@@ -1,6 +1,6 @@
 /** Binds a unit's discovered dependencies onto a container as mocks — the sole container coupling. */
 
-import type { BindingTag, Container, DependencyKey, DependencySlot, InjectOptions } from "@codefast/di";
+import type { BindingTag, Constructor, Container, DependencyKey, DependencySlot, InjectOptions } from "@codefast/di";
 import { tokenName } from "@codefast/di";
 
 import { OverrideMismatchError, UndeclaredDependencyError } from "#/errors/errors";
@@ -102,9 +102,16 @@ export function bindMocks(
   dependencies: ReadonlyArray<DependencySlot>,
   overrides: ReadonlyMap<DependencyKey, ReadonlyArray<SlottedOverride>>,
   mockFactory: MockFactory,
+  exposed?: ReadonlySet<Constructor>,
 ): ReadonlyMap<DependencyKey, ReadonlyArray<BoundMock>> {
   const declared = new Set<DependencyKey>(dependencies.map((slot) => slot.token));
   for (const key of overrides.keys()) {
+    if (exposed !== undefined && typeof key === "function" && exposed.has(key)) {
+      throw new OverrideMismatchError(
+        tokenName(key),
+        "the class is exposed as a real collaborator, so it cannot also be mocked.",
+      );
+    }
     if (!declared.has(key)) {
       throw new UndeclaredDependencyError(tokenName(key));
     }

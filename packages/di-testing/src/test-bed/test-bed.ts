@@ -4,8 +4,11 @@ import type { Constructor } from "@codefast/di";
 
 import type { MockFn } from "#/mocking/mock-factory";
 import type { Spy } from "#/mocking/spy";
+import type { TestBedOptions } from "#/test-bed/bed-builder";
+import { SociableBuilder } from "#/test-bed/sociable-builder";
+import type { SociableTestBedBuilder } from "#/test-bed/sociable-builder";
 import { SolitaryBuilder } from "#/test-bed/solitary-builder";
-import type { SolitaryTestBedBuilder, TestBedOptions } from "#/test-bed/solitary-builder";
+import type { SolitaryTestBedBuilder } from "#/test-bed/solitary-builder";
 
 /**
  * The factory surface for building isolated units under test.
@@ -22,12 +25,24 @@ export interface TestBedStatic {
     target: Constructor<Class>,
     options?: TestBedOptions<Backend>,
   ): SolitaryTestBedBuilder<Class, Backend>;
+
+  /**
+   * Begins a sociable test bed for `target`: chosen class collaborators stay real, tokens stay mocked.
+   *
+   * @remarks Returns only `expose` — a sociable bed without at least one exposed collaborator is a
+   * solitary bed, so the type steers the first call.
+   */
+  sociable<Class, Backend extends MockFn = Spy>(
+    target: Constructor<Class>,
+    options?: TestBedOptions<Backend>,
+  ): Pick<SociableTestBedBuilder<Class, Backend>, "expose">;
 }
 
 /**
  * Entry point for auto-mocking a class in isolation from its collaborators.
  *
- * @remarks `solitary` records the target and options only; nothing is instantiated until `compile()`.
+ * @remarks `solitary` and `sociable` record the target and options only; nothing is instantiated
+ * until `compile()`.
  */
 export const TestBed: TestBedStatic = {
   solitary<Class, Backend extends MockFn = Spy>(
@@ -35,5 +50,11 @@ export const TestBed: TestBedStatic = {
     options?: TestBedOptions<Backend>,
   ): SolitaryTestBedBuilder<Class, Backend> {
     return new SolitaryBuilder<Class, Backend>(target, options);
+  },
+  sociable<Class, Backend extends MockFn = Spy>(
+    target: Constructor<Class>,
+    options?: TestBedOptions<Backend>,
+  ): Pick<SociableTestBedBuilder<Class, Backend>, "expose"> {
+    return new SociableBuilder<Class, Backend>(target, options);
   },
 };

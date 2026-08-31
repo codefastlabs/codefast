@@ -21,3 +21,47 @@ export function scanDependencies(target: Constructor, reader: MetadataReader): R
 
   return [...(constructorMetadata?.params ?? []), ...accessors.map((accessor) => accessor.descriptor)];
 }
+
+/**
+ * What a sociable scan finds: the slots to mock, and the exposed classes the unit actually reaches.
+ */
+export interface SociableScan {
+  readonly mockSlots: ReadonlyArray<DependencySlot>;
+  readonly realClasses: ReadonlyArray<Constructor>;
+}
+
+/**
+ * Walks the unit's dependency graph across the exposed set: an exposed class dependency stays real
+ * and is scanned in turn, everything else becomes a mock slot.
+ *
+ * @remarks Class identity is what exposure follows — a `Token`-keyed dependency is always mocked,
+ * treating tokens as the declared boundary between the logic under test and the outside world.
+ */
+export function scanSociableDependencies(
+  target: Constructor,
+  exposed: ReadonlySet<Constructor>,
+  reader: MetadataReader,
+): SociableScan {
+  const mockSlots: Array<DependencySlot> = [];
+  const realClasses: Array<Constructor> = [];
+  const visited = new Set<Constructor>([target]);
+  const queue: Array<Constructor> = [target];
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    for (const slot of scanDependencies(current, reader)) {
+      const token = slot.token;
+      if (typeof token === "function" && exposed.has(token)) {
+        if (!visited.has(token)) {
+          visited.add(token);
+          realClasses.push(token);
+          queue.push(token);
+        }
+        continue;
+      }
+      mockSlots.push(slot);
+    }
+  }
+
+  return { mockSlots, realClasses };
+}

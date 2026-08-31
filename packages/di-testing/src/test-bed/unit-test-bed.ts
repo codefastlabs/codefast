@@ -1,6 +1,6 @@
 /** The compiled result of a solitary test bed: the real unit plus handles to its mocks. */
 
-import type { Container, DependencyKey, InjectOptions, TokenValue } from "@codefast/di";
+import type { Constructor, Container, DependencyKey, InjectOptions, TokenValue } from "@codefast/di";
 import { tokenName } from "@codefast/di";
 
 import type { BoundMock } from "#/discovery/mock-binder";
@@ -49,6 +49,42 @@ export interface UnitTestBed<Class, Backend extends MockFn = Spy> extends AsyncD
   reset(): void;
   /** Runs the unit's `@preDestroy` hooks and disposes the backing container. */
   dispose(): Promise<void>;
+}
+
+/**
+ * A sociable bed: the solitary surface plus access to the real collaborators it exposed.
+ *
+ * @typeParam Class - The class under test.
+ * @typeParam Backend - The spy type the bed's mock factory produces.
+ */
+export interface SociableUnitTestBed<Class, Backend extends MockFn = Spy> extends UnitTestBed<Class, Backend> {
+  /**
+   * The real instance of an exposed collaborator — the one the unit was actually built with.
+   *
+   * @throws UndeclaredDependencyError When the class was not exposed.
+   */
+  exposed<Real>(target: Constructor<Real>): Real;
+}
+
+/**
+ * Wraps a compiled bed with access to its exposed real collaborators.
+ */
+export function createSociableUnitTestBed<Class, Backend extends MockFn = Spy>(
+  bed: UnitTestBed<Class, Backend>,
+  container: Container,
+  exposedClasses: ReadonlySet<Constructor>,
+): SociableUnitTestBed<Class, Backend> {
+  return {
+    ...bed,
+    [Symbol.asyncDispose]: bed[Symbol.asyncDispose],
+    exposed<Real>(target: Constructor<Real>): Real {
+      if (!exposedClasses.has(target)) {
+        throw new UndeclaredDependencyError(tokenName(target), "not exposed");
+      }
+      // Exposed classes are singletons the unit's construction already instantiated.
+      return container.resolve(target);
+    },
+  };
 }
 
 /**

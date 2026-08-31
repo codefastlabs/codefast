@@ -49,10 +49,10 @@ export class UndeclaredDependencyError extends TestingError {
 }
 
 /**
- * A `unitRef.get(...)` lookup asked for a dependency supplied by `.using()`, `.absent()`, or `.all()`.
+ * A `unitRef.get(...)` lookup asked for a dependency that is not a retrievable mock.
  *
- * @remarks Those overrides seal the value: it carries no mock surface, so handing it back typed as
- * `Mocked` would lie. The test already holds the reference it passed in.
+ * @remarks `.using()`, `.absent()`, and `.all()` seal the value, and an exposed class is real —
+ * neither carries a mock surface, so handing them back typed as `Mocked` would lie.
  */
 export class SealedDependencyError extends TestingError {
   readonly code = "SEALED_DEPENDENCY";
@@ -60,7 +60,7 @@ export class SealedDependencyError extends TestingError {
 
   constructor(tokenName: string) {
     super(
-      `'${tokenName}' was supplied with .using(), .absent(), or .all(), so it is sealed: it has no mock surface to retrieve. Use the reference the test passed in instead.`,
+      `'${tokenName}' is not a retrievable mock: it was supplied with .using(), .absent(), or .all(), or exposed as a real collaborator. Use the reference the test passed in, or bed.exposed(Class) for a real instance.`,
     );
     this.tokenName = tokenName;
   }

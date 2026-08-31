@@ -85,6 +85,16 @@
       "types": "./dist/mocking/spy.d.ts",
       "import": "./dist/mocking/spy.js"
     },
+    "./test-bed/bed-builder": {
+      "source": "./src/test-bed/bed-builder.ts",
+      "types": "./dist/test-bed/bed-builder.d.ts",
+      "import": "./dist/test-bed/bed-builder.js"
+    },
+    "./test-bed/sociable-builder": {
+      "source": "./src/test-bed/sociable-builder.ts",
+      "types": "./dist/test-bed/sociable-builder.d.ts",
+      "import": "./dist/test-bed/sociable-builder.js"
+    },
     "./test-bed/solitary-builder": {
       "source": "./src/test-bed/solitary-builder.ts",
       "types": "./dist/test-bed/solitary-builder.d.ts",

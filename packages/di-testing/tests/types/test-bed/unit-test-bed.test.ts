@@ -58,6 +58,15 @@ describe("UnitReference.get", () => {
     });
   });
 
+  it("steers a sociable bed through expose before anything else", () => {
+    const started = TestBed.sociable(OrderProcessor);
+
+    expectTypeOf(started).toHaveProperty("expose");
+    expectTypeOf(started).not.toHaveProperty("compile");
+    expectTypeOf(started).not.toHaveProperty("mock");
+    expectTypeOf(started.expose).returns.toHaveProperty("compile");
+  });
+
   it("keeps the default backend precisely typed as Spy", () => {
     const { unitRef } = TestBed.solitary(OrderProcessor).compile();
 

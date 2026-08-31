@@ -200,6 +200,51 @@ export class ThrowingService {
   }
 }
 
+/** A tax policy read through a token — the kind of boundary sociable beds always mock. */
+export interface TaxPolicy {
+  rateFor(currency: string): number;
+}
+
+export const TaxPolicyToken = token<TaxPolicy>("TaxPolicy");
+
+/** A zero-dependency pricing collaborator worth keeping real in sociable tests. */
+@injectable()
+export class DiscountPolicy {
+  off(amountMajor: number): number {
+    return amountMajor * 0.9;
+  }
+}
+
+/** A pricing collaborator mixing a class dependency with a token boundary. */
+@injectable([TaxPolicyToken, DiscountPolicy])
+export class PricingService {
+  constructor(
+    private readonly tax: TaxPolicy,
+    private readonly discount: DiscountPolicy,
+  ) {}
+
+  total(amountMajor: number, currency: string): number {
+    return this.discount.off(amountMajor) * (1 + this.tax.rateFor(currency));
+  }
+}
+
+/** A checkout unit whose pricing can stay real while its gateway and log stay mocked. */
+@injectable([PricingService, PaymentGatewayToken, LoggerToken])
+export class CheckoutService {
+  constructor(
+    private readonly pricing: PricingService,
+    private readonly gateway: PaymentGateway,
+    private readonly logger: Logger,
+  ) {}
+
+  checkout(amountMajor: number, currency: string): number {
+    const total = this.pricing.total(amountMajor, currency);
+    this.gateway.charge("order-1", total);
+    this.logger.log(`charged ${String(total)}`);
+    return total;
+  }
+}
+
 /** A unit with lifecycle hooks that log through an injected collaborator. */
 @injectable([LoggerToken])
 export class LifecycleService {
@@ -214,4 +259,25 @@ export class LifecycleService {
   stop(): void {
     this.logger.log("stop");
   }
+}
+
+/** A unit hosting a lifecycle-carrying collaborator, for exposing it in a sociable bed. */
+@injectable([LifecycleService])
+export class LifecycleHost {
+  constructor(readonly service: LifecycleService) {}
+}
+
+/** A unit hosting the throwing collaborator, for the sociable failed-compile path. */
+@injectable([ThrowingService])
+export class ThrowingHost {
+  constructor(readonly service: ThrowingService) {}
+}
+
+/** Two exposed paths reaching one collaborator — the diamond a sociable scan must not duplicate. */
+@injectable([PricingService, DiscountPolicy])
+export class BundleService {
+  constructor(
+    readonly pricing: PricingService,
+    readonly discount: DiscountPolicy,
+  ) {}
 }

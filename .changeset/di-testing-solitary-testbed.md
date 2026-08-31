@@ -9,4 +9,6 @@ a zero-dependency spy; pass `mockFactory: () => vi.fn()` to build the mocks from
 return type flows through the bed, so each backend's own mock API type-checks on `unitRef.get(...)` and inside `.impl`
 callbacks with no adapter packages. Overrides cover fixed sealed values (`.using`), partial stubs (`.impl`), absent
 optionals (`.absent`), `injectAll` element lists (`.all`), and slot-targeted mocks (`.mock(token, { name })`); beds
-expose `reset()` and `await using` disposal.
+expose `reset()` and `await using` disposal. `TestBed.sociable(Class).expose(Collaborator)` keeps chosen class-keyed
+collaborators real (recursively, lifecycle included) while token-keyed dependencies stay mocked as the declared
+boundary; `bed.exposed(Class)` retrieves the real instances.

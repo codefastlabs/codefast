@@ -1,7 +1,8 @@
 # @codefast/di-testing
 
-Solitary auto-mocking test beds for [`@codefast/di`](https://github.com/codefastlabs/codefast/tree/main/packages/di) —
-write an isolated unit test for an `@injectable` class in two lines, with every collaborator mocked for you.
+Solitary and sociable auto-mocking test beds for
+[`@codefast/di`](https://github.com/codefastlabs/codefast/tree/main/packages/di) — write an isolated unit test for an
+`@injectable` class in two lines, with every collaborator mocked for you, or keep chosen collaborators real.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/di-testing)](https://www.npmjs.com/package/@codefast/di-testing)
 [![license](https://img.shields.io/npm/l/@codefast/di-testing)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
@@ -103,6 +104,31 @@ Begins a solitary test bed for `target`, auto-mocking every dependency it declar
   slotless form covers every slot without a more specific override.
 - `.compile()` — instantiate the unit synchronously (the primary path).
 - `.compileAsync()` — for a unit whose `@postConstruct` is asynchronous.
+
+### `TestBed.sociable(target, options?)`
+
+A sociable bed keeps chosen collaborators real while everything else stays mocked — a unit test over a small real
+subtree, not an integration test. It returns only `.expose()`, steering the first call:
+
+```typescript
+const bed = TestBed.sociable(CheckoutService, { mockFactory: () => vi.fn() })
+  .expose(PricingService) // real instance, wired through the container
+  .mock(TaxPolicyToken)
+  .impl((fn) => ({ rateFor: fn().mockReturnValue(0.1) }))
+  .compile();
+
+bed.unit.checkout(100, "USD"); // real PricingService math over the mocked tax boundary
+bed.exposed(PricingService); // the real instance the unit was built with
+```
+
+- **Exposure follows class identity.** A class-keyed dependency — of the unit or of another exposed class — stays real
+  when exposed, and its own dependencies follow the same rules recursively.
+- **Tokens are the boundary.** A `Token`-keyed dependency is always mocked, in both modes: tokens mark where the logic
+  under test meets the outside world.
+- Exposed collaborators are real singletons resolved through the container, so their `@postConstruct` runs at compile
+  and `@preDestroy` on dispose. `bed.exposed(Class)` retrieves them; `unitRef.get(Class)` refuses them
+  (`SealedDependencyError`) because they carry no mock surface.
+- Exposing a class the unit never reaches, or exposing and mocking the same class, is an error at compile.
 
 ### Behavior notes
 
