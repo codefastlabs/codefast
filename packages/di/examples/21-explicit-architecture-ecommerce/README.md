@@ -118,16 +118,20 @@ if (config.database === "postgres") {
 | Bounded module per layer                | `Module.create` + a root `builder.import`          |
 | One correlation id per request          | a `scoped()` binding + `createChild()`             |
 | Wire-up check before serving traffic    | `container.validate()`                             |
+| Swap an adapter to replay an incident   | `container.rebind(token)`                          |
 | Seeing the dependency rule              | `generateDependencyGraph()` + `toDotGraph()`       |
 
 ## What the run shows
 
 The bootstrap runs NeonCart's Black Friday drop: only three pairs of "Void Runner X" exist. A shopper buys one over the
 HTTP `POST /checkout`; the warehouse holds the last two for a VIP over the **CLI** — the same `PlaceOrder` use case
-behind a second transport, proving it is transport-agnostic; then a late shopper's order is refused at the domain
-boundary (`OutOfStockError` → `422`). Each success selects a payment gateway by currency and fans a confirmation out to
-every notification channel (email + SMS + Discord), and every request carries its own scoped correlation id for the
-audit trail.
+behind a second transport, proving it is transport-agnostic. Each success selects a payment gateway by currency and fans
+a confirmation out to every notification channel (email + SMS + Discord), and every request carries its own scoped
+correlation id for the audit trail.
+
+Then three checkouts are refused at the boundary, each mapped to `422`: a late shopper's oversell (`OutOfStockError`), a
+yen order no configured gateway can settle (`UnsupportedCurrencyError`), and — after a `rebind` swaps a declining
+gateway in through the same port — a charge the acquirer rejects (`PaymentDeclinedError`).
 
 ## Is this too many files?
 
