@@ -3,16 +3,20 @@ import { describe, expect, it, vi } from "vitest";
 import { TestBed } from "#/test-bed/test-bed";
 import {
   AccessorConsumer,
+  AccessorOnlyService,
+  CollidingTagConsumer,
   DoubleLogger,
   EmailServiceToken,
   LoggerToken,
   NamedConsumer,
   OrderProcessor,
   PaymentGatewayToken,
+  PlainStandalone,
   PluginToken,
   ReportService,
   Standalone,
   TaggedConsumer,
+  ThrowingService,
   UserServiceToken,
 } from "#/tests/unit/support/fixtures";
 
@@ -61,6 +65,13 @@ describe("TestBed.solitary", () => {
     expect(unit.logger).toBe(unitRef.get(LoggerToken));
   });
 
+  it("binds every tagged slot even when tag values stringify identically", () => {
+    const { unit, unitRef } = TestBed.solitary(CollidingTagConsumer).compile();
+
+    expect(unit.first).toBe(unitRef.get(LoggerToken));
+    expect(unit.second).toBe(unitRef.get(LoggerToken));
+  });
+
   it("resolves an accessor-injected dependency", () => {
     const { unit, unitRef } = TestBed.solitary(AccessorConsumer).compile();
     unit.notify("bob@example.com");
@@ -79,6 +90,26 @@ describe("TestBed.solitary", () => {
   it("compiles a dependency-free unit", () => {
     const { unit } = TestBed.solitary(Standalone).compile();
     expect(unit.ping()).toBe("pong");
+  });
+
+  it("compiles an undecorated zero-argument class", () => {
+    const { unit } = TestBed.solitary(PlainStandalone).compile();
+    expect(unit.ping()).toBe("plain");
+  });
+
+  it("compiles an accessor-only class that has no @injectable", () => {
+    const { unit, unitRef } = TestBed.solitary(AccessorOnlyService).compile();
+    unit.notify("vip@example.com");
+
+    expect(unitRef.get(EmailServiceToken).send.mock.calls.at(0)).toEqual(["vip@example.com", "accessor-only"]);
+  });
+
+  it("propagates a @postConstruct failure out of compile", () => {
+    expect(() => TestBed.solitary(ThrowingService).compile()).toThrow("boot failed");
+  });
+
+  it("propagates a @postConstruct failure out of compileAsync", async () => {
+    await expect(TestBed.solitary(ThrowingService).compileAsync()).rejects.toThrow("boot failed");
   });
 
   it("builds the unit through compileAsync", async () => {

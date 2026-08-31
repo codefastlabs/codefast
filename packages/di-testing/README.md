@@ -88,11 +88,22 @@ Begins a solitary test bed for `target`, auto-mocking every dependency it declar
 
 ### Builder
 
-- `.mock(token).using(value)` — bind a fixed value for one dependency.
+- `.mock(token).using(value)` — bind a fixed value for one dependency. The value is returned by `unitRef.get` as-is; the
+  `Mocked` spy surface applies only to auto-mocks and `.impl` stubs.
 - `.mock(token).impl((fn) => stub)` — bind a partial stub built from the active spy factory; unlisted members stay
-  auto-mocked.
+  auto-mocked. The `fn` helper is typed for the built-in spy and jest-shaped backends (`vi.fn`, `jest.fn`); with a Sinon
+  factory, use Sinon's own `returns`/`callsFake` on the value `fn()` returns.
 - `.compile()` — instantiate the unit synchronously (the primary path).
 - `.compileAsync()` — for a unit whose `@postConstruct` is asynchronous.
+
+### Behavior notes
+
+- An `optional()` dependency is auto-mocked like any other — it resolves to the mock, not `undefined` as an unbound
+  optional would in production. Use `.mock(token).using(undefined as never)` to exercise the absent branch.
+- An `injectAll()` dependency receives a one-element array holding the token's mock — a solitary bed binds exactly one
+  value per token.
+- Named or tagged parameters of one token each get their own binding but share that token's single mock, so their call
+  logs merge.
 
 ### Result — `UnitTestBed`
 

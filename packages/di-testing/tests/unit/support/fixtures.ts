@@ -46,6 +46,9 @@ export const PluginToken = token<Plugin>("Plugin");
 /** A tag key used to request a tagged binding. */
 export const EnvTag = tag<string>("env");
 
+/** A tag key whose values collide once stringified, exercising tag identity in slot handling. */
+export const CollideTag = tag<unknown>("collide");
+
 // ── Units under test ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /** A multi-dependency unit whose collaborators are all constructor-injected. */
@@ -119,6 +122,15 @@ export class TaggedConsumer {
   constructor(readonly logger: Logger) {}
 }
 
+/** A unit whose sole dependency is requested with a tag whose values stringify identically. */
+@injectable([inject(LoggerToken, { tag: CollideTag.of(1) }), inject(LoggerToken, { tag: CollideTag.of("1") })])
+export class CollidingTagConsumer {
+  constructor(
+    readonly first: Logger,
+    readonly second: Logger,
+  ) {}
+}
+
 /** A unit whose dependency is accessor-injected rather than constructor-injected. */
 @injectable([])
 export class AccessorConsumer {
@@ -126,6 +138,34 @@ export class AccessorConsumer {
 
   notify(to: string): void {
     this.email.send(to, "hello");
+  }
+}
+
+/** An accessor-only unit with no `@injectable` at all — di resolves these through the zero-arg fallback. */
+export class AccessorOnlyService {
+  @inject(EmailServiceToken) accessor email!: EmailService;
+
+  notify(to: string): void {
+    this.email.send(to, "accessor-only");
+  }
+}
+
+/** An undecorated zero-dependency class — resolvable without any metadata. */
+export class PlainStandalone {
+  ping(): string {
+    return "plain";
+  }
+}
+
+/** A unit whose `@postConstruct` always throws, exercising the failed-compile path. */
+@injectable([LoggerToken])
+export class ThrowingService {
+  constructor(private readonly logger: Logger) {}
+
+  @postConstruct()
+  boot(): void {
+    this.logger.log("boot");
+    throw new Error("boot failed");
   }
 }
 

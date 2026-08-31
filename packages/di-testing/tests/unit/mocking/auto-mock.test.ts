@@ -47,4 +47,62 @@ describe("createAutoMock", () => {
     const mock = createAutoMock<Service>(defaultMockFactory) as Record<symbol, unknown>;
     expect(mock[Symbol.iterator]).toBeUndefined();
   });
+
+  it("mocks a function-typed dependency as a live spy", () => {
+    const mock = createAutoMock<(id: string) => number>(defaultMockFactory);
+
+    mock.mockReturnValue(7);
+    expect(mock("u1")).toBe(7);
+    expect(mock.mock.calls).toEqual([["u1"]]);
+  });
+
+  it("honours a class-instance seed whose methods live on the prototype", () => {
+    class FakeService {
+      find(id: string): string {
+        return `real:${id}`;
+      }
+      save(_value: string): void {}
+    }
+    const mock = createAutoMock<Service>(defaultMockFactory, new FakeService());
+
+    expect(mock.find("u1")).toBe("real:u1");
+  });
+
+  it("lets a seed supply then and symbol-keyed members", () => {
+    const iterate = (): Iterator<number> => [1, 2][Symbol.iterator]();
+    const mock = createAutoMock<Iterable<number>>(defaultMockFactory, {
+      [Symbol.iterator]: iterate,
+    } as never);
+
+    expect([...mock]).toEqual([1, 2]);
+  });
+
+  it("returns a property written onto the mock instead of a spy", () => {
+    const mock = createAutoMock<Service & { host?: string }>(defaultMockFactory);
+    mock.host = "localhost";
+
+    expect(mock.host).toBe("localhost");
+  });
+
+  it("does not mint spies for serializer probes", () => {
+    const mock = createAutoMock<Service>(defaultMockFactory) as unknown as Record<string, unknown>;
+
+    expect(mock["toJSON"]).toBeUndefined();
+    expect(mock["asymmetricMatch"]).toBeUndefined();
+    expect(typeof mock["name"]).toBe("string");
+    expect(typeof mock["hasOwnProperty"]).toBe("function");
+  });
+
+  it("answers `in` consistently with property access", () => {
+    const mock = createAutoMock<Service>(defaultMockFactory);
+
+    expect("find" in mock).toBe(true);
+    expect("then" in mock).toBe(false);
+  });
+
+  it("answers `in` for seeded members", () => {
+    const mock = createAutoMock<Service>(defaultMockFactory, { find: () => "seeded" });
+
+    expect("find" in mock).toBe(true);
+  });
 });

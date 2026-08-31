@@ -16,7 +16,7 @@ export abstract class TestingError extends Error {
 }
 
 /**
- * The class under test carries no `@injectable` metadata, so its dependencies cannot be discovered.
+ * The class under test takes constructor parameters but carries no `@injectable` metadata.
  */
 export class NotInjectableError extends TestingError {
   readonly code = "NOT_INJECTABLE";
@@ -24,7 +24,7 @@ export class NotInjectableError extends TestingError {
 
   constructor(targetName: string) {
     super(
-      `Cannot build a solitary test bed for '${targetName}': it is not decorated with @injectable(...), so its dependencies cannot be discovered. Decorate the class, or bind its collaborators manually with a Container.`,
+      `Cannot build a solitary test bed for '${targetName}': its constructor takes parameters but the class is not decorated with @injectable(...), so those dependencies cannot be discovered. Decorate the class, or bind its collaborators manually with a Container.`,
     );
     this.targetName = targetName;
   }

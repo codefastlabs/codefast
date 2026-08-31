@@ -1,63 +1,72 @@
 /** The lazy `Proxy` that mocks an erased interface one accessed property at a time. */
 
-import type { MockFactory } from "#/mocking/mock-factory";
+import { getOrInsertComputed } from "@codefast/di/core/map-upsert";
+
+import type { MockFactory, MockFn } from "#/mocking/mock-factory";
 import type { Spy } from "#/mocking/spy";
 
 /**
- * A mocked view of `T`: every method becomes a {@link Spy}, nested objects are mocked in turn.
- *
- * @typeParam T - The dependency type being mocked.
+ * A mocked view of `Dependency`: every method becomes a {@link Spy}, nested objects are mocked in turn.
  */
-export type Mocked<T> = T extends (...args: infer Args) => infer Return
+export type Mocked<Dependency> = Dependency extends (...args: infer Args) => infer Return
   ? Spy<Args, Return>
-  : T extends object
-    ? { [Key in keyof T]: Mocked<T[Key]> }
-    : T;
+  : Dependency extends object
+    ? { [Key in keyof Dependency]: Mocked<Dependency[Key]> }
+    : Dependency;
 
 /**
- * A recursively optional view of `T` — the shape a hand-written `.impl` stub may supply.
+ * A recursively optional view of `Dependency` — the shape a hand-written `.impl` stub may supply.
  *
  * @remarks Functions are kept whole (a stub replaces a whole method), everything else is made
  * optional so only the members a test cares about need spelling out.
- *
- * @typeParam T - The dependency type being partially stubbed.
  */
-export type DeepPartial<T> = T extends (...args: ReadonlyArray<unknown>) => unknown
-  ? T
-  : T extends object
-    ? { [Key in keyof T]?: DeepPartial<T[Key]> }
-    : T;
+export type DeepPartial<Dependency> = Dependency extends (...args: ReadonlyArray<unknown>) => unknown
+  ? Dependency
+  : Dependency extends object
+    ? { [Key in keyof Dependency]?: DeepPartial<Dependency[Key]> }
+    : Dependency;
+
+// `then` would make every mock thenable and stall `await`; `toJSON` and `asymmetricMatch` are probed
+// by serializers and expect() and must not answer as callables.
+const UNMOCKED_KEYS: ReadonlySet<string> = new Set(["then", "toJSON", "asymmetricMatch"]);
 
 /**
  * Builds a lazy auto-mock for an erased interface: each accessed property becomes a cached spy.
  *
- * @remarks A `then` access and every symbol key return the raw target untouched — so the mock is
- * never mistaken for a thenable (which would stall an `await`) and inspection or iteration does not
- * spawn stray spies. A `seed` supplies concrete members that take precedence over the lazy spies.
- *
- * @typeParam T - The dependency type being mocked.
+ * @remarks The proxy target is itself a spy, so a function-typed dependency records calls and exposes
+ * real mock state. A `seed` wins over every other rule, inherited members included; keys the root spy
+ * already carries (its own API, `Function.prototype`, a property written onto the mock) pass through
+ * rather than minting a stray spy.
  */
-export function createAutoMock<T>(mockFactory: MockFactory, seed?: DeepPartial<T>): Mocked<T> {
-  const cache = new Map<PropertyKey, unknown>();
+export function createAutoMock<Dependency>(
+  mockFactory: MockFactory,
+  seed?: DeepPartial<Dependency>,
+): Mocked<Dependency> {
+  const cache = new Map<string, MockFn>();
   const seedRecord = seed as Record<PropertyKey, unknown> | undefined;
-  const target = (): void => {};
+  const target = mockFactory();
 
   const proxy = new Proxy(target, {
     get(fnTarget, key, receiver): unknown {
-      if (key === "then" || typeof key === "symbol") {
+      if (seedRecord !== undefined && Reflect.has(seedRecord, key)) {
+        return Reflect.get(seedRecord, key);
+      }
+      if (typeof key === "symbol" || UNMOCKED_KEYS.has(key) || Reflect.has(fnTarget, key)) {
         return Reflect.get(fnTarget, key, receiver);
       }
-      if (seedRecord !== undefined && Object.hasOwn(seedRecord, key)) {
-        return seedRecord[key];
+      return getOrInsertComputed(cache, key, mockFactory);
+    },
+    // `in` agrees with `get`: any mockable string key answers true, everything else asks the target.
+    has(fnTarget, key): boolean {
+      if (seedRecord !== undefined && Reflect.has(seedRecord, key)) {
+        return true;
       }
-      let spy = cache.get(key);
-      if (spy === undefined) {
-        spy = mockFactory();
-        cache.set(key, spy);
+      if (typeof key === "symbol" || UNMOCKED_KEYS.has(key)) {
+        return Reflect.has(fnTarget, key);
       }
-      return spy;
+      return true;
     },
   });
 
-  return proxy as unknown as Mocked<T>;
+  return proxy as unknown as Mocked<Dependency>;
 }

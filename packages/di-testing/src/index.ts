@@ -3,7 +3,6 @@
 export { TestBed } from "#/test-bed/test-bed";
 export type { TestBedStatic } from "#/test-bed/test-bed";
 export type { MockOverrideBuilder, SolitaryTestBedBuilder, TestBedOptions } from "#/test-bed/solitary-builder";
-export { SolitaryBuilder } from "#/test-bed/solitary-builder";
 export type { UnitReference, UnitTestBed } from "#/test-bed/unit-test-bed";
 
 export { createAutoMock } from "#/mocking/auto-mock";

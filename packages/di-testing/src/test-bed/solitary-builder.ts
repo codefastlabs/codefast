@@ -2,6 +2,7 @@
 
 import type { Constructor, DependencyKey, MetadataReader } from "@codefast/di";
 import { Container, defaultMetadataReader } from "@codefast/di";
+import { verifyingMetadataReader } from "@codefast/di/metadata/verifying-metadata-reader";
 
 import { scanDependencies } from "#/discovery/dependency-scanner";
 import type { MockOverride } from "#/discovery/mock-binder";
@@ -30,7 +31,12 @@ export interface TestBedOptions {
  * @typeParam Class - The class under test.
  */
 export interface MockOverrideBuilder<Dependency, Class> {
-  /** Supplies a fixed value for this dependency. */
+  /**
+   * Supplies a fixed value for this dependency.
+   *
+   * @remarks The value is bound and returned by `unitRef.get` as-is — the `Mocked` surface applies
+   * only to auto-mocks and `.impl` stubs.
+   */
   using(value: Dependency): SolitaryTestBedBuilder<Class>;
   /** Supplies a partial stub, built from the active spy factory; unlisted members stay auto-mocked. */
   impl(setup: (mock: StubFactory) => DeepPartial<Dependency>): SolitaryTestBedBuilder<Class>;
@@ -63,7 +69,8 @@ export class SolitaryBuilder<Class> implements SolitaryTestBedBuilder<Class> {
 
   constructor(target: Constructor<Class>, options?: TestBedOptions) {
     this.#target = target;
-    this.#reader = options?.metadataReader ?? defaultMetadataReader;
+    // A supplied reader is a claim — verify it the way the container itself does.
+    this.#reader = verifyingMetadataReader(options?.metadataReader ?? defaultMetadataReader);
     this.#mockFactory = options?.mockFactory ?? defaultMockFactory;
   }
 
@@ -75,7 +82,8 @@ export class SolitaryBuilder<Class> implements SolitaryTestBedBuilder<Class> {
         return this;
       },
       impl: (setup) => {
-        const seed = setup(this.#mockFactory as unknown as StubFactory);
+        // Narrows to the authoring surface; a backend without it (Sinon) uses its own methods on `mock()`.
+        const seed = setup(this.#mockFactory as StubFactory);
         this.#overrides.set(key, { kind: "impl", seed });
         return this;
       },
@@ -84,14 +92,25 @@ export class SolitaryBuilder<Class> implements SolitaryTestBedBuilder<Class> {
 
   compile(): UnitTestBed<Class> {
     const { container, mocks } = this.#prepare();
-    const unit = container.resolve(this.#target);
-    return createUnitTestBed(unit, mocks, container);
+    try {
+      const unit = container.resolve(this.#target);
+      return createUnitTestBed(unit, mocks, container);
+    } catch (error) {
+      // A failed compile still owns the container — dispose it so no lifecycle state leaks.
+      void container.dispose().catch(() => undefined);
+      throw error;
+    }
   }
 
   async compileAsync(): Promise<UnitTestBed<Class>> {
     const { container, mocks } = this.#prepare();
-    const unit = await container.resolveAsync(this.#target);
-    return createUnitTestBed(unit, mocks, container);
+    try {
+      const unit = await container.resolveAsync(this.#target);
+      return createUnitTestBed(unit, mocks, container);
+    } catch (error) {
+      await container.dispose().catch(() => undefined);
+      throw error;
+    }
   }
 
   /** Builds the container, binds every dependency's mock, and registers the unit as a singleton. */

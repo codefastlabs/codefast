@@ -18,9 +18,13 @@ export interface SpyState<Args extends ReadonlyArray<unknown>> {
   readonly results: ReadonlyArray<SpyResult>;
 }
 
-// The `Return` default is `any` so a spy drops into any typed method slot a stub supplies —
-// the same reason Vitest's own mock call signature returns `any`. This is the package's only `any`.
-// oxlint-disable-next-line typescript/no-explicit-any -- a spy must be assignable to any return type
+/* oxlint-disable typescript/no-explicit-any -- a spy must be assignable to any return type */
+/**
+ * The built-in zero-dependency spy: callable, records calls, and takes a return value or implementation.
+ *
+ * @remarks `Return` defaults to `any` so a spy drops into any typed method slot, exactly as Vitest's
+ * own mock type does — the package's one deliberate `any`.
+ */
 export interface Spy<Args extends ReadonlyArray<unknown> = ReadonlyArray<unknown>, Return = any> {
   (...args: Args): Return;
   /** The recorded calls and their outcomes. */
@@ -32,51 +36,49 @@ export interface Spy<Args extends ReadonlyArray<unknown> = ReadonlyArray<unknown
   /** Clears the recorded calls and any configured return value or implementation. */
   mockReset(): void;
 }
+/* oxlint-enable typescript/no-explicit-any */
 
 /**
  * Creates a fresh zero-dependency spy that records its calls and returns `undefined` until configured.
  */
 export function createSpy(): Spy {
-  let calls: Array<ReadonlyArray<unknown>> = [];
-  let results: Array<SpyResult> = [];
+  const calls: Array<ReadonlyArray<unknown>> = [];
+  const results: Array<SpyResult> = [];
   let implementation: ((...args: ReadonlyArray<unknown>) => unknown) | undefined;
   let returnValue: unknown;
 
-  const spy = (...args: ReadonlyArray<unknown>): unknown => {
-    calls.push(args);
-    try {
-      const value = implementation === undefined ? returnValue : implementation(...args);
-      results.push({ type: "return", value });
-      return value;
-    } catch (error) {
-      results.push({ type: "throw", value: error });
-      throw error;
-    }
-  };
+  const spy = Object.assign(
+    (...args: ReadonlyArray<unknown>): unknown => {
+      calls.push(args);
+      try {
+        const value = implementation === undefined ? returnValue : implementation(...args);
+        results.push({ type: "return", value });
+        return value;
+      } catch (error) {
+        results.push({ type: "throw", value: error });
+        throw error;
+      }
+    },
+    {
+      mock: { calls, results },
+      mockReturnValue(value: unknown): Spy {
+        returnValue = value;
+        implementation = undefined;
+        return spy;
+      },
+      mockImplementation(fn: (...args: ReadonlyArray<unknown>) => unknown): Spy {
+        implementation = fn;
+        return spy;
+      },
+      // Cleared in place so `mock` stays one stable object across resets.
+      mockReset(): void {
+        calls.length = 0;
+        results.length = 0;
+        implementation = undefined;
+        returnValue = undefined;
+      },
+    },
+  ) as Spy;
 
-  return Object.assign(spy, {
-    mock: {
-      get calls(): ReadonlyArray<ReadonlyArray<unknown>> {
-        return calls;
-      },
-      get results(): ReadonlyArray<SpyResult> {
-        return results;
-      },
-    },
-    mockReturnValue(value: unknown): Spy {
-      returnValue = value;
-      implementation = undefined;
-      return spy as Spy;
-    },
-    mockImplementation(fn: (...args: ReadonlyArray<unknown>) => unknown): Spy {
-      implementation = fn;
-      return spy as Spy;
-    },
-    mockReset(): void {
-      calls = [];
-      results = [];
-      implementation = undefined;
-      returnValue = undefined;
-    },
-  }) as Spy;
+  return spy;
 }

@@ -1,6 +1,6 @@
 /** The compiled result of a solitary test bed: the real unit plus handles to its mocks. */
 
-import type { Constructor, Container, DependencyKey, Token, TokenValue } from "@codefast/di";
+import type { Container, DependencyKey, TokenValue } from "@codefast/di";
 import { tokenName } from "@codefast/di";
 
 import { UndeclaredDependencyError } from "#/errors/errors";
@@ -13,9 +13,12 @@ export interface UnitReference {
   /**
    * Retrieves the mock bound for one of the unit's dependencies, typed to that dependency's value.
    *
+   * @remarks A dependency overridden with `.using()` comes back as the supplied value itself, which
+   * carries no spy surface — the `Mocked` type describes auto-mocks and `.impl` stubs.
+   *
    * @throws UndeclaredDependencyError When the identifier is not one of the unit's dependencies.
    */
-  get<Identifier extends Token<unknown> | Constructor>(identifier: Identifier): Mocked<TokenValue<Identifier>>;
+  get<Identifier extends DependencyKey>(identifier: Identifier): Mocked<TokenValue<Identifier>>;
 }
 
 /**
@@ -42,11 +45,11 @@ export function createUnitTestBed<Class>(
   container: Container,
 ): UnitTestBed<Class> {
   const unitRef: UnitReference = {
-    get(identifier) {
+    get<Identifier extends DependencyKey>(identifier: Identifier): Mocked<TokenValue<Identifier>> {
       if (!mocks.has(identifier)) {
         throw new UndeclaredDependencyError(tokenName(identifier));
       }
-      return mocks.get(identifier) as never;
+      return mocks.get(identifier) as Mocked<TokenValue<Identifier>>;
     },
   };
 

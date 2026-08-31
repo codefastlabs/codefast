@@ -7,22 +7,25 @@ import { createSpy } from "#/mocking/spy";
  * The loose callable an auto-mock materializes for each accessed property.
  *
  * @remarks Deliberately structural so any backend qualifies: the built-in {@link Spy}, a Vitest
- * `vi.fn()`, a `jest.fn()`, or a Sinon stub all satisfy it. The rich {@link Spy} surface is what a
- * consumer sees back through `Mocked` and the `.impl` authoring callback.
+ * `vi.fn()`, a `jest.fn()`, or a Sinon stub all satisfy it.
  */
 export type MockFn = (...args: ReadonlyArray<unknown>) => unknown;
 
 /**
- * Produces one spy. Defaults to the built-in zero-dependency spy; pass `() => vi.fn()` (or `jest.fn`,
- * `() => sinon.stub()`) to build the mocks from that backend instead.
+ * The factory each auto-mocked member is created by.
+ *
+ * @remarks Defaults to the built-in zero-dependency spy; `() => vi.fn()` or `jest.fn` slot in
+ * directly. Auto-mocks only need the result to be callable, so `() => sinon.stub()` works too — but
+ * see {@link StubFactory} for what `.impl` assumes.
  */
 export type MockFactory = () => MockFn;
 
 /**
  * The authoring view of the active factory handed to a `.impl` callback — one call yields one `Spy`.
  *
- * @remarks Its `mockReturnValue` / `mockImplementation` are the subset every supported backend shares,
- * so a stub reads the same whether the default spy or `vi.fn()` is in use.
+ * @remarks Typed for the built-in spy and the jest-shaped backends (`vi.fn`, `jest.fn`), which share
+ * `mockReturnValue` / `mockImplementation`. A backend with its own authoring surface (a Sinon stub's
+ * `returns` / `callsFake`) still works — call its methods on the returned value instead.
  */
 export type StubFactory = () => Spy;
 
