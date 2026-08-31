@@ -14,22 +14,16 @@ export type MockFn = (...args: ReadonlyArray<unknown>) => unknown;
 /**
  * The factory each auto-mocked member is created by.
  *
- * @remarks Defaults to the built-in zero-dependency spy; `() => vi.fn()` or `jest.fn` slot in
- * directly. Auto-mocks only need the result to be callable, so `() => sinon.stub()` works too — but
- * see {@link StubFactory} for what `.impl` assumes.
- */
-export type MockFactory = () => MockFn;
-
-/**
- * The authoring view of the active factory handed to a `.impl` callback — one call yields one `Spy`.
+ * @remarks `Backend` is the spy type the factory returns, and it flows through the whole test bed:
+ * `Mocked` members, `unitRef.get`, and the `.impl` callback are all typed against it, so
+ * `() => vi.fn()` gives every mock Vitest's own surface and `() => sinon.stub()` gives Sinon's —
+ * with no adapter package and no module augmentation.
  *
- * @remarks Typed for the built-in spy and the jest-shaped backends (`vi.fn`, `jest.fn`), which share
- * `mockReturnValue` / `mockImplementation`. A backend with its own authoring surface (a Sinon stub's
- * `returns` / `callsFake`) still works — call its methods on the returned value instead.
+ * @typeParam Backend - The spy type one factory call produces; defaults to the loose callable.
  */
-export type StubFactory = () => Spy;
+export type MockFactory<Backend extends MockFn = MockFn> = () => Backend;
 
 /**
  * The default `MockFactory` — one built-in {@link Spy} per call, with no test-framework dependency.
  */
-export const defaultMockFactory: MockFactory = () => createSpy();
+export const defaultMockFactory: MockFactory<Spy> = () => createSpy();

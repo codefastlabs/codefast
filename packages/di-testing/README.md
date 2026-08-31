@@ -12,7 +12,9 @@ write an isolated unit test for an `@injectable` class in two lines, with every 
   and `@preDestroy` run exactly as in production.
 - **Zero test-framework dependency.** The default mock is a small built-in spy. Pass `() => vi.fn()` (or `jest.fn`,
   `() => sinon.stub()`) to build the mocks from that backend and use its matchers instead.
-- **Typed lookups.** `unitRef.get(EmailToken)` returns `Mocked<EmailService>` — the token's value type flows through.
+- **Backend-typed lookups.** The factory's return type flows through the whole bed: with `() => vi.fn()`,
+  `unitRef.get(EmailToken).send` carries Vitest's own mock surface (`mockReturnValueOnce`, `mockClear`, …) — no adapter
+  package, no module augmentation, no postinstall scripts.
 
 ## Requirements
 
@@ -88,33 +90,43 @@ Begins a solitary test bed for `target`, auto-mocking every dependency it declar
 
 ### Builder
 
-- `.mock(token).using(value)` — bind a fixed value for one dependency. The value is returned by `unitRef.get` as-is; the
-  `Mocked` spy surface applies only to auto-mocks and `.impl` stubs.
 - `.mock(token).impl((fn) => stub)` — bind a partial stub built from the active spy factory; unlisted members stay
-  auto-mocked. The `fn` helper is typed for the built-in spy and jest-shaped backends (`vi.fn`, `jest.fn`); with a Sinon
-  factory, use Sinon's own `returns`/`callsFake` on the value `fn()` returns.
+  auto-mocked. `fn()` is typed as whatever the backend produces, so `fn().mockReturnValue(...)` (jest-shaped) or
+  `fn().returns(...)` (Sinon) both type-check against the factory you chose.
+- `.mock(token).using(value)` — bind a fixed value. The value is **sealed**: it has no mock surface, so `unitRef.get`
+  refuses it rather than hand it back mistyped — the test already holds the reference it passed in.
+- `.mock(token).absent()` — leave the dependency unbound: an `optional()` slot resolves `undefined`, an `injectAll()`
+  slot `[]`. Anything else is an `OverrideMismatchError`.
+- `.mock(token).all([a, b])` — supply the elements of an unconstrained `injectAll()` slot, in order. Sealed like
+  `.using`.
+- `.mock(token, { name })` / `.mock(token, { tag })` — target one slot of a token that is injected several ways; the
+  slotless form covers every slot without a more specific override.
 - `.compile()` — instantiate the unit synchronously (the primary path).
 - `.compileAsync()` — for a unit whose `@postConstruct` is asynchronous.
 
 ### Behavior notes
 
 - An `optional()` dependency is auto-mocked like any other — it resolves to the mock, not `undefined` as an unbound
-  optional would in production. Use `.mock(token).using(undefined as never)` to exercise the absent branch.
-- An `injectAll()` dependency receives a one-element array holding the token's mock — a solitary bed binds exactly one
-  value per token.
-- Named or tagged parameters of one token each get their own binding but share that token's single mock, so their call
-  logs merge.
+  optional would in production. Use `.mock(token).absent()` to exercise the absent branch.
+- An `injectAll()` dependency receives a one-element array holding the token's mock; use `.mock(token).all([...])` to
+  supply several elements.
+- Named or tagged parameters of one token share the token's mock unless a slot-targeted `.mock(token, { name })` gives
+  that slot its own.
 
 ### Result — `UnitTestBed`
 
 - `unit` — the real class under test.
-- `unitRef.get(token)` — the `Mocked<T>` bound for a dependency.
+- `unitRef.get(token, options?)` — the `Mocked<T>` bound for a dependency (or one slot of it). Only auto-mocks and
+  `.impl` stubs come back; sealed values throw `SealedDependencyError`.
+- `reset()` — clear the call history and configured behaviour of every auto-mock the bed created.
 - `dispose()` — run the unit's `@preDestroy` hooks and dispose the container. Also runs via `await using`.
 
 ## Errors
 
-- `NotInjectableError` — the class under test is not `@injectable`, so its dependencies cannot be discovered.
-- `UndeclaredDependencyError` — a `.mock(...)` or `unitRef.get(...)` named a token the class does not depend on.
+- `NotInjectableError` — the class under test takes constructor parameters but is not `@injectable`.
+- `UndeclaredDependencyError` — a `.mock(...)` or `unitRef.get(...)` named a token or slot the class does not use.
+- `SealedDependencyError` — `unitRef.get(...)` asked for a `.using()`/`.absent()`/`.all()` value.
+- `OverrideMismatchError` — `.absent()` on a required dependency, or `.all()` on a non-`injectAll` slot.
 
 ## License
 

@@ -116,6 +116,37 @@ export class NamedConsumer {
   constructor(readonly logger: Logger) {}
 }
 
+/** A unit taking the same token once by name and once unconstrained — two distinct slots. */
+@injectable([inject(LoggerToken, { name: "primary" }), LoggerToken])
+export class DualLoggerConsumer {
+  constructor(
+    readonly primary: Logger,
+    readonly plain: Logger,
+  ) {}
+}
+
+/** A unit that repeats its slots, so shared override lanes are consumed more than once. */
+@injectable([
+  optional(LoggerToken),
+  optional(LoggerToken),
+  injectAll(PluginToken),
+  injectAll(PluginToken),
+  inject(EmailServiceToken, { name: "outbox" }),
+  inject(EmailServiceToken, { name: "outbox" }),
+  inject(EmailServiceToken, { name: "inbox" }),
+])
+export class RepeatedSlotsConsumer {
+  constructor(
+    readonly firstLogger: Logger | undefined,
+    readonly secondLogger: Logger | undefined,
+    readonly pluginsA: Array<Plugin>,
+    readonly pluginsB: Array<Plugin>,
+    readonly outboxA: EmailService,
+    readonly outboxB: EmailService,
+    readonly inbox: EmailService,
+  ) {}
+}
+
 /** A unit whose sole dependency is requested with a tag. */
 @injectable([inject(LoggerToken, { tag: EnvTag.of("prod") })])
 export class TaggedConsumer {

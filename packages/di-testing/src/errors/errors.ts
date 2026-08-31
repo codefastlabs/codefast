@@ -31,7 +31,7 @@ export class NotInjectableError extends TestingError {
 }
 
 /**
- * A `.mock(...)` override or a `unitRef.get(...)` lookup named a token the unit does not depend on.
+ * A `.mock(...)` override or a `unitRef.get(...)` lookup named a token or slot the unit does not use.
  *
  * @remarks Almost always a typo or a stale token reference; failing loudly beats silently binding an
  * unused constant or returning `undefined`.
@@ -40,10 +40,42 @@ export class UndeclaredDependencyError extends TestingError {
   readonly code = "UNDECLARED_DEPENDENCY";
   readonly tokenName: string;
 
+  constructor(tokenName: string, slot?: string) {
+    super(
+      `'${tokenName}'${slot === undefined ? "" : ` (${slot})`} is not a dependency of the class under test. Only tokens the class declares in its constructor or accessor injections can be mocked or retrieved.`,
+    );
+    this.tokenName = tokenName;
+  }
+}
+
+/**
+ * A `unitRef.get(...)` lookup asked for a dependency supplied by `.using()`, `.absent()`, or `.all()`.
+ *
+ * @remarks Those overrides seal the value: it carries no mock surface, so handing it back typed as
+ * `Mocked` would lie. The test already holds the reference it passed in.
+ */
+export class SealedDependencyError extends TestingError {
+  readonly code = "SEALED_DEPENDENCY";
+  readonly tokenName: string;
+
   constructor(tokenName: string) {
     super(
-      `'${tokenName}' is not a dependency of the class under test. Only tokens the class declares in its constructor or accessor injections can be mocked or retrieved.`,
+      `'${tokenName}' was supplied with .using(), .absent(), or .all(), so it is sealed: it has no mock surface to retrieve. Use the reference the test passed in instead.`,
     );
+    this.tokenName = tokenName;
+  }
+}
+
+/**
+ * An override whose shape does not fit the slot it targets — `.absent()` on a required dependency,
+ * or `.all()` on one that is not an unconstrained `injectAll`.
+ */
+export class OverrideMismatchError extends TestingError {
+  readonly code = "OVERRIDE_MISMATCH";
+  readonly tokenName: string;
+
+  constructor(tokenName: string, detail: string) {
+    super(`'${tokenName}': ${detail}`);
     this.tokenName = tokenName;
   }
 }

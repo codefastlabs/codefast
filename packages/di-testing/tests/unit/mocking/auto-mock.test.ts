@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
+import type { Mock } from "vitest";
 
-import { createAutoMock } from "#/mocking/auto-mock";
+import { createAutoMock, MOCK_RESET } from "#/mocking/auto-mock";
 import { defaultMockFactory } from "#/mocking/mock-factory";
 
 interface Service {
@@ -24,10 +25,46 @@ describe("createAutoMock", () => {
   });
 
   it("uses the supplied factory for every property", () => {
-    const mock = createAutoMock<Service>(() => vi.fn());
+    const mock = createAutoMock<Service, Mock>(() => vi.fn());
     mock.find("u1");
 
     expect(mock.find).toHaveBeenCalledWith("u1");
+  });
+
+  it("resets the root spy and every cached member through MOCK_RESET", () => {
+    const mock = createAutoMock<Service>(defaultMockFactory);
+    mock.find("u1");
+    mock.save("v");
+
+    (mock as unknown as { [MOCK_RESET]: () => void })[MOCK_RESET]();
+
+    expect(mock.find.mock.calls).toEqual([]);
+    expect(mock.save.mock.calls).toEqual([]);
+  });
+
+  it("resets backends that spell reset their own way", () => {
+    type Callable = (...args: ReadonlyArray<unknown>) => unknown;
+    const resets: Array<string> = [];
+    const sinonish = (): Callable & { reset(): void } =>
+      Object.assign(() => undefined, { reset: () => void resets.push("reset") });
+    const historyish = (): Callable & { resetHistory(): void } =>
+      Object.assign(() => undefined, { resetHistory: () => void resets.push("history") });
+
+    const sinonMock = createAutoMock<Service, Callable & { reset(): void }>(sinonish);
+    void sinonMock.find;
+    (sinonMock as unknown as { [MOCK_RESET]: () => void })[MOCK_RESET]();
+
+    const historyMock = createAutoMock<Service, Callable & { resetHistory(): void }>(historyish);
+    void historyMock.find;
+    (historyMock as unknown as { [MOCK_RESET]: () => void })[MOCK_RESET]();
+
+    // Each variant resets its root spy plus the one materialized member.
+    expect(resets).toEqual(["reset", "reset", "history", "history"]);
+
+    // A backend with no reset method at all is left alone rather than crashed on.
+    const bare = createAutoMock<Service, Callable>(() => () => undefined);
+    void bare.find;
+    expect(() => (bare as unknown as { [MOCK_RESET]: () => void })[MOCK_RESET]()).not.toThrow();
   });
 
   it("prefers seeded members over lazy spies", () => {
