@@ -16,7 +16,7 @@ export abstract class TestingError extends Error {
 }
 
 /**
- * The class under test takes constructor parameters but carries no `@injectable` metadata.
+ * A scanned class takes constructor parameters but carries no `@injectable` metadata.
  */
 export class NotInjectableError extends TestingError {
   readonly code = "NOT_INJECTABLE";
@@ -24,7 +24,7 @@ export class NotInjectableError extends TestingError {
 
   constructor(targetName: string) {
     super(
-      `Cannot build a solitary test bed for '${targetName}': its constructor takes parameters but the class is not decorated with @injectable(...), so those dependencies cannot be discovered. Decorate the class, or bind its collaborators manually with a Container.`,
+      `Cannot mock the dependencies of '${targetName}': its constructor takes parameters but the class is not decorated with @injectable(...), so those dependencies cannot be discovered. Decorate the class, or bind its collaborators manually with a Container.`,
     );
     this.targetName = targetName;
   }
@@ -40,35 +40,43 @@ export class UndeclaredDependencyError extends TestingError {
   readonly code = "UNDECLARED_DEPENDENCY";
   readonly tokenName: string;
 
-  constructor(tokenName: string, slot?: string) {
+  constructor(tokenName: string, detail?: string) {
     super(
-      `'${tokenName}'${slot === undefined ? "" : ` (${slot})`} is not a dependency of the class under test. Only tokens the class declares in its constructor or accessor injections can be mocked or retrieved.`,
+      `'${tokenName}'${detail === undefined ? "" : ` (${detail})`} is not a dependency of the class under test. Only tokens the class declares in its constructor or accessor injections can be mocked or retrieved.`,
     );
     this.tokenName = tokenName;
   }
 }
 
+/** What a sealed entry was supplied with, naming the one cause a lookup error should report. */
+export type SealedCause = "value" | "absent" | "all" | "exposed";
+
+const SEALED_MESSAGES: Readonly<Record<SealedCause, string>> = {
+  value: "it was supplied with .using(), so it has no mock surface. Use the reference the test passed in.",
+  absent: "it was declared absent with .absent(), so there is nothing to retrieve.",
+  all: "its elements were supplied with .usingAll(). Use the references the test passed in.",
+  exposed: "it is exposed as a real collaborator. Retrieve it with bed.exposed(Class) instead.",
+};
+
 /**
  * A `mocks.get(...)` lookup asked for a dependency that is not a retrievable mock.
  *
- * @remarks `.using()`, `.absent()`, and `.all()` seal the value, and an exposed class is real —
- * neither carries a mock surface, so handing them back typed as `Mocked` would lie.
+ * @remarks `.using()`, `.absent()`, and `.usingAll()` seal the value, and an exposed class is real —
+ * none of them carries a mock surface, so handing them back typed as `Mocked` would lie.
  */
 export class SealedDependencyError extends TestingError {
   readonly code = "SEALED_DEPENDENCY";
   readonly tokenName: string;
 
-  constructor(tokenName: string) {
-    super(
-      `'${tokenName}' is not a retrievable mock: it was supplied with .using(), .absent(), or .all(), or exposed as a real collaborator. Use the reference the test passed in, or bed.exposed(Class) for a real instance.`,
-    );
+  constructor(tokenName: string, cause: SealedCause) {
+    super(`'${tokenName}' is not a retrievable mock: ${SEALED_MESSAGES[cause]}`);
     this.tokenName = tokenName;
   }
 }
 
 /**
  * An override whose shape does not fit the slot it targets — `.absent()` on a required dependency,
- * or `.all()` on one that is not an unconstrained `injectAll`.
+ * or `.usingAll()` where no unconstrained `injectAll()` slot exists.
  */
 export class OverrideMismatchError extends TestingError {
   readonly code = "OVERRIDE_MISMATCH";
@@ -77,5 +85,19 @@ export class OverrideMismatchError extends TestingError {
   constructor(tokenName: string, detail: string) {
     super(`'${tokenName}': ${detail}`);
     this.tokenName = tokenName;
+  }
+}
+
+/**
+ * A sociable bed's exposure could not be honoured — the class is unreachable, already the unit, or
+ * was asked for without having been exposed.
+ */
+export class ExposureError extends TestingError {
+  readonly code = "EXPOSURE";
+  readonly targetName: string;
+
+  constructor(targetName: string, detail: string) {
+    super(`'${targetName}': ${detail}`);
+    this.targetName = targetName;
   }
 }

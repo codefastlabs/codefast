@@ -2,7 +2,7 @@
 
 export { TestBed } from "#/test-bed/test-bed";
 export type { TestBedStatic } from "#/test-bed/test-bed";
-export type { MockOverrideBuilder, TestBedOptions } from "#/test-bed/bed-builder";
+export type { MockOverrideBuilder, PreparedBed, TestBedOptions } from "#/test-bed/bed-builder";
 export type { SolitaryTestBedBuilder } from "#/test-bed/solitary-builder";
 export type { SociableTestBedBuilder } from "#/test-bed/sociable-builder";
 export type { SociableUnitTestBed, UnitReference, UnitTestBed } from "#/test-bed/unit-test-bed";
@@ -16,9 +16,11 @@ export type { Spy, SpyResult, SpyState } from "#/mocking/spy";
 
 export type { InjectionIdentifier } from "#/types";
 export {
+  ExposureError,
   NotInjectableError,
   OverrideMismatchError,
   SealedDependencyError,
   TestingError,
   UndeclaredDependencyError,
 } from "#/errors/errors";
+export type { SealedCause } from "#/errors/errors";

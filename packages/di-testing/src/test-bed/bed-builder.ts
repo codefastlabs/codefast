@@ -40,8 +40,12 @@ export interface MockOverrideBuilder<Dependency, Owner, Backend extends MockFunc
    * it rather than hand it back mistyped — the test already holds the reference it passed in.
    */
   using(value: Dependency): Owner;
-  /** Supplies a partial stub, built from the active spy factory; unlisted members stay auto-mocked. */
-  stub(setup: (mock: MockFactory<Backend>) => DeepPartial<Dependency>): Owner;
+  /**
+   * Supplies a partial stub, built from the active spy factory; unlisted members stay auto-mocked.
+   *
+   * @remarks The callback runs once per compile, so beds built from one builder never share spies.
+   */
+  stub(setup: (fn: MockFactory<Backend>) => DeepPartial<Dependency>): Owner;
   /** Leaves the dependency unbound: an `optional()` slot resolves `undefined`, an `injectAll()` slot `[]`. */
   absent(): Owner;
   /** Supplies every element of an unconstrained `injectAll()` slot, in order. Sealed like `.using`. */
@@ -57,7 +61,8 @@ export interface PreparedBed {
 }
 
 /**
- * The shared builder core: records overrides and resolves the reader and mock factory.
+ * The shared builder core: records overrides, resolves the reader and mock factory, and owns the
+ * compile template that disposes the container when a build fails.
  *
  * @remarks Fields are `protected` rather than `#` so the two concrete builders stay thin; nothing
  * outside `test-bed/` extends this class.
@@ -69,7 +74,7 @@ export abstract class BedBuilder<Class, Backend extends MockFunction = Spy> {
   protected readonly target: Constructor<Class>;
   protected readonly reader: MetadataReader;
   protected readonly mockFactory: MockFactory<Backend>;
-  protected readonly overrides: Map<DependencyKey, Array<SlottedOverride>> = new Map();
+  protected readonly overrides: ReadonlyMap<DependencyKey, ReadonlyArray<SlottedOverride>> = new Map();
 
   constructor(target: Constructor<Class>, options?: TestBedOptions<Backend>) {
     this.target = target;
@@ -93,27 +98,57 @@ export abstract class BedBuilder<Class, Backend extends MockFunction = Spy> {
     const key = identifier as DependencyKey;
     const criteria = normalizeCriteria(options);
     const set = (override: SlottedOverride["override"]): this => {
-      this.register(key, criteria, override);
+      this.#register(key, criteria, override);
       return this;
     };
     return {
       using: (value) => set({ kind: "value", value }),
-      stub: (setup) => set({ kind: "stub", seed: setup(this.mockFactory) }),
+      stub: (setup) => set({ kind: "stub", setup: setup as (fn: MockFactory) => unknown }),
       absent: () => set({ kind: "absent" }),
       usingAll: (values) => set({ kind: "all", values }),
     };
   }
 
+  /** Resolves the unit inside a guard that disposes the container when any compile step throws. */
+  protected compileWith<Prepared extends PreparedBed, Bed>(
+    prepare: () => Prepared,
+    build: (unit: Class, prepared: Prepared) => Bed,
+  ): Bed {
+    let prepared: Prepared | undefined;
+    try {
+      prepared = prepare();
+      const unit = prepared.container.resolve(this.target);
+      return build(unit, prepared);
+    } catch (error) {
+      // A failed compile still owns the container — dispose it so no lifecycle state leaks.
+      void prepared?.container.dispose().catch(() => undefined);
+      throw error;
+    }
+  }
+
+  /** The async twin of {@link compileWith}, for units whose activation is asynchronous. */
+  protected async compileWithAsync<Prepared extends PreparedBed, Bed>(
+    prepare: () => Prepared,
+    build: (unit: Class, prepared: Prepared) => Bed,
+  ): Promise<Bed> {
+    let prepared: Prepared | undefined;
+    try {
+      prepared = prepare();
+      const unit = await prepared.container.resolveAsync(this.target);
+      return build(unit, prepared);
+    } catch (error) {
+      await prepared?.container.dispose().catch(() => undefined);
+      throw error;
+    }
+  }
+
   /** Records an override, replacing any earlier one that targets the same token and slot. */
-  protected register(
-    key: DependencyKey,
-    criteria: SlotCriteria | undefined,
-    override: SlottedOverride["override"],
-  ): void {
-    let list = this.overrides.get(key);
+  #register(key: DependencyKey, criteria: SlotCriteria | undefined, override: SlottedOverride["override"]): void {
+    const overrides = this.overrides as Map<DependencyKey, Array<SlottedOverride>>;
+    let list = overrides.get(key);
     if (list === undefined) {
       list = [];
-      this.overrides.set(key, list);
+      overrides.set(key, list);
     }
     const existing = list.findIndex((candidate) =>
       candidate.criteria === undefined || criteria === undefined

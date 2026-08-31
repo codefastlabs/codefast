@@ -42,26 +42,17 @@ export class SolitaryBuilder<Class, Backend extends MockFunction = Spy>
   implements SolitaryTestBedBuilder<Class, Backend>
 {
   compile(): UnitTestBed<Class, Backend> {
-    const { container, mocks } = this.#prepare();
-    try {
-      const unit = container.resolve(this.target);
-      return createUnitTestBed(unit, mocks, container);
-    } catch (error) {
-      // A failed compile still owns the container — dispose it so no lifecycle state leaks.
-      void container.dispose().catch(() => undefined);
-      throw error;
-    }
+    return this.compileWith(
+      () => this.#prepare(),
+      (unit, prepared) => createUnitTestBed(unit, prepared.mocks, prepared.container),
+    );
   }
 
   async compileAsync(): Promise<UnitTestBed<Class, Backend>> {
-    const { container, mocks } = this.#prepare();
-    try {
-      const unit = await container.resolveAsync(this.target);
-      return createUnitTestBed(unit, mocks, container);
-    } catch (error) {
-      await container.dispose().catch(() => undefined);
-      throw error;
-    }
+    return this.compileWithAsync(
+      () => this.#prepare(),
+      (unit, prepared) => createUnitTestBed(unit, prepared.mocks, prepared.container),
+    );
   }
 
   /** Builds the container, binds every dependency's mock, and registers the unit as a singleton. */

@@ -23,11 +23,14 @@ export function scanDependencies(target: Constructor, reader: MetadataReader): R
 }
 
 /**
- * What a sociable scan finds: the slots to mock, and the exposed classes the unit actually reaches.
+ * What a sociable scan finds: the slots to mock, the exposed classes the unit actually reaches, and
+ * the constrained slots those classes are injected through.
  */
 export interface SociableScan {
   readonly mockSlots: ReadonlyArray<DependencySlot>;
-  readonly realClasses: ReadonlyArray<Constructor>;
+  readonly realClasses: ReadonlySet<Constructor>;
+  /** The name/tag-constrained slots each exposed class is requested through, for alias replay. */
+  readonly realSlots: ReadonlyArray<DependencySlot>;
 }
 
 /**
@@ -43,7 +46,8 @@ export function scanSociableDependencies(
   reader: MetadataReader,
 ): SociableScan {
   const mockSlots: Array<DependencySlot> = [];
-  const realClasses: Array<Constructor> = [];
+  const realClasses = new Set<Constructor>();
+  const realSlots: Array<DependencySlot> = [];
   const visited = new Set<Constructor>([target]);
   const queue: Array<Constructor> = [target];
 
@@ -52,9 +56,12 @@ export function scanSociableDependencies(
     for (const slot of scanDependencies(current, reader)) {
       const token = slot.token;
       if (typeof token === "function" && exposed.has(token)) {
+        if (slot.name !== undefined || (slot.tags?.length ?? 0) > 0) {
+          realSlots.push(slot);
+        }
         if (!visited.has(token)) {
           visited.add(token);
-          realClasses.push(token);
+          realClasses.add(token);
           queue.push(token);
         }
         continue;
@@ -63,5 +70,5 @@ export function scanSociableDependencies(
     }
   }
 
-  return { mockSlots, realClasses };
+  return { mockSlots, realClasses, realSlots };
 }

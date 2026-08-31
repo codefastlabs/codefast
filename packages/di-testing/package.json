@@ -1,12 +1,15 @@
 {
   "name": "@codefast/di-testing",
   "version": "0.0.0",
-  "description": "Solitary auto-mocking test beds for @codefast/di",
+  "description": "Solitary and sociable auto-mocking test beds for @codefast/di",
   "keywords": [
     "auto-mock",
     "codefast",
     "dependency-injection",
     "di",
+    "sociable",
+    "solitary",
+    "test-bed",
     "testing",
     "typescript"
   ],
@@ -132,12 +135,10 @@
     "test:unit": "vitest run tests/unit",
     "test:watch": "vitest"
   },
-  "dependencies": {
-    "@codefast/di": "workspace:*"
-  },
   "devDependencies": {
     "@babel/core": "catalog:",
     "@babel/plugin-proposal-decorators": "catalog:",
+    "@codefast/di": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
     "@types/node": "catalog:",
@@ -145,6 +146,9 @@
     "expect-type": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@codefast/di": ">=0.7.0"
   },
   "engines": {
     "node": ">=24.0.0"

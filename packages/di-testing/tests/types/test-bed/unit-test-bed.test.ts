@@ -1,4 +1,5 @@
-import { describe, expectTypeOf, it, vi } from "vitest";
+import { expectTypeOf } from "expect-type";
+import { describe, it, vi } from "vitest";
 import type { Mock } from "vitest";
 
 import type { Mocked } from "#/mocking/auto-mock";
@@ -65,6 +66,15 @@ describe("UnitReference.get", () => {
     expectTypeOf(started).not.toHaveProperty("compile");
     expectTypeOf(started).not.toHaveProperty("mock");
     expectTypeOf(started.expose).returns.toHaveProperty("compile");
+  });
+
+  it("rejects a stub seed whose member does not match the dependency", () => {
+    const builder = TestBed.solitary(OrderProcessor)
+      .mock(UserServiceToken)
+      // @ts-expect-error — findUser is a method, so a number seed must not type-check.
+      .stub(() => ({ findUser: 42 }));
+
+    expectTypeOf(builder).toHaveProperty("compile");
   });
 
   it("keeps the default backend precisely typed as Spy", () => {

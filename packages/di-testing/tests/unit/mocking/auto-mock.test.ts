@@ -2,7 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import type { Mock } from "vitest";
 
 import { createAutoMock, MOCK_RESET } from "#/mocking/auto-mock";
+import type { Mocked } from "#/mocking/auto-mock";
 import { defaultMockFactory } from "#/mocking/mock-factory";
+import { createSpy } from "#/mocking/spy";
 
 interface Service {
   find(id: string): string;
@@ -137,9 +139,109 @@ describe("createAutoMock", () => {
     expect("then" in mock).toBe(false);
   });
 
+  it("answers `in` for the reset key", () => {
+    const mock = createAutoMock<Service>(defaultMockFactory);
+
+    expect(MOCK_RESET in mock).toBe(true);
+  });
+
   it("answers `in` for seeded members", () => {
     const mock = createAutoMock<Service>(defaultMockFactory, { find: () => "seeded" });
 
     expect("find" in mock).toBe(true);
+  });
+
+  it("survives a point-free backend factory", () => {
+    // The cache upsert must call the factory with no arguments — vi.fn("name") would install the
+    // property name as the mock's implementation.
+    const mock = createAutoMock<Service, Mock>(vi.fn);
+
+    expect(mock.find("u1")).toBeUndefined();
+    expect(mock.find).toHaveBeenCalledWith("u1");
+  });
+
+  it("mocks nested members to any depth", () => {
+    interface Repo {
+      user: { create(name: string): string };
+    }
+    const mock = createAutoMock<Repo>(defaultMockFactory);
+
+    mock.user.create("alice");
+
+    expect(mock.user.create.mock.calls).toEqual([["alice"]]);
+    expect(mock.user.create).toBe(mock.user.create);
+  });
+
+  it("auto-mocks members that shadow Function.prototype", () => {
+    interface Discount {
+      apply(order: string): number;
+    }
+    const mock = createAutoMock<Discount>(defaultMockFactory);
+
+    mock.apply("order-1");
+
+    expect(mock.apply.mock.calls).toEqual([["order-1"]]);
+  });
+
+  it("returns a primitive seed as the dependency's whole value", () => {
+    expect(createAutoMock<string>(defaultMockFactory, "https://x")).toBe("https://x");
+    expect(createAutoMock<number>(defaultMockFactory, 0)).toBe(0);
+  });
+
+  it("keeps a non-configurable target property over a colliding seed key", () => {
+    // vi.fn defines `mock` as non-configurable; a proxy returning a different value would violate
+    // the proxy invariant and throw.
+    const mock = createAutoMock<{ mock: string }, Mock>(() => vi.fn(), { mock: "seeded" });
+
+    expect(mock.mock).not.toBe("seeded");
+  });
+
+  it("re-enters the proxy when a chainable backend method returns the target", () => {
+    const mock = createAutoMock<(id: string) => number>(defaultMockFactory);
+    const chained = mock.mockReturnValue(7);
+
+    expect(chained).toBe(mock);
+    expect(mock("u1")).toBe(7);
+  });
+
+  it("resets seeded spies through MOCK_RESET", () => {
+    const seeded = createSpy().mockReturnValue("u");
+    // The primitive seed member exercises the reset walk's non-spy guard.
+    const mock = createAutoMock<Service & { label: string }>(defaultMockFactory, { find: seeded, label: "x" });
+    mock.find("u1");
+
+    (mock as unknown as { [MOCK_RESET]: () => void })[MOCK_RESET]();
+
+    expect(seeded.mock.calls).toEqual([]);
+    expect(seeded("x")).toBeUndefined();
+  });
+
+  it("enumerates materialized members instead of backend internals", () => {
+    const mock = createAutoMock<Service>(defaultMockFactory);
+    void mock.find;
+
+    expect(Object.keys(mock)).toEqual(["find"]);
+    expect(Object.hasOwn(mock, "find")).toBe(true);
+  });
+
+  it("enumerates seed keys and invariant-pinned target keys", () => {
+    const seeded = createAutoMock<Service, Mock>(() => vi.fn(), { find: () => "seeded" });
+    // vi.fn's non-configurable `mock` must be reported (proxy invariant); the seed key joins it.
+    expect(Object.keys(seeded)).toEqual(expect.arrayContaining(["find", "mock"]));
+  });
+
+  it("forwards delete of a never-materialized key to the target", () => {
+    const mock = createAutoMock<Service>(defaultMockFactory);
+
+    expect(() => delete (mock as Partial<Mocked<Service>>).find).not.toThrow();
+  });
+
+  it("re-mints a member after delete", () => {
+    const mock = createAutoMock<Service>(defaultMockFactory);
+    mock.find("u1");
+
+    delete (mock as Partial<Mocked<Service>>).find;
+
+    expect(mock.find.mock.calls).toEqual([]);
   });
 });

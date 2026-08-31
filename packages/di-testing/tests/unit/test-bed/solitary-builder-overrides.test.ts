@@ -5,6 +5,7 @@ import { TestBed } from "#/test-bed/test-bed";
 import type { EmailService, Plugin } from "#/tests/unit/support/fixtures";
 import {
   DualLoggerConsumer,
+  MultiAndNamedConsumer,
   EmailServiceToken,
   EnvTag,
   LoggerToken,
@@ -14,6 +15,7 @@ import {
   PluginToken,
   RepeatedSlotsConsumer,
   ReportService,
+  TaggedConsumer,
   UserServiceToken,
 } from "#/tests/unit/support/fixtures";
 
@@ -109,13 +111,13 @@ describe("TestBed.solitary overrides", () => {
     );
   });
 
-  it("rejects .all() on a dependency that is not an unconstrained injectAll", () => {
+  it("rejects .usingAll() when the token has no unconstrained injectAll slot", () => {
     expect(() =>
       TestBed.solitary(OrderProcessor)
         .mock(EmailServiceToken)
         .usingAll([{ send: () => undefined }])
         .compile(),
-    ).toThrow(OverrideMismatchError);
+    ).toThrow(UndeclaredDependencyError);
   });
 
   it("rejects an override for a non-dependency", () => {
@@ -192,7 +194,7 @@ describe("TestBed.solitary overrides", () => {
     expect(() => mocks.get(LoggerToken)).toThrow(UndeclaredDependencyError);
   });
 
-  it("resets every auto-mock the bed created, skipping sealed values", () => {
+  it("resets every auto-mock and stub the bed created, skipping sealed values", () => {
     const bed = TestBed.solitary(OrderProcessor)
       .mock(UserServiceToken)
       .stub((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "a@b.c" }) }))
@@ -206,6 +208,57 @@ describe("TestBed.solitary overrides", () => {
     bed.resetMocks();
 
     expect(bed.mocks.get(PaymentGatewayToken).charge.mock.calls).toEqual([]);
+    // The .stub seed's spy was minted by the bed's factory, so it resets too.
+    expect(bed.mocks.get(UserServiceToken).findUser.mock.calls).toEqual([]);
+    expect(bed.mocks.get(UserServiceToken).findUser("u1")).toBeUndefined();
+  });
+
+  it("gives each compile of one builder its own stub spies", () => {
+    const builder = TestBed.solitary(OrderProcessor)
+      .mock(UserServiceToken)
+      .stub((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "a@b.c" }) }));
+
+    const first = builder.compile();
+    first.unit.placeOrder("u1", 5);
+    const second = builder.compile();
+
+    expect(first.mocks.get(UserServiceToken).findUser.mock.calls).toHaveLength(1);
+    expect(second.mocks.get(UserServiceToken).findUser.mock.calls).toEqual([]);
+  });
+
+  it("addresses a declared slot without an override through mocks.get criteria", () => {
+    const { unit, mocks } = TestBed.solitary(NamedConsumer).compile();
+
+    expect(mocks.get(LoggerToken, { name: "primary" })).toBe(unit.logger);
+  });
+
+  it("deduplicates repeated tag criteria by identity", () => {
+    const prod = EnvTag.of("prod");
+    const { unit, mocks } = TestBed.solitary(TaggedConsumer)
+      .mock(LoggerToken, { tag: prod, tags: [prod] })
+      .stub(() => ({}))
+      .compile();
+
+    expect(mocks.get(LoggerToken, { tag: prod })).toBe(unit.logger);
+  });
+
+  it("rejects a slot-targeted usingAll on a slot that is not an unconstrained injectAll", () => {
+    expect(() =>
+      TestBed.solitary(MultiAndNamedConsumer)
+        .mock(PluginToken, { name: "primary" })
+        .usingAll([{ name: "alpha" }])
+        .compile(),
+    ).toThrow(OverrideMismatchError);
+  });
+
+  it("supplies an injectAll slot with usingAll while a named sibling slot stays mocked", () => {
+    const alpha: Plugin = { name: "alpha" };
+
+    const { unit, mocks } = TestBed.solitary(MultiAndNamedConsumer).mock(PluginToken).usingAll([alpha]).compile();
+
+    expect(unit.primary).toBe(mocks.get(PluginToken, { name: "primary" }));
+    // Known interplay: the named slot's binding is also collected by the unconstrained injectAll.
+    expect(unit.plugins).toEqual([alpha, unit.primary]);
   });
 
   it("consumes one override across repeated slots of every kind", () => {

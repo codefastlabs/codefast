@@ -1,3 +1,5 @@
+/// <reference lib="esnext.disposable" />
+
 /** The compiled result of a test bed: the real unit plus handles to its mocks. */
 
 import type { Constructor, Container, DependencyKey, InjectOptions, TokenValue } from "@codefast/di";
@@ -5,7 +7,7 @@ import { tokenName } from "@codefast/di";
 
 import type { BoundMock } from "#/discovery/mock-binder";
 import { criteriaEquals, normalizeCriteria } from "#/discovery/mock-binder";
-import { SealedDependencyError, UndeclaredDependencyError } from "#/errors/errors";
+import { ExposureError, SealedDependencyError, UndeclaredDependencyError } from "#/errors/errors";
 import type { Mocked } from "#/mocking/auto-mock";
 import { MOCK_RESET } from "#/mocking/auto-mock";
 import type { MockFunction } from "#/mocking/mock-factory";
@@ -20,12 +22,13 @@ export interface UnitReference<Backend extends MockFunction = Spy> {
   /**
    * Retrieves the mock bound for one of the unit's dependencies, typed to that dependency's value.
    *
-   * @remarks Pass `options` (a name or tags) to address a slot that carries its own override. Only
-   * auto-mocks and `.stub` seeds come back — a value supplied with `.using()`, `.absent()`, or
-   * `.usingAll()` is sealed, because it has no mock surface for the `Mocked` type to describe.
+   * @remarks Pass `options` (a name or tags) to address one slot of a token injected several ways.
+   * Only auto-mocks and `.stub` seeds come back — a value supplied with `.using()`, `.absent()`, or
+   * `.usingAll()` is sealed, and an exposed class is real, so neither has a mock surface for the
+   * `Mocked` type to describe.
    *
    * @throws UndeclaredDependencyError When the identifier or slot is not one of the unit's dependencies.
-   * @throws SealedDependencyError When the dependency was supplied as a sealed value.
+   * @throws SealedDependencyError When the dependency was supplied as a sealed value or exposed.
    */
   get<Identifier extends DependencyKey>(
     identifier: Identifier,
@@ -45,10 +48,10 @@ export interface UnitReference<Backend extends MockFunction = Spy> {
 export interface UnitTestBed<Class, Backend extends MockFunction = Spy> extends AsyncDisposable {
   readonly unit: Class;
   readonly mocks: UnitReference<Backend>;
-  /** Clears the call history and configured behaviour of every auto-mock the bed created. */
-  resetMocks(): void;
+  /** Clears the call history and configured behaviour of every auto-mock and stub the bed created. */
+  resetMocks(this: void): void;
   /** Runs the unit's `@preDestroy` hooks and disposes the backing container. */
-  dispose(): Promise<void>;
+  dispose(this: void): Promise<void>;
 }
 
 /**
@@ -59,9 +62,9 @@ export interface UnitTestBed<Class, Backend extends MockFunction = Spy> extends 
  */
 export interface SociableUnitTestBed<Class, Backend extends MockFunction = Spy> extends UnitTestBed<Class, Backend> {
   /**
-   * The real instance of an exposed collaborator — the one the unit was actually built with.
+   * Returns the real instance of an exposed collaborator — the one the unit was actually built with.
    *
-   * @throws UndeclaredDependencyError When the class was not exposed.
+   * @throws ExposureError When the class was not exposed.
    */
   exposed<Real>(target: Constructor<Real>): Real;
 }
@@ -74,12 +77,17 @@ export function createSociableUnitTestBed<Class, Backend extends MockFunction = 
   container: Container,
   exposedClasses: ReadonlySet<Constructor>,
 ): SociableUnitTestBed<Class, Backend> {
+  // Copied member by member, so a future bed with accessor or prototype members cannot be dropped
+  // silently by a spread.
   return {
-    ...bed,
+    unit: bed.unit,
+    mocks: bed.mocks,
+    resetMocks: bed.resetMocks,
+    dispose: bed.dispose,
     [Symbol.asyncDispose]: bed[Symbol.asyncDispose],
     exposed<Real>(target: Constructor<Real>): Real {
       if (!exposedClasses.has(target)) {
-        throw new UndeclaredDependencyError(tokenName(target), "not exposed");
+        throw new ExposureError(target.name, "the class was not exposed. Add .expose(Class) before compile().");
       }
       // Exposed classes are singletons the unit's construction already instantiated.
       return container.resolve(target);
@@ -110,10 +118,10 @@ export function createUnitTestBed<Class, Backend extends MockFunction = Spy>(
           ? (bound.find((candidate) => candidate.criteria === undefined) ?? (bound.length === 1 ? bound[0] : undefined))
           : bound.find((candidate) => candidate.criteria !== undefined && criteriaEquals(candidate.criteria, criteria));
       if (entry === undefined) {
-        throw new UndeclaredDependencyError(tokenName(identifier), "the requested slot");
+        throw new UndeclaredDependencyError(tokenName(identifier), "no such slot");
       }
-      if (entry.sealed) {
-        throw new SealedDependencyError(tokenName(identifier));
+      if (entry.kind !== "auto" && entry.kind !== "stub") {
+        throw new SealedDependencyError(tokenName(identifier), entry.kind);
       }
       return entry.value as Mocked<TokenValue<Identifier>, Backend>;
     },
@@ -122,7 +130,7 @@ export function createUnitTestBed<Class, Backend extends MockFunction = Spy>(
   const resetMocks = (): void => {
     for (const bound of entries.values()) {
       for (const entry of bound) {
-        if (!entry.sealed) {
+        if (entry.kind === "auto" || entry.kind === "stub") {
           (entry.value as { [MOCK_RESET]?: () => void })[MOCK_RESET]?.();
         }
       }

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { OverrideMismatchError, SealedDependencyError, UndeclaredDependencyError } from "#/errors/errors";
+import { ExposureError, OverrideMismatchError, SealedDependencyError } from "#/errors/errors";
 import { TestBed } from "#/test-bed/test-bed";
 import {
   BundleService,
@@ -9,6 +9,8 @@ import {
   LifecycleHost,
   LifecycleService,
   LoggerToken,
+  NamedPricingHost,
+  TaggedPricingHost,
   PaymentGatewayToken,
   PricingService,
   Standalone,
@@ -32,7 +34,7 @@ describe("TestBed.sociable", () => {
 
     const total = unit.checkout(100, "USD");
 
-    // Real PricingService math over the stubbed boundary: 50 * (1 + 0.1).
+    // Real PricingService math runs over the stubbed tax boundary.
     expect(total).toBeCloseTo(55);
     expect(mocks.get(PaymentGatewayToken).charge).toHaveBeenCalledWith("order-1", total);
     expect(mocks.get(TaxPolicyToken).rateFor).toHaveBeenCalledWith("USD");
@@ -41,7 +43,7 @@ describe("TestBed.sociable", () => {
   it("exposes a whole real subtree when every class is exposed", () => {
     const { unit } = bedFor().expose(DiscountPolicy).compile();
 
-    // 100 → real discount 90 → real pricing 90 * 1.1.
+    // The real discount and the real pricing both apply.
     expect(unit.checkout(100, "USD")).toBeCloseTo(99);
   });
 
@@ -69,11 +71,11 @@ describe("TestBed.sociable", () => {
   it("rejects exposed() for a class that was not exposed", () => {
     const bed = bedFor().compile();
 
-    expect(() => bed.exposed(DiscountPolicy)).toThrow(UndeclaredDependencyError);
+    expect(() => bed.exposed(DiscountPolicy)).toThrow(ExposureError);
   });
 
   it("rejects an exposed class the unit never reaches", () => {
-    expect(() => bedFor().expose(Standalone).compile()).toThrow(UndeclaredDependencyError);
+    expect(() => bedFor().expose(Standalone).compile()).toThrow(ExposureError);
   });
 
   it("rejects exposing and mocking the same class", () => {
@@ -120,5 +122,35 @@ describe("TestBed.sociable", () => {
   it("propagates an exposed collaborator's @postConstruct failure out of both compiles", async () => {
     expect(() => TestBed.sociable(ThrowingHost).expose(ThrowingService).compile()).toThrow("boot failed");
     await expect(TestBed.sociable(ThrowingHost).expose(ThrowingService).compileAsync()).rejects.toThrow("boot failed");
+  });
+
+  it("keeps a collaborator exposed through a named slot real and singular", () => {
+    const bed = TestBed.sociable(NamedPricingHost, { mockFactory: () => vi.fn() })
+      .expose(PricingService)
+      .mock(TaxPolicyToken)
+      .stub((fn) => ({ rateFor: fn().mockReturnValue(0) }))
+      .mock(DiscountPolicy)
+      .stub((fn) => ({ off: fn().mockReturnValue(80) }))
+      .compile();
+
+    // The named slot received the same real singleton bed.exposed() hands back.
+    expect(bed.unit.pricing).toBe(bed.exposed(PricingService));
+    expect(bed.unit.pricing.total(100, "USD")).toBeCloseTo(80);
+  });
+
+  it("keeps a collaborator exposed through a tagged slot real and singular", () => {
+    const bed = TestBed.sociable(TaggedPricingHost, { mockFactory: () => vi.fn() })
+      .expose(PricingService)
+      .mock(TaxPolicyToken)
+      .stub((fn) => ({ rateFor: fn().mockReturnValue(0) }))
+      .mock(DiscountPolicy)
+      .stub((fn) => ({ off: fn().mockReturnValue(80) }))
+      .compile();
+
+    expect(bed.unit.pricing).toBe(bed.exposed(PricingService));
+  });
+
+  it("rejects exposing the unit under test itself", () => {
+    expect(() => TestBed.sociable(CheckoutService).expose(CheckoutService).compile()).toThrow(ExposureError);
   });
 });

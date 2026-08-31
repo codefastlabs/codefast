@@ -5,7 +5,7 @@ import { inject, injectable, injectAll, optional, postConstruct, preDestroy, tag
 // ── Collaborator contracts ───────────────────────────────────────────────────────────────────────────────────────────
 
 /** A record the fake user service returns. */
-export interface UserRecord {
+interface UserRecord {
   readonly id: string;
   readonly email: string;
 }
@@ -35,6 +35,11 @@ export interface Plugin {
   readonly name: string;
 }
 
+/** A tax policy read through a token — the kind of boundary sociable beds always mock. */
+export interface TaxPolicy {
+  rateFor(currency: string): number;
+}
+
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 export const UserServiceToken = token<UserService>("UserService");
@@ -42,12 +47,13 @@ export const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway");
 export const EmailServiceToken = token<EmailService>("EmailService");
 export const LoggerToken = token<Logger>("Logger");
 export const PluginToken = token<Plugin>("Plugin");
+export const TaxPolicyToken = token<TaxPolicy>("TaxPolicy");
 
 /** A tag key used to request a tagged binding. */
 export const EnvTag = tag<string>("env");
 
 /** A tag key whose values collide once stringified, exercising tag identity in slot handling. */
-export const CollideTag = tag<unknown>("collide");
+const CollideTag = tag<unknown>("collide");
 
 // ── Units under test ─────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -200,13 +206,6 @@ export class ThrowingService {
   }
 }
 
-/** A tax policy read through a token — the kind of boundary sociable beds always mock. */
-export interface TaxPolicy {
-  rateFor(currency: string): number;
-}
-
-export const TaxPolicyToken = token<TaxPolicy>("TaxPolicy");
-
 /** A zero-dependency pricing collaborator worth keeping real in sociable tests. */
 @injectable()
 export class DiscountPolicy {
@@ -279,5 +278,32 @@ export class BundleService {
   constructor(
     readonly pricing: PricingService,
     readonly discount: DiscountPolicy,
+  ) {}
+}
+
+/** A unit mixing an unconstrained injectAll with a named slot of the same token. */
+@injectable([injectAll(PluginToken), inject(PluginToken, { name: "primary" })])
+export class MultiAndNamedConsumer {
+  constructor(
+    readonly plugins: Array<Plugin>,
+    readonly primary: Plugin,
+  ) {}
+}
+
+/** A unit that reaches its real-able collaborator through a named slot. */
+@injectable([inject(PricingService, { name: "primary" }), PaymentGatewayToken])
+export class NamedPricingHost {
+  constructor(
+    readonly pricing: PricingService,
+    readonly gateway: PaymentGateway,
+  ) {}
+}
+
+/** A unit that reaches its real-able collaborator through a tagged slot. */
+@injectable([inject(PricingService, { tag: EnvTag.of("prod") }), PaymentGatewayToken])
+export class TaggedPricingHost {
+  constructor(
+    readonly pricing: PricingService,
+    readonly gateway: PaymentGateway,
   ) {}
 }

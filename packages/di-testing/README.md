@@ -21,6 +21,8 @@ Solitary and sociable auto-mocking test beds for
 
 - **Node.js 24 or later**, matching `@codefast/di`.
 - A peer install of `@codefast/di` with `@injectable` / `inject` classes to test.
+- Types for `AsyncDisposable` (`await using`): `@types/node` provides them; without it, add `"ESNext.Disposable"` to
+  your tsconfig `lib`.
 
 ## Installation
 
@@ -135,9 +137,10 @@ bed.exposed(PricingService); // the real instance the unit was built with
 - An `optional()` dependency is auto-mocked like any other — it resolves to the mock, not `undefined` as an unbound
   optional would in production. Use `.mock(token).absent()` to exercise the absent branch.
 - An `injectAll()` dependency receives a one-element array holding the token's mock; use `.mock(token).usingAll([...])`
-  to supply several elements.
+  to supply several elements. When the same token also has a named or tagged slot, that slot's binding is collected by
+  the unconstrained `injectAll` too — di's `resolveAll` takes every binding of the token.
 - Named or tagged parameters of one token share the token's mock unless a slot-targeted `.mock(token, { name })` gives
-  that slot its own.
+  that slot its own; either way `mocks.get(token, { name })` addresses the slot directly.
 
 ### Result — `UnitTestBed`
 

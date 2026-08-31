@@ -10,15 +10,18 @@ import type { MockFactory } from "#/mocking/mock-factory";
 
 /**
  * How one dependency is supplied instead of a plain auto-mock.
+ *
+ * @remarks A stub's `setup` runs once per compile, so two beds built from one builder never share
+ * seeded spies.
  */
 export type MockOverride =
-  | { readonly kind: "stub"; readonly seed: unknown }
+  | { readonly kind: "stub"; readonly setup: (mock: MockFactory) => unknown }
   | { readonly kind: "value"; readonly value: unknown }
   | { readonly kind: "absent" }
   | { readonly kind: "all"; readonly values: ReadonlyArray<unknown> };
 
 /**
- * Normalized slot criteria an override or a `mocks` lookup addresses one binding slot with.
+ * Normalized slot criteria an override or a `mocks.get` lookup addresses one binding slot with.
  */
 export interface SlotCriteria {
   readonly name: string | undefined;
@@ -35,25 +38,34 @@ export interface SlottedOverride {
 }
 
 /**
- * One bound value `mocks` can look up: its slot criteria and whether it is sealed.
- *
- * @remarks Sealed entries came from `.using()`, `.absent()`, or `.all()` — they carry no mock
- * surface, so retrieving them as `Mocked` would lie.
+ * What one bound entry was supplied with — only `auto` and `stub` entries carry a mock surface.
+ */
+export type BoundMockKind = "auto" | "stub" | "value" | "absent" | "all" | "exposed";
+
+/**
+ * One bound value `mocks` can look up: its slot criteria, the value, and how it was supplied.
  */
 export interface BoundMock {
   readonly criteria: SlotCriteria | undefined;
   readonly value: unknown;
-  readonly sealed: boolean;
+  readonly kind: BoundMockKind;
 }
+
+/** The name prefix `usingAll` elements are bound under, so identical constants keep distinct slots. */
+const ALL_ELEMENT_SLOT_PREFIX = "di-testing:all:";
 
 /**
  * Folds an `InjectOptions` into slot criteria, or `undefined` when it names no criterion.
+ *
+ * @remarks Tags are copied and deduplicated by identity — di interns each `(key, value)` pair, so a
+ * repeated pair is the same object.
  */
 export function normalizeCriteria(options: InjectOptions | undefined): SlotCriteria | undefined {
   if (options === undefined) {
     return undefined;
   }
-  const tags = options.tag === undefined ? (options.tags ?? []) : [options.tag, ...(options.tags ?? [])];
+  const folded = options.tag === undefined ? (options.tags ?? []) : [options.tag, ...(options.tags ?? [])];
+  const tags = [...new Set(folded)];
   if (options.name === undefined && tags.length === 0) {
     return undefined;
   }
@@ -67,9 +79,28 @@ export function criteriaEquals(left: SlotCriteria, right: SlotCriteria): boolean
   return left.name === right.name && tagSetEquals(left.tags, right.tags);
 }
 
-/** Tag pairs are interned by di, so set equality is identity membership both ways. */
+/** Tag pairs are interned by di, so tag lists compare as identity sets, duplicates collapsed. */
 function tagSetEquals(left: ReadonlyArray<BindingTag>, right: ReadonlyArray<BindingTag>): boolean {
-  return left.length === right.length && left.every((tag) => right.includes(tag));
+  const leftSet = new Set(left);
+  const rightSet = new Set(right);
+  if (leftSet.size !== rightSet.size) {
+    return false;
+  }
+  for (const tag of leftSet) {
+    if (!rightSet.has(tag)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/** Returns the slot's own criteria, or `undefined` for an unconstrained slot. */
+function criteriaOfSlot(slot: DependencySlot): SlotCriteria | undefined {
+  const tags = slot.tags ?? [];
+  if (slot.name === undefined && tags.length === 0) {
+    return undefined;
+  }
+  return { name: slot.name, tags };
 }
 
 /** Returns whether an override's criteria address exactly this slot. */
@@ -89,13 +120,20 @@ function describeCriteria(criteria: SlotCriteria): string {
   return `slot with ${parts.join(" and ")}`;
 }
 
+/** Whether a slot can take a `usingAll` override — an unconstrained `injectAll` collects in order. */
+function acceptsAll(slot: DependencySlot): boolean {
+  return slot.multi && slot.name === undefined && (slot.tags?.length ?? 0) === 0;
+}
+
 /**
  * Binds a mock for every discovered dependency and returns the entries `mocks` reads.
  *
  * @remarks One shared mock per token for slots without a specific override — duplicate tokens across
- * parameters share it — while an override carrying slot criteria supplies just its own slot. An
- * override that matches nothing is an {@link UndeclaredDependencyError}; `.absent()` on a required
- * slot or `.all()` on a non-`injectAll` slot is an {@link OverrideMismatchError}.
+ * parameters share it — while an override carrying slot criteria supplies just its own slot; every
+ * constrained slot is also recorded under its own criteria so `mocks.get(token, options)` resolves.
+ * An override that matches nothing is an {@link UndeclaredDependencyError}; `.absent()` on a
+ * required slot or `.usingAll()` with no unconstrained `injectAll()` slot is an
+ * {@link OverrideMismatchError}.
  */
 export function bindMocks(
   container: Container,
@@ -104,16 +142,14 @@ export function bindMocks(
   mockFactory: MockFactory,
   exposed?: ReadonlySet<Constructor>,
 ): ReadonlyMap<DependencyKey, ReadonlyArray<BoundMock>> {
-  const declared = new Set<DependencyKey>(dependencies.map((slot) => slot.token));
-  for (const key of overrides.keys()) {
-    if (exposed !== undefined && typeof key === "function" && exposed.has(key)) {
-      throw new OverrideMismatchError(
-        tokenName(key),
-        "the class is exposed as a real collaborator, so it cannot also be mocked.",
-      );
-    }
-    if (!declared.has(key)) {
-      throw new UndeclaredDependencyError(tokenName(key));
+  if (exposed !== undefined) {
+    for (const key of overrides.keys()) {
+      if (typeof key === "function" && exposed.has(key)) {
+        throw new OverrideMismatchError(
+          tokenName(key),
+          "the class is exposed as a real collaborator, so it cannot also be mocked.",
+        );
+      }
     }
   }
 
@@ -129,14 +165,38 @@ export function bindMocks(
       entries = [];
       bound.set(token, entries);
     }
-    entries.push(entry);
+    // One entry per distinct slot criteria; duplicate slots share the first recording.
+    const duplicate = entries.some((candidate) =>
+      candidate.criteria === undefined || entry.criteria === undefined
+        ? candidate.criteria === entry.criteria
+        : criteriaEquals(candidate.criteria, entry.criteria),
+    );
+    if (!duplicate) {
+      entries.push(entry);
+    }
+  };
+
+  const bindConstant = (slot: DependencySlot, value: unknown): void => {
+    const builder = container.bind(slot.token).toConstantValue(value);
+    if (slot.name !== undefined) {
+      builder.whenNamed(slot.name);
+    }
+    if (slot.tags !== undefined) {
+      for (const tag of slot.tags) {
+        builder.whenTagged(tag);
+      }
+    }
   };
 
   for (const slot of dependencies) {
     const list = overrides.get(slot.token) ?? [];
+    // A slotless `usingAll` applies only to the slots that can take it; other slots fall through.
     const override =
       list.find((candidate) => candidate.criteria !== undefined && matchesSlot(candidate.criteria, slot)) ??
-      list.find((candidate) => candidate.criteria === undefined);
+      list.find(
+        (candidate) => candidate.criteria === undefined && (candidate.override.kind !== "all" || acceptsAll(slot)),
+      );
+
     if (override !== undefined) {
       consumed.add(override);
 
@@ -149,16 +209,16 @@ export function bindMocks(
         }
         if (!overrideValues.has(override)) {
           overrideValues.set(override, undefined);
-          record(slot.token, { criteria: override.criteria, value: undefined, sealed: true });
         }
+        record(slot.token, { criteria: override.criteria, value: undefined, kind: "absent" });
         continue;
       }
 
       if (override.override.kind === "all") {
-        if (!slot.multi || slot.name !== undefined || (slot.tags?.length ?? 0) > 0) {
+        if (!acceptsAll(slot)) {
           throw new OverrideMismatchError(
             tokenName(slot.token),
-            ".all() supplies the elements of an unconstrained injectAll() slot — this slot is not one.",
+            ".usingAll() supplies the elements of an unconstrained injectAll() slot — this slot is not one.",
           );
         }
         if (!overrideValues.has(override)) {
@@ -171,49 +231,38 @@ export function bindMocks(
             container
               .bind(slot.token)
               .toConstantValue(value)
-              .whenNamed(`di-testing:all:${String(index)}`);
+              .whenNamed(`${ALL_ELEMENT_SLOT_PREFIX}${String(index)}`);
           }
-          record(slot.token, { criteria: override.criteria, value: values, sealed: true });
+          record(slot.token, { criteria: override.criteria, value: values, kind: "all" });
         }
         continue;
       }
     }
-    // absent/all slots continued above, so only the value/impl lanes reach here.
-    const lane = override?.override as Extract<MockOverride, { kind: "value" | "stub" }> | undefined;
 
     // A slotted override owns its own value; the token-level lane is shared across plain slots.
+    const lane = override?.override as Extract<MockOverride, { kind: "value" | "stub" }> | undefined;
+    const kind: BoundMockKind = lane === undefined ? "auto" : lane.kind;
     let value: unknown;
     if (override !== undefined && override.criteria !== undefined) {
       if (!overrideValues.has(override)) {
         overrideValues.set(override, buildMock(lane, mockFactory));
-        record(slot.token, {
-          criteria: override.criteria,
-          value: overrideValues.get(override),
-          sealed: lane?.kind === "value",
-        });
       }
       value = overrideValues.get(override);
+      record(slot.token, { criteria: override.criteria, value, kind });
     } else {
       if (!sharedValues.has(slot.token)) {
         sharedValues.set(slot.token, buildMock(lane, mockFactory));
-        record(slot.token, {
-          criteria: undefined,
-          value: sharedValues.get(slot.token),
-          sealed: lane?.kind === "value",
-        });
+        record(slot.token, { criteria: undefined, value: sharedValues.get(slot.token), kind });
       }
       value = sharedValues.get(slot.token);
-    }
-
-    const builder = container.bind(slot.token).toConstantValue(value);
-    if (slot.name !== undefined) {
-      builder.whenNamed(slot.name);
-    }
-    if (slot.tags !== undefined) {
-      for (const tag of slot.tags) {
-        builder.whenTagged(tag);
+      // A constrained slot on the shared lane is also addressable by its own criteria.
+      const slotCriteria = criteriaOfSlot(slot);
+      if (slotCriteria !== undefined) {
+        record(slot.token, { criteria: slotCriteria, value, kind });
       }
     }
+
+    bindConstant(slot, value);
   }
 
   for (const [token, list] of overrides) {
@@ -221,7 +270,11 @@ export function bindMocks(
       if (!consumed.has(override)) {
         throw new UndeclaredDependencyError(
           tokenName(token),
-          override.criteria === undefined ? undefined : describeCriteria(override.criteria),
+          override.criteria === undefined
+            ? override.override.kind === "all"
+              ? "no unconstrained injectAll() slot"
+              : undefined
+            : describeCriteria(override.criteria),
         );
       }
     }
@@ -230,7 +283,7 @@ export function bindMocks(
   return bound;
 }
 
-/** The value bound for one lane: an override's value, a seeded auto-mock, or a plain auto-mock. */
+/** Returns the value bound for one lane: an override's value, a seeded auto-mock, or a plain auto-mock. */
 function buildMock(
   override: Extract<MockOverride, { kind: "value" | "stub" }> | undefined,
   mockFactory: MockFactory,
@@ -241,5 +294,6 @@ function buildMock(
   if (override.kind === "value") {
     return override.value;
   }
-  return createAutoMock(mockFactory, override.seed as DeepPartial<unknown>);
+  // The stub's seed is built here, once per compile, so beds never share seeded spies.
+  return createAutoMock(mockFactory, override.setup(mockFactory) as DeepPartial<unknown>);
 }
