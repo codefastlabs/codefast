@@ -34,6 +34,7 @@ only covers _legacy_ (`experimentalDecorators`) decorators — not the standard 
 | `/ui` header | `@codefast/theme`             | FOUC-free light/dark/system toggle, persisted client-side in `localStorage`                                                                                                                                                                                |
 | `/variants`  | `@codefast/tailwind-variants` | A `Callout` component built from one typed `tv()` config                                                                                                                                                                                                   |
 | `/di`        | `@codefast/di`                | Interactive task board: `@injectable` + modules wire the graph; each action is a server function that resolves a `scoped` service from a per-request child container, with singleton repository/log, `rebind`, `validate()`, and the live dependency graph |
+| tests        | `@codefast/di-testing`        | `tests/unit/**` puts the task board's services under `TestBed.solitary` — every collaborator auto-mocked, with `.impl` stubs, an `injectAll` slot, an `optional` dependency, and `@preDestroy` on dispose                                                  |
 
 ## Develop
 
@@ -41,4 +42,5 @@ only covers _legacy_ (`experimentalDecorators`) decorators — not the standard 
 pnpm --filter @examples/tanstack-start dev      # http://localhost:3001
 pnpm --filter @examples/tanstack-start build
 pnpm --filter @examples/tanstack-start check-types
+pnpm --filter @examples/tanstack-start test:unit
 ```

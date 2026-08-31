@@ -558,6 +558,9 @@ importers:
       '@babel/plugin-proposal-decorators':
         specifier: 'catalog:'
         version: 8.0.2(@babel/core@8.0.1)
+      '@codefast/di-testing':
+        specifier: workspace:*
+        version: link:../../packages/di-testing
       '@codefast/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -591,6 +594,9 @@ importers:
       vite:
         specifier: 'catalog:'
         version: 8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0)
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@26.4.0)(@vitest/coverage-v8@4.1.11)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
 
   packages/benchmark-harness:
     dependencies:
