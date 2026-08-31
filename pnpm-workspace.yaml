@@ -51,7 +51,7 @@ catalog:
   "@vercel/analytics": ^2.0.1
   "@vitejs/plugin-react": ^6.1.0
   "@vitest/coverage-v8": ^4.1.11
-  "@xyflow/react": ^12.11.3
+  "@xyflow/react": ^12.11.5
   awilix: ^13.0.5
   babel-plugin-react-compiler: ^1.0.0
   chart.js: ^4.5.1
