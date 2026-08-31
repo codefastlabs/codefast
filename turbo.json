@@ -34,22 +34,28 @@
       "persistent": true
     },
     "test": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
     },
     "test:coverage": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"],
       "outputs": ["coverage/**"]
     },
     "test:e2e": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
     },
     "test:integration": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
     },
     "test:type": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
     },
     "test:unit": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "vitest.config.*", "vitest.setup.*"]
     },
     "test:watch": {
