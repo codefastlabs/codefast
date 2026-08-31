@@ -12,14 +12,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [
     babel({
-      plugins: [
-        [
-          "@babel/plugin-proposal-decorators",
-          {
-            version: "2023-11",
-          },
-        ],
-      ],
+      plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]],
     }),
   ],
   // Vitest 4 resolves test modules through the SSR pipeline; gate `#/` on the
