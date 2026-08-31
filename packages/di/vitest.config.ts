@@ -15,14 +15,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [
     babel({
-      plugins: [
-        [
-          "@babel/plugin-proposal-decorators",
-          {
-            version: "2023-11",
-          },
-        ],
-      ],
+      plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]],
     }),
   ],
   // Resolve internal `#/` subpath imports to `src` (not the built `dist`): the
