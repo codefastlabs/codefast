@@ -1,4 +1,4 @@
-/** The compiled result of a solitary test bed: the real unit plus handles to its mocks. */
+/** The compiled result of a test bed: the real unit plus handles to its mocks. */
 
 import type { Constructor, Container, DependencyKey, InjectOptions, TokenValue } from "@codefast/di";
 import { tokenName } from "@codefast/di";
@@ -8,7 +8,7 @@ import { criteriaEquals, normalizeCriteria } from "#/discovery/mock-binder";
 import { SealedDependencyError, UndeclaredDependencyError } from "#/errors/errors";
 import type { Mocked } from "#/mocking/auto-mock";
 import { MOCK_RESET } from "#/mocking/auto-mock";
-import type { MockFn } from "#/mocking/mock-factory";
+import type { MockFunction } from "#/mocking/mock-factory";
 import type { Spy } from "#/mocking/spy";
 
 /**
@@ -16,13 +16,13 @@ import type { Spy } from "#/mocking/spy";
  *
  * @typeParam Backend - The spy type the bed's mock factory produces.
  */
-export interface UnitReference<Backend extends MockFn = Spy> {
+export interface UnitReference<Backend extends MockFunction = Spy> {
   /**
    * Retrieves the mock bound for one of the unit's dependencies, typed to that dependency's value.
    *
    * @remarks Pass `options` (a name or tags) to address a slot that carries its own override. Only
-   * auto-mocks and `.impl` stubs come back — a value supplied with `.using()`, `.absent()`, or
-   * `.all()` is sealed, because it has no mock surface for the `Mocked` type to describe.
+   * auto-mocks and `.stub` seeds come back — a value supplied with `.using()`, `.absent()`, or
+   * `.usingAll()` is sealed, because it has no mock surface for the `Mocked` type to describe.
    *
    * @throws UndeclaredDependencyError When the identifier or slot is not one of the unit's dependencies.
    * @throws SealedDependencyError When the dependency was supplied as a sealed value.
@@ -42,11 +42,11 @@ export interface UnitReference<Backend extends MockFn = Spy> {
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
  */
-export interface UnitTestBed<Class, Backend extends MockFn = Spy> extends AsyncDisposable {
+export interface UnitTestBed<Class, Backend extends MockFunction = Spy> extends AsyncDisposable {
   readonly unit: Class;
-  readonly unitRef: UnitReference<Backend>;
+  readonly mocks: UnitReference<Backend>;
   /** Clears the call history and configured behaviour of every auto-mock the bed created. */
-  reset(): void;
+  resetMocks(): void;
   /** Runs the unit's `@preDestroy` hooks and disposes the backing container. */
   dispose(): Promise<void>;
 }
@@ -57,7 +57,7 @@ export interface UnitTestBed<Class, Backend extends MockFn = Spy> extends AsyncD
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
  */
-export interface SociableUnitTestBed<Class, Backend extends MockFn = Spy> extends UnitTestBed<Class, Backend> {
+export interface SociableUnitTestBed<Class, Backend extends MockFunction = Spy> extends UnitTestBed<Class, Backend> {
   /**
    * The real instance of an exposed collaborator — the one the unit was actually built with.
    *
@@ -69,7 +69,7 @@ export interface SociableUnitTestBed<Class, Backend extends MockFn = Spy> extend
 /**
  * Wraps a compiled bed with access to its exposed real collaborators.
  */
-export function createSociableUnitTestBed<Class, Backend extends MockFn = Spy>(
+export function createSociableUnitTestBed<Class, Backend extends MockFunction = Spy>(
   bed: UnitTestBed<Class, Backend>,
   container: Container,
   exposedClasses: ReadonlySet<Constructor>,
@@ -88,30 +88,27 @@ export function createSociableUnitTestBed<Class, Backend extends MockFn = Spy>(
 }
 
 /**
- * Assembles a {@link UnitTestBed} around an instantiated unit and its bound mocks.
+ * Assembles a {@link UnitTestBed} around an instantiated unit and its bound mock entries.
  */
-export function createUnitTestBed<Class, Backend extends MockFn = Spy>(
+export function createUnitTestBed<Class, Backend extends MockFunction = Spy>(
   unit: Class,
-  mocks: ReadonlyMap<DependencyKey, ReadonlyArray<BoundMock>>,
+  entries: ReadonlyMap<DependencyKey, ReadonlyArray<BoundMock>>,
   container: Container,
 ): UnitTestBed<Class, Backend> {
-  const unitRef: UnitReference<Backend> = {
+  const mocks: UnitReference<Backend> = {
     get<Identifier extends DependencyKey>(
       identifier: Identifier,
       options?: InjectOptions,
     ): Mocked<TokenValue<Identifier>, Backend> {
-      const entries = mocks.get(identifier);
-      if (entries === undefined) {
+      const bound = entries.get(identifier);
+      if (bound === undefined) {
         throw new UndeclaredDependencyError(tokenName(identifier));
       }
       const criteria = normalizeCriteria(options);
       const entry =
         criteria === undefined
-          ? (entries.find((candidate) => candidate.criteria === undefined) ??
-            (entries.length === 1 ? entries[0] : undefined))
-          : entries.find(
-              (candidate) => candidate.criteria !== undefined && criteriaEquals(candidate.criteria, criteria),
-            );
+          ? (bound.find((candidate) => candidate.criteria === undefined) ?? (bound.length === 1 ? bound[0] : undefined))
+          : bound.find((candidate) => candidate.criteria !== undefined && criteriaEquals(candidate.criteria, criteria));
       if (entry === undefined) {
         throw new UndeclaredDependencyError(tokenName(identifier), "the requested slot");
       }
@@ -122,9 +119,9 @@ export function createUnitTestBed<Class, Backend extends MockFn = Spy>(
     },
   };
 
-  const reset = (): void => {
-    for (const entries of mocks.values()) {
-      for (const entry of entries) {
+  const resetMocks = (): void => {
+    for (const bound of entries.values()) {
+      for (const entry of bound) {
         if (!entry.sealed) {
           (entry.value as { [MOCK_RESET]?: () => void })[MOCK_RESET]?.();
         }
@@ -138,8 +135,8 @@ export function createUnitTestBed<Class, Backend extends MockFn = Spy>(
 
   return {
     unit,
-    unitRef,
-    reset,
+    mocks,
+    resetMocks,
     dispose,
     [Symbol.asyncDispose]: dispose,
   };

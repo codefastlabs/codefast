@@ -10,7 +10,7 @@ export type { SociableUnitTestBed, UnitReference, UnitTestBed } from "#/test-bed
 export { createAutoMock, MOCK_RESET } from "#/mocking/auto-mock";
 export type { DeepPartial, Mocked } from "#/mocking/auto-mock";
 export { defaultMockFactory } from "#/mocking/mock-factory";
-export type { MockFactory, MockFn } from "#/mocking/mock-factory";
+export type { MockFactory, MockFunction } from "#/mocking/mock-factory";
 export { createSpy } from "#/mocking/spy";
 export type { Spy, SpyResult, SpyState } from "#/mocking/spy";
 

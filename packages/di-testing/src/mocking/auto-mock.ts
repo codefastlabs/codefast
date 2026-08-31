@@ -2,7 +2,7 @@
 
 import { getOrInsertComputed } from "@codefast/di/core/map-upsert";
 
-import type { MockFactory, MockFn } from "#/mocking/mock-factory";
+import type { MockFactory, MockFunction } from "#/mocking/mock-factory";
 import type { Spy } from "#/mocking/spy";
 
 /**
@@ -14,7 +14,9 @@ import type { Spy } from "#/mocking/spy";
  *
  * @typeParam Backend - The spy type the active mock factory produces.
  */
-export type Mocked<Dependency, Backend extends MockFn = Spy> = Dependency extends (...args: infer Args) => infer Return
+export type Mocked<Dependency, Backend extends MockFunction = Spy> = Dependency extends (
+  ...args: infer Args
+) => infer Return
   ? Backend extends Spy
     ? Spy<Args, Return>
     : Backend & ((...args: Args) => Return)
@@ -23,7 +25,7 @@ export type Mocked<Dependency, Backend extends MockFn = Spy> = Dependency extend
     : Dependency;
 
 /**
- * A recursively optional view of `Dependency` — the shape a hand-written `.impl` stub may supply.
+ * A recursively optional view of `Dependency` — the shape a hand-written `.stub` stub may supply.
  *
  * @remarks Functions are kept whole (a stub replaces a whole method), everything else is made
  * optional so only the members a test cares about need spelling out.
@@ -65,11 +67,11 @@ function resetSpy(spy: unknown): void {
  *
  * @typeParam Backend - The spy type the factory produces, threaded into the returned `Mocked` view.
  */
-export function createAutoMock<Dependency, Backend extends MockFn = Spy>(
+export function createAutoMock<Dependency, Backend extends MockFunction = Spy>(
   mockFactory: MockFactory<Backend>,
   seed?: DeepPartial<Dependency>,
 ): Mocked<Dependency, Backend> {
-  const cache = new Map<string, MockFn>();
+  const cache = new Map<string, MockFunction>();
   const seedRecord = seed as Record<PropertyKey, unknown> | undefined;
   const target = mockFactory();
 

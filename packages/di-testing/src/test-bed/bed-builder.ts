@@ -7,7 +7,7 @@ import { verifyingMetadataReader } from "@codefast/di/metadata/verifying-metadat
 import type { BoundMock, SlotCriteria, SlottedOverride } from "#/discovery/mock-binder";
 import { criteriaEquals, normalizeCriteria } from "#/discovery/mock-binder";
 import type { DeepPartial } from "#/mocking/auto-mock";
-import type { MockFactory, MockFn } from "#/mocking/mock-factory";
+import type { MockFactory, MockFunction } from "#/mocking/mock-factory";
 import { defaultMockFactory } from "#/mocking/mock-factory";
 import type { Spy } from "#/mocking/spy";
 import type { InjectionIdentifier } from "#/types";
@@ -16,9 +16,9 @@ import type { InjectionIdentifier } from "#/types";
  * Options that configure a whole test-bed compile.
  *
  * @typeParam Backend - The spy type the mock factory produces; it flows into every `Mocked` member,
- * `unitRef.get`, and the `.impl` callback, so `() => vi.fn()` yields Vitest's own mock typing.
+ * `mocks.get`, and the `.stub` callback, so `() => vi.fn()` yields Vitest's own mock typing.
  */
-export interface TestBedOptions<Backend extends MockFn = Spy> {
+export interface TestBedOptions<Backend extends MockFunction = Spy> {
   /** Spy factory each auto-mock property is materialized with; defaults to the built-in spy. */
   readonly mockFactory?: MockFactory<Backend> | undefined;
   /** Reader the dependency scan and the compile container both consult; defaults to di's reader. */
@@ -32,20 +32,20 @@ export interface TestBedOptions<Backend extends MockFn = Spy> {
  * @typeParam Owner - The builder the chain returns to.
  * @typeParam Backend - The spy type the bed's mock factory produces.
  */
-export interface MockOverrideBuilder<Dependency, Owner, Backend extends MockFn = Spy> {
+export interface MockOverrideBuilder<Dependency, Owner, Backend extends MockFunction = Spy> {
   /**
    * Supplies a fixed value for this dependency.
    *
-   * @remarks The value is bound as-is and sealed: it has no mock surface, so `unitRef.get` refuses
+   * @remarks The value is bound as-is and sealed: it has no mock surface, so `mocks.get` refuses
    * it rather than hand it back mistyped — the test already holds the reference it passed in.
    */
   using(value: Dependency): Owner;
   /** Supplies a partial stub, built from the active spy factory; unlisted members stay auto-mocked. */
-  impl(setup: (mock: MockFactory<Backend>) => DeepPartial<Dependency>): Owner;
+  stub(setup: (mock: MockFactory<Backend>) => DeepPartial<Dependency>): Owner;
   /** Leaves the dependency unbound: an `optional()` slot resolves `undefined`, an `injectAll()` slot `[]`. */
   absent(): Owner;
   /** Supplies every element of an unconstrained `injectAll()` slot, in order. Sealed like `.using`. */
-  all(values: ReadonlyArray<Dependency>): Owner;
+  usingAll(values: ReadonlyArray<Dependency>): Owner;
 }
 
 /**
@@ -65,7 +65,7 @@ export interface PreparedBed {
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
  */
-export abstract class BedBuilder<Class, Backend extends MockFn = Spy> {
+export abstract class BedBuilder<Class, Backend extends MockFunction = Spy> {
   protected readonly target: Constructor<Class>;
   protected readonly reader: MetadataReader;
   protected readonly mockFactory: MockFactory<Backend>;
@@ -98,9 +98,9 @@ export abstract class BedBuilder<Class, Backend extends MockFn = Spy> {
     };
     return {
       using: (value) => set({ kind: "value", value }),
-      impl: (setup) => set({ kind: "impl", seed: setup(this.mockFactory) }),
+      stub: (setup) => set({ kind: "stub", seed: setup(this.mockFactory) }),
       absent: () => set({ kind: "absent" }),
-      all: (values) => set({ kind: "all", values }),
+      usingAll: (values) => set({ kind: "all", values }),
     };
   }
 

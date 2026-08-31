@@ -36,7 +36,7 @@ only covers _legacy_ (`experimentalDecorators`) decorators — not the standard 
 | `/di`        | `@codefast/di`                | Interactive task board: `@injectable` + modules wire the graph; each action is a server function that resolves a `scoped` service from a per-request child container, with singleton repository/log, `rebind`, `validate()`, and the live dependency graph |
 
 The task board's services are also under test with `@codefast/di-testing`: `tests/unit/**` puts them under
-`TestBed.solitary` — every collaborator auto-mocked, with `.impl` stubs, an `injectAll` slot, the `optional` dependency
+`TestBed.solitary` — every collaborator auto-mocked, with `.stub` stubs, an `injectAll` slot, the `optional` dependency
 exercised both bound and absent, and `@preDestroy` on dispose.
 
 ## Develop

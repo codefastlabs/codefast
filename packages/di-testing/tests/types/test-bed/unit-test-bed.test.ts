@@ -14,16 +14,16 @@ describe("UnitReference.get", () => {
   });
 
   it("maps a token to the mocked value type on the default backend", () => {
-    const { unitRef } = TestBed.solitary(OrderProcessor).compile();
+    const { mocks } = TestBed.solitary(OrderProcessor).compile();
 
-    expectTypeOf(unitRef.get(EmailServiceToken)).toEqualTypeOf<Mocked<EmailService>>();
-    expectTypeOf(unitRef.get(UserServiceToken)).toEqualTypeOf<Mocked<UserService>>();
-    expectTypeOf(unitRef.get(EmailServiceToken).send).parameter(0).toEqualTypeOf<string>();
+    expectTypeOf(mocks.get(EmailServiceToken)).toEqualTypeOf<Mocked<EmailService>>();
+    expectTypeOf(mocks.get(UserServiceToken)).toEqualTypeOf<Mocked<UserService>>();
+    expectTypeOf(mocks.get(EmailServiceToken).send).parameter(0).toEqualTypeOf<string>();
   });
 
   it("flows the vitest backend into every mock surface", () => {
-    const { unitRef } = TestBed.solitary(OrderProcessor, { mockFactory: () => vi.fn() }).compile();
-    const send = unitRef.get(EmailServiceToken).send;
+    const { mocks } = TestBed.solitary(OrderProcessor, { mockFactory: () => vi.fn() }).compile();
+    const send = mocks.get(EmailServiceToken).send;
 
     // Vitest-native APIs type-check without any adapter or module augmentation.
     expectTypeOf(send).toHaveProperty("mockReturnValueOnce");
@@ -32,10 +32,10 @@ describe("UnitReference.get", () => {
     expectTypeOf<Parameters<typeof send>>().toEqualTypeOf<[string, string]>();
   });
 
-  it("hands the .impl callback the active backend's factory", () => {
+  it("hands the .stub callback the active backend's factory", () => {
     TestBed.solitary(OrderProcessor, { mockFactory: () => vi.fn() })
       .mock(UserServiceToken)
-      .impl((fn) => {
+      .stub((fn) => {
         expectTypeOf(fn()).toEqualTypeOf<Mock>();
         return {};
       });
@@ -52,7 +52,7 @@ describe("UnitReference.get", () => {
       mockFactory: () => ({}) as unknown as FakeSinonStub,
     });
 
-    bed.mock(UserServiceToken).impl((fn) => {
+    bed.mock(UserServiceToken).stub((fn) => {
       expectTypeOf(fn()).toHaveProperty("returns");
       return {};
     });
@@ -68,9 +68,9 @@ describe("UnitReference.get", () => {
   });
 
   it("keeps the default backend precisely typed as Spy", () => {
-    const { unitRef } = TestBed.solitary(OrderProcessor).compile();
+    const { mocks } = TestBed.solitary(OrderProcessor).compile();
 
-    expectTypeOf(unitRef.get(EmailServiceToken).send).toEqualTypeOf<Spy<[to: string, body: string], void>>();
+    expectTypeOf(mocks.get(EmailServiceToken).send).toEqualTypeOf<Spy<[to: string, body: string], void>>();
     // The vitest Mock must NOT structurally satisfy Spy, or custom backends would lose their typing.
     expectTypeOf<Mock>().not.toExtend<Spy>();
   });

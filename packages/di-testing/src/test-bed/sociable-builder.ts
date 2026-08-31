@@ -7,7 +7,7 @@ import { scanSociableDependencies } from "#/discovery/dependency-scanner";
 import type { BoundMock } from "#/discovery/mock-binder";
 import { bindMocks } from "#/discovery/mock-binder";
 import { UndeclaredDependencyError } from "#/errors/errors";
-import type { MockFn } from "#/mocking/mock-factory";
+import type { MockFunction } from "#/mocking/mock-factory";
 import type { Spy } from "#/mocking/spy";
 import type { MockOverrideBuilder } from "#/test-bed/bed-builder";
 import { BedBuilder } from "#/test-bed/bed-builder";
@@ -25,7 +25,7 @@ import type { InjectionIdentifier } from "#/types";
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
  */
-export interface SociableTestBedBuilder<Class, Backend extends MockFn = Spy> {
+export interface SociableTestBedBuilder<Class, Backend extends MockFunction = Spy> {
   /** Keeps a class-keyed collaborator real; its own dependencies follow the same exposure rules. */
   expose(target: Constructor): SociableTestBedBuilder<Class, Backend>;
   /** Replaces the auto-mock for one dependency with a hand-written stub or a concrete value. */
@@ -45,7 +45,7 @@ export interface SociableTestBedBuilder<Class, Backend extends MockFn = Spy> {
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
  */
-export class SociableBuilder<Class, Backend extends MockFn = Spy>
+export class SociableBuilder<Class, Backend extends MockFunction = Spy>
   extends BedBuilder<Class, Backend>
   implements SociableTestBedBuilder<Class, Backend>
 {
@@ -103,7 +103,7 @@ export class SociableBuilder<Class, Backend extends MockFn = Spy>
     }
     container.bind(this.target).toSelf().singleton();
 
-    // Sealed entries so unitRef.get points at bed.exposed() instead of handing back a fake Mocked.
+    // Sealed entries so mocks.get points at bed.exposed() instead of handing back a fake Mocked.
     const merged = new Map(mocks);
     for (const realClass of realClasses) {
       merged.set(realClass, [{ criteria: undefined, value: undefined, sealed: true }]);

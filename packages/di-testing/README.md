@@ -14,7 +14,7 @@ Solitary and sociable auto-mocking test beds for
 - **Zero test-framework dependency.** The default mock is a small built-in spy. Pass `() => vi.fn()` (or `jest.fn`,
   `() => sinon.stub()`) to build the mocks from that backend and use its matchers instead.
 - **Backend-typed lookups.** The factory's return type flows through the whole bed: with `() => vi.fn()`,
-  `unitRef.get(EmailToken).send` carries Vitest's own mock surface (`mockReturnValueOnce`, `mockClear`, …) — no adapter
+  `mocks.get(EmailToken).send` carries Vitest's own mock surface (`mockReturnValueOnce`, `mockClear`, …) — no adapter
   package, no module augmentation, no postinstall scripts.
 
 ## Requirements
@@ -56,15 +56,15 @@ class OrderProcessor {
 }
 
 it("charges then emails a confirmation", () => {
-  const { unit, unitRef } = TestBed.solitary(OrderProcessor, { mockFactory: () => vi.fn() })
+  const { unit, mocks } = TestBed.solitary(OrderProcessor, { mockFactory: () => vi.fn() })
     .mock(UserServiceToken)
-    .impl((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "alice@example.com" }) }))
+    .stub((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "alice@example.com" }) }))
     .compile();
 
   unit.placeOrder("u1", 42);
 
-  expect(unitRef.get(PaymentGatewayToken).charge).toHaveBeenCalledWith("u1", 42);
-  expect(unitRef.get(EmailServiceToken).send).toHaveBeenCalledWith("alice@example.com", "Order confirmed — 42");
+  expect(mocks.get(PaymentGatewayToken).charge).toHaveBeenCalledWith("u1", 42);
+  expect(mocks.get(EmailServiceToken).send).toHaveBeenCalledWith("alice@example.com", "Order confirmed — 42");
 });
 ```
 
@@ -75,9 +75,9 @@ and stub with `.mockReturnValue()`:
 import { TestBed } from "@codefast/di-testing";
 import assert from "node:assert/strict";
 
-const { unit, unitRef } = TestBed.solitary(OrderProcessor).compile();
+const { unit, mocks } = TestBed.solitary(OrderProcessor).compile();
 unit.placeOrder("u1", 42);
-assert.deepEqual(unitRef.get(PaymentGatewayToken).charge.mock.calls[0], ["u1", 42]);
+assert.deepEqual(mocks.get(PaymentGatewayToken).charge.mock.calls[0], ["u1", 42]);
 ```
 
 ## API
@@ -91,14 +91,14 @@ Begins a solitary test bed for `target`, auto-mocking every dependency it declar
 
 ### Builder
 
-- `.mock(token).impl((fn) => stub)` — bind a partial stub built from the active spy factory; unlisted members stay
+- `.mock(token).stub((fn) => stub)` — bind a partial stub built from the active spy factory; unlisted members stay
   auto-mocked. `fn()` is typed as whatever the backend produces, so `fn().mockReturnValue(...)` (jest-shaped) or
   `fn().returns(...)` (Sinon) both type-check against the factory you chose.
-- `.mock(token).using(value)` — bind a fixed value. The value is **sealed**: it has no mock surface, so `unitRef.get`
+- `.mock(token).using(value)` — bind a fixed value. The value is **sealed**: it has no mock surface, so `mocks.get`
   refuses it rather than hand it back mistyped — the test already holds the reference it passed in.
 - `.mock(token).absent()` — leave the dependency unbound: an `optional()` slot resolves `undefined`, an `injectAll()`
   slot `[]`. Anything else is an `OverrideMismatchError`.
-- `.mock(token).all([a, b])` — supply the elements of an unconstrained `injectAll()` slot, in order. Sealed like
+- `.mock(token).usingAll([a, b])` — supply the elements of an unconstrained `injectAll()` slot, in order. Sealed like
   `.using`.
 - `.mock(token, { name })` / `.mock(token, { tag })` — target one slot of a token that is injected several ways; the
   slotless form covers every slot without a more specific override.
@@ -114,7 +114,7 @@ subtree, not an integration test. It returns only `.expose()`, steering the firs
 const bed = TestBed.sociable(CheckoutService, { mockFactory: () => vi.fn() })
   .expose(PricingService) // real instance, wired through the container
   .mock(TaxPolicyToken)
-  .impl((fn) => ({ rateFor: fn().mockReturnValue(0.1) }))
+  .stub((fn) => ({ rateFor: fn().mockReturnValue(0.1) }))
   .compile();
 
 bed.unit.checkout(100, "USD"); // real PricingService math over the mocked tax boundary
@@ -126,7 +126,7 @@ bed.exposed(PricingService); // the real instance the unit was built with
 - **Tokens are the boundary.** A `Token`-keyed dependency is always mocked, in both modes: tokens mark where the logic
   under test meets the outside world.
 - Exposed collaborators are real singletons resolved through the container, so their `@postConstruct` runs at compile
-  and `@preDestroy` on dispose. `bed.exposed(Class)` retrieves them; `unitRef.get(Class)` refuses them
+  and `@preDestroy` on dispose. `bed.exposed(Class)` retrieves them; `mocks.get(Class)` refuses them
   (`SealedDependencyError`) because they carry no mock surface.
 - Exposing a class the unit never reaches, or exposing and mocking the same class, is an error at compile.
 
@@ -134,24 +134,24 @@ bed.exposed(PricingService); // the real instance the unit was built with
 
 - An `optional()` dependency is auto-mocked like any other — it resolves to the mock, not `undefined` as an unbound
   optional would in production. Use `.mock(token).absent()` to exercise the absent branch.
-- An `injectAll()` dependency receives a one-element array holding the token's mock; use `.mock(token).all([...])` to
-  supply several elements.
+- An `injectAll()` dependency receives a one-element array holding the token's mock; use `.mock(token).usingAll([...])`
+  to supply several elements.
 - Named or tagged parameters of one token share the token's mock unless a slot-targeted `.mock(token, { name })` gives
   that slot its own.
 
 ### Result — `UnitTestBed`
 
 - `unit` — the real class under test.
-- `unitRef.get(token, options?)` — the `Mocked<T>` bound for a dependency (or one slot of it). Only auto-mocks and
-  `.impl` stubs come back; sealed values throw `SealedDependencyError`.
-- `reset()` — clear the call history and configured behaviour of every auto-mock the bed created.
+- `mocks.get(token, options?)` — the `Mocked<T>` bound for a dependency (or one slot of it). Only auto-mocks and `.stub`
+  stubs come back; sealed values throw `SealedDependencyError`.
+- `resetMocks()` — clear the call history and configured behaviour of every auto-mock the bed created.
 - `dispose()` — run the unit's `@preDestroy` hooks and dispose the container. Also runs via `await using`.
 
 ## Errors
 
 - `NotInjectableError` — the class under test takes constructor parameters but is not `@injectable`.
-- `UndeclaredDependencyError` — a `.mock(...)` or `unitRef.get(...)` named a token or slot the class does not use.
-- `SealedDependencyError` — `unitRef.get(...)` asked for a `.using()`/`.absent()`/`.all()` value.
+- `UndeclaredDependencyError` — a `.mock(...)` or `mocks.get(...)` named a token or slot the class does not use.
+- `SealedDependencyError` — `mocks.get(...)` asked for a `.using()`/`.absent()`/`.all()` value.
 - `OverrideMismatchError` — `.absent()` on a required dependency, or `.all()` on a non-`injectAll` slot.
 
 ## License

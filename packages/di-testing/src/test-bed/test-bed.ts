@@ -2,7 +2,7 @@
 
 import type { Constructor } from "@codefast/di";
 
-import type { MockFn } from "#/mocking/mock-factory";
+import type { MockFunction } from "#/mocking/mock-factory";
 import type { Spy } from "#/mocking/spy";
 import type { TestBedOptions } from "#/test-bed/bed-builder";
 import { SociableBuilder } from "#/test-bed/sociable-builder";
@@ -18,10 +18,10 @@ export interface TestBedStatic {
    * Begins a solitary test bed for `target`, auto-mocking every dependency it declares.
    *
    * @remarks The mock factory's return type becomes `Backend` and types every mock the bed hands
-   * out — pass `{ mockFactory: () => vi.fn() }` and `unitRef.get(X).method` carries Vitest's own
+   * out — pass `{ mockFactory: () => vi.fn() }` and `mocks.get(X).method` carries Vitest's own
    * mock surface.
    */
-  solitary<Class, Backend extends MockFn = Spy>(
+  solitary<Class, Backend extends MockFunction = Spy>(
     target: Constructor<Class>,
     options?: TestBedOptions<Backend>,
   ): SolitaryTestBedBuilder<Class, Backend>;
@@ -32,7 +32,7 @@ export interface TestBedStatic {
    * @remarks Returns only `expose` — a sociable bed without at least one exposed collaborator is a
    * solitary bed, so the type steers the first call.
    */
-  sociable<Class, Backend extends MockFn = Spy>(
+  sociable<Class, Backend extends MockFunction = Spy>(
     target: Constructor<Class>,
     options?: TestBedOptions<Backend>,
   ): Pick<SociableTestBedBuilder<Class, Backend>, "expose">;
@@ -45,13 +45,13 @@ export interface TestBedStatic {
  * until `compile()`.
  */
 export const TestBed: TestBedStatic = {
-  solitary<Class, Backend extends MockFn = Spy>(
+  solitary<Class, Backend extends MockFunction = Spy>(
     target: Constructor<Class>,
     options?: TestBedOptions<Backend>,
   ): SolitaryTestBedBuilder<Class, Backend> {
     return new SolitaryBuilder<Class, Backend>(target, options);
   },
-  sociable<Class, Backend extends MockFn = Spy>(
+  sociable<Class, Backend extends MockFunction = Spy>(
     target: Constructor<Class>,
     options?: TestBedOptions<Backend>,
   ): Pick<SociableTestBedBuilder<Class, Backend>, "expose"> {

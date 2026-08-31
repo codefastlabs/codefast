@@ -5,7 +5,7 @@ import { Container } from "@codefast/di";
 
 import { scanDependencies } from "#/discovery/dependency-scanner";
 import { bindMocks } from "#/discovery/mock-binder";
-import type { MockFn } from "#/mocking/mock-factory";
+import type { MockFunction } from "#/mocking/mock-factory";
 import type { Spy } from "#/mocking/spy";
 import type { MockOverrideBuilder, PreparedBed } from "#/test-bed/bed-builder";
 import { BedBuilder } from "#/test-bed/bed-builder";
@@ -19,7 +19,7 @@ import type { InjectionIdentifier } from "#/types";
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
  */
-export interface SolitaryTestBedBuilder<Class, Backend extends MockFn = Spy> {
+export interface SolitaryTestBedBuilder<Class, Backend extends MockFunction = Spy> {
   /** Replaces the auto-mock for one dependency with a hand-written stub or a concrete value. */
   mock<Dependency>(
     identifier: InjectionIdentifier<Dependency>,
@@ -37,7 +37,7 @@ export interface SolitaryTestBedBuilder<Class, Backend extends MockFn = Spy> {
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
  */
-export class SolitaryBuilder<Class, Backend extends MockFn = Spy>
+export class SolitaryBuilder<Class, Backend extends MockFunction = Spy>
   extends BedBuilder<Class, Backend>
   implements SolitaryTestBedBuilder<Class, Backend>
 {

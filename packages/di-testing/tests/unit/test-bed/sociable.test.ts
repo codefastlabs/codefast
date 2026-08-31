@@ -22,20 +22,20 @@ describe("TestBed.sociable", () => {
     TestBed.sociable(CheckoutService, { mockFactory: () => vi.fn() })
       .expose(PricingService)
       .mock(TaxPolicyToken)
-      .impl((fn) => ({ rateFor: fn().mockReturnValue(0.1) }));
+      .stub((fn) => ({ rateFor: fn().mockReturnValue(0.1) }));
 
   it("keeps the exposed collaborator real while tokens stay mocked", () => {
-    const { unit, unitRef } = bedFor()
+    const { unit, mocks } = bedFor()
       .mock(DiscountPolicy)
-      .impl((fn) => ({ off: fn().mockReturnValue(50) }))
+      .stub((fn) => ({ off: fn().mockReturnValue(50) }))
       .compile();
 
     const total = unit.checkout(100, "USD");
 
     // Real PricingService math over the stubbed boundary: 50 * (1 + 0.1).
     expect(total).toBeCloseTo(55);
-    expect(unitRef.get(PaymentGatewayToken).charge).toHaveBeenCalledWith("order-1", total);
-    expect(unitRef.get(TaxPolicyToken).rateFor).toHaveBeenCalledWith("USD");
+    expect(mocks.get(PaymentGatewayToken).charge).toHaveBeenCalledWith("order-1", total);
+    expect(mocks.get(TaxPolicyToken).rateFor).toHaveBeenCalledWith("USD");
   });
 
   it("exposes a whole real subtree when every class is exposed", () => {
@@ -46,10 +46,10 @@ describe("TestBed.sociable", () => {
   });
 
   it("mocks a class dependency of an exposed class unless it is exposed too", () => {
-    const { unitRef } = bedFor().compile();
+    const { mocks } = bedFor().compile();
 
     // DiscountPolicy was not exposed, so it is a retrievable auto-mock.
-    expect(unitRef.get(DiscountPolicy).off).not.toHaveBeenCalled();
+    expect(mocks.get(DiscountPolicy).off).not.toHaveBeenCalled();
   });
 
   it("hands back the real exposed instance the unit was built with", () => {
@@ -60,10 +60,10 @@ describe("TestBed.sociable", () => {
     expect(pricing.total(100, "USD")).toBeCloseTo(99);
   });
 
-  it("seals exposed classes on unitRef.get", () => {
+  it("seals exposed classes on mocks.get", () => {
     const bed = bedFor().compile();
 
-    expect(() => bed.unitRef.get(PricingService)).toThrow(SealedDependencyError);
+    expect(() => bed.mocks.get(PricingService)).toThrow(SealedDependencyError);
   });
 
   it("rejects exposed() for a class that was not exposed", () => {
@@ -80,7 +80,7 @@ describe("TestBed.sociable", () => {
     expect(() =>
       bedFor()
         .mock(PricingService)
-        .impl(() => ({}))
+        .stub(() => ({}))
         .compile(),
     ).toThrow(OverrideMismatchError);
   });
@@ -89,7 +89,7 @@ describe("TestBed.sociable", () => {
     const bed = TestBed.sociable(LifecycleHost, { mockFactory: () => vi.fn() })
       .expose(LifecycleService)
       .compile();
-    const log = bed.unitRef.get(LoggerToken);
+    const log = bed.mocks.get(LoggerToken);
 
     expect(log.log).toHaveBeenCalledWith("start");
 
@@ -109,7 +109,7 @@ describe("TestBed.sociable", () => {
       .expose(PricingService)
       .expose(DiscountPolicy)
       .mock(TaxPolicyToken)
-      .impl((fn) => ({ rateFor: fn().mockReturnValue(0) }))
+      .stub((fn) => ({ rateFor: fn().mockReturnValue(0) }))
       .compile();
 
     // The unit's direct DiscountPolicy and the one inside PricingService are the same singleton.

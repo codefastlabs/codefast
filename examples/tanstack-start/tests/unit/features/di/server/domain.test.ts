@@ -21,84 +21,84 @@ import {
 import type { Task } from "#/features/di/server/domain";
 
 // Vitest-backed spies: matchers work on every auto-mock, and the factory's return type flows into
-// the bed, so vitest-only APIs like mockReturnValueOnce type-check on unitRef.get(...).method.
+// the bed, so vitest-only APIs like mockReturnValueOnce type-check on mocks.get(...).method.
 const withVitestSpies = { mockFactory: () => vi.fn() };
 
 describe("TaskService", () => {
-  // Must stay a factory: `.impl` seeds are built eagerly at `.mock()` time, so a shared builder
+  // Must stay a factory: `.stub` seeds are built eagerly at `.mock()` time, so a shared builder
   // would leak spy call logs between tests. Overrides are last-write-wins, so a test may re-mock
   // a token the helper already stubbed — replacing that stub wholesale, not merging with it.
   const bedFor = (tasks: Array<Task> = []) =>
     TestBed.solitary(TaskService, withVitestSpies)
       .mock(TaskRepositoryToken)
-      .impl((fn) => ({ list: fn().mockReturnValue(tasks) }))
+      .stub((fn) => ({ list: fn().mockReturnValue(tasks) }))
       .mock(TaskValidationToken)
-      .impl((fn) => ({ collect: fn().mockReturnValue([]) }));
+      .stub((fn) => ({ collect: fn().mockReturnValue([]) }));
 
   it("adds a task when validation passes", () => {
-    const { unit, unitRef } = bedFor()
+    const { unit, mocks } = bedFor()
       .mock(IdGeneratorToken)
-      .impl((fn) => ({ next: fn().mockReturnValue("id-1") }))
+      .stub((fn) => ({ next: fn().mockReturnValue("id-1") }))
       .compile();
 
     const errors = unit.add("Ship the release");
 
     expect(errors).toEqual([]);
-    expect(unitRef.get(TaskRepositoryToken).add).toHaveBeenCalledWith("Ship the release", "id-1");
+    expect(mocks.get(TaskRepositoryToken).add).toHaveBeenCalledWith("Ship the release", "id-1");
     // The optional MetricsExporter is auto-mocked, so the happy path records a metric.
-    expect(unitRef.get(MetricsExporterToken).record).toHaveBeenCalledWith("task.added");
+    expect(mocks.get(MetricsExporterToken).record).toHaveBeenCalledWith("task.added");
     // Success stays out of the activity log — only the repository logs the add.
-    expect(unitRef.get(ActivityLogToken).record).not.toHaveBeenCalled();
+    expect(mocks.get(ActivityLogToken).record).not.toHaveBeenCalled();
   });
 
   it("still adds when the optional MetricsExporter is absent", () => {
-    const { unit, unitRef } = bedFor().mock(MetricsExporterToken).absent().compile();
+    const { unit, mocks } = bedFor().mock(MetricsExporterToken).absent().compile();
 
     expect(unit.add("Ship the release")).toEqual([]);
-    expect(unitRef.get(TaskRepositoryToken).add).toHaveBeenCalled();
+    expect(mocks.get(TaskRepositoryToken).add).toHaveBeenCalled();
   });
 
   it("returns validation errors without touching the repository", () => {
-    const { unit, unitRef } = bedFor()
+    const { unit, mocks } = bedFor()
       .mock(TaskValidationToken)
-      .impl((fn) => ({ collect: fn().mockReturnValue(["Title cannot be empty."]) }))
+      .stub((fn) => ({ collect: fn().mockReturnValue(["Title cannot be empty."]) }))
       .compile();
 
     const errors = unit.add("");
 
     expect(errors).toEqual(["Title cannot be empty."]);
-    expect(unitRef.get(TaskRepositoryToken).add).not.toHaveBeenCalled();
-    expect(unitRef.get(ActivityLogToken).record).toHaveBeenCalledWith('rejected "" · 1 validation error(s)');
+    expect(mocks.get(TaskRepositoryToken).add).not.toHaveBeenCalled();
+    expect(mocks.get(ActivityLogToken).record).toHaveBeenCalledWith('rejected "" · 1 validation error(s)');
   });
 
   it("counts every validation error in the rejection log", () => {
-    const { unit, unitRef } = bedFor()
+    const { unit, mocks } = bedFor()
       .mock(TaskValidationToken)
-      .impl((fn) => ({
+      .stub((fn) => ({
         collect: fn().mockReturnValue(["Title cannot be empty.", "A task with this title already exists."]),
       }))
       .compile();
 
     expect(unit.add("dup")).toHaveLength(2);
-    expect(unitRef.get(ActivityLogToken).record).toHaveBeenCalledWith('rejected "dup" · 2 validation error(s)');
+    expect(mocks.get(ActivityLogToken).record).toHaveBeenCalledWith('rejected "dup" · 2 validation error(s)');
   });
 
   it("hands validation the existing titles from the repository", () => {
-    const { unit, unitRef } = bedFor([{ id: "t1", title: "Existing", done: false, createdAt: "" }]).compile();
+    const { unit, mocks } = bedFor([{ id: "t1", title: "Existing", done: false, createdAt: "" }]).compile();
 
     unit.add("New task");
 
-    expect(unitRef.get(TaskValidationToken).collect).toHaveBeenCalledWith("New task", ["Existing"]);
+    expect(mocks.get(TaskValidationToken).collect).toHaveBeenCalledWith("New task", ["Existing"]);
   });
 
   it("delegates toggle and remove to the repository", () => {
-    const { unit, unitRef } = bedFor().compile();
+    const { unit, mocks } = bedFor().compile();
 
     unit.toggle("t1");
     unit.remove("t2");
 
-    expect(unitRef.get(TaskRepositoryToken).toggle).toHaveBeenCalledWith("t1");
-    expect(unitRef.get(TaskRepositoryToken).remove).toHaveBeenCalledWith("t2");
+    expect(mocks.get(TaskRepositoryToken).toggle).toHaveBeenCalledWith("t1");
+    expect(mocks.get(TaskRepositoryToken).remove).toHaveBeenCalledWith("t2");
   });
 
   it("records teardown on dispose when the request asks for it", async () => {
@@ -106,7 +106,7 @@ describe("TaskService", () => {
       .mock(RequestContextToken)
       .using({ requestId: "req-1", receivedAt: "", recordTeardown: true })
       .compile();
-    const log = bed.unitRef.get(ActivityLogToken);
+    const log = bed.mocks.get(ActivityLogToken);
 
     await bed.dispose();
 
@@ -118,7 +118,7 @@ describe("TaskService", () => {
       .mock(RequestContextToken)
       .using({ requestId: "req-2", receivedAt: "", recordTeardown: false })
       .compile();
-    const log = bed.unitRef.get(ActivityLogToken);
+    const log = bed.mocks.get(ActivityLogToken);
 
     await bed.dispose();
 
@@ -156,13 +156,13 @@ describe("task validators", () => {
 
 describe("CompositeTaskValidator", () => {
   it("collects the messages its validators return", () => {
-    const { unit, unitRef } = TestBed.solitary(CompositeTaskValidator, withVitestSpies)
+    const { unit, mocks } = TestBed.solitary(CompositeTaskValidator, withVitestSpies)
       .mock(TaskValidatorToken)
-      .impl((fn) => ({ validate: fn().mockReturnValue("Title cannot be empty.") }))
+      .stub((fn) => ({ validate: fn().mockReturnValue("Title cannot be empty.") }))
       .compile();
 
     expect(unit.collect("", [])).toEqual(["Title cannot be empty."]);
-    expect(unitRef.get(TaskValidatorToken).validate).toHaveBeenCalledWith("", []);
+    expect(mocks.get(TaskValidatorToken).validate).toHaveBeenCalledWith("", []);
   });
 
   it("returns no messages when every validator passes", () => {
@@ -183,55 +183,55 @@ describe("InMemoryTaskRepository", () => {
       .compile();
 
   it("stamps new tasks with the injected clock", () => {
-    const { unit, unitRef } = compileRepository();
+    const { unit, mocks } = compileRepository();
 
     unit.add("Write tests", "task-1");
 
     expect(unit.list()).toEqual([{ id: "task-1", title: "Write tests", done: false, createdAt: FROZEN_NOW }]);
-    expect(unitRef.get(ActivityLogToken).record).toHaveBeenCalledWith('added "Write tests"');
+    expect(mocks.get(ActivityLogToken).record).toHaveBeenCalledWith('added "Write tests"');
   });
 
   it("toggles and logs completion state in both directions", () => {
-    const { unit, unitRef } = compileRepository();
+    const { unit, mocks } = compileRepository();
     unit.add("Write tests", "task-1");
 
     unit.toggle("task-1");
     expect(unit.list().at(0)?.done).toBe(true);
-    expect(unitRef.get(ActivityLogToken).record).toHaveBeenCalledWith('completed "Write tests"');
+    expect(mocks.get(ActivityLogToken).record).toHaveBeenCalledWith('completed "Write tests"');
 
     unit.toggle("task-1");
     expect(unit.list().at(0)?.done).toBe(false);
-    expect(unitRef.get(ActivityLogToken).record).toHaveBeenCalledWith('reopened "Write tests"');
+    expect(mocks.get(ActivityLogToken).record).toHaveBeenCalledWith('reopened "Write tests"');
   });
 
   it("removes and logs the removed title", () => {
-    const { unit, unitRef } = compileRepository();
+    const { unit, mocks } = compileRepository();
     unit.add("Write tests", "task-1");
 
     unit.remove("task-1");
 
     expect(unit.list()).toEqual([]);
-    expect(unitRef.get(ActivityLogToken).record).toHaveBeenCalledWith('removed "Write tests"');
+    expect(mocks.get(ActivityLogToken).record).toHaveBeenCalledWith('removed "Write tests"');
   });
 
   it("ignores toggle and remove for unknown ids", () => {
-    const { unit, unitRef } = compileRepository();
+    const { unit, mocks } = compileRepository();
 
     unit.toggle("missing");
     unit.remove("missing");
 
     expect(unit.list()).toEqual([]);
-    expect(unitRef.get(ActivityLogToken).record).not.toHaveBeenCalled();
+    expect(mocks.get(ActivityLogToken).record).not.toHaveBeenCalled();
   });
 });
 
 describe("ActivityLogMetricsExporter", () => {
   it("prefixes events into the activity log (built-in spy backend)", () => {
     // No mockFactory: this bed demonstrates the zero-dependency default spy and its .mock.calls log.
-    const { unit, unitRef } = TestBed.solitary(ActivityLogMetricsExporter).compile();
+    const { unit, mocks } = TestBed.solitary(ActivityLogMetricsExporter).compile();
 
     unit.record("task.added");
 
-    expect(unitRef.get(ActivityLogToken).record.mock.calls.at(0)).toEqual(["metric · task.added"]);
+    expect(mocks.get(ActivityLogToken).record.mock.calls.at(0)).toEqual(["metric · task.added"]);
   });
 });

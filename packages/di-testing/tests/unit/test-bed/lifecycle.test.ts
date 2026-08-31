@@ -7,14 +7,14 @@ import { LifecycleService, LoggerToken } from "#/tests/unit/support/fixtures";
 
 describe("TestBed.solitary lifecycle", () => {
   it("runs @postConstruct during compile", () => {
-    const { unitRef } = TestBed.solitary(LifecycleService).compile();
+    const { mocks } = TestBed.solitary(LifecycleService).compile();
 
-    expect(unitRef.get(LoggerToken).log.mock.calls.at(0)).toEqual(["start"]);
+    expect(mocks.get(LoggerToken).log.mock.calls.at(0)).toEqual(["start"]);
   });
 
   it("runs @preDestroy on dispose", async () => {
     const bed = TestBed.solitary(LifecycleService).compile();
-    const logger = bed.unitRef.get(LoggerToken);
+    const logger = bed.mocks.get(LoggerToken);
 
     await bed.dispose();
 
@@ -25,7 +25,7 @@ describe("TestBed.solitary lifecycle", () => {
     let logger: Mocked<Logger>;
     {
       await using bed = TestBed.solitary(LifecycleService).compile();
-      logger = bed.unitRef.get(LoggerToken);
+      logger = bed.mocks.get(LoggerToken);
     }
 
     expect(logger.log.mock.calls).toContainEqual(["stop"]);

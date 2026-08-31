@@ -22,9 +22,9 @@ describe("TestBed.solitary overrides", () => {
     const sent: Array<string> = [];
     const email: EmailService = { send: (to) => void sent.push(to) };
 
-    const { unit, unitRef } = TestBed.solitary(OrderProcessor)
+    const { unit, mocks } = TestBed.solitary(OrderProcessor)
       .mock(UserServiceToken)
-      .impl((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "alice@example.com" }) }))
+      .stub((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "alice@example.com" }) }))
       .mock(EmailServiceToken)
       .using(email)
       .compile();
@@ -33,18 +33,18 @@ describe("TestBed.solitary overrides", () => {
 
     expect(sent).toEqual(["alice@example.com"]);
     // Sealed: the value carries no mock surface, so retrieving it as Mocked would lie.
-    expect(() => unitRef.get(EmailServiceToken)).toThrow(SealedDependencyError);
+    expect(() => mocks.get(EmailServiceToken)).toThrow(SealedDependencyError);
   });
 
-  it("keeps unlisted members auto-mocked when using .impl()", () => {
-    const { unitRef } = TestBed.solitary(OrderProcessor)
+  it("keeps unlisted members auto-mocked when using .stub()", () => {
+    const { mocks } = TestBed.solitary(OrderProcessor)
       .mock(PaymentGatewayToken)
-      .impl(() => ({}))
+      .stub(() => ({}))
       .compile();
 
     // `charge` was not stubbed, so it is still an auto-mock spy that records calls.
-    unitRef.get(PaymentGatewayToken).charge("u1", 1);
-    expect(unitRef.get(PaymentGatewayToken).charge.mock.calls.at(0)).toEqual(["u1", 1]);
+    mocks.get(PaymentGatewayToken).charge("u1", 1);
+    expect(mocks.get(PaymentGatewayToken).charge.mock.calls.at(0)).toEqual(["u1", 1]);
   });
 
   it("lets the last override for a token win", () => {
@@ -53,7 +53,7 @@ describe("TestBed.solitary overrides", () => {
 
     const { unit } = TestBed.solitary(OrderProcessor)
       .mock(UserServiceToken)
-      .impl((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "a@b.c" }) }))
+      .stub((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "a@b.c" }) }))
       .mock(EmailServiceToken)
       .using({ send: (to) => void first.push(to) })
       .mock(EmailServiceToken)
@@ -67,18 +67,18 @@ describe("TestBed.solitary overrides", () => {
   });
 
   it("targets one slot of a token with .mock(token, { name })", () => {
-    const { unit, unitRef } = TestBed.solitary(DualLoggerConsumer)
+    const { unit, mocks } = TestBed.solitary(DualLoggerConsumer)
       .mock(LoggerToken, { name: "primary" })
-      .impl(() => ({}))
+      .stub(() => ({}))
       .compile();
 
     expect(unit.primary).not.toBe(unit.plain);
-    expect(unit.primary).toBe(unitRef.get(LoggerToken, { name: "primary" }));
-    expect(unit.plain).toBe(unitRef.get(LoggerToken));
+    expect(unit.primary).toBe(mocks.get(LoggerToken, { name: "primary" }));
+    expect(unit.plain).toBe(mocks.get(LoggerToken));
 
     unit.primary.log("only primary");
-    expect(unitRef.get(LoggerToken, { name: "primary" }).log.mock.calls).toEqual([["only primary"]]);
-    expect(unitRef.get(LoggerToken).log.mock.calls).toEqual([]);
+    expect(mocks.get(LoggerToken, { name: "primary" }).log.mock.calls).toEqual([["only primary"]]);
+    expect(mocks.get(LoggerToken).log.mock.calls).toEqual([]);
   });
 
   it("leaves an optional dependency absent with .absent()", () => {
@@ -97,10 +97,10 @@ describe("TestBed.solitary overrides", () => {
     const alpha: Plugin = { name: "alpha" };
     const beta: Plugin = { name: "beta" };
 
-    const { unit, unitRef } = TestBed.solitary(ReportService).mock(PluginToken).all([alpha, beta]).compile();
+    const { unit, mocks } = TestBed.solitary(ReportService).mock(PluginToken).usingAll([alpha, beta]).compile();
 
     expect(unit.plugins).toEqual([alpha, beta]);
-    expect(() => unitRef.get(PluginToken)).toThrow(SealedDependencyError);
+    expect(() => mocks.get(PluginToken)).toThrow(SealedDependencyError);
   });
 
   it("rejects .absent() on a required dependency", () => {
@@ -113,7 +113,7 @@ describe("TestBed.solitary overrides", () => {
     expect(() =>
       TestBed.solitary(OrderProcessor)
         .mock(EmailServiceToken)
-        .all([{ send: () => undefined }])
+        .usingAll([{ send: () => undefined }])
         .compile(),
     ).toThrow(OverrideMismatchError);
   });
@@ -131,7 +131,7 @@ describe("TestBed.solitary overrides", () => {
     expect(() =>
       TestBed.solitary(DualLoggerConsumer)
         .mock(LoggerToken, { name: "backup" })
-        .impl(() => ({}))
+        .stub(() => ({}))
         .compile(),
     ).toThrow(UndeclaredDependencyError);
   });
@@ -140,7 +140,7 @@ describe("TestBed.solitary overrides", () => {
     expect(() =>
       TestBed.solitary(DualLoggerConsumer)
         .mock(LoggerToken, { tag: EnvTag.of("nowhere") })
-        .impl(() => ({}))
+        .stub(() => ({}))
         .compile(),
     ).toThrow(UndeclaredDependencyError);
   });
@@ -150,7 +150,7 @@ describe("TestBed.solitary overrides", () => {
 
     const { unit } = TestBed.solitary(OrderProcessor)
       .mock(UserServiceToken)
-      .impl((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "a@b.c" }) }))
+      .stub((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "a@b.c" }) }))
       .mock(EmailServiceToken, {})
       .using({ send: (to) => void sent.push(to) })
       .compile();
@@ -160,66 +160,66 @@ describe("TestBed.solitary overrides", () => {
   });
 
   it("lets the last override for one slot win", () => {
-    const { unit, unitRef } = TestBed.solitary(DualLoggerConsumer)
+    const { unit, mocks } = TestBed.solitary(DualLoggerConsumer)
       .mock(LoggerToken, { name: "primary" })
-      .impl(() => ({ log: () => undefined }))
+      .stub(() => ({ log: () => undefined }))
       .mock(LoggerToken, { name: "primary" })
-      .impl(() => ({}))
+      .stub(() => ({}))
       .compile();
 
-    // The second .impl replaced the first, so log is an auto-mock spy again.
+    // The second .stub replaced the first, so log is an auto-mock spy again.
     unit.primary.log("kept");
-    expect(unitRef.get(LoggerToken, { name: "primary" }).log.mock.calls).toEqual([["kept"]]);
+    expect(mocks.get(LoggerToken, { name: "primary" }).log.mock.calls).toEqual([["kept"]]);
   });
 
   it("falls back to the lone slotted mock when get() has no criteria", () => {
-    const { unit, unitRef } = TestBed.solitary(NamedConsumer)
+    const { unit, mocks } = TestBed.solitary(NamedConsumer)
       .mock(LoggerToken, { name: "primary" })
-      .impl(() => ({}))
+      .stub(() => ({}))
       .compile();
 
-    expect(unitRef.get(LoggerToken)).toBe(unit.logger);
+    expect(mocks.get(LoggerToken)).toBe(unit.logger);
   });
 
   it("rejects a lookup for a slot that has no mock", () => {
-    const { unitRef } = TestBed.solitary(NamedConsumer).compile();
+    const { mocks } = TestBed.solitary(NamedConsumer).compile();
 
-    expect(() => unitRef.get(LoggerToken, { name: "backup" })).toThrow(UndeclaredDependencyError);
+    expect(() => mocks.get(LoggerToken, { name: "backup" })).toThrow(UndeclaredDependencyError);
   });
 
   it("rejects a lookup for a non-dependency", () => {
-    const { unitRef } = TestBed.solitary(OrderProcessor).compile();
-    expect(() => unitRef.get(LoggerToken)).toThrow(UndeclaredDependencyError);
+    const { mocks } = TestBed.solitary(OrderProcessor).compile();
+    expect(() => mocks.get(LoggerToken)).toThrow(UndeclaredDependencyError);
   });
 
   it("resets every auto-mock the bed created, skipping sealed values", () => {
     const bed = TestBed.solitary(OrderProcessor)
       .mock(UserServiceToken)
-      .impl((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "a@b.c" }) }))
+      .stub((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "a@b.c" }) }))
       .mock(EmailServiceToken)
       .using({ send: () => undefined })
       .compile();
 
     bed.unit.placeOrder("u1", 5);
-    expect(bed.unitRef.get(PaymentGatewayToken).charge.mock.calls).toHaveLength(1);
+    expect(bed.mocks.get(PaymentGatewayToken).charge.mock.calls).toHaveLength(1);
 
-    bed.reset();
+    bed.resetMocks();
 
-    expect(bed.unitRef.get(PaymentGatewayToken).charge.mock.calls).toEqual([]);
+    expect(bed.mocks.get(PaymentGatewayToken).charge.mock.calls).toEqual([]);
   });
 
   it("consumes one override across repeated slots of every kind", () => {
     const alpha: Plugin = { name: "alpha" };
 
-    const { unit, unitRef } = TestBed.solitary(RepeatedSlotsConsumer)
+    const { unit, mocks } = TestBed.solitary(RepeatedSlotsConsumer)
       .mock(LoggerToken)
       .absent()
       .mock(PluginToken)
-      .all([alpha])
+      .usingAll([alpha])
       .mock(EmailServiceToken, { name: "outbox" })
-      .impl(() => ({}))
+      .stub(() => ({}))
       .mock(EmailServiceToken, { name: "inbox" })
-      .impl(() => ({}))
+      .stub(() => ({}))
       .compile();
 
     expect(unit.firstLogger).toBeUndefined();
@@ -229,18 +229,18 @@ describe("TestBed.solitary overrides", () => {
     // Both outbox slots share the one slot-targeted mock; inbox has its own.
     expect(unit.outboxA).toBe(unit.outboxB);
     expect(unit.outboxA).not.toBe(unit.inbox);
-    expect(unitRef.get(EmailServiceToken, { name: "inbox" })).toBe(unit.inbox);
+    expect(mocks.get(EmailServiceToken, { name: "inbox" })).toBe(unit.inbox);
     // Every slot is covered by a slotted override, so a slotless lookup has nothing to return.
-    expect(() => unitRef.get(EmailServiceToken)).toThrow(UndeclaredDependencyError);
+    expect(() => mocks.get(EmailServiceToken)).toThrow(UndeclaredDependencyError);
   });
 
   it("rejects a token-level override fully shadowed by slotted ones", () => {
     expect(() =>
       TestBed.solitary(RepeatedSlotsConsumer)
         .mock(EmailServiceToken, { name: "outbox" })
-        .impl(() => ({}))
+        .stub(() => ({}))
         .mock(EmailServiceToken, { name: "inbox" })
-        .impl(() => ({}))
+        .stub(() => ({}))
         .mock(EmailServiceToken)
         .using({ send: () => undefined })
         .compile(),

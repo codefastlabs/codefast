@@ -31,7 +31,7 @@ export class NotInjectableError extends TestingError {
 }
 
 /**
- * A `.mock(...)` override or a `unitRef.get(...)` lookup named a token or slot the unit does not use.
+ * A `.mock(...)` override or a `mocks.get(...)` lookup named a token or slot the unit does not use.
  *
  * @remarks Almost always a typo or a stale token reference; failing loudly beats silently binding an
  * unused constant or returning `undefined`.
@@ -49,7 +49,7 @@ export class UndeclaredDependencyError extends TestingError {
 }
 
 /**
- * A `unitRef.get(...)` lookup asked for a dependency that is not a retrievable mock.
+ * A `mocks.get(...)` lookup asked for a dependency that is not a retrievable mock.
  *
  * @remarks `.using()`, `.absent()`, and `.all()` seal the value, and an exposed class is real —
  * neither carries a mock surface, so handing them back typed as `Mocked` would lie.

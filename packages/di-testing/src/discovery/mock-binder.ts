@@ -12,13 +12,13 @@ import type { MockFactory } from "#/mocking/mock-factory";
  * How one dependency is supplied instead of a plain auto-mock.
  */
 export type MockOverride =
-  | { readonly kind: "impl"; readonly seed: unknown }
+  | { readonly kind: "stub"; readonly seed: unknown }
   | { readonly kind: "value"; readonly value: unknown }
   | { readonly kind: "absent" }
   | { readonly kind: "all"; readonly values: ReadonlyArray<unknown> };
 
 /**
- * Normalized slot criteria an override or a `unitRef` lookup addresses one binding slot with.
+ * Normalized slot criteria an override or a `mocks` lookup addresses one binding slot with.
  */
 export interface SlotCriteria {
   readonly name: string | undefined;
@@ -35,7 +35,7 @@ export interface SlottedOverride {
 }
 
 /**
- * One bound value `unitRef` can look up: its slot criteria and whether it is sealed.
+ * One bound value `mocks` can look up: its slot criteria and whether it is sealed.
  *
  * @remarks Sealed entries came from `.using()`, `.absent()`, or `.all()` — they carry no mock
  * surface, so retrieving them as `Mocked` would lie.
@@ -90,7 +90,7 @@ function describeCriteria(criteria: SlotCriteria): string {
 }
 
 /**
- * Binds a mock for every discovered dependency and returns the entries `unitRef` reads.
+ * Binds a mock for every discovered dependency and returns the entries `mocks` reads.
  *
  * @remarks One shared mock per token for slots without a specific override — duplicate tokens across
  * parameters share it — while an override carrying slot criteria supplies just its own slot. An
@@ -179,7 +179,7 @@ export function bindMocks(
       }
     }
     // absent/all slots continued above, so only the value/impl lanes reach here.
-    const lane = override?.override as Extract<MockOverride, { kind: "value" | "impl" }> | undefined;
+    const lane = override?.override as Extract<MockOverride, { kind: "value" | "stub" }> | undefined;
 
     // A slotted override owns its own value; the token-level lane is shared across plain slots.
     let value: unknown;
@@ -232,7 +232,7 @@ export function bindMocks(
 
 /** The value bound for one lane: an override's value, a seeded auto-mock, or a plain auto-mock. */
 function buildMock(
-  override: Extract<MockOverride, { kind: "value" | "impl" }> | undefined,
+  override: Extract<MockOverride, { kind: "value" | "stub" }> | undefined,
   mockFactory: MockFactory,
 ): unknown {
   if (override === undefined) {
