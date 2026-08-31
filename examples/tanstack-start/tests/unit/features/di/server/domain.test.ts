@@ -1,5 +1,4 @@
 import { TestBed } from "@codefast/di-testing";
-import type { TestBedOptions } from "@codefast/di-testing";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -21,8 +20,9 @@ import {
 } from "#/features/di/server/domain";
 import type { Task } from "#/features/di/server/domain";
 
-// Vitest-backed spies so `toHaveBeenCalledWith` matchers work on every auto-mock.
-const withVitestSpies: TestBedOptions = { mockFactory: () => vi.fn() };
+// Vitest-backed spies: matchers work on every auto-mock, and the factory's return type flows into
+// the bed, so vitest-only APIs like mockReturnValueOnce type-check on unitRef.get(...).method.
+const withVitestSpies = { mockFactory: () => vi.fn() };
 
 describe("TaskService", () => {
   // Must stay a factory: `.impl` seeds are built eagerly at `.mock()` time, so a shared builder
@@ -52,10 +52,7 @@ describe("TaskService", () => {
   });
 
   it("still adds when the optional MetricsExporter is absent", () => {
-    const { unit, unitRef } = bedFor()
-      .mock(MetricsExporterToken)
-      .using(undefined as never)
-      .compile();
+    const { unit, unitRef } = bedFor().mock(MetricsExporterToken).absent().compile();
 
     expect(unit.add("Ship the release")).toEqual([]);
     expect(unitRef.get(TaskRepositoryToken).add).toHaveBeenCalled();
