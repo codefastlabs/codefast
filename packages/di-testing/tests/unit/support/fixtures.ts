@@ -1,6 +1,6 @@
 /** Decorated fixtures the test-bed unit tests exercise. */
 
-import { inject, injectable, injectAll, optional, postConstruct, preDestroy, tag, token } from "@codefast/di";
+import { inject, injectable, injectAll, optional, postConstruct, preDestroy, slotName, tag, token } from "@codefast/di";
 
 // ── Collaborator contracts ───────────────────────────────────────────────────────────────────────────────────────────
 
@@ -119,6 +119,12 @@ export class DoubleLogger {
 /** A unit whose sole dependency is requested by name. */
 @injectable([inject(LoggerToken, { name: "primary" })])
 export class NamedConsumer {
+  constructor(readonly logger: Logger) {}
+}
+
+/** A unit requesting its dependency through di's reserved criterion — the name's tag spelling. */
+@injectable([inject(LoggerToken, { tag: slotName.of("primary") })])
+export class ReservedTagConsumer {
   constructor(readonly logger: Logger) {}
 }
 

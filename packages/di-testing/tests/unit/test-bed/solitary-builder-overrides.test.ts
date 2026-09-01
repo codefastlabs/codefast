@@ -1,3 +1,4 @@
+import { slotName } from "@codefast/di";
 import { describe, expect, it } from "vitest";
 
 import { OverrideMismatchError, SealedDependencyError, UndeclaredDependencyError } from "#/errors/errors";
@@ -15,6 +16,7 @@ import {
   PluginToken,
   RepeatedSlotsConsumer,
   ReportService,
+  ReservedTagConsumer,
   TaggedConsumer,
   UserServiceToken,
 } from "#/tests/unit/support/fixtures";
@@ -81,6 +83,27 @@ describe("TestBed.solitary overrides", () => {
     unit.primary.log("only primary");
     expect(mocks.get(LoggerToken, { name: "primary" }).log.mock.calls).toEqual([["only primary"]]);
     expect(mocks.get(LoggerToken).log.mock.calls).toEqual([]);
+  });
+
+  it("treats the reserved slotName criterion and the name spelling as one slot", () => {
+    // di folds { name: "x" } and { tag: slotName.of("x") } into one slot; addressing here must too.
+    const { unit, mocks } = TestBed.solitary(DualLoggerConsumer)
+      .mock(LoggerToken, { tag: slotName.of("primary") })
+      .stub(() => ({}))
+      .compile();
+
+    expect(unit.primary).toBe(mocks.get(LoggerToken, { name: "primary" }));
+    expect(mocks.get(LoggerToken, { tags: [slotName.of("primary")] })).toBe(unit.primary);
+    expect(unit.plain).toBe(mocks.get(LoggerToken));
+  });
+
+  it("addresses a dependency declared with the reserved criterion by its name", () => {
+    const { unit, mocks } = TestBed.solitary(ReservedTagConsumer)
+      .mock(LoggerToken, { name: "primary" })
+      .stub(() => ({}))
+      .compile();
+
+    expect(unit.logger).toBe(mocks.get(LoggerToken, { name: "primary" }));
   });
 
   it("leaves an optional dependency absent with .absent()", () => {
