@@ -34,6 +34,8 @@ export interface BindingSlot {
  *
  * @remarks The one place the derived `name` is computed — a slot assembled any other way can carry
  * a name criterion the readers of the view never see.
+ *
+ * @since 0.8.0
  */
 export function createBindingSlot(tags: ReadonlyArray<BindingTag>): BindingSlot {
   let name: string | undefined;

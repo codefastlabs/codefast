@@ -158,6 +158,8 @@ export function tag<Value = unknown>(name: string): TagKey<Value> {
  * @remarks `whenNamed(n)` and a request's `name` are sugar for `slotName.of(n)`, so one selection
  * model serves both spellings — a name takes part in key masks, indexes and specificity like any
  * criterion. What reserves the key is its identity; diagnostics render its criteria as `name:<value>`.
+ *
+ * @since 0.8.0
  */
 export const slotName: TagKey<string> = tag<string>("di:name");
 
@@ -170,6 +172,8 @@ let lastPeekedCriterion: BindingTag<string> | undefined;
  * The reserved criterion for a name, or `undefined` while no binding has declared it.
  *
  * @remarks Reads without minting, so a request-side name no binding declared is never retained.
+ *
+ * @since 0.8.0
  */
 export function slotNameCriterionOf(name: string): BindingTag<string> | undefined {
   if (name === lastPeekedName) {

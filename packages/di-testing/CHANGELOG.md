@@ -1,5 +1,15 @@
 # @codefast/di-testing
 
+## 0.1.1
+
+### Patch Changes
+
+- [#774](https://github.com/codefastlabs/codefast/pull/774) [`176e95a`](https://github.com/codefastlabs/codefast/commit/176e95a32b44fa16d81a22e4a48f53176837c839) Thanks [@thevuong](https://github.com/thevuong)! - Fold di's reserved `slotName` criterion into slot addressing, so `{ name: "x" }` and `{ tag: slotName.of("x") }` — one
+  slot to the container — are one slot to TestBed too: a mock registered with either spelling now matches a dependency
+  declared with the other, and `mocks.get(token, options)` accepts both.
+- Updated dependencies [[`96af502`](https://github.com/codefastlabs/codefast/commit/96af502ed8dd7fc02c4440d03b40dc6677b7bcec)]:
+  - @codefast/di@0.8.0
+
 ## 0.1.0
 
 ### Minor Changes
