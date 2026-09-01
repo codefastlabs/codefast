@@ -45,6 +45,16 @@ One variant was tried and rejected: probing the own registry at the top of `tagg
 recovered about half of the interpreted row's loss but cost the two hottest rows roughly 25% in the same paired runs —
 the larger body stopped inlining into `resolve()` — so the probe did not land.
 
+**Review-fix addendum, same day.** The code-review pass on this branch changed the fold again: a request's name now
+reads the intern cache through `TagKey.peek()`/`slotNameCriterionOf()` instead of minting (dynamic names no longer
+retained for the process lifetime), the matcher compares the reserved criterion by identity through the same read, and
+the criterion threads as `BindingTag | null` so "folded: none" is never re-folded. A bare `peek()` call on the fold path
+first measured 0.62×–0.83× on the named rows; the shared one-entry name→criterion front recovered it. Final adjacent
+pair against the pre-review branch state: `constant-resolve` 1.00 (control), `named-constant-get` 1.04,
+`slot-name-parent-owned` 1.14, `slot-tag-shorthand-hoisted` 1.00, `slot-injected-name-interpreted` 1.02,
+`slot-name-and-tag` 0.92 — the last buys back the documented "a hand-built criterion matches nothing" invariant on the
+scan lane, on a codefast-only `excludeFromAggregates` row.
+
 ## 2026-08-17 — dropping the ES2025 `Map` upsert methods costs nothing, and pays on the named lane
 
 The Node-floor change replaced `Map.prototype.getOrInsert` / `getOrInsertComputed` with the package's own
