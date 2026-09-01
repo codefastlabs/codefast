@@ -1,15 +1,16 @@
 /**
  * Slot-matching rules and the concurrent/async resolution branches.
  *
- * Slot matching is symmetric: a constrained binding only matches a request that carries the
- * matching constraint, and an unconstrained binding is excluded once the request asks for a
- * name or tags. The concurrency cases exercise the resolver's non-owner context branch, which
- * only runs when a second async chain starts while another still owns the shared context.
+ * Slot matching is a superset filter: a binding's criteria — its name folded in — are its
+ * conditions, so it matches any request stating all of them, and an unconstrained binding is
+ * excluded once the request asks for anything. The concurrency cases exercise the resolver's
+ * non-owner context branch, which only runs when a second async chain starts while another still
+ * owns the shared context.
  */
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
-import { tag } from "#/core/tag";
+import { slotName, tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
@@ -56,12 +57,69 @@ describe("multi-tag slot matching", () => {
     expect(plain.resolveOptional(serviceToken, { tag: ENV_TAG.of("prod") })).toBeUndefined();
   });
 
-  it("excludes a name-only binding when the request also carries tags", () => {
+  it("keeps a name-only binding matching when the request also carries tags", () => {
     const named = Container.create();
     named.bind(serviceToken).toConstantValue("named").whenNamed("primary");
 
+    // The binding's only condition — its name — is stated, so the extra tag rules nothing out.
     expect(named.resolve(serviceToken, { name: "primary" })).toBe("named");
-    expect(named.resolveOptional(serviceToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBeUndefined();
+    expect(named.resolve(serviceToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBe("named");
+    // The reverse still fails: a name the request does not carry stays a condition unmet.
+    expect(named.resolveOptional(serviceToken, { tag: ENV_TAG.of("prod") })).toBeUndefined();
+  });
+
+  it("dispatches a name-plus-tag request to the most specific candidate", () => {
+    const instance = Container.create();
+    instance.bind(serviceToken).toConstantValue("tagged").whenTagged(ENV_TAG.of("prod"));
+    instance.bind(serviceToken).toConstantValue("named-tagged").whenNamed("primary").whenTagged(ENV_TAG.of("prod"));
+
+    expect(instance.resolve(serviceToken, { tag: ENV_TAG.of("prod") })).toBe("tagged");
+    // Both candidates' conditions are stated; the one declaring more of the request wins.
+    expect(instance.resolve(serviceToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBe("named-tagged");
+  });
+
+  it("dispatches a name-plus-tag request through the index union above the threshold", () => {
+    // Nine fillers push the token past the size threshold where the tag-index union answers.
+    const bigToken = token<string>("union-lane-service");
+    const instance = Container.create();
+    for (let index = 0; index < 9; index += 1) {
+      instance
+        .bind(bigToken)
+        .toConstantValue(`filler-${String(index)}`)
+        .whenNamed(`filler-${String(index)}`);
+    }
+    instance.bind(bigToken).toConstantValue("tagged").whenTagged(ENV_TAG.of("prod"));
+    instance.bind(bigToken).toConstantValue("named-tagged").whenNamed("primary").whenTagged(ENV_TAG.of("prod"));
+
+    expect(instance.resolve(bigToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBe("named-tagged");
+    // The name repeated as the reserved criterion is one criterion — the gather dedups it.
+    expect(instance.resolve(bigToken, { name: "primary", tags: [slotName.of("primary"), ENV_TAG.of("prod")] })).toBe(
+      "named-tagged",
+    );
+    // A name-less multi-criterion request takes the same lane.
+    instance.bind(bigToken).toConstantValue("both-tags").whenTagged(ENV_TAG.of("prod")).whenTagged(REGION_TAG.of("eu"));
+    expect(instance.resolve(bigToken, { tags: [ENV_TAG.of("prod"), REGION_TAG.of("eu")] })).toBe("both-tags");
+    // A union miss answers undefined at the root, and reaches the parent when there is one.
+    expect(instance.resolveOptional(bigToken, { name: "primary", tag: ENV_TAG.of("dev") })).toBeUndefined();
+    const child = instance.createChild();
+    for (let index = 0; index < 9; index += 1) {
+      child
+        .bind(bigToken)
+        .toConstantValue(`child-${String(index)}`)
+        .whenNamed(`child-${String(index)}`);
+    }
+    child.bind(bigToken).toConstantValue("child-tagged").whenTagged(ENV_TAG.of("dev"));
+    expect(child.resolve(bigToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBe("named-tagged");
+  });
+
+  it("treats whenNamed and whenTagged of the reserved criterion as one slot", () => {
+    const instance = Container.create();
+    instance.bind(serviceToken).toConstantValue("first").whenNamed("primary");
+    instance.bind(serviceToken).toConstantValue("second").whenTagged(slotName.of("primary"));
+
+    // Same criterion set — last-wins replaced the first binding, whichever spelling asks.
+    expect(instance.resolve(serviceToken, { name: "primary" })).toBe("second");
+    expect(instance.resolve(serviceToken, { tag: slotName.of("primary") })).toBe("second");
   });
 });
 

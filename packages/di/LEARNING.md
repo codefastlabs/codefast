@@ -97,7 +97,7 @@ field order, so they all share a single V8 hidden class — a [performance techn
 covered later.
 
 The binding lands in the [`BindingRegistry`](src/core/registry.ts) — the **Registry pattern**, a token→bindings store
-with side indexes for id, name, and tag lookups. Registration is **last-wins**: `add()` finds any existing binding whose
+with side indexes for id and criterion lookups. Registration is **last-wins**: `add()` finds any existing binding whose
 _slot_ is equal and displaces it (see [SPEC — slots and last-wins](SPEC.md#slot-matching)). Every mutation bumps a
 monotonic `#version` counter — the seed for all the [cache invalidation](#version-stamping--cache-invalidation) later.
 
@@ -337,8 +337,8 @@ class._
 
 **One rule, one place (single source of truth for a decision).** The tiered fast lanes above are an optimization risk:
 each is a shortcut that must yield exactly what the general path would. So "does this slot match this request?" is
-answered by _one_ function, `matchesSlot()`, and "is this request name-only?" by `isNameOnlyOptions()`
-([`binding-select.ts`](src/resolution/select/binding-select.ts),
+answered by _one_ function, `matchesSlot()`, and "does this request carry exactly one criterion?" by
+`singleCriterionOnlyOf()` ([`binding-select.ts`](src/resolution/select/binding-select.ts),
 [`resolve-options.ts`](src/injection/resolve-options.ts)) — the lanes _call_ those rather than re-deciding. This isn't
 hypothetical caution: a fast lane that re-implemented a rule once returned a binding a `when()` predicate was refusing.
 _Lesson: when several code paths must agree on a decision, put the decision in one function they all call — a duplicated
@@ -678,9 +678,9 @@ tuples plus `NoInfer` let a factory's argument types be *derived* from a depende
 
 <a id="type-predicates"></a>
 
-**Type predicates.** Small narrowing helpers — [`isNameOnlyOptions`](src/injection/resolve-options.ts),
-`isInjectionDescriptor`, `#isPlainConstant` — give the hot paths a typed shortcut and keep the "which shape is this?"
-logic in one named place. _Lesson: a `x is T` predicate is how you turn a runtime shape check into type information._
+**Type predicates.** Small narrowing helpers — [`isInjectionDescriptor`](src/injection/descriptor.ts), `isSyncModule`,
+`#isPlainConstant` — give the hot paths a typed shortcut and keep the "which shape is this?" logic in one named place.
+_Lesson: a `x is T` predicate is how you turn a runtime shape check into type information._
 
 <a id="conditional-package-imports"></a>
 
@@ -744,7 +744,7 @@ per-call objects that could be per-slot, per-container, or constant._
 **`getOrInsert` vs `getOrInsertComputed`, chosen by hit rate.** The package's own `Map` upsert helpers
 ([`map-upsert.ts`](src/core/map-upsert.ts)) come in eager and lazy forms — its own, because the ES2025 methods they
 stand in for would raise the package's Node floor. The registry's index insertions use the eager `getOrInsert` because a
-bind is usually a token's first (the fallback value is usually what gets stored); `namedEntry()` uses the lazy
+bind is usually a token's first (the fallback value is usually what gets stored); `taggedEntry()` uses the lazy
 `getOrInsertComputed` with a module-scope factory so no closure is allocated on the common hit
 ([`registry.ts`](src/core/registry.ts), [`binding-lookup-cache.ts`](src/resolution/cache/binding-lookup-cache.ts)).
 _Lesson: eager-vs-lazy isn't a style choice; pick it from which branch dominates._

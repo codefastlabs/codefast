@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { bindingSlotEquals, bindingSlotToString, DEFAULT_BINDING_SLOT, generateBindingId } from "#/core/binding";
-import { tag, tagKeyMaskOf } from "#/core/tag";
+import { slotName, tag, tagKeyMaskOf } from "#/core/tag";
 
 const A_TAG = tag("a");
 const B_TAG = tag("b");
@@ -23,10 +23,11 @@ describe("bindingSlotEquals", () => {
   });
 
   it("differs on name, tag count, or tag value", () => {
+    // A name is the reserved criterion, so a differing name is a differing criterion set.
     expect(
       bindingSlotEquals(
-        { name: "x", tags: [], keyMask: tagKeyMaskOf([]) },
-        { name: "y", tags: [], keyMask: tagKeyMaskOf([]) },
+        { name: "x", tags: [slotName.of("x")], keyMask: tagKeyMaskOf([slotName.of("x")]) },
+        { name: "y", tags: [slotName.of("y")], keyMask: tagKeyMaskOf([slotName.of("y")]) },
       ),
     ).toBe(false);
     expect(
@@ -47,12 +48,16 @@ describe("bindingSlotEquals", () => {
 describe("bindingSlotToString", () => {
   it("renders 'default' for the default slot and name/tags otherwise", () => {
     expect(bindingSlotToString(DEFAULT_BINDING_SLOT)).toBe("default");
-    expect(bindingSlotToString({ name: "primary", tags: [], keyMask: tagKeyMaskOf([]) })).toBe("name:primary");
+    // A name is the reserved criterion, carried in tags and rendered once as the name: part.
+    const nameCriterion = slotName.of("primary");
+    expect(
+      bindingSlotToString({ name: "primary", tags: [nameCriterion], keyMask: tagKeyMaskOf([nameCriterion]) }),
+    ).toBe("name:primary");
     expect(
       bindingSlotToString({
         name: "primary",
-        tags: [TIER_TAG.of("gold")],
-        keyMask: tagKeyMaskOf([TIER_TAG.of("gold")]),
+        tags: [nameCriterion, TIER_TAG.of("gold")],
+        keyMask: tagKeyMaskOf([nameCriterion, TIER_TAG.of("gold")]),
       }),
     ).toBe("name:primary,tag:tier=gold");
   });

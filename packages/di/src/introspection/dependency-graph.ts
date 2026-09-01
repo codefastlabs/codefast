@@ -1,6 +1,7 @@
 import type { Binding } from "#/core/binding";
 import { effectiveBindingScope } from "#/core/binding-scope";
 import type { BindingRegistry } from "#/core/registry";
+import { slotName } from "#/core/tag";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type { BindingKind, BindingScope, Constructor } from "#/core/types";
@@ -96,12 +97,23 @@ function matchingTargets(candidates: ReadonlyArray<Binding>, ref: DependencySlot
   return candidates.filter((candidate) => matchesSlot(candidate.slot, criterion));
 }
 
+/** The name a dependency asks for, whichever spelling carries it. */
+function refSlotName(ref: DependencySlot): string | undefined {
+  if (ref.name !== undefined) {
+    return ref.name;
+  }
+  const reserved = ref.tags?.find((criterion) => criterion.key === slotName);
+  return reserved === undefined ? undefined : String(reserved.value);
+}
+
 function edgeLabel(ref: DependencySlot, index: number): string {
+  const name = refSlotName(ref);
+  const firstPlainTag = ref.tags?.find((criterion) => criterion.key !== slotName);
   const criterion =
-    ref.name !== undefined
-      ? `name:${ref.name}`
-      : ref.tags !== undefined && ref.tags.length > 0
-        ? `tag:${ref.tags[0]?.key.name}=${String(ref.tags[0]?.value)}`
+    name !== undefined
+      ? `name:${name}`
+      : firstPlainTag !== undefined
+        ? `tag:${firstPlainTag.key.name}=${String(firstPlainTag.value)}`
         : `[${index}]`;
 
   return ref.optional ? `${criterion} optional` : criterion;
@@ -170,23 +182,25 @@ function addDependencyEdges(
       return;
     }
 
+    const unboundSlotName = refSlotName(ref);
     accumulator.edges.push({
       from,
       to: unboundNodeIdFor(accumulator, ref.token),
       label,
       optional: true,
-      ...(ref.name !== undefined ? { slotName: ref.name } : {}),
+      ...(unboundSlotName !== undefined ? { slotName: unboundSlotName } : {}),
     });
 
     return;
   }
 
+  const requestedName = refSlotName(ref);
   for (const target of targets) {
     // A multi dep with no criterion of its own fans out — each edge names the slot it hits.
-    const slotName = target.slot.name ?? ref.name;
+    const edgeSlotName = target.slot.name ?? requestedName;
     const perTargetLabel =
-      ref.multi && ref.name === undefined && slotName !== undefined
-        ? edgeLabel({ ...ref, name: slotName }, index)
+      ref.multi && requestedName === undefined && edgeSlotName !== undefined
+        ? edgeLabel({ ...ref, name: edgeSlotName }, index)
         : label;
 
     accumulator.edges.push({
@@ -194,7 +208,7 @@ function addDependencyEdges(
       to: target.id,
       label: perTargetLabel,
       optional: ref.optional,
-      ...(slotName !== undefined ? { slotName } : {}),
+      ...(edgeSlotName !== undefined ? { slotName: edgeSlotName } : {}),
     });
   }
 }

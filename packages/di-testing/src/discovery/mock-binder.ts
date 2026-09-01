@@ -1,7 +1,7 @@
 /** Binds a unit's discovered dependencies onto a container as mocks — the sole container coupling. */
 
 import type { BindingTag, Constructor, Container, DependencyKey, DependencySlot, InjectOptions } from "@codefast/di";
-import { tokenName } from "@codefast/di";
+import { slotName, tokenName } from "@codefast/di";
 
 import { OverrideMismatchError, UndeclaredDependencyError } from "#/errors/errors";
 import type { DeepPartial } from "#/mocking/auto-mock";
@@ -65,10 +65,28 @@ export interface BoundMock {
 const ALL_ELEMENT_SLOT_PREFIX = "di-testing:all:";
 
 /**
+ * One name and plain tag set, with di's reserved criterion folded into the name.
+ *
+ * @remarks di treats `{name: "x"}` and `{tag: slotName.of("x")}` as one slot, so addressing here
+ * must too — mirroring `bindingSlotToResolveOptions` in di.
+ */
+function foldReservedName(
+  name: string | undefined,
+  tags: ReadonlyArray<BindingTag>,
+): { name: string | undefined; tags: ReadonlyArray<BindingTag> } {
+  const reserved = tags.find((tag) => tag.key === slotName);
+  if (reserved === undefined) {
+    return { name, tags };
+  }
+  return { name: name ?? (reserved.value as string), tags: tags.filter((tag) => tag.key !== slotName) };
+}
+
+/**
  * Folds an `InjectOptions` into slot criteria, or `undefined` when it names no criterion.
  *
  * @remarks Tags are copied and deduplicated by identity — di interns each `(key, value)` pair, so a
- * repeated pair is the same object.
+ * repeated pair is the same object. A reserved `slotName` criterion folds into `name`, so both
+ * spellings address one slot.
  *
  * @since 0.1.0
  */
@@ -76,12 +94,12 @@ export function normalizeCriteria(options: InjectOptions | undefined): SlotCrite
   if (options === undefined) {
     return undefined;
   }
-  const folded = options.tag === undefined ? (options.tags ?? []) : [options.tag, ...(options.tags ?? [])];
-  const tags = [...new Set(folded)];
-  if (options.name === undefined && tags.length === 0) {
+  const merged = options.tag === undefined ? (options.tags ?? []) : [options.tag, ...(options.tags ?? [])];
+  const { name, tags } = foldReservedName(options.name, [...new Set(merged)]);
+  if (name === undefined && tags.length === 0) {
     return undefined;
   }
-  return { name: options.name, tags };
+  return { name, tags };
 }
 
 /**
@@ -110,16 +128,17 @@ function tagSetEquals(left: ReadonlyArray<BindingTag>, right: ReadonlyArray<Bind
 
 /** Returns the slot's own criteria, or `undefined` for an unconstrained slot. */
 function criteriaOfSlot(slot: DependencySlot): SlotCriteria | undefined {
-  const tags = slot.tags ?? [];
-  if (slot.name === undefined && tags.length === 0) {
+  const { name, tags } = foldReservedName(slot.name, slot.tags ?? []);
+  if (name === undefined && tags.length === 0) {
     return undefined;
   }
-  return { name: slot.name, tags };
+  return { name, tags };
 }
 
 /** Returns whether an override's criteria address exactly this slot. */
 function matchesSlot(criteria: SlotCriteria, slot: DependencySlot): boolean {
-  return criteria.name === slot.name && tagSetEquals(criteria.tags, slot.tags ?? []);
+  const folded = foldReservedName(slot.name, slot.tags ?? []);
+  return criteria.name === folded.name && tagSetEquals(criteria.tags, folded.tags);
 }
 
 /** A readable rendering of criteria for error messages. */

@@ -206,7 +206,8 @@ is ignored.
 
 The hint passed into a single resolve has three fields, all optional:
 
-- **`name`** — matches a binding with `whenNamed(name)`.
+- **`name`** — sugar for the reserved criterion `slotName.of(name)`: the request's criterion set carries it alongside
+  whatever `tag`/`tags` contribute ([section 5.11](#slot-matching)). It selects a binding with `whenNamed(name)`.
 - **`tags`** — an array of criteria, read as a **superset filter**: it matches a binding whose _every_ declared tag is
   in this array, not "the binding must carry all of these tags". The full rule is in [section 5.11](#slot-matching).
 - **`tag`** — shorthand for exactly one criterion, equivalent to a single element of `tags`. Several criteria require
@@ -217,7 +218,8 @@ The hint passed into a single resolve has three fields, all optional:
 
 **A criterion is minted by `TagKey.of()`, and only by it — normative.** A tag key is declared with `tag<Value>(name)`;
 `key.of(value)` returns an **interned** `BindingTag`: the same value always yields the **same object**. `BindingTag` is
-branded so it cannot be constructed by hand.
+branded so it cannot be constructed by hand. `key.peek(value)` reads the intern cache without minting — the engine folds
+a request's `name` through it, so a name no binding ever declared is never retained.
 
 ```ts
 const Region = tag<"eu" | "us">("region");
@@ -269,8 +271,9 @@ predicate. An ordinary resolve never needs it.
 - **`currentResolveOptions`** — the hint passed into the current resolve, `undefined` if there is none.
 
 A **`ResolutionFrame`** holds: `tokenName` (for display in error messages), `scope`, `bindingId`, `kind`, and the
-**`slot`** of the binding matched for that frame. A slot has two parts: `name` (`undefined` if the binding declares no
-`whenNamed()`) and `tags` (`[]` if it declares no `whenTagged()`). The important point: a slot reflects the **constraint
+**`slot`** of the binding matched for that frame. A slot is the binding's criterion set: `tags` (every criterion, the
+reserved name criterion included) plus `name`, the derived view of the reserved criterion (`undefined` if the binding
+declares no `whenNamed()`) — see [section 5.11](#slot-matching). The important point: a slot reflects the **constraint
 registered at bind time**, not the hint passed at resolve time — the advanced constraints in
 [section 8](#8-advanced-constraints) read exactly this field.
 
@@ -515,6 +518,9 @@ container
 > be declared up front with `tag<Value>(name)` — that is what makes identity comparison enough to stand in for
 > `Object.is` ([section 3.5](#resolve-options)). The key name is still a `string`, so use a namespace prefix to avoid
 > collisions: `tag("mylib:fuel")`, `tag("@scope/pkg:env")`.
+
+> **`whenNamed` is sugar:** a name is a criterion of the reserved key `slotName` — `whenNamed("console")` ≡
+> `whenTagged(slotName.of("console"))`, single-valued per slot ([section 5.11](#slot-matching)).
 
 > **Explicit `whenDefault()` vs declaring no constraint:** a binding with no `when*` at all also matches the default
 > slot. `whenDefault()` is useful when you want to document the intent explicitly, or to combine it with a custom
@@ -793,44 +799,63 @@ container.bind(AbstractAuditLogger).toAlias(Logger).whenNamed("audit");
 
 **Vocabulary (normative):**
 
-A **binding slot** is the key that uniquely identifies a slot in the registry, computed from the binding's constraints:
+A **binding slot** is the key that uniquely identifies a slot in the registry — the binding's **criterion set**,
+computed from its constraints:
 
 ```
 BindingSlot = {
-  name: string | undefined,      // from whenNamed() — undefined if absent
-  tags: ReadonlySet<BindingTag>, // from EVERY whenTagged() on this binding
+  tags: ReadonlySet<BindingTag>, // from EVERY whenTagged(), plus slotName.of(n) when the binding declares whenNamed(n)
+  name: string | undefined,      // derived view: the reserved criterion's value, undefined when the slot carries none
 }
 ```
 
-Two binding slots are **equal** when: `name` is equal (or both are `undefined`) **and** `tags` are equal by the identity
-of each criterion (order does not matter). Because criteria are interned ([section 3.5](#resolve-options)), identity
-here gives exactly the result of `Object.is` on `[key, value]`. The `default` slot is
-`{ name: undefined, tags: new Set() }`.
+**One selection model — a name is a criterion inside it, not a second rule (normative).** The package exports a reserved
+tag key `slotName: TagKey<string>`, and a name is a criterion of that key:
+
+- `whenNamed(n)` ≡ `whenTagged(slotName.of(n))` — the binding-side sugar; `whenParentNamed(n)` is likewise
+  `whenParentTagged(slotName.of(n))` ([section 8](#8-advanced-constraints)).
+- `{ name: n }` in `ResolveOptions` / `InjectOptions` ≡ `{ tag: slotName.of(n) }` — the request-side sugar
+  ([section 3.5](#resolve-options)).
+- **One criterion per key, reserved key included:** a slot carries at most one criterion of any key — re-declaring a
+  key, through either verb, replaces that key's criterion. `whenNamed` inherits this rule rather than adding one.
+- What reserves the key is its **identity**, not its display name. Diagnostics render its criterion as `name:<value>`,
+  never `tag:…`, and `BindingSlot.name` is the derived view of it that `ResolutionFrame.slot` (section 3.7) and the
+  `when*Named` constraints read.
+
+Two binding slots are **equal** when their criterion sets are equal by the identity of each criterion (order does not
+matter). Because criteria are interned ([section 3.5](#resolve-options)), identity here gives exactly the result of
+`Object.is` on `[key, value]`. The `default` slot is the empty criterion set.
 
 **Predicate-only `when()`:** a binding carrying only `.when(predicate)` (with no `whenNamed`/`whenTagged`) **does not
 take part in slot last-wins** — several bindings for one token can coexist with the same binding slot. If ≥ 2 candidates
 remain after runtime filtering, `resolve`/`resolveAsync` throws `AmbiguousBindingError` (not `InternalError` — this is a
 user error, not an internal one).
 
-**Candidate:** a binding that passes the `ResolveOptions` filter (name/tags) and every `when(ctx)` predicate.
+**Candidate:** a binding whose slot matches the request's criterion set and that passes every `when(ctx)` predicate.
 
-**Filtering `ResolveOptions` → slot (normative).** `name` and `tags` are two independent rules, and they **do not have
-the same shape**:
+**Filtering `ResolveOptions` → slot (normative).** One rule, whatever mix of spellings the request uses:
 
-- **`name` compares for equality, absence included.** A slot with a name only matches a request asking for that exact
-  name; a slot without a name does not match a request that has one. This is **not** a subset relation.
-- **`tags` is a superset filter: every tag the slot declares must be in the request's tag set.** Adding a tag to the
-  request makes it match **more**, not fewer.
-- **A slot with no tags does not match a request that has tags** — a request carrying tags never falls back to the
-  default slot.
-- The request's tag set is the **union** of `tag` and `tags` ([section 3.5](#resolve-options)); `tags: []` counts as no
-  criteria.
-- Tag values compare by `Object.is`; predicates are evaluated **after** slot matching.
+- **The request's criterion set** is the union of `tags`, `tag`, and — when `name` is present — `slotName.of(name)`
+  ([section 3.5](#resolve-options)); `tags: []` counts as no criteria.
+- **A slot matches when every criterion it declares is in the request's criterion set** — a superset filter. Adding a
+  criterion to the request makes it match **more**, not fewer.
+- **The default slot is the one exception:** a slot with no criteria matches only a request with no criteria — a request
+  carrying any criterion never falls back to the default slot.
+- A slot that declares no name states **no condition on the name** — it does not demand the request drop its `name`,
+  exactly as a slot without `size` does not demand the request drop `size`.
+- Criteria compare by identity — `Object.is` on `[key, value]` — and predicates are evaluated **after** slot matching.
 
-| Request                         | Slot `{}` | Slot `{fuel:petrol}` | Slot `{fuel:petrol, size:v8}` |
-| ------------------------------- | --------- | -------------------- | ----------------------------- |
-| `{tags:[fuel:petrol]}`          | ✗         | ✓                    | ✗                             |
-| `{tags:[fuel:petrol, size:v8]}` | ✗         | ✓                    | ✓                             |
+| Request                          | Slot `{}` | Slot `{name:x}` | Slot `{fuel:petrol}` | Slot `{name:x, fuel:petrol}` |
+| -------------------------------- | --------- | --------------- | -------------------- | ---------------------------- |
+| `{name:"x"}`                     | ✗         | ✓               | ✗                    | ✗                            |
+| `{tags:[fuel:petrol]}`           | ✗         | ✗               | ✓                    | ✗                            |
+| `{name:"x", tags:[fuel:petrol]}` | ✗         | ✓               | ✓                    | ✓                            |
+
+> **Compatibility (one-rule model vs. the earlier two-rule model):** outcomes differ **only** for a request carrying
+> both a `name` and at least one tag. The old name rule — equality, absence included — excluded every slot that declared
+> no name; under the one rule those slots match whenever their criteria are covered (the `{fuel:petrol}` cell in the
+> last row above), and specificity decides as usual (row 9 below). A request carrying only a name, only tags, or nothing
+> resolves exactly as before.
 
 **No criteria — `resolve` and `resolveAll` differ (normative):** when `ResolveOptions` is absent or carries no criteria,
 `resolve`/`resolveOptional` read that as a request for **the default slot exactly**, so a binding with only a
@@ -839,41 +864,48 @@ included.
 
 **Case table:**
 
-| #   | Case                                                                 | Resulting slot         | `resolve` with no hint                                                       | `resolveAll` / hint     |
-| --- | -------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------- | ----------------------- |
-| 1   | `bind(T).to*(A)`                                                     | Default                | A                                                                            | `[A]`                   |
-| 2   | `bind(T).to*(A)` then `bind(T).to*(B)`                               | Default last-wins      | B                                                                            | `[B]`                   |
-| 3   | `to*(A).whenNamed("a")` then `to*(B).whenNamed("a")`                 | Named "a" last-wins    | `NoMatchingBindingError` (no default)                                        | Hint `{name:"a"}` → B   |
-| 4   | `to*(A).whenNamed("a")` and `to*(B).whenNamed("b")`                  | Named "a" + Named "b"  | `NoMatchingBindingError`                                                     | `resolveAll` → `[A, B]` |
-| 5   | `to*(A)` and `to*(B).whenNamed("x")`                                 | Default + Named "x"    | A                                                                            | `resolveAll` → `[A, B]` |
-| 6   | `rebind(T).to*(C)`                                                   | Explicit reset         | C                                                                            | `[C]`                   |
-| 7   | Tags `{fuel:petrol, size:v8}.to*(A)` then the same tags `.to*(B)`    | Tag-set last-wins      | Hint `{tags:[...]}` → B                                                      | Hint → B                |
-| 8   | Tags `{fuel:petrol}.to*(A)` and tags `{fuel:petrol, size:v8}.to*(B)` | Two different tag-sets | Hint `{tags:[fuel]}` → A; hint `{tags:[fuel, size]}` → **B** (more specific) | `resolveAll` → `[A, B]` |
+| #   | Case                                                                      | Resulting slot         | `resolve` with no hint                                                       | `resolveAll` / hint                                                                               |
+| --- | ------------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| 1   | `bind(T).to*(A)`                                                          | Default                | A                                                                            | `[A]`                                                                                             |
+| 2   | `bind(T).to*(A)` then `bind(T).to*(B)`                                    | Default last-wins      | B                                                                            | `[B]`                                                                                             |
+| 3   | `to*(A).whenNamed("a")` then `to*(B).whenNamed("a")`                      | Named "a" last-wins    | `NoMatchingBindingError` (no default)                                        | Hint `{name:"a"}` → B                                                                             |
+| 4   | `to*(A).whenNamed("a")` and `to*(B).whenNamed("b")`                       | Named "a" + Named "b"  | `NoMatchingBindingError`                                                     | `resolveAll` → `[A, B]`                                                                           |
+| 5   | `to*(A)` and `to*(B).whenNamed("x")`                                      | Default + Named "x"    | A                                                                            | `resolveAll` → `[A, B]`                                                                           |
+| 6   | `rebind(T).to*(C)`                                                        | Explicit reset         | C                                                                            | `[C]`                                                                                             |
+| 7   | Tags `{fuel:petrol, size:v8}.to*(A)` then the same tags `.to*(B)`         | Tag-set last-wins      | Hint `{tags:[...]}` → B                                                      | Hint → B                                                                                          |
+| 8   | Tags `{fuel:petrol}.to*(A)` and tags `{fuel:petrol, size:v8}.to*(B)`      | Two different tag-sets | Hint `{tags:[fuel]}` → A; hint `{tags:[fuel, size]}` → **B** (more specific) | `resolveAll` → `[A, B]`                                                                           |
+| 9   | Tags `{fuel:petrol}.to*(A)` and named `"x"` + tags `{fuel:petrol}.to*(B)` | Tagged + named-tagged  | `NoMatchingBindingError` (no default)                                        | Hint `{tags:[fuel]}` → A; hint `{name:"x", tags:[fuel]}` → **B** (A matches too; B more specific) |
 
 **Row 3 — `resolve` with no hint:** throws `NoMatchingBindingError` (not `TokenNotBoundError`) because the token has
 bindings but no slot matches the empty hint. The message lists the available slots:
 `"Available slots: [name:a, name:b]"`.
 
-**Row 8 — the more detailed the hint, the more bindings satisfy it, hence the need for a more-specific rule.** A
-binding's tags are **its conditions**, not a filter that must match exactly. The hint `{fuel:petrol}` rules out B
-because B also demands `size`; the hint `{fuel:petrol, size:v8}` satisfies **both** A and B, because A's only condition
-is stated too. This is a dispatch model (like routing, media queries, overload resolution), and every dispatch model
-needs a tie-breaker.
+**Rows 8 and 9 — the more detailed the hint, the more bindings satisfy it, hence the need for a more-specific rule.** A
+binding's criteria are **its conditions**, not a filter that must match exactly. In row 8 the hint `{fuel:petrol}` rules
+out B because B also demands `size`; the hint `{fuel:petrol, size:v8}` satisfies **both** A and B, because A's only
+condition is stated too. Row 9 is the same shape with the name as the extra criterion: `{name:"x", tags:[fuel]}`
+satisfies A — whose only condition, `fuel`, is stated — and B, which states both; B wins on specificity. This is a
+dispatch model (like routing, media queries, overload resolution), and every dispatch model needs a tie-breaker.
 
 **The more-specific rule for `resolve` / `resolveOptional` (normative)** — applied in order, stopping at the first step
 that picks exactly one candidate:
 
 1. **Predicate:** if exactly one candidate carries a `when()` predicate, that candidate wins. Two or more is genuine
    ambiguity.
-2. **Tag count:** the candidate declaring **more tags than every other candidate** wins — it matches more of what was
-   asked.
+2. **Criterion count:** the candidate declaring **more criteria than every other candidate** wins — it matches more of
+   what was asked. A name, when the slot carries one, counts as one criterion like any other.
 3. If no step decides, throw `AmbiguousBindingError`.
 
-So row 8 resolves in both directions: `{fuel}` → A, `{fuel, size}` → B. An equal tag count is still ambiguous —
+So row 8 resolves in both directions: `{fuel}` → A, `{fuel, size}` → B. An equal criterion count is still ambiguous —
 `{fuel:petrol}.to*(A)` and `{size:v8}.to*(B)` with a hint carrying both tags leaves neither more specific.
 
 `resolveAll` does **not** apply this rule: it returns every matching candidate, and specificity only comes into play
 when exactly one must be chosen.
+
+> **The more-specific rule is container-local.** Selection answers from the nearest container whose candidates match
+> before consulting the parent, so a child's matching subset slot (say, tag-only) answers a `{name, tags}` request even
+> when the parent declares a slot carrying more of its criteria — locality outranks specificity across the chain,
+> exactly as it always has for tag-only requests.
 
 > **`has(token)` and slot semantics:** `container.has(token)` returns `true` if the token has **any binding at all**
 > (even if only named/tagged slots, with no default). `container.resolve(token)` with no hint can still throw
@@ -889,12 +921,13 @@ changing `slot`/`predicate` requires re-indexing, so those still build a new obj
 
 **`BindingSlot` — used for slot-aware last-wins and for resolution matching:**
 
-`BindingSlot` carries `name` (`undefined` = default slot, i.e. no `whenNamed`) and `tags` (`[]` = no `whenTagged`; order
-does not affect equality).
+`BindingSlot` carries `tags` — the binding's whole criterion set, the reserved name criterion included (`[]` = the
+default slot) — and `name`, the derived view of the reserved criterion (`undefined` when the slot carries none). Order
+inside `tags` does not affect equality.
 
-Two `BindingSlot`s are equal when `name` is equal (or both `undefined`) **and** `tags` are equal by the identity of each
-criterion (order does not matter) — equivalent to `Object.is` on `[key, value]` thanks to interning. The implementer
-should provide a `bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean` helper.
+Two `BindingSlot`s are equal when their criterion sets are equal by the identity of each criterion (order does not
+matter) — equivalent to `Object.is` on `[key, value]` thanks to interning; `name`, being derived, needs no separate
+comparison. The implementer should provide a `bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean` helper.
 
 **Fields common to every binding (except where noted):**
 
@@ -1271,6 +1304,8 @@ fail fast at startup on a config error, and remove lazy-init latency from the fi
 **Scope, cross-container behaviour, and idempotency:**
 
 - Only singletons defined at the current container are warmed up — it does not walk up to the parent.
+- **Each singleton binding is instantiated directly, not re-selected** — warming never runs another binding whose
+  criteria happen to be a subset of the singleton's slot.
 - If singleton A at the child depends on singleton B at the parent, resolving A triggers resolving B at the parent and
   caches B there. `initializeAsync()` on a child can therefore indirectly trigger parent singletons.
 - A `toConstantValue` binding is **not skipped** when it has an `onActivation` — the activation runs and the result is

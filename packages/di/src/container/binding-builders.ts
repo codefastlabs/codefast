@@ -17,11 +17,17 @@ import type {
   SingletonLifecycleBuilder,
   TransientBindingBuilder,
 } from "#/core/binding";
-import { clearBindingFrame, createBinding, DEFAULT_BINDING_SLOT, refinableFields } from "#/core/binding";
+import {
+  clearBindingFrame,
+  createBinding,
+  createBindingSlot,
+  DEFAULT_BINDING_SLOT,
+  refinableFields,
+} from "#/core/binding";
 import { mergingConstraintRequirements } from "#/core/constraint-requirement";
 import type { BindingRegistry } from "#/core/registry";
 import type { BindingTag } from "#/core/tag";
-import { tagKeyMaskOf } from "#/core/tag";
+import { slotName } from "#/core/tag";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type {
@@ -47,8 +53,7 @@ function updateSlotTag(slot: BindingSlot, criterion: BindingTag): BindingSlot {
   } else {
     tags[existingIndex] = criterion;
   }
-  // Frozen like DEFAULT_BINDING_SLOT's list: frames and snapshots alias a slot's tags.
-  return { ...slot, tags: Object.freeze(tags), keyMask: tagKeyMaskOf(tags) };
+  return createBindingSlot(tags);
 }
 
 /** Record a module's binding id, dropping the id the chain re-slotted away from. */
@@ -231,7 +236,7 @@ export class BindingChain<Value>
   }
 
   whenNamed(name: string): this {
-    return this.#reslot({ ...this.#registered().slot, name }, this.#registered().predicate);
+    return this.whenTagged(slotName.of(name));
   }
 
   whenTagged(criterion: BindingTag): this {

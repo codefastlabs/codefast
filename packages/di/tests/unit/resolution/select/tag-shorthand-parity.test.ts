@@ -7,11 +7,15 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
-import { tag } from "#/core/tag";
+import { slotName, tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectAll, normalizeToDescriptor, optional } from "#/injection/descriptor";
-import { singleTagOnlyOf } from "#/injection/resolve-options";
+import {
+  bindingSlotToResolveOptions,
+  singleCriterionForSlot,
+  singleCriterionOnlyOf,
+} from "#/injection/resolve-options";
 
 const SLOT = tag("slot");
 const ENV = tag("env");
@@ -138,20 +142,70 @@ describe("tag shorthand on the injection surface", () => {
   });
 });
 
-describe("singleTagOnlyOf", () => {
+describe("singleCriterionOnlyOf", () => {
   const pair = ENV.of("prod");
 
   it("admits both spellings of a one-tag request to the index lane", () => {
-    expect(singleTagOnlyOf({ tag: pair })).toBe(pair);
-    expect(singleTagOnlyOf({ tags: [pair] })).toBe(pair);
-    expect(singleTagOnlyOf({ tag: pair, tags: [] })).toBe(pair);
+    expect(singleCriterionOnlyOf({ tag: pair })).toBe(pair);
+    expect(singleCriterionOnlyOf({ tags: [pair] })).toBe(pair);
+    expect(singleCriterionOnlyOf({ tag: pair, tags: [] })).toBe(pair);
   });
 
-  it("withholds requests the single-tag index cannot answer", () => {
-    // Two sources means two tags requested, and a one-tag index would skip the ambiguity check.
-    expect(singleTagOnlyOf({ tag: pair, tags: [TIER.of("premium")] })).toBeUndefined();
-    expect(singleTagOnlyOf({ tags: [pair, TIER.of("premium")] })).toBeUndefined();
-    expect(singleTagOnlyOf({ name: "primary", tag: pair })).toBeUndefined();
-    expect(singleTagOnlyOf({})).toBeUndefined();
+  it("folds a lone name to the reserved criterion once one is minted", () => {
+    // The fold peeks rather than mints, so an undeclared name folds to nothing.
+    expect(singleCriterionOnlyOf({ name: "parity-unminted" })).toBeUndefined();
+    const criterion = slotName.of("primary");
+    expect(singleCriterionOnlyOf({ name: "primary" })).toBe(criterion);
+    expect(singleCriterionOnlyOf({ name: "primary", tags: [] })).toBe(criterion);
+  });
+
+  it("never interns a request-side name no binding declared", () => {
+    const container = Container.create();
+    const probe = token<string>("parity-leak-probe-target");
+    container.bind(probe).toConstantValue("v").whenNamed("declared");
+
+    expect(container.resolveOptional(probe, { name: "never-declared-name" })).toBeUndefined();
+    // The miss folded through peek, so the name minted nothing.
+    expect(slotName.peek("never-declared-name")).toBeUndefined();
+    expect(slotName.peek("declared")).toBeDefined();
+  });
+
+  it("renders the reserved criterion as name in NoMatchingBindingError", () => {
+    const container = Container.create();
+    const probe = token<string>("parity-error-probe");
+    container.bind(probe).toConstantValue("v").whenNamed("x");
+
+    expect(() => container.resolve(probe, { tag: slotName.of("y") })).toThrow(/"name":"y"/);
+  });
+
+  it("memoizes the per-slot fold, leaving an unminted lone name open until a bind mints it", () => {
+    const multi = { token: token<string>("sfs-multi"), optional: false, multi: false, name: "x", tags: [pair] };
+    // Two criteria fold to "none", and the memo answers the repeat.
+    expect(singleCriterionForSlot(multi)).toBeNull();
+    expect(singleCriterionForSlot(multi)).toBeNull();
+
+    const late = { token: token<string>("sfs-late"), optional: false, multi: false, name: "sfs-late-name" };
+    expect(singleCriterionForSlot(late)).toBeNull();
+    const criterion = slotName.of("sfs-late-name");
+    expect(singleCriterionForSlot(late)).toBe(criterion);
+    expect(singleCriterionForSlot(late)).toBe(criterion);
+  });
+
+  it("folds a reserved criterion beside plain tags into name plus the remaining tags", () => {
+    expect(bindingSlotToResolveOptions({ tags: [slotName.of("folded"), pair] })).toEqual({
+      name: "folded",
+      tags: [pair],
+    });
+    // A name already present wins; the reserved criterion is only stripped.
+    expect(bindingSlotToResolveOptions({ name: "kept", tags: [slotName.of("kept")] })).toEqual({ name: "kept" });
+  });
+
+  it("withholds requests the single-criterion index cannot answer", () => {
+    // Two sources means two criteria requested, and a one-criterion index would skip the ambiguity check.
+    expect(singleCriterionOnlyOf({ tag: pair, tags: [TIER.of("premium")] })).toBeUndefined();
+    expect(singleCriterionOnlyOf({ tags: [pair, TIER.of("premium")] })).toBeUndefined();
+    expect(singleCriterionOnlyOf({ name: "primary", tag: pair })).toBeUndefined();
+    expect(singleCriterionOnlyOf({ name: "primary", tags: [pair] })).toBeUndefined();
+    expect(singleCriterionOnlyOf({})).toBeUndefined();
   });
 });

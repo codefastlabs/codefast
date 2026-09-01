@@ -58,6 +58,14 @@ export interface TagKey<Value = unknown> {
   readonly mask: TagKeyMask;
   /** The criterion for one value, interned: the same value always yields the same object. */
   of(value: Value): BindingTag<Value>;
+  /**
+   * The interned criterion for a value, or `undefined` when none was ever minted.
+   *
+   * @remarks Reading without minting is what keeps a request-side value from being retained for
+   * the process lifetime: a value no binding ever declared has no criterion, so a lookup can
+   * answer "no match" without inserting one.
+   */
+  peek(value: Value): BindingTag<Value> | undefined;
 }
 
 let tagKeyCounter = -1;
@@ -101,6 +109,28 @@ export function tag<Value = unknown>(name: string): TagKey<Value> {
   let lastValue: Value | undefined;
   let lastPair: BindingTag<Value> | undefined;
 
+  // The miss paths live outside `of()`/`peek()` so the hot wrappers stay small enough to inline.
+  const internPair = (value: Value): BindingTag<Value> => {
+    const cacheKey = internKeyFor(value);
+    const existing = interned.get(cacheKey);
+
+    if (existing !== undefined) {
+      lastValue = value;
+      lastPair = existing;
+
+      return existing;
+    }
+
+    const pair = { key, value, mask } as BindingTag<Value>;
+
+    interned.set(cacheKey, pair);
+    lastValue = value;
+    lastPair = pair;
+
+    return pair;
+  };
+  const peekInterned = (value: Value): BindingTag<Value> | undefined => interned.get(internKeyFor(value));
+
   const key: TagKey<Value> = {
     name,
     id,
@@ -109,28 +139,48 @@ export function tag<Value = unknown>(name: string): TagKey<Value> {
       if (lastPair !== undefined && Object.is(value, lastValue)) {
         return lastPair;
       }
-
-      const cacheKey = internKeyFor(value);
-      const existing = interned.get(cacheKey);
-
-      if (existing !== undefined) {
-        lastValue = value;
-        lastPair = existing;
-
-        return existing;
+      return internPair(value);
+    },
+    peek(value: Value): BindingTag<Value> | undefined {
+      if (lastPair !== undefined && Object.is(value, lastValue)) {
+        return lastPair;
       }
-
-      const pair = { key, value, mask } as BindingTag<Value>;
-
-      interned.set(cacheKey, pair);
-      lastValue = value;
-      lastPair = pair;
-
-      return pair;
+      return peekInterned(value);
     },
   };
 
   return key;
+}
+
+/**
+ * The reserved key a slot's name is a criterion of.
+ *
+ * @remarks `whenNamed(n)` and a request's `name` are sugar for `slotName.of(n)`, so one selection
+ * model serves both spellings — a name takes part in key masks, indexes and specificity like any
+ * criterion. What reserves the key is its identity; diagnostics render its criteria as `name:<value>`.
+ */
+export const slotName: TagKey<string> = tag<string>("di:name");
+
+// One-entry front for the reserved key's read: a name's criterion never changes once minted, so a
+// hit is sound forever, and a miss is never cached so a later `whenNamed` bind is still seen.
+let lastPeekedName: string | undefined;
+let lastPeekedCriterion: BindingTag<string> | undefined;
+
+/**
+ * The reserved criterion for a name, or `undefined` while no binding has declared it.
+ *
+ * @remarks Reads without minting, so a request-side name no binding declared is never retained.
+ */
+export function slotNameCriterionOf(name: string): BindingTag<string> | undefined {
+  if (name === lastPeekedName) {
+    return lastPeekedCriterion;
+  }
+  const criterion = slotName.peek(name);
+  if (criterion !== undefined) {
+    lastPeekedName = name;
+    lastPeekedCriterion = criterion;
+  }
+  return criterion;
 }
 
 /**
