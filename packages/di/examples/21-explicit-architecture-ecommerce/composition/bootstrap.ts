@@ -2,10 +2,14 @@
 
 import { toDotGraph } from "@codefast/di";
 
+import { PaymentGatewayToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
+import type { PaymentGateway } from "#/examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
 import { ProductRepositoryToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
 import { createContainer } from "#/examples/21-explicit-architecture-ecommerce/composition/container";
 import { Product } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product";
 import { toProductId } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
+import type { OrderId } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-id";
+import type { PaymentIntent } from "#/examples/21-explicit-architecture-ecommerce/domain/payment/payment-intent";
 import { Money } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/money";
 import { PlaceOrderCommandCliToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/cli/place-order-command";
 import { RequestContextToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/middleware/request-context";
@@ -13,6 +17,23 @@ import { CatalogControllerToken } from "#/examples/21-explicit-architecture-ecom
 import { CheckoutControllerToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/routes/checkout-routes";
 import { HttpServerToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/server";
 import { banner, item, ok, section, step } from "#/examples/support/log";
+
+// ── Test doubles ─────────────────────────────────────────────────────────────────────────────────────────────────────
+
+/** A `PaymentGateway` whose acquirer declines every charge, swapped in through the port to replay an outage. */
+class DecliningPaymentGateway implements PaymentGateway {
+  readonly name = "declining-acquirer";
+
+  supports(_currency: string): boolean {
+    return true;
+  }
+
+  async charge(orderId: OrderId, amount: Money): Promise<PaymentIntent> {
+    console.log(`    [declining-acquirer] refused ${amount.toString()} for ${orderId}`);
+
+    return { id: `decline_${orderId}`, orderId, amount, gateway: this.name, status: "failed" };
+  }
+}
 
 /** Boots the container and races a limited-stock drop through both driving adapters. */
 export async function bootstrap(): Promise<void> {
@@ -61,6 +82,31 @@ export async function bootstrap(): Promise<void> {
   });
   item("POST /checkout → status", late.status);
   item("POST /checkout → body", late.body);
+
+  section("A yen order no configured gateway can settle — UNSUPPORTED_CURRENCY, mapped to 422");
+  const unsupported = await server.handle("POST", "/checkout", {
+    customerEmail: "yuki@shopper.example",
+    currency: "JPY",
+    items: [{ productId: "prism_hoodie", quantity: 1 }],
+  });
+  item("POST /checkout → status", unsupported.status);
+  item("POST /checkout → body", unsupported.body);
+
+  section("Incident replay — the acquirer starts declining; rebind swaps the gateway, nothing else moves");
+  const replay = createContainer();
+  await replay
+    .resolve(ProductRepositoryToken)
+    .save(Product.list(toProductId("prism_hoodie"), "Prism Hoodie", Money.of(120, "USD"), 50));
+  replay.rebind(PaymentGatewayToken).toConstantValue(new DecliningPaymentGateway());
+  const replayServer = replay.resolve(HttpServerToken);
+  replay.resolve(CheckoutControllerToken).register(replayServer);
+  const declined = await replayServer.handle("POST", "/checkout", {
+    customerEmail: "aria@shopper.example",
+    currency: "USD",
+    items: [{ productId: "prism_hoodie", quantity: 1 }],
+  });
+  item("POST /checkout → status", declined.status);
+  item("POST /checkout → body", declined.body);
 
   section("Who took the last pair? — one correlation id per request, for the audit trail");
   const requestA = container.createChild();

@@ -5,9 +5,10 @@ directory, because the lesson **is** the structure: how `@codefast/di` wires an 
 the framework.
 
 The scenario is a private bank clearing a large transfer against a closing settlement window: a `LargeTransferAttempted`
-event fans out to four subscribers (audit, metrics, fraud, compliance), the domain refuses the overdraft that follows,
-and a frozen clock replays the exact instant — modelled with Hexagonal / Onion / Clean layering (what Herberto Graça
-named _Explicit Architecture_).
+event fans out to four subscribers (audit, metrics, fraud, compliance), a branch withdrawal draws the balance down, and
+then the domain refuses three operations the rules forbid — an over-limit withdrawal, a deposit to an account that was
+never opened, and a cross-currency transfer — before a frozen clock replays the exact instant. It is modelled with
+Hexagonal / Onion / Clean layering (what Herberto Graça named _Explicit Architecture_).
 
 ```sh
 npx tsx examples/20-explicit-architecture/20-explicit-architecture.ts
@@ -58,6 +59,7 @@ Dependencies point **inward**. An inner ring may not name an outer one. The clas
 │   └── use-cases/               #   @injectable classes that orchestrate the domain
 │       ├── open-account.ts
 │       ├── deposit-money.ts
+│       ├── withdraw-money.ts
 │       └── transfer-money.ts
 ├── infrastructure/              # driven adapters — @injectable, implement the outbound ports
 │   ├── in-memory-account-repository.ts
