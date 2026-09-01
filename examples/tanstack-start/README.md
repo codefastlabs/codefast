@@ -35,10 +35,18 @@ only covers _legacy_ (`experimentalDecorators`) decorators — not the standard 
 | `/variants`  | `@codefast/tailwind-variants` | A `Callout` component built from one typed `tv()` config                                                                                                                                                                                                   |
 | `/di`        | `@codefast/di`                | Interactive task board: `@injectable` + modules wire the graph; each action is a server function that resolves a `scoped` service from a per-request child container, with singleton repository/log, `rebind`, `validate()`, and the live dependency graph |
 
+The task board's services are also under test with `@codefast/di-testing`: `tests/unit/**` puts them under
+`TestBed.solitary` — every collaborator auto-mocked, with `.stub` stubs, an `injectAll` slot, the `optional` dependency
+exercised both bound and absent, and `@preDestroy` on dispose.
+
 ## Develop
+
+Run `pnpm build:packages` first on a fresh clone — like the app itself, the tests consume the built `@codefast/*` dist
+(running them through turbo builds it automatically).
 
 ```bash
 pnpm --filter @examples/tanstack-start dev      # http://localhost:3001
 pnpm --filter @examples/tanstack-start build
 pnpm --filter @examples/tanstack-start check-types
+pnpm --filter @examples/tanstack-start test:unit
 ```

@@ -16,6 +16,9 @@
     "packages/di": {
       "entry": ["examples/**/*.ts", "tests/integration/accessor-e2e.script.ts"],
       "ignoreDependencies": ["@babel/plugin-proposal-decorators"]
+    },
+    "packages/di-testing": {
+      "ignoreDependencies": ["@babel/plugin-proposal-decorators"]
     }
   },
   "rules": {

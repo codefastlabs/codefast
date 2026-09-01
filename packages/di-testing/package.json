@@ -1,0 +1,156 @@
+{
+  "name": "@codefast/di-testing",
+  "version": "0.1.0",
+  "description": "Solitary and sociable auto-mocking test beds for @codefast/di",
+  "keywords": [
+    "auto-mock",
+    "codefast",
+    "dependency-injection",
+    "di",
+    "sociable",
+    "solitary",
+    "test-bed",
+    "testing",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
+    "directory": "packages/di-testing"
+  },
+  "files": [
+    "dist",
+    "src",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "imports": {
+    "#/tests/*": [
+      "./tests/*",
+      "./tests/*.ts",
+      "./tests/*.tsx",
+      "./tests/*/index.ts",
+      "./tests/*/index.tsx"
+    ],
+    "#/*": {
+      "source": [
+        "./src/*",
+        "./src/*.ts",
+        "./src/*.tsx",
+        "./src/*/index.ts",
+        "./src/*/index.tsx"
+      ],
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./discovery/dependency-scanner": {
+      "source": "./src/discovery/dependency-scanner.ts",
+      "types": "./dist/discovery/dependency-scanner.d.ts",
+      "import": "./dist/discovery/dependency-scanner.js"
+    },
+    "./discovery/mock-binder": {
+      "source": "./src/discovery/mock-binder.ts",
+      "types": "./dist/discovery/mock-binder.d.ts",
+      "import": "./dist/discovery/mock-binder.js"
+    },
+    "./errors/errors": {
+      "source": "./src/errors/errors.ts",
+      "types": "./dist/errors/errors.d.ts",
+      "import": "./dist/errors/errors.js"
+    },
+    "./mocking/auto-mock": {
+      "source": "./src/mocking/auto-mock.ts",
+      "types": "./dist/mocking/auto-mock.d.ts",
+      "import": "./dist/mocking/auto-mock.js"
+    },
+    "./mocking/mock-factory": {
+      "source": "./src/mocking/mock-factory.ts",
+      "types": "./dist/mocking/mock-factory.d.ts",
+      "import": "./dist/mocking/mock-factory.js"
+    },
+    "./mocking/spy": {
+      "source": "./src/mocking/spy.ts",
+      "types": "./dist/mocking/spy.d.ts",
+      "import": "./dist/mocking/spy.js"
+    },
+    "./test-bed/bed-builder": {
+      "source": "./src/test-bed/bed-builder.ts",
+      "types": "./dist/test-bed/bed-builder.d.ts",
+      "import": "./dist/test-bed/bed-builder.js"
+    },
+    "./test-bed/sociable-builder": {
+      "source": "./src/test-bed/sociable-builder.ts",
+      "types": "./dist/test-bed/sociable-builder.d.ts",
+      "import": "./dist/test-bed/sociable-builder.js"
+    },
+    "./test-bed/solitary-builder": {
+      "source": "./src/test-bed/solitary-builder.ts",
+      "types": "./dist/test-bed/solitary-builder.d.ts",
+      "import": "./dist/test-bed/solitary-builder.js"
+    },
+    "./test-bed/test-bed": {
+      "source": "./src/test-bed/test-bed.ts",
+      "types": "./dist/test-bed/test-bed.d.ts",
+      "import": "./dist/test-bed/test-bed.js"
+    },
+    "./test-bed/unit-test-bed": {
+      "source": "./src/test-bed/unit-test-bed.ts",
+      "types": "./dist/test-bed/unit-test-bed.d.ts",
+      "import": "./dist/test-bed/unit-test-bed.js"
+    },
+    "./types": {
+      "source": "./src/types.ts",
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "vitest run tests/e2e",
+    "test:integration": "vitest run tests/integration",
+    "test:type": "vitest run tests/types",
+    "test:unit": "vitest run tests/unit",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@babel/core": "catalog:",
+    "@babel/plugin-proposal-decorators": "catalog:",
+    "@codefast/di": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
+    "@rolldown/plugin-babel": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "expect-type": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@codefast/di": ">=0.7.0"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}
