@@ -78,6 +78,40 @@ describe("multi-tag slot matching", () => {
     expect(instance.resolve(serviceToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBe("named-tagged");
   });
 
+  it("dispatches a name-plus-tag request through the index union above the threshold", () => {
+    // Nine fillers push the token past the size threshold where the tag-index union answers.
+    const bigToken = token<string>("union-lane-service");
+    const instance = Container.create();
+    for (let index = 0; index < 9; index += 1) {
+      instance
+        .bind(bigToken)
+        .toConstantValue(`filler-${String(index)}`)
+        .whenNamed(`filler-${String(index)}`);
+    }
+    instance.bind(bigToken).toConstantValue("tagged").whenTagged(ENV_TAG.of("prod"));
+    instance.bind(bigToken).toConstantValue("named-tagged").whenNamed("primary").whenTagged(ENV_TAG.of("prod"));
+
+    expect(instance.resolve(bigToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBe("named-tagged");
+    // The name repeated as the reserved criterion is one criterion — the gather dedups it.
+    expect(instance.resolve(bigToken, { name: "primary", tags: [slotName.of("primary"), ENV_TAG.of("prod")] })).toBe(
+      "named-tagged",
+    );
+    // A name-less multi-criterion request takes the same lane.
+    instance.bind(bigToken).toConstantValue("both-tags").whenTagged(ENV_TAG.of("prod")).whenTagged(REGION_TAG.of("eu"));
+    expect(instance.resolve(bigToken, { tags: [ENV_TAG.of("prod"), REGION_TAG.of("eu")] })).toBe("both-tags");
+    // A union miss answers undefined at the root, and reaches the parent when there is one.
+    expect(instance.resolveOptional(bigToken, { name: "primary", tag: ENV_TAG.of("dev") })).toBeUndefined();
+    const child = instance.createChild();
+    for (let index = 0; index < 9; index += 1) {
+      child
+        .bind(bigToken)
+        .toConstantValue(`child-${String(index)}`)
+        .whenNamed(`child-${String(index)}`);
+    }
+    child.bind(bigToken).toConstantValue("child-tagged").whenTagged(ENV_TAG.of("dev"));
+    expect(child.resolve(bigToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBe("named-tagged");
+  });
+
   it("treats whenNamed and whenTagged of the reserved criterion as one slot", () => {
     const instance = Container.create();
     instance.bind(serviceToken).toConstantValue("first").whenNamed("primary");

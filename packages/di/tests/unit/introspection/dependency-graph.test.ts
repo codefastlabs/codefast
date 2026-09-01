@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
-import { slotName } from "#/core/tag";
+import { slotName, tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
@@ -197,6 +197,41 @@ describe("generateDependencyGraph", () => {
     expect(fanOut).toHaveLength(1);
     expect(fanOut[0]!.slotName).toBe("primary");
     expect(fanOut[0]!.label).toBe("name:primary");
+  });
+
+  it("labels a tagged dependency by its first plain criterion", () => {
+    const fuel = tag<string>("graph-fuel");
+    const engineToken = token<string>("engine");
+    @injectable([inject(engineToken, { tag: fuel.of("gas") })])
+    class Service {
+      constructor(readonly engine: string) {}
+    }
+    const container = Container.create();
+    container.bind(engineToken).toConstantValue("gas-engine").whenTagged(fuel.of("gas"));
+    container.bind(Service).toSelf().singleton();
+
+    const graph = container.generateDependencyGraph();
+    const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
+    const edge = graph.edges.find((candidate) => candidate.from === serviceNode!.id);
+
+    expect(edge!.label).toBe("tag:graph-fuel=gas");
+  });
+
+  it("keeps the reserved-criterion name on an unbound optional dependency's edge", () => {
+    const ghostToken = token<number>("ghost-config");
+    @injectable([optional(ghostToken, { tags: [slotName.of("ghost")] })])
+    class Service {
+      constructor(readonly config?: number) {}
+    }
+    const container = Container.create();
+    container.bind(Service).toSelf().singleton();
+
+    const graph = container.generateDependencyGraph();
+    const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
+    const edge = graph.edges.find((candidate) => candidate.from === serviceNode!.id);
+
+    expect(edge!.slotName).toBe("ghost");
+    expect(edge!.label).toBe("name:ghost optional");
   });
 
   it("treats a dependency spelling its name as the reserved criterion like the name spelling", () => {

@@ -41,6 +41,46 @@ describe("a named dependency inside a compiled plan", () => {
     expect(container.resolve(Root).driver).toBe("primary-driver");
   });
 
+  it("bakes a named dependency into the async plan the same way", async () => {
+    const driverToken = token<string>("named-plan-async-driver");
+    const rootToken = token<{ driver: string }>("named-plan-async-root");
+
+    const container = Container.create();
+    container.bind(driverToken).toConstantValue("primary-driver").whenNamed("primary");
+    container
+      .bind(rootToken)
+      .toResolvedAsync(async (driver: string) => ({ driver }), [inject(driverToken, { name: "primary" })] as const)
+      .transient();
+
+    for (let index = 0; index < WARM_ITERATIONS; index += 1) {
+      await container.resolveAsync(rootToken);
+    }
+
+    expect((await container.resolveAsync(rootToken)).driver).toBe("primary-driver");
+  });
+
+  it("leaves an async named dependency to the runtime when its candidate carries a predicate", async () => {
+    const driverToken = token<string>("named-plan-async-predicated-driver");
+    const rootToken = token<{ driver: string }>("named-plan-async-predicated-root");
+
+    const container = Container.create();
+    container
+      .bind(driverToken)
+      .toConstantValue("primary-driver")
+      .whenNamed("primary")
+      .when(() => true);
+    container
+      .bind(rootToken)
+      .toResolvedAsync(async (driver: string) => ({ driver }), [inject(driverToken, { name: "primary" })] as const)
+      .transient();
+
+    for (let index = 0; index < WARM_ITERATIONS; index += 1) {
+      await container.resolveAsync(rootToken);
+    }
+
+    expect((await container.resolveAsync(rootToken)).driver).toBe("primary-driver");
+  });
+
   it("resolves a named singleton to the named binding on its first materialization", () => {
     const driverToken = token<{ id: string }>("named-plan-singleton");
 

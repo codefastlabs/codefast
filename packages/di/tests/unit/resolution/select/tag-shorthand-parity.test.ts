@@ -11,7 +11,11 @@ import { slotName, tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectAll, normalizeToDescriptor, optional } from "#/injection/descriptor";
-import { singleCriterionOnlyOf } from "#/injection/resolve-options";
+import {
+  bindingSlotToResolveOptions,
+  singleCriterionForSlot,
+  singleCriterionOnlyOf,
+} from "#/injection/resolve-options";
 
 const SLOT = tag("slot");
 const ENV = tag("env");
@@ -172,6 +176,28 @@ describe("singleCriterionOnlyOf", () => {
     container.bind(probe).toConstantValue("v").whenNamed("x");
 
     expect(() => container.resolve(probe, { tag: slotName.of("y") })).toThrow(/"name":"y"/);
+  });
+
+  it("memoizes the per-slot fold, leaving an unminted lone name open until a bind mints it", () => {
+    const multi = { token: token<string>("sfs-multi"), optional: false, multi: false, name: "x", tags: [pair] };
+    // Two criteria fold to "none", and the memo answers the repeat.
+    expect(singleCriterionForSlot(multi)).toBeNull();
+    expect(singleCriterionForSlot(multi)).toBeNull();
+
+    const late = { token: token<string>("sfs-late"), optional: false, multi: false, name: "sfs-late-name" };
+    expect(singleCriterionForSlot(late)).toBeNull();
+    const criterion = slotName.of("sfs-late-name");
+    expect(singleCriterionForSlot(late)).toBe(criterion);
+    expect(singleCriterionForSlot(late)).toBe(criterion);
+  });
+
+  it("folds a reserved criterion beside plain tags into name plus the remaining tags", () => {
+    expect(bindingSlotToResolveOptions({ tags: [slotName.of("folded"), pair] })).toEqual({
+      name: "folded",
+      tags: [pair],
+    });
+    // A name already present wins; the reserved criterion is only stripped.
+    expect(bindingSlotToResolveOptions({ name: "kept", tags: [slotName.of("kept")] })).toEqual({ name: "kept" });
   });
 
   it("withholds requests the single-criterion index cannot answer", () => {

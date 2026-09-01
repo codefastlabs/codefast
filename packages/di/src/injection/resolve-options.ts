@@ -161,13 +161,11 @@ export function singleCriterionForSlot(injectionSlot: DependencySlot): BindingTa
   return folded;
 }
 
-/** A request whose only criterion is a name — the one shape whose fold can change after a bind. */
+/** A slot request whose only criterion is a name — the one shape whose fold can change after a bind. */
 function isLoneNameOptions(options: ResolveOptions | undefined): boolean {
+  // Slot-derived options never carry the `tag` shorthand — `buildOptions` folds it into `tags`.
   return (
-    options !== undefined &&
-    options.name !== undefined &&
-    options.tag === undefined &&
-    (options.tags === undefined || options.tags.length === 0)
+    options !== undefined && options.name !== undefined && (options.tags === undefined || options.tags.length === 0)
   );
 }
 
