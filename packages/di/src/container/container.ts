@@ -186,9 +186,6 @@ class DefaultContainer implements Container {
     if (this.#moduleRefs !== undefined || this.#moduleBindingIds !== undefined) {
       builtSubsystems.push("container.moduleTables");
     }
-    if (this.#registry.isNamedIndexBuilt) {
-      builtSubsystems.push("registry.namedIndex");
-    }
     if (this.#registry.isTaggedIndexBuilt) {
       builtSubsystems.push("registry.taggedIndex");
     }

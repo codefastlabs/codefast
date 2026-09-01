@@ -1,5 +1,5 @@
 import type { BindingTag, TagKeyMask } from "#/core/tag";
-import { NO_TAG_KEYS } from "#/core/tag";
+import { NO_TAG_KEYS, slotName } from "#/core/tag";
 import type { Token } from "#/core/token";
 import type {
   ActivationHandler,
@@ -16,19 +16,21 @@ import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue
 // ── BindingSlot ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * The name-plus-tags coordinate a binding registers under and a request matches against.
+ * The criterion set a binding registers under and a request matches against.
  *
  * @since 0.3.16-canary.0
  */
 export interface BindingSlot {
+  /** Derived view of the reserved `slotName` criterion — `undefined` when the slot carries none. */
   readonly name: string | undefined;
+  /** The whole criterion set, the reserved name criterion included. */
   readonly tags: ReadonlyArray<BindingTag>;
   /** OR of this slot's tag keys, so the subset test is one word compare. */
   readonly keyMask: TagKeyMask;
 }
 
 /**
- * Returns whether two slots carry the same name and tag set, in any tag order.
+ * Returns whether two slots carry the same criterion set, in any order.
  *
  * @since 0.3.16-canary.0
  */
@@ -68,7 +70,7 @@ export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: Object
  * @since 0.3.16-canary.0
  */
 export function bindingSlotToString(slot: BindingSlot): string {
-  if (slot.name === undefined && slot.tags.length === 0) {
+  if (slot.tags.length === 0) {
     return "default";
   }
   const parts: Array<string> = [];
@@ -76,6 +78,10 @@ export function bindingSlotToString(slot: BindingSlot): string {
     parts.push(`name:${slot.name}`);
   }
   for (const criterion of slot.tags) {
+    // The reserved criterion already printed as the `name:` part.
+    if (criterion.key === slotName) {
+      continue;
+    }
     parts.push(`tag:${criterion.key.name}=${String(criterion.value)}`);
   }
   return parts.join(",");

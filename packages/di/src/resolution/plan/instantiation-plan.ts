@@ -12,7 +12,7 @@ import { tokenName } from "#/core/token";
 import type { Constructor, ResolutionFrame, ResolveOptions } from "#/core/types";
 import { AsyncResolutionError } from "#/errors/errors";
 import type { DependencySlot } from "#/injection/resolve-options";
-import { injectionSlotToResolveOptions, isNameOnlyOptions } from "#/injection/resolve-options";
+import { injectionSlotToResolveOptions } from "#/injection/resolve-options";
 import type { ConstructorMetadata } from "#/metadata/metadata-types";
 
 // Past this depth a dependency escapes to the runtime path rather than inlining further —
@@ -115,22 +115,13 @@ export interface InstantiationPlanHost {
   /** Options-less lookup with alias hops folded; `null` when the fast lane can't answer. */
   lookupDependencyEntry(token: Token<unknown> | Constructor): InstantiationPlanDependencyEntry | null;
   /**
-   * A name-only lookup a plan may bake in, or `null` when the answer is not the compiler's to make.
+   * A single-criterion lookup a plan may bake in, or `null` when the answer is not the compiler's
+   * to make.
    *
-   * @remarks Selection for a named request is an index hit *and* a predicate, and a predicate reads
+   * @remarks Selection for such a request is an index hit *and* a predicate, and a predicate reads
    * the resolution path — so only a candidate carrying none of one can be decided ahead of time.
    */
-  lookupPathIndependentNamedEntry(
-    token: Token<unknown> | Constructor,
-    options: ResolveOptions & { name: string },
-  ): InstantiationPlanDependencyEntry | null;
-  /**
-   * The named lookup's single-tag twin, or `null` under the same rule.
-   *
-   * @remarks Optional so a host predating it stays a valid host — a compiler given none simply
-   * escapes the dependency, which is exactly the pre-settlement behavior.
-   */
-  lookupPathIndependentTaggedEntry?(
+  lookupPathIndependentEntry(
     token: Token<unknown> | Constructor,
     options: ResolveOptions,
   ): InstantiationPlanDependencyEntry | null;
@@ -265,19 +256,11 @@ export class InstantiationPlanCompiler {
       return this.#compileEscapeThunk(token, ancestors, "optional", options);
     }
     if (options !== undefined) {
-      // A name the registry can settle without reading a path is a dependency like any other: it
-      // escapes only because it carries a criterion, not because anything about it is opaque.
-      if (isNameOnlyOptions(options)) {
-        const named = this.#host.lookupPathIndependentNamedEntry(token, options);
-        if (named !== null) {
-          return this.#compileDepThunk(named, compileStack, depth, ancestors, options);
-        }
-      } else {
-        // The host owns the whole single-tag decision, including whether the options qualify.
-        const tagged = this.#host.lookupPathIndependentTaggedEntry?.(token, options);
-        if (tagged !== null && tagged !== undefined) {
-          return this.#compileDepThunk(tagged, compileStack, depth, ancestors, options);
-        }
+      // A criterion the registry can settle without reading a path is a dependency like any other:
+      // it escapes only because the host cannot decide it ahead of time.
+      const indexed = this.#host.lookupPathIndependentEntry(token, options);
+      if (indexed !== null) {
+        return this.#compileDepThunk(indexed, compileStack, depth, ancestors, options);
       }
       return this.#compileEscapeThunk(token, ancestors, "single", options);
     }
@@ -541,17 +524,9 @@ export class InstantiationPlanCompiler {
       return this.#compileAsyncEscapeThunk(token, ancestors, "optional", options);
     }
     if (options !== undefined) {
-      if (isNameOnlyOptions(options)) {
-        const named = this.#host.lookupPathIndependentNamedEntry(token, options);
-        if (named !== null) {
-          return this.#compileAsyncDepThunk(named, compileStack, depth, ancestors, options);
-        }
-      } else {
-        // The host owns the whole single-tag decision, including whether the options qualify.
-        const tagged = this.#host.lookupPathIndependentTaggedEntry?.(token, options);
-        if (tagged !== null && tagged !== undefined) {
-          return this.#compileAsyncDepThunk(tagged, compileStack, depth, ancestors, options);
-        }
+      const indexed = this.#host.lookupPathIndependentEntry(token, options);
+      if (indexed !== null) {
+        return this.#compileAsyncDepThunk(indexed, compileStack, depth, ancestors, options);
       }
       return this.#compileAsyncEscapeThunk(token, ancestors, "single", options);
     }

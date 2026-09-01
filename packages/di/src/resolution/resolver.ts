@@ -3,7 +3,7 @@ import type { Container } from "#/container/container";
 import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
 import type { BindingRegistry } from "#/core/registry";
-import { NO_TAG_KEYS } from "#/core/tag";
+import { NO_TAG_KEYS, slotName } from "#/core/tag";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type {
@@ -28,7 +28,7 @@ import {
   TokenNotBoundError,
 } from "#/errors/errors";
 import type { DependencySlot } from "#/injection/resolve-options";
-import { isNameOnlyOptions, resolveOptionsForSlot, singleTagOnlyOf } from "#/injection/resolve-options";
+import { resolveOptionsForSlot, singleCriterionForSlot, singleCriterionOnlyOf } from "#/injection/resolve-options";
 import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
 import type { ScopeManager } from "#/lifecycle/scope-manager";
 import { SCOPED_MISS } from "#/lifecycle/scope-manager";
@@ -163,44 +163,47 @@ export class DependencyResolver implements ResolverCallbacks {
 
   // ── Binding lookup ─────────────────────────────────────────────────────────────────────────────────────────────────
 
+  /**
+   * Finds the binding a request selects in this container, walking up to the parent on a miss.
+   *
+   * @remarks `singleCriterion` is the request's lone criterion, folded once by the caller so alias
+   * hops and parent walks do not re-fold it — `undefined` when the request carries none or several.
+   */
   #findBinding(
     token: Token<unknown> | Constructor,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
+    singleCriterion: BindingTag | undefined,
   ): DefaultLookupEntry<DependencyResolver> | undefined {
     if (options === undefined) {
       const fastDefaultBinding = this.#registry.getFastDefault(token);
       if (fastDefaultBinding !== undefined) {
         return { binding: fastDefaultBinding, owner: this };
       }
-    } else if (isNameOnlyOptions(options)) {
-      const namedBinding = this.#registry.getSimpleNamed(token, options.name);
-      if (namedBinding !== undefined && this.#matchesBindingFast(namedBinding, options, resolutionStack)) {
-        return { binding: namedBinding, owner: this };
-      }
     } else {
-      const singleTag = singleTagOnlyOf(options);
-      if (singleTag !== undefined) {
-        const tagged = this.#registry.getSimpleTagged(token, singleTag);
-        if (tagged !== undefined && this.#satisfiesPredicate(tagged, options, resolutionStack)) {
-          return { binding: tagged, owner: this };
+      if (singleCriterion !== undefined) {
+        const indexed = this.#registry.getSimpleTagged(token, singleCriterion);
+        if (indexed !== undefined && this.#satisfiesPredicate(indexed, options, resolutionStack)) {
+          return { binding: indexed, owner: this };
         }
       } else if (
-        options.name === undefined &&
         // A threshold switches the data structure, never the semantics: under it the generic scan
         // below beats walking the indexes, and both paths answer identically. Sized first, so a
         // small list pays one length read and nothing else.
         this.#registry.getAll(token).length > MULTI_TAG_INDEX_THRESHOLD &&
         requestedTagKeyMask(options) !== NO_TAG_KEYS
       ) {
-        // A name-less multi-tag request matches only name-less tagged slots, and every such slot
-        // lives in one of the two tag indexes — so their union is the whole candidate set and the
-        // token's full list never needs scanning. Selection still owns predicates and specificity.
+        // A multi-criterion request matches only slots whose every criterion it carries, and every
+        // such slot lives in one of the two tag indexes — so their union is the whole candidate set
+        // and the token's full list never needs scanning. Selection still owns predicates and
+        // specificity.
         const selected = this.#selectMultiTagged(token, options, resolutionStack);
         if (selected !== undefined) {
           return { binding: selected, owner: this };
         }
-        return this.#parent === undefined ? undefined : this.#parent.#findBinding(token, options, resolutionStack);
+        return this.#parent === undefined
+          ? undefined
+          : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
       }
     }
 
@@ -219,7 +222,7 @@ export class DependencyResolver implements ResolverCallbacks {
       }
     }
     if (this.#parent !== undefined) {
-      return this.#parent.#findBinding(token, options, resolutionStack);
+      return this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
     }
     return undefined;
   }
@@ -234,10 +237,13 @@ export class DependencyResolver implements ResolverCallbacks {
     token: Token<unknown> | Constructor,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
+    precomputedCriterion?: BindingTag,
   ): DefaultLookupEntry<DependencyResolver> {
+    const singleCriterion =
+      precomputedCriterion ?? (options === undefined ? undefined : singleCriterionOnlyOf(options));
     let currentToken = token;
     let visitedAliasTokens: Set<Token<unknown> | Constructor> | undefined;
-    let found = this.#findBinding(currentToken, options, resolutionStack);
+    let found = this.#findBinding(currentToken, options, resolutionStack, singleCriterion);
 
     while (found !== undefined && found.binding.kind === "alias") {
       const target = found.binding.target;
@@ -247,7 +253,7 @@ export class DependencyResolver implements ResolverCallbacks {
       }
       visitedAliasTokens.add(target);
       currentToken = target;
-      found = this.#findBinding(currentToken, options, resolutionStack);
+      found = this.#findBinding(currentToken, options, resolutionStack, singleCriterion);
     }
 
     if (found === undefined) {
@@ -272,7 +278,7 @@ export class DependencyResolver implements ResolverCallbacks {
     token: Token<unknown> | Constructor,
     options: ResolveOptions | undefined,
   ): DefaultLookupEntry<DependencyResolver> | undefined {
-    return this.#findBinding(token, options, []);
+    return this.#findBinding(token, options, [], options === undefined ? undefined : singleCriterionOnlyOf(options));
   }
 
   /**
@@ -429,22 +435,14 @@ export class DependencyResolver implements ResolverCallbacks {
       const entry = this.#lookup.defaultEntry(token);
       return entry === null ? null : { binding: entry.binding };
     },
-    // Exactly what #findBinding's named lane accepts, minus the half that reads a path: a predicate
-    // is the compiler's cue to leave the selection to the runtime.
-    lookupPathIndependentNamedEntry: (token, options) => {
-      const entry = this.#lookup.namedEntry(token, options.name);
-      if (entry === null || entry.binding.predicate !== undefined || !matchesSlot(entry.binding.slot, options)) {
+    // Exactly what #findBinding's single-criterion lane accepts, minus the half that reads a path:
+    // a predicate is the compiler's cue to leave the selection to the runtime.
+    lookupPathIndependentEntry: (token, options) => {
+      const singleCriterion = singleCriterionOnlyOf(options);
+      if (singleCriterion === undefined) {
         return null;
       }
-      return { binding: entry.binding };
-    },
-    // The named rule verbatim, on the single-tag lane's memo.
-    lookupPathIndependentTaggedEntry: (token, options) => {
-      const singleTag = singleTagOnlyOf(options);
-      if (singleTag === undefined) {
-        return null;
-      }
-      const entry = this.#lookup.taggedEntry(token, singleTag);
+      const entry = this.#lookup.taggedEntry(token, singleCriterion);
       if (entry === null || entry.binding.predicate !== undefined || !matchesSlot(entry.binding.slot, options)) {
         return null;
       }
@@ -508,40 +506,29 @@ export class DependencyResolver implements ResolverCallbacks {
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
+    precomputedCriterion?: BindingTag,
   ): Value {
-    // Name-only fast lane: memoized lookup, dispatching just the shapes whose
-    // semantics involve no resolution context (constants, cached singletons).
-    if (options !== undefined && isNameOnlyOptions(options)) {
-      const namedEntry = this.#lookup.namedEntry(token, options.name);
-      if (namedEntry !== null) {
-        const namedBinding = namedEntry.binding;
-        if (namedEntry.owner.#isPlainConstant(namedBinding)) {
-          return namedBinding.value as Value;
-        }
-        if (namedBinding.scope === "singleton" && namedBinding.instance !== NO_INSTANCE) {
-          return namedBinding.instance as Value;
-        }
-        // Everything else keeps the full path (context, activation, guards).
-      }
-    } else if (options !== undefined) {
-      // Single-tag fast lane: the named lane's tagged twin, memoizing the chain walk.
-      const singleTag = singleTagOnlyOf(options);
-      if (singleTag !== undefined) {
-        const taggedEntry = this.#lookup.taggedEntry(token, singleTag);
-        if (taggedEntry !== null) {
-          const taggedBinding = taggedEntry.binding;
-          if (taggedEntry.owner.#isPlainConstant(taggedBinding)) {
-            return taggedBinding.value as Value;
+    // Single-criterion fast lane (a lone name folds here too): memoized lookup, dispatching just
+    // the shapes whose semantics involve no resolution context (constants, cached singletons).
+    let singleCriterion: BindingTag | undefined;
+    if (options !== undefined) {
+      singleCriterion = precomputedCriterion ?? singleCriterionOnlyOf(options);
+      if (singleCriterion !== undefined) {
+        const indexedEntry = this.#lookup.taggedEntry(token, singleCriterion);
+        if (indexedEntry !== null) {
+          const indexedBinding = indexedEntry.binding;
+          if (indexedEntry.owner.#isPlainConstant(indexedBinding)) {
+            return indexedBinding.value as Value;
           }
-          if (taggedBinding.scope === "singleton" && taggedBinding.instance !== NO_INSTANCE) {
-            return taggedBinding.instance as Value;
+          if (indexedBinding.scope === "singleton" && indexedBinding.instance !== NO_INSTANCE) {
+            return indexedBinding.instance as Value;
           }
           // Everything else keeps the full path (context, activation, guards).
         }
       }
     }
 
-    const { binding, owner } = this.#requireBinding(token, options, resolutionStack);
+    const { binding, owner } = this.#requireBinding(token, options, resolutionStack, singleCriterion);
 
     // A singleton owned by a parent resolver is resolved there, so the parent caches it.
     if (binding.scope === "singleton" && owner !== this) {
@@ -741,7 +728,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (options === undefined) {
       return this.resolveFromContext(dep.token, resolutionStack);
     }
-    return this.resolve(dep.token, options, resolutionStack);
+    return this.resolve(dep.token, options, resolutionStack, singleCriterionForSlot(dep));
   }
 
   resolveOptional<Value>(
@@ -749,7 +736,12 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
   ): Value | undefined {
-    const entry = this.#findBinding(token, options, resolutionStack);
+    const entry = this.#findBinding(
+      token,
+      options,
+      resolutionStack,
+      options === undefined ? undefined : singleCriterionOnlyOf(options),
+    );
     if (entry === undefined) {
       return undefined;
     }
@@ -867,8 +859,9 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
+    precomputedCriterion?: BindingTag,
   ): Promise<Value> {
-    const { binding, owner } = this.#requireBinding(token, options, resolutionStack);
+    const { binding, owner } = this.#requireBinding(token, options, resolutionStack, precomputedCriterion);
 
     if (binding.scope === "singleton" && owner !== this) {
       return owner.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner) as Promise<Value>;
@@ -1112,7 +1105,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (options === undefined) {
       return this.resolveAsyncFromContext(dep.token, resolutionStack, branchDepth);
     }
-    return this.resolveAsync(dep.token, options, resolutionStack, branchDepth);
+    return this.resolveAsync(dep.token, options, resolutionStack, branchDepth, singleCriterionForSlot(dep));
   }
 
   async resolveOptionalAsync<Value>(
@@ -1121,7 +1114,12 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
   ): Promise<Value | undefined> {
-    const entry = this.#findBinding(token, options, resolutionStack);
+    const entry = this.#findBinding(
+      token,
+      options,
+      resolutionStack,
+      options === undefined ? undefined : singleCriterionOnlyOf(options),
+    );
     if (entry === undefined) {
       return undefined;
     }
@@ -1172,29 +1170,11 @@ export class DependencyResolver implements ResolverCallbacks {
     return result;
   }
 
-  /** Every binding the chain's name indexes hold for one name, nearest container first. */
-  #namedBindingsFromChain(token: Token<unknown> | Constructor, name: string): Array<Binding> {
-    // A name resolves to at most one binding per registry, so a root container's answer is built
-    // whole rather than grown — the list is sized at its allocation.
-    const ownBinding = this.#registry.getSimpleNamed(token, name);
-    if (this.#parent === undefined) {
-      return ownBinding === undefined ? [] : [ownBinding];
-    }
-    const result: Array<Binding> = ownBinding === undefined ? [] : [ownBinding];
-    for (let current: DependencyResolver | undefined = this.#parent; current !== undefined; current = current.#parent) {
-      const binding = current.#registry.getSimpleNamed(token, name);
-      if (binding !== undefined) {
-        result.push(binding);
-      }
-    }
-    return result;
-  }
-
   /**
-   * The candidates an index can name outright, or `null` when the request needs full selection.
+   * The candidates the index can name outright, or `null` when the request needs full selection.
    *
-   * @remarks Kept off `#candidateBindings` so that method stays the size it was: a request neither
-   * index serves must not pay for the two that do.
+   * @remarks Kept off `#candidateBindings` so that method stays the size it was: a request the
+   * index cannot serve must not pay for the shape it does.
    * An index has matched the slot already, but a hit may still carry a predicate, and evaluating
    * that is the selection path's job.
    */
@@ -1203,31 +1183,26 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions,
     resolutionStack: Array<ResolutionFrame>,
   ): ReadonlyArray<Binding> | null {
-    if (isNameOnlyOptions(options)) {
-      const named = this.#namedBindingsFromChain(token, options.name);
-      return anyPredicate(named)
-        ? selectAllBindings(named, options, this.#makeConstraintContext(resolutionStack, options))
-        : named;
-    }
-    const singleTag = singleTagOnlyOf(options);
-    if (singleTag === undefined) {
+    const singleCriterion = singleCriterionOnlyOf(options);
+    if (singleCriterion === undefined) {
       return null;
     }
-    const tagged = this.#taggedBindingsFromChain(token, singleTag);
-    return anyPredicate(tagged)
-      ? selectAllBindings(tagged, options, this.#makeConstraintContext(resolutionStack, options))
-      : tagged;
+    const indexed = this.#taggedBindingsFromChain(token, singleCriterion);
+    return anyPredicate(indexed)
+      ? selectAllBindings(indexed, options, this.#makeConstraintContext(resolutionStack, options))
+      : indexed;
   }
 
   /**
-   * Every binding the chain's tag indexes hold for one tag, nearest container first.
+   * Every binding the chain's criterion indexes hold for one criterion, nearest container first.
    *
-   * @remarks A request for one tag and no name matches exactly the bindings the index keys, so this
-   * is the whole candidate set rather than a prefilter — a named or multi-tag slot cannot satisfy it.
+   * @remarks A request for exactly one criterion matches exactly the bindings the index keys, so
+   * this is the whole candidate set rather than a prefilter — a multi-criterion slot cannot satisfy
+   * it.
    */
   #taggedBindingsFromChain(token: Token<unknown> | Constructor, tag: BindingTag): Array<Binding> {
-    // A tag matches at most one binding per registry, so a root container's answer is built whole
-    // rather than grown — the shape `#namedBindingsFromChain` takes, for the same reason.
+    // A criterion matches at most one binding per registry, so a root container's answer is built
+    // whole rather than grown — the list is sized at its allocation.
     const ownBinding = this.#registry.getSimpleTagged(token, tag);
     if (this.#parent === undefined) {
       return ownBinding === undefined ? [] : [ownBinding];
@@ -1284,13 +1259,16 @@ export class DependencyResolver implements ResolverCallbacks {
     return buildConstraintContext(resolutionStack, options);
   }
 
-  /** Selection for a name-less multi-tag request, over the union of the two tag indexes. */
+  /** Selection for a multi-criterion request, over the union of the two tag indexes. */
   #selectMultiTagged(
     token: Token<unknown> | Constructor,
     options: ResolveOptions,
     resolutionStack: Array<ResolutionFrame>,
   ): Binding | undefined {
     const candidates: Array<Binding> = [];
+    if (options.name !== undefined) {
+      this.#gatherTagCandidates(token, slotName.of(options.name), candidates);
+    }
     this.#gatherTagCandidates(token, options.tag, candidates);
     const listed = options.tags;
     if (listed !== undefined) {

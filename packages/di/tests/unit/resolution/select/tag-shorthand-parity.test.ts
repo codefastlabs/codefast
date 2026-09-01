@@ -8,10 +8,11 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { tag } from "#/core/tag";
+import { slotName } from "#/core/tag";
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectAll, normalizeToDescriptor, optional } from "#/injection/descriptor";
-import { singleTagOnlyOf } from "#/injection/resolve-options";
+import { singleCriterionOnlyOf } from "#/injection/resolve-options";
 
 const SLOT = tag("slot");
 const ENV = tag("env");
@@ -138,20 +139,26 @@ describe("tag shorthand on the injection surface", () => {
   });
 });
 
-describe("singleTagOnlyOf", () => {
+describe("singleCriterionOnlyOf", () => {
   const pair = ENV.of("prod");
 
   it("admits both spellings of a one-tag request to the index lane", () => {
-    expect(singleTagOnlyOf({ tag: pair })).toBe(pair);
-    expect(singleTagOnlyOf({ tags: [pair] })).toBe(pair);
-    expect(singleTagOnlyOf({ tag: pair, tags: [] })).toBe(pair);
+    expect(singleCriterionOnlyOf({ tag: pair })).toBe(pair);
+    expect(singleCriterionOnlyOf({ tags: [pair] })).toBe(pair);
+    expect(singleCriterionOnlyOf({ tag: pair, tags: [] })).toBe(pair);
   });
 
-  it("withholds requests the single-tag index cannot answer", () => {
-    // Two sources means two tags requested, and a one-tag index would skip the ambiguity check.
-    expect(singleTagOnlyOf({ tag: pair, tags: [TIER.of("premium")] })).toBeUndefined();
-    expect(singleTagOnlyOf({ tags: [pair, TIER.of("premium")] })).toBeUndefined();
-    expect(singleTagOnlyOf({ name: "primary", tag: pair })).toBeUndefined();
-    expect(singleTagOnlyOf({})).toBeUndefined();
+  it("folds a lone name to the reserved criterion", () => {
+    expect(singleCriterionOnlyOf({ name: "primary" })).toBe(slotName.of("primary"));
+    expect(singleCriterionOnlyOf({ name: "primary", tags: [] })).toBe(slotName.of("primary"));
+  });
+
+  it("withholds requests the single-criterion index cannot answer", () => {
+    // Two sources means two criteria requested, and a one-criterion index would skip the ambiguity check.
+    expect(singleCriterionOnlyOf({ tag: pair, tags: [TIER.of("premium")] })).toBeUndefined();
+    expect(singleCriterionOnlyOf({ tags: [pair, TIER.of("premium")] })).toBeUndefined();
+    expect(singleCriterionOnlyOf({ name: "primary", tag: pair })).toBeUndefined();
+    expect(singleCriterionOnlyOf({ name: "primary", tags: [pair] })).toBeUndefined();
+    expect(singleCriterionOnlyOf({})).toBeUndefined();
   });
 });

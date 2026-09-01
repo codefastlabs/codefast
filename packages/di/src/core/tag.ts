@@ -101,6 +101,27 @@ export function tag<Value = unknown>(name: string): TagKey<Value> {
   let lastValue: Value | undefined;
   let lastPair: BindingTag<Value> | undefined;
 
+  // The miss path lives outside `of()` so the hot wrapper stays small enough to inline.
+  const internPair = (value: Value): BindingTag<Value> => {
+    const cacheKey = internKeyFor(value);
+    const existing = interned.get(cacheKey);
+
+    if (existing !== undefined) {
+      lastValue = value;
+      lastPair = existing;
+
+      return existing;
+    }
+
+    const pair = { key, value, mask } as BindingTag<Value>;
+
+    interned.set(cacheKey, pair);
+    lastValue = value;
+    lastPair = pair;
+
+    return pair;
+  };
+
   const key: TagKey<Value> = {
     name,
     id,
@@ -109,29 +130,21 @@ export function tag<Value = unknown>(name: string): TagKey<Value> {
       if (lastPair !== undefined && Object.is(value, lastValue)) {
         return lastPair;
       }
-
-      const cacheKey = internKeyFor(value);
-      const existing = interned.get(cacheKey);
-
-      if (existing !== undefined) {
-        lastValue = value;
-        lastPair = existing;
-
-        return existing;
-      }
-
-      const pair = { key, value, mask } as BindingTag<Value>;
-
-      interned.set(cacheKey, pair);
-      lastValue = value;
-      lastPair = pair;
-
-      return pair;
+      return internPair(value);
     },
   };
 
   return key;
 }
+
+/**
+ * The reserved key a slot's name is a criterion of.
+ *
+ * @remarks `whenNamed(n)` and a request's `name` are sugar for `slotName.of(n)`, so one selection
+ * model serves both spellings — a name takes part in key masks, indexes and specificity like any
+ * criterion. What reserves the key is its identity; diagnostics render its criteria as `name:<value>`.
+ */
+export const slotName: TagKey<string> = tag<string>("di:name");
 
 /**
  * The key set a list of criteria covers.

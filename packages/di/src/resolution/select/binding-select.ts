@@ -1,6 +1,6 @@
 import type { Binding, BindingSlot } from "#/core/binding";
 import type { BindingTag, TagKeyMask } from "#/core/tag";
-import { coversTagKeys, NO_TAG_KEYS } from "#/core/tag";
+import { coversTagKeys, NO_TAG_KEYS, slotName } from "#/core/tag";
 import type { ConstraintContext, ResolveOptions } from "#/core/types";
 import { AmbiguousBindingError } from "#/errors/errors";
 
@@ -41,7 +41,7 @@ export function selectBinding(
   }
   // Reached only where the throw was: a slot declaring more of what the request carries is the more
   // specific match, so an over-specified request resolves instead of being ambiguous.
-  const mostSpecific = mostSpecificByTagCount(candidates);
+  const mostSpecific = mostSpecificByCriterionCount(candidates);
   if (mostSpecific !== undefined) {
     return mostSpecific;
   }
@@ -51,8 +51,8 @@ export function selectBinding(
   );
 }
 
-/** The lone candidate declaring more tags than every other, or `undefined` when that is a tie. */
-function mostSpecificByTagCount(candidates: ReadonlyArray<Binding>): Binding | undefined {
+/** The lone candidate declaring more criteria than every other, or `undefined` when that is a tie. */
+function mostSpecificByCriterionCount(candidates: ReadonlyArray<Binding>): Binding | undefined {
   let best: Binding | undefined;
   let bestCount = -1;
   let tied = false;
@@ -118,35 +118,24 @@ function filterBindings(
 }
 
 function hasSlotCriterion(options: ResolveOptions): boolean {
-  return options.name !== undefined || requestedTagKeyMask(options) !== NO_TAG_KEYS;
+  return requestedTagKeyMask(options) !== NO_TAG_KEYS;
 }
 
 /**
- * Whether a binding's slot satisfies a request: names must be equal, and every tag the slot
- * declares must be among the tags requested.
+ * Whether a binding's slot satisfies a request: every criterion the slot declares must be among
+ * the request's criteria, a name spelling either side folding to the reserved criterion.
  *
- * @remarks The tag half is a key-mask subset test before any criterion is read, so a slot the
- * request cannot satisfy is rejected in one word compare. Criteria are interned, so what follows is
- * identity.
+ * @remarks A key-mask subset test runs before any criterion is read, so a slot the request cannot
+ * satisfy is rejected in one word compare. Criteria are interned, so what follows is identity.
  *
  * @since 0.5.0-canary.9
  */
 export function matchesSlot(slot: BindingSlot, options: ResolveOptions | undefined): boolean {
-  const requestedName = options?.name;
-
-  if (slot.name !== undefined) {
-    if (slot.name !== requestedName) {
-      return false;
-    }
-  } else if (requestedName !== undefined) {
-    return false;
-  }
-
   const slotMask = slot.keyMask;
   const requestMask = requestedTagKeyMask(options);
 
   if (slotMask === NO_TAG_KEYS) {
-    // A request carrying tags needs a tagged slot: an untagged binding never matches.
+    // A request carrying any criterion never falls back to the default slot.
     return requestMask === NO_TAG_KEYS;
   }
   if (!coversTagKeys(requestMask, slotMask)) {
@@ -178,6 +167,9 @@ export function requestedTagKeyMask(options: ResolveOptions | undefined): TagKey
   const listed = options.tags;
   let mask = single === undefined ? NO_TAG_KEYS : single.mask;
 
+  if (options.name !== undefined) {
+    mask = (mask | slotName.mask) as TagKeyMask;
+  }
   if (listed !== undefined) {
     for (let index = 0; index < listed.length; index += 1) {
       mask = (mask | listed[index]!.mask) as TagKeyMask;
@@ -191,6 +183,10 @@ export function requestedTagKeyMask(options: ResolveOptions | undefined): TagKey
 function requestCarries(options: ResolveOptions | undefined, criterion: BindingTag): boolean {
   if (options === undefined) {
     return false;
+  }
+  // The `name` spelling: interning makes the value compare exact for the reserved criterion.
+  if (criterion.key === slotName && criterion.value === options.name) {
+    return true;
   }
   if (options.tag === criterion) {
     return true;
