@@ -696,8 +696,10 @@ class DefaultContainer implements Container {
         ) {
           continue;
         }
+        // Warm the binding itself — re-selecting by its own criteria could pick a different
+        // candidate whose criteria are a subset of them.
         const slotOptions = bindingSlotToResolveOptions(binding.slot);
-        await this.resolveAsync(binding.token, slotOptions);
+        await this.#resolver.warmBindingAsync(binding, slotOptions);
       }
     }
   }

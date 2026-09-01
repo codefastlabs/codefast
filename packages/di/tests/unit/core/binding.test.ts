@@ -23,10 +23,11 @@ describe("bindingSlotEquals", () => {
   });
 
   it("differs on name, tag count, or tag value", () => {
+    // A name is the reserved criterion, so a differing name is a differing criterion set.
     expect(
       bindingSlotEquals(
-        { name: "x", tags: [], keyMask: tagKeyMaskOf([]) },
-        { name: "y", tags: [], keyMask: tagKeyMaskOf([]) },
+        { name: "x", tags: [slotName.of("x")], keyMask: tagKeyMaskOf([slotName.of("x")]) },
+        { name: "y", tags: [slotName.of("y")], keyMask: tagKeyMaskOf([slotName.of("y")]) },
       ),
     ).toBe(false);
     expect(

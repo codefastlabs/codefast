@@ -13,6 +13,10 @@ union lane like any tag, and `whenParentTagged(slotName.of(n))` is now expressib
 name rule — equality, absence included — excluded every slot that declared no name; under the one-rule model those slots
 match whenever their declared criteria are covered by the request, and the most-specific candidate (highest criterion
 count, the name counting as one) wins. Requests carrying only a name, only tags, or nothing resolve exactly as before.
+Selection stays container-local: a child's matching subset slot answers before a parent's more specific one, exactly as
+it always has for tag-only requests. `initializeAsync` instantiates each singleton binding directly instead of
+re-selecting by its slot's criteria, and a request's `name` folds through the new `TagKey.peek()` — an intern read that
+never mints — so dynamic names no binding declares are never retained.
 
 **Breaking (internal API):** the registry's string-keyed named index, the lookup cache's named lane, and the
 `isNameOnlyOptions`/`singleTagOnlyOf` helpers are gone; `singleCriterionOnlyOf` is the one admission test.

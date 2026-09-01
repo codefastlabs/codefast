@@ -7,8 +7,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
-import { tag } from "#/core/tag";
-import { slotName } from "#/core/tag";
+import { slotName, tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectAll, normalizeToDescriptor, optional } from "#/injection/descriptor";
@@ -148,9 +147,31 @@ describe("singleCriterionOnlyOf", () => {
     expect(singleCriterionOnlyOf({ tag: pair, tags: [] })).toBe(pair);
   });
 
-  it("folds a lone name to the reserved criterion", () => {
-    expect(singleCriterionOnlyOf({ name: "primary" })).toBe(slotName.of("primary"));
-    expect(singleCriterionOnlyOf({ name: "primary", tags: [] })).toBe(slotName.of("primary"));
+  it("folds a lone name to the reserved criterion once one is minted", () => {
+    // The fold peeks rather than mints, so an undeclared name folds to nothing.
+    expect(singleCriterionOnlyOf({ name: "parity-unminted" })).toBeUndefined();
+    const criterion = slotName.of("primary");
+    expect(singleCriterionOnlyOf({ name: "primary" })).toBe(criterion);
+    expect(singleCriterionOnlyOf({ name: "primary", tags: [] })).toBe(criterion);
+  });
+
+  it("never interns a request-side name no binding declared", () => {
+    const container = Container.create();
+    const probe = token<string>("parity-leak-probe-target");
+    container.bind(probe).toConstantValue("v").whenNamed("declared");
+
+    expect(container.resolveOptional(probe, { name: "never-declared-name" })).toBeUndefined();
+    // The miss folded through peek, so the name minted nothing.
+    expect(slotName.peek("never-declared-name")).toBeUndefined();
+    expect(slotName.peek("declared")).toBeDefined();
+  });
+
+  it("renders the reserved criterion as name in NoMatchingBindingError", () => {
+    const container = Container.create();
+    const probe = token<string>("parity-error-probe");
+    container.bind(probe).toConstantValue("v").whenNamed("x");
+
+    expect(() => container.resolve(probe, { tag: slotName.of("y") })).toThrow(/"name":"y"/);
   });
 
   it("withholds requests the single-criterion index cannot answer", () => {

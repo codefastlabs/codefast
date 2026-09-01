@@ -1,5 +1,5 @@
 import type { BindingTag, TagKeyMask } from "#/core/tag";
-import { NO_TAG_KEYS, slotName } from "#/core/tag";
+import { NO_TAG_KEYS, slotName, tagKeyMaskOf } from "#/core/tag";
 import type { Token } from "#/core/token";
 import type {
   ActivationHandler,
@@ -30,12 +30,32 @@ export interface BindingSlot {
 }
 
 /**
+ * Builds a slot from its criterion set, deriving the name view and key mask.
+ *
+ * @remarks The one place the derived `name` is computed — a slot assembled any other way can carry
+ * a name criterion the readers of the view never see.
+ */
+export function createBindingSlot(tags: ReadonlyArray<BindingTag>): BindingSlot {
+  let name: string | undefined;
+  for (const criterion of tags) {
+    if (criterion.key === slotName) {
+      name = criterion.value as string;
+      break;
+    }
+  }
+  // Frozen like DEFAULT_BINDING_SLOT's list: frames and snapshots alias a slot's tags.
+  return { name, tags: Object.freeze([...tags]), keyMask: tagKeyMaskOf(tags) };
+}
+
+/**
  * Returns whether two slots carry the same criterion set, in any order.
+ *
+ * @remarks The derived `name` is not compared — the criterion set alone is the identity.
  *
  * @since 0.3.16-canary.0
  */
 export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean {
-  if (left.name !== right.name || left.keyMask !== right.keyMask || left.tags.length !== right.tags.length) {
+  if (left.keyMask !== right.keyMask || left.tags.length !== right.tags.length) {
     return false;
   }
   for (const criterion of left.tags) {

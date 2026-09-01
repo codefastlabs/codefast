@@ -3,7 +3,7 @@ import type { Container } from "#/container/container";
 import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
 import type { BindingRegistry } from "#/core/registry";
-import { NO_TAG_KEYS, slotName } from "#/core/tag";
+import { NO_TAG_KEYS, slotNameCriterionOf } from "#/core/tag";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type {
@@ -180,31 +180,27 @@ export class DependencyResolver implements ResolverCallbacks {
       if (fastDefaultBinding !== undefined) {
         return { binding: fastDefaultBinding, owner: this };
       }
-    } else {
-      if (singleCriterion !== undefined) {
-        const indexed = this.#registry.getSimpleTagged(token, singleCriterion);
-        if (indexed !== undefined && this.#satisfiesPredicate(indexed, options, resolutionStack)) {
-          return { binding: indexed, owner: this };
-        }
-      } else if (
-        // A threshold switches the data structure, never the semantics: under it the generic scan
-        // below beats walking the indexes, and both paths answer identically. Sized first, so a
-        // small list pays one length read and nothing else.
-        this.#registry.getAll(token).length > MULTI_TAG_INDEX_THRESHOLD &&
-        requestedTagKeyMask(options) !== NO_TAG_KEYS
-      ) {
-        // A multi-criterion request matches only slots whose every criterion it carries, and every
-        // such slot lives in one of the two tag indexes — so their union is the whole candidate set
-        // and the token's full list never needs scanning. Selection still owns predicates and
-        // specificity.
-        const selected = this.#selectMultiTagged(token, options, resolutionStack);
-        if (selected !== undefined) {
-          return { binding: selected, owner: this };
-        }
-        return this.#parent === undefined
-          ? undefined
-          : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
+    } else if (singleCriterion !== undefined) {
+      const indexed = this.#registry.getSimpleTagged(token, singleCriterion);
+      if (indexed !== undefined && this.#satisfiesPredicate(indexed, options, resolutionStack)) {
+        return { binding: indexed, owner: this };
       }
+    } else if (
+      // A threshold switches the data structure, never the semantics: under it the generic scan
+      // below beats walking the indexes, and both paths answer identically. Sized first, so a
+      // small list pays one length read and nothing else.
+      this.#registry.getAll(token).length > MULTI_TAG_INDEX_THRESHOLD &&
+      requestedTagKeyMask(options) !== NO_TAG_KEYS
+    ) {
+      // A multi-criterion request matches only slots whose every criterion it carries, and every
+      // such slot is in the two tag indexes — their union is the whole candidate set, unscanned.
+      const selected = this.#selectMultiTagged(token, options, resolutionStack);
+      if (selected !== undefined) {
+        return { binding: selected, owner: this };
+      }
+      return this.#parent === undefined
+        ? undefined
+        : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
     }
 
     const bindings = this.#registry.getAll(token);
@@ -213,7 +209,7 @@ export class DependencyResolver implements ResolverCallbacks {
       // specificity to weigh and no ambiguity to report.
       const selected =
         bindings.length === 1
-          ? this.#matchesBindingFast(bindings[0]!, options, resolutionStack)
+          ? matchesSlot(bindings[0]!.slot, options) && this.#satisfiesPredicate(bindings[0]!, options, resolutionStack)
             ? bindings[0]
             : undefined
           : selectBinding(bindings, options, this.#makeConstraintContext(resolutionStack, options), tokenName(token));
@@ -237,10 +233,11 @@ export class DependencyResolver implements ResolverCallbacks {
     token: Token<unknown> | Constructor,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
-    precomputedCriterion?: BindingTag,
+    precomputedCriterion?: BindingTag | null,
   ): DefaultLookupEntry<DependencyResolver> {
+    // `null` is a caller's "folded: none" — only an absent precomputation re-folds.
     const singleCriterion =
-      precomputedCriterion ?? (options === undefined ? undefined : singleCriterionOnlyOf(options));
+      precomputedCriterion === undefined ? singleCriterionOnlyOf(options) : (precomputedCriterion ?? undefined);
     let currentToken = token;
     let visitedAliasTokens: Set<Token<unknown> | Constructor> | undefined;
     let found = this.#findBinding(currentToken, options, resolutionStack, singleCriterion);
@@ -278,7 +275,7 @@ export class DependencyResolver implements ResolverCallbacks {
     token: Token<unknown> | Constructor,
     options: ResolveOptions | undefined,
   ): DefaultLookupEntry<DependencyResolver> | undefined {
-    return this.#findBinding(token, options, [], options === undefined ? undefined : singleCriterionOnlyOf(options));
+    return this.#findBinding(token, options, [], singleCriterionOnlyOf(options));
   }
 
   /**
@@ -506,13 +503,14 @@ export class DependencyResolver implements ResolverCallbacks {
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
-    precomputedCriterion?: BindingTag,
+    precomputedCriterion?: BindingTag | null,
   ): Value {
     // Single-criterion fast lane (a lone name folds here too): memoized lookup, dispatching just
     // the shapes whose semantics involve no resolution context (constants, cached singletons).
     let singleCriterion: BindingTag | undefined;
     if (options !== undefined) {
-      singleCriterion = precomputedCriterion ?? singleCriterionOnlyOf(options);
+      singleCriterion =
+        precomputedCriterion === undefined ? singleCriterionOnlyOf(options) : (precomputedCriterion ?? undefined);
       if (singleCriterion !== undefined) {
         const indexedEntry = this.#lookup.taggedEntry(token, singleCriterion);
         if (indexedEntry !== null) {
@@ -528,7 +526,7 @@ export class DependencyResolver implements ResolverCallbacks {
       }
     }
 
-    const { binding, owner } = this.#requireBinding(token, options, resolutionStack, singleCriterion);
+    const { binding, owner } = this.#requireBinding(token, options, resolutionStack, singleCriterion ?? null);
 
     // A singleton owned by a parent resolver is resolved there, so the parent caches it.
     if (binding.scope === "singleton" && owner !== this) {
@@ -723,7 +721,7 @@ export class DependencyResolver implements ResolverCallbacks {
       return this.resolveAll(dep.token, options, resolutionStack);
     }
     if (dep.optional) {
-      return this.resolveOptional(dep.token, options, resolutionStack);
+      return this.resolveOptional(dep.token, options, resolutionStack, singleCriterionForSlot(dep));
     }
     if (options === undefined) {
       return this.resolveFromContext(dep.token, resolutionStack);
@@ -735,12 +733,13 @@ export class DependencyResolver implements ResolverCallbacks {
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
+    precomputedCriterion?: BindingTag | null,
   ): Value | undefined {
     const entry = this.#findBinding(
       token,
       options,
       resolutionStack,
-      options === undefined ? undefined : singleCriterionOnlyOf(options),
+      precomputedCriterion === undefined ? singleCriterionOnlyOf(options) : (precomputedCriterion ?? undefined),
     );
     if (entry === undefined) {
       return undefined;
@@ -854,12 +853,22 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#resolveBindingAsync(binding, undefined, resolutionStack, branchDepth, owner);
   }
 
+  /**
+   * Instantiates one owned binding directly, bypassing selection.
+   *
+   * @remarks Warm-up must build the binding it inspected: re-selecting by the slot's own criteria
+   * could pick a different candidate whose criteria are a subset of them.
+   */
+  warmBindingAsync(binding: Binding, options: ResolveOptions | undefined): Promise<unknown> {
+    return this.#resolveBindingAsync(binding, options, [], ROOT_BRANCH, this);
+  }
+
   async resolveAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
-    precomputedCriterion?: BindingTag,
+    precomputedCriterion?: BindingTag | null,
   ): Promise<Value> {
     const { binding, owner } = this.#requireBinding(token, options, resolutionStack, precomputedCriterion);
 
@@ -1100,7 +1109,7 @@ export class DependencyResolver implements ResolverCallbacks {
       return this.resolveAllAsync(dep.token, options, resolutionStack, branchDepth);
     }
     if (dep.optional) {
-      return this.resolveOptionalAsync(dep.token, options, resolutionStack, branchDepth);
+      return this.resolveOptionalAsync(dep.token, options, resolutionStack, branchDepth, singleCriterionForSlot(dep));
     }
     if (options === undefined) {
       return this.resolveAsyncFromContext(dep.token, resolutionStack, branchDepth);
@@ -1113,12 +1122,13 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
+    precomputedCriterion?: BindingTag | null,
   ): Promise<Value | undefined> {
     const entry = this.#findBinding(
       token,
       options,
       resolutionStack,
-      options === undefined ? undefined : singleCriterionOnlyOf(options),
+      precomputedCriterion === undefined ? singleCriterionOnlyOf(options) : (precomputedCriterion ?? undefined),
     );
     if (entry === undefined) {
       return undefined;
@@ -1266,14 +1276,16 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
   ): Binding | undefined {
     const candidates: Array<Binding> = [];
+    const gathered: Array<BindingTag> = [];
     if (options.name !== undefined) {
-      this.#gatherTagCandidates(token, slotName.of(options.name), candidates);
+      // Read, not minted: an unminted name has no criterion, so no slot can carry it.
+      this.#gatherTagCandidates(token, slotNameCriterionOf(options.name), candidates, gathered);
     }
-    this.#gatherTagCandidates(token, options.tag, candidates);
+    this.#gatherTagCandidates(token, options.tag, candidates, gathered);
     const listed = options.tags;
     if (listed !== undefined) {
       for (let index = 0; index < listed.length; index += 1) {
-        this.#gatherTagCandidates(token, listed[index], candidates);
+        this.#gatherTagCandidates(token, listed[index], candidates, gathered);
       }
     }
     if (candidates.length === 0) {
@@ -1287,35 +1299,24 @@ export class DependencyResolver implements ResolverCallbacks {
     token: Token<unknown> | Constructor,
     criterion: BindingTag | undefined,
     out: Array<Binding>,
+    gathered: Array<BindingTag>,
   ): void {
-    if (criterion === undefined) {
+    // Distinct criteria never share a binding — a slot lives in exactly one bucket — so deduping
+    // by criterion covers a request repeating one across its spellings, without scanning `out`.
+    if (criterion === undefined || gathered.includes(criterion)) {
       return;
     }
-    // The includes probes only guard a request repeating a criterion across its two spellings.
+    gathered.push(criterion);
     const single = this.#registry.getSimpleTagged(token, criterion);
-    if (single !== undefined && !out.includes(single)) {
+    if (single !== undefined) {
       out.push(single);
     }
     const bucket = this.#registry.getMultiTagged(token, criterion);
     if (bucket !== undefined) {
       for (let index = 0; index < bucket.length; index += 1) {
-        const candidate = bucket[index]!;
-        if (!out.includes(candidate)) {
-          out.push(candidate);
-        }
+        out.push(bucket[index]!);
       }
     }
-  }
-
-  #matchesBindingFast(
-    binding: Binding,
-    options: ResolveOptions | undefined,
-    resolutionStack: Array<ResolutionFrame>,
-  ): boolean {
-    if (!matchesSlot(binding.slot, options)) {
-      return false;
-    }
-    return this.#satisfiesPredicate(binding, options, resolutionStack);
   }
 
   /** The predicate half of a match, for a lane whose index has already settled the slot. */

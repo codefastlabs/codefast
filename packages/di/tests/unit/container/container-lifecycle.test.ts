@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { Module } from "#/core/module";
+import { tag } from "#/core/tag";
 import { token } from "#/core/token";
 import { createAutoRegisterRegistry } from "#/decorators/injectable";
 import { AsyncModuleLoadError, DisposedContainerError } from "#/errors/errors";
@@ -223,6 +224,36 @@ describe("auto-registration", () => {
 });
 
 describe("initializeAsync", () => {
+  it("warms the singleton binding itself, not a subset binding its criteria also satisfy", async () => {
+    const fuel = tag<string>("lifecycle-fuel");
+    const serviceToken = token<string>("eager-named-tagged");
+    const container = Container.create();
+    let hijackBuilt = 0;
+    let warmBuilt = 0;
+    container
+      .bind(serviceToken)
+      .toDynamic(() => {
+        hijackBuilt += 1;
+        return "hijack";
+      })
+      .whenTagged(fuel.of("x"))
+      .when(() => true);
+    container
+      .bind(serviceToken)
+      .toDynamic(() => {
+        warmBuilt += 1;
+        return "warm";
+      })
+      .whenNamed("a")
+      .whenTagged(fuel.of("x"))
+      .singleton();
+
+    await container.initializeAsync();
+
+    expect(warmBuilt).toBe(1);
+    expect(hijackBuilt).toBe(0);
+  });
+
   it("eagerly instantiates singletons, including async ones", async () => {
     const built: Array<string> = [];
     const syncToken = token<string>("eager-sync");

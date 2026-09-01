@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
+import { slotName } from "#/core/tag";
 import { token } from "#/core/token";
 import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
@@ -181,6 +182,26 @@ describe("generateDependencyGraph", () => {
   it("labels a named class-constructor dependency with its slot name", () => {
     const configToken = token<number>("config");
     @injectable([inject(configToken, { name: "primary" })])
+    class Service {
+      constructor(readonly config: number) {}
+    }
+    const container = Container.create();
+    container.bind(configToken).toConstantValue(1).whenNamed("primary");
+    container.bind(configToken).toConstantValue(2).whenNamed("secondary");
+    container.bind(Service).toSelf().singleton();
+
+    const graph = container.generateDependencyGraph();
+    const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
+    const fanOut = graph.edges.filter((edge) => edge.from === serviceNode!.id);
+
+    expect(fanOut).toHaveLength(1);
+    expect(fanOut[0]!.slotName).toBe("primary");
+    expect(fanOut[0]!.label).toBe("name:primary");
+  });
+
+  it("treats a dependency spelling its name as the reserved criterion like the name spelling", () => {
+    const configToken = token<number>("config");
+    @injectable([inject(configToken, { tag: slotName.of("primary") })])
     class Service {
       constructor(readonly config: number) {}
     }

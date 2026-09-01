@@ -1,3 +1,5 @@
+import type { BindingTag } from "#/core/tag";
+import { slotName } from "#/core/tag";
 import type { BindingIdentifier, BindingScope, ResolveOptions } from "#/core/types";
 
 /**
@@ -43,13 +45,34 @@ export class TokenNotBoundError extends DiError {
 }
 
 // Options carry caller values a tag may hold — a bigint or a circular object must not make the
-// diagnostic itself throw and mask the real error.
+// diagnostic itself throw and mask the real error. The reserved criterion renders as `name`.
 function describeResolveOptions(options: ResolveOptions): string {
   try {
-    return (
-      JSON.stringify(options, (_key, value: unknown) => (typeof value === "bigint" ? `${String(value)}n` : value)) ??
-      "undefined"
-    );
+    let name = options.name;
+    const criteria: Array<string> = [];
+    const add = (criterion: BindingTag): void => {
+      if (criterion.key === slotName) {
+        name ??= String(criterion.value);
+      } else {
+        criteria.push(`${criterion.key.name}=${String(criterion.value)}`);
+      }
+    };
+    if (options.tag !== undefined) {
+      add(options.tag);
+    }
+    if (options.tags !== undefined) {
+      for (const criterion of options.tags) {
+        add(criterion);
+      }
+    }
+    const display: { name?: string; tags?: Array<string> } = {};
+    if (name !== undefined) {
+      display.name = name;
+    }
+    if (criteria.length > 0) {
+      display.tags = criteria;
+    }
+    return JSON.stringify(display) ?? "undefined";
   } catch {
     return "[unserializable options]";
   }

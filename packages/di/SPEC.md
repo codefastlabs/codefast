@@ -218,7 +218,8 @@ The hint passed into a single resolve has three fields, all optional:
 
 **A criterion is minted by `TagKey.of()`, and only by it — normative.** A tag key is declared with `tag<Value>(name)`;
 `key.of(value)` returns an **interned** `BindingTag`: the same value always yields the **same object**. `BindingTag` is
-branded so it cannot be constructed by hand.
+branded so it cannot be constructed by hand. `key.peek(value)` reads the intern cache without minting — the engine folds
+a request's `name` through it, so a name no binding ever declared is never retained.
 
 ```ts
 const Region = tag<"eu" | "us">("region");
@@ -901,6 +902,11 @@ So row 8 resolves in both directions: `{fuel}` → A, `{fuel, size}` → B. An e
 `resolveAll` does **not** apply this rule: it returns every matching candidate, and specificity only comes into play
 when exactly one must be chosen.
 
+> **The more-specific rule is container-local.** Selection answers from the nearest container whose candidates match
+> before consulting the parent, so a child's matching subset slot (say, tag-only) answers a `{name, tags}` request even
+> when the parent declares a slot carrying more of its criteria — locality outranks specificity across the chain,
+> exactly as it always has for tag-only requests.
+
 > **`has(token)` and slot semantics:** `container.has(token)` returns `true` if the token has **any binding at all**
 > (even if only named/tagged slots, with no default). `container.resolve(token)` with no hint can still throw
 > `NoMatchingBindingError` even when `has(token)` is `true`. See [section 6.10](#introspection) for the right way to use
@@ -1298,6 +1304,8 @@ fail fast at startup on a config error, and remove lazy-init latency from the fi
 **Scope, cross-container behaviour, and idempotency:**
 
 - Only singletons defined at the current container are warmed up — it does not walk up to the parent.
+- **Each singleton binding is instantiated directly, not re-selected** — warming never runs another binding whose
+  criteria happen to be a subset of the singleton's slot.
 - If singleton A at the child depends on singleton B at the parent, resolving A triggers resolving B at the parent and
   caches B there. `initializeAsync()` on a child can therefore indirectly trigger parent singletons.
 - A `toConstantValue` binding is **not skipped** when it has an `onActivation` — the activation runs and the result is

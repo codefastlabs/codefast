@@ -1,6 +1,6 @@
 import type { Binding, BindingSlot } from "#/core/binding";
 import type { BindingTag, TagKeyMask } from "#/core/tag";
-import { coversTagKeys, NO_TAG_KEYS, slotName } from "#/core/tag";
+import { coversTagKeys, NO_TAG_KEYS, slotName, slotNameCriterionOf } from "#/core/tag";
 import type { ConstraintContext, ResolveOptions } from "#/core/types";
 import { AmbiguousBindingError } from "#/errors/errors";
 
@@ -184,8 +184,9 @@ function requestCarries(options: ResolveOptions | undefined, criterion: BindingT
   if (options === undefined) {
     return false;
   }
-  // The `name` spelling: interning makes the value compare exact for the reserved criterion.
-  if (criterion.key === slotName && criterion.value === options.name) {
+  // The `name` spelling folds through the intern read, so this too is identity — a hand-built
+  // criterion matches nothing on any lane, and an unminted name retains nothing.
+  if (criterion.key === slotName && options.name !== undefined && criterion === slotNameCriterionOf(options.name)) {
     return true;
   }
   if (options.tag === criterion) {
