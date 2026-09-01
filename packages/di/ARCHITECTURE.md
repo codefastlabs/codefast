@@ -158,10 +158,11 @@ What _is_ split out are the collaborators that need no cross-instance private ac
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
 
 > **Invariant (single source of truth).** Whether a slot matches a request is answered by `matchesSlot()` alone, and
-> whether a request is name-only by `isNameOnlyOptions()`. The resolver's fast lanes are lanes, not separate semantics —
-> a fast lane that re-implements one of those rules is how the two spellings drift. This isn't hypothetical:
-> `resolveAll`'s name lane once returned a binding whose `when()` predicate `resolve` was refusing, precisely because it
-> re-decided a rule instead of calling the shared matcher.
+> whether a request carries exactly one criterion by `singleCriterionOnlyOf()` — a lone name folds to the reserved
+> `slotName` criterion there, so the name spelling and the tag spellings reach one lane. The resolver's fast lanes are
+> lanes, not separate semantics — a fast lane that re-implements one of those rules is how the spellings drift. This
+> isn't hypothetical: `resolveAll`'s name lane once returned a binding whose `when()` predicate `resolve` was refusing,
+> precisely because it re-decided a rule instead of calling the shared matcher.
 
 **Both dependency sources are one shape.** A class's `ParamMetadata` and a `toResolved` `InjectionDescriptor` are
 structurally `DependencySlot`, so `#resolveDeps`/`#resolveDepsAsync` serve both and the plan compiler compiles both —
@@ -206,11 +207,11 @@ scheme that shares or lends that array:
 A poisoned frame changes which binding is selected — a wrong value, not just a wrong diagnostic. That's why this one is
 firm rather than a matter of taste; anything faster here has to keep both mechanisms from firing.
 
-**A name the registry can settle is not opaque.** A dependency used to escape on `options !== undefined`, before
-anything tried to look it up — yet `whenNamed` writes `slot.name` rather than a predicate, so a name-only request is
-usually a plain index hit. `lookupPathIndependentNamedEntry` bakes that selection into the plan when — and only when —
-the candidate carries no predicate and its slot matches the request, since a predicate reads the resolution path and is
-the runtime's to evaluate.
+**A criterion the registry can settle is not opaque.** A dependency used to escape on `options !== undefined`, before
+anything tried to look it up — yet `whenNamed`/`whenTagged` write criteria into the slot rather than a predicate, so a
+single-criterion request is usually a plain index hit. `lookupPathIndependentEntry` bakes that selection into the plan
+when — and only when — the candidate carries no predicate and its slot matches the request, since a predicate reads the
+resolution path and is the runtime's to evaluate.
 
 > **Invariant (correctness).** An entry reached by a criterion carries that criterion into every escape it falls back
 > to. `#compileDepThunk`'s escapes replay `resolveFromContext` — the _default_ slot — when handed no options, so a named
@@ -239,27 +240,27 @@ never has.
 > an unrelated row. That sensitivity is a V8 property and can shift between versions, so measure any edit near it
 > against the benchmark rather than trusting a past number.
 
-The same reasoning covers two smaller shapes: `#namedBindingsFromChain` returns `[binding]` whole for a root container
-rather than growing an empty list (a name matches at most once per registry, so the size is known), and `#findBinding`
-treats a lone candidate as its own selection — matching it _is_ the decision, with no specificity to weigh and no
-ambiguity to report.
+The same reasoning covers two smaller shapes: `#taggedBindingsFromChain` returns `[binding]` whole for a root container
+rather than growing an empty list (a criterion matches at most once per registry, so the size is known), and
+`#findBinding` treats a lone candidate as its own selection — matching it _is_ the decision, with no specificity to
+weigh and no ambiguity to report.
 
 **An upsert's fallback is eager or computed by hit rate.** The package's own upsert helpers
 ([`core/map-upsert.ts`](src/core/map-upsert.ts)) come in both forms: `getOrInsert` takes a fallback the caller has
 already evaluated, `getOrInsertComputed` calls a factory only on a miss. So the choice follows which case dominates.
-`BindingLookupCache.namedEntry()` runs on every named resolve and almost always hits a long-lived container, so it takes
-the computed form with the factory hoisted to module scope, so no closure is allocated per call either. The registry's
-index insertions are the mirror image: a bind is usually the token's first, so the fallback is usually the value that
-gets stored, and the eager form wins. (`add()` itself no longer upserts — its list is copy-on-write, so it always builds
-the next array.) Both forms are in the tree on purpose, and they stay the package's own rather than the platform's
-ES2025 `Map` methods, which would move the Node floor to 26 for two call shapes a local helper already covers. Both
-reject a value type that admits `undefined`, because they read absence with one `get` rather than a second `has` — a map
-that stores `undefined` needs `ScopeManager.readScoped()`'s shape, not this one. A lazily allocated index also spells
-its type arguments — `this.#field ??= new Map<Key, Value>()` — because TypeScript does not contextually type the
-right-hand side of `??=`, so a bare `new Map()` there becomes `Map<any, any>` and silently drops every check that reads
-the field. (Note that "almost always hits" is a claim about a long-lived container; it inverts in a per-request one,
-where every first resolve of a named token buys a map it won't read again — worth measuring fresh vs warm if you revisit
-this.)
+`BindingLookupCache.taggedEntry()` runs on every criterion-carrying resolve and almost always hits a long-lived
+container, so it takes the computed form with the factory hoisted to module scope, so no closure is allocated per call
+either. The registry's index insertions are the mirror image: a bind is usually the token's first, so the fallback is
+usually the value that gets stored, and the eager form wins. (`add()` itself no longer upserts — its list is
+copy-on-write, so it always builds the next array.) Both forms are in the tree on purpose, and they stay the package's
+own rather than the platform's ES2025 `Map` methods, which would move the Node floor to 26 for two call shapes a local
+helper already covers. Both reject a value type that admits `undefined`, because they read absence with one `get` rather
+than a second `has` — a map that stores `undefined` needs `ScopeManager.readScoped()`'s shape, not this one. A lazily
+allocated index also spells its type arguments — `this.#field ??= new Map<Key, Value>()` — because TypeScript does not
+contextually type the right-hand side of `??=`, so a bare `new Map()` there becomes `Map<any, any>` and silently drops
+every check that reads the field. (Note that "almost always hits" is a claim about a long-lived container; it inverts in
+a per-request one, where every first criterion-carrying resolve of a token buys a map it won't read again — worth
+measuring fresh vs warm if you revisit this.)
 
 **A criterion is interned, so the index can be keyed by it.** A tag key is minted by `tag()` and its criteria by
 `TagKey.of()`, which caches one object per value — so `Object.is` equality
@@ -278,23 +279,24 @@ slot the OR of its keys, and a request the OR of what it names; a slot whose key
 by `(requestMask & slotMask) !== slotMask` before any criterion is read. Bits wrap every 32 keys, so two keys can share
 one — a false positive the identity comparison then rejects, never a false negative.
 
-**Agreeing on the answer is not agreeing on the lane.** `tag: pair` and `tags: [pair]` are one request, and
-`singleTagOnlyOf` is the admission test that has to see it that way — reading the presence of `tag` as a reason to give
-up once made the shorthand (the form the README reaches for) the only spelling the index never served. A request
-carrying a tag from **both** sources at once still declines: two tags asked for is not something a one-tag index can
-answer without skipping the ambiguity check the full path runs.
+**Agreeing on the answer is not agreeing on the lane.** `tag: pair`, `tags: [pair]` and — through the reserved criterion
+— `name: n` are each one-criterion requests, and `singleCriterionOnlyOf` is the admission test that has to see them that
+way — reading the presence of `tag` as a reason to give up once made the shorthand (the form the README reaches for) the
+only spelling the index never served. A request carrying criteria from **two** sources at once still declines: two
+criteria asked for is not something a one-criterion index can answer without skipping the ambiguity check the full path
+runs.
 
 > **Invariant (consistency of contract).** Two spellings SPEC calls equivalent have to reach the same lane, or the
 > shorter one becomes the slower one and the documentation recommending it becomes wrong.
 > [SPEC](SPEC.md#resolve-options) makes the two spellings one request;
 > `tests/unit/resolution/select/tag-shorthand-parity.test.ts` pins the lane alongside the answer.
 
-**`resolveAll` reads the tag index too, and one tag is not the subset query several are.** A request carrying one tag
-and no name matches exactly the bindings whose slot _is_ that tag — a named or multi-tag slot cannot satisfy it, and
-last-wins keeps at most one such binding per registry. So the index holds the whole answer per container and walking the
-chain is the candidate set rather than a prefilter, which is the shape the name lane had all along. Both lanes that read
-the index evaluate a found binding's predicate, as the name lane always has, because a predicate needs a live context no
-index can hold.
+**`resolveAll` reads the tag index too, and one criterion is not the subset query several are.** A request carrying
+exactly one criterion — a lone name folds to the reserved criterion — matches exactly the bindings whose slot _is_ that
+criterion: a multi-criterion slot cannot satisfy it, and last-wins keeps at most one such binding per registry. So the
+index holds the whole answer per container and walking the chain is the candidate set rather than a prefilter. Both
+lanes that read the index evaluate a found binding's predicate, because a predicate needs a live context no index can
+hold.
 
 A caution this lane earned the hard way, worth remembering when you read _any_ comment justifying a restriction:
 `simpleTagOf` once excluded predicate-bearing bindings from the tag index "because the index is read without a re-check"
@@ -303,13 +305,14 @@ long after the reason had stopped being true. The restriction outlived the fact.
 by `tests/unit/resolution/select/tagged-selection.test.ts`, so the failure that stale reasoning could have caused — an
 indexed hit reaching a caller past a predicate that refused it — can't land quietly.
 
-The multi-tag case is a **subset query** — a request carrying several tags matches every binding whose tags are a subset
-of them, so `[A]`, `[B]` and `[A,B]` all answer a request for `[A,B]` — which no single `Map` lookup can serve. The
-index that serves it buckets every name-less multi-tag slot under its **first** criterion: a matching slot's every tag
-is in the request, its first tag included, so walking the request's few buckets (plus the single-tag index under each
-request criterion) finds each candidate **exactly once** — no dedup set, no per-resolve allocation beyond the candidate
-list selection was already building, and no stringified tag values (the `Object.is` rule in
-[SPEC](SPEC.md#resolve-options) still holds; buckets are keyed by the interned criterion).
+The multi-criterion case is a **subset query** — a request carrying several criteria matches every binding whose
+criteria are a subset of them, so `[A]`, `[B]` and `[A,B]` all answer a request for `[A,B]` — which no single `Map`
+lookup can serve. The index that serves it buckets every multi-criterion slot under its **first** criterion: a matching
+slot's every criterion is in the request, its first included, so walking the request's few buckets (plus the single-tag
+index under each request criterion, the folded name criterion among them) finds each candidate **exactly once** — no
+dedup set, no per-resolve allocation beyond the candidate list selection was already building, and no stringified tag
+values (the `Object.is` rule in [SPEC](SPEC.md#resolve-options) still holds; buckets are keyed by the interned
+criterion).
 
 Two deliberate bounds on that lane. It serves **`resolve` only** — `resolveAll` keeps the full scan, because its result
 order follows the token's list and bucket order would reorder it. And it engages only past a **size threshold** on the
@@ -331,15 +334,15 @@ entry.
 > chain's summed version can see. Alias folding belongs where the version stamp is; moving it into `getFastDefault()`
 > would miss a parent rebind.
 
-**All three criteria lanes memoize the chain walk, and the single-tag one defers its map.** `taggedEntry` mirrors
-`namedEntry` — chain-versioned, `null` meaning "this shape needs full selection", predicate- and alias-carrying hits
-declined — with one difference the fresh-vs-warm measurement forced: a per-request child usually asks one `(token, tag)`
-exactly once, and an inner-map allocation on that first ask was the whole cost of the memo on that shape. So the first
-shape a cache generation sees is answered from the walk and parked in a one-entry front, and the map is not written
-until a second distinct shape appears; an alternating pair converges after one extra walk per key. The memo key is the
-criterion object itself — interning makes identity the slot contract's own `Object.is`, the same exactness the
-registry's tagged index relies on, so an indexed hit needs no value re-check. The warm-vs-fresh numbers that settled
-this, and the shape's A/B, live in the benchmark suite's `RESULTS.md`.
+**Both lookup lanes memoize the chain walk, and the criterion one defers its map.** `taggedEntry` mirrors `defaultEntry`
+— chain-versioned, `null` meaning "this shape needs full selection", predicate- and alias-carrying hits declined — with
+one difference the fresh-vs-warm measurement forced: a per-request child usually asks one `(token, tag)` exactly once,
+and an inner-map allocation on that first ask was the whole cost of the memo on that shape. So the first shape a cache
+generation sees is answered from the walk and parked in a one-entry front, and the map is not written until a second
+distinct shape appears; an alternating pair converges after one extra walk per key. The memo key is the criterion object
+itself — interning makes identity the slot contract's own `Object.is`, the same exactness the registry's tagged index
+relies on, so an indexed hit needs no value re-check. The warm-vs-fresh numbers that settled this, and the shape's A/B,
+live in the benchmark suite's `RESULTS.md`.
 
 **Late hooks are why a memo over a binding keys on the hook's identity.** `.onActivation()` writes the field **in
 place** on an already-registered binding and bumps no version. `needsActivation()` therefore answers the binding's own
@@ -478,9 +481,9 @@ push a frame onto, while the shared stack pays one per push.
 
 `DefaultContainer`'s constructor builds only what a resolve cannot happen without: the registry, the scope manager, the
 lifecycle manager and the resolver chain. Everything else arrives on first use — the inspector, the module ref/binding
-tables, the scope's in-flight and scoped caches, the registry's named and tagged slot indexes, and the class
-introspector's three metadata caches. An empty `Map` is not free — V8 gives it a backing store — and those are `Map`s a
-bind-and-resolve container never reads.
+tables, the scope's in-flight and scoped caches, the registry's tagged slot indexes, and the class introspector's three
+metadata caches. An empty `Map` is not free — V8 gives it a backing store — and those are `Map`s a bind-and-resolve
+container never reads.
 
 > **Invariant (correctness).** Deferral is an allocation decision only. A deferred collaborator must answer identically
 > whether or not something touched it first — an unallocated cache reads as a miss, never as an error — which is why
