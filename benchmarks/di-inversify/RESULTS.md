@@ -15,6 +15,36 @@ than the ratios on it.
 (`65443f167`) landed, on a freshly rebuilt `dist`. 78 of the run's cells carried a per-trial IQR above 5%, so single
 rows from it are read through the aggregates, not alone.
 
+## 2026-09-01 — the name lane folds into the tag lane
+
+`whenNamed` became sugar for a reserved tag key (`slotName`), which deleted the registry's string-keyed named index, the
+lookup cache's named lane, and `isNameOnlyOptions` — every single-criterion request now takes the one criterion lane,
+with a dependency's folded criterion memoized on its slot so the interpreted dep path never pays the intern map per hop.
+Two inlining fixes landed alongside because the first pass measured 0.65×–0.81× across the named rows: `TagKey.of()`'s
+miss path moved out of the hot wrapper, and `singleCriterionOnlyOf`'s name half split into its own function. Measured
+paired and alternating over three adjacent source-swap passes (`BENCH_ONLY` isolate runner, A first in each pair;
+`constant-resolve` rode along as the drift control and read parity in all three).
+
+| Row                              | B/A median |            B/A passes |
+| -------------------------------- | ---------: | --------------------: |
+| `slot-name-parent-owned`         |      1.120 | 1.113 · 1.149 · 1.120 |
+| `named-constant-get`             |      1.090 | 1.117 · 1.071 · 1.090 |
+| `slot-tag-shorthand-hoisted`     |      1.038 | 1.041 · 1.036 · 1.038 |
+| `constant-resolve` (control)     |      0.995 | 0.995 · 1.020 · 0.994 |
+| `slot-name-and-tag`              |      0.959 | 0.965 · 0.959 · 0.929 |
+| `slot-injected-name-interpreted` |      0.782 | 0.805 · 0.780 · 0.782 |
+
+The two hottest named rows gained 9–12% — the criterion lane's one-entry front plus the interned-criterion map beats the
+old two-map string walk once `of()` inlines — and the tag shorthand row gained 4% from the smaller admission helper. Two
+rows paid: `slot-name-and-tag` (−4%) now runs the multi-criterion union gather that the old name rule skipped, and
+`slot-injected-name-interpreted` (−22%) alternates four names, defeating both one-entry fronts so each dep pays the
+criterion-map path where it used to pay the string-map path. Both are codefast-only, `excludeFromAggregates` rows; the
+aggregate-bearing rows moved up or stayed put.
+
+One variant was tried and rejected: probing the own registry at the top of `taggedEntry` before the version-stamped walk
+recovered about half of the interpreted row's loss but cost the two hottest rows roughly 25% in the same paired runs —
+the larger body stopped inlining into `resolve()` — so the probe did not land.
+
 ## 2026-08-17 — dropping the ES2025 `Map` upsert methods costs nothing, and pays on the named lane
 
 The Node-floor change replaced `Map.prototype.getOrInsert` / `getOrInsertComputed` with the package's own
