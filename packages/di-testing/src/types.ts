@@ -9,5 +9,7 @@ import type { Constructor, Token } from "@codefast/di";
  * `mocks.get()` can map an identifier back to the mock type it produced.
  *
  * @typeParam Value - The value type the identified dependency resolves to.
+ *
+ * @since 0.1.0
  */
 export type InjectionIdentifier<Value> = Token<Value> | Constructor<Value>;

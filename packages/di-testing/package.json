@@ -1,6 +1,6 @@
 {
   "name": "@codefast/di-testing",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Solitary and sociable auto-mocking test beds for @codefast/di",
   "keywords": [
     "auto-mock",

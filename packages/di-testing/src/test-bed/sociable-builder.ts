@@ -23,6 +23,8 @@ import type { InjectionIdentifier } from "#/types";
  *
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
+ *
+ * @since 0.1.0
  */
 export interface SociableTestBedBuilder<Class, Backend extends MockFunction = Spy> {
   /** Keeps a class-keyed collaborator real; its own dependencies follow the same exposure rules. */
@@ -46,6 +48,8 @@ type PreparedSociableBed = PreparedBed & { readonly realClasses: ReadonlySet<Con
  *
  * @typeParam Class - The class under test.
  * @typeParam Backend - The spy type the bed's mock factory produces.
+ *
+ * @since 0.1.0
  */
 export class SociableBuilder<Class, Backend extends MockFunction = Spy>
   extends BedBuilder<Class, Backend>

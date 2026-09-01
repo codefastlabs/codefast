@@ -10,6 +10,8 @@ import { NotInjectableError } from "#/errors/errors";
  * @remarks Mirrors di's own fallback: a class with no constructor metadata is fine as long as its
  * constructor takes no parameters, which keeps zero-arg and accessor-only classes testable without
  * `@injectable`. A parameterful constructor with no metadata is a {@link NotInjectableError}.
+ *
+ * @since 0.1.0
  */
 export function scanDependencies(target: Constructor, reader: MetadataReader): ReadonlyArray<DependencySlot> {
   const constructorMetadata = reader.getConstructorMetadata(target);
@@ -25,6 +27,8 @@ export function scanDependencies(target: Constructor, reader: MetadataReader): R
 /**
  * What a sociable scan finds: the slots to mock, the exposed classes the unit actually reaches, and
  * the constrained slots those classes are injected through.
+ *
+ * @since 0.1.0
  */
 export interface SociableScan {
   readonly mockSlots: ReadonlyArray<DependencySlot>;
@@ -39,6 +43,8 @@ export interface SociableScan {
  *
  * @remarks Class identity is what exposure follows — a `Token`-keyed dependency is always mocked,
  * treating tokens as the declared boundary between the logic under test and the outside world.
+ *
+ * @since 0.1.0
  */
 export function scanSociableDependencies(
   target: Constructor,

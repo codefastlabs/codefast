@@ -13,6 +13,8 @@ import type { Spy } from "#/mocking/spy";
  *
  * @typeParam Dependency - The dependency type being mocked.
  * @typeParam Backend - The spy type the active mock factory produces.
+ *
+ * @since 0.1.0
  */
 export type Mocked<Dependency, Backend extends MockFunction = Spy> = Dependency extends (
   ...args: infer Args
@@ -33,6 +35,8 @@ export type Mocked<Dependency, Backend extends MockFunction = Spy> = Dependency 
  * optional so only the members a test cares about need spelling out.
  *
  * @typeParam Dependency - The dependency type being partially stubbed.
+ *
+ * @since 0.1.0
  */
 export type DeepPartial<Dependency> = Dependency extends (...args: Array<never>) => unknown
   ? Dependency
@@ -43,6 +47,8 @@ export type DeepPartial<Dependency> = Dependency extends (...args: Array<never>)
 /**
  * The key an auto-mock answers with its reset routine, clearing the root spy, every materialized
  * member, and the spies of its seed.
+ *
+ * @since 0.1.0
  */
 export const MOCK_RESET: unique symbol = Symbol("di-testing:mock-reset");
 
@@ -107,6 +113,8 @@ function seedProvides(seed: object, key: PropertyKey): boolean {
  *
  * @typeParam Dependency - The dependency type being mocked.
  * @typeParam Backend - The spy type the factory produces, threaded into the returned `Mocked` view.
+ *
+ * @since 0.1.0
  */
 export function createAutoMock<Dependency, Backend extends MockFunction = Spy>(
   mockFactory: MockFactory<Backend>,

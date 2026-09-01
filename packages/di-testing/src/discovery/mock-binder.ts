@@ -13,6 +13,8 @@ import type { MockFactory } from "#/mocking/mock-factory";
  *
  * @remarks A stub's `setup` runs once per compile, so two beds built from one builder never share
  * seeded spies.
+ *
+ * @since 0.1.0
  */
 export type MockOverride =
   | { readonly kind: "stub"; readonly setup: (mock: MockFactory) => unknown }
@@ -22,6 +24,8 @@ export type MockOverride =
 
 /**
  * Normalized slot criteria an override or a `mocks.get` lookup addresses one binding slot with.
+ *
+ * @since 0.1.0
  */
 export interface SlotCriteria {
   readonly name: string | undefined;
@@ -31,6 +35,8 @@ export interface SlotCriteria {
 /**
  * One override registration: how a dependency is supplied, and which slot it targets (none = every
  * slot of the token that has no more specific override).
+ *
+ * @since 0.1.0
  */
 export interface SlottedOverride {
   readonly criteria: SlotCriteria | undefined;
@@ -39,11 +45,15 @@ export interface SlottedOverride {
 
 /**
  * What one bound entry was supplied with — only `auto` and `stub` entries carry a mock surface.
+ *
+ * @since 0.1.0
  */
 export type BoundMockKind = "auto" | "stub" | "value" | "absent" | "all" | "exposed";
 
 /**
  * One bound value `mocks` can look up: its slot criteria, the value, and how it was supplied.
+ *
+ * @since 0.1.0
  */
 export interface BoundMock {
   readonly criteria: SlotCriteria | undefined;
@@ -59,6 +69,8 @@ const ALL_ELEMENT_SLOT_PREFIX = "di-testing:all:";
  *
  * @remarks Tags are copied and deduplicated by identity — di interns each `(key, value)` pair, so a
  * repeated pair is the same object.
+ *
+ * @since 0.1.0
  */
 export function normalizeCriteria(options: InjectOptions | undefined): SlotCriteria | undefined {
   if (options === undefined) {
@@ -74,6 +86,8 @@ export function normalizeCriteria(options: InjectOptions | undefined): SlotCrite
 
 /**
  * Returns whether two criteria address the same slot — equal name and the same tag set.
+ *
+ * @since 0.1.0
  */
 export function criteriaEquals(left: SlotCriteria, right: SlotCriteria): boolean {
   return left.name === right.name && tagSetEquals(left.tags, right.tags);
@@ -134,6 +148,8 @@ function acceptsAll(slot: DependencySlot): boolean {
  * An override that matches nothing is an {@link UndeclaredDependencyError}; `.absent()` on a
  * required slot or `.usingAll()` with no unconstrained `injectAll()` slot is an
  * {@link OverrideMismatchError}.
+ *
+ * @since 0.1.0
  */
 export function bindMocks(
   container: Container,
