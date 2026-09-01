@@ -141,6 +141,8 @@ function memoizeResolveOptions(
  * rather than per hop — which is what keeps a named dependency's resolve off the intern map. A
  * lone name whose criterion is not interned yet is left unmemoized: a later `whenNamed` binding
  * mints it, and the next fold must see that.
+ *
+ * @since 0.8.0
  */
 export function singleCriterionForSlot(injectionSlot: DependencySlot): BindingTag | null {
   const slot = injectionSlot as SlotWithMemoizedOptions;

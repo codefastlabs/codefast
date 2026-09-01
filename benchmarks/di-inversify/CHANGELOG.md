@@ -1,5 +1,12 @@
 # @codefast/benchmark-di-inversify
 
+## 0.7.2
+
+### Patch Changes
+
+- Updated dependencies [[`96af502`](https://github.com/codefastlabs/codefast/commit/96af502ed8dd7fc02c4440d03b40dc6677b7bcec)]:
+  - @codefast/di@0.8.0
+
 ## 0.7.1
 
 ### Patch Changes
