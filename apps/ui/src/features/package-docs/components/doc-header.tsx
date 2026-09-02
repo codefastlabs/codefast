@@ -4,6 +4,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import { ExternalLinkIcon, FileTextIcon, ScaleIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
+import { CopyDocButton } from "#/features/package-docs/components/copy-doc-button";
 import { DOC_KIND_BY_SLUG, docPath } from "#/features/package-docs/lib/doc-kinds";
 import type { PackageSummary, RenderedDoc } from "#/features/package-docs/lib/rendered-doc";
 import { packageNpmUrl, repoBlobUrl } from "#/features/package-docs/lib/site";
@@ -50,6 +51,7 @@ export function DocHeader({ pkg, doc, className, ...props }: DocHeaderProps) {
             {pkg.license} license
           </a>
         </Button>
+        <CopyDocButton pkg={pkg.slug} doc={doc.doc} />
         <Button asChild variant="ghost" size="sm">
           <a href={`${docPath(pkg.slug, doc.doc)}.md`}>
             <FileTextIcon className="size-3.5" />
