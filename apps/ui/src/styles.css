@@ -191,7 +191,8 @@
   color: var(--ui-fg);
   font-size: 0.9375rem;
   line-height: 1.75;
-  overflow-wrap: anywhere;
+  /* break-word, not anywhere: `anywhere` shrinks table columns to one character per line. */
+  overflow-wrap: break-word;
 }
 
 .markdown-body > :first-child {
@@ -343,6 +344,17 @@
   border: 1px solid color-mix(in oklab, var(--ui-border) 60%, transparent);
   text-align: start;
   vertical-align: top;
+}
+
+/* Identifiers and paths in a cell stay on one line; the table scrolls instead. */
+.markdown-body td code,
+.markdown-body th code {
+  white-space: nowrap;
+}
+
+.markdown-body td,
+.markdown-body th {
+  min-width: 6rem;
 }
 
 .markdown-body th {
