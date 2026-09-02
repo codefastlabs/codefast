@@ -7,7 +7,7 @@ export const REQUIREMENTS = [
   { label: "React", value: "≥ 19.0.0" },
   { label: "TypeScript", value: "≥ 5.0" },
   { label: "Tailwind CSS", value: "v4" },
-  { label: "Node.js", value: "≥ 20" },
+  { label: "Node.js", value: "≥ 24" },
 ] as const;
 
 export const INSTALL_STEPS = [
