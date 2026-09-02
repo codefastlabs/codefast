@@ -37,9 +37,10 @@ completeness".
 
 A record of what was chosen and why. Never edit the old content; if a decision changes, write a new one and link back.
 
-| File                                                           | Content                                                                                             |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| [`github-project-board.md`](decisions/github-project-board.md) | The GitHub Projects board design: what was chosen, why, and which platform limits forced a redesign |
+| File                                                           | Content                                                                                                     |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [`github-project-board.md`](decisions/github-project-board.md) | The GitHub Projects board design: what was chosen, why, and which platform limits forced a redesign         |
+| [`microfrontends-spike.md`](decisions/microfrontends-spike.md) | Vercel microfrontends for the docs portal: what the spike proved, the gaps, and why it was rejected on cost |
 
 ## guides/ — how to do things
 
