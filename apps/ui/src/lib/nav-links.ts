@@ -13,12 +13,13 @@ import { linkOptions } from "@tanstack/react-router";
  */
 export const PRIMARY_NAV = linkOptions([
   { to: "/", label: "Home" },
+  { to: "/docs", label: "Packages" },
   { to: "/components", label: "Components" },
   { to: "/about", label: "Getting Started" },
 ]);
 
 type PrimaryNavLink = (typeof PRIMARY_NAV)[number];
-/** Union of the valid primary-route paths, e.g. `"/" | "/components" | "/about"`. */
+/** Union of the valid primary-route paths, e.g. `"/" | "/docs" | "/components" | "/about"`. */
 export type PrimaryNavPath = PrimaryNavLink["to"];
 
 /** Canonical GitHub repository URL — reused by the header and footer. */
@@ -28,5 +29,5 @@ export const GITHUB_URL = "https://github.com/codefastlabs/codefast";
 export const RESOURCE_LINKS = [
   { href: GITHUB_URL, label: "GitHub", destination: "github" },
   { href: `${GITHUB_URL}/issues`, label: "Issues", destination: "github-issues" },
-  { href: "https://www.npmjs.com/package/@codefast/ui", label: "npm", destination: "npm" },
+  { href: "https://www.npmjs.com/org/codefast", label: "npm", destination: "npm" },
 ] as const;

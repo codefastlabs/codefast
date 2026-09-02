@@ -1,7 +1,16 @@
 # @apps/ui
 
-The documentation and component showcase site behind [codefastlabs.com](https://codefastlabs.com) — a
-[TanStack Start](https://tanstack.com/start) app that consumes the `@codefast/*` packages straight from the workspace.
+The site behind [codefastlabs.com](https://codefastlabs.com) — a [TanStack Start](https://tanstack.com/start) app that
+consumes the `@codefast/*` packages straight from the workspace. It serves three things:
+
+- `/` — a landing page listing every published package, built from `packages/*/package.json` at build time.
+- `/components/*` — the `@codefast/ui` showcase: live previews and copy-ready source for every component.
+- `/docs/<pkg>[/<kind>]` — the other packages' documentation, rendered at build time from the markdown they ship
+  (`README.md`, `SPEC.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `LEARNING.md`, `CHANGELOG.md`; see
+  `src/features/package-docs/lib/doc-kinds.ts`). Relative links are rewritten to the site or to GitHub, headings get
+  GitHub-style ids, and every page has a raw Markdown twin (`/docs/<pkg>.md`, `/docs/<pkg>/<kind>.md`). Nothing is
+  copied: the pages read the files through `import.meta.glob`, so editing a package's README changes its page on the
+  next build.
 
 In dev (`vite dev`) it resolves each package to its in-repo `src/` via the `source` resolve condition, so a package edit
 shows here without a rebuild; a production `vite build` drops that condition and runs the packages' built `dist/`,

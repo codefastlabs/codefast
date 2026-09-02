@@ -25,7 +25,7 @@ export function HeroSection() {
           <div className="text-center lg:text-start">
             <div className="hero-enter">
               <Badge variant="outline" className="mb-6 border-ui-border/60 text-ui-muted">
-                React 19 · Radix UI · Tailwind v4
+                Codefast Labs · open source · TypeScript
               </Badge>
             </div>
 
@@ -34,22 +34,24 @@ export function HeroSection() {
               className="hero-enter mx-auto mb-5 max-w-4xl leading-none font-bold tracking-tighter text-ui-fg [--hero-enter-delay:100ms] lg:mx-0"
               style={{ fontSize: "clamp(48px,7vw,88px)" }}
             >
-              Beautiful components
+              Packages built
               <br />
               <span className="text-ui-brand">for React 19.</span>
             </h1>
 
             <p className="hero-enter mx-auto mb-8 max-w-lg text-lg leading-relaxed text-ui-muted [--hero-enter-delay:200ms] lg:mx-0">
-              {COMPONENT_COUNT}+ accessible components built on Radix UI and Tailwind CSS v4. Copy the source. Own the
-              code.
+              {COMPONENT_COUNT}+ accessible UI components, plus variant styling, appearance management, consent-gated
+              tracking, and dependency injection — typed, documented, and published under @codefast.
             </p>
 
             <div className="hero-enter flex flex-col items-center gap-3 [--hero-enter-delay:300ms] sm:flex-row sm:justify-center lg:justify-start">
               <Button asChild size="lg">
-                <Link to="/components">Browse components</Link>
+                <Link to="/" hash="packages">
+                  Browse packages
+                </Link>
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link to="/about">Get started</Link>
+                <Link to="/components">Explore @codefast/ui</Link>
               </Button>
             </div>
           </div>

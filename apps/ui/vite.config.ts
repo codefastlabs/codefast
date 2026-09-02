@@ -41,7 +41,7 @@ function publicCacheRoutePatterns(): Array<string> {
  * from Vercel's static routing config instead. Prerendering itself needs no list — the
  * discovery merges these into `pages` automatically.
  */
-const ENTRY_PAGE_PATHS = ["/", "/about", "/components", "/privacy"];
+const ENTRY_PAGE_PATHS = ["/", "/about", "/components", "/docs", "/privacy"];
 
 /**
  * The ISR `/components/<slug>` pages — one per `registry/<slug>/meta.ts`, mirroring
@@ -56,6 +56,37 @@ function componentSlugPages(): Array<{ path: string; prerender: { enabled: boole
   return readdirSync(registryDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && existsSync(path.join(registryDir, entry.name, "meta.ts")))
     .map((entry) => ({ path: `/components/${entry.name}`, prerender: { enabled: false } }));
+}
+
+/**
+ * The package document files rendered under `/docs/<pkg>[/<kind>]`, in URL-segment form. Mirrors
+ * `features/package-docs/lib/doc-kinds.ts`; the README is the package page itself.
+ */
+const DOC_KIND_BY_FILE = new Map([
+  ["README.md", "readme"],
+  ["SPEC.md", "spec"],
+  ["ARCHITECTURE.md", "architecture"],
+  ["DECISIONS.md", "decisions"],
+  ["LEARNING.md", "learning"],
+  ["CHANGELOG.md", "changelog"],
+]);
+
+/**
+ * The prerendered `/docs/<pkg>[/<kind>]` pages — one per markdown document under `packages/*` (except
+ * `ui`, which has its own section). `autoStaticPathsDiscovery` skips param routes and link-crawling
+ * is off, so the docs pages are listed here; they also feed the sitemap.
+ */
+function packageDocPages(): Array<{ path: string }> {
+  const packagesDir = fileURLToPath(new URL("../../packages", import.meta.url));
+
+  return readdirSync(packagesDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name !== "ui")
+    .flatMap((entry) =>
+      readdirSync(path.join(packagesDir, entry.name))
+        .map((file) => DOC_KIND_BY_FILE.get(file))
+        .filter((kind): kind is string => kind !== undefined)
+        .map((kind) => ({ path: kind === "readme" ? `/docs/${entry.name}` : `/docs/${entry.name}/${kind}` })),
+    );
 }
 
 export default defineConfig(({ command }) => {
@@ -149,7 +180,7 @@ export default defineConfig(({ command }) => {
           enabled: true,
           crawlLinks: false,
         },
-        pages: componentSlugPages(),
+        pages: [...componentSlugPages(), ...packageDocPages()],
         sitemap: {
           enabled: true,
           host: "https://codefastlabs.com",
@@ -165,7 +196,7 @@ export default defineConfig(({ command }) => {
          * `headers()` is their canonical policy.
          */
         routeRules: Object.fromEntries(
-          [...ENTRY_PAGE_PATHS, ...publicCacheRoutePatterns()].map((pattern) => [
+          [...ENTRY_PAGE_PATHS, "/docs/**", ...publicCacheRoutePatterns()].map((pattern) => [
             pattern,
             { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
           ]),
