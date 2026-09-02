@@ -16,6 +16,9 @@ const SITE_PATH_BY_PACKAGE: ReadonlyMap<string, string> = new Map([["ui", "/ui"]
 
 const EXTERNAL_HREF = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 
+/** Repo files that carry no extension, so the blob/tree guess below cannot read them as directories. */
+const EXTENSIONLESS_FILES: ReadonlySet<string> = new Set(["LICENSE", "NOTICE", "CODEOWNERS", "Makefile", "Dockerfile"]);
+
 /** Joins and normalises a posix path, resolving `.` and `..` segments. */
 function normalizePath(...parts: ReadonlyArray<string>): string {
   const segments: Array<string> = [];
@@ -103,7 +106,7 @@ export function rewriteDocLink(href: string, context: LinkContext): string {
   }
 
   const lastSegment = repoPath.split("/").at(-1) ?? "";
-  const kind = lastSegment.includes(".") ? "blob" : "tree";
+  const kind = lastSegment.includes(".") || EXTENSIONLESS_FILES.has(lastSegment) ? "blob" : "tree";
 
   return `${GITHUB_URL}/${kind}/main/${repoPath}${hash}`;
 }

@@ -5,7 +5,7 @@ Solitary and sociable auto-mocking test beds for
 `@injectable` class in two lines, with every collaborator mocked for you, or keep chosen collaborators real.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/di-testing)](https://www.npmjs.com/package/@codefast/di-testing)
-[![license](https://img.shields.io/npm/l/@codefast/di-testing)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/@codefast/di-testing)](./LICENSE)
 
 - **Auto-mocking.** `TestBed.solitary(Class)` reads the class's declared dependencies through di's own `MetadataReader`
   and builds a mock for each — no per-collaborator `bind(...).toConstantValue(...)`.
@@ -159,4 +159,4 @@ bed.exposed(PricingService); // the real instance the unit was built with
 
 ## License
 
-MIT
+[MIT](./LICENSE)

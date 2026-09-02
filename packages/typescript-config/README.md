@@ -4,7 +4,7 @@ Shared TypeScript configuration presets — one strict, bundler-first base, focu
 Next.js, and a build overlay that turns on `.d.ts` emit.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/typescript-config)](https://www.npmjs.com/package/@codefast/typescript-config)
-[![license](https://img.shields.io/npm/l/@codefast/typescript-config)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/@codefast/typescript-config)](./LICENSE)
 
 ## Installation
 
@@ -92,4 +92,4 @@ All strictness comes from `base.json`, so every preset inherits it:
 
 ## License
 
-MIT — see [LICENSE](https://github.com/codefastlabs/codefast/blob/main/LICENSE).
+MIT — see [LICENSE](./LICENSE).

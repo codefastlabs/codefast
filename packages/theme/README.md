@@ -4,7 +4,7 @@ Appearance management for React 19 — optimistic updates, cross-tab sync, and F
 from Apple's Human Interface Guidelines.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/theme)](https://www.npmjs.com/package/@codefast/theme)
-[![license](https://img.shields.io/npm/l/@codefast/theme)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/@codefast/theme)](./LICENSE)
 
 Two words, two meanings, kept apart throughout the API:
 
@@ -179,4 +179,4 @@ bundler-aware imports — see the `exports` field in `package.json` for the full
 
 ## License
 
-[MIT](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[MIT](./LICENSE)

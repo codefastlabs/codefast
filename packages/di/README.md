@@ -4,7 +4,7 @@ Lightweight, type-safe dependency injection for modern TypeScript — built on T
 `reflect-metadata` and no `experimentalDecorators`.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/di)](https://www.npmjs.com/package/@codefast/di)
-[![license](https://img.shields.io/npm/l/@codefast/di)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/@codefast/di)](./LICENSE)
 
 - **Typed tokens.** `Token<Value>` flows through every `bind → resolve` path; `resolve()` returns the type you
   registered.
@@ -343,6 +343,5 @@ build, exports mirror, tests, the mandatory perf-guard for resolver changes, and
 
 ## License
 
-[MIT](https://github.com/codefastlabs/codefast/blob/main/LICENSE) — part of the
-[codefast monorepo](https://github.com/codefastlabs/codefast). See
+[MIT](./LICENSE) — part of the [codefast monorepo](https://github.com/codefastlabs/codefast). See
 [CHANGELOG.md](https://github.com/codefastlabs/codefast/blob/main/packages/di/CHANGELOG.md) for release history.

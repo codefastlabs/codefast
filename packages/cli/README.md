@@ -5,7 +5,7 @@ Developer CLI for the [Codefast monorepo](https://github.com/codefastlabs/codefa
 and `tag` exported APIs with `@since`.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/cli)](https://www.npmjs.com/package/@codefast/cli)
-[![license](https://img.shields.io/npm/l/@codefast/cli)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/@codefast/cli)](./LICENSE)
 
 This package exists to maintain the Codefast repository itself. It is published to npm and works in any pnpm workspace
 with a similar layout, but its flags and defaults follow Codefast's conventions — treat it as repo tooling, not a
@@ -267,4 +267,4 @@ failure is reported on stderr and the command exits `1`.
 
 ## License
 
-[MIT](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[MIT](./LICENSE)

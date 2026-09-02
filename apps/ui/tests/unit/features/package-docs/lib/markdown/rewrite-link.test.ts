@@ -45,6 +45,12 @@ describe("rewriteDocLink", () => {
     );
   });
 
+  it("links extensionless repo files such as LICENSE as blobs, not directories", () => {
+    expect(rewriteDocLink("./LICENSE", inDiReadme)).toBe(
+      "https://github.com/codefastlabs/codefast/blob/main/packages/di/LICENSE",
+    );
+  });
+
   it("does not treat an unknown markdown file as a docs page", () => {
     expect(rewriteDocLink("./NOTES.md", inDiReadme)).toBe(
       "https://github.com/codefastlabs/codefast/blob/main/packages/di/NOTES.md",

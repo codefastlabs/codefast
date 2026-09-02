@@ -13,6 +13,8 @@ export interface PackageSummary {
   readonly name: string;
   readonly description: string;
   readonly version: string;
+  /** SPDX id from the manifest, e.g. `MIT`. */
+  readonly license: string;
   /** The document kinds the package ships, in `DOC_KINDS` order. */
   readonly docs: ReadonlyArray<DocKindSlug>;
 }

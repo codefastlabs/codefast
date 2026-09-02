@@ -11,6 +11,7 @@ interface PackageManifest {
   readonly name: string;
   readonly description?: string;
   readonly version: string;
+  readonly license?: string;
 }
 
 // `packages/*` holds only published packages (private ones live in `internal/`), so no `private` filter.
@@ -65,6 +66,7 @@ export const PACKAGES: ReadonlyArray<PackageSummary> = Object.entries(manifests)
       name: manifest.name,
       description: manifest.description ?? "",
       version: manifest.version,
+      license: manifest.license ?? "MIT",
       docs: DOC_KINDS.filter((kind) => loaders?.has(kind.slug)).map((kind) => kind.slug),
     };
   })
