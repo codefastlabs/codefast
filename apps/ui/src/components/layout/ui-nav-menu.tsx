@@ -26,7 +26,7 @@ export function UiNavMenu() {
         {UI_NAV.map(({ to, label }) => (
           <DropdownMenuItem key={to} asChild>
             <Link to={to} className="no-underline" activeOptions={{ exact: to === "/ui" }}>
-              {label}
+              {label === "UI Overview" ? "Overview" : label}
             </Link>
           </DropdownMenuItem>
         ))}

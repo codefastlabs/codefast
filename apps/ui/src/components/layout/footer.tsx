@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
 import { track } from "#/features/tracking/lib/tracking";
-import { ALL_NAV, RESOURCE_LINKS } from "#/lib/nav-links";
+import { PRIMARY_NAV, RESOURCE_LINKS, UI_NAV } from "#/lib/nav-links";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -24,12 +24,20 @@ export function Footer() {
           </div>
 
           {/* Links */}
-          <div className="flex gap-16 text-sm">
+          <div className="flex flex-wrap gap-12 text-sm sm:gap-16">
             <div className="flex flex-col gap-3">
               <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Site</p>
-              {ALL_NAV.map(({ to, label }) => (
+              {PRIMARY_NAV.map(({ to, label }) => (
                 <Link key={to} to={to} className="text-ui-muted no-underline hover:text-ui-fg">
                   {label}
+                </Link>
+              ))}
+            </div>
+            <div className="flex flex-col gap-3">
+              <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">@codefast/ui</p>
+              {UI_NAV.map(({ to, label }) => (
+                <Link key={to} to={to} className="text-ui-muted no-underline hover:text-ui-fg">
+                  {label === "UI Overview" ? "Overview" : label}
                 </Link>
               ))}
             </div>

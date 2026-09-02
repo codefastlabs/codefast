@@ -21,7 +21,7 @@ export const PRIMARY_NAV = linkOptions([
  * everywhere else.
  */
 export const UI_NAV = linkOptions([
-  { to: "/ui", label: "Overview" },
+  { to: "/ui", label: "UI Overview" },
   { to: "/ui/components", label: "Components" },
   { to: "/ui/about", label: "Getting Started" },
 ]);
