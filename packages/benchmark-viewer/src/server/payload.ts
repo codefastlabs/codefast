@@ -6,10 +6,10 @@ import type { AggregatedScenarioResult, LibraryReport } from "@codefast/benchmar
 import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
 import {
+  isJsonlBenchObservationRow,
   jsonlBenchObservationRowToFingerprint,
   jsonlBenchObservationRowToScenarioTrialResult,
 } from "@codefast/benchmark-harness/report/jsonl";
-import { quantile, sortAscending } from "@codefast/benchmark-harness/report/quantiles";
 import { OBSERVATIONS_FILE_NAME } from "@codefast/benchmark-harness/shared/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "@codefast/benchmark-harness/shared/protocol";
 
@@ -106,13 +106,13 @@ interface SpreadResult {
 
 interface LibraryRunData {
   readonly report: LibraryReport;
-  readonly spreads: Map<string, SpreadResult | null>;
+  readonly spreads: Map<string, SpreadResult>;
 }
 
 interface RunData {
   readonly meta: EmbeddedRun;
   readonly reports: Map<string, LibraryReport>;
-  readonly spreadsPerLib: Map<string, Map<string, SpreadResult | null>>;
+  readonly spreadsPerLib: Map<string, Map<string, SpreadResult>>;
   readonly scenarioIndices: Map<string, Map<string, AggregatedScenarioResult>>;
 }
 
@@ -134,7 +134,12 @@ function parseJsonlLines(lines: ReadonlyArray<string>): ParsedLines {
   let skippedCount = 0;
   for (const line of lines) {
     try {
-      observations.push(JSON.parse(line) as JsonlBenchObservationRow);
+      const parsed: unknown = JSON.parse(line);
+      if (isJsonlBenchObservationRow(parsed)) {
+        observations.push(parsed);
+      } else {
+        skippedCount++;
+      }
     } catch {
       skippedCount++;
     }
@@ -142,18 +147,14 @@ function parseJsonlLines(lines: ReadonlyArray<string>): ParsedLines {
   return { observations, skippedCount };
 }
 
-function buildLibraryRunData(
-  observations: ReadonlyArray<JsonlBenchObservationRow>,
-  libraryName: string,
-): LibraryRunData | undefined {
-  const libraryObservations = observations.filter((observation) => observation.libraryName === libraryName);
-  if (libraryObservations.length === 0) {
+function buildLibraryRunData(libraryObservations: ReadonlyArray<JsonlBenchObservationRow>): LibraryRunData | undefined {
+  const firstObservation = libraryObservations[0];
+  if (firstObservation === undefined) {
     return undefined;
   }
 
-  const fingerprint = jsonlBenchObservationRowToFingerprint(libraryObservations[0]!);
+  const fingerprint = jsonlBenchObservationRowToFingerprint(firstObservation);
   const byTrialIndex = new Map<number, Array<ScenarioTrialResult>>();
-  const trialHzByScenario = new Map<string, Map<number, number>>();
 
   for (const obs of libraryObservations) {
     const trialResult = jsonlBenchObservationRowToScenarioTrialResult(obs);
@@ -163,14 +164,6 @@ function buildLibraryRunData(
     } else {
       trialScenarios.push(trialResult);
     }
-    if (obs.samples > 0) {
-      let scenarioTrials = trialHzByScenario.get(obs.scenarioId);
-      if (scenarioTrials === undefined) {
-        scenarioTrials = new Map();
-        trialHzByScenario.set(obs.scenarioId, scenarioTrials);
-      }
-      scenarioTrials.set(obs.trialIndex, obs.hzPerOp);
-    }
   }
 
   const trialPayloads: Array<TrialPayload> = [...byTrialIndex.entries()]
@@ -178,19 +171,11 @@ function buildLibraryRunData(
     .map(([trialIndex, scenarios]) => ({ trialIndex, scenarios }));
   const report = buildLibraryReport(fingerprint, trialPayloads, []);
 
-  const spreads = new Map<string, SpreadResult | null>();
-  for (const [scenarioId, trialHz] of trialHzByScenario) {
-    const sorted = sortAscending([...trialHz.values()]);
-    spreads.set(
-      scenarioId,
-      sorted.length === 0
-        ? null
-        : {
-            p25Hz: quantile(sorted, 0.25),
-            medianHz: quantile(sorted, 0.5),
-            p75Hz: quantile(sorted, 0.75),
-          },
-    );
+  // The aggregate rows already carry the per-trial spread, so the chart bands and the
+  // report medians come from one derivation.
+  const spreads = new Map<string, SpreadResult>();
+  for (const row of report.scenarios) {
+    spreads.set(row.id, { p25Hz: row.hzPerOpP25, medianHz: row.hzPerOpMedian, p75Hz: row.hzPerOpP75 });
   }
 
   return { report, spreads };
@@ -198,21 +183,11 @@ function buildLibraryRunData(
 
 function extractRunMeta(
   folderName: string,
-  observations: ReadonlyArray<JsonlBenchObservationRow>,
+  observationsByLibrary: ReadonlyMap<string, ReadonlyArray<JsonlBenchObservationRow>>,
   libraryNames: ReadonlyArray<string>,
   canonicalLibraryKey: string,
 ): EmbeddedRun | undefined {
-  const libraryNameSet = new Set(libraryNames);
-  const firstObsByLibrary = new Map<string, JsonlBenchObservationRow>();
-  for (const obs of observations) {
-    if (!firstObsByLibrary.has(obs.libraryName) && libraryNameSet.has(obs.libraryName)) {
-      firstObsByLibrary.set(obs.libraryName, obs);
-    }
-    if (firstObsByLibrary.size === libraryNames.length) {
-      break;
-    }
-  }
-  const canonical = firstObsByLibrary.get(canonicalLibraryKey);
+  const canonical = observationsByLibrary.get(canonicalLibraryKey)?.[0];
   if (canonical === undefined) {
     return undefined;
   }
@@ -230,7 +205,7 @@ function extractRunMeta(
     nodeOptions: canonical.nodeOptions,
     timestampIso: canonical.timestampIso,
     libraryVersions: libraryNames.flatMap((name) => {
-      const obs = firstObsByLibrary.get(name);
+      const obs = observationsByLibrary.get(name)?.[0];
       return obs !== undefined ? [{ key: name, version: obs.libraryVersion, gcExposed: obs.gcExposed }] : [];
     }),
   };
@@ -286,11 +261,25 @@ export function buildEmbeddedPayload(
       console.warn(`[bench-payload] ${raw.folderName}: skipped ${skippedCount} malformed JSONL line(s)`);
     }
 
+    const libraryNameSet = new Set(libraryNames);
+    const observationsByLibrary = new Map<string, Array<JsonlBenchObservationRow>>();
+    for (const obs of observations) {
+      if (!libraryNameSet.has(obs.libraryName)) {
+        continue;
+      }
+      const list = observationsByLibrary.get(obs.libraryName);
+      if (list === undefined) {
+        observationsByLibrary.set(obs.libraryName, [obs]);
+      } else {
+        list.push(obs);
+      }
+    }
+
     const reports = new Map<string, LibraryReport>();
-    const spreadsPerLib = new Map<string, Map<string, SpreadResult | null>>();
+    const spreadsPerLib = new Map<string, Map<string, SpreadResult>>();
 
     for (const libName of libraryNames) {
-      const libData = buildLibraryRunData(observations, libName);
+      const libData = buildLibraryRunData(observationsByLibrary.get(libName) ?? []);
       if (libData !== undefined) {
         reports.set(libName, libData.report);
         spreadsPerLib.set(libName, libData.spreads);
@@ -298,6 +287,7 @@ export function buildEmbeddedPayload(
     }
 
     if (!reports.has(primaryName)) {
+      console.warn(`[bench-payload] ${raw.folderName}: no rows for primary library "${primaryName}"; run not shown.`);
       continue;
     }
 
@@ -310,7 +300,7 @@ export function buildEmbeddedPayload(
       scenarioIndices.set(libName, idx);
     }
 
-    const meta = extractRunMeta(raw.folderName, observations, libraryNames, primaryName);
+    const meta = extractRunMeta(raw.folderName, observationsByLibrary, libraryNames, primaryName);
     if (meta !== undefined) {
       runs.push({ meta, reports, spreadsPerLib, scenarioIndices });
     }
@@ -358,9 +348,9 @@ export function buildEmbeddedPayload(
         const accum = seriesAccum.get(scenarioId)!.get(libName)!;
         accum.hz.push(libIndex !== undefined ? hzLookup(libIndex, scenarioId) : null);
         accum.iqrFraction.push(libIndex !== undefined ? hzIqrFractionLookup(libIndex, scenarioId) : null);
-        const spread = libSpreads?.get(scenarioId) ?? null;
-        accum.p25.push(spread !== null && spread.p25Hz > 0 ? spread.p25Hz : null);
-        accum.p75.push(spread !== null && spread.p75Hz > 0 ? spread.p75Hz : null);
+        const spread = libSpreads?.get(scenarioId);
+        accum.p25.push(spread !== undefined && spread.p25Hz > 0 ? spread.p25Hz : null);
+        accum.p75.push(spread !== undefined && spread.p75Hz > 0 ? spread.p75Hz : null);
       }
     }
   }

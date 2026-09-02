@@ -1,5 +1,7 @@
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, watch } from "node:fs";
+import { existsSync, watch } from "node:fs";
+import type { FSWatcher } from "node:fs";
+import { readFile } from "node:fs/promises";
 import type { Server } from "node:http";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,9 +18,12 @@ import type { BenchServerOptions, EmbeddedViewerPayload } from "#/types";
 const appDir = join(dirname(fileURLToPath(import.meta.url)), "..", "app");
 const publicDir = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 
-const HTTP_IMMUTABLE = "public, max-age=31536000, immutable";
+// Assets ship under stable names (no content hash), so the browser must revalidate; the ETag
+// keeps every unchanged response a 304.
 const HTTP_NO_CACHE = "no-cache";
 const HTTP_NO_STORE = "no-store";
+
+const PAYLOAD_CACHE_MAX_ENTRIES = 8;
 
 const CONTENT_TYPES: Record<string, string> = {
   ".js": "application/javascript; charset=utf-8",
@@ -35,7 +40,6 @@ const CONTENT_TYPES: Record<string, string> = {
 interface InMemoryAsset {
   content: Buffer;
   contentType: string;
-  httpCacheControl: string;
   etag: string;
 }
 
@@ -43,13 +47,13 @@ interface InMemoryPayload {
   payload: EmbeddedViewerPayload;
   rawJson: string;
   etag: string;
-  limit: number;
 }
 
 interface ServerState {
   assetMemoryCache: Map<string, InMemoryAsset>;
   options: BenchServerOptions;
-  payloadMemoryCache: InMemoryPayload | null;
+  payloadMemoryCache: Map<number, InMemoryPayload>;
+  resultsWatcher: FSWatcher | null;
 }
 
 function computeEtag(hashInput: Buffer | string): string {
@@ -60,23 +64,23 @@ function asArrayBuffer(nodeBuffer: Buffer): ArrayBuffer {
   return nodeBuffer.buffer.slice(nodeBuffer.byteOffset, nodeBuffer.byteOffset + nodeBuffer.byteLength) as ArrayBuffer;
 }
 
-function loadAsset(filePath: string, httpCacheControl: string): InMemoryAsset {
-  const fileBytes = readFileSync(filePath);
+async function loadAsset(filePath: string): Promise<InMemoryAsset> {
+  const fileBytes = await readFile(filePath);
   const contentType = CONTENT_TYPES[extname(filePath)] ?? "application/octet-stream";
-  return { content: fileBytes, contentType, httpCacheControl, etag: computeEtag(fileBytes) };
+  return { content: fileBytes, contentType, etag: computeEtag(fileBytes) };
 }
 
-function resolveStaticFile(pathname: string): { filePath: string; httpCacheControl: string } | null {
+function resolveStaticFile(pathname: string): string | null {
   const stripped = pathname.slice(1);
 
   const appPath = resolve(appDir, stripped);
   if (appPath.startsWith(appDir + "/") && existsSync(appPath)) {
-    return { filePath: appPath, httpCacheControl: HTTP_IMMUTABLE };
+    return appPath;
   }
 
   const publicPath = resolve(publicDir, stripped);
   if (publicPath.startsWith(publicDir + "/")) {
-    return { filePath: publicPath, httpCacheControl: HTTP_IMMUTABLE };
+    return publicPath;
   }
 
   return null;
@@ -86,14 +90,30 @@ function parseLimitParam(limitParam: string | null, defaultLimit: number): numbe
   if (limitParam === null) {
     return defaultLimit;
   }
-  const parsedLimit = parseInt(limitParam, 10);
-  return Number.isFinite(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 10_000) : defaultLimit;
+  const parsedLimit = Number(limitParam);
+  return Number.isInteger(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 10_000) : defaultLimit;
+}
+
+// Recursive so a run's observations.jsonl landing inside a new run directory also invalidates —
+// the directory's own creation event can fire before the file is written.
+function watchBenchResults(state: ServerState, onInvalidate: () => void): void {
+  if (state.resultsWatcher !== null) {
+    return;
+  }
+  try {
+    state.resultsWatcher = watch(state.options.benchResultsDir, { persistent: false, recursive: true }, onInvalidate);
+  } catch {
+    // Directory missing — retried before the next payload build; warning payloads are never cached.
+  }
 }
 
 async function getOrBuildPayload(state: ServerState, runLimit: number): Promise<InMemoryPayload> {
-  if (state.payloadMemoryCache !== null && state.payloadMemoryCache.limit === runLimit) {
-    return state.payloadMemoryCache;
+  const cached = state.payloadMemoryCache.get(runLimit);
+  if (cached !== undefined) {
+    return cached;
   }
+  // Attach (or re-attach) before reading, so no change between read and watch goes unseen.
+  watchBenchResults(state, () => state.payloadMemoryCache.clear());
   const { runs: rawRuns, hasMore, warning } = await listRawRuns(state.options.benchResultsDir, runLimit);
   const payload = buildEmbeddedPayload(rawRuns, state.options, hasMore, runLimit, warning);
   const rawJson = JSON.stringify(payload);
@@ -101,9 +121,16 @@ async function getOrBuildPayload(state: ServerState, runLimit: number): Promise<
     payload,
     rawJson,
     etag: computeEtag(rawJson),
-    limit: runLimit,
   };
-  state.payloadMemoryCache = payloadEntry;
+  if (warning === undefined) {
+    if (state.payloadMemoryCache.size >= PAYLOAD_CACHE_MAX_ENTRIES) {
+      const oldestLimit = state.payloadMemoryCache.keys().next().value;
+      if (oldestLimit !== undefined) {
+        state.payloadMemoryCache.delete(oldestLimit);
+      }
+    }
+    state.payloadMemoryCache.set(runLimit, payloadEntry);
+  }
   return payloadEntry;
 }
 
@@ -116,7 +143,12 @@ async function getOrBuildPayload(state: ServerState, runLimit: number): Promise<
  * @since 0.3.16-canary.0
  */
 export function createBenchServer(options: BenchServerOptions): Server {
-  const state: ServerState = { assetMemoryCache: new Map(), options, payloadMemoryCache: null };
+  const state: ServerState = {
+    assetMemoryCache: new Map(),
+    options,
+    payloadMemoryCache: new Map(),
+    resultsWatcher: null,
+  };
   const app = new Hono();
 
   app.onError((err, c) => {
@@ -148,16 +180,16 @@ export function createBenchServer(options: BenchServerOptions): Server {
     return c.body(cachedPayload.rawJson);
   });
 
-  app.get("/*", (c) => {
-    const resolved = resolveStaticFile(c.req.path);
-    if (resolved === null) {
+  app.get("/*", async (c) => {
+    const resolvedFilePath = resolveStaticFile(c.req.path);
+    if (resolvedFilePath === null) {
       return c.text("Forbidden", 403);
     }
 
     let staticAsset = state.assetMemoryCache.get(c.req.path);
     if (staticAsset === undefined) {
       try {
-        staticAsset = loadAsset(resolved.filePath, resolved.httpCacheControl);
+        staticAsset = await loadAsset(resolvedFilePath);
         state.assetMemoryCache.set(c.req.path, staticAsset);
       } catch {
         return c.text("Not found", 404);
@@ -168,21 +200,15 @@ export function createBenchServer(options: BenchServerOptions): Server {
       return c.body(null, 304);
     }
     c.header("Content-Type", staticAsset.contentType);
-    c.header("Cache-Control", staticAsset.httpCacheControl);
+    c.header("Cache-Control", HTTP_NO_CACHE);
     c.header("ETag", staticAsset.etag);
     return c.body(asArrayBuffer(staticAsset.content));
   });
 
   const server = createAdaptorServer(app) as Server;
 
-  try {
-    const watcher = watch(options.benchResultsDir, { persistent: false }, () => {
-      state.payloadMemoryCache = null;
-    });
-    server.once("close", () => watcher.close());
-  } catch {
-    // directory isn't found — watcher unavailable, cache cleared on each miss anyway
-  }
+  watchBenchResults(state, () => state.payloadMemoryCache.clear());
+  server.once("close", () => state.resultsWatcher?.close());
 
   return server;
 }
