@@ -1,8 +1,8 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
-import { fetchDetail } from "#/features/components-catalog/components/detail/detail-bodies";
 import { DetailNotFound } from "#/features/components-catalog/components/detail/detail-not-found";
 import { DetailPage } from "#/features/components-catalog/components/detail/detail-page";
+import { fetchDetail } from "#/features/components-catalog/lib/detail";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 import { SITE_OG_IMAGE, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 import { COMPONENT_BY_SLUG } from "#/registry/_core/components";

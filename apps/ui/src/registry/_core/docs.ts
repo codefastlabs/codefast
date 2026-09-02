@@ -1,10 +1,9 @@
 /**
  * Lazy rich-doc registry for the detail page (`/ui/components/$slug`), keyed by slug.
- * Auto-discovered from `registry/<slug>/doc.ts`; lazy, so importing this is ~free.
+ * Auto-discovered from `registry/<slug>/doc.ts`; lazy, so importing this costs one loader map.
  * Components without a doc fall back to the card demo from `demos.ts`. To add one:
  * export a `ComponentDoc` from `doc.ts` pointing at example files via `docSource`.
  */
-import { rememberExampleComponent } from "#/registry/_core/examples";
 import type { HighlightedSource } from "#/registry/_core/highlight";
 import { getHighlightedSources } from "#/registry/_core/highlight-source";
 import type { ComponentDoc, ResolvedComponentDoc, ResolvedDocExample, SourceRef } from "#/registry/_core/types";
@@ -42,6 +41,7 @@ function requireSource(sources: Record<SourceRef, HighlightedSource>, ref: Sourc
 function resolveExample(
   example: ComponentDoc["examples"][number],
   sources: Record<SourceRef, HighlightedSource>,
+  remember: (ref: SourceRef, component: ComponentDoc["examples"][number]["Demo"]) => void,
 ): ResolvedDocExample {
   // Drop the live `Demo` — loader data is serialized across the SSR boundary and
   // a component function would not survive it. Stash the component first so a
@@ -49,7 +49,7 @@ function resolveExample(
   // from `EXAMPLE_COMPONENT_BY_REF` via `source` (kept below).
   const { Demo, ...serializable } = example;
 
-  rememberExampleComponent(example.source, Demo);
+  remember(example.source, Demo);
 
   return { ...serializable, ...requireSource(sources, example.source) };
 }
@@ -78,7 +78,9 @@ export async function loadDoc(slug: string): Promise<ResolvedComponentDoc | unde
   const refs = [...doc.examples.map((example) => example.source), ...(doc.usage ? [doc.usage] : [])];
   const sources = await getHighlightedSources({ data: [...new Set(refs)] });
 
-  const examples = doc.examples.map((example) => resolveExample(example, sources));
+  // Loaded here, not at module top: the examples map is ~500 lazy imports that only a doc render needs.
+  const { rememberExampleComponent } = await import("#/registry/_core/examples");
+  const examples = doc.examples.map((example) => resolveExample(example, sources, rememberExampleComponent));
   const usage = doc.usage ? requireSource(sources, doc.usage) : undefined;
 
   // `anatomy` is plain tree data — it rides through `...doc` unchanged.
