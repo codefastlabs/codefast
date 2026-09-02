@@ -32,7 +32,7 @@ export function PackageCard({ pkg, className, ...props }: PackageCardProps) {
       {/* The whole card is the link; the overlay keeps the markup a plain heading + paragraph. */}
       {isUi ? (
         <Link
-          to="/components"
+          to="/ui"
           className="inline-flex items-center gap-1 text-sm font-medium text-ui-brand no-underline after:absolute after:inset-0"
         >
           Component docs

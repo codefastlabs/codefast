@@ -14,7 +14,7 @@ interface DocPageHead {
 
 /**
  * The `<title>` of a doc page. A document already named after its package keeps that name once —
- * "@codefast/di" becomes "@codefast/di — Overview", "@codefast/tracking — Spec" stays as written — and
+ * `@codefast/di` becomes `@codefast/di — Overview`, `@codefast/tracking — Spec` stays as written — and
  * any other heading gets the package name appended.
  */
 export function pageTitle(docTitle: string, packageName: string, kindLabel: string): string {

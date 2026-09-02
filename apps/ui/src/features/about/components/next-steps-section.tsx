@@ -19,7 +19,7 @@ export function NextStepsSection() {
 
       <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
         <Button asChild size="lg">
-          <Link to="/components">Open component gallery</Link>
+          <Link to="/ui/components">Open component gallery</Link>
         </Button>
         <Button asChild variant="outline" size="lg">
           <Link to="/">Back to home</Link>

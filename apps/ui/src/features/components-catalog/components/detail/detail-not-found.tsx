@@ -11,7 +11,7 @@ export function DetailNotFound() {
       description="We couldn’t find that component. It may have been renamed or removed."
       action={
         <Button asChild>
-          <Link to="/components">Browse all components</Link>
+          <Link to="/ui/components">Browse all components</Link>
         </Button>
       }
     />

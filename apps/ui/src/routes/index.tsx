@@ -1,10 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { DemoWallSection } from "#/features/home/components/demo-wall-section";
-import { FeaturesSection } from "#/features/home/components/features-section";
 import { HeroSection } from "#/features/home/components/hero-section";
-import { InstallCta } from "#/features/home/components/install-cta";
-import { StatsSection } from "#/features/home/components/stats-section";
 import { PackagesSection } from "#/features/package-docs/components/packages-section";
 import { getPackages } from "#/features/package-docs/lib/package-docs";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
@@ -53,10 +49,6 @@ function HomePage() {
     <main>
       <HeroSection />
       <PackagesSection packages={packages} />
-      <DemoWallSection />
-      <StatsSection />
-      <FeaturesSection />
-      <InstallCta />
     </main>
   );
 }

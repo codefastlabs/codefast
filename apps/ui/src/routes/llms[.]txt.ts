@@ -32,7 +32,7 @@ function packageSection(pkg: PackageSummary): string {
 function buildLlmsTxt(packages: ReadonlyArray<PackageSummary>): string {
   const components = COMPONENTS.map(
     (component) =>
-      `- [${component.name}](${absoluteUrl(`/components/${component.slug}`)}): ${component.description} · [Markdown](${absoluteUrl(`/components/${component.slug}.md`)})`,
+      `- [${component.name}](${absoluteUrl(`/ui/components/${component.slug}`)}): ${component.description} · [Markdown](${absoluteUrl(`/ui/components/${component.slug}.md`)})`,
   ).join("\n");
   const packageSections = packages
     .filter((pkg) => pkg.slug !== "ui")
@@ -51,8 +51,8 @@ function buildLlmsTxt(packages: ReadonlyArray<PackageSummary>): string {
 ## Pages
 - [Home](${absoluteUrl("/")}): Every published package at a glance
 - [Packages](${absoluteUrl("/docs")}): Documentation index for the non-UI packages
-- [Getting Started](${absoluteUrl("/about")}): Install @codefast/ui and wire up the CSS
-- [Components](${absoluteUrl("/components")}): Browse the full component library A–Z
+- [Getting Started](${absoluteUrl("/ui/about")}): Install @codefast/ui and wire up the CSS
+- [Components](${absoluteUrl("/ui/components")}): Browse the full component library A–Z
 
 ## Packages
 ${packageSections}

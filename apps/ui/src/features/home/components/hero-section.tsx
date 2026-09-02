@@ -51,7 +51,7 @@ export function HeroSection() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link to="/components">Explore @codefast/ui</Link>
+                <Link to="/ui/components">Explore @codefast/ui</Link>
               </Button>
             </div>
           </div>

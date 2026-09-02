@@ -4,7 +4,7 @@ The site behind [codefastlabs.com](https://codefastlabs.com) — a [TanStack Sta
 consumes the `@codefast/*` packages straight from the workspace. It serves three things:
 
 - `/` — a landing page listing every published package, built from `packages/*/package.json` at build time.
-- `/components/*` — the `@codefast/ui` showcase: live previews and copy-ready source for every component.
+- `/ui/components/*` — the `@codefast/ui` showcase: live previews and copy-ready source for every component.
 - `/docs/<pkg>[/<kind>]` — the other packages' documentation, rendered at build time from the markdown they ship
   (`README.md`, `SPEC.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `LEARNING.md`, `CHANGELOG.md`; see
   `src/features/package-docs/lib/doc-kinds.ts`). Relative links are rewritten to the site or to GitHub, headings get
@@ -73,13 +73,13 @@ storage names — every cookie and key name is supplied by the app.
 
 ### This app's pages are CDN-cached (ISR) — the HTML can't be personalized
 
-The entry pages (`/`, `/about`, `/components`, `/privacy`) are prerendered at build time; every `/components/$slug` page
-is server-rendered on demand and cached by the CDN under its route's `headers()` policy (`Cache-Control` +
-`CDN-Cache-Control`, see `src/lib/cache.ts` — TanStack Start's hybrid ISR pattern). Either way the served HTML is shared
-across visitors, so the inline gtag bootstrap in `google-tag.tsx` bakes the strictest possible default (`denied`,
-`opt-in`, region `other`) — a request-derived value (geo in `loaderData`, the document shell, or otherwise) would leak
-the first visitor's region to everyone served from that cache entry. Start does run route loaders before SSR render; the
-constraint is cache sharing, not shell-vs-loader timing.
+The entry pages (`/`, `/docs`, `/privacy`, `/ui`, `/ui/about`, `/ui/components`) are prerendered at build time; every
+`/ui/components/$slug` page is server-rendered on demand and cached by the CDN under its route's `headers()` policy
+(`Cache-Control` + `CDN-Cache-Control`, see `src/lib/cache.ts` — TanStack Start's hybrid ISR pattern). Either way the
+served HTML is shared across visitors, so the inline gtag bootstrap in `google-tag.tsx` bakes the strictest possible
+default (`denied`, `opt-in`, region `other`) — a request-derived value (geo in `loaderData`, the document shell, or
+otherwise) would leak the first visitor's region to everyone served from that cache entry. Start does run route loaders
+before SSR render; the constraint is cache sharing, not shell-vs-loader timing.
 
 The per-visitor correction runs on the one lane a shared cache can't poison: after hydration, `visitor-consent.ts` calls
 the `resolveVisitorConsent` server function once per session (`private, no-store`; cached in `sessionStorage` as

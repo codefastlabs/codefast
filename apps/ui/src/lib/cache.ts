@@ -34,7 +34,7 @@
  *   already bounded by `max-age=3600`.
  * - `Vary` on request inputs — pages are deliberately visitor- and query-independent; see the
  *   cached-render invariant in `features/tracking/lib/consent.ts`.
- * The client tier (`staleTime`) lives on the loader route itself (`/components/$slug`).
+ * The client tier (`staleTime`) lives on the loader route itself (`/ui/components/$slug`).
  *
  * @see https://tanstack.com/start/latest/docs/framework/react/guide/isr
  */

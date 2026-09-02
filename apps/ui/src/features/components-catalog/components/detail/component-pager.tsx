@@ -16,7 +16,7 @@ export function ComponentPager({ previous, next, className, ...props }: Componen
     <nav className={cn("grid gap-4 sm:grid-cols-2", className)} {...props}>
       {previous ? (
         <Link
-          to="/components/$slug"
+          to="/ui/components/$slug"
           params={{ slug: previous.slug }}
           className="group flex flex-col gap-1 rounded-xl border border-ui-border/60 p-4 no-underline transition-colors duration-200 hover:border-ui-brand"
         >
@@ -31,7 +31,7 @@ export function ComponentPager({ previous, next, className, ...props }: Componen
       )}
       {next ? (
         <Link
-          to="/components/$slug"
+          to="/ui/components/$slug"
           params={{ slug: next.slug }}
           className="group flex flex-col items-end gap-1 rounded-xl border border-ui-border/60 p-4 text-end no-underline transition-colors duration-200 hover:border-ui-brand sm:col-start-2"
         >

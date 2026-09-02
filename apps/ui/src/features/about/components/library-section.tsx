@@ -23,7 +23,7 @@ export function LibrarySection() {
         {COMPONENTS.map(({ slug, name }) => (
           <Link
             key={slug}
-            to="/components/$slug"
+            to="/ui/components/$slug"
             params={{ slug }}
             className="rounded-full border border-ui-border/60 bg-ui-card px-3 py-1 text-xs text-ui-muted no-underline transition-colors duration-200 hover:border-ui-brand/40 hover:text-ui-fg"
           >
@@ -34,7 +34,7 @@ export function LibrarySection() {
 
       <div className="flex flex-wrap gap-3">
         <Button asChild>
-          <Link to="/components">Browse components</Link>
+          <Link to="/ui/components">Browse components</Link>
         </Button>
         <Button variant="outline" asChild>
           <a href="https://www.npmjs.com/package/@codefast/ui" target="_blank" rel="noreferrer">

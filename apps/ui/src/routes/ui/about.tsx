@@ -9,11 +9,11 @@ import { ThemeSection } from "#/features/about/components/theme-section";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
 
-export const Route = createFileRoute("/about")({
+export const Route = createFileRoute("/ui/about")({
   // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   head: () => {
-    const seo = canonicalHead("/about");
+    const seo = canonicalHead("/ui/about");
 
     return {
       meta: [

@@ -3,7 +3,7 @@
  *
  * Each component's doc lives in its own `registry/<slug>/doc.ts` module,
  * discovered by `docs.ts` and loaded on demand via `loadDoc(slug)`. The detail
- * route (`/components/$slug`) reads from there; components without an entry
+ * route (`/ui/components/$slug`) reads from there; components without an entry
  * fall back to the single card demo from `demos.ts`.
  */
 import type { ComponentType } from "react";

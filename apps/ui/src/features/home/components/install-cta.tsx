@@ -36,7 +36,7 @@ export function InstallCta() {
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button asChild size="lg">
-              <Link to="/about">Read the docs</Link>
+              <Link to="/ui/about">Read the docs</Link>
             </Button>
             <Button asChild variant="outline" size="lg">
               <a href="https://github.com/codefastlabs/codefast" target="_blank" rel="noreferrer">

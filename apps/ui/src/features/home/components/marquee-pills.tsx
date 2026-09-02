@@ -22,7 +22,7 @@ export function MarqueePills({ components, decorative = false }: MarqueePillsPro
       {components.map(({ slug, name }) => (
         <Link
           key={slug}
-          to="/components/$slug"
+          to="/ui/components/$slug"
           params={{ slug }}
           tabIndex={decorative ? -1 : undefined}
           className="shrink-0 rounded-full border border-ui-inverse/15 bg-ui-inverse/5 px-3 py-1.5 text-xs whitespace-nowrap text-ui-inverse/60 no-underline transition-colors duration-200 hover:border-ui-brand/50 hover:text-ui-inverse"

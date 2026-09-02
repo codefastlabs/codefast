@@ -26,8 +26,8 @@ describe("rewriteDocLink", () => {
   });
 
   it("sends @codefast/ui docs to the component gallery", () => {
-    expect(rewriteDocLink("../ui/README.md", inDiReadme)).toBe("/components");
-    expect(rewriteDocLink("../ui", inDiReadme)).toBe("/components");
+    expect(rewriteDocLink("../ui/README.md", inDiReadme)).toBe("/ui");
+    expect(rewriteDocLink("../ui", inDiReadme)).toBe("/ui");
   });
 
   it("sends every other repo file to GitHub, blob for files and tree for directories", () => {

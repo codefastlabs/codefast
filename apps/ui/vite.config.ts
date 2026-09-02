@@ -41,10 +41,10 @@ function publicCacheRoutePatterns(): Array<string> {
  * from Vercel's static routing config instead. Prerendering itself needs no list — the
  * discovery merges these into `pages` automatically.
  */
-const ENTRY_PAGE_PATHS = ["/", "/about", "/components", "/docs", "/privacy"];
+const ENTRY_PAGE_PATHS = ["/", "/docs", "/privacy", "/ui", "/ui/about", "/ui/components"];
 
 /**
- * The ISR `/components/<slug>` pages — one per `registry/<slug>/meta.ts`, mirroring
+ * The ISR `/ui/components/<slug>` pages — one per `registry/<slug>/meta.ts`, mirroring
  * `_core/components.ts`'s auto-discovery, since `autoStaticPathsDiscovery` skips
  * param routes and link-crawling is off. Each entry opts out of prerendering (a page
  * defaults to `enabled: true` — a static file would shadow the ISR server function on
@@ -55,7 +55,7 @@ function componentSlugPages(): Array<{ path: string; prerender: { enabled: boole
 
   return readdirSync(registryDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && existsSync(path.join(registryDir, entry.name, "meta.ts")))
-    .map((entry) => ({ path: `/components/${entry.name}`, prerender: { enabled: false } }));
+    .map((entry) => ({ path: `/ui/components/${entry.name}`, prerender: { enabled: false } }));
 }
 
 /**
@@ -88,6 +88,17 @@ function packageDocPages(): Array<{ path: string }> {
         .map((kind) => ({ path: kind === "readme" ? `/docs/${entry.name}` : `/docs/${entry.name}/${kind}` })),
     );
 }
+
+/**
+ * The `@codefast/ui` section moved from the site root to `/ui`. Every old URL — the gallery, each detail
+ * page and its `.md` twin, Getting Started — answers a permanent redirect so indexed links and bookmarks
+ * keep working. Emitted into Vercel's static routing, so no function runs for them.
+ */
+const LEGACY_REDIRECTS = {
+  "/components": { redirect: { to: "/ui/components", status: 308 } },
+  "/components/**": { redirect: { to: "/ui/components/**", status: 308 } },
+  "/about": { redirect: { to: "/ui/about", status: 308 } },
+} as const;
 
 export default defineConfig(({ command }) => {
   const isDev = command === "serve";
@@ -195,12 +206,15 @@ export default defineConfig(({ command }) => {
          * The ISR slug pages are not here — they are live renders, and the route's
          * `headers()` is their canonical policy.
          */
-        routeRules: Object.fromEntries(
-          [...ENTRY_PAGE_PATHS, "/docs/**", ...publicCacheRoutePatterns()].map((pattern) => [
-            pattern,
-            { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
-          ]),
-        ),
+        routeRules: {
+          ...Object.fromEntries(
+            [...ENTRY_PAGE_PATHS, "/docs/**", ...publicCacheRoutePatterns()].map((pattern) => [
+              pattern,
+              { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
+            ]),
+          ),
+          ...LEGACY_REDIRECTS,
+        },
         exportConditions: isDev ? ["source", "module"] : ["module"],
         /**
          * Traces `react` and `react-dom` into the serverless function's `node_modules`.

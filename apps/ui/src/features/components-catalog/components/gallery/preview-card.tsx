@@ -16,7 +16,7 @@ interface PreviewCardProps extends ComponentProps<"div"> {
 
 /**
  * Gallery card: a live demo preview plus its metadata. The full source lives on
- * the component detail page (`/components/$slug`) — gallery cards stay a quick
+ * the component detail page (`/ui/components/$slug`) — gallery cards stay a quick
  * visual scan, so they neither ship a Code tab nor load any highlighted source.
  */
 export function PreviewCard({ name, description, children, wide, slug, isNew, className, ...props }: PreviewCardProps) {

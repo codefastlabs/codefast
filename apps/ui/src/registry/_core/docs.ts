@@ -1,5 +1,5 @@
 /**
- * Lazy rich-doc registry for the detail page (`/components/$slug`), keyed by slug.
+ * Lazy rich-doc registry for the detail page (`/ui/components/$slug`), keyed by slug.
  * Auto-discovered from `registry/<slug>/doc.ts`; lazy, so importing this is ~free.
  * Components without a doc fall back to the card demo from `demos.ts`. To add one:
  * export a `ComponentDoc` from `doc.ts` pointing at example files via `docSource`.

@@ -32,7 +32,7 @@ export function DemoWallSection() {
 
         <div className="reveal-up mt-12 text-center">
           <Button asChild variant="outline" size="lg">
-            <Link to="/components">Explore all {COMPONENT_COUNT}+ components</Link>
+            <Link to="/ui/components">Explore all {COMPONENT_COUNT}+ components</Link>
           </Button>
         </div>
       </div>

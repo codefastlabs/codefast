@@ -23,7 +23,7 @@ export function BreadcrumbSeparatorDemo() {
         </BreadcrumbSeparator>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link to="/components">Components</Link>
+            <Link to="/ui/components">Components</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator>

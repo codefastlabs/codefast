@@ -7,7 +7,7 @@ import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 import { SITE_OG_IMAGE, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 import { COMPONENT_BY_SLUG } from "#/registry/_core/components";
 
-export const Route = createFileRoute("/components/$slug")({
+export const Route = createFileRoute("/ui/components/$slug")({
   // ISR: this is a live render the CDN caches — both headers required (see lib/cache.ts).
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   // The client tier of the ISR stack: detail data changes only on redeploy, so revisits
@@ -15,8 +15,8 @@ export const Route = createFileRoute("/components/$slug")({
   staleTime: 60 * 60_000,
   head: ({ params }: { params: { slug: string } }) => {
     const component = COMPONENT_BY_SLUG.get(params.slug);
-    const url = absoluteUrl(`/components/${params.slug}`);
-    const seo = canonicalHead(`/components/${params.slug}`);
+    const url = absoluteUrl(`/ui/components/${params.slug}`);
+    const seo = canonicalHead(`/ui/components/${params.slug}`);
 
     return {
       meta: [
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/components/$slug")({
               "@type": "BreadcrumbList",
               itemListElement: [
                 { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-                { "@type": "ListItem", position: 2, name: "Components", item: absoluteUrl("/components") },
+                { "@type": "ListItem", position: 2, name: "Components", item: absoluteUrl("/ui/components") },
                 { "@type": "ListItem", position: 3, name: component.name, item: url },
               ],
             }),

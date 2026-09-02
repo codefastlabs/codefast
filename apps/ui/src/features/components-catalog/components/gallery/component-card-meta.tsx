@@ -22,7 +22,7 @@ export function ComponentCardMeta({ name, description, slug, isNew, className, .
       <div className="flex items-center gap-2">
         {slug ? (
           <Link
-            to="/components/$slug"
+            to="/ui/components/$slug"
             params={{ slug }}
             className="group inline-flex items-center gap-1 text-sm font-semibold text-ui-fg no-underline"
             onClick={() => {
