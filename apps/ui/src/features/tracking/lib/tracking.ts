@@ -21,7 +21,7 @@ import { isAnalyticsAllowed, isExemptionAllowed } from "#/features/tracking/lib/
 export const catalog = defineEventCatalog({
   copy_code: {
     schema: z.object({
-      kind: z.enum(["install-command", "setup-snippet", "usage-example"]),
+      kind: z.enum(["install-command", "setup-snippet", "usage-example", "doc-snippet"]),
       name: z.string(),
     }),
   },

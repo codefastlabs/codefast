@@ -43,6 +43,7 @@ describe("renderMarkdown", () => {
     expect(rendered.html).toContain('class="shiki');
     expect(rendered.html).toContain("--shiki-dark");
     expect(rendered.html).toContain('<pre class="shiki"><code>graph TD;');
+    expect(rendered.html.match(/data-copy-code/g)).toHaveLength(2);
   });
 
   it("keeps explicit anchor targets and tables", async () => {
