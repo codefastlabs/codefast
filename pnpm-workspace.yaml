@@ -2,6 +2,7 @@ packages:
   - apps/*
   - examples/*
   - packages/**
+  - internal/*
   - benchmarks/*
 
 allowBuilds:

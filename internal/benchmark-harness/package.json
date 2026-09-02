@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/codefastlabs/codefast.git",
-    "directory": "packages/benchmark-harness"
+    "directory": "internal/benchmark-harness"
   },
   "files": [
     "dist",

@@ -13,7 +13,7 @@ React SSR server for browsing benchmark run history produced by the `benchmarks/
 - `findAvailablePort` — picks a free port so suites can launch the viewer without configuration.
 
 The viewer reads the JSONL observation files written by
-[`@codefast/benchmark-harness`](https://github.com/codefastlabs/codefast/tree/main/packages/benchmark-harness) reports
+[`@codefast/benchmark-harness`](https://github.com/codefastlabs/codefast/tree/main/internal/benchmark-harness) reports
 and charts library-vs-library results across runs.
 
 ## Usage
