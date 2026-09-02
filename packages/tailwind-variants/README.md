@@ -4,7 +4,7 @@ A type-safe variant styling API for Tailwind CSS — a faster drop-in replacemen
 production by [@codefast/ui](https://github.com/codefastlabs/codefast/tree/main/packages/ui).
 
 [![npm version](https://img.shields.io/npm/v/@codefast/tailwind-variants)](https://www.npmjs.com/package/@codefast/tailwind-variants)
-[![license](https://img.shields.io/npm/l/@codefast/tailwind-variants)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/@codefast/tailwind-variants)](./LICENSE)
 
 Describe a component's `base` classes, `variants`, `compoundVariants`, `slots`, and `defaultVariants` once; get back a
 fully typed function that resolves the right Tailwind classes and settles conflicts with `tailwind-merge`.
@@ -285,5 +285,5 @@ explains that design, which parts of it are load-bearing, and how to measure a c
 
 ## License
 
-MIT — see [LICENSE](https://github.com/codefastlabs/codefast/blob/main/LICENSE). Release history lives in the
+MIT — see [LICENSE](./LICENSE). Release history lives in the
 [CHANGELOG](https://github.com/codefastlabs/codefast/blob/main/packages/tailwind-variants/CHANGELOG.md).

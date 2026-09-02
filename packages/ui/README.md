@@ -4,7 +4,7 @@
 — fully typed, tree-shakeable, themeable.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/ui)](https://www.npmjs.com/package/@codefast/ui)
-[![license](https://img.shields.io/npm/l/@codefast/ui)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/@codefast/ui)](./LICENSE)
 
 **[codefastlabs.com](https://codefastlabs.com)** — full documentation with live previews and copy-ready source for every
 component.
@@ -125,4 +125,4 @@ The package is developed in the [codefast monorepo](https://github.com/codefastl
 
 ## License
 
-[MIT](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[MIT](./LICENSE)

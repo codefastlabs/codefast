@@ -3,7 +3,7 @@
 Consent-gated, type-safe event tracking for TanStack Start apps.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/tracking)](https://www.npmjs.com/package/@codefast/tracking)
-[![license](https://img.shields.io/npm/l/@codefast/tracking)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/@codefast/tracking)](./LICENSE)
 
 - **One catalog, typed end to end** — apps define their events over any [Standard Schema](https://standardschema.dev)
   library (zod, `zod/mini`, valibot, ...); `track()` validates properties at the call site and at runtime, and the
@@ -190,4 +190,4 @@ persistent toggle, gtag bootstrap, durable anonymous id, and the private server-
 
 ## License
 
-[MIT](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[MIT](./LICENSE)
