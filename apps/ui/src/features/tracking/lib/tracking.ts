@@ -32,7 +32,7 @@ export const catalog = defineEventCatalog({
   },
   select_search_result: {
     schema: z.object({
-      resultType: z.enum(["page", "component"]),
+      resultType: z.enum(["page", "component", "package"]),
       destination: z.optional(z.enum(["/", "/docs", "/ui", "/ui/components", "/ui/about"])),
       slug: z.optional(z.string()),
       hadQuery: z.boolean(),

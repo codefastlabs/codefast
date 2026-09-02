@@ -4,12 +4,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CommandPalette } from "#/components/layout/command-palette";
 
-const { track, navigate } = vi.hoisted(() => ({
+const { track, navigate, getPackages } = vi.hoisted(() => ({
   track: vi.fn(),
   navigate: vi.fn(),
+  getPackages: vi.fn(),
 }));
 
 vi.mock("#/features/tracking/lib/tracking", () => ({ track }));
+// The real server function would fetch; the palette only needs the resolved list.
+vi.mock("#/features/package-docs/lib/package-docs", () => ({ getPackages }));
 
 vi.mock(import("@tanstack/react-router"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -19,6 +22,10 @@ vi.mock(import("@tanstack/react-router"), async (importOriginal) => ({
 beforeEach(() => {
   track.mockClear();
   navigate.mockClear();
+  getPackages.mockReset();
+  getPackages.mockResolvedValue([
+    { slug: "di", name: "@codefast/di", description: "DI", version: "0.8.0", docs: ["readme", "spec"] },
+  ]);
 
   // cmdk's list measures/scrolls selection; jsdom lacks both APIs.
   vi.stubGlobal(
@@ -43,8 +50,8 @@ describe("CommandPalette tracking", () => {
 
     render(<CommandPalette />);
 
-    await user.click(screen.getByRole("button", { name: /search components/i }));
-    await user.type(screen.getByPlaceholderText(/search components and pages/i), "butt");
+    await user.click(screen.getByRole("button", { name: /search the site/i }));
+    await user.type(screen.getByPlaceholderText(/search packages, components, and pages/i), "butt");
 
     await waitFor(() => {
       expect(track).toHaveBeenCalledWith("search_query", { queryLength: 4 });
@@ -60,7 +67,7 @@ describe("CommandPalette tracking", () => {
 
     render(<CommandPalette />);
 
-    await user.click(screen.getByRole("button", { name: /search components/i }));
+    await user.click(screen.getByRole("button", { name: /search the site/i }));
     await user.click(screen.getByRole("option", { name: /^Components$/i }));
 
     expect(track).toHaveBeenCalledWith("select_search_result", {
@@ -75,8 +82,8 @@ describe("CommandPalette tracking", () => {
 
     render(<CommandPalette />);
 
-    await user.click(screen.getByRole("button", { name: /search components/i }));
-    await user.type(screen.getByPlaceholderText(/search components and pages/i), "button form");
+    await user.click(screen.getByRole("button", { name: /search the site/i }));
+    await user.type(screen.getByPlaceholderText(/search packages, components, and pages/i), "button form");
 
     const buttonOption = screen.getByRole("option", {
       name: (_accessibleName, element) => element.getAttribute("data-value") === "Button form",
@@ -93,5 +100,23 @@ describe("CommandPalette tracking", () => {
         hasDemo: true,
       }),
     );
+  });
+
+  it("tracks select_search_result when choosing a package document", async () => {
+    const user = userEvent.setup();
+
+    render(<CommandPalette />);
+    await user.click(screen.getByRole("button", { name: /search the site/i }));
+
+    const item = await screen.findByRole("option", { name: /@codefast\/di.*Specification/i });
+
+    await user.click(item);
+
+    expect(track).toHaveBeenCalledWith("select_search_result", {
+      resultType: "package",
+      slug: "di",
+      hadQuery: false,
+    });
+    expect(navigate).toHaveBeenCalledWith({ to: "/docs/$pkg/$doc", params: { pkg: "di", doc: "spec" } });
   });
 });
