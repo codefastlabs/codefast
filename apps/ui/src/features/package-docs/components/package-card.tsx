@@ -4,15 +4,19 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
+import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 
 interface PackageCardProps extends Omit<ComponentProps<"article">, "children"> {
   readonly pkg: PackageSummary;
+  /** List the package's other documents as direct links — for the docs index, where that is the point. */
+  readonly showDocs?: boolean | undefined;
 }
 
 /** One published package: name, version, description, and the way into its documentation. */
-export function PackageCard({ pkg, className, ...props }: PackageCardProps) {
+export function PackageCard({ pkg, showDocs = false, className, ...props }: PackageCardProps) {
   const isUi = pkg.slug === "ui";
+  const extraDocs = showDocs && !isUi ? pkg.docs.filter((doc) => doc !== "readme") : [];
 
   return (
     <article
@@ -29,6 +33,21 @@ export function PackageCard({ pkg, className, ...props }: PackageCardProps) {
         </Badge>
       </div>
       <p className="flex-1 text-sm leading-relaxed text-ui-muted">{pkg.description}</p>
+      {extraDocs.length > 0 ? (
+        <ul className="relative z-10 flex flex-wrap gap-1.5" aria-label="Documents">
+          {extraDocs.map((doc) => (
+            <li key={doc}>
+              <Link
+                to="/docs/$pkg/$doc"
+                params={{ pkg: pkg.slug, doc }}
+                className="inline-flex rounded-full border border-ui-border/60 px-2.5 py-0.5 text-xs text-ui-muted no-underline transition-colors hover:border-ui-brand/60 hover:text-ui-fg"
+              >
+                {DOC_KIND_BY_SLUG.get(doc)?.label ?? doc}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : null}
       {/* The whole card is the link; the overlay keeps the markup a plain heading + paragraph. */}
       {isUi ? (
         <Link
