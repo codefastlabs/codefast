@@ -2,13 +2,13 @@ import { cn } from "@codefast/ui/lib/utils";
 import { useLocation } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
-import type { ComponentDetail } from "#/features/components-catalog/components/detail/detail-bodies";
 import { DetailBody } from "#/features/components-catalog/components/detail/detail-bodies";
 import { DetailCtaSection } from "#/features/components-catalog/components/detail/detail-cta-section";
 import { DetailHeroSection } from "#/features/components-catalog/components/detail/detail-hero-section";
 import { SidebarNav } from "#/features/components-catalog/components/gallery/sidebar-nav";
 import { ALPHABET_GROUPS } from "#/features/components-catalog/data";
 import { useHashScroll } from "#/features/components-catalog/hooks/use-hash-scroll";
+import type { ComponentDetail } from "#/features/components-catalog/lib/detail";
 
 interface DetailPageProps extends Omit<ComponentProps<"main">, "children"> {
   /** The component detail, resolved by the `$slug` route loader. */
