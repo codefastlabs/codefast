@@ -18,7 +18,7 @@ describe("apps/ui tracking catalog", () => {
     expect(() => {
       assertValidEventProperties(catalog.select_search_result.schema, "select_search_result", {
         resultType: "page",
-        destination: "/components",
+        destination: "/ui/components",
         hadQuery: true,
       });
     }).not.toThrow();

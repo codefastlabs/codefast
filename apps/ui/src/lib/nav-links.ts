@@ -14,12 +14,12 @@ import { linkOptions } from "@tanstack/react-router";
 export const PRIMARY_NAV = linkOptions([
   { to: "/", label: "Home" },
   { to: "/docs", label: "Packages" },
-  { to: "/components", label: "Components" },
-  { to: "/about", label: "Getting Started" },
+  { to: "/ui/components", label: "Components" },
+  { to: "/ui/about", label: "Getting Started" },
 ]);
 
 type PrimaryNavLink = (typeof PRIMARY_NAV)[number];
-/** Union of the valid primary-route paths, e.g. `"/" | "/docs" | "/components" | "/about"`. */
+/** Union of the valid primary-route paths, e.g. `"/" | "/docs" | "/ui/components" | "/ui/about"`. */
 export type PrimaryNavPath = PrimaryNavLink["to"];
 
 /** Canonical GitHub repository URL — reused by the header and footer. */

@@ -44,7 +44,7 @@ export function RelatedSection({ dependencies, related, ...props }: RelatedSecti
               return (
                 <Link
                   key={relatedSlug}
-                  to="/components/$slug"
+                  to="/ui/components/$slug"
                   params={{ slug: relatedSlug }}
                   className="rounded-full border border-ui-border/60 bg-ui-card px-3 py-1 text-xs font-medium text-ui-muted no-underline transition-colors duration-200 hover:border-ui-brand hover:text-ui-fg"
                 >

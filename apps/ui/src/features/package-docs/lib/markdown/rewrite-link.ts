@@ -12,7 +12,7 @@ export interface LinkContext {
 }
 
 /** Packages whose docs live elsewhere on the site than `/docs/<pkg>`. */
-const SITE_PATH_BY_PACKAGE: ReadonlyMap<string, string> = new Map([["ui", "/components"]]);
+const SITE_PATH_BY_PACKAGE: ReadonlyMap<string, string> = new Map([["ui", "/ui"]]);
 
 const EXTERNAL_HREF = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 

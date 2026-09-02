@@ -42,7 +42,7 @@ export function DemoTile({ slug, wide }: DemoTileProps) {
       </div>
 
       <Link
-        to="/components/$slug"
+        to="/ui/components/$slug"
         params={{ slug }}
         className="flex items-center justify-between border-t border-ui-border/60 px-5 py-3.5 text-sm font-medium text-ui-fg no-underline transition-colors hover:bg-ui-surface"
       >

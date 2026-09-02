@@ -56,7 +56,7 @@ export function StatsSection() {
           variant="outline"
           className="border-ui-inverse/20 bg-transparent text-ui-inverse hover:bg-ui-inverse/10 hover:text-ui-inverse dark:border-ui-inverse/20 dark:bg-transparent dark:hover:bg-ui-inverse/10"
         >
-          <Link to="/components">View all components</Link>
+          <Link to="/ui/components">View all components</Link>
         </Button>
       </div>
     </section>

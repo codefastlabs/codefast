@@ -41,7 +41,7 @@ export function GalleryHeroSection() {
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Button asChild size="lg">
-            <Link to="/about">Getting Started</Link>
+            <Link to="/ui/about">Getting Started</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
             <a href={`#${firstLetterGroupId}`}>Jump to {ALPHABET_GROUPS[0]?.label ?? "A"}</a>

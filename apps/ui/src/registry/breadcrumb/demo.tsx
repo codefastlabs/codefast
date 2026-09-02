@@ -46,7 +46,7 @@ export function BreadcrumbDemo() {
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <a href="/components">Components</a>
+            <a href="/ui/components">Components</a>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />

@@ -65,7 +65,7 @@ describe("CommandPalette tracking", () => {
 
     expect(track).toHaveBeenCalledWith("select_search_result", {
       resultType: "page",
-      destination: "/components",
+      destination: "/ui/components",
       hadQuery: false,
     });
   });

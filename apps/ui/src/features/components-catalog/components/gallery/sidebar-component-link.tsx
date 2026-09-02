@@ -39,7 +39,7 @@ export function SidebarComponentLink({
       {...props}
     >
       <Link
-        to="/components/$slug"
+        to="/ui/components/$slug"
         params={{ slug }}
         data-slug={slug}
         aria-current={active ? "page" : undefined}

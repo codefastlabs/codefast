@@ -29,7 +29,7 @@ export function buildComponentMarkdown(component: ComponentMeta, doc?: ResolvedC
   const isComposition = component.composition !== undefined;
   const sections: Array<string> = [];
 
-  sections.push(`# ${component.name}`, component.description, `> ${absoluteUrl(`/components/${component.slug}`)}`);
+  sections.push(`# ${component.name}`, component.description, `> ${absoluteUrl(`/ui/components/${component.slug}`)}`);
 
   sections.push("## Installation", `\`\`\`bash\n${INSTALL_COMMAND}\n\`\`\``);
 
@@ -140,7 +140,7 @@ export function buildComponentMarkdown(component: ComponentMeta, doc?: ResolvedC
       const links = doc.related.map((slug) => {
         const related = COMPONENT_BY_SLUG.get(slug);
 
-        return `- [${related?.name ?? slug}](${absoluteUrl(`/components/${slug}`)})`;
+        return `- [${related?.name ?? slug}](${absoluteUrl(`/ui/components/${slug}`)})`;
       });
 
       parts.push("### See also", links.join("\n"));

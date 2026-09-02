@@ -130,10 +130,10 @@ export function CommandPalette() {
 
       if (hasDemo) {
         // Components with a demo have a dedicated detail page.
-        void navigate({ to: "/components/$slug", params: { slug } });
+        void navigate({ to: "/ui/components/$slug", params: { slug } });
       } else {
         // Sidebar (no demo) jumps to its A–Z letter band on the overview.
-        void navigate({ to: "/components", hash: `letter-${name.charAt(0).toUpperCase()}` });
+        void navigate({ to: "/ui/components", hash: `letter-${name.charAt(0).toUpperCase()}` });
       }
     },
     [handleOpenChange, navigate, search],

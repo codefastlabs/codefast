@@ -5,11 +5,11 @@ import { GalleryLayout } from "#/features/components-catalog/components/gallery/
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 import { canonicalHead } from "#/lib/seo";
 
-export const Route = createFileRoute("/components/")({
+export const Route = createFileRoute("/ui/components/")({
   // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   head: () => {
-    const seo = canonicalHead("/components");
+    const seo = canonicalHead("/ui/components");
 
     return {
       meta: [

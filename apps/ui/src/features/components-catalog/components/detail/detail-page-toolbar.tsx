@@ -22,7 +22,7 @@ export function DetailPageToolbar({ component, className, ...props }: DetailPage
       <CopyPageMenu component={component} />
       {previous ? (
         <Button asChild variant="outline" size="icon-sm" aria-label={`Previous: ${previous.name}`}>
-          <Link to="/components/$slug" params={{ slug: previous.slug }}>
+          <Link to="/ui/components/$slug" params={{ slug: previous.slug }}>
             <ArrowLeftIcon />
           </Link>
         </Button>
@@ -33,7 +33,7 @@ export function DetailPageToolbar({ component, className, ...props }: DetailPage
       )}
       {next ? (
         <Button asChild variant="outline" size="icon-sm" aria-label={`Next: ${next.name}`}>
-          <Link to="/components/$slug" params={{ slug: next.slug }}>
+          <Link to="/ui/components/$slug" params={{ slug: next.slug }}>
             <ArrowRightIcon />
           </Link>
         </Button>

@@ -22,7 +22,7 @@ export function DocsSidebar({ packages, activePkg, activeDoc, className, ...prop
       >
         <div>
           <Link
-            to="/components"
+            to="/ui/components"
             className="block rounded-md px-2 py-1 font-medium text-ui-muted no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
           >
             @codefast/ui

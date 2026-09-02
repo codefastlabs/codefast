@@ -45,7 +45,7 @@ export function DetailHeroSection({ component, className, ...props }: DetailHero
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/components">Components</Link>
+                <Link to="/ui/components">Components</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator>

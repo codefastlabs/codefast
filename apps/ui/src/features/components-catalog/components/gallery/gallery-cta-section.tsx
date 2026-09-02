@@ -28,7 +28,7 @@ export function GalleryCtaSection() {
 
       <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
         <Button asChild size="lg">
-          <Link to="/about">Getting Started</Link>
+          <Link to="/ui/about">Getting Started</Link>
         </Button>
         <Button asChild variant="outline" size="lg">
           <Link to="/">Back to home</Link>
