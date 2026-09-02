@@ -16,8 +16,9 @@ forced a rewrite of the consumer for no gain in expressiveness.
 migration for most codebases is the import specifier. The exports are `tv`, `createTV`, `cn`, `cx`, `VariantProps` and
 the configuration types.
 
-**Consequences.** Upstream's test corpus doubles as a compatibility suite, and `@codefast/ui` moved over by changing
-imports. The constraint runs the other way too: an API idea that upstream users could not express is out of scope here.
+**Consequences.** The README's examples run as tests and a behaviour sweep covers the upstream shapes, and
+`@codefast/ui` moved over by changing imports. The constraint runs the other way too: an API idea that upstream users
+could not express is out of scope here.
 
 ## 2. Two verified departures from upstream
 

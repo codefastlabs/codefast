@@ -20,9 +20,9 @@ where a helper adds something (a `Result`, a normalised error), never to make th
 
 **Consequences.** Dependencies are visible as imports and checked by `tsc`. A new command is one directory with
 `command.ts`, `run*.ts`, `domain/` and `output.ts`. The cost is that swapping an implementation for a test means passing
-a temp directory or spying on `logger`, not binding a mock — accepted, because every infrastructure call here is cheap
-to exercise for real. This is the worked example the `@codefast/di` "explicit architecture" samples cite when they say
-the pattern must be earned by the domain: a CLI of this size does not earn it.
+a real path or spying on `logger`, not binding a mock — accepted, because every infrastructure call here is cheap to
+exercise for real. This is the worked example the `@codefast/di` "explicit architecture" samples cite when they say the
+pattern must be earned by the domain: a CLI of this size does not earn it.
 
 ## 2. An interface needs a second implementation
 
@@ -34,7 +34,7 @@ a module genuinely needs a test double that a real temp path or a `vi.spyOn` can
 none.
 
 **Consequences.** The `core/filesystem/node.ts` helpers are functions, not an adapter behind a port; telemetry or
-timing, when wanted, wraps a function (`withX(fn)`) instead of hooking a container activation.
+timing, if ever wanted, wraps a function instead of hooking a container activation.
 
 ## 3. Commander is the command model
 
@@ -68,13 +68,12 @@ text is produced in one place (`formatAppError`), so `--json` and human output s
 **Decision.** Each command directory has an `output.ts` (or a small `*-reporter.ts`) whose exported functions write
 through `core/logger.ts`. `logger` is a plain object so a test can `vi.spyOn(logger, "out")`.
 
-**Consequences.** Output changes never touch orchestration; `--json` variants are sibling functions in the same file.
+**Consequences.** Output changes never touch orchestration; a command's `--json` output lives beside its human output.
 
 ## 6. Parse TypeScript with `oxc-parser`
 
 **Context.** `arrange` and `tag` read and rewrite TypeScript source. The classic `typescript` compiler API was the only
-consumer of that runtime in the repository once the build moved to native TypeScript 7, and it was also the slowest step
-of every `arrange` run.
+consumer of that runtime in the repository once the build moved to native TypeScript 7.
 
 **Decision.** AST work (`arrange/domain/ast/`, `tag`) uses `oxc-parser`; edits are applied as text ranges
 (`core/source-text-edit.ts`) rather than by printing a transformed AST, so untouched code keeps its formatting byte for
@@ -110,7 +109,8 @@ names are the four commands plus `core/`, and a command's pure logic lives under
 **Context.** With no container, a test calls the function it targets.
 
 **Decision.** Unit tests live under `tests/unit/`, mirroring `src/`, and run in Node. Filesystem-touching code is tested
-against temp directories; output through spies on `logger`. There is no mocking layer for infrastructure.
+against fixture inputs under `tests/unit/support/`; output through spies on `logger`. There is no mocking layer for
+infrastructure.
 
 **Consequences.** Adding a test means importing a function and asserting on a `Result`. Coverage is enforced by the
 workspace's `test:coverage` gate, not by this document.
