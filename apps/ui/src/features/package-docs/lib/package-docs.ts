@@ -8,13 +8,28 @@ import { setResponseHeader } from "@tanstack/react-start/server";
 
 import { isDocKindSlug } from "#/features/package-docs/lib/doc-kinds";
 import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
+import { CHANGELOG_RELEASES_SHOWN, trimChangelog } from "#/features/package-docs/lib/markdown/trim-changelog";
 import type { DocPage, PackageSummary, RenderedDoc } from "#/features/package-docs/lib/rendered-doc";
+import { repoBlobUrl } from "#/features/package-docs/lib/site";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 
 function setContentCacheHeaders(): void {
   for (const [name, value] of Object.entries(CONTENT_CACHE_HEADERS)) {
     setResponseHeader(name, value);
   }
+}
+
+/** The latest releases of a changelog, closing with a pointer to the full file when releases were cut. */
+function trimmedChangelog(source: string, pkg: string, file: string): string {
+  const { source: kept, omitted } = trimChangelog(source);
+
+  if (omitted === 0) {
+    return kept;
+  }
+
+  const more = omitted === 1 ? "one more release" : `${omitted} more releases`;
+
+  return `${kept}\n\n---\n\n_Showing the latest ${CHANGELOG_RELEASES_SHOWN} releases; the [full changelog](${repoBlobUrl(`packages/${pkg}/${file}`)}) on GitHub has ${more}._\n`;
 }
 
 /** Renders one package document, or `null` when the package or kind does not exist. */
@@ -30,7 +45,8 @@ export async function renderDoc(pkg: string, doc: DocKindSlug): Promise<Rendered
   }
 
   const kind = docKind(doc);
-  const rendered = await renderMarkdown(source, { pkg, file: kind.file });
+  const body = doc === "changelog" ? trimmedChangelog(source, pkg, kind.file) : source;
+  const rendered = await renderMarkdown(body, { pkg, file: kind.file });
 
   return { pkg, doc, title: rendered.title ?? kind.label, html: rendered.html, toc: rendered.toc };
 }
