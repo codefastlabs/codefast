@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
 import { track } from "#/features/tracking/lib/tracking";
-import { PRIMARY_NAV, RESOURCE_LINKS } from "#/lib/nav-links";
+import { ALL_NAV, RESOURCE_LINKS } from "#/lib/nav-links";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -27,7 +27,7 @@ export function Footer() {
           <div className="flex gap-16 text-sm">
             <div className="flex flex-col gap-3">
               <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Site</p>
-              {PRIMARY_NAV.map(({ to, label }) => (
+              {ALL_NAV.map(({ to, label }) => (
                 <Link key={to} to={to} className="text-ui-muted no-underline hover:text-ui-fg">
                   {label}
                 </Link>

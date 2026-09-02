@@ -14,13 +14,24 @@ import { linkOptions } from "@tanstack/react-router";
 export const PRIMARY_NAV = linkOptions([
   { to: "/", label: "Home" },
   { to: "/docs", label: "Packages" },
+]);
+
+/**
+ * The `@codefast/ui` section's pages — a "UI" group in the header, listed after the primary pages
+ * everywhere else.
+ */
+export const UI_NAV = linkOptions([
+  { to: "/ui", label: "Overview" },
   { to: "/ui/components", label: "Components" },
   { to: "/ui/about", label: "Getting Started" },
 ]);
 
-type PrimaryNavLink = (typeof PRIMARY_NAV)[number];
-/** Union of the valid primary-route paths, e.g. `"/" | "/docs" | "/ui/components" | "/ui/about"`. */
-export type PrimaryNavPath = PrimaryNavLink["to"];
+/** Every navigable page in display order — footer and command palette. */
+export const ALL_NAV = [...PRIMARY_NAV, ...UI_NAV] as const;
+
+type NavLink = (typeof ALL_NAV)[number];
+/** Union of the valid page paths, e.g. `"/" | "/docs" | "/ui" | "/ui/components" | "/ui/about"`. */
+export type PrimaryNavPath = NavLink["to"];
 
 /** Canonical GitHub repository URL — reused by the header and footer. */
 export const GITHUB_URL = "https://github.com/codefastlabs/codefast";
