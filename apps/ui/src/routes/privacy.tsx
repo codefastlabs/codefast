@@ -15,7 +15,7 @@ export const Route = createFileRoute("/privacy")({
 
     return {
       meta: [
-        { title: "Privacy — codefast/ui" },
+        { title: "Privacy — Codefast Labs" },
         {
           name: "description",
           content: "What this site tracks, the consent model per region, and how to change your choice.",
@@ -33,8 +33,8 @@ function PrivacyPage() {
     <main className="container mx-auto max-w-3xl px-4 py-16 pb-32">
       <h1 className="mb-2 text-3xl font-semibold text-ui-fg">Privacy policy</h1>
       <p className="mb-12 text-sm text-ui-muted">
-        This site is a documentation and showcase site for <code>@codefast/ui</code>. It runs no ads, sells no data, and
-        collects nothing beyond the analytics described below.
+        This site documents the <code>@codefast</code> packages and showcases <code>@codefast/ui</code>. It runs no ads,
+        sells no data, and collects nothing beyond the analytics described below.
       </p>
 
       <section aria-labelledby="privacy-collect" className="mb-10">
