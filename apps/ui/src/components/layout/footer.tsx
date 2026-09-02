@@ -15,10 +15,10 @@ export function Footer() {
           {/* Brand */}
           <div className="max-w-xs">
             <p className="mb-2 text-sm font-semibold text-ui-fg">
-              codefast<span className="text-ui-brand">/ui</span>
+              codefast<span className="text-ui-brand">labs</span>
             </p>
             <p className="mb-4 text-sm leading-6 text-ui-muted">
-              Accessible, composable React components built on Radix UI and Tailwind CSS v4.
+              Open-source TypeScript packages for React 19 products — UI components, styling, theming, tracking, and DI.
             </p>
             <AppearanceToggle />
           </div>
@@ -26,7 +26,7 @@ export function Footer() {
           {/* Links */}
           <div className="flex gap-16 text-sm">
             <div className="flex flex-col gap-3">
-              <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Library</p>
+              <p className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Site</p>
               {PRIMARY_NAV.map(({ to, label }) => (
                 <Link key={to} to={to} className="text-ui-muted no-underline hover:text-ui-fg">
                   {label}

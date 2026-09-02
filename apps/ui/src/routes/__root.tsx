@@ -18,9 +18,9 @@ import { COMPONENTS } from "#/registry/_core/components";
 
 import appCss from "#/styles.css?url";
 
-const SITE_NAME = "codefast/ui";
-const SITE_TITLE = "codefast/ui — Beautiful, accessible React components";
-const SITE_DESCRIPTION = `${COMPONENTS.length}+ accessible React components built on Radix UI primitives and Tailwind CSS v4. Copy the source, own the code — strict TypeScript, dark mode, and zero config.`;
+const SITE_NAME = "Codefast Labs";
+const SITE_TITLE = "Codefast Labs — TypeScript packages for React 19 products";
+const SITE_DESCRIPTION = `Open-source TypeScript packages for React 19 products: ${COMPONENTS.length}+ accessible UI components built on Radix UI and Tailwind CSS v4, variant styling, appearance management, consent-gated tracking, and dependency injection.`;
 
 export const Route = createRootRoute({
   head: () => ({
