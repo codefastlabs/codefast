@@ -14,6 +14,7 @@ on:
       - "pnpm-lock.yaml"
       - "turbo.json"
       - "packages/**"
+      - "internal/**"
       - ".changeset/**"
       # changeset version reads every workspace manifest, including private apps/examples/benchmarks
       - "apps/*/package.json"

@@ -7,7 +7,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 CodeFast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11 — every package holds that one floor, `di`
 included, which is why it keeps its own `Map` upsert helpers instead of the ES2025 methods) publishing the `@codefast/*`
 packages. The flagship is `@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/ui` is a TanStack Start
-showcase site that consumes the packages.
+showcase site that consumes the packages. Workspace layout is by audience: `packages/` holds only published
+`@codefast/*` libraries, `internal/` holds private workspace packages consumed only inside the repo, `benchmarks/` the
+benchmark suites, `apps/` deployed sites, `examples/` consumer demos. A new package is private until it is published, so
+it starts in `internal/`.
 
 ## Toolchain (non-standard — read before assuming)
 
@@ -283,7 +286,7 @@ point of use beats brevity, and every word must convey information:
 | `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog       |
 | `packages/cli`               | `codefast` CLI — subcommands `arrange`, `audit`, `mirror`, `tag` (run via `pnpm run codefast <cmd>`)  |
 | `packages/typescript-config` | Shared tsconfig presets                                                                               |
-| `packages/benchmark-*`       | Performance benchmark harness/viewer (`pnpm bench`)                                                   |
+| `internal/benchmark-*`       | Private benchmark harness/viewer shared by `benchmarks/*` (`pnpm bench`); never published             |
 | `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di-inversify`, `tailwind-variants`)       |
 | `apps/ui`                    | Docs/showcase site for `@codefast/ui` (TanStack Start); consumes `packages/*` via `workspace:*`       |
 | `examples/tanstack-start`    | TanStack Start consumer demo; uses `workspace:*` so package changes are testable here directly        |

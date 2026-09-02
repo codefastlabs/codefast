@@ -36,7 +36,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Build Workspace Packages
-        run: npx turbo build --filter="./packages/**"
+        run: npx turbo build --filter="./packages/**" --filter="./internal/**"
 
       # `codefast mirror` generates `package.json#exports` from `dist/`, so a module added, moved or
       # renamed in `src/` silently changes the published surface until someone reruns it. Mirror is
@@ -57,7 +57,7 @@ jobs:
         run: |
           pnpm lint
           pnpm format:check
-          npx turbo run check-types --filter="./packages/**"
+          npx turbo run check-types --filter="./packages/**" --filter="./internal/**"
 
       # Repo-wide on purpose: the cross-package references are the ones most likely to rot, and a
       # dangling anchor into another document degrades to a scroll rather than a visible 404.
@@ -71,7 +71,7 @@ jobs:
 
       - name: Execute Automated Tests with Coverage
         if: ${{ inputs.run-tests }}
-        run: npx turbo run test:coverage --filter="./packages/**"
+        run: npx turbo run test:coverage --filter="./packages/**" --filter="./internal/**"
 
       - name: Publish Coverage Results to Codecov
         if: ${{ inputs.run-tests }}

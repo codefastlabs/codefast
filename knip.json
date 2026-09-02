@@ -7,10 +7,10 @@
     "apps/ui": {
       "entry": ["src/router.tsx"]
     },
-    "packages/benchmark-harness": {
+    "internal/benchmark-harness": {
       "ignoreBinaries": ["tsx"]
     },
-    "packages/benchmark-viewer": {
+    "internal/benchmark-viewer": {
       "ignoreDependencies": ["babel-plugin-react-compiler"]
     },
     "packages/di": {

@@ -452,10 +452,10 @@ importers:
     dependencies:
       '@codefast/benchmark-harness':
         specifier: workspace:*
-        version: link:../../packages/benchmark-harness
+        version: link:../../internal/benchmark-harness
       '@codefast/benchmark-viewer':
         specifier: workspace:*
-        version: link:../../packages/benchmark-viewer
+        version: link:../../internal/benchmark-viewer
       '@codefast/di':
         specifier: workspace:*
         version: link:../../packages/di
@@ -489,10 +489,10 @@ importers:
     dependencies:
       '@codefast/benchmark-harness':
         specifier: workspace:*
-        version: link:../../packages/benchmark-harness
+        version: link:../../internal/benchmark-harness
       '@codefast/benchmark-viewer':
         specifier: workspace:*
-        version: link:../../packages/benchmark-viewer
+        version: link:../../internal/benchmark-viewer
       '@codefast/tailwind-variants':
         specifier: workspace:*
         version: link:../../packages/tailwind-variants
@@ -604,7 +604,7 @@ importers:
         specifier: 'catalog:'
         version: 4.1.11(@types/node@26.4.0)(@vitest/coverage-v8@4.1.11)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
 
-  packages/benchmark-harness:
+  internal/benchmark-harness:
     dependencies:
       tinybench:
         specifier: 'catalog:'
@@ -612,7 +612,7 @@ importers:
     devDependencies:
       '@codefast/typescript-config':
         specifier: workspace:*
-        version: link:../typescript-config
+        version: link:../../packages/typescript-config
       '@types/node':
         specifier: 'catalog:'
         version: 26.4.0
@@ -626,14 +626,14 @@ importers:
         specifier: 'catalog:'
         version: 4.1.11(@types/node@26.4.0)(@vitest/coverage-v8@4.1.11)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
 
-  packages/benchmark-viewer:
+  internal/benchmark-viewer:
     dependencies:
       '@codefast/benchmark-harness':
         specifier: workspace:*
         version: link:../benchmark-harness
       '@codefast/tailwind-variants':
         specifier: workspace:*
-        version: link:../tailwind-variants
+        version: link:../../packages/tailwind-variants
       '@hono/node-server':
         specifier: 'catalog:'
         version: 2.1.1(hono@4.13.5)
@@ -661,7 +661,7 @@ importers:
     devDependencies:
       '@codefast/typescript-config':
         specifier: workspace:*
-        version: link:../typescript-config
+        version: link:../../packages/typescript-config
       '@rolldown/plugin-babel':
         specifier: 'catalog:'
         version: 0.2.3(@babel/core@8.0.1)(@babel/runtime@7.29.7)(rolldown@1.2.4)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.0))
