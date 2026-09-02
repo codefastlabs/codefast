@@ -82,6 +82,10 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
       if (view.group && scenario.group !== view.group) {
         return false;
       }
+      // Facets are a union: any selected feature keeps the scenario; the other filters narrow it.
+      if (view.facets.length > 0 && !view.facets.some((facet) => scenario.facets.includes(facet))) {
+        return false;
+      }
       if (!normalizedQuery) {
         return true;
       }
@@ -91,7 +95,7 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
         searchNorm(scenario.what).includes(normalizedQuery)
       );
     });
-  }, [payload, view.group, view.search]);
+  }, [payload, view.group, view.search, view.facets]);
 
   const baseRunIndices = useMemo<Array<number>>(() => {
     if (!payload) {

@@ -87,7 +87,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     onCopyLink: copyViewLink,
     onScenarioStep: selectScenarioByOffset,
     // Clearing the filters keeps the jump from being bounced back by the auto-select effect.
-    onScenarioJump: (scenarioId) => patchView({ scenarioId, search: "", group: "" }),
+    onScenarioJump: (scenarioId) => patchView({ scenarioId, search: "", group: "", facets: [] }),
   });
 
   const paletteActions = [
@@ -176,11 +176,20 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
         <ChartControlPanel
           envKey={view.envKey}
+          facetLabels={payload.facetLabels ?? []}
           group={view.group}
           hasMore={payload?.hasMore ?? false}
           isReloading={isReloading}
           onEnvChange={(envKey) => patchView({ envKey })}
           onGroupChange={(group) => patchView({ group })}
+          onToggleFacet={(label) =>
+            patchView({
+              facets: view.facets.includes(label)
+                ? view.facets.filter((facet) => facet !== label)
+                : [...view.facets, label],
+            })
+          }
+          selectedFacets={view.facets}
           onLoadOlderRuns={loadOlderRuns}
           onReload={() => loadData(true)}
           onRunWindowChange={(runWindow) => patchView({ runWindow })}

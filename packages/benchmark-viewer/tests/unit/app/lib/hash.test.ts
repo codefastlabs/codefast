@@ -30,9 +30,11 @@ function minimalPayload(overrides: Partial<EmbeddedViewerPayload> = {}): Embedde
         id: "scenario-one",
         group: "grp",
         what: "noop",
+        facets: ["tag"],
         libraries: {},
       },
     ],
+    facetLabels: ["name", "tag"],
     generatedAtIso: "2024-01-01T00:00:00.000Z",
     effectiveLimit: 10,
     hasMore: false,
@@ -45,6 +47,7 @@ const defaultView: ViewState = {
   envKey: "",
   group: "",
   search: "",
+  facets: [],
   runWindow: "all",
   showBands: true,
   useLogScale: false,
@@ -59,6 +62,7 @@ describe("buildHash / parseHash", () => {
       envKey: "env-1",
       group: "grp",
       search: "needle",
+      facets: ["name", "tag"],
       runWindow: "10",
       showBands: false,
       useLogScale: true,
@@ -66,6 +70,11 @@ describe("buildHash / parseHash", () => {
     };
     const hash = buildHash(view);
     expect(parseHash(`#${hash}`, payload)).toEqual(view);
+  });
+
+  it("drops facet labels the payload does not declare", () => {
+    const payload = minimalPayload();
+    expect(parseHash("#facets=tag,retired-facet", payload)).toEqual({ facets: ["tag"] });
   });
 
   it("ignores skip-link fragment ids that are not view keys", () => {

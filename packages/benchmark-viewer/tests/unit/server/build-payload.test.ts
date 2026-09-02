@@ -1,7 +1,7 @@
 import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
 import { describe, expect, it } from "vitest";
 
-import { buildEmbeddedPayload } from "#/server/payload";
+import { buildEmbeddedPayload, resolveScenarioFacets } from "#/server/payload";
 import type { RunLines } from "#/server/payload";
 import type { BenchServerOptions } from "#/types";
 
@@ -90,5 +90,28 @@ describe("buildEmbeddedPayload", () => {
     const payload = buildEmbeddedPayload([], options, true, 50);
     expect(payload.hasMore).toBe(true);
     expect(payload.effectiveLimit).toBe(50);
+  });
+});
+
+describe("resolveScenarioFacets", () => {
+  const facets = {
+    labels: ["name", "tag"],
+    byScenarioId: {
+      "slot-name-and-tag": ["tag", "name"],
+      "multi-tag-select-32": ["tag", "retired-facet"],
+    },
+  };
+
+  it("normalises declared labels to the chip order", () => {
+    expect(resolveScenarioFacets("slot-name-and-tag", facets)).toEqual(["name", "tag"]);
+  });
+
+  it("drops labels missing from the declared chip list", () => {
+    expect(resolveScenarioFacets("multi-tag-select-32", facets)).toEqual(["tag"]);
+  });
+
+  it("returns no labels for undeclared scenarios or an absent facet config", () => {
+    expect(resolveScenarioFacets("constant-resolve", facets)).toEqual([]);
+    expect(resolveScenarioFacets("slot-name-and-tag", undefined)).toEqual([]);
   });
 });

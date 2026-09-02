@@ -58,6 +58,7 @@ function buildMultiTagSlotResolveScenario(): BenchScenario {
 
   return {
     id: "multi-tag-slot-resolve",
+    facets: ["tag"],
     group: "micro",
     what: `resolve(token, { tags: [ENV_TAG.of("prod"),TIER_TAG.of("premium")] }) from ${String(SLOT_VARIANTS.length)}-variant multi-tag set (codefast-only)`,
     batch: MULTI_TAG_SLOT_BATCH,
@@ -119,6 +120,7 @@ function buildMultiTagConstraintResolveScenario(): BenchScenario {
 
   return {
     id: "multi-tag-constraint-resolve",
+    facets: ["tag"],
     group: "micro",
     what: "whenParentTaggedAll([env,tier]) predicate — 2-tag multi-condition constraint selection (codefast-only)",
     batch: MULTI_TAG_CONSTRAINT_BATCH,
@@ -165,6 +167,7 @@ function buildMultiTagSelectAtScaleScenario(): BenchScenario {
 
   return {
     id: `multi-tag-select-${String(variantCount)}`,
+    facets: ["tag"],
     group: "micro",
     what: `resolve(token, { tags }) selecting one of ${String(variantCount)} two-tag variants under one token (codefast-only)`,
     batch: MULTI_TAG_SELECT_BATCH,

@@ -13,6 +13,18 @@ export interface BenchLibraryConfig {
 }
 
 /**
+ * Facet data a suite resolves from its scenario declarations: chip order plus per-scenario labels.
+ *
+ * @since 0.3.16-canary.3
+ */
+export interface ScenarioFacets {
+  /** Chip labels in display order, and the values carried by the URL hash. */
+  readonly labels: ReadonlyArray<string>;
+  /** Facet labels per scenario id, as declared where each scenario is defined. */
+  readonly byScenarioId: Readonly<Record<string, ReadonlyArray<string>>>;
+}
+
+/**
  * Options for the bench history server: results directory, port, title, libraries, and run cap.
  *
  * @since 0.3.16-canary.0
@@ -32,6 +44,11 @@ export interface BenchServerOptions {
    * the "Load older runs" control. Default: 200.
    */
   readonly maxRuns?: number;
+  /**
+   * Feature filters shown as chips. The suite resolves these from its own scenario declarations;
+   * the viewer only filters by label. Omit for no chip row.
+   */
+  readonly scenarioFacets?: ScenarioFacets;
 }
 
 // ---------------------------------------------------------------------------
@@ -101,6 +118,8 @@ export interface EmbeddedScenarioSeries {
   readonly id: string;
   readonly group: string;
   readonly what: string;
+  /** Labels of the declared facets this scenario's id matched, in declaration order. */
+  readonly facets: ReadonlyArray<string>;
   /** Keyed by `EmbeddedLibraryMeta.key` (= `libraryName` in JSONL). */
   readonly libraries: Readonly<Record<string, EmbeddedLibraryRunData>>;
 }
@@ -116,6 +135,8 @@ export interface EmbeddedViewerPayload {
   readonly libraries: ReadonlyArray<EmbeddedLibraryMeta>;
   readonly runs: ReadonlyArray<EmbeddedRun>;
   readonly scenarios: ReadonlyArray<EmbeddedScenarioSeries>;
+  /** Declared facet labels in chip order; empty when the suite declares none. */
+  readonly facetLabels: ReadonlyArray<string>;
   /** ISO timestamp when this JSON snapshot was built (server clock). */
   readonly generatedAtIso: string;
   /** The maxRuns cap that was applied when building this payload. */

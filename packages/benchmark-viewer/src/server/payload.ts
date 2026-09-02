@@ -16,6 +16,7 @@ import type { ScenarioTrialResult, TrialPayload } from "@codefast/benchmark-harn
 import { DEFAULT_MAX_RUNS } from "#/constants";
 import type {
   BenchServerOptions,
+  ScenarioFacets,
   EmbeddedLibraryMeta,
   EmbeddedLibraryRunData,
   EmbeddedRun,
@@ -226,6 +227,20 @@ function hzIqrFractionLookup(index: ReadonlyMap<string, AggregatedScenarioResult
 }
 
 /**
+ * A scenario's declared facet labels, normalised to the declared chip order with unknown
+ * labels dropped.
+ *
+ * @since 0.3.16-canary.3
+ */
+export function resolveScenarioFacets(scenarioId: string, facets: ScenarioFacets | undefined): Array<string> {
+  const declared = facets?.byScenarioId[scenarioId];
+  if (facets === undefined || declared === undefined || declared.length === 0) {
+    return [];
+  }
+  return facets.labels.filter((label) => declared.includes(label));
+}
+
+/**
  * Builds the viewer payload from raw run lines: library metadata, run metadata, and per-scenario series.
  *
  * @since 0.3.16-canary.0
@@ -240,6 +255,8 @@ export function buildEmbeddedPayload(
   const libraryNames = options.libraries.map((lib) => lib.name);
   const primaryName = options.libraries.find((lib) => lib.isPrimary)?.name ?? libraryNames[0] ?? "";
 
+  const facetLabels = options.scenarioFacets?.labels ?? [];
+
   if (libraryNames.length === 0) {
     return {
       title: options.title ?? "Benchmark history",
@@ -247,6 +264,7 @@ export function buildEmbeddedPayload(
       libraries: [],
       runs: [],
       scenarios: [],
+      facetLabels,
       generatedAtIso: new Date().toISOString(),
       effectiveLimit,
       hasMore,
@@ -365,6 +383,7 @@ export function buildEmbeddedPayload(
       id: scenarioId,
       group: scenarioGroup.get(scenarioId) ?? "unknown",
       what: scenarioWhat.get(scenarioId) ?? "",
+      facets: resolveScenarioFacets(scenarioId, options.scenarioFacets),
       libraries: libraryData,
     };
   });
@@ -381,6 +400,7 @@ export function buildEmbeddedPayload(
     libraries,
     runs: embeddedRuns,
     scenarios,
+    facetLabels,
     generatedAtIso: new Date().toISOString(),
     effectiveLimit,
     hasMore,

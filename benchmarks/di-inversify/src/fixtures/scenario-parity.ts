@@ -15,7 +15,7 @@ import type { BenchScenario } from "#/scenarios/types";
  * @since 0.5.0-canary.7
  */
 export type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what"> &
-  Partial<Pick<BenchScenario, "excludeFromAggregates">>;
+  Partial<Pick<BenchScenario, "excludeFromAggregates" | "facets">>;
 
 // ── micro ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -46,6 +46,7 @@ export const CONSTANT_RESOLVE = {
  */
 export const SINGLETON_CLASS_1_DEP = {
   id: "singleton-class-1-dep",
+  facets: ["singleton"],
   group: "micro",
   what: "resolve a singleton class with one dependency (cache hit)",
 } as const satisfies ScenarioDescriptor;
@@ -55,6 +56,7 @@ export const SINGLETON_CLASS_1_DEP = {
  */
 export const TRANSIENT_CLASS_1_DEP = {
   id: "transient-class-1-dep",
+  facets: ["transient"],
   group: "micro",
   what: "resolve a transient class with one transient dep (fresh each call)",
 } as const satisfies ScenarioDescriptor;
@@ -64,6 +66,7 @@ export const TRANSIENT_CLASS_1_DEP = {
  */
 export const NAMED_CONSTANT_GET = {
   id: "named-constant-get",
+  facets: ["name"],
   group: "micro",
   what: "resolve a named constant from a 3-candidate set",
 } as const satisfies ScenarioDescriptor;
@@ -127,6 +130,7 @@ export const FAN_OUT_TREE = {
 export function resolveAllStrategiesDescriptor(strategyCount: number): ScenarioDescriptor {
   return {
     id: `resolve-all-strategies-${String(strategyCount)}`,
+    facets: ["resolve-all"],
     group: "fan-out",
     what: `resolveAll() across ${String(strategyCount)} strategy bindings once`,
   };
@@ -138,6 +142,7 @@ export function resolveAllStrategiesDescriptor(strategyCount: number): ScenarioD
 export function resolveAllNamedDescriptor(namedCount: number): ScenarioDescriptor {
   return {
     id: `resolve-all-named-${String(namedCount)}`,
+    facets: ["name", "resolve-all"],
     group: "fan-out",
     what: `resolveAll() with name qualifier across ${String(namedCount)} named strategy bindings`,
   };
@@ -195,6 +200,7 @@ export const LIFECYCLE_POST_CONSTRUCT_BATCH = 250;
  */
 export const LIFECYCLE_POST_CONSTRUCT_SINGLETON = {
   id: "lifecycle-post-construct-singleton",
+  facets: ["singleton"],
   group: "lifecycle",
   what: "resolve singleton class with @postConstruct already warmed",
 } as const satisfies ScenarioDescriptor;
@@ -224,6 +230,7 @@ export const REQUEST_LIFECYCLE_BATCH = 100;
  */
 export const CHILD_DEPTH_2_RESOLVE = {
   id: "child-depth-2-resolve",
+  facets: ["scope"],
   group: "scope",
   what: "resolve a parent binding from a depth-2 child (realistic per-request shape)",
 } as const satisfies ScenarioDescriptor;
@@ -233,6 +240,7 @@ export const CHILD_DEPTH_2_RESOLVE = {
  */
 export const CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE = {
   id: "child-request-lifecycle-create-resolve-dispose",
+  facets: ["scope"],
   group: "scope",
   what: "create per-request child container, resolve from grandchild depth-2, then unbind/dispose",
 } as const satisfies ScenarioDescriptor;
@@ -260,6 +268,7 @@ export const SCALE_MID_CHAIN_SIZE = 32;
  */
 export const SCALE_DEEP_TRANSIENT_CHAIN_512 = {
   id: "scale-deep-transient-chain-512",
+  facets: ["transient"],
   group: "scale",
   what: "resolve a 512-step transient chain (500+ binding registry pressure)",
 } as const satisfies ScenarioDescriptor;
@@ -269,6 +278,7 @@ export const SCALE_DEEP_TRANSIENT_CHAIN_512 = {
  */
 export const SCALE_MID_TRANSIENT_CHAIN_32 = {
   id: "scale-mid-transient-chain-32",
+  facets: ["transient"],
   group: "scale",
   what: "resolve a 32-step transient chain (deep-lane handoff depth — resolver's weakest transient band)",
 } as const satisfies ScenarioDescriptor;
@@ -394,6 +404,7 @@ export const HAS_OWN_UNBOUND_CHECK = {
  */
 export const CONTAINER_LEVEL_ACTIVATION_HOOK = {
   id: "container-level-activation-hook",
+  facets: ["hook"],
   group: "lifecycle",
   what: "resolve transient through a container.onActivation() hook — measures hook dispatch overhead",
 } as const satisfies ScenarioDescriptor;
@@ -409,6 +420,7 @@ export const CONTAINER_LEVEL_ACTIVATION_HOOK = {
  */
 export const BINDING_LEVEL_ACTIVATION_HOOK = {
   id: "binding-level-activation-hook",
+  facets: ["hook"],
   group: "lifecycle",
   what: "resolve transient through a per-binding .onActivation() hook — measures hook dispatch overhead",
 } as const satisfies ScenarioDescriptor;
@@ -418,6 +430,7 @@ export const BINDING_LEVEL_ACTIVATION_HOOK = {
  */
 export const SCOPED_BINDING_PER_CHILD = {
   id: "scoped-binding-per-child",
+  facets: ["scope"],
   group: "scope",
   what: "resolve .scoped() binding from a fresh child container each iteration — fresh instance per child",
 } as const satisfies ScenarioDescriptor;
@@ -450,6 +463,7 @@ export const TARGET_TAG_VALUE = "prod";
  */
 export const RESOLVE_OPTIONAL_HIT = {
   id: "resolve-optional-hit",
+  facets: ["optional"],
   group: "micro",
   what: "resolveOptional() when the binding exists — returns the value without throwing",
 } as const satisfies ScenarioDescriptor;
@@ -459,6 +473,7 @@ export const RESOLVE_OPTIONAL_HIT = {
  */
 export const RESOLVE_OPTIONAL_MISS = {
   id: "resolve-optional-miss",
+  facets: ["optional"],
   group: "micro",
   what: "resolveOptional() when no binding exists — returns undefined without throwing",
 } as const satisfies ScenarioDescriptor;
@@ -468,6 +483,7 @@ export const RESOLVE_OPTIONAL_MISS = {
  */
 export const TAGGED_BINDING_RESOLVE = {
   id: "tagged-binding-resolve",
+  facets: ["tag"],
   group: "micro",
   what: `resolve(token, { tags: [["env","${TARGET_TAG_VALUE}"]] }) from ${String(TAGGED_ENVS.length)}-variant tagged set`,
 } as const satisfies ScenarioDescriptor;
@@ -501,6 +517,7 @@ export const TO_RESOLVED_3_DEPS = {
  */
 export const TO_ALIAS_REDIRECT = {
   id: "to-alias-redirect",
+  facets: ["alias"],
   group: "micro",
   what: "resolve a toAlias() binding that redirects to a cached singleton (alias chain hit)",
 } as const satisfies ScenarioDescriptor;

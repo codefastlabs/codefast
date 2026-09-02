@@ -71,6 +71,9 @@ interface ChartControlPanelProps {
   group: string;
   uniqueGroups: Array<string>;
   onGroupChange: (value: string) => void;
+  facetLabels: ReadonlyArray<string>;
+  selectedFacets: Array<string>;
+  onToggleFacet: (label: string) => void;
   scenarioId: string;
   visibleScenarios: Array<EmbeddedScenarioSeries>;
   onScenarioChange: (id: string) => void;
@@ -101,6 +104,9 @@ export function ChartControlPanel({
   group,
   uniqueGroups,
   onGroupChange,
+  facetLabels,
+  selectedFacets,
+  onToggleFacet,
   scenarioId,
   visibleScenarios,
   onScenarioChange,
@@ -274,6 +280,36 @@ export function ChartControlPanel({
           </FieldSelect>
         </label>
       </div>
+      {facetLabels.length > 0 && (
+        <div
+          aria-label="Feature filters — a scenario stays listed when it matches any selected feature"
+          className="flex flex-wrap items-center gap-1.5"
+          role="group"
+        >
+          <span className="text-bh-label-muted me-1.5 text-[0.62rem] font-semibold tracking-[0.12em] uppercase">
+            Features
+          </span>
+          {facetLabels.map((label) => {
+            const isSelected = selectedFacets.includes(label);
+            return (
+              <button
+                aria-pressed={isSelected}
+                className={cn(
+                  "focus-visible:outline-bh-blue inline-flex min-h-7 items-center rounded-full border px-2.5 py-0.5 text-[0.75rem] leading-5 font-medium [transition:background_0.15s_ease,border-color_0.15s_ease,color_0.15s_ease] focus-visible:outline focus-visible:outline-offset-2 motion-reduce:transition-none",
+                  isSelected
+                    ? "border-bh-blue-ring bg-bh-blue/15 text-zinc-50"
+                    : "border-bh-border bg-bh-fill-white-4 hover:bg-bh-fill-white-7 text-zinc-400 hover:text-zinc-200",
+                )}
+                key={label}
+                onClick={() => onToggleFacet(label)}
+                type="button"
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

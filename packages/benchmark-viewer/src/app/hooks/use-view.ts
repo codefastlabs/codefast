@@ -15,6 +15,7 @@ export function useViewState(initialPayload: EmbeddedViewerPayload | undefined) 
     envKey: "",
     group: "",
     search: "",
+    facets: [],
     runWindow: "all",
     showBands: true,
     useLogScale: false,
