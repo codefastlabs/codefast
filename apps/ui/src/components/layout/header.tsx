@@ -9,7 +9,8 @@ import { AppearanceToggle } from "#/components/layout/appearance-toggle";
 import { CommandPalette } from "#/components/layout/command-palette";
 import { GitHubLink } from "#/components/layout/github-link";
 import { Logo } from "#/components/layout/logo";
-import { PRIMARY_NAV } from "#/lib/nav-links";
+import { UiNavMenu } from "#/components/layout/ui-nav-menu";
+import { PRIMARY_NAV, UI_NAV } from "#/lib/nav-links";
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -46,6 +47,21 @@ export function Header() {
                     {label}
                   </Link>
                 ))}
+                <p className="mt-3 px-3 text-xs font-semibold tracking-widest text-ui-muted uppercase">UI</p>
+                {UI_NAV.map(({ to, label }) => (
+                  <Link
+                    key={to}
+                    to={to}
+                    onClick={() => setOpen(false)}
+                    className="rounded-lg px-3 py-2 text-sm text-ui-muted no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
+                    activeProps={{
+                      className: "rounded-lg bg-ui-surface px-3 py-2 text-sm font-medium text-ui-fg no-underline",
+                    }}
+                    activeOptions={{ exact: to === "/ui" }}
+                  >
+                    {label}
+                  </Link>
+                ))}
               </nav>
 
               <div className="mt-6 flex flex-col gap-3 border-t border-ui-border pt-6">
@@ -75,6 +91,7 @@ export function Header() {
               {label}
             </Link>
           ))}
+          <UiNavMenu />
         </nav>
 
         {/* Right */}

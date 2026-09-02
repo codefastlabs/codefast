@@ -21,7 +21,7 @@ import {
   getIsMacPlatform,
 } from "#/lib/command-palette-keyboard";
 import type { PrimaryNavPath } from "#/lib/nav-links";
-import { PRIMARY_NAV } from "#/lib/nav-links";
+import { ALL_NAV } from "#/lib/nav-links";
 import { COMPONENTS } from "#/registry/_core/components";
 
 /** Debounce before tracking a search query — avoids firing `search_query` per keystroke. */
@@ -160,7 +160,7 @@ export function CommandPalette() {
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Pages">
-              {PRIMARY_NAV.map((page) => (
+              {ALL_NAV.map((page) => (
                 <CommandItem
                   key={page.to}
                   value={`page ${page.label}`}

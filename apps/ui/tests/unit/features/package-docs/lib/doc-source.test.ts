@@ -13,7 +13,7 @@ describe("package discovery", () => {
 
     const di = PACKAGES.find((pkg) => pkg.slug === "di");
 
-    expect(di?.docs).toEqual(["readme", "spec", "architecture", "learning", "changelog"]);
+    expect(di?.docs).toEqual(["readme", "spec", "architecture", "learning", "contributing", "changelog"]);
     expect(di?.version).toMatch(/^\d+\.\d+\.\d+/);
   });
 
