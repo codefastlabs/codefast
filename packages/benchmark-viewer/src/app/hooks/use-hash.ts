@@ -18,11 +18,8 @@ interface HashSyncOptions {
 export function useHashSync({ payload, view, patchView }: HashSyncOptions) {
   const initializedRef = useRef(false);
 
-  // Parse URL hash once on first payload load.
-  // Using initializedRef instead of the old hashApplyingRef pattern: the previous
-  // approach cleared the flag synchronously before setState flushed, allowing the
-  // view-sync effect below to race and overwrite the hash with defaults on the same
-  // render cycle. One-shot initialization is simpler and correct.
+  // Parse URL hash once on first payload load — a resettable flag would let the
+  // view-sync effect below race setState and overwrite the hash with defaults.
   useEffect(() => {
     if (!payload || initializedRef.current) {
       return;
@@ -38,9 +35,7 @@ export function useHashSync({ payload, view, patchView }: HashSyncOptions) {
     }
   }, [payload, patchView]);
 
-  // Sync URL hash on view change (debounced 120 ms).
-  // Returning the cleanup cancels any in-flight timer on unmount or before the next
-  // run — previously the timer was stored in a ref and never cancelled on unmount.
+  // Sync URL hash on view change (debounced 120 ms); the cleanup cancels the in-flight timer.
   useEffect(() => {
     if (!payload) {
       return;

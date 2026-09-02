@@ -64,6 +64,59 @@ export function categoryXScaleWindow(pointCount: number): { max: number; min: nu
 }
 
 /**
+ * A zoom/pan window kept relative to the newest point, so a rebuilt chart with a different
+ * point count restores the same view of recent history.
+ */
+export interface RelativeCategoryView {
+  readonly visibleCount: number;
+  readonly offsetFromEnd: number;
+}
+
+/**
+ * Captures the chart's x window relative to its newest point, or `undefined` at the default view.
+ *
+ * @remarks A default view stays `undefined` on purpose: the next chart should open on its own
+ * default window, not inherit the previous series' window size.
+ */
+export function captureRelativeCategoryView(
+  chart: Chart,
+  initial: { max: number; min: number },
+  pointCount: number,
+): RelativeCategoryView | undefined {
+  const xScale = chart.scales["x"];
+  if (!xScale || typeof xScale.min !== "number" || typeof xScale.max !== "number" || pointCount < 2) {
+    return undefined;
+  }
+  const eps = CHART_CATEGORY_VIEW_EPS;
+  const atInitial = Math.abs(xScale.min - initial.min) < eps && Math.abs(xScale.max - initial.max) < eps;
+  if (atInitial) {
+    return undefined;
+  }
+  return { visibleCount: xScale.max - xScale.min, offsetFromEnd: pointCount - 1 - xScale.max };
+}
+
+/**
+ * Maps a captured view onto a series of `pointCount` points; `undefined` means the full range.
+ */
+export function applyRelativeCategoryView(
+  view: RelativeCategoryView,
+  pointCount: number,
+): { max: number; min: number } | undefined {
+  if (pointCount < 2) {
+    return undefined;
+  }
+  const lastIx = pointCount - 1;
+  let max = Math.min(lastIx, Math.max(0, lastIx - view.offsetFromEnd));
+  const min = Math.max(0, max - view.visibleCount);
+  // Clamping at the start must not shrink the window to a sliver — keep its size where possible.
+  max = Math.min(lastIx, Math.max(max, min + view.visibleCount));
+  if (min <= 0 && max >= lastIx) {
+    return undefined;
+  }
+  return { min, max };
+}
+
+/**
  * Computes which toolbar controls to disable from the chart's current x-scale window.
  *
  * @since 0.3.16-canary.1

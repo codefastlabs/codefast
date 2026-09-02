@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 
 import type { ViewState } from "#/app/lib/hash";
+import { pickDefaultScenarioId } from "#/app/lib/metrics";
 import type { EmbeddedViewerPayload } from "#/types";
 
 /**
@@ -10,7 +11,7 @@ import type { EmbeddedViewerPayload } from "#/types";
  */
 export function useViewState(initialPayload: EmbeddedViewerPayload | undefined) {
   const [view, setView] = useState<ViewState>(() => ({
-    scenarioId: initialPayload?.scenarios[0]?.id ?? "",
+    scenarioId: initialPayload ? pickDefaultScenarioId(initialPayload.scenarios) : "",
     envKey: "",
     group: "",
     search: "",

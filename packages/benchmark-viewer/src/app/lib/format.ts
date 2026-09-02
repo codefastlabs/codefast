@@ -1,3 +1,5 @@
+import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";
+
 /**
  * Formats a run's ISO timestamp as a short local date-time, falling back to the folder name.
  *
@@ -24,6 +26,41 @@ export function fmtHz(hz: number | null | undefined): string {
     return "—";
   }
   return Number(hz).toLocaleString("en-US", { maximumFractionDigits: 0 });
+}
+
+const COMPACT_NUMBER = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
+
+/**
+ * Formats an hz/op axis tick compactly (`70M`, `1.5K`), or an empty string for a non-finite value.
+ */
+export function fmtHzCompact(hz: number): string {
+  return Number.isFinite(hz) ? COMPACT_NUMBER.format(hz) : "";
+}
+
+/**
+ * Formats a run's ISO timestamp as a short axis tick — time only when the axis spans one day.
+ */
+export function fmtRunTick(timestampIso: string | undefined, fallbackFolder: string, sameDay: boolean): string {
+  if (!timestampIso) {
+    return fallbackFolder;
+  }
+  const runDate = new Date(timestampIso);
+  if (Number.isNaN(runDate.getTime())) {
+    return fallbackFolder;
+  }
+  return sameDay
+    ? runDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })
+    : runDate.toLocaleString(undefined, { month: "numeric", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+/**
+ * Formats a primary-over-compare throughput ratio, or an em dash when absent.
+ */
+export function fmtRatio(ratio: number | null | undefined): string {
+  if (ratio === null || ratio === undefined || !Number.isFinite(ratio)) {
+    return "—";
+  }
+  return `${ratio.toFixed(3)}×`;
 }
 
 /**
@@ -60,19 +97,11 @@ export function spreadTierLabel(fraction: number | null | undefined): string {
   if (fraction <= 0.1) {
     return " · spread: low";
   }
-  if (fraction <= 0.25) {
+  // The high tier begins where the dispersion banner raises its alert, so the two labels agree.
+  if (fraction <= DISPERSION_IQR_ALERT) {
     return " · spread: medium";
   }
   return " · spread: high";
-}
-
-/**
- * Escapes HTML-significant characters for safe interpolation into markup.
- *
- * @since 0.3.16-canary.1
- */
-export function escHtml(text: string): string {
-  return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 /**

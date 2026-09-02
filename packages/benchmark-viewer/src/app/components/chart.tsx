@@ -1,19 +1,29 @@
 import { Chart } from "chart.js";
 import type { ChartDataset } from "chart.js";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ComponentProps, RefObject } from "react";
 
 import { ChevronDownIcon } from "#/app/components/icons";
 import {
   ALL_TOOLBAR_DISABLED,
+  applyRelativeCategoryView,
+  captureRelativeCategoryView,
   categoryXScaleWindow,
   computeChartToolbarDisabled,
   computeInitialCategoryWindow,
 } from "#/app/lib/chart-view";
-import type { ChartToolbarDisabled } from "#/app/lib/chart-view";
+import type { ChartToolbarDisabled, RelativeCategoryView } from "#/app/lib/chart-view";
 import { PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
 import type { PaletteEntry } from "#/app/lib/colors";
-import { formatLocal, isMacLikePlatform, spreadTierLabel } from "#/app/lib/format";
+import {
+  fmtHz,
+  fmtHzCompact,
+  fmtRatio,
+  fmtRunTick,
+  formatLocal,
+  isMacLikePlatform,
+  spreadTierLabel,
+} from "#/app/lib/format";
 import { ratioFrom } from "#/app/lib/metrics";
 import { CHART_SKIP_TARGET_ID } from "#/app/lib/skip-chart";
 import { cn } from "#/app/lib/utils";
@@ -57,10 +67,15 @@ function ChartTd({ className, ...props }: ComponentProps<"td">) {
  */
 export interface ChartPanelProps {
   scenario: EmbeddedScenarioSeries | null;
+  /** The runs to plot — only runs with data for the scenario. */
   runIndices: Array<number>;
+  /** Runs the window kept before the no-data filter, so the subtitle can say what was hidden. */
+  filteredRunCount: number;
   baseRunIndices: Array<number>;
   runs: ReadonlyArray<EmbeddedRun>;
   orderedLibraries: Array<EmbeddedLibraryMeta>;
+  primaryLib: EmbeddedLibraryMeta | undefined;
+  compareLibs: Array<EmbeddedLibraryMeta>;
   paletteMap: Record<string, PaletteEntry>;
   showBands: boolean;
   useLogScale: boolean;
@@ -78,7 +93,8 @@ export interface ChartPanelProps {
 function buildChartSubtitle(
   scenario: EmbeddedScenarioSeries | null,
   runIndices: Array<number>,
-  baseRunIndices: Array<number>,
+  filteredRunCount: number,
+  baseRunCount: number,
   envKey: string,
 ): string {
   if (runIndices.length === 0) {
@@ -87,12 +103,16 @@ function buildChartSubtitle(
   if (!scenario) {
     return "No scenario available for these filters.";
   }
-  let subtitle = `[${scenario.group}] ${scenario.id} · ${runIndices.length} plotted point(s)`;
+  let subtitle = `[${scenario.group}] ${scenario.id} · ${runIndices.length} run(s) with data`;
+  const hiddenRunCount = filteredRunCount - runIndices.length;
+  if (hiddenRunCount > 0) {
+    subtitle += ` · ${hiddenRunCount} without data hidden`;
+  }
   if (envKey) {
     subtitle += " · environment filter on";
   }
-  if (baseRunIndices.length > runIndices.length) {
-    subtitle += ` · last ${runIndices.length} of ${baseRunIndices.length} matching runs`;
+  if (baseRunCount > filteredRunCount) {
+    subtitle += ` · last ${filteredRunCount} of ${baseRunCount} matching runs`;
   }
   return subtitle;
 }
@@ -105,9 +125,12 @@ function buildChartSubtitle(
 export function ChartPanel({
   scenario,
   runIndices,
+  filteredRunCount,
   baseRunIndices,
   runs,
   orderedLibraries,
+  primaryLib,
+  compareLibs,
   paletteMap,
   showBands,
   useLogScale,
@@ -124,19 +147,15 @@ export function ChartPanel({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<Chart | null>(null);
   const initialCategoryViewRef = useRef<{ max: number; min: number } | null>(null);
+  // The user's zoom/pan window, carried across chart rebuilds (scenario switch, toggles).
+  const capturedViewRef = useRef<RelativeCategoryView | undefined>(undefined);
 
   const [chartToolbarDisabled, setChartToolbarDisabled] = useState<ChartToolbarDisabled>(ALL_TOOLBAR_DISABLED);
-
-  const primaryLib = useMemo(
-    () => orderedLibraries.find((lib) => lib.isPrimary) ?? orderedLibraries[0],
-    [orderedLibraries],
-  );
-  const compareLibs = useMemo(() => orderedLibraries.filter((lib) => !lib.isPrimary), [orderedLibraries]);
 
   const hasData = scenario !== null && runIndices.length > 0;
   // Fully disabled without data; with data it mirrors the built chart's zoom/pan state.
   const toolbarDisabled = hasData ? chartToolbarDisabled : ALL_TOOLBAR_DISABLED;
-  const emptyReason = getEmptyReason(scenario, runIndices, runs);
+  const emptyReason = getEmptyReason(scenario, runIndices, filteredRunCount, runs);
 
   const syncToolbarFromChart = useCallback(() => {
     const chart = chartRef.current;
@@ -170,9 +189,14 @@ export function ChartPanel({
     const existing = Chart.getChart(canvas);
     existing?.destroy();
 
+    // Time-only ticks when every plotted run shares one day; the tooltip title keeps the full stamp.
+    const plottedDays = new Set(
+      runIndices.map((globalIx) => runs[globalIx]?.timestampIso.slice(0, 10)).filter(Boolean),
+    );
+    const sameDay = plottedDays.size <= 1;
     const labels = runIndices.map((globalIx) => {
       const run = runs[globalIx];
-      return run ? formatLocal(run.timestampIso, run.folder) : "";
+      return run ? fmtRunTick(run.timestampIso, run.folder, sameDay) : "";
     });
     const runsSlice = runIndices.map((globalIx) => runs[globalIx]);
 
@@ -236,11 +260,18 @@ export function ChartPanel({
           return;
         }
         const ratioData = runIndices.map((globalIx) => ratioFrom(primData.hz[globalIx], cmpData.hz[globalIx]));
+        // The two libraries may never share a run — an all-null series would only add a legend row.
+        if (ratioData.every((ratio) => ratio === null)) {
+          return;
+        }
+        const ratioColor = RATIO_COLORS[compareIndex % RATIO_COLORS.length]!;
         datasets.push({
           label: `${primaryLib.displayName} ÷ ${cmpLib.displayName}`,
           data: ratioData,
-          borderColor: RATIO_COLORS[compareIndex % RATIO_COLORS.length],
-          backgroundColor: "rgba(251,191,119,0.08)",
+          borderColor: ratioColor,
+          backgroundColor: ratioColor,
+          // Dashed marks the ratio family apart from the solid hz series it is drawn over.
+          borderDash: [6, 4],
           spanGaps: true,
           yAxisID: "y1",
           tension: 0.12,
@@ -251,7 +282,12 @@ export function ChartPanel({
 
     const pointCount = labels.length;
     initialCategoryViewRef.current = computeInitialCategoryWindow(pointCount);
-    const xWindow = categoryXScaleWindow(pointCount);
+    // A window the user zoomed/panned survives the rebuild; the default view stays the default.
+    const restoredView = capturedViewRef.current;
+    const xWindow =
+      restoredView === undefined
+        ? categoryXScaleWindow(pointCount)
+        : applyRelativeCategoryView(restoredView, pointCount);
 
     const scales: Record<string, object> = {
       x: {
@@ -271,7 +307,11 @@ export function ChartPanel({
         type: useLogScale ? "logarithmic" : "linear",
         position: "left",
         title: { display: true, text: "hz/op", color: "rgba(235, 235, 245, 0.5)" },
-        ticks: { color: "rgba(235, 235, 245, 0.42)" },
+        ticks: {
+          color: "rgba(235, 235, 245, 0.42)",
+          // Compact ticks (70M) stay readable where full digits clip on narrow viewports.
+          callback: (value: number | string) => (typeof value === "number" ? fmtHzCompact(value) : value),
+        },
         grid: { color: "rgba(255, 255, 255, 0.055)" },
       },
     };
@@ -352,9 +392,10 @@ export function ChartPanel({
                   return `${datasetLabel}: —`;
                 }
                 if (ctx.dataset.yAxisID === "y1") {
-                  return `${datasetLabel}: ${Number(rawHz).toFixed(3)}×`;
+                  return `${datasetLabel}: ${fmtRatio(rawHz)}`;
                 }
-                const matchedLib = orderedLibraries.find((lib) => datasetLabel.startsWith(lib.displayName));
+                // Exact label match — a displayName that prefixes another must not steal its IQR.
+                const matchedLib = orderedLibraries.find((lib) => datasetLabel === `${lib.displayName} hz/op (median)`);
                 let extra = "";
                 if (matchedLib) {
                   const libData = scenario.libraries[matchedLib.key];
@@ -364,7 +405,7 @@ export function ChartPanel({
                     extra = ` · IQR ${(iqrFraction * 100).toFixed(1)}%${spreadTierLabel(iqrFraction)}`;
                   }
                 }
-                return `${datasetLabel}: ${Number(rawHz).toLocaleString("en-US", { maximumFractionDigits: 0 })}${extra}`;
+                return `${datasetLabel}: ${fmtHz(rawHz)}${extra}`;
               },
             },
           },
@@ -400,7 +441,16 @@ export function ChartPanel({
     });
 
     return () => {
-      chartRef.current?.destroy();
+      const outgoingChart = chartRef.current;
+      const initialView = initialCategoryViewRef.current;
+      if (outgoingChart && initialView) {
+        capturedViewRef.current = captureRelativeCategoryView(
+          outgoingChart,
+          initialView,
+          outgoingChart.data.labels?.length ?? 0,
+        );
+      }
+      outgoingChart?.destroy();
       chartRef.current = null;
       initialCategoryViewRef.current = null;
       setChartToolbarDisabled(ALL_TOOLBAR_DISABLED);
@@ -490,7 +540,16 @@ export function ChartPanel({
   }
 
   function handleResetZoom() {
-    applyChartAction("reset", (chart) => chart.resetZoom());
+    // The chart may have been created on a carried-over zoom window, and the plugin's resetZoom
+    // returns to the creation window — reset must mean the default view instead.
+    applyChartAction("reset", (chart) => {
+      const initialView = initialCategoryViewRef.current;
+      if (initialView) {
+        chart.zoomScale("x", initialView, "none");
+      } else {
+        chart.resetZoom();
+      }
+    });
   }
 
   return (
@@ -504,7 +563,7 @@ export function ChartPanel({
             Throughput over filtered runs
           </h2>
           <p className="mt-1.5 text-[0.8125rem] leading-snug text-zinc-500">
-            {hasData ? buildChartSubtitle(scenario, runIndices, baseRunIndices, envKey) : "—"}
+            {hasData ? buildChartSubtitle(scenario, runIndices, filteredRunCount, baseRunIndices.length, envKey) : "—"}
           </p>
         </div>
       </div>
@@ -721,16 +780,20 @@ function WheelHint() {
 function getEmptyReason(
   scenario: EmbeddedScenarioSeries | null,
   runIndices: Array<number>,
+  filteredRunCount: number,
   runs: ReadonlyArray<EmbeddedRun>,
 ): string {
   if (runs.length === 0) {
     return "No benchmark runs are in this history yet. Generate data with your bench command, then refresh this page.";
   }
-  if (runIndices.length === 0) {
+  if (filteredRunCount === 0) {
     return "No runs match the selected environment. Widen the filter to see the chart again.";
   }
   if (!scenario) {
     return "Pick a scenario from the Scenario list above.";
+  }
+  if (runIndices.length === 0) {
+    return "No run in this window measured this scenario. Widen the run window or pick another scenario.";
   }
   return "Nothing to plot for this selection.";
 }
@@ -781,24 +844,19 @@ function ChartTableRow({ globalIx, run, scenario, orderedLibraries, primaryLib, 
 
   return (
     <tr className="hover:bg-bh-table-hover even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover">
-      <ChartTd>{localClock}</ChartTd>
+      {/* Local clock text depends on the viewer's locale/timezone, which the server cannot know. */}
+      <ChartTd suppressHydrationWarning>{localClock}</ChartTd>
       <ChartTd>{run.folder}</ChartTd>
-      {orderedLibraries.map((lib) => {
-        const hz = libHzMap[lib.key];
-        return (
-          <ChartTd className="text-end tabular-nums" key={lib.key}>
-            {hz !== null ? Number(hz).toLocaleString("en-US", { maximumFractionDigits: 0 }) : "—"}
-          </ChartTd>
-        );
-      })}
-      {compareLibs.map((cmp) => {
-        const ratio = ratioFrom(primaryHz, libHzMap[cmp.key] ?? null);
-        return (
-          <ChartTd className="text-end tabular-nums" key={cmp.key}>
-            {ratio !== null ? `${ratio.toFixed(3)}×` : "—"}
-          </ChartTd>
-        );
-      })}
+      {orderedLibraries.map((lib) => (
+        <ChartTd className="text-end tabular-nums" key={lib.key}>
+          {fmtHz(libHzMap[lib.key])}
+        </ChartTd>
+      ))}
+      {compareLibs.map((cmp) => (
+        <ChartTd className="text-end tabular-nums" key={cmp.key}>
+          {fmtRatio(ratioFrom(primaryHz, libHzMap[cmp.key] ?? null))}
+        </ChartTd>
+      ))}
     </tr>
   );
 }

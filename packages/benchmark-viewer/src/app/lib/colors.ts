@@ -25,8 +25,11 @@ export const PALETTE: ReadonlyArray<PaletteEntry> = [
 /**
  * The line colors cycled across primary-÷-compare ratio series on the chart.
  *
+ * @remarks Deliberately disjoint from {@link PALETTE} — a ratio line sharing a library's hue
+ * reads as that library's series.
+ *
  * @since 0.3.16-canary.1
  */
-export const RATIO_COLORS = ["#fbbf77", "#f472b6", "#a78bfa", "#34d399"] as const;
+export const RATIO_COLORS = ["#f87171", "#22d3ee", "#a3e635", "#fde047"] as const;
 
 export { DISPERSION_IQR_ALERT, PAN_PIXELS_X, ZOOM_STEP_X } from "#/app/lib/constants";

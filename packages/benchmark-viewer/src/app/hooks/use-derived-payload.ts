@@ -4,7 +4,7 @@ import { PALETTE } from "#/app/lib/colors";
 import type { PaletteEntry } from "#/app/lib/colors";
 import { searchNorm } from "#/app/lib/format";
 import type { ViewState } from "#/app/lib/hash";
-import { buildMetrics, buildSnapshotRow } from "#/app/lib/metrics";
+import { buildMetrics, buildSnapshotRow, pickDefaultScenarioId } from "#/app/lib/metrics";
 import type { MetricsResult, SnapshotRow } from "#/app/lib/metrics";
 import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries, EmbeddedViewerPayload } from "#/types";
 
@@ -25,6 +25,12 @@ export interface DerivedPayload {
   visibleScenarios: Array<EmbeddedScenarioSeries>;
   baseRunIndices: Array<number>;
   runIndices: Array<number>;
+  /** The windowed runs where at least one library measured the current scenario — what the chart plots. */
+  chartRunIndices: Array<number>;
+  /** The ordered libraries with data in the plotted window — what the chart and metrics render. */
+  chartLibraries: Array<EmbeddedLibraryMeta>;
+  /** The compare libraries with data in the plotted window. */
+  chartCompareLibs: Array<EmbeddedLibraryMeta>;
   currentScenario: EmbeddedScenarioSeries | null;
   uniqueEnvKeys: Array<string>;
   envLabelMap: Record<string, string>;
@@ -44,21 +50,27 @@ export interface DerivedPayload {
  * @since 0.3.16-canary.3
  */
 export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOptions): DerivedPayload {
-  const { orderedLibraries, paletteMap } = useMemo<{
+  const { orderedLibraries, paletteMap, primaryLib, compareLibs } = useMemo<{
     orderedLibraries: Array<EmbeddedLibraryMeta>;
     paletteMap: Record<string, PaletteEntry>;
+    primaryLib: EmbeddedLibraryMeta | undefined;
+    compareLibs: Array<EmbeddedLibraryMeta>;
   }>(() => {
     if (!payload) {
-      return { orderedLibraries: [], paletteMap: {} };
+      return { orderedLibraries: [], paletteMap: {}, primaryLib: undefined, compareLibs: [] };
     }
-    const primary = payload.libraries.find((lib) => lib.isPrimary) ?? payload.libraries[0];
-    const compares = payload.libraries.filter((lib) => !lib.isPrimary);
+    // The server names the primary in the payload — deriving it again from isPrimary could disagree.
+    const primary =
+      payload.libraries.find((lib) => lib.key === payload.primaryLibraryKey) ??
+      payload.libraries.find((lib) => lib.isPrimary) ??
+      payload.libraries[0];
+    const compares = payload.libraries.filter((lib) => lib.key !== primary?.key);
     const ordered: Array<EmbeddedLibraryMeta> = primary ? [primary, ...compares] : [...payload.libraries];
     const paletteMap: Record<string, PaletteEntry> = {};
     ordered.forEach((lib, paletteIndex) => {
       paletteMap[lib.key] = PALETTE[paletteIndex % PALETTE.length]!;
     });
-    return { orderedLibraries: ordered, paletteMap };
+    return { orderedLibraries: ordered, paletteMap, primaryLib: primary, compareLibs: compares };
   }, [payload]);
 
   const visibleScenarios = useMemo<Array<EmbeddedScenarioSeries>>(() => {
@@ -116,6 +128,43 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     return payload.scenarios.find((scenario) => scenario.id === view.scenarioId) ?? null;
   }, [payload, view.scenarioId]);
 
+  // A run without data for this scenario carries no point — hiding it keeps the plotted line connected.
+  const chartRunIndices = useMemo<Array<number>>(() => {
+    if (!currentScenario) {
+      return runIndices;
+    }
+    const libraryData = Object.values(currentScenario.libraries);
+    return runIndices.filter((globalIx) => libraryData.some((lib) => lib.hz[globalIx] !== null));
+  }, [currentScenario, runIndices]);
+
+  // A library with no data in the plotted window would add only dead cards, columns, and legend rows.
+  const { chartLibraries, chartCompareLibs, inactiveLibraryNames } = useMemo<{
+    chartLibraries: Array<EmbeddedLibraryMeta>;
+    chartCompareLibs: Array<EmbeddedLibraryMeta>;
+    inactiveLibraryNames: Array<string>;
+  }>(() => {
+    if (!currentScenario) {
+      return { chartLibraries: orderedLibraries, chartCompareLibs: compareLibs, inactiveLibraryNames: [] };
+    }
+    const active: Array<EmbeddedLibraryMeta> = [];
+    const inactive: Array<string> = [];
+    for (const lib of orderedLibraries) {
+      const libData = currentScenario.libraries[lib.key];
+      const hasData = libData !== undefined && chartRunIndices.some((globalIx) => libData.hz[globalIx] !== null);
+      if (hasData) {
+        active.push(lib);
+      } else {
+        inactive.push(lib.displayName);
+      }
+    }
+    const activeKeys = new Set(active.map((lib) => lib.key));
+    return {
+      chartLibraries: active,
+      chartCompareLibs: compareLibs.filter((lib) => activeKeys.has(lib.key)),
+      inactiveLibraryNames: inactive,
+    };
+  }, [currentScenario, chartRunIndices, orderedLibraries, compareLibs]);
+
   const uniqueEnvKeys = useMemo<Array<string>>(() => {
     if (!payload) {
       return [];
@@ -143,49 +192,49 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     return [...new Set(payload.scenarios.map((scenario) => scenario.group))].toSorted((a, b) => a.localeCompare(b));
   }, [payload]);
 
-  const primaryLib = useMemo(
-    () => orderedLibraries.find((lib) => lib.isPrimary) ?? orderedLibraries[0],
-    [orderedLibraries],
-  );
-
-  const compareLibs = useMemo(() => orderedLibraries.filter((lib) => !lib.isPrimary), [orderedLibraries]);
-
   const scenarioIndex = visibleScenarios.findIndex((scenario) => scenario.id === view.scenarioId);
   const showMultiEnvBanner = uniqueEnvKeys.length > 1 && !view.envKey;
 
-  // Auto-select first visible scenario when filters change.
+  // Auto-select a scenario when none is visible: the richest one on first load (nothing chosen
+  // yet), the first match after a filter change.
   useEffect(() => {
     if (!payload || visibleScenarios.length === 0) {
       return;
     }
     const isVisible = visibleScenarios.some((scenario) => scenario.id === view.scenarioId);
     if (!isVisible) {
-      patchView({ scenarioId: visibleScenarios[0]?.id ?? "" });
+      patchView({
+        scenarioId: view.scenarioId === "" ? pickDefaultScenarioId(visibleScenarios) : (visibleScenarios[0]?.id ?? ""),
+      });
     }
   }, [payload, visibleScenarios, view.scenarioId, patchView]);
 
   const metricsData = useMemo<MetricsResult | null>(() => {
-    if (!currentScenario || runIndices.length === 0) {
+    if (!currentScenario || chartRunIndices.length === 0) {
       return null;
     }
     return buildMetrics({
       scenario: currentScenario,
-      runIndices,
-      orderedLibraries,
+      runIndices: chartRunIndices,
+      windowedRunCount: runIndices.length,
+      inactiveLibraryNames,
+      orderedLibraries: chartLibraries,
       paletteMap,
       primaryLib,
-      compareLibs,
+      compareLibs: chartCompareLibs,
       baseRunIndices,
       envKey: view.envKey,
       runWindow: view.runWindow,
     });
   }, [
     currentScenario,
-    runIndices,
-    orderedLibraries,
+    chartRunIndices,
+    runIndices.length,
+    inactiveLibraryNames,
+    chartLibraries,
     paletteMap,
     primaryLib,
-    compareLibs,
+    chartCompareLibs,
     baseRunIndices,
     view.envKey,
     view.runWindow,
@@ -209,6 +258,9 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     visibleScenarios,
     baseRunIndices,
     runIndices,
+    chartRunIndices,
+    chartLibraries,
+    chartCompareLibs,
     currentScenario,
     uniqueEnvKeys,
     envLabelMap,
