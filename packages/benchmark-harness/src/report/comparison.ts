@@ -2,6 +2,7 @@
 
 import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
 import { formatRatioMultiple, formatThroughputOpsPerSecond, formatThroughputRatio } from "#/report/format";
+import { quantile } from "#/report/quantiles";
 import type { ThroughputQuality } from "#/report/reliability";
 import {
   UNRELIABLE_RATIO_MARKER,
@@ -159,14 +160,6 @@ function geometricMean(ratios: ReadonlyArray<number>): number {
   return Math.exp(sumOfLogs / ratios.length);
 }
 
-function medianOfSorted(ascending: ReadonlyArray<number>): number {
-  if (ascending.length === 0) {
-    return 0;
-  }
-  const midpoint = Math.floor(ascending.length / 2);
-  return ascending.length % 2 === 1 ? ascending[midpoint]! : (ascending[midpoint - 1]! + ascending[midpoint]!) / 2;
-}
-
 function zeroedCell(): ComparisonCompetitorCell {
   return { hzPerOp: 0, ratio: 0, iqrFraction: 0 };
 }
@@ -279,7 +272,7 @@ export function summarizeAgainstCompetitor(
     wins,
     parities,
     losses,
-    medianRatio: medianOfSorted(ratios),
+    medianRatio: quantile(ratios, 0.5),
     geomeanRatio: geometricMean(ratios),
     groupGeomeans: [...ratiosByGroup].map(([group, groupRatios]) => ({
       group,
@@ -371,22 +364,23 @@ function buildMarkdownTableLines(
  *
  * @param pivot - the suite's subject, named in the header column
  * @param summaries - one head-to-head verdict per competitor, in report order
- * @param pivotScenarioCount - denominator of the coverage column, exposing a competitor that
- * implements only part of the suite
+ * @param aggregableScenarioCount - denominator of the coverage column: pivot rows eligible for
+ * aggregates, matching what `Comparable` counts, exposing a competitor that implements only part
+ * of the suite
  */
 function buildSummaryTableLines(
   pivot: ComparisonLibrary,
   summaries: ReadonlyArray<ComparisonCompetitorSummary>,
-  pivotScenarioCount: number,
+  aggregableScenarioCount: number,
 ): Array<string> {
   return [
-    `Ratios are \`${pivot.displayName} / competitor\` — above 1× means ${pivot.displayName} is faster. Win >1.03×, parity 0.97–1.03×, loss <0.97×. \`Comparable\` counts the rows both libraries measured, of ${String(pivotScenarioCount)} that ${pivot.displayName} measures; \`${UNRELIABLE_RATIO_MARKER}\` how many of those the median and geomean carry but no reader should cite alone.`,
+    `Ratios are \`${pivot.displayName} / competitor\` — above 1× means ${pivot.displayName} is faster. Win >1.03×, parity 0.97–1.03×, loss <0.97×. \`Comparable\` counts the rows both libraries measured, of ${String(aggregableScenarioCount)} aggregate-eligible rows that ${pivot.displayName} measures; \`${UNRELIABLE_RATIO_MARKER}\` how many of those the median and geomean carry but no reader should cite alone.`,
     "",
     ...buildMarkdownTableLines(
       ["Competitor", "Comparable", "Win / parity / loss", "Median", "Geomean", UNRELIABLE_RATIO_MARKER],
       summaries.map(({ displayName, headToHead }) => [
         displayName,
-        `${String(headToHead.comparableCount)} of ${String(pivotScenarioCount)}`,
+        `${String(headToHead.comparableCount)} of ${String(aggregableScenarioCount)}`,
         `${String(headToHead.wins.length)} / ${String(headToHead.parities.length)} / ${String(headToHead.losses.length)}`,
         formatRatioMultiple(headToHead.medianRatio),
         formatRatioMultiple(headToHead.geomeanRatio),
@@ -453,7 +447,7 @@ function buildCompetitorNoteLines(summaries: ReadonlyArray<ComparisonCompetitorS
     }
     if (competitorOnlyIds.length > 0) {
       lines.push(
-        `- **${displayName}** — measures ${String(competitorOnlyIds.length)} scenario(s) this suite does not, so they have no row.`,
+        `- **${displayName}** — has ${String(competitorOnlyIds.length)} scenario(s) with no pivot row (not measured here, or every pivot trial errored), so they have no row.`,
       );
     }
   }
@@ -575,7 +569,12 @@ export function renderComparisonMarkdownReport(
     ...(introLines.length === 0 ? [] : [""]),
     ...(summaries.length === 0
       ? []
-      : ["### Summary", "", ...buildSummaryTableLines(pivot, summaries, rows.length), ""]),
+      : [
+          "### Summary",
+          "",
+          ...buildSummaryTableLines(pivot, summaries, rows.filter((row) => !row.excludeFromAggregates).length),
+          "",
+        ]),
     ...(noteLines.length === 0 ? [] : [...noteLines, ""]),
     ...(groupTableLines.length === 0 ? [] : ["### Geomean by group", "", ...groupTableLines, ""]),
     "### Per scenario",

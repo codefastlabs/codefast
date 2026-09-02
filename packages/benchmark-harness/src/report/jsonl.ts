@@ -34,6 +34,51 @@ export interface JsonlBenchObservationRow {
 }
 
 /**
+ * Whether a parsed JSONL value carries the fields the report pipeline dereferences.
+ *
+ * @remarks The boundary guard for readers of `observations.jsonl` — a truncated write or a
+ * schema-drifted line must be counted and skipped where it enters, not crash aggregation.
+ */
+export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchObservationRow {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  const stringFields = [
+    "timestampIso",
+    "libraryName",
+    "libraryVersion",
+    "nodeVersion",
+    "v8Version",
+    "platform",
+    "arch",
+    "cpuModel",
+    "nodeOptions",
+    "scenarioId",
+    "group",
+    "what",
+  ] as const;
+  const numberFields = [
+    "cpuCount",
+    "trialIndex",
+    "batch",
+    "hzPerIteration",
+    "hzPerOp",
+    "meanMs",
+    "p75Ms",
+    "p99Ms",
+    "p999Ms",
+    "samples",
+  ] as const;
+  return (
+    stringFields.every((field) => typeof candidate[field] === "string") &&
+    numberFields.every((field) => typeof candidate[field] === "number") &&
+    typeof candidate["gcExposed"] === "boolean" &&
+    typeof candidate["stress"] === "boolean"
+  );
+}
+
+/**
  * Maps JSONL flattened fields onto a {@link Fingerprint}.
  *
  * @since 0.3.16-canary.0

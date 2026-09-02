@@ -3,10 +3,9 @@ import { buildComparisonRows, summarizeComparison } from "#/report/comparison";
 import { isIqrNoisy, isRatioUnreliable } from "#/report/reliability";
 import {
   BENCH_ISOLATE_ENV_KEY,
-  BENCH_ONLY_ENV_KEY,
   isEnvFlagEnabled,
-  parseScenarioFilter,
   resolveBenchModeFromEnvironment,
+  resolveScenarioFilterFromEnvironment,
 } from "#/shared/env-keys";
 
 /**
@@ -170,7 +169,7 @@ export function buildComparisonDocument(
   run: ComparisonDocumentRunInput,
 ): ComparisonDocument {
   const { fingerprint } = pivot.report;
-  const scenarioFilter = parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]);
+  const scenarioFilter = resolveScenarioFilterFromEnvironment();
   const scenariosMeasured = pivot.report.scenarios.length;
   return {
     schemaVersion: COMPARISON_DOCUMENT_SCHEMA_VERSION,

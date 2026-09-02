@@ -43,6 +43,8 @@ function scenario(id: string, hzPerOp: number, group = "micro"): AggregatedScena
     what: id,
     trialsIncluded: 3,
     hzPerOpMedian: hzPerOp,
+    hzPerOpP25: hzPerOp,
+    hzPerOpP75: hzPerOp,
     hzPerOpIqrFraction: 0.02,
     meanMsMedian: 0.5,
     p75MsMedian: 0.6,

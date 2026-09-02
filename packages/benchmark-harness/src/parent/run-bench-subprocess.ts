@@ -7,8 +7,8 @@ import {
   BENCH_ONLY_ENV_KEY,
   INTERNAL_BENCH_ENV_KEYS,
   isEnvFlagEnabled,
-  parseScenarioFilter,
   resolveBenchModeFromEnvironment,
+  resolveScenarioFilterFromEnvironment,
 } from "#/shared/env-keys";
 import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#/shared/protocol";
 import type { SubprocessPayload, TrialPayload } from "#/shared/protocol";
@@ -103,7 +103,11 @@ export type RunBenchSubprocessParameters = Readonly<{
   readonly harnessLabel: string;
   readonly scenarioName: string;
   readonly forwardChildStdoutVerbose: boolean;
-  /** Extra env vars for the child (merged over the pinned bench environment). */
+  /**
+   * Extra env vars for the child (merged over the pinned bench environment). Not a scenario-filter
+   * channel: scheduling and reporting read `BENCH_ONLY` from the parent environment, and isolated
+   * scheduling overwrites it per scenario.
+   */
   readonly environmentOverrides?: Readonly<Record<string, string>> | undefined;
 }>;
 
@@ -298,53 +302,6 @@ export async function discoverBenchScenarioIds(
 }
 
 /**
- * Runs every scenario in its own subprocess and merges the results into one payload.
- *
- * A single long-lived bench process trains the library's hot-path inline caches with
- * every scenario that ran before, so later scenarios (measured: ~30% on async chains)
- * pay for earlier ones. Isolation makes each row order-independent at the cost of one
- * process spawn per scenario.
- *
- * @since 0.5.0-canary.7
- */
-export async function runBenchSubprocessIsolated(parameters: RunBenchSubprocessParameters): Promise<SubprocessPayload> {
-  const { fingerprint: listFingerprint, scenarioIds } = await discoverBenchScenarioIds(parameters);
-
-  // Discovery reports every scenario the library has, so the filter is applied here — the per-worker
-  // BENCH_ONLY the loop sets below would otherwise overwrite it and run the whole suite.
-  const requestedScenarioIds = parseScenarioFilter(
-    parameters.environmentOverrides?.[BENCH_ONLY_ENV_KEY] ?? process.env[BENCH_ONLY_ENV_KEY],
-  );
-  const selectedScenarioIds =
-    requestedScenarioIds === undefined ? scenarioIds : scenarioIds.filter((id) => requestedScenarioIds.has(id));
-  if (selectedScenarioIds.length === 0) {
-    console.error(`[bench] ${parameters.harnessLabel} implements none of the requested scenarios; skipping.`);
-    return { fingerprint: listFingerprint, trials: [], sanityFailures: [], scenarioIds };
-  }
-
-  console.error(
-    `[bench] BENCH_ISOLATE=true: running ${String(selectedScenarioIds.length)} scenarios in separate subprocesses…`,
-  );
-  const workerPayloads: Array<SubprocessPayload> = [];
-  for (const scenarioId of selectedScenarioIds) {
-    workerPayloads.push(
-      await runBenchSubprocess({
-        ...parameters,
-        harnessLabel: `${parameters.harnessLabel} [${scenarioId}]`,
-        environmentOverrides: { ...parameters.environmentOverrides, [BENCH_ONLY_ENV_KEY]: scenarioId },
-      }),
-    );
-  }
-
-  return {
-    fingerprint: listFingerprint,
-    trials: mergeIsolatedTrials(workerPayloads),
-    sanityFailures: workerPayloads.flatMap((payload) => payload.sanityFailures),
-    scenarioIds,
-  };
-}
-
-/**
  * One library to schedule in an interleaved isolated run.
  *
  * @since 0.5.0-canary.8
@@ -394,7 +351,7 @@ export async function runBenchSubprocessesInterleaved(
 
   // Filtered here rather than in the child: the loop below sets BENCH_ONLY per scenario, so a
   // filter left to the child would be overwritten and the whole suite would run anyway.
-  const requestedScenarioIds = parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]);
+  const requestedScenarioIds = resolveScenarioFilterFromEnvironment();
   const discoveredScenarioIds = unionScenarioIds(
     libraries.map((library) => discoveries.get(library.key)?.scenarioIds ?? []),
   );

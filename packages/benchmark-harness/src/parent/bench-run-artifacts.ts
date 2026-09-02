@@ -94,6 +94,11 @@ export function writeBenchRunArtifacts(parameters: WriteBenchRunArtifactsParamet
     );
     return;
   }
+  // A run whose subject measured nothing (every row errored or failed sanity) is not the suite either.
+  if (scenariosMeasured === 0) {
+    console.log("Not mirrored to latest.*: the subject measured no rows. Fix the run before moving latest.*.");
+    return;
+  }
 
   writeMarkdownFile(paths.latestMarkdownPath, markdown);
   writeJsonFile(paths.latestJsonPath, comparisonDocument);

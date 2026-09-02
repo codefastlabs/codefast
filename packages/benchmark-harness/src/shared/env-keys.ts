@@ -314,3 +314,13 @@ export function parseScenarioFilter(value: string | undefined): ReadonlySet<stri
     .filter((id) => id.length > 0);
   return ids.length === 0 ? undefined : new Set(ids);
 }
+
+/**
+ * Resolves the scenario filter from {@link BENCH_ONLY_ENV_KEY} in the current environment.
+ *
+ * @remarks The one resolver every reader shares — the parent scheduler, the subject guard, and
+ * the report document must agree on what was filtered, or a narrowed run reports as complete.
+ */
+export function resolveScenarioFilterFromEnvironment(): ReadonlySet<string> | undefined {
+  return parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]);
+}
