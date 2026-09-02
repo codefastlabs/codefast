@@ -14,6 +14,10 @@ import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 
 import { NewBadge } from "#/components/shared/new-badge";
+import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
+import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
+import { getPackages } from "#/features/package-docs/lib/package-docs";
+import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 import { track } from "#/features/tracking/lib/tracking";
 import {
   getCommandPaletteAriaKeyshortcuts,
@@ -43,6 +47,23 @@ export function CommandPalette() {
   const ariaKeyshortcuts = getCommandPaletteAriaKeyshortcuts(isMac);
 
   const [search, setSearch] = useState("");
+  // The package list lives server-side (built from `packages/*/package.json`); fetched once, the first
+  // time the palette opens, so the header never pays for it.
+  const [packages, setPackages] = useState<ReadonlyArray<PackageSummary>>([]);
+  const packagesRequestedRef = useRef(false);
+
+  useEffect(() => {
+    if (!open || packagesRequestedRef.current) {
+      return;
+    }
+
+    packagesRequestedRef.current = true;
+    getPackages()
+      .then(setPackages)
+      .catch(() => {
+        packagesRequestedRef.current = false;
+      });
+  }, [open]);
   const searchTrackTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const lastTrackedQueryRef = useRef("");
 
@@ -139,6 +160,26 @@ export function CommandPalette() {
     [handleOpenChange, navigate, search],
   );
 
+  const goToPackageDoc = useCallback(
+    (pkg: string, doc: DocKindSlug) => {
+      track("select_search_result", {
+        resultType: "package",
+        slug: pkg,
+        hadQuery: search.trim().length > 0,
+      });
+      handleOpenChange(false);
+
+      if (pkg === "ui") {
+        void navigate({ to: "/ui" });
+      } else if (doc === "readme") {
+        void navigate({ to: "/docs/$pkg", params: { pkg } });
+      } else {
+        void navigate({ to: "/docs/$pkg/$doc", params: { pkg, doc } });
+      }
+    },
+    [handleOpenChange, navigate, search],
+  );
+
   return (
     <>
       <Button
@@ -146,17 +187,21 @@ export function CommandPalette() {
           handleOpenChange(true);
         }}
         aria-keyshortcuts={ariaKeyshortcuts}
-        aria-label="Search components"
+        aria-label="Search the site"
         variant="secondary"
       >
         <SearchIcon className="size-4 shrink-0" />
-        <span className="hidden flex-1 text-start text-sm lg:inline">Search components…</span>
+        <span className="hidden flex-1 text-start text-sm lg:inline">Search…</span>
         <Kbd className="hidden lg:inline-flex">/</Kbd>
       </Button>
 
       <CommandDialog open={open} onOpenChange={handleOpenChange}>
         <Command>
-          <CommandInput placeholder="Search components and pages…" value={search} onValueChange={handleSearchChange} />
+          <CommandInput
+            placeholder="Search packages, components, and pages…"
+            value={search}
+            onValueChange={handleSearchChange}
+          />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Pages">
@@ -172,6 +217,34 @@ export function CommandPalette() {
                 </CommandItem>
               ))}
             </CommandGroup>
+            {packages.length > 0 ? (
+              <CommandGroup heading="Packages">
+                {packages.flatMap((pkg) =>
+                  (pkg.slug === "ui" ? (["readme"] as const) : pkg.docs).map((doc) => {
+                    const kind = DOC_KIND_BY_SLUG.get(doc);
+                    const isReadme = doc === "readme";
+
+                    return (
+                      <CommandItem
+                        key={`${pkg.slug}/${doc}`}
+                        value={`package ${pkg.name} ${isReadme ? "" : (kind?.label ?? doc)}`}
+                        onSelect={() => {
+                          goToPackageDoc(pkg.slug, doc);
+                        }}
+                      >
+                        <span className="grow">
+                          {pkg.name}
+                          {isReadme ? null : <span className="text-ui-muted"> · {kind?.label ?? doc}</span>}
+                        </span>
+                        <span className="font-mono text-xs text-ui-muted" data-slot="command-shortcut">
+                          v{pkg.version}
+                        </span>
+                      </CommandItem>
+                    );
+                  }),
+                )}
+              </CommandGroup>
+            ) : null}
             <CommandGroup heading="Components">
               {COMPONENTS.map((component) => (
                 <CommandItem

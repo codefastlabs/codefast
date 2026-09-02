@@ -96,10 +96,17 @@ function RootDocument({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="min-h-full overflow-x-hidden bg-ui-bg font-sans wrap-anywhere text-ui-fg antialiased selection:bg-ui-fg/15">
+        {/* First tab stop on every page; visible only while focused. */}
+        <a
+          href="#content"
+          className="sr-only z-[60] rounded-lg bg-ui-brand px-3 py-2 text-sm font-medium text-white focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+        >
+          Skip to content
+        </a>
         <AppearanceProvider>
           <TooltipProvider>
             <Header />
-            {children}
+            <div id="content">{children}</div>
             <Footer />
           </TooltipProvider>
           {/* `@tanstack/devtools-vite` strips this whole block from production builds — keep it
