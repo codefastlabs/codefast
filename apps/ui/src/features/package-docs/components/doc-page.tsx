@@ -7,6 +7,7 @@ import { OnThisPage } from "#/features/components-catalog/components/detail/on-t
 import { useHashScroll } from "#/features/components-catalog/hooks/use-hash-scroll";
 import { DocBreadcrumb } from "#/features/package-docs/components/doc-breadcrumb";
 import { DocHeader } from "#/features/package-docs/components/doc-header";
+import { DocPager } from "#/features/package-docs/components/doc-pager";
 import { DocTabs } from "#/features/package-docs/components/doc-tabs";
 import { DocsSidebar } from "#/features/package-docs/components/docs-sidebar";
 import { MarkdownBody } from "#/features/package-docs/components/markdown-body";
@@ -48,6 +49,7 @@ export function DocPage({ page, className, ...props }: DocPageProps) {
             className="sticky top-header z-10 -mx-4 mb-6 border-b border-ui-border/60 xl:hidden"
           />
           <MarkdownBody html={page.doc.html} />
+          {pkg ? <DocPager pkg={pkg} activeDoc={page.doc.doc} /> : null}
         </div>
 
         <aside className="hidden xl:block">
