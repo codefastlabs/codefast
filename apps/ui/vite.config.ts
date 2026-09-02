@@ -117,6 +117,10 @@ export default defineConfig(({ command }) => {
           rolldownOptions: {
             output: {
               codeSplitting: {
+                // Only the matched example/doc modules go into a group chunk. Left on (the default), rolldown
+                // also drags the group's dependencies in — the UI primitives every page needs ended up inside
+                // `registry-*` chunks, and the entry preloaded 13 of them (~480 KB) on every page.
+                includeDependenciesRecursively: false,
                 groups: [
                   {
                     name: (id: string) => {
