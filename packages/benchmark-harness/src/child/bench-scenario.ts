@@ -10,6 +10,8 @@ export interface BenchScenario {
   readonly id: string;
   readonly what: string;
   readonly group: string;
+  /** Cross-cutting library features this scenario exercises, declared where the scenario is defined. */
+  readonly facets?: ReadonlyArray<string>;
   readonly batch?: number;
   readonly stress?: boolean;
   /** Render the row but keep it out of median/geomean aggregates — for rows whose sides do incomparable work. */
