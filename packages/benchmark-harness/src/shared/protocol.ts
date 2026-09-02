@@ -1,15 +1,13 @@
 /**
  * Wire protocol between per-library bench subprocesses and the parent runner.
  *
- * Each library's bench file prints one JSON payload delimited by explicit
- * START/END markers. The parent looks *only* for content between those markers,
- * so Node deprecation warnings, tsx banners, or stray `console.log`s never
- * contaminate parsing. This replaces the previous fragile "last non-empty
- * stdout line" heuristic.
- *
  * @since 0.3.16-canary.0
  */
 
+/**
+ * Marker line opening the framed JSON payload on child stdout — the parent reads only
+ * framed content, so warnings, banners, and stray logs never contaminate parsing.
+ */
 export const BENCH_RESULT_JSON_START = "BENCH_RESULT_JSON_START";
 /**
  * Marker line closing the framed JSON payload on child stdout.
@@ -100,6 +98,14 @@ export function emitSubprocessPayload(payload: SubprocessPayload): void {
   process.stdout.write(`\n${BENCH_RESULT_JSON_START}\n${JSON.stringify(payload)}\n${BENCH_RESULT_JSON_END}\n`);
 }
 
+function isTrialPayload(value: unknown): value is TrialPayload {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return typeof candidate["trialIndex"] === "number" && Array.isArray(candidate["scenarios"]);
+}
+
 function isSubprocessPayload(value: unknown): value is SubprocessPayload {
   if (typeof value !== "object" || value === null) {
     return false;
@@ -109,28 +115,44 @@ function isSubprocessPayload(value: unknown): value is SubprocessPayload {
     typeof candidate["fingerprint"] === "object" &&
     candidate["fingerprint"] !== null &&
     Array.isArray(candidate["trials"]) &&
-    Array.isArray(candidate["sanityFailures"])
+    candidate["trials"].every(isTrialPayload) &&
+    Array.isArray(candidate["sanityFailures"]) &&
+    candidate["sanityFailures"].every((entry: unknown) => typeof entry === "string")
   );
 }
 
 /**
  * Extracts the JSON payload from captured child stdout. Returns `undefined`
- * when markers are missing, content fails to parse, or the shape is invalid.
+ * when no framed block parses and validates.
+ *
+ * @remarks The last valid frame wins — the child emits its payload once, after all
+ * trials, so scenario output echoing the marker strings cannot shadow it.
  *
  * @since 0.3.16-canary.0
  */
 export function extractSubprocessPayload(stdout: string): SubprocessPayload | undefined {
-  const startIndex = stdout.indexOf(BENCH_RESULT_JSON_START);
-  const endIndex = stdout.indexOf(BENCH_RESULT_JSON_END, startIndex);
-  if (startIndex === -1 || endIndex === -1) {
-    return undefined;
+  let payload: SubprocessPayload | undefined;
+  let searchFrom = 0;
+  for (;;) {
+    const startIndex = stdout.indexOf(BENCH_RESULT_JSON_START, searchFrom);
+    if (startIndex === -1) {
+      break;
+    }
+    const jsonSliceStart = startIndex + BENCH_RESULT_JSON_START.length;
+    const endIndex = stdout.indexOf(BENCH_RESULT_JSON_END, jsonSliceStart);
+    if (endIndex === -1) {
+      break;
+    }
+    const raw = stdout.slice(jsonSliceStart, endIndex).trim();
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      if (isSubprocessPayload(parsed)) {
+        payload = parsed;
+      }
+    } catch {
+      // A contaminated frame is skipped; a later frame may still be the real payload.
+    }
+    searchFrom = endIndex + BENCH_RESULT_JSON_END.length;
   }
-  const jsonSliceStart = startIndex + BENCH_RESULT_JSON_START.length;
-  const raw = stdout.slice(jsonSliceStart, endIndex).trim();
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    return isSubprocessPayload(parsed) ? parsed : undefined;
-  } catch {
-    return undefined;
-  }
+  return payload;
 }

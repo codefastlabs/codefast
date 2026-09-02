@@ -154,6 +154,7 @@ function buildOptionalDepsScenario(): BenchScenario {
 
   return {
     id: "plan-escape-optional-dep",
+    facets: ["plan", "optional"],
     group: "resolution",
     what: "resolve a 4-dep transient class whose every dependency is optional and bound — four escapes at optional arity (codefast-only)",
     batch: PLAN_RESOLVE_BATCH,
@@ -173,6 +174,7 @@ function buildMultiDepsScenario(): BenchScenario {
 
   return {
     id: "plan-escape-multi-dep",
+    facets: ["plan"],
     group: "resolution",
     what: "resolve a 4-dep transient class whose every dependency is injectAll — four escapes at all arity (codefast-only)",
     batch: PLAN_RESOLVE_BATCH,
@@ -192,6 +194,7 @@ export function buildCodefastPlanEscapeScenarios(): ReadonlyArray<BenchScenario>
     buildPlainDepsScenario(
       {
         id: "plan-deps-inlined",
+        facets: ["plan"],
         group: "resolution",
         what: "resolve a 4-dep transient class whose leaves are transient classes — the plan inlines all four, no escape (codefast-only)",
       },
@@ -200,6 +203,7 @@ export function buildCodefastPlanEscapeScenarios(): ReadonlyArray<BenchScenario>
     buildPlainDepsScenario(
       {
         id: "plan-escape-factory-dep",
+        facets: ["plan"],
         group: "resolution",
         what: "the same class with toDynamic leaves — four escapes, one per opaque factory (codefast-only)",
       },
@@ -208,6 +212,7 @@ export function buildCodefastPlanEscapeScenarios(): ReadonlyArray<BenchScenario>
     buildPlainDepsScenario(
       {
         id: "plan-escape-scoped-dep",
+        facets: ["scope", "plan"],
         group: "resolution",
         what: "the same class with scoped leaves served from a warm scope — four escapes, no per-resolve rebuild, held out of the aggregates (codefast-only)",
       },
@@ -217,6 +222,7 @@ export function buildCodefastPlanEscapeScenarios(): ReadonlyArray<BenchScenario>
     buildPlainDepsScenario(
       {
         id: "plan-escape-hooked-dep",
+        facets: ["plan", "hook"],
         group: "resolution",
         what: "the same class with leaves carrying .onActivation() — four escapes, one per declined leaf plan (codefast-only)",
       },

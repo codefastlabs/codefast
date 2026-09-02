@@ -69,6 +69,7 @@ function buildArrayHoistedScenario(): BenchScenario {
 
   return {
     id: "slot-tag-array-hoisted",
+    facets: ["tag"],
     group: "slot-selection",
     what: `resolve(token, { tags }) with the tag list hoisted — tagged-index lane (codefast-only)`,
     batch: SLOT_RESOLVE_BATCH,
@@ -86,6 +87,7 @@ function buildShorthandHoistedScenario(): BenchScenario {
 
   return {
     id: "slot-tag-shorthand-hoisted",
+    facets: ["tag"],
     group: "slot-selection",
     what: `resolve(token, { tag }) with the pair hoisted — tagged-index lane, one allocation fewer than the array form (codefast-only)`,
     batch: SLOT_RESOLVE_BATCH,
@@ -103,6 +105,7 @@ function buildArrayInlineScenario(): BenchScenario {
 
   return {
     id: "slot-tag-array-inline",
+    facets: ["tag"],
     group: "slot-selection",
     what: `resolve(token, { tags: [[k, v]] }) written inline — tagged-index lane plus its literals (codefast-only)`,
     batch: SLOT_RESOLVE_BATCH,
@@ -121,6 +124,7 @@ function buildShorthandInlineScenario(): BenchScenario {
 
   return {
     id: "slot-tag-shorthand-inline",
+    facets: ["tag"],
     group: "slot-selection",
     what: `resolve(token, { tag: [k, v] }) written inline — tagged-index lane plus its literals (codefast-only)`,
     batch: SLOT_RESOLVE_BATCH,
@@ -155,6 +159,7 @@ function buildZeroValueScenario(): BenchScenario {
 
   return {
     id: "slot-tag-zero-value",
+    facets: ["tag"],
     group: "slot-selection",
     what: "resolve(token, { tags: [[k, 0]] }) — the tagged index hit that must be re-checked with Object.is (codefast-only)",
     batch: SLOT_RESOLVE_BATCH,
@@ -184,6 +189,7 @@ function buildNameAndTagScenario(): BenchScenario {
 
   return {
     id: "slot-name-and-tag",
+    facets: ["name", "tag"],
     group: "slot-selection",
     what: "resolve(token, { name, tags }) — neither the name index nor the tag index can serve it alone (codefast-only)",
     batch: SLOT_RESOLVE_BATCH,
@@ -206,6 +212,7 @@ function buildResolveAllScenario(): BenchScenario {
 
   return {
     id: "slot-tag-resolve-all",
+    facets: ["tag", "resolve-all"],
     group: "slot-selection",
     what: "resolveAll(token, { tags }) — the tagged index read once per container up the chain (codefast-only)",
     batch: SLOT_RESOLVE_BATCH,
@@ -233,6 +240,7 @@ function buildMissOptionalScenario(): BenchScenario {
 
   return {
     id: "slot-tag-miss-optional",
+    facets: ["tag", "optional"],
     group: "slot-selection",
     what: "resolveOptional(token, { tags }) that matches no slot — the failed lookup over a populated token (codefast-only)",
     batch: SLOT_RESOLVE_BATCH,
@@ -271,6 +279,7 @@ function buildTaggedParentOwnedScenario(): BenchScenario {
 
   return {
     id: "slot-tag-parent-owned",
+    facets: ["tag"],
     group: "slot-selection",
     what: "resolve(token, { tags }) from a child for a binding the parent owns — the tagged index consulted per container up the chain, unmemoized (codefast-only)",
     batch: SLOT_RESOLVE_BATCH,
@@ -298,6 +307,7 @@ function buildNamedParentOwnedScenario(): BenchScenario {
 
   return {
     id: "slot-name-parent-owned",
+    facets: ["name"],
     group: "slot-selection",
     what: "resolve(token, { name }) from a child for a binding the parent owns — the tagged row's shape on the memoized named lane (codefast-only)",
     batch: SLOT_RESOLVE_BATCH,
@@ -359,6 +369,7 @@ function buildInjectedNameCompiledScenario(): BenchScenario {
 
   return {
     id: "slot-injected-name-compiled",
+    facets: ["name", "plan"],
     group: "slot-selection",
     what: "resolve a class whose four dependencies each request a name — the compiled plan's escape thunks (codefast-only)",
     batch: SLOT_RESOLVE_BATCH,
@@ -378,6 +389,7 @@ function buildInjectedNameInterpretedScenario(): BenchScenario {
 
   return {
     id: "slot-injected-name-interpreted",
+    facets: ["name", "plan"],
     group: "slot-selection",
     what: "the same four named dependencies with the class's plan declined — the interpreted dependency lane (codefast-only)",
     batch: SLOT_RESOLVE_BATCH,
@@ -430,6 +442,7 @@ function buildInjectedTagCompiledScenario(): BenchScenario {
 
   return {
     id: "slot-injected-tag-compiled",
+    facets: ["tag", "plan"],
     group: "slot-selection",
     what: "resolve a class whose four dependencies each request a tag — the compiled plan's tagged dependency lane (codefast-only)",
     batch: SLOT_RESOLVE_BATCH,
@@ -449,6 +462,7 @@ function buildInjectedTagInterpretedScenario(): BenchScenario {
 
   return {
     id: "slot-injected-tag-interpreted",
+    facets: ["tag", "plan"],
     group: "slot-selection",
     what: "the same four tagged dependencies with the class's plan declined — the interpreted dependency lane (codefast-only)",
     batch: SLOT_RESOLVE_BATCH,

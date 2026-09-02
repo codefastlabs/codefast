@@ -59,6 +59,7 @@ function buildMaskRejectWideCatalogScenario(): BenchScenario {
 
   return {
     id: "mask-reject-wide-catalog",
+    facets: ["tag"],
     group: "slot-selection",
     what: "resolveAll over 32 single-tag candidates where 31 fail the key-mask subset test (codefast-only)",
     batch: MASK_BATCH,
@@ -103,6 +104,7 @@ function buildMaskAcceptTwoOfFourScenario(): BenchScenario {
 
   return {
     id: "mask-accept-two-of-four",
+    facets: ["tag"],
     group: "slot-selection",
     what: "resolve where the request names four keys and the winner declares two — mask admits, identity decides (codefast-only)",
     batch: MASK_BATCH,
@@ -140,6 +142,7 @@ function buildMaskCollisionScenario(): BenchScenario {
 
   return {
     id: "mask-collision-same-bit",
+    facets: ["tag"],
     group: "slot-selection",
     what: "resolveAll where two tag keys share a mask bit, so the prefilter admits a slot identity must reject (codefast-only)",
     batch: MASK_BATCH,

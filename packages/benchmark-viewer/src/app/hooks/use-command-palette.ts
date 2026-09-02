@@ -2,7 +2,6 @@ import type { RefObject } from "react";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 
 import type { ViewState } from "#/app/lib/hash";
-import type { EmbeddedScenarioSeries } from "#/types";
 
 /**
  * The command palette's built-in actions, in display order.
@@ -22,13 +21,16 @@ export const PALETTE_ACTIONS = [
   { id: "copy-link", label: "Copy link to this view" },
 ] as const;
 
+/** Prefix marking a palette action id as a jump to that scenario. */
+export const PALETTE_SCENARIO_ACTION_PREFIX = "scenario:";
+
 interface CommandPaletteOptions {
-  visibleScenarios: Array<EmbeddedScenarioSeries>;
-  scenarioIndex: number;
   view: ViewState;
   patchView: (patch: Partial<ViewState>) => void;
   loadData: (isReload?: boolean) => void;
   onCopyLink: () => void;
+  onScenarioStep: (delta: 1 | -1) => void;
+  onScenarioJump: (scenarioId: string) => void;
 }
 
 /**
@@ -51,12 +53,12 @@ export interface CommandPaletteHandle {
  * @since 0.3.16-canary.3
  */
 export function useCommandPalette({
-  visibleScenarios,
-  scenarioIndex,
   view,
   patchView,
   loadData,
   onCopyLink,
+  onScenarioStep,
+  onScenarioJump,
 }: CommandPaletteOptions): CommandPaletteHandle {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -95,6 +97,10 @@ export function useCommandPalette({
 
   function handleCommand(id: string) {
     close();
+    if (id.startsWith(PALETTE_SCENARIO_ACTION_PREFIX)) {
+      onScenarioJump(id.slice(PALETTE_SCENARIO_ACTION_PREFIX.length));
+      return;
+    }
     switch (id) {
       case "reload-data":
         loadData(true);
@@ -103,14 +109,10 @@ export function useCommandPalette({
         document.getElementById("scenario-search")?.focus();
         break;
       case "scenario-next":
-        if (scenarioIndex < visibleScenarios.length - 1) {
-          patchView({ scenarioId: visibleScenarios[scenarioIndex + 1]!.id });
-        }
+        onScenarioStep(1);
         break;
       case "scenario-prev":
-        if (scenarioIndex > 0) {
-          patchView({ scenarioId: visibleScenarios[scenarioIndex - 1]!.id });
-        }
+        onScenarioStep(-1);
         break;
       case "toggle-bands":
         patchView({ showBands: !view.showBands });

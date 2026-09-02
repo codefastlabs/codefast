@@ -37,6 +37,8 @@ interface ChildService {
 interface FreshChildLane {
   /** The lane's segment of every row id it produces. */
   readonly id: string;
+  /** Feature facets the lane's selection criterion exercises, beyond the shared scope facet. */
+  readonly laneFacets: ReadonlyArray<string>;
   readonly criterion: string;
   readonly bindInto: (parent: Container) => void;
   readonly resolveFrom: (child: Container) => ChildService;
@@ -52,6 +54,7 @@ const HOISTED_TAGS = [ENV_TAG.of(TARGET_TAG_VALUE)];
 const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
   {
     id: "default",
+    laneFacets: [],
     criterion: "resolve(token)",
     bindInto: (parent) => {
       parent.bind(defaultLaneToken).toConstantValue({ env: TARGET_TAG_VALUE });
@@ -60,6 +63,7 @@ const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
   },
   {
     id: "name",
+    laneFacets: ["name"],
     criterion: "resolve(token, { name })",
     bindInto: (parent) => {
       for (const env of TAGGED_ENVS) {
@@ -70,6 +74,7 @@ const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
   },
   {
     id: "tag",
+    laneFacets: ["tag"],
     criterion: "resolve(token, { tags })",
     bindInto: (parent) => {
       for (const env of TAGGED_ENVS) {
@@ -98,6 +103,7 @@ function buildFreshChildScenario(lane: FreshChildLane, resolvesPerChild: number)
 
   const descriptor = {
     id: `fresh-child-${lane.id}-n${String(resolvesPerChild)}`,
+    facets: ["scope", ...lane.laneFacets],
     group: "scope",
     what: `${lane.criterion} ${String(resolvesPerChild)}× inside a per-request child, then teardown — the lane's per-container state paid at duty cycle ${String(resolvesPerChild)} (codefast-only)`,
   } as const satisfies ScenarioDescriptor;

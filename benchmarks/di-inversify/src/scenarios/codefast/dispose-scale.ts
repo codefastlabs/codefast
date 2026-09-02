@@ -31,12 +31,14 @@ const disposableTokens = Array.from({ length: SINGLETON_COUNT }, (_value, index)
 
 const MATERIALIZE_SINGLETONS = {
   id: `materialize-${String(SINGLETON_COUNT)}-singletons`,
+  facets: ["singleton"],
   group: "lifecycle",
   what: `create a container, bind ${String(SINGLETON_COUNT)} singletons with @preDestroy and resolve each once — the row the teardown is read against (codefast-only)`,
 } as const satisfies ScenarioDescriptor;
 
 const UNBIND_ALL_SINGLETONS = {
   id: `unbind-all-${String(SINGLETON_COUNT)}-singletons`,
+  facets: ["singleton"],
   group: "lifecycle",
   what: `the same container, then unbindAll() — the materialized-binding walk plus ${String(SINGLETON_COUNT)} @preDestroy calls (codefast-only)`,
 } as const satisfies ScenarioDescriptor;

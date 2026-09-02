@@ -1,4 +1,4 @@
-import { BENCH_ONLY_ENV_KEY, parseScenarioFilter } from "#/shared/env-keys";
+import { BENCH_ONLY_ENV_KEY, resolveScenarioFilterFromEnvironment } from "#/shared/env-keys";
 import type { TrialPayload } from "#/shared/protocol";
 
 /**
@@ -17,7 +17,7 @@ export function assertSubjectMeasuredSomething(
   subjectLibraryName: string,
   subjectTrials: ReadonlyArray<TrialPayload>,
 ): void {
-  if (parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]) === undefined) {
+  if (resolveScenarioFilterFromEnvironment() === undefined) {
     return;
   }
   if (subjectTrials.some((trial) => trial.scenarios.length > 0)) {

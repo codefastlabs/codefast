@@ -1,9 +1,78 @@
+import { NOISY_IQR_FRACTION } from "@codefast/benchmark-harness/report/reliability";
+import { format } from "date-fns";
+
+import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";
+
 /**
- * Formats a run's ISO timestamp as a short local date-time, falling back to the folder name.
+ * The date-fns patterns one region's readers expect for the viewer's timestamps.
+ *
+ * @since 0.3.16-canary.3
+ */
+export interface TimeConventions {
+  /** Full stamp, e.g. `17/8/26, 23:12`. */
+  readonly fullPattern: string;
+  /** Year-less axis tick, e.g. `17/8 23:12`. */
+  readonly tickPattern: string;
+  /** Time-only axis tick for a single-day axis. */
+  readonly clockPattern: string;
+}
+
+const VI_TIME_CONVENTIONS: TimeConventions = {
+  fullPattern: "d/M/yy, HH:mm",
+  tickPattern: "d/M HH:mm",
+  clockPattern: "HH:mm",
+};
+
+const EN_US_TIME_CONVENTIONS: TimeConventions = {
+  fullPattern: "M/d/yy, h:mm a",
+  tickPattern: "M/d h:mm a",
+  clockPattern: "h:mm a",
+};
+
+// Timezone is the "where is the reader" signal; browser language keys the fallback lane.
+const TIME_ZONE_CONVENTIONS: ReadonlyMap<string, TimeConventions> = new Map([
+  ["Asia/Ho_Chi_Minh", VI_TIME_CONVENTIONS],
+  ["Asia/Saigon", VI_TIME_CONVENTIONS],
+]);
+
+const LANGUAGE_CONVENTIONS: ReadonlyMap<string, TimeConventions> = new Map([["vi", VI_TIME_CONVENTIONS]]);
+
+/**
+ * Resolves timestamp conventions from where the reader is (timezone), then their browser
+ * language, then a day-unambiguous US default.
+ *
+ * @remarks Timezone outranks language on purpose: a browser installed in English still belongs
+ * to a reader in Vietnam, and language alone would hand them month-first dates.
+ */
+export function resolveTimeConventions(language: string | undefined, timeZone: string | undefined): TimeConventions {
+  const byZone = timeZone === undefined ? undefined : TIME_ZONE_CONVENTIONS.get(timeZone);
+  if (byZone !== undefined) {
+    return byZone;
+  }
+  const primaryLanguage = language?.toLowerCase().split("-")[0];
+  const byLanguage = primaryLanguage === undefined ? undefined : LANGUAGE_CONVENTIONS.get(primaryLanguage);
+  return byLanguage ?? EN_US_TIME_CONVENTIONS;
+}
+
+function detectTimeConventions(): TimeConventions {
+  const timeZone = typeof Intl === "undefined" ? undefined : Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const language = typeof navigator === "undefined" ? undefined : navigator.language;
+  return resolveTimeConventions(language, timeZone);
+}
+
+const activeTimeConventions = detectTimeConventions();
+
+/**
+ * Formats a run's ISO timestamp as a full local stamp (`17/8/26, 23:12` in Vietnam), falling
+ * back to the folder name.
  *
  * @since 0.3.16-canary.1
  */
-export function formatLocal(timestampIso: string | undefined, fallbackFolder: string): string {
+export function formatLocal(
+  timestampIso: string | undefined,
+  fallbackFolder: string,
+  conventions: TimeConventions = activeTimeConventions,
+): string {
   if (!timestampIso) {
     return fallbackFolder;
   }
@@ -11,7 +80,7 @@ export function formatLocal(timestampIso: string | undefined, fallbackFolder: st
   if (Number.isNaN(runDate.getTime())) {
     return fallbackFolder;
   }
-  return runDate.toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
+  return format(runDate, conventions.fullPattern);
 }
 
 /**
@@ -24,6 +93,45 @@ export function fmtHz(hz: number | null | undefined): string {
     return "—";
   }
   return Number(hz).toLocaleString("en-US", { maximumFractionDigits: 0 });
+}
+
+const COMPACT_NUMBER = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
+
+/**
+ * Formats an hz/op axis tick compactly (`70M`, `1.5K`), or an empty string for a non-finite value.
+ */
+export function fmtHzCompact(hz: number): string {
+  return Number.isFinite(hz) ? COMPACT_NUMBER.format(hz) : "";
+}
+
+/**
+ * Formats a run's ISO timestamp as a short local axis tick (`17/8 23:12` in Vietnam) — time
+ * only when the axis spans one day.
+ */
+export function fmtRunTick(
+  timestampIso: string | undefined,
+  fallbackFolder: string,
+  sameDay: boolean,
+  conventions: TimeConventions = activeTimeConventions,
+): string {
+  if (!timestampIso) {
+    return fallbackFolder;
+  }
+  const runDate = new Date(timestampIso);
+  if (Number.isNaN(runDate.getTime())) {
+    return fallbackFolder;
+  }
+  return format(runDate, sameDay ? conventions.clockPattern : conventions.tickPattern);
+}
+
+/**
+ * Formats a primary-over-compare throughput ratio, or an em dash when absent.
+ */
+export function fmtRatio(ratio: number | null | undefined): string {
+  if (ratio === null || ratio === undefined || !Number.isFinite(ratio)) {
+    return "—";
+  }
+  return `${ratio.toFixed(3)}×`;
 }
 
 /**
@@ -57,22 +165,15 @@ export function spreadTierLabel(fraction: number | null | undefined): string {
   if (fraction == null || !Number.isFinite(fraction)) {
     return "";
   }
-  if (fraction <= 0.1) {
+  // Boundaries mirror the IQR-table severity tiers: low = below the harness noise floor,
+  // medium = up to the dispersion alert, so the tooltip and the metric card agree on a value.
+  if (fraction <= NOISY_IQR_FRACTION) {
     return " · spread: low";
   }
-  if (fraction <= 0.25) {
+  if (fraction <= DISPERSION_IQR_ALERT) {
     return " · spread: medium";
   }
   return " · spread: high";
-}
-
-/**
- * Escapes HTML-significant characters for safe interpolation into markup.
- *
- * @since 0.3.16-canary.1
- */
-export function escHtml(text: string): string {
-  return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 /**

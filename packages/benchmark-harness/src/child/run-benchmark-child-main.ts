@@ -13,7 +13,7 @@ import {
   BENCH_LIST_ENV_KEY,
   BENCH_ONLY_ENV_KEY,
   isEnvFlagEnabled,
-  parseScenarioFilter,
+  resolveScenarioFilterFromEnvironment,
 } from "#/shared/env-keys";
 import { emitSubprocessPayload } from "#/shared/protocol";
 
@@ -67,7 +67,7 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
   // A scenario filter, either from the parent in isolated mode or set directly to bench one row.
   // Matching nothing measures nothing: only some libraries implement any given row, and failing
   // here would take the whole comparison down with them.
-  const requestedScenarioIds = parseScenarioFilter(process.env[BENCH_ONLY_ENV_KEY]);
+  const requestedScenarioIds = resolveScenarioFilterFromEnvironment();
   const scenarios =
     requestedScenarioIds === undefined
       ? allScenarios

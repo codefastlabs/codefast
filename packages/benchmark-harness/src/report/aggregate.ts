@@ -15,6 +15,8 @@ export interface AggregatedScenarioResult {
   readonly what: string;
   readonly trialsIncluded: number;
   readonly hzPerOpMedian: number;
+  readonly hzPerOpP25: number;
+  readonly hzPerOpP75: number;
   readonly hzPerOpIqrFraction: number;
   readonly meanMsMedian: number;
   readonly p75MsMedian: number;
@@ -66,6 +68,8 @@ function aggregateTrialsForScenario(
     what: firstTrial.what,
     trialsIncluded: successfulTrials.length,
     hzPerOpMedian,
+    hzPerOpP25,
+    hzPerOpP75,
     hzPerOpIqrFraction,
     meanMsMedian: quantile(meanMsSortedAscending, 0.5),
     p75MsMedian: quantile(p75MsSortedAscending, 0.5),

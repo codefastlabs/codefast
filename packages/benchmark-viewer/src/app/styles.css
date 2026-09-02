@@ -51,6 +51,10 @@
   --color-bh-table-hover: rgba(63, 63, 70, 0.18);
   --color-bh-table-zebra: rgba(39, 39, 42, 0.35);
   --color-bh-table-zebra-hover: rgba(63, 63, 70, 0.22);
+  /* Sticky-column colors: each row tint flattened onto the sticky base, so pinned cells track their row. */
+  --color-bh-table-sticky-hover: rgba(28, 28, 32, 0.97);
+  --color-bh-table-sticky-zebra: rgba(27, 27, 30, 0.97);
+  --color-bh-table-sticky-zebra-hover: rgba(29, 29, 34, 0.97);
   --color-bh-table-seg-disabled: rgb(39, 39, 42);
 
   --color-bh-warn-fg: rgb(255, 214, 170);

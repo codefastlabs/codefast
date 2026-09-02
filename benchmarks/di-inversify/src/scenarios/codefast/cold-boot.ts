@@ -35,6 +35,7 @@ const CONTAINER_CREATE_EMPTY = {
 
 const CREATE_CHILD_EMPTY = {
   id: "create-child-empty",
+  facets: ["scope"],
   group: "boot",
   what: "parent.createChild() with nothing bound — a per-request container's whole allocation (codefast-only)",
 } as const satisfies ScenarioDescriptor;

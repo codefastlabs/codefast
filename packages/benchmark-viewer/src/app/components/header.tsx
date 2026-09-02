@@ -16,7 +16,6 @@ export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
       </p>
       <h1 className="mt-3 text-2xl font-semibold tracking-[-0.02em] wrap-break-word text-zinc-50 sm:text-[1.75rem] sm:leading-tight">
         {title}
-        <span className="font-normal text-zinc-400"> · hz/op median per run</span>
       </h1>
       <div className="mt-3 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-prose text-[0.9375rem] leading-relaxed text-pretty wrap-break-word text-zinc-400/95">

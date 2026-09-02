@@ -23,6 +23,7 @@ export {
   parseEnvInteger,
   parseScenarioFilter,
   resolveBenchModeFromEnvironment,
+  resolveScenarioFilterFromEnvironment,
 } from "#/shared/env-keys";
 
 export { assertSubjectMeasuredSomething } from "#/parent/assert-subject-measured";
@@ -56,13 +57,21 @@ export { runSanityChecks } from "#/child/run-sanity-checks";
 
 export { resolveBenchParentExitCode } from "#/parent/resolve-bench-parent-exit-code";
 
-export type { RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess";
+export type { InterleavedLibraryRun, RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess";
 export {
   SubprocessExecutionError,
   buildSubprocessEnvironment,
   discoverBenchScenarioIds,
+  isIsolatedBenchRunRequested,
   runBenchSubprocess,
+  runBenchSubprocessesInterleaved,
 } from "#/parent/run-bench-subprocess";
+
+export type { BenchRunOutputPaths, WriteBenchRunArtifactsParameters } from "#/parent/bench-run-artifacts";
+export { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#/parent/bench-run-artifacts";
+
+export type { BenchScenarioInventory, BenchScenarioInventoryEntry } from "#/parent/run-bench-listing-main";
+export { buildBenchScenarioInventory, runBenchScenarioListingMain } from "#/parent/run-bench-listing-main";
 
 export type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
 export { buildLibraryReport } from "#/report/aggregate";
@@ -70,7 +79,11 @@ export { buildLibraryReport } from "#/report/aggregate";
 export { formatRatioMultiple, formatThroughputOpsPerSecond, formatThroughputRatio } from "#/report/format";
 
 export type { JsonlBenchObservationRow } from "#/report/jsonl";
-export { jsonlBenchObservationRowToFingerprint, jsonlBenchObservationRowToScenarioTrialResult } from "#/report/jsonl";
+export {
+  isJsonlBenchObservationRow,
+  jsonlBenchObservationRowToFingerprint,
+  jsonlBenchObservationRowToScenarioTrialResult,
+} from "#/report/jsonl";
 
 export { quantile, sortAscending } from "#/report/quantiles";
 
@@ -115,6 +128,8 @@ export type {
   ComparisonDocumentCell,
   ComparisonDocumentEnvironment,
   ComparisonDocumentLibrary,
+  ComparisonDocumentRun,
+  ComparisonDocumentRunInput,
   ComparisonDocumentScenario,
 } from "#/report/comparison-document";
 export { COMPARISON_DOCUMENT_SCHEMA_VERSION, buildComparisonDocument } from "#/report/comparison-document";

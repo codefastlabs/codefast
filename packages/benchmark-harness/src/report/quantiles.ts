@@ -1,9 +1,6 @@
 /**
- * Matches NumPy's default (`linear`) so external tooling agrees with reporter output.
- *
- * @since 0.3.16-canary.0
+ * Copies the values into a new array sorted ascending, as {@link quantile} requires.
  */
-
 export function sortAscending(values: ReadonlyArray<number>): Array<number> {
   return [...values].toSorted((left, right) => left - right);
 }
@@ -11,6 +8,8 @@ export function sortAscending(values: ReadonlyArray<number>): Array<number> {
 /**
  * Linear-interpolation quantile. `quantileProbability` ∈ [0, 1].
  * Returns `0` for empty input (callers aggregate before meaningless quantiles otherwise).
+ *
+ * @remarks Matches NumPy's default (`linear`) so external tooling agrees with reporter output.
  *
  * @since 0.3.16-canary.0
  */

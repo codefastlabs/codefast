@@ -35,6 +35,8 @@ function scenario(id: string, hzPerOpMedian: number, hzPerOpIqrFraction = 0): Ag
     what: `what ${id}`,
     trialsIncluded: 3,
     hzPerOpMedian,
+    hzPerOpP25: hzPerOpMedian,
+    hzPerOpP75: hzPerOpMedian,
     hzPerOpIqrFraction,
     meanMsMedian: 0,
     p75MsMedian: 0,

@@ -16,6 +16,12 @@
       "autoPort": true
     },
     {
+      "name": "di-bench-viewer",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["BENCH_PORT=4321", "pnpm", "run", "di:bench:serve"],
+      "port": 4321
+    },
+    {
       "name": "tanstack-start",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@examples/tanstack-start", "exec", "vite", "dev", "--port", "3001"],

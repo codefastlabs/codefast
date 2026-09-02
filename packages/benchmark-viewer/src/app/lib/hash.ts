@@ -10,6 +10,8 @@ export interface ViewState {
   envKey: string;
   group: string;
   search: string;
+  /** Selected facet labels; a scenario stays visible when it matches any of them. */
+  facets: Array<string>;
   runWindow: "all" | "10" | "20";
   showBands: boolean;
   useLogScale: boolean;
@@ -25,6 +27,7 @@ export const HASH_KEYS = {
   environment: "environment",
   group: "group",
   search: "search",
+  facets: "facets",
   scenario: "scenario",
   runWindow: "run-window",
   showBands: "show-bands",
@@ -47,6 +50,9 @@ export function buildHash(view: ViewState): string {
   }
   if (view.search.trim()) {
     parts.push(`${HASH_KEYS.search}=${encodeURIComponent(view.search.trim())}`);
+  }
+  if (view.facets.length > 0) {
+    parts.push(`${HASH_KEYS.facets}=${encodeURIComponent(view.facets.join(","))}`);
   }
   if (view.scenarioId) {
     parts.push(`${HASH_KEYS.scenario}=${encodeURIComponent(view.scenarioId)}`);
@@ -89,6 +95,12 @@ export function parseHash(raw: string, payload: EmbeddedViewerPayload): Partial<
   const searchParam = params.get(HASH_KEYS.search);
   if (searchParam !== null) {
     patch.search = searchParam;
+  }
+
+  const facetsParam = params.get(HASH_KEYS.facets);
+  if (facetsParam !== null) {
+    const validFacets = new Set(payload.facetLabels);
+    patch.facets = facetsParam.split(",").filter((label) => validFacets.has(label));
   }
 
   const runWindowParam = params.get(HASH_KEYS.runWindow);

@@ -18,6 +18,7 @@ const CHAIN_DEPTH = 3;
 
 const CHAIN_REBIND_INVALIDATION = {
   id: `rebind-parent-resolve-child-depth-${String(CHAIN_DEPTH)}`,
+  facets: ["scope"],
   group: "lifecycle",
   what: `rebind in the root, then resolve from a depth-${String(CHAIN_DEPTH)} child — the chain-summed version stamp invalidated per iteration (codefast-only)`,
 } as const satisfies ScenarioDescriptor;

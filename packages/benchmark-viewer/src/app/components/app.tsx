@@ -3,7 +3,6 @@ import type { RefObject } from "react";
 import type { ChartInstance } from "#/app/components/chart";
 import { ChartPanel } from "#/app/components/chart";
 import { ChartControlPanel } from "#/app/components/controls";
-import { FindPanel } from "#/app/components/finder";
 import { ClientPageOpenedClock, ClientSnapshotClock } from "#/app/components/footer";
 import { PageHeader } from "#/app/components/header";
 import { KpiGrid } from "#/app/components/kpi";
@@ -11,7 +10,7 @@ import { MetricsPanel } from "#/app/components/metrics";
 import { CommandPalette } from "#/app/components/palette";
 import { SkipToChartLink } from "#/app/components/skip-to-chart";
 import { SnapshotSection } from "#/app/components/snapshot";
-import { PALETTE_ACTIONS, useCommandPalette } from "#/app/hooks/use-command-palette";
+import { PALETTE_ACTIONS, PALETTE_SCENARIO_ACTION_PREFIX, useCommandPalette } from "#/app/hooks/use-command-palette";
 import { useDerivedPayload } from "#/app/hooks/use-derived-payload";
 import { useDetailsPersist } from "#/app/hooks/use-details-persist";
 import { useHashSync } from "#/app/hooks/use-hash";
@@ -45,10 +44,14 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     visibleScenarios,
     baseRunIndices,
     runIndices,
+    chartRunIndices,
+    chartLibraries,
+    chartCompareLibs,
     currentScenario,
     uniqueEnvKeys,
     envLabelMap,
     uniqueGroups,
+    primaryLib,
     compareLibs,
     scenarioIndex,
     showMultiEnvBanner,
@@ -70,14 +73,30 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     }
   }
 
+  function selectScenarioByOffset(delta: 1 | -1) {
+    const nextScenario = visibleScenarios[scenarioIndex + delta];
+    if (nextScenario !== undefined) {
+      patchView({ scenarioId: nextScenario.id });
+    }
+  }
+
   const palette = useCommandPalette({
-    visibleScenarios,
-    scenarioIndex,
     view,
     patchView,
     loadData,
     onCopyLink: copyViewLink,
+    onScenarioStep: selectScenarioByOffset,
+    // Clearing the filters keeps the jump from being bounced back by the auto-select effect.
+    onScenarioJump: (scenarioId) => patchView({ scenarioId, search: "", group: "", facets: [] }),
   });
+
+  const paletteActions = [
+    ...PALETTE_ACTIONS,
+    ...(payload?.scenarios ?? []).map((scenario) => ({
+      id: `${PALETTE_SCENARIO_ACTION_PREFIX}${scenario.id}`,
+      label: `Go to: [${scenario.group}] ${scenario.id}`,
+    })),
+  ];
 
   function handleDownloadPng(chartRef: RefObject<ChartInstance | null>) {
     const chart = chartRef.current;
@@ -89,9 +108,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     const filename = `bench-history-${scenarioSlug}.png`;
     const downloadLink = document.createElement("a");
     downloadLink.download = filename;
-    downloadLink.href = (
-      chart as ChartInstance & { toBase64Image: (type: string, quality: number) => string }
-    ).toBase64Image("image/png", 1);
+    downloadLink.href = chart.toBase64Image("image/png", 1);
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
@@ -157,33 +174,31 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           </div>
         )}
 
-        <FindPanel
-          group={view.group}
-          onGroupChange={(group) => patchView({ group })}
-          onSearchChange={(search) => patchView({ search })}
-          search={view.search}
-          uniqueGroups={uniqueGroups}
-        />
-
         <ChartControlPanel
           envKey={view.envKey}
+          facetLabels={payload.facetLabels ?? []}
+          group={view.group}
           hasMore={payload?.hasMore ?? false}
           isReloading={isReloading}
           onEnvChange={(envKey) => patchView({ envKey })}
+          onGroupChange={(group) => patchView({ group })}
+          onToggleFacet={(label) =>
+            patchView({
+              facets: view.facets.includes(label)
+                ? view.facets.filter((facet) => facet !== label)
+                : [...view.facets, label],
+            })
+          }
+          selectedFacets={view.facets}
           onLoadOlderRuns={loadOlderRuns}
           onReload={() => loadData(true)}
           onRunWindowChange={(runWindow) => patchView({ runWindow })}
           onScenarioChange={(scenarioId) => patchView({ scenarioId })}
-          onScenarioNext={() => {
-            if (scenarioIndex < visibleScenarios.length - 1) {
-              patchView({ scenarioId: visibleScenarios[scenarioIndex + 1]!.id });
-            }
-          }}
-          onScenarioPrev={() => {
-            if (scenarioIndex > 0) {
-              patchView({ scenarioId: visibleScenarios[scenarioIndex - 1]!.id });
-            }
-          }}
+          onSearchChange={(search) => patchView({ search })}
+          search={view.search}
+          uniqueGroups={uniqueGroups}
+          onScenarioNext={() => selectScenarioByOffset(1)}
+          onScenarioPrev={() => selectScenarioByOffset(-1)}
           envLabelMap={envLabelMap}
           runWindow={view.runWindow}
           scenarioId={view.scenarioId}
@@ -200,9 +215,12 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           onClearGroup={() => patchView({ group: "" })}
           onClearSearch={() => patchView({ search: "" })}
           onDownloadPng={handleDownloadPng}
-          orderedLibraries={orderedLibraries}
+          orderedLibraries={chartLibraries}
+          primaryLib={primaryLib}
+          compareLibs={chartCompareLibs}
           paletteMap={paletteMap}
-          runIndices={runIndices}
+          runIndices={chartRunIndices}
+          filteredRunCount={runIndices.length}
           runs={payload.runs}
           scenario={currentScenario}
           showBands={view.showBands}
@@ -212,7 +230,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           useLogScale={view.useLogScale}
         />
 
-        <MetricsPanel currentScenario={currentScenario} metricsData={metricsData} runIndices={runIndices} />
+        <MetricsPanel currentScenario={currentScenario} metricsData={metricsData} runIndices={chartRunIndices} />
 
         <KpiGrid latestRun={latestRun} runCount={payload.runs.length} scenarioCount={payload.scenarios.length} />
 
@@ -239,7 +257,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
       </main>
 
       <CommandPalette
-        actions={PALETTE_ACTIONS}
+        actions={paletteActions}
         inputRef={palette.inputRef}
         isOpen={palette.isOpen}
         onAction={palette.handleCommand}
