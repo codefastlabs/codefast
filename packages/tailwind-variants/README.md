@@ -285,5 +285,5 @@ explains that design, which parts of it are load-bearing, and how to measure a c
 
 ## License
 
-MIT — see [LICENSE](./LICENSE). Release history lives in the
+Released under the [MIT License](./LICENSE). Release history lives in the
 [CHANGELOG](https://github.com/codefastlabs/codefast/blob/main/packages/tailwind-variants/CHANGELOG.md).
