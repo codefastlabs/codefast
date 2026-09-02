@@ -614,3 +614,7 @@ Tailwind Variants (TV) provides a complete solution for managing variants in Tai
 
 TV is the ideal tool for teams that want to build maintainable, scalable component systems with Tailwind CSS in
 production.
+
+## License
+
+Released under the [MIT License](./LICENSE).

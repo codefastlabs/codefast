@@ -131,3 +131,7 @@ console.log(counterB.value()); // 0  ← separate state
 - **Example 02** — use `@injectable` and `inject()` so the container constructs classes automatically instead of writing
   factory functions.
 - **Example 03** — understand the third scope, `scoped`, and how child containers enable per-request isolation.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

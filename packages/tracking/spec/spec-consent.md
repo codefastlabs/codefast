@@ -164,3 +164,7 @@ returns none; effective consent falls back to the regional default; prompt neede
 (strictest exception). `{…, mode:"opt-out", region:"other"}` valid (usual pairing). `{…, mode:"opt-out", region:"eu"}`
 invalid (looser than the region's mode). `{…, mode:"opt-in", region:"us"}` invalid (only the strictest constant's
 pairing may deviate).
+
+## License
+
+Released under the [MIT License](../LICENSE).

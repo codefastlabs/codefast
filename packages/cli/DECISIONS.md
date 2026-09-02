@@ -521,3 +521,7 @@ tracing through 8 layers of DI container to find where `console.log` is called.
 **Applied:** the current `src/` layout matches the spirit of §3; the operational document is
 [ARCHITECTURE.md](./ARCHITECTURE.md). This document now serves as the **decision history** (why it changed) and a
 **closed checklist** (§7).
+
+## License
+
+Released under the [MIT License](./LICENSE).

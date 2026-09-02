@@ -197,3 +197,7 @@ interpretation; Vietnam PDPL implementing detail; India DPDP staging; Japan/Aust
 per-state effective dates and the 11-state GPC list (verify against each state's own AG/legislature page before this
 becomes normative). Several US precise-geolocation radii (CA/CO 1,850 ft vs VA/CT/TX 1,750 ft) and the Colorado 2025
 amendment's bill number need direct statutory confirmation.
+
+## License
+
+Released under the [MIT License](../LICENSE).

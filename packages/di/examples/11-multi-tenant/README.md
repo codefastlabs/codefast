@@ -267,3 +267,7 @@ to the correct schema automatically.
 - **Example 03** — scoped lifetime and child containers.
 - **Example 12** — production microservice: similar patterns applied to a single-tenant service with health checks and
   graceful shutdown.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

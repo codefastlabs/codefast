@@ -206,3 +206,7 @@ import { toCytoscapeGraph, toDotGraph, toMermaidGraph, toReactFlowGraph } from "
 
 - **Example 09** — `ScopeViolationError`; `validate()` is the dynamic complement to graph inspection.
 - **Example 16** — using `inspect()` and `has()` in tests to verify container wiring.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

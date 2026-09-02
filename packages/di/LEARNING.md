@@ -830,3 +830,7 @@ A reading order that tends to work:
 
 If a performance claim in this document matters to a decision you're making, don't take it on faith — the
 [`benchmarks/di-inversify`](../../benchmarks/di-inversify/README.md) suite is how you check it against your own runtime.
+
+## License
+
+Released under the [MIT License](./LICENSE).

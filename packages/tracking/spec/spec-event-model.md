@@ -104,3 +104,7 @@ epoch-milliseconds.
 **V6 — context stripped in the exempt lane (when §4 is populated).** A gated event delivered to an exempt destination
 carries `anonymousId == ""` and no `context` key, even when the same event delivered under an open gate would carry
 `context`.
+
+## License
+
+Released under the [MIT License](../LICENSE).

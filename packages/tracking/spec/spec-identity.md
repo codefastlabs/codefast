@@ -89,3 +89,7 @@ returns the cached old one), and the persist request fires again for the new id.
 
 **V6 — once-per-load persist.** Three permitted events on one page load → exactly one persist request. A `refresh()`
 after `getOrCreate()` on the same load → still one request.
+
+## License
+
+Released under the [MIT License](../LICENSE).

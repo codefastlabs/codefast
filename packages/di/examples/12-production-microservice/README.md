@@ -227,3 +227,7 @@ async function main() {
 - **Example 05** — async lifecycle fundamentals (`toDynamicAsync`, `onActivation`, `onDeactivation`, `await using`).
 - **Example 09** — `ScopeViolationError` and how `validate()` catches it.
 - **Example 13** — the same patterns applied to a full e-commerce platform with multiple bounded contexts.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

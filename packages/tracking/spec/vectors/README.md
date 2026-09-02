@@ -76,3 +76,7 @@ the spec's legal premise is settled. Re-verify those premises with counsel (see 
 There is no bundled runner — each implementation writes a thin adapter that (a) loads a file, (b) for each `pure` vector
 calls the named operation and compares to `expect`, (c) for each `scenario` vector drives its own harness. The
 `vector.schema.json` here validates the file shape itself.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

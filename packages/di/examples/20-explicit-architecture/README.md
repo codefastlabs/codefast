@@ -137,3 +137,7 @@ storage engine change without touching it. But the pattern has a real cost, and 
 pay. A three-command CLI wrapped in the same ceremony ends up with dozens of one-method port files for work that fits in
 a flat handful — see [`packages/cli/DECISIONS.md`](../../../cli/DECISIONS.md) for a worked account of exactly that
 mistake inside this repo. Reach for this structure when the domain earns it, not by default.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

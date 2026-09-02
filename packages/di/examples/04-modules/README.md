@@ -163,3 +163,7 @@ See Example 05 for the full async module + lifecycle story.
 
 - **Example 05** — async factories, lifecycle hooks, and `await using` disposal.
 - **Example 10** — plugin architecture built on dynamic module load/unload.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

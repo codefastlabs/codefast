@@ -178,3 +178,7 @@ entries.forEach((e) => console.log(`${e.target.name} (${e.scope})`));
 
 - **Example 02** — `@injectable` fundamentals.
 - **Example 04** — modules as an alternative way to group bindings.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

@@ -3203,3 +3203,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 ---
 
 _Document version: 8.1 — April 2026_ _Inspired by InversifyJS v8.0.0 (March 2026) — researched from docs.inversify.io_
+
+## License
+
+Released under the [MIT License](./LICENSE).

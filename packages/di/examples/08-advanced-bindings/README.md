@@ -169,3 +169,7 @@ container.bind(LoggerToken).toConstantValue(new FileLogger());
 
 - **Example 09** — all error types and how to recover from each.
 - **Example 16** — using `rebind()` in tests to swap real services for stubs.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

@@ -182,3 +182,7 @@ own file, and typically each architectural layer into its own package.
 
 - **Example 12** — a production microservice with health checks, job workers, and structured startup/shutdown.
 - **Example 16** — how to test code structured this way (fresh containers, `rebind()`, child overrides).
+
+## License
+
+Released under the [MIT License](../../LICENSE).

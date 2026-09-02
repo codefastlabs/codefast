@@ -139,3 +139,7 @@ Yes — deliberately. This is the scale at which Explicit Architecture earns its
 adapters per port, and two transports over one use case. For a smaller service the ceremony would cost more than it
 returns — see [`packages/cli/DECISIONS.md`](../../../cli/DECISIONS.md) for a worked account of that mistake. Reach for
 this shape when the domain earns it.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

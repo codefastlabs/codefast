@@ -157,3 +157,7 @@ nothing sent.
 
 **V5 — cookie cleanup.** Cookies `_ga`, `_ga_ABC123`, `_gcl_au` present; withdrawal expires `_ga` and `_ga_ABC123` (both
 domain variants) and leaves `_gcl_au` untouched.
+
+## License
+
+Released under the [MIT License](../LICENSE).
