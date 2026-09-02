@@ -3,7 +3,6 @@ import type { RefObject } from "react";
 import type { ChartInstance } from "#/app/components/chart";
 import { ChartPanel } from "#/app/components/chart";
 import { ChartControlPanel } from "#/app/components/controls";
-import { FindPanel } from "#/app/components/finder";
 import { ClientPageOpenedClock, ClientSnapshotClock } from "#/app/components/footer";
 import { PageHeader } from "#/app/components/header";
 import { KpiGrid } from "#/app/components/kpi";
@@ -175,23 +174,20 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           </div>
         )}
 
-        <FindPanel
-          group={view.group}
-          onGroupChange={(group) => patchView({ group })}
-          onSearchChange={(search) => patchView({ search })}
-          search={view.search}
-          uniqueGroups={uniqueGroups}
-        />
-
         <ChartControlPanel
           envKey={view.envKey}
+          group={view.group}
           hasMore={payload?.hasMore ?? false}
           isReloading={isReloading}
           onEnvChange={(envKey) => patchView({ envKey })}
+          onGroupChange={(group) => patchView({ group })}
           onLoadOlderRuns={loadOlderRuns}
           onReload={() => loadData(true)}
           onRunWindowChange={(runWindow) => patchView({ runWindow })}
           onScenarioChange={(scenarioId) => patchView({ scenarioId })}
+          onSearchChange={(search) => patchView({ search })}
+          search={view.search}
+          uniqueGroups={uniqueGroups}
           onScenarioNext={() => selectScenarioByOffset(1)}
           onScenarioPrev={() => selectScenarioByOffset(-1)}
           envLabelMap={envLabelMap}

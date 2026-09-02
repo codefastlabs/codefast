@@ -1,10 +1,21 @@
 import { tv } from "@codefast/tailwind-variants";
 import type { CSSProperties } from "react";
 
-import { fmtHz } from "#/app/lib/format";
+import { fmtHz, fmtHzCompact } from "#/app/lib/format";
 import type { MetaItem, MetricCardProps, MetricsResult } from "#/app/lib/metrics";
 import { cn } from "#/app/lib/utils";
 import type { EmbeddedScenarioSeries } from "#/types";
+
+const iqrValue = tv({
+  base: "shrink-0 font-mono tracking-[-0.02em] tabular-nums",
+  variants: {
+    severity: {
+      ok: "text-bh-ink-mid",
+      noisy: "text-amber-300/90",
+      high: "text-red-300/95",
+    },
+  },
+});
 
 interface MetricsPanelProps {
   currentScenario: EmbeddedScenarioSeries | null;
@@ -26,8 +37,11 @@ function renderMetaItem(item: MetaItem) {
   switch (item.type) {
     case "range":
       return (
-        <span className="font-mono tracking-[-0.02em] tabular-nums">
-          Range {fmtHz(item.minHz)} … {fmtHz(item.maxHz)}
+        <span
+          className="font-mono tracking-[-0.02em] tabular-nums"
+          title={`Range ${fmtHz(item.minHz)} … ${fmtHz(item.maxHz)} hz/op`}
+        >
+          Range {fmtHzCompact(item.minHz)} … {fmtHzCompact(item.maxHz)}
         </span>
       );
     case "text":
@@ -50,7 +64,7 @@ function renderMetaItem(item: MetaItem) {
               key={row.libName}
             >
               <span className="text-bh-label min-w-0">{row.libName}</span>
-              <span className="text-bh-ink-mid shrink-0 font-mono tracking-[-0.02em] tabular-nums">{row.iqrLabel}</span>
+              <span className={iqrValue({ severity: row.severity })}>{row.iqrLabel}</span>
             </div>
           ))}
         </div>

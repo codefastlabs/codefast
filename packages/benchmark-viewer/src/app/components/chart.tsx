@@ -241,7 +241,7 @@ export function ChartPanel({
       }
 
       datasets.push({
-        label: `${lib.displayName} hz/op (median)`,
+        label: lib.displayName,
         data: hz,
         borderColor: paletteEntry.border,
         backgroundColor: `${paletteEntry.band.slice(0, paletteEntry.band.lastIndexOf(",") + 1)} 0.08)`,
@@ -306,7 +306,7 @@ export function ChartPanel({
       y: {
         type: useLogScale ? "logarithmic" : "linear",
         position: "left",
-        title: { display: true, text: "hz/op", color: "rgba(235, 235, 245, 0.5)" },
+        title: { display: true, text: "hz/op (median)", color: "rgba(235, 235, 245, 0.5)" },
         ticks: {
           color: "rgba(235, 235, 245, 0.42)",
           // Compact ticks (70M) stay readable where full digits clip on narrow viewports.
@@ -339,6 +339,8 @@ export function ChartPanel({
           legend: {
             labels: {
               color: "rgba(235, 235, 245, 0.72)",
+              boxWidth: 14,
+              boxHeight: 8,
               filter: (item) => {
                 const legendText = item.text ?? "";
                 return !legendText.endsWith(" P25") && !legendText.includes("P25–P75");
@@ -395,7 +397,7 @@ export function ChartPanel({
                   return `${datasetLabel}: ${fmtRatio(rawHz)}`;
                 }
                 // Exact label match — a displayName that prefixes another must not steal its IQR.
-                const matchedLib = orderedLibraries.find((lib) => datasetLabel === `${lib.displayName} hz/op (median)`);
+                const matchedLib = orderedLibraries.find((lib) => datasetLabel === lib.displayName);
                 let extra = "";
                 if (matchedLib) {
                   const libData = scenario.libraries[matchedLib.key];

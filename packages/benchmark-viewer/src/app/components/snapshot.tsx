@@ -34,7 +34,7 @@ interface SnapshotSectionProps {
 }
 
 /**
- * Renders the collapsible table of the newest run's throughput and ratios per scenario.
+ * Renders the collapsible table of each scenario's newest measured throughput and ratios.
  *
  * @since 0.3.16-canary.3
  */
@@ -52,11 +52,11 @@ export function SnapshotSection({
       id="snapshot-details"
     >
       <summary className="cursor-pointer list-none py-1 text-sm leading-snug font-semibold text-zinc-100 marker:content-[''] [&::-webkit-details-marker]:hidden">
-        Snapshot of <span className="text-cyan-200/90">globally newest</span> bench folder — throughput by scenario
-        (table)
+        <span className="text-cyan-200/90">Latest measurement</span> by scenario (table)
       </summary>
       <p className="mb-3 text-xs leading-relaxed text-zinc-500" id="snapshot-desc">
-        Rows use the chronologically last run directory ({runCount} total), independent of the Environment selector.
+        Each cell uses that library's newest run with data ({runCount} runs scanned), independent of the Environment
+        selector — so a ratio can pair values from different runs. As of dates the newest contributing run.
       </p>
       <div className="border-bh-border bg-bh-scrim-table overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
         <table aria-label="Latest run throughput by scenario" className="w-full border-collapse text-[0.8rem]">
@@ -89,18 +89,21 @@ export function SnapshotSection({
                   ÷ {cmp.displayName}
                 </Th>
               ))}
+              <Th className="text-end whitespace-nowrap" scope="col">
+                As of
+              </Th>
             </tr>
           </thead>
           <tbody>
             {snapshotRows.map((row) => (
               <tr
-                className="hover:bg-bh-table-hover even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover"
+                className="group hover:bg-bh-table-hover even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover"
                 key={row.id}
               >
-                <Td className="bg-bh-table-sticky sticky start-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
+                <Td className="bg-bh-table-sticky group-hover:bg-bh-table-sticky-hover group-even:bg-bh-table-sticky-zebra group-even:group-hover:bg-bh-table-sticky-zebra-hover sticky start-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
                   {row.id}
                 </Td>
-                <Td className="bg-bh-table-sticky sticky start-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
+                <Td className="bg-bh-table-sticky group-hover:bg-bh-table-sticky-hover group-even:bg-bh-table-sticky-zebra group-even:group-hover:bg-bh-table-sticky-zebra-hover sticky start-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
                   {row.group}
                 </Td>
                 {row.hzCells.map((hzCell, cellIndex) => (
@@ -113,6 +116,9 @@ export function SnapshotSection({
                     {ratioCell}
                   </Td>
                 ))}
+                <Td className="text-end whitespace-nowrap text-zinc-500" suppressHydrationWarning>
+                  {row.asOf}
+                </Td>
               </tr>
             ))}
           </tbody>

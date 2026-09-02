@@ -244,11 +244,10 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     if (!payload || payload.runs.length === 0) {
       return [];
     }
-    const lastIx = payload.runs.length - 1;
     return payload.scenarios.map((scenario) =>
-      buildSnapshotRow(scenario, lastIx, orderedLibraries, paletteMap, primaryLib, compareLibs),
+      buildSnapshotRow(scenario, payload.runs, orderedLibraries, primaryLib, compareLibs),
     );
-  }, [payload, orderedLibraries, paletteMap, primaryLib, compareLibs]);
+  }, [payload, orderedLibraries, primaryLib, compareLibs]);
 
   const latestRun = payload?.runs[payload.runs.length - 1];
 

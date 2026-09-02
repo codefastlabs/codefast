@@ -36,6 +36,18 @@ function FieldSelect({ className, ...props }: ComponentProps<"select">) {
   );
 }
 
+function FieldInput({ className, ...props }: ComponentProps<"input">) {
+  return (
+    <input
+      {...props}
+      className={cn(
+        "focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm leading-normal text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2",
+        className,
+      )}
+    />
+  );
+}
+
 function SegButton({ className, ...props }: ComponentProps<"button">) {
   return (
     <button
@@ -54,6 +66,11 @@ interface ChartControlPanelProps {
   onReload: () => void;
   hasMore: boolean;
   onLoadOlderRuns: () => void;
+  search: string;
+  onSearchChange: (value: string) => void;
+  group: string;
+  uniqueGroups: Array<string>;
+  onGroupChange: (value: string) => void;
   scenarioId: string;
   visibleScenarios: Array<EmbeddedScenarioSeries>;
   onScenarioChange: (id: string) => void;
@@ -69,7 +86,8 @@ interface ChartControlPanelProps {
 }
 
 /**
- * Renders the sticky chart-data bar: reload, scenario picker, environment filter, and run window.
+ * Renders the scenario-and-data bar: search, group filter, scenario picker, environment filter,
+ * run window, and reload — sticky on desktop.
  *
  * @since 0.3.16-canary.3
  */
@@ -78,6 +96,11 @@ export function ChartControlPanel({
   onReload,
   hasMore,
   onLoadOlderRuns,
+  search,
+  onSearchChange,
+  group,
+  uniqueGroups,
+  onGroupChange,
   scenarioId,
   visibleScenarios,
   onScenarioChange,
@@ -93,11 +116,13 @@ export function ChartControlPanel({
 }: ChartControlPanelProps) {
   return (
     <div
-      aria-label="Chart data selection"
-      className="border-bh-border bg-bh-surface-sticky shadow-bh-sticky sticky top-[max(0.5rem,env(safe-area-inset-top,0px))] z-40 mt-6 mb-5 flex flex-col gap-3 rounded-[1.25rem] border px-3 py-3 backdrop-blur-2xl backdrop-saturate-200 max-sm:gap-2 max-sm:py-2.5 sm:top-3 sm:-mx-2 sm:mt-8 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4"
+      aria-label="Scenario and data selection"
+      className="border-bh-border bg-bh-surface-sticky shadow-bh-sticky z-40 mt-6 mb-5 flex flex-col gap-3 rounded-[1.25rem] border px-3 py-3 backdrop-blur-2xl backdrop-saturate-200 max-sm:gap-2 max-sm:py-2.5 sm:sticky sm:top-3 sm:-mx-2 sm:mt-8 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4"
     >
       <div className="flex flex-wrap items-center justify-between gap-2 gap-y-2 sm:gap-y-1">
-        <p className="text-bh-label mb-0 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">Chart data</p>
+        <p className="text-bh-label mb-0 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
+          Scenario &amp; runs
+        </p>
         <div className="flex shrink-0 items-center gap-2">
           {hasMore && (
             <ReloadButton
@@ -124,6 +149,39 @@ export function ChartControlPanel({
         </div>
       </div>
       <div className="flex flex-col gap-4 max-sm:grid max-sm:grid-cols-2 max-sm:gap-2 max-sm:rounded-xl max-sm:bg-black/22 max-sm:p-2 max-sm:[box-shadow:inset_0_0.0625rem_0_rgba(255,255,255,0.05),0_0_0_0.0625rem_rgba(255,255,255,0.06)] sm:flex-row sm:flex-wrap sm:items-end sm:gap-3">
+        <label
+          className="w-full min-w-0 max-sm:col-span-full sm:w-auto sm:max-w-xs sm:min-w-44 sm:flex-1"
+          htmlFor="scenario-search"
+        >
+          <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">Search</FieldLabel>
+          <FieldInput
+            aria-label="Search scenarios"
+            autoComplete="off"
+            className="max-sm:h-9 max-sm:min-h-9"
+            id="scenario-search"
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Filter by scenario, group…"
+            type="search"
+            value={search}
+          />
+        </label>
+        <label className="w-full min-w-0 sm:w-auto sm:max-w-44 sm:min-w-36" htmlFor="ctrl-group">
+          <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">Group</FieldLabel>
+          <FieldSelect
+            aria-label="Filter by group"
+            className="max-sm:h-9 max-sm:min-h-9"
+            id="ctrl-group"
+            onChange={(e) => onGroupChange(e.target.value)}
+            value={group}
+          >
+            <option value="">All groups</option>
+            {uniqueGroups.map((groupName) => (
+              <option key={groupName} value={groupName}>
+                {groupName}
+              </option>
+            ))}
+          </FieldSelect>
+        </label>
         <div className="flex w-full min-w-0 flex-col gap-2 max-sm:col-span-full max-sm:mb-0.5 max-sm:gap-1.5 max-sm:border-b max-sm:border-white/6 max-sm:pb-2 sm:w-auto sm:max-w-none sm:flex-[1_1_20rem] sm:flex-row sm:flex-wrap sm:items-end">
           <label className="w-full min-w-0 flex-1 sm:w-auto sm:max-w-md sm:min-w-56" htmlFor="ctrl-scenario">
             <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">

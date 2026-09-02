@@ -1,9 +1,17 @@
 import { quantile, sortAscending } from "@codefast/benchmark-harness/report/quantiles";
+import { NOISY_IQR_FRACTION } from "@codefast/benchmark-harness/report/reliability";
 
 import type { PaletteEntry } from "#/app/lib/colors";
 import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";
-import { fmtHz, fmtPctChange, fmtRatio } from "#/app/lib/format";
-import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
+import { fmtHz, fmtPctChange, fmtRatio, formatLocal } from "#/app/lib/format";
+import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
+
+/**
+ * How loud a library's worst per-trial IQR is, tiered on the harness's noise thresholds.
+ *
+ * @since 0.3.16-canary.3
+ */
+export type IqrSeverity = "ok" | "noisy" | "high";
 
 /**
  * Returns the median of the finite positive numbers in a list, or null when none remain.
@@ -88,7 +96,7 @@ export type MetaItem =
   | { type: "text"; value: string }
   | { type: "fine-text"; value: string }
   | { type: "ratio-paired"; value: string }
-  | { type: "iqr-table"; rows: Array<{ libName: string; iqrLabel: string }> };
+  | { type: "iqr-table"; rows: Array<{ libName: string; iqrLabel: string; severity: IqrSeverity }> };
 
 /**
  * The label, value, meta lines, and accent styling one MetricCard renders.
@@ -115,7 +123,8 @@ export interface MetricsResult {
 }
 
 /**
- * One scenario's row in the latest-run snapshot table: hz cells plus ratio cells.
+ * One scenario's row in the latest-measurement snapshot table: hz cells, ratio cells, and the
+ * local date of the newest contributing run.
  *
  * @since 0.3.16-canary.1
  */
@@ -124,6 +133,7 @@ export interface SnapshotRow {
   group: string;
   hzCells: Array<string>;
   ratioCells: Array<string>;
+  asOf: string;
 }
 
 /**
@@ -267,13 +277,15 @@ export function buildMetrics({
   const iqrRows = orderedLibraries.map((lib) => {
     const libData = scenario.libraries[lib.key];
     let iqrLabel = "—";
+    let severity: IqrSeverity = "ok";
     if (libData) {
       const maxIqr = maxIqrFraction(libData.iqrFraction, runIndices);
       if (maxIqr > 0) {
         iqrLabel = `${(maxIqr * 100).toFixed(1)}%`;
+        severity = maxIqr > DISPERSION_IQR_ALERT ? "high" : maxIqr > NOISY_IQR_FRACTION ? "noisy" : "ok";
       }
     }
-    return { libName: lib.displayName, iqrLabel };
+    return { libName: lib.displayName, iqrLabel, severity };
   });
 
   cards.push({
@@ -307,29 +319,47 @@ export function buildMetrics({
 }
 
 /**
- * Builds one scenario's snapshot-table row from the chronologically last run.
+ * Builds one scenario's snapshot-table row from each library's newest run with data.
+ *
+ * @remarks Runs are dominated by narrowed suites, so the last run directory rarely covers a given
+ * scenario — cells therefore use per-library latest values, and the ratio may pair different runs.
  *
  * @since 0.3.16-canary.1
  */
 export function buildSnapshotRow(
   scenario: EmbeddedScenarioSeries,
-  lastIx: number,
+  runs: ReadonlyArray<EmbeddedRun>,
   orderedLibraries: Array<EmbeddedLibraryMeta>,
-  paletteMap: Record<string, PaletteEntry>,
   primaryLib: EmbeddedLibraryMeta | undefined,
   compareLibs: Array<EmbeddedLibraryMeta>,
 ): SnapshotRow {
   const libHzMap: Record<string, number | null> = {};
   const hzCells: Array<string> = [];
+  let newestDataIx = -1;
   for (const lib of orderedLibraries) {
-    const hz = scenario.libraries[lib.key]?.hz[lastIx] ?? null;
-    const positiveHz = typeof hz === "number" && hz > 0 ? hz : null;
-    libHzMap[lib.key] = positiveHz;
-    hzCells.push(positiveHz !== null ? fmtHz(positiveHz) : "—");
+    const hzSeries = scenario.libraries[lib.key]?.hz ?? [];
+    let latestHz: number | null = null;
+    for (let runIx = hzSeries.length - 1; runIx >= 0; runIx--) {
+      const hz = hzSeries[runIx];
+      if (typeof hz === "number" && hz > 0) {
+        latestHz = hz;
+        newestDataIx = Math.max(newestDataIx, runIx);
+        break;
+      }
+    }
+    libHzMap[lib.key] = latestHz;
+    hzCells.push(fmtHz(latestHz));
   }
 
   const primaryHz = primaryLib ? (libHzMap[primaryLib.key] ?? null) : null;
   const ratioCells: Array<string> = compareLibs.map((cmp) => fmtRatio(ratioFrom(primaryHz, libHzMap[cmp.key] ?? null)));
+  const newestRun = newestDataIx >= 0 ? runs[newestDataIx] : undefined;
 
-  return { id: scenario.id, group: scenario.group, hzCells, ratioCells };
+  return {
+    id: scenario.id,
+    group: scenario.group,
+    hzCells,
+    ratioCells,
+    asOf: newestRun ? formatLocal(newestRun.timestampIso, newestRun.folder) : "—",
+  };
 }
