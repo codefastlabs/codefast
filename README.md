@@ -99,11 +99,11 @@ confusing, a prop feels awkward, or a component is missing,
 
 ## Repository Layout
 
-| Path                                                 | Role                                                                                                                        |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| [`apps/ui`](apps/ui)                                 | Docs and showcase site behind [codefastlabs.com](https://codefastlabs.com) (TanStack Start), consuming local package source |
-| [`examples/tanstack-start`](examples/tanstack-start) | Consumer smoke test — runs the packages' built `dist/` via `workspace:*` links                                              |
-| [`benchmarks/`](benchmarks)                          | Benchmark suites comparing `@codefast/*` against upstream libraries (`pnpm bench`)                                          |
+| Path                                                 | Role                                                                                                                                        |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`apps/ui`](apps/ui)                                 | The site behind [codefastlabs.com](https://codefastlabs.com) (TanStack Start): package landing, `/docs/<pkg>` docs, `@codefast/ui` showcase |
+| [`examples/tanstack-start`](examples/tanstack-start) | Consumer smoke test — runs the packages' built `dist/` via `workspace:*` links                                                              |
+| [`benchmarks/`](benchmarks)                          | Benchmark suites comparing `@codefast/*` against upstream libraries (`pnpm bench`)                                                          |
 
 ## Development
 
