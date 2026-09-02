@@ -1,8 +1,8 @@
 # Testing taxonomy
 
-This monorepo uses **four explicit test categories**. Every test file in `packages/*/tests/**` and `apps/*/tests/**`
-MUST live under exactly one category directory, otherwise it will not be discovered by Vitest. There is no implicit
-"leftover" bucket.
+This monorepo uses **four explicit test categories**. Every test file in `packages/*/tests/**`, `internal/*/tests/**`,
+and `apps/*/tests/**` MUST live under exactly one category directory, otherwise it will not be discovered by Vitest.
+There is no implicit "leftover" bucket.
 
 ## Categories
 
@@ -78,8 +78,8 @@ pnpm test:coverage         # full coverage, all packages + apps
 ### CI honesty
 
 - **Packages gate** (`.github/workflows/reusable-verify-packages.yml`): build, verify the generated exports,
-  lint/format/types, then `test:coverage` — all scoped to `./packages/**`, so `apps/*` is not built, started, or tested
-  there.
+  lint/format/types, then `test:coverage` — all scoped to `./packages/**` + `./internal/**`, so `apps/*` is not built,
+  started, or tested there.
 
 Root `pnpm test:e2e` runs every package that defines the script — use it for full-repo gates.
 

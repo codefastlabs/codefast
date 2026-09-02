@@ -1,3 +1,5 @@
+| [`internal/`](internal) | Private workspace packages consumed only inside the repo (benchmark harness and viewer);
+never published |
 <h1 align="center">CodeFast</h1>
 
 <p align="center">
