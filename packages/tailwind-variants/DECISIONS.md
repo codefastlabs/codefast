@@ -1,619 +1,104 @@
-# Decision: Tailwind Variants (TV) — Type-Safe Variant API for Tailwind CSS
+# `@codefast/tailwind-variants` — design decisions
 
-> **Status:** accepted and implemented. Written 2025-09-14; `tv()`, slots, `extend`, compound variants, `cn`/`cx` and
-> `createTV` have all shipped in `@codefast/tailwind-variants`.
->
-> **This is a design record, not API documentation.** For real usage see [README.md](./README.md) — read that first.
-> This document is kept for the _why_ (the comparison against `tailwind-variants`/`cva`, the type-inference trade-offs),
-> which is written down nowhere else; the code below illustrates design intent at the time and is not checked against
-> the current API.
->
-> The **Future Roadmap** section at the end is a wish list from when the RFC was written, not a plan: the browser
-> extension, the VS Code extension and the CLI migration tool do not exist and are not scheduled.
+Why the package exists and the choices that fix its API. [`ARCHITECTURE.md`](./ARCHITECTURE.md) is the source of truth
+for the internal shape — the compiled plan, the selection cache, which shapes are load-bearing;
+[`README.md`](./README.md) documents the API. Each decision below still holds; a decision that stops holding gets
+replaced here, not annotated.
 
-## Summary
+## 1. A drop-in replacement, not a new API
 
-**Tailwind Variants (TV)** is a powerful library designed to create type-safe variant APIs for Tailwind CSS, letting
-developers build flexible component systems with a simple syntax and an excellent developer experience.
+**Context.** `@codefast/ui` styles every component with `tailwind-variants`. Its configuration shape — `base`,
+`variants`, `defaultVariants`, `compoundVariants`, `slots`, `compoundSlots`, `extend` — is the right vocabulary; what
+fell short was resolution cost on hot render paths and some type-inference edges. Inventing a different API would have
+forced a rewrite of the consumer for no gain in expressiveness.
 
-## Motivation
+**Decision.** Keep the upstream configuration shape and option names (`twMerge`, `twMergeConfig`) exactly, so the
+migration for most codebases is the import specifier. The exports are `tv`, `createTV`, `cn`, `cx`, `VariantProps` and
+the configuration types.
 
-Managing component variants in Tailwind CSS usually leads to:
+**Consequences.** The README's examples run as tests and a behaviour sweep covers the upstream shapes, and
+`@codefast/ui` moved over by changing imports. The constraint runs the other way too: an API idea that upstream users
+could not express is out of scope here.
 
-- Code duplication and poor maintainability
-- Missing type safety when using TypeScript
-- Complex logic to handle conditional classes
-- Difficulty extending and reusing components
-- Class conflicts that are not resolved automatically
+## 2. Two verified departures from upstream
 
-TV solves these problems by providing a declarative, type-safe API with automatic class merging and a capable variant
-system.
+**Context.** Upstream's `createTV(options)` returns a bare `tv`, exposes a mutable `defaultConfig`, and ships `cnMerge`.
+Global mutable configuration is the one upstream shape that fights the compile-once design below: a plan compiled under
+one merge config cannot be trusted after the global changes.
 
-## Detailed Design
+**Decision.** `createTV(options)` returns `{ tv, cn }` that share the options, and there is no mutable global: no
+`defaultConfig`, no `cnMerge`. Local `tv(config, options)` still overrides the factory.
 
-### 1. Core API - The `tv()` Function
+**Consequences.** Every resolver knows its merge configuration at compile time. Migration needs one destructure where
+upstream assigned `createTV`'s result directly; the README records both departures.
 
-#### 1.1 Basic Usage
+## 3. Settle everything once, at `tv()`
 
-```typescript
-const button = tv({
-  base: "inline-flex items-center justify-center rounded-md font-medium",
-  variants: {
-    variant: {
-      default: "bg-primary text-primary-foreground",
-      destructive: "bg-destructive text-destructive-foreground",
-      outline: "border border-input",
-    },
-    size: {
-      sm: "h-9 px-3 text-sm",
-      md: "h-10 px-4",
-      lg: "h-11 px-8",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-    size: "md",
-  },
-});
+**Context.** A configuration is fixed the moment `tv` is called; the resolver it returns runs on every render, forever.
+Upstream pays for dictionary walks and array flattening on each call.
 
-// Usage
-button(); // -> classes with default variants
-button({ variant: "destructive", size: "lg" });
-button({ className: "w-full" }); // merge custom classes
-```
+**Decision.** `tv()` compiles the configuration into a plan — flattened class strings, precomputed slot positions,
+compound conditions turned into checks — and resolution is string concatenation over that plan. This makes `tv()` itself
+slower than upstream's by design.
 
-#### 1.2 Nested Arrays Support
+**Consequences.** The per-component definition cost is paid within a render or two of resolution savings; the benchmark
+suite measures both sides (`construct-*` rows against the resolution rows) so the trade stays visible. Anything that
+would move work back into the resolver is a regression, whatever it saves at definition.
 
-```typescript
-const component = tv({
-  base: ["base-1", ["base-2", ["base-3"]]], // Flatten automatically
-  variants: {
-    color: {
-      primary: ["text-blue-500", ["bg-blue-50", ["hover:bg-blue-100"]]],
-    },
-  },
-});
-```
+## 4. Cache resolutions per selection, with an opt-out
 
-#### 1.3 Boolean Variants
+**Context.** A list renders the same few variant selections thousands of times, and both the plan walk and the merge are
+pure functions of the selection.
 
-```typescript
-const toggle = tv({
-  base: "toggle-base",
-  variants: {
-    disabled: {
-      true: "opacity-50 cursor-not-allowed",
-      false: "opacity-100",
-    },
-  },
-});
+**Decision.** A resolver remembers what each selection resolved to, in a bounded store keyed by the selection. Slot
+components return the same object of slot functions for the same selection. `cacheResolutions: false` disables the store
+for a component whose values are unique per call.
 
-// Usage
-toggle({ disabled: true });
-toggle({ disabled: false });
-toggle(); // Uses false as default for boolean variants
-```
+**Consequences.** Repeated selections cost a lookup. Two things callers must know, and the README says both: the
+returned slot object is shared, so it must not be mutated; and a variant fed ids or timestamps should opt out or it
+fills the store with entries nothing reads again.
 
-### 2. Compound Variants System
+## 5. `tailwind-merge` is a peer, and merging is optional
 
-#### 2.1 Basic Compound Variants
+**Context.** Conflict resolution is what makes `className` overrides safe, but `tailwind-merge` is a sizeable dependency
+whose version a design system wants to pin once, not receive twice.
 
-```typescript
-const button = tv({
-  base: "button-base",
-  variants: {
-    variant: {
-      primary: "bg-blue-500",
-      secondary: "bg-gray-500",
-    },
-    size: {
-      sm: "text-sm",
-      lg: "text-lg",
-    },
-  },
-  compoundVariants: [
-    {
-      // Apply when variant=primary AND size=lg
-      variant: "primary",
-      size: "lg",
-      className: "shadow-lg font-bold",
-    },
-  ],
-});
-```
+**Decision.** `tailwind-merge >= 3` is a peer dependency, not a dependency; the package ships ESM only with no runtime
+dependencies of its own. `twMerge: false` keeps every declared class for callers that resolve conflicts elsewhere, and
+`twMergeConfig` extends the class groups for custom themes.
 
-#### 2.2 Type Safety
+**Consequences.** One copy of `tailwind-merge` per application, at the version the application chose. Callers who turn
+merging off own their conflicts.
 
-- Compound variants only accept valid combinations
-- Compile-time errors for invalid variant keys
-- Full IntelliSense support
+## 6. Types describe what the selection can be, no more
 
-### 3. Slots System - Multi-Element Components
+**Context.** Variant props are the public contract a component's own props extend, so a wrong inference is a wrong
+component API.
 
-#### 3.1 Basic Slots
+**Decision.** `VariantProps<typeof resolver>` derives the selection type from the configuration, boolean variants accept
+`true`/`false` and default to `false`, and `className` / `class` accept any `ClassValue`. Inference is checked by static
+type tests under `tests/types/` alongside the runtime suite.
 
-```typescript
-const card = tv({
-  slots: {
-    base: "rounded-lg border shadow-sm",
-    header: "flex flex-col space-y-1.5 p-6",
-    title: "font-semibold leading-none",
-    description: "text-sm text-muted-foreground",
-    content: "p-6 pt-0",
-    footer: "flex items-center p-6 pt-0",
-  },
-  variants: {
-    size: {
-      sm: {
-        header: "p-4",
-        content: "p-4 pt-0",
-        footer: "p-4 pt-0",
-      },
-      lg: {
-        header: "p-8",
-        content: "p-8 pt-0",
-        footer: "p-8 pt-0",
-      },
-    },
-  },
-});
+**Consequences.** A change to the configuration types has to keep those type tests green; that is where a regression in
+inference shows up first.
 
-// Usage
-const { base, header, title, content } = card({ size: "sm" });
-base(); // -> card base classes
-header(); // -> header classes with size=sm
-title({ className: "text-xl" }); // -> title + custom classes
-```
+## 7. Performance claims live in the benchmark suite
 
-#### 3.2 Slot-Level Variant Overrides
+**Context.** "Faster than upstream" is the package's reason to exist, and a number written into a document rots the day
+the code changes.
 
-```typescript
-const menu = tv({
-  slots: {
-    base: "menu-base",
-    item: "menu-item",
-  },
-  variants: {
-    color: {
-      primary: {
-        base: "bg-blue-500",
-        item: "text-blue-600",
-      },
-    },
-  },
-});
+**Decision.** No figure appears in this file, the README or the source. The first-party suite in
+`benchmarks/tailwind-variants` runs the same workloads against `tailwind-variants` and `class-variance-authority` in
+isolated subprocesses; its results ledger is the only place a ratio is recorded, and the README tells readers to run it.
 
-// Individual slot override
-const { base, item } = menu();
-item({ color: "secondary" }); // Override color for just this slot
-```
+**Consequences.** A hot-path change is judged by re-running the suite, not by argument. `ARCHITECTURE.md` states what a
+shape guarantees; the suite says what it costs.
 
-#### 3.3 Compound Slots
+## 8. Not built, deliberately
 
-```typescript
-const pagination = tv({
-  slots: {
-    base: "flex space-x-2",
-    item: "px-3 py-1",
-    prev: "px-3 py-1",
-    next: "px-3 py-1",
-  },
-  compoundSlots: [
-    {
-      // Apply to multiple slots when conditions are met
-      slots: ["item", "prev", "next"],
-      size: "sm",
-      className: ["w-8 h-8", "text-xs"],
-    },
-  ],
-});
-```
-
-### 4. Extends System - Component Inheritance
-
-#### 4.1 Basic Extension
-
-```typescript
-const baseInput = tv({
-  base: "border rounded px-3 py-2",
-  variants: {
-    size: {
-      sm: "text-sm px-2 py-1",
-      lg: "text-lg px-4 py-3",
-    },
-  },
-});
-
-const textArea = tv({
-  base: "min-h-[80px] resize-none",
-  extend: baseInput, // Inherit all variants and base classes
-  variants: {
-    size: {
-      sm: "min-h-[60px]", // Override specific size
-      lg: "min-h-[120px]",
-    },
-  },
-});
-```
-
-#### 4.2 Multi-Level Extension
-
-```typescript
-const themeButton = tv({ base: "font-medium", variants: {...} });
-const appButton = tv({ extend: themeButton });
-const specificButton = tv({ extend: appButton });
-// Inheritance chain: themeButton -> appButton -> specificButton
-```
-
-#### 4.3 Slots Extension
-
-```typescript
-const baseCard = tv({
-  slots: { base: "rounded", content: "p-4" },
-  variants: { size: { sm: { content: "p-2" } } },
-});
-
-const extendedCard = tv({
-  extend: baseCard,
-  slots: { footer: "border-t" }, // Add new slots
-  variants: {
-    size: {
-      sm: { footer: "text-sm" }, // Extend existing variants
-    },
-  },
-});
-```
-
-### 5. Tailwind Merge Integration
-
-#### 5.1 Automatic Conflict Resolution
-
-```typescript
-const component = tv({
-  base: "text-lg text-sm px-4 px-2", // Conflicts resolved: text-sm px-2
-});
-
-// Result: "text-sm px-2" (later classes win)
-```
-
-#### 5.2 Custom Tailwind Merge Config
-
-```typescript
-const component = tv(
-  {
-    base: "text-tiny text-small shadow-small shadow-large",
-    variants: {
-      size: {
-        sm: "w-unit-2",
-        lg: "w-unit-6",
-      },
-    },
-  },
-  {
-    twMergeConfig: {
-      extend: {
-        classGroups: {
-          "font-size": [{ text: ["tiny", "small", "medium", "large"] }],
-        },
-        theme: {
-          spacing: ["unit", "unit-2", "unit-4", "unit-6"],
-        },
-      },
-    },
-  },
-);
-```
-
-#### 5.3 Disable Tailwind Merge
-
-```typescript
-const component = tv(
-  { base: "px-4 px-2" }, // Both classes preserved
-  { twMerge: false },
-);
-// Result: "px-4 px-2" (no merging)
-```
-
-### 6. Factory Pattern with createTV
-
-#### 6.1 Theme Configuration
-
-```typescript
-const { tv: createThemeTV } = createTV({
-  twMergeConfig: {
-    extend: {
-      classGroups: {
-        "font-size": [{ text: ["xs", "sm", "base", "lg"] }],
-      },
-    },
-  },
-});
-
-// All components created with this factory inherit the config
-const alert = createThemeTV({
-  base: "rounded border p-4",
-  variants: { variant: { default: "bg-background" } },
-});
-```
-
-#### 6.2 Config Override
-
-```typescript
-const { tv } = createTV({ twMerge: false });
-const component = tv(
-  { base: "conflicting classes" },
-  { twMerge: true }, // Override factory config
-);
-```
-
-### 7. Type Safety & Developer Experience
-
-#### 7.1 VariantProps Type Extraction
-
-```typescript
-const button = tv({
-  variants: {
-    variant: { primary: "...", secondary: "..." },
-    size: { sm: "...", md: "...", lg: "..." },
-  },
-});
-
-// Extract props type for React components
-type ButtonProps = VariantProps<typeof button>;
-// { variant?: "primary" | "secondary", size?: "sm" | "md" | "lg", className?: ClassValue }
-
-interface MyButtonProps extends ButtonProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-}
-```
-
-#### 7.2 ClassValue Support
-
-```typescript
-// Accepts multiple class formats
-button({
-  className: "custom-class", // string
-});
-button({
-  className: ["class1", "class2"], // array
-});
-button({
-  className: { conditional: true, other: false }, // object
-});
-```
-
-### 8. Advanced Patterns & Real-World Usage
-
-#### 8.1 Responsive Design System
-
-```typescript
-const grid = tv({
-  base: "grid gap-4",
-  variants: {
-    cols: {
-      1: "grid-cols-1",
-      2: "grid-cols-1 md:grid-cols-2",
-      3: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
-      auto: "grid-cols-[repeat(auto-fit,minmax(250px,1fr))]",
-    },
-  },
-});
-```
-
-#### 8.2 Design System Components
-
-```typescript
-// Navigation with compound variants
-const nav = tv({
-  slots: { root: "flex", list: "flex space-x-1", link: "px-3 py-2" },
-  variants: {
-    orientation: {
-      horizontal: { list: "flex-row" },
-      vertical: { list: "flex-col space-x-0 space-y-1" },
-    },
-    variant: {
-      pills: { link: "rounded-full" },
-    },
-  },
-  compoundVariants: [
-    {
-      orientation: "vertical",
-      variant: "pills",
-      className: { list: "space-y-2" },
-    },
-  ],
-});
-```
-
-#### 8.3 Form Component Inheritance
-
-```typescript
-const baseInput = tv({
-  base: "border rounded focus:ring-2",
-  variants: { size: { sm: "px-2 py-1", lg: "px-4 py-3" } },
-});
-
-const textInput = tv({ extend: baseInput });
-const select = tv({
-  extend: baseInput,
-  base: "cursor-pointer",
-  variants: { size: { sm: "pr-6", lg: "pr-10" } },
-});
-const textarea = tv({
-  extend: baseInput,
-  base: "min-h-[80px]",
-  variants: { size: { sm: "min-h-[60px]", lg: "min-h-[120px]" } },
-});
-```
-
-## Developer Experience (DX)
-
-### 1. IntelliSense & Autocompletion
-
-- Full TypeScript support with strict type inference
-- Autocomplete for variant keys and values
-- Error highlighting for invalid configurations
-
-### 2. Runtime Safety
-
-- Automatic validation of the compound variants configuration
-- Clear error messages for configuration errors
-- Graceful handling of undefined/null values
-
-### 3. Performance
-
-- Minimal runtime overhead
-- Efficient class string concatenation
-- Tree-shaking friendly architecture
-
-### 4. Debugging
-
-- Clear component hierarchy with extends
-- Transparent class resolution process
-- Development mode warnings
-
-## Migration & Adoption
-
-### 1. From CSS Modules/Styled Components
-
-```typescript
-// Before: CSS Modules
-import styles from "./button.module.css";
-const className = `${styles.base} ${variant === "primary" ? styles.primary : styles.secondary}`;
-
-// After: TV
-const button = tv({
-  base: "base-styles",
-  variants: { variant: { primary: "primary-styles", secondary: "secondary-styles" } },
-});
-const className = button({ variant: "primary" });
-```
-
-### 2. From Class Variance Authority (CVA)
-
-- A similar API, with many more features on top
-- A simple migration path — the syntax is nearly identical
-- Adds slots, extends and compound slots
-
-## Ecosystem Integration
-
-### 1. React Integration
-
-```typescript
-import React from "react";
-import { tv } from "@codefast/tailwind-variants";
-import type { VariantProps } from "@codefast/tailwind-variants";
-
-const button = tv({...});
-
-interface ButtonProps extends VariantProps<typeof button> {
-  children: React.ReactNode;
-}
-
-const Button: React.FC<ButtonProps> = ({ children, ...variants }) => {
-  return (
-    <button className={button(variants)}>
-      {children}
-    </button>
-  );
-};
-```
-
-### 2. Vue Integration
-
-```vue
-<script setup lang="ts">
-import { tv } from "@codefast/tailwind-variants";
-const button = tv({...});
-const props = defineProps<{variant?: "primary" | "secondary"}>();
-</script>
-
-<template>
-  <button :class="button(props)">
-    <slot />
-  </button>
-</template>
-```
-
-### 3. Framework Agnostic
-
-- No dependency on any specific framework
-- Usable with vanilla JS, React, Vue, Svelte and Solid.js
-- Server-side rendering friendly
-
-## Performance Considerations
-
-### 1. Bundle Size
-
-- Tree-shaking to drop unused code
-- Minimal runtime with optimized class concatenation
-- No external dependencies other than tailwind-merge
-
-### 2. Runtime Performance
-
-- Efficient caching of compiled class strings
-- Optimized conditional logic for variants
-- Minimal memory footprint
-
-### 3. Build Time
-
-- No build-time dependencies
-- Compatible with every bundler
-- Works with the Tailwind CSS JIT compiler
-
-## Testing Strategy
-
-### 1. Unit Testing
-
-- Test individual variant combinations
-- Validate class string outputs
-- Test edge cases and error conditions
-
-### 2. Integration Testing
-
-- Test with real component frameworks
-- Validate TypeScript integration
-- Test complex inheritance scenarios
-
-### 3. Performance Testing
-
-- Bundle size impact measurements
-- Runtime performance benchmarks
-- Memory usage profiling
-
-## Future Roadmap
-
-### 1. Enhanced Type Safety
-
-- Stricter validation for compound variants
-- Better error messages with suggestions
-- Advanced type inference improvements
-
-### 2. Additional Features
-
-- Animation/transition utilities
-- Theme switching capabilities
-- CSS-in-JS integration options
-
-### 3. Developer Tools
-
-- Browser extension for debugging
-- VS Code extension with enhanced IntelliSense
-- CLI tools for migration assistance
-
-## Conclusion
-
-Tailwind Variants (TV) provides a complete solution for managing variants in Tailwind CSS:
-
-- **Type Safety**: Full TypeScript support with strict inference
-- **Flexibility**: Slots, extends and compound variants for every use case
-- **Performance**: Minimal overhead with efficient class merging
-- **DX**: Excellent developer experience with IntelliSense and clear APIs
-- **Scalability**: From simple components to complex design systems
-
-TV is the ideal tool for teams that want to build maintainable, scalable component systems with Tailwind CSS in
-production.
+A browser devtools extension, a VS Code extension, a CLI migration tool and CSS-in-JS integration were once listed as a
+roadmap. None is scheduled: the migration from upstream is an import change, the type surface already drives editor
+completion, and the package stays framework-agnostic by having no runtime beyond string work.
 
 ## License
 
