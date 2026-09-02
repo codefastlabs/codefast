@@ -46,7 +46,7 @@ function DocsIndexPage() {
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {packages.map((pkg) => (
-          <PackageCard key={pkg.slug} pkg={pkg} />
+          <PackageCard key={pkg.slug} pkg={pkg} showDocs />
         ))}
       </div>
     </main>

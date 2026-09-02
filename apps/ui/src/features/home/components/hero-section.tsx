@@ -40,8 +40,8 @@ export function HeroSection() {
             </h1>
 
             <p className="hero-enter mx-auto mb-8 max-w-lg text-lg leading-relaxed text-ui-muted [--hero-enter-delay:200ms] lg:mx-0">
-              {COMPONENT_COUNT}+ accessible UI components, plus variant styling, appearance management, consent-gated
-              tracking, and dependency injection — typed, documented, and published under @codefast.
+              {COMPONENT_COUNT}+ accessible UI components, variant styling, theming, consent-gated tracking, and
+              dependency injection — typed, documented, and published under @codefast.
             </p>
 
             <div className="hero-enter flex flex-col items-center gap-3 [--hero-enter-delay:300ms] sm:flex-row sm:justify-center lg:justify-start">

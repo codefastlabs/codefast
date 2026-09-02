@@ -1,10 +1,16 @@
 import { cn } from "@codefast/ui/lib/utils";
-import { Link } from "@tanstack/react-router";
+import { Link, linkOptions } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
 import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
 import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
+
+/** `@codefast/ui` documents live in its own section, so its sidebar group lists those pages instead of markdown kinds. */
+const UI_SECTION_LINKS = linkOptions([
+  { to: "/ui/components", label: "Components" },
+  { to: "/ui/about", label: "Getting Started" },
+]);
 
 interface DocsSidebarProps extends ComponentProps<"aside"> {
   readonly packages: ReadonlyArray<PackageSummary>;
@@ -22,12 +28,22 @@ export function DocsSidebar({ packages, activePkg, activeDoc, className, ...prop
       >
         <div>
           <Link
-            to="/ui/components"
+            to="/ui"
             className="block rounded-md px-2 py-1 font-medium text-ui-muted no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
           >
             @codefast/ui
           </Link>
-          <p className="px-2 text-xs text-ui-muted">Component docs live in the gallery.</p>
+          <div className="mt-1 space-y-0.5 border-s border-ui-border/60 ps-2">
+            {UI_SECTION_LINKS.map(({ to, label }) => (
+              <Link
+                key={to}
+                to={to}
+                className="block rounded-md px-2 py-1 text-ui-muted no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
         </div>
         {packages.map((pkg) => {
           const isActivePkg = pkg.slug === activePkg;

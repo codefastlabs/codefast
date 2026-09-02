@@ -35,7 +35,7 @@ export function DocHeader({ pkg, doc, className, ...props }: DocHeaderProps) {
         <Button asChild variant="outline" size="sm">
           <a href={sourceUrl} target="_blank" rel="noreferrer">
             <ExternalLinkIcon className="size-3.5" />
-            Edit on GitHub
+            Source on GitHub
           </a>
         </Button>
         <Button asChild variant="outline" size="sm">
