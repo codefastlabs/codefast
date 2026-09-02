@@ -92,4 +92,4 @@ All strictness comes from `base.json`, so every preset inherits it:
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+Released under the [MIT License](./LICENSE).
