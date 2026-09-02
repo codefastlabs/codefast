@@ -362,8 +362,17 @@
   font-weight: 600;
 }
 
+/* Preflight makes every img a block; badges and other inline images must flow with their text. */
 .markdown-body img {
+  display: inline-block;
   max-width: 100%;
+  vertical-align: middle;
+}
+
+/* An image that is a paragraph's only content is a figure: full block, rounded. */
+.markdown-body p > img:only-child,
+.markdown-body p > a:only-child > img:only-child {
+  display: block;
   border-radius: 0.5rem;
 }
 
