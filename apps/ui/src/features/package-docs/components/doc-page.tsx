@@ -48,7 +48,7 @@ export function DocPage({ page, className, ...props }: DocPageProps) {
             items={page.doc.toc}
             className="sticky top-header z-10 -mx-4 mb-6 border-b border-ui-border/60 xl:hidden"
           />
-          <MarkdownBody html={page.doc.html} />
+          <MarkdownBody html={page.doc.html} analyticsName={`${page.doc.pkg}/${page.doc.doc}`} />
           {pkg ? <DocPager pkg={pkg} activeDoc={page.doc.doc} /> : null}
         </div>
 

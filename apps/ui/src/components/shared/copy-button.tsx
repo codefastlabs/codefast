@@ -8,7 +8,7 @@ import type { ComponentProps } from "react";
 import { track } from "#/features/tracking/lib/tracking";
 
 /** `copy_code`'s `kind` values — what's being copied, never the copied text itself. */
-export type CopyAnalyticsKind = "install-command" | "setup-snippet" | "usage-example";
+export type CopyAnalyticsKind = "install-command" | "setup-snippet" | "usage-example" | "doc-snippet";
 
 /**
  * Surface treatments for the copy chip. Colours come from the app's `ui-*`

@@ -75,7 +75,12 @@ function escapeHtml(text: string): string {
 
 /** A fenced block without a known grammar still renders as a code surface, just unhighlighted. */
 function plainCodeBlock(code: string, escaped: boolean | undefined): string {
-  return `<pre class="shiki"><code>${escaped ? code : escapeHtml(code)}</code></pre>\n`;
+  return `<pre class="shiki"><code>${escaped ? code : escapeHtml(code)}</code></pre>`;
+}
+
+/** Wraps a code surface with the copy button `MarkdownBody` handles by event delegation. */
+function codeBlock(pre: string): string {
+  return `<div class="markdown-code">${pre}<button type="button" class="markdown-copy" data-copy-code aria-label="Copy code">Copy</button></div>\n`;
 }
 
 /** Renders one markdown document written at `context` (the package and file the links resolve from). */
@@ -127,7 +132,7 @@ export async function renderMarkdown(source: string, context: LinkContext): Prom
         return `<h${depth} id="${id}"><a href="#${id}" class="heading-anchor">${this.parser.parseInline(tokens)}</a></h${depth}>\n`;
       },
       code(token) {
-        return highlighted.get(token) ?? plainCodeBlock(token.text, token.escaped);
+        return codeBlock(highlighted.get(token) ?? plainCodeBlock(token.text, token.escaped));
       },
       link({ href, title: linkTitle, tokens }) {
         const target = rewriteDocLink(href, context);

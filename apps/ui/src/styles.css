@@ -300,6 +300,57 @@
   border: 1px solid color-mix(in oklab, var(--ui-border) 60%, transparent);
 }
 
+.markdown-body .markdown-code {
+  position: relative;
+  margin: 0 0 1rem;
+}
+
+.markdown-body .markdown-code > pre {
+  margin: 0;
+}
+
+/* Copy chip over a code surface — the `overlay` tone of CopyButton, in plain CSS for static HTML. */
+.markdown-body .markdown-copy {
+  position: absolute;
+  inset-inline-end: 0.75rem;
+  top: 0.75rem;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid color-mix(in oklab, var(--ui-border) 60%, transparent);
+  border-radius: 0.5rem;
+  background-color: color-mix(in oklab, var(--ui-card) 90%, transparent);
+  color: var(--ui-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  opacity: 0;
+  backdrop-filter: blur(4px);
+  transition:
+    opacity 150ms,
+    color 150ms,
+    background-color 150ms;
+}
+
+.markdown-body .markdown-code:hover .markdown-copy,
+.markdown-body .markdown-copy:focus-visible,
+.markdown-body .markdown-copy[data-copied] {
+  opacity: 1;
+}
+
+.markdown-body .markdown-copy:hover {
+  background-color: var(--ui-surface);
+  color: var(--ui-fg);
+}
+
+.markdown-body .markdown-copy[data-copied] {
+  color: var(--ui-fg);
+}
+
+@media (hover: none) {
+  .markdown-body .markdown-copy {
+    opacity: 1;
+  }
+}
+
 .markdown-body pre.shiki {
   overflow-x: auto;
   padding: 1.25rem;
