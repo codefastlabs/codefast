@@ -33,7 +33,7 @@ relative paths.
 
 ## File naming
 
-Rationale and the full checklist live in [`DECISIONS.md`](DECISIONS.md).
+Rationale lives in [`DECISIONS.md`](DECISIONS.md).
 
 - Prefer **one concept per filename** (`grouping.ts`, `grouping-service.ts`, `analyze-service.ts`, `exports.ts`).
 - **`ast/`** uses short names: `ast-node.ts`, `helpers.ts`, `collectors-cn.ts`, `targets.ts`, etc.
@@ -50,7 +50,7 @@ Tests live under [`tests/`](tests/) only (see workspace rules). The CLI Vitest p
 ## Further reading
 
 - Product behavior and commands: [`README.md`](README.md).
-- Refactor rationale and checklist: [`DECISIONS.md`](DECISIONS.md).
+- Design decisions and their reasons: [`DECISIONS.md`](DECISIONS.md).
 
 ## License
 
