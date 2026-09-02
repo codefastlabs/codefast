@@ -15,6 +15,7 @@ describe("package discovery", () => {
 
     expect(di?.docs).toEqual(["readme", "spec", "architecture", "learning", "contributing", "changelog"]);
     expect(di?.version).toMatch(/^\d+\.\d+\.\d+/);
+    expect(di?.license).toBe("MIT");
   });
 
   it("excludes @codefast/ui from the docs section", () => {

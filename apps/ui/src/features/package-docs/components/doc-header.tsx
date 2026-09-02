@@ -1,7 +1,7 @@
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
-import { ExternalLinkIcon, FileTextIcon } from "lucide-react";
+import { ExternalLinkIcon, FileTextIcon, ScaleIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
 import { DOC_KIND_BY_SLUG, docPath } from "#/features/package-docs/lib/doc-kinds";
@@ -42,6 +42,12 @@ export function DocHeader({ pkg, doc, className, ...props }: DocHeaderProps) {
           <a href={packageNpmUrl(pkg.name)} target="_blank" rel="noreferrer">
             <ExternalLinkIcon className="size-3.5" />
             npm
+          </a>
+        </Button>
+        <Button asChild variant="outline" size="sm">
+          <a href={repoBlobUrl(`packages/${pkg.slug}/LICENSE`)} target="_blank" rel="noreferrer">
+            <ScaleIcon className="size-3.5" />
+            {pkg.license} license
           </a>
         </Button>
         <Button asChild variant="ghost" size="sm">
