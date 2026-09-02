@@ -68,6 +68,7 @@ const DOC_KIND_BY_FILE = new Map([
   ["ARCHITECTURE.md", "architecture"],
   ["DECISIONS.md", "decisions"],
   ["LEARNING.md", "learning"],
+  ["CONTRIBUTING.md", "contributing"],
   ["CHANGELOG.md", "changelog"],
 ]);
 
@@ -208,7 +209,7 @@ export default defineConfig(({ command }) => {
          */
         routeRules: {
           ...Object.fromEntries(
-            [...ENTRY_PAGE_PATHS, "/docs/**", ...publicCacheRoutePatterns()].map((pattern) => [
+            [...ENTRY_PAGE_PATHS, "/docs/**", "/og/**", ...publicCacheRoutePatterns()].map((pattern) => [
               pattern,
               { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
             ]),

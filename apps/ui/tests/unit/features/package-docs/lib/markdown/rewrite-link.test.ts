@@ -46,8 +46,8 @@ describe("rewriteDocLink", () => {
   });
 
   it("does not treat an unknown markdown file as a docs page", () => {
-    expect(rewriteDocLink("./CONTRIBUTING.md", inDiReadme)).toBe(
-      "https://github.com/codefastlabs/codefast/blob/main/packages/di/CONTRIBUTING.md",
+    expect(rewriteDocLink("./NOTES.md", inDiReadme)).toBe(
+      "https://github.com/codefastlabs/codefast/blob/main/packages/di/NOTES.md",
     );
   });
 });
