@@ -250,3 +250,7 @@ frame** (not spread across different ancestor nodes).
 
 - **Example 06** — basic `whenNamed`, `whenTagged`, and `whenParentIs` usage.
 - **Example 11** — ancestor tag constraints applied to multi-tenant isolation.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

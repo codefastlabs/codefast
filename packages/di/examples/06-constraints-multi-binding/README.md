@@ -161,3 +161,7 @@ for (const handler of handlers) {
 - **Example 08** — `toAlias` for redirecting one token to another, `BindingIdentifier` for removing a specific named
   binding.
 - **Example 17** — full constraint family for deep ancestor-chain matching.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

@@ -221,3 +221,7 @@ entry while every other test stayed green, and it now runs on every `pnpm test:u
 For a change the property cannot see — one that moves both lanes together, such as a reshape of `resolveVariantClasses`
 — run `collectSweepOutcomes` under each build and diff the two, which is what the property does across an option rather
 than across a version.
+
+## License
+
+Released under the [MIT License](./LICENSE).

@@ -166,3 +166,7 @@ AppContainer
 - **Example 04** — module fundamentals and diamond deduplication.
 - **Example 05** — async lifecycle hooks (`onActivation` / `onDeactivation`).
 - **Example 11** — same pattern applied to multi-tenant isolation.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

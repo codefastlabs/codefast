@@ -145,3 +145,7 @@ restrictive wins).
 
 **V7 — mid-session change.** A second `addEventListener` fire with a changed decision → the reconciled decision updates
 and withdrawal side effects fire if `analytics` flipped false.
+
+## License
+
+Released under the [MIT License](../LICENSE).

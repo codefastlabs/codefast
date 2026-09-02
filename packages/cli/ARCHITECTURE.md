@@ -51,3 +51,7 @@ Tests live under [`tests/`](tests/) only (see workspace rules). The CLI Vitest p
 
 - Product behavior and commands: [`README.md`](README.md).
 - Refactor rationale and checklist: [`DECISIONS.md`](DECISIONS.md).
+
+## License
+
+Released under the [MIT License](./LICENSE).

@@ -99,3 +99,7 @@ listeners stop.
 
 **V8 — mode re-read.** Gate evaluated before resolution uses opt-in (all denied ⇒ analytics false); after a resolve to
 `us`/opt-out with `analytics` requested and no stored decision, the same gate instance evaluates to true.
+
+## License
+
+Released under the [MIT License](../LICENSE).

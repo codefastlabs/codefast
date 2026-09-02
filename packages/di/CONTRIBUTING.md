@@ -165,3 +165,7 @@ the public API changes — and leave `@since` to CI.
 
 `edit resolution/resolver.ts` → `build` → `test:unit` → `bench:isolate` (guard regressions) → `pnpm verify` →
 `changeset` → commit.
+
+## License
+
+Released under the [MIT License](./LICENSE).

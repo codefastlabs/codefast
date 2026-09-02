@@ -146,3 +146,7 @@ These bind the spec to this repository and do not constrain other implementation
   behaviorally (real gtag stub + dataLayer assertions). apps/ui carries the integration matrix
   (`apps/ui/tests/integration/**`). There is no browser e2e suite — the repo has no browser runner, so anything needing
   a real browser is still unproven.
+
+## License
+
+Released under the [MIT License](../LICENSE).

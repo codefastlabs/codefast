@@ -218,3 +218,7 @@ node --import tsx/esm examples/19-custom-metadata-reader/19-custom-metadata-read
 - **Example 08** — `toResolved()` / `toDynamic()`, the decorator-free alternative when you only have a handful of
   foreign classes.
 - **Example 15** — the dependency graph that consumes the same reader.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

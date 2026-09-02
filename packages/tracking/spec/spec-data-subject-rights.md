@@ -130,3 +130,7 @@ analytics gate is independent.
 The standalone-UUID-in-the-system's-own-store personal-data status is **UNCERTAIN**; the Meta "no per-visitor deletion
 API for pixel/CAPI" point should be re-verified against Meta docs at finalization (platform DSR tooling changes); GA4
 deletion timelines are Google-operational and may shift.
+
+## License
+
+Released under the [MIT License](../LICENSE).

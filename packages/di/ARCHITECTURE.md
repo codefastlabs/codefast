@@ -528,3 +528,7 @@ Two things that guide doesn't cover and this engine keeps demonstrating:
 2. **Validate a perf idea by throwaway ablation**, not by reasoning. Build the variant, measure it, delete it — past
    attempts against this engine were mostly wrong in the direction their author expected, which is the best argument for
    measuring rather than arguing.
+
+## License
+
+Released under the [MIT License](./LICENSE).

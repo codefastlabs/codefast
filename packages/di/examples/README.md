@@ -82,3 +82,7 @@ Everything else builds on top of them.
 - Writing tests → `16`
 - Injecting into properties, or into objects a framework constructs → `18`
 - Wiring classes you cannot decorate → `19`
+
+## License
+
+Released under the [MIT License](../LICENSE).

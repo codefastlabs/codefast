@@ -21,3 +21,7 @@ Each document ends with a prose Conformance section, projected into machine-read
 runner for them** — `tests/unit/**` implements the same contract independently, so a vector and a unit test agreeing is
 evidence, not a tautology. The index above lists the seven core documents; four commercial-scope extensions sit
 alongside them.
+
+## License
+
+Released under the [MIT License](./LICENSE).

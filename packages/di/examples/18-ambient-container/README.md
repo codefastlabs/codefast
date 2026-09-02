@@ -161,3 +161,7 @@ node --import tsx/esm examples/18-ambient-container/18-ambient-container.ts
 - **Example 02** — constructor injection with `@inject()` descriptors, the default you should prefer.
 - **Example 06** — named and tagged slots, the same selection the accessor's `{ name }` option performs.
 - **Example 19** — supplying accessor metadata (and everything else) from a custom `MetadataReader`.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

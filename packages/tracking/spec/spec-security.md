@@ -94,3 +94,7 @@ is the index a reviewer reads to see the whole boundary at once.
 - **Legal premises.** The security properties here are engineering guarantees; the _legal sufficiency_ of any of them
   (is the id personal data here? is this sink consent-exempt in this jurisdiction?) is fact-dependent and flagged
   UNCERTAIN in the home documents — counsel review is required before relying on them.
+
+## License
+
+Released under the [MIT License](../LICENSE).

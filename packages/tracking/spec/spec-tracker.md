@@ -73,3 +73,7 @@ V2/V3 semantics, second per V1. No construction-time caching.
 
 **V6 — validation failures propagate.** `track("signup", {"plan": 5})` raises; `track("nope", {})` raises; no
 destination receives anything in either case.
+
+## License
+
+Released under the [MIT License](../LICENSE).

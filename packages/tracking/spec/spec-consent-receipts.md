@@ -150,3 +150,7 @@ text presented (EDPB para 108); a dangling ref is a conformance failure.
 Quebec Law 25's precise record-keeping article vs. its s.14 validity provision; and the concrete retention number per
 target jurisdiction (make it configurable, do not hard-code). (Vietnam's PDPL numbering — Art. 9 consent / Art. 10
 withdrawal — was resolved in the 2026-07-18 verification pass; see §1.)
+
+## License
+
+Released under the [MIT License](../LICENSE).

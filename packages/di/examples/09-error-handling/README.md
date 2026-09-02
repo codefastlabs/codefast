@@ -193,3 +193,7 @@ import {
 
 - **Example 03** — `scoped` scope explained; prerequisite for understanding `ScopeViolationError`.
 - **Example 16** — testing patterns: `validate()` as a wiring smoke-test at the start of integration tests.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

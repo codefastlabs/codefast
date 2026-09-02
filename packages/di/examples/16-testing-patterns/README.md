@@ -194,3 +194,7 @@ containers immediately.
 
 - **Example 09** — `ScopeViolationError`; understand what `validate()` is checking.
 - **Example 15** — `inspect()` and `lookupBindings()` for asserting container state in tests.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

@@ -230,3 +230,7 @@ class SearchController {
   - Scoped containers → **Example 03**
   - `@postConstruct()` / `@preDestroy()` → covered here and in Example 05
   - Testing this architecture → **Example 16**
+
+## License
+
+Released under the [MIT License](../../LICENSE).

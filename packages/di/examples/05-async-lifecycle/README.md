@@ -161,3 +161,7 @@ console.log(db1 === db2); // true — one instance, one connection
 
 - **Example 07** — full web-app combining async modules with per-request scoped containers.
 - **Example 12** — production microservice with DB pools, health checks, and graceful shutdown.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

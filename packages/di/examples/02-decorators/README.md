@@ -145,3 +145,7 @@ console.log(first === second); // true — same instance
 
 - **Example 03** — scoped lifetime and child containers (per-request isolation).
 - **Example 08** — plain tokens in `@injectable` (no `inject()` wrapper needed for the simple case).
+
+## License
+
+Released under the [MIT License](../../LICENSE).
