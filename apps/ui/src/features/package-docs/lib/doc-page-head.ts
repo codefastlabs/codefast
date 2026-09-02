@@ -4,10 +4,12 @@
  */
 import { DOC_KIND_BY_SLUG, docPath } from "#/features/package-docs/lib/doc-kinds";
 import type { DocPage } from "#/features/package-docs/lib/rendered-doc";
-import { SITE_OG_IMAGE, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
+import { absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 
 interface DocPageHead {
-  readonly meta: Array<{ title: string } | { name: string; content: string } | { property: "og:url"; content: string }>;
+  readonly meta: Array<
+    { title: string } | { name: string; content: string } | { property: "og:url" | "og:image"; content: string }
+  >;
   readonly links: Array<{ rel: "canonical"; href: string }>;
   readonly scripts: Array<ReturnType<typeof jsonLdScript>>;
 }
@@ -36,9 +38,17 @@ export function docPageHead(page: DocPage | undefined): DocPageHead {
   const seo = canonicalHead(path);
   const title = pageTitle(page.doc.title, name, DOC_KIND_BY_SLUG.get(page.doc.doc)?.label ?? page.doc.doc);
   const description = pkg?.description ?? `${page.doc.title} for ${name}.`;
+  // Rendered by `scripts/generate-og-image.ts`; the root's site-wide image is the fallback for a package without one.
+  const image = absoluteUrl(`/og/${page.doc.pkg}.png`);
 
   return {
-    meta: [{ title }, { name: "description", content: description }, ...seo.meta],
+    meta: [
+      { title },
+      { name: "description", content: description },
+      { property: "og:image", content: image },
+      { name: "twitter:image", content: image },
+      ...seo.meta,
+    ],
     links: seo.links,
     scripts: [
       jsonLdScript({
@@ -48,7 +58,7 @@ export function docPageHead(page: DocPage | undefined): DocPageHead {
         name: page.doc.title,
         description,
         url: absoluteUrl(path),
-        image: SITE_OG_IMAGE,
+        image,
       }),
       jsonLdScript({
         "@context": "https://schema.org",
