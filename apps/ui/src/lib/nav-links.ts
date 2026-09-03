@@ -4,6 +4,7 @@
  * navigation surface updates at once.
  */
 import { linkOptions } from "@tanstack/react-router";
+import type { ActiveOptions } from "@tanstack/react-router";
 
 /**
  * Primary in-app routes. Built with `linkOptions` so every `to` is validated
@@ -25,6 +26,15 @@ export const UI_NAV = linkOptions([
   { to: "/ui/components", label: "Components" },
   { to: "/ui/about", label: "Getting Started" },
 ]);
+
+/**
+ * Active-link options for a link that names one page: current on that page alone, not on the pages beneath it.
+ *
+ * @remarks
+ * A `<Link>` is active by default whenever its path is a prefix of the current one, which would mark a package and
+ * its document `aria-current` alongside the page actually being read.
+ */
+export const CURRENT_PAGE_ONLY: ActiveOptions = { exact: true };
 
 /** Every navigable page in display order — footer and command palette. */
 export const ALL_NAV = [...PRIMARY_NAV, ...UI_NAV] as const;

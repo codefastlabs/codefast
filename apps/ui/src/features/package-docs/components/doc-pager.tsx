@@ -7,6 +7,7 @@ import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
 import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
 import { isSameDoc, readingOrder } from "#/features/package-docs/lib/reading-order";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
+import { CURRENT_PAGE_ONLY } from "#/lib/nav-links";
 
 interface DocPagerProps extends ComponentProps<"nav"> {
   readonly pkg: PackageSummary;
@@ -42,18 +43,28 @@ function PagerLink({ pkg, target, direction }: PagerLinkProps) {
 
   if (target.page !== undefined) {
     return (
-      <Link to="/docs/$pkg/$kind/$page" params={{ pkg, kind: target.kind, page: target.page }} className={className}>
+      <Link
+        to="/docs/$pkg/$kind/$page"
+        params={{ pkg, kind: target.kind, page: target.page }}
+        activeOptions={CURRENT_PAGE_ONLY}
+        className={className}
+      >
         {body}
       </Link>
     );
   }
 
   return target.kind === "readme" ? (
-    <Link to="/docs/$pkg" params={{ pkg }} className={className}>
+    <Link to="/docs/$pkg" params={{ pkg }} activeOptions={CURRENT_PAGE_ONLY} className={className}>
       {body}
     </Link>
   ) : (
-    <Link to="/docs/$pkg/$kind" params={{ pkg, kind: target.kind }} className={className}>
+    <Link
+      to="/docs/$pkg/$kind"
+      params={{ pkg, kind: target.kind }}
+      activeOptions={CURRENT_PAGE_ONLY}
+      className={className}
+    >
       {body}
     </Link>
   );

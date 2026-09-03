@@ -42,7 +42,7 @@ export function DocPage({ data, className, ...props }: DocPageProps) {
                 trail={doc.page === undefined ? [] : [{ kind: doc.kind, label: kindLabel }]}
                 current={doc.kind === "readme" ? undefined : (doc.page ?? kindLabel)}
               />
-              <DocTabs pkg={pkg} activeDoc={doc} className="mb-8 lg:hidden" />
+              <DocTabs pkg={pkg} className="mb-8 lg:hidden" />
               <DocHeader pkg={pkg} doc={doc} />
             </>
           ) : null}

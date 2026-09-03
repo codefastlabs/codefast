@@ -3,17 +3,15 @@ import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
 import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
-import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
+import { CURRENT_PAGE_ONLY } from "#/lib/nav-links";
 
 interface DocTabsProps extends ComponentProps<"nav"> {
   readonly pkg: PackageSummary;
-  /** The document being read; the tab of its kind is highlighted. */
-  readonly activeDoc: DocRef;
 }
 
 /** The current package's document kinds as a scrollable tab strip — the sidebar's role on screens that hide it. */
-export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
+export function DocTabs({ pkg, className, ...props }: DocTabsProps) {
   if (pkg.docs.length < 2) {
     return null;
   }
@@ -28,20 +26,19 @@ export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
       {...props}
     >
       {pkg.docs.map(({ kind }) => {
-        const isActive = kind === activeDoc.kind;
         const label = DOC_KIND_BY_SLUG.get(kind)?.label ?? kind;
-        const linkClassName = cn(
-          "-mb-px shrink-0 border-b-2 px-3 py-2.5 text-sm whitespace-nowrap no-underline transition-colors",
-          isActive ? "border-ui-brand font-medium text-ui-fg" : "border-transparent text-ui-muted hover:text-ui-fg",
-        );
 
+        // A kind's tab stays current on the pages beneath it, which have no tab of their own; the README's path
+        // is every page's prefix, so its tab alone must match exactly.
         return kind === "readme" ? (
           <Link
             key={kind}
             to="/docs/$pkg"
             params={{ pkg: pkg.slug }}
-            aria-current={isActive ? "page" : undefined}
-            className={linkClassName}
+            activeOptions={CURRENT_PAGE_ONLY}
+            className="-mb-px shrink-0 border-b-2 px-3 py-2.5 text-sm whitespace-nowrap no-underline transition-colors"
+            activeProps={{ className: "border-ui-brand font-medium text-ui-fg" }}
+            inactiveProps={{ className: "border-transparent text-ui-muted hover:text-ui-fg" }}
           >
             {label}
           </Link>
@@ -50,8 +47,9 @@ export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
             key={kind}
             to="/docs/$pkg/$kind"
             params={{ pkg: pkg.slug, kind }}
-            aria-current={isActive ? "page" : undefined}
-            className={linkClassName}
+            className="-mb-px shrink-0 border-b-2 px-3 py-2.5 text-sm whitespace-nowrap no-underline transition-colors"
+            activeProps={{ className: "border-ui-brand font-medium text-ui-fg" }}
+            inactiveProps={{ className: "border-transparent text-ui-muted hover:text-ui-fg" }}
           >
             {label}
           </Link>

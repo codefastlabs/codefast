@@ -36,3 +36,6 @@ Object.defineProperty(window, "localStorage", {
   value: new MockStorage(),
   writable: true,
 });
+
+// jsdom only logs "Not implemented" for scrollTo, which the router calls on every load it renders.
+window.scrollTo = () => {};
