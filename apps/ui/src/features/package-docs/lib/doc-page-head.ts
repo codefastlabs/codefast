@@ -14,6 +14,13 @@ interface DocPageHead {
   readonly scripts: Array<ReturnType<typeof jsonLdScript>>;
 }
 
+interface BreadcrumbItem {
+  readonly "@type": "ListItem";
+  readonly position: number;
+  readonly name: string;
+  readonly item: string;
+}
+
 /**
  * The `<title>` of a doc page. A document already named after its package keeps that name once —
  * `@codefast/di` becomes `@codefast/di — Overview`, `@codefast/tracking — Spec` stays as written — and
@@ -27,6 +34,31 @@ export function pageTitle(docTitle: string, packageName: string, kindLabel: stri
   return docTitle.includes(packageName) ? docTitle : `${docTitle} — ${packageName}`;
 }
 
+/** Home › Packages › the package › its kind › the page, each crumb dropped when the document is the level above it. */
+function breadcrumbItems(page: DocPage, packageName: string, kindLabel: string): Array<BreadcrumbItem> {
+  const { pkg, doc, page: subPage, title } = page.doc;
+  const crumbs: Array<[name: string, path: string]> = [
+    ["Home", "/"],
+    ["Packages", "/docs"],
+    [packageName, docPath(pkg, "readme")],
+  ];
+
+  if (doc !== "readme") {
+    crumbs.push([subPage === undefined ? title : kindLabel, docPath(pkg, doc)]);
+  }
+
+  if (subPage !== undefined) {
+    crumbs.push([title, docPath(pkg, doc, subPage)]);
+  }
+
+  return crumbs.map(([name, path], index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name,
+    item: absoluteUrl(path),
+  }));
+}
+
 export function docPageHead(page: DocPage | undefined): DocPageHead {
   if (!page) {
     return { meta: [{ title: "Documentation — Codefast Labs" }], links: [], scripts: [] };
@@ -34,9 +66,10 @@ export function docPageHead(page: DocPage | undefined): DocPageHead {
 
   const pkg = page.packages.find((candidate) => candidate.slug === page.doc.pkg);
   const name = pkg?.name ?? `@codefast/${page.doc.pkg}`;
-  const path = docPath(page.doc.pkg, page.doc.doc);
+  const path = docPath(page.doc.pkg, page.doc.doc, page.doc.page);
   const seo = canonicalHead(path);
-  const title = pageTitle(page.doc.title, name, DOC_KIND_BY_SLUG.get(page.doc.doc)?.label ?? page.doc.doc);
+  const kindLabel = DOC_KIND_BY_SLUG.get(page.doc.doc)?.label ?? page.doc.doc;
+  const title = pageTitle(page.doc.title, name, kindLabel);
   const description = pkg?.description ?? `${page.doc.title} for ${name}.`;
   // Rendered by `scripts/generate-og-image.ts`; the root's site-wide image is the fallback for a package without one.
   const image = absoluteUrl(`/og/${page.doc.pkg}.png`);
@@ -63,14 +96,7 @@ export function docPageHead(page: DocPage | undefined): DocPageHead {
       jsonLdScript({
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-          { "@type": "ListItem", position: 2, name: "Packages", item: absoluteUrl("/docs") },
-          { "@type": "ListItem", position: 3, name, item: absoluteUrl(docPath(page.doc.pkg, "readme")) },
-          ...(page.doc.doc === "readme"
-            ? []
-            : [{ "@type": "ListItem", position: 4, name: page.doc.title, item: absoluteUrl(path) }]),
-        ],
+        itemListElement: breadcrumbItems(page, name, kindLabel),
       }),
     ],
   };

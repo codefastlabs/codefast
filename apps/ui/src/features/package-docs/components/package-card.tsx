@@ -16,7 +16,7 @@ interface PackageCardProps extends Omit<ComponentProps<"article">, "children"> {
 /** One published package: name, version, description, and the way into its documentation. */
 export function PackageCard({ pkg, showDocs = false, className, ...props }: PackageCardProps) {
   const isUi = pkg.slug === "ui";
-  const extraDocs = showDocs && !isUi ? pkg.docs.filter((doc) => doc !== "readme") : [];
+  const extraDocs = showDocs && !isUi ? pkg.docs.map(({ doc }) => doc).filter((doc) => doc !== "readme") : [];
 
   return (
     <article

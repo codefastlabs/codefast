@@ -11,7 +11,7 @@ interface DocTabsProps extends ComponentProps<"nav"> {
   readonly activeDoc: DocKindSlug;
 }
 
-/** The current package's documents as a scrollable tab strip — the sidebar's role on screens that hide it. */
+/** The current package's document kinds as a scrollable tab strip — the sidebar's role on screens that hide it. */
 export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
   if (pkg.docs.length < 2) {
     return null;
@@ -26,7 +26,7 @@ export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
       )}
       {...props}
     >
-      {pkg.docs.map((doc) => {
+      {pkg.docs.map(({ doc }) => {
         const isActive = doc === activeDoc;
         const label = DOC_KIND_BY_SLUG.get(doc)?.label ?? doc;
         const linkClassName = cn(

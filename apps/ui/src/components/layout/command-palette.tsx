@@ -15,8 +15,9 @@ import { useCallback, useEffect, useEffectEvent, useRef, useState, useSyncExtern
 
 import { NewBadge } from "#/components/shared/new-badge";
 import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
-import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
+import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
 import { getPackages } from "#/features/package-docs/lib/package-docs";
+import { packagePages } from "#/features/package-docs/lib/package-pages";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 import { track } from "#/features/tracking/lib/tracking";
 import {
@@ -27,6 +28,29 @@ import {
 import type { PrimaryNavPath } from "#/lib/nav-links";
 import { ALL_NAV } from "#/lib/nav-links";
 import { COMPONENTS } from "#/registry/_core/components";
+
+/** A palette row for one package document: where it goes, and the label after the package name (empty for the README). */
+interface PackageDocEntry {
+  readonly ref: DocRef;
+  readonly label: string;
+}
+
+/** The rows of one package: each kind and, beneath a directory kind, its pages; `@codefast/ui` has only its own section. */
+function packageDocEntries(pkg: PackageSummary): Array<PackageDocEntry> {
+  if (pkg.slug === "ui") {
+    return [{ ref: { doc: "readme" }, label: "" }];
+  }
+
+  return packagePages(pkg).map((ref) => {
+    const kindLabel = DOC_KIND_BY_SLUG.get(ref.doc)?.label ?? ref.doc;
+
+    if (ref.doc === "readme") {
+      return { ref, label: "" };
+    }
+
+    return { ref, label: ref.page === undefined ? kindLabel : `${kindLabel} · ${ref.page}` };
+  });
+}
 
 /** Debounce before tracking a search query — avoids firing `search_query` per keystroke. */
 const SEARCH_TRACK_DEBOUNCE_MS = 500;
@@ -161,7 +185,7 @@ export function CommandPalette() {
   );
 
   const goToPackageDoc = useCallback(
-    (pkg: string, doc: DocKindSlug) => {
+    (pkg: string, { doc, page }: DocRef) => {
       track("select_search_result", {
         resultType: "package",
         slug: pkg,
@@ -171,6 +195,8 @@ export function CommandPalette() {
 
       if (pkg === "ui") {
         void navigate({ to: "/ui" });
+      } else if (page !== undefined) {
+        void navigate({ to: "/docs/$pkg/$doc/$page", params: { pkg, doc, page } });
       } else if (doc === "readme") {
         void navigate({ to: "/docs/$pkg", params: { pkg } });
       } else {
@@ -220,21 +246,18 @@ export function CommandPalette() {
             {packages.length > 0 ? (
               <CommandGroup heading="Packages">
                 {packages.flatMap((pkg) =>
-                  (pkg.slug === "ui" ? (["readme"] as const) : pkg.docs).map((doc) => {
-                    const kind = DOC_KIND_BY_SLUG.get(doc);
-                    const isReadme = doc === "readme";
-
+                  packageDocEntries(pkg).map(({ ref, label }) => {
                     return (
                       <CommandItem
-                        key={`${pkg.slug}/${doc}`}
-                        value={`package ${pkg.name} ${isReadme ? "" : (kind?.label ?? doc)}`}
+                        key={`${pkg.slug}/${ref.doc}/${ref.page ?? ""}`}
+                        value={`package ${pkg.name} ${label}`}
                         onSelect={() => {
-                          goToPackageDoc(pkg.slug, doc);
+                          goToPackageDoc(pkg.slug, ref);
                         }}
                       >
                         <span className="grow">
                           {pkg.name}
-                          {isReadme ? null : <span className="text-ui-muted"> · {kind?.label ?? doc}</span>}
+                          {label ? <span className="text-ui-muted"> · {label}</span> : null}
                         </span>
                         <span className="font-mono text-xs text-ui-muted" data-slot="command-shortcut">
                           v{pkg.version}

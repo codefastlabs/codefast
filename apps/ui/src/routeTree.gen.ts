@@ -22,6 +22,8 @@ import { Route as DocsPkgChar123docChar125DotmdRouteImport } from './routes/docs
 import { Route as UiComponentsIndexRouteImport } from './routes/ui/components/index'
 import { Route as UiComponentsSlugRouteImport } from './routes/ui/components/$slug'
 import { Route as UiComponentsChar123slugChar125DotmdRouteImport } from './routes/ui/components/{$slug}[.]md'
+import { Route as DocsPkgDocPageRouteImport } from './routes/docs/$pkg_/$doc_/$page'
+import { Route as DocsPkgDocChar123pageChar125DotmdRouteImport } from './routes/docs/$pkg_/$doc_/{$page}[.]md'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -91,6 +93,17 @@ const UiComponentsChar123slugChar125DotmdRoute =
     path: '/ui/components/{$slug}.md',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DocsPkgDocPageRoute = DocsPkgDocPageRouteImport.update({
+  id: '/docs/$pkg_/$doc_/$page',
+  path: '/docs/$pkg/$doc/$page',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsPkgDocChar123pageChar125DotmdRoute =
+  DocsPkgDocChar123pageChar125DotmdRouteImport.update({
+    id: '/docs/$pkg_/$doc_/{$page}.md',
+    path: '/docs/$pkg/$doc/{$page}.md',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -106,6 +119,8 @@ export interface FileRoutesByFullPath {
   '/ui/components/$slug': typeof UiComponentsSlugRoute
   '/ui/components/{$slug}.md': typeof UiComponentsChar123slugChar125DotmdRoute
   '/ui/components/': typeof UiComponentsIndexRoute
+  '/docs/$pkg/$doc/$page': typeof DocsPkgDocPageRoute
+  '/docs/$pkg/$doc/{$page}.md': typeof DocsPkgDocChar123pageChar125DotmdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -121,6 +136,8 @@ export interface FileRoutesByTo {
   '/ui/components/$slug': typeof UiComponentsSlugRoute
   '/ui/components/{$slug}.md': typeof UiComponentsChar123slugChar125DotmdRoute
   '/ui/components': typeof UiComponentsIndexRoute
+  '/docs/$pkg/$doc/$page': typeof DocsPkgDocPageRoute
+  '/docs/$pkg/$doc/{$page}.md': typeof DocsPkgDocChar123pageChar125DotmdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -137,6 +154,8 @@ export interface FileRoutesById {
   '/ui/components/$slug': typeof UiComponentsSlugRoute
   '/ui/components/{$slug}.md': typeof UiComponentsChar123slugChar125DotmdRoute
   '/ui/components/': typeof UiComponentsIndexRoute
+  '/docs/$pkg_/$doc_/$page': typeof DocsPkgDocPageRoute
+  '/docs/$pkg_/$doc_/{$page}.md': typeof DocsPkgDocChar123pageChar125DotmdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -154,6 +173,8 @@ export interface FileRouteTypes {
     | '/ui/components/$slug'
     | '/ui/components/{$slug}.md'
     | '/ui/components/'
+    | '/docs/$pkg/$doc/$page'
+    | '/docs/$pkg/$doc/{$page}.md'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -169,6 +190,8 @@ export interface FileRouteTypes {
     | '/ui/components/$slug'
     | '/ui/components/{$slug}.md'
     | '/ui/components'
+    | '/docs/$pkg/$doc/$page'
+    | '/docs/$pkg/$doc/{$page}.md'
   id:
     | '__root__'
     | '/'
@@ -184,6 +207,8 @@ export interface FileRouteTypes {
     | '/ui/components/$slug'
     | '/ui/components/{$slug}.md'
     | '/ui/components/'
+    | '/docs/$pkg_/$doc_/$page'
+    | '/docs/$pkg_/$doc_/{$page}.md'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -200,6 +225,8 @@ export interface RootRouteChildren {
   UiComponentsSlugRoute: typeof UiComponentsSlugRoute
   UiComponentsChar123slugChar125DotmdRoute: typeof UiComponentsChar123slugChar125DotmdRoute
   UiComponentsIndexRoute: typeof UiComponentsIndexRoute
+  DocsPkgDocPageRoute: typeof DocsPkgDocPageRoute
+  DocsPkgDocChar123pageChar125DotmdRoute: typeof DocsPkgDocChar123pageChar125DotmdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -295,6 +322,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UiComponentsChar123slugChar125DotmdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs/$pkg_/$doc_/$page': {
+      id: '/docs/$pkg_/$doc_/$page'
+      path: '/docs/$pkg/$doc/$page'
+      fullPath: '/docs/$pkg/$doc/$page'
+      preLoaderRoute: typeof DocsPkgDocPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/$pkg_/$doc_/{$page}.md': {
+      id: '/docs/$pkg_/$doc_/{$page}.md'
+      path: '/docs/$pkg/$doc/{$page}.md'
+      fullPath: '/docs/$pkg/$doc/{$page}.md'
+      preLoaderRoute: typeof DocsPkgDocChar123pageChar125DotmdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -313,6 +354,9 @@ const rootRouteChildren: RootRouteChildren = {
   UiComponentsChar123slugChar125DotmdRoute:
     UiComponentsChar123slugChar125DotmdRoute,
   UiComponentsIndexRoute: UiComponentsIndexRoute,
+  DocsPkgDocPageRoute: DocsPkgDocPageRoute,
+  DocsPkgDocChar123pageChar125DotmdRoute:
+    DocsPkgDocChar123pageChar125DotmdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

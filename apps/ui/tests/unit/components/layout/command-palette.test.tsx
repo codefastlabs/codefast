@@ -24,7 +24,17 @@ beforeEach(() => {
   navigate.mockClear();
   getPackages.mockReset();
   getPackages.mockResolvedValue([
-    { slug: "di", name: "@codefast/di", description: "DI", version: "0.8.0", license: "MIT", docs: ["readme", "spec"] },
+    {
+      slug: "di",
+      name: "@codefast/di",
+      description: "DI",
+      version: "0.8.0",
+      license: "MIT",
+      docs: [
+        { doc: "readme", pages: [] },
+        { doc: "spec", pages: [] },
+      ],
+    },
   ]);
 
   // cmdk's list measures/scrolls selection; jsdom lacks both APIs.
