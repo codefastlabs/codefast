@@ -13,16 +13,16 @@ lives at repo level any more.
 
 ---
 
-## 1. The model in one sentence
+## The model in one sentence
 
 **The board tracks issues, not PRs.** An issue moves from `Inbox` down to `Done` almost entirely automatically; a PR
 only affects the status of the issue it is linked to, and never appears as a card itself.
 
-## 2. Fields
+## Fields
 
 | Field     | Type          | Meaning                                                                                                     |
 | --------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
-| `Status`  | single-select | The stage in the workflow — see §3                                                                          |
+| `Status`  | single-select | The stage in the workflow — see [Status](#status)                                                           |
 | `Package` | single-select | `ui` · `di` · `tailwind-variants` · `theme` · `tracking` · `cli` · `benchmark` · `apps/ui` · `repo-tooling` |
 | `Kind`    | single-select | `feat` · `fix` · `perf` · `docs` · `dx` · `chore` · `idea` · `learn`                                        |
 | `Target`  | text          | **Which downstream project needs this.** Not a version milestone — versions are per package                 |
@@ -35,7 +35,9 @@ becomes the commit prefix directly.
 
 `Kind` and `Target` have **no workflow filling them in** — set them by hand at triage.
 
-## 3. Status — six stages
+<a id="status"></a>
+
+## Status — six stages
 
 | Stage         | Meaning             | Who sets it                          | Rule                                              |
 | ------------- | ------------------- | ------------------------------------ | ------------------------------------------------- |
@@ -54,17 +56,17 @@ Three rules keep the board from rotting, and dropping any one of them rots it:
 
 > To park an idea use `Someday`, **not `Done`** — `Done` will close draft issues too.
 
-## 4. The seven automated workflows
+## The seven automated workflows
 
-| Workflow                       | Trigger                          | Action                 |
-| ------------------------------ | -------------------------------- | ---------------------- |
-| `Auto-add to project`          | an issue matches the filter (§5) | add it to the board    |
-| `Item added to project`        | an item reaches the board        | `Status: Inbox`        |
-| `Pull request linked to issue` | a PR is linked to an issue       | `Status: In review`    |
-| `Item closed`                  | an issue/PR closes               | `Status: Done`         |
-| `Pull request merged`          | a PR merges                      | `Status: Done`         |
-| `Auto-close issue`             | `Status` changes to `Done`       | **close the issue**    |
-| `Auto-add sub-issues`          | an item has sub-issues           | add the sub-issues too |
+| Workflow                       | Trigger                                                                         | Action                 |
+| ------------------------------ | ------------------------------------------------------------------------------- | ---------------------- |
+| `Auto-add to project`          | an issue matches the filter ([What reaches the board](#what-reaches-the-board)) | add it to the board    |
+| `Item added to project`        | an item reaches the board                                                       | `Status: Inbox`        |
+| `Pull request linked to issue` | a PR is linked to an issue                                                      | `Status: In review`    |
+| `Item closed`                  | an issue/PR closes                                                              | `Status: Done`         |
+| `Pull request merged`          | a PR merges                                                                     | `Status: Done`         |
+| `Auto-close issue`             | `Status` changes to `Done`                                                      | **close the issue**    |
+| `Auto-add sub-issues`          | an item has sub-issues                                                          | add the sub-issues too |
 
 The last two close the loop in both directions: closing an issue moves its card to `Done`, and dragging a card to `Done`
 closes the issue. There is no status left to fix by hand.
@@ -72,7 +74,9 @@ closes the issue. There is no status left to fix by hand.
 `Pull request linked to issue` **does not pull the PR onto the board** — it sets a field on the **issue**. That is why
 the board can know an issue is awaiting review without containing any PRs.
 
-## 5. What reaches the board, and what does not
+<a id="what-reaches-the-board"></a>
+
+## What reaches the board, and what does not
 
 The `Auto-add to project` filter:
 
@@ -87,7 +91,7 @@ is:issue is:open -label:dependencies -label:github-actions
 - **Your own PRs do not reach the board either.** A small PR with no linked issue is invisible to the board — that is
   deliberate, not an oversight.
 
-## 6. Ideas, learning goals, and vision
+## Ideas, learning goals, and vision
 
 These three kinds of content have **different ending conditions**, so they live in different places:
 
@@ -109,7 +113,7 @@ Creating a draft quickly through the API:
 gh api graphql -f query='mutation { addProjectV2DraftIssue(input:{ projectId:"PVT_kwDOBoFaAM4BfM8Z", title:"…", body:"…" }) { projectItem { id } } }'
 ```
 
-## 7. The four views
+## The four views
 
 | #   | View         | Layout | Group     | Filter              | Use it for                                     |
 | --- | ------------ | ------ | --------- | ------------------- | ---------------------------------------------- |
@@ -124,7 +128,7 @@ The view numbers jump from 3 to 5 because the `Roadmap` view (number 4) was dele
 The `Perf` view lines up with existing infrastructure: the `performance` label, the
 `.github/ISSUE_TEMPLATE/performance-regression.yml` issue template, and `benchmarks/*`.
 
-## 8. The operating rhythm
+## The operating rhythm
 
 | Rhythm           | What to do                                                                                                                   |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------- |

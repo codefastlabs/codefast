@@ -8,7 +8,7 @@ How to use the board is in [`guides/github-project-board.md`](../guides/github-p
 
 ---
 
-## 1. The context at design time
+## The context at design time
 
 The state of the repo when the board was built, because it decided nearly every choice:
 
@@ -21,15 +21,15 @@ The state of the repo when the board was built, because it decided nearly every 
 With 0 issues and one person working, a Jira-style board with 8 fields would be dead in two weeks. **Every field is a
 tax paid on every item**, so exactly 4 were settled on.
 
-## 2. The decisions
+## The decisions
 
-### 2.1 An org-level board, not a repo-level one
+### An org-level board, not a repo-level one
 
 Projects (classic) has been killed off. `github.com/codefastlabs/codefast/projects` is only a listing page. The real
 board lives at `orgs/codefastlabs/projects/4` and is linked into the repo — with the upside that it can later span
 several of the org's repos.
 
-### 2.2 Four fields, no more
+### Four fields, no more
 
 `Status` · `Package` · `Kind` · `Target`.
 
@@ -39,7 +39,7 @@ several of the org's repos.
 `Package` is kept because this is a monorepo: the real day-to-day question is _"what is still outstanding in which
 package"_, not _"what priority is this issue"_.
 
-### 2.3 Auto-add issues only, never PRs
+### Auto-add issues only, never PRs
 
 > **This was forced by the platform, not the original choice.**
 >
@@ -69,7 +69,7 @@ This is offset by the `Pull request linked to issue` workflow → the issue move
 out, because it is easy to misread: that workflow **sets a field on the issue**, it does **not** pull the PR onto the
 board.
 
-### 2.4 Adding a `Someday` stage
+### Adding a `Someday` stage
 
 The first `Status` set had 5 stages: `Inbox → Next → In progress → In review → Done`.
 
@@ -79,7 +79,7 @@ for months. Park an idea in `Inbox` and the rule dies in week one — which is e
 Adding `Someday` resolves the conflict: `Inbox` = not yet triaged (empty every week), `Someday` = deliberately parked
 (re-read every release), `Next` = committed to.
 
-### 2.5 Ideas and learning goals are draft issues
+### Ideas and learning goals are draft issues
 
 Not real issues: they burn no issue number, send no notifications, and leak nothing publicly before they are ripe.
 
@@ -89,15 +89,15 @@ Verified experimentally (create a draft → read the field → delete): a draft 
 Purely personal learning, unrelated to the repo, **does not belong in this project** — mixing "learn Rust" with "fix RTL
 for Tooltip" destroys the very signal the board exists to give: _what can actually ship_.
 
-### 2.6 Turning on `Auto-close issue`
+### Turning on `Auto-close issue`
 
 Drag a card to `Done` → the issue closes itself. Together with `Item closed` → `Done`, the loop is closed in both
 directions, with no idempotency loop because both ends converge.
 
-**A side effect worth knowing:** it applies to draft issues too. That is why §3 of the guide stresses parking ideas in
-`Someday` rather than `Done`.
+**A side effect worth knowing:** it applies to draft issues too. That is why the guide's
+[Status section](../guides/github-project-board.md#status) stresses parking ideas in `Someday` rather than `Done`.
 
-### 2.7 Deleting the `Roadmap` view
+### Deleting the `Roadmap` view
 
 Created, then deleted. Two reasons:
 
@@ -109,7 +109,7 @@ Created, then deleted. Two reasons:
 Keeping it would only be a dead tab. If a timeline is genuinely needed later: add a `Target date` field of type DATE, do
 not change `Target`.
 
-### 2.8 `Target` means a downstream project, not a version milestone
+### `Target` means a downstream project, not a version milestone
 
 This is an **internal-first project**, and each package versions independently — so a 1.0 would be one package's own
 decision, never a repo-wide milestone a board field could track.
@@ -121,12 +121,12 @@ A note alongside it: the evidence in the repo (npm `access: public`, the codefas
 downloads/bundle-size badges) all points at "a public product" — **the opposite of the real intent**. That is exactly
 why this has to be written down rather than left for each reader to re-infer from the repo.
 
-### 2.9 Keeping the project private
+### Keeping the project private
 
 Making it public, so the board could serve as a roadmap for outsiders, was considered. Settled on **private** — it fits
 the internal nature of the project, and it is what decision 2.7 follows from.
 
-## 3. GitHub Projects limits encountered
+## GitHub Projects limits encountered
 
 Recorded so they do not have to be rediscovered:
 
@@ -139,7 +139,7 @@ Recorded so they do not have to be rediscovered:
 | `filter` exists only on `updateProjectV2View`, not on `createProjectV2View` | Creating a view then setting its filter is two steps                             |
 | The Roadmap layout needs a DATE field                                       | → decision 2.7                                                                   |
 
-## 4. Considered and rejected
+## Considered and rejected
 
 - **One project per package** (9 projects) — rejected: it splits one stream of work apart, and the `Package` field
   already covers that need.
@@ -149,7 +149,7 @@ Recorded so they do not have to be rediscovered:
   schedule, so a text `Target` fits better than a fixed-length iteration.
 - **The `good first issue` / `help wanted` labels** — currently meaningless for an internal project, not yet cleaned up.
 
-## 5. Still open
+## Still open
 
 - The public-facing signals on an internal project: npm `access: public`, the doc site, and the two labels above.
   Whether to clean them up or leave them is undecided.

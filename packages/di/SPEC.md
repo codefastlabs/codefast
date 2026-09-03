@@ -5,27 +5,7 @@
 
 ---
 
-## Table of contents
-
-1. [Background and goals](#1-background-and-goals)
-2. [Design principles](#2-design-principles)
-3. [Foundation types](#3-foundation-types)
-4. [Token API](#4-token-api)
-5. [Binding API](#5-binding-api)
-6. [Container API](#6-container-api)
-7. [Decorator layer](#7-decorator-layer)
-8. [Advanced Constraints](#8-advanced-constraints)
-9. [Module system](#9-module-system)
-10. [Error hierarchy](#10-error-hierarchy)
-11. [File structure](#11-file-structure)
-12. [Roadmap](#12-roadmap)
-13. [Technical stack](#13-technical-stack)
-14. [Testing guide](#14-testing-guide)
-15. [Comparison with InversifyJS v8](#15-comparison-with-inversifyjs-v8)
-
----
-
-## 1. Background and goals
+## Background and goals
 
 ### What InversifyJS v8 solved
 
@@ -61,9 +41,11 @@ still returns the wrong type.
 
 ---
 
-## 2. Design principles
+## Design principles
 
-### 2.1 Naming — no `I` or `T` prefix
+<a id="naming"></a>
+
+### Naming — no `I` or `T` prefix
 
 | Avoid                   | Use                              | Why                                                  |
 | ----------------------- | -------------------------------- | ---------------------------------------------------- |
@@ -77,7 +59,7 @@ This rule applies to the library's own code and to every illustrative snippet in
 external API verbatim (Inversify's `Newable<T>`, for instance), the original spelling may stay so the comparison does
 not distort the source.
 
-### 2.2 Naming — sync/async convention
+### Naming — sync/async convention
 
 One consistent rule: **unqualified = sync, `Async` suffix = async**. There is never a `Sync` suffix.
 
@@ -88,7 +70,7 @@ container.load(AppModule); // sync
 container.loadAsync(LazyModule); // async — the module has async setup
 ```
 
-### 2.3 Token replaces ServiceIdentifier
+### Token replaces ServiceIdentifier
 
 InversifyJS uses `string | symbol | Newable<T>` as the service identifier — flexible, but not type-safe.
 `container.get<WrongType>('my-service')` compiles and returns the wrong type.
@@ -98,7 +80,7 @@ token, but `Token<Value>` is the preferred form when an abstraction is needed.
 
 <a id="chain-order"></a>
 
-### 2.4 Fluent chain — the canonical, invariant order
+### Fluent chain — the canonical, invariant order
 
 ```
 bind(token)
@@ -117,13 +99,13 @@ this order through each step's return type.
 > activation fires for a transient instance (every resolve) or a singleton (only the first). Forcing scope to be
 > declared first removes the ambiguity entirely — a reader knows immediately which context the activation runs in.
 
-### 2.5 Other principles
+### Other principles
 
 **Zero magic:** decorators are optional. An entire app can be written with explicit bindings and not a single decorator.
 
 **Last-wins / override:** `bind()` applies **slot-aware last-wins at registration time**. Same slot (`default`, same
 `whenNamed`, same `whenTagged`) means the new binding replaces the old one; a different slot appends, which is what
-serves `resolveAll`. See [section 5.10](#binding-examples) for the exact definition.
+serves `resolveAll`. See [Full examples](#binding-examples) for the exact definition.
 
 **Eager commit:** `to*()` commits the binding into the registry immediately — exactly **once** for the whole chain.
 Every read after that (`has`, `resolve*`, `validate`, `inspect`) sees the latest state, even if the chain is abandoned
@@ -136,22 +118,22 @@ silently returns a `Promise`.
 type-safe. The container also has container-level hooks that apply to every binding of a token.
 
 **Singleton async creation is serialized:** concurrent `resolveAsync` calls for the same singleton token share one
-in-flight Promise — the factory runs once, `onActivation` runs once. See [section 6.2](#resolution).
+in-flight Promise — the factory runs once, `onActivation` runs once. See [Resolution](#resolution).
 
 ---
 
-## 3. Foundation types
+## Foundation types
 
 This section declares every foundation type used throughout the spec. The implementer must export all of them from
 `@codefast/di`.
 
-### 3.1 `BindingScope`
+### `BindingScope`
 
 ```ts
 type BindingScope = "singleton" | "transient" | "scoped";
 ```
 
-### 3.2 `BindingIdentifier`
+### `BindingIdentifier`
 
 An opaque branded type — it cannot be constructed by hand from outside the library. It is only obtained through `.id()`
 on a builder.
@@ -161,7 +143,7 @@ declare const BINDING_ID_BRAND: unique symbol;
 type BindingIdentifier = string & { readonly [BINDING_ID_BRAND]: true };
 ```
 
-### 3.3 `Constructor`
+### `Constructor`
 
 ```ts
 /**
@@ -177,7 +159,7 @@ type Constructor<Value = unknown> = new (...args: unknown[]) => Value;
 
 <a id="lifecycle-handlers"></a>
 
-### 3.4 `ActivationHandler` and `DeactivationHandler`
+### `ActivationHandler` and `DeactivationHandler`
 
 An **activation handler** receives the resolution context and the instance, and runs after `@postConstruct()` and before
 the instance is cached into its scope. By the time it runs, the instance has been fully `new`-ed, accessor initializers
@@ -202,14 +184,15 @@ is ignored.
 
 <a id="resolve-options"></a>
 
-### 3.5 `ResolveOptions`
+### `ResolveOptions`
 
 The hint passed into a single resolve has three fields, all optional:
 
 - **`name`** — sugar for the reserved criterion `slotName.of(name)`: the request's criterion set carries it alongside
-  whatever `tag`/`tags` contribute ([section 5.11](#slot-matching)). It selects a binding with `whenNamed(name)`.
+  whatever `tag`/`tags` contribute ([Slots and last-wins](#slot-matching)). It selects a binding with `whenNamed(name)`.
 - **`tags`** — an array of criteria, read as a **superset filter**: it matches a binding whose _every_ declared tag is
-  in this array, not "the binding must carry all of these tags". The full rule is in [section 5.11](#slot-matching).
+  in this array, not "the binding must carry all of these tags". The full rule is in
+  [Slots and last-wins](#slot-matching).
 - **`tag`** — shorthand for exactly one criterion, equivalent to a single element of `tags`. Several criteria require
   `tags`; `InjectOptions` accepts both and folds `tag` into `tags`, so an `InjectionDescriptor` only ever carries one
   spelling.
@@ -231,21 +214,21 @@ container.resolve(Storage, { tag: Region.of("eu") });
 since each value has exactly one criterion, comparing criteria by **identity** gives the same answer as `Object.is` on
 the value. The consequence for an implementer: an index keyed by **criterion** is exact and needs no recheck. An index
 keyed by _value_ instead answers with **SameValueZero**, treating `-0` and `+0` as one key — which contradicts
-`Object.is` ([section 5.11](#slot-matching), [section 8](#8-advanced-constraints)) — and forces the fast path to recheck
-with the matcher. The intern cache must keep `-0` separate from `+0` to preserve the rule. `NaN` is unaffected: both
-rules treat `NaN` as equal to itself, so it folds to one criterion.
+`Object.is` ([Slots and last-wins](#slot-matching), [Advanced Constraints](#advanced-constraints)) — and forces the fast
+path to recheck with the matcher. The intern cache must keep `-0` separate from `+0` to preserve the rule. `NaN` is
+unaffected: both rules treat `NaN` as equal to itself, so it folds to one criterion.
 
 **The key set of a slot and of a request is a bitmask — not normative, but the subset rule is.** A slot only matches
-when the request carries **every** key the slot declares ([section 5.11](#slot-matching)). The implementation ORs the
-keys into a word and rejects with `(requestMask & slotMask) !== slotMask` before reading any criterion. Bits wrap every
-32 keys, so two keys can share a bit: that is a **false positive** which identity eliminates afterwards, never a false
-negative.
+when the request carries **every** key the slot declares ([Slots and last-wins](#slot-matching)). The implementation ORs
+the keys into a word and rejects with `(requestMask & slotMask) !== slotMask` before reading any criterion. Bits wrap
+every 32 keys, so two keys can share a bit: that is a **false positive** which identity eliminates afterwards, never a
+false negative.
 
 **Passing `tag` and `tags` together (normative):** the request carries the **union** of both sources — equivalent to
 `tags: [tag, ...tags]`, and `InjectOptions` folds it into exactly that shape. Such a request asks for two or more tags,
 so it cannot use the single-tag index; it takes the full selection path.
 
-### 3.6 `ResolutionContext`
+### `ResolutionContext`
 
 `ctx` in `toDynamic` / `toDynamicAsync` — not a full container, only resolution within the current context:
 
@@ -259,7 +242,7 @@ predicate. An ordinary resolve never needs it.
 
 > **Exact shape:** `src/core/types.ts` — `ResolutionContext`.
 
-### 3.7 `ConstraintContext`
+### `ConstraintContext`
 
 `ConstraintContext` describes the current position within a resolve, in five parts:
 
@@ -273,9 +256,9 @@ predicate. An ordinary resolve never needs it.
 A **`ResolutionFrame`** holds: `tokenName` (for display in error messages), `scope`, `bindingId`, `kind`, and the
 **`slot`** of the binding matched for that frame. A slot is the binding's criterion set: `tags` (every criterion, the
 reserved name criterion included) plus `name`, the derived view of the reserved criterion (`undefined` if the binding
-declares no `whenNamed()`) — see [section 5.11](#slot-matching). The important point: a slot reflects the **constraint
-registered at bind time**, not the hint passed at resolve time — the advanced constraints in
-[section 8](#8-advanced-constraints) read exactly this field.
+declares no `whenNamed()`) — see [Slots and last-wins](#slot-matching). The important point: a slot reflects the
+**constraint registered at bind time**, not the hint passed at resolve time — the advanced constraints in
+[Advanced Constraints](#advanced-constraints) read exactly this field.
 
 **`BindingKind`** is one of seven values: `class`, `dynamic`, `dynamic-async`, `resolved`, `resolved-async`, `constant`,
 `alias`.
@@ -316,7 +299,7 @@ ancestors            = []
 > slot) — used by advanced constraints and by validate. The implementer must maintain both structures in parallel inside
 > the resolver: the string path (cheaper) and the frame stack (richer).
 
-### 3.8 `TokenValue`
+### `TokenValue`
 
 A helper type that extracts `Value` from `Token<Value>` or `Constructor<Value>`:
 
@@ -326,9 +309,9 @@ type TokenValue<Type> = Type extends Token<infer Value> ? Value : Type extends C
 
 ---
 
-## 4. Token API
+## Token API
 
-### 4.1 Creating a token
+### Creating a token
 
 `token()` is a factory function — consistent with how modern TypeScript reads (much like `signal()`, `ref()`).
 
@@ -352,7 +335,7 @@ export const Tokens = {
 } as const;
 ```
 
-### 4.2 Type signature
+### Type signature
 
 ```ts
 // Branded type — cannot be forged with an ordinary object literal
@@ -370,7 +353,7 @@ const logger = container.resolve(Logger); // ^? LoggerService
 const port = container.resolve(Port); // ^? number
 ```
 
-### 4.3 A class as a token
+### A class as a token
 
 A class can be used directly as a token when no abstraction is needed:
 
@@ -390,12 +373,12 @@ const logger = container.resolve(Logger); // ^? LoggerService
 
 ---
 
-## 5. Binding API
+## Binding API
 
 A binding describes how to produce a value from a token. The API is a fluent builder with a canonical order:
 `to*() → when*() → scope() → on*()`.
 
-### 5.1 Binding kinds
+### Binding kinds
 
 | Method                                 | InversifyJS v8 equivalent         | When to use it                           |
 | -------------------------------------- | --------------------------------- | ---------------------------------------- |
@@ -423,9 +406,7 @@ A binding describes how to produce a value from a token. The API is a fluent bui
 > can carry constraints and `.id()` — the only builder with no type parameter, because an alias produces no value of its
 > own.
 
-<a id="scope"></a>
-
-### 5.2 Scope
+### Scope
 
 ```ts
 .singleton()  // ←→ .inSingletonScope()  — created once, reused forever
@@ -452,7 +433,7 @@ need lifecycle hooks, you can skip `scope()` and take the transient default.
 | `transient`           | ✅ OK       | ✅ OK        | ✅ OK        |
 
 `container.validate()` walks the whole dependency graph and throws `ScopeViolationError` for any violation. See
-[section 6.9](#validate) for the limits of `validate()`.
+[`validate`](#validate) for the limits of `validate()`.
 
 > **`scoped` in a parent container:** a `scoped` binding is only a singleton within the child container that first
 > resolves it. Resolving `scoped` directly from a parent container (with no child scope context) throws
@@ -462,7 +443,7 @@ need lifecycle hooks, you can skip `scope()` and take the transient default.
 > container that called resolve. When `child.resolve(SomeToken)` walks up to the parent and finds a singleton binding
 > there, the instance is cached at the **parent**. `child.dispose()` only deactivates singletons defined at the child.
 
-### 5.3 `toConstantValue` — semantics
+### `toConstantValue` — semantics
 
 `toConstantValue(value)` creates a binding that always returns the same value. It is treated as a singleton — there is
 no scope choice. Lifecycle:
@@ -476,7 +457,7 @@ no scope choice. Lifecycle:
 
 <a id="constraints"></a>
 
-### 5.4 Constraints — `when*`
+### Constraints — `when*`
 
 `when*` comes immediately after `to*()`, before scope. A binding may carry one or several combined constraints.
 
@@ -516,11 +497,11 @@ container
 
 > **`whenTagged` takes a criterion, not a loose pair:** a criterion can only be minted by `TagKey.of()`, so the key must
 > be declared up front with `tag<Value>(name)` — that is what makes identity comparison enough to stand in for
-> `Object.is` ([section 3.5](#resolve-options)). The key name is still a `string`, so use a namespace prefix to avoid
-> collisions: `tag("mylib:fuel")`, `tag("@scope/pkg:env")`.
+> `Object.is` ([`ResolveOptions`](#resolve-options)). The key name is still a `string`, so use a namespace prefix to
+> avoid collisions: `tag("mylib:fuel")`, `tag("@scope/pkg:env")`.
 
 > **`whenNamed` is sugar:** a name is a criterion of the reserved key `slotName` — `whenNamed("console")` ≡
-> `whenTagged(slotName.of("console"))`, single-valued per slot ([section 5.11](#slot-matching)).
+> `whenTagged(slotName.of("console"))`, single-valued per slot ([Slots and last-wins](#slot-matching)).
 
 > **Explicit `whenDefault()` vs declaring no constraint:** a binding with no `when*` at all also matches the default
 > slot. `whenDefault()` is useful when you want to document the intent explicitly, or to combine it with a custom
@@ -554,7 +535,7 @@ container.resolve(Engine, { tags: [Fuel.of("petrol"), Size.of("v8")] });
 container.resolve(Logger, { name: "audit", tag: Env.of("production") });
 ```
 
-### 5.5 `toAlias` — hint forwarding
+### `toAlias` — hint forwarding
 
 An alias points at another token. When the alias is resolved, the hint is **forwarded** to the target token's
 resolution.
@@ -583,10 +564,10 @@ const logger = container.resolve(AbstractAuditLogger, { name: "audit" });
 > **An alias has no scope of its own:** the scope is decided by the target binding. An alias is only a pointer — it
 > caches no instance.
 
-### 5.6 Builder type interfaces
+### Builder type interfaces
 
 Each step in the chain returns a different builder, and it is precisely that builder's method set which enforces the
-order in [section 2.4](#chain-order):
+order in [Fluent chain](#chain-order):
 
 | Builder returned by | Constraint | Scope | `onActivation` | `onDeactivation` | `id()` |
 | ------------------- | :--------: | :---: | :------------: | :--------------: | :----: |
@@ -605,7 +586,7 @@ from `toConstantValue()` has no scope step because a constant binding is always 
 it moves to a builder with only lifecycle and `id()` left, a one-way state: calling a hook means locking the constraint
 part. The builder from `toAlias()` is the only one **without a type parameter** — an alias produces no value, so there
 is nothing to infer. `transient` and `scoped` have no `onDeactivation` because those two scopes have no deactivation
-([section 3.4](#lifecycle-handlers)).
+([`ActivationHandler` and `DeactivationHandler`](#lifecycle-handlers)).
 
 > **Exact shape:** `src/core/binding.ts` — `BindToBuilder`, `SlotConstrainedBuilder`, `BindingBuilder`,
 > `ConstantBindingBuilder`, `AliasBindingBuilder`, `SingletonBindingBuilder`, `TransientBindingBuilder`,
@@ -628,7 +609,7 @@ is nothing to infer. `transient` and `scoped` have no `onDeactivation` because t
 > hooks. Pinned by `tests/unit/resolution/cache-invalidation.test.ts` ("drops a hook that was replaced on the same
 > chain"); changing this to accumulate is a behavior change, not a clarification.
 
-### 5.7 `toResolved` and `toResolvedAsync` — explicit deps
+### `toResolved` and `toResolvedAsync` — explicit deps
 
 ```ts
 // toDynamic — use it when the logic is complex or the resolve is conditional
@@ -655,7 +636,7 @@ annotation needed.
 > injection. When you need `{ name: "file" }` or `{ tags: [...] }`, use `toDynamic`/`toDynamicAsync` with
 > `ctx.resolve(token, hint)`.
 
-### 5.8 `BindingIdentifier` — precise unbinding
+### `BindingIdentifier` — precise unbinding
 
 The builder has `.id()` to obtain a `BindingIdentifier` — used to unbind one specific binding out of several:
 
@@ -671,7 +652,7 @@ container.unbind(consoleId);
 > — `.id()` is not terminal. The id is **stable for the whole chain**: a value taken early still points at the right
 > binding after the chain is refined.
 
-### 5.9 Lifecycle hooks
+### Lifecycle hooks
 
 `onActivation` runs after `@postConstruct()`, before the instance is cached into its scope. It must return an instance.
 
@@ -731,7 +712,7 @@ container.bind(Database).to(PostgresDatabase)
 
 <a id="binding-examples"></a>
 
-### 5.10 Full examples
+### Full examples
 
 ```ts
 // Class binding
@@ -795,7 +776,7 @@ container.bind(AbstractAuditLogger).toAlias(Logger).whenNamed("audit");
 
 <a id="slot-matching"></a>
 
-### 5.11 Slots and last-wins — the exact definition
+### Slots and last-wins — the exact definition
 
 **Vocabulary (normative):**
 
@@ -813,17 +794,17 @@ BindingSlot = {
 tag key `slotName: TagKey<string>`, and a name is a criterion of that key:
 
 - `whenNamed(n)` ≡ `whenTagged(slotName.of(n))` — the binding-side sugar; `whenParentNamed(n)` is likewise
-  `whenParentTagged(slotName.of(n))` ([section 8](#8-advanced-constraints)).
+  `whenParentTagged(slotName.of(n))` ([Advanced Constraints](#advanced-constraints)).
 - `{ name: n }` in `ResolveOptions` / `InjectOptions` ≡ `{ tag: slotName.of(n) }` — the request-side sugar
-  ([section 3.5](#resolve-options)).
+  ([`ResolveOptions`](#resolve-options)).
 - **One criterion per key, reserved key included:** a slot carries at most one criterion of any key — re-declaring a
   key, through either verb, replaces that key's criterion. `whenNamed` inherits this rule rather than adding one.
 - What reserves the key is its **identity**, not its display name. Diagnostics render its criterion as `name:<value>`,
-  never `tag:…`, and `BindingSlot.name` is the derived view of it that `ResolutionFrame.slot` (section 3.7) and the
-  `when*Named` constraints read.
+  never `tag:…`, and `BindingSlot.name` is the derived view of it that `ResolutionFrame.slot`
+  ([`ConstraintContext`](#constraintcontext)) and the `when*Named` constraints read.
 
 Two binding slots are **equal** when their criterion sets are equal by the identity of each criterion (order does not
-matter). Because criteria are interned ([section 3.5](#resolve-options)), identity here gives exactly the result of
+matter). Because criteria are interned ([`ResolveOptions`](#resolve-options)), identity here gives exactly the result of
 `Object.is` on `[key, value]`. The `default` slot is the empty criterion set.
 
 **Predicate-only `when()`:** a binding carrying only `.when(predicate)` (with no `whenNamed`/`whenTagged`) **does not
@@ -836,7 +817,7 @@ user error, not an internal one).
 **Filtering `ResolveOptions` → slot (normative).** One rule, whatever mix of spellings the request uses:
 
 - **The request's criterion set** is the union of `tags`, `tag`, and — when `name` is present — `slotName.of(name)`
-  ([section 3.5](#resolve-options)); `tags: []` counts as no criteria.
+  ([`ResolveOptions`](#resolve-options)); `tags: []` counts as no criteria.
 - **A slot matches when every criterion it declares is in the request's criterion set** — a superset filter. Adding a
   criterion to the request makes it match **more**, not fewer.
 - **The default slot is the one exception:** a slot with no criteria matches only a request with no criteria — a request
@@ -909,10 +890,10 @@ when exactly one must be chosen.
 
 > **`has(token)` and slot semantics:** `container.has(token)` returns `true` if the token has **any binding at all**
 > (even if only named/tagged slots, with no default). `container.resolve(token)` with no hint can still throw
-> `NoMatchingBindingError` even when `has(token)` is `true`. See [section 6.10](#introspection) for the right way to use
-> `has` + `hasOwn`.
+> `NoMatchingBindingError` even when `has(token)` is `true`. See [Introspection](#introspection) for the right way to
+> use `has` + `hasOwn`.
 
-### 5.12 The `Binding` discriminated union — internal data model
+### The `Binding` discriminated union — internal data model
 
 `Binding<Value>` is the union type representing a binding committed into the registry. The implementer must define it in
 `binding.ts`. Fields are `readonly` to library users. Internally, a fluent chain **may refine in place** exactly those
@@ -975,11 +956,11 @@ must follow the alias chain to the final binding and take the scope from there. 
 
 ---
 
-## 6. Container API
+## Container API
 
 <a id="container-create"></a>
 
-### 6.1 Creating a container
+### Creating a container
 
 ```ts
 import { Container } from "@codefast/di";
@@ -998,9 +979,7 @@ const container = await Container.fromModulesAsync(AppModule, DatabaseModule);
 `fromModules`/`fromModulesAsync` take modules variadically, so there is no room for options. When you need both, use
 `Container.create(options)` followed by `load(...)`/`loadAsync(...)` — exactly what those two factories do.
 
-<a id="resolution"></a>
-
-### 6.2 Resolution
+### Resolution
 
 ```ts
 // Sync resolve — throws AsyncResolutionError if the binding has an async factory
@@ -1071,7 +1050,7 @@ const [a, b] = await Promise.all([container.resolveAsync(Database), container.re
 // a === b: true
 ```
 
-### 6.3 Managing bindings
+### Managing bindings
 
 ```ts
 // Add a binding
@@ -1130,7 +1109,7 @@ When `unbind(token)` or `unbind(bindingId)` is called:
 - If the old binding **does** have an async `onDeactivation`: a sync `rebind()` throws `AsyncDeactivationError` — the
   same behaviour as a sync `unbind()`.
 
-Since the spec has no `rebindAsync()` (see [section 15.4](#not-adopted-from-v8)), the required workaround is:
+Since the spec has no `rebindAsync()` (see [Not adopted from v8](#not-adopted-from-v8)), the required workaround is:
 
 ```ts
 // When the old binding has an async onDeactivation:
@@ -1142,9 +1121,7 @@ container.bind(Logger).to(FileLogger).singleton(); // create the new binding
 > traffic. If the binding has async deactivation, splitting it into two explicit steps (`unbindAsync` + `bind`) states
 > the intent more clearly.
 
-<a id="module-management"></a>
-
-### 6.4 Module management
+### Module management
 
 ```ts
 // Load a module synchronously
@@ -1199,7 +1176,7 @@ When `unload(module)` or `unloadAsync(module)` is called and the ref-count reach
   called.
 - A sync `unload()` is only safe if every deactivation handler is sync. If any is async, `unloadAsync()` must be used.
 
-### 6.5 Container-level activation hooks
+### Container-level activation hooks
 
 Besides per-binding `.onActivation()`, the container supports container-level hooks — they apply to **every** binding of
 a token, including bindings added after the hook was registered:
@@ -1223,7 +1200,7 @@ container.onDeactivation(Database, async (db) => {
 > `onActivation()`. Deactivation runs in reverse: container-level `onDeactivation()` → per-binding `onDeactivation()` →
 > `@preDestroy()`.
 
-### 6.6 Child containers
+### Child containers
 
 ```ts
 // A child inherits every parent binding (resolution walks up when the child has none)
@@ -1271,7 +1248,7 @@ const handler = req.container.resolve(UserController);
 > with no binding copies. `dispose()` only clears the child's singleton cache. The pattern is safe for high-throughput
 > request handling.
 
-### 6.7 Container state lifecycle
+### Container state lifecycle
 
 A container has an `isDisposed` state. After `dispose()` is called, every mutation (`bind`, `unbind`, `rebind`, `load`,
 `unload`) throws `DisposedContainerError`. Resolution operations (`resolve*`, `has*`, `inspect`) throw
@@ -1292,7 +1269,7 @@ await container.dispose(); // safe — no throw, no double-deactivation
 
 The container exposes a readonly `isDisposed` property.
 
-### 6.8 `initializeAsync` — warm up singletons
+### `initializeAsync` — warm up singletons
 
 ```ts
 await container.initializeAsync();
@@ -1316,14 +1293,13 @@ fail fast at startup on a config error, and remove lazy-init latency from the fi
 
 <a id="validate"></a>
 
-### 6.9 `validate` — detecting captive dependencies
+### `validate` — detecting captive dependencies
 
 ```ts
 container.validate();
 ```
 
-Walks the dependency graph and throws `ScopeViolationError` for any violation of the scope matrix in
-[section 5.2](#scope).
+Walks the dependency graph and throws `ScopeViolationError` for any violation of the scope matrix in [Scope](#scope).
 
 **Analysis scope (normative):**
 
@@ -1349,9 +1325,7 @@ violation inside a dynamic factory is only detected at runtime.
 
 Call `validate()` after loading every module, before serving the first request.
 
-<a id="introspection"></a>
-
-### 6.10 Introspection
+### Introspection
 
 ```ts
 // Check whether there is any binding at all — checks the whole parent chain
@@ -1434,15 +1408,15 @@ slot the edge points at, if the binding declares one). The `label` field is **fo
   edge carrying `optional: true`. That keeps "optional but absent" distinct from "not a dependency".
 - **A required dep that is not bound is skipped** — that is `validate()`'s job, not the graph's.
 - **`injectAll` fans out to every binding** of the token, each edge carrying its `slotName`.
-- **Edge targets are filtered by resolution's own slot rules** ([§6.9](#validate)): a request that names nothing will
-  not connect to a named binding it could never have resolved.
+- **Edge targets are filtered by resolution's own slot rules** ([`validate`](#validate)): a request that names nothing
+  will not connect to a named binding it could never have resolved.
 - **Predicates (`when...`) are not evaluated** — a predicate needs a real resolve context, so the graph keeps every
   candidate that has one.
 - **With `includeParent: true`**, a binding at the current container shadows a binding for the same token at the parent,
   exactly as resolution order walks up; an edge from the child connects directly to the parent binding that satisfies
   it.
 
-### 6.11 The Container interface
+### The Container interface
 
 Put together, a container exposes eight groups:
 
@@ -1465,12 +1439,12 @@ currently has only `metadataReader` — defaulting to the decorator reader, and 
 
 ---
 
-## 7. Decorator layer
+## Decorator layer
 
 Decorators are syntactic sugar — the core container does not depend on them. They use **TC39 Decorator Stage 3** and
 `Symbol.metadata`. Neither `experimentalDecorators: true` nor `reflect-metadata` is needed.
 
-### 7.1 Usage
+### Usage
 
 TC39 Decorator Stage 3 **does not support parameter decorators** (TS1206). `@inject` on a constructor parameter is only
 available with `experimentalDecorators: true` (legacy). The solution: `@injectable()` takes a **deps array** that
@@ -1520,7 +1494,7 @@ class PluginRunner {
 }
 ```
 
-### 7.2 Named / tagged / multi inject
+### Named / tagged / multi inject
 
 `inject()`, `optional()` and `injectAll()` are plain functions returning an `InjectionDescriptor`:
 
@@ -1559,7 +1533,7 @@ required dependency, `optional` returning `undefined` when there is no binding, 
 binding into an array.
 
 `InjectOptions` has three fields: `name`, `tag` (shorthand for one criterion, folded into `tags` when the descriptor is
-built — see [section 3.5](#resolve-options)), and `tags`.
+built — see [`ResolveOptions`](#resolve-options)), and `tags`.
 
 `InjectionDescriptor` carries: `token`, `optional`, `multi` (true when created by `injectAll`), `name?`, `tags?`. It
 comes with the type guard `isInjectionDescriptor(value)`.
@@ -1587,13 +1561,13 @@ resolving. The normalization rules (normative):
 - `Constructor<Value>` → `{ token, optional: false, multi: false, name: undefined, tags: undefined }`
 - `InjectionDescriptor<Value>` → left as-is
 
-`InjectableDependency` is exported from `@codefast/di` (see [section 11.1](#public-api)).
+`InjectableDependency` is exported from `@codefast/di` (see [Public API](#public-api)).
 
 **`InjectableOptions` — the options for `@injectable()`:**
 
 `InjectableOptions` has two fields: `autoRegister` (the registry a class registers itself into; leave it out and it does
-not self-register — see [section 7.7](#auto-registration)) and `scope` (the scope used when self-registering, ignored
-without `autoRegister`, defaulting to `"transient"`).
+not self-register — see [Auto-registration](#auto-registration)) and `scope` (the scope used when self-registering,
+ignored without `autoRegister`, defaulting to `"transient"`).
 
 `InjectableOptions` is exported from `@codefast/di`.
 
@@ -1602,7 +1576,7 @@ without `autoRegister`, defaulting to `"transient"`).
 `injectable(deps?, options?)` returns a class decorator; `deps` is a `readonly InjectableDependency[]` and `options` is
 an `InjectableOptions`.
 
-### 7.3 Inheritance — explicit, no magic
+### Inheritance — explicit, no magic
 
 Every dep must be declared explicitly — there is no implicit inheritance injection:
 
@@ -1626,7 +1600,7 @@ class UserService extends BaseService {
 
 <a id="metadata-reader"></a>
 
-### 7.4 MetadataReader — the port interface
+### MetadataReader — the port interface
 
 The container does not read `Symbol.metadata` directly — it reads through this port, so the port can be swapped in
 tests:
@@ -1639,7 +1613,7 @@ The port has three methods:
   the order they appear in the class (top-down).
 - **`getAccessorMetadata(target)`** — **optional** — the list of `@inject accessor` fields, each with `key` and
   `descriptor`. If a reader omits this method, no class ever gets a container context opened for it, so every accessor
-  injection throws `MissingContainerContextError` ([§7.5](#accessor-injection)).
+  injection throws `MissingContainerContextError` ([Property injection](#accessor-injection)).
 
 > **Exact shape:** `src/metadata/metadata-types.ts` — `MetadataReader`, `ConstructorMetadata`, `ParamMetadata`,
 > `LifecycleMetadata`.
@@ -1647,7 +1621,8 @@ The port has three methods:
 **Installing your own reader — normative:**
 
 The resolver is **handed** its reader when it is constructed, which happens inside the container's constructor. The only
-source resolution is guaranteed to read is therefore `ContainerOptions.metadataReader` ([§6.1](#container-create)):
+source resolution is guaranteed to read is therefore `ContainerOptions.metadataReader`
+([Creating a container](#container-create)):
 
 ```ts
 import { Container } from "@codefast/di";
@@ -1704,7 +1679,7 @@ throws `MissingMetadataError`. The parent class's metadata is never silently lea
 
 <a id="accessor-injection"></a>
 
-### 7.5 Property injection through the `accessor` field decorator
+### Property injection through the `accessor` field decorator
 
 TC39 Stage 3 supports `accessor`. `@inject(token)` is a **field decorator** on an **instance `accessor`**.
 **`static accessor` is not supported:** a static initializer runs when the class is defined, outside the reach of both
@@ -1838,7 +1813,7 @@ Used in a deps array, TypeScript matches `InjectionDescriptor<Value>`. Used as a
 > decorator metadata must keep `inject()` a callable object; use `isInjectionDescriptor(value)` before processing a deps
 > array.
 
-### 7.6 Method lifecycle decorators
+### Method lifecycle decorators
 
 `@postConstruct()` and `@preDestroy()` are method decorators on **instance methods**; the method name is written into
 `Symbol.metadata` and the corresponding WeakMap mirror. **Static methods are not supported** — the lifecycle manager
@@ -1874,9 +1849,7 @@ container.bind(Database).to(DatabaseService).singleton();
 > **Async contamination:** an async `@postConstruct()` forces `resolveAsync()` — async contamination spreads along the
 > entire dependency path.
 
-<a id="auto-registration"></a>
-
-### 7.7 Auto-registration
+### Auto-registration
 
 `@injectable()` supports `autoRegister` — a class registers itself into an **explicit registry** at module load time.
 There is no global singleton.
@@ -1914,7 +1887,7 @@ builds a fresh registry.
 
 > **Exact shape:** `src/decorators/injectable.ts`.
 
-### 7.8 The decorator and helper list
+### The decorator and helper list
 
 | API                            | Kind                          | Target                        | Effect                                                                                                   |
 | ------------------------------ | ----------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
@@ -1933,7 +1906,7 @@ builds a fresh registry.
 > **There are no parameter decorators.** TC39 Stage 3 does not support them (TS1206). The deps array replaces them
 > entirely.
 
-### 7.9 tsconfig setup
+### tsconfig setup
 
 ```json
 {
@@ -1952,7 +1925,7 @@ builds a fresh registry.
 
 ---
 
-## 8. Advanced Constraints
+## Advanced Constraints
 
 Advanced constraints are a family of predicate factories — each takes configuration parameters and returns a
 `(ctx: ConstraintContext) => boolean` — used with `.when()` in a binding chain.
@@ -1966,7 +1939,7 @@ Advanced constraints are exported from the root `@codefast/di`, and also from th
 `@codefast/di/resolution/select/constraints`, which points at the same module. The examples in this section import from
 the root — the shorter path, and always correct.
 
-### 8.1 Token name resolution
+### Token name resolution
 
 Every constraint function takes a `Token<unknown> | Constructor` and resolves it to a `tokenName` string, which is
 compared against `ResolutionFrame.tokenName`. The rules:
@@ -1978,7 +1951,7 @@ compared against `ResolutionFrame.tokenName`. The rules:
 > `name` — say `token<A>("Config")` and `token<B>("Config")` — a constraint cannot tell them apart. Give tokens unique
 > names (a namespace prefix such as `"@myapp/Config"`) to avoid false matches.
 
-### 8.2 Type signatures
+### Type signatures
 
 Ten constraints, each taking configuration parameters and returning a predicate over `ConstraintContext`:
 
@@ -2009,11 +1982,11 @@ Ten constraints, each taking configuration parameters and returning a predicate 
 The two negative forms returning `true` on absence are deliberate: "no parent is X" is trivially true when there is no
 parent at all. The two `…TaggedAll` forms are equivalent to AND-composing several individual criteria, but cost one
 predicate call and allocate no intermediate closure. Criteria compare by identity — equivalent to `Object.is` on
-`[key, value]` thanks to interning, consistent with slot equality in [section 5.11](#slot-matching).
+`[key, value]` thanks to interning, consistent with slot equality in [Slots and last-wins](#slot-matching).
 
 > **Exact shape:** `src/resolution/select/constraints.ts`.
 
-### 8.3 Semantics
+### Semantics
 
 `ctx.parent` is the `ResolutionFrame` of the binding directly above in the stack (the binding currently injecting this
 token). `ctx.ancestors` is every frame above `ctx.parent`, ordered from nearest to furthest — it does not include
@@ -2036,15 +2009,15 @@ token). `ctx.ancestors` is every frame above `ctx.parent`, ordered from nearest 
 
 > **Why identity comparison is enough:** criteria are interned, so each `[key, value]` has exactly one object; comparing
 > by identity therefore gives the same answer as `Object.is` on the value — handling `NaN` correctly and keeping `+0`
-> distinct from `-0`, consistent with slot equality in [section 5.11](#slot-matching). This is also why the table above
-> no longer has a pairwise comparison loop.
+> distinct from `-0`, consistent with slot equality in [Slots and last-wins](#slot-matching). This is also why the table
+> above no longer has a pairwise comparison loop.
 
 > **The named variants read `slot.name`, not `currentResolveOptions`:** `whenParentNamed("console")` asks "does the
 > parent's binding have `whenNamed("console")`?" — not "was the parent resolved with the hint `{ name: "console" }`?".
 > Those are different questions: a binding can match the slot `"console"` without any resolve hint when it is the only
 > candidate, and vice versa.
 
-### 8.4 Examples
+### Examples
 
 **`whenParentIs` — a verbose logger only when the parent is `DebugService`:**
 
@@ -2139,7 +2112,7 @@ Equivalent to writing it by hand, but without the intermediate closure:
 .when(whenParentTaggedAll([Env.of("prod"), Tier.of("premium")]))
 ```
 
-### 8.5 Composability
+### Composability
 
 The constraint functions return `(ctx: ConstraintContext) => boolean`, so they compose naturally with JavaScript
 operators:
@@ -2174,9 +2147,9 @@ container.bind(Logger).to(VerboseLogger).when(whenAnyAncestorIs(DebugModule));
 container.bind(Tracer).to(VerboseTracer).when(whenAnyAncestorIs(DebugModule));
 ```
 
-### 8.6 Rules (normative)
+### Rules (normative)
 
-The rules in [section 5.4](#constraints) apply in full to advanced constraints — these are ordinary `when()` predicates:
+The rules in [Constraints](#constraints) apply in full to advanced constraints — these are ordinary `when()` predicates:
 
 - The predicate is called every time a resolve needs to pick a candidate, never cached.
 - The predicate must be pure and deterministic — no side effects, no I/O.
@@ -2184,7 +2157,7 @@ The rules in [section 5.4](#constraints) apply in full to advanced constraints �
 - Make the predicates mutually exclusive when several bindings of one token use predicate-only `when()`. If ≥ 2
   candidates remain after filtering, the resolver throws `AmbiguousBindingError`.
 
-### 8.7 Performance note
+### Performance note
 
 `whenAnyAncestorIs`, `whenAnyAncestorTagged` and `whenAnyAncestorTaggedAll` walk the whole of `ctx.ancestors` — O(depth)
 per resolve. With the shallow dependency graphs that are typical (< 10 levels), the overhead is negligible. Avoid these
@@ -2195,7 +2168,7 @@ constraints on a hot path with a deep graph and `transient` bindings; prefer `wh
 the number of tags on the parent slot. With small m and n (< 5) the overhead is negligible; prefer it over AND-composing
 several `whenParentTagged` calls, to reduce the number of predicate invocations.
 
-### 8.8 Subpath export
+### Subpath export
 
 ```ts
 // @codefast/di/resolution/select/constraints — src/resolution/select/constraints.ts
@@ -2219,11 +2192,11 @@ real source path; **there is no `@codefast/di/constraints` alias**.
 
 ---
 
-## 9. Module system
+## Module system
 
 A module is how bindings are grouped by domain. Both sync and async setup are supported.
 
-### 9.1 Sync module
+### Sync module
 
 ```ts
 import { SyncModule } from "@codefast/di";
@@ -2239,7 +2212,7 @@ export const AppModule = SyncModule.create("App", (builder) => {
 });
 ```
 
-### 9.2 Async module
+### Async module
 
 ```ts
 export const DatabaseModule = AsyncModule.create("Database", async (builder) => {
@@ -2263,7 +2236,7 @@ const container = Container.create();
 await container.loadAsync(DatabaseModule);
 ```
 
-### 9.3 Using modules
+### Using modules
 
 ```ts
 // Sync — every module must be a SyncModule
@@ -2285,9 +2258,9 @@ testContainer.rebind(Database).toConstantValue(mockDatabase);
 >
 > **Deduplication:** calling `container.load(M)` repeatedly, or `m.import(M)` from several modules, is a no-op from the
 > second time on. Dedup is based on **object identity**, not on `name`. Unload reference-counting uses the same identity
-> — see [section 6.4](#module-management).
+> — see [Module management](#module-management).
 
-### 9.4 A `SyncModule` cannot import an `AsyncModule`
+### A `SyncModule` cannot import an `AsyncModule`
 
 `ModuleBuilder` (used inside `SyncModule.create()`) only accepts `SyncModule[]` in `import()`. This is required — a
 `SyncModule` callback is sync and cannot await an async setup:
@@ -2304,7 +2277,7 @@ export const AppModule = AsyncModule.create("App", async (builder) => {
 });
 ```
 
-### 9.5 Module interface
+### Module interface
 
 **`ModuleBuilder`** — which only exists inside a `SyncModule.create()` callback — does exactly two things: `bind(token)`
 and `import(...modules)` accepting **only** `SyncModule`. **`AsyncModuleBuilder`** does the same two things, but its
@@ -2329,7 +2302,7 @@ all you hold is the union.
 
 ---
 
-## 10. Error hierarchy
+## Error hierarchy
 
 Every error extends `DiError` — an abstract class that forces each subclass to declare a `code` string
 (machine-readable), alongside a message carrying enough context for a human reader.
@@ -2379,10 +2352,10 @@ may therefore carry that type. Three errors in the table exist precisely because
 used to throw `InternalError`, and all three are caller misuse.
 
 `ChainNotRegisteredError` and `SelfBindingRequiresClassError` are nearly unreachable from TypeScript: the chain's return
-types ([§2.4](#chain-order)) and the type of `bind()` already block most of the way. They exist for JavaScript callers,
-or callers who have cast through the types — so that misuse **fails loudly** instead of silently doing nothing — and
-they belong to the `DiError` taxonomy so that a `catch (error) { if (error instanceof DiError) … }` does not let them
-escape.
+types ([Fluent chain](#chain-order)) and the type of `bind()` already block most of the way. They exist for JavaScript
+callers, or callers who have cast through the types — so that misuse **fails loudly** instead of silently doing nothing
+— and they belong to the `DiError` taxonomy so that a `catch (error) { if (error instanceof DiError) … }` does not let
+them escape.
 
 `StaticMemberDecoratorError` exists because all three of those decorators act on **an instance**: `@inject` resolves
 through the container active while the instance is being constructed, and `@postConstruct`/`@preDestroy` bracket one
@@ -2403,15 +2376,15 @@ class name is taken from the instance itself at the throw site, so the happy pat
 
 ### `AsyncActivationError` vs `AsyncResolutionError`
 
-Both come from the rule in [§3.4](#lifecycle-handlers) — a hook returning a `Promise` means the resolve must be
-`resolveAsync()` — but here the async source is not the binding's factory, it is the hook, which only reveals itself
-**after** the instance has been created. The container cannot know in advance, at the point it selects the binding.
-`hookKind` says whether it was `postConstruct` or `onActivation`; `methodName` pins the exact method when a class has
-several `@postConstruct()`.
+Both come from the rule in [`ActivationHandler` and `DeactivationHandler`](#lifecycle-handlers) — a hook returning a
+`Promise` means the resolve must be `resolveAsync()` — but here the async source is not the binding's factory, it is the
+hook, which only reveals itself **after** the instance has been created. The container cannot know in advance, at the
+point it selects the binding. `hookKind` says whether it was `postConstruct` or `onActivation`; `methodName` pins the
+exact method when a class has several `@postConstruct()`.
 
 ---
 
-## 11. File structure
+## File structure
 
 ```
 packages/di/
@@ -2534,7 +2507,7 @@ layer and the container. Keeping it separate avoids a circular import (`containe
 
 <a id="public-api"></a>
 
-### 11.1 Public API (`index.ts`)
+### Public API (`index.ts`)
 
 ```ts
 // Foundation types
@@ -2671,7 +2644,7 @@ export type { ScopeViolationDetails } from "#/errors/errors";
 // buildDependencyGraph() from dependency-graph.ts — already wrapped as container.generateDependencyGraph()
 ```
 
-### 11.2 `package.json`
+### `package.json`
 
 ESM-only. `engines.node >= 24.0.0` — the monorepo's floor, held by the package's own `core/map-upsert` helpers instead
 of the ES2025 `Map.prototype.getOrInsert`, which would raise it to 26.
@@ -2723,7 +2696,7 @@ shape of an entry).
 
 <a id="tsconfig-build"></a>
 
-### 11.3 `tsconfig.build.json`
+### `tsconfig.build.json`
 
 The build uses native `tsc` (TypeScript 7) following the Turborepo "Compiled Packages" model — emitting `.js` + `.d.ts`
 file by file into `dist/`, with no bundler. `tsdown` is gone.
@@ -2752,7 +2725,7 @@ no consumer imports its types.
 
 ---
 
-## 12. Roadmap
+## Roadmap
 
 ### Core container
 
@@ -2800,8 +2773,8 @@ no consumer imports its types.
 
 ### Error classes
 
-Every error subclass with a `readonly code` and full context fields, as in [section 10](#10-error-hierarchy). Including
-the new `AmbiguousBindingError`, `AsyncDeactivationError` and `DisposedContainerError`.
+Every error subclass with a `readonly code` and full context fields, as in [Error hierarchy](#error-hierarchy).
+Including the new `AmbiguousBindingError`, `AsyncDeactivationError` and `DisposedContainerError`.
 
 ### Introspection and diagnostics
 
@@ -2812,10 +2785,10 @@ the new `AmbiguousBindingError`, `AsyncDeactivationError` and `DisposedContainer
 
 ### Advanced constraints
 
-Fully spec'd in [section 8](#8-advanced-constraints). Exported from the root `@codefast/di` and from the subpath
-`@codefast/di/resolution/select/constraints`: `whenParentIs`, `whenNoParentIs`, `whenAnyAncestorIs`, `whenNoAncestorIs`,
-`whenParentNamed`, `whenAnyAncestorNamed`, `whenParentTagged`, `whenAnyAncestorTagged`, `whenParentTaggedAll`,
-`whenAnyAncestorTaggedAll`.
+Fully spec'd in [Advanced Constraints](#advanced-constraints). Exported from the root `@codefast/di` and from the
+subpath `@codefast/di/resolution/select/constraints`: `whenParentIs`, `whenNoParentIs`, `whenAnyAncestorIs`,
+`whenNoAncestorIs`, `whenParentNamed`, `whenAnyAncestorNamed`, `whenParentTagged`, `whenAnyAncestorTagged`,
+`whenParentTaggedAll`, `whenAnyAncestorTaggedAll`.
 
 ### Integration packages
 
@@ -2824,7 +2797,7 @@ Fully spec'd in [section 8](#8-advanced-constraints). Exported from the root `@c
 
 ---
 
-## 13. Technical stack
+## Technical stack
 
 | Tool                    | Role                                                                                                                 |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -2857,13 +2830,13 @@ Fully spec'd in [section 8](#8-advanced-constraints). Exported from the root `@c
 ```
 
 In practice the emit options (`declaration`, `outDir`, …) are split out into `tsconfig.build.json`
-([§11.3](#tsconfig-build)); the base `tsconfig.json` keeps `noEmit: true` for type-checking.
+([`tsconfig.build.json`](#tsconfig-build)); the base `tsconfig.json` keeps `noEmit: true` for type-checking.
 
 ---
 
-## 14. Testing guide
+## Testing guide
 
-### 14.1 An isolated container — no modules loaded
+### An isolated container — no modules loaded
 
 The simplest pattern: create a fresh container and bind only what the test needs:
 
@@ -2888,7 +2861,7 @@ describe("UserService", () => {
 
 <a id="test-child-override"></a>
 
-### 14.2 A child container — overriding a parent binding
+### A child container — overriding a parent binding
 
 To override a binding defined in a module, use `bind()` at the child container (no `rebind()` is needed, because the
 child has no own binding):
@@ -2903,7 +2876,7 @@ const userService = testContainer.resolve(UserService);
 // userService.database === mockDatabase
 ```
 
-### 14.3 Rebind — overriding a binding in the same container
+### Rebind — overriding a binding in the same container
 
 Use `rebind()` when replacing a binding that **already exists** in the same container (hot-reload or reconfiguration,
 for instance):
@@ -2919,7 +2892,7 @@ container.rebind(Logger).toConstantValue(mockLogger);
 
 <a id="test-metadata-reader"></a>
 
-### 14.4 Swapping the MetadataReader
+### Swapping the MetadataReader
 
 The container takes its `MetadataReader` through `MetadataReaderToken`. To test container behaviour without depending on
 `Symbol.metadata`:
@@ -2941,7 +2914,7 @@ container.bind(UserService).toSelf();
 const service = container.resolve(UserService);
 ```
 
-### 14.5 Testing a scoped binding
+### Testing a scoped binding
 
 ```ts
 it("scoped binding isolated per child", () => {
@@ -2963,7 +2936,7 @@ it("scoped binding isolated per child", () => {
 });
 ```
 
-### 14.6 Testing an async binding
+### Testing an async binding
 
 ```ts
 it("resolves async binding", async () => {
@@ -2983,7 +2956,7 @@ it("resolves async binding", async () => {
 });
 ```
 
-### 14.7 Testing dispose behaviour
+### Testing dispose behaviour
 
 ```ts
 it("calls onDeactivation on dispose", async () => {
@@ -3005,7 +2978,7 @@ it("throws DisposedContainerError after dispose", async () => {
 });
 ```
 
-### 14.8 Testing `validate()`
+### Testing `validate()`
 
 ```ts
 it("detects captive dependency violation", () => {
@@ -3018,7 +2991,7 @@ it("detects captive dependency violation", () => {
 });
 ```
 
-### 14.9 Anti-patterns to avoid
+### Anti-patterns to avoid
 
 **Do not use a global container in tests:** global state makes tests depend on each other:
 
@@ -3035,20 +3008,22 @@ afterEach(async () => {
 });
 ```
 
-**Do not mock `Symbol.metadata` directly:** use `MetadataReaderToken` instead (see [14.4](#test-metadata-reader)).
+**Do not mock `Symbol.metadata` directly:** use `MetadataReaderToken` instead (see
+[Swapping the MetadataReader](#test-metadata-reader)).
 
-**Do not use `rebind()` to override a parent:** use `bind()` at the child container (see [14.2](#test-child-override)).
+**Do not use `rebind()` to override a parent:** use `bind()` at the child container (see
+[A child container](#test-child-override)).
 
 ---
 
-## 15. Comparison with InversifyJS v8
+## Comparison with InversifyJS v8
 
 This section compares the whole public API of InversifyJS v8.0.0 (March 2026) against `@codefast/di`. Each feature group
 is examined along three axes: **learned from v8**, **improved over v8**, **not adopted from v8**.
 
 ---
 
-### 15.1 API comparison by group
+### API comparison by group
 
 #### Setup and requirements
 
@@ -3111,7 +3086,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 ---
 
-### 15.2 Summary: learned from v8
+### Summary: learned from v8
 
 | v8 feature                                                     | How it is done here                                                                |
 | -------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -3132,7 +3107,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 ---
 
-### 15.3 Summary: improved over v8
+### Summary: improved over v8
 
 | InversifyJS v8                                                           | This library                                                                                           |
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
@@ -3165,7 +3140,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | Async unbind called synchronously: silent failure                        | `AsyncDeactivationError` — explicit                                                                    |
 | No `lookupBindings`                                                      | `lookupBindings()` returns `BindingSnapshot[]` — never `undefined`                                     |
 | `toService()` + hint semantics are not specified                         | `toAlias()` hint forwarding is documented                                                              |
-| No testing guide                                                         | [Section 14](#14-testing-guide) with patterns for isolated containers, child overrides, MetadataReader |
+| No testing guide                                                         | [Testing guide](#testing-guide) with patterns for isolated containers, child overrides, MetadataReader |
 | `autoRegister` through a global option or per-get                        | `createAutoRegisterRegistry()` — an explicit registry, no global state                                 |
 | `[Symbol.asyncDispose]()` is not specified                               | `dispose()` + `[Symbol.asyncDispose]()` — `await using` support                                        |
 | `[Symbol.dispose]()` is not specified                                    | `[Symbol.dispose](): never` — throws `SyncDisposalNotSupportedError`, plainly                          |
@@ -3175,7 +3150,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 <a id="not-adopted-from-v8"></a>
 
-### 15.4 Summary: not adopted from v8
+### Summary: not adopted from v8
 
 | InversifyJS v8                                                           | Why not                                                                             |
 | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |

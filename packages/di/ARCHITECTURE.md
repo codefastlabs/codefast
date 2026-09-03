@@ -785,8 +785,8 @@ There is no gate to clear, just a suggested order that tends to save time:
    invariant, it will tell you fast whether your change broke it.
 2. If the change is about speed, measure it. What a shape costs, and whether a new idea beats it, is an empirical
    question. The benchmark suite ([`benchmarks/di-inversify`](../../benchmarks/di-inversify/README.md)) is the source of
-   truth, [`BENCH_GUIDE.md`](../../benchmarks/di-inversify/BENCH_GUIDE.md) is the method, and step 5 of
-   [CONTRIBUTING.md](./CONTRIBUTING.md) is the checklist.
+   truth, [`BENCH_GUIDE.md`](../../benchmarks/di-inversify/BENCH_GUIDE.md) is the method, and the performance step of
+   [CONTRIBUTING.md](./CONTRIBUTING.md#guard-performance) is the checklist.
 
 Two things that guide does not cover and this engine keeps demonstrating:
 

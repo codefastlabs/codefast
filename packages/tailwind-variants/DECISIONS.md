@@ -5,7 +5,7 @@ for the internal shape — the compiled plan, the selection cache, which shapes 
 [`README.md`](./README.md) documents the API. Each decision below still holds; a decision that stops holding gets
 replaced here, not annotated.
 
-## 1. A drop-in replacement, not a new API
+## A drop-in replacement, not a new API
 
 **Context.** `@codefast/ui` styles every component with `tailwind-variants`. Its configuration shape — `base`,
 `variants`, `defaultVariants`, `compoundVariants`, `slots`, `compoundSlots`, `extend` — is the right vocabulary; what
@@ -20,7 +20,7 @@ the configuration types.
 `@codefast/ui` moved over by changing imports. The constraint runs the other way too: an API idea that upstream users
 could not express is out of scope here.
 
-## 2. Two verified departures from upstream
+## Two verified departures from upstream
 
 **Context.** Upstream's `createTV(options)` returns a bare `tv`, exposes a mutable `defaultConfig`, and ships `cnMerge`.
 Global mutable configuration is the one upstream shape that fights the compile-once design below: a plan compiled under
@@ -32,7 +32,7 @@ one merge config cannot be trusted after the global changes.
 **Consequences.** Every resolver knows its merge configuration at compile time. Migration needs one destructure where
 upstream assigned `createTV`'s result directly; the README records both departures.
 
-## 3. Settle everything once, at `tv()`
+## Settle everything once, at `tv()`
 
 **Context.** A configuration is fixed the moment `tv` is called; the resolver it returns runs on every render, forever.
 Upstream pays for dictionary walks and array flattening on each call.
@@ -45,7 +45,7 @@ slower than upstream's by design.
 suite measures both sides (`construct-*` rows against the resolution rows) so the trade stays visible. Anything that
 would move work back into the resolver is a regression, whatever it saves at definition.
 
-## 4. Cache resolutions per selection, with an opt-out
+## Cache resolutions per selection, with an opt-out
 
 **Context.** A list renders the same few variant selections thousands of times, and both the plan walk and the merge are
 pure functions of the selection.
@@ -58,7 +58,7 @@ for a component whose values are unique per call.
 returned slot object is shared, so it must not be mutated; and a variant fed ids or timestamps should opt out or it
 fills the store with entries nothing reads again.
 
-## 5. `tailwind-merge` is a peer, and merging is optional
+## `tailwind-merge` is a peer, and merging is optional
 
 **Context.** Conflict resolution is what makes `className` overrides safe, but `tailwind-merge` is a sizeable dependency
 whose version a design system wants to pin once, not receive twice.
@@ -70,7 +70,7 @@ dependencies of its own. `twMerge: false` keeps every declared class for callers
 **Consequences.** One copy of `tailwind-merge` per application, at the version the application chose. Callers who turn
 merging off own their conflicts.
 
-## 6. Types describe what the selection can be, no more
+## Types describe what the selection can be, no more
 
 **Context.** Variant props are the public contract a component's own props extend, so a wrong inference is a wrong
 component API.
@@ -82,7 +82,7 @@ type tests under `tests/types/` alongside the runtime suite.
 **Consequences.** A change to the configuration types has to keep those type tests green; that is where a regression in
 inference shows up first.
 
-## 7. Performance claims live in the benchmark suite
+## Performance claims live in the benchmark suite
 
 **Context.** "Faster than upstream" is the package's reason to exist, and a number written into a document rots the day
 the code changes.
@@ -94,7 +94,7 @@ isolated subprocesses; its results ledger is the only place a ratio is recorded,
 **Consequences.** A hot-path change is judged by re-running the suite, not by argument. `ARCHITECTURE.md` states what a
 shape guarantees; the suite says what it costs.
 
-## 8. Not built, deliberately
+## Not built, deliberately
 
 A browser devtools extension, a VS Code extension, a CLI migration tool and CSS-in-JS integration were once listed as a
 roadmap. None is scheduled: the migration from upstream is an import change, the type surface already drives editor

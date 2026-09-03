@@ -10,7 +10,7 @@ that has actually been sprung once.
 
 ---
 
-## 0. Preparation
+## Preparation
 
 The `gh` token needs the project scopes:
 
@@ -29,7 +29,7 @@ gh api graphql -f query='{ organization(login:"codefastlabs"){ projectV2(number:
 
 ---
 
-## 1. Adding/changing single-select options — **you must pass the existing option's `id`**
+## Adding/changing single-select options — **you must pass the existing option's `id`**
 
 `updateProjectV2Field` **replaces the entire** option list. Passing only a `name` for an option that already exists
 **creates a completely new option**, and every workflow pointing at the old one **loses its target** — they show a red
@@ -59,7 +59,7 @@ workflows page and confirm there is **no red warning icon** anywhere.
 `color` is an enum: `GRAY` `BLUE` `GREEN` `YELLOW` `ORANGE` `RED` `PINK` `PURPLE`. `name`, `color` and `description` are
 all required; `id` is optional.
 
-## 2. Changing a built-in workflow — UI only
+## Changing a built-in workflow — UI only
 
 GraphQL has **no** mutation to create or edit a built-in workflow (only `deleteProjectV2Workflow`). You have to go to
 `…/projects/4/workflows`.
@@ -77,7 +77,7 @@ gh api graphql -f query='{ organization(login:"codefastlabs"){ projectV2(number:
 An enabled workflow **jumps to the top of the sidebar**, so the positions shift after each one you enable — read the
 labels again rather than remembering coordinates.
 
-## 3. Changing the auto-add filter
+## Changing the auto-add filter
 
 In the UI: `Auto-add to project` → `Edit` → the Filters box.
 
@@ -94,7 +94,9 @@ In the UI: `Auto-add to project` → `Edit` → the Filters box.
 There is no autocomplete suggesting fields. The UI shows a red error right under the box when the syntax is wrong — use
 that as your check.
 
-## 4. Changing a view's group-by — UI, and there is a confirmation dialog
+<a id="view-group-by"></a>
+
+## Changing a view's group-by — UI, and there is a confirmation dialog
 
 GraphQL **cannot** set group-by (`ProjectV2ViewConfigurationInput` only accepts `visibleFieldIds`).
 
@@ -112,7 +114,7 @@ gh api graphql -f query='{ organization(login:"codefastlabs"){ projectV2(number:
   number name groupByFields(first:2){ nodes{ ... on ProjectV2FieldCommon { name } } } } } } } }'
 ```
 
-## 5. Creating/deleting a view — the API works
+## Creating/deleting a view — the API works
 
 `createProjectV2View` takes `projectId`, `name`, `layout` (`BOARD_LAYOUT` · `TABLE_LAYOUT` · `ROADMAP_LAYOUT`) and
 `configuration`. It does **not** take `filter` — that needs `updateProjectV2View` as a second step.
@@ -127,12 +129,12 @@ gh api graphql -f query='mutation { updateProjectV2View(input:{
 }) { projectV2View { number filter } } }'
 ```
 
-Group-by still has to be done in the UI, per §4.
+Group-by still has to be done in the UI, per [Changing a view's group-by](#view-group-by).
 
 Deleting a view: `deleteProjectV2View(input:{viewId:"…"})` — it returns only `clientMutationId`, not the deleted view.
 **A view number is never reissued** after a deletion, so the numbering will have gaps.
 
-## 6. Changing the project README / description
+## Changing the project README / description
 
 ```bash
 gh api graphql -F readme=@docs/…/file.md -f query='mutation($readme:String!) {
@@ -142,7 +144,7 @@ gh api graphql -F readme=@docs/…/file.md -f query='mutation($readme:String!) {
 
 `updateProjectV2Input` takes: `title` `shortDescription` `readme` `closed` `public`.
 
-## 7. Draft issues
+## Draft issues
 
 ```bash
 # create
@@ -161,7 +163,7 @@ A draft issue **is handled by the workflows like any other item** — it gets `S
 
 Promoting a draft to a real issue: `convertProjectV2DraftIssueItemToIssue`.
 
-## 8. If the board is private, the browser tool must be signed in
+## If the board is private, the browser tool must be signed in
 
 A private board returns **404** to anonymous access — that is not a wrong path. Before concluding the URL is wrong,
 check the sign-in state of the exact browser being driven: each browser/profile has its own session, and a tab open in

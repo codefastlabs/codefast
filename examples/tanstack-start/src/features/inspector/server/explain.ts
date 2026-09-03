@@ -60,7 +60,7 @@ const slotLabel = (slot: { name?: string; tags: SlotTags }): string => {
   return parts.length === 0 ? "default slot" : `{ ${parts.join(", ")} }`;
 };
 
-/** A slot matches when every tag it declares is named by the request (SPEC §5.11). */
+/** A slot matches when every tag it declares is named by the request. */
 function verdictFor(entry: CatalogEntry, request: SlotRequest): CandidateVerdict {
   const { name, tags } = entry.slot;
 

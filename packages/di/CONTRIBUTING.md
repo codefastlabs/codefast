@@ -4,9 +4,9 @@ The full workflow for changing this package's source. Steps marked **(conditiona
 true. For repo-wide conventions see the root [CLAUDE.md](../../CLAUDE.md); this file is the `packages/di`-specific
 checklist.
 
-## 0. Scope the change first
+## Scope the change first
 
-Classify it — bug fix / feature / refactor / **perf** — because the perf-verify step (5) is mandatory only for hot-path
+Classify it — bug fix / feature / refactor / **perf** — because the perf-verify step is mandatory only for hot-path
 changes.
 
 Ground rules that bite in this package specifically:
@@ -35,7 +35,7 @@ Ground rules that bite in this package specifically:
   [benchmarks/di-inversify/RESULTS.md](../../benchmarks/di-inversify/RESULTS.md) is the dated per-run ledger. When you
   add to the docs, an invariant goes in ARCHITECTURE and a dated suite run goes in RESULTS.md.
 
-## 1. Write the code
+## Write the code
 
 - Internal imports use the `#/` subpath imports declared in `package.json#imports` (e.g. `#/resolution/resolver`). Do
   **not** add `compilerOptions.paths` for internal aliases.
@@ -55,7 +55,7 @@ Ground rules that bite in this package specifically:
   CLAUDE.md.
 - No speculative features — every new public API needs a real call site.
 
-## 2. Regenerate exports — (conditional: added/moved/renamed a module)
+## Regenerate exports — (conditional: added/moved/renamed a module)
 
 `package.json#exports` is **generated from `dist/`** by `codefast mirror`, never edited by hand:
 
@@ -67,7 +67,7 @@ pnpm cli:mirror                    # write package.json#exports
 
 Requires `packages/cli/dist` to exist (build the CLI if it doesn't).
 
-## 3. Build
+## Build
 
 ```bash
 pnpm --filter @codefast/di build   # rm -rf dist && tsc -p tsconfig.build.json (clean, no incremental)
@@ -76,7 +76,7 @@ pnpm --filter @codefast/di build   # rm -rf dist && tsc -p tsconfig.build.json (
 TS7 emits `.js` + `.d.ts` per file; there is no bundler. `apps/ui` consumes the built `dist/`, so run
 `pnpm build:packages` before testing an app against your change.
 
-## 4. Test
+## Test
 
 Tests live under exactly one of `tests/{unit,integration,e2e,types}/**`, mirroring the `src/` path
 (`src/resolution/resolver.ts` → `tests/unit/resolution/resolver.test.ts`). Never under `src/`.
@@ -87,7 +87,9 @@ pnpm --filter @codefast/di test:unit   # or test:integration / test:type / test:
 
 Add coverage for the new behavior.
 
-## 5. Guard performance — (conditional: touched resolver / resolution / registry hot paths)
+<a id="guard-performance"></a>
+
+## Guard performance — (conditional: touched resolver / resolution / registry hot paths)
 
 A resolver refactor's cost isn't known until it's measured. Run the head-to-head, order-independent suite against a
 freshly rebuilt baseline:
@@ -117,7 +119,7 @@ pnpm --filter @codefast/benchmark-di-inversify bench:isolate
 BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
 ```
 
-## 6. Static checks
+## Static checks
 
 ```bash
 pnpm check       # lint + format:check + check-types (no auto-fix)
@@ -127,7 +129,7 @@ pnpm check:fix   # lint:fix + format (writes fixes)
 Lint/format is Oxc (`oxlint --deny-warnings`, `oxfmt`). If you edited files via a script rather than the editor, run
 `pnpm format` and `pnpm lint:fix` by hand — this repo has no post-write formatting hook.
 
-## 7. Verify consumers — (conditional: changed a public API surface)
+## Verify consumers — (conditional: changed a public API surface)
 
 `apps/ui` and `examples/*` consume the built package. Verify the **production** build, not just `dev` — client
 import-protection and prerendering only surface at build time:
@@ -137,7 +139,7 @@ pnpm build:packages
 pnpm --filter @apps/ui build
 ```
 
-## 8. Changeset
+## Changeset
 
 ```bash
 pnpm changeset
@@ -148,13 +150,13 @@ Every `@codefast/*` package versions independently, so a changeset bumps only wh
 repo is currently in canary pre-release mode is a thing to read, not to remember (`test -f .changeset/pre.json`),
 because it flips either way; use the `release` skill for the publish flow.
 
-## 9. Full gate before commit / PR
+## Full gate before commit / PR
 
 ```bash
 pnpm verify   # build:packages + lint:fix + format + check-types + test:coverage
 ```
 
-## 10. Commit
+## Commit
 
 Conventional Commits (commitlint-enforced). If you are on `main`, branch first. Update this package's README/docs when
 the public API changes — and leave `@since` to CI.
