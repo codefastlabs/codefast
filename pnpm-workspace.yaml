@@ -15,6 +15,9 @@ allowBuilds:
 # a function". Drop once https://github.com/rolldown/rolldown/issues/10747 is fixed.
 overrides:
   rolldown: 1.2.4
+  # fast-uri < 3.1.6 carries high-severity SSRF / host-confusion advisories; pulled in
+  # transitively via ajv → @commitlint. Drop once the intermediates resolve >= 3.1.6.
+  fast-uri: ^3.1.6
 
 catalog:
   "@babel/core": ^8.0.1
