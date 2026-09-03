@@ -28,13 +28,13 @@
 
 ---
 
-This monorepo publishes the `@codefast/*` packages: a family of small, strictly typed libraries for building React 19
-products. The flagship is [`@codefast/ui`](packages/ui), 70+ accessible components built on Radix UI primitives and
-styled with Tailwind CSS 4. Around it sit the packages a product needs next — a type-safe variant API, appearance
+This monorepo publishes the `@codefast/*` packages — a family of small, strictly typed libraries for building React 19
+products. The flagship is [`@codefast/ui`](packages/ui): 70+ accessible components built on Radix UI primitives and
+styled with Tailwind CSS 4. Around it sit the packages a product reaches for next — a type-safe variant API, appearance
 management, consent-gated event tracking, dependency injection with an auto-mocking test bed, and the shared TypeScript
 configuration and CLI that keep the repo consistent.
 
-Every package is documented at **[codefastlabs.com](https://codefastlabs.com)**: component previews with copy-ready
+Every package is documented at **[codefastlabs.com](https://codefastlabs.com)** — component previews with copy-ready
 source under `/ui`, and each package's own README, specification, and architecture notes under `/docs/<pkg>`.
 
 ## Packages

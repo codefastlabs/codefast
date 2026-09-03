@@ -6,12 +6,19 @@ variants for libraries, React, and Next.js.
 [![npm version](https://img.shields.io/npm/v/@codefast/typescript-config)](https://www.npmjs.com/package/@codefast/typescript-config)
 [![license](https://img.shields.io/npm/l/@codefast/typescript-config)](./LICENSE)
 
-- **Strict by default** — `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, and `verbatimModuleSyntax` come
-  from the base every preset extends.
-- **Bundler-first** — ESNext target and module with `moduleResolution: "bundler"`, so `exports`/`imports` maps resolve
-  the way Vite, esbuild, and friends resolve them.
-- **Type-check only** — the presets set `noEmit`; a separate build overlay turns emit and `.d.ts` generation on.
-- **Plain JSON** — no runtime code, nothing to import at runtime.
+## Overview
+
+`@codefast/typescript-config` gives you one strict, bundler-first TypeScript baseline and a few focused variants — for
+libraries, React, and Next.js. Extend the preset that fits your project, then override anything you need locally.
+
+The presets are plain JSON `tsconfig` files. There's no runtime code, and nothing to import.
+
+- **Strict by default.** `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, and `verbatimModuleSyntax` come
+  from the base that every preset extends.
+- **Bundler-first.** An ESNext target and module with `moduleResolution: "bundler"`, so `exports` and `imports` maps
+  resolve the way Vite, esbuild, and friends resolve them.
+- **Type-check only.** The presets set `noEmit`; a separate build overlay turns on emit and `.d.ts` generation.
+- **Plain JSON.** No runtime code, nothing to import.
 
 ## Installation
 
@@ -19,18 +26,14 @@ variants for libraries, React, and Next.js.
 pnpm add -D @codefast/typescript-config
 ```
 
-Requirements:
-
-- Node >= 24.
-- `typescript` >= 5 is a peer dependency (`moduleResolution: "bundler"` is a TypeScript 5 option).
-
-Published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the minor if you need
-stability.
+`@codefast/typescript-config` requires Node.js 24 or later, and `typescript` 5 or later as a peer dependency —
+`moduleResolution: "bundler"` is a TypeScript 5 option. The package is published on 0.x and versioned on its own track:
+breaking changes ship as minor versions, so pin the minor version when you need stability.
 
 ## Quick start
 
-Extend the preset that matches your project in `tsconfig.json`. Keep the `.json` extension — the package exports only
-the full file names.
+Extend the preset that matches your project in `tsconfig.json`. Keep the `.json` extension — the package exports the
+full file names only.
 
 ```json
 {
@@ -39,7 +42,7 @@ the full file names.
 }
 ```
 
-Options you set locally always win, so overriding a preset value is a one-line change:
+Options you set locally always win, so overriding a preset value takes one line:
 
 ```json
 {
@@ -91,9 +94,9 @@ A Next.js app:
 
 ### Building with `tsc`
 
-`library-build.json` is an overlay, not a standalone preset: it carries only the emit options, so layer it over your
-development config in a separate `tsconfig.build.json`. Listing both in `extends` keeps the strictness from
-`library.json` and adds `.d.ts` emit on top:
+`library-build.json` is an overlay, not a standalone preset. It carries only the emit options, so layer it over your
+development config in a separate `tsconfig.build.json`. List both in `extends` to keep the strictness from
+`library.json` and add `.d.ts` emit on top:
 
 ```json
 {
@@ -112,7 +115,7 @@ explicit type annotation on every export, which is what lets declarations be pro
 
 ## Notable compiler options
 
-All strictness comes from `base.json`, so every preset inherits it:
+Every preset inherits its strictness from `base.json`:
 
 - `strict` — the full strict family (`strictNullChecks`, `noImplicitAny`, and friends).
 - `noUncheckedIndexedAccess` — indexed access is typed `T | undefined`, forcing explicit handling.

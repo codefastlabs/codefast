@@ -6,13 +6,20 @@ class strings, `audit` source conventions, `mirror` export maps from `dist/`, an
 [![npm version](https://img.shields.io/npm/v/@codefast/cli)](https://www.npmjs.com/package/@codefast/cli)
 [![license](https://img.shields.io/npm/l/@codefast/cli)](./LICENSE)
 
-This package is repo tooling published to npm: it runs in any pnpm workspace with a similar layout, but its flags and
-defaults follow the codefast conventions rather than aiming to be a general-purpose product.
+## Overview
 
-- **Safe by default** — every writing command has `--dry-run`; every audit is read-only except `audit comments --fix`.
-- **Scriptable** — `--json` prints one JSON object on stdout and suppresses human progress output.
-- **CI-ready** — audits exit non-zero when findings remain, so they gate a pipeline without extra glue.
-- **Configurable** — an optional `codefast.config.*` file, validated by a strict schema, adjusts every command.
+`codefast` is the command line for the [codefast monorepo](https://github.com/codefastlabs/codefast). It has four
+commands: `arrange` regroups Tailwind class strings, `audit` checks source conventions, `mirror` writes
+`package.json#exports` from `dist/`, and `tag` stamps exported APIs with `@since`.
+
+This is repo tooling, published to npm. It runs in any pnpm workspace with a similar layout, but its flags and defaults
+follow the codefast conventions rather than aiming to be a general-purpose product.
+
+- **Safe by default.** Every writing command has `--dry-run`, and every audit is read-only except
+  `audit comments --fix`.
+- **Scriptable.** `--json` prints one JSON object on stdout and suppresses human progress output.
+- **CI-ready.** Audits exit non-zero when findings remain, so they gate a pipeline without extra glue.
+- **Configurable.** An optional `codefast.config.*` file, validated by a strict schema, adjusts every command.
 
 ## Installation and usage
 
@@ -47,8 +54,8 @@ pnpm add -g @codefast/cli
 pnpm dlx @codefast/cli --help
 ```
 
-Published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the minor if you need
-stability.
+The package is published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the
+minor version when you need stability.
 
 Every writing command writes by default; pass `--dry-run` to preview. The global `--no-color` flag must come before the
 command name (`codefast --no-color mirror`). Commands that accept `--json` print a single JSON object on stdout and

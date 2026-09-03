@@ -5,17 +5,26 @@ Consent-gated, type-safe event tracking for TanStack Start apps that ship to a C
 [![npm version](https://img.shields.io/npm/v/@codefast/tracking)](https://www.npmjs.com/package/@codefast/tracking)
 [![license](https://img.shields.io/npm/l/@codefast/tracking)](./LICENSE)
 
-- **One catalog, typed end to end** — the app defines its events over any [Standard Schema](https://standardschema.dev)
-  library (zod, `zod/mini`, valibot, ...). `track()` infers the event name and its properties from the catalog and
-  validates them at runtime, and the client bundle only pays for the schema library the app already ships.
-- **One consent config, every surface** — `ConsentConfig` holds the storage key, the policy version, and the requested
+## Overview
+
+`@codefast/tracking` is consent-gated, type-safe event tracking for TanStack Start apps deployed to a CDN cache (ISR).
+You define your events over a Standard Schema catalog, and `track()` infers each event's name and properties, validates
+them at runtime, and forwards them to your destinations — but only when consent allows.
+
+Because ISR HTML is shared across visitors, the package bakes the strictest consent default into the cached render, then
+resolves the region-correct default per visitor over a private server-function lane.
+
+- **One catalog, typed end to end.** The app defines its events over any [Standard Schema](https://standardschema.dev)
+  library (zod, `zod/mini`, valibot, and so on). `track()` infers the event name and its properties from the catalog and
+  validates them at runtime, and the client bundle pays only for the schema library the app already ships.
+- **One consent config, every surface.** `ConsentConfig` holds the storage key, the policy version, and the requested
   purposes. The React hooks, the tracker gate, and the pre-hydration Google tag bootstrap all take the same object, so
   nothing drifts.
-- **ISR-safe by design** — shared HTML bakes the strictest consent default; the region-correct default arrives per
+- **ISR-safe by design.** Shared HTML bakes the strictest consent default; the region-correct default arrives per
   visitor over a private server-function lane.
-- **Per-category decisions** — consent is `{ ads, analytics }`, mirroring Google Consent Mode v2, with region-resolved
-  opt-in or opt-out modes and Global Privacy Control honored as an ads opt-out.
-- **Destinations own their transport** — gtag.js and Vercel Analytics batch in-page, so `track()` is fire-and-forget and
+- **Per-category decisions.** Consent is `{ ads, analytics }`, mirroring Google Consent Mode v2, with region-resolved
+  opt-in or opt-out modes, and Global Privacy Control honored as an ads opt-out.
+- **Destinations own their transport.** gtag.js and Vercel Analytics batch in-page, so `track()` is fire-and-forget, and
   a failing destination never breaks the interaction.
 
 ## Installation
@@ -24,12 +33,13 @@ Consent-gated, type-safe event tracking for TanStack Start apps that ship to a C
 pnpm add @codefast/tracking
 ```
 
-Requires Node >= 24. The one runtime dependency is `@standard-schema/spec`. Every peer is optional and is only needed by
-the surface that uses it: `react` and `react-dom` (>= 19) for the `react/*` subpaths, `@tanstack/react-start` (>= 1.168)
-for `adapters/tanstack-start`, and `@vercel/analytics` for `destinations/vercel-analytics`.
+`@codefast/tracking` requires Node.js 24 or later. Its one runtime dependency is `@standard-schema/spec`. Every peer is
+optional, needed only by the surface that uses it: `react` and `react-dom` (19 or later) for the `react/*` subpaths,
+`@tanstack/react-start` (1.168 or later) for `adapters/tanstack-start`, and `@vercel/analytics` for
+`destinations/vercel-analytics`.
 
-Published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the minor if you need
-stability.
+The package is published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the
+minor version when you need stability.
 
 ## Quick start
 
