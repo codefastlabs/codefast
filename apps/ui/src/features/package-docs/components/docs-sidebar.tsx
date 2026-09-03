@@ -15,21 +15,21 @@ const UI_SECTION_LINKS = linkOptions([
 interface DocsSidebarProps extends ComponentProps<"aside"> {
   readonly packages: ReadonlyArray<PackageSummary>;
   readonly activePkg?: string | undefined;
-  /** The document being read, so its kind is highlighted and, for a directory kind, its pages unfold. */
-  readonly active?: DocRef | undefined;
+  /** The document being read: its kind is highlighted and, for a directory kind, its pages unfold. */
+  readonly activeDoc?: DocRef | undefined;
 }
 
-interface KindEntryProps {
+interface PackageDocEntryProps {
   readonly pkg: string;
   readonly entry: PackageDoc;
-  /** The active document when it belongs to this package. */
-  readonly active: DocRef | undefined;
+  /** The document being read, when it belongs to this package. */
+  readonly activeDoc: DocRef | undefined;
 }
 
-/** One kind of the package, with its pages unfolded beneath it while one of them (or the kind itself) is open. */
-function KindEntry({ pkg, entry, active }: KindEntryProps) {
-  const isActiveKind = active?.doc === entry.doc;
-  const isActive = isActiveKind && active.page === undefined;
+/** One document the package ships, with its pages unfolded beneath it while it or one of them is open. */
+function PackageDocEntry({ pkg, entry, activeDoc }: PackageDocEntryProps) {
+  const isActiveKind = activeDoc?.doc === entry.doc;
+  const isActive = isActiveKind && activeDoc.page === undefined;
 
   return (
     <div>
@@ -47,7 +47,7 @@ function KindEntry({ pkg, entry, active }: KindEntryProps) {
       {isActiveKind && entry.pages.length > 0 ? (
         <div className="mt-0.5 space-y-0.5 border-s border-ui-border/60 ps-2">
           {entry.pages.map((page) => {
-            const isActivePage = active.page === page;
+            const isActivePage = activeDoc.page === page;
 
             return (
               <Link
@@ -71,7 +71,7 @@ function KindEntry({ pkg, entry, active }: KindEntryProps) {
 }
 
 /** Sticky left nav: every documented package with the documents it ships; `@codefast/ui` points at its own section. */
-export function DocsSidebar({ packages, activePkg, active, className, ...props }: DocsSidebarProps) {
+export function DocsSidebar({ packages, activePkg, activeDoc, className, ...props }: DocsSidebarProps) {
   return (
     <aside className={cn("hidden lg:block", className)} {...props}>
       <nav
@@ -98,7 +98,7 @@ export function DocsSidebar({ packages, activePkg, active, className, ...props }
           </div>
         </div>
         {packages.map((pkg) => {
-          const activeInPkg = pkg.slug === activePkg ? active : undefined;
+          const activeInPkg = pkg.slug === activePkg ? activeDoc : undefined;
 
           return (
             <div key={pkg.slug}>
@@ -116,7 +116,7 @@ export function DocsSidebar({ packages, activePkg, active, className, ...props }
                 {pkg.docs
                   .filter((entry) => entry.doc !== "readme")
                   .map((entry) => (
-                    <KindEntry key={entry.doc} pkg={pkg.slug} entry={entry} active={activeInPkg} />
+                    <PackageDocEntry key={entry.doc} pkg={pkg.slug} entry={entry} activeDoc={activeInPkg} />
                   ))}
               </div>
             </div>

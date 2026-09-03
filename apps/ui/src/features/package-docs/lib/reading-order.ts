@@ -1,12 +1,11 @@
 /**
- * The reading order of a package's documents — each kind's own page followed by the pages beneath
- * it — shared by the pager and anything else that walks the docs as one sequence.
+ * The reading order of a package's documents — each kind's own page followed by the pages beneath it.
  */
 import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 
-/** Every document of `pkg` as a flat sequence in sidebar order. */
-export function packagePages(pkg: PackageSummary): ReadonlyArray<DocRef> {
+/** Every document of `pkg` as one sequence in sidebar order, for the pager and the command palette. */
+export function readingOrder(pkg: PackageSummary): ReadonlyArray<DocRef> {
   return pkg.docs.flatMap(({ doc, pages }): Array<DocRef> => [{ doc }, ...pages.map((page) => ({ doc, page }))]);
 }
 

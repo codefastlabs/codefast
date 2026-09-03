@@ -9,12 +9,12 @@ import { setResponseHeader } from "@tanstack/react-start/server";
 import { isDocKindSlug } from "#/features/package-docs/lib/doc-kinds";
 import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
 import { CHANGELOG_RELEASES_SHOWN, trimChangelog } from "#/features/package-docs/lib/markdown/trim-changelog";
-import type { DocPage, PackageSummary, RenderedDoc } from "#/features/package-docs/lib/rendered-doc";
+import type { DocPageData, PackageSummary, RenderedDoc } from "#/features/package-docs/lib/rendered-doc";
 import { repoBlobUrl } from "#/features/package-docs/lib/site";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 
-/** The address of a doc page as the route params carry it — `page` is the splat under a directory kind. */
-interface DocPageInput {
+/** The address of a doc page as the route params carry it; `page` is present only under a directory kind. */
+interface DocPageParams {
   readonly pkg: string;
   readonly doc: string;
   readonly page?: string | undefined;
@@ -81,8 +81,8 @@ export const getPackages = createServerFn({ method: "GET" }).handler(
 
 /** A `/docs/<pkg>[/<doc>[/<page>]]` page: the rendered document plus the sidebar index, or `null` for an unknown target. */
 export const getDocPage = createServerFn({ method: "GET" })
-  .validator((input: DocPageInput): DocPageInput => input)
-  .handler(async ({ data }): Promise<DocPage | null> => {
+  .validator((params: DocPageParams): DocPageParams => params)
+  .handler(async ({ data }): Promise<DocPageData | null> => {
     setContentCacheHeaders();
 
     if (!isDocKindSlug(data.doc)) {

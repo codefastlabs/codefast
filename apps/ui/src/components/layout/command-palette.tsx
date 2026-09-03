@@ -17,7 +17,7 @@ import { NewBadge } from "#/components/shared/new-badge";
 import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
 import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
 import { getPackages } from "#/features/package-docs/lib/package-docs";
-import { packagePages } from "#/features/package-docs/lib/package-pages";
+import { readingOrder } from "#/features/package-docs/lib/reading-order";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 import { track } from "#/features/tracking/lib/tracking";
 import {
@@ -30,18 +30,18 @@ import { ALL_NAV } from "#/lib/nav-links";
 import { COMPONENTS } from "#/registry/_core/components";
 
 /** A palette row for one package document: where it goes, and the label after the package name (empty for the README). */
-interface PackageDocEntry {
+interface PackageDocRow {
   readonly ref: DocRef;
   readonly label: string;
 }
 
 /** The rows of one package: each kind and, beneath a directory kind, its pages; `@codefast/ui` has only its own section. */
-function packageDocEntries(pkg: PackageSummary): Array<PackageDocEntry> {
+function packageDocRows(pkg: PackageSummary): Array<PackageDocRow> {
   if (pkg.slug === "ui") {
     return [{ ref: { doc: "readme" }, label: "" }];
   }
 
-  return packagePages(pkg).map((ref) => {
+  return readingOrder(pkg).map((ref) => {
     const kindLabel = DOC_KIND_BY_SLUG.get(ref.doc)?.label ?? ref.doc;
 
     if (ref.doc === "readme") {
@@ -246,7 +246,7 @@ export function CommandPalette() {
             {packages.length > 0 ? (
               <CommandGroup heading="Packages">
                 {packages.flatMap((pkg) =>
-                  packageDocEntries(pkg).map(({ ref, label }) => {
+                  packageDocRows(pkg).map(({ ref, label }) => {
                     return (
                       <CommandItem
                         key={`${pkg.slug}/${ref.doc}/${ref.page ?? ""}`}

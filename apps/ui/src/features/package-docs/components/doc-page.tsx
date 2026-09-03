@@ -11,29 +11,28 @@ import { DocPager } from "#/features/package-docs/components/doc-pager";
 import { DocTabs } from "#/features/package-docs/components/doc-tabs";
 import { DocsSidebar } from "#/features/package-docs/components/docs-sidebar";
 import { MarkdownBody } from "#/features/package-docs/components/markdown-body";
-import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
-import type { DocPage as DocPageData } from "#/features/package-docs/lib/rendered-doc";
+import { DOC_KIND_BY_SLUG, docAnalyticsName } from "#/features/package-docs/lib/doc-kinds";
+import type { DocPageData } from "#/features/package-docs/lib/rendered-doc";
 
 interface DocPageProps extends Omit<ComponentProps<"main">, "children"> {
-  /** The page data resolved by the `/docs/$pkg[/$doc[/$]]` route loader. */
-  readonly page: DocPageData;
+  /** The page data resolved by the `/docs/$pkg[/$doc[/$page]]` route loader. */
+  readonly data: DocPageData;
 }
 
 /** A package document: packages sidebar, the rendered markdown, and the "On this page" rail. */
-export function DocPage({ page, className, ...props }: DocPageProps) {
+export function DocPage({ data, className, ...props }: DocPageProps) {
   const hash = useLocation({ select: (location) => location.hash });
 
   useHashScroll(hash);
 
-  const { doc } = page;
-  const pkg = page.packages.find((candidate) => candidate.slug === doc.pkg);
+  const { doc, packages } = data;
+  const pkg = packages.find((candidate) => candidate.slug === doc.pkg);
   const kindLabel = DOC_KIND_BY_SLUG.get(doc.doc)?.label ?? doc.doc;
-  const analyticsName = doc.page === undefined ? `${doc.pkg}/${doc.doc}` : `${doc.pkg}/${doc.doc}/${doc.page}`;
 
   return (
     <main className={cn("container mx-auto px-4 py-10 pb-32", className)} {...props}>
       <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[220px_minmax(0,1fr)_200px]">
-        <DocsSidebar packages={page.packages} activePkg={doc.pkg} active={doc} />
+        <DocsSidebar packages={packages} activePkg={doc.pkg} activeDoc={doc} />
 
         <div className="min-w-0">
           {pkg ? (
@@ -43,7 +42,7 @@ export function DocPage({ page, className, ...props }: DocPageProps) {
                 trail={doc.page === undefined ? [] : [{ doc: doc.doc, label: kindLabel }]}
                 current={doc.doc === "readme" ? undefined : (doc.page ?? kindLabel)}
               />
-              <DocTabs pkg={pkg} activeDoc={doc.doc} className="mb-8 lg:hidden" />
+              <DocTabs pkg={pkg} activeDoc={doc} className="mb-8 lg:hidden" />
               <DocHeader pkg={pkg} doc={doc} />
             </>
           ) : null}
@@ -52,8 +51,8 @@ export function DocPage({ page, className, ...props }: DocPageProps) {
             items={doc.toc}
             className="sticky top-header z-10 -mx-4 mb-6 border-b border-ui-border/60 xl:hidden"
           />
-          <MarkdownBody html={doc.html} analyticsName={analyticsName} />
-          {pkg ? <DocPager pkg={pkg} active={doc} /> : null}
+          <MarkdownBody html={doc.html} analyticsName={docAnalyticsName(doc.pkg, doc.doc, doc.page)} />
+          {pkg ? <DocPager pkg={pkg} activeDoc={doc} /> : null}
         </div>
 
         <aside className="hidden xl:block">

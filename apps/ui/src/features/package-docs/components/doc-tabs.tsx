@@ -3,12 +3,13 @@ import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
 import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
-import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
+import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 
 interface DocTabsProps extends ComponentProps<"nav"> {
   readonly pkg: PackageSummary;
-  readonly activeDoc: DocKindSlug;
+  /** The document being read; the tab of its kind is highlighted. */
+  readonly activeDoc: DocRef;
 }
 
 /** The current package's document kinds as a scrollable tab strip — the sidebar's role on screens that hide it. */
@@ -27,7 +28,7 @@ export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
       {...props}
     >
       {pkg.docs.map(({ doc }) => {
-        const isActive = doc === activeDoc;
+        const isActive = doc === activeDoc.doc;
         const label = DOC_KIND_BY_SLUG.get(doc)?.label ?? doc;
         const linkClassName = cn(
           "-mb-px shrink-0 border-b-2 px-3 py-2.5 text-sm whitespace-nowrap no-underline transition-colors",

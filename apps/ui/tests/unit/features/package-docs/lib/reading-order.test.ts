@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isSameDoc, packagePages } from "#/features/package-docs/lib/package-pages";
+import { isSameDoc, readingOrder } from "#/features/package-docs/lib/reading-order";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 
 const tracking: PackageSummary = {
@@ -16,9 +16,9 @@ const tracking: PackageSummary = {
   ],
 };
 
-describe("packagePages", () => {
+describe("readingOrder", () => {
   it("walks each kind's own page and then the pages beneath it, in sidebar order", () => {
-    expect(packagePages(tracking)).toEqual([
+    expect(readingOrder(tracking)).toEqual([
       { doc: "readme" },
       { doc: "spec" },
       { doc: "spec", page: "spec-consent" },

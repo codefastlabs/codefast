@@ -83,10 +83,9 @@ function packageMarkdownFiles(packageDir: string): Array<string> {
 }
 
 /**
- * The prerendered `/docs/<pkg>[/<kind>[/<page>]]` pages — one per markdown document under `packages/*`
- * (except `ui`, which has its own section), addressed exactly as `doc-kinds.ts` addresses them.
- * `autoStaticPathsDiscovery` skips param routes and link-crawling is off, so the docs pages are listed
- * here; they also feed the sitemap.
+ * The prerendered `/docs/<pkg>[/<kind>[/<page>]]` pages — one per markdown document under `packages/*` (except
+ * `ui`, which has its own section), addressed as `doc-kinds.ts` addresses them. Listed because
+ * `autoStaticPathsDiscovery` skips param routes and link-crawling is off; the list also feeds the sitemap.
  */
 function packageDocPages(): Array<{ path: string }> {
   const packagesDir = fileURLToPath(new URL("../../packages", import.meta.url));

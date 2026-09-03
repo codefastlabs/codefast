@@ -43,7 +43,7 @@ export interface RenderedDoc {
 }
 
 /** Everything a doc page needs: the document plus the index that draws the sidebar. */
-export interface DocPage {
+export interface DocPageData {
   readonly doc: RenderedDoc;
   readonly packages: ReadonlyArray<PackageSummary>;
 }

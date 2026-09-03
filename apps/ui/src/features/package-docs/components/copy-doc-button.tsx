@@ -4,7 +4,7 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
 import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
-import { docPath } from "#/features/package-docs/lib/doc-kinds";
+import { docAnalyticsName, docPath } from "#/features/package-docs/lib/doc-kinds";
 import { track } from "#/features/tracking/lib/tracking";
 
 interface CopyDocButtonProps extends Omit<ComponentProps<typeof Button>, "children" | "onClick"> {
@@ -16,15 +16,14 @@ interface CopyDocButtonProps extends Omit<ComponentProps<typeof Button>, "childr
 
 /** Copies the document's raw Markdown (its `.md` twin) — the same text an LLM would be handed. */
 export function CopyDocButton({ pkg, doc, page, variant = "outline", size = "sm", ...props }: CopyDocButtonProps) {
-  const path = docPath(pkg, doc, page);
   const { copyToClipboard, isCopied } = useCopyToClipboard({
     onCopy: () => {
-      track("copy_page", { slug: path.slice("/docs/".length), variant: "markdown" });
+      track("copy_page", { slug: docAnalyticsName(pkg, doc, page), variant: "markdown" });
     },
   });
 
   const copy = async (): Promise<void> => {
-    const response = await fetch(`${path}.md`);
+    const response = await fetch(`${docPath(pkg, doc, page)}.md`);
 
     if (response.ok) {
       await copyToClipboard(await response.text());

@@ -5,12 +5,12 @@ import type { ComponentProps } from "react";
 
 import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
 import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
-import { isSameDoc, packagePages } from "#/features/package-docs/lib/package-pages";
+import { isSameDoc, readingOrder } from "#/features/package-docs/lib/reading-order";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 
 interface DocPagerProps extends ComponentProps<"nav"> {
   readonly pkg: PackageSummary;
-  readonly active: DocRef;
+  readonly activeDoc: DocRef;
 }
 
 interface PagerLinkProps {
@@ -19,7 +19,7 @@ interface PagerLinkProps {
   readonly direction: "previous" | "next";
 }
 
-/** The kind's label for its own page; a page beneath a kind is named by its path, as in the sidebar. */
+/** The kind's label for its own page; a page beneath a kind is named by its URL segment, as in the sidebar. */
 function pagerLabel({ doc, page }: DocRef): string {
   return page ?? DOC_KIND_BY_SLUG.get(doc)?.label ?? doc;
 }
@@ -59,12 +59,12 @@ function PagerLink({ pkg, target, direction }: PagerLinkProps) {
   );
 }
 
-/** Previous/next links through the package's documents, in sidebar order, at the end of a doc page. */
-export function DocPager({ pkg, active, className, ...props }: DocPagerProps) {
-  const pages = packagePages(pkg);
-  const index = pages.findIndex((candidate) => isSameDoc(candidate, active));
-  const previous = index > 0 ? pages[index - 1] : undefined;
-  const next = index >= 0 ? pages[index + 1] : undefined;
+/** Previous/next links through the package's documents, in reading order, at the end of a doc page. */
+export function DocPager({ pkg, activeDoc, className, ...props }: DocPagerProps) {
+  const order = readingOrder(pkg);
+  const index = order.findIndex((candidate) => isSameDoc(candidate, activeDoc));
+  const previous = index > 0 ? order[index - 1] : undefined;
+  const next = index >= 0 ? order[index + 1] : undefined;
 
   if (!previous && !next) {
     return null;

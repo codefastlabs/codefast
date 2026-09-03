@@ -26,7 +26,7 @@ export const Route = createFileRoute("/docs/$pkg")({
 });
 
 function PackageReadmeRoute() {
-  const page = Route.useLoaderData();
+  const data = Route.useLoaderData();
 
-  return <DocPage page={page} />;
+  return <DocPage data={data} />;
 }

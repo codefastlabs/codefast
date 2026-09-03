@@ -1,8 +1,6 @@
 /**
- * The markdown documents a package may publish, in sidebar order. A kind is served from its `file`
- * at `packages/<pkg>/`, or from a directory there named after its `slug` — that directory's
- * `README.md` is the kind's own page and every other `*.md` under it a page beneath the kind. The
- * `slug` is the kind's URL segment under `/docs/<pkg>/`.
+ * The markdown documents a package may publish, in sidebar order. A kind is served from its `file` at
+ * `packages/<pkg>/` or from a directory there named after its `slug`; the `slug` is its URL segment.
  */
 export const DOC_KINDS = [
   { slug: "readme", file: "README.md", label: "Overview" },
@@ -44,15 +42,17 @@ export function docPath(pkg: string, doc: DocKindSlug, page?: string): string {
   return doc === "readme" ? `/docs/${pkg}` : `/docs/${pkg}/${doc}`;
 }
 
+/** The document's name in analytics events, e.g. `tracking/spec/spec-consent` — the site path without `/docs/`. */
+export function docAnalyticsName(pkg: string, doc: DocKindSlug, page?: string): string {
+  return docPath(pkg, doc, page).slice("/docs/".length);
+}
+
 const INDEX_FILE = "README.md";
 
 /**
- * The document a package-relative path publishes as, or `null` when it is not one.
- *
- * A kind's file at the package root — or the bare name of its directory — is the kind's own page.
- * Inside a kind's directory, `README.md` is that page too, and a page is one level deep: a `*.md`
- * directly inside is the page named after it without the extension, and `<dir>/README.md` is the
- * page `<dir>`. Both are lowercased for the URL; anything nested deeper is not a document.
+ * The document a package-relative path publishes as, or `null` when it is not one: a kind's file (or
+ * bare directory name) is the kind's page, as is its directory's `README.md`; one level inside that
+ * directory, `x.md` is the page `x` and `x/README.md` the page `x`, lowercased. Deeper is not a document.
  */
 export function docRefFor(relativePath: string): DocRef | null {
   const slash = relativePath.indexOf("/");
