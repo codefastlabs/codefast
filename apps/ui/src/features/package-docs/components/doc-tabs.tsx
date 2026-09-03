@@ -3,15 +3,16 @@ import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
 import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
-import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
+import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 
 interface DocTabsProps extends ComponentProps<"nav"> {
   readonly pkg: PackageSummary;
-  readonly activeDoc: DocKindSlug;
+  /** The document being read; the tab of its kind is highlighted. */
+  readonly activeDoc: DocRef;
 }
 
-/** The current package's documents as a scrollable tab strip — the sidebar's role on screens that hide it. */
+/** The current package's document kinds as a scrollable tab strip — the sidebar's role on screens that hide it. */
 export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
   if (pkg.docs.length < 2) {
     return null;
@@ -26,17 +27,17 @@ export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
       )}
       {...props}
     >
-      {pkg.docs.map((doc) => {
-        const isActive = doc === activeDoc;
-        const label = DOC_KIND_BY_SLUG.get(doc)?.label ?? doc;
+      {pkg.docs.map(({ kind }) => {
+        const isActive = kind === activeDoc.kind;
+        const label = DOC_KIND_BY_SLUG.get(kind)?.label ?? kind;
         const linkClassName = cn(
           "-mb-px shrink-0 border-b-2 px-3 py-2.5 text-sm whitespace-nowrap no-underline transition-colors",
           isActive ? "border-ui-brand font-medium text-ui-fg" : "border-transparent text-ui-muted hover:text-ui-fg",
         );
 
-        return doc === "readme" ? (
+        return kind === "readme" ? (
           <Link
-            key={doc}
+            key={kind}
             to="/docs/$pkg"
             params={{ pkg: pkg.slug }}
             aria-current={isActive ? "page" : undefined}
@@ -46,9 +47,9 @@ export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
           </Link>
         ) : (
           <Link
-            key={doc}
-            to="/docs/$pkg/$doc"
-            params={{ pkg: pkg.slug, doc }}
+            key={kind}
+            to="/docs/$pkg/$kind"
+            params={{ pkg: pkg.slug, kind }}
             aria-current={isActive ? "page" : undefined}
             className={linkClassName}
           >

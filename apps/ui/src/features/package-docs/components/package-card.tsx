@@ -16,7 +16,7 @@ interface PackageCardProps extends Omit<ComponentProps<"article">, "children"> {
 /** One published package: name, version, description, and the way into its documentation. */
 export function PackageCard({ pkg, showDocs = false, className, ...props }: PackageCardProps) {
   const isUi = pkg.slug === "ui";
-  const extraDocs = showDocs && !isUi ? pkg.docs.filter((doc) => doc !== "readme") : [];
+  const extraDocs = showDocs && !isUi ? pkg.docs.map(({ kind }) => kind).filter((kind) => kind !== "readme") : [];
 
   return (
     <article
@@ -35,14 +35,14 @@ export function PackageCard({ pkg, showDocs = false, className, ...props }: Pack
       <p className="flex-1 text-sm leading-relaxed text-ui-muted">{pkg.description}</p>
       {extraDocs.length > 0 ? (
         <ul className="relative z-10 flex flex-wrap gap-1.5" aria-label="Documents">
-          {extraDocs.map((doc) => (
-            <li key={doc}>
+          {extraDocs.map((kind) => (
+            <li key={kind}>
               <Link
-                to="/docs/$pkg/$doc"
-                params={{ pkg: pkg.slug, doc }}
+                to="/docs/$pkg/$kind"
+                params={{ pkg: pkg.slug, kind }}
                 className="inline-flex rounded-full border border-ui-border/60 px-2.5 py-0.5 text-xs text-ui-muted no-underline transition-colors hover:border-ui-brand/60 hover:text-ui-fg"
               >
-                {DOC_KIND_BY_SLUG.get(doc)?.label ?? doc}
+                {DOC_KIND_BY_SLUG.get(kind)?.label ?? kind}
               </Link>
             </li>
           ))}

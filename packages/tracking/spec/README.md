@@ -29,6 +29,10 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted 
 | [spec-ad-consent-frameworks.md](spec-ad-consent-frameworks.md) | IAB TCF / GPP interop for programmatic advertising (read an external CMP, don't be one)     |
 | [spec-data-subject-rights.md](spec-data-subject-rights.md)     | DSR obligations for the pseudonymous id: delegate to destinations, keep the surface minimal |
 
+Each document is named for the identifier it is cited by — `spec-consent §3` in a comment or a test points at
+[spec-consent.md](spec-consent.md). Spec-level changes are recorded in the [spec changelog](CHANGELOG.md), separately
+from the package's release notes.
+
 Each document that defines rules ends with a Conformance section of language-neutral test vectors (JSON input → JSON
 output) that an implementation can turn into its own test suite; `spec-security` is the exception — it consolidates
 cross-cutting considerations whose normative home, and vectors, stay in the other documents. Machine-readable
@@ -146,6 +150,8 @@ These bind the spec to this repository and do not constrain other implementation
   behaviorally (real gtag stub + dataLayer assertions). apps/ui carries the integration matrix
   (`apps/ui/tests/integration/**`). There is no browser e2e suite — the repo has no browser runner, so anything needing
   a real browser is still unproven.
+- The package ships **no runner for the vectors** — `tests/unit/**` implements the same contract independently, so a
+  vector and a unit test agreeing is evidence, not a tautology.
 
 ## License
 

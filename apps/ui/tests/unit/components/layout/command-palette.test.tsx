@@ -24,7 +24,17 @@ beforeEach(() => {
   navigate.mockClear();
   getPackages.mockReset();
   getPackages.mockResolvedValue([
-    { slug: "di", name: "@codefast/di", description: "DI", version: "0.8.0", license: "MIT", docs: ["readme", "spec"] },
+    {
+      slug: "di",
+      name: "@codefast/di",
+      description: "DI",
+      version: "0.8.0",
+      license: "MIT",
+      docs: [
+        { kind: "readme", pages: [] },
+        { kind: "spec", pages: [] },
+      ],
+    },
   ]);
 
   // cmdk's list measures/scrolls selection; jsdom lacks both APIs.
@@ -117,6 +127,6 @@ describe("CommandPalette tracking", () => {
       slug: "di",
       hadQuery: false,
     });
-    expect(navigate).toHaveBeenCalledWith({ to: "/docs/$pkg/$doc", params: { pkg: "di", doc: "spec" } });
+    expect(navigate).toHaveBeenCalledWith({ to: "/docs/$pkg/$kind", params: { pkg: "di", kind: "spec" } });
   });
 });

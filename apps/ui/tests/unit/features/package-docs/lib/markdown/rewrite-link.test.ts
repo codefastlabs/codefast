@@ -4,6 +4,8 @@ import { rewriteDocImage, rewriteDocLink } from "#/features/package-docs/lib/mar
 
 const inDiReadme = { pkg: "di", file: "README.md" };
 const inDiSpec = { pkg: "di", file: "SPEC.md" };
+const inTrackingSpecPage = { pkg: "tracking", file: "spec/spec-consent.md" };
+const inTrackingVectors = { pkg: "tracking", file: "spec/vectors/README.md" };
 
 describe("rewriteDocLink", () => {
   it("passes external URLs and in-page anchors through", () => {
@@ -22,7 +24,32 @@ describe("rewriteDocLink", () => {
   it("maps another package's docs and directory to its pages", () => {
     expect(rewriteDocLink("../di-testing/README.md", inDiReadme)).toBe("/docs/di-testing");
     expect(rewriteDocLink("../theme", inDiReadme)).toBe("/docs/theme");
-    expect(rewriteDocLink("../../packages/tracking/SPEC.md", inDiReadme)).toBe("/docs/tracking/spec");
+    expect(rewriteDocLink("../../packages/tracking/spec/README.md", inDiReadme)).toBe("/docs/tracking/spec");
+  });
+
+  it("maps the files of a directory kind to the pages beneath it, resolving from the document's own directory", () => {
+    expect(rewriteDocLink("spec-identity.md#3-minting", inTrackingSpecPage)).toBe(
+      "/docs/tracking/spec/spec-identity#3-minting",
+    );
+    expect(rewriteDocLink("README.md", inTrackingSpecPage)).toBe("/docs/tracking/spec");
+    expect(rewriteDocLink("CHANGELOG.md", inTrackingSpecPage)).toBe("/docs/tracking/spec/changelog");
+    expect(rewriteDocLink("vectors/README.md", inTrackingSpecPage)).toBe("/docs/tracking/spec/vectors");
+    expect(rewriteDocLink("../README.md", inTrackingSpecPage)).toBe("/docs/tracking");
+    expect(rewriteDocLink("../CHANGELOG.md", inTrackingSpecPage)).toBe("/docs/tracking/changelog");
+    expect(rewriteDocLink("../spec-consent.md", inTrackingVectors)).toBe("/docs/tracking/spec/spec-consent");
+    expect(rewriteDocLink("./spec", inDiReadme)).toBe("/docs/di/spec");
+  });
+
+  it("sends a directory kind's non-markdown files, and markdown outside any kind, to GitHub", () => {
+    expect(rewriteDocLink("vectors/vector.schema.json", inTrackingSpecPage)).toBe(
+      "https://github.com/codefastlabs/codefast/blob/main/packages/tracking/spec/vectors/vector.schema.json",
+    );
+    expect(rewriteDocLink("../LICENSE", inTrackingSpecPage)).toBe(
+      "https://github.com/codefastlabs/codefast/blob/main/packages/tracking/LICENSE",
+    );
+    expect(rewriteDocLink("./examples/20-explicit-architecture/README.md", inDiReadme)).toBe(
+      "https://github.com/codefastlabs/codefast/blob/main/packages/di/examples/20-explicit-architecture/README.md",
+    );
   });
 
   it("sends @codefast/ui docs to the component gallery", () => {

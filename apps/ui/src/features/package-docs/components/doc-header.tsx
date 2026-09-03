@@ -16,8 +16,8 @@ interface DocHeaderProps extends Omit<ComponentProps<"header">, "children"> {
 
 /** Package name, version, and document title, with the source, npm, and Markdown-twin links. */
 export function DocHeader({ pkg, doc, className, ...props }: DocHeaderProps) {
-  const kind = DOC_KIND_BY_SLUG.get(doc.doc);
-  const sourceUrl = repoBlobUrl(`packages/${pkg.slug}/${kind?.file ?? "README.md"}`);
+  const kind = DOC_KIND_BY_SLUG.get(doc.kind);
+  const sourceUrl = repoBlobUrl(`packages/${pkg.slug}/${doc.file}`);
 
   return (
     <header className={cn("mb-10 border-b border-ui-border/60 pb-8", className)} {...props}>
@@ -29,7 +29,7 @@ export function DocHeader({ pkg, doc, className, ...props }: DocHeaderProps) {
         {kind ? <span>· {kind.label}</span> : null}
       </div>
       <h1 className="mb-4 text-3xl leading-tight font-bold tracking-tight text-ui-fg sm:text-4xl">{doc.title}</h1>
-      {doc.doc === "readme" && pkg.description ? (
+      {doc.kind === "readme" && pkg.description ? (
         <p className="max-w-2xl text-base leading-relaxed text-ui-muted">{pkg.description}</p>
       ) : null}
       <div className="mt-6 flex flex-wrap gap-2">
@@ -51,9 +51,9 @@ export function DocHeader({ pkg, doc, className, ...props }: DocHeaderProps) {
             {pkg.license} license
           </a>
         </Button>
-        <CopyDocButton pkg={pkg.slug} doc={doc.doc} />
+        <CopyDocButton pkg={pkg.slug} kind={doc.kind} page={doc.page} />
         <Button asChild variant="ghost" size="sm">
-          <a href={`${docPath(pkg.slug, doc.doc)}.md`}>
+          <a href={`${docPath(pkg.slug, doc.kind, doc.page)}.md`}>
             <FileTextIcon className="size-3.5" />
             View as Markdown
           </a>

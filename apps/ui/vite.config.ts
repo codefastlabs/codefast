@@ -11,8 +11,9 @@ import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
-// The `.ts` extension is required: Vite externalizes this import out of the bundled config,
-// so raw Node resolves it via package.json#imports — no extension probing, type-stripped.
+// The `.ts` extension is required: Vite externalizes these imports out of the bundled config,
+// so raw Node resolves them via package.json#imports — no extension probing, type-stripped.
+import { DOC_KIND_BY_SLUG, docPath, docRefFor } from "#/features/package-docs/lib/doc-kinds.ts";
 import { CONTENT_CACHE_CONTROL } from "#/lib/cache.ts";
 
 /**
@@ -59,23 +60,32 @@ function componentSlugPages(): Array<{ path: string; prerender: { enabled: boole
 }
 
 /**
- * The package document files rendered under `/docs/<pkg>[/<kind>]`, in URL-segment form. Mirrors
- * `features/package-docs/lib/doc-kinds.ts`; the README is the package page itself.
+ * The markdown files a package may publish, relative to its directory: the files at its root, plus
+ * everything under a directory named after a doc kind — the only directories the docs source globs.
  */
-const DOC_KIND_BY_FILE = new Map([
-  ["README.md", "readme"],
-  ["SPEC.md", "spec"],
-  ["ARCHITECTURE.md", "architecture"],
-  ["DECISIONS.md", "decisions"],
-  ["LEARNING.md", "learning"],
-  ["CONTRIBUTING.md", "contributing"],
-  ["CHANGELOG.md", "changelog"],
-]);
+function packageMarkdownFiles(packageDir: string): Array<string> {
+  const files: Array<string> = [];
+  const walk = (directory: string, prefix: string): void => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      const relative = `${prefix}${entry.name}`;
+
+      if (entry.isFile() && entry.name.endsWith(".md")) {
+        files.push(relative);
+      } else if (entry.isDirectory() && (prefix !== "" || DOC_KIND_BY_SLUG.has(entry.name))) {
+        walk(path.join(directory, entry.name), `${relative}/`);
+      }
+    }
+  };
+
+  walk(packageDir, "");
+
+  return files;
+}
 
 /**
- * The prerendered `/docs/<pkg>[/<kind>]` pages — one per markdown document under `packages/*` (except
- * `ui`, which has its own section). `autoStaticPathsDiscovery` skips param routes and link-crawling
- * is off, so the docs pages are listed here; they also feed the sitemap.
+ * The prerendered `/docs/<pkg>[/<kind>[/<page>]]` pages — one per markdown document under `packages/*` (except
+ * `ui`, which has its own section), addressed as `doc-kinds.ts` addresses them. Listed because
+ * `autoStaticPathsDiscovery` skips param routes and link-crawling is off; the list also feeds the sitemap.
  */
 function packageDocPages(): Array<{ path: string }> {
   const packagesDir = fileURLToPath(new URL("../../packages", import.meta.url));
@@ -83,10 +93,11 @@ function packageDocPages(): Array<{ path: string }> {
   return readdirSync(packagesDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && entry.name !== "ui")
     .flatMap((entry) =>
-      readdirSync(path.join(packagesDir, entry.name))
-        .map((file) => DOC_KIND_BY_FILE.get(file))
-        .filter((kind): kind is string => kind !== undefined)
-        .map((kind) => ({ path: kind === "readme" ? `/docs/${entry.name}` : `/docs/${entry.name}/${kind}` })),
+      packageMarkdownFiles(path.join(packagesDir, entry.name)).flatMap((file) => {
+        const ref = docRefFor(file);
+
+        return ref ? [{ path: docPath(entry.name, ref.kind, ref.page) }] : [];
+      }),
     );
 }
 

@@ -1,67 +1,69 @@
 import { useEffect, useState } from "react";
 
+import { resolveActiveAnchor } from "#/features/components-catalog/lib/active-anchor";
+
 interface UseActiveAnchorOptions {
-  /** IntersectionObserver rootMargin — tune per page (gallery vs detail TOC). */
-  readonly rootMargin?: string;
+  /** Where the observation band starts, as a fraction of the viewport height — tune per page for its sticky chrome. */
+  readonly bandTop?: number;
+  /** Where the observation band ends, as a fraction of the viewport height. */
+  readonly bandBottom?: number;
 }
 
-const DEFAULT_ROOT_MARGIN = "-15% 0px -75% 0px";
+interface ActiveAnchor {
+  /** The id set the answer was computed for; an answer for another set is stale and reads as `null`. */
+  readonly idsKey: string;
+  readonly id: string | null;
+}
+
+const DEFAULT_BAND_TOP = 0.15;
+const DEFAULT_BAND_BOTTOM = 0.25;
 
 /**
- * Scroll-spy: returns the id of the section anchor currently nearest the top of the view.
- * Shared by gallery letter bands, detail TOC, and mobile jump nav.
+ * Scroll-spy: returns the id of the section anchor at the reader's location — the anchor in the band
+ * near the top of the viewport, else the last one scrolled past, else the first. Shared by gallery
+ * letter bands, the detail TOC, and the mobile jump nav.
  */
 export function useActiveAnchor(ids: ReadonlyArray<string>, options?: UseActiveAnchorOptions): string | null {
-  const rootMargin = options?.rootMargin ?? DEFAULT_ROOT_MARGIN;
-  const [active, setActive] = useState<string | null>(null);
+  const bandTop = options?.bandTop ?? DEFAULT_BAND_TOP;
+  const bandBottom = options?.bandBottom ?? DEFAULT_BAND_BOTTOM;
+  const [active, setActive] = useState<ActiveAnchor>({ idsKey: "", id: null });
 
   // Callers pass a freshly-allocated `ids` array each render; key the effect on
   // the content so the observer rebinds only when the id set actually changes.
   const idsKey = ids.join("\n");
 
   useEffect(() => {
-    const targetIds = idsKey.length > 0 ? idsKey.split("\n") : [];
+    const targets = (idsKey.length > 0 ? idsKey.split("\n") : []).flatMap((id) => {
+      const element = document.getElementById(id);
+
+      return element ? [element] : [];
+    });
     // Each callback only reports the targets whose intersection *changed*, so keep
     // the latest state for every target and decide from the full set.
-    const states = new Map<Element, boolean>();
+    const inBand = new Set<Element>();
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          states.set(entry.target, entry.isIntersecting);
+          if (entry.isIntersecting) {
+            inBand.add(entry.target);
+          } else {
+            inBand.delete(entry.target);
+          }
         }
 
-        const visible = [...states.entries()]
-          .filter(([, isIntersecting]) => isIntersecting)
-          .map(([element]) => element);
-
-        // A section anchor (e.g. `#examples`) can wrap its own sub-anchors. When both
-        // a container and one of its children are in view, the child is the real
-        // location — drop any element that contains another visible one.
-        const specific = visible.filter(
-          (element) => !visible.some((other) => other !== element && element.contains(other)),
-        );
-
-        const topmost = specific.toSorted((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)[0];
-
-        if (topmost) {
-          setActive(topmost.id);
-        }
+        setActive({ idsKey, id: resolveActiveAnchor(targets, inBand, window.innerHeight * bandTop) });
       },
-      { rootMargin },
+      { rootMargin: `-${bandTop * 100}% 0px -${(1 - bandBottom) * 100}% 0px` },
     );
 
-    for (const id of targetIds) {
-      const element = document.getElementById(id);
-
-      if (element) {
-        observer.observe(element);
-      }
+    for (const target of targets) {
+      observer.observe(target);
     }
 
     return () => {
       observer.disconnect();
     };
-  }, [idsKey, rootMargin]);
+  }, [idsKey, bandTop, bandBottom]);
 
-  return active;
+  return active.idsKey === idsKey ? active.id : null;
 }

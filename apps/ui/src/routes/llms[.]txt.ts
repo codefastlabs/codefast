@@ -9,15 +9,18 @@ import { COMPONENTS } from "#/registry/_core/components";
 
 const NPM_ORG_URL = "https://www.npmjs.com/org/codefast";
 
-/** One package's docs as llms.txt bullets: the README page plus its `.md` twin for every document it ships. */
+/** One llms.txt bullet: the page plus its `.md` twin. */
+function docBullet(label: string, path: string, indent: string): string {
+  return `${indent}- [${label}](${absoluteUrl(path)}) · [Markdown](${absoluteUrl(`${path}.md`)})`;
+}
+
+/** One package's docs as llms.txt bullets: every document it ships, with a directory kind's pages nested beneath it. */
 function packageSection(pkg: PackageSummary): string {
   const docs = pkg.docs
-    .map((doc) => {
-      const label = DOC_KIND_BY_SLUG.get(doc)?.label ?? doc;
-      const path = docPath(pkg.slug, doc);
-
-      return `  - [${label}](${absoluteUrl(path)}) · [Markdown](${absoluteUrl(`${path}.md`)})`;
-    })
+    .flatMap(({ kind, pages }) => [
+      docBullet(DOC_KIND_BY_SLUG.get(kind)?.label ?? kind, docPath(pkg.slug, kind), "  "),
+      ...pages.map((page) => docBullet(page, docPath(pkg.slug, kind, page), "    ")),
+    ])
     .join("\n");
 
   return `- **${pkg.name}** v${pkg.version}: ${pkg.description}\n${docs}`;

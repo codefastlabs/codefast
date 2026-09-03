@@ -6,13 +6,13 @@ import { docPageHead } from "#/features/package-docs/lib/doc-page-head";
 import { getDocPage } from "#/features/package-docs/lib/package-docs";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 
-export const Route = createFileRoute("/docs/$pkg_/$doc")({
+/** A page beneath a directory kind, e.g. `/docs/tracking/spec/spec-consent`. */
+export const Route = createFileRoute("/docs/$pkg_/$kind_/$page")({
   // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   staleTime: 60 * 60_000,
   loader: async ({ params }) => {
-    // The README is the package page itself; its slug is not a valid `$doc`.
-    const page = params.doc === "readme" ? null : await getDocPage({ data: params });
+    const page = await getDocPage({ data: params });
 
     if (!page) {
       throw notFound();
@@ -23,11 +23,11 @@ export const Route = createFileRoute("/docs/$pkg_/$doc")({
   // Declared after `loader` on purpose: placed before it, TS cannot infer the loader type and `useLoaderData` degrades.
   head: ({ loaderData }) => docPageHead(loaderData),
   notFoundComponent: DocNotFound,
-  component: PackageDocRoute,
+  component: PackageDocPageRoute,
 });
 
-function PackageDocRoute() {
-  const page = Route.useLoaderData();
+function PackageDocPageRoute() {
+  const data = Route.useLoaderData();
 
-  return <DocPage page={page} />;
+  return <DocPage data={data} />;
 }

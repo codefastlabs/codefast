@@ -3,7 +3,7 @@
  * and structured data all describe the same document.
  */
 import { DOC_KIND_BY_SLUG, docPath } from "#/features/package-docs/lib/doc-kinds";
-import type { DocPage } from "#/features/package-docs/lib/rendered-doc";
+import type { DocPageData } from "#/features/package-docs/lib/rendered-doc";
 import { absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 
 interface DocPageHead {
@@ -12,6 +12,13 @@ interface DocPageHead {
   >;
   readonly links: Array<{ rel: "canonical"; href: string }>;
   readonly scripts: Array<ReturnType<typeof jsonLdScript>>;
+}
+
+interface BreadcrumbItem {
+  readonly "@type": "ListItem";
+  readonly position: number;
+  readonly name: string;
+  readonly item: string;
 }
 
 /**
@@ -27,19 +34,46 @@ export function pageTitle(docTitle: string, packageName: string, kindLabel: stri
   return docTitle.includes(packageName) ? docTitle : `${docTitle} — ${packageName}`;
 }
 
-export function docPageHead(page: DocPage | undefined): DocPageHead {
-  if (!page) {
+/** Home › Packages › the package › its kind › the page, stopping at the level the document sits on. */
+function breadcrumbItems(data: DocPageData, packageName: string, kindLabel: string): Array<BreadcrumbItem> {
+  const { pkg, kind, page, title } = data.doc;
+  const crumbs: Array<[name: string, path: string]> = [
+    ["Home", "/"],
+    ["Packages", "/docs"],
+    [packageName, docPath(pkg, "readme")],
+  ];
+
+  if (kind !== "readme") {
+    crumbs.push([page === undefined ? title : kindLabel, docPath(pkg, kind)]);
+  }
+
+  if (page !== undefined) {
+    crumbs.push([title, docPath(pkg, kind, page)]);
+  }
+
+  return crumbs.map(([name, path], index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name,
+    item: absoluteUrl(path),
+  }));
+}
+
+export function docPageHead(data: DocPageData | undefined): DocPageHead {
+  if (!data) {
     return { meta: [{ title: "Documentation — Codefast Labs" }], links: [], scripts: [] };
   }
 
-  const pkg = page.packages.find((candidate) => candidate.slug === page.doc.pkg);
-  const name = pkg?.name ?? `@codefast/${page.doc.pkg}`;
-  const path = docPath(page.doc.pkg, page.doc.doc);
+  const { doc } = data;
+  const pkg = data.packages.find((candidate) => candidate.slug === doc.pkg);
+  const name = pkg?.name ?? `@codefast/${doc.pkg}`;
+  const path = docPath(doc.pkg, doc.kind, doc.page);
   const seo = canonicalHead(path);
-  const title = pageTitle(page.doc.title, name, DOC_KIND_BY_SLUG.get(page.doc.doc)?.label ?? page.doc.doc);
-  const description = pkg?.description ?? `${page.doc.title} for ${name}.`;
+  const kindLabel = DOC_KIND_BY_SLUG.get(doc.kind)?.label ?? doc.kind;
+  const title = pageTitle(doc.title, name, kindLabel);
+  const description = pkg?.description ?? `${doc.title} for ${name}.`;
   // Rendered by `scripts/generate-og-image.ts`; the root's site-wide image is the fallback for a package without one.
-  const image = absoluteUrl(`/og/${page.doc.pkg}.png`);
+  const image = absoluteUrl(`/og/${doc.pkg}.png`);
 
   return {
     meta: [
@@ -55,7 +89,7 @@ export function docPageHead(page: DocPage | undefined): DocPageHead {
         "@context": "https://schema.org",
         "@type": "TechArticle",
         headline: title,
-        name: page.doc.title,
+        name: doc.title,
         description,
         url: absoluteUrl(path),
         image,
@@ -63,14 +97,7 @@ export function docPageHead(page: DocPage | undefined): DocPageHead {
       jsonLdScript({
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-          { "@type": "ListItem", position: 2, name: "Packages", item: absoluteUrl("/docs") },
-          { "@type": "ListItem", position: 3, name, item: absoluteUrl(docPath(page.doc.pkg, "readme")) },
-          ...(page.doc.doc === "readme"
-            ? []
-            : [{ "@type": "ListItem", position: 4, name: page.doc.title, item: absoluteUrl(path) }]),
-        ],
+        itemListElement: breadcrumbItems(data, name, kindLabel),
       }),
     ],
   };
