@@ -36,8 +36,8 @@ export function StatsSection() {
             eyebrow="Library"
             inverted
             titleId="home-stats-title"
-            title={`${COMPONENT_COUNT}+ components in the box`}
-            description="Every primitive ships as a named sub-path import — browse live previews and copy-ready source."
+            title="One import at a time."
+            description={`All ${COMPONENT_COUNT}+ components, each its own subpath export — so your bundle carries only what you use. Browse the full set below.`}
             className="mx-auto mb-8 text-center"
           />
         </div>

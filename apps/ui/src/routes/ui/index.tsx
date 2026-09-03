@@ -20,10 +20,10 @@ export const Route = createFileRoute("/ui/")({
 
     return {
       meta: [
-        { title: "codefast/ui — Beautiful, accessible React components for React 19" },
+        { title: "codefast/ui — Accessible React components, yours to own" },
         {
           name: "description",
-          content: `${COMPONENTS.length}+ accessible React components built on Radix UI primitives and Tailwind CSS v4. Copy the source, own the code — strict TypeScript, dark mode, and zero config.`,
+          content: `${COMPONENTS.length}+ React components built on Radix UI primitives and Tailwind CSS v4. Accessible by construction, typed to the prop, themeable in plain CSS — and yours to copy, source and all.`,
         },
         ...seo.meta,
       ],
