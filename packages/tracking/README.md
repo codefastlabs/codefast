@@ -299,9 +299,9 @@ durable anonymous id, and the private server-function consent lane.
 ## Documentation
 
 - [codefastlabs.com/docs/tracking](https://codefastlabs.com/docs/tracking) — the rendered docs.
-- [`SPEC.md`](./SPEC.md) — index of the behavioural contract; the language-neutral documents live under
-  [`spec/`](./spec/README.md), one per concern (event model, consent, identity, tracker, destinations, server lane,
-  security), each ending in conformance vectors.
+- [`spec/`](./spec/README.md) — the behavioural contract as language-neutral documents, one per concern (event model,
+  consent, identity, tracker, destinations, server lane, security, plus the commercial-scope extensions), each ending in
+  conformance vectors.
 - [`CHANGELOG.md`](./CHANGELOG.md) — release notes per version.
 
 ## Contributing

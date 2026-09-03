@@ -57,7 +57,7 @@ only joined by a newer audit.
 |                                                                           | [ARCHITECTURE.md](../../packages/cli/ARCHITECTURE.md)                           | Design doc — current-state map                         |
 |                                                                           | [DECISIONS.md](../../packages/cli/DECISIONS.md)                                 | Decision — refactor record (**was `SPEC.md`**)         |
 | **tracking**                                                              | [README.md](../../packages/tracking/README.md)                                  | Guide                                                  |
-|                                                                           | [SPEC.md](../../packages/tracking/SPEC.md)                                      | Spec pointer (into `spec/`)                            |
+|                                                                           | `SPEC.md` (since retired — `spec/README.md` is the Specification page)          | Spec pointer (into `spec/`)                            |
 |                                                                           | [spec/README.md](../../packages/tracking/spec/README.md) + 11 `spec-*.md`       | Spec — source of truth                                 |
 |                                                                           | [spec/vectors/README.md](../../packages/tracking/spec/vectors/README.md)        | Spec reference (vector format)                         |
 | **tailwind-variants**                                                     | [README.md](../../packages/tailwind-variants/README.md)                         | Guide                                                  |
@@ -96,8 +96,8 @@ only joined by a newer audit.
   package-local `DECISIONS.md` convention that mirrors the repo-level [`decisions/`](../decisions/) type.
 - Reworded the `packages/di` section of [`CLAUDE.md`](../../CLAUDE.md) to name `SPEC.md`, `ARCHITECTURE.md`, and
   `LEARNING.md` with their distinct roles.
-- Corrected the spec count and added the missing `spec-security` bullet in
-  [`tracking/SPEC.md`](../../packages/tracking/SPEC.md).
+- Corrected the spec count and added the missing `spec-security` bullet in `tracking/SPEC.md` (since retired in favour
+  of [`spec/README.md`](../../packages/tracking/spec/README.md) rendering as the Specification page).
 
 ## Content sweep — every authored doc read against its code
 
