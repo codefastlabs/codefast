@@ -5,6 +5,23 @@
 
 ---
 
+## How to read this document
+
+This is a **design specification and behavioural contract**, not a tutorial and not an architecture guide. It states
+what `@codefast/di` guarantees to callers and what an implementer must satisfy. Each section follows the same order:
+what a concept is, the rule that governs it, a short example, the edge cases and case tables, and — last — the rationale
+or compatibility note.
+
+Three kinds of callout recur:
+
+- **Normative** — the contract. An implementer must satisfy it; a caller may rely on it.
+- **Exact shape** — a pointer to the source file that declares a type. The source is authoritative for field-level
+  shape; this document is authoritative for behaviour.
+- **Rationale / Compatibility** — explanation of _why_ a rule exists, or how it relates to InversifyJS. These notes
+  never add a rule.
+
+---
+
 ## Background and goals
 
 ### What InversifyJS v8 solved
@@ -47,6 +64,8 @@ still returns the wrong type.
 
 ### Naming — no `I` or `T` prefix
 
+A name states what a thing is or does; a prefix or suffix that carries no information is dropped.
+
 | Avoid                   | Use                              | Why                                                  |
 | ----------------------- | -------------------------------- | ---------------------------------------------------- |
 | `IContainer`            | `Container`                      | An interface describes behaviour; the name is enough |
@@ -72,15 +91,19 @@ container.loadAsync(LazyModule); // async — the module has async setup
 
 ### Token replaces ServiceIdentifier
 
-InversifyJS uses `string | symbol | Newable<T>` as the service identifier — flexible, but not type-safe.
-`container.get<WrongType>('my-service')` compiles and returns the wrong type.
+The sole identifier is `Token<Value>` — a **branded type** (a type carrying a phantom, non-constructible marker so that
+only the library's factory can produce one). A class may also be used directly as a token; `Token<Value>` is the
+preferred form when an abstraction is needed.
 
-This library uses `Token<Value>` — a branded type — as the sole identifier. A class can also be used directly as a
-token, but `Token<Value>` is the preferred form when an abstraction is needed.
+> **Compatibility.** InversifyJS uses `string | symbol | Newable<T>` as the service identifier — flexible, but not
+> type-safe: `container.get<WrongType>('my-service')` compiles and returns the wrong type. A branded token makes that
+> call impossible.
 
 <a id="chain-order"></a>
 
 ### Fluent chain — the canonical, invariant order
+
+A binding is declared as a chain of four steps. Only the first is required, and the order never changes.
 
 ```
 bind(token)
@@ -90,42 +113,52 @@ bind(token)
   .on*(…)       // 4. Lifecycle — optional, always after scope
 ```
 
-`when*` **cannot** be called before `to*()` because `bind(token)` only returns a `BindToBuilder` (which has no `when*`).
-`when*` **cannot** be called after `scope()` because scope builders do not expose `when*`. Lifecycle hooks **cannot** be
-called before `scope()` because `BindingBuilder` (the result of `to*()`) does not expose `on*`. The compiler enforces
-this order through each step's return type.
+> **Normative.** The compiler enforces this order through each step's return type:
+>
+> - `when*` **cannot** be called before `to*()` — `bind(token)` returns only a `BindToBuilder`, which has no `when*`.
+> - `when*` **cannot** be called after `scope()` — scope builders do not expose `when*`.
+> - Lifecycle hooks **cannot** be called before `scope()` — `BindingBuilder` (the result of `to*()`) does not expose
+>   `on*`.
 
-> **Why must lifecycle come after scope?** If `onActivation` could be called before scope, it would be unclear whether
-> activation fires for a transient instance (every resolve) or a singleton (only the first). Forcing scope to be
+> **Rationale — why lifecycle comes after scope.** If `onActivation` could be called before scope, it would be unclear
+> whether activation fires for a transient instance (every resolve) or a singleton (only the first). Forcing scope to be
 > declared first removes the ambiguity entirely — a reader knows immediately which context the activation runs in.
 
 ### Other principles
 
-**Zero magic:** decorators are optional. An entire app can be written with explicit bindings and not a single decorator.
-
-**Last-wins / override:** `bind()` applies **slot-aware last-wins at registration time**. Same slot (`default`, same
-`whenNamed`, same `whenTagged`) means the new binding replaces the old one; a different slot appends, which is what
-serves `resolveAll`. See [Full examples](#binding-examples) for the exact definition.
-
-**Eager commit:** `to*()` commits the binding into the registry immediately — exactly **once** for the whole chain.
-Every read after that (`has`, `resolve*`, `validate`, `inspect`) sees the latest state, even if the chain is abandoned
-midway.
-
-**Async must be explicit:** `resolve()` on an async binding throws `AsyncResolutionError` with a clear message. It never
-silently returns a `Promise`.
-
-**Lifecycle is first-class:** `onActivation` and `onDeactivation` per binding — learned from InversifyJS v8 — but more
-type-safe. The container also has container-level hooks that apply to every binding of a token.
-
-**Singleton async creation is serialized:** concurrent `resolveAsync` calls for the same singleton token share one
-in-flight Promise — the factory runs once, `onActivation` runs once. See [Resolution](#resolution).
+- **Zero magic.** Decorators are optional. An entire app can be written with explicit bindings and not a single
+  decorator.
+- **Last-wins / override.** `bind()` applies **slot-aware last-wins at registration time**. Same slot (`default`, same
+  `whenNamed`, same `whenTagged`) means the new binding replaces the old one; a different slot appends, which is what
+  serves `resolveAll`. The exact definition is in [Slots and last-wins](#slot-matching); worked examples are in
+  [Full examples](#binding-examples).
+- **Eager commit.** `to*()` commits the binding into the registry immediately — exactly **once** for the whole chain.
+  Every read after that (`has`, `resolve*`, `validate`, `inspect`) sees the latest state, even if the chain is abandoned
+  midway.
+- **Async must be explicit.** `resolve()` on an async binding throws `AsyncResolutionError` with a clear message. It
+  never silently returns a `Promise`.
+- **Lifecycle is first-class.** `onActivation` and `onDeactivation` per binding — learned from InversifyJS v8 — but more
+  type-safe. The container also has container-level hooks that apply to every binding of a token.
+- **Singleton async creation is serialized.** Concurrent `resolveAsync` calls for the same singleton token share one
+  in-flight Promise — the factory runs once, `onActivation` runs once. See [Resolution](#resolution).
 
 ---
 
 ## Foundation types
 
 This section declares every foundation type used throughout the spec. The implementer must export all of them from
-`@codefast/di`.
+`@codefast/di`. The table below is a map; each type is specified in its own subsection.
+
+| Type                                        | What it is                                             | Where you meet it                                   |
+| ------------------------------------------- | ------------------------------------------------------ | --------------------------------------------------- |
+| `BindingScope`                              | The three instance lifetimes                           | `.singleton()` / `.transient()` / `.scoped()`       |
+| `BindingIdentifier`                         | An opaque id for one committed binding                 | `.id()`, `unbind(id)`                               |
+| `Constructor`                               | A concrete `new`-able class                            | `.to(Class)`, `.toSelf()`, deps arrays              |
+| `ActivationHandler` / `DeactivationHandler` | The two per-instance lifecycle callbacks               | `.onActivation()`, `.onDeactivation()`              |
+| `ResolveOptions`                            | The hint a single resolve carries (name and/or tags)   | `resolve(token, options)`, `inject(token, options)` |
+| `ResolutionContext`                         | What a dynamic factory receives                        | `.toDynamic((ctx) => …)`                            |
+| `ConstraintContext`                         | Where the current resolve sits in the dependency graph | `.when((ctx) => …)`, advanced constraints           |
+| `TokenValue`                                | Extracts `Value` from a token or constructor           | Type-level helper                                   |
 
 ### `BindingScope`
 
@@ -153,7 +186,7 @@ type BindingIdentifier = string & { readonly [BINDING_ID_BRAND]: true };
 type Constructor<Value = unknown> = new (...args: unknown[]) => Value;
 ```
 
-> **Abstract classes:** TypeScript does not allow `new AbstractClass()`, so an abstract class does not satisfy
+> **Abstract classes.** TypeScript does not allow `new AbstractClass()`, so an abstract class does not satisfy
 > `Constructor<Value>`. To bind an abstract class as a token, use `Token<Value>` instead.
 > `container.bind(AbstractLogger)` with `AbstractLogger` as an abstract class is a TypeScript error.
 
@@ -161,48 +194,67 @@ type Constructor<Value = unknown> = new (...args: unknown[]) => Value;
 
 ### `ActivationHandler` and `DeactivationHandler`
 
-An **activation handler** receives the resolution context and the instance, and runs after `@postConstruct()` and before
-the instance is cached into its scope. By the time it runs, the instance has been fully `new`-ed, accessor initializers
-included. It **must** return an instance — either the same one, or a Proxy wrapping it. If it returns a `Promise`, the
-resolve must be `resolveAsync()`.
+An **activation handler** is the last step before an instance is handed out and cached: it can initialise or wrap the
+instance. A **deactivation handler** is the teardown step when an instance leaves its scope.
 
-A **deactivation handler** receives the instance and runs when the instance is evicted from its scope. Its return value
-is ignored.
+> **Normative — activation.**
+>
+> - The handler receives the resolution context and the instance.
+> - It runs after `@postConstruct()` and before the instance is cached into its scope. By then the instance has been
+>   fully `new`-ed, accessor initializers included.
+> - It **must** return an instance — either the same one, or a Proxy wrapping it.
+> - If it returns a `Promise`, the resolve must be `resolveAsync()`.
+
+> **Normative — deactivation.**
+>
+> - The handler receives the instance and runs when the instance is evicted from its scope. Its return value is ignored.
+> - It is called only for the scopes in the table below.
+
+| Scope / kind      | Deactivation runs?                                                            | When                                       |
+| ----------------- | ----------------------------------------------------------------------------- | ------------------------------------------ |
+| `singleton`       | Yes                                                                           | Container disposed, or the binding unbound |
+| `toConstantValue` | Yes — treated as a singleton, **even if never resolved**                      | `dispose()` / `unbind()`                   |
+| `transient`       | No — each instance is an orphan once handed to the caller                     | —                                          |
+| `scoped`          | No — a child container only clears its cache, it does not notify the instance | —                                          |
+
+> **Why a constant deactivates without a resolve.** A singleton only exists after the first resolve, so if it is never
+> resolved there is nothing to deactivate. A constant is the opposite — the value is supplied by the caller at bind
+> time, so it exists from that moment. If the constant was resolved through `onActivation`, the hook receives the value
+> **after activation**, not the original.
 
 > **Exact shape:** `src/core/types.ts` — `ActivationHandler`, `DeactivationHandler`.
-
-> **`DeactivationHandler` scope restriction:** `onDeactivation` is only called for `singleton` (when the container is
-> disposed or the binding is unbound) and for `toConstantValue` (treated as a singleton). `transient` has no
-> deactivation — each instance is an orphan once handed to the caller. `scoped` has no deactivation — a child container
-> only clears its cache, it does not notify the instance.
-
-> **`toConstantValue` deactivates even if it was never resolved:** a singleton only exists after the first resolve, so
-> if it is never resolved there is nothing to deactivate. A constant is the opposite — the value is supplied by the
-> caller at bind time, so it exists from that moment. The hook is called at `dispose()` / `unbind()` whether or not
-> anyone resolved it; if it was resolved through `onActivation`, the hook receives the value **after activation**, not
-> the original.
 
 <a id="resolve-options"></a>
 
 ### `ResolveOptions`
 
-The hint passed into a single resolve has three fields, all optional:
+**Mental model.** A single resolve may carry a hint made of _criteria_. A criterion is one `[key, value]` pair minted
+from a declared tag key. A **name is also a criterion** — one of the reserved key `slotName` — so `name` and `tags` feed
+one selection model, not two.
 
-- **`name`** — sugar for the reserved criterion `slotName.of(name)`: the request's criterion set carries it alongside
-  whatever `tag`/`tags` contribute ([Slots and last-wins](#slot-matching)). It selects a binding with `whenNamed(name)`.
-- **`tags`** — an array of criteria, read as a **superset filter**: it matches a binding whose _every_ declared tag is
-  in this array, not "the binding must carry all of these tags". The full rule is in
-  [Slots and last-wins](#slot-matching).
-- **`tag`** — shorthand for exactly one criterion, equivalent to a single element of `tags`. Several criteria require
-  `tags`; `InjectOptions` accepts both and folds `tag` into `tags`, so an `InjectionDescriptor` only ever carries one
-  spelling.
+**Fields.** All three are optional:
+
+| Field  | Meaning                                                                                                                                                                | Relationship to the others                  |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `name` | Selects a binding declared with `whenNamed(name)`                                                                                                                      | Sugar for the criterion `slotName.of(name)` |
+| `tag`  | Exactly one criterion                                                                                                                                                  | Equivalent to a single element of `tags`    |
+| `tags` | An array of criteria, read as a **superset filter**: it matches a binding whose _every_ declared tag is in this array — not "the binding must carry all of these tags" | Several criteria require `tags`             |
+
+The full matching rule is in [Slots and last-wins](#slot-matching). `InjectOptions` accepts both `tag` and `tags` and
+folds `tag` into `tags`, so an `InjectionDescriptor` only ever carries one spelling.
 
 > **Exact shape:** `src/core/types.ts` — `ResolveOptions`.
 
-**A criterion is minted by `TagKey.of()`, and only by it — normative.** A tag key is declared with `tag<Value>(name)`;
-`key.of(value)` returns an **interned** `BindingTag`: the same value always yields the **same object**. `BindingTag` is
-branded so it cannot be constructed by hand. `key.peek(value)` reads the intern cache without minting — the engine folds
-a request's `name` through it, so a name no binding ever declared is never retained.
+#### Tag keys and criteria
+
+> **Normative — a criterion is minted by `TagKey.of()`, and only by it.**
+>
+> - A tag key is declared with `tag<Value>(name)`.
+> - `key.of(value)` returns an **interned** `BindingTag`: the same value always yields the **same object**. (_Interning_
+>   means keeping one canonical object per distinct value and returning it on every request.)
+> - `BindingTag` is branded, so it cannot be constructed by hand.
+> - `key.peek(value)` reads the intern cache without minting. The engine folds a request's `name` through it, so a name
+>   no binding ever declared is never retained.
 
 ```ts
 const Region = tag<"eu" | "us">("region");
@@ -210,91 +262,107 @@ container.bind(Storage).to(S3).whenTagged(Region.of("eu"));
 container.resolve(Storage, { tag: Region.of("eu") });
 ```
 
-**Tag value comparison is `Object.is` — normative, on the fast path too.** Interning is _how_ that rule is implemented:
-since each value has exactly one criterion, comparing criteria by **identity** gives the same answer as `Object.is` on
-the value. The consequence for an implementer: an index keyed by **criterion** is exact and needs no recheck. An index
-keyed by _value_ instead answers with **SameValueZero**, treating `-0` and `+0` as one key — which contradicts
-`Object.is` ([Slots and last-wins](#slot-matching), [Advanced Constraints](#advanced-constraints)) — and forces the fast
-path to recheck with the matcher. The intern cache must keep `-0` separate from `+0` to preserve the rule. `NaN` is
-unaffected: both rules treat `NaN` as equal to itself, so it folds to one criterion.
+#### Tag value comparison
 
-**The key set of a slot and of a request is a bitmask — not normative, but the subset rule is.** A slot only matches
-when the request carries **every** key the slot declares ([Slots and last-wins](#slot-matching)). The implementation ORs
-the keys into a word and rejects with `(requestMask & slotMask) !== slotMask` before reading any criterion. Bits wrap
-every 32 keys, so two keys can share a bit: that is a **false positive** which identity eliminates afterwards, never a
-false negative.
+> **Normative — tag values compare by `Object.is`, on the fast path too.** The intern cache must keep `-0` separate from
+> `+0` to preserve this rule. `NaN` folds to one criterion, because `Object.is(NaN, NaN)` is `true`.
 
-**Passing `tag` and `tags` together (normative):** the request carries the **union** of both sources — equivalent to
-`tags: [tag, ...tags]`, and `InjectOptions` folds it into exactly that shape. Such a request asks for two or more tags,
-so it cannot use the single-tag index; it takes the full selection path.
+Interning is _how_ the rule is implemented: since each value has exactly one criterion, comparing criteria by
+**identity** gives the same answer as `Object.is` on the value.
+
+> **Implementer note.** An index keyed by **criterion** is exact and needs no recheck. An index keyed by _value_ instead
+> answers with **SameValueZero**, treating `-0` and `+0` as one key — which contradicts `Object.is` (see
+> [Slots and last-wins](#slot-matching), [Advanced Constraints](#advanced-constraints)) — and forces the fast path to
+> recheck with the matcher.
+
+#### Passing `tag` and `tags` together
+
+> **Normative.** The request carries the **union** of both sources — equivalent to `tags: [tag, ...tags]`, and
+> `InjectOptions` folds it into exactly that shape.
+
+Such a request asks for two or more tags, so it cannot use the single-tag index; it takes the full selection path.
+
+#### Key sets as a bitmask (implementation note)
+
+The **subset rule is normative**: a slot only matches when the request carries **every** key the slot declares
+([Slots and last-wins](#slot-matching)). The bitmask is not normative — it is how the implementation rejects early. It
+ORs the keys into a word and rejects with `(requestMask & slotMask) !== slotMask` before reading any criterion. Bits
+wrap every 32 keys, so two keys can share a bit: that is a **false positive** which identity eliminates afterwards,
+never a false negative.
 
 ### `ResolutionContext`
 
-`ctx` in `toDynamic` / `toDynamicAsync` — not a full container, only resolution within the current context:
+`ctx` is what a dynamic factory (`toDynamic` / `toDynamicAsync`) receives. It is **not** a full container — it opens up
+exactly the ability to resolve within the current context.
 
-`ctx` is what a dynamic factory receives. It is **not** a full container — it opens up exactly the ability to resolve
-within the current context: `resolve`, `resolveAsync`, `resolveOptional`, `resolveOptionalAsync`, `resolveAll`,
-`resolveAllAsync`, each taking a token plus the same optional hint. `resolveAll` throws `AsyncResolutionError` if any
-matching binding is async, and returns `[]` when nothing matches.
-
-It also carries `graph`, holding the `ConstraintContext` — the dependency-graph context used inside a `when()`
-predicate. An ordinary resolve never needs it.
+- Six methods, each taking a token plus the same optional hint: `resolve`, `resolveAsync`, `resolveOptional`,
+  `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync`.
+- `resolveAll` throws `AsyncResolutionError` if any matching binding is async, and returns `[]` when nothing matches.
+- `graph` holds the `ConstraintContext` — the dependency-graph context used inside a `when()` predicate. An ordinary
+  resolve never needs it.
 
 > **Exact shape:** `src/core/types.ts` — `ResolutionContext`.
 
 ### `ConstraintContext`
 
-`ConstraintContext` describes the current position within a resolve, in five parts:
+**Mental model.** `ConstraintContext` answers "where am I in the current resolve?" — which token is being built, which
+binding asked for it, and every binding above that. A `when()` predicate reads it to decide whether a candidate applies.
 
-- **`resolutionPath`** — the token names along the current resolve path, readonly.
-- **`resolutionStack`** — the full `ResolutionFrame`s along the construction chain. Unlike `resolutionPath`, which is
-  only a chain of labels, the stack carries enough metadata to detect a captive dependency.
-- **`parent`** — the frame directly above, `undefined` at the root.
-- **`ancestors`** — every frame above `parent`.
-- **`currentResolveOptions`** — the hint passed into the current resolve, `undefined` if there is none.
+**Five fields:**
 
-A **`ResolutionFrame`** holds: `tokenName` (for display in error messages), `scope`, `bindingId`, `kind`, and the
+| Field                   | Contents                                                                                                  |
+| ----------------------- | --------------------------------------------------------------------------------------------------------- |
+| `resolutionPath`        | The token names along the current resolve path, readonly — a chain of labels                              |
+| `resolutionStack`       | The full `ResolutionFrame`s along the construction chain — enough metadata to detect a captive dependency |
+| `parent`                | The frame directly above, `undefined` at the root                                                         |
+| `ancestors`             | Every frame above `parent`                                                                                |
+| `currentResolveOptions` | The hint passed into the current resolve, `undefined` if there is none                                    |
+
+**A `ResolutionFrame`** holds: `tokenName` (for display in error messages), `scope`, `bindingId`, `kind`, and the
 **`slot`** of the binding matched for that frame. A slot is the binding's criterion set: `tags` (every criterion, the
 reserved name criterion included) plus `name`, the derived view of the reserved criterion (`undefined` if the binding
-declares no `whenNamed()`) — see [Slots and last-wins](#slot-matching). The important point: a slot reflects the
-**constraint registered at bind time**, not the hint passed at resolve time — the advanced constraints in
-[Advanced Constraints](#advanced-constraints) read exactly this field.
+declares no `whenNamed()`) — see [Slots and last-wins](#slot-matching).
+
+> **Normative.** A frame's `slot` reflects the **constraint registered at bind time**, not the hint passed at resolve
+> time. The advanced constraints in [Advanced Constraints](#advanced-constraints) read exactly this field.
 
 **`BindingKind`** is one of seven values: `class`, `dynamic`, `dynamic-async`, `resolved`, `resolved-async`, `constant`,
 `alias`.
 
 > **Exact shape:** `src/core/types.ts` — `ConstraintContext`, `ResolutionFrame`, `BindingKind`.
 
-**`resolutionStack` — ordering, and its relationship to `parent`/`ancestors` (normative):**
+#### `resolutionStack` ordering and its views
 
-`resolutionStack` is a readonly snapshot of the entire resolution path **above** the current token — it does not include
-the token being resolved. Order: from the root (index 0) to the direct parent (last index). The `parent` and `ancestors`
-fields are computed views over the same data:
+> **Normative.**
+>
+> - `resolutionStack` is a readonly snapshot of the entire resolution path **above** the current token — it does not
+>   include the token being resolved.
+> - Order: from the root (index 0) to the direct parent (last index).
+> - `parent` and `ancestors` are computed views over the same data, and the implementer must keep them consistent:
+>
+> ```ts
+> ctx.parent === ctx.resolutionStack.at(-1); // nearest frame, undefined at the root
+> ctx.ancestors === ctx.resolutionStack.slice(0, -1); // everything but the nearest frame
+> ```
 
-```ts
-// The relationship (normative — the implementer must keep these consistent):
-ctx.parent === ctx.resolutionStack.at(-1); // nearest frame, undefined at the root
-ctx.ancestors === ctx.resolutionStack.slice(0, -1); // everything but the nearest frame
-```
-
-Example: the resolve chain `App → Database → Logger` (root `App`, direct parent `Database`, currently resolving
+Example — the resolve chain `App → Database → Logger` (root `App`, direct parent `Database`, currently resolving
 `Logger`):
 
 ```
 resolutionStack = [App_frame, Database_frame]  // index 0 = root
-parent               = Database_frame               // resolutionStack.at(-1)
-ancestors            = [App_frame]                  // resolutionStack.slice(0, -1)
+parent          = Database_frame               // resolutionStack.at(-1)
+ancestors       = [App_frame]                  // resolutionStack.slice(0, -1)
 ```
 
 When resolving `App` at the root (nothing injects `App`):
 
 ```
 resolutionStack = []
-parent               = undefined
-ancestors            = []
+parent          = undefined
+ancestors       = []
 ```
 
-> **`resolutionPath` vs `resolutionStack`:** `resolutionPath` is an array of `tokenName` strings, enough to display in
+> **`resolutionPath` vs `resolutionStack`.** `resolutionPath` is an array of `tokenName` strings, enough to display in
 > an error message (`"App → Database → Logger"`). `resolutionStack` holds full `ResolutionFrame`s (scope, bindingId,
 > slot) — used by advanced constraints and by validate. The implementer must maintain both structures in parallel inside
 > the resolver: the string path (cheaper) and the frame stack (richer).
@@ -367,7 +435,7 @@ container.bind(Logger).to(ConsoleLogger);
 const logger = container.resolve(Logger); // ^? LoggerService
 ```
 
-> **`toSelf()` without `@injectable()`:** if `ConsoleLogger` has no `@injectable()` and its constructor takes deps, the
+> **`toSelf()` without `@injectable()`.** If `ConsoleLogger` has no `@injectable()` and its constructor takes deps, the
 > container throws `MissingMetadataError` — it does not assume zero deps. To use `toSelf()` with constructor deps but no
 > decorator, use `toDynamic()` or `toResolved()` instead.
 
@@ -375,8 +443,10 @@ const logger = container.resolve(Logger); // ^? LoggerService
 
 ## Binding API
 
-A binding describes how to produce a value from a token. The API is a fluent builder with a canonical order:
-`to*() → when*() → scope() → on*()`.
+**Mental model.** A binding tells the container how to produce a value for a token. It has four parts, declared in the
+fixed chain order `to*() → when*() → scope() → on*()`: a **strategy** (class, constant, factory, alias), optional
+**selection criteria** (a slot and/or a predicate), a **scope** (how long an instance lives), and optional **lifecycle
+hooks**.
 
 ### Binding kinds
 
@@ -391,22 +461,25 @@ A binding describes how to produce a value from a token. The API is a fluent bui
 | `.toResolvedAsync(asyncFactory, deps)` | —                                 | Explicit async deps, no `ctx` needed     |
 | `.toAlias(otherToken)`                 | `.toService(otherId)`             | Alias this token → another token         |
 
-> **`toDynamic` vs `toDynamicAsync`:** InversifyJS v8 uses `toDynamicValue` for both sync and async factories — the
-> compiler enforces nothing. This library splits them cleanly: `toDynamic` forces the factory to return `Value` (never a
-> `Promise`), `toDynamicAsync` forces it to return `Promise<Value>`. The compiler then enforces `resolveAsync()` where
-> it is needed.
+> **`toDynamic` vs `toDynamicAsync`.** `toDynamic` forces the factory to return `Value` (never a `Promise`);
+> `toDynamicAsync` forces it to return `Promise<Value>`. The compiler then enforces `resolveAsync()` where it is needed.
+> _Compatibility:_ InversifyJS v8 uses `toDynamicValue` for both sync and async factories — the compiler enforces
+> nothing.
 
-> **`toResolved` vs `toResolvedAsync`:** `toResolved` is shorthand for `toDynamic` when the deps are simple and the
+> **`toResolved` vs `toResolvedAsync`.** `toResolved` is shorthand for `toDynamic` when the deps are simple and the
 > factory is sync. `toResolvedAsync` is shorthand for `toDynamicAsync` when the deps are simple but the factory needs to
 > be async (initialising a cache from config, say). Both are pure syntactic sugar — they add no capability over
 > `toDynamic`/`toDynamicAsync`.
 
-> **`toAlias` chains:** an alias may point at another alias — the container follows the chain to the final binding. A
+> **`toAlias` chains.** An alias may point at another alias — the container follows the chain to the final binding. A
 > cycle (`A → B → A`) is detected and throws `CircularDependencyError`. `toAlias` returns an `AliasBindingBuilder` so it
 > can carry constraints and `.id()` — the only builder with no type parameter, because an alias produces no value of its
 > own.
 
 ### Scope
+
+**Mental model.** Scope decides how many instances a binding produces and who owns them: one per container hierarchy
+(`singleton`), one per child container (`scoped`), or one per resolve (`transient`).
 
 ```ts
 .singleton()  // ←→ .inSingletonScope()  — created once, reused forever
@@ -414,17 +487,20 @@ A binding describes how to produce a value from a token. The API is a fluent bui
 .scoped()     // ←→ .inRequestScope()   — once per child container
 ```
 
-Scope **always** comes after `when*` in the chain ([see 2.4](#chain-order)). The default when no scope is declared is
-`transient` — but the `on*()` lifecycle hooks are **only available after scope() is called** explicitly. If you do not
-need lifecycle hooks, you can skip `scope()` and take the transient default.
+> **Normative.**
+>
+> - Scope **always** comes after `when*` in the chain ([Fluent chain](#chain-order)).
+> - The default when no scope is declared is `transient`.
+> - The `on*()` lifecycle hooks are **only available after `scope()` is called** explicitly. If you do not need
+>   lifecycle hooks, you can skip `scope()` and take the transient default.
+> - A `scoped` binding is only a singleton within the child container that first resolves it. Resolving `scoped`
+>   directly from a parent container (with no child scope context) throws `MissingScopeContextError`.
+> - **Singleton cache ownership:** a singleton is cached at the container where the binding is defined — not at the
+>   container that called resolve. When `child.resolve(SomeToken)` walks up to the parent and finds a singleton binding
+>   there, the instance is cached at the **parent**. `child.dispose()` only deactivates singletons defined at the child.
 
-> **Why `transient` is the default:** it is the safest row of the matrix below — a `transient` consumer may depend on
-> any scope without a captive dependency, so the default can never introduce a violation on its own. It is also a fixed
-> constant inlined at each `to*()`, never a container-level setting: `bind(X).to(Y)` means the same thing in every file,
-> which keeps with the no-hidden-behaviour principle. Reach for `singleton()` or `scoped()` explicitly the moment a
-> binding needs shared state or a lifecycle.
-
-**Scope validation matrix — captive dependency:**
+**Scope validation matrix — captive dependency.** A _captive dependency_ is a long-lived consumer holding a
+shorter-lived dependency, which silently freezes that dependency for the consumer's whole life.
 
 | Consumer ╲ Dependency | `singleton` | `scoped`     | `transient`  |
 | --------------------- | ----------- | ------------ | ------------ |
@@ -435,29 +511,36 @@ need lifecycle hooks, you can skip `scope()` and take the transient default.
 `container.validate()` walks the whole dependency graph and throws `ScopeViolationError` for any violation. See
 [`validate`](#validate) for the limits of `validate()`.
 
-> **`scoped` in a parent container:** a `scoped` binding is only a singleton within the child container that first
-> resolves it. Resolving `scoped` directly from a parent container (with no child scope context) throws
-> `MissingScopeContextError`.
-
-> **Singleton cache ownership:** a singleton is cached at the container where the binding is defined — not at the
-> container that called resolve. When `child.resolve(SomeToken)` walks up to the parent and finds a singleton binding
-> there, the instance is cached at the **parent**. `child.dispose()` only deactivates singletons defined at the child.
+> **Rationale — why `transient` is the default.** It is the safest row of the matrix — a `transient` consumer may depend
+> on any scope without a captive dependency, so the default can never introduce a violation on its own. It is also a
+> fixed constant inlined at each `to*()`, never a container-level setting: `bind(X).to(Y)` means the same thing in every
+> file, which keeps with the no-hidden-behaviour principle. Reach for `singleton()` or `scoped()` explicitly the moment
+> a binding needs shared state or a lifecycle.
 
 ### `toConstantValue` — semantics
 
 `toConstantValue(value)` creates a binding that always returns the same value. It is treated as a singleton — there is
-no scope choice. Lifecycle:
+no scope choice.
 
-- `onActivation` may be registered and **will be called** the first time the value is resolved. The post-activation
-  result is cached; activation does not run again on later resolves.
-- If `onActivation` returns a `Promise`, the resolve must use `resolveAsync()`.
-- `onDeactivation` may be registered and will be called when the binding is unbound or the container is disposed.
-- The original value is considered immutable — `onActivation` may return a Proxy wrapper. After activation, the cached
-  value is the activation result, not the original.
+> **Normative — lifecycle of a constant.**
+>
+> - `onActivation` may be registered and **will be called** the first time the value is resolved. The post-activation
+>   result is cached; activation does not run again on later resolves.
+> - If `onActivation` returns a `Promise`, the resolve must use `resolveAsync()`.
+> - `onDeactivation` may be registered and will be called when the binding is unbound or the container is disposed.
+> - The original value is considered immutable — `onActivation` may return a Proxy wrapper. After activation, the cached
+>   value is the activation result, not the original.
 
 <a id="constraints"></a>
 
 ### Constraints — `when*`
+
+**Mental model.** A constraint decides _when_ a binding is eligible for a request. There are two mechanisms:
+
+- **Slot criteria** — `whenNamed`, `whenTagged`, `whenDefault`. Static, declared at bind time, matched at constant cost
+  against the request's hint. They define the binding's _slot_ ([Slots and last-wins](#slot-matching)).
+- **Predicates** — `when(ctx => boolean)`. Dynamic, evaluated at resolve time against the `ConstraintContext`, after
+  slot matching.
 
 `when*` comes immediately after `to*()`, before scope. A binding may carry one or several combined constraints.
 
@@ -495,27 +578,32 @@ container
   .when((ctx) => ctx.parent?.scope === "singleton");
 ```
 
-> **`whenTagged` takes a criterion, not a loose pair:** a criterion can only be minted by `TagKey.of()`, so the key must
+**Slot criteria — the three verbs:**
+
+> **`whenTagged` takes a criterion, not a loose pair.** A criterion can only be minted by `TagKey.of()`, so the key must
 > be declared up front with `tag<Value>(name)` — that is what makes identity comparison enough to stand in for
 > `Object.is` ([`ResolveOptions`](#resolve-options)). The key name is still a `string`, so use a namespace prefix to
 > avoid collisions: `tag("mylib:fuel")`, `tag("@scope/pkg:env")`.
 
-> **`whenNamed` is sugar:** a name is a criterion of the reserved key `slotName` — `whenNamed("console")` ≡
+> **`whenNamed` is sugar.** A name is a criterion of the reserved key `slotName` — `whenNamed("console")` ≡
 > `whenTagged(slotName.of("console"))`, single-valued per slot ([Slots and last-wins](#slot-matching)).
 
-> **Explicit `whenDefault()` vs declaring no constraint:** a binding with no `when*` at all also matches the default
+> **Explicit `whenDefault()` vs declaring no constraint.** A binding with no `when*` at all also matches the default
 > slot. `whenDefault()` is useful when you want to document the intent explicitly, or to combine it with a custom
 > `when()`.
 
-**`when()` predicates — the rules (normative):**
+**Predicates — `when()`:**
 
-- The predicate is called every time a resolve needs to pick a candidate (never cached).
-- The predicate **must be pure and deterministic** — no side effects, no I/O. Breaking this rule is undefined behaviour
-  and may cause an infinite loop or incorrect caching.
-- The predicate **must not** call `ctx.resolve*()` — that causes circular resolution.
-- **Performance note:** for a `transient` binding on a hot path (resolved on every request), a complex `when()`
-  predicate is called a great many times. Prefer `whenNamed` / `whenTagged` (O(1) lookup) on hot paths; keep custom
-  `when()` predicates for configuration-time bindings.
+> **Normative — rules for a `when()` predicate.**
+>
+> - The predicate is called every time a resolve needs to pick a candidate (never cached).
+> - The predicate **must be pure and deterministic** — no side effects, no I/O. Breaking this rule is undefined
+>   behaviour and may cause an infinite loop or incorrect caching.
+> - The predicate **must not** call `ctx.resolve*()` — that causes circular resolution.
+
+> **Performance note.** For a `transient` binding on a hot path (resolved on every request), a complex `when()`
+> predicate is called a great many times. Prefer `whenNamed` / `whenTagged` (O(1) lookup) on hot paths; keep custom
+> `when()` predicates for configuration-time bindings.
 
 **Resolving with a hint:**
 
@@ -561,13 +649,13 @@ const logger = container.resolve(AbstractAuditLogger, { name: "audit" });
 // → the Logger binding matching { name: "audit" } (if any), otherwise the default
 ```
 
-> **An alias has no scope of its own:** the scope is decided by the target binding. An alias is only a pointer — it
+> **An alias has no scope of its own.** The scope is decided by the target binding. An alias is only a pointer — it
 > caches no instance.
 
 ### Builder type interfaces
 
-Each step in the chain returns a different builder, and it is precisely that builder's method set which enforces the
-order in [Fluent chain](#chain-order):
+**Mental model.** Each step in the chain returns a different builder, and it is precisely that builder's method set
+which enforces the order in [Fluent chain](#chain-order). Reading the table row by row tells you what you may call next.
 
 | Builder returned by | Constraint | Scope | `onActivation` | `onDeactivation` | `id()` |
 | ------------------- | :--------: | :---: | :------------: | :--------------: | :----: |
@@ -579,35 +667,44 @@ order in [Fluent chain](#chain-order):
 | `transient()`       |     —      |   —   |       ✅       |        —         |   ✅   |
 | `scoped()`          |     —      |   —   |       ✅       |        —         |   ✅   |
 
-The builder from `bind(token)` has **only** the `to*` group and nothing else. The four constraint methods (`when`,
-`whenNamed`, `whenTagged`, `whenDefault`) plus `id()` are the shared part, factored into a `SlotConstrainedBuilder`
-interface that the three concrete builders inherit — it never appears in the chain, and no call returns it. The builder
-from `toConstantValue()` has no scope step because a constant binding is always a singleton; calling a lifecycle hook on
-it moves to a builder with only lifecycle and `id()` left, a one-way state: calling a hook means locking the constraint
-part. The builder from `toAlias()` is the only one **without a type parameter** — an alias produces no value, so there
-is nothing to infer. `transient` and `scoped` have no `onDeactivation` because those two scopes have no deactivation
-([`ActivationHandler` and `DeactivationHandler`](#lifecycle-handlers)).
+How to read the rows:
+
+- **`bind(token)`** returns a builder with **only** the `to*` group and nothing else.
+- **The shared part** — the four constraint methods (`when`, `whenNamed`, `whenTagged`, `whenDefault`) plus `id()` — is
+  factored into a `SlotConstrainedBuilder` interface that the three concrete builders inherit. It never appears in the
+  chain, and no call returns it.
+- **`toConstantValue()`** has no scope step because a constant binding is always a singleton. Calling a lifecycle hook
+  on it moves to a builder with only lifecycle and `id()` left — a one-way state: calling a hook locks the constraint
+  part.
+- **`toAlias()`** is the only builder **without a type parameter** — an alias produces no value, so there is nothing to
+  infer.
+- **`transient()` and `scoped()`** have no `onDeactivation` because those two scopes have no deactivation
+  ([`ActivationHandler` and `DeactivationHandler`](#lifecycle-handlers)).
 
 > **Exact shape:** `src/core/binding.ts` — `BindToBuilder`, `SlotConstrainedBuilder`, `BindingBuilder`,
 > `ConstantBindingBuilder`, `AliasBindingBuilder`, `SingletonBindingBuilder`, `TransientBindingBuilder`,
 > `ScopedBindingBuilder`, `SingletonLifecycleBuilder`.
 
-> **Why does `BindingBuilder` have no `on*()`?** Lifecycle hooks need the scope context to have clear semantics:
+> **Normative — a repeated `on*()` on one chain replaces the hook it already carries.** The three chain verbs compose
+> three different ways:
+>
+> - `when()` **narrows** — a candidate passes every predicate.
+> - Container-level hooks **accumulate** — each registration is another listener.
+> - A chain's `onActivation`/`onDeactivation` **replaces** — a chain held in a variable is a reconfiguration handle, and
+>   re-calling its lifecycle verb means "this hook now", not "this hook too".
+>
+> A caller who wants several activation steps composes them in one handler or registers container-level hooks. Pinned by
+> `tests/unit/resolution/cache-invalidation.test.ts` ("drops a hook that was replaced on the same chain"); changing this
+> to accumulate is a behavior change, not a clarification.
+
+> **Rationale — why `BindingBuilder` has no `on*()`.** Lifecycle hooks need the scope context to have clear semantics:
 > `onDeactivation` only makes sense for a singleton, while `onActivation` on a transient fires every time a new instance
 > is created. Forcing scope to be declared before lifecycle removes the ambiguity entirely — the compiler will not let
 > you confuse them.
 
-> **`ConstantBindingBuilder.onActivation` → `SingletonLifecycleBuilder`:** after `onActivation()` or `onDeactivation()`
+> **`ConstantBindingBuilder.onActivation` → `SingletonLifecycleBuilder`.** After `onActivation()` or `onDeactivation()`
 > is called, the builder no longer exposes `when*` — a one-way state: calling lifecycle "locks" the constraint and moves
 > into the lifecycle phase.
-
-> **A repeated `on*()` on one chain replaces the hook it already carries — normative.** The three chain verbs
-> deliberately compose three different ways: `when()` narrows (a candidate passes every predicate), container-level
-> hooks accumulate (each registration is another listener), and a chain's `onActivation`/`onDeactivation` replaces — a
-> chain held in a variable is a reconfiguration handle, and re-calling its lifecycle verb means "this hook now", not
-> "this hook too". A caller who wants several activation steps composes them in one handler or registers container-level
-> hooks. Pinned by `tests/unit/resolution/cache-invalidation.test.ts` ("drops a hook that was replaced on the same
-> chain"); changing this to accumulate is a behavior change, not a clarification.
 
 ### `toResolved` and `toResolvedAsync` — explicit deps
 
@@ -632,7 +729,7 @@ container.bind(Cache).toResolvedAsync(async (config) => Cache.connect(config.red
 With `deps: [Logger, Config] as const`, TypeScript infers the factory params as `[LoggerService, AppConfig]` — no manual
 annotation needed.
 
-> **`toResolved`/`toResolvedAsync` and named/tagged deps:** they only support plain tokens, not named or tagged
+> **`toResolved`/`toResolvedAsync` and named/tagged deps.** They only support plain tokens, not named or tagged
 > injection. When you need `{ name: "file" }` or `{ tags: [...] }`, use `toDynamic`/`toDynamicAsync` with
 > `ctx.resolve(token, hint)`.
 
@@ -648,7 +745,7 @@ const fileId = container.bind(Logger).to(FileLogger).whenNamed("file").singleton
 container.unbind(consoleId);
 ```
 
-> **`.id()` and chain order:** `.id()` may be called at any step after `to*()`. The builder can keep chaining afterwards
+> **`.id()` and chain order.** `.id()` may be called at any step after `to*()`. The builder can keep chaining afterwards
 > — `.id()` is not terminal. The id is **stable for the whole chain**: a value taken early still points at the right
 > binding after the chain is refined.
 
@@ -672,7 +769,8 @@ container
   });
 ```
 
-**The full lifecycle order:**
+**The full lifecycle order.** One resolve has two phases — _construction_ (everything inside the single `new`) and
+_activation_ (everything the resolver does once the instance exists). Deactivation runs the activation steps in reverse.
 
 ```
 Construction (within one `new`, usually wrapped in `runWithContainer` when the class has @inject accessors):
@@ -690,10 +788,17 @@ Deactivation (reverse):
   3. @preDestroy() — every method, in declaration order
 ```
 
-> **Construction and hooks:** `context.addInitializer` runs immediately after the constructor body, before the `new`
-> expression returns. The resolver then calls `@postConstruct()` and then `onActivation`. In short: constructor →
-> accessor initializers (`@inject accessor`) → `@postConstruct()` → `onActivation`. `@postConstruct()` always runs after
-> the accessor fields have been injected.
+Step by step:
+
+1. **Constructor body** — the class's own code runs first.
+2. **Accessor initializers** — `context.addInitializer` runs immediately after the constructor body, before the `new`
+   expression returns, so every `@inject accessor` field is set before anything outside the class sees the instance.
+3. **`@postConstruct()`** — the resolver calls it once `new` has returned; it can rely on the accessor fields.
+4. **Per-binding `onActivation`** — may wrap the instance; its return value is what proceeds.
+5. **Container-level `onActivation`** — runs last, over the value returned by step 4.
+
+In short: constructor → accessor initializers (`@inject accessor`) → `@postConstruct()` → `onActivation`.
+`@postConstruct()` always runs after the accessor fields have been injected.
 
 **Type inference — no annotation needed:**
 
@@ -778,53 +883,60 @@ container.bind(AbstractAuditLogger).toAlias(Logger).whenNamed("audit");
 
 ### Slots and last-wins — the exact definition
 
-**Vocabulary (normative):**
+**Mental model.** A **slot** is the set of conditions a binding declares about the request that may select it — its
+name, its tags, or nothing at all. The registry uses the slot as the key for last-wins: two bindings of one token with
+the same slot replace each other; different slots coexist. At resolve time a slot matches when the request states every
+condition the slot declares. The slot with no conditions is the **default slot**.
 
-A **binding slot** is the key that uniquely identifies a slot in the registry — the binding's **criterion set**,
-computed from its constraints:
+#### Vocabulary
 
-```
-BindingSlot = {
-  tags: ReadonlySet<BindingTag>, // from EVERY whenTagged(), plus slotName.of(n) when the binding declares whenNamed(n)
-  name: string | undefined,      // derived view: the reserved criterion's value, undefined when the slot carries none
-}
-```
+> **Normative — `BindingSlot`.** A binding slot is the key that uniquely identifies a slot in the registry — the
+> binding's **criterion set**, computed from its constraints:
+>
+> ```
+> BindingSlot = {
+>   tags: ReadonlySet<BindingTag>, // from EVERY whenTagged(), plus slotName.of(n) when the binding declares whenNamed(n)
+>   name: string | undefined,      // derived view: the reserved criterion's value, undefined when the slot carries none
+> }
+> ```
 
-**One selection model — a name is a criterion inside it, not a second rule (normative).** The package exports a reserved
-tag key `slotName: TagKey<string>`, and a name is a criterion of that key:
+> **Normative — a name is a criterion.** The package exports a reserved tag key `slotName: TagKey<string>`, and a name
+> is a criterion of that key. One selection model covers names and tags alike:
+>
+> - `whenNamed(n)` ≡ `whenTagged(slotName.of(n))` — the binding-side sugar; `whenParentNamed(n)` is likewise
+>   `whenParentTagged(slotName.of(n))` ([Advanced Constraints](#advanced-constraints)).
+> - `{ name: n }` in `ResolveOptions` / `InjectOptions` ≡ `{ tag: slotName.of(n) }` — the request-side sugar
+>   ([`ResolveOptions`](#resolve-options)).
+> - **One criterion per key, reserved key included:** a slot carries at most one criterion of any key — re-declaring a
+>   key, through either verb, replaces that key's criterion. `whenNamed` inherits this rule rather than adding one.
+> - What reserves the key is its **identity**, not its display name. Diagnostics render its criterion as `name:<value>`,
+>   never `tag:…`, and `BindingSlot.name` is the derived view of it that `ResolutionFrame.slot`
+>   ([`ConstraintContext`](#constraintcontext)) and the `when*Named` constraints read.
 
-- `whenNamed(n)` ≡ `whenTagged(slotName.of(n))` — the binding-side sugar; `whenParentNamed(n)` is likewise
-  `whenParentTagged(slotName.of(n))` ([Advanced Constraints](#advanced-constraints)).
-- `{ name: n }` in `ResolveOptions` / `InjectOptions` ≡ `{ tag: slotName.of(n) }` — the request-side sugar
-  ([`ResolveOptions`](#resolve-options)).
-- **One criterion per key, reserved key included:** a slot carries at most one criterion of any key — re-declaring a
-  key, through either verb, replaces that key's criterion. `whenNamed` inherits this rule rather than adding one.
-- What reserves the key is its **identity**, not its display name. Diagnostics render its criterion as `name:<value>`,
-  never `tag:…`, and `BindingSlot.name` is the derived view of it that `ResolutionFrame.slot`
-  ([`ConstraintContext`](#constraintcontext)) and the `when*Named` constraints read.
+> **Normative — slot equality.** Two binding slots are **equal** when their criterion sets are equal by the identity of
+> each criterion (order does not matter). Because criteria are interned ([`ResolveOptions`](#resolve-options)), identity
+> here gives exactly the result of `Object.is` on `[key, value]`. The `default` slot is the empty criterion set.
 
-Two binding slots are **equal** when their criterion sets are equal by the identity of each criterion (order does not
-matter). Because criteria are interned ([`ResolveOptions`](#resolve-options)), identity here gives exactly the result of
-`Object.is` on `[key, value]`. The `default` slot is the empty criterion set.
-
-**Predicate-only `when()`:** a binding carrying only `.when(predicate)` (with no `whenNamed`/`whenTagged`) **does not
-take part in slot last-wins** — several bindings for one token can coexist with the same binding slot. If ≥ 2 candidates
-remain after runtime filtering, `resolve`/`resolveAsync` throws `AmbiguousBindingError` (not `InternalError` — this is a
-user error, not an internal one).
+> **Normative — predicate-only `when()`.** A binding carrying only `.when(predicate)` (with no `whenNamed`/`whenTagged`)
+> **does not take part in slot last-wins** — several bindings for one token can coexist with the same binding slot. If ≥
+> 2 candidates remain after runtime filtering, `resolve`/`resolveAsync` throws `AmbiguousBindingError` (not
+> `InternalError` — this is a user error, not an internal one).
 
 **Candidate:** a binding whose slot matches the request's criterion set and that passes every `when(ctx)` predicate.
 
-**Filtering `ResolveOptions` → slot (normative).** One rule, whatever mix of spellings the request uses:
+#### The matching rule
 
-- **The request's criterion set** is the union of `tags`, `tag`, and — when `name` is present — `slotName.of(name)`
-  ([`ResolveOptions`](#resolve-options)); `tags: []` counts as no criteria.
-- **A slot matches when every criterion it declares is in the request's criterion set** — a superset filter. Adding a
-  criterion to the request makes it match **more**, not fewer.
-- **The default slot is the one exception:** a slot with no criteria matches only a request with no criteria — a request
-  carrying any criterion never falls back to the default slot.
-- A slot that declares no name states **no condition on the name** — it does not demand the request drop its `name`,
-  exactly as a slot without `size` does not demand the request drop `size`.
-- Criteria compare by identity — `Object.is` on `[key, value]` — and predicates are evaluated **after** slot matching.
+> **Normative — filtering `ResolveOptions` → slot.** One rule, whatever mix of spellings the request uses:
+>
+> - **The request's criterion set** is the union of `tags`, `tag`, and — when `name` is present — `slotName.of(name)`
+>   ([`ResolveOptions`](#resolve-options)); `tags: []` counts as no criteria.
+> - **A slot matches when every criterion it declares is in the request's criterion set** — a superset filter. Adding a
+>   criterion to the request makes it match **more**, not fewer.
+> - **The default slot is the one exception:** a slot with no criteria matches only a request with no criteria — a
+>   request carrying any criterion never falls back to the default slot.
+> - A slot that declares no name states **no condition on the name** — it does not demand the request drop its `name`,
+>   exactly as a slot without `size` does not demand the request drop `size`.
+> - Criteria compare by identity — `Object.is` on `[key, value]` — and predicates are evaluated **after** slot matching.
 
 | Request                          | Slot `{}` | Slot `{name:x}` | Slot `{fuel:petrol}` | Slot `{name:x, fuel:petrol}` |
 | -------------------------------- | --------- | --------------- | -------------------- | ---------------------------- |
@@ -832,18 +944,13 @@ user error, not an internal one).
 | `{tags:[fuel:petrol]}`           | ✗         | ✗               | ✓                    | ✗                            |
 | `{name:"x", tags:[fuel:petrol]}` | ✗         | ✓               | ✓                    | ✓                            |
 
-> **Compatibility (one-rule model vs. the earlier two-rule model):** outcomes differ **only** for a request carrying
-> both a `name` and at least one tag. The old name rule — equality, absence included — excluded every slot that declared
-> no name; under the one rule those slots match whenever their criteria are covered (the `{fuel:petrol}` cell in the
-> last row above), and specificity decides as usual (row 9 below). A request carrying only a name, only tags, or nothing
-> resolves exactly as before.
+#### No criteria — `resolve` and `resolveAll` differ
 
-**No criteria — `resolve` and `resolveAll` differ (normative):** when `ResolveOptions` is absent or carries no criteria,
-`resolve`/`resolveOptional` read that as a request for **the default slot exactly**, so a binding with only a
-named/tagged slot is **not** selected. `resolveAll` instead takes **every** binding of the token, named and tagged
-included.
+> **Normative.** When `ResolveOptions` is absent or carries no criteria, `resolve`/`resolveOptional` read that as a
+> request for **the default slot exactly**, so a binding with only a named/tagged slot is **not** selected. `resolveAll`
+> instead takes **every** binding of the token, named and tagged included.
 
-**Case table:**
+#### Case table
 
 | #   | Case                                                                      | Resulting slot         | `resolve` with no hint                                                       | `resolveAll` / hint                                                                               |
 | --- | ------------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -857,25 +964,27 @@ included.
 | 8   | Tags `{fuel:petrol}.to*(A)` and tags `{fuel:petrol, size:v8}.to*(B)`      | Two different tag-sets | Hint `{tags:[fuel]}` → A; hint `{tags:[fuel, size]}` → **B** (more specific) | `resolveAll` → `[A, B]`                                                                           |
 | 9   | Tags `{fuel:petrol}.to*(A)` and named `"x"` + tags `{fuel:petrol}.to*(B)` | Tagged + named-tagged  | `NoMatchingBindingError` (no default)                                        | Hint `{tags:[fuel]}` → A; hint `{name:"x", tags:[fuel]}` → **B** (A matches too; B more specific) |
 
-**Row 3 — `resolve` with no hint:** throws `NoMatchingBindingError` (not `TokenNotBoundError`) because the token has
+**Row 3 — `resolve` with no hint** throws `NoMatchingBindingError` (not `TokenNotBoundError`) because the token has
 bindings but no slot matches the empty hint. The message lists the available slots:
 `"Available slots: [name:a, name:b]"`.
 
-**Rows 8 and 9 — the more detailed the hint, the more bindings satisfy it, hence the need for a more-specific rule.** A
-binding's criteria are **its conditions**, not a filter that must match exactly. In row 8 the hint `{fuel:petrol}` rules
-out B because B also demands `size`; the hint `{fuel:petrol, size:v8}` satisfies **both** A and B, because A's only
-condition is stated too. Row 9 is the same shape with the name as the extra criterion: `{name:"x", tags:[fuel]}`
-satisfies A — whose only condition, `fuel`, is stated — and B, which states both; B wins on specificity. This is a
-dispatch model (like routing, media queries, overload resolution), and every dispatch model needs a tie-breaker.
+**Rows 8 and 9 — a more detailed hint satisfies more bindings, hence the need for a tie-breaker.** A binding's criteria
+are **its conditions**, not a filter that must match exactly. In row 8 the hint `{fuel:petrol}` rules out B because B
+also demands `size`; the hint `{fuel:petrol, size:v8}` satisfies **both** A and B, because A's only condition is stated
+too. Row 9 is the same shape with the name as the extra criterion: `{name:"x", tags:[fuel]}` satisfies A — whose only
+condition, `fuel`, is stated — and B, which states both; B wins on specificity. This is a dispatch model (like routing,
+media queries, overload resolution), and every dispatch model needs a tie-breaker.
 
-**The more-specific rule for `resolve` / `resolveOptional` (normative)** — applied in order, stopping at the first step
-that picks exactly one candidate:
+#### The more-specific rule
 
-1. **Predicate:** if exactly one candidate carries a `when()` predicate, that candidate wins. Two or more is genuine
-   ambiguity.
-2. **Criterion count:** the candidate declaring **more criteria than every other candidate** wins — it matches more of
-   what was asked. A name, when the slot carries one, counts as one criterion like any other.
-3. If no step decides, throw `AmbiguousBindingError`.
+> **Normative — for `resolve` / `resolveOptional`.** Applied in order, stopping at the first step that picks exactly one
+> candidate:
+>
+> 1. **Predicate:** if exactly one candidate carries a `when()` predicate, that candidate wins. Two or more is genuine
+>    ambiguity.
+> 2. **Criterion count:** the candidate declaring **more criteria than every other candidate** wins — it matches more of
+>    what was asked. A name, when the slot carries one, counts as one criterion like any other.
+> 3. If no step decides, throw `AmbiguousBindingError`.
 
 So row 8 resolves in both directions: `{fuel}` → A, `{fuel, size}` → B. An equal criterion count is still ambiguous —
 `{fuel:petrol}.to*(A)` and `{size:v8}.to*(B)` with a hint carrying both tags leaves neither more specific.
@@ -883,43 +992,45 @@ So row 8 resolves in both directions: `{fuel}` → A, `{fuel, size}` → B. An e
 `resolveAll` does **not** apply this rule: it returns every matching candidate, and specificity only comes into play
 when exactly one must be chosen.
 
-> **The more-specific rule is container-local.** Selection answers from the nearest container whose candidates match
-> before consulting the parent, so a child's matching subset slot (say, tag-only) answers a `{name, tags}` request even
-> when the parent declares a slot carrying more of its criteria — locality outranks specificity across the chain,
-> exactly as it always has for tag-only requests.
+> **Normative — the more-specific rule is container-local.** Selection answers from the nearest container whose
+> candidates match before consulting the parent. A child's matching subset slot (say, tag-only) therefore answers a
+> `{name, tags}` request even when the parent declares a slot carrying more of its criteria — locality outranks
+> specificity across the chain.
 
-> **`has(token)` and slot semantics:** `container.has(token)` returns `true` if the token has **any binding at all**
+> **`has(token)` and slot semantics.** `container.has(token)` returns `true` if the token has **any binding at all**
 > (even if only named/tagged slots, with no default). `container.resolve(token)` with no hint can still throw
 > `NoMatchingBindingError` even when `has(token)` is `true`. See [Introspection](#introspection) for the right way to
 > use `has` + `hasOwn`.
 
+> **Compatibility — the one-rule model vs. the earlier two-rule model.** Under the earlier model, a request's `name` was
+> compared by equality (absence included), which excluded every slot that declared no name. Under the one-rule model
+> above, those slots match whenever their criteria are covered (the `{fuel:petrol}` cell in the last row of the matrix),
+> and specificity decides as usual (case-table row 9). Outcomes differ **only** for a request carrying both a `name` and
+> at least one tag. A request carrying only a name, only tags, or nothing resolves exactly as before.
+
 ### The `Binding` discriminated union — internal data model
 
 `Binding<Value>` is the union type representing a binding committed into the registry. The implementer must define it in
-`binding.ts`. Fields are `readonly` to library users. Internally, a fluent chain **may refine in place** exactly those
-fields no registry index depends on (`scope`, `onActivation`, `onDeactivation`) on the very object already registered;
-changing `slot`/`predicate` requires re-indexing, so those still build a new object. See `ARCHITECTURE.md`.
+`binding.ts`. Fields are `readonly` to library users.
 
-**`BindingSlot` — used for slot-aware last-wins and for resolution matching:**
+> **Internal refinement.** A fluent chain **may refine in place** exactly those fields no registry index depends on
+> (`scope`, `onActivation`, `onDeactivation`) on the very object already registered; changing `slot`/`predicate`
+> requires re-indexing, so those still build a new object. See `ARCHITECTURE.md`.
 
-`BindingSlot` carries `tags` — the binding's whole criterion set, the reserved name criterion included (`[]` = the
-default slot) — and `name`, the derived view of the reserved criterion (`undefined` when the slot carries none). Order
-inside `tags` does not affect equality.
+**`BindingSlot` — used for slot-aware last-wins and for resolution matching.** `BindingSlot` carries `tags` — the
+binding's whole criterion set, the reserved name criterion included (`[]` = the default slot) — and `name`, the derived
+view of the reserved criterion (`undefined` when the slot carries none). Order inside `tags` does not affect equality.
 
 Two `BindingSlot`s are equal when their criterion sets are equal by the identity of each criterion (order does not
 matter) — equivalent to `Object.is` on `[key, value]` thanks to interning; `name`, being derived, needs no separate
 comparison. The implementer should provide a `bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean` helper.
 
-**Fields common to every binding (except where noted):**
+**Fields common to every binding (except where noted).** Every committed binding carries: `id`, `token`, `slot`, and an
+optional `predicate` coming from `.when()`. `whenNamed`/`whenTagged` do **not** become part of the predicate — they go
+into the slot. When a binding declares both a slot and a predicate, both must pass: the slot matches first at constant
+cost, the predicate is checked afterwards at runtime.
 
-Every committed binding carries: `id`, `token`, `slot`, and an optional `predicate` coming from `.when()`. Note that
-`whenNamed`/`whenTagged` do **not** become part of the predicate — they go into the slot. When a binding declares both a
-slot and a predicate, both must pass: the slot matches first at constant cost, the predicate is checked afterwards at
-runtime.
-
-**7 binding kinds:**
-
-Seven kinds, each adding its own fields on top of the common part above:
+**Seven binding kinds**, each adding its own fields on top of the common part above:
 
 | `kind`           | From                      | Own fields                                                          |
 | ---------------- | ------------------------- | ------------------------------------------------------------------- |
@@ -936,27 +1047,30 @@ runtime. For `constant`, `onActivation` runs the first time the value is resolve
 
 > **Exact shape:** `src/core/binding.ts` — `Binding` and its seven member interfaces.
 
-**Normalization at commit time (normative):**
+> **Normative — normalization at commit time.**
+>
+> - `toSelf()` → a `ClassBinding` with `target === token` (the token must be a `Constructor<Value>`).
+> - The deps array of `toResolved`/`toResolvedAsync`: each element is a `Token | Constructor | InjectionDescriptor`. At
+>   commit time, a plain `Token`/`Constructor` is normalized into an `InjectionDescriptor` with
+>   `{ token, optional: false, multi: false }`. The `deps` in `ResolvedBinding`/`ResolvedAsyncBinding` is always
+>   `readonly InjectionDescriptor[]` — never a raw token.
+> - A `BindingIdentifier` is generated **once per fluent chain**, unique across the whole container hierarchy (not
+>   merely within one container). Use `crypto.randomUUID()` or a monotonic counter. Later refinement (`.singleton()`,
+>   `.whenNamed()`, …) does **not** mint a new id — the id taken from `.id()` at any step of the chain stays valid until
+>   the chain ends.
 
-- `toSelf()` → a `ClassBinding` with `target === token` (the token must be a `Constructor<Value>`).
-- The deps array of `toResolved`/`toResolvedAsync`: each element is a `Token | Constructor | InjectionDescriptor`. At
-  commit time, a plain `Token`/`Constructor` is normalized into an `InjectionDescriptor` with
-  `{ token, optional: false, multi: false }`. The `deps` in `ResolvedBinding`/`ResolvedAsyncBinding` is always
-  `readonly InjectionDescriptor[]` — never a raw token.
-- A `BindingIdentifier` is generated **once per fluent chain**, unique across the whole container hierarchy (not merely
-  within one container). Use `crypto.randomUUID()` or a monotonic counter. Later refinement (`.singleton()`,
-  `.whenNamed()`, …) does **not** mint a new id — the id taken from `.id()` at any step of the chain stays valid until
-  the chain ends.
-
-**Reaching the scope of an `AliasBinding` — at resolve time:**
-
-`AliasBinding` has no `scope` field. When the scope is needed (to build a `ResolutionFrame`, for instance), the resolver
-must follow the alias chain to the final binding and take the scope from there. If the chain ends at another
-`AliasBinding`, keep following. If there is a cycle → `CircularDependencyError`.
+**Reaching the scope of an `AliasBinding` — at resolve time.** `AliasBinding` has no `scope` field. When the scope is
+needed (to build a `ResolutionFrame`, for instance), the resolver must follow the alias chain to the final binding and
+take the scope from there. If the chain ends at another `AliasBinding`, keep following. If there is a cycle →
+`CircularDependencyError`.
 
 ---
 
 ## Container API
+
+**Mental model.** A container holds bindings, resolves tokens into values, owns the instances it caches, and can spawn
+child containers that see its bindings. Everything a container does falls into nine groups, listed in
+[The Container interface](#the-container-interface).
 
 <a id="container-create"></a>
 
@@ -981,6 +1095,18 @@ const container = await Container.fromModulesAsync(AppModule, DatabaseModule);
 
 ### Resolution
 
+**Mental model.** Six resolve methods cover three questions — one value, an optional value, or every value — each in a
+sync and an async form. Sync never returns a `Promise`; if anything on the path is async, the sync form throws.
+
+| Method                 | Returns                       | When there is no binding | When the binding is async |
+| ---------------------- | ----------------------------- | ------------------------ | ------------------------- |
+| `resolve`              | `Value`                       | `TokenNotBoundError`     | `AsyncResolutionError`    |
+| `resolveAsync`         | `Promise<Value>`              | `TokenNotBoundError`     | Resolves                  |
+| `resolveOptional`      | `Value \| undefined`          | `undefined`              | `AsyncResolutionError`    |
+| `resolveOptionalAsync` | `Promise<Value \| undefined>` | `undefined`              | Resolves                  |
+| `resolveAll`           | `Value[]`                     | `[]`                     | `AsyncResolutionError`    |
+| `resolveAllAsync`      | `Promise<Value[]>`            | `[]`                     | Resolves                  |
+
 ```ts
 // Sync resolve — throws AsyncResolutionError if the binding has an async factory
 const logger = container.resolve(Logger); // ^? LoggerService
@@ -1001,14 +1127,16 @@ const fileLogger = container.resolve(Logger, { name: "file" });
 const petrolEngine = container.resolve(Engine, { tag: Fuel.of("petrol") });
 ```
 
-**`resolveOptionalAsync` error semantics:**
+#### `resolveOptionalAsync` error semantics
 
-- The token has no binding → returns `undefined` (no `TokenNotBoundError`)
-- The token has a binding but the async binding throws at runtime (a failed DB connect, say) → **re-throw** that error,
-  do not turn it into `undefined`
-- The token has a binding but nothing matches the hint → returns `undefined` (no `NoMatchingBindingError`)
+> **Normative.**
+>
+> - The token has no binding → returns `undefined` (no `TokenNotBoundError`).
+> - The token has a binding but the async binding throws at runtime (a failed DB connect, say) → **re-throw** that
+>   error, do not turn it into `undefined`.
+> - The token has a binding but nothing matches the hint → returns `undefined` (no `NoMatchingBindingError`).
 
-**`resolveAll` + `ResolveOptions` — filter semantics:**
+#### `resolveAll` + `ResolveOptions` — filter semantics
 
 ```ts
 container.bind(Logger).to(ConsoleLogger); // default slot
@@ -1019,14 +1147,17 @@ container.resolveAll(Logger, { name: "file" }); // → [FileLogger]
 container.resolveAll(Logger, { name: "x" }); // → [] (empty array, no throw)
 ```
 
-`resolveAll` / `resolveAllAsync` **never throw `TokenNotBoundError`** — they return `[]` when nothing matches.
+> **Normative.** `resolveAll` / `resolveAllAsync` **never throw `TokenNotBoundError`** — they return `[]` when nothing
+> matches.
 
-**Async contamination — the propagation rule:**
+#### Async contamination — the propagation rule
 
-If token `A` depends on token `B`, and `B` has a `toDynamicAsync`/`toResolvedAsync` factory or an async
-`@postConstruct()`, then `A` is async too. Async contamination spreads along the entire dependency path.
-`container.resolve(A)` in that case throws `AsyncResolutionError`. The container detects the contamination at resolve
-time and the message names which token in the chain is the async source:
+**Mental model.** Async is contagious along the dependency path: one async link makes every consumer above it async.
+
+> **Normative.** If token `A` depends on token `B`, and `B` has a `toDynamicAsync`/`toResolvedAsync` factory or an async
+> `@postConstruct()`, then `A` is async too. Async contamination spreads along the entire dependency path.
+> `container.resolve(A)` in that case throws `AsyncResolutionError`. The container detects the contamination at resolve
+> time and the message names which token in the chain is the async source.
 
 ```
 AsyncResolutionError: Token 'App' requires async resolution because 'Database'
@@ -1034,15 +1165,17 @@ in its dependency chain has an async factory. Use container.resolveAsync(App).
   asyncSourceToken: "Database"
 ```
 
-**Singleton async creation — serialized (normative):**
+#### Singleton async creation — serialized
 
-Concurrent `resolveAsync(Token)` calls for the same singleton token **share one in-flight Promise**. The implementation
-must guarantee:
+**Mental model.** Two callers racing for the same async singleton get the same Promise, so the factory runs once.
 
-1. When the factory starts running, the Promise is stored in the in-flight map.
-2. The next concurrent call receives that same Promise — no new instance is created.
-3. When the Promise settles (resolved or rejected), the in-flight map entry is cleared.
-4. If the factory rejected, the next resolve creates a new Promise (retry).
+> **Normative.** Concurrent `resolveAsync(Token)` calls for the same singleton token **share one in-flight Promise**.
+> The implementation must guarantee:
+>
+> 1. When the factory starts running, the Promise is stored in the in-flight map.
+> 2. The next concurrent call receives that same Promise — no new instance is created.
+> 3. When the Promise settles (resolved or rejected), the in-flight map entry is cleared.
+> 4. If the factory rejected, the next resolve creates a new Promise (retry).
 
 ```ts
 // Both get the same instance — the factory runs only once
@@ -1073,15 +1206,17 @@ await container.unbindAllAsync();
 container.rebind(Logger).to(FileLogger).singleton();
 ```
 
-**`rebind` semantics — normative:**
+#### `rebind` semantics
 
-`rebind(token)` only affects the **own** bindings of the current container. If the token is only bound at the parent
-(not at the child), `child.rebind(token)` throws `RebindUnboundTokenError`. After the unbind, `to*()` commits
-immediately — there is no gap between the unbind and the bind.
+**Mental model.** `rebind` means "replace a binding that already exists in _this_ container". It is an atomic
+unbind-then-bind, never a way to override a parent.
 
-> **`rebind` and the parent chain:** this design is deliberate. `rebind` means "replace a binding that already exists in
-> this container". To override a parent binding from a child container (the common test pattern), use `bind()` at the
-> child — resolution prefers the child over the parent:
+> **Normative.** `rebind(token)` only affects the **own** bindings of the current container. If the token is only bound
+> at the parent (not at the child), `child.rebind(token)` throws `RebindUnboundTokenError`. After the unbind, `to*()`
+> commits immediately — there is no gap between the unbind and the bind.
+
+> **`rebind` and the parent chain.** To override a parent binding from a child container (the common test pattern), use
+> `bind()` at the child — resolution prefers the child over the parent:
 >
 > ```ts
 > const testContainer = container.createChild();
@@ -1090,26 +1225,25 @@ immediately — there is no gap between the unbind and the bind.
 > // No rebind() needed, because the child has no own binding yet
 > ```
 
-**`unbind` and singleton deactivation:**
+#### `unbind` and singleton deactivation
 
-When `unbind(token)` or `unbind(bindingId)` is called:
+> **Normative.** When `unbind(token)` or `unbind(bindingId)` is called:
+>
+> - The binding is removed from the registry immediately (no gap).
+> - If the binding is a singleton and already cached, `onDeactivation` and `@preDestroy()` **are called synchronously**
+>   when the handlers are sync.
+> - If a handler is async, `unbindAsync()` must be used — a sync `unbind()` on a binding with async deactivation throws
+>   `AsyncDeactivationError`.
 
-- The binding is removed from the registry immediately (no gap).
-- If the binding is a singleton and already cached, `onDeactivation` and `@preDestroy()` **are called synchronously**
-  when the handlers are sync.
-- If a handler is async, `unbindAsync()` must be used — a sync `unbind()` on a binding with async deactivation throws
-  `AsyncDeactivationError`.
+#### `rebind` and async deactivation
 
-**`rebind` and async deactivation (normative):**
+> **Normative.** Deactivation of the old singleton follows the same rule as `unbind`:
+>
+> - If the old binding has **no** async `onDeactivation` (or no `onDeactivation` at all): a sync `rebind()` is safe.
+> - If the old binding **does** have an async `onDeactivation`: a sync `rebind()` throws `AsyncDeactivationError` — the
+>   same behaviour as a sync `unbind()`.
 
-`rebind(token)` is essentially an atomic unbind-then-bind. Deactivation of the old singleton follows the same rule as
-`unbind`:
-
-- If the old binding has **no** async `onDeactivation` (or no `onDeactivation` at all): a sync `rebind()` is safe.
-- If the old binding **does** have an async `onDeactivation`: a sync `rebind()` throws `AsyncDeactivationError` — the
-  same behaviour as a sync `unbind()`.
-
-Since the spec has no `rebindAsync()` (see [Not adopted from v8](#not-adopted-from-v8)), the required workaround is:
+There is no `rebindAsync()` (see [Not adopted from v8](#not-adopted-from-v8)), so the required workaround is:
 
 ```ts
 // When the old binding has an async onDeactivation:
@@ -1117,9 +1251,9 @@ await container.unbindAsync(Logger); // deactivate the old singleton
 container.bind(Logger).to(FileLogger).singleton(); // create the new binding
 ```
 
-> **Why there is no `rebindAsync()`:** `rebind` is a test/reconfiguration utility — it always happens when there is no
-> traffic. If the binding has async deactivation, splitting it into two explicit steps (`unbindAsync` + `bind`) states
-> the intent more clearly.
+> **Rationale — why there is no `rebindAsync()`.** `rebind` is a test/reconfiguration utility — it always happens when
+> there is no traffic. If the binding has async deactivation, splitting it into two explicit steps (`unbindAsync` +
+> `bind`) states the intent more clearly.
 
 ### Module management
 
@@ -1141,11 +1275,14 @@ await container.unloadAsync(AsyncFeatureModule);
 const count = container.loadAutoRegistered(appRegistry);
 ```
 
-**Reference counting for shared deps:**
+#### Reference counting for shared deps
 
-The container tracks ownership per `(module, container)` pair with a reference count. If `ModuleA` imports `ModuleB`,
-and `AppModule` also imports `ModuleB`, then `ModuleB` is set up only once. `ModuleB` is only unbound when its ref-count
-reaches 0:
+**Mental model.** A module imported by several others is set up once and torn down once — when the last importer is
+gone.
+
+> **Normative.** The container tracks ownership per `(module, container)` pair with a reference count. If `ModuleA`
+> imports `ModuleB`, and `AppModule` also imports `ModuleB`, then `ModuleB` is set up only once. `ModuleB` is only
+> unbound when its ref-count reaches 0.
 
 ```ts
 container.load(ModuleA); // ModuleA (ref:1) + ModuleB (ref:1)
@@ -1155,7 +1292,7 @@ container.unload(ModuleA); // ModuleA unloaded; ModuleB ref:2→1 — not unboun
 container.unload(AppModule); // AppModule unloaded; ModuleB ref:1→0 — ModuleB unbound
 ```
 
-**`Container.fromModules` dedup behaviour:**
+#### `Container.fromModules` dedup behaviour
 
 ```ts
 // ModuleA and ModuleB both import(LoggerModule)
@@ -1164,17 +1301,17 @@ const container = Container.fromModules(ModuleA, ModuleB);
 // LoggerModule ref-count = 2 (from ModuleA and ModuleB)
 ```
 
-Dedup is based on **object identity**, not on `name`. Two different module objects with the same `name` are two
-different modules — no dedup. `name` exists only for error messages and logging.
+> **Normative.** Dedup is based on **object identity**, not on `name`. Two different module objects with the same `name`
+> are two different modules — no dedup. `name` exists only for error messages and logging.
 
-**`unload` and cached singletons:**
+#### `unload` and cached singletons
 
-When `unload(module)` or `unloadAsync(module)` is called and the ref-count reaches 0:
-
-- The bindings are removed from the registry.
-- Cached singleton instances belonging to that module are **deactivated** — `onDeactivation` and `@preDestroy()` are
-  called.
-- A sync `unload()` is only safe if every deactivation handler is sync. If any is async, `unloadAsync()` must be used.
+> **Normative.** When `unload(module)` or `unloadAsync(module)` is called and the ref-count reaches 0:
+>
+> - The bindings are removed from the registry.
+> - Cached singleton instances belonging to that module are **deactivated** — `onDeactivation` and `@preDestroy()` are
+>   called.
+> - A sync `unload()` is only safe if every deactivation handler is sync. If any is async, `unloadAsync()` must be used.
 
 ### Container-level activation hooks
 
@@ -1192,15 +1329,18 @@ container.onDeactivation(Database, async (db) => {
 });
 ```
 
-> **A child container does not inherit container-level hooks:** a hook fires only for bindings of the container it was
-> registered on. When a child resolves a token from the parent (walking up the parent chain), the parent's hooks fire
-> because the binding belongs to the parent.
+> **Normative — a child container does not inherit container-level hooks.** A hook fires only for bindings of the
+> container it was registered on. When a child resolves a token from the parent (walking up the parent chain), the
+> parent's hooks fire because the binding belongs to the parent.
 
-> **Order:** accessor initializers (inside `new`) → `@postConstruct()` → per-binding `onActivation()` → container-level
+> **Order.** Accessor initializers (inside `new`) → `@postConstruct()` → per-binding `onActivation()` → container-level
 > `onActivation()`. Deactivation runs in reverse: container-level `onDeactivation()` → per-binding `onDeactivation()` →
-> `@preDestroy()`.
+> `@preDestroy()`. The full diagram is in [Lifecycle hooks](#lifecycle-hooks).
 
 ### Child containers
+
+**Mental model.** A child sees every parent binding and may add or override its own. Instances the child creates for its
+own bindings belong to the child; parent singletons stay with the parent.
 
 ```ts
 // A child inherits every parent binding (resolution walks up when the child has none)
@@ -1222,13 +1362,12 @@ await requestContainer.dispose();
 }
 ```
 
-> **`[Symbol.dispose](): never`:** the container implements `Symbol.dispose` but always throws
+> **Normative — `[Symbol.dispose](): never`.** The container implements `Symbol.dispose` but always throws
 > `SyncDisposalNotSupportedError`, because `onDeactivation` may be async. Use `await using` (which calls
 > `Symbol.asyncDispose`) rather than `using` (which calls `Symbol.dispose`).
 
-**Scoped bindings — the request scope pattern:**
-
-A `scoped` binding is a singleton within one child container. The pattern for request scope in a web framework:
+**Scoped bindings — the request scope pattern.** A `scoped` binding is a singleton within one child container. The
+pattern for request scope in a web framework:
 
 ```ts
 // One child container per request
@@ -1244,15 +1383,17 @@ const handler = req.container.resolve(UserController);
 // When the request ends, await using calls requestScope.dispose() for you
 ```
 
-> **The cost of `createChild()`:** `createChild()` creates one new container object holding a parent reference — O(1),
+> **The cost of `createChild()`.** `createChild()` creates one new container object holding a parent reference — O(1),
 > with no binding copies. `dispose()` only clears the child's singleton cache. The pattern is safe for high-throughput
 > request handling.
 
 ### Container state lifecycle
 
-A container has an `isDisposed` state. After `dispose()` is called, every mutation (`bind`, `unbind`, `rebind`, `load`,
-`unload`) throws `DisposedContainerError`. Resolution operations (`resolve*`, `has*`, `inspect`) throw
-`DisposedContainerError` too.
+> **Normative.** A container has an `isDisposed` state, exposed as a readonly property. After `dispose()` is called:
+>
+> - Every mutation (`bind`, `unbind`, `rebind`, `load`, `unload`) throws `DisposedContainerError`.
+> - Resolution operations (`resolve*`, `has*`, `inspect`) throw `DisposedContainerError` too.
+> - `dispose()` is idempotent: calling it again is a no-op — no throw, no double-deactivation.
 
 ```ts
 const container = Container.create();
@@ -1267,8 +1408,6 @@ container.bind(Logger).toSelf(); // throws DisposedContainerError
 await container.dispose(); // safe — no throw, no double-deactivation
 ```
 
-The container exposes a readonly `isDisposed` property.
-
 ### `initializeAsync` — warm up singletons
 
 ```ts
@@ -1278,18 +1417,18 @@ await container.initializeAsync();
 Resolves and caches every `singleton` binding in **the current container** (the parent is not included). The purpose:
 fail fast at startup on a config error, and remove lazy-init latency from the first request.
 
-**Scope, cross-container behaviour, and idempotency:**
-
-- Only singletons defined at the current container are warmed up — it does not walk up to the parent.
-- **Each singleton binding is instantiated directly, not re-selected** — warming never runs another binding whose
-  criteria happen to be a subset of the singleton's slot.
-- If singleton A at the child depends on singleton B at the parent, resolving A triggers resolving B at the parent and
-  caches B there. `initializeAsync()` on a child can therefore indirectly trigger parent singletons.
-- A `toConstantValue` binding is **not skipped** when it has an `onActivation` — the activation runs and the result is
-  cached. A `toConstantValue` with no `onActivation` is skipped (there is nothing to resolve).
-- **Idempotent:** calling it repeatedly is safe — an already-cached singleton is not recreated and its factory does not
-  run again.
-- Bindings added **after** `initializeAsync()` is called are not warmed up automatically — call it again if needed.
+> **Normative — scope, cross-container behaviour, and idempotency.**
+>
+> - Only singletons defined at the current container are warmed up — it does not walk up to the parent.
+> - **Each singleton binding is instantiated directly, not re-selected** — warming never runs another binding whose
+>   criteria happen to be a subset of the singleton's slot.
+> - If singleton A at the child depends on singleton B at the parent, resolving A triggers resolving B at the parent and
+>   caches B there. `initializeAsync()` on a child can therefore indirectly trigger parent singletons.
+> - A `toConstantValue` binding is **not skipped** when it has an `onActivation` — the activation runs and the result is
+>   cached. A `toConstantValue` with no `onActivation` is skipped (there is nothing to resolve).
+> - **Idempotent:** calling it repeatedly is safe — an already-cached singleton is not recreated and its factory does
+>   not run again.
+> - Bindings added **after** `initializeAsync()` is called are not warmed up automatically — call it again if needed.
 
 <a id="validate"></a>
 
@@ -1301,27 +1440,25 @@ container.validate();
 
 Walks the dependency graph and throws `ScopeViolationError` for any violation of the scope matrix in [Scope](#scope).
 
-**Analysis scope (normative):**
+> **Normative — analysis scope.** `validate()` can only statically analyse bindings whose deps are declared explicitly:
+>
+> | Binding kind                     | Can `validate()` analyse it?         |
+> | -------------------------------- | ------------------------------------ |
+> | `to(Class)` with `@injectable`   | ✅ Fully analysed                    |
+> | `toSelf()` with `@injectable`    | ✅ Fully analysed                    |
+> | `toResolved(factory, deps)`      | ✅ Analyses the deps array           |
+> | `toResolvedAsync(factory, deps)` | ✅ Analyses the deps array           |
+> | `toAlias(target)`                | ✅ Traced to the target — transitive |
+> | `toDynamic(ctx => ...)`          | ❌ Opaque — skipped                  |
+> | `toDynamicAsync(ctx => ...)`     | ❌ Opaque — skipped                  |
+> | `toConstantValue(value)`         | ✅ No deps — always OK               |
 
-`validate()` can only statically analyse bindings whose deps are declared explicitly:
+**Alias chains.** When tracing an alias (`toAlias(target)`), `validate()` follows the chain to the final binding. If a
+`singleton` consumer aliases to a `scoped` target, that is a scope violation. `validate()` checks transitively — not
+only direct dependencies.
 
-| Binding kind                     | Can `validate()` analyse it?         |
-| -------------------------------- | ------------------------------------ |
-| `to(Class)` with `@injectable`   | ✅ Fully analysed                    |
-| `toSelf()` with `@injectable`    | ✅ Fully analysed                    |
-| `toResolved(factory, deps)`      | ✅ Analyses the deps array           |
-| `toResolvedAsync(factory, deps)` | ✅ Analyses the deps array           |
-| `toAlias(target)`                | ✅ Traced to the target — transitive |
-| `toDynamic(ctx => ...)`          | ❌ Opaque — skipped                  |
-| `toDynamicAsync(ctx => ...)`     | ❌ Opaque — skipped                  |
-| `toConstantValue(value)`         | ✅ No deps — always OK               |
-
-**`validate()` and alias chains:** when tracing an alias (`toAlias(target)`), `validate()` follows the chain to the
-final binding. If a `singleton` consumer aliases to a `scoped` target, that is a scope violation. `validate()` checks
-transitively — not only direct dependencies.
-
-`toDynamic` and `toDynamicAsync` are **opaque** to `validate()` — no false positives, no false negatives. A scope
-violation inside a dynamic factory is only detected at runtime.
+**Dynamic factories.** `toDynamic` and `toDynamicAsync` are **opaque** to `validate()` — no false positives, no false
+negatives. A scope violation inside a dynamic factory is only detected at runtime.
 
 Call `validate()` after loading every module, before serving the first request.
 
@@ -1348,7 +1485,10 @@ const snapshot = container.inspect(); // ContainerSnapshot
 const graph = container.generateDependencyGraph({ includeParent: false }); // ContainerGraphJson
 ```
 
-**`has(token)` vs `has(token, hint)` — the exact semantics:**
+#### `has(token)` vs `has(token, hint)`
+
+**Mental model.** `has(token)` asks "is this token bound at all?". `has(token, hint)` asks "would this hint find a
+binding?". Neither asks "will a hintless resolve succeed" — that needs a default slot.
 
 ```ts
 container.bind(Logger).to(FileLogger).whenNamed("file");
@@ -1362,18 +1502,18 @@ container.resolve(Logger); // throws NoMatchingBindingError — there is no defa
 container.resolve(Logger, { name: "file" }); // FileLogger
 ```
 
-> **`has(token)` returns `true` but `resolve(token)` throws:** this is the correct behaviour. `has` checks that any
+> **`has(token)` returns `true` but `resolve(token)` throws — this is the correct behaviour.** `has` checks that any
 > binding exists; `resolve` with no hint asks for the default slot. When you only need to know "is this token bound at
 > all" without resolving, use `has(token)`. When you need to know "will a hintless resolve succeed", `has(token)`
 > returning `true` is not enough — with no default slot it will still throw at resolve.
 
-> **`lookupBindings` returns `[]` rather than `undefined`:** consistent with `resolveAll` — no bindings means an empty
-> array, not `undefined`. To check whether a binding exists, use `has()`.
-
-> **`has` vs `hasOwn`:** `has(token)` checks the whole parent chain. `hasOwn(token)` checks the current container only —
+> **`has` vs `hasOwn`.** `has(token)` checks the whole parent chain. `hasOwn(token)` checks the current container only —
 > useful when you need to know whether a binding is defined at the child or inherited from the parent.
 
-**The `ContainerSnapshot` interface:**
+> **`lookupBindings` returns `[]` rather than `undefined`.** Consistent with `resolveAll` — no bindings means an empty
+> array, not `undefined`. To check whether a binding exists, use `has()`.
+
+#### The `ContainerSnapshot` interface
 
 `ContainerSnapshot` carries: `ownBindings` (every binding at this container, excluding the parent),
 `cachedSingletonCount` (how many singletons are cached here, also excluding the parent), `hasParent`, and `isDisposed`.
@@ -1382,7 +1522,7 @@ Each `BindingSnapshot` carries: `tokenName`, `kind`, `scope`, `slot`, and `id`.
 
 > **Exact shape:** `src/introspection/inspector.ts` — `ContainerSnapshot`, `BindingSnapshot`.
 
-**The `ContainerGraphJson` interface:**
+#### The `ContainerGraphJson` interface
 
 `ContainerGraphJson` has three parts: `nodes`, `edges`, and `includesParent` (whether parent bindings were folded in —
 it depends on `GraphOptions`).
@@ -1418,7 +1558,7 @@ slot the edge points at, if the binding declares one). The `label` field is **fo
 
 ### The Container interface
 
-Put together, a container exposes eight groups:
+Put together, a container exposes nine groups:
 
 | Group                 | Members                                                                                               |
 | --------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -1441,8 +1581,12 @@ currently has only `metadataReader` — defaulting to the decorator reader, and 
 
 ## Decorator layer
 
-Decorators are syntactic sugar — the core container does not depend on them. They use **TC39 Decorator Stage 3** and
-`Symbol.metadata`. Neither `experimentalDecorators: true` nor `reflect-metadata` is needed.
+**Mental model.** Decorators only _record metadata_ — which tokens a class needs, which methods are lifecycle hooks. The
+container reads that metadata through a swappable port and does the actual work. Decorators are syntactic sugar; the
+core container does not depend on them.
+
+They use **TC39 Decorator Stage 3** and `Symbol.metadata`. Neither `experimentalDecorators: true` nor `reflect-metadata`
+is needed.
 
 ### Usage
 
@@ -1450,12 +1594,15 @@ TC39 Decorator Stage 3 **does not support parameter decorators** (TS1206). `@inj
 available with `experimentalDecorators: true` (legacy). The solution: `@injectable()` takes a **deps array** that
 declares the constructor order explicitly — the same pattern as Angular Ivy.
 
-The deps array is checked against the constructor at compile time, in both directions: each element's resolved value
-must match its parameter (order, `optional`, `injectAll`), and for a **literal deps tuple the arity must match exactly**
-— a list longer than the constructor is rejected rather than resolved and discarded. Optional trailing parameters admit
-every arity they declare, and a rest parameter admits any list. A deps array whose length the compiler cannot know skips
-the arity check; that spelling is also how a class deliberately declares more dependencies than its constructor takes
-(for the dependency graph's edges), and the surplus values are resolved and discarded.
+> **Normative — the deps array is checked against the constructor at compile time, in both directions.**
+>
+> - Each element's resolved value must match its parameter (order, `optional`, `injectAll`).
+> - For a **literal deps tuple the arity must match exactly** — a list longer than the constructor is rejected rather
+>   than resolved and discarded.
+> - Optional trailing parameters admit every arity they declare, and a rest parameter admits any list.
+> - A deps array whose length the compiler cannot know skips the arity check. That spelling is also how a class
+>   deliberately declares more dependencies than its constructor takes (for the dependency graph's edges); the surplus
+>   values are resolved and discarded.
 
 ```ts
 import { injectable, inject, injectAll, optional } from "@codefast/di";
@@ -1526,22 +1673,19 @@ class Runner {
 }
 ```
 
-Type signatures:
+**Type signatures.** All three take a token plus the same optional `InjectOptions`, and return an `InjectionDescriptor`:
+`inject` for a required dependency, `optional` returning `undefined` when there is no binding, `injectAll` collecting
+every matching binding into an array.
 
-All three take a token plus the same optional `InjectOptions`, and return an `InjectionDescriptor`: `inject` for a
-required dependency, `optional` returning `undefined` when there is no binding, `injectAll` collecting every matching
-binding into an array.
-
-`InjectOptions` has three fields: `name`, `tag` (shorthand for one criterion, folded into `tags` when the descriptor is
-built — see [`ResolveOptions`](#resolve-options)), and `tags`.
-
-`InjectionDescriptor` carries: `token`, `optional`, `multi` (true when created by `injectAll`), `name?`, `tags?`. It
-comes with the type guard `isInjectionDescriptor(value)`.
+- `InjectOptions` has three fields: `name`, `tag` (shorthand for one criterion, folded into `tags` when the descriptor
+  is built — see [`ResolveOptions`](#resolve-options)), and `tags`.
+- `InjectionDescriptor` carries: `token`, `optional`, `multi` (true when created by `injectAll`), `name?`, `tags?`. It
+  comes with the type guard `isInjectionDescriptor(value)`.
 
 > **Exact shape:** `src/injection/descriptor.ts` — `injectAll`, `optional`, `isInjectionDescriptor`,
 > `InjectionDescriptor`, `InjectOptions`; `src/decorators/inject.ts` — `inject`.
 
-**`InjectableDependency` — the union type for one element of the deps array:**
+#### `InjectableDependency` — one element of the deps array
 
 ```ts
 /**
@@ -1554,31 +1698,27 @@ comes with the type guard `isInjectionDescriptor(value)`.
 type InjectableDependency<Value = unknown> = Token<Value> | Constructor<Value> | InjectionDescriptor<Value>;
 ```
 
-At metadata-read time the resolver normalizes the whole `InjectableDependency[]` into `InjectionDescriptor[]` before
-resolving. The normalization rules (normative):
-
-- `Token<Value>` → `{ token, optional: false, multi: false, name: undefined, tags: undefined }`
-- `Constructor<Value>` → `{ token, optional: false, multi: false, name: undefined, tags: undefined }`
-- `InjectionDescriptor<Value>` → left as-is
+> **Normative — normalization at metadata-read time.** The resolver normalizes the whole `InjectableDependency[]` into
+> `InjectionDescriptor[]` before resolving:
+>
+> - `Token<Value>` → `{ token, optional: false, multi: false, name: undefined, tags: undefined }`
+> - `Constructor<Value>` → `{ token, optional: false, multi: false, name: undefined, tags: undefined }`
+> - `InjectionDescriptor<Value>` → left as-is
 
 `InjectableDependency` is exported from `@codefast/di` (see [Public API](#public-api)).
 
-**`InjectableOptions` — the options for `@injectable()`:**
+#### `InjectableOptions` and the full signature
 
 `InjectableOptions` has two fields: `autoRegister` (the registry a class registers itself into; leave it out and it does
 not self-register — see [Auto-registration](#auto-registration)) and `scope` (the scope used when self-registering,
-ignored without `autoRegister`, defaulting to `"transient"`).
-
-`InjectableOptions` is exported from `@codefast/di`.
-
-**The full signature of `@injectable()`:**
+ignored without `autoRegister`, defaulting to `"transient"`). It is exported from `@codefast/di`.
 
 `injectable(deps?, options?)` returns a class decorator; `deps` is a `readonly InjectableDependency[]` and `options` is
 an `InjectableOptions`.
 
 ### Inheritance — explicit, no magic
 
-Every dep must be declared explicitly — there is no implicit inheritance injection:
+> **Normative.** Every dep must be declared explicitly — there is no implicit inheritance injection.
 
 ```ts
 @injectable([Logger])
@@ -1602,27 +1742,29 @@ class UserService extends BaseService {
 
 ### MetadataReader — the port interface
 
-The container does not read `Symbol.metadata` directly — it reads through this port, so the port can be swapped in
-tests:
+**Mental model.** The container never touches `Symbol.metadata` itself. It asks a `MetadataReader` three questions about
+a class — constructor deps, lifecycle methods, accessor fields — and a test can answer those questions with a fake.
 
 The port has three methods:
 
-- **`getConstructorMetadata(target)`** — describes the constructor's dependencies: a list of `ParamMetadata`, each with
-  `index`, `token`, `optional`, `multi`, `name?`, `tags?`.
-- **`getLifecycleMetadata(target)`** — two lists of method names: `postConstruct` and `preDestroy`. They are called in
-  the order they appear in the class (top-down).
-- **`getAccessorMetadata(target)`** — **optional** — the list of `@inject accessor` fields, each with `key` and
-  `descriptor`. If a reader omits this method, no class ever gets a container context opened for it, so every accessor
-  injection throws `MissingContainerContextError` ([Property injection](#accessor-injection)).
+| Method                           | Answers                                                                                                                      | Required? |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | :-------: |
+| `getConstructorMetadata(target)` | The constructor's dependencies: a list of `ParamMetadata`, each with `index`, `token`, `optional`, `multi`, `name?`, `tags?` |    Yes    |
+| `getLifecycleMetadata(target)`   | Two lists of method names, `postConstruct` and `preDestroy`, called in the order they appear in the class (top-down)         |    Yes    |
+| `getAccessorMetadata(target)`    | The list of `@inject accessor` fields, each with `key` and `descriptor`                                                      | Optional  |
+
+If a reader omits `getAccessorMetadata`, no class ever gets a container context opened for it, so every accessor
+injection throws `MissingContainerContextError` ([Property injection](#accessor-injection)).
 
 > **Exact shape:** `src/metadata/metadata-types.ts` — `MetadataReader`, `ConstructorMetadata`, `ParamMetadata`,
 > `LifecycleMetadata`.
 
-**Installing your own reader — normative:**
+#### Installing your own reader
 
-The resolver is **handed** its reader when it is constructed, which happens inside the container's constructor. The only
-source resolution is guaranteed to read is therefore `ContainerOptions.metadataReader`
-([Creating a container](#container-create)):
+> **Normative.** The resolver is **handed** its reader when it is constructed, which happens inside the container's
+> constructor. The only source resolution is guaranteed to read is therefore `ContainerOptions.metadataReader`
+> ([Creating a container](#container-create)). This reader outranks any `MetadataReaderToken` binding, and children
+> inherit it (a child calls the parent's `#getMetadataReader()` again when building its own resolver).
 
 ```ts
 import { Container } from "@codefast/di";
@@ -1630,10 +1772,7 @@ import { Container } from "@codefast/di";
 const container = Container.create({ metadataReader: customReader });
 ```
 
-This reader outranks any `MetadataReaderToken` binding, and children inherit it (a child calls the parent's
-`#getMetadataReader()` again when building its own resolver).
-
-**`MetadataReaderToken` — the binding, and its limits:**
+#### `MetadataReaderToken` — the binding, and its limits
 
 ```ts
 import { MetadataReaderToken } from "@codefast/di";
@@ -1646,19 +1785,21 @@ const app = root.createChild(); // app's resolver is built after the binding exi
 Binding the token **on the very container you are using** is invisible to every path: the constructor already ran before
 the binding existed, so the resolver keeps the default reader and an undecorated class throws `MissingMetadataError`.
 
-**Normative — one container, one reader.** The reader is fixed when the container's resolver is built; `validate()`,
-`inspect()`, `generateDependencyGraph()` and `unbind*` all answer using that same reader. Introspection cannot disagree
-with resolution.
+> **Normative — one container, one reader.** The reader is fixed when the container's resolver is built; `validate()`,
+> `inspect()`, `generateDependencyGraph()` and `unbind*` all answer using that same reader. Introspection cannot
+> disagree with resolution.
 
 `MetadataReaderToken` has type `Token<MetadataReader>` and is exported from `@codefast/di`.
 
-**`SymbolMetadataReader` — reading metadata**
+#### `SymbolMetadataReader` — reading metadata
 
 The default implementation reads straight from `Symbol.metadata` — there is no WeakMap mirror. Because `Symbol.metadata`
 is not yet defined natively on every runtime (current Node.js returns `undefined`), the codebase normalizes it once at
 module load: `METADATA_SYMBOL = Symbol.metadata ?? Symbol.for("Symbol.metadata")`. Babel and esbuild use the same
 pattern when transforming decorators, which keeps the symbol consistent. Once a runtime has a native `Symbol.metadata`,
-`??` picks the native symbol. The list of `@inject accessor` fields is obtained through `getAccessorMetadata(target)`.
+`??` picks the native symbol.
+
+The list of `@inject accessor` fields is obtained through `getAccessorMetadata(target)`.
 `getConstructorMetadata(target)` only describes the constructor's dependencies; it does not stand in for accessor
 fields.
 
@@ -1674,17 +1815,19 @@ getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
 }
 ```
 
-If a child extends a parent but has no `@injectable()` → `getConstructorMetadata` returns `undefined` → the container
-throws `MissingMetadataError`. The parent class's metadata is never silently leaked.
+> **Normative — no leaking of parent metadata.** If a child extends a parent but has no `@injectable()`,
+> `getConstructorMetadata` returns `undefined` and the container throws `MissingMetadataError`. The parent class's
+> metadata is never silently leaked.
 
 <a id="accessor-injection"></a>
 
 ### Property injection through the `accessor` field decorator
 
+**Mental model.** `@inject(Token) accessor field` fills a field from the container _during_ `new`, in the same call
+frame — so the constructor has run, but nothing outside the class has seen the instance yet. It works because the
+resolver opens a "current container" context around the `new` and the field's initializer reads it.
+
 TC39 Stage 3 supports `accessor`. `@inject(token)` is a **field decorator** on an **instance `accessor`**.
-**`static accessor` is not supported:** a static initializer runs when the class is defined, outside the reach of both
-`runWithContainer` and `new`. The decorator **throws** when `context.static === true`. On toolchains that do not invoke
-decorators for static fields, the error only surfaces if the decorator actually runs:
 
 ```ts
 @injectable()
@@ -1694,7 +1837,11 @@ class Dashboard {
 }
 ```
 
-**The mechanism — initialization order:**
+> **Normative — `static accessor` is not supported.** A static initializer runs when the class is defined, outside the
+> reach of both `runWithContainer` and `new`. The decorator **throws** when `context.static === true`. On toolchains
+> that do not invoke decorators for static fields, the error only surfaces if the decorator actually runs.
+
+#### The mechanism — initialization order
 
 `@inject(token)` on an `accessor` writes the token into `Symbol.metadata` through `context.metadata`. When the container
 resolves a class with `accessor` fields, it uses `context.addInitializer` to inject the value into each instance. The
@@ -1713,7 +1860,12 @@ const dash = container.resolve(Dashboard);
 // dash.db → DatabaseService from the same container
 ```
 
-**Outside a container context:**
+**Construction (TC39) and activation (container).** One resolve consists of (1) **construction** — the constructor body
+then `addInitializer` (accessors are injected here, before `new` returns; see the
+[decorators proposal](https://github.com/tc39/proposal-decorators)); and (2) **activation** — `@postConstruct()` then
+`onActivation()`, called by the resolver/lifecycle after (1) has completed.
+
+#### Outside a container context
 
 If the class is `new`-ed by hand (not through the container), the accessor initializer has no container → it throws
 `MissingContainerContextError`, carrying the class name (`className`) and the accessor name (`accessorName`) separately.
@@ -1727,23 +1879,18 @@ import { runWithContainer } from "@codefast/di";
 const instance = runWithContainer(container, () => new Dashboard());
 ```
 
-Only accessor injection is bridged. Lifecycle belongs to the resolver, so a hand-built instance does **not** run
-`@postConstruct`, and the container does not dispose it either.
+> **Normative.** Only accessor injection is bridged. Lifecycle belongs to the resolver, so a hand-built instance does
+> **not** run `@postConstruct`, and the container does not dispose it either.
 
-**Construction (TC39) and activation (container):** one resolve consists of (1) **construction** — the constructor body
-then `addInitializer` (accessors are injected here, before `new` returns; see the
-[decorators proposal](https://github.com/tc39/proposal-decorators)); and (2) **activation** — `@postConstruct()` then
-`onActivation()`, called by the resolver/lifecycle after (1) has completed.
+#### How the container context is passed — a module-level active container
 
-**How the container context is passed — a module-level active container (normative):**
-
-TC39's `context.addInitializer` runs synchronously right after the constructor body, in the same call frame as `new`.
-The container exploits this with a **module-level active container variable** pattern:
-
-`runWithContainer(container, fn)` sets the active variable to the given container, runs `fn`, then restores the previous
-value in a `finally` block — so it is correct even when the constructor throws, and nested calls (A builds B builds C)
-restore in the right order. `getActiveContainer()` reads the currently active container, returning `undefined` when no
-context is open.
+> **Normative.** TC39's `context.addInitializer` runs synchronously right after the constructor body, in the same call
+> frame as `new`. The container exploits this with a **module-level active container variable**:
+>
+> - `runWithContainer(container, fn)` sets the active variable to the given container, runs `fn`, then restores the
+>   previous value in a `finally` block — so it is correct even when the constructor throws, and nested calls (A builds
+>   B builds C) restore in the right order.
+> - `getActiveContainer()` reads the currently active container, returning `undefined` when no context is open.
 
 > **Exact shape:** `src/ambient/active-container.ts`.
 
@@ -1754,14 +1901,18 @@ context is open.
 const instance = runWithContainer(this.container, () => new target(...constructorArgs));
 ```
 
-**The `inject()` accessor decorator uses `getActiveContainer` in the initializer:**
+**The `inject()` accessor decorator uses `getActiveContainer` in the initializer.** In its accessor-decorator role, the
+implementation of `inject()` does three things:
 
-In its accessor-decorator role, the implementation of `inject()` does three things: it throws if `context.static` is
-`true`; it writes `{ key, descriptor }` into `Symbol.metadata` through `context.metadata` so `MetadataReader` can read
-it back; and it installs an initializer via `context.addInitializer`. That initializer calls `getActiveContainer()` —
-with no container it throws `MissingContainerContextError` carrying the class name and the accessor name — and with one
-it resolves the token (the `resolveOptional` variant if the descriptor is optional) and writes the value through
-`context.access.set`. It does not override `get`/`set`; it only adds an initializer.
+1. It throws if `context.static` is `true`.
+2. It writes `{ key, descriptor }` into `Symbol.metadata` through `context.metadata` so `MetadataReader` can read it
+   back.
+3. It installs an initializer via `context.addInitializer`. That initializer calls `getActiveContainer()` — with no
+   container it throws `MissingContainerContextError` carrying the class name and the accessor name — and with one it
+   resolves the token (the `resolveOptional` variant if the descriptor is optional) and writes the value through
+   `context.access.set`.
+
+It does not override `get`/`set`; it only adds an initializer.
 
 > **Exact shape:** `src/decorators/inject.ts`.
 
@@ -1778,37 +1929,34 @@ resolver.resolve(Dashboard)
   → @postConstruct() runs (after runWithContainer)
 ```
 
-> **Concurrency safety:** `_activeContainer` is a module-level variable. In a single-threaded environment (the Node.js
+> **Concurrency safety.** `_activeContainer` is a module-level variable. In a single-threaded environment (the Node.js
 > event loop) this is safe, because JS has no true parallelism. `runWithContainer` with `try/finally` guarantees that
 > nested construction (A injects B injects C) stacks correctly. Should the library ever need to support Worker threads,
 > each Worker has its own module scope — there is no shared state.
 
-> **`INJECT_ACCESSOR_KEY`:** a `unique symbol` in `metadata-keys.ts`, not exported. `SymbolMetadataReader` reads it
+> **`INJECT_ACCESSOR_KEY`.** A `unique symbol` in `metadata-keys.ts`, not exported. `SymbolMetadataReader` reads it
 > through `getAccessorMetadata(target)` and a WeakMap mirror keyed by `context.metadata`. The resolver uses
 > `getAccessorMetadata` to detect accessor injection and to wrap `new` in `runWithContainer` when a class needs an
 > active container inside its initializers.
 
+#### Design choices
+
 > **Constructor injection is still preferred** — immutable, easy to test, no container context needed. Property
 > injection through `accessor` is useful when a class extends a framework that owns the constructor, or when you need to
 > break a circular dependency.
->
+
 > **`@inject` on a plain field is not supported** (`@inject(Logger) logger!`). Property injection only goes through
 > `accessor` (`@inject(Logger) accessor logger`, …). A Stage 3 field decorator does have `context.access`; restricting
 > this to `accessor` is an **API choice** (a narrower surface), not a limitation of the proposal.
 
-**`inject()` is dual-role:**
+#### `inject()` is dual-role
 
-`inject()` works both as a plain function (in a deps array) and as an accessor decorator. The return type is an
-intersection:
+`inject()` works both as a plain function (in a deps array) and as an accessor decorator. Its return type is the
+**intersection** of `InjectionDescriptor<Value>` and `ClassAccessorDecorator<unknown, Value>`. Used in a deps array,
+TypeScript matches the first half; used as a decorator, it matches the second. One function, one import — there is no
+separate import for either role.
 
-The return type of `inject()` is the **intersection** of `InjectionDescriptor<Value>` and a `ClassAccessorDecorator`.
-Used in a deps array, TypeScript matches the first half; used as a decorator, it matches the second. One function, one
-import.
-
-Used in a deps array, TypeScript matches `InjectionDescriptor<Value>`. Used as a decorator, TypeScript matches
-`ClassAccessorDecorator<unknown, Value>`. Both roles work with the same function — there is no separate import.
-
-> **Decorator toolchain:** Vitest uses its default transform (OXC). Test snippets that need Stage 3 decorators go
+> **Decorator toolchain.** Vitest uses its default transform (OXC). Test snippets that need Stage 3 decorators go
 > through `@rolldown/plugin-babel` with `@babel/plugin-proposal-decorators` (`version: "2023-11"`). A transform around
 > decorator metadata must keep `inject()` a callable object; use `isInjectionDescriptor(value)` before processing a deps
 > array.
@@ -1838,18 +1986,21 @@ class DatabaseService {
 container.bind(Database).to(DatabaseService).singleton();
 ```
 
-> **Several `@postConstruct()` / `@preDestroy()`:** a class may have several `@postConstruct()` methods and several
-> `@preDestroy()` methods. All of them are called in declaration order (top-down). If one throws, the remaining methods
-> are not called and the error is propagated.
+> **Normative.**
 >
-> **Scope:** `@postConstruct()` runs for every scope — each time a new instance is created. `@preDestroy()` only runs
-> for `singleton`, when the container is disposed or the binding unbound. `scoped` and `transient` instances get no
-> `@preDestroy()`.
->
-> **Async contamination:** an async `@postConstruct()` forces `resolveAsync()` — async contamination spreads along the
-> entire dependency path.
+> - **Several per class:** a class may have several `@postConstruct()` methods and several `@preDestroy()` methods. All
+>   of them are called in declaration order (top-down). If one throws, the remaining methods are not called and the
+>   error is propagated.
+> - **Scope:** `@postConstruct()` runs for every scope — each time a new instance is created. `@preDestroy()` only runs
+>   for `singleton`, when the container is disposed or the binding unbound. `scoped` and `transient` instances get no
+>   `@preDestroy()`.
+> - **Async contamination:** an async `@postConstruct()` forces `resolveAsync()` — async contamination spreads along the
+>   entire dependency path.
 
 ### Auto-registration
+
+**Mental model.** A class can put itself on a list at module-load time; a container later binds everything on that list.
+The list is an ordinary object you create and pass around — never a global.
 
 `@injectable()` supports `autoRegister` — a class registers itself into an **explicit registry** at module load time.
 There is no global singleton.
@@ -1869,23 +2020,21 @@ const count = container.loadAutoRegistered(appRegistry);
 // count = 2
 ```
 
-> **Scope in auto-register:** the default is `transient`. Override it with
+> **Scope in auto-register.** The default is `transient`. Override it with
 > `{ autoRegister: registry, scope: "singleton" | "scoped" }`.
->
-> **Coexisting with explicit bind:** `container.bind(UserService)` after `loadAutoRegistered()` applies slot-aware
+
+> **Coexisting with explicit bind.** `container.bind(UserService)` after `loadAutoRegistered()` applies slot-aware
 > last-wins — the explicit binding replaces the auto-registered one when the slot is the same.
->
-> **Why not a global registry:** global state creates an implicit side effect at module import time — hard to
-> tree-shake, hard to isolate in tests. `createAutoRegisterRegistry()` returns an ordinary object that can be passed
-> around, mocked, or reset independently.
 
-**The `AutoRegisterRegistry` interface:**
-
-`AutoRegisterRegistry` has two methods: `register(target, scope)` — called automatically by
-`@injectable({ autoRegister })` — and `entries()`, returning everything registered. `createAutoRegisterRegistry()`
-builds a fresh registry.
+**The `AutoRegisterRegistry` interface.** `AutoRegisterRegistry` has two methods: `register(target, scope)` — called
+automatically by `@injectable({ autoRegister })` — and `entries()`, returning everything registered.
+`createAutoRegisterRegistry()` builds a fresh registry.
 
 > **Exact shape:** `src/decorators/injectable.ts`.
+
+> **Rationale — why not a global registry.** Global state creates an implicit side effect at module import time — hard
+> to tree-shake, hard to isolate in tests. `createAutoRegisterRegistry()` returns an ordinary object that can be passed
+> around, mocked, or reset independently.
 
 ### The decorator and helper list
 
@@ -1902,7 +2051,7 @@ builds a fresh registry.
 
 > **`@singleton()` and `@scoped()` do not exist.** Scope is a binding-time concern — declared at `.singleton()` /
 > `.transient()` / `.scoped()` in the fluent chain. A class does not decide its own scope.
->
+
 > **There are no parameter decorators.** TC39 Stage 3 does not support them (TS1206). The deps array replaces them
 > entirely.
 
@@ -1923,14 +2072,13 @@ builds a fresh registry.
 
 ---
 
----
-
 ## Advanced Constraints
 
-Advanced constraints are a family of predicate factories — each takes configuration parameters and returns a
-`(ctx: ConstraintContext) => boolean` — used with `.when()` in a binding chain.
+**Mental model.** These helpers are convenience factories for `when()` predicates. Each takes a token, a name, or a
+criterion and returns `(ctx: ConstraintContext) => boolean`. Nothing here adds a mechanism: everything an advanced
+constraint does, a hand-written `when()` over `ctx.parent` and `ctx.ancestors` could do too.
 
-Unlike `whenNamed` / `whenTagged` (static slot filtering, O(1)), advanced constraints inspect **where the binding sits
+Where `whenNamed` / `whenTagged` filter statically by slot (O(1)), advanced constraints inspect **where the binding sits
 in the dependency graph at runtime**: which token is the direct parent, which slot of an ancestor is active. The typical
 use case is injecting differently depending on the subtree being resolved — for example, `VerboseLogger` when an
 ancestor is `DebugModule`, or `SandboxMailer` when some ancestor carries the tag `env=test`.
@@ -1941,13 +2089,13 @@ the root — the shorter path, and always correct.
 
 ### Token name resolution
 
-Every constraint function takes a `Token<unknown> | Constructor` and resolves it to a `tokenName` string, which is
-compared against `ResolutionFrame.tokenName`. The rules:
+> **Normative.** Every constraint function takes a `Token<unknown> | Constructor` and resolves it to a `tokenName`
+> string, which is compared against `ResolutionFrame.tokenName`:
+>
+> - `Token<Value>` → use `token.name` (the string given at `token("Logger")`)
+> - `Constructor` → use `Constructor.name` (the JavaScript class name)
 
-- `Token<Value>` → use `token.name` (the string given at `token("Logger")`)
-- `Constructor` → use `Constructor.name` (the JavaScript class name)
-
-> **Unique names:** `ResolutionFrame.tokenName` is a `string`, not a branded type. If two different tokens share a
+> **Unique names.** `ResolutionFrame.tokenName` is a `string`, not a branded type. If two different tokens share a
 > `name` — say `token<A>("Config")` and `token<B>("Config")` — a constraint cannot tell them apart. Give tokens unique
 > names (a namespace prefix such as `"@myapp/Config"`) to avoid false matches.
 
@@ -1968,21 +2116,21 @@ Ten constraints, each taking configuration parameters and returning a predicate 
 | `whenAnyAncestorTagged(criterion)` | some ancestor carries that criterion                             |          `false`          |
 | `whenAnyAncestorTaggedAll(tags)`   | **at least one** ancestor's slot contains **all** given criteria |          `false`          |
 
-> **An empty criterion list is rejected:** `whenParentTaggedAll([])` reads literally as "the parent carries all of
-> nothing", which is true of every parent — the constraint silently weakens into "there is some parent", while still
-> winning specificity over an unconstrained binding. Both `…TaggedAll` variants throw `EmptyTagCriteriaError` right at
-> the call site.
->
-> **A slot name nobody declares:** `whenParentNamed`/`whenAnyAncestorNamed` expect a string, so a typo produces a
-> constraint that is never true and that nobody reports. `validate()` throws `UnreachableConstraintError` when no
-> binding anywhere in the container chain declares that slot name. The requirement survives `when()` chaining: a
-> composed predicate carries both sides' requirements, so narrowing a helper-built constraint does not hide it from
-> `validate()`.
-
 The two negative forms returning `true` on absence are deliberate: "no parent is X" is trivially true when there is no
 parent at all. The two `…TaggedAll` forms are equivalent to AND-composing several individual criteria, but cost one
 predicate call and allocate no intermediate closure. Criteria compare by identity — equivalent to `Object.is` on
 `[key, value]` thanks to interning, consistent with slot equality in [Slots and last-wins](#slot-matching).
+
+> **Normative — an empty criterion list is rejected.** `whenParentTaggedAll([])` reads literally as "the parent carries
+> all of nothing", which is true of every parent — the constraint would silently weaken into "there is some parent",
+> while still winning specificity over an unconstrained binding. Both `…TaggedAll` variants throw
+> `EmptyTagCriteriaError` right at the call site.
+
+> **Normative — a slot name nobody declares.** `whenParentNamed`/`whenAnyAncestorNamed` expect a string, so a typo
+> produces a constraint that is never true and that nobody reports. `validate()` throws `UnreachableConstraintError`
+> when no binding anywhere in the container chain declares that slot name. The requirement survives `when()` chaining: a
+> composed predicate carries both sides' requirements, so narrowing a helper-built constraint does not hide it from
+> `validate()`.
 
 > **Exact shape:** `src/resolution/select/constraints.ts`.
 
@@ -1992,30 +2140,30 @@ predicate call and allocate no intermediate closure. Criteria compare by identit
 token). `ctx.ancestors` is every frame above `ctx.parent`, ordered from nearest to furthest — it does not include
 `ctx.parent`.
 
-**The canonical implementation table (normative):**
+> **Normative — the canonical implementation table.**
+>
+> | Function                           | Logic                                                                           |
+> | ---------------------------------- | ------------------------------------------------------------------------------- |
+> | `whenParentIs(token)`              | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token)`       |
+> | `whenNoParentIs(token)`            | `ctx.parent === undefined \|\| ctx.parent.tokenName !== tokenNameOf(token)`     |
+> | `whenAnyAncestorIs(token)`         | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token))`                   |
+> | `whenNoAncestorIs(token)`          | `ctx.ancestors.every(f => f.tokenName !== tokenNameOf(token))`                  |
+> | `whenParentNamed(name)`            | `ctx.parent !== undefined && ctx.parent.slot.name === name`                     |
+> | `whenAnyAncestorNamed(name)`       | `ctx.ancestors.some(f => f.slot.name === name)`                                 |
+> | `whenParentTagged(criterion)`      | `ctx.parent !== undefined && ctx.parent.slot.tags.includes(criterion)`          |
+> | `whenAnyAncestorTagged(criterion)` | `ctx.ancestors.some(f => f.slot.tags.includes(criterion))`                      |
+> | `whenParentTaggedAll(tags)`        | `ctx.parent !== undefined && tags.every(t => ctx.parent.slot.tags.includes(t))` |
+> | `whenAnyAncestorTaggedAll(tags)`   | `ctx.ancestors.some(f => tags.every(t => f.slot.tags.includes(t)))`             |
 
-| Function                           | Logic                                                                           |
-| ---------------------------------- | ------------------------------------------------------------------------------- |
-| `whenParentIs(token)`              | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token)`       |
-| `whenNoParentIs(token)`            | `ctx.parent === undefined \|\| ctx.parent.tokenName !== tokenNameOf(token)`     |
-| `whenAnyAncestorIs(token)`         | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token))`                   |
-| `whenNoAncestorIs(token)`          | `ctx.ancestors.every(f => f.tokenName !== tokenNameOf(token))`                  |
-| `whenParentNamed(name)`            | `ctx.parent !== undefined && ctx.parent.slot.name === name`                     |
-| `whenAnyAncestorNamed(name)`       | `ctx.ancestors.some(f => f.slot.name === name)`                                 |
-| `whenParentTagged(criterion)`      | `ctx.parent !== undefined && ctx.parent.slot.tags.includes(criterion)`          |
-| `whenAnyAncestorTagged(criterion)` | `ctx.ancestors.some(f => f.slot.tags.includes(criterion))`                      |
-| `whenParentTaggedAll(tags)`        | `ctx.parent !== undefined && tags.every(t => ctx.parent.slot.tags.includes(t))` |
-| `whenAnyAncestorTaggedAll(tags)`   | `ctx.ancestors.some(f => tags.every(t => f.slot.tags.includes(t)))`             |
-
-> **Why identity comparison is enough:** criteria are interned, so each `[key, value]` has exactly one object; comparing
-> by identity therefore gives the same answer as `Object.is` on the value — handling `NaN` correctly and keeping `+0`
-> distinct from `-0`, consistent with slot equality in [Slots and last-wins](#slot-matching). This is also why the table
-> above no longer has a pairwise comparison loop.
-
-> **The named variants read `slot.name`, not `currentResolveOptions`:** `whenParentNamed("console")` asks "does the
+> **The named variants read `slot.name`, not `currentResolveOptions`.** `whenParentNamed("console")` asks "does the
 > parent's binding have `whenNamed("console")`?" — not "was the parent resolved with the hint `{ name: "console" }`?".
 > Those are different questions: a binding can match the slot `"console"` without any resolve hint when it is the only
 > candidate, and vice versa.
+
+> **Why identity comparison is enough.** Criteria are interned, so each `[key, value]` has exactly one object; comparing
+> by identity therefore gives the same answer as `Object.is` on the value — handling `NaN` correctly and keeping `+0`
+> distinct from `-0`, consistent with slot equality in [Slots and last-wins](#slot-matching). This is also why the table
+> above has no pairwise comparison loop.
 
 ### Examples
 
@@ -2031,7 +2179,7 @@ container.bind(Logger).to(VerboseLogger).when(whenParentIs(DebugService));
 When `DebugService` asks for `Logger`, the predicate matches and `VerboseLogger` is chosen. Every other service gets
 `ConsoleLogger` (the default slot).
 
-> **Make them mutually exclusive:** both bindings above use predicate-only `when()`. If both predicates are `true`
+> **Make them mutually exclusive.** Both bindings above use predicate-only `when()`. If both predicates are `true`
 > during one resolve, the resolver throws `AmbiguousBindingError`. Make the predicates exclude each other — for
 > instance, add `.when((ctx) => !whenParentIs(DebugService)(ctx))` to the first binding as the negation.
 
@@ -2194,7 +2342,8 @@ real source path; **there is no `@codefast/di/constraints` alias**.
 
 ## Module system
 
-A module is how bindings are grouped by domain. Both sync and async setup are supported.
+**Mental model.** A module is a named, reusable description of bindings — a function that receives a builder and calls
+`bind`/`import` on it. It holds no runtime state; a container decides when to run it and remembers what it produced.
 
 ### Sync module
 
@@ -2252,18 +2401,18 @@ testContainer.bind(Database).toConstantValue(mockDatabase); // overrides the par
 testContainer.rebind(Database).toConstantValue(mockDatabase);
 ```
 
-> **A module is a pure description — it holds no runtime state:** the same `SyncModule` / `AsyncModule` object can be
-> loaded into several independent containers in parallel. A module only holds its `name` and its `setup` callback; the
-> container tracks "which modules are loaded" and "which binding belongs to which module".
->
-> **Deduplication:** calling `container.load(M)` repeatedly, or `m.import(M)` from several modules, is a no-op from the
-> second time on. Dedup is based on **object identity**, not on `name`. Unload reference-counting uses the same identity
-> — see [Module management](#module-management).
+> **Normative — a module is a pure description, holding no runtime state.** The same `SyncModule` / `AsyncModule` object
+> can be loaded into several independent containers in parallel. A module only holds its `name` and its `setup`
+> callback; the container tracks "which modules are loaded" and "which binding belongs to which module".
+
+> **Normative — deduplication.** Calling `container.load(M)` repeatedly, or `m.import(M)` from several modules, is a
+> no-op from the second time on. Dedup is based on **object identity**, not on `name`. Unload reference-counting uses
+> the same identity — see [Module management](#module-management).
 
 ### A `SyncModule` cannot import an `AsyncModule`
 
-`ModuleBuilder` (used inside `SyncModule.create()`) only accepts `SyncModule[]` in `import()`. This is required — a
-`SyncModule` callback is sync and cannot await an async setup:
+> **Normative.** `ModuleBuilder` (used inside `SyncModule.create()`) only accepts `SyncModule[]` in `import()`. A
+> `SyncModule` callback is sync and cannot await an async setup.
 
 ```ts
 // Compile error — a SyncModule cannot import an AsyncModule
@@ -2279,33 +2428,36 @@ export const AppModule = AsyncModule.create("App", async (builder) => {
 
 ### Module interface
 
-**`ModuleBuilder`** — which only exists inside a `SyncModule.create()` callback — does exactly two things: `bind(token)`
-and `import(...modules)` accepting **only** `SyncModule`. **`AsyncModuleBuilder`** does the same two things, but its
-`import` accepts both `SyncModule` and `AsyncModule`.
-
-`SyncModule` and `AsyncModule` both carry a `name` and a **branded field** that separates the two at the type level. The
-static factories: `SyncModule.create(name, setup)` with a sync `setup`, `AsyncModule.create(name, setup)` with an async
-one. There are also `Module.create` / `Module.createAsync` — which only forward to those two factories, for call sites
-that prefer importing a single name — plus the type guard `isSyncModule(module)` for telling them apart at runtime when
-all you hold is the union.
+| Type                 | What it offers                                                                                                                                  |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ModuleBuilder`      | Exists only inside a `SyncModule.create()` callback. Exactly two things: `bind(token)` and `import(...modules)` accepting **only** `SyncModule` |
+| `AsyncModuleBuilder` | The same two things, but its `import` accepts both `SyncModule` and `AsyncModule`                                                               |
+| `SyncModule`         | Carries a `name` and a **branded field**; built by `SyncModule.create(name, setup)` with a sync `setup`                                         |
+| `AsyncModule`        | Carries a `name` and a **branded field**; built by `AsyncModule.create(name, setup)` with an async `setup`                                      |
+| `Module`             | `Module.create` / `Module.createAsync` only forward to the two factories above, for call sites that prefer importing a single name              |
+| `isSyncModule`       | Type guard for telling the two apart at runtime when all you hold is the union                                                                  |
 
 > **Exact shape:** `src/core/module.ts` — `ModuleBuilder`, `AsyncModuleBuilder`, `SyncModule`, `AsyncModule`, `Module`,
 > `isSyncModule`.
 
-> **Why a branded field?** TypeScript uses structural typing — if the two interfaces only had `name: string`,
-> `container.load(asyncModule)` would compile without complaint. The branded field makes `load(asyncModule)` a
-> TypeScript error at compile time.
->
-> **`ModuleBuilder` has no `unbind` / `rebind`:** a module is _additive_ — it only declares, it never removes another
-> module's bindings. Overriding in a test uses `container.bind()` or `container.rebind()` after loading. This avoids
-> hidden coupling between modules.
+> **Rationale — why a branded field.** TypeScript uses structural typing — if the two interfaces only had
+> `name: string`, `container.load(asyncModule)` would compile without complaint. The branded field makes
+> `load(asyncModule)` a TypeScript error at compile time.
+
+> **Rationale — `ModuleBuilder` has no `unbind` / `rebind`.** A module is _additive_ — it only declares, it never
+> removes another module's bindings. Overriding in a test uses `container.bind()` or `container.rebind()` after loading.
+> This avoids hidden coupling between modules.
 
 ---
 
 ## Error hierarchy
 
-Every error extends `DiError` — an abstract class that forces each subclass to declare a `code` string
-(machine-readable), alongside a message carrying enough context for a human reader.
+**Mental model.** Every error the library throws extends one abstract class, `DiError`, and carries a machine-readable
+`code` plus the context fields a human needs to act. A `catch (error) { if (error instanceof DiError) … }` catches all
+of them; a `switch` on `code` tells them apart without string-matching messages.
+
+> **Normative.** Every error extends `DiError` — an abstract class that forces each subclass to declare a `code` string
+> (machine-readable), alongside a message carrying enough context for a human reader.
 
 | Error                           | `code`                        | Thrown when                                                            | Context fields                                   |
 | ------------------------------- | ----------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------ |
@@ -2346,41 +2498,51 @@ chain has an async factory. Use container.resolveAsync(App).
 
 ### The boundary between a library bug and a caller error
 
-`InternalError` means **the library is broken** — a consumer catching one has caught a library bug. No user-caused error
-may therefore carry that type. Three errors in the table exist precisely because of that rule: `AmbiguousBindingError`
-(predicates that do not exclude each other), `StaticMemberDecoratorError`, and `ChainNotRegisteredError` — all three
-used to throw `InternalError`, and all three are caller misuse.
+> **Normative.** `InternalError` means **the library is broken** — a consumer catching one has caught a library bug. No
+> user-caused error may therefore carry that type.
 
-`ChainNotRegisteredError` and `SelfBindingRequiresClassError` are nearly unreachable from TypeScript: the chain's return
-types ([Fluent chain](#chain-order)) and the type of `bind()` already block most of the way. They exist for JavaScript
-callers, or callers who have cast through the types — so that misuse **fails loudly** instead of silently doing nothing
-— and they belong to the `DiError` taxonomy so that a `catch (error) { if (error instanceof DiError) … }` does not let
-them escape.
+Three errors in the table exist precisely because of that rule: `AmbiguousBindingError` (predicates that do not exclude
+each other), `StaticMemberDecoratorError`, and `ChainNotRegisteredError` — each is caller misuse, so each has its own
+type rather than `InternalError`.
 
-`StaticMemberDecoratorError` exists because all three of those decorators act on **an instance**: `@inject` resolves
-through the container active while the instance is being constructed, and `@postConstruct`/`@preDestroy` bracket one
-instance's lifecycle. A static member belongs to the class, and the container does not construct classes.
+**Errors for callers outside the type system.** `ChainNotRegisteredError` and `SelfBindingRequiresClassError` are nearly
+unreachable from TypeScript: the chain's return types ([Fluent chain](#chain-order)) and the type of `bind()` already
+block most of the way. They exist for JavaScript callers, or callers who have cast through the types — so that misuse
+**fails loudly** instead of silently doing nothing — and they belong to the `DiError` taxonomy so that a
+`catch (error) { if (error instanceof DiError) … }` does not let them escape.
+
+**Why static members are an error.** `StaticMemberDecoratorError` exists because all three of those decorators act on
+**an instance**: `@inject` resolves through the container active while the instance is being constructed, and
+`@postConstruct`/`@preDestroy` bracket one instance's lifecycle. A static member belongs to the class, and the container
+does not construct classes.
 
 ### `MissingMetadataError` vs `InvalidMetadataError`
 
-Missing metadata is a class the container was never told about; invalid metadata is a reader answering wrongly. Only a
-**user-supplied** reader is checked — the default decorator reader writes the very metadata it reads back, so there is
-nothing to check, and a container given no custom reader has nothing to answer for. The check runs once per
-`(reader, class)` pair per process, and only over the fields the consumer dereferences (`params`, and each entry's
-`token`).
+Missing metadata is a class the container was never told about; invalid metadata is a reader answering wrongly.
 
-The **lifecycle** answer also lands in `InvalidMetadataError`, with a different `reason`: if the reader names a
-`postConstruct`/`preDestroy` method the instance does not have, a silently skipped hook is a failure **the caller cannot
-see** — so it is reported (`"lifecycle method 'strat' is not a method on the instance"`) rather than swallowed. The
-class name is taken from the instance itself at the throw site, so the happy path carries no extra argument.
+> **Normative.**
+>
+> - Only a **user-supplied** reader is checked — the default decorator reader writes the very metadata it reads back, so
+>   there is nothing to check, and a container given no custom reader has nothing to answer for.
+> - The check runs once per `(reader, class)` pair per process, and only over the fields the consumer dereferences
+>   (`params`, and each entry's `token`).
+> - The **lifecycle** answer also lands in `InvalidMetadataError`, with a different `reason`: if the reader names a
+>   `postConstruct`/`preDestroy` method the instance does not have, it is reported
+>   (`"lifecycle method 'strat' is not a method on the instance"`) rather than swallowed. The class name is taken from
+>   the instance itself at the throw site, so the happy path carries no extra argument.
+
+A silently skipped hook is a failure **the caller cannot see** — which is why the lifecycle case is reported rather than
+swallowed.
 
 ### `AsyncActivationError` vs `AsyncResolutionError`
 
 Both come from the rule in [`ActivationHandler` and `DeactivationHandler`](#lifecycle-handlers) — a hook returning a
-`Promise` means the resolve must be `resolveAsync()` — but here the async source is not the binding's factory, it is the
-hook, which only reveals itself **after** the instance has been created. The container cannot know in advance, at the
-point it selects the binding. `hookKind` says whether it was `postConstruct` or `onActivation`; `methodName` pins the
-exact method when a class has several `@postConstruct()`.
+`Promise` means the resolve must be `resolveAsync()`. The difference is _where_ the async source sits:
+
+- `AsyncResolutionError` — the source is a binding's factory, known at the point the binding is selected.
+- `AsyncActivationError` — the source is a hook, which only reveals itself **after** the instance has been created. The
+  container cannot know in advance. `hookKind` says whether it was `postConstruct` or `onActivation`; `methodName` pins
+  the exact method when a class has several `@postConstruct()`.
 
 ---
 
@@ -2484,24 +2646,25 @@ packages/di/
 └── tsconfig.build.json
 ```
 
-**A directory is a layer, and imports only go one way.** `{core, errors, injection}` → `{lifecycle, ambient}` →
-`resolution` → `{decorators, metadata}` → `{container, introspection}`. Imports within a layer are free; only a value
-import back up to a higher layer is a violation. `index.ts` is exempt — gathering every layer into a barrel is its job.
-Type-only imports do not count, because they evaporate at build time and constrain nothing at runtime.
+> **Normative — a directory is a layer, and imports only go one way.** `{core, errors, injection}` →
+> `{lifecycle, ambient}` → `resolution` → `{decorators, metadata}` → `{container, introspection}`. Imports within a
+> layer are free; only a value import back up to a higher layer is a violation. `index.ts` is exempt — gathering every
+> layer into a barrel is its job. Type-only imports do not count, because they evaporate at build time and constrain
+> nothing at runtime.
 
-**Ownership of `core/types.ts`:** the foundation types (`BindingScope`, `BindingIdentifier`, `BindingKind`,
+**Ownership of `core/types.ts`.** The foundation types (`BindingScope`, `BindingIdentifier`, `BindingKind`,
 `Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`,
 `ResolutionFrame`, `TokenValue`) are declared here — a file with a single responsibility that depends on no other file
 in the package. `core/binding.ts`, `resolution/resolver.ts`, `lifecycle/scope-manager.ts` and the rest all import from
 it. Re-exported from `index.ts`.
 
-**Why `resolution/select/binding-select.ts` is separate from `core/registry.ts`:** the registry is the storage layer —
+**Why `resolution/select/binding-select.ts` is separate from `core/registry.ts`.** The registry is the storage layer —
 it stores bindings and handles slot-aware last-wins. `binding-select.ts` is the runtime filtering layer — it takes a
 token plus `ResolveOptions` plus the `when()` predicates and returns candidates. `resolver.ts` consumes its result. This
 split makes each layer independently testable, and keeps the registry at layer 0 while selection sits alongside the
 resolver.
 
-**Why `metadata/metadata-reader-token.ts` is its own file:** `MetadataReaderToken` is the bridge between the decorator
+**Why `metadata/metadata-reader-token.ts` is its own file.** `MetadataReaderToken` is the bridge between the decorator
 layer and the container. Keeping it separate avoids a circular import (`container/container.ts` →
 `metadata-reader-token.ts` → nothing pointing back).
 
@@ -2690,7 +2853,7 @@ shape of an entry).
 }
 ```
 
-> **Why `src` is in `files`:** the published artifact ships `src` too, because `tsc` leaves `#/` subpaths verbatim in
+> **Why `src` is in `files`.** The published artifact ships `src` too, because `tsc` leaves `#/` subpaths verbatim in
 > `dist/*.js` — they only resolve when the `imports` map (conditions `types`/`default` → `dist`) travels with them,
 > while the `source` condition lets dev/test inside the repo run the TypeScript sources directly with no prior build.
 
@@ -2847,7 +3010,6 @@ import { describe, expect, it } from "vitest";
 describe("UserService", () => {
   it("registers user and logs action", () => {
     const noopLogger: LoggerService = { log: () => {} };
-
     const container = Container.create();
     container.bind(Logger).toConstantValue(noopLogger);
     container.bind(UserRepo).toConstantValue(mockUserRepo);
@@ -3177,7 +3339,60 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 ---
 
-_Document version: 8.1 — April 2026_ _Inspired by InversifyJS v8.0.0 (March 2026) — researched from docs.inversify.io_
+## Changelog of this rewrite
+
+This revision changes how the specification is **presented**. It adds no rule, removes no rule, and softens no rule;
+every normative statement, case table, scope matrix, lifecycle order, error code and source pointer of the previous
+revision is carried over with its meaning intact.
+
+**Structure and presentation**
+
+- Added a [How to read this document](#how-to-read-this-document) preface naming the three callout kinds (_Normative_,
+  _Exact shape_, _Rationale / Compatibility_). No hand-written table of contents: the docs site at codefastlabs.com
+  generates one from the headings.
+- Every section now follows one order: what the concept is, the governing rule, a short example, edge cases and tables,
+  then rationale or compatibility notes last.
+- Normative content that was previously inline bold prose is set in labelled `> **Normative.**` blockquotes; rationale
+  that was previously interleaved with rules is set in labelled `> **Rationale.**` blockquotes at the end of its
+  section.
+- Long mixed paragraphs were split into bullet lists or tables: the deactivation-by-scope rules, the `ResolveOptions`
+  fields, the `ConstraintContext` fields, the `MetadataReader` port, the six resolve methods, the module interface, and
+  the "how to read the rows" notes under the builder table.
+- Sub-headings were added inside the dense sections (`ResolveOptions`, `ConstraintContext`, Slots and last-wins,
+  Resolution, Managing bindings, Module management, Introspection, MetadataReader, Property injection) so each rule has
+  its own anchor.
+- The lifecycle-order diagram is followed by a numbered step-by-step gloss; the Container-level hooks section links to
+  it instead of restating it in full.
+- Stale cross-references were corrected: "see 2.4" now cites [Fluent chain](#chain-order) by anchor, and the "Last-wins"
+  principle now cites [Slots and last-wins](#slot-matching) for the definition (it previously pointed at the examples).
+- The Container interface table is introduced as "nine groups", matching its nine rows.
+
+**Current rule separated from history or compatibility**
+
+- Slots and last-wins: the one-rule model is stated on its own; the comparison with the earlier two-rule model is a
+  single _Compatibility_ note at the end of the section.
+- Token replaces ServiceIdentifier: the branded-token rule is stated first; the InversifyJS `container.get<WrongType>`
+  observation is a _Compatibility_ note.
+- Binding kinds: the `toDynamicValue` comparison with InversifyJS is marked as compatibility text inside its note.
+- The boundary between a library bug and a caller error: the three errors that exist because of the `InternalError` rule
+  are named without recounting what they threw before.
+- Advanced Constraints, "Why identity comparison is enough": the observation that the implementation table has no
+  pairwise loop is stated in the present tense.
+- Slots and last-wins, container-local rule: stated as a rule about locality, without the historical aside.
+
+**Mental-model openers added**
+
+`ResolveOptions` · `ConstraintContext` · `ActivationHandler` and `DeactivationHandler` · Binding API · Scope ·
+Constraints — `when*` · Builder type interfaces · Slots and last-wins · Container API · Resolution · Async contamination
+· Singleton async creation · `rebind` semantics · Reference counting · Child containers · `has(token)` vs
+`has(token, hint)` · Decorator layer · MetadataReader · Property injection through `accessor` · Auto-registration ·
+Advanced Constraints · Module system · Error hierarchy. The Foundation types section also gained a map table listing
+each type, what it is, and where a reader meets it.
+
+---
+
+_Document version: 8.2 — September 2026_ _Inspired by InversifyJS v8.0.0 (March 2026) — researched from
+docs.inversify.io_
 
 ## License
 
