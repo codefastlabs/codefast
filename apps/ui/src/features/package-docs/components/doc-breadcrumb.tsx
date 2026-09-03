@@ -9,7 +9,7 @@ import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 
 /** A linked crumb between the package and the current document: a directory kind above one of its pages. */
 export interface BreadcrumbTrailItem {
-  readonly doc: DocKindSlug;
+  readonly kind: DocKindSlug;
   readonly label: string;
 }
 
@@ -46,14 +46,14 @@ export function DocBreadcrumb({ pkg, trail = [], current, className, ...props }:
           )}
         </li>
         {trail.map((item) => (
-          <Fragment key={item.doc}>
+          <Fragment key={item.kind}>
             <li aria-hidden>
               <ChevronRightIcon className="size-3.5" />
             </li>
             <li>
               <Link
-                to="/docs/$pkg/$doc"
-                params={{ pkg: pkg.slug, doc: item.doc }}
+                to="/docs/$pkg/$kind"
+                params={{ pkg: pkg.slug, kind: item.kind }}
                 className="no-underline hover:text-ui-fg"
               >
                 {item.label}

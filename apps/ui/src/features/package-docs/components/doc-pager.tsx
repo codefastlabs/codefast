@@ -20,8 +20,8 @@ interface PagerLinkProps {
 }
 
 /** The kind's label for its own page; a page beneath a kind is named by its URL segment, as in the sidebar. */
-function pagerLabel({ doc, page }: DocRef): string {
-  return page ?? DOC_KIND_BY_SLUG.get(doc)?.label ?? doc;
+function pagerLabel({ kind, page }: DocRef): string {
+  return page ?? DOC_KIND_BY_SLUG.get(kind)?.label ?? kind;
 }
 
 function PagerLink({ pkg, target, direction }: PagerLinkProps) {
@@ -42,18 +42,18 @@ function PagerLink({ pkg, target, direction }: PagerLinkProps) {
 
   if (target.page !== undefined) {
     return (
-      <Link to="/docs/$pkg/$doc/$page" params={{ pkg, doc: target.doc, page: target.page }} className={className}>
+      <Link to="/docs/$pkg/$kind/$page" params={{ pkg, kind: target.kind, page: target.page }} className={className}>
         {body}
       </Link>
     );
   }
 
-  return target.doc === "readme" ? (
+  return target.kind === "readme" ? (
     <Link to="/docs/$pkg" params={{ pkg }} className={className}>
       {body}
     </Link>
   ) : (
-    <Link to="/docs/$pkg/$doc" params={{ pkg, doc: target.doc }} className={className}>
+    <Link to="/docs/$pkg/$kind" params={{ pkg, kind: target.kind }} className={className}>
       {body}
     </Link>
   );

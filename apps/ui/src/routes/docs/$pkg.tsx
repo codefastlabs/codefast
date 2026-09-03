@@ -11,7 +11,7 @@ export const Route = createFileRoute("/docs/$pkg")({
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   staleTime: 60 * 60_000,
   loader: async ({ params }) => {
-    const page = await getDocPage({ data: { pkg: params.pkg, doc: "readme" } });
+    const page = await getDocPage({ data: { pkg: params.pkg, kind: "readme" } });
 
     if (!page) {
       throw notFound();

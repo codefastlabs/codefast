@@ -36,19 +36,19 @@ export function pageTitle(docTitle: string, packageName: string, kindLabel: stri
 
 /** Home › Packages › the package › its kind › the page, stopping at the level the document sits on. */
 function breadcrumbItems(data: DocPageData, packageName: string, kindLabel: string): Array<BreadcrumbItem> {
-  const { pkg, doc, page, title } = data.doc;
+  const { pkg, kind, page, title } = data.doc;
   const crumbs: Array<[name: string, path: string]> = [
     ["Home", "/"],
     ["Packages", "/docs"],
     [packageName, docPath(pkg, "readme")],
   ];
 
-  if (doc !== "readme") {
-    crumbs.push([page === undefined ? title : kindLabel, docPath(pkg, doc)]);
+  if (kind !== "readme") {
+    crumbs.push([page === undefined ? title : kindLabel, docPath(pkg, kind)]);
   }
 
   if (page !== undefined) {
-    crumbs.push([title, docPath(pkg, doc, page)]);
+    crumbs.push([title, docPath(pkg, kind, page)]);
   }
 
   return crumbs.map(([name, path], index) => ({
@@ -67,9 +67,9 @@ export function docPageHead(data: DocPageData | undefined): DocPageHead {
   const { doc } = data;
   const pkg = data.packages.find((candidate) => candidate.slug === doc.pkg);
   const name = pkg?.name ?? `@codefast/${doc.pkg}`;
-  const path = docPath(doc.pkg, doc.doc, doc.page);
+  const path = docPath(doc.pkg, doc.kind, doc.page);
   const seo = canonicalHead(path);
-  const kindLabel = DOC_KIND_BY_SLUG.get(doc.doc)?.label ?? doc.doc;
+  const kindLabel = DOC_KIND_BY_SLUG.get(doc.kind)?.label ?? doc.kind;
   const title = pageTitle(doc.title, name, kindLabel);
   const description = pkg?.description ?? `${doc.title} for ${name}.`;
   // Rendered by `scripts/generate-og-image.ts`; the root's site-wide image is the fallback for a package without one.

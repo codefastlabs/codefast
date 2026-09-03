@@ -96,7 +96,7 @@ function packageDocPages(): Array<{ path: string }> {
       packageMarkdownFiles(path.join(packagesDir, entry.name)).flatMap((file) => {
         const ref = docRefFor(file);
 
-        return ref ? [{ path: docPath(entry.name, ref.doc, ref.page) }] : [];
+        return ref ? [{ path: docPath(entry.name, ref.kind, ref.page) }] : [];
       }),
     );
 }

@@ -10,29 +10,29 @@ const tracking: PackageSummary = {
   version: "1.0.0",
   license: "MIT",
   docs: [
-    { doc: "readme", pages: [] },
-    { doc: "spec", pages: ["spec-consent", "vectors"] },
-    { doc: "changelog", pages: [] },
+    { kind: "readme", pages: [] },
+    { kind: "spec", pages: ["spec-consent", "vectors"] },
+    { kind: "changelog", pages: [] },
   ],
 };
 
 describe("readingOrder", () => {
   it("walks each kind's own page and then the pages beneath it, in sidebar order", () => {
     expect(readingOrder(tracking)).toEqual([
-      { doc: "readme" },
-      { doc: "spec" },
-      { doc: "spec", page: "spec-consent" },
-      { doc: "spec", page: "vectors" },
-      { doc: "changelog" },
+      { kind: "readme" },
+      { kind: "spec" },
+      { kind: "spec", page: "spec-consent" },
+      { kind: "spec", page: "vectors" },
+      { kind: "changelog" },
     ]);
   });
 });
 
 describe("isSameDoc", () => {
   it("compares the kind and the page together", () => {
-    expect(isSameDoc({ doc: "spec" }, { doc: "spec" })).toBe(true);
-    expect(isSameDoc({ doc: "spec" }, { doc: "spec", page: "vectors" })).toBe(false);
-    expect(isSameDoc({ doc: "spec", page: "vectors" }, { doc: "spec", page: "vectors" })).toBe(true);
-    expect(isSameDoc({ doc: "spec", page: "vectors" }, { doc: "changelog", page: "vectors" })).toBe(false);
+    expect(isSameDoc({ kind: "spec" }, { kind: "spec" })).toBe(true);
+    expect(isSameDoc({ kind: "spec" }, { kind: "spec", page: "vectors" })).toBe(false);
+    expect(isSameDoc({ kind: "spec", page: "vectors" }, { kind: "spec", page: "vectors" })).toBe(true);
+    expect(isSameDoc({ kind: "spec", page: "vectors" }, { kind: "changelog", page: "vectors" })).toBe(false);
   });
 });

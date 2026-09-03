@@ -4,20 +4,20 @@ import { docPath, docRefFor } from "#/features/package-docs/lib/doc-kinds";
 
 describe("docRefFor", () => {
   it("maps a kind's file at the package root to the kind", () => {
-    expect(docRefFor("README.md")).toEqual({ doc: "readme" });
-    expect(docRefFor("SPEC.md")).toEqual({ doc: "spec" });
-    expect(docRefFor("CHANGELOG.md")).toEqual({ doc: "changelog" });
+    expect(docRefFor("README.md")).toEqual({ kind: "readme" });
+    expect(docRefFor("SPEC.md")).toEqual({ kind: "spec" });
+    expect(docRefFor("CHANGELOG.md")).toEqual({ kind: "changelog" });
   });
 
   it("maps a kind's directory, and its README, to the kind's own page", () => {
-    expect(docRefFor("spec")).toEqual({ doc: "spec" });
-    expect(docRefFor("spec/README.md")).toEqual({ doc: "spec" });
+    expect(docRefFor("spec")).toEqual({ kind: "spec" });
+    expect(docRefFor("spec/README.md")).toEqual({ kind: "spec" });
   });
 
   it("maps a markdown file inside a kind's directory to a page named after it, lowercased", () => {
-    expect(docRefFor("spec/spec-consent.md")).toEqual({ doc: "spec", page: "spec-consent" });
-    expect(docRefFor("spec/CHANGELOG.md")).toEqual({ doc: "spec", page: "changelog" });
-    expect(docRefFor("spec/vectors/README.md")).toEqual({ doc: "spec", page: "vectors" });
+    expect(docRefFor("spec/spec-consent.md")).toEqual({ kind: "spec", page: "spec-consent" });
+    expect(docRefFor("spec/CHANGELOG.md")).toEqual({ kind: "spec", page: "changelog" });
+    expect(docRefFor("spec/vectors/README.md")).toEqual({ kind: "spec", page: "vectors" });
   });
 
   it("rejects anything that is not a document, including markdown nested deeper than one page", () => {

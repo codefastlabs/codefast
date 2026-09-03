@@ -31,8 +31,8 @@ beforeEach(() => {
       version: "0.8.0",
       license: "MIT",
       docs: [
-        { doc: "readme", pages: [] },
-        { doc: "spec", pages: [] },
+        { kind: "readme", pages: [] },
+        { kind: "spec", pages: [] },
       ],
     },
   ]);
@@ -127,6 +127,6 @@ describe("CommandPalette tracking", () => {
       slug: "di",
       hadQuery: false,
     });
-    expect(navigate).toHaveBeenCalledWith({ to: "/docs/$pkg/$doc", params: { pkg: "di", doc: "spec" } });
+    expect(navigate).toHaveBeenCalledWith({ to: "/docs/$pkg/$kind", params: { pkg: "di", kind: "spec" } });
   });
 });

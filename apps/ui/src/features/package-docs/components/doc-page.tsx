@@ -15,7 +15,7 @@ import { DOC_KIND_BY_SLUG, docAnalyticsName } from "#/features/package-docs/lib/
 import type { DocPageData } from "#/features/package-docs/lib/rendered-doc";
 
 interface DocPageProps extends Omit<ComponentProps<"main">, "children"> {
-  /** The page data resolved by the `/docs/$pkg[/$doc[/$page]]` route loader. */
+  /** The page data resolved by the `/docs/$pkg[/$kind[/$page]]` route loader. */
   readonly data: DocPageData;
 }
 
@@ -27,7 +27,7 @@ export function DocPage({ data, className, ...props }: DocPageProps) {
 
   const { doc, packages } = data;
   const pkg = packages.find((candidate) => candidate.slug === doc.pkg);
-  const kindLabel = DOC_KIND_BY_SLUG.get(doc.doc)?.label ?? doc.doc;
+  const kindLabel = DOC_KIND_BY_SLUG.get(doc.kind)?.label ?? doc.kind;
 
   return (
     <main className={cn("container mx-auto px-4 py-10 pb-32", className)} {...props}>
@@ -39,8 +39,8 @@ export function DocPage({ data, className, ...props }: DocPageProps) {
             <>
               <DocBreadcrumb
                 pkg={pkg}
-                trail={doc.page === undefined ? [] : [{ doc: doc.doc, label: kindLabel }]}
-                current={doc.doc === "readme" ? undefined : (doc.page ?? kindLabel)}
+                trail={doc.page === undefined ? [] : [{ kind: doc.kind, label: kindLabel }]}
+                current={doc.kind === "readme" ? undefined : (doc.page ?? kindLabel)}
               />
               <DocTabs pkg={pkg} activeDoc={doc} className="mb-8 lg:hidden" />
               <DocHeader pkg={pkg} doc={doc} />
@@ -51,7 +51,7 @@ export function DocPage({ data, className, ...props }: DocPageProps) {
             items={doc.toc}
             className="sticky top-header z-10 -mx-4 mb-6 border-b border-ui-border/60 xl:hidden"
           />
-          <MarkdownBody html={doc.html} analyticsName={docAnalyticsName(doc.pkg, doc.doc, doc.page)} />
+          <MarkdownBody html={doc.html} analyticsName={docAnalyticsName(doc.pkg, doc.kind, doc.page)} />
           {pkg ? <DocPager pkg={pkg} activeDoc={doc} /> : null}
         </div>
 

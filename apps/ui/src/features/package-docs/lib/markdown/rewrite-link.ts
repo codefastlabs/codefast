@@ -82,7 +82,7 @@ function sitePathFor(repoPath: string): string | null {
     return null;
   }
 
-  return overridden ?? docPath(pkg, ref.doc, ref.page);
+  return overridden ?? docPath(pkg, ref.kind, ref.page);
 }
 
 /**

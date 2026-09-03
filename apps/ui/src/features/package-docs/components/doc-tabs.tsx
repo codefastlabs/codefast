@@ -27,17 +27,17 @@ export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
       )}
       {...props}
     >
-      {pkg.docs.map(({ doc }) => {
-        const isActive = doc === activeDoc.doc;
-        const label = DOC_KIND_BY_SLUG.get(doc)?.label ?? doc;
+      {pkg.docs.map(({ kind }) => {
+        const isActive = kind === activeDoc.kind;
+        const label = DOC_KIND_BY_SLUG.get(kind)?.label ?? kind;
         const linkClassName = cn(
           "-mb-px shrink-0 border-b-2 px-3 py-2.5 text-sm whitespace-nowrap no-underline transition-colors",
           isActive ? "border-ui-brand font-medium text-ui-fg" : "border-transparent text-ui-muted hover:text-ui-fg",
         );
 
-        return doc === "readme" ? (
+        return kind === "readme" ? (
           <Link
-            key={doc}
+            key={kind}
             to="/docs/$pkg"
             params={{ pkg: pkg.slug }}
             aria-current={isActive ? "page" : undefined}
@@ -47,9 +47,9 @@ export function DocTabs({ pkg, activeDoc, className, ...props }: DocTabsProps) {
           </Link>
         ) : (
           <Link
-            key={doc}
-            to="/docs/$pkg/$doc"
-            params={{ pkg: pkg.slug, doc }}
+            key={kind}
+            to="/docs/$pkg/$kind"
+            params={{ pkg: pkg.slug, kind }}
             aria-current={isActive ? "page" : undefined}
             className={linkClassName}
           >

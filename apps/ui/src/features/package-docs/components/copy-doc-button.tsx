@@ -9,21 +9,21 @@ import { track } from "#/features/tracking/lib/tracking";
 
 interface CopyDocButtonProps extends Omit<ComponentProps<typeof Button>, "children" | "onClick"> {
   readonly pkg: string;
-  readonly doc: DocKindSlug;
+  readonly kind: DocKindSlug;
   /** The page under a directory kind; omit for the kind's own page. */
   readonly page?: string | undefined;
 }
 
 /** Copies the document's raw Markdown (its `.md` twin) — the same text an LLM would be handed. */
-export function CopyDocButton({ pkg, doc, page, variant = "outline", size = "sm", ...props }: CopyDocButtonProps) {
+export function CopyDocButton({ pkg, kind, page, variant = "outline", size = "sm", ...props }: CopyDocButtonProps) {
   const { copyToClipboard, isCopied } = useCopyToClipboard({
     onCopy: () => {
-      track("copy_page", { slug: docAnalyticsName(pkg, doc, page), variant: "markdown" });
+      track("copy_page", { slug: docAnalyticsName(pkg, kind, page), variant: "markdown" });
     },
   });
 
   const copy = async (): Promise<void> => {
-    const response = await fetch(`${docPath(pkg, doc, page)}.md`);
+    const response = await fetch(`${docPath(pkg, kind, page)}.md`);
 
     if (response.ok) {
       await copyToClipboard(await response.text());

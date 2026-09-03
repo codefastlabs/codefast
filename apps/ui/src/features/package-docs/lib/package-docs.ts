@@ -16,7 +16,7 @@ import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 /** The address of a doc page as the route params carry it; `page` is present only under a directory kind. */
 interface DocPageParams {
   readonly pkg: string;
-  readonly doc: string;
+  readonly kind: string;
   readonly page?: string | undefined;
 }
 
@@ -40,29 +40,28 @@ function trimmedChangelog(source: string, pkg: string, file: string): string {
 }
 
 /** Renders one package document, or `null` when the package, kind, or page does not exist. */
-export async function renderDoc(pkg: string, doc: DocKindSlug, page?: string): Promise<RenderedDoc | null> {
+export async function renderDoc(pkg: string, kind: DocKindSlug, page?: string): Promise<RenderedDoc | null> {
   const [{ docKind, docSource }, { renderMarkdown }] = await Promise.all([
     import("#/features/package-docs/lib/doc-source.impl"),
     import("#/features/package-docs/lib/markdown/render.impl"),
   ]);
-  const source = docSource(pkg, doc, page);
+  const source = docSource(pkg, kind, page);
 
   if (!source) {
     return null;
   }
 
-  const kind = docKind(doc);
   const raw = await source.load();
   // Only the package's own changelog is trimmed; a changelog page inside a directory kind renders whole.
-  const body = doc === "changelog" && page === undefined ? trimmedChangelog(raw, pkg, source.file) : raw;
+  const body = kind === "changelog" && page === undefined ? trimmedChangelog(raw, pkg, source.file) : raw;
   const rendered = await renderMarkdown(body, { pkg, file: source.file });
 
   return {
     pkg,
-    doc,
+    kind,
     page,
     file: source.file,
-    title: rendered.title ?? page ?? kind.label,
+    title: rendered.title ?? page ?? docKind(kind).label,
     html: rendered.html,
     toc: rendered.toc,
   };
@@ -79,19 +78,19 @@ export const getPackages = createServerFn({ method: "GET" }).handler(
   },
 );
 
-/** A `/docs/<pkg>[/<doc>[/<page>]]` page: the rendered document plus the sidebar index, or `null` for an unknown target. */
+/** A `/docs/<pkg>[/<kind>[/<page>]]` page: the rendered document plus the sidebar index, or `null` for an unknown target. */
 export const getDocPage = createServerFn({ method: "GET" })
   .validator((params: DocPageParams): DocPageParams => params)
   .handler(async ({ data }): Promise<DocPageData | null> => {
     setContentCacheHeaders();
 
-    if (!isDocKindSlug(data.doc)) {
+    if (!isDocKindSlug(data.kind)) {
       return null;
     }
 
     const [{ DOC_PACKAGES }, doc] = await Promise.all([
       import("#/features/package-docs/lib/doc-source.impl"),
-      renderDoc(data.pkg, data.doc, data.page),
+      renderDoc(data.pkg, data.kind, data.page),
     ]);
 
     return doc ? { doc, packages: DOC_PACKAGES } : null;

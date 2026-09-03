@@ -13,7 +13,7 @@ describe("package discovery", () => {
 
     const di = PACKAGES.find((pkg) => pkg.slug === "di");
 
-    expect(di?.docs.map((entry) => entry.doc)).toEqual([
+    expect(di?.docs.map((entry) => entry.kind)).toEqual([
       "readme",
       "spec",
       "architecture",
@@ -27,7 +27,7 @@ describe("package discovery", () => {
   });
 
   it("serves a directory kind's README as the kind and its other files as sorted pages beneath it", () => {
-    const spec = PACKAGES.find((pkg) => pkg.slug === "tracking")?.docs.find((entry) => entry.doc === "spec");
+    const spec = PACKAGES.find((pkg) => pkg.slug === "tracking")?.docs.find((entry) => entry.kind === "spec");
 
     expect(spec?.pages).toEqual([...(spec?.pages ?? [])].toSorted());
     expect(spec?.pages).toEqual(expect.arrayContaining(["changelog", "spec-consent", "spec-security", "vectors"]));

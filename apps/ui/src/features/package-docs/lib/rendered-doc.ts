@@ -7,7 +7,7 @@ import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
 
 /** One document kind a package ships, with the pages beneath it when the kind is a directory. */
 export interface PackageDoc {
-  readonly doc: DocKindSlug;
+  readonly kind: DocKindSlug;
   /** The pages under a directory kind, sorted by URL path; empty for a single-file kind. */
   readonly pages: ReadonlyArray<string>;
 }
@@ -29,7 +29,7 @@ export interface PackageSummary {
 /** One markdown document rendered to HTML. */
 export interface RenderedDoc {
   readonly pkg: string;
-  readonly doc: DocKindSlug;
+  readonly kind: DocKindSlug;
   /** The page under a directory kind; absent for the kind's own page. */
   readonly page?: string | undefined;
   /** The source file, relative to the package directory — e.g. `SPEC.md` or `spec/spec-consent.md`. */

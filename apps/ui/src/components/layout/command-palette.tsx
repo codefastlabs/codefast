@@ -38,13 +38,13 @@ interface PackageDocRow {
 /** The rows of one package: each kind and, beneath a directory kind, its pages; `@codefast/ui` has only its own section. */
 function packageDocRows(pkg: PackageSummary): Array<PackageDocRow> {
   if (pkg.slug === "ui") {
-    return [{ ref: { doc: "readme" }, label: "" }];
+    return [{ ref: { kind: "readme" }, label: "" }];
   }
 
   return readingOrder(pkg).map((ref) => {
-    const kindLabel = DOC_KIND_BY_SLUG.get(ref.doc)?.label ?? ref.doc;
+    const kindLabel = DOC_KIND_BY_SLUG.get(ref.kind)?.label ?? ref.kind;
 
-    if (ref.doc === "readme") {
+    if (ref.kind === "readme") {
       return { ref, label: "" };
     }
 
@@ -185,7 +185,7 @@ export function CommandPalette() {
   );
 
   const goToPackageDoc = useCallback(
-    (pkg: string, { doc, page }: DocRef) => {
+    (pkg: string, { kind, page }: DocRef) => {
       track("select_search_result", {
         resultType: "package",
         slug: pkg,
@@ -196,11 +196,11 @@ export function CommandPalette() {
       if (pkg === "ui") {
         void navigate({ to: "/ui" });
       } else if (page !== undefined) {
-        void navigate({ to: "/docs/$pkg/$doc/$page", params: { pkg, doc, page } });
-      } else if (doc === "readme") {
+        void navigate({ to: "/docs/$pkg/$kind/$page", params: { pkg, kind, page } });
+      } else if (kind === "readme") {
         void navigate({ to: "/docs/$pkg", params: { pkg } });
       } else {
-        void navigate({ to: "/docs/$pkg/$doc", params: { pkg, doc } });
+        void navigate({ to: "/docs/$pkg/$kind", params: { pkg, kind } });
       }
     },
     [handleOpenChange, navigate, search],
@@ -249,7 +249,7 @@ export function CommandPalette() {
                   packageDocRows(pkg).map(({ ref, label }) => {
                     return (
                       <CommandItem
-                        key={`${pkg.slug}/${ref.doc}/${ref.page ?? ""}`}
+                        key={`${pkg.slug}/${ref.kind}/${ref.page ?? ""}`}
                         value={`package ${pkg.name} ${label}`}
                         onSelect={() => {
                           goToPackageDoc(pkg.slug, ref);

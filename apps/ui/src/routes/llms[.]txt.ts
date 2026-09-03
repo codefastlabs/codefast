@@ -17,9 +17,9 @@ function docBullet(label: string, path: string, indent: string): string {
 /** One package's docs as llms.txt bullets: every document it ships, with a directory kind's pages nested beneath it. */
 function packageSection(pkg: PackageSummary): string {
   const docs = pkg.docs
-    .flatMap(({ doc, pages }) => [
-      docBullet(DOC_KIND_BY_SLUG.get(doc)?.label ?? doc, docPath(pkg.slug, doc), "  "),
-      ...pages.map((page) => docBullet(page, docPath(pkg.slug, doc, page), "    ")),
+    .flatMap(({ kind, pages }) => [
+      docBullet(DOC_KIND_BY_SLUG.get(kind)?.label ?? kind, docPath(pkg.slug, kind), "  "),
+      ...pages.map((page) => docBullet(page, docPath(pkg.slug, kind, page), "    ")),
     ])
     .join("\n");
 

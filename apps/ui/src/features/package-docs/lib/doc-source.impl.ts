@@ -21,6 +21,7 @@ export interface DocSource {
   readonly load: () => Promise<string>;
 }
 
+/** The sources one kind of a package is served from: its own page and the pages beneath it. */
 interface KindSources {
   index: DocSource | undefined;
   readonly pages: Map<string, DocSource>;
@@ -81,24 +82,24 @@ const sourcesByPackage: ReadonlyMap<string, ReadonlyMap<DocKindSlug, KindSources
     }
 
     const kinds = upsert(byPackage, pkg, () => new Map<DocKindSlug, KindSources>());
-    const kind = upsert(kinds, ref.doc, () => ({ index: undefined, pages: new Map<string, DocSource>() }));
-    const taken = ref.page === undefined ? kind.index : kind.pages.get(ref.page);
+    const sources = upsert(kinds, ref.kind, () => ({ index: undefined, pages: new Map<string, DocSource>() }));
+    const taken = ref.page === undefined ? sources.index : sources.pages.get(ref.page);
 
     if (taken) {
-      throw new Error(`packages/${pkg}: "${taken.file}" and "${file}" both publish the same "${ref.doc}" page.`);
+      throw new Error(`packages/${pkg}: "${taken.file}" and "${file}" both publish the same "${ref.kind}" page.`);
     }
 
     if (ref.page === undefined) {
-      kind.index = { file, load };
+      sources.index = { file, load };
     } else {
-      kind.pages.set(ref.page, { file, load });
+      sources.pages.set(ref.page, { file, load });
     }
   }
 
   for (const [pkg, kinds] of byPackage) {
-    for (const [doc, kind] of kinds) {
-      if (!kind.index) {
-        throw new Error(`packages/${pkg}: the "${doc}" directory has no README.md to serve as its page.`);
+    for (const [slug, sources] of kinds) {
+      if (!sources.index) {
+        throw new Error(`packages/${pkg}: the "${slug}" directory has no README.md to serve as its page.`);
       }
     }
   }
@@ -121,7 +122,7 @@ export const PACKAGES: ReadonlyArray<PackageSummary> = Object.entries(manifests)
       docs: DOC_KINDS.flatMap((kind): Array<PackageDoc> => {
         const sources = kinds?.get(kind.slug);
 
-        return sources ? [{ doc: kind.slug, pages: [...sources.pages.keys()].toSorted() }] : [];
+        return sources ? [{ kind: kind.slug, pages: [...sources.pages.keys()].toSorted() }] : [];
       }),
     };
   })
@@ -131,26 +132,26 @@ export const PACKAGES: ReadonlyArray<PackageSummary> = Object.entries(manifests)
 export const DOC_PACKAGES: ReadonlyArray<PackageSummary> = PACKAGES.filter((pkg) => pkg.slug !== "ui");
 
 /** The source of one document, or `null` when the package, kind, or page does not exist. */
-export function docSource(pkg: string, doc: DocKindSlug, page?: string): DocSource | null {
+export function docSource(pkg: string, kind: DocKindSlug, page?: string): DocSource | null {
   if (pkg === "ui") {
     return null;
   }
 
-  const kind = sourcesByPackage.get(pkg)?.get(doc);
+  const sources = sourcesByPackage.get(pkg)?.get(kind);
 
-  if (!kind) {
+  if (!sources) {
     return null;
   }
 
-  return (page === undefined ? kind.index : kind.pages.get(page)) ?? null;
+  return (page === undefined ? sources.index : sources.pages.get(page)) ?? null;
 }
 
 /** The kind record for a slug, throwing on an unknown one — callers narrow with `isDocKindSlug` first. */
-export function docKind(doc: DocKindSlug): DocKind {
-  const kind = DOC_KINDS.find((candidate) => candidate.slug === doc);
+export function docKind(slug: DocKindSlug): DocKind {
+  const kind = DOC_KINDS.find((candidate) => candidate.slug === slug);
 
   if (!kind) {
-    throw new Error(`Unknown doc kind "${doc}".`);
+    throw new Error(`Unknown doc kind "${slug}".`);
   }
 
   return kind;
