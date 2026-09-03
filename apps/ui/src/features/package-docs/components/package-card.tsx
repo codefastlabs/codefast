@@ -6,6 +6,7 @@ import type { ComponentProps } from "react";
 
 import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
+import { CURRENT_PAGE_ONLY } from "#/lib/nav-links";
 
 interface PackageCardProps extends Omit<ComponentProps<"article">, "children"> {
   readonly pkg: PackageSummary;
@@ -40,6 +41,7 @@ export function PackageCard({ pkg, showDocs = false, className, ...props }: Pack
               <Link
                 to="/docs/$pkg/$kind"
                 params={{ pkg: pkg.slug, kind }}
+                activeOptions={CURRENT_PAGE_ONLY}
                 className="inline-flex rounded-full border border-ui-border/60 px-2.5 py-0.5 text-xs text-ui-muted no-underline transition-colors hover:border-ui-brand/60 hover:text-ui-fg"
               >
                 {DOC_KIND_BY_SLUG.get(kind)?.label ?? kind}
@@ -52,6 +54,7 @@ export function PackageCard({ pkg, showDocs = false, className, ...props }: Pack
       {isUi ? (
         <Link
           to="/ui"
+          activeOptions={CURRENT_PAGE_ONLY}
           className="inline-flex items-center gap-1 text-sm font-medium text-ui-brand no-underline after:absolute after:inset-0"
         >
           Component docs
@@ -61,6 +64,7 @@ export function PackageCard({ pkg, showDocs = false, className, ...props }: Pack
         <Link
           to="/docs/$pkg"
           params={{ pkg: pkg.slug }}
+          activeOptions={CURRENT_PAGE_ONLY}
           className="inline-flex items-center gap-1 text-sm font-medium text-ui-brand no-underline after:absolute after:inset-0"
         >
           Documentation

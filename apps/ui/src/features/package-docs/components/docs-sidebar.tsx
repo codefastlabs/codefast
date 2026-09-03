@@ -5,6 +5,7 @@ import type { ComponentProps } from "react";
 import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
 import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
 import type { PackageDoc, PackageSummary } from "#/features/package-docs/lib/rendered-doc";
+import { CURRENT_PAGE_ONLY } from "#/lib/nav-links";
 
 /** `@codefast/ui` documents live in its own section, so its sidebar group lists those pages instead of markdown kinds. */
 const UI_SECTION_LINKS = linkOptions([
@@ -15,7 +16,7 @@ const UI_SECTION_LINKS = linkOptions([
 interface DocsSidebarProps extends ComponentProps<"aside"> {
   readonly packages: ReadonlyArray<PackageSummary>;
   readonly activePkg?: string | undefined;
-  /** The document being read: its kind is highlighted and, for a directory kind, its pages unfold. */
+  /** The document being read: a directory kind unfolds its pages while it or one of them is open. */
   readonly activeDoc?: DocRef | undefined;
 }
 
@@ -28,42 +29,35 @@ interface PackageDocEntryProps {
 
 /** One document the package ships, with its pages unfolded beneath it while it or one of them is open. */
 function PackageDocEntry({ pkg, entry, activeDoc }: PackageDocEntryProps) {
-  const isActiveKind = activeDoc?.kind === entry.kind;
-  const isActive = isActiveKind && activeDoc.page === undefined;
+  const isUnfolded = activeDoc?.kind === entry.kind && entry.pages.length > 0;
 
   return (
     <div>
       <Link
         to="/docs/$pkg/$kind"
         params={{ pkg, kind: entry.kind }}
-        aria-current={isActive ? "page" : undefined}
-        className={cn(
-          "block rounded-md px-2 py-1 no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg",
-          isActive ? "bg-ui-surface font-medium text-ui-fg" : "text-ui-muted",
-        )}
+        activeOptions={CURRENT_PAGE_ONLY}
+        className="block rounded-md px-2 py-1 no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
+        activeProps={{ className: "bg-ui-surface font-medium text-ui-fg" }}
+        inactiveProps={{ className: "text-ui-muted" }}
       >
         {DOC_KIND_BY_SLUG.get(entry.kind)?.label ?? entry.kind}
       </Link>
-      {isActiveKind && entry.pages.length > 0 ? (
+      {isUnfolded ? (
         <div className="mt-0.5 space-y-0.5 border-s border-ui-border/60 ps-2">
-          {entry.pages.map((page) => {
-            const isActivePage = activeDoc.page === page;
-
-            return (
-              <Link
-                key={page}
-                to="/docs/$pkg/$kind/$page"
-                params={{ pkg, kind: entry.kind, page }}
-                aria-current={isActivePage ? "page" : undefined}
-                className={cn(
-                  "block truncate rounded-md px-2 py-1 font-mono text-xs no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg",
-                  isActivePage ? "bg-ui-surface font-medium text-ui-fg" : "text-ui-muted",
-                )}
-              >
-                {page}
-              </Link>
-            );
-          })}
+          {entry.pages.map((page) => (
+            <Link
+              key={page}
+              to="/docs/$pkg/$kind/$page"
+              params={{ pkg, kind: entry.kind, page }}
+              activeOptions={CURRENT_PAGE_ONLY}
+              className="block truncate rounded-md px-2 py-1 font-mono text-xs no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
+              activeProps={{ className: "bg-ui-surface font-medium text-ui-fg" }}
+              inactiveProps={{ className: "text-ui-muted" }}
+            >
+              {page}
+            </Link>
+          ))}
         </div>
       ) : null}
     </div>
@@ -81,6 +75,7 @@ export function DocsSidebar({ packages, activePkg, activeDoc, className, ...prop
         <div>
           <Link
             to="/ui"
+            activeOptions={CURRENT_PAGE_ONLY}
             className="block rounded-md px-2 py-1 font-medium text-ui-muted no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
           >
             @codefast/ui
@@ -90,6 +85,7 @@ export function DocsSidebar({ packages, activePkg, activeDoc, className, ...prop
               <Link
                 key={to}
                 to={to}
+                activeOptions={CURRENT_PAGE_ONLY}
                 className="block rounded-md px-2 py-1 text-ui-muted no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
               >
                 {label}
@@ -97,31 +93,32 @@ export function DocsSidebar({ packages, activePkg, activeDoc, className, ...prop
             ))}
           </div>
         </div>
-        {packages.map((pkg) => {
-          const activeInPkg = pkg.slug === activePkg ? activeDoc : undefined;
-
-          return (
-            <div key={pkg.slug}>
-              <Link
-                to="/docs/$pkg"
-                params={{ pkg: pkg.slug }}
-                className={cn(
-                  "block rounded-md px-2 py-1 font-medium no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg",
-                  activeInPkg?.kind === "readme" ? "bg-ui-surface text-ui-fg" : "text-ui-muted",
-                )}
-              >
-                {pkg.name}
-              </Link>
-              <div className="mt-1 space-y-0.5 border-s border-ui-border/60 ps-2">
-                {pkg.docs
-                  .filter((entry) => entry.kind !== "readme")
-                  .map((entry) => (
-                    <PackageDocEntry key={entry.kind} pkg={pkg.slug} entry={entry} activeDoc={activeInPkg} />
-                  ))}
-              </div>
+        {packages.map((pkg) => (
+          <div key={pkg.slug}>
+            <Link
+              to="/docs/$pkg"
+              params={{ pkg: pkg.slug }}
+              activeOptions={CURRENT_PAGE_ONLY}
+              className="block rounded-md px-2 py-1 font-medium no-underline transition-colors hover:bg-ui-surface hover:text-ui-fg"
+              activeProps={{ className: "bg-ui-surface text-ui-fg" }}
+              inactiveProps={{ className: "text-ui-muted" }}
+            >
+              {pkg.name}
+            </Link>
+            <div className="mt-1 space-y-0.5 border-s border-ui-border/60 ps-2">
+              {pkg.docs
+                .filter((entry) => entry.kind !== "readme")
+                .map((entry) => (
+                  <PackageDocEntry
+                    key={entry.kind}
+                    pkg={pkg.slug}
+                    entry={entry}
+                    activeDoc={pkg.slug === activePkg ? activeDoc : undefined}
+                  />
+                ))}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </nav>
     </aside>
   );
