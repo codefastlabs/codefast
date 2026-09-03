@@ -3,27 +3,27 @@ import { COMPONENTS } from "#/registry/_core/components";
 export const FEATURES = [
   {
     number: "01",
-    title: "Radix UI primitives",
+    title: "Accessible by construction",
     description:
-      "Every component is built on battle-tested Radix UI primitives. Keyboard navigation, ARIA attributes, and focus management are included — no configuration required.",
+      "Keyboard navigation, focus management, and ARIA semantics come from Radix UI primitives — the behavioral building blocks under each component. Correct behavior isn't bolted on. It's where you start.",
   },
   {
     number: "02",
-    title: "Dark mode, zero config",
+    title: "Yours to own",
     description:
-      "All tokens resolve automatically based on system preference or an explicit user choice. Drop in the CSS and dark mode works everywhere.",
+      "Components ship as source: unstyled markup plus Tailwind utility classes. Copy one into your codebase and shape it to your brand. Nothing is hidden behind a wrapper you can't reach.",
   },
   {
     number: "03",
-    title: "Tailwind CSS v4",
+    title: "Typed to the prop",
     description:
-      "Components are unstyled HTML + Tailwind utility classes. Copy the source, customise to your brand — no wrapper components hiding your ability to adapt.",
+      "Every component exports its prop types, so autocomplete, refactors, and composition just work. Mistakes surface in your editor — never at runtime.",
   },
   {
     number: "04",
-    title: "Strict TypeScript",
+    title: "Themeable in plain CSS",
     description:
-      "Full type inference on props, variants, and composition patterns. Catch mistakes at the editor, never at runtime. Every component ships with .d.ts files.",
+      "Palettes of oklch design tokens with a dark variant. Restyle the whole set from one file, and switch light and dark without a line of JavaScript.",
   },
 ] as const;
 
@@ -41,7 +41,7 @@ interface DemoWallTile {
 export const DEMO_WALL: ReadonlyArray<DemoWallTile> = [
   { slug: "chart", wide: true },
   { slug: "calendar" },
-  { slug: "command" },
+  { slug: "radio-cards" },
   { slug: "bubble" },
   { slug: "carousel" },
   { slug: "input-otp" },

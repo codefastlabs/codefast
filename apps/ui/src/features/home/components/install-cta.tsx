@@ -14,7 +14,7 @@ export function InstallCta() {
             eyebrow="Get started"
             titleId="home-install-title"
             title="One command to start."
-            description="Tokens, dark mode, and accessibility come pre-configured. Install the package and wire up the CSS — no config files required."
+            description="Add the package, import three lines of CSS, and build. Design tokens, dark mode, and accessibility are already wired up — there's nothing to configure."
             className="mx-auto mb-10 text-center"
           />
 

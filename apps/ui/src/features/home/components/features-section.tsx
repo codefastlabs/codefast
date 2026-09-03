@@ -10,11 +10,12 @@ export function FeaturesSection() {
           titleId="home-features-title"
           title={
             <>
-              Built for the way
+              The details,
               <br />
-              you actually work.
+              already handled.
             </>
           }
+          description="The unglamorous parts of a component library — accessibility, types, theming, ownership — are the parts you feel every day. So we started there."
           className="reveal-up mb-16"
         />
 

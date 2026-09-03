@@ -15,12 +15,12 @@ export function DemoWallSection() {
           titleId="home-playground-title"
           title={
             <>
-              Don&apos;t read about it.
+              What you see
               <br />
-              Play with it.
+              is what ships.
             </>
           }
-          description="Every tile below is the real component, running live — fire a toast, drag the carousel, type in the code. What you see is exactly what ships."
+          description="Every tile is the real component, running in your browser — fire a toast, scrub the chart, drag the carousel, type into the field. No screenshots. No mockups."
           className="reveal-up mb-16"
         />
 
