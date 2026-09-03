@@ -110,9 +110,7 @@ export function DetailBody({ detail }: DetailBodyProps) {
         </div>
 
         <aside className="hidden xl:block">
-          <div className="sticky top-toc rounded-xl bg-ui-bg/75 p-3 backdrop-blur-lg backdrop-saturate-150">
-            <OnThisPage items={toc} />
-          </div>
+          <OnThisPage items={toc} />
         </aside>
       </div>
     </>

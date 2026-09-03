@@ -1,18 +1,23 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
+import { useRef } from "react";
 
 import type { TocItem } from "#/features/components-catalog/components/detail/toc";
 import { useActiveAnchor } from "#/features/components-catalog/hooks/use-active-anchor";
+import { useScrollChipIntoView } from "#/features/components-catalog/hooks/use-scroll-chip-into-view";
 
 interface DetailMobileTocProps extends ComponentProps<"div"> {
   readonly items: ReadonlyArray<TocItem>;
 }
 
-/** Horizontal section jump nav for detail pages on mobile and tablet. */
+/** Horizontal section jump nav for detail pages on mobile and tablet; the active chip stays scrolled into view. */
 export function DetailMobileToc({ items, className, ...props }: DetailMobileTocProps) {
+  const navRef = useRef<HTMLElement>(null);
   const topLevelItems = items.filter((item) => item.depth !== 2);
   const ids = topLevelItems.map((item) => item.id);
   const active = useActiveAnchor(ids);
+
+  useScrollChipIntoView(navRef, active);
 
   if (topLevelItems.length === 0) {
     return null;
@@ -21,6 +26,7 @@ export function DetailMobileToc({ items, className, ...props }: DetailMobileTocP
   return (
     <div className={cn("bg-ui-bg/75 px-4 py-3 backdrop-blur-lg backdrop-saturate-150 lg:hidden", className)} {...props}>
       <nav
+        ref={navRef}
         className="flex scrollbar-none gap-2 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         aria-label="On this page"
       >
@@ -31,6 +37,7 @@ export function DetailMobileToc({ items, className, ...props }: DetailMobileTocP
             <a
               key={item.id}
               href={`#${item.id}`}
+              data-chip-id={item.id}
               aria-current={isActive ? "location" : undefined}
               className={cn(
                 "flex min-h-9 shrink-0 items-center justify-center rounded-full border px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap no-underline transition-colors duration-200",

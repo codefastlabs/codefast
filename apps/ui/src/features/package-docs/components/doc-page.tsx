@@ -56,9 +56,7 @@ export function DocPage({ data, className, ...props }: DocPageProps) {
         </div>
 
         <aside className="hidden xl:block">
-          <div className="sticky top-toc max-h-[calc(100vh-var(--spacing-toc)-1rem)] overflow-y-auto rounded-xl bg-ui-bg/75 p-3 backdrop-blur-lg backdrop-saturate-150">
-            <OnThisPage items={doc.toc} />
-          </div>
+          <OnThisPage items={doc.toc} />
         </aside>
       </div>
     </main>
