@@ -1,8 +1,7 @@
 # @codefast/di-testing
 
-Solitary and sociable auto-mocking test beds for
-[`@codefast/di`](https://github.com/codefastlabs/codefast/tree/main/packages/di) — write an isolated unit test for an
-`@injectable` class in two lines, with every collaborator mocked for you, or keep chosen collaborators real.
+Solitary and sociable auto-mocking test beds for [`@codefast/di`](../di): unit-test an `@injectable` class with every
+collaborator mocked for you, or keep chosen collaborators real.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/di-testing)](https://www.npmjs.com/package/@codefast/di-testing)
 [![license](https://img.shields.io/npm/l/@codefast/di-testing)](./LICENSE)
@@ -14,15 +13,8 @@ Solitary and sociable auto-mocking test beds for
 - **Zero test-framework dependency.** The default mock is a small built-in spy. Pass `() => vi.fn()` (or `jest.fn`,
   `() => sinon.stub()`) to build the mocks from that backend and use its matchers instead.
 - **Backend-typed lookups.** The factory's return type flows through the whole bed: with `() => vi.fn()`,
-  `mocks.get(EmailToken).send` carries Vitest's own mock surface (`mockReturnValueOnce`, `mockClear`, …) — no adapter
-  package, no module augmentation, no postinstall scripts.
-
-## Requirements
-
-- **Node.js 24 or later**, matching `@codefast/di`.
-- A peer install of `@codefast/di` with `@injectable` / `inject` classes to test.
-- Types for `AsyncDisposable` (`await using`): `@types/node` provides them; without it, add `"ESNext.Disposable"` to
-  your tsconfig `lib`.
+  `mocks.get(EmailToken).send` carries Vitest's own mock surface (`mockReturnValueOnce`, `mockClear`, …) with no adapter
+  package and no module augmentation.
 
 ## Installation
 
@@ -30,18 +22,32 @@ Solitary and sociable auto-mocking test beds for
 pnpm add -D @codefast/di-testing
 ```
 
+Requires Node.js 24 or later and a peer install of `@codefast/di` (`>=0.8.0`) with the same TypeScript setup: native
+Stage 3 decorators, `experimentalDecorators` off. Published on 0.x and versioned on its own track: breaking changes ship
+as minor versions, so pin the minor if you need stability.
+
 ## Quick start
 
-```typescript
-import { inject, injectable, token } from "@codefast/di";
+```ts
+import { injectable, token } from "@codefast/di";
 import { TestBed } from "@codefast/di-testing";
 import { expect, it, vi } from "vitest";
+
+interface UserService {
+  findUser(id: string): { id: string; email: string };
+}
+interface PaymentGateway {
+  charge(userId: string, amount: number): void;
+}
+interface EmailService {
+  send(to: string, body: string): void;
+}
 
 const UserServiceToken = token<UserService>("UserService");
 const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway");
 const EmailServiceToken = token<EmailService>("EmailService");
 
-@injectable([inject(UserServiceToken), inject(PaymentGatewayToken), inject(EmailServiceToken)])
+@injectable([UserServiceToken, PaymentGatewayToken, EmailServiceToken])
 class OrderProcessor {
   constructor(
     private readonly users: UserService,
@@ -70,10 +76,10 @@ it("charges then emails a confirmation", () => {
 });
 ```
 
-The zero-dependency default reads the same, minus the `mockFactory` — assert against the built-in spy's `.mock.calls`
-and stub with `.mockReturnValue()`:
+The zero-dependency default reads the same, minus the `mockFactory`. Assert against the built-in spy's `.mock.calls` and
+stub with `.mockReturnValue()`:
 
-```typescript
+```ts
 import { TestBed } from "@codefast/di-testing";
 import assert from "node:assert/strict";
 
@@ -82,81 +88,143 @@ unit.placeOrder("u1", 42);
 assert.deepEqual(mocks.get(PaymentGatewayToken).charge.mock.calls[0], ["u1", 42]);
 ```
 
-## API
+## Solitary beds
 
-### `TestBed.solitary(target, options?)`
+`TestBed.solitary(target, options?)` begins a bed for `target` and auto-mocks every dependency it declares. Nothing is
+instantiated until `compile()`. The options:
 
-Begins a solitary test bed for `target`, auto-mocking every dependency it declares. `options`:
-
-- `mockFactory?: () => spy` — the spy backend for each auto-mock. Defaults to the built-in zero-dependency spy.
+- `mockFactory?: () => spy` — the spy backend each auto-mock is built from. Defaults to the built-in spy.
 - `metadataReader?: MetadataReader` — the reader dependencies are discovered through. Defaults to di's reader.
 
-### Builder
+The builder records overrides, then compiles:
 
 - `.mock(token).stub((fn) => stub)` — bind a partial stub built from the active spy factory; unlisted members stay
   auto-mocked. `fn()` is typed as whatever the backend produces, so `fn().mockReturnValue(...)` (jest-shaped) or
-  `fn().returns(...)` (Sinon) both type-check against the factory you chose.
+  `fn().returns(...)` (Sinon) type-check against the factory you chose.
 - `.mock(token).using(value)` — bind a fixed value. The value is **sealed**: it has no mock surface, so `mocks.get`
   refuses it rather than hand it back mistyped — the test already holds the reference it passed in.
 - `.mock(token).absent()` — leave the dependency unbound: an `optional()` slot resolves `undefined`, an `injectAll()`
-  slot `[]`. Anything else is an `OverrideMismatchError`.
+  slot `[]`. On a required dependency this is an `OverrideMismatchError`.
 - `.mock(token).usingAll([a, b])` — supply the elements of an unconstrained `injectAll()` slot, in order. Sealed like
   `.using`.
 - `.mock(token, { name })` / `.mock(token, { tag })` — target one slot of a token that is injected several ways; the
-  slotless form covers every slot without a more specific override.
-- `.compile()` — instantiate the unit synchronously (the primary path).
-- `.compileAsync()` — for a unit whose `@postConstruct` is asynchronous.
+  slotless form covers every slot without a more specific override. Registering the same target twice replaces the
+  earlier override.
+- `.compile()` — instantiate the unit synchronously, running accessor injection and `@postConstruct`.
+- `.compileAsync()` — the same for a unit whose `@postConstruct` is asynchronous.
 
-### `TestBed.sociable(target, options?)`
+`.mock(...)` accepts a token or a class, matching how the unit declares the dependency.
+
+## Sociable beds
 
 A sociable bed keeps chosen collaborators real while everything else stays mocked — a unit test over a small real
-subtree, not an integration test. It returns only `.expose()`, steering the first call:
+subtree, not an integration test. `TestBed.sociable(target, options?)` takes the same options and returns only
+`.expose()`, because a sociable bed with nothing exposed is a solitary bed.
 
-```typescript
-const bed = TestBed.sociable(CheckoutService, { mockFactory: () => vi.fn() })
-  .expose(PricingService) // real instance, wired through the container
-  .mock(TaxPolicyToken)
-  .stub((fn) => ({ rateFor: fn().mockReturnValue(0.1) }))
-  .compile();
+```ts
+import { injectable, token } from "@codefast/di";
+import { TestBed } from "@codefast/di-testing";
+import { expect, it, vi } from "vitest";
 
-bed.unit.checkout(100, "USD"); // real PricingService math over the mocked tax boundary
-bed.exposed(PricingService); // the real instance the unit was built with
+interface TaxPolicy {
+  rateFor(currency: string): number;
+}
+
+const TaxPolicyToken = token<TaxPolicy>("TaxPolicy");
+
+@injectable([TaxPolicyToken])
+class PricingService {
+  constructor(private readonly tax: TaxPolicy) {}
+
+  total(amount: number, currency: string): number {
+    return amount * (1 + this.tax.rateFor(currency));
+  }
+}
+
+@injectable([PricingService])
+class CheckoutService {
+  constructor(private readonly pricing: PricingService) {}
+
+  checkout(amount: number, currency: string): number {
+    return this.pricing.total(amount, currency);
+  }
+}
+
+it("prices through the real PricingService over a mocked tax boundary", () => {
+  const bed = TestBed.sociable(CheckoutService, { mockFactory: () => vi.fn() })
+    .expose(PricingService)
+    .mock(TaxPolicyToken)
+    .stub((fn) => ({ rateFor: fn().mockReturnValue(0.1) }))
+    .compile();
+
+  expect(bed.unit.checkout(100, "USD")).toBe(110);
+  expect(bed.exposed(PricingService)).toBeInstanceOf(PricingService);
+});
 ```
 
 - **Exposure follows class identity.** A class-keyed dependency — of the unit or of another exposed class — stays real
   when exposed, and its own dependencies follow the same rules recursively.
 - **Tokens are the boundary.** A `Token`-keyed dependency is always mocked, in both modes: tokens mark where the logic
   under test meets the outside world.
-- Exposed collaborators are real singletons resolved through the container, so their `@postConstruct` runs at compile
-  and `@preDestroy` on dispose. `bed.exposed(Class)` retrieves them; `mocks.get(Class)` refuses them
-  (`SealedDependencyError`) because they carry no mock surface.
-- Exposing a class the unit never reaches, or exposing and mocking the same class, is an error at compile.
+- Exposed collaborators are singletons resolved through the container, so their `@postConstruct` runs at compile and
+  `@preDestroy` on dispose. `bed.exposed(Class)` returns the instance the unit was built with; `mocks.get(Class)`
+  refuses it with a `SealedDependencyError` because it carries no mock surface.
+- Exposing the unit itself, or a class the unit never reaches through exposed collaborators, is an `ExposureError` at
+  compile.
 
-### Behavior notes
+## Behaviour notes
 
-- An `optional()` dependency is auto-mocked like any other — it resolves to the mock, not `undefined` as an unbound
-  optional would in production. Use `.mock(token).absent()` to exercise the absent branch.
+- A class whose constructor takes no parameters is testable without `@injectable`; a parameterful constructor with no
+  metadata is a `NotInjectableError`.
+- An `optional()` dependency is auto-mocked like any other — it resolves to the mock, not to the `undefined` an unbound
+  optional would give in production. Use `.mock(token).absent()` to exercise the absent branch.
 - An `injectAll()` dependency receives a one-element array holding the token's mock; use `.mock(token).usingAll([...])`
-  to supply several elements. When the same token also has a named or tagged slot, that slot's binding is collected by
-  the unconstrained `injectAll` too — di's `resolveAll` takes every binding of the token.
+  to supply several elements.
 - Named or tagged parameters of one token share the token's mock unless a slot-targeted `.mock(token, { name })` gives
   that slot its own; either way `mocks.get(token, { name })` addresses the slot directly.
+- A `.mock(...)` that names a token or slot the unit does not declare is an `UndeclaredDependencyError` at compile — a
+  typo fails loudly instead of binding an unused constant.
+- A failed compile disposes the container it was building, so no lifecycle state leaks between tests.
 
-### Result — `UnitTestBed`
+## Result
+
+`compile()` returns a `UnitTestBed` (a sociable bed returns a `SociableUnitTestBed`, which adds `exposed`):
 
 - `unit` — the real class under test.
-- `mocks.get(token, options?)` — the `Mocked<T>` bound for a dependency (or one slot of it). Only auto-mocks and `.stub`
-  stubs come back; sealed values throw `SealedDependencyError`.
-- `resetMocks()` — clear the call history and configured behaviour of every auto-mock the bed created.
-- `dispose()` — run the unit's `@preDestroy` hooks and dispose the container. Also runs via `await using`.
+- `mocks.get(token, options?)` — the `Mocked<T>` bound for a dependency, or for one slot of it. Only auto-mocks and
+  `.stub` stubs come back; sealed values and exposed classes throw `SealedDependencyError`.
+- `resetMocks()` — clear the call history and configured behaviour of every auto-mock and stub the bed created.
+- `dispose()` — run the unit's `@preDestroy` hooks and dispose the container.
+
+The bed implements `AsyncDisposable`, so `await using bed = TestBed.solitary(X).compile()` disposes it at the end of the
+block; that needs the `esnext.disposable` lib in your TypeScript configuration if your `target` does not include it.
+
+The lower-level pieces are exported too: `createAutoMock`, `createSpy`, `defaultMockFactory`, and the `Mocked`,
+`DeepPartial`, `MockFactory`, and `Spy` types.
 
 ## Errors
 
-- `NotInjectableError` — the class under test takes constructor parameters but is not `@injectable`.
-- `UndeclaredDependencyError` — a `.mock(...)` or `mocks.get(...)` named a token or slot the class does not use.
-- `SealedDependencyError` — `mocks.get(...)` asked for a `.using()`/`.absent()`/`.all()` value.
-- `OverrideMismatchError` — `.absent()` on a required dependency, or `.all()` on a non-`injectAll` slot.
+Every error extends `TestingError` and carries a stable `code`. `TestingError` mirrors di's `DiError` shape without
+extending it, so setup failures can be caught separately from resolution failures.
+
+| Error                       | Code                    | Raised when                                                                                         |
+| --------------------------- | ----------------------- | --------------------------------------------------------------------------------------------------- |
+| `NotInjectableError`        | `NOT_INJECTABLE`        | A scanned class takes constructor parameters but is not `@injectable`                               |
+| `UndeclaredDependencyError` | `UNDECLARED_DEPENDENCY` | A `.mock(...)` or `mocks.get(...)` named a token or slot the unit does not use                      |
+| `SealedDependencyError`     | `SEALED_DEPENDENCY`     | `mocks.get(...)` asked for a `.using()`/`.absent()`/`.usingAll()` value or an exposed class         |
+| `OverrideMismatchError`     | `OVERRIDE_MISMATCH`     | `.absent()` on a required dependency, or `.usingAll()` with no unconstrained `injectAll()` slot     |
+| `ExposureError`             | `EXPOSURE`              | An exposed class is the unit, is unreachable, or `bed.exposed()` names a class that was not exposed |
+
+## Documentation
+
+- [Rendered docs on codefastlabs.com](https://codefastlabs.com/docs/di-testing)
+- [`@codefast/di`](../di/README.md) — the container this package builds on, including its `SPEC.md`.
+- [`CHANGELOG.md`](./CHANGELOG.md) — release history.
+
+## Contributing
+
+See the repo-wide [contributing guide](../../CONTRIBUTING.md) for setup, conventions, and the test taxonomy.
 
 ## License
 
-[MIT](./LICENSE)
+Released under the [MIT License](./LICENSE).

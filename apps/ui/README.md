@@ -1,97 +1,133 @@
 # @apps/ui
 
-The site behind [codefastlabs.com](https://codefastlabs.com) — a [TanStack Start](https://tanstack.com/start) app that
-consumes the `@codefast/*` packages straight from the workspace. It serves three things:
+The [codefastlabs.com](https://codefastlabs.com) portal — a [TanStack Start](https://tanstack.com/start) app that
+consumes the `@codefast/*` packages straight from the workspace. It serves the package landing, the documentation every
+package ships as Markdown, and the `@codefast/ui` showcase with live previews and copy-ready source.
 
-- `/` — a landing page listing every published package, built from `packages/*/package.json` at build time.
-- `/ui/components/*` — the `@codefast/ui` showcase: live previews and copy-ready source for every component.
-- `/docs/<pkg>[/<kind>]` — the other packages' documentation, rendered at build time from the markdown they ship
-  (`README.md`, `SPEC.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `LEARNING.md`, `CHANGELOG.md`; see
-  `src/features/package-docs/lib/doc-kinds.ts`). Relative links are rewritten to the site or to GitHub, headings get
-  GitHub-style ids, and every page has a raw Markdown twin (`/docs/<pkg>.md`, `/docs/<pkg>/<kind>.md`). Nothing is
-  copied: the pages read the files through `import.meta.glob`, so editing a package's README changes its page on the
-  next build.
+## What it serves
 
-In dev (`vite dev`) it resolves each package to its in-repo `src/` via the `source` resolve condition, so a package edit
-shows here without a rebuild; a production `vite build` drops that condition and runs the packages' built `dist/`,
-matching what a real consumer ships. It deploys to Vercel as ISR/prerender.
+| Route                          | Page                                                                                                        |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `/`                            | Landing page listing every published package, read from `packages/*/package.json`                           |
+| `/docs`                        | Package index                                                                                               |
+| `/docs/<pkg>`                  | A package's `README.md`, rendered                                                                           |
+| `/docs/<pkg>/<doc>`            | The package's other documents: `spec`, `architecture`, `decisions`, `learning`, `contributing`, `changelog` |
+| `/docs/<pkg>.md`, `…/<doc>.md` | Raw Markdown twin of each docs page, served as `text/markdown`                                              |
+| `/ui`                          | The `@codefast/ui` landing page                                                                             |
+| `/ui/components`               | Component gallery                                                                                           |
+| `/ui/components/<slug>`        | One component: live examples, source, and docs                                                              |
+| `/ui/components/<slug>.md`     | Markdown twin of a component page (production only — the dev server does not dispatch `.md` routes)         |
+| `/ui/about`                    | Getting started with `@codefast/ui`                                                                         |
+| `/privacy`                     | Privacy policy                                                                                              |
+| `/llms.txt`                    | Machine-readable index of every package, document, and component, with links to the `.md` twins             |
+
+`@codefast/ui` is the one package without a `/docs/<pkg>` page: its documentation is the `/ui` section, and a link to it
+inside another package's Markdown is rewritten there. Route files live under `src/routes/`; the document kinds and their
+URL segments are declared once in `src/features/package-docs/lib/doc-kinds.ts`.
+
+## How package docs are rendered
+
+Nothing is copied. `src/features/package-docs/lib/doc-source.impl.ts` reads `packages/*/package.json` and
+`packages/*/*.md` through `import.meta.glob`, so editing a package's README changes its page on the next build.
+
+`src/features/package-docs/lib/markdown/render.impl.ts` renders each document at build time with
+[`marked`](https://marked.js.org) and highlights fenced code with [Shiki](https://shiki.style). Headings get
+GitHub-style ids and the `##`/`###` outline becomes the page's table of contents. Relative links are rewritten by
+`markdown/rewrite-link.ts`: a sibling document becomes its `/docs/<pkg>/<doc>` page, and any other repo path points at
+GitHub, so the Markdown that reads well on GitHub also reads well on the site.
+
+The `.md` twins are server routes (`src/routes/docs/{$pkg}[.]md.ts` and `docs/$pkg_/{$doc}[.]md.ts`) that return the
+source Markdown unchanged.
+
+Link-preview images are generated, not drawn by hand: `pnpm --filter @apps/ui generate:og` runs
+`scripts/generate-og-image.ts`, which renders `public/og-image.png` for the site and one `public/og/<pkg>.png` per
+package with resvg. Run it after adding or removing a component or package.
 
 ## Develop
 
+Run `pnpm build:packages` once on a fresh clone. In dev the app resolves each `@codefast/*` package to its in-repo
+`src/` through the `source` resolve condition, so a package edit shows here without a rebuild; a production `vite build`
+drops that condition and runs the packages' built `dist/`, matching what a real consumer ships.
+
 ```bash
-pnpm --filter @apps/ui dev     # http://localhost:3000
-pnpm --filter @apps/ui build   # production build (runs against each package's dist/)
+pnpm --filter @apps/ui dev            # http://localhost:3000
+pnpm --filter @apps/ui build          # production build, against each package's dist/
+pnpm --filter @apps/ui preview        # serve the build output from disk
+pnpm --filter @apps/ui check-types    # tsc --noEmit
+pnpm --filter @apps/ui generate:og    # regenerate the OG images
 ```
 
 ## Testing
 
-Vitest runs a single **unit** project (`tests/unit/**`, `tests/integration/**`, `tests/types/**` under jsdom). Taxonomy
-details live in the repo root [`TESTING.md`](../../TESTING.md).
+Vitest runs a single **unit** project under jsdom that covers `tests/unit/**`, `tests/integration/**`, and
+`tests/types/**`. The taxonomy is the repo's — see [`TESTING.md`](../../TESTING.md).
 
 ```bash
-pnpm --filter @apps/ui test:unit          # unit + jsdom
-pnpm --filter @apps/ui test:integration   # integration
-pnpm --filter @apps/ui test:coverage      # V8 coverage for the unit project only
+pnpm --filter @apps/ui test:unit          # tests/unit
+pnpm --filter @apps/ui test:integration   # tests/integration
+pnpm --filter @apps/ui test:type          # tests/types
+pnpm --filter @apps/ui test:coverage      # V8 coverage for the unit project
+pnpm --filter @apps/ui test:watch
 ```
 
-## Analytics
+## Analytics and consent
 
-GA4 (`src/features/tracking/lib/tracking.ts`, `src/features/tracking/components/google-tag.tsx`) is gated behind an env
-var — set it in `.env.local` (gitignored) to enable it; leave it unset and it stays fully inert (no script loads, no
-gtag calls):
+Google Analytics 4 is gated behind one environment variable. Set it in a local env file (`.env*` is gitignored); leave
+it unset and the tag never loads:
 
 ```
 VITE_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
-- `VITE_GA4_MEASUREMENT_ID` — GA4 property → Admin → Data Streams → Web stream → "Measurement ID".
+The site requests a single consent category, `analytics`, and runs no ads. The consent contract lives in
+`src/features/tracking/lib/consent.ts` (`defineConsentConfig` from `@codefast/tracking`); the event catalog and tracker
+in `src/features/tracking/lib/tracking.ts`.
 
-Google Ads conversion tracking was built (`createGoogleAdsConversionDestination` in `@codefast/tracking`) and then
-deliberately not adopted for this app — removed rather than left wired but unused.
+### Per-visitor consent over a server function
 
-## Consent
+The pages are prerendered or ISR-cached on Vercel, so the served HTML is shared across visitors and can carry nothing
+region-specific. `<GoogleTag />` (`components/google-tag.tsx`) therefore bakes the strictest default into the inline
+gtag bootstrap.
 
-Region (`x-vercel-ip-country`) and GPC (`Sec-GPC`) are resolved per visitor by a server function
-(`src/features/tracking/lib/resolve-visitor-consent.ts` → `buildInitialConsent` from `@codefast/tracking/server`) and
-drive both:
-
-- The Consent Mode v2 state in `src/features/tracking/components/google-tag.tsx` / `consent-gate.tsx` (denied for EU/VN
-  opt-in regions, analytics granted for US/other — GPC is ads-only).
-- The consent UI in `src/features/tracking/components/consent-gate.tsx` — a blocking accept/reject banner for opt-in
-  regions, an always-visible "Turn on/off analytics" toggle for opt-out regions (this site sells or shares no personal
-  data, so the control is named by what it does). Both come from `@codefast/tracking/react`, styled here via
-  `className`.
+The region-correct value arrives per visitor on the one lane a shared cache cannot poison: after hydration,
+`lib/visitor-consent.ts` calls the `resolveVisitorConsent` server function (`lib/resolve-visitor-consent.ts`), which
+reads the request's geo header on the server and fails closed to the strictest default when it is absent. The result is
+cached in `sessionStorage` for the session. `<ConsentGate />` (`components/consent-gate.tsx`) then renders the
+region-correct UI from `@codefast/tracking/react`: an opt-in banner plus a settings reopen link for EU/VN, and a
+persistent analytics opt-out toggle for US/other. There is no edge middleware and no consent cookie set by the server;
+the trade is one round trip before the consent UI appears.
 
 ### Browser storage naming
 
 Every first-party storage name (cookie, `localStorage`, `sessionStorage`) follows `codefast-ui-<content>`: the prefix
-namespaces the shared origin, `<content>` is a kebab-case noun naming exactly what is stored — never the storage kind
-(the privacy page discloses that) and never less than the content (`codefast-ui-initial-consent` holds a full
-`InitialConsent`, so it is not called `-region`). `codefast-ui-anon-id` predates the full-word rule and stays: renaming
-a year-lived cookie would churn every existing visitor's identity for a cosmetic gain. `@codefast/tracking` ships no
-storage names — every cookie and key name is supplied by the app.
+namespaces the shared origin, and `<content>` is a kebab-case noun naming exactly what is stored — never the storage
+kind, and never less than the content. The names in use are `codefast-ui-consent` (the decision),
+`codefast-ui-initial-consent` (the resolved region default, in `sessionStorage`), and `codefast-ui-anon-id` (the
+anonymous-id cookie). `@codefast/tracking` ships no storage names — every one is supplied by the app.
 
-### This app's pages are CDN-cached (ISR) — the HTML can't be personalized
+## Deployment
 
-The entry pages (`/`, `/docs`, `/privacy`, `/ui`, `/ui/about`, `/ui/components`) are prerendered at build time; every
-`/ui/components/$slug` page is server-rendered on demand and cached by the CDN under its route's `headers()` policy
-(`Cache-Control` + `CDN-Cache-Control`, see `src/lib/cache.ts` — TanStack Start's hybrid ISR pattern). Either way the
-served HTML is shared across visitors, so the inline gtag bootstrap in `google-tag.tsx` bakes the strictest possible
-default (`denied`, `opt-in`, region `other`) — a request-derived value (geo in `loaderData`, the document shell, or
-otherwise) would leak the first visitor's region to everyone served from that cache entry. Start does run route loaders
-before SSR render; the constraint is cache sharing, not shell-vs-loader timing.
+The app deploys to Vercel through Nitro's `vercel` preset (`vite.config.ts`). Rendering is split per route, because a
+prerendered file and a server function are mutually exclusive on Vercel:
 
-The per-visitor correction runs on the one lane a shared cache can't poison: after hydration, `visitor-consent.ts` calls
-the `resolveVisitorConsent` server function once per session (`private, no-store`; cached in `sessionStorage` as
-`codefast-ui-initial-consent`), and `<ConsentGate />` renders the region-correct UI and pushes the granted regional
-default to gtag for undecided opt-out visitors. The resolver reads the geo header on the server, reuses
-`buildInitialConsent` directly — no duplicated country sets — and fails closed to the strictest default when the header
-is absent (a host without geo), when the request fails, or before it resolves. There is no edge middleware, no consent
-cookie, and no `window.__INITIAL_CONSENT__`; the trade is one round trip before the consent UI appears (and before an
-undecided US visitor's first hits upgrade from cookieless pings to full measurement).
+- **Prerendered at build time** — the entry pages (`/`, `/docs`, `/privacy`, `/ui`, `/ui/about`, `/ui/components`) via
+  `autoStaticPathsDiscovery`, plus every `/docs/<pkg>[/<doc>]` page, listed from the Markdown under `packages/*`.
+  `crawlLinks` stays off so the gallery never drags the component pages into the static set.
+- **ISR** — each `/ui/components/<slug>` page is server-rendered on demand and CDN-cached under its route's `headers()`
+  (`Cache-Control` + `CDN-Cache-Control`, from `src/lib/cache.ts`).
 
-## Built with TanStack Start
+Static files bypass the server, so their cache headers come from Nitro `routeRules`, which Vercel bakes into its static
+routing. The same block carries the permanent redirects for the `@codefast/ui` section's former URLs:
 
-Routing, server functions, and API routes follow standard [TanStack Start](https://tanstack.com/start) conventions — see
-its docs for the framework primitives. Styling is [Tailwind CSS](https://tailwindcss.com/) v4 via `@codefast/ui`'s
-preset (`src/styles.css`).
+| From             | To                  | Status |
+| ---------------- | ------------------- | ------ |
+| `/components`    | `/ui/components`    | 308    |
+| `/components/**` | `/ui/components/**` | 308    |
+| `/about`         | `/ui/about`         | 308    |
+
+`vite preview` serves the build output from disk and replays none of this routing. To check deployed headers locally,
+run `vercel link` once and then `vercel dev`.
+
+## License
+
+Released under the [MIT License](../../LICENSE).

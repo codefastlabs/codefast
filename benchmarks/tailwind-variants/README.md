@@ -1,11 +1,14 @@
 # `@codefast/tailwind-variants` vs `tailwind-variants` · `class-variance-authority`
 
-A tinybench harness for variant-styling APIs. `@codefast/tailwind-variants` is the subject; `tailwind-variants` is the
-API it replaces, and `class-variance-authority` is the smaller-surface alternative people reach for instead.
+A tinybench suite for variant-styling APIs. `@codefast/tailwind-variants` is the subject; `tailwind-variants` is the API
+it replaces, and `class-variance-authority` is the smaller-surface alternative people reach for instead.
+
+> **Private benchmark suite.** Never published to npm. Run it rather than quoting it: every figure is one
+> `pnpm bench:isolate` away.
 
 **This is a first-party benchmark** — the same repository owns the library and the harness. Read it as a re-runnable
 claim, not a neutral verdict. The measurement standard is the DI suite's
-[`BENCH_GUIDE.md`](../di-inversify/BENCH_GUIDE.md); it is written against that harness but the rules are the same,
+[`BENCH_GUIDE.md`](../di-inversify/BENCH_GUIDE.md); it is written against that suite, but the rules are the same,
 because both suites share `@codefast/benchmark-harness`.
 
 ## Run it
@@ -14,57 +17,76 @@ because both suites share `@codefast/benchmark-harness`.
 pnpm bench
 ```
 
-From the repo root: `pnpm bench` runs every suite; filter with
-`pnpm --filter @codefast/benchmark-tailwind-variants bench`. The parent rebuilds `@codefast/tailwind-variants` first, so
-a run measures the working tree.
+From the repo root, `pnpm bench` runs every suite; filter with
+`pnpm --filter @codefast/benchmark-tailwind-variants bench`. Every run rebuilds `@codefast/tailwind-variants` first, so
+it measures the working tree rather than a stale `dist/`.
 
 | Command                               | What changes                                                                           |
 | ------------------------------------- | -------------------------------------------------------------------------------------- |
-| `pnpm bench`                          | Default profile, 3 trials per scenario                                                 |
+| `pnpm bench`                          | Default profile, the default trial count                                               |
 | `pnpm bench:fast`                     | Smoke profile — shorter windows. For "did I break it", not for a claim                 |
 | `pnpm bench:full`                     | `--expose-gc` for every library                                                        |
 | `pnpm bench:isolate`                  | Isolated profile — one subprocess per scenario, libraries interleaved (citable ratios) |
-| `pnpm bench:list`                     | List the scenarios without running them                                                |
+| `pnpm bench:list`                     | Prints the scenario inventory as JSON on stdout, measuring nothing                     |
 | `pnpm bench:verbose`                  | Per-trial detail on stdout                                                             |
-| `pnpm bench:serve`                    | Serves the run history in a browser                                                    |
-| `pnpm bench:codefast`                 | One library's child process directly                                                   |
-| `pnpm bench:tailwind-variants`        | ″                                                                                      |
-| `pnpm bench:class-variance-authority` | ″                                                                                      |
+| `pnpm bench:serve`                    | Serves the run history from `bench-results/` in a browser                              |
+| `pnpm bench:codefast`                 | The `@codefast/tailwind-variants` child process alone                                  |
+| `pnpm bench:tailwind-variants`        | The `tailwind-variants` child process alone                                            |
+| `pnpm bench:class-variance-authority` | The `class-variance-authority` child process alone                                     |
+| `BENCH_MODE=<mode>`                   | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set           |
+| `BENCH_TRIALS=<n>`                    | Trials per scenario; the harness refuses anything below its minimum                    |
+| `BENCH_ONLY=<id>,<id>`                | Restrict the run to these scenario ids                                                 |
+| `BENCH_PORT=<n>`                      | Preferred port for `bench:serve`                                                       |
 
-Runs land in `bench-results/` (git-ignored): a timestamped `report.md` plus `observations.jsonl`, mirrored to
-`latest.md` / `latest.jsonl`.
+Every run writes a timestamped directory under `bench-results/` (git-ignored) holding `report.md`, `report.json` and
+`observations.jsonl`, and mirrors the newest whole-suite run to `latest.md` / `latest.json` / `latest.jsonl`. A run
+narrowed with `BENCH_ONLY` leaves `latest.*` alone, and its `report.json` `run` block says it was filtered.
 
 ## What it measures
 
-Eight configuration shapes, each run **twice** — once with `tailwind-merge` enabled and once without — for sixteen
-scenarios in total:
+Each configuration shape runs **twice** — once with `tailwind-merge` enabled and once without — and the shapes are the
+scenario groups:
 
-| Shape            | What it exercises                               |
-| ---------------- | ----------------------------------------------- |
-| `simple`         | a handful of variants, no slots                 |
-| `complex`        | many variants plus compound variants            |
-| `slots`          | multi-slot components                           |
-| `compound-slots` | compound variants that target slots             |
-| `extends`        | a config extending another                      |
-| `create-tv`      | the factory path rather than the bare `tv` call |
-| `extreme`        | a deliberately oversized variant matrix         |
-| `extreme-slots`  | the same, with slots                            |
+| Group            | What it exercises                                         |
+| ---------------- | --------------------------------------------------------- |
+| `simple`         | a handful of variants, no slots                           |
+| `complex`        | many variants plus compound variants and booleans         |
+| `slots`          | multi-slot components                                     |
+| `compound-slots` | compound variants that target slots                       |
+| `extends`        | a config extending another                                |
+| `create-tv`      | the factory path rather than the bare `tv` call           |
+| `extreme`        | a deliberately oversized variant matrix                   |
+| `extreme-slots`  | the same, with many slots                                 |
+| `repeat-simple`  | the same few `simple` selections rendered again and again |
+| `repeat-slots`   | the same few `slots` selections rendered again and again  |
 
-The merge flag is always passed **explicitly** (`{ twMerge: true }` / `{ twMerge: false }`) rather than left to each
-package's default, so the pair differ in implementation and not in configuration.
+Two more groups are controls rather than comparisons, and both declare `excludeFromAggregates` so they stay in the table
+but out of the medians and geomeans:
 
-`class-variance-authority` has no slots, no extends and no factory, so it implements only `simple` and `complex` — four
-of the sixteen rows. It reads `—` on the rest, and the report counts only the rows a library actually measured.
+- `construct` — define a component and render it once, so the cost is per definition rather than per render.
+- `uncached` — `@codefast/tailwind-variants` only, with its resolution cache switched off, so the plan walk itself stays
+  measured.
+
+The merge flag is always passed **explicitly** (`{ twMerge: true }` / `{ twMerge: false }`, from
+`src/harness/bench-options.ts`) rather than left to each package's default, so the pair differ in implementation and not
+in configuration. `class-variance-authority` has no merge option of its own, so its "with merge" rows call
+`tailwind-merge` after `cva()` — the usual production pairing.
+
+`class-variance-authority` has no slots, no extends and no factory, so it implements only the `simple` and `complex`
+groups. It reads `—` on the rest, and the report counts only the rows a library actually measured.
 
 ## How it is put together
 
 ```
-src/harness/run.ts        parent: one subprocess per library, merge, render
-src/harness/config.ts     the three library configs
-src/*-benches.ts          one child entry per library
-src/scenarios/<library>/  that library's implementation of each shape
-src/fixtures/             the variant configs, shared by every library
-src/lib/tv-shims.ts       the one typing escape hatch, isolated here
+src/harness/run.ts          parent: rebuilds @codefast/tailwind-variants, one subprocess per library, merge, render
+src/harness/config.ts       the three library configs
+src/harness/bench-options.ts the explicit tv option bags every scenario passes
+src/harness/list.ts         the bench:list entry
+src/harness/serve.ts        the bench:serve entry
+src/*-benches.ts            one child entry per library
+src/scenarios/<library>/    that library's implementation of each shape
+src/fixtures/               the variant configs, shared by every library
+src/lib/tv-shims.ts         the one typing escape hatch, isolated here
 ```
 
 `src/fixtures/scenario-parity.ts` holds each scenario's id, group and description once, and every side imports it — so a
@@ -77,12 +99,29 @@ scenarios.
 
 ## Reading the output
 
-Same rules as the DI suite: cite the aggregates rather than a row; `†` marks rows fast enough that their ratio moves
-between runs of the same build; `‡` marks cells whose per-trial IQR exceeded 5%; a ratio between 0.97× and 1.03× is
-parity.
+Same rules as the DI suite: cite the aggregates rather than a row; `†` marks rows above the harness's throughput noise
+ceiling, whose ratio moves between runs of the same build; `‡` marks cells whose per-trial IQR exceeded the harness's
+noise fraction; a ratio inside the summary's parity band is parity, not a win or a loss.
 
-Set `BENCH_ISOLATE=true` for a citable cross-library ratio. It gives each scenario its own subprocess and runs the
-libraries **interleaved** — every library measures a scenario before the next scenario starts, rotating which goes first
-— so drift over the run no longer lands on whoever was scheduled last. The report's Environment section names the policy
-it used. Without it, one process per library runs that library's whole suite and there is nothing to interleave, so
-those ratios stay provisional.
+Use `pnpm bench:isolate` (or `BENCH_ISOLATE=true`) for a citable cross-library ratio. It gives each scenario its own
+subprocess and runs the libraries **interleaved** — every library measures a scenario before the next scenario starts,
+rotating which goes first — so drift over the run no longer lands on whoever was scheduled last. The report's
+Environment section names the policy it used. Without it, one process per library runs that library's whole suite and
+there is nothing to interleave, so those ratios stay provisional.
+
+## Documentation
+
+- [`../di-inversify/BENCH_GUIDE.md`](../di-inversify/BENCH_GUIDE.md) — the measurement standard both suites hold a
+  number to.
+- [`CHANGELOG.md`](./CHANGELOG.md) — release notes for this suite.
+- [`../../packages/tailwind-variants`](../../packages/tailwind-variants) — the library under test.
+- [`../../internal/benchmark-harness`](../../internal/benchmark-harness) — the shared harness, its `BENCH_*` keys and
+  report format.
+
+## Contributing
+
+See the repository [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
+
+## License
+
+Released under the [MIT License](../../LICENSE).

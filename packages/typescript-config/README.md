@@ -1,10 +1,17 @@
 # @codefast/typescript-config
 
-Shared TypeScript configuration presets — one strict, bundler-first base, focused variants for libraries, React, and
-Next.js, and a build overlay that turns on `.d.ts` emit.
+Shared TypeScript configuration presets for projects that want one strict, bundler-first baseline and small, focused
+variants for libraries, React, and Next.js.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/typescript-config)](https://www.npmjs.com/package/@codefast/typescript-config)
 [![license](https://img.shields.io/npm/l/@codefast/typescript-config)](./LICENSE)
+
+- **Strict by default** — `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, and `verbatimModuleSyntax` come
+  from the base every preset extends.
+- **Bundler-first** — ESNext target and module with `moduleResolution: "bundler"`, so `exports`/`imports` maps resolve
+  the way Vite, esbuild, and friends resolve them.
+- **Type-check only** — the presets set `noEmit`; a separate build overlay turns emit and `.d.ts` generation on.
+- **Plain JSON** — no runtime code, nothing to import at runtime.
 
 ## Installation
 
@@ -12,15 +19,18 @@ Next.js, and a build overlay that turns on `.d.ts` emit.
 pnpm add -D @codefast/typescript-config
 ```
 
-TypeScript >= 5.0 is a peer dependency (`moduleResolution: "bundler"` requires it). The package ships plain JSON — it
-adds no runtime code.
+Requirements:
 
-## Usage
+- Node >= 24.
+- `typescript` >= 5 is a peer dependency (`moduleResolution: "bundler"` is a TypeScript 5 option).
 
-Extend the preset that matches your project in `tsconfig.json`. Keep the `.json` extension — the package export map only
-exposes the full file names.
+Published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the minor if you need
+stability.
 
-A generic TypeScript project:
+## Quick start
+
+Extend the preset that matches your project in `tsconfig.json`. Keep the `.json` extension — the package exports only
+the full file names.
 
 ```json
 {
@@ -28,6 +38,29 @@ A generic TypeScript project:
   "include": ["src"]
 }
 ```
+
+Options you set locally always win, so overriding a preset value is a one-line change:
+
+```json
+{
+  "extends": "@codefast/typescript-config/library.json",
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ESNext"]
+  }
+}
+```
+
+## Presets
+
+| Preset               | Extends     | Purpose                                                                                                                                           |
+| -------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base.json`          | —           | Strict, bundler-first baseline: ESNext target and module, DOM + ESNext libs, type-check only.                                                     |
+| `library.json`       | `base.json` | Headless packages: `lib` is `ESNext` only, so relying on a browser global is a type error.                                                        |
+| `react.json`         | `base.json` | React with the automatic JSX runtime (`jsx: "react-jsx"`) — components need no `React` import.                                                    |
+| `next.json`          | `base.json` | Next.js apps: `jsx: "preserve"`, `incremental` builds, and the `next` TypeScript plugin.                                                          |
+| `library-build.json` | (overlay)   | Build-emit overrides for a build config: `noEmit: false`, `declaration` + `isolatedDeclarations`, declaration and source maps, `types: ["node"]`. |
+
+### Choosing a preset
 
 A publishable package with no browser coupling:
 
@@ -56,26 +89,26 @@ A Next.js app:
 }
 ```
 
-Options you set locally always win, so overriding a preset value is a one-line change:
+### Building with `tsc`
+
+`library-build.json` is an overlay, not a standalone preset: it carries only the emit options, so layer it over your
+development config in a separate `tsconfig.build.json`. Listing both in `extends` keeps the strictness from
+`library.json` and adds `.d.ts` emit on top:
 
 ```json
 {
-  "extends": "@codefast/typescript-config/library.json",
+  "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ESNext"]
-  }
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts"]
 }
 ```
 
-## Presets
-
-| Preset               | Extends     | Purpose                                                                                                                                                    |
-| -------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `base.json`          | —           | Strict, bundler-first baseline: ESNext target/module, DOM + ESNext libs, type-check only.                                                                  |
-| `library.json`       | `base.json` | Headless packages: drops the DOM libs so reliance on browser globals is a type error.                                                                      |
-| `react.json`         | `base.json` | React 17+ automatic JSX transform (`jsx: "react-jsx"`) — no `React` import needed.                                                                         |
-| `next.json`          | `base.json` | Next.js apps: `jsx: "preserve"`, incremental builds, and the `next` TypeScript plugin.                                                                     |
-| `library-build.json` | (overlay)   | Build-emit overrides layered over `library.json` in a build config: `noEmit: false`, `.d.ts` via `isolatedDeclarations`, plus declaration and source maps. |
+Then `tsc -p tsconfig.build.json` emits `.js`, `.d.ts`, and their maps into `dist/`. `isolatedDeclarations` requires an
+explicit type annotation on every export, which is what lets declarations be produced file by file.
 
 ## Notable compiler options
 
@@ -83,12 +116,27 @@ All strictness comes from `base.json`, so every preset inherits it:
 
 - `strict` — the full strict family (`strictNullChecks`, `noImplicitAny`, and friends).
 - `noUncheckedIndexedAccess` — indexed access is typed `T | undefined`, forcing explicit handling.
+- `noImplicitOverride` — a method that overrides a base-class member must say `override`.
+- `verbatimModuleSyntax` — type-only imports must be written `import type`, so a transpiler can drop them without type
+  information.
 - `isolatedModules` + `moduleDetection: "force"` — every file is a module and must transpile in isolation, as bundlers
   require.
 - `module: "ESNext"` + `moduleResolution: "bundler"` — modern ESM with bundler-style `exports`/`imports` resolution.
-- `noEmit` — presets type-check only; emitting is your bundler's job (override in a build config if `tsc` emits for
-  you).
+- `noEmit` — presets type-check only; emitting is your bundler's job, or `library-build.json`'s when `tsc` builds for
+  you.
 - `forceConsistentCasingInFileNames` — catches import-path casing mismatches before they break case-sensitive CI.
+- `skipLibCheck`, `esModuleInterop`, `resolveJsonModule` — pragmatic defaults for consuming third-party packages and
+  JSON.
+
+## Documentation
+
+- [codefastlabs.com/docs/typescript-config](https://codefastlabs.com/docs/typescript-config) — this document, rendered.
+- [`CHANGELOG.md`](./CHANGELOG.md) — release notes for every published version.
+
+## Contributing
+
+The package is developed in the [codefast monorepo](https://github.com/codefastlabs/codefast); the repo-wide
+[contributing guide](../../CONTRIBUTING.md) covers setup, the test taxonomy, and the release flow.
 
 ## License
 

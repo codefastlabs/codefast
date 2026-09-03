@@ -1,10 +1,8 @@
-| [`internal/`](internal) | Private workspace packages consumed only inside the repo (benchmark harness and viewer);
-never published |
-<h1 align="center">CodeFast</h1>
+<h1 align="center">Codefast Labs</h1>
 
 <p align="center">
-  Beautiful, accessible React components — and the type-safe tooling around them.<br/>
-  70+ primitives built on Radix UI and Tailwind CSS 4, designed for React 19.
+  Open-source TypeScript packages for React 19 products, published under <code>@codefast</code>.<br/>
+  Components, variant styling, appearance management, consent-gated tracking, dependency injection, and the tooling that ties them together.
 </p>
 
 <p align="center">
@@ -30,59 +28,14 @@ never published |
 
 ---
 
-The flagship package is [`@codefast/ui`](packages/ui): **70+ accessible React components** built on Radix UI primitives,
-styled with Tailwind CSS 4, and fully typed. Around it, this monorepo publishes the supporting `@codefast/*` packages —
-variant styling, theming, event tracking, dependency injection, and shared TypeScript configuration.
+This monorepo publishes the `@codefast/*` packages: a family of small, strictly typed libraries for building React 19
+products. The flagship is [`@codefast/ui`](packages/ui), 70+ accessible components built on Radix UI primitives and
+styled with Tailwind CSS 4. Around it sit the packages a product needs next — a type-safe variant API, appearance
+management, consent-gated event tracking, dependency injection with an auto-mocking test bed, and the shared TypeScript
+configuration and CLI that keep the repo consistent.
 
-Browse every component with live previews and copy-ready source at **[codefastlabs.com](https://codefastlabs.com)**.
-
-## Quick Start
-
-Install the component library:
-
-```bash
-pnpm add @codefast/ui
-```
-
-Wire it into your Tailwind CSS 4 stylesheet:
-
-```css
-@import "tailwindcss";
-@import "@codefast/ui/css/themes/neutral.css";
-@import "@codefast/ui/css/preset.css";
-```
-
-Every component ships as its own sub-path import — pull in only what you use:
-
-```tsx
-import { Button } from "@codefast/ui/button";
-
-export function MyPage() {
-  return <Button variant="outline">Click me</Button>;
-}
-```
-
-Requires React 19 and Tailwind CSS 4. See [codefastlabs.com](https://codefastlabs.com) for per-component documentation.
-
-## Status: 0.x, versioned per package
-
-Every package is on **0.x**, and each one moves on its own version track — releasing one leaves the others at their
-current versions, so a version number describes the package that carries it. These packages are built for the
-maintainer's own projects first, so a 1.0 is a per-package call, taken when that package's API is worth committing to:
-none is scheduled, and none is ruled out. While a package is on 0.x, **breaking changes ship as minor versions** — the
-caret range npm installs by default holds you inside the current minor, so one never arrives unasked — read the
-[changelog](https://github.com/codefastlabs/codefast/releases) before you widen it.
-
-Install the default `latest` — the documentation site tracks it:
-
-```bash
-pnpm add @codefast/ui
-```
-
-An open API is the point rather than a phase to get through, so feedback stays welcome indefinitely — if a name is
-confusing, a prop feels awkward, or a component is missing,
-[open an issue](https://github.com/codefastlabs/codefast/issues/new) or
-[start a discussion](https://github.com/codefastlabs/codefast/discussions).
+Every package is documented at **[codefastlabs.com](https://codefastlabs.com)**: component previews with copy-ready
+source under `/ui`, and each package's own README, specification, and architecture notes under `/docs/<pkg>`.
 
 ## Packages
 
@@ -97,13 +50,65 @@ confusing, a prop feels awkward, or a component is missing,
 | [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`arrange`, `audit`, `mirror`, `tag`)                            |
 | [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                                         |
 
-## Repository Layout
+## Quick start
 
-| Path                                                 | Role                                                                                                                                        |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`apps/ui`](apps/ui)                                 | The site behind [codefastlabs.com](https://codefastlabs.com) (TanStack Start): package landing, `/docs/<pkg>` docs, `@codefast/ui` showcase |
-| [`examples/tanstack-start`](examples/tanstack-start) | Consumer smoke test — runs the packages' built `dist/` via `workspace:*` links                                                              |
-| [`benchmarks/`](benchmarks)                          | Benchmark suites comparing `@codefast/*` against upstream libraries (`pnpm bench`)                                                          |
+The flagship package is the fastest way in. Install it:
+
+```bash
+pnpm add @codefast/ui
+```
+
+Wire it into your Tailwind CSS 4 stylesheet:
+
+```css
+@import "tailwindcss";
+@import "@codefast/ui/css/themes/neutral.css";
+@import "@codefast/ui/css/preset.css";
+```
+
+Every component ships as its own subpath import, so you pull in only what you use:
+
+```tsx
+import { Button } from "@codefast/ui/button";
+
+export function MyPage() {
+  return <Button variant="outline">Click me</Button>;
+}
+```
+
+`@codefast/ui` requires React 19 and Tailwind CSS 4. Getting started and per-component documentation live at
+[codefastlabs.com/ui](https://codefastlabs.com/ui); every other package is documented at
+`https://codefastlabs.com/docs/<pkg>`.
+
+## Status: 0.x, versioned per package
+
+Every package is on **0.x**, and each one moves on its own version track: releasing one leaves the others where they
+are, so a version number describes the package that carries it. A 1.0 is a per-package call, taken when that package's
+API is worth committing to — none is scheduled, and none is ruled out.
+
+While a package is on 0.x, **breaking changes ship as minor versions**. The caret range npm installs by default keeps
+you inside the current minor, so one never arrives unasked; read the
+[release notes](https://github.com/codefastlabs/codefast/releases) before you widen it. Install the default `latest` —
+the documentation site tracks it.
+
+Feedback is welcome at any stage: if a name is confusing, a prop feels awkward, or a component is missing,
+[open an issue](https://github.com/codefastlabs/codefast/issues/new) or
+[start a discussion](https://github.com/codefastlabs/codefast/discussions).
+
+## Repository layout
+
+The workspace is laid out by audience: who consumes a directory decides where it lives.
+
+| Path                                                 | Role                                                                                                               |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| [`apps/ui`](apps/ui)                                 | The codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` docs, and the `@codefast/ui` showcase |
+| [`packages/`](packages)                              | The published `@codefast/*` libraries — nothing else lives here                                                    |
+| [`internal/`](internal)                              | Private workspace packages consumed only inside the repo (the benchmark harness and viewer); never published       |
+| [`benchmarks/`](benchmarks)                          | Benchmark suites comparing `@codefast/*` against upstream libraries (`pnpm bench`)                                 |
+| [`examples/tanstack-start`](examples/tanstack-start) | Consumer demo that runs the packages' built `dist/` through `workspace:*` links                                    |
+| [`docs/`](docs)                                      | Repo-level documents organised by type: decisions, guides, reports, runbooks                                       |
+
+A new package starts in `internal/` and moves to `packages/` when it is published.
 
 ## Development
 
@@ -118,48 +123,46 @@ confusing, a prop feels awkward, or a component is missing,
 git clone https://github.com/codefastlabs/codefast.git
 cd codefast
 pnpm install
-pnpm build:packages   # required once before running apps or type-aware lint
+pnpm build:packages   # required once before running apps, type-checking, or type-aware lint
 pnpm dev              # start all apps and packages in watch mode
 ```
 
 ### Scripts
 
-| Command               | Description                                                         |
-| --------------------- | ------------------------------------------------------------------- |
-| `pnpm dev`            | Start all apps and packages in development mode                     |
-| `pnpm build:packages` | Build only `packages/*` (run after editing any package source)      |
-| `pnpm check`          | Lint + format check + type check (static gate, no fixes)            |
-| `pnpm check:fix`      | Lint with `--fix` + format write                                    |
-| `pnpm test`           | Run tests across the monorepo                                       |
-| `pnpm test:coverage`  | Run tests with coverage reports                                     |
-| `pnpm verify`         | Full gate: build, lint, format, type check, and tests with coverage |
-| `pnpm bench`          | Run the benchmark suites                                            |
+| Command                | Description                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| `pnpm dev`             | Start all apps and packages in watch mode                                    |
+| `pnpm build:packages`  | Build only `packages/*` (run after editing any package source)               |
+| `pnpm check-types`     | Type-check the whole repo with native `tsc --noEmit`                         |
+| `pnpm check`           | Lint + format check + type check (static gate, no fixes)                     |
+| `pnpm check:fix`       | Lint with `--fix` + format write                                             |
+| `pnpm test`            | Run every test category across the monorepo                                  |
+| `pnpm test:unit`       | Run only the unit category (`test:integration`, `test:e2e`, `test:type` too) |
+| `pnpm test:coverage`   | Run tests with coverage reports                                              |
+| `pnpm verify`          | Full gate: build, lint, format, type check, and tests with coverage          |
+| `pnpm bench`           | Run the benchmark suites                                                     |
+| `pnpm cli:audit:links` | Check every Markdown link and anchor in the repo                             |
+| `pnpm release`         | Add a changeset for a package change                                         |
 
-Linting and formatting run on [Oxc](https://oxc.rs) (Oxlint + Oxfmt); native
-[TypeScript 7](https://www.typescriptlang.org) (`tsc`) handles both type checking and library builds (emitting `.js` +
-`.d.ts` per file, no bundler), while [Vite](https://vite.dev) (Rolldown) bundles the browser apps. Tests follow a strict
-category taxonomy — see [TESTING.md](TESTING.md).
+Linting and formatting run on [Oxc](https://oxc.rs) (Oxlint + Oxfmt). Native
+[TypeScript 7](https://www.typescriptlang.org) (`tsc`) handles both type checking and library builds, emitting `.js` and
+`.d.ts` per file with no bundler; [Vite](https://vite.dev) (Rolldown) bundles only the browser apps. Tests follow a
+strict category taxonomy — see [TESTING.md](TESTING.md).
 
 ## Contributing
 
-1. [Fork](https://github.com/codefastlabs/codefast/fork) the repository and clone your fork.
-2. `pnpm install && pnpm build:packages`
-3. Create a feature branch and make your changes, adding tests where applicable (see [TESTING.md](TESTING.md)).
-4. Run `pnpm verify` from the repo root.
-5. Add a changeset (`pnpm exec changeset`) when a published package changes.
-6. Commit following [Conventional Commits](https://www.conventionalcommits.org/) and open a
-   [Pull Request](https://github.com/codefastlabs/codefast/pulls).
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before your first change: the toolchain is deliberately non-standard, and the
+test taxonomy ([TESTING.md](TESTING.md)) and comment rules are enforced by CI. In short: fork, `pnpm install`,
+`pnpm build:packages`, make the change with tests, run `pnpm verify`, add a changeset (`pnpm release`) when a published
+package changes, commit following [Conventional Commits](https://www.conventionalcommits.org/), and open a pull request.
+Versioning and releases are managed with [Changesets](https://github.com/changesets/changesets).
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before your first change — the toolchain is deliberately non-standard (Oxc
-instead of ESLint/Prettier, native TypeScript 7 with no bundler for `packages/*`), and the test taxonomy and comment
-rules are enforced. Versioning and releases are managed with [Changesets](https://github.com/changesets/changesets).
-
-Found a problem? Use the [issue templates](https://github.com/codefastlabs/codefast/issues/new/choose) — there is a
-dedicated one for performance regressions. Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
+Found a problem? Use the [issue templates](https://github.com/codefastlabs/codefast/issues/new/choose). Participation is
+governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Security
 
-Please report vulnerabilities privately — see [SECURITY.md](SECURITY.md). Do not open a public issue.
+Report vulnerabilities privately — see [SECURITY.md](SECURITY.md). Do not open a public issue.
 
 ## License
 
