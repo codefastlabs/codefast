@@ -36,14 +36,22 @@ describe("renderMarkdown", () => {
 
   it("highlights known fences with Shiki and leaves unknown ones as plain code", async () => {
     const rendered = await renderMarkdown(
-      ["```ts", "const a: number = 1;", "```", "", "```mermaid", "graph TD;", "```"].join("\n"),
+      ["```ts", "const a: number = 1;", "```", "", "```text", "plain body", "```"].join("\n"),
       context,
     );
 
     expect(rendered.html).toContain('class="shiki');
     expect(rendered.html).toContain("--shiki-dark");
-    expect(rendered.html).toContain('<pre class="shiki"><code>graph TD;');
+    expect(rendered.html).toContain('<pre class="shiki"><code>plain body');
     expect(rendered.html.match(/data-copy-code/g)).toHaveLength(2);
+  });
+
+  it("renders a mermaid fence as a diagram source block with no copy button", async () => {
+    const rendered = await renderMarkdown(["```mermaid", "graph TD;", "```"].join("\n"), context);
+
+    expect(rendered.html).toContain('<pre class="mermaid">graph TD;');
+    expect(rendered.html).not.toContain("markdown-code");
+    expect(rendered.html).not.toContain("data-copy-code");
   });
 
   it("keeps explicit anchor targets and tables", async () => {

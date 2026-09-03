@@ -2,6 +2,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useEffect, useRef } from "react";
 
+import { useMermaidDiagrams } from "#/features/package-docs/lib/use-mermaid-diagrams";
 import { track } from "#/features/tracking/lib/tracking";
 
 interface MarkdownBodyProps extends Omit<ComponentProps<"article">, "children" | "dangerouslySetInnerHTML"> {
@@ -21,6 +22,8 @@ const COPIED_FEEDBACK_MS = 2000;
  */
 export function MarkdownBody({ html, analyticsName, className, ...props }: MarkdownBodyProps) {
   const articleRef = useRef<HTMLElement>(null);
+
+  useMermaidDiagrams(articleRef, html);
 
   // Listener on the container, not a JSX handler: the clickable element is the real `<button>` in
   // the HTML, so keyboard access comes for free and the article itself stays non-interactive.

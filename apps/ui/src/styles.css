@@ -365,6 +365,31 @@
   font-size: inherit;
 }
 
+/* Mermaid diagrams (useMermaidDiagrams) render client-side. Hide the raw source until the block is
+   processed, so the prerendered HTML never flashes 20 lines of diagram text; the rendered SVG then
+   sits centered on its own surface and scrolls if it outgrows the column. */
+.markdown-body pre.mermaid {
+  margin: 0 0 1rem;
+  text-align: center;
+}
+
+.markdown-body pre.mermaid:not([data-processed]) {
+  visibility: hidden;
+}
+
+.markdown-body pre.mermaid[data-processed] {
+  overflow-x: auto;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--ui-border) 60%, transparent);
+  background-color: var(--ui-card);
+}
+
+.markdown-body pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
 .markdown-body blockquote {
   padding: 0.25rem 0 0.25rem 1rem;
   border-inline-start: 3px solid color-mix(in oklab, var(--ui-brand) 50%, transparent);
