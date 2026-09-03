@@ -6,15 +6,24 @@ collaborator mocked for you, or keep chosen collaborators real.
 [![npm version](https://img.shields.io/npm/v/@codefast/di-testing)](https://www.npmjs.com/package/@codefast/di-testing)
 [![license](https://img.shields.io/npm/l/@codefast/di-testing)](./LICENSE)
 
+## Overview
+
+`@codefast/di-testing` gives you two auto-mocking test beds for [`@codefast/di`](../di). A **solitary** bed constructs
+the class under test with every collaborator mocked for you; a **sociable** bed keeps chosen collaborators real and
+mocks the rest.
+
+The unit is built through a real container, so `@postConstruct`, accessor injection, and `@preDestroy` run exactly as in
+production — and you assert against the mocks the bed created.
+
 - **Auto-mocking.** `TestBed.solitary(Class)` reads the class's declared dependencies through di's own `MetadataReader`
   and builds a mock for each — no per-collaborator `bind(...).toConstantValue(...)`.
 - **Real instance, real wiring.** The unit is constructed through a container, so `@postConstruct`, accessor injection,
   and `@preDestroy` run exactly as in production.
-- **Zero test-framework dependency.** The default mock is a small built-in spy. Pass `() => vi.fn()` (or `jest.fn`,
-  `() => sinon.stub()`) to build the mocks from that backend and use its matchers instead.
+- **Zero test-framework dependency.** The default mock is a small built-in spy. Pass `() => vi.fn()` — or `jest.fn`,
+  `() => sinon.stub()` — to build the mocks from that backend and use its matchers instead.
 - **Backend-typed lookups.** The factory's return type flows through the whole bed: with `() => vi.fn()`,
-  `mocks.get(EmailToken).send` carries Vitest's own mock surface (`mockReturnValueOnce`, `mockClear`, …) with no adapter
-  package and no module augmentation.
+  `mocks.get(EmailToken).send` carries Vitest's own mock surface (`mockReturnValueOnce`, `mockClear`, and so on), with
+  no adapter package and no module augmentation.
 
 ## Installation
 
@@ -22,9 +31,9 @@ collaborator mocked for you, or keep chosen collaborators real.
 pnpm add -D @codefast/di-testing
 ```
 
-Requires Node.js 24 or later and a peer install of `@codefast/di` (`>=0.8.0`) with the same TypeScript setup: native
-Stage 3 decorators, `experimentalDecorators` off. Published on 0.x and versioned on its own track: breaking changes ship
-as minor versions, so pin the minor if you need stability.
+`@codefast/di-testing` requires Node.js 24 or later and a peer install of `@codefast/di` (`>=0.8.0`), with the same
+TypeScript setup: native Stage 3 decorators, `experimentalDecorators` off. The package is published on 0.x and versioned
+on its own track: breaking changes ship as minor versions, so pin the minor version when you need stability.
 
 ## Quick start
 
@@ -91,7 +100,7 @@ assert.deepEqual(mocks.get(PaymentGatewayToken).charge.mock.calls[0], ["u1", 42]
 ## Solitary beds
 
 `TestBed.solitary(target, options?)` begins a bed for `target` and auto-mocks every dependency it declares. Nothing is
-instantiated until `compile()`. The options:
+instantiated until you call `compile()`. The options:
 
 - `mockFactory?: () => spy` — the spy backend each auto-mock is built from. Defaults to the built-in spy.
 - `metadataReader?: MetadataReader` — the reader dependencies are discovered through. Defaults to di's reader.

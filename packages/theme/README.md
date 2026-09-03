@@ -6,15 +6,24 @@ and a FOUC-free server render.
 [![npm version](https://img.shields.io/npm/v/@codefast/theme)](https://www.npmjs.com/package/@codefast/theme)
 [![license](https://img.shields.io/npm/l/@codefast/theme)](./LICENSE)
 
+## Overview
+
+`@codefast/theme` manages a light / dark / automatic appearance preference for React 19 apps. You wrap your app in a
+provider, then read and set the preference from any component. The resolved color scheme lands on `<html>` — with
+optimistic updates, cross-tab sync, and no flash on first paint.
+
+The preference lives in `localStorage`, so it works on statically prerendered, CDN-served pages — no cookies, loaders,
+or server functions.
+
 - **Two words, kept apart.** The vocabulary follows Apple's Human Interface Guidelines: the _appearance_ is what the
   user chose, the _color scheme_ is what the page shows.
-- **Client-only persistence.** The preference lives in `localStorage` — no cookies, loaders, or server functions, so it
+- **Client-only persistence.** The preference lives in `localStorage` — no cookies, loaders, or server functions — so it
   works on statically prerendered, CDN-served pages.
 - **No flash on first paint.** `<AppearanceScript>` applies the stored preference from `<head>` before the browser
   paints.
 - **React 19 primitives.** Built on `useOptimistic`, `useSyncExternalStore`, and `useEffectEvent`; the setter is
-  optimistic and every tab follows along.
-- **Tailwind-ready.** The resolved color scheme lands on `<html>` as a `light` / `dark` class plus the CSS
+  optimistic, and every tab follows along.
+- **Tailwind-ready.** The resolved color scheme lands on `<html>` as a `light` / `dark` class, plus the CSS
   `color-scheme` property, so `dark:` variants and native controls both follow.
 
 ## Installation
@@ -25,8 +34,9 @@ pnpm add @codefast/theme
 # yarn add @codefast/theme
 ```
 
-`react` and `react-dom` version 19 or later are peer dependencies. Requires Node >= 24. Published on 0.x and versioned
-on its own track: breaking changes ship as minor versions, so pin the minor if you need stability.
+`react` and `react-dom` 19 or later are peer dependencies, and `@codefast/theme` requires Node.js 24 or later. The
+package is published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the minor
+version when you need stability.
 
 ## Quick start
 

@@ -6,6 +6,15 @@ building components whose classes depend on props.
 [![npm version](https://img.shields.io/npm/v/@codefast/tailwind-variants)](https://www.npmjs.com/package/@codefast/tailwind-variants)
 [![license](https://img.shields.io/npm/l/@codefast/tailwind-variants)](./LICENSE)
 
+## Overview
+
+`@codefast/tailwind-variants` turns one configuration into a typed function that returns the right Tailwind classes for
+a set of props. Describe your `base`, `variants`, and `slots` once; call the function with props; get back a merged
+class string. It's a drop-in, faster replacement for `tailwind-variants`, with the same configuration shape.
+
+`tv()` compiles the configuration up front, so resolving a component is string work — and a repeated selection comes
+from a cache.
+
 - **One configuration, one typed function.** Describe `base`, `variants`, `compoundVariants`, `slots`, and
   `defaultVariants` once; get back a function whose props are inferred from it.
 - **Conflicts settled by `tailwind-merge`.** A caller's `className` wins over the configuration, and an unknown variant
@@ -23,8 +32,9 @@ pnpm add @codefast/tailwind-variants tailwind-merge
 # yarn add @codefast/tailwind-variants tailwind-merge
 ```
 
-Ships ESM only. `tailwind-merge` is a peer dependency (`>=3.0.0`). Requires Node >= 24. Published on 0.x and versioned
-on its own track: breaking changes ship as minor versions, so pin the minor if you need stability.
+`@codefast/tailwind-variants` ships ESM only. `tailwind-merge` is a peer dependency (`>=3.0.0`), and the package
+requires Node.js 24 or later. It's published on 0.x and versioned on its own track: breaking changes ship as minor
+versions, so pin the minor version when you need stability.
 
 ## Quick start
 

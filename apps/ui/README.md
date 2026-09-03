@@ -1,8 +1,8 @@
 # @apps/ui
 
-The [codefastlabs.com](https://codefastlabs.com) portal — a [TanStack Start](https://tanstack.com/start) app that
+The [codefastlabs.com](https://codefastlabs.com) portal: a [TanStack Start](https://tanstack.com/start) app that
 consumes the `@codefast/*` packages straight from the workspace. It serves the package landing, the documentation every
-package ships as Markdown, and the `@codefast/ui` showcase with live previews and copy-ready source.
+package ships as Markdown, and the `@codefast/ui` showcase — live previews and copy-ready source.
 
 ## What it serves
 
