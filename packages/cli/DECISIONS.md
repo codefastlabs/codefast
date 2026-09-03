@@ -4,7 +4,7 @@ The choices that shape this package and the reasons behind them. [`ARCHITECTURE.
 resulting layout; [`README.md`](./README.md) describes what the commands do. Each decision below still holds; a decision
 that stops holding gets replaced here, not annotated.
 
-## 1. Plain functions, not Explicit Architecture
+## Plain functions, not Explicit Architecture
 
 **Context.** The CLI has four top-level commands (`arrange`, `audit`, `mirror`, `tag`), each a short pipeline: read
 files, run a pure transformation, print or write the result. An earlier revision applied full Explicit / Hexagonal
@@ -24,7 +24,7 @@ a real path or spying on `logger`, not binding a mock — accepted, because ever
 exercise for real. This is the worked example the `@codefast/di` "explicit architecture" samples cite when they say the
 pattern must be earned by the domain: a CLI of this size does not earn it.
 
-## 2. An interface needs a second implementation
+## An interface needs a second implementation
 
 **Context.** Under the previous layout every interface had exactly one implementation, so the interface documented
 nothing and guaranteed nothing; it existed because the architecture required a port.
@@ -36,7 +36,7 @@ none.
 **Consequences.** The `core/filesystem/node.ts` helpers are functions, not an adapter behind a port; telemetry or
 timing, if ever wanted, wraps a function instead of hooking a container activation.
 
-## 3. Commander is the command model
+## Commander is the command model
 
 **Context.** Commander already gives a declarative, composable tree of commands, options and actions. The earlier
 `CommandTree` / `CommandRouteWire` JSON that was translated into Commander added a layer with no extra capability.
@@ -48,7 +48,7 @@ timing, if ever wanted, wraps a function instead of hooking a container activati
 schema per command (`cli-schema.ts`) parsed through `parseWithSchema`, so shape errors are reported as usage errors, not
 as stack traces.
 
-## 4. `Result<T, AppError>` for recoverable failures
+## `Result<T, AppError>` for recoverable failures
 
 **Context.** A CLI's failures are mostly expected: a missing config, an unparsable file, a path outside the workspace.
 Throwing for those turns every caller into a `try`/`catch` and loses the error code the exit code depends on.
@@ -61,7 +61,7 @@ the matching exit code (`core/exit-codes.ts`); unexpected exceptions still propa
 **Consequences.** Domain and orchestration code never touch `process.exitCode`; only the command boundary does. Error
 text is produced in one place (`formatAppError`), so `--json` and human output stay consistent.
 
-## 5. Presenters are output functions
+## Presenters are output functions
 
 **Context.** Printing a report is a side effect at the edge; it never needs to be abstracted over.
 
@@ -70,7 +70,7 @@ through `core/logger.ts`. `logger` is a plain object so a test can `vi.spyOn(log
 
 **Consequences.** Output changes never touch orchestration; a command's `--json` output lives beside its human output.
 
-## 6. Parse TypeScript with `oxc-parser`
+## Parse TypeScript with `oxc-parser`
 
 **Context.** `arrange` and `tag` read and rewrite TypeScript source. The classic `typescript` compiler API was the only
 consumer of that runtime in the repository once the build moved to native TypeScript 7.
@@ -82,7 +82,7 @@ byte.
 **Consequences.** Nothing in the repository depends on the classic `typescript` runtime. The trade is that the CLI reads
 syntax only — it never type-checks — which is all four commands need.
 
-## 7. Audits are read-only and mechanical
+## Audits are read-only and mechanical
 
 **Context.** `audit rtl`, `audit links`, `audit comments` and `audit react` gate CI. A gate that needs judgment to
 interpret, or that can only be fixed by hand, is ignored under time pressure.
@@ -93,7 +93,7 @@ mechanical offers `--fix` (comment dividers) so a red run is one command from gr
 
 **Consequences.** Audits stay cheap to keep on; a new rule has to come with a precise detector or it does not ship.
 
-## 8. Naming
+## Naming
 
 **Context.** Suffixes such as `.port.ts`, `.adapter.ts`, `.domain-service.ts`, `.value-object.ts` and `.coordination.ts`
 described the pattern a file played in the old architecture, not what the file contained.
@@ -104,7 +104,7 @@ names are the four commands plus `core/`, and a command's pure logic lives under
 
 **Consequences.** A filename says what a module does; the directory says which command it belongs to.
 
-## 9. Tests
+## Tests
 
 **Context.** With no container, a test calls the function it targets.
 

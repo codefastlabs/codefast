@@ -258,8 +258,8 @@ point of use beats brevity, and every word must convey information:
   `DefaultContainer` — not `ContainerImpl`. **A type parameter is named for what it holds**: `Value`, `Target`, `Deps`,
   `Ctx`, `Result` — not `T`, `TValue`, `TResult`. A bare `T` says nothing at the use site, which is where the reader
   meets it. Verbatim external API quoted for comparison (Inversify's `Newable<T>`) keeps its own spelling. This
-  originated as [`packages/di/SPEC.md` §2.1](packages/di/SPEC.md) and applies repo-wide — it lived in one package's spec
-  long enough for another package to drift from it.
+  originated as [the naming principle in `packages/di/SPEC.md`](packages/di/SPEC.md#naming) and applies repo-wide — it
+  lived in one package's spec long enough for another package to drift from it.
 
 - **Name by role, never lie.** A name must state what the thing actually does (`options` for a hard selection criterion,
   never `hint`; a render function is `renderX`, never `customLabel`). No filler suffixes — `Type` on a type alias says
