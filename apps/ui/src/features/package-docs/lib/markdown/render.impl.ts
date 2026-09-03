@@ -132,6 +132,12 @@ export async function renderMarkdown(source: string, context: LinkContext): Prom
         return `<h${depth} id="${id}"><a href="#${id}" class="heading-anchor">${this.parser.parseInline(tokens)}</a></h${depth}>\n`;
       },
       code(token) {
+        // A mermaid fence renders client-side in `MarkdownBody`, so it ships as a plain
+        // source-bearing element with no copy chip — that button belongs on code, not a diagram.
+        if (((token.lang ?? "").trim().split(/\s+/)[0] ?? "") === "mermaid") {
+          return `<pre class="mermaid">${escapeHtml(token.text)}</pre>\n`;
+        }
+
         return codeBlock(highlighted.get(token) ?? plainCodeBlock(token.text, token.escaped));
       },
       link({ href, title: linkTitle, tokens }) {
