@@ -2570,6 +2570,8 @@ packages/di/
 │   │   ├── binding-scope.ts   effectiveBindingScope() — internal; use BindingSnapshot.scope
 │   │   ├── registry.ts        BindingRegistry — slot-aware last-wins, the fast lookup indexes,
 │   │   │                      a version counter for memoization; stores bindings BY REFERENCE (no re-copy)
+│   │   ├── constraint-requirement.ts  What a constraint needs before it can match, so validate() can check for it
+│   │   ├── map-upsert.ts      getOrInsert()/getOrInsertComputed() — the two Map upserts every index allocates through
 │   │   └── module.ts          SyncModule / AsyncModule, MODULE_SETUP
 │   ├── errors/
 │   │   ├── errors.ts          Every error class
@@ -2676,9 +2678,11 @@ layer and the container. Keeping it separate avoids a circular import (`containe
 // Foundation types
 export type {
   ActivationHandler,
+  BindingConstraint,
   BindingIdentifier,
   BindingKind,
   BindingScope,
+  BindingTag,
   ConstraintContext,
   Constructor,
   DependencyKey,
@@ -2693,6 +2697,10 @@ export type {
 export { token, tokenName } from "#/core/token";
 export type { Token } from "#/core/token";
 
+// Tag — the interned slot criteria a `whenTagged` and a resolve both take
+export { coversTagKeys, NO_TAG_KEYS, slotName, tag, tagKeyMaskOf } from "#/core/tag";
+export type { TagKey, TagKeyMask } from "#/core/tag";
+
 // Binding builders — types only
 export type {
   AliasBindingBuilder,
@@ -2702,14 +2710,26 @@ export type {
   ScopedBindingBuilder,
   SingletonBindingBuilder,
   SingletonLifecycleBuilder,
+  SlotConstrainedBuilder,
   TransientBindingBuilder,
 } from "#/core/binding";
 
 // Container
 export { Container } from "#/container/container";
-export type { Container as ContainerInterface, ContainerStatic } from "#/container/container";
+export type { Container as ContainerInterface, ContainerOptions, ContainerStatic } from "#/container/container";
 
-export { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/injection/resolve-options";
+// Ambient container — the context an `@inject` accessor initializer resolves from. `resolution/context`
+// stays internal: it hands out resolver callbacks, not public values.
+export { getActiveContainer, runWithContainer } from "#/ambient/active-container";
+
+// `effectiveBindingScope` is deliberately absent: it reads a `Binding`, which is internal, and no
+// public API hands one out. `BindingSnapshot.scope` and `GraphNode.scope` are the public answers.
+export {
+  bindingSlotToResolveOptions,
+  injectionSlotToResolveOptions,
+  resolveOptionsForSlot,
+} from "#/injection/resolve-options";
+export type { DependencySlot } from "#/injection/resolve-options";
 
 // Introspection types
 export type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspector";
@@ -2720,6 +2740,29 @@ export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#/i
 // Module
 export { AsyncModule, isSyncModule, Module, SyncModule } from "#/core/module";
 export type { AsyncModuleBuilder, ModuleBuilder } from "#/core/module";
+
+// Decorators
+export { inject } from "#/decorators/inject";
+export { injectAll, isInjectionDescriptor, optional } from "#/injection/descriptor";
+export type { InjectionDescriptor, InjectOptions } from "#/injection/descriptor";
+export { injectable } from "#/decorators/injectable";
+export type { InjectableDependency, InjectableOptions } from "#/decorators/injectable";
+export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
+
+// Auto-register
+export { createAutoRegisterRegistry } from "#/decorators/injectable";
+export type { AutoRegisterRegistry } from "#/decorators/injectable";
+
+// MetadataReader — everything a consumer needs to write one and pass it to Container.create()
+export { MetadataReaderToken } from "#/metadata/metadata-reader-token";
+export type {
+  ConstructorMetadata,
+  LifecycleMetadata,
+  MetadataReader,
+  MutableLifecycleMetadata,
+  ParamMetadata,
+} from "#/metadata/metadata-types";
+export { defaultMetadataReader, SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
 
 // Constraints — contextual injection predicates for .when()
 export {
@@ -2735,22 +2778,6 @@ export {
   whenParentTaggedAll,
 } from "#/resolution/select/constraints";
 
-// Decorators
-export { inject } from "#/decorators/inject";
-export { injectAll, isInjectionDescriptor, optional } from "#/injection/descriptor";
-export type { InjectionDescriptor, InjectOptions } from "#/injection/descriptor";
-export { injectable } from "#/decorators/injectable";
-export type { InjectableDependency, InjectableOptions } from "#/decorators/injectable";
-export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
-
-// Auto-register
-export { createAutoRegisterRegistry } from "#/decorators/injectable";
-export type { AutoRegisterRegistry } from "#/decorators/injectable";
-
-// MetadataReader
-export { MetadataReaderToken } from "#/metadata/metadata-reader-token";
-export type { MetadataReader, MutableLifecycleMetadata } from "#/metadata/metadata-types";
-
 // Errors
 export {
   AmbiguousBindingError,
@@ -2758,23 +2785,35 @@ export {
   AsyncDeactivationError,
   AsyncModuleLoadError,
   AsyncResolutionError,
+  ChainNotRegisteredError,
   CircularDependencyError,
   DiError,
   DisposedContainerError,
   InternalError,
+  InvalidMetadataError,
   MissingContainerContextError,
   MissingMetadataError,
   MissingScopeContextError,
   NoMatchingBindingError,
-  ChainNotRegisteredError,
   RebindUnboundTokenError,
   ScopeViolationError,
+  SelfBindingRequiresClassError,
   StaticMemberDecoratorError,
   SyncDisposalNotSupportedError,
+  EmptyTagCriteriaError,
   TokenNotBoundError,
+  UnreachableConstraintError,
   UnreachableLifecycleHookError,
 } from "#/errors/errors";
 export type { ScopeViolationDetails } from "#/errors/errors";
+
+// Graph adapters — render `generateDependencyGraph()` output for common viewers
+export { toDotGraph } from "#/introspection/graph-adapters/dot";
+export { toCytoscapeGraph } from "#/introspection/graph-adapters/cytoscape";
+export type { CytoscapeEdge, CytoscapeElements, CytoscapeNode } from "#/introspection/graph-adapters/cytoscape";
+export { toReactFlowGraph } from "#/introspection/graph-adapters/reactflow";
+export type { ReactFlowEdge, ReactFlowGraph, ReactFlowNode } from "#/introspection/graph-adapters/reactflow";
+export { toMermaidGraph } from "#/introspection/graph-adapters/mermaid";
 
 // ── Subpaths: a full mirror, nothing excluded ───────────────────────────────
 //
