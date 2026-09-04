@@ -45,6 +45,7 @@
     "lint:fix": "oxlint --fix --deny-warnings .",
     "prepare": "simple-git-hooks",
     "preview": "turbo run preview",
+    "publish-packages": "pnpm run codefast pack-slim && changeset publish",
     "release": "changeset",
     "release:canary:enter": "changeset pre enter canary",
     "release:canary:exit": "changeset pre exit",
