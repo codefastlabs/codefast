@@ -39,7 +39,7 @@ type UseRenderComponentProps<
 interface UseRenderOptions<TElement extends ElementType, TState extends RenderState> {
   defaultTagName: TElement;
   props?: ComponentPropsWithRef<TElement>;
-  render?: RenderProp<TState>;
+  render?: RenderProp<TState> | undefined;
   state?: TState;
   stateAttributesMapping?: StateAttributesMapping<TState>;
 }

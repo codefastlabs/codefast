@@ -201,7 +201,6 @@ interface DropdownMenuCheckboxItemProps extends ComponentProps<typeof DropdownMe
  * @since 0.3.16-canary.0
  */
 function DropdownMenuCheckboxItem({
-  checked,
   children,
   className,
   inset,
@@ -209,7 +208,6 @@ function DropdownMenuCheckboxItem({
 }: DropdownMenuCheckboxItemProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.CheckboxItem
-      checked={checked}
       className={cn(
         "relative flex cursor-default items-center gap-1.5 rounded-md py-1 ps-1.5 pe-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-inset:ps-7 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,

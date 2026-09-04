@@ -1,4 +1,4 @@
-import { expectTypeOf } from "expect-type";
+import { expectTypeOf } from "vitest";
 
 import type { VariantProps } from "#/index";
 import { createTV, tv } from "#/index";

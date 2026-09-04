@@ -32,8 +32,8 @@ function InputSearch({
 }: InputSearchProps): JSX.Element {
   const [value, setValue] = useControllableState<string | undefined>({
     defaultProp: defaultValue,
-    onChange,
     prop: valueProperty,
+    ...(onChange === undefined ? {} : { onChange }),
   });
 
   return (

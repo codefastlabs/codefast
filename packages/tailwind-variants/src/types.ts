@@ -70,11 +70,16 @@ export type SlotSchema = Record<string, ClassValue>;
  * This type defines the properties that can be passed to variant functions,
  * including variant values and optional className/class properties.
  *
+ * @remarks Each field admits an explicit `undefined` so a caller under `exactOptionalPropertyTypes`
+ * can forward a possibly-undefined prop (`variant={variant}`) without omitting it.
+ *
  * @since 0.3.16-canary.0
  */
-export type VariantSelection<Variants extends VariantSchema> = VariantValues<Variants> & {
-  className?: ClassValue;
-  class?: ClassValue;
+export type VariantSelection<Variants extends VariantSchema> = {
+  readonly [Variant in keyof VariantValues<Variants>]?: VariantValues<Variants>[Variant] | undefined;
+} & {
+  className?: ClassValue | undefined;
+  class?: ClassValue | undefined;
 };
 
 /**

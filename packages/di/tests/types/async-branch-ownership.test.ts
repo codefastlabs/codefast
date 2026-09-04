@@ -5,8 +5,7 @@
  * `OwnedBranchStack` is minted only by `extendResolutionBranch`, and a `BranchDepth` cannot be a
  * number that came from anywhere else.
  */
-import { expectTypeOf } from "expect-type";
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NO_TAG_KEYS } from "#/core/tag";
 import type { BindingIdentifier, ResolutionFrame } from "#/core/types";

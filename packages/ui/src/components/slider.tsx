@@ -30,10 +30,10 @@ function Slider({ className, defaultValue, max = 100, min = 0, value, ...props }
         className,
       )}
       data-slot="slider"
-      defaultValue={defaultValue}
       max={max}
       min={min}
-      value={value}
+      {...(defaultValue === undefined ? {} : { defaultValue })}
+      {...(value === undefined ? {} : { value })}
       {...props}
     >
       <SliderPrimitive.Track

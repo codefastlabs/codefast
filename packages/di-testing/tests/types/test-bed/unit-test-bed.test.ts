@@ -1,5 +1,4 @@
-import { expectTypeOf } from "expect-type";
-import { describe, it, vi } from "vitest";
+import { describe, expectTypeOf, it, vi } from "vitest";
 import type { Mock } from "vitest";
 
 import type { Mocked } from "#/mocking/auto-mock";

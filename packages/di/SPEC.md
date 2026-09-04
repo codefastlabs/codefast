@@ -2892,9 +2892,15 @@ shape of an entry).
 }
 ```
 
-> **Why `src` is in `files`.** The published artifact ships `src` too, because `tsc` leaves `#/` subpaths verbatim in
-> `dist/*.js` — they only resolve when the `imports` map (conditions `types`/`default` → `dist`) travels with them,
-> while the `source` condition lets dev/test inside the repo run the TypeScript sources directly with no prior build.
+> **Why `src` is in `files`, and why it never reaches npm.** In the repo, `src` earns its place three ways: the `source`
+> condition lets dev/test run the TypeScript sources directly with no prior build, and the `dist` source maps
+> (`declarationMap`/`sourceMap`, which point at `../src` without inlining sources) give in-repo consumers of the built
+> `dist` — `apps/ui`, `examples` — go-to-definition and debugger step-into against the original `.ts`. None of that is a
+> consumer's concern: `tsc` leaves `#/` verbatim in `dist/*.js`, and a consumer resolves those through the `imports`
+> map's `types`/`default` → `dist` conditions, never the `source` one (nothing enables `source` unasked). So
+> `codefast pack-slim` runs on the CI checkout right before `changeset publish` (never committed) and drops `src` from
+> `files`, every `source` condition from `exports`/`imports`, and the `dist` source maps plus their now-dangling
+> `sourceMappingURL` directives — the tarball ships `dist` runtime and types only.
 
 <a id="tsconfig-build"></a>
 

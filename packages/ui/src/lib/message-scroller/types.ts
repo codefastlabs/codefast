@@ -153,11 +153,11 @@ type MessageScrollerProviderProps = {
   // Opening position on the first non-empty render, applied once.
   defaultScrollPosition?: MessageScrollerDefaultScrollPosition;
   // Distance from an edge that still counts as at-top/at-bottom. Defaults to 8.
-  scrollEdgeThreshold?: number;
+  scrollEdgeThreshold?: number | undefined;
   // Extra top margin for a newly anchored row, added to scrollMargin. Defaults to 64.
-  scrollPreviousItemPeek?: number;
+  scrollPreviousItemPeek?: number | undefined;
   // Default margin on the aligned edge for commands and visibility. Defaults to 0.
-  scrollMargin?: number;
+  scrollMargin?: number | undefined;
 };
 
 /**

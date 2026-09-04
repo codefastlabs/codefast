@@ -4,7 +4,6 @@
   "compilerOptions": {
     "types": ["vite/client"],
     "allowImportingTsExtensions": true,
-    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,

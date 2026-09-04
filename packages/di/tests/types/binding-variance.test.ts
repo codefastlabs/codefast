@@ -6,8 +6,7 @@
  * signature has to grow either a cast or a structural stand-in for the shape it wants. Method syntax
  * compares those parameters bivariantly, which is what keeps the erasure possible.
  */
-import { expectTypeOf } from "expect-type";
-import { describe, it } from "vitest";
+import { describe, expectTypeOf, it } from "vitest";
 
 import type {
   AliasBinding,

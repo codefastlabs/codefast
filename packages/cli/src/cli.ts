@@ -8,6 +8,7 @@ import { Command } from "commander";
 import { createArrangeCommand } from "#/arrange/command";
 import { createAuditCommand } from "#/audit/command";
 import { createMirrorCommand } from "#/mirror/command";
+import { createPackSlimCommand } from "#/pack-slim/command";
 import { createTagCommand } from "#/tag/command";
 
 function readVersion(): string {
@@ -43,6 +44,7 @@ export async function runCli(argv: Array<string>): Promise<number> {
   program.addCommand(createArrangeCommand());
   program.addCommand(createAuditCommand());
   program.addCommand(createMirrorCommand());
+  program.addCommand(createPackSlimCommand());
   program.addCommand(createTagCommand());
 
   await program.parseAsync(argv, { from: "node" });

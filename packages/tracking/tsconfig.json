@@ -3,7 +3,6 @@
   "extends": "@codefast/typescript-config/react.json",
   "compilerOptions": {
     "customConditions": ["source"],
-    "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "types": ["node", "vitest/globals"]

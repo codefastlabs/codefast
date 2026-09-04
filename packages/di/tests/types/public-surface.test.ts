@@ -26,8 +26,7 @@ import type {
   MetadataReader,
   ResolveOptions,
 } from "@codefast/di";
-import { expectTypeOf } from "expect-type";
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { tag } from "#/core/tag";
 

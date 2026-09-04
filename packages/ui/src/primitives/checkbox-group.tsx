@@ -57,7 +57,7 @@ interface CheckboxGroupContextValue {
   /**
    * Optional name attribute for the checkbox group form field
    */
-  name?: string;
+  name?: string | undefined;
 
   /**
    * Array of currently selected checkbox values
@@ -161,8 +161,8 @@ function CheckboxGroup({
    */
   const [value = [], setValue] = useControllableState<Array<string> | undefined>({
     defaultProp: defaultValue,
-    onChange: onValueChange,
     prop: valueProperty,
+    ...(onValueChange === undefined ? {} : { onChange: onValueChange }),
   });
 
   /**
@@ -270,7 +270,7 @@ function CheckboxGroupItem({
   /**
    * Whether this checkbox is currently checked
    */
-  const checked = context.value?.includes(props.value);
+  const checked = context.value?.includes(props.value) ?? false;
 
   return (
     <RovingFocus.Item asChild {...rovingFocusGroupScope} active={checked} focusable={!isDisabled}>

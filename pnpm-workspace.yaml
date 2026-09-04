@@ -69,7 +69,6 @@ catalog:
   date-fns-jalali: 4.4.0-0
   embla-carousel-autoplay: ^8.6.0
   embla-carousel-react: ^8.6.0
-  expect-type: ^1.4.0
   hono: ^4.13.5
   input-otp: ^1.5.0
   inversify: ^8.2.3

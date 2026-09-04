@@ -2,6 +2,7 @@
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "customConditions": ["source"],
+    "exactOptionalPropertyTypes": false,
     "types": ["node"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
