@@ -7,7 +7,7 @@ import { defineConfig } from "vitest/config";
  * The test beds instantiate decorated `@injectable` classes, so the decorator
  * transform is required here exactly as in `@codefast/di`. Test taxonomy:
  *   tests/unit/**   — isolated unit tests
- *   tests/types/**  — static expect-type inference tests
+ *   tests/types/**  — static type-inference tests (vitest expectTypeOf)
  */
 export default defineConfig({
   plugins: [

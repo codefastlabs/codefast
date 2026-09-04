@@ -150,9 +150,6 @@ catalogs:
     embla-carousel-react:
       specifier: ^8.6.0
       version: 8.6.0
-    expect-type:
-      specifier: ^1.4.0
-      version: 1.4.0
     hono:
       specifier: ^4.13.5
       version: 4.13.5
@@ -775,9 +772,6 @@ importers:
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.1.11(vitest@4.1.11)
-      expect-type:
-        specifier: 'catalog:'
-        version: 1.4.0
       tsx:
         specifier: 'catalog:'
         version: 4.23.12
@@ -811,9 +805,6 @@ importers:
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.1.11(vitest@4.1.11)
-      expect-type:
-        specifier: 'catalog:'
-        version: 1.4.0
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
@@ -832,9 +823,6 @@ importers:
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.1.11(vitest@4.1.11)
-      expect-type:
-        specifier: 'catalog:'
-        version: 1.4.0
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.6.0
@@ -942,9 +930,6 @@ importers:
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.1.11(vitest@4.1.11)
-      expect-type:
-        specifier: 'catalog:'
-        version: 1.4.0
       jsdom:
         specifier: 'catalog:'
         version: 30.0.1

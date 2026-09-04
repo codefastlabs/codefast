@@ -143,7 +143,6 @@
     "@rolldown/plugin-babel": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "expect-type": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

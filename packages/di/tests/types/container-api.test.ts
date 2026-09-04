@@ -1,5 +1,4 @@
-import { expectTypeOf } from "expect-type";
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { token } from "#/core/token";

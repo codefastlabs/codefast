@@ -10,7 +10,7 @@ import { defineConfig } from "vitest/config";
  *                           accessor-e2e.script.ts subprocess it drives is a SUPPORT
  *                           entrypoint, not a test, so it lives under support/.
  *   tests/e2e/**          — pre-wired (none yet)
- *   tests/types/**        — static expect-type inference tests
+ *   tests/types/**        — static type-inference tests (vitest expectTypeOf)
  */
 export default defineConfig({
   plugins: [
