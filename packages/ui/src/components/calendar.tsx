@@ -165,7 +165,7 @@ function CalendarWeekNumber({ children, ...props }: ComponentProps<typeof WeekNu
  * @since 0.3.16-canary.0
  */
 type CalendarDayButtonProps = ComponentProps<typeof DayButton> & {
-  locale?: Partial<Locale>;
+  locale?: Partial<Locale> | undefined;
 };
 
 /**

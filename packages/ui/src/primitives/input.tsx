@@ -31,12 +31,12 @@ interface InputContextValue {
   /**
    * Whether the input is disabled
    */
-  disabled?: boolean;
+  disabled?: boolean | undefined;
 
   /**
    * Whether the input is in read-only mode
    */
-  readOnly?: boolean;
+  readOnly?: boolean | undefined;
 }
 
 const [InputContextProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);

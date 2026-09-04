@@ -231,10 +231,9 @@ interface MenubarCheckboxItemProps extends ComponentProps<typeof MenubarPrimitiv
 /**
  * @since 0.3.16-canary.0
  */
-function MenubarCheckboxItem({ checked, children, className, inset, ...props }: MenubarCheckboxItemProps): JSX.Element {
+function MenubarCheckboxItem({ children, className, inset, ...props }: MenubarCheckboxItemProps): JSX.Element {
   return (
     <MenubarPrimitive.CheckboxItem
-      checked={checked}
       className={cn(
         "relative flex cursor-default items-center gap-1.5 rounded-md py-1 ps-7 pe-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-inset:ps-7 data-disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className,

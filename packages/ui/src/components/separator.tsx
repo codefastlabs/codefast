@@ -22,7 +22,7 @@ function Separator({ align, className, decorative = true, orientation, ...props 
       className={separatorVariants({ align, className, orientation })}
       data-slot="separator"
       decorative={decorative}
-      orientation={orientation}
+      {...(orientation === undefined ? {} : { orientation })}
       {...props}
     />
   );

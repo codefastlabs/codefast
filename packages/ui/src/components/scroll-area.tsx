@@ -70,7 +70,7 @@ function ScrollAreaScrollbar({
       className={scrollAreaScrollbarVariants({ className, orientation, size })}
       data-orientation={orientation}
       data-slot="scroll-area-scrollbar"
-      orientation={orientation}
+      {...(orientation === undefined ? {} : { orientation })}
       {...props}
     >
       <ScrollAreaPrimitive.ScrollAreaThumb

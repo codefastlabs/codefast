@@ -38,7 +38,7 @@ type MessageScrollerRefs = {
   pendingScrollFrameRef: RefObject<number | null>;
   pendingScrollToMessageRef: RefObject<{
     messageId: string;
-    options?: MessageScrollerScrollOptions;
+    options?: MessageScrollerScrollOptions | undefined;
   } | null>;
   prependRestoreRef: RefObject<{
     element: HTMLElement;
@@ -93,7 +93,7 @@ function useMessageScrollerRefs({
   const messageElementsRef = useRef(new Map<string, HTMLElement>());
   const pendingScrollToMessageRef = useRef<{
     messageId: string;
-    options?: MessageScrollerScrollOptions;
+    options?: MessageScrollerScrollOptions | undefined;
   } | null>(null);
   // The row to hold steady on the next prepend: the first visible row, or a jump
   // target seeded by scrollToElement. restorePrependedAnchor reads only this.

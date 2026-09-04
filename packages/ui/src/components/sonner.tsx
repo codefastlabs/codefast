@@ -35,7 +35,7 @@ function Toaster({ ...props }: ToasterProps): JSX.Element {
           "--normal-text": "var(--popover-foreground)",
         } as CSSProperties
       }
-      theme={theme as ToasterProps["theme"]}
+      theme={theme as NonNullable<ToasterProps["theme"]>}
       toastOptions={{
         classNames: {
           toast: "rounded-2xl",

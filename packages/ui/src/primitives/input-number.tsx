@@ -90,42 +90,42 @@ interface InputNumberContextValue {
   /**
    * Accessible label for the decrement button
    */
-  ariaDecrementLabel?: string;
+  ariaDecrementLabel?: string | undefined;
 
   /**
    * Accessible label for the increment button
    */
-  ariaIncrementLabel?: string;
+  ariaIncrementLabel?: string | undefined;
 
   /**
    * Initial value used when the input is uncontrolled
    */
-  defaultValue?: number;
+  defaultValue?: number | undefined;
 
   /**
    * Whether the input is disabled
    */
-  disabled?: boolean;
+  disabled?: boolean | undefined;
 
   /**
    * Unique identifier for the input
    */
-  id?: string;
+  id?: string | undefined;
 
   /**
    * Maximum allowed value
    */
-  max?: number;
+  max?: number | undefined;
 
   /**
    * Minimum allowed value
    */
-  min?: number;
+  min?: number | undefined;
 
   /**
    * Whether the input is read-only
    */
-  readOnly?: boolean;
+  readOnly?: boolean | undefined;
 
   /**
    * Step value for increments/decrements
@@ -135,7 +135,7 @@ interface InputNumberContextValue {
   /**
    * Current value of the input
    */
-  value?: number;
+  value?: number | undefined;
 }
 
 const [InputNumberContextProvider, useInputNumberContext] =
@@ -240,8 +240,8 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
    */
   const [value, setValue] = useControllableState<number | undefined>({
     defaultProp: defaultValue,
-    onChange,
     prop: valueProperty,
+    ...(onChange === undefined ? {} : { onChange }),
   });
 
   /**
