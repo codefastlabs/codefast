@@ -26,7 +26,7 @@ import type { EmbeddedViewerPayload } from "#/types";
  *
  * @since 0.3.16-canary.1
  */
-export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload }) {
+export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload | undefined }) {
   const { view, patchView } = useViewState(initialPayload);
   const { toastMsg, showToast } = useToast();
 

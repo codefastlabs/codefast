@@ -26,9 +26,9 @@ import { runTagOnTarget } from "#/tag/target-runner";
 export type TagSyncRunRequest = {
   rootDir: string;
   write: boolean;
-  json?: boolean;
-  targetPath?: string;
-  skipPackages?: Array<string>;
+  json?: boolean | undefined;
+  targetPath?: string | undefined;
+  skipPackages?: Array<string> | undefined;
   config?: unknown;
 };
 
