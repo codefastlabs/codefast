@@ -1,16 +1,18 @@
 # @codefast/cli
 
 The `codefast` command line for the [codefast monorepo](https://github.com/codefastlabs/codefast): `arrange` Tailwind
-class strings, `audit` source conventions, `mirror` export maps from `dist/`, and `tag` exported APIs with `@since`.
+class strings, `audit` source conventions, `mirror` export maps from `dist/`, `pack-slim` the publish artifact, and
+`tag` exported APIs with `@since`.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/cli)](https://www.npmjs.com/package/@codefast/cli)
 [![license](https://img.shields.io/npm/l/@codefast/cli)](./LICENSE)
 
 ## Overview
 
-`codefast` is the command line for the [codefast monorepo](https://github.com/codefastlabs/codefast). It has four
+`codefast` is the command line for the [codefast monorepo](https://github.com/codefastlabs/codefast). It has five
 commands: `arrange` regroups Tailwind class strings, `audit` checks source conventions, `mirror` writes
-`package.json#exports` from `dist/`, and `tag` stamps exported APIs with `@since`.
+`package.json#exports` from `dist/`, `pack-slim` strips the source lane from the publish artifact, and `tag` stamps
+exported APIs with `@since`.
 
 This is repo tooling, published to npm. It runs in any pnpm workspace with a similar layout, but its flags and defaults
 follow the codefast conventions rather than aiming to be a general-purpose product.
@@ -128,6 +130,28 @@ codefast mirror --dry-run       # report changes without writing
 | `--dry-run`       | Report what would change without writing any `package.json`.  |
 | `-v`, `--verbose` | Print extra diagnostics.                                      |
 | `--json`          | Print one JSON summary on stdout (suppresses human progress). |
+
+Exits `1` when any package fails, `0` otherwise.
+
+## `pack-slim`
+
+Strips the source lane from published packages so the npm tarball ships `dist` runtime and types only. Where `mirror`
+writes the full exports — including the `source` condition — for repo dev, `pack-slim` removes it for publish: it drops
+`src` from `files`, every `source` condition from `exports`/`imports`, and the `dist` source maps plus their dangling
+`sourceMappingURL` directives. Private packages are skipped, since `changeset publish` never publishes them. It is meant
+to run on an ephemeral CI checkout right before publish (the release workflow runs it as its publish step), so it is
+never committed.
+
+```bash
+codefast pack-slim                 # every published package
+codefast pack-slim packages/ui     # one package (path relative to repo root)
+codefast pack-slim --dry-run       # report what would be stripped without touching a file
+```
+
+| Flag        | Description                                                   |
+| ----------- | ------------------------------------------------------------- |
+| `--dry-run` | Report what would be stripped without touching any file.      |
+| `--json`    | Print one JSON summary on stdout (suppresses human progress). |
 
 Exits `1` when any package fails, `0` otherwise.
 
