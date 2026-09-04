@@ -6,6 +6,7 @@ import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { listWorkspacePackageDirectories } from "#/core/workspace/resolver";
 import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
+import type { PackSlimRunRequest } from "#/pack-slim/cli-schema";
 import {
   isMapAnnotatedFile,
   isSourceMapFile,
@@ -15,14 +16,11 @@ import {
 import type { PackSlimPackageStats, PackSlimProgressListener, PackSlimRunStats } from "#/pack-slim/domain/types";
 
 /**
- * The inputs a pack-slim run needs: the repo root, an optional single-package filter, and the write toggle.
+ * A pack-slim run request paired with an optional progress listener.
  */
-export interface PackSlimRunInput {
-  readonly rootDir: string;
-  readonly packageFilter?: string | undefined;
-  readonly write?: boolean | undefined;
+export type PackSlimRunInput = PackSlimRunRequest & {
   readonly listener?: PackSlimProgressListener | undefined;
-}
+};
 
 /**
  * Strips the source lane from every published package's build output and returns the aggregate stats.
