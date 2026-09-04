@@ -142,16 +142,22 @@ writes the full exports — including the `source` condition — for repo dev, `
 to run on an ephemeral CI checkout right before publish (the release workflow runs it as its publish step), so it is
 never committed.
 
+Because its result must never be committed, `pack-slim` refuses to write when the git working tree has uncommitted
+tracked changes — guarding against an accidental local run landing on real work. `--dry-run` is exempt (it writes
+nothing) and `--force` overrides the guard. In CI the check is transparent: `dist` is gitignored, so the tree is clean
+when the release workflow runs it.
+
 ```bash
 codefast pack-slim                 # every published package
 codefast pack-slim packages/ui     # one package (path relative to repo root)
 codefast pack-slim --dry-run       # report what would be stripped without touching a file
 ```
 
-| Flag        | Description                                                   |
-| ----------- | ------------------------------------------------------------- |
-| `--dry-run` | Report what would be stripped without touching any file.      |
-| `--json`    | Print one JSON summary on stdout (suppresses human progress). |
+| Flag        | Description                                                       |
+| ----------- | ----------------------------------------------------------------- |
+| `--dry-run` | Report what would be stripped without touching any file.          |
+| `--force`   | Run even if the git working tree has uncommitted tracked changes. |
+| `--json`    | Print one JSON summary on stdout (suppresses human progress).     |
 
 Exits `1` when any package fails, `0` otherwise.
 
