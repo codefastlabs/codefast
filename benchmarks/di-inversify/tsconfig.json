@@ -2,7 +2,6 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
-    "exactOptionalPropertyTypes": false,
     "noEmit": true,
     "types": ["node"]
   },

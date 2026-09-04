@@ -99,7 +99,7 @@ export type StringNode = {
   /**
    * When set, the entire cn(...) call is replaced at once.
    */
-  cnCall?: DomainCallExpression;
+  cnCall?: DomainCallExpression | undefined;
   /**
    * First literal in the slot; used for positions and line-number reporting.
    */
@@ -202,7 +202,7 @@ export type GroupFileResult = {
 export type ArrangeGroupFileOptions = {
   write: boolean;
   withClassName: boolean;
-  cnImport?: string;
+  cnImport?: string | undefined;
 };
 
 /**

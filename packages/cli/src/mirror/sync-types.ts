@@ -7,10 +7,10 @@ import type { GlobalStats, PackageStats, WorkspaceMultiDiscoverySource } from "#
  */
 export type MirrorSyncRunRequest = {
   rootDir: string;
-  packageFilter?: string;
+  packageFilter?: string | undefined;
   config?: unknown;
   /** When false, compute and report changes without writing package.json. Defaults to true. */
-  write?: boolean;
+  write?: boolean | undefined;
 };
 
 /**

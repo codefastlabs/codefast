@@ -18,8 +18,8 @@ export type ArrangeSyncRunRequest = {
   rootDir: string;
   targetPath: string;
   write: boolean;
-  withClassName?: boolean;
-  cnImport?: string;
+  withClassName?: boolean | undefined;
+  cnImport?: string | undefined;
   config?: unknown;
 };
 

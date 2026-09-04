@@ -107,7 +107,7 @@ export interface MetricCardProps {
   label: string;
   value: string;
   meta: Array<MetaItem>;
-  accentColor?: string;
+  accentColor?: string | undefined;
   isRatio?: boolean;
 }
 

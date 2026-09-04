@@ -2,7 +2,6 @@
   "extends": "@codefast/typescript-config/react.json",
   "compilerOptions": {
     "customConditions": ["source"],
-    "exactOptionalPropertyTypes": false,
     "types": ["node"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
