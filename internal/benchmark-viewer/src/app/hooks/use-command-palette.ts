@@ -21,7 +21,11 @@ export const PALETTE_ACTIONS = [
   { id: "copy-link", label: "Copy link to this view" },
 ] as const;
 
-/** Prefix marking a palette action id as a jump to that scenario. */
+/**
+ * Prefix marking a palette action id as a jump to that scenario.
+ *
+ * @since 0.7.2
+ */
 export const PALETTE_SCENARIO_ACTION_PREFIX = "scenario:";
 
 interface CommandPaletteOptions {

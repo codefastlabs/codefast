@@ -1,5 +1,25 @@
 # @codefast/typescript-config
 
+## 0.9.0
+
+### Minor Changes
+
+- [#809](https://github.com/codefastlabs/codefast/pull/809) [`7485645`](https://github.com/codefastlabs/codefast/commit/74856453cc18f38aed156af0ccb2970c0199477f) Thanks [@thevuong](https://github.com/thevuong)! - `exactOptionalPropertyTypes` now defaults to `true` in `base.json`, so every preset (`base`, `library`, `react`) turns
+  it on and each package inherits one source of truth instead of repeating the flag. Packages not yet ready for it opt out
+  explicitly with `"exactOptionalPropertyTypes": false` (`@codefast/cli`, `@codefast/tailwind-variants`, and the private
+  benchmark packages). A consumer extending these presets will now type-check under `exactOptionalPropertyTypes`; set it
+  back to `false` locally if that surfaces errors you are not ready to fix.
+
+### Patch Changes
+
+- [#791](https://github.com/codefastlabs/codefast/pull/791) [`37a212b`](https://github.com/codefastlabs/codefast/commit/37a212b4d805588413159e11e872b98db82326bf) Thanks [@thevuong](https://github.com/thevuong)! - Point the README's license badge and "License" section at the package's own `LICENSE` file instead of the monorepo root.
+
+- [#793](https://github.com/codefastlabs/codefast/pull/793) [`83cceeb`](https://github.com/codefastlabs/codefast/commit/83cceeb2168e063441125643a83e9555fb2d2048) Thanks [@thevuong](https://github.com/thevuong)! - Make "MIT" in the README's License section the link to the package's `LICENSE` file.
+
+- [#796](https://github.com/codefastlabs/codefast/pull/796) [`ba04d27`](https://github.com/codefastlabs/codefast/commit/ba04d2703c59a1677f52e6a9fffd0ec202328218) Thanks [@thevuong](https://github.com/thevuong)! - Rewrite the README around one structure — what the package is, installation and requirements, a complete quick start,
+  the concepts in learning order, then the documents and the license — with every API claim checked against the current
+  code and no figures that go stale.
+
 ## 0.8.0
 
 ### Minor Changes

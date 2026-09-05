@@ -2,6 +2,8 @@
 
 /**
  * The outcome of slimming one workspace package.
+ *
+ * @since 0.8.1
  */
 export interface PackSlimPackageStats {
   name: string;
@@ -19,6 +21,8 @@ export interface PackSlimPackageStats {
 
 /**
  * The aggregate stats of a pack-slim run across every targeted package.
+ *
+ * @since 0.8.1
  */
 export interface PackSlimRunStats {
   packagesFound: number;
@@ -32,6 +36,8 @@ export interface PackSlimRunStats {
 
 /**
  * The progress events a pack-slim run emits as it works through the packages.
+ *
+ * @since 0.8.1
  */
 export interface PackSlimProgressListener {
   onBanner?(): void;

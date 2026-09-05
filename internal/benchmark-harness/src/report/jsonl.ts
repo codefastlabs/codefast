@@ -38,6 +38,8 @@ export interface JsonlBenchObservationRow {
  *
  * @remarks The boundary guard for readers of `observations.jsonl` — a truncated write or a
  * schema-drifted line must be counted and skipped where it enters, not crash aggregation.
+ *
+ * @since 0.7.2
  */
 export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchObservationRow {
   if (typeof value !== "object" || value === null) {

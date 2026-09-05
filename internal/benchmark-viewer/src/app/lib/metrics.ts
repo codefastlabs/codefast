@@ -30,6 +30,8 @@ function medianNumeric(values: Array<number | null | undefined>): number | null 
 /**
  * Picks the scenario with the richest history — most libraries with data, then most runs with
  * data — so the landing view opens on a chart worth reading.
+ *
+ * @since 0.7.2
  */
 export function pickDefaultScenarioId(scenarios: ReadonlyArray<EmbeddedScenarioSeries>): string {
   let bestId = "";

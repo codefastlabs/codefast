@@ -66,6 +66,8 @@ export function categoryXScaleWindow(pointCount: number): { max: number; min: nu
 /**
  * A zoom/pan window kept relative to the newest point, so a rebuilt chart with a different
  * point count restores the same view of recent history.
+ *
+ * @since 0.7.2
  */
 export interface RelativeCategoryView {
   readonly visibleCount: number;
@@ -77,6 +79,8 @@ export interface RelativeCategoryView {
  *
  * @remarks A default view stays `undefined` on purpose: the next chart should open on its own
  * default window, not inherit the previous series' window size.
+ *
+ * @since 0.7.2
  */
 export function captureRelativeCategoryView(
   chart: Chart,
@@ -97,6 +101,8 @@ export function captureRelativeCategoryView(
 
 /**
  * Maps a captured view onto a series of `pointCount` points; `undefined` means the full range.
+ *
+ * @since 0.7.2
  */
 export function applyRelativeCategoryView(
   view: RelativeCategoryView,
