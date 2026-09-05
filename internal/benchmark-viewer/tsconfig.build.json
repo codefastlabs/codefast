@@ -2,7 +2,6 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
   "compilerOptions": {
-    "outDir": "./dist",
     "rootDir": "./src",
     // Opted out of the shared `isolatedDeclarations`: 49 sites in this browser app still infer
     // their exported types. See the tracked follow-up before flipping it on.

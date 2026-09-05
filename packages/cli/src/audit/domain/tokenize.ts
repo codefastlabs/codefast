@@ -51,7 +51,7 @@ export function splitClassName(token: string): [string | null, string, string | 
  *
  * @since 0.5.0-canary.6
  */
-export function* stringLiterals(content: string): Generator<{ text: string; line: number }> {
+function* stringLiterals(content: string): Generator<{ text: string; line: number }> {
   const pattern = /"([^"\n]*)"|'([^'\n]*)'|`([^`]*)`/g;
   for (const match of content.matchAll(pattern)) {
     const text = match[1] ?? match[2] ?? match[3] ?? "";

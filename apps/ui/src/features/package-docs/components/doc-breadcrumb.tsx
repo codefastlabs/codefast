@@ -8,7 +8,7 @@ import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 
 /** A linked crumb between the package and the current document: a directory kind above one of its pages. */
-export interface BreadcrumbTrailItem {
+interface BreadcrumbTrailItem {
   readonly kind: DocKindSlug;
   readonly label: string;
 }

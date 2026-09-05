@@ -90,7 +90,7 @@ export type VariantSelection<Variants extends VariantSchema> = {
  *
  * @since 0.6.0
  */
-export type VariantValues<Variants extends VariantSchema> = {
+type VariantValues<Variants extends VariantSchema> = {
   readonly [Variant in keyof Variants]?: HasBooleanVariant<Variants[Variant]> extends true
     ? boolean | VariantValue<keyof Variants[Variant]>
     : VariantValue<keyof Variants[Variant]>;
@@ -113,7 +113,7 @@ export type SlotClassMap<Slots extends SlotSchema> = {
  *
  * @since 0.6.0
  */
-export type PlainClassValue = ReadonlyArray<PlainClassValue> | bigint | boolean | null | number | string | undefined;
+type PlainClassValue = ReadonlyArray<PlainClassValue> | bigint | boolean | null | number | string | undefined;
 
 /**
  * What one variant value carries in a slot configuration: classes for the base slot, or a map
@@ -125,14 +125,14 @@ export type PlainClassValue = ReadonlyArray<PlainClassValue> | bigint | boolean 
  *
  * @since 0.6.0
  */
-export type SlotClassValue<Slots extends SlotSchema> = PlainClassValue | (SlotClassMap<Slots> & { base?: ClassValue });
+type SlotClassValue<Slots extends SlotSchema> = PlainClassValue | (SlotClassMap<Slots> & { base?: ClassValue });
 
 /**
  * A variant schema whose object values name slots rather than clsx conditions.
  *
  * @since 0.6.0
  */
-export type SlotVariantSchema<Slots extends SlotSchema> = Record<string, Record<string, SlotClassValue<Slots>>>;
+type SlotVariantSchema<Slots extends SlotSchema> = Record<string, Record<string, SlotClassValue<Slots>>>;
 
 /**
  * Type for compound variant definitions.
@@ -434,11 +434,11 @@ export type ClassValue = ClassArray | ClassDictionary | bigint | boolean | null 
  *
  * @since 0.6.0
  */
-export type ClassDictionary = Record<string, unknown>;
+type ClassDictionary = Record<string, unknown>;
 
 /**
  * Class values nested to any depth.
  *
  * @since 0.6.0
  */
-export type ClassArray = Array<ClassValue>;
+type ClassArray = Array<ClassValue>;

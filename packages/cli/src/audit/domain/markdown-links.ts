@@ -7,7 +7,7 @@
  *
  * @since 0.5.0
  */
-export type MarkdownLinkReference = {
+type MarkdownLinkReference = {
   readonly line: number;
   /** The path as written, with any fragment stripped. Empty when the link is fragment-only. */
   readonly targetPath: string;

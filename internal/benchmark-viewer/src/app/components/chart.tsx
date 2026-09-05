@@ -863,5 +863,4 @@ function ChartTableRow({ globalIx, run, scenario, orderedLibraries, primaryLib, 
   );
 }
 
-export type { RefObject };
 export type { Chart as ChartInstance };

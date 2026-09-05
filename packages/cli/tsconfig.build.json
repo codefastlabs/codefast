@@ -2,7 +2,6 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
   "compilerOptions": {
-    "outDir": "./dist",
     "rootDir": "./src",
     // Bin package — no consumer imports its types, so there are no declarations to isolate.
     "declaration": false,

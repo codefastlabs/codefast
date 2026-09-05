@@ -36,7 +36,7 @@ const mirrorCssConfigSchema = z.union([
  *
  * @since 0.3.16-canary.0
  */
-export const mirrorPackageConfigSchema = z
+const mirrorPackageConfigSchema = z
   .object({
     /** Preserve the existing `package.json#exports` map and only add missing conditions
      *  (`source`, `types`, `import`). No dist/ scan is performed. */
@@ -54,13 +54,6 @@ export const mirrorPackageConfigSchema = z
     css: mirrorCssConfigSchema.optional(),
   })
   .strict();
-
-/**
- * The validated per-package `mirror` configuration.
- *
- * @since 0.3.16-canary.0
- */
-export type MirrorPackageConfig = z.infer<typeof mirrorPackageConfigSchema>;
 
 /**
  * Mirror config: a record keyed by package name. Set a package to `false` to skip it;
@@ -82,7 +75,7 @@ export type MirrorConfig = z.infer<typeof mirrorConfigSchema>;
  *
  * @since 0.3.16-canary.0
  */
-export const codefastTagConfigSchema = z
+const codefastTagConfigSchema = z
   .object({
     skipPackages: z.array(z.string()).optional(),
     onAfterWrite: afterWriteHookSchema.optional(),
@@ -101,7 +94,7 @@ export type CodefastTagConfig = z.infer<typeof codefastTagConfigSchema>;
  *
  * @since 0.3.16-canary.0
  */
-export const codefastArrangeConfigSchema = z
+const codefastArrangeConfigSchema = z
   .object({
     onAfterWrite: afterWriteHookSchema.optional(),
   })
@@ -119,7 +112,7 @@ export type CodefastArrangeConfig = z.infer<typeof codefastArrangeConfigSchema>;
  *
  * @since 0.3.16-canary.0
  */
-export const codefastAuditRtlConfigSchema = z
+const codefastAuditRtlConfigSchema = z
   .object({
     /** Directory or file to scan when no CLI target is passed. */
     target: z.string().optional(),
@@ -129,18 +122,11 @@ export const codefastAuditRtlConfigSchema = z
   .strict();
 
 /**
- * The validated `audit rtl` configuration.
- *
- * @since 0.3.16-canary.0
- */
-export type CodefastAuditRtlConfig = z.infer<typeof codefastAuditRtlConfigSchema>;
-
-/**
  * Link audit defaults — the scan always starts at the repo root, so only exceptions are configured.
  *
  * @since 0.5.0
  */
-export const codefastAuditLinksConfigSchema = z
+const codefastAuditLinksConfigSchema = z
   .object({
     /** Bare link targets or `repo/relative/doc.md:target` entries to ignore. */
     allowlist: z.array(z.string()).optional(),
@@ -148,18 +134,11 @@ export const codefastAuditLinksConfigSchema = z
   .strict();
 
 /**
- * The validated `audit links` configuration.
- *
- * @since 0.5.0
- */
-export type CodefastAuditLinksConfig = z.infer<typeof codefastAuditLinksConfigSchema>;
-
-/**
  * Comment-divider audit defaults — the scan always starts at the repo root, so only exceptions are configured.
  *
  * @since 0.6.0
  */
-export const codefastAuditCommentsConfigSchema = z
+const codefastAuditCommentsConfigSchema = z
   .object({
     /** Divider lines as written, or `repo/relative/path.ts:<divider>` entries, to ignore. */
     allowlist: z.array(z.string()).optional(),
@@ -167,19 +146,12 @@ export const codefastAuditCommentsConfigSchema = z
   .strict();
 
 /**
- * @see codefastAuditCommentsConfigSchema
- *
- * @since 0.6.0
- */
-export type CodefastAuditCommentsConfig = z.infer<typeof codefastAuditCommentsConfigSchema>;
-
-/**
  * React import-policy audit defaults — the scan always starts at the repo root, so only
  * exceptions are configured.
  *
  * @since 0.8.0
  */
-export const codefastAuditReactConfigSchema = z
+const codefastAuditReactConfigSchema = z
   .object({
     /** Offending source text as written, or `repo/relative/path.tsx:<text>` entries, to ignore. */
     allowlist: z.array(z.string()).optional(),
@@ -187,18 +159,11 @@ export const codefastAuditReactConfigSchema = z
   .strict();
 
 /**
- * The validated `audit react` configuration.
- *
- * @since 0.8.0
- */
-export type CodefastAuditReactConfig = z.infer<typeof codefastAuditReactConfigSchema>;
-
-/**
  * Zod schema grouping the per-audit configurations under `audit`.
  *
  * @since 0.3.16-canary.0
  */
-export const codefastAuditConfigSchema = z
+const codefastAuditConfigSchema = z
   .object({
     rtl: codefastAuditRtlConfigSchema.optional(),
     links: codefastAuditLinksConfigSchema.optional(),
@@ -206,13 +171,6 @@ export const codefastAuditConfigSchema = z
     react: codefastAuditReactConfigSchema.optional(),
   })
   .strict();
-
-/**
- * The validated `audit` configuration.
- *
- * @since 0.3.16-canary.0
- */
-export type CodefastAuditConfig = z.infer<typeof codefastAuditConfigSchema>;
 
 /**
  * Root `codefast.config` Zod schema — single source of truth for both validation and TS types.

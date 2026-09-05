@@ -19,7 +19,7 @@ import type { AnyScenario } from "#/scenarios/types";
  *
  * @since 0.6.0
  */
-export interface PreparedShape {
+interface PreparedShape {
   readonly batch: number;
   readonly run: () => void;
 }

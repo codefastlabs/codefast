@@ -2,7 +2,7 @@ import type { Node, NodeProps } from "@xyflow/react";
 import type { ReactElement } from "react";
 import { memo } from "react";
 
-export interface LaneNodeData extends Record<string, unknown> {
+interface LaneNodeData extends Record<string, unknown> {
   readonly label: string;
   readonly width: number;
   readonly height: number;

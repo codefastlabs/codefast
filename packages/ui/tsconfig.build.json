@@ -2,7 +2,6 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
   "compilerOptions": {
-    "outDir": "./dist",
     "rootDir": "./src",
     // Opted out of the shared `isolatedDeclarations`: tsc 7.0.2 panics on this project with the
     // flag on ("Unhandled case in Node.Text: *ast.CallExpression") and is clean without it.

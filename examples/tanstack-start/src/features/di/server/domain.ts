@@ -73,14 +73,14 @@ export const RequestContextToken = token<RequestContext>("RequestContext");
 // ── Infrastructure (singletons + a transient id generator) ───────────────────────────────────────────────────────────
 
 @injectable()
-export class SystemClock implements Clock {
+class SystemClock implements Clock {
   now(): string {
     return new Date().toISOString();
   }
 }
 
 @injectable()
-export class InMemoryActivityLog implements ActivityLog {
+class InMemoryActivityLog implements ActivityLog {
   readonly #entries: Array<string> = [];
 
   // Lifecycle hook: runs once, right after the container constructs this singleton.
@@ -99,7 +99,7 @@ export class InMemoryActivityLog implements ActivityLog {
 }
 
 @injectable()
-export class UuidGenerator implements IdGenerator {
+class UuidGenerator implements IdGenerator {
   // Unique per constructed instance — a transient binding produces a new one each resolve.
   readonly instanceId = globalThis.crypto.randomUUID().slice(0, 8);
 

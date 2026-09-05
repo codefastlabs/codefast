@@ -32,4 +32,4 @@ export const PALETTE: ReadonlyArray<PaletteEntry> = [
  */
 export const RATIO_COLORS = ["#f87171", "#22d3ee", "#a3e635", "#fde047"] as const;
 
-export { DISPERSION_IQR_ALERT, PAN_PIXELS_X, ZOOM_STEP_X } from "#/app/lib/constants";
+export { PAN_PIXELS_X, ZOOM_STEP_X } from "#/app/lib/constants";

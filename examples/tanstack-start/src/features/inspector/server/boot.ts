@@ -2,12 +2,12 @@
 import type { Container } from "@codefast/di";
 import { DiError, token } from "@codefast/di";
 
-export interface PricingConfig {
+interface PricingConfig {
   readonly revision: string;
   readonly surchargePercent: number;
 }
 
-export const pricingConfigToken = token<PricingConfig>("PricingConfig");
+const pricingConfigToken = token<PricingConfig>("PricingConfig");
 
 export interface BootReport {
   readonly revision: string;

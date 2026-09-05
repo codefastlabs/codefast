@@ -33,7 +33,7 @@ export interface RequestInput {
   readonly introduceCaptive: boolean;
 }
 
-export interface ScopeProof {
+interface ScopeProof {
   readonly requestId: string;
   readonly clockStartedAt: string;
   /** Two resolves inside one request: a scoped service is one instance, a transient is not. */
@@ -41,13 +41,13 @@ export interface ScopeProof {
   readonly transientSame: boolean;
 }
 
-export interface ModuleReport {
+interface ModuleReport {
   readonly loaded: ReadonlyArray<string>;
   /** What the flagged capability answered, or why it was not there to answer. */
   readonly riskCheck: string;
 }
 
-export interface ValidationReport {
+interface ValidationReport {
   readonly passed: boolean;
   readonly detail: string;
 }
@@ -151,7 +151,7 @@ function validationReport(request: Container): ValidationReport {
   }
 }
 
-export async function runRequest(input: RequestInput): Promise<RequestOutcome> {
+async function runRequest(input: RequestInput): Promise<RequestOutcome> {
   const root = await getRoot();
   const context: TenantContext = { tenant: input.tenant, region: input.region, tier: input.tier };
   // A child per request: scoped bindings live and die with it, the catalog stays on the parent.

@@ -44,15 +44,6 @@ export interface DistModule {
 }
 
 /**
- * The identifying metadata mirror reads from a package's manifest.
- *
- * @since 0.3.16-canary.0
- */
-export interface MirrorPackageMeta {
-  packageName: string;
-}
-
-/**
  * Parsed `package.json` — only fields mirror reads/writes are typed strictly.
  *
  * @since 0.3.16-canary.0

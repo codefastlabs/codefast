@@ -1,6 +1,8 @@
 {
   "extends": "@codefast/typescript-config/react.json",
   "compilerOptions": {
+    // `outDir` sits here, not only in tsconfig.build.json: knip derives its dist → src mapping from this file.
+    "outDir": "./dist",
     "customConditions": ["source"],
     "types": ["node", "vitest/globals"]
   },

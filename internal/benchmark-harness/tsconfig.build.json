@@ -2,7 +2,6 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
   "compilerOptions": {
-    "outDir": "./dist",
     "rootDir": "./src"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],

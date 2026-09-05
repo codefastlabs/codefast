@@ -23,32 +23,6 @@ function exitCodeForAppError(error: AppError): number {
 }
 
 /**
- * Narrows a `Result` by invoking `onSuccess` on success, or reporting the error and setting the exit code.
- *
- * @since 0.3.16-canary.0
- */
-export function handleResult<Value>(
-  outcome: Result<Value, AppError>,
-  onSuccess: (value: Value) => void,
-): outcome is { readonly ok: true; readonly value: Value } {
-  if (!outcome.ok) {
-    logger.err(formatAppError(outcome.error));
-    if (
-      isVerboseCliDiagnostics() &&
-      outcome.error.code === "INFRA_FAILURE" &&
-      outcome.error.cause instanceof Error &&
-      outcome.error.cause.stack !== undefined
-    ) {
-      logger.err(outcome.error.cause.stack);
-    }
-    process.exitCode = exitCodeForAppError(outcome.error);
-    return false;
-  }
-  onSuccess(outcome.value);
-  return true;
-}
-
-/**
  * Narrows a `Result`, reporting a failure and setting the exit code, or logging an optional success message.
  *
  * @since 0.3.16-canary.0

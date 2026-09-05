@@ -40,7 +40,7 @@ function trimmedChangelog(source: string, pkg: string, file: string): string {
 }
 
 /** Renders one package document, or `null` when the package, kind, or page does not exist. */
-export async function renderDoc(pkg: string, kind: DocKindSlug, page?: string): Promise<RenderedDoc | null> {
+async function renderDoc(pkg: string, kind: DocKindSlug, page?: string): Promise<RenderedDoc | null> {
   const [{ docKind, docSource }, { renderMarkdown }] = await Promise.all([
     import("#/features/package-docs/lib/doc-source.impl"),
     import("#/features/package-docs/lib/markdown/render.impl"),

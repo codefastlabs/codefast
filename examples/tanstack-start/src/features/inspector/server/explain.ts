@@ -6,7 +6,7 @@ import type { CatalogEntry } from "#/features/inspector/server/catalog";
 import type { SlotTags } from "#/features/inspector/shared/tenant";
 
 /** The request as it crosses to the client: tag values are rendered, because `unknown` is not serialisable. */
-export interface RequestView {
+interface RequestView {
   readonly name?: string;
   readonly tags: ReadonlyArray<readonly [string, string]>;
 }
@@ -17,7 +17,7 @@ export interface SlotRequest {
   readonly tags: SlotTags;
 }
 
-export type CandidateVerdict =
+type CandidateVerdict =
   | { readonly kind: "matched"; readonly tagCount: number }
   | { readonly kind: "guarded"; readonly tagCount: number; readonly guard: string }
   | { readonly kind: "rejected"; readonly because: string };
@@ -32,7 +32,7 @@ export interface CandidateView {
 }
 
 /** Which rule settled a slot, in the order the engine applies them. */
-export type DecidingRule = "sole candidate" | "predicate" | "more tags" | "ambiguous" | "no candidate";
+type DecidingRule = "sole candidate" | "predicate" | "more tags" | "ambiguous" | "no candidate";
 
 export interface Decision {
   readonly token: string;
