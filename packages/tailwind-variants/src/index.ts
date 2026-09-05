@@ -1,10 +1,4 @@
-/**
- * Tailwind Variants Package
- *
- * This package provides a powerful utility for creating variant-based component styling
- * with Tailwind CSS. It allows you to define component variants, slots, and compound
- * variants in a type-safe manner.
- */
+/** The public surface of `@codefast/tailwind-variants`: `tv`, `createTV`, the class utilities, and their types. */
 
 export { createTV, tv } from "#/tv";
 

@@ -5,14 +5,11 @@
 import type { ConfigExtension } from "tailwind-merge";
 
 /**
- * Converts string boolean values to actual boolean types.
- *
- * This utility type converts string representations of booleans ("true", "false")
- * to actual boolean types, while preserving existing boolean types.
+ * The value a caller passes for one group key: `boolean` for a `"true"`/`"false"` key, the key itself otherwise.
  *
  * @since 0.3.16-canary.0
  */
-export type VariantValue<Key> = Key extends "false" | "true" ? boolean : Key extends boolean ? Key : Key;
+export type VariantValue<Key> = Key extends "false" | "true" ? boolean : Key;
 
 /**
  * Checks whether a variant group supports boolean values.
@@ -29,20 +26,16 @@ export type HasBooleanVariant<Group extends Record<string, unknown>> = "true" ex
     : false;
 
 /**
- * Extracts variant props from a component or variant function.
+ * The variant props a resolver accepts, with `class` and `className` stripped, for a component's own props to extend.
  *
- * This utility type extracts the variant properties from a component or
- * variant function, including className and class properties, while
- * allowing for specific keys to be omitted.
+ * @remarks Read off the resolver's call signature rather than re-derived from its schema, so the
+ * checker reuses the selection type it already built for the resolver instead of instantiating it again.
  *
  * @since 0.3.16-canary.0
  */
-export type VariantProps<Component> =
-  Component extends VariantResolver<infer Variants>
-    ? Variants extends Record<string, never>
-      ? object
-      : Omit<VariantSelection<Variants>, "class" | "className">
-    : never;
+export type VariantProps<Component> = Component extends (props?: infer Props) => unknown
+  ? Omit<Exclude<Props, undefined>, "class" | "className">
+  : never;
 
 /**
  * Base configuration schema for variant groups.
@@ -202,9 +195,13 @@ export type CompoundSlot<Variants extends VariantSchema, Slots extends SlotSchem
  * @since 0.3.16-canary.0
  */
 export interface VariantConfig<Variants extends VariantSchema> {
+  /** Classes every call starts from, before any variant contributes. */
   readonly base?: ClassValue;
+  /** Classes applied when a call selects every listed value at once; an array lists alternatives. */
   readonly compoundVariants?: ReadonlyArray<CompoundVariant<NoInfer<Variants>>>;
+  /** The value each variant takes when a call omits it; a boolean group reads as `false` otherwise. */
   readonly defaultVariants?: VariantValues<NoInfer<Variants>>;
+  /** Each variant name mapped to the values a call may pick, and the classes each value contributes. */
   readonly variants?: Variants;
 }
 
@@ -217,11 +214,17 @@ export interface VariantConfig<Variants extends VariantSchema> {
  * @since 0.3.16-canary.0
  */
 export interface SlotVariantConfig<Variants extends VariantSchema, Slots extends SlotSchema> {
+  /** Classes of the `base` slot when `slots` declares none of its own. */
   readonly base?: ClassValue;
+  /** Classes applied to the named slots at once when a call selects every listed value. */
   readonly compoundSlots?: ReadonlyArray<CompoundSlot<NoInfer<Variants>, NoInfer<Slots>>>;
+  /** Classes applied when a call selects every listed value at once; a slot map targets slots individually. */
   readonly compoundVariants?: ReadonlyArray<SlotCompoundVariant<NoInfer<Variants>, NoInfer<Slots>>>;
+  /** The value each variant takes when a call omits it; a boolean group reads as `false` otherwise. */
   readonly defaultVariants?: VariantValues<NoInfer<Variants>>;
+  /** Each slot name mapped to the classes it starts from; `base` is resolved whether or not it is declared. */
   readonly slots?: Slots;
+  /** Each variant name mapped to its values, each contributing a plain value to `base` or a map to named slots. */
   readonly variants?: SlotVariantSchema<NoInfer<Slots>> & Variants;
 }
 
@@ -243,7 +246,13 @@ export interface TailwindVariantsOptions {
    * @defaultValue true
    */
   readonly cacheResolutions?: boolean;
+  /**
+   * Resolves Tailwind conflicts in every answer with `tailwind-merge`, so a later class wins over an earlier one.
+   *
+   * @defaultValue true
+   */
   readonly twMerge?: boolean;
+  /** A `tailwind-merge` extension for custom class groups; one merge function is built per configuration object. */
   readonly twMergeConfig?: ConfigExtension<string, string>;
 }
 
@@ -303,6 +312,7 @@ export type VariantResolverResult<Variants extends VariantSchema, Slots extends 
  * @since 0.3.16-canary.0
  */
 export interface VariantResolver<Variants extends VariantSchema, Slots extends SlotSchema = SlotSchema> {
+  /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */
   config: VariantConfig<Variants> | SlotVariantConfig<Variants, Slots>;
 
   (
@@ -396,25 +406,29 @@ export interface ExtendedVariantConfig<
   BaseSlots extends SlotSchema,
   ExtensionSlots extends SlotSchema,
 > {
+  /** Classes appended after the extended resolver's own base classes. */
   readonly base?: ClassValue;
+  /** Compound slots added after the extended resolver's, over the merged variants and slots. */
   readonly compoundSlots?: ReadonlyArray<
     CompoundSlot<MergedVariantSchema<BaseVariants, ExtensionVariants>, MergedSlotSchema<BaseSlots, ExtensionSlots>>
   >;
+  /** Compound variants added after the extended resolver's, over the merged variants and slots. */
   readonly compoundVariants?: ReadonlyArray<
     SlotCompoundVariant<
       MergedVariantSchema<BaseVariants, ExtensionVariants>,
       MergedSlotSchema<BaseSlots, ExtensionSlots>
     >
   >;
+  /** Defaults that override the extended resolver's, over the merged variants. */
   readonly defaultVariants?: VariantValues<MergedVariantSchema<BaseVariants, ExtensionVariants>>;
   /**
-   * Required, because this is the overload for extending. Optional, it makes the last overload a
-   * catch-all: a configuration the earlier ones correctly reject still matches here, and `BaseVariants`
-   * having nothing to infer from widens to `VariantSchema`, whose key is `string` — so every
-   * mistyped variant name becomes legal again.
+   * The resolver whose configuration this one inherits. Required: made optional, this overload
+   * would catch every configuration the earlier ones reject and widen every variant name to `string`.
    */
   readonly extend: VariantResolver<BaseVariants, BaseSlots>;
+  /** Slots added to, or replacing, the extended resolver's. */
   readonly slots?: ExtensionSlots;
+  /** Variants added to the extended resolver's; a group declared by both merges value by value. */
   readonly variants?: ExtensionVariants;
 }
 
