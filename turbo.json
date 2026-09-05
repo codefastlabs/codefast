@@ -8,6 +8,7 @@
     },
     "//#format:check": {},
     "//#lint": {},
+    "//#knip": {},
     "//#lint:fix": {
       "cache": false
     },

@@ -11,7 +11,7 @@
     "bench:serve": "turbo run bench:serve",
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=@codefast*/*...",
-    "check": "turbo run lint format:check check-types",
+    "check": "turbo run lint format:check check-types knip",
     "check-types": "turbo run check-types",
     "check:fix": "turbo run lint:fix && turbo run format",
     "clean": "turbo clean",
@@ -62,7 +62,7 @@
     "ui:build": "turbo run build --filter=@apps/ui",
     "ui:dev": "turbo run dev --filter=@apps/ui",
     "ui:preview": "turbo run preview --filter=@apps/ui",
-    "verify": "pnpm build:packages && turbo run lint:fix && turbo run format && turbo run check-types test:coverage",
+    "verify": "pnpm build:packages && turbo run lint:fix && turbo run format && turbo run check-types test:coverage knip",
     "version-packages": "changeset version && pnpm run codefast tag"
   },
   "devDependencies": {
