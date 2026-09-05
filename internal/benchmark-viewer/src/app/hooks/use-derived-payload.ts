@@ -6,6 +6,7 @@ import { searchNorm } from "#/app/lib/format";
 import type { ViewState } from "#/app/lib/hash";
 import { buildMetrics, buildSnapshotRow, pickDefaultScenarioId } from "#/app/lib/metrics";
 import type { MetricsResult, SnapshotRow } from "#/app/lib/metrics";
+import { runIndicesWithData } from "#/app/lib/overlay";
 import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries, EmbeddedViewerPayload } from "#/types";
 
 interface DerivedPayloadOptions {
@@ -32,6 +33,10 @@ export interface DerivedPayload {
   /** The compare libraries with data in the plotted window. */
   chartCompareLibs: Array<EmbeddedLibraryMeta>;
   currentScenario: EmbeddedScenarioSeries | null;
+  /** Every scenario in the current scenario's group, in payload order — what the overlay draws. */
+  overlayScenarios: Array<EmbeddedScenarioSeries>;
+  /** Whether the chart overlays the group: the toggle is on and the group has more than one row. */
+  isOverlayActive: boolean;
   uniqueEnvKeys: Array<string>;
   envLabelMap: Record<string, string>;
   uniqueGroups: Array<string>;
@@ -132,14 +137,22 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     return payload.scenarios.find((scenario) => scenario.id === view.scenarioId) ?? null;
   }, [payload, view.scenarioId]);
 
-  // A run without data for this scenario carries no point — hiding it keeps the plotted line connected.
+  const overlayScenarios = useMemo<Array<EmbeddedScenarioSeries>>(() => {
+    if (!payload || !currentScenario) {
+      return [];
+    }
+    return payload.scenarios.filter((scenario) => scenario.group === currentScenario.group);
+  }, [payload, currentScenario]);
+
+  const isOverlayActive = view.overlayGroup && overlayScenarios.length > 1;
+
+  // A run without data for the plotted rows carries no point — hiding it keeps the lines connected.
   const chartRunIndices = useMemo<Array<number>>(() => {
     if (!currentScenario) {
       return runIndices;
     }
-    const libraryData = Object.values(currentScenario.libraries);
-    return runIndices.filter((globalIx) => libraryData.some((lib) => lib.hz[globalIx] !== null));
-  }, [currentScenario, runIndices]);
+    return runIndicesWithData(isOverlayActive ? overlayScenarios : [currentScenario], runIndices);
+  }, [currentScenario, isOverlayActive, overlayScenarios, runIndices]);
 
   // A library with no data in the plotted window would add only dead cards, columns, and legend rows.
   const { chartLibraries, chartCompareLibs, inactiveLibraryNames } = useMemo<{
@@ -265,6 +278,8 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     chartLibraries,
     chartCompareLibs,
     currentScenario,
+    overlayScenarios,
+    isOverlayActive,
     uniqueEnvKeys,
     envLabelMap,
     uniqueGroups,

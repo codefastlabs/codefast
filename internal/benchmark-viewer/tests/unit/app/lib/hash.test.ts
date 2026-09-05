@@ -52,6 +52,7 @@ const defaultView: ViewState = {
   showBands: true,
   useLogScale: false,
   showRatio: false,
+  overlayGroup: false,
 };
 
 describe("buildHash / parseHash", () => {
@@ -67,6 +68,7 @@ describe("buildHash / parseHash", () => {
       showBands: false,
       useLogScale: true,
       showRatio: true,
+      overlayGroup: true,
     };
     const hash = buildHash(view);
     expect(parseHash(`#${hash}`, payload)).toEqual(view);

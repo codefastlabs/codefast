@@ -256,6 +256,7 @@ export function buildEmbeddedPayload(
   const primaryName = options.libraries.find((lib) => lib.isPrimary)?.name ?? libraryNames[0] ?? "";
 
   const facetLabels = options.scenarioFacets?.labels ?? [];
+  const viewDefaults = options.viewDefaults;
 
   if (libraryNames.length === 0) {
     return {
@@ -265,6 +266,7 @@ export function buildEmbeddedPayload(
       runs: [],
       scenarios: [],
       facetLabels,
+      ...(viewDefaults !== undefined && { viewDefaults }),
       generatedAtIso: new Date().toISOString(),
       effectiveLimit,
       hasMore,
@@ -324,10 +326,11 @@ export function buildEmbeddedPayload(
     }
   }
 
-  // Collect scenario metadata in forward order so the oldest run's values take precedence.
+  // Collect scenario metadata newest run first: a row's group and description follow the suite's
+  // current definition, not the one it had when the oldest saved run was recorded.
   const scenarioGroup = new Map<string, string>();
   const scenarioWhat = new Map<string, string>();
-  for (const run of runs) {
+  for (const run of runs.toReversed()) {
     for (const [, report] of run.reports) {
       for (const scenario of report.scenarios) {
         if (!scenarioGroup.has(scenario.id)) {
@@ -401,6 +404,7 @@ export function buildEmbeddedPayload(
     runs: embeddedRuns,
     scenarios,
     facetLabels,
+    ...(viewDefaults !== undefined && { viewDefaults }),
     generatedAtIso: new Date().toISOString(),
     effectiveLimit,
     hasMore,

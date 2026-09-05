@@ -32,4 +32,25 @@ export const PALETTE: ReadonlyArray<PaletteEntry> = [
  */
 export const RATIO_COLORS = ["#f87171", "#22d3ee", "#a3e635", "#fde047"] as const;
 
+/**
+ * The line colors cycled across the rows of a group overlay, one hue per row.
+ *
+ * @remarks Wider than {@link PALETTE} because a group holds more rows than the suite holds libraries.
+ */
+export const OVERLAY_PALETTE: ReadonlyArray<string> = [
+  "#6ee7c5",
+  "#93b4ff",
+  "#fbbf77",
+  "#f472b6",
+  "#a78bfa",
+  "#a3e635",
+  "#22d3ee",
+  "#fde047",
+];
+
+/**
+ * The dash patterns cycled across libraries within a group overlay; the primary library draws solid.
+ */
+export const OVERLAY_DASHES: ReadonlyArray<ReadonlyArray<number>> = [[], [6, 4], [2, 3], [10, 4, 2, 4]];
+
 export { PAN_PIXELS_X, ZOOM_STEP_X } from "#/app/lib/constants";
