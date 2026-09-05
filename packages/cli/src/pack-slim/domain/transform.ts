@@ -12,6 +12,8 @@ interface ManifestSlimReport {
 
 /**
  * The slimmed manifest paired with the report of what it dropped.
+ *
+ * @since 0.8.1
  */
 export interface SlimManifestResult {
   readonly manifest: Record<string, unknown>;
@@ -20,6 +22,8 @@ export interface SlimManifestResult {
 
 /**
  * The result of stripping the `sourceMappingURL` directive from an emitted file's text.
+ *
+ * @since 0.8.1
  */
 export interface StripCommentResult {
   readonly text: string;
@@ -33,6 +37,8 @@ const MAP_ANNOTATED_EXTENSIONS: ReadonlySet<string> = new Set([".js", ".mjs", ".
 
 /**
  * Whether a dist entry is a source-map sidecar (`*.map`).
+ *
+ * @since 0.8.1
  */
 export function isSourceMapFile(fileName: string): boolean {
   return fileName.endsWith(".map");
@@ -40,6 +46,8 @@ export function isSourceMapFile(fileName: string): boolean {
 
 /**
  * Whether a dist entry is an emitted file that may carry a `sourceMappingURL` directive.
+ *
+ * @since 0.8.1
  */
 export function isMapAnnotatedFile(fileName: string): boolean {
   for (const extension of MAP_ANNOTATED_EXTENSIONS) {
@@ -56,6 +64,8 @@ export function isMapAnnotatedFile(fileName: string): boolean {
  * @remarks Operates on a structural clone, so the caller's manifest is left intact. A consumer never enables the
  * `source` condition and resolves `#/` through `types`/`default` to `dist`, so dropping the source lane and the shipped
  * sources it points at leaves the published surface whole.
+ *
+ * @since 0.8.1
  */
 export function slimPublishManifest(manifest: Record<string, unknown>): SlimManifestResult {
   const draft = structuredClone(manifest);
@@ -73,6 +83,8 @@ export function slimPublishManifest(manifest: Record<string, unknown>): SlimMani
 
 /**
  * Strips every `sourceMappingURL` directive line from an emitted file's text.
+ *
+ * @since 0.8.1
  */
 export function stripSourceMappingComment(text: string): StripCommentResult {
   const lines = text.split("\n");

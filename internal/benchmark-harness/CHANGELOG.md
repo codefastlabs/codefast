@@ -1,5 +1,12 @@
 # @codefast/benchmark-harness
 
+## 0.7.2
+
+### Patch Changes
+
+- [#777](https://github.com/codefastlabs/codefast/pull/777) [`05a9ba9`](https://github.com/codefastlabs/codefast/commit/05a9ba98ff2d0ee59d1a4d9f646d5130588c5abb) Thanks [@thevuong](https://github.com/thevuong)! - Move the package from `packages/` to `internal/`, the new home for private workspace packages. The package name and API
+  are unchanged.
+
 ## 0.7.1
 
 ### Patch Changes

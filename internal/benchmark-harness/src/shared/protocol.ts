@@ -7,6 +7,8 @@
 /**
  * Marker line opening the framed JSON payload on child stdout — the parent reads only
  * framed content, so warnings, banners, and stray logs never contaminate parsing.
+ *
+ * @since 0.7.2
  */
 export const BENCH_RESULT_JSON_START = "BENCH_RESULT_JSON_START";
 /**

@@ -43,6 +43,8 @@ const LANGUAGE_CONVENTIONS: ReadonlyMap<string, TimeConventions> = new Map([["vi
  *
  * @remarks Timezone outranks language on purpose: a browser installed in English still belongs
  * to a reader in Vietnam, and language alone would hand them month-first dates.
+ *
+ * @since 0.7.2
  */
 export function resolveTimeConventions(language: string | undefined, timeZone: string | undefined): TimeConventions {
   const byZone = timeZone === undefined ? undefined : TIME_ZONE_CONVENTIONS.get(timeZone);
@@ -99,6 +101,8 @@ const COMPACT_NUMBER = new Intl.NumberFormat("en-US", { notation: "compact", max
 
 /**
  * Formats an hz/op axis tick compactly (`70M`, `1.5K`), or an empty string for a non-finite value.
+ *
+ * @since 0.7.2
  */
 export function fmtHzCompact(hz: number): string {
   return Number.isFinite(hz) ? COMPACT_NUMBER.format(hz) : "";
@@ -107,6 +111,8 @@ export function fmtHzCompact(hz: number): string {
 /**
  * Formats a run's ISO timestamp as a short local axis tick (`17/8 23:12` in Vietnam) — time
  * only when the axis spans one day.
+ *
+ * @since 0.7.2
  */
 export function fmtRunTick(
   timestampIso: string | undefined,
@@ -126,6 +132,8 @@ export function fmtRunTick(
 
 /**
  * Formats a primary-over-compare throughput ratio, or an em dash when absent.
+ *
+ * @since 0.7.2
  */
 export function fmtRatio(ratio: number | null | undefined): string {
   if (ratio === null || ratio === undefined || !Number.isFinite(ratio)) {

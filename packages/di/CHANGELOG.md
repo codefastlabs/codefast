@@ -1,5 +1,18 @@
 # @codefast/di
 
+## 0.8.1
+
+### Patch Changes
+
+- [#791](https://github.com/codefastlabs/codefast/pull/791) [`37a212b`](https://github.com/codefastlabs/codefast/commit/37a212b4d805588413159e11e872b98db82326bf) Thanks [@thevuong](https://github.com/thevuong)! - Point the README's license badge and "License" section at the package's own `LICENSE` file instead of the monorepo root.
+
+- [#796](https://github.com/codefastlabs/codefast/pull/796) [`ba04d27`](https://github.com/codefastlabs/codefast/commit/ba04d2703c59a1677f52e6a9fffd0ec202328218) Thanks [@thevuong](https://github.com/thevuong)! - Rewrite the README around one structure — what the package is, installation and requirements, a complete quick start,
+  the concepts in learning order, then the documents and the license — with every API claim checked against the current
+  code and no figures that go stale.
+
+- [#784](https://github.com/codefastlabs/codefast/pull/784) [`ad2f93a`](https://github.com/codefastlabs/codefast/commit/ad2f93a688e99c3ed8be6ceeae9d6cdd6be861bc) Thanks [@thevuong](https://github.com/thevuong)! - Ship the MIT `LICENSE` file in the published package. `files` already listed it, but the file was missing from the
+  package directory, so the tarball had none.
+
 ## 0.8.0
 
 ### Minor Changes

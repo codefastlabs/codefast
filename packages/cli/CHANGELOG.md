@@ -1,5 +1,23 @@
 # @codefast/cli
 
+## 0.8.1
+
+### Patch Changes
+
+- [#812](https://github.com/codefastlabs/codefast/pull/812) [`f051471`](https://github.com/codefastlabs/codefast/commit/f051471eeb33b59dcb73f977b679ba27384e3a17) Thanks [@thevuong](https://github.com/thevuong)! - Raise the published dependency floors: `zod` to 4.5.4 (`@codefast/cli`, `@codefast/theme`), `lucide-react` to 1.41.0 and
+  `react-hook-form` to 7.87.0 (`@codefast/ui`).
+
+- [#810](https://github.com/codefastlabs/codefast/pull/810) [`75c63d2`](https://github.com/codefastlabs/codefast/commit/75c63d2abbb713d88489058c1c57bbc6e10f9358) Thanks [@thevuong](https://github.com/thevuong)! - Enable `exactOptionalPropertyTypes` for the packages that were temporarily opted out when it became the `base.json`
+  default (`@codefast/cli`, `@codefast/tailwind-variants`, and the private benchmark packages). Only `@codefast/cli` and
+  `@codefast/benchmark-viewer` needed code: the optional fields the flag surfaces on their exported request/option/prop
+  types are widened to `?: T | undefined`. Backward-compatible type change — no runtime effect.
+
+- [#791](https://github.com/codefastlabs/codefast/pull/791) [`37a212b`](https://github.com/codefastlabs/codefast/commit/37a212b4d805588413159e11e872b98db82326bf) Thanks [@thevuong](https://github.com/thevuong)! - Point the README's license badge and "License" section at the package's own `LICENSE` file instead of the monorepo root.
+
+- [#796](https://github.com/codefastlabs/codefast/pull/796) [`ba04d27`](https://github.com/codefastlabs/codefast/commit/ba04d2703c59a1677f52e6a9fffd0ec202328218) Thanks [@thevuong](https://github.com/thevuong)! - Rewrite the README around one structure — what the package is, installation and requirements, a complete quick start,
+  the concepts in learning order, then the documents and the license — with every API claim checked against the current
+  code and no figures that go stale.
+
 ## 0.8.0
 
 ### Minor Changes

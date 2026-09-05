@@ -9,6 +9,8 @@ import { err, ok } from "#/core/result";
  *
  * @remarks The output is read with `--untracked-files=no`, so untracked and gitignored paths (like the freshly built
  * `dist`) never appear — any non-blank line is a staged or unstaged change to a tracked file.
+ *
+ * @since 0.8.1
  */
 export function hasUncommittedTrackedChanges(porcelainOutput: string): boolean {
   return porcelainOutput.split("\n").some((line) => line.trim().length > 0);
@@ -29,6 +31,8 @@ function readTrackedWorkingTreeStatus(rootDir: string): string {
  *
  * @remarks pack-slim rewrites tracked `package.json` files and deletes build output; its result must never be committed.
  * A caller passing `--force` skips this, and `--dry-run` never reaches it because it writes nothing.
+ *
+ * @since 0.8.1
  */
 export function ensureWorkingTreeClean(rootDir: string): Result<void, AppError> {
   let porcelain: string;
