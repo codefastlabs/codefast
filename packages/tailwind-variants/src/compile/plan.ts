@@ -7,7 +7,7 @@
  */
 
 import type { PlanClasses } from "#/compile/class-values";
-import { toClassText, toPlanClasses, toVariantKey } from "#/compile/class-values";
+import { hasBooleanVariantValues, toClassText, toPlanClasses, toVariantKey } from "#/compile/class-values";
 import type { CompoundPlanEntry, CompoundSlotPlanEntry } from "#/compile/compound";
 import { compileCompoundSlots, compileCompoundVariants } from "#/compile/compound";
 import { hasSlotsConfig } from "#/compile/configuration";
@@ -20,11 +20,6 @@ import type {
   VariantConfig,
   VariantSchema,
 } from "#/types";
-
-/** A group keyed by "true"/"false" accepts boolean variant values. */
-const hasBooleanVariantValues = (variantGroup: Record<string, unknown>): boolean => {
-  return "true" in variantGroup || "false" in variantGroup;
-};
 
 /**
  * One variant group with the classes its default selects already resolved.

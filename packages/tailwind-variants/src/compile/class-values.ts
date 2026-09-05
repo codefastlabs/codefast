@@ -93,6 +93,13 @@ export const toPlanClasses = (value: ClassValue, slotIndexByName: Record<string,
 };
 
 /**
+ * Whether a group keyed by "true"/"false" accepts boolean variant values.
+ */
+export const hasBooleanVariantValues = (variantGroup: Record<string, unknown>): boolean => {
+  return "true" in variantGroup || "false" in variantGroup;
+};
+
+/**
  * The key a variant value selects inside its group, with booleans spelled as their group keys.
  *
  * @since 0.6.0

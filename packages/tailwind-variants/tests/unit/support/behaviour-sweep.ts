@@ -199,15 +199,29 @@ const stable = (value: unknown): string => {
 };
 
 /**
+ * How a sweep reaches its resolvers: one per case, or a fresh one for every call.
+ *
+ * @remarks A fresh resolver per call keeps every answer on the first-call lane, which resolves the
+ * configuration directly rather than through a compiled plan.
+ */
+export interface SweepRun {
+  readonly freshResolverPerCall?: boolean;
+}
+
+/**
  * Every outcome the corpus produces, one line each, under the given options.
  *
  * @param options - merged over each case's own, so one sweep can be run twice and compared
+ * @param run - how resolvers are obtained; the default shares one per case
  */
-export const collectSweepOutcomes = (options: TailwindVariantsOptions): ReadonlyArray<string> => {
+export const collectSweepOutcomes = (options: TailwindVariantsOptions, run: SweepRun = {}): ReadonlyArray<string> => {
   const lines: Array<string> = [];
 
   for (const sweepCase of CASES) {
-    const resolver = tv(sweepCase.config as never, { ...sweepCase.options, ...options }) as AnyResolver;
+    const define = (): AnyResolver =>
+      tv(sweepCase.config as never, { ...sweepCase.options, ...options }) as AnyResolver;
+    const shared = define();
+    const resolver: AnyResolver = run.freshResolverPerCall ? (props) => define()(props) : shared;
     const sweep = variantSweep(sweepCase.config);
 
     for (const selection of sweep) {
@@ -262,7 +276,9 @@ export const collectSweepOutcomes = (options: TailwindVariantsOptions): Readonly
     const scoped = api.tv(BUTTON as never) as AnyResolver;
 
     for (const selection of variantSweep(BUTTON)) {
-      lines.push(`createTV(${String(twMerge)}) :: ${stable(selection)} :: ${String(scoped(selection))}`);
+      const answer = run.freshResolverPerCall ? (api.tv(BUTTON as never) as AnyResolver)(selection) : scoped(selection);
+
+      lines.push(`createTV(${String(twMerge)}) :: ${stable(selection)} :: ${String(answer)}`);
     }
   }
 
