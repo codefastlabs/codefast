@@ -53,10 +53,12 @@ jobs:
       # so a `--filter="./packages/**"` drops both without failing — this step once ran neither, and
       # a file committed unformatted stayed green. Both root scripts already scan the whole repo, and
       # calling them directly cannot silently resolve to zero tasks. Only `check-types` is per-package.
+      # `knip` is repo-wide as well: it maps each package's `dist` back to `src`, so it needs the build above.
       - name: Validate Code Quality and Type Safety
         run: |
           pnpm lint
           pnpm format:check
+          pnpm knip
           npx turbo run check-types --filter="./packages/**" --filter="./internal/**"
 
       # Repo-wide on purpose: the cross-package references are the ones most likely to rot, and a
