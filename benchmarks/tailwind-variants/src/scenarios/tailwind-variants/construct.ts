@@ -1,28 +1,25 @@
-import { CONSTRUCT_SIMPLE, CONSTRUCT_SLOTS } from "#/fixtures/scenario-parity";
+import { CONSTRUCT_DEFINITIONS_PER_LOOP, CONSTRUCT_SIMPLE, CONSTRUCT_SLOTS } from "#/fixtures/scenario-parity";
 import { buttonVariants } from "#/fixtures/simple";
-import type { ServicePreviewSlots } from "#/fixtures/slot-types";
+import type { CardRenderer, FlatRenderer } from "#/fixtures/slot-types";
 import { slotsVariants } from "#/fixtures/slots";
 import { TV_MERGE_ENABLED } from "#/harness/bench-options";
+import { renderEverySlot } from "#/lib/render-slots";
 import { tailwindVariantsTv } from "#/lib/tv-shims";
 import type { BenchScenario } from "#/scenarios/types";
 
-const DEFINITIONS_PER_LOOP = 12;
+const defineButton = (): number =>
+  (tailwindVariantsTv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer)({ size: "sm", variant: "outline" }).length;
 
-const defineButton = (): string =>
-  (tailwindVariantsTv(buttonVariants, TV_MERGE_ENABLED) as (props: unknown) => string)({
-    size: "sm",
-    variant: "outline",
-  });
-
-const defineCard = (): string =>
-  (tailwindVariantsTv(slotsVariants, TV_MERGE_ENABLED) as (props: unknown) => ServicePreviewSlots)({
-    size: "md",
-    variant: "info",
-  }).base();
+// Every slot renders: one library merges all slots on the first render, the other merges each slot on demand.
+const defineCard = (): number =>
+  renderEverySlot(
+    (tailwindVariantsTv(slotsVariants, TV_MERGE_ENABLED) as CardRenderer)({ size: "md", variant: "info" }),
+  );
 
 /**
- * Construction is per component definition where every other scenario is per render, so a ratio
- * here does not belong in the same geomean as the resolution rows.
+ * Builds the construct rows, which price a component definition rather than a render.
+ *
+ * @remarks A ratio here does not belong in the geomean with the resolution rows, so the descriptors keep it off.
  *
  * @since 0.6.0
  */
@@ -30,15 +27,13 @@ export function buildTailwindVariantsNpmConstructScenarios(): ReadonlyArray<Benc
   return [
     {
       ...CONSTRUCT_SIMPLE,
-      batch: DEFINITIONS_PER_LOOP,
-      excludeFromAggregates: true,
       // Consuming the render keeps the definition alive: a `tv` call nothing reads can be elided.
       build: () => {
         let renderedLength = 0;
 
         return () => {
-          for (let index = 0; index < DEFINITIONS_PER_LOOP; index++) {
-            renderedLength += defineButton().length;
+          for (let index = 0; index < CONSTRUCT_DEFINITIONS_PER_LOOP; index++) {
+            renderedLength += defineButton();
           }
 
           if (renderedLength < 0) {
@@ -46,18 +41,16 @@ export function buildTailwindVariantsNpmConstructScenarios(): ReadonlyArray<Benc
           }
         };
       },
-      sanity: () => defineButton().length > 0,
+      sanity: () => defineButton() > 0,
     },
     {
       ...CONSTRUCT_SLOTS,
-      batch: DEFINITIONS_PER_LOOP,
-      excludeFromAggregates: true,
       build: () => {
         let renderedLength = 0;
 
         return () => {
-          for (let index = 0; index < DEFINITIONS_PER_LOOP; index++) {
-            renderedLength += defineCard().length;
+          for (let index = 0; index < CONSTRUCT_DEFINITIONS_PER_LOOP; index++) {
+            renderedLength += defineCard();
           }
 
           if (renderedLength < 0) {
@@ -65,7 +58,7 @@ export function buildTailwindVariantsNpmConstructScenarios(): ReadonlyArray<Benc
           }
         };
       },
-      sanity: () => defineCard().length > 0,
+      sanity: () => defineCard() > 0,
     },
   ];
 }
