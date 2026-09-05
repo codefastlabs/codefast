@@ -210,6 +210,24 @@ export const UNCACHED_SLOTS_WITH_MERGE = {
 } as const satisfies ScenarioDescriptor;
 
 /**
+ * The without-merge control for simple variants, paired with its with-merge row to isolate the merge step.
+ */
+export const UNCACHED_SIMPLE_WITHOUT_MERGE = {
+  id: "uncached-simple-without-merge",
+  group: "uncached",
+  what: "Control, not a comparison: simple variants with the cache and tailwind-merge off, isolating the merge step",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * The without-merge control for slots, paired with its with-merge row to isolate the merge step.
+ */
+export const UNCACHED_SLOTS_WITHOUT_MERGE = {
+  id: "uncached-slots-without-merge",
+  group: "uncached",
+  what: "Control, not a comparison: slots with the cache and tailwind-merge off, isolating the merge step",
+} as const satisfies ScenarioDescriptor;
+
+/**
  * @since 0.6.0
  */
 export const CONSTRUCT_SIMPLE = {
