@@ -22,6 +22,12 @@
       "port": 4321
     },
     {
+      "name": "tv-bench-viewer",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["BENCH_PORT=4322", "pnpm", "run", "tv:bench:serve"],
+      "port": 4322
+    },
+    {
       "name": "tanstack-start",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@examples/tanstack-start", "exec", "vite", "dev", "--port", "3001"],
