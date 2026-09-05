@@ -1,7 +1,5 @@
 /**
- * Create tv Benchmark Data
- *
- * Data specific to create-tv benchmarks
+ * Button config and prop selections for the `create-tv` scenarios.
  *
  * @since 0.3.16-canary.0
  */

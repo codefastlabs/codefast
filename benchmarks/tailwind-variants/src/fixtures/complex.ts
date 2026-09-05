@@ -1,7 +1,5 @@
 /**
- * Complex Benchmark Data
- *
- * Data specific to complex variant benchmarks
+ * Compound-variant button config and prop selections for the `complex` scenarios.
  *
  * @since 0.3.16-canary.0
  */

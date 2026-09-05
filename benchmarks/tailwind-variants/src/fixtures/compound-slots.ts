@@ -1,7 +1,5 @@
 /**
- * Compound Slots Benchmark Data
- *
- * Data specific to compound slots variant benchmarks
+ * Pagination slot config with compound slots, and prop selections, for the `compound-slots` scenarios.
  *
  * @since 0.3.16-canary.0
  */

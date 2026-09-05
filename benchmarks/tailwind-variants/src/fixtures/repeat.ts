@@ -1,13 +1,7 @@
 /**
- * Repeat Benchmark Data
+ * Prop selections that cycle a few choices, for the `repeat-*` scenarios.
  *
- * A smaller working set than the other prop fixtures: twelve calls over three distinct selections
- * rather than twelve distinct ones, which is what a list rendering one component looks like.
- *
- * What this does **not** vary is object identity. The array is built once, so the timed loop hands
- * the same twelve references over and over — as every other fixture here does. Measuring the cost of
- * the fresh props object React builds per render would need a fixture that allocates inside the
- * timed function, and none of these do.
+ * Built once, so the timed loop hands the same object references over and over, as every fixture here does.
  */
 
 const SIMPLE_SELECTIONS = [

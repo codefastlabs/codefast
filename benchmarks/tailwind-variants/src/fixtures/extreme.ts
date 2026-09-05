@@ -1,12 +1,4 @@
-/**
- * Extreme Benchmark Data
- *
- * Stress test data with maximum complexity to push libraries to their limits:
- * - 100+ variant options
- * - 50+ compound variants
- * - Deep slot nesting
- * - Heavy class strings
- */
+/** Oversized variant matrix and slot config, with prop selections, for the `extreme` scenarios. */
 
 // Generate a large number of color variants dynamically
 const generateColorVariants = () => {
