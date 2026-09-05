@@ -12,15 +12,16 @@ building components whose classes depend on props.
 a set of props. Describe your `base`, `variants`, and `slots` once; call the function with props; get back a merged
 class string. It's a drop-in, faster replacement for `tailwind-variants`, with the same configuration shape.
 
-`tv()` compiles the configuration up front, so resolving a component is string work — and a repeated selection comes
-from a cache.
+`tv()` costs next to nothing. The first call resolves straight from the configuration, the second compiles it into a
+plan, and from then on resolving a component is string work — with a repeated selection answered from a cache.
 
 - **One configuration, one typed function.** Describe `base`, `variants`, `compoundVariants`, `slots`, and
   `defaultVariants` once; get back a function whose props are inferred from it.
 - **Conflicts settled by `tailwind-merge`.** A caller's `className` wins over the configuration, and an unknown variant
   value is a type error.
-- **Compiled up front.** The configuration becomes a plan when `tv()` runs, so resolving a component is string work, and
-  a repeated selection is answered from a cache.
+- **Compiled once, when it pays.** `tv()` only wraps the configuration; the first render reads it directly and the
+  second compiles it into a plan, so a component rendered once costs no more than that render, and every render after is
+  string work with repeated selections answered from a cache.
 - **Drop-in, with no runtime dependencies of its own.** Same configuration shape as `tailwind-variants`;
   `tailwind-merge` is a peer, so you get one copy at the version you chose.
 
@@ -186,8 +187,9 @@ iconButton({ tone: "outline", size: "sm" });
 A variant function remembers what each selection resolved to, because a list renders the same few selections many times
 and both the plan walk and the merge are pure functions of the selection. Two consequences are worth knowing:
 
-- A slot component called twice with the same selection gets back the **same** object of slot functions. That is stable
-  enough for a React dependency array; it also means the object is shared, so do not mutate it.
+- Once its plan is compiled — from the second call on — a slot component called with a selection it has already seen
+  gets back the **same** object of slot functions. That is stable enough for a React dependency array; it also means the
+  object is shared, so do not mutate it.
 - The store is bounded and keyed by the selection, so a variant whose values are effectively unique per call (an id, a
   timestamp, a fresh object) fills it with entries nothing reads again. `cacheResolutions: false` is the escape hatch
   for that component.
@@ -205,7 +207,7 @@ cn("text-base", "text-huge"); // => "text-huge" — the custom group is understo
 ```
 
 Options passed locally to `tv(config, options)` override the factory's globals. Every variant function also exposes a
-read-only `config` property carrying its fully merged configuration, which is what `extend` reads.
+`config` property carrying its fully merged configuration, which is what `extend` reads.
 
 ## Class utilities
 
@@ -273,12 +275,13 @@ by hardware, so run it yourself rather than reading them here:
 pnpm --filter @codefast/benchmark-tailwind-variants bench
 ```
 
-The speed comes from settling things once. The configuration is settled when `tv()` is called: variant groups, compound
-conditions, and slot positions are compiled into a plan, and every class value is flattened to a string, so resolving a
-component is string concatenation rather than dictionary lookups. The answer is then settled per selection, so a list
-rendering the same few selections resolves each of them once. `cn` / `cx` take the same string fast path, joining
-directly when every argument is already a string. The trade is that `tv()` itself does more work per component
-definition, against a resolution that is cheaper on every render; the suite measures both.
+The speed comes from settling things once, and only once a component has shown it will be rendered again. `tv()` wraps
+the configuration and the first call reads it directly; the second call compiles it into a plan — variant groups,
+compound conditions, and slot positions settled, every class value flattened to a string — so every resolution after is
+string concatenation rather than dictionary lookups. The answer is then settled per selection, so a list rendering the
+same few selections resolves each of them once. `cn` / `cx` take the same string fast path, joining directly when every
+argument is already a string. The suite prices both ends: `define-only-*` and `first-render-*` for a definition and its
+first render, the resolution rows for every render after.
 
 ## Documentation
 

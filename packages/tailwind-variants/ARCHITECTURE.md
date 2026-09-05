@@ -9,11 +9,13 @@ trade this design makes — see [DECISIONS.md](./DECISIONS.md).
 ## The one idea
 
 A variant configuration is fixed the moment `tv` is called. A resolver is then called once per render, forever. So
-everything that depends only on the configuration is settled **once**, in `tv`, and resolution reads the result.
+everything that depends only on the configuration is settled **once**, and resolution reads the result. The once is the
+resolver's second call, not `tv` itself: the first call reads the configuration directly, so a component defined and
+rendered a single time — a cold start, a page that shows it once — never pays for a plan it would not have used.
 
 ```
-tv(config)  ──compile──▶  VariantPlan  ──resolve──▶  "px-4 py-2 bg-primary"
-   once                                   per call
+tv(config) ──▶ resolver ──1st call──▶ cold lane ──2nd call──▶ VariantPlan ──resolve──▶ "px-4 py-2 bg-primary"
+  a wrapper                reads the configuration      compiled once           every call after
 ```
 
 The same idea applied a second time: within one configuration, the answer depends only on the selection, and a list
@@ -36,6 +38,7 @@ That split is the directory layout:
 | `compile/class-values.ts`  | flattening configuration class values into plan form                  |
 | `compile/configuration.ts` | shape guards, and collapsing an `extend` chain into one configuration |
 | `compile/selection.ts`     | encoding a call's selection as one number                             |
+| `resolve/cold.ts`          | the cold lane: the first call, read straight from the configuration   |
 | `resolve/variants.ts`      | the flat lane                                                         |
 | `resolve/slots.ts`         | the slot lane                                                         |
 | `resolve/cache.ts`         | the bounded store a resolver answers a repeated selection from        |
@@ -74,6 +77,21 @@ called with props re-resolves from scratch (`resolveSlotWithOverrides`). That la
 
 **`base` is always slot position zero.** The plan synthesises it whether or not the configuration declares it, which is
 why a plain string class value can be assigned to `texts[0]` without a lookup.
+
+## The cold lane answers exactly what the plan answers
+
+The first call has no plan, so `resolve/cold.ts` walks the configuration itself. It is a second statement of the
+resolution rules, and every rule the plan settles at compile time it applies inline instead: a missing selection takes
+the configured default, or `false` for a group keyed by `true`/`false`; the slot lane alone treats a falsy key as no
+selection; a boolean compound condition reads an absent value as `false` in the flat lane and in compound slots, never
+in a slot configuration's compound variants; compound slots read the call's props and ignore a slot's own overrides.
+Where the plan copies each group onto a prototype-less object once, the cold lane guards each read with `Object.hasOwn`,
+which is the same answer paid per read instead of per definition — and the cold lane reads each group once.
+
+Two things follow. The cold lane's answer is not remembered: the store belongs to the plan, so identity of a slot object
+holds from the second call on, and a caller who wants it warm renders twice. And the cold lane is held to the plan by
+the behaviour sweep, which drives the whole corpus through a fresh resolver per call and requires every outcome to equal
+the compiled one — the only proof this file accepts that the two statements of the rules agree.
 
 ## What the selection key may and may not collapse
 
@@ -129,22 +147,19 @@ Everything else follows from having to make that distinction hold:
 
 ## The trade this design makes
 
-`tv` is the expensive end. It flattens every class value, precomputes slot positions and copies every variant group onto
-a prototype-less object, and the `construct-*` rows — added because the other scenarios hoist `tv` out of the timed loop
-and so could never see it — put the cost at **0.24× of `tailwind-variants` for a flat component and roughly a fifth for
-a slot one**. Read the slot figure loosely: the harness marks that cell unstable in most runs, which is the same reason
-this file tells you not to read a single slot row closely.
+The plan is the expensive end, and it is paid on the second call rather than in `tv`. `define-only-*` prices `tv` itself
+and `first-render-*` a definition plus the cold lane; both are controls off the aggregates, and both now read against
+upstream rather than behind it. The resolution rows price the plan, and a component that renders more than a handful of
+times earns its plan back on the `repeat-*` shape — read those rows, not a figure written here, for what any of this
+costs today.
 
-That is the deliberate shape of the design, not a defect. The same run measures resolution at 4.2× to 118× upstream, so
-a component pays for its definition within a render or two.
+Two things keep the second call from paying more than it must, and both are worth preserving: the selection encoder
+hands out ids as values turn up rather than up front, so a group of two hundred values costs nothing to compile and only
+what a caller actually selects to run; and every variant group is copied onto a prototype-less object exactly once,
+which is what lets the plan walk index it by whatever a caller passed without a guard per read.
 
-Two later changes widened the trade rather than the design itself. The selection cache added about a quarter of a
-microsecond per definition, and the prototype-less copy roughly doubled what was left — the flat row went from 0.47× to
-0.24× on that alone. Two things keep the first of those small, and both are worth preserving: the encoder is compiled on
-first resolution rather than in `tv`, so a component defined and never rendered pays nothing, and value ids are handed
-out as values turn up rather than up front.
-
-If construction ever needs to come down, that is where to look, and `construct-*` is the row to read.
+If the second call ever needs to come down, `compileVariantPlan` is where the time goes — the group copies above most of
+all — and the difference between a fresh resolver's second and first call is how to see it.
 
 ## How much of this a page can actually feel
 
@@ -192,11 +207,11 @@ every row now measures a lookup rather than the resolver:
 
 - `uncached-*` runs with `cacheResolutions: false` and is the row to read for the plan walk. A change under `resolve/`
   that does not move it did not do what you think. It has no counterpart in a library without the same switch, so its
-  ratio column is meaningless — it is a control, and it is off the aggregates for that reason. `construct-*` measures
-  the walk too, since each of its definitions resolves once against an empty cache, but it measures compilation
-  alongside it.
+  ratio column is meaningless — it is a control, and it is off the aggregates for that reason.
 - `repeat-*` is the shape a UI actually has: three selections, fresh props objects, over and over.
-- `construct-*` is per component definition where everything else is per render, so it is off the aggregates too.
+- `define-only-*` prices `tv` alone and `first-render-*` a definition plus its first render, which is the cold lane;
+  both are per component definition where everything else is per render, so both are off the aggregates too. Neither
+  touches the plan — a change under `compile/` shows up between a fresh resolver's second call and its first.
 
 Rows here are batched loops, so the noise floor is tighter than the DI suite's: an A/A run put every median within
 ±0.6%. Treat a ratio at or above 1.03× as signal, and re-measure anything smaller with more passes before believing it —
