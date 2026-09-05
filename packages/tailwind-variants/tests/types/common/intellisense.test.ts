@@ -81,6 +81,13 @@ describe("IntelliSense-driving types", () => {
     const plain = tv({ base: "flex" });
 
     expectTypeOf<keyof VariantProps<typeof plain>>().toEqualTypeOf<never>();
+    expectTypeOf(plain.variantKeys).toEqualTypeOf<ReadonlyArray<never>>();
+  });
+
+  test("names the variant keys a resolver declares, merged across extend", () => {
+    expectTypeOf(button.variantKeys).toEqualTypeOf<ReadonlyArray<"disabled" | "size" | "variant">>();
+    expectTypeOf(card.variantKeys).toEqualTypeOf<ReadonlyArray<"size" | "tone">>();
+    expectTypeOf(textarea.variantKeys).toEqualTypeOf<ReadonlyArray<"disabled" | "resize" | "size" | "variant">>();
   });
 
   test("offers the declared slots, plus base, on a slot resolver's result", () => {

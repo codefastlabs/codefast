@@ -36,6 +36,9 @@ const EMPTY_PROPS: Record<string, unknown> = {};
 /** Stored for a selection that resolves to no classes, so a miss stays distinguishable from it. */
 const NO_CLASSES = null;
 
+/** Shared answer for a configuration without variants, so defining one allocates no array. */
+const NO_VARIANT_KEYS: ReadonlyArray<string> = [];
+
 /** One resolver's selection encoder paired with the store it fills. */
 interface ResolverMemo<Value> {
   readonly cache: ResolutionCache<Value>;
@@ -246,9 +249,12 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
   };
 
   const configuredVariantResolver = variantResolverFunction as VariantResolver<Variants, Slots>;
+  const metadata = configuredVariantResolver as { config: unknown; variantKeys: unknown };
 
-  // A plain store: defining the property with attributes costs more than the rest of this call.
-  (configuredVariantResolver as { config: unknown }).config = mergedConfiguration;
+  // Plain stores: defining a property with attributes costs more than the rest of this call.
+  metadata.config = mergedConfiguration;
+  metadata.variantKeys =
+    mergedConfiguration.variants === undefined ? NO_VARIANT_KEYS : Object.keys(mergedConfiguration.variants);
 
   return configuredVariantResolver;
 }

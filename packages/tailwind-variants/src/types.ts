@@ -314,6 +314,8 @@ export type VariantResolverResult<Variants extends VariantSchema, Slots extends 
 export interface VariantResolver<Variants extends VariantSchema, Slots extends SlotSchema = SlotSchema> {
   /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */
   config: VariantConfig<Variants> | SlotVariantConfig<Variants, Slots>;
+  /** The variant names in declaration order, an extended resolver's first, for splitting props by hand. */
+  readonly variantKeys: ReadonlyArray<Extract<keyof Variants, string>>;
 
   (
     props?: VariantSelection<Variants>,
