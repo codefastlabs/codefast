@@ -10,9 +10,11 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     tanstackStart(),
-    // Build for Vercel (Nitro Build Output API → .vercel/output).
+    // Build for Vercel (Nitro Build Output API → .vercel/output). Hashed client assets go
+    // under `/_vercel/immutable/`, which Vercel serves across deployments, as in apps/ui.
     nitro({
       preset: "vercel",
+      vercel: { immutableStaticFiles: true },
     }),
     viteReact(),
     // Lower @codefast/di's standard decorators and run the React Compiler.
