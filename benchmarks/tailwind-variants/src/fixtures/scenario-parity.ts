@@ -222,7 +222,7 @@ export const REPEAT_SLOTS_WITH_MERGE = {
  */
 export const UNCACHED_SIMPLE_WITH_MERGE = {
   id: "uncached-simple-with-merge",
-  group: "uncached",
+  group: "simple",
   what: "Control, not a comparison: simple variants with the resolution and merge caches off, so the plan walk and the merge stay measured",
   batch: simpleTestProps.length,
   excludeFromAggregates: true,
@@ -233,7 +233,7 @@ export const UNCACHED_SIMPLE_WITH_MERGE = {
  */
 export const UNCACHED_SLOTS_WITH_MERGE = {
   id: "uncached-slots-with-merge",
-  group: "uncached",
+  group: "slots",
   what: "Control, not a comparison: slots with the resolution and merge caches off, so the plan walk and the merge stay measured",
   batch: slotsTestProps.length,
   excludeFromAggregates: true,
@@ -244,7 +244,7 @@ export const UNCACHED_SLOTS_WITH_MERGE = {
  */
 export const UNCACHED_SIMPLE_WITHOUT_MERGE = {
   id: "uncached-simple-without-merge",
-  group: "uncached",
+  group: "simple",
   what: "Control, not a comparison: simple variants with the resolution cache and tailwind-merge off; its delta from the with-merge row is the merge step",
   batch: simpleTestProps.length,
   excludeFromAggregates: true,
@@ -255,7 +255,7 @@ export const UNCACHED_SIMPLE_WITHOUT_MERGE = {
  */
 export const UNCACHED_SLOTS_WITHOUT_MERGE = {
   id: "uncached-slots-without-merge",
-  group: "uncached",
+  group: "slots",
   what: "Control, not a comparison: slots with the resolution cache and tailwind-merge off; its delta from the with-merge row is the merge step",
   batch: slotsTestProps.length,
   excludeFromAggregates: true,

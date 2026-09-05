@@ -82,6 +82,39 @@ describe("buildEmbeddedPayload", () => {
     expect(payload.benchResultsWarning).toBe("could not read dir");
   });
 
+  it("takes a scenario's group and description from the newest run that recorded it", () => {
+    const options: BenchServerOptions = {
+      benchResultsDir: "/tmp",
+      libraries: [{ name: "only-lib", displayName: "Only", isPrimary: true }],
+    };
+
+    const rawRuns: Array<RunLines> = [
+      { folderName: "run-1", lines: [observationLine("only-lib", { group: "uncached", what: "old wording" })] },
+      { folderName: "run-2", lines: [observationLine("only-lib", { group: "simple", what: "current wording" })] },
+    ];
+
+    const payload = buildEmbeddedPayload(rawRuns, options, false, 200);
+    expect(payload.scenarios).toEqual([
+      expect.objectContaining({ id: "scenario-one", group: "simple", what: "current wording" }),
+    ]);
+  });
+
+  it("passes the suite's view defaults through to the client", () => {
+    const withDefaults: BenchServerOptions = {
+      benchResultsDir: "/tmp",
+      libraries: [{ name: "only-lib", displayName: "Only", isPrimary: true }],
+      viewDefaults: { overlayGroup: true, useLogScale: true },
+    };
+    const { viewDefaults: _declared, ...withoutDefaults } = withDefaults;
+    const rawRuns: Array<RunLines> = [{ folderName: "run-1", lines: [observationLine("only-lib")] }];
+
+    expect(buildEmbeddedPayload(rawRuns, withDefaults, false, 200).viewDefaults).toEqual({
+      overlayGroup: true,
+      useLogScale: true,
+    });
+    expect(buildEmbeddedPayload(rawRuns, withoutDefaults, false, 200)).not.toHaveProperty("viewDefaults");
+  });
+
   it("sets hasMore and effectiveLimit from arguments", () => {
     const options: BenchServerOptions = {
       benchResultsDir: "/tmp",

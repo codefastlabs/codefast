@@ -16,6 +16,8 @@ export interface ViewState {
   showBands: boolean;
   useLogScale: boolean;
   showRatio: boolean;
+  /** Draws every row of the selected scenario's group on one chart. */
+  overlayGroup: boolean;
 }
 
 /**
@@ -33,6 +35,7 @@ const HASH_KEYS = {
   showBands: "show-bands",
   useLogScale: "use-log-scale",
   showRatio: "show-ratio",
+  overlayGroup: "overlay-group",
 };
 
 /**
@@ -63,6 +66,7 @@ export function buildHash(view: ViewState): string {
   parts.push(`${HASH_KEYS.showBands}=${view.showBands ? "1" : "0"}`);
   parts.push(`${HASH_KEYS.useLogScale}=${view.useLogScale ? "1" : "0"}`);
   parts.push(`${HASH_KEYS.showRatio}=${view.showRatio ? "1" : "0"}`);
+  parts.push(`${HASH_KEYS.overlayGroup}=${view.overlayGroup ? "1" : "0"}`);
   return parts.join("&");
 }
 
@@ -116,6 +120,9 @@ export function parseHash(raw: string, payload: EmbeddedViewerPayload): Partial<
   }
   if (params.has(HASH_KEYS.showRatio)) {
     patch.showRatio = params.get(HASH_KEYS.showRatio) === "1";
+  }
+  if (params.has(HASH_KEYS.overlayGroup)) {
+    patch.overlayGroup = params.get(HASH_KEYS.overlayGroup) === "1";
   }
 
   const scenarioParam = params.get(HASH_KEYS.scenario);

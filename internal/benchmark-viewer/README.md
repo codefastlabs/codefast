@@ -35,7 +35,10 @@ declarations and the viewer renders as filter chips. `StartBenchServerOptions` a
 `src/app/` is a Vite-bundled React app that the server renders on the first request and hydrates in the browser. It
 shows a KPI grid and a comparison chart (Chart.js with zoom) for the selected scenario, a metrics panel and a per-run
 snapshot table, controls for the run range and libraries plotted, and a command palette for jumping between scenarios.
-The current view is mirrored into the URL hash, so a chart state can be shared as a link.
+The current view is mirrored into the URL hash, so a chart state can be shared as a link. An **Overlay group** toggle
+draws every row of the selected scenario's group on one chart — colour per row, dash pattern per library, the selected
+row heavier — so the configurations of one workload read against each other; bands and ratio lines stay off while it is
+on. A suite can open with that overlay and the log axis on through the server's `viewDefaults` option.
 
 The package builds in two lanes: plain `tsc` for the Node server, and `vite build` for the browser entry
 (`src/app/entry.tsx`) into `dist/app/`.

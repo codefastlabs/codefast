@@ -25,6 +25,16 @@ export interface ScenarioFacets {
 }
 
 /**
+ * The display toggles a suite wants the viewer to open with; the URL hash still overrides them.
+ */
+export interface ViewDefaults {
+  /** Draws every row of the selected scenario's group on one chart, one line per row and library. */
+  readonly overlayGroup?: boolean;
+  /** Plots throughput on a logarithmic axis, which keeps rows of very different scale readable together. */
+  readonly useLogScale?: boolean;
+}
+
+/**
  * Options for the bench history server: results directory, port, title, libraries, and run cap.
  *
  * @since 0.3.16-canary.0
@@ -49,6 +59,8 @@ export interface BenchServerOptions {
    * the viewer only filters by label. Omit for no chip row.
    */
   readonly scenarioFacets?: ScenarioFacets;
+  /** Display toggles the viewer opens with when the URL hash names none. */
+  readonly viewDefaults?: ViewDefaults;
 }
 
 // ---------------------------------------------------------------------------
@@ -137,6 +149,8 @@ export interface EmbeddedViewerPayload {
   readonly scenarios: ReadonlyArray<EmbeddedScenarioSeries>;
   /** Declared facet labels in chip order; empty when the suite declares none. */
   readonly facetLabels: ReadonlyArray<string>;
+  /** Display toggles the suite asked the viewer to open with. */
+  readonly viewDefaults?: ViewDefaults;
   /** ISO timestamp when this JSON snapshot was built (server clock). */
   readonly generatedAtIso: string;
   /** The maxRuns cap that was applied when building this payload. */
