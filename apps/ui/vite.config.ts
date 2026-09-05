@@ -216,6 +216,12 @@ export default defineConfig(({ command }) => {
       nitro({
         preset: "vercel",
         /**
+         * Emits the hashed client assets under `/_vercel/immutable/`, a path Vercel shares across
+         * deployments: a tab opened before a deploy keeps resolving its chunks after it. Nitro
+         * skips this with a warning when the Vercel project has not enabled the feature.
+         */
+        vercel: { immutableStaticFiles: true },
+        /**
          * Sets `Cache-Control` for every static file: the prerendered entry pages and the
          * cacheable `public/` files. Static files bypass the server, so `routeRules` (baked
          * into Vercel's static routing config) is the only path to their deployed headers.
