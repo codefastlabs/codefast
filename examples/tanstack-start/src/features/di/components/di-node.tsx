@@ -7,7 +7,7 @@ import { memo } from "react";
 
 import { ScopeDot } from "#/features/di/components/scope-dot";
 
-export interface DiNodeData extends Record<string, unknown> {
+interface DiNodeData extends Record<string, unknown> {
   readonly label: string;
   /** Named multi-binding slot (e.g. `non-empty`) when this node is one of several on a token. */
   readonly slotName: string | undefined;

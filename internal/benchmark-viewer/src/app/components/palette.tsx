@@ -1,10 +1,9 @@
-import { tv } from "@codefast/tailwind-variants";
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useHasHydrated } from "#/app/hooks/use-has-hydrated";
 import { isMacLikePlatform } from "#/app/lib/format";
-import { cn } from "#/app/lib/utils";
+import { cn, tv } from "#/app/lib/utils";
 
 interface PaletteAction {
   id: string;

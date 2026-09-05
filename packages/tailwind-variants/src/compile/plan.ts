@@ -31,7 +31,7 @@ const hasBooleanVariantValues = (variantGroup: Record<string, unknown>): boolean
  *
  * @since 0.6.0
  */
-export interface VariantPlanEntry {
+interface VariantPlanEntry {
   readonly defaultClasses: PlanClasses | undefined;
   readonly group: Record<string, PlanClasses>;
   readonly name: string;

@@ -17,12 +17,4 @@ export const TIER_TAG = tag<string>("tier");
 /**
  * @since 0.6.0
  */
-export const REGION_TAG = tag<string>("region");
-/**
- * @since 0.6.0
- */
-export const SHARD_TAG = tag<number>("shard");
-/**
- * @since 0.6.0
- */
 export const LEVEL_TAG = tag<number>("level");

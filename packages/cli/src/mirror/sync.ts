@@ -19,7 +19,7 @@ import { resolvePackageFilterUnderRoot } from "#/mirror/package-path";
 import type { MirrorSyncExecutionInput } from "#/mirror/sync-types";
 import { syncExportsForWorkspacePackage } from "#/mirror/sync-workspace-package";
 
-export type { MirrorSyncExecutionInput, MirrorSyncProgressListener, MirrorSyncRunRequest } from "#/mirror/sync-types";
+export type { MirrorSyncExecutionInput } from "#/mirror/sync-types";
 
 /**
  * Runs the mirror sync across the targeted packages and returns the aggregate stats.

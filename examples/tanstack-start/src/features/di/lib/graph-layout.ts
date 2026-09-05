@@ -10,7 +10,7 @@ const ROW_GAP_Y_PX = 148;
 const LANE_GAP_Y_PX = 64;
 const LANE_PADDING_PX = 28;
 
-export interface Lane {
+interface Lane {
   readonly id: string;
   readonly label: string;
   readonly x: number;

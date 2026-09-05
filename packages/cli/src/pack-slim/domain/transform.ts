@@ -3,7 +3,7 @@
 /**
  * What slimming one manifest removed.
  */
-export interface ManifestSlimReport {
+interface ManifestSlimReport {
   readonly filesSrcRemoved: boolean;
   readonly exportsSourceRemoved: number;
   readonly importsSourceRemoved: number;
@@ -29,14 +29,7 @@ export interface StripCommentResult {
 /**
  * The emitted-file extensions that may carry a `sourceMappingURL` directive.
  */
-export const MAP_ANNOTATED_EXTENSIONS: ReadonlySet<string> = new Set([
-  ".js",
-  ".mjs",
-  ".cjs",
-  ".d.ts",
-  ".d.mts",
-  ".d.cts",
-]);
+const MAP_ANNOTATED_EXTENSIONS: ReadonlySet<string> = new Set([".js", ".mjs", ".cjs", ".d.ts", ".d.mts", ".d.cts"]);
 
 /**
  * Whether a dist entry is a source-map sidecar (`*.map`).

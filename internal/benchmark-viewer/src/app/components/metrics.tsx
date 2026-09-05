@@ -1,9 +1,8 @@
-import { tv } from "@codefast/tailwind-variants";
 import type { CSSProperties } from "react";
 
 import { fmtHz, fmtHzCompact } from "#/app/lib/format";
 import type { MetaItem, MetricCardProps, MetricsResult } from "#/app/lib/metrics";
-import { cn } from "#/app/lib/utils";
+import { cn, tv } from "#/app/lib/utils";
 import type { EmbeddedScenarioSeries } from "#/types";
 
 const iqrValue = tv({

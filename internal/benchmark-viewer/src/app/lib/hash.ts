@@ -23,7 +23,7 @@ export interface ViewState {
  *
  * @since 0.3.16-canary.1
  */
-export const HASH_KEYS = {
+const HASH_KEYS = {
   environment: "environment",
   group: "group",
   search: "search",

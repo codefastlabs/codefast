@@ -2911,15 +2911,15 @@ file by file into `dist/`, with no bundler. `tsdown` is gone.
 
 The shared emit flags live in the `@codefast/typescript-config/library-build.json` preset (`noEmit: false`,
 `declaration`, `declarationMap`, `sourceMap`, `types: ["node"]`). The build file uses an **`extends` array** so it both
-inherits the package base (flags + `paths`) and pulls in the emit block, keeping only a local `outDir`/`rootDir`
-(relative paths — placing them in the preset would resolve them against the preset's directory) plus
-`include`/`exclude`:
+inherits the package base (flags + `paths`) and pulls in the emit block, keeping only a local `rootDir` (a relative path
+— placing it in the preset would resolve it against the preset's directory) plus `include`/`exclude`. `outDir` is
+declared in `tsconfig.json` rather than here: `noEmit` keeps it inert for type-checking, the build inherits it, and knip
+derives its `dist` → `src` mapping from that file, which is what lets it follow `#/` imports back to source.
 
 ```json
 {
   "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
   "compilerOptions": {
-    "outDir": "./dist",
     "rootDir": "./src"
   },
   "include": ["src/**/*.ts"],
@@ -3037,8 +3037,9 @@ subpath `@codefast/di/resolution/select/constraints`: `whenParentIs`, `whenNoPar
 }
 ```
 
-In practice the emit options (`declaration`, `outDir`, …) are split out into `tsconfig.build.json`
-([`tsconfig.build.json`](#tsconfig-build)); the base `tsconfig.json` keeps `noEmit: true` for type-checking.
+In practice the emit options (`declaration`, `sourceMap`, …) are split out into `tsconfig.build.json`
+([`tsconfig.build.json`](#tsconfig-build)); the base `tsconfig.json` keeps `noEmit: true` for type-checking and carries
+only `outDir`, which the build inherits.
 
 ---
 

@@ -3,11 +3,6 @@
  */
 import { GITHUB_URL } from "#/lib/nav-links";
 
-/** The package's directory on GitHub, at `main`. */
-export function packageGitHubUrl(pkg: string): string {
-  return `${GITHUB_URL}/tree/main/packages/${pkg}`;
-}
-
 /** A repo file on GitHub, at `main`. */
 export function repoBlobUrl(repoPath: string): string {
   return `${GITHUB_URL}/blob/main/${repoPath}`;

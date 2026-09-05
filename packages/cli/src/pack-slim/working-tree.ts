@@ -17,7 +17,7 @@ export function hasUncommittedTrackedChanges(porcelainOutput: string): boolean {
 /**
  * Reads git's porcelain status for tracked files only, under the given root.
  */
-export function readTrackedWorkingTreeStatus(rootDir: string): string {
+function readTrackedWorkingTreeStatus(rootDir: string): string {
   return execFileSync("git", ["status", "--porcelain", "--untracked-files=no"], {
     cwd: rootDir,
     encoding: "utf8",

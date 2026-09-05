@@ -14,7 +14,7 @@ import type { ClassValue } from "#/types";
  *
  * @since 0.6.0
  */
-export interface SlotClassGroup {
+interface SlotClassGroup {
   readonly classes: ReadonlyArray<string>;
   readonly slotIndexes: ReadonlyArray<number>;
 }

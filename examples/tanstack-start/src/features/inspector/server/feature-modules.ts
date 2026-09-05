@@ -15,7 +15,7 @@ export interface RiskCheck {
 export const riskCheckToken = token<RiskCheck>("RiskCheck");
 
 /** Fraud screening: bought separately, so the binding only exists while the flag is on. */
-export const fraudScreeningModule = Module.create("fraud-screening", (builder) => {
+const fraudScreeningModule = Module.create("fraud-screening", (builder) => {
   builder.bind(riskCheckToken).toConstantValue({ provider: "Sift", maxScore: 92 });
 });
 

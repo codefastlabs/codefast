@@ -19,7 +19,7 @@ export type DocKindSlug = DocKind["slug"];
 export const DOC_KIND_BY_SLUG: ReadonlyMap<string, DocKind> = new Map(DOC_KINDS.map((kind) => [kind.slug, kind]));
 
 /** O(1) lookup of a kind by its file name, e.g. `SPEC.md`. */
-export const DOC_KIND_BY_FILE: ReadonlyMap<string, DocKind> = new Map(DOC_KINDS.map((kind) => [kind.file, kind]));
+const DOC_KIND_BY_FILE: ReadonlyMap<string, DocKind> = new Map(DOC_KINDS.map((kind) => [kind.file, kind]));
 
 /** A document's address within its package: the kind, and for a directory kind the page beneath it. */
 export interface DocRef {

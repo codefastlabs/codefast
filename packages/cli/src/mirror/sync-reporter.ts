@@ -30,7 +30,7 @@ export type CliLoggerLike = {
  *
  * @since 0.3.16-canary.0
  */
-export interface MirrorSyncReporterPort {
+interface MirrorSyncReporterPort {
   configureMirrorColors(noColor: boolean): void;
   mirrorBanner(logger: CliLoggerLike): void;
   mirrorDryRunNotice(logger: CliLoggerLike): void;

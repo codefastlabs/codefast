@@ -40,7 +40,7 @@ type TagTargetCandidateSource = "explicit-target" | "workspace-package" | "repo-
  *
  * @since 0.3.16-canary.0
  */
-export type TagTargetSource =
+type TagTargetSource =
   | "explicit-target"
   | "workspace-package-selected-src"
   | "workspace-package-selected-root"

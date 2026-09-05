@@ -17,7 +17,7 @@ import type { RtlClassToken, RtlViolation } from "#/audit/domain/types";
  *
  * @since 0.5.0-canary.6
  */
-export function hasRtlCompanion(fileTokens: ReadonlyArray<RtlClassToken>, expectedValue: string): boolean {
+function hasRtlCompanion(fileTokens: ReadonlyArray<RtlClassToken>, expectedValue: string): boolean {
   return fileTokens.some(({ variant, value }) => {
     if (!variant) {
       return false;

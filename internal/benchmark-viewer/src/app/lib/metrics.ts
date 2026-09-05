@@ -11,7 +11,7 @@ import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#
  *
  * @since 0.3.16-canary.3
  */
-export type IqrSeverity = "ok" | "noisy" | "high";
+type IqrSeverity = "ok" | "noisy" | "high";
 
 /**
  * Returns the median of the finite positive numbers in a list, or null when none remain.
@@ -20,7 +20,7 @@ export type IqrSeverity = "ok" | "noisy" | "high";
  *
  * @since 0.3.16-canary.1
  */
-export function medianNumeric(values: Array<number | null | undefined>): number | null {
+function medianNumeric(values: Array<number | null | undefined>): number | null {
   const positiveValues = values.filter(
     (value): value is number => typeof value === "number" && Number.isFinite(value) && value > 0,
   );
