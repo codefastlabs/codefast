@@ -118,20 +118,20 @@ Everything else follows from having to make that distinction hold:
   generations then mean nothing in a real page is ever evicted, and the caller's class needs no tier of its own.
 - Ids are handed out as values turn up rather than up front, so a group of two hundred values costs nothing to compile
   and only what a caller actually selects to run.
-- `valueIds` is a **null-prototype** object, and so is every compiled variant group and the slot index map. A plain
-  object answers `group["toString"]` with a function rather than `undefined`, and a caller chooses that key by passing
-  it as a variant value: the flat lane concatenates the function's source text, and `"__proto__"` hands the slot lane
-  `Object.prototype` to read slot positions off. Copying a group key by key onto a prototype-less object costs roughly
-  twice what reusing the source object did, which is the price of the whole class of bug and is paid once per component
-  definition. Both bulk alternatives measured about four times the key-by-key loop.
+- `valueIds` is a **null-prototype** object, and so is every copied variant group and the slot index map. A plain object
+  answers `group["toString"]` with a function rather than `undefined`, and a caller chooses that key by passing it as a
+  variant value; `"__proto__"` hands the slot lane `Object.prototype` to read slot positions off. The slot lane
+  therefore always reads a copy. The flat lane accepts only a string it reads, so a group whose values are all strings
+  on a plain prototype is read in place, and the encoder asks `Object.hasOwn` before it hands a value an id; every other
+  group is copied key by key, which measured about a quarter of either bulk form onto a prototype-less object.
 
 ## Shapes that are load-bearing
 
 - **`selectForSlot` stays out of line.** Inlining it by hand measured slower on every slot scenario — the engine already
   inlines it, and the larger caller falls out of the shape it optimises.
-- **The flat lane casts `PlanClasses` to `string`.** A configuration without slots compiles every class value to a
-  string, so the per-slot form cannot reach that code. The cast encodes an invariant the compiler cannot see, not a
-  shortcut.
+- **The flat lane accepts only a string it reads.** A configuration without slots compiles every class value to a
+  string, so the per-slot form cannot reach that code — and a string-only group is the caller's own object, whose
+  inherited members the type check is what keeps out. Loosening it to a truthiness check reintroduces both.
 - **`toClassText` is not a wrapper around the flattener.** Its string check is what keeps the common case out of it
   entirely, at compile time and for the runtime `class`/`className` prop.
 - **The flattener in `class-names.ts` reproduces clsx exactly, corners included** — a `bigint` contributes nothing
@@ -153,12 +153,13 @@ upstream rather than behind it. The resolution rows price the plan, and a compon
 times earns its plan back on the `repeat-*` shape — read those rows, not a figure written here, for what any of this
 costs today.
 
-Two things keep the second call from paying more than it must, and both are worth preserving: the selection encoder
+Three things keep the second call from paying more than it must, and all are worth preserving: the selection encoder
 hands out ids as values turn up rather than up front, so a group of two hundred values costs nothing to compile and only
-what a caller actually selects to run; and every variant group is copied onto a prototype-less object exactly once,
-which is what lets the plan walk index it by whatever a caller passed without a guard per read.
+what a caller actually selects to run; a flat-lane group whose values are all strings is read in place rather than
+copied, behind the type check the flat lane already makes; and every other group is copied onto a prototype-less object
+exactly once, which is what lets the slot lane index it by whatever a caller passed without a guard per read.
 
-If the second call ever needs to come down, `compileVariantPlan` is where the time goes — the group copies above most of
+If the second call ever needs to come down, `compileVariantPlan` is where the time goes — the slot-lane copies most of
 all — and the difference between a fresh resolver's second and first call is how to see it.
 
 ## How much of this a page can actually feel

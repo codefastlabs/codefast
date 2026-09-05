@@ -206,8 +206,10 @@ const { tv, cn } = createTV({
 cn("text-base", "text-huge"); // => "text-huge" — the custom group is understood
 ```
 
-Options passed locally to `tv(config, options)` override the factory's globals. Every variant function also exposes a
-`config` property carrying its fully merged configuration, which is what `extend` reads.
+Options passed locally to `tv(config, options)` override the factory's globals. Every variant function also exposes
+`config`, its fully merged configuration (what `extend` reads), and `variantKeys`, the variant names in declaration
+order with an extended function's first — the same list upstream exposes, for splitting variant props from the rest by
+hand.
 
 ## Class utilities
 
@@ -263,6 +265,8 @@ Two differences to check for:
 - `createTV` returns an object `{ tv, cn }` sharing the global options, rather than a bare `tv` function — destructure
   instead of assigning directly.
 - `cnMerge` and a mutable `defaultConfig` are not exported; use `createTV` to configure merging.
+- `variantKeys` is exposed as upstream exposes it; the other metadata upstream attaches to the function (`base`,
+  `variants`, `defaultVariants`, `slots`, `compoundVariants`, `compoundSlots`, `extend`) lives under `config`.
 
 ## Benchmarks
 
