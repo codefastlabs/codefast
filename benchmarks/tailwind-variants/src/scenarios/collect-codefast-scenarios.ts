@@ -9,12 +9,12 @@ import { buildCodefastRepeatScenarios } from "#/scenarios/codefast/repeat";
 import { buildCodefastSimpleScenarios } from "#/scenarios/codefast/simple";
 import { buildCodefastSlotsScenarios } from "#/scenarios/codefast/slots";
 import { buildCodefastUncachedScenarios } from "#/scenarios/codefast/uncached";
-import type { AnyScenario } from "#/scenarios/types";
+import type { BenchScenario } from "#/scenarios/types";
 
 /**
  * @since 0.3.16-canary.0
  */
-export function collectAllCodefastScenarios(): ReadonlyArray<AnyScenario> {
+export function collectAllCodefastScenarios(): ReadonlyArray<BenchScenario> {
   return [
     ...buildCodefastSimpleScenarios(),
     ...buildCodefastComplexScenarios(),

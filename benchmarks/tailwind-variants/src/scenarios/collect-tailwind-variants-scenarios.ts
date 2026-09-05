@@ -8,12 +8,12 @@ import { buildTailwindVariantsNpmExtremeSlotsScenarios } from "#/scenarios/tailw
 import { buildTailwindVariantsNpmRepeatScenarios } from "#/scenarios/tailwind-variants/repeat";
 import { buildTailwindVariantsNpmSimpleScenarios } from "#/scenarios/tailwind-variants/simple";
 import { buildTailwindVariantsNpmSlotsScenarios } from "#/scenarios/tailwind-variants/slots";
-import type { AnyScenario } from "#/scenarios/types";
+import type { BenchScenario } from "#/scenarios/types";
 
 /**
  * @since 0.3.16-canary.0
  */
-export function collectAllTailwindVariantsNpmScenarios(): ReadonlyArray<AnyScenario> {
+export function collectAllTailwindVariantsNpmScenarios(): ReadonlyArray<BenchScenario> {
   return [
     ...buildTailwindVariantsNpmSimpleScenarios(),
     ...buildTailwindVariantsNpmComplexScenarios(),
