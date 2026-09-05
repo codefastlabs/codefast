@@ -1,7 +1,4 @@
-/**
- * tv and cva infer strict literal types from configuration objects.
- * Benchmark fixtures use widened object shapes; relax typing only at this boundary.
- */
+/** The one typing escape hatch: each library's `tv`, `createTV`, and `cva` widened to `any` for the shared fixtures. */
 /* eslint-disable @typescript-eslint/no-explicit-any -- benchmark-only escape hatch for library generics */
 import { createTV as codefastCreateTVFn, tv as codefastTv } from "@codefast/tailwind-variants";
 import { cva as cvaFromLib } from "class-variance-authority";

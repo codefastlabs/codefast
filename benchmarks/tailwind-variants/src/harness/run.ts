@@ -29,6 +29,7 @@ import {
 } from "@codefast/benchmark-harness/report/comparison";
 import { buildComparisonDocument } from "@codefast/benchmark-harness/report/comparison-document";
 import type { BenchSubprocessConfig } from "@codefast/benchmark-harness/shared/config";
+import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
   assertBenchEnvKeys,
   BENCH_VERBOSE_ENV_KEY,
@@ -52,9 +53,15 @@ function rebuildCodefastTailwindVariantsPackage(): void {
     stdio: ["ignore", "pipe", "pipe"],
     env: process.env,
   });
+  if (result.error !== undefined) {
+    throw new Error(`Build failed for ${CODEFAST_TV.libraryName}: pnpm could not be run (${result.error.message})`, {
+      cause: result.error,
+    });
+  }
   if (result.status !== 0) {
     console.error(result.stderr || result.stdout);
-    throw new Error(`Build failed for ${CODEFAST_TV.libraryName}, exit ${String(result.status)}`);
+    const outcome = result.signal === null ? `exit ${String(result.status)}` : `signal ${result.signal}`;
+    throw new Error(`Build failed for ${CODEFAST_TV.libraryName}, ${outcome}`);
   }
   const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
   console.log(`Finished rebuild of ${CODEFAST_TV.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
@@ -66,21 +73,19 @@ const LIBRARY_MAJOR_RUN_ORDER =
   "library-major — each library's whole suite runs before the next starts, so drift over the run lands on whoever ran later; cross-library ratios from this profile are provisional";
 
 /**
- * Every library's payload, keyed by library name.
+ * Runs every library's bench and returns the payloads keyed by library name.
  *
- * @remarks Isolated runs interleave, because a cross-library ratio is only as good as the gap between
- * the two measurements it divides. Without isolation there is one process per library and nothing to
- * interleave, so that profile keeps its caveat.
+ * @remarks Isolated runs interleave, because a ratio is only as good as the gap between the two
+ * measurements it divides; one process per library has nothing to interleave, so that profile keeps its caveat.
  */
 async function runEveryLibrary(
   configs: ReadonlyArray<BenchSubprocessConfig>,
 ): Promise<{ payloads: Map<string, SubprocessPayload>; runOrder: string }> {
   const parametersFor = (config: BenchSubprocessConfig): RunBenchSubprocessParameters => ({
     packageRootDirectory,
-    // Every library builds under the same tsconfig here; only the entry file differs.
-    tsconfigFileName: CODEFAST_TV.tsconfigFileName,
+    tsconfigFileName: config.tsconfigFileName,
     benchEntryFileNameUnderSrc: config.benchEntryFileName,
-    harnessLabel: config.libraryName,
+    harnessLabel: resolveDisplayName(config),
     scenarioName: config.scenarioName,
     forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
   });
@@ -141,17 +146,17 @@ async function main(): Promise<void> {
 
   const codefastLibrary: ComparisonLibrary = {
     report: codefastReport,
-    displayName: CODEFAST_TV.libraryName,
+    displayName: resolveDisplayName(CODEFAST_TV),
     shortName: "cf",
   };
   const tailwindVariantsLibrary: ComparisonLibrary = {
     report: tailwindVariantsReport,
-    displayName: TAILWIND_VARIANTS.libraryName,
+    displayName: resolveDisplayName(TAILWIND_VARIANTS),
     shortName: "tv",
   };
   const classVarianceAuthorityLibrary: ComparisonLibrary = {
     report: classVarianceAuthorityReport,
-    displayName: CVA.libraryName,
+    displayName: resolveDisplayName(CVA),
     shortName: "cva",
   };
 

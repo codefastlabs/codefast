@@ -28,7 +28,7 @@ it measures the working tree rather than a stale `dist/`.
 | `pnpm bench:full`                     | `--expose-gc` for every library                                                        |
 | `pnpm bench:isolate`                  | Isolated profile — one subprocess per scenario, libraries interleaved (citable ratios) |
 | `pnpm bench:list`                     | Prints the scenario inventory as JSON on stdout, measuring nothing                     |
-| `pnpm bench:verbose`                  | Per-trial detail on stdout                                                             |
+| `pnpm bench:verbose`                  | Forwards each child's full stdout; progress streams on stderr either way               |
 | `pnpm bench:serve`                    | Serves the run history from `bench-results/` in a browser                              |
 | `pnpm bench:codefast`                 | The `@codefast/tailwind-variants` child process alone                                  |
 | `pnpm bench:tailwind-variants`        | The `tailwind-variants` child process alone                                            |
@@ -47,33 +47,37 @@ narrowed with `BENCH_ONLY` leaves `latest.*` alone, and its `report.json` `run` 
 Each configuration shape runs **twice** — once with `tailwind-merge` enabled and once without — and the shapes are the
 scenario groups:
 
-| Group            | What it exercises                                         |
-| ---------------- | --------------------------------------------------------- |
-| `simple`         | a handful of variants, no slots                           |
-| `complex`        | many variants plus compound variants and booleans         |
-| `slots`          | multi-slot components                                     |
-| `compound-slots` | compound variants that target slots                       |
-| `extends`        | a config extending another                                |
-| `create-tv`      | the factory path rather than the bare `tv` call           |
-| `extreme`        | a deliberately oversized variant matrix                   |
-| `extreme-slots`  | the same, with many slots                                 |
-| `repeat-simple`  | the same few `simple` selections rendered again and again |
-| `repeat-slots`   | the same few `slots` selections rendered again and again  |
+| Group            | What it exercises                                                                      |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| `simple`         | a handful of variants, no slots                                                        |
+| `complex`        | many variants plus compound variants and booleans                                      |
+| `slots`          | multi-slot components                                                                  |
+| `compound-slots` | compound variants that target slots                                                    |
+| `extends`        | a config extending another                                                             |
+| `create-tv`      | a resolver made by the `createTV` factory; the factory call itself is outside the loop |
+| `extreme`        | a deliberately oversized variant matrix                                                |
+| `extreme-slots`  | the same, with many slots                                                              |
+| `repeat-simple`  | the same few `simple` selections rendered again and again                              |
+| `repeat-slots`   | the same few `slots` selections rendered again and again                               |
 
-Two more groups are controls rather than comparisons, and both declare `excludeFromAggregates` so they stay in the table
-but out of the medians and geomeans:
+Three more groups are controls rather than comparisons, and all three declare `excludeFromAggregates` so they stay in
+the table but out of the medians and geomeans:
 
-- `construct` — define a component and render it once, so the cost is per definition rather than per render.
-- `uncached` — `@codefast/tailwind-variants` only, with its resolution cache switched off, so the plan walk itself stays
-  measured. Each with-merge row pairs with a without-merge one, so their delta isolates the merge step on a miss.
+- `define-only` — define a component without rendering it. An eager library compiles here and a lazy one defers to its
+  first render, so the ratio is shown but stays off the aggregates.
+- `first-render` — define a component and render it once (every slot, for a slot component); minus `define-only` it is
+  the cost of the first render alone, and it stays off the aggregates for the same reason.
+- `uncached` — `@codefast/tailwind-variants` only, with its resolution cache and tailwind-merge's own cache switched
+  off, so the plan walk and the merge itself stay measured. Each with-merge row pairs with a without-merge one, so their
+  delta is the merge step on a miss.
 
 The merge flag is always passed **explicitly** (`{ twMerge: true }` / `{ twMerge: false }`, from
 `src/harness/bench-options.ts`) rather than left to each package's default, so the pair differ in implementation and not
 in configuration. `class-variance-authority` has no merge option of its own, so its "with merge" rows call
 `tailwind-merge` after `cva()` — the usual production pairing.
 
-`class-variance-authority` has no slots, no extends and no factory, so it implements only the `simple` and `complex`
-groups. It reads `—` on the rest, and the report counts only the rows a library actually measured.
+`class-variance-authority` has no slots, no extends and no factory; this suite ports only the `simple` and `complex`
+groups to it, so it reads `—` on the rest, and the report counts only the rows a library actually measured.
 
 ## How it is put together
 

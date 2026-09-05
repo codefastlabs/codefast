@@ -1,7 +1,5 @@
 /**
- * Simple Benchmark Data
- *
- * Data specific to simple variant benchmarks
+ * Button variant config and prop selections for the `simple` scenarios.
  *
  * @since 0.3.16-canary.0
  */

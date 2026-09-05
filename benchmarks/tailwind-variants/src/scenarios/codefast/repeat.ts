@@ -6,30 +6,21 @@ import {
   REPEAT_SLOTS_WITHOUT_MERGE,
 } from "#/fixtures/scenario-parity";
 import { buttonVariants } from "#/fixtures/simple";
-import type { ServicePreviewSlots } from "#/fixtures/slot-types";
+import type { CardRenderer, FlatRenderer } from "#/fixtures/slot-types";
 import { slotsVariants } from "#/fixtures/slots";
 import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
+import { renderCardSlots } from "#/lib/render-slots";
 import { codefastTvFn } from "#/lib/tv-shims";
 import type { BenchScenario } from "#/scenarios/types";
 
-type RepeatProps = Record<string, string>;
-type SlotsRenderer = (props: RepeatProps) => ServicePreviewSlots;
+const flatNoMerge = codefastTvFn(buttonVariants, TV_MERGE_DISABLED) as FlatRenderer;
+const flatWithMerge = codefastTvFn(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;
+const slotsNoMerge = codefastTvFn(slotsVariants, TV_MERGE_DISABLED) as CardRenderer;
+const slotsWithMerge = codefastTvFn(slotsVariants, TV_MERGE_ENABLED) as CardRenderer;
 
-const flatNoMerge = codefastTvFn(buttonVariants, TV_MERGE_DISABLED) as (props: RepeatProps) => string;
-const flatWithMerge = codefastTvFn(buttonVariants, TV_MERGE_ENABLED) as (props: RepeatProps) => string;
-const slotsNoMerge = codefastTvFn(slotsVariants, TV_MERGE_DISABLED) as SlotsRenderer;
-const slotsWithMerge = codefastTvFn(slotsVariants, TV_MERGE_ENABLED) as SlotsRenderer;
-
-function runSlotLoop(renderer: SlotsRenderer): void {
+function runSlotLoop(renderer: CardRenderer): void {
   for (const props of repeatSlotsTestProps) {
-    const { base, content, description, footer, header, title } = renderer(props);
-
-    base();
-    header();
-    content();
-    footer();
-    title();
-    description();
+    renderCardSlots(renderer(props));
   }
 }
 

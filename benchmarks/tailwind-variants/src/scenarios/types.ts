@@ -1,14 +1,6 @@
-/**
- * Shared scenario typing for `@codefast/tailwind-variants`, tailwind-variants (npm),
- * and class-variance-authority bench subprocesses.
- *
- * Matching `id` values align rows in each comparison report.
- */
+/** Scenario typing shared by the three bench subprocesses. */
 
-import type {
-  AsyncBenchScenario as HarnessAsyncBenchScenario,
-  BenchScenario as HarnessBenchScenario,
-} from "@codefast/benchmark-harness/child/bench-scenario";
+import type { BenchScenario as HarnessBenchScenario } from "@codefast/benchmark-harness/child/bench-scenario";
 
 /**
  * @since 0.3.16-canary.0
@@ -24,18 +16,11 @@ type ScenarioGroup =
   | "extreme-slots"
   | "repeat-simple"
   | "repeat-slots"
-  | "construct"
+  | "define-only"
+  | "first-render"
   | "uncached";
 
 /**
  * @since 0.3.16-canary.0
  */
 export type BenchScenario = HarnessBenchScenario & { readonly group: ScenarioGroup };
-/**
- * @since 0.3.16-canary.0
- */
-type AsyncBenchScenario = HarnessAsyncBenchScenario & { readonly group: ScenarioGroup };
-/**
- * @since 0.3.16-canary.0
- */
-export type AnyScenario = BenchScenario | AsyncBenchScenario;

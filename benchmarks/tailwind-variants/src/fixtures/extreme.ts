@@ -1,12 +1,4 @@
-/**
- * Extreme Benchmark Data
- *
- * Stress test data with maximum complexity to push libraries to their limits:
- * - 100+ variant options
- * - 50+ compound variants
- * - Deep slot nesting
- * - Heavy class strings
- */
+/** Oversized variant matrix and slot config, with prop selections, for the `extreme` scenarios. */
 
 // Generate a large number of color variants dynamically
 const generateColorVariants = () => {
@@ -203,6 +195,9 @@ export const extremeVariants = {
 /**
  * Extreme test props covering many prop combinations.
  *
+ * @remarks Distinct `color` values stay within the selection encoder's raw-axis capacity, so every
+ * selection here is cacheable on both sides.
+ *
  * @since 0.3.16-canary.0
  */
 export const extremeTestProps = [
@@ -237,10 +232,10 @@ export const extremeTestProps = [
     glass: true,
     loading: false,
   },
-  { animation: "slide", color: "stone-500", gradient: "none", shadow: "lg", size: "size-11" },
-  { color: "zinc-700", hover: true, loading: true, outline: false, rounded: "xl", selected: true },
+  { animation: "slide", color: "red-500", gradient: "none", shadow: "lg", size: "size-11" },
+  { color: "blue-700", hover: true, loading: true, outline: false, rounded: "xl", selected: true },
   {
-    color: "neutral-400",
+    color: "green-400",
     disabled: true,
     elevation: "sm",
     glass: false,

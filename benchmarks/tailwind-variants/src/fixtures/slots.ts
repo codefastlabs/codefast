@@ -1,7 +1,5 @@
 /**
- * Slots Benchmark Data
- *
- * Data specific to slots variant benchmarks
+ * Card slot config and prop selections for the `slots` scenarios.
  *
  * @since 0.3.16-canary.0
  */

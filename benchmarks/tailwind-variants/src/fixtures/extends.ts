@@ -1,7 +1,5 @@
 /**
- * Extends Benchmark Data
- *
- * Data specific to extends variant benchmarks
+ * Base and extension configs, with prop selections, for the `extends` scenarios.
  *
  * @since 0.3.16-canary.0
  */
