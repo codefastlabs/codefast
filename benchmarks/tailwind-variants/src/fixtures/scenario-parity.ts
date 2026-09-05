@@ -13,9 +13,9 @@ type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what"> &
   Partial<Pick<BenchScenario, "batch" | "excludeFromAggregates">>;
 
 /**
- * Component definitions per timed iteration of a construct row, so every side's loop bound and batch agree.
+ * Component definitions per timed iteration of a cold row, so every side's loop bound and batch agree.
  */
-export const CONSTRUCT_DEFINITIONS_PER_LOOP = 12;
+export const COLD_DEFINITIONS_PER_LOOP = 12;
 
 /**
  * @since 0.5.0-canary.7
@@ -262,23 +262,45 @@ export const UNCACHED_SLOTS_WITHOUT_MERGE = {
 } as const satisfies ScenarioDescriptor;
 
 /**
- * @since 0.6.0
+ * Defining a button without rendering it: an eager library compiles here, a lazy one on its first render.
  */
-export const CONSTRUCT_SIMPLE = {
-  id: "construct-simple",
-  group: "construct",
-  what: "Define a button component and render it once (per definition, not per render — off the aggregates)",
-  batch: CONSTRUCT_DEFINITIONS_PER_LOOP,
+export const DEFINE_ONLY_SIMPLE = {
+  id: "define-only-simple",
+  group: "define-only",
+  what: "Define a button component without rendering it (an eager library compiles here, a lazy one on first render — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
 /**
- * @since 0.6.0
+ * Defining a slot component without rendering it: an eager library compiles here, a lazy one on its first render.
  */
-export const CONSTRUCT_SLOTS = {
-  id: "construct-slots",
-  group: "construct",
-  what: "Define a slot component and render every slot once (per definition, not per render — off the aggregates)",
-  batch: CONSTRUCT_DEFINITIONS_PER_LOOP,
+export const DEFINE_ONLY_SLOTS = {
+  id: "define-only-slots",
+  group: "define-only",
+  what: "Define a slot component without rendering it (an eager library compiles here, a lazy one on first render — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * Defining a button and rendering it once; minus the define-only row, the first render alone.
+ */
+export const FIRST_RENDER_SIMPLE = {
+  id: "first-render-simple",
+  group: "first-render",
+  what: "Define a button component and render it once (per definition, not per render; minus define-only it is the first render — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * Defining a slot component and rendering every slot once; minus the define-only row, the first render alone.
+ */
+export const FIRST_RENDER_SLOTS = {
+  id: "first-render-slots",
+  group: "first-render",
+  what: "Define a slot component and render every slot once (per definition, not per render; minus define-only it is the first render — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;

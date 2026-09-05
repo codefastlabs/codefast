@@ -16,7 +16,8 @@ type ScenarioGroup =
   | "extreme-slots"
   | "repeat-simple"
   | "repeat-slots"
-  | "construct"
+  | "define-only"
+  | "first-render"
   | "uncached";
 
 /**

@@ -60,11 +60,13 @@ scenario groups:
 | `repeat-simple`  | the same few `simple` selections rendered again and again                              |
 | `repeat-slots`   | the same few `slots` selections rendered again and again                               |
 
-Two more groups are controls rather than comparisons, and both declare `excludeFromAggregates` so they stay in the table
-but out of the medians and geomeans:
+Three more groups are controls rather than comparisons, and all three declare `excludeFromAggregates` so they stay in
+the table but out of the medians and geomeans:
 
-- `construct` — define a component and render it once, so the cost is per definition rather than per render; its ratio
-  is shown but stays off the aggregates.
+- `define-only` — define a component without rendering it. An eager library compiles here and a lazy one defers to its
+  first render, so the ratio is shown but stays off the aggregates.
+- `first-render` — define a component and render it once (every slot, for a slot component); minus `define-only` it is
+  the cost of the first render alone, and it stays off the aggregates for the same reason.
 - `uncached` — `@codefast/tailwind-variants` only, with its resolution cache and tailwind-merge's own cache switched
   off, so the plan walk and the merge itself stay measured. Each with-merge row pairs with a without-merge one, so their
   delta is the merge step on a miss.
