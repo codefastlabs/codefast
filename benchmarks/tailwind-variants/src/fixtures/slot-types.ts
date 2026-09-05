@@ -1,48 +1,45 @@
-/**
- * Slot renderers returned by `tv()` when using `slots`.
- * Library overloads can resolve to `string` here; assertions keep benchmarks typed.
- *
- * @since 0.3.16-canary.0
- */
+/** Renderer shapes derived from the slot fixtures, so a renamed slot fails at compile time. */
+import type { compoundSlotsVariants } from "#/fixtures/compound-slots";
+import type { extremeSlotsVariants } from "#/fixtures/extreme";
+import type { slotsVariants } from "#/fixtures/slots";
+
 type SlotCallable = () => string;
 
-/**
- * @since 0.3.16-canary.0
- */
-export type ServicePreviewSlots = {
-  base: SlotCallable;
-  content: SlotCallable;
-  description: SlotCallable;
-  footer: SlotCallable;
-  header: SlotCallable;
-  title: SlotCallable;
-};
+type SlotRenderers<Config extends { readonly slots: object }> = Readonly<Record<keyof Config["slots"], SlotCallable>>;
+
+type Props = Readonly<Record<string, unknown>>;
 
 /**
  * @since 0.3.16-canary.0
  */
-export type CompoundPaginationSlots = {
-  base: SlotCallable;
-  cursor: SlotCallable;
-  item: SlotCallable;
-  next: SlotCallable;
-  prev: SlotCallable;
-};
+export type ServicePreviewSlots = SlotRenderers<typeof slotsVariants>;
 
 /**
  * @since 0.3.16-canary.0
  */
-export type ExtremeDialogSlots = {
-  action: SlotCallable;
-  badge: SlotCallable;
-  close: SlotCallable;
-  content: SlotCallable;
-  description: SlotCallable;
-  footer: SlotCallable;
-  header: SlotCallable;
-  icon: SlotCallable;
-  overlay: SlotCallable;
-  separator: SlotCallable;
-  title: SlotCallable;
-  trigger: SlotCallable;
-};
+export type CompoundPaginationSlots = SlotRenderers<typeof compoundSlotsVariants>;
+
+/**
+ * @since 0.3.16-canary.0
+ */
+export type ExtremeDialogSlots = SlotRenderers<typeof extremeSlotsVariants>;
+
+/**
+ * A flat `tv` resolver as the benchmark loops call it.
+ */
+export type FlatRenderer = (props: Props) => string;
+
+/**
+ * A card-style slot resolver as the benchmark loops call it.
+ */
+export type CardRenderer = (props: Props) => ServicePreviewSlots;
+
+/**
+ * A pagination slot resolver as the benchmark loops call it.
+ */
+export type PaginationRenderer = (props: Props) => CompoundPaginationSlots;
+
+/**
+ * A dialog slot resolver as the benchmark loops call it.
+ */
+export type DialogRenderer = (props: Props) => ExtremeDialogSlots;
