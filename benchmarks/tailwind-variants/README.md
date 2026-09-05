@@ -65,7 +65,7 @@ but out of the medians and geomeans:
 
 - `construct` — define a component and render it once, so the cost is per definition rather than per render.
 - `uncached` — `@codefast/tailwind-variants` only, with its resolution cache switched off, so the plan walk itself stays
-  measured.
+  measured. Each with-merge row pairs with a without-merge one, so their delta isolates the merge step on a miss.
 
 The merge flag is always passed **explicitly** (`{ twMerge: true }` / `{ twMerge: false }`, from
 `src/harness/bench-options.ts`) rather than left to each package's default, so the pair differ in implementation and not
