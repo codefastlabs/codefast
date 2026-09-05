@@ -54,7 +54,7 @@ catalog:
   "@unpic/react": ^1.0.2
   "@vercel/analytics": ^2.0.1
   "@vitejs/plugin-react": ^6.1.1
-  "@vitest/coverage-v8": ^4.1.11
+  "@vitest/coverage-v8": ^5.0.0
   "@xyflow/react": ^12.11.6
   awilix: ^13.0.5
   babel-plugin-react-compiler: ^1.0.0
@@ -110,7 +110,7 @@ catalog:
   typescript: ^7.0.2
   vaul: ^1.1.2
   vite: ^8.2.2
-  vitest: ^4.1.11
+  vitest: ^5.0.0
   yaml: ^2.9.0
   zod: ^4.5.4
 

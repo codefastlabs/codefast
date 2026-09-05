@@ -21,6 +21,7 @@ node_modules
 
 # testing
 coverage
+.vitest
 
 # turbo
 .turbo

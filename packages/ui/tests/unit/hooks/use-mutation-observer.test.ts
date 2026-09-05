@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { useMutationObserver } from "#/hooks/use-mutation-observer";
 
 describe("useMutationObserver", () => {
-  test("should attach a MutationObserver and call the callback on mutations", () => {
+  test("should attach a MutationObserver and call the callback on mutations", async () => {
     const callback = vi.fn();
     const ref = { current: document.createElement("div") };
 
@@ -18,11 +18,10 @@ describe("useMutationObserver", () => {
 
     ref.current.append(newElement);
 
-    // MutationObserver callbacks are asynchronous
-    setTimeout(() => {
-      // Assert that the callback was called
+    // MutationObserver delivers records asynchronously; the test must own the wait
+    await vi.waitFor(() => {
       expect(callback).toHaveBeenCalledWith(expect.any(Array), expect.any(MutationObserver));
-    }, 0);
+    });
   });
 
   test("should clean up the MutationObserver on unmount", () => {
