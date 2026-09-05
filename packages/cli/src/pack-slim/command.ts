@@ -19,6 +19,8 @@ import { ensureWorkingTreeClean } from "#/pack-slim/working-tree";
 
 /**
  * Creates the `pack-slim` subcommand, which strips the source lane from published packages before publish.
+ *
+ * @since 0.8.1
  */
 export function createPackSlimCommand(): Command {
   const cmd = new Command("pack-slim")

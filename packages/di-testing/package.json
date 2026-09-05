@@ -1,6 +1,6 @@
 {
   "name": "@codefast/di-testing",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Solitary and sociable auto-mocking test beds for @codefast/di",
   "keywords": [
     "auto-mock",
@@ -147,7 +147,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@codefast/di": ">=0.8.0"
+    "@codefast/di": ">=0.8.1"
   },
   "engines": {
     "node": ">=24.0.0"

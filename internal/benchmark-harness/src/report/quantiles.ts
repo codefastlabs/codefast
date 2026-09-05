@@ -1,5 +1,7 @@
 /**
  * Copies the values into a new array sorted ascending, as {@link quantile} requires.
+ *
+ * @since 0.7.2
  */
 export function sortAscending(values: ReadonlyArray<number>): Array<number> {
   return [...values].toSorted((left, right) => left - right);

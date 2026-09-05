@@ -1,5 +1,28 @@
 # @codefast/ui
 
+## 0.9.1
+
+### Patch Changes
+
+- [#812](https://github.com/codefastlabs/codefast/pull/812) [`f051471`](https://github.com/codefastlabs/codefast/commit/f051471eeb33b59dcb73f977b679ba27384e3a17) Thanks [@thevuong](https://github.com/thevuong)! - Raise the published dependency floors: `zod` to 4.5.4 (`@codefast/cli`, `@codefast/theme`), `lucide-react` to 1.41.0 and
+  `react-hook-form` to 7.87.0 (`@codefast/ui`).
+
+- [#791](https://github.com/codefastlabs/codefast/pull/791) [`37a212b`](https://github.com/codefastlabs/codefast/commit/37a212b4d805588413159e11e872b98db82326bf) Thanks [@thevuong](https://github.com/thevuong)! - Point the README's license badge and "License" section at the package's own `LICENSE` file instead of the monorepo root.
+
+- [#796](https://github.com/codefastlabs/codefast/pull/796) [`ba04d27`](https://github.com/codefastlabs/codefast/commit/ba04d2703c59a1677f52e6a9fffd0ec202328218) Thanks [@thevuong](https://github.com/thevuong)! - Rewrite the README around one structure — what the package is, installation and requirements, a complete quick start,
+  the concepts in learning order, then the documents and the license — with every API claim checked against the current
+  code and no figures that go stale.
+
+- [#784](https://github.com/codefastlabs/codefast/pull/784) [`ad2f93a`](https://github.com/codefastlabs/codefast/commit/ad2f93a688e99c3ed8be6ceeae9d6cdd6be861bc) Thanks [@thevuong](https://github.com/thevuong)! - Ship the MIT `LICENSE` file in the published package. `files` already listed it, but the file was missing from the
+  package directory, so the tarball had none.
+
+- [#809](https://github.com/codefastlabs/codefast/pull/809) [`57209a5`](https://github.com/codefastlabs/codefast/commit/57209a52aa8a9132651a9567ad7608e9c13997e4) Thanks [@thevuong](https://github.com/thevuong)! - Enable `exactOptionalPropertyTypes` for the package. Optional context-value and option types that a provider or hook may
+  populate with an explicit `undefined` are now typed `?: T | undefined`, and the external Radix/Sonner call sites that
+  forwarded a possibly-undefined prop now omit it when undefined instead of passing it through. Types only — no public API
+  or runtime change.
+- Updated dependencies [[`37a212b`](https://github.com/codefastlabs/codefast/commit/37a212b4d805588413159e11e872b98db82326bf), [`83cceeb`](https://github.com/codefastlabs/codefast/commit/83cceeb2168e063441125643a83e9555fb2d2048), [`ba04d27`](https://github.com/codefastlabs/codefast/commit/ba04d2703c59a1677f52e6a9fffd0ec202328218), [`ad2f93a`](https://github.com/codefastlabs/codefast/commit/ad2f93a688e99c3ed8be6ceeae9d6cdd6be861bc), [`6cd6a0e`](https://github.com/codefastlabs/codefast/commit/6cd6a0e88f8c004c2e4e646c104d46169f3e86ed)]:
+  - @codefast/tailwind-variants@0.7.1
+
 ## 0.9.0
 
 ### Minor Changes

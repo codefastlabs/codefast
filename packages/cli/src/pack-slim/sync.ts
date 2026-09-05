@@ -17,6 +17,8 @@ import type { PackSlimPackageStats, PackSlimProgressListener, PackSlimRunStats }
 
 /**
  * A pack-slim run request paired with an optional progress listener.
+ *
+ * @since 0.8.1
  */
 export type PackSlimRunInput = PackSlimRunRequest & {
   readonly listener?: PackSlimProgressListener | undefined;
@@ -28,6 +30,8 @@ export type PackSlimRunInput = PackSlimRunRequest & {
  * @remarks Meant to run on an ephemeral CI checkout right before `changeset publish`: it rewrites `package.json`, drops
  * `dist` source maps, and clears their now-dangling `sourceMappingURL` directives, so the tarball ships only `dist`
  * runtime and types. Private packages are skipped because `changeset publish` never publishes them.
+ *
+ * @since 0.8.1
  */
 export async function runPackSlim(
   fs: FilesystemPort,

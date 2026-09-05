@@ -3,6 +3,8 @@ import type { PackSlimPackageStats, PackSlimProgressListener, PackSlimRunStats }
 
 /**
  * A progress listener that renders pack-slim run events as human-readable CLI lines.
+ *
+ * @since 0.8.1
  */
 export class PackSlimProgressPresenter implements PackSlimProgressListener {
   private dryRun = false;
