@@ -30,6 +30,8 @@ interface VariantPlanEntry {
   readonly defaultClasses: PlanClasses | undefined;
   readonly group: Record<string, PlanClasses>;
   readonly name: string;
+  /** Own keys the group declares, so the selection encoder sizes its axis without walking the group again. */
+  readonly valueCount: number;
 }
 
 /**
@@ -88,11 +90,31 @@ const collectConditionNames = (
 };
 
 /**
+ * Whether a flat-lane group can be read in place: a plain object whose every value is already a string.
+ *
+ * @remarks The flat lane accepts only a string it reads, so an inherited member of `Object.prototype`
+ * contributes nothing there; any other prototype could answer a string the group never declared.
+ */
+const isReadableInPlace = (variantGroup: Record<string, ClassValue>): boolean => {
+  if (Object.getPrototypeOf(variantGroup) !== Object.prototype) {
+    return false;
+  }
+
+  for (const key in variantGroup) {
+    if (typeof variantGroup[key] !== "string") {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+/**
  * Flatten a variant group's classes onto an object with no prototype.
  *
  * @remarks The group is indexed by whatever value a caller passes, and on a plain object
- * `group["toString"]` answers with a function rather than `undefined` — which resolution then
- * concatenates, and `"__proto__"` makes it read slot positions off `Object.prototype`.
+ * `group["toString"]` answers with a function rather than `undefined` — which the slot lane would
+ * read slot positions off, `"__proto__"` handing it `Object.prototype` itself.
  */
 const normalizeVariantGroup = (
   variantGroup: Record<string, ClassValue>,
@@ -133,7 +155,11 @@ const compileVariantEntries = (
       continue;
     }
 
-    const group = normalizeVariantGroup(variantGroup, slotIndexByName);
+    // The flat lane guards each read with a type check, so a string-only group needs no copy.
+    const group =
+      slotIndexByName === null && isReadableInPlace(variantGroup)
+        ? (variantGroup as Record<string, string>)
+        : normalizeVariantGroup(variantGroup, slotIndexByName);
     const configuredDefault = defaultVariantProps[name];
     // A group keyed by "true"/"false" reads as false unless the configuration says otherwise.
     const defaultKey =
@@ -144,9 +170,13 @@ const compileVariantEntries = (
         : toVariantKey(configuredDefault);
 
     entries.push({
-      defaultClasses: defaultKey === undefined ? undefined : group[defaultKey],
+      defaultClasses:
+        defaultKey === undefined || !Object.hasOwn(group, defaultKey as PropertyKey)
+          ? undefined
+          : group[defaultKey as string],
       group,
       name,
+      valueCount: Object.keys(variantGroup).length,
     });
   }
 
