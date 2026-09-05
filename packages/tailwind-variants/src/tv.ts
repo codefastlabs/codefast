@@ -1,14 +1,16 @@
 /**
- * The package's public entry point: `tv` compiles a configuration into a plan, and the resolver it
- * returns runs that plan against one set of props.
+ * The package's public entry point: `tv` wraps a configuration in a resolver that reads it directly
+ * once, compiles it into a plan on its second call, and runs that plan on every call after.
  */
 
 import { createTailwindMergeFn, cx } from "#/class-names";
-import { hasExtendConfig, mergeVariantConfigs } from "#/compile/configuration";
+import { hasExtendConfig, hasSlotsConfig, mergeVariantConfigs } from "#/compile/configuration";
+import type { VariantPlan } from "#/compile/plan";
 import { compileVariantPlan } from "#/compile/plan";
 import { compileSelectionEncoder, UNENCODABLE } from "#/compile/selection";
 import type { ResolutionCache } from "#/resolve/cache";
 import { createResolutionCache } from "#/resolve/cache";
+import { createColdSlotResolvers, resolveColdVariantClasses } from "#/resolve/cold";
 import { createSlotResolvers } from "#/resolve/slots";
 import { resolveVariantClasses } from "#/resolve/variants";
 import type {
@@ -34,11 +36,39 @@ const EMPTY_PROPS: Record<string, unknown> = {};
 /** Stored for a selection that resolves to no classes, so a miss stays distinguishable from it. */
 const NO_CLASSES = null;
 
+/** Shared answer for a configuration without variants, so defining one allocates no array. */
+const NO_VARIANT_KEYS: ReadonlyArray<string> = [];
+
 /** One resolver's selection encoder paired with the store it fills. */
 interface ResolverMemo<Value> {
   readonly cache: ResolutionCache<Value>;
   readonly keyOf: (variantProps: Record<string, unknown>) => number;
 }
+
+/** Everything a resolver settles on its second call: the plan, and the store for the lane it runs. */
+interface CompiledResolver {
+  readonly flatMemo: ResolverMemo<string | typeof NO_CLASSES> | null;
+  readonly plan: VariantPlan;
+  readonly slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null;
+}
+
+const compileResolver = (
+  configuration: VariantConfig<VariantSchema> | SlotVariantConfig<VariantSchema, SlotSchema>,
+  shouldMerge: boolean,
+  tailwindMerge: (classes: string) => string,
+  shouldCacheResolutions: boolean,
+): CompiledResolver => {
+  const plan = compileVariantPlan(configuration, shouldMerge, tailwindMerge);
+  const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan, plan.slots !== null) : null;
+
+  if (encoder === null) {
+    return { flatMemo: null, plan, slotMemo: null };
+  }
+
+  return plan.slots === null
+    ? { flatMemo: { cache: createResolutionCache(), keyOf: encoder.keyOf }, plan, slotMemo: null }
+    : { flatMemo: null, plan, slotMemo: { cache: createResolutionCache(), keyOf: encoder.keyOf } };
+};
 
 /**
  * The caller's own classes as a key fragment, or `null` for a clsx-shaped value no key can carry.
@@ -101,7 +131,10 @@ export function tv<
 ): VariantResolver<MergedVariantSchema<BaseVariants, ExtensionVariants>, MergedSlotSchema<BaseSlots, ExtensionSlots>>;
 
 /**
- * Compile a configuration into a plan, and return the resolver that runs it.
+ * Wraps a configuration in a resolver that reads it directly once, then compiles it into a plan.
+ *
+ * @remarks The first call resolves straight from the configuration, so a component defined and
+ * rendered once never pays for a plan; the second call compiles, and every call after runs the plan.
  *
  * @since 0.3.16-canary.0
  */
@@ -131,18 +164,11 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
     throw new Error("compoundVariants must be an array");
   }
 
-  const plan = compileVariantPlan(mergedConfiguration, shouldMergeClasses, tailwindMergeFn);
-  const slots = plan.slots;
+  const slotConfiguration = hasSlotsConfig(mergedConfiguration) ? mergedConfiguration : null;
 
-  const compileMemo = <Value>(): ResolverMemo<Value> | null => {
-    const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan, slots !== null) : null;
-
-    return encoder === null ? null : { cache: createResolutionCache<Value>(), keyOf: encoder.keyOf };
-  };
-
-  // Compiled on first resolution, so a component defined and never rendered pays nothing for it.
-  let flatMemo: ResolverMemo<string | typeof NO_CLASSES> | null | undefined;
-  let slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null | undefined;
+  // Compiled on the second call, so a component defined and rendered once pays for neither.
+  let compiled: CompiledResolver | null = null;
+  let isColdCall = true;
 
   const variantResolverFunction = (
     variantProps?: VariantSelection<Variants>,
@@ -151,12 +177,28 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
 
     type Result = Slots extends Record<string, never> ? string | undefined : VariantResolverResult<Variants, Slots>;
 
-    if (slots !== null) {
-      if (slotMemo === undefined) {
-        slotMemo = compileMemo<Record<string, SlotClassResolver<VariantSchema>>>();
+    if (compiled === null) {
+      if (isColdCall) {
+        isColdCall = false;
+
+        return (slotConfiguration === null
+          ? resolveColdVariantClasses(mergedConfiguration, shouldMergeClasses, tailwindMergeFn, props)
+          : createColdSlotResolvers(
+              slotConfiguration,
+              shouldMergeClasses,
+              tailwindMergeFn,
+              props,
+            )) as unknown as Result;
       }
 
-      const memo = slotMemo;
+      compiled = compileResolver(mergedConfiguration, shouldMergeClasses, tailwindMergeFn, shouldCacheResolutions);
+    }
+
+    const plan = compiled.plan;
+    const slots = plan.slots;
+
+    if (slots !== null) {
+      const memo = compiled.slotMemo;
 
       if (memo !== null) {
         const selectionKey = memo.keyOf(props);
@@ -181,12 +223,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
 
     const className = props.className as ClassValue;
     const customClasses = className === undefined || className === null ? (props.class as ClassValue) : className;
-
-    if (flatMemo === undefined) {
-      flatMemo = compileMemo<string | typeof NO_CLASSES>();
-    }
-
-    const memo = flatMemo;
+    const memo = compiled.flatMemo;
     const customClassKey = memo === null ? null : toCustomClassKey(customClasses);
 
     if (memo !== null && customClassKey !== null) {
@@ -212,13 +249,12 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
   };
 
   const configuredVariantResolver = variantResolverFunction as VariantResolver<Variants, Slots>;
+  const metadata = configuredVariantResolver as { config: unknown; variantKeys: unknown };
 
-  Object.defineProperty(configuredVariantResolver, "config", {
-    configurable: false,
-    enumerable: false,
-    value: mergedConfiguration,
-    writable: false,
-  });
+  // Plain stores: defining a property with attributes costs more than the rest of this call.
+  metadata.config = mergedConfiguration;
+  metadata.variantKeys =
+    mergedConfiguration.variants === undefined ? NO_VARIANT_KEYS : Object.keys(mergedConfiguration.variants);
 
   return configuredVariantResolver;
 }

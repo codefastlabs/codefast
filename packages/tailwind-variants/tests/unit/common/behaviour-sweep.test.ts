@@ -18,6 +18,20 @@ describe("behaviour sweep", () => {
     expect(divergences).toEqual([]);
   });
 
+  test("a resolver's first answer is exactly what its compiled plan answers", () => {
+    const compiled = collectSweepOutcomes({});
+    const firstCalls = collectSweepOutcomes({}, { freshResolverPerCall: true });
+
+    expect(firstCalls).toHaveLength(compiled.length);
+
+    const divergences = compiled
+      .map((line, index) => ({ line, other: firstCalls[index] }))
+      .filter((pair) => pair.line !== pair.other)
+      .slice(0, 10);
+
+    expect(divergences).toEqual([]);
+  });
+
   test("the sweep is large enough to be worth running", () => {
     expect(collectSweepOutcomes({}).length).toBeGreaterThan(50_000);
   });

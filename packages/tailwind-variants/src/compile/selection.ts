@@ -117,7 +117,7 @@ export const compileSelectionEncoder = (
     }
 
     // Ids are handed out as values turn up, so a group nobody selects from costs nothing to compile.
-    if (addAxis(entry.name, AXIS_BY_GROUP_KEY, Object.keys(entry.group).length + 1, entry.group) === null) {
+    if (addAxis(entry.name, AXIS_BY_GROUP_KEY, entry.valueCount + 1, entry.group) === null) {
       return null;
     }
   }
@@ -156,7 +156,7 @@ export const compileSelectionEncoder = (
 
             if (found !== undefined) {
               id = found;
-            } else if (axis.group[variantKey] === undefined) {
+            } else if (!Object.hasOwn(axis.group, variantKey)) {
               // Not remembered: the ids table is only ever as large as the group, where remembering
               // every value a caller passes would grow it without bound for the resolver's lifetime.
               id = axis.unknownId;

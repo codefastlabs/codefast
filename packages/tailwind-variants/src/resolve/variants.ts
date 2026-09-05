@@ -11,8 +11,8 @@ import type { ClassValue } from "#/types";
  * Resolves classes for a configuration without slots, appending `customClasses` last so the
  * caller's `className`/`class` outranks the configuration.
  *
- * @remarks Such a configuration compiles every class value to a string, so the plan's per-slot form
- * cannot reach here — which is what the casts below rely on.
+ * @remarks Such a configuration compiles every class value to a string, and a group may be the
+ * caller's own object, so only a string read counts — an inherited member contributes nothing.
  *
  * @since 0.6.0
  */
@@ -25,16 +25,10 @@ export const resolveVariantClasses = (
 
   for (const entry of plan.entries) {
     const selected = variantProps[entry.name];
-    let classes: string | undefined;
+    // `toVariantKey` only answers `undefined` for `undefined`, which the default branch takes.
+    const classes = selected === undefined ? entry.defaultClasses : entry.group[toVariantKey(selected) as string];
 
-    if (selected === undefined) {
-      classes = entry.defaultClasses as string | undefined;
-    } else {
-      // `toVariantKey` only answers `undefined` for `undefined`, which the branch above took.
-      classes = entry.group[toVariantKey(selected) as string] as string | undefined;
-    }
-
-    if (classes) {
+    if (typeof classes === "string" && classes !== "") {
       text = text === "" ? classes : text + " " + classes;
     }
   }
