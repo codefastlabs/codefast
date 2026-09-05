@@ -252,14 +252,25 @@ describe("decorator metadata across class inheritance", () => {
   });
 });
 
+// A cold Node + tsx start on a saturated machine can outlive the default test timeout.
+const SUBPROCESS_TEST_TIMEOUT_MS = 60_000;
+const SUBPROCESS_KILL_AFTER_MS = 45_000;
+
 describe("Accessor injection e2e (tsx subprocess)", () => {
-  it("constructor → accessor inject → @postConstruct with tsx emit", () => {
+  it("constructor → accessor inject → @postConstruct with tsx emit", { timeout: SUBPROCESS_TEST_TIMEOUT_MS }, () => {
     const scriptPath = join(integrationDir, "support", "accessor-e2e.script.ts");
     const spawnResult = spawnSync("node", ["--import", "tsx/esm", scriptPath], {
       cwd: packageRoot,
       encoding: "utf-8",
+      timeout: SUBPROCESS_KILL_AFTER_MS,
     });
-    expect(spawnResult.status).toBe(0);
+    // stderr rides along only on failure, so the diff shows why the child died.
+    const outcome = {
+      error: spawnResult.error?.message,
+      status: spawnResult.status,
+      stderr: spawnResult.status === 0 ? "" : spawnResult.stderr,
+    };
+    expect(outcome).toEqual({ error: undefined, status: 0, stderr: "" });
     expect(spawnResult.stdout).toContain("ACCESSOR_E2E_OK");
   });
 });
