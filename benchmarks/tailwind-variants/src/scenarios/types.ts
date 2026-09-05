@@ -17,8 +17,7 @@ type ScenarioGroup =
   | "repeat-simple"
   | "repeat-slots"
   | "define-only"
-  | "first-render"
-  | "uncached";
+  | "first-render";
 
 /**
  * @since 0.3.16-canary.0
