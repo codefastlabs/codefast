@@ -22,10 +22,10 @@ const LoggerToken = token<Logger>("Logger");
 @injectable([DbToken, optional(CacheToken), injectAll(PluginToken), inject(LoggerToken, { name: "audit" })])
 class UserRepository {
   constructor(
-    private readonly db: Database,
-    private readonly cache: Cache | undefined,
-    private readonly plugins: Array<Plugin>,
-    private readonly audit: Logger,
+    readonly db: Database,
+    readonly cache: Cache | undefined,
+    readonly plugins: Array<Plugin>,
+    readonly audit: Logger,
   ) {}
 
   @postConstruct()
@@ -36,12 +36,6 @@ class UserRepository {
   @preDestroy()
   async shutdown(): Promise<void> {
     await this.db.flush();
-  }
-
-  find(id: string): string {
-    this.audit.info(`find ${id} across ${this.plugins.length} plugins`);
-
-    return this.cache?.get(id) ?? id;
   }
 }
 
