@@ -58,4 +58,22 @@ describe("apps/ui tracking catalog", () => {
       });
     }).not.toThrow();
   });
+
+  it("accepts run_demo with the demo, the action and what triggered it", () => {
+    expect(() => {
+      assertValidEventProperties(catalog.run_demo.schema, "run_demo", {
+        demo: "wiring",
+        action: "resolve",
+        trigger: "autoplay",
+      });
+    }).not.toThrow();
+
+    expect(() => {
+      assertValidEventProperties(catalog.run_demo.schema, "run_demo", {
+        demo: "test-bed",
+        action: "run",
+        trigger: "click",
+      });
+    }).not.toThrow();
+  });
 });

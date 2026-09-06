@@ -1,10 +1,18 @@
 import { Button } from "@codefast/ui/button";
+import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
+import { Suspense, lazy } from "react";
 
+import { LazyVisible } from "#/components/shared/lazy-visible";
+import { PreviewSkeleton } from "#/components/shared/preview-skeleton";
 import { SectionHeader } from "#/components/shared/section-header";
 import { SnippetCard } from "#/features/home/components/snippet-card";
-import { TestBedDemo } from "#/features/home/components/test-bed-demo";
+
+// Loaded when the section scrolls near, so @codefast/di-testing stays out of the home page's first chunk.
+const TestBedDemo = lazy(() =>
+  import("#/features/home/components/test-bed-demo").then((module) => ({ default: module.TestBedDemo })),
+);
 
 interface DiTestingSectionProps extends Omit<ComponentProps<"section">, "children"> {
   /** The `@codefast/di-testing` unit test as dual-theme highlighted HTML, from the route loader. */
@@ -12,11 +20,15 @@ interface DiTestingSectionProps extends Omit<ComponentProps<"section">, "childre
 }
 
 /** The flagship's second half: a unit test over a real container, with every collaborator mocked for you. */
-export function DiTestingSection({ testBedHtml, ...props }: DiTestingSectionProps) {
+export function DiTestingSection({ testBedHtml, className, ...props }: DiTestingSectionProps) {
   return (
-    <section aria-labelledby="home-testing-title" className="border-t border-ui-border/60 py-24 sm:py-32" {...props}>
+    <section
+      aria-labelledby="home-testing-title"
+      className={cn("border-t border-ui-border/60 py-24 sm:py-32", className)}
+      {...props}
+    >
       <div className="container mx-auto px-4">
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] lg:gap-16">
+        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] lg:gap-20">
           <div className="reveal-up">
             <SectionHeader
               eyebrow="Testing"
@@ -29,7 +41,7 @@ export function DiTestingSection({ testBedHtml, ...props }: DiTestingSectionProp
                 </>
               }
               description="@codefast/di-testing reads a class's declared dependencies and builds a mock for each — no per-collaborator bind. The unit is constructed through a real container, so accessor injection and lifecycle hooks run exactly as in production. Use the built-in spy, as here, or pass vi.fn or jest.fn and assert with their matchers."
-              className="mb-8"
+              className="mb-10"
             />
             <Button asChild variant="outline" size="lg">
               <Link to="/docs/$pkg" params={{ pkg: "di-testing" }}>
@@ -37,9 +49,13 @@ export function DiTestingSection({ testBedHtml, ...props }: DiTestingSectionProp
               </Link>
             </Button>
           </div>
-          <div className="reveal-up flex flex-col gap-4">
+          <div className="reveal-up flex flex-col gap-6">
             <SnippetCard label="Unit test" caption="@codefast/di-testing" highlightedCode={testBedHtml} />
-            <TestBedDemo />
+            <LazyVisible minHeight={148} fallback={<PreviewSkeleton minHeight={148} className="w-full rounded-2xl" />}>
+              <Suspense fallback={<PreviewSkeleton minHeight={148} className="w-full rounded-2xl" />}>
+                <TestBedDemo />
+              </Suspense>
+            </LazyVisible>
           </div>
         </div>
       </div>

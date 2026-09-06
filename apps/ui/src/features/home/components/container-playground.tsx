@@ -11,6 +11,7 @@ import { ResolutionLog } from "#/features/home/components/resolution-log";
 import type { OrderService } from "#/features/home/demos/shop";
 import { OrderServiceToken, createShop } from "#/features/home/demos/shop";
 import { constructionOrder } from "#/features/home/demos/wiring-order";
+import { track } from "#/features/tracking/lib/tracking";
 import { useInView } from "#/hooks/use-in-view";
 
 const STEP_MS = 180;
@@ -145,13 +146,14 @@ export function ContainerPlayground() {
     }
 
     autoplayed.current = true;
+    track("run_demo", { demo: "wiring", action: "resolve", trigger: "autoplay" });
     timers.current.push(setTimeout(openScope, 500), setTimeout(resolveOrder, 1100));
   }, [inView, openScope, resolveOrder]);
 
   return (
-    <div ref={root} className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-      <Tabs defaultValue="graph" className="rounded-2xl border border-ui-border/60 bg-ui-card p-5">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <div ref={root} className="grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <Tabs defaultValue="graph" className="rounded-2xl border border-ui-border/60 bg-ui-card p-6">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <p className="font-mono text-xs text-ui-muted">container.generateDependencyGraph()</p>
           <TabsList>
             <TabsTrigger value="graph">Graph</TabsTrigger>
@@ -172,8 +174,8 @@ export function ContainerPlayground() {
             aria-hidden
             className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-linear-to-l from-ui-card to-transparent sm:hidden"
           />
-          <p className="mt-2 text-xs text-ui-muted sm:hidden">Scroll sideways for the whole graph.</p>
-          <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-ui-muted" aria-label="Scope legend">
+          <p className="mt-3 text-xs text-ui-muted sm:hidden">Scroll sideways for the whole graph.</p>
+          <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ui-muted" aria-label="Scope legend">
             {SCOPE_LEGEND.map(({ scope: name, note, dot }) => (
               <li key={name} className="flex items-center gap-2">
                 <span aria-hidden className={cn("size-2 rounded-full", dot)} />
@@ -195,12 +197,13 @@ export function ContainerPlayground() {
         </TabsContent>
       </Tabs>
 
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap gap-3">
           <Button
             variant="outline"
             onClick={() => {
               interacted.current = true;
+              track("run_demo", { demo: "wiring", action: "open-scope", trigger: "click" });
               openScope();
             }}
           >
@@ -209,6 +212,7 @@ export function ContainerPlayground() {
           <Button
             onClick={() => {
               interacted.current = true;
+              track("run_demo", { demo: "wiring", action: "resolve", trigger: "click" });
               resolveOrder();
             }}
             disabled={active !== null}
@@ -219,6 +223,7 @@ export function ContainerPlayground() {
             variant="ghost"
             onClick={() => {
               interacted.current = true;
+              track("run_demo", { demo: "wiring", action: "reset", trigger: "click" });
               reset();
             }}
           >
@@ -226,7 +231,7 @@ export function ContainerPlayground() {
           </Button>
         </div>
         <ResolutionLog entries={entries} className="flex-1" />
-        <p className="text-xs leading-relaxed text-ui-muted">
+        <p className="pt-1 text-xs leading-relaxed text-ui-muted">
           Resolving from the root container throws: RequestContext is scoped, so the library refuses until a request
           scope is open. Inside one, the three singletons come back reused, the transient gateway and the root are new
           every time, and the context is new per scope.

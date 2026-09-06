@@ -1,18 +1,23 @@
 import { Button } from "@codefast/ui/button";
+import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useState } from "react";
 
 import { createCaptiveContainer, validationMessage } from "#/features/home/demos/captive";
+import { track } from "#/features/tracking/lib/tracking";
 
 type ScopesCardProps = Omit<ComponentProps<"article">, "children">;
 
 /** Scopes with validation: a singleton over a scoped binding, caught by validate() before the first resolve. */
-export function ScopesCard(props: ScopesCardProps) {
+export function ScopesCard({ className, ...props }: ScopesCardProps) {
   const [fixed, setFixed] = useState(false);
   const message = validationMessage(createCaptiveContainer(fixed));
 
   return (
-    <article className="flex flex-col gap-4 rounded-2xl border border-ui-border/60 bg-ui-card p-6" {...props}>
+    <article
+      className={cn("flex flex-col gap-5 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:p-8", className)}
+      {...props}
+    >
       <div className="flex items-baseline gap-3">
         <span className="font-mono text-sm text-ui-brand tabular-nums">03</span>
         <h3 className="text-base font-semibold text-ui-fg">Scopes with validation</h3>
@@ -34,7 +39,14 @@ export function ScopesCard(props: ScopesCardProps) {
         {message ?? "validate() passed: no captive dependency, no unreachable constraint."}
       </pre>
       <div className="mt-auto">
-        <Button variant="outline" size="sm" onClick={() => setFixed((value) => !value)}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            track("run_demo", { demo: "scopes", action: "toggle-scope", trigger: "click" });
+            setFixed((value) => !value);
+          }}
+        >
           {fixed ? "Make the cache a singleton again" : "Make the cache scoped too"}
         </Button>
       </div>

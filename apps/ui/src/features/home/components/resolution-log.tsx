@@ -30,7 +30,7 @@ export function ResolutionLog({ entries, className, ...props }: ResolutionLogPro
       ref={scroller}
       aria-live="polite"
       className={cn(
-        "h-64 overflow-y-auto rounded-xl border border-ui-border/60 bg-neutral-950 p-4 font-mono text-xs leading-relaxed text-neutral-100",
+        "h-72 overflow-y-auto rounded-xl border border-ui-border/60 bg-neutral-950 p-5 font-mono text-xs leading-relaxed text-neutral-100",
         className,
       )}
       {...props}
