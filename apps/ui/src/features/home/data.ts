@@ -1,6 +1,14 @@
 import { COMPONENTS } from "#/registry/_core/components";
 
-export const FEATURES = [
+/** One numbered point in a features section. */
+export interface Feature {
+  readonly number: string;
+  readonly title: string;
+  readonly description: string;
+}
+
+/** Why `@codefast/ui`: the points the `/ui` landing makes. */
+export const FEATURES: ReadonlyArray<Feature> = [
   {
     number: "01",
     title: "Accessible by construction",
