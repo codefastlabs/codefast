@@ -44,11 +44,15 @@ export function DiPillarsSection({
           description="Every dependency is declared where it is consumed and checked where it is declared. The container does the construction; the compiler does the arguing."
           className="reveal-up mb-16"
         />
+        {/* The tall decorators sample takes the right column for two rows, so the two toggling cards stack beside it. */}
         <div className="grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-2">
           <TypedTokensCard rightListHtml={rightListHtml} wrongListHtml={wrongListHtml} className="reveal-up" />
-          <DecoratorsCard decoratorsHtml={decoratorsHtml} className="reveal-up" />
+          <DecoratorsCard
+            decoratorsHtml={decoratorsHtml}
+            className="reveal-up md:col-start-2 md:row-span-2 md:row-start-1"
+          />
           <ScopesCard className="reveal-up" />
-          <IntrospectionCard className="reveal-up" />
+          <IntrospectionCard className="reveal-up md:col-span-2" />
         </div>
       </div>
     </section>
