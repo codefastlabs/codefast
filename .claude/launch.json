@@ -4,7 +4,7 @@
     {
       "name": "preview",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@apps/ui", "exec", "vite", "preview"],
+      "runtimeArgs": ["--filter", "@apps/ui", "run", "preview"],
       "port": 3000,
       "autoPort": true
     },

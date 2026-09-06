@@ -214,7 +214,8 @@ export default defineConfig(({ command }) => {
         },
       }),
       nitro({
-        preset: "vercel",
+        // Deploys target Vercel; `preview` builds with NITRO_PRESET=node-server so the same app runs from disk locally.
+        preset: process.env.NITRO_PRESET ?? "vercel",
         /**
          * Emits the hashed client assets under `/_vercel/immutable/`, a path Vercel shares across
          * deployments: a tab opened before a deploy keeps resolving its chunks after it. Nitro

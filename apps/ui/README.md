@@ -75,7 +75,7 @@ drops that condition and runs the packages' built `dist/`, matching what a real 
 ```bash
 pnpm --filter @apps/ui dev            # http://localhost:3000
 pnpm --filter @apps/ui build          # production build, against each package's dist/
-pnpm --filter @apps/ui preview        # serve the build output from disk
+pnpm --filter @apps/ui preview        # build with the node-server preset and serve it from disk
 pnpm --filter @apps/ui check-types    # tsc --noEmit
 pnpm --filter @apps/ui generate:brand # regenerate the raster brand assets and OG images
 ```
@@ -148,8 +148,10 @@ routing. The same block carries the permanent redirects for the `@codefast/ui` s
 | `/components/**` | `/ui/components/**` | 308    |
 | `/about`         | `/ui/about`         | 308    |
 
-`vite preview` serves the build output from disk and replays none of this routing. To check deployed headers locally,
-run `vercel link` once and then `vercel dev`.
+`preview` builds with `NITRO_PRESET=node-server` and runs that output, so the redirects and cache headers above are
+replayed by Nitro itself; the Vercel build (`.vercel/output`) is Build Output API and has no local runner. What the node
+build cannot show is Vercel-only behaviour such as the `/_vercel/immutable/` asset path — for that, run `vercel link`
+once and then `vercel dev`.
 
 ## License
 
