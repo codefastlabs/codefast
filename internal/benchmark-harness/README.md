@@ -92,16 +92,17 @@ parsers, the keys the parent strips before spawning a child, and an integration 
 user-facing key all derive from that map. Turbo runs in strict env mode, so a key missing from `passThroughEnv` is
 dropped for any run started at the repo root — which looks exactly like the key having no effect.
 
-| Key                    | Effect                                                                                         |
-| ---------------------- | ---------------------------------------------------------------------------------------------- |
-| `BENCH_MODE=fast`      | Smoke profile: shorter sampling windows, a single trial. Never a citable number                |
-| `BENCH_MODE=default`   | The default profile — the same as leaving `BENCH_MODE` unset                                   |
-| `BENCH_MODE=full`      | Extended profile: `--expose-gc` in every child, with collections forced into the measured loop |
-| `BENCH_TRIALS=<n>`     | Trials per scenario; the harness refuses anything below `MINIMUM_TRIAL_COUNT`                  |
-| `BENCH_ISOLATE=true`   | One subprocess per scenario, libraries interleaved                                             |
-| `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids; a library implementing none of them measures nothing   |
-| `BENCH_VERBOSE=true`   | Forward each child's stdout through the parent                                                 |
-| `BENCH_PORT=<n>`       | Preferred port for a suite's `bench:serve`                                                     |
+| Key                    | Effect                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| `BENCH_MODE=fast`      | Smoke profile: shorter sampling windows, a single trial. Never a citable number                   |
+| `BENCH_MODE=default`   | The default profile — the same as leaving `BENCH_MODE` unset                                      |
+| `BENCH_MODE=full`      | Extended profile: `--expose-gc` in every child, with collections forced into the measured loop    |
+| `BENCH_TRIALS=<n>`     | Trials per scenario; the harness refuses anything below `MINIMUM_TRIAL_COUNT`                     |
+| `BENCH_ISOLATE=true`   | One subprocess per scenario, libraries interleaved                                                |
+| `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids; a library implementing none of them measures nothing      |
+| `BENCH_VERBOSE=true`   | Forward each child's stdout through the parent                                                    |
+| `BENCH_PORT=<n>`       | Preferred port for a suite's `bench:serve`                                                        |
+| `PORT=<n>`             | Read by `bench:serve` when `BENCH_PORT` is unset: the port a launcher hands the process it starts |
 
 On/off keys accept `1`, `true`, `yes` or `on` in any case. Numeric keys take digits only and are range-checked, so
 `BENCH_TRIALS=3abc` and `BENCH_PORT=0` are errors rather than a silently different number. An unknown `BENCH_*` key is

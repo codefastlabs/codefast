@@ -17,15 +17,15 @@
     },
     {
       "name": "di-bench-viewer",
-      "runtimeExecutable": "env",
-      "runtimeArgs": ["BENCH_PORT=4321", "pnpm", "run", "di:bench:serve"],
-      "port": 4321
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "di:bench:serve"],
+      "autoPort": true
     },
     {
       "name": "tv-bench-viewer",
-      "runtimeExecutable": "env",
-      "runtimeArgs": ["BENCH_PORT=4322", "pnpm", "run", "tv:bench:serve"],
-      "port": 4322
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "tv:bench:serve"],
+      "autoPort": true
     },
     {
       "name": "tanstack-start",

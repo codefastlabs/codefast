@@ -37,6 +37,7 @@ it measures the working tree rather than a stale `dist/`.
 | `BENCH_TRIALS=<n>`                    | Trials per scenario; the harness refuses anything below its minimum                    |
 | `BENCH_ONLY=<id>,<id>`                | Restrict the run to these scenario ids                                                 |
 | `BENCH_PORT=<n>`                      | Preferred port for `bench:serve`                                                       |
+| `PORT=<n>`                            | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process   |
 
 Every run writes a timestamped directory under `bench-results/` (git-ignored) holding `report.md`, `report.json` and
 `observations.jsonl`, and mirrors the newest whole-suite run to `latest.md` / `latest.json` / `latest.jsonl`. A run

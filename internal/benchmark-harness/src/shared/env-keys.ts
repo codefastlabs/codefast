@@ -23,6 +23,10 @@ export const BENCH_VERBOSE_ENV_KEY = "BENCH_VERBOSE";
  */
 export const BENCH_PORT_ENV_KEY = "BENCH_PORT";
 /**
+ * Generic port a launcher hands the process it starts; `bench:serve` reads it when `BENCH_PORT` is unset.
+ */
+export const PORT_ENV_KEY = "PORT";
+/**
  * Overrides the per-scenario trial count; unset/empty uses the mode default.
  *
  * @since 0.5.0-canary.7
@@ -107,7 +111,7 @@ export type BenchEnvSpec =
   | { readonly audience: "retired"; readonly replacement: string };
 
 /**
- * Every key the harness owns in the `BENCH_*` namespace.
+ * Every environment key the harness reads: the `BENCH_*` namespace plus the generic `PORT`.
  *
  * @remarks The single source for value parsing, which keys the parent strips before spawning, which
  * keys Turbo must pass through, and which spellings are rejected outright.
@@ -124,6 +128,7 @@ export const BENCH_ENV_SPECS: Readonly<Record<string, BenchEnvSpec>> = {
   BENCH_PORT: { audience: "user", kind: "integer", max: MAXIMUM_PORT, min: 1, turboTasks: ["bench:serve"] },
   BENCH_TRIALS: { audience: "user", kind: "integer", min: MINIMUM_TRIAL_COUNT, turboTasks: MEASURING_TURBO_TASKS },
   BENCH_VERBOSE: { audience: "user", kind: "flag", turboTasks: MEASURING_TURBO_TASKS },
+  PORT: { audience: "user", kind: "integer", max: MAXIMUM_PORT, min: 1, turboTasks: ["bench:serve"] },
 };
 
 const BENCH_ENV_SPEC_ENTRIES: ReadonlyArray<readonly [string, BenchEnvSpec]> = Object.entries(BENCH_ENV_SPECS);
@@ -223,6 +228,16 @@ export function parseEnvInteger(key: string, bounds?: IntegerEnvBounds): number 
     throw new Error(`${key}="${rawValue}" is out of range. Use a whole number ${range}.`);
   }
   return parsedValue;
+}
+
+/**
+ * Resolves the port a suite's `bench:serve` tries first.
+ *
+ * @remarks `BENCH_PORT` wins, then the generic `PORT` a launcher hands the process it starts, then the
+ * suite's default — so a launcher that picks a free port finds the viewer on that port.
+ */
+export function resolvePreferredPortFromEnvironment(defaultPort: number): number {
+  return parseEnvInteger(BENCH_PORT_ENV_KEY) ?? parseEnvInteger(PORT_ENV_KEY) ?? defaultPort;
 }
 
 /**

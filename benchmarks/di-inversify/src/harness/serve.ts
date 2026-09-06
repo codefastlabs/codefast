@@ -4,9 +4,8 @@ import { fileURLToPath } from "node:url";
 
 import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
-  BENCH_PORT_ENV_KEY,
   BENCH_RESULTS_DIR_NAME,
-  parseEnvInteger,
+  resolvePreferredPortFromEnvironment,
 } from "@codefast/benchmark-harness/shared/env-keys";
 import { startBenchServer } from "@codefast/benchmark-viewer/server";
 
@@ -47,7 +46,7 @@ function collectScenarioFacets(): { labels: Array<string>; byScenarioId: Record<
 
 await startBenchServer({
   benchResultsDir: join(dirname(fileURLToPath(import.meta.url)), "..", "..", BENCH_RESULTS_DIR_NAME),
-  preferredPort: parseEnvInteger(BENCH_PORT_ENV_KEY) ?? 3001,
+  preferredPort: resolvePreferredPortFromEnvironment(3001),
   title: SERVE_TITLE,
   libraries: [
     {
