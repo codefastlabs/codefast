@@ -1,4 +1,5 @@
 import { Button } from "@codefast/ui/button";
+import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 import { Suspense, lazy } from "react";
@@ -19,9 +20,13 @@ interface DiTestingSectionProps extends Omit<ComponentProps<"section">, "childre
 }
 
 /** The flagship's second half: a unit test over a real container, with every collaborator mocked for you. */
-export function DiTestingSection({ testBedHtml, ...props }: DiTestingSectionProps) {
+export function DiTestingSection({ testBedHtml, className, ...props }: DiTestingSectionProps) {
   return (
-    <section aria-labelledby="home-testing-title" className="border-t border-ui-border/60 py-24 sm:py-32" {...props}>
+    <section
+      aria-labelledby="home-testing-title"
+      className={cn("border-t border-ui-border/60 py-24 sm:py-32", className)}
+      {...props}
+    >
       <div className="container mx-auto px-4">
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] lg:gap-20">
           <div className="reveal-up">

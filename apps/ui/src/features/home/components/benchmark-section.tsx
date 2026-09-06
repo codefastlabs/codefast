@@ -1,4 +1,5 @@
 import { Button } from "@codefast/ui/button";
+import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
 import { SectionHeader } from "#/components/shared/section-header";
@@ -11,11 +12,11 @@ const GUIDE_URL = `${GITHUB_URL}/blob/main/benchmarks/di-inversify/BENCH_GUIDE.m
 type BenchmarkSectionProps = Omit<ComponentProps<"section">, "children">;
 
 /** The benchmark suite, pointed at rather than quoted: every figure lives next to the method that produced it. */
-export function BenchmarkSection(props: BenchmarkSectionProps) {
+export function BenchmarkSection({ className, ...props }: BenchmarkSectionProps) {
   return (
     <section
       aria-labelledby="home-benchmarks-title"
-      className="border-t border-ui-border/60 bg-ui-surface py-24 sm:py-32"
+      className={cn("border-t border-ui-border/60 bg-ui-surface py-24 sm:py-32", className)}
       {...props}
     >
       <div className="container mx-auto px-4">

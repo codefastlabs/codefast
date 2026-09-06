@@ -1,5 +1,6 @@
 import { TestBed } from "@codefast/di-testing";
 import { Button } from "@codefast/ui/button";
+import { cn } from "@codefast/ui/lib/utils";
 import { CheckIcon, PlayIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import { useState } from "react";
@@ -10,7 +11,7 @@ import { track } from "#/features/tracking/lib/tracking";
 type TestBedDemoProps = Omit<ComponentProps<"div">, "children">;
 
 /** Runs the sample beside it for real: a solitary bed, one call on the unit, the recorded mock call. */
-export function TestBedDemo(props: TestBedDemoProps) {
+export function TestBedDemo({ className, ...props }: TestBedDemoProps) {
   const [calls, setCalls] = useState<ReadonlyArray<ReadonlyArray<unknown>> | null>(null);
 
   const run = (): void => {
@@ -23,7 +24,10 @@ export function TestBedDemo(props: TestBedDemoProps) {
   };
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-ui-border/60 bg-ui-card p-6" {...props}>
+    <div
+      className={cn("flex flex-col gap-4 rounded-2xl border border-ui-border/60 bg-ui-card p-6", className)}
+      {...props}
+    >
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-semibold text-ui-fg">Run it in this tab</p>
         <Button size="sm" onClick={run}>

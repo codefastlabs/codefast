@@ -1,3 +1,4 @@
+import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
 import { SectionHeader } from "#/components/shared/section-header";
@@ -14,9 +15,13 @@ interface DiPillarsSectionProps extends Omit<ComponentProps<"section">, "childre
 }
 
 /** Why the flagship: four points from the package's README, each shown rather than told. */
-export function DiPillarsSection({ wrongListHtml, decoratorsHtml, ...props }: DiPillarsSectionProps) {
+export function DiPillarsSection({ wrongListHtml, decoratorsHtml, className, ...props }: DiPillarsSectionProps) {
   return (
-    <section aria-labelledby="home-pillars-title" className="border-t border-ui-border/60 py-24 sm:py-32" {...props}>
+    <section
+      aria-labelledby="home-pillars-title"
+      className={cn("border-t border-ui-border/60 py-24 sm:py-32", className)}
+      {...props}
+    >
       <div className="container mx-auto px-4">
         <SectionHeader
           eyebrow="Why @codefast/di"
