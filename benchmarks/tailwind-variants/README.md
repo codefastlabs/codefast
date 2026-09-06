@@ -60,16 +60,19 @@ scenario groups:
 | `repeat-simple`  | the same few `simple` selections rendered again and again                              |
 | `repeat-slots`   | the same few `slots` selections rendered again and again                               |
 
-Three more groups are controls rather than comparisons, and all three declare `excludeFromAggregates` so they stay in
-the table but out of the medians and geomeans:
+Two more groups are controls rather than comparisons, and both declare `excludeFromAggregates` so they stay in the table
+but out of the medians and geomeans:
 
 - `define-only` — define a component without rendering it. An eager library compiles here and a lazy one defers to its
   first render, so the ratio is shown but stays off the aggregates.
 - `first-render` — define a component and render it once (every slot, for a slot component); minus `define-only` it is
   the cost of the first render alone, and it stays off the aggregates for the same reason.
-- `uncached` — `@codefast/tailwind-variants` only, with its resolution cache and tailwind-merge's own cache switched
-  off, so the plan walk and the merge itself stay measured. Each with-merge row pairs with a without-merge one, so their
-  delta is the merge step on a miss.
+
+The `uncached-*` rows are controls too — `@codefast/tailwind-variants` only, with its resolution cache and
+tailwind-merge's own cache switched off, so the plan walk and the merge itself stay measured, and each with-merge row
+pairs with a without-merge one so their delta is the merge step on a miss. They live inside the `simple` and `slots`
+groups rather than a group of their own, so `bench:serve` overlays them on the same chart as the cached rows they should
+be read against; they stay off the aggregates by declaration.
 
 The merge flag is always passed **explicitly** (`{ twMerge: true }` / `{ twMerge: false }`, from
 `src/harness/bench-options.ts`) rather than left to each package's default, so the pair differ in implementation and not

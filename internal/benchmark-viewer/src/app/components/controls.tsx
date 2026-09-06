@@ -1,6 +1,7 @@
 import type { ComponentProps } from "react";
 
 import { RefreshCwIcon } from "#/app/components/icons";
+import { useCompactOnScroll } from "#/app/hooks/use-compact-on-scroll";
 import type { ViewState } from "#/app/lib/hash";
 import { cn } from "#/app/lib/utils";
 import type { EmbeddedScenarioSeries } from "#/types";
@@ -120,6 +121,10 @@ export function ChartControlPanel({
   runWindow,
   onRunWindowChange,
 }: ChartControlPanelProps) {
+  // Scrolled past the chart's top, the sticky panel keeps only the scenario row unless pinned open.
+  const { isCompact, pinned, togglePinned } = useCompactOnScroll();
+  const foldable = cn(isCompact && "sm:hidden");
+
   return (
     <div
       aria-label="Scenario and data selection"
@@ -130,6 +135,14 @@ export function ChartControlPanel({
           Scenario &amp; runs
         </p>
         <div className="flex shrink-0 items-center gap-2">
+          <ReloadButton
+            aria-pressed={pinned}
+            className="shrink-0 max-sm:hidden"
+            onClick={togglePinned}
+            title={pinned ? "Let the filters fold away while scrolling" : "Keep every filter visible while scrolling"}
+          >
+            {pinned ? "Unpin filters" : "Pin filters"}
+          </ReloadButton>
           {hasMore && (
             <ReloadButton
               aria-label="Load older benchmark runs"
@@ -156,7 +169,7 @@ export function ChartControlPanel({
       </div>
       <div className="flex flex-col gap-4 max-sm:grid max-sm:grid-cols-2 max-sm:gap-2 max-sm:rounded-xl max-sm:bg-black/22 max-sm:p-2 max-sm:[box-shadow:inset_0_0.0625rem_0_rgba(255,255,255,0.05),0_0_0_0.0625rem_rgba(255,255,255,0.06)] sm:flex-row sm:flex-wrap sm:items-end sm:gap-3">
         <label
-          className="w-full min-w-0 max-sm:col-span-full sm:w-auto sm:max-w-xs sm:min-w-44 sm:flex-1"
+          className={cn("w-full min-w-0 max-sm:col-span-full sm:w-auto sm:max-w-xs sm:min-w-44 sm:flex-1", foldable)}
           htmlFor="scenario-search"
         >
           <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">Search</FieldLabel>
@@ -171,7 +184,7 @@ export function ChartControlPanel({
             value={search}
           />
         </label>
-        <label className="w-full min-w-0 sm:w-auto sm:max-w-44 sm:min-w-36" htmlFor="ctrl-group">
+        <label className={cn("w-full min-w-0 sm:w-auto sm:max-w-44 sm:min-w-36", foldable)} htmlFor="ctrl-group">
           <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">Group</FieldLabel>
           <FieldSelect
             aria-label="Filter by group"
@@ -233,7 +246,7 @@ export function ChartControlPanel({
           </div>
         </div>
         <label
-          className="w-full min-w-0 sm:w-auto sm:max-w-88 sm:min-w-[min(100%,16.25rem)] sm:flex-[1.1]"
+          className={cn("w-full min-w-0 sm:w-auto sm:max-w-88 sm:min-w-[min(100%,16.25rem)] sm:flex-[1.1]", foldable)}
           htmlFor="ctrl-env"
         >
           <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">
@@ -255,7 +268,7 @@ export function ChartControlPanel({
           </FieldSelect>
         </label>
         <label
-          className="w-full min-w-0 shrink-0 sm:w-auto sm:max-w-44 sm:min-w-[min(100%,10rem)]"
+          className={cn("w-full min-w-0 shrink-0 sm:w-auto sm:max-w-44 sm:min-w-[min(100%,10rem)]", foldable)}
           htmlFor="ctrl-run-window"
         >
           <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">
@@ -283,7 +296,7 @@ export function ChartControlPanel({
       {facetLabels.length > 0 && (
         <div
           aria-label="Feature filters — a scenario stays listed when it matches any selected feature"
-          className="flex flex-wrap items-center gap-1.5"
+          className={cn("flex flex-wrap items-center gap-1.5", foldable)}
           role="group"
         >
           <span className="text-bh-label-muted me-1.5 text-[0.62rem] font-semibold tracking-[0.12em] uppercase">

@@ -1,9 +1,12 @@
 import { Chart } from "chart.js";
-import type { ChartDataset } from "chart.js";
-import { useCallback, useEffect, useRef, useState } from "react";
+import type { ChartDataset, ScriptableContext } from "chart.js";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ComponentProps, RefObject } from "react";
 
 import { ChevronDownIcon } from "#/app/components/icons";
+import { Kbd } from "#/app/components/kbd";
+import { OverlayLegend } from "#/app/components/overlay-legend";
+import { createMarkersPlugin, definitionChangeMarkers, versionChangeMarkers } from "#/app/lib/annotations";
 import {
   ALL_TOOLBAR_DISABLED,
   applyRelativeCategoryView,
@@ -13,7 +16,7 @@ import {
   computeInitialCategoryWindow,
 } from "#/app/lib/chart-view";
 import type { ChartToolbarDisabled, RelativeCategoryView } from "#/app/lib/chart-view";
-import { PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X } from "#/app/lib/colors";
+import { PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X, withAlpha } from "#/app/lib/colors";
 import type { PaletteEntry } from "#/app/lib/colors";
 import {
   fmtHz,
@@ -25,6 +28,8 @@ import {
   spreadTierLabel,
 } from "#/app/lib/format";
 import { ratioFrom } from "#/app/lib/metrics";
+import { buildOverlaySeries, indexToFirst, isSparseLogTick, rowShortLabel } from "#/app/lib/overlay";
+import type { OverlaySeries } from "#/app/lib/overlay";
 import { CHART_SKIP_TARGET_ID } from "#/app/lib/skip-chart";
 import { cn } from "#/app/lib/utils";
 import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
@@ -60,6 +65,9 @@ function ChartTd({ className, ...props }: ComponentProps<"td">) {
   );
 }
 
+/** Every how many plotted runs a receding overlay line shows a marker, counted back from the newest. */
+const SPARSE_POINT_EVERY = 4;
+
 /**
  * The data, display flags, and callbacks ChartPanel renders one scenario's run history from.
  *
@@ -80,11 +88,26 @@ export interface ChartPanelProps {
   showBands: boolean;
   useLogScale: boolean;
   showRatio: boolean;
+  /** Every row of the selected scenario's group, drawn together when the overlay is active. */
+  overlayScenarios: Array<EmbeddedScenarioSeries>;
+  /** Every tracked library, in order — the overlay decides per row which of them drew anything. */
+  overlayLibraries: Array<EmbeddedLibraryMeta>;
+  /** The overlay toggle as the user set it, whether or not the group has enough rows to use it. */
+  overlayGroup: boolean;
+  overlayActive: boolean;
+  /** Rows of the overlaid group the user has hidden from the legend table. */
+  hiddenOverlayRows: Array<string>;
+  /** Plots each line as a percentage of its first plotted run. */
+  indexToFirstRun: boolean;
   envKey: string;
   onClearEnv: () => void;
   onClearSearch: () => void;
   onClearGroup: () => void;
   onDownloadPng: (chartRef: RefObject<Chart | null>) => void;
+  onOverlayGroupChange: (value: boolean) => void;
+  onToggleOverlayRow: (scenarioId: string) => void;
+  onSelectRow: (scenarioId: string) => void;
+  onIndexToFirstRunChange: (value: boolean) => void;
   showBandsChange: (value: boolean) => void;
   logScaleChange: (value: boolean) => void;
   showRatioChange: (value: boolean) => void;
@@ -92,10 +115,12 @@ export interface ChartPanelProps {
 
 function buildChartSubtitle(
   scenario: EmbeddedScenarioSeries | null,
+  overlayRowCount: number,
   runIndices: Array<number>,
   filteredRunCount: number,
   baseRunCount: number,
   envKey: string,
+  indexToFirstRun: boolean,
 ): string {
   if (runIndices.length === 0) {
     return "No saved runs match the current Environment filter.";
@@ -103,7 +128,17 @@ function buildChartSubtitle(
   if (!scenario) {
     return "No scenario available for these filters.";
   }
-  let subtitle = `[${scenario.group}] ${scenario.id} · ${runIndices.length} run(s) with data`;
+  let subtitle =
+    overlayRowCount > 0
+      ? `[${scenario.group}] ${overlayRowCount} rows overlaid, ${rowShortLabel(scenario.id, scenario.group)} emphasised · ${runIndices.length} run(s) with data`
+      : `[${scenario.group}] ${scenario.id} · ${runIndices.length} run(s) with data`;
+  if (indexToFirstRun) {
+    subtitle += " · each line as % of its first plotted run";
+  }
+  const normalization = scenario.batchNormalization;
+  if (normalization !== undefined) {
+    subtitle += ` · ${normalization.rescaledRunCount} older run(s) rescaled to batch ${normalization.referenceBatch}`;
+  }
   const hiddenRunCount = filteredRunCount - runIndices.length;
   if (hiddenRunCount > 0) {
     subtitle += ` · ${hiddenRunCount} without data hidden`;
@@ -135,11 +170,21 @@ export function ChartPanel({
   showBands,
   useLogScale,
   showRatio,
+  overlayScenarios,
+  overlayLibraries,
+  overlayGroup,
+  overlayActive,
+  hiddenOverlayRows,
+  indexToFirstRun,
   envKey,
   onClearEnv,
   onClearSearch,
   onClearGroup,
   onDownloadPng,
+  onOverlayGroupChange,
+  onToggleOverlayRow,
+  onSelectRow,
+  onIndexToFirstRunChange,
   showBandsChange,
   logScaleChange,
   showRatioChange,
@@ -155,6 +200,62 @@ export function ChartPanel({
   const hasData = scenario !== null && runIndices.length > 0;
   // Fully disabled without data; with data it mirrors the built chart's zoom/pan state.
   const toolbarDisabled = hasData ? chartToolbarDisabled : ALL_TOOLBAR_DISABLED;
+
+  const overlaySeries = useMemo<Array<OverlaySeries>>(
+    () =>
+      overlayActive && scenario !== null
+        ? buildOverlaySeries({
+            hiddenScenarioIds: hiddenOverlayRows,
+            libraries: overlayLibraries,
+            paletteMap,
+            runIndices,
+            scenarios: overlayScenarios,
+            selectedScenarioId: scenario.id,
+          })
+        : [],
+    [overlayActive, scenario, hiddenOverlayRows, overlayLibraries, paletteMap, runIndices, overlayScenarios],
+  );
+
+  // The selected row draws at full colour and weight; every other row recedes behind it.
+  // A receding row still shows its marker shape, on every fourth point counted back from the newest.
+  const pointCount = runIndices.length;
+  const overlayStyleOf = useCallback(
+    (series: OverlaySeries) => ({
+      borderColor: series.emphasized ? series.color : withAlpha(series.color, 0.55),
+      borderWidth: series.emphasized ? 2.75 : 1.25,
+      pointRadius: series.emphasized
+        ? 2.5
+        : (context: ScriptableContext<"line">) =>
+            (pointCount - 1 - context.dataIndex) % SPARSE_POINT_EVERY === 0 ? 2.5 : 0,
+    }),
+    [pointCount],
+  );
+
+  // Lifting one row: its lines at full weight, every other line faded; `null` restores every style.
+  const highlightOverlayRow = useCallback(
+    (scenarioId: string | null) => {
+      const chart = chartRef.current;
+      if (!chart || !overlayActive) {
+        return;
+      }
+      overlaySeries.forEach((series, index) => {
+        const dataset = chart.data.datasets[index];
+        if (!dataset) {
+          return;
+        }
+        Object.assign(
+          dataset,
+          scenarioId === null
+            ? overlayStyleOf(series)
+            : series.scenarioId === scenarioId
+              ? { borderColor: series.color, borderWidth: 3, pointRadius: 2.5 }
+              : { borderColor: withAlpha(series.color, 0.12), borderWidth: 1, pointRadius: 0 },
+        );
+      });
+      chart.update("none");
+    },
+    [overlayActive, overlaySeries, overlayStyleOf],
+  );
   const emptyReason = getEmptyReason(scenario, runIndices, filteredRunCount, runs);
 
   const syncToolbarFromChart = useCallback(() => {
@@ -201,18 +302,47 @@ export function ChartPanel({
     const runsSlice = runIndices.map((globalIx) => runs[globalIx]);
 
     const datasets: Array<ChartDataset<"line", Array<number | null>>> = [];
+    const overlaySeriesByLabel = new Map(overlaySeries.map((series) => [series.label, series]));
+    // The selected row's line per library, which every other row's tooltip value is read against.
+    const selectedSeriesByLibrary = new Map(
+      overlaySeries.filter((series) => series.emphasized).map((series) => [series.libraryKey, series]),
+    );
+    const plottedValues = (values: ReadonlyArray<number | null>) =>
+      indexToFirstRun ? indexToFirst(values).values : [...values];
 
-    for (const lib of orderedLibraries) {
+    for (const series of overlaySeries) {
+      datasets.push({
+        label: series.label,
+        data: plottedValues(series.data),
+        ...overlayStyleOf(series),
+        backgroundColor: series.color,
+        borderDash: [...series.borderDash],
+        pointStyle: series.pointStyle,
+        pointHoverRadius: 4,
+        pointHitRadius: 6,
+        spanGaps: false,
+        yAxisID: "y",
+        tension: 0.12,
+        order: series.emphasized ? 4 : 6,
+      });
+    }
+
+    for (const lib of overlayActive ? [] : orderedLibraries) {
       const libData = scenario.libraries[lib.key];
       if (!libData) {
         continue;
       }
       const paletteEntry = paletteMap[lib.key]!;
-      const hz = runIndices.map((globalIx) => libData.hz[globalIx] ?? null);
+      const rawHz = runIndices.map((globalIx) => libData.hz[globalIx] ?? null);
+      const indexed = indexToFirst(rawHz);
+      const hz = indexToFirstRun ? indexed.values : rawHz;
+      // Bands scale by the same base as the line they surround, so they stay around it.
+      const scaleBand = (value: number | null) =>
+        indexToFirstRun ? (value === null || indexed.base === null ? null : (value / indexed.base) * 100) : value;
 
       if (showBands) {
-        const p25 = runIndices.map((globalIx) => libData.p25[globalIx] ?? null);
-        const p75 = runIndices.map((globalIx) => libData.p75[globalIx] ?? null);
+        const p25 = runIndices.map((globalIx) => scaleBand(libData.p25[globalIx] ?? null));
+        const p75 = runIndices.map((globalIx) => scaleBand(libData.p75[globalIx] ?? null));
         datasets.push(
           {
             label: `${lib.displayName} P25`,
@@ -252,7 +382,9 @@ export function ChartPanel({
       });
     }
 
-    if (showRatio && primaryLib) {
+    const drawRatio = showRatio && !overlayActive;
+
+    if (drawRatio && primaryLib) {
       compareLibs.forEach((cmpLib, compareIndex) => {
         const primData = scenario.libraries[primaryLib.key];
         const cmpData = scenario.libraries[cmpLib.key];
@@ -306,17 +438,30 @@ export function ChartPanel({
       y: {
         type: useLogScale ? "logarithmic" : "linear",
         position: "left",
-        title: { display: true, text: "hz/op (median)", color: "rgba(235, 235, 245, 0.5)" },
+        title: {
+          display: true,
+          text: indexToFirstRun ? "% of first plotted run" : "hz/op (median)",
+          color: "rgba(235, 235, 245, 0.5)",
+        },
         ticks: {
           color: "rgba(235, 235, 245, 0.42)",
-          // Compact ticks (70M) stay readable where full digits clip on narrow viewports.
-          callback: (value: number | string) => (typeof value === "number" ? fmtHzCompact(value) : value),
+          // Compact ticks (70M) stay readable where full digits clip on narrow viewports; a log axis
+          // labels only the 1, 2 and 5 of each decade so its ticks do not pile up.
+          callback: (value: number | string) => {
+            if (typeof value !== "number") {
+              return value;
+            }
+            if (useLogScale && !isSparseLogTick(value)) {
+              return "";
+            }
+            return indexToFirstRun ? `${fmtHzCompact(value)}%` : fmtHzCompact(value);
+          },
         },
         grid: { color: "rgba(255, 255, 255, 0.055)" },
       },
     };
 
-    if (showRatio) {
+    if (drawRatio) {
       scales["y1"] = {
         type: "linear",
         position: "right",
@@ -326,9 +471,16 @@ export function ChartPanel({
       };
     }
 
+    // Runs where the suite redefined the row, or the primary library changed version, get a rule.
+    const markers = [
+      ...definitionChangeMarkers(scenario, runIndices),
+      ...versionChangeMarkers(runs, runIndices, primaryLib),
+    ];
+
     chartRef.current = new Chart(canvas, {
       type: "line",
       data: { labels, datasets },
+      plugins: [createMarkersPlugin(markers)],
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -337,6 +489,8 @@ export function ChartPanel({
         scales,
         plugins: {
           legend: {
+            // The overlay draws its legend as a table under the chart instead.
+            display: !overlayActive,
             labels: {
               color: "rgba(235, 235, 245, 0.72)",
               boxWidth: 14,
@@ -352,6 +506,9 @@ export function ChartPanel({
               const datasetLabel = item.dataset.label ?? "";
               return !datasetLabel.endsWith(" P25") && !datasetLabel.includes("P25–P75");
             },
+            // Fastest first, so the row order in the tooltip is the order of the lines above it.
+            itemSort: (left, right) =>
+              (right.parsed.y ?? Number.NEGATIVE_INFINITY) - (left.parsed.y ?? Number.NEGATIVE_INFINITY),
             callbacks: {
               title: (items) => {
                 if (!items.length) {
@@ -396,9 +553,34 @@ export function ChartPanel({
                 if (ctx.dataset.yAxisID === "y1") {
                   return `${datasetLabel}: ${fmtRatio(rawHz)}`;
                 }
+                let extra = "";
+                const overlayMatch = overlaySeriesByLabel.get(datasetLabel);
+                if (overlayMatch !== undefined) {
+                  const absolute = overlayMatch.data[ctx.dataIndex] ?? null;
+                  const valueText = indexToFirstRun ? `${rawHz.toFixed(1)}% (${fmtHz(absolute)})` : fmtHz(absolute);
+                  const selected = selectedSeriesByLibrary.get(overlayMatch.libraryKey);
+                  if (overlayMatch.emphasized) {
+                    extra += " · selected";
+                  } else if (selected !== undefined) {
+                    const ratio = ratioFrom(absolute, selected.data[ctx.dataIndex] ?? null);
+                    if (ratio !== null) {
+                      extra += ` · ${fmtRatio(ratio)} of ${selected.shortLabel}`;
+                    }
+                  }
+                  const iqrFraction = overlayMatch.iqrFraction[ctx.dataIndex];
+                  if (typeof iqrFraction === "number" && Number.isFinite(iqrFraction)) {
+                    extra += ` · IQR ${(iqrFraction * 100).toFixed(1)}%${spreadTierLabel(iqrFraction)}`;
+                  }
+                  return `${datasetLabel}: ${valueText}${extra}`;
+                }
                 // Exact label match — a displayName that prefixes another must not steal its IQR.
                 const matchedLib = orderedLibraries.find((lib) => datasetLabel === lib.displayName);
-                let extra = "";
+                if (matchedLib && indexToFirstRun) {
+                  const globalIx = runIndices[ctx.dataIndex];
+                  const absolute =
+                    globalIx === undefined ? null : (scenario.libraries[matchedLib.key]?.hz[globalIx] ?? null);
+                  extra = ` (${fmtHz(absolute)})`;
+                }
                 if (matchedLib) {
                   const libData = scenario.libraries[matchedLib.key];
                   const globalIx = runIndices[ctx.dataIndex];
@@ -407,7 +589,7 @@ export function ChartPanel({
                     extra = ` · IQR ${(iqrFraction * 100).toFixed(1)}%${spreadTierLabel(iqrFraction)}`;
                   }
                 }
-                return `${datasetLabel}: ${fmtHz(rawHz)}${extra}`;
+                return `${datasetLabel}: ${indexToFirstRun ? `${rawHz.toFixed(1)}%` : fmtHz(rawHz)}${extra}`;
               },
             },
           },
@@ -433,7 +615,7 @@ export function ChartPanel({
             limits: {},
           },
         },
-        layout: { padding: { top: 4, right: 12 + (showRatio ? 20 : 0), bottom: 2, left: 12 } },
+        layout: { padding: { top: 4, right: 12 + (drawRatio ? 20 : 0), bottom: 2, left: 12 } },
       },
     });
 
@@ -466,6 +648,10 @@ export function ChartPanel({
     showBands,
     useLogScale,
     showRatio,
+    overlayActive,
+    overlaySeries,
+    overlayStyleOf,
+    indexToFirstRun,
     primaryLib,
     compareLibs,
     syncToolbarFromChart,
@@ -565,7 +751,17 @@ export function ChartPanel({
             Throughput over filtered runs
           </h2>
           <p className="mt-1.5 text-[0.8125rem] leading-snug text-zinc-500">
-            {hasData ? buildChartSubtitle(scenario, runIndices, filteredRunCount, baseRunIndices.length, envKey) : "—"}
+            {hasData
+              ? buildChartSubtitle(
+                  scenario,
+                  overlayActive ? overlayScenarios.length : 0,
+                  runIndices,
+                  filteredRunCount,
+                  baseRunIndices.length,
+                  envKey,
+                  indexToFirstRun,
+                )
+              : "—"}
           </p>
         </div>
       </div>
@@ -614,8 +810,9 @@ export function ChartPanel({
       </div>
 
       <p className="text-[0.8125rem] leading-relaxed text-zinc-500">
-        Opens on newest portion of history; Reset zoom restores full range. <WheelHint /> Drag pans on the chart ·
-        legend toggles series.
+        Opens on newest portion of history; Reset zoom restores full range. <WheelHint /> Drag pans on the chart ·{" "}
+        {overlayActive ? "the table below the chart selects, hides and lifts rows" : "legend toggles series"}. Dashed
+        yellow rules mark runs where the row's definition or the primary library's version changed.
       </p>
 
       <section
@@ -666,6 +863,20 @@ export function ChartPanel({
         />
       </section>
 
+      {overlayActive && scenario !== null && (
+        <OverlayLegend
+          hiddenRows={hiddenOverlayRows}
+          libraries={overlayLibraries}
+          onHoverRow={highlightOverlayRow}
+          onSelectRow={onSelectRow}
+          onToggleRow={onToggleOverlayRow}
+          paletteMap={paletteMap}
+          rows={overlayScenarios}
+          selectedScenarioId={scenario.id}
+          series={overlaySeries}
+        />
+      )}
+
       {/* Display toggles — `group` enables group-open: chevron rotation */}
       <details className="group mt-1 border-t border-white/6 sm:mt-0 sm:border-t-0" ref={displayDetailsRef}>
         <summary className="focus-visible:outline-bh-blue flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pe-0.5 text-zinc-200 select-none marker:content-[''] focus-visible:outline focus-visible:outline-offset-2 max-sm:-mx-0.5 max-sm:px-1 max-sm:active:bg-white/4 sm:hidden [&::-webkit-details-marker]:hidden">
@@ -678,14 +889,48 @@ export function ChartPanel({
           <span className="text-bh-label-muted hidden text-[0.62rem] tracking-[0.12em] sm:inline">Display</span>
           <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
             <input
+              aria-label="Overlay group"
+              checked={overlayGroup}
+              className="text-bh-blue accent-bh-blue focus:ring-bh-blue/50 size-4 rounded border-white/20 bg-black/30 focus:ring-2 focus:outline-none"
+              disabled={overlayScenarios.length < 2}
+              onChange={(e) => onOverlayGroupChange(e.target.checked)}
+              title={
+                overlayScenarios.length < 2
+                  ? "This group has a single row"
+                  : "Draw every row of this group on one chart: colour per library, dash pattern per row"
+              }
+              type="checkbox"
+            />
+            <span>
+              {overlayScenarios.length > 1 ? `Overlay group (${overlayScenarios.length} rows)` : "Overlay group"}
+            </span>
+          </label>
+          <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
+            <input
               aria-label="P25–P75 band"
               checked={showBands}
               className="text-bh-blue accent-bh-blue focus:ring-bh-blue/50 size-4 rounded border-white/20 bg-black/30 focus:ring-2 focus:outline-none"
+              disabled={overlayActive}
               onChange={(e) => showBandsChange(e.target.checked)}
-              title="Per-trial P25–P75 spread around each run median"
+              title={
+                overlayActive
+                  ? "Not drawn while the group is overlaid"
+                  : "Per-trial P25–P75 spread around each run median"
+              }
               type="checkbox"
             />
             <span>P25–P75 band</span>
+          </label>
+          <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
+            <input
+              aria-label="Relative to first run"
+              checked={indexToFirstRun}
+              className="text-bh-blue accent-bh-blue focus:ring-bh-blue/50 size-4 rounded border-white/20 bg-black/30 focus:ring-2 focus:outline-none"
+              onChange={(e) => onIndexToFirstRunChange(e.target.checked)}
+              title="Plot every line as a percentage of its own first plotted run, so lines of any scale share the axis"
+              type="checkbox"
+            />
+            <span>Relative to first run</span>
           </label>
           <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
             <input
@@ -702,7 +947,9 @@ export function ChartPanel({
               aria-label="Primary ratios"
               checked={showRatio}
               className="text-bh-blue accent-bh-blue focus:ring-bh-blue/50 size-4 rounded border-white/20 bg-black/30 focus:ring-2 focus:outline-none"
+              disabled={overlayActive}
               onChange={(e) => showRatioChange(e.target.checked)}
+              title={overlayActive ? "Not drawn while the group is overlaid" : undefined}
               type="checkbox"
             />
             {primaryLib && compareLibs.length === 1
@@ -730,7 +977,9 @@ export function ChartPanel({
           Tabular data for the current chart (accessibility)
         </summary>
         <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-          Same points and libraries as the line chart above; newest run first. Useful for screen readers and copy‑paste.
+          {overlayActive
+            ? "The selected row's points and libraries; the chart above overlays every row of its group. Newest run first."
+            : "Same points and libraries as the line chart above; newest run first. Useful for screen readers and copy‑paste."}
         </p>
         <div className="border-bh-border bg-bh-scrim-table mt-3 overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
           <table aria-label="Chart series data" className="w-full border-collapse text-[0.8rem]">
@@ -769,11 +1018,7 @@ export function ChartPanel({
 function WheelHint() {
   return (
     <span suppressHydrationWarning>
-      {isMacLikePlatform() ? (
-        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">⌃ Control</kbd>
-      ) : (
-        <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">Ctrl</kbd>
-      )}
+      {isMacLikePlatform() ? <Kbd>⌃ Control</Kbd> : <Kbd>Ctrl</Kbd>}
       +wheel zooms ·
     </span>
   );
