@@ -2,25 +2,18 @@ import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
-import { Suspense, lazy } from "react";
 
-import { LazyVisible } from "#/components/shared/lazy-visible";
-import { PreviewSkeleton } from "#/components/shared/preview-skeleton";
 import { SectionHeader } from "#/components/shared/section-header";
-import { SnippetCard } from "#/features/home/components/snippet-card";
-
-// Loaded when the section scrolls near, so @codefast/di-testing stays out of the home page's first chunk.
-const TestBedDemo = lazy(() =>
-  import("#/features/home/components/test-bed-demo").then((module) => ({ default: module.TestBedDemo })),
-);
+import { TestBedCard } from "#/features/home/components/test-bed-card";
+import type { TestBedSnippet } from "#/features/home/lib/home-snippets";
 
 interface DiTestingSectionProps extends Omit<ComponentProps<"section">, "children"> {
-  /** The `@codefast/di-testing` unit test as dual-theme highlighted HTML, from the route loader. */
-  readonly testBedHtml: string;
+  /** The `@codefast/di-testing` test file, split per test and highlighted by the route loader. */
+  readonly testBed: TestBedSnippet;
 }
 
-/** The flagship's second half: a unit test over a real container, with every collaborator mocked for you. */
-export function DiTestingSection({ testBedHtml, className, ...props }: DiTestingSectionProps) {
+/** The flagship's second half: four tests over a real container, with every collaborator mocked for you. */
+export function DiTestingSection({ testBed, className, ...props }: DiTestingSectionProps) {
   return (
     <section
       aria-labelledby="home-testing-title"
@@ -49,14 +42,7 @@ export function DiTestingSection({ testBedHtml, className, ...props }: DiTesting
               </Link>
             </Button>
           </div>
-          <div className="reveal-up flex flex-col gap-6">
-            <SnippetCard label="Unit tests" caption="@codefast/di-testing" highlightedCode={testBedHtml} />
-            <LazyVisible minHeight={148} fallback={<PreviewSkeleton minHeight={148} className="w-full rounded-2xl" />}>
-              <Suspense fallback={<PreviewSkeleton minHeight={148} className="w-full rounded-2xl" />}>
-                <TestBedDemo />
-              </Suspense>
-            </LazyVisible>
-          </div>
+          <TestBedCard snippet={testBed} className="reveal-up" />
         </div>
       </div>
     </section>

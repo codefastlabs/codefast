@@ -69,7 +69,7 @@ function HomePage() {
         wrongListHtml={snippets.wrongList}
         decoratorsHtml={snippets.decorators}
       />
-      <DiTestingSection testBedHtml={snippets.testBed} />
+      <DiTestingSection testBed={snippets.testBed} />
       <BenchmarkSection ledger={ledger} />
       <PackagesSection packages={packages} />
       <InstallCta
