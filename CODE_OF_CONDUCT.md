@@ -73,7 +73,7 @@ resolution.
 
 ## Addressing and Repairing Harm
 
-CodeFast is maintained by one person, so **Community Moderators** throughout this document means the maintainer. The
+Codefast is maintained by one person, so **Community Moderators** throughout this document means the maintainer. The
 enforcement ladder below is the Contributor Covenant’s suggested range, and it is the range used here.
 
 If an investigation by the Community Moderators finds that this Code of Conduct has been violated, the following
