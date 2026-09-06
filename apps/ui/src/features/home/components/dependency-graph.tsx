@@ -41,7 +41,8 @@ export function DependencyGraph({ graph, constructed, active, className, ...prop
     >
       <defs>
         <marker id="wiring-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0 0L8 4L0 8Z" className="fill-ui-muted" />
+          {/* context-stroke: the head takes the colour of the line it ends, and follows it as the line lights up. */}
+          <path d="M0 0L8 4L0 8Z" fill="context-stroke" />
         </marker>
       </defs>
       {layout.edges.map((edge) => (
