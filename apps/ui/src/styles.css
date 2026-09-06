@@ -184,6 +184,48 @@
   color: var(--shiki-dark) !important;
 }
 
+/* ── Scroll fade ─────────────────────────────────────────────────────────────────────────────────────────────────── */
+/* Trailing-edge fade for a horizontally scrolling block (ScrollFade / ShikiSurface). The child scroller names a
+   timeline the wrapper's overlay animates on, so the fade exists only while the child actually overflows and thins
+   out as it scrolls to the end. Progressive: without scroll timelines the overlay keeps its base opacity of zero. */
+@supports (animation-timeline: scroll()) {
+  .scroll-fade-x {
+    position: relative;
+    overflow: hidden;
+    timeline-scope: --scroll-fade-x;
+  }
+
+  .scroll-fade-x > * {
+    scroll-timeline: --scroll-fade-x inline;
+  }
+
+  .scroll-fade-x::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: 3rem;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(to left, var(--scroll-fade-color, var(--ui-card)), transparent);
+    animation: scroll-fade-x linear both;
+    animation-timeline: --scroll-fade-x;
+  }
+
+  .scroll-fade-x:dir(rtl)::after {
+    background: linear-gradient(to right, var(--scroll-fade-color, var(--ui-card)), transparent);
+  }
+}
+
+@keyframes scroll-fade-x {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* ── Markdown body ───────────────────────────────────────────────────────────────────────────────────────────────── */
 /* Prose styling for package documents rendered from packages/*.md (MarkdownBody). Headings carry
    GitHub-style ids; code blocks are Shiki dual-theme surfaces styled by the rules above. */
