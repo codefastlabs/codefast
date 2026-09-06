@@ -67,7 +67,7 @@ function HomePage() {
       <DiPillarsSection
         rightListHtml={snippets.rightList}
         wrongListHtml={snippets.wrongList}
-        decoratorsHtml={snippets.decorators}
+        decorators={snippets.decorators}
       />
       <DiTestingSection testBed={snippets.testBed} />
       <BenchmarkSection ledger={ledger} />

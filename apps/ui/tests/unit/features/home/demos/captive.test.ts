@@ -3,9 +3,9 @@ import { describe, expect, it } from "vitest";
 import { createCaptiveContainer, validationMessage } from "#/features/home/demos/captive";
 
 describe("validationMessage", () => {
-  it("reports the singleton OrderService holding its first captive, the transient gateway", () => {
+  it("reports the singleton OrderService holding the scoped RequestContext captive", () => {
     expect(validationMessage(createCaptiveContainer(false))).toMatch(
-      /^Scope violation: 'OrderService' \(singleton\) depends on 'PaymentGateway' \(transient\)/,
+      /^Scope violation: 'OrderService' \(singleton\) depends on 'RequestContext' \(scoped\)/,
     );
   });
 

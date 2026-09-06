@@ -26,13 +26,12 @@ export function ScopesCard({ className, ...props }: ScopesCardProps) {
       </div>
       <p className="text-sm leading-relaxed text-ui-muted">
         Singleton, scoped or transient per binding, and a binding may not outlive what it holds. This is the live
-        container with one binding changed: a singleton OrderService would keep its first gateway and its first
-        request&rsquo;s context for the container&rsquo;s whole life, so validate() refuses the graph up front and names
-        the first captive it finds:
+        container with one binding changed: a singleton OrderService would keep its first request&rsquo;s context for
+        the container&rsquo;s whole life, so validate() refuses the graph up front and names the captive:
       </p>
       <ScrollFade className="rounded-xl bg-ui-surface [--scroll-fade-color:var(--ui-surface)]">
         <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-ui-fg">
-          {`container.bind(PaymentGatewayToken).toDynamic(createGateway).transient();\ncontainer.bind(RequestContextToken).to(RequestContext).scoped();\ncontainer.bind(OrderServiceToken).to(OrderService).${fixed ? "transient" : "singleton"}();\ncontainer.validate();`}
+          {`container.bind(RequestContextToken).to(RequestContext).scoped();\ncontainer.bind(OrderServiceToken).to(OrderService).${fixed ? "transient" : "singleton"}();\ncontainer.validate();`}
         </pre>
       </ScrollFade>
       <DemoVerdict tone={message === null ? "pass" : "caught"}>
