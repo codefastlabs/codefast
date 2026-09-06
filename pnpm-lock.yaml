@@ -326,6 +326,9 @@ importers:
       '@codefast/di':
         specifier: workspace:*
         version: link:../../packages/di
+      '@codefast/di-testing':
+        specifier: workspace:*
+        version: link:../../packages/di-testing
       '@codefast/theme':
         specifier: workspace:*
         version: link:../../packages/theme
@@ -411,9 +414,12 @@ importers:
         specifier: 'catalog:'
         version: 4.5.4
     devDependencies:
-      '@codefast/di-testing':
-        specifier: workspace:*
-        version: link:../../packages/di-testing
+      '@babel/core':
+        specifier: 'catalog:'
+        version: 8.0.1
+      '@babel/plugin-proposal-decorators':
+        specifier: 'catalog:'
+        version: 8.0.2(@babel/core@8.0.1)
       '@codefast/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config

@@ -1,3 +1,4 @@
+import babel from "@rolldown/plugin-babel";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
@@ -18,7 +19,8 @@ export default defineConfig({
     passWithNoTests: true,
     projects: [
       {
-        plugins: [viteReact()],
+        // Stage 3 decorators for the home page's live `@codefast/di` demos, as the app build compiles them.
+        plugins: [viteReact(), babel({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] })],
         test: {
           environment: "jsdom",
           include: ["tests/{unit,integration,types}/**/*.test.ts?(x)"],

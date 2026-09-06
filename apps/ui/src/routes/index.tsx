@@ -1,10 +1,11 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 
+import { DiPillarsSection } from "#/features/home/components/di-pillars-section";
 import { DiTestingSection } from "#/features/home/components/di-testing-section";
-import { FeaturesSection } from "#/features/home/components/features-section";
 import { HeroSection } from "#/features/home/components/hero-section";
 import { InstallCta } from "#/features/home/components/install-cta";
-import { DI_INSTALL_COMMAND, DI_PILLARS } from "#/features/home/data";
+import { WiringSection } from "#/features/home/components/wiring-section";
+import { DI_INSTALL_COMMAND } from "#/features/home/data";
 import { getHomeSnippets } from "#/features/home/lib/home-snippets";
 import { PackagesSection } from "#/features/package-docs/components/packages-section";
 import { getPackages } from "#/features/package-docs/lib/package-docs";
@@ -60,20 +61,8 @@ function HomePage() {
   return (
     <main>
       <HeroSection quickStartHtml={snippets.quickStart} />
-      <FeaturesSection
-        eyebrow="Why @codefast/di"
-        titleId="home-pillars-title"
-        title={
-          <>
-            Explicit by design,
-            <br />
-            checked by the compiler.
-          </>
-        }
-        description="Every dependency is declared where it is consumed and checked where it is declared. The container does the construction; the compiler does the arguing."
-        features={DI_PILLARS}
-        className="border-t border-ui-border/60"
-      />
+      <WiringSection />
+      <DiPillarsSection wrongListHtml={snippets.wrongList} />
       <DiTestingSection testBedHtml={snippets.testBed} />
       <PackagesSection packages={packages} />
       <InstallCta
