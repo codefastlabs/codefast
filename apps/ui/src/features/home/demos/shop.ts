@@ -20,12 +20,12 @@ export interface PaymentGateway {
 }
 
 // Every service is bound through a named token: a class's own name does not survive the client bundle's minifier.
-const ShopConfigToken = token<ShopConfig>("ShopConfig");
-const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway");
-const LoggerToken = token<Logger>("Logger");
-const PriceCatalogToken = token<PriceCatalog>("PriceCatalog");
-const InventoryToken = token<Inventory>("Inventory");
-const RequestContextToken = token<RequestContext>("RequestContext");
+export const ShopConfigToken = token<ShopConfig>("ShopConfig");
+export const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway");
+export const LoggerToken = token<Logger>("Logger");
+export const PriceCatalogToken = token<PriceCatalog>("PriceCatalog");
+export const InventoryToken = token<Inventory>("Inventory");
+export const RequestContextToken = token<RequestContext>("RequestContext");
 export const OrderServiceToken = token<OrderService>("OrderService");
 
 // Numbers every constructed instance, so the log can show which ones the container reused.
@@ -100,30 +100,42 @@ export class OrderService {
   }
 }
 
+/** A fresh gateway per resolve, numbered like every other instance so the log can tell them apart. */
+function createGateway(): PaymentGateway {
+  const instance = nextInstance();
+
+  return { instance, charge: (price) => `pay-${instance} for ${price.amount.toFixed(2)} ${price.currency}` };
+}
+
 /** The demo container and the graph the library derives from its bindings. */
 export interface Shop {
   readonly container: Container;
   readonly graph: ContainerGraphJson;
 }
 
-/** Binds the order flow by token: three singletons, a constant, a transient factory, a scoped context, a transient root. */
-export function createShop(): Shop {
+/** How OrderService is bound: transient as the live graph ships it, or the singleton validate() refuses. */
+export interface ShopOptions {
+  readonly orderService?: "transient" | "singleton" | undefined;
+}
+
+/** Binds the order flow by token: three singletons, a constant, a transient factory, a scoped context, and the root. */
+export function createShop(options: ShopOptions = {}): Shop {
   const container = Container.create();
 
   container.bind(ShopConfigToken).toConstantValue({ currency: "USD" });
   container.bind(LoggerToken).to(Logger).singleton();
   container.bind(PriceCatalogToken).to(PriceCatalog).singleton();
   container.bind(InventoryToken).to(Inventory).singleton();
-  container
-    .bind(PaymentGatewayToken)
-    .toDynamic(() => {
-      const instance = nextInstance();
-
-      return { instance, charge: (price) => `pay-${instance} for ${price.amount.toFixed(2)} ${price.currency}` };
-    })
-    .transient();
+  container.bind(PaymentGatewayToken).toDynamic(createGateway).transient();
   container.bind(RequestContextToken).to(RequestContext).scoped();
-  container.bind(OrderServiceToken).to(OrderService).transient();
+
+  const orderService = container.bind(OrderServiceToken).to(OrderService);
+
+  if (options.orderService === "singleton") {
+    orderService.singleton();
+  } else {
+    orderService.transient();
+  }
 
   return { container, graph: container.generateDependencyGraph() };
 }

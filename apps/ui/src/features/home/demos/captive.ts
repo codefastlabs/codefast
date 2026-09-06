@@ -1,34 +1,11 @@
-/** A container with a captive dependency, for the validate() demo: a singleton holding a scoped instance. */
-import { Container, injectable, token } from "@codefast/di";
+/** validate() over the live shop, with OrderService bound as shipped or as the captive singleton. */
+import type { Container } from "@codefast/di";
 
-const RequestSessionToken = token<RequestSession>("RequestSession");
-const ResponseCacheToken = token<ResponseCache>("ResponseCache");
+import { createShop } from "#/features/home/demos/shop";
 
-/** Lives for one request scope. */
-@injectable()
-class RequestSession {
-  readonly id = "session";
-}
-
-/** Holds the session; as a singleton it would freeze the first request's session for the container's whole life. */
-@injectable([RequestSessionToken])
-class ResponseCache {
-  constructor(readonly session: RequestSession) {}
-}
-
-/** Binds the session scoped and the cache either as the captive singleton or, when `fixed`, scoped alongside it. */
+/** The live shop's container; `fixed` keeps OrderService transient, otherwise it becomes the singleton validate() refuses. */
 export function createCaptiveContainer(fixed: boolean): Container {
-  const container = Container.create();
-
-  container.bind(RequestSessionToken).to(RequestSession).scoped();
-
-  if (fixed) {
-    container.bind(ResponseCacheToken).to(ResponseCache).scoped();
-  } else {
-    container.bind(ResponseCacheToken).to(ResponseCache).singleton();
-  }
-
-  return container;
+  return createShop({ orderService: fixed ? "transient" : "singleton" }).container;
 }
 
 /** What validate() says about a container: the message it throws, or null when the graph is sound. */
