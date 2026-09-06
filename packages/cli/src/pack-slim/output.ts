@@ -14,7 +14,7 @@ export class PackSlimProgressPresenter implements PackSlimProgressListener {
   }
 
   onBanner(): void {
-    logger.out(this.dryRun ? "pack-slim (dry run) — no files will change" : "pack-slim — stripping source lane");
+    logger.out(this.dryRun ? "pack-slim (dry run) — no files will change" : "pack-slim — slimming publish artifacts");
   }
 
   onPackageComplete(stats: PackSlimPackageStats, ordinal: number, total: number): void {
@@ -41,6 +41,15 @@ export class PackSlimProgressPresenter implements PackSlimProgressListener {
     }
     if (stats.importsSourceRemoved > 0) {
       parts.push(`imports:source×${stats.importsSourceRemoved}`);
+    }
+    if (stats.importsUnshippedRemoved > 0) {
+      parts.push(`imports:unshipped×${stats.importsUnshippedRemoved}`);
+    }
+    if (stats.scriptsRemoved > 0) {
+      parts.push(`scripts×${stats.scriptsRemoved}`);
+    }
+    if (stats.devDependenciesRemoved > 0) {
+      parts.push(`devDependencies×${stats.devDependenciesRemoved}`);
     }
     if (stats.mapFilesDeleted > 0) {
       parts.push(`maps×${stats.mapFilesDeleted}`);

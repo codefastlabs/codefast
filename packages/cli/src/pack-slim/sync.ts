@@ -25,11 +25,11 @@ export type PackSlimRunInput = PackSlimRunRequest & {
 };
 
 /**
- * Strips the source lane from every published package's build output and returns the aggregate stats.
+ * Slims every published package's manifest and build output for publish and returns the aggregate stats.
  *
- * @remarks Meant to run on an ephemeral CI checkout right before `changeset publish`: it rewrites `package.json`, drops
- * `dist` source maps, and clears their now-dangling `sourceMappingURL` directives, so the tarball ships only `dist`
- * runtime and types. Private packages are skipped because `changeset publish` never publishes them.
+ * @remarks Meant to run on an ephemeral CI checkout right before `changeset publish`: it rewrites `package.json` down to
+ * what a consumer reads, drops `dist` source maps, and clears their now-dangling `sourceMappingURL` directives, so the
+ * tarball ships only `dist` runtime and types. Private packages are skipped because `changeset publish` never publishes them.
  *
  * @since 0.8.1
  */
@@ -103,6 +103,9 @@ async function slimWorkspacePackage(
     filesSrcRemoved: false,
     exportsSourceRemoved: 0,
     importsSourceRemoved: 0,
+    importsUnshippedRemoved: 0,
+    scriptsRemoved: 0,
+    devDependenciesRemoved: 0,
     mapFilesDeleted: 0,
     sourceCommentsStripped: 0,
     changed: false,
@@ -134,6 +137,9 @@ async function slimWorkspacePackage(
     pkgStats.filesSrcRemoved = report.filesSrcRemoved;
     pkgStats.exportsSourceRemoved = report.exportsSourceRemoved;
     pkgStats.importsSourceRemoved = report.importsSourceRemoved;
+    pkgStats.importsUnshippedRemoved = report.importsUnshippedRemoved;
+    pkgStats.scriptsRemoved = report.scriptsRemoved;
+    pkgStats.devDependenciesRemoved = report.devDependenciesRemoved;
     if (report.changed && write) {
       await fs.writeFile(packageJsonPath, `${JSON.stringify(slimmed, null, 2)}\n`, "utf8");
     }
