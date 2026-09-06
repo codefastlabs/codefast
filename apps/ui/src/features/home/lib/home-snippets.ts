@@ -3,12 +3,20 @@ import { setResponseHeader } from "@tanstack/react-start/server";
 
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 
+/** The testing sample split for its tabbed card: the import block, then one entry per `it(...)` in file order. */
+export interface TestBedSnippet {
+  /** The import block as dual-theme highlighted HTML. */
+  readonly imports: string;
+  /** Each test's title as the sample states it, with its body as dual-theme highlighted HTML. */
+  readonly tests: ReadonlyArray<{ readonly title: string; readonly html: string }>;
+}
+
 /** The home page's code samples as dual-theme highlighted HTML. */
 export interface HomeSnippets {
   /** The `@codefast/di` quick start shown in the hero. */
   readonly quickStart: string;
-  /** The `@codefast/di-testing` unit test over the live shop's OrderService, shown in the testing section. */
-  readonly testBed: string;
+  /** The `@codefast/di-testing` tests over the live shop's OrderService, split for the testing section's card. */
+  readonly testBed: TestBedSnippet;
   /** The quick start's OrderService with its list right, which the typed-tokens card opens on. */
   readonly rightList: string;
   /** The same class naming the shop's config token, which the typed-tokens card shows with the compiler's verdict. */
