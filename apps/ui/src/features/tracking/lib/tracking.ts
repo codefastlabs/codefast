@@ -54,8 +54,15 @@ export const catalog = defineEventCatalog({
   open_external: {
     schema: z.object({
       destination: z.enum(["github", "github-issues", "npm", "chatgpt", "claude", "component-markdown"]),
-      surface: z.enum(["header", "footer", "copy-page-menu"]),
+      surface: z.enum(["header", "footer", "copy-page-menu", "home-benchmarks"]),
       slug: z.optional(z.string()),
+    }),
+  },
+  run_demo: {
+    schema: z.object({
+      demo: z.enum(["wiring", "scopes", "test-bed"]),
+      action: z.enum(["open-scope", "resolve", "reset", "toggle-scope", "run"]),
+      trigger: z.enum(["click", "autoplay"]),
     }),
   },
 });

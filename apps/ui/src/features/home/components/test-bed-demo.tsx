@@ -5,6 +5,7 @@ import type { ComponentProps } from "react";
 import { useState } from "react";
 
 import { OrderProcessor, PaymentGatewayToken } from "#/features/home/demos/order-processor";
+import { track } from "#/features/tracking/lib/tracking";
 
 type TestBedDemoProps = Omit<ComponentProps<"div">, "children">;
 
@@ -13,6 +14,8 @@ export function TestBedDemo(props: TestBedDemoProps) {
   const [calls, setCalls] = useState<ReadonlyArray<ReadonlyArray<unknown>> | null>(null);
 
   const run = (): void => {
+    track("run_demo", { demo: "test-bed", action: "run", trigger: "click" });
+
     const { unit, mocks } = TestBed.solitary(OrderProcessor).compile();
 
     unit.placeOrder("u1", 42);
@@ -20,7 +23,7 @@ export function TestBedDemo(props: TestBedDemoProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-ui-border/60 bg-ui-card p-5" {...props}>
+    <div className="flex flex-col gap-4 rounded-2xl border border-ui-border/60 bg-ui-card p-6" {...props}>
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-semibold text-ui-fg">Run it in this tab</p>
         <Button size="sm" onClick={run}>
