@@ -28,7 +28,7 @@ export function DiTestingSection({ testBedHtml, className, ...props }: DiTesting
       {...props}
     >
       <div className="container mx-auto px-4">
-        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] lg:gap-20">
+        <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] lg:gap-20">
           <div className="reveal-up">
             <SectionHeader
               eyebrow="Testing"

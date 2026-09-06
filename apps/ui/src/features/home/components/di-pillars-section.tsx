@@ -36,7 +36,7 @@ export function DiPillarsSection({ wrongListHtml, decoratorsHtml, className, ...
           description="Every dependency is declared where it is consumed and checked where it is declared. The container does the construction; the compiler does the arguing."
           className="reveal-up mb-16"
         />
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-2">
           <TypedTokensCard wrongListHtml={wrongListHtml} className="reveal-up" />
           <DecoratorsCard decoratorsHtml={decoratorsHtml} className="reveal-up" />
           <ScopesCard className="reveal-up" />

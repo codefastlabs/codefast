@@ -151,7 +151,7 @@ export function ContainerPlayground() {
   }, [inView, openScope, resolveOrder]);
 
   return (
-    <div ref={root} className="grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+    <div ref={root} className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
       <Tabs defaultValue="graph" className="rounded-2xl border border-ui-border/60 bg-ui-card p-6">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <p className="font-mono text-xs text-ui-muted">container.generateDependencyGraph()</p>

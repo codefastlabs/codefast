@@ -20,7 +20,7 @@ export function BenchmarkSection({ className, ...props }: BenchmarkSectionProps)
       {...props}
     >
       <div className="container mx-auto px-4">
-        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:gap-20">
+        <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:gap-20">
           <SectionHeader
             eyebrow="Benchmarks"
             titleId="home-benchmarks-title"
