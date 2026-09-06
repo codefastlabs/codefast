@@ -2,10 +2,10 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useEffect, useRef } from "react";
 
-/** One line of the playground's log. */
+/** One line of the playground's log; `warn` is a refusal the demo recovers from, `error` something it could not. */
 export interface LogEntry {
   readonly id: number;
-  readonly tone: "info" | "success" | "error";
+  readonly tone: "info" | "success" | "warn" | "error";
   readonly text: string;
 }
 
@@ -36,7 +36,7 @@ export function ResolutionLog({ entries, className, ...props }: ResolutionLogPro
       {...props}
     >
       {entries.length === 0 ? (
-        <p className="text-neutral-500">Open a request scope, then resolve OrderService.</p>
+        <p className="text-neutral-500">Resolve OrderService, or open a request scope first.</p>
       ) : (
         <ol className="flex flex-col gap-0.5">
           {entries.map((entry) => (
@@ -44,6 +44,7 @@ export function ResolutionLog({ entries, className, ...props }: ResolutionLogPro
               key={entry.id}
               className={cn(
                 entry.tone === "error" && "text-red-400",
+                entry.tone === "warn" && "text-amber-300",
                 entry.tone === "success" && "text-sky-400",
                 entry.tone === "info" && "text-neutral-200",
               )}

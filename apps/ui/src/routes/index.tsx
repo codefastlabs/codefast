@@ -7,6 +7,7 @@ import { HeroSection } from "#/features/home/components/hero-section";
 import { InstallCta } from "#/features/home/components/install-cta";
 import { WiringSection } from "#/features/home/components/wiring-section";
 import { DI_INSTALL_COMMAND } from "#/features/home/data";
+import { getBenchmarkLedger } from "#/features/home/lib/benchmark-ledger";
 import { getHomeSnippets } from "#/features/home/lib/home-snippets";
 import { PackagesSection } from "#/features/package-docs/components/packages-section";
 import { getPackages } from "#/features/package-docs/lib/package-docs";
@@ -22,9 +23,9 @@ export const Route = createFileRoute("/")({
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   staleTime: 60 * 60_000,
   loader: async () => {
-    const [packages, snippets] = await Promise.all([getPackages(), getHomeSnippets()]);
+    const [packages, snippets, ledger] = await Promise.all([getPackages(), getHomeSnippets(), getBenchmarkLedger()]);
 
-    return { packages, snippets };
+    return { packages, snippets, ledger };
   },
   head: () => {
     const seo = canonicalHead("/");
@@ -57,15 +58,19 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { packages, snippets } = Route.useLoaderData();
+  const { packages, snippets, ledger } = Route.useLoaderData();
 
   return (
     <main>
       <HeroSection quickStartHtml={snippets.quickStart} />
       <WiringSection />
-      <DiPillarsSection wrongListHtml={snippets.wrongList} decoratorsHtml={snippets.decorators} />
+      <DiPillarsSection
+        rightListHtml={snippets.rightList}
+        wrongListHtml={snippets.wrongList}
+        decoratorsHtml={snippets.decorators}
+      />
       <DiTestingSection testBedHtml={snippets.testBed} />
-      <BenchmarkSection />
+      <BenchmarkSection ledger={ledger} />
       <PackagesSection packages={packages} />
       <InstallCta
         command={DI_INSTALL_COMMAND}

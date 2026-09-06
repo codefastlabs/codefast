@@ -10,21 +10,35 @@ const SNAPSHOT = createShop().container.inspect();
 
 type IntrospectionCardProps = Omit<ComponentProps<"article">, "children">;
 
-/** Modules and introspection: the demo container's own bindings, read back through inspect(). */
+/** Modules and introspection: the demo container's own bindings, read back through inspect(), beside the pitch. */
 export function IntrospectionCard({ className, ...props }: IntrospectionCardProps) {
   return (
     <article
-      className={cn("flex flex-col gap-5 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:p-8", className)}
+      className={cn(
+        "grid grid-cols-[minmax(0,1fr)] gap-5 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:p-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] md:gap-x-10",
+        className,
+      )}
       {...props}
     >
-      <div className="flex items-baseline gap-3">
-        <span className="font-mono text-sm text-ui-brand tabular-nums">04</span>
-        <h3 className="text-base font-semibold text-ui-fg">Modules and introspection</h3>
+      <div className="flex flex-col gap-5">
+        <div className="flex items-baseline gap-3">
+          <span className="font-mono text-sm text-ui-brand tabular-nums">04</span>
+          <h3 className="text-base font-semibold text-ui-fg">Modules and introspection</h3>
+        </div>
+        <p className="text-sm leading-relaxed text-ui-muted">
+          Bundle bindings into reusable, ref-counted modules. Ask any container what it holds with inspect(), or hand
+          its dependency graph to a renderer.
+        </p>
+        <ul className="mt-auto flex flex-wrap gap-2" aria-label="Graph renderers">
+          {RENDERERS.map((name) => (
+            <li key={name}>
+              <span className="inline-flex rounded-full border border-ui-border/60 bg-ui-surface px-3 py-1 text-xs text-ui-fg">
+                {name}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
-      <p className="text-sm leading-relaxed text-ui-muted">
-        Bundle bindings into reusable, ref-counted modules. Ask any container what it holds with inspect(), or hand its
-        dependency graph to a renderer.
-      </p>
       <div className="overflow-hidden rounded-xl border border-ui-border/60">
         <table className="w-full font-mono text-xs">
           <caption className="sr-only">The demo container&rsquo;s bindings</caption>
@@ -52,15 +66,6 @@ export function IntrospectionCard({ className, ...props }: IntrospectionCardProp
           </tbody>
         </table>
       </div>
-      <ul className="mt-auto flex flex-wrap gap-2" aria-label="Graph renderers">
-        {RENDERERS.map((name) => (
-          <li key={name}>
-            <span className="inline-flex rounded-full border border-ui-border/60 bg-ui-surface px-3 py-1 text-xs text-ui-fg">
-              {name}
-            </span>
-          </li>
-        ))}
-      </ul>
     </article>
   );
 }

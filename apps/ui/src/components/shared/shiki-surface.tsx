@@ -12,7 +12,8 @@ export function ShikiSurface({ html, className, showLineNumbers, ...props }: Shi
   return (
     <div
       className={cn(
-        "overflow-x-auto [&_.shiki]:overflow-x-auto [&_.shiki]:p-5 [&_.shiki]:text-xs [&_.shiki]:leading-relaxed [&_.shiki]:tab-2!",
+        // The fade colour tracks the Shiki theme backgrounds, like the line-number gutter below.
+        "scroll-fade-x [--scroll-fade-color:#fff] dark:[--scroll-fade-color:#24292e] [&_.shiki]:overflow-x-auto [&_.shiki]:p-5 [&_.shiki]:text-xs [&_.shiki]:leading-relaxed [&_.shiki]:tab-2!",
         // Sticky line-number gutter; its bg must match the Shiki theme bg
         // (#fff / #24292e) so scrolled code can't bleed through underneath.
         showLineNumbers &&

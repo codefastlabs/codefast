@@ -1,4 +1,4 @@
-import { Container, inject, injectAll, injectable, optional, postConstruct, preDestroy, token } from "@codefast/di";
+import { inject, injectAll, injectable, optional, postConstruct, preDestroy, token } from "@codefast/di";
 
 interface Database {
   warmCache(): Promise<void>;
@@ -10,22 +10,18 @@ interface Cache {
 interface Plugin {
   readonly name: string;
 }
-interface Logger {
-  info(message: string): void;
-}
 
 const DbToken = token<Database>("Database");
 const CacheToken = token<Cache>("Cache");
 const PluginToken = token<Plugin>("Plugin");
-const LoggerToken = token<Logger>("Logger");
 
-@injectable([DbToken, optional(CacheToken), injectAll(PluginToken), inject(LoggerToken, { name: "audit" })])
-class UserRepository {
+@injectable([DbToken, optional(CacheToken), injectAll(PluginToken), inject(DbToken, { name: "replica" })])
+export class UserRepository {
   constructor(
     readonly db: Database,
     readonly cache: Cache | undefined,
     readonly plugins: Array<Plugin>,
-    readonly audit: Logger,
+    readonly replica: Database,
   ) {}
 
   @postConstruct()
@@ -38,5 +34,3 @@ class UserRepository {
     await this.db.flush();
   }
 }
-
-Container.create().bind(UserRepository).toSelf().singleton();

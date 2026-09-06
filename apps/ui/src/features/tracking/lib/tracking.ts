@@ -60,8 +60,8 @@ export const catalog = defineEventCatalog({
   },
   run_demo: {
     schema: z.object({
-      demo: z.enum(["wiring", "scopes", "test-bed"]),
-      action: z.enum(["open-scope", "resolve", "reset", "toggle-scope", "run"]),
+      demo: z.enum(["wiring", "scopes", "typed-tokens", "test-bed"]),
+      action: z.enum(["open-scope", "resolve", "reset", "toggle-scope", "toggle-token", "run"]),
       trigger: z.enum(["click", "autoplay"]),
     }),
   },
