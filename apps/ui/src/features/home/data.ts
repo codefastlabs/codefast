@@ -1,6 +1,14 @@
 import { COMPONENTS } from "#/registry/_core/components";
 
-export const FEATURES = [
+/** One numbered point in a features section. */
+export interface Feature {
+  readonly number: string;
+  readonly title: string;
+  readonly description: string;
+}
+
+/** Why `@codefast/ui`: the points the `/ui` landing makes. */
+export const FEATURES: ReadonlyArray<Feature> = [
   {
     number: "01",
     title: "Accessible by construction",
@@ -25,7 +33,38 @@ export const FEATURES = [
     description:
       "Palettes of oklch design tokens with a dark variant. Restyle the whole set from one file, and switch light and dark without a line of JavaScript.",
   },
-] as const;
+];
+
+/** Why `@codefast/di`: the points the home page makes, drawn from the package's own README. */
+export const DI_PILLARS: ReadonlyArray<Feature> = [
+  {
+    number: "01",
+    title: "Typed tokens",
+    description:
+      "A Token<Value> flows through every bind → resolve path, so resolve() returns exactly the type you registered, and @injectable checks a class's dependency list against its constructor. A wrong dependency is a compile-time error, not a runtime surprise.",
+  },
+  {
+    number: "02",
+    title: "Native Stage 3 decorators",
+    description:
+      "@injectable, inject, optional, injectAll, @postConstruct and @preDestroy declare dependencies where they are consumed. No reflect-metadata, no experimentalDecorators, no runtime reflection.",
+  },
+  {
+    number: "03",
+    title: "Scopes with validation",
+    description:
+      "Singleton, scoped or transient per binding, child containers for request scopes, and validate() to catch captive dependencies before the first request reaches them.",
+  },
+  {
+    number: "04",
+    title: "Modules and introspection",
+    description:
+      "Bundle bindings into reusable, ref-counted modules. Inspect a container, or render its dependency graph as DOT, Mermaid, Cytoscape or React Flow.",
+  },
+];
+
+/** The one command the home page's install section copies. */
+export const DI_INSTALL_COMMAND = "pnpm add @codefast/di";
 
 interface DemoWallTile {
   /** Registry slug of the demo to feature. */

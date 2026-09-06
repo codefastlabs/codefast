@@ -1,32 +1,49 @@
-import { SectionHeader } from "#/components/shared/section-header";
-import { FEATURES } from "#/features/home/data";
+import { cn } from "@codefast/ui/lib/utils";
+import type { ComponentProps, ReactNode } from "react";
 
-export function FeaturesSection() {
+import { SectionHeader } from "#/components/shared/section-header";
+import type { Feature } from "#/features/home/data";
+
+interface FeaturesSectionProps extends Omit<ComponentProps<"section">, "children" | "title"> {
+  readonly eyebrow: string;
+  readonly titleId: string;
+  readonly title: ReactNode;
+  readonly description: string;
+  readonly features: ReadonlyArray<Feature>;
+}
+
+/** A numbered list of the points a package makes, under a section header. */
+export function FeaturesSection({
+  eyebrow,
+  titleId,
+  title,
+  description,
+  features,
+  className,
+  ...props
+}: FeaturesSectionProps) {
   return (
-    <section aria-labelledby="home-features-title" className="py-24 sm:py-32">
+    <section aria-labelledby={titleId} className={cn("py-24 sm:py-32", className)} {...props}>
       <div className="container mx-auto px-4">
         <SectionHeader
-          eyebrow="Why codefast/ui"
-          titleId="home-features-title"
-          title={
-            <>
-              The details,
-              <br />
-              already handled.
-            </>
-          }
-          description="The unglamorous parts of a component library — accessibility, types, theming, ownership — are the parts you feel every day. So we started there."
+          eyebrow={eyebrow}
+          titleId={titleId}
+          title={title}
+          description={description}
           className="reveal-up mb-16"
         />
 
         <div className="divide-y divide-ui-border/60">
-          {FEATURES.map(({ number, title, description }) => (
-            <article key={title} className="group reveal-up grid gap-4 py-10 sm:grid-cols-[56px_1fr_1.5fr] sm:gap-10">
+          {features.map(({ number, title: featureTitle, description: featureDescription }) => (
+            <article
+              key={featureTitle}
+              className="group reveal-up grid gap-4 py-10 sm:grid-cols-[56px_1fr_1.5fr] sm:gap-10"
+            >
               <p className="font-mono text-sm text-ui-muted tabular-nums transition-colors duration-200 group-hover:text-ui-brand">
                 {number}
               </p>
-              <h3 className="text-base font-semibold text-ui-fg">{title}</h3>
-              <p className="text-sm leading-relaxed text-ui-muted">{description}</p>
+              <h3 className="text-base font-semibold text-ui-fg">{featureTitle}</h3>
+              <p className="text-sm leading-relaxed text-ui-muted">{featureDescription}</p>
             </article>
           ))}
         </div>

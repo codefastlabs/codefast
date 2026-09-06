@@ -1,11 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { DemoWallSection } from "#/features/home/components/demo-wall-section";
 import { FeaturesSection } from "#/features/home/components/features-section";
 import { InstallCta } from "#/features/home/components/install-cta";
 import { StatsSection } from "#/features/home/components/stats-section";
+import { FEATURES } from "#/features/home/data";
 import { UiHeroSection } from "#/features/ui-home/components/ui-hero-section";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
+import { INSTALL_COMMAND } from "#/lib/install";
 import { GITHUB_URL } from "#/lib/nav-links";
 import { SITE_URL, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
 import { COMPONENTS } from "#/registry/_core/components";
@@ -51,8 +53,27 @@ function UiHomePage() {
       <UiHeroSection />
       <DemoWallSection />
       <StatsSection />
-      <FeaturesSection />
-      <InstallCta />
+      <FeaturesSection
+        eyebrow="Why codefast/ui"
+        titleId="ui-features-title"
+        title={
+          <>
+            The details,
+            <br />
+            already handled.
+          </>
+        }
+        description="The unglamorous parts of a component library — accessibility, types, theming, ownership — are the parts you feel every day. So we started there."
+        features={FEATURES}
+      />
+      <InstallCta
+        command={INSTALL_COMMAND}
+        titleId="ui-install-title"
+        title="One command to start."
+        description="Add the package, import three lines of CSS, and build. Design tokens, dark mode, and accessibility are already wired up — there's nothing to configure."
+        analyticsName="home-hero"
+        docsAction={<Link to="/ui/about">Read the docs</Link>}
+      />
     </main>
   );
 }

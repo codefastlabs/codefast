@@ -1,7 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 
+import { DiTestingSection } from "#/features/home/components/di-testing-section";
+import { FeaturesSection } from "#/features/home/components/features-section";
 import { HeroSection } from "#/features/home/components/hero-section";
-import { getHeroSnippet } from "#/features/home/lib/hero-snippet";
+import { InstallCta } from "#/features/home/components/install-cta";
+import { DI_INSTALL_COMMAND, DI_PILLARS } from "#/features/home/data";
+import { getHomeSnippets } from "#/features/home/lib/home-snippets";
 import { PackagesSection } from "#/features/package-docs/components/packages-section";
 import { getPackages } from "#/features/package-docs/lib/package-docs";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
@@ -16,15 +20,18 @@ export const Route = createFileRoute("/")({
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   staleTime: 60 * 60_000,
   loader: async () => {
-    const [packages, snippetHtml] = await Promise.all([getPackages(), getHeroSnippet()]);
+    const [packages, snippets] = await Promise.all([getPackages(), getHomeSnippets()]);
 
-    return { packages, snippetHtml };
+    return { packages, snippets };
   },
   head: () => {
     const seo = canonicalHead("/");
 
     return {
-      meta: [{ title: "Codefast Labs — TypeScript packages for React 19 products" }, ...seo.meta],
+      meta: [
+        { title: "Codefast Labs — Type-safe dependency injection for TypeScript, and the packages around it" },
+        ...seo.meta,
+      ],
       links: seo.links,
       scripts: [
         jsonLdScript({
@@ -48,12 +55,39 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { packages, snippetHtml } = Route.useLoaderData();
+  const { packages, snippets } = Route.useLoaderData();
 
   return (
     <main>
-      <HeroSection snippetHtml={snippetHtml} />
+      <HeroSection quickStartHtml={snippets.quickStart} />
+      <FeaturesSection
+        eyebrow="Why @codefast/di"
+        titleId="home-pillars-title"
+        title={
+          <>
+            Explicit by design,
+            <br />
+            checked by the compiler.
+          </>
+        }
+        description="Every dependency is declared where it is consumed and checked where it is declared. The container does the construction; the compiler does the arguing."
+        features={DI_PILLARS}
+        className="border-t border-ui-border/60"
+      />
+      <DiTestingSection testBedHtml={snippets.testBed} />
       <PackagesSection packages={packages} />
+      <InstallCta
+        command={DI_INSTALL_COMMAND}
+        titleId="home-install-title"
+        title="One command to start."
+        description="Add the package, declare a class's dependencies with @injectable, and resolve it from a container. Native decorators, no reflect-metadata, nothing to configure."
+        analyticsName="home-di"
+        docsAction={
+          <Link to="/docs/$pkg" params={{ pkg: "di" }}>
+            Read the docs
+          </Link>
+        }
+      />
     </main>
   );
 }
