@@ -77,15 +77,15 @@ export class RequestContext {
   readonly requestId = `req-${this.instance}`;
 }
 
-@injectable([PriceCatalogToken, InventoryToken, PaymentGatewayToken, RequestContextToken, LoggerToken])
+@injectable([PriceCatalogToken, InventoryToken, RequestContextToken, PaymentGatewayToken, LoggerToken])
 export class OrderService {
   readonly instance = nextInstance();
 
   constructor(
     readonly catalog: PriceCatalog,
     readonly inventory: Inventory,
-    readonly payments: PaymentGateway,
     readonly context: RequestContext,
+    readonly payments: PaymentGateway,
     readonly logger: Logger,
   ) {}
 
