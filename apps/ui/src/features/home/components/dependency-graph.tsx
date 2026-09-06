@@ -2,7 +2,7 @@ import type { ContainerGraphJson, GraphNode } from "@codefast/di";
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
-import { NODE_HEIGHT, NODE_WIDTH, layoutGraph } from "#/features/home/demos/wiring-order";
+import { NODE_HEIGHT, NODE_WIDTH, edgePath, layoutGraph } from "#/features/home/demos/wiring-order";
 
 interface DependencyGraphProps extends Omit<ComponentProps<"svg">, "children" | "viewBox"> {
   readonly graph: ContainerGraphJson;
@@ -41,13 +41,14 @@ export function DependencyGraph({ graph, constructed, active, className, ...prop
     >
       <defs>
         <marker id="wiring-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0 0L8 4L0 8Z" className="fill-ui-muted" />
+          {/* context-stroke: the head takes the colour of the line it ends, and follows it as the line lights up. */}
+          <path d="M0 0L8 4L0 8Z" fill="context-stroke" />
         </marker>
       </defs>
       {layout.edges.map((edge) => (
         <path
           key={`${edge.from}-${edge.to}`}
-          d={`M${edge.x1} ${edge.y1} C ${edge.x1 + 36} ${edge.y1}, ${edge.x2 - 36} ${edge.y2}, ${edge.x2 - 1} ${edge.y2}`}
+          d={edgePath(edge)}
           className={cn(
             "fill-none stroke-ui-border transition-colors duration-300",
             constructed.has(edge.from) && constructed.has(edge.to) && "stroke-ui-brand",
