@@ -3,17 +3,68 @@
 What has actually been measured, separated by what each measurement can support. The method for each is in
 [`BENCH_GUIDE.md`](./BENCH_GUIDE.md); re-run any of it with the recipes there.
 
-**Environment.** Node 26.1.0 / V8 14.6, Apple M3 Max × 14, darwin/arm64. `@codefast/di` 0.5.0-canary.8 · inversify 8.2.3
-· awilix 13.0.5 · tsyringe 4.10.0. Isolated profile (`BENCH_ISOLATE=true`), 3 trials, unless a row says otherwise.
+**Environment.** Node 26.1.0 / V8 14.6, Apple M3 Max × 14, darwin/arm64. `@codefast/di` 0.8.1 · inversify 8.2.3 · awilix
+13.0.5 · tsyringe 4.10.0. Isolated profile (`BENCH_ISOLATE=true`), 3 trials, unless a row says otherwise. Entries below
+name the versions they measured where they differ.
 
-**The machine was not quiet.** These figures come from sessions that had been running benchmarks back to back for hours,
-so the absolute throughputs are depressed. Ratios survive that: a paired run measures both builds in the same window,
-and an interleaved run measures every library within the same scenario. Absolute `hz/op` from this page is worth less
-than the ratios on it.
+**One pass on a quiet machine, then sessions that were not.** The 2026-09-06 figures are a single full pass on an
+otherwise idle machine (a Vite dev server sat idle alongside), so they carry no between-run variance of their own; the
+figures from 2026-08-01 back come from sessions that had been running benchmarks back to back for hours, which depresses
+absolute throughput. Ratios survive both: a paired run measures both builds in the same window, and an interleaved run
+measures every library within the same scenario. Absolute `hz/op` from this page is worth less than the ratios on it.
 
-**Last full re-measure: 2026-07-31**, after the cascade-lane change (`3a0ad82e0`) and the root-frame change
-(`65443f167`) landed, on a freshly rebuilt `dist`. 78 of the run's cells carried a per-trial IQR above 5%, so single
-rows from it are read through the aggregates, not alone.
+**Last full re-measure: 2026-09-06**, on `@codefast/di` 0.8.1 from a `dist` the harness rebuilt first, full profile
+(`--expose-gc`), interleaved. 17 of the run's 62 comparable cells carried a per-trial IQR above 5% (78 did on
+2026-07-31), so single rows from it are still read through the aggregates, not alone.
+
+## 2026-09-06 — full re-measure on 0.8.1: the suite holds, the one loss widens
+
+`BENCH_MODE=full pnpm bench:isolate` from `benchmarks/di-inversify`: `--expose-gc` for every library, one subprocess per
+scenario, libraries interleaved with rotating order, 3 trials, every one of the suite's 108 rows measured.
+`@codefast/di` 0.8.1 from a `dist` the harness rebuilt first, against inversify 8.2.3, awilix 13.0.5 and tsyringe
+4.10.0, on Node 26.1.0 / V8 14.6, Apple M3 Max × 14, darwin/arm64. One pass of about nine minutes on an otherwise idle
+machine (a Vite dev server sat idle alongside), so between-run variance is not measured here; the 2026-07-31 and
+2026-08-01 sections below hold the drift figures this run has no counterpart for.
+
+| Competitor | Comparable | Win / parity / loss | Median | Geomean |   † |
+| ---------- | ---------: | ------------------: | -----: | ------: | --: |
+| inversify  |   45 of 89 |          45 / 0 / 0 |  2.33× |   2.84× |  16 |
+| Awilix 13  |    8 of 89 |           8 / 0 / 0 |  3.22× |   3.77× |   3 |
+| tsyringe 4 |    8 of 89 |           7 / 0 / 1 |  6.00× |   4.89× |   3 |
+
+`†` counts the comparable rows above the throughput ceiling where a single row stops reproducing; they stay in the
+median and geomean and nobody should cite one alone. 17 of the 62 comparable cells carried a per-trial IQR above 5%,
+against 78 cells on 2026-07-31.
+
+Against inversify the comparable count is 45 where the 2026-07-31 run had 43: inversify passes the
+`scoped-binding-per-child` sanity check it failed then, and the suite has grown since. Group geomeans against inversify,
+this run beside the last full one:
+
+| Group         | 2026-09-06 | 2026-07-31 |
+| ------------- | ---------: | ---------: |
+| scope         |  8.91× (3) |      4.67× |
+| boot          |  6.65× (2) |      5.33× |
+| production    |  6.49× (3) |      7.60× |
+| lifecycle     |  3.90× (5) |      3.82× |
+| introspection |  3.45× (2) |      3.27× |
+| micro         | 2.47× (10) |      2.20× |
+| realistic     |  2.39× (3) |      3.70× |
+| fan-out       |  2.06× (7) |      2.18× |
+| scale         |  1.78× (2) |      1.69× |
+| failure       |  1.64× (2) |          — |
+| async         |  1.62× (6) |      1.67× |
+
+Two groups moved by more than a single pass can explain, and neither is claimed as an engine change here: `scope` nearly
+doubled and `realistic` fell by a third. Both sit on three rows, so a group moves when one row does; nothing in this run
+separates an engine change from a scheduling effect, and no entry between 2026-07-31 and today claims a change aimed at
+either group. Anyone quoting the scope figure as a gain owes it a paired A/B against the 2026-07-31 build first. The
+lowest comparable row is `realistic-graph-resolved-root` at 1.24×, stable within its trials. `failure` reads 1.64× over
+its two remaining rows with `circular-dependency-3` excluded by declaration, just above the ~1.2–1.5× the retraction
+below estimated for it.
+
+The one loss is the one already on this page: `realistic-graph-cold-resolve` at 0.89× of tsyringe, down from 0.94× on
+2026-07-31 and 0.98× the session before, and still slower on purpose — see [Where it loses](#where-it-loses). Every
+other comparable row against every competitor is a win.
 
 ## 2026-09-01 — the name lane folds into the tag lane
 
@@ -480,22 +531,24 @@ declining the plan, not this one.
 ## Suite aggregates
 
 `BENCH_ISOLATE=true BENCH_MODE=full`, one subprocess per scenario, libraries **interleaved with rotating order** — every
-library measures a scenario before the next scenario starts. Ratios over the 43 scenarios each competitor implements.
+library measures a scenario before the next scenario starts. Ratios over the rows each competitor implements: 45 against
+inversify, 8 against awilix and tsyringe. Measured 2026-09-06 on `@codefast/di` 0.8.1; that day's entry sets the group
+table beside the previous run.
 
 | Competitor | Win / parity / loss | Median | Geomean |
 | ---------- | ------------------: | -----: | ------: |
-| inversify  |          43 / 0 / 0 |  2.21× |   2.92× |
-| Awilix 13  |           8 / 0 / 0 |  3.25× |   3.83× |
-| tsyringe 4 |           7 / 0 / 1 |  5.68× |   4.88× |
+| inversify  |          45 / 0 / 0 |  2.33× |   2.84× |
+| Awilix 13  |           8 / 0 / 0 |  3.22× |   3.77× |
+| tsyringe 4 |           7 / 0 / 1 |  6.00× |   4.89× |
 
-Group geomeans against inversify: production 7.60× · failure 6.77× · boot 5.33× · scope 4.67× · lifecycle 3.82× ·
-realistic 3.70× · introspection 3.27× · micro 2.20× · fan-out 2.18× · scale 1.69× · async 1.67×.
+Group geomeans against inversify: scope 8.91× · boot 6.65× · production 6.49× · lifecycle 3.90× · introspection 3.45× ·
+micro 2.47× · realistic 2.39× · fan-out 2.06× · scale 1.78× · failure 1.64× · async 1.62×.
 
-The async group moved from 1.13× to 1.67× between the previous measurement and this one; that is the cascade-lane change
-(`3a0ad82e0`), and it is what retires the suite's last loss against inversify — see [Where it loses](#where-it-loses).
-The tsyringe column's single loss is `realistic-graph-cold-resolve` at 0.94×, the row this page already documents as
-parity-by-design. inversify fails its own sanity check on `scoped-binding-per-child` and is skipped there, so its
-comparable count stays 43.
+The async group's move from 1.13× to 1.67× on 2026-07-31 was the cascade-lane change (`3a0ad82e0`), which retired the
+suite's last loss against inversify — see [Where it loses](#where-it-loses); it reads 1.62× on 2026-09-06. The tsyringe
+column's single loss is `realistic-graph-cold-resolve` at 0.89× (0.94× on 2026-07-31), the row this page already
+documents as parity-by-design. inversify passed every sanity check in the 2026-09-06 run, so its comparable count is the
+full 45 where the 2026-07-31 run, which skipped `scoped-binding-per-child` on a failed check, counted 43.
 
 **What interleaving cost, which is the point.** The same profile, library-major, read 43 / 0 / 0 at median 3.04× and
 geomean 4.13× — and against awilix and tsyringe, medians of 5.14× and 6.41× rather than 2.86× and 4.21×. Those extra
@@ -505,7 +558,7 @@ whoever went later, and `@codefast/di` always went first. Nothing about the libr
 Two independent checks that the interleaved figures are the real ones: `realistic-graph-cold-resolve` against tsyringe
 read **0.98×** in that session and 0.99× in a hand-rolled rotating probe, against 1.28× library-major; and awilix on
 that row read 1.42× and 1.38× in the probe, against 1.82×. The 2026-07-31 re-measure reads 0.94× on it, inside the same
-band.
+band, and the 2026-09-06 full run 0.89×, a little further from parity with the reason unchanged.
 
 The **shared-process** profile (no `BENCH_ISOLATE`) cannot interleave — one process per library runs that library's
 whole suite — so its cross-library ratios stay provisional. It is also a different measurement for a second reason: one
@@ -514,10 +567,11 @@ scenarios pay for earlier ones.
 
 ## Where it loses
 
-**`realistic-graph-cold-resolve` — 0.94× of tsyringe** in the 2026-07-31 interleaved run (0.98× in the prior session,
-1.15× shared-process — the row breathes around parity), and slower **on purpose**. A cold iteration hands the collector
-ten bindings, each carrying every field any binding kind declares, because one uniform V8 hidden class for every binding
-is worth roughly 30% on hot resolve. Winning this row means paying for it everywhere else.
+**`realistic-graph-cold-resolve` — 0.89× of tsyringe** in the 2026-09-06 interleaved full run (0.94× on 2026-07-31,
+0.98× in the session before that, 1.15× shared-process — the row breathes around parity and this pass sits at the low
+end of its band), and slower **on purpose**. A cold iteration hands the collector ten bindings, each carrying every
+field any binding kind declares, because one uniform V8 hidden class for every binding is worth roughly 30% on hot
+resolve. Winning this row means paying for it everywhere else.
 
 **`dynamic-async-chain-8` no longer belongs here.** The 0.75× documented below under Retracted was real when measured,
 and the cascade-lane change (`3a0ad82e0`) is what removed it: async cycle detection now reads its ancestors off the

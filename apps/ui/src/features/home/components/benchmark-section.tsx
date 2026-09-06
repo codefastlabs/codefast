@@ -2,20 +2,29 @@ import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
+import { ScrollFade } from "#/components/shared/scroll-fade";
 import { SectionHeader } from "#/components/shared/section-header";
+import { LedgerDate } from "#/features/home/components/ledger-date";
+import { ScoreBar } from "#/features/home/components/score-bar";
 import type { LedgerFacts } from "#/features/home/lib/benchmark-ledger-facts";
 import { track } from "#/features/tracking/lib/tracking";
 import { GITHUB_URL } from "#/lib/nav-links";
 
 const LEDGER_URL = `${GITHUB_URL}/blob/main/benchmarks/di-inversify/RESULTS.md`;
+const LOSSES_URL = `${LEDGER_URL}#where-it-loses`;
 const GUIDE_URL = `${GITHUB_URL}/blob/main/benchmarks/di-inversify/BENCH_GUIDE.md`;
 
-// A fixed locale and zone, so the server render and the client agree on the label.
-const LEDGER_DATE = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" });
+/** The ledger's `name version` for a competitor line, matched by name prefix; the line's own label otherwise. */
+function competitorLabel(ledger: LedgerFacts, competitor: string): string {
+  const library = ledger.libraries.find((candidate) =>
+    competitor.toLowerCase().startsWith(candidate.name.toLowerCase()),
+  );
 
-/** `2026-09-01` as a readable day, kept machine-readable on the element. */
-function LedgerDate({ date }: { readonly date: string }) {
-  return <time dateTime={date}>{LEDGER_DATE.format(new Date(`${date}T00:00:00Z`))}</time>;
+  return library ? `${library.name} ${library.version}` : competitor;
+}
+
+function trackLedgerClick(): void {
+  track("open_external", { destination: "github", surface: "home-benchmarks" });
 }
 
 interface BenchmarkSectionProps extends Omit<ComponentProps<"section">, "children"> {
@@ -23,8 +32,10 @@ interface BenchmarkSectionProps extends Omit<ComponentProps<"section">, "childre
   readonly ledger: LedgerFacts;
 }
 
-/** The benchmark suite, pointed at rather than quoted: the ledger's own facts here, every figure next to its method. */
+/** The benchmark suite's scoreboard, every figure lifted from the ledger's aggregates table and linked back to it. */
 export function BenchmarkSection({ ledger, className, ...props }: BenchmarkSectionProps) {
+  const lossCount = ledger.aggregates.reduce((sum, row) => sum + row.losses, 0);
+
   return (
     <section
       aria-labelledby="home-benchmarks-title"
@@ -32,7 +43,7 @@ export function BenchmarkSection({ ledger, className, ...props }: BenchmarkSecti
       {...props}
     >
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,30rem)] lg:gap-20">
+        <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,32rem)] lg:gap-20">
           <SectionHeader
             eyebrow="Benchmarks"
             titleId="home-benchmarks-title"
@@ -43,82 +54,109 @@ export function BenchmarkSection({ ledger, className, ...props }: BenchmarkSecti
                 the method attached.
               </>
             }
-            description="A first-party suite runs the same workloads through @codefast/di, InversifyJS, Awilix and tsyringe. Its ledger records every figure beside the recipe that produced it and the machine it ran on, and the guide shows how to re-run any row. A number without its method is not worth quoting, so this page shows what the ledger compared and when, and leaves the figures to it."
+            description="A first-party suite runs the same workloads through @codefast/di, InversifyJS, Awilix and tsyringe, every library interleaved so none of them rides the machine's drift. Its ledger records every figure beside the recipe that produced it and the machine it ran on, and the guide shows how to re-run any row. The scoreboard here is lifted from that ledger at build time, losses included."
             className="reveal-up"
           />
           <div className="reveal-up flex flex-col gap-5 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:p-8">
-            <p className="font-mono text-xs text-ui-muted">benchmarks/di-inversify/RESULTS.md</p>
-            <dl className="flex flex-col gap-4 text-sm">
-              {ledger.libraries.length > 0 ? (
-                <div className="flex flex-col gap-2">
-                  <dt className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Compared</dt>
-                  <dd>
-                    <ul className="flex flex-wrap gap-2" aria-label="Libraries compared">
-                      {ledger.libraries.map((library) => (
-                        <li
-                          key={library.name}
-                          className="inline-flex items-baseline gap-1.5 rounded-full border border-ui-border/60 bg-ui-surface px-3 py-1 font-mono text-xs"
-                        >
-                          <span className="text-ui-fg">{library.name}</span>
-                          <span className="text-ui-muted">{library.version}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </dd>
-                </div>
-              ) : null}
-              {ledger.environment ? (
-                <div className="flex flex-col gap-1">
-                  <dt className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Environment</dt>
-                  <dd className="font-mono text-xs leading-relaxed text-ui-fg">{ledger.environment}</dd>
-                </div>
-              ) : null}
-              {ledger.latestEntry ? (
-                <div className="flex flex-col gap-1">
-                  <dt className="text-xs font-semibold tracking-widest text-ui-muted uppercase">Latest entry</dt>
-                  <dd className="leading-relaxed text-ui-fg">
-                    <LedgerDate date={ledger.latestEntry.date} />
-                    <span className="text-ui-muted"> · {ledger.latestEntry.title}</span>
-                  </dd>
-                </div>
-              ) : null}
-              {ledger.lastFullRemeasure ? (
-                <div className="flex flex-col gap-1">
-                  <dt className="text-xs font-semibold tracking-widest text-ui-muted uppercase">
-                    Last full re-measure
-                  </dt>
-                  <dd className="leading-relaxed text-ui-fg">
-                    <LedgerDate date={ledger.lastFullRemeasure} />
-                  </dd>
-                </div>
-              ) : null}
-            </dl>
-            <p className="text-sm leading-relaxed text-ui-muted">
-              Paired and interleaved runs, an isolated profile, three trials per row, and the per-trial spread reported
-              with each cell. Ratios are read across libraries in the same window, never from absolute throughput.
+            <p className="font-mono text-xs leading-relaxed text-ui-muted">
+              benchmarks/di-inversify/RESULTS.md
+              {ledger.aggregateProfile ? ` · ${ledger.aggregateProfile}` : null}
             </p>
+            {ledger.aggregates.length > 0 ? (
+              <ScrollFade className="[--scroll-fade-color:var(--ui-card)]">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[26rem] text-sm">
+                    <caption className="sr-only">Suite aggregates: @codefast/di over each competitor</caption>
+                    <thead className="text-xs text-ui-muted">
+                      <tr>
+                        <th scope="col" className="pb-2 text-start font-medium">
+                          @codefast/di vs
+                        </th>
+                        <th scope="col" className="pb-2 text-start font-medium">
+                          win · parity · loss
+                        </th>
+                        <th scope="col" className="pe-3 pb-2 text-end font-medium whitespace-nowrap">
+                          median
+                        </th>
+                        <th scope="col" className="pb-2 text-end font-medium whitespace-nowrap">
+                          geomean
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-ui-border/60">
+                      {ledger.aggregates.map((row) => (
+                        <tr key={row.competitor}>
+                          <th scope="row" className="py-3 pe-3 text-start font-mono text-xs font-normal text-ui-fg">
+                            {competitorLabel(ledger, row.competitor)}
+                          </th>
+                          <td className="py-3 pe-3">
+                            <div className="flex items-center gap-2">
+                              <ScoreBar
+                                wins={row.wins}
+                                parities={row.parities}
+                                losses={row.losses}
+                                className="min-w-12"
+                              />
+                              <span className="shrink-0 font-mono text-xs text-ui-muted tabular-nums">
+                                {`${row.wins} · ${row.parities} · ${row.losses}`}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-3 pe-3 text-end font-semibold whitespace-nowrap text-ui-fg tabular-nums">
+                            {row.median.toFixed(2)}×
+                          </td>
+                          <td className="py-3 text-end font-semibold whitespace-nowrap text-ui-fg tabular-nums">
+                            {row.geomean.toFixed(2)}×
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </ScrollFade>
+            ) : null}
+            <p className="text-sm leading-relaxed text-ui-muted">
+              {lossCount === 0 ? (
+                "No comparable row lost; parity and unreliable rows are marked in the ledger."
+              ) : (
+                <>
+                  {lossCount === 1 ? "The one loss" : `The ${lossCount} losses`}
+                  {ledger.losses.length > 0
+                    ? `: ${ledger.losses.map((loss) => `${loss.scenario} at ${loss.ratio}× of ${loss.competitor}`).join(", ")}, `
+                    : " "}
+                  stay published, with the reason, under{" "}
+                  <a
+                    href={LOSSES_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={trackLedgerClick}
+                    className="text-ui-fg underline underline-offset-4 hover:text-ui-brand"
+                  >
+                    Where it loses
+                  </a>
+                  .
+                </>
+              )}
+            </p>
+            {ledger.environment || ledger.lastFullRemeasure ? (
+              <p className="font-mono text-xs leading-relaxed text-ui-muted">
+                {ledger.environment}
+                {ledger.environment && ledger.lastFullRemeasure ? " · " : null}
+                {ledger.lastFullRemeasure ? (
+                  <>
+                    last full re-measure <LedgerDate date={ledger.lastFullRemeasure} />
+                  </>
+                ) : null}
+              </p>
+            ) : null}
             <div className="flex flex-wrap gap-3 pt-1">
               <Button asChild>
-                <a
-                  href={LEDGER_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={() => {
-                    track("open_external", { destination: "github", surface: "home-benchmarks" });
-                  }}
-                >
+                <a href={LEDGER_URL} target="_blank" rel="noreferrer" onClick={trackLedgerClick}>
                   Read the ledger
                 </a>
               </Button>
               <Button asChild variant="outline">
-                <a
-                  href={GUIDE_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={() => {
-                    track("open_external", { destination: "github", surface: "home-benchmarks" });
-                  }}
-                >
+                <a href={GUIDE_URL} target="_blank" rel="noreferrer" onClick={trackLedgerClick}>
                   Run it yourself
                 </a>
               </Button>
