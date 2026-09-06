@@ -40,7 +40,7 @@ export function DiTestingSection({ testBedHtml, className, ...props }: DiTesting
                   you don&rsquo;t test.
                 </>
               }
-              description="@codefast/di-testing reads a class's declared dependencies and builds a mock for each — no per-collaborator bind. Here it is the live graph's OrderService, with its catalog, inventory, gateway, context and logger all mocked. The unit is constructed through a real container, so accessor injection and lifecycle hooks run exactly as in production. Use the built-in spy, as here, or pass vi.fn or jest.fn and assert with their matchers."
+              description="@codefast/di-testing reads a class's declared dependencies and builds a mock for each — no per-collaborator bind. Here the live graph's OrderService is under four tests: every collaborator auto-mocked, two of them stubbed to drive a scenario, the request context replaced by a value, and a token the unit never declared refused at compile. The unit is constructed through a real container, so accessor injection and lifecycle hooks run exactly as in production. Use the built-in spy, as here, or pass vi.fn or jest.fn and assert with their matchers."
               className="mb-10"
             />
             <Button asChild variant="outline" size="lg">
@@ -50,7 +50,7 @@ export function DiTestingSection({ testBedHtml, className, ...props }: DiTesting
             </Button>
           </div>
           <div className="reveal-up flex flex-col gap-6">
-            <SnippetCard label="Unit test" caption="@codefast/di-testing" highlightedCode={testBedHtml} />
+            <SnippetCard label="Unit tests" caption="@codefast/di-testing" highlightedCode={testBedHtml} />
             <LazyVisible minHeight={148} fallback={<PreviewSkeleton minHeight={148} className="w-full rounded-2xl" />}>
               <Suspense fallback={<PreviewSkeleton minHeight={148} className="w-full rounded-2xl" />}>
                 <TestBedDemo />
