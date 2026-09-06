@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { DOC_PACKAGES, PACKAGES, docSource } from "#/features/package-docs/lib/doc-source.impl";
+import { DOC_PACKAGES, PACKAGES, PACKAGE_ORDER, docSource } from "#/features/package-docs/lib/doc-source.impl";
 
 describe("package discovery", () => {
-  it("lists every published package with its documents, sorted by name", () => {
+  it("lists every published package with its documents, the flagship first", () => {
+    const slugs = PACKAGES.map((pkg) => pkg.slug);
     const names = PACKAGES.map((pkg) => pkg.name);
 
-    expect(names).toEqual([...names].toSorted((a, b) => a.localeCompare(b)));
-    expect(names).toContain("@codefast/di");
-    expect(names).toContain("@codefast/ui");
+    expect(slugs).toEqual([...PACKAGE_ORDER]);
+    expect(slugs[0]).toBe("di");
     expect(names).not.toContain("@codefast/benchmark-harness");
 
     const di = PACKAGES.find((pkg) => pkg.slug === "di");

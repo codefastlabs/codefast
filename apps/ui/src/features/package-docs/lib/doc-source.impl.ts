@@ -107,7 +107,25 @@ const sourcesByPackage: ReadonlyMap<string, ReadonlyMap<DocKindSlug, KindSources
   return byPackage;
 })();
 
-/** Every published package with the documents it ships, sorted by name. */
+/** Display order of the published packages: the flagship first, then the rest as a product reaches for them. */
+export const PACKAGE_ORDER: ReadonlyArray<string> = [
+  "di",
+  "di-testing",
+  "ui",
+  "tailwind-variants",
+  "theme",
+  "tracking",
+  "cli",
+  "typescript-config",
+];
+
+function packageRank(slug: string): number {
+  const index = PACKAGE_ORDER.indexOf(slug);
+
+  return index === -1 ? PACKAGE_ORDER.length : index;
+}
+
+/** Every published package with the documents it ships, in display order; a package not yet placed sorts last by name. */
 export const PACKAGES: ReadonlyArray<PackageSummary> = Object.entries(manifests)
   .map(([globPath, manifest]): PackageSummary => {
     const [pkg] = packageAndFile(globPath);
@@ -126,7 +144,7 @@ export const PACKAGES: ReadonlyArray<PackageSummary> = Object.entries(manifests)
       }),
     };
   })
-  .toSorted((a, b) => a.name.localeCompare(b.name));
+  .toSorted((a, b) => packageRank(a.slug) - packageRank(b.slug) || a.name.localeCompare(b.name));
 
 /** The packages whose docs render under `/docs/<pkg>` — every published package except `ui`, which has its own site section. */
 export const DOC_PACKAGES: ReadonlyArray<PackageSummary> = PACKAGES.filter((pkg) => pkg.slug !== "ui");
