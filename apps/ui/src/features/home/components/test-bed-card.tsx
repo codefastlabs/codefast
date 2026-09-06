@@ -1,12 +1,13 @@
 import { cn } from "@codefast/ui/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
-import { BracesIcon, ChevronRightIcon } from "lucide-react";
+import { BracesIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import { Suspense, lazy, useState } from "react";
 
 import { CodeBlock } from "#/components/shared/code-block";
 import { LazyVisible } from "#/components/shared/lazy-visible";
 import { PreviewSkeleton } from "#/components/shared/preview-skeleton";
+import { ImportsFold } from "#/features/home/components/imports-fold";
 import { SHOP_TESTS } from "#/features/home/demos/shop-tests";
 import type { TestBedSnippet } from "#/features/home/lib/home-snippets";
 
@@ -54,13 +55,11 @@ export function TestBedCard({ snippet, className, ...props }: TestBedCardProps) 
             ))}
           </TabsList>
         </div>
-        <details className="group border-b border-ui-border/60">
-          <summary className="flex cursor-pointer list-none items-center gap-1.5 px-6 py-2 font-mono text-xs text-ui-muted transition-colors select-none hover:text-ui-fg">
-            <ChevronRightIcon className="size-3.5 transition-transform group-open:rotate-90" />
-            imports, from ./shop and @codefast/di-testing
-          </summary>
-          <CodeBlock highlightedCode={snippet.imports} />
-        </details>
+        <ImportsFold
+          label="imports, from ./shop and @codefast/di-testing"
+          highlightedCode={snippet.imports}
+          className="border-b border-ui-border/60"
+        />
         {snippet.tests.map((test, index) => (
           <TabsContent key={test.title} value={String(index)}>
             <CodeBlock highlightedCode={test.html} />

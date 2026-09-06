@@ -2,14 +2,16 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
 import { CodeBlock } from "#/components/shared/code-block";
+import { ImportsFold } from "#/features/home/components/imports-fold";
+import type { FoldedSnippet } from "#/features/home/lib/home-snippets";
 
 interface DecoratorsCardProps extends Omit<ComponentProps<"article">, "children"> {
-  /** Every decorator in one class, as dual-theme highlighted HTML. */
-  readonly decoratorsHtml: string;
+  /** Every decorator in one class, its import block split off, as dual-theme highlighted HTML. */
+  readonly decorators: FoldedSnippet;
 }
 
 /** Native decorators: dependencies and lifecycle declared where they are consumed, nothing reflected at runtime. */
-export function DecoratorsCard({ decoratorsHtml, className, ...props }: DecoratorsCardProps) {
+export function DecoratorsCard({ decorators, className, ...props }: DecoratorsCardProps) {
   return (
     <article
       className={cn("flex flex-col gap-5 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:p-8", className)}
@@ -25,7 +27,12 @@ export function DecoratorsCard({ decoratorsHtml, className, ...props }: Decorato
         closes through the two hooks. No reflect-metadata, no experimentalDecorators, no runtime reflection.
       </p>
       <div className="overflow-hidden rounded-xl border border-ui-border/60">
-        <CodeBlock highlightedCode={decoratorsHtml} />
+        <ImportsFold
+          label="imports, from @codefast/di"
+          highlightedCode={decorators.imports}
+          className="border-b border-ui-border/60"
+        />
+        <CodeBlock highlightedCode={decorators.body} />
       </div>
       <p className="mt-auto text-sm leading-relaxed text-ui-muted">
         This page compiles them with the standard decorators transform; the same code runs unchanged once browsers ship

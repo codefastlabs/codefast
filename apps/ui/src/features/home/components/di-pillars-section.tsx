@@ -6,21 +6,22 @@ import { DecoratorsCard } from "#/features/home/components/decorators-card";
 import { IntrospectionCard } from "#/features/home/components/introspection-card";
 import { ScopesCard } from "#/features/home/components/scopes-card";
 import { TypedTokensCard } from "#/features/home/components/typed-tokens-card";
+import type { FoldedSnippet } from "#/features/home/lib/home-snippets";
 
 interface DiPillarsSectionProps extends Omit<ComponentProps<"section">, "children"> {
   /** The well-declared class for the typed-tokens card, as dual-theme highlighted HTML. */
   readonly rightListHtml: string;
   /** The mis-declared class for the typed-tokens card, as dual-theme highlighted HTML. */
   readonly wrongListHtml: string;
-  /** Every decorator in one class for the decorators card, as dual-theme highlighted HTML. */
-  readonly decoratorsHtml: string;
+  /** Every decorator in one class for the decorators card, its import block split off. */
+  readonly decorators: FoldedSnippet;
 }
 
 /** Why the flagship: four points from the package's README, each shown rather than told. */
 export function DiPillarsSection({
   rightListHtml,
   wrongListHtml,
-  decoratorsHtml,
+  decorators,
   className,
   ...props
 }: DiPillarsSectionProps) {
@@ -47,10 +48,7 @@ export function DiPillarsSection({
         {/* The tall decorators sample takes the right column for two rows, so the two toggling cards stack beside it. */}
         <div className="grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-2">
           <TypedTokensCard rightListHtml={rightListHtml} wrongListHtml={wrongListHtml} className="reveal-up" />
-          <DecoratorsCard
-            decoratorsHtml={decoratorsHtml}
-            className="reveal-up md:col-start-2 md:row-span-2 md:row-start-1"
-          />
+          <DecoratorsCard decorators={decorators} className="reveal-up md:col-start-2 md:row-span-2 md:row-start-1" />
           <ScopesCard className="reveal-up" />
           <IntrospectionCard className="reveal-up md:col-span-2" />
         </div>

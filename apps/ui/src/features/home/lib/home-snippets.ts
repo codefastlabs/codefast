@@ -3,6 +3,14 @@ import { setResponseHeader } from "@tanstack/react-start/server";
 
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 
+/** A sample with its import block split off, so a card can fold the imports and start at the code that matters. */
+export interface FoldedSnippet {
+  /** The import block as dual-theme highlighted HTML. */
+  readonly imports: string;
+  /** Everything after the imports as dual-theme highlighted HTML. */
+  readonly body: string;
+}
+
 /** The testing sample split for its tabbed card: the import block, then one entry per `it(...)` in file order. */
 export interface TestBedSnippet {
   /** The import block as dual-theme highlighted HTML. */
@@ -21,8 +29,8 @@ export interface HomeSnippets {
   readonly rightList: string;
   /** The same class naming the shop's config token, which the typed-tokens card shows with the compiler's verdict. */
   readonly wrongList: string;
-  /** Every decorator in one class, for the decorators card. */
-  readonly decorators: string;
+  /** Every decorator in one class for the decorators card, its import block split off. */
+  readonly decorators: FoldedSnippet;
 }
 
 /**

@@ -38,6 +38,21 @@ describe("home samples", () => {
     }
   });
 
+  it("keep every line the pillar cards show inside their column, imports aside", () => {
+    const shown = Object.entries(sources).filter(
+      ([path]) => path.endsWith("decorators.source.ts") || path.endsWith(".sample.txt"),
+    );
+    const overlong = shown.flatMap(([path, source]) =>
+      source
+        .split("\n")
+        .filter((line) => !line.startsWith("import ") && line.length > 66)
+        .map((line) => `${path}: ${line}`),
+    );
+
+    expect(shown.length).toBeGreaterThanOrEqual(3);
+    expect(overlong).toEqual([]);
+  });
+
   it("name every token after the type it carries", () => {
     const mismatched: Array<string> = [];
 

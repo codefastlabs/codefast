@@ -1,33 +1,33 @@
 import { inject, injectAll, injectable, optional, postConstruct, preDestroy, token } from "@codefast/di";
 
-interface MailTransport {
+interface Transport {
   connect(): Promise<void>;
   close(): Promise<void>;
   send(to: string, body: string): Promise<void>;
 }
-interface ReceiptFormatter {
+interface Formatter {
   format(receipt: string): string;
 }
 interface Logger {
   info(message: string): void;
 }
 
-const MailTransportToken = token<MailTransport>("MailTransport");
-const ReceiptFormatterToken = token<ReceiptFormatter>("ReceiptFormatter");
+const TransportToken = token<Transport>("Transport");
+const FormatterToken = token<Formatter>("Formatter");
 const LoggerToken = token<Logger>("Logger");
 
 @injectable([
-  MailTransportToken,
+  TransportToken,
   optional(LoggerToken),
-  injectAll(ReceiptFormatterToken),
-  inject(MailTransportToken, { name: "fallback" }),
+  injectAll(FormatterToken),
+  inject(TransportToken, { name: "fallback" }),
 ])
 export class ReceiptMailer {
   constructor(
-    readonly transport: MailTransport,
+    readonly transport: Transport,
     readonly logger: Logger | undefined,
-    readonly formatters: Array<ReceiptFormatter>,
-    readonly fallback: MailTransport,
+    readonly formatters: Array<Formatter>,
+    readonly fallback: Transport,
   ) {}
 
   @postConstruct()

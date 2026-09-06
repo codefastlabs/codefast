@@ -13,7 +13,8 @@ describe("highlightHomeSnippets", () => {
       ...testBed.tests.map((test) => test.html),
       rightList,
       wrongList,
-      decorators,
+      decorators.imports,
+      decorators.body,
     ]) {
       expect(html).toContain('class="shiki');
       expect(html).toContain("--shiki-dark");
@@ -24,8 +25,11 @@ describe("highlightHomeSnippets", () => {
     expect(rightList).toContain("LoggerToken");
     expect(rightList).not.toContain("ShopConfigToken");
     expect(wrongList).toContain("ShopConfigToken");
-    expect(decorators).toContain("postConstruct");
-    expect(decorators).toContain("ReceiptMailer");
+    expect(decorators.imports).toContain("@codefast/di");
+    expect(decorators.imports).not.toContain("ReceiptMailer");
+    expect(decorators.body).toContain("postConstruct");
+    expect(decorators.body).toContain("ReceiptMailer");
+    expect(decorators.body).not.toContain("import");
   });
 
   it("splits the test file into its imports and one body per test, titled as the sample states them", async () => {
