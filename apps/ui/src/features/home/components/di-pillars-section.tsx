@@ -9,10 +9,12 @@ import { TypedTokensCard } from "#/features/home/components/typed-tokens-card";
 interface DiPillarsSectionProps extends Omit<ComponentProps<"section">, "children"> {
   /** The mis-declared class for the typed-tokens card, as dual-theme highlighted HTML. */
   readonly wrongListHtml: string;
+  /** Every decorator in one class for the decorators card, as dual-theme highlighted HTML. */
+  readonly decoratorsHtml: string;
 }
 
 /** Why the flagship: four points from the package's README, each shown rather than told. */
-export function DiPillarsSection({ wrongListHtml, ...props }: DiPillarsSectionProps) {
+export function DiPillarsSection({ wrongListHtml, decoratorsHtml, ...props }: DiPillarsSectionProps) {
   return (
     <section aria-labelledby="home-pillars-title" className="border-t border-ui-border/60 py-24 sm:py-32" {...props}>
       <div className="container mx-auto px-4">
@@ -31,7 +33,7 @@ export function DiPillarsSection({ wrongListHtml, ...props }: DiPillarsSectionPr
         />
         <div className="grid gap-4 md:grid-cols-2">
           <TypedTokensCard wrongListHtml={wrongListHtml} className="reveal-up" />
-          <DecoratorsCard className="reveal-up" />
+          <DecoratorsCard decoratorsHtml={decoratorsHtml} className="reveal-up" />
           <ScopesCard className="reveal-up" />
           <IntrospectionCard className="reveal-up" />
         </div>

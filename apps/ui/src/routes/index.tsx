@@ -62,7 +62,7 @@ function HomePage() {
     <main>
       <HeroSection quickStartHtml={snippets.quickStart} />
       <WiringSection />
-      <DiPillarsSection wrongListHtml={snippets.wrongList} />
+      <DiPillarsSection wrongListHtml={snippets.wrongList} decoratorsHtml={snippets.decorators} />
       <DiTestingSection testBedHtml={snippets.testBed} />
       <PackagesSection packages={packages} />
       <InstallCta
