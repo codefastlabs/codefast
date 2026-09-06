@@ -60,9 +60,10 @@ router-core (`new-process-route-tree.js`: `isFrameMoreSpecific`, `sortDynamic`, 
 segments (`{-$sub}`) are the other option; either way `docRefFor`, `PackageDoc.pages`, the sidebar, `readingOrder`, the
 prerender list in `vite.config.ts`, and the `.md` twin routes must grow together.
 
-Link-preview images are generated, not drawn by hand: `pnpm --filter @apps/ui generate:og` runs
-`scripts/generate-og-image.ts`, which renders `public/og-image.png` for the site and one `public/og/<pkg>.png` per
-package with resvg. Run it after adding or removing a component or package.
+Raster brand assets are generated, not drawn by hand: `pnpm --filter @apps/ui generate:brand` runs
+`scripts/generate-brand-assets.ts`, which renders the favicon, the app icons, the lockups and README banner under
+`public/brand/`, `public/og-image.png` for the site, and one `public/og/<pkg>.png` per package with resvg. Run it after
+changing a brand source or adding a package.
 
 ## Develop
 
@@ -75,7 +76,7 @@ pnpm --filter @apps/ui dev            # http://localhost:3000
 pnpm --filter @apps/ui build          # production build, against each package's dist/
 pnpm --filter @apps/ui preview        # serve the build output from disk
 pnpm --filter @apps/ui check-types    # tsc --noEmit
-pnpm --filter @apps/ui generate:og    # regenerate the OG images
+pnpm --filter @apps/ui generate:brand # regenerate the raster brand assets and OG images
 ```
 
 ## Testing

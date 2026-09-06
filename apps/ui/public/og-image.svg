@@ -6,8 +6,8 @@
     </linearGradient>
     <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
       gradientTransform="translate(1000 90) rotate(130) scale(620 620)">
-      <stop offset="0" stop-color="#0ea5e9" stop-opacity="0.30" />
-      <stop offset="1" stop-color="#0ea5e9" stop-opacity="0" />
+      <stop offset="0" stop-color="#00a6f4" stop-opacity="0.30" />
+      <stop offset="1" stop-color="#00a6f4" stop-opacity="0" />
     </radialGradient>
     <style>
       text { font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
@@ -16,22 +16,22 @@
 
   <rect width="1200" height="630" fill="url(#bg)" />
   <rect width="1200" height="630" fill="url(#glow)" />
-  <rect x="0" y="0" width="1200" height="6" fill="#0ea5e9" />
+  <rect x="0" y="0" width="1200" height="6" fill="#00a6f4" />
 
-  <!-- Brand mark -->
-  <text x="80" y="120" font-size="34" font-weight="700" fill="#fafafa">
-    codefast<tspan fill="#38bdf8">/ui</tspan>
-  </text>
+  <!-- Lockup: the mark at 40 px, then the wordmark -->
+  <g transform="translate(80 76) scale(0.625)">
+    <rect x="4" y="4" width="24" height="24" rx="6" fill="#00bcff" />
+    <rect x="36" y="4" width="24" height="24" rx="6" fill="#fafafa" fill-opacity="0.4" />
+    <rect x="4" y="36" width="24" height="24" rx="6" fill="#fafafa" fill-opacity="0.4" />
+    <rect x="36" y="36" width="24" height="24" rx="6" fill="#fafafa" fill-opacity="0.15" />
+  </g>
+  <text x="132" y="108" font-size="34" font-weight="600" letter-spacing="-0.7" fill="#fafafa">codefast<tspan fill="#00bcff">labs</tspan></text>
 
   <!-- Headline -->
-  <text x="78" y="320" font-size="84" font-weight="800" letter-spacing="-2" fill="#fafafa">Beautiful, accessible</text>
-  <text x="78" y="420" font-size="84" font-weight="800" letter-spacing="-2" fill="#fafafa">React components</text>
+  <text x="76" y="342" font-size="84" font-weight="800" letter-spacing="-2.5" fill="#fafafa">Packages built</text>
+  <text x="76" y="432" font-size="84" font-weight="800" letter-spacing="-2.5" fill="#fafafa">for <tspan fill="#00bcff">React 19.</tspan></text>
 
-  <!-- Sub — the count and og-image.png are written by scripts/generate-og-image.ts; run `pnpm generate:og` in apps/ui -->
-  <text x="80" y="500" font-size="30" font-weight="500" fill="#a3a3a3">
-    70+ components · Radix UI · Tailwind CSS v4 · React 19
-  </text>
+  <text x="80" y="498" font-size="28" font-weight="500" fill="#a1a1a1">Components · variant styling · theming · tracking · dependency injection</text>
 
-  <!-- Footer line -->
-  <text x="80" y="566" font-size="24" font-weight="500" fill="#71717a">Copy the source. Own the code.</text>
+  <text x="80" y="566" font-size="24" font-weight="500" fill="#737373">codefastlabs.com · @codefast on npm</text>
 </svg>

@@ -32,7 +32,7 @@ export const Route = createFileRoute("/")({
             "@type": "Organization",
             name: "Codefast Labs",
             url: SITE_URL,
-            logo: absoluteUrl("/logo512.png"),
+            logo: absoluteUrl("/icon-512.png"),
             sameAs: [GITHUB_URL, NPM_URL],
           },
         }),

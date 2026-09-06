@@ -22,7 +22,7 @@
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
-    "generate:og": "node scripts/generate-og-image.ts",
+    "generate:brand": "node scripts/generate-brand-assets.ts",
     "preview": "vite preview",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
