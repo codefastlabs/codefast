@@ -10,7 +10,7 @@ import { SiteHeader } from "#/components/site-header";
 
 import appCss from "#/styles.css?url";
 
-const TITLE = "CodeFast × TanStack Start — npm consumer demo";
+const TITLE = "Codefast × TanStack Start — npm consumer demo";
 const DESCRIPTION =
   "A TanStack Start app that consumes the published @codefast/* packages straight from npm: UI components, color-scheme theming, tailwind-variants, and server-side DI.";
 

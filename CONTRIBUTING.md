@@ -1,4 +1,4 @@
-# Contributing to CodeFast
+# Contributing to Codefast
 
 Thanks for helping out. This file covers the repo-wide workflow; `@codefast/di` has its own stricter checklist at
 [packages/di/CONTRIBUTING.md](packages/di/CONTRIBUTING.md), and the full set of conventions lives in
@@ -6,7 +6,7 @@ Thanks for helping out. This file covers the repo-wide workflow; `@codefast/di` 
 
 Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-CodeFast is on **0.x**, and each package versions independently — while a package is on 0.x its breaking changes ship as
+Codefast is on **0.x**, and each package versions independently — while a package is on 0.x its breaking changes ship as
 minor versions, which is what keeps them cheap enough to make. The API surface never "locks", so feedback on a name or a
 shape is worth raising whenever you hit it.
 

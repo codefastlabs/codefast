@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        CodeFast is in **canary pre-release** on the road to 1.0, so please reproduce against the current canary before filing — the bug may already be fixed there.
+        Codefast is in **canary pre-release** on the road to 1.0, so please reproduce against the current canary before filing — the bug may already be fixed there.
 
         For a security vulnerability, do **not** open an issue: follow [SECURITY.md](https://github.com/codefastlabs/codefast/blob/main/SECURITY.md).
 
