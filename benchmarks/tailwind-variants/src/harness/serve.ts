@@ -4,9 +4,8 @@ import { fileURLToPath } from "node:url";
 
 import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
-  BENCH_PORT_ENV_KEY,
   BENCH_RESULTS_DIR_NAME,
-  parseEnvInteger,
+  resolvePreferredPortFromEnvironment,
 } from "@codefast/benchmark-harness/shared/env-keys";
 import { startBenchServer } from "@codefast/benchmark-viewer/server";
 
@@ -14,7 +13,7 @@ import { CODEFAST_TV, CVA, SERVE_TITLE, TAILWIND_VARIANTS } from "#/harness/conf
 
 await startBenchServer({
   benchResultsDir: join(dirname(fileURLToPath(import.meta.url)), "..", "..", BENCH_RESULTS_DIR_NAME),
-  preferredPort: parseEnvInteger(BENCH_PORT_ENV_KEY) ?? 3002,
+  preferredPort: resolvePreferredPortFromEnvironment(3002),
   title: SERVE_TITLE,
   // Each shape's cached, uncached, merged and unmerged rows read against each other on one chart.
   viewDefaults: { overlayGroup: true, useLogScale: true },

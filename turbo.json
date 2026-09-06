@@ -76,7 +76,7 @@
     "bench:serve": {
       "cache": false,
       "persistent": true,
-      "passThroughEnv": ["BENCH_PORT"]
+      "passThroughEnv": ["BENCH_PORT", "PORT"]
     }
   }
 }

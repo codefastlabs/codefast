@@ -17,12 +17,14 @@ export {
   INTERNAL_BENCH_ENV_KEYS,
   MINIMUM_TRIAL_COUNT,
   OBSERVATIONS_FILE_NAME,
+  PORT_ENV_KEY,
   USER_BENCH_ENV_KEYS,
   assertBenchEnvKeys,
   isEnvFlagEnabled,
   parseEnvInteger,
   parseScenarioFilter,
   resolveBenchModeFromEnvironment,
+  resolvePreferredPortFromEnvironment,
   resolveScenarioFilterFromEnvironment,
 } from "#/shared/env-keys";
 

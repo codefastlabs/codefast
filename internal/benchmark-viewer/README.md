@@ -59,8 +59,10 @@ pnpm bench:serve          # every suite's viewer
 pnpm di:bench:serve       # only the DI suite's viewer
 ```
 
-`BENCH_PORT=<n>` sets the preferred port. Each suite's `src/harness/serve.ts` is the caller: it points
-`startBenchServer` at its own `bench-results/` directory and declares its libraries and scenario facets.
+`BENCH_PORT=<n>` sets the preferred port; when it is unset, a generic `PORT` set by the launcher is honoured before the
+suite's default, so a launcher that assigns a free port finds the viewer there. Each suite's `src/harness/serve.ts` is
+the caller: it points `startBenchServer` at its own `bench-results/` directory and declares its libraries and scenario
+facets.
 
 ## Documentation
 

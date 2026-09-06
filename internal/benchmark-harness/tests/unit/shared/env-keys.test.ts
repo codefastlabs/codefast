@@ -9,7 +9,9 @@ import {
   isEnvFlagEnabled,
   parseEnvInteger,
   parseScenarioFilter,
+  PORT_ENV_KEY,
   resolveBenchModeFromEnvironment,
+  resolvePreferredPortFromEnvironment,
 } from "#/shared/env-keys";
 
 const FLAG_KEY = "BENCH_TEST_FLAG";
@@ -132,6 +134,38 @@ describe("parseEnvInteger", () => {
 
   it("refuses a non-integer harness key rather than guessing bounds", () => {
     expect(() => parseEnvInteger(BENCH_MODE_ENV_KEY)).toThrow(/pass explicit bounds/);
+  });
+});
+
+describe("resolvePreferredPortFromEnvironment", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("falls back to the suite default when neither key is set", () => {
+    expect(resolvePreferredPortFromEnvironment(3002)).toBe(3002);
+  });
+
+  // A launcher that assigns a free port announces it through the generic key.
+  it("reads the generic PORT a launcher set", () => {
+    vi.stubEnv(PORT_ENV_KEY, "64957");
+    expect(resolvePreferredPortFromEnvironment(3002)).toBe(64957);
+  });
+
+  it("lets BENCH_PORT override a PORT the launcher set", () => {
+    vi.stubEnv(PORT_ENV_KEY, "3000");
+    vi.stubEnv(BENCH_PORT_ENV_KEY, "4322");
+    expect(resolvePreferredPortFromEnvironment(3002)).toBe(4322);
+  });
+
+  it("treats an empty PORT as unset", () => {
+    vi.stubEnv(PORT_ENV_KEY, "");
+    expect(resolvePreferredPortFromEnvironment(3002)).toBe(3002);
+  });
+
+  it("range-checks PORT like BENCH_PORT", () => {
+    vi.stubEnv(PORT_ENV_KEY, "65536");
+    expect(() => resolvePreferredPortFromEnvironment(3002)).toThrow(/out of range/);
   });
 });
 
