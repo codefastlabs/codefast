@@ -7,7 +7,7 @@ import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
 export interface HomeSnippets {
   /** The `@codefast/di` quick start shown in the hero. */
   readonly quickStart: string;
-  /** The `@codefast/di-testing` unit test shown in the testing section. */
+  /** The `@codefast/di-testing` unit test over the live shop's OrderService, shown in the testing section. */
   readonly testBed: string;
   /** The quick start's OrderService with its list right, which the typed-tokens card opens on. */
   readonly rightList: string;

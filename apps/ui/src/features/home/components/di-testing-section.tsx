@@ -40,7 +40,7 @@ export function DiTestingSection({ testBedHtml, className, ...props }: DiTesting
                   you don&rsquo;t test.
                 </>
               }
-              description="@codefast/di-testing reads a class's declared dependencies and builds a mock for each — no per-collaborator bind. The unit is constructed through a real container, so accessor injection and lifecycle hooks run exactly as in production. Use the built-in spy, as here, or pass vi.fn or jest.fn and assert with their matchers."
+              description="@codefast/di-testing reads a class's declared dependencies and builds a mock for each — no per-collaborator bind. Here it is the live graph's OrderService, with its catalog, inventory, gateway, context and logger all mocked. The unit is constructed through a real container, so accessor injection and lifecycle hooks run exactly as in production. Use the built-in spy, as here, or pass vi.fn or jest.fn and assert with their matchers."
               className="mb-10"
             />
             <Button asChild variant="outline" size="lg">

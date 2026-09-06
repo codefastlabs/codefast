@@ -15,6 +15,7 @@ describe("highlightHomeSnippets", () => {
     expect(quickStart).toContain("@codefast/di");
     expect(testBed).toContain("TestBed");
     expect(testBed).toContain("@codefast/di-testing");
+    expect(testBed).toContain("OrderService");
     expect(rightList).toContain("LoggerToken");
     expect(rightList).not.toContain("ShopConfigToken");
     expect(wrongList).toContain("ShopConfigToken");
