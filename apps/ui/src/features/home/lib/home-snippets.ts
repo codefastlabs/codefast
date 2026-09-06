@@ -9,6 +9,8 @@ export interface HomeSnippets {
   readonly quickStart: string;
   /** The `@codefast/di-testing` unit test shown in the testing section. */
   readonly testBed: string;
+  /** The mis-declared class the typed-tokens card shows with the compiler's verdict. */
+  readonly wrongList: string;
 }
 
 /**

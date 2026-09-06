@@ -1,0 +1,6 @@
+const ClockToken = token<Clock>("Clock");
+
+@injectable([ClockToken])
+class CheckoutService {
+  constructor(private readonly logger: Logger) {}
+}

@@ -4,6 +4,7 @@ import type { ComponentProps } from "react";
 
 import { SectionHeader } from "#/components/shared/section-header";
 import { SnippetCard } from "#/features/home/components/snippet-card";
+import { TestBedDemo } from "#/features/home/components/test-bed-demo";
 
 interface DiTestingSectionProps extends Omit<ComponentProps<"section">, "children"> {
   /** The `@codefast/di-testing` unit test as dual-theme highlighted HTML, from the route loader. */
@@ -36,8 +37,9 @@ export function DiTestingSection({ testBedHtml, ...props }: DiTestingSectionProp
               </Link>
             </Button>
           </div>
-          <div className="reveal-up">
+          <div className="reveal-up flex flex-col gap-4">
             <SnippetCard label="Unit test" caption="@codefast/di-testing" highlightedCode={testBedHtml} />
+            <TestBedDemo />
           </div>
         </div>
       </div>
