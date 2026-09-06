@@ -10,6 +10,7 @@ import {
   RequestContextToken,
   ShopConfigToken,
 } from "#/features/home/demos/shop";
+import { SHOP_TESTS } from "#/features/home/demos/shop-tests";
 
 /** One test's outcome: its name as the sample states it, whether it passed, and the value it checked. */
 export interface ShopTestResult {
@@ -19,7 +20,6 @@ export interface ShopTestResult {
 }
 
 interface ShopTest {
-  readonly name: string;
   readonly run: () => Omit<ShopTestResult, "name">;
 }
 
@@ -27,10 +27,9 @@ function same(actual: unknown, expected: unknown): boolean {
   return JSON.stringify(actual) === JSON.stringify(expected);
 }
 
-// The names are the sample's `it(...)` titles, verbatim, so the panel reports the tests the reader is looking at.
+// One entry per `it(...)` of the sample, in file order; the titles come from the shared list the card also reads.
 const TESTS: ReadonlyArray<ShopTest> = [
   {
-    name: "reserves the stock before charging",
     run: () => {
       const { unit, mocks } = TestBed.solitary(OrderService).compile();
 
@@ -42,7 +41,6 @@ const TESTS: ReadonlyArray<ShopTest> = [
     },
   },
   {
-    name: "charges the catalog's price and returns the receipt",
     run: () => {
       const { unit, mocks } = TestBed.solitary(OrderService)
         .mock(PriceCatalogToken)
@@ -60,7 +58,6 @@ const TESTS: ReadonlyArray<ShopTest> = [
     },
   },
   {
-    name: "logs the order under its request id",
     run: () => {
       const { unit, mocks } = TestBed.solitary(OrderService)
         .mock(RequestContextToken)
@@ -80,7 +77,6 @@ const TESTS: ReadonlyArray<ShopTest> = [
     },
   },
   {
-    name: "refuses a token the unit never declared",
     run: () => {
       try {
         TestBed.solitary(OrderService).mock(ShopConfigToken).using({ currency: "EUR" }).compile();
@@ -100,7 +96,9 @@ const TESTS: ReadonlyArray<ShopTest> = [
 
 /** Runs every test of the sample and reports each outcome; a thrown check is a failure, never a crash. */
 export function runShopTests(): ReadonlyArray<ShopTestResult> {
-  return TESTS.map(({ name, run }) => {
+  return TESTS.map(({ run }, index) => {
+    const name = SHOP_TESTS[index]?.title ?? `test ${index + 1}`;
+
     try {
       return { name, ...run() };
     } catch (error: unknown) {

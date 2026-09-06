@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { runShopTests } from "#/features/home/demos/shop-test-run";
+import { SHOP_TESTS } from "#/features/home/demos/shop-tests";
 
 // The sample the testing section shows, so the runnable twin can be held to its titles.
 const sample = import.meta.glob<string>("../../../../../src/features/home/demos/shop-test.source.ts", {
@@ -22,7 +23,15 @@ describe("runShopTests", () => {
     const titles = [...source.matchAll(/^it\("([^"]+)"/gm)].map((match) => match[1]);
 
     expect(titles).toHaveLength(4);
+    expect(SHOP_TESTS.map((test) => test.title)).toEqual(titles);
     expect(runShopTests().map((result) => result.name)).toEqual(titles);
+  });
+
+  it("keeps every line of the sample inside the card's column", () => {
+    const source = Object.values(sample)[0] ?? "";
+    const overlong = source.split("\n").filter((line) => line.length > 76);
+
+    expect(overlong).toEqual([]);
   });
 
   it("reports what each test checked", () => {
