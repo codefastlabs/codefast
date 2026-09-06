@@ -89,14 +89,24 @@ interface PlacedNode {
   readonly y: number;
 }
 
-/** An edge from the right edge of its dependent to the left edge of its dependency. */
-interface PlacedEdge {
+/** A point an edge passes through on its way across a column it does not stop in. */
+export interface Waypoint {
+  readonly x: number;
+  readonly y: number;
+}
+
+/**
+ * An edge from the right edge of its dependent to the left edge of its dependency. Across every column in between it
+ * runs level through a gap between that column's nodes, so a node never sits on top of it.
+ */
+export interface PlacedEdge {
   readonly from: string;
   readonly to: string;
   readonly x1: number;
   readonly y1: number;
   readonly x2: number;
   readonly y2: number;
+  readonly waypoints: ReadonlyArray<Waypoint>;
 }
 
 /** The whole picture: placed nodes and edges plus the canvas they need. */
@@ -155,16 +165,71 @@ export function layoutGraph(graph: ContainerGraphJson): GraphLayout {
     const to = placed.get(edge.to);
 
     if (from && to) {
-      edges.push({
-        from: edge.from,
-        to: edge.to,
-        x1: from.x + NODE_WIDTH,
-        y1: from.y + NODE_HEIGHT / 2,
-        x2: to.x,
-        y2: to.y + NODE_HEIGHT / 2,
-      });
+      const x1 = from.x + NODE_WIDTH;
+      const y1 = from.y + NODE_HEIGHT / 2;
+      const x2 = to.x;
+      const y2 = to.y + NODE_HEIGHT / 2;
+      const waypoints: Array<Waypoint> = [];
+
+      for (let column = (columns.get(edge.from) ?? 0) + 1; column < (columns.get(edge.to) ?? 0); column += 1) {
+        const left = column * (NODE_WIDTH + COLUMN_GAP);
+        const rows = (byColumn.get(column) ?? []).map((node) => placed.get(node.id)?.y ?? 0).toSorted((a, b) => a - b);
+        const straight = y1 + ((y2 - y1) * (left + NODE_WIDTH / 2 - x1)) / (x2 - x1);
+        const y = gapNearest(rows, straight);
+
+        waypoints.push({ x: left, y }, { x: left + NODE_WIDTH, y });
+      }
+
+      edges.push({ from: edge.from, to: edge.to, x1, y1, x2, y2, waypoints });
     }
   }
 
   return { nodes: [...placed.values()], edges, width, height };
+}
+
+/** The centre of the gap between a column's nodes nearest to `y`; above or below the column when it has one node. */
+function gapNearest(rows: ReadonlyArray<number>, y: number): number {
+  const gaps: Array<number> = [];
+
+  for (const [index, top] of rows.entries()) {
+    const next = rows[index + 1];
+
+    if (next !== undefined) {
+      gaps.push((top + NODE_HEIGHT + next) / 2);
+    }
+  }
+
+  const first = rows[0];
+  const last = rows.at(-1);
+
+  if (gaps.length === 0 && first !== undefined && last !== undefined) {
+    gaps.push(first - ROW_GAP / 2, last + NODE_HEIGHT + ROW_GAP / 2);
+  }
+
+  return gaps.reduce((best, gap) => (Math.abs(gap - y) < Math.abs(best - y) ? gap : best), gaps[0] ?? y);
+}
+
+// How far past each end an edge keeps level before it bends, so every bend happens inside a column gap.
+const BEND = 36;
+
+/** The SVG path of an edge: level through every waypoint, bending only between columns, ending just short of the box. */
+export function edgePath(edge: PlacedEdge): string {
+  const points: ReadonlyArray<Waypoint> = [
+    { x: edge.x1, y: edge.y1 },
+    ...edge.waypoints,
+    { x: edge.x2 - 1, y: edge.y2 },
+  ];
+  let path = `M${edge.x1} ${edge.y1}`;
+
+  for (const [index, point] of points.entries()) {
+    const previous = points[index - 1];
+
+    if (previous !== undefined) {
+      const bend = Math.min(BEND, (point.x - previous.x) / 2);
+
+      path += ` C ${previous.x + bend} ${previous.y}, ${point.x - bend} ${point.y}, ${point.x} ${point.y}`;
+    }
+  }
+
+  return path;
 }
