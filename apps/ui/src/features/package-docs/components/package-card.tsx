@@ -5,6 +5,7 @@ import { ArrowRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
 import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
+import { FLAGSHIP_SLUG } from "#/features/package-docs/lib/flagship";
 import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 import { CURRENT_PAGE_ONLY } from "#/lib/nav-links";
 
@@ -17,21 +18,26 @@ interface PackageCardProps extends Omit<ComponentProps<"article">, "children"> {
 /** One published package: name, version, description, and the way into its documentation. */
 export function PackageCard({ pkg, showDocs = false, className, ...props }: PackageCardProps) {
   const isUi = pkg.slug === "ui";
+  const isFlagship = pkg.slug === FLAGSHIP_SLUG;
   const extraDocs = showDocs && !isUi ? pkg.docs.map(({ kind }) => kind).filter((kind) => kind !== "readme") : [];
 
   return (
     <article
       className={cn(
         "group relative flex flex-col gap-3 rounded-2xl border border-ui-border/60 bg-ui-card p-6 transition-colors hover:border-ui-brand/60",
+        isFlagship && "border-ui-brand/40 shadow-lg shadow-ui-brand/5",
         className,
       )}
       {...props}
     >
       <div className="flex items-center justify-between gap-3">
         <h3 className="font-mono text-sm font-semibold text-ui-fg">{pkg.name}</h3>
-        <Badge variant="outline" className="border-ui-border/60 font-mono text-xs text-ui-muted">
-          v{pkg.version}
-        </Badge>
+        <div className="flex items-center gap-1.5">
+          {isFlagship ? <Badge className="bg-ui-brand text-xs text-white hover:bg-ui-brand">Flagship</Badge> : null}
+          <Badge variant="outline" className="border-ui-border/60 font-mono text-xs text-ui-muted">
+            v{pkg.version}
+          </Badge>
+        </div>
       </div>
       <p className="flex-1 text-sm leading-relaxed text-ui-muted">{pkg.description}</p>
       {extraDocs.length > 0 ? (

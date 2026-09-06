@@ -5,6 +5,7 @@
  */
 import { DOC_KINDS, docRefFor } from "#/features/package-docs/lib/doc-kinds";
 import type { DocKind, DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
+import { FLAGSHIP_SLUG } from "#/features/package-docs/lib/flagship";
 import type { PackageDoc, PackageSummary } from "#/features/package-docs/lib/rendered-doc";
 
 interface PackageManifest {
@@ -109,7 +110,7 @@ const sourcesByPackage: ReadonlyMap<string, ReadonlyMap<DocKindSlug, KindSources
 
 /** Display order of the published packages: the flagship first, then the rest as a product reaches for them. */
 export const PACKAGE_ORDER: ReadonlyArray<string> = [
-  "di",
+  FLAGSHIP_SLUG,
   "di-testing",
   "ui",
   "tailwind-variants",
