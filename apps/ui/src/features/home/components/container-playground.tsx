@@ -176,25 +176,22 @@ export function ContainerPlayground() {
             <TabsTrigger value="dot">DOT</TabsTrigger>
           </TabsList>
         </div>
-        <TabsContent value="graph" className="relative">
-          <div className="overflow-x-auto">
-            <DependencyGraph
-              graph={shop.graph}
-              constructed={constructed}
-              active={active ?? undefined}
-              className="min-w-[40rem] sm:min-w-0"
-            />
-          </div>
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-linear-to-l from-ui-card to-transparent sm:hidden"
-          />
-          <p className="mt-3 text-xs text-ui-muted sm:hidden">Scroll sideways for the whole graph.</p>
+        <TabsContent value="graph">
+          <ScrollFade className="[--scroll-fade-color:var(--ui-card)]">
+            <div className="overflow-x-auto">
+              <DependencyGraph
+                graph={shop.graph}
+                constructed={constructed}
+                active={active ?? undefined}
+                className="min-w-[40rem] sm:min-w-0"
+              />
+            </div>
+          </ScrollFade>
           <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ui-muted" aria-label="Scope legend">
             {SCOPE_LEGEND.map(({ scope: name, note, dot }) => (
               <li key={name} className="flex items-center gap-2">
                 <span aria-hidden className={cn("size-2 rounded-full", dot)} />
-                <span className="font-mono text-ui-fg">{name}</span>
+                <span className="font-mono whitespace-nowrap text-ui-fg">{name}</span>
                 <span>{note}</span>
               </li>
             ))}
