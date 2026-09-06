@@ -9,9 +9,9 @@ export interface HomeSnippets {
   readonly quickStart: string;
   /** The `@codefast/di-testing` unit test shown in the testing section. */
   readonly testBed: string;
-  /** The well-declared class the typed-tokens card opens on. */
+  /** The quick start's OrderService with its list right, which the typed-tokens card opens on. */
   readonly rightList: string;
-  /** The mis-declared class the typed-tokens card shows with the compiler's verdict. */
+  /** The same class naming the shop's config token, which the typed-tokens card shows with the compiler's verdict. */
   readonly wrongList: string;
   /** Every decorator in one class, for the decorators card. */
   readonly decorators: string;

@@ -11,13 +11,13 @@ describe("highlightHomeSnippets", () => {
       expect(html).toContain("--shiki-dark");
       expect(html).not.toMatch(/\n\s*$/);
     }
-    expect(quickStart).toContain("CheckoutService");
+    expect(quickStart).toContain("OrderService");
     expect(quickStart).toContain("@codefast/di");
     expect(testBed).toContain("TestBed");
     expect(testBed).toContain("@codefast/di-testing");
     expect(rightList).toContain("LoggerToken");
-    expect(rightList).not.toContain("ClockToken");
-    expect(wrongList).toContain("ClockToken");
+    expect(rightList).not.toContain("ShopConfigToken");
+    expect(wrongList).toContain("ShopConfigToken");
     expect(decorators).toContain("postConstruct");
   });
 });

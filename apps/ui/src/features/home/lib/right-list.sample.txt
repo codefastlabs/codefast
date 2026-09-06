@@ -1,6 +1,6 @@
 const LoggerToken = token<Logger>("Logger");
 
 @injectable([LoggerToken])
-class CheckoutService {
+class OrderService {
   constructor(private readonly logger: Logger) {}
 }

@@ -8,14 +8,14 @@ import { DemoVerdict } from "#/features/home/components/demo-verdict";
 import { track } from "#/features/tracking/lib/tracking";
 
 interface TypedTokensCardProps extends Omit<ComponentProps<"article">, "children"> {
-  /** The class whose dependency list matches its constructor, as dual-theme highlighted HTML. */
+  /** The quick start's OrderService with its list right, as dual-theme highlighted HTML. */
   readonly rightListHtml: string;
-  /** The same class naming the wrong token, as dual-theme highlighted HTML. */
+  /** The same class naming the shop's config token, as dual-theme highlighted HTML. */
   readonly wrongListHtml: string;
 }
 
 // The cause `tsc` reports for the wrong list, without the decorator-signature wrapper around it.
-const COMPILER_CAUSE = "Property 'info' is missing in type 'Clock' but required in type 'Logger'.";
+const COMPILER_CAUSE = "Property 'info' is missing in type 'ShopConfig' but required in type 'Logger'.";
 
 /** Typed tokens: the dependency list is checked against the constructor, and naming the wrong token fails to compile. */
 export function TypedTokensCard({ rightListHtml, wrongListHtml, className, ...props }: TypedTokensCardProps) {
@@ -32,7 +32,8 @@ export function TypedTokensCard({ rightListHtml, wrongListHtml, className, ...pr
       </div>
       <p className="text-sm leading-relaxed text-ui-muted">
         A Token&lt;Value&gt; flows through every bind → resolve path, and @injectable checks the dependency list against
-        the constructor. Swap in the wrong token and the compiler says so before anything runs:
+        the constructor. This is the quick start&rsquo;s OrderService; hand it the shop&rsquo;s config token in place of
+        the logger&rsquo;s and the compiler says so before anything runs:
       </p>
       <div className="overflow-hidden rounded-xl border border-ui-border/60">
         <CodeBlock highlightedCode={wrong ? wrongListHtml : rightListHtml} />
