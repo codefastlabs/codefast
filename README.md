@@ -14,9 +14,9 @@
 <p align="center">
   <a href="https://github.com/codefastlabs/codefast/actions/workflows/release.yml"><img src="https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg?branch=main" alt="Release"></a>
   <a href="https://codecov.io/gh/codefastlabs/codefast"><img src="https://img.shields.io/codecov/c/github/codefastlabs/codefast" alt="Test Coverage"></a>
-  <a href="https://www.npmjs.com/package/@codefast/ui"><img src="https://img.shields.io/npm/v/@codefast/ui" alt="NPM Version"></a>
-  <a href="https://bundlephobia.com/package/@codefast/ui"><img src="https://img.shields.io/bundlephobia/minzip/@codefast/ui" alt="Bundle Size"></a>
-  <a href="https://www.npmjs.com/package/@codefast/ui"><img src="https://img.shields.io/npm/dm/@codefast/ui" alt="NPM Downloads"></a>
+  <a href="https://www.npmjs.com/package/@codefast/di"><img src="https://img.shields.io/npm/v/@codefast/di" alt="NPM Version"></a>
+  <a href="https://bundlephobia.com/package/@codefast/di"><img src="https://img.shields.io/bundlephobia/minzip/@codefast/di" alt="Bundle Size"></a>
+  <a href="https://www.npmjs.com/package/@codefast/di"><img src="https://img.shields.io/npm/dm/@codefast/di" alt="NPM Downloads"></a>
   <a href="https://github.com/codefastlabs/codefast/blob/main/LICENSE"><img src="https://img.shields.io/github/license/codefastlabs/codefast" alt="License"></a>
 </p>
 
@@ -31,10 +31,11 @@
 ---
 
 This monorepo publishes the `@codefast/*` packages — a family of small, strictly typed libraries for building React 19
-products. The flagship is [`@codefast/ui`](packages/ui): 70+ accessible components built on Radix UI primitives and
-styled with Tailwind CSS 4. Around it sit the packages a product reaches for next — a type-safe variant API, appearance
-management, consent-gated event tracking, dependency injection with an auto-mocking test bed, and the shared TypeScript
-configuration and CLI that keep the repo consistent.
+products. The flagship is [`@codefast/di`](packages/di): lightweight, type-safe dependency injection on TC39 Stage 3
+decorators — typed tokens, scopes, modules, introspection — with [`@codefast/di-testing`](packages/di-testing) as its
+auto-mocking test bed. Around it sit the packages a product reaches for next — 70+ accessible components built on Radix
+UI primitives and Tailwind CSS 4, a type-safe variant API, appearance management, consent-gated event tracking, and the
+shared TypeScript configuration and CLI that keep the repo consistent.
 
 Every package is documented at **[codefastlabs.com](https://codefastlabs.com)** — component previews with copy-ready
 source under `/ui`, and each package's own README, specification, and architecture notes under `/docs/<pkg>`.
@@ -43,13 +44,13 @@ source under `/ui`, and each package's own README, specification, and architectu
 
 | Package                                                     | Description                                                                                     |
 | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| [`@codefast/di`](packages/di)                               | Lightweight, type-safe dependency injection on TC39 Stage 3 decorators — the flagship           |
+| [`@codefast/di-testing`](packages/di-testing)               | Solitary and sociable auto-mocking test beds for `@codefast/di`                                 |
 | [`@codefast/ui`](packages/ui)                               | 70+ accessible React components built on Radix UI primitives and Tailwind CSS 4                 |
 | [`@codefast/tailwind-variants`](packages/tailwind-variants) | Type-safe variant styling API — a faster drop-in replacement for `tailwind-variants`            |
 | [`@codefast/theme`](packages/theme)                         | Appearance management for React 19 — optimistic updates, cross-tab sync, FOUC-free SSR          |
 | [`@codefast/tracking`](packages/tracking)                   | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog |
-| [`@codefast/di`](packages/di)                               | Lightweight dependency-injection primitives for TypeScript                                      |
-| [`@codefast/di-testing`](packages/di-testing)               | Solitary and sociable auto-mocking test beds for `@codefast/di`                                 |
-| [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`arrange`, `audit`, `mirror`, `tag`)                            |
+| [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`arrange`, `audit`, `mirror`, `pack-slim`, `tag`)               |
 | [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                                         |
 
 ## Quick start
@@ -57,30 +58,43 @@ source under `/ui`, and each package's own README, specification, and architectu
 The flagship package is the fastest way in. Install it:
 
 ```bash
-pnpm add @codefast/ui
+pnpm add @codefast/di
 ```
 
-Wire it into your Tailwind CSS 4 stylesheet:
+Describe how each service is built once, then ask the container for it by a typed key:
 
-```css
-@import "tailwindcss";
-@import "@codefast/ui/css/themes/neutral.css";
-@import "@codefast/ui/css/preset.css";
-```
+```ts
+import { Container, injectable, token } from "@codefast/di";
 
-Every component ships as its own subpath import, so you pull in only what you use:
-
-```tsx
-import { Button } from "@codefast/ui/button";
-
-export function MyPage() {
-  return <Button variant="outline">Click me</Button>;
+interface Logger {
+  info(message: string): void;
 }
+
+const LoggerToken = token<Logger>("Logger");
+
+@injectable([LoggerToken])
+class CheckoutService {
+  constructor(private readonly logger: Logger) {}
+
+  complete(orderId: string): void {
+    this.logger.info(`Order ${orderId} completed`);
+  }
+}
+
+const container = Container.create();
+
+container.bind(LoggerToken).toConstantValue({
+  info: (message) => console.log(message),
+});
+container.bind(CheckoutService).toSelf();
+
+container.resolve(CheckoutService).complete("ORD-1001");
 ```
 
-`@codefast/ui` requires React 19 and Tailwind CSS 4. Getting started and per-component documentation live at
-[codefastlabs.com/ui](https://codefastlabs.com/ui); every other package is documented at
-`https://codefastlabs.com/docs/<pkg>`.
+`@codefast/di` requires Node.js 24 or later and TypeScript 5.9 or later with native Stage 3 decorators — no
+`reflect-metadata`, no `experimentalDecorators`. Its README, specification, and architecture notes live at
+[codefastlabs.com/docs/di](https://codefastlabs.com/docs/di); the component library at
+[codefastlabs.com/ui](https://codefastlabs.com/ui); every other package at `https://codefastlabs.com/docs/<pkg>`.
 
 ## Status: 0.x, versioned per package
 
