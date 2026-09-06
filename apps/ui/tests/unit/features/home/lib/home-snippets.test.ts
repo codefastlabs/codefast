@@ -16,6 +16,7 @@ describe("highlightHomeSnippets", () => {
     expect(testBed).toContain("TestBed");
     expect(testBed).toContain("@codefast/di-testing");
     expect(testBed).toContain("OrderService");
+    expect(testBed).toContain("UndeclaredDependencyError");
     expect(rightList).toContain("LoggerToken");
     expect(rightList).not.toContain("ShopConfigToken");
     expect(wrongList).toContain("ShopConfigToken");
