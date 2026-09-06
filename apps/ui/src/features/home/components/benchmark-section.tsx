@@ -34,7 +34,10 @@ interface BenchmarkSectionProps extends Omit<ComponentProps<"section">, "childre
 
 /** The benchmark suite's scoreboard, every figure lifted from the ledger's aggregates table and linked back to it. */
 export function BenchmarkSection({ ledger, className, ...props }: BenchmarkSectionProps) {
+  const wins = ledger.aggregates.reduce((sum, row) => sum + row.wins, 0);
+  const parities = ledger.aggregates.reduce((sum, row) => sum + row.parities, 0);
   const lossCount = ledger.aggregates.reduce((sum, row) => sum + row.losses, 0);
+  const rows = wins + parities + lossCount;
 
   return (
     <section
@@ -63,57 +66,85 @@ export function BenchmarkSection({ ledger, className, ...props }: BenchmarkSecti
               {ledger.aggregateProfile ? ` · ${ledger.aggregateProfile}` : null}
             </p>
             {ledger.aggregates.length > 0 ? (
-              <ScrollFade className="[--scroll-fade-color:var(--ui-card)]">
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[26rem] text-sm">
-                    <caption className="sr-only">Suite aggregates: @codefast/di over each competitor</caption>
-                    <thead className="text-xs text-ui-muted">
-                      <tr>
-                        <th scope="col" className="pb-2 text-start font-medium">
-                          @codefast/di vs
-                        </th>
-                        <th scope="col" className="pb-2 text-start font-medium">
-                          win · parity · loss
-                        </th>
-                        <th scope="col" className="pe-3 pb-2 text-end font-medium whitespace-nowrap">
-                          median
-                        </th>
-                        <th scope="col" className="pb-2 text-end font-medium whitespace-nowrap">
-                          geomean
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-ui-border/60">
-                      {ledger.aggregates.map((row) => (
-                        <tr key={row.competitor}>
-                          <th scope="row" className="py-3 pe-3 text-start font-mono text-xs font-normal text-ui-fg">
-                            {competitorLabel(ledger, row.competitor)}
-                          </th>
-                          <td className="py-3 pe-3">
-                            <div className="flex items-center gap-2">
-                              <ScoreBar
-                                wins={row.wins}
-                                parities={row.parities}
-                                losses={row.losses}
-                                className="min-w-12"
-                              />
-                              <span className="shrink-0 font-mono text-xs text-ui-muted tabular-nums">
-                                {`${row.wins} · ${row.parities} · ${row.losses}`}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="py-3 pe-3 text-end font-semibold whitespace-nowrap text-ui-fg tabular-nums">
-                            {row.median.toFixed(2)}×
-                          </td>
-                          <td className="py-3 text-end font-semibold whitespace-nowrap text-ui-fg tabular-nums">
-                            {row.geomean.toFixed(2)}×
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              <>
+                <div className="flex flex-col gap-2">
+                  <p className="text-sm text-ui-fg">
+                    <span className="font-semibold">@codefast/di</span>
+                    <span className="text-ui-muted">{` across ${rows} head-to-head rows`}</span>
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <ScoreBar wins={wins} parities={parities} losses={lossCount} className="h-2.5 flex-1" />
+                    <span className="shrink-0 font-mono text-xs text-ui-fg tabular-nums">
+                      {`${wins} wins · ${parities} parity · ${lossCount} ${lossCount === 1 ? "loss" : "losses"}`}
+                    </span>
+                  </div>
                 </div>
-              </ScrollFade>
+                <ScrollFade className="[--scroll-fade-color:var(--ui-card)]">
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[26rem] text-sm">
+                      <caption className="sr-only">How @codefast/di fared against each competitor</caption>
+                      <thead className="text-xs text-ui-muted">
+                        <tr>
+                          <th scope="col" rowSpan={2} className="pb-2 text-start align-bottom font-medium">
+                            against
+                          </th>
+                          <th scope="col" rowSpan={2} className="pb-2 text-start align-bottom font-medium">
+                            wins · parity · losses
+                          </th>
+                          <th
+                            scope="colgroup"
+                            colSpan={2}
+                            className="pb-1 text-end font-medium whitespace-nowrap text-ui-fg"
+                          >
+                            @codefast/di faster by
+                          </th>
+                        </tr>
+                        <tr>
+                          <th scope="col" className="pe-3 pb-2 text-end font-medium whitespace-nowrap">
+                            median
+                          </th>
+                          <th scope="col" className="pb-2 text-end font-medium whitespace-nowrap">
+                            geomean
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-ui-border/60">
+                        {ledger.aggregates.map((row) => (
+                          <tr key={row.competitor}>
+                            <th scope="row" className="py-3 pe-3 text-start font-mono text-xs font-normal text-ui-fg">
+                              <span className="text-ui-muted">vs </span>
+                              {competitorLabel(ledger, row.competitor)}
+                            </th>
+                            <td className="py-3 pe-3">
+                              <div className="flex items-center gap-2">
+                                <ScoreBar
+                                  wins={row.wins}
+                                  parities={row.parities}
+                                  losses={row.losses}
+                                  className="min-w-12"
+                                />
+                                <span className="shrink-0 font-mono text-xs text-ui-muted tabular-nums">
+                                  {`${row.wins} · ${row.parities} · ${row.losses}`}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="py-3 pe-3 text-end font-semibold whitespace-nowrap text-ui-fg tabular-nums">
+                              {row.median.toFixed(2)}×
+                            </td>
+                            <td className="py-3 text-end font-semibold whitespace-nowrap text-ui-fg tabular-nums">
+                              {row.geomean.toFixed(2)}×
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </ScrollFade>
+                <p className="text-xs leading-relaxed text-ui-muted">
+                  A ratio is @codefast/di&rsquo;s throughput over the competitor&rsquo;s on the same row, so 2× means
+                  twice the work in the same time.
+                </p>
+              </>
             ) : null}
             <p className="text-sm leading-relaxed text-ui-muted">
               {lossCount === 0 ? (
