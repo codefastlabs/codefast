@@ -1,6 +1,7 @@
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { Kbd } from "#/app/components/kbd";
 import { useHasHydrated } from "#/app/hooks/use-has-hydrated";
 import { isMacLikePlatform } from "#/app/lib/format";
 import { cn, tv } from "#/app/lib/utils";
@@ -27,9 +28,7 @@ function PaletteShortcutHint() {
 
   return (
     <>
-      Esc closes ·{" "}
-      <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">{label}</kbd>{" "}
-      toggles · ↑↓ navigate · Enter runs
+      Esc closes · <Kbd>{label}</Kbd> toggles · ↑↓ navigate · Enter runs
     </>
   );
 }

@@ -18,8 +18,11 @@ export function useViewState(initialPayload: EmbeddedViewerPayload | undefined) 
     facets: [],
     runWindow: "all",
     showBands: true,
-    useLogScale: false,
+    useLogScale: initialPayload?.viewDefaults?.useLogScale ?? false,
     showRatio: false,
+    overlayGroup: initialPayload?.viewDefaults?.overlayGroup ?? false,
+    hiddenOverlayRows: [],
+    indexToFirstRun: false,
   }));
 
   const patchView = useCallback((patch: Partial<ViewState>) => {

@@ -48,6 +48,8 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     chartLibraries,
     chartCompareLibs,
     currentScenario,
+    overlayScenarios,
+    isOverlayActive,
     uniqueEnvKeys,
     envLabelMap,
     uniqueGroups,
@@ -104,7 +106,8 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
       showToast("Nothing to export yet — select a scenario with plotted runs.");
       return;
     }
-    const scenarioSlug = String(view.scenarioId || "chart").replace(/[^a-zA-Z0-9_.-]+/g, "_");
+    const plotted = isOverlayActive ? `group-${currentScenario?.group ?? ""}` : view.scenarioId;
+    const scenarioSlug = String(plotted || "chart").replace(/[^a-zA-Z0-9_.-]+/g, "_");
     const filename = `bench-history-${scenarioSlug}.png`;
     const downloadLink = document.createElement("a");
     downloadLink.download = filename;
@@ -215,7 +218,23 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           onClearGroup={() => patchView({ group: "" })}
           onClearSearch={() => patchView({ search: "" })}
           onDownloadPng={handleDownloadPng}
+          hiddenOverlayRows={view.hiddenOverlayRows}
+          indexToFirstRun={view.indexToFirstRun}
+          onIndexToFirstRunChange={(indexToFirstRun) => patchView({ indexToFirstRun })}
+          onOverlayGroupChange={(overlayGroup) => patchView({ overlayGroup })}
+          onSelectRow={(scenarioId) => patchView({ scenarioId })}
+          onToggleOverlayRow={(scenarioId) =>
+            patchView({
+              hiddenOverlayRows: view.hiddenOverlayRows.includes(scenarioId)
+                ? view.hiddenOverlayRows.filter((id) => id !== scenarioId)
+                : [...view.hiddenOverlayRows, scenarioId],
+            })
+          }
           orderedLibraries={chartLibraries}
+          overlayActive={isOverlayActive}
+          overlayGroup={view.overlayGroup}
+          overlayLibraries={orderedLibraries}
+          overlayScenarios={overlayScenarios}
           primaryLib={primaryLib}
           compareLibs={chartCompareLibs}
           paletteMap={paletteMap}

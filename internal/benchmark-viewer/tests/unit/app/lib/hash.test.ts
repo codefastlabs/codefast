@@ -52,6 +52,9 @@ const defaultView: ViewState = {
   showBands: true,
   useLogScale: false,
   showRatio: false,
+  overlayGroup: false,
+  hiddenOverlayRows: [],
+  indexToFirstRun: false,
 };
 
 describe("buildHash / parseHash", () => {
@@ -67,9 +70,17 @@ describe("buildHash / parseHash", () => {
       showBands: false,
       useLogScale: true,
       showRatio: true,
+      overlayGroup: true,
+      hiddenOverlayRows: ["scenario-one"],
+      indexToFirstRun: true,
     };
     const hash = buildHash(view);
     expect(parseHash(`#${hash}`, payload)).toEqual(view);
+  });
+
+  it("drops hidden rows the payload does not know", () => {
+    const payload = minimalPayload();
+    expect(parseHash("#hide-rows=scenario-one,retired-row", payload)).toEqual({ hiddenOverlayRows: ["scenario-one"] });
   });
 
   it("drops facet labels the payload does not declare", () => {

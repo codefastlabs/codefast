@@ -82,6 +82,76 @@ describe("buildEmbeddedPayload", () => {
     expect(payload.benchResultsWarning).toBe("could not read dir");
   });
 
+  it("takes a scenario's group and description from the newest run that recorded it", () => {
+    const options: BenchServerOptions = {
+      benchResultsDir: "/tmp",
+      libraries: [{ name: "only-lib", displayName: "Only", isPrimary: true }],
+    };
+
+    const rawRuns: Array<RunLines> = [
+      { folderName: "run-1", lines: [observationLine("only-lib", { group: "uncached", what: "old wording" })] },
+      { folderName: "run-2", lines: [observationLine("only-lib", { group: "simple", what: "current wording" })] },
+    ];
+
+    const payload = buildEmbeddedPayload(rawRuns, options, false, 200);
+    expect(payload.scenarios).toEqual([
+      expect.objectContaining({ id: "scenario-one", group: "simple", what: "current wording" }),
+    ]);
+  });
+
+  it("passes the suite's view defaults through to the client", () => {
+    const withDefaults: BenchServerOptions = {
+      benchResultsDir: "/tmp",
+      libraries: [{ name: "only-lib", displayName: "Only", isPrimary: true }],
+      viewDefaults: { overlayGroup: true, useLogScale: true },
+    };
+    const { viewDefaults: _declared, ...withoutDefaults } = withDefaults;
+    const rawRuns: Array<RunLines> = [{ folderName: "run-1", lines: [observationLine("only-lib")] }];
+
+    expect(buildEmbeddedPayload(rawRuns, withDefaults, false, 200).viewDefaults).toEqual({
+      overlayGroup: true,
+      useLogScale: true,
+    });
+    expect(buildEmbeddedPayload(rawRuns, withoutDefaults, false, 200)).not.toHaveProperty("viewDefaults");
+  });
+
+  it("rescales older runs to the newest run's batch and marks where the batch changed", () => {
+    const options: BenchServerOptions = {
+      benchResultsDir: "/tmp",
+      libraries: [{ name: "only-lib", displayName: "Only", isPrimary: true }],
+    };
+
+    const rawRuns: Array<RunLines> = [
+      { folderName: "run-1", lines: [observationLine("only-lib", { batch: 1, hzPerIteration: 100, hzPerOp: 100 })] },
+      { folderName: "run-2", lines: [observationLine("only-lib", { batch: 12, hzPerIteration: 100, hzPerOp: 1200 })] },
+      { folderName: "run-3", lines: [observationLine("only-lib", { batch: 12, hzPerIteration: 110, hzPerOp: 1320 })] },
+    ];
+
+    const [scenario] = buildEmbeddedPayload(rawRuns, options, false, 200).scenarios;
+
+    expect(scenario?.libraries["only-lib"]?.hz).toEqual([1200, 1200, 1320]);
+    expect(scenario?.batchNormalization).toEqual({ referenceBatch: 12, rescaledRunCount: 1 });
+    expect(scenario?.changes).toEqual([{ runIndex: 1, label: "batch 1 → 12" }]);
+  });
+
+  it("marks a run whose description changed and leaves an unchanged scenario unmarked", () => {
+    const options: BenchServerOptions = {
+      benchResultsDir: "/tmp",
+      libraries: [{ name: "only-lib", displayName: "Only", isPrimary: true }],
+    };
+
+    const rawRuns: Array<RunLines> = [
+      { folderName: "run-1", lines: [observationLine("only-lib", { what: "old wording" })] },
+      { folderName: "run-2", lines: [observationLine("only-lib", { what: "new wording" })] },
+    ];
+    const [changed] = buildEmbeddedPayload(rawRuns, options, false, 200).scenarios;
+    const [steady] = buildEmbeddedPayload([rawRuns[0]!], options, false, 200).scenarios;
+
+    expect(changed?.changes).toEqual([{ runIndex: 1, label: "description changed" }]);
+    expect(steady).not.toHaveProperty("changes");
+    expect(steady).not.toHaveProperty("batchNormalization");
+  });
+
   it("sets hasMore and effectiveLimit from arguments", () => {
     const options: BenchServerOptions = {
       benchResultsDir: "/tmp",
