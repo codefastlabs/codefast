@@ -20,5 +20,6 @@ describe("highlightHomeSnippets", () => {
     expect(rightList).not.toContain("ShopConfigToken");
     expect(wrongList).toContain("ShopConfigToken");
     expect(decorators).toContain("postConstruct");
+    expect(decorators).toContain("ReceiptMailer");
   });
 });
