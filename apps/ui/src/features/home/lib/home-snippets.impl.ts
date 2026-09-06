@@ -6,7 +6,7 @@ import { highlightTsx } from "#/registry/_core/highlight-source.impl";
 const rawSources = import.meta.glob<string>(
   [
     "./quick-start.source.ts",
-    "./test-bed.source.ts",
+    "../demos/shop-test.source.ts",
     "./right-list.sample.txt",
     "./wrong-list.sample.txt",
     "../demos/decorators.source.ts",
@@ -22,7 +22,7 @@ const rawSources = import.meta.glob<string>(
 export async function highlightHomeSnippets(): Promise<HomeSnippets> {
   const [quickStart, testBed, rightList, wrongList, decorators] = await Promise.all([
     highlightTsx((rawSources["./quick-start.source.ts"] ?? "").trimEnd()),
-    highlightTsx((rawSources["./test-bed.source.ts"] ?? "").trimEnd()),
+    highlightTsx((rawSources["../demos/shop-test.source.ts"] ?? "").trimEnd()),
     highlightTsx((rawSources["./right-list.sample.txt"] ?? "").trimEnd()),
     highlightTsx((rawSources["./wrong-list.sample.txt"] ?? "").trimEnd()),
     highlightTsx((rawSources["../demos/decorators.source.ts"] ?? "").trimEnd()),

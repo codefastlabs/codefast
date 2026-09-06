@@ -7,11 +7,11 @@ interface Logger {
 const LoggerToken = token<Logger>("Logger");
 
 @injectable([LoggerToken])
-class CheckoutService {
+class OrderService {
   constructor(private readonly logger: Logger) {}
 
-  complete(orderId: string): void {
-    this.logger.info(`Order ${orderId} completed`);
+  place(sku: string): void {
+    this.logger.info(`${sku} placed`);
   }
 }
 
@@ -20,6 +20,6 @@ const container = Container.create();
 container.bind(LoggerToken).toConstantValue({
   info: (message) => console.log(message),
 });
-container.bind(CheckoutService).toSelf();
+container.bind(OrderService).toSelf();
 
-container.resolve(CheckoutService).complete("ORD-1001");
+container.resolve(OrderService).place("SKU-42");

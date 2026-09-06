@@ -16,7 +16,7 @@ export function WiringSection() {
               is real.
             </>
           }
-          description="This container runs in your browser. The graph comes from generateDependencyGraph(), the badges from each binding's scope, and the log from the instances the container actually built. Open a request scope, resolve, resolve again, and watch what it reuses."
+          description="The quick start's OrderService, grown into a shop and running in your browser. The graph comes from generateDependencyGraph(), the badges from each binding's scope, and the log from the instances the container actually built. Open a request scope, resolve, resolve again, and watch what it reuses."
           className="reveal-up mb-16"
         />
         <ContainerPlayground />

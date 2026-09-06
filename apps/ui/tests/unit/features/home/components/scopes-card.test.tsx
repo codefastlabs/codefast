@@ -17,11 +17,11 @@ afterEach(() => {
 });
 
 describe("ScopesCard", () => {
-  it("opens on the sound graph, with validate() passing", () => {
+  it("opens on the shop as shipped, with validate() passing", () => {
     render(<ScopesCard />);
 
     expect(screen.getByRole("status")).toHaveTextContent("validate() passed");
-    expect(screen.getByText(/to\(ResponseCache\)\.scoped\(\)/)).toBeInTheDocument();
+    expect(screen.getByText(/to\(OrderService\)\.transient\(\)/)).toBeInTheDocument();
   });
 
   it("shows the captive singleton validate() refuses on demand, and back", async () => {
@@ -29,13 +29,13 @@ describe("ScopesCard", () => {
 
     render(<ScopesCard />);
 
-    await user.click(screen.getByRole("button", { name: "Make the cache a singleton" }));
+    await user.click(screen.getByRole("button", { name: "Make OrderService a singleton" }));
 
     expect(screen.getByRole("status")).toHaveTextContent(/validate\(\) refused: Scope violation/);
-    expect(screen.getByText(/to\(ResponseCache\)\.singleton\(\)/)).toBeInTheDocument();
+    expect(screen.getByText(/to\(OrderService\)\.singleton\(\)/)).toBeInTheDocument();
     expect(track).toHaveBeenCalledWith("run_demo", { demo: "scopes", action: "toggle-scope", trigger: "click" });
 
-    await user.click(screen.getByRole("button", { name: "Make the cache scoped again" }));
+    await user.click(screen.getByRole("button", { name: "Make OrderService transient again" }));
 
     expect(screen.getByRole("status")).toHaveTextContent("validate() passed");
   });

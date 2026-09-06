@@ -13,6 +13,12 @@ describe("createShop", () => {
     expect(graph.nodes.map((node) => node.scope)).toEqual(expect.arrayContaining(["singleton", "scoped", "transient"]));
   });
 
+  it("binds OrderService as a singleton on request, for the captive case", () => {
+    const { graph } = createShop({ orderService: "singleton" });
+
+    expect(graph.nodes.find((node) => node.tokenName === "OrderService")?.scope).toBe("singleton");
+  });
+
   it("refuses to resolve the scoped context from the root container", () => {
     const { container } = createShop();
 

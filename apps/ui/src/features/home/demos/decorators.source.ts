@@ -1,36 +1,42 @@
 import { inject, injectAll, injectable, optional, postConstruct, preDestroy, token } from "@codefast/di";
 
-interface Database {
-  warmCache(): Promise<void>;
-  flush(): Promise<void>;
+interface MailTransport {
+  connect(): Promise<void>;
+  close(): Promise<void>;
+  send(to: string, body: string): Promise<void>;
 }
-interface Cache {
-  get(key: string): string | undefined;
+interface ReceiptFormatter {
+  format(receipt: string): string;
 }
-interface Plugin {
-  readonly name: string;
+interface Logger {
+  info(message: string): void;
 }
 
-const DbToken = token<Database>("Database");
-const CacheToken = token<Cache>("Cache");
-const PluginToken = token<Plugin>("Plugin");
+const MailTransportToken = token<MailTransport>("MailTransport");
+const ReceiptFormatterToken = token<ReceiptFormatter>("ReceiptFormatter");
+const LoggerToken = token<Logger>("Logger");
 
-@injectable([DbToken, optional(CacheToken), injectAll(PluginToken), inject(DbToken, { name: "replica" })])
-export class UserRepository {
+@injectable([
+  MailTransportToken,
+  optional(LoggerToken),
+  injectAll(ReceiptFormatterToken),
+  inject(MailTransportToken, { name: "fallback" }),
+])
+export class ReceiptMailer {
   constructor(
-    readonly db: Database,
-    readonly cache: Cache | undefined,
-    readonly plugins: Array<Plugin>,
-    readonly replica: Database,
+    readonly transport: MailTransport,
+    readonly logger: Logger | undefined,
+    readonly formatters: Array<ReceiptFormatter>,
+    readonly fallback: MailTransport,
   ) {}
 
   @postConstruct()
-  async init(): Promise<void> {
-    await this.db.warmCache();
+  async connect(): Promise<void> {
+    await this.transport.connect();
   }
 
   @preDestroy()
-  async shutdown(): Promise<void> {
-    await this.db.flush();
+  async close(): Promise<void> {
+    await this.transport.close();
   }
 }

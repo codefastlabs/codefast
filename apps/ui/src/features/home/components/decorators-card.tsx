@@ -20,8 +20,9 @@ export function DecoratorsCard({ decoratorsHtml, className, ...props }: Decorato
         <h3 className="text-base font-semibold text-ui-fg">Native Stage 3 decorators</h3>
       </div>
       <p className="text-sm leading-relaxed text-ui-muted">
-        Six decorators cover dependencies and lifecycle: a required token, an optional one, every binding of a token, a
-        named slot, and the two hooks. No reflect-metadata, no experimentalDecorators, no runtime reflection.
+        Six decorators cover dependencies and lifecycle. ReceiptMailer, which mails what place() returns, takes a
+        required transport, an optional logger, every formatter bound and a named fallback transport, then connects and
+        closes through the two hooks. No reflect-metadata, no experimentalDecorators, no runtime reflection.
       </p>
       <div className="overflow-hidden rounded-xl border border-ui-border/60">
         <CodeBlock highlightedCode={decoratorsHtml} />

@@ -1,6 +1,6 @@
-const ClockToken = token<Clock>("Clock");
+const ShopConfigToken = token<ShopConfig>("ShopConfig");
 
-@injectable([ClockToken])
-class CheckoutService {
+@injectable([ShopConfigToken])
+class OrderService {
   constructor(private readonly logger: Logger) {}
 }
