@@ -1,18 +1,24 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 
-/** Wordmark + glyph linking back to the home page. */
+import { BrandMark } from "#/features/brand/components/brand-mark";
+import { BrandWordmark } from "#/features/brand/components/brand-wordmark";
+
+/** Mark + wordmark linking home; a right-click opens the brand page instead of the browser menu. */
 export function Logo() {
+  const navigate = useNavigate();
+
   return (
-    <Link to="/" className="flex shrink-0 items-center gap-1.5 no-underline" aria-label="Codefast Labs home">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-ui-fg" aria-hidden="true">
-        <rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" />
-        <rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.4" />
-        <rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.4" />
-        <rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.15" />
-      </svg>
-      <span className="text-sm font-semibold tracking-tight text-ui-fg">
-        codefast<span className="text-ui-brand">labs</span>
-      </span>
+    <Link
+      to="/"
+      className="flex shrink-0 items-center gap-1.5 no-underline"
+      aria-label="Codefast Labs home"
+      onContextMenu={(event) => {
+        event.preventDefault();
+        void navigate({ to: "/brand" });
+      }}
+    >
+      <BrandMark small className="size-4 text-ui-fg" />
+      <BrandWordmark className="text-sm text-ui-fg" />
     </Link>
   );
 }

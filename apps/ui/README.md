@@ -20,6 +20,7 @@ package ships as Markdown, and the `@codefast/ui` showcase — live previews and
 | `/ui/components/<slug>.md`  | Markdown twin of a component page (production only — the dev server does not dispatch `.md` routes)         |
 | `/ui/about`                 | Getting started with `@codefast/ui`                                                                         |
 | `/privacy`                  | Privacy policy                                                                                              |
+| `/brand`                    | Brand assets: the mark, lockups, colours, type, and downloads; a right-click on the site logo lands here    |
 | `/llms.txt`                 | Machine-readable index of every package, document, and component, with links to the `.md` twins             |
 
 `@codefast/ui` is the one package without a `/docs/<pkg>` page: its documentation is the `/ui` section, and a link to it

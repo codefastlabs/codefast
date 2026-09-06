@@ -42,7 +42,7 @@ function publicCacheRoutePatterns(): Array<string> {
  * from Vercel's static routing config instead. Prerendering itself needs no list — the
  * discovery merges these into `pages` automatically.
  */
-const ENTRY_PAGE_PATHS = ["/", "/docs", "/privacy", "/ui", "/ui/about", "/ui/components"];
+const ENTRY_PAGE_PATHS = ["/", "/brand", "/docs", "/privacy", "/ui", "/ui/about", "/ui/components"];
 
 /**
  * The ISR `/ui/components/<slug>` pages — one per `registry/<slug>/meta.ts`, mirroring
@@ -230,7 +230,7 @@ export default defineConfig(({ command }) => {
          */
         routeRules: {
           ...Object.fromEntries(
-            [...ENTRY_PAGE_PATHS, "/docs/**", "/og/**", ...publicCacheRoutePatterns()].map((pattern) => [
+            [...ENTRY_PAGE_PATHS, "/docs/**", "/og/**", "/brand/**", ...publicCacheRoutePatterns()].map((pattern) => [
               pattern,
               { headers: { "cache-control": CONTENT_CACHE_CONTROL } },
             ]),

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { AppearanceToggle } from "#/components/layout/appearance-toggle";
+import { Logo } from "#/components/layout/logo";
 import { ConsentGate } from "#/features/tracking/components/consent-gate";
 import { track } from "#/features/tracking/lib/tracking";
 import { PRIMARY_NAV, RESOURCE_LINKS, UI_NAV } from "#/lib/nav-links";
@@ -14,9 +15,9 @@ export function Footer() {
         <div className="mb-10 flex flex-col gap-8 sm:flex-row sm:justify-between">
           {/* Brand */}
           <div className="max-w-xs">
-            <p className="mb-2 text-sm font-semibold text-ui-fg">
-              codefast<span className="text-ui-brand">labs</span>
-            </p>
+            <div className="mb-2">
+              <Logo />
+            </div>
             <p className="mb-4 text-sm leading-6 text-ui-muted">
               Open-source TypeScript packages for React 19 products — UI components, styling, theming, tracking, and DI.
             </p>
@@ -66,6 +67,9 @@ export function Footer() {
             <p>&copy; {year} Codefast Labs. Released under the MIT License.</p>
             <Link to="/privacy" className="text-ui-muted no-underline hover:text-ui-fg">
               Privacy
+            </Link>
+            <Link to="/brand" className="text-ui-muted no-underline hover:text-ui-fg">
+              Brand
             </Link>
             {/* the region-aware consent control — a footer link, per CCPA's conspicuous-link convention */}
             <ConsentGate />
