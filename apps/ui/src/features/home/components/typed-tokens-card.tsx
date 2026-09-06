@@ -19,7 +19,7 @@ const COMPILER_OUTPUT = [
 /** Typed tokens: a wrong dependency list is a compile error, shown with the compiler's actual words. */
 export function TypedTokensCard({ wrongListHtml, ...props }: TypedTokensCardProps) {
   return (
-    <article className="flex flex-col gap-4 rounded-2xl border border-ui-border/60 bg-ui-card p-6" {...props}>
+    <article className="flex flex-col gap-5 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:p-8" {...props}>
       <div className="flex items-baseline gap-3">
         <span className="font-mono text-sm text-ui-brand tabular-nums">01</span>
         <h3 className="text-base font-semibold text-ui-fg">Typed tokens</h3>

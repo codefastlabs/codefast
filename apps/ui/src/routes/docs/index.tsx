@@ -44,7 +44,7 @@ function DocsIndexPage() {
         description="Each package publishes its README, and where it has one, its specification, architecture notes, decision record, and changelog — rendered straight from the repository."
         className="mb-12"
       />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {packages.map((pkg) => (
           <PackageCard key={pkg.slug} pkg={pkg} showDocs />
         ))}

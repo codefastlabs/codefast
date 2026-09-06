@@ -23,9 +23,9 @@ export function PackagesSection({ packages, ...props }: PackagesSectionProps) {
           titleId="packages-title"
           title="One repo, every layer."
           description="Dependency injection, UI components, variant styling, appearance management, consent-gated tracking, and the tooling that keeps them honest — all published under @codefast."
-          className="mb-12"
+          className="mb-16"
         />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {packages.map((pkg) => (
             <PackageCard key={pkg.slug} pkg={pkg} />
           ))}

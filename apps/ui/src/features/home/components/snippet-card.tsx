@@ -23,7 +23,7 @@ export function SnippetCard({ label, caption, highlightedCode, className, ...pro
       )}
       {...props}
     >
-      <div className="flex items-center justify-between border-b border-ui-border/60 px-5 py-3.5">
+      <div className="flex items-center justify-between border-b border-ui-border/60 px-6 py-4">
         <div className="flex items-center gap-2 text-xs font-semibold tracking-widest text-ui-muted uppercase">
           <BracesIcon className="size-3.5" />
           {label}

@@ -10,7 +10,7 @@ interface DecoratorsCardProps extends Omit<ComponentProps<"article">, "children"
 /** Native decorators: dependencies and lifecycle declared where they are consumed, nothing reflected at runtime. */
 export function DecoratorsCard({ decoratorsHtml, ...props }: DecoratorsCardProps) {
   return (
-    <article className="flex flex-col gap-4 rounded-2xl border border-ui-border/60 bg-ui-card p-6" {...props}>
+    <article className="flex flex-col gap-5 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:p-8" {...props}>
       <div className="flex items-baseline gap-3">
         <span className="font-mono text-sm text-ui-brand tabular-nums">02</span>
         <h3 className="text-base font-semibold text-ui-fg">Native Stage 3 decorators</h3>
