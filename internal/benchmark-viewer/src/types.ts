@@ -25,6 +25,16 @@ export interface ScenarioFacets {
 }
 
 /**
+ * The display toggles a suite wants the viewer to open with; the URL hash still overrides them.
+ */
+export interface ViewDefaults {
+  /** Draws every row of the selected scenario's group on one chart, one line per row and library. */
+  readonly overlayGroup?: boolean;
+  /** Plots throughput on a logarithmic axis, which keeps rows of very different scale readable together. */
+  readonly useLogScale?: boolean;
+}
+
+/**
  * Options for the bench history server: results directory, port, title, libraries, and run cap.
  *
  * @since 0.3.16-canary.0
@@ -49,6 +59,8 @@ export interface BenchServerOptions {
    * the viewer only filters by label. Omit for no chip row.
    */
   readonly scenarioFacets?: ScenarioFacets;
+  /** Display toggles the viewer opens with when the URL hash names none. */
+  readonly viewDefaults?: ViewDefaults;
 }
 
 // ---------------------------------------------------------------------------
@@ -110,6 +122,24 @@ export interface EmbeddedLibraryRunData {
 }
 
 /**
+ * A run at which the suite's definition of a scenario changed, and how.
+ */
+export interface EmbeddedScenarioChange {
+  /** Index into `EmbeddedViewerPayload.runs` of the first run recorded under the new definition. */
+  readonly runIndex: number;
+  readonly label: string;
+}
+
+/**
+ * How older runs of a scenario were rescaled so every run reports `hz/op` in the newest run's unit.
+ */
+export interface EmbeddedBatchNormalization {
+  /** The `batch` the newest run recorded; every other run's throughput is expressed in this unit. */
+  readonly referenceBatch: number;
+  readonly rescaledRunCount: number;
+}
+
+/**
  * One scenario's per-library time series across all runs in the payload.
  *
  * @since 0.3.16-canary.0
@@ -122,6 +152,10 @@ export interface EmbeddedScenarioSeries {
   readonly facets: ReadonlyArray<string>;
   /** Keyed by `EmbeddedLibraryMeta.key` (= `libraryName` in JSONL). */
   readonly libraries: Readonly<Record<string, EmbeddedLibraryRunData>>;
+  /** Runs where the scenario's `batch` or description changed; absent when it never did. */
+  readonly changes?: ReadonlyArray<EmbeddedScenarioChange>;
+  /** Present when at least one run was rescaled to the newest run's `batch`. */
+  readonly batchNormalization?: EmbeddedBatchNormalization;
 }
 
 /**
@@ -137,6 +171,8 @@ export interface EmbeddedViewerPayload {
   readonly scenarios: ReadonlyArray<EmbeddedScenarioSeries>;
   /** Declared facet labels in chip order; empty when the suite declares none. */
   readonly facetLabels: ReadonlyArray<string>;
+  /** Display toggles the suite asked the viewer to open with. */
+  readonly viewDefaults?: ViewDefaults;
   /** ISO timestamp when this JSON snapshot was built (server clock). */
   readonly generatedAtIso: string;
   /** The maxRuns cap that was applied when building this payload. */

@@ -1,3 +1,5 @@
+import { Kbd } from "#/app/components/kbd";
+
 interface PageHeaderProps {
   title: string;
   onCopyLink: () => void;
@@ -20,11 +22,8 @@ export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
       <div className="mt-3 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-prose text-[0.9375rem] leading-relaxed text-pretty wrap-break-word text-zinc-400/95">
           Median hz/op per saved run, optional P25–P75 bands, and primary-vs-compare ratios.{" "}
-          <span className="text-zinc-500">Press</span>{" "}
-          <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">⌘K</kbd>{" "}
-          <span className="text-zinc-500">or</span>{" "}
-          <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-px font-mono text-zinc-300">Ctrl+K</kbd>{" "}
-          <span className="text-zinc-500">for quick actions.</span>
+          <span className="text-zinc-500">Press</span> <Kbd>⌘K</Kbd> <span className="text-zinc-500">or</span>{" "}
+          <Kbd>Ctrl+K</Kbd> <span className="text-zinc-500">for quick actions.</span>
         </p>
         <div className="flex w-full shrink-0 flex-wrap items-stretch gap-2 sm:w-auto sm:items-center sm:justify-end">
           <button

@@ -20,6 +20,7 @@ import type {
   EmbeddedLibraryMeta,
   EmbeddedLibraryRunData,
   EmbeddedRun,
+  EmbeddedScenarioChange,
   EmbeddedScenarioSeries,
   EmbeddedViewerPayload,
 } from "#/types";
@@ -217,6 +218,75 @@ function hzLookup(index: ReadonlyMap<string, AggregatedScenarioResult>, scenario
   return row !== undefined && row.hzPerOpMedian > 0 ? row.hzPerOpMedian : null;
 }
 
+/** The scenario's aggregate in one run, preferring the primary library's copy of it. */
+function scenarioRowOf(run: RunData, scenarioId: string, primaryName: string): AggregatedScenarioResult | undefined {
+  const primaryRow = run.scenarioIndices.get(primaryName)?.get(scenarioId);
+  if (primaryRow !== undefined) {
+    return primaryRow;
+  }
+  for (const index of run.scenarioIndices.values()) {
+    const row = index.get(scenarioId);
+    if (row !== undefined) {
+      return row;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * The `batch` each scenario's newest run recorded, which every older run is rescaled to.
+ *
+ * @remarks A suite that changes how many operations one timed iteration performs changes the unit
+ * of `hz/op`; expressing every run in the newest unit keeps a series comparable across that change.
+ */
+export function referenceBatches(
+  runs: ReadonlyArray<RunData>,
+  scenarioIds: ReadonlyArray<string>,
+  primaryName: string,
+): Map<string, number> {
+  const reference = new Map<string, number>();
+  for (const run of runs.toReversed()) {
+    for (const scenarioId of scenarioIds) {
+      if (reference.has(scenarioId)) {
+        continue;
+      }
+      const row = scenarioRowOf(run, scenarioId, primaryName);
+      if (row !== undefined && row.batch > 0) {
+        reference.set(scenarioId, row.batch);
+      }
+    }
+  }
+  return reference;
+}
+
+/**
+ * The runs at which a scenario's `batch` or description differs from the run before it.
+ */
+export function definitionChanges(
+  runs: ReadonlyArray<RunData>,
+  scenarioId: string,
+  primaryName: string,
+): Array<EmbeddedScenarioChange> {
+  const changes: Array<EmbeddedScenarioChange> = [];
+  let previous: AggregatedScenarioResult | undefined;
+  runs.forEach((run, runIndex) => {
+    const row = scenarioRowOf(run, scenarioId, primaryName);
+    if (row === undefined) {
+      return;
+    }
+    if (previous !== undefined) {
+      if (row.batch !== previous.batch) {
+        changes.push({ runIndex, label: `batch ${String(previous.batch)} → ${String(row.batch)}` });
+      }
+      if (row.what !== previous.what && row.what.length > 0 && previous.what.length > 0) {
+        changes.push({ runIndex, label: "description changed" });
+      }
+    }
+    previous = row;
+  });
+  return changes;
+}
+
 function hzIqrFractionLookup(index: ReadonlyMap<string, AggregatedScenarioResult>, scenarioId: string): number | null {
   const row = index.get(scenarioId);
   if (row === undefined || row.hzPerOpMedian <= 0) {
@@ -256,6 +326,7 @@ export function buildEmbeddedPayload(
   const primaryName = options.libraries.find((lib) => lib.isPrimary)?.name ?? libraryNames[0] ?? "";
 
   const facetLabels = options.scenarioFacets?.labels ?? [];
+  const viewDefaults = options.viewDefaults;
 
   if (libraryNames.length === 0) {
     return {
@@ -265,6 +336,7 @@ export function buildEmbeddedPayload(
       runs: [],
       scenarios: [],
       facetLabels,
+      ...(viewDefaults !== undefined && { viewDefaults }),
       generatedAtIso: new Date().toISOString(),
       effectiveLimit,
       hasMore,
@@ -324,10 +396,11 @@ export function buildEmbeddedPayload(
     }
   }
 
-  // Collect scenario metadata in forward order so the oldest run's values take precedence.
+  // Collect scenario metadata newest run first: a row's group and description follow the suite's
+  // current definition, not the one it had when the oldest saved run was recorded.
   const scenarioGroup = new Map<string, string>();
   const scenarioWhat = new Map<string, string>();
-  for (const run of runs) {
+  for (const run of runs.toReversed()) {
     for (const [, report] of run.reports) {
       for (const scenario of report.scenarios) {
         if (!scenarioGroup.has(scenario.id)) {
@@ -345,6 +418,8 @@ export function buildEmbeddedPayload(
   });
 
   const embeddedRuns: Array<EmbeddedRun> = runs.map((run) => run.meta);
+  const reference = referenceBatches(runs, scenarioIds, primaryName);
+  const rescaledRuns = new Map<string, Set<number>>();
 
   // Pre-allocate series accumulators keyed by scenarioId → libName.
   const seriesAccum = new Map<string, Map<string, LibSeriesAccum>>();
@@ -358,20 +433,31 @@ export function buildEmbeddedPayload(
 
   // Fill arrays in (run → lib → scenario) order so the outer Map lookups for
   // scenarioIndices and spreadsPerLib are amortised across all scenarios per run.
-  for (const run of runs) {
+  runs.forEach((run, runIndex) => {
     for (const libName of libraryNames) {
       const libIndex = run.scenarioIndices.get(libName);
       const libSpreads = run.spreadsPerLib.get(libName);
       for (const scenarioId of scenarioIds) {
         const accum = seriesAccum.get(scenarioId)!.get(libName)!;
-        accum.hz.push(libIndex !== undefined ? hzLookup(libIndex, scenarioId) : null);
+        const row = libIndex?.get(scenarioId);
+        // Every run reports in the newest run's unit, so a change of batch does not read as a jump.
+        const referenceBatch = reference.get(scenarioId);
+        const factor =
+          row !== undefined && row.batch > 0 && referenceBatch !== undefined ? referenceBatch / row.batch : 1;
+        if (factor !== 1) {
+          const marked = rescaledRuns.get(scenarioId) ?? new Set<number>();
+          marked.add(runIndex);
+          rescaledRuns.set(scenarioId, marked);
+        }
+        const hz = libIndex !== undefined ? hzLookup(libIndex, scenarioId) : null;
+        accum.hz.push(hz === null ? null : hz * factor);
         accum.iqrFraction.push(libIndex !== undefined ? hzIqrFractionLookup(libIndex, scenarioId) : null);
         const spread = libSpreads?.get(scenarioId);
-        accum.p25.push(spread !== undefined && spread.p25Hz > 0 ? spread.p25Hz : null);
-        accum.p75.push(spread !== undefined && spread.p75Hz > 0 ? spread.p75Hz : null);
+        accum.p25.push(spread !== undefined && spread.p25Hz > 0 ? spread.p25Hz * factor : null);
+        accum.p75.push(spread !== undefined && spread.p75Hz > 0 ? spread.p75Hz * factor : null);
       }
     }
-  }
+  });
 
   const scenarios: Array<EmbeddedScenarioSeries> = scenarioIds.map((scenarioId) => {
     const libraryData: Record<string, EmbeddedLibraryRunData> = {};
@@ -379,12 +465,18 @@ export function buildEmbeddedPayload(
     for (const libName of libraryNames) {
       libraryData[libName] = perLib.get(libName)! as EmbeddedLibraryRunData;
     }
+    const changes = definitionChanges(runs, scenarioId, primaryName);
+    const rescaledRunCount = rescaledRuns.get(scenarioId)?.size ?? 0;
+    const referenceBatch = reference.get(scenarioId);
     return {
       id: scenarioId,
       group: scenarioGroup.get(scenarioId) ?? "unknown",
       what: scenarioWhat.get(scenarioId) ?? "",
       facets: resolveScenarioFacets(scenarioId, options.scenarioFacets),
       libraries: libraryData,
+      ...(changes.length > 0 && { changes }),
+      ...(rescaledRunCount > 0 &&
+        referenceBatch !== undefined && { batchNormalization: { referenceBatch, rescaledRunCount } }),
     };
   });
 
@@ -401,6 +493,7 @@ export function buildEmbeddedPayload(
     runs: embeddedRuns,
     scenarios,
     facetLabels,
+    ...(viewDefaults !== undefined && { viewDefaults }),
     generatedAtIso: new Date().toISOString(),
     effectiveLimit,
     hasMore,

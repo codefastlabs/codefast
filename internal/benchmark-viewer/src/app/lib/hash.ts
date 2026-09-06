@@ -16,6 +16,12 @@ export interface ViewState {
   showBands: boolean;
   useLogScale: boolean;
   showRatio: boolean;
+  /** Draws every row of the selected scenario's group on one chart. */
+  overlayGroup: boolean;
+  /** Rows of the overlaid group the user has hidden; empty when every row draws. */
+  hiddenOverlayRows: Array<string>;
+  /** Plots every line as a percentage of its own first plotted run instead of in hz/op. */
+  indexToFirstRun: boolean;
 }
 
 /**
@@ -33,6 +39,9 @@ const HASH_KEYS = {
   showBands: "show-bands",
   useLogScale: "use-log-scale",
   showRatio: "show-ratio",
+  overlayGroup: "overlay-group",
+  hiddenOverlayRows: "hide-rows",
+  indexToFirstRun: "index-first",
 };
 
 /**
@@ -63,6 +72,11 @@ export function buildHash(view: ViewState): string {
   parts.push(`${HASH_KEYS.showBands}=${view.showBands ? "1" : "0"}`);
   parts.push(`${HASH_KEYS.useLogScale}=${view.useLogScale ? "1" : "0"}`);
   parts.push(`${HASH_KEYS.showRatio}=${view.showRatio ? "1" : "0"}`);
+  parts.push(`${HASH_KEYS.overlayGroup}=${view.overlayGroup ? "1" : "0"}`);
+  parts.push(`${HASH_KEYS.indexToFirstRun}=${view.indexToFirstRun ? "1" : "0"}`);
+  if (view.hiddenOverlayRows.length > 0) {
+    parts.push(`${HASH_KEYS.hiddenOverlayRows}=${encodeURIComponent(view.hiddenOverlayRows.join(","))}`);
+  }
   return parts.join("&");
 }
 
@@ -116,6 +130,17 @@ export function parseHash(raw: string, payload: EmbeddedViewerPayload): Partial<
   }
   if (params.has(HASH_KEYS.showRatio)) {
     patch.showRatio = params.get(HASH_KEYS.showRatio) === "1";
+  }
+  if (params.has(HASH_KEYS.overlayGroup)) {
+    patch.overlayGroup = params.get(HASH_KEYS.overlayGroup) === "1";
+  }
+  if (params.has(HASH_KEYS.indexToFirstRun)) {
+    patch.indexToFirstRun = params.get(HASH_KEYS.indexToFirstRun) === "1";
+  }
+  const hiddenRowsParam = params.get(HASH_KEYS.hiddenOverlayRows);
+  if (hiddenRowsParam !== null) {
+    const validIds = new Set(payload.scenarios.map((scenario) => scenario.id));
+    patch.hiddenOverlayRows = hiddenRowsParam.split(",").filter((id) => validIds.has(id));
   }
 
   const scenarioParam = params.get(HASH_KEYS.scenario);
