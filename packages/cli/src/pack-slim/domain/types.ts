@@ -14,6 +14,9 @@ export interface PackSlimPackageStats {
   filesSrcRemoved: boolean;
   exportsSourceRemoved: number;
   importsSourceRemoved: number;
+  importsUnshippedRemoved: number;
+  scriptsRemoved: number;
+  devDependenciesRemoved: number;
   mapFilesDeleted: number;
   sourceCommentsStripped: number;
   changed: boolean;

@@ -11,8 +11,8 @@ class strings, `audit` source conventions, `mirror` export maps from `dist/`, `p
 
 `codefast` is the command line for the [codefast monorepo](https://github.com/codefastlabs/codefast). It has five
 commands: `arrange` regroups Tailwind class strings, `audit` checks source conventions, `mirror` writes
-`package.json#exports` from `dist/`, `pack-slim` strips the source lane from the publish artifact, and `tag` stamps
-exported APIs with `@since`.
+`package.json#exports` from `dist/`, `pack-slim` slims the publish artifact down to what a consumer reads, and `tag`
+stamps exported APIs with `@since`.
 
 This is repo tooling, published to npm. It runs in any pnpm workspace with a similar layout, but its flags and defaults
 follow the codefast conventions rather than aiming to be a general-purpose product.
@@ -135,12 +135,14 @@ Exits `1` when any package fails, `0` otherwise.
 
 ## `pack-slim`
 
-Strips the source lane from published packages so the npm tarball ships `dist` runtime and types only. Where `mirror`
-writes the full exports — including the `source` condition — for repo dev, `pack-slim` removes it for publish: it drops
-`src` from `files`, every `source` condition from `exports`/`imports`, and the `dist` source maps plus their dangling
-`sourceMappingURL` directives. Private packages are skipped, since `changeset publish` never publishes them. It is meant
-to run on an ephemeral CI checkout right before publish (the release workflow runs it as its publish step), so it is
-never committed.
+Slims published packages down to what a consumer's `tsc` and Node read, so the npm tarball ships `dist` runtime and
+types only and its `package.json` describes nothing else. Where `mirror` writes the full exports — including the
+`source` condition — for repo dev, `pack-slim` removes the development lane for publish: it drops `src` from `files`,
+every `source` condition from `exports`/`imports`, every `imports` entry left pointing outside `files` (the `#/tests/*`
+and `#/examples/*` aliases), every script that is not an install or publish lifecycle hook, `devDependencies`, and the
+`dist` source maps plus their dangling `sourceMappingURL` directives. Private packages are skipped, since
+`changeset publish` never publishes them. It is meant to run on an ephemeral CI checkout right before publish (the
+release workflow runs it as its publish step), so it is never committed.
 
 Because its result must never be committed, `pack-slim` refuses to write when the git working tree has uncommitted
 tracked changes — guarding against an accidental local run landing on real work. `--dry-run` is exempt (it writes

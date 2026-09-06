@@ -18,13 +18,16 @@ import { runPackSlim } from "#/pack-slim/sync";
 import { ensureWorkingTreeClean } from "#/pack-slim/working-tree";
 
 /**
- * Creates the `pack-slim` subcommand, which strips the source lane from published packages before publish.
+ * Creates the `pack-slim` subcommand, which slims published packages down to what a consumer reads before publish.
  *
  * @since 0.8.1
  */
 export function createPackSlimCommand(): Command {
   const cmd = new Command("pack-slim")
-    .description("Strip src, source conditions, and dist source maps from published packages before publish")
+    .description(
+      "Strip src, source conditions, unshipped imports, dev-only scripts, devDependencies, and dist source maps from " +
+        "published packages before publish",
+    )
     .argument("[package]", "Optional package path relative to repo root (e.g. packages/ui)")
     .option("--dry-run", "Report what would change without touching any file", false)
     .option("--force", "Run even if the git working tree has uncommitted tracked changes", false)

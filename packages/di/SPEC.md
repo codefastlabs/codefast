@@ -2899,8 +2899,9 @@ shape of an entry).
 > consumer's concern: `tsc` leaves `#/` verbatim in `dist/*.js`, and a consumer resolves those through the `imports`
 > map's `types`/`default` → `dist` conditions, never the `source` one (nothing enables `source` unasked). So
 > `codefast pack-slim` runs on the CI checkout right before `changeset publish` (never committed) and drops `src` from
-> `files`, every `source` condition from `exports`/`imports`, and the `dist` source maps plus their now-dangling
-> `sourceMappingURL` directives — the tarball ships `dist` runtime and types only.
+> `files`, every `source` condition from `exports`/`imports`, the `imports` entries left pointing outside `files`
+> (`#/tests/*`, `#/examples/*`), every script that is not a lifecycle hook, `devDependencies`, and the `dist` source
+> maps plus their now-dangling `sourceMappingURL` directives — the tarball ships `dist` runtime and types only.
 
 <a id="tsconfig-build"></a>
 

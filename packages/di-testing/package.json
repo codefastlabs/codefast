@@ -13,6 +13,10 @@
     "testing",
     "typescript"
   ],
+  "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/di-testing#readme",
+  "bugs": {
+    "url": "https://github.com/codefastlabs/codefast/issues"
+  },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "repository": {

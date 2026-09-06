@@ -63,7 +63,12 @@ function seedPackage(): Record<string, string> {
         name: "@codefast/di",
         files: ["dist", "src", "README.md"],
         exports: { ".": { source: "./src/index.ts", types: "./dist/index.d.ts", import: "./dist/index.js" } },
-        imports: { "#/*": { source: ["./src/*"], types: "./dist/*.d.ts", default: "./dist/*.js" } },
+        imports: {
+          "#/tests/*": ["./tests/*"],
+          "#/*": { source: ["./src/*"], types: "./dist/*.d.ts", default: "./dist/*.js" },
+        },
+        scripts: { build: "tsc -p tsconfig.build.json", test: "vitest run" },
+        devDependencies: { typescript: "^7.0.2" },
       },
       null,
       2,
@@ -78,7 +83,7 @@ function seedPackage(): Record<string, string> {
 }
 
 describe("runPackSlim", () => {
-  it("strips src, source conditions, and dist maps for a single package", async () => {
+  it("strips the development lane and dist maps for a single package", async () => {
     const { fs, store } = createFakeRepo(seedPackage());
 
     const outcome = await runPackSlim(fs, { rootDir: ROOT, packageFilter: "packages/di", write: true });
@@ -91,6 +96,8 @@ describe("runPackSlim", () => {
     expect(manifest.files).toEqual(["dist", "README.md"]);
     expect(manifest.exports).toEqual({ ".": { types: "./dist/index.d.ts", import: "./dist/index.js" } });
     expect(manifest.imports).toEqual({ "#/*": { types: "./dist/*.d.ts", default: "./dist/*.js" } });
+    expect(manifest).not.toHaveProperty("scripts");
+    expect(manifest).not.toHaveProperty("devDependencies");
 
     expect(store.has(`${PKG}/dist/index.js.map`)).toBe(false);
     expect(store.has(`${PKG}/dist/index.d.ts.map`)).toBe(false);
@@ -102,7 +109,13 @@ describe("runPackSlim", () => {
     expect(stats.packagesProcessed).toBe(1);
     expect(stats.packagesChanged).toBe(1);
     expect(stats.totalMapFilesDeleted).toBe(3);
-    expect(stats.packageDetails[0]?.sourceCommentsStripped).toBe(3);
+    expect(stats.packageDetails[0]).toMatchObject({
+      importsSourceRemoved: 1,
+      importsUnshippedRemoved: 1,
+      scriptsRemoved: 2,
+      devDependenciesRemoved: 1,
+      sourceCommentsStripped: 3,
+    });
   });
 
   it("touches nothing under --dry-run but still reports what it would drop", async () => {

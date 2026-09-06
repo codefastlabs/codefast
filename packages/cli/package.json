@@ -1,7 +1,7 @@
 {
   "name": "@codefast/cli",
   "version": "0.8.1",
-  "description": "Developer CLI for the Codefast monorepo (arrange, audit, mirror, tag)",
+  "description": "Developer CLI for the Codefast monorepo (arrange, audit, mirror, pack-slim, tag)",
   "keywords": [
     "cli",
     "codefast",
@@ -26,9 +26,9 @@
   },
   "files": [
     "dist",
-    "LICENSE",
+    "CHANGELOG.md",
     "README.md",
-    "package.json"
+    "LICENSE"
   ],
   "type": "module",
   "imports": {
