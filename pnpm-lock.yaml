@@ -411,6 +411,9 @@ importers:
         specifier: 'catalog:'
         version: 4.5.4
     devDependencies:
+      '@codefast/di-testing':
+        specifier: workspace:*
+        version: link:../../packages/di-testing
       '@codefast/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
