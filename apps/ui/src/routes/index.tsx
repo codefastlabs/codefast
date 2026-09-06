@@ -1,5 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 
+import { BenchmarkSection } from "#/features/home/components/benchmark-section";
 import { DiPillarsSection } from "#/features/home/components/di-pillars-section";
 import { DiTestingSection } from "#/features/home/components/di-testing-section";
 import { HeroSection } from "#/features/home/components/hero-section";
@@ -64,6 +65,7 @@ function HomePage() {
       <WiringSection />
       <DiPillarsSection wrongListHtml={snippets.wrongList} decoratorsHtml={snippets.decorators} />
       <DiTestingSection testBedHtml={snippets.testBed} />
+      <BenchmarkSection />
       <PackagesSection packages={packages} />
       <InstallCta
         command={DI_INSTALL_COMMAND}
