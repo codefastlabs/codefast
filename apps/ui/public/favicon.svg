@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <style>
+    .lead { fill: #0084d1; }
+    .trail { fill: #171717; }
+    @media (prefers-color-scheme: dark) {
+      .lead { fill: #00bcff; }
+      .trail { fill: #fafafa; }
+    }
+  </style>
+  <rect class="lead" x="4" y="4" width="24" height="24" rx="6" />
+  <rect class="trail" x="36" y="4" width="24" height="24" rx="6" fill-opacity="0.5" />
+  <rect class="trail" x="4" y="36" width="24" height="24" rx="6" fill-opacity="0.5" />
+  <rect class="trail" x="36" y="36" width="24" height="24" rx="6" fill-opacity="0.25" />
+</svg>

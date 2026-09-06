@@ -20,6 +20,7 @@ package ships as Markdown, and the `@codefast/ui` showcase — live previews and
 | `/ui/components/<slug>.md`  | Markdown twin of a component page (production only — the dev server does not dispatch `.md` routes)         |
 | `/ui/about`                 | Getting started with `@codefast/ui`                                                                         |
 | `/privacy`                  | Privacy policy                                                                                              |
+| `/brand`                    | Brand assets: the mark, lockups, colours, type, and downloads; a right-click on the site logo lands here    |
 | `/llms.txt`                 | Machine-readable index of every package, document, and component, with links to the `.md` twins             |
 
 `@codefast/ui` is the one package without a `/docs/<pkg>` page: its documentation is the `/ui` section, and a link to it
@@ -60,9 +61,10 @@ router-core (`new-process-route-tree.js`: `isFrameMoreSpecific`, `sortDynamic`, 
 segments (`{-$sub}`) are the other option; either way `docRefFor`, `PackageDoc.pages`, the sidebar, `readingOrder`, the
 prerender list in `vite.config.ts`, and the `.md` twin routes must grow together.
 
-Link-preview images are generated, not drawn by hand: `pnpm --filter @apps/ui generate:og` runs
-`scripts/generate-og-image.ts`, which renders `public/og-image.png` for the site and one `public/og/<pkg>.png` per
-package with resvg. Run it after adding or removing a component or package.
+Raster brand assets are generated, not drawn by hand: `pnpm --filter @apps/ui generate:brand` runs
+`scripts/generate-brand-assets.ts`, which renders the favicon, the app icons, the lockups and README banner under
+`public/brand/`, `public/og-image.png` for the site, and one `public/og/<pkg>.png` per package with resvg. Run it after
+changing a brand source or adding a package.
 
 ## Develop
 
@@ -75,7 +77,7 @@ pnpm --filter @apps/ui dev            # http://localhost:3000
 pnpm --filter @apps/ui build          # production build, against each package's dist/
 pnpm --filter @apps/ui preview        # serve the build output from disk
 pnpm --filter @apps/ui check-types    # tsc --noEmit
-pnpm --filter @apps/ui generate:og    # regenerate the OG images
+pnpm --filter @apps/ui generate:brand # regenerate the raster brand assets and OG images
 ```
 
 ## Testing

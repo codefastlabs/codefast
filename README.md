@@ -1,4 +1,6 @@
-<h1 align="center">Codefast Labs</h1>
+<p align="center">
+  <a href="https://codefastlabs.com"><img src="apps/ui/public/brand/readme-banner.png" alt="Codefast Labs" width="960"></a>
+</p>
 
 <p align="center">
   Open-source TypeScript packages for React 19 products, published under <code>@codefast</code>.<br/>

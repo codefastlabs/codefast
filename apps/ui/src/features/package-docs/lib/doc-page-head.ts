@@ -72,7 +72,7 @@ export function docPageHead(data: DocPageData | undefined): DocPageHead {
   const kindLabel = DOC_KIND_BY_SLUG.get(doc.kind)?.label ?? doc.kind;
   const title = pageTitle(doc.title, name, kindLabel);
   const description = pkg?.description ?? `${doc.title} for ${name}.`;
-  // Rendered by `scripts/generate-og-image.ts`; the root's site-wide image is the fallback for a package without one.
+  // Rendered by `scripts/generate-brand-assets.ts`; the root's site-wide image is the fallback for a package without one.
   const image = absoluteUrl(`/og/${doc.pkg}.png`);
 
   return {

@@ -1,25 +1,23 @@
 {
-  "short_name": "codefast/ui",
-  "name": "codefast/ui — accessible React components",
+  "name": "Codefast Labs",
+  "short_name": "Codefast",
+  "description": "Open-source TypeScript packages for React 19 products, published under @codefast.",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "logo192.png",
+      "src": "/icon-512.png",
+      "sizes": "512x512",
       "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
-  "theme_color": "#0ea5e9",
-  "background_color": "#09090b"
+  "theme_color": "#00a6f4",
+  "background_color": "#0a0a0a"
 }
