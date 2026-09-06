@@ -8,6 +8,8 @@ import { ScopesCard } from "#/features/home/components/scopes-card";
 import { TypedTokensCard } from "#/features/home/components/typed-tokens-card";
 
 interface DiPillarsSectionProps extends Omit<ComponentProps<"section">, "children"> {
+  /** The well-declared class for the typed-tokens card, as dual-theme highlighted HTML. */
+  readonly rightListHtml: string;
   /** The mis-declared class for the typed-tokens card, as dual-theme highlighted HTML. */
   readonly wrongListHtml: string;
   /** Every decorator in one class for the decorators card, as dual-theme highlighted HTML. */
@@ -15,7 +17,13 @@ interface DiPillarsSectionProps extends Omit<ComponentProps<"section">, "childre
 }
 
 /** Why the flagship: four points from the package's README, each shown rather than told. */
-export function DiPillarsSection({ wrongListHtml, decoratorsHtml, className, ...props }: DiPillarsSectionProps) {
+export function DiPillarsSection({
+  rightListHtml,
+  wrongListHtml,
+  decoratorsHtml,
+  className,
+  ...props
+}: DiPillarsSectionProps) {
   return (
     <section
       aria-labelledby="home-pillars-title"
@@ -37,7 +45,7 @@ export function DiPillarsSection({ wrongListHtml, decoratorsHtml, className, ...
           className="reveal-up mb-16"
         />
         <div className="grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-2">
-          <TypedTokensCard wrongListHtml={wrongListHtml} className="reveal-up" />
+          <TypedTokensCard rightListHtml={rightListHtml} wrongListHtml={wrongListHtml} className="reveal-up" />
           <DecoratorsCard decoratorsHtml={decoratorsHtml} className="reveal-up" />
           <ScopesCard className="reveal-up" />
           <IntrospectionCard className="reveal-up" />

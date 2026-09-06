@@ -3,14 +3,16 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useState } from "react";
 
+import { ScrollFade } from "#/components/shared/scroll-fade";
+import { DemoVerdict } from "#/features/home/components/demo-verdict";
 import { createCaptiveContainer, validationMessage } from "#/features/home/demos/captive";
 import { track } from "#/features/tracking/lib/tracking";
 
 type ScopesCardProps = Omit<ComponentProps<"article">, "children">;
 
-/** Scopes with validation: a singleton over a scoped binding, caught by validate() before the first resolve. */
+/** Scopes with validation: a sound graph by default, and the captive singleton validate() refuses one click away. */
 export function ScopesCard({ className, ...props }: ScopesCardProps) {
-  const [fixed, setFixed] = useState(false);
+  const [fixed, setFixed] = useState(true);
   const message = validationMessage(createCaptiveContainer(fixed));
 
   return (
@@ -23,21 +25,19 @@ export function ScopesCard({ className, ...props }: ScopesCardProps) {
         <h3 className="text-base font-semibold text-ui-fg">Scopes with validation</h3>
       </div>
       <p className="text-sm leading-relaxed text-ui-muted">
-        Singleton, scoped or transient per binding. A singleton that holds a scoped instance would freeze the first
-        request&rsquo;s session for the container&rsquo;s whole life; validate() refuses it up front.
+        Singleton, scoped or transient per binding. A singleton that held a scoped instance would freeze the first
+        request&rsquo;s session for the container&rsquo;s whole life, so validate() refuses that graph up front:
       </p>
-      <pre className="overflow-x-auto rounded-xl bg-ui-surface p-4 font-mono text-xs leading-relaxed text-ui-fg">
-        {`container.bind(RequestSessionToken).to(RequestSession).scoped();\ncontainer.bind(ResponseCacheToken).to(ResponseCache).${fixed ? "scoped" : "singleton"}();\ncontainer.validate();`}
-      </pre>
-      <pre
-        className={
-          message === null
-            ? "overflow-x-auto rounded-xl border border-sky-500/30 bg-sky-500/5 p-4 font-mono text-xs leading-relaxed text-sky-700 dark:text-sky-400"
-            : "overflow-x-auto rounded-xl border border-red-500/30 bg-red-500/5 p-4 font-mono text-xs leading-relaxed whitespace-pre-wrap text-red-700 dark:text-red-400"
-        }
-      >
-        {message ?? "validate() passed: no captive dependency, no unreachable constraint."}
-      </pre>
+      <ScrollFade className="rounded-xl bg-ui-surface [--scroll-fade-color:var(--ui-surface)]">
+        <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-ui-fg">
+          {`container.bind(RequestSessionToken).to(RequestSession).scoped();\ncontainer.bind(ResponseCacheToken).to(ResponseCache).${fixed ? "scoped" : "singleton"}();\ncontainer.validate();`}
+        </pre>
+      </ScrollFade>
+      <DemoVerdict tone={message === null ? "pass" : "caught"}>
+        {message === null
+          ? "validate() passed: no captive dependency, no unreachable constraint."
+          : `validate() refused: ${message}`}
+      </DemoVerdict>
       <div className="mt-auto">
         <Button
           variant="outline"
@@ -47,7 +47,7 @@ export function ScopesCard({ className, ...props }: ScopesCardProps) {
             setFixed((value) => !value);
           }}
         >
-          {fixed ? "Make the cache a singleton again" : "Make the cache scoped too"}
+          {fixed ? "Make the cache a singleton" : "Make the cache scoped again"}
         </Button>
       </div>
     </article>

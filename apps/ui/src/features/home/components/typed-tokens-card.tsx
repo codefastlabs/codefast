@@ -1,24 +1,26 @@
+import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
+import { useState } from "react";
 
 import { CodeBlock } from "#/components/shared/code-block";
+import { DemoVerdict } from "#/features/home/components/demo-verdict";
+import { track } from "#/features/tracking/lib/tracking";
 
 interface TypedTokensCardProps extends Omit<ComponentProps<"article">, "children"> {
-  /** The mis-declared class as dual-theme highlighted HTML. */
+  /** The class whose dependency list matches its constructor, as dual-theme highlighted HTML. */
+  readonly rightListHtml: string;
+  /** The same class naming the wrong token, as dual-theme highlighted HTML. */
   readonly wrongListHtml: string;
 }
 
-// What `tsc` reports for the sample above: the dependency list names a Clock where the constructor wants a Logger.
-const COMPILER_OUTPUT = [
-  "error TS1238: Unable to resolve signature of class decorator when called as an expression.",
-  "  Argument of type 'typeof CheckoutService' is not assignable to parameter of type",
-  "  'abstract new (args_0: Clock) => unknown'.",
-  "    Types of parameters 'logger' and 'args_0' are incompatible.",
-  "      Property 'info' is missing in type 'Clock' but required in type 'Logger'.",
-];
+// The cause `tsc` reports for the wrong list, without the decorator-signature wrapper around it.
+const COMPILER_CAUSE = "Property 'info' is missing in type 'Clock' but required in type 'Logger'.";
 
-/** Typed tokens: a wrong dependency list is a compile error, shown with the compiler's actual words. */
-export function TypedTokensCard({ wrongListHtml, className, ...props }: TypedTokensCardProps) {
+/** Typed tokens: the dependency list is checked against the constructor, and naming the wrong token fails to compile. */
+export function TypedTokensCard({ rightListHtml, wrongListHtml, className, ...props }: TypedTokensCardProps) {
+  const [wrong, setWrong] = useState(false);
+
   return (
     <article
       className={cn("flex flex-col gap-5 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:p-8", className)}
@@ -30,14 +32,28 @@ export function TypedTokensCard({ wrongListHtml, className, ...props }: TypedTok
       </div>
       <p className="text-sm leading-relaxed text-ui-muted">
         A Token&lt;Value&gt; flows through every bind → resolve path, and @injectable checks the dependency list against
-        the constructor. Name the wrong token and the compiler says so:
+        the constructor. Swap in the wrong token and the compiler says so before anything runs:
       </p>
       <div className="overflow-hidden rounded-xl border border-ui-border/60">
-        <CodeBlock highlightedCode={wrongListHtml} />
+        <CodeBlock highlightedCode={wrong ? wrongListHtml : rightListHtml} />
       </div>
-      <pre className="overflow-x-auto rounded-xl border border-red-500/30 bg-red-500/5 p-4 font-mono text-xs leading-relaxed text-red-700 dark:text-red-400">
-        {COMPILER_OUTPUT.join("\n")}
-      </pre>
+      <DemoVerdict tone={wrong ? "caught" : "pass"}>
+        {wrong
+          ? `tsc --noEmit: 1 error. ${COMPILER_CAUSE}`
+          : "tsc --noEmit: 0 errors. The list names a Logger and the constructor takes one."}
+      </DemoVerdict>
+      <div className="mt-auto">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            track("run_demo", { demo: "typed-tokens", action: "toggle-token", trigger: "click" });
+            setWrong((value) => !value);
+          }}
+        >
+          {wrong ? "Name the right token again" : "Name the wrong token"}
+        </Button>
+      </div>
     </article>
   );
 }

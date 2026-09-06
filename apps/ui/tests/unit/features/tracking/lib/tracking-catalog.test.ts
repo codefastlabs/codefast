@@ -75,5 +75,13 @@ describe("apps/ui tracking catalog", () => {
         trigger: "click",
       });
     }).not.toThrow();
+
+    expect(() => {
+      assertValidEventProperties(catalog.run_demo.schema, "run_demo", {
+        demo: "typed-tokens",
+        action: "toggle-token",
+        trigger: "click",
+      });
+    }).not.toThrow();
   });
 });
