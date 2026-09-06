@@ -32,27 +32,32 @@ one merge config cannot be trusted after the global changes.
 **Consequences.** Every resolver knows its merge configuration at compile time. Migration needs one destructure where
 upstream assigned `createTV`'s result directly; the README records both departures.
 
-## Settle everything once, at `tv()`
+## Settle everything once, on the second call
 
 **Context.** A configuration is fixed the moment `tv` is called; the resolver it returns runs on every render, forever.
-Upstream pays for dictionary walks and array flattening on each call.
+Upstream pays for dictionary walks and array flattening on each call. But a design system defines every component at
+module load and renders many of them once or not at all on a given page, so work done inside `tv()` is paid by
+components that never earn it back.
 
-**Decision.** `tv()` compiles the configuration into a plan — flattened class strings, precomputed slot positions,
-compound conditions turned into checks — and resolution is string concatenation over that plan. This makes `tv()` itself
-slower than upstream's by design.
+**Decision.** `tv()` only wraps the configuration. The first call resolves straight from it, through a cold lane that
+answers exactly what the plan answers; the second call compiles the plan — flattened class strings, precomputed slot
+positions, compound conditions turned into checks — and every call after is string concatenation over that plan.
 
-**Consequences.** The per-component definition cost is paid within a render or two of resolution savings; the benchmark
-suite measures both sides (`construct-*` rows against the resolution rows) so the trade stays visible. Anything that
-would move work back into the resolver is a regression, whatever it saves at definition.
+**Consequences.** A definition and a single render each cost less than upstream's, and a component pays for its plan
+only once it has rendered twice. The benchmark suite prices both ends (`define-only-*` and `first-render-*` against the
+resolution rows) so the trade stays visible. The cold lane is a second implementation of the resolution rules and is
+held to the plan by the behaviour sweep, which drives every case through a fresh resolver as well as a shared one.
+Anything that would move work back into the per-render path is a regression, whatever it saves at definition or first
+render.
 
 ## Cache resolutions per selection, with an opt-out
 
 **Context.** A list renders the same few variant selections thousands of times, and both the plan walk and the merge are
 pure functions of the selection.
 
-**Decision.** A resolver remembers what each selection resolved to, in a bounded store keyed by the selection. Slot
-components return the same object of slot functions for the same selection. `cacheResolutions: false` disables the store
-for a component whose values are unique per call.
+**Decision.** A resolver remembers what each selection resolved to, in a bounded store keyed by the selection. From the
+second call on, slot components return the same object of slot functions for the same selection.
+`cacheResolutions: false` disables the store for a component whose values are unique per call.
 
 **Consequences.** Repeated selections cost a lookup. Two things callers must know, and the README says both: the
 returned slot object is shared, so it must not be mutated; and a variant fed ids or timestamps should opt out or it

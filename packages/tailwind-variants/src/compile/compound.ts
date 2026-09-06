@@ -60,7 +60,7 @@ const EMPTY_COMPOUND_SLOTS: ReadonlyArray<CompoundSlotPlanEntry> = [];
  *
  * @since 0.3.16-canary.2
  */
-const getCompoundClass = (compoundDefinition: {
+export const getCompoundClass = (compoundDefinition: {
   readonly class?: ClassValue;
   readonly className?: ClassValue;
 }): ClassValue => {

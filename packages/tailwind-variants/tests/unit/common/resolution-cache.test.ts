@@ -3,13 +3,20 @@ import { describe, expect, test } from "vitest";
 import { tv } from "#/index";
 
 describe("resolution cache", () => {
-  test("answers a repeated selection with the same slot resolvers", () => {
+  test("answers a repeated selection with the same slot resolvers once the plan is compiled", () => {
     const card = tv({
       slots: { base: "rounded", title: "text-xl" },
       variants: { size: { lg: { base: "max-w-lg" }, sm: { base: "max-w-sm" } } },
     });
 
-    expect(card({ size: "sm" })).toBe(card({ size: "sm" }));
+    // The first call resolves the configuration directly and is not remembered; the plan compiles
+    // on the second call, and from then on a repeated selection is answered from the store.
+    const first = card({ size: "sm" });
+    const second = card({ size: "sm" });
+
+    expect(first).not.toBe(second);
+    expect(first.base()).toBe(second.base());
+    expect(card({ size: "sm" })).toBe(second);
     expect(card({ size: "sm" })).not.toBe(card({ size: "lg" }));
   });
 
