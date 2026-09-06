@@ -23,7 +23,7 @@
     "dev": "vite dev --port 3000",
     "build": "vite build",
     "generate:brand": "node scripts/generate-brand-assets.ts",
-    "preview": "vite preview",
+    "preview": "NITRO_PRESET=node-server vite build && node .output/server/index.mjs",
     "check-types": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage --project unit",
