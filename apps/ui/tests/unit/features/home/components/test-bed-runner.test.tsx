@@ -17,7 +17,7 @@ afterEach(() => {
 });
 
 describe("TestBedRunner", () => {
-  it("runs the four beds on demand and shows the open test's evidence", async () => {
+  it("runs the four beds on demand, reveals them one by one, and shows the open test's evidence", async () => {
     const user = userEvent.setup();
 
     render(<TestBedRunner activeIndex={3} />);
@@ -26,18 +26,28 @@ describe("TestBedRunner", () => {
 
     await user.click(screen.getByRole("button", { name: /run all four/i }));
 
-    expect(screen.getByRole("status")).toHaveTextContent("4 of 4 passed");
+    expect(screen.getByRole("status")).toHaveTextContent(/running 0 of 4/);
+    expect(screen.getByRole("button", { name: /run again/i })).toBeDisabled();
+
+    expect(await screen.findByText(/4 of 4 passed · [\d.]+ ms$/)).toBeInTheDocument();
     expect(screen.getByText(/UNDECLARED_DEPENDENCY/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /run again/i })).toBeEnabled();
     expect(track).toHaveBeenCalledWith("run_demo", { demo: "test-bed", action: "run", trigger: "click" });
   });
 
-  it("follows the open test once the beds have run", async () => {
+  it("shows every run as a new one, and follows the open test", async () => {
     const user = userEvent.setup();
     const { rerender } = render(<TestBedRunner activeIndex={0} />);
 
     await user.click(screen.getByRole("button", { name: /run all four/i }));
 
-    expect(screen.getByText(/reserve\.mock\.calls\[0\]/)).toBeInTheDocument();
+    expect(await screen.findByText(/reserve\.mock\.calls\[0\]/)).toBeInTheDocument();
+    expect(await screen.findByText(/4 of 4 passed/)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /run again/i }));
+
+    expect(screen.getByText(/reserves the stock before charging: running…/)).toBeInTheDocument();
+    expect(await screen.findByText(/4 of 4 passed · [\d.]+ ms · run 2/)).toBeInTheDocument();
 
     rerender(<TestBedRunner activeIndex={1} />);
 
