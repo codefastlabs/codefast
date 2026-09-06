@@ -44,10 +44,11 @@ function buildLlmsTxt(packages: ReadonlyArray<PackageSummary>): string {
 
   return `# Codefast Labs
 
-> Open-source TypeScript packages for React 19 products, published under \`@codefast\`: ${COMPONENTS.length}+ accessible UI components built on Radix UI and Tailwind CSS v4, a type-safe variant styling API, appearance management, consent-gated event tracking for TanStack Start, and dependency-injection primitives.
+> Open-source TypeScript packages for React 19 products, published under \`@codefast\`: dependency injection on TC39 Stage 3 decorators with an auto-mocking test bed, ${COMPONENTS.length}+ accessible UI components built on Radix UI and Tailwind CSS v4, a type-safe variant styling API, appearance management, and consent-gated event tracking for TanStack Start.
 
 ## Key facts
 - Every package is published to npm under the \`@codefast\` scope and developed in one monorepo
+- \`@codefast/di\` is the flagship: typed tokens, native Stage 3 decorators, scopes, modules and introspection, with \`@codefast/di-testing\` as its auto-mocking test bed
 - \`@codefast/ui\` components are named sub-path imports: \`@codefast/ui/<slug>\` (e.g. \`@codefast/ui/button\`)
 - Every page below has a raw Markdown twin: append \`.md\` to a component page, or use the Markdown links under each package
 

@@ -30,11 +30,21 @@ function getHighlighter(): Promise<HighlighterCore> {
 }
 
 /**
- * Highlights to one dual-theme tree: `defaultColor: "light"` writes a real light
+ * Highlights TSX to one dual-theme tree: `defaultColor: "light"` writes a real light
  * color inline (legible even without theme CSS) plus a `--shiki-dark` var that
  * `styles.css` swaps under `.dark` — half the bytes of a tree per theme.
  */
-async function highlight(ref: SourceRef, highlighter: HighlighterCore): Promise<HighlightedSource> {
+export async function highlightTsx(code: string): Promise<string> {
+  const highlighter = await getHighlighter();
+
+  return highlighter.codeToHtml(code, {
+    lang: "tsx",
+    themes: { light: "github-light", dark: "github-dark" },
+    defaultColor: "light",
+  });
+}
+
+async function highlight(ref: SourceRef): Promise<HighlightedSource> {
   const loadCode = rawSources[ref];
 
   if (!loadCode) {
@@ -42,23 +52,17 @@ async function highlight(ref: SourceRef, highlighter: HighlighterCore): Promise<
   }
 
   const code = await loadCode();
-  const html = highlighter.codeToHtml(code, {
-    lang: "tsx",
-    themes: { light: "github-light", dark: "github-dark" },
-    defaultColor: "light",
-  });
 
-  return { code, html };
+  return { code, html: await highlightTsx(code) };
 }
 
 /**
- * Highlights every ref in one pass, sharing a single highlighter instance —
+ * Highlights every ref in one pass over the one memoised highlighter —
  * one server-fn round trip per doc instead of one per example.
  */
 export async function highlightSources(refs: ReadonlyArray<SourceRef>): Promise<Record<SourceRef, HighlightedSource>> {
-  const highlighter = await getHighlighter();
   const entries = await Promise.all(
-    refs.map(async (ref): Promise<[SourceRef, HighlightedSource]> => [ref, await highlight(ref, highlighter)]),
+    refs.map(async (ref): Promise<[SourceRef, HighlightedSource]> => [ref, await highlight(ref)]),
   );
 
   return Object.fromEntries(entries);

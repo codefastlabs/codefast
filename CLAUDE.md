@@ -6,13 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11 — every package holds that one floor, `di`
 included, which is why it keeps its own `Map` upsert helpers instead of the ES2025 methods) publishing the `@codefast/*`
-packages. The flagship is `@codefast/ui`, a Radix-based, Tailwind CSS 4 component library. `apps/ui` is the TanStack
-Start site behind codefastlabs.com: a landing page over every published package, the `@codefast/ui` showcase, and
-`/docs/<pkg>` pages rendered at build time from each package's own `README.md`/`SPEC.md`/`ARCHITECTURE.md`/… — or from a
-directory named after the kind (`spec/`), whose `README.md` is the kind's page and whose other `*.md` render beneath it.
-Workspace layout is by audience: `packages/` holds only published `@codefast/*` libraries, `internal/` holds private
-workspace packages consumed only inside the repo, `benchmarks/` the benchmark suites, `apps/` deployed sites,
-`examples/` consumer demos. A new package is private until it is published, so it starts in `internal/`.
+packages. The flagship is `@codefast/di`, lightweight dependency injection on TC39 Stage 3 decorators; `@codefast/ui` is
+the Radix-based, Tailwind CSS 4 component library. `apps/ui` is the TanStack Start site behind codefastlabs.com: a
+landing page over every published package, the `@codefast/ui` showcase, and `/docs/<pkg>` pages rendered at build time
+from each package's own `README.md`/`SPEC.md`/`ARCHITECTURE.md`/… — or from a directory named after the kind (`spec/`),
+whose `README.md` is the kind's page and whose other `*.md` render beneath it. Workspace layout is by audience:
+`packages/` holds only published `@codefast/*` libraries, `internal/` holds private workspace packages consumed only
+inside the repo, `benchmarks/` the benchmark suites, `apps/` deployed sites, `examples/` consumer demos. A new package
+is private until it is published, so it starts in `internal/`.
 
 ## Toolchain (non-standard — read before assuming)
 

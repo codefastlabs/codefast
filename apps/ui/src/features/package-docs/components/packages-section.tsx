@@ -22,7 +22,7 @@ export function PackagesSection({ packages, ...props }: PackagesSectionProps) {
           eyebrow="Packages"
           titleId="packages-title"
           title="One repo, every layer."
-          description="UI components, variant styling, appearance management, consent-gated tracking, dependency injection, and the tooling that keeps them honest — all published under @codefast."
+          description="Dependency injection, UI components, variant styling, appearance management, consent-gated tracking, and the tooling that keeps them honest — all published under @codefast."
           className="mb-12"
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
