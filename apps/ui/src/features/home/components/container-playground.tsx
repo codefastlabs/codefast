@@ -5,6 +5,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { ScrollFade } from "#/components/shared/scroll-fade";
 import { DependencyGraph } from "#/features/home/components/dependency-graph";
 import type { LogEntry } from "#/features/home/components/resolution-log";
 import { ResolutionLog } from "#/features/home/components/resolution-log";
@@ -70,6 +71,20 @@ export function ContainerPlayground() {
   }, [append, shop]);
 
   const resolveOrder = useCallback((): void => {
+    // With no scope open the root refuses, since RequestContext is scoped: show the refusal, open one, carry on.
+    if (scope.current === null) {
+      append("info", "container.resolve(OrderService)");
+
+      try {
+        shop.container.resolve(OrderServiceToken);
+      } catch (error: unknown) {
+        const code = error instanceof DiError ? error.code : "refused";
+
+        append("warn", `  ↳ ${code}: RequestContext is scoped and no request scope is open, so one opens first`);
+        openScope();
+      }
+    }
+
     const target = scope.current ?? shop.container;
     let service: OrderService;
 
@@ -123,7 +138,7 @@ export function ContainerPlayground() {
         order.length * STEP_MS + 60,
       ),
     );
-  }, [append, order, shop]);
+  }, [append, openScope, order, shop]);
 
   const reset = useCallback((): void => {
     for (const timer of timers.current) {
@@ -186,14 +201,18 @@ export function ContainerPlayground() {
           </ul>
         </TabsContent>
         <TabsContent value="mermaid">
-          <pre className="overflow-x-auto rounded-xl bg-ui-surface p-4 font-mono text-xs leading-relaxed text-ui-fg">
-            {toMermaidGraph(shop.graph)}
-          </pre>
+          <ScrollFade className="rounded-xl bg-ui-surface [--scroll-fade-color:var(--ui-surface)]">
+            <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-ui-fg">
+              {toMermaidGraph(shop.graph)}
+            </pre>
+          </ScrollFade>
         </TabsContent>
         <TabsContent value="dot">
-          <pre className="overflow-x-auto rounded-xl bg-ui-surface p-4 font-mono text-xs leading-relaxed text-ui-fg">
-            {toDotGraph(shop.graph)}
-          </pre>
+          <ScrollFade className="rounded-xl bg-ui-surface [--scroll-fade-color:var(--ui-surface)]">
+            <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-ui-fg">
+              {toDotGraph(shop.graph)}
+            </pre>
+          </ScrollFade>
         </TabsContent>
       </Tabs>
 
@@ -232,9 +251,9 @@ export function ContainerPlayground() {
         </div>
         <ResolutionLog entries={entries} className="flex-1" />
         <p className="pt-1 text-xs leading-relaxed text-ui-muted">
-          Resolving from the root container throws: RequestContext is scoped, so the library refuses until a request
-          scope is open. Inside one, the three singletons come back reused, the transient gateway and the root are new
-          every time, and the context is new per scope.
+          Inside a request scope the three singletons come back reused, the transient gateway and the root are new on
+          every resolve, and the context is new per scope. The root container itself refuses to build an OrderService,
+          because RequestContext is scoped: resolve with no scope open and the log shows that refusal, then opens one.
         </p>
       </div>
     </div>
