@@ -1,11 +1,14 @@
 import type { ComponentProps } from "react";
 
-const DECORATORS = ["@injectable", "inject", "optional", "injectAll", "@postConstruct", "@preDestroy"];
+import { CodeBlock } from "#/components/shared/code-block";
 
-type DecoratorsCardProps = Omit<ComponentProps<"article">, "children">;
+interface DecoratorsCardProps extends Omit<ComponentProps<"article">, "children"> {
+  /** Every decorator in one class, as dual-theme highlighted HTML. */
+  readonly decoratorsHtml: string;
+}
 
-/** Native decorators: dependencies declared where they are consumed, with nothing reflected at runtime. */
-export function DecoratorsCard(props: DecoratorsCardProps) {
+/** Native decorators: dependencies and lifecycle declared where they are consumed, nothing reflected at runtime. */
+export function DecoratorsCard({ decoratorsHtml, ...props }: DecoratorsCardProps) {
   return (
     <article className="flex flex-col gap-4 rounded-2xl border border-ui-border/60 bg-ui-card p-6" {...props}>
       <div className="flex items-baseline gap-3">
@@ -13,18 +16,12 @@ export function DecoratorsCard(props: DecoratorsCardProps) {
         <h3 className="text-base font-semibold text-ui-fg">Native Stage 3 decorators</h3>
       </div>
       <p className="text-sm leading-relaxed text-ui-muted">
-        Six decorators declare dependencies and lifecycle explicitly, so the container never reads a type at runtime. No
-        reflect-metadata, no experimentalDecorators, and the same code runs in Node and in this browser tab.
+        Six decorators cover dependencies and lifecycle: a required token, an optional one, every binding of a token, a
+        named slot, and the two hooks. No reflect-metadata, no experimentalDecorators, no runtime reflection.
       </p>
-      <ul className="flex flex-wrap gap-2" aria-label="Decorators">
-        {DECORATORS.map((name) => (
-          <li key={name}>
-            <code className="inline-flex rounded-full border border-ui-border/60 bg-ui-surface px-3 py-1 font-mono text-xs text-ui-fg">
-              {name}
-            </code>
-          </li>
-        ))}
-      </ul>
+      <div className="overflow-hidden rounded-xl border border-ui-border/60">
+        <CodeBlock highlightedCode={decoratorsHtml} />
+      </div>
       <p className="mt-auto text-sm leading-relaxed text-ui-muted">
         This page compiles them with the standard decorators transform; the same code runs unchanged once browsers ship
         them.

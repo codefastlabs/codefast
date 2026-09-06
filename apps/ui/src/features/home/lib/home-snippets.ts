@@ -11,6 +11,8 @@ export interface HomeSnippets {
   readonly testBed: string;
   /** The mis-declared class the typed-tokens card shows with the compiler's verdict. */
   readonly wrongList: string;
+  /** Every decorator in one class, for the decorators card. */
+  readonly decorators: string;
 }
 
 /**

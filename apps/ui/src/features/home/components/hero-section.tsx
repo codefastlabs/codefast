@@ -5,7 +5,6 @@ import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
 import { SnippetCard } from "#/features/home/components/snippet-card";
-import { COMPONENT_COUNT } from "#/features/home/data";
 
 interface HeroSectionProps extends Omit<ComponentProps<"section">, "children"> {
   /** The flagship's quick start as dual-theme highlighted HTML, from the route loader. */
@@ -54,8 +53,7 @@ export function HeroSection({ quickStartHtml, className, ...props }: HeroSection
             <p className="hero-enter mx-auto mb-8 max-w-lg text-lg leading-relaxed text-ui-muted [--hero-enter-delay:200ms] lg:mx-0">
               Wire services with typed tokens and native decorators — no reflect-metadata, no runtime reflection — then
               add scopes, modules, introspection and an auto-mocking test bed as the graph grows. Around it sit the
-              @codefast packages a React 19 product reaches for next: {COMPONENT_COUNT}+ accessible UI components,
-              variant styling, theming and consent-gated tracking.
+              @codefast packages a React 19 product reaches for next.
             </p>
 
             <div className="hero-enter flex flex-col items-center gap-3 [--hero-enter-delay:300ms] sm:flex-row sm:justify-center lg:justify-start">
