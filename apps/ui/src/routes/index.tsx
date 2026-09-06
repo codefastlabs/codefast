@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { HeroSection } from "#/features/home/components/hero-section";
+import { getHeroSnippet } from "#/features/home/lib/hero-snippet";
 import { PackagesSection } from "#/features/package-docs/components/packages-section";
 import { getPackages } from "#/features/package-docs/lib/package-docs";
 import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
@@ -14,7 +15,11 @@ export const Route = createFileRoute("/")({
   // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.
   headers: () => ({ ...CONTENT_CACHE_HEADERS }),
   staleTime: 60 * 60_000,
-  loader: () => getPackages(),
+  loader: async () => {
+    const [packages, snippetHtml] = await Promise.all([getPackages(), getHeroSnippet()]);
+
+    return { packages, snippetHtml };
+  },
   head: () => {
     const seo = canonicalHead("/");
 
@@ -27,7 +32,7 @@ export const Route = createFileRoute("/")({
           "@type": "WebSite",
           name: "Codefast Labs",
           url: SITE_URL,
-          description: `Open-source TypeScript packages for React 19 products: ${COMPONENTS.length}+ accessible UI components, variant styling, appearance management, consent-gated tracking, and dependency injection.`,
+          description: `Open-source TypeScript packages for React 19 products: dependency injection with an auto-mocking test bed, ${COMPONENTS.length}+ accessible UI components, variant styling, appearance management, and consent-gated tracking.`,
           publisher: {
             "@type": "Organization",
             name: "Codefast Labs",
@@ -43,11 +48,11 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const packages = Route.useLoaderData();
+  const { packages, snippetHtml } = Route.useLoaderData();
 
   return (
     <main>
-      <HeroSection />
+      <HeroSection snippetHtml={snippetHtml} />
       <PackagesSection packages={packages} />
     </main>
   );

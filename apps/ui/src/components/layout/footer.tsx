@@ -19,7 +19,8 @@ export function Footer() {
               <Logo />
             </div>
             <p className="mb-4 text-sm leading-6 text-ui-muted">
-              Open-source TypeScript packages for React 19 products — UI components, styling, theming, tracking, and DI.
+              Open-source TypeScript packages for React 19 products — dependency injection, UI components, styling,
+              theming, and tracking.
             </p>
             <AppearanceToggle />
           </div>

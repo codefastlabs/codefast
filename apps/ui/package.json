@@ -33,6 +33,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@codefast/di": "workspace:*",
     "@codefast/theme": "workspace:*",
     "@codefast/tracking": "workspace:*",
     "@codefast/ui": "workspace:*",

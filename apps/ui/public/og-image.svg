@@ -31,7 +31,7 @@
   <text x="76" y="342" font-size="84" font-weight="800" letter-spacing="-2.5" fill="#fafafa">Packages built</text>
   <text x="76" y="432" font-size="84" font-weight="800" letter-spacing="-2.5" fill="#fafafa">for <tspan fill="#00bcff">React 19.</tspan></text>
 
-  <text x="80" y="498" font-size="28" font-weight="500" fill="#a1a1a1">Components · variant styling · theming · tracking · dependency injection</text>
+  <text x="80" y="498" font-size="28" font-weight="500" fill="#a1a1a1">Dependency injection · components · variant styling · theming · tracking</text>
 
   <text x="80" y="566" font-size="24" font-weight="500" fill="#737373">codefastlabs.com · @codefast on npm</text>
 </svg>

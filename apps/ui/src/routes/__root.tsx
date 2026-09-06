@@ -20,7 +20,7 @@ import appCss from "#/styles.css?url";
 
 const SITE_NAME = "Codefast Labs";
 const SITE_TITLE = "Codefast Labs — TypeScript packages for React 19 products";
-const SITE_DESCRIPTION = `Open-source TypeScript packages for React 19 products: ${COMPONENTS.length}+ accessible UI components built on Radix UI and Tailwind CSS v4, variant styling, appearance management, consent-gated tracking, and dependency injection.`;
+const SITE_DESCRIPTION = `Open-source TypeScript packages for React 19 products: dependency injection with an auto-mocking test bed, ${COMPONENTS.length}+ accessible UI components built on Radix UI and Tailwind CSS v4, variant styling, appearance management, and consent-gated tracking.`;
 
 export const Route = createRootRoute({
   head: () => ({

@@ -1,15 +1,27 @@
 import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
+import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
+import type { ComponentProps } from "react";
 
-import { HeroShowcase } from "#/features/home/components/hero-showcase";
+import { HeroDiCard } from "#/features/home/components/hero-di-card";
 import { COMPONENT_COUNT } from "#/features/home/data";
 
-export function HeroSection() {
+interface HeroSectionProps extends Omit<ComponentProps<"section">, "children"> {
+  /** The flagship's quick start as dual-theme highlighted HTML, from the route loader. */
+  readonly snippetHtml: string;
+}
+
+/** The landing hero: the portal's pitch beside the flagship's quick start. */
+export function HeroSection({ snippetHtml, className, ...props }: HeroSectionProps) {
   return (
     <section
       aria-labelledby="home-hero-title"
-      className="relative flex min-h-[calc(100vh-var(--spacing-header))] items-center overflow-hidden px-4 py-20 sm:py-24"
+      className={cn(
+        "relative flex min-h-[calc(100vh-var(--spacing-header))] items-center overflow-hidden px-4 py-20 sm:py-24",
+        className,
+      )}
+      {...props}
     >
       <div
         aria-hidden
@@ -21,7 +33,7 @@ export function HeroSection() {
       />
 
       <div className="relative container mx-auto">
-        <div className="grid items-center gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-20 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,26rem)]">
+        <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,30rem)] lg:gap-16 xl:grid-cols-[minmax(0,1fr)_minmax(0,34rem)]">
           <div className="text-center lg:text-start">
             <div className="hero-enter">
               <Badge variant="outline" className="mb-6 border-ui-border/60 text-ui-muted">
@@ -40,8 +52,9 @@ export function HeroSection() {
             </h1>
 
             <p className="hero-enter mx-auto mb-8 max-w-lg text-lg leading-relaxed text-ui-muted [--hero-enter-delay:200ms] lg:mx-0">
-              {COMPONENT_COUNT}+ accessible UI components, variant styling, theming, consent-gated tracking, and
-              dependency injection — typed, documented, and published under @codefast.
+              Dependency injection with typed tokens and an auto-mocking test bed, {COMPONENT_COUNT}+ accessible UI
+              components, variant styling, theming, and consent-gated tracking — typed, documented, and published under
+              @codefast.
             </p>
 
             <div className="hero-enter flex flex-col items-center gap-3 [--hero-enter-delay:300ms] sm:flex-row sm:justify-center lg:justify-start">
@@ -51,13 +64,15 @@ export function HeroSection() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link to="/ui/components">Explore @codefast/ui</Link>
+                <Link to="/docs/$pkg" params={{ pkg: "di" }}>
+                  Explore @codefast/di
+                </Link>
               </Button>
             </div>
           </div>
 
-          <div className="mx-auto w-full max-w-sm lg:mx-0 lg:max-w-none">
-            <HeroShowcase />
+          <div className="hero-enter mx-auto w-full max-w-xl [--hero-enter-delay:200ms] lg:mx-0 lg:max-w-none">
+            <HeroDiCard highlightedCode={snippetHtml} />
           </div>
         </div>
       </div>

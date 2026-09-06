@@ -323,6 +323,9 @@ importers:
 
   apps/ui:
     dependencies:
+      '@codefast/di':
+        specifier: workspace:*
+        version: link:../../packages/di
       '@codefast/theme':
         specifier: workspace:*
         version: link:../../packages/theme
