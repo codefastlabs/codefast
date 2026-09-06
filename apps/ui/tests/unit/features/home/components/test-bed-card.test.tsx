@@ -63,6 +63,6 @@ describe("TestBedCard", () => {
 
     expect(screen.getByText(/body 3/)).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: /run all four/i }, { timeout: 5000 })).toBeInTheDocument();
-    expect(screen.getByText(/refuses a token the unit never declared: not run yet/)).toBeInTheDocument();
+    expect(screen.getByText("not run yet")).toBeInTheDocument();
   });
 });

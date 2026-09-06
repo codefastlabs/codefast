@@ -34,12 +34,15 @@ describe("runShopTests", () => {
     expect(overlong).toEqual([]);
   });
 
-  it("reports what each test checked", () => {
-    const evidence = runShopTests().map((result) => result.evidence);
+  it("reports what each test observed, as the expression the sample reads and the value it held", () => {
+    const observations = runShopTests().map((result) => result.observations);
 
-    expect(evidence[0]).toContain('["SKU-42"]');
-    expect(evidence[1]).toContain('"pay-1"');
-    expect(evidence[2]).toContain("req-7: SKU-42 → pay-1");
-    expect(evidence[3]).toContain("UNDECLARED_DEPENDENCY");
+    expect(observations[0]).toEqual([{ expression: "reserve.mock.calls[0]", value: '["SKU-42"]' }]);
+    expect(observations[1]).toEqual([
+      { expression: 'place("SKU-42")', value: '"pay-1"' },
+      { expression: "charge.mock.calls[0]", value: '[{ amount: 42, currency: "USD" }]' },
+    ]);
+    expect(observations[2]).toEqual([{ expression: "info.mock.calls[0]", value: '["req-7: SKU-42 → pay-1"]' }]);
+    expect(observations[3]).toEqual([{ expression: "compile()", value: "throws UNDECLARED_DEPENDENCY" }]);
   });
 });
