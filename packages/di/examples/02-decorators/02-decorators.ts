@@ -11,10 +11,10 @@ import { item } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ConfigToken = token<AppConfig>("AppConfig");
-const CacheToken = token<Cache>("Cache");
-const LoggerToken = token<Logger>("Logger");
-const UserServiceToken = token<UserService>("UserService");
+const ConfigToken = token<AppConfig>("decorators:AppConfig");
+const CacheToken = token<Cache>("decorators:Cache");
+const LoggerToken = token<Logger>("decorators:Logger");
+const UserServiceToken = token<UserService>("decorators:UserService");
 
 // ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 

@@ -52,15 +52,15 @@ import { ok, section } from "#/examples/support/log";
 
 // ── Core contracts ───────────────────────────────────────────────────────────────────────────────────────────────────
 
-const AppConfigToken = token<AppConfig>("AppConfig");
-const AppLoggerToken = token<AppLogger>("AppLogger");
-const StorageToken = token<StorageProvider>("StorageProvider");
-const AnalyticsToken = token<AnalyticsProvider>("AnalyticsProvider");
-const NotificationToken = token<NotificationProvider>("NotificationProvider");
-const DocumentServiceToken = token<DocumentService>("DocumentService");
+const AppConfigToken = token<AppConfig>("plugin-architecture:AppConfig");
+const AppLoggerToken = token<AppLogger>("plugin-architecture:AppLogger");
+const StorageToken = token<StorageProvider>("plugin-architecture:StorageProvider");
+const AnalyticsToken = token<AnalyticsProvider>("plugin-architecture:AnalyticsProvider");
+const NotificationToken = token<NotificationProvider>("plugin-architecture:NotificationProvider");
+const DocumentServiceToken = token<DocumentService>("plugin-architecture:DocumentService");
 
 // PluginToken is a multi-binding registry with one named slot per capability.
-const PluginToken = token<PluginDescriptor>("Plugin");
+const PluginToken = token<PluginDescriptor>("plugin-architecture:Plugin");
 
 // ── Shared types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

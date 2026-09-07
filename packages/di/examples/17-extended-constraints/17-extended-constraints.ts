@@ -41,10 +41,10 @@ import {
 
 import { section, step } from "#/examples/support/log";
 
-const BACKEND_TAG = tag<"memcached" | "redis">("backend");
-const REGION_TAG = tag<"eu" | "us">("region");
-const TENANT_TAG = tag<"enterprise" | "starter">("tenant");
-const TIER_TAG = tag<"free" | "paid">("tier");
+const BACKEND_TAG = tag<"memcached" | "redis">("extended-constraints:backend");
+const REGION_TAG = tag<"eu" | "us">("extended-constraints:region");
+const TENANT_TAG = tag<"enterprise" | "starter">("extended-constraints:tenant");
+const TIER_TAG = tag<"free" | "paid">("extended-constraints:tier");
 
 // ── Shared logger interface ──────────────────────────────────────────────────────────────────────────────────────────
 
@@ -66,9 +66,9 @@ function makeLogger(source: string): Logger {
 
 section("1. whenParentIs / whenNoParentIs");
 
-const LoggerToken = token<Logger>("Logger");
-const OrderServiceToken = token<OrderService>("OrderService");
-const BillingServiceToken = token<BillingService>("BillingService");
+const LoggerToken = token<Logger>("extended-constraints:Logger");
+const OrderServiceToken = token<OrderService>("extended-constraints:OrderService");
+const BillingServiceToken = token<BillingService>("extended-constraints:BillingService");
 
 @injectable([inject(LoggerToken)])
 class OrderService {
@@ -118,11 +118,11 @@ parentIsContainer.resolve(BillingServiceToken).run(); // [silent]  processing bi
 
 section("2. whenAnyAncestorIs / whenNoAncestorIs");
 
-const RiskScorerToken = token<RiskScorer>("RiskScorer");
-const FraudCheckerToken = token<FraudChecker>("FraudChecker");
-const PaymentOrchestratorToken = token<PaymentOrchestrator>("PaymentOrchestrator");
-const InvoiceBuilderToken = token<InvoiceBuilder>("InvoiceBuilder");
-const BillingOrchestratorToken = token<BillingOrchestrator>("BillingOrchestrator");
+const RiskScorerToken = token<RiskScorer>("extended-constraints:RiskScorer");
+const FraudCheckerToken = token<FraudChecker>("extended-constraints:FraudChecker");
+const PaymentOrchestratorToken = token<PaymentOrchestrator>("extended-constraints:PaymentOrchestrator");
+const InvoiceBuilderToken = token<InvoiceBuilder>("extended-constraints:InvoiceBuilder");
+const BillingOrchestratorToken = token<BillingOrchestrator>("extended-constraints:BillingOrchestrator");
 
 @injectable([inject(LoggerToken)])
 class RiskScorer {
@@ -209,8 +209,8 @@ ancestorIsContainer.resolve(BillingOrchestratorToken).run(); // [standard] build
 
 section("3. whenParentNamed / whenAnyAncestorNamed");
 
-const DataSourceToken = token<DataSource, "primary" | "replica">("DataSource");
-const QueryRunnerToken = token<QueryRunner>("QueryRunner");
+const DataSourceToken = token<DataSource, "primary" | "replica">("extended-constraints:DataSource");
+const QueryRunnerToken = token<QueryRunner>("extended-constraints:QueryRunner");
 
 @injectable([inject(LoggerToken)])
 class DataSource {
@@ -265,7 +265,7 @@ namedContainer.resolve(QueryRunnerToken).execute(); // [replica-logger] connecte
 // "primary" on ArchiveSource is another slot than "primary" on DataSource — and the token
 // argument is what lets the two Logger bindings tell them apart. A name alone could not:
 // both parents carry slot.name === "primary".
-const ArchiveSourceToken = token<DataSource, "primary">("ArchiveSource");
+const ArchiveSourceToken = token<DataSource, "primary">("extended-constraints:ArchiveSource");
 
 const sharedNameContainer = Container.create();
 
@@ -288,8 +288,8 @@ sharedNameContainer.resolve(ArchiveSourceToken, { name: "primary" }).connect(); 
 // whenAnyAncestorNamed reaches past the direct parent: the audit channel is
 // chosen from the named ConnectionPool two levels up, even though the Logger's
 // immediate parent (HealthProbe) carries no name.
-const ConnectionPoolToken = token<ConnectionPool, "primary" | "replica">("ConnectionPool");
-const HealthProbeToken = token<HealthProbe>("HealthProbe");
+const ConnectionPoolToken = token<ConnectionPool, "primary" | "replica">("extended-constraints:ConnectionPool");
+const HealthProbeToken = token<HealthProbe>("extended-constraints:HealthProbe");
 
 @injectable([inject(HealthProbeToken)])
 class ConnectionPool {
@@ -345,9 +345,9 @@ interface CacheAdapter {
   read(key: string): string | undefined;
 }
 
-const CacheAdapterToken = token<CacheAdapter>("CacheAdapter");
-const SessionStoreToken = token<SessionStore>("SessionStore");
-const ProductCacheToken = token<ProductCache>("ProductCache");
+const CacheAdapterToken = token<CacheAdapter>("extended-constraints:CacheAdapter");
+const SessionStoreToken = token<SessionStore>("extended-constraints:SessionStore");
+const ProductCacheToken = token<ProductCache>("extended-constraints:ProductCache");
 
 // SessionStore needs backend=redis AND region=eu.
 @injectable([inject(CacheAdapterToken)])
@@ -426,9 +426,9 @@ interface AuditLogger {
   audit(event: string): void;
 }
 
-const AuditLoggerToken = token<AuditLogger>("AuditLogger");
-const ReportGeneratorToken = token<ReportGenerator>("ReportGenerator");
-const AnalyticsDashboardToken = token<AnalyticsDashboard>("AnalyticsDashboard");
+const AuditLoggerToken = token<AuditLogger>("extended-constraints:AuditLogger");
+const ReportGeneratorToken = token<ReportGenerator>("extended-constraints:ReportGenerator");
+const AnalyticsDashboardToken = token<AnalyticsDashboard>("extended-constraints:AnalyticsDashboard");
 
 @injectable([inject(AuditLoggerToken)])
 class ReportGenerator {

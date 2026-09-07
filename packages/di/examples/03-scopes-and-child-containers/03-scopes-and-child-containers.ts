@@ -12,10 +12,10 @@ import { item, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const AppDatabaseToken = token<AppDatabase>("AppDatabase");
-const RequestContextToken = token<RequestContext>("RequestContext");
-const RequestLoggerToken = token<RequestLogger>("RequestLogger");
-const HandlerToken = token<RequestHandler>("RequestHandler");
+const AppDatabaseToken = token<AppDatabase>("scopes-and-child-containers:AppDatabase");
+const RequestContextToken = token<RequestContext>("scopes-and-child-containers:RequestContext");
+const RequestLoggerToken = token<RequestLogger>("scopes-and-child-containers:RequestLogger");
+const HandlerToken = token<RequestHandler>("scopes-and-child-containers:RequestHandler");
 
 // ── Domain types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

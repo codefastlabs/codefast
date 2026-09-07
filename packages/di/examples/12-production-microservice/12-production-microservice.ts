@@ -40,16 +40,16 @@ import { banner } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ServiceConfigToken = token<ServiceConfig>("ServiceConfig");
-const DatabasePoolToken = token<DatabasePool>("DatabasePool");
-const RedisClientToken = token<RedisClient>("RedisClient");
-const JobQueueToken = token<JobQueue>("JobQueue");
-const JobWorkerToken = token<JobWorker>("JobWorker");
-const HealthRegistryToken = token<HealthRegistry>("HealthRegistry");
-const HttpServerToken = token<HttpServer>("HttpServer");
-const JobRepositoryToken = token<JobRepository>("JobRepository");
-const JobServiceToken = token<JobService>("JobService");
-const MetricsCollectorToken = token<MetricsCollector>("MetricsCollector");
+const ServiceConfigToken = token<ServiceConfig>("production-microservice:ServiceConfig");
+const DatabasePoolToken = token<DatabasePool>("production-microservice:DatabasePool");
+const RedisClientToken = token<RedisClient>("production-microservice:RedisClient");
+const JobQueueToken = token<JobQueue>("production-microservice:JobQueue");
+const JobWorkerToken = token<JobWorker>("production-microservice:JobWorker");
+const HealthRegistryToken = token<HealthRegistry>("production-microservice:HealthRegistry");
+const HttpServerToken = token<HttpServer>("production-microservice:HttpServer");
+const JobRepositoryToken = token<JobRepository>("production-microservice:JobRepository");
+const JobServiceToken = token<JobService>("production-microservice:JobService");
+const MetricsCollectorToken = token<MetricsCollector>("production-microservice:MetricsCollector");
 
 // ── Domain types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

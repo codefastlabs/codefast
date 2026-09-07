@@ -11,9 +11,9 @@ import { item } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const GreeterToken = token<Greeter>("Greeter");
-const MessageToken = token<string>("Message");
-const CounterToken = token<Counter>("Counter");
+const GreeterToken = token<Greeter>("basic-tokens:Greeter");
+const MessageToken = token<string>("basic-tokens:Message");
+const CounterToken = token<Counter>("basic-tokens:Counter");
 
 // ── Interfaces & classes ─────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -84,7 +84,7 @@ item("counterBeta count", counterBeta.value()); // 0  (different instance)
 item("Different counter instances", counterAlpha !== counterBeta); // true
 
 // resolveOptional — returns undefined instead of throwing for unbound tokens
-const LogToken = token<string>("Log");
+const LogToken = token<string>("basic-tokens:Log");
 const log = container.resolveOptional(LogToken);
 item("Optional unbound token", log); // undefined
 

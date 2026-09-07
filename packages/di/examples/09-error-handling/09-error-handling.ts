@@ -33,10 +33,10 @@ import { caughtError, item, ok, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const LoggerToken = token<Logger>("Logger");
-const ServiceAToken = token<CircularServiceA>("ServiceA");
-const ServiceBToken = token<CircularServiceB>("ServiceB");
-const DatabaseToken = token<Database>("Database");
+const LoggerToken = token<Logger>("error-handling:Logger");
+const ServiceAToken = token<CircularServiceA>("error-handling:ServiceA");
+const ServiceBToken = token<CircularServiceB>("error-handling:ServiceB");
+const DatabaseToken = token<Database>("error-handling:Database");
 
 interface Logger {
   log(message: string): void;
@@ -144,7 +144,7 @@ class UnmarkedService {
   constructor(private readonly logger: Logger) {}
 }
 
-const UnmarkedToken = token<UnmarkedService>("UnmarkedService");
+const UnmarkedToken = token<UnmarkedService>("error-handling:UnmarkedService");
 const missingMetadataContainer = Container.create();
 missingMetadataContainer.bind(LoggerToken).toConstantValue({ log: console.log });
 missingMetadataContainer.bind(UnmarkedToken).to(UnmarkedService); // no @injectable on class
@@ -171,8 +171,8 @@ section("6. ScopeViolationError — captive dependency");
 // The singleton is created once and captures the scoped instance forever,
 // breaking the scoped isolation guarantee.
 
-const ScopedServiceToken = token<ScopedService>("ScopedService");
-const SingletonConsumerToken = token<SingletonConsumer>("SingletonConsumer");
+const ScopedServiceToken = token<ScopedService>("error-handling:ScopedService");
+const SingletonConsumerToken = token<SingletonConsumer>("error-handling:SingletonConsumer");
 
 @injectable()
 class ScopedService {
@@ -201,7 +201,7 @@ try {
 section("7. AsyncModuleLoadError");
 
 const AsyncDatabaseModule = Module.createAsync("Database", async (builder) => {
-  const DatabaseSetupToken = token<string>("DbSetup");
+  const DatabaseSetupToken = token<string>("error-handling:DbSetup");
   builder.bind(DatabaseSetupToken).toConstantValue("connected");
 });
 

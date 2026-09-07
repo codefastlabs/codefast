@@ -88,53 +88,55 @@ import { banner } from "#/examples/support/log";
 // ============================================================================
 
 // Infrastructure
-const AppConfigToken = token<AppConfig>("AppConfig");
-const DatabaseToken = token<Database>("Database");
-const RedisToken = token<RedisClient>("RedisClient");
-const S3Token = token<S3Client>("S3Client");
-const ElasticToken = token<ElasticClient>("ElasticClient");
-const LoggerToken = token<Logger>("Logger");
-const EventBusToken = token<EventBus>("EventBus");
-const IdGeneratorToken = token<IdGenerator>("IdGenerator");
+const AppConfigToken = token<AppConfig>("ecommerce-platform:AppConfig");
+const DatabaseToken = token<Database>("ecommerce-platform:Database");
+const RedisToken = token<RedisClient>("ecommerce-platform:RedisClient");
+const S3Token = token<S3Client>("ecommerce-platform:S3Client");
+const ElasticToken = token<ElasticClient>("ecommerce-platform:ElasticClient");
+const LoggerToken = token<Logger>("ecommerce-platform:Logger");
+const EventBusToken = token<EventBus>("ecommerce-platform:EventBus");
+const IdGeneratorToken = token<IdGenerator>("ecommerce-platform:IdGenerator");
 
 // Catalog
-const ProductRepositoryToken = token<ProductRepository>("ProductRepository");
-const CategoryRepositoryToken = token<CategoryRepository>("CategoryRepository");
-const InventoryServiceToken = token<InventoryService>("InventoryService");
-const PricingServiceToken = token<PricingService>("PricingService");
-const CatalogServiceToken = token<CatalogService>("CatalogService");
-const SearchServiceToken = token<SearchService>("SearchService");
+const ProductRepositoryToken = token<ProductRepository>("ecommerce-platform:ProductRepository");
+const CategoryRepositoryToken = token<CategoryRepository>("ecommerce-platform:CategoryRepository");
+const InventoryServiceToken = token<InventoryService>("ecommerce-platform:InventoryService");
+const PricingServiceToken = token<PricingService>("ecommerce-platform:PricingService");
+const CatalogServiceToken = token<CatalogService>("ecommerce-platform:CatalogService");
+const SearchServiceToken = token<SearchService>("ecommerce-platform:SearchService");
 
 // Cart
-const CartRepositoryToken = token<CartRepository>("CartRepository");
-const CartServiceToken = token<CartService>("CartService");
-const CouponServiceToken = token<CouponService>("CouponService");
+const CartRepositoryToken = token<CartRepository>("ecommerce-platform:CartRepository");
+const CartServiceToken = token<CartService>("ecommerce-platform:CartService");
+const CouponServiceToken = token<CouponService>("ecommerce-platform:CouponService");
 
 // Orders
-const OrderRepositoryToken = token<OrderRepository>("OrderRepository");
-const OrderServiceToken = token<OrderService>("OrderService");
-const FulfillmentServiceToken = token<FulfillmentService>("FulfillmentService");
-const ShippingCarrierToken = token<ShippingCarrier>("ShippingCarrier"); // multi-binding
+const OrderRepositoryToken = token<OrderRepository>("ecommerce-platform:OrderRepository");
+const OrderServiceToken = token<OrderService>("ecommerce-platform:OrderService");
+const FulfillmentServiceToken = token<FulfillmentService>("ecommerce-platform:FulfillmentService");
+const ShippingCarrierToken = token<ShippingCarrier>("ecommerce-platform:ShippingCarrier"); // multi-binding
 
 // Payments
-const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway"); // multi-binding
-const PaymentServiceToken = token<PaymentService>("PaymentService");
+const PaymentGatewayToken = token<PaymentGateway>("ecommerce-platform:PaymentGateway"); // multi-binding
+const PaymentServiceToken = token<PaymentService>("ecommerce-platform:PaymentService");
 
 // Users
-const UserRepositoryToken = token<UserRepository>("UserRepository");
-const UserServiceToken = token<UserService>("UserService");
-const AddressRepositoryToken = token<AddressRepository>("AddressRepository");
-const LoyaltyServiceToken = token<LoyaltyService>("LoyaltyService");
-const SessionToken = token<UserSession>("UserSession"); // scoped
+const UserRepositoryToken = token<UserRepository>("ecommerce-platform:UserRepository");
+const UserServiceToken = token<UserService>("ecommerce-platform:UserService");
+const AddressRepositoryToken = token<AddressRepository>("ecommerce-platform:AddressRepository");
+const LoyaltyServiceToken = token<LoyaltyService>("ecommerce-platform:LoyaltyService");
+const SessionToken = token<UserSession>("ecommerce-platform:UserSession"); // scoped
 
 // Notifications
-const NotificationChannelToken = token<NotificationChannel>("NotificationChannel"); // multi-binding
-const NotificationServiceToken = token<NotificationService>("NotificationService");
+const NotificationChannelToken = token<NotificationChannel>("ecommerce-platform:NotificationChannel"); // multi-binding
+const NotificationServiceToken = token<NotificationService>("ecommerce-platform:NotificationService");
 
 // Analytics
-const AnalyticsServiceToken = token<AnalyticsService>("AnalyticsService"); // optional
-const AbTestServiceToken = token<AbTestService>("AbTestService"); // optional
-const CheckoutApplicationServiceToken = token<CheckoutApplicationService>("CheckoutApplicationService");
+const AnalyticsServiceToken = token<AnalyticsService>("ecommerce-platform:AnalyticsService"); // optional
+const AbTestServiceToken = token<AbTestService>("ecommerce-platform:AbTestService"); // optional
+const CheckoutApplicationServiceToken = token<CheckoutApplicationService>(
+  "ecommerce-platform:CheckoutApplicationService",
+);
 
 // ============================================================================
 // ── DOMAIN TYPES ─────────────────────────────────────────────────────────────────────────────────────────────────────

@@ -35,13 +35,13 @@ interface HttpResponse {
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ConfigToken = token<AppConfig>("AppConfig");
-const DatabaseToken = token<Database>("Database");
-const UserRepoToken = token<UserRepository>("UserRepository");
-const AuthServiceToken = token<AuthService>("AuthService");
-const MiddlewareToken = token<Middleware>("Middleware");
-const RequestContextToken = token<HttpRequest>("RequestContext");
-const UserControllerToken = token<UserController>("UserController");
+const ConfigToken = token<AppConfig>("real-world-web-app:AppConfig");
+const DatabaseToken = token<Database>("real-world-web-app:Database");
+const UserRepoToken = token<UserRepository>("real-world-web-app:UserRepository");
+const AuthServiceToken = token<AuthService>("real-world-web-app:AuthService");
+const MiddlewareToken = token<Middleware>("real-world-web-app:Middleware");
+const RequestContextToken = token<HttpRequest>("real-world-web-app:RequestContext");
+const UserControllerToken = token<UserController>("real-world-web-app:UserController");
 
 // ── Infrastructure ───────────────────────────────────────────────────────────────────────────────────────────────────
 

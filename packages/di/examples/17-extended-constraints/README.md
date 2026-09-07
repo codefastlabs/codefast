@@ -143,7 +143,7 @@ which `DataSource` slot its parent binding declares. The constraint reads the bi
 a binding selected without a hint still carries its slot. Declaring the names on the token makes them checked literals.
 
 ```ts
-const DataSourceToken = token<DataSource, "primary" | "replica">("DataSource");
+const DataSourceToken = token<DataSource, "primary" | "replica">("extended-constraints:DataSource");
 
 container
   .bind(LoggerToken)
@@ -168,7 +168,7 @@ a different slot from `"primary"` on `DataSource`. The token argument is what te
 not, since both parent frames carry `slot.name === "primary"`.
 
 ```ts
-const ArchiveSourceToken = token<DataSource, "primary">("ArchiveSource");
+const ArchiveSourceToken = token<DataSource, "primary">("extended-constraints:ArchiveSource");
 
 container
   .bind(LoggerToken)
@@ -196,8 +196,8 @@ container.resolve(ArchiveSourceToken, { name: "primary" }).connect(); // [archiv
 
 ```ts
 // Tag keys are declared once; `key.of(value)` mints the criterion every tag API takes.
-const BACKEND_TAG = tag<"memcached" | "redis">("backend");
-const REGION_TAG = tag<"eu" | "us">("region");
+const BACKEND_TAG = tag<"memcached" | "redis">("extended-constraints:backend");
+const REGION_TAG = tag<"eu" | "us">("extended-constraints:region");
 
 // Redis-EU requires BOTH backend=redis AND region=eu (AND semantics)
 container
@@ -232,8 +232,8 @@ automatically picks the right implementation based on which tagged ancestor is i
 tag-free.
 
 ```ts
-const TENANT_TAG = tag<"enterprise" | "starter">("tenant");
-const TIER_TAG = tag<"free" | "paid">("tier");
+const TENANT_TAG = tag<"enterprise" | "starter">("extended-constraints:tenant");
+const TIER_TAG = tag<"free" | "paid">("extended-constraints:tier");
 
 // Enterprise audit logger: parent chain must carry tenant=enterprise AND tier=paid on the same frame
 container

@@ -28,10 +28,10 @@ import { item, ok, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ConfigToken = token<Config>("Config");
-const LoggerToken = token<Logger>("Logger");
-const PoolToken = token<LegacyPool>("Pool");
-const ReportServiceToken = token<ReportService>("ReportService");
+const ConfigToken = token<Config>("custom-metadata-reader:Config");
+const LoggerToken = token<Logger>("custom-metadata-reader:Logger");
+const PoolToken = token<LegacyPool>("custom-metadata-reader:Pool");
+const ReportServiceToken = token<ReportService>("custom-metadata-reader:ReportService");
 
 // ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 

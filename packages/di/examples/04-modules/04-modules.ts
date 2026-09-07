@@ -12,11 +12,11 @@ import { item, step } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ConfigToken = token<Config>("Config");
-const LoggerToken = token<Logger>("Logger");
-const EmailServiceToken = token<EmailService>("EmailService");
-const AuthServiceToken = token<AuthService>("AuthService");
-const AppToken = token<App>("App");
+const ConfigToken = token<Config>("modules:Config");
+const LoggerToken = token<Logger>("modules:Logger");
+const EmailServiceToken = token<EmailService>("modules:EmailService");
+const AuthServiceToken = token<AuthService>("modules:AuthService");
+const AppToken = token<App>("modules:App");
 
 // ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -123,7 +123,7 @@ item("Shared Logger", firstLoggerResolve === secondLoggerResolve); // true
 
 // You can also load/unload modules dynamically after container creation
 const ExtraModule = Module.create("Extra", (builder) => {
-  const ExtraToken = token<string>("Extra");
+  const ExtraToken = token<string>("modules:Extra");
   builder.bind(ExtraToken).toConstantValue("extra-value");
 });
 

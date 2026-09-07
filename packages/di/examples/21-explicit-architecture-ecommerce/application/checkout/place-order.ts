@@ -101,4 +101,4 @@ export class PlaceOrder {
 }
 
 /** The injection token that resolves the `PlaceOrder` use case. */
-export const PlaceOrderToken = token<PlaceOrder>("PlaceOrder");
+export const PlaceOrderToken = token<PlaceOrder>("explicit-architecture-ecommerce:PlaceOrder");

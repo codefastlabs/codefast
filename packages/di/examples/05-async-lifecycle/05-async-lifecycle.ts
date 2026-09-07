@@ -15,10 +15,10 @@ import { item } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ConfigToken = token<Config>("Config");
-const DatabaseToken = token<Database>("Database");
-const CacheToken = token<Cache>("Cache");
-const AppToken = token<App>("App");
+const ConfigToken = token<Config>("async-lifecycle:Config");
+const DatabaseToken = token<Database>("async-lifecycle:Database");
+const CacheToken = token<Cache>("async-lifecycle:Cache");
+const AppToken = token<App>("async-lifecycle:App");
 
 // ── Domain ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
