@@ -111,6 +111,8 @@ const finish = (text: string, shouldMerge: boolean, tailwindMerge: (classes: str
 
 /**
  * Resolves a configuration without slots for one set of props, reading the configuration directly.
+ *
+ * @since 0.8.0
  */
 export const resolveColdVariantClasses = (
   configuration: Definition,
@@ -240,6 +242,8 @@ const coldSlotText = (
 
 /**
  * Creates one class resolver per slot for one set of props, reading the configuration directly.
+ *
+ * @since 0.8.0
  */
 export const createColdSlotResolvers = (
   configuration: SlotVariantConfig<VariantSchema, SlotSchema>,

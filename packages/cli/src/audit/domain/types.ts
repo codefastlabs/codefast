@@ -82,6 +82,8 @@ export type ReactAuditResult = {
 
 /**
  * A `token()`, `tag()` or module display name that breaks the display-name convention.
+ *
+ * @since 0.9.0
  */
 export type DisplayNameViolation = {
   readonly line: number;
@@ -92,6 +94,8 @@ export type DisplayNameViolation = {
 
 /**
  * The display-name violations found in one file.
+ *
+ * @since 0.9.0
  */
 export type DisplayNameFileViolations = {
   readonly relativePath: string;
@@ -100,6 +104,8 @@ export type DisplayNameFileViolations = {
 
 /**
  * Outcome of one `audit display-names` run.
+ *
+ * @since 0.9.0
  */
 export type DisplayNameAuditResult = {
   readonly files: Array<DisplayNameFileViolations>;

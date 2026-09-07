@@ -28,6 +28,8 @@ export interface Token<out Value, out Names extends string = string> {
 
 /**
  * The slot names a dependency key declares — `string` for a class, or a token that declares none.
+ *
+ * @since 0.9.0
  */
 export type SlotNamesOf<Key> = Key extends Token<unknown, infer Names extends string> ? Names : string;
 

@@ -1,5 +1,25 @@
 # @codefast/cli
 
+## 0.9.0
+
+### Minor Changes
+
+- [#848](https://github.com/codefastlabs/codefast/pull/848) [`a34b944`](https://github.com/codefastlabs/codefast/commit/a34b944d405d37db968add2a790b8209393dd515) Thanks [@thevuong](https://github.com/thevuong)! - New `codefast audit display-names`: reports every `token()`, `tag()` and module display name off the repo's convention —
+  `<namespace>:<Name>`, with a kebab-case (or scoped-package) namespace, PascalCase for a token or module and camelCase
+  for a tag key — across TypeScript and markdown, skipping `tests/`, `benchmarks/`, `.changeset/` and `CHANGELOG.md`.
+  Exceptions go in `audit.displayNames.allowlist`. Wired into the repo as `pnpm cli:audit:display-names` and into CI.
+
+- [#844](https://github.com/codefastlabs/codefast/pull/844) [`24fbe04`](https://github.com/codefastlabs/codefast/commit/24fbe04fdde03022dce980cb6f656ddb2b00274d) Thanks [@thevuong](https://github.com/thevuong)! - `audit comments` now enforces the section-divider convention in ignore files. `.gitignore`, `.dockerignore`,
+  `.npmignore`, `.prettierignore`, and `.eslintignore` are scanned for `#`-comment dividers, checked for the canonical
+  width, and rewritten by `--fix` — the same treatment `.ts`, `.tsx`, and `.css` already get. The code-only content rules
+  (`@since`, TSDoc grammar, banned fragments) stay off ignore files, which carry the divider convention alone.
+
+- [#827](https://github.com/codefastlabs/codefast/pull/827) [`3285708`](https://github.com/codefastlabs/codefast/commit/3285708b8e9934b9e6610cb95c99725cb9e4b2d2) Thanks [@thevuong](https://github.com/thevuong)! - `pack-slim` now slims the whole development lane out of the publish manifest, not only the source lane. Alongside `src`,
+  the `source` conditions, and the `dist` source maps it drops every `imports` entry left pointing outside `files` (the
+  `#/tests/*` and `#/examples/*` aliases), every script that is not an install or publish lifecycle hook, and
+  `devDependencies`, so the `package.json` npm shows describes only what a consumer's `tsc` and Node resolve. The CLI's
+  own tarball now ships its `CHANGELOG.md`.
+
 ## 0.8.1
 
 ### Patch Changes

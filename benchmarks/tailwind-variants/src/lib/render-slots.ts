@@ -3,6 +3,8 @@ import type { CompoundPaginationSlots, ExtremeDialogSlots, ServicePreviewSlots }
 
 /**
  * Renders the card slots a service preview shows.
+ *
+ * @since 0.7.3
  */
 export function renderCardSlots(slots: ServicePreviewSlots): void {
   slots.base();
@@ -15,6 +17,8 @@ export function renderCardSlots(slots: ServicePreviewSlots): void {
 
 /**
  * Renders the pagination slots a page control shows.
+ *
+ * @since 0.7.3
  */
 export function renderPaginationSlots(slots: CompoundPaginationSlots): void {
   slots.base();
@@ -26,6 +30,8 @@ export function renderPaginationSlots(slots: CompoundPaginationSlots): void {
 
 /**
  * Renders every dialog slot.
+ *
+ * @since 0.7.3
  */
 export function renderDialogSlots(slots: ExtremeDialogSlots): void {
   slots.trigger();
@@ -44,6 +50,8 @@ export function renderDialogSlots(slots: ExtremeDialogSlots): void {
 
 /**
  * Renders every slot once and returns the total class length, so nothing the definition produced can be elided.
+ *
+ * @since 0.7.3
  */
 export function renderEverySlot(slots: Readonly<Record<string, () => string>>): number {
   let length = 0;

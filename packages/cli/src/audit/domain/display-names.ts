@@ -32,6 +32,8 @@ const KIND_LABEL: Record<DisplayNameKind, string> = {
  *
  * @remarks Runs on markdown as well as TypeScript because a doc sample is what a reader copies:
  * a convention the docs break is not one the docs teach.
+ *
+ * @since 0.9.0
  */
 export function auditDisplayNames(sourceText: string): Array<DisplayNameViolation> {
   const violations: Array<DisplayNameViolation> = [];

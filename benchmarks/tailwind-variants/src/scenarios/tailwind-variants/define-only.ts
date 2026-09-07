@@ -13,6 +13,8 @@ const defineCard = (): unknown => tailwindVariantsTv(slotsVariants, TV_MERGE_ENA
  *
  * @remarks An eager library compiles here and a lazy one defers to its first render, so the descriptors
  * keep the ratio off the aggregates.
+ *
+ * @since 0.7.3
  */
 export function buildTailwindVariantsNpmDefineOnlyScenarios(): ReadonlyArray<BenchScenario> {
   return [

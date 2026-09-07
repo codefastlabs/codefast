@@ -24,6 +24,8 @@ export const BENCH_VERBOSE_ENV_KEY = "BENCH_VERBOSE";
 export const BENCH_PORT_ENV_KEY = "BENCH_PORT";
 /**
  * Generic port a launcher hands the process it starts; `bench:serve` reads it when `BENCH_PORT` is unset.
+ *
+ * @since 0.8.0
  */
 export const PORT_ENV_KEY = "PORT";
 /**
@@ -235,6 +237,8 @@ export function parseEnvInteger(key: string, bounds?: IntegerEnvBounds): number 
  *
  * @remarks `BENCH_PORT` wins, then the generic `PORT` a launcher hands the process it starts, then the
  * suite's default — so a launcher that picks a free port finds the viewer on that port.
+ *
+ * @since 0.8.0
  */
 export function resolvePreferredPortFromEnvironment(defaultPort: number): number {
   return parseEnvInteger(BENCH_PORT_ENV_KEY) ?? parseEnvInteger(PORT_ENV_KEY) ?? defaultPort;

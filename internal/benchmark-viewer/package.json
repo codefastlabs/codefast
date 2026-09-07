@@ -1,6 +1,6 @@
 {
   "name": "@codefast/benchmark-viewer",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "private": true,
   "description": "React SSR benchmark history viewer server for Codefast benchmark packages",
   "license": "MIT",

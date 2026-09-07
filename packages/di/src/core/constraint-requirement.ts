@@ -31,6 +31,8 @@ export interface ConstraintRequirement {
 
 /**
  * What a helper records about one waited-for slot name, before the discriminant is stamped on.
+ *
+ * @since 0.9.0
  */
 export type SlotNameRequirement = Omit<ConstraintRequirement, "requires">;
 
@@ -48,6 +50,8 @@ export function requiringAncestorSlotName(
 
 /**
  * Records every slot name a predicate waits for — one per reserved criterion in a `…TaggedAll` list.
+ *
+ * @since 0.9.0
  */
 export function requiringAncestorSlotNames(
   predicate: BindingConstraint,

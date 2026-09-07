@@ -26,6 +26,8 @@ export interface ScenarioFacets {
 
 /**
  * The display toggles a suite wants the viewer to open with; the URL hash still overrides them.
+ *
+ * @since 0.8.0
  */
 export interface ViewDefaults {
   /** Draws every row of the selected scenario's group on one chart, one line per row and library. */
@@ -123,6 +125,8 @@ export interface EmbeddedLibraryRunData {
 
 /**
  * A run at which the suite's definition of a scenario changed, and how.
+ *
+ * @since 0.8.0
  */
 export interface EmbeddedScenarioChange {
   /** Index into `EmbeddedViewerPayload.runs` of the first run recorded under the new definition. */
@@ -132,6 +136,8 @@ export interface EmbeddedScenarioChange {
 
 /**
  * How older runs of a scenario were rescaled so every run reports `hz/op` in the newest run's unit.
+ *
+ * @since 0.8.0
  */
 export interface EmbeddedBatchNormalization {
   /** The `batch` the newest run recorded; every other run's throughput is expressed in this unit. */

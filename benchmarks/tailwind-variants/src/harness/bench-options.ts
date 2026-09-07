@@ -18,5 +18,7 @@ export const TV_CACHE_DISABLED = { cacheResolutions: false, twMerge: true, twMer
 
 /**
  * The without-merge counterpart of `TV_CACHE_DISABLED`, so a paired control isolates the merge step.
+ *
+ * @since 0.7.3
  */
 export const TV_CACHE_AND_MERGE_DISABLED = { cacheResolutions: false, twMerge: false } as const;

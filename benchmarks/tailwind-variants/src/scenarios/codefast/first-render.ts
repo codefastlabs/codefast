@@ -19,6 +19,8 @@ const defineAndRenderCard = (): number =>
  *
  * @remarks Minus the define-only row this is the first render alone; the descriptors keep the ratio off
  * the aggregates because the work is per definition, not per render.
+ *
+ * @since 0.7.3
  */
 export function buildCodefastFirstRenderScenarios(): ReadonlyArray<BenchScenario> {
   return [

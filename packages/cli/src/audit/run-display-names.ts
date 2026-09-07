@@ -18,6 +18,8 @@ const SKIPPED_BASENAMES: ReadonlySet<string> = new Set(["CHANGELOG.md"]);
 
 /**
  * Scans a target path for `token()`, `tag()` and module display names that break the convention.
+ *
+ * @since 0.9.0
  */
 export function runDisplayNameAudit(
   fs: FilesystemPort,
