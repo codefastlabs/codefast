@@ -14,7 +14,7 @@ framework-free; unlike 20 it spreads the pattern across a full application.
 | Wiring         | `@injectable` + `.to()`       | same, plus factories where a runtime decision is involved |
 
 ```sh
-npx tsx examples/21-explicit-architecture-ecommerce/21-explicit-architecture-ecommerce.ts
+npx tsx examples/21-explicit-architecture-ecommerce/main.ts
 ```
 
 ## The dependency rule
