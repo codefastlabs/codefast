@@ -1,4 +1,4 @@
-const ShopConfigToken = token<ShopConfig>("ShopConfig");
+const ShopConfigToken = token<ShopConfig>("shop:ShopConfig");
 
 @injectable([ShopConfigToken])
 class OrderService {

@@ -4,7 +4,7 @@ interface Logger {
   info(message: string): void;
 }
 
-const LoggerToken = token<Logger>("Logger");
+const LoggerToken = token<Logger>("app:Logger");
 
 @injectable([LoggerToken])
 class OrderService {
