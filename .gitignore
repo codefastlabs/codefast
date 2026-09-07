@@ -1,35 +1,17 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 #
-# Stack: pnpm workspaces + Turborepo. App: apps/docs (TanStack Start, Vite, Nitro).
-# Libraries: TypeScript emit (tsgo) → dist/.
+# Stack: pnpm workspaces + Turborepo. App: apps/ui (TanStack Start, Vite, Nitro).
+# Libraries: native tsc (TypeScript 7) emit → dist/.
 
-# dependencies
+# ── Dependencies ──────────────────────────────────────────────────────────────────────────────────────────────────────
 node_modules
-.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
 
-# local env files
+# ── Environment ───────────────────────────────────────────────────────────────────────────────────────────────────────
 .env
 .env.*
-.env.*.local
 *.local
 
-# testing
-coverage
-.vitest
-
-# turbo
-.turbo
-
-# vercel
-.vercel
-
-# build outputs
+# ── Build outputs ─────────────────────────────────────────────────────────────────────────────────────────────────────
 .next/
 out/
 build
@@ -39,51 +21,47 @@ dist-ssr
 tsconfig.tsbuildinfo
 *.tsbuildinfo
 
-# TanStack Start / Nitro / Vite SSR (apps/docs)
+# ── Framework & tool caches ───────────────────────────────────────────────────────────────────────────────────────────
+.turbo
+.vercel
 .nitro
 .tanstack
 .wrangler
 .output
 .vinxi
 .content-collections
-
-# Vite (config reload temp files, some versions)
 vite.config.*.timestamp-*
 .vite-hooks/
+__unconfig*
 
-# debug
+# ── Testing & coverage ────────────────────────────────────────────────────────────────────────────────────────────────
+coverage
+.vitest
+codecov
+codecov.*
+!codecov.yml
+
+# ── Logs ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# misc
+# ── Editors & OS ──────────────────────────────────────────────────────────────────────────────────────────────────────
+# JetBrains machine/user state — share via docs or .editorconfig instead.
 .DS_Store
 *.pem
+.idea/
+
+# ── Project tooling ───────────────────────────────────────────────────────────────────────────────────────────────────
+storybook-static
+build-storybook.log
+.exports-analysis
+.claude/worktrees/
+benchmarks/**/bench-results/
 count.txt
 todos.json
 
-# IDEs — JetBrains machine/user state (share via docs or .editorconfig instead)
-.idea/
-
-# storybook
-storybook-static
-build-storybook.log
-
-# codecov
-codecov
-codecov.*
-!codecov.yml
-
-# scripts
-.exports-analysis
-
-# Claude Code worktrees (temporary git worktrees, never committed)
-.claude/worktrees/
-
-# benchmark artifacts (generated)
-benchmarks/**/bench-results/
-
-# python cache
+# ── Python cache ──────────────────────────────────────────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]

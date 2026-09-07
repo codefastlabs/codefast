@@ -14,29 +14,59 @@ const LEAD_GLYPHS = "──";
 /** Every glyph a divider has historically been drawn with, so legacy forms are recognised too. */
 const RULE_CHARACTER_CLASS = String.raw`[-=─_*~#]`;
 
-const ruleOnlyLinePattern = new RegExp(
-  String.raw`^(?<indent>[ \t]*)(?:\/\/|\/\*|\*)[ \t]*${RULE_CHARACTER_CLASS}{4,}[ \t]*(?:\*\/)?[ \t]*$`,
-);
-const titledLinePattern = new RegExp(
-  String.raw`^(?<indent>[ \t]*)(?:\/\/|\/\*)[ \t]*${RULE_CHARACTER_CLASS}{2,}[ \t]+(?<title>.*?)[ \t]+${RULE_CHARACTER_CLASS}{2,}[ \t]*(?:\*\/)?[ \t]*$`,
-);
-const commentLinePattern = /^[ \t]*(?:\/\/|\/\*|\*)/;
-const bareRuleClosePattern = new RegExp(String.raw`^[ \t]*${RULE_CHARACTER_CLASS}{4,}[ \t]*\*\/[ \t]*$`);
+/**
+ * Which comment syntax a divider is written in.
+ *
+ * @since 0.6.0
+ */
+export type DividerLanguage = "css" | "ignore" | "js";
+
+// The comment lead each syntax opens a divider with — `#` for ignore files, slash forms for code.
+const commentLeadByLanguage: Record<DividerLanguage, string> = {
+  css: String.raw`\/\/|\/\*|\*`,
+  ignore: String.raw`#`,
+  js: String.raw`\/\/|\/\*|\*`,
+};
+
+interface DividerPatterns {
+  readonly ruleOnly: RegExp;
+  readonly titled: RegExp;
+  readonly commentLine: RegExp;
+  readonly bareRuleClose: RegExp;
+  readonly commentPrefix: RegExp;
+}
+
+// One compiled pattern set per language — the comment lead is the only part that varies.
+const patternsByLanguage = new Map<DividerLanguage, DividerPatterns>();
+
+function patternsFor(language: DividerLanguage): DividerPatterns {
+  const cached = patternsByLanguage.get(language);
+  if (cached !== undefined) {
+    return cached;
+  }
+  const lead = commentLeadByLanguage[language];
+  const built: DividerPatterns = {
+    ruleOnly: new RegExp(
+      String.raw`^(?<indent>[ \t]*)(?:${lead})[ \t]*${RULE_CHARACTER_CLASS}{4,}[ \t]*(?:\*\/)?[ \t]*$`,
+    ),
+    titled: new RegExp(
+      String.raw`^(?<indent>[ \t]*)(?:${lead})[ \t]*${RULE_CHARACTER_CLASS}{2,}[ \t]+(?<title>.*?)[ \t]+${RULE_CHARACTER_CLASS}{2,}[ \t]*(?:\*\/)?[ \t]*$`,
+    ),
+    commentLine: new RegExp(String.raw`^[ \t]*(?:${lead})`),
+    bareRuleClose: new RegExp(String.raw`^[ \t]*${RULE_CHARACTER_CLASS}{4,}[ \t]*\*\/[ \t]*$`),
+    commentPrefix: new RegExp(String.raw`^[ \t]*(?:${lead})[ \t]?`),
+  };
+  patternsByLanguage.set(language, built);
+  return built;
+}
+
 const rulesOnlyPattern = new RegExp(String.raw`^(?:${RULE_CHARACTER_CLASS}|[ \t])*$`);
-const commentPrefixPattern = /^[ \t]*(?:\/\/|\/\*|\*)[ \t]?/;
 const commentSuffixPattern = /[ \t]*\*\/[ \t]*$/;
 
 /** A banner spanning more lines than this is prose that happens to start with a rule, not a divider. */
 const MAX_BANNER_SPAN = 16;
 /** Past this a banner's lone line is a sentence the writer wanted kept, not a section name. */
 const MAX_TITLE_LENGTH = 60;
-
-/**
- * Which comment syntax a divider is written in.
- *
- * @since 0.6.0
- */
-export type DividerLanguage = "css" | "js";
 
 /**
  * Why a divider fails the convention. Both kinds are mechanical, so every report is one `--fix` away.
@@ -73,7 +103,8 @@ export function renderDivider(indent: string, title: string, language: DividerLa
     const head = `${indent}/* ${LEAD_GLYPHS} ${title} `;
     return `${head}${RULE_GLYPH.repeat(Math.max(2, DIVIDER_COLUMN - head.length - 3))} */`;
   }
-  const head = `${indent}// ${LEAD_GLYPHS} ${title} `;
+  const prefix = language === "ignore" ? "#" : "//";
+  const head = `${indent}${prefix} ${LEAD_GLYPHS} ${title} `;
   return `${head}${RULE_GLYPH.repeat(Math.max(2, DIVIDER_COLUMN - head.length))}`;
 }
 
@@ -131,8 +162,9 @@ export function applyCommentDividerFixes(
 
 function readRegionAt(lines: Array<string>, index: number, language: DividerLanguage): DividerRegion | null {
   const line = lines[index]!;
+  const patterns = patternsFor(language);
 
-  const titled = titledLinePattern.exec(line);
+  const titled = patterns.titled.exec(line);
   const title = titled?.groups?.title?.trim();
   if (titled !== null && title !== undefined && title.length > 0 && !rulesOnlyPattern.test(title)) {
     const indent = titled.groups?.indent ?? "";
@@ -147,29 +179,39 @@ function readRegionAt(lines: Array<string>, index: number, language: DividerLang
     };
   }
 
-  const ruleOnly = ruleOnlyLinePattern.exec(line);
+  const ruleOnly = patterns.ruleOnly.exec(line);
   if (ruleOnly === null) {
     return null;
   }
-  return readBannerAt(lines, index, ruleOnly.groups?.indent ?? "");
+  return readBannerAt(lines, index, ruleOnly.groups?.indent ?? "", language);
 }
 
-function readBannerAt(lines: Array<string>, index: number, indent: string): DividerRegion | null {
+function readBannerAt(
+  lines: Array<string>,
+  index: number,
+  indent: string,
+  language: DividerLanguage,
+): DividerRegion | null {
   const line = lines[index]!;
+  const patterns = patternsFor(language);
   // An unterminated `/*` opens a block whose body needs no per-line marker, so the run ends at `*/`.
   const insideBlock = line.trimStart().startsWith("/*") && !line.includes("*/");
   const body: Array<string> = [];
   let cursor = index + 1;
-  while (cursor < lines.length && cursor - index <= MAX_BANNER_SPAN && !isBannerClose(lines[cursor]!, insideBlock)) {
-    if (!insideBlock && !commentLinePattern.test(lines[cursor]!)) {
+  while (
+    cursor < lines.length &&
+    cursor - index <= MAX_BANNER_SPAN &&
+    !isBannerClose(lines[cursor]!, insideBlock, language)
+  ) {
+    if (!insideBlock && !patterns.commentLine.test(lines[cursor]!)) {
       break;
     }
-    body.push(stripCommentPrefix(lines[cursor]!));
+    body.push(stripCommentPrefix(lines[cursor]!, language));
     cursor++;
   }
 
   const closed =
-    cursor < lines.length && cursor - index <= MAX_BANNER_SPAN && isBannerClose(lines[cursor]!, insideBlock);
+    cursor < lines.length && cursor - index <= MAX_BANNER_SPAN && isBannerClose(lines[cursor]!, insideBlock, language);
   const meaningful = body.filter((entry) => entry.length > 0);
   // A frame around prose is a doc block, and an unclosed rule is prose formatting inside one.
   if (!closed || meaningful.length !== 1 || !looksLikeTitle(meaningful[0]!)) {
@@ -190,17 +232,23 @@ function looksLikeTitle(text: string): boolean {
   return text.length <= MAX_TITLE_LENGTH && !text.endsWith(".");
 }
 
-function isBannerClose(line: string, insideBlock: boolean): boolean {
-  if (ruleOnlyLinePattern.test(line)) {
+function isBannerClose(line: string, insideBlock: boolean, language: DividerLanguage): boolean {
+  const patterns = patternsFor(language);
+  if (patterns.ruleOnly.test(line)) {
     return true;
   }
-  return insideBlock && bareRuleClosePattern.test(line);
+  return insideBlock && patterns.bareRuleClose.test(line);
 }
 
 function usesCanonicalGlyphs(line: string): boolean {
-  return line.trimStart().startsWith(`// ${LEAD_GLYPHS} `) || line.trimStart().startsWith(`/* ${LEAD_GLYPHS} `);
+  const trimmed = line.trimStart();
+  return (
+    trimmed.startsWith(`// ${LEAD_GLYPHS} `) ||
+    trimmed.startsWith(`/* ${LEAD_GLYPHS} `) ||
+    trimmed.startsWith(`# ${LEAD_GLYPHS} `)
+  );
 }
 
-function stripCommentPrefix(line: string): string {
-  return line.replace(commentPrefixPattern, "").replace(commentSuffixPattern, "").trim();
+function stripCommentPrefix(line: string, language: DividerLanguage): string {
+  return line.replace(patternsFor(language).commentPrefix, "").replace(commentSuffixPattern, "").trim();
 }

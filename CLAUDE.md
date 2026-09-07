@@ -202,10 +202,13 @@ types carry the types.**
 
   `//`, a space, `──` (U+2500 ×2), a space, the title, a space, then `─` padded so the line ends at **column 120** —
   `printWidth`, counting indentation. CSS has no `//` and spells the same divider `/* ── Surfaces ──…── */`, ending at
-  the same column. Nothing else: not the three-line `/* ---- \n * Title \n * ---- */` banner, not `// ====`, not
-  `#region`. Two rule lines around a title carry no information the title does not, and a frame whose width nobody
-  checks drifts — this one is title-dependent, so `pnpm cli:audit:comments` checks it and `--fix` repads it. Nobody
-  counts dashes by hand. Everything the audit reports is mechanical, so a red run is always one `--fix` from green.
+  the same column; ignore files (`.gitignore` and the `.*ignore` family) spell it over `#` — `# ── Dependencies ──…──`
+  to the same column, and `cli:audit:comments` enforces and `--fix`-repads those too (only the divider — an ignore file
+  carries none of the code-comment content rules). Nothing else: not the three-line `/* ---- \n * Title \n * ---- */`
+  banner, not `// ====`, not `#region`. Two rule lines around a title carry no information the title does not, and a
+  frame whose width nobody checks drifts — this one is title-dependent, so `pnpm cli:audit:comments` checks it and
+  `--fix` repads it. Nobody counts dashes by hand. Everything the audit reports is mechanical, so a red run is always
+  one `--fix` from green.
 
 - **A divider is not a doc block, and the rule reaches only the divider.** A divider is a label and nothing else: one
   short noun phrase. The moment a comment carries prose — a module header naming what the file owns, an explanation

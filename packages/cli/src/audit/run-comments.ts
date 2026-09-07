@@ -103,30 +103,34 @@ export function runCommentAudit(
         }
         breakages.push({ line: region.startLine, raw: region.raw, reason: reasonByDefect[region.defect] });
       }
-      for (const finding of scanCommentContent(content, language)) {
-        if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
-          allowlistedCount++;
-          continue;
-        }
-        breakages.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect[finding.defect] });
-      }
-      const packageVersion = nearestVersion(fs, absolutePath, versionByDirectory);
-      if (packageVersion !== null) {
-        for (const finding of scanImpossibleSinceTags(content, packageVersion)) {
+      // The content rules — banned fragments, `@since`, TSDoc grammar — govern doc comments in
+      // code; an ignore file carries only the divider convention.
+      if (language !== "ignore") {
+        for (const finding of scanCommentContent(content, language)) {
           if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
             allowlistedCount++;
             continue;
           }
-          breakages.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect["since-impossible"] });
+          breakages.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect[finding.defect] });
         }
-      }
-      if (language === "js") {
-        for (const finding of scanTsdocSyntax(content)) {
-          if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
-            allowlistedCount++;
-            continue;
+        const packageVersion = nearestVersion(fs, absolutePath, versionByDirectory);
+        if (packageVersion !== null) {
+          for (const finding of scanImpossibleSinceTags(content, packageVersion)) {
+            if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
+              allowlistedCount++;
+              continue;
+            }
+            breakages.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect["since-impossible"] });
           }
-          breakages.push({ line: finding.line, raw: finding.raw, reason: finding.reason });
+        }
+        if (language === "js") {
+          for (const finding of scanTsdocSyntax(content)) {
+            if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
+              allowlistedCount++;
+              continue;
+            }
+            breakages.push({ line: finding.line, raw: finding.raw, reason: finding.reason });
+          }
         }
       }
       if (breakages.length > 0) {
