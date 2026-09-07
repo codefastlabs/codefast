@@ -48,7 +48,7 @@ export function inject<Value, Names extends string = string>(
   // already been folded. Built once here rather than per constructed instance.
   const resolveOptions = injectionSlotToResolveOptions(descriptor);
   // The names are checked above; the container lane only needs the value type.
-  const key: Token<Value> | Constructor<Value> = token;
+  const resolveKey: Token<Value> | Constructor<Value> = token;
 
   const decoratorFn = (
     _target: ClassAccessorDecoratorTarget<unknown, Value>,
@@ -74,8 +74,8 @@ export function inject<Value, Names extends string = string>(
       const ambient = getAmbientResolution();
       if (ambient !== undefined) {
         const value = descriptor.optional
-          ? ambient.resolveOptional(key, resolveOptions)
-          : ambient.resolve(key, resolveOptions);
+          ? ambient.resolveOptional(resolveKey, resolveOptions)
+          : ambient.resolve(resolveKey, resolveOptions);
         context.access.set(this, value as Value);
         return;
       }
@@ -84,8 +84,8 @@ export function inject<Value, Names extends string = string>(
         throw new MissingContainerContextError(classNameOf(this), context.name);
       }
       const value = descriptor.optional
-        ? container.resolveOptional(key, resolveOptions)
-        : container.resolve(key, resolveOptions);
+        ? container.resolveOptional(resolveKey, resolveOptions)
+        : container.resolve(resolveKey, resolveOptions);
       context.access.set(this, value as Value);
     });
 
