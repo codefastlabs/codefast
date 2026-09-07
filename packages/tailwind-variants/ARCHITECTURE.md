@@ -164,7 +164,7 @@ all — and the difference between a fresh resolver's second and first call is h
 
 ## How much of this a page can actually feel
 
-Every figure above is a microbenchmark, and one measurement bounds what any of them is worth. Rendering `apps/ui`'s
+Every figure above is a microbenchmark, and one measurement bounds what any of them is worth. Rendering `apps/web`'s
 registry demos through `renderToString` — sixty-eight components, the densest page this repository can assemble — takes
 about 15 ms and makes **266 resolver calls**. At the ~95 ns a call the cache saves on those configurations, the whole
 cache is worth **~25 µs, or 0.17% of the render**. Three runs of the identical build spread 1.15 ms, so the effect sits

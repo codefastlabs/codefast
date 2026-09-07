@@ -19,7 +19,7 @@ Four things routinely surprise newcomers:
 - **One TypeScript: native [TypeScript 7](https://www.typescriptlang.org)** (`tsc`, the Go port), used for both
   type-checking and package builds.
 - **`packages/*` have no bundler.** `tsc` emits per-file `.js` + `.d.ts` to `dist/`. Vite (Rolldown) is reserved for
-  genuine browser bundles (`apps/ui`, `examples/*`, the benchmark viewer's browser lane).
+  genuine browser bundles (`apps/web`, `examples/*`, the benchmark viewer's browser lane).
 - **`exactOptionalPropertyTypes` is on.** An optional prop that may receive an explicit value is typed
   `?: T | undefined`.
 
@@ -177,7 +177,7 @@ Changed a public API surface? Verify the **production** build of a consumer, not
 and prerendering only surface at build time:
 
 ```bash
-pnpm build:packages && pnpm --filter @apps/ui build
+pnpm build:packages && pnpm --filter @apps/web build
 ```
 
 ## Commits and pull requests

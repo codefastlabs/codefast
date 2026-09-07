@@ -143,12 +143,12 @@ These bind the spec to this repository and do not constrain other implementation
   re-exported from the root.
 - The GA4 user-deletion binding (`server/user-deletion`), the Meta/TikTok/Microsoft-UET destination mappings, and the
   TCF/GPP ad-framework reconciler (`client/ad-framework-consent`) ship as **integrator-facing reference bindings** —
-  covered by the test suite and spec vectors, but with no `apps/ui` call site (the reference app wires only GA4 +
+  covered by the test suite and spec vectors, but with no `apps/web` call site (the reference app wires only GA4 +
   Vercel). They are public API for external integrators, not dead code; the live-CMP signal and vendor transports remain
   the integrator's to supply.
 - Testing: `tests/unit/**` mirrors `src/**` per the repo taxonomy (jsdom for browser surfaces); consent flows are tested
-  behaviorally (real gtag stub + dataLayer assertions). apps/ui carries the integration matrix
-  (`apps/ui/tests/integration/**`). There is no browser e2e suite — the repo has no browser runner, so anything needing
+  behaviorally (real gtag stub + dataLayer assertions). apps/web carries the integration matrix
+  (`apps/web/tests/integration/**`). There is no browser e2e suite — the repo has no browser runner, so anything needing
   a real browser is still unproven.
 - The package ships **no runner for the vectors** — `tests/unit/**` implements the same contract independently, so a
   vector and a unit test agreeing is evidence, not a tautology.

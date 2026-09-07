@@ -236,7 +236,7 @@ Exits non-zero when violations remain so it can gate CI.
 
 ```bash
 codefast audit react                       # whole repo
-codefast audit react apps/ui/src           # explicit target
+codefast audit react apps/web/src           # explicit target
 codefast audit react --json                # machine-readable summary
 ```
 

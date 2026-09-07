@@ -73,7 +73,7 @@ Requires `packages/cli/dist` to exist (build the CLI if it doesn't).
 pnpm --filter @codefast/di build   # rm -rf dist && tsc -p tsconfig.build.json (clean, no incremental)
 ```
 
-TS7 emits `.js` + `.d.ts` per file; there is no bundler. `apps/ui` consumes the built `dist/`, so run
+TS7 emits `.js` + `.d.ts` per file; there is no bundler. `apps/web` consumes the built `dist/`, so run
 `pnpm build:packages` before testing an app against your change.
 
 ## Test
@@ -131,12 +131,12 @@ Lint/format is Oxc (`oxlint --deny-warnings`, `oxfmt`). If you edited files via 
 
 ## Verify consumers — (conditional: changed a public API surface)
 
-`apps/ui` and `examples/*` consume the built package. Verify the **production** build, not just `dev` — client
+`apps/web` and `examples/*` consume the built package. Verify the **production** build, not just `dev` — client
 import-protection and prerendering only surface at build time:
 
 ```bash
 pnpm build:packages
-pnpm --filter @apps/ui build
+pnpm --filter @apps/web build
 ```
 
 ## Changeset

@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11 — every package holds that one floor, `di`
 included, which is why it keeps its own `Map` upsert helpers instead of the ES2025 methods) publishing the `@codefast/*`
 packages. The flagship is `@codefast/di`, lightweight dependency injection on TC39 Stage 3 decorators; `@codefast/ui` is
-the Radix-based, Tailwind CSS 4 component library. `apps/ui` is the TanStack Start site behind codefastlabs.com: a
+the Radix-based, Tailwind CSS 4 component library. `apps/web` is the TanStack Start site behind codefastlabs.com: a
 landing page over every published package, the `@codefast/ui` showcase, and `/docs/<pkg>` pages rendered at build time
 from each package's own `README.md`/`SPEC.md`/`ARCHITECTURE.md`/… — or from a directory named after the kind (`spec/`),
 whose `README.md` is the kind's page and whose other `*.md` render beneath it. Workspace layout is by audience:
@@ -28,8 +28,8 @@ is private until it is published, so it starts in `internal/`.
 - **Library and bin packages build with native `tsc`** — per-package `tsconfig.build.json`, the Turborepo "Compiled
   Packages" model, emitting per-file `.js` + `.d.ts` to `dist/`. tsc leaves internal `#/` subpath imports verbatim, so
   each `package.json#imports` is conditional (`source` → `src` for dev/tests, `types`/`default` → `dist` for consumers),
-  and `apps/ui` consumes the built `dist/`. Exports are generated from `dist/` by `codefast mirror`. The **only**
-  bundler is **Vite** (Rolldown), reserved for genuine browser bundles: `apps/ui`/`examples` (TanStack Start) and the
+  and `apps/web` consumes the built `dist/`. Exports are generated from `dist/` by `codefast mirror`. The **only**
+  bundler is **Vite** (Rolldown), reserved for genuine browser bundles: `apps/web`/`examples` (TanStack Start) and the
   `benchmark-viewer` browser app (its Node/SSR lane is plain tsc).
 - **`exactOptionalPropertyTypes` is enabled** — an optional prop that may receive an explicit value must be typed
   `?: T | undefined`.
@@ -60,12 +60,12 @@ in this order — never write from memory:
 2. **Confirm the installed version's real shape** in `node_modules/.pnpm/@tanstack+*/...` — the pin can lag `latest`
    (e.g. `createServerFn().validator()` is what compiles here; `getRequestHeader`/`getRequest`/`setResponseHeader` come
    from `@tanstack/react-start/server`).
-3. **Verify against the real `vite build`, not just `dev` + `check-types`.** `pnpm --filter @apps/ui build`. Dev SSRs
+3. **Verify against the real `vite build`, not just `dev` + `check-types`.** `pnpm --filter @apps/web build`. Dev SSRs
    every request and hides two things that only surface in prod: **(a)** client import-protection denies any
    client-reachable import of `**/*.server.*` (don't put a `createServerFn` module behind a `.server.` filename the
    client imports); **(b)** the build **prerenders**, so a route `loader` runs at **build time**, not per visitor.
 
-**The load-bearing deployment fact — `apps/ui` ships to Vercel as ISR/prerender.** The served HTML is **cached and
+**The load-bearing deployment fact — `apps/web` ships to Vercel as ISR/prerender.** The served HTML is **cached and
 shared across visitors**, so per-visitor data (geo → region consent) MUST come from a **client request to a server
 function**: Vercel injects `x-vercel-ip-country` on that request, so the fn resolves the real region. A root-route **SSR
 loader is wrong here** — it resolves at build/regen and bakes one visitor-independent value (the strictest default) into
@@ -294,7 +294,7 @@ point of use beats brevity, and every word must convey information:
 | `packages/typescript-config` | Shared tsconfig presets                                                                                           |
 | `internal/benchmark-*`       | Private benchmark harness/viewer shared by `benchmarks/*` (`pnpm bench`); never published                         |
 | `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di-inversify`, `tailwind-variants`)                   |
-| `apps/ui`                    | codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` markdown docs, `@codefast/ui` showcase   |
+| `apps/web`                   | codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` markdown docs, `@codefast/ui` showcase   |
 | `examples/tanstack-start`    | TanStack Start consumer demo; uses `workspace:*` so package changes are testable here directly                    |
 
 ### `packages/di` layout
@@ -324,7 +324,7 @@ hot-path changes against `benchmarks/di-inversify` (`pnpm bench:isolate` for ord
 best-of across several processes) before assuming a refactor is free — and measure cold paths too, which the hot loops
 hide.
 
-## UI/component conventions (apps/ui and packages/ui)
+## UI/component conventions (apps/web and packages/ui)
 
 These are project rules the linters do not fully enforce:
 
@@ -332,8 +332,9 @@ These are project rules the linters do not fully enforce:
   inline in `className`. When a class set repeats, extract a **reusable component**, not a string constant. Conditional
   classes use `cn()` inline. CSS effects (gradient/mask/background-size) use Tailwind arbitrary values
   (`bg-[radial-gradient(...)]`), not `style` objects.
-- **One component per file** under `apps/ui/src/components/**`. Extract sub-components/helpers into their own kebab-case
-  file and import. Accepted co-location exceptions: icon sets, and `*.example.tsx` / `demo.tsx` under `registry/`.
+- **One component per file** under `apps/web/src/components/**`. Extract sub-components/helpers into their own
+  kebab-case file and import. Accepted co-location exceptions: icon sets, and `*.example.tsx` / `demo.tsx` under
+  `registry/`.
 - **No inline prop types.** Declare `interface XxxProps extends ComponentProps<"element">` (matching the host element
   rendered), spread `{...props}` **last** on that element, and merge classes via `cn(base, className)`. `Omit` any attr
   the wrapper hard-sets. When forwarding to another component (not a DOM element), extend

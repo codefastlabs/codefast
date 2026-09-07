@@ -3,7 +3,7 @@
 A [TanStack Start](https://tanstack.com/start) app that exercises the `@codefast/*` libraries the way a real consumer
 does: against their **built `dist/`**, not their source. It is the consumer demo under `examples/*`.
 
-## What makes this different from `apps/ui`
+## What makes this different from `apps/web`
 
 Both apps consume the packages through `workspace:*` links:
 
@@ -15,10 +15,10 @@ Both apps consume the packages through `workspace:*` links:
 "@codefast/ui": "workspace:*"
 ```
 
-The difference is which lane the link resolves to. `apps/ui` sets the dev-only `source` resolve condition, so in dev it
+The difference is which lane the link resolves to. `apps/web` sets the dev-only `source` resolve condition, so in dev it
 runs the packages' in-repo `src/`. This app's `vite.config.ts` sets no such condition, so the same `workspace:*` links
 resolve to each package's built `dist/` — the exact artifact a published install runs. That makes it a smoke test of the
-shipped output, catching build and export problems that source-mode `apps/ui` never sees.
+shipped output, catching build and export problems that source-mode `apps/web` never sees.
 
 `@codefast/di` uses TC39 standard decorators (`@injectable`, `@postConstruct`, `@preDestroy`), so the Vite config adds
 `@rolldown/plugin-babel` with `@babel/plugin-proposal-decorators` (`version: "2023-11"`) to lower them, alongside the

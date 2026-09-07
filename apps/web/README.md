@@ -1,4 +1,4 @@
-# @apps/ui
+# @apps/web
 
 The [codefastlabs.com](https://codefastlabs.com) portal: a [TanStack Start](https://tanstack.com/start) app that
 consumes the `@codefast/*` packages straight from the workspace. It serves the package landing, the documentation every
@@ -61,7 +61,7 @@ router-core (`new-process-route-tree.js`: `isFrameMoreSpecific`, `sortDynamic`, 
 segments (`{-$sub}`) are the other option; either way `docRefFor`, `PackageDoc.pages`, the sidebar, `readingOrder`, the
 prerender list in `vite.config.ts`, and the `.md` twin routes must grow together.
 
-Raster brand assets are generated, not drawn by hand: `pnpm --filter @apps/ui generate:brand` runs
+Raster brand assets are generated, not drawn by hand: `pnpm --filter @apps/web generate:brand` runs
 `scripts/generate-brand-assets.ts`, which renders the favicon, the app icons, the lockups and README banner under
 `public/brand/`, `public/og-image.png` for the site, and one `public/og/<pkg>.png` per package with resvg. Run it after
 changing a brand source or adding a package.
@@ -73,11 +73,11 @@ Run `pnpm build:packages` once on a fresh clone. In dev the app resolves each `@
 drops that condition and runs the packages' built `dist/`, matching what a real consumer ships.
 
 ```bash
-pnpm --filter @apps/ui dev            # http://localhost:3000
-pnpm --filter @apps/ui build          # production build, against each package's dist/
-pnpm --filter @apps/ui preview        # build with the node-server preset and serve it from disk
-pnpm --filter @apps/ui check-types    # tsc --noEmit
-pnpm --filter @apps/ui generate:brand # regenerate the raster brand assets and OG images
+pnpm --filter @apps/web dev            # http://localhost:3000
+pnpm --filter @apps/web build          # production build, against each package's dist/
+pnpm --filter @apps/web preview        # build with the node-server preset and serve it from disk
+pnpm --filter @apps/web check-types    # tsc --noEmit
+pnpm --filter @apps/web generate:brand # regenerate the raster brand assets and OG images
 ```
 
 ## Testing
@@ -86,11 +86,11 @@ Vitest runs a single **unit** project under jsdom that covers `tests/unit/**`, `
 `tests/types/**`. The taxonomy is the repo's — see [`TESTING.md`](../../TESTING.md).
 
 ```bash
-pnpm --filter @apps/ui test:unit          # tests/unit
-pnpm --filter @apps/ui test:integration   # tests/integration
-pnpm --filter @apps/ui test:type          # tests/types
-pnpm --filter @apps/ui test:coverage      # V8 coverage for the unit project
-pnpm --filter @apps/ui test:watch
+pnpm --filter @apps/web test:unit          # tests/unit
+pnpm --filter @apps/web test:integration   # tests/integration
+pnpm --filter @apps/web test:type          # tests/types
+pnpm --filter @apps/web test:coverage      # V8 coverage for the unit project
+pnpm --filter @apps/web test:watch
 ```
 
 ## Analytics and consent

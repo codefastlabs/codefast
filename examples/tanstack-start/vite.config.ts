@@ -11,7 +11,7 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart(),
     // Build for Vercel (Nitro Build Output API → .vercel/output). Hashed client assets go
-    // under `/_vercel/immutable/`, which Vercel serves across deployments, as in apps/ui.
+    // under `/_vercel/immutable/`, which Vercel serves across deployments, as in apps/web.
     nitro({
       preset: "vercel",
       vercel: { immutableStaticFiles: true },

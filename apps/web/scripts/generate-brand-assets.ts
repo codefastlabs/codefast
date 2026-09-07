@@ -9,7 +9,7 @@
  * - `public/brand/*.png`: the lockups and the README banner, rendered at 2× for retina screens.
  *
  * Renders with resvg and vendored Inter TTFs for deterministic output. Run with
- * `pnpm --filter @apps/ui generate:brand` after changing a brand source or adding a package.
+ * `pnpm --filter @apps/web generate:brand` after changing a brand source or adding a package.
  */
 
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";

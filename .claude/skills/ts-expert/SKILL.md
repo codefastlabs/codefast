@@ -68,8 +68,8 @@ Then prove the behaviour, because the gate above cannot:
 - Changed something a browser renders → start the preview, interact with the thing you changed, and read the console. A
   feature that silently degrades (a filter that stops filtering, a sort that falls back to a different comparator)
   type-checks perfectly.
-- Changed `apps/ui` → `pnpm --filter @apps/ui build`. Dev hides client import-protection errors and build-time prerender
-  failures.
+- Changed `apps/web` → `pnpm --filter @apps/web build`. Dev hides client import-protection errors and build-time
+  prerender failures.
 
 Report the gate result honestly. If something still fails, say so and paste the output.
 
