@@ -71,6 +71,11 @@ jobs:
       - name: Verify React Import Policy
         run: pnpm cli:audit:react
 
+      # A token's display name is a bare string: two owners can mint the same one and no type
+      # catches it. The `<namespace>:<Name>` rule is what keeps diagnostics and constraints unambiguous.
+      - name: Verify Token Display Names
+        run: pnpm cli:audit:tokens
+
       - name: Execute Automated Tests with Coverage
         if: ${{ inputs.run-tests }}
         run: npx turbo run test:coverage --filter="./packages/**" --filter="./internal/**"

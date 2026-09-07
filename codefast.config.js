@@ -50,6 +50,9 @@ const config = {
     react: {
       allowlist: [],
     },
+    tokens: {
+      allowlist: [],
+    },
     rtl: {
       target: "packages/ui/src",
       // Sheet: slides live in tv() side (left/right) buckets — the side is physical,

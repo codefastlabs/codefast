@@ -193,3 +193,42 @@ export async function prepareCommentAudit(
     allowlist: commentsConfig.allowlist ?? [],
   });
 }
+
+/**
+ * Loads config and resolves the scan target for `audit tokens`.
+ *
+ * @remarks Defaults to the repo root: a display name collides across packages, so the convention
+ * has to hold across them.
+ */
+export async function prepareTokenAudit(
+  fs: FilesystemPort,
+  args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+  },
+): Promise<Result<RtlAuditCommandPrelude, AppError>> {
+  let rootDir: string;
+  try {
+    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
+  } catch (caughtError: unknown) {
+    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
+  }
+
+  const loadedOutcome = await loadCodefastConfig(rootDir, fs);
+  if (!loadedOutcome.ok) {
+    return loadedOutcome;
+  }
+  const tokensConfig = loadedOutcome.value.config.audit?.tokens ?? {};
+
+  const targetPath =
+    args.rawTarget === undefined ? rootDir : resolveRepoRelativePath(args.currentWorkingDirectory, args.rawTarget);
+  if (!fs.existsSync(targetPath)) {
+    return err(new AppError("NOT_FOUND", `Not found: ${targetPath}`));
+  }
+
+  return ok({
+    rootDir,
+    targetPath: fs.canonicalPathSync(targetPath),
+    allowlist: tokensConfig.allowlist ?? [],
+  });
+}

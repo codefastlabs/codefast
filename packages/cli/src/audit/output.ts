@@ -1,4 +1,10 @@
-import type { CommentAuditResult, LinkAuditResult, ReactAuditResult, RtlAuditResult } from "#/audit/domain/types";
+import type {
+  CommentAuditResult,
+  LinkAuditResult,
+  ReactAuditResult,
+  RtlAuditResult,
+  TokenAuditResult,
+} from "#/audit/domain/types";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
 import { logger } from "#/core/logger";
 
@@ -193,4 +199,45 @@ export function formatCommentAuditJsonOutput(result: CommentAuditResult, rootDir
 
 function truncate(raw: string): string {
   return raw.length <= 60 ? raw : `${raw.slice(0, 57)}…`;
+}
+
+/**
+ * Exit `1` when any non-allowlisted display name remains.
+ */
+export function exitCodeForTokenAuditResult(result: TokenAuditResult): number {
+  return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
+}
+
+/**
+ * Human-readable display-name report.
+ */
+export function presentTokenAuditResult(result: TokenAuditResult): void {
+  for (const file of result.files) {
+    logger.out(`\n${file.relativePath}`);
+    for (const { line, raw, reason } of file.violations) {
+      logger.out(`  ${line}: ${raw} → ${reason}`);
+    }
+  }
+
+  const allowlistSuffix = result.allowlistedCount > 0 ? ` (${result.allowlistedCount} allowlisted)` : "";
+
+  if (result.violationCount > 0) {
+    logger.out(`\n✖ ${result.violationCount} display name(s) without a namespace${allowlistSuffix}`);
+  } else {
+    logger.out(
+      `✓ Every token() and tag() display name carries a namespace across ${result.scannedFileCount} file(s)${allowlistSuffix}`,
+    );
+  }
+}
+
+/**
+ * Machine-readable display-name summary for `--json`.
+ */
+export function formatTokenAuditJsonOutput(result: TokenAuditResult, rootDir: string): string {
+  return JSON.stringify({
+    schemaVersion: 1 as const,
+    ok: result.violationCount === 0,
+    cwd: rootDir,
+    result,
+  });
 }

@@ -44,6 +44,7 @@ pnpm run cli:audit:rtl              # codefast audit rtl
 pnpm run cli:audit:links            # codefast audit links
 pnpm run cli:audit:comments         # codefast audit comments
 pnpm run cli:audit:react            # codefast audit react
+pnpm run cli:audit:tokens           # codefast audit tokens
 ```
 
 `pnpm run version-packages` runs `changeset version` and then `codefast tag`, so published APIs are stamped at release.
@@ -246,6 +247,26 @@ codefast audit react --json                # machine-readable summary
 
 Configure intentional exceptions via `audit.react.allowlist` — each entry is the offending source text as written or
 `repo/relative/path.tsx:<text>`.
+
+## `audit tokens`
+
+Read-only scan enforcing the `<namespace>:<Name>` convention for `token()` and `tag()` display names. Scans TypeScript
+and markdown alike, since a doc sample is what a reader copies; skips `tests/`, `benchmarks/`, `.changeset/` and
+`CHANGELOG.md`, where a name is scoped by its file or quoted as it was. Exits non-zero when violations remain so it can
+gate CI.
+
+```bash
+codefast audit tokens                      # whole repo
+codefast audit tokens packages/di/examples  # explicit target
+codefast audit tokens --json               # machine-readable summary
+```
+
+| Flag     | Description                       |
+| -------- | --------------------------------- |
+| `--json` | Print one JSON summary on stdout. |
+
+Configure intentional exceptions via `audit.tokens.allowlist` — each entry is the call as written, through its closing
+parenthesis, or `repo/relative/path.ts:<call>`.
 
 ## `tag`
 

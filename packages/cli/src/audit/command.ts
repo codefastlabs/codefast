@@ -7,26 +7,37 @@ import {
   linkAuditRunRequestSchema,
   reactAuditRunRequestSchema,
   rtlAuditRunRequestSchema,
+  tokenAuditRunRequestSchema,
 } from "#/audit/cli-schema";
 import {
   exitCodeForCommentAuditResult,
   exitCodeForLinkAuditResult,
   exitCodeForReactAuditResult,
   exitCodeForRtlAuditResult,
+  exitCodeForTokenAuditResult,
   formatCommentAuditJsonOutput,
   formatLinkAuditJsonOutput,
   formatReactAuditJsonOutput,
   formatRtlAuditJsonOutput,
+  formatTokenAuditJsonOutput,
   presentCommentAuditResult,
   presentLinkAuditResult,
   presentReactAuditResult,
   presentRtlAuditResult,
+  presentTokenAuditResult,
 } from "#/audit/output";
-import { prepareCommentAudit, prepareLinkAudit, prepareReactAudit, prepareRtlAudit } from "#/audit/prepare";
+import {
+  prepareCommentAudit,
+  prepareLinkAudit,
+  prepareReactAudit,
+  prepareRtlAudit,
+  prepareTokenAudit,
+} from "#/audit/prepare";
 import { runRtlAudit } from "#/audit/run";
 import { runCommentAudit } from "#/audit/run-comments";
 import { runLinkAudit } from "#/audit/run-links";
 import { runReactAudit } from "#/audit/run-react";
+import { runTokenAudit } from "#/audit/run-tokens";
 import { readOptionalPositionalArg } from "#/core/cli/positional";
 import { consumeCliAppError } from "#/core/cli/result-handle";
 import { nodeFilesystem } from "#/core/filesystem/node";
@@ -163,6 +174,47 @@ export function createAuditCommand(): Command {
         presentReactAuditResult(outcome.value);
       }
       process.exitCode = exitCodeForReactAuditResult(outcome.value);
+    });
+
+  cmd
+    .command("tokens")
+    .description("Report token() and tag() display names declared without a <namespace>: prefix")
+    .argument("[target]", "Directory or file to scan (default: the repo root)")
+    .option("--json", "Print one JSON summary on stdout", false)
+    .action(async (target: string | undefined, opts: { json?: boolean }) => {
+      const prelude = await prepareTokenAudit(nodeFilesystem, {
+        currentWorkingDirectory: process.cwd(),
+        rawTarget: readOptionalPositionalArg(target),
+      });
+      if (!consumeCliAppError(prelude)) {
+        return;
+      }
+      const { rootDir, targetPath, allowlist } = prelude.value;
+      const parsed = parseWithSchema(tokenAuditRunRequestSchema, {
+        rootDir,
+        targetPath,
+        allowlist,
+        json: !!opts.json,
+      });
+      if (!consumeCliAppError(parsed)) {
+        return;
+      }
+
+      const outcome = runTokenAudit(nodeFilesystem, {
+        rootDir: parsed.value.rootDir,
+        targetPath: parsed.value.targetPath,
+        allowlist: parsed.value.allowlist ?? [],
+      });
+      if (!consumeCliAppError(outcome)) {
+        return;
+      }
+
+      if (parsed.value.json) {
+        logger.out(formatTokenAuditJsonOutput(outcome.value, rootDir));
+      } else {
+        presentTokenAuditResult(outcome.value);
+      }
+      process.exitCode = exitCodeForTokenAuditResult(outcome.value);
     });
 
   cmd

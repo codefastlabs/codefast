@@ -81,6 +81,34 @@ export type ReactAuditResult = {
 };
 
 /**
+ * A `token()` or `tag()` display name declared without a namespace.
+ */
+export type TokenNameViolation = {
+  readonly line: number;
+  /** The call as written, through its closing quote. */
+  readonly raw: string;
+  readonly reason: string;
+};
+
+/**
+ * The display-name violations found in one file.
+ */
+export type TokenNameFileViolations = {
+  readonly relativePath: string;
+  readonly violations: Array<TokenNameViolation>;
+};
+
+/**
+ * Outcome of one `audit tokens` run.
+ */
+export type TokenAuditResult = {
+  readonly files: Array<TokenNameFileViolations>;
+  readonly violationCount: number;
+  readonly allowlistedCount: number;
+  readonly scannedFileCount: number;
+};
+
+/**
  * A broken link or anchor found by the link audit.
  *
  * @since 0.5.0
