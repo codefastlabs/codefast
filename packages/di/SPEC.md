@@ -917,8 +917,9 @@ condition the slot declares. The slot with no conditions is the **default slot**
 > **Normative — a name is a criterion.** The package exports a reserved tag key `slotName: TagKey<string>`, and a name
 > is a criterion of that key. One selection model covers names and tags alike:
 >
-> - `whenNamed(n)` ≡ `whenTagged(slotName.of(n))` — the binding-side sugar; `whenParentNamed(n)` is likewise
->   `whenParentTagged(slotName.of(n))` ([Advanced Constraints](#advanced-constraints)).
+> - `whenNamed(n)` ≡ `whenTagged(slotName.of(n))` — the binding-side sugar. `whenParentTagged(slotName.of(n))` is the
+>   token-free ancestor spelling; `whenParentNamed(T, n)` adds the token check
+>   ([Advanced Constraints](#advanced-constraints)).
 > - `{ name: n }` in `ResolveOptions` / `InjectOptions` ≡ `{ tag: slotName.of(n) }` — the request-side sugar
 >   ([`ResolveOptions`](#resolve-options)).
 > - **One criterion per key, reserved key included:** a slot carries at most one criterion of any key — re-declaring a
@@ -927,8 +928,9 @@ condition the slot declares. The slot with no conditions is the **default slot**
 >   never `tag:…`, and `BindingSlot.name` is the derived view of it that `ResolutionFrame.slot`
 >   ([`ConstraintContext`](#constraintcontext)) and the `when*Named` constraints read.
 > - A tag key types its values; the reserved key is shared, so a name's values are typed by the **token** instead:
->   `Token<Value, Names>` narrows `whenNamed` and every request-side `name` to `Names` ([Token API](#token-api)). The
->   `when*Named` ancestor constraints take no token and stay `string`.
+>   `Token<Value, Names>` narrows `whenNamed`, every request-side `name`, and the `name` of `whenParentNamed(T, name)` /
+>   `whenAnyAncestorNamed(T, name)` to the `Names` of the token they name ([Token API](#token-api)). A name is a label
+>   on one token's slots; a label shared across tokens is what a tag key is for.
 
 > **Normative — slot equality.** Two binding slots are **equal** when their criterion sets are equal by the identity of
 > each criterion (order does not matter). Because criteria are interned ([`ResolveOptions`](#resolve-options)), identity
@@ -2120,18 +2122,18 @@ the root — the shorter path, and always correct.
 
 Ten constraints, each taking configuration parameters and returning a predicate over `ConstraintContext`:
 
-| Constraint                         | Matches when                                                     | With no parent / ancestor |
-| ---------------------------------- | ---------------------------------------------------------------- | :-----------------------: |
-| `whenParentIs(token)`              | the direct parent is that token                                  |          `false`          |
-| `whenNoParentIs(token)`            | the direct parent is **not** that token                          |          `true`           |
-| `whenParentNamed(name)`            | the parent binding's slot carries exactly that name              |          `false`          |
-| `whenParentTagged(criterion)`      | the parent's slot contains that criterion                        |          `false`          |
-| `whenParentTaggedAll(tags)`        | the parent's slot contains **all** the given criteria            |          `false`          |
-| `whenAnyAncestorIs(token)`         | at least one ancestor is that token                              |          `false`          |
-| `whenNoAncestorIs(token)`          | **no** ancestor is that token                                    |          `true`           |
-| `whenAnyAncestorNamed(name)`       | some ancestor carries a slot with exactly that name              |          `false`          |
-| `whenAnyAncestorTagged(criterion)` | some ancestor carries that criterion                             |          `false`          |
-| `whenAnyAncestorTaggedAll(tags)`   | **at least one** ancestor's slot contains **all** given criteria |          `false`          |
+| Constraint                          | Matches when                                                     | With no parent / ancestor |
+| ----------------------------------- | ---------------------------------------------------------------- | :-----------------------: |
+| `whenParentIs(token)`               | the direct parent is that token                                  |          `false`          |
+| `whenNoParentIs(token)`             | the direct parent is **not** that token                          |          `true`           |
+| `whenParentNamed(token, name)`      | the direct parent is that token and its slot carries that name   |          `false`          |
+| `whenParentTagged(criterion)`       | the parent's slot contains that criterion                        |          `false`          |
+| `whenParentTaggedAll(tags)`         | the parent's slot contains **all** the given criteria            |          `false`          |
+| `whenAnyAncestorIs(token)`          | at least one ancestor is that token                              |          `false`          |
+| `whenNoAncestorIs(token)`           | **no** ancestor is that token                                    |          `true`           |
+| `whenAnyAncestorNamed(token, name)` | some ancestor is that token and its slot carries that name       |          `false`          |
+| `whenAnyAncestorTagged(criterion)`  | some ancestor carries that criterion                             |          `false`          |
+| `whenAnyAncestorTaggedAll(tags)`    | **at least one** ancestor's slot contains **all** given criteria |          `false`          |
 
 The two negative forms returning `true` on absence are deliberate: "no parent is X" is trivially true when there is no
 parent at all. The two `…TaggedAll` forms are equivalent to AND-composing several individual criteria, but cost one
@@ -2143,11 +2145,15 @@ predicate call and allocate no intermediate closure. Criteria compare by identit
 > while still winning specificity over an unconstrained binding. Both `…TaggedAll` variants throw
 > `EmptyTagCriteriaError` right at the call site.
 
-> **Normative — a slot name nobody declares.** `whenParentNamed`/`whenAnyAncestorNamed` expect a string, so a typo
+> **Normative — a slot name nobody declares.** A slot name is a bare string, so a name the token does not type — a token
+> declaring no `Names`, or the reserved criterion `slotName.of(n)` handed to a `…Tagged` helper — can be a typo that
 > produces a constraint that is never true and that nobody reports. `validate()` throws `UnreachableConstraintError`
-> when no binding anywhere in the container chain declares that slot name. The requirement survives `when()` chaining: a
-> composed predicate carries both sides' requirements, so narrowing a helper-built constraint does not hide it from
-> `validate()`.
+> when the name is not declared where the constraint waits for it: for `whenParentNamed(T, n)` /
+> `whenAnyAncestorNamed(T, n)`, on a binding **of `T`** in the container chain; for a reserved criterion in
+> `whenParentTagged`, `whenAnyAncestorTagged` or either `…TaggedAll`, on a binding of any token. A criterion of any
+> other key records nothing — it is minted from a typed key, so it cannot be a typo. The requirement survives `when()`
+> chaining: a composed predicate carries both sides' requirements, so narrowing a helper-built constraint does not hide
+> it from `validate()`.
 
 > **Exact shape:** `src/resolution/select/constraints.ts`.
 
@@ -2159,23 +2165,23 @@ token). `ctx.ancestors` is every frame above `ctx.parent`, ordered from nearest 
 
 > **Normative — the canonical implementation table.**
 >
-> | Function                           | Logic                                                                           |
-> | ---------------------------------- | ------------------------------------------------------------------------------- |
-> | `whenParentIs(token)`              | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token)`       |
-> | `whenNoParentIs(token)`            | `ctx.parent === undefined \|\| ctx.parent.tokenName !== tokenNameOf(token)`     |
-> | `whenAnyAncestorIs(token)`         | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token))`                   |
-> | `whenNoAncestorIs(token)`          | `ctx.ancestors.every(f => f.tokenName !== tokenNameOf(token))`                  |
-> | `whenParentNamed(name)`            | `ctx.parent !== undefined && ctx.parent.slot.name === name`                     |
-> | `whenAnyAncestorNamed(name)`       | `ctx.ancestors.some(f => f.slot.name === name)`                                 |
-> | `whenParentTagged(criterion)`      | `ctx.parent !== undefined && ctx.parent.slot.tags.includes(criterion)`          |
-> | `whenAnyAncestorTagged(criterion)` | `ctx.ancestors.some(f => f.slot.tags.includes(criterion))`                      |
-> | `whenParentTaggedAll(tags)`        | `ctx.parent !== undefined && tags.every(t => ctx.parent.slot.tags.includes(t))` |
-> | `whenAnyAncestorTaggedAll(tags)`   | `ctx.ancestors.some(f => tags.every(t => f.slot.tags.includes(t)))`             |
+> | Function                            | Logic                                                                                                      |
+> | ----------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+> | `whenParentIs(token)`               | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token)`                                  |
+> | `whenNoParentIs(token)`             | `ctx.parent === undefined \|\| ctx.parent.tokenName !== tokenNameOf(token)`                                |
+> | `whenAnyAncestorIs(token)`          | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token))`                                              |
+> | `whenNoAncestorIs(token)`           | `ctx.ancestors.every(f => f.tokenName !== tokenNameOf(token))`                                             |
+> | `whenParentNamed(token, name)`      | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token) && ctx.parent.slot.name === name` |
+> | `whenAnyAncestorNamed(token, name)` | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token) && f.slot.name === name)`                      |
+> | `whenParentTagged(criterion)`       | `ctx.parent !== undefined && ctx.parent.slot.tags.includes(criterion)`                                     |
+> | `whenAnyAncestorTagged(criterion)`  | `ctx.ancestors.some(f => f.slot.tags.includes(criterion))`                                                 |
+> | `whenParentTaggedAll(tags)`         | `ctx.parent !== undefined && tags.every(t => ctx.parent.slot.tags.includes(t))`                            |
+> | `whenAnyAncestorTaggedAll(tags)`    | `ctx.ancestors.some(f => tags.every(t => f.slot.tags.includes(t)))`                                        |
 
-> **The named variants read `slot.name`, not `currentResolveOptions`.** `whenParentNamed("console")` asks "does the
-> parent's binding have `whenNamed("console")`?" — not "was the parent resolved with the hint `{ name: "console" }`?".
-> Those are different questions: a binding can match the slot `"console"` without any resolve hint when it is the only
-> candidate, and vice versa.
+> **The named variants read `slot.name`, not `currentResolveOptions`.** `whenParentNamed(Logger, "console")` asks "is
+> the parent a `Logger` binding declaring `whenNamed("console")`?" — not "was the parent resolved with the hint
+> `{ name: "console" }`?". Those are different questions: a binding can match the slot `"console"` without any resolve
+> hint when it is the only candidate, and vice versa.
 
 > **Why identity comparison is enough.** Criteria are interned, so each `[key, value]` has exactly one object; comparing
 > by identity therefore gives the same answer as `Object.is` on the value — handling `NaN` correctly and keeping `+0`
@@ -2216,18 +2222,20 @@ receive `prodConfig`.
 **`whenParentNamed` — a logger that knows which slot of `Database` it serves:**
 
 ```ts
-import { whenParentNamed } from "@codefast/di";
+import { token, whenParentNamed } from "@codefast/di";
+
+const Database = token<Database, "primary" | "replica">("Database");
 
 container.bind(Database).to(PrimaryDatabase).whenNamed("primary").singleton();
 container.bind(Database).to(ReplicaDatabase).whenNamed("replica").singleton();
 
-container.bind(Logger).to(PrimaryLogger).when(whenParentNamed("primary"));
+container.bind(Logger).to(PrimaryLogger).when(whenParentNamed(Database, "primary"));
 
-container.bind(Logger).to(ReplicaLogger).when(whenParentNamed("replica"));
+container.bind(Logger).to(ReplicaLogger).when(whenParentNamed(Database, "replica"));
 ```
 
-When `PrimaryDatabase` is resolved (binding slot `"primary"`), it injects `PrimaryLogger` because
-`ctx.parent.slot.name === "primary"`.
+When `PrimaryDatabase` is resolved (binding slot `"primary"`), it injects `PrimaryLogger` because the parent frame is a
+`Database` binding whose `slot.name` is `"primary"`. The token types the name, so `"primry"` is a compile error.
 
 **`whenAnyAncestorTagged` — pick different infrastructure by environment tag:**
 

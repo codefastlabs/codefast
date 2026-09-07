@@ -211,18 +211,18 @@ container.resolve(StorageToken, { tag: Provider.of("s3") }); // → S3Storage
 resolving — pass a predicate to `.when(ctx => boolean)`. It runs at resolve time, after slot matching. These ready-made
 predicates ship from the root entry:
 
-| Predicate                            | Matches when                                           |
-| ------------------------------------ | ------------------------------------------------------ |
-| `whenParentIs(token)`                | the direct parent resolves `token`                     |
-| `whenNoParentIs(token)`              | there is no parent, or it resolves a different token   |
-| `whenAnyAncestorIs(token)`           | some ancestor resolves `token`                         |
-| `whenNoAncestorIs(token)`            | no ancestor resolves `token`                           |
-| `whenParentNamed(name)`              | the parent's slot carries that name                    |
-| `whenAnyAncestorNamed(name)`         | some ancestor's slot carries that name                 |
-| `whenParentTagged(criterion)`        | the parent's slot carries that criterion               |
-| `whenAnyAncestorTagged(criterion)`   | some ancestor's slot carries that criterion            |
-| `whenParentTaggedAll(criteria)`      | the parent's slot carries all criteria in the array    |
-| `whenAnyAncestorTaggedAll(criteria)` | some ancestor's slot carries all criteria in the array |
+| Predicate                            | Matches when                                            |
+| ------------------------------------ | ------------------------------------------------------- |
+| `whenParentIs(token)`                | the direct parent resolves `token`                      |
+| `whenNoParentIs(token)`              | there is no parent, or it resolves a different token    |
+| `whenAnyAncestorIs(token)`           | some ancestor resolves `token`                          |
+| `whenNoAncestorIs(token)`            | no ancestor resolves `token`                            |
+| `whenParentNamed(token, name)`       | the parent resolves `token` at the slot named `name`    |
+| `whenAnyAncestorNamed(token, name)`  | some ancestor resolves `token` at the slot named `name` |
+| `whenParentTagged(criterion)`        | the parent's slot carries that criterion                |
+| `whenAnyAncestorTagged(criterion)`   | some ancestor's slot carries that criterion             |
+| `whenParentTaggedAll(criteria)`      | the parent's slot carries all criteria in the array     |
+| `whenAnyAncestorTaggedAll(criteria)` | some ancestor's slot carries all criteria in the array  |
 
 For the exact matching and most-specific-wins rules, see [`SPEC.md` → Slots and last-wins](./SPEC.md#slot-matching).
 
