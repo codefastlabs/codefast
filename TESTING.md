@@ -60,7 +60,7 @@ pnpm --filter <pkg> test:unit          # tests/unit/**
 pnpm --filter <pkg> test:integration   # tests/integration/**
 pnpm --filter <pkg> test:e2e           # tests/e2e/**
 pnpm --filter <pkg> test:type          # tests/types/**
-pnpm --filter <pkg> test:coverage      # coverage (apps/ui: unit project only)
+pnpm --filter <pkg> test:coverage      # coverage (apps/web: unit project only)
 pnpm --filter <pkg> test:watch         # interactive watch mode
 ```
 
@@ -87,7 +87,7 @@ Root `pnpm test:e2e` runs every package that defines the script — use it for f
 
 | Package / app                 | unit | integration | e2e | type |
 | ----------------------------- | :--: | :---------: | :-: | :--: |
-| `@apps/ui`                    | yes  |     yes     |  —  |  —   |
+| `@apps/web`                   | yes  |     yes     |  —  |  —   |
 | `@codefast/benchmark-harness` | yes  |     yes     |  —  |  —   |
 | `@codefast/benchmark-viewer`  | yes  |      —      |  —  |  —   |
 | `@codefast/cli`               | yes  |      —      |  —  |  —   |

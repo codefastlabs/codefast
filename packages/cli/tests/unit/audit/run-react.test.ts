@@ -8,14 +8,14 @@ import type { CliFileEncoding, DirectoryEntry, FilesystemPort } from "#/core/fil
 describe("runReactAudit", () => {
   it("matches allowlist keys as repo-relative posix paths", () => {
     const rootDir = path.join(path.sep, "repo");
-    const filePath = path.join(rootDir, "apps", "ui", "src", "demo.tsx");
+    const filePath = path.join(rootDir, "apps", "web", "src", "demo.tsx");
     const fs = createAuditTestFilesystem({
       [filePath]: `import * as React from "react";\nexport const x = React.version;\n`,
     });
 
     const blocked = runReactAudit(fs, {
       rootDir,
-      targetPath: path.join(rootDir, "apps", "ui", "src"),
+      targetPath: path.join(rootDir, "apps", "web", "src"),
       allowlist: [],
     });
     expect(blocked.ok).toBe(true);
@@ -23,12 +23,12 @@ describe("runReactAudit", () => {
       return;
     }
     expect(blocked.value.violationCount).toBe(1);
-    expect(blocked.value.files[0]?.relativePath).toBe("apps/ui/src/demo.tsx");
+    expect(blocked.value.files[0]?.relativePath).toBe("apps/web/src/demo.tsx");
 
     const allowed = runReactAudit(fs, {
       rootDir,
       targetPath: filePath,
-      allowlist: [`apps/ui/src/demo.tsx:import * as React from "react";`],
+      allowlist: [`apps/web/src/demo.tsx:import * as React from "react";`],
     });
     expect(allowed.ok).toBe(true);
     if (!allowed.ok) {

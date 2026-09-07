@@ -1,5 +1,5 @@
 {
-  "projectName": "@apps/ui",
+  "projectName": "@apps/web",
   "mode": "file-router",
   "typescript": true,
   "tailwind": true,

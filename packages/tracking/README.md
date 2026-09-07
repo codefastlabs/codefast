@@ -302,7 +302,7 @@ tanstackStart({
 
 ## Reference consumer
 
-[`apps/ui/src/features/tracking`](../../apps/ui/src/features/tracking/) wires everything above on a real ISR-deployed
+[`apps/web/src/features/tracking`](../../apps/web/src/features/tracking/) wires everything above on a real ISR-deployed
 TanStack Start site: the consent config and runtime, the banner and the persistent toggle, the gtag bootstrap, the
 durable anonymous id, and the private server-function consent lane.
 

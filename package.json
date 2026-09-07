@@ -59,11 +59,11 @@
     "tv:bench": "turbo run bench --filter=@codefast/benchmark-tailwind-variants",
     "tv:bench:isolate": "turbo run bench:isolate --filter=@codefast/benchmark-tailwind-variants",
     "tv:bench:serve": "turbo run bench:serve --filter=@codefast/benchmark-tailwind-variants",
-    "ui:build": "turbo run build --filter=@apps/ui",
-    "ui:dev": "turbo run dev --filter=@apps/ui",
-    "ui:preview": "turbo run preview --filter=@apps/ui",
     "verify": "pnpm build:packages && turbo run lint:fix && turbo run format && turbo run check-types test:coverage knip",
-    "version-packages": "changeset version && pnpm run codefast tag"
+    "version-packages": "changeset version && pnpm run codefast tag",
+    "web:build": "turbo run build --filter=@apps/web",
+    "web:dev": "turbo run dev --filter=@apps/web",
+    "web:preview": "turbo run preview --filter=@apps/web"
   },
   "devDependencies": {
     "@changesets/changelog-github": "catalog:",

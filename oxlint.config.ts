@@ -10,7 +10,7 @@ export default defineConfig({
   // ── Plugins & categories ───────────────────────────────────────────────────────────────────────────────────────────
   // Built-in plugins relevant to this monorepo: TypeScript libraries (di,
   // tailwind-variants, cli), React 19 UI packages (ui, theme, benchmark-viewer),
-  // TanStack Start apps (apps/ui docs site, examples/* consumers), and vitest test suites.
+  // TanStack Start apps (apps/web docs site, examples/* consumers), and vitest test suites.
   plugins: ["import", "jsx-a11y", "node", "oxc", "promise", "react", "typescript", "unicorn", "vitest"],
   // Correctness only (oxlint's recommended default scope) — broader categories
   // (suspicious, pedantic) are too noisy for this codebase under denyWarnings.
@@ -84,7 +84,7 @@ export default defineConfig({
       // (role="group", role="progressbar", role="status", role="list") that have
       // no semantic-equivalent HTML tag in these contexts — e.g. role="progressbar"
       // on <svg>, role="group" on layout divs, role="status" live regions.
-      files: ["{apps/ui,internal/benchmark-viewer,packages/ui}/src/**/*.{ts,tsx}"],
+      files: ["{apps/web,internal/benchmark-viewer,packages/ui}/src/**/*.{ts,tsx}"],
       rules: {
         "jsx-a11y/prefer-tag-over-role": "off",
       },

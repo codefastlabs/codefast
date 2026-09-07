@@ -18,7 +18,7 @@ pnpm verify
 <!--
 Changed a public API surface? Also verify a consumer's PRODUCTION build — client
 import-protection and prerendering only surface there:
-  pnpm build:packages && pnpm --filter @apps/ui build
+  pnpm build:packages && pnpm --filter @apps/web build
 -->
 
 ## Performance — delete unless a hot path changed

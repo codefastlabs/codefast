@@ -4,14 +4,14 @@
     {
       "name": "preview",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@apps/ui", "run", "preview"],
+      "runtimeArgs": ["--filter", "@apps/web", "run", "preview"],
       "port": 3000,
       "autoPort": true
     },
     {
       "name": "web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@apps/ui", "exec", "vite", "dev"],
+      "runtimeArgs": ["--filter", "@apps/web", "exec", "vite", "dev"],
       "port": 3000,
       "autoPort": true
     },

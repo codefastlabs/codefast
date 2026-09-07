@@ -21,7 +21,7 @@ export default defineConfig({
   // each class string; render-pipeline grouping across strings is handled by
   // `codefast arrange` — the two are complementary.
   sortTailwindcss: {
-    stylesheet: "apps/ui/src/styles.css",
+    stylesheet: "apps/web/src/styles.css",
     functions: ["cn", "cva", "cx", "tv"],
   },
 

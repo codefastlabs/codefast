@@ -13,7 +13,7 @@ description:
 - Every `@codefast/*` package versions **independently** — `.changeset/config.json` declares no `fixed` group, so a
   changeset bumps only the packages it names, plus their dependents via `updateInternalDependencies: "patch"`.
   `privatePackages.version: true` is set so the four private `@codefast/benchmark-*` are versioned and changelogged
-  (Changesets 3.0 defaults it to `false`). `@apps/ui` is in `ignore` and never needs a changeset.
+  (Changesets 3.0 defaults it to `false`). `@apps/web` is in `ignore` and never needs a changeset.
 - **Do not run `pnpm changeset add`** (an interactive TUI). Write the `.changeset/<kebab-case>.md` file yourself:
 
   ```md

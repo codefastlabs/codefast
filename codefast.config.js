@@ -27,7 +27,7 @@ const config = {
         "./css/*": "./src/css/*",
       },
     },
-    "@apps/ui": false,
+    "@apps/web": false,
     "@examples/tanstack-start": false,
     "@codefast/cli": false,
     // Node lane is tsc; the browser app is a Vite bundle whose hashed chunks in

@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://codefastlabs.com"><img src="apps/ui/public/brand/readme-banner.png" alt="Codefast Labs" width="960"></a>
+  <a href="https://codefastlabs.com"><img src="apps/web/public/brand/readme-banner.png" alt="Codefast Labs" width="960"></a>
 </p>
 
 <p align="center">
@@ -117,7 +117,7 @@ The workspace is laid out by audience: who consumes a directory decides where it
 
 | Path                                                 | Role                                                                                                               |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [`apps/ui`](apps/ui)                                 | The codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` docs, and the `@codefast/ui` showcase |
+| [`apps/web`](apps/web)                               | The codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` docs, and the `@codefast/ui` showcase |
 | [`packages/`](packages)                              | The published `@codefast/*` libraries — nothing else lives here                                                    |
 | [`internal/`](internal)                              | Private workspace packages consumed only inside the repo (the benchmark harness and viewer); never published       |
 | [`benchmarks/`](benchmarks)                          | Benchmark suites comparing `@codefast/*` against upstream libraries (`pnpm bench`)                                 |

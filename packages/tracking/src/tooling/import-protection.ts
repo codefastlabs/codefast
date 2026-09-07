@@ -3,7 +3,7 @@
  * framework-neutral data each build tool maps to its own guard: TanStack Start's
  * `importProtection.client.specifiers`, Next's `server-only`, Remix's `.server` convention.
  * Ships and versions with the package instead of going stale in each consumer's config.
- * Nothing in this package imports it — its consumers are app build configs (see apps/ui
+ * Nothing in this package imports it — its consumers are app build configs (see apps/web
  * vite.config.ts).
  *
  * @example
