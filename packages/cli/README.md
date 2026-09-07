@@ -44,7 +44,7 @@ pnpm run cli:audit:rtl              # codefast audit rtl
 pnpm run cli:audit:links            # codefast audit links
 pnpm run cli:audit:comments         # codefast audit comments
 pnpm run cli:audit:react            # codefast audit react
-pnpm run cli:audit:tokens           # codefast audit tokens
+pnpm run cli:audit:display-names    # codefast audit display-names
 ```
 
 `pnpm run version-packages` runs `changeset version` and then `codefast tag`, so published APIs are stamped at release.
@@ -248,25 +248,28 @@ codefast audit react --json                # machine-readable summary
 Configure intentional exceptions via `audit.react.allowlist` — each entry is the offending source text as written or
 `repo/relative/path.tsx:<text>`.
 
-## `audit tokens`
+## `audit display-names`
 
-Read-only scan enforcing the `<namespace>:<Name>` convention for `token()` and `tag()` display names. Scans TypeScript
-and markdown alike, since a doc sample is what a reader copies; skips `tests/`, `benchmarks/`, `.changeset/` and
+Read-only scan enforcing the display-name convention for every string a `token()`, `tag()` or module factory takes: a
+name is spelled like the TS symbol it stands for, under its owner's namespace — `<namespace>:<Name>`. The namespace is a
+kebab-case package, app or feature slug (or a scoped package name); a token or module name is PascalCase, because it
+stands for a type or a unit of composition; a tag key is camelCase, because it names an attribute. Scans TypeScript and
+markdown alike, since a doc sample is what a reader copies; skips `tests/`, `benchmarks/`, `.changeset/` and
 `CHANGELOG.md`, where a name is scoped by its file or quoted as it was. Exits non-zero when violations remain so it can
 gate CI.
 
 ```bash
-codefast audit tokens                      # whole repo
-codefast audit tokens packages/di/examples  # explicit target
-codefast audit tokens --json               # machine-readable summary
+codefast audit display-names                      # whole repo
+codefast audit display-names packages/di/examples  # explicit target
+codefast audit display-names --json               # machine-readable summary
 ```
 
 | Flag     | Description                       |
 | -------- | --------------------------------- |
 | `--json` | Print one JSON summary on stdout. |
 
-Configure intentional exceptions via `audit.tokens.allowlist` — each entry is the call as written, through its closing
-parenthesis, or `repo/relative/path.ts:<call>`.
+Configure intentional exceptions via `audit.displayNames.allowlist` — each entry is the call as written, through its
+closing quote (or parenthesis when the name is the only argument), or `repo/relative/path.ts:<call>`.
 
 ## `tag`
 

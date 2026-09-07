@@ -161,7 +161,7 @@ const codefastAuditReactConfigSchema = z
 /**
  * Display-name audit defaults — the scan always starts at the repo root, so only exceptions are configured.
  */
-const codefastAuditTokensConfigSchema = z
+const codefastAuditDisplayNamesConfigSchema = z
   .object({
     /** Offending calls as written, or `repo/relative/path.ts:<call>` entries, to ignore. */
     allowlist: z.array(z.string()).optional(),
@@ -179,7 +179,7 @@ const codefastAuditConfigSchema = z
     links: codefastAuditLinksConfigSchema.optional(),
     comments: codefastAuditCommentsConfigSchema.optional(),
     react: codefastAuditReactConfigSchema.optional(),
-    tokens: codefastAuditTokensConfigSchema.optional(),
+    displayNames: codefastAuditDisplayNamesConfigSchema.optional(),
   })
   .strict();
 

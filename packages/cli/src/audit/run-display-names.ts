@@ -1,7 +1,7 @@
 import path from "node:path";
 
-import { auditDisplayNames } from "#/audit/domain/token-names";
-import type { TokenAuditResult, TokenNameFileViolations } from "#/audit/domain/types";
+import { auditDisplayNames } from "#/audit/domain/display-names";
+import type { DisplayNameAuditResult, DisplayNameFileViolations } from "#/audit/domain/types";
 import { AppError, messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
@@ -17,21 +17,21 @@ const SKIPPED_SEGMENTS: ReadonlySet<string> = new Set(["tests", "benchmarks", ".
 const SKIPPED_BASENAMES: ReadonlySet<string> = new Set(["CHANGELOG.md"]);
 
 /**
- * Scans a target path for `token()` / `tag()` display names declared without a namespace.
+ * Scans a target path for `token()`, `tag()` and module display names that break the convention.
  */
-export function runTokenAudit(
+export function runDisplayNameAudit(
   fs: FilesystemPort,
   args: {
     readonly rootDir: string;
     readonly targetPath: string;
     readonly allowlist: ReadonlyArray<string>;
   },
-): Result<TokenAuditResult, AppError> {
+): Result<DisplayNameAuditResult, AppError> {
   try {
     const allowlist = new Set(args.allowlist);
     const { rootDir, targetPath } = args;
     const filesToScan = collectScanPaths(fs, rootDir, targetPath);
-    const files: Array<TokenNameFileViolations> = [];
+    const files: Array<DisplayNameFileViolations> = [];
     let violationCount = 0;
     let allowlistedCount = 0;
 

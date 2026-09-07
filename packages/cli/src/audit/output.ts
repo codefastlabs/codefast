@@ -3,7 +3,7 @@ import type {
   LinkAuditResult,
   ReactAuditResult,
   RtlAuditResult,
-  TokenAuditResult,
+  DisplayNameAuditResult,
 } from "#/audit/domain/types";
 import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
 import { logger } from "#/core/logger";
@@ -202,16 +202,16 @@ function truncate(raw: string): string {
 }
 
 /**
- * Exit `1` when any non-allowlisted display name remains.
+ * Exit `1` when any non-allowlisted display-name violation remains.
  */
-export function exitCodeForTokenAuditResult(result: TokenAuditResult): number {
+export function exitCodeForDisplayNameAuditResult(result: DisplayNameAuditResult): number {
   return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
 }
 
 /**
  * Human-readable display-name report.
  */
-export function presentTokenAuditResult(result: TokenAuditResult): void {
+export function presentDisplayNameAuditResult(result: DisplayNameAuditResult): void {
   for (const file of result.files) {
     logger.out(`\n${file.relativePath}`);
     for (const { line, raw, reason } of file.violations) {
@@ -222,10 +222,10 @@ export function presentTokenAuditResult(result: TokenAuditResult): void {
   const allowlistSuffix = result.allowlistedCount > 0 ? ` (${result.allowlistedCount} allowlisted)` : "";
 
   if (result.violationCount > 0) {
-    logger.out(`\n✖ ${result.violationCount} display name(s) without a namespace${allowlistSuffix}`);
+    logger.out(`\n✖ ${result.violationCount} display name(s) off the convention${allowlistSuffix}`);
   } else {
     logger.out(
-      `✓ Every token() and tag() display name carries a namespace across ${result.scannedFileCount} file(s)${allowlistSuffix}`,
+      `✓ Every token, tag and module display name follows <namespace>:<Name> across ${result.scannedFileCount} file(s)${allowlistSuffix}`,
     );
   }
 }
@@ -233,7 +233,7 @@ export function presentTokenAuditResult(result: TokenAuditResult): void {
 /**
  * Machine-readable display-name summary for `--json`.
  */
-export function formatTokenAuditJsonOutput(result: TokenAuditResult, rootDir: string): string {
+export function formatDisplayNameAuditJsonOutput(result: DisplayNameAuditResult, rootDir: string): string {
   return JSON.stringify({
     schemaVersion: 1 as const,
     ok: result.violationCount === 0,

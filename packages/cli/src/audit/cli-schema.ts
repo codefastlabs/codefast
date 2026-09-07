@@ -103,7 +103,7 @@ export const reactAuditRunRequestSchema: z.ZodType<ReactAuditRunRequest> = z.obj
 /**
  * Resolved request for a single display-name audit run.
  */
-export type TokenAuditRunRequest = {
+export type DisplayNameAuditRunRequest = {
   readonly rootDir: string;
   readonly targetPath: string;
   readonly allowlist?: ReadonlyArray<string> | undefined;
@@ -111,9 +111,9 @@ export type TokenAuditRunRequest = {
 };
 
 /**
- * Zod schema for {@link TokenAuditRunRequest}.
+ * Zod schema for {@link DisplayNameAuditRunRequest}.
  */
-export const tokenAuditRunRequestSchema: z.ZodType<TokenAuditRunRequest> = z.object({
+export const displayNameAuditRunRequestSchema: z.ZodType<DisplayNameAuditRunRequest> = z.object({
   rootDir: z.string().min(1),
   targetPath: z.string().min(1),
   allowlist: z.array(z.string()).optional(),

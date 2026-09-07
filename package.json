@@ -26,7 +26,7 @@
     "cli:audit:links": "pnpm run codefast audit links",
     "cli:audit:react": "pnpm run codefast audit react",
     "cli:audit:rtl": "pnpm run codefast audit rtl",
-    "cli:audit:tokens": "pnpm run codefast audit tokens",
+    "cli:audit:display-names": "pnpm run codefast audit display-names",
     "cli:mirror": "pnpm run codefast mirror",
     "cli:mirror:preview": "pnpm run codefast mirror --dry-run",
     "codefast": "node ./packages/cli/dist/bin.js",

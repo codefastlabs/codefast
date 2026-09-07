@@ -195,12 +195,12 @@ export async function prepareCommentAudit(
 }
 
 /**
- * Loads config and resolves the scan target for `audit tokens`.
+ * Loads config and resolves the scan target for `audit display-names`.
  *
  * @remarks Defaults to the repo root: a display name collides across packages, so the convention
  * has to hold across them.
  */
-export async function prepareTokenAudit(
+export async function prepareDisplayNameAudit(
   fs: FilesystemPort,
   args: {
     readonly currentWorkingDirectory: string;
@@ -218,7 +218,7 @@ export async function prepareTokenAudit(
   if (!loadedOutcome.ok) {
     return loadedOutcome;
   }
-  const tokensConfig = loadedOutcome.value.config.audit?.tokens ?? {};
+  const displayNamesConfig = loadedOutcome.value.config.audit?.displayNames ?? {};
 
   const targetPath =
     args.rawTarget === undefined ? rootDir : resolveRepoRelativePath(args.currentWorkingDirectory, args.rawTarget);
@@ -229,6 +229,6 @@ export async function prepareTokenAudit(
   return ok({
     rootDir,
     targetPath: fs.canonicalPathSync(targetPath),
-    allowlist: tokensConfig.allowlist ?? [],
+    allowlist: displayNamesConfig.allowlist ?? [],
   });
 }

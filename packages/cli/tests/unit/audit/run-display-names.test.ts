@@ -2,10 +2,10 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { runTokenAudit } from "#/audit/run-tokens";
+import { runDisplayNameAudit } from "#/audit/run-display-names";
 import type { CliFileEncoding, DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
 
-describe("runTokenAudit", () => {
+describe("runDisplayNameAudit", () => {
   it("scans TypeScript and markdown, skips tests, benchmarks, changesets and changelogs", () => {
     const rootDir = path.join(path.sep, "repo");
     const fs = createAuditTestFilesystem({
@@ -18,7 +18,7 @@ describe("runTokenAudit", () => {
       [path.join(rootDir, "packages", "di", "src", "ok.ts")]: `export const C = token<number>("di:C");\n`,
     });
 
-    const outcome = runTokenAudit(fs, { rootDir, targetPath: rootDir, allowlist: [] });
+    const outcome = runDisplayNameAudit(fs, { rootDir, targetPath: rootDir, allowlist: [] });
     expect(outcome.ok).toBe(true);
     if (!outcome.ok) {
       return;
@@ -38,7 +38,7 @@ describe("runTokenAudit", () => {
       [filePath]: `const A = token<number>("A");\nconst B = tag<string>("b");\n`,
     });
 
-    const outcome = runTokenAudit(fs, {
+    const outcome = runDisplayNameAudit(fs, {
       rootDir,
       targetPath: filePath,
       allowlist: [`token<number>("A")`, `apps/web/src/demo.ts:tag<string>("b")`],

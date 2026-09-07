@@ -81,9 +81,9 @@ export type ReactAuditResult = {
 };
 
 /**
- * A `token()` or `tag()` display name declared without a namespace.
+ * A `token()`, `tag()` or module display name that breaks the display-name convention.
  */
-export type TokenNameViolation = {
+export type DisplayNameViolation = {
   readonly line: number;
   /** The call as written, through its closing quote. */
   readonly raw: string;
@@ -93,16 +93,16 @@ export type TokenNameViolation = {
 /**
  * The display-name violations found in one file.
  */
-export type TokenNameFileViolations = {
+export type DisplayNameFileViolations = {
   readonly relativePath: string;
-  readonly violations: Array<TokenNameViolation>;
+  readonly violations: Array<DisplayNameViolation>;
 };
 
 /**
- * Outcome of one `audit tokens` run.
+ * Outcome of one `audit display-names` run.
  */
-export type TokenAuditResult = {
-  readonly files: Array<TokenNameFileViolations>;
+export type DisplayNameAuditResult = {
+  readonly files: Array<DisplayNameFileViolations>;
   readonly violationCount: number;
   readonly allowlistedCount: number;
   readonly scannedFileCount: number;

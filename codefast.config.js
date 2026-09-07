@@ -50,7 +50,7 @@ const config = {
     react: {
       allowlist: [],
     },
-    tokens: {
+    displayNames: {
       allowlist: [],
     },
     rtl: {

@@ -7,37 +7,37 @@ import {
   linkAuditRunRequestSchema,
   reactAuditRunRequestSchema,
   rtlAuditRunRequestSchema,
-  tokenAuditRunRequestSchema,
+  displayNameAuditRunRequestSchema,
 } from "#/audit/cli-schema";
 import {
   exitCodeForCommentAuditResult,
   exitCodeForLinkAuditResult,
   exitCodeForReactAuditResult,
   exitCodeForRtlAuditResult,
-  exitCodeForTokenAuditResult,
+  exitCodeForDisplayNameAuditResult,
   formatCommentAuditJsonOutput,
   formatLinkAuditJsonOutput,
   formatReactAuditJsonOutput,
   formatRtlAuditJsonOutput,
-  formatTokenAuditJsonOutput,
+  formatDisplayNameAuditJsonOutput,
   presentCommentAuditResult,
   presentLinkAuditResult,
   presentReactAuditResult,
   presentRtlAuditResult,
-  presentTokenAuditResult,
+  presentDisplayNameAuditResult,
 } from "#/audit/output";
 import {
   prepareCommentAudit,
   prepareLinkAudit,
   prepareReactAudit,
   prepareRtlAudit,
-  prepareTokenAudit,
+  prepareDisplayNameAudit,
 } from "#/audit/prepare";
 import { runRtlAudit } from "#/audit/run";
 import { runCommentAudit } from "#/audit/run-comments";
+import { runDisplayNameAudit } from "#/audit/run-display-names";
 import { runLinkAudit } from "#/audit/run-links";
 import { runReactAudit } from "#/audit/run-react";
-import { runTokenAudit } from "#/audit/run-tokens";
 import { readOptionalPositionalArg } from "#/core/cli/positional";
 import { consumeCliAppError } from "#/core/cli/result-handle";
 import { nodeFilesystem } from "#/core/filesystem/node";
@@ -177,12 +177,12 @@ export function createAuditCommand(): Command {
     });
 
   cmd
-    .command("tokens")
-    .description("Report token() and tag() display names declared without a <namespace>: prefix")
+    .command("display-names")
+    .description("Report token(), tag() and module display names that break the <namespace>:<Name> convention")
     .argument("[target]", "Directory or file to scan (default: the repo root)")
     .option("--json", "Print one JSON summary on stdout", false)
     .action(async (target: string | undefined, opts: { json?: boolean }) => {
-      const prelude = await prepareTokenAudit(nodeFilesystem, {
+      const prelude = await prepareDisplayNameAudit(nodeFilesystem, {
         currentWorkingDirectory: process.cwd(),
         rawTarget: readOptionalPositionalArg(target),
       });
@@ -190,7 +190,7 @@ export function createAuditCommand(): Command {
         return;
       }
       const { rootDir, targetPath, allowlist } = prelude.value;
-      const parsed = parseWithSchema(tokenAuditRunRequestSchema, {
+      const parsed = parseWithSchema(displayNameAuditRunRequestSchema, {
         rootDir,
         targetPath,
         allowlist,
@@ -200,7 +200,7 @@ export function createAuditCommand(): Command {
         return;
       }
 
-      const outcome = runTokenAudit(nodeFilesystem, {
+      const outcome = runDisplayNameAudit(nodeFilesystem, {
         rootDir: parsed.value.rootDir,
         targetPath: parsed.value.targetPath,
         allowlist: parsed.value.allowlist ?? [],
@@ -210,11 +210,11 @@ export function createAuditCommand(): Command {
       }
 
       if (parsed.value.json) {
-        logger.out(formatTokenAuditJsonOutput(outcome.value, rootDir));
+        logger.out(formatDisplayNameAuditJsonOutput(outcome.value, rootDir));
       } else {
-        presentTokenAuditResult(outcome.value);
+        presentDisplayNameAuditResult(outcome.value);
       }
-      process.exitCode = exitCodeForTokenAuditResult(outcome.value);
+      process.exitCode = exitCodeForDisplayNameAuditResult(outcome.value);
     });
 
   cmd
