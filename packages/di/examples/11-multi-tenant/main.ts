@@ -100,9 +100,9 @@ interface InviteService {
 
 // ── Root-level tokens (shared across all tenants) ────────────────────────────────────────────────────────────────────
 
-const DatabasePoolToken = token<DatabasePool>("DatabasePool");
-const AppConfigToken = token<AppConfig>("AppConfig");
-const AppLoggerToken = token<AppLogger>("AppLogger");
+const DatabasePoolToken = token<DatabasePool>("multi-tenant:DatabasePool");
+const AppConfigToken = token<AppConfig>("multi-tenant:AppConfig");
+const AppLoggerToken = token<AppLogger>("multi-tenant:AppLogger");
 
 interface AppConfig {
   defaultDatabaseUrl: string;
@@ -117,14 +117,14 @@ interface AppLogger {
 
 // ── Tenant-scoped tokens (isolated per child container) ──────────────────────────────────────────────────────────────
 
-const TenantContextToken = token<TenantContext>("TenantContext");
-const TenantDatabaseToken = token<TenantDatabase>("TenantDatabase");
-const TenantCacheToken = token<TenantCache>("TenantCache");
-const TenantLoggerToken = token<TenantLogger>("TenantLogger");
-const FeatureFlagsToken = token<FeatureFlags>("FeatureFlags");
-const RateLimiterToken = token<RateLimiter>("RateLimiter");
-const UserServiceToken = token<UserService>("UserService");
-const InviteServiceToken = token<InviteService>("InviteService");
+const TenantContextToken = token<TenantContext>("multi-tenant:TenantContext");
+const TenantDatabaseToken = token<TenantDatabase>("multi-tenant:TenantDatabase");
+const TenantCacheToken = token<TenantCache>("multi-tenant:TenantCache");
+const TenantLoggerToken = token<TenantLogger>("multi-tenant:TenantLogger");
+const FeatureFlagsToken = token<FeatureFlags>("multi-tenant:FeatureFlags");
+const RateLimiterToken = token<RateLimiter>("multi-tenant:RateLimiter");
+const UserServiceToken = token<UserService>("multi-tenant:UserService");
+const InviteServiceToken = token<InviteService>("multi-tenant:InviteService");
 
 // ── Shared infrastructure (root singletons) ──────────────────────────────────────────────────────────────────────────
 
@@ -365,7 +365,7 @@ class TenantInviteManager implements InviteService {
 
 // ── Root module — shared infrastructure ──────────────────────────────────────────────────────────────────────────────
 
-const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
+const InfrastructureModule = Module.createAsync("multi-tenant:Infra", async (builder) => {
   builder.bind(AppConfigToken).toConstantValue({
     defaultDatabaseUrl: "postgres://localhost:5432/saas",
     redisUrl: "redis://localhost:6379",

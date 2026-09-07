@@ -11,4 +11,4 @@ export interface IdGenerator {
 }
 
 /** The injection token that names the identifier-minting port. */
-export const IdGeneratorToken = token<IdGenerator>("IdGenerator");
+export const IdGeneratorToken = token<IdGenerator>("explicit-architecture:IdGenerator");

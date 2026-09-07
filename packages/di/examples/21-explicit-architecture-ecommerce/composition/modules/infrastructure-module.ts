@@ -32,7 +32,7 @@ import { RequestContextToken } from "#/examples/21-explicit-architecture-ecommer
 const config = loadEnvConfig();
 
 /** Auto-wires the decorated adapters with `.to()`; config picks the repository, and gateway secrets are read here. */
-export const infrastructureModule = Module.create("Infrastructure", (builder) => {
+export const infrastructureModule = Module.create("explicit-architecture-ecommerce:Infrastructure", (builder) => {
   builder.bind(ClockToken).to(SystemClock).singleton();
   builder.bind(IdGeneratorToken).to(UuidIdGenerator).singleton();
   builder.bind(UnitOfWorkToken).to(InMemoryUnitOfWork).singleton();

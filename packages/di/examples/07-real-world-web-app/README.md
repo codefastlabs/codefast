@@ -85,7 +85,7 @@ Container.fromModulesAsync(
 ### Infrastructure: async setup and teardown
 
 ```ts
-const InfraModule = Module.createAsync("Infra", async (builder) => {
+const InfraModule = Module.createAsync("real-world-web-app:Infra", async (builder) => {
   const config = await loadConfig(); // remote config fetch
   builder.bind(ConfigToken).toConstantValue(config);
 });

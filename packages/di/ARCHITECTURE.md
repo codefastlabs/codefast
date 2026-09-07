@@ -472,11 +472,11 @@ reports `CircularDependencyError` rather than recursing, and the flag is still r
 `tests/unit/resolution/in-flight-invariants.test.ts` pins both for the hooked lane too.
 
 **Every path-based check keys on binding identity, never on a token's display name.** A display name is not unique: two
-`token("Config")` from different modules are distinct tokens. `enterResolutionPath` and `extendResolutionBranch` compare
-`bindingId` read off the frame stack. The names an error or `ctx.resolutionPath` reports are **derived from the frames**
-at the moment they are asked for, so no name array exists to keep in step. A hop pushes and pops one stack, the branch
-helper takes one depth, and an escape thunk copies one frame array; the error path pays for name materialisation, not
-the hot path.
+`token("app:Config")` from different modules are distinct tokens. `enterResolutionPath` and `extendResolutionBranch`
+compare `bindingId` read off the frame stack. The names an error or `ctx.resolutionPath` reports are **derived from the
+frames** at the moment they are asked for, so no name array exists to keep in step. A hop pushes and pops one stack, the
+branch helper takes one depth, and an escape thunk copies one frame array; the error path pays for name materialisation,
+not the hot path.
 
 **A membership set past a depth threshold.** `enterResolutionPath` scans the frames linearly while the stack is short,
 and attaches a membership `Set` of binding ids to the array once the stack passes `RESOLUTION_SET_THRESHOLD`, which
@@ -834,9 +834,9 @@ general pattern, not just a fixed bug.
 - **A memo keyed on binding id missed a late hook.** The activation-need memo once cached "no activation" per binding id
   and skipped a late `.onActivation()` hook on every lane that consulted it, while the default dynamic lane read the
   field fresh and honoured it. The failure was silent. [Lookup caches](#lookup-caches) describes the fix.
-- **A name-keyed cycle check reported a false cycle.** Two `token("Config")` from different modules are distinct tokens,
-  and a check keyed on display name reported a cycle for a legitimately acyclic chain that held both. Every path check
-  now keys on `bindingId` ([Cycle detection](#cycles)).
+- **A name-keyed cycle check reported a false cycle.** Two `token("app:Config")` from different modules are distinct
+  tokens, and a check keyed on display name reported a cycle for a legitimately acyclic chain that held both. Every path
+  check now keys on `bindingId` ([Cycle detection](#cycles)).
 - **A threshold that switched lanes changed semantics.** A removed constant, `DEEP_LANE_THRESHOLD`, switched the async
   pipeline between _lanes_ past a depth. That silently changed context identity, stack frames and promise shape at the
   crossing point, and reported a false `CircularDependencyError` for a diamond dependency past it.

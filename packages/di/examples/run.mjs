@@ -27,7 +27,7 @@ const names = readdirSync(examplesDir, { withFileTypes: true })
 const results = [];
 
 for (const name of names) {
-  const entry = join(examplesDir, name, `${name}.ts`);
+  const entry = join(examplesDir, name, "main.ts");
   line(bold(`\n▶ ${name}`));
 
   const startedAt = Date.now();

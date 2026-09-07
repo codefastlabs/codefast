@@ -3,8 +3,9 @@ import { BindingChain } from "#/container/binding-builders";
 import type { Binding, BindingBuilder, BindToBuilder, ConstantBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
 import { effectiveBindingScope } from "#/core/binding-scope";
+import type { ConstraintRequirement } from "#/core/constraint-requirement";
 import { constraintRequirementsOf } from "#/core/constraint-requirement";
-import { getOrInsert } from "#/core/map-upsert";
+import { getOrInsert, getOrInsertComputed } from "#/core/map-upsert";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#/core/module";
 import { isSyncModule, MODULE_SETUP } from "#/core/module";
 import { BindingRegistry } from "#/core/registry";
@@ -47,6 +48,25 @@ import { verifyingMetadataReader } from "#/metadata/verifying-metadata-reader";
 import { ROOT_BRANCH } from "#/resolution/path/resolution-path";
 import { DependencyResolver } from "#/resolution/resolver";
 
+/** Whether a requirement's name is declared — on its token when it names one, on any token otherwise. */
+function isSlotNameDeclared(
+  declared: ReadonlyMap<string, ReadonlySet<string>>,
+  requirement: ConstraintRequirement,
+): boolean {
+  if (requirement.tokenName !== undefined) {
+    return declared.get(requirement.tokenName)?.has(requirement.name) ?? false;
+  }
+  for (const names of declared.values()) {
+    if (names.has(requirement.name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** Hoisted so the slot-name index's `getOrInsertComputed` allocates only on a miss, no closure per call. */
+const newSlotNameSet = (): Set<string> => new Set<string>();
+
 // ── Container interface ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -57,12 +77,16 @@ import { DependencyResolver } from "#/resolution/resolver";
 export interface Container {
   readonly isDisposed: boolean;
 
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  bind<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+  ): BindToBuilder<Value, Names>;
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void;
   unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void>;
   unbindAll(): void;
   unbindAllAsync(): Promise<void>;
-  rebind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+  rebind<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+  ): BindToBuilder<Value, Names>;
 
   load(...modules: Array<SyncModule>): void;
   loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
@@ -73,15 +97,30 @@ export interface Container {
   onActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void;
   onDeactivation<Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void;
 
-  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value;
-  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value>;
-  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined;
-  resolveOptionalAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
+  resolve<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value;
+  resolveAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Promise<Value>;
+  resolveOptional<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value | undefined;
+  resolveOptionalAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<Value | undefined>;
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value>;
-  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>>;
+  resolveAll<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Array<Value>;
+  resolveAllAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Promise<Array<Value>>;
 
   createChild(): Container;
 
@@ -92,8 +131,14 @@ export interface Container {
   initializeAsync(): Promise<void>;
   validate(): void;
 
-  has(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean;
-  hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean;
+  has<Names extends string = string>(
+    token: Token<unknown, Names> | Constructor,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): boolean;
+  hasOwn<Names extends string = string>(
+    token: Token<unknown, Names> | Constructor,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): boolean;
   lookupBindings<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot>;
   inspect(): ContainerSnapshot;
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
@@ -237,7 +282,9 @@ class DefaultContainer implements Container {
 
   // ── Binding ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
+  bind<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+  ): BindToBuilder<Value, Names> {
     this.#assertNotDisposed();
     return this.#createBindToBuilder(token);
   }
@@ -361,7 +408,9 @@ class DefaultContainer implements Container {
     await this.#deactivatePairs(this.#drainSingletons(this.#registry.clear()));
   }
 
-  rebind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> {
+  rebind<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+  ): BindToBuilder<Value, Names> {
     this.#assertNotDisposed();
     if (!this.#registry.has(token)) {
       throw new RebindUnboundTokenError(tokenName(token));
@@ -560,7 +609,10 @@ class DefaultContainer implements Container {
 
   // ── Resolution ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
+  resolve<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     // A resolve already holding the shared stack means this one is nested; it mints its own.
@@ -575,7 +627,10 @@ class DefaultContainer implements Container {
     return this.#resolver.resolve(token, options, rootStack);
   }
 
-  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
+  resolveAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Promise<Value> {
     this.#assertNotDisposed();
     if (options === undefined) {
       return this.#resolver.resolveAsyncFromRoot(token) as Promise<Value>;
@@ -583,7 +638,10 @@ class DefaultContainer implements Container {
     return this.#resolver.resolveAsync(token, options, [], ROOT_BRANCH);
   }
 
-  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
+  resolveOptional<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value | undefined {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     return rootStack.length === 0
@@ -591,15 +649,18 @@ class DefaultContainer implements Container {
       : this.#resolver.resolveOptional(token, options, []);
   }
 
-  resolveOptionalAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
+  resolveOptionalAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<Value | undefined> {
     this.#assertNotDisposed();
     return this.#resolver.resolveOptionalAsync(token, options, [], ROOT_BRANCH);
   }
 
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
+  resolveAll<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Array<Value> {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     return rootStack.length === 0
@@ -607,7 +668,10 @@ class DefaultContainer implements Container {
       : this.#resolver.resolveAll(token, options, []);
   }
 
-  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>> {
+  resolveAllAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Promise<Array<Value>> {
     this.#assertNotDisposed();
     return this.#resolver.resolveAllAsync(token, options, [], ROOT_BRANCH);
   }
@@ -729,7 +793,7 @@ class DefaultContainer implements Container {
 
   /** A constraint waiting on a slot name no binding declares can never hold. */
   #validateConstraintRequirements(allBindings: ReadonlyArray<Binding>): void {
-    let declaredSlotNames: Set<string> | undefined;
+    let declaredSlotNames: Map<string, Set<string>> | undefined;
 
     for (const binding of allBindings) {
       const { predicate } = binding;
@@ -742,19 +806,20 @@ class DefaultContainer implements Container {
       }
       declaredSlotNames ??= this.#slotNamesInChain();
       for (const requirement of requirements) {
-        if (!declaredSlotNames.has(requirement.name)) {
-          throw new UnreachableConstraintError(tokenName(binding.token), requirement.name, requirement.helperName);
+        if (!isSlotNameDeclared(declaredSlotNames, requirement)) {
+          throw new UnreachableConstraintError(tokenName(binding.token), requirement);
         }
       }
     }
   }
 
-  /** Every slot name declared anywhere a resolve through this container could reach. */
-  #slotNamesInChain(): Set<string> {
-    const names = this.#parent === undefined ? new Set<string>() : this.#parent.#slotNamesInChain();
+  /** Every slot name declared anywhere a resolve through this container could reach, by declaring token. */
+  #slotNamesInChain(): Map<string, Set<string>> {
+    const names = this.#parent === undefined ? new Map<string, Set<string>>() : this.#parent.#slotNamesInChain();
     for (const binding of this.#registry.allBindings()) {
-      if (binding.slot.name !== undefined) {
-        names.add(binding.slot.name);
+      const name = binding.slot.name;
+      if (name !== undefined) {
+        getOrInsertComputed(names, tokenName(binding.token), newSlotNameSet).add(name);
       }
     }
     return names;
@@ -894,12 +959,18 @@ class DefaultContainer implements Container {
 
   // ── Introspection ──────────────────────────────────────────────────────────────────────────────────────────────────
 
-  has(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
+  has<Names extends string = string>(
+    token: Token<unknown, Names> | Constructor,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): boolean {
     this.#assertNotDisposed();
     return this.#getInspector().has(token, options, () => this.#parent?.has(token, options) ?? false);
   }
 
-  hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
+  hasOwn<Names extends string = string>(
+    token: Token<unknown, Names> | Constructor,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): boolean {
     this.#assertNotDisposed();
     return this.#getInspector().hasOwn(token, options);
   }

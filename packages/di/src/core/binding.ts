@@ -407,11 +407,16 @@ export function clearBindingFrame<Value>(binding: Binding<Value>): void {
  *
  * @since 0.3.16-canary.0
  */
-export interface SlotConstrainedBuilder {
+export interface SlotConstrainedBuilder<Names extends string = string> {
+  /** Narrows the binding to requests the predicate accepts, evaluated on every resolve. */
   when(predicate: BindingConstraint): this;
-  whenNamed(name: string): this;
+  /** Declares the binding's slot name, one of the names the token declares. */
+  whenNamed(name: Names): this;
+  /** Declares one criterion of the binding's slot, replacing any earlier criterion of the same key. */
   whenTagged(criterion: BindingTag): this;
+  /** Keeps the binding on the default slot, the one an unconstrained request selects. */
   whenDefault(): this;
+  /** The identifier this binding is registered under. */
   id(): BindingIdentifier;
 }
 
@@ -420,21 +425,21 @@ export interface SlotConstrainedBuilder {
  *
  * @since 0.3.16-canary.0
  */
-export interface BindToBuilder<Value> {
-  to(type: Constructor<Value>): BindingBuilder<Value>;
-  toSelf(): BindingBuilder<Value>;
-  toConstantValue(value: Value): ConstantBindingBuilder<Value>;
-  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value>;
-  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value>;
+export interface BindToBuilder<Value, Names extends string = string> {
+  to(type: Constructor<Value>): BindingBuilder<Value, Names>;
+  toSelf(): BindingBuilder<Value, Names>;
+  toConstantValue(value: Value): ConstantBindingBuilder<Value, Names>;
+  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value, Names>;
+  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value, Names>;
   toResolved<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
-  ): BindingBuilder<Value>;
+  ): BindingBuilder<Value, Names>;
   toResolvedAsync<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
-  ): BindingBuilder<Value>;
-  toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder;
+  ): BindingBuilder<Value, Names>;
+  toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder<Names>;
 }
 
 /**
@@ -442,7 +447,7 @@ export interface BindToBuilder<Value> {
  *
  * @since 0.3.16-canary.0
  */
-export interface BindingBuilder<Value> extends SlotConstrainedBuilder {
+export interface BindingBuilder<Value, Names extends string = string> extends SlotConstrainedBuilder<Names> {
   singleton(): SingletonBindingBuilder<Value>;
   transient(): TransientBindingBuilder<Value>;
   scoped(): ScopedBindingBuilder<Value>;
@@ -453,7 +458,7 @@ export interface BindingBuilder<Value> extends SlotConstrainedBuilder {
  *
  * @since 0.3.16-canary.0
  */
-export interface ConstantBindingBuilder<Value> extends SlotConstrainedBuilder {
+export interface ConstantBindingBuilder<Value, Names extends string = string> extends SlotConstrainedBuilder<Names> {
   onActivation(fn: ActivationHandler<Value>): SingletonLifecycleBuilder<Value>;
   onDeactivation(fn: DeactivationHandler<Value>): SingletonLifecycleBuilder<Value>;
 }
@@ -463,7 +468,7 @@ export interface ConstantBindingBuilder<Value> extends SlotConstrainedBuilder {
  *
  * @since 0.3.16-canary.0
  */
-export interface AliasBindingBuilder extends SlotConstrainedBuilder {}
+export interface AliasBindingBuilder<Names extends string = string> extends SlotConstrainedBuilder<Names> {}
 
 /**
  * The fluent chain after `singleton()`, where both lifecycle hooks stay available.

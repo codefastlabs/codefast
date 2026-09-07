@@ -48,8 +48,8 @@ flowchart LR
 ### Creating tokens
 
 ```ts
-const GreeterToken = token<Greeter>("Greeter");
-const MessageToken = token<string>("Message");
+const GreeterToken = token<Greeter>("basic-tokens:Greeter");
+const MessageToken = token<string>("basic-tokens:Message");
 ```
 
 `token<T>(name)` creates a `Token<T>`. The string name is used only for debugging — it has no effect on resolution. Two

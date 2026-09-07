@@ -18,4 +18,4 @@ export interface ProductRepository {
 }
 
 /** The injection token that binds the `ProductRepository` port to its adapter. */
-export const ProductRepositoryToken = token<ProductRepository>("ProductRepository");
+export const ProductRepositoryToken = token<ProductRepository>("explicit-architecture-ecommerce:ProductRepository");

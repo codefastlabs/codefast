@@ -13,18 +13,18 @@ import { Container, inject, injectable, token, whenParentIs } from "@codefast/di
 import { tag } from "#/core/tag";
 import { item, section } from "#/examples/support/log";
 
-const PROVIDER_TAG = tag<"local" | "s3">("provider");
+const PROVIDER_TAG = tag<"local" | "s3">("constraints-multi-binding:provider");
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const LoggerToken = token<Logger>("Logger");
-const PaymentLoggerToken = token<Logger>("PaymentLogger");
-const StorageToken = token<Storage>("Storage");
-const S3StorageToken = token<Storage>("S3Storage");
-const LocalStorageToken = token<Storage>("LocalStorage");
-const EventHandlerToken = token<EventHandler>("EventHandler");
-const OrderServiceToken = token<OrderService>("OrderService");
-const PaymentServiceToken = token<PaymentService>("PaymentService");
+const LoggerToken = token<Logger>("constraints-multi-binding:Logger");
+const PaymentLoggerToken = token<Logger>("constraints-multi-binding:PaymentLogger");
+const StorageToken = token<Storage>("constraints-multi-binding:Storage");
+const S3StorageToken = token<Storage>("constraints-multi-binding:S3Storage");
+const LocalStorageToken = token<Storage>("constraints-multi-binding:LocalStorage");
+const EventHandlerToken = token<EventHandler>("constraints-multi-binding:EventHandler");
+const OrderServiceToken = token<OrderService>("constraints-multi-binding:OrderService");
+const PaymentServiceToken = token<PaymentService>("constraints-multi-binding:PaymentService");
 
 // ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 

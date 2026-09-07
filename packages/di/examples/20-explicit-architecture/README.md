@@ -11,7 +11,7 @@ never opened, and a cross-currency transfer — before a frozen clock replays th
 Hexagonal / Onion / Clean layering (what Herberto Graça named _Explicit Architecture_).
 
 ```sh
-npx tsx examples/20-explicit-architecture/20-explicit-architecture.ts
+npx tsx examples/20-explicit-architecture/main.ts
 ```
 
 ## The dependency rule

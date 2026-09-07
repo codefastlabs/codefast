@@ -35,13 +35,13 @@ interface HttpResponse {
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ConfigToken = token<AppConfig>("AppConfig");
-const DatabaseToken = token<Database>("Database");
-const UserRepoToken = token<UserRepository>("UserRepository");
-const AuthServiceToken = token<AuthService>("AuthService");
-const MiddlewareToken = token<Middleware>("Middleware");
-const RequestContextToken = token<HttpRequest>("RequestContext");
-const UserControllerToken = token<UserController>("UserController");
+const AppConfigToken = token<AppConfig>("real-world-web-app:AppConfig");
+const DatabaseToken = token<Database>("real-world-web-app:Database");
+const UserRepositoryToken = token<UserRepository>("real-world-web-app:UserRepository");
+const AuthServiceToken = token<AuthService>("real-world-web-app:AuthService");
+const MiddlewareToken = token<Middleware>("real-world-web-app:Middleware");
+const HttpRequestToken = token<HttpRequest>("real-world-web-app:HttpRequest");
+const UserControllerToken = token<UserController>("real-world-web-app:UserController");
 
 // ── Infrastructure ───────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -101,7 +101,7 @@ interface AuthService {
   issueToken(userId: string): string;
 }
 
-@injectable([inject(ConfigToken), inject(UserRepoToken)])
+@injectable([inject(AppConfigToken), inject(UserRepositoryToken)])
 class AuthManager implements AuthService {
   constructor(
     private readonly config: AppConfig,
@@ -164,7 +164,7 @@ class AuthMiddleware implements Middleware {
 // Controllers (scoped — one per request via scoped child container)
 // ============================================================================
 
-@injectable([inject(RequestContextToken), inject(UserRepoToken), inject(AuthServiceToken)])
+@injectable([inject(HttpRequestToken), inject(UserRepositoryToken), inject(AuthServiceToken)])
 class UserController {
   constructor(
     private readonly httpRequest: HttpRequest,
@@ -190,14 +190,14 @@ class UserController {
 
 // ── Modules ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
+const InfrastructureModule = Module.createAsync("real-world-web-app:Infra", async (builder) => {
   const config = await loadConfig();
-  builder.bind(ConfigToken).toConstantValue(config);
+  builder.bind(AppConfigToken).toConstantValue(config);
 
   builder
     .bind(DatabaseToken)
     .toDynamicAsync(async (context) => {
-      const appConfig = context.resolve(ConfigToken);
+      const appConfig = context.resolve(AppConfigToken);
       return new Database(appConfig.databaseUrl);
     })
     .singleton()
@@ -210,30 +210,30 @@ const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
     });
 });
 
-const RepositoryModule = Module.create("Repository", (builder) => {
-  builder.bind(UserRepoToken).to(UserPostgresRepository).singleton();
+const RepositoryModule = Module.create("real-world-web-app:Repository", (builder) => {
+  builder.bind(UserRepositoryToken).to(UserPostgresRepository).singleton();
 });
 
-const ServiceModule = Module.create("Service", (builder) => {
+const ServiceModule = Module.create("real-world-web-app:Service", (builder) => {
   builder.import(RepositoryModule);
   builder.bind(AuthServiceToken).to(AuthManager).singleton();
 });
 
-const MiddlewareModule = Module.create("Middleware", (builder) => {
+const MiddlewareModule = Module.create("real-world-web-app:Middleware", (builder) => {
   builder.import(ServiceModule);
   // Multi-binding: each middleware uses a distinct binding slot via whenNamed()
   builder.bind(MiddlewareToken).to(LoggingMiddleware).whenNamed("logging");
   builder.bind(MiddlewareToken).to(AuthMiddleware).whenNamed("auth");
 });
 
-const ControllerModule = Module.create("Controller", (builder) => {
+const ControllerModule = Module.create("real-world-web-app:Controller", (builder) => {
   builder.import(ServiceModule);
   builder.bind(UserControllerToken).to(UserController).scoped();
 });
 
-const AppModule = Module.create("App", (builder) => {
+const AppModule = Module.create("real-world-web-app:App", (builder) => {
   builder.import(RepositoryModule, ServiceModule, MiddlewareModule, ControllerModule);
-  builder.bind(RequestContextToken).toConstantValue({
+  builder.bind(HttpRequestToken).toConstantValue({
     requestId: "bootstrap",
     method: "GET",
     path: "/bootstrap",
@@ -257,7 +257,7 @@ async function createServer() {
     // Each request gets its own scoped child container
     const requestContainer = container.createChild();
 
-    requestContainer.bind(RequestContextToken).toConstantValue(request);
+    requestContainer.bind(HttpRequestToken).toConstantValue(request);
 
     // Collect middleware pipeline
     const middlewarePipeline = requestContainer.resolveAll(MiddlewareToken);

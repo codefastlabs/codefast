@@ -74,4 +74,4 @@ export class HttpServer {
 }
 
 /** Injection token for the HTTP server. */
-export const HttpServerToken = token<HttpServer>("HttpServer");
+export const HttpServerToken = token<HttpServer>("explicit-architecture-ecommerce:HttpServer");

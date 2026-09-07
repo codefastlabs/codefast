@@ -9,4 +9,4 @@ export interface Clock {
 }
 
 /** The injection token that binds the `Clock` port to its adapter. */
-export const ClockToken = token<Clock>("Clock");
+export const ClockToken = token<Clock>("explicit-architecture-ecommerce:Clock");

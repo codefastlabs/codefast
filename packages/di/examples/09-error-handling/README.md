@@ -161,7 +161,7 @@ Call `validate()` at startup (after `initializeAsync`) to catch this class of bu
 **Code:** `ASYNC_MODULE_LOAD`
 
 ```ts
-const AsyncDbModule = Module.createAsync("Db", async (builder) => { ... });
+const AsyncDbModule = Module.createAsync("error-handling:Db", async (builder) => { ... });
 
 container.load(AsyncDbModule);      // ← throws: load() is sync-only
 await container.loadAsync(AsyncDbModule); // ← correct

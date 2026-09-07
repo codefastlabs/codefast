@@ -17,7 +17,7 @@ import {
 import { HttpServer, HttpServerToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/server";
 
 /** Binds the driving adapters — one HTTP server, two controllers, and a CLI over the same use cases. */
-export const presentationModule = Module.create("Presentation", (builder) => {
+export const presentationModule = Module.create("explicit-architecture-ecommerce:Presentation", (builder) => {
   builder.bind(HttpServerToken).to(HttpServer).singleton();
   builder.bind(CatalogControllerToken).to(CatalogController).singleton();
   builder.bind(CheckoutControllerToken).to(CheckoutController).singleton();

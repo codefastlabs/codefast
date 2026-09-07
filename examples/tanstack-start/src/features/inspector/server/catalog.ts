@@ -31,12 +31,12 @@ export interface Settlement {
   readonly audit: AuditLogger;
 }
 
-export const storageToken = token<Storage>("Storage");
-export const paymentToken = token<PaymentGateway>("PaymentGateway");
-export const notifierToken = token<Notifier>("Notifier");
-export const auditLoggerToken = token<AuditLogger>("AuditLogger");
-export const settlementToken = token<Settlement>("Settlement");
-export const tenantContextToken = token<TenantContext>("TenantContext");
+export const storageToken = token<Storage>("inspector:Storage");
+export const paymentToken = token<PaymentGateway>("inspector:PaymentGateway");
+export const notifierToken = token<Notifier>("inspector:Notifier");
+export const auditLoggerToken = token<AuditLogger>("inspector:AuditLogger");
+export const settlementToken = token<Settlement>("inspector:Settlement");
+export const tenantContextToken = token<TenantContext>("inspector:TenantContext");
 
 /** What the trace needs about one registered binding, including what the snapshot cannot tell it. */
 export interface CatalogEntry {
@@ -75,7 +75,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
     entries.push({
       id: storageBinding.id(),
-      tokenName: "Storage",
+      tokenName: "inspector:Storage",
       label: storage.adapter,
       slot: { tags: [REGION_TAG.of(region)] },
       value: storage,
@@ -86,7 +86,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
     entries.push({
       id: paymentBinding.id(),
-      tokenName: "PaymentGateway",
+      tokenName: "inspector:PaymentGateway",
       label: `${payment.gateway} (list rate)`,
       slot: { tags: [REGION_TAG.of(region)] },
       value: payment,
@@ -105,7 +105,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
     entries.push({
       id: binding.id(),
-      tokenName: "PaymentGateway",
+      tokenName: "inspector:PaymentGateway",
       label: gateway,
       slot: {
         tags: [REGION_TAG.of(region), TIER_TAG.of("enterprise")],
@@ -122,7 +122,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
   entries.push({
     id: promoBinding.id(),
-    tokenName: "PaymentGateway",
+    tokenName: "inspector:PaymentGateway",
     label: promo.gateway,
     slot: { tags: [TIER_TAG.of("enterprise")] },
     value: promo,
@@ -137,7 +137,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
     entries.push({
       id: binding.id(),
-      tokenName: "Notifier",
+      tokenName: "inspector:Notifier",
       label: `${channel} notifier`,
       slot: { name, tags: [] },
       value: notifier,
@@ -151,7 +151,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
   entries.push({
     id: appLogBinding.id(),
-    tokenName: "AuditLogger",
+    tokenName: "inspector:AuditLogger",
     label: appLog.sink,
     slot: { tags: [] },
     value: appLog,
@@ -165,7 +165,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
   entries.push({
     id: paymentsLogBinding.id(),
-    tokenName: "AuditLogger",
+    tokenName: "inspector:AuditLogger",
     label: paymentsLog.sink,
     slot: { tags: [] },
     guard: "when the parent is Settlement",

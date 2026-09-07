@@ -88,53 +88,55 @@ import { banner } from "#/examples/support/log";
 // ============================================================================
 
 // Infrastructure
-const AppConfigToken = token<AppConfig>("AppConfig");
-const DatabaseToken = token<Database>("Database");
-const RedisToken = token<RedisClient>("RedisClient");
-const S3Token = token<S3Client>("S3Client");
-const ElasticToken = token<ElasticClient>("ElasticClient");
-const LoggerToken = token<Logger>("Logger");
-const EventBusToken = token<EventBus>("EventBus");
-const IdGeneratorToken = token<IdGenerator>("IdGenerator");
+const AppConfigToken = token<AppConfig>("ecommerce-platform:AppConfig");
+const DatabaseToken = token<Database>("ecommerce-platform:Database");
+const RedisClientToken = token<RedisClient>("ecommerce-platform:RedisClient");
+const S3ClientToken = token<S3Client>("ecommerce-platform:S3Client");
+const ElasticClientToken = token<ElasticClient>("ecommerce-platform:ElasticClient");
+const LoggerToken = token<Logger>("ecommerce-platform:Logger");
+const EventBusToken = token<EventBus>("ecommerce-platform:EventBus");
+const IdGeneratorToken = token<IdGenerator>("ecommerce-platform:IdGenerator");
 
 // Catalog
-const ProductRepositoryToken = token<ProductRepository>("ProductRepository");
-const CategoryRepositoryToken = token<CategoryRepository>("CategoryRepository");
-const InventoryServiceToken = token<InventoryService>("InventoryService");
-const PricingServiceToken = token<PricingService>("PricingService");
-const CatalogServiceToken = token<CatalogService>("CatalogService");
-const SearchServiceToken = token<SearchService>("SearchService");
+const ProductRepositoryToken = token<ProductRepository>("ecommerce-platform:ProductRepository");
+const CategoryRepositoryToken = token<CategoryRepository>("ecommerce-platform:CategoryRepository");
+const InventoryServiceToken = token<InventoryService>("ecommerce-platform:InventoryService");
+const PricingServiceToken = token<PricingService>("ecommerce-platform:PricingService");
+const CatalogServiceToken = token<CatalogService>("ecommerce-platform:CatalogService");
+const SearchServiceToken = token<SearchService>("ecommerce-platform:SearchService");
 
 // Cart
-const CartRepositoryToken = token<CartRepository>("CartRepository");
-const CartServiceToken = token<CartService>("CartService");
-const CouponServiceToken = token<CouponService>("CouponService");
+const CartRepositoryToken = token<CartRepository>("ecommerce-platform:CartRepository");
+const CartServiceToken = token<CartService>("ecommerce-platform:CartService");
+const CouponServiceToken = token<CouponService>("ecommerce-platform:CouponService");
 
 // Orders
-const OrderRepositoryToken = token<OrderRepository>("OrderRepository");
-const OrderServiceToken = token<OrderService>("OrderService");
-const FulfillmentServiceToken = token<FulfillmentService>("FulfillmentService");
-const ShippingCarrierToken = token<ShippingCarrier>("ShippingCarrier"); // multi-binding
+const OrderRepositoryToken = token<OrderRepository>("ecommerce-platform:OrderRepository");
+const OrderServiceToken = token<OrderService>("ecommerce-platform:OrderService");
+const FulfillmentServiceToken = token<FulfillmentService>("ecommerce-platform:FulfillmentService");
+const ShippingCarrierToken = token<ShippingCarrier>("ecommerce-platform:ShippingCarrier"); // multi-binding
 
 // Payments
-const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway"); // multi-binding
-const PaymentServiceToken = token<PaymentService>("PaymentService");
+const PaymentGatewayToken = token<PaymentGateway>("ecommerce-platform:PaymentGateway"); // multi-binding
+const PaymentServiceToken = token<PaymentService>("ecommerce-platform:PaymentService");
 
 // Users
-const UserRepositoryToken = token<UserRepository>("UserRepository");
-const UserServiceToken = token<UserService>("UserService");
-const AddressRepositoryToken = token<AddressRepository>("AddressRepository");
-const LoyaltyServiceToken = token<LoyaltyService>("LoyaltyService");
-const SessionToken = token<UserSession>("UserSession"); // scoped
+const UserRepositoryToken = token<UserRepository>("ecommerce-platform:UserRepository");
+const UserServiceToken = token<UserService>("ecommerce-platform:UserService");
+const AddressRepositoryToken = token<AddressRepository>("ecommerce-platform:AddressRepository");
+const LoyaltyServiceToken = token<LoyaltyService>("ecommerce-platform:LoyaltyService");
+const UserSessionToken = token<UserSession>("ecommerce-platform:UserSession"); // scoped
 
 // Notifications
-const NotificationChannelToken = token<NotificationChannel>("NotificationChannel"); // multi-binding
-const NotificationServiceToken = token<NotificationService>("NotificationService");
+const NotificationChannelToken = token<NotificationChannel>("ecommerce-platform:NotificationChannel"); // multi-binding
+const NotificationServiceToken = token<NotificationService>("ecommerce-platform:NotificationService");
 
 // Analytics
-const AnalyticsServiceToken = token<AnalyticsService>("AnalyticsService"); // optional
-const AbTestServiceToken = token<AbTestService>("AbTestService"); // optional
-const CheckoutApplicationServiceToken = token<CheckoutApplicationService>("CheckoutApplicationService");
+const AnalyticsServiceToken = token<AnalyticsService>("ecommerce-platform:AnalyticsService"); // optional
+const AbTestServiceToken = token<AbTestService>("ecommerce-platform:AbTestService"); // optional
+const CheckoutApplicationServiceToken = token<CheckoutApplicationService>(
+  "ecommerce-platform:CheckoutApplicationService",
+);
 
 // ============================================================================
 // ── DOMAIN TYPES ─────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -758,7 +760,7 @@ interface InventoryService {
   isInStock(productId: string, quantity?: number): Promise<boolean>;
 }
 
-@injectable([inject(DatabaseToken), inject(RedisToken), inject(LoggerToken)])
+@injectable([inject(DatabaseToken), inject(RedisClientToken), inject(LoggerToken)])
 class InventoryManager implements InventoryService {
   readonly #log: Logger;
 
@@ -819,7 +821,7 @@ interface PricingService {
   applyCoupon(cart: Cart, couponCode: string): Promise<CouponResult>;
 }
 
-@injectable([inject(DatabaseToken), inject(RedisToken), inject(LoggerToken)])
+@injectable([inject(DatabaseToken), inject(RedisClientToken), inject(LoggerToken)])
 class PricingManager implements PricingService {
   readonly #log: Logger;
 
@@ -958,7 +960,7 @@ interface SearchService {
   indexProduct(product: Product): Promise<void>;
 }
 
-@injectable([inject(ElasticToken), inject(ProductRepositoryToken), inject(LoggerToken)])
+@injectable([inject(ElasticClientToken), inject(ProductRepositoryToken), inject(LoggerToken)])
 class ProductElasticsearchSearchService implements SearchService {
   readonly #log: Logger;
 
@@ -1011,7 +1013,7 @@ interface CartRepository {
   delete(id: string): Promise<void>;
 }
 
-@injectable([inject(RedisToken), inject(LoggerToken)])
+@injectable([inject(RedisClientToken), inject(LoggerToken)])
 class CartRedisRepository implements CartRepository {
   readonly #log: Logger;
 
@@ -1702,7 +1704,7 @@ interface UserRepository {
   updateLoyaltyPoints(userId: string, delta: number): Promise<number>;
 }
 
-@injectable([inject(DatabaseToken), inject(RedisToken), inject(LoggerToken)])
+@injectable([inject(DatabaseToken), inject(RedisClientToken), inject(LoggerToken)])
 class UserPostgresRepository implements UserRepository {
   readonly #log: Logger;
 
@@ -2039,7 +2041,7 @@ interface CheckoutApplicationService {
 }
 
 @injectable([
-  inject(SessionToken),
+  inject(UserSessionToken),
   inject(LoggerToken),
   inject(CatalogServiceToken),
   inject(CartServiceToken),
@@ -2290,7 +2292,7 @@ interface AbTestService {
   track(userId: string, experimentId: string, hasConverted: boolean): Promise<void>;
 }
 
-@injectable([inject(RedisToken), inject(LoggerToken)])
+@injectable([inject(RedisClientToken), inject(LoggerToken)])
 class AbTestManager implements AbTestService {
   readonly #log: Logger;
 
@@ -2327,7 +2329,7 @@ class AbTestManager implements AbTestService {
 
 // ── Infrastructure (async) ───────────────────────────────────────────────────────────────────────────────────────────
 
-const InfrastructureModule = Module.createAsync("Infrastructure", async (builder) => {
+const InfrastructureModule = Module.createAsync("ecommerce-platform:Infrastructure", async (builder) => {
   const config = await loadAppConfig();
   builder.bind(AppConfigToken).toConstantValue(config);
   builder.bind(LoggerToken).to(EcommerceRootLogger).singleton();
@@ -2348,7 +2350,7 @@ const InfrastructureModule = Module.createAsync("Infrastructure", async (builder
 
   // Redis: async connect, close on deactivation
   builder
-    .bind(RedisToken)
+    .bind(RedisClientToken)
     .to(MockRedis)
     .singleton()
     .onActivation(async (_context, redisClient) => {
@@ -2359,8 +2361,8 @@ const InfrastructureModule = Module.createAsync("Infrastructure", async (builder
       await redisClient.quit();
     });
 
-  builder.bind(S3Token).to(MockS3).singleton();
-  builder.bind(ElasticToken).to(MockElastic).singleton();
+  builder.bind(S3ClientToken).to(MockS3).singleton();
+  builder.bind(ElasticClientToken).to(MockElastic).singleton();
 
   // In-memory EventBus (replace with Kafka/RabbitMQ binding in production)
   builder.bind(EventBusToken).to(InMemoryEventBus).singleton();
@@ -2368,7 +2370,7 @@ const InfrastructureModule = Module.createAsync("Infrastructure", async (builder
 
 // ── Catalog ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const CatalogModule = Module.create("Catalog", (builder) => {
+const CatalogModule = Module.create("ecommerce-platform:Catalog", (builder) => {
   builder.bind(ProductRepositoryToken).to(ProductPostgresRepository).singleton();
   builder.bind(CategoryRepositoryToken).to(CategoryPostgresRepository).singleton();
   builder.bind(InventoryServiceToken).to(InventoryManager).singleton();
@@ -2380,7 +2382,7 @@ const CatalogModule = Module.create("Catalog", (builder) => {
 
 // ── Cart ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const CartModule = Module.create("Cart", (builder) => {
+const CartModule = Module.create("ecommerce-platform:Cart", (builder) => {
   builder.import(CatalogModule);
   builder.bind(CartRepositoryToken).to(CartRedisRepository).singleton();
   builder.bind(CouponServiceToken).to(CouponManager).singleton();
@@ -2389,13 +2391,13 @@ const CartModule = Module.create("Cart", (builder) => {
 
 // ── Orders ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ShippingModule = Module.create("Shipping", (builder) => {
+const ShippingModule = Module.create("ecommerce-platform:Shipping", (builder) => {
   builder.bind(ShippingCarrierToken).to(FedExCarrier).whenNamed("fedex").singleton();
   builder.bind(ShippingCarrierToken).to(UpsCarrier).whenNamed("ups").singleton();
   builder.bind(ShippingCarrierToken).to(DhlCarrier).whenNamed("dhl").singleton();
 });
 
-const OrderModule = Module.create("Orders", (builder) => {
+const OrderModule = Module.create("ecommerce-platform:Orders", (builder) => {
   builder.import(ShippingModule);
   builder.bind(OrderRepositoryToken).to(OrderPostgresRepository).singleton();
   builder.bind(FulfillmentServiceToken).to(ShippingFulfillmentService).singleton();
@@ -2404,7 +2406,7 @@ const OrderModule = Module.create("Orders", (builder) => {
 
 // ── Payments ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const PaymentModule = Module.create("Payments", (builder) => {
+const PaymentModule = Module.create("ecommerce-platform:Payments", (builder) => {
   builder.bind(PaymentGatewayToken).to(StripeGateway).whenNamed("stripe").singleton();
   builder.bind(PaymentGatewayToken).to(PayPalGateway).whenNamed("paypal").singleton();
   builder.bind(PaymentGatewayToken).to(CashOnDeliveryGateway).whenNamed("cod").singleton();
@@ -2413,17 +2415,17 @@ const PaymentModule = Module.create("Payments", (builder) => {
 
 // ── Users ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const UserModule = Module.create("Users", (builder) => {
+const UserModule = Module.create("ecommerce-platform:Users", (builder) => {
   builder.bind(UserRepositoryToken).to(UserPostgresRepository).singleton();
   builder.bind(AddressRepositoryToken).to(AddressPostgresRepository).singleton();
   builder.bind(LoyaltyServiceToken).to(LoyaltyManager).singleton();
   builder.bind(UserServiceToken).to(UserAccountService).singleton();
-  // SessionToken is scoped — bound per-request in child container
+  // UserSessionToken is scoped — bound per-request in child container
 });
 
 // ── Notifications ────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const NotificationModule = Module.create("Notifications", (builder) => {
+const NotificationModule = Module.create("ecommerce-platform:Notifications", (builder) => {
   builder.bind(NotificationChannelToken).to(EmailChannel).whenNamed("email").singleton();
   builder.bind(NotificationChannelToken).to(SmsChannel).whenNamed("sms").singleton();
   builder.bind(NotificationChannelToken).to(PushChannel).whenNamed("push").singleton();
@@ -2432,17 +2434,17 @@ const NotificationModule = Module.create("Notifications", (builder) => {
 
 // ── Analytics (optional features) ────────────────────────────────────────────────────────────────────────────────────
 
-const AnalyticsModule = Module.create("Analytics", (builder) => {
+const AnalyticsModule = Module.create("ecommerce-platform:Analytics", (builder) => {
   builder.bind(AnalyticsServiceToken).to(SegmentAnalyticsService).singleton();
   builder.bind(AbTestServiceToken).to(AbTestManager).singleton();
 });
 
 // ── Root app module ──────────────────────────────────────────────────────────────────────────────────────────────────
 
-const AppModule = Module.create("App", (builder) => {
+const AppModule = Module.create("ecommerce-platform:App", (builder) => {
   builder.import(CatalogModule, CartModule, OrderModule, UserModule, NotificationModule, AnalyticsModule);
   // Placeholder scoped session token — overridden per request in child container
-  builder.bind(SessionToken).toConstantValue({
+  builder.bind(UserSessionToken).toConstantValue({
     userId: "bootstrap",
     email: "bootstrap@example.com",
     tier: "bronze",
@@ -2506,7 +2508,7 @@ async function handleCheckoutRequest(
 ): Promise<void> {
   // Each request gets an isolated scoped child container
   const requestContainer = rootContainer.createChild();
-  requestContainer.bind(SessionToken).toConstantValue(session);
+  requestContainer.bind(UserSessionToken).toConstantValue(session);
   const checkoutOrchestrator = requestContainer.resolve(CheckoutApplicationServiceToken);
   await checkoutOrchestrator.completeCheckoutJourney(requestId);
 }

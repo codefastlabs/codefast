@@ -27,9 +27,9 @@ import { item, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ClockToken = token<Clock>("Clock");
-const TransportToken = token<Transport>("Transport");
-const RequestIdToken = token<string>("RequestId");
+const ClockToken = token<Clock>("ambient-container:Clock");
+const TransportToken = token<Transport>("ambient-container:Transport");
+const RequestIdToken = token<string>("ambient-container:RequestId");
 
 // ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 

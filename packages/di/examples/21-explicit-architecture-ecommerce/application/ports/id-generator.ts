@@ -9,4 +9,4 @@ export interface IdGenerator {
 }
 
 /** The injection token that binds the `IdGenerator` port to its adapter. */
-export const IdGeneratorToken = token<IdGenerator>("IdGenerator");
+export const IdGeneratorToken = token<IdGenerator>("explicit-architecture-ecommerce:IdGenerator");

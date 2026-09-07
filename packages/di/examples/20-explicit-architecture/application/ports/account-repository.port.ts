@@ -15,4 +15,4 @@ export interface AccountRepository {
 }
 
 /** The injection token that names the account persistence port. */
-export const AccountRepositoryToken = token<AccountRepository>("AccountRepository");
+export const AccountRepositoryToken = token<AccountRepository>("explicit-architecture:AccountRepository");

@@ -30,4 +30,4 @@ export class CheckoutController {
 }
 
 /** Injection token for the checkout controller. */
-export const CheckoutControllerToken = token<CheckoutController>("CheckoutController");
+export const CheckoutControllerToken = token<CheckoutController>("explicit-architecture-ecommerce:CheckoutController");

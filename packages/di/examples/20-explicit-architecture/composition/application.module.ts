@@ -16,7 +16,7 @@ import { BankingControllerToken } from "#/examples/20-explicit-architecture/comp
 import { BankingController } from "#/examples/20-explicit-architecture/primary/banking-controller";
 
 /** Binds the inbound ports to their decorated use-case classes; the container reads each class's deps. */
-export const applicationModule = Module.create("Application", (builder) => {
+export const applicationModule = Module.create("explicit-architecture:Application", (builder) => {
   builder.bind(OpenAccountUseCaseToken).to(OpenAccount).singleton();
   builder.bind(DepositMoneyUseCaseToken).to(DepositMoney).singleton();
   builder.bind(WithdrawMoneyUseCaseToken).to(WithdrawMoney).singleton();

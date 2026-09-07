@@ -21,7 +21,7 @@ export interface EventHandler {
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /** The injection token that names the event-publishing port. */
-export const EventPublisherToken = token<EventPublisher>("EventPublisher");
+export const EventPublisherToken = token<EventPublisher>("explicit-architecture:EventPublisher");
 
 /** The injection token that names the event-subscriber port — bound once per subscriber slot. */
-export const EventHandlerToken = token<EventHandler>("EventHandler");
+export const EventHandlerToken = token<EventHandler>("explicit-architecture:EventHandler");

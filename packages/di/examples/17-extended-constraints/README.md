@@ -51,8 +51,8 @@ flowchart TD
     Q3 -->|"Does NOT have ancestor T"| C4["whenNoAncestorIs(T)"]
 
     Q1 -->|"Named slot"| Q4{Depth?}
-    Q4 -->|"Direct parent"| C5["whenParentNamed(name)"]
-    Q4 -->|"Any ancestor"| C6["whenAnyAncestorNamed(name)"]
+    Q4 -->|"Direct parent"| C5["whenParentNamed(T, name)"]
+    Q4 -->|"Any ancestor"| C6["whenAnyAncestorNamed(T, name)"]
 
     Q1 -->|"Tagged slot"| Q5{Single or\nmultiple tags?}
     Q5 -->|"One tag"| Q6{Depth?}
@@ -86,18 +86,18 @@ graph TB
 
 ## Constraint reference
 
-| Constraint                        | Matches when…                                                         |
-| --------------------------------- | --------------------------------------------------------------------- |
-| `whenParentIs(T)`                 | direct parent token === T                                             |
-| `whenNoParentIs(T)`               | direct parent token !== T (or no parent)                              |
-| `whenAnyAncestorIs(T)`            | any token in the ancestor chain === T                                 |
-| `whenNoAncestorIs(T)`             | no token in the ancestor chain === T                                  |
-| `whenParentNamed(n)`              | direct parent was resolved with name `n`                              |
-| `whenAnyAncestorNamed(n)`         | any ancestor was resolved with name `n`                               |
-| `whenParentTagged(k, v)`          | direct parent slot carries tag `k=v`                                  |
-| `whenParentTaggedAll(pairs)`      | direct parent slot carries ALL given tags                             |
-| `whenAnyAncestorTagged(k, v)`     | any ancestor slot carries tag `k=v`                                   |
-| `whenAnyAncestorTaggedAll(pairs)` | any ancestor slot carries ALL given tags (on the same ancestor frame) |
+| Constraint                      | Matches when…                                                    |
+| ------------------------------- | ---------------------------------------------------------------- |
+| `whenParentIs(T)`               | direct parent token === T                                        |
+| `whenNoParentIs(T)`             | direct parent token !== T (or no parent)                         |
+| `whenAnyAncestorIs(T)`          | any token in the ancestor chain === T                            |
+| `whenNoAncestorIs(T)`           | no token in the ancestor chain === T                             |
+| `whenParentNamed(T, n)`         | direct parent token === T and its binding's slot is named `n`    |
+| `whenAnyAncestorNamed(T, n)`    | any ancestor token === T and its binding's slot is named `n`     |
+| `whenParentTagged(c)`           | direct parent slot carries criterion `c`                         |
+| `whenParentTaggedAll([c])`      | direct parent slot carries ALL given criteria                    |
+| `whenAnyAncestorTagged(c)`      | any ancestor slot carries criterion `c`                          |
+| `whenAnyAncestorTaggedAll([c])` | any ancestor slot carries ALL given criteria (on the same frame) |
 
 ---
 
@@ -138,13 +138,22 @@ Even though `RiskScorer`'s direct parent is `FraudChecker`, `whenAnyAncestorIs` 
 
 ## 3. `whenParentNamed` / `whenAnyAncestorNamed` — name propagation
 
-**Scenario:** `DataSource` has two named bindings ("primary", "replica"). The `Logger` injected into each adapts based
-on which named slot is being resolved.
+**Scenario:** `DataSource` has two named bindings ("primary", "replica"). The `Logger` injected into each adapts to
+which `DataSource` slot its parent binding declares. The constraint reads the binding's slot name, not the resolve hint:
+a binding selected without a hint still carries its slot. Declaring the names on the token makes them checked literals.
 
 ```ts
-container.bind(LoggerToken).toConstantValue(makeLogger("primary-logger")).when(whenParentNamed("primary"));
+const DataSourceToken = token<DataSource, "primary" | "replica">("extended-constraints:DataSource");
 
-container.bind(LoggerToken).toConstantValue(makeLogger("replica-logger")).when(whenParentNamed("replica"));
+container
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("primary-logger"))
+  .when(whenParentNamed(DataSourceToken, "primary"));
+
+container
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("replica-logger"))
+  .when(whenParentNamed(DataSourceToken, "replica"));
 
 container.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
 container.bind(DataSourceToken).to(DataSource).whenNamed("replica").singleton();
@@ -152,6 +161,29 @@ container.bind(DataSourceToken).to(DataSource).whenNamed("replica").singleton();
 // QueryRunner resolves DataSource named "replica" → gets replica-logger
 container.bind(QueryRunnerToken).to(QueryRunner).singleton();
 container.resolve(QueryRunnerToken).execute(); // [replica-logger] connected
+```
+
+**Two parent tokens sharing a slot name.** A name is a label on one token's slots, so `"primary"` on `ArchiveSource` is
+a different slot from `"primary"` on `DataSource`. The token argument is what tells the two apart; a name alone could
+not, since both parent frames carry `slot.name === "primary"`.
+
+```ts
+const ArchiveSourceToken = token<DataSource, "primary">("extended-constraints:ArchiveSource");
+
+container
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("datasource-primary-logger"))
+  .when(whenParentNamed(DataSourceToken, "primary"));
+container
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("archive-primary-logger"))
+  .when(whenParentNamed(ArchiveSourceToken, "primary"));
+
+container.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
+container.bind(ArchiveSourceToken).to(DataSource).whenNamed("primary").singleton();
+
+container.resolve(DataSourceToken, { name: "primary" }).connect(); // [datasource-primary-logger]
+container.resolve(ArchiveSourceToken, { name: "primary" }).connect(); // [archive-primary-logger]
 ```
 
 `whenAnyAncestorNamed` works the same way but searches the full ancestor chain instead of only the direct parent.
@@ -164,8 +196,8 @@ container.resolve(QueryRunnerToken).execute(); // [replica-logger] connected
 
 ```ts
 // Tag keys are declared once; `key.of(value)` mints the criterion every tag API takes.
-const BACKEND_TAG = tag<"memcached" | "redis">("backend");
-const REGION_TAG = tag<"eu" | "us">("region");
+const BACKEND_TAG = tag<"memcached" | "redis">("extended-constraints:backend");
+const REGION_TAG = tag<"eu" | "us">("extended-constraints:region");
 
 // Redis-EU requires BOTH backend=redis AND region=eu (AND semantics)
 container
@@ -200,8 +232,8 @@ automatically picks the right implementation based on which tagged ancestor is i
 tag-free.
 
 ```ts
-const TENANT_TAG = tag<"enterprise" | "starter">("tenant");
-const TIER_TAG = tag<"free" | "paid">("tier");
+const TENANT_TAG = tag<"enterprise" | "starter">("extended-constraints:tenant");
+const TIER_TAG = tag<"free" | "paid">("extended-constraints:tier");
 
 // Enterprise audit logger: parent chain must carry tenant=enterprise AND tier=paid on the same frame
 container
@@ -237,11 +269,11 @@ frame** (not spread across different ancestor nodes).
 | Default impl for all but one consumer                | `whenNoParentIs(T)`             |
 | Behaviour propagated from a root service, any depth  | `whenAnyAncestorIs(T)`          |
 | Opt-out when a root service is absent                | `whenNoAncestorIs(T)`           |
-| Adapt to which named slot the parent was resolved in | `whenParentNamed(n)`            |
-| Same but searching any depth                         | `whenAnyAncestorNamed(n)`       |
-| Single tag on the immediate parent                   | `whenParentTagged(k, v)`        |
+| Adapt to which slot of one token the parent declares | `whenParentNamed(T, n)`         |
+| Same but searching any depth                         | `whenAnyAncestorNamed(T, n)`    |
+| Single tag on the immediate parent                   | `whenParentTagged(c)`           |
 | Multiple tags (AND) on the immediate parent          | `whenParentTaggedAll([…])`      |
-| Single tag anywhere in the ancestor chain            | `whenAnyAncestorTagged(k, v)`   |
+| Single tag anywhere in the ancestor chain            | `whenAnyAncestorTagged(c)`      |
 | Multiple tags (AND, same frame) anywhere in chain    | `whenAnyAncestorTaggedAll([…])` |
 
 ---

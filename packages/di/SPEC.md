@@ -236,7 +236,7 @@ one selection model, not two.
 
 | Field  | Meaning                                                                                                                                                                | Relationship to the others                  |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `name` | Selects a binding declared with `whenNamed(name)`                                                                                                                      | Sugar for the criterion `slotName.of(name)` |
+| `name` | Selects a binding declared with `whenNamed(name)`; typed as the names the token declares ([Token API](#token-api))                                                     | Sugar for the criterion `slotName.of(name)` |
 | `tag`  | Exactly one criterion                                                                                                                                                  | Equivalent to a single element of `tags`    |
 | `tags` | An array of criteria, read as a **superset filter**: it matches a binding whose _every_ declared tag is in this array — not "the binding must carry all of these tags" | Several criteria require `tags`             |
 
@@ -257,7 +257,7 @@ folds `tag` into `tags`, so an `InjectionDescriptor` only ever carries one spell
 >   no binding ever declared is never retained.
 
 ```ts
-const Region = tag<"eu" | "us">("region");
+const Region = tag<"eu" | "us">("app:region");
 container.bind(Storage).to(S3).whenTagged(Region.of("eu"));
 container.resolve(Storage, { tag: Region.of("eu") });
 ```
@@ -387,33 +387,75 @@ type TokenValue<Type> = Type extends Token<infer Value> ? Value : Type extends C
 import { token } from "@codefast/di";
 
 // Basic
-const Logger = token<LoggerService>("Logger");
-const Database = token<DatabaseService>("Database");
-const Config = token<AppConfig>("Config");
+const Logger = token<LoggerService>("app:Logger");
+const Database = token<DatabaseService>("app:Database");
+const Config = token<AppConfig>("app:Config");
 
 // Token for a primitive
-const Port = token<number>("Port");
-const Env = token<"development" | "production">("Env");
+const Port = token<number>("app:Port");
+const Env = token<"development" | "production">("app:Env");
 
 // Organised by domain
 export const Tokens = {
-  Logger: token<LoggerService>("Logger"),
-  Database: token<DatabaseService>("Database"),
-  Config: token<AppConfig>("Config"),
+  Logger: token<LoggerService>("app:Logger"),
+  Database: token<DatabaseService>("app:Database"),
+  Config: token<AppConfig>("app:Config"),
 } as const;
 ```
+
+<a id="display-names"></a>
+
+### Display names
+
+The string a `token()`, `tag()` or module factory takes is its **display name**: what diagnostics print, what
+`ResolutionFrame.tokenName` carries, and what the `when*Is` / `when*Named` constraints compare. It is not the thing's
+identity — the object is — so two declarations may share one, and nothing but this rule stops them.
+
+> **Normative — a display name is spelled like the TS symbol it stands for, under its owner's namespace:
+> `<namespace>:<Name>`.**
+>
+> | Kind    | Stands for                        | Name half  | Example                            |
+> | ------- | --------------------------------- | ---------- | ---------------------------------- |
+> | token   | a type or class                   | PascalCase | `shop:Logger`, `di:MetadataReader` |
+> | module  | a unit of composition             | PascalCase | `shop:Infra`, `app:Root`           |
+> | tag key | an attribute a request selects on | camelCase  | `shop:cacheTier`, `di:name`        |
+>
+> The namespace is the owner — the kebab-case slug of the package, app or feature that declares the name, or a scoped
+> package name (`@scope/pkg:Config`) — and the library's own names sit under `di:`. Slot names (`whenNamed("primary")`)
+> and tag values (`Region.of("eu")`) are **values**, not display names: they mean something only within one token or one
+> key, so they stay lowercase and take no prefix. The convention holds in the library, the docs and every example, and
+> `pnpm cli:audit:display-names` fails the build where it does not; tests and benchmarks are outside it, since a name
+> there is scoped by its file and meets no other author's.
+
+What it buys: a diagnostic that says `No binding for 'shop:Logger'` names one owner; two features that each declare a
+`Clock` cannot produce a `whenParentIs` false match; a reader tells a token from a tag key from a module by its shape;
+and a doc sample carries the shape a real app needs.
 
 ### Type signature
 
 ```ts
 // Branded type — cannot be forged with an ordinary object literal
 declare const TOKEN_BRAND: unique symbol;
+declare const TOKEN_NAMES_BRAND: unique symbol;
 
-interface Token<Value> {
+interface Token<Value, Names extends string = string> {
   readonly name: string;
   readonly [TOKEN_BRAND]: Value; // unique symbol, not exported
+  readonly [TOKEN_NAMES_BRAND]?: Names; // phantom: the slot names this token's bindings may declare
 }
 ```
+
+```ts
+// Declaring the slot names makes every `name` the token meets a checked, completable literal
+const Logger = token<Logger, "console" | "file">("app:Logger");
+container.bind(Logger).to(FileLogger).whenNamed("file");
+container.resolve(Logger, { name: "file" }); // { name: "fiel" } is a compile error
+type Names = SlotNamesOf<typeof Logger>; // "console" | "file"; `string` for a class or an undeclared token
+```
+
+`Names` is covariant and defaults to `string`, so a token declaring none behaves as before, and a declaring token is
+still a `Token<unknown>` wherever the engine erases the value type. Only the token infers `Names`: the `options` bag of
+`resolve*`, `has`, `hasOwn`, `inject`, `optional` and `injectAll` is `NoInfer`, so a request cannot widen the set.
 
 ```ts
 // Resolve always returns the right type — the wrong token cannot be passed
@@ -550,8 +592,8 @@ container.bind(Logger).to(ConsoleLogger).whenNamed("console").singleton();
 container.bind(Logger).to(FileLogger).whenNamed("file").singleton();
 
 // Tagged binding — a criterion can only be minted from a tag key, never by hand
-const Fuel = tag<"petrol" | "electric">("fuel");
-const Size = tag<"v8" | "v6">("size");
+const Fuel = tag<"petrol" | "electric">("app:fuel");
+const Size = tag<"v8" | "v6">("app:size");
 
 container.bind(Engine).to(PetrolEngine).whenTagged(Fuel.of("petrol"));
 container.bind(Engine).to(ElectricEngine).whenTagged(Fuel.of("electric"));
@@ -582,8 +624,8 @@ container
 
 > **`whenTagged` takes a criterion, not a loose pair.** A criterion can only be minted by `TagKey.of()`, so the key must
 > be declared up front with `tag<Value>(name)` — that is what makes identity comparison enough to stand in for
-> `Object.is` ([`ResolveOptions`](#resolve-options)). The key name is still a `string`, so use a namespace prefix to
-> avoid collisions: `tag("mylib:fuel")`, `tag("@scope/pkg:env")`.
+> `Object.is` ([`ResolveOptions`](#resolve-options)). The key name is still a `string`, so it follows the display-name
+> convention ([Display names](#display-names)): `tag("mylib:fuel")`, `tag("@scope/pkg:env")`.
 
 > **`whenNamed` is sugar.** A name is a criterion of the reserved key `slotName` — `whenNamed("console")` ≡
 > `whenTagged(slotName.of("console"))`, single-valued per slot ([Slots and last-wins](#slot-matching)).
@@ -608,7 +650,7 @@ container
 **Resolving with a hint:**
 
 ```ts
-const Env = tag<"production" | "staging">("env");
+const Env = tag<"production" | "staging">("app:env");
 
 // Named
 container.resolve(Logger, { name: "file" });
@@ -903,8 +945,9 @@ condition the slot declares. The slot with no conditions is the **default slot**
 > **Normative — a name is a criterion.** The package exports a reserved tag key `slotName: TagKey<string>`, and a name
 > is a criterion of that key. One selection model covers names and tags alike:
 >
-> - `whenNamed(n)` ≡ `whenTagged(slotName.of(n))` — the binding-side sugar; `whenParentNamed(n)` is likewise
->   `whenParentTagged(slotName.of(n))` ([Advanced Constraints](#advanced-constraints)).
+> - `whenNamed(n)` ≡ `whenTagged(slotName.of(n))` — the binding-side sugar. `whenParentTagged(slotName.of(n))` is the
+>   token-free ancestor spelling; `whenParentNamed(T, n)` adds the token check
+>   ([Advanced Constraints](#advanced-constraints)).
 > - `{ name: n }` in `ResolveOptions` / `InjectOptions` ≡ `{ tag: slotName.of(n) }` — the request-side sugar
 >   ([`ResolveOptions`](#resolve-options)).
 > - **One criterion per key, reserved key included:** a slot carries at most one criterion of any key — re-declaring a
@@ -912,6 +955,10 @@ condition the slot declares. The slot with no conditions is the **default slot**
 > - What reserves the key is its **identity**, not its display name. Diagnostics render its criterion as `name:<value>`,
 >   never `tag:…`, and `BindingSlot.name` is the derived view of it that `ResolutionFrame.slot`
 >   ([`ConstraintContext`](#constraintcontext)) and the `when*Named` constraints read.
+> - A tag key types its values; the reserved key is shared, so a name's values are typed by the **token** instead:
+>   `Token<Value, Names>` narrows `whenNamed`, every request-side `name`, and the `name` of `whenParentNamed(T, name)` /
+>   `whenAnyAncestorNamed(T, name)` to the `Names` of the token they name ([Token API](#token-api)). A name is a label
+>   on one token's slots; a label shared across tokens is what a tag key is for.
 
 > **Normative — slot equality.** Two binding slots are **equal** when their criterion sets are equal by the identity of
 > each criterion (order does not matter). Because criteria are interned ([`ResolveOptions`](#resolve-options)), identity
@@ -1160,9 +1207,9 @@ container.resolveAll(Logger, { name: "x" }); // → [] (empty array, no throw)
 > time and the message names which token in the chain is the async source.
 
 ```
-AsyncResolutionError: Token 'App' requires async resolution because 'Database'
-in its dependency chain has an async factory. Use container.resolveAsync(App).
-  asyncSourceToken: "Database"
+AsyncResolutionError: Token 'app:Api' requires async resolution because 'app:Database'
+in its dependency chain has an async factory. Use container.resolveAsync(Api).
+  asyncSourceToken: "app:Database"
 ```
 
 #### Singleton async creation — serialized
@@ -2092,29 +2139,30 @@ the root — the shorter path, and always correct.
 > **Normative.** Every constraint function takes a `Token<unknown> | Constructor` and resolves it to a `tokenName`
 > string, which is compared against `ResolutionFrame.tokenName`:
 >
-> - `Token<Value>` → use `token.name` (the string given at `token("Logger")`)
+> - `Token<Value>` → use `token.name` (the string given at `token("app:Logger")`)
 > - `Constructor` → use `Constructor.name` (the JavaScript class name)
 
 > **Unique names.** `ResolutionFrame.tokenName` is a `string`, not a branded type. If two different tokens share a
-> `name` — say `token<A>("Config")` and `token<B>("Config")` — a constraint cannot tell them apart. Give tokens unique
-> names (a namespace prefix such as `"@myapp/Config"`) to avoid false matches.
+> `name` — say `token<A>("app:Config")` and `token<B>("app:Config")` — a constraint cannot tell them apart. This is why
+> a display name is `<namespace>:<Name>` ([Display names](#display-names)): two owners never mint the same name by
+> accident, so a false match can only come from one owner naming two tokens alike.
 
 ### Type signatures
 
 Ten constraints, each taking configuration parameters and returning a predicate over `ConstraintContext`:
 
-| Constraint                         | Matches when                                                     | With no parent / ancestor |
-| ---------------------------------- | ---------------------------------------------------------------- | :-----------------------: |
-| `whenParentIs(token)`              | the direct parent is that token                                  |          `false`          |
-| `whenNoParentIs(token)`            | the direct parent is **not** that token                          |          `true`           |
-| `whenParentNamed(name)`            | the parent binding's slot carries exactly that name              |          `false`          |
-| `whenParentTagged(criterion)`      | the parent's slot contains that criterion                        |          `false`          |
-| `whenParentTaggedAll(tags)`        | the parent's slot contains **all** the given criteria            |          `false`          |
-| `whenAnyAncestorIs(token)`         | at least one ancestor is that token                              |          `false`          |
-| `whenNoAncestorIs(token)`          | **no** ancestor is that token                                    |          `true`           |
-| `whenAnyAncestorNamed(name)`       | some ancestor carries a slot with exactly that name              |          `false`          |
-| `whenAnyAncestorTagged(criterion)` | some ancestor carries that criterion                             |          `false`          |
-| `whenAnyAncestorTaggedAll(tags)`   | **at least one** ancestor's slot contains **all** given criteria |          `false`          |
+| Constraint                          | Matches when                                                     | With no parent / ancestor |
+| ----------------------------------- | ---------------------------------------------------------------- | :-----------------------: |
+| `whenParentIs(token)`               | the direct parent is that token                                  |          `false`          |
+| `whenNoParentIs(token)`             | the direct parent is **not** that token                          |          `true`           |
+| `whenParentNamed(token, name)`      | the direct parent is that token and its slot carries that name   |          `false`          |
+| `whenParentTagged(criterion)`       | the parent's slot contains that criterion                        |          `false`          |
+| `whenParentTaggedAll(tags)`         | the parent's slot contains **all** the given criteria            |          `false`          |
+| `whenAnyAncestorIs(token)`          | at least one ancestor is that token                              |          `false`          |
+| `whenNoAncestorIs(token)`           | **no** ancestor is that token                                    |          `true`           |
+| `whenAnyAncestorNamed(token, name)` | some ancestor is that token and its slot carries that name       |          `false`          |
+| `whenAnyAncestorTagged(criterion)`  | some ancestor carries that criterion                             |          `false`          |
+| `whenAnyAncestorTaggedAll(tags)`    | **at least one** ancestor's slot contains **all** given criteria |          `false`          |
 
 The two negative forms returning `true` on absence are deliberate: "no parent is X" is trivially true when there is no
 parent at all. The two `…TaggedAll` forms are equivalent to AND-composing several individual criteria, but cost one
@@ -2126,11 +2174,15 @@ predicate call and allocate no intermediate closure. Criteria compare by identit
 > while still winning specificity over an unconstrained binding. Both `…TaggedAll` variants throw
 > `EmptyTagCriteriaError` right at the call site.
 
-> **Normative — a slot name nobody declares.** `whenParentNamed`/`whenAnyAncestorNamed` expect a string, so a typo
+> **Normative — a slot name nobody declares.** A slot name is a bare string, so a name the token does not type — a token
+> declaring no `Names`, or the reserved criterion `slotName.of(n)` handed to a `…Tagged` helper — can be a typo that
 > produces a constraint that is never true and that nobody reports. `validate()` throws `UnreachableConstraintError`
-> when no binding anywhere in the container chain declares that slot name. The requirement survives `when()` chaining: a
-> composed predicate carries both sides' requirements, so narrowing a helper-built constraint does not hide it from
-> `validate()`.
+> when the name is not declared where the constraint waits for it: for `whenParentNamed(T, n)` /
+> `whenAnyAncestorNamed(T, n)`, on a binding **of `T`** in the container chain; for a reserved criterion in
+> `whenParentTagged`, `whenAnyAncestorTagged` or either `…TaggedAll`, on a binding of any token. A criterion of any
+> other key records nothing — it is minted from a typed key, so it cannot be a typo. The requirement survives `when()`
+> chaining: a composed predicate carries both sides' requirements, so narrowing a helper-built constraint does not hide
+> it from `validate()`.
 
 > **Exact shape:** `src/resolution/select/constraints.ts`.
 
@@ -2142,23 +2194,23 @@ token). `ctx.ancestors` is every frame above `ctx.parent`, ordered from nearest 
 
 > **Normative — the canonical implementation table.**
 >
-> | Function                           | Logic                                                                           |
-> | ---------------------------------- | ------------------------------------------------------------------------------- |
-> | `whenParentIs(token)`              | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token)`       |
-> | `whenNoParentIs(token)`            | `ctx.parent === undefined \|\| ctx.parent.tokenName !== tokenNameOf(token)`     |
-> | `whenAnyAncestorIs(token)`         | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token))`                   |
-> | `whenNoAncestorIs(token)`          | `ctx.ancestors.every(f => f.tokenName !== tokenNameOf(token))`                  |
-> | `whenParentNamed(name)`            | `ctx.parent !== undefined && ctx.parent.slot.name === name`                     |
-> | `whenAnyAncestorNamed(name)`       | `ctx.ancestors.some(f => f.slot.name === name)`                                 |
-> | `whenParentTagged(criterion)`      | `ctx.parent !== undefined && ctx.parent.slot.tags.includes(criterion)`          |
-> | `whenAnyAncestorTagged(criterion)` | `ctx.ancestors.some(f => f.slot.tags.includes(criterion))`                      |
-> | `whenParentTaggedAll(tags)`        | `ctx.parent !== undefined && tags.every(t => ctx.parent.slot.tags.includes(t))` |
-> | `whenAnyAncestorTaggedAll(tags)`   | `ctx.ancestors.some(f => tags.every(t => f.slot.tags.includes(t)))`             |
+> | Function                            | Logic                                                                                                      |
+> | ----------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+> | `whenParentIs(token)`               | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token)`                                  |
+> | `whenNoParentIs(token)`             | `ctx.parent === undefined \|\| ctx.parent.tokenName !== tokenNameOf(token)`                                |
+> | `whenAnyAncestorIs(token)`          | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token))`                                              |
+> | `whenNoAncestorIs(token)`           | `ctx.ancestors.every(f => f.tokenName !== tokenNameOf(token))`                                             |
+> | `whenParentNamed(token, name)`      | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token) && ctx.parent.slot.name === name` |
+> | `whenAnyAncestorNamed(token, name)` | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token) && f.slot.name === name)`                      |
+> | `whenParentTagged(criterion)`       | `ctx.parent !== undefined && ctx.parent.slot.tags.includes(criterion)`                                     |
+> | `whenAnyAncestorTagged(criterion)`  | `ctx.ancestors.some(f => f.slot.tags.includes(criterion))`                                                 |
+> | `whenParentTaggedAll(tags)`         | `ctx.parent !== undefined && tags.every(t => ctx.parent.slot.tags.includes(t))`                            |
+> | `whenAnyAncestorTaggedAll(tags)`    | `ctx.ancestors.some(f => tags.every(t => f.slot.tags.includes(t)))`                                        |
 
-> **The named variants read `slot.name`, not `currentResolveOptions`.** `whenParentNamed("console")` asks "does the
-> parent's binding have `whenNamed("console")`?" — not "was the parent resolved with the hint `{ name: "console" }`?".
-> Those are different questions: a binding can match the slot `"console"` without any resolve hint when it is the only
-> candidate, and vice versa.
+> **The named variants read `slot.name`, not `currentResolveOptions`.** `whenParentNamed(Logger, "console")` asks "is
+> the parent a `Logger` binding declaring `whenNamed("console")`?" — not "was the parent resolved with the hint
+> `{ name: "console" }`?". Those are different questions: a binding can match the slot `"console"` without any resolve
+> hint when it is the only candidate, and vice versa.
 
 > **Why identity comparison is enough.** Criteria are interned, so each `[key, value]` has exactly one object; comparing
 > by identity therefore gives the same answer as `Object.is` on the value — handling `NaN` correctly and keeping `+0`
@@ -2199,25 +2251,27 @@ receive `prodConfig`.
 **`whenParentNamed` — a logger that knows which slot of `Database` it serves:**
 
 ```ts
-import { whenParentNamed } from "@codefast/di";
+import { token, whenParentNamed } from "@codefast/di";
+
+const Database = token<Database, "primary" | "replica">("app:Database");
 
 container.bind(Database).to(PrimaryDatabase).whenNamed("primary").singleton();
 container.bind(Database).to(ReplicaDatabase).whenNamed("replica").singleton();
 
-container.bind(Logger).to(PrimaryLogger).when(whenParentNamed("primary"));
+container.bind(Logger).to(PrimaryLogger).when(whenParentNamed(Database, "primary"));
 
-container.bind(Logger).to(ReplicaLogger).when(whenParentNamed("replica"));
+container.bind(Logger).to(ReplicaLogger).when(whenParentNamed(Database, "replica"));
 ```
 
-When `PrimaryDatabase` is resolved (binding slot `"primary"`), it injects `PrimaryLogger` because
-`ctx.parent.slot.name === "primary"`.
+When `PrimaryDatabase` is resolved (binding slot `"primary"`), it injects `PrimaryLogger` because the parent frame is a
+`Database` binding whose `slot.name` is `"primary"`. The token types the name, so `"primry"` is a compile error.
 
 **`whenAnyAncestorTagged` — pick different infrastructure by environment tag:**
 
 ```ts
 import { tag, whenAnyAncestorTagged } from "@codefast/di";
 
-const Env = tag<"test" | "prod">("env");
+const Env = tag<"test" | "prod">("app:env");
 
 // Some ancestor in the chain carries env=test → use the sandbox
 container
@@ -2237,8 +2291,8 @@ container
 ```ts
 import { tag, whenParentTaggedAll } from "@codefast/di";
 
-const Env = tag<"test" | "prod">("env");
-const Tier = tag<"basic" | "premium">("tier");
+const Env = tag<"test" | "prod">("app:env");
+const Tier = tag<"basic" | "premium">("app:tier");
 
 // PremiumPlugin is only injected when the parent has BOTH env=prod AND tier=premium
 container
@@ -2350,11 +2404,11 @@ real source path; **there is no `@codefast/di/constraints` alias**.
 ```ts
 import { SyncModule } from "@codefast/di";
 
-export const LoggerModule = SyncModule.create("Logger", (builder) => {
+export const LoggerModule = SyncModule.create("app:Logger", (builder) => {
   builder.bind(Logger).to(ConsoleLogger).singleton();
 });
 
-export const AppModule = SyncModule.create("App", (builder) => {
+export const AppModule = SyncModule.create("app:Root", (builder) => {
   builder.import(LoggerModule);
   builder.bind(Config).toConstantValue(loadConfig());
   builder.bind(App).toSelf().singleton();
@@ -2364,7 +2418,7 @@ export const AppModule = SyncModule.create("App", (builder) => {
 ### Async module
 
 ```ts
-export const DatabaseModule = AsyncModule.create("Database", async (builder) => {
+export const DatabaseModule = AsyncModule.create("app:Database", async (builder) => {
   const config = await loadRemoteConfig();
 
   builder.import(LoggerModule); // a SyncModule can be imported by an AsyncModuleBuilder
@@ -2416,12 +2470,12 @@ testContainer.rebind(Database).toConstantValue(mockDatabase);
 
 ```ts
 // Compile error — a SyncModule cannot import an AsyncModule
-export const AppModule = SyncModule.create("App", (builder) => {
+export const AppModule = SyncModule.create("app:Root", (builder) => {
   builder.import(DatabaseModule); // TypeScript error: AsyncModule is not assignable to SyncModule
 });
 
 // Right — convert to an AsyncModule when you need to import one
-export const AppModule = AsyncModule.create("App", async (builder) => {
+export const AppModule = AsyncModule.create("app:Root", async (builder) => {
   builder.import(DatabaseModule); // OK — AsyncModuleBuilder accepts both SyncModule and AsyncModule
 });
 ```
@@ -2490,10 +2544,10 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 Every message states the way out, not merely the symptom. Two representative examples:
 
 ```
-No binding for 'Logger' matching { name: 'file' }. Available slots: [default, name:console].
+No binding for 'app:Logger' matching { name: 'file' }. Available slots: [default, name:console].
 
-Token 'App' requires async resolution because 'Database' in its dependency
-chain has an async factory. Use container.resolveAsync(App).
+Token 'app:Api' requires async resolution because 'app:Database' in its dependency
+chain has an async factory. Use container.resolveAsync(Api).
 ```
 
 ### The boundary between a library bug and a caller error

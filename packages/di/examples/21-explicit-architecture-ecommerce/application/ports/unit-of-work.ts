@@ -8,4 +8,4 @@ export interface UnitOfWork {
 }
 
 /** The injection token that binds the `UnitOfWork` port to its adapter. */
-export const UnitOfWorkToken = token<UnitOfWork>("UnitOfWork");
+export const UnitOfWorkToken = token<UnitOfWork>("explicit-architecture-ecommerce:UnitOfWork");

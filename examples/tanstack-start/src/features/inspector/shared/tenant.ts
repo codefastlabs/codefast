@@ -16,8 +16,8 @@ export type Tier = (typeof TIERS)[number];
  * @remarks Declared once and shared, so the bind site and the request site cannot drift: the value
  * type is checked at both ends, and a criterion is the same interned object on either side.
  */
-export const REGION_TAG = tag<Region>("region");
-export const TIER_TAG = tag<Tier>("tier");
+export const REGION_TAG = tag<Region>("inspector:region");
+export const TIER_TAG = tag<Tier>("inspector:tier");
 
 /** What one request carries; every slot decision is taken against this. */
 export interface TenantContext {

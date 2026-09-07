@@ -10,8 +10,8 @@
  * whenNoParentIs(T)       | direct parent token !== T  (or no parent)
  * whenAnyAncestorIs(T)    | any token in the ancestor chain === T
  * whenNoAncestorIs(T)     | no token in the ancestor chain === T
- * whenParentNamed(n)      | direct parent was resolved with name n
- * whenAnyAncestorNamed(n) | any ancestor was resolved with name n
+ * whenParentNamed(T, n)   | direct parent token === T at the slot named n
+ * whenAnyAncestorNamed(T, n) | any ancestor token === T at the slot named n
  * whenParentTagged(c)     | direct parent slot carries criterion c
  * whenParentTaggedAll([c]) | direct parent slot carries ALL given criteria
  * whenAnyAncestorTagged(c)     | any ancestor slot carries criterion c
@@ -41,10 +41,10 @@ import {
 
 import { section, step } from "#/examples/support/log";
 
-const BACKEND_TAG = tag<"memcached" | "redis">("backend");
-const REGION_TAG = tag<"eu" | "us">("region");
-const TENANT_TAG = tag<"enterprise" | "starter">("tenant");
-const TIER_TAG = tag<"free" | "paid">("tier");
+const BACKEND_TAG = tag<"memcached" | "redis">("extended-constraints:backend");
+const REGION_TAG = tag<"eu" | "us">("extended-constraints:region");
+const TENANT_TAG = tag<"enterprise" | "starter">("extended-constraints:tenant");
+const TIER_TAG = tag<"free" | "paid">("extended-constraints:tier");
 
 // ── Shared logger interface ──────────────────────────────────────────────────────────────────────────────────────────
 
@@ -66,9 +66,9 @@ function makeLogger(source: string): Logger {
 
 section("1. whenParentIs / whenNoParentIs");
 
-const LoggerToken = token<Logger>("Logger");
-const OrderServiceToken = token<OrderService>("OrderService");
-const BillingServiceToken = token<BillingService>("BillingService");
+const LoggerToken = token<Logger>("extended-constraints:Logger");
+const OrderServiceToken = token<OrderService>("extended-constraints:OrderService");
+const BillingServiceToken = token<BillingService>("extended-constraints:BillingService");
 
 @injectable([inject(LoggerToken)])
 class OrderService {
@@ -118,11 +118,11 @@ parentIsContainer.resolve(BillingServiceToken).run(); // [silent]  processing bi
 
 section("2. whenAnyAncestorIs / whenNoAncestorIs");
 
-const RiskScorerToken = token<RiskScorer>("RiskScorer");
-const FraudCheckerToken = token<FraudChecker>("FraudChecker");
-const PaymentOrchestratorToken = token<PaymentOrchestrator>("PaymentOrchestrator");
-const InvoiceBuilderToken = token<InvoiceBuilder>("InvoiceBuilder");
-const BillingOrchestratorToken = token<BillingOrchestrator>("BillingOrchestrator");
+const RiskScorerToken = token<RiskScorer>("extended-constraints:RiskScorer");
+const FraudCheckerToken = token<FraudChecker>("extended-constraints:FraudChecker");
+const PaymentOrchestratorToken = token<PaymentOrchestrator>("extended-constraints:PaymentOrchestrator");
+const InvoiceBuilderToken = token<InvoiceBuilder>("extended-constraints:InvoiceBuilder");
+const BillingOrchestratorToken = token<BillingOrchestrator>("extended-constraints:BillingOrchestrator");
 
 @injectable([inject(LoggerToken)])
 class RiskScorer {
@@ -198,18 +198,19 @@ ancestorIsContainer.resolve(BillingOrchestratorToken).run(); // [standard] build
 // 3. whenParentNamed / whenAnyAncestorNamed
 //
 //    Scenario: a DataSource token has two named bindings ("primary", "replica").
-//    A QueryRunner also uses DataSource — its binding is resolved with name
-//    "replica". The Logger injected into DataSource uses whenParentNamed to
-//    distinguish which DataSource instance is being constructed.
+//    A QueryRunner also uses DataSource — its dependency asks for the slot named
+//    "replica". The Logger injected into DataSource uses whenParentNamed to read
+//    which DataSource slot its parent binding declares, so the names the token
+//    declares are what the constraint completes and checks.
 //
 //    whenAnyAncestorNamed reaches past the direct parent: a Logger two levels
-//    below a named ConnectionPool still selects by that ancestor's name.
+//    below a named ConnectionPool still selects by that ancestor's slot.
 // ─────────────────────────────────────────────────────────────────────────────
 
 section("3. whenParentNamed / whenAnyAncestorNamed");
 
-const DataSourceToken = token<DataSource>("DataSource");
-const QueryRunnerToken = token<QueryRunner>("QueryRunner");
+const DataSourceToken = token<DataSource, "primary" | "replica">("extended-constraints:DataSource");
+const QueryRunnerToken = token<QueryRunner>("extended-constraints:QueryRunner");
 
 @injectable([inject(LoggerToken)])
 class DataSource {
@@ -232,10 +233,16 @@ class QueryRunner {
 
 const namedContainer = Container.create();
 
-// Logger adapts based on which named DataSource is being built.
-namedContainer.bind(LoggerToken).toConstantValue(makeLogger("primary-logger")).when(whenParentNamed("primary"));
+// Logger adapts based on which DataSource slot is being built — the token types the name.
+namedContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("primary-logger"))
+  .when(whenParentNamed(DataSourceToken, "primary"));
 
-namedContainer.bind(LoggerToken).toConstantValue(makeLogger("replica-logger")).when(whenParentNamed("replica"));
+namedContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("replica-logger"))
+  .when(whenParentNamed(DataSourceToken, "replica"));
 
 // Fallback for contexts with no name (e.g. QueryRunner itself).
 namedContainer
@@ -254,11 +261,35 @@ namedContainer.resolve(DataSourceToken, { name: "replica" }).connect(); // [repl
 // The Logger inside that DataSource sees parent.slot.name === "replica".
 namedContainer.resolve(QueryRunnerToken).execute(); // [replica-logger] connected
 
+// Two parent tokens sharing a slot name. A name is a label on one token's slots, so
+// "primary" on ArchiveSource is another slot than "primary" on DataSource — and the token
+// argument is what lets the two Logger bindings tell them apart. A name alone could not:
+// both parents carry slot.name === "primary".
+const ArchiveSourceToken = token<DataSource, "primary">("extended-constraints:ArchiveSource");
+
+const sharedNameContainer = Container.create();
+
+sharedNameContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("datasource-primary-logger"))
+  .when(whenParentNamed(DataSourceToken, "primary"));
+
+sharedNameContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("archive-primary-logger"))
+  .when(whenParentNamed(ArchiveSourceToken, "primary"));
+
+sharedNameContainer.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
+sharedNameContainer.bind(ArchiveSourceToken).to(DataSource).whenNamed("primary").singleton();
+
+sharedNameContainer.resolve(DataSourceToken, { name: "primary" }).connect(); // [datasource-primary-logger]
+sharedNameContainer.resolve(ArchiveSourceToken, { name: "primary" }).connect(); // [archive-primary-logger]
+
 // whenAnyAncestorNamed reaches past the direct parent: the audit channel is
 // chosen from the named ConnectionPool two levels up, even though the Logger's
 // immediate parent (HealthProbe) carries no name.
-const ConnectionPoolToken = token<ConnectionPool>("ConnectionPool");
-const HealthProbeToken = token<HealthProbe>("HealthProbe");
+const ConnectionPoolToken = token<ConnectionPool, "primary" | "replica">("extended-constraints:ConnectionPool");
+const HealthProbeToken = token<HealthProbe>("extended-constraints:HealthProbe");
 
 @injectable([inject(HealthProbeToken)])
 class ConnectionPool {
@@ -280,9 +311,15 @@ class HealthProbe {
 
 const ancestorContainer = Container.create();
 
-ancestorContainer.bind(LoggerToken).toConstantValue(makeLogger("primary-audit")).when(whenAnyAncestorNamed("primary"));
+ancestorContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("primary-audit"))
+  .when(whenAnyAncestorNamed(ConnectionPoolToken, "primary"));
 
-ancestorContainer.bind(LoggerToken).toConstantValue(makeLogger("replica-audit")).when(whenAnyAncestorNamed("replica"));
+ancestorContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("replica-audit"))
+  .when(whenAnyAncestorNamed(ConnectionPoolToken, "replica"));
 
 // Transient so each resolve rebuilds the chain and re-selects the logger by ancestor.
 ancestorContainer.bind(ConnectionPoolToken).to(ConnectionPool).whenNamed("primary").transient();
@@ -308,9 +345,9 @@ interface CacheAdapter {
   read(key: string): string | undefined;
 }
 
-const CacheAdapterToken = token<CacheAdapter>("CacheAdapter");
-const SessionStoreToken = token<SessionStore>("SessionStore");
-const ProductCacheToken = token<ProductCache>("ProductCache");
+const CacheAdapterToken = token<CacheAdapter>("extended-constraints:CacheAdapter");
+const SessionStoreToken = token<SessionStore>("extended-constraints:SessionStore");
+const ProductCacheToken = token<ProductCache>("extended-constraints:ProductCache");
 
 // SessionStore needs backend=redis AND region=eu.
 @injectable([inject(CacheAdapterToken)])
@@ -389,9 +426,9 @@ interface AuditLogger {
   audit(event: string): void;
 }
 
-const AuditLoggerToken = token<AuditLogger>("AuditLogger");
-const ReportGeneratorToken = token<ReportGenerator>("ReportGenerator");
-const AnalyticsDashboardToken = token<AnalyticsDashboard>("AnalyticsDashboard");
+const AuditLoggerToken = token<AuditLogger>("extended-constraints:AuditLogger");
+const ReportGeneratorToken = token<ReportGenerator>("extended-constraints:ReportGenerator");
+const AnalyticsDashboardToken = token<AnalyticsDashboard>("extended-constraints:AnalyticsDashboard");
 
 @injectable([inject(AuditLoggerToken)])
 class ReportGenerator {
@@ -464,8 +501,8 @@ tenantContainer.resolve(AnalyticsDashboardToken, { tags: [TENANT_TAG.of("starter
 //  whenNoParentIs(T)            — default impl for everyone except one consumer
 //  whenAnyAncestorIs(T)         — propagate behaviour from a root service down
 //  whenNoAncestorIs(T)          — opt out of behaviour when a root is absent
-//  whenParentNamed(n)           — adapt to which named slot the parent was resolved in
-//  whenAnyAncestorNamed(n)      — same but for any depth
+//  whenParentNamed(T, n)        — adapt to which slot of T the parent binding declares
+//  whenAnyAncestorNamed(T, n)   — same but for any depth
 //  whenParentTagged(k,v)        — adapt to a single tag on the immediate parent
 //  whenParentTaggedAll([…])     — adapt to a combination of tags (AND) on parent
 //  whenAnyAncestorTagged(k,v)   — propagate a single tag down the full chain

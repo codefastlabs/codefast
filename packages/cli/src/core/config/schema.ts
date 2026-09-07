@@ -159,6 +159,16 @@ const codefastAuditReactConfigSchema = z
   .strict();
 
 /**
+ * Display-name audit defaults — the scan always starts at the repo root, so only exceptions are configured.
+ */
+const codefastAuditDisplayNamesConfigSchema = z
+  .object({
+    /** Offending calls as written, or `repo/relative/path.ts:<call>` entries, to ignore. */
+    allowlist: z.array(z.string()).optional(),
+  })
+  .strict();
+
+/**
  * Zod schema grouping the per-audit configurations under `audit`.
  *
  * @since 0.3.16-canary.0
@@ -169,6 +179,7 @@ const codefastAuditConfigSchema = z
     links: codefastAuditLinksConfigSchema.optional(),
     comments: codefastAuditCommentsConfigSchema.optional(),
     react: codefastAuditReactConfigSchema.optional(),
+    displayNames: codefastAuditDisplayNamesConfigSchema.optional(),
   })
   .strict();
 

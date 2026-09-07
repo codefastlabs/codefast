@@ -10,6 +10,7 @@ import {
   constraintRequirementsOf,
   mergingConstraintRequirements,
   requiringAncestorSlotName,
+  requiringAncestorSlotNames,
 } from "#/core/constraint-requirement";
 import type { BindingConstraint } from "#/core/types";
 
@@ -26,10 +27,28 @@ describe("constraint requirements", () => {
   });
 
   it("a helper-built predicate answers both readers", () => {
-    const predicate = requiringAncestorSlotName(bare(), "primary", "whenParentNamed");
+    const predicate = requiringAncestorSlotName(bare(), {
+      tokenName: "Database",
+      name: "primary",
+      helperName: "whenParentNamed",
+    });
 
-    expect(constraintRequirementOf(predicate)?.name).toBe("primary");
+    expect(constraintRequirementOf(predicate)).toEqual({
+      requires: "ancestorSlotName",
+      tokenName: "Database",
+      name: "primary",
+      helperName: "whenParentNamed",
+    });
     expect(constraintRequirementsOf(predicate)).toHaveLength(1);
+  });
+
+  it("a list records one requirement per waited-for name", () => {
+    const predicate = requiringAncestorSlotNames(bare(), [
+      { tokenName: undefined, name: "first", helperName: "whenParentTaggedAll" },
+      { tokenName: undefined, name: "second", helperName: "whenParentTaggedAll" },
+    ]);
+
+    expect(constraintRequirementsOf(predicate).map((requirement) => requirement.name)).toEqual(["first", "second"]);
   });
 
   it("merging two bare predicates records nothing on the composite", () => {
@@ -39,8 +58,16 @@ describe("constraint requirements", () => {
   });
 
   it("merging carries one side's requirement, and both sides' requirements in order", () => {
-    const left = requiringAncestorSlotName(bare(), "first", "whenParentNamed");
-    const right = requiringAncestorSlotName(bare(), "second", "whenAnyAncestorNamed");
+    const left = requiringAncestorSlotName(bare(), {
+      tokenName: undefined,
+      name: "first",
+      helperName: "whenParentNamed",
+    });
+    const right = requiringAncestorSlotName(bare(), {
+      tokenName: undefined,
+      name: "second",
+      helperName: "whenAnyAncestorNamed",
+    });
 
     const oneSided = mergingConstraintRequirements(bare(), left, bare());
     expect(constraintRequirementOf(oneSided)?.name).toBe("first");
@@ -52,14 +79,22 @@ describe("constraint requirements", () => {
   });
 
   it("a composed composite keeps merging when narrowed again", () => {
-    const left = requiringAncestorSlotName(bare(), "first", "whenParentNamed");
-    const right = requiringAncestorSlotName(bare(), "second", "whenAnyAncestorNamed");
+    const left = requiringAncestorSlotName(bare(), {
+      tokenName: undefined,
+      name: "first",
+      helperName: "whenParentNamed",
+    });
+    const right = requiringAncestorSlotName(bare(), {
+      tokenName: undefined,
+      name: "second",
+      helperName: "whenAnyAncestorNamed",
+    });
     const once = mergingConstraintRequirements(bare(), left, right);
 
     const twice = mergingConstraintRequirements(
       bare(),
       once,
-      requiringAncestorSlotName(bare(), "third", "whenParentNamed"),
+      requiringAncestorSlotName(bare(), { tokenName: undefined, name: "third", helperName: "whenParentNamed" }),
     );
 
     expect(constraintRequirementsOf(twice).map((requirement) => requirement.name)).toEqual([

@@ -7,24 +7,35 @@ import {
   linkAuditRunRequestSchema,
   reactAuditRunRequestSchema,
   rtlAuditRunRequestSchema,
+  displayNameAuditRunRequestSchema,
 } from "#/audit/cli-schema";
 import {
   exitCodeForCommentAuditResult,
   exitCodeForLinkAuditResult,
   exitCodeForReactAuditResult,
   exitCodeForRtlAuditResult,
+  exitCodeForDisplayNameAuditResult,
   formatCommentAuditJsonOutput,
   formatLinkAuditJsonOutput,
   formatReactAuditJsonOutput,
   formatRtlAuditJsonOutput,
+  formatDisplayNameAuditJsonOutput,
   presentCommentAuditResult,
   presentLinkAuditResult,
   presentReactAuditResult,
   presentRtlAuditResult,
+  presentDisplayNameAuditResult,
 } from "#/audit/output";
-import { prepareCommentAudit, prepareLinkAudit, prepareReactAudit, prepareRtlAudit } from "#/audit/prepare";
+import {
+  prepareCommentAudit,
+  prepareLinkAudit,
+  prepareReactAudit,
+  prepareRtlAudit,
+  prepareDisplayNameAudit,
+} from "#/audit/prepare";
 import { runRtlAudit } from "#/audit/run";
 import { runCommentAudit } from "#/audit/run-comments";
+import { runDisplayNameAudit } from "#/audit/run-display-names";
 import { runLinkAudit } from "#/audit/run-links";
 import { runReactAudit } from "#/audit/run-react";
 import { readOptionalPositionalArg } from "#/core/cli/positional";
@@ -163,6 +174,47 @@ export function createAuditCommand(): Command {
         presentReactAuditResult(outcome.value);
       }
       process.exitCode = exitCodeForReactAuditResult(outcome.value);
+    });
+
+  cmd
+    .command("display-names")
+    .description("Report token(), tag() and module display names that break the <namespace>:<Name> convention")
+    .argument("[target]", "Directory or file to scan (default: the repo root)")
+    .option("--json", "Print one JSON summary on stdout", false)
+    .action(async (target: string | undefined, opts: { json?: boolean }) => {
+      const prelude = await prepareDisplayNameAudit(nodeFilesystem, {
+        currentWorkingDirectory: process.cwd(),
+        rawTarget: readOptionalPositionalArg(target),
+      });
+      if (!consumeCliAppError(prelude)) {
+        return;
+      }
+      const { rootDir, targetPath, allowlist } = prelude.value;
+      const parsed = parseWithSchema(displayNameAuditRunRequestSchema, {
+        rootDir,
+        targetPath,
+        allowlist,
+        json: !!opts.json,
+      });
+      if (!consumeCliAppError(parsed)) {
+        return;
+      }
+
+      const outcome = runDisplayNameAudit(nodeFilesystem, {
+        rootDir: parsed.value.rootDir,
+        targetPath: parsed.value.targetPath,
+        allowlist: parsed.value.allowlist ?? [],
+      });
+      if (!consumeCliAppError(outcome)) {
+        return;
+      }
+
+      if (parsed.value.json) {
+        logger.out(formatDisplayNameAuditJsonOutput(outcome.value, rootDir));
+      } else {
+        presentDisplayNameAuditResult(outcome.value);
+      }
+      process.exitCode = exitCodeForDisplayNameAuditResult(outcome.value);
     });
 
   cmd

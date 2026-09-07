@@ -1,4 +1,4 @@
-const LoggerToken = token<Logger>("Logger");
+const LoggerToken = token<Logger>("shop:Logger");
 
 @injectable([LoggerToken])
 class OrderService {

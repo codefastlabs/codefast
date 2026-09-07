@@ -1,3 +1,4 @@
+import type { ConstraintRequirement } from "#/core/constraint-requirement";
 import type { BindingTag } from "#/core/tag";
 import { slotName } from "#/core/tag";
 import type { BindingIdentifier, BindingScope, ResolveOptions } from "#/core/types";
@@ -235,14 +236,20 @@ export class UnreachableConstraintError extends DiError {
   readonly code = "UNREACHABLE_CONSTRAINT";
   readonly tokenName: string;
   readonly requiredName: string;
+  /** The token the name was required on, or `undefined` when the constraint named no token. */
+  readonly requiredTokenName: string | undefined;
   readonly helperName: string;
 
-  constructor(tokenName: string, requiredName: string, helperName: string) {
+  constructor(tokenName: string, requirement: ConstraintRequirement) {
+    const { name, helperName, tokenName: requiredTokenName } = requirement;
+    const scope = requiredTokenName === undefined ? "no binding" : `no binding for '${requiredTokenName}'`;
+    const target = requiredTokenName === undefined ? "the binding it should match" : `a '${requiredTokenName}' binding`;
     super(
-      `The binding for '${tokenName}' is constrained by ${helperName}('${requiredName}'), but no binding in this container or its ancestors declares the slot name '${requiredName}', so the constraint can never hold. Name the slot with .whenNamed('${requiredName}') on the binding it should match, or correct the name here.`,
+      `The binding for '${tokenName}' is constrained by ${helperName} waiting on the slot name '${name}', but ${scope} in this container or its ancestors declares it, so the constraint can never hold. Name the slot with .whenNamed('${name}') on ${target}, or correct the name here.`,
     );
     this.tokenName = tokenName;
-    this.requiredName = requiredName;
+    this.requiredName = name;
+    this.requiredTokenName = requiredTokenName;
     this.helperName = helperName;
   }
 }

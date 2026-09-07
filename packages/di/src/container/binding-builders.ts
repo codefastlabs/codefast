@@ -96,12 +96,12 @@ export interface BindingRegistration {
  *
  * @since 0.5.0-canary.8
  */
-export class BindingChain<Value>
+export class BindingChain<Value, Names extends string = string>
   implements
-    AliasBindingBuilder,
-    BindingBuilder<Value>,
-    BindToBuilder<Value>,
-    ConstantBindingBuilder<Value>,
+    AliasBindingBuilder<Names>,
+    BindingBuilder<Value, Names>,
+    BindToBuilder<Value, Names>,
+    ConstantBindingBuilder<Value, Names>,
     ScopedBindingBuilder<Value>,
     SingletonBindingBuilder<Value>,
     SingletonLifecycleBuilder<Value>,
@@ -113,10 +113,10 @@ export class BindingChain<Value>
   #displacedByChain: Array<Binding> | undefined;
   // Registry version after this chain's last write — a mismatch means someone else wrote in between.
   #versionAfterLastWrite = -1;
-  readonly #token: Token<Value> | Constructor<Value>;
+  readonly #token: Token<Value, Names> | Constructor<Value>;
   readonly #registration: BindingRegistration;
 
-  constructor(token: Token<Value> | Constructor<Value>, registration: BindingRegistration) {
+  constructor(token: Token<Value, Names> | Constructor<Value>, registration: BindingRegistration) {
     this.#token = token;
     this.#registration = registration;
   }
@@ -140,33 +140,33 @@ export class BindingChain<Value>
 
   // ── Registration ───────────────────────────────────────────────────────────────────────────────────────────────────
 
-  to(type: Constructor<Value>): BindingBuilder<Value> {
+  to(type: Constructor<Value>): BindingBuilder<Value, Names> {
     return this.#register({ kind: "class", target: type, scope: "transient" });
   }
 
-  toSelf(): BindingBuilder<Value> {
+  toSelf(): BindingBuilder<Value, Names> {
     if (typeof this.#token !== "function") {
       throw new SelfBindingRequiresClassError(tokenName(this.#token));
     }
     return this.#register({ kind: "class", target: this.#token, scope: "transient" });
   }
 
-  toConstantValue(value: Value): ConstantBindingBuilder<Value> {
+  toConstantValue(value: Value): ConstantBindingBuilder<Value, Names> {
     return this.#register({ kind: "constant", scope: "singleton", value });
   }
 
-  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value> {
+  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value, Names> {
     return this.#register({ kind: "dynamic", factory, scope: "transient" });
   }
 
-  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
+  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value, Names> {
     return this.#register({ kind: "dynamic-async", factory, scope: "transient" });
   }
 
   toResolved<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
-  ): BindingBuilder<Value> {
+  ): BindingBuilder<Value, Names> {
     return this.#register({
       kind: "resolved",
       deps: deps.map((dependency) => normalizeToDescriptor(dependency)),
@@ -178,7 +178,7 @@ export class BindingChain<Value>
   toResolvedAsync<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
-  ): BindingBuilder<Value> {
+  ): BindingBuilder<Value, Names> {
     return this.#register({
       kind: "resolved-async",
       deps: deps.map((dependency) => normalizeToDescriptor(dependency)),
@@ -187,7 +187,7 @@ export class BindingChain<Value>
     });
   }
 
-  toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
+  toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder<Names> {
     return this.#register({ kind: "alias", scope: "transient", target });
   }
 
@@ -235,7 +235,7 @@ export class BindingChain<Value>
     return this.#reslot(binding.slot, composed);
   }
 
-  whenNamed(name: string): this {
+  whenNamed(name: Names): this {
     return this.whenTagged(slotName.of(name));
   }
 

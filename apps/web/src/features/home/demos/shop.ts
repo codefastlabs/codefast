@@ -20,13 +20,13 @@ export interface PaymentGateway {
 }
 
 // Every service is bound through a named token: a class's own name does not survive the client bundle's minifier.
-export const ShopConfigToken = token<ShopConfig>("ShopConfig");
-export const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway");
-export const LoggerToken = token<Logger>("Logger");
-export const PriceCatalogToken = token<PriceCatalog>("PriceCatalog");
-export const InventoryToken = token<Inventory>("Inventory");
-export const RequestContextToken = token<RequestContext>("RequestContext");
-export const OrderServiceToken = token<OrderService>("OrderService");
+export const ShopConfigToken = token<ShopConfig>("shop:ShopConfig");
+export const PaymentGatewayToken = token<PaymentGateway>("shop:PaymentGateway");
+export const LoggerToken = token<Logger>("shop:Logger");
+export const PriceCatalogToken = token<PriceCatalog>("shop:PriceCatalog");
+export const InventoryToken = token<Inventory>("shop:Inventory");
+export const RequestContextToken = token<RequestContext>("shop:RequestContext");
+export const OrderServiceToken = token<OrderService>("shop:OrderService");
 
 // Numbers every constructed instance, so the log can show which ones the container reused.
 let sequence = 0;

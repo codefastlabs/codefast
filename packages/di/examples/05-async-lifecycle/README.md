@@ -102,7 +102,7 @@ binding.
 When module setup itself is async (e.g. fetching remote config):
 
 ```ts
-const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
+const InfrastructureModule = Module.createAsync("async-lifecycle:Infra", async (builder) => {
   const config = await fetchConfig(); // await during module bootstrap
   builder.bind(ConfigToken).toConstantValue(config);
 });

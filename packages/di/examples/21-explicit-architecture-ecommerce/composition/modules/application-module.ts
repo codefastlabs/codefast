@@ -16,7 +16,7 @@ import {
 } from "#/examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
 
 /** Binds the use cases; each `@injectable` class carries its own `inject`/`injectAll` deps. */
-export const applicationModule = Module.create("Application", (builder) => {
+export const applicationModule = Module.create("explicit-architecture-ecommerce:Application", (builder) => {
   builder.bind(GetProductToken).to(GetProduct).singleton();
   builder.bind(ListProductsToken).to(ListProducts).singleton();
   builder.bind(PlaceOrderToken).to(PlaceOrder).singleton();

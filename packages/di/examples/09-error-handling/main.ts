@@ -33,10 +33,10 @@ import { caughtError, item, ok, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const LoggerToken = token<Logger>("Logger");
-const ServiceAToken = token<CircularServiceA>("ServiceA");
-const ServiceBToken = token<CircularServiceB>("ServiceB");
-const DatabaseToken = token<Database>("Database");
+const LoggerToken = token<Logger>("error-handling:Logger");
+const CircularServiceAToken = token<CircularServiceA>("error-handling:CircularServiceA");
+const CircularServiceBToken = token<CircularServiceB>("error-handling:CircularServiceB");
+const DatabaseToken = token<Database>("error-handling:Database");
 
 interface Logger {
   log(message: string): void;
@@ -120,11 +120,15 @@ class CircularServiceB {
 }
 
 const circularContainer = Container.create();
-circularContainer.bind(ServiceAToken).toDynamic((context) => new CircularServiceA(context.resolve(ServiceBToken)));
-circularContainer.bind(ServiceBToken).toDynamic((context) => new CircularServiceB(context.resolve(ServiceAToken)));
+circularContainer
+  .bind(CircularServiceAToken)
+  .toDynamic((context) => new CircularServiceA(context.resolve(CircularServiceBToken)));
+circularContainer
+  .bind(CircularServiceBToken)
+  .toDynamic((context) => new CircularServiceB(context.resolve(CircularServiceAToken)));
 
 try {
-  circularContainer.resolve(ServiceAToken);
+  circularContainer.resolve(CircularServiceAToken);
 } catch (error) {
   caughtError("circular dependency A → B → A", error);
   item("Is CircularDependencyError", error instanceof CircularDependencyError);
@@ -144,13 +148,13 @@ class UnmarkedService {
   constructor(private readonly logger: Logger) {}
 }
 
-const UnmarkedToken = token<UnmarkedService>("UnmarkedService");
+const UnmarkedServiceToken = token<UnmarkedService>("error-handling:UnmarkedService");
 const missingMetadataContainer = Container.create();
 missingMetadataContainer.bind(LoggerToken).toConstantValue({ log: console.log });
-missingMetadataContainer.bind(UnmarkedToken).to(UnmarkedService); // no @injectable on class
+missingMetadataContainer.bind(UnmarkedServiceToken).to(UnmarkedService); // no @injectable on class
 
 try {
-  missingMetadataContainer.resolve(UnmarkedToken);
+  missingMetadataContainer.resolve(UnmarkedServiceToken);
 } catch (error) {
   caughtError("resolve class without @injectable", error);
   item("Is MissingMetadataError", error instanceof MissingMetadataError);
@@ -158,9 +162,9 @@ try {
 
 // Fix: add @injectable, or use toDynamic / toResolved instead
 missingMetadataContainer
-  .rebind(UnmarkedToken)
+  .rebind(UnmarkedServiceToken)
   .toDynamic((context) => new UnmarkedService(context.resolve(LoggerToken)));
-const repairedService = missingMetadataContainer.resolve(UnmarkedToken);
+const repairedService = missingMetadataContainer.resolve(UnmarkedServiceToken);
 item("Fixed with toDynamic", repairedService instanceof UnmarkedService);
 
 // ── 6. ScopeViolationError ───────────────────────────────────────────────────────────────────────────────────────────
@@ -171,8 +175,8 @@ section("6. ScopeViolationError — captive dependency");
 // The singleton is created once and captures the scoped instance forever,
 // breaking the scoped isolation guarantee.
 
-const ScopedServiceToken = token<ScopedService>("ScopedService");
-const SingletonConsumerToken = token<SingletonConsumer>("SingletonConsumer");
+const ScopedServiceToken = token<ScopedService>("error-handling:ScopedService");
+const SingletonConsumerToken = token<SingletonConsumer>("error-handling:SingletonConsumer");
 
 @injectable()
 class ScopedService {
@@ -200,8 +204,8 @@ try {
 
 section("7. AsyncModuleLoadError");
 
-const AsyncDatabaseModule = Module.createAsync("Database", async (builder) => {
-  const DatabaseSetupToken = token<string>("DbSetup");
+const AsyncDatabaseModule = Module.createAsync("error-handling:Database", async (builder) => {
+  const DatabaseSetupToken = token<string>("error-handling:DatabaseSetup");
   builder.bind(DatabaseSetupToken).toConstantValue("connected");
 });
 
