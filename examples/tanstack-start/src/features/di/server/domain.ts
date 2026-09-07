@@ -299,14 +299,14 @@ export const TaskServiceToken = token<TaskService>("tasks:TaskService");
 
 // ── Modules — reusable bundles of bindings ───────────────────────────────────────────────────────────────────────────
 
-export const infrastructureModule = Module.create("infrastructure", (builder) => {
+export const infrastructureModule = Module.create("tasks:Infrastructure", (builder) => {
   builder.bind(ClockToken).to(SystemClock).singleton();
   builder.bind(ActivityLogToken).to(InMemoryActivityLog).singleton();
   // Transient: every resolve returns a brand-new generator instance.
   builder.bind(IdGeneratorToken).to(UuidGenerator).transient();
 });
 
-export const validationModule = Module.create("validation", (builder) => {
+export const validationModule = Module.create("tasks:Validation", (builder) => {
   // Multi-binding: same token, distinct named slots — without whenNamed, last-wins keeps only one.
   builder.bind(TaskValidatorToken).to(NonEmptyTitleValidator).whenNamed("non-empty").singleton();
   builder.bind(TaskValidatorToken).to(MaxTitleLengthValidator).whenNamed("max-length").singleton();
@@ -314,7 +314,7 @@ export const validationModule = Module.create("validation", (builder) => {
   builder.bind(TaskValidationToken).to(CompositeTaskValidator).singleton();
 });
 
-export const domainModule = Module.create("domain", (builder) => {
+export const domainModule = Module.create("tasks:Domain", (builder) => {
   builder.import(infrastructureModule);
   builder.import(validationModule);
   builder.bind(TaskRepositoryToken).to(InMemoryTaskRepository).singleton();
