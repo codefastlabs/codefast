@@ -407,18 +407,29 @@ export const Tokens = {
 
 ### Display names
 
-The string a `token()` or `tag()` takes is its **display name**: what diagnostics print, what
-`ResolutionFrame.tokenName` carries, and what the `when*Is` / `when*Named` constraints compare. It is not the token's
-identity — the object is — so two tokens may share one, and nothing but this rule stops them.
+The string a `token()`, `tag()` or module factory takes is its **display name**: what diagnostics print, what
+`ResolutionFrame.tokenName` carries, and what the `when*Is` / `when*Named` constraints compare. It is not the thing's
+identity — the object is — so two declarations may share one, and nothing but this rule stops them.
 
-> **Normative — a display name is `<namespace>:<Name>`.** The namespace is the owner: the package, app or feature that
-> declares the token (`shop:Logger`, `inspector:Clock`, `@scope/pkg:Config`), and the library's own names sit under
-> `di:` (`di:name`, `di:MetadataReader`). Both halves are non-empty and free of whitespace. The convention holds in the
-> library, the docs and every example, and `pnpm cli:audit:tokens` fails the build where it does not; tests and
-> benchmarks are outside it, since a token there is scoped by its file and meets no other author's.
+> **Normative — a display name is spelled like the TS symbol it stands for, under its owner's namespace:
+> `<namespace>:<Name>`.**
+>
+> | Kind    | Stands for                        | Name half  | Example                            |
+> | ------- | --------------------------------- | ---------- | ---------------------------------- |
+> | token   | a type or class                   | PascalCase | `shop:Logger`, `di:MetadataReader` |
+> | module  | a unit of composition             | PascalCase | `shop:Infra`, `app:Root`           |
+> | tag key | an attribute a request selects on | camelCase  | `shop:cacheTier`, `di:name`        |
+>
+> The namespace is the owner — the kebab-case slug of the package, app or feature that declares the name, or a scoped
+> package name (`@scope/pkg:Config`) — and the library's own names sit under `di:`. Slot names (`whenNamed("primary")`)
+> and tag values (`Region.of("eu")`) are **values**, not display names: they mean something only within one token or one
+> key, so they stay lowercase and take no prefix. The convention holds in the library, the docs and every example, and
+> `pnpm cli:audit:display-names` fails the build where it does not; tests and benchmarks are outside it, since a name
+> there is scoped by its file and meets no other author's.
 
 What it buys: a diagnostic that says `No binding for 'shop:Logger'` names one owner; two features that each declare a
-`Clock` cannot produce a `whenParentIs` false match; and a reader of a doc sample copies the shape a real app needs.
+`Clock` cannot produce a `whenParentIs` false match; a reader tells a token from a tag key from a module by its shape;
+and a doc sample carries the shape a real app needs.
 
 ### Type signature
 
@@ -2393,11 +2404,11 @@ real source path; **there is no `@codefast/di/constraints` alias**.
 ```ts
 import { SyncModule } from "@codefast/di";
 
-export const LoggerModule = SyncModule.create("Logger", (builder) => {
+export const LoggerModule = SyncModule.create("app:Logger", (builder) => {
   builder.bind(Logger).to(ConsoleLogger).singleton();
 });
 
-export const AppModule = SyncModule.create("App", (builder) => {
+export const AppModule = SyncModule.create("app:Root", (builder) => {
   builder.import(LoggerModule);
   builder.bind(Config).toConstantValue(loadConfig());
   builder.bind(App).toSelf().singleton();
@@ -2407,7 +2418,7 @@ export const AppModule = SyncModule.create("App", (builder) => {
 ### Async module
 
 ```ts
-export const DatabaseModule = AsyncModule.create("Database", async (builder) => {
+export const DatabaseModule = AsyncModule.create("app:Database", async (builder) => {
   const config = await loadRemoteConfig();
 
   builder.import(LoggerModule); // a SyncModule can be imported by an AsyncModuleBuilder
@@ -2459,12 +2470,12 @@ testContainer.rebind(Database).toConstantValue(mockDatabase);
 
 ```ts
 // Compile error — a SyncModule cannot import an AsyncModule
-export const AppModule = SyncModule.create("App", (builder) => {
+export const AppModule = SyncModule.create("app:Root", (builder) => {
   builder.import(DatabaseModule); // TypeScript error: AsyncModule is not assignable to SyncModule
 });
 
 // Right — convert to an AsyncModule when you need to import one
-export const AppModule = AsyncModule.create("App", async (builder) => {
+export const AppModule = AsyncModule.create("app:Root", async (builder) => {
   builder.import(DatabaseModule); // OK — AsyncModuleBuilder accepts both SyncModule and AsyncModule
 });
 ```

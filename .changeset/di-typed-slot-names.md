@@ -15,6 +15,7 @@ tokens is what a tag key is for. `validate()` checks the name on that token's bi
 carries the new `requiredTokenName`. The reserved criterion handed to a `…Tagged` helper
 (`whenParentTagged(slotName.of("x"))`) is now validated too, as it is the same bare string.
 
-Display names follow `<namespace>:<Name>` everywhere the package speaks: the docs and examples declare
-`token<Logger>("app:Logger")`, and the package's own `MetadataReaderToken` now prints as `di:MetadataReader`, beside the
-reserved `di:name` key. SPEC gains a normative "Display names" section stating the rule.
+Display names follow one rule everywhere the package speaks — spelled like the TS symbol they stand for, under the
+owner's namespace: `token<Logger>("app:Logger")`, `Module.create("app:Infra", …)`, `tag("app:cacheTier")`. The package's
+own `MetadataReaderToken` now prints as `di:MetadataReader`, beside the reserved `di:name` key. SPEC gains a normative
+"Display names" section stating the rule and its enforcement.

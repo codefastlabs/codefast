@@ -367,11 +367,11 @@ A module is a reusable, stateless bundle of related bindings. Group them once, t
 ```ts
 import { Container, Module } from "@codefast/di";
 
-const InfrastructureModule = Module.create("Infra", (api) => {
+const InfrastructureModule = Module.create("app:Infra", (api) => {
   api.bind(LoggerToken).toConstantValue(console);
 });
 
-const AppModule = Module.create("App", (api) => {
+const AppModule = Module.create("app:Root", (api) => {
   api.import(InfrastructureModule);
   api.bind(UserRepository).toSelf().singleton();
 });
