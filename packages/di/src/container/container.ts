@@ -5,7 +5,7 @@ import { NO_INSTANCE } from "#/core/binding";
 import { effectiveBindingScope } from "#/core/binding-scope";
 import type { ConstraintRequirement } from "#/core/constraint-requirement";
 import { constraintRequirementsOf } from "#/core/constraint-requirement";
-import { getOrInsert } from "#/core/map-upsert";
+import { getOrInsert, getOrInsertComputed } from "#/core/map-upsert";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#/core/module";
 import { isSyncModule, MODULE_SETUP } from "#/core/module";
 import { BindingRegistry } from "#/core/registry";
@@ -63,6 +63,9 @@ function isSlotNameDeclared(
   }
   return false;
 }
+
+/** Hoisted so the slot-name index's `getOrInsertComputed` allocates only on a miss, no closure per call. */
+const newSlotNameSet = (): Set<string> => new Set<string>();
 
 // ── Container interface ──────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -816,7 +819,7 @@ class DefaultContainer implements Container {
     for (const binding of this.#registry.allBindings()) {
       const name = binding.slot.name;
       if (name !== undefined) {
-        getOrInsert(names, tokenName(binding.token), new Set<string>()).add(name);
+        getOrInsertComputed(names, tokenName(binding.token), newSlotNameSet).add(name);
       }
     }
     return names;
