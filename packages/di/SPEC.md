@@ -236,7 +236,7 @@ one selection model, not two.
 
 | Field  | Meaning                                                                                                                                                                | Relationship to the others                  |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `name` | Selects a binding declared with `whenNamed(name)`                                                                                                                      | Sugar for the criterion `slotName.of(name)` |
+| `name` | Selects a binding declared with `whenNamed(name)`; typed as the names the token declares ([Token API](#token-api))                                                     | Sugar for the criterion `slotName.of(name)` |
 | `tag`  | Exactly one criterion                                                                                                                                                  | Equivalent to a single element of `tags`    |
 | `tags` | An array of criteria, read as a **superset filter**: it matches a binding whose _every_ declared tag is in this array — not "the binding must carry all of these tags" | Several criteria require `tags`             |
 
@@ -408,12 +408,26 @@ export const Tokens = {
 ```ts
 // Branded type — cannot be forged with an ordinary object literal
 declare const TOKEN_BRAND: unique symbol;
+declare const TOKEN_NAMES_BRAND: unique symbol;
 
-interface Token<Value> {
+interface Token<Value, Names extends string = string> {
   readonly name: string;
   readonly [TOKEN_BRAND]: Value; // unique symbol, not exported
+  readonly [TOKEN_NAMES_BRAND]?: Names; // phantom: the slot names this token's bindings may declare
 }
 ```
+
+```ts
+// Declaring the slot names makes every `name` the token meets a checked, completable literal
+const Logger = token<Logger, "console" | "file">("Logger");
+container.bind(Logger).to(FileLogger).whenNamed("file");
+container.resolve(Logger, { name: "file" }); // { name: "fiel" } is a compile error
+type Names = SlotNamesOf<typeof Logger>; // "console" | "file"; `string` for a class or an undeclared token
+```
+
+`Names` is covariant and defaults to `string`, so a token declaring none behaves as before, and a declaring token is
+still a `Token<unknown>` wherever the engine erases the value type. Only the token infers `Names`: the `options` bag of
+`resolve*`, `has`, `hasOwn`, `inject`, `optional` and `injectAll` is `NoInfer`, so a request cannot widen the set.
 
 ```ts
 // Resolve always returns the right type — the wrong token cannot be passed
@@ -912,6 +926,9 @@ condition the slot declares. The slot with no conditions is the **default slot**
 > - What reserves the key is its **identity**, not its display name. Diagnostics render its criterion as `name:<value>`,
 >   never `tag:…`, and `BindingSlot.name` is the derived view of it that `ResolutionFrame.slot`
 >   ([`ConstraintContext`](#constraintcontext)) and the `when*Named` constraints read.
+> - A tag key types its values; the reserved key is shared, so a name's values are typed by the **token** instead:
+>   `Token<Value, Names>` narrows `whenNamed` and every request-side `name` to `Names` ([Token API](#token-api)). The
+>   `when*Named` ancestor constraints take no token and stay `string`.
 
 > **Normative — slot equality.** Two binding slots are **equal** when their criterion sets are equal by the identity of
 > each criterion (order does not matter). Because criteria are interned ([`ResolveOptions`](#resolve-options)), identity

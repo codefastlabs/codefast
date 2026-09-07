@@ -170,6 +170,15 @@ container.bind(LoggerToken).toConstantValue(fileLogger).whenNamed("file");
 container.resolve(LoggerToken, { name: "file" }); // → fileLogger
 ```
 
+Declare the names on the token and they become checked, completable literals at every bind and request site:
+
+```ts
+const LoggerToken = token<Logger, "console" | "file">("Logger");
+
+container.bind(LoggerToken).toConstantValue(fileLogger).whenNamed("file");
+container.resolve(LoggerToken, { name: "file" }); // { name: "fiel" } is a compile error
+```
+
 **Tagged — for typed, collision-proof keys.** A criterion is a `[key, value]` pair. Declare the key once with
 `tag<Value>(name)`, then mint a criterion with `key.of(value)`. The bind site and the resolve site share the same typed
 key: a key declared `tag<"s3" | "gcs">` refuses any other value, so the two sites can't drift apart.
