@@ -102,6 +102,8 @@ export const reactAuditRunRequestSchema: z.ZodType<ReactAuditRunRequest> = z.obj
 
 /**
  * Resolved request for a single display-name audit run.
+ *
+ * @since 0.9.0
  */
 export type DisplayNameAuditRunRequest = {
   readonly rootDir: string;
@@ -112,6 +114,8 @@ export type DisplayNameAuditRunRequest = {
 
 /**
  * Zod schema for {@link DisplayNameAuditRunRequest}.
+ *
+ * @since 0.9.0
  */
 export const displayNameAuditRunRequestSchema: z.ZodType<DisplayNameAuditRunRequest> = z.object({
   rootDir: z.string().min(1),

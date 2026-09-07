@@ -26,20 +26,28 @@ export type ExtremeDialogSlots = SlotRenderers<typeof extremeSlotsVariants>;
 
 /**
  * A flat `tv` resolver as the benchmark loops call it.
+ *
+ * @since 0.7.3
  */
 export type FlatRenderer = (props: Props) => string;
 
 /**
  * A card-style slot resolver as the benchmark loops call it.
+ *
+ * @since 0.7.3
  */
 export type CardRenderer = (props: Props) => ServicePreviewSlots;
 
 /**
  * A pagination slot resolver as the benchmark loops call it.
+ *
+ * @since 0.7.3
  */
 export type PaginationRenderer = (props: Props) => CompoundPaginationSlots;
 
 /**
  * A dialog slot resolver as the benchmark loops call it.
+ *
+ * @since 0.7.3
  */
 export type DialogRenderer = (props: Props) => ExtremeDialogSlots;

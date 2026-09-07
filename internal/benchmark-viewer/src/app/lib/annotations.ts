@@ -5,6 +5,8 @@ import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#
 
 /**
  * One marker: the plotted point it sits on and the text drawn beside it.
+ *
+ * @since 0.8.0
  */
 export interface ChartMarker {
   readonly label: string;
@@ -13,6 +15,8 @@ export interface ChartMarker {
 
 /**
  * Markers for the runs where the suite changed the scenario's `batch` or description.
+ *
+ * @since 0.8.0
  */
 export function definitionChangeMarkers(
   scenario: EmbeddedScenarioSeries,
@@ -30,6 +34,8 @@ export function definitionChangeMarkers(
 
 /**
  * Markers for the plotted runs where a library's recorded version differs from the run before.
+ *
+ * @since 0.8.0
  */
 export function versionChangeMarkers(
   runs: ReadonlyArray<EmbeddedRun>,
@@ -63,6 +69,8 @@ const LABEL_LINE_HEIGHT = 12;
  *
  * @remarks Labels on the same point stack downward; drawing happens after the datasets so a rule
  * never hides a line.
+ *
+ * @since 0.8.0
  */
 export function createMarkersPlugin(markers: ReadonlyArray<ChartMarker>): Plugin<"line"> {
   return {

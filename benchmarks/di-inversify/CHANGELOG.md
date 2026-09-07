@@ -1,5 +1,19 @@
 # @codefast/benchmark-di-inversify
 
+## 0.7.4
+
+### Patch Changes
+
+- [#826](https://github.com/codefastlabs/codefast/pull/826) [`6d1347a`](https://github.com/codefastlabs/codefast/commit/6d1347a1e6a140aafb1dc552175551902993e94b) Thanks [@thevuong](https://github.com/thevuong)! - `bench:serve` now honours the generic `PORT` variable when `BENCH_PORT` is unset, before falling back to the suite's
+  default port. A launcher that assigns a free port and announces it through `PORT` — the Claude Code Browser pane with
+  `autoPort`, a PaaS — finds the viewer on that port instead of on one the suite chose for itself; `BENCH_PORT` stays the
+  explicit override. The harness exposes the precedence as `resolvePreferredPortFromEnvironment(defaultPort)` and the
+  `PORT_ENV_KEY` constant, and Turbo passes `PORT` through to `bench:serve`.
+- Updated dependencies [[`6d1347a`](https://github.com/codefastlabs/codefast/commit/6d1347a1e6a140aafb1dc552175551902993e94b), [`c5aa94d`](https://github.com/codefastlabs/codefast/commit/c5aa94d4685c60449673e93a2e1b8b74df7ded67), [`0984174`](https://github.com/codefastlabs/codefast/commit/0984174df148a7cffcd09b837bdde1922f38f24e), [`d0b794c`](https://github.com/codefastlabs/codefast/commit/d0b794c047344c4040b5641202c259d72a0ea48c)]:
+  - @codefast/benchmark-harness@0.8.0
+  - @codefast/benchmark-viewer@0.8.0
+  - @codefast/di@0.9.0
+
 ## 0.7.3
 
 ### Patch Changes

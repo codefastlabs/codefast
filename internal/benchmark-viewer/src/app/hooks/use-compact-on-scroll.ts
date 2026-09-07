@@ -6,6 +6,8 @@ const COMPACT_SCROLL_Y = 200;
 /**
  * Whether a sticky panel should fold to its essentials: the page has scrolled past the chart's top
  * on a wide viewport and the user has not pinned the panel open.
+ *
+ * @since 0.8.0
  */
 export function useCompactOnScroll(): { isCompact: boolean; pinned: boolean; togglePinned: () => void } {
   const [scrolled, setScrolled] = useState(false);

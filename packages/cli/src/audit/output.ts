@@ -203,6 +203,8 @@ function truncate(raw: string): string {
 
 /**
  * Exit `1` when any non-allowlisted display-name violation remains.
+ *
+ * @since 0.9.0
  */
 export function exitCodeForDisplayNameAuditResult(result: DisplayNameAuditResult): number {
   return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
@@ -210,6 +212,8 @@ export function exitCodeForDisplayNameAuditResult(result: DisplayNameAuditResult
 
 /**
  * Human-readable display-name report.
+ *
+ * @since 0.9.0
  */
 export function presentDisplayNameAuditResult(result: DisplayNameAuditResult): void {
   for (const file of result.files) {
@@ -232,6 +236,8 @@ export function presentDisplayNameAuditResult(result: DisplayNameAuditResult): v
 
 /**
  * Machine-readable display-name summary for `--json`.
+ *
+ * @since 0.9.0
  */
 export function formatDisplayNameAuditJsonOutput(result: DisplayNameAuditResult, rootDir: string): string {
   return JSON.stringify({

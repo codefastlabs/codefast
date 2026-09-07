@@ -34,11 +34,15 @@ export const RATIO_COLORS = ["#f87171", "#22d3ee", "#a3e635", "#fde047"] as cons
 
 /**
  * The dash patterns cycled across the rows of a group overlay; the first row of a group draws solid.
+ *
+ * @since 0.8.0
  */
 export const OVERLAY_DASHES: ReadonlyArray<ReadonlyArray<number>> = [[], [6, 4], [2, 3], [10, 4, 2, 4]];
 
 /**
  * The point shapes cycled across the rows of a group overlay, so a row reads at its markers as well as its dash.
+ *
+ * @since 0.8.0
  */
 export const OVERLAY_POINT_STYLES: ReadonlyArray<"circle" | "rect" | "rectRot" | "triangle"> = [
   "circle",
@@ -58,6 +62,8 @@ function hexToRgb(hex: string): [number, number, number] {
 
 /**
  * A palette hex color at the given opacity, for lines that should recede behind the emphasised one.
+ *
+ * @since 0.8.0
  */
 export function withAlpha(hex: string, alpha: number): string {
   const [red, green, blue] = hexToRgb(hex);
@@ -110,6 +116,8 @@ const SHADE_STEPS: ReadonlyArray<readonly [lightness: number, saturation: number
 /**
  * The shade a row takes inside its library's colour family: the base hue, moved in lightness far
  * enough to tell apart on a dark background.
+ *
+ * @since 0.8.0
  */
 export function shadeOf(hex: string, step: number): string {
   const [lightnessOffset, saturationOffset] = SHADE_STEPS[step % SHADE_STEPS.length]!;

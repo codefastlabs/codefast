@@ -238,6 +238,8 @@ function scenarioRowOf(run: RunData, scenarioId: string, primaryName: string): A
  *
  * @remarks A suite that changes how many operations one timed iteration performs changes the unit
  * of `hz/op`; expressing every run in the newest unit keeps a series comparable across that change.
+ *
+ * @since 0.8.0
  */
 export function referenceBatches(
   runs: ReadonlyArray<RunData>,
@@ -261,6 +263,8 @@ export function referenceBatches(
 
 /**
  * The runs at which a scenario's `batch` or description differs from the run before it.
+ *
+ * @since 0.8.0
  */
 export function definitionChanges(
   runs: ReadonlyArray<RunData>,

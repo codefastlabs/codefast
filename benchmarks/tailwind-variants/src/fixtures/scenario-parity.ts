@@ -14,6 +14,8 @@ type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what"> &
 
 /**
  * Component definitions per timed iteration of a cold row, so every side's loop bound and batch agree.
+ *
+ * @since 0.7.3
  */
 export const COLD_DEFINITIONS_PER_LOOP = 12;
 
@@ -241,6 +243,8 @@ export const UNCACHED_SLOTS_WITH_MERGE = {
 
 /**
  * The without-merge control for simple variants, paired with its with-merge row to isolate the merge step.
+ *
+ * @since 0.7.3
  */
 export const UNCACHED_SIMPLE_WITHOUT_MERGE = {
   id: "uncached-simple-without-merge",
@@ -252,6 +256,8 @@ export const UNCACHED_SIMPLE_WITHOUT_MERGE = {
 
 /**
  * The without-merge control for slots, paired with its with-merge row to isolate the merge step.
+ *
+ * @since 0.7.3
  */
 export const UNCACHED_SLOTS_WITHOUT_MERGE = {
   id: "uncached-slots-without-merge",
@@ -263,6 +269,8 @@ export const UNCACHED_SLOTS_WITHOUT_MERGE = {
 
 /**
  * Defining a button without rendering it: an eager library compiles here, a lazy one on its first render.
+ *
+ * @since 0.7.3
  */
 export const DEFINE_ONLY_SIMPLE = {
   id: "define-only-simple",
@@ -274,6 +282,8 @@ export const DEFINE_ONLY_SIMPLE = {
 
 /**
  * Defining a slot component without rendering it: an eager library compiles here, a lazy one on its first render.
+ *
+ * @since 0.7.3
  */
 export const DEFINE_ONLY_SLOTS = {
   id: "define-only-slots",
@@ -285,6 +295,8 @@ export const DEFINE_ONLY_SLOTS = {
 
 /**
  * Defining a button and rendering it once; minus the define-only row, the first render alone.
+ *
+ * @since 0.7.3
  */
 export const FIRST_RENDER_SIMPLE = {
   id: "first-render-simple",
@@ -296,6 +308,8 @@ export const FIRST_RENDER_SIMPLE = {
 
 /**
  * Defining a slot component and rendering every slot once; minus the define-only row, the first render alone.
+ *
+ * @since 0.7.3
  */
 export const FIRST_RENDER_SLOTS = {
   id: "first-render-slots",

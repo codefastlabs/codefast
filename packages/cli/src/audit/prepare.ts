@@ -199,6 +199,8 @@ export async function prepareCommentAudit(
  *
  * @remarks Defaults to the repo root: a display name collides across packages, so the convention
  * has to hold across them.
+ *
+ * @since 0.9.0
  */
 export async function prepareDisplayNameAudit(
   fs: FilesystemPort,

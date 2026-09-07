@@ -76,6 +76,8 @@ function RowGlyph({
  *
  * @remarks Clicking a row name selects it, the trailing checkbox hides it, and hovering a row lifts
  * its lines on the chart.
+ *
+ * @since 0.8.0
  */
 export function OverlayLegend({
   hiddenRows,

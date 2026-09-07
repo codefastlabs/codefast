@@ -1,5 +1,17 @@
 # @codefast/di-testing
 
+## 0.1.3
+
+### Patch Changes
+
+- [#827](https://github.com/codefastlabs/codefast/pull/827) [`0984174`](https://github.com/codefastlabs/codefast/commit/0984174df148a7cffcd09b837bdde1922f38f24e) Thanks [@thevuong](https://github.com/thevuong)! - `package.json` now carries `homepage` and `bugs`, so npm links the package README and the issue tracker the way the
+  other `@codefast/*` packages already do.
+
+- [#848](https://github.com/codefastlabs/codefast/pull/848) [`ffb61a0`](https://github.com/codefastlabs/codefast/commit/ffb61a094aefb77d68dd13af7dba96ffdee6f5f2) Thanks [@thevuong](https://github.com/thevuong)! - README samples declare tokens with a `<namespace>:<Name>` display name, matching the convention `@codefast/di`
+  documents.
+- Updated dependencies [[`0984174`](https://github.com/codefastlabs/codefast/commit/0984174df148a7cffcd09b837bdde1922f38f24e), [`d0b794c`](https://github.com/codefastlabs/codefast/commit/d0b794c047344c4040b5641202c259d72a0ea48c)]:
+  - @codefast/di@0.9.0
+
 ## 0.1.2
 
 ### Patch Changes

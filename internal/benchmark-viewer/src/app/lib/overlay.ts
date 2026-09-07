@@ -5,6 +5,8 @@ import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
 
 /**
  * One plotted line of a group overlay, with the row and library it came from.
+ *
+ * @since 0.8.0
  */
 export interface OverlaySeries {
   readonly borderDash: ReadonlyArray<number>;
@@ -27,6 +29,8 @@ export interface OverlaySeries {
  *
  * @remarks `uncached-simple-with-merge` in group `simple` reads `uncached-with-merge`; a row named
  * exactly after its group keeps its id.
+ *
+ * @since 0.8.0
  */
 export function rowShortLabel(scenarioId: string, group: string): string {
   const idTokens = scenarioId.split("-");
@@ -42,6 +46,8 @@ export function rowShortLabel(scenarioId: string, group: string): string {
 
 /**
  * A series expressed as a percentage of its first plotted point, so lines of any scale share one axis.
+ *
+ * @since 0.8.0
  */
 export function indexToFirst(values: ReadonlyArray<number | null>): {
   readonly base: number | null;
@@ -56,6 +62,8 @@ export function indexToFirst(values: ReadonlyArray<number | null>): {
 
 /**
  * The options the overlay is built from: the group's rows, the libraries with their colours, and the plotted runs.
+ *
+ * @since 0.8.0
  */
 export interface BuildOverlaySeriesOptions {
   /** Rows the user has hidden with the row chips; they draw nothing and take no legend entry. */
@@ -69,6 +77,8 @@ export interface BuildOverlaySeriesOptions {
 
 /**
  * The legend label of one overlay line, so a tooltip can find its row and library again.
+ *
+ * @since 0.8.0
  */
 export function overlaySeriesLabel(scenarioId: string, libraryDisplayName: string): string {
   return `${scenarioId} · ${libraryDisplayName}`;
@@ -80,6 +90,8 @@ export function overlaySeriesLabel(scenarioId: string, libraryDisplayName: strin
  *
  * @remarks A library with no data for a row in the plotted runs draws nothing, so the legend only
  * lists lines that exist.
+ *
+ * @since 0.8.0
  */
 export function buildOverlaySeries({
   hiddenScenarioIds,
@@ -130,6 +142,8 @@ export function buildOverlaySeries({
 
 /**
  * The runs where at least one library measured at least one of the given rows.
+ *
+ * @since 0.8.0
  */
 export function runIndicesWithData(
   scenarios: ReadonlyArray<EmbeddedScenarioSeries>,
@@ -144,6 +158,8 @@ export function runIndicesWithData(
 
 /**
  * Whether a logarithmic tick is worth a label: only the 1, 2 and 5 of each decade, so the axis stays legible.
+ *
+ * @since 0.8.0
  */
 export function isSparseLogTick(value: number): boolean {
   if (!(value > 0) || !Number.isFinite(value)) {

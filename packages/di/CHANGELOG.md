@@ -1,5 +1,32 @@
 # @codefast/di
 
+## 0.9.0
+
+### Minor Changes
+
+- [#847](https://github.com/codefastlabs/codefast/pull/847) [`d0b794c`](https://github.com/codefastlabs/codefast/commit/d0b794c047344c4040b5641202c259d72a0ea48c) Thanks [@thevuong](https://github.com/thevuong)! - `Token` gains a second type parameter, `Names extends string = string`, declaring the slot names its bindings may use:
+  `token<Logger, "console" | "file">("Logger")`. `whenNamed`, and `name` in `ResolveOptions` and `InjectOptions`, narrow
+  to it, so a misspelt name is a compile error and the IDE completes the declared names at every bind and request site.
+  `Names` is a covariant phantom that defaults to `string`, so existing tokens, class keys and internal `Token<unknown>`
+  lanes are unchanged; a new `SlotNamesOf<Key>` type reads the set back.
+
+  **Breaking:** `whenParentNamed` and `whenAnyAncestorNamed` now take the parent token first —
+  `whenParentNamed(Database, "primary")` — and match only when that frame resolves that token at that slot. A slot name is
+  a label on one token's bindings, so the token is part of the question and is what types the name; a label shared across
+  tokens is what a tag key is for. `validate()` checks the name on that token's bindings and `UnreachableConstraintError`
+  carries the new `requiredTokenName`. The reserved criterion handed to a `…Tagged` helper
+  (`whenParentTagged(slotName.of("x"))`) is now validated too, as it is the same bare string.
+
+  Display names follow one rule everywhere the package speaks — spelled like the TS symbol they stand for, under the
+  owner's namespace: `token<Logger>("app:Logger")`, `Module.create("app:Infra", …)`, `tag("app:cacheTier")`. The package's
+  own `MetadataReaderToken` now prints as `di:MetadataReader`, beside the reserved `di:name` key. SPEC gains a normative
+  "Display names" section stating the rule and its enforcement.
+
+### Patch Changes
+
+- [#827](https://github.com/codefastlabs/codefast/pull/827) [`0984174`](https://github.com/codefastlabs/codefast/commit/0984174df148a7cffcd09b837bdde1922f38f24e) Thanks [@thevuong](https://github.com/thevuong)! - `package.json` now carries `homepage` and `bugs`, so npm links the package README and the issue tracker the way the
+  other `@codefast/*` packages already do.
+
 ## 0.8.1
 
 ### Patch Changes

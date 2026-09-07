@@ -83,6 +83,8 @@ export function isMapAnnotatedFile(fileName: string): boolean {
  *
  * @remarks Publish hooks stay because `pnpm publish` runs them right after pack-slim; install hooks stay because a
  * consumer's package manager runs them.
+ *
+ * @since 0.9.0
  */
 export function isLifecycleScript(name: string): boolean {
   if (LIFECYCLE_SCRIPT_STEMS.has(name)) {

@@ -1,5 +1,12 @@
 # @codefast/ui
 
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies [[`98fc6c7`](https://github.com/codefastlabs/codefast/commit/98fc6c76421c35e687f115dd4969f3cc60cd1282)]:
+  - @codefast/tailwind-variants@0.8.0
+
 ## 0.9.1
 
 ### Patch Changes

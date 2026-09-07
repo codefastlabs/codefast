@@ -7,6 +7,8 @@ import { cn } from "#/app/lib/utils";
  *
  * @remarks Sized below the text it sits in, with a floor for small captions: a monospace face at the
  * same nominal size reads larger than the proportional face beside it, and the border and padding add to that.
+ *
+ * @since 0.8.0
  */
 export function Kbd({ className, ...props }: ComponentProps<"kbd">) {
   return (
