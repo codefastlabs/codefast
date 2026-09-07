@@ -48,7 +48,7 @@ interface Logger {
   info(message: string): void;
 }
 
-const LoggerToken = token<Logger>("Logger");
+const LoggerToken = token<Logger>("app:Logger");
 
 @injectable([LoggerToken])
 class CheckoutService {
@@ -86,7 +86,7 @@ and resolve against. Tokens compare by reference, so declare each one once and r
 ```ts
 import { token } from "@codefast/di";
 
-const DbToken = token<Database>("Database");
+const DbToken = token<Database>("app:Database");
 ```
 
 A class constructor works as a key too: `container.bind(UserService).toSelf()`, then `container.resolve(UserService)`.
@@ -173,7 +173,7 @@ container.resolve(LoggerToken, { name: "file" }); // → fileLogger
 Declare the names on the token and they become checked, completable literals at every bind and request site:
 
 ```ts
-const LoggerToken = token<Logger, "console" | "file">("Logger");
+const LoggerToken = token<Logger, "console" | "file">("app:Logger");
 
 container.bind(LoggerToken).toConstantValue(fileLogger).whenNamed("file");
 container.resolve(LoggerToken, { name: "file" }); // { name: "fiel" } is a compile error
@@ -186,7 +186,7 @@ key: a key declared `tag<"s3" | "gcs">` refuses any other value, so the two site
 ```ts
 import { tag } from "@codefast/di";
 
-const Provider = tag<"s3" | "gcs">("provider");
+const Provider = tag<"s3" | "gcs">("app:provider");
 
 container.bind(StorageToken).to(S3Storage).whenTagged(Provider.of("s3"));
 container.resolve(StorageToken, { tag: Provider.of("s3") }); // → S3Storage

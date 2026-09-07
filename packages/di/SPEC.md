@@ -257,7 +257,7 @@ folds `tag` into `tags`, so an `InjectionDescriptor` only ever carries one spell
 >   no binding ever declared is never retained.
 
 ```ts
-const Region = tag<"eu" | "us">("region");
+const Region = tag<"eu" | "us">("app:region");
 container.bind(Storage).to(S3).whenTagged(Region.of("eu"));
 container.resolve(Storage, { tag: Region.of("eu") });
 ```
@@ -387,21 +387,38 @@ type TokenValue<Type> = Type extends Token<infer Value> ? Value : Type extends C
 import { token } from "@codefast/di";
 
 // Basic
-const Logger = token<LoggerService>("Logger");
-const Database = token<DatabaseService>("Database");
-const Config = token<AppConfig>("Config");
+const Logger = token<LoggerService>("app:Logger");
+const Database = token<DatabaseService>("app:Database");
+const Config = token<AppConfig>("app:Config");
 
 // Token for a primitive
-const Port = token<number>("Port");
-const Env = token<"development" | "production">("Env");
+const Port = token<number>("app:Port");
+const Env = token<"development" | "production">("app:Env");
 
 // Organised by domain
 export const Tokens = {
-  Logger: token<LoggerService>("Logger"),
-  Database: token<DatabaseService>("Database"),
-  Config: token<AppConfig>("Config"),
+  Logger: token<LoggerService>("app:Logger"),
+  Database: token<DatabaseService>("app:Database"),
+  Config: token<AppConfig>("app:Config"),
 } as const;
 ```
+
+<a id="display-names"></a>
+
+### Display names
+
+The string a `token()` or `tag()` takes is its **display name**: what diagnostics print, what
+`ResolutionFrame.tokenName` carries, and what the `when*Is` / `when*Named` constraints compare. It is not the token's
+identity — the object is — so two tokens may share one, and nothing but this rule stops them.
+
+> **Normative — a display name is `<namespace>:<Name>`.** The namespace is the owner: the package, app or feature that
+> declares the token (`shop:Logger`, `inspector:Clock`, `@scope/pkg:Config`), and the library's own names sit under
+> `di:` (`di:name`, `di:MetadataReader`). Both halves are non-empty and free of whitespace. The convention holds in the
+> library, the docs and every example, and `pnpm cli:audit:tokens` fails the build where it does not; tests and
+> benchmarks are outside it, since a token there is scoped by its file and meets no other author's.
+
+What it buys: a diagnostic that says `No binding for 'shop:Logger'` names one owner; two features that each declare a
+`Clock` cannot produce a `whenParentIs` false match; and a reader of a doc sample copies the shape a real app needs.
 
 ### Type signature
 
@@ -419,7 +436,7 @@ interface Token<Value, Names extends string = string> {
 
 ```ts
 // Declaring the slot names makes every `name` the token meets a checked, completable literal
-const Logger = token<Logger, "console" | "file">("Logger");
+const Logger = token<Logger, "console" | "file">("app:Logger");
 container.bind(Logger).to(FileLogger).whenNamed("file");
 container.resolve(Logger, { name: "file" }); // { name: "fiel" } is a compile error
 type Names = SlotNamesOf<typeof Logger>; // "console" | "file"; `string` for a class or an undeclared token
@@ -564,8 +581,8 @@ container.bind(Logger).to(ConsoleLogger).whenNamed("console").singleton();
 container.bind(Logger).to(FileLogger).whenNamed("file").singleton();
 
 // Tagged binding — a criterion can only be minted from a tag key, never by hand
-const Fuel = tag<"petrol" | "electric">("fuel");
-const Size = tag<"v8" | "v6">("size");
+const Fuel = tag<"petrol" | "electric">("app:fuel");
+const Size = tag<"v8" | "v6">("app:size");
 
 container.bind(Engine).to(PetrolEngine).whenTagged(Fuel.of("petrol"));
 container.bind(Engine).to(ElectricEngine).whenTagged(Fuel.of("electric"));
@@ -596,8 +613,8 @@ container
 
 > **`whenTagged` takes a criterion, not a loose pair.** A criterion can only be minted by `TagKey.of()`, so the key must
 > be declared up front with `tag<Value>(name)` — that is what makes identity comparison enough to stand in for
-> `Object.is` ([`ResolveOptions`](#resolve-options)). The key name is still a `string`, so use a namespace prefix to
-> avoid collisions: `tag("mylib:fuel")`, `tag("@scope/pkg:env")`.
+> `Object.is` ([`ResolveOptions`](#resolve-options)). The key name is still a `string`, so it follows the display-name
+> convention ([Display names](#display-names)): `tag("mylib:fuel")`, `tag("@scope/pkg:env")`.
 
 > **`whenNamed` is sugar.** A name is a criterion of the reserved key `slotName` — `whenNamed("console")` ≡
 > `whenTagged(slotName.of("console"))`, single-valued per slot ([Slots and last-wins](#slot-matching)).
@@ -622,7 +639,7 @@ container
 **Resolving with a hint:**
 
 ```ts
-const Env = tag<"production" | "staging">("env");
+const Env = tag<"production" | "staging">("app:env");
 
 // Named
 container.resolve(Logger, { name: "file" });
@@ -1179,9 +1196,9 @@ container.resolveAll(Logger, { name: "x" }); // → [] (empty array, no throw)
 > time and the message names which token in the chain is the async source.
 
 ```
-AsyncResolutionError: Token 'App' requires async resolution because 'Database'
-in its dependency chain has an async factory. Use container.resolveAsync(App).
-  asyncSourceToken: "Database"
+AsyncResolutionError: Token 'app:Api' requires async resolution because 'app:Database'
+in its dependency chain has an async factory. Use container.resolveAsync(Api).
+  asyncSourceToken: "app:Database"
 ```
 
 #### Singleton async creation — serialized
@@ -2111,12 +2128,13 @@ the root — the shorter path, and always correct.
 > **Normative.** Every constraint function takes a `Token<unknown> | Constructor` and resolves it to a `tokenName`
 > string, which is compared against `ResolutionFrame.tokenName`:
 >
-> - `Token<Value>` → use `token.name` (the string given at `token("Logger")`)
+> - `Token<Value>` → use `token.name` (the string given at `token("app:Logger")`)
 > - `Constructor` → use `Constructor.name` (the JavaScript class name)
 
 > **Unique names.** `ResolutionFrame.tokenName` is a `string`, not a branded type. If two different tokens share a
-> `name` — say `token<A>("Config")` and `token<B>("Config")` — a constraint cannot tell them apart. Give tokens unique
-> names (a namespace prefix such as `"@myapp/Config"`) to avoid false matches.
+> `name` — say `token<A>("app:Config")` and `token<B>("app:Config")` — a constraint cannot tell them apart. This is why
+> a display name is `<namespace>:<Name>` ([Display names](#display-names)): two owners never mint the same name by
+> accident, so a false match can only come from one owner naming two tokens alike.
 
 ### Type signatures
 
@@ -2224,7 +2242,7 @@ receive `prodConfig`.
 ```ts
 import { token, whenParentNamed } from "@codefast/di";
 
-const Database = token<Database, "primary" | "replica">("Database");
+const Database = token<Database, "primary" | "replica">("app:Database");
 
 container.bind(Database).to(PrimaryDatabase).whenNamed("primary").singleton();
 container.bind(Database).to(ReplicaDatabase).whenNamed("replica").singleton();
@@ -2242,7 +2260,7 @@ When `PrimaryDatabase` is resolved (binding slot `"primary"`), it injects `Prima
 ```ts
 import { tag, whenAnyAncestorTagged } from "@codefast/di";
 
-const Env = tag<"test" | "prod">("env");
+const Env = tag<"test" | "prod">("app:env");
 
 // Some ancestor in the chain carries env=test → use the sandbox
 container
@@ -2262,8 +2280,8 @@ container
 ```ts
 import { tag, whenParentTaggedAll } from "@codefast/di";
 
-const Env = tag<"test" | "prod">("env");
-const Tier = tag<"basic" | "premium">("tier");
+const Env = tag<"test" | "prod">("app:env");
+const Tier = tag<"basic" | "premium">("app:tier");
 
 // PremiumPlugin is only injected when the parent has BOTH env=prod AND tier=premium
 container
@@ -2515,10 +2533,10 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 Every message states the way out, not merely the symptom. Two representative examples:
 
 ```
-No binding for 'Logger' matching { name: 'file' }. Available slots: [default, name:console].
+No binding for 'app:Logger' matching { name: 'file' }. Available slots: [default, name:console].
 
-Token 'App' requires async resolution because 'Database' in its dependency
-chain has an async factory. Use container.resolveAsync(App).
+Token 'app:Api' requires async resolution because 'app:Database' in its dependency
+chain has an async factory. Use container.resolveAsync(Api).
 ```
 
 ### The boundary between a library bug and a caller error

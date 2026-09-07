@@ -265,6 +265,11 @@ point of use beats brevity, and every word must convey information:
   originated as [the naming principle in `packages/di/SPEC.md`](packages/di/SPEC.md#naming) and applies repo-wide — it
   lived in one package's spec long enough for another package to drift from it.
 
+- **A `token()` / `tag()` display name is `<namespace>:<Name>`** — the namespace is the owner (package, app or feature:
+  `shop:Logger`, `inspector:Clock`, `@scope/pkg:Config`; the library's own live under `di:`). The string is a display
+  name, not the token's identity, so only this rule keeps two owners from minting the same one; `pnpm cli:audit:tokens`
+  enforces it across source, docs and examples (tests and benchmarks are out of scope). Slot names (`whenNamed`) are
+  labels within one token and take no prefix.
 - **Name by role, never lie.** A name must state what the thing actually does (`options` for a hard selection criterion,
   never `hint`; a render function is `renderX`, never `customLabel`). No filler suffixes — `Type` on a type alias says
   nothing (`AppearanceContextValue`, not `AppearanceContextType`).
