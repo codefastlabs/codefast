@@ -61,14 +61,14 @@ export interface RequestContext {
  * (TC39 decorators have no parameter decorators, so the order here maps to the params).
  * ------------------------------------------------------------------------ */
 
-export const ClockToken = token<Clock>("Clock");
-export const ActivityLogToken = token<ActivityLog>("ActivityLog");
-export const IdGeneratorToken = token<IdGenerator>("IdGenerator");
-export const TaskValidatorToken = token<TaskValidator>("TaskValidator");
-export const TaskValidationToken = token<TaskValidation>("TaskValidation");
-export const MetricsExporterToken = token<MetricsExporter>("MetricsExporter");
-export const TaskRepositoryToken = token<TaskRepository>("TaskRepository");
-export const RequestContextToken = token<RequestContext>("RequestContext");
+export const ClockToken = token<Clock>("tasks:Clock");
+export const ActivityLogToken = token<ActivityLog>("tasks:ActivityLog");
+export const IdGeneratorToken = token<IdGenerator>("tasks:IdGenerator");
+export const TaskValidatorToken = token<TaskValidator>("tasks:TaskValidator");
+export const TaskValidationToken = token<TaskValidation>("tasks:TaskValidation");
+export const MetricsExporterToken = token<MetricsExporter>("tasks:MetricsExporter");
+export const TaskRepositoryToken = token<TaskRepository>("tasks:TaskRepository");
+export const RequestContextToken = token<RequestContext>("tasks:RequestContext");
 
 // ── Infrastructure (singletons + a transient id generator) ───────────────────────────────────────────────────────────
 
@@ -295,7 +295,7 @@ export class TaskService {
   }
 }
 
-export const TaskServiceToken = token<TaskService>("TaskService");
+export const TaskServiceToken = token<TaskService>("tasks:TaskService");
 
 // ── Modules — reusable bundles of bindings ───────────────────────────────────────────────────────────────────────────
 

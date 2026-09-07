@@ -64,11 +64,11 @@ export interface RequestOutcome {
   readonly summary: ReadonlyArray<{ readonly label: string; readonly value: string }>;
 }
 
-const clockToken = token<{ startedAt: string }>("Clock");
-const requestIdToken = token<string>("RequestId");
-const scopedProbeToken = token<{ id: string }>("ScopedProbe");
-const transientProbeToken = token<{ id: string }>("TransientProbe");
-const captiveHolderToken = token<{ heldId: string }>("CaptiveHolder");
+const clockToken = token<{ startedAt: string }>("inspector:Clock");
+const requestIdToken = token<string>("inspector:RequestId");
+const scopedProbeToken = token<{ id: string }>("inspector:ScopedProbe");
+const transientProbeToken = token<{ id: string }>("inspector:TransientProbe");
+const captiveHolderToken = token<{ heldId: string }>("inspector:CaptiveHolder");
 
 let sequence = 0;
 const nextId = (): string => {

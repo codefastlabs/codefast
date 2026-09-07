@@ -7,7 +7,7 @@ interface PricingConfig {
   readonly surchargePercent: number;
 }
 
-const pricingConfigToken = token<PricingConfig>("PricingConfig");
+const pricingConfigToken = token<PricingConfig>("inspector:PricingConfig");
 
 export interface BootReport {
   readonly revision: string;
