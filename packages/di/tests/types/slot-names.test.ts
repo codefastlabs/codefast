@@ -8,6 +8,7 @@ import { inject } from "#/decorators/inject";
 import { NoMatchingBindingError } from "#/errors/errors";
 import type { InjectOptions } from "#/injection/descriptor";
 import { injectAll, optional } from "#/injection/descriptor";
+import { whenAnyAncestorNamed, whenParentNamed } from "#/resolution/select/constraints";
 
 interface Logger {
   log(message: string): void;
@@ -57,6 +58,17 @@ describe("a token declaring slot names narrows every `name` it meets", () => {
     expectTypeOf(inject(Named, { name: "file" }).token).toEqualTypeOf<
       Token<Logger> | (new (...args: Array<never>) => Logger)
     >();
+  });
+
+  it("the ancestor constraints read the names off the parent token they name", () => {
+    expectTypeOf(whenParentNamed(Named, "console")).toBeFunction();
+    expectTypeOf(whenAnyAncestorNamed(Named, "file")).toBeFunction();
+    // @ts-expect-error the parent token declares no such name
+    whenParentNamed(Named, "consol");
+    // @ts-expect-error the parent token declares no such name
+    whenAnyAncestorNamed(Named, "fiel");
+    expectTypeOf(whenParentNamed(Unnamed, "anything")).toBeFunction();
+    expectTypeOf(whenAnyAncestorNamed(ConsoleLogger, "anything")).toBeFunction();
   });
 
   it("a token declaring no names, and a class key, still take any string", () => {

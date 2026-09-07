@@ -10,8 +10,8 @@
  * whenNoParentIs(T)       | direct parent token !== T  (or no parent)
  * whenAnyAncestorIs(T)    | any token in the ancestor chain === T
  * whenNoAncestorIs(T)     | no token in the ancestor chain === T
- * whenParentNamed(n)      | direct parent was resolved with name n
- * whenAnyAncestorNamed(n) | any ancestor was resolved with name n
+ * whenParentNamed(T, n)   | direct parent token === T at the slot named n
+ * whenAnyAncestorNamed(T, n) | any ancestor token === T at the slot named n
  * whenParentTagged(c)     | direct parent slot carries criterion c
  * whenParentTaggedAll([c]) | direct parent slot carries ALL given criteria
  * whenAnyAncestorTagged(c)     | any ancestor slot carries criterion c
@@ -198,17 +198,18 @@ ancestorIsContainer.resolve(BillingOrchestratorToken).run(); // [standard] build
 // 3. whenParentNamed / whenAnyAncestorNamed
 //
 //    Scenario: a DataSource token has two named bindings ("primary", "replica").
-//    A QueryRunner also uses DataSource — its binding is resolved with name
-//    "replica". The Logger injected into DataSource uses whenParentNamed to
-//    distinguish which DataSource instance is being constructed.
+//    A QueryRunner also uses DataSource — its dependency asks for the slot named
+//    "replica". The Logger injected into DataSource uses whenParentNamed to read
+//    which DataSource slot its parent binding declares, so the names the token
+//    declares are what the constraint completes and checks.
 //
 //    whenAnyAncestorNamed reaches past the direct parent: a Logger two levels
-//    below a named ConnectionPool still selects by that ancestor's name.
+//    below a named ConnectionPool still selects by that ancestor's slot.
 // ─────────────────────────────────────────────────────────────────────────────
 
 section("3. whenParentNamed / whenAnyAncestorNamed");
 
-const DataSourceToken = token<DataSource>("DataSource");
+const DataSourceToken = token<DataSource, "primary" | "replica">("DataSource");
 const QueryRunnerToken = token<QueryRunner>("QueryRunner");
 
 @injectable([inject(LoggerToken)])
@@ -232,10 +233,16 @@ class QueryRunner {
 
 const namedContainer = Container.create();
 
-// Logger adapts based on which named DataSource is being built.
-namedContainer.bind(LoggerToken).toConstantValue(makeLogger("primary-logger")).when(whenParentNamed("primary"));
+// Logger adapts based on which DataSource slot is being built — the token types the name.
+namedContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("primary-logger"))
+  .when(whenParentNamed(DataSourceToken, "primary"));
 
-namedContainer.bind(LoggerToken).toConstantValue(makeLogger("replica-logger")).when(whenParentNamed("replica"));
+namedContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("replica-logger"))
+  .when(whenParentNamed(DataSourceToken, "replica"));
 
 // Fallback for contexts with no name (e.g. QueryRunner itself).
 namedContainer
@@ -257,7 +264,7 @@ namedContainer.resolve(QueryRunnerToken).execute(); // [replica-logger] connecte
 // whenAnyAncestorNamed reaches past the direct parent: the audit channel is
 // chosen from the named ConnectionPool two levels up, even though the Logger's
 // immediate parent (HealthProbe) carries no name.
-const ConnectionPoolToken = token<ConnectionPool>("ConnectionPool");
+const ConnectionPoolToken = token<ConnectionPool, "primary" | "replica">("ConnectionPool");
 const HealthProbeToken = token<HealthProbe>("HealthProbe");
 
 @injectable([inject(HealthProbeToken)])
@@ -280,9 +287,15 @@ class HealthProbe {
 
 const ancestorContainer = Container.create();
 
-ancestorContainer.bind(LoggerToken).toConstantValue(makeLogger("primary-audit")).when(whenAnyAncestorNamed("primary"));
+ancestorContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("primary-audit"))
+  .when(whenAnyAncestorNamed(ConnectionPoolToken, "primary"));
 
-ancestorContainer.bind(LoggerToken).toConstantValue(makeLogger("replica-audit")).when(whenAnyAncestorNamed("replica"));
+ancestorContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("replica-audit"))
+  .when(whenAnyAncestorNamed(ConnectionPoolToken, "replica"));
 
 // Transient so each resolve rebuilds the chain and re-selects the logger by ancestor.
 ancestorContainer.bind(ConnectionPoolToken).to(ConnectionPool).whenNamed("primary").transient();
@@ -464,8 +477,8 @@ tenantContainer.resolve(AnalyticsDashboardToken, { tags: [TENANT_TAG.of("starter
 //  whenNoParentIs(T)            — default impl for everyone except one consumer
 //  whenAnyAncestorIs(T)         — propagate behaviour from a root service down
 //  whenNoAncestorIs(T)          — opt out of behaviour when a root is absent
-//  whenParentNamed(n)           — adapt to which named slot the parent was resolved in
-//  whenAnyAncestorNamed(n)      — same but for any depth
+//  whenParentNamed(T, n)        — adapt to which slot of T the parent binding declares
+//  whenAnyAncestorNamed(T, n)   — same but for any depth
 //  whenParentTagged(k,v)        — adapt to a single tag on the immediate parent
 //  whenParentTaggedAll([…])     — adapt to a combination of tags (AND) on parent
 //  whenAnyAncestorTagged(k,v)   — propagate a single tag down the full chain
