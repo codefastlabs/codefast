@@ -11,7 +11,7 @@ import { item } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ConfigToken = token<AppConfig>("decorators:AppConfig");
+const AppConfigToken = token<AppConfig>("decorators:AppConfig");
 const CacheToken = token<Cache>("decorators:Cache");
 const LoggerToken = token<Logger>("decorators:Logger");
 const UserServiceToken = token<UserService>("decorators:UserService");
@@ -36,7 +36,7 @@ interface Logger {
 
 // @injectable declares constructor dependencies in order.
 // inject() marks a required dependency; optional() marks optional.
-@injectable([inject(ConfigToken), optional(LoggerToken)])
+@injectable([inject(AppConfigToken), optional(LoggerToken)])
 class Database {
   readonly url: string;
 
@@ -46,7 +46,7 @@ class Database {
   }
 }
 
-@injectable([inject(ConfigToken)])
+@injectable([inject(AppConfigToken)])
 class InMemoryCache implements Cache {
   readonly #store = new Map<string, string>();
 
@@ -93,7 +93,7 @@ class UserService {
 
 const container = Container.create();
 
-container.bind(ConfigToken).toConstantValue({ databaseUrl: "postgres://localhost/app", isDebug: true });
+container.bind(AppConfigToken).toConstantValue({ databaseUrl: "postgres://localhost/app", isDebug: true });
 container.bind(LoggerToken).toConstantValue({ log: (message) => console.log(message) });
 
 container.bind(Database).toSelf().singleton();

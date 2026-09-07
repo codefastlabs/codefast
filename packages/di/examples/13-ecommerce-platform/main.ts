@@ -90,9 +90,9 @@ import { banner } from "#/examples/support/log";
 // Infrastructure
 const AppConfigToken = token<AppConfig>("ecommerce-platform:AppConfig");
 const DatabaseToken = token<Database>("ecommerce-platform:Database");
-const RedisToken = token<RedisClient>("ecommerce-platform:RedisClient");
-const S3Token = token<S3Client>("ecommerce-platform:S3Client");
-const ElasticToken = token<ElasticClient>("ecommerce-platform:ElasticClient");
+const RedisClientToken = token<RedisClient>("ecommerce-platform:RedisClient");
+const S3ClientToken = token<S3Client>("ecommerce-platform:S3Client");
+const ElasticClientToken = token<ElasticClient>("ecommerce-platform:ElasticClient");
 const LoggerToken = token<Logger>("ecommerce-platform:Logger");
 const EventBusToken = token<EventBus>("ecommerce-platform:EventBus");
 const IdGeneratorToken = token<IdGenerator>("ecommerce-platform:IdGenerator");
@@ -125,7 +125,7 @@ const UserRepositoryToken = token<UserRepository>("ecommerce-platform:UserReposi
 const UserServiceToken = token<UserService>("ecommerce-platform:UserService");
 const AddressRepositoryToken = token<AddressRepository>("ecommerce-platform:AddressRepository");
 const LoyaltyServiceToken = token<LoyaltyService>("ecommerce-platform:LoyaltyService");
-const SessionToken = token<UserSession>("ecommerce-platform:UserSession"); // scoped
+const UserSessionToken = token<UserSession>("ecommerce-platform:UserSession"); // scoped
 
 // Notifications
 const NotificationChannelToken = token<NotificationChannel>("ecommerce-platform:NotificationChannel"); // multi-binding
@@ -760,7 +760,7 @@ interface InventoryService {
   isInStock(productId: string, quantity?: number): Promise<boolean>;
 }
 
-@injectable([inject(DatabaseToken), inject(RedisToken), inject(LoggerToken)])
+@injectable([inject(DatabaseToken), inject(RedisClientToken), inject(LoggerToken)])
 class InventoryManager implements InventoryService {
   readonly #log: Logger;
 
@@ -821,7 +821,7 @@ interface PricingService {
   applyCoupon(cart: Cart, couponCode: string): Promise<CouponResult>;
 }
 
-@injectable([inject(DatabaseToken), inject(RedisToken), inject(LoggerToken)])
+@injectable([inject(DatabaseToken), inject(RedisClientToken), inject(LoggerToken)])
 class PricingManager implements PricingService {
   readonly #log: Logger;
 
@@ -960,7 +960,7 @@ interface SearchService {
   indexProduct(product: Product): Promise<void>;
 }
 
-@injectable([inject(ElasticToken), inject(ProductRepositoryToken), inject(LoggerToken)])
+@injectable([inject(ElasticClientToken), inject(ProductRepositoryToken), inject(LoggerToken)])
 class ProductElasticsearchSearchService implements SearchService {
   readonly #log: Logger;
 
@@ -1013,7 +1013,7 @@ interface CartRepository {
   delete(id: string): Promise<void>;
 }
 
-@injectable([inject(RedisToken), inject(LoggerToken)])
+@injectable([inject(RedisClientToken), inject(LoggerToken)])
 class CartRedisRepository implements CartRepository {
   readonly #log: Logger;
 
@@ -1704,7 +1704,7 @@ interface UserRepository {
   updateLoyaltyPoints(userId: string, delta: number): Promise<number>;
 }
 
-@injectable([inject(DatabaseToken), inject(RedisToken), inject(LoggerToken)])
+@injectable([inject(DatabaseToken), inject(RedisClientToken), inject(LoggerToken)])
 class UserPostgresRepository implements UserRepository {
   readonly #log: Logger;
 
@@ -2041,7 +2041,7 @@ interface CheckoutApplicationService {
 }
 
 @injectable([
-  inject(SessionToken),
+  inject(UserSessionToken),
   inject(LoggerToken),
   inject(CatalogServiceToken),
   inject(CartServiceToken),
@@ -2292,7 +2292,7 @@ interface AbTestService {
   track(userId: string, experimentId: string, hasConverted: boolean): Promise<void>;
 }
 
-@injectable([inject(RedisToken), inject(LoggerToken)])
+@injectable([inject(RedisClientToken), inject(LoggerToken)])
 class AbTestManager implements AbTestService {
   readonly #log: Logger;
 
@@ -2350,7 +2350,7 @@ const InfrastructureModule = Module.createAsync("ecommerce-platform:Infrastructu
 
   // Redis: async connect, close on deactivation
   builder
-    .bind(RedisToken)
+    .bind(RedisClientToken)
     .to(MockRedis)
     .singleton()
     .onActivation(async (_context, redisClient) => {
@@ -2361,8 +2361,8 @@ const InfrastructureModule = Module.createAsync("ecommerce-platform:Infrastructu
       await redisClient.quit();
     });
 
-  builder.bind(S3Token).to(MockS3).singleton();
-  builder.bind(ElasticToken).to(MockElastic).singleton();
+  builder.bind(S3ClientToken).to(MockS3).singleton();
+  builder.bind(ElasticClientToken).to(MockElastic).singleton();
 
   // In-memory EventBus (replace with Kafka/RabbitMQ binding in production)
   builder.bind(EventBusToken).to(InMemoryEventBus).singleton();
@@ -2420,7 +2420,7 @@ const UserModule = Module.create("ecommerce-platform:Users", (builder) => {
   builder.bind(AddressRepositoryToken).to(AddressPostgresRepository).singleton();
   builder.bind(LoyaltyServiceToken).to(LoyaltyManager).singleton();
   builder.bind(UserServiceToken).to(UserAccountService).singleton();
-  // SessionToken is scoped — bound per-request in child container
+  // UserSessionToken is scoped — bound per-request in child container
 });
 
 // ── Notifications ────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -2444,7 +2444,7 @@ const AnalyticsModule = Module.create("ecommerce-platform:Analytics", (builder) 
 const AppModule = Module.create("ecommerce-platform:App", (builder) => {
   builder.import(CatalogModule, CartModule, OrderModule, UserModule, NotificationModule, AnalyticsModule);
   // Placeholder scoped session token — overridden per request in child container
-  builder.bind(SessionToken).toConstantValue({
+  builder.bind(UserSessionToken).toConstantValue({
     userId: "bootstrap",
     email: "bootstrap@example.com",
     tier: "bronze",
@@ -2508,7 +2508,7 @@ async function handleCheckoutRequest(
 ): Promise<void> {
   // Each request gets an isolated scoped child container
   const requestContainer = rootContainer.createChild();
-  requestContainer.bind(SessionToken).toConstantValue(session);
+  requestContainer.bind(UserSessionToken).toConstantValue(session);
   const checkoutOrchestrator = requestContainer.resolve(CheckoutApplicationServiceToken);
   await checkoutOrchestrator.completeCheckoutJourney(requestId);
 }

@@ -30,7 +30,7 @@ import { item, ok, section } from "#/examples/support/log";
 
 const ConfigToken = token<Config>("custom-metadata-reader:Config");
 const LoggerToken = token<Logger>("custom-metadata-reader:Logger");
-const PoolToken = token<LegacyPool>("custom-metadata-reader:Pool");
+const LegacyPoolToken = token<LegacyPool>("custom-metadata-reader:LegacyPool");
 const ReportServiceToken = token<ReportService>("custom-metadata-reader:ReportService");
 
 // ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ class LegacyPool {
 }
 
 /** Decorated the normal way, to prove the delegating reader does not break the common path. */
-@injectable([inject(PoolToken), inject(LoggerToken)])
+@injectable([inject(LegacyPoolToken), inject(LoggerToken)])
 class ReportService {
   constructor(
     private readonly pool: LegacyPool,
@@ -136,10 +136,10 @@ const plainContainer = Container.create();
 
 plainContainer.bind(ConfigToken).toConstantValue({ dsn: "postgres://localhost/app" });
 plainContainer.bind(LoggerToken).toConstantValue({ log: (message) => console.log(`  [log] ${message}`) });
-plainContainer.bind(PoolToken).to(LegacyPool).singleton();
+plainContainer.bind(LegacyPoolToken).to(LegacyPool).singleton();
 
 try {
-  plainContainer.resolve(PoolToken);
+  plainContainer.resolve(LegacyPoolToken);
 } catch (error) {
   if (error instanceof MissingMetadataError) {
     item("code", error.code);
@@ -159,10 +159,10 @@ const app = Container.create({ metadataReader: new TableFirstMetadataReader() })
 
 app.bind(ConfigToken).toConstantValue({ dsn: "postgres://localhost/app" });
 app.bind(LoggerToken).toConstantValue({ log: (message) => console.log(`  [log] ${message}`) });
-app.bind(PoolToken).to(LegacyPool).singleton();
+app.bind(LegacyPoolToken).to(LegacyPool).singleton();
 app.bind(ReportServiceToken).to(ReportService).singleton();
 
-const pool = app.resolve(PoolToken);
+const pool = app.resolve(LegacyPoolToken);
 
 item("constructor params came from the table", pool.config.dsn);
 item("postConstruct ran open()", pool.opened);
@@ -206,9 +206,9 @@ section("5. Inheritance, and the token path");
 const request = app.createChild();
 
 request.bind(ConfigToken).toConstantValue({ dsn: "postgres://localhost/replica" });
-request.bind(PoolToken).to(LegacyPool).singleton();
+request.bind(LegacyPoolToken).to(LegacyPool).singleton();
 
-item("child inherited the reader", request.resolve(PoolToken).config.dsn);
+item("child inherited the reader", request.resolve(LegacyPoolToken).config.dsn);
 
 const readerRoot = Container.create();
 
@@ -218,9 +218,9 @@ const boundChild = readerRoot.createChild();
 
 boundChild.bind(ConfigToken).toConstantValue({ dsn: "postgres://localhost/bound" });
 boundChild.bind(LoggerToken).toConstantValue({ log: (message) => console.log(`  [log] ${message}`) });
-boundChild.bind(PoolToken).to(LegacyPool).singleton();
+boundChild.bind(LegacyPoolToken).to(LegacyPool).singleton();
 
-item("bound in the parent", boundChild.resolve(PoolToken).config.dsn);
+item("bound in the parent", boundChild.resolve(LegacyPoolToken).config.dsn);
 
 // The same binding on the container that needs it is too late — prefer the option.
 const tooLate = Container.create();
@@ -228,10 +228,10 @@ const tooLate = Container.create();
 tooLate.bind(MetadataReaderToken).toConstantValue(new TableFirstMetadataReader());
 tooLate.bind(ConfigToken).toConstantValue({ dsn: "postgres://localhost/late" });
 tooLate.bind(LoggerToken).toConstantValue({ log: () => undefined });
-tooLate.bind(PoolToken).to(LegacyPool).singleton();
+tooLate.bind(LegacyPoolToken).to(LegacyPool).singleton();
 
 try {
-  tooLate.resolve(PoolToken);
+  tooLate.resolve(LegacyPoolToken);
 } catch (error) {
   if (error instanceof MissingMetadataError) {
     item("bound on itself", `throws ${error.code}`);
