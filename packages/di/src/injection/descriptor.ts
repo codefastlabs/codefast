@@ -8,8 +8,14 @@ import type { DependencySlot } from "#/injection/resolve-options";
  *
  * @since 0.3.16-canary.0
  */
-export interface InjectOptions {
-  name?: string | undefined;
+export interface InjectOptions<Names extends string = string> {
+  /**
+   * The slot name a binding declared with `whenNamed`.
+   *
+   * @remarks Narrowed to the names the token declares, so a dependency cannot ask for a name no
+   * binding could carry; a token declaring none takes any string.
+   */
+  name?: Names | undefined;
   /**
    * Single-tag shorthand, equivalent to listing the one pair in `tags`.
    *
@@ -172,9 +178,9 @@ function withOptions<DescValue>(
  *
  * @since 0.6.0
  */
-export function buildInjectionDescriptor<Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
+export function buildInjectionDescriptor<Value, Names extends string = string>(
+  token: Token<Value, Names> | Constructor<Value>,
+  options?: NoInfer<InjectOptions<Names>>,
 ): InjectionDescriptor<Value> {
   return withOptions({ token, optional: false, multi: false }, options);
 }
@@ -184,9 +190,9 @@ export function buildInjectionDescriptor<Value>(
  *
  * @since 0.3.16-canary.0
  */
-export function optional<Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
+export function optional<Value, Names extends string = string>(
+  token: Token<Value, Names> | Constructor<Value>,
+  options?: NoInfer<InjectOptions<Names>>,
 ): InjectionDescriptor<Value | undefined> {
   return withOptions(
     {
@@ -203,9 +209,9 @@ export function optional<Value>(
  *
  * @since 0.3.16-canary.0
  */
-export function injectAll<Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
+export function injectAll<Value, Names extends string = string>(
+  token: Token<Value, Names> | Constructor<Value>,
+  options?: NoInfer<InjectOptions<Names>>,
 ): InjectionDescriptor<Array<Value>> {
   return withOptions(
     {

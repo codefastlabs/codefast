@@ -64,8 +64,14 @@ export type DeactivationHandler<Value> = (instance: Value) => void | Promise<voi
  *
  * @since 0.3.16-canary.0
  */
-export interface ResolveOptions {
-  name?: string | undefined;
+export interface ResolveOptions<Names extends string = string> {
+  /**
+   * The slot name a binding declared with `whenNamed`.
+   *
+   * @remarks Narrowed to the names the token declares, so a request cannot ask for a name no
+   * binding could carry; a token declaring none takes any string.
+   */
+  name?: Names | undefined;
   /**
    * Single-tag shorthand, equivalent to listing the one pair in `tags`.
    *

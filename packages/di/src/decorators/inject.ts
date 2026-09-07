@@ -39,14 +39,16 @@ type ClassAccessorDecorator<This, Value> = (
  *
  * @since 0.3.16-canary.0
  */
-export function inject<Value>(
-  token: Token<Value> | Constructor<Value>,
-  options?: InjectOptions,
+export function inject<Value, Names extends string = string>(
+  token: Token<Value, Names> | Constructor<Value>,
+  options?: NoInfer<InjectOptions<Names>>,
 ): InjectionDescriptor<Value> & ClassAccessorDecorator<unknown, Value> {
   const descriptor = buildInjectionDescriptor(token, options);
   // Derived from the descriptor, not from `options`: the descriptor is where the tag shorthand has
   // already been folded. Built once here rather than per constructed instance.
   const resolveOptions = injectionSlotToResolveOptions(descriptor);
+  // The names are checked above; the container lane only needs the value type.
+  const key: Token<Value> | Constructor<Value> = token;
 
   const decoratorFn = (
     _target: ClassAccessorDecoratorTarget<unknown, Value>,
@@ -72,8 +74,8 @@ export function inject<Value>(
       const ambient = getAmbientResolution();
       if (ambient !== undefined) {
         const value = descriptor.optional
-          ? ambient.resolveOptional(token, resolveOptions)
-          : ambient.resolve(token, resolveOptions);
+          ? ambient.resolveOptional(key, resolveOptions)
+          : ambient.resolve(key, resolveOptions);
         context.access.set(this, value as Value);
         return;
       }
@@ -82,8 +84,8 @@ export function inject<Value>(
         throw new MissingContainerContextError(classNameOf(this), context.name);
       }
       const value = descriptor.optional
-        ? container.resolveOptional(token, resolveOptions)
-        : container.resolve(token, resolveOptions);
+        ? container.resolveOptional(key, resolveOptions)
+        : container.resolve(key, resolveOptions);
       context.access.set(this, value as Value);
     });
 

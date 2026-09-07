@@ -18,7 +18,7 @@ export type {
 
 // Token
 export { token, tokenName } from "#/core/token";
-export type { Token } from "#/core/token";
+export type { SlotNamesOf, Token } from "#/core/token";
 
 // Tag — the interned slot criteria a `whenTagged` and a resolve both take
 export { coversTagKeys, NO_TAG_KEYS, slotName, tag, tagKeyMaskOf } from "#/core/tag";
