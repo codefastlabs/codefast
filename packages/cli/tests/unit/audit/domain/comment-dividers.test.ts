@@ -27,6 +27,13 @@ describe("renderDivider", () => {
 
     expect(rendered.endsWith("──")).toBe(true);
   });
+
+  it("opens an ignore-file divider with a hash and ends at the fixed column", () => {
+    const rendered = renderDivider("", "Dependencies", "ignore");
+
+    expect(rendered.startsWith("# ── Dependencies ──")).toBe(true);
+    expect(rendered).toHaveLength(DIVIDER_COLUMN);
+  });
 });
 
 describe("scanCommentDividers", () => {
@@ -91,6 +98,21 @@ describe("scanCommentDividers", () => {
     expect(scanCommentDividers(source.join("\n"), "css")).toStrictEqual([]);
   });
 
+  it("accepts a canonical ignore-file divider and repads a mispadded one", () => {
+    const canonical = scanCommentDividers(renderDivider("", "Build outputs", "ignore"), "ignore");
+
+    expect(canonical).toHaveLength(1);
+    expect(canonical[0]?.defect).toBeNull();
+
+    const mispadded = scanCommentDividers("# ── Build outputs ──", "ignore");
+
+    expect(mispadded[0]?.defect).toBe("bad-width");
+  });
+
+  it("reads a plain hash label as a comment, not a divider", () => {
+    expect(scanCommentDividers(["# dependencies", "node_modules"].join("\n"), "ignore")).toStrictEqual([]);
+  });
+
   it("ignores a rule that is a table separator inside a doc block", () => {
     const source = [
       "/**",
@@ -146,6 +168,13 @@ describe("applyCommentDividerFixes", () => {
     const source = ["// ─────", "// Title", "//", "// Prose that would be lost.", "// ─────"].join("\n");
 
     expect(applyCommentDividerFixes(source, "js")).toStrictEqual({ content: source, fixedCount: 0 });
+  });
+
+  it("normalises a legacy hash divider into the canonical ignore form", () => {
+    expect(fix(["# === Environment ===", ".env"], "ignore")).toStrictEqual([
+      renderDivider("", "Environment", "ignore"),
+      ".env",
+    ]);
   });
 
   it("preserves CRLF line endings", () => {
