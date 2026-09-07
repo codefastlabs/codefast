@@ -10,9 +10,9 @@
  *     distinct slot (e.g. whenNamed("storage"), whenNamed("analytics")).
  *
  * The pattern therefore is:
- *   1. Each plugin MODULE binds its own capability token (StorageToken, etc.)
+ *   1. Each plugin MODULE binds its own capability token (StorageProviderToken, etc.)
  *   2. The PLATFORM registers plugin descriptors via direct container.bind()
- *      with distinct whenNamed(...) slots, enabling resolveAll(PluginToken).
+ *      with distinct whenNamed(...) slots, enabling resolveAll(PluginDescriptorToken).
  *
  * Without DI: hand-wire every plugin's dependencies, track which plugins are
  * active, manually tear down connections on unload.
@@ -29,21 +29,21 @@
  *
  * Architecture:
  *
- *   ┌──────────────────────────────────────────────────────┐
- *   │  Platform container (singletons)                     │
- *   │                                                      │
- *   │  Modules (last-wins per capability token):           │
- *   │  ┌──────────┐  ┌───────────────┐  ┌───────────────┐  │
- *   │  │CoreModule│  │  S3Plugin     │  │AnalyticsPlugin│  │
- *   │  │ Config   │  │ StorageToken  │  │AnalyticsToken │  │
- *   │  │ Logger   │  └───────────────┘  └───────────────┘  │
- *   │  └──────────┘                                        │
- *   │                                                      │
- *   │  Direct container.bind() + named slots:              │
- *   │  PluginToken whenNamed("storage")      = S3          │
- *   │  PluginToken whenNamed("analytics")    = Segment     │
- *   │  PluginToken whenNamed("notifications")= Slack       │
- *   └──────────────────────────────────────────────────────┘
+ *   ┌───────────────────────────────────────────────────────────┐
+ *   │  Platform container (singletons)                          │
+ *   │                                                           │
+ *   │  Modules (last-wins per capability token):                │
+ *   │  ┌──────────┐  ┌───────────────┐  ┌────────────────┐      │
+ *   │  │CoreModule│  │  S3Plugin     │  │ AnalyticsPlugin│      │
+ *   │  │ Config   │  │ Storage       │  │ Analytics      │      │
+ *   │  │ Logger   │  └───────────────┘  └────────────────┘      │
+ *   │  └──────────┘                                             │
+ *   │                                                           │
+ *   │  PluginDescriptorToken named slots (direct bind):         │
+ *   │    whenNamed("storage")       = S3                        │
+ *   │    whenNamed("analytics")     = Segment                   │
+ *   │    whenNamed("notifications") = Slack                     │
+ *   └───────────────────────────────────────────────────────────┘
  */
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
@@ -52,15 +52,15 @@ import { ok, section } from "#/examples/support/log";
 
 // ── Core contracts ───────────────────────────────────────────────────────────────────────────────────────────────────
 
-const AppConfigToken = token<AppConfig>("AppConfig");
-const AppLoggerToken = token<AppLogger>("AppLogger");
-const StorageToken = token<StorageProvider>("StorageProvider");
-const AnalyticsToken = token<AnalyticsProvider>("AnalyticsProvider");
-const NotificationToken = token<NotificationProvider>("NotificationProvider");
-const DocumentServiceToken = token<DocumentService>("DocumentService");
+const AppConfigToken = token<AppConfig>("plugin-architecture:AppConfig");
+const AppLoggerToken = token<AppLogger>("plugin-architecture:AppLogger");
+const StorageProviderToken = token<StorageProvider>("plugin-architecture:StorageProvider");
+const AnalyticsProviderToken = token<AnalyticsProvider>("plugin-architecture:AnalyticsProvider");
+const NotificationProviderToken = token<NotificationProvider>("plugin-architecture:NotificationProvider");
+const DocumentServiceToken = token<DocumentService>("plugin-architecture:DocumentService");
 
-// PluginToken is a multi-binding registry with one named slot per capability.
-const PluginToken = token<PluginDescriptor>("Plugin");
+// PluginDescriptorToken is a multi-binding registry with one named slot per capability.
+const PluginDescriptorToken = token<PluginDescriptor>("plugin-architecture:PluginDescriptor");
 
 // ── Shared types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -106,7 +106,7 @@ interface PluginDescriptor {
 // CoreModule — shared infrastructure, loaded once (diamond-dedup)
 // ============================================================================
 
-const CoreModule = Module.create("Core", (builder) => {
+const CoreModule = Module.create("plugin-architecture:Core", (builder) => {
   builder.bind(AppConfigToken).toConstantValue({
     env: "production",
     region: "ap-southeast-1",
@@ -156,12 +156,12 @@ class S3StorageProvider implements StorageProvider {
   }
 }
 
-const S3PluginModule = Module.createAsync("S3Plugin", async (builder) => {
+const S3PluginModule = Module.createAsync("plugin-architecture:S3Plugin", async (builder) => {
   // CoreModule imported here — deduped if already loaded
   builder.import(CoreModule);
 
   builder
-    .bind(StorageToken)
+    .bind(StorageProviderToken)
     .toDynamicAsync(async (context) => {
       const config = context.resolve(AppConfigToken);
       const logger = context.resolve(AppLoggerToken);
@@ -206,11 +206,11 @@ class SegmentAnalyticsProvider implements AnalyticsProvider {
   }
 }
 
-const AnalyticsPluginModule = Module.createAsync("AnalyticsPlugin", async (builder) => {
+const AnalyticsPluginModule = Module.createAsync("plugin-architecture:AnalyticsPlugin", async (builder) => {
   builder.import(CoreModule); // deduped — CoreModule setup runs exactly once
 
   builder
-    .bind(AnalyticsToken)
+    .bind(AnalyticsProviderToken)
     .toDynamicAsync(async (context) => {
       const config = context.resolve(AppConfigToken);
       const logger = context.resolve(AppLoggerToken);
@@ -240,11 +240,11 @@ class SlackNotificationProvider implements NotificationProvider {
   }
 }
 
-const SlackPluginModule = Module.createAsync("SlackPlugin", async (builder) => {
+const SlackPluginModule = Module.createAsync("plugin-architecture:SlackPlugin", async (builder) => {
   builder.import(CoreModule); // third import of CoreModule — still runs only once
 
   builder
-    .bind(NotificationToken)
+    .bind(NotificationProviderToken)
     .toDynamicAsync(async (context) => {
       const config = context.resolve(AppConfigToken);
       const logger = context.resolve(AppLoggerToken);
@@ -264,7 +264,12 @@ interface DocumentService {
   downloadDocument(userId: string, filename: string): Promise<string>;
 }
 
-@injectable([inject(StorageToken), inject(AnalyticsToken), inject(NotificationToken), inject(AppLoggerToken)])
+@injectable([
+  inject(StorageProviderToken),
+  inject(AnalyticsProviderToken),
+  inject(NotificationProviderToken),
+  inject(AppLoggerToken),
+])
 class DocumentOrchestrator implements DocumentService {
   constructor(
     private readonly storage: StorageProvider,
@@ -323,11 +328,11 @@ class LocalStorageProvider implements StorageProvider {
   }
 }
 
-const LocalStoragePluginModule = Module.createAsync("LocalStoragePlugin", async (builder) => {
+const LocalStoragePluginModule = Module.createAsync("plugin-architecture:LocalStoragePlugin", async (builder) => {
   builder.import(CoreModule);
 
   builder
-    .bind(StorageToken)
+    .bind(StorageProviderToken)
     .toDynamicAsync(async (context) => {
       const logger = context.resolve(AppLoggerToken);
       logger.info("[LocalStoragePlugin] initialised");
@@ -358,7 +363,7 @@ class Platform {
 
     // Register plugin descriptors directly on the container with named slots.
     this.#container
-      .bind(PluginToken)
+      .bind(PluginDescriptorToken)
       .toConstantValue({
         name: "S3StoragePlugin",
         version: "2.1.0",
@@ -366,7 +371,7 @@ class Platform {
       })
       .whenNamed("storage");
     this.#container
-      .bind(PluginToken)
+      .bind(PluginDescriptorToken)
       .toConstantValue({
         name: "SegmentAnalyticsPlugin",
         version: "1.4.2",
@@ -374,7 +379,7 @@ class Platform {
       })
       .whenNamed("analytics");
     this.#container
-      .bind(PluginToken)
+      .bind(PluginDescriptorToken)
       .toConstantValue({
         name: "SlackNotificationPlugin",
         version: "3.0.1",
@@ -386,16 +391,16 @@ class Platform {
     this.#container
       .bind(DocumentServiceToken)
       .toDynamicAsync(async (context) => {
-        const storage = await context.resolveAsync(StorageToken);
-        const analytics = await context.resolveAsync(AnalyticsToken);
-        const notifications = await context.resolveAsync(NotificationToken);
+        const storage = await context.resolveAsync(StorageProviderToken);
+        const analytics = await context.resolveAsync(AnalyticsProviderToken);
+        const notifications = await context.resolveAsync(NotificationProviderToken);
         const logger = context.resolve(AppLoggerToken);
         return new DocumentOrchestrator(storage, analytics, notifications, logger);
       })
       .singleton();
 
     // Print loaded plugins — resolveAll reads all three container.bind() entries
-    const loadedPlugins = this.#container.resolveAll(PluginToken);
+    const loadedPlugins = this.#container.resolveAll(PluginDescriptorToken);
     ok(`${loadedPlugins.length} plugin(s) loaded`);
     for (const pluginDescriptor of loadedPlugins) {
       console.log(
@@ -424,9 +429,9 @@ class Platform {
     this.#container
       .rebind(DocumentServiceToken)
       .toDynamicAsync(async (context) => {
-        const storage = await context.resolveAsync(StorageToken);
-        const analytics = await context.resolveAsync(AnalyticsToken);
-        const notifications = await context.resolveAsync(NotificationToken);
+        const storage = await context.resolveAsync(StorageProviderToken);
+        const analytics = await context.resolveAsync(AnalyticsProviderToken);
+        const notifications = await context.resolveAsync(NotificationProviderToken);
         const logger = context.resolve(AppLoggerToken);
         return new DocumentOrchestrator(storage, analytics, notifications, logger);
       })
@@ -434,19 +439,19 @@ class Platform {
 
     // Load new storage plugin and warm up only its singleton
     await this.#container.loadAsync(newPluginModule);
-    await this.#container.resolveAsync(StorageToken);
+    await this.#container.resolveAsync(StorageProviderToken);
 
     // Register new descriptor in the same named slot to replace old storage descriptor.
-    this.#container.bind(PluginToken).toConstantValue(newDescriptor).whenNamed("storage");
+    this.#container.bind(PluginDescriptorToken).toConstantValue(newDescriptor).whenNamed("storage");
 
-    const activePlugins = this.#container.resolveAll(PluginToken);
+    const activePlugins = this.#container.resolveAll(PluginDescriptorToken);
     console.log(
       `   Active plugins (${activePlugins.length}): ${activePlugins.map((pluginDescriptor) => pluginDescriptor.name).join(", ")}`,
     );
   }
 
   async flushAnalytics(): Promise<void> {
-    const analyticsProvider = await this.#container.resolveAsync(AnalyticsToken);
+    const analyticsProvider = await this.#container.resolveAsync(AnalyticsProviderToken);
     await analyticsProvider.flush();
   }
 

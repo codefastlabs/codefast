@@ -25,4 +25,4 @@ export class PgPool {
 }
 
 /** The injection token for the mock connection pool. */
-export const PgPoolToken = token<PgPool>("PgPool");
+export const PgPoolToken = token<PgPool>("explicit-architecture-ecommerce:PgPool");

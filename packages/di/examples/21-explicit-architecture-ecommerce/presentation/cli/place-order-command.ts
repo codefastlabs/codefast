@@ -20,4 +20,6 @@ export class PlaceOrderCommandCli {
 }
 
 /** Injection token for the place-order CLI command. */
-export const PlaceOrderCommandCliToken = token<PlaceOrderCommandCli>("PlaceOrderCommandCli");
+export const PlaceOrderCommandCliToken = token<PlaceOrderCommandCli>(
+  "explicit-architecture-ecommerce:PlaceOrderCommandCli",
+);

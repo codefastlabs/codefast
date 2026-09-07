@@ -19,12 +19,12 @@ import { item, ok, section, step } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const LoggerToken = token<Logger>("Logger");
-const ConfigToken = token<Config>("Config");
-const CacheToken = token<Cache>("Cache");
-const DatabaseToken = token<Database>("Database");
-const UserServiceToken = token<UserService>("UserService");
-const AnalyticsToken = token<Analytics>("Analytics");
+const LoggerToken = token<Logger>("inspection-graph:Logger");
+const ConfigToken = token<Config>("inspection-graph:Config");
+const CacheToken = token<Cache>("inspection-graph:Cache");
+const DatabaseToken = token<Database>("inspection-graph:Database");
+const UserServiceToken = token<UserService>("inspection-graph:UserService");
+const AnalyticsToken = token<Analytics>("inspection-graph:Analytics");
 
 // ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -120,14 +120,14 @@ class SegmentAnalytics implements Analytics {
 
 // ── Modules ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const InfraModule = Module.create("Infra", (builder) => {
+const InfraModule = Module.create("inspection-graph:Infra", (builder) => {
   builder.bind(LoggerToken).to(ConsoleLogger).singleton();
   builder.bind(ConfigToken).toConstantValue({ databaseUrl: "postgres://localhost/app", env: "development" });
   builder.bind(CacheToken).to(RedisCache).singleton();
   builder.bind(DatabaseToken).to(PostgresDatabase).singleton();
 });
 
-const AppModule = Module.create("App", (builder) => {
+const AppModule = Module.create("inspection-graph:App", (builder) => {
   builder.bind(UserServiceToken).to(UserManager).singleton();
   builder.bind(AnalyticsToken).to(SegmentAnalytics).singleton();
 });
@@ -175,14 +175,14 @@ for (const binding of loggerBindings) {
 
 section("has() / hasOwn()");
 
-const UnboundToken = token<unknown>("Unbound");
+const UnboundToken = token<unknown>("inspection-graph:Unbound");
 
 item("has(LoggerToken)", container.has(LoggerToken)); // true
 item("has(UnboundToken)", container.has(UnboundToken)); // false
 item("hasOwn(LoggerToken)", container.hasOwn(LoggerToken)); // true
 
 // Named / tagged existence checks
-const PluginToken = token<{ name: string }>("Plugin");
+const PluginToken = token<{ name: string }>("inspection-graph:Plugin");
 container.bind(PluginToken).toConstantValue({ name: "alpha" }).whenNamed("alpha");
 container.bind(PluginToken).toConstantValue({ name: "beta" }).whenNamed("beta");
 
@@ -196,7 +196,7 @@ item("has(PluginToken, {name:'gamma'})", container.has(PluginToken, { name: "gam
 
 section("Child container inspection");
 
-const RequestScopedToken = token<{ requestId: string }>("RequestScoped");
+const RequestScopedToken = token<{ requestId: string }>("inspection-graph:RequestScoped");
 const childContainer = container.createChild();
 childContainer.bind(RequestScopedToken).toConstantValue({ requestId: "req-42" });
 

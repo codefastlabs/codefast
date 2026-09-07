@@ -4,7 +4,7 @@ A progressive set of runnable examples covering every feature of `@codefast/di`.
 file you can run with `tsx` or `ts-node`.
 
 ```sh
-npx tsx examples/01-basic-tokens/01-basic-tokens.ts
+npx tsx examples/01-basic-tokens/main.ts
 ```
 
 Run every example in sequence with a per-example PASS/FAIL summary:

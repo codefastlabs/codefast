@@ -86,12 +86,12 @@ function internKeyFor(value: unknown): unknown {
 /**
  * Declares a tag key, whose `of()` builds the criteria a `whenTagged` and a resolve both take.
  *
- * @remarks The value type is checked at both ends: a key declared `tag<Region>("region")` refuses a
+ * @remarks The value type is checked at both ends: a key declared `tag<Region>("di:region")` refuses a
  * value that is not a `Region`, so a bind site and a resolve site cannot drift apart silently.
  *
  * @example
  * ```ts
- * const Region = tag<"eu" | "us">("region");
+ * const Region = tag<"eu" | "us">("di:region");
  * container.bind(Storage).to(S3).whenTagged(Region.of("eu"));
  * container.resolve(Storage, { tag: Region.of("eu") });
  * ```

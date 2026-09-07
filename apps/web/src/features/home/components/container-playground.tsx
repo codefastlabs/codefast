@@ -52,7 +52,7 @@ export function ContainerPlayground() {
   );
 
   const order = useMemo(() => {
-    const rootId = shop.graph.nodes.find((node) => node.tokenName === "OrderService")?.id;
+    const rootId = shop.graph.nodes.find((node) => node.tokenName === "shop:OrderService")?.id;
 
     return rootId === undefined ? [] : constructionOrder(shop.graph, rootId);
   }, [shop]);
@@ -98,12 +98,12 @@ export function ContainerPlayground() {
     }
 
     const instances = new Map<string, number>([
-      ["OrderService", service.instance],
-      ["PriceCatalog", service.catalog.instance],
-      ["Inventory", service.inventory.instance],
-      ["PaymentGateway", service.payments.instance],
-      ["RequestContext", service.context.instance],
-      ["Logger", service.logger.instance],
+      ["shop:OrderService", service.instance],
+      ["shop:PriceCatalog", service.catalog.instance],
+      ["shop:Inventory", service.inventory.instance],
+      ["shop:PaymentGateway", service.payments.instance],
+      ["shop:RequestContext", service.context.instance],
+      ["shop:Logger", service.logger.instance],
     ]);
     const receipt = service.place("SKU-42");
 

@@ -265,6 +265,14 @@ point of use beats brevity, and every word must convey information:
   originated as [the naming principle in `packages/di/SPEC.md`](packages/di/SPEC.md#naming) and applies repo-wide — it
   lived in one package's spec long enough for another package to drift from it.
 
+- **A display name is spelled like the TS symbol it stands for, under its owner's namespace: `<namespace>:<Name>`.** The
+  namespace is the kebab-case slug of the package, app or feature that declares it (or `@scope/pkg`); the library's own
+  live under `di:`. A `token()` name and a module name are PascalCase — they stand for a type or a unit of composition
+  (`shop:Logger`, `shop:Infra`, `di:MetadataReader`); a `tag()` key is camelCase — it names an attribute
+  (`shop:cacheTier`, `di:name`). Slot names (`whenNamed("primary")`) and tag values are values, not display names:
+  lowercase, no prefix. The string is not the thing's identity, so only this rule keeps two owners from minting the same
+  one; `pnpm cli:audit:display-names` enforces it across source, docs and examples (tests and benchmarks are out of
+  scope).
 - **Name by role, never lie.** A name must state what the thing actually does (`options` for a hard selection criterion,
   never `hint`; a render function is `renderX`, never `customLabel`). No filler suffixes — `Type` on a type alias says
   nothing (`AppearanceContextValue`, not `AppearanceContextType`).

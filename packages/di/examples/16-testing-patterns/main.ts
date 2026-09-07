@@ -44,11 +44,11 @@ function assert(condition: boolean, message: string): void {
 
 // ── Domain ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const LoggerToken = token<Logger>("Logger");
-const EmailServiceToken = token<EmailService>("EmailService");
-const UserServiceToken = token<UserService>("UserService");
-const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway");
-const OrderServiceToken = token<OrderService>("OrderService");
+const LoggerToken = token<Logger>("testing-patterns:Logger");
+const EmailServiceToken = token<EmailService>("testing-patterns:EmailService");
+const UserServiceToken = token<UserService>("testing-patterns:UserService");
+const PaymentGatewayToken = token<PaymentGateway>("testing-patterns:PaymentGateway");
+const OrderServiceToken = token<OrderService>("testing-patterns:OrderService");
 
 interface Logger {
   messages: Array<string>;
@@ -200,7 +200,7 @@ class StubPaymentGateway implements PaymentGateway {
 
 // ── Shared module (real infra) ───────────────────────────────────────────────────────────────────────────────────────
 
-const CoreModule = Module.create("Core", (builder) => {
+const CoreModule = Module.create("testing-patterns:Core", (builder) => {
   builder.bind(LoggerToken).to(RealLogger).singleton();
   builder.bind(UserServiceToken).to(DatabaseUserService).singleton();
   builder.bind(PaymentGatewayToken).to(StripePaymentGateway).singleton();

@@ -3,8 +3,9 @@ import { BindingChain } from "#/container/binding-builders";
 import type { Binding, BindingBuilder, BindToBuilder, ConstantBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
 import { effectiveBindingScope } from "#/core/binding-scope";
+import type { ConstraintRequirement } from "#/core/constraint-requirement";
 import { constraintRequirementsOf } from "#/core/constraint-requirement";
-import { getOrInsert } from "#/core/map-upsert";
+import { getOrInsert, getOrInsertComputed } from "#/core/map-upsert";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#/core/module";
 import { isSyncModule, MODULE_SETUP } from "#/core/module";
 import { BindingRegistry } from "#/core/registry";
@@ -46,6 +47,25 @@ import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
 import { verifyingMetadataReader } from "#/metadata/verifying-metadata-reader";
 import { ROOT_BRANCH } from "#/resolution/path/resolution-path";
 import { DependencyResolver } from "#/resolution/resolver";
+
+/** Whether a requirement's name is declared — on its token when it names one, on any token otherwise. */
+function isSlotNameDeclared(
+  declared: ReadonlyMap<string, ReadonlySet<string>>,
+  requirement: ConstraintRequirement,
+): boolean {
+  if (requirement.tokenName !== undefined) {
+    return declared.get(requirement.tokenName)?.has(requirement.name) ?? false;
+  }
+  for (const names of declared.values()) {
+    if (names.has(requirement.name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** Hoisted so the slot-name index's `getOrInsertComputed` allocates only on a miss, no closure per call. */
+const newSlotNameSet = (): Set<string> => new Set<string>();
 
 // ── Container interface ──────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -773,7 +793,7 @@ class DefaultContainer implements Container {
 
   /** A constraint waiting on a slot name no binding declares can never hold. */
   #validateConstraintRequirements(allBindings: ReadonlyArray<Binding>): void {
-    let declaredSlotNames: Set<string> | undefined;
+    let declaredSlotNames: Map<string, Set<string>> | undefined;
 
     for (const binding of allBindings) {
       const { predicate } = binding;
@@ -786,19 +806,20 @@ class DefaultContainer implements Container {
       }
       declaredSlotNames ??= this.#slotNamesInChain();
       for (const requirement of requirements) {
-        if (!declaredSlotNames.has(requirement.name)) {
-          throw new UnreachableConstraintError(tokenName(binding.token), requirement.name, requirement.helperName);
+        if (!isSlotNameDeclared(declaredSlotNames, requirement)) {
+          throw new UnreachableConstraintError(tokenName(binding.token), requirement);
         }
       }
     }
   }
 
-  /** Every slot name declared anywhere a resolve through this container could reach. */
-  #slotNamesInChain(): Set<string> {
-    const names = this.#parent === undefined ? new Set<string>() : this.#parent.#slotNamesInChain();
+  /** Every slot name declared anywhere a resolve through this container could reach, by declaring token. */
+  #slotNamesInChain(): Map<string, Set<string>> {
+    const names = this.#parent === undefined ? new Map<string, Set<string>>() : this.#parent.#slotNamesInChain();
     for (const binding of this.#registry.allBindings()) {
-      if (binding.slot.name !== undefined) {
-        names.add(binding.slot.name);
+      const name = binding.slot.name;
+      if (name !== undefined) {
+        getOrInsertComputed(names, tokenName(binding.token), newSlotNameSet).add(name);
       }
     }
     return names;

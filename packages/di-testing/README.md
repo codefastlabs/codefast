@@ -52,9 +52,9 @@ interface EmailService {
   send(to: string, body: string): void;
 }
 
-const UserServiceToken = token<UserService>("UserService");
-const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway");
-const EmailServiceToken = token<EmailService>("EmailService");
+const UserServiceToken = token<UserService>("app:UserService");
+const PaymentGatewayToken = token<PaymentGateway>("app:PaymentGateway");
+const EmailServiceToken = token<EmailService>("app:EmailService");
 
 @injectable([UserServiceToken, PaymentGatewayToken, EmailServiceToken])
 class OrderProcessor {
@@ -139,7 +139,7 @@ interface TaxPolicy {
   rateFor(currency: string): number;
 }
 
-const TaxPolicyToken = token<TaxPolicy>("TaxPolicy");
+const TaxPolicyToken = token<TaxPolicy>("app:TaxPolicy");
 
 @injectable([TaxPolicyToken])
 class PricingService {

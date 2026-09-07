@@ -69,11 +69,20 @@ describe("parent predicates", () => {
     expect(predicate(ROOT_CONTEXT)).toBe(true);
   });
 
-  it("whenParentNamed matches the parent binding's slot name", () => {
-    const predicate = whenParentNamed("primary");
+  it("whenParentNamed matches the parent binding's token and slot name together", () => {
+    const predicate = whenParentNamed(token<number>("svc"), "primary");
     expect(predicate(contextWith([frame("svc", { name: "primary" })]))).toBe(true);
     expect(predicate(contextWith([frame("svc", { name: "secondary" })]))).toBe(false);
+    // The same name on another token is another slot.
+    expect(predicate(contextWith([frame("other", { name: "primary" })]))).toBe(false);
     expect(predicate(ROOT_CONTEXT)).toBe(false);
+  });
+
+  it("whenParentNamed takes a class as the parent token", () => {
+    class Svc {}
+    const predicate = whenParentNamed(Svc, "primary");
+    expect(predicate(contextWith([frame("Svc", { name: "primary" })]))).toBe(true);
+    expect(predicate(contextWith([frame("svc", { name: "primary" })]))).toBe(false);
   });
 
   it("whenParentTagged compares tag values with Object.is", () => {
@@ -110,8 +119,10 @@ describe("ancestor predicates", () => {
   });
 
   it("whenAnyAncestorNamed / whenAnyAncestorTagged match any frame's slot", () => {
-    expect(whenAnyAncestorNamed("app")(contextWith(deepStack))).toBe(true);
-    expect(whenAnyAncestorNamed("missing")(contextWith(deepStack))).toBe(false);
+    expect(whenAnyAncestorNamed(rootToken, "app")(contextWith(deepStack))).toBe(true);
+    expect(whenAnyAncestorNamed(rootToken, "missing")(contextWith(deepStack))).toBe(false);
+    // The name is read off the frame resolving that token, not off any frame.
+    expect(whenAnyAncestorNamed(token<number>("mid"), "app")(contextWith(deepStack))).toBe(false);
     expect(whenAnyAncestorTagged(ENV.of("prod"))(contextWith(deepStack))).toBe(true);
     expect(whenAnyAncestorTagged(ENV.of("dev"))(contextWith(deepStack))).toBe(false);
   });

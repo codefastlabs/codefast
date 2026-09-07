@@ -25,4 +25,4 @@ export class GetProduct {
 }
 
 /** The injection token that resolves the `GetProduct` use case. */
-export const GetProductToken = token<GetProduct>("GetProduct");
+export const GetProductToken = token<GetProduct>("explicit-architecture-ecommerce:GetProduct");

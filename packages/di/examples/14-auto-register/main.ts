@@ -21,14 +21,14 @@ import { section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const LoggerToken = token<Logger>("Logger");
-const ConfigToken = token<Config>("Config");
-const DatabaseToken = token<Database>("Database");
-const UserRepositoryToken = token<UserRepository>("UserRepository");
-const OrderRepositoryToken = token<OrderRepository>("OrderRepository");
-const UserServiceToken = token<UserService>("UserService");
-const OrderServiceToken = token<OrderService>("OrderService");
-const NotificationServiceToken = token<NotificationService>("NotificationService");
+const LoggerToken = token<Logger>("auto-register:Logger");
+const ConfigToken = token<Config>("auto-register:Config");
+const DatabaseToken = token<Database>("auto-register:Database");
+const UserRepositoryToken = token<UserRepository>("auto-register:UserRepository");
+const OrderRepositoryToken = token<OrderRepository>("auto-register:OrderRepository");
+const UserServiceToken = token<UserService>("auto-register:UserService");
+const OrderServiceToken = token<OrderService>("auto-register:OrderService");
+const NotificationServiceToken = token<NotificationService>("auto-register:NotificationService");
 
 // ── Interfaces ───────────────────────────────────────────────────────────────────────────────────────────────────────
 

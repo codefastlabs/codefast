@@ -15,4 +15,4 @@ export interface OrderRepository {
 }
 
 /** The injection token that binds the `OrderRepository` port to its adapter. */
-export const OrderRepositoryToken = token<OrderRepository>("OrderRepository");
+export const OrderRepositoryToken = token<OrderRepository>("explicit-architecture-ecommerce:OrderRepository");

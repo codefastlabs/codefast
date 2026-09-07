@@ -48,7 +48,7 @@ interface Logger {
   info(message: string): void;
 }
 
-const LoggerToken = token<Logger>("Logger");
+const LoggerToken = token<Logger>("app:Logger");
 
 @injectable([LoggerToken])
 class CheckoutService {
@@ -86,7 +86,7 @@ and resolve against. Tokens compare by reference, so declare each one once and r
 ```ts
 import { token } from "@codefast/di";
 
-const DbToken = token<Database>("Database");
+const DbToken = token<Database>("app:Database");
 ```
 
 A class constructor works as a key too: `container.bind(UserService).toSelf()`, then `container.resolve(UserService)`.
@@ -173,7 +173,7 @@ container.resolve(LoggerToken, { name: "file" }); // → fileLogger
 Declare the names on the token and they become checked, completable literals at every bind and request site:
 
 ```ts
-const LoggerToken = token<Logger, "console" | "file">("Logger");
+const LoggerToken = token<Logger, "console" | "file">("app:Logger");
 
 container.bind(LoggerToken).toConstantValue(fileLogger).whenNamed("file");
 container.resolve(LoggerToken, { name: "file" }); // { name: "fiel" } is a compile error
@@ -186,7 +186,7 @@ key: a key declared `tag<"s3" | "gcs">` refuses any other value, so the two site
 ```ts
 import { tag } from "@codefast/di";
 
-const Provider = tag<"s3" | "gcs">("provider");
+const Provider = tag<"s3" | "gcs">("app:provider");
 
 container.bind(StorageToken).to(S3Storage).whenTagged(Provider.of("s3"));
 container.resolve(StorageToken, { tag: Provider.of("s3") }); // → S3Storage
@@ -211,18 +211,18 @@ container.resolve(StorageToken, { tag: Provider.of("s3") }); // → S3Storage
 resolving — pass a predicate to `.when(ctx => boolean)`. It runs at resolve time, after slot matching. These ready-made
 predicates ship from the root entry:
 
-| Predicate                            | Matches when                                           |
-| ------------------------------------ | ------------------------------------------------------ |
-| `whenParentIs(token)`                | the direct parent resolves `token`                     |
-| `whenNoParentIs(token)`              | there is no parent, or it resolves a different token   |
-| `whenAnyAncestorIs(token)`           | some ancestor resolves `token`                         |
-| `whenNoAncestorIs(token)`            | no ancestor resolves `token`                           |
-| `whenParentNamed(name)`              | the parent's slot carries that name                    |
-| `whenAnyAncestorNamed(name)`         | some ancestor's slot carries that name                 |
-| `whenParentTagged(criterion)`        | the parent's slot carries that criterion               |
-| `whenAnyAncestorTagged(criterion)`   | some ancestor's slot carries that criterion            |
-| `whenParentTaggedAll(criteria)`      | the parent's slot carries all criteria in the array    |
-| `whenAnyAncestorTaggedAll(criteria)` | some ancestor's slot carries all criteria in the array |
+| Predicate                            | Matches when                                            |
+| ------------------------------------ | ------------------------------------------------------- |
+| `whenParentIs(token)`                | the direct parent resolves `token`                      |
+| `whenNoParentIs(token)`              | there is no parent, or it resolves a different token    |
+| `whenAnyAncestorIs(token)`           | some ancestor resolves `token`                          |
+| `whenNoAncestorIs(token)`            | no ancestor resolves `token`                            |
+| `whenParentNamed(token, name)`       | the parent resolves `token` at the slot named `name`    |
+| `whenAnyAncestorNamed(token, name)`  | some ancestor resolves `token` at the slot named `name` |
+| `whenParentTagged(criterion)`        | the parent's slot carries that criterion                |
+| `whenAnyAncestorTagged(criterion)`   | some ancestor's slot carries that criterion             |
+| `whenParentTaggedAll(criteria)`      | the parent's slot carries all criteria in the array     |
+| `whenAnyAncestorTaggedAll(criteria)` | some ancestor's slot carries all criteria in the array  |
 
 For the exact matching and most-specific-wins rules, see [`SPEC.md` → Slots and last-wins](./SPEC.md#slot-matching).
 
@@ -367,11 +367,11 @@ A module is a reusable, stateless bundle of related bindings. Group them once, t
 ```ts
 import { Container, Module } from "@codefast/di";
 
-const InfrastructureModule = Module.create("Infra", (api) => {
+const InfrastructureModule = Module.create("app:Infra", (api) => {
   api.bind(LoggerToken).toConstantValue(console);
 });
 
-const AppModule = Module.create("App", (api) => {
+const AppModule = Module.create("app:Root", (api) => {
   api.import(InfrastructureModule);
   api.bind(UserRepository).toSelf().singleton();
 });

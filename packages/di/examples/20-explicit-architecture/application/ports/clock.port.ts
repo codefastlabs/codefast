@@ -9,4 +9,4 @@ export interface Clock {
 }
 
 /** The injection token that names the clock port. */
-export const ClockToken = token<Clock>("Clock");
+export const ClockToken = token<Clock>("explicit-architecture:Clock");

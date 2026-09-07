@@ -1,6 +1,7 @@
-import { requiringAncestorSlotName } from "#/core/constraint-requirement";
+import type { SlotNameRequirement } from "#/core/constraint-requirement";
+import { requiringAncestorSlotName, requiringAncestorSlotNames } from "#/core/constraint-requirement";
 import type { BindingTag } from "#/core/tag";
-import { coversTagKeys, tagKeyMaskOf } from "#/core/tag";
+import { coversTagKeys, slotName, tagKeyMaskOf } from "#/core/tag";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type { BindingConstraint, Constructor } from "#/core/types";
@@ -51,28 +52,43 @@ export function whenNoAncestorIs(token: Token<unknown> | Constructor): BindingCo
 }
 
 /**
- * Matches when the direct parent slot carries the given name.
+ * Matches when the direct parent resolves the given token at the slot carrying the given name.
+ *
+ * @remarks A slot name is a label on one token's bindings, so the token is part of the question — and
+ * what types `name` to the names that token declares.
  *
  * @since 0.3.16-canary.0
  */
-export function whenParentNamed(name: string): BindingConstraint {
+export function whenParentNamed<Names extends string>(
+  token: Token<unknown, Names> | Constructor,
+  name: NoInfer<Names>,
+): BindingConstraint {
+  const parentTokenName = tokenName(token);
   return requiringAncestorSlotName(
-    (constraintContext) => constraintContext.parent !== undefined && constraintContext.parent.slot.name === name,
-    name,
-    "whenParentNamed",
+    (constraintContext) =>
+      constraintContext.parent !== undefined &&
+      constraintContext.parent.tokenName === parentTokenName &&
+      constraintContext.parent.slot.name === name,
+    { tokenName: parentTokenName, name, helperName: "whenParentNamed" },
   );
 }
 
 /**
- * Matches when at least one ancestor slot carries the given name.
+ * Matches when at least one ancestor resolves the given token at the slot carrying the given name.
  *
  * @since 0.3.16-canary.0
  */
-export function whenAnyAncestorNamed(name: string): BindingConstraint {
+export function whenAnyAncestorNamed<Names extends string>(
+  token: Token<unknown, Names> | Constructor,
+  name: NoInfer<Names>,
+): BindingConstraint {
+  const ancestorTokenName = tokenName(token);
   return requiringAncestorSlotName(
-    (constraintContext) => constraintContext.ancestors.some((ancestorFrame) => ancestorFrame.slot.name === name),
-    name,
-    "whenAnyAncestorNamed",
+    (constraintContext) =>
+      constraintContext.ancestors.some(
+        (ancestorFrame) => ancestorFrame.tokenName === ancestorTokenName && ancestorFrame.slot.name === name,
+      ),
+    { tokenName: ancestorTokenName, name, helperName: "whenAnyAncestorNamed" },
   );
 }
 
@@ -82,8 +98,12 @@ export function whenAnyAncestorNamed(name: string): BindingConstraint {
  * @since 0.3.16-canary.0
  */
 export function whenParentTagged(criterion: BindingTag): BindingConstraint {
-  return (constraintContext) =>
-    constraintContext.parent !== undefined && constraintContext.parent.slot.tags.includes(criterion);
+  return requiringReservedNamesAmong(
+    (constraintContext) =>
+      constraintContext.parent !== undefined && constraintContext.parent.slot.tags.includes(criterion),
+    [criterion],
+    "whenParentTagged",
+  );
 }
 
 /**
@@ -92,8 +112,12 @@ export function whenParentTagged(criterion: BindingTag): BindingConstraint {
  * @since 0.3.16-canary.0
  */
 export function whenAnyAncestorTagged(criterion: BindingTag): BindingConstraint {
-  return (constraintContext) =>
-    constraintContext.ancestors.some((ancestorFrame) => ancestorFrame.slot.tags.includes(criterion));
+  return requiringReservedNamesAmong(
+    (constraintContext) =>
+      constraintContext.ancestors.some((ancestorFrame) => ancestorFrame.slot.tags.includes(criterion)),
+    [criterion],
+    "whenAnyAncestorTagged",
+  );
 }
 
 /**
@@ -106,13 +130,17 @@ export function whenAnyAncestorTagged(criterion: BindingTag): BindingConstraint 
 export function whenParentTaggedAll(tags: ReadonlyArray<BindingTag>): BindingConstraint {
   assertHasCriteria(tags, "whenParentTaggedAll");
   const wanted = tagKeyMaskOf(tags);
-  return (constraintContext) => {
-    const { parent } = constraintContext;
-    if (parent === undefined || !coversTagKeys(parent.slot.keyMask, wanted)) {
-      return false;
-    }
-    return tags.every((criterion) => parent.slot.tags.includes(criterion));
-  };
+  return requiringReservedNamesAmong(
+    (constraintContext) => {
+      const { parent } = constraintContext;
+      if (parent === undefined || !coversTagKeys(parent.slot.keyMask, wanted)) {
+        return false;
+      }
+      return tags.every((criterion) => parent.slot.tags.includes(criterion));
+    },
+    tags,
+    "whenParentTaggedAll",
+  );
 }
 
 /**
@@ -125,11 +153,34 @@ export function whenParentTaggedAll(tags: ReadonlyArray<BindingTag>): BindingCon
 export function whenAnyAncestorTaggedAll(tags: ReadonlyArray<BindingTag>): BindingConstraint {
   assertHasCriteria(tags, "whenAnyAncestorTaggedAll");
   const wanted = tagKeyMaskOf(tags);
-  return (constraintContext) =>
-    constraintContext.ancestors.some(
-      (frame) =>
-        coversTagKeys(frame.slot.keyMask, wanted) && tags.every((criterion) => frame.slot.tags.includes(criterion)),
-    );
+  return requiringReservedNamesAmong(
+    (constraintContext) =>
+      constraintContext.ancestors.some(
+        (frame) =>
+          coversTagKeys(frame.slot.keyMask, wanted) && tags.every((criterion) => frame.slot.tags.includes(criterion)),
+      ),
+    tags,
+    "whenAnyAncestorTaggedAll",
+  );
+}
+
+/**
+ * Records a requirement for every reserved-key criterion in a list, so a name spelled through the tag
+ * lane is validated exactly as one spelled through `whenNamed`.
+ */
+function requiringReservedNamesAmong(
+  predicate: BindingConstraint,
+  tags: ReadonlyArray<BindingTag>,
+  helperName: string,
+): BindingConstraint {
+  let requirements: Array<SlotNameRequirement> | undefined;
+  for (const criterion of tags) {
+    if (criterion.key === slotName) {
+      requirements ??= [];
+      requirements.push({ tokenName: undefined, name: criterion.value as string, helperName });
+    }
+  }
+  return requirements === undefined ? predicate : requiringAncestorSlotNames(predicate, requirements);
 }
 
 /**

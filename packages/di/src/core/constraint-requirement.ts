@@ -14,30 +14,60 @@ export const CONSTRAINT_REQUIREMENT: unique symbol = Symbol("di:constraint-requi
 /**
  * The slot name a constraint waits for on an ancestor.
  *
- * @remarks Only names are described. A tag criterion is interned, so a typo cannot produce one that
- * looks valid, while a name is a bare string that nothing checks.
+ * @remarks Only names are described, however spelled: a tag criterion of any other key is minted from
+ * a typed key, so a typo cannot produce one that looks valid, while a name is a bare string that
+ * nothing checks — through `whenNamed`'s reserved key included.
  *
  * @since 0.6.0
  */
 export interface ConstraintRequirement {
   readonly requires: "ancestorSlotName";
+  /** The token whose slot must carry the name, or `undefined` when the spelling named no token. */
+  readonly tokenName: string | undefined;
   readonly name: string;
   /** The helper that built the predicate, so a report can name what the caller wrote. */
   readonly helperName: string;
 }
 
 /**
- * Records what a predicate waits for. Called once, where the predicate is built.
+ * What a helper records about one waited-for slot name, before the discriminant is stamped on.
+ */
+export type SlotNameRequirement = Omit<ConstraintRequirement, "requires">;
+
+/**
+ * Records the one slot name a predicate waits for. Called once, where the predicate is built.
  *
  * @since 0.6.0
  */
 export function requiringAncestorSlotName(
   predicate: BindingConstraint,
-  name: string,
-  helperName: string,
+  requirement: SlotNameRequirement,
 ): BindingConstraint {
-  const requirement: ConstraintRequirement = { requires: "ancestorSlotName", name, helperName };
-  Object.defineProperty(predicate, CONSTRAINT_REQUIREMENT, { value: requirement, enumerable: false });
+  return requiringAncestorSlotNames(predicate, [requirement]);
+}
+
+/**
+ * Records every slot name a predicate waits for — one per reserved criterion in a `…TaggedAll` list.
+ */
+export function requiringAncestorSlotNames(
+  predicate: BindingConstraint,
+  requirements: ReadonlyArray<SlotNameRequirement>,
+): BindingConstraint {
+  return attachRequirements(
+    predicate,
+    requirements.map((requirement) => ({ requires: "ancestorSlotName", ...requirement })),
+  );
+}
+
+/** One non-enumerable write per predicate: a second define on the same key would throw. */
+function attachRequirements(
+  predicate: BindingConstraint,
+  requirements: ReadonlyArray<ConstraintRequirement>,
+): BindingConstraint {
+  Object.defineProperty(predicate, CONSTRAINT_REQUIREMENT, {
+    value: requirements.length === 1 ? requirements[0] : requirements,
+    enumerable: false,
+  });
   return predicate;
 }
 
@@ -86,9 +116,5 @@ export function mergingConstraintRequirements(
   if (merged.length === 0) {
     return composite;
   }
-  Object.defineProperty(composite, CONSTRAINT_REQUIREMENT, {
-    value: merged.length === 1 ? merged[0] : merged,
-    enumerable: false,
-  });
-  return composite;
+  return attachRequirements(composite, merged);
 }

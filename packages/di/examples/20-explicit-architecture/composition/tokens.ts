@@ -9,16 +9,16 @@ import type { MetricsHandler } from "#/examples/20-explicit-architecture/infrast
 import type { BankingController } from "#/examples/20-explicit-architecture/primary/banking-controller";
 
 /** The audit-trail subscriber, addressable on its own for inspection. */
-export const AuditLogToken = token<AuditLogHandler>("AuditLogHandler");
+export const AuditLogToken = token<AuditLogHandler>("explicit-architecture:AuditLogHandler");
 
 /** The metrics subscriber, addressable on its own for inspection. */
-export const MetricsToken = token<MetricsHandler>("MetricsHandler");
+export const MetricsToken = token<MetricsHandler>("explicit-architecture:MetricsHandler");
 
 /** The fraud-review subscriber, addressable on its own for inspection. */
-export const FraudEngineToken = token<FraudEngineHandler>("FraudEngineHandler");
+export const FraudEngineToken = token<FraudEngineHandler>("explicit-architecture:FraudEngineHandler");
 
 /** The compliance-ledger subscriber, addressable on its own for inspection. */
-export const ComplianceToken = token<ComplianceLogHandler>("ComplianceLogHandler");
+export const ComplianceToken = token<ComplianceLogHandler>("explicit-architecture:ComplianceLogHandler");
 
 /** The primary controller that drives the inbound ports. */
-export const BankingControllerToken = token<BankingController>("BankingController");
+export const BankingControllerToken = token<BankingController>("explicit-architecture:BankingController");

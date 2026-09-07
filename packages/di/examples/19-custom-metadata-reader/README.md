@@ -207,7 +207,7 @@ The owning modules are subpaths too, if you prefer importing narrowly: `@codefas
 ## Run it
 
 ```sh
-node --import tsx/esm examples/19-custom-metadata-reader/19-custom-metadata-reader.ts
+node --import tsx/esm examples/19-custom-metadata-reader/main.ts
 ```
 
 ---

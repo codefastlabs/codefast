@@ -8,6 +8,6 @@ import { infrastructureModule } from "#/examples/21-explicit-architecture-ecomme
 import { presentationModule } from "#/examples/21-explicit-architecture-ecommerce/composition/modules/presentation-module";
 
 /** Aggregates the domain, infrastructure, application, and presentation modules. */
-export const appModule = Module.create("App", (builder) => {
+export const appModule = Module.create("explicit-architecture-ecommerce:App", (builder) => {
   builder.import(domainModule, infrastructureModule, applicationModule, presentationModule);
 });

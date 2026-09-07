@@ -81,6 +81,34 @@ export type ReactAuditResult = {
 };
 
 /**
+ * A `token()`, `tag()` or module display name that breaks the display-name convention.
+ */
+export type DisplayNameViolation = {
+  readonly line: number;
+  /** The call as written, through its closing quote. */
+  readonly raw: string;
+  readonly reason: string;
+};
+
+/**
+ * The display-name violations found in one file.
+ */
+export type DisplayNameFileViolations = {
+  readonly relativePath: string;
+  readonly violations: Array<DisplayNameViolation>;
+};
+
+/**
+ * Outcome of one `audit display-names` run.
+ */
+export type DisplayNameAuditResult = {
+  readonly files: Array<DisplayNameFileViolations>;
+  readonly violationCount: number;
+  readonly allowlistedCount: number;
+  readonly scannedFileCount: number;
+};
+
+/**
  * A broken link or anchor found by the link audit.
  *
  * @since 0.5.0

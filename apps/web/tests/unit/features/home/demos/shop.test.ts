@@ -6,7 +6,7 @@ import { OrderServiceToken, createShop } from "#/features/home/demos/shop";
 describe("createShop", () => {
   it("derives a graph rooted at OrderService with its five dependencies", () => {
     const { graph } = createShop();
-    const root = graph.nodes.find((node) => node.tokenName === "OrderService");
+    const root = graph.nodes.find((node) => node.tokenName === "shop:OrderService");
 
     expect(root).toBeDefined();
     expect(graph.edges.filter((edge) => edge.from === root?.id)).toHaveLength(5);
@@ -16,7 +16,7 @@ describe("createShop", () => {
   it("binds OrderService as a singleton on request, for the captive case", () => {
     const { graph } = createShop({ orderService: "singleton" });
 
-    expect(graph.nodes.find((node) => node.tokenName === "OrderService")?.scope).toBe("singleton");
+    expect(graph.nodes.find((node) => node.tokenName === "shop:OrderService")?.scope).toBe("singleton");
   });
 
   it("refuses to resolve the scoped context from the root container", () => {

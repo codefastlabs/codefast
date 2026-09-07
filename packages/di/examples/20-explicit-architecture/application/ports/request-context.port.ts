@@ -9,4 +9,4 @@ export interface RequestContext {
 }
 
 /** The injection token that names the per-request context port, resolved once per unit of work. */
-export const RequestContextToken = token<RequestContext>("RequestContext");
+export const RequestContextToken = token<RequestContext>("explicit-architecture:RequestContext");

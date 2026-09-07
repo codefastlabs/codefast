@@ -39,4 +39,4 @@ export class CatalogController {
 }
 
 /** Injection token for the catalog controller. */
-export const CatalogControllerToken = token<CatalogController>("CatalogController");
+export const CatalogControllerToken = token<CatalogController>("explicit-architecture-ecommerce:CatalogController");

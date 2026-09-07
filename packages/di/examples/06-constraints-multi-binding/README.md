@@ -76,7 +76,7 @@ resolve hint take. Criteria are interned, so the same value is always the same o
 compare by identity. Building one by hand matches nothing.
 
 ```ts
-const PROVIDER_TAG = tag<"local" | "s3">("provider");
+const PROVIDER_TAG = tag<"local" | "s3">("constraints-multi-binding:provider");
 
 container.bind(StorageToken).to(S3Storage).whenTagged(PROVIDER_TAG.of("s3")).singleton();
 container.bind(StorageToken).to(LocalStorage).whenTagged(PROVIDER_TAG.of("local")).singleton();

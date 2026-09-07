@@ -151,7 +151,7 @@ import { getActiveContainer, runWithContainer } from "@codefast/di/ambient/activ
 ## Run it
 
 ```sh
-node --import tsx/esm examples/18-ambient-container/18-ambient-container.ts
+node --import tsx/esm examples/18-ambient-container/main.ts
 ```
 
 ---

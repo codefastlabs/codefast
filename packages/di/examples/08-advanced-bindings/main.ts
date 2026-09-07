@@ -15,12 +15,12 @@ import { item, section } from "#/examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const LoggerToken = token<Logger>("Logger");
-const AbstractLoggerToken = token<Logger>("AbstractLogger");
-const ConfigToken = token<Config>("Config");
-const MailerToken = token<Mailer>("Mailer");
-const NotifierToken = token<Notifier>("Notifier");
-const PluginToken = token<Plugin>("Plugin");
+const LoggerToken = token<Logger>("advanced-bindings:Logger");
+const AbstractLoggerToken = token<Logger>("advanced-bindings:AbstractLogger");
+const ConfigToken = token<Config>("advanced-bindings:Config");
+const MailerToken = token<Mailer>("advanced-bindings:Mailer");
+const NotifierToken = token<Notifier>("advanced-bindings:Notifier");
+const PluginToken = token<Plugin>("advanced-bindings:Plugin");
 
 // ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -142,7 +142,7 @@ class MixedService {
   }
 }
 
-const MixedServiceToken = token<MixedService>("MixedService");
+const MixedServiceToken = token<MixedService>("advanced-bindings:MixedService");
 container.bind(MixedServiceToken).to(MixedService);
 container.bind(NotifierToken).to(PlainNotifier).singleton();
 const notifier = container.resolve(NotifierToken);

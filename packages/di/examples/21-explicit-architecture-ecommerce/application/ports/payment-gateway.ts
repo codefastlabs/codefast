@@ -19,4 +19,4 @@ export interface PaymentGateway {
 }
 
 /** The injection token that binds the `PaymentGateway` port to its adapters. */
-export const PaymentGatewayToken = token<PaymentGateway>("PaymentGateway");
+export const PaymentGatewayToken = token<PaymentGateway>("explicit-architecture-ecommerce:PaymentGateway");

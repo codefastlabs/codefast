@@ -13,7 +13,7 @@ declare const TOKEN_NAMES_BRAND: unique symbol;
  *
  * @example
  * ```ts
- * const Logger = token<Logger, "console" | "file">("Logger");
+ * const Logger = token<Logger, "console" | "file">("di:Logger");
  * container.bind(Logger).to(FileLogger).whenNamed("file");
  * container.resolve(Logger, { name: "file" });
  * ```

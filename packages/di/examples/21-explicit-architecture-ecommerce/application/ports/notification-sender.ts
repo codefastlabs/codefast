@@ -12,4 +12,4 @@ export interface NotificationSender {
 }
 
 /** The injection token that binds the `NotificationSender` port to its adapters. */
-export const NotificationSenderToken = token<NotificationSender>("NotificationSender");
+export const NotificationSenderToken = token<NotificationSender>("explicit-architecture-ecommerce:NotificationSender");

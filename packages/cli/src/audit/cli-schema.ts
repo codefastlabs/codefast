@@ -101,6 +101,26 @@ export const reactAuditRunRequestSchema: z.ZodType<ReactAuditRunRequest> = z.obj
 });
 
 /**
+ * Resolved request for a single display-name audit run.
+ */
+export type DisplayNameAuditRunRequest = {
+  readonly rootDir: string;
+  readonly targetPath: string;
+  readonly allowlist?: ReadonlyArray<string> | undefined;
+  readonly json: boolean;
+};
+
+/**
+ * Zod schema for {@link DisplayNameAuditRunRequest}.
+ */
+export const displayNameAuditRunRequestSchema: z.ZodType<DisplayNameAuditRunRequest> = z.object({
+  rootDir: z.string().min(1),
+  targetPath: z.string().min(1),
+  allowlist: z.array(z.string()).optional(),
+  json: z.boolean(),
+});
+
+/**
  * Resolves a path that may be absolute or relative to `rootDir`.
  *
  * @since 0.5.0-canary.6

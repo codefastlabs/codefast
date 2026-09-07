@@ -12,9 +12,9 @@ interface Logger {
   info(message: string): void;
 }
 
-const TransportToken = token<Transport>("Transport");
-const FormatterToken = token<Formatter>("Formatter");
-const LoggerToken = token<Logger>("Logger");
+const TransportToken = token<Transport>("app:Transport");
+const FormatterToken = token<Formatter>("app:Formatter");
+const LoggerToken = token<Logger>("app:Logger");
 
 @injectable([
   TransportToken,

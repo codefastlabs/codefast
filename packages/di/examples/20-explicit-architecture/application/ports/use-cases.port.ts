@@ -59,13 +59,13 @@ export interface TransferMoneyUseCase {
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /** The injection token that names the open-account use case. */
-export const OpenAccountUseCaseToken = token<OpenAccountUseCase>("OpenAccountUseCase");
+export const OpenAccountUseCaseToken = token<OpenAccountUseCase>("explicit-architecture:OpenAccountUseCase");
 
 /** The injection token that names the deposit-money use case. */
-export const DepositMoneyUseCaseToken = token<DepositMoneyUseCase>("DepositMoneyUseCase");
+export const DepositMoneyUseCaseToken = token<DepositMoneyUseCase>("explicit-architecture:DepositMoneyUseCase");
 
 /** The injection token that names the withdraw-money use case. */
-export const WithdrawMoneyUseCaseToken = token<WithdrawMoneyUseCase>("WithdrawMoneyUseCase");
+export const WithdrawMoneyUseCaseToken = token<WithdrawMoneyUseCase>("explicit-architecture:WithdrawMoneyUseCase");
 
 /** The injection token that names the transfer-money use case. */
-export const TransferMoneyUseCaseToken = token<TransferMoneyUseCase>("TransferMoneyUseCase");
+export const TransferMoneyUseCaseToken = token<TransferMoneyUseCase>("explicit-architecture:TransferMoneyUseCase");

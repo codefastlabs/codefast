@@ -12,10 +12,10 @@ export interface RiskCheck {
   readonly maxScore: number;
 }
 
-export const riskCheckToken = token<RiskCheck>("RiskCheck");
+export const riskCheckToken = token<RiskCheck>("inspector:RiskCheck");
 
 /** Fraud screening: bought separately, so the binding only exists while the flag is on. */
-const fraudScreeningModule = Module.create("fraud-screening", (builder) => {
+const fraudScreeningModule = Module.create("inspector:FraudScreening", (builder) => {
   builder.bind(riskCheckToken).toConstantValue({ provider: "Sift", maxScore: 92 });
 });
 

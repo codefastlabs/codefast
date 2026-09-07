@@ -8,4 +8,4 @@ export interface RequestContext {
 }
 
 /** Injection token for the per-request context. */
-export const RequestContextToken = token<RequestContext>("RequestContext");
+export const RequestContextToken = token<RequestContext>("explicit-architecture-ecommerce:RequestContext");

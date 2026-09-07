@@ -17,4 +17,4 @@ export class ListProducts {
 }
 
 /** The injection token that resolves the `ListProducts` use case. */
-export const ListProductsToken = token<ListProducts>("ListProducts");
+export const ListProductsToken = token<ListProducts>("explicit-architecture-ecommerce:ListProducts");

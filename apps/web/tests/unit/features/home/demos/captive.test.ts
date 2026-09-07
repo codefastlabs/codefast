@@ -5,7 +5,7 @@ import { createCaptiveContainer, validationMessage } from "#/features/home/demos
 describe("validationMessage", () => {
   it("reports the singleton OrderService holding the scoped RequestContext captive", () => {
     expect(validationMessage(createCaptiveContainer(false))).toMatch(
-      /^Scope violation: 'OrderService' \(singleton\) depends on 'RequestContext' \(scoped\)/,
+      /^Scope violation: 'shop:OrderService' \(singleton\) depends on 'shop:RequestContext' \(scoped\)/,
     );
   });
 
