@@ -365,7 +365,7 @@ class TenantInviteManager implements InviteService {
 
 // ── Root module — shared infrastructure ──────────────────────────────────────────────────────────────────────────────
 
-const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
+const InfrastructureModule = Module.createAsync("multi-tenant:Infra", async (builder) => {
   builder.bind(AppConfigToken).toConstantValue({
     defaultDatabaseUrl: "postgres://localhost:5432/saas",
     redisUrl: "redis://localhost:6379",

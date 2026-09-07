@@ -106,7 +106,7 @@ interface PluginDescriptor {
 // CoreModule — shared infrastructure, loaded once (diamond-dedup)
 // ============================================================================
 
-const CoreModule = Module.create("Core", (builder) => {
+const CoreModule = Module.create("plugin-architecture:Core", (builder) => {
   builder.bind(AppConfigToken).toConstantValue({
     env: "production",
     region: "ap-southeast-1",
@@ -156,7 +156,7 @@ class S3StorageProvider implements StorageProvider {
   }
 }
 
-const S3PluginModule = Module.createAsync("S3Plugin", async (builder) => {
+const S3PluginModule = Module.createAsync("plugin-architecture:S3Plugin", async (builder) => {
   // CoreModule imported here — deduped if already loaded
   builder.import(CoreModule);
 
@@ -206,7 +206,7 @@ class SegmentAnalyticsProvider implements AnalyticsProvider {
   }
 }
 
-const AnalyticsPluginModule = Module.createAsync("AnalyticsPlugin", async (builder) => {
+const AnalyticsPluginModule = Module.createAsync("plugin-architecture:AnalyticsPlugin", async (builder) => {
   builder.import(CoreModule); // deduped — CoreModule setup runs exactly once
 
   builder
@@ -240,7 +240,7 @@ class SlackNotificationProvider implements NotificationProvider {
   }
 }
 
-const SlackPluginModule = Module.createAsync("SlackPlugin", async (builder) => {
+const SlackPluginModule = Module.createAsync("plugin-architecture:SlackPlugin", async (builder) => {
   builder.import(CoreModule); // third import of CoreModule — still runs only once
 
   builder
@@ -323,7 +323,7 @@ class LocalStorageProvider implements StorageProvider {
   }
 }
 
-const LocalStoragePluginModule = Module.createAsync("LocalStoragePlugin", async (builder) => {
+const LocalStoragePluginModule = Module.createAsync("plugin-architecture:LocalStoragePlugin", async (builder) => {
   builder.import(CoreModule);
 
   builder

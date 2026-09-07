@@ -2329,7 +2329,7 @@ class AbTestManager implements AbTestService {
 
 // ── Infrastructure (async) ───────────────────────────────────────────────────────────────────────────────────────────
 
-const InfrastructureModule = Module.createAsync("Infrastructure", async (builder) => {
+const InfrastructureModule = Module.createAsync("ecommerce-platform:Infrastructure", async (builder) => {
   const config = await loadAppConfig();
   builder.bind(AppConfigToken).toConstantValue(config);
   builder.bind(LoggerToken).to(EcommerceRootLogger).singleton();
@@ -2370,7 +2370,7 @@ const InfrastructureModule = Module.createAsync("Infrastructure", async (builder
 
 // ── Catalog ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const CatalogModule = Module.create("Catalog", (builder) => {
+const CatalogModule = Module.create("ecommerce-platform:Catalog", (builder) => {
   builder.bind(ProductRepositoryToken).to(ProductPostgresRepository).singleton();
   builder.bind(CategoryRepositoryToken).to(CategoryPostgresRepository).singleton();
   builder.bind(InventoryServiceToken).to(InventoryManager).singleton();
@@ -2382,7 +2382,7 @@ const CatalogModule = Module.create("Catalog", (builder) => {
 
 // ── Cart ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const CartModule = Module.create("Cart", (builder) => {
+const CartModule = Module.create("ecommerce-platform:Cart", (builder) => {
   builder.import(CatalogModule);
   builder.bind(CartRepositoryToken).to(CartRedisRepository).singleton();
   builder.bind(CouponServiceToken).to(CouponManager).singleton();
@@ -2391,13 +2391,13 @@ const CartModule = Module.create("Cart", (builder) => {
 
 // ── Orders ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ShippingModule = Module.create("Shipping", (builder) => {
+const ShippingModule = Module.create("ecommerce-platform:Shipping", (builder) => {
   builder.bind(ShippingCarrierToken).to(FedExCarrier).whenNamed("fedex").singleton();
   builder.bind(ShippingCarrierToken).to(UpsCarrier).whenNamed("ups").singleton();
   builder.bind(ShippingCarrierToken).to(DhlCarrier).whenNamed("dhl").singleton();
 });
 
-const OrderModule = Module.create("Orders", (builder) => {
+const OrderModule = Module.create("ecommerce-platform:Orders", (builder) => {
   builder.import(ShippingModule);
   builder.bind(OrderRepositoryToken).to(OrderPostgresRepository).singleton();
   builder.bind(FulfillmentServiceToken).to(ShippingFulfillmentService).singleton();
@@ -2406,7 +2406,7 @@ const OrderModule = Module.create("Orders", (builder) => {
 
 // ── Payments ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const PaymentModule = Module.create("Payments", (builder) => {
+const PaymentModule = Module.create("ecommerce-platform:Payments", (builder) => {
   builder.bind(PaymentGatewayToken).to(StripeGateway).whenNamed("stripe").singleton();
   builder.bind(PaymentGatewayToken).to(PayPalGateway).whenNamed("paypal").singleton();
   builder.bind(PaymentGatewayToken).to(CashOnDeliveryGateway).whenNamed("cod").singleton();
@@ -2415,7 +2415,7 @@ const PaymentModule = Module.create("Payments", (builder) => {
 
 // ── Users ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const UserModule = Module.create("Users", (builder) => {
+const UserModule = Module.create("ecommerce-platform:Users", (builder) => {
   builder.bind(UserRepositoryToken).to(UserPostgresRepository).singleton();
   builder.bind(AddressRepositoryToken).to(AddressPostgresRepository).singleton();
   builder.bind(LoyaltyServiceToken).to(LoyaltyManager).singleton();
@@ -2425,7 +2425,7 @@ const UserModule = Module.create("Users", (builder) => {
 
 // ── Notifications ────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const NotificationModule = Module.create("Notifications", (builder) => {
+const NotificationModule = Module.create("ecommerce-platform:Notifications", (builder) => {
   builder.bind(NotificationChannelToken).to(EmailChannel).whenNamed("email").singleton();
   builder.bind(NotificationChannelToken).to(SmsChannel).whenNamed("sms").singleton();
   builder.bind(NotificationChannelToken).to(PushChannel).whenNamed("push").singleton();
@@ -2434,14 +2434,14 @@ const NotificationModule = Module.create("Notifications", (builder) => {
 
 // ── Analytics (optional features) ────────────────────────────────────────────────────────────────────────────────────
 
-const AnalyticsModule = Module.create("Analytics", (builder) => {
+const AnalyticsModule = Module.create("ecommerce-platform:Analytics", (builder) => {
   builder.bind(AnalyticsServiceToken).to(SegmentAnalyticsService).singleton();
   builder.bind(AbTestServiceToken).to(AbTestManager).singleton();
 });
 
 // ── Root app module ──────────────────────────────────────────────────────────────────────────────────────────────────
 
-const AppModule = Module.create("App", (builder) => {
+const AppModule = Module.create("ecommerce-platform:App", (builder) => {
   builder.import(CatalogModule, CartModule, OrderModule, UserModule, NotificationModule, AnalyticsModule);
   // Placeholder scoped session token — overridden per request in child container
   builder.bind(SessionToken).toConstantValue({

@@ -190,7 +190,7 @@ class UserController {
 
 // ── Modules ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
+const InfrastructureModule = Module.createAsync("real-world-web-app:Infra", async (builder) => {
   const config = await loadConfig();
   builder.bind(ConfigToken).toConstantValue(config);
 
@@ -210,28 +210,28 @@ const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
     });
 });
 
-const RepositoryModule = Module.create("Repository", (builder) => {
+const RepositoryModule = Module.create("real-world-web-app:Repository", (builder) => {
   builder.bind(UserRepoToken).to(UserPostgresRepository).singleton();
 });
 
-const ServiceModule = Module.create("Service", (builder) => {
+const ServiceModule = Module.create("real-world-web-app:Service", (builder) => {
   builder.import(RepositoryModule);
   builder.bind(AuthServiceToken).to(AuthManager).singleton();
 });
 
-const MiddlewareModule = Module.create("Middleware", (builder) => {
+const MiddlewareModule = Module.create("real-world-web-app:Middleware", (builder) => {
   builder.import(ServiceModule);
   // Multi-binding: each middleware uses a distinct binding slot via whenNamed()
   builder.bind(MiddlewareToken).to(LoggingMiddleware).whenNamed("logging");
   builder.bind(MiddlewareToken).to(AuthMiddleware).whenNamed("auth");
 });
 
-const ControllerModule = Module.create("Controller", (builder) => {
+const ControllerModule = Module.create("real-world-web-app:Controller", (builder) => {
   builder.import(ServiceModule);
   builder.bind(UserControllerToken).to(UserController).scoped();
 });
 
-const AppModule = Module.create("App", (builder) => {
+const AppModule = Module.create("real-world-web-app:App", (builder) => {
   builder.import(RepositoryModule, ServiceModule, MiddlewareModule, ControllerModule);
   builder.bind(RequestContextToken).toConstantValue({
     requestId: "bootstrap",

@@ -29,7 +29,7 @@ import { SystemClock } from "#/examples/20-explicit-architecture/infrastructure/
 let requestSequence = 0;
 
 /** Binds the storage, clock, id, and eventing adapters that the domain never names directly. */
-export const infrastructureModule = Module.create("Infrastructure", (builder) => {
+export const infrastructureModule = Module.create("explicit-architecture:Infrastructure", (builder) => {
   builder.bind(AccountRepositoryToken).to(InMemoryAccountRepository).singleton();
   builder.bind(ClockToken).to(SystemClock).singleton();
   builder.bind(IdGeneratorToken).to(SequentialIdGenerator).singleton();

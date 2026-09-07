@@ -58,7 +58,7 @@ graph LR
 ## Defining a module
 
 ```ts
-const CoreModule = Module.create("Core", (builder) => {
+const CoreModule = Module.create("modules:Core", (builder) => {
   builder.bind(ConfigToken).toConstantValue({ smtpHost: "smtp.example.com", jwtSecret: "s3cr3t" });
   builder.bind(LoggerToken).toConstantValue({ info: console.log, error: console.error });
 });
@@ -72,17 +72,17 @@ is used for debugging.
 ## Composing modules
 
 ```ts
-const EmailModule = Module.create("Email", (builder) => {
+const EmailModule = Module.create("modules:Email", (builder) => {
   builder.import(CoreModule); // declare dependency
   builder.bind(EmailServiceToken).to(EmailService).singleton();
 });
 
-const AuthModule = Module.create("Auth", (builder) => {
+const AuthModule = Module.create("modules:Auth", (builder) => {
   builder.import(CoreModule); // also depends on Core
   builder.bind(AuthServiceToken).to(AuthService).singleton();
 });
 
-const AppModule = Module.create("App", (builder) => {
+const AppModule = Module.create("modules:App", (builder) => {
   builder.import(CoreModule, EmailModule, AuthModule); // CoreModule imported 3× total
   builder.bind(AppToken).to(App);
 });
@@ -132,7 +132,7 @@ console.log(firstLogger === secondLogger); // true
 Modules can be added and removed after the container is created:
 
 ```ts
-const ExtraModule = Module.create("Extra", (builder) => {
+const ExtraModule = Module.create("modules:Extra", (builder) => {
   builder.bind(ExtraToken).toConstantValue("extra-value");
 });
 
@@ -149,7 +149,7 @@ This is useful for feature flags, hot-reload during development, or plugin syste
 When setup needs to `await` something (fetching remote config, opening a DB connection), use `Module.createAsync`:
 
 ```ts
-const InfraModule = Module.createAsync("Infra", async (builder) => {
+const InfraModule = Module.createAsync("modules:Infra", async (builder) => {
   const config = await fetchRemoteConfig();
   builder.bind(ConfigToken).toConstantValue(config);
 });

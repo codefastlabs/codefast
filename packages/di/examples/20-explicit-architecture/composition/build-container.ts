@@ -7,7 +7,7 @@ import { infrastructureModule } from "#/examples/20-explicit-architecture/compos
 
 /** Assembles the infrastructure and application modules and validates the graph before returning it. */
 export function buildContainer(): Container {
-  const bankingModule = Module.create("Banking", (builder) => {
+  const bankingModule = Module.create("explicit-architecture:Banking", (builder) => {
     builder.import(infrastructureModule, applicationModule);
   });
 

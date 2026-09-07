@@ -120,14 +120,14 @@ class SegmentAnalytics implements Analytics {
 
 // ── Modules ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const InfraModule = Module.create("Infra", (builder) => {
+const InfraModule = Module.create("inspection-graph:Infra", (builder) => {
   builder.bind(LoggerToken).to(ConsoleLogger).singleton();
   builder.bind(ConfigToken).toConstantValue({ databaseUrl: "postgres://localhost/app", env: "development" });
   builder.bind(CacheToken).to(RedisCache).singleton();
   builder.bind(DatabaseToken).to(PostgresDatabase).singleton();
 });
 
-const AppModule = Module.create("App", (builder) => {
+const AppModule = Module.create("inspection-graph:App", (builder) => {
   builder.bind(UserServiceToken).to(UserManager).singleton();
   builder.bind(AnalyticsToken).to(SegmentAnalytics).singleton();
 });

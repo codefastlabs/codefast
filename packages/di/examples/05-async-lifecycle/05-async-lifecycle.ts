@@ -100,13 +100,13 @@ class App {
 
 // ── AsyncModule ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const InfrastructureModule = Module.createAsync("Infra", async (builder) => {
+const InfrastructureModule = Module.createAsync("async-lifecycle:Infra", async (builder) => {
   // Async module setup — fetch config from "remote" source
   const config = await fetchConfig();
   builder.bind(ConfigToken).toConstantValue(config);
 });
 
-const DatabaseModule = Module.create("Database", (builder) => {
+const DatabaseModule = Module.create("async-lifecycle:Database", (builder) => {
   // toDynamicAsync: async factory with access to ResolutionContext
   builder
     .bind(DatabaseToken)
@@ -126,7 +126,7 @@ const DatabaseModule = Module.create("Database", (builder) => {
     });
 });
 
-const CacheModule = Module.create("Cache", (builder) => {
+const CacheModule = Module.create("async-lifecycle:Cache", (builder) => {
   builder
     .bind(CacheToken)
     .toDynamicAsync(async (context) => {
@@ -143,7 +143,7 @@ const CacheModule = Module.create("Cache", (builder) => {
     });
 });
 
-const AppModule = Module.create("App", (builder) => {
+const AppModule = Module.create("async-lifecycle:App", (builder) => {
   builder.bind(AppToken).to(App).singleton();
 });
 

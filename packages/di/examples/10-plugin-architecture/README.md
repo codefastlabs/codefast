@@ -73,7 +73,7 @@ Each capability is an `AsyncModule` that:
 3. Owns its own async `onActivation` (open connections) and `onDeactivation` (close them)
 
 ```ts
-const S3PluginModule = Module.createAsync("S3Plugin", async (builder) => {
+const S3PluginModule = Module.createAsync("plugin-architecture:S3Plugin", async (builder) => {
   builder.import(CoreModule); // shared config & logger
 
   builder

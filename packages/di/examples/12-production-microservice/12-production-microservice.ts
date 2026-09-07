@@ -553,7 +553,7 @@ class JobManager implements JobService {
 
 // ── Modules ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const ConfigModule = Module.createAsync("Config", async (builder) => {
+const ConfigModule = Module.createAsync("production-microservice:Config", async (builder) => {
   // In production, read from process.env / secrets manager
   builder.bind(ServiceConfigToken).toConstantValue({
     port: 3000,
@@ -565,7 +565,7 @@ const ConfigModule = Module.createAsync("Config", async (builder) => {
   });
 });
 
-const DatabaseModule = Module.createAsync("Database", async (builder) => {
+const DatabaseModule = Module.createAsync("production-microservice:Database", async (builder) => {
   builder.import(ConfigModule);
 
   builder
@@ -583,7 +583,7 @@ const DatabaseModule = Module.createAsync("Database", async (builder) => {
     });
 });
 
-const RedisModule = Module.createAsync("Redis", async (builder) => {
+const RedisModule = Module.createAsync("production-microservice:Redis", async (builder) => {
   builder.import(ConfigModule);
 
   builder
@@ -601,7 +601,7 @@ const RedisModule = Module.createAsync("Redis", async (builder) => {
     });
 });
 
-const WorkerModule = Module.createAsync("Worker", async (builder) => {
+const WorkerModule = Module.createAsync("production-microservice:Worker", async (builder) => {
   builder.import(ConfigModule);
 
   builder
@@ -626,7 +626,7 @@ const WorkerModule = Module.createAsync("Worker", async (builder) => {
     });
 });
 
-const MetricsModule = Module.create("Metrics", (builder) => {
+const MetricsModule = Module.create("production-microservice:Metrics", (builder) => {
   builder
     .bind(MetricsCollectorToken)
     .toDynamic(() => new InMemoryMetricsCollector())
@@ -634,7 +634,7 @@ const MetricsModule = Module.create("Metrics", (builder) => {
 });
 
 // HealthModule imports async modules → must be async itself
-const HealthModule = Module.createAsync("Health", async (builder) => {
+const HealthModule = Module.createAsync("production-microservice:Health", async (builder) => {
   builder.import(ConfigModule);
 
   // DatabasePool and RedisClient have async factories — use toDynamicAsync
@@ -667,7 +667,7 @@ const HealthModule = Module.createAsync("Health", async (builder) => {
 });
 
 // HttpModule imports async modules → must be async itself
-const HttpModule = Module.createAsync("Http", async (builder) => {
+const HttpModule = Module.createAsync("production-microservice:Http", async (builder) => {
   builder.import(ConfigModule, HealthModule);
 
   // HealthRegistry is toDynamicAsync → HttpServer must also use toDynamicAsync
@@ -724,14 +724,14 @@ const HttpModule = Module.createAsync("Http", async (builder) => {
 });
 
 // ServiceModule imports async modules → must be async itself
-const ServiceModule = Module.createAsync("Service", async (builder) => {
+const ServiceModule = Module.createAsync("production-microservice:Service", async (builder) => {
   builder.import(DatabaseModule, RedisModule, MetricsModule);
   builder.bind(JobRepositoryToken).to(JobQueueBackedRepository).singleton();
   builder.bind(JobServiceToken).to(JobManager).singleton();
 });
 
 // AppModule composes everything — async because it imports async modules
-const AppModule = Module.createAsync("App", async (builder) => {
+const AppModule = Module.createAsync("production-microservice:App", async (builder) => {
   builder.import(
     ConfigModule,
     DatabaseModule,

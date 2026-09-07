@@ -200,7 +200,7 @@ class StubPaymentGateway implements PaymentGateway {
 
 // ── Shared module (real infra) ───────────────────────────────────────────────────────────────────────────────────────
 
-const CoreModule = Module.create("Core", (builder) => {
+const CoreModule = Module.create("testing-patterns:Core", (builder) => {
   builder.bind(LoggerToken).to(RealLogger).singleton();
   builder.bind(UserServiceToken).to(DatabaseUserService).singleton();
   builder.bind(PaymentGatewayToken).to(StripePaymentGateway).singleton();

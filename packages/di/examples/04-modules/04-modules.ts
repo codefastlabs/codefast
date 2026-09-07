@@ -74,7 +74,7 @@ class App {
 // ── Modules ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 // CoreModule: shared primitives (config + logger) — can be imported by others
-const CoreModule = Module.create("Core", (builder) => {
+const CoreModule = Module.create("modules:Core", (builder) => {
   builder.bind(ConfigToken).toConstantValue({
     smtpHost: "smtp.example.com",
     jwtSecret: "supersecret",
@@ -87,19 +87,19 @@ const CoreModule = Module.create("Core", (builder) => {
 });
 
 // EmailModule: depends on CoreModule
-const EmailModule = Module.create("Email", (builder) => {
+const EmailModule = Module.create("modules:Email", (builder) => {
   builder.import(CoreModule); // declares dependency
   builder.bind(EmailServiceToken).to(EmailService).singleton();
 });
 
 // AuthModule: also depends on CoreModule
-const AuthModule = Module.create("Auth", (builder) => {
+const AuthModule = Module.create("modules:Auth", (builder) => {
   builder.import(CoreModule); // CoreModule deduped — setup runs only once
   builder.bind(AuthServiceToken).to(AuthService).singleton();
 });
 
 // AppModule: composes all above — CoreModule imported 3 times, runs once
-const AppModule = Module.create("App", (builder) => {
+const AppModule = Module.create("modules:App", (builder) => {
   builder.import(CoreModule, EmailModule, AuthModule);
   builder.bind(AppToken).to(App);
 });
@@ -122,7 +122,7 @@ const secondLoggerResolve = container.resolve(LoggerToken);
 item("Shared Logger", firstLoggerResolve === secondLoggerResolve); // true
 
 // You can also load/unload modules dynamically after container creation
-const ExtraModule = Module.create("Extra", (builder) => {
+const ExtraModule = Module.create("modules:Extra", (builder) => {
   const ExtraToken = token<string>("modules:Extra");
   builder.bind(ExtraToken).toConstantValue("extra-value");
 });

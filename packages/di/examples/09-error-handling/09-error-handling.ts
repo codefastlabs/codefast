@@ -200,7 +200,7 @@ try {
 
 section("7. AsyncModuleLoadError");
 
-const AsyncDatabaseModule = Module.createAsync("Database", async (builder) => {
+const AsyncDatabaseModule = Module.createAsync("error-handling:Database", async (builder) => {
   const DatabaseSetupToken = token<string>("error-handling:DbSetup");
   builder.bind(DatabaseSetupToken).toConstantValue("connected");
 });
