@@ -261,6 +261,30 @@ namedContainer.resolve(DataSourceToken, { name: "replica" }).connect(); // [repl
 // The Logger inside that DataSource sees parent.slot.name === "replica".
 namedContainer.resolve(QueryRunnerToken).execute(); // [replica-logger] connected
 
+// Two parent tokens sharing a slot name. A name is a label on one token's slots, so
+// "primary" on ArchiveSource is another slot than "primary" on DataSource — and the token
+// argument is what lets the two Logger bindings tell them apart. A name alone could not:
+// both parents carry slot.name === "primary".
+const ArchiveSourceToken = token<DataSource, "primary">("ArchiveSource");
+
+const sharedNameContainer = Container.create();
+
+sharedNameContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("datasource-primary-logger"))
+  .when(whenParentNamed(DataSourceToken, "primary"));
+
+sharedNameContainer
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("archive-primary-logger"))
+  .when(whenParentNamed(ArchiveSourceToken, "primary"));
+
+sharedNameContainer.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
+sharedNameContainer.bind(ArchiveSourceToken).to(DataSource).whenNamed("primary").singleton();
+
+sharedNameContainer.resolve(DataSourceToken, { name: "primary" }).connect(); // [datasource-primary-logger]
+sharedNameContainer.resolve(ArchiveSourceToken, { name: "primary" }).connect(); // [archive-primary-logger]
+
 // whenAnyAncestorNamed reaches past the direct parent: the audit channel is
 // chosen from the named ConnectionPool two levels up, even though the Logger's
 // immediate parent (HealthProbe) carries no name.

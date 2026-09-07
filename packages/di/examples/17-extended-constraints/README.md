@@ -163,6 +163,29 @@ container.bind(QueryRunnerToken).to(QueryRunner).singleton();
 container.resolve(QueryRunnerToken).execute(); // [replica-logger] connected
 ```
 
+**Two parent tokens sharing a slot name.** A name is a label on one token's slots, so `"primary"` on `ArchiveSource` is
+a different slot from `"primary"` on `DataSource`. The token argument is what tells the two apart; a name alone could
+not, since both parent frames carry `slot.name === "primary"`.
+
+```ts
+const ArchiveSourceToken = token<DataSource, "primary">("ArchiveSource");
+
+container
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("datasource-primary-logger"))
+  .when(whenParentNamed(DataSourceToken, "primary"));
+container
+  .bind(LoggerToken)
+  .toConstantValue(makeLogger("archive-primary-logger"))
+  .when(whenParentNamed(ArchiveSourceToken, "primary"));
+
+container.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
+container.bind(ArchiveSourceToken).to(DataSource).whenNamed("primary").singleton();
+
+container.resolve(DataSourceToken, { name: "primary" }).connect(); // [datasource-primary-logger]
+container.resolve(ArchiveSourceToken, { name: "primary" }).connect(); // [archive-primary-logger]
+```
+
 `whenAnyAncestorNamed` works the same way but searches the full ancestor chain instead of only the direct parent.
 
 ---
