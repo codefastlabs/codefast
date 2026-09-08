@@ -66,10 +66,11 @@ jobs:
       - name: Verify Documentation Cross-References
         run: pnpm cli:audit:links
 
-      # oxlint bans namespace/default React imports natively, but an implicit `React.*`
-      # UMD-global type reference passes both lint and tsc — only this audit sees it.
-      - name: Verify React Import Policy
-        run: pnpm cli:audit:react
+      # oxlint bans namespace/default React imports natively, but an implicit `React.*` UMD-global
+      # type reference — and a named `import { z } from "zod"` vs the namespace form — pass both
+      # lint and tsc; only this audit sees them.
+      - name: Verify Import Policy
+        run: pnpm cli:audit:imports
 
       # A display name is a bare string: two owners can mint the same one and no type catches it.
       # The `<namespace>:<Name>` rule is what keeps diagnostics and constraints unambiguous.

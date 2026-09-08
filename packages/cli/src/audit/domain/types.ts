@@ -46,12 +46,10 @@ export type RtlAuditResult = {
 };
 
 /**
- * A React import-policy violation: a namespace/default `React` import, or an implicit
- * `React.*` UMD-global type reference.
- *
- * @since 0.8.0
+ * An import-policy violation: a banned import form (namespace / default / named), or an implicit
+ * UMD-global type reference under a name nothing in the file imports.
  */
-export type ReactImportViolation = {
+export type ImportPolicyViolation = {
   readonly line: number;
   /** The offending source text — the import statement or the qualified type name. */
   readonly raw: string;
@@ -59,22 +57,18 @@ export type ReactImportViolation = {
 };
 
 /**
- * The React import-policy violations found in one file.
- *
- * @since 0.8.0
+ * The import-policy violations found in one file.
  */
-export type ReactImportFileViolations = {
+export type ImportPolicyFileViolations = {
   readonly relativePath: string;
-  readonly violations: Array<ReactImportViolation>;
+  readonly violations: Array<ImportPolicyViolation>;
 };
 
 /**
- * Outcome of one `audit react` run.
- *
- * @since 0.8.0
+ * Outcome of one `audit imports` run.
  */
-export type ReactAuditResult = {
-  readonly files: Array<ReactImportFileViolations>;
+export type ImportsAuditResult = {
+  readonly files: Array<ImportPolicyFileViolations>;
   readonly violationCount: number;
   readonly allowlistedCount: number;
   readonly scannedFileCount: number;

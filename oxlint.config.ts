@@ -42,7 +42,7 @@ export default defineConfig({
     "typescript/no-explicit-any": "warn",
 
     // House style: React members are imported by name — never a namespace or default
-    // `React` import. The implicit `React.*` UMD global is caught by `codefast audit react`.
+    // `React` import. The implicit `React.*` UMD global is caught by `codefast audit imports`.
     "no-restricted-imports": [
       "error",
       {

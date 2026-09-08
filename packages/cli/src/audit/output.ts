@@ -1,7 +1,7 @@
 import type {
   CommentAuditResult,
+  ImportsAuditResult,
   LinkAuditResult,
-  ReactAuditResult,
   RtlAuditResult,
   DisplayNameAuditResult,
 } from "#/audit/domain/types";
@@ -101,20 +101,16 @@ export function formatLinkAuditJsonOutput(result: LinkAuditResult, rootDir: stri
 }
 
 /**
- * Exit `1` when any non-allowlisted React import-policy violation remains.
- *
- * @since 0.8.0
+ * Exit `1` when any non-allowlisted import-policy violation remains.
  */
-export function exitCodeForReactAuditResult(result: ReactAuditResult): number {
+export function exitCodeForImportsAuditResult(result: ImportsAuditResult): number {
   return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
 }
 
 /**
- * Human-readable React import-policy report.
- *
- * @since 0.8.0
+ * Human-readable import-policy report.
  */
-export function presentReactAuditResult(result: ReactAuditResult): void {
+export function presentImportsAuditResult(result: ImportsAuditResult): void {
   for (const file of result.files) {
     logger.out(`\n${file.relativePath}`);
     for (const { line, raw, reason } of file.violations) {
@@ -125,20 +121,16 @@ export function presentReactAuditResult(result: ReactAuditResult): void {
   const allowlistSuffix = result.allowlistedCount > 0 ? ` (${result.allowlistedCount} allowlisted)` : "";
 
   if (result.violationCount > 0) {
-    logger.out(`\n✖ ${result.violationCount} React import violation(s)${allowlistSuffix}`);
+    logger.out(`\n✖ ${result.violationCount} import-policy violation(s)${allowlistSuffix}`);
   } else {
-    logger.out(
-      `✓ No namespace/default React imports or React.* UMD globals across ${result.scannedFileCount} file(s)${allowlistSuffix}`,
-    );
+    logger.out(`✓ No import-policy violations across ${result.scannedFileCount} file(s)${allowlistSuffix}`);
   }
 }
 
 /**
- * Machine-readable React import-policy summary for `--json`.
- *
- * @since 0.8.0
+ * Machine-readable import-policy summary for `--json`.
  */
-export function formatReactAuditJsonOutput(result: ReactAuditResult, rootDir: string): string {
+export function formatImportsAuditJsonOutput(result: ImportsAuditResult, rootDir: string): string {
   return JSON.stringify({
     schemaVersion: 1 as const,
     ok: result.violationCount === 0,

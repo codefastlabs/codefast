@@ -84,7 +84,7 @@ syntax only — it never type-checks — which is all four commands need.
 
 ## Audits are read-only and mechanical
 
-**Context.** `audit rtl`, `audit links`, `audit comments` and `audit react` gate CI. A gate that needs judgment to
+**Context.** `audit rtl`, `audit links`, `audit comments` and `audit imports` gate CI. A gate that needs judgment to
 interpret, or that can only be fixed by hand, is ignored under time pressure.
 
 **Decision.** Every audit reports a location and a one-line reason, exits non-zero on any finding, and where the fix is

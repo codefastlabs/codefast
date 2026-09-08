@@ -77,11 +77,9 @@ export const commentAuditRunRequestSchema: z.ZodType<CommentAuditRunRequest> = z
 });
 
 /**
- * Resolved request for a single React import-policy audit run.
- *
- * @since 0.8.0
+ * Resolved request for a single import-policy audit run.
  */
-export type ReactAuditRunRequest = {
+export type ImportsAuditRunRequest = {
   readonly rootDir: string;
   readonly targetPath: string;
   readonly allowlist?: ReadonlyArray<string> | undefined;
@@ -89,11 +87,9 @@ export type ReactAuditRunRequest = {
 };
 
 /**
- * Zod schema for {@link ReactAuditRunRequest}.
- *
- * @since 0.8.0
+ * Zod schema for {@link ImportsAuditRunRequest}.
  */
-export const reactAuditRunRequestSchema: z.ZodType<ReactAuditRunRequest> = z.object({
+export const importsAuditRunRequestSchema: z.ZodType<ImportsAuditRunRequest> = z.object({
   rootDir: z.string().min(1),
   targetPath: z.string().min(1),
   allowlist: z.array(z.string()).optional(),

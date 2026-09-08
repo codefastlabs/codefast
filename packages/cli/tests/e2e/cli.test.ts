@@ -71,7 +71,7 @@ describe("workspace discovery over the real monorepo", () => {
   });
 
   it("audit runs read-only over a source tree and exits clean", () => {
-    const run = runBin(["audit", "react", path.join(packageRoot, "src")]);
+    const run = runBin(["audit", "imports", path.join(packageRoot, "src")]);
     expect(run.status).toBe(0);
   });
 });

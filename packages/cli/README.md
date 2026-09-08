@@ -88,7 +88,7 @@ codefast audit links                               # find broken markdown cross-
 | `tag`                 | Stamp `@since <version>` on exported declarations that lack one            | yes (`--dry-run`) |
 | `audit links`         | Report markdown cross-references that resolve to nothing                   | no                |
 | `audit rtl`           | Report physical-direction Tailwind classes that should be logical          | no                |
-| `audit react`         | Enforce named-only React imports                                           | no (report only)  |
+| `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)      | no (report only)  |
 | `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
 
@@ -283,19 +283,23 @@ codefast audit rtl --json                  # machine-readable summary
 With no `[target]`, the scan root is `audit.rtl.target` from the config; when neither is set the command fails.
 Configure exceptions via `audit.rtl.allowlist` — each entry is a bare class token or `repo/relative/path.tsx:token`.
 
-### `audit react`
+### `audit imports`
 
-_House style._ Enforces named-only React imports: it flags `import * as React` and default `React` imports (type-only
-included), plus an implicit `React.*` UMD-global type reference (`e: React.FormEvent` with no import) that `tsc` accepts
-silently through the `export as namespace React` declaration in `@types/react`.
+_House style._ Enforces the monorepo's import policy over `.ts`/`.tsx` files:
+
+- **React** — members must be imported by name. Flags `import * as React` and default `React` imports (type-only
+  included), plus an implicit `React.*` UMD-global type reference (`e: React.FormEvent` with no import) that `tsc`
+  accepts silently through the `export as namespace React` declaration in `@types/react`.
+- **Zod** (front-end packages only) — flags a named `import { z } from "zod"`, which pins Zod's full locale set into the
+  bundle; `import * as z from "zod"` lets bundlers tree-shake it.
 
 ```bash
-codefast audit react                       # whole repo
-codefast audit react apps/web/src          # explicit target
-codefast audit react --json                # machine-readable summary
+codefast audit imports                       # whole repo
+codefast audit imports apps/web/src          # explicit target
+codefast audit imports --json                # machine-readable summary
 ```
 
-Configure exceptions via `audit.react.allowlist` — each entry is the offending source text as written or
+Configure exceptions via `audit.imports.allowlist` — each entry is the offending source text as written or
 `repo/relative/path.tsx:<text>`.
 
 ### `audit comments`
@@ -382,7 +386,7 @@ export default {
     },
     links: { allowlist: [] }, // bare link target, or `repo/relative/doc.md:target`
     comments: { allowlist: [] }, // divider as written, or `repo/relative/path.ts:<divider>`
-    react: { allowlist: [] }, // offending text as written, or `repo/relative/path.tsx:<text>`
+    imports: { allowlist: [] }, // offending import text as written, or `repo/relative/path.tsx:<text>`
     displayNames: { allowlist: [] }, // call as written, or `repo/relative/path.ts:<call>`
   },
 };
@@ -432,7 +436,7 @@ pnpm run cli:mirror                 # codefast mirror
 pnpm run cli:audit:links            # codefast audit links
 pnpm run cli:audit:rtl              # codefast audit rtl
 pnpm run cli:audit:comments         # codefast audit comments
-pnpm run cli:audit:react            # codefast audit react
+pnpm run cli:audit:imports          # codefast audit imports
 pnpm run cli:audit:display-names    # codefast audit display-names
 ```
 
