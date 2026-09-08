@@ -18,6 +18,7 @@ export function createTagTestFilesystem(initial: TagTestFilesystemState): {
   const fs: FilesystemPort = {
     existsSync: () => true,
     canonicalPathSync: (inputPath) => inputPath,
+    globSync: () => [],
     statSync: () => ({
       isDirectory: () => false,
       isFile: () => true,

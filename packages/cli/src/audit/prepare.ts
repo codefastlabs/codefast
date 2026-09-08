@@ -4,7 +4,7 @@ import { AppError, messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
-import { findRepoRoot } from "#/core/workspace/resolver";
+import { resolveProjectRoot } from "#/core/workspace/resolver";
 
 /**
  * Shared prelude for `audit rtl`: repo root and the canonicalized scan target with its allowlist.
@@ -32,7 +32,7 @@ export async function prepareRtlAudit(
   let rootDir: string;
   try {
     // Realpath so allowlist keys (`path.relative(rootDir, file)`) stay stable when cwd is a symlink.
-    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
+    rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
@@ -88,7 +88,7 @@ export async function prepareLinkAudit(
 ): Promise<Result<RtlAuditCommandPrelude, AppError>> {
   let rootDir: string;
   try {
-    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
+    rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
@@ -129,7 +129,7 @@ export async function prepareReactAudit(
 ): Promise<Result<RtlAuditCommandPrelude, AppError>> {
   let rootDir: string;
   try {
-    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
+    rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
@@ -170,7 +170,7 @@ export async function prepareCommentAudit(
 ): Promise<Result<RtlAuditCommandPrelude, AppError>> {
   let rootDir: string;
   try {
-    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
+    rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
@@ -211,7 +211,7 @@ export async function prepareDisplayNameAudit(
 ): Promise<Result<RtlAuditCommandPrelude, AppError>> {
   let rootDir: string;
   try {
-    rootDir = fs.canonicalPathSync(findRepoRoot(args.currentWorkingDirectory, fs));
+    rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }

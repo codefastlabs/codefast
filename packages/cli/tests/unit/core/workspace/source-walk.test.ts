@@ -50,6 +50,7 @@ function createWalkFilesystem(filePaths: Array<string>): FilesystemPort {
   return {
     existsSync: (filePath) => files.has(path.normalize(filePath)),
     canonicalPathSync: (inputPath) => path.normalize(inputPath),
+    globSync: () => [],
     statSync: (filePath) => {
       const normalized = path.normalize(filePath);
       if (files.has(normalized)) {

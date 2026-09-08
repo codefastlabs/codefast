@@ -117,7 +117,11 @@ export interface GlobalStats {
  *
  * @since 0.3.16-canary.0
  */
-export type WorkspaceMultiDiscoverySource = "default-patterns" | "pnpm-workspace-yaml" | "declared-empty";
+export type WorkspaceMultiDiscoverySource =
+  | "default-patterns"
+  | "pnpm-workspace-yaml"
+  | "declared-empty"
+  | "single-package";
 
 /**
  * The workspace package paths found for a mirror run and how they were discovered.

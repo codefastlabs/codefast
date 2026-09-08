@@ -111,6 +111,12 @@ export class MirrorSyncReporter implements MirrorSyncReporterPort {
       logger.out(`${this.paint("Discovering workspace packages from pnpm-workspace.yaml…", ANSI.dim)}\n`);
       return;
     }
+    if (mode.source === "single-package") {
+      logger.out(
+        `${this.paint("No pnpm-workspace.yaml — processing the single package at the project root…", ANSI.dim)}\n`,
+      );
+      return;
+    }
     logger.out(`${this.paint("pnpm-workspace.yaml declares an empty workspace package list.", ANSI.dim)}\n`);
   }
 

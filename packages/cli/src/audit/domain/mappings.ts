@@ -87,7 +87,7 @@ export const RTL_SWAP_MAPPINGS: ReadonlyArray<readonly [string, string]> = [
  *
  * @since 0.5.0-canary.6
  */
-export const PHYSICAL_SIDE_VARIANT =
+export const PHYSICAL_SIDE_VARIANT: RegExp =
   /data-side-(?:left|right)|data-\[side=(?:left|right)\]|\[data-side=(?:left|right)\]/;
 
 /**
@@ -96,7 +96,7 @@ export const PHYSICAL_SIDE_VARIANT =
  *
  * @since 0.5.0-canary.6
  */
-export const DIRECTION_RESOLVED_VARIANT = /data-\[motion[=^]/;
+export const DIRECTION_RESOLVED_VARIANT: RegExp = /data-\[motion[=^]/;
 
 /**
  * The physical slide-animation class prefixes the RTL audit inspects.

@@ -3,7 +3,7 @@ import type { AppError } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { ok } from "#/core/result";
-import { findRepoRoot } from "#/core/workspace/resolver";
+import { resolveProjectRoot } from "#/core/workspace/resolver";
 import type { TagCommandPrelude } from "#/tag/domain/types";
 import { resolveProvidedTagTargetPath } from "#/tag/resolve-target-path";
 
@@ -21,7 +21,7 @@ export async function prepareTagSync(
 ): Promise<Result<TagCommandPrelude, AppError>> {
   let rootDir: string;
   try {
-    rootDir = findRepoRoot(args.currentWorkingDirectory, fs);
+    rootDir = resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir;
   } catch {
     rootDir = args.currentWorkingDirectory;
   }

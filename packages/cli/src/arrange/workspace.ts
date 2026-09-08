@@ -6,7 +6,7 @@ import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
-import { findRepoRoot } from "#/core/workspace/resolver";
+import { resolveProjectRoot } from "#/core/workspace/resolver";
 
 /**
  * Resolves the arrange target, repo root, and loaded config an arrange run needs.
@@ -29,7 +29,7 @@ export async function prepareArrangeWorkspace(
   }
   let rootDir: string;
   try {
-    rootDir = findRepoRoot(args.currentWorkingDirectory, fs);
+    rootDir = resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir;
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }

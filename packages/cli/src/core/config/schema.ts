@@ -1,18 +1,98 @@
 import { z } from "zod";
 
-const afterWriteHookSchema = z.custom<(ctx: { files: Array<string> }) => void | Promise<void>>(
-  (value) => typeof value === "function",
-  {
-    message: "Expected a function",
-  },
-);
-
 /**
  * A config hook invoked with the written file paths after a command rewrites files.
  *
  * @since 0.3.16-canary.0
  */
-export type CodefastAfterWriteHook = z.infer<typeof afterWriteHookSchema>;
+export type CodefastAfterWriteHook = (context: { files: Array<string> }) => void | Promise<void>;
+
+/**
+ * CSS export configuration for a mirrored package — a flag, or per-file overrides.
+ */
+type MirrorCssConfig =
+  | boolean
+  | {
+      enabled?: boolean | undefined;
+      customExports?: Record<string, string> | undefined;
+      forceExportFiles?: boolean | undefined;
+    };
+
+/**
+ * Per-package mirror configuration. Setting a package to `false` skips it entirely.
+ */
+interface MirrorPackageConfig {
+  /** Preserve the existing `package.json#exports` map and only add missing conditions
+   *  (`source`, `types`, `import`); no `dist/` scan is performed. */
+  preserve?: boolean | undefined;
+  strip?: string | undefined;
+  /** Specifiers to leave out of the generated map, so a package's public surface is a decision
+   *  rather than a consequence of its `dist/` layout. Matched against the specifier as it would
+   *  appear in `exports` (after `strip`); a trailing `/*` excludes a whole subtree. The root
+   *  export and `./package.json` are never excluded. */
+  exclude?: Array<string> | undefined;
+  exports?: Record<string, string> | undefined;
+  source: boolean | string;
+  types: boolean;
+  import: boolean;
+  css?: MirrorCssConfig | undefined;
+}
+
+/**
+ * The validated `mirror` configuration, keyed by package name.
+ *
+ * @since 0.3.16-canary.0
+ */
+export type MirrorConfig = Record<string, false | MirrorPackageConfig>;
+
+/**
+ * The validated `tag` command configuration.
+ *
+ * @since 0.3.16-canary.0
+ */
+export interface CodefastTagConfig {
+  skipPackages?: Array<string> | undefined;
+  onAfterWrite?: CodefastAfterWriteHook | undefined;
+}
+
+/**
+ * The validated `arrange` command configuration.
+ *
+ * @since 0.3.16-canary.0
+ */
+export interface CodefastArrangeConfig {
+  onAfterWrite?: CodefastAfterWriteHook | undefined;
+}
+
+/** An audit's per-command defaults: entries to ignore, as bare tokens or `repo/relative/path:token`. */
+interface CodefastAuditAllowlistConfig {
+  allowlist?: Array<string> | undefined;
+}
+
+/** Per-audit defaults grouped under `audit`; the scan always starts at the repo root. */
+interface CodefastAuditConfig {
+  rtl?: { target?: string | undefined; allowlist?: Array<string> | undefined } | undefined;
+  links?: CodefastAuditAllowlistConfig | undefined;
+  comments?: CodefastAuditAllowlistConfig | undefined;
+  react?: CodefastAuditAllowlistConfig | undefined;
+  displayNames?: CodefastAuditAllowlistConfig | undefined;
+}
+
+/**
+ * The validated root `codefast.config` shape.
+ *
+ * @since 0.3.16-canary.0
+ */
+export interface CodefastConfig {
+  mirror?: MirrorConfig | undefined;
+  tag?: CodefastTagConfig | undefined;
+  arrange?: CodefastArrangeConfig | undefined;
+  audit?: CodefastAuditConfig | undefined;
+}
+
+const afterWriteHookSchema = z.custom<CodefastAfterWriteHook>((value) => typeof value === "function", {
+  message: "Expected a function",
+});
 
 const mirrorCssConfigSchema = z.union([
   z.boolean(),
@@ -25,27 +105,10 @@ const mirrorCssConfigSchema = z.union([
     .strict(),
 ]);
 
-/**
- * Per-package mirror configuration. Setting a package to `false` skips it entirely.
- *
- * - `source` — include a `source` condition pointing to the original `.ts` file (default `true`).
- *   Pass a string to override the root-export source path explicitly.
- * - `types` — include the `types` condition when `.d.ts` files exist (default `true`).
- * - `import` — include the `import` condition (default `true`).
- * - `css` — CSS export configuration (wildcard or per-file).
- *
- * @since 0.3.16-canary.0
- */
 const mirrorPackageConfigSchema = z
   .object({
-    /** Preserve the existing `package.json#exports` map and only add missing conditions
-     *  (`source`, `types`, `import`). No dist/ scan is performed. */
     preserve: z.boolean().optional(),
     strip: z.string().optional(),
-    /** Specifiers to leave out of the generated map, so a package's public surface is a decision
-     *  rather than a consequence of its `dist/` layout. Matched against the specifier as it would
-     *  appear in `exports` (after `strip`); a trailing `/*` excludes a whole subtree. The root
-     *  export and `./package.json` are never excluded. */
     exclude: z.array(z.string()).optional(),
     exports: z.record(z.string(), z.string()).optional(),
     source: z.union([z.boolean(), z.string()]).default(true),
@@ -56,25 +119,15 @@ const mirrorPackageConfigSchema = z
   .strict();
 
 /**
- * Mirror config: a record keyed by package name. Set a package to `false` to skip it;
- * omit it entirely to process it with default settings.
+ * Zod validator for the `mirror` configuration record; its output is a {@link MirrorConfig}.
  *
  * @since 0.3.16-canary.0
  */
-export const mirrorConfigSchema = z.record(z.string(), z.union([z.literal(false), mirrorPackageConfigSchema]));
+export const mirrorConfigSchema: z.ZodType<MirrorConfig> = z.record(
+  z.string(),
+  z.union([z.literal(false), mirrorPackageConfigSchema]),
+);
 
-/**
- * The validated `mirror` configuration, keyed by package name.
- *
- * @since 0.3.16-canary.0
- */
-export type MirrorConfig = z.infer<typeof mirrorConfigSchema>;
-
-/**
- * Zod schema for the `tag` command's configuration.
- *
- * @since 0.3.16-canary.0
- */
 const codefastTagConfigSchema = z
   .object({
     skipPackages: z.array(z.string()).optional(),
@@ -82,113 +135,41 @@ const codefastTagConfigSchema = z
   })
   .strict();
 
-/**
- * The validated `tag` command configuration.
- *
- * @since 0.3.16-canary.0
- */
-export type CodefastTagConfig = z.infer<typeof codefastTagConfigSchema>;
-
-/**
- * Zod schema for the `arrange` command's configuration.
- *
- * @since 0.3.16-canary.0
- */
 const codefastArrangeConfigSchema = z
   .object({
     onAfterWrite: afterWriteHookSchema.optional(),
   })
   .strict();
 
-/**
- * The validated `arrange` command configuration.
- *
- * @since 0.3.16-canary.0
- */
-export type CodefastArrangeConfig = z.infer<typeof codefastArrangeConfigSchema>;
-
-/**
- * RTL audit defaults — `target` is relative to the repo root (where `codefast.config` lives).
- *
- * @since 0.3.16-canary.0
- */
 const codefastAuditRtlConfigSchema = z
   .object({
-    /** Directory or file to scan when no CLI target is passed. */
     target: z.string().optional(),
-    /** Bare class tokens or `repo/relative/path.tsx:token` entries to ignore. */
     allowlist: z.array(z.string()).optional(),
   })
   .strict();
 
-/**
- * Link audit defaults — the scan always starts at the repo root, so only exceptions are configured.
- *
- * @since 0.5.0
- */
-const codefastAuditLinksConfigSchema = z
+const codefastAuditAllowlistConfigSchema = z
   .object({
-    /** Bare link targets or `repo/relative/doc.md:target` entries to ignore. */
     allowlist: z.array(z.string()).optional(),
   })
   .strict();
 
-/**
- * Comment-divider audit defaults — the scan always starts at the repo root, so only exceptions are configured.
- *
- * @since 0.6.0
- */
-const codefastAuditCommentsConfigSchema = z
-  .object({
-    /** Divider lines as written, or `repo/relative/path.ts:<divider>` entries, to ignore. */
-    allowlist: z.array(z.string()).optional(),
-  })
-  .strict();
-
-/**
- * React import-policy audit defaults — the scan always starts at the repo root, so only
- * exceptions are configured.
- *
- * @since 0.8.0
- */
-const codefastAuditReactConfigSchema = z
-  .object({
-    /** Offending source text as written, or `repo/relative/path.tsx:<text>` entries, to ignore. */
-    allowlist: z.array(z.string()).optional(),
-  })
-  .strict();
-
-/**
- * Display-name audit defaults — the scan always starts at the repo root, so only exceptions are configured.
- */
-const codefastAuditDisplayNamesConfigSchema = z
-  .object({
-    /** Offending calls as written, or `repo/relative/path.ts:<call>` entries, to ignore. */
-    allowlist: z.array(z.string()).optional(),
-  })
-  .strict();
-
-/**
- * Zod schema grouping the per-audit configurations under `audit`.
- *
- * @since 0.3.16-canary.0
- */
 const codefastAuditConfigSchema = z
   .object({
     rtl: codefastAuditRtlConfigSchema.optional(),
-    links: codefastAuditLinksConfigSchema.optional(),
-    comments: codefastAuditCommentsConfigSchema.optional(),
-    react: codefastAuditReactConfigSchema.optional(),
-    displayNames: codefastAuditDisplayNamesConfigSchema.optional(),
+    links: codefastAuditAllowlistConfigSchema.optional(),
+    comments: codefastAuditAllowlistConfigSchema.optional(),
+    react: codefastAuditAllowlistConfigSchema.optional(),
+    displayNames: codefastAuditAllowlistConfigSchema.optional(),
   })
   .strict();
 
 /**
- * Root `codefast.config` Zod schema — single source of truth for both validation and TS types.
+ * Zod validator for a raw `codefast.config` object; its output is a {@link CodefastConfig}.
  *
  * @since 0.3.16-canary.0
  */
-export const codefastConfigRootSchema = z
+export const codefastConfigRootSchema: z.ZodType<CodefastConfig> = z
   .object({
     mirror: mirrorConfigSchema.optional(),
     tag: codefastTagConfigSchema.optional(),
@@ -196,10 +177,3 @@ export const codefastConfigRootSchema = z
     audit: codefastAuditConfigSchema.optional(),
   })
   .strict();
-
-/**
- * The validated root `codefast.config` shape.
- *
- * @since 0.3.16-canary.0
- */
-export type CodefastConfig = z.infer<typeof codefastConfigRootSchema>;

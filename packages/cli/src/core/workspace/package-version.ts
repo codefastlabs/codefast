@@ -1,6 +1,8 @@
 import path from "node:path";
 
 import type { FilesystemPort } from "#/core/filesystem/port";
+import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
+import { packageJsonFileName } from "#/core/workspace/well-known-files";
 
 /**
  * Finds the `version` of the nearest enclosing `package.json`, or null when the first
@@ -10,22 +12,20 @@ import type { FilesystemPort } from "#/core/filesystem/port";
  */
 function findNearestPackageVersion(fs: FilesystemPort, targetPath: string): string | null {
   const resolved = path.resolve(targetPath);
-  let current = fs.statSync(resolved).isDirectory() ? resolved : path.dirname(resolved);
+  const startDirectory = fs.statSync(resolved).isDirectory() ? resolved : path.dirname(resolved);
 
-  while (true) {
-    const packageJsonPath = path.join(current, "package.json");
-    if (fs.existsSync(packageJsonPath)) {
-      const version = (JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as { version?: unknown }).version;
-
-      return typeof version === "string" && version.length > 0 ? version : null;
-    }
-
-    const parent = path.dirname(current);
-    if (parent === current) {
-      return null;
-    }
-    current = parent;
+  const packageDirectory = findNearestAncestor(startDirectory, (directoryPath) =>
+    fs.existsSync(path.join(directoryPath, packageJsonFileName)),
+  );
+  if (packageDirectory === undefined) {
+    return null;
   }
+
+  const version = (
+    JSON.parse(fs.readFileSync(path.join(packageDirectory, packageJsonFileName), "utf8")) as { version?: unknown }
+  ).version;
+
+  return typeof version === "string" && version.length > 0 ? version : null;
 }
 
 export { findNearestPackageVersion };

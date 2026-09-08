@@ -5,7 +5,7 @@ import type { DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { listWorkspacePackageDirectories } from "#/core/workspace/resolver";
-import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
+import { distDirName, packageJsonFileName } from "#/core/workspace/well-known-files";
 import type { PackSlimRunRequest } from "#/pack-slim/cli-schema";
 import {
   isMapAnnotatedFile,
@@ -79,7 +79,7 @@ async function resolveTargets(
 ): Promise<Array<string>> {
   if (packageFilter !== undefined) {
     const packageDir = path.resolve(rootDir, packageFilter);
-    if (!fs.existsSync(path.join(packageDir, PACKAGE_JSON))) {
+    if (!fs.existsSync(path.join(packageDir, packageJsonFileName))) {
       throw new Error(`No package.json under "${packageFilter}"`);
     }
     return [packageDir];
@@ -93,7 +93,7 @@ async function slimWorkspacePackage(
   packageDir: string,
   write: boolean,
 ): Promise<PackSlimPackageStats> {
-  const packageJsonPath = path.join(packageDir, PACKAGE_JSON);
+  const packageJsonPath = path.join(packageDir, packageJsonFileName);
   const pkgStats: PackSlimPackageStats = {
     name: path.basename(packageDir),
     path: packageDir,
@@ -144,7 +144,7 @@ async function slimWorkspacePackage(
       await fs.writeFile(packageJsonPath, `${JSON.stringify(slimmed, null, 2)}\n`, "utf8");
     }
 
-    await pruneDist(fs, path.join(packageDir, DIST_DIR), write, pkgStats);
+    await pruneDist(fs, path.join(packageDir, distDirName), write, pkgStats);
 
     pkgStats.changed = report.changed || pkgStats.mapFilesDeleted > 0 || pkgStats.sourceCommentsStripped > 0;
   } catch (caughtError: unknown) {

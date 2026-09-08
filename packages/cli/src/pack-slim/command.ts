@@ -10,7 +10,7 @@ import { nodeFilesystem } from "#/core/filesystem/node";
 import { logger } from "#/core/logger";
 import { err } from "#/core/result";
 import { parseWithSchema } from "#/core/schema-parse";
-import { findRepoRoot } from "#/core/workspace/resolver";
+import { resolveProjectRoot } from "#/core/workspace/resolver";
 import { exitCodeForPackSlimResult, formatPackSlimJsonOutput } from "#/pack-slim/cli-result";
 import { packSlimRunRequestSchema } from "#/pack-slim/cli-schema";
 import { PackSlimProgressPresenter } from "#/pack-slim/output";
@@ -48,7 +48,7 @@ export function createPackSlimCommand(): Command {
 
         let rootDir: string;
         try {
-          rootDir = findRepoRoot(process.cwd(), nodeFilesystem);
+          rootDir = resolveProjectRoot(process.cwd(), nodeFilesystem).rootDir;
         } catch (caughtError: unknown) {
           consumeCliAppError(err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError)));
           return;

@@ -1,7 +1,5 @@
-import path from "node:path";
-
 import type { FilesystemPort } from "#/core/filesystem/port";
-import { defaultSkipDirectoryNames } from "#/core/workspace/skip-directories";
+import { walkFiles } from "#/core/workspace/walk-files";
 
 /**
  * Recursively collects the `.ts`/`.tsx` file paths under a root, skipping `.d.ts` and skip-listed directories.
@@ -9,26 +7,9 @@ import { defaultSkipDirectoryNames } from "#/core/workspace/skip-directories";
  * @since 0.3.16-canary.0
  */
 export function walkTsxFiles(rootDirectoryPath: string, fs: FilesystemPort): Array<string> {
-  const result: Array<string> = [];
-  visitTsxPaths(result, rootDirectoryPath, fs);
-  return result;
-}
-
-function visitTsxPaths(result: Array<string>, entryPath: string, fs: FilesystemPort): void {
-  const entryStats = fs.statSync(entryPath);
-  if (entryStats.isDirectory()) {
-    for (const childName of fs.readdirSync(entryPath)) {
-      if (defaultSkipDirectoryNames.has(childName)) {
-        continue;
-      }
-      visitTsxPaths(result, path.join(entryPath, childName), fs);
-    }
-    return;
-  }
-  if (entryPath.endsWith(".d.ts")) {
-    return;
-  }
-  if (entryPath.endsWith(".tsx") || entryPath.endsWith(".ts")) {
-    result.push(entryPath);
-  }
+  return walkFiles(
+    rootDirectoryPath,
+    fs,
+    (filePath) => !filePath.endsWith(".d.ts") && (filePath.endsWith(".ts") || filePath.endsWith(".tsx")),
+  );
 }

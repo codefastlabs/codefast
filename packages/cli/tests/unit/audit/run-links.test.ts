@@ -103,6 +103,7 @@ function createLinkTestFilesystem(files: Record<string, string>): FilesystemPort
   return {
     existsSync: (filePath) => normalized.has(path.normalize(filePath)),
     canonicalPathSync: (inputPath) => path.normalize(inputPath),
+    globSync: () => [],
     statSync: (filePath) => {
       const normalizedPath = path.normalize(filePath);
       if (normalized.has(normalizedPath)) {

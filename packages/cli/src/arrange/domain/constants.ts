@@ -82,7 +82,7 @@ export const MAX_STRIP_VARIANT_PASSES = 12;
  *
  * @since 0.3.16-canary.0
  */
-export const EMPTY_CN_TV_BINDINGS = new Set<string>();
+export const EMPTY_CN_TV_BINDINGS: Set<string> = new Set<string>();
 
 /**
  * Bucket sort order — **render pipeline** (lower → earlier in `cn()` output).
@@ -163,7 +163,7 @@ export const COMPATIBLE_BUCKET_SETS: ReadonlyArray<ReadonlySet<Bucket>> = [
  *
  * @since 0.3.16-canary.0
  */
-export const RESPONSIVE_PREFIX =
+export const RESPONSIVE_PREFIX: RegExp =
   /^(?:@(?:min|max)-\[[^\]]+\]:|@\[[^\]]+\]:|@(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:\/[a-z][a-z0-9-]*)?:|(?:max-|min-)?(?:sm|md|lg|xl|2xl|3xl)(?:\/[a-z][a-z0-9-]*)?:|(?:max-|min-)\[[^\]]+\]:)/;
 
 /**
@@ -171,7 +171,7 @@ export const RESPONSIVE_PREFIX =
  *
  * @since 0.3.16-canary.0
  */
-export const STATE_PREFIXES = new Set([
+export const STATE_PREFIXES: ReadonlySet<string> = new Set([
   "hover",
   "focus",
   "focus-within",

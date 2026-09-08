@@ -20,6 +20,7 @@ function createFilesystemHarness(
     filesystem: {
       existsSync: (p) => virtualFiles.has(p),
       canonicalPathSync: (p) => p,
+      globSync: () => [],
       statSync: () => ({ isDirectory: () => false, isFile: () => true }),
       readFileSync: (p) => virtualFiles.get(p) ?? "",
       writeFileSync: (p, data) => {

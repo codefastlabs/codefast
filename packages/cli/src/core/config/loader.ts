@@ -6,6 +6,7 @@ import type { ZodError } from "zod";
 import { codefastConfigRootSchema } from "#/core/config/schema";
 import type { CodefastConfig } from "#/core/config/schema";
 import type { FilesystemPort } from "#/core/filesystem/port";
+import { ancestorDirectories } from "#/core/workspace/ancestor-directories";
 
 /**
  * A loaded config together with its schema warnings and the path it was read from.
@@ -44,8 +45,7 @@ const cachedLoads = new Map<string, Promise<LoadConfigPayload>>();
 
 function listConfigCandidates(startDir: string, fs: FilesystemPort): Array<string> {
   const candidates: Array<string> = [];
-  let current = path.resolve(startDir);
-  while (true) {
+  for (const current of ancestorDirectories(startDir)) {
     for (const name of configJsPriority) {
       const candidate = path.join(current, name);
       if (fs.existsSync(candidate)) {
@@ -57,12 +57,6 @@ function listConfigCandidates(startDir: string, fs: FilesystemPort): Array<strin
     if (fs.existsSync(jsonCandidate)) {
       candidates.push(jsonCandidate);
     }
-
-    const parent = path.dirname(current);
-    if (parent === current) {
-      break;
-    }
-    current = parent;
   }
   return candidates;
 }
