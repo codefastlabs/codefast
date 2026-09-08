@@ -12,6 +12,8 @@ import { walkTsxFiles } from "#/core/workspace/typescript-walk";
 
 /**
  * Scans a target path for import-policy violations, applying each rule only to files in its scope.
+ *
+ * @since 0.10.0
  */
 export function runImportsAudit(
   fs: FilesystemPort,

@@ -1,5 +1,13 @@
 # @codefast/theme
 
+## 0.8.3
+
+### Patch Changes
+
+- [#850](https://github.com/codefastlabs/codefast/pull/850) [`db17956`](https://github.com/codefastlabs/codefast/commit/db17956ca01e5f9c4cca545e194804e8d1591f09) Thanks [@thevuong](https://github.com/thevuong)! - Import Zod as a namespace (`import * as z from "zod"`) so bundlers can tree-shake it. The named `import { z }` kept
+  Zod's full locale set in the bundle; the appearance provider's browser bundle now drops roughly 80% (~91 KB → ~18 KB
+  gzip).
+
 ## 0.8.2
 
 ### Patch Changes

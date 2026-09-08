@@ -102,6 +102,8 @@ export function formatLinkAuditJsonOutput(result: LinkAuditResult, rootDir: stri
 
 /**
  * Exit `1` when any non-allowlisted import-policy violation remains.
+ *
+ * @since 0.10.0
  */
 export function exitCodeForImportsAuditResult(result: ImportsAuditResult): number {
   return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
@@ -109,6 +111,8 @@ export function exitCodeForImportsAuditResult(result: ImportsAuditResult): numbe
 
 /**
  * Human-readable import-policy report.
+ *
+ * @since 0.10.0
  */
 export function presentImportsAuditResult(result: ImportsAuditResult): void {
   for (const file of result.files) {
@@ -129,6 +133,8 @@ export function presentImportsAuditResult(result: ImportsAuditResult): void {
 
 /**
  * Machine-readable import-policy summary for `--json`.
+ *
+ * @since 0.10.0
  */
 export function formatImportsAuditJsonOutput(result: ImportsAuditResult, rootDir: string): string {
   return JSON.stringify({

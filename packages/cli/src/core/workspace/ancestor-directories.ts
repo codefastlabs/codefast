@@ -2,6 +2,8 @@ import path from "node:path";
 
 /**
  * Each directory from `fromDirectory` up to and including the filesystem root.
+ *
+ * @since 0.10.0
  */
 export function* ancestorDirectories(fromDirectory: string): Generator<string> {
   let directoryPath = path.resolve(fromDirectory);
@@ -17,6 +19,8 @@ export function* ancestorDirectories(fromDirectory: string): Generator<string> {
 
 /**
  * The nearest ancestor directory (starting at `fromDirectory`) the predicate accepts, or undefined at the filesystem root.
+ *
+ * @since 0.10.0
  */
 export function findNearestAncestor(
   fromDirectory: string,

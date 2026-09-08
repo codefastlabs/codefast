@@ -11,6 +11,8 @@ import { packageJsonFileName, workspaceYamlFileName } from "#/core/workspace/wel
 
 /**
  * A resolved project root and whether it is a pnpm workspace or a standalone single package.
+ *
+ * @since 0.10.0
  */
 export type ResolvedProjectRoot = {
   readonly rootDir: string;
@@ -19,6 +21,8 @@ export type ResolvedProjectRoot = {
 
 /**
  * Resolves the project root: the `pnpm-workspace.yaml` directory, or the nearest `package.json` for a single package.
+ *
+ * @since 0.10.0
  */
 export function resolveProjectRoot(fromDirectory: string, fs: FilesystemPort): ResolvedProjectRoot {
   // Resolution follows where the user is (cwd), not where the CLI is installed.
