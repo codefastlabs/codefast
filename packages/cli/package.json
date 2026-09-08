@@ -26,11 +26,15 @@
   },
   "files": [
     "dist",
+    "src",
     "CHANGELOG.md",
     "README.md",
     "LICENSE"
   ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "imports": {
     "#/tests/*": [
       "./tests/*",
@@ -47,8 +51,17 @@
         "./src/*/index.ts",
         "./src/*/index.tsx"
       ],
+      "types": "./dist/*.d.ts",
       "default": "./dist/*.js"
     }
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public"

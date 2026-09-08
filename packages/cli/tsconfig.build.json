@@ -3,9 +3,10 @@
   "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
   "compilerOptions": {
     "rootDir": "./src",
-    // Bin package — no consumer imports its types, so there are no declarations to isolate.
-    "declaration": false,
-    "declarationMap": false,
+    // Also a library (see package.json exports): ships declarations for the programmatic entry.
+    "declaration": true,
+    "declarationMap": true,
+    // Off — zod schemas here have types tsc emits by inference but cannot isolate.
     "isolatedDeclarations": false
   },
   "include": ["src/**/*.ts"],
