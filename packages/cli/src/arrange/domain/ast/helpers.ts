@@ -27,6 +27,7 @@ const KNOWN_CN_TV_MODULES = new Set([
   // from "tailwind-variants"; new code should prefer "@codefast/tailwind-variants".
   "tailwind-variants",
   "#lib/utils",
+  "#/lib/utils",
   "~/lib/utils",
   "@/lib/utils",
 ]);

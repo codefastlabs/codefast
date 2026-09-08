@@ -113,9 +113,11 @@ function mirrorTargetsFromWorkspaceLayout(
 
   const multiSource: WorkspaceMultiDiscoverySource = layoutOutcome.layoutSource;
 
-  const relPaths = layoutOutcome.packageDirectoryPathsAbsolute
-    .map((absolutePath) => normalizePath(path.relative(rootDir, absolutePath)))
-    .filter((relativePath) => relativePath.length > 0);
+  // A single-package root maps to "." (path.relative to itself is empty); a workspace maps to subpaths.
+  const relPaths = layoutOutcome.packageDirectoryPathsAbsolute.map((absolutePath) => {
+    const relativePath = normalizePath(path.relative(rootDir, absolutePath));
+    return relativePath.length > 0 ? relativePath : ".";
+  });
 
   relPaths.sort((left, right) => left.localeCompare(right));
   return { relPaths, multiSource };

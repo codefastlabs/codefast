@@ -1,6 +1,5 @@
 import { globSync } from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 import { parse as parseYaml } from "yaml";
 
@@ -10,29 +9,61 @@ import { createAnyGlobMatcher } from "#/core/glob";
 import { logger } from "#/core/logger";
 
 /**
- * Resolves the monorepo root (directory containing `pnpm-workspace.yaml`).
- *
- * @since 0.3.16-canary.0
+ * Whether a resolved project root is a pnpm workspace or a standalone single package.
  */
-export function findRepoRoot(fromDirectory: string, fs: FilesystemPort): string {
-  const candidates = [path.dirname(fileURLToPath(import.meta.url)), fromDirectory];
+export type ProjectRootMode = "workspace" | "single-package";
 
-  for (const start of candidates) {
-    let dir = path.resolve(start);
-    for (;;) {
-      if (fs.existsSync(path.join(dir, "pnpm-workspace.yaml"))) {
-        return dir;
-      }
-      const parent = path.dirname(dir);
-      if (parent === dir) {
-        break;
-      }
-      dir = parent;
+/**
+ * A resolved project root and whether it is a pnpm workspace or a standalone single package.
+ */
+export type ResolvedProjectRoot = {
+  readonly rootDir: string;
+  readonly mode: ProjectRootMode;
+};
+
+function findWorkspaceRoot(fromDirectory: string, fs: FilesystemPort): string | undefined {
+  // The root follows where the user is (cwd), not where the CLI is installed.
+  let dir = path.resolve(fromDirectory);
+  for (;;) {
+    if (fs.existsSync(path.join(dir, workspaceYamlFileName))) {
+      return dir;
     }
+    const parent = path.dirname(dir);
+    if (parent === dir) {
+      return undefined;
+    }
+    dir = parent;
   }
+}
 
+function findNearestPackageDirectory(fromDirectory: string, fs: FilesystemPort): string | undefined {
+  let dir = path.resolve(fromDirectory);
+  for (;;) {
+    if (fs.existsSync(path.join(dir, packageJsonFileName))) {
+      return dir;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) {
+      return undefined;
+    }
+    dir = parent;
+  }
+}
+
+/**
+ * Resolves the project root: the `pnpm-workspace.yaml` directory, or the nearest `package.json` for a single package.
+ */
+export function resolveProjectRoot(fromDirectory: string, fs: FilesystemPort): ResolvedProjectRoot {
+  const workspaceRoot = findWorkspaceRoot(fromDirectory, fs);
+  if (workspaceRoot !== undefined) {
+    return { rootDir: workspaceRoot, mode: "workspace" };
+  }
+  const packageRoot = findNearestPackageDirectory(fromDirectory, fs);
+  if (packageRoot !== undefined) {
+    return { rootDir: packageRoot, mode: "single-package" };
+  }
   throw new Error(
-    `Could not locate monorepo root (missing pnpm-workspace.yaml). Searched from: ${candidates.join(", ")}`,
+    `Could not locate a project root (no pnpm-workspace.yaml and no package.json found from: ${fromDirectory})`,
   );
 }
 
@@ -41,7 +72,7 @@ export function findRepoRoot(fromDirectory: string, fs: FilesystemPort): string 
  *
  * @since 0.3.16-canary.0
  */
-type WorkspacePackageLayoutSource = "pnpm-workspace-yaml" | "default-patterns" | "declared-empty";
+type WorkspacePackageLayoutSource = "pnpm-workspace-yaml" | "default-patterns" | "declared-empty" | "single-package";
 
 /**
  * The discovered workspace package directories together with how the layout was determined.
@@ -179,32 +210,36 @@ export async function listWorkspacePackageDirectories(
   const workspaceYaml = await readWorkspaceYaml(rootDirectoryPathAbsolute, fs);
   const defInc = defaultIncludePatterns;
 
+  if (!workspaceYaml.exists) {
+    // No pnpm-workspace.yaml: treat the nearest package as the whole workspace.
+    const rootPackageJsonPath = path.join(rootDirectoryPathAbsolute, packageJsonFileName);
+    return {
+      packageDirectoryPathsAbsolute: fs.existsSync(rootPackageJsonPath) ? [rootDirectoryPathAbsolute] : [],
+      layoutSource: "single-package",
+      hasPnpmWorkspaceYamlFile: false,
+    };
+  }
+
   let include: Array<string>;
   let exclude: Array<string>;
   let layoutSource: WorkspacePackageLayoutSource;
   const hasPnpmWorkspaceYamlFile = workspaceYaml.exists;
 
-  if (!workspaceYaml.exists) {
+  const parsed = parsePnpmWorkspaceDocument(workspaceYaml.doc);
+  if (!parsed.hasPackagesKey) {
     include = [...defInc];
     exclude = [];
     layoutSource = "default-patterns";
+  } else if (parsed.isEmptyPackagesArray) {
+    return {
+      packageDirectoryPathsAbsolute: [],
+      layoutSource: "declared-empty",
+      hasPnpmWorkspaceYamlFile: true,
+    };
   } else {
-    const parsed = parsePnpmWorkspaceDocument(workspaceYaml.doc);
-    if (!parsed.hasPackagesKey) {
-      include = [...defInc];
-      exclude = [];
-      layoutSource = "default-patterns";
-    } else if (parsed.isEmptyPackagesArray) {
-      return {
-        packageDirectoryPathsAbsolute: [],
-        layoutSource: "declared-empty",
-        hasPnpmWorkspaceYamlFile: true,
-      };
-    } else {
-      include = parsed.include;
-      exclude = parsed.exclude;
-      layoutSource = "pnpm-workspace-yaml";
-    }
+    include = parsed.include;
+    exclude = parsed.exclude;
+    layoutSource = "pnpm-workspace-yaml";
   }
 
   const foundRelativePosixPackageRoots = new Set<string>();
