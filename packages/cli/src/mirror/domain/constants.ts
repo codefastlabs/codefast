@@ -3,13 +3,13 @@
  *
  * @since 0.3.16-canary.0
  */
-export const VALID_JS_EXTENSIONS = new Set([".js", ".mjs", ".cjs"]);
+export const VALID_JS_EXTENSIONS: ReadonlySet<string> = new Set([".js", ".mjs", ".cjs"]);
 /**
  * The declaration-file extensions accepted as type entries in `dist/`.
  *
  * @since 0.3.16-canary.0
  */
-export const VALID_DTS_EXTENSIONS = new Set([".d.ts", ".d.mts", ".d.cts"]);
+export const VALID_DTS_EXTENSIONS: ReadonlySet<string> = new Set([".d.ts", ".d.mts", ".d.cts"]);
 /**
  * The `package.json` self-export specifier every generated map includes.
  *
