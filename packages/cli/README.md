@@ -399,6 +399,26 @@ actually written — never on `--dry-run`. A hook failure is reported on stderr 
 | `1`  | General failure (missing paths, failed packages, failed hooks). |
 | `2`  | Invalid arguments or configuration.                             |
 
+## Programmatic use
+
+`@codefast/cli` is importable as well as executable. `runCli` runs the same CLI in-process and resolves to the exit code
+it would have exited with — the `codefast` binary is a thin wrapper around it.
+
+```ts
+import { runCli } from "@codefast/cli";
+
+// `argv` follows the `process.argv` layout: the first two entries are ignored,
+// exactly as when Node runs the binary.
+const exitCode = await runCli(["node", "codefast", "mirror", "--dry-run", "--json"]);
+
+if (exitCode !== 0) {
+  throw new Error(`codefast exited with ${exitCode}`);
+}
+```
+
+The command still writes its human or `--json` output to stdout/stderr; `runCli` does not capture it. Read stdout
+yourself when you need the structured summary.
+
 ## How the codefast monorepo uses it
 
 The tool is general; the codefast monorepo just wires convenience scripts and a release step around it — a good template
