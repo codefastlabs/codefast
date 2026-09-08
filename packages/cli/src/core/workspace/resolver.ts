@@ -10,16 +10,11 @@ import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
 import { packageJsonFileName, workspaceYamlFileName } from "#/core/workspace/well-known-files";
 
 /**
- * Whether a resolved project root is a pnpm workspace or a standalone single package.
- */
-export type ProjectRootMode = "workspace" | "single-package";
-
-/**
  * A resolved project root and whether it is a pnpm workspace or a standalone single package.
  */
 export type ResolvedProjectRoot = {
   readonly rootDir: string;
-  readonly mode: ProjectRootMode;
+  readonly mode: "workspace" | "single-package";
 };
 
 /**
