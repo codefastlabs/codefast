@@ -5,6 +5,8 @@ import { defaultSkipDirectoryNames } from "#/core/workspace/skip-directories";
 
 /**
  * Every file under a root the predicate accepts, skipping build output and vendored trees.
+ *
+ * @since 0.10.0
  */
 export function walkFiles(
   rootDirectoryPath: string,

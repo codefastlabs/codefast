@@ -78,6 +78,8 @@ export const commentAuditRunRequestSchema: z.ZodType<CommentAuditRunRequest> = z
 
 /**
  * Resolved request for a single import-policy audit run.
+ *
+ * @since 0.10.0
  */
 export type ImportsAuditRunRequest = {
   readonly rootDir: string;
@@ -88,6 +90,8 @@ export type ImportsAuditRunRequest = {
 
 /**
  * Zod schema for {@link ImportsAuditRunRequest}.
+ *
+ * @since 0.10.0
  */
 export const importsAuditRunRequestSchema: z.ZodType<ImportsAuditRunRequest> = z.object({
   rootDir: z.string().min(1),

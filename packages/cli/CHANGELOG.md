@@ -1,5 +1,33 @@
 # @codefast/cli
 
+## 0.10.0
+
+### Minor Changes
+
+- [#852](https://github.com/codefastlabs/codefast/pull/852) [`d959e09`](https://github.com/codefastlabs/codefast/commit/d959e090cc8a1f9a5b3c17c835b55170a362ddf3) Thanks [@thevuong](https://github.com/thevuong)! - Generalize `audit react` into `audit imports` — a rule-driven import-policy audit. It keeps the React policy (members
+  imported by name; no `import * as React`, default `React`, or implicit `React.*` UMD-global type reference) and adds a
+  Zod policy for front-end packages: a named `import { z } from "zod"` pins Zod's full locale set into the bundle, so the
+  namespace form (`import * as z from "zod"`) is required there. Adding another library is one rule entry.
+
+  Breaking: the subcommand is now `audit imports` (was `audit react`), the config key is `audit.imports` (was
+  `audit.react`), and the convenience script is `cli:audit:imports` (was `cli:audit:react`).
+
+- [#853](https://github.com/codefastlabs/codefast/pull/853) [`bfa9908`](https://github.com/codefastlabs/codefast/commit/bfa990839bc4d3f57f8812b8786832534da9541a) Thanks [@thevuong](https://github.com/thevuong)! - Export `defineConfig` and the `CodefastConfig` type so `codefast.config.*` is authored with full editor autocomplete and
+  type-checking instead of by memory — `import { defineConfig } from "@codefast/cli"`, or a
+  `/** @type {import("@codefast/cli").CodefastConfig} */` JSDoc annotation in a plain `.js` config. The `mirror`
+  per-package `source`/`types`/`import` fields are now optional in the type (they already default to `true`), so a minimal
+  entry type-checks.
+
+- [#849](https://github.com/codefastlabs/codefast/pull/849) [`0574761`](https://github.com/codefastlabs/codefast/commit/0574761e32cd80bf7fd091313fcce20e0fe11978) Thanks [@thevuong](https://github.com/thevuong)! - Expose a programmatic entry point. `@codefast/cli` is now importable — `import { runCli } from "@codefast/cli"` runs the
+  CLI in-process and resolves to its exit code — in addition to the `codefast` binary. The package ships type declarations
+  for this entry.
+
+- [#849](https://github.com/codefastlabs/codefast/pull/849) [`0401f20`](https://github.com/codefastlabs/codefast/commit/0401f20f9f764dc4af3008869247d7a973ba595a) Thanks [@thevuong](https://github.com/thevuong)! - Support single-package projects, not just pnpm workspaces. Commands now resolve their root by walking up from the
+  current directory: the nearest `pnpm-workspace.yaml` marks a workspace (every package under it is in scope), and with no
+  workspace file the nearest `package.json` marks a single package (that one package is the whole scope). Previously every
+  command except `arrange group` required a `pnpm-workspace.yaml` and exited otherwise. The root now follows where you run
+  the CLI (cwd) rather than where the CLI is installed. `arrange` also recognizes `cn` / `tv` imported from `#/lib/utils`.
+
 ## 0.9.0
 
 ### Minor Changes

@@ -48,6 +48,8 @@ export type RtlAuditResult = {
 /**
  * An import-policy violation: a banned import form (namespace / default / named), or an implicit
  * UMD-global type reference under a name nothing in the file imports.
+ *
+ * @since 0.10.0
  */
 export type ImportPolicyViolation = {
   readonly line: number;
@@ -58,6 +60,8 @@ export type ImportPolicyViolation = {
 
 /**
  * The import-policy violations found in one file.
+ *
+ * @since 0.10.0
  */
 export type ImportPolicyFileViolations = {
   readonly relativePath: string;
@@ -66,6 +70,8 @@ export type ImportPolicyFileViolations = {
 
 /**
  * Outcome of one `audit imports` run.
+ *
+ * @since 0.10.0
  */
 export type ImportsAuditResult = {
   readonly files: Array<ImportPolicyFileViolations>;

@@ -13,6 +13,8 @@ interface OxcNode {
  * One library's import policy: which forms of importing `module` are banned, optionally limited to
  * files whose repo-relative path matches `scope`, plus an optional UMD-global name to flag when the
  * file references `<name>.*` without importing it.
+ *
+ * @since 0.10.0
  */
 export interface ImportPolicyRule {
   readonly module: string;
@@ -27,6 +29,8 @@ export interface ImportPolicyRule {
  * The import policies enforced across the monorepo: React members by name (never a namespace,
  * default, or implicit `React.*` UMD global), and Zod as a namespace in front-end packages so
  * bundlers can tree-shake it (a named `import { z }` pins Zod's full locale set into the bundle).
+ *
+ * @since 0.10.0
  */
 export const defaultImportPolicyRules: ReadonlyArray<ImportPolicyRule> = [
   {
@@ -69,6 +73,8 @@ function importedName(specifier: OxcNode): string | undefined {
  * @remarks Each rule matches import declarations from its `module` and flags the banned forms;
  * a rule with `umdGlobal` additionally flags implicit `<name>.*` type references when nothing in
  * the file imports that name (the case tsc accepts silently through a UMD `export as namespace`).
+ *
+ * @since 0.10.0
  */
 export function auditImportPolicySource(
   filePath: string,
