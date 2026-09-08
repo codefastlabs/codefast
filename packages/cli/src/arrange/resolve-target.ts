@@ -1,8 +1,7 @@
 import path from "node:path";
 
 import type { FilesystemPort } from "#/core/filesystem/port";
-
-const packageJsonFileName = "package.json";
+import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
 
 /**
  * Resolves the arrange target to a canonical path, defaulting to the nearest package directory.
@@ -24,22 +23,9 @@ export function resolveArrangeTargetPath(
   if (explicitTargetPath) {
     return fs.canonicalPathSync(explicitTargetPath);
   }
-  const nearestPackageDirectory = findNearestPackageDirectory(fs, args.currentWorkingDirectory);
+  const nearestPackageDirectory = findNearestAncestor(args.currentWorkingDirectory, (directoryPath) =>
+    fs.existsSync(path.join(directoryPath, "package.json")),
+  );
   const resolvedDefaultTarget = nearestPackageDirectory ?? args.currentWorkingDirectory;
   return fs.canonicalPathSync(resolvedDefaultTarget);
-}
-
-function findNearestPackageDirectory(fs: FilesystemPort, currentWorkingDirectory: string): string | undefined {
-  let currentDir = path.resolve(currentWorkingDirectory);
-  while (true) {
-    const packageJsonPath = path.join(currentDir, packageJsonFileName);
-    if (fs.existsSync(packageJsonPath)) {
-      return currentDir;
-    }
-    const parentDirectory = path.dirname(currentDir);
-    if (parentDirectory === currentDir) {
-      return undefined;
-    }
-    currentDir = parentDirectory;
-  }
 }

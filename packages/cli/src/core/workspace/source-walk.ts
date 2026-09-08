@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import type { FilesystemPort } from "#/core/filesystem/port";
-import { defaultSkipDirectoryNames } from "#/core/workspace/skip-directories";
+import { walkFiles } from "#/core/workspace/walk-files";
 
 // Ignore files carry the divider convention over `#` comments — the content rules stay code-only.
 const ignoreFileNames: ReadonlySet<string> = new Set([
@@ -21,9 +21,7 @@ const ignoreFileNames: ReadonlySet<string> = new Set([
  * @since 0.6.0
  */
 export function walkSourceFiles(rootDirectoryPath: string, fs: FilesystemPort): Array<string> {
-  const result: Array<string> = [];
-  visitSourcePaths(result, rootDirectoryPath, fs);
-  return result;
+  return walkFiles(rootDirectoryPath, fs, (filePath) => sourceCommentLanguage(filePath) !== null);
 }
 
 /**
@@ -42,20 +40,4 @@ export function sourceCommentLanguage(filePath: string): "css" | "ignore" | "js"
     return "css";
   }
   return ignoreFileNames.has(path.basename(filePath)) ? "ignore" : null;
-}
-
-function visitSourcePaths(result: Array<string>, entryPath: string, fs: FilesystemPort): void {
-  const entryStats = fs.statSync(entryPath);
-  if (entryStats.isDirectory()) {
-    for (const childName of fs.readdirSync(entryPath)) {
-      if (defaultSkipDirectoryNames.has(childName)) {
-        continue;
-      }
-      visitSourcePaths(result, path.join(entryPath, childName), fs);
-    }
-    return;
-  }
-  if (sourceCommentLanguage(entryPath) !== null) {
-    result.push(entryPath);
-  }
 }
