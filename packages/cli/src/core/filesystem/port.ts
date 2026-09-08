@@ -35,6 +35,7 @@ export interface FilesystemPort {
     filePath: string,
     options?: { recursive?: boolean; withFileTypes?: boolean },
   ): Promise<Array<string> | Array<DirectoryEntry>>;
+  globSync(pattern: string, options: { readonly cwd: string }): Array<string>;
   rename(oldPath: string, newPath: string): Promise<void>;
   unlink(filePath: string): Promise<void>;
 }

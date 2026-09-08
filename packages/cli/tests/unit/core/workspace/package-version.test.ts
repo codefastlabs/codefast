@@ -13,6 +13,7 @@ function createFilesystem(files: Record<string, string>): FilesystemPort {
   return {
     existsSync: (filePath) => contents.has(path.normalize(filePath)),
     canonicalPathSync: (inputPath) => path.normalize(inputPath),
+    globSync: () => [],
     statSync: (filePath) => {
       const normalizedPath = path.normalize(filePath);
       if (contents.has(normalizedPath)) {

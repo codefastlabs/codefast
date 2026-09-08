@@ -1,4 +1,3 @@
-import { globSync } from "node:fs";
 import path from "node:path";
 
 import { parse as parseYaml } from "yaml";
@@ -7,6 +6,7 @@ import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import { createAnyGlobMatcher } from "#/core/glob";
 import { logger } from "#/core/logger";
+import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
 
 /**
  * Whether a resolved project root is a pnpm workspace or a standalone single package.
@@ -21,44 +21,20 @@ export type ResolvedProjectRoot = {
   readonly mode: ProjectRootMode;
 };
 
-function findWorkspaceRoot(fromDirectory: string, fs: FilesystemPort): string | undefined {
-  // The root follows where the user is (cwd), not where the CLI is installed.
-  let dir = path.resolve(fromDirectory);
-  for (;;) {
-    if (fs.existsSync(path.join(dir, workspaceYamlFileName))) {
-      return dir;
-    }
-    const parent = path.dirname(dir);
-    if (parent === dir) {
-      return undefined;
-    }
-    dir = parent;
-  }
-}
-
-function findNearestPackageDirectory(fromDirectory: string, fs: FilesystemPort): string | undefined {
-  let dir = path.resolve(fromDirectory);
-  for (;;) {
-    if (fs.existsSync(path.join(dir, packageJsonFileName))) {
-      return dir;
-    }
-    const parent = path.dirname(dir);
-    if (parent === dir) {
-      return undefined;
-    }
-    dir = parent;
-  }
-}
-
 /**
  * Resolves the project root: the `pnpm-workspace.yaml` directory, or the nearest `package.json` for a single package.
  */
 export function resolveProjectRoot(fromDirectory: string, fs: FilesystemPort): ResolvedProjectRoot {
-  const workspaceRoot = findWorkspaceRoot(fromDirectory, fs);
+  // Resolution follows where the user is (cwd), not where the CLI is installed.
+  const workspaceRoot = findNearestAncestor(fromDirectory, (directoryPath) =>
+    fs.existsSync(path.join(directoryPath, workspaceYamlFileName)),
+  );
   if (workspaceRoot !== undefined) {
     return { rootDir: workspaceRoot, mode: "workspace" };
   }
-  const packageRoot = findNearestPackageDirectory(fromDirectory, fs);
+  const packageRoot = findNearestAncestor(fromDirectory, (directoryPath) =>
+    fs.existsSync(path.join(directoryPath, packageJsonFileName)),
+  );
   if (packageRoot !== undefined) {
     return { rootDir: packageRoot, mode: "single-package" };
   }
@@ -141,26 +117,22 @@ function parsePnpmWorkspaceDocument(doc: unknown): {
   hasPackagesKey: boolean;
   isEmptyPackagesArray: boolean;
 } {
-  const wf = workspaceYamlFileName;
-  if (doc === null || doc === undefined) {
-    throw new Error(`${wf} root document must be an object (got empty or null)`);
-  }
-  if (typeof doc !== "object" || Array.isArray(doc)) {
-    throw new Error(`${wf} root must be a mapping, not an array or scalar`);
+  if (doc === null || typeof doc !== "object" || Array.isArray(doc)) {
+    throw new Error(`${workspaceYamlFileName} root must be a mapping, not an array or scalar`);
   }
   const parsedDoc = doc as Record<string, unknown>;
   if (!Object.prototype.hasOwnProperty.call(parsedDoc, "packages")) {
     return { include: [], exclude: [], hasPackagesKey: false, isEmptyPackagesArray: false };
   }
-  const pkgs = parsedDoc.packages;
-  if (!Array.isArray(pkgs)) {
-    throw new Error(`${wf} field "packages" must be an array`);
+  const packagesField = parsedDoc.packages;
+  if (!Array.isArray(packagesField)) {
+    throw new Error(`${workspaceYamlFileName} field "packages" must be an array`);
   }
-  if (pkgs.length === 0) {
+  if (packagesField.length === 0) {
     return { include: [], exclude: [], hasPackagesKey: true, isEmptyPackagesArray: true };
   }
   return {
-    ...splitPnpmWorkspacePackagesArray(pkgs),
+    ...splitPnpmWorkspacePackagesArray(packagesField),
     hasPackagesKey: true,
     isEmptyPackagesArray: false,
   };
@@ -170,8 +142,7 @@ async function readWorkspaceYaml(
   rootDir: string,
   fs: FilesystemPort,
 ): Promise<{ exists: false } | { exists: true; doc: unknown }> {
-  const wf = workspaceYamlFileName;
-  const workspaceYamlPath = path.join(rootDir, wf);
+  const workspaceYamlPath = path.join(rootDir, workspaceYamlFileName);
   if (!fs.existsSync(workspaceYamlPath)) {
     return { exists: false };
   }
@@ -179,7 +150,7 @@ async function readWorkspaceYaml(
   try {
     raw = await fs.readFile(workspaceYamlPath, "utf8");
   } catch (caughtReadError: unknown) {
-    throw new Error(`Failed to read ${wf}: ${messageFrom(caughtReadError)}`, {
+    throw new Error(`Failed to read ${workspaceYamlFileName}: ${messageFrom(caughtReadError)}`, {
       cause: caughtReadError,
     });
   }
@@ -187,12 +158,12 @@ async function readWorkspaceYaml(
   try {
     doc = parseYaml(raw) as unknown;
   } catch (caughtYamlParseError: unknown) {
-    throw new Error(`Failed to parse ${wf}: ${messageFrom(caughtYamlParseError)}`, {
+    throw new Error(`Failed to parse ${workspaceYamlFileName}: ${messageFrom(caughtYamlParseError)}`, {
       cause: caughtYamlParseError,
     });
   }
   if (doc === null || doc === undefined) {
-    throw new Error(`${wf} must define a mapping at the document root`);
+    throw new Error(`${workspaceYamlFileName} must define a mapping at the document root`);
   }
   return { exists: true, doc };
 }
@@ -208,7 +179,6 @@ export async function listWorkspacePackageDirectories(
   suppressGlobPermissionDiagnostics?: boolean,
 ): Promise<WorkspacePackageLayoutOutcome> {
   const workspaceYaml = await readWorkspaceYaml(rootDirectoryPathAbsolute, fs);
-  const defInc = defaultIncludePatterns;
 
   if (!workspaceYaml.exists) {
     // No pnpm-workspace.yaml: treat the nearest package as the whole workspace.
@@ -223,11 +193,10 @@ export async function listWorkspacePackageDirectories(
   let include: Array<string>;
   let exclude: Array<string>;
   let layoutSource: WorkspacePackageLayoutSource;
-  const hasPnpmWorkspaceYamlFile = workspaceYaml.exists;
 
   const parsed = parsePnpmWorkspaceDocument(workspaceYaml.doc);
   if (!parsed.hasPackagesKey) {
-    include = [...defInc];
+    include = [...defaultIncludePatterns];
     exclude = [];
     layoutSource = "default-patterns";
   } else if (parsed.isEmptyPackagesArray) {
@@ -243,17 +212,12 @@ export async function listWorkspacePackageDirectories(
   }
 
   const foundRelativePosixPackageRoots = new Set<string>();
-  const globOpts = {
-    cwd: rootDirectoryPathAbsolute,
-    posix: true as const,
-    ...(path.sep === "\\" ? { windowsPathsNoEscape: true as const } : {}),
-  };
 
   for (const pattern of include) {
-    const globPat = workspacePatternToPackageJsonGlob(pattern);
+    const packageJsonGlob = workspacePatternToPackageJsonGlob(pattern);
     let matches: Array<string>;
     try {
-      matches = globSync(globPat, globOpts);
+      matches = fs.globSync(packageJsonGlob, { cwd: rootDirectoryPathAbsolute });
     } catch (caughtGlobError: unknown) {
       if (isGlobPermissionError(caughtGlobError)) {
         if (!suppressGlobPermissionDiagnostics) {
@@ -265,32 +229,32 @@ export async function listWorkspacePackageDirectories(
         cause: caughtGlobError,
       });
     }
+    const suffix = `/${packageJsonFileName}`;
     for (const matchedPath of matches) {
-      const posix = toPosix(matchedPath);
-      const suffix = `/${packageJsonFileName}`;
-      if (!posix.endsWith(suffix)) {
+      const posixPath = toPosix(matchedPath);
+      if (!posixPath.endsWith(suffix)) {
         continue;
       }
-      const rel = posix.slice(0, -suffix.length);
-      if (!rel) {
+      const relativeRoot = posixPath.slice(0, -suffix.length);
+      if (!relativeRoot) {
         continue;
       }
-      foundRelativePosixPackageRoots.add(rel);
+      foundRelativePosixPackageRoots.add(relativeRoot);
     }
   }
 
   const isExcluded = createAnyGlobMatcher(exclude, { dot: true });
 
-  const filteredRelative = [...foundRelativePosixPackageRoots].filter((rel) => !isExcluded(rel));
+  const filteredRelative = [...foundRelativePosixPackageRoots].filter((relativeRoot) => !isExcluded(relativeRoot));
   filteredRelative.sort((a, b) => a.localeCompare(b));
 
-  const packageDirectoryPathsAbsolute = filteredRelative.map((rel) =>
-    path.resolve(rootDirectoryPathAbsolute, rel.split("/").join(path.sep)),
+  const packageDirectoryPathsAbsolute = filteredRelative.map((relativeRoot) =>
+    path.resolve(rootDirectoryPathAbsolute, relativeRoot.split("/").join(path.sep)),
   );
 
   return {
     packageDirectoryPathsAbsolute,
     layoutSource,
-    hasPnpmWorkspaceYamlFile,
+    hasPnpmWorkspaceYamlFile: true,
   };
 }

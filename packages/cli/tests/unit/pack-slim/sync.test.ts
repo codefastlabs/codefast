@@ -14,6 +14,7 @@ function createFakeRepo(files: Record<string, string>): {
   const fs: FilesystemPort = {
     existsSync: (filePath) => store.has(filePath) || isDir(filePath),
     canonicalPathSync: (inputPath) => inputPath,
+    globSync: () => [],
     statSync: (filePath) => ({ isDirectory: () => isDir(filePath), isFile: () => store.has(filePath) }),
     readFileSync: (filePath) => {
       const found = store.get(filePath);

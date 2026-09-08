@@ -32,6 +32,9 @@ function createPackageJsonFilesystemHarness(initialPackageJson: Record<string, u
       canonicalPathSync(inputPath) {
         return inputPath;
       },
+      globSync() {
+        return [];
+      },
       statSync() {
         return {
           isDirectory: () => false,

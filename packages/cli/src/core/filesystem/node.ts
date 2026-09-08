@@ -36,6 +36,8 @@ export const nodeFilesystem: FilesystemPort = {
     return raw as unknown as Array<DirectoryEntry>;
   },
 
+  globSync: (pattern: string, options: { cwd: string }) => fsSync.globSync(pattern, options),
+
   rename: (oldPath: string, newPath: string) => fsPromises.rename(oldPath, newPath),
 
   unlink: (filePath: string) => fsPromises.unlink(filePath),

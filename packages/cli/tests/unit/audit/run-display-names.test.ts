@@ -57,6 +57,7 @@ function createAuditTestFilesystem(files: Record<string, string>): FilesystemPor
   return {
     existsSync: (filePath) => normalized.has(path.normalize(filePath)),
     canonicalPathSync: (inputPath) => path.normalize(inputPath),
+    globSync: () => [],
     statSync: (filePath) => {
       const normalizedPath = path.normalize(filePath);
       if (normalized.has(normalizedPath)) {
