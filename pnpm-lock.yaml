@@ -293,6 +293,9 @@ importers:
       '@changesets/cli':
         specifier: 'catalog:'
         version: 3.0.2
+      '@codefast/cli':
+        specifier: workspace:*
+        version: link:packages/cli
       '@commitlint/cli':
         specifier: 'catalog:'
         version: 21.2.2(@types/node@26.4.1)(conventional-commits-parser@7.1.2)(typescript@7.0.2)

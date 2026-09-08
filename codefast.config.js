@@ -2,6 +2,8 @@ import { execSync } from "node:child_process";
 
 /**
  * Codefast monorepo tooling — sections are read by matching `codefast` subcommands.
+ *
+ * @type {import("@codefast/cli").CodefastConfig}
  */
 const config = {
   mirror: {

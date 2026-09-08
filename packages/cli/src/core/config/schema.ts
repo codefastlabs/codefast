@@ -32,9 +32,10 @@ interface MirrorPackageConfig {
    *  export and `./package.json` are never excluded. */
   exclude?: Array<string> | undefined;
   exports?: Record<string, string> | undefined;
-  source: boolean | string;
-  types: boolean;
-  import: boolean;
+  /** All three default to `true`; the mirror resolves an omitted value the same as `true`. */
+  source?: boolean | string | undefined;
+  types?: boolean | undefined;
+  import?: boolean | undefined;
   css?: MirrorCssConfig | undefined;
 }
 

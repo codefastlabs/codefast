@@ -344,11 +344,99 @@ Configure exceptions via `audit.displayNames.allowlist` — each entry is the ca
 
 ## Configuration
 
-Configuration is optional. Add a `codefast.config.*` file at your project root to adjust `mirror`, `tag`, `arrange`, and
-`audit`. The CLI walks up from the working directory and uses the first match, checking `codefast.config.mjs`,
-`codefast.config.js`, `codefast.config.cjs`, then `codefast.config.json` in each directory. JS configs are loaded via
-[jiti](https://github.com/unjs/jiti), so **only run the CLI in repositories you trust**; JSON configs cannot define
-hooks. The schema is strict — an unknown key is a configuration error.
+**You do not need a config file.** Every command has sensible defaults and works with none. Add a `codefast.config.*`
+file at your project root only to change a default — and add only the sections for the commands you actually use.
+
+**Where it goes and how it loads.** The CLI walks up from the working directory and uses the first match, checking
+`codefast.config.mjs`, `codefast.config.js`, `codefast.config.cjs`, then `codefast.config.json` in each directory. JS
+configs are loaded via [jiti](https://github.com/unjs/jiti) — so **only run the CLI in repositories you trust**, and
+note that only a JS config can define `onAfterWrite` hooks (JSON can't hold functions). The schema is **strict**: an
+unknown key is an error, which catches typos immediately.
+
+### Start small
+
+The smallest valid config is empty. Grow it one section at a time — each top-level key configures one command:
+
+```js
+// codefast.config.js
+export default {};
+```
+
+| Key       | Command   | What it configures                                                                             |
+| --------- | --------- | ---------------------------------------------------------------------------------------------- |
+| `mirror`  | `mirror`  | per-package `exports` generation — see [per-package config](#per-package-mirror-configuration) |
+| `tag`     | `tag`     | package names to skip, and a hook to run after writing                                         |
+| `arrange` | `arrange` | a hook to run after writing                                                                    |
+| `audit`   | `audit *` | each audit's default scan target and its `allowlist` of accepted exceptions                    |
+
+### Author it with types
+
+Don't memorize the shape. Import `defineConfig` (or annotate with the `CodefastConfig` type) and your editor completes
+every key, checks the values, and catches typos **before you run anything** — the types _are_ the reference for what's
+valid, and the strict runtime schema is the backstop.
+
+```ts
+// codefast.config.ts
+import { defineConfig } from "@codefast/cli";
+
+export default defineConfig({
+  mirror: { "@acme/ui": { strip: "./components/" } }, // autocomplete: strip, exclude, source, types, css, …
+});
+```
+
+A plain `.js` config gets the same help through a JSDoc type — no build step, no `.ts`:
+
+```js
+// codefast.config.js
+/** @type {import("@codefast/cli").CodefastConfig} */
+export default {
+  mirror: { "@acme/ui": { strip: "./components/" } },
+};
+```
+
+### Common recipes
+
+**Run a formatter after a command rewrites files.** `tag` and `arrange` take an `onAfterWrite` hook (sync or async). It
+runs only when files were actually written — never on `--dry-run`:
+
+```js
+// codefast.config.js
+import { execSync } from "node:child_process";
+
+const format = ({ files }) => execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
+
+export default {
+  tag: { onAfterWrite: format },
+  arrange: { onAfterWrite: format },
+};
+```
+
+**Skip packages.** `tag.skipPackages` takes globs matched against package names; `mirror` skips any package set to
+`false`:
+
+```js
+export default {
+  tag: { skipPackages: ["@acme/internal", "@apps/*"] },
+  mirror: { "@acme/internal": false },
+};
+```
+
+**Accept a known audit finding.** Every audit takes an `allowlist`. An entry is the offending text exactly as it
+appears, or `repo/relative/path:<text>` to scope it to a single file:
+
+```js
+export default {
+  audit: {
+    imports: { allowlist: [`packages/legacy/src/x.ts:import { z } from "zod";`] },
+    rtl: { allowlist: ["packages/ui/src/variants/sheet.ts:data-open:slide-in-from-left-10"] },
+  },
+};
+```
+
+### Complete reference
+
+Every section together — see [per-package `mirror` configuration](#per-package-mirror-configuration) for the `mirror`
+keys:
 
 ```js
 // codefast.config.js
@@ -392,8 +480,9 @@ export default {
 };
 ```
 
-`source`, `types`, and `import` default to `true`. The `onAfterWrite` hooks (sync or async) run only when files were
-actually written — never on `--dry-run`. A hook failure is reported on stderr and the command exits `1`.
+`source`, `types`, and `import` default to `true`, so an empty `mirror` entry still emits all three. The `onAfterWrite`
+hooks run only when files were actually written — never on `--dry-run`; a hook failure is reported on stderr and the
+command exits `1`.
 
 ## Exit codes
 
