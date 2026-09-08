@@ -3,8 +3,8 @@ import path from "node:path";
 import type { MirrorConfig } from "#/core/config/schema";
 import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
+import { distDirName, packageJsonFileName } from "#/core/workspace/well-known-files";
 import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
-import { DIST_DIR, PACKAGE_JSON } from "#/mirror/domain/constants";
 import { createPathTransform, generateExports } from "#/mirror/domain/exports";
 import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
 import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";
@@ -28,8 +28,8 @@ export async function syncExportsForWorkspacePackage(
   const pathBasename = path.basename;
 
   const packageDir = pathResolve(rootDir, packagePathStr);
-  const distDir = pathJoin(packageDir, DIST_DIR);
-  const packageJsonPath = pathJoin(packageDir, PACKAGE_JSON);
+  const distDir = pathJoin(packageDir, distDirName);
+  const packageJsonPath = pathJoin(packageDir, packageJsonFileName);
   const folderBasename = pathBasename(packageDir);
 
   const distFilesystem = createMirrorDistFilesystem(fs);

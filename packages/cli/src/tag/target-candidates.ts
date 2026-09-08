@@ -4,9 +4,8 @@ import { z } from "zod";
 
 import type { FilesystemPort } from "#/core/filesystem/port";
 import { listWorkspacePackageDirectories } from "#/core/workspace/resolver";
+import { packageJsonFileName } from "#/core/workspace/well-known-files";
 import type { TagTargetCandidate } from "#/tag/domain/types";
-
-const packageJsonFileName = "package.json";
 
 const packageJsonNameSchema = z.looseObject({
   name: z.string().min(1).optional(),

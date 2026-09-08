@@ -7,6 +7,7 @@ import type { FilesystemPort } from "#/core/filesystem/port";
 import { createAnyGlobMatcher } from "#/core/glob";
 import { logger } from "#/core/logger";
 import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
+import { packageJsonFileName, workspaceYamlFileName } from "#/core/workspace/well-known-files";
 
 /**
  * Whether a resolved project root is a pnpm workspace or a standalone single package.
@@ -61,9 +62,7 @@ export type WorkspacePackageLayoutOutcome = {
   readonly hasPnpmWorkspaceYamlFile: boolean;
 };
 
-const workspaceYamlFileName = "pnpm-workspace.yaml";
 const defaultIncludePatterns = ["packages/*"];
-const packageJsonFileName = "package.json";
 
 function toPosix(filePath: string): string {
   return filePath.split(path.sep).join("/");

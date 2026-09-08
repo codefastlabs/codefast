@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import type { FilesystemPort } from "#/core/filesystem/port";
-import { DIST_DIR } from "#/mirror/domain/constants";
+import { distDirName } from "#/core/workspace/well-known-files";
 import type { PackageJsonShape } from "#/mirror/domain/types";
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
 
@@ -163,7 +163,7 @@ export async function supplementExportsInPackageJson(
     return { supplementedSpecifiers: [] };
   }
 
-  const distDir = path.join(packageDir, DIST_DIR);
+  const distDir = path.join(packageDir, distDirName);
   const supplementedSpecifiers: Array<string> = [];
   const supplementedExports: Record<string, unknown> = {};
   const originalPathBySpecifier: Record<string, string> = {};

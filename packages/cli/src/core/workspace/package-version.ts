@@ -2,6 +2,7 @@ import path from "node:path";
 
 import type { FilesystemPort } from "#/core/filesystem/port";
 import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
+import { packageJsonFileName } from "#/core/workspace/well-known-files";
 
 /**
  * Finds the `version` of the nearest enclosing `package.json`, or null when the first
@@ -14,14 +15,14 @@ function findNearestPackageVersion(fs: FilesystemPort, targetPath: string): stri
   const startDirectory = fs.statSync(resolved).isDirectory() ? resolved : path.dirname(resolved);
 
   const packageDirectory = findNearestAncestor(startDirectory, (directoryPath) =>
-    fs.existsSync(path.join(directoryPath, "package.json")),
+    fs.existsSync(path.join(directoryPath, packageJsonFileName)),
   );
   if (packageDirectory === undefined) {
     return null;
   }
 
   const version = (
-    JSON.parse(fs.readFileSync(path.join(packageDirectory, "package.json"), "utf8")) as { version?: unknown }
+    JSON.parse(fs.readFileSync(path.join(packageDirectory, packageJsonFileName), "utf8")) as { version?: unknown }
   ).version;
 
   return typeof version === "string" && version.length > 0 ? version : null;
