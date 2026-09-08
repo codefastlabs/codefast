@@ -369,6 +369,31 @@ export default {};
 | `arrange` | `arrange` | a hook to run after writing                                                                    |
 | `audit`   | `audit *` | each audit's default scan target and its `allowlist` of accepted exceptions                    |
 
+### Author it with types
+
+Don't memorize the shape. Import `defineConfig` (or annotate with the `CodefastConfig` type) and your editor completes
+every key, checks the values, and catches typos **before you run anything** — the types _are_ the reference for what's
+valid, and the strict runtime schema is the backstop.
+
+```ts
+// codefast.config.ts
+import { defineConfig } from "@codefast/cli";
+
+export default defineConfig({
+  mirror: { "@acme/ui": { strip: "./components/" } }, // autocomplete: strip, exclude, source, types, css, …
+});
+```
+
+A plain `.js` config gets the same help through a JSDoc type — no build step, no `.ts`:
+
+```js
+// codefast.config.js
+/** @type {import("@codefast/cli").CodefastConfig} */
+export default {
+  mirror: { "@acme/ui": { strip: "./components/" } },
+};
+```
+
 ### Common recipes
 
 **Run a formatter after a command rewrites files.** `tag` and `arrange` take an `onAfterWrite` hook (sync or async). It
