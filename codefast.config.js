@@ -47,7 +47,7 @@ const config = {
     comments: {
       allowlist: [],
     },
-    react: {
+    imports: {
       allowlist: [],
     },
     displayNames: {
