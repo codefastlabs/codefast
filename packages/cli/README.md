@@ -136,7 +136,21 @@ Read-only report of long strings, nested `cn` inside `tv()`, and related finding
 ### `arrange simplify [target]`
 
 Flattens grouped arrays and static-only `cn()` calls back to plain strings in `tv()` slots — the inverse cleanup pass.
-Accepts `--dry-run` and `--json`.
+In a mixed `cn()` call it coalesces only _adjacent_ static literals and keeps argument order, so tailwind-merge
+precedence is unchanged (a later argument still overrides an earlier one).
+
+| Flag                       | Description                                                                                              |
+| -------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `--dry-run`                | Show what simplify would change without writing files.                                                   |
+| `--fold-variant-classname` | Fold `cn()` overrides into a variant function's `className` option (alias: `--fold-variant-class-name`). |
+| `--json`                   | Print one JSON summary on stdout.                                                                        |
+
+With `--fold-variant-classname`, `cn(buttonVariants({ size: "sm" }), "flex-1")` becomes
+`buttonVariants({ size: "sm", className: "flex-1" })`, and a dynamic or multi-part override folds into a `className`
+array. The fold fires only when the native TypeScript type server confirms the callee's options accept a `className` (or
+`class`) of the right shape, so it loads the `typescript` package (an optional peer, v7) and needs the target inside a
+`tsconfig`; files outside a project keep the base pass. Run a formatter afterward — a folded call can exceed the print
+width until it is wrapped.
 
 ### `arrange group <tokens...>`
 

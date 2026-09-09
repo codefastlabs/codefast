@@ -177,6 +177,29 @@ infrastructure.
 **Consequences.** Adding a test means importing a function and asserting on a `Result`. Coverage is enforced by the
 workspace's `test:coverage` gate, not by this document.
 
+## Simplify preserves cn() precedence; the className fold is type-gated and opt-in
+
+**Context.** The mixed-`cn()` branch of `simplify` moved every static literal to the front of the call. Argument order
+in `cn()` is tailwind-merge precedence — a later argument overrides an earlier one — so hoisting an override string
+ahead of a variant call silently changed which utilities won, dropping the very override the trailing string existed to
+apply. Separately, the idiomatic way to override a variant is its own `className` option, not a `cn()` wrapper around
+it, and a codemod that produced the wrapper form left the tidier call unwritten.
+
+**Decision.** Two rules. The base pass coalesces only _adjacent_ static literals and never reorders arguments, so
+precedence is preserved and a lone static after a dynamic argument is left alone. Folding `cn(variant({…}), …overrides)`
+into `variant({…, className: …})` is a separate capability behind `--fold-variant-classname`. It fires only when the
+native TypeScript type server (`typescript/unstable/sync`) confirms the callee's first-parameter options accept a
+`className`/`class` of the right shape — string for a single static override, a class array for a dynamic or multi-part
+one. Detection is by type, never by name: a call the type server does not recognize as a variant function is left
+untouched.
+
+**Consequences.** The default pass stays oxc-only, synchronous, and workspace-free; the fold is the one path that spawns
+the type server and needs the target inside a `tsconfig`, so `typescript` is an optional peer and files outside a
+project keep the base pass. The type sees the option's shape but not the variant's `twMerge` setting, so a variant
+configured `twMerge: false` would merge a folded `className` differently than the `cn()` it replaced — accepted as out
+of scope, since the option-type gate already excludes non-variant callees and the shipped variants use the default
+merge.
+
 ## License
 
 Released under the [MIT License](./LICENSE).
