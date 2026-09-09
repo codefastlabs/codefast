@@ -26,8 +26,7 @@ export async function runArrangeSimplify(
   const probe: VariantClassNameProbe | null = args.foldVariantClassName ? await createVariantClassNameProbe() : null;
   try {
     for (const filePath of filePaths) {
-      const fileProbe = probe ? probe.forFile(filePath) : null;
-      const result = processArrangeSimplifyFile(fs, { filePath, write: args.write, fileProbe });
+      const result = processArrangeSimplifyFile(fs, { filePath, write: args.write, probe });
       totalFound += result.totalFound;
       totalChanged += result.changed;
       if (result.changed > 0) {

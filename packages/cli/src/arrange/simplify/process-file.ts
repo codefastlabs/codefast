@@ -3,7 +3,7 @@ import { collectSimplifyTargets } from "#/arrange/domain/ast/simplify-targets";
 import { dropCnImportIfUnused } from "#/arrange/domain/imports";
 import type { GroupFileResult } from "#/arrange/domain/types";
 import { collectClassNameFoldTargets } from "#/arrange/simplify/fold-targets";
-import type { FileClassNameProbe } from "#/arrange/simplify/variant-classname-probe";
+import type { FileClassNameProbe, VariantClassNameProbe } from "#/arrange/simplify/variant-classname-probe";
 import { parseDomainSourceFile } from "#/arrange/source-parse";
 import type { Filesystem } from "#/core/filesystem/filesystem";
 import { applyEditsDescending } from "#/core/source-text-edit";
@@ -23,15 +23,22 @@ export function processArrangeSimplifyFile(
   args: {
     readonly filePath: string;
     readonly write: boolean;
-    readonly fileProbe?: FileClassNameProbe | null;
+    readonly probe?: VariantClassNameProbe | null;
   },
 ): GroupFileResult {
-  const { filePath, write, fileProbe } = args;
+  const { filePath, write, probe } = args;
   const sourceText = fs.readFileSync(filePath, "utf8");
   const domainSf = parseDomainSourceFile(filePath, sourceText);
 
+  // Resolve the file's type-server project at most once, and only if a syntactic fold candidate needs it.
+  let resolvedFileProbe: FileClassNameProbe | null | undefined;
+  const resolveFileProbe = (): FileClassNameProbe | null => {
+    resolvedFileProbe ??= probe ? probe.forFile(filePath) : null;
+    return resolvedFileProbe;
+  };
+
   // Fold edits replace a whole cn() call, so they take precedence over any base edit on the same call.
-  const foldEdits = fileProbe ? collectClassNameFoldTargets(domainSf, fileProbe) : [];
+  const foldEdits = probe ? collectClassNameFoldTargets(domainSf, resolveFileProbe) : [];
   const baseEdits = collectSimplifyTargets(domainSf).filter(
     (edit) => !foldEdits.some((fold) => editsOverlap(edit, fold)),
   );

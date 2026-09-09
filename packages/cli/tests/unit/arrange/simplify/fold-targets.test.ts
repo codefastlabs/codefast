@@ -11,7 +11,7 @@ function probeReturning(acceptance: VariantClassNameAcceptance | null): FileClas
 
 function fold(sourceText: string, probe: FileClassNameProbe): string {
   const sourceFile = parseDomainSourceFile("/virtual/x.tsx", sourceText);
-  const edits = collectClassNameFoldTargets(sourceFile, probe).filter(
+  const edits = collectClassNameFoldTargets(sourceFile, () => probe).filter(
     (edit) => sourceText.slice(edit.start, edit.end) !== edit.replacement,
   );
   return edits.length > 0 ? applyEditsDescending(sourceText, edits) : sourceText;

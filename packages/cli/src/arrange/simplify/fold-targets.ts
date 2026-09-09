@@ -71,12 +71,15 @@ function objectAcceptsClassNameFold(objectArg: DomainCallExpression["arguments"]
   return true;
 }
 
-/** Plans folding one `cn(variant({…}), …overrides)` into `variant({…, className: …})`, or `null` when unsafe. */
-function planClassNameFold(
-  cnCall: DomainCallExpression,
-  sourceText: string,
-  fileProbe: FileClassNameProbe,
-): PlannedSimplifyEdit | null {
+/** A syntactically foldable `cn(variant({…}), …)` call, with the type check it still needs to pass. */
+interface FoldCandidate {
+  readonly calleeOffset: number;
+  readonly needsArray: boolean;
+  readonly edit: PlannedSimplifyEdit;
+}
+
+/** Builds a fold candidate from syntax alone — no type server — or `null` when the shape is not foldable. */
+function buildFoldCandidate(cnCall: DomainCallExpression, sourceText: string): FoldCandidate | null {
   const args = cnCall.arguments;
   const variantCall = args[0];
   if (args.length < 2 || variantCall === undefined || !isDomainCallExpression(variantCall)) {
@@ -86,8 +89,8 @@ function planClassNameFold(
   if (variantCall.arguments.length !== 1 || objectArg === undefined || !objectAcceptsClassNameFold(objectArg)) {
     return null;
   }
-  const offset = calleeNameOffset(variantCall.expression);
-  if (offset === null) {
+  const calleeOffset = calleeNameOffset(variantCall.expression);
+  if (calleeOffset === null) {
     return null;
   }
 
@@ -99,11 +102,6 @@ function planClassNameFold(
   // A dynamic override or more than one piece becomes an array, so the option must accept one; a
   // single static override stays a scalar string. Types decide whether either shape is legal.
   const needsArray = pieces.length > 1 || pieces.some((piece) => piece.kind === "dynamic");
-  const acceptance = fileProbe.classNameAcceptance(offset);
-  if (!acceptance || (needsArray ? !acceptance.acceptsArray : !acceptance.acceptsString)) {
-    return null;
-  }
-
   const rendered = pieces.map(renderPiece);
   const classNameValue = pieces.length > 1 ? `[${rendered.join(", ")}]` : rendered[0];
   const optionsInner = sourceText
@@ -116,29 +114,36 @@ function planClassNameFold(
     optionsInner.length > 0 ? `${optionsInner}, className: ${classNameValue}` : `className: ${classNameValue}`;
 
   return {
-    start: cnCall.pos,
-    end: cnCall.end,
-    replacement: `${calleeSrc}({ ${newInner} })`,
-    label: "cn-fold-classname",
+    calleeOffset,
+    needsArray,
+    edit: {
+      start: cnCall.pos,
+      end: cnCall.end,
+      replacement: `${calleeSrc}({ ${newInner} })`,
+      label: "cn-fold-classname",
+    },
   };
 }
 
 /**
  * Collects `className` fold edits for every foldable `cn(variant({…}), …)` call in a source file.
+ *
+ * @remarks The type server is loaded lazily via `resolveFileProbe` — only once a syntactic candidate
+ * exists — so files with no foldable call never pay for a type query.
  */
 export function collectClassNameFoldTargets(
   sourceFile: DomainSourceFile,
-  fileProbe: FileClassNameProbe,
+  resolveFileProbe: () => FileClassNameProbe | null,
 ): Array<PlannedSimplifyEdit> {
   const sourceText = sourceFile.text;
   const knownBindings = buildKnownCnTvBindings(sourceFile);
-  const results: Array<PlannedSimplifyEdit> = [];
+  const candidates: Array<FoldCandidate> = [];
 
   const visit = (node: DomainAstNode): void => {
     if (isDomainCallExpression(node) && isCnOrTvIdentifier(node.expression, "cn", knownBindings)) {
-      const edit = planClassNameFold(node, sourceText, fileProbe);
-      if (edit) {
-        results.push(edit);
+      const candidate = buildFoldCandidate(node, sourceText);
+      if (candidate) {
+        candidates.push(candidate);
       }
     }
     forEachDomainChild(node, visit);
@@ -148,5 +153,25 @@ export function collectClassNameFoldTargets(
     visit(statement);
   }
 
+  if (candidates.length === 0) {
+    return [];
+  }
+
+  const fileProbe = resolveFileProbe();
+  if (!fileProbe) {
+    return [];
+  }
+
+  const results: Array<PlannedSimplifyEdit> = [];
+  for (const candidate of candidates) {
+    const acceptance = fileProbe.classNameAcceptance(candidate.calleeOffset);
+    if (!acceptance) {
+      continue;
+    }
+    if (candidate.needsArray ? !acceptance.acceptsArray : !acceptance.acceptsString) {
+      continue;
+    }
+    results.push(candidate.edit);
+  }
   return results;
 }
