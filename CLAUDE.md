@@ -163,12 +163,13 @@ Rules: **no tests under** `src/**`; no test files directly under `tests/` (must 
   is the implicit `React.*` UMD-global type reference (`e: React.FormEvent` with no import — tsc accepts it silently).
   Two-layer enforcement, no jsPlugins: oxlint's built-in `no-restricted-imports` catches the import forms in-editor, and
   `pnpm cli:audit:imports` (the `codefast` CLI, gating CI) catches everything including the UMD global.
-- **Zod is imported as a namespace in front-end packages** (`import * as z from "zod"`, the v4 style). A named
-  `import { z } from "zod"` pins Zod's full locale set into the browser bundle because bundlers cannot tree-shake it.
-  `pnpm cli:audit:imports` enforces the namespace form for bundled packages (`theme`, `ui`, `tailwind-variants`,
-  `apps/web`, `examples/*`, `benchmark-viewer`); backend/tsc packages such as `cli` are out of scope and unaffected.
-  oxlint cannot express this (it has no `no-restricted-syntax`, and `importNames` would flag the namespace form too), so
-  the audit is the only enforcement layer.
+- **Zod is imported as a namespace** (`import * as z from "zod"`, the v4 style) — the repo-wide house form. A named
+  `import { z } from "zod"` pins Zod's full locale set into the browser bundle because bundlers cannot tree-shake it,
+  which is why the namespace form is mandatory wherever code ships bundled; the repo applies it everywhere for one
+  consistent style. `pnpm cli:audit:imports` enforces it across every workspace package (`cli` included — a `named:z`
+  rule with no `scope`); a named-`z` type-only import stays fine (`import type { ZodType } from "zod"`), only the value
+  `z` is banned. oxlint cannot express this (it has no `no-restricted-syntax`, and `importNames` would flag the
+  namespace form too), so the audit is the only enforcement layer.
 
 ## Comments (TSDoc, not JSDoc)
 

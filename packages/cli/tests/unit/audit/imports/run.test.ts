@@ -61,7 +61,7 @@ describe("runImportsAudit", () => {
     expect(outcome.value.scannedFileCount).toBe(2);
   });
 
-  it("applies the Zod namespace rule only to front-end packages", () => {
+  it("applies the Zod namespace rule to every package, accepting only the namespace form", () => {
     const rootDir = path.join(path.sep, "repo");
     const themeNamed = path.join(rootDir, "packages", "theme", "src", "named.ts");
     const themeNamespace = path.join(rootDir, "packages", "theme", "src", "namespace.ts");
@@ -77,11 +77,16 @@ describe("runImportsAudit", () => {
     if (!outcome.ok) {
       return;
     }
-    // Only the front-end named import is flagged: the namespace form is allowed, and the
-    // backend package (packages/cli) is outside the Zod rule's scope.
-    expect(outcome.value.violationCount).toBe(1);
-    expect(outcome.value.files.map((file) => file.relativePath)).toEqual(["packages/theme/src/named.ts"]);
-    expect(outcome.value.files[0]?.violations[0]?.reason).toContain('named import { z } from "zod"');
+    // The house form is repo-wide: every named import is flagged (backend `cli` included); only
+    // the namespace form passes.
+    expect(outcome.value.violationCount).toBe(2);
+    expect(outcome.value.files.map((file) => file.relativePath).sort()).toEqual([
+      "packages/cli/src/named.ts",
+      "packages/theme/src/named.ts",
+    ]);
+    for (const file of outcome.value.files) {
+      expect(file.violations[0]?.reason).toContain('named import { z } from "zod"');
+    }
   });
 });
 

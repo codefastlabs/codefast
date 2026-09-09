@@ -1,6 +1,6 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { describe, expect, it } from "vitest";
-import { z } from "zod";
+import * as z from "zod";
 import * as zm from "zod/mini";
 
 import { assertValidEventProperties, defineEventCatalog } from "#/core/event-catalog";

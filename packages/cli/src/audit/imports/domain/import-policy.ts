@@ -27,8 +27,8 @@ export interface ImportPolicyRule {
 
 /**
  * The import policies enforced across the monorepo: React members by name (never a namespace,
- * default, or implicit `React.*` UMD global), and Zod as a namespace in front-end packages so
- * bundlers can tree-shake it (a named `import { z }` pins Zod's full locale set into the bundle).
+ * default, or implicit `React.*` UMD global), and Zod as a namespace repo-wide — the house form,
+ * so a named `import { z }` never pins Zod's full locale set into a package that ships bundled.
  *
  * @since 0.10.0
  */
@@ -42,15 +42,9 @@ export const defaultImportPolicyRules: ReadonlyArray<ImportPolicyRule> = [
   {
     module: "zod",
     ban: ["named:z"],
-    scope: [
-      "packages/theme/**",
-      "packages/ui/**",
-      "packages/tailwind-variants/**",
-      "apps/web/**",
-      "examples/*/**",
-      "internal/benchmark-viewer/**",
-    ],
-    message: 'import Zod as a namespace so bundlers can tree-shake it: import * as z from "zod"',
+    message:
+      'import Zod as a namespace: import * as z from "zod" (repo house form; a named import { z } pins Zod\'s full ' +
+      "locale set into any bundle that reaches it)",
   },
 ];
 
