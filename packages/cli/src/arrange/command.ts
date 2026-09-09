@@ -2,27 +2,24 @@ import process from "node:process";
 
 import { Command } from "commander";
 
-import { analyzeDirectory } from "#/arrange/analyze";
-import {
-  arrangeAnalyzeDirectoryRequestSchema,
-  arrangeSuggestGroupsRequestSchema,
-  arrangeSyncRunRequestSchema,
-} from "#/arrange/cli-schema";
-import type { AnalyzeReport, ArrangeRunResult } from "#/arrange/domain/types";
-import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
-import {
-  printAnalyzeReport,
-  printGroupFilePreviewFromWork,
-  printSimplifyResult,
-  printSyncResult,
-} from "#/arrange/output";
-import { runArrangeSimplify } from "#/arrange/simplify-sync";
-import { suggestCnGroupsFromCli } from "#/arrange/suggest";
-import { runArrangeSync } from "#/arrange/sync";
-import { prepareArrangeWorkspace } from "#/arrange/workspace";
+import { formatArrangeGroupJsonOutput } from "#/arrange/group/cli-result";
+import { arrangeSuggestGroupsRequestSchema } from "#/arrange/group/cli-schema";
+import { suggestCnGroupsFromCli } from "#/arrange/group/suggest";
+import { analyzeDirectory } from "#/arrange/inspect/analyze";
+import { formatArrangeAnalyzeJsonOutput } from "#/arrange/inspect/cli-result";
+import { arrangeAnalyzeDirectoryRequestSchema } from "#/arrange/inspect/cli-schema";
+import { printAnalyzeReport } from "#/arrange/inspect/output";
+import { prepareArrangeWorkspace } from "#/arrange/prepare";
+import { exitCodeForArrangeSyncResult, formatArrangeSyncJsonOutput } from "#/arrange/regroup/cli-result";
+import { arrangeSyncRunRequestSchema } from "#/arrange/regroup/cli-schema";
+import { printGroupFilePreviewFromWork, printSyncResult } from "#/arrange/regroup/output";
+import { runArrangeSync } from "#/arrange/regroup/run";
+import { formatArrangeSimplifyJsonOutput } from "#/arrange/simplify/cli-result";
+import { printSimplifyResult } from "#/arrange/simplify/output";
+import { runArrangeSimplify } from "#/arrange/simplify/run";
 import { readOptionalPositionalArg } from "#/core/cli/positional";
 import { consumeCliAppError, runCliResultAsync } from "#/core/cli/result-handle";
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
+import { CLI_EXIT_SUCCESS } from "#/core/exit-codes";
 import { nodeFilesystem } from "#/core/filesystem/node";
 import { logger } from "#/core/logger";
 import { parseWithSchema } from "#/core/schema-parse";
@@ -128,7 +125,7 @@ export function createArrangeCommand(): Command {
       const { resolvedTarget } = prelude.value;
       await runCliResultAsync(runArrangeSimplify(nodeFilesystem, { targetPath: resolvedTarget, write }), (value) => {
         if (opts.json) {
-          logger.out(JSON.stringify({ schemaVersion: 1 as const, ok: true, write, result: value }));
+          logger.out(formatArrangeSimplifyJsonOutput(value, write));
           return CLI_EXIT_SUCCESS;
         }
         printSimplifyResult(value, write);
@@ -162,30 +159,4 @@ export function createArrangeCommand(): Command {
     });
 
   return cmd;
-}
-
-function formatArrangeAnalyzeJsonOutput(analyzeRootPath: string, report: AnalyzeReport): string {
-  return JSON.stringify({ schemaVersion: 1 as const, analyzeRootPath, report });
-}
-
-function formatArrangeSyncJsonOutput(result: ArrangeRunResult, write: boolean): string {
-  const { previewPlans: _plans, ...serializableResult } = result;
-  return JSON.stringify({
-    schemaVersion: 1 as const,
-    ok: result.hookError === null,
-    write,
-    result: serializableResult,
-  });
-}
-
-function formatArrangeGroupJsonOutput(output: ArrangeSuggestGroupsOutput): string {
-  return JSON.stringify({
-    schemaVersion: 1 as const,
-    primaryLine: output.primaryLine,
-    bucketsCommentLine: output.bucketsCommentLine,
-  });
-}
-
-function exitCodeForArrangeSyncResult(result: ArrangeRunResult): number {
-  return result.hookError !== null ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
 }

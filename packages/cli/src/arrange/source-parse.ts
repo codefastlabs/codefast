@@ -1,5 +1,5 @@
 import type { DomainSourceFile } from "#/arrange/domain/ast/ast-node";
-import { TypeScriptAstTranslator } from "#/arrange/typescript-ast-translator";
+import { TypeScriptAstTranslator } from "#/arrange/domain/ast/translator";
 import { messageFrom } from "#/core/errors";
 import { logger } from "#/core/logger";
 

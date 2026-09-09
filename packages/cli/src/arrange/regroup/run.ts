@@ -1,0 +1,68 @@
+import type { GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
+import type { ArrangeRunResult } from "#/arrange/domain/types";
+import type { ArrangeSyncRunRequest } from "#/arrange/regroup/cli-schema";
+import { processArrangeGroupFile } from "#/arrange/regroup/process-file";
+import { scanArrangeTargets } from "#/arrange/scan-target";
+import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#/core/config/schema";
+import type { AppError } from "#/core/errors";
+import { messageFrom } from "#/core/errors";
+import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Result } from "#/core/result";
+import { ok } from "#/core/result";
+
+async function runOnAfterWriteHook(
+  hook: CodefastAfterWriteHook | undefined,
+  modifiedFiles: Array<string>,
+): Promise<string | null> {
+  if (!hook || modifiedFiles.length === 0) {
+    return null;
+  }
+  try {
+    await hook({ files: modifiedFiles });
+    return null;
+  } catch (caughtHookError: unknown) {
+    return `[arrange] onAfterWrite hook failed: ${messageFrom(caughtHookError)}`;
+  }
+}
+
+/**
+ * Runs the grouping pipeline over every target file and returns the aggregated result.
+ *
+ * @since 0.3.16-canary.0
+ */
+export async function runArrangeSync(
+  fs: FilesystemPort,
+  request: ArrangeSyncRunRequest,
+): Promise<Result<ArrangeRunResult, AppError>> {
+  const filePaths = scanArrangeTargets(fs, request.targetPath);
+  const modifiedFiles: Array<string> = [];
+  const previewPlans: Array<GroupFileWorkPlan> = [];
+  let totalFound = 0;
+  let totalChanged = 0;
+
+  const groupOptions = {
+    write: request.write,
+    withClassName: !!request.withClassName,
+    cnImport: request.cnImport,
+  };
+
+  for (const filePath of filePaths) {
+    const fileProcessResult = processArrangeGroupFile(fs, { filePath, options: groupOptions });
+    totalFound += fileProcessResult.totalFound;
+    totalChanged += fileProcessResult.changed;
+    if (fileProcessResult.changed > 0) {
+      modifiedFiles.push(fileProcessResult.filePath);
+    }
+    if (fileProcessResult.workPlan) {
+      previewPlans.push(fileProcessResult.workPlan);
+    }
+  }
+
+  const arrangeConfig = request.config as CodefastArrangeConfig | undefined;
+  const hookError =
+    request.write && modifiedFiles.length > 0
+      ? await runOnAfterWriteHook(arrangeConfig?.onAfterWrite, modifiedFiles)
+      : null;
+
+  return ok({ filePaths, modifiedFiles, totalFound, totalChanged, hookError, previewPlans });
+}
