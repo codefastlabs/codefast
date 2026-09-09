@@ -4,10 +4,11 @@ import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/core/config/sc
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
-import { createAnyGlobMatcher } from "#/core/glob";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
+import { filterSkippedCandidates } from "#/tag/domain/skip-filter";
 import type {
+  TagExecutionInput,
   TagFileResult,
   TagProgressListener,
   TagResolvedTarget,
@@ -15,31 +16,9 @@ import type {
   TagTargetCandidate,
   TagTargetExecutionResult,
 } from "#/tag/domain/types";
+import { extractDistinctVersions, summarizeVersions } from "#/tag/domain/version-summary";
 import { resolveTagTargetCandidates } from "#/tag/target-candidates";
 import { runTagOnTarget } from "#/tag/target-runner";
-
-/**
- * The inputs a tag run is invoked with.
- *
- * @since 0.3.16-canary.0
- */
-export type TagRunRequest = {
-  rootDir: string;
-  write: boolean;
-  json?: boolean | undefined;
-  targetPath?: string | undefined;
-  skipPackages?: Array<string> | undefined;
-  config?: unknown;
-};
-
-/**
- * A run request paired with an optional progress listener.
- *
- * @since 0.3.16-canary.0
- */
-export type TagExecutionInput = TagRunRequest & {
-  readonly listener?: TagProgressListener | undefined;
-};
 
 /**
  * Applies `@since` tags across the selected targets and returns the aggregate result.
@@ -111,24 +90,6 @@ async function runTagOnAfterWriteHook(
   }
 }
 
-function summarizeVersions(distinctVersions: Set<string>): string {
-  if (distinctVersions.size === 0) {
-    return "none";
-  }
-  if (distinctVersions.size > 1) {
-    return "mixed";
-  }
-  return distinctVersions.values().next().value ?? "none";
-}
-
-function extractDistinctVersions(targetResults: Array<TagTargetExecutionResult>): Set<string> {
-  return new Set(
-    targetResults
-      .map((targetResult) => targetResult.result?.version)
-      .filter((version): version is string => typeof version === "string" && version.length > 0),
-  );
-}
-
 function chooseWorkspacePackageTargetPath(
   fs: FilesystemPort,
   candidate: TagTargetCandidate,
@@ -168,39 +129,6 @@ function resolveTargetSelection(fs: FilesystemPort, candidate: TagTargetCandidat
     packageDir: candidate.packageDir,
     packageName: candidate.packageName,
   };
-}
-
-/**
- * Partition tag target candidates into those to tag and those to skip, matching
- * each candidate's package name against `skipPackages` as glob patterns.
- * Candidates without a package name (e.g. an explicit-target path) are never skipped.
- *
- * @since 0.5.0-canary.0
- */
-export function filterSkippedCandidates(
-  targetCandidates: Array<TagTargetCandidate>,
-  skipPackages: ReadonlyArray<string> | undefined,
-): { includedCandidates: Array<TagTargetCandidate>; skippedPackages: Array<string> } {
-  if (!skipPackages || skipPackages.length === 0) {
-    return {
-      includedCandidates: targetCandidates,
-      skippedPackages: [],
-    };
-  }
-
-  const isSkipped = createAnyGlobMatcher(skipPackages);
-  const includedCandidates: Array<TagTargetCandidate> = [];
-  const skippedPackages: Array<string> = [];
-  for (const candidate of targetCandidates) {
-    const packageName = candidate.packageName;
-    if (packageName && isSkipped(packageName)) {
-      skippedPackages.push(packageName);
-      continue;
-    }
-    includedCandidates.push(candidate);
-  }
-
-  return { includedCandidates, skippedPackages };
 }
 
 async function runOnResolvedTarget(

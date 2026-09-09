@@ -123,3 +123,26 @@ export interface TagCommandPrelude {
   readonly config: CodefastConfig;
   readonly resolvedTargetPath: string | undefined;
 }
+
+/**
+ * The inputs a tag run is invoked with.
+ *
+ * @since 0.3.16-canary.0
+ */
+export type TagRunRequest = {
+  rootDir: string;
+  write: boolean;
+  json?: boolean | undefined;
+  targetPath?: string | undefined;
+  skipPackages?: Array<string> | undefined;
+  config?: unknown;
+};
+
+/**
+ * A run request paired with an optional progress listener.
+ *
+ * @since 0.3.16-canary.0
+ */
+export type TagExecutionInput = TagRunRequest & {
+  readonly listener?: TagProgressListener | undefined;
+};
