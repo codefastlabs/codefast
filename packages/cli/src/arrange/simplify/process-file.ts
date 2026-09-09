@@ -47,10 +47,12 @@ export function processArrangeSimplifyFile(
   const meaningful = edits.filter((edit) => sourceText.slice(edit.start, edit.end) !== edit.replacement);
 
   // Apply class-simplification edits first, then prune any cn import that
-  // became (or was already) unused.
+  // became (or was already) unused. With no edits the text is unchanged, so the
+  // already-parsed tree is reused rather than parsing every untouched file twice.
   const textAfterEdits = meaningful.length > 0 ? applyEditsDescending(sourceText, meaningful) : sourceText;
+  const domainSfAfterEdits = meaningful.length > 0 ? parseDomainSourceFile(filePath, textAfterEdits) : domainSf;
 
-  const textAfterImportDrop = dropCnImportIfUnused(parseDomainSourceFile(filePath, textAfterEdits));
+  const textAfterImportDrop = dropCnImportIfUnused(domainSfAfterEdits);
 
   const importDropped = textAfterImportDrop !== textAfterEdits;
   const totalFound = meaningful.length + (importDropped ? 1 : 0);
