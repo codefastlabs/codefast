@@ -4,7 +4,7 @@ import type { MirrorConfig } from "#/core/config/schema";
 import { messageFrom } from "#/core/errors";
 import type { FilesystemPort } from "#/core/filesystem/port";
 import { distDirName, packageJsonFileName } from "#/core/workspace/well-known-files";
-import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
+import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-node";
 import { createPathTransform, generateExports } from "#/mirror/domain/exports";
 import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
 import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";

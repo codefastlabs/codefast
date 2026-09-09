@@ -15,11 +15,11 @@ import type {
   PackageStats,
   WorkspaceMultiDiscoverySource,
 } from "#/mirror/domain/types";
+import type { MirrorSyncExecutionInput } from "#/mirror/domain/types";
 import { resolvePackageFilterUnderRoot } from "#/mirror/package-path";
-import type { MirrorSyncExecutionInput } from "#/mirror/sync-types";
 import { syncExportsForWorkspacePackage } from "#/mirror/sync-workspace-package";
 
-export type { MirrorSyncExecutionInput } from "#/mirror/sync-types";
+export type { MirrorSyncExecutionInput } from "#/mirror/domain/types";
 
 /**
  * Runs the mirror sync across the targeted packages and returns the aggregate stats.
