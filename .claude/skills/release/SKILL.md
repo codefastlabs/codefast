@@ -47,7 +47,7 @@ recipe below.
 1. Lower the incorrect changesets from `major` to `minor`.
 2. Reset the `package.json` of every package the wrong bump reached — `git diff` is the authoritative list, not the
    changeset's, since `updateInternalDependencies` drags dependents along, including the two under `benchmarks/*`
-   (`benchmark-di-inversify`, `benchmark-tailwind-variants`).
+   (`benchmark-di`, `benchmark-tailwind-variants`).
 3. Set each one back to the **most recently published** canary of the line you want to continue (e.g. `0.5.0-canary.5`)
    so CI computes the next as `.6` — the counter is that package's max published prerelease + 1, so avoid numbers
    already published.

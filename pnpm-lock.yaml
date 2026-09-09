@@ -472,7 +472,7 @@ importers:
         specifier: 'catalog:'
         version: 5.0.0(@types/node@26.4.1)(@vitest/coverage-v8@5.0.0)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0))
 
-  benchmarks/di-inversify:
+  benchmarks/di:
     dependencies:
       '@codefast/benchmark-harness':
         specifier: workspace:*

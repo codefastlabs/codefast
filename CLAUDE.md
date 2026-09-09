@@ -308,7 +308,7 @@ point of use beats brevity, and every word must convey information:
 | `packages/cli`               | `codefast` CLI — subcommands `arrange`, `audit`, `mirror`, `pack-slim`, `tag` (run via `pnpm run codefast <cmd>`) |
 | `packages/typescript-config` | Shared tsconfig presets                                                                                           |
 | `internal/benchmark-*`       | Private benchmark harness/viewer shared by `benchmarks/*` (`pnpm bench`); never published                         |
-| `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di-inversify`, `tailwind-variants`)                   |
+| `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di`, `tailwind-variants`)                             |
 | `apps/web`                   | codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` markdown docs, `@codefast/ui` showcase   |
 | `examples/tanstack-start`    | TanStack Start consumer demo; uses `workspace:*` so package changes are testable here directly                    |
 
@@ -321,8 +321,8 @@ depends on, and which shapes that look simplifiable are load-bearing — worth r
 `resolution/`. The two cross-link at their seams and neither is generated from the other;
 [`LEARNING.md`](packages/di/LEARNING.md) is a guided read of the techniques the engine applies, not an authoritative
 doc. What a shape _costs_, and whether a new idea beats it, is an empirical question the benchmark suite
-(`benchmarks/di-inversify`) answers by re-running; numbers live there and in its `RESULTS.md` ledger, never in a source
-comment and never in ARCHITECTURE.
+(`benchmarks/di`) answers by re-running; numbers live there and in its `RESULTS.md` ledger, never in a source comment
+and never in ARCHITECTURE.
 
 `src/` groups by subsystem: **`core/`** is the model (`token`, `types`, `tag`, `constructor-type`, `binding`,
 `registry`, `module`, plus the `map-upsert` helpers every index allocates through), **`errors/`** the error taxonomy and
@@ -335,9 +335,8 @@ guard; `plan/` — the instantiation-plan compiler; `select/` — binding select
 and async pipelines stay in one class because `#` private fields can't span files and both touch the same private state
 per hop; anything that doesn't is already extracted. Tests mirror these paths (`tests/unit/resolution/…`).
 `package.json#exports` is generated from `dist/` by `codefast mirror` — rerun it after moving/adding modules. Verify
-hot-path changes against `benchmarks/di-inversify` (`pnpm bench:isolate` for order-independent numbers, ≥3 trials,
-best-of across several processes) before assuming a refactor is free — and measure cold paths too, which the hot loops
-hide.
+hot-path changes against `benchmarks/di` (`pnpm bench:isolate` for order-independent numbers, ≥3 trials, best-of across
+several processes) before assuming a refactor is free — and measure cold paths too, which the hot loops hide.
 
 ## UI/component conventions (apps/web and packages/ui)
 

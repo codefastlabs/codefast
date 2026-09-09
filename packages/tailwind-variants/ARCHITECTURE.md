@@ -185,8 +185,8 @@ propless path reads it on every slot call, so it still pays for a caller that re
 
 Resolution is a hot path and it is layout-sensitive: reshaping a function has moved rows the change could not reach.
 Treat every edit under `resolve/`, and any reshape of `compileVariantPlan`, as a performance change requiring a paired
-A/B. The method is in [`benchmarks/di-inversify/BENCH_GUIDE.md`](../../benchmarks/di-inversify/BENCH_GUIDE.md); both of
-the mechanisms it describes work here, and **pairing them wrong fails silently**:
+A/B. The method is in [`benchmarks/di/BENCH_GUIDE.md`](../../benchmarks/di/BENCH_GUIDE.md); both of the mechanisms it
+describes work here, and **pairing them wrong fails silently**:
 
 - **Swap the source** — check out or stash `packages/tailwind-variants/src` per side, then run `bench:isolate`. That
   runner rebuilds the package before sampling, which is exactly what makes the swap take effect.
