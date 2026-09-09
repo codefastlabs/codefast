@@ -68,6 +68,29 @@ export function endAfterOptionalCommaFollowingInSource(source: string, tokenEnd:
 }
 
 /**
+ * Returns the edits with every overlap removed, keeping the outermost of any overlapping pair.
+ *
+ * @remarks A planned edit replaces a whole AST node, so two ranges either nest or are disjoint and
+ * the outer replacement already contains the inner span verbatim — dropping the nested edit keeps
+ * the output valid. Higher-priority edits must come first so an exact-range tie keeps the earlier
+ * one. This is the invariant `applyEditsDescending` assumes; run it before applying.
+ */
+export function dropOverlappingEdits<Edit extends { start: number; end: number }>(
+  edits: ReadonlyArray<Edit>,
+): Array<Edit> {
+  const ordered = [...edits].toSorted((editA, editB) => editA.start - editB.start || editB.end - editA.end);
+  const kept: Array<Edit> = [];
+  let lastEnd = -1;
+  for (const edit of ordered) {
+    if (edit.start >= lastEnd) {
+      kept.push(edit);
+      lastEnd = edit.end;
+    }
+  }
+  return kept;
+}
+
+/**
  * Applies non-overlapping text edits from the highest offset down and returns the edited source.
  *
  * @since 0.3.16-canary.0

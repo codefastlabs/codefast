@@ -52,4 +52,22 @@ describe("simplify className fold", () => {
     const source = `${importCn}\nconst a = cn(buttonVariants({ size: "sm" }), names.next);\n`;
     expect(fold(source, probeReturning({ acceptsString: true, acceptsArray: false }))).toBe(source);
   });
+
+  it("splices className after the last property without swallowing a trailing line comment", () => {
+    const source = `${importCn}\nconst a = cn(buttonVariants({\n  size: "sm", // note\n}), "flex-1");\n`;
+    const out = fold(source, acceptsBoth);
+    // className lands after the property, before the original comma and comment — not inside the comment.
+    expect(out).toContain(`size: "sm", className: "flex-1", // note`);
+    expect(out).not.toContain(`// note, className`);
+  });
+
+  it("folds into an empty options object", () => {
+    const source = `${importCn}\nconst a = cn(buttonVariants({}), "flex-1");\n`;
+    expect(fold(source, acceptsBoth)).toContain(`buttonVariants({ className: "flex-1" })`);
+  });
+
+  it("preserves a trailing comma already present after the last property", () => {
+    const source = `${importCn}\nconst a = cn(buttonVariants({ size: "sm", }), "flex-1");\n`;
+    expect(fold(source, acceptsBoth)).toContain(`buttonVariants({ size: "sm", className: "flex-1", })`);
+  });
 });

@@ -1,4 +1,3 @@
-import type { PlannedSimplifyEdit } from "#/arrange/domain/ast/simplify-targets";
 import { collectSimplifyTargets } from "#/arrange/domain/ast/simplify-targets";
 import { dropCnImportIfUnused } from "#/arrange/domain/imports";
 import type { GroupFileResult } from "#/arrange/domain/types";
@@ -6,12 +5,7 @@ import { collectClassNameFoldTargets } from "#/arrange/simplify/fold-targets";
 import type { FileClassNameProbe, VariantClassNameProbe } from "#/arrange/simplify/variant-classname-probe";
 import { parseDomainSourceFile } from "#/arrange/source-parse";
 import type { Filesystem } from "#/core/filesystem/filesystem";
-import { applyEditsDescending } from "#/core/source-text-edit";
-
-/** True when two planned edits touch overlapping source ranges. */
-function editsOverlap(left: PlannedSimplifyEdit, right: PlannedSimplifyEdit): boolean {
-  return left.start < right.end && right.start < left.end;
-}
+import { applyEditsDescending, dropOverlappingEdits } from "#/core/source-text-edit";
 
 // A file simplify can act on names `cn`/`tv` (a call or an import to prune) or carries a `class`/`className`;
 // a source with none of these has nothing to flatten or fold, so it never needs parsing.
@@ -44,14 +38,14 @@ export function processArrangeSimplifyFile(
     return resolvedFileProbe;
   };
 
-  // Fold edits replace a whole cn() call, so they take precedence over any base edit on the same call.
+  // Combine fold and base edits, drop no-ops, then remove overlaps so applyEditsDescending only sees
+  // non-overlapping ranges. Fold edits lead the list, so a fold wins an exact-range tie with a base
+  // edit on the same call and nested calls keep only the outermost edit.
   const foldEdits = probe ? collectClassNameFoldTargets(domainSf, resolveFileProbe) : [];
-  const baseEdits = collectSimplifyTargets(domainSf).filter(
-    (edit) => !foldEdits.some((fold) => editsOverlap(edit, fold)),
+  const baseEdits = collectSimplifyTargets(domainSf);
+  const meaningful = dropOverlappingEdits(
+    [...foldEdits, ...baseEdits].filter((edit) => sourceText.slice(edit.start, edit.end) !== edit.replacement),
   );
-  const edits = [...foldEdits, ...baseEdits];
-
-  const meaningful = edits.filter((edit) => sourceText.slice(edit.start, edit.end) !== edit.replacement);
 
   // Apply class-simplification edits first, then prune any cn import that
   // became (or was already) unused. With no edits the text is unchanged, so the

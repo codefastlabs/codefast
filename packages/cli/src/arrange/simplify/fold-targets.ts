@@ -9,7 +9,12 @@ import {
   isDomainPropertyAssignment,
   isDomainTailwindClassLiteral,
 } from "#/arrange/domain/ast/ast-node";
-import type { DomainAstNode, DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
+import type {
+  DomainAstNode,
+  DomainCallExpression,
+  DomainObjectLiteralExpression,
+  DomainSourceFile,
+} from "#/arrange/domain/ast/ast-node";
 import { buildKnownCnTvBindings, isCnOrTvIdentifier, propertyAssignmentNameText } from "#/arrange/domain/ast/helpers";
 import type { PlannedSimplifyEdit } from "#/arrange/domain/ast/simplify-targets";
 import { escapeTsStringLiteralContent } from "#/arrange/domain/source-text-formatters";
@@ -54,10 +59,7 @@ function calleeNameOffset(expression: DomainAstNode): number | null {
 }
 
 /** True when the object literal is a plain bag of assignments that does not already set `className`/`class`. */
-function objectAcceptsClassNameFold(objectArg: DomainCallExpression["arguments"][number]): boolean {
-  if (!isDomainObjectLiteralExpression(objectArg)) {
-    return false;
-  }
+function objectAcceptsClassNameFold(objectArg: DomainObjectLiteralExpression): boolean {
   for (const property of objectArg.properties) {
     // A spread or shorthand parses as a non-assignment node — its `className` cannot be reasoned about.
     if (!isDomainPropertyAssignment(property)) {
@@ -86,7 +88,12 @@ function buildFoldCandidate(cnCall: DomainCallExpression, sourceText: string): F
     return null;
   }
   const objectArg = variantCall.arguments[0];
-  if (variantCall.arguments.length !== 1 || objectArg === undefined || !objectAcceptsClassNameFold(objectArg)) {
+  if (
+    variantCall.arguments.length !== 1 ||
+    objectArg === undefined ||
+    !isDomainObjectLiteralExpression(objectArg) ||
+    !objectAcceptsClassNameFold(objectArg)
+  ) {
     return null;
   }
   const calleeOffset = calleeNameOffset(variantCall.expression);
@@ -104,14 +111,14 @@ function buildFoldCandidate(cnCall: DomainCallExpression, sourceText: string): F
   const needsArray = pieces.length > 1 || pieces.some((piece) => piece.kind === "dynamic");
   const rendered = pieces.map(renderPiece);
   const classNameValue = pieces.length > 1 ? `[${rendered.join(", ")}]` : rendered[0];
-  const optionsInner = sourceText
-    .slice(objectArg.pos + 1, objectArg.end - 1)
-    .trim()
-    .replace(/,$/, "")
-    .trim();
-  const calleeSrc = sourceText.slice(variantCall.expression.pos, variantCall.expression.end);
-  const newInner =
-    optionsInner.length > 0 ? `${optionsInner}, className: ${classNameValue}` : `className: ${classNameValue}`;
+
+  // Splice `className` in right after the last property (or just inside an empty object), keeping the
+  // object's original text — a trailing comma or line comment would break a re-serialized `{ … }`.
+  const lastProperty = objectArg.properties.at(-1);
+  const insertOffset = lastProperty ? lastProperty.end : objectArg.pos + 1;
+  const insertion = lastProperty ? `, className: ${classNameValue}` : ` className: ${classNameValue} `;
+  const replacement =
+    sourceText.slice(variantCall.pos, insertOffset) + insertion + sourceText.slice(insertOffset, variantCall.end);
 
   return {
     calleeOffset,
@@ -119,7 +126,7 @@ function buildFoldCandidate(cnCall: DomainCallExpression, sourceText: string): F
     edit: {
       start: cnCall.pos,
       end: cnCall.end,
-      replacement: `${calleeSrc}({ ${newInner} })`,
+      replacement,
       label: "cn-fold-classname",
     },
   };
