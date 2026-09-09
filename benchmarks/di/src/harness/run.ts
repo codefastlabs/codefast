@@ -114,7 +114,7 @@ async function runEveryLibrary(
 
 async function main(): Promise<void> {
   assertBenchEnvKeys();
-  console.log("\n@codefast/benchmark-di-inversify — head-to-head bench, each library in its canonical decorator mode.");
+  console.log("\n@codefast/benchmark-di — head-to-head bench, each library in its canonical decorator mode.");
   console.log(`  ${CODEFAST_DI.libraryName}  : TC39 Stage 3 decorators + Symbol.metadata`);
   console.log(`  ${resolveDisplayName(INVERSIFY)} : legacy experimental decorators + reflect-metadata`);
   console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");

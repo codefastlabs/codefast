@@ -22,8 +22,8 @@ it — open that file, that's where the learning is. The document has two parts 
 
 **A note on the performance claims.** Several techniques here exist for speed. Where this document explains _why_ a
 shape is fast, treat that as a hypothesis tied to a particular Node/V8 version and machine — the numbers behind it live
-with the [`benchmarks/di-inversify`](../../benchmarks/di-inversify/README.md) suite, which is how you'd actually check.
-This document teaches the _technique and the reasoning_, not a scoreboard. When in doubt, read the code and measure.
+with the [`benchmarks/di`](../../benchmarks/di/README.md) suite, which is how you'd actually check. This document
+teaches the _technique and the reasoning_, not a scoreboard. When in doubt, read the code and measure.
 
 The three companion documents, and when each is the one you want:
 
@@ -1033,8 +1033,8 @@ Because spread doesn't copy symbol keys, dropping it takes no code at all.
 ### E. Performance engineering techniques
 
 _Reminder: the following are techniques and the reasoning behind them, not benchmark results. Whether any of them is
-worth it today is an empirical question the [`benchmarks/di-inversify`](../../benchmarks/di-inversify/README.md) suite
-answers; the [`ARCHITECTURE.md`](ARCHITECTURE.md) notes carry the design rationale._
+worth it today is an empirical question the [`benchmarks/di`](../../benchmarks/di/README.md) suite answers; the
+[`ARCHITECTURE.md`](ARCHITECTURE.md) notes carry the design rationale._
 
 <a id="one-hidden-class-for-every-binding"></a>
 
@@ -1231,7 +1231,7 @@ A reading order that tends to work:
    short and very readable.
 
 If a performance claim in this document matters to a decision you're making, don't take it on faith — the
-[`benchmarks/di-inversify`](../../benchmarks/di-inversify/README.md) suite is how you check it against your own runtime.
+[`benchmarks/di`](../../benchmarks/di/README.md) suite is how you check it against your own runtime.
 
 ## License
 

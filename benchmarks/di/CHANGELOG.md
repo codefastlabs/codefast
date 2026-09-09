@@ -1,4 +1,4 @@
-# @codefast/benchmark-di-inversify
+# @codefast/benchmark-di
 
 ## 0.7.4
 

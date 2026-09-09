@@ -5,7 +5,7 @@
       "entry": ["package.json", "codefast.config.js"],
       "ignoreBinaries": ["read"]
     },
-    "benchmarks/di-inversify": {
+    "benchmarks/di": {
       "entry": ["src/*-benches.ts"]
     },
     "internal/benchmark-harness": {

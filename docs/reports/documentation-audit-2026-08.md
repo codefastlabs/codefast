@@ -68,11 +68,11 @@ only joined by a newer audit.
 
 ### Benchmarks
 
-| File                                                                        | Type                               |
-| --------------------------------------------------------------------------- | ---------------------------------- |
-| [di-inversify/BENCH_GUIDE.md](../../benchmarks/di-inversify/BENCH_GUIDE.md) | Runbook (measurement method)       |
-| [di-inversify/RESULTS.md](../../benchmarks/di-inversify/RESULTS.md)         | Report (dated, append-only ledger) |
-| di-inversify/README · tailwind-variants/README                              | Guide                              |
+| File                                                    | Type                               |
+| ------------------------------------------------------- | ---------------------------------- |
+| [di/BENCH_GUIDE.md](../../benchmarks/di/BENCH_GUIDE.md) | Runbook (measurement method)       |
+| [di/RESULTS.md](../../benchmarks/di/RESULTS.md)         | Report (dated, append-only ledger) |
+| di/README · tailwind-variants/README                    | Guide                              |
 
 ## Findings
 
@@ -145,9 +145,9 @@ state count reconciled to 11 (the pre-Montana-removal "12" / "a dozen" leftovers
 - **`cli/DECISIONS.md` §1 "a CLI tool with 3 commands"** — this sits in the section the document flags as pre-refactor
   context. `audit` was added after the refactor (it is absent from the §3 target layout), so "3 commands" is accurate
   for that historical snapshot; changing it to four would falsify the record.
-- **`benchmarks/di-inversify/RESULTS.md` environment header pinning `@codefast/di 0.5.0-canary.8`** — the header is
-  bound to the dated "last full re-measure" (2026-07-31). A newer full re-measure should add a new dated environment
-  block rather than overwrite this one.
+- **`benchmarks/di/RESULTS.md` environment header pinning `@codefast/di 0.5.0-canary.8`** — the header is bound to the
+  dated "last full re-measure" (2026-07-31). A newer full re-measure should add a new dated environment block rather
+  than overwrite this one.
 - **`spec-regions.md` "20+/20 comprehensive laws" hedge** — a moving target the document already flags for counsel; only
   the internally-contradictory GPC count was reconciled.
 - **RFC-2119 keyword list variance across the spec docs** — cosmetic (the core docs omit `SHOULD NOT`, which they never

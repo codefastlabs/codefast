@@ -7,9 +7,8 @@ it replaces, and `class-variance-authority` is the smaller-surface alternative p
 > `pnpm bench:isolate` away.
 
 **This is a first-party benchmark** — the same repository owns the library and the harness. Read it as a re-runnable
-claim, not a neutral verdict. The measurement standard is the DI suite's
-[`BENCH_GUIDE.md`](../di-inversify/BENCH_GUIDE.md); it is written against that suite, but the rules are the same,
-because both suites share `@codefast/benchmark-harness`.
+claim, not a neutral verdict. The measurement standard is the DI suite's [`BENCH_GUIDE.md`](../di/BENCH_GUIDE.md); it is
+written against that suite, but the rules are the same, because both suites share `@codefast/benchmark-harness`.
 
 ## Run it
 
@@ -119,8 +118,7 @@ there is nothing to interleave, so those ratios stay provisional.
 
 ## Documentation
 
-- [`../di-inversify/BENCH_GUIDE.md`](../di-inversify/BENCH_GUIDE.md) — the measurement standard both suites hold a
-  number to.
+- [`../di/BENCH_GUIDE.md`](../di/BENCH_GUIDE.md) — the measurement standard both suites hold a number to.
 - [`CHANGELOG.md`](./CHANGELOG.md) — release notes for this suite.
 - [`../../packages/tailwind-variants`](../../packages/tailwind-variants) — the library under test.
 - [`../../internal/benchmark-harness`](../../internal/benchmark-harness) — the shared harness, its `BENCH_*` keys and

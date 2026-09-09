@@ -128,16 +128,15 @@ A suite wires the harness in two files. Its parent entry spawns one child per li
 `runBenchSubprocessesInterleaved`, builds a `LibraryReport` per payload with `buildLibraryReport`, renders
 `renderComparisonMarkdownReport` and `renderComparisonConsoleReport`, builds the `report.json` document with
 `buildComparisonDocument`, and hands everything to `writeBenchRunArtifacts`. Each child entry calls
-`runBenchmarkChildMain` with the library's scenario collector.
-[`../../benchmarks/di-inversify`](../../benchmarks/di-inversify) and
+`runBenchmarkChildMain` with the library's scenario collector. [`../../benchmarks/di`](../../benchmarks/di) and
 [`../../benchmarks/tailwind-variants`](../../benchmarks/tailwind-variants) are the two consumers.
 
 ## Documentation
 
 - [`CHANGELOG.md`](./CHANGELOG.md) — release notes for this package.
 - [`../benchmark-viewer`](../benchmark-viewer) — the server and browser app that read the JSONL these runs write.
-- [`../../benchmarks/di-inversify/BENCH_GUIDE.md`](../../benchmarks/di-inversify/BENCH_GUIDE.md) — the measurement
-  standard the suites hold a number to, written against this harness.
+- [`../../benchmarks/di/BENCH_GUIDE.md`](../../benchmarks/di/BENCH_GUIDE.md) — the measurement standard the suites hold
+  a number to, written against this harness.
 
 ## Contributing
 

@@ -10,9 +10,9 @@ import type { LedgerFacts } from "#/features/home/lib/benchmark-ledger-facts";
 import { track } from "#/features/tracking/lib/tracking";
 import { GITHUB_URL } from "#/lib/nav-links";
 
-const LEDGER_URL = `${GITHUB_URL}/blob/main/benchmarks/di-inversify/RESULTS.md`;
+const LEDGER_URL = `${GITHUB_URL}/blob/main/benchmarks/di/RESULTS.md`;
 const LOSSES_URL = `${LEDGER_URL}#where-it-loses`;
-const GUIDE_URL = `${GITHUB_URL}/blob/main/benchmarks/di-inversify/BENCH_GUIDE.md`;
+const GUIDE_URL = `${GITHUB_URL}/blob/main/benchmarks/di/BENCH_GUIDE.md`;
 
 /** The ledger's `name version` for a competitor line, matched by name prefix; the line's own label otherwise. */
 function competitorLabel(ledger: LedgerFacts, competitor: string): string {
@@ -62,7 +62,7 @@ export function BenchmarkSection({ ledger, className, ...props }: BenchmarkSecti
           />
           <div className="reveal-up flex flex-col gap-5 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:p-8">
             <p className="font-mono text-xs leading-relaxed text-ui-muted">
-              benchmarks/di-inversify/RESULTS.md
+              benchmarks/di/RESULTS.md
               {ledger.aggregateProfile ? ` · ${ledger.aggregateProfile}` : null}
             </p>
             {ledger.aggregates.length > 0 ? (

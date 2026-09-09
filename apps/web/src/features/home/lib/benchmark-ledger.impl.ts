@@ -2,7 +2,7 @@
 import type { LedgerFacts } from "#/features/home/lib/benchmark-ledger-facts";
 import { parseLedgerFacts } from "#/features/home/lib/benchmark-ledger-facts";
 
-const ledgers = import.meta.glob<string>("../../../../../../benchmarks/di-inversify/RESULTS.md", {
+const ledgers = import.meta.glob<string>("../../../../../../benchmarks/di/RESULTS.md", {
   query: "?raw",
   import: "default",
   eager: true,

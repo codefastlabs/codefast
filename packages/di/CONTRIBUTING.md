@@ -30,10 +30,10 @@ Ground rules that bite in this package specifically:
   Treat it as working notes, not law — the invariants are the load-bearing part; any performance rationale in it is a
   pointer to go measure, not a settled fact.
 - **Numbers are empirical, and the benchmark suite is where they live.** What a shape costs, and whether a new idea
-  beats it, is answered by re-running [`benchmarks/di-inversify`](../../benchmarks/di-inversify/README.md), not by a
-  figure written into a doc — [`BENCH_GUIDE.md`](../../benchmarks/di-inversify/BENCH_GUIDE.md) is the method and
-  [benchmarks/di-inversify/RESULTS.md](../../benchmarks/di-inversify/RESULTS.md) is the dated per-run ledger. When you
-  add to the docs, an invariant goes in ARCHITECTURE and a dated suite run goes in RESULTS.md.
+  beats it, is answered by re-running [`benchmarks/di`](../../benchmarks/di/README.md), not by a figure written into a
+  doc — [`BENCH_GUIDE.md`](../../benchmarks/di/BENCH_GUIDE.md) is the method and
+  [benchmarks/di/RESULTS.md](../../benchmarks/di/RESULTS.md) is the dated per-run ledger. When you add to the docs, an
+  invariant goes in ARCHITECTURE and a dated suite run goes in RESULTS.md.
 
 ## Write the code
 
@@ -95,7 +95,7 @@ A resolver refactor's cost isn't known until it's measured. Run the head-to-head
 freshly rebuilt baseline:
 
 ```bash
-pnpm --filter @codefast/benchmark-di-inversify bench:isolate
+pnpm --filter @codefast/benchmark-di bench:isolate
 ```
 
 - Compare against a baseline run on the same machine, **stashed and rebuilt** — not against numbers from an earlier
@@ -109,14 +109,14 @@ pnpm --filter @codefast/benchmark-di-inversify bench:isolate
   `realistic-graph-cold-resolve` outright.
 - **Validate a perf hypothesis by throwaway ablation, not by reasoning.** Build the variant, measure it, delete it.
   Several plausible mechanisms in this package's history were wrong in the direction their author expected.
-- Known weak spots to watch (see [benchmarks/di-inversify/RESULTS.md](../../benchmarks/di-inversify/RESULTS.md)):
-  per-hop dispatch in `#resolveDefaultEntry`, and cold container build against the leaner containers.
+- Known weak spots to watch (see [benchmarks/di/RESULTS.md](../../benchmarks/di/RESULTS.md)): per-hop dispatch in
+  `#resolveDefaultEntry`, and cold container build against the leaner containers.
 - For a material perf change (kept or dropped), run the publishable profile and record the dated run in
-  [RESULTS.md](../../benchmarks/di-inversify/RESULTS.md) — that ledger is the record now, so a dropped attempt with its
-  cost goes there too:
+  [RESULTS.md](../../benchmarks/di/RESULTS.md) — that ledger is the record now, so a dropped attempt with its cost goes
+  there too:
 
 ```bash
-BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
+BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di bench:isolate
 ```
 
 ## Static checks

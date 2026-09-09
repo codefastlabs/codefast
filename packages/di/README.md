@@ -416,9 +416,9 @@ metadata under `decorators/*` and `metadata/*`. Introspection ships at flat spec
 
 ## Benchmarks
 
-A first-party benchmark suite lives in the monorepo, at [`benchmarks/di-inversify`](../../benchmarks/di-inversify). It
-runs the same workloads through `@codefast/di`, InversifyJS, Awilix, and tsyringe, and its `RESULTS.md` ledger records
-the numbers alongside the method that produced them. Run it yourself rather than taking any figure on faith.
+A first-party benchmark suite lives in the monorepo, at [`benchmarks/di`](../../benchmarks/di). It runs the same
+workloads through `@codefast/di`, InversifyJS, Awilix, and tsyringe, and its `RESULTS.md` ledger records the numbers
+alongside the method that produced them. Run it yourself rather than taking any figure on faith.
 
 ## Documentation
 

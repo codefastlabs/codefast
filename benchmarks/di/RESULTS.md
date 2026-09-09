@@ -19,12 +19,12 @@ measures every library within the same scenario. Absolute `hz/op` from this page
 
 ## 2026-09-06 — full re-measure on 0.8.1: the suite holds, the one loss widens
 
-`BENCH_MODE=full pnpm bench:isolate` from `benchmarks/di-inversify`: `--expose-gc` for every library, one subprocess per
-scenario, libraries interleaved with rotating order, 3 trials, every one of the suite's 108 rows measured.
-`@codefast/di` 0.8.1 from a `dist` the harness rebuilt first, against inversify 8.2.3, awilix 13.0.5 and tsyringe
-4.10.0, on Node 26.1.0 / V8 14.6, Apple M3 Max × 14, darwin/arm64. One pass of about nine minutes on an otherwise idle
-machine (a Vite dev server sat idle alongside), so between-run variance is not measured here; the 2026-07-31 and
-2026-08-01 sections below hold the drift figures this run has no counterpart for.
+`BENCH_MODE=full pnpm bench:isolate` from `benchmarks/di`: `--expose-gc` for every library, one subprocess per scenario,
+libraries interleaved with rotating order, 3 trials, every one of the suite's 108 rows measured. `@codefast/di` 0.8.1
+from a `dist` the harness rebuilt first, against inversify 8.2.3, awilix 13.0.5 and tsyringe 4.10.0, on Node 26.1.0 / V8
+14.6, Apple M3 Max × 14, darwin/arm64. One pass of about nine minutes on an otherwise idle machine (a Vite dev server
+sat idle alongside), so between-run variance is not measured here; the 2026-07-31 and 2026-08-01 sections below hold the
+drift figures this run has no counterpart for.
 
 | Competitor | Comparable | Win / parity / loss | Median | Geomean |   † |
 | ---------- | ---------: | ------------------: | -----: | ------: | --: |

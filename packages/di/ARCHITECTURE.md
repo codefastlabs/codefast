@@ -15,10 +15,10 @@
 > The honest summary: understand the shape and its invariants first, then change whatever you have a good reason to.
 
 **What this document is.** It describes _what the shape is and what it guarantees_. What a shape **costs**, and whether
-a new idea beats it, is an empirical question. The benchmark suite in
-[`benchmarks/di-inversify`](../../benchmarks/di-inversify/README.md) answers it, and re-running the suite is how you
-check. No figure belongs in this file: a cost claim has to be re-measurable, and numbers belong with the method that
-produced them (the suite, its [`RESULTS.md`](../../benchmarks/di-inversify/RESULTS.md) ledger, or the commit).
+a new idea beats it, is an empirical question. The benchmark suite in [`benchmarks/di`](../../benchmarks/di/README.md)
+answers it, and re-running the suite is how you check. No figure belongs in this file: a cost claim has to be
+re-measurable, and numbers belong with the method that produced them (the suite, its
+[`RESULTS.md`](../../benchmarks/di/RESULTS.md) ledger, or the commit).
 
 <a id="overview"></a>
 
@@ -784,8 +784,8 @@ There is no gate to clear, just a suggested order that tends to save time:
    [Important invariants](#invariants)), and check the test named next to each. If a test is what is holding an
    invariant, it will tell you fast whether your change broke it.
 2. If the change is about speed, measure it. What a shape costs, and whether a new idea beats it, is an empirical
-   question. The benchmark suite ([`benchmarks/di-inversify`](../../benchmarks/di-inversify/README.md)) is the source of
-   truth, [`BENCH_GUIDE.md`](../../benchmarks/di-inversify/BENCH_GUIDE.md) is the method, and the performance step of
+   question. The benchmark suite ([`benchmarks/di`](../../benchmarks/di/README.md)) is the source of truth,
+   [`BENCH_GUIDE.md`](../../benchmarks/di/BENCH_GUIDE.md) is the method, and the performance step of
    [CONTRIBUTING.md](./CONTRIBUTING.md#guard-performance) is the checklist.
 
 Two things that guide does not cover and this engine keeps demonstrating:

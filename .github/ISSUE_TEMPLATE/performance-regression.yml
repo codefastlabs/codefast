@@ -7,7 +7,7 @@ body:
       value: |
         This form asks for the measurement, not the impression — because most reported regressions in this repo have turned out to be noise.
 
-        The benchmark suites publish their own reliability rules; the checkboxes at the bottom are those rules. Read [benchmarks/di-inversify/RESULTS.md § Reading the noise](https://github.com/codefastlabs/codefast/blob/main/benchmarks/di-inversify/RESULTS.md) first if you have not.
+        The benchmark suites publish their own reliability rules; the checkboxes at the bottom are those rules. Read [benchmarks/di/RESULTS.md § Reading the noise](https://github.com/codefastlabs/codefast/blob/main/benchmarks/di/RESULTS.md) first if you have not.
 
         For a slowdown you cannot yet measure this way, open a **Bug report** and say so — a hypothesis with a reproduction is still worth having.
 
@@ -46,7 +46,7 @@ body:
     attributes:
       label: Command
       description: "The exact invocation, including env vars and trial count."
-      placeholder: "BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate"
+      placeholder: "BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di bench:isolate"
       render: shell
     validations:
       required: true

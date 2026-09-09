@@ -2606,7 +2606,7 @@ Both come from the rule in [`ActivationHandler` and `DeactivationHandler`](#life
 packages/di/
 ├── ARCHITECTURE.md            Layering, hot-path invariants, and the rules for changing resolution/
 │                              — read it before touching anything under src/resolution/
-│                                (per-shape costs are measured by the benchmarks/di-inversify suite, not recorded here)
+│                                (per-shape costs are measured by the benchmarks/di suite, not recorded here)
 ├── src/                       Directory = layer. Imports only flow downward in the order below.
 │   │  ── layer 0: core/, errors/, injection/ ──────────────────────────────
 │   ├── core/

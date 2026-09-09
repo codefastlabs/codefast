@@ -99,7 +99,7 @@ A refactor on a hot path is not free until measured. Run the head-to-head suite 
 are order-independent:
 
 ```bash
-pnpm --filter @codefast/benchmark-di-inversify bench:isolate
+pnpm --filter @codefast/benchmark-di bench:isolate
 ```
 
 The rules that make a result publishable — learned the hard way, and enforced on ourselves:
@@ -120,14 +120,13 @@ The rules that make a result publishable — learned the hard way, and enforced 
 For anything material, run the publishable profile and update `RESULTS.md`:
 
 ```bash
-BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di-inversify bench:isolate
+BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di bench:isolate
 ```
 
 `bench:isolate` runs **scenario-major and interleaved** — every library measures a scenario before the next one starts,
 rotating who goes first — so drift over the run no longer lands on whoever was scheduled last. The report states the
 policy it used. Without `bench:isolate` there is one process per library and nothing to interleave, so a cross-library
-ratio from that profile stays provisional; see
-[`benchmarks/di-inversify/BENCH_GUIDE.md`](benchmarks/di-inversify/BENCH_GUIDE.md).
+ratio from that profile stays provisional; see [`benchmarks/di/BENCH_GUIDE.md`](benchmarks/di/BENCH_GUIDE.md).
 
 ## Changesets
 
