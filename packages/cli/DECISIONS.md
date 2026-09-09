@@ -195,10 +195,12 @@ untouched.
 
 **Consequences.** The default pass stays oxc-only, synchronous, and workspace-free; the fold is the one path that spawns
 the type server and needs the target inside a `tsconfig`, so `typescript` is an optional peer and files outside a
-project keep the base pass. The type sees the option's shape but not the variant's `twMerge` setting, so a variant
-configured `twMerge: false` would merge a folded `className` differently than the `cn()` it replaced — accepted as out
-of scope, since the option-type gate already excludes non-variant callees and the shipped variants use the default
-merge.
+project keep the base pass. A cheap syntactic pre-scan gates that cost: the type server is queried only for a file that
+actually contains a `cn(variant({…}), …)` call, so a directory of hundreds of files loads a project once for the few
+that qualify rather than once per file. The type sees the option's shape but not the variant's `twMerge` setting, so a
+variant configured `twMerge: false` would merge a folded `className` differently than the `cn()` it replaced — accepted
+as out of scope, since the option-type gate already excludes non-variant callees and the shipped variants use the
+default merge.
 
 ## License
 
