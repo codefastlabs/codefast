@@ -47,17 +47,18 @@ function isAllStaticLiterals(args: ReadonlyArray<DomainAstNode>): boolean {
   return args.length > 0 && args.every(isDomainTailwindClassLiteral);
 }
 
-// ---------------------------------------------------------------------------
-// Mixed cn() merge: ALL static args → one string first, dynamic args follow
-// ---------------------------------------------------------------------------
+// ── Mixed cn() merge: coalesce adjacent static runs, order preserved ─────────────────────────────────────────────────
+
+type MixedCnPiece =
+  | { readonly kind: "static"; readonly texts: Array<string> }
+  | { readonly kind: "dynamic"; readonly src: string };
 
 /**
- * For a cn() call that has both static and dynamic args:
- * - Merge ALL static string literals (regardless of position) into one string.
- * - Place the merged string first.
- * - Append all dynamic args in their original relative order.
+ * Builds a mixed cn() replacement that coalesces each run of adjacent static literals into one string.
  *
- * Returns `null` when nothing changes (0 statics, or already 1 static at arg[0]).
+ * @remarks Argument order is preserved so tailwind-merge precedence is unchanged — a later cn()
+ * argument still overrides an earlier one. Returns `null` when no run of two-or-more adjacent statics
+ * exists, since reordering a lone static across a dynamic argument would change what renders.
  */
 function buildMixedCnReplacement(call: DomainCallExpression, sourceText: string): string | null {
   const args = [...call.arguments];
@@ -65,34 +66,32 @@ function buildMixedCnReplacement(call: DomainCallExpression, sourceText: string)
     return null;
   }
 
-  const staticTexts: Array<string> = [];
-  const dynamicSrcs: Array<string> = [];
-
+  const pieces: Array<MixedCnPiece> = [];
   for (const arg of args) {
     if (isDomainTailwindClassLiteral(arg)) {
-      staticTexts.push(arg.text);
+      const last = pieces.at(-1);
+      if (last?.kind === "static") {
+        last.texts.push(arg.text);
+      } else {
+        pieces.push({ kind: "static", texts: [arg.text] });
+      }
     } else {
-      dynamicSrcs.push(sourceText.slice(arg.pos, arg.end));
+      pieces.push({ kind: "dynamic", src: sourceText.slice(arg.pos, arg.end) });
     }
   }
 
-  if (staticTexts.length === 0) {
+  const merged = pieces.some((piece) => piece.kind === "static" && piece.texts.length > 1);
+  if (!merged) {
     return null;
   }
 
-  // Already simplest form: 1 static arg already at the front.
-  const firstArg = args[0];
-  if (staticTexts.length === 1 && firstArg !== undefined && isDomainTailwindClassLiteral(firstArg)) {
-    return null;
-  }
-
-  const flatStatic = staticTexts.join(" ").trim();
   const baseIndent = indentOfLineContaining(sourceText, call.pos);
   const argIndent = `${baseIndent}  `;
-  const lines = [
-    `${argIndent}"${escapeTsStringLiteralContent(flatStatic)}",`,
-    ...dynamicSrcs.map((src) => `${argIndent}${src},`),
-  ];
+  const lines = pieces.map((piece) =>
+    piece.kind === "static"
+      ? `${argIndent}"${escapeTsStringLiteralContent(piece.texts.join(" ").trim())}",`
+      : `${argIndent}${piece.src},`,
+  );
   return `cn(\n${lines.join("\n")}\n${baseIndent})`;
 }
 
