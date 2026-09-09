@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { AppError } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { normalizePath } from "#/mirror/domain/path-normalizer";
@@ -12,7 +12,7 @@ import { normalizePath } from "#/mirror/domain/path-normalizer";
  * @since 0.3.16-canary.0
  */
 export function resolveMirrorPackageFromCliArg(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly rootDir: string;
     readonly packageArg: string | undefined;
@@ -41,7 +41,7 @@ export function resolveMirrorPackageFromCliArg(
  * @since 0.3.16-canary.0
  */
 export function resolvePackageFilterUnderRoot(
-  fs: FilesystemPort,
+  fs: Filesystem,
   rootDir: string,
   packageFilter: string,
 ): Result<string, AppError> {

@@ -1,11 +1,10 @@
 import type { GlobalCliOptions } from "#/core/cli/global-options";
+import { resolveProjectRootResult } from "#/core/cli/resolve-root";
 import { loadCodefastConfig } from "#/core/config";
-import { AppError } from "#/core/errors";
-import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { AppError } from "#/core/errors";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { resolveProjectRoot } from "#/core/workspace/resolver";
+import { ok } from "#/core/result";
 import type { MirrorSyncCommandPrelude } from "#/mirror/domain/types";
 import { resolveMirrorPackageFromCliArg } from "#/mirror/package-path";
 
@@ -15,19 +14,18 @@ import { resolveMirrorPackageFromCliArg } from "#/mirror/package-path";
  * @since 0.3.16-canary.0
  */
 export async function prepareMirrorSync(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly currentWorkingDirectory: string;
     readonly packageArg: string | undefined;
     readonly globals: GlobalCliOptions;
   },
 ): Promise<Result<MirrorSyncCommandPrelude, AppError>> {
-  let rootDir: string;
-  try {
-    rootDir = resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir;
-  } catch (caughtError: unknown) {
-    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
+  const rootOutcome = resolveProjectRootResult(fs, args.currentWorkingDirectory);
+  if (!rootOutcome.ok) {
+    return rootOutcome;
   }
+  const rootDir = rootOutcome.value;
 
   const filterOutcome = resolveMirrorPackageFromCliArg(fs, {
     rootDir,

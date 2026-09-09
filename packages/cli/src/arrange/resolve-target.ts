@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
 import { packageJsonFileName } from "#/core/workspace/well-known-files";
 
@@ -10,7 +10,7 @@ import { packageJsonFileName } from "#/core/workspace/well-known-files";
  * @since 0.3.16-canary.0
  */
 export function resolveArrangeTargetPath(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly currentWorkingDirectory: string;
     readonly rawTarget: string | undefined;

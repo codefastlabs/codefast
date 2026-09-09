@@ -2,9 +2,9 @@ import path from "node:path";
 
 import type { MirrorConfig } from "#/core/config/schema";
 import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { distDirName, packageJsonFileName } from "#/core/workspace/well-known-files";
-import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-impl";
+import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-node";
 import { createPathTransform, generateExports } from "#/mirror/domain/exports";
 import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
 import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";
@@ -17,7 +17,7 @@ import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
  * @since 0.3.16-canary.0
  */
 export async function syncExportsForWorkspacePackage(
-  fs: FilesystemPort,
+  fs: Filesystem,
   rootDir: string,
   packagePathStr: string,
   config: MirrorConfig,

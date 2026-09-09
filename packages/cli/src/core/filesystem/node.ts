@@ -2,14 +2,14 @@ import fsSync from "node:fs";
 import fsPromises from "node:fs/promises";
 import path from "node:path";
 
-import type { CliFileEncoding, DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
+import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
 
 /**
- * The `FilesystemPort` implementation backed by Node's real filesystem.
+ * The `Filesystem` implementation backed by Node's real filesystem.
  *
  * @since 0.3.16-canary.0
  */
-export const nodeFilesystem: FilesystemPort = {
+export const nodeFilesystem: Filesystem = {
   existsSync: fsSync.existsSync,
   statSync: fsSync.statSync,
   readFileSync: fsSync.readFileSync,

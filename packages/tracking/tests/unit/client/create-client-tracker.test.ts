@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { z } from "zod";
+import * as z from "zod";
 
 import { createClientTracker } from "#/client/create-client-tracker";
 import { defineEventCatalog } from "#/core/event-catalog";

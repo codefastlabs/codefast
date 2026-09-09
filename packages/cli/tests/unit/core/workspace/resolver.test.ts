@@ -2,10 +2,10 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import type { CliFileEncoding, FilesystemPort } from "#/core/filesystem/port";
+import type { CliFileEncoding, Filesystem } from "#/core/filesystem/filesystem";
 import { listWorkspacePackageDirectories, resolveProjectRoot } from "#/core/workspace/resolver";
 
-function createExistsOnlyFilesystem(existingPaths: Iterable<string>): FilesystemPort {
+function createExistsOnlyFilesystem(existingPaths: Iterable<string>): Filesystem {
   const present = new Set(existingPaths);
   const unsupported = (operation: string): never => {
     throw new Error(`unsupported filesystem operation in test: ${operation}`);
@@ -29,7 +29,7 @@ function createExistsOnlyFilesystem(existingPaths: Iterable<string>): Filesystem
 function createWorkspaceFilesystem(options: {
   files: Record<string, string>;
   glob?: (pattern: string, cwd: string) => Array<string>;
-}): FilesystemPort {
+}): Filesystem {
   const files = new Map(Object.entries(options.files));
   const unsupported = (operation: string): never => {
     throw new Error(`unsupported filesystem operation in test: ${operation}`);

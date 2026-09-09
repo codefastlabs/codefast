@@ -49,20 +49,3 @@ export function consumeCliAppError<Value>(
   }
   return true;
 }
-
-/**
- * Awaits a `Result`, hands a success to `onSuccess`, and records the returned exit code on the process.
- *
- * @since 0.3.16-canary.0
- */
-export async function runCliResultAsync<Value>(
-  outcomePromise: Promise<Result<Value, AppError>>,
-  onSuccess: (value: Value) => number | void | Promise<number | void>,
-): Promise<void> {
-  const outcome = await outcomePromise;
-  if (!consumeCliAppError(outcome)) {
-    return;
-  }
-  const exit = await onSuccess(outcome.value);
-  process.exitCode = exit === undefined ? 0 : exit;
-}

@@ -1,12 +1,5 @@
-import { CLI_EXIT_GENERAL_ERROR } from "#/core/exit-codes";
 import { logger } from "#/core/logger";
-import { exitCodeForTagSyncResult } from "#/tag/cli-result";
-import type {
-  TagProgressListener,
-  TagResolvedTarget,
-  TagSyncResult,
-  TagTargetExecutionResult,
-} from "#/tag/domain/types";
+import type { TagProgressListener, TagResolvedTarget, TagResult, TagTargetExecutionResult } from "#/tag/domain/types";
 
 type TagProgressEvent =
   | { type: "target-started"; target: TagResolvedTarget }
@@ -17,13 +10,13 @@ type TagProgressEvent =
  *
  * @since 0.3.16-canary.0
  */
-export class TagSyncProgressPresenter implements TagProgressListener {
+export class TagProgressPresenter implements TagProgressListener {
   onTargetStarted(target: TagResolvedTarget): void {
-    logger.out(TagSyncProgressPresenter.formatProgress({ type: "target-started", target }));
+    logger.out(TagProgressPresenter.formatProgress({ type: "target-started", target }));
   }
 
   onTargetCompleted(target: TagResolvedTarget, result: TagTargetExecutionResult): void {
-    logger.out(TagSyncProgressPresenter.formatProgress({ type: "target-completed", target, result }));
+    logger.out(TagProgressPresenter.formatProgress({ type: "target-completed", target, result }));
   }
 
   private static formatProgress(event: TagProgressEvent): string {
@@ -46,29 +39,28 @@ const colors = {
 } as const;
 
 /**
- * Prints a tag run's target table, warnings, and summary, and returns the exit code.
+ * Prints a tag run's target table, warnings, and summary to the human reader.
  *
  * @since 0.3.16-canary.0
  */
-export function presentTagSyncResult(result: TagSyncResult, rootDir: string): number {
+export function presentTagResult(result: TagResult, rootDir: string): void {
   logger.out(formatTargetTable(result.selectedTargets, rootDir));
   if (result.selectedTargets.length === 0) {
     logger.err("No packages found in workspace. Check your pnpm-workspace.yaml or provide an explicit target path.");
-    return CLI_EXIT_GENERAL_ERROR;
+    return;
   }
   const warningsAndErrorsSection = formatWarningsAndErrors(result);
   if (warningsAndErrorsSection) {
     logger.err(warningsAndErrorsSection);
   }
   logger.out(formatSummary(result));
-  return exitCodeForTagSyncResult(result);
 }
 
 function withColorizedLine(line: string, colorCode: string): string {
   return `${colorCode}${line}${colorReset}`;
 }
 
-function warningsAndErrorsFromResult(result: TagSyncResult): Array<string> {
+function warningsAndErrorsFromResult(result: TagResult): Array<string> {
   const entries: Array<string> = [];
   for (const targetResult of result.targetResults) {
     if (targetResult.runError) {
@@ -98,7 +90,7 @@ function formatTargetTable(targets: Array<TagResolvedTarget>, rootDir: string): 
   return lines.join("\n");
 }
 
-function formatWarningsAndErrors(result: TagSyncResult): string | null {
+function formatWarningsAndErrors(result: TagResult): string | null {
   const entries = warningsAndErrorsFromResult(result);
   if (entries.length === 0) {
     return null;
@@ -110,7 +102,7 @@ function formatWarningsAndErrors(result: TagSyncResult): string | null {
   return lines.join("\n");
 }
 
-function formatSummary(result: TagSyncResult): string {
+function formatSummary(result: TagResult): string {
   const isDryRun = result.mode === "dry-run";
   const summaryPrefix = isDryRun ? "[tag:dry-run]" : "[tag]";
   const versionSuffix =

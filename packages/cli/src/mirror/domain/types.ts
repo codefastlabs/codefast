@@ -144,3 +144,56 @@ export interface MirrorSyncCommandPrelude {
   readonly config: CodefastConfig;
   readonly packageFilter: string | undefined;
 }
+
+/**
+ * The inputs a mirror run is invoked with.
+ *
+ * @since 0.3.16-canary.0
+ */
+export type MirrorSyncRunRequest = {
+  rootDir: string;
+  packageFilter?: string | undefined;
+  config?: unknown;
+  /** When false, compute and report changes without writing package.json. Defaults to true. */
+  write?: boolean | undefined;
+};
+
+/**
+ * Whether a run targets a single package or the discovered workspace set.
+ *
+ * @since 0.3.16-canary.0
+ */
+export type MirrorProcessingModeInput = { kind: "single" } | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
+
+/**
+ * Callbacks a mirror run invokes as it progresses through packages.
+ *
+ * @since 0.3.16-canary.0
+ */
+export type MirrorSyncProgressListener = {
+  configure(options: { readonly noColor: boolean; readonly verbose: boolean; readonly dryRun: boolean }): void;
+  onBanner(): void;
+  onProcessingMode(mode: MirrorProcessingModeInput): void;
+  onNoPackages(): void;
+  onPackageComplete(pkgStats: PackageStats, ordinal: number, total: number): void;
+  onComplete(stats: GlobalStats, elapsedSeconds: number): void;
+};
+
+/**
+ * A run request paired with an optional progress listener.
+ *
+ * @since 0.3.16-canary.0
+ */
+export type MirrorSyncExecutionInput = MirrorSyncRunRequest & {
+  readonly listener?: MirrorSyncProgressListener | undefined;
+};
+
+/**
+ * The stdout/stderr line-writer shape the reporter prints through.
+ *
+ * @since 0.3.16-canary.0
+ */
+export type CliLoggerLike = {
+  out(line: string): void;
+  err(line: string): void;
+};

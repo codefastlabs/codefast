@@ -1,91 +1,46 @@
-import { resolveRepoRelativePath } from "#/audit/cli-schema";
+import path from "node:path";
+
 import { loadCodefastConfig } from "#/core/config";
+import type { CodefastConfig } from "#/core/config/schema";
 import { AppError, messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { resolveProjectRoot } from "#/core/workspace/resolver";
 
 /**
- * Shared prelude for `audit rtl`: repo root and the canonicalized scan target with its allowlist.
+ * Shared prelude for an audit: repo root and the canonicalized scan target with its allowlist.
  *
  * @since 0.5.0-canary.6
  */
-export type RtlAuditCommandPrelude = {
+export type AuditCommandPrelude = {
   readonly rootDir: string;
   readonly targetPath: string;
   readonly allowlist: ReadonlyArray<string>;
 };
 
 /**
- * Loads config and resolves the scan target for `audit rtl`.
+ * Resolves a path that may be absolute or relative to `rootDir`.
  *
  * @since 0.5.0-canary.6
  */
-export async function prepareRtlAudit(
-  fs: FilesystemPort,
-  args: {
-    readonly currentWorkingDirectory: string;
-    readonly rawTarget: string | undefined;
-  },
-): Promise<Result<RtlAuditCommandPrelude, AppError>> {
-  let rootDir: string;
-  try {
-    // Realpath so allowlist keys (`path.relative(rootDir, file)`) stay stable when cwd is a symlink.
-    rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
-  } catch (caughtError: unknown) {
-    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
-  }
-
-  const loadedOutcome = await loadCodefastConfig(rootDir, fs);
-  if (!loadedOutcome.ok) {
-    return loadedOutcome;
-  }
-  const { config } = loadedOutcome.value;
-  const rtlConfig = config.audit?.rtl ?? {};
-
-  const targetFromCli = args.rawTarget;
-  const targetFromConfig = rtlConfig.target;
-  const resolvedTargetInput = targetFromCli ?? targetFromConfig;
-  if (resolvedTargetInput === undefined) {
-    return err(
-      new AppError(
-        "VALIDATION_ERROR",
-        "Missing scan target: pass a path argument or set audit.rtl.target in codefast.config",
-      ),
-    );
-  }
-
-  const targetPath = resolveRepoRelativePath(
-    targetFromCli !== undefined ? args.currentWorkingDirectory : rootDir,
-    resolvedTargetInput,
-  );
-  if (!fs.existsSync(targetPath)) {
-    return err(new AppError("NOT_FOUND", `Not found: ${targetPath}`));
-  }
-
-  return ok({
-    rootDir,
-    targetPath: fs.canonicalPathSync(targetPath),
-    allowlist: rtlConfig.allowlist ?? [],
-  });
+export function resolveRepoRelativePath(rootDir: string, maybeRelative: string): string {
+  return path.isAbsolute(maybeRelative) ? path.resolve(maybeRelative) : path.resolve(rootDir, maybeRelative);
 }
 
 /**
- * Loads config and resolves the scan target for `audit links`.
+ * Loads config and resolves the repo root as the scan target, taking the allowlist the caller selects.
  *
- * @remarks Defaults to the repo root rather than a configured path: a link audit that only covers one
- * package cannot see the cross-package references that are the ones most likely to rot.
- *
- * @since 0.5.0
+ * @remarks Every repo-wide audit shares this prelude; only the config key its allowlist comes from differs.
  */
-export async function prepareLinkAudit(
-  fs: FilesystemPort,
+export async function prepareRepoRootAudit(
+  fs: Filesystem,
   args: {
     readonly currentWorkingDirectory: string;
     readonly rawTarget: string | undefined;
   },
-): Promise<Result<RtlAuditCommandPrelude, AppError>> {
+  selectAllowlist: (config: CodefastConfig) => ReadonlyArray<string>,
+): Promise<Result<AuditCommandPrelude, AppError>> {
   let rootDir: string;
   try {
     rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
@@ -97,7 +52,6 @@ export async function prepareLinkAudit(
   if (!loadedOutcome.ok) {
     return loadedOutcome;
   }
-  const linksConfig = loadedOutcome.value.config.audit?.links ?? {};
 
   const targetPath =
     args.rawTarget === undefined ? rootDir : resolveRepoRelativePath(args.currentWorkingDirectory, args.rawTarget);
@@ -108,129 +62,6 @@ export async function prepareLinkAudit(
   return ok({
     rootDir,
     targetPath: fs.canonicalPathSync(targetPath),
-    allowlist: linksConfig.allowlist ?? [],
-  });
-}
-
-/**
- * Loads config and resolves the scan target for `audit imports`.
- *
- * @remarks Defaults to the repo root: the import policy is repo-wide, and generated or vendored
- * trees are already excluded by the shared walk.
- *
- * @since 0.10.0
- */
-export async function prepareImportsAudit(
-  fs: FilesystemPort,
-  args: {
-    readonly currentWorkingDirectory: string;
-    readonly rawTarget: string | undefined;
-  },
-): Promise<Result<RtlAuditCommandPrelude, AppError>> {
-  let rootDir: string;
-  try {
-    rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
-  } catch (caughtError: unknown) {
-    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
-  }
-
-  const loadedOutcome = await loadCodefastConfig(rootDir, fs);
-  if (!loadedOutcome.ok) {
-    return loadedOutcome;
-  }
-  const importsConfig = loadedOutcome.value.config.audit?.imports ?? {};
-
-  const targetPath =
-    args.rawTarget === undefined ? rootDir : resolveRepoRelativePath(args.currentWorkingDirectory, args.rawTarget);
-  if (!fs.existsSync(targetPath)) {
-    return err(new AppError("NOT_FOUND", `Not found: ${targetPath}`));
-  }
-
-  return ok({
-    rootDir,
-    targetPath: fs.canonicalPathSync(targetPath),
-    allowlist: importsConfig.allowlist ?? [],
-  });
-}
-
-/**
- * Loads config and resolves the scan target for `audit comments`.
- *
- * @remarks Defaults to the repo root: a divider convention that only holds inside one package
- * is not a convention.
- *
- * @since 0.6.0
- */
-export async function prepareCommentAudit(
-  fs: FilesystemPort,
-  args: {
-    readonly currentWorkingDirectory: string;
-    readonly rawTarget: string | undefined;
-  },
-): Promise<Result<RtlAuditCommandPrelude, AppError>> {
-  let rootDir: string;
-  try {
-    rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
-  } catch (caughtError: unknown) {
-    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
-  }
-
-  const loadedOutcome = await loadCodefastConfig(rootDir, fs);
-  if (!loadedOutcome.ok) {
-    return loadedOutcome;
-  }
-  const commentsConfig = loadedOutcome.value.config.audit?.comments ?? {};
-
-  const targetPath =
-    args.rawTarget === undefined ? rootDir : resolveRepoRelativePath(args.currentWorkingDirectory, args.rawTarget);
-  if (!fs.existsSync(targetPath)) {
-    return err(new AppError("NOT_FOUND", `Not found: ${targetPath}`));
-  }
-
-  return ok({
-    rootDir,
-    targetPath: fs.canonicalPathSync(targetPath),
-    allowlist: commentsConfig.allowlist ?? [],
-  });
-}
-
-/**
- * Loads config and resolves the scan target for `audit display-names`.
- *
- * @remarks Defaults to the repo root: a display name collides across packages, so the convention
- * has to hold across them.
- *
- * @since 0.9.0
- */
-export async function prepareDisplayNameAudit(
-  fs: FilesystemPort,
-  args: {
-    readonly currentWorkingDirectory: string;
-    readonly rawTarget: string | undefined;
-  },
-): Promise<Result<RtlAuditCommandPrelude, AppError>> {
-  let rootDir: string;
-  try {
-    rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
-  } catch (caughtError: unknown) {
-    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
-  }
-
-  const loadedOutcome = await loadCodefastConfig(rootDir, fs);
-  if (!loadedOutcome.ok) {
-    return loadedOutcome;
-  }
-  const displayNamesConfig = loadedOutcome.value.config.audit?.displayNames ?? {};
-
-  const targetPath =
-    args.rawTarget === undefined ? rootDir : resolveRepoRelativePath(args.currentWorkingDirectory, args.rawTarget);
-  if (!fs.existsSync(targetPath)) {
-    return err(new AppError("NOT_FOUND", `Not found: ${targetPath}`));
-  }
-
-  return ok({
-    rootDir,
-    targetPath: fs.canonicalPathSync(targetPath),
-    allowlist: displayNamesConfig.allowlist ?? [],
+    allowlist: selectAllowlist(loadedOutcome.value.config),
   });
 }

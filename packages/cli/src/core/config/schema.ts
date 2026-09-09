@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 
 /**
  * A config hook invoked with the written file paths after a command rewrites files.

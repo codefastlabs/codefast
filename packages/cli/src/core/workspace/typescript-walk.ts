@@ -1,4 +1,4 @@
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { walkFiles } from "#/core/workspace/walk-files";
 
 /**
@@ -6,7 +6,7 @@ import { walkFiles } from "#/core/workspace/walk-files";
  *
  * @since 0.3.16-canary.0
  */
-export function walkTsxFiles(rootDirectoryPath: string, fs: FilesystemPort): Array<string> {
+export function walkTsxFiles(rootDirectoryPath: string, fs: Filesystem): Array<string> {
   return walkFiles(
     rootDirectoryPath,
     fs,

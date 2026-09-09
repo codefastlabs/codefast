@@ -1,4 +1,4 @@
-import type { DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
+import type { DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
 
 type TagTestFilesystemState = {
   readonly path: string;
@@ -6,16 +6,16 @@ type TagTestFilesystemState = {
 };
 
 /**
- * Minimal {@link FilesystemPort} for exercising {@link TagSinceWriter} in tests.
+ * Minimal {@link Filesystem} for exercising {@link TagSinceWriter} in tests.
  *
  * @since 0.3.16-canary.0
  */
 export function createTagTestFilesystem(initial: TagTestFilesystemState): {
-  readonly fs: FilesystemPort;
+  readonly fs: Filesystem;
   readonly getContent: () => string;
 } {
   let content = initial.content;
-  const fs: FilesystemPort = {
+  const fs: Filesystem = {
     existsSync: () => true,
     canonicalPathSync: (inputPath) => inputPath,
     globSync: () => [],

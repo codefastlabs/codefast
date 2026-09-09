@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
 import { packageJsonFileName } from "#/core/workspace/well-known-files";
 
@@ -10,7 +10,7 @@ import { packageJsonFileName } from "#/core/workspace/well-known-files";
  *
  * @since 0.8.0
  */
-function findNearestPackageVersion(fs: FilesystemPort, targetPath: string): string | null {
+function findNearestPackageVersion(fs: Filesystem, targetPath: string): string | null {
   const resolved = path.resolve(targetPath);
   const startDirectory = fs.statSync(resolved).isDirectory() ? resolved : path.dirname(resolved);
 

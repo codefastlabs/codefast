@@ -1,5 +1,5 @@
 import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { PACKAGE_JSON_EXPORT } from "#/mirror/domain/constants";
 import { MirrorError, MirrorErrorCode } from "#/mirror/domain/errors";
 import type { ExportMapData, ExportOriginalPathBySpecifier, PackageJsonShape } from "#/mirror/domain/types";
@@ -11,7 +11,7 @@ import type { ExportMapData, ExportOriginalPathBySpecifier, PackageJsonShape } f
  * @since 0.3.16-canary.0
  */
 export async function writePackageJsonExportsAtomic(
-  fs: FilesystemPort,
+  fs: Filesystem,
   packageJsonPath: string,
   mergeInput: {
     generatedExports: ExportMapData;

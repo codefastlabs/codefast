@@ -2,7 +2,7 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { sourceCommentLanguage, walkSourceFiles } from "#/core/workspace/source-walk";
 
 describe("sourceCommentLanguage", () => {
@@ -44,7 +44,7 @@ describe("walkSourceFiles", () => {
   });
 });
 
-function createWalkFilesystem(filePaths: Array<string>): FilesystemPort {
+function createWalkFilesystem(filePaths: Array<string>): Filesystem {
   const files = new Set(filePaths.map((filePath) => path.normalize(filePath)));
 
   return {

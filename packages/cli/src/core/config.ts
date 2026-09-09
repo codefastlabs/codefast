@@ -2,7 +2,7 @@ import { loadConfigPayload } from "#/core/config/loader";
 import type { CodefastConfig } from "#/core/config/schema";
 import { reportSchemaWarnings } from "#/core/config/warnings";
 import { AppError, messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 
@@ -13,7 +13,7 @@ import { err, ok } from "#/core/result";
  */
 export async function loadCodefastConfig(
   rootDir: string,
-  fs: FilesystemPort,
+  fs: Filesystem,
 ): Promise<Result<{ config: CodefastConfig }, AppError>> {
   try {
     const { config, warnings } = await loadConfigPayload(rootDir, fs);

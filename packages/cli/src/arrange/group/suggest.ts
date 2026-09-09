@@ -1,0 +1,18 @@
+import { suggestCnGroups, summarizeGroupBucketLabels } from "#/arrange/domain/grouping";
+import { formatArray, formatCnCall } from "#/arrange/domain/source-text-formatters";
+import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
+import type { ArrangeSuggestGroupsRequest } from "#/arrange/group/cli-schema";
+
+/**
+ * Formats the suggested grouping for an inline class string as `arrange group` output lines.
+ *
+ * @since 0.3.16-canary.0
+ */
+export function suggestCnGroupsFromCli(request: ArrangeSuggestGroupsRequest): ArrangeSuggestGroupsOutput {
+  const groups = suggestCnGroups(request.inlineClasses);
+  const primaryLine = request.emitTvStyleArray
+    ? formatArray(groups)
+    : formatCnCall(groups, { trailingClassName: request.trailingClassName });
+  const bucketsCommentLine = `// Buckets: ${JSON.stringify(summarizeGroupBucketLabels(groups))}`;
+  return { primaryLine, bucketsCommentLine };
+}
