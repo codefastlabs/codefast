@@ -1,5 +1,3 @@
-import process from "node:process";
-
 import { Command } from "commander";
 import type { ZodType } from "zod";
 
@@ -41,14 +39,12 @@ import { rtlAuditRunRequestSchema } from "#/audit/rtl/cli-schema";
 import { presentRtlAuditResult } from "#/audit/rtl/output";
 import { prepareRtlAudit } from "#/audit/rtl/prepare";
 import { runRtlAudit } from "#/audit/rtl/run";
-import { readOptionalPositionalArg } from "#/core/cli/positional";
-import { consumeCliAppError } from "#/core/cli/result-handle";
+import type { NamedCommandPipeline } from "#/core/cli/command-pipeline";
+import { registerPipelineSubcommand } from "#/core/cli/command-pipeline";
 import type { AppError } from "#/core/errors";
 import type { Filesystem } from "#/core/filesystem/filesystem";
 import { nodeFilesystem } from "#/core/filesystem/node";
-import { logger } from "#/core/logger";
 import type { Result } from "#/core/result";
-import { parseWithSchema } from "#/core/schema-parse";
 
 type AuditActionOptions = {
   readonly json?: boolean;
@@ -171,6 +167,29 @@ const commentsCheck: AuditCheck<CommentAuditRunRequest, CommentAuditResult> = {
 };
 
 /**
+ * Adapts an `AuditCheck` descriptor onto the shared command pipeline.
+ */
+function auditCheckToPipeline<Request, CheckResult>(
+  check: AuditCheck<Request, CheckResult>,
+): NamedCommandPipeline<AuditCommandPrelude, Request, CheckResult, never, AuditActionOptions> {
+  return {
+    name: check.name,
+    description: check.description,
+    positional: { name: "[target]", help: check.targetHelp },
+    jsonHelp: "Print one JSON summary on stdout",
+    schema: check.schema,
+    configureArgv: check.extraOptions,
+    prepare: (fs, input) =>
+      check.prepare(fs, { currentWorkingDirectory: input.currentWorkingDirectory, rawTarget: input.rawArg }),
+    buildRequest: ({ prelude, opts }) => check.buildRequest(prelude, opts),
+    run: async (fs, request) => check.run(fs, request),
+    presentHuman: ({ result }) => check.present(result),
+    formatJson: ({ result, prelude }) => check.formatJson(result, prelude.rootDir),
+    exitCode: check.exitCode,
+  };
+}
+
+/**
  * Top-level `audit` command — the source scans. Every one of them reports by default; only
  * `comments --fix` writes, and only where the rewrite discards nothing a person wrote.
  *
@@ -179,49 +198,11 @@ const commentsCheck: AuditCheck<CommentAuditRunRequest, CommentAuditResult> = {
 export function createAuditCommand(): Command {
   const cmd = new Command("audit").description("Source audits").enablePositionalOptions();
 
-  registerAuditCheck(cmd, rtlCheck);
-  registerAuditCheck(cmd, linksCheck);
-  registerAuditCheck(cmd, importsCheck);
-  registerAuditCheck(cmd, displayNamesCheck);
-  registerAuditCheck(cmd, commentsCheck);
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(rtlCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(linksCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(importsCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(displayNamesCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(commentsCheck));
 
   return cmd;
-}
-
-function registerAuditCheck<Request, CheckResult>(parent: Command, check: AuditCheck<Request, CheckResult>): void {
-  const sub = parent
-    .command(check.name)
-    .description(check.description)
-    .argument("[target]", check.targetHelp)
-    .option("--json", "Print one JSON summary on stdout", false);
-  check.extraOptions?.(sub);
-  sub.action(makeAuditAction(check));
-}
-
-function makeAuditAction<Request, CheckResult>(
-  check: AuditCheck<Request, CheckResult>,
-): (target: string | undefined, opts: AuditActionOptions) => Promise<void> {
-  return async (target, opts) => {
-    const prelude = await check.prepare(nodeFilesystem, {
-      currentWorkingDirectory: process.cwd(),
-      rawTarget: readOptionalPositionalArg(target),
-    });
-    if (!consumeCliAppError(prelude)) {
-      return;
-    }
-    const parsed = parseWithSchema(check.schema, check.buildRequest(prelude.value, opts));
-    if (!consumeCliAppError(parsed)) {
-      return;
-    }
-    const outcome = check.run(nodeFilesystem, parsed.value);
-    if (!consumeCliAppError(outcome)) {
-      return;
-    }
-    if (opts.json) {
-      logger.out(check.formatJson(outcome.value, prelude.value.rootDir));
-    } else {
-      check.present(outcome.value);
-    }
-    process.exitCode = check.exitCode(outcome.value);
-  };
 }

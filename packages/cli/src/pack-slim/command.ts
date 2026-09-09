@@ -1,21 +1,53 @@
-import process from "node:process";
-
 import { Command } from "commander";
 
-import { globalCliCommanderOptionsSchema } from "#/core/cli/global-options";
-import { readOptionalPositionalArg } from "#/core/cli/positional";
-import { consumeCliAppError } from "#/core/cli/result-handle";
-import { AppError, messageFrom } from "#/core/errors";
+import type { CommandPipeline } from "#/core/cli/command-pipeline";
+import { applyCommandPipeline } from "#/core/cli/command-pipeline";
 import { nodeFilesystem } from "#/core/filesystem/node";
-import { logger } from "#/core/logger";
-import { err } from "#/core/result";
-import { parseWithSchema } from "#/core/schema-parse";
-import { resolveProjectRoot } from "#/core/workspace/resolver";
+import { ok } from "#/core/result";
 import { exitCodeForPackSlimResult, formatPackSlimJsonOutput } from "#/pack-slim/cli-result";
 import { packSlimRunRequestSchema } from "#/pack-slim/cli-schema";
+import type { PackSlimRunRequest } from "#/pack-slim/cli-schema";
+import type { PackSlimRunStats } from "#/pack-slim/domain/types";
 import { PackSlimProgressPresenter } from "#/pack-slim/output";
+import type { PackSlimCommandPrelude } from "#/pack-slim/prepare";
+import { preparePackSlim } from "#/pack-slim/prepare";
 import { runPackSlim } from "#/pack-slim/run";
 import { ensureWorkingTreeClean } from "#/pack-slim/working-tree";
+
+type PackSlimCommandOptions = { readonly dryRun?: boolean; readonly force?: boolean; readonly json?: boolean };
+
+const packSlimPipeline: CommandPipeline<
+  PackSlimCommandPrelude,
+  PackSlimRunRequest,
+  PackSlimRunStats,
+  PackSlimProgressPresenter,
+  PackSlimCommandOptions
+> = {
+  positional: { name: "[package]", help: "Optional package path relative to repo root (e.g. packages/ui)" },
+  schema: packSlimRunRequestSchema,
+  configureArgv: (command) => {
+    command.option("--dry-run", "Report what would change without touching any file", false);
+    command.option("--force", "Run even if the git working tree has uncommitted tracked changes", false);
+  },
+  prepare: (fs, input) =>
+    preparePackSlim(fs, { currentWorkingDirectory: input.currentWorkingDirectory, packageArg: input.rawArg }),
+  // A destructive slim must never land on uncommitted work; --dry-run writes nothing, so it is exempt.
+  guard: async ({ prelude, opts }) =>
+    !opts.dryRun && !opts.force ? ensureWorkingTreeClean(prelude.rootDir) : ok(undefined),
+  buildRequest: ({ prelude, opts }) => ({
+    rootDir: prelude.rootDir,
+    packageFilter: prelude.packageFilter,
+    write: !opts.dryRun,
+  }),
+  createPresenter: ({ opts }) => {
+    const presenter = new PackSlimProgressPresenter();
+    presenter.configure({ dryRun: !!opts.dryRun });
+    return presenter;
+  },
+  run: (fs, request, presenter) => runPackSlim(fs, { ...request, listener: presenter }),
+  formatJson: ({ result, opts, elapsedSeconds }) => formatPackSlimJsonOutput(result, elapsedSeconds, !opts.dryRun),
+  exitCode: exitCodeForPackSlimResult,
+};
 
 /**
  * Creates the `pack-slim` subcommand, which slims published packages down to what a consumer reads before publish.
@@ -23,75 +55,10 @@ import { ensureWorkingTreeClean } from "#/pack-slim/working-tree";
  * @since 0.8.1
  */
 export function createPackSlimCommand(): Command {
-  const cmd = new Command("pack-slim")
-    .description(
-      "Strip src, source conditions, unshipped imports, dev-only scripts, devDependencies, and dist source maps from " +
-        "published packages before publish",
-    )
-    .argument("[package]", "Optional package path relative to repo root (e.g. packages/ui)")
-    .option("--dry-run", "Report what would change without touching any file", false)
-    .option("--force", "Run even if the git working tree has uncommitted tracked changes", false)
-    .option("--json", "Print one JSON summary on stdout (suppresses human progress)", false)
-    .action(
-      async (
-        packageArg: string | undefined,
-        opts: { dryRun?: boolean; force?: boolean; json?: boolean },
-        command: Command,
-      ) => {
-        const globalsOptionCarrier =
-          (command.optsWithGlobals?.() as Record<string, unknown> | undefined) ??
-          (command.opts() as Record<string, unknown>);
-        const globalOptionsOutcome = parseWithSchema(globalCliCommanderOptionsSchema, globalsOptionCarrier);
-        if (!consumeCliAppError(globalOptionsOutcome)) {
-          return;
-        }
-
-        let rootDir: string;
-        try {
-          rootDir = resolveProjectRoot(process.cwd(), nodeFilesystem).rootDir;
-        } catch (caughtError: unknown) {
-          consumeCliAppError(err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError)));
-          return;
-        }
-
-        const write = !opts.dryRun;
-        // A destructive slim must never land on a developer's uncommitted work; --dry-run writes nothing, so it is exempt.
-        if (write && !opts.force) {
-          const cleanCheck = ensureWorkingTreeClean(rootDir);
-          if (!consumeCliAppError(cleanCheck)) {
-            return;
-          }
-        }
-
-        const parsed = parseWithSchema(packSlimRunRequestSchema, {
-          rootDir,
-          packageFilter: readOptionalPositionalArg(packageArg),
-          write,
-        });
-        if (!consumeCliAppError(parsed)) {
-          return;
-        }
-
-        const json = !!opts.json;
-        const presenter = new PackSlimProgressPresenter();
-        if (!json) {
-          presenter.configure({ dryRun: !write });
-        }
-
-        const startTime = performance.now();
-        const outcome = await runPackSlim(nodeFilesystem, {
-          ...parsed.value,
-          listener: json ? undefined : presenter,
-        });
-        if (!consumeCliAppError(outcome)) {
-          return;
-        }
-        if (json) {
-          logger.out(formatPackSlimJsonOutput(outcome.value, (performance.now() - startTime) / 1000, write));
-        }
-        process.exitCode = exitCodeForPackSlimResult(outcome.value);
-      },
-    );
-
+  const cmd = new Command("pack-slim").description(
+    "Strip src, source conditions, unshipped imports, dev-only scripts, devDependencies, and dist source maps from " +
+      "published packages before publish",
+  );
+  applyCommandPipeline(cmd, nodeFilesystem, packSlimPipeline);
   return cmd;
 }

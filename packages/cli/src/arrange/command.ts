@@ -1,30 +1,127 @@
-import process from "node:process";
-
 import { Command } from "commander";
 
+import type { AnalyzeReport, ArrangeRunResult, ArrangeTargetWorkspaceAndConfig } from "#/arrange/domain/types";
 import { formatArrangeGroupJsonOutput } from "#/arrange/group/cli-result";
 import { arrangeSuggestGroupsRequestSchema } from "#/arrange/group/cli-schema";
 import { presentArrangeGroupResult } from "#/arrange/group/output";
 import { suggestCnGroupsFromCli } from "#/arrange/group/suggest";
 import { formatArrangeAnalyzeJsonOutput } from "#/arrange/inspect/cli-result";
+import type { ArrangeAnalyzeDirectoryRequest } from "#/arrange/inspect/cli-schema";
 import { arrangeAnalyzeDirectoryRequestSchema } from "#/arrange/inspect/cli-schema";
 import { presentAnalyzeReport } from "#/arrange/inspect/output";
 import { runArrangeInspect } from "#/arrange/inspect/run";
 import { prepareArrangeWorkspace } from "#/arrange/prepare";
 import { exitCodeForArrangeResult, formatArrangeJsonOutput } from "#/arrange/regroup/cli-result";
+import type { ArrangeRunRequest } from "#/arrange/regroup/cli-schema";
 import { arrangeRunRequestSchema } from "#/arrange/regroup/cli-schema";
-import { presentGroupFilePreviewFromWork, presentArrangeResult } from "#/arrange/regroup/output";
+import { presentArrangeResult, presentGroupFilePreviewFromWork } from "#/arrange/regroup/output";
 import { runArrange } from "#/arrange/regroup/run";
 import { formatArrangeSimplifyJsonOutput } from "#/arrange/simplify/cli-result";
+import type { ArrangeSimplifyRunRequest } from "#/arrange/simplify/cli-schema";
 import { arrangeSimplifyRunRequestSchema } from "#/arrange/simplify/cli-schema";
 import { presentSimplifyResult } from "#/arrange/simplify/output";
 import { runArrangeSimplify } from "#/arrange/simplify/run";
-import { readOptionalPositionalArg } from "#/core/cli/positional";
-import { consumeCliAppError, runCliResultAsync } from "#/core/cli/result-handle";
+import type { CommandPipeline, CommandPrepare, NamedCommandPipeline } from "#/core/cli/command-pipeline";
+import { applyCommandPipeline, registerPipelineSubcommand } from "#/core/cli/command-pipeline";
+import { consumeCliAppError } from "#/core/cli/result-handle";
 import { CLI_EXIT_SUCCESS } from "#/core/exit-codes";
 import { nodeFilesystem } from "#/core/filesystem/node";
 import { logger } from "#/core/logger";
 import { parseWithSchema } from "#/core/schema-parse";
+
+const targetHelp = "Directory or file (default: nearest package directory from cwd)";
+
+type ArrangeRegroupOptions = {
+  readonly dryRun?: boolean;
+  readonly withClassName?: boolean;
+  readonly cnImport?: string | undefined;
+  readonly json?: boolean;
+};
+type ArrangeSimplifyOptions = { readonly dryRun?: boolean; readonly json?: boolean };
+
+const prepareWorkspace: CommandPrepare<ArrangeTargetWorkspaceAndConfig> = (fs, input) =>
+  prepareArrangeWorkspace(fs, { currentWorkingDirectory: input.currentWorkingDirectory, rawTarget: input.rawArg });
+
+const regroupPipeline: CommandPipeline<
+  ArrangeTargetWorkspaceAndConfig,
+  ArrangeRunRequest,
+  ArrangeRunResult,
+  never,
+  ArrangeRegroupOptions
+> = {
+  positional: { name: "[target]", help: targetHelp },
+  schema: arrangeRunRequestSchema,
+  configureArgv: (command) => {
+    command.option("--dry-run", "Preview suggested replacements without writing files", false);
+    command.option("--with-classname, --with-class-name", "Append className as final cn() argument", false);
+    command.option("--cn-import <spec>", "Override module specifier when adding cn import");
+  },
+  prepare: prepareWorkspace,
+  buildRequest: ({ prelude, opts }) => ({
+    rootDir: prelude.rootDir,
+    targetPath: prelude.resolvedTarget,
+    write: !opts.dryRun,
+    withClassName: opts.withClassName,
+    cnImport: opts.cnImport,
+    config: prelude.config.arrange ?? {},
+  }),
+  run: (fs, request) => runArrange(fs, request),
+  presentHuman: ({ result, opts }) => {
+    // Dry-run previews are human-only; the --json summary omits the non-serializable plans.
+    if (opts.dryRun) {
+      for (const plan of result.previewPlans) {
+        presentGroupFilePreviewFromWork(plan);
+      }
+    }
+    presentArrangeResult(result, !opts.dryRun);
+  },
+  formatJson: ({ result, opts }) => formatArrangeJsonOutput(result, !opts.dryRun),
+  exitCode: exitCodeForArrangeResult,
+};
+
+const inspectPipeline: NamedCommandPipeline<
+  ArrangeTargetWorkspaceAndConfig,
+  ArrangeAnalyzeDirectoryRequest,
+  AnalyzeReport
+> = {
+  name: "inspect",
+  description: "Report long strings, nested cn in tv(), and related findings (read-only)",
+  positional: { name: "[target]", help: targetHelp },
+  jsonHelp: "Print one JSON object on stdout instead of a human report",
+  schema: arrangeAnalyzeDirectoryRequestSchema,
+  prepare: prepareWorkspace,
+  buildRequest: ({ prelude }) => ({ analyzeRootPath: prelude.resolvedTarget }),
+  run: async (fs, request) => runArrangeInspect(fs, request.analyzeRootPath),
+  presentHuman: ({ result, prelude }) => {
+    presentAnalyzeReport(prelude.resolvedTarget, result);
+  },
+  formatJson: ({ result, prelude }) => formatArrangeAnalyzeJsonOutput(prelude.resolvedTarget, result),
+  exitCode: () => CLI_EXIT_SUCCESS,
+};
+
+const simplifyPipeline: NamedCommandPipeline<
+  ArrangeTargetWorkspaceAndConfig,
+  ArrangeSimplifyRunRequest,
+  ArrangeRunResult,
+  never,
+  ArrangeSimplifyOptions
+> = {
+  name: "simplify",
+  description: "Flatten grouped arrays and static-only cn() calls back to plain strings in tv() slots",
+  positional: { name: "[target]", help: targetHelp },
+  schema: arrangeSimplifyRunRequestSchema,
+  configureArgv: (command) => {
+    command.option("--dry-run", "Show what simplify would change without writing files", false);
+  },
+  prepare: prepareWorkspace,
+  buildRequest: ({ prelude, opts }) => ({ targetPath: prelude.resolvedTarget, write: !opts.dryRun }),
+  run: (fs, request) => runArrangeSimplify(fs, request),
+  presentHuman: ({ result, opts }) => {
+    presentSimplifyResult(result, !opts.dryRun);
+  },
+  formatJson: ({ result, opts }) => formatArrangeSimplifyJsonOutput(result, !opts.dryRun),
+  exitCode: () => CLI_EXIT_SUCCESS,
+};
 
 /**
  * Creates the `arrange` command and its subcommands.
@@ -36,109 +133,14 @@ export function createArrangeCommand(): Command {
     .description("Regroup Tailwind classes in cn() / tv() calls in render-pipeline order")
     // The parent action shares option names (--json) with subcommands; positional
     // options ensure tokens after a subcommand bind to that subcommand, not the parent.
-    .enablePositionalOptions()
-    .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-    .option("--dry-run", "Preview suggested replacements without writing files", false)
-    .option("--with-classname, --with-class-name", "Append className as final cn() argument", false)
-    .option("--cn-import <spec>", "Override module specifier when adding cn import")
-    .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
-    .action(async (target: string | undefined, opts: Record<string, unknown>) => {
-      const write = !opts.dryRun;
-      const prelude = await prepareArrangeWorkspace(nodeFilesystem, {
-        currentWorkingDirectory: process.cwd(),
-        rawTarget: readOptionalPositionalArg(target),
-      });
-      if (!consumeCliAppError(prelude)) {
-        return;
-      }
-      const { resolvedTarget, rootDir, config } = prelude.value;
-      const parsed = parseWithSchema(arrangeRunRequestSchema, {
-        rootDir,
-        targetPath: resolvedTarget,
-        write,
-        withClassName: opts.withClassName as boolean | undefined,
-        cnImport: opts.cnImport as string | undefined,
-        config: config.arrange ?? {},
-      });
-      if (!consumeCliAppError(parsed)) {
-        return;
-      }
-      await runCliResultAsync(runArrange(nodeFilesystem, parsed.value), (value) => {
-        if (!write) {
-          for (const plan of value.previewPlans) {
-            presentGroupFilePreviewFromWork(plan);
-          }
-        }
-        if (opts.json) {
-          logger.out(formatArrangeJsonOutput(value, write));
-          return exitCodeForArrangeResult(value);
-        }
-        presentArrangeResult(value, write);
-        return exitCodeForArrangeResult(value);
-      });
-    });
+    .enablePositionalOptions();
+  applyCommandPipeline(cmd, nodeFilesystem, regroupPipeline);
 
-  cmd
-    .command("inspect")
-    .description("Report long strings, nested cn in tv(), and related findings (read-only)")
-    .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-    .option("--json", "Print one JSON object on stdout instead of a human report", false)
-    .action(async (target: string | undefined, opts: { json?: boolean }) => {
-      const prelude = await prepareArrangeWorkspace(nodeFilesystem, {
-        currentWorkingDirectory: process.cwd(),
-        rawTarget: readOptionalPositionalArg(target),
-      });
-      if (!consumeCliAppError(prelude)) {
-        return;
-      }
-      const { resolvedTarget } = prelude.value;
-      const parsed = parseWithSchema(arrangeAnalyzeDirectoryRequestSchema, {
-        analyzeRootPath: resolvedTarget,
-      });
-      if (!consumeCliAppError(parsed)) {
-        return;
-      }
-      const outcome = runArrangeInspect(nodeFilesystem, parsed.value.analyzeRootPath);
-      if (!consumeCliAppError(outcome)) {
-        return;
-      }
-      if (opts.json) {
-        logger.out(formatArrangeAnalyzeJsonOutput(resolvedTarget, outcome.value));
-      } else {
-        presentAnalyzeReport(resolvedTarget, outcome.value);
-      }
-    });
+  registerPipelineSubcommand(cmd, nodeFilesystem, inspectPipeline);
+  registerPipelineSubcommand(cmd, nodeFilesystem, simplifyPipeline);
 
-  cmd
-    .command("simplify")
-    .description("Flatten grouped arrays and static-only cn() calls back to plain strings in tv() slots")
-    .argument("[target]", "Directory or file (default: nearest package directory from cwd)")
-    .option("--dry-run", "Show what simplify would change without writing files", false)
-    .option("--json", "Print one JSON object on stdout (suppresses human progress)", false)
-    .action(async (target: string | undefined, opts: Record<string, unknown>) => {
-      const write = !opts.dryRun;
-      const prelude = await prepareArrangeWorkspace(nodeFilesystem, {
-        currentWorkingDirectory: process.cwd(),
-        rawTarget: readOptionalPositionalArg(target),
-      });
-      if (!consumeCliAppError(prelude)) {
-        return;
-      }
-      const { resolvedTarget } = prelude.value;
-      const parsed = parseWithSchema(arrangeSimplifyRunRequestSchema, { targetPath: resolvedTarget, write });
-      if (!consumeCliAppError(parsed)) {
-        return;
-      }
-      await runCliResultAsync(runArrangeSimplify(nodeFilesystem, parsed.value), (value) => {
-        if (opts.json) {
-          logger.out(formatArrangeSimplifyJsonOutput(value, write));
-          return CLI_EXIT_SUCCESS;
-        }
-        presentSimplifyResult(value, write);
-        return CLI_EXIT_SUCCESS;
-      });
-    });
-
+  // `group` is a pure token-string transform — no workspace prelude, a variadic positional — so it
+  // does not fit the workspace pipeline and stays wired by hand.
   cmd
     .command("group")
     .description("Try grouping on a pasted class string (stdout: cn(...) or tv array with --tv)")
