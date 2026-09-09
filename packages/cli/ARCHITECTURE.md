@@ -14,7 +14,7 @@ Every command directory follows one shape, so a reader who knows one command kno
 | `cli-schema.ts`               | Zod argv schema(s), named for what they parse.                                              |
 | `prepare.ts`                  | Prelude: resolve repo root + config into a request (present only when a command needs one). |
 | `run.ts` / `run-<variant>.ts` | The async orchestrator(s), returning `Result<T, AppError>`.                                 |
-| `output.ts`                   | Human presenters — side effects through `logger`.                                           |
+| `output.ts`                   | Human presenters (`present*`) — side effects through `logger`.                              |
 | `cli-result.ts`               | Machine output — the `--json` string (pure) and the exit-code mapping (pure).               |
 | `domain/`                     | Pure logic and types: no Commander, no `process`, no `logger`.                              |
 
@@ -65,7 +65,9 @@ Rationale lives in [`DECISIONS.md`](DECISIONS.md).
 
 - Prefer **one concept per filename** (`grouping.ts`, `grouping-service.ts`, `analyze-service.ts`, `exports.ts`).
 - The per-command skeleton fixes a role name to each file: `command.ts`, `cli-schema.ts`, `prepare.ts`, `run*.ts`,
-  `output.ts`, `cli-result.ts`. The orchestrator is `run*`, never `sync` — `sync` is `mirror`'s domain verb alone.
+  `output.ts`, `cli-result.ts`. The orchestrator is `run*`, never `sync` — `sync` is `mirror`'s domain verb alone; the
+  `output.ts` presenters are `present*`. A file that fills a role slot takes the role name even when its work has a verb
+  of its own — an "analyze" orchestrator is `run.ts`, with the concept kept in `domain/analyze-service.ts`.
 - **`ast/`** uses short names: `ast-node.ts`, `helpers.ts`, `collectors-cn.ts`, `targets.ts`, `translator.ts`, etc.
 - Zod schemas are named for what they parse, not with a reserved suffix: per-command argv schemas are `cli-schema.ts`,
   the config schema is [`core/config/schema.ts`](src/core/config/schema.ts).

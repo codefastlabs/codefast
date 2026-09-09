@@ -5,11 +5,11 @@ import type { ArrangeRunResult, PlannedGroupEdit } from "#/arrange/domain/types"
 import { logger } from "#/core/logger";
 
 /**
- * Prints the totals and follow-up hints for an `arrange` run.
+ * Presents the totals and follow-up hints for an `arrange` run.
  *
  * @since 0.3.16-canary.0
  */
-export function printArrangeResult(result: ArrangeRunResult, write: boolean): void {
+export function presentArrangeResult(result: ArrangeRunResult, write: boolean): void {
   logger.out(
     `\nTotal: ${result.filePaths.length} file(s), ${result.totalFound} site(s) (cn/tv/JSX className) to review.`,
   );
@@ -28,12 +28,12 @@ export function printArrangeResult(result: ArrangeRunResult, write: boolean): vo
 }
 
 /**
- * Prints the per-file preview of a work plan's unwrap and grouping edits.
+ * Presents the per-file preview of a work plan's unwrap and grouping edits.
  *
  * @since 0.3.16-canary.0
  */
-export function printGroupFilePreviewFromWork(work: GroupFileWorkPlan): void {
-  printGroupFilePreviewBody({
+export function presentGroupFilePreviewFromWork(work: GroupFileWorkPlan): void {
+  presentGroupFilePreviewBody({
     filePath: work.filePath,
     reportTotal: work.reportTotal,
     cnInTvNoReplacement: work.cnInTvNoReplacement,
@@ -46,7 +46,7 @@ export function printGroupFilePreviewFromWork(work: GroupFileWorkPlan): void {
   });
 }
 
-function printGroupFilePreviewBody(args: {
+function presentGroupFilePreviewBody(args: {
   filePath: string;
   reportTotal: number;
   cnInTvNoReplacement: number;

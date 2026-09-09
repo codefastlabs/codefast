@@ -5,11 +5,11 @@ import type { AnalyzeReport } from "#/arrange/domain/types";
 import { logger } from "#/core/logger";
 
 /**
- * Prints the human-readable summary of an `arrange inspect` report.
+ * Presents the human-readable summary of an `arrange inspect` report.
  *
  * @since 0.3.16-canary.0
  */
-export function printAnalyzeReport(resolvedTargetPath: string, report: AnalyzeReport): void {
+export function presentAnalyzeReport(resolvedTargetPath: string, report: AnalyzeReport): void {
   logger.out(`Path: ${path.resolve(resolvedTargetPath)}`);
   logger.out(`.ts/.tsx files: ${report.files}`);
   logger.out(`cn(...) call sites: ${report.cnCallExpressions}`);

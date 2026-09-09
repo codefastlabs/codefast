@@ -14,9 +14,9 @@ eleven more ports. Roughly three files in four existed to connect the other one,
 resolved at runtime what a function call would have checked at compile time.
 
 **Decision.** Behaviour is wired with plain functions. A command module builds its Commander subcommand and calls
-`prepare*` / `run*` functions directly; domain modules export pure functions; output modules export `print*` functions.
-There is no container, no module registry, no token. Node built-ins are called through thin helpers in `core/` only
-where a helper adds something (a `Result`, a normalised error), never to make them injectable.
+`prepare*` / `run*` functions directly; domain modules export pure functions; output modules export `present*`
+functions. There is no container, no module registry, no token. Node built-ins are called through thin helpers in
+`core/` only where a helper adds something (a `Result`, a normalised error), never to make them injectable.
 
 **Consequences.** Dependencies are visible as imports and checked by `tsc`. A new command is one directory following a
 fixed skeleton — `command.ts` (Commander wiring), `cli-schema.ts` (argv), `prepare.ts` (prelude), `run*.ts`
@@ -121,12 +121,16 @@ mechanical offers `--fix` (comment dividers) so a red run is one command from gr
 **Context.** Suffixes such as `.port.ts`, `.adapter.ts`, `.domain-service.ts`, `.value-object.ts` and `.coordination.ts`
 described the pattern a file played in the old architecture, not what the file contained.
 
-**Decision.** One concept per file, named for the concept: `grouping.ts`, `analyze.ts`, `exports.ts`. The only reserved
-suffix is `.test.ts`; Zod schemas are named for what they parse (`cli-schema.ts`, `core/config/schema.ts`). Directory
-names are the five commands plus `core/`, and a command's pure logic lives under its `domain/`. Within a command, the
-pipeline roles carry fixed names — `prepare.ts` for the prelude, `run*.ts` for the orchestrator, `cli-result.ts` for the
-machine output. The orchestrator is `run*`, never `sync`: `sync` reads as "synchronous" (these functions are async) and
-is kept only where it is the domain verb, as in `mirror` syncing `package.json` exports.
+**Decision.** Two kinds of file, two naming rules. A **pipeline-role file** — the fixed slot every command and
+subcommand repeats — carries its role name: `command.ts` (Commander wiring), `cli-schema.ts` (argv), `prepare.ts`
+(prelude), `run*.ts` (orchestrator), `output.ts` (the human `present*` functions), `cli-result.ts` (machine output).
+Every **other** file is named for the one concept it holds: `grouping.ts`, `token-classifier.ts`, `exports.ts`. The only
+reserved suffix is `.test.ts`; Zod schemas are named for what they parse (`cli-schema.ts`, `core/config/schema.ts`).
+Directory names are the five commands plus `core/`, and a command's pure logic lives under its `domain/`. The role wins
+at a role slot: a subcommand whose work reads as "analyze" still names its orchestrator `run.ts` and keeps the concept
+in `domain/analyze-service.ts` — the file that touches the `FilesystemPort` and returns a `Result` is `run*`, not the
+verb it computes. The orchestrator is `run*`, never `sync`: `sync` reads as "synchronous" (these functions are async)
+and is kept only where it is the domain verb, as in `mirror` syncing `package.json` exports.
 
 **Consequences.** A filename says what a module does; the directory says which command it belongs to; and the same role
 answers to the same name in every command.

@@ -4,18 +4,20 @@ import { Command } from "commander";
 
 import { formatArrangeGroupJsonOutput } from "#/arrange/group/cli-result";
 import { arrangeSuggestGroupsRequestSchema } from "#/arrange/group/cli-schema";
+import { presentArrangeGroupResult } from "#/arrange/group/output";
 import { suggestCnGroupsFromCli } from "#/arrange/group/suggest";
-import { analyzeDirectory } from "#/arrange/inspect/analyze";
 import { formatArrangeAnalyzeJsonOutput } from "#/arrange/inspect/cli-result";
 import { arrangeAnalyzeDirectoryRequestSchema } from "#/arrange/inspect/cli-schema";
-import { printAnalyzeReport } from "#/arrange/inspect/output";
+import { presentAnalyzeReport } from "#/arrange/inspect/output";
+import { runArrangeInspect } from "#/arrange/inspect/run";
 import { prepareArrangeWorkspace } from "#/arrange/prepare";
 import { exitCodeForArrangeResult, formatArrangeJsonOutput } from "#/arrange/regroup/cli-result";
 import { arrangeRunRequestSchema } from "#/arrange/regroup/cli-schema";
-import { printGroupFilePreviewFromWork, printArrangeResult } from "#/arrange/regroup/output";
+import { presentGroupFilePreviewFromWork, presentArrangeResult } from "#/arrange/regroup/output";
 import { runArrange } from "#/arrange/regroup/run";
 import { formatArrangeSimplifyJsonOutput } from "#/arrange/simplify/cli-result";
-import { printSimplifyResult } from "#/arrange/simplify/output";
+import { arrangeSimplifyRunRequestSchema } from "#/arrange/simplify/cli-schema";
+import { presentSimplifyResult } from "#/arrange/simplify/output";
 import { runArrangeSimplify } from "#/arrange/simplify/run";
 import { readOptionalPositionalArg } from "#/core/cli/positional";
 import { consumeCliAppError, runCliResultAsync } from "#/core/cli/result-handle";
@@ -64,14 +66,14 @@ export function createArrangeCommand(): Command {
       await runCliResultAsync(runArrange(nodeFilesystem, parsed.value), (value) => {
         if (!write) {
           for (const plan of value.previewPlans) {
-            printGroupFilePreviewFromWork(plan);
+            presentGroupFilePreviewFromWork(plan);
           }
         }
         if (opts.json) {
           logger.out(formatArrangeJsonOutput(value, write));
           return exitCodeForArrangeResult(value);
         }
-        printArrangeResult(value, write);
+        presentArrangeResult(value, write);
         return exitCodeForArrangeResult(value);
       });
     });
@@ -96,14 +98,14 @@ export function createArrangeCommand(): Command {
       if (!consumeCliAppError(parsed)) {
         return;
       }
-      const outcome = analyzeDirectory(nodeFilesystem, parsed.value.analyzeRootPath);
+      const outcome = runArrangeInspect(nodeFilesystem, parsed.value.analyzeRootPath);
       if (!consumeCliAppError(outcome)) {
         return;
       }
       if (opts.json) {
         logger.out(formatArrangeAnalyzeJsonOutput(resolvedTarget, outcome.value));
       } else {
-        printAnalyzeReport(resolvedTarget, outcome.value);
+        presentAnalyzeReport(resolvedTarget, outcome.value);
       }
     });
 
@@ -123,12 +125,16 @@ export function createArrangeCommand(): Command {
         return;
       }
       const { resolvedTarget } = prelude.value;
-      await runCliResultAsync(runArrangeSimplify(nodeFilesystem, { targetPath: resolvedTarget, write }), (value) => {
+      const parsed = parseWithSchema(arrangeSimplifyRunRequestSchema, { targetPath: resolvedTarget, write });
+      if (!consumeCliAppError(parsed)) {
+        return;
+      }
+      await runCliResultAsync(runArrangeSimplify(nodeFilesystem, parsed.value), (value) => {
         if (opts.json) {
           logger.out(formatArrangeSimplifyJsonOutput(value, write));
           return CLI_EXIT_SUCCESS;
         }
-        printSimplifyResult(value, write);
+        presentSimplifyResult(value, write);
         return CLI_EXIT_SUCCESS;
       });
     });
@@ -153,8 +159,7 @@ export function createArrangeCommand(): Command {
       if (opts.json) {
         logger.out(formatArrangeGroupJsonOutput(output));
       } else {
-        logger.out(output.primaryLine);
-        logger.out(output.bucketsCommentLine);
+        presentArrangeGroupResult(output);
       }
     });
 
