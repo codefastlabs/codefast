@@ -125,7 +125,7 @@ Long static JSX `className` strings are regrouped regardless of where `cn` comes
 | `--dry-run`          | Preview suggested replacements without writing files.                         |
 | `--with-classname`   | Append `className` as the final `cn()` argument (alias: `--with-class-name`). |
 | `--cn-import <spec>` | Override the module specifier used when a missing `cn` import is added.       |
-| `--json`             | Print one JSON object on stdout (suppresses human progress).                  |
+| `--json`             | Print one JSON summary on stdout (suppresses human progress).                 |
 
 Exits `1` when the `arrange.onAfterWrite` hook fails, `0` otherwise.
 
