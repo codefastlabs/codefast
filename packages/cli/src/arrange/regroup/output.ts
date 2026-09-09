@@ -9,7 +9,7 @@ import { logger } from "#/core/logger";
  *
  * @since 0.3.16-canary.0
  */
-export function printSyncResult(result: ArrangeRunResult, write: boolean): void {
+export function printArrangeResult(result: ArrangeRunResult, write: boolean): void {
   logger.out(
     `\nTotal: ${result.filePaths.length} file(s), ${result.totalFound} site(s) (cn/tv/JSX className) to review.`,
   );

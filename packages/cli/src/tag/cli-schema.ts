@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-import type { TagSyncRunRequest } from "#/tag/run";
+import type { TagRunRequest } from "#/tag/run";
 
 /**
- * Zod schema validating a `TagSyncRunRequest`.
+ * Zod schema validating a `TagRunRequest`.
  *
  * @since 0.3.16-canary.0
  */
-export const tagSyncRunRequestSchema: z.ZodType<TagSyncRunRequest> = z.object({
+export const tagRunRequestSchema: z.ZodType<TagRunRequest> = z.object({
   rootDir: z.string().min(1),
   write: z.boolean(),
   json: z.boolean().optional(),

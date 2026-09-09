@@ -12,7 +12,7 @@ import { resolveProvidedTagTargetPath } from "#/tag/resolve-target-path";
  *
  * @since 0.3.16-canary.0
  */
-export async function prepareTagSync(
+export async function prepareTag(
   fs: FilesystemPort,
   args: {
     readonly currentWorkingDirectory: string;

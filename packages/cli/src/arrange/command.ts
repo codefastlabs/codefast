@@ -10,10 +10,10 @@ import { formatArrangeAnalyzeJsonOutput } from "#/arrange/inspect/cli-result";
 import { arrangeAnalyzeDirectoryRequestSchema } from "#/arrange/inspect/cli-schema";
 import { printAnalyzeReport } from "#/arrange/inspect/output";
 import { prepareArrangeWorkspace } from "#/arrange/prepare";
-import { exitCodeForArrangeSyncResult, formatArrangeSyncJsonOutput } from "#/arrange/regroup/cli-result";
-import { arrangeSyncRunRequestSchema } from "#/arrange/regroup/cli-schema";
-import { printGroupFilePreviewFromWork, printSyncResult } from "#/arrange/regroup/output";
-import { runArrangeSync } from "#/arrange/regroup/run";
+import { exitCodeForArrangeResult, formatArrangeJsonOutput } from "#/arrange/regroup/cli-result";
+import { arrangeRunRequestSchema } from "#/arrange/regroup/cli-schema";
+import { printGroupFilePreviewFromWork, printArrangeResult } from "#/arrange/regroup/output";
+import { runArrange } from "#/arrange/regroup/run";
 import { formatArrangeSimplifyJsonOutput } from "#/arrange/simplify/cli-result";
 import { printSimplifyResult } from "#/arrange/simplify/output";
 import { runArrangeSimplify } from "#/arrange/simplify/run";
@@ -50,7 +50,7 @@ export function createArrangeCommand(): Command {
         return;
       }
       const { resolvedTarget, rootDir, config } = prelude.value;
-      const parsed = parseWithSchema(arrangeSyncRunRequestSchema, {
+      const parsed = parseWithSchema(arrangeRunRequestSchema, {
         rootDir,
         targetPath: resolvedTarget,
         write,
@@ -61,18 +61,18 @@ export function createArrangeCommand(): Command {
       if (!consumeCliAppError(parsed)) {
         return;
       }
-      await runCliResultAsync(runArrangeSync(nodeFilesystem, parsed.value), (value) => {
+      await runCliResultAsync(runArrange(nodeFilesystem, parsed.value), (value) => {
         if (!write) {
           for (const plan of value.previewPlans) {
             printGroupFilePreviewFromWork(plan);
           }
         }
         if (opts.json) {
-          logger.out(formatArrangeSyncJsonOutput(value, write));
-          return exitCodeForArrangeSyncResult(value);
+          logger.out(formatArrangeJsonOutput(value, write));
+          return exitCodeForArrangeResult(value);
         }
-        printSyncResult(value, write);
-        return exitCodeForArrangeSyncResult(value);
+        printArrangeResult(value, write);
+        return exitCodeForArrangeResult(value);
       });
     });
 

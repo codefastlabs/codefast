@@ -7,12 +7,12 @@ import { consumeCliAppError } from "#/core/cli/result-handle";
 import { nodeFilesystem } from "#/core/filesystem/node";
 import { logger } from "#/core/logger";
 import { parseWithSchema } from "#/core/schema-parse";
-import { exitCodeForTagSyncResult } from "#/tag/cli-result";
-import { tagSyncRunRequestSchema } from "#/tag/cli-schema";
-import type { TagSyncResult } from "#/tag/domain/types";
-import { presentTagSyncResult, TagSyncProgressPresenter } from "#/tag/output";
-import { prepareTagSync } from "#/tag/prepare";
-import { runTagSync } from "#/tag/run";
+import { exitCodeForTagResult } from "#/tag/cli-result";
+import { tagRunRequestSchema } from "#/tag/cli-schema";
+import type { TagResult } from "#/tag/domain/types";
+import { presentTagResult, TagProgressPresenter } from "#/tag/output";
+import { prepareTag } from "#/tag/prepare";
+import { runTag } from "#/tag/run";
 
 /**
  * Creates the `tag` subcommand, which stamps `@since` tags on exported declarations.
@@ -26,7 +26,7 @@ export function createTagCommand(): Command {
     .option("--dry-run", "Show summary without writing files", false)
     .option("--json", "Print one JSON summary on stdout (suppresses human progress)", false)
     .action(async (target: string | undefined, opts: { dryRun?: boolean; json?: boolean }) => {
-      const prelude = await prepareTagSync(nodeFilesystem, {
+      const prelude = await prepareTag(nodeFilesystem, {
         currentWorkingDirectory: process.cwd(),
         rawTarget: readOptionalPositionalArg(target),
       });
@@ -35,7 +35,7 @@ export function createTagCommand(): Command {
       }
       const { rootDir, config, resolvedTargetPath } = prelude.value;
       const tagConfig = config.tag ?? {};
-      const parsed = parseWithSchema(tagSyncRunRequestSchema, {
+      const parsed = parseWithSchema(tagRunRequestSchema, {
         rootDir,
         write: !opts.dryRun,
         json: opts.json,
@@ -46,8 +46,8 @@ export function createTagCommand(): Command {
       if (!consumeCliAppError(parsed)) {
         return;
       }
-      const progressPresenter = new TagSyncProgressPresenter();
-      const tagOutcome = await runTagSync(nodeFilesystem, {
+      const progressPresenter = new TagProgressPresenter();
+      const tagOutcome = await runTag(nodeFilesystem, {
         ...parsed.value,
         listener: parsed.value.json ? undefined : progressPresenter,
       });
@@ -55,17 +55,17 @@ export function createTagCommand(): Command {
         return;
       }
       if (parsed.value.json) {
-        logger.out(formatTagSyncJsonOutput(tagOutcome.value, rootDir));
-        process.exitCode = exitCodeForTagSyncResult(tagOutcome.value);
+        logger.out(formatTagJsonOutput(tagOutcome.value, rootDir));
+        process.exitCode = exitCodeForTagResult(tagOutcome.value);
       } else {
-        process.exitCode = presentTagSyncResult(tagOutcome.value, rootDir);
+        process.exitCode = presentTagResult(tagOutcome.value, rootDir);
       }
     });
 
   return cmd;
 }
 
-function formatTagSyncJsonOutput(result: TagSyncResult, rootDir: string): string {
+function formatTagJsonOutput(result: TagResult, rootDir: string): string {
   return JSON.stringify({
     schemaVersion: 1 as const,
     ok: result.hookError === null,

@@ -99,7 +99,7 @@ export interface TagProgressListener {
  *
  * @since 0.3.16-canary.0
  */
-export type TagSyncResult = {
+export type TagResult = {
   mode: "applied" | "dry-run";
   selectedTargets: Array<TagResolvedTarget>;
   skippedPackages: Array<string>;

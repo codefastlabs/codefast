@@ -1,6 +1,6 @@
 import type { GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
 import type { ArrangeRunResult } from "#/arrange/domain/types";
-import type { ArrangeSyncRunRequest } from "#/arrange/regroup/cli-schema";
+import type { ArrangeRunRequest } from "#/arrange/regroup/cli-schema";
 import { processArrangeGroupFile } from "#/arrange/regroup/process-file";
 import { scanArrangeTargets } from "#/arrange/scan-target";
 import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#/core/config/schema";
@@ -30,9 +30,9 @@ async function runOnAfterWriteHook(
  *
  * @since 0.3.16-canary.0
  */
-export async function runArrangeSync(
+export async function runArrange(
   fs: FilesystemPort,
-  request: ArrangeSyncRunRequest,
+  request: ArrangeRunRequest,
 ): Promise<Result<ArrangeRunResult, AppError>> {
   const filePaths = scanArrangeTargets(fs, request.targetPath);
   const modifiedFiles: Array<string> = [];

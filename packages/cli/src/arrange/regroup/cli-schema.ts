@@ -5,7 +5,7 @@ import { z } from "zod";
  *
  * @since 0.3.16-canary.0
  */
-export type ArrangeSyncRunRequest = {
+export type ArrangeRunRequest = {
   rootDir: string;
   targetPath: string;
   write: boolean;
@@ -19,7 +19,7 @@ export type ArrangeSyncRunRequest = {
  *
  * @since 0.3.16-canary.0
  */
-export const arrangeSyncRunRequestSchema: z.ZodType<ArrangeSyncRunRequest> = z.object({
+export const arrangeRunRequestSchema: z.ZodType<ArrangeRunRequest> = z.object({
   rootDir: z.string().min(1),
   targetPath: z.string().min(1),
   write: z.boolean(),

@@ -11,7 +11,7 @@ import type {
   TagFileResult,
   TagProgressListener,
   TagResolvedTarget,
-  TagSyncResult,
+  TagResult,
   TagTargetCandidate,
   TagTargetExecutionResult,
 } from "#/tag/domain/types";
@@ -23,7 +23,7 @@ import { runTagOnTarget } from "#/tag/target-runner";
  *
  * @since 0.3.16-canary.0
  */
-export type TagSyncRunRequest = {
+export type TagRunRequest = {
   rootDir: string;
   write: boolean;
   json?: boolean | undefined;
@@ -37,19 +37,16 @@ export type TagSyncRunRequest = {
  *
  * @since 0.3.16-canary.0
  */
-export type TagSyncExecutionInput = TagSyncRunRequest & {
+export type TagExecutionInput = TagRunRequest & {
   readonly listener?: TagProgressListener | undefined;
 };
 
 /**
- * Runs the tag sync across the selected targets and returns the aggregate result.
+ * Applies `@since` tags across the selected targets and returns the aggregate result.
  *
  * @since 0.3.16-canary.0
  */
-export async function runTagSync(
-  fs: FilesystemPort,
-  input: TagSyncExecutionInput,
-): Promise<Result<TagSyncResult, AppError>> {
+export async function runTag(fs: FilesystemPort, input: TagExecutionInput): Promise<Result<TagResult, AppError>> {
   try {
     const tagConfig = input.config as CodefastTagConfig | undefined;
     const targetCandidates = await resolveTagTargetCandidates(fs, input.rootDir, input.targetPath);
