@@ -44,9 +44,9 @@ timing, if ever wanted, wraps a function instead of hooking a container activati
 `CommandTree` / `CommandRouteWire` JSON that was translated into Commander added a layer with no extra capability.
 
 **Decision.** Each `<command>/command.ts` exports `create<Name>Command(): Command` and uses the Commander API directly;
-`cli.ts` is the composition root that registers the five commands and global options. Where a command has several
-near-identical subcommands (the five `audit` scans), `command.ts` declares one descriptor per subcommand and a single
-runner walks them, so the shared prepare → parse → run → report pipeline is written once, not copied per scan.
+`cli.ts` is the composition root that registers the five commands and global options. The prepare → guard → parse → run
+→ report → exit control flow every command and subcommand repeats is written once in `core/cli/command-pipeline.ts`; a
+`command.ts` supplies only a descriptor of typed slots, so the spine is never copied per command.
 
 **Consequences.** Adding a flag is one `.option()` call next to the action that reads it. Argv validation stays a Zod
 schema per command (`cli-schema.ts`) parsed through `parseWithSchema`, so shape errors are reported as usage errors, not
@@ -66,6 +66,35 @@ subcommand only when that subcommand alone uses it; anything two subcommands use
 **Consequences.** Everything about one scan lives in one folder (`audit/rtl/`, `arrange/inspect/`), and `audit/domain/`
 holds only what every scan shares. `mirror`, `pack-slim` and `tag` have no subcommands and stay flat.
 
+## One pipeline, exit code computed once
+
+**Context.** The prepare → parse → run → report → exit dance was hand-copied into every `command.ts`, and each copy
+recomputed the exit code on its own path — some presenters even returned it, leaking control-flow policy into the human
+presenter. Only `audit` had factored the dance into a descriptor and runner, and nothing else reused it.
+
+**Decision.** The dance lives once in `core/cli/command-pipeline.ts`. A command supplies a `CommandPipeline` descriptor
+of typed slots — `prepare`, `schema`, `buildRequest`, `run`, `presentHuman` / `formatJson`, `exitCode`, plus optional
+`guard` and `createPresenter` — and the pipeline runs them, parses global options uniformly, and computes the exit code
+exactly once from the run result; `present*` functions return `void`. `arrange group` is the deliberate exception: a
+pure token-string transform with no workspace prelude and a variadic positional, it stays wired by hand.
+
+**Consequences.** Adding a command is a descriptor, not a copy of the spine; the exit code has one source; global
+options reach every command the same way. The optional slots (`guard` for pack-slim's working-tree check,
+`createPresenter` for streaming progress) keep the shared spine from collapsing to a lowest common denominator.
+
+## Group a command's I/O by subsystem
+
+**Context.** `domain/` is reserved for pure logic, so a command whose work is mostly I/O pushes that work to flat files
+at the command root. `tag` had target resolution, candidate discovery, the per-target runner, the since-writer and
+version resolution all in one root pile, with only types under `domain/`.
+
+**Decision.** When the root pile grows past a handful, group it by subsystem rather than by purity: `tag/target/` for
+discovering and selecting what to tag, `tag/writer/` for stamping `@since`. The purity rule stays; this grouping is
+orthogonal to it. Shared types stay in `domain/types.ts` because they are genuinely cross-subsystem — scattering them
+would couple the subsystems through their type imports.
+
+**Consequences.** "Where is the tagging logic?" answers by folder, not by scanning a flat root.
+
 ## `Result<T, AppError>` for recoverable failures
 
 **Context.** A CLI's failures are mostly expected: a missing config, an unparsable file, a path outside the workspace.
@@ -73,8 +102,8 @@ Throwing for those turns every caller into a `try`/`catch` and loses the error c
 
 **Decision.** Fallible operations return `Result<T, AppError>` (`core/result.ts`, `core/errors.ts`). `AppError` is a
 plain object with a code, not an `Error` subclass, so building one costs no stack capture. One boundary,
-`consumeCliAppError` / `runCliResultAsync` in `core/cli/result-handle.ts`, turns an `err` into a formatted message and
-the matching exit code (`core/exit-codes.ts`); unexpected exceptions still propagate.
+`consumeCliAppError` in `core/cli/result-handle.ts`, turns an `err` into a formatted message and the matching exit code
+(`core/exit-codes.ts`); unexpected exceptions still propagate.
 
 **Consequences.** Domain and orchestration code never touch `process.exitCode`; only the command boundary does. Error
 text is produced in one place (`formatAppError`), so `--json` and human output stay consistent.
@@ -86,12 +115,14 @@ side effect, checked with a spy), and a script reads the `--json` string and the
 asserting on the return). Folding both into one file mixes an effectful presenter with a pure serializer.
 
 **Decision.** Each command directory splits output by audience. `output.ts` (or a small `*-reporter.ts`) holds the human
-`present*` functions that write through `core/logger.ts` — a plain object, so a test can `vi.spyOn(logger, "out")`.
-`cli-result.ts` holds the machine output: the `format*JsonOutput` string builders and the `exitCodeFor*` mappers, which
-take a result and return a value, touching neither `logger` nor `process`.
+`present*` functions that write through `core/logger.ts` — a plain object, so a test can `vi.spyOn(logger, "out")` — and
+return `void`. `cli-result.ts` holds the machine output: the `format*JsonOutput` string builders and the `exitCodeFor*`
+mappers, which take a result and return a value, touching neither `logger` nor `process`. The exit code is policy, not
+presentation, so the pipeline calls `exitCodeFor*` once for both audiences rather than letting a presenter decide it.
 
 **Consequences.** Output changes never touch orchestration; the `--json` shape and the exit-code rule are unit-tested
-without a spy. `command.ts` carries no serialization or exit-code logic of its own — it calls the two output modules.
+without a spy. `command.ts` carries no serialization or exit-code logic of its own — the pipeline calls the two output
+modules.
 
 ## Parse TypeScript with `oxc-parser`
 
@@ -145,6 +176,31 @@ infrastructure.
 
 **Consequences.** Adding a test means importing a function and asserting on a `Result`. Coverage is enforced by the
 workspace's `test:coverage` gate, not by this document.
+
+## Simplify preserves cn() precedence; the className fold is type-gated and opt-in
+
+**Context.** The mixed-`cn()` branch of `simplify` moved every static literal to the front of the call. Argument order
+in `cn()` is tailwind-merge precedence — a later argument overrides an earlier one — so hoisting an override string
+ahead of a variant call silently changed which utilities won, dropping the very override the trailing string existed to
+apply. Separately, the idiomatic way to override a variant is its own `className` option, not a `cn()` wrapper around
+it, and a codemod that produced the wrapper form left the tidier call unwritten.
+
+**Decision.** Two rules. The base pass coalesces only _adjacent_ static literals and never reorders arguments, so
+precedence is preserved and a lone static after a dynamic argument is left alone. Folding `cn(variant({…}), …overrides)`
+into `variant({…, className: …})` is a separate capability behind `--fold-variant-classname`. It fires only when the
+native TypeScript type server (`typescript/unstable/sync`) confirms the callee's first-parameter options accept a
+`className`/`class` of the right shape — string for a single static override, a class array for a dynamic or multi-part
+one. Detection is by type, never by name: a call the type server does not recognize as a variant function is left
+untouched.
+
+**Consequences.** The default pass stays oxc-only, synchronous, and workspace-free; the fold is the one path that spawns
+the type server and needs the target inside a `tsconfig`, so `typescript` is an optional peer and files outside a
+project keep the base pass. A cheap syntactic pre-scan gates that cost: the type server is queried only for a file that
+actually contains a `cn(variant({…}), …)` call, so a directory of hundreds of files loads a project once for the few
+that qualify rather than once per file. The type sees the option's shape but not the variant's `twMerge` setting, so a
+variant configured `twMerge: false` would merge a folded `className` differently than the `cn()` it replaced — accepted
+as out of scope, since the option-type gate already excludes non-variant callees and the shipped variants use the
+default merge.
 
 ## License
 

@@ -10,7 +10,6 @@ import type { TagRunRequest } from "#/tag/domain/types";
 export const tagRunRequestSchema: z.ZodType<TagRunRequest> = z.object({
   rootDir: z.string().min(1),
   write: z.boolean(),
-  json: z.boolean().optional(),
   targetPath: z.string().optional(),
   skipPackages: z.array(z.string()).optional(),
   config: z.unknown().optional(),

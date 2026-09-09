@@ -3,8 +3,8 @@ import path from "node:path";
 import type { Filesystem } from "#/core/filesystem/filesystem";
 import { walkTsxFiles } from "#/core/workspace/typescript-walk";
 import type { TagRunOptions, TagRunResult } from "#/tag/domain/types";
-import { TagSinceWriter } from "#/tag/since-writer";
-import { resolveNearestPackageVersion } from "#/tag/version-resolver";
+import { TagSinceWriter } from "#/tag/writer/since-writer";
+import { resolveNearestPackageVersion } from "#/tag/writer/version-resolver";
 
 /**
  * Stamps `@since` tags across one target's TypeScript files and returns the run result.

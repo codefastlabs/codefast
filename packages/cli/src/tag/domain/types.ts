@@ -132,7 +132,6 @@ export interface TagCommandPrelude {
 export type TagRunRequest = {
   rootDir: string;
   write: boolean;
-  json?: boolean | undefined;
   targetPath?: string | undefined;
   skipPackages?: Array<string> | undefined;
   config?: unknown;

@@ -6,6 +6,7 @@ import * as z from "zod";
 export type ArrangeSimplifyRunRequest = {
   targetPath: string;
   write: boolean;
+  foldVariantClassName?: boolean | undefined;
 };
 
 /**
@@ -14,4 +15,5 @@ export type ArrangeSimplifyRunRequest = {
 export const arrangeSimplifyRunRequestSchema: z.ZodType<ArrangeSimplifyRunRequest> = z.object({
   targetPath: z.string().min(1),
   write: z.boolean(),
+  foldVariantClassName: z.boolean().optional(),
 });

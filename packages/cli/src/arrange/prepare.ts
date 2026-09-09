@@ -1,12 +1,11 @@
 import type { ArrangeTargetWorkspaceAndConfig } from "#/arrange/domain/types";
 import { resolveArrangeTargetPath } from "#/arrange/resolve-target";
+import { resolveProjectRootResult } from "#/core/cli/resolve-root";
 import { loadCodefastConfig } from "#/core/config";
 import { AppError } from "#/core/errors";
-import { messageFrom } from "#/core/errors";
 import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
-import { resolveProjectRoot } from "#/core/workspace/resolver";
 
 /**
  * Resolves the arrange target, repo root, and loaded config an arrange run needs.
@@ -27,12 +26,11 @@ export async function prepareArrangeWorkspace(
   if (!fs.existsSync(resolvedTarget)) {
     return err(new AppError("NOT_FOUND", `Not found: ${resolvedTarget}`));
   }
-  let rootDir: string;
-  try {
-    rootDir = resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir;
-  } catch (caughtError: unknown) {
-    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
+  const rootOutcome = resolveProjectRootResult(fs, args.currentWorkingDirectory);
+  if (!rootOutcome.ok) {
+    return rootOutcome;
   }
+  const rootDir = rootOutcome.value;
   const loadedOutcome = await loadCodefastConfig(rootDir, fs);
   if (!loadedOutcome.ok) {
     return loadedOutcome;

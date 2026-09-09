@@ -1,6 +1,4 @@
-import { CLI_EXIT_GENERAL_ERROR } from "#/core/exit-codes";
 import { logger } from "#/core/logger";
-import { exitCodeForTagResult } from "#/tag/cli-result";
 import type { TagProgressListener, TagResolvedTarget, TagResult, TagTargetExecutionResult } from "#/tag/domain/types";
 
 type TagProgressEvent =
@@ -41,22 +39,21 @@ const colors = {
 } as const;
 
 /**
- * Prints a tag run's target table, warnings, and summary, and returns the exit code.
+ * Prints a tag run's target table, warnings, and summary to the human reader.
  *
  * @since 0.3.16-canary.0
  */
-export function presentTagResult(result: TagResult, rootDir: string): number {
+export function presentTagResult(result: TagResult, rootDir: string): void {
   logger.out(formatTargetTable(result.selectedTargets, rootDir));
   if (result.selectedTargets.length === 0) {
     logger.err("No packages found in workspace. Check your pnpm-workspace.yaml or provide an explicit target path.");
-    return CLI_EXIT_GENERAL_ERROR;
+    return;
   }
   const warningsAndErrorsSection = formatWarningsAndErrors(result);
   if (warningsAndErrorsSection) {
     logger.err(warningsAndErrorsSection);
   }
   logger.out(formatSummary(result));
-  return exitCodeForTagResult(result);
 }
 
 function withColorizedLine(line: string, colorCode: string): string {

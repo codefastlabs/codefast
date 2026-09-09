@@ -76,30 +76,12 @@ export class TypeScriptAstTranslator {
   }
 
   /**
-   * Own child nodes in source-declaration order, mirroring `ts.forEachChild`:
-   * recurses into nested node objects and arrays of nodes, skipping primitives
-   * and plain records (e.g. a template element's `value`) that carry no `type`.
+   * Translates any node the typed cases do not cover, recursing into own child nodes and arrays of
+   * nodes in source-declaration order and skipping primitives and records that carry no `type`.
+   *
+   * @remarks Children are walked inline rather than through a generator — the `yield` per child is
+   * several times slower than a plain loop on this hot path, and this fallback runs for most nodes.
    */
-  private *childNodesOf(node: OxcNode): Generator<OxcNode> {
-    for (const key in node) {
-      if (key === "type" || key === "start" || key === "end" || key === "range") {
-        continue;
-      }
-      const value = node[key];
-      if (Array.isArray(value)) {
-        for (const element of value) {
-          if (isOxcNode(element)) {
-            yield element;
-          }
-        }
-        continue;
-      }
-      if (isOxcNode(value)) {
-        yield value;
-      }
-    }
-  }
-
   private translateUnknown(node: OxcNode, parent: DomainAstNode | null): DomainUnknownAstNode {
     const self: WritableDomainAst<DomainUnknownAstNode> = {
       kind: DomainSyntaxKind.Unknown,
@@ -109,10 +91,23 @@ export class TypeScriptAstTranslator {
       children: [],
     };
     const childList: Array<DomainAstNode> = [];
-    for (const child of this.childNodesOf(node)) {
-      childList.push(this.translateNode(child, self as DomainUnknownAstNode));
+    for (const key in node) {
+      if (key === "type" || key === "start" || key === "end" || key === "range") {
+        continue;
+      }
+      const value = node[key];
+      if (Array.isArray(value)) {
+        for (const element of value) {
+          if (isOxcNode(element)) {
+            childList.push(this.translateNode(element, self as DomainUnknownAstNode));
+          }
+        }
+      } else if (isOxcNode(value)) {
+        childList.push(this.translateNode(value, self as DomainUnknownAstNode));
+      }
     }
-    return { ...self, children: childList } as DomainUnknownAstNode;
+    self.children = childList;
+    return self as DomainUnknownAstNode;
   }
 
   private stringLiteralText(node: OxcNode): string | undefined {
