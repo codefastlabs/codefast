@@ -17,8 +17,8 @@ import type {
   TagTargetExecutionResult,
 } from "#/tag/domain/types";
 import { extractDistinctVersions, summarizeVersions } from "#/tag/domain/version-summary";
-import { resolveTagTargetCandidates } from "#/tag/target-candidates";
-import { runTagOnTarget } from "#/tag/target-runner";
+import { resolveTagTargetCandidates } from "#/tag/target/candidates";
+import { runTagOnTarget } from "#/tag/target/runner";
 
 /**
  * Applies `@since` tags across the selected targets and returns the aggregate result.
@@ -34,21 +34,20 @@ export async function runTag(fs: Filesystem, input: TagExecutionInput): Promise<
     const targetExecutionResults = await Promise.all(
       selectedTargets.map((resolvedTarget) => runOnResolvedTarget(fs, resolvedTarget, input.write, input.listener)),
     );
-    const allFileResults: Array<TagFileResult> = targetExecutionResults.flatMap(
-      (targetResult) => targetResult.result?.fileResults ?? [],
-    );
-    const filesScanned = targetExecutionResults.reduce(
-      (sum, targetResult) => sum + (targetResult.result?.filesScanned ?? 0),
-      0,
-    );
-    const filesChanged = targetExecutionResults.reduce(
-      (sum, targetResult) => sum + (targetResult.result?.filesChanged ?? 0),
-      0,
-    );
-    const taggedDeclarations = targetExecutionResults.reduce(
-      (sum, targetResult) => sum + (targetResult.result?.taggedDeclarations ?? 0),
-      0,
-    );
+    const allFileResults: Array<TagFileResult> = [];
+    let filesScanned = 0;
+    let filesChanged = 0;
+    let taggedDeclarations = 0;
+    for (const targetResult of targetExecutionResults) {
+      const runResult = targetResult.result;
+      if (runResult === null) {
+        continue;
+      }
+      allFileResults.push(...runResult.fileResults);
+      filesScanned += runResult.filesScanned;
+      filesChanged += runResult.filesChanged;
+      taggedDeclarations += runResult.taggedDeclarations;
+    }
     const modifiedFiles = allFileResults.filter((entry) => entry.changed).map((entry) => entry.filePath);
     const hookError =
       input.write && modifiedFiles.length > 0

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { TagSinceWriter } from "#/tag/since-writer";
+import { TagSinceWriter } from "#/tag/writer/since-writer";
 import { createTagTestFilesystem } from "#/tests/unit/support/tag-test-filesystem";
 
 describe("TagSinceWriter", () => {
