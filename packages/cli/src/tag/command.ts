@@ -7,9 +7,8 @@ import { consumeCliAppError } from "#/core/cli/result-handle";
 import { nodeFilesystem } from "#/core/filesystem/node";
 import { logger } from "#/core/logger";
 import { parseWithSchema } from "#/core/schema-parse";
-import { exitCodeForTagResult } from "#/tag/cli-result";
+import { exitCodeForTagResult, formatTagJsonOutput } from "#/tag/cli-result";
 import { tagRunRequestSchema } from "#/tag/cli-schema";
-import type { TagResult } from "#/tag/domain/types";
 import { presentTagResult, TagProgressPresenter } from "#/tag/output";
 import { prepareTag } from "#/tag/prepare";
 import { runTag } from "#/tag/run";
@@ -63,13 +62,4 @@ export function createTagCommand(): Command {
     });
 
   return cmd;
-}
-
-function formatTagJsonOutput(result: TagResult, rootDir: string): string {
-  return JSON.stringify({
-    schemaVersion: 1 as const,
-    ok: result.hookError === null,
-    cwd: rootDir,
-    result,
-  });
 }
