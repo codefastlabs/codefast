@@ -13,6 +13,10 @@ function editsOverlap(left: PlannedSimplifyEdit, right: PlannedSimplifyEdit): bo
   return left.start < right.end && right.start < left.end;
 }
 
+// A file simplify can act on names `cn`/`tv` (a call or an import to prune) or carries a `class`/`className`;
+// a source with none of these has nothing to flatten or fold, so it never needs parsing.
+const SIMPLIFY_MARKER = /\b(?:cn|tv)\b|className|\bclass\s*[=:]/;
+
 /**
  * Runs the simplify pass on one file — flattening class expressions and pruning an unused `cn` import.
  *
@@ -28,6 +32,9 @@ export function processArrangeSimplifyFile(
 ): GroupFileResult {
   const { filePath, write, probe } = args;
   const sourceText = fs.readFileSync(filePath, "utf8");
+  if (!SIMPLIFY_MARKER.test(sourceText)) {
+    return { filePath, totalFound: 0, changed: 0 };
+  }
   const domainSf = parseDomainSourceFile(filePath, sourceText);
 
   // Resolve the file's type-server project at most once, and only if a syntactic fold candidate needs it.
