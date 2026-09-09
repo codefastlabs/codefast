@@ -9,7 +9,17 @@ import {
 } from "@codefast/benchmark-harness/shared/env-keys";
 import { startBenchServer } from "@codefast/benchmark-viewer/server";
 
-import { CODEFAST_DI, INVERSIFY, SERVE_TITLE, AWILIX, TSYRINGE } from "#/harness/config";
+import {
+  AWILIX,
+  BRANDI,
+  CODEFAST_DI,
+  DITOX,
+  INJECTION_JS,
+  INVERSIFY,
+  ITI,
+  SERVE_TITLE,
+  TSYRINGE,
+} from "#/harness/config";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 
 /** Chip display order; the labels themselves are declared on the scenario definitions. */
@@ -57,6 +67,10 @@ await startBenchServer({
     { name: INVERSIFY.libraryName, displayName: resolveDisplayName(INVERSIFY) },
     { name: AWILIX.libraryName, displayName: resolveDisplayName(AWILIX) },
     { name: TSYRINGE.libraryName, displayName: resolveDisplayName(TSYRINGE) },
+    { name: BRANDI.libraryName, displayName: resolveDisplayName(BRANDI) },
+    { name: DITOX.libraryName, displayName: resolveDisplayName(DITOX) },
+    { name: ITI.libraryName, displayName: resolveDisplayName(ITI) },
+    { name: INJECTION_JS.libraryName, displayName: resolveDisplayName(INJECTION_JS) },
   ],
   // Resolved from the scenario declarations themselves, so a rename cannot detach its facets.
   scenarioFacets: collectScenarioFacets(),

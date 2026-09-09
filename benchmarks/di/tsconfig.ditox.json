@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@codefast/typescript-config/library.json",
+  "compilerOptions": {
+    "experimentalDecorators": false,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [
+    "src/ditox-benches.ts",
+    "src/harness/**/*.ts",
+    "src/scenarios/types.ts",
+    "src/scenarios/collect-ditox-scenarios.ts",
+    "src/scenarios/ditox/**/*.ts",
+    "src/fixtures/realistic-graph.ts",
+    "src/fixtures/fan-out-descriptor.ts",
+    "src/fixtures/scenario-parity.ts",
+    "src/fixtures/ditox-adapter.ts"
+  ]
+}

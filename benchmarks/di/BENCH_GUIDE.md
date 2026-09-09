@@ -162,7 +162,7 @@ Also required for a comparison to mean anything:
 
 - **Each library in its canonical mode.** Forcing a library into another's decorator model measures the adapter.
 - **The same profile on both sides.** `--expose-gc` changes what is being measured; the report header prints it per
-  library, and all four must agree.
+  library, and every library must agree.
 - **The same workload, enforced by code.** `src/fixtures/scenario-parity.ts` holds each scenario's id, group,
   description and batch factor once and both sides import it. When adding a scenario, put the shared constants there — a
   batch factor that drifts scales `hzPerOp` silently.

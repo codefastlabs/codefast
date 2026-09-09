@@ -55,6 +55,7 @@ catalog:
   "@xyflow/react": ^12.11.6
   awilix: ^13.0.5
   babel-plugin-react-compiler: ^1.0.0
+  brandi: ^5.1.0
   chart.js: ^4.5.1
   chartjs-plugin-zoom: ^2.2.0
   class-variance-authority: ^0.7.1
@@ -63,11 +64,14 @@ catalog:
   commander: ^15.0.0
   date-fns: ^4.4.0
   date-fns-jalali: 4.4.0-0
+  ditox: ^3.3.0
   embla-carousel-autoplay: ^8.6.0
   embla-carousel-react: ^8.6.0
   hono: ^4.13.7
+  injection-js: ^2.6.1
   input-otp: ^1.5.0
   inversify: ^8.2.3
+  iti: ^0.8.0
   jest-axe: ^11.0.0
   jiti: ^2.7.0
   jsdom: ^30.0.1

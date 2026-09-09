@@ -47,7 +47,7 @@ import {
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
-import { AWILIX, CODEFAST_DI, INVERSIFY, TSYRINGE } from "#/harness/config";
+import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, ITI, TSYRINGE } from "#/harness/config";
 import { DI_COMPARISON_CONSOLE, DI_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
 const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
@@ -126,11 +126,24 @@ async function main(): Promise<void> {
 
   rebuildCodefastDiPackage();
 
-  const { payloads, runOrder } = await runEveryLibrary([CODEFAST_DI, INVERSIFY, AWILIX, TSYRINGE]);
+  const { payloads, runOrder } = await runEveryLibrary([
+    CODEFAST_DI,
+    INVERSIFY,
+    AWILIX,
+    TSYRINGE,
+    BRANDI,
+    DITOX,
+    ITI,
+    INJECTION_JS,
+  ]);
   const codefastPayload = payloads.get(CODEFAST_DI.libraryName)!;
   const inversifyPayload = payloads.get(INVERSIFY.libraryName)!;
   const awilixPayload = payloads.get(AWILIX.libraryName)!;
   const tsyringePayload = payloads.get(TSYRINGE.libraryName)!;
+  const brandiPayload = payloads.get(BRANDI.libraryName)!;
+  const ditoxPayload = payloads.get(DITOX.libraryName)!;
+  const itiPayload = payloads.get(ITI.libraryName)!;
+  const injectionJsPayload = payloads.get(INJECTION_JS.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
 
   assertSubjectMeasuredSomething(CODEFAST_DI.libraryName, codefastPayload.trials);
@@ -155,18 +168,42 @@ async function main(): Promise<void> {
     tsyringePayload.trials,
     tsyringePayload.sanityFailures,
   );
+  const brandiReport: LibraryReport = buildLibraryReport(
+    brandiPayload.fingerprint,
+    brandiPayload.trials,
+    brandiPayload.sanityFailures,
+  );
+  const ditoxReport: LibraryReport = buildLibraryReport(
+    ditoxPayload.fingerprint,
+    ditoxPayload.trials,
+    ditoxPayload.sanityFailures,
+  );
+  const itiReport: LibraryReport = buildLibraryReport(
+    itiPayload.fingerprint,
+    itiPayload.trials,
+    itiPayload.sanityFailures,
+  );
+  const injectionJsReport: LibraryReport = buildLibraryReport(
+    injectionJsPayload.fingerprint,
+    injectionJsPayload.trials,
+    injectionJsPayload.sanityFailures,
+  );
 
   const codefastLibrary: ComparisonLibrary = {
     report: codefastReport,
     displayName: CODEFAST_DI.libraryName,
     shortName: "cf",
   };
-  // awilix and tsyringe cover only the core subset, so they read `—` outside it; their
-  // head-to-head lines still count only the rows they measured.
+  // Every competitor except inversify covers only a subset of the core rows, so each reads `—`
+  // outside what it measured; the head-to-head lines still count only the rows in common.
   const competitors: ReadonlyArray<ComparisonLibrary> = [
     { report: inversifyReport, displayName: INVERSIFY.libraryName, shortName: "inv" },
     { report: awilixReport, displayName: resolveDisplayName(AWILIX), shortName: "awi" },
     { report: tsyringeReport, displayName: resolveDisplayName(TSYRINGE), shortName: "tsy" },
+    { report: brandiReport, displayName: resolveDisplayName(BRANDI), shortName: "brn" },
+    { report: ditoxReport, displayName: resolveDisplayName(DITOX), shortName: "dtx" },
+    { report: itiReport, displayName: resolveDisplayName(ITI), shortName: "iti" },
+    { report: injectionJsReport, displayName: resolveDisplayName(INJECTION_JS), shortName: "inj" },
   ];
   renderComparisonConsoleReport(codefastLibrary, competitors, DI_COMPARISON_CONSOLE);
 
@@ -175,6 +212,10 @@ async function main(): Promise<void> {
     { fingerprint: inversifyPayload.fingerprint, trials: inversifyPayload.trials },
     { fingerprint: awilixPayload.fingerprint, trials: awilixPayload.trials },
     { fingerprint: tsyringePayload.fingerprint, trials: tsyringePayload.trials },
+    { fingerprint: brandiPayload.fingerprint, trials: brandiPayload.trials },
+    { fingerprint: ditoxPayload.fingerprint, trials: ditoxPayload.trials },
+    { fingerprint: itiPayload.fingerprint, trials: itiPayload.trials },
+    { fingerprint: injectionJsPayload.fingerprint, trials: injectionJsPayload.trials },
   ];
 
   const markdown = renderComparisonMarkdownReport(codefastLibrary, competitors, {

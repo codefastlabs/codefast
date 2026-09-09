@@ -120,6 +120,9 @@ catalogs:
     babel-plugin-react-compiler:
       specifier: ^1.0.0
       version: 1.0.0
+    brandi:
+      specifier: ^5.1.0
+      version: 5.1.0
     chart.js:
       specifier: ^4.5.1
       version: 4.5.1
@@ -144,6 +147,9 @@ catalogs:
     date-fns-jalali:
       specifier: 4.4.0-0
       version: 4.4.0-0
+    ditox:
+      specifier: ^3.3.0
+      version: 3.3.0
     embla-carousel-autoplay:
       specifier: ^8.6.0
       version: 8.6.0
@@ -153,12 +159,18 @@ catalogs:
     hono:
       specifier: ^4.13.7
       version: 4.13.7
+    injection-js:
+      specifier: ^2.6.1
+      version: 2.6.1
     input-otp:
       specifier: ^1.5.0
       version: 1.5.0
     inversify:
       specifier: ^8.2.3
       version: 8.2.3
+    iti:
+      specifier: ^0.8.0
+      version: 0.8.0
     jest-axe:
       specifier: ^11.0.0
       version: 11.0.0
@@ -486,9 +498,21 @@ importers:
       awilix:
         specifier: 'catalog:'
         version: 13.0.5
+      brandi:
+        specifier: 'catalog:'
+        version: 5.1.0
+      ditox:
+        specifier: 'catalog:'
+        version: 3.3.0
+      injection-js:
+        specifier: 'catalog:'
+        version: 2.6.1
       inversify:
         specifier: 'catalog:'
         version: 8.2.3(reflect-metadata@0.2.2)
+      iti:
+        specifier: 'catalog:'
+        version: 0.8.0
       reflect-metadata:
         specifier: 'catalog:'
         version: 0.2.2
@@ -4445,6 +4469,9 @@ packages:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
 
+  brandi@5.1.0:
+    resolution: {integrity: sha512-wGAIaC/pj/SMRCc7RdEhawT83YcbuxSViRAWp0d5cWOCjpGqAzCJo8NeiL/5rUbAPL4zlQ45ciz5eMnARMGygA==}
+
   browserslist@4.28.8:
     resolution: {integrity: sha512-V2NpofLblG64mfOtSgDhOJESZEGogzDMBv/q+W6oc4LXWP/q75eOXoOaaOu1EOadB9U4Bwx/e0yzbvwKH8zalA==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -4820,6 +4847,10 @@ packages:
     resolution: {integrity: sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw==}
     engines: {node: '>=0.3.1'}
 
+  ditox@3.3.0:
+    resolution: {integrity: sha512-inc8TrePCjiFVew6NCh6+iuFtuClkJmkf7NWazNZlMhf4KkbHvixJDhlozn0znd4ASo1Ke9iPooKUsTtuDRcjQ==}
+    engines: {node: '>=12'}
+
   dom-accessibility-api@0.5.16:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
 
@@ -5084,6 +5115,9 @@ packages:
     resolution: {integrity: sha512-IBTdIkzZNOpqm7q3dRqJvMaldXjDHWkEDfrwGEQTs5eaQMWV+djAhR+wahyNNMAa+qpbDUhBMVt4ZKNwpPm7xQ==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
+  injection-js@2.6.1:
+    resolution: {integrity: sha512-dbR5bdhi7TWDoCye9cByZqeg/gAfamm8Vu3G1KZOTYkOif8WkuM8CD0oeDPtZYMzT5YH76JAFB7bkmyY9OJi2A==}
+
   input-otp@1.5.0:
     resolution: {integrity: sha512-3AcfdW1sNG0FmSA5hHMBXG7jNW5CdcdKs8ln8JOmn6S2SRkoXoJx+2UwC+ZvjflfnOdHJx0SfQ9/YjlxVYLtGQ==}
     peerDependencies:
@@ -5125,6 +5159,10 @@ packages:
   isbot@5.2.1:
     resolution: {integrity: sha512-dJ+LpKyClQZ7NG+j3OensC/mAZkGpukE9YUrgPYvAZj2doVL0edfDgywTUh5CXa0o+nW9a1V9e5+CJTX8+SxRw==}
     engines: {node: '>=18'}
+
+  iti@0.8.0:
+    resolution: {integrity: sha512-sy/Hz+EQcC87E5jTusKtP7VFW4MDPe4HH11IafcrJU6wNX7d6QR31DYnEmpnpHDBgrG33B4siXLzMwhDaRmd9w==}
+    engines: {node: '>=12'}
 
   jest-axe@11.0.0:
     resolution: {integrity: sha512-JuLD/QzqDn5QxpFUMkbmf55GiI+sdutpryRD//rIRuyEefYAuMfQbQZ53TsNtZXKV3rjgfD4KKTKPY+2Ga1mGw==}
@@ -6137,6 +6175,10 @@ packages:
     resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  utility-types@3.11.0:
+    resolution: {integrity: sha512-6Z7Ma2aVEWisaL6TvBCy7P8rm2LQoPv6dJ7ecIaIixHcwfbJ0x7mWdbcwlIM5IGQxPZSFYeqRCqlOOeKoJYMkw==}
+    engines: {node: '>= 4'}
 
   uuid@14.0.2:
     resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
@@ -9407,6 +9449,8 @@ snapshots:
     dependencies:
       fill-range: 7.1.1
 
+  brandi@5.1.0: {}
+
   browserslist@4.28.8:
     dependencies:
       baseline-browser-mapping: 2.11.13
@@ -9777,6 +9821,8 @@ snapshots:
 
   diff@8.0.4: {}
 
+  ditox@3.3.0: {}
+
   dom-accessibility-api@0.5.16: {}
 
   dom-accessibility-api@0.6.3: {}
@@ -10033,6 +10079,10 @@ snapshots:
 
   ini@6.0.0: {}
 
+  injection-js@2.6.1:
+    dependencies:
+      tslib: 2.8.1
+
   input-otp@1.5.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       react: 19.2.8
@@ -10065,6 +10115,10 @@ snapshots:
   is-potential-custom-element-name@1.0.1: {}
 
   isbot@5.2.1: {}
+
+  iti@0.8.0:
+    dependencies:
+      utility-types: 3.11.0
 
   jest-axe@11.0.0:
     dependencies:
@@ -11175,6 +11229,8 @@ snapshots:
   use-sync-external-store@1.6.0(react@19.2.8):
     dependencies:
       react: 19.2.8
+
+  utility-types@3.11.0: {}
 
   uuid@14.0.2: {}
 
