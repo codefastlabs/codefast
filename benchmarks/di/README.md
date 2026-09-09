@@ -1,7 +1,9 @@
-# `@codefast/di` vs InversifyJS · Awilix · tsyringe
+# `@codefast/di` vs InversifyJS · Awilix · tsyringe · Brandi · ditox · iti · injection-js
 
-A tinybench suite that runs the same dependency-injection workloads through four containers and reports one table.
-`@codefast/di` is the subject; the other three are the comparison.
+A tinybench suite that runs the same dependency-injection workloads through eight containers and reports one table.
+`@codefast/di` is the subject; the other seven are the comparison. Each rival runs only the scenarios it can express in
+its own idiom — inversify the full suite, awilix/tsyringe/brandi/ditox the factory/class core subset, iti and
+injection-js the singleton-friendly rows of that subset.
 
 > **Private benchmark suite.** Never published to npm. Results are recorded in [`RESULTS.md`](./RESULTS.md) and are
 > meant to be re-run, not quoted from memory.
@@ -53,7 +55,7 @@ per-trial figure the markdown summarises, including each cell's IQR.
 
 ```
 src/harness/run.ts          parent: rebuilds @codefast/di, spawns one subprocess per library, merges, renders
-src/harness/config.ts       the four library configs (entry file, tsconfig, display name)
+src/harness/config.ts       the eight library configs (entry file, tsconfig, display name)
 src/harness/list.ts         the bench:list entry
 src/harness/serve.ts        the bench:serve entry
 src/*-benches.ts            one child entry per library
@@ -63,8 +65,10 @@ src/instruments/            diagnostic tools, outside the comparison
 ```
 
 Each library runs **in its own subprocess, under its own tsconfig, in its canonical mode**: `@codefast/di` with TC39
-Stage 3 decorators and `Symbol.metadata`, `inversify` and `tsyringe` with legacy decorators and `reflect-metadata`,
-`awilix` decorator-free. Nothing is forced into another library's idiom, and no two libraries share a heap.
+Stage 3 decorators and `Symbol.metadata`, `inversify`, `tsyringe` and `injection-js` with legacy decorators and
+`reflect-metadata`, `awilix` and `brandi` and `ditox` and `iti` decorator-free (awilix's proxy cradle, brandi's and
+ditox's token wiring, iti's chained builder). Nothing is forced into another library's idiom, and no two libraries share
+a heap.
 
 `src/fixtures/scenario-parity.ts` is what keeps a pair honest: scenario id, group, description and batch factor live
 there once, and both sides import them. A batch factor that drifted between two implementations would silently scale
@@ -76,9 +80,13 @@ reported apart because their cost is not comparable to a success path. Two furth
 instrumentation instead of a head-to-head pair: `slot-selection` for the criteria lanes, and `resolution` for the engine
 lanes — compiled plans and their escapes, the depth thresholds, the sync context pool, the accessor channel.
 
-Awilix and tsyringe implement only the factory/class-binding core subset, so they read `—` on everything outside it; the
-report counts only the rows a competitor actually measured. A scenario whose two sides do incomparable amounts of work
-declares `excludeFromAggregates` and stays in the table but out of the medians and geomeans.
+Only inversify implements the full suite. awilix, tsyringe, brandi and ditox implement the factory/class-binding core
+subset (micro, realistic, fan-out, scale); iti and injection-js implement only its singleton-friendly rows, because
+neither has a general transient scope — iti memoizes every `get`, and injection-js caches every provider per injector.
+Every competitor reads `—` on everything it does not measure, and the report counts only the rows it actually ran.
+Forcing a fully-transient tree onto a memoizing container would measure a proxy rather than the library, so those rows
+are omitted rather than faked. A scenario whose two sides do incomparable amounts of work declares
+`excludeFromAggregates` and stays in the table but out of the medians and geomeans.
 
 ## Instruments
 
