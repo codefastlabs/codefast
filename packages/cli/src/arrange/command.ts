@@ -37,7 +37,11 @@ type ArrangeRegroupOptions = {
   readonly cnImport?: string | undefined;
   readonly json?: boolean;
 };
-type ArrangeSimplifyOptions = { readonly dryRun?: boolean; readonly json?: boolean };
+type ArrangeSimplifyOptions = {
+  readonly dryRun?: boolean;
+  readonly json?: boolean;
+  readonly foldVariantClassName?: boolean;
+};
 
 const prepareWorkspace: CommandPrepare<ArrangeTargetWorkspaceAndConfig> = (fs, input) =>
   prepareArrangeWorkspace(fs, { currentWorkingDirectory: input.currentWorkingDirectory, rawTarget: input.rawArg });
@@ -112,9 +116,18 @@ const simplifyPipeline: NamedCommandPipeline<
   schema: arrangeSimplifyRunRequestSchema,
   configureArgv: (command) => {
     command.option("--dry-run", "Show what simplify would change without writing files", false);
+    command.option(
+      "--fold-variant-classname, --fold-variant-class-name",
+      "Fold cn() overrides into a variant function's className option (uses the TypeScript type server)",
+      false,
+    );
   },
   prepare: prepareWorkspace,
-  buildRequest: ({ prelude, opts }) => ({ targetPath: prelude.resolvedTarget, write: !opts.dryRun }),
+  buildRequest: ({ prelude, opts }) => ({
+    targetPath: prelude.resolvedTarget,
+    write: !opts.dryRun,
+    foldVariantClassName: opts.foldVariantClassName,
+  }),
   run: (fs, request) => runArrangeSimplify(fs, request),
   presentHuman: ({ result, opts }) => {
     presentSimplifyResult(result, !opts.dryRun);
