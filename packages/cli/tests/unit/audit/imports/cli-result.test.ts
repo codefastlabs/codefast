@@ -24,6 +24,7 @@ describe("imports cli-result", () => {
       schemaVersion: 1,
       ok: false,
       cwd: "/repo",
+      result: { violationCount: 1 },
     });
     expect(JSON.parse(formatImportsAuditJsonOutput(clean, "/repo")).ok).toBe(true);
   });

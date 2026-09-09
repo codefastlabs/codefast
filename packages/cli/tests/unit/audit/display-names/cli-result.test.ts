@@ -22,6 +22,7 @@ describe("display-names cli-result", () => {
       schemaVersion: 1,
       ok: false,
       cwd: "/repo",
+      result: { violationCount: 1 },
     });
     expect(JSON.parse(formatDisplayNameAuditJsonOutput(clean, "/repo")).ok).toBe(true);
   });

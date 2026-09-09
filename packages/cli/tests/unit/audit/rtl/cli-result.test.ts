@@ -22,6 +22,7 @@ describe("rtl cli-result", () => {
       schemaVersion: 1,
       ok: false,
       cwd: "/repo",
+      result: { violationCount: 1 },
     });
     expect(JSON.parse(formatRtlAuditJsonOutput(clean, "/repo")).ok).toBe(true);
   });
