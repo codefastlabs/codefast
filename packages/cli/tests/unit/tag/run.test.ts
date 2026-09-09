@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { TagTargetCandidate } from "#/tag/domain/types";
-import { filterSkippedCandidates } from "#/tag/sync";
+import { filterSkippedCandidates } from "#/tag/run";
 
 function workspaceCandidate(packageName: string): TagTargetCandidate {
   const packageDir = `/repo/${packageName}`;

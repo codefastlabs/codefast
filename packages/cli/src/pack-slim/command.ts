@@ -14,7 +14,7 @@ import { resolveProjectRoot } from "#/core/workspace/resolver";
 import { exitCodeForPackSlimResult, formatPackSlimJsonOutput } from "#/pack-slim/cli-result";
 import { packSlimRunRequestSchema } from "#/pack-slim/cli-schema";
 import { PackSlimProgressPresenter } from "#/pack-slim/output";
-import { runPackSlim } from "#/pack-slim/sync";
+import { runPackSlim } from "#/pack-slim/run";
 import { ensureWorkingTreeClean } from "#/pack-slim/working-tree";
 
 /**

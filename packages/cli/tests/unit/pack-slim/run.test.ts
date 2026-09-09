@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import type { DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
-import { runPackSlim } from "#/pack-slim/sync";
+import { runPackSlim } from "#/pack-slim/run";
 
 function createFakeRepo(files: Record<string, string>): {
   readonly fs: FilesystemPort;

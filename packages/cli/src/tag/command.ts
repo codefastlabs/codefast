@@ -12,7 +12,7 @@ import { tagSyncRunRequestSchema } from "#/tag/cli-schema";
 import type { TagSyncResult } from "#/tag/domain/types";
 import { presentTagSyncResult, TagSyncProgressPresenter } from "#/tag/output";
 import { prepareTagSync } from "#/tag/prepare";
-import { runTagSync } from "#/tag/sync";
+import { runTagSync } from "#/tag/run";
 
 /**
  * Creates the `tag` subcommand, which stamps `@since` tags on exported declarations.

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { TagSyncRunRequest } from "#/tag/sync";
+import type { TagSyncRunRequest } from "#/tag/run";
 
 /**
  * Zod schema validating a `TagSyncRunRequest`.

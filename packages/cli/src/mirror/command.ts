@@ -12,7 +12,7 @@ import { exitCodeForMirrorSyncResult, formatMirrorSyncJsonOutput } from "#/mirro
 import { mirrorSyncRunRequestSchema } from "#/mirror/cli-schema";
 import { MirrorSyncProgressPresenter } from "#/mirror/output";
 import { prepareMirrorSync } from "#/mirror/prepare";
-import { runMirrorSync } from "#/mirror/sync";
+import { runMirrorSync } from "#/mirror/run";
 
 /**
  * Creates the `mirror` subcommand, which writes `package.json#exports` from `dist/`.
