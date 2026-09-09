@@ -3,7 +3,7 @@ import path from "node:path";
 import { parse as parseYaml } from "yaml";
 
 import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { createAnyGlobMatcher } from "#/core/glob";
 import { logger } from "#/core/logger";
 import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
@@ -24,7 +24,7 @@ export type ResolvedProjectRoot = {
  *
  * @since 0.10.0
  */
-export function resolveProjectRoot(fromDirectory: string, fs: FilesystemPort): ResolvedProjectRoot {
+export function resolveProjectRoot(fromDirectory: string, fs: Filesystem): ResolvedProjectRoot {
   // Resolution follows where the user is (cwd), not where the CLI is installed.
   const workspaceRoot = findNearestAncestor(fromDirectory, (directoryPath) =>
     fs.existsSync(path.join(directoryPath, workspaceYamlFileName)),
@@ -138,7 +138,7 @@ function parsePnpmWorkspaceDocument(doc: unknown): {
 
 async function readWorkspaceYaml(
   rootDir: string,
-  fs: FilesystemPort,
+  fs: Filesystem,
 ): Promise<{ exists: false } | { exists: true; doc: unknown }> {
   const workspaceYamlPath = path.join(rootDir, workspaceYamlFileName);
   if (!fs.existsSync(workspaceYamlPath)) {
@@ -173,7 +173,7 @@ async function readWorkspaceYaml(
  */
 export async function listWorkspacePackageDirectories(
   rootDirectoryPathAbsolute: string,
-  fs: FilesystemPort,
+  fs: Filesystem,
   suppressGlobPermissionDiagnostics?: boolean,
 ): Promise<WorkspacePackageLayoutOutcome> {
   const workspaceYaml = await readWorkspaceYaml(rootDirectoryPathAbsolute, fs);

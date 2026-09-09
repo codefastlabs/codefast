@@ -3,7 +3,7 @@ import path from "node:path";
 import { auditDisplayNames } from "#/audit/display-names/domain/display-names";
 import type { DisplayNameAuditResult, DisplayNameFileViolations } from "#/audit/domain/types";
 import { AppError, messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { walkMarkdownFiles } from "#/core/workspace/markdown-walk";
@@ -22,7 +22,7 @@ const SKIPPED_BASENAMES: ReadonlySet<string> = new Set(["CHANGELOG.md"]);
  * @since 0.9.0
  */
 export function runDisplayNameAudit(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly rootDir: string;
     readonly targetPath: string;
@@ -60,7 +60,7 @@ export function runDisplayNameAudit(
   }
 }
 
-function collectScanPaths(fs: FilesystemPort, rootDir: string, targetPath: string): Array<string> {
+function collectScanPaths(fs: Filesystem, rootDir: string, targetPath: string): Array<string> {
   const stats = fs.statSync(targetPath);
   const candidates = stats.isFile()
     ? [targetPath]

@@ -2,16 +2,16 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import type { DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
+import type { DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
 import { runPackSlim } from "#/pack-slim/run";
 
 function createFakeRepo(files: Record<string, string>): {
-  readonly fs: FilesystemPort;
+  readonly fs: Filesystem;
   readonly store: Map<string, string>;
 } {
   const store = new Map<string, string>(Object.entries(files));
   const isDir = (candidate: string): boolean => [...store.keys()].some((key) => key.startsWith(`${candidate}/`));
-  const fs: FilesystemPort = {
+  const fs: Filesystem = {
     existsSync: (filePath) => store.has(filePath) || isDir(filePath),
     canonicalPathSync: (inputPath) => inputPath,
     globSync: () => [],

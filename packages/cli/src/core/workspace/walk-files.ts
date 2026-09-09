@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { defaultSkipDirectoryNames } from "#/core/workspace/skip-directories";
 
 /**
@@ -10,7 +10,7 @@ import { defaultSkipDirectoryNames } from "#/core/workspace/skip-directories";
  */
 export function walkFiles(
   rootDirectoryPath: string,
-  fs: FilesystemPort,
+  fs: Filesystem,
   shouldInclude: (filePath: string) => boolean,
 ): Array<string> {
   const result: Array<string> = [];
@@ -21,7 +21,7 @@ export function walkFiles(
 function visit(
   result: Array<string>,
   entryPath: string,
-  fs: FilesystemPort,
+  fs: Filesystem,
   shouldInclude: (filePath: string) => boolean,
 ): void {
   const entryStats = fs.statSync(entryPath);

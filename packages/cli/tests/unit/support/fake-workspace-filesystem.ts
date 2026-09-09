@@ -1,9 +1,9 @@
 import path from "node:path";
 
-import type { DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
+import type { DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
 
 /**
- * A {@link FilesystemPort} that reports a pnpm workspace at `rootDir` and treats only the listed paths
+ * A {@link Filesystem} that reports a pnpm workspace at `rootDir` and treats only the listed paths
  * (plus the root and its `pnpm-workspace.yaml`) as existing. No config file exists, so config loads empty.
  *
  * @since 0.3.16-canary.0
@@ -11,7 +11,7 @@ import type { DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
 export function createWorkspaceFilesystem(options: {
   readonly rootDir: string;
   readonly existingPaths?: ReadonlyArray<string>;
-}): FilesystemPort {
+}): Filesystem {
   const existing = new Set<string>([
     options.rootDir,
     path.join(options.rootDir, "pnpm-workspace.yaml"),
@@ -35,10 +35,10 @@ export function createWorkspaceFilesystem(options: {
 }
 
 /**
- * A {@link FilesystemPort} where nothing exists, so project-root resolution throws.
+ * A {@link Filesystem} where nothing exists, so project-root resolution throws.
  *
  * @since 0.3.16-canary.0
  */
-export function createRootlessFilesystem(): FilesystemPort {
+export function createRootlessFilesystem(): Filesystem {
   return { ...createWorkspaceFilesystem({ rootDir: "unused" }), existsSync: () => false };
 }

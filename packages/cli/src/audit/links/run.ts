@@ -3,7 +3,7 @@ import path from "node:path";
 import type { LinkAuditResult, LinkFileBreakages, LinkBreakage } from "#/audit/domain/types";
 import { collectMarkdownAnchors, scanMarkdownLinks } from "#/audit/links/domain/markdown-links";
 import { AppError, messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { walkMarkdownFiles } from "#/core/workspace/markdown-walk";
@@ -14,7 +14,7 @@ import { walkMarkdownFiles } from "#/core/workspace/markdown-walk";
  * @since 0.5.0
  */
 export function runLinkAudit(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly rootDir: string;
     readonly targetPath: string;
@@ -70,7 +70,7 @@ export function runLinkAudit(
 }
 
 function inspectReference(
-  fs: FilesystemPort,
+  fs: Filesystem,
   anchorsByFile: Map<string, ReadonlySet<string>>,
   args: {
     readonly absolutePath: string;
@@ -109,7 +109,7 @@ function inspectReference(
     : { line: reference.line, raw, reason: `anchor not found in ${path.basename(resolved)}` };
 }
 
-function collectScanPaths(fs: FilesystemPort, targetPath: string): Array<string> {
+function collectScanPaths(fs: Filesystem, targetPath: string): Array<string> {
   const stats = fs.statSync(targetPath);
   if (stats.isFile()) {
     return [targetPath];

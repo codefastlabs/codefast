@@ -2,7 +2,7 @@ import path from "node:path";
 
 import * as z from "zod";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { listWorkspacePackageDirectories } from "#/core/workspace/resolver";
 import { packageJsonFileName } from "#/core/workspace/well-known-files";
 import type { TagTargetCandidate } from "#/tag/domain/types";
@@ -15,7 +15,7 @@ function toPosix(filePath: string): string {
   return filePath.split(path.sep).join("/");
 }
 
-function readPackageName(fs: FilesystemPort, packageDir: string): string | null {
+function readPackageName(fs: Filesystem, packageDir: string): string | null {
   const packageJsonPath = path.join(packageDir, packageJsonFileName);
   if (!fs.existsSync(packageJsonPath)) {
     return null;
@@ -38,7 +38,7 @@ function toRootRelativePath(rootDir: string, absolutePath: string): string {
   return relativePath ? toPosix(relativePath) : ".";
 }
 
-function toPackageTargetCandidate(fs: FilesystemPort, rootDir: string, packageDir: string): TagTargetCandidate {
+function toPackageTargetCandidate(fs: Filesystem, rootDir: string, packageDir: string): TagTargetCandidate {
   const packageName = readPackageName(fs, packageDir);
   return {
     candidatePath: packageDir,
@@ -55,7 +55,7 @@ function toPackageTargetCandidate(fs: FilesystemPort, rootDir: string, packageDi
  * @since 0.3.16-canary.0
  */
 export async function resolveTagTargetCandidates(
-  fs: FilesystemPort,
+  fs: Filesystem,
   rootDir: string,
   explicitTarget: string | undefined,
 ): Promise<Array<TagTargetCandidate>> {

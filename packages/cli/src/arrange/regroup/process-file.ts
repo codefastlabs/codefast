@@ -11,7 +11,7 @@ import {
 import { ensureCnImport } from "#/arrange/domain/imports";
 import type { ArrangeGroupFileOptions, GroupFileResult } from "#/arrange/domain/types";
 import { parseDomainSourceFile } from "#/arrange/source-parse";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 
 /**
  * Runs the grouping pipeline on one file — preview or write — and returns its per-file result.
@@ -19,7 +19,7 @@ import type { FilesystemPort } from "#/core/filesystem/port";
  * @since 0.3.16-canary.0
  */
 export function processArrangeGroupFile(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly filePath: string;
     readonly options: ArrangeGroupFileOptions;

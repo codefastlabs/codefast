@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import type { CliFileEncoding, FilesystemPort } from "#/core/filesystem/port";
+import type { CliFileEncoding, Filesystem } from "#/core/filesystem/filesystem";
 import { supplementExportsInPackageJson } from "#/mirror/supplement-exports";
 
 function createFilesystemHarness(
   initialPackageJson: Record<string, unknown>,
   existingFiles: Array<string> = [],
 ): {
-  filesystem: FilesystemPort;
+  filesystem: Filesystem;
   readPackageJson(): Record<string, unknown>;
 } {
   const packageJsonPath = "/virtual/package.json";

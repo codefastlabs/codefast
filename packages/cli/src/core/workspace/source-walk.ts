@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { walkFiles } from "#/core/workspace/walk-files";
 
 // Ignore files carry the divider convention over `#` comments — the content rules stay code-only.
@@ -20,7 +20,7 @@ const ignoreFileNames: ReadonlySet<string> = new Set([
  *
  * @since 0.6.0
  */
-export function walkSourceFiles(rootDirectoryPath: string, fs: FilesystemPort): Array<string> {
+export function walkSourceFiles(rootDirectoryPath: string, fs: Filesystem): Array<string> {
   return walkFiles(rootDirectoryPath, fs, (filePath) => sourceCommentLanguage(filePath) !== null);
 }
 

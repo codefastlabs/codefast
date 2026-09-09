@@ -19,9 +19,9 @@ Every command directory follows one shape, so a reader who knows one command kno
 | `domain/`                     | Pure logic and types: no Commander, no `process`, no `logger`.                              |
 
 The orchestrator role is always `run*` — never `sync`, which survives only as `mirror`'s domain verb (it syncs
-`package.json` exports). I/O that goes through the `FilesystemPort` (a `run*.ts`, a `prepare.ts`, a per-file helper)
-stays at the command root; `domain/` is reserved for what is pure, which is why an I/O-heavy command like `tag` keeps
-only `types.ts` under `domain/`.
+`package.json` exports). I/O that goes through the `Filesystem` (a `run*.ts`, a `prepare.ts`, a per-file helper) stays
+at the command root; `domain/` is reserved for what is pure, which is why an I/O-heavy command like `tag` keeps only
+`types.ts` under `domain/`.
 
 A command that has **subcommands** nests one level further: each subcommand (`audit rtl`, `audit links`, …;
 `arrange inspect`, `arrange simplify`, …) is its own directory under the command, holding the same skeleton for its own

@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { runLinkAudit } from "#/audit/links/run";
-import type { CliFileEncoding, DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
+import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
 
 const rootDir = path.join(path.sep, "repo");
 const docsDir = path.join(rootDir, "docs");
@@ -97,7 +97,7 @@ describe("runLinkAudit", () => {
   });
 });
 
-function createLinkTestFilesystem(files: Record<string, string>): FilesystemPort {
+function createLinkTestFilesystem(files: Record<string, string>): Filesystem {
   const normalized = new Map(Object.entries(files).map(([filePath, content]) => [path.normalize(filePath), content]));
 
   return {

@@ -1,6 +1,6 @@
 import { loadCodefastConfig } from "#/core/config";
 import type { AppError } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { ok } from "#/core/result";
 import { resolveProjectRoot } from "#/core/workspace/resolver";
@@ -13,7 +13,7 @@ import { resolveProvidedTagTargetPath } from "#/tag/resolve-target-path";
  * @since 0.3.16-canary.0
  */
 export async function prepareTag(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly currentWorkingDirectory: string;
     readonly rawTarget: string | undefined;

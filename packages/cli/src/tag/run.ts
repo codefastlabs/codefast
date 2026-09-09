@@ -3,7 +3,7 @@ import path from "node:path";
 import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/core/config/schema";
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { filterSkippedCandidates } from "#/tag/domain/skip-filter";
@@ -25,7 +25,7 @@ import { runTagOnTarget } from "#/tag/target-runner";
  *
  * @since 0.3.16-canary.0
  */
-export async function runTag(fs: FilesystemPort, input: TagExecutionInput): Promise<Result<TagResult, AppError>> {
+export async function runTag(fs: Filesystem, input: TagExecutionInput): Promise<Result<TagResult, AppError>> {
   try {
     const tagConfig = input.config as CodefastTagConfig | undefined;
     const targetCandidates = await resolveTagTargetCandidates(fs, input.rootDir, input.targetPath);
@@ -91,7 +91,7 @@ async function runTagOnAfterWriteHook(
 }
 
 function chooseWorkspacePackageTargetPath(
-  fs: FilesystemPort,
+  fs: Filesystem,
   candidate: TagTargetCandidate,
 ): {
   targetPath: string;
@@ -119,7 +119,7 @@ function chooseWorkspacePackageTargetPath(
   };
 }
 
-function resolveTargetSelection(fs: FilesystemPort, candidate: TagTargetCandidate, rootDir: string): TagResolvedTarget {
+function resolveTargetSelection(fs: Filesystem, candidate: TagTargetCandidate, rootDir: string): TagResolvedTarget {
   const selectedTarget = chooseWorkspacePackageTargetPath(fs, candidate);
   const rootRelativeTargetPath = path.relative(rootDir, selectedTarget.targetPath).split(path.sep).join("/");
   return {
@@ -132,7 +132,7 @@ function resolveTargetSelection(fs: FilesystemPort, candidate: TagTargetCandidat
 }
 
 async function runOnResolvedTarget(
-  fs: FilesystemPort,
+  fs: Filesystem,
   resolvedTarget: TagResolvedTarget,
   write: boolean,
   listener: TagProgressListener | undefined,

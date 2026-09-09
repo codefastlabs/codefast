@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { runRtlAudit } from "#/audit/rtl/run";
-import type { CliFileEncoding, DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
+import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
 
 describe("runRtlAudit", () => {
   it("matches allowlist keys as repo-relative posix paths", () => {
@@ -63,7 +63,7 @@ describe("runRtlAudit", () => {
   });
 });
 
-function createAuditTestFilesystem(files: Record<string, string>): FilesystemPort {
+function createAuditTestFilesystem(files: Record<string, string>): Filesystem {
   const normalized = new Map(Object.entries(files).map(([filePath, content]) => [path.normalize(filePath), content]));
 
   return {

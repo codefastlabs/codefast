@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { runDisplayNameAudit } from "#/audit/display-names/run";
-import type { CliFileEncoding, DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
+import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
 
 describe("runDisplayNameAudit", () => {
   it("scans TypeScript and markdown, skips tests, benchmarks, changesets and changelogs", () => {
@@ -51,7 +51,7 @@ describe("runDisplayNameAudit", () => {
   });
 });
 
-function createAuditTestFilesystem(files: Record<string, string>): FilesystemPort {
+function createAuditTestFilesystem(files: Record<string, string>): Filesystem {
   const normalized = new Map(Object.entries(files).map(([filePath, content]) => [path.normalize(filePath), content]));
 
   return {

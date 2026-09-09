@@ -2,12 +2,12 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { findNearestPackageVersion } from "#/core/workspace/package-version";
 
 const rootDir = path.join(path.sep, "repo");
 
-function createFilesystem(files: Record<string, string>): FilesystemPort {
+function createFilesystem(files: Record<string, string>): Filesystem {
   const contents = new Map(Object.entries(files).map(([filePath, content]) => [path.normalize(filePath), content]));
 
   return {

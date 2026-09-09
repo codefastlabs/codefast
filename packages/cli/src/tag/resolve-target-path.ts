@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 
 /**
  * Canonicalizes the user-provided target path, or returns `undefined` when none was given.
@@ -8,7 +8,7 @@ import type { FilesystemPort } from "#/core/filesystem/port";
  * @since 0.3.16-canary.0
  */
 export function resolveProvidedTagTargetPath(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly currentWorkingDirectory: string;
     readonly rawTarget: string | undefined;

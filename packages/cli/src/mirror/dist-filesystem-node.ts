@@ -1,16 +1,16 @@
 import path from "node:path";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { isDirentList } from "#/mirror/domain/dirent-guard";
 import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
 import { normalizePath } from "#/mirror/domain/path-normalizer";
 
 /**
- * Creates the `DistFilesystem` the mirror scan uses, backed by a `FilesystemPort`.
+ * Creates the `DistFilesystem` the mirror scan uses, backed by a `Filesystem`.
  *
  * @since 0.3.16-canary.0
  */
-export function createMirrorDistFilesystem(fs: FilesystemPort): DistFilesystem {
+export function createMirrorDistFilesystem(fs: Filesystem): DistFilesystem {
   return {
     async listRelativeFilesRecursively(dirPath: string): Promise<Array<string>> {
       try {

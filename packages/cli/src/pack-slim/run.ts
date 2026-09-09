@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { AppError, messageFrom } from "#/core/errors";
-import type { DirectoryEntry, FilesystemPort } from "#/core/filesystem/port";
+import type { DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { listWorkspacePackageDirectories } from "#/core/workspace/resolver";
@@ -34,7 +34,7 @@ export type PackSlimRunInput = PackSlimRunRequest & {
  * @since 0.8.1
  */
 export async function runPackSlim(
-  fs: FilesystemPort,
+  fs: Filesystem,
   input: PackSlimRunInput,
 ): Promise<Result<PackSlimRunStats, AppError>> {
   const write = input.write ?? true;
@@ -73,7 +73,7 @@ export async function runPackSlim(
 }
 
 async function resolveTargets(
-  fs: FilesystemPort,
+  fs: Filesystem,
   rootDir: string,
   packageFilter: string | undefined,
 ): Promise<Array<string>> {
@@ -88,11 +88,7 @@ async function resolveTargets(
   return [...layout.packageDirectoryPathsAbsolute].sort((left, right) => left.localeCompare(right));
 }
 
-async function slimWorkspacePackage(
-  fs: FilesystemPort,
-  packageDir: string,
-  write: boolean,
-): Promise<PackSlimPackageStats> {
+async function slimWorkspacePackage(fs: Filesystem, packageDir: string, write: boolean): Promise<PackSlimPackageStats> {
   const packageJsonPath = path.join(packageDir, packageJsonFileName);
   const pkgStats: PackSlimPackageStats = {
     name: path.basename(packageDir),
@@ -155,7 +151,7 @@ async function slimWorkspacePackage(
 }
 
 async function pruneDist(
-  fs: FilesystemPort,
+  fs: Filesystem,
   distDir: string,
   write: boolean,
   pkgStats: PackSlimPackageStats,

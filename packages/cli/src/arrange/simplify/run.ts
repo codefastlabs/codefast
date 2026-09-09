@@ -2,7 +2,7 @@ import type { ArrangeRunResult } from "#/arrange/domain/types";
 import { scanArrangeTargets } from "#/arrange/scan-target";
 import { processArrangeSimplifyFile } from "#/arrange/simplify/process-file";
 import type { AppError } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { ok } from "#/core/result";
 
@@ -12,7 +12,7 @@ import { ok } from "#/core/result";
  * @since 0.3.16-canary.0
  */
 export async function runArrangeSimplify(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: { targetPath: string; write: boolean },
 ): Promise<Result<ArrangeRunResult, AppError>> {
   const filePaths = scanArrangeTargets(fs, args.targetPath);

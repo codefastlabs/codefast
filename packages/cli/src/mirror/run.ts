@@ -3,7 +3,7 @@ import path from "node:path";
 import type { MirrorConfig } from "#/core/config/schema";
 import { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { listWorkspacePackageDirectories } from "#/core/workspace/resolver";
@@ -27,7 +27,7 @@ export type { MirrorSyncExecutionInput } from "#/mirror/domain/types";
  * @since 0.3.16-canary.0
  */
 export async function runMirrorSync(
-  fs: FilesystemPort,
+  fs: Filesystem,
   input: MirrorSyncExecutionInput,
 ): Promise<Result<GlobalStats, AppError>> {
   const config = (input.config ?? {}) as MirrorConfig;

@@ -2,7 +2,7 @@ import { collectSimplifyTargets } from "#/arrange/domain/ast/simplify-targets";
 import { dropCnImportIfUnused } from "#/arrange/domain/imports";
 import type { GroupFileResult } from "#/arrange/domain/types";
 import { parseDomainSourceFile } from "#/arrange/source-parse";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { applyEditsDescending } from "#/core/source-text-edit";
 
 /**
@@ -11,7 +11,7 @@ import { applyEditsDescending } from "#/core/source-text-edit";
  * @since 0.3.16-canary.0
  */
 export function processArrangeSimplifyFile(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly filePath: string;
     readonly write: boolean;

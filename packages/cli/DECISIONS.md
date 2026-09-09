@@ -128,9 +128,9 @@ Every **other** file is named for the one concept it holds: `grouping.ts`, `toke
 reserved suffix is `.test.ts`; Zod schemas are named for what they parse (`cli-schema.ts`, `core/config/schema.ts`).
 Directory names are the five commands plus `core/`, and a command's pure logic lives under its `domain/`. The role wins
 at a role slot: a subcommand whose work reads as "analyze" still names its orchestrator `run.ts` and keeps the concept
-in `domain/analyze-service.ts` — the file that touches the `FilesystemPort` and returns a `Result` is `run*`, not the
-verb it computes. The orchestrator is `run*`, never `sync`: `sync` reads as "synchronous" (these functions are async)
-and is kept only where it is the domain verb, as in `mirror` syncing `package.json` exports.
+in `domain/analyze-service.ts` — the file that touches the `Filesystem` and returns a `Result` is `run*`, not the verb
+it computes. The orchestrator is `run*`, never `sync`: `sync` reads as "synchronous" (these functions are async) and is
+kept only where it is the domain verb, as in `mirror` syncing `package.json` exports.
 
 **Consequences.** A filename says what a module does; the directory says which command it belongs to; and the same role
 answers to the same name in every command.

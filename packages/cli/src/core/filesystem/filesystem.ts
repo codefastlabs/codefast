@@ -22,7 +22,7 @@ export interface DirectoryEntry {
  *
  * @since 0.3.16-canary.0
  */
-export interface FilesystemPort {
+export interface Filesystem {
   existsSync(filePath: string): boolean;
   canonicalPathSync(inputPath: string): string;
   statSync(filePath: string): { isDirectory(): boolean; isFile(): boolean };

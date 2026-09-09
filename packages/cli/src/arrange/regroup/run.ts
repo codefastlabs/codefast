@@ -6,7 +6,7 @@ import { scanArrangeTargets } from "#/arrange/scan-target";
 import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#/core/config/schema";
 import type { AppError } from "#/core/errors";
 import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { ok } from "#/core/result";
 
@@ -31,7 +31,7 @@ async function runOnAfterWriteHook(
  * @since 0.3.16-canary.0
  */
 export async function runArrange(
-  fs: FilesystemPort,
+  fs: Filesystem,
   request: ArrangeRunRequest,
 ): Promise<Result<ArrangeRunResult, AppError>> {
   const filePaths = scanArrangeTargets(fs, request.targetPath);

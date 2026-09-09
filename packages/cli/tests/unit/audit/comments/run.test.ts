@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { runCommentAudit } from "#/audit/comments/run";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 
 const rootDir = path.join(path.sep, "repo");
 const srcDir = path.join(rootDir, "src");
@@ -176,12 +176,12 @@ describe("runCommentAudit", () => {
 });
 
 function createSourceTestFilesystem(files: Record<string, string>): {
-  fs: FilesystemPort;
+  fs: Filesystem;
   contents: Map<string, string>;
 } {
   const contents = new Map(Object.entries(files).map(([filePath, content]) => [path.normalize(filePath), content]));
 
-  const fs: FilesystemPort = {
+  const fs: Filesystem = {
     existsSync: (filePath) => contents.has(path.normalize(filePath)),
     canonicalPathSync: (inputPath) => path.normalize(inputPath),
     globSync: () => [],

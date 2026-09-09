@@ -5,7 +5,7 @@ import type { ZodError } from "zod";
 
 import { codefastConfigRootSchema } from "#/core/config/schema";
 import type { CodefastConfig } from "#/core/config/schema";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { ancestorDirectories } from "#/core/workspace/ancestor-directories";
 
 /**
@@ -43,7 +43,7 @@ const configJson = "codefast.config.json";
 
 const cachedLoads = new Map<string, Promise<LoadConfigPayload>>();
 
-function listConfigCandidates(startDir: string, fs: FilesystemPort): Array<string> {
+function listConfigCandidates(startDir: string, fs: Filesystem): Array<string> {
   const candidates: Array<string> = [];
   for (const current of ancestorDirectories(startDir)) {
     for (const name of configJsPriority) {
@@ -61,7 +61,7 @@ function listConfigCandidates(startDir: string, fs: FilesystemPort): Array<strin
   return candidates;
 }
 
-async function readConfigFromPath(filePath: string, jitiBaseDir: string, fs: FilesystemPort): Promise<CodefastConfig> {
+async function readConfigFromPath(filePath: string, jitiBaseDir: string, fs: Filesystem): Promise<CodefastConfig> {
   const ext = path.extname(filePath);
   if (ext === ".json") {
     const content = await fs.readFile(filePath, "utf8");
@@ -80,7 +80,7 @@ async function readConfigFromPath(filePath: string, jitiBaseDir: string, fs: Fil
   return parseLoadedConfig(unwrappedConfig, filePath);
 }
 
-async function loadOnce(startDir: string, fs: FilesystemPort): Promise<LoadConfigPayload> {
+async function loadOnce(startDir: string, fs: Filesystem): Promise<LoadConfigPayload> {
   const warnings: Array<string> = [];
   const configPaths = listConfigCandidates(startDir, fs);
   if (configPaths.length === 0) {
@@ -100,7 +100,7 @@ async function loadOnce(startDir: string, fs: FilesystemPort): Promise<LoadConfi
  *
  * @since 0.3.16-canary.0
  */
-export function loadConfigPayload(startDir: string, fs: FilesystemPort): Promise<LoadConfigPayload> {
+export function loadConfigPayload(startDir: string, fs: Filesystem): Promise<LoadConfigPayload> {
   const cacheKey = path.resolve(startDir);
   if (!cachedLoads.has(cacheKey)) {
     cachedLoads.set(cacheKey, loadOnce(cacheKey, fs));

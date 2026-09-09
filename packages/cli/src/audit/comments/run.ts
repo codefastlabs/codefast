@@ -19,7 +19,7 @@ import { scanImpossibleSinceTags } from "#/audit/comments/domain/since-versions"
 import { scanTsdocSyntax } from "#/audit/comments/domain/tsdoc-syntax";
 import type { CommentAuditResult, DividerBreakage, DividerFileBreakages } from "#/audit/domain/types";
 import { AppError, messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { findNearestPackageVersion } from "#/core/workspace/package-version";
@@ -56,7 +56,7 @@ interface ScannedFile {
  * @since 0.6.0
  */
 export function runCommentAudit(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly rootDir: string;
     readonly targetPath: string;
@@ -170,7 +170,7 @@ export function runCommentAudit(
 }
 
 function appendDeadLinkBreakages(
-  fs: FilesystemPort,
+  fs: Filesystem,
   scanned: Array<ScannedFile>,
   allowlist: ReadonlySet<string>,
   perFile: Map<string, Array<DividerBreakage>>,
@@ -221,7 +221,7 @@ function appendDeadLinkBreakages(
 }
 
 // One package.json walk per directory — sibling files share the answer.
-function nearestVersion(fs: FilesystemPort, absolutePath: string, cache: Map<string, string | null>): string | null {
+function nearestVersion(fs: Filesystem, absolutePath: string, cache: Map<string, string | null>): string | null {
   const directory = path.dirname(absolutePath);
   const cached = cache.get(directory);
   if (cached !== undefined) {
@@ -232,7 +232,7 @@ function nearestVersion(fs: FilesystemPort, absolutePath: string, cache: Map<str
   return version;
 }
 
-function collectScanPaths(fs: FilesystemPort, targetPath: string): Array<string> {
+function collectScanPaths(fs: Filesystem, targetPath: string): Array<string> {
   const stats = fs.statSync(targetPath);
   if (stats.isFile()) {
     return [targetPath];

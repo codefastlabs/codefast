@@ -1,6 +1,6 @@
 import { parseSync } from "oxc-parser";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { applyEditsDescending, indentOfLineContaining } from "#/core/source-text-edit";
 import type { TagFileResult } from "#/tag/domain/types";
 
@@ -56,7 +56,7 @@ function identifierName(node: unknown): string | undefined {
 export class TagSinceWriter {
   private readonly sinceDocumentationTag = "@since";
 
-  constructor(private readonly fs: FilesystemPort) {}
+  constructor(private readonly fs: Filesystem) {}
 
   applySinceTagsToFile(filePath: string, version: string, write: boolean): TagFileResult {
     const sourceText = this.fs.readFileSync(filePath, "utf8");

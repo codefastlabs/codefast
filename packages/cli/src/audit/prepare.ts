@@ -3,7 +3,7 @@ import path from "node:path";
 import { loadCodefastConfig } from "#/core/config";
 import type { CodefastConfig } from "#/core/config/schema";
 import { AppError, messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { resolveProjectRoot } from "#/core/workspace/resolver";
@@ -34,7 +34,7 @@ export function resolveRepoRelativePath(rootDir: string, maybeRelative: string):
  * @remarks Every repo-wide audit shares this prelude; only the config key its allowlist comes from differs.
  */
 export async function prepareRepoRootAudit(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly currentWorkingDirectory: string;
     readonly rawTarget: string | undefined;

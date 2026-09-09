@@ -44,8 +44,8 @@ import { runRtlAudit } from "#/audit/rtl/run";
 import { readOptionalPositionalArg } from "#/core/cli/positional";
 import { consumeCliAppError } from "#/core/cli/result-handle";
 import type { AppError } from "#/core/errors";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { nodeFilesystem } from "#/core/filesystem/node";
-import type { FilesystemPort } from "#/core/filesystem/port";
 import { logger } from "#/core/logger";
 import type { Result } from "#/core/result";
 import { parseWithSchema } from "#/core/schema-parse";
@@ -64,11 +64,11 @@ interface AuditCheck<Request, CheckResult> {
   readonly targetHelp: string;
   readonly schema: ZodType<Request>;
   readonly prepare: (
-    fs: FilesystemPort,
+    fs: Filesystem,
     input: { readonly currentWorkingDirectory: string; readonly rawTarget: string | undefined },
   ) => Promise<Result<AuditCommandPrelude, AppError>>;
   readonly buildRequest: (prelude: AuditCommandPrelude, opts: AuditActionOptions) => unknown;
-  readonly run: (fs: FilesystemPort, request: Request) => Result<CheckResult, AppError>;
+  readonly run: (fs: Filesystem, request: Request) => Result<CheckResult, AppError>;
   readonly present: (result: CheckResult) => void;
   readonly formatJson: (result: CheckResult, rootDir: string) => string;
   readonly exitCode: (result: CheckResult) => number;

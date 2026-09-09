@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { distDirName } from "#/core/workspace/well-known-files";
 import type { PackageJsonShape } from "#/mirror/domain/types";
 import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
@@ -45,7 +45,7 @@ function inferModulePath(specifier: string, entry: Record<string, unknown>): str
   return specifier;
 }
 
-function findDtsSpecifier(fs: FilesystemPort, distDir: string, modulePath: string): string | null {
+function findDtsSpecifier(fs: Filesystem, distDir: string, modulePath: string): string | null {
   for (const ext of DTS_EXTENSIONS) {
     if (fs.existsSync(path.join(distDir, `${modulePath}${ext}`))) {
       return `./dist/${modulePath}${ext}`;
@@ -54,7 +54,7 @@ function findDtsSpecifier(fs: FilesystemPort, distDir: string, modulePath: strin
   return null;
 }
 
-function findImportSpecifier(fs: FilesystemPort, distDir: string, modulePath: string): string | null {
+function findImportSpecifier(fs: Filesystem, distDir: string, modulePath: string): string | null {
   for (const ext of JS_EXTENSIONS) {
     if (fs.existsSync(path.join(distDir, `${modulePath}${ext}`))) {
       return `./dist/${modulePath}${ext}`;
@@ -72,7 +72,7 @@ function buildSupplementedEntry(
   existing: Record<string, unknown>,
   modulePath: string,
   distDir: string,
-  fs: FilesystemPort,
+  fs: Filesystem,
   options: {
     source: boolean | string;
     types: boolean;
@@ -144,7 +144,7 @@ export type SupplementResult = {
  * @since 0.3.16-canary.0
  */
 export async function supplementExportsInPackageJson(
-  fs: FilesystemPort,
+  fs: Filesystem,
   packageJsonPath: string,
   packageDir: string,
   options: {
@@ -208,7 +208,7 @@ export async function supplementExportsInPackageJson(
  *
  * @since 0.3.16-canary.0
  */
-export function buildSourcePathResolver(fs: FilesystemPort, packageDir: string): (modulePath: string) => string {
+export function buildSourcePathResolver(fs: Filesystem, packageDir: string): (modulePath: string) => string {
   const srcDir = path.join(packageDir, "src");
   return (modulePath) => {
     const tsxPath = path.join(srcDir, `${modulePath}.tsx`);

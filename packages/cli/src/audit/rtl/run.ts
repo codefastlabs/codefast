@@ -3,7 +3,7 @@ import path from "node:path";
 import type { RtlAuditResult, RtlFileViolations } from "#/audit/domain/types";
 import { auditFileContent } from "#/audit/rtl/domain/audit-file";
 import { AppError, messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { walkTsxFiles } from "#/core/workspace/typescript-walk";
@@ -14,7 +14,7 @@ import { walkTsxFiles } from "#/core/workspace/typescript-walk";
  * @since 0.5.0-canary.6
  */
 export function runRtlAudit(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly rootDir: string;
     readonly targetPath: string;
@@ -58,7 +58,7 @@ export function runRtlAudit(
   }
 }
 
-function collectScanPaths(fs: FilesystemPort, targetPath: string): Array<string> {
+function collectScanPaths(fs: Filesystem, targetPath: string): Array<string> {
   const stats = fs.statSync(targetPath);
   if (stats.isFile()) {
     return [targetPath];

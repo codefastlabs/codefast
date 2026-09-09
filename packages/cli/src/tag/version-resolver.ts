@@ -1,4 +1,4 @@
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { findNearestPackageVersion } from "#/core/workspace/package-version";
 
 /**
@@ -6,7 +6,7 @@ import { findNearestPackageVersion } from "#/core/workspace/package-version";
  *
  * @since 0.3.16-canary.0
  */
-export function resolveNearestPackageVersion(fs: FilesystemPort, targetPath: string): string {
+export function resolveNearestPackageVersion(fs: Filesystem, targetPath: string): string {
   const version = findNearestPackageVersion(fs, targetPath);
   if (version === null) {
     throw new Error(`Unable to resolve a package version from target: ${targetPath}`);

@@ -2,7 +2,7 @@ import type { AuditCommandPrelude } from "#/audit/prepare";
 import { resolveRepoRelativePath } from "#/audit/prepare";
 import { loadCodefastConfig } from "#/core/config";
 import { AppError, messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import type { Result } from "#/core/result";
 import { err, ok } from "#/core/result";
 import { resolveProjectRoot } from "#/core/workspace/resolver";
@@ -13,7 +13,7 @@ import { resolveProjectRoot } from "#/core/workspace/resolver";
  * @since 0.5.0-canary.6
  */
 export async function prepareRtlAudit(
-  fs: FilesystemPort,
+  fs: Filesystem,
   args: {
     readonly currentWorkingDirectory: string;
     readonly rawTarget: string | undefined;

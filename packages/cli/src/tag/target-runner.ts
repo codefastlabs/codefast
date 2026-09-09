@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { walkTsxFiles } from "#/core/workspace/typescript-walk";
 import type { TagRunOptions, TagRunResult } from "#/tag/domain/types";
 import { TagSinceWriter } from "#/tag/since-writer";
@@ -11,7 +11,7 @@ import { resolveNearestPackageVersion } from "#/tag/version-resolver";
  *
  * @since 0.3.16-canary.0
  */
-export function runTagOnTarget(fs: FilesystemPort, targetPath: string, opts: TagRunOptions): TagRunResult {
+export function runTagOnTarget(fs: Filesystem, targetPath: string, opts: TagRunOptions): TagRunResult {
   const resolvedTarget = path.resolve(targetPath);
   const version = resolveNearestPackageVersion(fs, resolvedTarget);
 

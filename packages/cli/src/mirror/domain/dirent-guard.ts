@@ -1,4 +1,4 @@
-import type { DirectoryEntry } from "#/core/filesystem/port";
+import type { DirectoryEntry } from "#/core/filesystem/filesystem";
 
 /**
  * Narrow `fs.promises.readdir` overload result to `Dirent[]` when `withFileTypes: true`.

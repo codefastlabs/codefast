@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { messageFrom } from "#/core/errors";
-import type { FilesystemPort } from "#/core/filesystem/port";
+import type { Filesystem } from "#/core/filesystem/filesystem";
 import { logger } from "#/core/logger";
 import { walkTsxFiles } from "#/core/workspace/typescript-walk";
 
@@ -21,7 +21,7 @@ function isTestFile(filePath: string): boolean {
  *
  * @since 0.3.16-canary.0
  */
-export function scanArrangeTargets(fs: FilesystemPort, targetPath: string): Array<string> {
+export function scanArrangeTargets(fs: Filesystem, targetPath: string): Array<string> {
   const resolvedTargetPath = path.resolve(targetPath);
   if (fs.statSync(resolvedTargetPath).isDirectory()) {
     try {
