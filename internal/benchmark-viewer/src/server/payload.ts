@@ -482,6 +482,9 @@ export function buildEmbeddedPayload(
       group: scenarioGroup.get(scenarioId) ?? "unknown",
       what: scenarioWhat.get(scenarioId) ?? "",
       facets: resolveScenarioFacets(scenarioId, options.scenarioFacets),
+      ...(options.scenarioBaselines?.[scenarioId] !== undefined && {
+        baselineId: options.scenarioBaselines[scenarioId],
+      }),
       libraries: libraryData,
       ...(changes.length > 0 && { changes }),
       ...(rescaledRunCount > 0 &&

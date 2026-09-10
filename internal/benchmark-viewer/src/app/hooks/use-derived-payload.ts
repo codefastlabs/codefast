@@ -15,6 +15,38 @@ interface DerivedPayloadOptions {
   patchView: (patch: Partial<ViewState>) => void;
 }
 
+/** One library's throughput ratio of the current scenario to its within-group baseline. */
+export interface WithinGroupCostEntry {
+  readonly libraryKey: string;
+  readonly displayName: string;
+  readonly ratio: number;
+}
+
+function median(values: ReadonlyArray<number>): number {
+  if (values.length === 0) {
+    return 0;
+  }
+  const sorted = [...values].toSorted((left, right) => left - right);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 1 ? sorted[mid]! : (sorted[mid - 1]! + sorted[mid]!) / 2;
+}
+
+function medianHzOverRuns(
+  series: EmbeddedScenarioSeries,
+  libraryKey: string,
+  runIndices: ReadonlyArray<number>,
+): number {
+  const hz = series.libraries[libraryKey]?.hz;
+  if (hz === undefined) {
+    return 0;
+  }
+  return median(
+    runIndices
+      .map((runIndex) => hz[runIndex])
+      .filter((value): value is number => value !== null && value !== undefined && value > 0),
+  );
+}
+
 /**
  * Filtered, ordered, and aggregated data derived from the payload and the current view.
  *
@@ -47,6 +79,10 @@ export interface DerivedPayload {
   scenarioIndex: number;
   showMultiEnvBanner: boolean;
   showMultiConfigBanner: boolean;
+  /** The current scenario's throughput relative to its within-group baseline, per library; empty when no baseline. */
+  withinGroupCost: Array<WithinGroupCostEntry>;
+  /** The baseline scenario the within-group cost is measured against, when the current scenario names one. */
+  baselineScenario: EmbeddedScenarioSeries | null;
   metricsData: MetricsResult | null;
   snapshotRows: Array<SnapshotRow>;
   latestRun: EmbeddedRun | undefined;
@@ -294,6 +330,26 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
 
   const latestRun = payload?.runs[payload.runs.length - 1];
 
+  const baselineScenario = useMemo<EmbeddedScenarioSeries | null>(() => {
+    if (!payload || !currentScenario || currentScenario.baselineId === undefined) {
+      return null;
+    }
+    return payload.scenarios.find((scenario) => scenario.id === currentScenario.baselineId) ?? null;
+  }, [payload, currentScenario]);
+
+  const withinGroupCost = useMemo<Array<WithinGroupCostEntry>>(() => {
+    if (!currentScenario || baselineScenario === null || chartRunIndices.length === 0) {
+      return [];
+    }
+    return chartLibraries.flatMap((library) => {
+      const current = medianHzOverRuns(currentScenario, library.key, chartRunIndices);
+      const baseline = medianHzOverRuns(baselineScenario, library.key, chartRunIndices);
+      return current > 0 && baseline > 0
+        ? [{ libraryKey: library.key, displayName: library.displayName, ratio: current / baseline }]
+        : [];
+    });
+  }, [currentScenario, baselineScenario, chartLibraries, chartRunIndices]);
+
   return {
     orderedLibraries,
     paletteMap,
@@ -316,6 +372,8 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     scenarioIndex,
     showMultiEnvBanner,
     showMultiConfigBanner,
+    withinGroupCost,
+    baselineScenario,
     metricsData,
     snapshotRows,
     latestRun,

@@ -60,6 +60,8 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     scenarioIndex,
     showMultiEnvBanner,
     showMultiConfigBanner,
+    withinGroupCost,
+    baselineScenario,
     metricsData,
     snapshotRows,
     latestRun,
@@ -290,6 +292,27 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         />
 
         <MetricsPanel currentScenario={currentScenario} metricsData={metricsData} runIndices={chartRunIndices} />
+
+        {withinGroupCost.length > 0 && baselineScenario !== null && (
+          <section className="border-bh-border bg-bh-surface mt-6 rounded-2xl border p-4 sm:p-5">
+            <p className="text-bh-label mb-1 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
+              Within-group cost
+            </p>
+            <p className="mb-3 text-xs text-zinc-500">
+              <span className="text-zinc-300">{currentScenario?.id}</span> vs baseline{" "}
+              <code className="text-zinc-400">{baselineScenario.id}</code> — throughput relative to the baseline over
+              the plotted runs; below <span className="tabular-nums">1.00×</span> is slower than the baseline.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {withinGroupCost.map((entry) => (
+                <div className="rounded-lg border border-white/10 px-3 py-2" key={entry.libraryKey}>
+                  <div className="text-[0.7rem] text-zinc-400">{entry.displayName}</div>
+                  <div className="text-sm font-semibold text-zinc-100 tabular-nums">{entry.ratio.toFixed(2)}×</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <KpiGrid latestRun={latestRun} runCount={payload.runs.length} scenarioCount={payload.scenarios.length} />
 

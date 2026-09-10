@@ -71,6 +71,8 @@ export interface BenchServerOptions {
   readonly scenarioFacets?: ScenarioFacets;
   /** Display toggles the viewer opens with when the URL hash names none. */
   readonly viewDefaults?: ViewDefaults;
+  /** Each scenario id mapped to its within-group baseline scenario id; drives the cost-vs-baseline metric. */
+  readonly scenarioBaselines?: Record<string, string>;
   /**
    * Derives a run's report from its parsed observations, so the viewer can serve `report.md` and
    * `report.json` on demand for runs that no longer store them. Omit to disable the report routes.
@@ -174,6 +176,8 @@ export interface EmbeddedScenarioSeries {
   readonly what: string;
   /** Labels of the declared facets this scenario's id matched, in declaration order. */
   readonly facets: ReadonlyArray<string>;
+  /** The baseline scenario id this one's within-group ratio is measured against; absent when none. */
+  readonly baselineId?: string;
   /** Keyed by `EmbeddedLibraryMeta.key` (= `libraryName` in JSONL). */
   readonly libraries: Readonly<Record<string, EmbeddedLibraryRunData>>;
   /** Runs where the scenario's `batch` or description changed; absent when it never did. */
