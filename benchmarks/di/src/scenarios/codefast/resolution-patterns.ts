@@ -15,12 +15,19 @@
  *     Four variants registered under the same token, each with a different tag
  *     value.  `resolve(token, { tags: [...] })` filters to the matching candidate.
  *     Measures the tag-based slot lookup on the hot path.
+ *
+ *   - `conditional-injection-tagged` — the same tagged set, but selected by the
+ *     *consumer's* tag rather than a call-site hint: a transient consumer declares
+ *     `inject(token, { tag })` and resolving it picks the matching binding. This is
+ *     the injection-context idiom brandi also expresses (its only conditional form).
  */
 import type { BindingTag } from "@codefast/di";
-import { Container, token } from "@codefast/di";
+import { Container, inject, injectable, token } from "@codefast/di";
 
 import { ENV_TAG } from "#/fixtures/bench-tags";
 import {
+  CONDITIONAL_INJECTION_BATCH,
+  CONDITIONAL_INJECTION_TAGGED,
   OPTIONAL_HIT_BATCH,
   OPTIONAL_MISS_BATCH,
   RESOLVE_OPTIONAL_HIT,
@@ -106,9 +113,44 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
   };
 }
 
+// ── scenario 4: conditional injection by consumer tag ────────────────────────────────────────────────────────────────
+
+const conditionalServiceToken = token<TaggedService>("bench-cf-rp-conditional-service");
+const conditionalConsumerToken = token<ConditionalConsumer>("bench-cf-rp-conditional-consumer");
+
+@injectable([inject(conditionalServiceToken, { tag: ENV_TAG.of(TARGET_TAG_VALUE) })])
+class ConditionalConsumer {
+  constructor(readonly service: TaggedService) {}
+}
+
+function buildConditionalInjectionTaggedScenario(): BenchScenario {
+  const container = Container.create();
+
+  for (const env of TAGGED_ENVS) {
+    container.bind(conditionalServiceToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
+  }
+  container.bind(conditionalConsumerToken).to(ConditionalConsumer).transient();
+  container.resolve(conditionalConsumerToken);
+
+  return {
+    ...CONDITIONAL_INJECTION_TAGGED,
+    batch: CONDITIONAL_INJECTION_BATCH,
+    sanity: () => container.resolve(conditionalConsumerToken).service.env === TARGET_TAG_VALUE,
+    build: () =>
+      batched(CONDITIONAL_INJECTION_BATCH, () => {
+        container.resolve(conditionalConsumerToken);
+      }),
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildCodefastResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildResolveOptionalHitScenario(), buildResolveOptionalMissScenario(), buildTaggedBindingResolveScenario()];
+  return [
+    buildResolveOptionalHitScenario(),
+    buildResolveOptionalMissScenario(),
+    buildTaggedBindingResolveScenario(),
+    buildConditionalInjectionTaggedScenario(),
+  ];
 }

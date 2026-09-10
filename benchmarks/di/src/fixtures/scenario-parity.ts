@@ -500,6 +500,21 @@ export const TAGGED_BINDING_RESOLVE = {
   what: `resolve(token, { tags: [["env","${TARGET_TAG_VALUE}"]] }) from ${String(TAGGED_ENVS.length)}-variant tagged set`,
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * The per-iteration op count for the conditional-injection row.
+ */
+export const CONDITIONAL_INJECTION_BATCH = 300;
+
+/**
+ * Resolving a transient consumer whose own tag selects one binding out of the tagged set.
+ */
+export const CONDITIONAL_INJECTION_TAGGED = {
+  id: "conditional-injection-tagged",
+  facets: ["tag"],
+  group: "micro",
+  what: `resolve a transient consumer injected with the tag-selected binding (1 of ${String(TAGGED_ENVS.length)})`,
+} as const satisfies ScenarioDescriptor;
+
 // ── binding-variants ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
