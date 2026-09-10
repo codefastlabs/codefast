@@ -4,12 +4,13 @@
  * Ditox is functional; classes are wired through `injectableClass()` and bound
  * as singleton or transient factories.
  */
-import { createContainer, injectableClass, token } from "ditox";
+import { createContainer, injectableClass, optional, token } from "ditox";
 
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
   CONSTANT_RESOLVE_BATCH,
+  OPTIONAL_MISSING_TRANSIENT,
   SINGLETON_CLASS_1_DEP,
   TRANSIENT_CLASS_1_DEP,
 } from "#/fixtures/scenario-parity";
@@ -87,6 +88,45 @@ function buildTransientClassOneDepScenario(): BenchScenario {
 /**
  * Builds the ditox micro-benchmark scenarios.
  */
+class OptionalMissLeaf {}
+
+class OptionalMissService {
+  constructor(readonly leafDependency?: OptionalMissLeaf) {}
+}
+
+const OPTIONAL_MISS_LEAF_TOKEN = token<OptionalMissLeaf>("bench-ditox-optional-miss-leaf");
+const OPTIONAL_MISS_SERVICE_TOKEN = token<OptionalMissService>("bench-ditox-optional-miss-svc");
+
+function buildOptionalMissingTransientScenario(): BenchScenario {
+  const container = createContainer();
+  // The optional leaf token is never bound, so every resolve checks the absent optional.
+  container.bindFactory(
+    OPTIONAL_MISS_SERVICE_TOKEN,
+    injectableClass(OptionalMissService, optional(OPTIONAL_MISS_LEAF_TOKEN)),
+    { scope: "transient" },
+  );
+  container.resolve(OPTIONAL_MISS_SERVICE_TOKEN);
+
+  return {
+    ...OPTIONAL_MISSING_TRANSIENT,
+    batch: CLASS_RESOLVE_BATCH,
+    sanity: () => {
+      const firstResolution = container.resolve(OPTIONAL_MISS_SERVICE_TOKEN);
+      const secondResolution = container.resolve(OPTIONAL_MISS_SERVICE_TOKEN);
+      return firstResolution !== secondResolution && firstResolution.leafDependency === undefined;
+    },
+    build: () =>
+      batched(CLASS_RESOLVE_BATCH, () => {
+        container.resolve(OPTIONAL_MISS_SERVICE_TOKEN);
+      }),
+  };
+}
+
 export function buildDitoxMicroScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildConstantResolveScenario(), buildSingletonClassOneDepScenario(), buildTransientClassOneDepScenario()];
+  return [
+    buildConstantResolveScenario(),
+    buildSingletonClassOneDepScenario(),
+    buildTransientClassOneDepScenario(),
+    buildOptionalMissingTransientScenario(),
+  ];
 }

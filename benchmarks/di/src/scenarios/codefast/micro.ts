@@ -13,7 +13,7 @@
  * operations per second per *logical* operation — otherwise a batched
  * scenario would appear 1000× faster than the equivalent un-batched one.
  */
-import { Container, injectable, token } from "@codefast/di";
+import { Container, injectable, optional, token } from "@codefast/di";
 
 import {
   CLASS_RESOLVE_BATCH,
@@ -21,6 +21,7 @@ import {
   CONSTANT_RESOLVE_BATCH,
   NAMED_CONSTANT_GET,
   NAMED_RESOLVE_BATCH,
+  OPTIONAL_MISSING_TRANSIENT,
   SINGLETON_CLASS_1_DEP,
   TRANSIENT_CLASS_1_DEP,
 } from "#/fixtures/scenario-parity";
@@ -138,11 +139,44 @@ function buildNamedConstantGetScenario(): BenchScenario {
 /**
  * @since 0.3.16-canary.0
  */
+@injectable()
+class OptionalMissLeaf {}
+
+const optionalMissLeafToken = token<OptionalMissLeaf>("bench-cf-optional-miss-leaf");
+const optionalMissServiceToken = token<OptionalMissService>("bench-cf-optional-miss-svc");
+
+@injectable([optional(optionalMissLeafToken)])
+class OptionalMissService {
+  constructor(readonly leafDependency?: OptionalMissLeaf) {}
+}
+
+function buildOptionalMissingTransientScenario(): BenchScenario {
+  const container = Container.create();
+  // The optional leaf token is never bound, so every resolve checks the absent optional.
+  container.bind(optionalMissServiceToken).to(OptionalMissService).transient();
+  container.resolve(optionalMissServiceToken);
+
+  return {
+    ...OPTIONAL_MISSING_TRANSIENT,
+    batch: CLASS_RESOLVE_BATCH,
+    sanity: () => {
+      const firstResolution = container.resolve(optionalMissServiceToken);
+      const secondResolution = container.resolve(optionalMissServiceToken);
+      return firstResolution !== secondResolution && firstResolution.leafDependency === undefined;
+    },
+    build: () =>
+      batched(CLASS_RESOLVE_BATCH, () => {
+        container.resolve(optionalMissServiceToken);
+      }),
+  };
+}
+
 export function buildCodefastMicroScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildConstantResolveScenario(),
     buildSingletonClassOneDepScenario(),
     buildTransientClassOneDepScenario(),
     buildNamedConstantGetScenario(),
+    buildOptionalMissingTransientScenario(),
   ];
 }

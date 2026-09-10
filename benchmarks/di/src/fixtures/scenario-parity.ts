@@ -62,6 +62,18 @@ export const TRANSIENT_CLASS_1_DEP = {
 } as const satisfies ScenarioDescriptor;
 
 /**
+ * The optional-miss path: a transient class whose one optional dependency is unbound, so every
+ * resolve reconstructs it and checks the absent optional. Skipped by libraries without real
+ * transient scope (their `get` caches, so the optional is checked only once).
+ */
+export const OPTIONAL_MISSING_TRANSIENT = {
+  id: "optional-missing-transient",
+  facets: ["optional", "transient"],
+  group: "micro",
+  what: "resolve a transient class whose one optional dependency is unbound",
+} as const satisfies ScenarioDescriptor;
+
+/**
  * @since 0.5.0-canary.7
  */
 export const NAMED_CONSTANT_GET = {
