@@ -20,6 +20,10 @@ export const PALETTE: ReadonlyArray<PaletteEntry> = [
   { border: "#fbbf77", band: "rgba(251,191,119,0.16)", text: "rgb(253,224,169)" },
   { border: "#f472b6", band: "rgba(244,114,182,0.16)", text: "rgb(249,168,212)" },
   { border: "#a78bfa", band: "rgba(167,139,250,0.16)", text: "rgb(196,181,253)" },
+  // A suite plots one series per library; keep at least as many hues as the largest suite compares
+  // (the `di` suite has seven), or `paletteMap`'s modulo would hand two libraries the same colour.
+  { border: "#7ee787", band: "rgba(126,231,135,0.16)", text: "rgb(187,247,208)" },
+  { border: "#f0abfc", band: "rgba(240,171,252,0.16)", text: "rgb(245,213,255)" },
 ];
 
 /**
