@@ -40,6 +40,7 @@ function minimalPayload(overrides: Partial<EmbeddedViewerPayload> = {}): Embedde
     generatedAtIso: "2024-01-01T00:00:00.000Z",
     effectiveLimit: 10,
     hasMore: false,
+    reportsAvailable: false,
     ...overrides,
   };
 }

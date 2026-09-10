@@ -150,6 +150,9 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     );
   }
 
+  const reportRunIndex = baseRunIndices.at(-1);
+  const reportRunFolder = reportRunIndex !== undefined ? payload.runs[reportRunIndex]?.folder : undefined;
+
   return (
     <>
       <SkipToChartLink />
@@ -226,6 +229,26 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           uniqueEnvKeys={uniqueEnvKeys}
           visibleScenarios={visibleScenarios}
         />
+
+        {payload.reportsAvailable && reportRunFolder !== undefined && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+            <span>Download the report for the newest matching run:</span>
+            <a
+              className="text-bh-blue rounded-md border border-white/10 px-2 py-1 hover:bg-white/5"
+              download
+              href={`/api/report.md?run=${encodeURIComponent(reportRunFolder)}`}
+            >
+              report.md
+            </a>
+            <a
+              className="text-bh-blue rounded-md border border-white/10 px-2 py-1 hover:bg-white/5"
+              download
+              href={`/api/report.json?run=${encodeURIComponent(reportRunFolder)}`}
+            >
+              report.json
+            </a>
+          </div>
+        )}
 
         <ChartPanel
           baseRunIndices={baseRunIndices}

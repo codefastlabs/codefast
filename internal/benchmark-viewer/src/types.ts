@@ -1,3 +1,11 @@
+import type { ParsedRun } from "@codefast/benchmark-harness/report/jsonl";
+
+/** A run's report derived on demand: the markdown and the comparison document as JSON text. */
+export interface DerivedRunReport {
+  readonly markdown: string;
+  readonly comparisonJson: string;
+}
+
 /**
  * Configuration for the dynamic bench history server.
  *
@@ -63,6 +71,13 @@ export interface BenchServerOptions {
   readonly scenarioFacets?: ScenarioFacets;
   /** Display toggles the viewer opens with when the URL hash names none. */
   readonly viewDefaults?: ViewDefaults;
+  /**
+   * Derives a run's report from its parsed observations, so the viewer can serve `report.md` and
+   * `report.json` on demand for runs that no longer store them. Omit to disable the report routes.
+   */
+  readonly deriveReport?:
+    | ((parsed: ParsedRun, context: { readonly runId: string }) => DerivedRunReport | undefined)
+    | undefined;
 }
 
 // ---------------------------------------------------------------------------
@@ -188,6 +203,8 @@ export interface EmbeddedViewerPayload {
   readonly effectiveLimit: number;
   /** True when older run directories exist beyond the effectiveLimit window. */
   readonly hasMore: boolean;
+  /** True when the server can derive `report.md`/`report.json` on demand for a run. */
+  readonly reportsAvailable: boolean;
   /**
    * When the bench results directory could not be read, a short diagnostic for the UI.
    * Omitted when the directory was read successfully (even if it contained no runs).

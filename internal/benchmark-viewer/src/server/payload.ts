@@ -348,6 +348,7 @@ export function buildEmbeddedPayload(
       generatedAtIso: new Date().toISOString(),
       effectiveLimit,
       hasMore,
+      reportsAvailable: options.deriveReport !== undefined,
       ...(benchResultsWarning !== undefined && { benchResultsWarning }),
     };
   }
@@ -505,6 +506,7 @@ export function buildEmbeddedPayload(
     generatedAtIso: new Date().toISOString(),
     effectiveLimit,
     hasMore,
+    reportsAvailable: options.deriveReport !== undefined,
     ...(benchResultsWarning !== undefined && { benchResultsWarning }),
   };
 }
