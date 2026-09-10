@@ -16,18 +16,13 @@ import {
 import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import type { RunBenchSubprocessParameters } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import {
+  INTERLEAVED_RUN_ORDER,
   isIsolatedBenchRunRequested,
+  LIBRARY_MAJOR_RUN_ORDER,
   runBenchSubprocess,
   runBenchSubprocessesInterleaved,
 } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
-import type { LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
-import type { ComparisonLibrary } from "@codefast/benchmark-harness/report/comparison";
-import {
-  renderComparisonConsoleReport,
-  renderComparisonMarkdownReport,
-} from "@codefast/benchmark-harness/report/comparison";
-import { buildComparisonDocument } from "@codefast/benchmark-harness/report/comparison-document";
+import { renderComparisonConsoleReport } from "@codefast/benchmark-harness/report/comparison";
 import type { BenchSubprocessConfig } from "@codefast/benchmark-harness/shared/config";
 import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
@@ -37,8 +32,10 @@ import {
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
+import { assembleTvComparison } from "#/harness/comparison";
+import type { LibraryPayload } from "#/harness/comparison";
 import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
-import { TAILWIND_VARIANTS_COMPARISON_CONSOLE, TAILWIND_VARIANTS_COMPARISON_MARKDOWN } from "#/harness/presentation";
+import { TAILWIND_VARIANTS_COMPARISON_CONSOLE } from "#/harness/presentation";
 
 const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
@@ -66,11 +63,6 @@ function rebuildCodefastTailwindVariantsPackage(): void {
   const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
   console.log(`Finished rebuild of ${CODEFAST_TV.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
 }
-
-const INTERLEAVED_RUN_ORDER =
-  "interleaved — every library runs a scenario before the next scenario starts, rotating which goes first";
-const LIBRARY_MAJOR_RUN_ORDER =
-  "library-major — each library's whole suite runs before the next starts, so drift over the run lands on whoever ran later; cross-library ratios from this profile are provisional";
 
 /**
  * Runs every library's bench and returns the payloads keyed by library name.
@@ -122,68 +114,34 @@ async function main(): Promise<void> {
 
   const { payloads, runOrder } = await runEveryLibrary([CODEFAST_TV, TAILWIND_VARIANTS, CVA]);
   const codefastPayload = payloads.get(CODEFAST_TV.libraryName)!;
-  const tailwindVariantsPayload = payloads.get(TAILWIND_VARIANTS.libraryName)!;
-  const classVarianceAuthorityPayload = payloads.get(CVA.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
 
   assertSubjectMeasuredSomething(CODEFAST_TV.libraryName, codefastPayload.trials);
 
-  const codefastReport: LibraryReport = buildLibraryReport(
-    codefastPayload.fingerprint,
-    codefastPayload.trials,
-    codefastPayload.sanityFailures,
-  );
-  const tailwindVariantsReport: LibraryReport = buildLibraryReport(
-    tailwindVariantsPayload.fingerprint,
-    tailwindVariantsPayload.trials,
-    tailwindVariantsPayload.sanityFailures,
-  );
-  const classVarianceAuthorityReport: LibraryReport = buildLibraryReport(
-    classVarianceAuthorityPayload.fingerprint,
-    classVarianceAuthorityPayload.trials,
-    classVarianceAuthorityPayload.sanityFailures,
+  const payloadsByLibrary = new Map<string, LibraryPayload>(
+    [CODEFAST_TV, TAILWIND_VARIANTS, CVA].flatMap((config) => {
+      const payload = payloads.get(config.libraryName);
+      return payload === undefined
+        ? []
+        : [
+            [
+              config.libraryName,
+              { fingerprint: payload.fingerprint, trials: payload.trials, sanityFailures: payload.sanityFailures },
+            ] as const,
+          ];
+    }),
   );
 
-  const codefastLibrary: ComparisonLibrary = {
-    report: codefastReport,
-    displayName: resolveDisplayName(CODEFAST_TV),
-    shortName: "cf",
-  };
-  const tailwindVariantsLibrary: ComparisonLibrary = {
-    report: tailwindVariantsReport,
-    displayName: resolveDisplayName(TAILWIND_VARIANTS),
-    shortName: "tv",
-  };
-  const classVarianceAuthorityLibrary: ComparisonLibrary = {
-    report: classVarianceAuthorityReport,
-    displayName: resolveDisplayName(CVA),
-    shortName: "cva",
-  };
-
-  const competitors = [tailwindVariantsLibrary, classVarianceAuthorityLibrary];
-  renderComparisonConsoleReport(codefastLibrary, competitors, TAILWIND_VARIANTS_COMPARISON_CONSOLE);
-
-  const librariesForJsonl = [
-    { fingerprint: codefastPayload.fingerprint, trials: codefastPayload.trials },
-    { fingerprint: tailwindVariantsPayload.fingerprint, trials: tailwindVariantsPayload.trials },
-    {
-      fingerprint: classVarianceAuthorityPayload.fingerprint,
-      trials: classVarianceAuthorityPayload.trials,
-    },
-  ];
-
-  const markdown = renderComparisonMarkdownReport(codefastLibrary, competitors, {
-    ...TAILWIND_VARIANTS_COMPARISON_MARKDOWN,
-    runOrder,
-  });
-  // The same comparison the markdown renders, kept as data: the table rounds every ratio and
-  // spends its reliability verdicts as glyphs, neither of which reads back.
   const outputPaths = buildBenchRunOutputPaths(packageRootDirectory);
-  const comparisonDocument = buildComparisonDocument(codefastLibrary, competitors, {
+  const { codefastLibrary, competitors, markdown, comparisonDocument } = assembleTvComparison(payloadsByLibrary, {
     runId: outputPaths.runId,
     runOrder,
     scenariosAvailable: codefastPayload.scenarioIds?.length,
   });
+
+  renderComparisonConsoleReport(codefastLibrary, competitors, TAILWIND_VARIANTS_COMPARISON_CONSOLE);
+
+  const librariesForJsonl = [...payloadsByLibrary.values()].map(({ fingerprint, trials }) => ({ fingerprint, trials }));
 
   writeBenchRunArtifacts({ paths: outputPaths, markdown, comparisonDocument, librariesForJsonl });
 }
