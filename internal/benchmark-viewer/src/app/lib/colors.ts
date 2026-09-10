@@ -14,16 +14,17 @@ export interface PaletteEntry {
  *
  * @since 0.3.16-canary.1
  */
+// Seven hues spread for the widest pairwise separation (so no two lines read alike), each also kept
+// clear of the ratio colours. Keep at least as many as the largest suite compares (the `di` suite has
+// seven), or `paletteMap`'s modulo would hand two libraries the same colour.
 export const PALETTE: ReadonlyArray<PaletteEntry> = [
-  { border: "#6ee7c5", band: "rgba(110,231,197,0.18)", text: "rgb(167,243,208)" },
-  { border: "#93b4ff", band: "rgba(147,180,255,0.16)", text: "rgb(186,213,254)" },
-  { border: "#fbbf77", band: "rgba(251,191,119,0.16)", text: "rgb(253,224,169)" },
+  { border: "#2dd4bf", band: "rgba(45,212,191,0.18)", text: "rgb(187,241,234)" },
+  { border: "#60a5fa", band: "rgba(96,165,250,0.16)", text: "rgb(177,210,251)" },
+  { border: "#f59e42", band: "rgba(245,158,66,0.16)", text: "rgb(251,215,178)" },
   { border: "#f472b6", band: "rgba(244,114,182,0.16)", text: "rgb(249,168,212)" },
-  { border: "#a78bfa", band: "rgba(167,139,250,0.16)", text: "rgb(196,181,253)" },
-  // A suite plots one series per library; keep at least as many hues as the largest suite compares
-  // (the `di` suite has seven), or `paletteMap`'s modulo would hand two libraries the same colour.
-  { border: "#7ee787", band: "rgba(126,231,135,0.16)", text: "rgb(187,247,208)" },
-  { border: "#f0abfc", band: "rgba(240,171,252,0.16)", text: "rgb(245,213,255)" },
+  { border: "#a855f7", band: "rgba(168,85,247,0.16)", text: "rgb(215,177,251)" },
+  { border: "#86efac", band: "rgba(134,239,172,0.16)", text: "rgb(183,245,206)" },
+  { border: "#f0abfc", band: "rgba(240,171,252,0.16)", text: "rgb(240,177,251)" },
 ];
 
 /**
