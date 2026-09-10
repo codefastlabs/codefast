@@ -75,6 +75,11 @@ export const OBSERVATIONS_FILE_NAME = "observations.jsonl";
 export const BENCH_RESULTS_DIR_NAME = "bench-results";
 
 /**
+ * File in the bench-results root that points at the newest whole-suite run by its id.
+ */
+export const LATEST_RUN_POINTER_FILE_NAME = "latest.json";
+
+/**
  * Fewest trials that can carry a median: with two, the median is their mean and cannot separate a
  * change from noise.
  *

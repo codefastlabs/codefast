@@ -2,6 +2,7 @@ import type { ComparisonCompetitorSummary, ComparisonLibrary } from "#/report/co
 import { buildComparisonRows, summarizeComparison } from "#/report/comparison";
 import { isIqrNoisy, isRatioUnreliable } from "#/report/reliability";
 import { resolveRunShapeFromEnvironment, resolveScenarioFilterFromEnvironment } from "#/shared/env-keys";
+import type { BenchRunShape } from "#/shared/env-keys";
 
 /**
  * Shape of {@link ComparisonDocument}, so a reader of an older run directory can tell that the file
@@ -52,6 +53,8 @@ export interface ComparisonDocumentRunInput {
   readonly runOrder?: string | undefined;
   /** Every row the subject collects — `SubprocessPayload.scenarioIds`, not the measured subset. */
   readonly scenariosAvailable?: number | undefined;
+  /** The run's shape; when omitted it is read from the environment (a live run), not the data. */
+  readonly shape?: BenchRunShape | undefined;
 }
 
 /**
@@ -166,7 +169,7 @@ export function buildComparisonDocument(
   const { fingerprint } = pivot.report;
   const scenarioFilter = resolveScenarioFilterFromEnvironment();
   const scenariosMeasured = pivot.report.scenarios.length;
-  const shape = resolveRunShapeFromEnvironment();
+  const shape = run.shape ?? resolveRunShapeFromEnvironment();
   return {
     schemaVersion: COMPARISON_DOCUMENT_SCHEMA_VERSION,
     run: {

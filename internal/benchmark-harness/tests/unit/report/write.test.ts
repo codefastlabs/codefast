@@ -4,6 +4,7 @@ import { join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { parseRunObservations } from "#/report/jsonl";
 import type { JsonlBenchObservationRow } from "#/report/jsonl";
 import { writeJsonlRun } from "#/report/write";
 import { BENCH_ISOLATE_ENV_KEY, BENCH_MODE_ENV_KEY } from "#/shared/env-keys";
@@ -84,5 +85,17 @@ describe("writeJsonlRun config identity", () => {
     const rows = writtenRows();
     expect(rows).toHaveLength(2);
     expect(rows.every((row) => row.trialCount === 2)).toBe(true);
+  });
+
+  it("round-trips through parseRunObservations, recovering the payloads and the shape", () => {
+    vi.stubEnv(BENCH_ISOLATE_ENV_KEY, "1");
+    vi.stubEnv(BENCH_MODE_ENV_KEY, "full");
+    const outputPath = join(temporaryRoot, "observations.jsonl");
+    writeJsonlRun(outputPath, [{ fingerprint: fingerprint(), trials: trials(2) }]);
+    const { libraries, shape } = parseRunObservations(readFileSync(outputPath, "utf8"));
+    expect(shape).toStrictEqual({ isolated: true, mode: "full" });
+    const library = libraries.get("@codefast/di");
+    expect(library?.trials).toHaveLength(2);
+    expect(library?.fingerprint.libraryName).toBe("@codefast/di");
   });
 });

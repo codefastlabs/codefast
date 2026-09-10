@@ -266,6 +266,19 @@ export function isIsolatedBenchRunRequested(): boolean {
   return isEnvFlagEnabled(BENCH_ISOLATE_ENV_KEY);
 }
 
+/** The run-order caveat for an isolated run: scenario-major and rotated, so ratios are citable. */
+export const INTERLEAVED_RUN_ORDER =
+  "interleaved — every library runs a scenario before the next scenario starts, rotating which goes first";
+
+/** The run-order caveat for a shared run: one library's whole suite before the next, so ratios are provisional. */
+export const LIBRARY_MAJOR_RUN_ORDER =
+  "library-major — each library's whole suite runs before the next starts, so drift over the run lands on whoever ran later; cross-library ratios from this profile are provisional";
+
+/** Selects the run-order caveat that matches a run's execution shape. */
+export function runOrderForShape(isolated: boolean): string {
+  return isolated ? INTERLEAVED_RUN_ORDER : LIBRARY_MAJOR_RUN_ORDER;
+}
+
 function mergeIsolatedTrials(workerPayloads: ReadonlyArray<SubprocessPayload>): Array<TrialPayload> {
   const trialCount = Math.max(0, ...workerPayloads.map((payload) => payload.trials.length));
   const merged: Array<TrialPayload> = [];
