@@ -8,6 +8,7 @@
 import { buildBrandiConditionalScenarios } from "#/scenarios/brandi/conditional";
 import { buildBrandiFanOutScenarios } from "#/scenarios/brandi/fan-out";
 import { buildBrandiMicroScenarios } from "#/scenarios/brandi/micro";
+import { buildBrandiModuleScenarios } from "#/scenarios/brandi/module";
 import { buildBrandiRealisticScenarios } from "#/scenarios/brandi/realistic";
 import { buildBrandiScaleScenarios } from "#/scenarios/brandi/scale";
 import type { AnyScenario } from "#/scenarios/types";
@@ -21,6 +22,7 @@ export function collectAllBrandiScenarios(): ReadonlyArray<AnyScenario> {
     ...buildBrandiRealisticScenarios(),
     ...buildBrandiFanOutScenarios(),
     ...buildBrandiConditionalScenarios(),
+    ...buildBrandiModuleScenarios(),
     ...buildBrandiScaleScenarios(),
   ];
 }

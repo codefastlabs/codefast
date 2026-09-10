@@ -17,7 +17,7 @@
  */
 import { Container, Module, token } from "@codefast/di";
 
-import { MODULE_LOAD_UNLOAD } from "#/fixtures/scenario-parity";
+import { MODULE_COLD_FROM_MODULES, MODULE_LOAD_UNLOAD } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
 // ── shared tokens ────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -134,9 +134,8 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
   runOneColdStart();
 
   return {
-    id: "module-cold-from-modules",
-    group: "boot",
-    what: "Container.fromModules(2 modules) fresh container build + resolve root (cold start)",
+    ...MODULE_COLD_FROM_MODULES,
+    what: "Container.fromModules(2 modules) — fresh container build + resolve root (cold start)",
     batch: 1,
     sanity: () => {
       const result = runOneColdStart();

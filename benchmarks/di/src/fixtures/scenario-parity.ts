@@ -307,6 +307,15 @@ export const MODULE_LOAD_UNLOAD = {
 } as const satisfies ScenarioDescriptor;
 
 /**
+ * Building a fresh container from two modules and resolving the root, per iteration.
+ */
+export const MODULE_COLD_FROM_MODULES = {
+  id: "module-cold-from-modules",
+  group: "boot",
+  what: "build a fresh container from 2 modules and resolve the root service (cold start)",
+} as const satisfies ScenarioDescriptor;
+
+/**
  * @since 0.5.0-canary.7
  */
 export const BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE = {
