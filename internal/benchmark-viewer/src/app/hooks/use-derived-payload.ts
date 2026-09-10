@@ -16,7 +16,7 @@ interface DerivedPayloadOptions {
 }
 
 /** One library's throughput ratio of the current scenario to its within-group baseline. */
-export interface WithinGroupCostEntry {
+interface WithinGroupCostEntry {
   readonly libraryKey: string;
   readonly displayName: string;
   readonly ratio: number;
