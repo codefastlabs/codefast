@@ -236,14 +236,14 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           <div className="mt-4 mb-6 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
             <span>Download the report for the newest matching run:</span>
             <a
-              className="text-bh-blue rounded-md border border-white/10 px-2 py-1 hover:bg-white/5"
+              className="text-bh-ink border-bh-border bg-bh-fill-white-4 hover:bg-bh-fill-white-7 rounded-md border px-2 py-1"
               download
               href={`/api/report.md?run=${encodeURIComponent(reportRunFolder)}`}
             >
               report.md
             </a>
             <a
-              className="text-bh-blue rounded-md border border-white/10 px-2 py-1 hover:bg-white/5"
+              className="text-bh-ink border-bh-border bg-bh-fill-white-4 hover:bg-bh-fill-white-7 rounded-md border px-2 py-1"
               download
               href={`/api/report.json?run=${encodeURIComponent(reportRunFolder)}`}
             >

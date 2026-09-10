@@ -30,7 +30,7 @@ function FieldSelect({ className, ...props }: ComponentProps<"select">) {
     <select
       {...props}
       className={cn(
-        "focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm leading-normal text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2",
+        "bh-select focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 pr-9 pl-3 text-sm leading-normal text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2",
         className,
       )}
     />
