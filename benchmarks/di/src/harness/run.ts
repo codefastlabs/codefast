@@ -26,18 +26,13 @@ import {
 import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import type { RunBenchSubprocessParameters } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import {
+  INTERLEAVED_RUN_ORDER,
   isIsolatedBenchRunRequested,
+  LIBRARY_MAJOR_RUN_ORDER,
   runBenchSubprocess,
   runBenchSubprocessesInterleaved,
 } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
-import type { LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
-import type { ComparisonLibrary } from "@codefast/benchmark-harness/report/comparison";
-import {
-  renderComparisonConsoleReport,
-  renderComparisonMarkdownReport,
-} from "@codefast/benchmark-harness/report/comparison";
-import { buildComparisonDocument } from "@codefast/benchmark-harness/report/comparison-document";
+import { renderComparisonConsoleReport } from "@codefast/benchmark-harness/report/comparison";
 import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import type { BenchSubprocessConfig } from "@codefast/benchmark-harness/shared/config";
 import {
@@ -47,8 +42,10 @@ import {
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
+import { assembleDiComparison } from "#/harness/comparison";
+import type { LibraryPayload } from "#/harness/comparison";
 import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, TSYRINGE } from "#/harness/config";
-import { DI_COMPARISON_CONSOLE, DI_COMPARISON_MARKDOWN } from "#/harness/presentation";
+import { DI_COMPARISON_CONSOLE } from "#/harness/presentation";
 
 const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
@@ -81,11 +78,6 @@ function subprocessParametersFor(config: BenchSubprocessConfig): RunBenchSubproc
     forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
   };
 }
-
-const INTERLEAVED_RUN_ORDER =
-  "interleaved — every library runs a scenario before the next scenario starts, rotating which goes first";
-const LIBRARY_MAJOR_RUN_ORDER =
-  "library-major — each library's whole suite runs before the next starts, so drift over the run lands on whoever ran later; cross-library ratios from this profile are provisional";
 
 /**
  * Every library's payload, keyed by library name.
@@ -136,92 +128,34 @@ async function main(): Promise<void> {
     INJECTION_JS,
   ]);
   const codefastPayload = payloads.get(CODEFAST_DI.libraryName)!;
-  const inversifyPayload = payloads.get(INVERSIFY.libraryName)!;
-  const awilixPayload = payloads.get(AWILIX.libraryName)!;
-  const tsyringePayload = payloads.get(TSYRINGE.libraryName)!;
-  const brandiPayload = payloads.get(BRANDI.libraryName)!;
-  const ditoxPayload = payloads.get(DITOX.libraryName)!;
-  const injectionJsPayload = payloads.get(INJECTION_JS.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
 
   assertSubjectMeasuredSomething(CODEFAST_DI.libraryName, codefastPayload.trials);
 
-  const codefastReport: LibraryReport = buildLibraryReport(
-    codefastPayload.fingerprint,
-    codefastPayload.trials,
-    codefastPayload.sanityFailures,
-  );
-  const inversifyReport: LibraryReport = buildLibraryReport(
-    inversifyPayload.fingerprint,
-    inversifyPayload.trials,
-    inversifyPayload.sanityFailures,
-  );
-  const awilixReport: LibraryReport = buildLibraryReport(
-    awilixPayload.fingerprint,
-    awilixPayload.trials,
-    awilixPayload.sanityFailures,
-  );
-  const tsyringeReport: LibraryReport = buildLibraryReport(
-    tsyringePayload.fingerprint,
-    tsyringePayload.trials,
-    tsyringePayload.sanityFailures,
-  );
-  const brandiReport: LibraryReport = buildLibraryReport(
-    brandiPayload.fingerprint,
-    brandiPayload.trials,
-    brandiPayload.sanityFailures,
-  );
-  const ditoxReport: LibraryReport = buildLibraryReport(
-    ditoxPayload.fingerprint,
-    ditoxPayload.trials,
-    ditoxPayload.sanityFailures,
-  );
-  const injectionJsReport: LibraryReport = buildLibraryReport(
-    injectionJsPayload.fingerprint,
-    injectionJsPayload.trials,
-    injectionJsPayload.sanityFailures,
+  const payloadsByLibrary = new Map<string, LibraryPayload>(
+    [CODEFAST_DI, INVERSIFY, AWILIX, TSYRINGE, BRANDI, DITOX, INJECTION_JS].flatMap((config) => {
+      const payload = payloads.get(config.libraryName);
+      return payload === undefined
+        ? []
+        : [
+            [
+              config.libraryName,
+              { fingerprint: payload.fingerprint, trials: payload.trials, sanityFailures: payload.sanityFailures },
+            ] as const,
+          ];
+    }),
   );
 
-  const codefastLibrary: ComparisonLibrary = {
-    report: codefastReport,
-    displayName: CODEFAST_DI.libraryName,
-    shortName: "cf",
-  };
-  // Every competitor except inversify covers only a subset of the core rows, so each reads `—`
-  // outside what it measured; the head-to-head lines still count only the rows in common.
-  const competitors: ReadonlyArray<ComparisonLibrary> = [
-    { report: inversifyReport, displayName: INVERSIFY.libraryName, shortName: "inv" },
-    { report: awilixReport, displayName: resolveDisplayName(AWILIX), shortName: "awi" },
-    { report: tsyringeReport, displayName: resolveDisplayName(TSYRINGE), shortName: "tsy" },
-    { report: brandiReport, displayName: resolveDisplayName(BRANDI), shortName: "brn" },
-    { report: ditoxReport, displayName: resolveDisplayName(DITOX), shortName: "dtx" },
-    { report: injectionJsReport, displayName: resolveDisplayName(INJECTION_JS), shortName: "inj" },
-  ];
-  renderComparisonConsoleReport(codefastLibrary, competitors, DI_COMPARISON_CONSOLE);
-
-  const librariesForJsonl = [
-    { fingerprint: codefastPayload.fingerprint, trials: codefastPayload.trials },
-    { fingerprint: inversifyPayload.fingerprint, trials: inversifyPayload.trials },
-    { fingerprint: awilixPayload.fingerprint, trials: awilixPayload.trials },
-    { fingerprint: tsyringePayload.fingerprint, trials: tsyringePayload.trials },
-    { fingerprint: brandiPayload.fingerprint, trials: brandiPayload.trials },
-    { fingerprint: ditoxPayload.fingerprint, trials: ditoxPayload.trials },
-    { fingerprint: injectionJsPayload.fingerprint, trials: injectionJsPayload.trials },
-  ];
-
-  const markdown = renderComparisonMarkdownReport(codefastLibrary, competitors, {
-    ...DI_COMPARISON_MARKDOWN,
-    runOrder,
-  });
-
-  // The same comparison the markdown renders, kept as data: the table rounds every ratio and
-  // spends its reliability verdicts as glyphs, neither of which reads back.
   const outputPaths = buildBenchRunOutputPaths(packageRootDirectory);
-  const comparisonDocument = buildComparisonDocument(codefastLibrary, competitors, {
+  const { codefastLibrary, competitors, markdown, comparisonDocument } = assembleDiComparison(payloadsByLibrary, {
     runId: outputPaths.runId,
     runOrder,
     scenariosAvailable: codefastPayload.scenarioIds?.length,
   });
+
+  renderComparisonConsoleReport(codefastLibrary, competitors, DI_COMPARISON_CONSOLE);
+
+  const librariesForJsonl = [...payloadsByLibrary.values()].map(({ fingerprint, trials }) => ({ fingerprint, trials }));
 
   writeBenchRunArtifacts({ paths: outputPaths, markdown, comparisonDocument, librariesForJsonl });
 }
