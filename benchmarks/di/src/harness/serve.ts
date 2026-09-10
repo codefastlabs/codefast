@@ -2,6 +2,7 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { runOrderForShape } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
   BENCH_RESULTS_DIR_NAME,
@@ -9,6 +10,7 @@ import {
 } from "@codefast/benchmark-harness/shared/env-keys";
 import { startBenchServer } from "@codefast/benchmark-viewer/server";
 
+import { assembleDiComparison } from "#/harness/comparison";
 import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, SERVE_TITLE, TSYRINGE } from "#/harness/config";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 
@@ -63,4 +65,15 @@ await startBenchServer({
   ],
   // Resolved from the scenario declarations themselves, so a rename cannot detach its facets.
   scenarioFacets: collectScenarioFacets(),
+  deriveReport: (parsed, { runId }) => {
+    if (parsed.shape === undefined) {
+      return undefined;
+    }
+    const { markdown, comparisonDocument } = assembleDiComparison(parsed.libraries, {
+      runId,
+      runOrder: runOrderForShape(parsed.shape.isolated),
+      shape: parsed.shape,
+    });
+    return { markdown, comparisonJson: `${JSON.stringify(comparisonDocument, undefined, 2)}\n` };
+  },
 });

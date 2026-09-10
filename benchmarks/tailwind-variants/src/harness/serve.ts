@@ -2,6 +2,7 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { runOrderForShape } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
 import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import {
   BENCH_RESULTS_DIR_NAME,
@@ -9,6 +10,7 @@ import {
 } from "@codefast/benchmark-harness/shared/env-keys";
 import { startBenchServer } from "@codefast/benchmark-viewer/server";
 
+import { assembleTvComparison } from "#/harness/comparison";
 import { CODEFAST_TV, CVA, SERVE_TITLE, TAILWIND_VARIANTS } from "#/harness/config";
 
 await startBenchServer({
@@ -26,4 +28,15 @@ await startBenchServer({
     { name: TAILWIND_VARIANTS.libraryName, displayName: resolveDisplayName(TAILWIND_VARIANTS) },
     { name: CVA.libraryName, displayName: resolveDisplayName(CVA) },
   ],
+  deriveReport: (parsed, { runId }) => {
+    if (parsed.shape === undefined) {
+      return undefined;
+    }
+    const { markdown, comparisonDocument } = assembleTvComparison(parsed.libraries, {
+      runId,
+      runOrder: runOrderForShape(parsed.shape.isolated),
+      shape: parsed.shape,
+    });
+    return { markdown, comparisonJson: `${JSON.stringify(comparisonDocument, undefined, 2)}\n` };
+  },
 });
