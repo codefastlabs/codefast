@@ -8,6 +8,8 @@ function run(folder: string, version: string): EmbeddedRun {
     folder,
     envKey: "env",
     envLabel: "env",
+    configKey: "cfg",
+    configLabel: "cfg",
     nodeVersion: "26",
     v8Version: "14",
     platform: "darwin",

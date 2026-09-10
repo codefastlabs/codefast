@@ -1,12 +1,8 @@
-import type { ComparisonCompetitorSummary, ComparisonLibrary } from "#/report/comparison";
-import { buildComparisonRows, summarizeComparison } from "#/report/comparison";
+import type { ComparisonCompetitorSummary, ComparisonLibrary, IntraLibraryRow } from "#/report/comparison";
+import { buildComparisonRows, buildIntraLibraryRows, summarizeComparison } from "#/report/comparison";
 import { isIqrNoisy, isRatioUnreliable } from "#/report/reliability";
-import {
-  BENCH_ISOLATE_ENV_KEY,
-  isEnvFlagEnabled,
-  resolveBenchModeFromEnvironment,
-  resolveScenarioFilterFromEnvironment,
-} from "#/shared/env-keys";
+import { resolveRunShapeFromEnvironment, resolveScenarioFilterFromEnvironment } from "#/shared/env-keys";
+import type { BenchRunShape } from "#/shared/env-keys";
 
 /**
  * Shape of {@link ComparisonDocument}, so a reader of an older run directory can tell that the file
@@ -57,6 +53,10 @@ export interface ComparisonDocumentRunInput {
   readonly runOrder?: string | undefined;
   /** Every row the subject collects — `SubprocessPayload.scenarioIds`, not the measured subset. */
   readonly scenariosAvailable?: number | undefined;
+  /** The run's shape; when omitted it is read from the environment (a live run), not the data. */
+  readonly shape?: BenchRunShape | undefined;
+  /** Each compared scenario id mapped to its group baseline, for the intra-library section. */
+  readonly baselineOf?: ReadonlyMap<string, string> | undefined;
 }
 
 /**
@@ -142,6 +142,8 @@ export interface ComparisonDocument {
   readonly competitors: ReadonlyArray<ComparisonDocumentLibrary>;
   readonly scenarios: ReadonlyArray<ComparisonDocumentScenario>;
   readonly headToHead: ReadonlyArray<ComparisonCompetitorSummary>;
+  /** Within-group ratios, each scenario against its group baseline; empty when no baseline is declared. */
+  readonly intraLibrary: ReadonlyArray<IntraLibraryRow>;
 }
 
 function toDocumentLibrary(library: ComparisonLibrary): ComparisonDocumentLibrary {
@@ -171,12 +173,13 @@ export function buildComparisonDocument(
   const { fingerprint } = pivot.report;
   const scenarioFilter = resolveScenarioFilterFromEnvironment();
   const scenariosMeasured = pivot.report.scenarios.length;
+  const shape = run.shape ?? resolveRunShapeFromEnvironment();
   return {
     schemaVersion: COMPARISON_DOCUMENT_SCHEMA_VERSION,
     run: {
       runId: run.runId,
-      mode: resolveBenchModeFromEnvironment() ?? "default",
-      isolated: isEnvFlagEnabled(BENCH_ISOLATE_ENV_KEY),
+      mode: shape.mode,
+      isolated: shape.isolated,
       scenarioFilter: scenarioFilter === undefined ? null : [...scenarioFilter],
       trialCount: pivot.report.trialCount,
       scenariosMeasured,
@@ -217,5 +220,6 @@ export function buildComparisonDocument(
       })),
     })),
     headToHead: summarizeComparison(pivot, competitors),
+    intraLibrary: buildIntraLibraryRows([pivot, ...competitors], run.baselineOf ?? new Map()),
   };
 }

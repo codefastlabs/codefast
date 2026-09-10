@@ -31,6 +31,9 @@ function observationLine(libraryName: string, overrides: Partial<JsonlBenchObser
     p99Ms: 12,
     p999Ms: 13,
     samples: 100,
+    isolated: false,
+    mode: "default",
+    trialCount: 3,
     ...overrides,
   };
   return JSON.stringify(row);

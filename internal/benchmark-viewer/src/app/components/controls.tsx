@@ -30,7 +30,7 @@ function FieldSelect({ className, ...props }: ComponentProps<"select">) {
     <select
       {...props}
       className={cn(
-        "focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm leading-normal text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2",
+        "bh-select focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue box-border h-10 w-full rounded-xl border border-white/10 bg-black/30 pr-9 pl-3 text-sm leading-normal text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2",
         className,
       )}
     />
@@ -85,6 +85,10 @@ interface ChartControlPanelProps {
   uniqueEnvKeys: Array<string>;
   envLabelMap: Record<string, string>;
   onEnvChange: (key: string) => void;
+  configKey: string;
+  uniqueConfigKeys: Array<string>;
+  configLabelMap: Record<string, string>;
+  onConfigChange: (key: string) => void;
   runWindow: ViewState["runWindow"];
   onRunWindowChange: (window: ViewState["runWindow"]) => void;
 }
@@ -118,6 +122,10 @@ export function ChartControlPanel({
   uniqueEnvKeys,
   envLabelMap,
   onEnvChange,
+  configKey,
+  uniqueConfigKeys,
+  configLabelMap,
+  onConfigChange,
   runWindow,
   onRunWindowChange,
 }: ChartControlPanelProps) {
@@ -267,6 +275,30 @@ export function ChartControlPanel({
             ))}
           </FieldSelect>
         </label>
+        {uniqueConfigKeys.length > 1 && (
+          <label
+            className={cn("w-full min-w-0 sm:w-auto sm:max-w-72 sm:min-w-[min(100%,13rem)]", foldable)}
+            htmlFor="ctrl-config"
+          >
+            <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">
+              Configuration
+            </FieldLabel>
+            <FieldSelect
+              aria-label="Filter runs by benchmark configuration"
+              className="max-sm:h-9 max-sm:min-h-9"
+              id="ctrl-config"
+              onChange={(e) => onConfigChange(e.target.value)}
+              value={configKey}
+            >
+              <option value="">All configs</option>
+              {uniqueConfigKeys.map((key) => (
+                <option key={key} value={key}>
+                  {configLabelMap[key] ?? key}
+                </option>
+              ))}
+            </FieldSelect>
+          </label>
+        )}
         <label
           className={cn("w-full min-w-0 shrink-0 sm:w-auto sm:max-w-44 sm:min-w-[min(100%,10rem)]", foldable)}
           htmlFor="ctrl-run-window"

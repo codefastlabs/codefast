@@ -8,6 +8,7 @@ import {
   UNRELIABLE_RATIO_MARKER,
   formatNoisyIqrCaveatLine,
   formatReliabilityCaveatLine,
+  isIqrNoisy,
   isRatioNoisy,
   isRatioUnreliable,
   isThroughputCellNoisy,
@@ -79,6 +80,8 @@ export interface ComparisonMarkdownReportOptions {
   readonly runOrder?: string;
   /** Emits the skipped-scenario section; off when appended to a report that already has it. */
   readonly includeSanityFailures?: boolean;
+  /** Each compared scenario id mapped to its group baseline; drives the within-group section. */
+  readonly baselineOf?: ReadonlyMap<string, string>;
 }
 
 /**
@@ -543,6 +546,42 @@ function buildSanityFailureLines(
  *
  * @since 0.5.0-canary.9
  */
+/** Renders the within-group section: each scenario's throughput against its group baseline, per library. */
+function buildIntraLibraryTableLines(rows: ReadonlyArray<IntraLibraryRow>): Array<string> {
+  if (rows.length === 0) {
+    return [];
+  }
+  const libraryNames: Array<string> = [];
+  for (const row of rows) {
+    for (const cell of row.cells) {
+      if (!libraryNames.includes(cell.libraryDisplayName)) {
+        libraryNames.push(cell.libraryDisplayName);
+      }
+    }
+  }
+  const header = ["Scenario", "Baseline", ...libraryNames];
+  const separator = header.map((_unused, columnIndex) => (columnIndex < 2 ? "---" : "---:"));
+  const dataRows = rows.map((row) => {
+    const byLibrary = new Map(row.cells.map((cell) => [cell.libraryDisplayName, cell]));
+    const ratioCells = libraryNames.map((name) => {
+      const cell = byLibrary.get(name);
+      return cell === undefined
+        ? "—"
+        : `${formatRatioMultiple(cell.ratio)}${cell.unreliable ? UNRELIABLE_RATIO_MARKER : ""}`;
+    });
+    return [`\`${row.scenarioId}\``, `\`${row.baselineId}\``, ...ratioCells];
+  });
+  return [
+    "### Within-group cost",
+    "",
+    "Each scenario's throughput relative to its group baseline, per library — below `1.00×` is slower than the baseline.",
+    "",
+    `| ${header.join(" | ")} |`,
+    `| ${separator.join(" | ")} |`,
+    ...dataRows.map((cells) => `| ${cells.join(" | ")} |`),
+  ];
+}
+
 export function renderComparisonMarkdownReport(
   pivot: ComparisonLibrary,
   competitors: ReadonlyArray<ComparisonLibrary>,
@@ -552,6 +591,9 @@ export function renderComparisonMarkdownReport(
   const summaries = summarizeComparison(pivot, competitors);
   const unreliableCount = countUnreliableRatioCells(rows);
   const noisyCount = countNoisyCells(rows);
+  const intraLibraryLines = buildIntraLibraryTableLines(
+    buildIntraLibraryRows([pivot, ...competitors], options.baselineOf ?? new Map()),
+  );
   const introLines = options.introLines ?? [];
   const noteLines = [...buildCompetitorNoteLines(summaries), ...buildPartialTrialNoteLines(pivot, competitors)];
   const groupTableLines = buildGroupGeomeanTableLines(collectGroupOrder(rows), summaries);
@@ -583,6 +625,7 @@ export function renderComparisonMarkdownReport(
     // The caveats sit directly under the table so they travel with the marked cells.
     ...(unreliableCount === 0 ? [] : ["", formatReliabilityCaveatLine(unreliableCount)]),
     ...(noisyCount === 0 ? [] : ["", formatNoisyIqrCaveatLine(noisyCount)]),
+    ...(intraLibraryLines.length === 0 ? [] : ["", ...intraLibraryLines]),
   ];
 
   return sections.join("\n");
@@ -670,4 +713,70 @@ export function renderComparisonConsoleReport(
     console.log(options.footerHintLine);
   }
   console.log("");
+}
+
+/** One library's ratio of a scenario's throughput to its group baseline's, with reliability. */
+export interface IntraLibraryRatioCell {
+  readonly libraryDisplayName: string;
+  readonly ratio: number;
+  readonly iqrFraction: number;
+  readonly unreliable: boolean;
+}
+
+/** A scenario's intra-library comparison: its throughput against the group baseline, per library. */
+export interface IntraLibraryRow {
+  readonly scenarioId: string;
+  readonly group: string;
+  readonly what: string;
+  readonly baselineId: string;
+  readonly cells: ReadonlyArray<IntraLibraryRatioCell>;
+}
+
+function indexScenariosById(report: LibraryReport): Map<string, AggregatedScenarioResult> {
+  const index = new Map<string, AggregatedScenarioResult>();
+  for (const scenario of report.scenarios) {
+    index.set(scenario.id, scenario);
+  }
+  return index;
+}
+
+/**
+ * Builds the intra-library rows: for every scenario that names a baseline, each library's ratio of
+ * that scenario's throughput to the baseline's.
+ *
+ * @param libraries - Pivot first, then competitors; each contributes one cell per row it measured.
+ * @param baselineOf - Each compared scenario id mapped to the baseline scenario id it is measured against.
+ */
+export function buildIntraLibraryRows(
+  libraries: ReadonlyArray<ComparisonLibrary>,
+  baselineOf: ReadonlyMap<string, string>,
+): Array<IntraLibraryRow> {
+  const indexed = libraries.map((library) => ({ library, byId: indexScenariosById(library.report) }));
+  const pivotById = indexed[0]?.byId;
+  const rows: Array<IntraLibraryRow> = [];
+  for (const [scenarioId, baselineId] of baselineOf) {
+    const pivotScenario = pivotById?.get(scenarioId);
+    if (pivotScenario === undefined) {
+      continue;
+    }
+    const cells: Array<IntraLibraryRatioCell> = [];
+    for (const { library, byId } of indexed) {
+      const compared = byId.get(scenarioId);
+      const baseline = byId.get(baselineId);
+      if (compared === undefined || baseline === undefined || baseline.hzPerOpMedian <= 0) {
+        continue;
+      }
+      cells.push({
+        libraryDisplayName: library.displayName,
+        ratio: compared.hzPerOpMedian / baseline.hzPerOpMedian,
+        iqrFraction: compared.hzPerOpIqrFraction,
+        unreliable:
+          isRatioUnreliable(compared.hzPerOpMedian, baseline.hzPerOpMedian) || isIqrNoisy(compared.hzPerOpIqrFraction),
+      });
+    }
+    if (cells.length > 0) {
+      rows.push({ scenarioId, group: pivotScenario.group, what: pivotScenario.what, baselineId, cells });
+    }
+  }
+  return rows;
 }

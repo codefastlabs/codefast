@@ -38,9 +38,10 @@ it measures the working tree rather than a stale `dist/`.
 | `BENCH_PORT=<n>`                      | Preferred port for `bench:serve`                                                       |
 | `PORT=<n>`                            | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process   |
 
-Every run writes a timestamped directory under `bench-results/` (git-ignored) holding `report.md`, `report.json` and
-`observations.jsonl`, and mirrors the newest whole-suite run to `latest.md` / `latest.json` / `latest.jsonl`. A run
-narrowed with `BENCH_ONLY` leaves `latest.*` alone, and its `report.json` `run` block says it was filtered.
+Every run writes a timestamped directory under `bench-results/` (git-ignored) holding one file, `observations.jsonl`,
+and — for a whole-suite run — points `bench-results/latest.json` at it. `report.md` and `report.json` are derived on
+demand: `pnpm bench:report [run]` rebuilds them from a run's observations, and `pnpm bench:serve` offers them as
+downloads. A run narrowed with `BENCH_ONLY` does not move `latest.json`.
 
 ## What it measures
 

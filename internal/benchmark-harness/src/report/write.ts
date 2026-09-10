@@ -2,6 +2,8 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 
 import type { JsonlBenchObservationRow } from "#/report/jsonl";
+import { resolveRunShapeFromEnvironment } from "#/shared/env-keys";
+import type { BenchRunShape } from "#/shared/env-keys";
 import type { Fingerprint, TrialPayload } from "#/shared/protocol";
 
 /**
@@ -30,7 +32,9 @@ export function writeJsonFile(outputPath: string, value: unknown): void {
 function flattenLibraryToJsonl(
   fingerprint: Fingerprint,
   trials: ReadonlyArray<TrialPayload>,
+  shape: BenchRunShape,
 ): Array<JsonlBenchObservationRow> {
+  const trialCount = trials.length;
   const observations: Array<JsonlBenchObservationRow> = [];
   for (const trial of trials) {
     for (const scenarioResult of trial.scenarios) {
@@ -60,6 +64,9 @@ function flattenLibraryToJsonl(
         p99Ms: scenarioResult.p99Ms,
         p999Ms: scenarioResult.p999Ms,
         samples: scenarioResult.samples,
+        isolated: shape.isolated,
+        mode: shape.mode,
+        trialCount,
       });
     }
   }
@@ -75,7 +82,10 @@ export function writeJsonlRun(
   outputPath: string,
   libraries: ReadonlyArray<{ fingerprint: Fingerprint; trials: ReadonlyArray<TrialPayload> }>,
 ): void {
-  const allObservations = libraries.flatMap((library) => flattenLibraryToJsonl(library.fingerprint, library.trials));
+  const shape = resolveRunShapeFromEnvironment();
+  const allObservations = libraries.flatMap((library) =>
+    flattenLibraryToJsonl(library.fingerprint, library.trials, shape),
+  );
   const serialised = allObservations.map((observation) => JSON.stringify(observation)).join("\n");
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, `${serialised}\n`, "utf8");

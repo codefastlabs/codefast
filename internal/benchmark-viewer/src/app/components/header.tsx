@@ -12,7 +12,7 @@ interface PageHeaderProps {
  */
 export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
   return (
-    <header className="mb-8 max-w-4xl border-b border-white/6 pb-6 sm:mb-10 sm:pb-8">
+    <header className="mb-8 border-b border-white/6 pb-6 sm:mb-10 sm:pb-8">
       <p className="text-[0.6875rem] font-semibold tracking-[0.22em] text-cyan-300/90 uppercase">
         Bench history viewer
       </p>

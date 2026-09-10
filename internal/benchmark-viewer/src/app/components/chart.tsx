@@ -34,6 +34,15 @@ import { CHART_SKIP_TARGET_ID } from "#/app/lib/skip-chart";
 import { cn } from "#/app/lib/utils";
 import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
 
+/** Drops any alpha so a tooltip swatch shows the line's true hue, not the faint fill under the curve. */
+function toOpaqueColor(color: unknown): string {
+  if (typeof color !== "string") {
+    return "#e4e4e7";
+  }
+  const rgba = color.match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i);
+  return rgba ? `rgb(${rgba[1]}, ${rgba[2]}, ${rgba[3]})` : color;
+}
+
 function SegButton({ className, ...props }: ComponentProps<"button">) {
   return (
     <button
@@ -510,6 +519,14 @@ export function ChartPanel({
             itemSort: (left, right) =>
               (right.parsed.y ?? Number.NEGATIVE_INFINITY) - (left.parsed.y ?? Number.NEGATIVE_INFINITY),
             callbacks: {
+              // Chart.js fills the swatch with the dataset's backgroundColor — for a line that is the
+              // near-transparent band under the curve, so the swatch reads as its solid line colour instead.
+              labelColor: (ctx) => ({
+                borderColor: toOpaqueColor(ctx.dataset.borderColor),
+                backgroundColor: toOpaqueColor(ctx.dataset.borderColor),
+                borderWidth: 0,
+                borderRadius: 3,
+              }),
               title: (items) => {
                 if (!items.length) {
                   return "";

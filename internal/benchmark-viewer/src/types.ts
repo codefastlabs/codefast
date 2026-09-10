@@ -1,3 +1,11 @@
+import type { ParsedRun } from "@codefast/benchmark-harness/report/jsonl";
+
+/** A run's report derived on demand: the markdown and the comparison document as JSON text. */
+export interface DerivedRunReport {
+  readonly markdown: string;
+  readonly comparisonJson: string;
+}
+
 /**
  * Configuration for the dynamic bench history server.
  *
@@ -63,6 +71,15 @@ export interface BenchServerOptions {
   readonly scenarioFacets?: ScenarioFacets;
   /** Display toggles the viewer opens with when the URL hash names none. */
   readonly viewDefaults?: ViewDefaults;
+  /** Each scenario id mapped to its within-group baseline scenario id; drives the cost-vs-baseline metric. */
+  readonly scenarioBaselines?: Record<string, string>;
+  /**
+   * Derives a run's report from its parsed observations, so the viewer can serve `report.md` and
+   * `report.json` on demand for runs that no longer store them. Omit to disable the report routes.
+   */
+  readonly deriveReport?:
+    | ((parsed: ParsedRun, context: { readonly runId: string }) => DerivedRunReport | undefined)
+    | undefined;
 }
 
 // ---------------------------------------------------------------------------
@@ -101,6 +118,9 @@ export interface EmbeddedRun {
   /** Stable key for same-machine + same-Node filtering. */
   readonly envKey: string;
   readonly envLabel: string;
+  /** Stable key for same-configuration filtering (execution shape, profile, trial count). */
+  readonly configKey: string;
+  readonly configLabel: string;
   readonly nodeVersion: string;
   readonly v8Version: string;
   readonly platform: string;
@@ -156,6 +176,8 @@ export interface EmbeddedScenarioSeries {
   readonly what: string;
   /** Labels of the declared facets this scenario's id matched, in declaration order. */
   readonly facets: ReadonlyArray<string>;
+  /** The baseline scenario id this one's within-group ratio is measured against; absent when none. */
+  readonly baselineId?: string;
   /** Keyed by `EmbeddedLibraryMeta.key` (= `libraryName` in JSONL). */
   readonly libraries: Readonly<Record<string, EmbeddedLibraryRunData>>;
   /** Runs where the scenario's `batch` or description changed; absent when it never did. */
@@ -185,6 +207,8 @@ export interface EmbeddedViewerPayload {
   readonly effectiveLimit: number;
   /** True when older run directories exist beyond the effectiveLimit window. */
   readonly hasMore: boolean;
+  /** True when the server can derive `report.md`/`report.json` on demand for a run. */
+  readonly reportsAvailable: boolean;
   /**
    * When the bench results directory could not be read, a short diagnostic for the UI.
    * Omitted when the directory was read successfully (even if it contained no runs).

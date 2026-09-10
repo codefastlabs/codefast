@@ -6,6 +6,8 @@ import type { Server } from "node:http";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { readRunObservations, resolveRunDirectory } from "@codefast/benchmark-harness/parent/bench-run-artifacts";
+import { parseRunObservations } from "@codefast/benchmark-harness/report/jsonl";
 import { createAdaptorServer } from "@hono/node-server";
 import { Hono } from "hono";
 import { stream } from "hono/streaming";
@@ -134,6 +136,38 @@ async function getOrBuildPayload(state: ServerState, runLimit: number): Promise<
   return payloadEntry;
 }
 
+// A run id reaches the report route from the query string; reject anything that is not a bare id.
+function isSafeRunId(runParam: string): boolean {
+  return !runParam.includes("/") && !runParam.includes("\\") && !runParam.includes("..");
+}
+
+type DerivedReportResult =
+  | { readonly runId: string; readonly markdown: string; readonly comparisonJson: string }
+  | { readonly error: string; readonly status: 400 | 404 | 501 };
+
+// Resolves a run and derives its report on demand, so the viewer serves what a run no longer stores.
+function deriveRunReport(options: BenchServerOptions, runParam: string | undefined): DerivedReportResult {
+  if (options.deriveReport === undefined) {
+    return { error: "This viewer does not derive reports.", status: 501 };
+  }
+  if (runParam !== undefined && !isSafeRunId(runParam)) {
+    return { error: "Invalid run id.", status: 400 };
+  }
+  const packageRootDirectory = dirname(options.benchResultsDir);
+  let resolved;
+  try {
+    resolved = resolveRunDirectory(packageRootDirectory, runParam);
+  } catch {
+    return { error: "No such run.", status: 404 };
+  }
+  const parsed = parseRunObservations(readRunObservations(resolved.runDirectory));
+  const report = options.deriveReport(parsed, { runId: resolved.runId });
+  if (report === undefined) {
+    return { error: "Run has no valid observations.", status: 404 };
+  }
+  return { runId: resolved.runId, markdown: report.markdown, comparisonJson: report.comparisonJson };
+}
+
 /**
  * Creates an HTTP server for the benchmark history viewer.
  *
@@ -178,6 +212,28 @@ export function createBenchServer(options: BenchServerOptions): Server {
     c.header("Content-Type", "application/json; charset=utf-8");
     c.header("Cache-Control", HTTP_NO_STORE);
     return c.body(cachedPayload.rawJson);
+  });
+
+  app.get("/api/report.md", (c) => {
+    const result = deriveRunReport(state.options, c.req.query("run"));
+    if ("error" in result) {
+      return c.text(result.error, result.status);
+    }
+    c.header("Content-Type", "text/markdown; charset=utf-8");
+    c.header("Content-Disposition", `attachment; filename="report-${result.runId}.md"`);
+    c.header("Cache-Control", HTTP_NO_STORE);
+    return c.body(result.markdown);
+  });
+
+  app.get("/api/report.json", (c) => {
+    const result = deriveRunReport(state.options, c.req.query("run"));
+    if ("error" in result) {
+      return c.text(result.error, result.status);
+    }
+    c.header("Content-Type", "application/json; charset=utf-8");
+    c.header("Content-Disposition", `attachment; filename="report-${result.runId}.json"`);
+    c.header("Cache-Control", HTTP_NO_STORE);
+    return c.body(result.comparisonJson);
   });
 
   app.get("/*", async (c) => {

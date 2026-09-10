@@ -10,6 +10,7 @@ import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
   CONSTANT_RESOLVE_BATCH,
+  OPTIONAL_MISSING_TRANSIENT,
   SINGLETON_CLASS_1_DEP,
   TRANSIENT_CLASS_1_DEP,
 } from "#/fixtures/scenario-parity";
@@ -85,6 +86,43 @@ function buildTransientClassOneDepScenario(): BenchScenario {
 /**
  * Builds the brandi micro-benchmark scenarios.
  */
+class OptionalMissLeaf {}
+
+class OptionalMissService {
+  constructor(readonly leafDependency?: OptionalMissLeaf) {}
+}
+
+const OPTIONAL_MISS_LEAF_TOKEN = token<OptionalMissLeaf>("bench-brandi-optional-miss-leaf");
+const OPTIONAL_MISS_SERVICE_TOKEN = token<OptionalMissService>("bench-brandi-optional-miss-svc");
+
+injected(OptionalMissService, OPTIONAL_MISS_LEAF_TOKEN.optional);
+
+function buildOptionalMissingTransientScenario(): BenchScenario {
+  const container = createContainer();
+  // The optional leaf token is never bound, so every resolve checks the absent optional.
+  container.bind(OPTIONAL_MISS_SERVICE_TOKEN).toInstance(OptionalMissService).inTransientScope();
+  container.get(OPTIONAL_MISS_SERVICE_TOKEN);
+
+  return {
+    ...OPTIONAL_MISSING_TRANSIENT,
+    batch: CLASS_RESOLVE_BATCH,
+    sanity: () => {
+      const firstResolution = container.get(OPTIONAL_MISS_SERVICE_TOKEN);
+      const secondResolution = container.get(OPTIONAL_MISS_SERVICE_TOKEN);
+      return firstResolution !== secondResolution && firstResolution.leafDependency === undefined;
+    },
+    build: () =>
+      batched(CLASS_RESOLVE_BATCH, () => {
+        container.get(OPTIONAL_MISS_SERVICE_TOKEN);
+      }),
+  };
+}
+
 export function buildBrandiMicroScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildConstantResolveScenario(), buildSingletonClassOneDepScenario(), buildTransientClassOneDepScenario()];
+  return [
+    buildConstantResolveScenario(),
+    buildSingletonClassOneDepScenario(),
+    buildTransientClassOneDepScenario(),
+    buildOptionalMissingTransientScenario(),
+  ];
 }

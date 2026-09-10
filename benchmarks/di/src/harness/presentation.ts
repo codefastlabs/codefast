@@ -23,7 +23,7 @@ export const DI_COMPARISON_MARKDOWN: ComparisonMarkdownReportOptions = {
     "",
     "One row per scenario `@codefast/di` measures, one throughput column for it, one ratio column per competitor. **Only inversify implements the full suite.** awilix, tsyringe, brandi and ditox implement the factory/class-binding core subset (micro, realistic, fan-out, scale); injection-js implements only the singleton-friendly rows of that subset, since Angular's `ReflectiveInjector` caches every provider per injector. Every competitor reads `—` on scenarios it does not measure, and the `Comparable` column below counts only the rows it actually ran.",
     "",
-    "Cite the summary, not the rows. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`); a competitor's own throughput is that figure divided by its ratio, and its exact value, along with `mean ms`, `p99 ms` and every per-trial IQR, is in `latest.jsonl`.",
+    "Cite the summary, not the rows. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`); a competitor's own throughput is that figure divided by its ratio, and its exact value, along with `mean ms`, `p99 ms` and every per-trial IQR, is in the run's `observations.jsonl`.",
     "",
     "Run with `BENCH_ISOLATE=true` to bench each scenario in its own subprocess, removing cross-scenario inline-cache wear (~30% on async chains in a shared process).",
   ],

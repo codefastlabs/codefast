@@ -10,7 +10,7 @@ import { slotsTestProps } from "#/fixtures/slots";
 import type { BenchScenario } from "#/scenarios/types";
 
 type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what"> &
-  Partial<Pick<BenchScenario, "batch" | "excludeFromAggregates">>;
+  Partial<Pick<BenchScenario, "batch" | "excludeFromAggregates" | "comparesWithin">>;
 
 /**
  * Component definitions per timed iteration of a cold row, so every side's loop bound and batch agree.
@@ -34,6 +34,7 @@ export const SIMPLE_WITHOUT_MERGE = {
  */
 export const SIMPLE_WITH_MERGE = {
   id: "simple-with-merge",
+  comparesWithin: "simple-without-merge",
   group: "simple",
   what: "Simple button variants with tailwind-merge on tv",
   batch: simpleTestProps.length,
@@ -54,6 +55,7 @@ export const COMPLEX_WITHOUT_MERGE = {
  */
 export const COMPLEX_WITH_MERGE = {
   id: "complex-with-merge",
+  comparesWithin: "complex-without-merge",
   group: "complex",
   what: "Complex variants with tailwind-merge on tv",
   batch: complexTestProps.length,
@@ -74,6 +76,7 @@ export const SLOTS_WITHOUT_MERGE = {
  */
 export const SLOTS_WITH_MERGE = {
   id: "slots-with-merge",
+  comparesWithin: "slots-without-merge",
   group: "slots",
   what: "Slots with tailwind-merge on tv",
   batch: slotsTestProps.length,
@@ -94,6 +97,7 @@ export const COMPOUND_SLOTS_WITHOUT_MERGE = {
  */
 export const COMPOUND_SLOTS_WITH_MERGE = {
   id: "compound-slots-with-merge",
+  comparesWithin: "compound-slots-without-merge",
   group: "compound-slots",
   what: "Compound slots with tailwind-merge on tv",
   batch: compoundSlotsTestProps.length,
@@ -114,6 +118,7 @@ export const EXTENDS_WITHOUT_MERGE = {
  */
 export const EXTENDS_WITH_MERGE = {
   id: "extends-with-merge",
+  comparesWithin: "extends-without-merge",
   group: "extends",
   what: "Extended tv config with tailwind-merge on tv",
   batch: extendsTestProps.length,
@@ -134,6 +139,7 @@ export const CREATE_TV_WITHOUT_MERGE = {
  */
 export const CREATE_TV_WITH_MERGE = {
   id: "create-tv-with-merge",
+  comparesWithin: "create-tv-without-merge",
   group: "create-tv",
   what: "Resolver from the createTV factory with tailwind-merge; the factory call sits outside the timed loop",
   batch: createTvTestProps.length,
@@ -154,6 +160,7 @@ export const EXTREME_WITHOUT_MERGE = {
  */
 export const EXTREME_WITH_MERGE = {
   id: "extreme-with-merge",
+  comparesWithin: "extreme-without-merge",
   group: "extreme",
   what: "Large variant matrix with tailwind-merge on tv",
   batch: extremeTestProps.length,
@@ -174,6 +181,7 @@ export const EXTREME_SLOTS_WITHOUT_MERGE = {
  */
 export const EXTREME_SLOTS_WITH_MERGE = {
   id: "extreme-slots-with-merge",
+  comparesWithin: "extreme-slots-without-merge",
   group: "extreme-slots",
   what: "Many slots with tailwind-merge on tv",
   batch: extremeSlotsTestProps.length,
@@ -194,6 +202,7 @@ export const REPEAT_SIMPLE_WITHOUT_MERGE = {
  */
 export const REPEAT_SIMPLE_WITH_MERGE = {
   id: "repeat-simple-with-merge",
+  comparesWithin: "repeat-simple-without-merge",
   group: "repeat-simple",
   what: "Simple button variants, 3 selections repeated, with tailwind-merge on tv",
   batch: repeatSimpleTestProps.length,
@@ -214,6 +223,7 @@ export const REPEAT_SLOTS_WITHOUT_MERGE = {
  */
 export const REPEAT_SLOTS_WITH_MERGE = {
   id: "repeat-slots-with-merge",
+  comparesWithin: "repeat-slots-without-merge",
   group: "repeat-slots",
   what: "Slots, 3 selections repeated, with tailwind-merge on tv",
   batch: repeatSlotsTestProps.length,
@@ -224,6 +234,7 @@ export const REPEAT_SLOTS_WITH_MERGE = {
  */
 export const UNCACHED_SIMPLE_WITH_MERGE = {
   id: "uncached-simple-with-merge",
+  comparesWithin: "uncached-simple-without-merge",
   group: "simple",
   what: "Control, not a comparison: simple variants with the resolution and merge caches off, so the plan walk and the merge stay measured",
   batch: simpleTestProps.length,
@@ -235,6 +246,7 @@ export const UNCACHED_SIMPLE_WITH_MERGE = {
  */
 export const UNCACHED_SLOTS_WITH_MERGE = {
   id: "uncached-slots-with-merge",
+  comparesWithin: "uncached-slots-without-merge",
   group: "slots",
   what: "Control, not a comparison: slots with the resolution and merge caches off, so the plan walk and the merge stay measured",
   batch: slotsTestProps.length,
@@ -318,3 +330,21 @@ export const FIRST_RENDER_SLOTS = {
   batch: COLD_DEFINITIONS_PER_LOOP,
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
+
+/** Each with-merge scenario mapped to its without-merge baseline, for the within-group section. */
+export const SCENARIO_BASELINES: ReadonlyMap<string, string> = new Map(
+  [
+    SIMPLE_WITH_MERGE,
+    COMPLEX_WITH_MERGE,
+    SLOTS_WITH_MERGE,
+    COMPOUND_SLOTS_WITH_MERGE,
+    EXTENDS_WITH_MERGE,
+    CREATE_TV_WITH_MERGE,
+    EXTREME_WITH_MERGE,
+    EXTREME_SLOTS_WITH_MERGE,
+    REPEAT_SIMPLE_WITH_MERGE,
+    REPEAT_SLOTS_WITH_MERGE,
+    UNCACHED_SIMPLE_WITH_MERGE,
+    UNCACHED_SLOTS_WITH_MERGE,
+  ].map((descriptor) => [descriptor.id, descriptor.comparesWithin] as const),
+);

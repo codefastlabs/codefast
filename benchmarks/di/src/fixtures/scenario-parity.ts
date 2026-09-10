@@ -62,6 +62,18 @@ export const TRANSIENT_CLASS_1_DEP = {
 } as const satisfies ScenarioDescriptor;
 
 /**
+ * The optional-miss path: a transient class whose one optional dependency is unbound, so every
+ * resolve reconstructs it and checks the absent optional. Skipped by libraries without real
+ * transient scope (their `get` caches, so the optional is checked only once).
+ */
+export const OPTIONAL_MISSING_TRANSIENT = {
+  id: "optional-missing-transient",
+  facets: ["optional", "transient"],
+  group: "micro",
+  what: "resolve a transient class whose one optional dependency is unbound",
+} as const satisfies ScenarioDescriptor;
+
+/**
  * @since 0.5.0-canary.7
  */
 export const NAMED_CONSTANT_GET = {
@@ -166,6 +178,15 @@ export const RESOLVE_ASYNC_SINGLE_HOP = {
   id: "resolve-async-single-hop",
   group: "async",
   what: "resolveAsync() one singleton async factory (warm path after first await)",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * Awaiting one transient async-constructed value, rebuilt each iteration (cold path).
+ */
+export const ASYNC_INIT_SINGLE_HOP = {
+  id: "async-init-single-hop",
+  group: "async",
+  what: "await one transient async-constructed value, rebuilt each iteration (cold path)",
 } as const satisfies ScenarioDescriptor;
 
 /**
@@ -292,6 +313,15 @@ export const MODULE_LOAD_UNLOAD = {
   id: "module-load-unload",
   group: "boot",
   what: "container.load(2 modules) → resolve root → container.unload() per iteration",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * Building a fresh container from two modules and resolving the root, per iteration.
+ */
+export const MODULE_COLD_FROM_MODULES = {
+  id: "module-cold-from-modules",
+  group: "boot",
+  what: "build a fresh container from 2 modules and resolve the root service (cold start)",
 } as const satisfies ScenarioDescriptor;
 
 /**
@@ -486,6 +516,21 @@ export const TAGGED_BINDING_RESOLVE = {
   facets: ["tag"],
   group: "micro",
   what: `resolve(token, { tags: [["env","${TARGET_TAG_VALUE}"]] }) from ${String(TAGGED_ENVS.length)}-variant tagged set`,
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * The per-iteration op count for the conditional-injection row.
+ */
+export const CONDITIONAL_INJECTION_BATCH = 300;
+
+/**
+ * Resolving a transient consumer whose own tag selects one binding out of the tagged set.
+ */
+export const CONDITIONAL_INJECTION_TAGGED = {
+  id: "conditional-injection-tagged",
+  facets: ["tag"],
+  group: "micro",
+  what: `resolve a transient consumer injected with the tag-selected binding (1 of ${String(TAGGED_ENVS.length)})`,
 } as const satisfies ScenarioDescriptor;
 
 // ── binding-variants ─────────────────────────────────────────────────────────────────────────────────────────────────

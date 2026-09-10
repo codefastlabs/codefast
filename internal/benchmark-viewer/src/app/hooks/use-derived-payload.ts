@@ -15,6 +15,38 @@ interface DerivedPayloadOptions {
   patchView: (patch: Partial<ViewState>) => void;
 }
 
+/** One library's throughput ratio of the current scenario to its within-group baseline. */
+interface WithinGroupCostEntry {
+  readonly libraryKey: string;
+  readonly displayName: string;
+  readonly ratio: number;
+}
+
+function median(values: ReadonlyArray<number>): number {
+  if (values.length === 0) {
+    return 0;
+  }
+  const sorted = [...values].toSorted((left, right) => left - right);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 1 ? sorted[mid]! : (sorted[mid - 1]! + sorted[mid]!) / 2;
+}
+
+function medianHzOverRuns(
+  series: EmbeddedScenarioSeries,
+  libraryKey: string,
+  runIndices: ReadonlyArray<number>,
+): number {
+  const hz = series.libraries[libraryKey]?.hz;
+  if (hz === undefined) {
+    return 0;
+  }
+  return median(
+    runIndices
+      .map((runIndex) => hz[runIndex])
+      .filter((value): value is number => value !== null && value !== undefined && value > 0),
+  );
+}
+
 /**
  * Filtered, ordered, and aggregated data derived from the payload and the current view.
  *
@@ -39,11 +71,18 @@ export interface DerivedPayload {
   isOverlayActive: boolean;
   uniqueEnvKeys: Array<string>;
   envLabelMap: Record<string, string>;
+  uniqueConfigKeys: Array<string>;
+  configLabelMap: Record<string, string>;
   uniqueGroups: Array<string>;
   primaryLib: EmbeddedLibraryMeta | undefined;
   compareLibs: Array<EmbeddedLibraryMeta>;
   scenarioIndex: number;
   showMultiEnvBanner: boolean;
+  showMultiConfigBanner: boolean;
+  /** The current scenario's throughput relative to its within-group baseline, per library; empty when no baseline. */
+  withinGroupCost: Array<WithinGroupCostEntry>;
+  /** The baseline scenario the within-group cost is measured against, when the current scenario names one. */
+  baselineScenario: EmbeddedScenarioSeries | null;
   metricsData: MetricsResult | null;
   snapshotRows: Array<SnapshotRow>;
   latestRun: EmbeddedRun | undefined;
@@ -106,16 +145,15 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     if (!payload) {
       return [];
     }
-    if (!view.envKey) {
-      return payload.runs.map((_, runIndex) => runIndex);
-    }
     return payload.runs.reduce<Array<number>>((acc, r, i) => {
-      if (r.envKey === view.envKey) {
+      const envMatches = !view.envKey || r.envKey === view.envKey;
+      const configMatches = !view.configKey || r.configKey === view.configKey;
+      if (envMatches && configMatches) {
         acc.push(i);
       }
       return acc;
     }, []);
-  }, [payload, view.envKey]);
+  }, [payload, view.envKey, view.configKey]);
 
   const runIndices = useMemo<Array<number>>(() => {
     if (view.runWindow === "all" || baseRunIndices.length === 0) {
@@ -205,6 +243,26 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     return map;
   }, [payload]);
 
+  const uniqueConfigKeys = useMemo<Array<string>>(() => {
+    if (!payload) {
+      return [];
+    }
+    return [...new Set(payload.runs.map((run) => run.configKey))].toSorted((left, right) => left.localeCompare(right));
+  }, [payload]);
+
+  const configLabelMap = useMemo<Record<string, string>>(() => {
+    if (!payload) {
+      return {};
+    }
+    const map: Record<string, string> = {};
+    for (const run of payload.runs) {
+      if (!(run.configKey in map)) {
+        map[run.configKey] = run.configLabel ?? run.configKey;
+      }
+    }
+    return map;
+  }, [payload]);
+
   const uniqueGroups = useMemo<Array<string>>(() => {
     if (!payload) {
       return [];
@@ -214,6 +272,7 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
 
   const scenarioIndex = visibleScenarios.findIndex((scenario) => scenario.id === view.scenarioId);
   const showMultiEnvBanner = uniqueEnvKeys.length > 1 && !view.envKey;
+  const showMultiConfigBanner = uniqueConfigKeys.length > 1 && !view.configKey;
 
   // Auto-select a scenario when none is visible: the richest one on first load (nothing chosen
   // yet), the first match after a filter change.
@@ -271,6 +330,26 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
 
   const latestRun = payload?.runs[payload.runs.length - 1];
 
+  const baselineScenario = useMemo<EmbeddedScenarioSeries | null>(() => {
+    if (!payload || !currentScenario || currentScenario.baselineId === undefined) {
+      return null;
+    }
+    return payload.scenarios.find((scenario) => scenario.id === currentScenario.baselineId) ?? null;
+  }, [payload, currentScenario]);
+
+  const withinGroupCost = useMemo<Array<WithinGroupCostEntry>>(() => {
+    if (!currentScenario || baselineScenario === null || chartRunIndices.length === 0) {
+      return [];
+    }
+    return chartLibraries.flatMap((library) => {
+      const current = medianHzOverRuns(currentScenario, library.key, chartRunIndices);
+      const baseline = medianHzOverRuns(baselineScenario, library.key, chartRunIndices);
+      return current > 0 && baseline > 0
+        ? [{ libraryKey: library.key, displayName: library.displayName, ratio: current / baseline }]
+        : [];
+    });
+  }, [currentScenario, baselineScenario, chartLibraries, chartRunIndices]);
+
   return {
     orderedLibraries,
     paletteMap,
@@ -285,11 +364,16 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     isOverlayActive,
     uniqueEnvKeys,
     envLabelMap,
+    uniqueConfigKeys,
+    configLabelMap,
     uniqueGroups,
     primaryLib,
     compareLibs,
     scenarioIndex,
     showMultiEnvBanner,
+    showMultiConfigBanner,
+    withinGroupCost,
+    baselineScenario,
     metricsData,
     snapshotRows,
     latestRun,

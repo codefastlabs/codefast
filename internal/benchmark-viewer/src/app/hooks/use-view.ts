@@ -13,6 +13,9 @@ export function useViewState(initialPayload: EmbeddedViewerPayload | undefined) 
   const [view, setView] = useState<ViewState>(() => ({
     scenarioId: initialPayload ? pickDefaultScenarioId(initialPayload.scenarios) : "",
     envKey: "",
+    // Scope to the newest run's configuration by default, so incomparable configs never share the
+    // chart until the reader widens to "All configs".
+    configKey: initialPayload?.runs[initialPayload.runs.length - 1]?.configKey ?? "",
     group: "",
     search: "",
     facets: [],

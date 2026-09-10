@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   assertBenchEnvKeys,
+  BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
   BENCH_MODE_ENV_KEY,
   BENCH_PORT_ENV_KEY,
@@ -12,6 +13,7 @@ import {
   PORT_ENV_KEY,
   resolveBenchModeFromEnvironment,
   resolvePreferredPortFromEnvironment,
+  resolveRunShapeFromEnvironment,
 } from "#/shared/env-keys";
 
 const FLAG_KEY = "BENCH_TEST_FLAG";
@@ -217,5 +219,31 @@ describe("assertBenchEnvKeys", () => {
     vi.stubEnv("BENCH_ALLOC_OPERATIONS", "10");
     expect(() => assertBenchEnvKeys()).toThrow(/is not a bench environment key/);
     expect(() => assertBenchEnvKeys({ extraKeys: new Set(["BENCH_ALLOC_OPERATIONS"]) })).not.toThrow();
+  });
+});
+
+describe("resolveRunShapeFromEnvironment", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("reads the default shape when nothing is set", () => {
+    expect(resolveRunShapeFromEnvironment()).toStrictEqual({ isolated: false, mode: "default" });
+  });
+
+  it("reads the isolated flag", () => {
+    vi.stubEnv(BENCH_ISOLATE_ENV_KEY, "1");
+    expect(resolveRunShapeFromEnvironment().isolated).toBe(true);
+  });
+
+  it.each(["fast", "default", "full"] as const)("reads the %j profile", (mode) => {
+    vi.stubEnv(BENCH_MODE_ENV_KEY, mode);
+    expect(resolveRunShapeFromEnvironment().mode).toBe(mode);
+  });
+
+  it("combines shape and profile", () => {
+    vi.stubEnv(BENCH_ISOLATE_ENV_KEY, "true");
+    vi.stubEnv(BENCH_MODE_ENV_KEY, "full");
+    expect(resolveRunShapeFromEnvironment()).toStrictEqual({ isolated: true, mode: "full" });
   });
 });

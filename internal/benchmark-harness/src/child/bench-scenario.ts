@@ -12,6 +12,11 @@ export interface BenchScenario {
   readonly group: string;
   /** Cross-cutting library features this scenario exercises, declared where the scenario is defined. */
   readonly facets?: ReadonlyArray<string>;
+  /**
+   * The id of the baseline scenario this one's intra-library ratio is measured against — e.g. the
+   * without-merge row a with-merge row prices itself against.
+   */
+  readonly comparesWithin?: string;
   readonly batch?: number;
   readonly stress?: boolean;
   /** Render the row but keep it out of median/geomean aggregates — for rows whose sides do incomparable work. */

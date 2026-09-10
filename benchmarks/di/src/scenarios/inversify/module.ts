@@ -16,7 +16,7 @@
 import "reflect-metadata";
 import { Container, ContainerModule } from "inversify";
 
-import { MODULE_LOAD_UNLOAD } from "#/fixtures/scenario-parity";
+import { MODULE_COLD_FROM_MODULES, MODULE_LOAD_UNLOAD } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
 // ── shared identifiers ───────────────────────────────────────────────────────────────────────────────────────────────
@@ -95,9 +95,57 @@ function buildModuleLoadUnloadScenario(): BenchScenario {
   };
 }
 
+// ── scenario 2: cold start from modules ──────────────────────────────────────────────────────────────────────────────
+
+function buildModuleColdFromModulesScenario(): BenchScenario {
+  const infraModule = new ContainerModule(({ bind }) => {
+    bind<ModuleConfig>(moduleConfigId).toConstantValue({ env: "production" });
+    bind<ModuleLogger>(moduleLoggerId)
+      .toDynamicValue(() => ({ info: () => undefined }))
+      .inSingletonScope();
+    bind<ModuleDb>(moduleDbId)
+      .toDynamicValue((ctx) => {
+        const cfg = ctx.get<ModuleConfig>(moduleConfigId);
+        return { url: `postgres://${cfg.env}/app` };
+      })
+      .inSingletonScope();
+  });
+
+  const appModule = new ContainerModule(({ bind }) => {
+    bind<ModuleService>(moduleServiceId)
+      .toDynamicValue((ctx) => {
+        const db = ctx.get<ModuleDb>(moduleDbId);
+        return { name: `service@${db.url}` };
+      })
+      .inSingletonScope();
+  });
+
+  function runOneColdStart(): string {
+    // inversify has no `fromModules`; a fresh container + load(modules) matches the cold-start shape.
+    const container = new Container({ jitless: false });
+    container.load(infraModule, appModule);
+    return container.get<ModuleService>(moduleServiceId).name;
+  }
+
+  // Pre-warm
+  runOneColdStart();
+
+  return {
+    ...MODULE_COLD_FROM_MODULES,
+    what: "new Container() + load(2 ContainerModules) + get root (cold start)",
+    batch: 1,
+    sanity: () => runOneColdStart().startsWith("service@postgres://"),
+    build: () => {
+      return () => {
+        runOneColdStart();
+      };
+    },
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildInversifyModuleScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildModuleLoadUnloadScenario()];
+  return [buildModuleLoadUnloadScenario(), buildModuleColdFromModulesScenario()];
 }

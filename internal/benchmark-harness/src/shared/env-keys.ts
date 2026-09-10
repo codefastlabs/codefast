@@ -75,6 +75,11 @@ export const OBSERVATIONS_FILE_NAME = "observations.jsonl";
 export const BENCH_RESULTS_DIR_NAME = "bench-results";
 
 /**
+ * File in the bench-results root that points at the newest whole-suite run by its id.
+ */
+export const LATEST_RUN_POINTER_FILE_NAME = "latest.json";
+
+/**
  * Fewest trials that can carry a median: with two, the median is their mean and cannot separate a
  * change from noise.
  *
@@ -272,6 +277,30 @@ export function resolveBenchModeFromEnvironment(): BenchMode | undefined {
     return normalizedValue;
   }
   throw new Error(`${BENCH_MODE_ENV_KEY}="${rawValue}" is not a bench mode. Use ${BENCH_MODE_VALUES.join(", ")}.`);
+}
+
+/**
+ * A run's configuration identity minus its trial count: the execution shape and the timing profile.
+ *
+ * @remarks Read together they partition runs into comparable sets; `isolated` with `full` is the
+ * only pair whose cross-library ratios are citable.
+ */
+export interface BenchRunShape {
+  readonly isolated: boolean;
+  readonly mode: "fast" | "default" | "full";
+}
+
+/**
+ * Resolves the env-derived half of a run's configuration identity: its execution shape and profile.
+ *
+ * @remarks The one resolver the JSONL writer and the comparison `run` block share, so the config
+ * stamped on the observations cannot disagree with the config the report claims produced them.
+ */
+export function resolveRunShapeFromEnvironment(): BenchRunShape {
+  return {
+    isolated: isEnvFlagEnabled(BENCH_ISOLATE_ENV_KEY),
+    mode: resolveBenchModeFromEnvironment() ?? "default",
+  };
 }
 
 /**

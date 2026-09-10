@@ -38,12 +38,13 @@ function documentWith(run: Partial<ComparisonDocument["run"]>): ComparisonDocume
     competitors: [],
     scenarios: [],
     headToHead: [],
+    intraLibrary: [],
   };
 }
 
 function write(comparisonDocument: ComparisonDocument): ReturnType<typeof buildBenchRunOutputPaths> {
   const paths = buildBenchRunOutputPaths(temporaryRoot);
-  writeBenchRunArtifacts({ paths, markdown: "# report", comparisonDocument, librariesForJsonl: [] });
+  writeBenchRunArtifacts({ paths, comparisonDocument, librariesForJsonl: [] });
   return paths;
 }
 
@@ -58,54 +59,40 @@ describe("writeBenchRunArtifacts", () => {
     vi.restoreAllMocks();
   });
 
-  it("names the run directory after the run id, so a mirror joins back exactly", () => {
+  it("names the run directory after the run id", () => {
     const paths = write(documentWith({}));
     expect(paths.runDirectory.endsWith(paths.runId)).toBe(true);
   });
 
-  it("writes all three artifacts into the run directory", () => {
+  it("writes only observations.jsonl into the run directory", () => {
     const paths = write(documentWith({}));
-    expect(existsSync(paths.markdownPath)).toBe(true);
-    expect(existsSync(paths.jsonPath)).toBe(true);
     expect(existsSync(paths.jsonlPath)).toBe(true);
+    expect(existsSync(join(paths.runDirectory, "report.md"))).toBe(false);
+    expect(existsSync(join(paths.runDirectory, "report.json"))).toBe(false);
   });
 
-  it("mirrors an unfiltered run to latest.*", () => {
+  it("points latest.json at an unfiltered run", () => {
     const paths = write(documentWith({}));
-    expect(existsSync(paths.latestMarkdownPath)).toBe(true);
-    expect(existsSync(paths.latestJsonPath)).toBe(true);
-    expect(existsSync(paths.latestJsonlPath)).toBe(true);
+    expect(existsSync(paths.latestPointerPath)).toBe(true);
+    expect(JSON.parse(readFileSync(paths.latestPointerPath, "utf8"))).toStrictEqual({ runId: paths.runId });
   });
 
-  // latest.* is what CI diffs and what a published figure is checked against.
-  it("refuses to mirror a filtered run, which would look complete and not be", () => {
+  // latest.json has to mean the whole suite, so a narrowed run must not move it.
+  it("does not move latest.json for a filtered run", () => {
     const paths = write(documentWith({ scenarioFilter: ["one-row"], scenariosMeasured: 1 }));
-    expect(existsSync(paths.jsonPath)).toBe(true);
-    expect(existsSync(paths.latestMarkdownPath)).toBe(false);
-    expect(existsSync(paths.latestJsonPath)).toBe(false);
-    expect(existsSync(paths.latestJsonlPath)).toBe(false);
+    expect(existsSync(paths.jsonlPath)).toBe(true);
+    expect(existsSync(paths.latestPointerPath)).toBe(false);
   });
 
-  it("leaves an existing latest.* untouched when a filtered run follows a whole one", () => {
+  it("leaves an existing latest.json untouched when a filtered run follows a whole one", () => {
     const wholeRun = write(documentWith({}));
-    const mirroredBefore = readFileSync(wholeRun.latestJsonPath, "utf8");
+    const pointerBefore = readFileSync(wholeRun.latestPointerPath, "utf8");
     write(documentWith({ scenarioFilter: ["one-row"], scenariosMeasured: 1 }));
-    expect(readFileSync(wholeRun.latestJsonPath, "utf8")).toBe(mirroredBefore);
+    expect(readFileSync(wholeRun.latestPointerPath, "utf8")).toBe(pointerBefore);
   });
 
-  // A smoke profile still moves latest.*, so it has to be readable off the file.
-  it("mirrors a fast run and records the profile that produced it", () => {
-    const paths = write(documentWith({ mode: "fast", trialCount: 1 }));
-    expect(existsSync(paths.latestJsonPath)).toBe(true);
-    const mirrored = JSON.parse(readFileSync(paths.latestJsonPath, "utf8")) as ComparisonDocument;
-    expect(mirrored.run.mode).toBe("fast");
-    expect(mirrored.run.trialCount).toBe(1);
-  });
-
-  it("keeps no-filter as an explicit null rather than dropping the key", () => {
-    const paths = write(documentWith({}));
-    const written = JSON.parse(readFileSync(paths.jsonPath, "utf8")) as Record<string, unknown>;
-    expect(Object.keys(written["run"] as object)).toContain("scenarioFilter");
-    expect((written["run"] as ComparisonDocument["run"]).scenarioFilter).toBeNull();
+  it("does not move latest.json when the subject measured no rows", () => {
+    const paths = write(documentWith({ scenariosMeasured: 0 }));
+    expect(existsSync(paths.latestPointerPath)).toBe(false);
   });
 });

@@ -52,11 +52,16 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     isOverlayActive,
     uniqueEnvKeys,
     envLabelMap,
+    uniqueConfigKeys,
+    configLabelMap,
     uniqueGroups,
     primaryLib,
     compareLibs,
     scenarioIndex,
     showMultiEnvBanner,
+    showMultiConfigBanner,
+    withinGroupCost,
+    baselineScenario,
     metricsData,
     snapshotRows,
     latestRun,
@@ -147,12 +152,15 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     );
   }
 
+  const reportRunIndex = baseRunIndices.at(-1);
+  const reportRunFolder = reportRunIndex !== undefined ? payload.runs[reportRunIndex]?.folder : undefined;
+
   return (
     <>
       <SkipToChartLink />
 
       <main
-        className="mx-auto max-w-7xl px-3 pt-6 pb-[max(5.5rem,calc(env(safe-area-inset-bottom,0px)+4.5rem))] sm:px-6 sm:pt-10 sm:pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]"
+        className="px-3 pt-6 pb-[max(5.5rem,calc(env(safe-area-inset-bottom,0px)+4.5rem))] sm:px-6 sm:pt-10 sm:pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))] lg:px-8"
         id="app"
       >
         <PageHeader title={payload.title} onCopyLink={copyViewLink} />
@@ -177,7 +185,21 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           </div>
         )}
 
+        {showMultiConfigBanner && (
+          <div
+            className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
+            role="status"
+          >
+            <strong className="font-semibold text-amber-200">Multiple configurations in history.</strong> Pick a
+            Configuration filter before reading the chart — isolated vs shared and fast vs full runs are not comparable.
+          </div>
+        )}
+
         <ChartControlPanel
+          configKey={view.configKey}
+          configLabelMap={configLabelMap}
+          onConfigChange={(configKey) => patchView({ configKey })}
+          uniqueConfigKeys={uniqueConfigKeys}
           envKey={view.envKey}
           facetLabels={payload.facetLabels ?? []}
           group={view.group}
@@ -209,6 +231,26 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           uniqueEnvKeys={uniqueEnvKeys}
           visibleScenarios={visibleScenarios}
         />
+
+        {payload.reportsAvailable && reportRunFolder !== undefined && (
+          <div className="mt-4 mb-6 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+            <span>Download the report for the newest matching run:</span>
+            <a
+              className="text-bh-ink border-bh-border bg-bh-fill-white-4 hover:bg-bh-fill-white-7 rounded-md border px-2 py-1"
+              download
+              href={`/api/report.md?run=${encodeURIComponent(reportRunFolder)}`}
+            >
+              report.md
+            </a>
+            <a
+              className="text-bh-ink border-bh-border bg-bh-fill-white-4 hover:bg-bh-fill-white-7 rounded-md border px-2 py-1"
+              download
+              href={`/api/report.json?run=${encodeURIComponent(reportRunFolder)}`}
+            >
+              report.json
+            </a>
+          </div>
+        )}
 
         <ChartPanel
           baseRunIndices={baseRunIndices}
@@ -250,6 +292,27 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         />
 
         <MetricsPanel currentScenario={currentScenario} metricsData={metricsData} runIndices={chartRunIndices} />
+
+        {withinGroupCost.length > 0 && baselineScenario !== null && (
+          <section className="border-bh-border bg-bh-surface mt-6 mb-8 rounded-2xl border p-4 sm:p-5">
+            <p className="text-bh-label mb-1 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
+              Within-group cost
+            </p>
+            <p className="mb-3 text-xs text-zinc-500">
+              <span className="text-zinc-300">{currentScenario?.id}</span> vs baseline{" "}
+              <code className="text-zinc-400">{baselineScenario.id}</code> — throughput relative to the baseline over
+              the plotted runs; below <span className="tabular-nums">1.00×</span> is slower than the baseline.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {withinGroupCost.map((entry) => (
+                <div className="rounded-lg border border-white/10 px-3 py-2" key={entry.libraryKey}>
+                  <div className="text-[0.7rem] text-zinc-400">{entry.displayName}</div>
+                  <div className="text-sm font-semibold text-zinc-100 tabular-nums">{entry.ratio.toFixed(2)}×</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <KpiGrid latestRun={latestRun} runCount={payload.runs.length} scenarioCount={payload.scenarios.length} />
 

@@ -8,6 +8,7 @@ import type { EmbeddedViewerPayload } from "#/types";
 export interface ViewState {
   scenarioId: string;
   envKey: string;
+  configKey: string;
   group: string;
   search: string;
   /** Selected facet labels; a scenario stays visible when it matches any of them. */
@@ -31,6 +32,7 @@ export interface ViewState {
  */
 const HASH_KEYS = {
   environment: "environment",
+  config: "config",
   group: "group",
   search: "search",
   facets: "facets",
@@ -54,6 +56,9 @@ export function buildHash(view: ViewState): string {
   if (view.envKey) {
     parts.push(`${HASH_KEYS.environment}=${encodeURIComponent(view.envKey)}`);
   }
+  // Always emitted, empty included: the default scopes to the newest config, so "all configs" is a
+  // real choice the URL has to carry or a reload would silently re-scope.
+  parts.push(`${HASH_KEYS.config}=${encodeURIComponent(view.configKey)}`);
   if (view.group) {
     parts.push(`${HASH_KEYS.group}=${encodeURIComponent(view.group)}`);
   }
@@ -97,6 +102,14 @@ export function parseHash(raw: string, payload: EmbeddedViewerPayload): Partial<
     const validEnvKeys = new Set(payload.runs.map((run) => run.envKey));
     if (envParam === "" || validEnvKeys.has(envParam)) {
       patch.envKey = envParam;
+    }
+  }
+
+  const configParam = params.get(HASH_KEYS.config);
+  if (configParam !== null) {
+    const validConfigKeys = new Set(payload.runs.map((run) => run.configKey));
+    if (configParam === "" || validConfigKeys.has(configParam)) {
+      patch.configKey = configParam;
     }
   }
 

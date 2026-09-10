@@ -1,4 +1,5 @@
-import type { Fingerprint, ScenarioTrialResult } from "#/shared/protocol";
+import type { BenchRunShape } from "#/shared/env-keys";
+import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 
 /**
  * One serialised observation line in bench `observations.jsonl` ({@link writeJsonlRun} output).
@@ -31,6 +32,10 @@ export interface JsonlBenchObservationRow {
   readonly p99Ms: number;
   readonly p999Ms: number;
   readonly samples: number;
+  // Configuration identity of the run that produced this row: its execution shape and timing profile.
+  readonly isolated: boolean;
+  readonly mode: "fast" | "default" | "full";
+  readonly trialCount: number;
 }
 
 /**
@@ -72,12 +77,36 @@ export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchO
     "p999Ms",
     "samples",
   ] as const;
+  const modeValue = candidate["mode"];
+  const configFieldsOk =
+    typeof candidate["isolated"] === "boolean" &&
+    typeof candidate["trialCount"] === "number" &&
+    (modeValue === "fast" || modeValue === "default" || modeValue === "full");
   return (
+    configFieldsOk &&
     stringFields.every((field) => typeof candidate[field] === "string") &&
     numberFields.every((field) => typeof candidate[field] === "number") &&
     typeof candidate["gcExposed"] === "boolean" &&
     typeof candidate["stress"] === "boolean"
   );
+}
+
+/**
+ * Derives a stable partition key for the run configuration a row was measured under.
+ *
+ * @remarks Runs sharing a key are comparable; a key change marks a boundary a chart must not cross.
+ */
+export function benchConfigKeyOfRow(row: JsonlBenchObservationRow): string {
+  return `${row.isolated ? "iso" : "shared"}|${row.mode}|t${row.trialCount}`;
+}
+
+/**
+ * Derives a human label for the run configuration a row was measured under.
+ */
+export function benchConfigLabelOfRow(row: JsonlBenchObservationRow): string {
+  const shape = row.isolated ? "isolated" : "shared";
+  const trials = row.trialCount === 1 ? "1 trial" : `${row.trialCount} trials`;
+  return `${shape} · ${row.mode} · ${trials}`;
 }
 
 /**
@@ -122,4 +151,68 @@ export function jsonlBenchObservationRowToScenarioTrialResult(row: JsonlBenchObs
     p999Ms: row.p999Ms,
     samples: row.samples,
   };
+}
+
+/**
+ * One library's fingerprint and per-trial payloads reconstructed from its observation rows.
+ */
+export interface LibraryObservations {
+  readonly fingerprint: Fingerprint;
+  readonly trials: ReadonlyArray<TrialPayload>;
+}
+
+/**
+ * A run reconstructed from its `observations.jsonl`: each library's payloads and the run's shape.
+ */
+export interface ParsedRun {
+  readonly libraries: Map<string, LibraryObservations>;
+  /** The execution shape and profile stamped on the rows; `undefined` when no row was valid. */
+  readonly shape: BenchRunShape | undefined;
+}
+
+/**
+ * Reconstructs a run from an `observations.jsonl` file — each library's fingerprint and per-trial
+ * payloads plus the run shape — skipping any line that is not a valid observation row.
+ *
+ * @remarks The inverse of {@link writeJsonlRun}: it recovers what a report needs from the one file a
+ * run persists, so the comparison document and markdown can be derived on demand.
+ */
+export function parseRunObservations(jsonlContent: string): ParsedRun {
+  const grouped = new Map<string, { fingerprint: Fingerprint; trials: Map<number, Array<ScenarioTrialResult>> }>();
+  let shape: BenchRunShape | undefined;
+  for (const line of jsonlContent.split("\n")) {
+    if (line.trim().length === 0) {
+      continue;
+    }
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(line);
+    } catch {
+      continue;
+    }
+    if (!isJsonlBenchObservationRow(parsed)) {
+      continue;
+    }
+    shape ??= { isolated: parsed.isolated, mode: parsed.mode };
+    let bucket = grouped.get(parsed.libraryName);
+    if (bucket === undefined) {
+      bucket = { fingerprint: jsonlBenchObservationRowToFingerprint(parsed), trials: new Map() };
+      grouped.set(parsed.libraryName, bucket);
+    }
+    const scenarioResult = jsonlBenchObservationRowToScenarioTrialResult(parsed);
+    const trialScenarios = bucket.trials.get(parsed.trialIndex);
+    if (trialScenarios === undefined) {
+      bucket.trials.set(parsed.trialIndex, [scenarioResult]);
+    } else {
+      trialScenarios.push(scenarioResult);
+    }
+  }
+  const libraries = new Map<string, LibraryObservations>();
+  for (const [libraryName, bucket] of grouped) {
+    const trials = [...bucket.trials.entries()]
+      .toSorted((left, right) => left[0] - right[0])
+      .map(([trialIndex, scenarios]) => ({ trialIndex, scenarios }));
+    libraries.set(libraryName, { fingerprint: bucket.fingerprint, trials });
+  }
+  return { libraries, shape };
 }

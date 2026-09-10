@@ -6,6 +6,8 @@ import type { AggregatedScenarioResult, LibraryReport } from "@codefast/benchmar
 import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
 import {
+  benchConfigKeyOfRow,
+  benchConfigLabelOfRow,
   isJsonlBenchObservationRow,
   jsonlBenchObservationRowToFingerprint,
   jsonlBenchObservationRowToScenarioTrialResult,
@@ -199,6 +201,8 @@ function extractRunMeta(
     folder: folderName,
     envKey,
     envLabel,
+    configKey: benchConfigKeyOfRow(canonical),
+    configLabel: benchConfigLabelOfRow(canonical),
     nodeVersion: canonical.nodeVersion,
     v8Version: canonical.v8Version,
     platform: canonical.platform,
@@ -344,6 +348,7 @@ export function buildEmbeddedPayload(
       generatedAtIso: new Date().toISOString(),
       effectiveLimit,
       hasMore,
+      reportsAvailable: options.deriveReport !== undefined,
       ...(benchResultsWarning !== undefined && { benchResultsWarning }),
     };
   }
@@ -477,6 +482,9 @@ export function buildEmbeddedPayload(
       group: scenarioGroup.get(scenarioId) ?? "unknown",
       what: scenarioWhat.get(scenarioId) ?? "",
       facets: resolveScenarioFacets(scenarioId, options.scenarioFacets),
+      ...(options.scenarioBaselines?.[scenarioId] !== undefined && {
+        baselineId: options.scenarioBaselines[scenarioId],
+      }),
       libraries: libraryData,
       ...(changes.length > 0 && { changes }),
       ...(rescaledRunCount > 0 &&
@@ -501,6 +509,7 @@ export function buildEmbeddedPayload(
     generatedAtIso: new Date().toISOString(),
     effectiveLimit,
     hasMore,
+    reportsAvailable: options.deriveReport !== undefined,
     ...(benchResultsWarning !== undefined && { benchResultsWarning }),
   };
 }
