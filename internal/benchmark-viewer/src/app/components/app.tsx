@@ -233,7 +233,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         />
 
         {payload.reportsAvailable && reportRunFolder !== undefined && (
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+          <div className="mt-4 mb-6 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
             <span>Download the report for the newest matching run:</span>
             <a
               className="text-bh-blue rounded-md border border-white/10 px-2 py-1 hover:bg-white/5"
@@ -294,7 +294,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         <MetricsPanel currentScenario={currentScenario} metricsData={metricsData} runIndices={chartRunIndices} />
 
         {withinGroupCost.length > 0 && baselineScenario !== null && (
-          <section className="border-bh-border bg-bh-surface mt-6 rounded-2xl border p-4 sm:p-5">
+          <section className="border-bh-border bg-bh-surface mt-6 mb-8 rounded-2xl border p-4 sm:p-5">
             <p className="text-bh-label mb-1 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
               Within-group cost
             </p>
