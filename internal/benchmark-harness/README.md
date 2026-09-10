@@ -63,26 +63,23 @@ stay comparable.
 
 ## Run artifacts
 
-`writeBenchRunArtifacts` writes three files into a timestamped directory under `bench-results/` and mirrors them to
-stable `latest.*` names:
+A run persists exactly one file. `writeBenchRunArtifacts` writes `observations.jsonl` into a timestamped directory under
+`bench-results/`, and — when the run is the whole suite — points `bench-results/latest.json` at it with a one-line
+`{ runId }`:
 
-| File                 | For                                                                                         |
-| -------------------- | ------------------------------------------------------------------------------------------- |
-| `report.md`          | Reading. Rounded figures, the `†`/`‡` markers, and the prose that frames the comparison     |
-| `report.json`        | Querying. The same comparison as data — full-precision ratios, reliability as booleans      |
-| `observations.jsonl` | Raw per-trial rows, one per `(library, trial, scenario)`, with the fingerprint on every row |
+| File                 | For                                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `observations.jsonl` | Raw per-trial rows, one per `(library, trial, scenario)`, with the fingerprint and the run's config identity on every row |
+| `latest.json`        | A pointer — the `runId` of the newest whole-suite run                                                                     |
 
-Every `report.json` opens with a `run` block — `runId`, `mode`, `isolated`, `scenarioFilter`, `trialCount`, and
-`scenariosMeasured` against `scenariosAvailable` — so a run narrowed to one row cannot be mistaken for a whole suite.
-`runId` is the run-directory basename, which joins a `latest.*` mirror back to its directory exactly.
+The comparison document and the markdown report are **derived on demand**, never persisted next to the trials:
+`parseRunObservations` recovers each library's payloads and the run's shape from the one file, and a suite's
+`bench:report` (or the viewer's report download) rebuilds `report.md`/`report.json` from them. Each observation row
+carries `isolated`, `mode` and `trialCount`, so a report derived from disk records the configuration the run actually
+used rather than the shell's.
 
-**A filtered run does not move `latest.*`.** It writes its own directory and says so on stdout. `latest.*` is what CI
-diffs and what a published figure is checked against, so it has to mean the whole suite. A run whose subject measured no
-rows is not mirrored either. A smoke run does mirror; `run.mode` is how you tell it apart from a publishable one.
-
-`report.json` exists because `report.md` is a lossy projection: a rounded ratio cannot resolve a small gap, and the
-markers encode thresholds only the renderer knows. `buildComparisonDocument` keeps every figure computed on the way to
-the markdown, so two `report.json` files are a plain dictionary join.
+**A filtered run does not move `latest.json`.** It writes its own directory and says so on stdout; `latest.json` has to
+mean the whole suite. A run whose subject measured no rows does not move it either.
 
 ## Environment keys
 

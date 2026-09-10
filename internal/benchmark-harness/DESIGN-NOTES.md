@@ -146,14 +146,15 @@ not `report.json`. Dropping the JSONL would lose the per-trial IQR the history b
 
 ## Proposed sequence
 
-Each PR is independently verifiable.
+Each PR is independently verifiable. Batches 1–3 are **implemented** on `feat/bench-config-identity`; batch 4 (P3)
+remains.
 
-| #   | PR                                  | Content                                                                                                | Depends on  |
-| --- | ----------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------- |
-| 1   | harness: **stamp config**           | add `isolated`/`mode`/`trialCount` + `configKey` to the fingerprint → JSONL row, guard/mapper, tests   | —           |
-| 2   | harness: **one artifact + pointer** | write only `observations.jsonl`; `latest` becomes a pointer; add on-demand derivation + `bench:report` | 1           |
-| 3   | viewer: **partition + download**    | filter by `configKey` (symmetric with `envKey`); render comparison; download md/json                   | 1, 2        |
-| 4   | harness + suites: **baseline axis** | scenario `baseline` flag, within-group ratio; migrate tailwind-variants groups onto it                 | independent |
+| #   | PR                                  | Content                                                                                                    | Status |
+| --- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------ |
+| 1   | harness: **stamp config**           | `isolated`/`mode`/`trialCount` on every JSONL row (required), shared shape resolver                        | done   |
+| 2   | viewer: **partition**               | filter by `configKey` symmetric with `envKey`, default to the newest config, multi-config banner           | done   |
+| 3   | harness + suites + viewer: **P4**   | one `observations.jsonl` per run + `latest.json` pointer; `bench:report` and serve download derive md/json | done   |
+| 4   | harness + suites: **baseline axis** | scenario `comparesWithin: "<group>"`, within-group ratio; migrate tailwind-variants groups onto it         | to do  |
 
 Per-PR verification: `pnpm build:packages` (so the viewer sees the harness's new types) → the harness unit tests → a
 live `pnpm di:bench:isolate` and `pnpm di:bench:serve`.
