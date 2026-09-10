@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { isJsonlBenchObservationRow } from "#/report/jsonl";
 
-/** A minimal row carrying every field the guard requires, minus the optional config identity. */
-function legacyRow(): Record<string, unknown> {
+/** A minimal row carrying every field the guard requires, config identity included. */
+function validRow(): Record<string, unknown> {
   return {
     timestampIso: "2026-09-10T00:00:00.000Z",
     libraryName: "@codefast/di",
@@ -29,33 +29,38 @@ function legacyRow(): Record<string, unknown> {
     p99Ms: 0.002,
     p999Ms: 0.003,
     samples: 100,
+    isolated: true,
+    mode: "full",
+    trialCount: 3,
   };
 }
 
 describe("isJsonlBenchObservationRow", () => {
-  it("accepts a legacy row that predates the config identity", () => {
-    expect(isJsonlBenchObservationRow(legacyRow())).toBe(true);
+  it("accepts a fully valid row", () => {
+    expect(isJsonlBenchObservationRow(validRow())).toBe(true);
   });
 
-  it("accepts a row carrying a valid config identity", () => {
-    expect(isJsonlBenchObservationRow({ ...legacyRow(), isolated: true, mode: "full", trialCount: 3 })).toBe(true);
+  it.each(["isolated", "mode", "trialCount"])("rejects a row missing the required %s", (field) => {
+    const row = validRow();
+    delete row[field];
+    expect(isJsonlBenchObservationRow(row)).toBe(false);
   });
 
   it.each(["quick", "", 3, null])("rejects an invalid mode %j", (mode) => {
-    expect(isJsonlBenchObservationRow({ ...legacyRow(), mode })).toBe(false);
+    expect(isJsonlBenchObservationRow({ ...validRow(), mode })).toBe(false);
   });
 
   it("rejects a non-boolean isolated", () => {
-    expect(isJsonlBenchObservationRow({ ...legacyRow(), isolated: "yes" })).toBe(false);
+    expect(isJsonlBenchObservationRow({ ...validRow(), isolated: "yes" })).toBe(false);
   });
 
   it("rejects a non-number trialCount", () => {
-    expect(isJsonlBenchObservationRow({ ...legacyRow(), trialCount: "3" })).toBe(false);
+    expect(isJsonlBenchObservationRow({ ...validRow(), trialCount: "3" })).toBe(false);
   });
 
-  it("rejects a row missing a required field", () => {
-    const { samples, ...withoutSamples } = legacyRow();
-    void samples;
-    expect(isJsonlBenchObservationRow(withoutSamples)).toBe(false);
+  it("rejects a row missing a required measurement field", () => {
+    const row = validRow();
+    delete row["samples"];
+    expect(isJsonlBenchObservationRow(row)).toBe(false);
   });
 });

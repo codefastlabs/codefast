@@ -31,11 +31,10 @@ export interface JsonlBenchObservationRow {
   readonly p99Ms: number;
   readonly p999Ms: number;
   readonly samples: number;
-  // Configuration identity of the run that produced this row; absent on rows written before the
-  // harness stamped it, so every reader treats these three as optional.
-  readonly isolated?: boolean;
-  readonly mode?: "fast" | "default" | "full";
-  readonly trialCount?: number;
+  // Configuration identity of the run that produced this row: its execution shape and timing profile.
+  readonly isolated: boolean;
+  readonly mode: "fast" | "default" | "full";
+  readonly trialCount: number;
 }
 
 /**
@@ -77,14 +76,11 @@ export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchO
     "p999Ms",
     "samples",
   ] as const;
-  // The config identity is validated only when present, so a legacy row that predates it still passes.
+  const modeValue = candidate["mode"];
   const configFieldsOk =
-    (candidate["isolated"] === undefined || typeof candidate["isolated"] === "boolean") &&
-    (candidate["trialCount"] === undefined || typeof candidate["trialCount"] === "number") &&
-    (candidate["mode"] === undefined ||
-      candidate["mode"] === "fast" ||
-      candidate["mode"] === "default" ||
-      candidate["mode"] === "full");
+    typeof candidate["isolated"] === "boolean" &&
+    typeof candidate["trialCount"] === "number" &&
+    (modeValue === "fast" || modeValue === "default" || modeValue === "full");
   return (
     configFieldsOk &&
     stringFields.every((field) => typeof candidate[field] === "string") &&
@@ -92,6 +88,24 @@ export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchO
     typeof candidate["gcExposed"] === "boolean" &&
     typeof candidate["stress"] === "boolean"
   );
+}
+
+/**
+ * Derives a stable partition key for the run configuration a row was measured under.
+ *
+ * @remarks Runs sharing a key are comparable; a key change marks a boundary a chart must not cross.
+ */
+export function benchConfigKeyOfRow(row: JsonlBenchObservationRow): string {
+  return `${row.isolated ? "iso" : "shared"}|${row.mode}|t${row.trialCount}`;
+}
+
+/**
+ * Derives a human label for the run configuration a row was measured under.
+ */
+export function benchConfigLabelOfRow(row: JsonlBenchObservationRow): string {
+  const shape = row.isolated ? "isolated" : "shared";
+  const trials = row.trialCount === 1 ? "1 trial" : `${row.trialCount} trials`;
+  return `${shape} · ${row.mode} · ${trials}`;
 }
 
 /**
