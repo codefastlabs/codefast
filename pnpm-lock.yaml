@@ -168,9 +168,6 @@ catalogs:
     inversify:
       specifier: ^8.2.3
       version: 8.2.3
-    iti:
-      specifier: ^0.8.0
-      version: 0.8.0
     jest-axe:
       specifier: ^11.0.0
       version: 11.0.0
@@ -510,9 +507,6 @@ importers:
       inversify:
         specifier: 'catalog:'
         version: 8.2.3(reflect-metadata@0.2.2)
-      iti:
-        specifier: 'catalog:'
-        version: 0.8.0
       reflect-metadata:
         specifier: 'catalog:'
         version: 0.2.2
@@ -5160,10 +5154,6 @@ packages:
     resolution: {integrity: sha512-dJ+LpKyClQZ7NG+j3OensC/mAZkGpukE9YUrgPYvAZj2doVL0edfDgywTUh5CXa0o+nW9a1V9e5+CJTX8+SxRw==}
     engines: {node: '>=18'}
 
-  iti@0.8.0:
-    resolution: {integrity: sha512-sy/Hz+EQcC87E5jTusKtP7VFW4MDPe4HH11IafcrJU6wNX7d6QR31DYnEmpnpHDBgrG33B4siXLzMwhDaRmd9w==}
-    engines: {node: '>=12'}
-
   jest-axe@11.0.0:
     resolution: {integrity: sha512-JuLD/QzqDn5QxpFUMkbmf55GiI+sdutpryRD//rIRuyEefYAuMfQbQZ53TsNtZXKV3rjgfD4KKTKPY+2Ga1mGw==}
     engines: {node: '>= 18.0.0'}
@@ -6175,10 +6165,6 @@ packages:
     resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  utility-types@3.11.0:
-    resolution: {integrity: sha512-6Z7Ma2aVEWisaL6TvBCy7P8rm2LQoPv6dJ7ecIaIixHcwfbJ0x7mWdbcwlIM5IGQxPZSFYeqRCqlOOeKoJYMkw==}
-    engines: {node: '>= 4'}
 
   uuid@14.0.2:
     resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
@@ -10116,10 +10102,6 @@ snapshots:
 
   isbot@5.2.1: {}
 
-  iti@0.8.0:
-    dependencies:
-      utility-types: 3.11.0
-
   jest-axe@11.0.0:
     dependencies:
       axe-core: 4.12.1
@@ -11229,8 +11211,6 @@ snapshots:
   use-sync-external-store@1.6.0(react@19.2.8):
     dependencies:
       react: 19.2.8
-
-  utility-types@3.11.0: {}
 
   uuid@14.0.2: {}
 

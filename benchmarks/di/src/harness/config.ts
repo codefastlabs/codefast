@@ -69,18 +69,6 @@ export const DITOX = {
 } as const satisfies BenchSubprocessConfig;
 
 /**
- * iti: functional container whose bindings are memoized singletons, so it
- * measures only the singleton-friendly rows of the core subset.
- */
-export const ITI = {
-  libraryName: "iti",
-  scenarioName: "iti",
-  tsconfigFileName: "tsconfig.iti.json",
-  benchEntryFileName: "iti-benches.ts",
-  displayName: "iti 0.8",
-} as const satisfies BenchSubprocessConfig;
-
-/**
  * injection-js: Angular's `ReflectiveInjector` in its decorator mode, singleton
  * per injector with a non-cached transient root.
  */
@@ -98,4 +86,4 @@ export const INJECTION_JS = {
  * @since 0.3.16-canary.0
  */
 export const SERVE_TITLE =
-  "@codefast/di vs inversify / awilix / tsyringe / brandi / ditox / iti / injection-js — bench history";
+  "@codefast/di vs inversify / awilix / tsyringe / brandi / ditox / injection-js — bench history";
