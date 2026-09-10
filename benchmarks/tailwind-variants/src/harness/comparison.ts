@@ -9,6 +9,7 @@ import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
 import type { BenchRunShape } from "@codefast/benchmark-harness/shared/env-keys";
 import type { Fingerprint, TrialPayload } from "@codefast/benchmark-harness/shared/protocol";
 
+import { SCENARIO_BASELINES } from "#/fixtures/scenario-parity";
 import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
 import { TAILWIND_VARIANTS_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
@@ -74,12 +75,14 @@ export function assembleTvComparison(
   const markdown = renderComparisonMarkdownReport(codefastLibrary, competitors, {
     ...TAILWIND_VARIANTS_COMPARISON_MARKDOWN,
     runOrder: options.runOrder,
+    baselineOf: SCENARIO_BASELINES,
   });
   const comparisonDocument = buildComparisonDocument(codefastLibrary, competitors, {
     runId: options.runId,
     runOrder: options.runOrder,
     scenariosAvailable: options.scenariosAvailable,
     shape: options.shape,
+    baselineOf: SCENARIO_BASELINES,
   });
   return { codefastLibrary, competitors, markdown, comparisonDocument };
 }
