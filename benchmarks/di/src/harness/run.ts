@@ -8,8 +8,8 @@
  *    accidental inherit of CI-specific flags.
  * 3. Parse the START/END-framed `SubprocessPayload` from stdout and turn it
  *    into a `LibraryReport`.
- * 4. Emit three outputs: a markdown report under `bench-results/`, a JSONL
- *    file alongside it, and an aligned ASCII table on stdout.
+ * 4. Print an aligned ASCII table on stdout and persist the run's
+ *    `observations.jsonl`; the report is derived on demand by `bench:report`.
  *
  * The subprocess contract lives in `@codefast/benchmark-harness`. Any scenario
  * list change only touches the child processes; this file is stable.
@@ -147,7 +147,7 @@ async function main(): Promise<void> {
   );
 
   const outputPaths = buildBenchRunOutputPaths(packageRootDirectory);
-  const { codefastLibrary, competitors, markdown, comparisonDocument } = assembleDiComparison(payloadsByLibrary, {
+  const { codefastLibrary, competitors, comparisonDocument } = assembleDiComparison(payloadsByLibrary, {
     runId: outputPaths.runId,
     runOrder,
     scenariosAvailable: codefastPayload.scenarioIds?.length,
@@ -157,7 +157,7 @@ async function main(): Promise<void> {
 
   const librariesForJsonl = [...payloadsByLibrary.values()].map(({ fingerprint, trials }) => ({ fingerprint, trials }));
 
-  writeBenchRunArtifacts({ paths: outputPaths, markdown, comparisonDocument, librariesForJsonl });
+  writeBenchRunArtifacts({ paths: outputPaths, comparisonDocument, librariesForJsonl });
 }
 
 main().catch((caught: unknown) => {

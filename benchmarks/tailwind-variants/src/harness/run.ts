@@ -133,7 +133,7 @@ async function main(): Promise<void> {
   );
 
   const outputPaths = buildBenchRunOutputPaths(packageRootDirectory);
-  const { codefastLibrary, competitors, markdown, comparisonDocument } = assembleTvComparison(payloadsByLibrary, {
+  const { codefastLibrary, competitors, comparisonDocument } = assembleTvComparison(payloadsByLibrary, {
     runId: outputPaths.runId,
     runOrder,
     scenariosAvailable: codefastPayload.scenarioIds?.length,
@@ -143,7 +143,7 @@ async function main(): Promise<void> {
 
   const librariesForJsonl = [...payloadsByLibrary.values()].map(({ fingerprint, trials }) => ({ fingerprint, trials }));
 
-  writeBenchRunArtifacts({ paths: outputPaths, markdown, comparisonDocument, librariesForJsonl });
+  writeBenchRunArtifacts({ paths: outputPaths, comparisonDocument, librariesForJsonl });
 }
 
 main().catch((caught: unknown) => {
