@@ -1,12 +1,7 @@
 import type { ComparisonCompetitorSummary, ComparisonLibrary } from "#/report/comparison";
 import { buildComparisonRows, summarizeComparison } from "#/report/comparison";
 import { isIqrNoisy, isRatioUnreliable } from "#/report/reliability";
-import {
-  BENCH_ISOLATE_ENV_KEY,
-  isEnvFlagEnabled,
-  resolveBenchModeFromEnvironment,
-  resolveScenarioFilterFromEnvironment,
-} from "#/shared/env-keys";
+import { resolveRunShapeFromEnvironment, resolveScenarioFilterFromEnvironment } from "#/shared/env-keys";
 
 /**
  * Shape of {@link ComparisonDocument}, so a reader of an older run directory can tell that the file
@@ -171,12 +166,13 @@ export function buildComparisonDocument(
   const { fingerprint } = pivot.report;
   const scenarioFilter = resolveScenarioFilterFromEnvironment();
   const scenariosMeasured = pivot.report.scenarios.length;
+  const shape = resolveRunShapeFromEnvironment();
   return {
     schemaVersion: COMPARISON_DOCUMENT_SCHEMA_VERSION,
     run: {
       runId: run.runId,
-      mode: resolveBenchModeFromEnvironment() ?? "default",
-      isolated: isEnvFlagEnabled(BENCH_ISOLATE_ENV_KEY),
+      mode: shape.mode,
+      isolated: shape.isolated,
       scenarioFilter: scenarioFilter === undefined ? null : [...scenarioFilter],
       trialCount: pivot.report.trialCount,
       scenariosMeasured,

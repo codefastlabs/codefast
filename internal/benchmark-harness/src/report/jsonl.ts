@@ -31,6 +31,11 @@ export interface JsonlBenchObservationRow {
   readonly p99Ms: number;
   readonly p999Ms: number;
   readonly samples: number;
+  // Configuration identity of the run that produced this row; absent on rows written before the
+  // harness stamped it, so every reader treats these three as optional.
+  readonly isolated?: boolean;
+  readonly mode?: "fast" | "default" | "full";
+  readonly trialCount?: number;
 }
 
 /**
@@ -72,7 +77,16 @@ export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchO
     "p999Ms",
     "samples",
   ] as const;
+  // The config identity is validated only when present, so a legacy row that predates it still passes.
+  const configFieldsOk =
+    (candidate["isolated"] === undefined || typeof candidate["isolated"] === "boolean") &&
+    (candidate["trialCount"] === undefined || typeof candidate["trialCount"] === "number") &&
+    (candidate["mode"] === undefined ||
+      candidate["mode"] === "fast" ||
+      candidate["mode"] === "default" ||
+      candidate["mode"] === "full");
   return (
+    configFieldsOk &&
     stringFields.every((field) => typeof candidate[field] === "string") &&
     numberFields.every((field) => typeof candidate[field] === "number") &&
     typeof candidate["gcExposed"] === "boolean" &&

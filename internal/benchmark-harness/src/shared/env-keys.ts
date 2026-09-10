@@ -275,6 +275,30 @@ export function resolveBenchModeFromEnvironment(): BenchMode | undefined {
 }
 
 /**
+ * A run's configuration identity minus its trial count: the execution shape and the timing profile.
+ *
+ * @remarks Read together they partition runs into comparable sets; `isolated` with `full` is the
+ * only pair whose cross-library ratios are citable.
+ */
+export interface BenchRunShape {
+  readonly isolated: boolean;
+  readonly mode: "fast" | "default" | "full";
+}
+
+/**
+ * Resolves the env-derived half of a run's configuration identity: its execution shape and profile.
+ *
+ * @remarks The one resolver the JSONL writer and the comparison `run` block share, so the config
+ * stamped on the observations cannot disagree with the config the report claims produced them.
+ */
+export function resolveRunShapeFromEnvironment(): BenchRunShape {
+  return {
+    isolated: isEnvFlagEnabled(BENCH_ISOLATE_ENV_KEY),
+    mode: resolveBenchModeFromEnvironment() ?? "default",
+  };
+}
+
+/**
  * Options for {@link assertBenchEnvKeys}.
  *
  * @since 0.6.0
