@@ -10,6 +10,7 @@ import {
 } from "@codefast/benchmark-harness/shared/env-keys";
 import { startBenchServer } from "@codefast/benchmark-viewer/server";
 
+import { SCENARIO_BASELINES } from "#/fixtures/scenario-parity";
 import { assembleTvComparison } from "#/harness/comparison";
 import { CODEFAST_TV, CVA, SERVE_TITLE, TAILWIND_VARIANTS } from "#/harness/config";
 
@@ -19,6 +20,7 @@ await startBenchServer({
   title: SERVE_TITLE,
   // Each shape's cached, uncached, merged and unmerged rows read against each other on one chart.
   viewDefaults: { overlayGroup: true, useLogScale: true },
+  scenarioBaselines: Object.fromEntries(SCENARIO_BASELINES),
   libraries: [
     {
       name: CODEFAST_TV.libraryName,
