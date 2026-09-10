@@ -181,6 +181,15 @@ export const RESOLVE_ASYNC_SINGLE_HOP = {
 } as const satisfies ScenarioDescriptor;
 
 /**
+ * Awaiting one transient async-constructed value, rebuilt each iteration (cold path).
+ */
+export const ASYNC_INIT_SINGLE_HOP = {
+  id: "async-init-single-hop",
+  group: "async",
+  what: "await one transient async-constructed value, rebuilt each iteration (cold path)",
+} as const satisfies ScenarioDescriptor;
+
+/**
  * @since 0.5.0-canary.7
  */
 export const DYNAMIC_ASYNC_CHAIN_8 = {

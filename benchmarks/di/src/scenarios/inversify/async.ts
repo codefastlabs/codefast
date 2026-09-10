@@ -5,11 +5,16 @@ import type { ServiceIdentifier } from "inversify";
 import {
   ASYNC_CHAIN_DEPTH,
   ASYNC_CONCURRENT_FANOUT_COUNTS,
+  ASYNC_INIT_SINGLE_HOP,
   DYNAMIC_ASYNC_CHAIN_8,
   RESOLVE_ASYNC_SINGLE_HOP,
   asyncFanoutConcurrentDescriptor,
 } from "#/fixtures/scenario-parity";
 import type { AsyncBenchScenario } from "#/scenarios/types";
+
+class AsyncInitService {
+  readonly ready = true;
+}
 
 // Fan-out factories yield via microtask, not setImmediate: a macrotask wait (~15µs on
 // Apple silicon) dwarfs both libraries' machinery and the row degrades into measuring libuv.
@@ -135,12 +140,41 @@ function buildAsyncFanOutConcurrentScenario(
   };
 }
 
+function buildAsyncInitSingleHopScenario(): AsyncBenchScenario {
+  const asyncServiceIdentifier = Symbol("bench-inv-async-init-single-hop");
+  const container = new Container({ jitless: false });
+  container
+    .bind<AsyncInitService>(asyncServiceIdentifier)
+    .toDynamicValue(async () => {
+      await Promise.resolve();
+      return new AsyncInitService();
+    })
+    .inTransientScope();
+
+  return {
+    ...ASYNC_INIT_SINGLE_HOP,
+    what: "getAsync() one transient async dynamic value, rebuilt each iteration (cold path)",
+    kind: "async",
+    batch: 1,
+    sanity: async () => (await container.getAsync<AsyncInitService>(asyncServiceIdentifier)).ready,
+    build: () => {
+      return async () => {
+        const service = await container.getAsync<AsyncInitService>(asyncServiceIdentifier);
+        if (!service.ready) {
+          throw new Error("Expected async-constructed service to be ready");
+        }
+      };
+    },
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildInversifyAsyncScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [
     buildResolveAsyncSingleHopScenario(),
+    buildAsyncInitSingleHopScenario(),
     buildDynamicAsyncChainDepthEightScenario(),
     ...ASYNC_CONCURRENT_FANOUT_COUNTS.map((concurrency) => buildAsyncFanOutConcurrentScenario(concurrency)),
   ];

@@ -3,11 +3,16 @@ import { Container, token } from "@codefast/di";
 import {
   ASYNC_CHAIN_DEPTH,
   ASYNC_CONCURRENT_FANOUT_COUNTS,
+  ASYNC_INIT_SINGLE_HOP,
   DYNAMIC_ASYNC_CHAIN_8,
   RESOLVE_ASYNC_SINGLE_HOP,
   asyncFanoutConcurrentDescriptor,
 } from "#/fixtures/scenario-parity";
 import type { AsyncBenchScenario } from "#/scenarios/types";
+
+class AsyncInitService {
+  readonly ready = true;
+}
 
 // Fan-out factories yield via microtask, not setImmediate: a macrotask wait (~15µs on
 // Apple silicon) dwarfs both libraries' machinery and the row degrades into measuring libuv.
@@ -132,12 +137,40 @@ function buildAsyncFanOutConcurrentScenario(
   };
 }
 
+function buildAsyncInitSingleHopScenario(): AsyncBenchScenario {
+  const asyncServiceToken = token<AsyncInitService>("bench-cf-async-init-single-hop");
+  const container = Container.create();
+  container
+    .bind(asyncServiceToken)
+    .toDynamicAsync(async () => {
+      await Promise.resolve();
+      return new AsyncInitService();
+    })
+    .transient();
+
+  return {
+    ...ASYNC_INIT_SINGLE_HOP,
+    kind: "async",
+    batch: 1,
+    sanity: async () => (await container.resolveAsync(asyncServiceToken)).ready,
+    build: () => {
+      return async () => {
+        const service = await container.resolveAsync(asyncServiceToken);
+        if (!service.ready) {
+          throw new Error("Expected async-constructed service to be ready");
+        }
+      };
+    },
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildCodefastAsyncScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [
     buildResolveAsyncSingleHopScenario(),
+    buildAsyncInitSingleHopScenario(),
     buildDynamicAsyncChainDepthEightScenario(),
     ...ASYNC_CONCURRENT_FANOUT_COUNTS.map((concurrency) => buildAsyncFanOutConcurrentScenario(concurrency)),
   ];
