@@ -6,6 +6,8 @@ import type { AggregatedScenarioResult, LibraryReport } from "@codefast/benchmar
 import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
 import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
 import {
+  benchConfigKeyOfRow,
+  benchConfigLabelOfRow,
   isJsonlBenchObservationRow,
   jsonlBenchObservationRowToFingerprint,
   jsonlBenchObservationRowToScenarioTrialResult,
@@ -199,6 +201,8 @@ function extractRunMeta(
     folder: folderName,
     envKey,
     envLabel,
+    configKey: benchConfigKeyOfRow(canonical),
+    configLabel: benchConfigLabelOfRow(canonical),
     nodeVersion: canonical.nodeVersion,
     v8Version: canonical.v8Version,
     platform: canonical.platform,

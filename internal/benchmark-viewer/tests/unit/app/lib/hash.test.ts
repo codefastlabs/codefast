@@ -15,6 +15,8 @@ function minimalPayload(overrides: Partial<EmbeddedViewerPayload> = {}): Embedde
         folder: "run-1",
         envKey: "env-1",
         envLabel: "env-1",
+        configKey: "cfg-1",
+        configLabel: "cfg-1",
         nodeVersion: "22",
         v8Version: "12",
         platform: "darwin",
@@ -45,6 +47,7 @@ function minimalPayload(overrides: Partial<EmbeddedViewerPayload> = {}): Embedde
 const defaultView: ViewState = {
   scenarioId: "scenario-one",
   envKey: "",
+  configKey: "",
   group: "",
   search: "",
   facets: [],
@@ -63,6 +66,7 @@ describe("buildHash / parseHash", () => {
     const view: ViewState = {
       ...defaultView,
       envKey: "env-1",
+      configKey: "cfg-1",
       group: "grp",
       search: "needle",
       facets: ["name", "tag"],

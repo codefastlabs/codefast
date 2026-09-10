@@ -52,11 +52,14 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     isOverlayActive,
     uniqueEnvKeys,
     envLabelMap,
+    uniqueConfigKeys,
+    configLabelMap,
     uniqueGroups,
     primaryLib,
     compareLibs,
     scenarioIndex,
     showMultiEnvBanner,
+    showMultiConfigBanner,
     metricsData,
     snapshotRows,
     latestRun,
@@ -177,7 +180,21 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           </div>
         )}
 
+        {showMultiConfigBanner && (
+          <div
+            className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
+            role="status"
+          >
+            <strong className="font-semibold text-amber-200">Multiple configurations in history.</strong> Pick a
+            Configuration filter before reading the chart — isolated vs shared and fast vs full runs are not comparable.
+          </div>
+        )}
+
         <ChartControlPanel
+          configKey={view.configKey}
+          configLabelMap={configLabelMap}
+          onConfigChange={(configKey) => patchView({ configKey })}
+          uniqueConfigKeys={uniqueConfigKeys}
           envKey={view.envKey}
           facetLabels={payload.facetLabels ?? []}
           group={view.group}

@@ -39,11 +39,14 @@ export interface DerivedPayload {
   isOverlayActive: boolean;
   uniqueEnvKeys: Array<string>;
   envLabelMap: Record<string, string>;
+  uniqueConfigKeys: Array<string>;
+  configLabelMap: Record<string, string>;
   uniqueGroups: Array<string>;
   primaryLib: EmbeddedLibraryMeta | undefined;
   compareLibs: Array<EmbeddedLibraryMeta>;
   scenarioIndex: number;
   showMultiEnvBanner: boolean;
+  showMultiConfigBanner: boolean;
   metricsData: MetricsResult | null;
   snapshotRows: Array<SnapshotRow>;
   latestRun: EmbeddedRun | undefined;
@@ -106,16 +109,15 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     if (!payload) {
       return [];
     }
-    if (!view.envKey) {
-      return payload.runs.map((_, runIndex) => runIndex);
-    }
     return payload.runs.reduce<Array<number>>((acc, r, i) => {
-      if (r.envKey === view.envKey) {
+      const envMatches = !view.envKey || r.envKey === view.envKey;
+      const configMatches = !view.configKey || r.configKey === view.configKey;
+      if (envMatches && configMatches) {
         acc.push(i);
       }
       return acc;
     }, []);
-  }, [payload, view.envKey]);
+  }, [payload, view.envKey, view.configKey]);
 
   const runIndices = useMemo<Array<number>>(() => {
     if (view.runWindow === "all" || baseRunIndices.length === 0) {
@@ -205,6 +207,26 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     return map;
   }, [payload]);
 
+  const uniqueConfigKeys = useMemo<Array<string>>(() => {
+    if (!payload) {
+      return [];
+    }
+    return [...new Set(payload.runs.map((run) => run.configKey))].toSorted((left, right) => left.localeCompare(right));
+  }, [payload]);
+
+  const configLabelMap = useMemo<Record<string, string>>(() => {
+    if (!payload) {
+      return {};
+    }
+    const map: Record<string, string> = {};
+    for (const run of payload.runs) {
+      if (!(run.configKey in map)) {
+        map[run.configKey] = run.configLabel ?? run.configKey;
+      }
+    }
+    return map;
+  }, [payload]);
+
   const uniqueGroups = useMemo<Array<string>>(() => {
     if (!payload) {
       return [];
@@ -214,6 +236,7 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
 
   const scenarioIndex = visibleScenarios.findIndex((scenario) => scenario.id === view.scenarioId);
   const showMultiEnvBanner = uniqueEnvKeys.length > 1 && !view.envKey;
+  const showMultiConfigBanner = uniqueConfigKeys.length > 1 && !view.configKey;
 
   // Auto-select a scenario when none is visible: the richest one on first load (nothing chosen
   // yet), the first match after a filter change.
@@ -285,11 +308,14 @@ export function useDerivedPayload({ payload, view, patchView }: DerivedPayloadOp
     isOverlayActive,
     uniqueEnvKeys,
     envLabelMap,
+    uniqueConfigKeys,
+    configLabelMap,
     uniqueGroups,
     primaryLib,
     compareLibs,
     scenarioIndex,
     showMultiEnvBanner,
+    showMultiConfigBanner,
     metricsData,
     snapshotRows,
     latestRun,

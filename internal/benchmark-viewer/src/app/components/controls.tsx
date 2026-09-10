@@ -85,6 +85,10 @@ interface ChartControlPanelProps {
   uniqueEnvKeys: Array<string>;
   envLabelMap: Record<string, string>;
   onEnvChange: (key: string) => void;
+  configKey: string;
+  uniqueConfigKeys: Array<string>;
+  configLabelMap: Record<string, string>;
+  onConfigChange: (key: string) => void;
   runWindow: ViewState["runWindow"];
   onRunWindowChange: (window: ViewState["runWindow"]) => void;
 }
@@ -118,6 +122,10 @@ export function ChartControlPanel({
   uniqueEnvKeys,
   envLabelMap,
   onEnvChange,
+  configKey,
+  uniqueConfigKeys,
+  configLabelMap,
+  onConfigChange,
   runWindow,
   onRunWindowChange,
 }: ChartControlPanelProps) {
@@ -267,6 +275,30 @@ export function ChartControlPanel({
             ))}
           </FieldSelect>
         </label>
+        {uniqueConfigKeys.length > 1 && (
+          <label
+            className={cn("w-full min-w-0 sm:w-auto sm:max-w-72 sm:min-w-[min(100%,13rem)]", foldable)}
+            htmlFor="ctrl-config"
+          >
+            <FieldLabel className="max-sm:mb-[0.2rem] max-sm:text-[0.6875rem] max-sm:leading-[1.2]">
+              Configuration
+            </FieldLabel>
+            <FieldSelect
+              aria-label="Filter runs by benchmark configuration"
+              className="max-sm:h-9 max-sm:min-h-9"
+              id="ctrl-config"
+              onChange={(e) => onConfigChange(e.target.value)}
+              value={configKey}
+            >
+              <option value="">All configs</option>
+              {uniqueConfigKeys.map((key) => (
+                <option key={key} value={key}>
+                  {configLabelMap[key] ?? key}
+                </option>
+              ))}
+            </FieldSelect>
+          </label>
+        )}
         <label
           className={cn("w-full min-w-0 shrink-0 sm:w-auto sm:max-w-44 sm:min-w-[min(100%,10rem)]", foldable)}
           htmlFor="ctrl-run-window"

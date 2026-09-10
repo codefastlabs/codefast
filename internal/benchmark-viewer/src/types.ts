@@ -101,6 +101,9 @@ export interface EmbeddedRun {
   /** Stable key for same-machine + same-Node filtering. */
   readonly envKey: string;
   readonly envLabel: string;
+  /** Stable key for same-configuration filtering (execution shape, profile, trial count). */
+  readonly configKey: string;
+  readonly configLabel: string;
   readonly nodeVersion: string;
   readonly v8Version: string;
   readonly platform: string;
