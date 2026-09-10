@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import { runBenchScenarioListingMain } from "@codefast/benchmark-harness/parent/run-bench-listing-main";
 
-import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, ITI, TSYRINGE } from "#/harness/config";
+import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, TSYRINGE } from "#/harness/config";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -17,7 +17,6 @@ runBenchScenarioListingMain(packageRootDirectory, [
   TSYRINGE,
   BRANDI,
   DITOX,
-  ITI,
   INJECTION_JS,
 ]).catch((caught: unknown) => {
   const message = caught instanceof Error ? caught.message : String(caught);

@@ -47,7 +47,7 @@ import {
 } from "@codefast/benchmark-harness/shared/env-keys";
 import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
 
-import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, ITI, TSYRINGE } from "#/harness/config";
+import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, TSYRINGE } from "#/harness/config";
 import { DI_COMPARISON_CONSOLE, DI_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
 const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
@@ -133,7 +133,6 @@ async function main(): Promise<void> {
     TSYRINGE,
     BRANDI,
     DITOX,
-    ITI,
     INJECTION_JS,
   ]);
   const codefastPayload = payloads.get(CODEFAST_DI.libraryName)!;
@@ -142,7 +141,6 @@ async function main(): Promise<void> {
   const tsyringePayload = payloads.get(TSYRINGE.libraryName)!;
   const brandiPayload = payloads.get(BRANDI.libraryName)!;
   const ditoxPayload = payloads.get(DITOX.libraryName)!;
-  const itiPayload = payloads.get(ITI.libraryName)!;
   const injectionJsPayload = payloads.get(INJECTION_JS.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
 
@@ -178,11 +176,6 @@ async function main(): Promise<void> {
     ditoxPayload.trials,
     ditoxPayload.sanityFailures,
   );
-  const itiReport: LibraryReport = buildLibraryReport(
-    itiPayload.fingerprint,
-    itiPayload.trials,
-    itiPayload.sanityFailures,
-  );
   const injectionJsReport: LibraryReport = buildLibraryReport(
     injectionJsPayload.fingerprint,
     injectionJsPayload.trials,
@@ -202,7 +195,6 @@ async function main(): Promise<void> {
     { report: tsyringeReport, displayName: resolveDisplayName(TSYRINGE), shortName: "tsy" },
     { report: brandiReport, displayName: resolveDisplayName(BRANDI), shortName: "brn" },
     { report: ditoxReport, displayName: resolveDisplayName(DITOX), shortName: "dtx" },
-    { report: itiReport, displayName: resolveDisplayName(ITI), shortName: "iti" },
     { report: injectionJsReport, displayName: resolveDisplayName(INJECTION_JS), shortName: "inj" },
   ];
   renderComparisonConsoleReport(codefastLibrary, competitors, DI_COMPARISON_CONSOLE);
@@ -214,7 +206,6 @@ async function main(): Promise<void> {
     { fingerprint: tsyringePayload.fingerprint, trials: tsyringePayload.trials },
     { fingerprint: brandiPayload.fingerprint, trials: brandiPayload.trials },
     { fingerprint: ditoxPayload.fingerprint, trials: ditoxPayload.trials },
-    { fingerprint: itiPayload.fingerprint, trials: itiPayload.trials },
     { fingerprint: injectionJsPayload.fingerprint, trials: injectionJsPayload.trials },
   ];
 

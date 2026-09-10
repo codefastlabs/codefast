@@ -2,7 +2,7 @@
   "name": "@codefast/benchmark-di",
   "version": "0.7.4",
   "private": true,
-  "description": "Head-to-head tinybench harness: @codefast/di vs InversifyJS v8 (full suite), Awilix, tsyringe, Brandi and ditox (core subset), plus iti and injection-js (singleton-friendly rows)",
+  "description": "Head-to-head tinybench harness: @codefast/di vs InversifyJS v8 (full suite), Awilix, tsyringe, Brandi and ditox (core subset), plus injection-js (singleton-friendly rows)",
   "keywords": [
     "awilix",
     "benchmark",
@@ -12,7 +12,6 @@
     "ditox",
     "injection-js",
     "inversify",
-    "iti",
     "tsyringe"
   ],
   "license": "MIT",
@@ -52,7 +51,6 @@
     "ditox": "catalog:",
     "injection-js": "catalog:",
     "inversify": "catalog:",
-    "iti": "catalog:",
     "reflect-metadata": "catalog:",
     "tsx": "catalog:",
     "tsyringe": "catalog:"

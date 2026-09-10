@@ -4,10 +4,10 @@ What has actually been measured, separated by what each measurement can support.
 [`BENCH_GUIDE.md`](./BENCH_GUIDE.md); re-run any of it with the recipes there.
 
 **Environment.** Node 26.1.0 / V8 14.6, Apple M3 Max × 14, darwin/arm64. `@codefast/di` 0.8.1 · inversify 8.2.3 · awilix
-13.0.5 · tsyringe 4.10.0 · brandi 5.1.0 · ditox 3.3.0 · iti 0.8.0 · injection-js 2.6.1. Isolated profile
-(`BENCH_ISOLATE=true`), 3 trials, unless a row says otherwise. Entries below name the versions they measured where they
-differ. inversify runs the full suite; awilix, tsyringe, brandi and ditox the factory/class core subset; iti and
-injection-js only the singleton-friendly rows of that subset (neither has a general transient scope).
+13.0.5 · tsyringe 4.10.0 · brandi 5.1.0 · ditox 3.3.0 · injection-js 2.6.1. Isolated profile (`BENCH_ISOLATE=true`), 3
+trials, unless a row says otherwise. Entries below name the versions they measured where they differ. inversify runs the
+full suite; awilix, tsyringe, brandi and ditox the factory/class core subset; injection-js only the singleton-friendly
+rows of that subset (Angular's `ReflectiveInjector` caches every provider per injector).
 
 **One pass on a quiet machine, then sessions that were not.** The 2026-09-06 figures are a single full pass on an
 otherwise idle machine (a Vite dev server sat idle alongside), so they carry no between-run variance of their own; the
@@ -19,24 +19,29 @@ measures every library within the same scenario. Absolute `hz/op` from this page
 (`--expose-gc`), interleaved. 17 of the run's 62 comparable cells carried a per-trial IQR above 5% (78 did on
 2026-07-31), so single rows from it are still read through the aggregates, not alone.
 
-## 2026-09-10 — four more rivals: brandi, ditox, iti, injection-js
+## 2026-09-10 — three more rivals: brandi, ditox, injection-js (iti evaluated, then dropped)
 
-Four directly-comparable containers joined the head-to-head, each in its canonical mode and each measured only on the
-rows it can express honestly. All four are actively maintained (last release in parentheses); none is one of the
+Three directly-comparable containers joined the head-to-head, each in its canonical mode and each measured only on the
+rows it can express honestly. All three are actively maintained (last release in parentheses); none is one of the
 unmaintained candidates the suite deliberately skips.
 
 | Library      | Version (release) | Canonical mode measured                                                 | Comparable core rows | Rows omitted, and why                                                                             |
 | ------------ | ----------------- | ----------------------------------------------------------------------- | -------------------: | ------------------------------------------------------------------------------------------------- |
 | brandi       | 5.1.0 (2026-01)   | token-based, decorator-free; `injected()` wiring, singleton + transient |               8 of 8 | —                                                                                                 |
 | ditox        | 3.3.0 (2026-02)   | functional; `bindFactory`/`injectableClass`, singleton + transient      |               8 of 8 | —                                                                                                 |
-| iti          | 0.8.0 (2025-10)   | chained functional builder; every binding is a memoized singleton       |               3 of 8 | transient micro, hot transient-root, fan-out, scale — iti has no transient scope                  |
 | injection-js | 2.6.1 (2025-10)   | Angular's `ReflectiveInjector`; `@Injectable` + `reflect-metadata`      |               4 of 8 | transient micro, fan-out, scale — singleton per injector, so sub-deps of a fresh root stay cached |
 
-The transient omissions are behavioural, not a handicap: iti memoizes every `get`, and injection-js caches every
-provider per injector (its `instantiateResolved` builds a fresh top-level instance but resolves that instance's deps
-from the cached singletons). Forcing a fully-transient tree or chain onto either would measure a proxy, not the library,
-so those rows read `—`. Neither implements async resolution, tags/multi-binding, or child-scope disposal — the same rows
-awilix and tsyringe already sit out.
+injection-js's transient omissions are behavioural, not a handicap: it caches every provider per injector (its
+`instantiateResolved` builds a fresh top-level instance but resolves that instance's deps from the cached singletons).
+Forcing a fully-transient tree or chain onto it would measure a proxy, not the library, so those rows read `—`. It
+implements neither async resolution, tags/multi-binding, nor child-scope disposal — the same rows awilix and tsyringe
+already sit out.
+
+**iti 0.8.0 was measured here, then removed from the suite.** It is a memoized typed container, not a lifetime-managing
+DI: every `get` is cached for the life of the container, its "transient" is a hand-written factory the caller invokes,
+it has no automatic injection and no hierarchical scope. Over the 3 singleton-friendly rows it could run it read a 0.24×
+median against codefast — it "won" all three — because those rows are memoized-map reads, not DI resolves; that is
+precisely why it is out of scope for a DI head-to-head, and the row is kept on record rather than quietly dropped.
 
 `BENCH_ONLY=<the eight core ids> pnpm bench:isolate`, default profile, one subprocess per scenario, libraries
 interleaved with rotating order, 3 trials, **three passes**. `@codefast/di` 0.9.0 from a `dist` the harness rebuilt
@@ -53,34 +58,31 @@ Per-competitor over the rows each one implements — median of the three passes'
 | tsyringe 4   |     8 of 8 | 8 / 0 / 0           |  4.43× | `realistic-graph-cold-resolve` breathes to parity (1.00×–1.18×)                  |
 | Brandi 5     |     8 of 8 | 8 / 0 / 0           |  11.7× | —                                                                                |
 | Ditox 3      |     8 of 8 | 4 / 1 / 3           |  1.21× | `realistic-graph-cold-resolve` 0.54×; hot micro 0.82×–0.92× (both above ceiling) |
-| iti 0.8      |     3 of 3 | 0 / 0 / 3           |  0.24× | every row it runs — see below                                                    |
 | injection-js |     4 of 4 | 2 / 1 / 1           |  1.27× | `realistic-graph-resolve-root` 0.91×                                             |
 
-**The honest losses, and what they are.** Three hold up as signal; two ride the throughput ceiling and only agree on
+**The honest losses, and what they are.** Two hold up as signal; two more ride the throughput ceiling and only agree on
 direction.
 
-- **`realistic-graph-cold-resolve` — 0.54× of ditox, 0.67× of iti.** This is the row this page already documents under
+- **`realistic-graph-cold-resolve` — 0.54× of ditox.** This is the row this page already documents under
   [Where it loses](#where-it-loses): a cold iteration hands the collector ten bindings each carrying every field any
-  binding kind declares, because one uniform V8 hidden class is worth ~30% on the hot path. ditox's plain closures and
-  iti's memoized factories carry no such uniform shape, so they build the fresh graph faster. Per pass, ditox 0.54 ·
-  0.59 · 0.50; iti 0.67 · 0.67 · 0.56 (iti's cell carries a >5% per-trial IQR). Losing this row is the price of winning
-  `realistic-graph-resolve-root`, which codefast takes 1.6× against ditox on the same graph.
+  binding kind declares, because one uniform V8 hidden class is worth ~30% on the hot path. ditox's plain closures carry
+  no such uniform shape, so it builds the fresh graph faster. Per pass, ditox 0.54 · 0.59 · 0.50. Losing this row is the
+  price of winning `realistic-graph-resolve-root`, which codefast takes 1.6× against ditox on the same graph.
 - **`realistic-graph-resolve-root` — 0.91× of injection-js** (0.89 · 0.94 · 0.89, sub-30M and tight). Angular's
   `instantiateResolved` builds a fresh root over already-cached singleton deps with a pre-resolved provider, and on this
   10-node graph that path edges out codefast's transient root. It is the only row injection-js beats codefast on; it
   loses the two micro rows (1.5×–2.0×) and sits at parity on cold-resolve.
-- **`constant-resolve` / `singleton-class-1-dep` vs ditox and iti** — direction only. ditox reads 0.82×–0.92× and iti
-  0.23×–0.25× on these two, meaning both fetch a warmed singleton faster than codefast: iti's `get` is a memoized map
-  read and ditox's is close to one. But both rows run above ~130M ops/s, inside the band the guide says stops
-  reproducing between runs, so the ~4× iti gap is a real property of a memoized container, not a citable per-row figure.
-  codefast's `singleton-class-1-dep` still carries its full binding/lifecycle shape on every resolve, which these two do
-  not.
+- **`constant-resolve` / `singleton-class-1-dep` vs ditox** — direction only. ditox reads 0.82×–0.92× on these two,
+  meaning it fetches a warmed singleton faster than codefast: ditox's `get` is close to a plain map read. But both rows
+  run above ~130M ops/s, inside the band the guide says stops reproducing between runs, so the gap is a real property of
+  a leaner warm-singleton path, not a citable per-row figure. codefast's `singleton-class-1-dep` still carries its full
+  binding/lifecycle shape on every resolve, which ditox does not.
 
-**Where codefast wins the rivals that cover the whole subset.** Against ditox — the closest of the four — codefast takes
-`realistic-graph-resolve-root` (~1.6×), `fan-out` (~2.1×), `scale-mid` (~1.4×) and `transient-class-1-dep` (~6.6×, above
-the ceiling), with `scale-deep` at parity (1.01×, 0.92–1.10). Brandi is the slowest of the set — 10–24× on micro, 5–9×
-on the graph and chains — because each `toInstance` binding walks its scope machinery per resolve. The inversify, awilix
-and tsyringe columns match the full-suite ledger below; the tsyringe `realistic-graph-cold-resolve` row reads
+**Where codefast wins the rivals that cover the whole subset.** Against ditox — the closest of the three — codefast
+takes `realistic-graph-resolve-root` (~1.6×), `fan-out` (~2.1×), `scale-mid` (~1.4×) and `transient-class-1-dep` (~6.6×,
+above the ceiling), with `scale-deep` at parity (1.01×, 0.92–1.10). Brandi is the slowest of the set — 10–24× on micro,
+5–9× on the graph and chains — because each `toInstance` binding walks its scope machinery per resolve. The inversify,
+awilix and tsyringe columns match the full-suite ledger below; the tsyringe `realistic-graph-cold-resolve` row reads
 1.00×–1.18× here (default profile), consistent with the 0.89× the GC-exposed full profile records for the same row.
 
 ## 2026-09-06 — full re-measure on 0.8.1: the suite holds, the one loss widens
