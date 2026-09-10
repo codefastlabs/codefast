@@ -2,8 +2,9 @@
  * Central list of all ditox bench scenarios. Used by the bench subprocess.
  * Ditox is functional and token-based with singleton/transient scopes and real
  * container hierarchy (`createContainer(parent)`), so it covers the factory/
- * class-binding core subset plus the depth-2 child-scope row — the codefast-only
- * introspection/lifecycle rows stay absent.
+ * class-binding core subset, the depth-2 child-scope row, and the `resolveAll`
+ * strategy rows (via `bindMultiValue`) — the codefast-only introspection/
+ * lifecycle rows stay absent.
  */
 import { buildDitoxFanOutScenarios } from "#/scenarios/ditox/fan-out";
 import { buildDitoxMicroScenarios } from "#/scenarios/ditox/micro";

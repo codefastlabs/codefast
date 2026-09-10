@@ -1,7 +1,8 @@
 /**
  * Central list of all tsyringe bench scenarios (core subset). Used by the bench
  * subprocess. tsyringe supports the factory/class-binding core scenarios shared
- * by every library — the codefast-only introspection/lifecycle rows are absent.
+ * by every library, plus the `resolveAll` strategy rows (via repeated `register`)
+ * — the codefast-only introspection/lifecycle rows are absent.
  */
 import { buildTsyringeFanOutScenarios } from "#/scenarios/tsyringe/fan-out";
 import { buildTsyringeMicroScenarios } from "#/scenarios/tsyringe/micro";
