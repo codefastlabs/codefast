@@ -4,6 +4,7 @@ import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate
 import type { ComparisonLibrary, ComparisonMarkdownReportOptions } from "#/report/comparison";
 import {
   buildComparisonRows,
+  buildIntraLibraryRows,
   renderComparisonConsoleReport,
   renderComparisonMarkdownReport,
   summarizeAgainstCompetitor,
@@ -415,5 +416,34 @@ describe("renderComparisonConsoleReport", () => {
       });
     });
     expect(withoutHint).not.toContain("Cite the table.");
+  });
+});
+
+describe("buildIntraLibraryRows", () => {
+  it("ratios each compared scenario against its baseline, per library", () => {
+    const pivot = library("cf", [scenario("with", 80), scenario("without", 100)]);
+    const rival = library("rival", [scenario("with", 50), scenario("without", 100)]);
+    const rows = buildIntraLibraryRows([pivot, rival], new Map([["with", "without"]]));
+    expect(rows).toHaveLength(1);
+    const [row] = rows;
+    expect(row?.baselineId).toBe("without");
+    expect(row?.cells.map((cell) => [cell.libraryDisplayName, cell.ratio])).toStrictEqual([
+      ["cf", 0.8],
+      ["rival", 0.5],
+    ]);
+  });
+
+  it("skips a library missing either side, and a compared scenario the pivot never measured", () => {
+    const pivot = library("cf", [scenario("with", 80), scenario("without", 100)]);
+    const partial = library("partial", [scenario("with", 50)]);
+    const rows = buildIntraLibraryRows(
+      [pivot, partial],
+      new Map([
+        ["with", "without"],
+        ["absent", "without"],
+      ]),
+    );
+    expect(rows).toHaveLength(1);
+    expect(rows[0]?.cells.map((cell) => cell.libraryDisplayName)).toStrictEqual(["cf"]);
   });
 });

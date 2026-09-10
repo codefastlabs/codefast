@@ -38,6 +38,7 @@ function documentWith(run: Partial<ComparisonDocument["run"]>): ComparisonDocume
     competitors: [],
     scenarios: [],
     headToHead: [],
+    intraLibrary: [],
   };
 }
 

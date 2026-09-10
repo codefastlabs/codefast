@@ -1,5 +1,5 @@
-import type { ComparisonCompetitorSummary, ComparisonLibrary } from "#/report/comparison";
-import { buildComparisonRows, summarizeComparison } from "#/report/comparison";
+import type { ComparisonCompetitorSummary, ComparisonLibrary, IntraLibraryRow } from "#/report/comparison";
+import { buildComparisonRows, buildIntraLibraryRows, summarizeComparison } from "#/report/comparison";
 import { isIqrNoisy, isRatioUnreliable } from "#/report/reliability";
 import { resolveRunShapeFromEnvironment, resolveScenarioFilterFromEnvironment } from "#/shared/env-keys";
 import type { BenchRunShape } from "#/shared/env-keys";
@@ -55,6 +55,8 @@ export interface ComparisonDocumentRunInput {
   readonly scenariosAvailable?: number | undefined;
   /** The run's shape; when omitted it is read from the environment (a live run), not the data. */
   readonly shape?: BenchRunShape | undefined;
+  /** Each compared scenario id mapped to its group baseline, for the intra-library section. */
+  readonly baselineOf?: ReadonlyMap<string, string> | undefined;
 }
 
 /**
@@ -140,6 +142,8 @@ export interface ComparisonDocument {
   readonly competitors: ReadonlyArray<ComparisonDocumentLibrary>;
   readonly scenarios: ReadonlyArray<ComparisonDocumentScenario>;
   readonly headToHead: ReadonlyArray<ComparisonCompetitorSummary>;
+  /** Within-group ratios, each scenario against its group baseline; empty when no baseline is declared. */
+  readonly intraLibrary: ReadonlyArray<IntraLibraryRow>;
 }
 
 function toDocumentLibrary(library: ComparisonLibrary): ComparisonDocumentLibrary {
@@ -216,5 +220,6 @@ export function buildComparisonDocument(
       })),
     })),
     headToHead: summarizeComparison(pivot, competitors),
+    intraLibrary: buildIntraLibraryRows([pivot, ...competitors], run.baselineOf ?? new Map()),
   };
 }
