@@ -1,12 +1,14 @@
 /**
  * Central list of all Awilix bench scenarios (core subset). Used by the bench
- * subprocess. Awilix supports the factory/class-binding core scenarios shared
- * by every library — the codefast-only introspection/lifecycle rows are absent.
+ * subprocess. Awilix supports the factory/class-binding core scenarios shared by
+ * every library, plus the per-scope lifetime row (its native `scoped()` +
+ * `createScope()`) — the codefast-only introspection/lifecycle rows are absent.
  */
 import { buildAwilixFanOutScenarios } from "#/scenarios/awilix/fan-out";
 import { buildAwilixMicroScenarios } from "#/scenarios/awilix/micro";
 import { buildAwilixRealisticScenarios } from "#/scenarios/awilix/realistic";
 import { buildAwilixScaleScenarios } from "#/scenarios/awilix/scale";
+import { buildAwilixScopeScenarios } from "#/scenarios/awilix/scope";
 import type { AnyScenario } from "#/scenarios/types";
 
 /**
@@ -17,6 +19,7 @@ export function collectAllAwilixScenarios(): ReadonlyArray<AnyScenario> {
     ...buildAwilixMicroScenarios(),
     ...buildAwilixRealisticScenarios(),
     ...buildAwilixFanOutScenarios(),
+    ...buildAwilixScopeScenarios(),
     ...buildAwilixScaleScenarios(),
   ];
 }
