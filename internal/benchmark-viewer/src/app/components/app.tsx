@@ -160,7 +160,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
       <SkipToChartLink />
 
       <main
-        className="mx-auto max-w-7xl px-3 pt-6 pb-[max(5.5rem,calc(env(safe-area-inset-bottom,0px)+4.5rem))] sm:px-6 sm:pt-10 sm:pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]"
+        className="px-3 pt-6 pb-[max(5.5rem,calc(env(safe-area-inset-bottom,0px)+4.5rem))] sm:px-6 sm:pt-10 sm:pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))] lg:px-8"
         id="app"
       >
         <PageHeader title={payload.title} onCopyLink={copyViewLink} />
