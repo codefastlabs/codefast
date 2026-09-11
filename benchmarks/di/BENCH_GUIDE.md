@@ -51,36 +51,39 @@ It then contributes to no published figure, so a win there does not pay for a lo
 
 ## Comparing two builds: paired, alternating, best-of
 
-1. Put the two builds where the bench can reach them. **Two mechanisms work, and which one you pick decides which runner
-   you may use in step 2** — see the table below.
-2. For each scenario, run **one subprocess per side, back to back**, and record the ratio.
+This compares two builds of `@codefast/di` itself — before and after an engine change — not codefast against a rival. It
+is self-controlled, and there is one method: **swap the source.** You do not choose between source and build, because
+`src/harness/run.ts` rebuilds `packages/di/dist` from `src` **unconditionally** — the call sits in `main()` with no flag
+guarding it, so every lane that goes through `run.ts` rebuilds before it spawns. That rebuild is not an obstacle; it is
+the mechanism. Edit, checkout, stash or patch `packages/di/src` per side, and the rebuild is what makes each side's
+source take effect.
+
+1. Put each side's code in `packages/di/src` (checkout, stash or patch).
+2. For each scenario, run **one subprocess per side, back to back**, and record the ratio — `bench:isolate` does exactly
+   this, and the rebuild it runs first is what installs the side you checked out.
 3. Repeat for at least three passes, **swapping which side goes first each pass**.
 4. Report the median of the per-pass ratios, and show them all.
-
-Step 2 means **one subprocess per (side, scenario)**. Both runners below give you that; what they do not share is what
-they do to the build first, and pairing them wrong fails _silently_.
-
-| Step 1 mechanism                                                                | Step 2 runner                                                            | Why that pairing                                                                                                                                                                                                                                                                                                  |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Swap the source** — checkout, stash or patch `packages/di/src` per side       | `bench:isolate`                                                          | `src/harness/run.ts` calls `rebuildCodefastDiPackage()` before it spawns anything, and that rebuild is exactly what makes the swap take effect                                                                                                                                                                    |
-| **Swap the build** — two prebuilt dirs, copied over `packages/di/dist` per side | `BENCH_ONLY=<id>` on a child entry: `bench:codefast` / `bench:inversify` | The same rebuild would overwrite `packages/di/dist` from `src` before the first sample, so both sides measure HEAD and **every row reports parity** — an A/B that never compared anything. Prove the swap is live before trusting a number: install a build whose target function throws, and check the row fails |
 
 A narrowed run writes its own timestamped directory but leaves `latest.*` alone, so an A/B pass cannot quietly become
 the suite's published state.
 
-**Prefer swapping the source, and narrow the run instead.** `BENCH_ONLY=<id>` — a comma-separated list — is read by the
-parent as well as the child, so `BENCH_ONLY=<id> pnpm bench:isolate` runs that row alone, isolated and interleaved, in
-seconds. The rebuild it does first is around half a second, so nothing about the source lane is slow; what used to be
-slow was the whole suite. A library that implements none of the requested ids measures nothing and reads `—`, rather
-than failing the run, so a row only this package has is still a legal filter.
+**Narrow the run instead of running the suite.** `BENCH_ONLY=<id>` — a comma-separated list — is read by the parent as
+well as the child, so `BENCH_ONLY=<id> pnpm bench:isolate` runs that row alone, isolated and interleaved, in seconds.
+The rebuild it does first is around half a second, so nothing about the source lane is slow; what used to be slow was
+the whole suite. A library that implements none of the requested ids measures nothing and reads `—` rather than failing
+the run, so a row only this package has is still a legal filter.
 
-That leaves swapping the build for one case: when the two builds are not both reachable from the working tree. It buys
-speed you no longer need and gives up what the parent does — interleaving, the Environment header, the instability
-flags, and a cross-library ratio you are allowed to cite. It also leaves `packages/di/dist` disagreeing with `src` until
-someone rebuilds, and it ties the measurement to a directory rather than a commit.
-
-Whichever you use, `bench`, `bench:fast`, `bench:full` and `bench:verbose` are all `run.ts` too, and none of them
-isolates per scenario — so they are wrong here for a second reason.
+**Escape hatch — swapping `dist` directly, only when a side is not reachable from the working tree.** The one case the
+source lane cannot serve is comparing against a build you cannot check out — a published version, an old `dist` archived
+outside the tree. Then copy the two prebuilt dirs over `packages/di/dist` per side and run the **child entries**
+(`bench:codefast` / `bench:inversify`, `node --import tsx/esm src/*-benches.ts`), which do **not** go through `run.ts`.
+You must never use a `run.ts` lane here — `bench`, `bench:isolate`, `bench:full`, `bench:fast`, `bench:verbose` — for
+two reasons: its unconditional rebuild overwrites your swapped `dist` from `src` before the first sample, so both sides
+measure HEAD and **every row reports parity** — an A/B that compared nothing — and none of those lanes isolates per
+scenario anyway. Prove the swap is live before trusting a number: install a build whose target function throws, and
+check the row fails. This gives up what the parent provides — interleaving, the Environment header, the instability
+flags, and a citable cross-library ratio — leaves `dist` disagreeing with `src` until someone rebuilds, and ties the
+measurement to a directory rather than a commit.
 
 Running a side's whole suite in one process is not a cheaper version of the same measurement either: scenarios that
 share an isolate share inline caches and optimisation state, so a change to a function several rows exercise shows up
