@@ -8,7 +8,7 @@ it replaces, and `class-variance-authority` is the smaller-surface alternative p
 
 **This is a first-party benchmark** — the same repository owns the library and the harness. Read it as a re-runnable
 claim, not a neutral verdict. The measurement standard is the DI suite's [`BENCH_GUIDE.md`](../di/BENCH_GUIDE.md); it is
-written against that suite, but the rules are the same, because both suites share `@codefast/benchmark-harness`.
+written against that suite, but the rules are the same, because both suites share `@internal/benchmark-harness`.
 
 ## Run it
 
@@ -16,9 +16,8 @@ written against that suite, but the rules are the same, because both suites shar
 pnpm bench
 ```
 
-From the repo root, `pnpm bench` runs every suite; filter with
-`pnpm --filter @codefast/benchmark-tailwind-variants bench`. Every run rebuilds `@codefast/tailwind-variants` first, so
-it measures the working tree rather than a stale `dist/`.
+From the repo root, `pnpm bench` runs every suite; filter with `pnpm --filter @benchmark/tailwind-variants bench`. Every
+run rebuilds `@codefast/tailwind-variants` first, so it measures the working tree rather than a stale `dist/`.
 
 | Command                               | What changes                                                                           |
 | ------------------------------------- | -------------------------------------------------------------------------------------- |

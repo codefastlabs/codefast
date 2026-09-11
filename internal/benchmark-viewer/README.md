@@ -1,4 +1,4 @@
-# @codefast/benchmark-viewer
+# @internal/benchmark-viewer
 
 A React SSR server and browser app for browsing the run history the `benchmarks/*` suites write.
 

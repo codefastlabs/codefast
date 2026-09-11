@@ -132,10 +132,10 @@ Two defences, and the first is worth more:
 
 A throughput row cannot see a few hundred bytes per resolve — the floor above is ±12% on the fast rows, and an
 allocation change is far below it. An allocation claim is deterministic, so measure it deterministically:
-`pnpm --filter @codefast/benchmark-di instrument:alloc` reports scavenges per 2M resolves across three shapes, one child
-process each, under a 1 MB young generation where scavenge count tracks bytes allocated. It is what settled the per-hop
-options allocation — the interpreted named-slot lane went 870 → 442, landing exactly on the criteria-free control's 443,
-while the compiled lane sat at 1260 on both builds.
+`pnpm --filter @benchmark/di instrument:alloc` reports scavenges per 2M resolves across three shapes, one child process
+each, under a 1 MB young generation where scavenge count tracks bytes allocated. It is what settled the per-hop options
+allocation — the interpreted named-slot lane went 870 → 442, landing exactly on the criteria-free control's 443, while
+the compiled lane sat at 1260 on both builds.
 
 Two instruments that look right and are not, both tried here first:
 

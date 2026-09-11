@@ -390,8 +390,9 @@ from there, under the id `pre/<name>`.
 
 **Each package versions on its own track.** `.changeset/config.json` declares no `fixed` group, so a changeset bumps
 only the packages it names plus whatever depends on them (`updateInternalDependencies: "patch"`), and a version number
-describes the package carrying it. The config sets `privatePackages.version: true` so the four private
-`@codefast/benchmark-*` are versioned and changelogged (Changesets 3.0 defaults it to `false`).
+describes the package carrying it. The config sets `privatePackages.version: true` so the four private benchmark
+packages (the `@benchmark/*` suites and the `@internal/benchmark-*` harness and viewer) are versioned and changelogged
+(Changesets 3.0 defaults it to `false`).
 
 **A `major` is one package's own call.** It takes that package to 1.0 and leaves the rest where they are — reach for one
 when the package's API is worth committing to, none scheduled and none ruled out. While a package is on 0.x, prefer
