@@ -382,7 +382,8 @@ One difference came out of measuring fresh containers against warm ones. A per-r
 `(token, tag)` exactly once, and allocating an inner map on that first ask was the whole cost of the memo on that shape.
 So the first shape a cache generation sees is answered from the walk and parked in a one-entry front, and the map is not
 written until a second distinct shape appears. An alternating pair converges after one extra walk per key. The
-warm-vs-fresh numbers that settled this, and the shape's A/B, live in the benchmark suite's `RESULTS.md`.
+warm-vs-fresh numbers that settled this, and the shape's A/B, are recorded in the package `CHANGELOG.md` at the entry
+that landed the tagged chain-walk memo.
 
 **Late hooks are why the activation-need memo reads the field first.** `.onActivation()` writes the hook field **in
 place** on an already-registered binding and bumps no version. `needsActivation()` therefore answers the binding's own
