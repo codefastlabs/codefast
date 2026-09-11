@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-harness": minor
+"@internal/benchmark-harness": minor
 ---
 
 Stamp each `observations.jsonl` row with the run's configuration identity — `isolated`, `mode`, and `trialCount` — so a

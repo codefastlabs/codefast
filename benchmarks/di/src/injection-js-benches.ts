@@ -5,12 +5,12 @@
  * — legacy experimental decorators + `reflect-metadata`.
  */
 import "reflect-metadata";
-import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "@codefast/benchmark-harness/child/bench-options";
+import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "@internal/benchmark-harness/child/bench-options";
 import {
   exitBenchmarkChildProcessOnFailure,
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
-} from "@codefast/benchmark-harness/child/run-benchmark-child-main";
+} from "@internal/benchmark-harness/child/run-benchmark-child-main";
 
 import { INJECTION_JS } from "#/harness/config";
 import { collectAllInjectionJsScenarios } from "#/scenarios/collect-injection-js-scenarios";

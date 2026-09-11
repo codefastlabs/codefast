@@ -1,7 +1,7 @@
 import type {
   ComparisonConsoleReportOptions,
   ComparisonMarkdownReportOptions,
-} from "@codefast/benchmark-harness/report/comparison";
+} from "@internal/benchmark-harness/report/comparison";
 
 /**
  * @since 0.3.16-canary.0

@@ -2,18 +2,18 @@ import type { Dirent } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import type { AggregatedScenarioResult, LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
-import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
-import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
+import type { AggregatedScenarioResult, LibraryReport } from "@internal/benchmark-harness/report/aggregate";
+import { buildLibraryReport } from "@internal/benchmark-harness/report/aggregate";
+import type { JsonlBenchObservationRow } from "@internal/benchmark-harness/report/jsonl";
 import {
   benchConfigKeyOfRow,
   benchConfigLabelOfRow,
   isJsonlBenchObservationRow,
   jsonlBenchObservationRowToFingerprint,
   jsonlBenchObservationRowToScenarioTrialResult,
-} from "@codefast/benchmark-harness/report/jsonl";
-import { OBSERVATIONS_FILE_NAME } from "@codefast/benchmark-harness/shared/env-keys";
-import type { ScenarioTrialResult, TrialPayload } from "@codefast/benchmark-harness/shared/protocol";
+} from "@internal/benchmark-harness/report/jsonl";
+import { OBSERVATIONS_FILE_NAME } from "@internal/benchmark-harness/shared/env-keys";
+import type { ScenarioTrialResult, TrialPayload } from "@internal/benchmark-harness/shared/protocol";
 
 import { DEFAULT_MAX_RUNS } from "#/constants";
 import type {

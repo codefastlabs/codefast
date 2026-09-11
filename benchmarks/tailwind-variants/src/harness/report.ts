@@ -3,10 +3,10 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { readRunObservations, resolveRunDirectory } from "@codefast/benchmark-harness/parent/bench-run-artifacts";
-import { runOrderForShape } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import { parseRunObservations } from "@codefast/benchmark-harness/report/jsonl";
-import { writeJsonFile, writeMarkdownFile } from "@codefast/benchmark-harness/report/write";
+import { readRunObservations, resolveRunDirectory } from "@internal/benchmark-harness/parent/bench-run-artifacts";
+import { runOrderForShape } from "@internal/benchmark-harness/parent/run-bench-subprocess";
+import { parseRunObservations } from "@internal/benchmark-harness/report/jsonl";
+import { writeJsonFile, writeMarkdownFile } from "@internal/benchmark-harness/report/write";
 
 import { assembleTvComparison } from "#/harness/comparison";
 

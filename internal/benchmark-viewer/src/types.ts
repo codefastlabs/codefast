@@ -1,4 +1,4 @@
-import type { ParsedRun } from "@codefast/benchmark-harness/report/jsonl";
+import type { ParsedRun } from "@internal/benchmark-harness/report/jsonl";
 
 /** A run's report derived on demand: the markdown and the comparison document as JSON text. */
 export interface DerivedRunReport {

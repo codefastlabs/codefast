@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-viewer": patch
+"@internal/benchmark-viewer": patch
 ---
 
 Make the chart tooltip swatches show each series' true colour. Chart.js fills a tooltip's colour box with the dataset's

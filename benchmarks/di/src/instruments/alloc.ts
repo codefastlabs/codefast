@@ -16,7 +16,7 @@
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-import { assertBenchEnvKeys, parseEnvInteger } from "@codefast/benchmark-harness/shared/env-keys";
+import { assertBenchEnvKeys, parseEnvInteger } from "@internal/benchmark-harness/shared/env-keys";
 
 import { findShape, INSTRUMENT_SHAPES } from "#/instruments/shapes";
 

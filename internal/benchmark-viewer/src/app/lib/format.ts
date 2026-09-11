@@ -1,4 +1,4 @@
-import { NOISY_IQR_FRACTION } from "@codefast/benchmark-harness/report/reliability";
+import { NOISY_IQR_FRACTION } from "@internal/benchmark-harness/report/reliability";
 import { format } from "date-fns";
 
 import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";

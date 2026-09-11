@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-harness": minor
+"@internal/benchmark-harness": minor
 ---
 
 Add the intra-library comparison axis. A scenario can declare `comparesWithin: "<baseline-scenario-id>"`, and

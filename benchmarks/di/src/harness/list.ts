@@ -3,8 +3,8 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
-import { runBenchScenarioListingMain } from "@codefast/benchmark-harness/parent/run-bench-listing-main";
+import { resolveBenchParentExitCode } from "@internal/benchmark-harness/parent/resolve-bench-parent-exit-code";
+import { runBenchScenarioListingMain } from "@internal/benchmark-harness/parent/run-bench-listing-main";
 
 import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, TSYRINGE } from "#/harness/config";
 

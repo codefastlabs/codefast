@@ -34,8 +34,8 @@ const config = {
     "@codefast/cli": false,
     // Node lane is tsc; the browser app is a Vite bundle whose hashed chunks in
     // dist/app must not be turned into package exports — exports are hand-kept.
-    "@codefast/benchmark-viewer": false,
-    "@codefast/benchmark-tailwind-variants": false,
+    "@internal/benchmark-viewer": false,
+    "@benchmark/tailwind-variants": false,
     "@codefast/typescript-config": false,
   },
 

@@ -11,36 +11,36 @@
  * 4. Print an aligned ASCII table on stdout and persist the run's
  *    `observations.jsonl`; the report is derived on demand by `bench:report`.
  *
- * The subprocess contract lives in `@codefast/benchmark-harness`. Any scenario
+ * The subprocess contract lives in `@internal/benchmark-harness`. Any scenario
  * list change only touches the child processes; this file is stable.
  */
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { assertSubjectMeasuredSomething } from "@codefast/benchmark-harness/parent/assert-subject-measured";
+import { assertSubjectMeasuredSomething } from "@internal/benchmark-harness/parent/assert-subject-measured";
 import {
   buildBenchRunOutputPaths,
   writeBenchRunArtifacts,
-} from "@codefast/benchmark-harness/parent/bench-run-artifacts";
-import { resolveBenchParentExitCode } from "@codefast/benchmark-harness/parent/resolve-bench-parent-exit-code";
-import type { RunBenchSubprocessParameters } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
+} from "@internal/benchmark-harness/parent/bench-run-artifacts";
+import { resolveBenchParentExitCode } from "@internal/benchmark-harness/parent/resolve-bench-parent-exit-code";
+import type { RunBenchSubprocessParameters } from "@internal/benchmark-harness/parent/run-bench-subprocess";
 import {
   INTERLEAVED_RUN_ORDER,
   isIsolatedBenchRunRequested,
   LIBRARY_MAJOR_RUN_ORDER,
   runBenchSubprocess,
   runBenchSubprocessesInterleaved,
-} from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import { renderComparisonConsoleReport } from "@codefast/benchmark-harness/report/comparison";
-import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
-import type { BenchSubprocessConfig } from "@codefast/benchmark-harness/shared/config";
+} from "@internal/benchmark-harness/parent/run-bench-subprocess";
+import { renderComparisonConsoleReport } from "@internal/benchmark-harness/report/comparison";
+import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
+import type { BenchSubprocessConfig } from "@internal/benchmark-harness/shared/config";
 import {
   assertBenchEnvKeys,
   BENCH_VERBOSE_ENV_KEY,
   isEnvFlagEnabled,
-} from "@codefast/benchmark-harness/shared/env-keys";
-import type { SubprocessPayload } from "@codefast/benchmark-harness/shared/protocol";
+} from "@internal/benchmark-harness/shared/env-keys";
+import type { SubprocessPayload } from "@internal/benchmark-harness/shared/protocol";
 
 import { assembleDiComparison } from "#/harness/comparison";
 import type { LibraryPayload } from "#/harness/comparison";
@@ -106,7 +106,7 @@ async function runEveryLibrary(
 
 async function main(): Promise<void> {
   assertBenchEnvKeys();
-  console.log("\n@codefast/benchmark-di — head-to-head bench, each library in its canonical decorator mode.");
+  console.log("\n@benchmark/di — head-to-head bench, each library in its canonical decorator mode.");
   console.log(`  ${CODEFAST_DI.libraryName}  : TC39 Stage 3 decorators + Symbol.metadata`);
   console.log(`  ${resolveDisplayName(INVERSIFY)} : legacy experimental decorators + reflect-metadata`);
   console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");

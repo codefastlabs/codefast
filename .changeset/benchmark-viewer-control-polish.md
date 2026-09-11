@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-viewer": patch
+"@internal/benchmark-viewer": patch
 ---
 
 Two control-panel visual fixes. Every filter `select` now draws its own chevron inset `0.75rem` from the right edge

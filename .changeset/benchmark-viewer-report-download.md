@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-viewer": minor
+"@internal/benchmark-viewer": minor
 ---
 
 Serve a run's `report.md` and `report.json` for download, derived on demand from its `observations.jsonl`. A suite opts

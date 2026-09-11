@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-di": minor
+"@benchmark/di": minor
 ---
 
 Expand cross-library coverage so each rival is measured on every feature it natively supports, not just the shared core.

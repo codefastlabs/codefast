@@ -1,5 +1,5 @@
 {
-  "name": "@codefast/benchmark-di",
+  "name": "@benchmark/di",
   "version": "0.7.4",
   "private": true,
   "description": "Head-to-head tinybench harness: @codefast/di vs InversifyJS v8 (full suite), Awilix, tsyringe, Brandi and ditox (core subset), plus injection-js (singleton-friendly rows)",
@@ -44,9 +44,9 @@
     "instrument:alloc": "TSX_TSCONFIG_PATH=tsconfig.codefast.json node --import tsx/esm src/instruments/alloc.ts"
   },
   "dependencies": {
-    "@codefast/benchmark-harness": "workspace:*",
-    "@codefast/benchmark-viewer": "workspace:*",
     "@codefast/di": "workspace:*",
+    "@internal/benchmark-harness": "workspace:*",
+    "@internal/benchmark-viewer": "workspace:*",
     "awilix": "catalog:",
     "brandi": "catalog:",
     "ditox": "catalog:",

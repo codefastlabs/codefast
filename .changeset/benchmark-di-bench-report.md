@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-di": minor
+"@benchmark/di": minor
 ---
 
 Add `bench:report [run]`, which derives `report.md` and `report.json` for a run from its `observations.jsonl` on demand

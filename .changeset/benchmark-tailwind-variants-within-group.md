@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-tailwind-variants": minor
+"@benchmark/tailwind-variants": minor
 ---
 
 Declare each with-merge scenario's without-merge baseline (`comparesWithin`) and expose the mapping as

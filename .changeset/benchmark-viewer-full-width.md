@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-viewer": patch
+"@internal/benchmark-viewer": patch
 ---
 
 Let the page use the full viewport width. The layout dropped its centered `max-w-7xl` container (and the header's

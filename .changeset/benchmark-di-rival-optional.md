@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-di": minor
+"@benchmark/di": minor
 ---
 
 Add an `optional-missing-transient` row: a transient class whose one optional dependency is unbound, so every resolve
