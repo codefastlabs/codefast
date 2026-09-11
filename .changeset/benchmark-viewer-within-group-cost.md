@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-viewer": minor
+"@internal/benchmark-viewer": minor
 ---
 
 Surface the within-group cost in the viewer. A suite passes `scenarioBaselines` (each scenario id mapped to its

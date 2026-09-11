@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-viewer": patch
+"@internal/benchmark-viewer": patch
 ---
 
 Rework the chart palette so every series is easy to tell apart. It held five hues while the `di` suite plots seven

@@ -1,6 +1,6 @@
 /** Scenario typing shared by the three bench subprocesses. */
 
-import type { BenchScenario as HarnessBenchScenario } from "@codefast/benchmark-harness/child/bench-scenario";
+import type { BenchScenario as HarnessBenchScenario } from "@internal/benchmark-harness/child/bench-scenario";
 
 /**
  * @since 0.3.16-canary.0

@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-di": minor
+"@benchmark/di": minor
 ---
 
 Bench ditox and injection-js on hierarchical child-scope resolution. Both have real container hierarchy

@@ -6,9 +6,9 @@ import type { Server } from "node:http";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { readRunObservations, resolveRunDirectory } from "@codefast/benchmark-harness/parent/bench-run-artifacts";
-import { parseRunObservations } from "@codefast/benchmark-harness/report/jsonl";
 import { createAdaptorServer } from "@hono/node-server";
+import { readRunObservations, resolveRunDirectory } from "@internal/benchmark-harness/parent/bench-run-artifacts";
+import { parseRunObservations } from "@internal/benchmark-harness/report/jsonl";
 import { Hono } from "hono";
 import { stream } from "hono/streaming";
 

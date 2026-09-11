@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-harness": minor
+"@internal/benchmark-harness": minor
 ---
 
 Persist one file per run. `writeBenchRunArtifacts` now writes only `observations.jsonl` into the run directory and, for

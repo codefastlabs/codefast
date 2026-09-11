@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-harness": minor
+"@internal/benchmark-harness": minor
 ---
 
 Add the primitives a suite needs to derive a report from a run's `observations.jsonl` instead of reading eagerly written

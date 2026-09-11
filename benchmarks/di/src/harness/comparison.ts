@@ -1,13 +1,13 @@
 /** The head-to-head comparison assembled from each library's payloads, shared by the run and report entries. */
-import { buildLibraryReport } from "@codefast/benchmark-harness/report/aggregate";
-import type { LibraryReport } from "@codefast/benchmark-harness/report/aggregate";
-import type { ComparisonLibrary } from "@codefast/benchmark-harness/report/comparison";
-import { renderComparisonMarkdownReport } from "@codefast/benchmark-harness/report/comparison";
-import { buildComparisonDocument } from "@codefast/benchmark-harness/report/comparison-document";
-import type { ComparisonDocument } from "@codefast/benchmark-harness/report/comparison-document";
-import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
-import type { BenchRunShape } from "@codefast/benchmark-harness/shared/env-keys";
-import type { Fingerprint, TrialPayload } from "@codefast/benchmark-harness/shared/protocol";
+import { buildLibraryReport } from "@internal/benchmark-harness/report/aggregate";
+import type { LibraryReport } from "@internal/benchmark-harness/report/aggregate";
+import type { ComparisonLibrary } from "@internal/benchmark-harness/report/comparison";
+import { renderComparisonMarkdownReport } from "@internal/benchmark-harness/report/comparison";
+import { buildComparisonDocument } from "@internal/benchmark-harness/report/comparison-document";
+import type { ComparisonDocument } from "@internal/benchmark-harness/report/comparison-document";
+import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
+import type { BenchRunShape } from "@internal/benchmark-harness/shared/env-keys";
+import type { Fingerprint, TrialPayload } from "@internal/benchmark-harness/shared/protocol";
 
 import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, TSYRINGE } from "#/harness/config";
 import { DI_COMPARISON_MARKDOWN } from "#/harness/presentation";

@@ -1,4 +1,4 @@
-# @codefast/benchmark-harness
+# @internal/benchmark-harness
 
 Shared [tinybench](https://github.com/tinylibs/tinybench) harness for the `benchmarks/*` suites: a parent/child
 subprocess protocol, environment fingerprinting, strict `BENCH_*` environment parsing, and one comparison report that
@@ -19,7 +19,7 @@ renders a pivot library against any number of competitors.
 ## Layout
 
 The package is organised by role in the subprocess model. Every module is also reachable as a subpath export
-(`@codefast/benchmark-harness/parent/run-bench-subprocess`, and so on); the root export re-exports all of them.
+(`@internal/benchmark-harness/parent/run-bench-subprocess`, and so on); the root export re-exports all of them.
 
 | Area       | Owns                                                                                                                                                                                                                          |
 | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

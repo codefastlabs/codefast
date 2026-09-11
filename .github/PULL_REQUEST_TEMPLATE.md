@@ -26,7 +26,7 @@ import-protection and prerendering only surface there:
 Numbers and the command that produced them. Include the IQR column; a ratio without it cannot be judged.
 
 ```bash
-pnpm --filter @codefast/benchmark-di bench:isolate
+pnpm --filter @benchmark/di bench:isolate
 ```
 
 Confirm the method: process isolation, at least 3 trials per side, baseline stashed and rebuilt on this machine, best-of

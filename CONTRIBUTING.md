@@ -99,7 +99,7 @@ A refactor on a hot path is not free until measured. Run the head-to-head suite 
 are order-independent:
 
 ```bash
-pnpm --filter @codefast/benchmark-di bench:isolate
+pnpm --filter @benchmark/di bench:isolate
 ```
 
 The rules that make a result publishable — learned the hard way, and enforced on ourselves:
@@ -120,7 +120,7 @@ The rules that make a result publishable — learned the hard way, and enforced 
 For anything material, run the publishable profile and update `RESULTS.md`:
 
 ```bash
-BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di bench:isolate
+BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @benchmark/di bench:isolate
 ```
 
 `bench:isolate` runs **scenario-major and interleaved** — every library measures a scenario before the next one starts,

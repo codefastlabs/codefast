@@ -1,5 +1,5 @@
 ---
-"@codefast/benchmark-viewer": minor
+"@internal/benchmark-viewer": minor
 ---
 
 Partition the run history by configuration, the way it already partitions by environment. Each run carries a

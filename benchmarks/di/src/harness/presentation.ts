@@ -1,7 +1,7 @@
 import type {
   ComparisonConsoleReportOptions,
   ComparisonMarkdownReportOptions,
-} from "@codefast/benchmark-harness/report/comparison";
+} from "@internal/benchmark-harness/report/comparison";
 
 /**
  * Stable copy for the one table comparing `@codefast/di` against every competitor.

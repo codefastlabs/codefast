@@ -1,3 +1,4 @@
+import { Container, injectable, token } from "@codefast/di";
 /**
  * What an instrument may run, and what each shape is in the comparison table.
  *
@@ -6,9 +7,8 @@
  * by resemblance. A shape the suite has no row for says so in `row`, which is the only thing that
  * keeps such a gap visible.
  */
-import type { BenchScenario } from "@codefast/benchmark-harness/child/bench-scenario";
-import { isAsyncScenario } from "@codefast/benchmark-harness/child/bench-scenario";
-import { Container, injectable, token } from "@codefast/di";
+import type { BenchScenario } from "@internal/benchmark-harness/child/bench-scenario";
+import { isAsyncScenario } from "@internal/benchmark-harness/child/bench-scenario";
 
 import { batched } from "#/harness/batched";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";

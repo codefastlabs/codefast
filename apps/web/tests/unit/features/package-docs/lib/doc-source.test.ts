@@ -9,7 +9,7 @@ describe("package discovery", () => {
 
     expect(slugs).toEqual([...PACKAGE_ORDER]);
     expect(slugs[0]).toBe("di");
-    expect(names).not.toContain("@codefast/benchmark-harness");
+    expect(names).not.toContain("@internal/benchmark-harness");
 
     const di = PACKAGES.find((pkg) => pkg.slug === "di");
 

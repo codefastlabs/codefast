@@ -1,4 +1,4 @@
-import type { JsonlBenchObservationRow } from "@codefast/benchmark-harness/report/jsonl";
+import type { JsonlBenchObservationRow } from "@internal/benchmark-harness/report/jsonl";
 import { describe, expect, it } from "vitest";
 
 import { buildEmbeddedPayload, resolveScenarioFacets } from "#/server/payload";

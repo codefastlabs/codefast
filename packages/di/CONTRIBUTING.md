@@ -95,7 +95,7 @@ A resolver refactor's cost isn't known until it's measured. Run the head-to-head
 freshly rebuilt baseline:
 
 ```bash
-pnpm --filter @codefast/benchmark-di bench:isolate
+pnpm --filter @benchmark/di bench:isolate
 ```
 
 - Compare against a baseline run on the same machine, **stashed and rebuilt** — not against numbers from an earlier
@@ -116,7 +116,7 @@ pnpm --filter @codefast/benchmark-di bench:isolate
   there too:
 
 ```bash
-BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @codefast/benchmark-di bench:isolate
+BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @benchmark/di bench:isolate
 ```
 
 ## Static checks

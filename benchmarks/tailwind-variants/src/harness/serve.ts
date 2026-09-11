@@ -2,13 +2,13 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { runOrderForShape } from "@codefast/benchmark-harness/parent/run-bench-subprocess";
-import { resolveDisplayName } from "@codefast/benchmark-harness/shared/config";
+import { runOrderForShape } from "@internal/benchmark-harness/parent/run-bench-subprocess";
+import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
 import {
   BENCH_RESULTS_DIR_NAME,
   resolvePreferredPortFromEnvironment,
-} from "@codefast/benchmark-harness/shared/env-keys";
-import { startBenchServer } from "@codefast/benchmark-viewer/server";
+} from "@internal/benchmark-harness/shared/env-keys";
+import { startBenchServer } from "@internal/benchmark-viewer/server";
 
 import { SCENARIO_BASELINES } from "#/fixtures/scenario-parity";
 import { assembleTvComparison } from "#/harness/comparison";

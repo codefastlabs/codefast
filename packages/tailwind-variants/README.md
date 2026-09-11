@@ -276,7 +276,7 @@ simple, complex, slots, compound slots, `extend`, `createTV`, and extreme config
 by hardware, so run it yourself rather than reading them here:
 
 ```bash
-pnpm --filter @codefast/benchmark-tailwind-variants bench
+pnpm --filter @benchmark/tailwind-variants bench
 ```
 
 The speed comes from settling things once, and only once a component has shown it will be rendered again. `tv()` wraps

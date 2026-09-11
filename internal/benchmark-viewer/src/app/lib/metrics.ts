@@ -1,5 +1,5 @@
-import { quantile, sortAscending } from "@codefast/benchmark-harness/report/quantiles";
-import { NOISY_IQR_FRACTION } from "@codefast/benchmark-harness/report/reliability";
+import { quantile, sortAscending } from "@internal/benchmark-harness/report/quantiles";
+import { NOISY_IQR_FRACTION } from "@internal/benchmark-harness/report/reliability";
 
 import type { PaletteEntry } from "#/app/lib/colors";
 import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";

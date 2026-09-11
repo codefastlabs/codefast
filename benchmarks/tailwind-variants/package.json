@@ -1,5 +1,5 @@
 {
-  "name": "@codefast/benchmark-tailwind-variants",
+  "name": "@benchmark/tailwind-variants",
   "version": "0.7.3",
   "private": true,
   "description": "Subprocess tinybench harness: @codefast/tailwind-variants vs tailwind-variants and vs class-variance-authority (pairwise reports)",
@@ -46,9 +46,9 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@codefast/benchmark-harness": "workspace:*",
-    "@codefast/benchmark-viewer": "workspace:*",
     "@codefast/tailwind-variants": "workspace:*",
+    "@internal/benchmark-harness": "workspace:*",
+    "@internal/benchmark-viewer": "workspace:*",
     "class-variance-authority": "catalog:",
     "tailwind-merge": "catalog:",
     "tailwind-variants": "catalog:",

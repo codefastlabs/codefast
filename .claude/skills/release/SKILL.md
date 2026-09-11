@@ -12,8 +12,9 @@ description:
 
 - Every `@codefast/*` package versions **independently** — `.changeset/config.json` declares no `fixed` group, so a
   changeset bumps only the packages it names, plus their dependents via `updateInternalDependencies: "patch"`.
-  `privatePackages.version: true` is set so the four private `@codefast/benchmark-*` are versioned and changelogged
-  (Changesets 3.0 defaults it to `false`). `@apps/web` is in `ignore` and never needs a changeset.
+  `privatePackages.version: true` is set so the four private benchmark packages (`@benchmark/*`,
+  `@internal/benchmark-*`) are versioned and changelogged (Changesets 3.0 defaults it to `false`). `@apps/web` is in
+  `ignore` and never needs a changeset.
 - **Do not run `pnpm changeset add`** (an interactive TUI). Write the `.changeset/<kebab-case>.md` file yourself:
 
   ```md
@@ -47,7 +48,7 @@ recipe below.
 1. Lower the incorrect changesets from `major` to `minor`.
 2. Reset the `package.json` of every package the wrong bump reached — `git diff` is the authoritative list, not the
    changeset's, since `updateInternalDependencies` drags dependents along, including the two under `benchmarks/*`
-   (`benchmark-di`, `benchmark-tailwind-variants`).
+   (`@benchmark/di`, `@benchmark/tailwind-variants`).
 3. Set each one back to the **most recently published** canary of the line you want to continue (e.g. `0.5.0-canary.5`)
    so CI computes the next as `.6` — the counter is that package's max published prerelease + 1, so avoid numbers
    already published.

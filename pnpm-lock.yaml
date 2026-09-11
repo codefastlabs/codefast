@@ -483,15 +483,15 @@ importers:
 
   benchmarks/di:
     dependencies:
-      '@codefast/benchmark-harness':
-        specifier: workspace:*
-        version: link:../../internal/benchmark-harness
-      '@codefast/benchmark-viewer':
-        specifier: workspace:*
-        version: link:../../internal/benchmark-viewer
       '@codefast/di':
         specifier: workspace:*
         version: link:../../packages/di
+      '@internal/benchmark-harness':
+        specifier: workspace:*
+        version: link:../../internal/benchmark-harness
+      '@internal/benchmark-viewer':
+        specifier: workspace:*
+        version: link:../../internal/benchmark-viewer
       awilix:
         specifier: 'catalog:'
         version: 13.0.5
@@ -529,15 +529,15 @@ importers:
 
   benchmarks/tailwind-variants:
     dependencies:
-      '@codefast/benchmark-harness':
-        specifier: workspace:*
-        version: link:../../internal/benchmark-harness
-      '@codefast/benchmark-viewer':
-        specifier: workspace:*
-        version: link:../../internal/benchmark-viewer
       '@codefast/tailwind-variants':
         specifier: workspace:*
         version: link:../../packages/tailwind-variants
+      '@internal/benchmark-harness':
+        specifier: workspace:*
+        version: link:../../internal/benchmark-harness
+      '@internal/benchmark-viewer':
+        specifier: workspace:*
+        version: link:../../internal/benchmark-viewer
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
@@ -670,15 +670,15 @@ importers:
 
   internal/benchmark-viewer:
     dependencies:
-      '@codefast/benchmark-harness':
-        specifier: workspace:*
-        version: link:../benchmark-harness
       '@codefast/tailwind-variants':
         specifier: workspace:*
         version: link:../../packages/tailwind-variants
       '@hono/node-server':
         specifier: 'catalog:'
         version: 2.1.1(hono@4.13.7)
+      '@internal/benchmark-harness':
+        specifier: workspace:*
+        version: link:../benchmark-harness
       chart.js:
         specifier: 'catalog:'
         version: 4.5.1

@@ -1,5 +1,5 @@
 {
-  "name": "@codefast/benchmark-viewer",
+  "name": "@internal/benchmark-viewer",
   "version": "0.8.0",
   "private": true,
   "description": "React SSR benchmark history viewer server for Codefast benchmark packages",
@@ -95,9 +95,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@codefast/benchmark-harness": "workspace:*",
     "@codefast/tailwind-variants": "workspace:*",
     "@hono/node-server": "catalog:",
+    "@internal/benchmark-harness": "workspace:*",
     "chart.js": "catalog:",
     "chartjs-plugin-zoom": "catalog:",
     "date-fns": "catalog:",

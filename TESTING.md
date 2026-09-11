@@ -88,8 +88,8 @@ Root `pnpm test:e2e` runs every package that defines the script — use it for f
 | Package / app                 | unit | integration | e2e | type |
 | ----------------------------- | :--: | :---------: | :-: | :--: |
 | `@apps/web`                   | yes  |     yes     |  —  |  —   |
-| `@codefast/benchmark-harness` | yes  |     yes     |  —  |  —   |
-| `@codefast/benchmark-viewer`  | yes  |      —      |  —  |  —   |
+| `@internal/benchmark-harness` | yes  |     yes     |  —  |  —   |
+| `@internal/benchmark-viewer`  | yes  |      —      |  —  |  —   |
 | `@codefast/cli`               | yes  |      —      |  —  |  —   |
 | `@codefast/di`                | yes  |     yes     |  —  | yes  |
 | `@codefast/di-testing`        | yes  |      —      |  —  | yes  |
