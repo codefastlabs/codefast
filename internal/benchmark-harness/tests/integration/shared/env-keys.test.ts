@@ -25,10 +25,21 @@ function passThroughEnvFor(taskName: string): ReadonlyArray<string> {
   return readTurboConfig().tasks[taskName]?.passThroughEnv ?? [];
 }
 
-const benchTaskNames = ["bench", "bench:isolate", "bench:serve"];
+// Turbo reads `*` in a passThroughEnv entry as a glob over the key name.
+function entryCovers(entry: string, key: string): boolean {
+  if (!entry.includes("*")) {
+    return entry === key;
+  }
+  const pattern = entry.split("*").map((segment) => segment.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  return new RegExp(`^${pattern.join(".*")}$`).test(key);
+}
 
-// Turbo runs in strict env mode, so a user-facing key missing from passThroughEnv is silently
-// dropped for every run started at the repo root — the key looks set and changes nothing.
+const HARNESS_NAMESPACE_WILDCARD = "BENCH_*";
+
+const benchTaskNames = ["bench", "bench:fast", "bench:full", "bench:isolate", "bench:serve", "bench:verbose"];
+
+// Turbo runs in strict env mode, so a user-facing key no entry covers is silently dropped for
+// every run started at the repo root — the key looks set and changes nothing.
 describe("turbo passThroughEnv covers the bench env surface", () => {
   it.each(USER_BENCH_ENV_KEYS)("%s is passed through on each task its spec claims", (key) => {
     const spec = BENCH_ENV_SPECS[key];
@@ -37,17 +48,30 @@ describe("turbo passThroughEnv covers the bench env surface", () => {
     }
     expect(spec.turboTasks.length).toBeGreaterThan(0);
     for (const taskName of spec.turboTasks) {
-      expect(passThroughEnvFor(taskName), `turbo task ${taskName}`).toContain(key);
+      expect(
+        passThroughEnvFor(taskName).some((entry) => entryCovers(entry, key)),
+        `turbo task ${taskName} passes through ${key}`,
+      ).toBe(true);
     }
   });
 
+  // A literal entry must be a key the harness reads; the only wildcard allowed is the harness's own
+  // namespace, whose stray keys `assertBenchEnvKeys` rejects at the parent instead of Turbo dropping
+  // them silently.
   it.each(benchTaskNames)("%s passes through nothing the harness does not read", (taskName) => {
-    for (const key of passThroughEnvFor(taskName)) {
-      expect(USER_BENCH_ENV_KEYS, `stale or unknown key in turbo task ${taskName}`).toContain(key);
-    }
+    const entries = passThroughEnvFor(taskName);
+    const wildcards = entries.filter((entry) => entry.includes("*"));
+    const literals = entries.filter((entry) => !entry.includes("*"));
+    expect(wildcards, `unexpected wildcard in turbo task ${taskName}`).toEqual(
+      wildcards.map(() => HARNESS_NAMESPACE_WILDCARD),
+    );
+    expect(
+      literals.filter((entry) => !USER_BENCH_ENV_KEYS.includes(entry)),
+      `stale key in turbo task ${taskName}`,
+    ).toEqual([]);
   });
 
-  it.each(benchTaskNames)("%s never passes through an internal protocol key", (taskName) => {
+  it.each(benchTaskNames)("%s never names an internal protocol key", (taskName) => {
     for (const internalKey of INTERNAL_BENCH_ENV_KEYS) {
       expect(passThroughEnvFor(taskName)).not.toContain(internalKey);
     }

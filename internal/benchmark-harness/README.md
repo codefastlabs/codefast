@@ -118,8 +118,16 @@ From the repo root:
 ```bash
 pnpm bench            # run every suite, shared profile
 pnpm bench:isolate    # run every suite, one subprocess per scenario, interleaved
+pnpm bench:fast       # smoke profile — shorter windows, for "did I break it"
+pnpm bench:full       # --expose-gc for every library
+pnpm bench:verbose    # forward each child's full stdout
+pnpm bench:list       # every suite's scenario inventory as JSON, measuring nothing
+pnpm bench:report     # derive report.md / report.json from each suite's latest run
 pnpm bench:serve      # browse recorded runs (see ../benchmark-viewer)
 ```
+
+Every root script has a `di:` and a `tv:` twin (`pnpm di:bench:fast`, `pnpm tv:bench:list`, …) that filters to one
+suite; the per-library child entries (`bench:<library>`) stay suite-local.
 
 A suite wires the harness in two files. Its parent entry spawns one child per library with `runBenchSubprocess` or
 `runBenchSubprocessesInterleaved`, builds a `LibraryReport` per payload with `buildLibraryReport`, renders

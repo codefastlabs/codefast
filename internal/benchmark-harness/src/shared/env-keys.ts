@@ -94,7 +94,7 @@ const MAXIMUM_PORT = 65_535;
 const BENCH_MODE_VALUES = ["fast", "default", "full"] as const;
 
 /** The Turbo tasks that actually run a suite, as opposed to serving its history. */
-const MEASURING_TURBO_TASKS = ["bench", "bench:isolate"] as const;
+const MEASURING_TURBO_TASKS = ["bench", "bench:fast", "bench:full", "bench:isolate", "bench:verbose"] as const;
 
 type BenchEnvValueSpec =
   | { readonly kind: "flag" }
@@ -107,8 +107,8 @@ type BenchEnvValueSpec =
  * What a `BENCH_*` key accepts and who is allowed to set it.
  *
  * @remarks `turboTasks` is required on user-facing keys because Turbo runs in strict env mode: a key
- * absent from a task's `passThroughEnv` is dropped for any run started from the repo root, which
- * looks exactly like the key having no effect.
+ * no `passThroughEnv` entry covers is dropped for any run started from the repo root, which looks
+ * exactly like the key having no effect. The entry covering it may be the `BENCH_*` wildcard.
  *
  * @since 0.6.0
  */

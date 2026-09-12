@@ -66,17 +66,38 @@
     "bench": {
       "cache": false,
       "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
-      "passThroughEnv": ["BENCH_ISOLATE", "BENCH_MODE", "BENCH_ONLY", "BENCH_TRIALS", "BENCH_VERBOSE"]
+      "passThroughEnv": ["BENCH_*"]
     },
     "bench:isolate": {
       "cache": false,
       "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
-      "passThroughEnv": ["BENCH_ISOLATE", "BENCH_MODE", "BENCH_ONLY", "BENCH_TRIALS", "BENCH_VERBOSE"]
+      "passThroughEnv": ["BENCH_*"]
+    },
+    "bench:fast": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
+      "passThroughEnv": ["BENCH_*"]
+    },
+    "bench:full": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
+      "passThroughEnv": ["BENCH_*"]
+    },
+    "bench:verbose": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
+      "passThroughEnv": ["BENCH_*"]
+    },
+    "bench:list": {
+      "cache": false
+    },
+    "bench:report": {
+      "cache": false
     },
     "bench:serve": {
       "cache": false,
       "persistent": true,
-      "passThroughEnv": ["BENCH_PORT", "PORT"]
+      "passThroughEnv": ["BENCH_*", "PORT"]
     }
   }
 }
