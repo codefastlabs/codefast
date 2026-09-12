@@ -15,9 +15,10 @@ paired re-run, except where a loss is a structural O(N) difference that reproduc
 14, darwin/arm64, `--expose-gc` for every library. inversify 8.2.3 · awilix 13.0.5 · tsyringe 4.10.0 · brandi 5.1.0 ·
 ditox 3.3.0 · injection-js 2.6.1. Each library runs at its canonical decorator mode (inversify legacy decorators +
 `reflect-metadata`, codefast TC39 Stage 3 + `Symbol.metadata`); every inversify container uses `{ jitless: false }`, its
-fastest documented configuration. Only inversify implements the full suite; awilix, tsyringe, brandi and ditox implement
-the factory/class-binding core subset; injection-js only the singleton-friendly rows of it (`ReflectiveInjector` caches
-every provider per injector). Run 2026-09-11.
+fastest documented configuration. No competitor implements every row: inversify covers nearly every shared descriptor;
+awilix, tsyringe, brandi and ditox the factory/class-binding core plus the scope, lifecycle, module, multi-binding and
+async rows their APIs express natively; injection-js only the singleton-friendly rows (`ReflectiveInjector` caches every
+provider per injector). Run 2026-09-11.
 
 ## Summary — where we stand
 
