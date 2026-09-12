@@ -31,7 +31,7 @@ measures the working tree rather than a stale `dist/`.
 | `pnpm bench:fast`       | Smoke profile — shorter sampling windows. For "did I break it", never for a claim                           |
 | `pnpm bench:full`       | `--expose-gc` for every library, forcing collections into the measured loop                                 |
 | `pnpm bench:isolate`    | One subprocess per scenario, so no scenario inherits another's inline caches                                |
-| `pnpm bench:verbose`    | Per-trial detail on stdout                                                                                  |
+| `pnpm bench:verbose`    | Streams every child line and prints the per-scenario table                                                  |
 | `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout, measuring nothing                                          |
 | `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                                                   |
 | `pnpm bench:<library>`  | One child process alone: `codefast`, `inversify`, `awilix`, `tsyringe`, `brandi`, `ditox` or `injection-js` |

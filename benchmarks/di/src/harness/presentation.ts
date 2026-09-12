@@ -42,5 +42,6 @@ export const DI_COMPARISON_MARKDOWN: ComparisonMarkdownReportOptions = {
  */
 export const DI_COMPARISON_CONSOLE: ComparisonConsoleReportOptions = {
   sectionHeading: "Comparable scenarios",
-  footerHintLine: "Cite the 'Comparable scenarios' table.",
+  footerHintLine:
+    "Cite the aggregates above, never a row. `pnpm bench:report` derives the per-scenario table as report.md; `pnpm bench:verbose` prints it here.",
 };

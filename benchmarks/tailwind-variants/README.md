@@ -26,7 +26,7 @@ run rebuilds `@codefast/tailwind-variants` first, so it measures the working tre
 | `pnpm bench:full`                     | `--expose-gc` for every library                                                        |
 | `pnpm bench:isolate`                  | Isolated profile — one subprocess per scenario, libraries interleaved (citable ratios) |
 | `pnpm bench:list`                     | Prints the scenario inventory as JSON on stdout, measuring nothing                     |
-| `pnpm bench:verbose`                  | Forwards each child's full stdout; progress streams on stderr either way               |
+| `pnpm bench:verbose`                  | Streams every child line and prints the per-scenario table                             |
 | `pnpm bench:serve`                    | Serves the run history from `bench-results/` in a browser                              |
 | `pnpm bench:codefast`                 | The `@codefast/tailwind-variants` child process alone                                  |
 | `pnpm bench:tailwind-variants`        | The `tailwind-variants` child process alone                                            |

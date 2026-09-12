@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Parent harness: rebuild `@codefast/tailwind-variants`, run each library bench in its own subprocess in
- * `BENCH_LIBRARIES` order, then emit one report with `@codefast/tailwind-variants` as the pivot.
+ * Parent harness: rebuild `@codefast/tailwind-variants`, run every library through the shared progress
+ * display, then render the comparison and persist the run's observations.
  */
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
@@ -13,23 +13,14 @@ import {
   writeBenchRunArtifacts,
 } from "@internal/benchmark-harness/parent/bench-run-artifacts";
 import { resolveBenchParentExitCode } from "@internal/benchmark-harness/parent/resolve-bench-parent-exit-code";
-import type { RunBenchSubprocessParameters } from "@internal/benchmark-harness/parent/run-bench-subprocess";
-import {
-  INTERLEAVED_RUN_ORDER,
-  isIsolatedBenchRunRequested,
-  LIBRARY_MAJOR_RUN_ORDER,
-  runBenchSubprocess,
-  runBenchSubprocessesInterleaved,
-} from "@internal/benchmark-harness/parent/run-bench-subprocess";
+import { runBenchLibraries } from "@internal/benchmark-harness/parent/run-bench-libraries";
 import { renderComparisonConsoleReport } from "@internal/benchmark-harness/report/comparison";
-import type { BenchSubprocessConfig } from "@internal/benchmark-harness/shared/config";
 import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
 import {
   assertBenchEnvKeys,
   BENCH_VERBOSE_ENV_KEY,
   isEnvFlagEnabled,
 } from "@internal/benchmark-harness/shared/env-keys";
-import type { SubprocessPayload } from "@internal/benchmark-harness/shared/protocol";
 
 import { assembleTvComparison } from "#/harness/comparison";
 import type { LibraryPayload } from "#/harness/comparison";
@@ -63,39 +54,6 @@ function rebuildCodefastTailwindVariantsPackage(): void {
   console.log(`Finished rebuild of ${CODEFAST_TV.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
 }
 
-/**
- * Runs every library's bench and returns the payloads keyed by library name.
- *
- * @remarks Isolated runs interleave, because a ratio is only as good as the gap between the two
- * measurements it divides; one process per library has nothing to interleave, so that profile keeps its caveat.
- */
-async function runEveryLibrary(
-  configs: ReadonlyArray<BenchSubprocessConfig>,
-): Promise<{ payloads: Map<string, SubprocessPayload>; runOrder: string }> {
-  const parametersFor = (config: BenchSubprocessConfig): RunBenchSubprocessParameters => ({
-    packageRootDirectory,
-    tsconfigFileName: config.tsconfigFileName,
-    benchEntryFileNameUnderSrc: config.benchEntryFileName,
-    harnessLabel: resolveDisplayName(config),
-    scenarioName: config.scenarioName,
-    forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
-  });
-
-  if (isIsolatedBenchRunRequested()) {
-    return {
-      payloads: await runBenchSubprocessesInterleaved(
-        configs.map((config) => ({ key: config.libraryName, parameters: parametersFor(config) })),
-      ),
-      runOrder: INTERLEAVED_RUN_ORDER,
-    };
-  }
-  const payloads = new Map<string, SubprocessPayload>();
-  for (const config of configs) {
-    payloads.set(config.libraryName, await runBenchSubprocess(parametersFor(config)));
-  }
-  return { payloads, runOrder: LIBRARY_MAJOR_RUN_ORDER };
-}
-
 async function main(): Promise<void> {
   assertBenchEnvKeys();
   console.log("\n@benchmark/tailwind-variants — head-to-head bench, each library paying for a render its own way.");
@@ -103,17 +61,19 @@ async function main(): Promise<void> {
   for (const library of BENCH_LIBRARIES) {
     console.log(`  ${resolveDisplayName(library).padEnd(labelWidth)} : ${library.strategy}`);
   }
-  console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");
-  if (!VERBOSE_MODE_ENABLED) {
-    const prefixes = BENCH_LIBRARIES.map((library) => `\`[${library.scenarioName}]\``).join(" / ");
-    console.log(
-      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress streams on stderr (prefixed ${prefixes}). Use \`${BENCH_VERBOSE_ENV_KEY}=true\` (or \`pnpm bench:verbose\`) for full child stdout.\n`,
-    );
-  }
+  console.log(
+    VERBOSE_MODE_ENABLED
+      ? "Verbose: every child line streams here, and the per-scenario table prints after the run.\n"
+      : `Progress per library follows. \`${BENCH_VERBOSE_ENV_KEY}=true\` (\`pnpm bench:verbose\`) streams every child line and prints the per-scenario table.\n`,
+  );
 
   rebuildCodefastTailwindVariantsPackage();
 
-  const { payloads, runOrder } = await runEveryLibrary(BENCH_LIBRARIES);
+  const { payloads, runOrder } = await runBenchLibraries({
+    packageRootDirectory,
+    libraries: BENCH_LIBRARIES,
+    verbose: VERBOSE_MODE_ENABLED,
+  });
   const codefastPayload = payloads.get(CODEFAST_TV.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
 
@@ -140,7 +100,10 @@ async function main(): Promise<void> {
     scenariosAvailable: codefastPayload.scenarioIds?.length,
   });
 
-  renderComparisonConsoleReport(codefastLibrary, competitors, TAILWIND_VARIANTS_COMPARISON_CONSOLE);
+  renderComparisonConsoleReport(codefastLibrary, competitors, {
+    ...TAILWIND_VARIANTS_COMPARISON_CONSOLE,
+    includeScenarioTable: VERBOSE_MODE_ENABLED,
+  });
 
   const librariesForJsonl = [...payloadsByLibrary.values()].map(({ fingerprint, trials }) => ({ fingerprint, trials }));
 

@@ -1,18 +1,7 @@
 #!/usr/bin/env node
 /**
- * Parent harness. Responsibilities:
- *
- * 1. Rebuild `@codefast/di` so the bench sees the latest source changes.
- * 2. Spawn each library's bench entry in its own subprocess, under its own
- *    tsconfig, with a pinned environment — no `NODE_ENV=development`, no
- *    accidental inherit of CI-specific flags.
- * 3. Parse the START/END-framed `SubprocessPayload` from stdout and turn it
- *    into a `LibraryReport`.
- * 4. Print an aligned ASCII table on stdout and persist the run's
- *    `observations.jsonl`; the report is derived on demand by `bench:report`.
- *
- * The subprocess contract lives in `@internal/benchmark-harness`. Any scenario
- * list change only touches the child processes; this file is stable.
+ * Parent harness: rebuild `@codefast/di`, run every library through the shared progress display, then
+ * render the comparison and persist the run's observations.
  */
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
@@ -24,23 +13,14 @@ import {
   writeBenchRunArtifacts,
 } from "@internal/benchmark-harness/parent/bench-run-artifacts";
 import { resolveBenchParentExitCode } from "@internal/benchmark-harness/parent/resolve-bench-parent-exit-code";
-import type { RunBenchSubprocessParameters } from "@internal/benchmark-harness/parent/run-bench-subprocess";
-import {
-  INTERLEAVED_RUN_ORDER,
-  isIsolatedBenchRunRequested,
-  LIBRARY_MAJOR_RUN_ORDER,
-  runBenchSubprocess,
-  runBenchSubprocessesInterleaved,
-} from "@internal/benchmark-harness/parent/run-bench-subprocess";
+import { runBenchLibraries } from "@internal/benchmark-harness/parent/run-bench-libraries";
 import { renderComparisonConsoleReport } from "@internal/benchmark-harness/report/comparison";
 import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
-import type { BenchSubprocessConfig } from "@internal/benchmark-harness/shared/config";
 import {
   assertBenchEnvKeys,
   BENCH_VERBOSE_ENV_KEY,
   isEnvFlagEnabled,
 } from "@internal/benchmark-harness/shared/env-keys";
-import type { SubprocessPayload } from "@internal/benchmark-harness/shared/protocol";
 
 import { assembleDiComparison } from "#/harness/comparison";
 import type { LibraryPayload } from "#/harness/comparison";
@@ -68,42 +48,6 @@ function rebuildCodefastDiPackage(): void {
   console.log(`Finished rebuild of ${CODEFAST_DI.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
 }
 
-function subprocessParametersFor(config: BenchSubprocessConfig): RunBenchSubprocessParameters {
-  return {
-    packageRootDirectory,
-    tsconfigFileName: config.tsconfigFileName,
-    benchEntryFileNameUnderSrc: config.benchEntryFileName,
-    harnessLabel: resolveDisplayName(config),
-    scenarioName: config.scenarioName,
-    forwardChildStdoutVerbose: VERBOSE_MODE_ENABLED,
-  };
-}
-
-/**
- * Every library's payload, keyed by library name.
- *
- * @remarks Isolated runs interleave, because a cross-library ratio is only as good as the gap between
- * the two measurements it divides. Without isolation there is one process per library and nothing to
- * interleave, so that profile keeps its caveat.
- */
-async function runEveryLibrary(
-  configs: ReadonlyArray<BenchSubprocessConfig>,
-): Promise<{ payloads: Map<string, SubprocessPayload>; runOrder: string }> {
-  if (isIsolatedBenchRunRequested()) {
-    return {
-      payloads: await runBenchSubprocessesInterleaved(
-        configs.map((config) => ({ key: config.libraryName, parameters: subprocessParametersFor(config) })),
-      ),
-      runOrder: INTERLEAVED_RUN_ORDER,
-    };
-  }
-  const payloads = new Map<string, SubprocessPayload>();
-  for (const config of configs) {
-    payloads.set(config.libraryName, await runBenchSubprocess(subprocessParametersFor(config)));
-  }
-  return { payloads, runOrder: LIBRARY_MAJOR_RUN_ORDER };
-}
-
 async function main(): Promise<void> {
   assertBenchEnvKeys();
   console.log("\n@benchmark/di — head-to-head bench, each library in its canonical runtime mode.");
@@ -111,17 +55,19 @@ async function main(): Promise<void> {
   for (const library of BENCH_LIBRARIES) {
     console.log(`  ${resolveDisplayName(library).padEnd(labelWidth)} : ${library.runtime}`);
   }
-  console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");
-  if (!VERBOSE_MODE_ENABLED) {
-    const prefixes = BENCH_LIBRARIES.map((library) => `\`[${library.scenarioName}]\``).join(" / ");
-    console.log(
-      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress still streams on stderr (prefixed ${prefixes}). Use \`${BENCH_VERBOSE_ENV_KEY}=true\` (or \`pnpm bench:verbose\`) for full child stdout.\n`,
-    );
-  }
+  console.log(
+    VERBOSE_MODE_ENABLED
+      ? "Verbose: every child line streams here, and the per-scenario table prints after the run.\n"
+      : `Progress per library follows. \`${BENCH_VERBOSE_ENV_KEY}=true\` (\`pnpm bench:verbose\`) streams every child line and prints the per-scenario table.\n`,
+  );
 
   rebuildCodefastDiPackage();
 
-  const { payloads, runOrder } = await runEveryLibrary(BENCH_LIBRARIES);
+  const { payloads, runOrder } = await runBenchLibraries({
+    packageRootDirectory,
+    libraries: BENCH_LIBRARIES,
+    verbose: VERBOSE_MODE_ENABLED,
+  });
   const codefastPayload = payloads.get(CODEFAST_DI.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
 
@@ -148,7 +94,10 @@ async function main(): Promise<void> {
     scenariosAvailable: codefastPayload.scenarioIds?.length,
   });
 
-  renderComparisonConsoleReport(codefastLibrary, competitors, DI_COMPARISON_CONSOLE);
+  renderComparisonConsoleReport(codefastLibrary, competitors, {
+    ...DI_COMPARISON_CONSOLE,
+    includeScenarioTable: VERBOSE_MODE_ENABLED,
+  });
 
   const librariesForJsonl = [...payloadsByLibrary.values()].map(({ fingerprint, trials }) => ({ fingerprint, trials }));
 
