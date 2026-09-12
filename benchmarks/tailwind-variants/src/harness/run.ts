@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /**
- * Parent harness: rebuild `@codefast/tailwind-variants`, run each library bench in its own subprocess
- * (order: `@codefast/tailwind-variants` → tailwind-variants → class-variance-authority), then emit one
- * report with `@codefast/tailwind-variants` as the pivot.
+ * Parent harness: rebuild `@codefast/tailwind-variants`, run each library bench in its own subprocess in
+ * `BENCH_LIBRARIES` order, then emit one report with `@codefast/tailwind-variants` as the pivot.
  */
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
@@ -34,7 +33,7 @@ import type { SubprocessPayload } from "@internal/benchmark-harness/shared/proto
 
 import { assembleTvComparison } from "#/harness/comparison";
 import type { LibraryPayload } from "#/harness/comparison";
-import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
+import { BENCH_LIBRARIES, CODEFAST_TV } from "#/harness/config";
 import { TAILWIND_VARIANTS_COMPARISON_CONSOLE } from "#/harness/presentation";
 
 const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
@@ -99,27 +98,29 @@ async function runEveryLibrary(
 
 async function main(): Promise<void> {
   assertBenchEnvKeys();
-  console.log(
-    `\n@benchmark/tailwind-variants — each library runs in its own subprocess; ` +
-      `comparisons are ${CODEFAST_TV.libraryName} vs ${TAILWIND_VARIANTS.libraryName} and vs ${CVA.libraryName}.\n`,
-  );
+  console.log("\n@benchmark/tailwind-variants — head-to-head bench, each library paying for a render its own way.");
+  const labelWidth = Math.max(...BENCH_LIBRARIES.map((library) => resolveDisplayName(library).length));
+  for (const library of BENCH_LIBRARIES) {
+    console.log(`  ${resolveDisplayName(library).padEnd(labelWidth)} : ${library.strategy}`);
+  }
+  console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");
   if (!VERBOSE_MODE_ENABLED) {
+    const prefixes = BENCH_LIBRARIES.map((library) => `\`[${library.scenarioName}]\``).join(" / ");
     console.log(
-      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress streams on stderr ` +
-        `(\`[${CODEFAST_TV.scenarioName}]\` / \`[${TAILWIND_VARIANTS.scenarioName}]\` / \`[${CVA.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=true\` for full child stdout.\n`,
+      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress streams on stderr (prefixed ${prefixes}). Use \`${BENCH_VERBOSE_ENV_KEY}=true\` (or \`pnpm bench:verbose\`) for full child stdout.\n`,
     );
   }
 
   rebuildCodefastTailwindVariantsPackage();
 
-  const { payloads, runOrder } = await runEveryLibrary([CODEFAST_TV, TAILWIND_VARIANTS, CVA]);
+  const { payloads, runOrder } = await runEveryLibrary(BENCH_LIBRARIES);
   const codefastPayload = payloads.get(CODEFAST_TV.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
 
   assertSubjectMeasuredSomething(CODEFAST_TV.libraryName, codefastPayload.trials);
 
   const payloadsByLibrary = new Map<string, LibraryPayload>(
-    [CODEFAST_TV, TAILWIND_VARIANTS, CVA].flatMap((config) => {
+    BENCH_LIBRARIES.flatMap((config) => {
       const payload = payloads.get(config.libraryName);
       return payload === undefined
         ? []
