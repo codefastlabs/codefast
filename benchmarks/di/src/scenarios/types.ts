@@ -1,10 +1,10 @@
 /**
- * Shared scenario typing for every library harness (codefast, inversify, awilix, tsyringe).
+ * Shared scenario typing for every library harness.
  *
  * Each library exposes its own scenarios with matching `id`s for every head-to-head row.
  * Matching IDs are what let the reporter align rows across libraries; an `id` may appear on
- * only some libraries when a scenario is intentionally library-specific or outside the
- * awilix/tsyringe core subset.
+ * only some libraries when a scenario is intentionally library-specific or outside what a
+ * competitor's idiom can express.
  */
 
 import type {

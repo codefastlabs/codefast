@@ -44,7 +44,7 @@ import type { SubprocessPayload } from "@internal/benchmark-harness/shared/proto
 
 import { assembleDiComparison } from "#/harness/comparison";
 import type { LibraryPayload } from "#/harness/comparison";
-import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, TSYRINGE } from "#/harness/config";
+import { BENCH_LIBRARIES, CODEFAST_DI } from "#/harness/config";
 import { DI_COMPARISON_CONSOLE } from "#/harness/presentation";
 
 const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
@@ -106,34 +106,29 @@ async function runEveryLibrary(
 
 async function main(): Promise<void> {
   assertBenchEnvKeys();
-  console.log("\n@benchmark/di — head-to-head bench, each library in its canonical decorator mode.");
-  console.log(`  ${CODEFAST_DI.libraryName}  : TC39 Stage 3 decorators + Symbol.metadata`);
-  console.log(`  ${resolveDisplayName(INVERSIFY)} : legacy experimental decorators + reflect-metadata`);
+  console.log("\n@benchmark/di — head-to-head bench, each library in its canonical runtime mode.");
+  const labelWidth = Math.max(...BENCH_LIBRARIES.map((library) => resolveDisplayName(library).length));
+  for (const library of BENCH_LIBRARIES) {
+    console.log(`  ${resolveDisplayName(library).padEnd(labelWidth)} : ${library.runtime}`);
+  }
   console.log("Each library runs N trials; the table reports per-trial medians and IQR.\n");
   if (!VERBOSE_MODE_ENABLED) {
+    const prefixes = BENCH_LIBRARIES.map((library) => `\`[${library.scenarioName}]\``).join(" / ");
     console.log(
-      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress still streams on stderr (prefixed \`[${CODEFAST_DI.scenarioName}]\` / \`[${INVERSIFY.scenarioName}]\`). Use \`${BENCH_VERBOSE_ENV_KEY}=true\` (or \`pnpm bench:verbose\`) for full child stdout.\n`,
+      `[bench] Quiet mode: child stdout is suppressed; per-scenario progress still streams on stderr (prefixed ${prefixes}). Use \`${BENCH_VERBOSE_ENV_KEY}=true\` (or \`pnpm bench:verbose\`) for full child stdout.\n`,
     );
   }
 
   rebuildCodefastDiPackage();
 
-  const { payloads, runOrder } = await runEveryLibrary([
-    CODEFAST_DI,
-    INVERSIFY,
-    AWILIX,
-    TSYRINGE,
-    BRANDI,
-    DITOX,
-    INJECTION_JS,
-  ]);
+  const { payloads, runOrder } = await runEveryLibrary(BENCH_LIBRARIES);
   const codefastPayload = payloads.get(CODEFAST_DI.libraryName)!;
   console.log(`\n[bench] Run order: ${runOrder}`);
 
   assertSubjectMeasuredSomething(CODEFAST_DI.libraryName, codefastPayload.trials);
 
   const payloadsByLibrary = new Map<string, LibraryPayload>(
-    [CODEFAST_DI, INVERSIFY, AWILIX, TSYRINGE, BRANDI, DITOX, INJECTION_JS].flatMap((config) => {
+    BENCH_LIBRARIES.flatMap((config) => {
       const payload = payloads.get(config.libraryName);
       return payload === undefined
         ? []
