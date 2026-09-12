@@ -86,9 +86,12 @@ groups to it, so it reads `—` on the rest, and the report counts only the rows
 
 ```
 src/harness/run.ts          parent: rebuilds @codefast/tailwind-variants, one subprocess per library, merge, render
-src/harness/config.ts       the three library configs
+src/harness/config.ts       every library config, subject first — the order the run, the columns and the viewer share
+src/harness/presentation.ts the report's fixed prose, derived from those configs
+src/harness/comparison.ts   assembles the head-to-head report from each library's payloads
 src/harness/bench-options.ts the explicit tv option bags every scenario passes
 src/harness/list.ts         the bench:list entry
+src/harness/report.ts       the bench:report entry
 src/harness/serve.ts        the bench:serve entry
 src/*-benches.ts            one child entry per library
 src/scenarios/<library>/    that library's implementation of each shape
