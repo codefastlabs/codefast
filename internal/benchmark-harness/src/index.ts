@@ -59,7 +59,11 @@ export { runSanityChecks } from "#/child/run-sanity-checks";
 
 export { resolveBenchParentExitCode } from "#/parent/resolve-bench-parent-exit-code";
 
-export type { InterleavedLibraryRun, RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess";
+export type {
+  InterleavedLibraryRun,
+  RunBenchSubprocessParameters,
+  SubprocessProgressTarget,
+} from "#/parent/run-bench-subprocess";
 export {
   SubprocessExecutionError,
   buildSubprocessEnvironment,
@@ -68,6 +72,33 @@ export {
   runBenchSubprocess,
   runBenchSubprocessesInterleaved,
 } from "#/parent/run-bench-subprocess";
+
+export type { RunBenchLibrariesOptions, RunBenchLibrariesResult } from "#/parent/run-bench-libraries";
+export { runBenchLibraries } from "#/parent/run-bench-libraries";
+
+export type { BenchProgressEvent } from "#/shared/progress";
+export { formatProgressEvent, parseProgressEvent } from "#/shared/progress";
+
+export type { ProgressDisplay } from "#/parent/progress/progress-display";
+export type {
+  LibraryProgress,
+  LibraryProgressStatus,
+  RegisterLibraryOptions,
+  SubprocessScope,
+} from "#/parent/progress/progress-tracker";
+export { ProgressTracker, progressFraction } from "#/parent/progress/progress-tracker";
+export type { RenderProgressFrameOptions } from "#/parent/progress/render-progress-frame";
+export { formatElapsed, renderProgressFrame } from "#/parent/progress/render-progress-frame";
+export type { LiveProgressDisplayOptions } from "#/parent/progress/live-progress-display";
+export { LiveProgressDisplay } from "#/parent/progress/live-progress-display";
+export type { PlainProgressDisplayOptions } from "#/parent/progress/plain-progress-display";
+export { PlainProgressDisplay } from "#/parent/progress/plain-progress-display";
+export type { CreateProgressDisplayOptions } from "#/parent/progress/create-progress-display";
+export {
+  canDrawLiveProgress,
+  createProgressDisplay,
+  prefersUnicodeBars,
+} from "#/parent/progress/create-progress-display";
 
 export type { BenchRunOutputPaths, WriteBenchRunArtifactsParameters } from "#/parent/bench-run-artifacts";
 export { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#/parent/bench-run-artifacts";

@@ -120,7 +120,7 @@ pnpm bench            # run every suite, shared profile
 pnpm bench:isolate    # run every suite, one subprocess per scenario, interleaved
 pnpm bench:fast       # smoke profile — shorter windows, for "did I break it"
 pnpm bench:full       # --expose-gc for every library
-pnpm bench:verbose    # forward each child's full stdout
+pnpm bench:verbose    # stream every child line and print the per-scenario table
 pnpm bench:list       # every suite's scenario inventory as JSON, measuring nothing
 pnpm bench:report     # derive report.md / report.json from each suite's latest run
 pnpm bench:serve      # browse recorded runs (see ../benchmark-viewer)
@@ -129,8 +129,24 @@ pnpm bench:serve      # browse recorded runs (see ../benchmark-viewer)
 Every root script has a `di:` and a `tv:` twin (`pnpm di:bench:fast`, `pnpm tv:bench:list`, …) that filters to one
 suite; the per-library child entries (`bench:<library>`) stay suite-local.
 
-A suite wires the harness in two files. Its parent entry spawns one child per library with `runBenchSubprocess` or
-`runBenchSubprocessesInterleaved`, builds a `LibraryReport` per payload with `buildLibraryReport`, renders
+## Progress display
+
+A run reports through one `ProgressDisplay` (`src/parent/progress/`), chosen by `createProgressDisplay` from what stderr
+can draw. On an interactive terminal it is a live block — one line per library with a bar, `done/total`, the trial
+ordinal when a profile runs more than one, elapsed time and the scenario in flight — redrawn in place, with any other
+child output kept above it. Piped, under `CI`, or with `BENCH_VERBOSE=true`, it is one plain line per milestone instead,
+plus a "still running" heartbeat after ten quiet seconds, so a log stays readable.
+
+The child does not know which display it feeds. Its stderr lines are the protocol: `src/shared/progress.ts` holds the
+formatter the child prints with and the parser the parent reads with, so `bench:<library>` run alone prints the same
+readable lines a parent consumes, and a round-trip test pins the format. An isolated run counts a library's scenarios
+across its per-scenario children; the scheduler tells the display the total after discovery.
+
+The per-scenario table prints on the console only in verbose mode; the default console report is the aggregates, and
+`bench:report` derives the full table as `report.md`.
+
+A suite wires the harness in two files. Its parent entry runs every library with `runBenchLibraries` (which picks the
+run shape and the progress display), builds a `LibraryReport` per payload with `buildLibraryReport`, renders
 `renderComparisonMarkdownReport` and `renderComparisonConsoleReport`, builds the `report.json` document with
 `buildComparisonDocument`, and hands everything to `writeBenchRunArtifacts`. Each child entry calls
 `runBenchmarkChildMain` with the library's scenario collector. [`../../benchmarks/di`](../../benchmarks/di) and

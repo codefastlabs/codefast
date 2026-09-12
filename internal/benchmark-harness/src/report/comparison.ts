@@ -92,6 +92,8 @@ export interface ComparisonMarkdownReportOptions {
 export interface ComparisonConsoleReportOptions {
   readonly sectionHeading: string;
   readonly footerHintLine?: string;
+  /** Prints the per-scenario rows above the summary; off, the summary alone is the console report. */
+  readonly includeScenarioTable?: boolean | undefined;
 }
 
 // A ratio within ±3% of 1.0 is statistical parity, not a win or a loss.
@@ -635,6 +637,32 @@ const CLI_TABLE_COLUMN_GAP = "  ";
 const CONSOLE_THROUGHPUT_COLUMN_WIDTH = 18;
 const CONSOLE_RATIO_COLUMN_WIDTH = 12;
 
+function printScenarioRows(
+  rows: ReadonlyArray<ComparisonScenarioRow>,
+  scenarioColumnWidth: number,
+  groupColumnWidth: number,
+): void {
+  for (const row of rows) {
+    const pivotSample = pivotQuality(row);
+    console.log(
+      [
+        row.id.padEnd(scenarioColumnWidth),
+        row.group.padEnd(groupColumnWidth),
+        markThroughputQuality(formatThroughputOpsPerSecond(row.pivotHzPerOp), pivotSample).padStart(
+          CONSOLE_THROUGHPUT_COLUMN_WIDTH,
+        ),
+        ...row.competitors.map((competitor) =>
+          markRatioQuality(
+            formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
+            pivotSample,
+            competitor,
+          ).padStart(CONSOLE_RATIO_COLUMN_WIDTH),
+        ),
+      ].join(CLI_TABLE_COLUMN_GAP),
+    );
+  }
+}
+
 /**
  * Prints the comparison to stdout with aligned ASCII columns.
  *
@@ -657,28 +685,11 @@ export function renderComparisonConsoleReport(
   ].join(CLI_TABLE_COLUMN_GAP);
 
   console.log(`\n${options.sectionHeading}`);
-  console.log(headerLine);
-  console.log("-".repeat(headerLine.length));
-  for (const row of rows) {
-    const pivotSample = pivotQuality(row);
-    console.log(
-      [
-        row.id.padEnd(scenarioColumnWidth),
-        row.group.padEnd(groupColumnWidth),
-        markThroughputQuality(formatThroughputOpsPerSecond(row.pivotHzPerOp), pivotSample).padStart(
-          CONSOLE_THROUGHPUT_COLUMN_WIDTH,
-        ),
-        ...row.competitors.map((competitor) =>
-          markRatioQuality(
-            formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
-            pivotSample,
-            competitor,
-          ).padStart(CONSOLE_RATIO_COLUMN_WIDTH),
-        ),
-      ].join(CLI_TABLE_COLUMN_GAP),
-    );
+  if (options.includeScenarioTable ?? true) {
+    console.log(headerLine);
+    console.log("-".repeat(headerLine.length));
+    printScenarioRows(rows, scenarioColumnWidth, groupColumnWidth);
   }
-
   console.log("");
   for (const { displayName, headToHead } of summarizeComparison(pivot, competitors)) {
     console.log(

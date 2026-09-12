@@ -85,10 +85,45 @@
       "types": "./dist/parent/bench-run-artifacts.d.ts",
       "import": "./dist/parent/bench-run-artifacts.js"
     },
+    "./parent/progress/create-progress-display": {
+      "source": "./src/parent/progress/create-progress-display.ts",
+      "types": "./dist/parent/progress/create-progress-display.d.ts",
+      "import": "./dist/parent/progress/create-progress-display.js"
+    },
+    "./parent/progress/live-progress-display": {
+      "source": "./src/parent/progress/live-progress-display.ts",
+      "types": "./dist/parent/progress/live-progress-display.d.ts",
+      "import": "./dist/parent/progress/live-progress-display.js"
+    },
+    "./parent/progress/plain-progress-display": {
+      "source": "./src/parent/progress/plain-progress-display.ts",
+      "types": "./dist/parent/progress/plain-progress-display.d.ts",
+      "import": "./dist/parent/progress/plain-progress-display.js"
+    },
+    "./parent/progress/progress-display": {
+      "source": "./src/parent/progress/progress-display.ts",
+      "types": "./dist/parent/progress/progress-display.d.ts",
+      "import": "./dist/parent/progress/progress-display.js"
+    },
+    "./parent/progress/progress-tracker": {
+      "source": "./src/parent/progress/progress-tracker.ts",
+      "types": "./dist/parent/progress/progress-tracker.d.ts",
+      "import": "./dist/parent/progress/progress-tracker.js"
+    },
+    "./parent/progress/render-progress-frame": {
+      "source": "./src/parent/progress/render-progress-frame.ts",
+      "types": "./dist/parent/progress/render-progress-frame.d.ts",
+      "import": "./dist/parent/progress/render-progress-frame.js"
+    },
     "./parent/resolve-bench-parent-exit-code": {
       "source": "./src/parent/resolve-bench-parent-exit-code.ts",
       "types": "./dist/parent/resolve-bench-parent-exit-code.d.ts",
       "import": "./dist/parent/resolve-bench-parent-exit-code.js"
+    },
+    "./parent/run-bench-libraries": {
+      "source": "./src/parent/run-bench-libraries.ts",
+      "types": "./dist/parent/run-bench-libraries.d.ts",
+      "import": "./dist/parent/run-bench-libraries.js"
     },
     "./parent/run-bench-listing-main": {
       "source": "./src/parent/run-bench-listing-main.ts",
@@ -149,6 +184,11 @@
       "source": "./src/shared/env-keys.ts",
       "types": "./dist/shared/env-keys.d.ts",
       "import": "./dist/shared/env-keys.js"
+    },
+    "./shared/progress": {
+      "source": "./src/shared/progress.ts",
+      "types": "./dist/shared/progress.d.ts",
+      "import": "./dist/shared/progress.js"
     },
     "./shared/protocol": {
       "source": "./src/shared/protocol.ts",
