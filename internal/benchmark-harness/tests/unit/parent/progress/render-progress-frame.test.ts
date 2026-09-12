@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import type { LibraryProgress } from "#/parent/progress/progress-tracker";
 import { formatElapsed, renderProgressFrame } from "#/parent/progress/render-progress-frame";
+import { createPalette } from "#/shared/palette";
+
+const ESCAPE = String.fromCodePoint(0x1b);
+const ANSI_CODE = new RegExp(`${ESCAPE}\\[[0-9;]*m`, "g");
 
 function row(overrides: Partial<LibraryProgress> & Pick<LibraryProgress, "key" | "label">): LibraryProgress {
   return {
@@ -91,12 +95,28 @@ describe("renderProgressFrame", () => {
     expect(line).toBe("cf  ########............  2/10  t2/3  1.0s");
   });
 
-  it("never exceeds the width, clipping the tail with an ellipsis", () => {
-    const lines = renderProgressFrame(rows, { nowMs: 5700, width: 50, unicode: true });
+  it("never exceeds the width, clipping the tail with an ellipsis and dropping it when no room is left", () => {
+    const lines = renderProgressFrame(rows, { nowMs: 5700, width: 60, unicode: true });
     for (const line of lines) {
-      expect(line.length).toBeLessThanOrEqual(50);
+      expect(line.length).toBeLessThanOrEqual(60);
     }
-    expect(lines[1]).toMatch(/…$/);
+    expect(lines[1]).toMatch(/  resolve…$/);
+    const [cramped] = renderProgressFrame([rows[1]!], { nowMs: 5700, width: 40, unicode: true });
+    expect(cramped).toBe("InversifyJS 8  ████████░░░░░░░░░░░░  47/111  1.5s".replace("  47/111", "  47/111"));
+  });
+
+  it("pads before it tints, so a coloured frame strips back to the plain one", () => {
+    const plain = renderProgressFrame(rows, { nowMs: 5700, width: 120, unicode: false });
+    const colored = renderProgressFrame(rows, {
+      nowMs: 5700,
+      width: 120,
+      unicode: false,
+      palette: createPalette({ enabled: true }),
+    });
+    expect(colored).not.toEqual(plain);
+    expect(colored.map((line) => line.replaceAll(ANSI_CODE, ""))).toEqual(plain);
+    expect(colored[0]).toContain(`${ESCAPE}[32m####################${ESCAPE}[39m`);
+    expect(colored[1]).toContain(`${ESCAPE}[36m########${ESCAPE}[39m`);
   });
 
   it("names the exit code on a failed row and labels discovery", () => {

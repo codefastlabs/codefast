@@ -76,6 +76,9 @@ export {
 export type { RunBenchLibrariesOptions, RunBenchLibrariesResult } from "#/parent/run-bench-libraries";
 export { runBenchLibraries } from "#/parent/run-bench-libraries";
 
+export type { CreatePaletteOptions, Palette, Tint } from "#/shared/palette";
+export { PLAIN_PALETTE, createPalette, shouldColor } from "#/shared/palette";
+
 export type { BenchProgressEvent } from "#/shared/progress";
 export { formatProgressEvent, parseProgressEvent } from "#/shared/progress";
 

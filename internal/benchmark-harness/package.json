@@ -185,6 +185,11 @@
       "types": "./dist/shared/env-keys.d.ts",
       "import": "./dist/shared/env-keys.js"
     },
+    "./shared/palette": {
+      "source": "./src/shared/palette.ts",
+      "types": "./dist/shared/palette.d.ts",
+      "import": "./dist/shared/palette.js"
+    },
     "./shared/progress": {
       "source": "./src/shared/progress.ts",
       "types": "./dist/shared/progress.d.ts",

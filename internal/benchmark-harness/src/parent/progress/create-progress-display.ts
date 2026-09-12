@@ -2,6 +2,7 @@
 import { LiveProgressDisplay } from "#/parent/progress/live-progress-display";
 import { PlainProgressDisplay } from "#/parent/progress/plain-progress-display";
 import type { ProgressDisplay } from "#/parent/progress/progress-display";
+import { createPalette } from "#/shared/palette";
 
 /**
  * Options for {@link createProgressDisplay}.
@@ -38,7 +39,11 @@ export function createProgressDisplay(options: CreateProgressDisplayOptions): Pr
   const stream = options.stream ?? process.stderr;
   const env = options.env ?? process.env;
   if (!options.verbose && canDrawLiveProgress(stream, env)) {
-    return new LiveProgressDisplay({ stream, unicode: prefersUnicodeBars(env) });
+    return new LiveProgressDisplay({
+      stream,
+      unicode: prefersUnicodeBars(env),
+      palette: createPalette({ stream, env }),
+    });
   }
   return new PlainProgressDisplay({ write: (line) => stream.write(`${line}\n`) });
 }

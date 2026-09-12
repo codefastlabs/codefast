@@ -142,6 +142,11 @@ formatter the child prints with and the parser the parent reads with, so `bench:
 readable lines a parent consumes, and a round-trip test pins the format. An isolated run counts a library's scenarios
 across its per-scenario children; the scheduler tells the display the total after discovery.
 
+Both the block and the console report colour their verdicts through `node:util`'s `styleText`, resolved once per stream
+by `createPalette`: a reliable win green, a loss red, a parity or an unreliable cell dim, a finished library green and a
+failed one red. `NO_COLOR` turns it off, `FORCE_COLOR` turns it on for a pipe, and every cell is padded before it is
+tinted, so alignment never depends on colour.
+
 The per-scenario table prints on the console only in verbose mode; the default console report is the aggregates, and
 `bench:report` derives the full table as `report.md`.
 

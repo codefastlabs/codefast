@@ -15,6 +15,8 @@ import {
   markRatioQuality,
   markThroughputQuality,
 } from "#/report/reliability";
+import type { Palette, Tint } from "#/shared/palette";
+import { createPalette } from "#/shared/palette";
 
 /**
  * One library column: its aggregated report plus the labels used in table headers.
@@ -94,6 +96,8 @@ export interface ComparisonConsoleReportOptions {
   readonly footerHintLine?: string;
   /** Prints the per-scenario rows above the summary; off, the summary alone is the console report. */
   readonly includeScenarioTable?: boolean | undefined;
+  /** Colour roles for stdout; defaults to colour on an interactive terminal, honouring `NO_COLOR`. */
+  readonly palette?: Palette | undefined;
 }
 
 // A ratio within ±3% of 1.0 is statistical parity, not a win or a loss.
@@ -637,30 +641,61 @@ const CLI_TABLE_COLUMN_GAP = "  ";
 const CONSOLE_THROUGHPUT_COLUMN_WIDTH = 18;
 const CONSOLE_RATIO_COLUMN_WIDTH = 12;
 
+// Colour is a verdict: a reliable win or loss earns one; a parity, an unreliable cell and a row the
+// competitor never measured all read dim.
+function ratioCellTint(pivotHzPerOp: number, competitor: ComparisonCompetitorCell, palette: Palette): Tint {
+  if (competitor.hzPerOp === undefined || competitor.hzPerOp <= 0 || pivotHzPerOp <= 0) {
+    return palette.dim;
+  }
+  if (isRatioUnreliable(pivotHzPerOp, competitor.hzPerOp)) {
+    return palette.dim;
+  }
+  const ratio = pivotHzPerOp / competitor.hzPerOp;
+  if (ratio > 1 + HEAD_TO_HEAD_PARITY_BAND) {
+    return palette.win;
+  }
+  if (ratio < 1 - HEAD_TO_HEAD_PARITY_BAND) {
+    return palette.loss;
+  }
+  return palette.parity;
+}
+
 function printScenarioRows(
   rows: ReadonlyArray<ComparisonScenarioRow>,
   scenarioColumnWidth: number,
   groupColumnWidth: number,
+  palette: Palette,
 ): void {
   for (const row of rows) {
     const pivotSample = pivotQuality(row);
     console.log(
       [
         row.id.padEnd(scenarioColumnWidth),
-        row.group.padEnd(groupColumnWidth),
+        palette.dim(row.group.padEnd(groupColumnWidth)),
         markThroughputQuality(formatThroughputOpsPerSecond(row.pivotHzPerOp), pivotSample).padStart(
           CONSOLE_THROUGHPUT_COLUMN_WIDTH,
         ),
         ...row.competitors.map((competitor) =>
-          markRatioQuality(
-            formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
-            pivotSample,
+          ratioCellTint(
+            row.pivotHzPerOp,
             competitor,
-          ).padStart(CONSOLE_RATIO_COLUMN_WIDTH),
+            palette,
+          )(
+            markRatioQuality(
+              formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
+              pivotSample,
+              competitor,
+            ).padStart(CONSOLE_RATIO_COLUMN_WIDTH),
+          ),
         ),
       ].join(CLI_TABLE_COLUMN_GAP),
     );
   }
+}
+
+function formatCount(count: number, noun: string, tintWhenPositive: Tint, palette: Palette): string {
+  const text = `${String(count)} ${noun}${count === 1 ? "" : noun.endsWith("s") ? "es" : "s"}`;
+  return count > 0 ? tintWhenPositive(text) : palette.dim(text);
 }
 
 /**
@@ -673,6 +708,7 @@ export function renderComparisonConsoleReport(
   competitors: ReadonlyArray<ComparisonLibrary>,
   options: ComparisonConsoleReportOptions,
 ): void {
+  const palette = options.palette ?? createPalette({ stream: process.stdout });
   const rows = buildComparisonRows(pivot, competitors);
   const scenarioColumnWidth = Math.max(28, ...rows.map((row) => row.id.length));
   const groupColumnWidth = Math.max(10, ...rows.map((row) => row.group.length));
@@ -684,25 +720,30 @@ export function renderComparisonConsoleReport(
     ...competitors.map((competitor) => `vs ${consoleLabel(competitor)}`.padStart(CONSOLE_RATIO_COLUMN_WIDTH)),
   ].join(CLI_TABLE_COLUMN_GAP);
 
-  console.log(`\n${options.sectionHeading}`);
+  console.log(`\n${palette.heading(options.sectionHeading)}`);
   if (options.includeScenarioTable ?? true) {
-    console.log(headerLine);
-    console.log("-".repeat(headerLine.length));
-    printScenarioRows(rows, scenarioColumnWidth, groupColumnWidth);
+    console.log(palette.heading(headerLine));
+    console.log(palette.dim("-".repeat(headerLine.length)));
+    printScenarioRows(rows, scenarioColumnWidth, groupColumnWidth, palette);
   }
   console.log("");
   for (const { displayName, headToHead } of summarizeComparison(pivot, competitors)) {
+    const wins = formatCount(headToHead.wins.length, "win", palette.win, palette);
+    const parities = palette.dim(`${String(headToHead.parities.length)} parity`);
+    const losses = formatCount(headToHead.losses.length, "loss", palette.loss, palette);
     console.log(
-      `${consoleLabel(pivot)} vs ${displayName}: ${String(headToHead.wins.length)} wins · ${String(headToHead.parities.length)} parity · ${String(headToHead.losses.length)} loss${headToHead.losses.length === 1 ? "" : "es"} of ${String(headToHead.comparableCount)} comparable — median ${formatRatioMultiple(headToHead.medianRatio)}, geomean ${formatRatioMultiple(headToHead.geomeanRatio)}`,
+      `${palette.heading(`${consoleLabel(pivot)} vs ${displayName}`)}: ${wins} · ${parities} · ${losses} of ${String(headToHead.comparableCount)} comparable — median ${palette.heading(formatRatioMultiple(headToHead.medianRatio))}, geomean ${palette.heading(formatRatioMultiple(headToHead.geomeanRatio))}`,
     );
     if (headToHead.groupGeomeans.length > 0) {
       console.log(
-        `  By group: ${headToHead.groupGeomeans.map((entry) => `${entry.group} ${formatRatioMultiple(entry.geomeanRatio)}`).join(" · ")}`,
+        palette.dim(
+          `  By group: ${headToHead.groupGeomeans.map((entry) => `${entry.group} ${formatRatioMultiple(entry.geomeanRatio)}`).join(" · ")}`,
+        ),
       );
     }
     if (headToHead.losses.length > 0) {
       console.log(
-        `  Losses: ${headToHead.losses
+        `  ${palette.loss("Losses:")} ${headToHead.losses
           .map(
             (entry) =>
               `${entry.id} (${formatRatioMultiple(entry.ratio)}${entry.unreliable ? UNRELIABLE_RATIO_MARKER : ""})`,
@@ -713,15 +754,15 @@ export function renderComparisonConsoleReport(
   }
   const unreliableCount = countUnreliableRatioCells(rows);
   if (unreliableCount > 0) {
-    console.log(formatReliabilityCaveatLine(unreliableCount));
+    console.log(palette.dim(formatReliabilityCaveatLine(unreliableCount)));
   }
   const noisyCount = countNoisyCells(rows);
   if (noisyCount > 0) {
-    console.log(formatNoisyIqrCaveatLine(noisyCount));
+    console.log(palette.dim(formatNoisyIqrCaveatLine(noisyCount)));
   }
   if (options.footerHintLine !== undefined) {
     console.log("");
-    console.log(options.footerHintLine);
+    console.log(palette.dim(options.footerHintLine));
   }
   console.log("");
 }

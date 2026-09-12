@@ -3,6 +3,8 @@ import type { ProgressDisplay } from "#/parent/progress/progress-display";
 import type { LibraryProgress, RegisterLibraryOptions } from "#/parent/progress/progress-tracker";
 import { ProgressTracker } from "#/parent/progress/progress-tracker";
 import { renderProgressFrame } from "#/parent/progress/render-progress-frame";
+import type { Palette } from "#/shared/palette";
+import { PLAIN_PALETTE } from "#/shared/palette";
 import type { BenchProgressEvent } from "#/shared/progress";
 
 const REDRAW_INTERVAL_MS = 100;
@@ -20,6 +22,7 @@ function cursorUpAndClear(lineCount: number): string {
 export interface LiveProgressDisplayOptions {
   readonly stream: NodeJS.WriteStream;
   readonly unicode: boolean;
+  readonly palette?: Palette | undefined;
   readonly tracker?: ProgressTracker | undefined;
   readonly now?: (() => number) | undefined;
 }
@@ -35,6 +38,7 @@ export class LiveProgressDisplay implements ProgressDisplay {
   readonly #tracker: ProgressTracker;
   readonly #stream: NodeJS.WriteStream;
   readonly #unicode: boolean;
+  readonly #palette: Palette;
   readonly #now: () => number;
   #renderedLineCount = 0;
   #lastFrame = "";
@@ -43,6 +47,7 @@ export class LiveProgressDisplay implements ProgressDisplay {
   constructor(options: LiveProgressDisplayOptions) {
     this.#stream = options.stream;
     this.#unicode = options.unicode;
+    this.#palette = options.palette ?? PLAIN_PALETTE;
     this.#now = options.now ?? (() => performance.now());
     this.#tracker = options.tracker ?? new ProgressTracker(this.#now);
     // Unref'd so a run that dies before `finish()` still lets the process exit.
@@ -125,6 +130,7 @@ export class LiveProgressDisplay implements ProgressDisplay {
       nowMs: this.#now(),
       width: Math.max(20, (this.#stream.columns || FALLBACK_WIDTH) - 1),
       unicode: this.#unicode,
+      palette: this.#palette,
     });
     const frame = lines.join("\n");
     if (frame === this.#lastFrame) {
