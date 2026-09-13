@@ -679,7 +679,18 @@ export class DependencyResolver implements ResolverCallbacks {
   }
 
   /** Path-continuing resolution handed to the ambient slot while an accessor class constructs. */
+  // The ambient resolution a top-level construction hands its accessors: the lent root stack is one
+  // array for the resolver's lifetime, so the pair of closures over it is built once and reused.
+  #rootAmbientResolution: AmbientResolution | undefined;
+
   #ambientResolutionFor(resolutionStack: Array<ResolutionFrame>): AmbientResolution {
+    if (resolutionStack === this.rootStack) {
+      return (this.#rootAmbientResolution ??= this.#buildAmbientResolution(resolutionStack));
+    }
+    return this.#buildAmbientResolution(resolutionStack);
+  }
+
+  #buildAmbientResolution(resolutionStack: Array<ResolutionFrame>): AmbientResolution {
     return {
       resolve: <Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value =>
         options === undefined
