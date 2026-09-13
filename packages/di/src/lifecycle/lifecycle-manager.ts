@@ -1,5 +1,6 @@
 import type { Binding } from "#/core/binding";
 import { getOrInsert } from "#/core/map-upsert";
+import { advanceStateEpoch } from "#/core/state-epoch";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type {
@@ -31,6 +32,7 @@ export class LifecycleManager {
 
   registerActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
     this.#activationVersion += 1;
+    advanceStateEpoch();
     this.#cachedToken = undefined;
     this.#cachedHooks = undefined;
     this.#activationHooks ??= new Map();

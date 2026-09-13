@@ -7,6 +7,7 @@
 import type { Binding } from "#/core/binding";
 import { getOrInsertComputed } from "#/core/map-upsert";
 import type { BindingRegistry } from "#/core/registry";
+import { stateEpoch } from "#/core/state-epoch";
 import type { BindingTag } from "#/core/tag";
 import type { Token } from "#/core/token";
 import type { Constructor } from "#/core/types";
@@ -41,6 +42,9 @@ const newTagToEntryMap = <Owner>(): Map<BindingTag, DefaultLookupEntry<Owner> | 
 export class BindingLookupCache<Owner> {
   #byToken: Map<Token<unknown> | Constructor, DefaultLookupEntry<Owner> | null> | undefined;
   #version = -1;
+  // The last chain sum and the epoch it was taken at.
+  #chainVersion = -1;
+  #chainEpoch = -1;
   // One entry in front of the map, and the map is not written until a second distinct token appears
   // in one generation: the two shapes that reach here — an alias, and a token owned by a parent —
   // are both resolved in a loop over the same token. `null` is a real answer, so absence is tracked
@@ -71,12 +75,23 @@ export class BindingLookupCache<Owner> {
     return this.#byToken !== undefined || this.#byTokenAndTag !== undefined;
   }
 
-  /** Summed registry versions of this cache's whole chain — the memo stamp. */
+  /**
+   * Summed registry versions of this cache's whole chain — the memo stamp.
+   *
+   * @remarks Re-summed only when the process-wide state epoch has moved since the last sum: no
+   * registry anywhere changed in between, so no registry in this chain did either.
+   */
   chainVersion(): number {
+    const epoch = stateEpoch();
+    if (epoch === this.#chainEpoch) {
+      return this.#chainVersion;
+    }
     let version = this.#registry.version;
     for (let cache = this.#parent; cache !== undefined; cache = cache.#parent) {
       version += cache.#registry.version;
     }
+    this.#chainEpoch = epoch;
+    this.#chainVersion = version;
     return version;
   }
 

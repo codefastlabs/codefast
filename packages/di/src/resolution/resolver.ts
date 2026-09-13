@@ -3,6 +3,7 @@ import type { Container } from "#/container/container";
 import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/core/binding";
 import { NO_INSTANCE } from "#/core/binding";
 import type { BindingRegistry } from "#/core/registry";
+import { stateEpoch } from "#/core/state-epoch";
 import { NO_TAG_KEYS, slotNameCriterionOf } from "#/core/tag";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
@@ -443,12 +444,25 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  /** Chain-summed activation version: a plan can inline a parent-owned binding, so a parent's hook registration must invalidate it. */
+  // The last chain-summed activation version and the state epoch it was taken at.
+  #chainActivationVersionMemo = -1;
+  #chainActivationEpoch = -1;
+
+  /**
+   * Chain-summed activation version: a plan can inline a parent-owned binding, so a parent's hook
+   * registration must invalidate it. Re-summed only when the process-wide state epoch has moved.
+   */
   #chainActivationVersion(): number {
+    const epoch = stateEpoch();
+    if (epoch === this.#chainActivationEpoch) {
+      return this.#chainActivationVersionMemo;
+    }
     let version = this.#lifecycle.activationVersion;
     for (let current = this.#parent; current !== undefined; current = current.#parent) {
       version += current.#lifecycle.activationVersion;
     }
+    this.#chainActivationEpoch = epoch;
+    this.#chainActivationVersionMemo = version;
     return version;
   }
 

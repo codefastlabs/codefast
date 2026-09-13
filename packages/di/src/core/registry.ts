@@ -1,6 +1,7 @@
 import type { Binding } from "#/core/binding";
 import { bindingSlotEquals, bindingSlotToString, writablePredicate } from "#/core/binding";
 import { getOrInsert } from "#/core/map-upsert";
+import { advanceStateEpoch } from "#/core/state-epoch";
 import type { BindingTag } from "#/core/tag";
 import type { Token } from "#/core/token";
 import type { BindingConstraint, BindingIdentifier, Constructor, DependencyKey } from "#/core/types";
@@ -64,6 +65,13 @@ export class BindingRegistry {
     return this.#version;
   }
 
+  // Every mutation moves the process-wide epoch too, which is what lets a descendant's cache skip
+  // re-summing the chain while nothing anywhere has changed.
+  #bump(): void {
+    this.#version += 1;
+    advanceStateEpoch();
+  }
+
   /** Whether a constant has ever been registered here, and so whether teardown has anything to sweep. */
   get hasHeldConstantBinding(): boolean {
     return this.#heldConstantBinding;
@@ -89,7 +97,7 @@ export class BindingRegistry {
    * activation hook in place), so version-stamped resolver caches still invalidate.
    */
   touch(): void {
-    this.#version += 1;
+    this.#bump();
   }
 
   /**
@@ -99,7 +107,7 @@ export class BindingRegistry {
    * what guarantees the single hidden class the resolver's hot reads depend on.
    */
   add(binding: Binding): Binding | undefined {
-    this.#version += 1;
+    this.#bump();
     if (binding.kind === "constant") {
       this.#heldConstantBinding = true;
     }
@@ -136,7 +144,7 @@ export class BindingRegistry {
 
   /** Remove all bindings for a token. Returns removed bindings. */
   removeByToken(token: Token<unknown> | Constructor): Array<Binding> {
-    this.#version += 1;
+    this.#bump();
     const lone = this.#lone.get(token);
     if (lone !== undefined) {
       this.#lone.delete(token);
@@ -164,7 +172,7 @@ export class BindingRegistry {
     if (binding === undefined) {
       return undefined;
     }
-    this.#version += 1;
+    this.#bump();
     byId.delete(id);
     const key: DependencyKey = binding.token;
     if (this.#lone.get(key)?.id === id) {
@@ -238,7 +246,7 @@ export class BindingRegistry {
 
   /** Remove all bindings. Returns all removed. */
   clear(): ReadonlyArray<Binding> {
-    this.#version += 1;
+    this.#bump();
     const all = this.allBindings();
     this.#lone.clear();
     this.#records?.clear();
@@ -296,7 +304,7 @@ export class BindingRegistry {
    * binding has to move, because the lone map holds default-slot bindings with no predicate.
    */
   setPredicate(binding: Binding, predicate: BindingConstraint | undefined): void {
-    this.#version += 1;
+    this.#bump();
     writablePredicate(binding).predicate = predicate;
     const key: DependencyKey = binding.token;
     if (this.#lone.get(key) === binding) {

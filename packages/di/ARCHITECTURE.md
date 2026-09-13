@@ -414,6 +414,17 @@ walk and parked in the slot, and the map is allocated and written only when a se
 > chain's summed version can see. Alias folding belongs where the version stamp is; moving it into `getFastDefault()`
 > would miss a parent rebind.
 
+**The chain sum is walked only when something, anywhere, changed.** Both memos are stamped with the summed versions of
+every registry up the chain, and the plan caches with the summed activation versions, so a parent's rebind or a
+grandparent's hook registration invalidates a descendant exactly. Summing is a walk of the chain, and it used to run on
+every memo read, which gave the parent walk a slope: a resolve from depth eight paid eight version reads before its
+one-entry front could even answer. Every registry version bump and every activation-hook registration now also advances
+one process-wide **state epoch** (`core/state-epoch.ts`), and each sum is memoized against the epoch it was taken at.
+While the epoch stands, no registry or lifecycle table in the process has moved, so no sum in any chain has either, and
+the read is one global compare; the moment anything moves, the next read re-sums exactly as before. A loop that rebinds
+on every iteration therefore pays the walk it always paid plus one compare, and a per-request child that binds nothing
+pays the compare alone.
+
 **`taggedEntry()` mirrors `defaultEntry()`, and defers its map.** It is chain-versioned, `null` means "this shape needs
 full selection", and predicate- and alias-carrying hits are declined. The memo key is the criterion object itself:
 interning (see [Criteria and tag indexes](#criteria)) makes identity the slot contract's own `Object.is`, so an indexed
@@ -816,6 +827,8 @@ These are covered in the sections above; this list exists so a perf review can f
   criterion-carrying param.
 - **One-entry inline caches in front of maps**, and the deferred memo maps behind `defaultEntry()` and `taggedEntry()` —
   [Lookup caches](#lookup-caches).
+- **Chain sums memoized against a process-wide state epoch** — [Lookup caches](#lookup-caches). Removes the parent
+  walk's slope while nothing has changed.
 - **Interned criteria as `Map` keys**, and the bitmask prefilter — [Criteria and tag indexes](#criteria). Removes a hash
   level and the stringification of tag values.
 - **Multi-tag bucket index past a size threshold** — [Criteria and tag indexes](#criteria). Semantics identical on both

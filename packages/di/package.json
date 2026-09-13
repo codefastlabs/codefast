@@ -115,6 +115,11 @@
       "types": "./dist/core/registry.d.ts",
       "import": "./dist/core/registry.js"
     },
+    "./core/state-epoch": {
+      "source": "./src/core/state-epoch.ts",
+      "types": "./dist/core/state-epoch.d.ts",
+      "import": "./dist/core/state-epoch.js"
+    },
     "./core/tag": {
       "source": "./src/core/tag.ts",
       "types": "./dist/core/tag.d.ts",

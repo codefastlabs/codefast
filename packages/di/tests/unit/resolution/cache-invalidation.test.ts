@@ -515,3 +515,50 @@ describe("a late binding hook is honored on lanes that memoize activation need",
     expect(container.resolve(rootToken).leaf.flagged).toBe(true);
   });
 });
+
+describe("chain sums memoized against the process-wide state epoch", () => {
+  it("still sees a root rebind from depth three after unrelated containers moved the epoch", () => {
+    const swapped = token<number>("epoch-chain-rebind");
+    const root = Container.create();
+    root.bind(swapped).toConstantValue(1);
+    const leaf = root.createChild().createChild().createChild();
+
+    expect(leaf.resolve(swapped)).toBe(1);
+
+    // Another chain moving the epoch forces this chain to re-sum, and the sum must still read as unchanged.
+    const other = Container.create();
+    other.bind(token<number>("epoch-other")).toConstantValue(7);
+
+    expect(leaf.resolve(swapped)).toBe(1);
+
+    root.rebind(swapped).toConstantValue(2);
+
+    expect(leaf.resolve(swapped)).toBe(2);
+
+    other.unbindAll();
+
+    expect(leaf.resolve(swapped)).toBe(2);
+  });
+
+  it("drops a descendant's compiled plan when a grandparent registers a hook after unrelated activity", () => {
+    const depToken = token<string>("epoch-plan-dep");
+
+    @injectable([depToken])
+    class Root {
+      constructor(readonly value: string) {}
+    }
+
+    const grandparent = Container.create();
+    grandparent.bind(depToken).toConstantValue("raw");
+    const leaf = grandparent.createChild().createChild();
+    leaf.bind(Root).toSelf().transient();
+
+    expect(leaf.resolve(Root).value).toBe("raw");
+
+    const other = Container.create();
+    other.bind(token<number>("epoch-other-plan")).toConstantValue(1);
+    grandparent.onActivation(depToken, (_context, value: string) => `${value}-activated`);
+
+    expect(leaf.resolve(Root).value).toBe("raw-activated");
+  });
+});
