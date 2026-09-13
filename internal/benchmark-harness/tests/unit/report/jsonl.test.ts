@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { isJsonlBenchObservationRow } from "#/report/jsonl";
+import type { JsonlBenchObservationRow } from "#/report/jsonl";
+import { isJsonlBenchObservationRow, jsonlBenchObservationRowToScenarioTrialResult } from "#/report/jsonl";
 
 /** A minimal row carrying every field the guard requires, config identity included. */
 function validRow(): Record<string, unknown> {
@@ -62,5 +63,18 @@ describe("isJsonlBenchObservationRow", () => {
     const row = validRow();
     delete row["samples"];
     expect(isJsonlBenchObservationRow(row)).toBe(false);
+  });
+});
+
+describe("jsonlBenchObservationRowToScenarioTrialResult", () => {
+  // Rows written before tiers existed were all contract rows, so the reader says so.
+  it("defaults a row without a tier to contract", () => {
+    const result = jsonlBenchObservationRowToScenarioTrialResult(validRow() as unknown as JsonlBenchObservationRow);
+    expect(result.tier).toBe("contract");
+  });
+
+  it("keeps the tier a row carries", () => {
+    const row = { ...validRow(), tier: "engine" } as unknown as JsonlBenchObservationRow;
+    expect(jsonlBenchObservationRowToScenarioTrialResult(row).tier).toBe("engine");
   });
 });

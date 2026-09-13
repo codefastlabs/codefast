@@ -1,7 +1,12 @@
+import type { BenchScenarioTier } from "#/child/bench-scenario";
 import type { ComparisonCompetitorSummary, ComparisonLibrary, IntraLibraryRow } from "#/report/comparison";
 import { buildComparisonRows, buildIntraLibraryRows, summarizeComparison } from "#/report/comparison";
 import { isIqrNoisy, isRatioUnreliable } from "#/report/reliability";
-import { resolveRunShapeFromEnvironment, resolveScenarioFilterFromEnvironment } from "#/shared/env-keys";
+import {
+  resolveRunShapeFromEnvironment,
+  resolveScenarioFilterFromEnvironment,
+  resolveTierFilterFromEnvironment,
+} from "#/shared/env-keys";
 import type { BenchRunShape } from "#/shared/env-keys";
 
 /**
@@ -13,7 +18,7 @@ import type { BenchRunShape } from "#/shared/env-keys";
  *
  * @since 0.6.0
  */
-export const COMPARISON_DOCUMENT_SCHEMA_VERSION = 2;
+export const COMPARISON_DOCUMENT_SCHEMA_VERSION = 3;
 
 /**
  * How the run was invoked, so a reader can tell a publishable run from a smoke or narrowed one.
@@ -35,6 +40,8 @@ export interface ComparisonDocumentRun {
    * cannot tell a key that means "no filter" from one this writer forgot.
    */
   readonly scenarioFilter: ReadonlyArray<string> | null;
+  /** The tier requested through `BENCH_TIER`, or `null` when every tier ran. */
+  readonly scenarioTier: BenchScenarioTier | null;
   readonly trialCount: number;
   readonly scenariosMeasured: number;
   /** Rows the subject collects, filtered or not; above `scenariosMeasured` means a partial run. */
@@ -172,6 +179,7 @@ export function buildComparisonDocument(
 ): ComparisonDocument {
   const { fingerprint } = pivot.report;
   const scenarioFilter = resolveScenarioFilterFromEnvironment();
+  const scenarioTier = resolveTierFilterFromEnvironment();
   const scenariosMeasured = pivot.report.scenarios.length;
   const shape = run.shape ?? resolveRunShapeFromEnvironment();
   return {
@@ -181,6 +189,7 @@ export function buildComparisonDocument(
       mode: shape.mode,
       isolated: shape.isolated,
       scenarioFilter: scenarioFilter === undefined ? null : [...scenarioFilter],
+      scenarioTier: scenarioTier ?? null,
       trialCount: pivot.report.trialCount,
       scenariosMeasured,
       scenariosAvailable: run.scenariosAvailable ?? scenariosMeasured,

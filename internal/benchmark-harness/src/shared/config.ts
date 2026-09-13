@@ -10,6 +10,11 @@ export interface BenchSubprocessConfig {
   readonly benchEntryFileName: string;
   /** Human-readable label for reports and UI. Falls back to `libraryName` when absent. */
   readonly displayName?: string;
+  /**
+   * Features the library's public API offers, in the suite's vocabulary; a scenario's `requires`
+   * is read against it to tell a row the library owes from one it cannot express.
+   */
+  readonly features?: ReadonlyArray<string> | undefined;
 }
 
 /**

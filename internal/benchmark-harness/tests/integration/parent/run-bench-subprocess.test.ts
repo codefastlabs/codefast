@@ -12,7 +12,7 @@ import {
   runBenchSubprocessesInterleaved,
   SubprocessExecutionError,
 } from "#/parent/run-bench-subprocess";
-import { BENCH_LIST_ENV_KEY, BENCH_MODE_ENV_KEY, BENCH_ONLY_ENV_KEY } from "#/shared/env-keys";
+import { BENCH_LIST_ENV_KEY, BENCH_MODE_ENV_KEY, BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#/shared/env-keys";
 
 const FAKE_SUITE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "fixtures", "fake-suite");
 
@@ -171,6 +171,22 @@ describe("discoverBenchScenarioIds", () => {
       discoverBenchScenarioIds(parametersFor(new RecordingDisplay(), { environmentOverrides: { FAKE_SCENARIOS: "" } })),
     ).rejects.toThrow(/no scenario ids/);
   });
+
+  it("returns each scenario's tier and required features alongside the ids", async () => {
+    const { scenarioListings } = await discoverBenchScenarioIds(
+      parametersFor(undefined, {
+        environmentOverrides: {
+          FAKE_SCENARIOS: "alpha,beta",
+          FAKE_TIERS: "beta",
+          FAKE_REQUIRES: "alpha=optional,transient",
+        },
+      }),
+    );
+    expect(scenarioListings).toEqual([
+      { id: "alpha", tier: "contract", requires: ["optional", "transient"] },
+      { id: "beta", tier: "engine", requires: [] },
+    ]);
+  });
 });
 
 describe("runBenchSubprocessesInterleaved", () => {
@@ -234,6 +250,32 @@ describe("runBenchSubprocessesInterleaved", () => {
     expect(payloads.get("left")?.trials[0]?.scenarios.map((scenario) => scenario.id)).toEqual(["beta"]);
     expect(display.calls).toContain("setScenarioCount left 1");
     expect(display.calls.filter((call) => call.startsWith("started left"))).toEqual(["started left beta"]);
+  });
+
+  // The tier is read from discovery, since the per-scenario BENCH_ONLY the loop sets would
+  // otherwise be the only filter a child sees.
+  it("honours BENCH_TIER from the parent environment and says so in the plan line", async () => {
+    vi.stubEnv(BENCH_TIER_ENV_KEY, "contract");
+    const display = new RecordingDisplay();
+    const payloads = await runBenchSubprocessesInterleaved(
+      [
+        {
+          key: "left",
+          parameters: parametersFor(undefined, {
+            environmentOverrides: { FAKE_SCENARIOS: "alpha,beta,gamma", FAKE_TIERS: "beta" },
+          }),
+        },
+      ],
+      display,
+    );
+    expect(payloads.get("left")?.trials[0]?.scenarios.map((scenario) => scenario.id)).toEqual(["alpha", "gamma"]);
+    expect(payloads.get("left")?.scenarioListings?.map((listing) => listing.tier)).toEqual([
+      "contract",
+      "engine",
+      "contract",
+    ]);
+    expect(display.calls).toContain("setScenarioCount left 2");
+    expect(display.logs.some((line) => line.includes("2 scenarios (contract tier) × 1 libraries"))).toBe(true);
   });
 });
 

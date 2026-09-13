@@ -11,12 +11,13 @@ let temporaryRoot: string;
 
 function documentWith(run: Partial<ComparisonDocument["run"]>): ComparisonDocument {
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     run: {
       runId: "2026-08-12T00-00-00-000Z",
       mode: "default",
       isolated: false,
       scenarioFilter: null,
+      scenarioTier: null,
       trialCount: 3,
       scenariosMeasured: 24,
       scenariosAvailable: 24,
@@ -89,6 +90,12 @@ describe("writeBenchRunArtifacts", () => {
     const pointerBefore = readFileSync(wholeRun.latestPointerPath, "utf8");
     write(documentWith({ scenarioFilter: ["one-row"], scenariosMeasured: 1 }));
     expect(readFileSync(wholeRun.latestPointerPath, "utf8")).toBe(pointerBefore);
+  });
+
+  it("does not move latest.json for a run narrowed to one tier", () => {
+    const paths = write(documentWith({ scenarioTier: "contract", scenariosMeasured: 50 }));
+    expect(existsSync(paths.jsonlPath)).toBe(true);
+    expect(existsSync(paths.latestPointerPath)).toBe(false);
   });
 
   it("does not move latest.json when the subject measured no rows", () => {

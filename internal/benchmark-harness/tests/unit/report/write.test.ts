@@ -32,6 +32,7 @@ function scenario(): ScenarioTrialResult {
   return {
     id: "constant-resolve",
     group: "micro",
+    tier: "contract",
     stress: false,
     excludeFromAggregates: false,
     batch: 1000,

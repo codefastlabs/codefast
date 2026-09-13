@@ -5,15 +5,19 @@ import {
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
   BENCH_MODE_ENV_KEY,
+  BENCH_ONLY_ENV_KEY,
   BENCH_PORT_ENV_KEY,
+  BENCH_TIER_ENV_KEY,
   BENCH_TRIALS_ENV_KEY,
   isEnvFlagEnabled,
+  isRunNarrowedByEnvironment,
   parseEnvInteger,
   parseScenarioFilter,
   PORT_ENV_KEY,
   resolveBenchModeFromEnvironment,
   resolvePreferredPortFromEnvironment,
   resolveRunShapeFromEnvironment,
+  resolveTierFilterFromEnvironment,
 } from "#/shared/env-keys";
 
 const FLAG_KEY = "BENCH_TEST_FLAG";
@@ -245,5 +249,46 @@ describe("resolveRunShapeFromEnvironment", () => {
     vi.stubEnv(BENCH_ISOLATE_ENV_KEY, "true");
     vi.stubEnv(BENCH_MODE_ENV_KEY, "full");
     expect(resolveRunShapeFromEnvironment()).toStrictEqual({ isolated: true, mode: "full" });
+  });
+});
+
+describe("resolveTierFilterFromEnvironment", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("reads an unset key as every tier", () => {
+    expect(resolveTierFilterFromEnvironment()).toBeUndefined();
+  });
+
+  it.each(["contract", "engine", " Engine "])("accepts %j in any case with surrounding blanks", (value) => {
+    vi.stubEnv(BENCH_TIER_ENV_KEY, value);
+    expect(resolveTierFilterFromEnvironment()).toBe(value.trim().toLowerCase());
+  });
+
+  // Running both tiers when one was asked for reports numbers for a different run than the one requested.
+  it("throws on an unknown tier rather than running everything", () => {
+    vi.stubEnv(BENCH_TIER_ENV_KEY, "public");
+    expect(() => resolveTierFilterFromEnvironment()).toThrow(`${BENCH_TIER_ENV_KEY}="public" is not a scenario tier`);
+  });
+});
+
+describe("isRunNarrowedByEnvironment", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("is false with neither filter set", () => {
+    expect(isRunNarrowedByEnvironment()).toBe(false);
+  });
+
+  it("is true under an id filter", () => {
+    vi.stubEnv(BENCH_ONLY_ENV_KEY, "alpha");
+    expect(isRunNarrowedByEnvironment()).toBe(true);
+  });
+
+  it("is true under a tier filter alone", () => {
+    vi.stubEnv(BENCH_TIER_ENV_KEY, "contract");
+    expect(isRunNarrowedByEnvironment()).toBe(true);
   });
 });

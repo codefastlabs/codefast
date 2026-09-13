@@ -4,7 +4,7 @@ import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate
 import type { ComparisonLibrary } from "#/report/comparison";
 import { buildComparisonDocument, COMPARISON_DOCUMENT_SCHEMA_VERSION } from "#/report/comparison-document";
 import { NOISY_IQR_FRACTION, THROUGHPUT_NOISE_CEILING_HZ_PER_OP } from "#/report/reliability";
-import { BENCH_ISOLATE_ENV_KEY, BENCH_MODE_ENV_KEY, BENCH_ONLY_ENV_KEY } from "#/shared/env-keys";
+import { BENCH_ISOLATE_ENV_KEY, BENCH_MODE_ENV_KEY, BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#/shared/env-keys";
 import type { Fingerprint } from "#/shared/protocol";
 
 const RUN = { runId: "2026-08-12T00-00-00-000Z" };
@@ -158,7 +158,12 @@ describe("buildComparisonDocument run provenance", () => {
 
   it("defaults to the default profile with no filter and no isolation", () => {
     const document = buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], RUN);
-    expect(document.run).toMatchObject({ isolated: false, mode: "default", scenarioFilter: null });
+    expect(document.run).toMatchObject({ isolated: false, mode: "default", scenarioFilter: null, scenarioTier: null });
+  });
+
+  it("records the tier the run was narrowed to", () => {
+    vi.stubEnv(BENCH_TIER_ENV_KEY, "engine");
+    expect(buildComparisonDocument(library("pivot", [scenario("a", 100)]), [], RUN).run.scenarioTier).toBe("engine");
   });
 
   it.each(["fast", "full"])("records the %s profile", (mode) => {

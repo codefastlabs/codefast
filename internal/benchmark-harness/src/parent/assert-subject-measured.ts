@@ -1,4 +1,10 @@
-import { BENCH_ONLY_ENV_KEY, resolveScenarioFilterFromEnvironment } from "#/shared/env-keys";
+import {
+  BENCH_ONLY_ENV_KEY,
+  BENCH_TIER_ENV_KEY,
+  isRunNarrowedByEnvironment,
+  resolveScenarioFilterFromEnvironment,
+  resolveTierFilterFromEnvironment,
+} from "#/shared/env-keys";
 import type { TrialPayload } from "#/shared/protocol";
 
 /**
@@ -17,13 +23,19 @@ export function assertSubjectMeasuredSomething(
   subjectLibraryName: string,
   subjectTrials: ReadonlyArray<TrialPayload>,
 ): void {
-  if (resolveScenarioFilterFromEnvironment() === undefined) {
+  if (!isRunNarrowedByEnvironment()) {
     return;
   }
   if (subjectTrials.some((trial) => trial.scenarios.length > 0)) {
     return;
   }
-  throw new Error(
-    `${BENCH_ONLY_ENV_KEY}="${process.env[BENCH_ONLY_ENV_KEY] ?? ""}" matched no scenario in ${subjectLibraryName}.`,
-  );
+  const asked = [
+    resolveScenarioFilterFromEnvironment() === undefined
+      ? []
+      : [`${BENCH_ONLY_ENV_KEY}="${process.env[BENCH_ONLY_ENV_KEY] ?? ""}"`],
+    resolveTierFilterFromEnvironment() === undefined
+      ? []
+      : [`${BENCH_TIER_ENV_KEY}="${process.env[BENCH_TIER_ENV_KEY] ?? ""}"`],
+  ].flat();
+  throw new Error(`${asked.join(" ")} matched no scenario in ${subjectLibraryName}.`);
 }

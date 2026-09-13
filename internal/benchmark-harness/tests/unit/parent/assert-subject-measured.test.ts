@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { assertSubjectMeasuredSomething } from "#/parent/assert-subject-measured";
-import { BENCH_ONLY_ENV_KEY } from "#/shared/env-keys";
+import { BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#/shared/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 
 const SUBJECT = "@codefast/tailwind-variants";
@@ -48,5 +48,20 @@ describe("assertSubjectMeasuredSomething", () => {
   it("treats a filter of only separators as no filter", () => {
     vi.stubEnv(BENCH_ONLY_ENV_KEY, " , ,");
     expect(() => assertSubjectMeasuredSomething(SUBJECT, [trialWithScenarioCount(0)])).not.toThrow();
+  });
+
+  it("rejects a tier that matched no row on the subject", () => {
+    vi.stubEnv(BENCH_TIER_ENV_KEY, "engine");
+    expect(() => assertSubjectMeasuredSomething(SUBJECT, [trialWithScenarioCount(0)])).toThrow(
+      `${BENCH_TIER_ENV_KEY}="engine" matched no scenario in ${SUBJECT}`,
+    );
+  });
+
+  it("names both filters when both narrowed the run to nothing", () => {
+    vi.stubEnv(BENCH_ONLY_ENV_KEY, "alpha");
+    vi.stubEnv(BENCH_TIER_ENV_KEY, "engine");
+    expect(() => assertSubjectMeasuredSomething(SUBJECT, [trialWithScenarioCount(0)])).toThrow(
+      `${BENCH_ONLY_ENV_KEY}="alpha" ${BENCH_TIER_ENV_KEY}="engine" matched no scenario in ${SUBJECT}`,
+    );
   });
 });

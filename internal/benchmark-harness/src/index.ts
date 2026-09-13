@@ -5,6 +5,7 @@ export { resolveDisplayName } from "#/shared/config";
 
 export type { AssertBenchEnvKeysOptions, BenchEnvSpec, BenchMode, IntegerEnvBounds } from "#/shared/env-keys";
 export {
+  assertBenchEnvKeys,
   BENCH_ENV_SPECS,
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
@@ -12,25 +13,33 @@ export {
   BENCH_ONLY_ENV_KEY,
   BENCH_PORT_ENV_KEY,
   BENCH_RESULTS_DIR_NAME,
+  BENCH_TIER_ENV_KEY,
   BENCH_TRIALS_ENV_KEY,
   BENCH_VERBOSE_ENV_KEY,
   INTERNAL_BENCH_ENV_KEYS,
+  isEnvFlagEnabled,
+  isRunNarrowedByEnvironment,
   MINIMUM_TRIAL_COUNT,
   OBSERVATIONS_FILE_NAME,
-  PORT_ENV_KEY,
-  USER_BENCH_ENV_KEYS,
-  assertBenchEnvKeys,
-  isEnvFlagEnabled,
   parseEnvInteger,
   parseScenarioFilter,
+  PORT_ENV_KEY,
   resolveBenchModeFromEnvironment,
   resolvePreferredPortFromEnvironment,
   resolveScenarioFilterFromEnvironment,
+  resolveTierFilterFromEnvironment,
+  USER_BENCH_ENV_KEYS,
 } from "#/shared/env-keys";
 
 export { assertSubjectMeasuredSomething } from "#/parent/assert-subject-measured";
 
-export type { Fingerprint, ScenarioTrialResult, SubprocessPayload, TrialPayload } from "#/shared/protocol";
+export type {
+  Fingerprint,
+  ScenarioListing,
+  ScenarioTrialResult,
+  SubprocessPayload,
+  TrialPayload,
+} from "#/shared/protocol";
 export {
   BENCH_RESULT_JSON_END,
   BENCH_RESULT_JSON_START,
@@ -40,8 +49,8 @@ export {
 
 export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/child/bench-options";
 
-export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario } from "#/child/bench-scenario";
-export { isAsyncScenario } from "#/child/bench-scenario";
+export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario, BenchScenarioTier } from "#/child/bench-scenario";
+export { DEFAULT_BENCH_SCENARIO_TIER, isAsyncScenario, tierOfScenario } from "#/child/bench-scenario";
 
 export type { CreateRunAllTrialsParameters, RunAllTrials } from "#/child/create-run-all-trials";
 export { createRunAllTrials } from "#/child/create-run-all-trials";
@@ -51,6 +60,7 @@ export { collectFingerprint } from "#/child/fingerprint";
 export type { RunBenchmarkChildMainParameters } from "#/child/run-benchmark-child-main";
 export {
   exitBenchmarkChildProcessOnFailure,
+  listScenarios,
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
 } from "#/child/run-benchmark-child-main";
@@ -114,8 +124,17 @@ export type {
 } from "#/parent/bench-run-artifacts";
 export { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#/parent/bench-run-artifacts";
 
-export type { BenchScenarioInventory, BenchScenarioInventoryEntry } from "#/parent/run-bench-listing-main";
-export { buildBenchScenarioInventory, runBenchScenarioListingMain } from "#/parent/run-bench-listing-main";
+export type {
+  BenchLibraryCoverage,
+  BenchScenarioInventory,
+  BenchScenarioInventoryEntry,
+} from "#/parent/run-bench-listing-main";
+export {
+  buildBenchScenarioInventory,
+  buildScenarioInventoryFromListings,
+  formatCoverageLines,
+  runBenchScenarioListingMain,
+} from "#/parent/run-bench-listing-main";
 
 export type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
 export { buildLibraryReport } from "#/report/aggregate";

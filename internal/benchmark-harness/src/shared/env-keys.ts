@@ -3,6 +3,7 @@
  *
  * @since 0.3.16-canary.0
  */
+import type { BenchScenarioTier } from "#/child/bench-scenario";
 
 /**
  * Timing profile for the run: `fast`, `default`, or `full`.
@@ -62,6 +63,14 @@ export const BENCH_ONLY_ENV_KEY = "BENCH_ONLY";
  */
 export const BENCH_LIST_ENV_KEY = "BENCH_LIST";
 /**
+ * Restricts the run to one scenario tier: `contract` rows compare libraries on public API, `engine`
+ * rows measure the subject's internals.
+ *
+ * @remarks Honoured at both levels like `BENCH_ONLY`, and a tier-filtered run is a narrowed run: it
+ * writes its own directory and leaves `latest.json` alone.
+ */
+export const BENCH_TIER_ENV_KEY = "BENCH_TIER";
+/**
  * File written inside each timestamped run directory by {@link writeJsonlRun}.
  *
  * @since 0.3.16-canary.0
@@ -92,6 +101,9 @@ const MAXIMUM_PORT = 65_535;
 
 /** Accepted {@link BENCH_MODE_ENV_KEY} values, in escalating cost order. */
 const BENCH_MODE_VALUES = ["fast", "default", "full"] as const;
+
+/** Accepted {@link BENCH_TIER_ENV_KEY} values. */
+const BENCH_TIER_VALUES: ReadonlyArray<BenchScenarioTier> = ["contract", "engine"];
 
 /** The Turbo tasks that actually run a suite, as opposed to serving its history. */
 const MEASURING_TURBO_TASKS = ["bench", "bench:fast", "bench:full", "bench:isolate", "bench:verbose"] as const;
@@ -133,6 +145,7 @@ export const BENCH_ENV_SPECS: Readonly<Record<string, BenchEnvSpec>> = {
   BENCH_MODE: { audience: "user", kind: "enum", turboTasks: MEASURING_TURBO_TASKS, values: BENCH_MODE_VALUES },
   BENCH_ONLY: { audience: "user", kind: "list", turboTasks: MEASURING_TURBO_TASKS },
   BENCH_PORT: { audience: "user", kind: "integer", max: MAXIMUM_PORT, min: 1, turboTasks: ["bench:serve"] },
+  BENCH_TIER: { audience: "user", kind: "enum", turboTasks: MEASURING_TURBO_TASKS, values: BENCH_TIER_VALUES },
   BENCH_TRIALS: { audience: "user", kind: "integer", min: MINIMUM_TRIAL_COUNT, turboTasks: MEASURING_TURBO_TASKS },
   BENCH_VERBOSE: { audience: "user", kind: "flag", turboTasks: MEASURING_TURBO_TASKS },
   PORT: { audience: "user", kind: "integer", max: MAXIMUM_PORT, min: 1, turboTasks: ["bench:serve"] },
@@ -361,6 +374,34 @@ export function parseScenarioFilter(value: string | undefined): ReadonlySet<stri
     .map((id) => id.trim())
     .filter((id) => id.length > 0);
   return ids.length === 0 ? undefined : new Set(ids);
+}
+
+/**
+ * Resolves the tier filter from {@link BENCH_TIER_ENV_KEY}; `undefined` means every tier runs.
+ *
+ * @remarks Throws on an unknown tier rather than running everything: a run asked for one tier and
+ * silently given both reports numbers for a different run than the one asked for.
+ */
+export function resolveTierFilterFromEnvironment(): BenchScenarioTier | undefined {
+  const { normalizedValue, rawValue } = readNormalized(BENCH_TIER_ENV_KEY);
+  if (normalizedValue.length === 0) {
+    return undefined;
+  }
+  const tier = BENCH_TIER_VALUES.find((candidate) => candidate === normalizedValue);
+  if (tier === undefined) {
+    throw new Error(`${BENCH_TIER_ENV_KEY}="${rawValue}" is not a scenario tier. Use ${BENCH_TIER_VALUES.join(", ")}.`);
+  }
+  return tier;
+}
+
+/**
+ * Whether the environment narrows the run below the whole suite, by id or by tier.
+ *
+ * @remarks The one predicate the artifacts writer and the subject guard share: a narrowed run must
+ * never move `latest.json`, and a filter that matched nothing on the subject is an error.
+ */
+export function isRunNarrowedByEnvironment(): boolean {
+  return resolveScenarioFilterFromEnvironment() !== undefined || resolveTierFilterFromEnvironment() !== undefined;
 }
 
 /**
