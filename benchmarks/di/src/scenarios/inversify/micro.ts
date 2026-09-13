@@ -13,6 +13,8 @@ import {
   CONSTANT_RESOLVE_BATCH,
   NAMED_CONSTANT_GET,
   NAMED_RESOLVE_BATCH,
+  namedResolveSlotsDescriptor,
+  SLOT_COUNTS,
   SINGLETON_CLASS_1_DEP,
   TRANSIENT_CLASS_1_DEP,
 } from "#/fixtures/scenario-parity";
@@ -116,6 +118,31 @@ function buildNamedConstantGetScenario(): BenchScenario {
   };
 }
 
+// The named-selection axis: the last-bound name is the target, the far end of any linear scan.
+function buildNamedResolveSlotsScenario(count: number): BenchScenario {
+  const slotsIdentifier = Symbol(`bench-inv-micro-named-slots-${String(count)}`);
+  const container = new Container({ jitless: false });
+  for (let index = 0; index < count; index++) {
+    container
+      .bind<number>(slotsIdentifier)
+      .toConstantValue(index)
+      .whenNamed(`slot-${String(index)}`);
+  }
+  const target = { name: `slot-${String(count - 1)}` } as const;
+  container.get<number>(slotsIdentifier, target);
+
+  return {
+    ...namedResolveSlotsDescriptor(count),
+    what: `get() one named constant out of ${String(count)} whenNamed() bindings on one identifier`,
+    batch: NAMED_RESOLVE_BATCH,
+    sanity: () => container.get<number>(slotsIdentifier, target) === count - 1,
+    build: () =>
+      batched(NAMED_RESOLVE_BATCH, () => {
+        container.get<number>(slotsIdentifier, target);
+      }),
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
@@ -125,5 +152,6 @@ export function buildInversifyMicroScenarios(): ReadonlyArray<BenchScenario> {
     buildSingletonClassOneDepScenario(),
     buildTransientClassOneDepScenario(),
     buildNamedConstantGetScenario(),
+    ...SLOT_COUNTS.map((count) => buildNamedResolveSlotsScenario(count)),
   ];
 }

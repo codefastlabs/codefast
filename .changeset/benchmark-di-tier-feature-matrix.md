@@ -30,3 +30,7 @@ offers.
   `dispose`) and ditox (`onRemoved` + `removeAll`), so the teardown walk reads apart from the single unbind.
   `container-create-empty`, `create-child-empty` and `bind-128-plain` move into the shared descriptors and run on all
   seven libraries, so a cold graph row's first resolve becomes subtractable from its bind and construction.
+- Two scale axes. `child-depth-1/2/4/8-resolve` replaces the single depth-2 child row on all seven libraries, so a
+  parent walk that is free reads apart from one that is linear in the chain. `named-resolve-slots-1/4/16/64` and
+  `tagged-resolve-slots-1/4/16/64` pick the last-bound name or tag out of N bindings on one token, on codefast and
+  inversify, so a selection that is indexed reads apart from one that scans.

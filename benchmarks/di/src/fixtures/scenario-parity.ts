@@ -82,6 +82,39 @@ export const OPTIONAL_MISSING_TRANSIENT = {
 } as const satisfies ScenarioDescriptor;
 
 /**
+ * The binding counts the one-token selection axes are measured at.
+ */
+export const SLOT_COUNTS = [1, 4, 16, 64] as const;
+
+/**
+ * One point on the named-selection axis: one name picked out of `count` named bindings on a token.
+ */
+export function namedResolveSlotsDescriptor(count: number): ScenarioDescriptor {
+  return {
+    id: `named-resolve-slots-${String(count)}`,
+    tier: "contract",
+    requires: ["name-hint"],
+    facets: ["name"],
+    group: "micro",
+    what: `resolve one named constant out of ${String(count)} named bindings on one token`,
+  };
+}
+
+/**
+ * One point on the tagged-selection axis: one tag picked out of `count` tagged bindings on a token.
+ */
+export function taggedResolveSlotsDescriptor(count: number): ScenarioDescriptor {
+  return {
+    id: `tagged-resolve-slots-${String(count)}`,
+    tier: "contract",
+    requires: ["tag-hint"],
+    facets: ["tag"],
+    group: "micro",
+    what: `resolve one tagged constant out of ${String(count)} tagged bindings on one token`,
+  };
+}
+
+/**
  * @since 0.5.0-canary.7
  */
 export const NAMED_CONSTANT_GET = {
@@ -352,16 +385,26 @@ export const CHILD_RESOLVE_BATCH = 500;
 export const REQUEST_LIFECYCLE_BATCH = 100;
 
 /**
- * @since 0.5.0-canary.7
+ * The child depths the parent-walk axis is measured at; depth 2 is the realistic per-request shape.
  */
-export const CHILD_DEPTH_2_RESOLVE = {
-  id: "child-depth-2-resolve",
-  tier: "contract",
-  requires: ["child-container"],
-  facets: ["scope"],
-  group: "scope",
-  what: "resolve a parent binding from a depth-2 child (realistic per-request shape)",
-} as const satisfies ScenarioDescriptor;
+export const CHILD_DEPTHS = [1, 2, 4, 8] as const;
+
+/**
+ * One point on the parent-walk axis: a root binding resolved from a child `depth` levels down.
+ *
+ * @remarks A single depth cannot tell a walk that is free from one that is linear in the chain; the
+ * axis can.
+ */
+export function childDepthResolveDescriptor(depth: number): ScenarioDescriptor {
+  return {
+    id: `child-depth-${String(depth)}-resolve`,
+    tier: "contract",
+    requires: ["child-container"],
+    facets: ["scope"],
+    group: "scope",
+    what: `resolve a root binding from a depth-${String(depth)} child — the parent walk a per-request container pays`,
+  };
+}
 
 /**
  * @since 0.5.0-canary.7

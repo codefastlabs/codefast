@@ -1,7 +1,7 @@
 /**
  * tsyringe — scope benchmarks. Parallel to `../codefast/scope.ts`.
  *
- *   - `child-depth-2-resolve`: an app-container registration resolved from a grandchild,
+ *   - `child-depth-N-resolve`: an app-container registration resolved from a child N levels down,
  *     walking the parent chain the way the other hierarchical containers do.
  *   - `child-request-lifecycle-create-resolve-dispose`: two nested children per request, the
  *     request's own registrations on the first, resolve from the second, then `dispose()` both.
@@ -14,9 +14,10 @@ import "reflect-metadata";
 import { container as tsyringeRootContainer, injectable, Lifecycle } from "tsyringe";
 
 import {
-  CHILD_DEPTH_2_RESOLVE,
+  CHILD_DEPTHS,
   CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
   CHILD_RESOLVE_BATCH,
+  childDepthResolveDescriptor,
   REQUEST_LIFECYCLE_BATCH,
   SCOPED_BINDING_PER_CHILD,
   SCOPED_PER_CHILD_BATCH,
@@ -24,22 +25,24 @@ import {
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-function buildChildDepthTwoResolveScenario(): BenchScenario {
-  const childScopeLeafToken = Symbol("bench-tsyringe-child2-leaf");
+function buildChildDepthResolveScenario(depth: number): BenchScenario {
+  const childScopeLeafToken = Symbol(`bench-tsyringe-child${String(depth)}-leaf`);
   const rootContainer = tsyringeRootContainer.createChildContainer();
   rootContainer.register<number>(childScopeLeafToken, { useValue: 42 });
-  const firstLevelChildContainer = rootContainer.createChildContainer();
-  const secondLevelChildContainer = firstLevelChildContainer.createChildContainer();
-  secondLevelChildContainer.resolve<number>(childScopeLeafToken);
+  let deepestContainer = rootContainer;
+  for (let level = 0; level < depth; level++) {
+    deepestContainer = deepestContainer.createChildContainer();
+  }
+  deepestContainer.resolve<number>(childScopeLeafToken);
 
   return {
-    ...CHILD_DEPTH_2_RESOLVE,
-    what: "resolve an app registration from a depth-2 createChildContainer() chain (realistic per-request shape)",
+    ...childDepthResolveDescriptor(depth),
+    what: `resolve an app registration from a depth-${String(depth)} createChildContainer() chain — the parent walk a per-request container pays`,
     batch: CHILD_RESOLVE_BATCH,
-    sanity: () => secondLevelChildContainer.resolve<number>(childScopeLeafToken) === 42,
+    sanity: () => deepestContainer.resolve<number>(childScopeLeafToken) === 42,
     build: () =>
       batched(CHILD_RESOLVE_BATCH, () => {
-        secondLevelChildContainer.resolve<number>(childScopeLeafToken);
+        deepestContainer.resolve<number>(childScopeLeafToken);
       }),
   };
 }
@@ -134,7 +137,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
  */
 export function buildTsyringeScopeScenarios(): ReadonlyArray<BenchScenario> {
   return [
-    buildChildDepthTwoResolveScenario(),
+    ...CHILD_DEPTHS.map((depth) => buildChildDepthResolveScenario(depth)),
     buildChildRequestLifecycleCreateResolveDisposeScenario(),
     buildScopedBindingPerChildScenario(),
   ];

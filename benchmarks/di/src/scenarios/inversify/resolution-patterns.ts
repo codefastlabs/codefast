@@ -16,9 +16,11 @@ import {
   OPTIONAL_MISS_BATCH,
   RESOLVE_OPTIONAL_HIT,
   RESOLVE_OPTIONAL_MISS,
+  SLOT_COUNTS,
   TAGGED_BINDING_RESOLVE,
   TAGGED_ENVS,
   TAGGED_RESOLVE_BATCH,
+  taggedResolveSlotsDescriptor,
   TARGET_TAG_VALUE,
 } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
@@ -105,9 +107,38 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
   };
 }
 
+// The tagged-selection axis: the last-bound tag value is the target, the far end of any linear scan.
+function buildTaggedResolveSlotsScenario(count: number): BenchScenario {
+  const slotsIdentifier = Symbol(`bench-inv-rp-tagged-slots-${String(count)}`);
+  const container = new Container({ jitless: false });
+  for (let index = 0; index < count; index++) {
+    const env = `env-${String(index)}`;
+    container.bind<TaggedService>(slotsIdentifier).toConstantValue({ env }).whenTagged("env", env);
+  }
+  const targetEnv = `env-${String(count - 1)}`;
+  const target = { tag: { key: "env", value: targetEnv } } as const;
+  container.get<TaggedService>(slotsIdentifier, target);
+
+  return {
+    ...taggedResolveSlotsDescriptor(count),
+    what: `get() one tagged constant out of ${String(count)} whenTagged() bindings on one identifier`,
+    batch: TAGGED_RESOLVE_BATCH,
+    sanity: () => container.get<TaggedService>(slotsIdentifier, target).env === targetEnv,
+    build: () =>
+      batched(TAGGED_RESOLVE_BATCH, () => {
+        container.get(slotsIdentifier, target);
+      }),
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildInversifyResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildGetOptionalHitScenario(), buildGetOptionalMissScenario(), buildTaggedBindingResolveScenario()];
+  return [
+    buildGetOptionalHitScenario(),
+    buildGetOptionalMissScenario(),
+    buildTaggedBindingResolveScenario(),
+    ...SLOT_COUNTS.map((count) => buildTaggedResolveSlotsScenario(count)),
+  ];
 }

@@ -1,9 +1,9 @@
 /**
  * ditox — scope benchmarks. Parallel to `../codefast/scope.ts`.
  *
- *   - `child-depth-2-resolve`: a root binds a constant, and a depth-2 child resolves
- *     it by walking the parent chain — aligns against every library with real
- *     container hierarchy (di, inversify, injection-js).
+ *   - `child-depth-N-resolve`: a root binds a constant, and a child N levels down resolves
+ *     it by walking the parent chain — aligns against every library with a real
+ *     container hierarchy.
  *
  *   - `child-request-lifecycle-create-resolve-dispose`: two nested children per request, the
  *     request's own factories bound on the first, resolve from the second, then `removeAll()` both.
@@ -16,9 +16,10 @@
 import { createContainer, injectable, token } from "ditox";
 
 import {
-  CHILD_DEPTH_2_RESOLVE,
+  CHILD_DEPTHS,
   CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
   CHILD_RESOLVE_BATCH,
+  childDepthResolveDescriptor,
   REQUEST_LIFECYCLE_BATCH,
   SCOPED_BINDING_PER_CHILD,
   SCOPED_PER_CHILD_BATCH,
@@ -26,21 +27,23 @@ import {
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-function buildChildDepthTwoResolveScenario(): BenchScenario {
-  const childScopeLeafToken = token<number>("bench-ditox-child2-leaf");
+function buildChildDepthResolveScenario(depth: number): BenchScenario {
+  const childScopeLeafToken = token<number>(`bench-ditox-child${String(depth)}-leaf`);
   const rootContainer = createContainer();
   rootContainer.bindValue(childScopeLeafToken, 42);
-  const firstLevelChildContainer = createContainer(rootContainer);
-  const secondLevelChildContainer = createContainer(firstLevelChildContainer);
-  secondLevelChildContainer.resolve(childScopeLeafToken);
+  let deepestContainer = rootContainer;
+  for (let level = 0; level < depth; level++) {
+    deepestContainer = createContainer(deepestContainer);
+  }
+  deepestContainer.resolve(childScopeLeafToken);
 
   return {
-    ...CHILD_DEPTH_2_RESOLVE,
+    ...childDepthResolveDescriptor(depth),
     batch: CHILD_RESOLVE_BATCH,
-    sanity: () => secondLevelChildContainer.resolve(childScopeLeafToken) === 42,
+    sanity: () => deepestContainer.resolve(childScopeLeafToken) === 42,
     build: () =>
       batched(CHILD_RESOLVE_BATCH, () => {
-        secondLevelChildContainer.resolve(childScopeLeafToken);
+        deepestContainer.resolve(childScopeLeafToken);
       }),
   };
 }
@@ -136,7 +139,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
  */
 export function buildDitoxScopeScenarios(): ReadonlyArray<BenchScenario> {
   return [
-    buildChildDepthTwoResolveScenario(),
+    ...CHILD_DEPTHS.map((depth) => buildChildDepthResolveScenario(depth)),
     buildChildRequestLifecycleCreateResolveDisposeScenario(),
     buildScopedBindingPerChildScenario(),
   ];

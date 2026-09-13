@@ -1,8 +1,8 @@
 /**
  * Awilix — scope benchmarks. Parallel to `../codefast/scope.ts`.
  *
- *   - `child-depth-2-resolve`: a root registration resolved from a grandchild scope, walking
- *     the scope chain the way di, inversify, ditox and injection-js walk their parents.
+ *   - `child-depth-N-resolve`: a root registration resolved from a scope N levels down, walking
+ *     the scope chain the way the other hierarchical containers walk their parents.
  *   - `child-request-lifecycle-create-resolve-dispose`: two nested scopes per request, the
  *     request's own registrations on the first, resolve from the second, then `dispose()` both.
  *   - `scoped-binding-per-child`: a `scoped`-lifetime registration is shared within one
@@ -13,9 +13,10 @@
 import { asFunction, asValue, createContainer } from "awilix";
 
 import {
-  CHILD_DEPTH_2_RESOLVE,
+  CHILD_DEPTHS,
   CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
   CHILD_RESOLVE_BATCH,
+  childDepthResolveDescriptor,
   REQUEST_LIFECYCLE_BATCH,
   SCOPED_BINDING_PER_CHILD,
   SCOPED_PER_CHILD_BATCH,
@@ -23,21 +24,23 @@ import {
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-function buildChildDepthTwoResolveScenario(): BenchScenario {
+function buildChildDepthResolveScenario(depth: number): BenchScenario {
   const rootContainer = createContainer();
   rootContainer.register({ leaf: asValue(42) });
-  const firstLevelScope = rootContainer.createScope();
-  const secondLevelScope = firstLevelScope.createScope();
-  secondLevelScope.resolve<number>("leaf");
+  let deepestScope = rootContainer;
+  for (let level = 0; level < depth; level++) {
+    deepestScope = deepestScope.createScope();
+  }
+  deepestScope.resolve<number>("leaf");
 
   return {
-    ...CHILD_DEPTH_2_RESOLVE,
-    what: "resolve a root registration from a depth-2 createScope() chain (realistic per-request shape)",
+    ...childDepthResolveDescriptor(depth),
+    what: `resolve a root registration from a depth-${String(depth)} createScope() chain — the parent walk a per-request scope pays`,
     batch: CHILD_RESOLVE_BATCH,
-    sanity: () => secondLevelScope.resolve<number>("leaf") === 42,
+    sanity: () => deepestScope.resolve<number>("leaf") === 42,
     build: () =>
       batched(CHILD_RESOLVE_BATCH, () => {
-        secondLevelScope.resolve<number>("leaf");
+        deepestScope.resolve<number>("leaf");
       }),
   };
 }
@@ -135,7 +138,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
  */
 export function buildAwilixScopeScenarios(): ReadonlyArray<BenchScenario> {
   return [
-    buildChildDepthTwoResolveScenario(),
+    ...CHILD_DEPTHS.map((depth) => buildChildDepthResolveScenario(depth)),
     buildChildRequestLifecycleCreateResolveDisposeScenario(),
     buildScopedBindingPerChildScenario(),
   ];

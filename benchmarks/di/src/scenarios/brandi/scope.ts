@@ -1,7 +1,7 @@
 /**
  * Brandi — scope benchmarks. Parallel to `../codefast/scope.ts`.
  *
- * `child-depth-2-resolve`: a root binding read from the end of a two-link `extend()` chain,
+ * `child-depth-N-resolve`: a root binding read from the end of an N-link `extend()` chain,
  * the parent walk every hierarchical container pays per request.
  *
  * `scoped-binding-per-child`: an `inContainerScope` binding is shared within one
@@ -13,30 +13,33 @@
 import { createContainer, token } from "brandi";
 
 import {
-  CHILD_DEPTH_2_RESOLVE,
+  CHILD_DEPTHS,
   CHILD_RESOLVE_BATCH,
+  childDepthResolveDescriptor,
   SCOPED_BINDING_PER_CHILD,
   SCOPED_PER_CHILD_BATCH,
 } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-function buildChildDepthTwoResolveScenario(): BenchScenario {
-  const childScopeLeafToken = token<number>("bench-brandi-child2-leaf");
+function buildChildDepthResolveScenario(depth: number): BenchScenario {
+  const childScopeLeafToken = token<number>(`bench-brandi-child${String(depth)}-leaf`);
   const rootContainer = createContainer();
   rootContainer.bind(childScopeLeafToken).toConstant(42);
-  const firstLevelChildContainer = createContainer().extend(rootContainer);
-  const secondLevelChildContainer = createContainer().extend(firstLevelChildContainer);
-  secondLevelChildContainer.get(childScopeLeafToken);
+  let deepestContainer = rootContainer;
+  for (let level = 0; level < depth; level++) {
+    deepestContainer = createContainer().extend(deepestContainer);
+  }
+  deepestContainer.get(childScopeLeafToken);
 
   return {
-    ...CHILD_DEPTH_2_RESOLVE,
-    what: "get() a root binding from the end of a depth-2 extend() chain (realistic per-request shape)",
+    ...childDepthResolveDescriptor(depth),
+    what: `get() a root binding from the end of a depth-${String(depth)} extend() chain — the parent walk a per-request container pays`,
     batch: CHILD_RESOLVE_BATCH,
-    sanity: () => secondLevelChildContainer.get(childScopeLeafToken) === 42,
+    sanity: () => deepestContainer.get(childScopeLeafToken) === 42,
     build: () =>
       batched(CHILD_RESOLVE_BATCH, () => {
-        secondLevelChildContainer.get(childScopeLeafToken);
+        deepestContainer.get(childScopeLeafToken);
       }),
   };
 }
@@ -91,5 +94,5 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
  * Builds brandi's scope benchmark scenarios.
  */
 export function buildBrandiScopeScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildChildDepthTwoResolveScenario(), buildScopedBindingPerChildScenario()];
+  return [...CHILD_DEPTHS.map((depth) => buildChildDepthResolveScenario(depth)), buildScopedBindingPerChildScenario()];
 }
