@@ -88,6 +88,16 @@ actually ran. Forcing a fully-transient tree onto a container that caches its re
 than the library, so those rows are omitted rather than faked. A scenario whose two sides do incomparable amounts of
 work declares `excludeFromAggregates` and stays in the table but out of the medians and geomeans.
 
+### Reading the console
+
+The run ends with a scoreboard rather than the per-scenario table: one row per competitor with `W · P · L`, the
+comparable count, the median and geomean ratio and the worst loss; a geomean per group with a column per competitor; and
+the reliable losses one per line, the `†` ones counted rather than listed. When `bench-results/latest.json` names a run
+of the same profile, shape and trial count on this machine, each aggregate gains a `Δ prev` over the rows both runs
+measured and the regressions beyond noise are listed — the A/B question the guide asks, answered on the spot. A closing
+card states the timing, the profile, the run order, sanity failures, whether `latest.json` moved, and the library
+versions. The per-scenario table is one `pnpm bench:verbose` or `pnpm bench:report` away.
+
 ## Instruments
 
 `src/instruments/` holds what the comparison table cannot answer, and nothing else. Today that is one tool:

@@ -119,6 +119,11 @@ rotating which goes first — so drift over the run no longer lands on whoever w
 Environment section names the policy it used. Without it, one process per library runs that library's whole suite and
 there is nothing to interleave, so those ratios stay provisional.
 
+The console closes with a scoreboard — `W · P · L`, comparable count, median, geomean and worst loss per competitor — a
+geomean per group, the reliable losses, a diff against the run `latest.json` names when it is the same configuration on
+this machine, and a run card with timing, profile, sanity failures and versions. The per-scenario table is one
+`pnpm bench:verbose` or `pnpm bench:report` away.
+
 ## Documentation
 
 - [`../di/BENCH_GUIDE.md`](../di/BENCH_GUIDE.md) — the measurement standard both suites hold a number to.

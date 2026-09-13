@@ -15,11 +15,14 @@ import {
 import { resolveBenchParentExitCode } from "@internal/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import { runBenchLibraries } from "@internal/benchmark-harness/parent/run-bench-libraries";
 import { renderComparisonConsoleReport } from "@internal/benchmark-harness/report/comparison";
+import { printRunCard } from "@internal/benchmark-harness/report/run-card";
+import { prepareRunDiff } from "@internal/benchmark-harness/report/run-diff";
 import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
 import {
   assertBenchEnvKeys,
   BENCH_VERBOSE_ENV_KEY,
   isEnvFlagEnabled,
+  resolveRunShapeFromEnvironment,
 } from "@internal/benchmark-harness/shared/env-keys";
 
 import { assembleDiComparison } from "#/harness/comparison";
@@ -31,7 +34,7 @@ const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
-function rebuildCodefastDiPackage(): void {
+function rebuildCodefastDiPackage(): number {
   console.log(`Rebuilding ${CODEFAST_DI.libraryName} before bench…`);
   const startedAtMs = performance.now();
   const result = spawnSync("pnpm", ["--filter", CODEFAST_DI.libraryName, "build"], {
@@ -44,12 +47,14 @@ function rebuildCodefastDiPackage(): void {
     console.error(result.stderr || result.stdout);
     throw new Error(`Build failed for ${CODEFAST_DI.libraryName}, exit ${String(result.status)}`);
   }
-  const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
-  console.log(`Finished rebuild of ${CODEFAST_DI.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
+  const elapsedMs = performance.now() - startedAtMs;
+  console.log(`Finished rebuild of ${CODEFAST_DI.libraryName} (${(elapsedMs / 1000).toFixed(1)}s wall).`);
+  return elapsedMs;
 }
 
 async function main(): Promise<void> {
   assertBenchEnvKeys();
+  const runStartedAtMs = performance.now();
   console.log("\n@benchmark/di — head-to-head bench, each library in its canonical runtime mode.");
   const labelWidth = Math.max(...BENCH_LIBRARIES.map((library) => resolveDisplayName(library).length));
   for (const library of BENCH_LIBRARIES) {
@@ -61,7 +66,7 @@ async function main(): Promise<void> {
       : `Progress per library follows. \`${BENCH_VERBOSE_ENV_KEY}=true\` (\`pnpm bench:verbose\`) streams every child line and prints the per-scenario table.\n`,
   );
 
-  rebuildCodefastDiPackage();
+  const rebuildMs = rebuildCodefastDiPackage();
 
   const { payloads, runOrder } = await runBenchLibraries({
     packageRootDirectory,
@@ -69,7 +74,6 @@ async function main(): Promise<void> {
     verbose: VERBOSE_MODE_ENABLED,
   });
   const codefastPayload = payloads.get(CODEFAST_DI.libraryName)!;
-  console.log(`\n[bench] Run order: ${runOrder}`);
 
   assertSubjectMeasuredSomething(CODEFAST_DI.libraryName, codefastPayload.trials);
 
@@ -93,15 +97,37 @@ async function main(): Promise<void> {
     runOrder,
     scenariosAvailable: codefastPayload.scenarioIds?.length,
   });
+  const shape = resolveRunShapeFromEnvironment();
+  // Read before the artifacts move `latest.json`, so the diff is against the run before this one.
+  const diff = prepareRunDiff(packageRootDirectory, {
+    pivot: codefastLibrary,
+    competitors,
+    shape,
+    trialCount: codefastLibrary.report.trialCount,
+  });
 
   renderComparisonConsoleReport(codefastLibrary, competitors, {
     ...DI_COMPARISON_CONSOLE,
     includeScenarioTable: VERBOSE_MODE_ENABLED,
+    diff,
   });
 
   const librariesForJsonl = [...payloadsByLibrary.values()].map(({ fingerprint, trials }) => ({ fingerprint, trials }));
 
-  writeBenchRunArtifacts({ paths: outputPaths, comparisonDocument, librariesForJsonl });
+  const artifacts = writeBenchRunArtifacts({ paths: outputPaths, comparisonDocument, librariesForJsonl });
+  printRunCard({
+    packageRootDirectory,
+    paths: outputPaths,
+    pivot: codefastLibrary,
+    competitors,
+    comparisonDocument,
+    artifacts,
+    librariesForJsonl,
+    shape,
+    wallMs: performance.now() - runStartedAtMs,
+    rebuildMs,
+    nextCommands: ["pnpm bench:report", "pnpm bench:serve"],
+  });
 }
 
 main().catch((caught: unknown) => {

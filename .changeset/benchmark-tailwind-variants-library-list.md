@@ -11,3 +11,6 @@ than implying the run wrote one.
 The run now shows live progress per library on an interactive terminal (plain milestones when piped or verbose) and
 prints the aggregates alone by default; `pnpm bench:verbose` prints the per-scenario table and `pnpm bench:report`
 derives it as `report.md`.
+
+The console report is now a scoreboard with a geomean-by-group table and the reliable losses, diffs against the run
+`latest.json` names when it is the same configuration on the same machine, and closes with a run card.

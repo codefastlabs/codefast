@@ -15,11 +15,14 @@ import {
 import { resolveBenchParentExitCode } from "@internal/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import { runBenchLibraries } from "@internal/benchmark-harness/parent/run-bench-libraries";
 import { renderComparisonConsoleReport } from "@internal/benchmark-harness/report/comparison";
+import { printRunCard } from "@internal/benchmark-harness/report/run-card";
+import { prepareRunDiff } from "@internal/benchmark-harness/report/run-diff";
 import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
 import {
   assertBenchEnvKeys,
   BENCH_VERBOSE_ENV_KEY,
   isEnvFlagEnabled,
+  resolveRunShapeFromEnvironment,
 } from "@internal/benchmark-harness/shared/env-keys";
 
 import { assembleTvComparison } from "#/harness/comparison";
@@ -31,7 +34,7 @@ const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
-function rebuildCodefastTailwindVariantsPackage(): void {
+function rebuildCodefastTailwindVariantsPackage(): number {
   console.log(`Rebuilding ${CODEFAST_TV.libraryName} before bench…`);
   const startedAtMs = performance.now();
   const result = spawnSync("pnpm", ["--filter", CODEFAST_TV.libraryName, "build"], {
@@ -50,12 +53,14 @@ function rebuildCodefastTailwindVariantsPackage(): void {
     const outcome = result.signal === null ? `exit ${String(result.status)}` : `signal ${result.signal}`;
     throw new Error(`Build failed for ${CODEFAST_TV.libraryName}, ${outcome}`);
   }
-  const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
-  console.log(`Finished rebuild of ${CODEFAST_TV.libraryName} (${elapsedSeconds.toFixed(1)}s wall).`);
+  const elapsedMs = performance.now() - startedAtMs;
+  console.log(`Finished rebuild of ${CODEFAST_TV.libraryName} (${(elapsedMs / 1000).toFixed(1)}s wall).`);
+  return elapsedMs;
 }
 
 async function main(): Promise<void> {
   assertBenchEnvKeys();
+  const runStartedAtMs = performance.now();
   console.log("\n@benchmark/tailwind-variants — head-to-head bench, each library paying for a render its own way.");
   const labelWidth = Math.max(...BENCH_LIBRARIES.map((library) => resolveDisplayName(library).length));
   for (const library of BENCH_LIBRARIES) {
@@ -67,7 +72,7 @@ async function main(): Promise<void> {
       : `Progress per library follows. \`${BENCH_VERBOSE_ENV_KEY}=true\` (\`pnpm bench:verbose\`) streams every child line and prints the per-scenario table.\n`,
   );
 
-  rebuildCodefastTailwindVariantsPackage();
+  const rebuildMs = rebuildCodefastTailwindVariantsPackage();
 
   const { payloads, runOrder } = await runBenchLibraries({
     packageRootDirectory,
@@ -75,7 +80,6 @@ async function main(): Promise<void> {
     verbose: VERBOSE_MODE_ENABLED,
   });
   const codefastPayload = payloads.get(CODEFAST_TV.libraryName)!;
-  console.log(`\n[bench] Run order: ${runOrder}`);
 
   assertSubjectMeasuredSomething(CODEFAST_TV.libraryName, codefastPayload.trials);
 
@@ -99,15 +103,37 @@ async function main(): Promise<void> {
     runOrder,
     scenariosAvailable: codefastPayload.scenarioIds?.length,
   });
+  const shape = resolveRunShapeFromEnvironment();
+  // Read before the artifacts move `latest.json`, so the diff is against the run before this one.
+  const diff = prepareRunDiff(packageRootDirectory, {
+    pivot: codefastLibrary,
+    competitors,
+    shape,
+    trialCount: codefastLibrary.report.trialCount,
+  });
 
   renderComparisonConsoleReport(codefastLibrary, competitors, {
     ...TAILWIND_VARIANTS_COMPARISON_CONSOLE,
     includeScenarioTable: VERBOSE_MODE_ENABLED,
+    diff,
   });
 
   const librariesForJsonl = [...payloadsByLibrary.values()].map(({ fingerprint, trials }) => ({ fingerprint, trials }));
 
-  writeBenchRunArtifacts({ paths: outputPaths, comparisonDocument, librariesForJsonl });
+  const artifacts = writeBenchRunArtifacts({ paths: outputPaths, comparisonDocument, librariesForJsonl });
+  printRunCard({
+    packageRootDirectory,
+    paths: outputPaths,
+    pivot: codefastLibrary,
+    competitors,
+    comparisonDocument,
+    artifacts,
+    librariesForJsonl,
+    shape,
+    wallMs: performance.now() - runStartedAtMs,
+    rebuildMs,
+    nextCommands: ["pnpm bench:report", "pnpm bench:serve"],
+  });
 }
 
 main().catch((caught: unknown) => {
