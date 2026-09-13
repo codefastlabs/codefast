@@ -38,7 +38,7 @@ export class ActivationNeedCache {
   needsActivation<Value>(binding: Binding<Value>): boolean {
     // The chain writes a binding's own hook in place with no version anything here can see, so it
     // is read fresh on every call; the memo covers only container hooks and lifecycle metadata.
-    if (binding.kind !== "alias" && binding.onActivation !== undefined) {
+    if (binding.kind !== "alias" && binding.activationHook !== undefined) {
       return true;
     }
     const lifecycleVersion = this.#lifecycle.activationVersion;
@@ -54,13 +54,13 @@ export class ActivationNeedCache {
       this.#version = version;
     }
     const memo = (this.#needByBindingId ??= new Map<BindingIdentifier, boolean>());
-    const cached = memo.get(binding.id);
+    const cached = memo.get(binding.identifier);
     if (cached !== undefined) {
       return cached;
     }
     const needsActivation =
       binding.kind === "class" ? this.#classNeedsActivation(binding) : this.#nonClassNeedsActivation(binding);
-    memo.set(binding.id, needsActivation);
+    memo.set(binding.identifier, needsActivation);
     return needsActivation;
   }
 
@@ -76,7 +76,7 @@ export class ActivationNeedCache {
       return needsActivation;
     }
     this.#classes.discoverPostConstruct(binding.target);
-    this.#needByBindingId?.delete(binding.id);
+    this.#needByBindingId?.delete(binding.identifier);
     return this.needsActivation(binding);
   }
 

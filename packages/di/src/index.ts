@@ -108,6 +108,7 @@ export {
   AsyncDeactivationError,
   AsyncModuleLoadError,
   AsyncResolutionError,
+  ChainAlreadyRegisteredError,
   ChainNotRegisteredError,
   CircularDependencyError,
   DiError,

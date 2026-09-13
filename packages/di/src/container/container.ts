@@ -351,7 +351,7 @@ class DefaultContainer implements Container {
       } else if (this.#owesConstantDeactivation(binding)) {
         (pairs ??= []).push([binding, binding.value]);
       }
-      this.#scope.deleteScoped(binding.id);
+      this.#scope.deleteScoped(binding.identifier);
     }
     return pairs ?? NO_DEACTIVATION_PAIRS;
   }
@@ -366,7 +366,7 @@ class DefaultContainer implements Container {
   #owesConstantDeactivation(binding: Binding): binding is ConstantBinding<unknown> {
     return (
       binding.kind === "constant" &&
-      (binding.onDeactivation !== undefined || this.#lifecycle.hasDeactivationHandlers(binding.token))
+      (binding.deactivationHook !== undefined || this.#lifecycle.hasDeactivationHandlers(binding.token))
     );
   }
 
@@ -775,7 +775,7 @@ class DefaultContainer implements Container {
         // something to run — and a container-level hook counts as one just as a per-binding hook does.
         if (
           binding.kind === "constant" &&
-          binding.onActivation === undefined &&
+          binding.activationHook === undefined &&
           !this.#lifecycle.hasActivationHandlers(binding.token)
         ) {
           continue;
@@ -872,11 +872,11 @@ class DefaultContainer implements Container {
     const rootName = tokenName(root.token);
 
     const dfs = (current: Binding, pathNames: Array<string>, pathBindingIds: Set<BindingIdentifier>): void => {
-      if (pathBindingIds.has(current.id)) {
+      if (pathBindingIds.has(current.identifier)) {
         return;
       }
       const extendedPathIds = new Set(pathBindingIds);
-      extendedPathIds.add(current.id);
+      extendedPathIds.add(current.identifier);
 
       for (const edge of this.#collectStaticDependencyEdges(current, reader)) {
         const { terminal, depTokenName } = edge;
@@ -919,10 +919,10 @@ class DefaultContainer implements Container {
     let current: Binding | undefined = binding;
 
     while (current !== undefined && current.kind === "alias") {
-      if (seenAliasIds.has(current.id)) {
+      if (seenAliasIds.has(current.identifier)) {
         throw new CircularDependencyError(cyclePath);
       }
-      seenAliasIds.add(current.id);
+      seenAliasIds.add(current.identifier);
       cyclePath.push(tokenName(current.token));
       const nextToken = current.target;
       const next = this.#resolver.peekBindingForValidate(nextToken, options);

@@ -365,7 +365,7 @@ export class DependencyResolver implements ResolverCallbacks {
         // fire for a parent-owned binding, and the owner's must.
         const containerHooks =
           owner.#lifecycle.activationVersion === 0 ? undefined : owner.#lifecycle.activationHandlersFor(binding.token);
-        if (binding.onActivation === undefined && (containerHooks === undefined || containerHooks.length === 0)) {
+        if (binding.activationHook === undefined && (containerHooks === undefined || containerHooks.length === 0)) {
           return this.#resolveTransientDynamicSyncFromContext(binding, resolutionStack);
         }
         return this.#resolveTransientDynamicActivatedSync(binding, containerHooks, resolutionStack);
@@ -422,8 +422,8 @@ export class DependencyResolver implements ResolverCallbacks {
         throw new AsyncResolutionError(resolutionStack[0]?.tokenName ?? tokenDisplayName, tokenDisplayName);
       }
       let activated = factoryResult;
-      if (binding.onActivation !== undefined) {
-        const activationResult = binding.onActivation(resolutionCtx, activated);
+      if (binding.activationHook !== undefined) {
+        const activationResult = binding.activationHook(resolutionCtx, activated);
         if (activationResult instanceof Promise) {
           throw new AsyncActivationError(tokenDisplayName, "onActivation");
         }
@@ -474,7 +474,7 @@ export class DependencyResolver implements ResolverCallbacks {
       this.#classPlanActivationVersion = activationVersion;
     }
     const plans = this.#classPlanByBindingId!;
-    const cached = plans.get(binding.id);
+    const cached = plans.get(binding.identifier);
     if (cached !== undefined) {
       return cached;
     }
@@ -483,7 +483,7 @@ export class DependencyResolver implements ResolverCallbacks {
       // Lifecycle metadata not discovered yet — the fallback resolve discovers it; retry then.
       return null;
     }
-    plans.set(binding.id, compiled);
+    plans.set(binding.identifier, compiled);
     return compiled;
   }
 
@@ -574,7 +574,7 @@ export class DependencyResolver implements ResolverCallbacks {
       this.#asyncPlanActivationVersion = activationVersion;
     }
     const plans = this.#asyncPlanByBindingId!;
-    const cached = plans.get(binding.id);
+    const cached = plans.get(binding.identifier);
     if (cached !== undefined) {
       return cached;
     }
@@ -583,7 +583,7 @@ export class DependencyResolver implements ResolverCallbacks {
       // Lifecycle metadata not discovered yet — the fallback resolve discovers it; retry then.
       return null;
     }
-    plans.set(binding.id, compiled);
+    plans.set(binding.identifier, compiled);
     return compiled;
   }
 
@@ -639,7 +639,7 @@ export class DependencyResolver implements ResolverCallbacks {
         return binding.instance;
       }
       // An async materialization already in flight must not be raced by a second, sync one.
-      if (this.#scope.getInflight(binding.id) !== undefined) {
+      if (this.#scope.getInflight(binding.identifier) !== undefined) {
         throw new AsyncResolutionError(
           resolutionStack[0]?.tokenName ?? tokenName(binding.token),
           tokenName(binding.token),
@@ -653,7 +653,7 @@ export class DependencyResolver implements ResolverCallbacks {
       if (cachedScoped !== SCOPED_MISS) {
         return cachedScoped;
       }
-      if (this.#scope.getInflight(binding.id) !== undefined) {
+      if (this.#scope.getInflight(binding.identifier) !== undefined) {
         throw new AsyncResolutionError(
           resolutionStack[0]?.tokenName ?? tokenName(binding.token),
           tokenName(binding.token),
@@ -1001,7 +1001,7 @@ export class DependencyResolver implements ResolverCallbacks {
         return owner.#resolveBindingAsync(binding, undefined, resolutionStack, branchDepth, owner);
       }
     } else if (this.#scope.isChild) {
-      const cachedScoped = this.#scope.readScoped(binding.id);
+      const cachedScoped = this.#scope.readScoped(binding.identifier);
       if (cachedScoped !== SCOPED_MISS) {
         return Promise.resolve(cachedScoped);
       }
@@ -1054,7 +1054,7 @@ export class DependencyResolver implements ResolverCallbacks {
         return binding.instance;
       }
       // In-flight dedup: concurrent callers share the first creation.
-      const inflight = this.#scope.getInflight(binding.id);
+      const inflight = this.#scope.getInflight(binding.identifier);
       if (inflight !== undefined) {
         return inflight;
       }
@@ -1067,7 +1067,7 @@ export class DependencyResolver implements ResolverCallbacks {
         return cachedScoped;
       }
       // In-flight dedup, scoped flavor: one instance per scope even under concurrency.
-      const inflight = this.#scope.getInflight(binding.id);
+      const inflight = this.#scope.getInflight(binding.identifier);
       if (inflight !== undefined) {
         return inflight;
       }
@@ -1108,15 +1108,15 @@ export class DependencyResolver implements ResolverCallbacks {
       ).then(
         (activated) => {
           this.#scope.setSingleton(binding, activated);
-          this.#scope.clearInflight(binding.id);
+          this.#scope.clearInflight(binding.identifier);
           return activated;
         },
         (error: unknown) => {
-          this.#scope.clearInflight(binding.id);
+          this.#scope.clearInflight(binding.identifier);
           throw error;
         },
       );
-      this.#scope.setInflight(binding.id, singletonPromise as Promise<unknown>);
+      this.#scope.setInflight(binding.identifier, singletonPromise as Promise<unknown>);
       return await singletonPromise;
     }
 
@@ -1132,15 +1132,15 @@ export class DependencyResolver implements ResolverCallbacks {
       ).then(
         (activated) => {
           this.#scope.setScoped(binding, activated);
-          this.#scope.clearInflight(binding.id);
+          this.#scope.clearInflight(binding.identifier);
           return activated;
         },
         (error: unknown) => {
-          this.#scope.clearInflight(binding.id);
+          this.#scope.clearInflight(binding.identifier);
           throw error;
         },
       );
-      this.#scope.setInflight(binding.id, scopedPromise as Promise<unknown>);
+      this.#scope.setInflight(binding.identifier, scopedPromise as Promise<unknown>);
       return await scopedPromise;
     }
 
@@ -1390,14 +1390,14 @@ export class DependencyResolver implements ResolverCallbacks {
   #isPlainConstant(binding: Binding): binding is ConstantBinding<unknown> {
     return (
       binding.kind === "constant" &&
-      binding.onActivation === undefined &&
+      binding.activationHook === undefined &&
       (this.#lifecycle.activationVersion === 0 || !this.#lifecycle.hasActivationHandlers(binding.token))
     );
   }
 
   /** Whether either an own hook or a container-level hook would run for this binding. */
   #hasAnyActivation(binding: DynamicBinding<unknown> | DynamicAsyncBinding<unknown>): boolean {
-    if (binding.onActivation !== undefined) {
+    if (binding.activationHook !== undefined) {
       return true;
     }
     return this.#lifecycle.activationVersion !== 0 && this.#lifecycle.hasActivationHandlers(binding.token);
@@ -1413,7 +1413,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (!this.#scope.isChild) {
       throw new MissingScopeContextError(tokenName(binding.token));
     }
-    return this.#scope.readScoped(binding.id);
+    return this.#scope.readScoped(binding.identifier);
   }
 
   // The shared root context answers every top-level request; building one is the rarer half and
@@ -1655,7 +1655,7 @@ export class DependencyResolver implements ResolverCallbacks {
   ): unknown {
     // Fan-outs are dominated by constants: with no activation hook anywhere in the chain, a
     // hook-free constant is plain no matter which container owns it — skip the owner probe.
-    if (binding.kind === "constant" && binding.onActivation === undefined && this.#chainActivationVersion() === 0) {
+    if (binding.kind === "constant" && binding.activationHook === undefined && this.#chainActivationVersion() === 0) {
       return binding.value;
     }
     const owner = this.#ownerOf(binding);
@@ -1681,7 +1681,7 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth,
   ): Promise<unknown> {
-    if (binding.kind === "constant" && binding.onActivation === undefined && this.#chainActivationVersion() === 0) {
+    if (binding.kind === "constant" && binding.activationHook === undefined && this.#chainActivationVersion() === 0) {
       return Promise.resolve(binding.value);
     }
     const owner = this.#ownerOf(binding);
@@ -1714,11 +1714,11 @@ export class DependencyResolver implements ResolverCallbacks {
   /** The resolver whose registry holds `binding` — `this` (the common case) when it is own. */
   #ownerOf(binding: Binding): DependencyResolver {
     // A root resolver can only hold its own bindings, so the per-candidate id probe is chain-only.
-    if (this.#parent === undefined || this.#registry.getById(binding.id) !== undefined) {
+    if (this.#parent === undefined || this.#registry.getById(binding.identifier) !== undefined) {
       return this;
     }
     for (let current: DependencyResolver | undefined = this.#parent; current !== undefined; current = current.#parent) {
-      if (current.#registry.getById(binding.id) !== undefined) {
+      if (current.#registry.getById(binding.identifier) !== undefined) {
         return current;
       }
     }
@@ -1733,7 +1733,13 @@ export class DependencyResolver implements ResolverCallbacks {
     if (existing !== undefined) {
       return existing;
     }
-    const frame = buildResolutionFrame(tokenName(binding.token), binding.scope, binding.id, binding.kind, binding.slot);
+    const frame = buildResolutionFrame(
+      tokenName(binding.token),
+      binding.scope,
+      binding.identifier,
+      binding.kind,
+      binding.slot,
+    );
     binding.frame = frame;
     return frame;
   }
@@ -1782,7 +1788,7 @@ export class DependencyResolver implements ResolverCallbacks {
 
 /** A constant whose value is its answer on every read: no own hook, and the caller has ruled out container hooks. */
 function isHookFreeConstant(binding: Binding): boolean {
-  return binding.kind === "constant" && binding.onActivation === undefined;
+  return binding.kind === "constant" && binding.activationHook === undefined;
 }
 
 function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {

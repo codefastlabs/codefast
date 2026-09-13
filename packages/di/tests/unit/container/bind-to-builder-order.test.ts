@@ -1,4 +1,5 @@
 import {
+  ChainAlreadyRegisteredError,
   ChainNotRegisteredError,
   Container,
   DiError,
@@ -159,17 +160,15 @@ describe("BindToBuilder fluent surface", () => {
     expect(container.has(ServiceToken)).toBe(false);
   });
 
-  it("gives each to*() on one entry its own binding id", () => {
+  it("registers a chain exactly once, so a second to*() on the same entry throws", () => {
     const container = Container.create();
     const ServiceToken = token<number>("entry-reused");
     const bindBuilder = container.bind(ServiceToken);
+    bindBuilder.toConstantValue(1);
 
-    const first = bindBuilder.toConstantValue(1).id();
-    const second = bindBuilder.toConstantValue(2).id();
-
-    expect(second).not.toBe(first);
-    // Same default slot, so last-wins leaves exactly one binding registered.
+    // The chain is its binding: another binding for the token is another bind() call.
+    expect(() => bindBuilder.toConstantValue(2)).toThrow(ChainAlreadyRegisteredError);
     expect(container.lookupBindings(ServiceToken)).toHaveLength(1);
-    expect(container.resolve(ServiceToken)).toBe(2);
+    expect(container.resolve(ServiceToken)).toBe(1);
   });
 });

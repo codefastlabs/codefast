@@ -149,21 +149,33 @@ assignability matters.
 
 <a id="one-binding-shape"></a>
 
-### Bindings: one shape, one construction site
+### Bindings: one shape, one construction site — and the chain is the binding
 
-Every binding is built by `createBinding()` in [`binding.ts`](src/core/binding.ts). It is a single object literal that
-lists every kind's fields in one fixed order, so all bindings in a process share one V8 hidden class (the
-engine-internal description of an object's property layout).
+Every binding is a `BindingChain` from [`binding-builders.ts`](src/container/binding-builders.ts): the object `bind()`
+returns is the object the registry stores and the resolver reads. Its class declares every kind's fields first, in one
+fixed order, and the chain's own bookkeeping after them as private fields, so all bindings in a process share one V8
+hidden class (the engine-internal description of an object's property layout). `to*()` fills the fields in place and
+hands the object to the registry; a plain bind is therefore one allocation, where a builder that produced a separate
+binding object was three and a copy of every field.
 
 This matters because the resolver's hot property reads — `kind`, `scope`, `factory` — are then monomorphic: every
 binding they see has the same layout. Mixed layouts would make those reads megamorphic, meaning V8 falls back to slow
 generic property lookup. The registry stores what it is handed **by reference** rather than re-copying it, so the shape
 survives registration.
 
-> **Convention (performance-load-bearing).** Construct bindings through `createBinding()` and keep the literal's key
-> order intact. A bare object literal, or reordered keys, quietly gives that binding a different hidden class and makes
-> the hot reads megamorphic. It still _works_; it just gives back what the single hidden class buys. If you have a
-> reason to change the construction site, measure it against the benchmark suite.
+Two names follow from the merge. The binding's id is `identifier`, because the chain's `.id()` step is a method on the
+same object, and the lifecycle hooks are `activationHook` / `deactivationHook`, because `.onActivation()` /
+`.onDeactivation()` are the steps that set them. A chain registers exactly once: a second `to*()` throws
+`ChainAlreadyRegisteredError` before it can overwrite the registered fields, and another binding for the same token is
+another `bind()`. Refinements write the registered object — a scope or a hook in place, a slot or a predicate through
+`registry.reslot()`, which takes the live binding out of every index, lets the chain rewrite the two fields, and takes
+it back through `add()` under the same object and id, so nothing that holds the binding has to be told.
+
+> **Convention (performance-load-bearing).** `BindingChain` is the only construction site, and its field declarations
+> keep their order. A second construction site, or a reordered field, quietly gives that binding a different hidden
+> class and makes the hot reads megamorphic. It still _works_; it just gives back what the single hidden class buys.
+> `tests/unit/container/bind-to-builder-order.test.ts` pins the single registration; the shape is held by the benchmark
+> suite's warm resolve rows.
 
 <a id="copy-on-write"></a>
 
@@ -855,8 +867,9 @@ drops every check that reads the field.
 
 These are covered in the sections above; this list exists so a perf review can find them in one place.
 
-- **One hidden class for all bindings** — [One shape, one construction site](#one-binding-shape). Convention: build
-  through `createBinding()`.
+- **One hidden class for all bindings, and the chain is the binding** —
+  [One shape, one construction site](#one-binding-shape). One allocation per bind; `BindingChain` is the only
+  construction site.
 - **`scope` as a total field** — [`scope` is a total field](#scope-total). Keeps the field's type feedback one shape.
 - **Path-independent entries baked into plans** — [Compiled plans and escapes](#plans). Saves a runtime lookup per
   criterion-carrying param.

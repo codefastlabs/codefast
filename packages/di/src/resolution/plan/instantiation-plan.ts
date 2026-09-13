@@ -209,18 +209,18 @@ export class InstantiationPlanCompiler {
   // class params, with the factory call (and its sync-only check) in place of `new`.
   #compileResolvedPlan(
     binding: Binding & { kind: "resolved" },
-    compileStack: Set<Binding["id"]>,
+    compileStack: Set<Binding["identifier"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
   ): InstantiationPlanCompileResult {
-    if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding)) {
+    if (binding.activationHook !== undefined || this.#host.hasActivationHandlers(binding)) {
       return null;
     }
     const factory = binding.factory;
     const tokenDisplayName = tokenName(binding.token);
     const depThunks = new Array<() => unknown>(binding.deps.length);
     const depAncestors = [...ancestors, binding];
-    compileStack.add(binding.id);
+    compileStack.add(binding.identifier);
     try {
       for (let index = 0; index < binding.deps.length; index += 1) {
         const thunk = this.#compileInjectionThunk(binding.deps[index]!, compileStack, depth, depAncestors);
@@ -230,7 +230,7 @@ export class InstantiationPlanCompiler {
         depThunks[index] = thunk;
       }
     } finally {
-      compileStack.delete(binding.id);
+      compileStack.delete(binding.identifier);
     }
     return () => {
       const factoryResult = factory(...depThunks.map((thunk) => thunk()));
@@ -248,7 +248,7 @@ export class InstantiationPlanCompiler {
    */
   #compileInjectionThunk(
     descriptor: DependencySlot,
-    compileStack: Set<Binding["id"]>,
+    compileStack: Set<Binding["identifier"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
   ): DependencyCompileResult {
@@ -278,11 +278,11 @@ export class InstantiationPlanCompiler {
 
   #compileClassPlan(
     binding: Binding & { kind: "class" },
-    compileStack: Set<Binding["id"]>,
+    compileStack: Set<Binding["identifier"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
   ): InstantiationPlanCompileResult {
-    if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding)) {
+    if (binding.activationHook !== undefined || this.#host.hasActivationHandlers(binding)) {
       return null;
     }
     const target = binding.target;
@@ -315,7 +315,7 @@ export class InstantiationPlanCompiler {
     }
     const depThunks = new Array<() => unknown>(params.length);
     const depAncestors = [...ancestors, binding];
-    compileStack.add(binding.id);
+    compileStack.add(binding.identifier);
     try {
       for (let index = 0; index < params.length; index += 1) {
         const thunk = this.#compileInjectionThunk(params[index]!, compileStack, depth, depAncestors);
@@ -325,7 +325,7 @@ export class InstantiationPlanCompiler {
         depThunks[index] = thunk;
       }
     } finally {
-      compileStack.delete(binding.id);
+      compileStack.delete(binding.identifier);
     }
     if (withAccessors) {
       return () =>
@@ -358,13 +358,13 @@ export class InstantiationPlanCompiler {
 
   #compileDepThunk(
     entry: InstantiationPlanDependencyEntry,
-    compileStack: Set<Binding["id"]>,
+    compileStack: Set<Binding["identifier"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
     options?: ResolveOptions,
   ): DependencyCompileResult {
     const { binding } = entry;
-    if (binding.kind === "constant" && binding.onActivation === undefined) {
+    if (binding.kind === "constant" && binding.activationHook === undefined) {
       if (!this.#host.hasActivationHandlers(binding)) {
         const value = binding.value;
         return () => value;
@@ -385,7 +385,7 @@ export class InstantiationPlanCompiler {
       scope === "transient" &&
       binding.kind === "class" &&
       depth < PLAN_DEPTH_LIMIT &&
-      !compileStack.has(binding.id)
+      !compileStack.has(binding.identifier)
     ) {
       const inlined = this.#compileClassPlan(
         binding as Binding & { kind: "class" },
@@ -438,11 +438,11 @@ export class InstantiationPlanCompiler {
 
   #compileAsyncClassNode(
     binding: Binding & { kind: "class" },
-    compileStack: Set<Binding["id"]>,
+    compileStack: Set<Binding["identifier"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
   ): AsyncNodeThunk | null | typeof PLAN_RETRY {
-    if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding)) {
+    if (binding.activationHook !== undefined || this.#host.hasActivationHandlers(binding)) {
       return null;
     }
     const target = binding.target;
@@ -465,7 +465,7 @@ export class InstantiationPlanCompiler {
     }
     const depThunks = new Array<AsyncNodeThunk>(params.length);
     const depAncestors = [...ancestors, binding];
-    compileStack.add(binding.id);
+    compileStack.add(binding.identifier);
     try {
       for (let index = 0; index < params.length; index += 1) {
         const thunk = this.#compileAsyncInjectionThunk(params[index]!, compileStack, depth, depAncestors);
@@ -475,7 +475,7 @@ export class InstantiationPlanCompiler {
         depThunks[index] = thunk;
       }
     } finally {
-      compileStack.delete(binding.id);
+      compileStack.delete(binding.identifier);
     }
     if (allSynchronous(depThunks)) {
       switch (depThunks.length) {
@@ -500,17 +500,17 @@ export class InstantiationPlanCompiler {
 
   #compileAsyncResolvedNode(
     binding: Binding & { kind: "resolved" | "resolved-async" },
-    compileStack: Set<Binding["id"]>,
+    compileStack: Set<Binding["identifier"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
   ): AsyncNodeThunk | null | typeof PLAN_RETRY {
-    if (binding.onActivation !== undefined || this.#host.hasActivationHandlers(binding)) {
+    if (binding.activationHook !== undefined || this.#host.hasActivationHandlers(binding)) {
       return null;
     }
     const factory = binding.factory;
     const depThunks = new Array<AsyncNodeThunk>(binding.deps.length);
     const depAncestors = [...ancestors, binding];
-    compileStack.add(binding.id);
+    compileStack.add(binding.identifier);
     try {
       for (let index = 0; index < binding.deps.length; index += 1) {
         const thunk = this.#compileAsyncInjectionThunk(binding.deps[index]!, compileStack, depth, depAncestors);
@@ -520,7 +520,7 @@ export class InstantiationPlanCompiler {
         depThunks[index] = thunk;
       }
     } finally {
-      compileStack.delete(binding.id);
+      compileStack.delete(binding.identifier);
     }
     // A sync-kind factory may still hand back a promise on this path — the async entry awaits it,
     // so the consumer is told to as well.
@@ -534,7 +534,7 @@ export class InstantiationPlanCompiler {
   /** Mirrors {@link InstantiationPlanCompiler.#compileInjectionThunk}, escaping through the async dispatch. */
   #compileAsyncInjectionThunk(
     descriptor: DependencySlot,
-    compileStack: Set<Binding["id"]>,
+    compileStack: Set<Binding["identifier"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
   ): AsyncDependencyCompileResult {
@@ -562,13 +562,13 @@ export class InstantiationPlanCompiler {
 
   #compileAsyncDepThunk(
     entry: InstantiationPlanDependencyEntry,
-    compileStack: Set<Binding["id"]>,
+    compileStack: Set<Binding["identifier"]>,
     depth: number,
     ancestors: ReadonlyArray<Binding>,
     options?: ResolveOptions,
   ): AsyncDependencyCompileResult {
     const { binding } = entry;
-    if (binding.kind === "constant" && binding.onActivation === undefined) {
+    if (binding.kind === "constant" && binding.activationHook === undefined) {
       if (!this.#host.hasActivationHandlers(binding)) {
         const value = binding.value;
         // The interpreted path funnels every dependency through an await, which unwraps a
@@ -589,7 +589,7 @@ export class InstantiationPlanCompiler {
         promiseShape: "maybe",
       };
     }
-    if (scope === "transient" && depth < PLAN_DEPTH_LIMIT && !compileStack.has(binding.id)) {
+    if (scope === "transient" && depth < PLAN_DEPTH_LIMIT && !compileStack.has(binding.identifier)) {
       let inlined: AsyncNodeThunk | null | typeof PLAN_RETRY = null;
       if (binding.kind === "class") {
         inlined = this.#compileAsyncClassNode(

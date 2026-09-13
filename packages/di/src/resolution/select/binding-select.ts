@@ -47,7 +47,7 @@ export function selectBinding(
   }
   throw new AmbiguousBindingError(
     tokenDisplayName,
-    candidates.map((c) => c.id),
+    candidates.map((c) => c.identifier),
   );
 }
 

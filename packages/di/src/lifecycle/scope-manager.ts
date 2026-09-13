@@ -116,7 +116,7 @@ export class ScopeManager {
     if (!this.isChild) {
       throw new MissingScopeContextError(tokenName(binding.token));
     }
-    (this.#scoped ??= new Map<BindingIdentifier, unknown>()).set(binding.id, instance);
+    (this.#scoped ??= new Map<BindingIdentifier, unknown>()).set(binding.identifier, instance);
   }
 
   /** Releases a removed binding's scoped instance. A scoped instance has no deactivation. */

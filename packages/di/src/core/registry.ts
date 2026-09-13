@@ -118,7 +118,7 @@ export class BindingRegistry {
     }
     const lone = this.#lone.get(key);
     if (lone === undefined) {
-      this.#byId?.set(binding.id, binding);
+      this.#byId?.set(binding.identifier, binding);
       if (isDefaultSlotBinding(binding)) {
         this.#lone.set(key, binding);
       } else {
@@ -130,14 +130,14 @@ export class BindingRegistry {
     if (isDefaultSlotBinding(binding)) {
       this.#lone.set(key, binding);
       if (this.#byId !== undefined) {
-        this.#byId.delete(lone.id);
-        this.#byId.set(binding.id, binding);
+        this.#byId.delete(lone.identifier);
+        this.#byId.set(binding.identifier, binding);
       }
       return lone;
     }
     // A second shape joins the token, which is what a record is for.
     this.#lone.delete(key);
-    this.#byId?.set(binding.id, binding);
+    this.#byId?.set(binding.identifier, binding);
     this.#indexTagged(this.#createRecord(key, [lone, binding]), binding);
     return undefined;
   }
@@ -148,7 +148,7 @@ export class BindingRegistry {
     const lone = this.#lone.get(token);
     if (lone !== undefined) {
       this.#lone.delete(token);
-      this.#byId?.delete(lone.id);
+      this.#byId?.delete(lone.identifier);
       return [lone];
     }
     const records = this.#records;
@@ -159,7 +159,7 @@ export class BindingRegistry {
     records.delete(token);
     if (this.#byId !== undefined) {
       for (const binding of record.bindings) {
-        this.#byId.delete(binding.id);
+        this.#byId.delete(binding.identifier);
       }
     }
     return [...record.bindings];
@@ -175,13 +175,13 @@ export class BindingRegistry {
     this.#bump();
     byId.delete(id);
     const key: DependencyKey = binding.token;
-    if (this.#lone.get(key)?.id === id) {
+    if (this.#lone.get(key)?.identifier === id) {
       this.#lone.delete(key);
       return binding;
     }
     const record = this.#records?.get(key);
     if (record !== undefined) {
-      const bindingIndex = record.bindings.findIndex((candidate) => candidate.id === id);
+      const bindingIndex = record.bindings.findIndex((candidate) => candidate.identifier === id);
       // Replaced, never spliced: a walk holding the current array must not lose its place.
       if (bindingIndex !== -1) {
         record.bindings = record.bindings.toSpliced(bindingIndex, 1);
@@ -308,6 +308,35 @@ export class BindingRegistry {
   }
 
   /**
+   * Takes a live binding out of every index, lets `rewrite` change its slot or predicate, and reports
+   * whether it was live; the caller registers it again with `add`.
+   *
+   * @remarks The binding keeps its object and its id, so the id index needs no touch and nothing
+   * that holds the object has to be told. `false` means the binding was unbound or displaced since
+   * it registered, and a refinement must not resurrect it.
+   */
+  reslot(binding: Binding, rewrite: () => void): boolean {
+    const key: DependencyKey = binding.token;
+    if (this.#lone.get(key) === binding) {
+      this.#bump();
+      this.#lone.delete(key);
+    } else {
+      const record = this.#records?.get(key);
+      const index = record === undefined ? -1 : record.bindings.indexOf(binding);
+      if (record === undefined || index === -1) {
+        return false;
+      }
+      this.#bump();
+      // Replaced, never spliced: a walk holding the current array must not lose its place.
+      record.bindings = record.bindings.toSpliced(index, 1);
+      this.#deindexTagged(record, binding);
+      this.#settle(key, record);
+    }
+    rewrite();
+    return true;
+  }
+
+  /**
    * Rewrites a live binding's predicate in place.
    *
    * @remarks Nothing indexes on the predicate, so the binding object and its id stay; only a lone
@@ -349,7 +378,7 @@ export class BindingRegistry {
         (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
       );
       if (displacedBinding !== undefined) {
-        this.#byId?.delete(displacedBinding.id);
+        this.#byId?.delete(displacedBinding.identifier);
         this.#deindexTagged(record, displacedBinding);
       }
     }
@@ -360,7 +389,7 @@ export class BindingRegistry {
     } else {
       record.bindings = [...record.bindings.filter((candidate) => candidate !== displacedBinding), binding];
     }
-    this.#byId?.set(binding.id, binding);
+    this.#byId?.set(binding.identifier, binding);
     this.#indexTagged(record, binding);
     this.#settle(key, record);
     return displacedBinding;
@@ -381,12 +410,12 @@ export class BindingRegistry {
     if (this.#byId === undefined) {
       const byId = new Map<BindingIdentifier, Binding>();
       for (const binding of this.#lone.values()) {
-        byId.set(binding.id, binding);
+        byId.set(binding.identifier, binding);
       }
       if (this.#records !== undefined) {
         for (const record of this.#records.values()) {
           for (const binding of record.bindings) {
-            byId.set(binding.id, binding);
+            byId.set(binding.identifier, binding);
           }
         }
       }
@@ -413,12 +442,12 @@ export class BindingRegistry {
   #deindexTagged(record: TokenRecord, binding: Binding): void {
     const { tags } = binding.slot;
     if (tags.length === 1) {
-      if (record.simple?.get(tags[0]!)?.id === binding.id) {
+      if (record.simple?.get(tags[0]!)?.identifier === binding.identifier) {
         record.simple.delete(tags[0]!);
       }
     } else if (tags.length >= 2) {
       const bucket = record.multi?.get(tags[0]!);
-      const bindingIndex = bucket?.findIndex((candidate) => candidate.id === binding.id) ?? -1;
+      const bindingIndex = bucket?.findIndex((candidate) => candidate.identifier === binding.identifier) ?? -1;
       // Spliced in place: nothing walks a bucket while user code runs — candidates are gathered
       // into their own array before any predicate is evaluated.
       if (bindingIndex !== -1) {

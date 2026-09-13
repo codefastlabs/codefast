@@ -113,7 +113,7 @@ export class Inspector {
       kind: binding.kind,
       scope: effectiveBindingScope(binding),
       slot,
-      id: binding.id,
+      id: binding.identifier,
     };
   }
 }

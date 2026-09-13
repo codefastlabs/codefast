@@ -108,8 +108,8 @@ export class LifecycleManager {
     }
 
     // 2. per-binding onActivation
-    if (binding.kind !== "alias" && binding.onActivation !== undefined) {
-      const activationResult = binding.onActivation(resolutionContext, activatedInstance);
+    if (binding.kind !== "alias" && binding.activationHook !== undefined) {
+      const activationResult = binding.activationHook(resolutionContext, activatedInstance);
       activatedInstance = activationResult instanceof Promise ? await activationResult : activationResult;
     }
 
@@ -141,8 +141,8 @@ export class LifecycleManager {
     }
 
     // 2. per-binding onActivation (must be sync)
-    if (binding.kind !== "alias" && binding.onActivation !== undefined) {
-      const activationResult = binding.onActivation(resolutionContext, activatedInstance);
+    if (binding.kind !== "alias" && binding.activationHook !== undefined) {
+      const activationResult = binding.activationHook(resolutionContext, activatedInstance);
       if (activationResult instanceof Promise) {
         throw new AsyncActivationError(tokenName(binding.token), "onActivation");
       }
@@ -184,8 +184,8 @@ export class LifecycleManager {
     }
 
     // 2. per-binding onDeactivation
-    if (binding.kind !== "alias" && binding.onDeactivation !== undefined) {
-      const hookResult = binding.onDeactivation(instance);
+    if (binding.kind !== "alias" && binding.deactivationHook !== undefined) {
+      const hookResult = binding.deactivationHook(instance);
       if (hookResult instanceof Promise) {
         await hookResult;
       }
@@ -216,8 +216,8 @@ export class LifecycleManager {
     }
 
     // 2. per-binding onDeactivation
-    if (binding.kind !== "alias" && binding.onDeactivation !== undefined) {
-      const hookResult = binding.onDeactivation(instance);
+    if (binding.kind !== "alias" && binding.deactivationHook !== undefined) {
+      const hookResult = binding.deactivationHook(instance);
       if (hookResult instanceof Promise) {
         throw new AsyncDeactivationError(tokenDisplayName);
       }

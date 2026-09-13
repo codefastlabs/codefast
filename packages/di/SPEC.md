@@ -2536,6 +2536,7 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | `RebindUnboundTokenError`       | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container            | `tokenName`                                      |
 | `DisposedContainerError`        | `DISPOSED_CONTAINER`          | Any operation on an already-disposed container                         | —                                                |
 | `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`       | `tokenName`                                      |
+| `ChainAlreadyRegisteredError`   | `CHAIN_ALREADY_REGISTERED`    | A second `to*()` on a chain that already registered its binding        | `tokenName`                                      |
 | `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                              | `tokenName`                                      |
 | `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member        | `decoratorName`, `memberName`                    |
 | `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds         | `tokenName`, `phase`                             |
@@ -2621,9 +2622,9 @@ packages/di/
 │   │   ├── tag.ts             tag() — the one and only tag-key factory; interned BindingTag,
 │   │   │                      TagKeyMask and the subset check over keys
 │   │   ├── binding.ts         The Binding discriminated union + BindingSlot utilities;
-│   │   │                      createBinding() — THE SINGLE BINDING CONSTRUCTION POINT, which
-│   │   │                      guarantees one hidden class for every binding; generateBindingId(),
-│   │   │                      refinableFields(); every public builder interface
+│   │   │                      generateBindingId(); every public builder interface. The one
+│   │   │                      construction point is BindingChain (container/binding-builders.ts):
+│   │   │                      the chain bind() returns IS the binding, one hidden class for all
 │   │   ├── binding-scope.ts   effectiveBindingScope() — internal; use BindingSnapshot.scope
 │   │   ├── registry.ts        BindingRegistry — slot-aware last-wins, the fast lookup indexes,
 │   │   │                      a version counter for memoization; stores bindings BY REFERENCE (no re-copy)
@@ -2842,6 +2843,7 @@ export {
   AsyncDeactivationError,
   AsyncModuleLoadError,
   AsyncResolutionError,
+  ChainAlreadyRegisteredError,
   ChainNotRegisteredError,
   CircularDependencyError,
   DiError,
