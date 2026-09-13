@@ -225,14 +225,21 @@ export class BindingChain<Value, Names extends string = string>
   when(predicate: BindingConstraint): this {
     const binding = this.#registered();
     const previous = binding.predicate;
-
-    if (previous === undefined) {
-      return this.#reslot(binding.slot, predicate);
-    }
     // The composite carries both sides' requirements, so validate() still sees them.
-    const composed = mergingConstraintRequirements((ctx) => previous(ctx) && predicate(ctx), previous, predicate);
-
-    return this.#reslot(binding.slot, composed);
+    const narrowed =
+      previous === undefined
+        ? predicate
+        : mergingConstraintRequirements((ctx) => previous(ctx) && predicate(ctx), previous, predicate);
+    const { registry } = this.#registration;
+    // The slot is unchanged, so nothing has to be re-indexed or displaced. With the last registry
+    // write this chain's own and nothing parked, the binding is provably live and is rewritten in
+    // place; otherwise the re-slot path re-checks liveness and restores what the shape frees.
+    if (registry.version === this.#versionAfterLastWrite && this.#displacedByChain === undefined) {
+      registry.setPredicate(binding as Binding, narrowed);
+      this.#versionAfterLastWrite = registry.version;
+      return this;
+    }
+    return this.#reslot(binding.slot, narrowed);
   }
 
   whenNamed(name: Names): this {

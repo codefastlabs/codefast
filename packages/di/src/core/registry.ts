@@ -1,9 +1,9 @@
 import type { Binding } from "#/core/binding";
-import { bindingSlotEquals, bindingSlotToString } from "#/core/binding";
+import { bindingSlotEquals, bindingSlotToString, writablePredicate } from "#/core/binding";
 import { getOrInsert } from "#/core/map-upsert";
 import type { BindingTag } from "#/core/tag";
 import type { Token } from "#/core/token";
-import type { BindingIdentifier, Constructor, DependencyKey } from "#/core/types";
+import type { BindingConstraint, BindingIdentifier, Constructor, DependencyKey } from "#/core/types";
 
 /**
  * Everything the registry knows about a token that is more than one default-slot binding.
@@ -13,8 +13,11 @@ import type { BindingIdentifier, Constructor, DependencyKey } from "#/core/types
  * never gets a record. The indexes stay unallocated until a tagged slot lands on the token.
  */
 interface TokenRecord {
-  /** Registration order, copy-on-write: `add` and `removeById` replace it, never splice it. */
-  bindings: ReadonlyArray<Binding>;
+  /**
+   * Registration order. An append lands in place; a removal or a displacement replaces the array,
+   * so a walk that read its length first is never shifted under.
+   */
+  bindings: Array<Binding>;
   /** Bindings whose slot carries exactly one criterion, keyed by that interned criterion. */
   simple: Map<BindingTag, Binding> | undefined;
   /** Bindings whose slot carries two or more criteria, bucketed by their first criterion. */
@@ -24,7 +27,7 @@ interface TokenRecord {
 const NO_BINDINGS: ReadonlyArray<Binding> = Object.freeze([]);
 
 /** One construction site, so every record shares a hidden class. */
-function createTokenRecord(bindings: ReadonlyArray<Binding>): TokenRecord {
+function createTokenRecord(bindings: Array<Binding>): TokenRecord {
   return {
     bindings,
     simple: undefined,
@@ -171,7 +174,7 @@ export class BindingRegistry {
     const record = this.#records?.get(key);
     if (record !== undefined) {
       const bindingIndex = record.bindings.findIndex((candidate) => candidate.id === id);
-      // Copy-on-write, like `add`: a walk holding the current array must not lose its place.
+      // Replaced, never spliced: a walk holding the current array must not lose its place.
       if (bindingIndex !== -1) {
         record.bindings = record.bindings.toSpliced(bindingIndex, 1);
       }
@@ -286,12 +289,35 @@ export class BindingRegistry {
     return this.#lone.get(token);
   }
 
+  /**
+   * Rewrites a live binding's predicate in place.
+   *
+   * @remarks Nothing indexes on the predicate, so the binding object and its id stay; only a lone
+   * binding has to move, because the lone map holds default-slot bindings with no predicate.
+   */
+  setPredicate(binding: Binding, predicate: BindingConstraint | undefined): void {
+    this.#version += 1;
+    writablePredicate(binding).predicate = predicate;
+    const key: DependencyKey = binding.token;
+    if (this.#lone.get(key) === binding) {
+      if (predicate !== undefined) {
+        this.#lone.delete(key);
+        this.#createRecord(key, [binding]);
+      }
+      return;
+    }
+    const record = this.#records?.get(key);
+    if (record !== undefined) {
+      this.#settle(key, record);
+    }
+  }
+
   /** Summarize available slot strings for a token (for error messages). */
   availableSlotStrings(token: Token<unknown> | Constructor): Array<string> {
     return this.getAll(token).map((binding) => bindingSlotToString(binding.slot));
   }
 
-  #createRecord(key: DependencyKey, bindings: ReadonlyArray<Binding>): TokenRecord {
+  #createRecord(key: DependencyKey, bindings: Array<Binding>): TokenRecord {
     const record = createTokenRecord(bindings);
     (this.#records ??= new Map<DependencyKey, TokenRecord>()).set(key, record);
     return record;
@@ -309,12 +335,13 @@ export class BindingRegistry {
         this.#deindexTagged(record, displacedBinding);
       }
     }
-    // Copy-on-write: a selection may be walking the current list inside a `when()` predicate, so
-    // mutation replaces the array and never splices one that has been handed out.
-    record.bindings =
-      displacedBinding === undefined
-        ? [...record.bindings, binding]
-        : [...record.bindings.filter((candidate) => candidate !== displacedBinding), binding];
+    // A selection may be walking this list inside a `when()` predicate. An append past the length it
+    // read cannot shift it, so it lands in place; a displacement replaces the array instead.
+    if (displacedBinding === undefined) {
+      record.bindings.push(binding);
+    } else {
+      record.bindings = [...record.bindings.filter((candidate) => candidate !== displacedBinding), binding];
+    }
     this.#byId?.set(binding.id, binding);
     this.#indexTagged(record, binding);
     this.#settle(key, record);

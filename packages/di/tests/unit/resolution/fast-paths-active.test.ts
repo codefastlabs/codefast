@@ -189,6 +189,21 @@ describe("deferred subsystems stay deferred", () => {
     expect(diagnose(container).builtSubsystems).toContain("registry.records");
   });
 
+  it("moves a lone binding into a record when a bare when() gives it a predicate", () => {
+    const serviceToken = token<string>("deferred-records-when");
+    const container = Container.create();
+    const chain = container.bind(serviceToken).toConstantValue("value");
+
+    expect(diagnose(container).builtSubsystems).not.toContain("registry.records");
+
+    chain.when(() => true);
+
+    expect(diagnose(container).builtSubsystems).toContain("registry.records");
+    // Rewritten in place: the id index was never needed to find the binding again.
+    expect(diagnose(container).builtSubsystems).not.toContain("registry.idIndex");
+    expect(container.resolve(serviceToken)).toBe("value");
+  });
+
   it("builds the id index only for an id-keyed operation", () => {
     const serviceToken = token<string>("deferred-id-index");
     const container = Container.create();

@@ -51,6 +51,43 @@ describe("candidate list stability under a mutating predicate", () => {
     expect(resolved).toEqual(["first", "second", "third"]);
   });
 
+  it("offers only the candidates registered when selection began, even as a predicate binds another", () => {
+    const serviceToken = token<string>("select-mid-bind");
+    const container = Container.create();
+    const evaluated: Array<string> = [];
+
+    let alreadyBound = false;
+    container
+      .bind(serviceToken)
+      .toConstantValue("first")
+      .when(() => {
+        evaluated.push("first");
+        if (!alreadyBound) {
+          alreadyBound = true;
+          container
+            .bind(serviceToken)
+            .toConstantValue("late")
+            .when(() => {
+              evaluated.push("late");
+              return true;
+            });
+        }
+        return true;
+      });
+    container
+      .bind(serviceToken)
+      .toConstantValue("second")
+      .when(() => {
+        evaluated.push("second");
+        return true;
+      });
+
+    // A binding registered mid-walk is not part of this selection; the next one sees it.
+    expect(container.resolveAll(serviceToken)).toEqual(["first", "second"]);
+    expect(evaluated).toEqual(["first", "second"]);
+    expect(container.resolveAll(serviceToken)).toEqual(["first", "second", "late"]);
+  });
+
   it("leaves a predicate-free candidate list alone", () => {
     const serviceToken = token<string>("select-no-predicate");
     const container = Container.create();

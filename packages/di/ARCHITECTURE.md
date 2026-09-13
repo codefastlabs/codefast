@@ -167,18 +167,26 @@ survives registration.
 
 <a id="copy-on-write"></a>
 
-### A token's binding list is copy-on-write
+### A token's binding list appends in place and replaces on removal
 
-A token can carry several bindings, and the registry keeps them in a list. `add` and `removeById` **replace** that array
-rather than splicing it.
+A token can carry several bindings, and the registry keeps them in a list. An `add` that displaces nothing **appends**
+to that array; a `removeById` or a displacement **replaces** it rather than splicing it.
 
 The reason is selection. Selection walks the registry's own list while running `when()` predicates, and a predicate is
-user code that may rebind the very token being walked. Because the walk holds its pre-mutation array, every candidate
-registered at selection start still gets its predicate evaluated, and no defensive copy is needed on the read side.
+user code that may rebind the very token being walked. The walk reads the list's length once before it starts: a removal
+hands it a new array, so its own is never shifted under it, and an append lands past the length it read, so it never
+sees a candidate that was not there when selection began. Every candidate registered at selection start still gets its
+predicate evaluated, none registered during it does, and no defensive copy is needed on the read side.
 
-> **Invariant (correctness).** A token's binding **list** is copy-on-write: `add` and `removeById` replace the array and
-> never splice one that has been handed out. `tests/unit/resolution/select/binding-select.test.ts` pins the observable
-> half.
+Appending in place is what makes a collection cheap to build: a hundred `when()` bindings on one token used to copy the
+list a hundred times, and a bare `when()` used to re-register the binding to change a field nothing indexes on. The
+predicate is now rewritten in place — the registry moves a lone binding into a record itself — when the chain owns the
+registry's last write and has nothing parked; otherwise the re-slot path re-checks that the binding is still live and
+restores what the new shape frees, exactly as before.
+
+> **Invariant (correctness).** A removal or a displacement replaces a token's binding array and never splices one that
+> has been handed out; an append lands in place, and every selection walk reads its starting length first.
+> `tests/unit/resolution/select/binding-select.test.ts` pins both halves.
 
 <a id="token-record"></a>
 
@@ -678,7 +686,7 @@ section before changing what the table describes.
 
 | Invariant                                                                                                                                | Pinned by                                                                                 | Where                                             |
 | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| A token's binding list is copy-on-write; `add`/`removeById` never splice a handed-out array.                                             | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Copy-on-write binding list](#copy-on-write)      |
+| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.    | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Binding list](#copy-on-write)                    |
 | Internal lanes take `Binding` and return `unknown`; only the eight public entry points name `Value`. Lifecycle hooks stay method syntax. | `tests/types/binding-variance.test.ts`                                                    | [Value-type erasure](#value-erasure)              |
 | `frame` is cleared whenever `scope` is refined in place.                                                                                 | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#frame-memo)               |
 | Chain refinements are absent from `bind()`'s type **and** throw before `to*()`.                                                          | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#fluent-chain)                 |

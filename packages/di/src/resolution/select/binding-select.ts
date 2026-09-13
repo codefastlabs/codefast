@@ -98,9 +98,10 @@ function filterBindings(
   requiresSlotMatch: boolean,
 ): Array<Binding> {
   const result: Array<Binding> = [];
-  // A predicate is user code that may rebind the token mid-walk, but the registry replaces a
-  // token's list on mutation instead of splicing it, so this walk keeps its own list — no copy.
-  for (let index = 0; index < bindings.length; index += 1) {
+  // A predicate is user code that may rebind the token mid-walk. A removal replaces the list, and an
+  // append lands past the length read here, so the walk offers exactly the candidates it started with.
+  const length = bindings.length;
+  for (let index = 0; index < length; index += 1) {
     const binding = bindings[index]!;
     if (requiresSlotMatch && !matchesSlot(binding.slot, options)) {
       continue;
