@@ -232,6 +232,9 @@ class DefaultContainer implements Container {
     if (this.#moduleRefs !== undefined || this.#moduleBindingIds !== undefined) {
       builtSubsystems.push("container.moduleTables");
     }
+    if (this.#registry.isRecordMapBuilt) {
+      builtSubsystems.push("registry.records");
+    }
     if (this.#registry.isIdIndexBuilt) {
       builtSubsystems.push("registry.idIndex");
     }
@@ -266,7 +269,7 @@ class DefaultContainer implements Container {
 
   /** What a container being constructed under this one inherits: a reader bound here, else this one's. */
   #readerForChild(): MetadataReader {
-    if (this.#registry.getAll(MetadataReaderToken).length > 0) {
+    if (this.#registry.has(MetadataReaderToken)) {
       try {
         return this.#resolver.resolve(MetadataReaderToken, undefined, []);
       } catch {
@@ -969,7 +972,7 @@ class DefaultContainer implements Container {
     options?: NoInfer<ResolveOptions<Names>>,
   ): boolean {
     this.#assertNotDisposed();
-    return this.#getInspector().has(token, options, () => this.#parent?.has(token, options) ?? false);
+    return this.#getInspector().hasOwn(token, options) || (this.#parent?.has(token, options) ?? false);
   }
 
   hasOwn<Names extends string = string>(

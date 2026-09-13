@@ -175,6 +175,20 @@ describe("deferred subsystems stay deferred", () => {
     expect(diagnose(container).builtSubsystems).toContain("resolver.planCompiler");
   });
 
+  it("builds the record map only for a token that is more than one default binding", () => {
+    const plainToken = token<string>("deferred-records-plain");
+    const namedToken = token<string>("deferred-records-named");
+    const container = Container.create();
+    container.bind(plainToken).toConstantValue("plain");
+    container.resolve(plainToken);
+
+    expect(diagnose(container).builtSubsystems).not.toContain("registry.records");
+
+    container.bind(namedToken).toConstantValue("named").whenNamed("primary");
+
+    expect(diagnose(container).builtSubsystems).toContain("registry.records");
+  });
+
   it("builds the id index only for an id-keyed operation", () => {
     const serviceToken = token<string>("deferred-id-index");
     const container = Container.create();

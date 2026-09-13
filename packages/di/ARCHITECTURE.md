@@ -182,24 +182,34 @@ registered at selection start still gets its predicate evaluated, and no defensi
 
 <a id="token-record"></a>
 
-### The registry keeps one record per token, and one map in front of it
+### The registry keeps the common token in one map, and a record for the rest
 
-`BindingRegistry` stores one record per token — its binding list, and the two tagged-slot indexes, which stay
-unallocated until a tagged slot lands on that token — in a single map, itself allocated by the first bind. A bind into a
-fresh token is therefore one record and one map write, and the index a caller almost never uses, binding **id** →
-binding, is built on the first id-keyed operation and maintained from then on, so a bind-and-resolve container never
-pays for it, and a container that only resolves through its parent pays for neither.
+Most tokens are bound once, to the default slot, with no predicate. `BindingRegistry` keeps exactly those in one map,
+token → binding, and nothing else about them: no list, no record, no index. A token that becomes anything more — a
+second binding, a tagged slot, a predicate — moves to a second map of records, where a record is its binding list plus
+the two tagged-slot indexes, which stay unallocated until a tagged slot lands on that token. A token is in exactly one
+of the two maps, and it moves back when a record shrinks to one default-slot binding. The record map itself is allocated
+by the first token that needs one, and the index a caller almost never uses, binding **id** → binding, is built on the
+first id-keyed operation and maintained from then on.
 
-One lookup is deliberately not folded into the record. `getFastDefault()` — a token's lone default-slot binding — is the
-first thing every synchronous resolve asks, before the chain-versioned memo, and it keeps its own map so the answer is a
-bare `Map.get` returning the binding. Reading it through the record (`entries.get(token)?.fastDefault`) is one dependent
-load more on the hottest lane there is, and a paired A/B of the two layouts read that load as a measurable loss on the
-warm resolve rows while the bind path gained either way. The second map costs one extra write per bind, which the bind
-path can afford; the resolve path cannot afford the load.
+The layout is priced on the two paths that matter. A plain bind is one map write and one binding object, because the
+common token gets no record and no list. A synchronous resolve's first read, `getFastDefault()`, is a bare `Map.get` on
+the lone map returning the binding — no record indirection, no optional chain. Reading the lone binding through a record
+(`entries.get(token)?.fastDefault`) is one dependent load more on the hottest lane there is, and a paired A/B of the two
+layouts read that load as a measurable loss on the warm resolve rows; keeping the lone map as the primary store, rather
+than as a second map beside a record map, is what lets both paths win at once.
+
+The price is paid where it is cold. `getAll()` on a lone token materialises a one-element list, so the resolver's
+selection lanes ask `getFastDefault()` (or `countBindings()`) first and reach `getAll()` only for a token that keeps a
+record, and a presence check with no criteria is `has()`, which also reads the lone map's size before probing it so a
+container that never bound anything — every per-request child — answers without a hash. Snapshots, error reporting and
+module rollback are the callers that pay for the list, and they can.
 
 > **Invariant (performance-load-bearing).** `getFastDefault()` stays a single own-registry `Map.get` returning the
-> binding — no record indirection, no optional chain. `tests/unit/core/registry.test.ts` pins the lazily built id index;
-> the fast-default shape is held by the benchmark suite's warm resolve rows, which is where it was found.
+> binding — no record indirection, no optional chain — and a default-slot-only token never allocates a record. The
+> promote/demote transitions are pinned by `tests/unit/core/registry.test.ts`, the lazily built id index and record map
+> by `tests/unit/resolution/fast-paths-active.test.ts`; the fast-default shape is held by the benchmark suite's warm
+> resolve rows, which is where it was found.
 
 <a id="scope-total"></a>
 
@@ -622,10 +632,11 @@ frame onto, while the shared stack pays one per push.
 `DefaultContainer`'s constructor builds only what a resolve cannot happen without: the registry, the scope manager, the
 lifecycle manager and the resolver chain — and each of those, in turn, allocates only its hot lane. Everything else
 arrives on first use — the inspector, the module ref/binding tables, the scope's in-flight and scoped caches, the
-registry's record map (first bind), id index (first id-keyed operation) and tagged slot indexes (first tagged slot), the
-class introspector's three metadata caches, the resolver's plan compiler and both plan maps (first plan request, which
-only a `class` or `resolved` binding makes), the lookup cache's memo maps (second distinct token or tag in one cache
-generation), and the activation-need memo (first answer its early returns cannot give).
+registry's record map (first token that is more than one default binding), id index (first id-keyed operation) and
+tagged slot indexes (first tagged slot), the class introspector's three metadata caches, the resolver's plan compiler
+and both plan maps (first plan request, which only a `class` or `resolved` binding makes), the lookup cache's memo maps
+(second distinct token or tag in one cache generation), and the activation-need memo (first answer its early returns
+cannot give).
 
 The reason is that an empty `Map` is not free: V8 gives it a backing store, and a closure-heavy host object such as the
 plan compiler's is a dozen allocations. Those are costs a per-request child — created, asked one parent-owned token,
@@ -672,7 +683,7 @@ section before changing what the table describes.
 | `frame` is cleared whenever `scope` is refined in place.                                                                                 | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#frame-memo)               |
 | Chain refinements are absent from `bind()`'s type **and** throw before `to*()`.                                                          | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#fluent-chain)                 |
 | One binding belongs to one container; the singleton slot lives on the binding.                                                           | `tests/unit/resolution/singleton-on-binding.test.ts`                                      | [Singleton on the binding](#singleton-on-binding) |
-| The registry keeps one record per token; the id index is built on first use; `getFastDefault()` is one bare `Map.get`.                   | `tests/unit/core/registry.test.ts`, the suite's warm resolve rows                         | [One record per token](#token-record)             |
+| The common token lives in the lone map alone and only the rest keep a record; `getFastDefault()` is one bare `Map.get`.                  | `tests/unit/core/registry.test.ts`, the suite's warm resolve rows                         | [The common token](#token-record)                 |
 
 **Selection and lookup**
 

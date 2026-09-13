@@ -6,13 +6,13 @@ import type { Token } from "#/core/token";
 import type { BindingIdentifier, Constructor, DependencyKey } from "#/core/types";
 
 /**
- * Everything the registry knows about one token, in one record.
+ * Everything the registry knows about a token that is more than one default-slot binding.
  *
- * @remarks One map lookup answers every question a resolve asks about a token — its list, its
- * default-slot fast path, its tagged indexes — and a bind into a fresh token is one record and one
- * map write. The indexes stay unallocated until a tagged slot lands on that token.
+ * @remarks A token carrying several bindings, a tagged slot or a predicate needs its list and its
+ * tagged indexes; the common token — one default-slot binding and nothing else — needs neither and
+ * never gets a record. The indexes stay unallocated until a tagged slot lands on the token.
  */
-interface TokenEntry {
+interface TokenRecord {
   /** Registration order, copy-on-write: `add` and `removeById` replace it, never splice it. */
   bindings: ReadonlyArray<Binding>;
   /** Bindings whose slot carries exactly one criterion, keyed by that interned criterion. */
@@ -23,10 +23,10 @@ interface TokenEntry {
 
 const NO_BINDINGS: ReadonlyArray<Binding> = Object.freeze([]);
 
-/** One construction site, so every entry shares a hidden class. */
-function createTokenEntry(binding: Binding): TokenEntry {
+/** One construction site, so every record shares a hidden class. */
+function createTokenRecord(bindings: ReadonlyArray<Binding>): TokenRecord {
   return {
-    bindings: [binding],
+    bindings,
     simple: undefined,
     multi: undefined,
   };
@@ -40,11 +40,12 @@ function createTokenEntry(binding: Binding): TokenEntry {
 export class BindingRegistry {
   // Monotonic mutation counter — lets resolvers version-stamp lookup caches across a container chain.
   #version = 0;
-  // Allocated by the first bind, so a container that only resolves through its parent never pays
-  // for the record map — only for the hot map below it.
-  #entries: Map<DependencyKey, TokenEntry> | undefined;
-  // The hot read on every resolve: a token's lone default-slot binding, one map probe away.
-  readonly #fastDefault = new Map<DependencyKey, Binding>();
+  // The common token lives here and nowhere else: exactly one default-slot binding, so the hot read
+  // of every resolve is a bare `Map.get` and a plain bind is one map write.
+  readonly #lone = new Map<DependencyKey, Binding>();
+  // Every other token — several bindings, a tagged slot, a predicate — has a record here, and a
+  // token is in exactly one of the two maps. Allocated by the first token that needs a record.
+  #records: Map<DependencyKey, TokenRecord> | undefined;
   // Built on the first id-keyed read and maintained from then on: a bind-and-resolve container
   // never asks by id, so it never pays for the second map.
   #byId: Map<BindingIdentifier, Binding> | undefined;
@@ -63,6 +64,21 @@ export class BindingRegistry {
   /** Whether a constant has ever been registered here, and so whether teardown has anything to sweep. */
   get hasHeldConstantBinding(): boolean {
     return this.#heldConstantBinding;
+  }
+
+  /** Whether the deferred tagged-slot index has had to be built. */
+  get isTaggedIndexBuilt(): boolean {
+    return this.#taggedIndexBuilt;
+  }
+
+  /** Whether an id-keyed operation has had to build the id index. */
+  get isIdIndexBuilt(): boolean {
+    return this.#byId !== undefined;
+  }
+
+  /** Whether a token carrying more than one default-slot binding has had to build the record map. */
+  get isRecordMapBuilt(): boolean {
+    return this.#records !== undefined;
   }
 
   /**
@@ -85,62 +101,57 @@ export class BindingRegistry {
       this.#heldConstantBinding = true;
     }
     const key: DependencyKey = binding.token;
-    const entries = (this.#entries ??= new Map<DependencyKey, TokenEntry>());
-    const entry = entries.get(key);
-    if (entry === undefined) {
-      const created = createTokenEntry(binding);
-      entries.set(key, created);
-      if (isDefaultSlotBinding(binding)) {
-        this.#fastDefault.set(key, binding);
-      }
+    const record = this.#records?.get(key);
+    if (record !== undefined) {
+      return this.#addToRecord(key, record, binding);
+    }
+    const lone = this.#lone.get(key);
+    if (lone === undefined) {
       this.#byId?.set(binding.id, binding);
-      if (binding.slot.tags.length > 0) {
-        this.#indexTagged(created, binding);
+      if (isDefaultSlotBinding(binding)) {
+        this.#lone.set(key, binding);
+      } else {
+        this.#indexTagged(this.#createRecord(key, [binding]), binding);
       }
       return undefined;
     }
-
-    // Only apply last-wins for slot-based bindings (not predicate-only)
-    let displacedBinding: Binding | undefined;
-    if (!isPurePredicateBinding(binding)) {
-      displacedBinding = entry.bindings.find(
-        (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
-      );
-      if (displacedBinding !== undefined) {
-        this.#byId?.delete(displacedBinding.id);
-        this.#deindexTagged(entry, displacedBinding);
+    // Same slot, last wins: the newcomer takes the lone seat and nothing else moves.
+    if (isDefaultSlotBinding(binding)) {
+      this.#lone.set(key, binding);
+      if (this.#byId !== undefined) {
+        this.#byId.delete(lone.id);
+        this.#byId.set(binding.id, binding);
       }
+      return lone;
     }
-    // Copy-on-write: a selection may be walking the current list inside a `when()` predicate, so
-    // mutation replaces the array and never splices one that has been handed out.
-    entry.bindings =
-      displacedBinding === undefined
-        ? [...entry.bindings, binding]
-        : [...entry.bindings.filter((candidate) => candidate !== displacedBinding), binding];
+    // A second shape joins the token, which is what a record is for.
+    this.#lone.delete(key);
     this.#byId?.set(binding.id, binding);
-    if (binding.slot.tags.length > 0) {
-      this.#indexTagged(entry, binding);
-    }
-    this.#refreshFastDefault(key, entry);
-    return displacedBinding;
+    this.#indexTagged(this.#createRecord(key, [lone, binding]), binding);
+    return undefined;
   }
 
   /** Remove all bindings for a token. Returns removed bindings. */
   removeByToken(token: Token<unknown> | Constructor): Array<Binding> {
     this.#version += 1;
-    const entries = this.#entries;
-    const entry = entries?.get(token);
-    if (entries === undefined || entry === undefined) {
+    const lone = this.#lone.get(token);
+    if (lone !== undefined) {
+      this.#lone.delete(token);
+      this.#byId?.delete(lone.id);
+      return [lone];
+    }
+    const records = this.#records;
+    const record = records?.get(token);
+    if (records === undefined || record === undefined) {
       return [];
     }
-    entries.delete(token);
-    this.#fastDefault.delete(token);
+    records.delete(token);
     if (this.#byId !== undefined) {
-      for (const binding of entry.bindings) {
+      for (const binding of record.bindings) {
         this.#byId.delete(binding.id);
       }
     }
-    return [...entry.bindings];
+    return [...record.bindings];
   }
 
   /** Remove a specific binding by ID. Returns the removed binding or undefined. */
@@ -153,27 +164,45 @@ export class BindingRegistry {
     this.#version += 1;
     byId.delete(id);
     const key: DependencyKey = binding.token;
-    const entries = this.#entries;
-    const entry = entries?.get(key);
-    if (entries !== undefined && entry !== undefined) {
-      const bindingIndex = entry.bindings.findIndex((candidate) => candidate.id === id);
+    if (this.#lone.get(key)?.id === id) {
+      this.#lone.delete(key);
+      return binding;
+    }
+    const record = this.#records?.get(key);
+    if (record !== undefined) {
+      const bindingIndex = record.bindings.findIndex((candidate) => candidate.id === id);
       // Copy-on-write, like `add`: a walk holding the current array must not lose its place.
-      const remaining = bindingIndex === -1 ? entry.bindings : entry.bindings.toSpliced(bindingIndex, 1);
-      this.#deindexTagged(entry, binding);
-      if (remaining.length === 0) {
-        entries.delete(key);
-        this.#fastDefault.delete(key);
-      } else {
-        entry.bindings = remaining;
-        this.#refreshFastDefault(key, entry);
+      if (bindingIndex !== -1) {
+        record.bindings = record.bindings.toSpliced(bindingIndex, 1);
       }
+      this.#deindexTagged(record, binding);
+      this.#settle(key, record);
     }
     return binding;
   }
 
-  /** Get all bindings for a token. */
+  /**
+   * Get all bindings for a token.
+   *
+   * @remarks Allocates a one-element list for a lone default-slot binding, so a hot path asks
+   * `getFastDefault()` first and reaches here only for a token that keeps a record.
+   */
   getAll(token: Token<unknown> | Constructor): ReadonlyArray<Binding> {
-    return this.#entries?.get(token)?.bindings ?? NO_BINDINGS;
+    const record = this.#records?.get(token);
+    if (record !== undefined) {
+      return record.bindings;
+    }
+    const lone = this.#lone.get(token);
+    return lone === undefined ? NO_BINDINGS : [lone];
+  }
+
+  /** How many bindings a token holds, without materialising a lone binding's list. */
+  countBindings(token: Token<unknown> | Constructor): number {
+    const record = this.#records?.get(token);
+    if (record !== undefined) {
+      return record.bindings.length;
+    }
+    return this.#lone.has(token) ? 1 : 0;
   }
 
   /** Get binding by ID. */
@@ -183,18 +212,23 @@ export class BindingRegistry {
 
   /** Check if any binding exists for token. */
   has(token: Token<unknown> | Constructor): boolean {
-    // An entry is dropped with its last binding, so presence is the whole answer.
-    return this.#entries !== undefined && this.#entries.has(token);
+    // A record is dropped with its last binding, so presence in either map is the whole answer. The
+    // size read keeps a container that never bound anything — every per-request child — off the probe.
+    return (
+      (this.#lone.size !== 0 && this.#lone.has(token)) || (this.#records !== undefined && this.#records.has(token))
+    );
   }
 
   /** All bindings in the registry. */
   allBindings(): ReadonlyArray<Binding> {
-    if (this.#entries === undefined) {
+    if (this.#lone.size === 0 && this.#records === undefined) {
       return NO_BINDINGS;
     }
-    const allBindings: Array<Binding> = [];
-    for (const entry of this.#entries.values()) {
-      allBindings.push(...entry.bindings);
+    const allBindings: Array<Binding> = [...this.#lone.values()];
+    if (this.#records !== undefined) {
+      for (const record of this.#records.values()) {
+        allBindings.push(...record.bindings);
+      }
     }
     return allBindings;
   }
@@ -203,8 +237,8 @@ export class BindingRegistry {
   clear(): ReadonlyArray<Binding> {
     this.#version += 1;
     const all = this.allBindings();
-    this.#entries?.clear();
-    this.#fastDefault.clear();
+    this.#lone.clear();
+    this.#records?.clear();
     this.#byId?.clear();
     return all;
   }
@@ -214,11 +248,15 @@ export class BindingRegistry {
     if (isPurePredicateBinding(binding)) {
       return false;
     }
-    const entry = this.#entries?.get(binding.token);
-    if (entry === undefined) {
+    if (this.#lone.has(binding.token)) {
+      // The lone seat is the default slot, so only a default-slot newcomer collides with it.
+      return binding.slot.tags.length === 0;
+    }
+    const record = this.#records?.get(binding.token);
+    if (record === undefined) {
       return false;
     }
-    return entry.bindings.some(
+    return record.bindings.some(
       (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
     );
   }
@@ -230,7 +268,7 @@ export class BindingRegistry {
    * identity — where a value-keyed map answered by SameValueZero and parted from `Object.is` on ±0.
    */
   getSimpleTagged(token: Token<unknown> | Constructor, criterion: BindingTag): Binding | undefined {
-    return this.#entries?.get(token)?.simple?.get(criterion);
+    return this.#records?.get(token)?.simple?.get(criterion);
   }
 
   /**
@@ -240,11 +278,12 @@ export class BindingRegistry {
    * against the request — first-criterion bucketing only guarantees each candidate appears once.
    */
   getMultiTagged(token: Token<unknown> | Constructor, criterion: BindingTag): ReadonlyArray<Binding> | undefined {
-    return this.#entries?.get(token)?.multi?.get(criterion);
+    return this.#records?.get(token)?.multi?.get(criterion);
   }
 
+  /** A token's lone default-slot binding — the first read of every synchronous resolve. */
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
-    return this.#fastDefault.get(token);
+    return this.#lone.get(token);
   }
 
   /** Summarize available slot strings for a token (for error messages). */
@@ -252,31 +291,56 @@ export class BindingRegistry {
     return this.getAll(token).map((binding) => bindingSlotToString(binding.slot));
   }
 
-  /** Whether the deferred tagged-slot index has had to be built. */
-  get isTaggedIndexBuilt(): boolean {
-    return this.#taggedIndexBuilt;
+  #createRecord(key: DependencyKey, bindings: ReadonlyArray<Binding>): TokenRecord {
+    const record = createTokenRecord(bindings);
+    (this.#records ??= new Map<DependencyKey, TokenRecord>()).set(key, record);
+    return record;
   }
 
-  /** Whether an id-keyed operation has had to build the id index. */
-  get isIdIndexBuilt(): boolean {
-    return this.#byId !== undefined;
+  #addToRecord(key: DependencyKey, record: TokenRecord, binding: Binding): Binding | undefined {
+    // Only apply last-wins for slot-based bindings (not predicate-only)
+    let displacedBinding: Binding | undefined;
+    if (!isPurePredicateBinding(binding)) {
+      displacedBinding = record.bindings.find(
+        (candidate) => !isPurePredicateBinding(candidate) && bindingSlotEquals(candidate.slot, binding.slot),
+      );
+      if (displacedBinding !== undefined) {
+        this.#byId?.delete(displacedBinding.id);
+        this.#deindexTagged(record, displacedBinding);
+      }
+    }
+    // Copy-on-write: a selection may be walking the current list inside a `when()` predicate, so
+    // mutation replaces the array and never splices one that has been handed out.
+    record.bindings =
+      displacedBinding === undefined
+        ? [...record.bindings, binding]
+        : [...record.bindings.filter((candidate) => candidate !== displacedBinding), binding];
+    this.#byId?.set(binding.id, binding);
+    this.#indexTagged(record, binding);
+    this.#settle(key, record);
+    return displacedBinding;
   }
 
-  #refreshFastDefault(key: DependencyKey, entry: TokenEntry): void {
-    const only = entry.bindings.length === 1 ? entry.bindings[0]! : undefined;
-    if (only !== undefined && isDefaultSlotBinding(only)) {
-      this.#fastDefault.set(key, only);
-    } else {
-      this.#fastDefault.delete(key);
+  // A record that shrank to one default-slot binding goes back to the lone map; an empty one goes.
+  #settle(key: DependencyKey, record: TokenRecord): void {
+    const { bindings } = record;
+    if (bindings.length === 0) {
+      this.#records!.delete(key);
+    } else if (bindings.length === 1 && isDefaultSlotBinding(bindings[0]!)) {
+      this.#records!.delete(key);
+      this.#lone.set(key, bindings[0]!);
     }
   }
 
   #ensureById(): Map<BindingIdentifier, Binding> {
     if (this.#byId === undefined) {
       const byId = new Map<BindingIdentifier, Binding>();
-      if (this.#entries !== undefined) {
-        for (const entry of this.#entries.values()) {
-          for (const binding of entry.bindings) {
+      for (const binding of this.#lone.values()) {
+        byId.set(binding.id, binding);
+      }
+      if (this.#records !== undefined) {
+        for (const record of this.#records.values()) {
+          for (const binding of record.bindings) {
             byId.set(binding.id, binding);
           }
         }
@@ -287,25 +351,28 @@ export class BindingRegistry {
   }
 
   // Indexes a slot that carries at least one criterion: one criterion goes in the exact map, more
-  // go in the first-criterion bucket.
-  #indexTagged(entry: TokenEntry, binding: Binding): void {
+  // go in the first-criterion bucket. An untagged binding has nothing to index.
+  #indexTagged(record: TokenRecord, binding: Binding): void {
     const { tags } = binding.slot;
+    if (tags.length === 0) {
+      return;
+    }
     this.#taggedIndexBuilt = true;
     if (tags.length === 1) {
-      (entry.simple ??= new Map()).set(tags[0]!, binding);
+      (record.simple ??= new Map()).set(tags[0]!, binding);
     } else {
-      getOrInsert((entry.multi ??= new Map()), tags[0]!, []).push(binding);
+      getOrInsert((record.multi ??= new Map()), tags[0]!, []).push(binding);
     }
   }
 
-  #deindexTagged(entry: TokenEntry, binding: Binding): void {
+  #deindexTagged(record: TokenRecord, binding: Binding): void {
     const { tags } = binding.slot;
     if (tags.length === 1) {
-      if (entry.simple?.get(tags[0]!)?.id === binding.id) {
-        entry.simple.delete(tags[0]!);
+      if (record.simple?.get(tags[0]!)?.id === binding.id) {
+        record.simple.delete(tags[0]!);
       }
     } else if (tags.length >= 2) {
-      const bucket = entry.multi?.get(tags[0]!);
+      const bucket = record.multi?.get(tags[0]!);
       const bindingIndex = bucket?.findIndex((candidate) => candidate.id === binding.id) ?? -1;
       // Spliced in place: nothing walks a bucket while user code runs — candidates are gathered
       // into their own array before any predicate is evaluated.

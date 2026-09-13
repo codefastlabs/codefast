@@ -202,7 +202,7 @@ export class DependencyResolver implements ResolverCallbacks {
       // A threshold switches the data structure, never the semantics: under it the generic scan
       // below beats walking the indexes, and both paths answer identically. Sized first, so a
       // small list pays one length read and nothing else.
-      this.#registry.getAll(token).length > MULTI_TAG_INDEX_THRESHOLD &&
+      this.#registry.countBindings(token) > MULTI_TAG_INDEX_THRESHOLD &&
       requestedTagKeyMask(options) !== NO_TAG_KEYS
     ) {
       // A multi-criterion request matches only slots whose every criterion it carries, and every
@@ -216,18 +216,28 @@ export class DependencyResolver implements ResolverCallbacks {
         : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
     }
 
-    const bindings = this.#registry.getAll(token);
-    if (bindings.length > 0) {
-      // A lone candidate is its own selection: matching it is the whole decision, with no
-      // specificity to weigh and no ambiguity to report.
-      const selected =
-        bindings.length === 1
-          ? matchesSlot(bindings[0]!.slot, options) && this.#satisfiesPredicate(bindings[0]!, options, resolutionStack)
-            ? bindings[0]
-            : undefined
-          : selectBinding(bindings, options, this.#makeConstraintContext(resolutionStack, options), tokenName(token));
-      if (selected !== undefined) {
-        return { binding: selected, owner: this };
+    // A lone default-slot candidate is its own selection: the slot match is the whole decision,
+    // it carries no predicate, and asking for it first keeps the registry from materialising its list.
+    const lone = this.#registry.getFastDefault(token);
+    if (lone !== undefined) {
+      if (matchesSlot(lone.slot, options)) {
+        return { binding: lone, owner: this };
+      }
+    } else {
+      const bindings = this.#registry.getAll(token);
+      if (bindings.length > 0) {
+        // One candidate is likewise its own selection, with no specificity to weigh and no
+        // ambiguity to report.
+        const selected =
+          bindings.length === 1
+            ? matchesSlot(bindings[0]!.slot, options) &&
+              this.#satisfiesPredicate(bindings[0]!, options, resolutionStack)
+              ? bindings[0]
+              : undefined
+            : selectBinding(bindings, options, this.#makeConstraintContext(resolutionStack, options), tokenName(token));
+        if (selected !== undefined) {
+          return { binding: selected, owner: this };
+        }
       }
     }
     if (this.#parent !== undefined) {

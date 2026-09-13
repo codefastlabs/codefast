@@ -163,3 +163,82 @@ describe("a token nobody bound", () => {
     expect(container.resolve(unbound)).toBe(1);
   });
 });
+
+describe("a lone default-slot binding and the record it grows into", () => {
+  it("keeps the default binding resolvable when a tagged slot joins the token", () => {
+    const serviceToken = token<string>("registry-lone-promote");
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("default");
+    container.bind(serviceToken).toConstantValue("prod").whenTagged(ENV_TAG.of("prod"));
+
+    expect(container.lookupBindings(serviceToken)).toHaveLength(2);
+    expect(container.resolve(serviceToken)).toBe("default");
+    expect(container.resolve(serviceToken, { tags: [ENV_TAG.of("prod")] })).toBe("prod");
+  });
+
+  it("goes back to a lone binding once the record shrinks to the default slot", () => {
+    const serviceToken = token<string>("registry-lone-demote");
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("default");
+    const tagged = container.bind(serviceToken).toConstantValue("prod").whenTagged(ENV_TAG.of("prod"));
+
+    container.unbind(tagged.id());
+
+    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(container.resolve(serviceToken)).toBe("default");
+    expect(() => container.resolve(serviceToken, { tags: [ENV_TAG.of("prod")] })).toThrow(NoMatchingBindingError);
+
+    // The token can grow a record again after it went back to being lone.
+    container.bind(serviceToken).toConstantValue("staging").whenTagged(ENV_TAG.of("staging"));
+
+    expect(container.resolve(serviceToken, { tags: [ENV_TAG.of("staging")] })).toBe("staging");
+    expect(container.resolve(serviceToken)).toBe("default");
+  });
+
+  it("lets a later default-slot binding take the lone seat under last-wins", () => {
+    const serviceToken = token<string>("registry-lone-last-wins");
+    const container = Container.create();
+    const first = container.bind(serviceToken).toConstantValue("first");
+    container.bind(serviceToken).toConstantValue("second");
+
+    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(container.resolve(serviceToken)).toBe("second");
+    // The displaced binding's id is gone with it.
+    expect(() => container.unbind(first.id())).not.toThrow();
+    expect(container.resolve(serviceToken)).toBe("second");
+  });
+
+  it("keeps a predicate binding beside the default one instead of displacing it", () => {
+    const serviceToken = token<string>("registry-lone-predicate");
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("default");
+    const guarded = container
+      .bind(serviceToken)
+      .toConstantValue("guarded")
+      .when(() => false);
+
+    expect(container.lookupBindings(serviceToken)).toHaveLength(2);
+    expect(container.resolve(serviceToken)).toBe("default");
+
+    container.unbind(guarded.id());
+
+    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(container.resolve(serviceToken)).toBe("default");
+  });
+
+  it("removes a whole token whether it is lone or keeps a record", () => {
+    const loneToken = token<string>("registry-lone-remove");
+    const recordToken = token<string>("registry-record-remove");
+    const container = Container.create();
+    container.bind(loneToken).toConstantValue("lone");
+    container.bind(recordToken).toConstantValue("a").whenNamed("a");
+    container.bind(recordToken).toConstantValue("b").whenNamed("b");
+
+    container.unbind(loneToken);
+    container.unbind(recordToken);
+
+    expect(container.has(loneToken)).toBe(false);
+    expect(container.has(recordToken)).toBe(false);
+    expect(container.inspect().ownBindings).toEqual([]);
+  });
+});
