@@ -71,6 +71,8 @@ export const TRANSIENT_CLASS_1_DEP = {
  * The optional-miss path: a transient class whose one optional dependency is unbound, so every
  * resolve reconstructs it and checks the absent optional. Skipped by libraries without real
  * transient scope (their `get` caches, so the optional is checked only once).
+ *
+ * @since 0.8.0
  */
 export const OPTIONAL_MISSING_TRANSIENT = {
   id: "optional-missing-transient",
@@ -83,11 +85,15 @@ export const OPTIONAL_MISSING_TRANSIENT = {
 
 /**
  * The binding counts the one-token selection axes are measured at.
+ *
+ * @since 0.8.0
  */
 export const SLOT_COUNTS = [1, 4, 16, 64] as const;
 
 /**
  * One point on the named-selection axis: one name picked out of `count` named bindings on a token.
+ *
+ * @since 0.8.0
  */
 export function namedResolveSlotsDescriptor(count: number): ScenarioDescriptor {
   return {
@@ -102,6 +108,8 @@ export function namedResolveSlotsDescriptor(count: number): ScenarioDescriptor {
 
 /**
  * One point on the tagged-selection axis: one tag picked out of `count` tagged bindings on a token.
+ *
+ * @since 0.8.0
  */
 export function taggedResolveSlotsDescriptor(count: number): ScenarioDescriptor {
   return {
@@ -171,6 +179,8 @@ export const REALISTIC_GRAPH_RESOLVED_ROOT = {
 
 /**
  * The class-lane hot row: the same graph as constructor-injected classes, each library's own class idiom.
+ *
+ * @since 0.8.0
  */
 export const REALISTIC_GRAPH_CLASS_RESOLVE_ROOT = {
   id: "realistic-graph-class-resolve-root",
@@ -182,6 +192,8 @@ export const REALISTIC_GRAPH_CLASS_RESOLVE_ROOT = {
 
 /**
  * The class-lane cold row: a fresh container, ten class bindings, one root resolve.
+ *
+ * @since 0.8.0
  */
 export const REALISTIC_GRAPH_CLASS_COLD_RESOLVE = {
   id: "realistic-graph-class-cold-resolve",
@@ -193,11 +205,15 @@ export const REALISTIC_GRAPH_CLASS_COLD_RESOLVE = {
 
 /**
  * Per-iteration op count for the two nested-resolve rows.
+ *
+ * @since 0.8.0
  */
 export const RESOLVER_LANE_BATCH = 300;
 
 /**
  * A transient factory that asks its resolution context for one constant.
+ *
+ * @since 0.8.0
  */
 export const NESTED_CONTEXT_RESOLVE = {
   id: "nested-context-resolve-in-factory",
@@ -209,6 +225,8 @@ export const NESTED_CONTEXT_RESOLVE = {
 
 /**
  * The same factory reaching for the container instead of its context.
+ *
+ * @since 0.8.0
  */
 export const NESTED_CONTAINER_RESOLVE = {
   id: "nested-container-resolve-in-factory",
@@ -220,6 +238,8 @@ export const NESTED_CONTAINER_RESOLVE = {
 
 /**
  * A class with one dependency injected into a property rather than its constructor.
+ *
+ * @since 0.8.0
  */
 export const ACCESSOR_INJECTION_CONSTRUCT = {
   id: "accessor-injection-construct",
@@ -233,15 +253,21 @@ export const ACCESSOR_INJECTION_CONSTRUCT = {
 
 /**
  * Per-iteration op count for the alias rows.
+ *
+ * @since 0.8.0
  */
 export const ALIAS_BATCH = 500;
 /**
  * How many alias hops the chain row walks.
+ *
+ * @since 0.8.0
  */
 export const ALIAS_CHAIN_HOPS = 3;
 
 /**
  * An alias chain several hops long ending at a cached singleton.
+ *
+ * @since 0.8.0
  */
 export const ALIAS_CHAIN = {
   id: `alias-chain-${String(ALIAS_CHAIN_HOPS)}`,
@@ -254,6 +280,8 @@ export const ALIAS_CHAIN = {
 
 /**
  * A child's alias whose terminal binding the parent owns.
+ *
+ * @since 0.8.0
  */
 export const ALIAS_PARENT_OWNED_TERMINAL = {
   id: "alias-parent-owned-terminal",
@@ -269,6 +297,8 @@ export const ALIAS_PARENT_OWNED_TERMINAL = {
  *
  * @remarks Excluded from aggregates like `circular-dependency-3`: a side that detects the cycle at
  * the second hop and a side that recurses until the stack gives out do incomparable work per op.
+ *
+ * @since 0.8.0
  */
 export const ALIAS_CYCLE_DETECTED = {
   id: "alias-cycle-detected",
@@ -284,11 +314,15 @@ export const ALIAS_CYCLE_DETECTED = {
 
 /**
  * Per-iteration op count for the slot-selection rows.
+ *
+ * @since 0.8.0
  */
 export const SLOT_RESOLVE_BATCH = 300;
 
 /**
  * A tag whose value is zero: the one value a truthiness check would drop.
+ *
+ * @since 0.8.0
  */
 export const SLOT_TAG_ZERO_VALUE = {
   id: "slot-tag-zero-value",
@@ -301,6 +335,8 @@ export const SLOT_TAG_ZERO_VALUE = {
 
 /**
  * A binding selected by its name and its tag together.
+ *
+ * @since 0.8.0
  */
 export const SLOT_NAME_AND_TAG = {
   id: "slot-name-and-tag",
@@ -313,6 +349,8 @@ export const SLOT_NAME_AND_TAG = {
 
 /**
  * Every binding on a token that carries a tag.
+ *
+ * @since 0.8.0
  */
 export const SLOT_TAG_RESOLVE_ALL = {
   id: "slot-tag-resolve-all",
@@ -325,6 +363,8 @@ export const SLOT_TAG_RESOLVE_ALL = {
 
 /**
  * A tagged request over a populated token that matches nothing.
+ *
+ * @since 0.8.0
  */
 export const SLOT_TAG_MISS_OPTIONAL = {
   id: "slot-tag-miss-optional",
@@ -337,6 +377,8 @@ export const SLOT_TAG_MISS_OPTIONAL = {
 
 /**
  * A tagged binding the parent owns, resolved from a long-lived child.
+ *
+ * @since 0.8.0
  */
 export const SLOT_TAG_PARENT_OWNED = {
   id: "slot-tag-parent-owned",
@@ -349,6 +391,8 @@ export const SLOT_TAG_PARENT_OWNED = {
 
 /**
  * A named binding the parent owns, resolved from a long-lived child.
+ *
+ * @since 0.8.0
  */
 export const SLOT_NAME_PARENT_OWNED = {
   id: "slot-name-parent-owned",
@@ -396,6 +440,8 @@ export function resolveAllStrategiesDescriptor(strategyCount: number): ScenarioD
  *
  * @remarks Reading a stable set rewards a memoised collection; building the set and reading it once
  * charges the memoisation instead, so the pair tells a cached-array advantage from a faster gather.
+ *
+ * @since 0.8.0
  */
 export function resolveAllColdDescriptor(strategyCount: number): ScenarioDescriptor {
   return {
@@ -435,11 +481,15 @@ export const ASYNC_CONCURRENT_FANOUT_COUNTS = [8, 16, 32, 64] as const;
 
 /**
  * How many async bindings the async collection row fans across.
+ *
+ * @since 0.8.0
  */
 export const ASYNC_STRATEGY_COUNT = 8;
 
 /**
  * Every async binding on one token awaited as a collection.
+ *
+ * @since 0.8.0
  */
 export const RESOLVE_ALL_ASYNC = {
   id: `resolve-all-async-${String(ASYNC_STRATEGY_COUNT)}`,
@@ -452,6 +502,8 @@ export const RESOLVE_ALL_ASYNC = {
 
 /**
  * The async miss: an unbound token resolved optionally, nothing instantiated.
+ *
+ * @since 0.8.0
  */
 export const RESOLVE_OPTIONAL_ASYNC_MISS = {
   id: "resolve-optional-async-miss",
@@ -464,6 +516,8 @@ export const RESOLVE_OPTIONAL_ASYNC_MISS = {
 
 /**
  * A root awaiting two siblings in parallel that share one async leaf.
+ *
+ * @since 0.8.0
  */
 export const ASYNC_DIAMOND_SHARED_LEAF = {
   id: "async-diamond-shared-leaf",
@@ -486,6 +540,8 @@ export const RESOLVE_ASYNC_SINGLE_HOP = {
 
 /**
  * Awaiting one transient async-constructed value, rebuilt each iteration (cold path).
+ *
+ * @since 0.8.0
  */
 export const ASYNC_INIT_SINGLE_HOP = {
   id: "async-init-single-hop",
@@ -551,11 +607,15 @@ export const LIFECYCLE_PRE_DESTROY_UNBIND = {
 
 /**
  * How many singletons the teardown pair materialises.
+ *
+ * @since 0.8.0
  */
 export const DISPOSE_SCALE_SINGLETON_COUNT = 100;
 
 /**
  * The baseline of the teardown pair: the singletons exist, nothing is torn down.
+ *
+ * @since 0.8.0
  */
 export const MATERIALIZE_100_SINGLETONS = {
   id: `materialize-${String(DISPOSE_SCALE_SINGLETON_COUNT)}-singletons`,
@@ -571,6 +631,8 @@ export const MATERIALIZE_100_SINGLETONS = {
  *
  * @remarks Paired with `lifecycle-pre-destroy-unbind`, which tears down one singleton: this row is
  * where finding what to tear down shows up.
+ *
+ * @since 0.8.0
  */
 export const UNBIND_ALL_100_SINGLETONS = {
   id: `unbind-all-${String(DISPOSE_SCALE_SINGLETON_COUNT)}-singletons`,
@@ -583,15 +645,21 @@ export const UNBIND_ALL_100_SINGLETONS = {
 
 /**
  * Per-iteration op count for the chain-rebind row.
+ *
+ * @since 0.8.0
  */
 export const CHAIN_REBIND_BATCH = 50;
 /**
  * How deep the chain-rebind row resolves from.
+ *
+ * @since 0.8.0
  */
 export const CHAIN_REBIND_DEPTH = 3;
 
 /**
  * A rebind in the root read from the far end of a container chain.
+ *
+ * @since 0.8.0
  */
 export const REBIND_PARENT_RESOLVE_CHILD_DEPTH_3 = {
   id: `rebind-parent-resolve-child-depth-${String(CHAIN_REBIND_DEPTH)}`,
@@ -615,15 +683,21 @@ export const REQUEST_LIFECYCLE_BATCH = 100;
 
 /**
  * Per-iteration op count for the fresh-child rows.
+ *
+ * @since 0.8.0
  */
 export const FRESH_CHILD_BATCH = 100;
 /**
  * The duty cycles the fresh-child rows are measured at: a memo paid once and never reused, then amortised.
+ *
+ * @since 0.8.0
  */
 export const FRESH_CHILD_RESOLVES = [1, 4] as const;
 
 /**
  * The selection criterion a fresh-child row resolves with.
+ *
+ * @since 0.8.0
  */
 export type FreshChildLane = "default" | "name" | "tag";
 
@@ -635,6 +709,8 @@ const FRESH_CHILD_CRITERIA: Readonly<Record<FreshChildLane, string>> = {
 
 /**
  * One cell of the fresh-child matrix: a criterion resolved N times inside a per-request child, then teardown.
+ *
+ * @since 0.8.0
  */
 export function freshChildDescriptor(lane: FreshChildLane, resolvesPerChild: number): ScenarioDescriptor {
   const laneRequires = lane === "name" ? ["name-hint" as const] : lane === "tag" ? ["tag-hint" as const] : [];
@@ -650,6 +726,8 @@ export function freshChildDescriptor(lane: FreshChildLane, resolvesPerChild: num
 
 /**
  * The child depths the parent-walk axis is measured at; depth 2 is the realistic per-request shape.
+ *
+ * @since 0.8.0
  */
 export const CHILD_DEPTHS = [1, 2, 4, 8] as const;
 
@@ -658,6 +736,8 @@ export const CHILD_DEPTHS = [1, 2, 4, 8] as const;
  *
  * @remarks A single depth cannot tell a walk that is free from one that is linear in the chain; the
  * axis can.
+ *
+ * @since 0.8.0
  */
 export function childDepthResolveDescriptor(depth: number): ScenarioDescriptor {
   return {
@@ -728,15 +808,21 @@ export const SCALE_MID_TRANSIENT_CHAIN_32 = {
 
 /**
  * Per-iteration op count for the two container-construction rows.
+ *
+ * @since 0.8.0
  */
 export const CONTAINER_CREATE_BATCH = 100;
 /**
  * How many tokens the bind-path row registers.
+ *
+ * @since 0.8.0
  */
 export const BIND_TOKEN_COUNT = 128;
 
 /**
  * An empty container: construction alone, unbundled from any bind or resolve.
+ *
+ * @since 0.8.0
  */
 export const CONTAINER_CREATE_EMPTY = {
   id: "container-create-empty",
@@ -748,6 +834,8 @@ export const CONTAINER_CREATE_EMPTY = {
 
 /**
  * An empty child of a warm parent: a per-request container's whole allocation.
+ *
+ * @since 0.8.0
  */
 export const CREATE_CHILD_EMPTY = {
   id: "create-child-empty",
@@ -763,6 +851,8 @@ export const CREATE_CHILD_EMPTY = {
  *
  * @remarks Every cold row bundles construction, binding and a resolve; this one prices the bind so
  * the cold graph row's first resolve becomes subtractable.
+ *
+ * @since 0.8.0
  */
 export const BIND_128_PLAIN = {
   id: `bind-${String(BIND_TOKEN_COUNT)}-plain`,
@@ -774,6 +864,8 @@ export const BIND_128_PLAIN = {
 
 /**
  * The same registrations refined after the fact with a name and a singleton scope.
+ *
+ * @since 0.8.0
  */
 export const BIND_128_REFINED = {
   id: `bind-${String(BIND_TOKEN_COUNT)}-refined`,
@@ -796,6 +888,8 @@ export const MODULE_LOAD_UNLOAD = {
 
 /**
  * Building a fresh container from two modules and resolving the root, per iteration.
+ *
+ * @since 0.8.0
  */
 export const MODULE_COLD_FROM_MODULES = {
   id: "module-cold-from-modules",
@@ -1027,11 +1121,15 @@ export const TAGGED_BINDING_RESOLVE = {
 
 /**
  * The per-iteration op count for the conditional-injection row.
+ *
+ * @since 0.8.0
  */
 export const CONDITIONAL_INJECTION_BATCH = 300;
 
 /**
  * Resolving a transient consumer whose own tag selects one binding out of the tagged set.
+ *
+ * @since 0.8.0
  */
 export const CONDITIONAL_INJECTION_TAGGED = {
   id: "conditional-injection-tagged",

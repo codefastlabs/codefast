@@ -111,6 +111,8 @@ function buildAliasCycleDetectedScenario(): BenchScenario {
 
 /**
  * Builds inversify's alias scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInversifyAliasScenarios(): ReadonlyArray<BenchScenario> {
   return [buildAliasChainScenario(), buildAliasParentOwnedTerminalScenario(), buildAliasCycleDetectedScenario()];

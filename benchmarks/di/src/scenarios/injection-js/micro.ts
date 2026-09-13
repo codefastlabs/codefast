@@ -63,6 +63,8 @@ function buildSingletonClassOneDepScenario(): BenchScenario {
 
 /**
  * Builds the injection-js micro-benchmark scenarios it can express.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsMicroScenarios(): ReadonlyArray<BenchScenario> {
   return [buildConstantResolveScenario(), buildSingletonClassOneDepScenario()];

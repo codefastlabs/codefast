@@ -2,7 +2,11 @@ import type { BenchSubprocessConfig } from "@internal/benchmark-harness/shared/c
 
 import type { DiFeature } from "#/fixtures/features";
 
-/** One benched library: how the parent spawns it, heads its column, and describes its wiring. */
+/**
+ * One benched library: how the parent spawns it, heads its column, and describes its wiring.
+ *
+ * @since 0.8.0
+ */
 export interface DiBenchLibrary extends BenchSubprocessConfig {
   /** Abbreviation heading the library's ratio column in the comparison table. */
   readonly shortName: string;
@@ -173,6 +177,8 @@ export const TSYRINGE = {
 
 /**
  * Brandi: token-based, decorator-free container covering the full core subset.
+ *
+ * @since 0.8.0
  */
 export const BRANDI = {
   libraryName: "brandi",
@@ -200,6 +206,8 @@ export const BRANDI = {
 
 /**
  * Ditox: functional, decorator-free container covering the full core subset.
+ *
+ * @since 0.8.0
  */
 export const DITOX = {
   libraryName: "ditox",
@@ -231,6 +239,8 @@ export const DITOX = {
 /**
  * injection-js: Angular's `ReflectiveInjector` in its decorator mode, singleton
  * per injector with a non-cached transient root.
+ *
+ * @since 0.8.0
  */
 export const INJECTION_JS = {
   libraryName: "injection-js",
@@ -257,13 +267,25 @@ export const INJECTION_JS = {
   ],
 } as const satisfies DiBenchLibrary;
 
-/** Every competitor in comparison-column order; the subject is never in this list. */
+/**
+ * Every competitor in comparison-column order; the subject is never in this list.
+ *
+ * @since 0.8.0
+ */
 export const COMPETITORS: ReadonlyArray<DiBenchLibrary> = [INVERSIFY, AWILIX, TSYRINGE, BRANDI, DITOX, INJECTION_JS];
 
-/** Every benched library, subject first, in spawn order. */
+/**
+ * Every benched library, subject first, in spawn order.
+ *
+ * @since 0.8.0
+ */
 export const BENCH_LIBRARIES: ReadonlyArray<DiBenchLibrary> = [CODEFAST_DI, ...COMPETITORS];
 
-/** The versus line naming the subject and every competitor, shared by the report heading and the viewer title. */
+/**
+ * The versus line naming the subject and every competitor, shared by the report heading and the viewer title.
+ *
+ * @since 0.8.0
+ */
 export const VERSUS_LINE = `${CODEFAST_DI.libraryName} vs ${COMPETITORS.map((library) => library.libraryName).join(" / ")}`;
 
 /**

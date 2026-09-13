@@ -55,6 +55,8 @@ function buildFactoryResolveScenario(descriptor: ScenarioDescriptor, viaContaine
 
 /**
  * Builds injection-js's resolver-lane scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsResolverLaneScenarios(): ReadonlyArray<BenchScenario> {
   return [

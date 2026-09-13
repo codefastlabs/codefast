@@ -6,6 +6,8 @@ import { PLAIN_PALETTE } from "#/shared/palette";
 
 /**
  * Layout inputs for one frame.
+ *
+ * @since 0.9.0
  */
 export interface RenderProgressFrameOptions {
   readonly nowMs: number;
@@ -21,6 +23,8 @@ const COLUMN_GAP = "  ";
 
 /**
  * Formats a duration the way the frame shows it: tenths of a second under a minute, then minutes.
+ *
+ * @since 0.9.0
  */
 export function formatElapsed(elapsedMs: number): string {
   const clampedMs = Math.max(0, elapsedMs);
@@ -143,6 +147,8 @@ function truncate(text: string, width: number, unicode: boolean): string {
 
 /**
  * Renders one line per library, aligned into columns and clipped to the width.
+ *
+ * @since 0.9.0
  */
 export function renderProgressFrame(
   rows: ReadonlyArray<LibraryProgress>,

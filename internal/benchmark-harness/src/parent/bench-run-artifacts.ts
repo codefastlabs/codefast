@@ -57,6 +57,8 @@ export interface WriteBenchRunArtifactsParameters {
 
 /**
  * What happened to `latest.json`: moved to this run, or kept because the run was not the whole suite.
+ *
+ * @since 0.9.0
  */
 export interface BenchRunArtifactsResult {
   readonly latestPointer: "moved" | "kept-filtered" | "kept-empty";
@@ -91,6 +93,8 @@ export function writeBenchRunArtifacts(parameters: WriteBenchRunArtifactsParamet
 
 /**
  * A run directory holding an `observations.jsonl`, paired with the run id it was written under.
+ *
+ * @since 0.9.0
  */
 export interface ResolvedRunDirectory {
   readonly runId: string;
@@ -135,6 +139,8 @@ function newestRunDirName(benchResultsRoot: string): string | undefined {
  *
  * @param packageRootDirectory - The benchmark package root; `bench-results/` is resolved under it.
  * @param requested - A run directory path, a run id, `"latest"`, or omitted for the newest run.
+ *
+ * @since 0.9.0
  */
 export function resolveRunDirectory(packageRootDirectory: string, requested?: string): ResolvedRunDirectory {
   const benchResultsRoot = join(packageRootDirectory, BENCH_RESULTS_DIR_NAME);
@@ -162,6 +168,8 @@ export function resolveRunDirectory(packageRootDirectory: string, requested?: st
 
 /**
  * Reads a run directory's `observations.jsonl` content.
+ *
+ * @since 0.9.0
  */
 export function readRunObservations(runDirectory: string): string {
   return readFileSync(join(runDirectory, OBSERVATIONS_FILE_NAME), "utf8");

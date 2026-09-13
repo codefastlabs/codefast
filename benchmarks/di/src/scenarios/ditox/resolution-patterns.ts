@@ -51,6 +51,8 @@ function buildResolveOptionalMissScenario(): BenchScenario {
 
 /**
  * Builds ditox's optional resolve scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
   return [buildResolveOptionalHitScenario(), buildResolveOptionalMissScenario()];

@@ -133,6 +133,8 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
 
 /**
  * Builds ditox's scope benchmark scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxScopeScenarios(): ReadonlyArray<BenchScenario> {
   return [

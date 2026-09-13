@@ -35,6 +35,8 @@ function buildChildDepthResolveScenario(depth: number): BenchScenario {
 
 /**
  * Builds injection-js's child-scope benchmark scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsScopeScenarios(): ReadonlyArray<BenchScenario> {
   return CHILD_DEPTHS.map((depth) => buildChildDepthResolveScenario(depth));

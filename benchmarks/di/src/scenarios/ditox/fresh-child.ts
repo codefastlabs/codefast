@@ -50,6 +50,8 @@ function buildFreshChildScenario(resolvesPerChild: number): BenchScenario {
 
 /**
  * Builds ditox's fresh-child scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxFreshChildScenarios(): ReadonlyArray<BenchScenario> {
   return FRESH_CHILD_RESOLVES.map((count) => buildFreshChildScenario(count));

@@ -95,6 +95,8 @@ function buildHasOwnUnboundCheckScenario(): BenchScenario {
 
 /**
  * Builds tsyringe's registry operation scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeRegistryOpsScenarios(): ReadonlyArray<BenchScenario> {
   return [buildContainerLevelActivationHookScenario(), buildHasBoundCheckScenario(), buildHasOwnUnboundCheckScenario()];

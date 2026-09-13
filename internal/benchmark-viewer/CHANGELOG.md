@@ -1,5 +1,52 @@
 # @codefast/benchmark-viewer
 
+## 0.9.0
+
+### Minor Changes
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`e7665ee`](https://github.com/codefastlabs/codefast/commit/e7665eed0afd49310e756d6f86756c4f9accefc5) Thanks [@thevuong](https://github.com/thevuong)! - Partition the run history by configuration, the way it already partitions by environment. Each run carries a
+  `configKey`/`configLabel` derived from its execution shape, timing profile, and trial count, and the chart defaults to
+  the newest run's configuration so incomparable regimes — `isolated` vs `shared`, `fast` vs `full` — never share a line
+  until the reader widens to "All configs". A Configuration selector appears when the history holds more than one, and a
+  banner warns while "All configs" is showing more than one.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`c00ae92`](https://github.com/codefastlabs/codefast/commit/c00ae92ff89b1a7e1d779c17d87cac4ce0066e87) Thanks [@thevuong](https://github.com/thevuong)! - Serve a run's `report.md` and `report.json` for download, derived on demand from its `observations.jsonl`. A suite opts
+  in by passing `deriveReport` to `startBenchServer`; the server then answers `/api/report.md` and `/api/report.json`
+  (with a `run` id, or the newest run by default) as attachments, and the viewer shows Download links for the newest run
+  in the current filter. Payloads carry `reportsAvailable` so the links appear only when the server can derive them.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`b26c8a4`](https://github.com/codefastlabs/codefast/commit/b26c8a4008ec87651da2a54f2aa6006c51ab6fc2) Thanks [@thevuong](https://github.com/thevuong)! - Surface the within-group cost in the viewer. A suite passes `scenarioBaselines` (each scenario id mapped to its
+  within-group baseline) to `startBenchServer`; when the selected scenario names a baseline, the viewer shows each
+  library's throughput relative to that baseline over the plotted runs — the same within-group ratio the report's
+  "Within-group cost" section carries, so the cost of a variant (such as enabling `tailwind-merge`) is legible on the
+  history page too.
+
+### Patch Changes
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`10e8142`](https://github.com/codefastlabs/codefast/commit/10e814253e3e38bbbfc4604473c6e4cb4cef3916) Thanks [@thevuong](https://github.com/thevuong)! - Two control-panel visual fixes. Every filter `select` now draws its own chevron inset `0.75rem` from the right edge
+  (`appearance: none` plus a custom glyph) instead of the browser arrow jammed against the border. And the report-download
+  links drop their vivid accent blue for the same muted button treatment as the panel's other controls, so they no longer
+  clash with the surrounding grey UI.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`eb7d819`](https://github.com/codefastlabs/codefast/commit/eb7d8190cb7464cc759e224ad05484ee88db2e84) Thanks [@thevuong](https://github.com/thevuong)! - Stop exporting `WithinGroupCostEntry` — it is only used within `use-derived-payload.ts`, so the export was flagged as
+  unused. No behaviour change.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`6c813aa`](https://github.com/codefastlabs/codefast/commit/6c813aa03be010afc8b2e125639341c73f075c3a) Thanks [@thevuong](https://github.com/thevuong)! - Let the page use the full viewport width. The layout dropped its centered `max-w-7xl` container (and the header's
+  `max-w-4xl` cap), so on a wide screen the chart spans the whole width and the control panel fits every filter on one row
+  instead of wrapping. Reading widths stay bounded where they matter — the intro copy keeps its `max-w-prose`.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`7d72fd7`](https://github.com/codefastlabs/codefast/commit/7d72fd7e394e3e62ff406dd5ebdb438ff5591346) Thanks [@thevuong](https://github.com/thevuong)! - Rework the chart palette so every series is easy to tell apart. It held five hues while the `di` suite plots seven
+  libraries, so `paletteMap`'s modulo handed two pairs the same colour (`@codefast/di` and `ditox` both teal, `inversify`
+  and `injection-js` both blue). The palette now carries seven hues chosen for the widest pairwise separation — its
+  closest pair is far more distinct than before, no two lines read alike, and each hue also stays clear of the ratio
+  colours. A note records that it must stay at least as long as the largest suite's library count.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`1e22a7d`](https://github.com/codefastlabs/codefast/commit/1e22a7deff616c0c80aa2816f8928938a806bbce) Thanks [@thevuong](https://github.com/thevuong)! - Make the chart tooltip swatches show each series' true colour. Chart.js fills a tooltip's colour box with the dataset's
+  `backgroundColor`, which for a line is the near-transparent fill under the curve (alpha `0.08`), so the swatches read as
+  washed-out. A `labelColor` callback now paints each swatch with the line's solid, opaque colour instead.
+- Updated dependencies [[`5c376d5`](https://github.com/codefastlabs/codefast/commit/5c376d5f9ff842103167ae0dd1afd9aed10c0199), [`fcbe338`](https://github.com/codefastlabs/codefast/commit/fcbe338d91de80b9476c41f2168828def26d1435), [`a836f8b`](https://github.com/codefastlabs/codefast/commit/a836f8b6b5ab1f16d9943d484e42793ff69f5d1c), [`765967b`](https://github.com/codefastlabs/codefast/commit/765967bd873d527d17ff7bfbb58d1563edd32438), [`36081f9`](https://github.com/codefastlabs/codefast/commit/36081f9643067b96f065e0687d78908074490f6f), [`06618b6`](https://github.com/codefastlabs/codefast/commit/06618b6c152f899f5cb7e010abfe554c58ddf7c5)]:
+  - @internal/benchmark-harness@0.9.0
+
 ## 0.8.0
 
 ### Minor Changes

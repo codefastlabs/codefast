@@ -1,6 +1,10 @@
 import type { BenchSubprocessConfig } from "@internal/benchmark-harness/shared/config";
 
-/** One benched library: how the parent spawns it, heads its column, and describes its render path. */
+/**
+ * One benched library: how the parent spawns it, heads its column, and describes its render path.
+ *
+ * @since 0.8.0
+ */
 export interface TvBenchLibrary extends BenchSubprocessConfig {
   /** Abbreviation heading the library's ratio column in the comparison table. */
   readonly shortName: string;
@@ -51,13 +55,25 @@ export const CVA = {
   strategy: "no result cache; the with-merge rows call `tailwind-merge` after `cva()`, the usual production pairing",
 } as const satisfies TvBenchLibrary;
 
-/** Every competitor in comparison-column order; the subject is never in this list. */
+/**
+ * Every competitor in comparison-column order; the subject is never in this list.
+ *
+ * @since 0.8.0
+ */
 export const COMPETITORS: ReadonlyArray<TvBenchLibrary> = [TAILWIND_VARIANTS, CVA];
 
-/** Every benched library, subject first, in spawn order. */
+/**
+ * Every benched library, subject first, in spawn order.
+ *
+ * @since 0.8.0
+ */
 export const BENCH_LIBRARIES: ReadonlyArray<TvBenchLibrary> = [CODEFAST_TV, ...COMPETITORS];
 
-/** The versus line naming the subject and every competitor, shared by the report heading and the viewer title. */
+/**
+ * The versus line naming the subject and every competitor, shared by the report heading and the viewer title.
+ *
+ * @since 0.8.0
+ */
 export const VERSUS_LINE = `${CODEFAST_TV.libraryName} vs ${COMPETITORS.map((library) => library.libraryName).join(" / ")}`;
 
 /**

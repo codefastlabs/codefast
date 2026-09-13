@@ -1,5 +1,74 @@
 # @codefast/benchmark-harness
 
+## 0.9.0
+
+### Minor Changes
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`5c376d5`](https://github.com/codefastlabs/codefast/commit/5c376d5f9ff842103167ae0dd1afd9aed10c0199) Thanks [@thevuong](https://github.com/thevuong)! - Add the primitives a suite needs to derive a report from a run's `observations.jsonl` instead of reading eagerly written
+  artifacts: `parseRunObservations` recovers each library's payloads and the run's shape from the file,
+  `resolveRunDirectory`/`readRunObservations` locate and read a run (an explicit path, a run id, `latest`, or the newest),
+  and `runOrderForShape` reconstructs the run-order caveat from the stamped `isolated` flag. `buildComparisonDocument` now
+  accepts the run `shape` as input, falling back to the environment only for a live run, so a report derived from disk
+  records the configuration the run actually used rather than the shell's.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`fcbe338`](https://github.com/codefastlabs/codefast/commit/fcbe338d91de80b9476c41f2168828def26d1435) Thanks [@thevuong](https://github.com/thevuong)! - Add the intra-library comparison axis. A scenario can declare `comparesWithin: "<baseline-scenario-id>"`, and
+  `buildIntraLibraryRows` computes, for every library, that scenario's throughput ratio to its baseline (with the same
+  reliability marker as a cross-library ratio). The comparison document gains an `intraLibrary` section and the markdown
+  report a "Within-group cost" table, both driven by a `baselineOf` map passed to `buildComparisonDocument` /
+  `renderComparisonMarkdownReport`. This surfaces within-library costs — such as the price of `tailwind-merge` per feature
+  — that the pivot-vs-competitors axis cannot express.
+
+- [#864](https://github.com/codefastlabs/codefast/pull/864) [`a836f8b`](https://github.com/codefastlabs/codefast/commit/a836f8b6b5ab1f16d9943d484e42793ff69f5d1c) Thanks [@thevuong](https://github.com/thevuong)! - Live progress per library. `runBenchLibraries` runs a suite's libraries behind one `ProgressDisplay`: on an interactive
+  terminal a block with one line per library — bar, `done/total`, trial ordinal, elapsed time and the scenario in flight —
+  redrawn in place with other child output kept above it; piped, under `CI` or with `BENCH_VERBOSE=true`, one plain line
+  per milestone plus a heartbeat after ten quiet seconds. The child's stderr progress lines become a protocol
+  (`shared/progress.ts` formats and parses them, with a `plan` line so a bar has its total before the first sample), so a
+  standalone `bench:<library>` prints the same readable lines a parent consumes. Isolated runs count each library's
+  scenarios across its per-scenario children. `renderComparisonConsoleReport` gains `includeScenarioTable`, off by default
+  in the suites so the console report is the aggregates; `bench:verbose` prints the table and `bench:report` derives it.
+
+  Colour, via `node:util`'s `styleText` and a shared `createPalette`: the block tints a running library's bar cyan, a
+  finished one green and a failed one red; the console report tints a reliable win green, a loss red, and a parity or an
+  unreliable cell dim. `NO_COLOR` disables it, `FORCE_COLOR` enables it on a pipe, and cells are padded before they are
+  tinted so alignment never depends on colour.
+
+  The console report becomes a scoreboard: one row per competitor with `W · P · L`, comparable count, median, geomean and
+  worst loss; a geomean-by-group table with a column per competitor; and the reliable losses one per line. When
+  `latest.json` names a run of the same configuration on the same machine, the report diffs against it — `Δ prev` beside
+  each aggregate over the rows both runs share, regressions beyond noise listed, improvements counted — and otherwise says
+  which configuration it skipped. Every run closes with a card: timing, counts, profile, run order, sanity failures,
+  whether `latest.json` moved, library versions, the observations file and the next commands. `writeBenchRunArtifacts` now
+  returns what happened to the pointer instead of printing it.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`765967b`](https://github.com/codefastlabs/codefast/commit/765967bd873d527d17ff7bfbb58d1563edd32438) Thanks [@thevuong](https://github.com/thevuong)! - Persist one file per run. `writeBenchRunArtifacts` now writes only `observations.jsonl` into the run directory and, for
+  a whole-suite run, points `bench-results/latest.json` at it with a one-line `{ runId }` — the three-file `latest.*`
+  mirror and the eagerly written `report.md`/`report.json` are gone, since both are pure derivations of the observations
+  and are rebuilt on demand by `bench:report` and the viewer's report download. `WriteBenchRunArtifactsParameters` drops
+  `markdown`, and `BenchRunOutputPaths` now carries `jsonlPath` and `latestPointerPath` in place of the report and mirror
+  paths.
+
+- [#865](https://github.com/codefastlabs/codefast/pull/865) [`36081f9`](https://github.com/codefastlabs/codefast/commit/36081f9643067b96f065e0687d78908074490f6f) Thanks [@thevuong](https://github.com/thevuong)! - Scenario tiers and a feature matrix in the listing.
+
+  - A scenario may declare `tier: "contract" | "engine"` and `requires: string[]`; a child reports both per scenario as
+    `scenarioListings`, every trial result and observation row carries the tier, and rows written before tiers existed
+    read as contract rows.
+  - `BENCH_TIER=contract|engine` narrows a run to one tier at both levels, like `BENCH_ONLY`; the comparison document
+    records it as `scenarioTier`, the run card names it in the profile line, and a tier-narrowed run leaves `latest.json`
+    alone. The comparison document schema is now version 3.
+  - A library config may declare `features`. When every library does, the inventory `bench:list` prints splits each row's
+    missing libraries into `gaps` (features allow it, nobody wrote it) and `unsupported`, summarises coverage per library
+    on stderr, and fails on a library implementing a row while not declaring a feature it requires. Engine rows are owed
+    by nobody and count in neither list.
+  - `BENCH_BASELINE=<run id or directory>` pins the run the report diffs against instead of the run `latest.json` names;
+    `Δ` labels then read `vs baseline <run id>`, and a pinned run that cannot be read throws rather than falling back.
+    `readPreviousRun` takes the requested run and `RunDiff` carries `pinned`; `describeDiffTarget` renders the label.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`06618b6`](https://github.com/codefastlabs/codefast/commit/06618b6c152f899f5cb7e010abfe554c58ddf7c5) Thanks [@thevuong](https://github.com/thevuong)! - Stamp each `observations.jsonl` row with the run's configuration identity — `isolated`, `mode`, and `trialCount` — so a
+  reader can tell which execution shape and timing profile produced a measurement rather than plotting incomparable runs
+  on one series. The fields are required — a run directory written before this change no longer parses and is dropped from
+  the history rather than plotted without a configuration. `resolveRunShapeFromEnvironment` is the one resolver the JSONL
+  writer and the comparison `run` block now share, so the two cannot disagree on the configuration a run recorded.
+
 ## 0.8.0
 
 ### Minor Changes

@@ -51,6 +51,8 @@ function buildResolveOptionalMissScenario(): BenchScenario {
 
 /**
  * Builds brandi's optional resolve scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
   return [buildResolveOptionalHitScenario(), buildResolveOptionalMissScenario()];

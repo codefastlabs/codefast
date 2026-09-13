@@ -122,6 +122,8 @@ function buildToSelfSingletonScenario(): BenchScenario {
 
 /**
  * Builds injection-js's binding-variant scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsBindingVariantScenarios(): ReadonlyArray<BenchScenario> {
   return [

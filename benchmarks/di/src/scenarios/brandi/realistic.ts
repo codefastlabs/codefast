@@ -44,6 +44,8 @@ function buildRealisticGraphColdResolveScenario(): BenchScenario {
 
 /**
  * Builds the brandi realistic-graph scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiRealisticScenarios(): ReadonlyArray<BenchScenario> {
   return [buildRealisticGraphResolveRootScenario(), buildRealisticGraphColdResolveScenario()];

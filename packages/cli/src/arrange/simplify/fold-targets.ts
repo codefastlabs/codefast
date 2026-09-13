@@ -137,6 +137,8 @@ function buildFoldCandidate(cnCall: DomainCallExpression, sourceText: string): F
  *
  * @remarks The type server is loaded lazily via `resolveFileProbe` — only once a syntactic candidate
  * exists — so files with no foldable call never pay for a type query.
+ *
+ * @since 0.11.0
  */
 export function collectClassNameFoldTargets(
   sourceFile: DomainSourceFile,

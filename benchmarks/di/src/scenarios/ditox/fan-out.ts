@@ -94,6 +94,8 @@ function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): Be
 
 /**
  * Builds the ditox fan-out scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [

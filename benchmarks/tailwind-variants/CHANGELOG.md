@@ -1,5 +1,38 @@
 # @codefast/benchmark-tailwind-variants
 
+## 0.8.0
+
+### Minor Changes
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`a779a01`](https://github.com/codefastlabs/codefast/commit/a779a01b408dee06051f5a8fc0cc09bf04b4f285) Thanks [@thevuong](https://github.com/thevuong)! - Add `bench:report [run]`, which derives `report.md` and `report.json` for a run from its `observations.jsonl` on demand
+  — defaulting to the newest run, or taking a run id or path. The comparison assembly (pivot, competitor order, display
+  and short names, presentation) is extracted into `src/harness/comparison.ts` so the live run and the derived report
+  build the identical comparison from one source.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`b215811`](https://github.com/codefastlabs/codefast/commit/b215811542abc13b86033cb79894c151761bdfe5) Thanks [@thevuong](https://github.com/thevuong)! - Declare each with-merge scenario's without-merge baseline (`comparesWithin`) and expose the mapping as
+  `SCENARIO_BASELINES`, so the report now carries a "Within-group cost" section: the throughput of every feature with
+  `tailwind-merge` relative to the same feature without it, per library. This makes the cost of `tailwind-merge` legible
+  directly — near-free on `@codefast/tailwind-variants`, a double-digit tax elsewhere.
+
+### Patch Changes
+
+- [#864](https://github.com/codefastlabs/codefast/pull/864) [`b166185`](https://github.com/codefastlabs/codefast/commit/b166185c683ccbd38fa17764bf20867db89924c8) Thanks [@thevuong](https://github.com/thevuong)! - Declare the library list once in `harness/config.ts` (`BENCH_LIBRARIES`, `COMPETITORS`) with a per-library render
+  strategy line, and derive the run header, quiet-mode prefixes, report heading, intro bullets, viewer title, scenario
+  listing and viewer library list from it. The report intro points at the run's `observations.jsonl` instead of a
+  `latest.jsonl` the harness no longer writes, and the console footer says `pnpm bench:report` derives `report.md` rather
+  than implying the run wrote one.
+
+  The run now shows live progress per library on an interactive terminal (plain milestones when piped or verbose) and
+  prints the aggregates alone by default; `pnpm bench:verbose` prints the per-scenario table and `pnpm bench:report`
+  derives it as `report.md`.
+
+  The console report is now a scoreboard with a geomean-by-group table and the reliable losses, diffs against the run
+  `latest.json` names when it is the same configuration on the same machine, and closes with a run card.
+
+- Updated dependencies [[`5c376d5`](https://github.com/codefastlabs/codefast/commit/5c376d5f9ff842103167ae0dd1afd9aed10c0199), [`fcbe338`](https://github.com/codefastlabs/codefast/commit/fcbe338d91de80b9476c41f2168828def26d1435), [`a836f8b`](https://github.com/codefastlabs/codefast/commit/a836f8b6b5ab1f16d9943d484e42793ff69f5d1c), [`765967b`](https://github.com/codefastlabs/codefast/commit/765967bd873d527d17ff7bfbb58d1563edd32438), [`36081f9`](https://github.com/codefastlabs/codefast/commit/36081f9643067b96f065e0687d78908074490f6f), [`06618b6`](https://github.com/codefastlabs/codefast/commit/06618b6c152f899f5cb7e010abfe554c58ddf7c5), [`e7665ee`](https://github.com/codefastlabs/codefast/commit/e7665eed0afd49310e756d6f86756c4f9accefc5), [`10e8142`](https://github.com/codefastlabs/codefast/commit/10e814253e3e38bbbfc4604473c6e4cb4cef3916), [`eb7d819`](https://github.com/codefastlabs/codefast/commit/eb7d8190cb7464cc759e224ad05484ee88db2e84), [`6c813aa`](https://github.com/codefastlabs/codefast/commit/6c813aa03be010afc8b2e125639341c73f075c3a), [`7d72fd7`](https://github.com/codefastlabs/codefast/commit/7d72fd7e394e3e62ff406dd5ebdb438ff5591346), [`c00ae92`](https://github.com/codefastlabs/codefast/commit/c00ae92ff89b1a7e1d779c17d87cac4ce0066e87), [`1e22a7d`](https://github.com/codefastlabs/codefast/commit/1e22a7deff616c0c80aa2816f8928938a806bbce), [`b26c8a4`](https://github.com/codefastlabs/codefast/commit/b26c8a4008ec87651da2a54f2aa6006c51ab6fc2)]:
+  - @internal/benchmark-harness@0.9.0
+  - @internal/benchmark-viewer@0.9.0
+
 ## 0.7.3
 
 ### Patch Changes

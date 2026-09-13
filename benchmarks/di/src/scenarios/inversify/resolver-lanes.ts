@@ -77,6 +77,8 @@ function buildPropertyInjectionScenario(): BenchScenario {
 
 /**
  * Builds inversify's resolver-lane scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInversifyResolverLaneScenarios(): ReadonlyArray<BenchScenario> {
   return [

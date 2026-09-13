@@ -64,6 +64,8 @@ function buildDisposeScaleScenario(descriptor: ScenarioDescriptor, tearDown: boo
 
 /**
  * Builds tsyringe's teardown-at-scale scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeDisposeScaleScenarios(): ReadonlyArray<BenchScenario> {
   return [

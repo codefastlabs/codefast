@@ -198,6 +198,9 @@ function buildNamedResolveSlotsScenario(count: number): BenchScenario {
   };
 }
 
+/**
+ * @since 0.8.0
+ */
 export function buildCodefastMicroScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildConstantResolveScenario(),

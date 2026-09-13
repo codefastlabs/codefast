@@ -205,6 +205,8 @@ function buildBootDecoratedContainerScenario(): BenchScenario {
 
 /**
  * Builds tsyringe's cold-path scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeBootScenarios(): ReadonlyArray<BenchScenario> {
   return [

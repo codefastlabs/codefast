@@ -79,6 +79,8 @@ function buildRealisticGraphResolvedRootScenario(): BenchScenario {
 
 /**
  * Builds ditox's explicit-deps scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxBindingVariantScenarios(): ReadonlyArray<BenchScenario> {
   return [buildToResolvedThreeDepsScenario(), buildRealisticGraphResolvedRootScenario()];

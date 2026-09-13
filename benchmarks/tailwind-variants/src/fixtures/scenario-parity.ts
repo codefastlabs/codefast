@@ -331,7 +331,11 @@ export const FIRST_RENDER_SLOTS = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** Each with-merge scenario mapped to its without-merge baseline, for the within-group section. */
+/**
+ * Each with-merge scenario mapped to its without-merge baseline, for the within-group section.
+ *
+ * @since 0.8.0
+ */
 export const SCENARIO_BASELINES: ReadonlyMap<string, string> = new Map(
   [
     SIMPLE_WITH_MERGE,

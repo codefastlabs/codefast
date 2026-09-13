@@ -1,6 +1,10 @@
 import type { ParsedRun } from "@internal/benchmark-harness/report/jsonl";
 
-/** A run's report derived on demand: the markdown and the comparison document as JSON text. */
+/**
+ * A run's report derived on demand: the markdown and the comparison document as JSON text.
+ *
+ * @since 0.9.0
+ */
 export interface DerivedRunReport {
   readonly markdown: string;
   readonly comparisonJson: string;

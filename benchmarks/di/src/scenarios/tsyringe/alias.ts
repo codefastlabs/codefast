@@ -101,6 +101,8 @@ function buildAliasParentOwnedTerminalScenario(): BenchScenario {
 
 /**
  * Builds tsyringe's alias scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeAliasScenarios(): ReadonlyArray<BenchScenario> {
   return [buildToAliasRedirectScenario(), buildAliasChainScenario(), buildAliasParentOwnedTerminalScenario()];

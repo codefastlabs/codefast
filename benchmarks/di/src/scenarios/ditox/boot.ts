@@ -84,6 +84,8 @@ function buildBindPlainScenario(): BenchScenario {
 
 /**
  * Builds ditox's cold-path scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxBootScenarios(): ReadonlyArray<BenchScenario> {
   return [buildContainerCreateScenario(), buildCreateChildScenario(), buildBindPlainScenario()];

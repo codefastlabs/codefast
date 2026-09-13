@@ -16,6 +16,8 @@ import type { SubprocessPayload } from "#/shared/protocol";
 
 /**
  * Options for {@link runBenchLibraries}.
+ *
+ * @since 0.9.0
  */
 export interface RunBenchLibrariesOptions {
   readonly packageRootDirectory: string;
@@ -29,6 +31,8 @@ export interface RunBenchLibrariesOptions {
 
 /**
  * Every library's payload keyed by library name, plus the run-order caveat the report cites.
+ *
+ * @since 0.9.0
  */
 export interface RunBenchLibrariesResult {
   readonly payloads: ReadonlyMap<string, SubprocessPayload>;
@@ -51,6 +55,8 @@ function describeBenchMode(): string | undefined {
  *
  * @remarks Isolated runs interleave because a cross-library ratio is only as good as the gap between
  * the two measurements it divides; a shared run has one process per library and nothing to interleave.
+ *
+ * @since 0.9.0
  */
 export async function runBenchLibraries(options: RunBenchLibrariesOptions): Promise<RunBenchLibrariesResult> {
   const { packageRootDirectory, libraries, verbose } = options;

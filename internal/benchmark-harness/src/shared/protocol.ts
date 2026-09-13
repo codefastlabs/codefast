@@ -96,6 +96,8 @@ export interface SubprocessPayload {
 
 /**
  * What a child says about one scenario without measuring it: its tier and the features it needs.
+ *
+ * @since 0.9.0
  */
 export interface ScenarioListing {
   readonly id: string;
