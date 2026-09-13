@@ -1,5 +1,9 @@
 /**
- * Brandi — scope benchmark. Parallel to `../codefast/scope.ts`'s
+ * Brandi — scope benchmarks. Parallel to `../codefast/scope.ts`.
+ *
+ * `child-depth-2-resolve`: a root binding read from the end of a two-link `extend()` chain,
+ * the parent walk every hierarchical container pays per request.
+ *
  * `scoped-binding-per-child`: an `inContainerScope` binding is shared within one
  * container and fresh across containers. The binding lives once on the app module;
  * each request creates a fresh child that `extend`s the app — the same "bind once"
@@ -8,9 +12,34 @@
  */
 import { createContainer, token } from "brandi";
 
-import { SCOPED_BINDING_PER_CHILD, SCOPED_PER_CHILD_BATCH } from "#/fixtures/scenario-parity";
+import {
+  CHILD_DEPTH_2_RESOLVE,
+  CHILD_RESOLVE_BATCH,
+  SCOPED_BINDING_PER_CHILD,
+  SCOPED_PER_CHILD_BATCH,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
+
+function buildChildDepthTwoResolveScenario(): BenchScenario {
+  const childScopeLeafToken = token<number>("bench-brandi-child2-leaf");
+  const rootContainer = createContainer();
+  rootContainer.bind(childScopeLeafToken).toConstant(42);
+  const firstLevelChildContainer = createContainer().extend(rootContainer);
+  const secondLevelChildContainer = createContainer().extend(firstLevelChildContainer);
+  secondLevelChildContainer.get(childScopeLeafToken);
+
+  return {
+    ...CHILD_DEPTH_2_RESOLVE,
+    what: "get() a root binding from the end of a depth-2 extend() chain (realistic per-request shape)",
+    batch: CHILD_RESOLVE_BATCH,
+    sanity: () => secondLevelChildContainer.get(childScopeLeafToken) === 42,
+    build: () =>
+      batched(CHILD_RESOLVE_BATCH, () => {
+        secondLevelChildContainer.get(childScopeLeafToken);
+      }),
+  };
+}
 
 interface ScopedInstance {
   readonly id: number;
@@ -62,5 +91,5 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
  * Builds brandi's scope benchmark scenarios.
  */
 export function buildBrandiScopeScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildScopedBindingPerChildScenario()];
+  return [buildChildDepthTwoResolveScenario(), buildScopedBindingPerChildScenario()];
 }

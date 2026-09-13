@@ -8,6 +8,7 @@
 import { buildTsyringeFanOutScenarios } from "#/scenarios/tsyringe/fan-out";
 import { buildTsyringeLifecycleScenarios } from "#/scenarios/tsyringe/lifecycle";
 import { buildTsyringeMicroScenarios } from "#/scenarios/tsyringe/micro";
+import { buildTsyringeProductionScenarios } from "#/scenarios/tsyringe/production";
 import { buildTsyringeRealisticScenarios } from "#/scenarios/tsyringe/realistic";
 import { buildTsyringeScaleScenarios } from "#/scenarios/tsyringe/scale";
 import { buildTsyringeScopeScenarios } from "#/scenarios/tsyringe/scope";
@@ -24,5 +25,6 @@ export function collectAllTsyringeScenarios(): ReadonlyArray<AnyScenario> {
     ...buildTsyringeScopeScenarios(),
     ...buildTsyringeLifecycleScenarios(),
     ...buildTsyringeScaleScenarios(),
+    ...buildTsyringeProductionScenarios(),
   ];
 }

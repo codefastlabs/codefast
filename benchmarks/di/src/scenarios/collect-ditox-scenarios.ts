@@ -11,6 +11,7 @@ import { buildDitoxFanOutScenarios } from "#/scenarios/ditox/fan-out";
 import { buildDitoxLifecycleScenarios } from "#/scenarios/ditox/lifecycle";
 import { buildDitoxMicroScenarios } from "#/scenarios/ditox/micro";
 import { buildDitoxModuleScenarios } from "#/scenarios/ditox/module";
+import { buildDitoxProductionScenarios } from "#/scenarios/ditox/production";
 import { buildDitoxRealisticScenarios } from "#/scenarios/ditox/realistic";
 import { buildDitoxScaleScenarios } from "#/scenarios/ditox/scale";
 import { buildDitoxScopeScenarios } from "#/scenarios/ditox/scope";
@@ -28,5 +29,6 @@ export function collectAllDitoxScenarios(): ReadonlyArray<AnyScenario> {
     ...buildDitoxLifecycleScenarios(),
     ...buildDitoxScaleScenarios(),
     ...buildDitoxScopeScenarios(),
+    ...buildDitoxProductionScenarios(),
   ];
 }

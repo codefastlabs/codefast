@@ -3,8 +3,8 @@
 A tinybench suite that runs the same dependency-injection workloads through seven containers and reports one table.
 `@codefast/di` is the subject; the other six are the comparison. Each rival runs only the scenarios it can express in
 its own idiom — inversify nearly every shared row, awilix/tsyringe/brandi/ditox the factory/class core plus the scope,
-lifecycle, module, multi-binding and async rows their APIs have a native form for, injection-js the singleton-friendly
-rows only.
+production, lifecycle, module, multi-binding and async rows their APIs have a native form for, injection-js the
+singleton-friendly rows only.
 
 > **Private benchmark suite.** Never published to npm. Results are recorded in [`RESULTS.md`](./RESULTS.md) and are
 > meant to be re-run, not quoted from memory.

@@ -12,3 +12,8 @@ offers.
 - `src/fixtures/features.ts` is the feature vocabulary; `src/harness/config.ts` declares each library's features, read
   from its installed typings. `pnpm bench:list` now reports per library which rows it owes (gaps) apart from the rows it
   cannot express, and fails when a library implements a row whose required feature it does not declare.
+- The production rows and the child-scope rows now run on every library whose API has a child and a teardown: awilix
+  (`createScope` + `dispose`), tsyringe (`createChildContainer` + `dispose`, `instancePerContainerCachingFactory` for
+  the per-operation unit of work) and ditox (`createContainer(parent)` + `removeAll`); brandi gains the depth-2 child
+  row over an `extend()` chain and injection-js the event-bus row over its cached `multi: true` array. 15 rows, each
+  with a `what` naming the mechanism.

@@ -10,6 +10,7 @@
  */
 import { buildInjectionJsFanOutScenarios } from "#/scenarios/injection-js/fan-out";
 import { buildInjectionJsMicroScenarios } from "#/scenarios/injection-js/micro";
+import { buildInjectionJsProductionScenarios } from "#/scenarios/injection-js/production";
 import { buildInjectionJsRealisticScenarios } from "#/scenarios/injection-js/realistic";
 import { buildInjectionJsScopeScenarios } from "#/scenarios/injection-js/scope";
 import type { AnyScenario } from "#/scenarios/types";
@@ -23,5 +24,6 @@ export function collectAllInjectionJsScenarios(): ReadonlyArray<AnyScenario> {
     ...buildInjectionJsRealisticScenarios(),
     ...buildInjectionJsFanOutScenarios(),
     ...buildInjectionJsScopeScenarios(),
+    ...buildInjectionJsProductionScenarios(),
   ];
 }
