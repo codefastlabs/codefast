@@ -496,6 +496,19 @@ export class DependencyResolver implements ResolverCallbacks {
       hasActivationHandlers: (binding) => this.#ownerOf(binding).#lifecycle.hasActivationHandlers(binding.token),
       knownPostConstruct: (target) => this.#classes.knownPostConstruct(target),
       needsActiveContainer: (target) => this.#classes.needsActiveContainer(target),
+      // A plan runs at the top level, so the lent root stack is free when it is; a plan reached
+      // with the root stack held mints its own path, exactly as the interpreted lane would.
+      constructWithAccessors: (binding, target, deps) => {
+        const stack = this.rootStack.length === 0 ? this.rootStack : [];
+        const frame = this.#getResolutionFrame(binding);
+        const resolutionSet = enterResolutionPath(stack, frame);
+        try {
+          return this.#classes.instantiate(target, deps, this.#ambientResolutionFor(stack));
+        } finally {
+          stack.pop();
+          resolutionSet?.delete(frame.bindingId);
+        }
+      },
       getConstructorMetadata: (target) => this.#classes.constructorMetadata(target),
       lookupDependencyEntry: (token) => {
         const entry = this.#lookup.defaultEntry(token);

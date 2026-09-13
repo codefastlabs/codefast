@@ -11,9 +11,11 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { token } from "#/core/token";
+import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import type { DiagnosableContainer, ResolutionDiagnostics } from "#/errors/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#/errors/diagnostics";
+import { CircularDependencyError } from "#/errors/errors";
 
 const WARM_ITERATIONS = 5;
 
@@ -254,5 +256,43 @@ describe("deferred subsystems stay deferred", () => {
     container.resolve(Service);
 
     expect(diagnose(container).builtSubsystems).toContain("resolver.activationNeedMemo");
+  });
+});
+
+describe("an accessor-injected class compiles as a plan root", () => {
+  it("is served by a compiled plan once warm, and its accessor still resolves", () => {
+    const depToken = token<string>("accessor-plan-dep");
+
+    @injectable([])
+    class WithAccessor {
+      @inject(depToken) accessor dependency!: string;
+    }
+
+    const container = Container.create();
+    container.bind(depToken).toConstantValue("value");
+    container.bind(WithAccessor).toSelf().transient();
+
+    for (let iteration = 0; iteration < WARM_ITERATIONS; iteration += 1) {
+      expect(container.resolve(WithAccessor).dependency).toBe("value");
+    }
+
+    expect(diagnose(container).compiledPlanCount).toBe(1);
+  });
+
+  it("still reports a cycle that closes through an accessor, before and after the plan compiles", () => {
+    const loopToken = token<object>("accessor-plan-loop");
+
+    @injectable([])
+    class Loop {
+      @inject(loopToken) accessor self!: object;
+    }
+
+    const container = Container.create();
+    container.bind(loopToken).to(Loop).transient();
+    container.bind(Loop).toSelf().transient();
+
+    for (let iteration = 0; iteration < WARM_ITERATIONS; iteration += 1) {
+      expect(() => container.resolve(Loop)).toThrow(CircularDependencyError);
+    }
   });
 });

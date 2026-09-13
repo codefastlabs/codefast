@@ -354,6 +354,18 @@ would have pushed at that point, and dispatched through exactly the resolve the 
 detection, constraint contexts and error paths are therefore identical to never having compiled. Without escapes, one
 `toDynamic` dependency anywhere would drop the whole graph to the interpreted path.
 
+**An accessor-injected class compiles only as a plan's root.** Its `@inject` accessors resolve while the constructor
+runs, through the ambient container, so the class cannot be a static node: nothing the compiler could bake would be what
+the accessor reads. As a root it can still be a plan — the constructor parameters compile as usual, and construction
+goes through the host, which pushes the class's own frame on the root stack, installs the ambient resolution, constructs
+and pops. An accessor that cycles back therefore arrives with its class already on the path and is caught exactly as on
+the interpreted lane. Below the root the class stays an escape, because a nested node has static ancestors a frame push
+would not replay, and a cycle through them would be reported a level late.
+
+> **Invariant (correctness).** An accessor-injected class is planned only at depth zero, and its plan node enters the
+> resolution path before constructing. `tests/unit/resolution/fast-paths-active.test.ts` pins both the compiled plan and
+> the cycle that closes through an accessor.
+
 > **Invariant (correctness).** An escape must stay behaviourally indistinguishable from the interpreted path. If you add
 > a case, seed it with the same ancestors and replay the same call.
 > `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` pins this.

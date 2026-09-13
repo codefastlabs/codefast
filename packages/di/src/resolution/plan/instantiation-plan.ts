@@ -111,6 +111,11 @@ export interface InstantiationPlanHost {
   /** Cached postConstruct presence — `undefined` until a runtime resolve discovers it. */
   knownPostConstruct(target: Constructor): boolean | undefined;
   needsActiveContainer(target: Constructor): boolean;
+  /**
+   * Constructs a class whose accessors resolve during construction, with the container ambient and
+   * the binding's frame on the path so an accessor that cycles back is still caught.
+   */
+  constructWithAccessors(binding: Binding, target: ConstructorInvocation, deps: Array<unknown>): unknown;
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
   /** Options-less lookup with alias hops folded; `null` when the fast lane can't answer. */
   lookupDependencyEntry(token: Token<unknown> | Constructor): InstantiationPlanDependencyEntry | null;
@@ -285,18 +290,28 @@ export class InstantiationPlanCompiler {
     if (hasPostConstruct === undefined) {
       return PLAN_RETRY;
     }
-    if (hasPostConstruct || this.#host.needsActiveContainer(target)) {
+    if (hasPostConstruct) {
       return null;
     }
+    // An accessor-injected class compiles only as the plan's root: its accessors resolve during
+    // construction with the class's own frame on the path, and a root has no static ancestors to replay.
+    const withAccessors = this.#host.needsActiveContainer(target);
+    if (withAccessors && depth !== 0) {
+      return null;
+    }
+    const host = this.#host;
     const invokable = target as ConstructorInvocation;
     const meta = this.#host.getConstructorMetadata(target);
     if (meta === undefined) {
       // Metadata-less classes with required params throw on the runtime path — keep them there.
-      return target.length === 0 ? () => new invokable() : null;
+      if (target.length !== 0) {
+        return null;
+      }
+      return withAccessors ? () => host.constructWithAccessors(binding, invokable, []) : () => new invokable();
     }
     const params = meta.params;
     if (params.length === 0) {
-      return () => new invokable();
+      return withAccessors ? () => host.constructWithAccessors(binding, invokable, []) : () => new invokable();
     }
     const depThunks = new Array<() => unknown>(params.length);
     const depAncestors = [...ancestors, binding];
@@ -311,6 +326,14 @@ export class InstantiationPlanCompiler {
       }
     } finally {
       compileStack.delete(binding.id);
+    }
+    if (withAccessors) {
+      return () =>
+        host.constructWithAccessors(
+          binding,
+          invokable,
+          depThunks.map((thunk) => thunk()),
+        );
     }
     switch (depThunks.length) {
       case 1: {
