@@ -493,6 +493,12 @@ Two deliberate bounds on that lane:
   `tests/unit/resolution/select/multi-tag-selection.test.ts` pins along with the subset, specificity, predicate and
   index-invalidation behaviour. The residual cost on a small list is one length read.
 
+Under the threshold, and on every request the indexes decline, the list gets a first pass before full selection. One
+slot match carrying no predicate is the whole answer, and no match is a clean miss; neither builds a constraint context,
+a display name or a candidate array, which is what a name-plus-tag request and a tagged miss over a populated token used
+to pay on every resolve. A second match, or a predicate on a match, hands the same list to full selection, which weighs
+specificity and reports ambiguity, so the two lanes answer identically.
+
 <a id="cycles"></a>
 
 ### Cycle detection: two mechanisms, on purpose

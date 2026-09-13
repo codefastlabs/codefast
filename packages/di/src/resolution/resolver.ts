@@ -226,15 +226,7 @@ export class DependencyResolver implements ResolverCallbacks {
     } else {
       const bindings = this.#registry.getAll(token);
       if (bindings.length > 0) {
-        // One candidate is likewise its own selection, with no specificity to weigh and no
-        // ambiguity to report.
-        const selected =
-          bindings.length === 1
-            ? matchesSlot(bindings[0]!.slot, options) &&
-              this.#satisfiesPredicate(bindings[0]!, options, resolutionStack)
-              ? bindings[0]
-              : undefined
-            : selectBinding(bindings, options, this.#makeConstraintContext(resolutionStack, options), tokenName(token));
+        const selected = this.#selectFromList(bindings, options, resolutionStack, token);
         if (selected !== undefined) {
           return { binding: selected, owner: this };
         }
@@ -244,6 +236,42 @@ export class DependencyResolver implements ResolverCallbacks {
       return this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
     }
     return undefined;
+  }
+
+  /**
+   * The scan a candidate list gets before full selection.
+   *
+   * @remarks A single slot match is the whole answer once its predicate, if any, agrees, and no
+   * match is a clean miss; neither needs a display name or a candidate array. Two slot matches
+   * hand the same list to full selection, which weighs specificity and reports ambiguity — so both
+   * lanes answer identically.
+   */
+  #selectFromList(
+    bindings: ReadonlyArray<Binding>,
+    options: ResolveOptions | undefined,
+    resolutionStack: Array<ResolutionFrame>,
+    token: Token<unknown> | Constructor,
+  ): Binding | undefined {
+    let match: Binding | undefined;
+    for (let index = 0; index < bindings.length; index += 1) {
+      const candidate = bindings[index]!;
+      if (!matchesSlot(candidate.slot, options)) {
+        continue;
+      }
+      if (match !== undefined) {
+        return selectBinding(
+          bindings,
+          options,
+          this.#makeConstraintContext(resolutionStack, options),
+          tokenName(token),
+        );
+      }
+      match = candidate;
+    }
+    if (match === undefined) {
+      return undefined;
+    }
+    return this.#satisfiesPredicate(match, options, resolutionStack) ? match : undefined;
   }
 
   /**
