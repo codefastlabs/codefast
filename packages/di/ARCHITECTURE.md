@@ -420,12 +420,22 @@ every registry up the chain, and the plan caches with the summed activation vers
 grandparent's hook registration invalidates a descendant exactly. Summing is a walk of the chain, and it used to run on
 every memo read, which gave the parent walk a slope: a resolve from depth eight paid eight version reads before its
 one-entry front could even answer. Every registry version bump and every activation-hook registration now also advances
-one process-wide **state epoch** (`core/state-epoch.ts`), and each sum is memoized against the epoch it was taken at.
-While the epoch stands, no registry or lifecycle table in the process has moved, so no sum in any chain has either, and
-the read is one global compare; the moment anything moves, the next read re-sums exactly as before. A loop that rebinds
-on every iteration therefore pays the walk it always paid plus one compare, and a per-request child that binds nothing
-pays the compare alone. A root container is exempt from the memo altogether: its sum is its own version, one field read,
-which is cheaper than the compare and the stamp — and a `resolveAll` over a root asks for it once per candidate.
+one process-wide **state epoch** (`core/state-epoch.ts`), and the lookup cache memoizes its registry sum against the
+epoch it was taken at. While the epoch stands, no registry in the process has moved, so no sum in any chain has either,
+and the read is one global compare; the moment anything moves, the next read re-sums exactly as before. A loop that
+rebinds on every iteration therefore pays the walk it always paid plus one compare, and a per-request child that binds
+nothing pays the compare alone. A root container is exempt from the memo altogether: its sum is its own version, one
+field read, which is cheaper than the compare and the stamp — and a `resolveAll` over a root asks for it once per
+candidate.
+
+The activation sum is deliberately **not** memoized on the resolver. It is read only by the plan getters and the
+collection lanes, a root answers it with one field read, and the memo that would serve a deep child costs two more
+fields on `DependencyResolver` — which a paired A/B read as a measurable loss on the warm transient class row, with the
+same two fields on the lookup cache costing nothing. The resolver's field count is load-bearing on that lane.
+
+> **Invariant (performance-load-bearing).** `DependencyResolver` carries no per-chain memo fields of its own; a cache
+> that serves one lane lives on the collaborator that owns the lane (`BindingLookupCache` for the registry sum). The
+> warm transient class row in the benchmark suite is what holds it, which is where it was found.
 
 **`taggedEntry()` mirrors `defaultEntry()`, and defers its map.** It is chain-versioned, `null` means "this shape needs
 full selection", and predicate- and alias-carrying hits are declined. The memo key is the criterion object itself:
