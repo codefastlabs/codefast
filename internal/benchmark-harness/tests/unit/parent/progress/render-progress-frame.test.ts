@@ -102,7 +102,7 @@ describe("renderProgressFrame", () => {
     }
     expect(lines[1]).toMatch(/  resolve…$/);
     const [cramped] = renderProgressFrame([rows[1]!], { nowMs: 5700, width: 40, unicode: true });
-    expect(cramped).toBe("InversifyJS 8  ████████░░░░░░░░░░░░  47/111  1.5s".replace("  47/111", "  47/111"));
+    expect(cramped).toBe("InversifyJS 8  ████████░░░░░░░░░░░░  47/111  1.5s");
   });
 
   it("pads before it tints, so a coloured frame strips back to the plain one", () => {
