@@ -70,8 +70,14 @@ source take effect.
 1. Put each side's code in `packages/di/src` (checkout, stash or patch).
 2. For each scenario, run **one subprocess per side, back to back**, and record the ratio — `bench:isolate` does exactly
    this, and the rebuild it runs first is what installs the side you checked out.
-3. Repeat for at least three passes, **swapping which side goes first each pass**.
-4. Report the median of the per-pass ratios, and show them all.
+3. One full pass per side is the confirmation: the full profile already runs three trials, so a pass per side is three
+   samples a side, and repeating the pass three times would be nine. **Alternate which side goes first** between
+   consecutive experiments rather than within one, and read the per-trial spread each side carries.
+4. Report the ratio of the two medians, and show both sides' spreads.
+
+Gate the full pass with a fast one. `BENCH_MODE=fast`, one pass per side, `BENCH_LIBRARY=@codefast/di` and the target
+rows alone answers "does this win at all?" in seconds; only a change that wins there earns the full pass, which is what
+the number quoted in a commit or the ledger comes from. A fast pass is a direction, never a figure.
 
 A narrowed run writes its own timestamped directory but leaves `latest.*` alone, so an A/B pass cannot quietly become
 the suite's published state.
