@@ -62,11 +62,15 @@ export { resolveBenchParentExitCode } from "#/parent/resolve-bench-parent-exit-c
 export type {
   InterleavedLibraryRun,
   RunBenchSubprocessParameters,
+  SubprocessLaunch,
+  SubprocessLaunchTarget,
+  SubprocessLauncher,
   SubprocessProgressTarget,
 } from "#/parent/run-bench-subprocess";
 export {
   SubprocessExecutionError,
   buildSubprocessEnvironment,
+  launchWithPnpmTsx,
   discoverBenchScenarioIds,
   isIsolatedBenchRunRequested,
   runBenchSubprocess,

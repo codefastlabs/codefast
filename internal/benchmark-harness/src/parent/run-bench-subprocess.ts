@@ -102,6 +102,36 @@ export type SubprocessProgressTarget = Readonly<{
 }>;
 
 /**
+ * The executable and arguments that start one bench child.
+ */
+export interface SubprocessLaunch {
+  readonly command: string;
+  readonly args: ReadonlyArray<string>;
+}
+
+/**
+ * What a launcher is told about the child it starts.
+ */
+export interface SubprocessLaunchTarget {
+  readonly tsconfigFileName: string;
+  /** The entry relative to the package root, already joined under `src/`. */
+  readonly entryPath: string;
+}
+
+/**
+ * Builds the command that runs a child; the default runs the TypeScript entry through the suite's own tsx.
+ */
+export type SubprocessLauncher = (target: SubprocessLaunchTarget) => SubprocessLaunch;
+
+/**
+ * The launcher every suite uses: `pnpm exec tsx --tsconfig <tsconfig> <entry>` in the suite package.
+ */
+export const launchWithPnpmTsx: SubprocessLauncher = ({ tsconfigFileName, entryPath }) => ({
+  command: "pnpm",
+  args: ["exec", "tsx", "--tsconfig", tsconfigFileName, entryPath],
+});
+
+/**
  * Parameters for {@link runBenchSubprocess}.
  *
  * @since 0.3.16-canary.0
@@ -118,6 +148,8 @@ export type RunBenchSubprocessParameters = Readonly<{
   readonly forwardChildStdoutVerbose: boolean;
   /** Absent for a standalone call, which then logs milestones plainly on stderr. */
   readonly progress?: SubprocessProgressTarget | undefined;
+  /** How the child is started; defaults to the suite's tsx. A test points it at a plain script. */
+  readonly launch?: SubprocessLauncher | undefined;
   /**
    * Extra env vars for the child (merged over the pinned bench environment). Not a scenario-filter
    * channel: scheduling and reporting read `BENCH_ONLY` from the parent environment, and isolated
@@ -158,15 +190,15 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
     exitCode: number | null;
     signal: NodeJS.Signals | null;
   }>((resolve, reject) => {
-    const childProcess = spawn(
-      "pnpm",
-      ["exec", "tsx", "--tsconfig", tsconfigFileName, join("src", benchEntryFileNameUnderSrc)],
-      {
-        cwd: packageRootDirectory,
-        stdio: ["ignore", "pipe", "pipe"],
-        env: { ...buildSubprocessEnvironment(), ...environmentOverrides },
-      },
-    );
+    const launch = (parameters.launch ?? launchWithPnpmTsx)({
+      tsconfigFileName,
+      entryPath: join("src", benchEntryFileNameUnderSrc),
+    });
+    const childProcess = spawn(launch.command, [...launch.args], {
+      cwd: packageRootDirectory,
+      stdio: ["ignore", "pipe", "pipe"],
+      env: { ...buildSubprocessEnvironment(), ...environmentOverrides },
+    });
 
     let stdout = "";
     let stderr = "";
