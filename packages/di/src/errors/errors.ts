@@ -418,6 +418,24 @@ export class ChainAlreadyRegisteredError extends DiError {
   }
 }
 
+/**
+ * `many()` on a binding with a named or tagged slot, or a slot constraint on a collection member.
+ *
+ * @remarks A collection member keeps the default slot: its membership replaces slot last-wins, and a
+ * tagged member would have no index able to return every member of the tag.
+ */
+export class ManyBindingSlotError extends DiError {
+  readonly code = "MANY_BINDING_SLOT";
+  readonly tokenName: string;
+
+  constructor(tokenName: string) {
+    super(
+      `A many() binding for token '${tokenName}' keeps the default slot: it cannot also declare whenNamed() or whenTagged().`,
+    );
+    this.tokenName = tokenName;
+  }
+}
+
 export class ChainNotRegisteredError extends DiError {
   readonly code = "CHAIN_NOT_REGISTERED";
   readonly tokenName: string;

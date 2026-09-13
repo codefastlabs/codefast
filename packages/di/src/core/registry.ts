@@ -1,5 +1,5 @@
 import type { Binding } from "#/core/binding";
-import { bindingSlotEquals, bindingSlotToString, writablePredicate } from "#/core/binding";
+import { bindingSlotEquals, bindingSlotToString, writableMembership, writablePredicate } from "#/core/binding";
 import { getOrInsert } from "#/core/map-upsert";
 import { advanceStateEpoch } from "#/core/state-epoch";
 import type { BindingTag } from "#/core/tag";
@@ -337,6 +337,20 @@ export class BindingRegistry {
   }
 
   /**
+   * Marks a live binding as a collection member in place, moving it out of the lone map: a member is
+   * never the token's lone default answer, and nothing else indexes on membership.
+   */
+  setMany(binding: Binding): void {
+    this.#bump();
+    writableMembership(binding).isMany = true;
+    const key: DependencyKey = binding.token;
+    if (this.#lone.get(key) === binding) {
+      this.#lone.delete(key);
+      this.#createRecord(key, [binding]);
+    }
+  }
+
+  /**
    * Rewrites a live binding's predicate in place.
    *
    * @remarks Nothing indexes on the predicate, so the binding object and its id stay; only a lone
@@ -457,12 +471,12 @@ export class BindingRegistry {
   }
 }
 
-/** A binding nothing has to be matched against: the default slot, no predicate. */
+/** A binding nothing has to be matched against: the default slot, no predicate, not a collection member. */
 function isDefaultSlotBinding(binding: Binding): boolean {
-  return binding.slot.tags.length === 0 && binding.predicate === undefined;
+  return binding.slot.tags.length === 0 && binding.predicate === undefined && !binding.isMany;
 }
 
-/** A predicate with no slot constraint: last-wins does not apply to it. */
+/** A binding that occupies no slot — a collection member, or a predicate with no slot constraint — so last-wins does not apply to it. */
 function isPurePredicateBinding(binding: Binding): boolean {
-  return binding.predicate !== undefined && binding.slot.tags.length === 0;
+  return binding.isMany || (binding.predicate !== undefined && binding.slot.tags.length === 0);
 }

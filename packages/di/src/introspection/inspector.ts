@@ -31,6 +31,8 @@ export interface BindingSnapshot {
     readonly tags: ReadonlyArray<BindingTag>;
   };
   readonly id: BindingIdentifier;
+  /** Whether the binding is a collection member only, taken by `resolveAll` and never by `resolve`. */
+  readonly isMany: boolean;
 }
 
 /**
@@ -114,6 +116,7 @@ export class Inspector {
       scope: effectiveBindingScope(binding),
       slot,
       id: binding.identifier,
+      isMany: binding.isMany,
     };
   }
 }

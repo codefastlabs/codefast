@@ -206,11 +206,11 @@ restores what the new shape frees, exactly as before.
 
 Most tokens are bound once, to the default slot, with no predicate. `BindingRegistry` keeps exactly those in one map,
 token → binding, and nothing else about them: no list, no record, no index. A token that becomes anything more — a
-second binding, a tagged slot, a predicate — moves to a second map of records, where a record is its binding list plus
-the two tagged-slot indexes, which stay unallocated until a tagged slot lands on that token. A token is in exactly one
-of the two maps, and it moves back when a record shrinks to one default-slot binding. The record map itself is allocated
-by the first token that needs one, and the index a caller almost never uses, binding **id** → binding, is built on the
-first id-keyed operation and maintained from then on.
+second binding, a tagged slot, a predicate, a `many()` member — moves to a second map of records, where a record is its
+binding list plus the two tagged-slot indexes, which stay unallocated until a tagged slot lands on that token. A token
+is in exactly one of the two maps, and it moves back when a record shrinks to one default-slot binding. The record map
+itself is allocated by the first token that needs one, and the index a caller almost never uses, binding **id** →
+binding, is built on the first id-keyed operation and maintained from then on.
 
 The layout is priced on the two paths that matter. A plain bind is one map write and one binding object, because the
 common token gets no record and no list. A synchronous resolve's first read, `getFastDefault()`, is a bare `Map.get` on

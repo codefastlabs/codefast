@@ -110,6 +110,7 @@ export {
   AsyncResolutionError,
   ChainAlreadyRegisteredError,
   ChainNotRegisteredError,
+  ManyBindingSlotError,
   CircularDependencyError,
   DiError,
   DisposedContainerError,

@@ -140,6 +140,11 @@ interface BindingBase<Value> {
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
   readonly predicate?: BindingConstraint | undefined;
+  /**
+   * Whether the binding is a collection member only: `resolveAll` includes it, `resolve` never
+   * selects it, and it neither displaces nor is displaced under slot last-wins.
+   */
+  readonly isMany: boolean;
 }
 
 /**
@@ -286,6 +291,16 @@ export function writablePredicate(binding: Binding): PredicateField {
   return binding as PredicateField;
 }
 
+/** Writable view of collection membership, which the registry sets because it decides the binding's map. */
+export interface MembershipField {
+  isMany: boolean;
+}
+
+/** Narrows a registered binding to its membership flag for the registry to set. */
+export function writableMembership(binding: Binding): MembershipField {
+  return binding as MembershipField;
+}
+
 /**
  * Writable view of the memoized frame, which is a cache rather than part of a binding's identity.
  *
@@ -324,6 +339,11 @@ export interface SlotConstrainedBuilder<Names extends string = string> {
   whenTagged(criterion: BindingTag): this;
   /** Keeps the binding on the default slot, the one an unconstrained request selects. */
   whenDefault(): this;
+  /**
+   * Makes the binding a collection member: one of several the token's `resolveAll` returns, never
+   * what a single `resolve` selects, and outside slot last-wins. It keeps the default slot.
+   */
+  many(): this;
   /** The identifier this binding is registered under. */
   id(): BindingIdentifier;
 }

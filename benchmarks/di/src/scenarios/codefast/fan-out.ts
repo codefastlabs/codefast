@@ -8,12 +8,11 @@
  * Inversify: N `.bind(TOKEN).toConstantValue(i).when(() => true)` registrations on the
  * same identifier; `getAll` returns all N.
  *
- * `@codefast/di`: the default (unnamed) slot is **last-wins**, so you cannot model N
- * unqualified `toConstantValue` the same way as Inversify without a different
- * multi-registration strategy. We use the library’s **constraint-only** slot (`.when(() => true)`)
- * so each of the N `toConstantValue` lines remains a distinct multi-binding — same as the
- * multi-bind shape Inversify uses for this benchmark; there is no `whenNamed` walk.
- * A predicate-only binding does not take part in slot last-wins, which is what lets N of them
+ * `@codefast/di`: the default (unnamed) slot is **last-wins**, so N unqualified `toConstantValue`
+ * lines would collapse to one. The library's own form of a strategy set is the collection member,
+ * `.many()`: each of the N lines stays a distinct binding that `resolveAll` returns and a single
+ * `resolve` never selects, with no predicate to evaluate per member and no `whenNamed` walk.
+ * A member does not take part in slot last-wins, which is what lets N of them
  * coexist on one token.
  */
 import { Container, token } from "@codefast/di";
@@ -54,7 +53,7 @@ function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
 }
 
 /**
- * Both libraries use predicate-only registrations (`when(() => true)`) so the
+ * Inversify uses predicate-only registrations (`when(() => true)`) and codefast `.many()` members, so the
  * `resolveAll/getAll` rows exercise the same "constraint-filtered multi-binding"
  * shape instead of mixing constrained and unconstrained binding paths.
  */
@@ -62,10 +61,7 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   const strategyToken = token<number>("bench-cf-fanout-resolve-all-strategy");
   const container = Container.create();
   for (let index = 0; index < strategyCount; index++) {
-    container
-      .bind(strategyToken)
-      .toConstantValue(index)
-      .when(() => true);
+    container.bind(strategyToken).toConstantValue(index).many();
   }
   container.resolveAll(strategyToken);
 
@@ -89,10 +85,7 @@ function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): Be
   function buildAndRead(): ReadonlyArray<number> {
     const container = Container.create();
     for (let index = 0; index < strategyCount; index++) {
-      container
-        .bind(strategyToken)
-        .toConstantValue(index)
-        .when(() => true);
+      container.bind(strategyToken).toConstantValue(index).many();
     }
     return container.resolveAll(strategyToken);
   }

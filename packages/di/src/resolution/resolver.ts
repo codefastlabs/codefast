@@ -257,7 +257,7 @@ export class DependencyResolver implements ResolverCallbacks {
     let match: Binding | undefined;
     for (let index = 0; index < bindings.length; index += 1) {
       const candidate = bindings[index]!;
-      if (!matchesSlot(candidate.slot, options)) {
+      if (candidate.isMany || !matchesSlot(candidate.slot, options)) {
         continue;
       }
       if (match !== undefined) {

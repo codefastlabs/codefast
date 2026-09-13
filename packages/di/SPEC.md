@@ -972,6 +972,15 @@ condition the slot declares. The slot with no conditions is the **default slot**
 > 2 candidates remain after runtime filtering, `resolve`/`resolveAsync` throws `AmbiguousBindingError` (not
 > `InternalError` — this is a user error, not an internal one).
 
+> **Normative — collection members: `many()`.** A binding refined with `.many()` is a **collection member**: several
+> members of one token coexist on the default slot, `resolveAll`/`resolveAllAsync` return every member (plus whatever
+> else the request matches, in registration order), and `resolve`/`resolveAsync` **never select** a member — a token
+> holding only members reads as unbound to a single resolve. A member takes no part in slot last-wins: it neither
+> displaces nor is displaced by the ordinary default binding or by other members. A member keeps the default slot —
+> `many()` on a named or tagged binding, or `whenNamed`/`whenTagged` on a member, throws `ManyBindingSlotError` — and
+> may carry `when()` predicates, which apply as for any candidate. This is the intended form of a strategy set; a
+> predicate that always passes is not.
+
 **Candidate:** a binding whose slot matches the request's criterion set and that passes every `when(ctx)` predicate.
 
 #### The matching rule
@@ -2516,32 +2525,34 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 > **Normative.** Every error extends `DiError` — an abstract class that forces each subclass to declare a `code` string
 > (machine-readable), alongside a message carrying enough context for a human reader.
 
-| Error                           | `code`                        | Thrown when                                                            | Context fields                                   |
-| ------------------------------- | ----------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------ |
-| `InternalError`                 | `INTERNAL_ERROR`              | An internal assertion failed — **not** a user error                    | —                                                |
-| `TokenNotBoundError`            | `TOKEN_NOT_BOUND`             | The token has no binding at all, even after walking the parent chain   | `tokenName`                                      |
-| `NoMatchingBindingError`        | `NO_MATCHING_BINDING`         | The token **has** bindings but no slot matches the hint                | `tokenName`, `hint`, `availableSlots`            |
-| `AmbiguousBindingError`         | `AMBIGUOUS_BINDING`           | ≥ 2 candidates remain and the more-specific rule cannot decide         | `tokenName`, `candidateIds`                      |
-| `CircularDependencyError`       | `CIRCULAR_DEPENDENCY`         | A → B → A, including a cycle along an alias chain                      | `cycle`                                          |
-| `AsyncResolutionError`          | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain  | `tokenName`, `asyncSourceToken`                  |
-| `AsyncActivationError`          | `ASYNC_ACTIVATION`            | `@postConstruct` or `onActivation` returned a `Promise` on a sync path | `tokenName`, `hookKind`, `methodName`            |
-| `AsyncDeactivationError`        | `ASYNC_DEACTIVATION`          | A sync `unbind()` on a binding with an async `onDeactivation`          | `tokenName`                                      |
-| `ScopeViolationError`           | `SCOPE_VIOLATION`             | Captive dependency — a singleton depending on scoped or transient      | `details`: both tokens + scopes, plus `path`     |
-| `MissingMetadataError`          | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing    | `targetName`                                     |
-| `InvalidMetadataError`          | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use       | `targetName`, `reason`                           |
-| `AsyncModuleLoadError`          | `ASYNC_MODULE_LOAD`           | A sync `load()` received an `AsyncModule`                              | `moduleName`                                     |
-| `SyncDisposalNotSupportedError` | `SYNC_DISPOSAL_NOT_SUPPORTED` | `[Symbol.dispose]()` was called                                        | —                                                |
-| `MissingScopeContextError`      | `MISSING_SCOPE_CONTEXT`       | A `scoped` binding resolved from a container with no child scope       | `tokenName`                                      |
-| `MissingContainerContextError`  | `MISSING_CONTAINER_CONTEXT`   | A class with `@inject accessor` was `new`-ed outside a container       | `className` (may be `undefined`), `accessorName` |
-| `RebindUnboundTokenError`       | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container            | `tokenName`                                      |
-| `DisposedContainerError`        | `DISPOSED_CONTAINER`          | Any operation on an already-disposed container                         | —                                                |
-| `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`       | `tokenName`                                      |
-| `ChainAlreadyRegisteredError`   | `CHAIN_ALREADY_REGISTERED`    | A second `to*()` on a chain that already registered its binding        | `tokenName`                                      |
-| `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                              | `tokenName`                                      |
-| `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member        | `decoratorName`, `memberName`                    |
-| `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds         | `tokenName`, `phase`                             |
-| `EmptyTagCriteriaError`         | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                        | `helperName`                                     |
-| `UnreachableConstraintError`    | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares        | `tokenName`, `requiredName`, `helperName`        |
+| Error                           | `code`                        | Thrown when                                                             | Context fields                                   |
+| ------------------------------- | ----------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
+| `InternalError`                 | `INTERNAL_ERROR`              | An internal assertion failed — **not** a user error                     | —                                                |
+| `TokenNotBoundError`            | `TOKEN_NOT_BOUND`             | The token has no binding at all, even after walking the parent chain    | `tokenName`                                      |
+| `NoMatchingBindingError`        | `NO_MATCHING_BINDING`         | The token **has** bindings but no slot matches the hint                 | `tokenName`, `hint`, `availableSlots`            |
+| `AmbiguousBindingError`         | `AMBIGUOUS_BINDING`           | ≥ 2 candidates remain and the more-specific rule cannot decide          | `tokenName`, `candidateIds`                      |
+| `CircularDependencyError`       | `CIRCULAR_DEPENDENCY`         | A → B → A, including a cycle along an alias chain                       | `cycle`                                          |
+| `AsyncResolutionError`          | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain   | `tokenName`, `asyncSourceToken`                  |
+| `AsyncActivationError`          | `ASYNC_ACTIVATION`            | `@postConstruct` or `onActivation` returned a `Promise` on a sync path  | `tokenName`, `hookKind`, `methodName`            |
+| `AsyncDeactivationError`        | `ASYNC_DEACTIVATION`          | A sync `unbind()` on a binding with an async `onDeactivation`           | `tokenName`                                      |
+| `ScopeViolationError`           | `SCOPE_VIOLATION`             | Captive dependency — a singleton depending on scoped or transient       | `details`: both tokens + scopes, plus `path`     |
+| `MissingMetadataError`          | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing     | `targetName`                                     |
+| `InvalidMetadataError`          | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use        | `targetName`, `reason`                           |
+| `AsyncModuleLoadError`          | `ASYNC_MODULE_LOAD`           | A sync `load()` received an `AsyncModule`                               | `moduleName`                                     |
+| `SyncDisposalNotSupportedError` | `SYNC_DISPOSAL_NOT_SUPPORTED` | `[Symbol.dispose]()` was called                                         | —                                                |
+| `MissingScopeContextError`      | `MISSING_SCOPE_CONTEXT`       | A `scoped` binding resolved from a container with no child scope        | `tokenName`                                      |
+| `MissingContainerContextError`  | `MISSING_CONTAINER_CONTEXT`   | A class with `@inject accessor` was `new`-ed outside a container        | `className` (may be `undefined`), `accessorName` |
+| `RebindUnboundTokenError`       | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container             | `tokenName`                                      |
+| `DisposedContainerError`        | `DISPOSED_CONTAINER`          | Any operation on an already-disposed container                          | —                                                |
+| `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`        | `tokenName`                                      |
+| `ChainAlreadyRegisteredError`   | `CHAIN_ALREADY_REGISTERED`    | A second `to*()` on a chain that already registered its binding         | `tokenName`                                      |
+| `ManyBindingSlotError`          | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member | `tokenName`                                      |
+| `ManyBindingSlotError`          | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member | `tokenName`                                      |
+| `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                               | `tokenName`                                      |
+| `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member         | `decoratorName`, `memberName`                    |
+| `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds          | `tokenName`, `phase`                             |
+| `EmptyTagCriteriaError`         | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                         | `helperName`                                     |
+| `UnreachableConstraintError`    | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares         | `tokenName`, `requiredName`, `helperName`        |
 
 > **Exact shape:** `src/errors/errors.ts` — every class above, plus `ScopeViolationDetails`.
 
@@ -2845,6 +2856,7 @@ export {
   AsyncResolutionError,
   ChainAlreadyRegisteredError,
   ChainNotRegisteredError,
+  ManyBindingSlotError,
   CircularDependencyError,
   DiError,
   DisposedContainerError,

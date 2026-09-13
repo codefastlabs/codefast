@@ -42,7 +42,12 @@ import type {
   ResolutionContext,
   ResolutionFrame,
 } from "#/core/types";
-import { ChainAlreadyRegisteredError, ChainNotRegisteredError, SelfBindingRequiresClassError } from "#/errors/errors";
+import {
+  ChainAlreadyRegisteredError,
+  ChainNotRegisteredError,
+  ManyBindingSlotError,
+  SelfBindingRequiresClassError,
+} from "#/errors/errors";
 import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#/injection/descriptor";
 import { normalizeToDescriptor } from "#/injection/descriptor";
 import type { ScopeManager } from "#/lifecycle/scope-manager";
@@ -107,6 +112,7 @@ export class BindingChain<Value, Names extends string = string>
   readonly token: Token<Value, Names> | Constructor<Value>;
   slot: BindingSlot = DEFAULT_BINDING_SLOT;
   predicate: BindingConstraint | undefined = undefined;
+  isMany = false;
   scope: BindingScope = "singleton";
   target: unknown = undefined;
   factory: unknown = undefined;
@@ -275,7 +281,34 @@ export class BindingChain<Value, Names extends string = string>
 
   whenTagged(criterion: BindingTag): this {
     this.#requireRegistered();
+    if (this.isMany) {
+      throw new ManyBindingSlotError(tokenName(this.token));
+    }
     return this.#reslot(updateSlotTag(this.slot, criterion), this.predicate);
+  }
+
+  many(): this {
+    this.#requireRegistered();
+    if (this.slot.tags.length !== 0) {
+      throw new ManyBindingSlotError(tokenName(this.token));
+    }
+    if (this.isMany) {
+      return this;
+    }
+    const { registry } = this.#registration;
+    // With the last registry write this chain's own and nothing parked, the binding is provably live
+    // and displaced nobody, so membership is written in place and the registry only moves it out of
+    // the lone map. Otherwise it goes through the re-slot path, which re-checks liveness and restores
+    // an ordinary binding this chain's `to*()` displaced, now that the member frees its slot.
+    if (registry.version === this.#versionAfterLastWrite && this.#displacedByChain === undefined) {
+      registry.setMany(this.#binding);
+      this.#versionAfterLastWrite = registry.version;
+      return this;
+    }
+    this.#commit(() => {
+      this.isMany = true;
+    });
+    return this;
   }
 
   whenDefault(): this {
