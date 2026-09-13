@@ -185,6 +185,8 @@ const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown
   },
 };
 
+const NO_DEACTIVATION_PAIRS: ReadonlyArray<[Binding, unknown]> = Object.freeze([]);
+
 // ── DefaultContainer ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 class DefaultContainer implements Container {
@@ -325,10 +327,12 @@ class DefaultContainer implements Container {
   }
 
   /** Remove bindings from registry + scope and collect [binding, instance] pairs for deactivation. */
-  #collectDeactivationPairs(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Array<[Binding, unknown]> {
+  #collectDeactivationPairs(
+    tokenOrId: Token<unknown> | Constructor | BindingIdentifier,
+  ): ReadonlyArray<[Binding, unknown]> {
     if (typeof tokenOrId === "string") {
       const binding = this.#registry.removeById(tokenOrId);
-      return binding === undefined ? [] : this.#drainSingletons([binding]);
+      return binding === undefined ? NO_DEACTIVATION_PAIRS : this.#drainSingletons([binding]);
     }
     // Dropping the whole token in one pass: removing each binding by id instead would re-scan and
     // re-index the token's binding list once per binding.
@@ -336,18 +340,20 @@ class DefaultContainer implements Container {
   }
 
   /** Drain scope entries for already-removed bindings, and pair each one that still owes a deactivation. */
-  #drainSingletons(bindings: ReadonlyArray<Binding>): Array<[Binding, unknown]> {
-    const pairs: Array<[Binding, unknown]> = [];
+  #drainSingletons(bindings: ReadonlyArray<Binding>): ReadonlyArray<[Binding, unknown]> {
+    // Allocated by the first pair owed: an unbind or rebind of a binding nothing ever cached — the
+    // hot-swap shape — owes no deactivation and hands the shared empty list back.
+    let pairs: Array<[Binding, unknown]> | undefined;
     for (const binding of bindings) {
       if (binding.instance !== NO_INSTANCE) {
-        pairs.push([binding, binding.instance]);
+        (pairs ??= []).push([binding, binding.instance]);
         this.#scope.deleteSingleton(binding);
       } else if (this.#owesConstantDeactivation(binding)) {
-        pairs.push([binding, binding.value]);
+        (pairs ??= []).push([binding, binding.value]);
       }
       this.#scope.deleteScoped(binding.id);
     }
-    return pairs;
+    return pairs ?? NO_DEACTIVATION_PAIRS;
   }
 
   /**
@@ -555,7 +561,7 @@ class DefaultContainer implements Container {
   }
 
   /** Unregister module bindings and collect [binding, instance] pairs for deactivation. */
-  #removeModuleBindings(ref: object): Array<[Binding, unknown]> {
+  #removeModuleBindings(ref: object): ReadonlyArray<[Binding, unknown]> {
     this.#moduleRefs?.delete(ref);
     const ids = this.#moduleBindingIds?.get(ref) ?? [];
     this.#moduleBindingIds?.delete(ref);
