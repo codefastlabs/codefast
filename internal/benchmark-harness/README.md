@@ -118,11 +118,54 @@ From the repo root:
 ```bash
 pnpm bench            # run every suite, shared profile
 pnpm bench:isolate    # run every suite, one subprocess per scenario, interleaved
+pnpm bench:fast       # smoke profile — shorter windows, for "did I break it"
+pnpm bench:full       # --expose-gc for every library
+pnpm bench:verbose    # stream every child line and print the per-scenario table
+pnpm bench:list       # every suite's scenario inventory as JSON, measuring nothing
+pnpm bench:report     # derive report.md / report.json from each suite's latest run
 pnpm bench:serve      # browse recorded runs (see ../benchmark-viewer)
 ```
 
-A suite wires the harness in two files. Its parent entry spawns one child per library with `runBenchSubprocess` or
-`runBenchSubprocessesInterleaved`, builds a `LibraryReport` per payload with `buildLibraryReport`, renders
+Every root script has a `di:` and a `tv:` twin (`pnpm di:bench:fast`, `pnpm tv:bench:list`, …) that filters to one
+suite; the per-library child entries (`bench:<library>`) stay suite-local.
+
+## Progress display
+
+A run reports through one `ProgressDisplay` (`src/parent/progress/`), chosen by `createProgressDisplay` from what stderr
+can draw. On an interactive terminal it is a live block — one line per library with a bar, `done/total`, the trial
+ordinal when a profile runs more than one, elapsed time and the scenario in flight — redrawn in place, with any other
+child output kept above it. Piped, under `CI`, or with `BENCH_VERBOSE=true`, it is one plain line per milestone instead,
+plus a "still running" heartbeat after ten quiet seconds, so a log stays readable.
+
+The child does not know which display it feeds. Its stderr lines are the protocol: `src/shared/progress.ts` holds the
+formatter the child prints with and the parser the parent reads with, so `bench:<library>` run alone prints the same
+readable lines a parent consumes, and a round-trip test pins the format. An isolated run counts a library's scenarios
+across its per-scenario children; the scheduler tells the display the total after discovery.
+
+Both the block and the console report colour their verdicts through `node:util`'s `styleText`, resolved once per stream
+by `createPalette`: a reliable win green, a loss red, a parity or an unreliable cell dim, a finished library green and a
+failed one red. `NO_COLOR` turns it off, `FORCE_COLOR` turns it on for a pipe, and every cell is padded before it is
+tinted, so alignment never depends on colour.
+
+The console report is a scoreboard, not a table. One row per competitor carries `W · P · L`, the comparable count, the
+median and geomean ratio and the worst loss; a second table gives the geomean per scenario group with one column per
+competitor; the reliable losses follow one per line, with the count of losses hidden because they sit above the
+throughput noise ceiling. The per-scenario table prints only in verbose mode, and `bench:report` derives it as
+`report.md`.
+
+When `latest.json` names a run of the same configuration — shape, profile and trial count — on the same CPU, Node and
+architecture, the report also diffs against it (`src/report/run-diff.ts`): a `Δ prev` column beside each aggregate,
+computed over the rows both runs measured; a list of regressions beyond noise, where a scenario's subject throughput
+fell by more than the larger of the noise floor and either side's IQR fraction, rows above the noise ceiling excluded;
+and the count of improvements beyond noise. A run of another configuration is named and skipped rather than compared.
+The previous run is read before the artifacts are written, while the pointer still names it.
+
+A run closes with a card (`src/report/run-card.ts`): wall and rebuild time, library and row counts, the profile, the run
+order and what it means for citing ratios, sanity failures by library, whether `latest.json` moved, every library's
+version, the observations file and the next commands.
+
+A suite wires the harness in two files. Its parent entry runs every library with `runBenchLibraries` (which picks the
+run shape and the progress display), builds a `LibraryReport` per payload with `buildLibraryReport`, renders
 `renderComparisonMarkdownReport` and `renderComparisonConsoleReport`, builds the `report.json` document with
 `buildComparisonDocument`, and hands everything to `writeBenchRunArtifacts`. Each child entry calls
 `runBenchmarkChildMain` with the library's scenario collector. [`../../benchmarks/di`](../../benchmarks/di) and

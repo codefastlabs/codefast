@@ -10,6 +10,7 @@ import {
   parseEnvInteger,
   resolveBenchModeFromEnvironment,
 } from "#/shared/env-keys";
+import { formatProgressEvent } from "#/shared/progress";
 import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 
 /**
@@ -209,7 +210,14 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
       }
       completedScenarioCount += 1;
       console.error(
-        `[bench] trial ${String(trialIndex + 1)}/${String(trialCount)} scenario ${String(completedScenarioCount)}/${String(runnableScenarioCount)} done: ${task.name}`,
+        formatProgressEvent({
+          kind: "scenario-done",
+          trial: trialIndex + 1,
+          trialCount,
+          scenario: completedScenarioCount,
+          scenarioCount: runnableScenarioCount,
+          scenarioId: task.name,
+        }),
       );
     });
 
@@ -267,15 +275,23 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
     trialCount: number = defaultTrialCount,
   ): Promise<Array<TrialPayload>> {
     const trials: Array<TrialPayload> = [];
+    const sanityFailureSet = new Set(sanityFailures);
+    // The plan goes out before the first sample so a parent can size its progress bar at once.
+    console.error(
+      formatProgressEvent({
+        kind: "plan",
+        trialCount,
+        scenarioCount: scenarios.filter((scenario) => !sanityFailureSet.has(scenario.id)).length,
+      }),
+    );
     const scenarioStartedAtMs = performance.now();
     for (let trialIndex = 0; trialIndex < trialCount; trialIndex++) {
       runFullGcIfExposed();
       const trial = await runOneTrial(trialIndex, trialCount, scenarios, sanityFailures);
       trials.push(trial);
-      console.error(`[bench] trial ${String(trialIndex + 1)}/${String(trialCount)} all scenarios finished`);
+      console.error(formatProgressEvent({ kind: "trial-done", trial: trialIndex + 1, trialCount }));
       if (trialIndex === trialCount - 1) {
-        const scenarioElapsedMs = performance.now() - scenarioStartedAtMs;
-        console.error(`[bench] all scenarios wall time: ${scenarioElapsedMs.toFixed(0)}ms`);
+        console.error(formatProgressEvent({ kind: "finished", wallTimeMs: performance.now() - scenarioStartedAtMs }));
       }
     }
     return trials;

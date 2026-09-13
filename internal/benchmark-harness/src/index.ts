@@ -59,17 +59,59 @@ export { runSanityChecks } from "#/child/run-sanity-checks";
 
 export { resolveBenchParentExitCode } from "#/parent/resolve-bench-parent-exit-code";
 
-export type { InterleavedLibraryRun, RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess";
+export type {
+  InterleavedLibraryRun,
+  RunBenchSubprocessParameters,
+  SubprocessLaunch,
+  SubprocessLaunchTarget,
+  SubprocessLauncher,
+  SubprocessProgressTarget,
+} from "#/parent/run-bench-subprocess";
 export {
   SubprocessExecutionError,
   buildSubprocessEnvironment,
+  launchWithPnpmTsx,
   discoverBenchScenarioIds,
   isIsolatedBenchRunRequested,
   runBenchSubprocess,
   runBenchSubprocessesInterleaved,
 } from "#/parent/run-bench-subprocess";
 
-export type { BenchRunOutputPaths, WriteBenchRunArtifactsParameters } from "#/parent/bench-run-artifacts";
+export type { RunBenchLibrariesOptions, RunBenchLibrariesResult } from "#/parent/run-bench-libraries";
+export { runBenchLibraries } from "#/parent/run-bench-libraries";
+
+export type { CreatePaletteOptions, Palette, Tint } from "#/shared/palette";
+export { PLAIN_PALETTE, createPalette, shouldColor } from "#/shared/palette";
+
+export type { BenchProgressEvent } from "#/shared/progress";
+export { formatProgressEvent, parseProgressEvent } from "#/shared/progress";
+
+export type { ProgressDisplay } from "#/parent/progress/progress-display";
+export type {
+  LibraryProgress,
+  LibraryProgressStatus,
+  RegisterLibraryOptions,
+  SubprocessScope,
+} from "#/parent/progress/progress-tracker";
+export { ProgressTracker, progressFraction } from "#/parent/progress/progress-tracker";
+export type { RenderProgressFrameOptions } from "#/parent/progress/render-progress-frame";
+export { formatElapsed, renderProgressFrame } from "#/parent/progress/render-progress-frame";
+export type { LiveProgressDisplayOptions } from "#/parent/progress/live-progress-display";
+export { LiveProgressDisplay } from "#/parent/progress/live-progress-display";
+export type { PlainProgressDisplayOptions } from "#/parent/progress/plain-progress-display";
+export { PlainProgressDisplay } from "#/parent/progress/plain-progress-display";
+export type { CreateProgressDisplayOptions } from "#/parent/progress/create-progress-display";
+export {
+  canDrawLiveProgress,
+  createProgressDisplay,
+  prefersUnicodeBars,
+} from "#/parent/progress/create-progress-display";
+
+export type {
+  BenchRunArtifactsResult,
+  BenchRunOutputPaths,
+  WriteBenchRunArtifactsParameters,
+} from "#/parent/bench-run-artifacts";
 export { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#/parent/bench-run-artifacts";
 
 export type { BenchScenarioInventory, BenchScenarioInventoryEntry } from "#/parent/run-bench-listing-main";
@@ -137,3 +179,14 @@ export type {
 export { COMPARISON_DOCUMENT_SCHEMA_VERSION, buildComparisonDocument } from "#/report/comparison-document";
 
 export { writeJsonFile, writeJsonlRun, writeMarkdownFile } from "#/report/write";
+
+export type { Verdict } from "#/report/verdict";
+export { HEAD_TO_HEAD_PARITY_BAND, classifyRatio, ratioTint, verdictTint } from "#/report/verdict";
+export type { ConsoleCell, RenderConsoleTableOptions } from "#/report/console-table";
+export { cell, renderConsoleTable } from "#/report/console-table";
+export type { RenderScoreboardOptions } from "#/report/console-scoreboard";
+export { renderScoreboardLines } from "#/report/console-scoreboard";
+export type { CompetitorDelta, CurrentRun, PreviousRun, RunDiff, ScenarioDelta } from "#/report/run-diff";
+export { buildRunDiff, formatCompactHz, formatDeltaPercent, prepareRunDiff, readPreviousRun } from "#/report/run-diff";
+export type { PrintRunCardParameters, RenderRunCardOptions, RunCardInput } from "#/report/run-card";
+export { printRunCard, renderRunCardLines } from "#/report/run-card";

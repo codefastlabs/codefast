@@ -11,7 +11,7 @@ import {
 import { startBenchServer } from "@internal/benchmark-viewer/server";
 
 import { assembleDiComparison } from "#/harness/comparison";
-import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, SERVE_TITLE, TSYRINGE } from "#/harness/config";
+import { BENCH_LIBRARIES, CODEFAST_DI, SERVE_TITLE } from "#/harness/config";
 import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
 
 /** Chip display order; the labels themselves are declared on the scenario definitions. */
@@ -50,19 +50,11 @@ await startBenchServer({
   benchResultsDir: join(dirname(fileURLToPath(import.meta.url)), "..", "..", BENCH_RESULTS_DIR_NAME),
   preferredPort: resolvePreferredPortFromEnvironment(3001),
   title: SERVE_TITLE,
-  libraries: [
-    {
-      name: CODEFAST_DI.libraryName,
-      displayName: resolveDisplayName(CODEFAST_DI),
-      isPrimary: true,
-    },
-    { name: INVERSIFY.libraryName, displayName: resolveDisplayName(INVERSIFY) },
-    { name: AWILIX.libraryName, displayName: resolveDisplayName(AWILIX) },
-    { name: TSYRINGE.libraryName, displayName: resolveDisplayName(TSYRINGE) },
-    { name: BRANDI.libraryName, displayName: resolveDisplayName(BRANDI) },
-    { name: DITOX.libraryName, displayName: resolveDisplayName(DITOX) },
-    { name: INJECTION_JS.libraryName, displayName: resolveDisplayName(INJECTION_JS) },
-  ],
+  libraries: BENCH_LIBRARIES.map((library) => ({
+    name: library.libraryName,
+    displayName: resolveDisplayName(library),
+    isPrimary: library === CODEFAST_DI,
+  })),
   // Resolved from the scenario declarations themselves, so a rename cannot detach its facets.
   scenarioFacets: collectScenarioFacets(),
   deriveReport: (parsed, { runId }) => {

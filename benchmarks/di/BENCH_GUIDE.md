@@ -76,14 +76,14 @@ the run, so a row only this package has is still a legal filter.
 **Escape hatch — swapping `dist` directly, only when a side is not reachable from the working tree.** The one case the
 source lane cannot serve is comparing against a build you cannot check out — a published version, an old `dist` archived
 outside the tree. Then copy the two prebuilt dirs over `packages/di/dist` per side and run the **child entries**
-(`bench:codefast` / `bench:inversify`, `node --import tsx/esm src/*-benches.ts`), which do **not** go through `run.ts`.
-You must never use a `run.ts` lane here — `bench`, `bench:isolate`, `bench:full`, `bench:fast`, `bench:verbose` — for
-two reasons: its unconditional rebuild overwrites your swapped `dist` from `src` before the first sample, so both sides
-measure HEAD and **every row reports parity** — an A/B that compared nothing — and none of those lanes isolates per
-scenario anyway. Prove the swap is live before trusting a number: install a build whose target function throws, and
-check the row fails. This gives up what the parent provides — interleaving, the Environment header, the instability
-flags, and a citable cross-library ratio — leaves `dist` disagreeing with `src` until someone rebuilds, and ties the
-measurement to a directory rather than a commit.
+(`bench:<library>` — `bench:codefast`, `bench:inversify`, … — `node --import tsx/esm src/*-benches.ts`), which do
+**not** go through `run.ts`. You must never use a `run.ts` lane here — `bench`, `bench:isolate`, `bench:full`,
+`bench:fast`, `bench:verbose` — for two reasons: its unconditional rebuild overwrites your swapped `dist` from `src`
+before the first sample, so both sides measure HEAD and **every row reports parity** — an A/B that compared nothing —
+and none of those lanes isolates per scenario anyway. Prove the swap is live before trusting a number: install a build
+whose target function throws, and check the row fails. This gives up what the parent provides — interleaving, the
+Environment header, the instability flags, and a citable cross-library ratio — leaves `dist` disagreeing with `src`
+until someone rebuilds, and ties the measurement to a directory rather than a commit.
 
 Running a side's whole suite in one process is not a cheaper version of the same measurement either: scenarios that
 share an isolate share inline caches and optimisation state, so a change to a function several rows exercise shows up

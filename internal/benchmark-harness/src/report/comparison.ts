@@ -1,6 +1,7 @@
 /** Renders one pivot library against any number of competitors; a head-to-head is the two-library case. */
 
 import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
+import { renderScoreboardLines } from "#/report/console-scoreboard";
 import { formatRatioMultiple, formatThroughputOpsPerSecond, formatThroughputRatio } from "#/report/format";
 import { quantile } from "#/report/quantiles";
 import type { ThroughputQuality } from "#/report/reliability";
@@ -15,6 +16,11 @@ import {
   markRatioQuality,
   markThroughputQuality,
 } from "#/report/reliability";
+import type { RunDiff, ScenarioDelta } from "#/report/run-diff";
+import { formatCompactHz, formatDeltaPercent } from "#/report/run-diff";
+import { HEAD_TO_HEAD_PARITY_BAND, ratioTint } from "#/report/verdict";
+import type { Palette, Tint } from "#/shared/palette";
+import { createPalette } from "#/shared/palette";
 
 /**
  * One library column: its aggregated report plus the labels used in table headers.
@@ -92,10 +98,13 @@ export interface ComparisonMarkdownReportOptions {
 export interface ComparisonConsoleReportOptions {
   readonly sectionHeading: string;
   readonly footerHintLine?: string;
+  /** Prints the per-scenario rows above the summary; off, the summary alone is the console report. */
+  readonly includeScenarioTable?: boolean | undefined;
+  /** Colour roles for stdout; defaults to colour on an interactive terminal, honouring `NO_COLOR`. */
+  readonly palette?: Palette | undefined;
+  /** The change since the previous comparable run, shown beside the aggregates and as a regression list. */
+  readonly diff?: RunDiff | undefined;
 }
-
-// A ratio within ±3% of 1.0 is statistical parity, not a win or a loss.
-const HEAD_TO_HEAD_PARITY_BAND = 0.03;
 
 /**
  * One classified entry: scenario id plus its pivot/competitor throughput ratio.
@@ -635,6 +644,65 @@ const CLI_TABLE_COLUMN_GAP = "  ";
 const CONSOLE_THROUGHPUT_COLUMN_WIDTH = 18;
 const CONSOLE_RATIO_COLUMN_WIDTH = 12;
 
+function ratioCellTint(pivotHzPerOp: number, competitor: ComparisonCompetitorCell, palette: Palette): Tint {
+  if (competitor.hzPerOp <= 0 || pivotHzPerOp <= 0) {
+    return palette.dim;
+  }
+  return ratioTint(pivotHzPerOp / competitor.hzPerOp, isRatioUnreliable(pivotHzPerOp, competitor.hzPerOp), palette);
+}
+
+function deltaTint(entry: ScenarioDelta | undefined, palette: Palette): Tint {
+  if (entry === undefined || entry.unreliable || Math.abs(entry.delta) <= entry.threshold) {
+    return palette.dim;
+  }
+  return entry.delta < 0 ? palette.loss : palette.win;
+}
+
+const CONSOLE_DELTA_COLUMN_WIDTH = 8;
+
+function printScenarioRows(
+  rows: ReadonlyArray<ComparisonScenarioRow>,
+  scenarioColumnWidth: number,
+  groupColumnWidth: number,
+  palette: Palette,
+  deltaById: ReadonlyMap<string, ScenarioDelta> | undefined,
+): void {
+  for (const row of rows) {
+    const pivotSample = pivotQuality(row);
+    const delta = deltaById?.get(row.id);
+    console.log(
+      [
+        row.id.padEnd(scenarioColumnWidth),
+        palette.dim(row.group.padEnd(groupColumnWidth)),
+        markThroughputQuality(formatThroughputOpsPerSecond(row.pivotHzPerOp), pivotSample).padStart(
+          CONSOLE_THROUGHPUT_COLUMN_WIDTH,
+        ),
+        ...(deltaById === undefined
+          ? []
+          : [
+              deltaTint(
+                delta,
+                palette,
+              )((delta === undefined ? "—" : formatDeltaPercent(delta.delta)).padStart(CONSOLE_DELTA_COLUMN_WIDTH)),
+            ]),
+        ...row.competitors.map((competitor) =>
+          ratioCellTint(
+            row.pivotHzPerOp,
+            competitor,
+            palette,
+          )(
+            markRatioQuality(
+              formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
+              pivotSample,
+              competitor,
+            ).padStart(CONSOLE_RATIO_COLUMN_WIDTH),
+          ),
+        ),
+      ].join(CLI_TABLE_COLUMN_GAP),
+    );
+  }
+}
+
 /**
  * Prints the comparison to stdout with aligned ASCII columns.
  *
@@ -645,74 +713,93 @@ export function renderComparisonConsoleReport(
   competitors: ReadonlyArray<ComparisonLibrary>,
   options: ComparisonConsoleReportOptions,
 ): void {
+  const palette = options.palette ?? createPalette({ stream: process.stdout });
   const rows = buildComparisonRows(pivot, competitors);
   const scenarioColumnWidth = Math.max(28, ...rows.map((row) => row.id.length));
   const groupColumnWidth = Math.max(10, ...rows.map((row) => row.group.length));
 
+  const diff = options.diff;
+  const deltaById = diff?.comparable === true ? new Map(diff.scenarios.map((entry) => [entry.id, entry])) : undefined;
   const headerLine = [
     "Scenario".padEnd(scenarioColumnWidth),
     "Group".padEnd(groupColumnWidth),
     `${consoleLabel(pivot)} hz/op`.padStart(CONSOLE_THROUGHPUT_COLUMN_WIDTH),
+    ...(deltaById === undefined ? [] : ["Δ prev".padStart(CONSOLE_DELTA_COLUMN_WIDTH)]),
     ...competitors.map((competitor) => `vs ${consoleLabel(competitor)}`.padStart(CONSOLE_RATIO_COLUMN_WIDTH)),
   ].join(CLI_TABLE_COLUMN_GAP);
 
-  console.log(`\n${options.sectionHeading}`);
-  console.log(headerLine);
-  console.log("-".repeat(headerLine.length));
-  for (const row of rows) {
-    const pivotSample = pivotQuality(row);
-    console.log(
-      [
-        row.id.padEnd(scenarioColumnWidth),
-        row.group.padEnd(groupColumnWidth),
-        markThroughputQuality(formatThroughputOpsPerSecond(row.pivotHzPerOp), pivotSample).padStart(
-          CONSOLE_THROUGHPUT_COLUMN_WIDTH,
-        ),
-        ...row.competitors.map((competitor) =>
-          markRatioQuality(
-            formatThroughputRatio(row.pivotHzPerOp, competitor.hzPerOp),
-            pivotSample,
-            competitor,
-          ).padStart(CONSOLE_RATIO_COLUMN_WIDTH),
-        ),
-      ].join(CLI_TABLE_COLUMN_GAP),
-    );
+  console.log(`\n${palette.heading(options.sectionHeading)}`);
+  if (options.includeScenarioTable ?? true) {
+    console.log(palette.heading(headerLine));
+    console.log(palette.dim("-".repeat(headerLine.length)));
+    printScenarioRows(rows, scenarioColumnWidth, groupColumnWidth, palette, deltaById);
   }
-
   console.log("");
-  for (const { displayName, headToHead } of summarizeComparison(pivot, competitors)) {
-    console.log(
-      `${consoleLabel(pivot)} vs ${displayName}: ${String(headToHead.wins.length)} wins · ${String(headToHead.parities.length)} parity · ${String(headToHead.losses.length)} loss${headToHead.losses.length === 1 ? "" : "es"} of ${String(headToHead.comparableCount)} comparable — median ${formatRatioMultiple(headToHead.medianRatio)}, geomean ${formatRatioMultiple(headToHead.geomeanRatio)}`,
-    );
-    if (headToHead.groupGeomeans.length > 0) {
-      console.log(
-        `  By group: ${headToHead.groupGeomeans.map((entry) => `${entry.group} ${formatRatioMultiple(entry.geomeanRatio)}`).join(" · ")}`,
-      );
-    }
-    if (headToHead.losses.length > 0) {
-      console.log(
-        `  Losses: ${headToHead.losses
-          .map(
-            (entry) =>
-              `${entry.id} (${formatRatioMultiple(entry.ratio)}${entry.unreliable ? UNRELIABLE_RATIO_MARKER : ""})`,
-          )
-          .join(", ")}`,
-      );
+  for (const line of renderScoreboardLines(pivot, competitors, rows, { palette, diff })) {
+    console.log(line);
+  }
+  if (diff !== undefined) {
+    console.log("");
+    for (const line of renderDiffLines(diff, palette)) {
+      console.log(line);
     }
   }
   const unreliableCount = countUnreliableRatioCells(rows);
-  if (unreliableCount > 0) {
-    console.log(formatReliabilityCaveatLine(unreliableCount));
-  }
   const noisyCount = countNoisyCells(rows);
+  if (unreliableCount > 0 || noisyCount > 0) {
+    console.log("");
+  }
+  if (unreliableCount > 0) {
+    console.log(palette.dim(formatReliabilityCaveatLine(unreliableCount)));
+  }
   if (noisyCount > 0) {
-    console.log(formatNoisyIqrCaveatLine(noisyCount));
+    console.log(palette.dim(formatNoisyIqrCaveatLine(noisyCount)));
   }
   if (options.footerHintLine !== undefined) {
     console.log("");
-    console.log(options.footerHintLine);
+    console.log(palette.dim(options.footerHintLine));
   }
   console.log("");
+}
+
+const MAX_LISTED_IMPROVEMENTS = 5;
+
+function renderDiffLines(diff: RunDiff, palette: Palette): Array<string> {
+  if (!diff.comparable) {
+    return [palette.dim(`No diff against ${diff.previousRunId}: ${diff.reason}.`)];
+  }
+  const lines: Array<string> = [];
+  const count = diff.regressions.length;
+  if (count === 0) {
+    lines.push(`${palette.heading("Regressions beyond noise")}  ${palette.done(`none vs ${diff.previousRunId}`)}`);
+  } else {
+    lines.push(
+      `${palette.heading(`Regressions beyond noise (${String(count)})`)}  ${palette.dim(`vs ${diff.previousRunId}`)}`,
+    );
+    const idWidth = Math.max(...diff.regressions.map((entry) => entry.id.length));
+    const groupWidth = Math.max(...diff.regressions.map((entry) => entry.group.length));
+    for (const entry of diff.regressions) {
+      lines.push(
+        [
+          entry.id.padEnd(idWidth),
+          palette.dim(entry.group.padEnd(groupWidth)),
+          `${formatCompactHz(entry.currentHzPerOp)} hz`.padStart(10),
+          palette.loss(formatDeltaPercent(entry.delta).padStart(CONSOLE_DELTA_COLUMN_WIDTH)),
+          palette.dim(`was ${formatCompactHz(entry.previousHzPerOp)}`),
+        ].join(CLI_TABLE_COLUMN_GAP),
+      );
+    }
+  }
+  if (diff.improvements.length > 0) {
+    const listed = diff.improvements
+      .slice(0, MAX_LISTED_IMPROVEMENTS)
+      .map((entry) => `${entry.id} ${formatDeltaPercent(entry.delta)}`);
+    const more = diff.improvements.length - listed.length;
+    lines.push(
+      `${palette.heading(`Improvements beyond noise (${String(diff.improvements.length)})`)}  ${palette.win(listed.join(" · "))}${more > 0 ? palette.dim(` · +${String(more)} more`) : ""}`,
+    );
+  }
+  return lines;
 }
 
 /** One library's ratio of a scenario's throughput to its group baseline's, with reliability. */

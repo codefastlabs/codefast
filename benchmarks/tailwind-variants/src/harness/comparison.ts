@@ -10,7 +10,8 @@ import type { BenchRunShape } from "@internal/benchmark-harness/shared/env-keys"
 import type { Fingerprint, TrialPayload } from "@internal/benchmark-harness/shared/protocol";
 
 import { SCENARIO_BASELINES } from "#/fixtures/scenario-parity";
-import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
+import { CODEFAST_TV, COMPETITORS } from "#/harness/config";
+import type { TvBenchLibrary } from "#/harness/config";
 import { TAILWIND_VARIANTS_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
 /** One library's fingerprint and per-trial payloads, live from a run or reconstructed from disk. */
@@ -20,21 +21,9 @@ export interface LibraryPayload {
   readonly sanityFailures?: ReadonlyArray<string> | undefined;
 }
 
-interface CompetitorSpec {
-  readonly libraryName: string;
-  readonly displayName: string;
-  readonly shortName: string;
-}
-
-// Order fixes the report columns: tailwind-variants then class-variance-authority.
-const COMPETITOR_SPECS: ReadonlyArray<CompetitorSpec> = [
-  { libraryName: TAILWIND_VARIANTS.libraryName, displayName: resolveDisplayName(TAILWIND_VARIANTS), shortName: "tv" },
-  { libraryName: CVA.libraryName, displayName: resolveDisplayName(CVA), shortName: "cva" },
-];
-
-function toLibrary(payload: LibraryPayload, displayName: string, shortName: string): ComparisonLibrary {
+function toLibrary(payload: LibraryPayload, library: TvBenchLibrary): ComparisonLibrary {
   const report: LibraryReport = buildLibraryReport(payload.fingerprint, payload.trials, payload.sanityFailures ?? []);
-  return { report, displayName, shortName };
+  return { report, displayName: resolveDisplayName(library), shortName: library.shortName };
 }
 
 /** The assembled comparison: the pivot, its competitors, the markdown report, and the document. */
@@ -67,10 +56,10 @@ export function assembleTvComparison(
   if (codefastPayload === undefined) {
     throw new Error(`No observations for the pivot library ${CODEFAST_TV.libraryName}.`);
   }
-  const codefastLibrary = toLibrary(codefastPayload, resolveDisplayName(CODEFAST_TV), "cf");
-  const competitors = COMPETITOR_SPECS.flatMap((spec) => {
-    const payload = payloadsByLibrary.get(spec.libraryName);
-    return payload === undefined ? [] : [toLibrary(payload, spec.displayName, spec.shortName)];
+  const codefastLibrary = toLibrary(codefastPayload, CODEFAST_TV);
+  const competitors = COMPETITORS.flatMap((library) => {
+    const payload = payloadsByLibrary.get(library.libraryName);
+    return payload === undefined ? [] : [toLibrary(payload, library)];
   });
   const markdown = renderComparisonMarkdownReport(codefastLibrary, competitors, {
     ...TAILWIND_VARIANTS_COMPARISON_MARKDOWN,

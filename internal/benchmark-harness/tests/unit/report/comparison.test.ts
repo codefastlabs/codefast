@@ -18,6 +18,7 @@ import {
   formatNoisyIqrCaveatLine,
   formatReliabilityCaveatLine,
 } from "#/report/reliability";
+import { createPalette } from "#/shared/palette";
 import type { Fingerprint } from "#/shared/protocol";
 
 const FINGERPRINT: Fingerprint = {
@@ -399,6 +400,27 @@ describe("renderComparisonConsoleReport", () => {
     expect(output).toContain("alpha");
     expect(output).toContain("beta");
     expect(output).toContain("2.00×");
+  });
+
+  it("colours a win green, a loss red and a parity dim, and strips back to the plain report", () => {
+    const escape = String.fromCodePoint(0x1b);
+    const render = (enabled: boolean): string =>
+      captureConsole(() => {
+        renderComparisonConsoleReport(
+          library("codefast", [scenario("win", 200), scenario("loss", 50), scenario("par", 100)]),
+          [library("inversify", [scenario("win", 100), scenario("loss", 100), scenario("par", 100)])],
+          { sectionHeading: "Section", palette: createPalette({ enabled }) },
+        );
+      });
+    const colored = render(true);
+    expect(colored.replaceAll(new RegExp(`${escape}\\[[0-9;]*m`, "g"), "")).toBe(render(false));
+    expect(colored).toContain(`${escape}[32m       2.00×${escape}[39m`);
+    expect(colored).toContain(`${escape}[31m       0.50×${escape}[39m`);
+    expect(colored).toContain(`${escape}[2m       1.00×${escape}[22m`);
+    // The scoreboard counts one win and one loss for this competitor.
+    expect(colored).toContain(`${escape}[32m1${escape}[39m`);
+    expect(colored).toContain(`${escape}[31m1${escape}[39m`);
+    expect(colored.replaceAll(new RegExp(`${escape}\\[[0-9;]*m`, "g"), "")).toContain("Scoreboard");
   });
 
   it("prints the footer hint only when one is given", () => {

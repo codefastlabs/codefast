@@ -1,4 +1,4 @@
-/** Scenario typing shared by the three bench subprocesses. */
+/** Scenario typing shared by every bench subprocess. */
 
 import type { BenchScenario as HarnessBenchScenario } from "@internal/benchmark-harness/child/bench-scenario";
 

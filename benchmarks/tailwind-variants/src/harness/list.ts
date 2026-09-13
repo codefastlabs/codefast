@@ -6,11 +6,11 @@ import { fileURLToPath } from "node:url";
 import { resolveBenchParentExitCode } from "@internal/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import { runBenchScenarioListingMain } from "@internal/benchmark-harness/parent/run-bench-listing-main";
 
-import { CODEFAST_TV, CVA, TAILWIND_VARIANTS } from "#/harness/config";
+import { BENCH_LIBRARIES } from "#/harness/config";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
-runBenchScenarioListingMain(packageRootDirectory, [CODEFAST_TV, TAILWIND_VARIANTS, CVA]).catch((caught: unknown) => {
+runBenchScenarioListingMain(packageRootDirectory, BENCH_LIBRARIES).catch((caught: unknown) => {
   const message = caught instanceof Error ? caught.message : String(caught);
   console.error(`\nScenario listing failed: ${message}`);
   process.exitCode = resolveBenchParentExitCode(caught);

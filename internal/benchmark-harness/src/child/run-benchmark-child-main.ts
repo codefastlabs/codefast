@@ -15,6 +15,7 @@ import {
   isEnvFlagEnabled,
   resolveScenarioFilterFromEnvironment,
 } from "#/shared/env-keys";
+import { formatProgressEvent } from "#/shared/progress";
 import { emitSubprocessPayload } from "#/shared/protocol";
 
 /**
@@ -49,7 +50,7 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
   // A child is also a supported entry point (`bench:codefast`), so it validates its own environment
   // rather than trusting a parent to have done it.
   assertBenchEnvKeys({ allowInternalKeys: true });
-  console.error(`[bench] subprocess ${scenarioName} started`);
+  console.error(formatProgressEvent({ kind: "child-started", scenarioName }));
   const allScenarios = collectScenarios();
 
   // Discovery mode for BENCH_ISOLATE: report ids only, run nothing.
@@ -60,7 +61,7 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
       sanityFailures: [],
       scenarioIds: allScenarios.map((scenario) => scenario.id),
     });
-    console.error(`[bench] subprocess ${scenarioName} completed (list mode)`);
+    console.error(formatProgressEvent({ kind: "child-completed", scenarioName, listMode: true }));
     return;
   }
 
@@ -89,7 +90,7 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
     // filtered run from a whole suite, and a partial run must not read as the current state.
     scenarioIds: allScenarios.map((scenario) => scenario.id),
   });
-  console.error(`[bench] subprocess ${scenarioName} completed`);
+  console.error(formatProgressEvent({ kind: "child-completed", scenarioName, listMode: false }));
 }
 
 /**

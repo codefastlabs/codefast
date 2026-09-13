@@ -1,5 +1,13 @@
 import type { BenchSubprocessConfig } from "@internal/benchmark-harness/shared/config";
 
+/** One benched library: how the parent spawns it, heads its column, and describes its render path. */
+export interface TvBenchLibrary extends BenchSubprocessConfig {
+  /** Abbreviation heading the library's ratio column in the comparison table. */
+  readonly shortName: string;
+  /** What one render costs the library — where it caches and where it merges — printed beside its name. */
+  readonly strategy: string;
+}
+
 /** Single source of truth for all benchmark-specific constants across run, serve, and subprocesses. */
 
 const TSCONFIG_FILE_NAME = "tsconfig.json";
@@ -13,7 +21,10 @@ export const CODEFAST_TV = {
   tsconfigFileName: TSCONFIG_FILE_NAME,
   benchEntryFileName: "codefast-benches.ts",
   displayName: "@codefast/tv",
-} as const satisfies BenchSubprocessConfig;
+  shortName: "cf",
+  strategy:
+    "resolution cached per selection, tailwind-merge behind its own cache; both switchable, and the `uncached-*` control rows switch both off",
+} as const satisfies TvBenchLibrary;
 
 /**
  * @since 0.3.16-canary.0
@@ -23,7 +34,9 @@ export const TAILWIND_VARIANTS = {
   scenarioName: "tailwind-variants",
   tsconfigFileName: TSCONFIG_FILE_NAME,
   benchEntryFileName: "tailwind-variants-benches.ts",
-} as const satisfies BenchSubprocessConfig;
+  shortName: "tv",
+  strategy: "resolution cached per selection with no switch to turn it off, tailwind-merge inside `tv()`",
+} as const satisfies TvBenchLibrary;
 
 /**
  * @since 0.3.16-canary.0
@@ -34,9 +47,20 @@ export const CVA = {
   tsconfigFileName: TSCONFIG_FILE_NAME,
   benchEntryFileName: "class-variance-authority-benches.ts",
   displayName: "cva",
-} as const satisfies BenchSubprocessConfig;
+  shortName: "cva",
+  strategy: "no result cache; the with-merge rows call `tailwind-merge` after `cva()`, the usual production pairing",
+} as const satisfies TvBenchLibrary;
+
+/** Every competitor in comparison-column order; the subject is never in this list. */
+export const COMPETITORS: ReadonlyArray<TvBenchLibrary> = [TAILWIND_VARIANTS, CVA];
+
+/** Every benched library, subject first, in spawn order. */
+export const BENCH_LIBRARIES: ReadonlyArray<TvBenchLibrary> = [CODEFAST_TV, ...COMPETITORS];
+
+/** The versus line naming the subject and every competitor, shared by the report heading and the viewer title. */
+export const VERSUS_LINE = `${CODEFAST_TV.libraryName} vs ${COMPETITORS.map((library) => library.libraryName).join(" / ")}`;
 
 /**
  * @since 0.3.16-canary.0
  */
-export const SERVE_TITLE = "@codefast/tailwind-variants vs tailwind-variants & cva — bench history";
+export const SERVE_TITLE = `${VERSUS_LINE} — bench history`;

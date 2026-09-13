@@ -2,8 +2,9 @@
 
 A tinybench suite that runs the same dependency-injection workloads through seven containers and reports one table.
 `@codefast/di` is the subject; the other six are the comparison. Each rival runs only the scenarios it can express in
-its own idiom — inversify the full suite, awilix/tsyringe/brandi/ditox the factory/class core subset, injection-js the
-singleton-friendly rows of that subset.
+its own idiom — inversify nearly every shared row, awilix/tsyringe/brandi/ditox the factory/class core plus the scope,
+lifecycle, module, multi-binding and async rows their APIs have a native form for, injection-js the singleton-friendly
+rows only.
 
 > **Private benchmark suite.** Never published to npm. Results are recorded in [`RESULTS.md`](./RESULTS.md) and are
 > meant to be re-run, not quoted from memory.
@@ -24,23 +25,22 @@ pnpm di:bench:serve      # browse recorded runs
 From this directory, `pnpm bench` does the same as `pnpm di:bench`. Every run rebuilds `@codefast/di` first, so it
 measures the working tree rather than a stale `dist/`.
 
-| Command                 | What changes                                                                         |
-| ----------------------- | ------------------------------------------------------------------------------------ |
-| `pnpm bench`            | Default profile: no `--expose-gc`, the default trial count                           |
-| `pnpm bench:fast`       | Smoke profile — shorter sampling windows. For "did I break it", never for a claim    |
-| `pnpm bench:full`       | `--expose-gc` for every library, forcing collections into the measured loop          |
-| `pnpm bench:isolate`    | One subprocess per scenario, so no scenario inherits another's inline caches         |
-| `pnpm bench:verbose`    | Per-trial detail on stdout                                                           |
-| `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout, measuring nothing                   |
-| `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                            |
-| `pnpm bench:codefast`   | The `@codefast/di` child process alone                                               |
-| `pnpm bench:inversify`  | The InversifyJS child process alone                                                  |
-| `pnpm instrument:alloc` | The allocation instrument (see below)                                                |
-| `BENCH_MODE=<mode>`     | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set         |
-| `BENCH_TRIALS=<n>`      | Trials per scenario; the harness refuses anything below its minimum                  |
-| `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use       |
-| `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                     |
-| `PORT=<n>`              | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process |
+| Command                 | What changes                                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `pnpm bench`            | Default profile: no `--expose-gc`, the default trial count                                                  |
+| `pnpm bench:fast`       | Smoke profile — shorter sampling windows. For "did I break it", never for a claim                           |
+| `pnpm bench:full`       | `--expose-gc` for every library, forcing collections into the measured loop                                 |
+| `pnpm bench:isolate`    | One subprocess per scenario, so no scenario inherits another's inline caches                                |
+| `pnpm bench:verbose`    | Streams every child line and prints the per-scenario table                                                  |
+| `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout, measuring nothing                                          |
+| `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                                                   |
+| `pnpm bench:<library>`  | One child process alone: `codefast`, `inversify`, `awilix`, `tsyringe`, `brandi`, `ditox` or `injection-js` |
+| `pnpm instrument:alloc` | The allocation instrument (see below)                                                                       |
+| `BENCH_MODE=<mode>`     | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set                                |
+| `BENCH_TRIALS=<n>`      | Trials per scenario; the harness refuses anything below its minimum                                         |
+| `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use                              |
+| `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                                            |
+| `PORT=<n>`              | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                        |
 
 Profiles compose: `BENCH_MODE=full pnpm bench:isolate` is the slowest and the most order-independent.
 
@@ -79,13 +79,24 @@ reported apart because their cost is not comparable to a success path. Two furth
 instrumentation instead of a head-to-head pair: `slot-selection` for the criteria lanes, and `resolution` for the engine
 lanes — compiled plans and their escapes, the depth thresholds, the sync context pool, the accessor channel.
 
-Only inversify implements the full suite. awilix, tsyringe, brandi and ditox implement the factory/class-binding core
-subset (micro, realistic, fan-out, scale); injection-js implements only its singleton-friendly rows, because Angular's
-`ReflectiveInjector` caches every provider per injector, so a fresh root's sub-deps stay cached singletons. Every
-competitor reads `—` on everything it does not measure, and the report counts only the rows it actually ran. Forcing a
-fully-transient tree onto a container that caches its resolutions would measure a proxy rather than the library, so
-those rows are omitted rather than faked. A scenario whose two sides do incomparable amounts of work declares
-`excludeFromAggregates` and stays in the table but out of the medians and geomeans.
+No competitor implements every row. inversify covers nearly every shared descriptor; awilix, tsyringe, brandi and ditox
+cover the factory/class-binding core plus whichever scope, lifecycle, module, multi-binding and async rows their API has
+a native form for (each collector's header lists its own); injection-js implements only its singleton-friendly rows,
+because Angular's `ReflectiveInjector` caches every provider per injector, so a fresh root's sub-deps stay cached
+singletons. Every competitor reads `—` on everything it does not measure, and the report counts only the rows it
+actually ran. Forcing a fully-transient tree onto a container that caches its resolutions would measure a proxy rather
+than the library, so those rows are omitted rather than faked. A scenario whose two sides do incomparable amounts of
+work declares `excludeFromAggregates` and stays in the table but out of the medians and geomeans.
+
+### Reading the console
+
+The run ends with a scoreboard rather than the per-scenario table: one row per competitor with `W · P · L`, the
+comparable count, the median and geomean ratio and the worst loss; a geomean per group with a column per competitor; and
+the reliable losses one per line, the `†` ones counted rather than listed. When `bench-results/latest.json` names a run
+of the same profile, shape and trial count on this machine, each aggregate gains a `Δ prev` over the rows both runs
+measured and the regressions beyond noise are listed — the A/B question the guide asks, answered on the spot. A closing
+card states the timing, the profile, the run order, sanity failures, whether `latest.json` moved, and the library
+versions. The per-scenario table is one `pnpm bench:verbose` or `pnpm bench:report` away.
 
 ## Instruments
 

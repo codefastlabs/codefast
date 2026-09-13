@@ -85,10 +85,45 @@
       "types": "./dist/parent/bench-run-artifacts.d.ts",
       "import": "./dist/parent/bench-run-artifacts.js"
     },
+    "./parent/progress/create-progress-display": {
+      "source": "./src/parent/progress/create-progress-display.ts",
+      "types": "./dist/parent/progress/create-progress-display.d.ts",
+      "import": "./dist/parent/progress/create-progress-display.js"
+    },
+    "./parent/progress/live-progress-display": {
+      "source": "./src/parent/progress/live-progress-display.ts",
+      "types": "./dist/parent/progress/live-progress-display.d.ts",
+      "import": "./dist/parent/progress/live-progress-display.js"
+    },
+    "./parent/progress/plain-progress-display": {
+      "source": "./src/parent/progress/plain-progress-display.ts",
+      "types": "./dist/parent/progress/plain-progress-display.d.ts",
+      "import": "./dist/parent/progress/plain-progress-display.js"
+    },
+    "./parent/progress/progress-display": {
+      "source": "./src/parent/progress/progress-display.ts",
+      "types": "./dist/parent/progress/progress-display.d.ts",
+      "import": "./dist/parent/progress/progress-display.js"
+    },
+    "./parent/progress/progress-tracker": {
+      "source": "./src/parent/progress/progress-tracker.ts",
+      "types": "./dist/parent/progress/progress-tracker.d.ts",
+      "import": "./dist/parent/progress/progress-tracker.js"
+    },
+    "./parent/progress/render-progress-frame": {
+      "source": "./src/parent/progress/render-progress-frame.ts",
+      "types": "./dist/parent/progress/render-progress-frame.d.ts",
+      "import": "./dist/parent/progress/render-progress-frame.js"
+    },
     "./parent/resolve-bench-parent-exit-code": {
       "source": "./src/parent/resolve-bench-parent-exit-code.ts",
       "types": "./dist/parent/resolve-bench-parent-exit-code.d.ts",
       "import": "./dist/parent/resolve-bench-parent-exit-code.js"
+    },
+    "./parent/run-bench-libraries": {
+      "source": "./src/parent/run-bench-libraries.ts",
+      "types": "./dist/parent/run-bench-libraries.d.ts",
+      "import": "./dist/parent/run-bench-libraries.js"
     },
     "./parent/run-bench-listing-main": {
       "source": "./src/parent/run-bench-listing-main.ts",
@@ -115,6 +150,16 @@
       "types": "./dist/report/comparison-document.d.ts",
       "import": "./dist/report/comparison-document.js"
     },
+    "./report/console-scoreboard": {
+      "source": "./src/report/console-scoreboard.ts",
+      "types": "./dist/report/console-scoreboard.d.ts",
+      "import": "./dist/report/console-scoreboard.js"
+    },
+    "./report/console-table": {
+      "source": "./src/report/console-table.ts",
+      "types": "./dist/report/console-table.d.ts",
+      "import": "./dist/report/console-table.js"
+    },
     "./report/format": {
       "source": "./src/report/format.ts",
       "types": "./dist/report/format.d.ts",
@@ -135,6 +180,21 @@
       "types": "./dist/report/reliability.d.ts",
       "import": "./dist/report/reliability.js"
     },
+    "./report/run-card": {
+      "source": "./src/report/run-card.ts",
+      "types": "./dist/report/run-card.d.ts",
+      "import": "./dist/report/run-card.js"
+    },
+    "./report/run-diff": {
+      "source": "./src/report/run-diff.ts",
+      "types": "./dist/report/run-diff.d.ts",
+      "import": "./dist/report/run-diff.js"
+    },
+    "./report/verdict": {
+      "source": "./src/report/verdict.ts",
+      "types": "./dist/report/verdict.d.ts",
+      "import": "./dist/report/verdict.js"
+    },
     "./report/write": {
       "source": "./src/report/write.ts",
       "types": "./dist/report/write.d.ts",
@@ -149,6 +209,16 @@
       "source": "./src/shared/env-keys.ts",
       "types": "./dist/shared/env-keys.d.ts",
       "import": "./dist/shared/env-keys.js"
+    },
+    "./shared/palette": {
+      "source": "./src/shared/palette.ts",
+      "types": "./dist/shared/palette.d.ts",
+      "import": "./dist/shared/palette.js"
+    },
+    "./shared/progress": {
+      "source": "./src/shared/progress.ts",
+      "types": "./dist/shared/progress.d.ts",
+      "import": "./dist/shared/progress.js"
     },
     "./shared/protocol": {
       "source": "./src/shared/protocol.ts",

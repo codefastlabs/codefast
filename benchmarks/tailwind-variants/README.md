@@ -26,7 +26,7 @@ run rebuilds `@codefast/tailwind-variants` first, so it measures the working tre
 | `pnpm bench:full`                     | `--expose-gc` for every library                                                        |
 | `pnpm bench:isolate`                  | Isolated profile — one subprocess per scenario, libraries interleaved (citable ratios) |
 | `pnpm bench:list`                     | Prints the scenario inventory as JSON on stdout, measuring nothing                     |
-| `pnpm bench:verbose`                  | Forwards each child's full stdout; progress streams on stderr either way               |
+| `pnpm bench:verbose`                  | Streams every child line and prints the per-scenario table                             |
 | `pnpm bench:serve`                    | Serves the run history from `bench-results/` in a browser                              |
 | `pnpm bench:codefast`                 | The `@codefast/tailwind-variants` child process alone                                  |
 | `pnpm bench:tailwind-variants`        | The `tailwind-variants` child process alone                                            |
@@ -86,9 +86,12 @@ groups to it, so it reads `—` on the rest, and the report counts only the rows
 
 ```
 src/harness/run.ts          parent: rebuilds @codefast/tailwind-variants, one subprocess per library, merge, render
-src/harness/config.ts       the three library configs
+src/harness/config.ts       every library config, subject first — the order the run, the columns and the viewer share
+src/harness/presentation.ts the report's fixed prose, derived from those configs
+src/harness/comparison.ts   assembles the head-to-head report from each library's payloads
 src/harness/bench-options.ts the explicit tv option bags every scenario passes
 src/harness/list.ts         the bench:list entry
+src/harness/report.ts       the bench:report entry
 src/harness/serve.ts        the bench:serve entry
 src/*-benches.ts            one child entry per library
 src/scenarios/<library>/    that library's implementation of each shape
@@ -115,6 +118,11 @@ subprocess and runs the libraries **interleaved** — every library measures a s
 rotating which goes first — so drift over the run no longer lands on whoever was scheduled last. The report's
 Environment section names the policy it used. Without it, one process per library runs that library's whole suite and
 there is nothing to interleave, so those ratios stay provisional.
+
+The console closes with a scoreboard — `W · P · L`, comparable count, median, geomean and worst loss per competitor — a
+geomean per group, the reliable losses, a diff against the run `latest.json` names when it is the same configuration on
+this machine, and a run card with timing, profile, sanity failures and versions. The per-scenario table is one
+`pnpm bench:verbose` or `pnpm bench:report` away.
 
 ## Documentation
 

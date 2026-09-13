@@ -1,6 +1,8 @@
 import { spawn } from "node:child_process";
 import { join } from "node:path";
 
+import { PlainProgressDisplay } from "#/parent/progress/plain-progress-display";
+import type { ProgressDisplay } from "#/parent/progress/progress-display";
 import {
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
@@ -10,10 +12,9 @@ import {
   resolveBenchModeFromEnvironment,
   resolveScenarioFilterFromEnvironment,
 } from "#/shared/env-keys";
+import { parseProgressEvent } from "#/shared/progress";
 import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#/shared/protocol";
 import type { SubprocessPayload, TrialPayload } from "#/shared/protocol";
-
-const HEARTBEAT_SILENCE_MS = 10_000;
 
 /**
  * Failure of a bench subprocess, carrying the exit code the child ended with.
@@ -64,30 +65,71 @@ export function buildSubprocessEnvironment(): NodeJS.ProcessEnv {
   return childEnvironment;
 }
 
-function createStreamLineForwarder(
-  prefix: string,
-  write: (chunk: string) => void,
-  onOutput: () => void,
-): { feed: (chunk: string) => void; flush: () => void } {
+function createStreamLineForwarder(onLine: (line: string) => void): {
+  feed: (chunk: string) => void;
+  flush: () => void;
+} {
   let bufferedRemainder = "";
   return {
     feed: (chunk: string): void => {
-      onOutput();
       bufferedRemainder += chunk;
       const lines = bufferedRemainder.split("\n");
       bufferedRemainder = lines.pop() ?? "";
       for (const line of lines) {
-        write(`${prefix}${line}\n`);
+        onLine(line);
       }
     },
     flush: (): void => {
       if (bufferedRemainder.length > 0) {
-        write(`${prefix}${bufferedRemainder}\n`);
+        onLine(bufferedRemainder);
         bufferedRemainder = "";
       }
     },
   };
 }
+
+/**
+ * Where a subprocess reports its progress: the display and the row it belongs to.
+ */
+export type SubprocessProgressTarget = Readonly<{
+  readonly display: ProgressDisplay;
+  /** The row key — the library name the report aligns on. */
+  readonly key: string;
+  /** The one scenario an isolated child measures, shown on its row while it runs. */
+  readonly scenarioId?: string | undefined;
+  /** A discovery child measures nothing, so its exit must not read as the library finishing. */
+  readonly discovery?: boolean | undefined;
+}>;
+
+/**
+ * The executable and arguments that start one bench child.
+ */
+export interface SubprocessLaunch {
+  readonly command: string;
+  readonly args: ReadonlyArray<string>;
+}
+
+/**
+ * What a launcher is told about the child it starts.
+ */
+export interface SubprocessLaunchTarget {
+  readonly tsconfigFileName: string;
+  /** The entry relative to the package root, already joined under `src/`. */
+  readonly entryPath: string;
+}
+
+/**
+ * Builds the command that runs a child; the default runs the TypeScript entry through the suite's own tsx.
+ */
+export type SubprocessLauncher = (target: SubprocessLaunchTarget) => SubprocessLaunch;
+
+/**
+ * The launcher every suite uses: `pnpm exec tsx --tsconfig <tsconfig> <entry>` in the suite package.
+ */
+export const launchWithPnpmTsx: SubprocessLauncher = ({ tsconfigFileName, entryPath }) => ({
+  command: "pnpm",
+  args: ["exec", "tsx", "--tsconfig", tsconfigFileName, entryPath],
+});
 
 /**
  * Parameters for {@link runBenchSubprocess}.
@@ -102,7 +144,12 @@ export type RunBenchSubprocessParameters = Readonly<{
   readonly benchEntryFileNameUnderSrc: string;
   readonly harnessLabel: string;
   readonly scenarioName: string;
+  /** Streams every child stdout and stderr line, progress lines included, as a prefixed log. */
   readonly forwardChildStdoutVerbose: boolean;
+  /** Absent for a standalone call, which then logs milestones plainly on stderr. */
+  readonly progress?: SubprocessProgressTarget | undefined;
+  /** How the child is started; defaults to the suite's tsx. A test points it at a plain script. */
+  readonly launch?: SubprocessLauncher | undefined;
   /**
    * Extra env vars for the child (merged over the pinned bench environment). Not a scenario-filter
    * channel: scheduling and reporting read `BENCH_ONLY` from the parent environment, and isolated
@@ -127,19 +174,15 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
     environmentOverrides,
   } = parameters;
 
-  console.error(`\nRunning ${harnessLabel} subprocess: ${benchEntryFileNameUnderSrc}…`);
-  const benchMode = resolveBenchModeFromEnvironment();
-  if (benchMode === "full") {
-    console.error(
-      "[bench] Running benchmark with --expose-gc (BENCH_MODE=full). This profile prioritizes stability and may still run significantly longer on large suites.",
-    );
-  } else if (benchMode === undefined) {
-    console.error(
-      "[bench] Running benchmark without --expose-gc (default profile). Use BENCH_MODE=fast for smoke checks or BENCH_MODE=full for GC-enabled stability runs.",
-    );
-  }
-  const startedAtMs = performance.now();
+  const progress = parameters.progress ?? standaloneProgressTarget(harnessLabel);
+  const { display, key } = progress;
   const childOutputPrefix = `[${scenarioName}] `;
+
+  if (progress.discovery === true) {
+    display.discovering(key);
+  } else {
+    display.subprocessStarted(key, progress.scenarioId);
+  }
 
   const spawnResult = await new Promise<{
     stdout: string;
@@ -147,48 +190,37 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
     exitCode: number | null;
     signal: NodeJS.Signals | null;
   }>((resolve, reject) => {
-    const childProcess = spawn(
-      "pnpm",
-      ["exec", "tsx", "--tsconfig", tsconfigFileName, join("src", benchEntryFileNameUnderSrc)],
-      {
-        cwd: packageRootDirectory,
-        stdio: ["ignore", "pipe", "pipe"],
-        env: { ...buildSubprocessEnvironment(), ...environmentOverrides },
-      },
-    );
+    const launch = (parameters.launch ?? launchWithPnpmTsx)({
+      tsconfigFileName,
+      entryPath: join("src", benchEntryFileNameUnderSrc),
+    });
+    const childProcess = spawn(launch.command, [...launch.args], {
+      cwd: packageRootDirectory,
+      stdio: ["ignore", "pipe", "pipe"],
+      env: { ...buildSubprocessEnvironment(), ...environmentOverrides },
+    });
 
     let stdout = "";
     let stderr = "";
-    let lastOutputAtMs = performance.now();
-    let lastHeartbeatAtMs = startedAtMs;
-
-    const refreshOutputTimestamp = (): void => {
-      lastOutputAtMs = performance.now();
-      lastHeartbeatAtMs = performance.now();
-    };
-
-    const heartbeatTimer = setInterval(() => {
-      const nowMs = performance.now();
-      if (nowMs - lastOutputAtMs >= HEARTBEAT_SILENCE_MS && nowMs - lastHeartbeatAtMs >= HEARTBEAT_SILENCE_MS) {
-        const elapsedSeconds = (nowMs - startedAtMs) / 1000;
-        console.error(`Still running ${scenarioName}... ${elapsedSeconds.toFixed(1)}s elapsed`);
-        lastHeartbeatAtMs = nowMs;
-      }
-    }, 1000);
 
     childProcess.stdout?.setEncoding("utf8");
     childProcess.stderr?.setEncoding("utf8");
 
-    const stdoutForwarder = createStreamLineForwarder(
-      childOutputPrefix,
-      (chunk) => (forwardChildStdoutVerbose ? process.stdout.write(chunk) : undefined),
-      refreshOutputTimestamp,
-    );
-    const stderrForwarder = createStreamLineForwarder(
-      childOutputPrefix,
-      (chunk) => process.stderr.write(chunk),
-      refreshOutputTimestamp,
-    );
+    const stdoutForwarder = createStreamLineForwarder((line) => {
+      if (forwardChildStdoutVerbose) {
+        display.log(`${childOutputPrefix}${line}`);
+      }
+    });
+    // A progress line feeds the display; anything else the child says stays visible as a log.
+    const stderrForwarder = createStreamLineForwarder((line) => {
+      const event = parseProgressEvent(line);
+      if (event !== undefined) {
+        display.event(key, event);
+      }
+      if (event === undefined || forwardChildStdoutVerbose) {
+        display.log(`${childOutputPrefix}${line}`);
+      }
+    });
 
     childProcess.stdout?.on("data", (chunk: string) => {
       stdout += chunk;
@@ -200,12 +232,10 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
     });
 
     childProcess.on("error", (error) => {
-      clearInterval(heartbeatTimer);
       reject(error);
     });
 
     childProcess.on("close", (exitCode, signal) => {
-      clearInterval(heartbeatTimer);
       stdoutForwarder.flush();
       stderrForwarder.flush();
       resolve({
@@ -217,16 +247,12 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
     });
   });
 
-  const elapsedSeconds = (performance.now() - startedAtMs) / 1000;
-  console.error(
-    `${harnessLabel} subprocess finished in ${elapsedSeconds.toFixed(1)}s wall (exit ${String(spawnResult.exitCode)}).`,
-  );
+  if (progress.discovery !== true) {
+    display.subprocessFinished(key, spawnResult.exitCode ?? undefined);
+  }
 
   if (spawnResult.exitCode !== 0) {
-    console.error("--- subprocess stderr ---");
-    console.error(spawnResult.stderr);
-    console.error("--- subprocess stdout ---");
-    console.error(spawnResult.stdout);
+    dumpChildOutput(display, spawnResult.stderr, spawnResult.stdout, "subprocess stdout");
     throw new SubprocessExecutionError(
       `${harnessLabel} subprocess failed (${benchEntryFileNameUnderSrc}), exit ${String(spawnResult.exitCode)}, signal ${String(spawnResult.signal)}`,
       spawnResult.exitCode ?? undefined,
@@ -236,10 +262,7 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
   const hasStartMarker = spawnResult.stdout.includes(BENCH_RESULT_JSON_START);
   const hasEndMarker = spawnResult.stdout.includes(BENCH_RESULT_JSON_END);
   if (!hasStartMarker || !hasEndMarker) {
-    console.error("--- subprocess stderr ---");
-    console.error(spawnResult.stderr);
-    console.error("--- subprocess stdout (missing framing markers) ---");
-    console.error(spawnResult.stdout);
+    dumpChildOutput(display, spawnResult.stderr, spawnResult.stdout, "subprocess stdout (missing framing markers)");
     throw new Error(
       `${harnessLabel} subprocess stdout did not contain ${BENCH_RESULT_JSON_START}/${BENCH_RESULT_JSON_END}; cannot parse result.`,
     );
@@ -247,14 +270,30 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
 
   const payload = extractSubprocessPayload(spawnResult.stdout);
   if (payload === undefined) {
-    console.error("--- subprocess stderr ---");
-    console.error(spawnResult.stderr);
-    console.error("--- subprocess stdout (framing markers present but JSON invalid) ---");
-    console.error(spawnResult.stdout);
+    dumpChildOutput(
+      display,
+      spawnResult.stderr,
+      spawnResult.stdout,
+      "subprocess stdout (framing markers present but JSON invalid)",
+    );
     throw new Error(`${harnessLabel} subprocess returned framing markers but the enclosed JSON failed to parse.`);
   }
 
   return payload;
+}
+
+// A standalone call (a suite's `bench:list`, a one-off) still gets readable milestones on stderr.
+function standaloneProgressTarget(label: string): SubprocessProgressTarget {
+  const display = new PlainProgressDisplay({ write: (line) => process.stderr.write(`${line}\n`) });
+  display.register(label, label);
+  return { display, key: label };
+}
+
+function dumpChildOutput(display: ProgressDisplay, stderr: string, stdout: string, stdoutTitle: string): void {
+  display.log("--- subprocess stderr ---");
+  display.log(stderr);
+  display.log(`--- ${stdoutTitle} ---`);
+  display.log(stdout);
 }
 
 /**
@@ -305,6 +344,7 @@ export async function discoverBenchScenarioIds(
   const listPayload = await runBenchSubprocess({
     ...parameters,
     harnessLabel: `${parameters.harnessLabel} [list]`,
+    progress: parameters.progress === undefined ? undefined : { ...parameters.progress, discovery: true },
     environmentOverrides: { ...parameters.environmentOverrides, [BENCH_LIST_ENV_KEY]: "true" },
   });
   const scenarioIds = listPayload.scenarioIds ?? [];
@@ -356,10 +396,19 @@ function unionScenarioIds(perLibraryIds: ReadonlyArray<ReadonlyArray<string>>): 
  */
 export async function runBenchSubprocessesInterleaved(
   libraries: ReadonlyArray<InterleavedLibraryRun>,
+  display?: ProgressDisplay,
 ): Promise<Map<string, SubprocessPayload>> {
+  const progressFor = (library: InterleavedLibraryRun, scenarioId?: string): SubprocessProgressTarget | undefined =>
+    display === undefined ? undefined : { display, key: library.key, scenarioId };
+  for (const library of libraries) {
+    display?.register(library.key, library.parameters.harnessLabel, { subprocessScope: "scenario" });
+  }
   const discoveries = new Map<string, Awaited<ReturnType<typeof discoverBenchScenarioIds>>>();
   for (const library of libraries) {
-    discoveries.set(library.key, await discoverBenchScenarioIds(library.parameters));
+    discoveries.set(
+      library.key,
+      await discoverBenchScenarioIds({ ...library.parameters, progress: progressFor(library) }),
+    );
   }
 
   // Filtered here rather than in the child: the loop below sets BENCH_ONLY per scenario, so a
@@ -372,7 +421,11 @@ export async function runBenchSubprocessesInterleaved(
     requestedScenarioIds === undefined
       ? discoveredScenarioIds
       : discoveredScenarioIds.filter((id) => requestedScenarioIds.has(id));
-  console.error(
+  for (const library of libraries) {
+    const implemented = discoveries.get(library.key)?.scenarioIds ?? [];
+    display?.setScenarioCount(library.key, scenarioIds.filter((id) => implemented.includes(id)).length);
+  }
+  display?.log(
     `[bench] BENCH_ISOLATE=true: ${String(scenarioIds.length)} scenarios × ${String(libraries.length)} libraries, interleaved with rotating order.`,
   );
 
@@ -392,6 +445,7 @@ export async function runBenchSubprocessesInterleaved(
       const payload = await runBenchSubprocess({
         ...library.parameters,
         harnessLabel: `${library.parameters.harnessLabel} [${scenarioId}]`,
+        progress: progressFor(library, scenarioId),
         environmentOverrides: { ...library.parameters.environmentOverrides, [BENCH_ONLY_ENV_KEY]: scenarioId },
       });
       workerPayloads.get(library.key)?.push(payload);
@@ -400,6 +454,7 @@ export async function runBenchSubprocessesInterleaved(
 
   const merged = new Map<string, SubprocessPayload>();
   for (const library of libraries) {
+    display?.libraryDone(library.key);
     const payloads = workerPayloads.get(library.key) ?? [];
     merged.set(library.key, {
       fingerprint: discoveries.get(library.key)!.fingerprint,

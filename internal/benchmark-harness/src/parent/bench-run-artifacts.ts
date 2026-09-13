@@ -56,38 +56,37 @@ export interface WriteBenchRunArtifactsParameters {
 }
 
 /**
- * Writes a run's `observations.jsonl`, points `latest.json` at it when it is the whole suite, and
- * names the file on stdout.
+ * What happened to `latest.json`: moved to this run, or kept because the run was not the whole suite.
+ */
+export interface BenchRunArtifactsResult {
+  readonly latestPointer: "moved" | "kept-filtered" | "kept-empty";
+}
+
+/**
+ * Writes a run's `observations.jsonl` and points `latest.json` at it when it is the whole suite.
  *
  * @remarks Only a whole-suite run moves the pointer: `latest.json` has to mean the complete suite, so
- * a run filtered to a row or two — or one that measured nothing — leaves it untouched.
+ * a run filtered to a row or two — or one that measured nothing — leaves it untouched. Nothing is
+ * printed; the caller states the outcome in its run card.
  *
  * @since 0.6.0
  */
-export function writeBenchRunArtifacts(parameters: WriteBenchRunArtifactsParameters): void {
+export function writeBenchRunArtifacts(parameters: WriteBenchRunArtifactsParameters): BenchRunArtifactsResult {
   const { paths, comparisonDocument, librariesForJsonl } = parameters;
 
   writeJsonlRun(paths.jsonlPath, librariesForJsonl);
 
-  console.log(`\nRun directory: ${paths.runDirectory}`);
-  console.log(`  ${OBSERVATIONS_FILE_NAME} ${paths.jsonlPath}`);
-
-  const { scenarioFilter, mode, scenariosMeasured, scenariosAvailable } = comparisonDocument.run;
+  const { scenarioFilter, scenariosMeasured } = comparisonDocument.run;
   if (scenarioFilter !== null) {
-    console.log(
-      `latest.json not moved: filtered to ${String(scenariosMeasured)} of ${String(scenariosAvailable)} rows ` +
-        `(${scenarioFilter.join(", ")}). Run the whole suite to move it.`,
-    );
-    return;
+    return { latestPointer: "kept-filtered" };
   }
   // A run whose subject measured nothing (every row errored or failed sanity) is not the suite either.
   if (scenariosMeasured === 0) {
-    console.log("latest.json not moved: the subject measured no rows. Fix the run before moving it.");
-    return;
+    return { latestPointer: "kept-empty" };
   }
 
   writeJsonFile(paths.latestPointerPath, { runId: paths.runId });
-  console.log(`Pointed latest.json at this run (${mode} profile, ${String(scenariosMeasured)} rows)`);
+  return { latestPointer: "moved" };
 }
 
 /**

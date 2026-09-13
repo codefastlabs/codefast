@@ -9,7 +9,7 @@
       "entry": ["src/*-benches.ts"]
     },
     "internal/benchmark-harness": {
-      "ignoreBinaries": ["tsx"]
+      "ignore": ["tests/integration/parent/fixtures/**"]
     },
     "internal/benchmark-viewer": {
       "entry": ["src/app/entry.tsx"]

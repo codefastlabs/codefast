@@ -12,7 +12,7 @@ import { startBenchServer } from "@internal/benchmark-viewer/server";
 
 import { SCENARIO_BASELINES } from "#/fixtures/scenario-parity";
 import { assembleTvComparison } from "#/harness/comparison";
-import { CODEFAST_TV, CVA, SERVE_TITLE, TAILWIND_VARIANTS } from "#/harness/config";
+import { BENCH_LIBRARIES, CODEFAST_TV, SERVE_TITLE } from "#/harness/config";
 
 await startBenchServer({
   benchResultsDir: join(dirname(fileURLToPath(import.meta.url)), "..", "..", BENCH_RESULTS_DIR_NAME),
@@ -21,15 +21,11 @@ await startBenchServer({
   // Each shape's cached, uncached, merged and unmerged rows read against each other on one chart.
   viewDefaults: { overlayGroup: true, useLogScale: true },
   scenarioBaselines: Object.fromEntries(SCENARIO_BASELINES),
-  libraries: [
-    {
-      name: CODEFAST_TV.libraryName,
-      displayName: resolveDisplayName(CODEFAST_TV),
-      isPrimary: true,
-    },
-    { name: TAILWIND_VARIANTS.libraryName, displayName: resolveDisplayName(TAILWIND_VARIANTS) },
-    { name: CVA.libraryName, displayName: resolveDisplayName(CVA) },
-  ],
+  libraries: BENCH_LIBRARIES.map((library) => ({
+    name: library.libraryName,
+    displayName: resolveDisplayName(library),
+    isPrimary: library === CODEFAST_TV,
+  })),
   deriveReport: (parsed, { runId }) => {
     if (parsed.shape === undefined) {
       return undefined;

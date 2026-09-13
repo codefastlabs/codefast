@@ -9,7 +9,8 @@ import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
 import type { BenchRunShape } from "@internal/benchmark-harness/shared/env-keys";
 import type { Fingerprint, TrialPayload } from "@internal/benchmark-harness/shared/protocol";
 
-import { AWILIX, BRANDI, CODEFAST_DI, DITOX, INJECTION_JS, INVERSIFY, TSYRINGE } from "#/harness/config";
+import { CODEFAST_DI, COMPETITORS } from "#/harness/config";
+import type { DiBenchLibrary } from "#/harness/config";
 import { DI_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
 /** One library's fingerprint and per-trial payloads, live from a run or reconstructed from disk. */
@@ -19,25 +20,9 @@ export interface LibraryPayload {
   readonly sanityFailures?: ReadonlyArray<string> | undefined;
 }
 
-interface CompetitorSpec {
-  readonly libraryName: string;
-  readonly displayName: string;
-  readonly shortName: string;
-}
-
-// Inversify carries its own display name; the rest resolve theirs. Order fixes the report columns.
-const COMPETITOR_SPECS: ReadonlyArray<CompetitorSpec> = [
-  { libraryName: INVERSIFY.libraryName, displayName: INVERSIFY.libraryName, shortName: "inv" },
-  { libraryName: AWILIX.libraryName, displayName: resolveDisplayName(AWILIX), shortName: "awi" },
-  { libraryName: TSYRINGE.libraryName, displayName: resolveDisplayName(TSYRINGE), shortName: "tsy" },
-  { libraryName: BRANDI.libraryName, displayName: resolveDisplayName(BRANDI), shortName: "brn" },
-  { libraryName: DITOX.libraryName, displayName: resolveDisplayName(DITOX), shortName: "dtx" },
-  { libraryName: INJECTION_JS.libraryName, displayName: resolveDisplayName(INJECTION_JS), shortName: "inj" },
-];
-
-function toLibrary(payload: LibraryPayload, displayName: string, shortName: string): ComparisonLibrary {
+function toLibrary(payload: LibraryPayload, library: DiBenchLibrary): ComparisonLibrary {
   const report: LibraryReport = buildLibraryReport(payload.fingerprint, payload.trials, payload.sanityFailures ?? []);
-  return { report, displayName, shortName };
+  return { report, displayName: resolveDisplayName(library), shortName: library.shortName };
 }
 
 /** The assembled comparison: the pivot, its competitors, the markdown report, and the document. */
@@ -70,10 +55,10 @@ export function assembleDiComparison(
   if (codefastPayload === undefined) {
     throw new Error(`No observations for the pivot library ${CODEFAST_DI.libraryName}.`);
   }
-  const codefastLibrary = toLibrary(codefastPayload, CODEFAST_DI.libraryName, "cf");
-  const competitors = COMPETITOR_SPECS.flatMap((spec) => {
-    const payload = payloadsByLibrary.get(spec.libraryName);
-    return payload === undefined ? [] : [toLibrary(payload, spec.displayName, spec.shortName)];
+  const codefastLibrary = toLibrary(codefastPayload, CODEFAST_DI);
+  const competitors = COMPETITORS.flatMap((library) => {
+    const payload = payloadsByLibrary.get(library.libraryName);
+    return payload === undefined ? [] : [toLibrary(payload, library)];
   });
   const markdown = renderComparisonMarkdownReport(codefastLibrary, competitors, {
     ...DI_COMPARISON_MARKDOWN,
