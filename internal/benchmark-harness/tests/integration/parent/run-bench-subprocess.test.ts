@@ -16,7 +16,7 @@ import { BENCH_LIST_ENV_KEY, BENCH_MODE_ENV_KEY, BENCH_ONLY_ENV_KEY, BENCH_TIER_
 
 const FAKE_SUITE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "fixtures", "fake-suite");
 
-// The fixture is plain JavaScript, so the child is node itself: no tsx, no pnpm, nothing to install.
+// Node strips the fixture's types itself, so the child is node alone: no tsx, no pnpm, nothing to install.
 const launchWithNode: SubprocessLauncher = ({ entryPath }) => ({ command: process.execPath, args: [entryPath] });
 
 /** Records every call so a test can assert the exact sequence the parent reported. */
@@ -63,7 +63,7 @@ function parametersFor(
   return {
     packageRootDirectory: FAKE_SUITE_ROOT,
     tsconfigFileName: "tsconfig.json",
-    benchEntryFileNameUnderSrc: "fake-benches.mjs",
+    benchEntryFileNameUnderSrc: "fake-benches.ts",
     harnessLabel: "Fake",
     scenarioName: "fake",
     forwardChildStdoutVerbose: false,
