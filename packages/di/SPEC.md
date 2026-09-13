@@ -638,9 +638,12 @@ container
 
 > **Normative — rules for a `when()` predicate.**
 >
-> - The predicate is called every time a resolve needs to pick a candidate (never cached).
 > - The predicate **must be pure and deterministic** — no side effects, no I/O. Breaking this rule is undefined
 >   behaviour and may cause an infinite loop or incorrect caching.
+> - Because it is pure, the engine may evaluate it once per container state and reuse the answer where the context
+>   cannot differ: a root-level `resolveAll` with no options keeps its candidate list until any registry in the chain
+>   changes, and keeps the value list too while every member is a hook-free constant. A read carrying options, or made
+>   from inside a factory, evaluates every predicate afresh.
 > - The predicate **must not** call `ctx.resolve*()` — that causes circular resolution.
 
 > **Performance note.** For a `transient` binding on a hot path (resolved on every request), a complex `when()`

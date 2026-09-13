@@ -34,7 +34,7 @@ import type { ScopeManager } from "#/lifecycle/scope-manager";
 import { SCOPED_MISS } from "#/lifecycle/scope-manager";
 import type { MetadataReader, ParamMetadata } from "#/metadata/metadata-types";
 import { ActivationNeedCache } from "#/resolution/cache/activation-need";
-import type { DefaultLookupEntry } from "#/resolution/cache/binding-lookup-cache";
+import type { CollectionEntry, DefaultLookupEntry } from "#/resolution/cache/binding-lookup-cache";
 import { BindingLookupCache } from "#/resolution/cache/binding-lookup-cache";
 import { ClassIntrospector } from "#/resolution/cache/class-introspector";
 import type { ResolverCallbacks } from "#/resolution/context";
@@ -853,6 +853,66 @@ export class DependencyResolver implements ResolverCallbacks {
       resolved[index] = this.#resolveCandidateSync(candidates[index]!, options, resolutionStack) as Value;
     }
     return resolved;
+  }
+
+  /**
+   * A root-level, options-less collection read through its memo: the value list when it is stable,
+   * the candidate list otherwise.
+   *
+   * @remarks Its own entry rather than a branch in `resolveAll`, so the options lane keeps the exact
+   * shape it had; the container routes a top-level read with no options here.
+   */
+  resolveRootCollection<Value>(token: Token<Value> | Constructor<Value>): Array<Value> {
+    const resolutionStack = this.rootStack;
+    const memo = this.#rootCollection(token, resolutionStack);
+    if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
+      return memo.values.slice() as Array<Value>;
+    }
+    const { candidates } = memo;
+    const resolved = new Array<Value>(candidates.length);
+    for (let index = 0; index < candidates.length; index += 1) {
+      resolved[index] = this.#resolveCandidateSync(candidates[index]!, undefined, resolutionStack) as Value;
+    }
+    return resolved;
+  }
+
+  /** The async twin of `resolveRootCollection`: a stable value list settles at once, candidates fan out as usual. */
+  resolveRootCollectionAsync<Value>(token: Token<Value> | Constructor<Value>): Promise<Array<Value>> {
+    // The async lane appends to its branch and never unwinds, so it works on a stack of its own.
+    const resolutionStack: Array<ResolutionFrame> = [];
+    const memo = this.#rootCollection(token, resolutionStack);
+    if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
+      return Promise.resolve(memo.values.slice() as Array<Value>);
+    }
+    return Promise.all(
+      memo.candidates.map(
+        (candidate) =>
+          this.#resolveCandidateAsync(candidate, undefined, resolutionStack, UNOWNED_BRANCH) as Promise<Value>,
+      ),
+    );
+  }
+
+  /**
+   * The memoized candidate list of a root-level, options-less collection, built on its first read.
+   *
+   * @remarks Sound because a `when()` predicate is pure over its context and the root context is a
+   * constant: the list can only change when a registry in the chain does, which is the version the
+   * memo is stamped with. The value list is kept too while every member is a hook-free constant
+   * and no activation hook exists anywhere in the chain.
+   */
+  #rootCollection(token: Token<unknown> | Constructor, resolutionStack: Array<ResolutionFrame>): CollectionEntry {
+    const memo = this.#lookup.collection(token);
+    if (memo !== undefined) {
+      return memo;
+    }
+    const candidates = this.#candidateBindings(token, undefined, resolutionStack);
+    const entry: CollectionEntry = { candidates, values: undefined, activationVersion: -1 };
+    if (this.#chainActivationVersion() === 0 && candidates.every(isHookFreeConstant)) {
+      entry.values = candidates.map((candidate) => (candidate as ConstantBinding<unknown>).value);
+      entry.activationVersion = 0;
+    }
+    this.#lookup.rememberCollection(token, entry);
+    return entry;
   }
 
   /** Every binding in the chain a `resolveAll` request matches, in chain order. */
@@ -1705,6 +1765,11 @@ export class DependencyResolver implements ResolverCallbacks {
     pool[depth] = created;
     return created;
   }
+}
+
+/** A constant whose value is its answer on every read: no own hook, and the caller has ruled out container hooks. */
+function isHookFreeConstant(binding: Binding): boolean {
+  return binding.kind === "constant" && binding.onActivation === undefined;
 }
 
 function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {

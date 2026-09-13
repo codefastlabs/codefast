@@ -449,6 +449,17 @@ written until a second distinct shape appears. An alternating pair converges aft
 warm-vs-fresh numbers that settled this, and the shape's A/B, are recorded in the package `CHANGELOG.md` at the entry
 that landed the tagged chain-walk memo.
 
+**A root-level collection is memoized on the same cache.** `resolveAll` with no options at the top level gathers the
+chain's bindings and runs every `when()` predicate against the root context, which is a constant. The contract makes a
+predicate pure, so that candidate list is a function of the chain's registries alone, and the lookup cache keeps it
+under the same chain-version stamp as its other two memos. When every member is a hook-free constant and no activation
+hook exists anywhere in the chain, the value list is kept as well, stamped with the chain's activation version, and a
+read hands out a copy. A read carrying options or made from inside a factory goes through the full gather, because its
+context is not a constant. The container routes a top-level read with no options to the memo's own entry,
+`resolveRootCollection`, so `resolveAll` itself keeps the exact shape the options lane had — a branch added there was
+measured as a loss on the tagged collection row. `tests/unit/resolution/resolver-collections.test.ts` pins the
+boundaries.
+
 **Late hooks are why the activation-need memo reads the field first.** `.onActivation()` writes the hook field **in
 place** on an already-registered binding and bumps no version. `needsActivation()` therefore answers the binding's own
 hook from the field itself before touching the memo, and stamps the memo with the registry version too, so a rebind loop

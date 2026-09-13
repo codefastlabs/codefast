@@ -25,6 +25,18 @@ export interface DefaultLookupEntry<Owner> {
 }
 
 /**
+ * A root-level collection read, memoized until any registry in the chain changes.
+ *
+ * @remarks `values` is kept only while every member is a hook-free constant, and
+ * `activationVersion` is the chain's activation version that promise was made under.
+ */
+export interface CollectionEntry {
+  readonly candidates: ReadonlyArray<Binding>;
+  values: ReadonlyArray<unknown> | undefined;
+  activationVersion: number;
+}
+
+/**
  * Alias folding gives up past this many hops and defers to the full resolve loop, whose
  * Set-based traversal detects genuine cycles exactly rather than by an arbitrary cap.
  *
@@ -59,6 +71,9 @@ export class BindingLookupCache<Owner> {
   #lastTagToken: Token<unknown> | Constructor | undefined;
   #lastTag: BindingTag | undefined;
   #lastTaggedEntry: DefaultLookupEntry<Owner> | null = null;
+  // Root-level collections by token, stamped with the chain version like the two memos above.
+  #collections: Map<Token<unknown> | Constructor, CollectionEntry> | undefined;
+  #collectionsVersion = -1;
 
   readonly #registry: BindingRegistry;
   readonly #owner: Owner;
@@ -162,6 +177,22 @@ export class BindingLookupCache<Owner> {
     this.#lastTag = tag;
     this.#lastTaggedEntry = entry;
     return entry;
+  }
+
+  /** The memoized root-level collection for a token, or `undefined` once the chain changed since it was stored. */
+  collection(token: Token<unknown> | Constructor): CollectionEntry | undefined {
+    const version = this.chainVersion();
+    if (version !== this.#collectionsVersion) {
+      this.#collections?.clear();
+      this.#collectionsVersion = version;
+      return undefined;
+    }
+    return this.#collections?.get(token);
+  }
+
+  /** Stores a root-level collection under the chain version the last `collection()` read stamped. */
+  rememberCollection(token: Token<unknown> | Constructor, entry: CollectionEntry): void {
+    (this.#collections ??= new Map<Token<unknown> | Constructor, CollectionEntry>()).set(token, entry);
   }
 
   #foldAliases(token: Token<unknown> | Constructor): DefaultLookupEntry<Owner> | null {

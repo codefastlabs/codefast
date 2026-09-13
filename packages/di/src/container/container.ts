@@ -677,6 +677,9 @@ class DefaultContainer implements Container {
   ): Array<Value> {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
+    if (options === undefined && rootStack.length === 0) {
+      return this.#resolver.resolveRootCollection(token);
+    }
     return rootStack.length === 0
       ? this.#resolver.resolveAll(token, options, rootStack)
       : this.#resolver.resolveAll(token, options, []);
@@ -687,6 +690,9 @@ class DefaultContainer implements Container {
     options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<Array<Value>> {
     this.#assertNotDisposed();
+    if (options === undefined) {
+      return this.#resolver.resolveRootCollectionAsync(token);
+    }
     return this.#resolver.resolveAllAsync(token, options, [], ROOT_BRANCH);
   }
 
