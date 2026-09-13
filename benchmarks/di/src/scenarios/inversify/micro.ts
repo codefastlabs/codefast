@@ -7,6 +7,7 @@
 import "reflect-metadata";
 import { Container, inject, injectable } from "inversify";
 
+import { isFreshEachResolve } from "#/fixtures/sanity";
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
@@ -87,11 +88,11 @@ function buildTransientClassOneDepScenario(): BenchScenario {
   return {
     ...TRANSIENT_CLASS_1_DEP,
     batch: CLASS_RESOLVE_BATCH,
-    sanity: () => {
-      const firstResolution = container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier);
-      const secondResolution = container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier);
-      return firstResolution !== secondResolution && firstResolution.leafDependency !== secondResolution.leafDependency;
-    },
+    sanity: () =>
+      isFreshEachResolve(
+        () => container.get<MicroServiceWithOneDependency>(microServiceWithOneDependencyIdentifier),
+        (service) => service.leafDependency,
+      ),
     build: () =>
       batched(CLASS_RESOLVE_BATCH, () => {
         container.get(microServiceWithOneDependencyIdentifier);

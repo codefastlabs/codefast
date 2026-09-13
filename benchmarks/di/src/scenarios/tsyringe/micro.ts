@@ -7,6 +7,7 @@
 import "reflect-metadata";
 import { container as rootContainer, inject, injectable, Lifecycle } from "tsyringe";
 
+import { isFreshEachResolve } from "#/fixtures/sanity";
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
@@ -85,11 +86,11 @@ function buildTransientClassOneDepScenario(): BenchScenario {
   return {
     ...TRANSIENT_CLASS_1_DEP,
     batch: CLASS_RESOLVE_BATCH,
-    sanity: () => {
-      const firstResolution = container.resolve<MicroServiceWithOneDependency>(MICRO_SERVICE_TOKEN);
-      const secondResolution = container.resolve<MicroServiceWithOneDependency>(MICRO_SERVICE_TOKEN);
-      return firstResolution !== secondResolution && firstResolution.leafDependency !== secondResolution.leafDependency;
-    },
+    sanity: () =>
+      isFreshEachResolve(
+        () => container.resolve<MicroServiceWithOneDependency>(MICRO_SERVICE_TOKEN),
+        (service) => service.leafDependency,
+      ),
     build: () =>
       batched(CLASS_RESOLVE_BATCH, () => {
         container.resolve<MicroServiceWithOneDependency>(MICRO_SERVICE_TOKEN);

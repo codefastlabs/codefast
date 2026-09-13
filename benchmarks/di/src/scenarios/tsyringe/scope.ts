@@ -13,6 +13,7 @@
 import "reflect-metadata";
 import { container as tsyringeRootContainer, injectable, Lifecycle } from "tsyringe";
 
+import { isSharedWithinScopeFreshAcross } from "#/fixtures/sanity";
 import {
   CHILD_DEPTHS,
   CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
@@ -103,14 +104,13 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
   const appContainer = tsyringeRootContainer.createChildContainer();
   appContainer.register(ScopedInstance, { useClass: ScopedInstance }, { lifecycle: Lifecycle.ContainerScoped });
 
-  function runOneScopedRequest(): ScopedInstance {
+  function resolveTwiceInFreshChild(): readonly [ScopedInstance, ScopedInstance] {
     const child = appContainer.createChildContainer();
-    const first = child.resolve(ScopedInstance);
-    const second = child.resolve(ScopedInstance);
-    if (first !== second) {
-      throw new Error("Expected ContainerScoped class to return same instance within child");
-    }
-    return first;
+    return [child.resolve(ScopedInstance), child.resolve(ScopedInstance)];
+  }
+
+  function runOneScopedRequest(): ScopedInstance {
+    return resolveTwiceInFreshChild()[0];
   }
 
   // Pre-warm
@@ -120,11 +120,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
     ...SCOPED_BINDING_PER_CHILD,
     what: "createChildContainer() + ContainerScoped class — tsyringe's per-container lifetime (bind once)",
     batch: SCOPED_PER_CHILD_BATCH,
-    sanity: () => {
-      const first = runOneScopedRequest();
-      const second = runOneScopedRequest();
-      return first !== second && first.id < second.id;
-    },
+    sanity: () => isSharedWithinScopeFreshAcross(resolveTwiceInFreshChild),
     build: () =>
       batched(SCOPED_PER_CHILD_BATCH, () => {
         runOneScopedRequest();

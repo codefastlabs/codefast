@@ -15,6 +15,7 @@
  */
 import { createContainer, injectable, token } from "ditox";
 
+import { isSharedWithinScopeFreshAcross } from "#/fixtures/sanity";
 import {
   CHILD_DEPTHS,
   CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
@@ -103,16 +104,16 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
   const rootContainer = createContainer();
   let instanceCounter = 0;
 
-  function runOneScopedRequest(): ScopedInstance {
+  function resolveTwiceInFreshChild(): readonly [ScopedInstance, ScopedInstance] {
     const scope = createContainer(rootContainer);
     scope.bindFactory(scopedToken, () => ({ id: ++instanceCounter }), { scope: "scoped" });
-    const first = scope.resolve(scopedToken);
-    const second = scope.resolve(scopedToken);
-    if (first !== second) {
-      throw new Error("Expected scoped binding to return same instance within child");
-    }
+    const pair = [scope.resolve(scopedToken), scope.resolve(scopedToken)] as const;
     scope.removeAll();
-    return first;
+    return pair;
+  }
+
+  function runOneScopedRequest(): ScopedInstance {
+    return resolveTwiceInFreshChild()[0];
   }
 
   // Pre-warm
@@ -122,11 +123,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
     ...SCOPED_BINDING_PER_CHILD,
     what: "per-request child + scoped bindFactory — ditox caches scoped by owner, so one bind per iteration",
     batch: SCOPED_PER_CHILD_BATCH,
-    sanity: () => {
-      const first = runOneScopedRequest();
-      const second = runOneScopedRequest();
-      return first !== second && first.id < second.id;
-    },
+    sanity: () => isSharedWithinScopeFreshAcross(resolveTwiceInFreshChild),
     build: () =>
       batched(SCOPED_PER_CHILD_BATCH, () => {
         runOneScopedRequest();

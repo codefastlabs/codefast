@@ -6,6 +6,7 @@
  */
 import { asClass, asValue, createContainer, InjectionMode, Lifetime } from "awilix";
 
+import { isFreshEachResolve } from "#/fixtures/sanity";
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
@@ -68,11 +69,11 @@ function buildTransientClassOneDepScenario(): BenchScenario {
   return {
     ...TRANSIENT_CLASS_1_DEP,
     batch: CLASS_RESOLVE_BATCH,
-    sanity: () => {
-      const firstResolution = container.resolve<MicroServiceWithOneDependency>("svc");
-      const secondResolution = container.resolve<MicroServiceWithOneDependency>("svc");
-      return firstResolution !== secondResolution && firstResolution.leafDependency !== secondResolution.leafDependency;
-    },
+    sanity: () =>
+      isFreshEachResolve(
+        () => container.resolve<MicroServiceWithOneDependency>("svc"),
+        (service) => service.leafDependency,
+      ),
     build: () =>
       batched(CLASS_RESOLVE_BATCH, () => {
         container.resolve("svc");

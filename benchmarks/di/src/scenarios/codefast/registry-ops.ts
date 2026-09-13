@@ -26,6 +26,7 @@
  */
 import { Container, token } from "@codefast/di";
 
+import { isSharedWithinScopeFreshAcross } from "#/fixtures/sanity";
 import {
   ACTIVATION_HOOK_BATCH,
   CONTAINER_LEVEL_ACTIVATION_HOOK,
@@ -175,15 +176,15 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
     .toDynamic(() => ({ id: ++instanceCounter }))
     .scoped();
 
-  function runOneScopedRequest(): ScopedInstance {
+  function resolveTwiceInFreshChild(): readonly [ScopedInstance, ScopedInstance] {
     const child = appContainer.createChild();
-    const first = child.resolve(scopedToken);
-    const second = child.resolve(scopedToken); // same child → same instance
-    if (first !== second) {
-      throw new Error("Expected scoped binding to return same instance within child");
-    }
+    const pair = [child.resolve(scopedToken), child.resolve(scopedToken)] as const;
     child.unbindAll();
-    return first;
+    return pair;
+  }
+
+  function runOneScopedRequest(): ScopedInstance {
+    return resolveTwiceInFreshChild()[0];
   }
 
   // Pre-warm
@@ -192,11 +193,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
   return {
     ...SCOPED_BINDING_PER_CHILD,
     batch: SCOPED_PER_CHILD_BATCH,
-    sanity: () => {
-      const r1 = runOneScopedRequest();
-      const r2 = runOneScopedRequest();
-      return r1 !== r2 && r1.id < r2.id;
-    },
+    sanity: () => isSharedWithinScopeFreshAcross(resolveTwiceInFreshChild),
     build: () =>
       batched(SCOPED_PER_CHILD_BATCH, () => {
         runOneScopedRequest();

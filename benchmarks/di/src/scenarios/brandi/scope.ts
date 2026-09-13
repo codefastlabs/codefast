@@ -12,6 +12,7 @@
  */
 import { createContainer, token } from "brandi";
 
+import { isSharedWithinScopeFreshAcross } from "#/fixtures/sanity";
 import {
   CHILD_DEPTHS,
   CHILD_RESOLVE_BATCH,
@@ -60,15 +61,14 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
   const appContainer = createContainer();
   appContainer.bind(scopedToken).toInstance(ScopedInstanceImpl).inContainerScope();
 
-  function runOneScopedRequest(): ScopedInstance {
+  function resolveTwiceInFreshChild(): readonly [ScopedInstance, ScopedInstance] {
     const scope = createContainer();
     scope.extend(appContainer);
-    const first = scope.get(scopedToken);
-    const second = scope.get(scopedToken);
-    if (first !== second) {
-      throw new Error("Expected inContainerScope binding to return same instance within scope");
-    }
-    return first;
+    return [scope.get(scopedToken), scope.get(scopedToken)];
+  }
+
+  function runOneScopedRequest(): ScopedInstance {
+    return resolveTwiceInFreshChild()[0];
   }
 
   // Pre-warm
@@ -78,11 +78,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
     ...SCOPED_BINDING_PER_CHILD,
     what: "child createContainer().extend(app) + inContainerScope — brandi's per-container lifetime (bind once)",
     batch: SCOPED_PER_CHILD_BATCH,
-    sanity: () => {
-      const first = runOneScopedRequest();
-      const second = runOneScopedRequest();
-      return first !== second && first.id < second.id;
-    },
+    sanity: () => isSharedWithinScopeFreshAcross(resolveTwiceInFreshChild),
     build: () =>
       batched(SCOPED_PER_CHILD_BATCH, () => {
         runOneScopedRequest();

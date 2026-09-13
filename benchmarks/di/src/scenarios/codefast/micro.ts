@@ -15,6 +15,7 @@
  */
 import { Container, injectable, optional, token } from "@codefast/di";
 
+import { isFreshEachResolve } from "#/fixtures/sanity";
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
@@ -102,11 +103,11 @@ function buildTransientClassOneDepScenario(): BenchScenario {
   return {
     ...TRANSIENT_CLASS_1_DEP,
     batch: CLASS_RESOLVE_BATCH,
-    sanity: () => {
-      const firstResolution = container.resolve(microServiceWithOneDependencyToken);
-      const secondResolution = container.resolve(microServiceWithOneDependencyToken);
-      return firstResolution !== secondResolution && firstResolution.leafDependency !== secondResolution.leafDependency;
-    },
+    sanity: () =>
+      isFreshEachResolve(
+        () => container.resolve(microServiceWithOneDependencyToken),
+        (service) => service.leafDependency,
+      ),
     build: () =>
       batched(CLASS_RESOLVE_BATCH, () => {
         container.resolve(microServiceWithOneDependencyToken);

@@ -12,6 +12,7 @@
  */
 import { asFunction, asValue, createContainer } from "awilix";
 
+import { isSharedWithinScopeFreshAcross } from "#/fixtures/sanity";
 import {
   CHILD_DEPTHS,
   CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
@@ -104,14 +105,13 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
     scopedInstance: asFunction((): ScopedInstance => ({ id: ++instanceCounter })).scoped(),
   });
 
-  function runOneScopedRequest(): ScopedInstance {
+  function resolveTwiceInFreshChild(): readonly [ScopedInstance, ScopedInstance] {
     const scope = rootContainer.createScope();
-    const first = scope.resolve<ScopedInstance>("scopedInstance");
-    const second = scope.resolve<ScopedInstance>("scopedInstance");
-    if (first !== second) {
-      throw new Error("Expected scoped registration to return same instance within scope");
-    }
-    return first;
+    return [scope.resolve<ScopedInstance>("scopedInstance"), scope.resolve<ScopedInstance>("scopedInstance")];
+  }
+
+  function runOneScopedRequest(): ScopedInstance {
+    return resolveTwiceInFreshChild()[0];
   }
 
   // Pre-warm
@@ -121,11 +121,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
     ...SCOPED_BINDING_PER_CHILD,
     what: "createScope() + asFunction().scoped() — awilix's native per-scope lifetime (bind once)",
     batch: SCOPED_PER_CHILD_BATCH,
-    sanity: () => {
-      const first = runOneScopedRequest();
-      const second = runOneScopedRequest();
-      return first !== second && first.id < second.id;
-    },
+    sanity: () => isSharedWithinScopeFreshAcross(resolveTwiceInFreshChild),
     build: () =>
       batched(SCOPED_PER_CHILD_BATCH, () => {
         runOneScopedRequest();

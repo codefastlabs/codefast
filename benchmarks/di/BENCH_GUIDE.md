@@ -179,7 +179,11 @@ Also required for a comparison to mean anything:
   description and batch factor once and both sides import it. When adding a scenario, put the shared constants there — a
   batch factor that drifts scales `hzPerOp` silently.
 - **The same observable outcome.** Every scenario declares a `sanity()` check that asserts the work actually happened —
-  the hook fired, the instance count matched. A scenario that is fast because it did less is not a win.
+  the hook fired, the instance count matched. A scenario that is fast because it did less is not a win. The checks a
+  feature's meaning turns on live once in `src/fixtures/sanity.ts` and every side calls the same one: a transient row
+  proves two resolves differ down to the dependency, a scoped row proves one instance within a scope and a fresh one in
+  the next, a collection row proves every binding came back once. A side that wrote its own weaker check would be
+  measuring a cheaper feature under the same id.
 
 ## What the harness enforces so you cannot forget
 

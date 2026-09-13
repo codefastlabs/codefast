@@ -34,3 +34,7 @@ offers.
   parent walk that is free reads apart from one that is linear in the chain. `named-resolve-slots-1/4/16/64` and
   `tagged-resolve-slots-1/4/16/64` pick the last-bound name or tag out of N bindings on one token, on codefast and
   inversify, so a selection that is indexed reads apart from one that scans.
+- `src/fixtures/sanity.ts` holds the semantic checks every head-to-head row shares — fresh per resolve down to the
+  dependency, one instance within a scope and a fresh one across, every binding of a collection present once — and the
+  transient, scoped and `resolveAll` rows on every library call the same one, so no side can measure a cheaper meaning
+  of the feature under the same id.

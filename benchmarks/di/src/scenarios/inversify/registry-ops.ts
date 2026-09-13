@@ -12,6 +12,7 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 
+import { isSharedWithinScopeFreshAcross } from "#/fixtures/sanity";
 import {
   ACTIVATION_HOOK_BATCH,
   CONTAINER_LEVEL_ACTIVATION_HOOK,
@@ -166,19 +167,19 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
   const appContainer = new Container({ jitless: false });
   let instanceCounter = 0;
 
-  function runOneScopedRequest(): ScopedInstance {
+  function resolveTwiceInFreshChild(): readonly [ScopedInstance, ScopedInstance] {
     const child = new Container({ jitless: false, parent: appContainer });
     child
       .bind<ScopedInstance>(scopedId)
       .toDynamicValue(() => ({ id: ++instanceCounter }))
       .inSingletonScope();
-    const first = child.get<ScopedInstance>(scopedId);
-    const second = child.get<ScopedInstance>(scopedId);
-    if (first !== second) {
-      throw new Error("Expected per-child singleton to return same instance within child");
-    }
+    const pair = [child.get<ScopedInstance>(scopedId), child.get<ScopedInstance>(scopedId)] as const;
     child.unbindAll();
-    return first;
+    return pair;
+  }
+
+  function runOneScopedRequest(): ScopedInstance {
+    return resolveTwiceInFreshChild()[0];
   }
 
   // Pre-warm
@@ -188,11 +189,7 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
     ...SCOPED_BINDING_PER_CHILD,
     what: "per-request child container with its own singleton bind — inversify's idiom for per-request sharing (one bind per iteration)",
     batch: SCOPED_PER_CHILD_BATCH,
-    sanity: () => {
-      const r1 = runOneScopedRequest();
-      const r2 = runOneScopedRequest();
-      return r1 !== r2 && r1.id < r2.id;
-    },
+    sanity: () => isSharedWithinScopeFreshAcross(resolveTwiceInFreshChild),
     build: () =>
       batched(SCOPED_PER_CHILD_BATCH, () => {
         runOneScopedRequest();

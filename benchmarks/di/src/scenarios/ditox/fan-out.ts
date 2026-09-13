@@ -12,6 +12,7 @@ import { buildDitoxRealisticContainer } from "#/fixtures/ditox-adapter";
 import { FAN_OUT_TREE_DEPTH_3_BREADTH_4, RESOLVE_ALL_STRATEGY_COUNTS } from "#/fixtures/fan-out-descriptor";
 import type { ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
 import type { RealisticNode } from "#/fixtures/realistic-graph";
+import { isCompleteCollection } from "#/fixtures/sanity";
 import {
   FAN_OUT_TREE,
   FAN_OUT_TREE_BATCH,
@@ -44,14 +45,14 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   for (let index = 0; index < strategyCount; index++) {
     bindMultiValue(container, strategyToken, index);
   }
-  const prewarmedStrategies = container.resolve(strategyToken);
+  container.resolve(strategyToken);
 
   return {
     ...resolveAllStrategiesDescriptor(strategyCount),
     // ditox caches the bindMultiValue collection — resolve() hands back the same array.
     what: `resolve() a cached bindMultiValue collection across ${String(strategyCount)} bindings once`,
     batch: 1,
-    sanity: () => prewarmedStrategies.length === strategyCount,
+    sanity: () => isCompleteCollection(container.resolve(strategyToken), strategyCount),
     build: () => {
       return () => {
         const strategies = container.resolve(strategyToken);
@@ -65,13 +66,14 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
 
 function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
   const strategyToken = token<ReadonlyArray<number>>("bench-ditox-fanout-resolve-all-cold");
-  function buildAndReadOnce(): number {
+  function buildAndRead(): ReadonlyArray<number> {
     const container = createContainer();
     for (let index = 0; index < strategyCount; index++) {
       bindMultiValue(container, strategyToken, index);
     }
-    return container.resolve(strategyToken).length;
+    return container.resolve(strategyToken);
   }
+  const buildAndReadOnce = (): number => buildAndRead().length;
   buildAndReadOnce();
 
   return {
@@ -79,7 +81,7 @@ function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): Be
     // The cached collection is built here for the first time, so this row charges the memoisation.
     what: `createContainer(), bindMultiValue ${String(strategyCount)} strategies, resolve() the collection once (cold collection)`,
     batch: 1,
-    sanity: () => buildAndReadOnce() === strategyCount,
+    sanity: () => isCompleteCollection(buildAndRead(), strategyCount),
     build: () => {
       return () => {
         if (buildAndReadOnce() !== strategyCount) {

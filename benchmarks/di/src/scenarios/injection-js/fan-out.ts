@@ -12,6 +12,7 @@ import type { ValueProvider } from "injection-js";
 
 import { RESOLVE_ALL_STRATEGY_COUNTS } from "#/fixtures/fan-out-descriptor";
 import type { ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
+import { isCompleteCollection } from "#/fixtures/sanity";
 import { resolveAllColdDescriptor, resolveAllStrategiesDescriptor } from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -22,14 +23,14 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
     providers.push({ provide: strategyToken, useValue: index, multi: true });
   }
   const injector = ReflectiveInjector.resolveAndCreate(providers);
-  const prewarmedStrategies = injector.get(strategyToken);
+  injector.get(strategyToken);
 
   return {
     ...resolveAllStrategiesDescriptor(strategyCount),
     // injection-js caches the multi:true provider array — get() hands back the same array.
     what: `get() a cached multi:true array across ${String(strategyCount)} bindings once`,
     batch: 1,
-    sanity: () => prewarmedStrategies.length === strategyCount,
+    sanity: () => isCompleteCollection(injector.get(strategyToken), strategyCount),
     build: () => {
       return () => {
         const strategies = injector.get(strategyToken);
@@ -47,9 +48,10 @@ function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): Be
   for (let index = 0; index < strategyCount; index++) {
     providers.push({ provide: strategyToken, useValue: index, multi: true });
   }
-  function buildAndReadOnce(): number {
-    return ReflectiveInjector.resolveAndCreate(providers).get(strategyToken).length;
+  function buildAndRead(): ReadonlyArray<number> {
+    return ReflectiveInjector.resolveAndCreate(providers).get(strategyToken);
   }
+  const buildAndReadOnce = (): number => buildAndRead().length;
   buildAndReadOnce();
 
   return {
@@ -57,7 +59,7 @@ function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): Be
     // The multi:true array is built here for the first time, so this row charges the memoisation.
     what: `resolveAndCreate() a fresh injector over ${String(strategyCount)} multi:true providers, get() the array once (cold collection)`,
     batch: 1,
-    sanity: () => buildAndReadOnce() === strategyCount,
+    sanity: () => isCompleteCollection(buildAndRead(), strategyCount),
     build: () => {
       return () => {
         if (buildAndReadOnce() !== strategyCount) {

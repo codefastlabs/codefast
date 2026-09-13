@@ -11,6 +11,7 @@ import { container as tsyringeRootContainer } from "tsyringe";
 import { FAN_OUT_TREE_DEPTH_3_BREADTH_4, RESOLVE_ALL_STRATEGY_COUNTS } from "#/fixtures/fan-out-descriptor";
 import type { ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
 import type { RealisticNode } from "#/fixtures/realistic-graph";
+import { isCompleteCollection } from "#/fixtures/sanity";
 import {
   FAN_OUT_TREE,
   FAN_OUT_TREE_BATCH,
@@ -44,13 +45,13 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   for (let index = 0; index < strategyCount; index++) {
     container.register<number>(strategyToken, { useValue: index });
   }
-  const prewarmedStrategies = container.resolveAll<number>(strategyToken);
+  container.resolveAll<number>(strategyToken);
 
   return {
     ...resolveAllStrategiesDescriptor(strategyCount),
     what: `resolveAll() across ${String(strategyCount)} strategy bindings once`,
     batch: 1,
-    sanity: () => prewarmedStrategies.length === strategyCount,
+    sanity: () => isCompleteCollection(container.resolveAll<number>(strategyToken), strategyCount),
     build: () => {
       return () => {
         const strategies = container.resolveAll<number>(strategyToken);
@@ -64,20 +65,21 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
 
 function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
   const strategyToken = "bench-tsyringe-fanout-resolve-all-cold";
-  function buildAndReadOnce(): number {
+  function buildAndRead(): ReadonlyArray<number> {
     const container = tsyringeRootContainer.createChildContainer();
     for (let index = 0; index < strategyCount; index++) {
       container.register<number>(strategyToken, { useValue: index });
     }
-    return container.resolveAll<number>(strategyToken).length;
+    return container.resolveAll<number>(strategyToken);
   }
+  const buildAndReadOnce = (): number => buildAndRead().length;
   buildAndReadOnce();
 
   return {
     ...resolveAllColdDescriptor(strategyCount),
     what: `createChildContainer(), register ${String(strategyCount)} strategies, resolveAll() once (cold collection)`,
     batch: 1,
-    sanity: () => buildAndReadOnce() === strategyCount,
+    sanity: () => isCompleteCollection(buildAndRead(), strategyCount),
     build: () => {
       return () => {
         if (buildAndReadOnce() !== strategyCount) {
