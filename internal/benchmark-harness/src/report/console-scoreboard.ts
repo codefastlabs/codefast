@@ -6,7 +6,7 @@ import { cell, renderConsoleTable } from "#/report/console-table";
 import { formatRatioMultiple } from "#/report/format";
 import { UNRELIABLE_RATIO_MARKER } from "#/report/reliability";
 import type { RunDiff } from "#/report/run-diff";
-import { formatDeltaPercent } from "#/report/run-diff";
+import { describeDiffTarget, formatDeltaPercent } from "#/report/run-diff";
 import { HEAD_TO_HEAD_PARITY_BAND, ratioTint } from "#/report/verdict";
 import type { Palette, Tint } from "#/shared/palette";
 
@@ -63,7 +63,7 @@ function scoreboardLines(
   const competitorDeltas = diff?.comparable === true ? diff.competitors : [];
   const bandPercent = String(Math.round(HEAD_TO_HEAD_PARITY_BAND * 100));
   const legend = `${consoleLabel(pivot)} ÷ competitor · win >1.0${bandPercent}× · parity ±${bandPercent}% · ${UNRELIABLE_RATIO_MARKER} not citable`;
-  const heading = `${palette.heading("Scoreboard")}  ${palette.dim(`(${legend}${diff?.comparable === true ? ` · Δ vs ${diff.previousRunId}` : ""})`)}`;
+  const heading = `${palette.heading("Scoreboard")}  ${palette.dim(`(${legend}${diff?.comparable === true ? ` · Δ vs ${describeDiffTarget(diff)}` : ""})`)}`;
 
   const header: Array<ConsoleCell> = [
     cell("vs"),

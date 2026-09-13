@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   assertBenchEnvKeys,
+  BENCH_BASELINE_ENV_KEY,
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
   BENCH_MODE_ENV_KEY,
@@ -14,6 +15,7 @@ import {
   parseEnvInteger,
   parseScenarioFilter,
   PORT_ENV_KEY,
+  resolveBaselineRunFromEnvironment,
   resolveBenchModeFromEnvironment,
   resolvePreferredPortFromEnvironment,
   resolveRunShapeFromEnvironment,
@@ -290,5 +292,22 @@ describe("isRunNarrowedByEnvironment", () => {
   it("is true under a tier filter alone", () => {
     vi.stubEnv(BENCH_TIER_ENV_KEY, "contract");
     expect(isRunNarrowedByEnvironment()).toBe(true);
+  });
+});
+
+describe("resolveBaselineRunFromEnvironment", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("reads an unset or blank key as no pin", () => {
+    expect(resolveBaselineRunFromEnvironment()).toBeUndefined();
+    vi.stubEnv(BENCH_BASELINE_ENV_KEY, "  ");
+    expect(resolveBaselineRunFromEnvironment()).toBeUndefined();
+  });
+
+  it("returns the run id or path trimmed", () => {
+    vi.stubEnv(BENCH_BASELINE_ENV_KEY, " 2026-09-12T23-19-19-864Z ");
+    expect(resolveBaselineRunFromEnvironment()).toBe("2026-09-12T23-19-19-864Z");
   });
 });

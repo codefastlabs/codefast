@@ -59,6 +59,7 @@ describe("renderScoreboardLines", () => {
       diff: {
         comparable: true,
         previousRunId: "prev",
+        pinned: false,
         scenarios: [],
         regressions: [],
         improvements: [],

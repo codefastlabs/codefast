@@ -71,6 +71,14 @@ export const BENCH_LIST_ENV_KEY = "BENCH_LIST";
  */
 export const BENCH_TIER_ENV_KEY = "BENCH_TIER";
 /**
+ * Pins the run the report diffs against: a run id or directory under `bench-results/`, instead of the
+ * run `latest.json` names.
+ *
+ * @remarks For the question "did the rewrite hold the line" — pin the last run of the old engine and
+ * every later run reads its `Δ` against that run, however many runs land in between.
+ */
+export const BENCH_BASELINE_ENV_KEY = "BENCH_BASELINE";
+/**
  * File written inside each timestamped run directory by {@link writeJsonlRun}.
  *
  * @since 0.3.16-canary.0
@@ -138,6 +146,7 @@ export type BenchEnvSpec =
  * @since 0.6.0
  */
 export const BENCH_ENV_SPECS: Readonly<Record<string, BenchEnvSpec>> = {
+  BENCH_BASELINE: { audience: "user", kind: "string", turboTasks: MEASURING_TURBO_TASKS },
   BENCH_FAST: { audience: "retired", replacement: "BENCH_MODE=fast" },
   BENCH_FULL: { audience: "retired", replacement: "BENCH_MODE=full" },
   BENCH_ISOLATE: { audience: "user", kind: "flag", turboTasks: MEASURING_TURBO_TASKS },
@@ -392,6 +401,14 @@ export function resolveTierFilterFromEnvironment(): BenchScenarioTier | undefine
     throw new Error(`${BENCH_TIER_ENV_KEY}="${rawValue}" is not a scenario tier. Use ${BENCH_TIER_VALUES.join(", ")}.`);
   }
   return tier;
+}
+
+/**
+ * Resolves the pinned baseline run from {@link BENCH_BASELINE_ENV_KEY}; `undefined` means diff against `latest.json`.
+ */
+export function resolveBaselineRunFromEnvironment(): string | undefined {
+  const value = (process.env[BENCH_BASELINE_ENV_KEY] ?? "").trim();
+  return value.length === 0 ? undefined : value;
 }
 
 /**

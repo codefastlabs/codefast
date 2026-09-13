@@ -6,6 +6,7 @@ export { resolveDisplayName } from "#/shared/config";
 export type { AssertBenchEnvKeysOptions, BenchEnvSpec, BenchMode, IntegerEnvBounds } from "#/shared/env-keys";
 export {
   assertBenchEnvKeys,
+  BENCH_BASELINE_ENV_KEY,
   BENCH_ENV_SPECS,
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
@@ -24,6 +25,7 @@ export {
   parseEnvInteger,
   parseScenarioFilter,
   PORT_ENV_KEY,
+  resolveBaselineRunFromEnvironment,
   resolveBenchModeFromEnvironment,
   resolvePreferredPortFromEnvironment,
   resolveScenarioFilterFromEnvironment,
@@ -206,6 +208,13 @@ export { cell, renderConsoleTable } from "#/report/console-table";
 export type { RenderScoreboardOptions } from "#/report/console-scoreboard";
 export { renderScoreboardLines } from "#/report/console-scoreboard";
 export type { CompetitorDelta, CurrentRun, PreviousRun, RunDiff, ScenarioDelta } from "#/report/run-diff";
-export { buildRunDiff, formatCompactHz, formatDeltaPercent, prepareRunDiff, readPreviousRun } from "#/report/run-diff";
+export {
+  buildRunDiff,
+  describeDiffTarget,
+  formatCompactHz,
+  formatDeltaPercent,
+  prepareRunDiff,
+  readPreviousRun,
+} from "#/report/run-diff";
 export type { PrintRunCardParameters, RenderRunCardOptions, RunCardInput } from "#/report/run-card";
 export { printRunCard, renderRunCardLines } from "#/report/run-card";

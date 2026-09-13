@@ -17,7 +17,7 @@ import {
   markThroughputQuality,
 } from "#/report/reliability";
 import type { RunDiff, ScenarioDelta } from "#/report/run-diff";
-import { formatCompactHz, formatDeltaPercent } from "#/report/run-diff";
+import { describeDiffTarget, formatCompactHz, formatDeltaPercent } from "#/report/run-diff";
 import { HEAD_TO_HEAD_PARITY_BAND, ratioTint } from "#/report/verdict";
 import type { Palette, Tint } from "#/shared/palette";
 import { createPalette } from "#/shared/palette";
@@ -766,15 +766,17 @@ const MAX_LISTED_IMPROVEMENTS = 5;
 
 function renderDiffLines(diff: RunDiff, palette: Palette): Array<string> {
   if (!diff.comparable) {
-    return [palette.dim(`No diff against ${diff.previousRunId}: ${diff.reason}.`)];
+    return [palette.dim(`No diff against ${describeDiffTarget(diff)}: ${diff.reason}.`)];
   }
   const lines: Array<string> = [];
   const count = diff.regressions.length;
   if (count === 0) {
-    lines.push(`${palette.heading("Regressions beyond noise")}  ${palette.done(`none vs ${diff.previousRunId}`)}`);
+    lines.push(
+      `${palette.heading("Regressions beyond noise")}  ${palette.done(`none vs ${describeDiffTarget(diff)}`)}`,
+    );
   } else {
     lines.push(
-      `${palette.heading(`Regressions beyond noise (${String(count)})`)}  ${palette.dim(`vs ${diff.previousRunId}`)}`,
+      `${palette.heading(`Regressions beyond noise (${String(count)})`)}  ${palette.dim(`vs ${describeDiffTarget(diff)}`)}`,
     );
     const idWidth = Math.max(...diff.regressions.map((entry) => entry.id.length));
     const groupWidth = Math.max(...diff.regressions.map((entry) => entry.group.length));

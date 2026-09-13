@@ -6,6 +6,7 @@ import { summarizeComparison } from "#/report/comparison";
 import { parseRunObservations } from "#/report/jsonl";
 import { isThroughputAboveNoiseCeiling, NOISY_IQR_FRACTION } from "#/report/reliability";
 import type { BenchRunShape } from "#/shared/env-keys";
+import { resolveBaselineRunFromEnvironment } from "#/shared/env-keys";
 import type { Fingerprint, TrialPayload } from "#/shared/protocol";
 
 /**
@@ -13,6 +14,8 @@ import type { Fingerprint, TrialPayload } from "#/shared/protocol";
  */
 export interface PreviousRun {
   readonly runId: string;
+  /** Named through `BENCH_BASELINE` rather than found through `latest.json`. */
+  readonly pinned: boolean;
   readonly shape: BenchRunShape;
   readonly trialCount: number;
   readonly libraries: ReadonlyMap<
@@ -63,12 +66,20 @@ export type RunDiff =
   | {
       readonly comparable: true;
       readonly previousRunId: string;
+      readonly pinned: boolean;
       readonly scenarios: ReadonlyArray<ScenarioDelta>;
       readonly regressions: ReadonlyArray<ScenarioDelta>;
       readonly improvements: ReadonlyArray<ScenarioDelta>;
       readonly competitors: ReadonlyArray<CompetitorDelta>;
     }
-  | { readonly comparable: false; readonly previousRunId: string; readonly reason: string };
+  | { readonly comparable: false; readonly previousRunId: string; readonly pinned: boolean; readonly reason: string };
+
+/**
+ * Names the run a diff was read against, marking a pinned baseline as such.
+ */
+export function describeDiffTarget(diff: Pick<RunDiff, "previousRunId" | "pinned">): string {
+  return `${diff.pinned ? "baseline " : ""}${diff.previousRunId}`;
+}
 
 /**
  * Formats a delta fraction as a signed percentage with one decimal.
@@ -105,22 +116,35 @@ function sameEnvironment(left: Fingerprint, right: Fingerprint): boolean {
 }
 
 /**
- * Reads the run `latest.json` names, for a diff; `undefined` when there is none or it is unreadable.
+ * Reads the run to diff against: the one `requested` names, else the one `latest.json` names.
  *
- * @remarks Call it before the current run moves the pointer, so it still names the run before this one.
+ * @remarks Call it before the current run moves the pointer, so it still names the run before this
+ * one. A missing or unreadable pointer reads as no previous run; a requested run that cannot be read
+ * throws, since a mistyped baseline must not silently become a diff against something else.
+ *
+ * @param packageRootDirectory - The suite package; `bench-results/` is resolved under it.
+ * @param requested - A run id or directory to pin, or omitted for the pointer.
  */
-export function readPreviousRun(packageRootDirectory: string): PreviousRun | undefined {
+export function readPreviousRun(packageRootDirectory: string, requested?: string): PreviousRun | undefined {
+  const pinned = requested !== undefined;
+  let resolved: ReturnType<typeof resolveRunDirectory>;
   try {
-    const { runId, runDirectory } = resolveRunDirectory(packageRootDirectory);
-    const { libraries, shape } = parseRunObservations(readRunObservations(runDirectory));
-    if (shape === undefined || libraries.size === 0) {
-      return undefined;
+    resolved = resolveRunDirectory(packageRootDirectory, requested);
+  } catch (error) {
+    if (pinned) {
+      throw error;
     }
-    const trialCount = Math.max(0, ...[...libraries.values()].map((library) => library.trials.length));
-    return { runId, shape, trialCount, libraries };
-  } catch {
     return undefined;
   }
+  const { libraries, shape } = parseRunObservations(readRunObservations(resolved.runDirectory));
+  if (shape === undefined || libraries.size === 0) {
+    if (pinned) {
+      throw new Error(`Baseline run "${requested}" holds no readable observations.`);
+    }
+    return undefined;
+  }
+  const trialCount = Math.max(0, ...[...libraries.values()].map((library) => library.trials.length));
+  return { runId: resolved.runId, pinned, shape, trialCount, libraries };
 }
 
 /**
@@ -129,7 +153,12 @@ export function readPreviousRun(packageRootDirectory: string): PreviousRun | und
 export function buildRunDiff(current: CurrentRun, previous: PreviousRun): RunDiff {
   const previousPivot = previous.libraries.get(current.pivot.report.fingerprint.libraryName);
   if (previousPivot === undefined) {
-    return { comparable: false, previousRunId: previous.runId, reason: "the previous run has no rows for the subject" };
+    return {
+      comparable: false,
+      previousRunId: previous.runId,
+      pinned: previous.pinned,
+      reason: "the previous run has no rows for the subject",
+    };
   }
   const currentKey = configKey(current.shape, current.trialCount);
   const previousKey = configKey(previous.shape, previous.trialCount);
@@ -137,6 +166,7 @@ export function buildRunDiff(current: CurrentRun, previous: PreviousRun): RunDif
     return {
       comparable: false,
       previousRunId: previous.runId,
+      pinned: previous.pinned,
       reason: `it ran ${configLabel(previous.shape, previous.trialCount)}, this run is ${configLabel(current.shape, current.trialCount)}`,
     };
   }
@@ -144,6 +174,7 @@ export function buildRunDiff(current: CurrentRun, previous: PreviousRun): RunDif
     return {
       comparable: false,
       previousRunId: previous.runId,
+      pinned: previous.pinned,
       reason: "it ran on a different CPU, Node or architecture",
     };
   }
@@ -207,15 +238,25 @@ export function buildRunDiff(current: CurrentRun, previous: PreviousRun): RunDif
       };
     },
   );
-  return { comparable: true, previousRunId: previous.runId, scenarios, regressions, improvements, competitors };
+  return {
+    comparable: true,
+    previousRunId: previous.runId,
+    pinned: previous.pinned,
+    scenarios,
+    regressions,
+    improvements,
+    competitors,
+  };
 }
 
 /**
  * Reads the previous run and diffs the current one against it, for a suite's parent entry.
  *
- * @remarks Call it before the artifacts are written, while `latest.json` still names the run before this one.
+ * @remarks Call it before the artifacts are written, while `latest.json` still names the run before
+ * this one. `BENCH_BASELINE` pins the run instead, so a rewrite can be read against the last run of
+ * the engine it replaces however many runs land in between.
  */
 export function prepareRunDiff(packageRootDirectory: string, current: CurrentRun): RunDiff | undefined {
-  const previous = readPreviousRun(packageRootDirectory);
+  const previous = readPreviousRun(packageRootDirectory, resolveBaselineRunFromEnvironment());
   return previous === undefined ? undefined : buildRunDiff(current, previous);
 }
