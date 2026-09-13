@@ -417,8 +417,10 @@ describe("renderComparisonConsoleReport", () => {
     expect(colored).toContain(`${escape}[32m       2.00×${escape}[39m`);
     expect(colored).toContain(`${escape}[31m       0.50×${escape}[39m`);
     expect(colored).toContain(`${escape}[2m       1.00×${escape}[22m`);
-    expect(colored).toContain(`${escape}[32m1 win${escape}[39m`);
-    expect(colored).toContain(`${escape}[31m1 loss${escape}[39m`);
+    // The scoreboard counts one win and one loss for this competitor.
+    expect(colored).toContain(`${escape}[32m1${escape}[39m`);
+    expect(colored).toContain(`${escape}[31m1${escape}[39m`);
+    expect(colored.replaceAll(new RegExp(`${escape}\\[[0-9;]*m`, "g"), "")).toContain("Scoreboard");
   });
 
   it("prints the footer hint only when one is given", () => {

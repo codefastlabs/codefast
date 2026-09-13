@@ -147,8 +147,22 @@ by `createPalette`: a reliable win green, a loss red, a parity or an unreliable 
 failed one red. `NO_COLOR` turns it off, `FORCE_COLOR` turns it on for a pipe, and every cell is padded before it is
 tinted, so alignment never depends on colour.
 
-The per-scenario table prints on the console only in verbose mode; the default console report is the aggregates, and
-`bench:report` derives the full table as `report.md`.
+The console report is a scoreboard, not a table. One row per competitor carries `W · P · L`, the comparable count, the
+median and geomean ratio and the worst loss; a second table gives the geomean per scenario group with one column per
+competitor; the reliable losses follow one per line, with the count of losses hidden because they sit above the
+throughput noise ceiling. The per-scenario table prints only in verbose mode, and `bench:report` derives it as
+`report.md`.
+
+When `latest.json` names a run of the same configuration — shape, profile and trial count — on the same CPU, Node and
+architecture, the report also diffs against it (`src/report/run-diff.ts`): a `Δ prev` column beside each aggregate,
+computed over the rows both runs measured; a list of regressions beyond noise, where a scenario's subject throughput
+fell by more than the larger of the noise floor and either side's IQR fraction, rows above the noise ceiling excluded;
+and the count of improvements beyond noise. A run of another configuration is named and skipped rather than compared.
+The previous run is read before the artifacts are written, while the pointer still names it.
+
+A run closes with a card (`src/report/run-card.ts`): wall and rebuild time, library and row counts, the profile, the run
+order and what it means for citing ratios, sanity failures by library, whether `latest.json` moved, every library's
+version, the observations file and the next commands.
 
 A suite wires the harness in two files. Its parent entry runs every library with `runBenchLibraries` (which picks the
 run shape and the progress display), builds a `LibraryReport` per payload with `buildLibraryReport`, renders

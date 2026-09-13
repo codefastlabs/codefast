@@ -150,6 +150,16 @@
       "types": "./dist/report/comparison-document.d.ts",
       "import": "./dist/report/comparison-document.js"
     },
+    "./report/console-scoreboard": {
+      "source": "./src/report/console-scoreboard.ts",
+      "types": "./dist/report/console-scoreboard.d.ts",
+      "import": "./dist/report/console-scoreboard.js"
+    },
+    "./report/console-table": {
+      "source": "./src/report/console-table.ts",
+      "types": "./dist/report/console-table.d.ts",
+      "import": "./dist/report/console-table.js"
+    },
     "./report/format": {
       "source": "./src/report/format.ts",
       "types": "./dist/report/format.d.ts",
@@ -169,6 +179,21 @@
       "source": "./src/report/reliability.ts",
       "types": "./dist/report/reliability.d.ts",
       "import": "./dist/report/reliability.js"
+    },
+    "./report/run-card": {
+      "source": "./src/report/run-card.ts",
+      "types": "./dist/report/run-card.d.ts",
+      "import": "./dist/report/run-card.js"
+    },
+    "./report/run-diff": {
+      "source": "./src/report/run-diff.ts",
+      "types": "./dist/report/run-diff.d.ts",
+      "import": "./dist/report/run-diff.js"
+    },
+    "./report/verdict": {
+      "source": "./src/report/verdict.ts",
+      "types": "./dist/report/verdict.d.ts",
+      "import": "./dist/report/verdict.js"
     },
     "./report/write": {
       "source": "./src/report/write.ts",

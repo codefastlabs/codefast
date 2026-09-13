@@ -103,7 +103,11 @@ export {
   prefersUnicodeBars,
 } from "#/parent/progress/create-progress-display";
 
-export type { BenchRunOutputPaths, WriteBenchRunArtifactsParameters } from "#/parent/bench-run-artifacts";
+export type {
+  BenchRunArtifactsResult,
+  BenchRunOutputPaths,
+  WriteBenchRunArtifactsParameters,
+} from "#/parent/bench-run-artifacts";
 export { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#/parent/bench-run-artifacts";
 
 export type { BenchScenarioInventory, BenchScenarioInventoryEntry } from "#/parent/run-bench-listing-main";
@@ -171,3 +175,14 @@ export type {
 export { COMPARISON_DOCUMENT_SCHEMA_VERSION, buildComparisonDocument } from "#/report/comparison-document";
 
 export { writeJsonFile, writeJsonlRun, writeMarkdownFile } from "#/report/write";
+
+export type { Verdict } from "#/report/verdict";
+export { HEAD_TO_HEAD_PARITY_BAND, classifyRatio, ratioTint, verdictTint } from "#/report/verdict";
+export type { ConsoleCell, RenderConsoleTableOptions } from "#/report/console-table";
+export { cell, renderConsoleTable } from "#/report/console-table";
+export type { RenderScoreboardOptions } from "#/report/console-scoreboard";
+export { renderScoreboardLines } from "#/report/console-scoreboard";
+export type { CompetitorDelta, CurrentRun, PreviousRun, RunDiff, ScenarioDelta } from "#/report/run-diff";
+export { buildRunDiff, formatCompactHz, formatDeltaPercent, prepareRunDiff, readPreviousRun } from "#/report/run-diff";
+export type { PrintRunCardParameters, RenderRunCardOptions, RunCardInput } from "#/report/run-card";
+export { printRunCard, renderRunCardLines } from "#/report/run-card";
