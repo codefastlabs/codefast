@@ -47,3 +47,8 @@ offers.
   the aggregates. Two features split so the matrix stays true: `optional-injection` (dependency-site, which awilix's
   cradle cannot express) from `optional`, and `binding-activation-hook` (per binding, which tsyringe's interceptors
   cannot express) from `activation-hook`.
+- `RESULTS.md` is rewritten from a full-profile isolated pass over the 126-row suite (run `2026-09-13T04-45-37-460Z`,
+  the baseline a rewrite is read against): registration is priced as the largest deficit, the cold collection pair shows
+  the `resolveAll` loss is not only memoisation, the teardown pair shows the deactivation walk is free, and two
+  selection lanes no index serves are found against inversify. `alias-cycle-detected` is excluded from the aggregates
+  like `circular-dependency-3`.
