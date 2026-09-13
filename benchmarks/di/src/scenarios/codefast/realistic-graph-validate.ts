@@ -22,6 +22,8 @@ function buildRealisticGraphValidateScenario(): BenchScenario {
 
   return {
     id: "realistic-graph-validate",
+    tier: "contract",
+    requires: ["validate"],
     group: "realistic",
     what: "statically validate scope rules over a 10-node graph (codefast-only)",
     batch: REALISTIC_VALIDATE_BATCH,

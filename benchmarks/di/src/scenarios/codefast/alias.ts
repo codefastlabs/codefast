@@ -25,6 +25,8 @@ interface AliasedService {
 
 const ALIAS_CHAIN = {
   id: `alias-chain-${String(ALIAS_CHAIN_HOPS)}`,
+  tier: "contract",
+  requires: ["alias"],
   facets: ["alias"],
   group: "micro",
   what: `resolve through ${String(ALIAS_CHAIN_HOPS)} chained toAlias() hops to a cached singleton — the iterative alias walk (codefast-only)`,
@@ -32,6 +34,8 @@ const ALIAS_CHAIN = {
 
 const ALIAS_PARENT_OWNED_TERMINAL = {
   id: "alias-parent-owned-terminal",
+  tier: "contract",
+  requires: ["alias", "child-container"],
   facets: ["alias"],
   group: "micro",
   what: "resolve a child's alias whose terminal singleton the parent owns — the hop the registry's own-map lookup cannot fold (codefast-only)",
@@ -39,6 +43,8 @@ const ALIAS_PARENT_OWNED_TERMINAL = {
 
 const ALIAS_CYCLE_DETECTED = {
   id: "alias-cycle-detected",
+  tier: "contract",
+  requires: ["alias", "cycle-detection"],
   facets: ["alias"],
   group: "failure",
   what: "resolve an alias that points back at itself and fail fast — the shared alias-walk diagnosis (codefast-only)",

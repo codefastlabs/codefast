@@ -15,6 +15,8 @@ const ASYNC_STRATEGY_COUNT = 8;
 
 const RESOLVE_ALL_ASYNC = {
   id: "resolve-all-async-8",
+  tier: "contract",
+  requires: ["async-resolve", "resolve-all"],
   facets: ["resolve-all"],
   group: "async",
   what: `resolveAllAsync() across ${String(ASYNC_STRATEGY_COUNT)} async factory bindings on one token (codefast-only)`,
@@ -22,6 +24,8 @@ const RESOLVE_ALL_ASYNC = {
 
 const RESOLVE_OPTIONAL_ASYNC_MISS = {
   id: "resolve-optional-async-miss",
+  tier: "contract",
+  requires: ["async-resolve", "optional"],
   facets: ["optional"],
   group: "async",
   what: "resolveOptionalAsync() when no binding exists — the async miss, resolved without instantiating (codefast-only)",

@@ -29,12 +29,16 @@ interface BoundValue {
 
 const CONTAINER_CREATE_EMPTY = {
   id: "container-create-empty",
+  tier: "contract",
+  requires: [],
   group: "boot",
   what: "Container.create() with nothing bound — the constructor plus whatever it does not defer (codefast-only)",
 } as const satisfies ScenarioDescriptor;
 
 const CREATE_CHILD_EMPTY = {
   id: "create-child-empty",
+  tier: "contract",
+  requires: ["child-container"],
   facets: ["scope"],
   group: "boot",
   what: "parent.createChild() with nothing bound — a per-request container's whole allocation (codefast-only)",
@@ -131,6 +135,8 @@ export function buildCodefastColdBootScenarios(): ReadonlyArray<BenchScenario> {
     buildBindPathScenario(
       {
         id: `bind-${String(BIND_TOKEN_COUNT)}-plain`,
+        tier: "contract",
+        requires: [],
         group: "boot",
         what: `bind ${String(BIND_TOKEN_COUNT)} tokens into a fresh container, no refinement — registration only (codefast-only)`,
       },
@@ -139,6 +145,8 @@ export function buildCodefastColdBootScenarios(): ReadonlyArray<BenchScenario> {
     buildBindPathScenario(
       {
         id: `bind-${String(BIND_TOKEN_COUNT)}-refined`,
+        tier: "contract",
+        requires: ["name-hint"],
         group: "boot",
         what: `the same ${String(BIND_TOKEN_COUNT)} refined after registration with .whenNamed().singleton() — one re-slot and one in-place scope write each (codefast-only)`,
       },

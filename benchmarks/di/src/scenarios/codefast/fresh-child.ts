@@ -22,6 +22,7 @@
 import { Container, token } from "@codefast/di";
 
 import { ENV_TAG } from "#/fixtures/bench-tags";
+import type { DiFeature } from "#/fixtures/features";
 import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
 import { TAGGED_ENVS, TARGET_TAG_VALUE } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
@@ -39,6 +40,8 @@ interface FreshChildLane {
   readonly id: string;
   /** Feature facets the lane's selection criterion exercises, beyond the shared scope facet. */
   readonly laneFacets: ReadonlyArray<string>;
+  /** Features the lane's selection criterion needs, beyond the child and its teardown. */
+  readonly laneRequires: ReadonlyArray<DiFeature>;
   readonly criterion: string;
   readonly bindInto: (parent: Container) => void;
   readonly resolveFrom: (child: Container) => ChildService;
@@ -55,6 +58,7 @@ const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
   {
     id: "default",
     laneFacets: [],
+    laneRequires: [],
     criterion: "resolve(token)",
     bindInto: (parent) => {
       parent.bind(defaultLaneToken).toConstantValue({ env: TARGET_TAG_VALUE });
@@ -64,6 +68,7 @@ const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
   {
     id: "name",
     laneFacets: ["name"],
+    laneRequires: ["name-hint"],
     criterion: "resolve(token, { name })",
     bindInto: (parent) => {
       for (const env of TAGGED_ENVS) {
@@ -75,6 +80,7 @@ const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
   {
     id: "tag",
     laneFacets: ["tag"],
+    laneRequires: ["tag-hint"],
     criterion: "resolve(token, { tags })",
     bindInto: (parent) => {
       for (const env of TAGGED_ENVS) {
@@ -103,6 +109,8 @@ function buildFreshChildScenario(lane: FreshChildLane, resolvesPerChild: number)
 
   const descriptor = {
     id: `fresh-child-${lane.id}-n${String(resolvesPerChild)}`,
+    tier: "contract",
+    requires: ["child-container", "dispose", ...lane.laneRequires],
     facets: ["scope", ...lane.laneFacets],
     group: "scope",
     what: `${lane.criterion} ${String(resolvesPerChild)}× inside a per-request child, then teardown — the lane's per-container state paid at duty cycle ${String(resolvesPerChild)} (codefast-only)`,
