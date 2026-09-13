@@ -82,12 +82,16 @@ export class BindingLookupCache<Owner> {
    * registry anywhere changed in between, so no registry in this chain did either.
    */
   chainVersion(): number {
+    // A root's sum is its own version: one field read, cheaper than the memo it would stamp.
+    if (this.#parent === undefined) {
+      return this.#registry.version;
+    }
     const epoch = stateEpoch();
     if (epoch === this.#chainEpoch) {
       return this.#chainVersion;
     }
     let version = this.#registry.version;
-    for (let cache = this.#parent; cache !== undefined; cache = cache.#parent) {
+    for (let cache: BindingLookupCache<Owner> | undefined = this.#parent; cache !== undefined; cache = cache.#parent) {
       version += cache.#registry.version;
     }
     this.#chainEpoch = epoch;

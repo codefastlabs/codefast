@@ -219,13 +219,15 @@ export class DependencyResolver implements ResolverCallbacks {
 
     // A lone default-slot candidate is its own selection: the slot match is the whole decision,
     // it carries no predicate, and asking for it first keeps the registry from materialising its list.
-    const lone = this.#registry.getFastDefault(token);
+    // An options-less request already probed the lone map above, so only a request with options asks again.
+    const lone = options === undefined ? undefined : this.#registry.getFastDefault(token);
     if (lone !== undefined) {
       if (matchesSlot(lone.slot, options)) {
         return { binding: lone, owner: this };
       }
     } else {
-      const bindings = this.#registry.getAll(token);
+      // The lone map has missed either way, so the record map is all that is left to read.
+      const bindings = this.#registry.getRecorded(token);
       if (bindings.length > 0) {
         const selected = this.#selectFromList(bindings, options, resolutionStack, token);
         if (selected !== undefined) {
@@ -453,12 +455,16 @@ export class DependencyResolver implements ResolverCallbacks {
    * registration must invalidate it. Re-summed only when the process-wide state epoch has moved.
    */
   #chainActivationVersion(): number {
+    // A root's sum is its own version: one field read, cheaper than the memo it would stamp.
+    if (this.#parent === undefined) {
+      return this.#lifecycle.activationVersion;
+    }
     const epoch = stateEpoch();
     if (epoch === this.#chainActivationEpoch) {
       return this.#chainActivationVersionMemo;
     }
     let version = this.#lifecycle.activationVersion;
-    for (let current = this.#parent; current !== undefined; current = current.#parent) {
+    for (let current: DependencyResolver | undefined = this.#parent; current !== undefined; current = current.#parent) {
       version += current.#lifecycle.activationVersion;
     }
     this.#chainActivationEpoch = epoch;
@@ -470,11 +476,16 @@ export class DependencyResolver implements ResolverCallbacks {
     const registryVersion = this.#lookup.chainVersion();
     const activationVersion = this.#chainActivationVersion();
     if (registryVersion !== this.#classPlanRegistryVersion || activationVersion !== this.#classPlanActivationVersion) {
-      this.#classPlanByBindingId?.clear();
+      // The stamps start at -1, so the first request always lands here: allocate then, clear after.
+      if (this.#classPlanByBindingId === undefined) {
+        this.#classPlanByBindingId = new Map<BindingIdentifier, (() => unknown) | null>();
+      } else {
+        this.#classPlanByBindingId.clear();
+      }
       this.#classPlanRegistryVersion = registryVersion;
       this.#classPlanActivationVersion = activationVersion;
     }
-    const plans = (this.#classPlanByBindingId ??= new Map<BindingIdentifier, (() => unknown) | null>());
+    const plans = this.#classPlanByBindingId!;
     const cached = plans.get(binding.id);
     if (cached !== undefined) {
       return cached;
@@ -553,11 +564,15 @@ export class DependencyResolver implements ResolverCallbacks {
     const registryVersion = this.#lookup.chainVersion();
     const activationVersion = this.#chainActivationVersion();
     if (registryVersion !== this.#asyncPlanRegistryVersion || activationVersion !== this.#asyncPlanActivationVersion) {
-      this.#asyncPlanByBindingId?.clear();
+      if (this.#asyncPlanByBindingId === undefined) {
+        this.#asyncPlanByBindingId = new Map<BindingIdentifier, (() => unknown) | null>();
+      } else {
+        this.#asyncPlanByBindingId.clear();
+      }
       this.#asyncPlanRegistryVersion = registryVersion;
       this.#asyncPlanActivationVersion = activationVersion;
     }
-    const plans = (this.#asyncPlanByBindingId ??= new Map<BindingIdentifier, (() => unknown) | null>());
+    const plans = this.#asyncPlanByBindingId!;
     const cached = plans.get(binding.id);
     if (cached !== undefined) {
       return cached;

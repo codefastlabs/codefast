@@ -210,8 +210,9 @@ than as a second map beside a record map, is what lets both paths win at once.
 The price is paid where it is cold. `getAll()` on a lone token materialises a one-element list, so the resolver's
 selection lanes ask `getFastDefault()` (or `countBindings()`) first and reach `getAll()` only for a token that keeps a
 record, and a presence check with no criteria is `has()`, which also reads the lone map's size before probing it so a
-container that never bound anything — every per-request child — answers without a hash. Snapshots, error reporting and
-module rollback are the callers that pay for the list, and they can.
+container that never bound anything — every per-request child — answers without a hash. A miss is priced too: once the
+lone probe has failed, `getRecorded()` reads the record map alone, so an unbound token costs one probe per map and not
+one more. Snapshots, error reporting and module rollback are the callers that pay for the list, and they can.
 
 > **Invariant (performance-load-bearing).** `getFastDefault()` stays a single own-registry `Map.get` returning the
 > binding — no record indirection, no optional chain — and a default-slot-only token never allocates a record. The
@@ -423,7 +424,8 @@ one process-wide **state epoch** (`core/state-epoch.ts`), and each sum is memoiz
 While the epoch stands, no registry or lifecycle table in the process has moved, so no sum in any chain has either, and
 the read is one global compare; the moment anything moves, the next read re-sums exactly as before. A loop that rebinds
 on every iteration therefore pays the walk it always paid plus one compare, and a per-request child that binds nothing
-pays the compare alone.
+pays the compare alone. A root container is exempt from the memo altogether: its sum is its own version, one field read,
+which is cheaper than the compare and the stamp — and a `resolveAll` over a root asks for it once per candidate.
 
 **`taggedEntry()` mirrors `defaultEntry()`, and defers its map.** It is chain-versioned, `null` means "this shape needs
 full selection", and predicate- and alias-carrying hits are declined. The memo key is the criterion object itself:

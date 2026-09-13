@@ -207,6 +207,16 @@ export class BindingRegistry {
     return lone === undefined ? NO_BINDINGS : [lone];
   }
 
+  /**
+   * The bindings of a token that keeps a record, or none.
+   *
+   * @remarks For a caller whose lone-map probe has just missed: the record map is all that is left
+   * to ask, and a lone binding's one-element list is never materialised here.
+   */
+  getRecorded(token: Token<unknown> | Constructor): ReadonlyArray<Binding> {
+    return this.#records?.get(token)?.bindings ?? NO_BINDINGS;
+  }
+
   /** How many bindings a token holds, without materialising a lone binding's list. */
   countBindings(token: Token<unknown> | Constructor): number {
     const record = this.#records?.get(token);
