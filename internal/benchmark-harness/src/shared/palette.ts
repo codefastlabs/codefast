@@ -3,11 +3,15 @@ import { styleText } from "node:util";
 
 /**
  * Wraps text in one colour role, or returns it untouched when colour is off.
+ *
+ * @since 0.9.0
  */
 export type Tint = (text: string) => string;
 
 /**
  * The colour roles the harness draws with; every role is a no-op on a stream without colour.
+ *
+ * @since 0.9.0
  */
 export interface Palette {
   readonly enabled: boolean;
@@ -23,6 +27,8 @@ export interface Palette {
 
 /**
  * Options for {@link createPalette}.
+ *
+ * @since 0.9.0
  */
 export interface CreatePaletteOptions {
   /** The stream the coloured text goes to; colour is on only when it is an interactive terminal. */
@@ -34,6 +40,8 @@ export interface CreatePaletteOptions {
 
 /**
  * True when colour belongs on the stream: `NO_COLOR` wins, then `FORCE_COLOR`, then whether it is a TTY.
+ *
+ * @since 0.9.0
  */
 export function shouldColor(stream: NodeJS.WriteStream, env: NodeJS.ProcessEnv): boolean {
   if (env["NO_COLOR"] !== undefined || env["NODE_DISABLE_COLORS"] !== undefined) {
@@ -54,6 +62,8 @@ function tint(enabled: boolean, format: Format): Tint {
 
 /**
  * Builds the palette for one stream.
+ *
+ * @since 0.9.0
  */
 export function createPalette(options: CreatePaletteOptions = {}): Palette {
   const stream = options.stream ?? process.stdout;
@@ -74,5 +84,7 @@ export function createPalette(options: CreatePaletteOptions = {}): Palette {
 
 /**
  * A palette that never colours, for output that must stay byte-for-byte plain.
+ *
+ * @since 0.9.0
  */
 export const PLAIN_PALETTE: Palette = createPalette({ enabled: false });

@@ -13,12 +13,20 @@ import { logger } from "#/core/logger";
 import type { Result } from "#/core/result";
 import { parseWithSchema } from "#/core/schema-parse";
 
-/** The options every command shares: the `--json` machine-output flag. Per-command option shapes extend this. */
+/**
+ * The options every command shares: the `--json` machine-output flag. Per-command option shapes extend this.
+ *
+ * @since 0.11.0
+ */
 export interface BaseCommandOptions {
   readonly json?: boolean | undefined;
 }
 
-/** A pipeline's `prepare` slot: resolves the argv context (cwd, positional, global options) into the command's prelude. */
+/**
+ * A pipeline's `prepare` slot: resolves the argv context (cwd, positional, global options) into the command's prelude.
+ *
+ * @since 0.11.0
+ */
 export type CommandPrepare<Prelude> = (
   fs: Filesystem,
   input: {
@@ -50,6 +58,8 @@ interface ReportInput<Prelude, RunResult, Presenter, Opts> {
  *
  * @remarks The optional slots carry the per-command variations — a working-tree guard and a streaming
  * presenter — so the control flow itself is written once.
+ *
+ * @since 0.11.0
  */
 export interface CommandPipeline<
   Prelude,
@@ -80,7 +90,11 @@ export interface CommandPipeline<
   readonly exitCode: (result: RunResult) => number;
 }
 
-/** A pipeline that names itself, so it can register as a subcommand under a parent command. */
+/**
+ * A pipeline that names itself, so it can register as a subcommand under a parent command.
+ *
+ * @since 0.11.0
+ */
 export type NamedCommandPipeline<
   Prelude,
   Request,
@@ -163,6 +177,8 @@ function makeAction<Prelude, Request, RunResult, Presenter, Opts extends BaseCom
 
 /**
  * Wires a pipeline onto a named Command: the shared positional, `--json`, any extra options, and the action.
+ *
+ * @since 0.11.0
  */
 export function applyCommandPipeline<Prelude, Request, RunResult, Presenter, Opts extends BaseCommandOptions>(
   command: Command,
@@ -180,6 +196,8 @@ export function applyCommandPipeline<Prelude, Request, RunResult, Presenter, Opt
 
 /**
  * Registers a pipeline as a subcommand under `parent`, taking its name and description from the pipeline.
+ *
+ * @since 0.11.0
  */
 export function registerPipelineSubcommand<Prelude, Request, RunResult, Presenter, Opts extends BaseCommandOptions>(
   parent: Command,

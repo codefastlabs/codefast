@@ -68,6 +68,8 @@ export const BENCH_LIST_ENV_KEY = "BENCH_LIST";
  *
  * @remarks Honoured at both levels like `BENCH_ONLY`, and a tier-filtered run is a narrowed run: it
  * writes its own directory and leaves `latest.json` alone.
+ *
+ * @since 0.9.0
  */
 export const BENCH_TIER_ENV_KEY = "BENCH_TIER";
 /**
@@ -76,6 +78,8 @@ export const BENCH_TIER_ENV_KEY = "BENCH_TIER";
  *
  * @remarks For the question "did the rewrite hold the line" — pin the last run of the old engine and
  * every later run reads its `Δ` against that run, however many runs land in between.
+ *
+ * @since 0.9.0
  */
 export const BENCH_BASELINE_ENV_KEY = "BENCH_BASELINE";
 /**
@@ -93,6 +97,8 @@ export const BENCH_RESULTS_DIR_NAME = "bench-results";
 
 /**
  * File in the bench-results root that points at the newest whole-suite run by its id.
+ *
+ * @since 0.9.0
  */
 export const LATEST_RUN_POINTER_FILE_NAME = "latest.json";
 
@@ -306,6 +312,8 @@ export function resolveBenchModeFromEnvironment(): BenchMode | undefined {
  *
  * @remarks Read together they partition runs into comparable sets; `isolated` with `full` is the
  * only pair whose cross-library ratios are citable.
+ *
+ * @since 0.9.0
  */
 export interface BenchRunShape {
   readonly isolated: boolean;
@@ -317,6 +325,8 @@ export interface BenchRunShape {
  *
  * @remarks The one resolver the JSONL writer and the comparison `run` block share, so the config
  * stamped on the observations cannot disagree with the config the report claims produced them.
+ *
+ * @since 0.9.0
  */
 export function resolveRunShapeFromEnvironment(): BenchRunShape {
   return {
@@ -390,6 +400,8 @@ export function parseScenarioFilter(value: string | undefined): ReadonlySet<stri
  *
  * @remarks Throws on an unknown tier rather than running everything: a run asked for one tier and
  * silently given both reports numbers for a different run than the one asked for.
+ *
+ * @since 0.9.0
  */
 export function resolveTierFilterFromEnvironment(): BenchScenarioTier | undefined {
   const { normalizedValue, rawValue } = readNormalized(BENCH_TIER_ENV_KEY);
@@ -405,6 +417,8 @@ export function resolveTierFilterFromEnvironment(): BenchScenarioTier | undefine
 
 /**
  * Resolves the pinned baseline run from {@link BENCH_BASELINE_ENV_KEY}; `undefined` means diff against `latest.json`.
+ *
+ * @since 0.9.0
  */
 export function resolveBaselineRunFromEnvironment(): string | undefined {
   const value = (process.env[BENCH_BASELINE_ENV_KEY] ?? "").trim();
@@ -416,6 +430,8 @@ export function resolveBaselineRunFromEnvironment(): string | undefined {
  *
  * @remarks The one predicate the artifacts writer and the subject guard share: a narrowed run must
  * never move `latest.json`, and a filter that matched nothing on the subject is an error.
+ *
+ * @since 0.9.0
  */
 export function isRunNarrowedByEnvironment(): boolean {
   return resolveScenarioFilterFromEnvironment() !== undefined || resolveTierFilterFromEnvironment() !== undefined;

@@ -1,5 +1,128 @@
 # @codefast/benchmark-di
 
+## 0.8.0
+
+### Minor Changes
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`5be7d53`](https://github.com/codefastlabs/codefast/commit/5be7d5307ae573bb9436373308c79a08d10d3aa1) Thanks [@thevuong](https://github.com/thevuong)! - Add `bench:report [run]`, which derives `report.md` and `report.json` for a run from its `observations.jsonl` on demand
+  — defaulting to the newest run, or taking a run id or path. The comparison assembly (pivot, competitor order, display
+  and short names, presentation) is extracted into `src/harness/comparison.ts` so the live run and the derived report
+  build the identical comparison from one source.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`978d166`](https://github.com/codefastlabs/codefast/commit/978d166345630f45465d4e2d148570c7ac744e4e) Thanks [@thevuong](https://github.com/thevuong)! - Bench ditox and injection-js on hierarchical child-scope resolution. Both have real container hierarchy
+  (`createContainer(parent)` / `resolveAndCreateChild`), so they now run the `child-depth-2-resolve` row — resolving a
+  root-bound constant from a depth-2 child by walking the parent chain — instead of reading `—`. brandi keeps `—`: its
+  `clone()` copies bindings rather than linking a parent, so it has no honest equivalent.
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`eb7d819`](https://github.com/codefastlabs/codefast/commit/eb7d8190cb7464cc759e224ad05484ee88db2e84) Thanks [@thevuong](https://github.com/thevuong)! - Expand cross-library coverage so each rival is measured on every feature it natively supports, not just the shared core.
+  New feature-fair rows, each using every library's own idiom (mechanism differences documented per row):
+
+  - **resolveAll collection** (`resolve-all-strategies-*`): ditox (`bindMultiValue`), injection-js (`multi: true`) and
+    tsyringe (repeated `register`) join `@codefast/di` and inversify — surfacing that ditox and injection-js cache the
+    collection array while di, inversify and tsyringe rebuild it.
+  - **conditional injection by consumer tag** (`conditional-injection-tagged`): brandi's `when`/`tagged` idiom against
+    di's `inject(token, { tag })`.
+  - **cold module composition** (`module-cold-from-modules`): inversify (`load`), ditox (`bindModule`) and brandi
+    (`use().from()`) against di's `Container.fromModules`.
+  - **cold async single-hop** (`async-init-single-hop`): inversify (`getAsync`) and brandi (`AsyncFactory`) against di's
+    `resolveAsync`.
+  - **per-request scoped lifetime** (`scoped-binding-per-child`): awilix (`createScope` + `scoped()`), tsyringe
+    (`ContainerScoped`), brandi (`inContainerScope`) and ditox (scoped `bindFactory`) join di and inversify.
+  - **disposal teardown hooks** (`lifecycle-pre-destroy-unbind`): ditox (`onRemoved`) and tsyringe (`dispose()`) join di
+    and inversify.
+
+  Awilix stays `—` on disposal (its `dispose()` is async-only), and tagged multi-key resolution stays `@codefast/di`-only
+  (inversify's `GetOptions` accepts a single tag).
+
+- [#861](https://github.com/codefastlabs/codefast/pull/861) [`da3bc2d`](https://github.com/codefastlabs/codefast/commit/da3bc2d1fcd6eafb2329ea046a4210bf0ac0998f) Thanks [@thevuong](https://github.com/thevuong)! - Add an `optional-missing-transient` row: a transient class whose one optional dependency is unbound, so every resolve
+  reconstructs it and checks the absent optional. `@codefast/di`, brandi and ditox all express it (each has real transient
+  scope plus an optional-token form — `optional()` / `token.optional` / `optional()`); injection-js and the container-only
+  rivals read `—`, since a cached `get` would check the optional just once.
+
+- [#865](https://github.com/codefastlabs/codefast/pull/865) [`30ce059`](https://github.com/codefastlabs/codefast/commit/30ce059f24b1bce2eb9779caa3fc59f8f398e6c7) Thanks [@thevuong](https://github.com/thevuong)! - Every scenario declares its tier and the public-API features it requires; every library declares the features its API
+  offers.
+
+  - 86 `contract` rows are specified against the public API and survive an engine rewrite; 25 `engine` rows name a lane of
+    the current resolver (compiled plans and their escapes, the tag-key mask, the hoisted-versus-inline options object,
+    the async branch lane) and are instrumentation owed by no other library. `BENCH_TIER=contract pnpm bench:isolate` runs
+    the comparison without them.
+  - `src/fixtures/features.ts` is the feature vocabulary; `src/harness/config.ts` declares each library's features, read
+    from its installed typings. `pnpm bench:list` now reports per library which rows it owes (gaps) apart from the rows it
+    cannot express, and fails when a library implements a row whose required feature it does not declare.
+  - The production rows and the child-scope rows now run on every library whose API has a child and a teardown: awilix
+    (`createScope` + `dispose`), tsyringe (`createChildContainer` + `dispose`, `instancePerContainerCachingFactory` for
+    the per-operation unit of work) and ditox (`createContainer(parent)` + `removeAll`); brandi gains the depth-2 child
+    row over an `extend()` chain and injection-js the event-bus row over its cached `multi: true` array. 15 rows, each
+    with a `what` naming the mechanism.
+  - A class lane for the realistic graph: `realistic-graph-class-resolve-root` and `realistic-graph-class-cold-resolve`
+    wire the same ten nodes as constructor-injected classes in each library's own class idiom (`@injectable([deps])`,
+    `@injectable` + `@inject`, `asClass` off the proxy cradle, `injected()`, `injectableClass()`, `@Injectable` +
+    `@Inject`), on all seven libraries. `src/fixtures/realistic-class-graph.ts` holds the one sanity every side runs: the
+    tree matches the descriptor node for node, singletons are one instance wherever they appear, the root is fresh per
+    resolve. The `class-injection` feature names what the rows require.
+  - Each loss `RESULTS.md` reports is now a pair whose difference isolates the mechanism. `resolve-all-cold-10/-100` build
+    a fresh container and read the collection once, so a memoised array (ditox, injection-js) is charged for the build the
+    stable row never pays. `materialize-100-singletons` and `unbind-all-100-singletons` move into the shared descriptors
+    and run on inversify (`@preDestroy` + `unbindAll`), awilix (`disposer` + awaited `dispose`), tsyringe (`Disposable` +
+    `dispose`) and ditox (`onRemoved` + `removeAll`), so the teardown walk reads apart from the single unbind.
+    `container-create-empty`, `create-child-empty` and `bind-128-plain` move into the shared descriptors and run on all
+    seven libraries, so a cold graph row's first resolve becomes subtractable from its bind and construction.
+  - Two scale axes. `child-depth-1/2/4/8-resolve` replaces the single depth-2 child row on all seven libraries, so a
+    parent walk that is free reads apart from one that is linear in the chain. `named-resolve-slots-1/4/16/64` and
+    `tagged-resolve-slots-1/4/16/64` pick the last-bound name or tag out of N bindings on one token, on codefast and
+    inversify, so a selection that is indexed reads apart from one that scans.
+  - `src/fixtures/sanity.ts` holds the semantic checks every head-to-head row shares — fresh per resolve down to the
+    dependency, one instance within a scope and a fresh one across, every binding of a collection present once — and the
+    transient, scoped and `resolveAll` rows on every library call the same one, so no side can measure a cheaper meaning
+    of the feature under the same id.
+  - `BENCH_GUIDE.md` gains the recipe a rewrite is measured by: run the contract tier once at the citable profile, pin
+    that run with `BENCH_BASELINE`, and read every later run against it.
+  - Every gap the matrix reported is closed: each library now implements every row its declared features allow, in its own
+    idiom — inversify 93 rows, ditox 44, tsyringe 43, awilix 40, injection-js 33, brandi 29 of 126. The last codefast-only
+    descriptors (aliases, fresh-child matrix, async entry points, chain rebind, nested factories, property injection,
+    refined bind, the six public slot rows) moved into the shared descriptors, and the six public slot rows now count in
+    the aggregates. Two features split so the matrix stays true: `optional-injection` (dependency-site, which awilix's
+    cradle cannot express) from `optional`, and `binding-activation-hook` (per binding, which tsyringe's interceptors
+    cannot express) from `activation-hook`.
+  - `RESULTS.md` is rewritten from a full-profile isolated pass over the 126-row suite (run `2026-09-13T04-45-37-460Z`,
+    the baseline a rewrite is read against): registration is priced as the largest deficit, the cold collection pair shows
+    the `resolveAll` loss is not only memoisation, the teardown pair shows the deactivation walk is free, and two
+    selection lanes no index serves are found against inversify. `alias-cycle-detected` is excluded from the aggregates
+    like `circular-dependency-3`.
+
+### Patch Changes
+
+- [#863](https://github.com/codefastlabs/codefast/pull/863) [`ccc5ed1`](https://github.com/codefastlabs/codefast/commit/ccc5ed193f15d9edc7c3e6475a6bfda22e2c6319) Thanks [@thevuong](https://github.com/thevuong)! - Rewrite `benchmarks/di/RESULTS.md` as a single machine-derived snapshot on `@codefast/di` 0.9.0 (full profile,
+  GC-exposed, interleaved) instead of an accreted dated ledger, weighting wins and losses equally so the page shows where
+  the engine is slower. The snapshot records that `@codefast/di` loses the aggregate to ditox (0.79× median) and the
+  geomean to injection-js (0.56×), and breaks down each loss as a real deficit or a by-design work difference — the
+  `resolve-all-strategies` collapse (0.03× at N=100) is the rivals returning a memoized collection where `@codefast/di`
+  re-gathers per op.
+
+  Assert the A/B method in `BENCH_GUIDE.md`: because `run.ts` rebuilds `packages/di/dist` from `src` unconditionally
+  before spawning, swapping the source is the one method, and swapping `dist` directly is a demoted escape hatch that must
+  use the child entries. Repoint the `packages/di/ARCHITECTURE.md` tag-chain-walk-memo reference from `RESULTS.md` to the
+  package `CHANGELOG.md`, where that A/B now lives.
+
+- [#864](https://github.com/codefastlabs/codefast/pull/864) [`3964ca9`](https://github.com/codefastlabs/codefast/commit/3964ca928c9a13df9e77ffb1837fa9fd65d0b918) Thanks [@thevuong](https://github.com/thevuong)! - Bring the run header, quiet-mode hint, report intro and README prose in line with the six-competitor suite. The library
+  list now lives once in `harness/config.ts` (`BENCH_LIBRARIES`, `COMPETITORS`), and the run header, report heading,
+  viewer title and per-library runtime lines derive from it, so a new competitor no longer needs a prose edit. The claim
+  that only inversify implemented the full suite is gone: inversify covers nearly every shared row, the decorator-free
+  containers cover the core plus the scope/lifecycle/module/multi-binding/async rows their APIs express, and injection-js
+  its singleton-friendly rows. Every rival gains a `bench:<library>` script for running its child process alone.
+
+  The run now shows live progress per library on an interactive terminal (plain milestones when piped or verbose) and
+  prints the aggregates alone by default; `pnpm bench:verbose` prints the per-scenario table and `pnpm bench:report`
+  derives it as `report.md`.
+
+  The console report is now a scoreboard with a geomean-by-group table and the reliable losses, diffs against the run
+  `latest.json` names when it is the same configuration on the same machine, and closes with a run card.
+
+- Updated dependencies [[`ccc5ed1`](https://github.com/codefastlabs/codefast/commit/ccc5ed193f15d9edc7c3e6475a6bfda22e2c6319), [`5c376d5`](https://github.com/codefastlabs/codefast/commit/5c376d5f9ff842103167ae0dd1afd9aed10c0199), [`fcbe338`](https://github.com/codefastlabs/codefast/commit/fcbe338d91de80b9476c41f2168828def26d1435), [`a836f8b`](https://github.com/codefastlabs/codefast/commit/a836f8b6b5ab1f16d9943d484e42793ff69f5d1c), [`765967b`](https://github.com/codefastlabs/codefast/commit/765967bd873d527d17ff7bfbb58d1563edd32438), [`36081f9`](https://github.com/codefastlabs/codefast/commit/36081f9643067b96f065e0687d78908074490f6f), [`06618b6`](https://github.com/codefastlabs/codefast/commit/06618b6c152f899f5cb7e010abfe554c58ddf7c5), [`e7665ee`](https://github.com/codefastlabs/codefast/commit/e7665eed0afd49310e756d6f86756c4f9accefc5), [`10e8142`](https://github.com/codefastlabs/codefast/commit/10e814253e3e38bbbfc4604473c6e4cb4cef3916), [`eb7d819`](https://github.com/codefastlabs/codefast/commit/eb7d8190cb7464cc759e224ad05484ee88db2e84), [`6c813aa`](https://github.com/codefastlabs/codefast/commit/6c813aa03be010afc8b2e125639341c73f075c3a), [`7d72fd7`](https://github.com/codefastlabs/codefast/commit/7d72fd7e394e3e62ff406dd5ebdb438ff5591346), [`c00ae92`](https://github.com/codefastlabs/codefast/commit/c00ae92ff89b1a7e1d779c17d87cac4ce0066e87), [`1e22a7d`](https://github.com/codefastlabs/codefast/commit/1e22a7deff616c0c80aa2816f8928938a806bbce), [`b26c8a4`](https://github.com/codefastlabs/codefast/commit/b26c8a4008ec87651da2a54f2aa6006c51ab6fc2)]:
+  - @codefast/di@0.9.1
+  - @internal/benchmark-harness@0.9.0
+  - @internal/benchmark-viewer@0.9.0
+
 ## 0.7.4
 
 ### Patch Changes

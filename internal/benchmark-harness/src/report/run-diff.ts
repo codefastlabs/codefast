@@ -11,6 +11,8 @@ import type { Fingerprint, TrialPayload } from "#/shared/protocol";
 
 /**
  * A run read back from disk to diff against.
+ *
+ * @since 0.9.0
  */
 export interface PreviousRun {
   readonly runId: string;
@@ -26,6 +28,8 @@ export interface PreviousRun {
 
 /**
  * The run a diff is computed for.
+ *
+ * @since 0.9.0
  */
 export interface CurrentRun {
   readonly pivot: ComparisonLibrary;
@@ -36,6 +40,8 @@ export interface CurrentRun {
 
 /**
  * One scenario's pivot throughput now against then.
+ *
+ * @since 0.9.0
  */
 export interface ScenarioDelta {
   readonly id: string;
@@ -52,6 +58,8 @@ export interface ScenarioDelta {
 
 /**
  * One competitor's aggregates now against then.
+ *
+ * @since 0.9.0
  */
 export interface CompetitorDelta {
   readonly displayName: string;
@@ -61,6 +69,8 @@ export interface CompetitorDelta {
 
 /**
  * The diff, or the reason there is none.
+ *
+ * @since 0.9.0
  */
 export type RunDiff =
   | {
@@ -76,6 +86,8 @@ export type RunDiff =
 
 /**
  * Names the run a diff was read against, marking a pinned baseline as such.
+ *
+ * @since 0.9.0
  */
 export function describeDiffTarget(diff: Pick<RunDiff, "previousRunId" | "pinned">): string {
   return `${diff.pinned ? "baseline " : ""}${diff.previousRunId}`;
@@ -83,6 +95,8 @@ export function describeDiffTarget(diff: Pick<RunDiff, "previousRunId" | "pinned
 
 /**
  * Formats a delta fraction as a signed percentage with one decimal.
+ *
+ * @since 0.9.0
  */
 export function formatDeltaPercent(delta: number): string {
   const rounded = Number((delta * 100).toFixed(1));
@@ -92,6 +106,8 @@ export function formatDeltaPercent(delta: number): string {
 
 /**
  * Formats throughput compactly for a diff line: `22.3M`, `146.9K`, `830`.
+ *
+ * @since 0.9.0
  */
 export function formatCompactHz(hzPerOp: number): string {
   if (hzPerOp >= 1_000_000) {
@@ -124,6 +140,8 @@ function sameEnvironment(left: Fingerprint, right: Fingerprint): boolean {
  *
  * @param packageRootDirectory - The suite package; `bench-results/` is resolved under it.
  * @param requested - A run id or directory to pin, or omitted for the pointer.
+ *
+ * @since 0.9.0
  */
 export function readPreviousRun(packageRootDirectory: string, requested?: string): PreviousRun | undefined {
   const pinned = requested !== undefined;
@@ -149,6 +167,8 @@ export function readPreviousRun(packageRootDirectory: string, requested?: string
 
 /**
  * Diffs the current run against a previous one, or explains why the two are not comparable.
+ *
+ * @since 0.9.0
  */
 export function buildRunDiff(current: CurrentRun, previous: PreviousRun): RunDiff {
   const previousPivot = previous.libraries.get(current.pivot.report.fingerprint.libraryName);
@@ -255,6 +275,8 @@ export function buildRunDiff(current: CurrentRun, previous: PreviousRun): RunDif
  * @remarks Call it before the artifacts are written, while `latest.json` still names the run before
  * this one. `BENCH_BASELINE` pins the run instead, so a rewrite can be read against the last run of
  * the engine it replaces however many runs land in between.
+ *
+ * @since 0.9.0
  */
 export function prepareRunDiff(packageRootDirectory: string, current: CurrentRun): RunDiff | undefined {
   const previous = readPreviousRun(packageRootDirectory, resolveBaselineRunFromEnvironment());

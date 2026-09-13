@@ -128,6 +128,8 @@ function buildAsyncDiamondSharedLeafScenario(): AsyncBenchScenario {
 
 /**
  * Builds inversify's async entry-point scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInversifyAsyncEntryPointScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [

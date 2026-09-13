@@ -91,6 +91,8 @@ function buildBindPlainScenario(): BenchScenario {
 
 /**
  * Builds brandi's cold-path scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiBootScenarios(): ReadonlyArray<BenchScenario> {
   return [buildContainerCreateScenario(), buildCreateChildScenario(), buildBindPlainScenario()];

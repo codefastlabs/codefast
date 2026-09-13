@@ -6,6 +6,8 @@ import { createPalette } from "#/shared/palette";
 
 /**
  * Options for {@link createProgressDisplay}.
+ *
+ * @since 0.9.0
  */
 export interface CreateProgressDisplayOptions {
   /** Verbose runs stream every child line, which an in-place block would fight with. */
@@ -16,6 +18,8 @@ export interface CreateProgressDisplayOptions {
 
 /**
  * True when the stream is an interactive terminal that can take cursor movement.
+ *
+ * @since 0.9.0
  */
 export function canDrawLiveProgress(stream: NodeJS.WriteStream, env: NodeJS.ProcessEnv): boolean {
   return stream.isTTY === true && env["CI"] === undefined && env["TERM"] !== "dumb";
@@ -23,6 +27,8 @@ export function canDrawLiveProgress(stream: NodeJS.WriteStream, env: NodeJS.Proc
 
 /**
  * True when the locale or platform makes block-drawing characters a safe bet.
+ *
+ * @since 0.9.0
  */
 export function prefersUnicodeBars(env: NodeJS.ProcessEnv, platform: NodeJS.Platform = process.platform): boolean {
   if (platform === "darwin") {
@@ -34,6 +40,8 @@ export function prefersUnicodeBars(env: NodeJS.ProcessEnv, platform: NodeJS.Plat
 
 /**
  * A live block on an interactive stderr, otherwise one line per milestone.
+ *
+ * @since 0.9.0
  */
 export function createProgressDisplay(options: CreateProgressDisplayOptions): ProgressDisplay {
   const stream = options.stream ?? process.stderr;

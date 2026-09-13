@@ -190,6 +190,8 @@ function buildProductionUnitOfWorkScenario(): BenchScenario {
 
 /**
  * Builds Awilix's production-shaped scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildAwilixProductionScenarios(): ReadonlyArray<BenchScenario> {
   return [buildProductionHttpHandlerScenario(), buildProductionUnitOfWorkScenario()];

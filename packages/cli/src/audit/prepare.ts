@@ -32,6 +32,8 @@ export function resolveRepoRelativePath(rootDir: string, maybeRelative: string):
  * Loads config and resolves the repo root as the scan target, taking the allowlist the caller selects.
  *
  * @remarks Every repo-wide audit shares this prelude; only the config key its allowlist comes from differs.
+ *
+ * @since 0.11.0
  */
 export async function prepareRepoRootAudit(
   fs: Filesystem,

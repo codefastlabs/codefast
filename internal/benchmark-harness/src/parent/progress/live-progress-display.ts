@@ -18,6 +18,8 @@ function cursorUpAndClear(lineCount: number): string {
 
 /**
  * Options for {@link LiveProgressDisplay}.
+ *
+ * @since 0.9.0
  */
 export interface LiveProgressDisplayOptions {
   readonly stream: NodeJS.WriteStream;
@@ -33,6 +35,8 @@ function isTicking(row: LibraryProgress): boolean {
 
 /**
  * Redraws the progress block on every change and every tick while something runs.
+ *
+ * @since 0.9.0
  */
 export class LiveProgressDisplay implements ProgressDisplay {
   readonly #tracker: ProgressTracker;

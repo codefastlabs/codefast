@@ -51,6 +51,8 @@ function buildResolveOptionalMissScenario(): BenchScenario {
 
 /**
  * Builds injection-js's optional resolve scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
   return [buildResolveOptionalHitScenario(), buildResolveOptionalMissScenario()];

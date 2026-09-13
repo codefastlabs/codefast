@@ -132,6 +132,8 @@ function buildAliasCycleDetectedScenario(): BenchScenario {
 
 /**
  * Builds injection-js's alias scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsAliasScenarios(): ReadonlyArray<BenchScenario> {
   return [

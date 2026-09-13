@@ -173,6 +173,8 @@ function buildNamedParentOwnedScenario(): BenchScenario {
 
 /**
  * Builds inversify's public slot-selection scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInversifySlotSelectionScenarios(): ReadonlyArray<BenchScenario> {
   return [

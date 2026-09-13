@@ -12,6 +12,8 @@ import type { Palette, Tint } from "#/shared/palette";
 
 /**
  * Options for {@link renderScoreboardLines}.
+ *
+ * @since 0.9.0
  */
 export interface RenderScoreboardOptions {
   readonly palette: Palette;
@@ -168,6 +170,8 @@ function lossLines(
 
 /**
  * Renders the scoreboard, the geomean-by-group table and the reliable losses, blank-line separated.
+ *
+ * @since 0.9.0
  */
 export function renderScoreboardLines(
   pivot: ComparisonLibrary,

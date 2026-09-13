@@ -236,6 +236,8 @@ function buildProductionEventBusDispatchScenario(): BenchScenario {
 
 /**
  * Builds ditox's production-shaped scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxProductionScenarios(): ReadonlyArray<BenchScenario> {
   return [

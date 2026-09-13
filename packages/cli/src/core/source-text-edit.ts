@@ -74,6 +74,8 @@ export function endAfterOptionalCommaFollowingInSource(source: string, tokenEnd:
  * the outer replacement already contains the inner span verbatim — dropping the nested edit keeps
  * the output valid. Higher-priority edits must come first so an exact-range tie keeps the earlier
  * one. This is the invariant `applyEditsDescending` assumes; run it before applying.
+ *
+ * @since 0.11.0
  */
 export function dropOverlappingEdits<Edit extends { start: number; end: number }>(
   edits: ReadonlyArray<Edit>,

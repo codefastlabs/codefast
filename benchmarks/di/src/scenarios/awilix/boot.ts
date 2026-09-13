@@ -81,6 +81,8 @@ function buildBindPlainScenario(): BenchScenario {
 
 /**
  * Builds Awilix's cold-path scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildAwilixBootScenarios(): ReadonlyArray<BenchScenario> {
   return [buildContainerCreateScenario(), buildCreateChildScenario(), buildBindPlainScenario()];

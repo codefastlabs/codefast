@@ -24,6 +24,8 @@ import type { AnyScenario } from "#/scenarios/types";
 
 /**
  * Collects every ditox bench scenario.
+ *
+ * @since 0.8.0
  */
 export function collectAllDitoxScenarios(): ReadonlyArray<AnyScenario> {
   return [

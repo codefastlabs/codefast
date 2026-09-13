@@ -6,6 +6,8 @@ import { resolveProjectRoot } from "#/core/workspace/resolver";
 
 /**
  * Resolves the project root as a `Result`, mapping a resolution failure to an `INFRA_FAILURE` error.
+ *
+ * @since 0.11.0
  */
 export function resolveProjectRootResult(fs: Filesystem, currentWorkingDirectory: string): Result<string, AppError> {
   try {

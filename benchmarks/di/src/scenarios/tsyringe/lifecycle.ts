@@ -53,6 +53,8 @@ function buildLifecyclePreDestroyUnbindScenario(): BenchScenario {
 
 /**
  * Builds tsyringe's lifecycle/disposal scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeLifecycleScenarios(): ReadonlyArray<BenchScenario> {
   return [buildLifecyclePreDestroyUnbindScenario()];

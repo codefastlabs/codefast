@@ -89,6 +89,8 @@ function buildHasBoundCheckScenario(): BenchScenario {
 
 /**
  * Builds Awilix's registry operation scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildAwilixRegistryOpsScenarios(): ReadonlyArray<BenchScenario> {
   return [buildRebindHotSwapScenario(), buildChainRebindInvalidationScenario(), buildHasBoundCheckScenario()];

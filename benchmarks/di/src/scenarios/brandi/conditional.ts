@@ -66,6 +66,8 @@ function buildConditionalInjectionTaggedScenario(): BenchScenario {
 
 /**
  * Builds the brandi conditional-injection scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiConditionalScenarios(): ReadonlyArray<BenchScenario> {
   return [buildConditionalInjectionTaggedScenario()];

@@ -10,14 +10,21 @@
  *
  * @remarks A `contract` row measures public API and compares libraries; an `engine` row measures one
  * library's internals, never enters a cross-library aggregate, and is deleted with the engine it names.
+ *
+ * @since 0.9.0
  */
 export type BenchScenarioTier = "contract" | "engine";
 
 /**
  * The tier a scenario that declares none belongs to.
+ *
+ * @since 0.9.0
  */
 export const DEFAULT_BENCH_SCENARIO_TIER: BenchScenarioTier = "contract";
 
+/**
+ * @since 0.9.0
+ */
 export interface BenchScenario {
   readonly kind?: never;
   readonly id: string;
@@ -70,6 +77,8 @@ export function isAsyncScenario(scenario: AnyBenchScenario): scenario is AsyncBe
 
 /**
  * Resolves the tier a scenario belongs to, defaulting one that declares none.
+ *
+ * @since 0.9.0
  */
 export function tierOfScenario(scenario: Pick<AnyBenchScenario, "tier">): BenchScenarioTier {
   return scenario.tier ?? DEFAULT_BENCH_SCENARIO_TIER;

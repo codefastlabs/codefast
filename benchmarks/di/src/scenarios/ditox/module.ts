@@ -75,6 +75,8 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
 
 /**
  * Builds the ditox module scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxModuleScenarios(): ReadonlyArray<BenchScenario> {
   return [buildModuleColdFromModulesScenario()];

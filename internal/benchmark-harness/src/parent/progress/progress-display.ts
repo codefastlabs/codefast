@@ -6,6 +6,8 @@ import type { BenchProgressEvent } from "#/shared/progress";
  * Everything a parent run reports while subprocesses measure.
  *
  * @remarks The live and plain displays share this so the scheduler never asks what the terminal is.
+ *
+ * @since 0.9.0
  */
 export interface ProgressDisplay {
   /** Adds a library row before anything runs, so the whole line-up is visible from the first frame. */

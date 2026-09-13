@@ -51,6 +51,8 @@ function buildAsyncInitSingleHopScenario(): AsyncBenchScenario {
 
 /**
  * Builds injection-js's async scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsAsyncScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [buildAsyncInitSingleHopScenario()];

@@ -79,6 +79,8 @@ function buildRealisticGraphResolvedRootScenario(): BenchScenario {
 
 /**
  * Builds brandi's explicit-deps scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiBindingVariantScenarios(): ReadonlyArray<BenchScenario> {
   return [buildToResolvedThreeDepsScenario(), buildRealisticGraphResolvedRootScenario()];

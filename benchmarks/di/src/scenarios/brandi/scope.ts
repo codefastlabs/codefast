@@ -88,6 +88,8 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
 
 /**
  * Builds brandi's scope benchmark scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiScopeScenarios(): ReadonlyArray<BenchScenario> {
   return [...CHILD_DEPTHS.map((depth) => buildChildDepthResolveScenario(depth)), buildScopedBindingPerChildScenario()];

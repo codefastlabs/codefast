@@ -46,6 +46,8 @@ function buildToSelfSingletonScenario(): BenchScenario {
 
 /**
  * Builds tsyringe's binding-variant scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeBindingVariantScenarios(): ReadonlyArray<BenchScenario> {
   return [buildToSelfSingletonScenario()];
