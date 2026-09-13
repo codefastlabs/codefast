@@ -281,7 +281,8 @@ let bindingIdCounter = 0;
  * @since 0.3.16-canary.0
  */
 export function generateBindingId(): BindingIdentifier {
-  return String(++bindingIdCounter) as BindingIdentifier;
+  bindingIdCounter += 1;
+  return bindingIdCounter as BindingIdentifier;
 }
 
 // ── Construction ─────────────────────────────────────────────────────────────────────────────────────────────────────

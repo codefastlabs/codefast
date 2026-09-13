@@ -74,7 +74,7 @@ function frameOf(name: string, id: number): ResolutionFrame {
   return {
     tokenName: name,
     scope: "transient",
-    bindingId: String(id) as BindingIdentifier,
+    bindingId: id as BindingIdentifier,
     kind: "class",
     slot: { name: undefined, tags: [], keyMask: NO_TAG_KEYS },
   };

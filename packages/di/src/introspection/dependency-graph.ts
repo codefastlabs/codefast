@@ -205,7 +205,7 @@ function addDependencyEdges(
 
     accumulator.edges.push({
       from,
-      to: target.id,
+      to: String(target.id),
       label: perTargetLabel,
       optional: ref.optional,
       ...(edgeSlotName !== undefined ? { slotName: edgeSlotName } : {}),
@@ -225,7 +225,7 @@ function addBindingEdges(
 
     if (meta !== undefined) {
       for (const [index, param] of meta.params.entries()) {
-        addDependencyEdges(accumulator, binding.id, param, index, lookup);
+        addDependencyEdges(accumulator, String(binding.id), param, index, lookup);
       }
     }
 
@@ -234,7 +234,7 @@ function addBindingEdges(
 
   if (binding.kind === "resolved" || binding.kind === "resolved-async") {
     for (const [index, dependency] of binding.deps.entries()) {
-      addDependencyEdges(accumulator, binding.id, dependency, index, lookup);
+      addDependencyEdges(accumulator, String(binding.id), dependency, index, lookup);
     }
 
     return;
@@ -244,7 +244,7 @@ function addBindingEdges(
     const aliasRef: DependencySlot = { token: binding.target, optional: false, multi: false };
 
     for (const target of matchingTargets(lookup(binding.target), aliasRef)) {
-      accumulator.edges.push({ from: binding.id, to: target.id, label: "alias", optional: false });
+      accumulator.edges.push({ from: String(binding.id), to: String(target.id), label: "alias", optional: false });
     }
   }
 }
@@ -260,7 +260,7 @@ function addRegistryBindings(
 
   for (const binding of sourceRegistry.allBindings()) {
     accumulator.nodes.push({
-      id: binding.id,
+      id: String(binding.id),
       tokenName: tokenName(binding.token),
       tokenKey: tokenKeyOf(binding.token),
       kind: binding.kind,

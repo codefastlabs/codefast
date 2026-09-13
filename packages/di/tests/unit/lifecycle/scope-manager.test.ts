@@ -24,7 +24,7 @@ const FIRST_BINDING = createBinding(
   undefined,
 );
 const FIRST_ID: BindingIdentifier = FIRST_BINDING.id;
-const UNSEEN_ID = "binding-never-seen" as BindingIdentifier;
+const UNSEEN_ID = -1 as BindingIdentifier;
 
 describe("ScopeManager scoped entries", () => {
   it("deleteScoped releases a cached entry and is a no-op for unknown ids", () => {

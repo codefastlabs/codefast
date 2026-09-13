@@ -330,7 +330,7 @@ class DefaultContainer implements Container {
   #collectDeactivationPairs(
     tokenOrId: Token<unknown> | Constructor | BindingIdentifier,
   ): ReadonlyArray<[Binding, unknown]> {
-    if (typeof tokenOrId === "string") {
+    if (typeof tokenOrId === "number") {
       const binding = this.#registry.removeById(tokenOrId);
       return binding === undefined ? NO_DEACTIVATION_PAIRS : this.#drainSingletons([binding]);
     }

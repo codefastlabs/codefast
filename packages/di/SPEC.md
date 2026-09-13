@@ -168,12 +168,12 @@ type BindingScope = "singleton" | "transient" | "scoped";
 
 ### `BindingIdentifier`
 
-An opaque branded type — it cannot be constructed by hand from outside the library. It is only obtained through `.id()`
-on a builder.
+An opaque branded number — it cannot be constructed by hand from outside the library. It is only obtained through
+`.id()` on a builder, and it is an identity to hand back to `unbind(id)`, never a value to parse or display.
 
 ```ts
 declare const BINDING_ID_BRAND: unique symbol;
-type BindingIdentifier = string & { readonly [BINDING_ID_BRAND]: true };
+type BindingIdentifier = number & { readonly [BINDING_ID_BRAND]: true };
 ```
 
 ### `Constructor`
@@ -1102,7 +1102,7 @@ runtime. For `constant`, `onActivation` runs the first time the value is resolve
 >   `{ token, optional: false, multi: false }`. The `deps` in `ResolvedBinding`/`ResolvedAsyncBinding` is always
 >   `readonly InjectionDescriptor[]` — never a raw token.
 > - A `BindingIdentifier` is generated **once per fluent chain**, unique across the whole container hierarchy (not
->   merely within one container). Use `crypto.randomUUID()` or a monotonic counter. Later refinement (`.singleton()`,
+>   merely within one container), from a process-wide monotonic counter. Later refinement (`.singleton()`,
 >   `.whenNamed()`, …) does **not** mint a new id — the id taken from `.id()` at any step of the chain stays valid until
 >   the chain ends.
 
@@ -1574,9 +1574,9 @@ Each `BindingSnapshot` carries: `tokenName`, `kind`, `scope`, `slot`, and `id`.
 `ContainerGraphJson` has three parts: `nodes`, `edges`, and `includesParent` (whether parent bindings were folded in —
 it depends on `GraphOptions`).
 
-Each **`GraphNode`** carries `id` (the `BindingIdentifier` itself, or `"unbound:<tokenKey>"` for a placeholder node),
-`tokenName`, `tokenKey` (the token's own identity — two tokens sharing a name still differ by key; stable within one
-process), `kind` (or `"unbound"`), `scope` (or `"unbound"`), and `fromParent`.
+Each **`GraphNode`** carries `id` (the `BindingIdentifier` rendered as a decimal string, or `"unbound:<tokenKey>"` for a
+placeholder node), `tokenName`, `tokenKey` (the token's own identity — two tokens sharing a name still differ by key;
+stable within one process), `kind` (or `"unbound"`), `scope` (or `"unbound"`), and `fromParent`.
 
 Each **`GraphEdge`** runs from the consumer (`from`) to the dependency (`to`), with `optional` and `slotName` (the named
 slot the edge points at, if the binding declares one). The `label` field is **for display only** — read

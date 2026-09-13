@@ -77,7 +77,7 @@ describe("removing a single binding by id", () => {
 
   it("is a no-op for an unknown binding id", () => {
     const container = Container.create();
-    expect(() => container.unbind("no-such-binding-id" as BindingIdentifier)).not.toThrow();
+    expect(() => container.unbind(-1 as BindingIdentifier)).not.toThrow();
   });
 });
 
