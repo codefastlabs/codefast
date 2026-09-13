@@ -3,6 +3,7 @@
  *
  * @since 0.3.16-canary.0
  */
+import type { BenchScenarioTier } from "#/child/bench-scenario";
 
 /**
  * Marker line opening the framed JSON payload on child stdout — the parent reads only
@@ -32,6 +33,7 @@ export const BENCH_RESULT_JSON_END = "BENCH_RESULT_JSON_END";
 export interface ScenarioTrialResult {
   readonly id: string;
   readonly group: string;
+  readonly tier: BenchScenarioTier;
   readonly stress: boolean;
   readonly excludeFromAggregates: boolean;
   readonly batch: number;
@@ -88,6 +90,17 @@ export interface SubprocessPayload {
   readonly sanityFailures: ReadonlyArray<string>;
   /** Every scenario id the library collected, in run order — before any filter narrowed the run. */
   readonly scenarioIds?: ReadonlyArray<string> | undefined;
+  /** What each collected scenario declares about itself, in the same order as `scenarioIds`. */
+  readonly scenarioListings?: ReadonlyArray<ScenarioListing> | undefined;
+}
+
+/**
+ * What a child says about one scenario without measuring it: its tier and the features it needs.
+ */
+export interface ScenarioListing {
+  readonly id: string;
+  readonly tier: BenchScenarioTier;
+  readonly requires: ReadonlyArray<string>;
 }
 
 /**

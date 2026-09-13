@@ -5,11 +5,28 @@
  * @since 0.3.16-canary.0
  */
 
+/**
+ * Which comparison a scenario belongs to.
+ *
+ * @remarks A `contract` row measures public API and compares libraries; an `engine` row measures one
+ * library's internals, never enters a cross-library aggregate, and is deleted with the engine it names.
+ */
+export type BenchScenarioTier = "contract" | "engine";
+
+/**
+ * The tier a scenario that declares none belongs to.
+ */
+export const DEFAULT_BENCH_SCENARIO_TIER: BenchScenarioTier = "contract";
+
 export interface BenchScenario {
   readonly kind?: never;
   readonly id: string;
   readonly what: string;
   readonly group: string;
+  /** Which comparison the row belongs to; a suite that declares none has only contract rows. */
+  readonly tier?: BenchScenarioTier | undefined;
+  /** Features of the library's public API the row needs, in the suite's own vocabulary. */
+  readonly requires?: ReadonlyArray<string> | undefined;
   /** Cross-cutting library features this scenario exercises, declared where the scenario is defined. */
   readonly facets?: ReadonlyArray<string>;
   /**
@@ -49,4 +66,11 @@ export type AnyBenchScenario = BenchScenario | AsyncBenchScenario;
  */
 export function isAsyncScenario(scenario: AnyBenchScenario): scenario is AsyncBenchScenario {
   return scenario.kind === "async";
+}
+
+/**
+ * Resolves the tier a scenario belongs to, defaulting one that declares none.
+ */
+export function tierOfScenario(scenario: Pick<AnyBenchScenario, "tier">): BenchScenarioTier {
+  return scenario.tier ?? DEFAULT_BENCH_SCENARIO_TIER;
 }

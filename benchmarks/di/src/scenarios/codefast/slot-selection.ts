@@ -1,9 +1,9 @@
 /**
- * `@codefast/di` — slot-selection lanes (codefast-only, paired-A/B instrumentation).
+ * `@codefast/di` — slot-selection lanes.
  *
- * These rows make `#findBinding`'s slot lanes measurable. They are **not** competitive rows: every
- * one carries `excludeFromAggregates` so that promoting one to a head-to-head pair later is a
- * deliberate act rather than a silent geomean shift.
+ * The hoisted/inline matrix and the injected-slot rows are engine instrumentation and carry
+ * `excludeFromAggregates`; the six public slot rows share their descriptors with every library that
+ * can express the selection and compete head to head.
  *
  * The first four form a 2×2 over (request form × where the tag literal lives), which is what
  * separates two costs the existing `tagged-binding-resolve` row cannot tell apart:
@@ -32,11 +32,19 @@ import type { BindingTag } from "@codefast/di";
 import { Container, inject, injectable, token } from "@codefast/di";
 
 import { ENV_TAG, LEVEL_TAG } from "#/fixtures/bench-tags";
-import { TAGGED_ENVS, TARGET_TAG_VALUE } from "#/fixtures/scenario-parity";
+import {
+  SLOT_NAME_AND_TAG,
+  SLOT_NAME_PARENT_OWNED,
+  SLOT_RESOLVE_BATCH,
+  SLOT_TAG_MISS_OPTIONAL,
+  SLOT_TAG_PARENT_OWNED,
+  SLOT_TAG_RESOLVE_ALL,
+  SLOT_TAG_ZERO_VALUE,
+  TAGGED_ENVS,
+  TARGET_TAG_VALUE,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
-
-const SLOT_RESOLVE_BATCH = 300;
 
 interface TaggedService {
   readonly env: string;
@@ -69,6 +77,8 @@ function buildArrayHoistedScenario(): BenchScenario {
 
   return {
     id: "slot-tag-array-hoisted",
+    tier: "engine",
+    requires: ["tag-hint"],
     facets: ["tag"],
     group: "slot-selection",
     what: `resolve(token, { tags }) with the tag list hoisted — tagged-index lane (codefast-only)`,
@@ -87,6 +97,8 @@ function buildShorthandHoistedScenario(): BenchScenario {
 
   return {
     id: "slot-tag-shorthand-hoisted",
+    tier: "engine",
+    requires: ["tag-hint"],
     facets: ["tag"],
     group: "slot-selection",
     what: `resolve(token, { tag }) with the pair hoisted — tagged-index lane, one allocation fewer than the array form (codefast-only)`,
@@ -105,6 +117,8 @@ function buildArrayInlineScenario(): BenchScenario {
 
   return {
     id: "slot-tag-array-inline",
+    tier: "engine",
+    requires: ["tag-hint"],
     facets: ["tag"],
     group: "slot-selection",
     what: `resolve(token, { tags: [[k, v]] }) written inline — tagged-index lane plus its literals (codefast-only)`,
@@ -124,6 +138,8 @@ function buildShorthandInlineScenario(): BenchScenario {
 
   return {
     id: "slot-tag-shorthand-inline",
+    tier: "engine",
+    requires: ["tag-hint"],
     facets: ["tag"],
     group: "slot-selection",
     what: `resolve(token, { tag: [k, v] }) written inline — tagged-index lane plus its literals (codefast-only)`,
@@ -158,12 +174,8 @@ function buildZeroValueScenario(): BenchScenario {
   container.resolve(numberedServiceToken, { tags: ZERO_TAGS });
 
   return {
-    id: "slot-tag-zero-value",
-    facets: ["tag"],
-    group: "slot-selection",
-    what: "resolve(token, { tags: [[k, 0]] }) — the tagged index hit that must be re-checked with Object.is (codefast-only)",
+    ...SLOT_TAG_ZERO_VALUE,
     batch: SLOT_RESOLVE_BATCH,
-    excludeFromAggregates: true,
     sanity: () => container.resolve(numberedServiceToken, { tags: ZERO_TAGS }).level === 0,
     build: () =>
       batched(SLOT_RESOLVE_BATCH, () => {
@@ -188,12 +200,8 @@ function buildNameAndTagScenario(): BenchScenario {
   container.resolve(namedTaggedToken, { name: NAMED_TAG_NAME, tags: NAMED_TAGS });
 
   return {
-    id: "slot-name-and-tag",
-    facets: ["name", "tag"],
-    group: "slot-selection",
-    what: "resolve(token, { name, tags }) — neither the name index nor the tag index can serve it alone (codefast-only)",
+    ...SLOT_NAME_AND_TAG,
     batch: SLOT_RESOLVE_BATCH,
-    excludeFromAggregates: true,
     sanity: () =>
       container.resolve(namedTaggedToken, { name: NAMED_TAG_NAME, tags: NAMED_TAGS }).env === TARGET_TAG_VALUE,
     build: () =>
@@ -211,12 +219,8 @@ function buildResolveAllScenario(): BenchScenario {
   container.resolveAll(taggedServiceToken, { tags: HOISTED_TAGS });
 
   return {
-    id: "slot-tag-resolve-all",
-    facets: ["tag", "resolve-all"],
-    group: "slot-selection",
-    what: "resolveAll(token, { tags }) — the tagged index read once per container up the chain (codefast-only)",
+    ...SLOT_TAG_RESOLVE_ALL,
     batch: SLOT_RESOLVE_BATCH,
-    excludeFromAggregates: true,
     sanity: () => {
       const all = container.resolveAll(taggedServiceToken, { tags: HOISTED_TAGS });
 
@@ -239,12 +243,8 @@ function buildMissOptionalScenario(): BenchScenario {
   container.resolveOptional(taggedServiceToken, { tags: MISSING_TAGS });
 
   return {
-    id: "slot-tag-miss-optional",
-    facets: ["tag", "optional"],
-    group: "slot-selection",
-    what: "resolveOptional(token, { tags }) that matches no slot — the failed lookup over a populated token (codefast-only)",
+    ...SLOT_TAG_MISS_OPTIONAL,
     batch: SLOT_RESOLVE_BATCH,
-    excludeFromAggregates: true,
     // A miss is only a miss if the token really is bound — otherwise the row measures an empty registry.
     sanity: () =>
       container.resolveOptional(taggedServiceToken, { tags: MISSING_TAGS }) === undefined &&
@@ -278,12 +278,8 @@ function buildTaggedParentOwnedScenario(): BenchScenario {
   longLivedChild.resolve(parentTaggedToken, { tags: HOISTED_TAGS });
 
   return {
-    id: "slot-tag-parent-owned",
-    facets: ["tag"],
-    group: "slot-selection",
-    what: "resolve(token, { tags }) from a child for a binding the parent owns — the tagged index consulted per container up the chain, unmemoized (codefast-only)",
+    ...SLOT_TAG_PARENT_OWNED,
     batch: SLOT_RESOLVE_BATCH,
-    excludeFromAggregates: true,
     // A chain walk only if the child owns nothing under the token — otherwise this is a local hit.
     sanity: () =>
       !longLivedChild.hasOwn(parentTaggedToken) &&
@@ -306,12 +302,8 @@ function buildNamedParentOwnedScenario(): BenchScenario {
   longLivedChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE });
 
   return {
-    id: "slot-name-parent-owned",
-    facets: ["name"],
-    group: "slot-selection",
-    what: "resolve(token, { name }) from a child for a binding the parent owns — the tagged row's shape on the memoized named lane (codefast-only)",
+    ...SLOT_NAME_PARENT_OWNED,
     batch: SLOT_RESOLVE_BATCH,
-    excludeFromAggregates: true,
     sanity: () =>
       !longLivedChild.hasOwn(parentNamedToken) &&
       longLivedChild.resolve(parentNamedToken, { name: TARGET_TAG_VALUE }).env === TARGET_TAG_VALUE,
@@ -369,6 +361,8 @@ function buildInjectedNameCompiledScenario(): BenchScenario {
 
   return {
     id: "slot-injected-name-compiled",
+    tier: "engine",
+    requires: ["decorators", "name-hint"],
     facets: ["name", "plan"],
     group: "slot-selection",
     what: "resolve a class whose four dependencies each request a name — the compiled plan's escape thunks (codefast-only)",
@@ -389,6 +383,8 @@ function buildInjectedNameInterpretedScenario(): BenchScenario {
 
   return {
     id: "slot-injected-name-interpreted",
+    tier: "engine",
+    requires: ["decorators", "name-hint"],
     facets: ["name", "plan"],
     group: "slot-selection",
     what: "the same four named dependencies with the class's plan declined — the interpreted dependency lane (codefast-only)",
@@ -442,6 +438,8 @@ function buildInjectedTagCompiledScenario(): BenchScenario {
 
   return {
     id: "slot-injected-tag-compiled",
+    tier: "engine",
+    requires: ["decorators", "tag-hint"],
     facets: ["tag", "plan"],
     group: "slot-selection",
     what: "resolve a class whose four dependencies each request a tag — the compiled plan's tagged dependency lane (codefast-only)",
@@ -462,6 +460,8 @@ function buildInjectedTagInterpretedScenario(): BenchScenario {
 
   return {
     id: "slot-injected-tag-interpreted",
+    tier: "engine",
+    requires: ["decorators", "tag-hint"],
     facets: ["tag", "plan"],
     group: "slot-selection",
     what: "the same four tagged dependencies with the class's plan declined — the interpreted dependency lane (codefast-only)",

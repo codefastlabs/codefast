@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { AnyBenchScenario } from "#/child/bench-scenario";
 import { runBenchmarkChildMain } from "#/child/run-benchmark-child-main";
-import { BENCH_LIST_ENV_KEY, BENCH_ONLY_ENV_KEY } from "#/shared/env-keys";
+import { BENCH_LIST_ENV_KEY, BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#/shared/env-keys";
 import { extractSubprocessPayload } from "#/shared/protocol";
 
 const BENCH_DEFAULTS = { time: 1, iterations: 1, warmupTime: 0, warmupIterations: 0 };
 
-function trivialScenario(id: string): AnyBenchScenario {
+function trivialScenario(id: string, overrides: Partial<AnyBenchScenario> = {}): AnyBenchScenario {
   let counter = 0;
   return {
     id,
@@ -17,7 +17,8 @@ function trivialScenario(id: string): AnyBenchScenario {
     build: () => () => {
       counter += 1;
     },
-  };
+    ...overrides,
+  } as AnyBenchScenario;
 }
 
 // Runs the child flow in-process (no subprocess) and returns the framed payload it emits.
@@ -109,6 +110,63 @@ describe("runBenchmarkChildMain", () => {
     });
 
     expect(payload.trials[0]?.scenarios.map((scenario) => scenario.id)).toEqual(["alpha", "gamma"]);
+  });
+
+  it("lists each scenario's tier and requires, defaulting an undeclared tier to contract", async () => {
+    vi.stubEnv(BENCH_LIST_ENV_KEY, "true");
+    const payload = await runChildAndCapture({
+      libraryName: "lib",
+      scenarioName: "test",
+      packageRoot: process.cwd(),
+      collectScenarios: () => [
+        trivialScenario("alpha"),
+        trivialScenario("beta", { tier: "engine", requires: ["plan"] }),
+        trivialScenario("gamma", { requires: ["optional", "transient"] }),
+      ],
+      benchDefaults: BENCH_DEFAULTS,
+    });
+
+    expect(payload.scenarioListings).toEqual([
+      { id: "alpha", tier: "contract", requires: [] },
+      { id: "beta", tier: "engine", requires: ["plan"] },
+      { id: "gamma", tier: "contract", requires: ["optional", "transient"] },
+    ]);
+  });
+
+  it("runs only the requested tier and stamps every result with its tier", async () => {
+    vi.stubEnv(BENCH_TIER_ENV_KEY, "engine");
+    const payload = await runChildAndCapture({
+      libraryName: "lib",
+      scenarioName: "test",
+      packageRoot: process.cwd(),
+      collectScenarios: () => [trivialScenario("alpha"), trivialScenario("beta", { tier: "engine" })],
+      benchDefaults: BENCH_DEFAULTS,
+      trialCount: 2,
+    });
+
+    expect(payload.trials[0]?.scenarios.map((scenario) => [scenario.id, scenario.tier])).toEqual([["beta", "engine"]]);
+    // The listing still names every row, so the parent reads this as a narrowed run.
+    expect(payload.scenarioIds).toEqual(["alpha", "beta"]);
+    expect(payload.scenarioListings?.map((listing) => listing.id)).toEqual(["alpha", "beta"]);
+  });
+
+  it("applies the tier filter on top of the id filter", async () => {
+    vi.stubEnv(BENCH_ONLY_ENV_KEY, "alpha, beta");
+    vi.stubEnv(BENCH_TIER_ENV_KEY, "contract");
+    const payload = await runChildAndCapture({
+      libraryName: "lib",
+      scenarioName: "test",
+      packageRoot: process.cwd(),
+      collectScenarios: () => [
+        trivialScenario("alpha"),
+        trivialScenario("beta", { tier: "engine" }),
+        trivialScenario("gamma"),
+      ],
+      benchDefaults: BENCH_DEFAULTS,
+      trialCount: 2,
+    });
+
+    expect(payload.trials[0]?.scenarios.map((scenario) => scenario.id)).toEqual(["alpha"]);
   });
 
   // A library implementing none of the requested rows measures nothing rather than failing —

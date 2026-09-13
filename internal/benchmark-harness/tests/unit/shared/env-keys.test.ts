@@ -2,18 +2,24 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   assertBenchEnvKeys,
+  BENCH_BASELINE_ENV_KEY,
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
   BENCH_MODE_ENV_KEY,
+  BENCH_ONLY_ENV_KEY,
   BENCH_PORT_ENV_KEY,
+  BENCH_TIER_ENV_KEY,
   BENCH_TRIALS_ENV_KEY,
   isEnvFlagEnabled,
+  isRunNarrowedByEnvironment,
   parseEnvInteger,
   parseScenarioFilter,
   PORT_ENV_KEY,
+  resolveBaselineRunFromEnvironment,
   resolveBenchModeFromEnvironment,
   resolvePreferredPortFromEnvironment,
   resolveRunShapeFromEnvironment,
+  resolveTierFilterFromEnvironment,
 } from "#/shared/env-keys";
 
 const FLAG_KEY = "BENCH_TEST_FLAG";
@@ -245,5 +251,63 @@ describe("resolveRunShapeFromEnvironment", () => {
     vi.stubEnv(BENCH_ISOLATE_ENV_KEY, "true");
     vi.stubEnv(BENCH_MODE_ENV_KEY, "full");
     expect(resolveRunShapeFromEnvironment()).toStrictEqual({ isolated: true, mode: "full" });
+  });
+});
+
+describe("resolveTierFilterFromEnvironment", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("reads an unset key as every tier", () => {
+    expect(resolveTierFilterFromEnvironment()).toBeUndefined();
+  });
+
+  it.each(["contract", "engine", " Engine "])("accepts %j in any case with surrounding blanks", (value) => {
+    vi.stubEnv(BENCH_TIER_ENV_KEY, value);
+    expect(resolveTierFilterFromEnvironment()).toBe(value.trim().toLowerCase());
+  });
+
+  // Running both tiers when one was asked for reports numbers for a different run than the one requested.
+  it("throws on an unknown tier rather than running everything", () => {
+    vi.stubEnv(BENCH_TIER_ENV_KEY, "public");
+    expect(() => resolveTierFilterFromEnvironment()).toThrow(`${BENCH_TIER_ENV_KEY}="public" is not a scenario tier`);
+  });
+});
+
+describe("isRunNarrowedByEnvironment", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("is false with neither filter set", () => {
+    expect(isRunNarrowedByEnvironment()).toBe(false);
+  });
+
+  it("is true under an id filter", () => {
+    vi.stubEnv(BENCH_ONLY_ENV_KEY, "alpha");
+    expect(isRunNarrowedByEnvironment()).toBe(true);
+  });
+
+  it("is true under a tier filter alone", () => {
+    vi.stubEnv(BENCH_TIER_ENV_KEY, "contract");
+    expect(isRunNarrowedByEnvironment()).toBe(true);
+  });
+});
+
+describe("resolveBaselineRunFromEnvironment", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("reads an unset or blank key as no pin", () => {
+    expect(resolveBaselineRunFromEnvironment()).toBeUndefined();
+    vi.stubEnv(BENCH_BASELINE_ENV_KEY, "  ");
+    expect(resolveBaselineRunFromEnvironment()).toBeUndefined();
+  });
+
+  it("returns the run id or path trimmed", () => {
+    vi.stubEnv(BENCH_BASELINE_ENV_KEY, " 2026-09-12T23-19-19-864Z ");
+    expect(resolveBaselineRunFromEnvironment()).toBe("2026-09-12T23-19-19-864Z");
   });
 });

@@ -49,6 +49,8 @@ function buildInitializeAsyncWarmupScenario(): AsyncBenchScenario {
 
   return {
     id: "initialize-async-warmup",
+    tier: "contract",
+    requires: ["async-resolve", "initialize"],
     kind: "async",
     group: "boot",
     what: `fresh container + ${String(ASYNC_SINGLETON_COUNT)} async singletons + initializeAsync() (codefast-only)`,
@@ -81,6 +83,8 @@ function buildInspectSnapshotScenario(): BenchScenario {
 
   return {
     id: "inspect-snapshot",
+    tier: "contract",
+    requires: ["introspection"],
     group: "introspection",
     what: `container.inspect() over ${String(INSPECT_BINDING_COUNT)}-binding registry → full ContainerSnapshot (codefast-only)`,
     batch: INSPECT_BATCH,
@@ -116,6 +120,8 @@ function buildLookupBindingsScenario(): BenchScenario {
 
   return {
     id: "lookup-bindings",
+    tier: "contract",
+    requires: ["introspection"],
     group: "introspection",
     what: `container.lookupBindings(token) returning ${String(LOOKUP_VARIANT_COUNT)} BindingSnapshot entries (codefast-only)`,
     batch: LOOKUP_BATCH,

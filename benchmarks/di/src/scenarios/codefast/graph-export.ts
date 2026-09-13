@@ -73,6 +73,8 @@ function buildGenerateDependencyGraphScenario(): BenchScenario {
 
   return {
     id: "generate-dependency-graph",
+    tier: "contract",
+    requires: ["introspection"],
     group: "introspection",
     what: `container.generateDependencyGraph() over a ${String(GRAPH_SPECS.length)}-node class graph → nodes and their declared-dependency edges (codefast-only)`,
     batch: GRAPH_EXPORT_BATCH,

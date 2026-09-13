@@ -1,5 +1,5 @@
 /**
- * `@codefast/di` — a rebind read from the far end of a container chain (codefast-only).
+ * `@codefast/di` — a rebind read from the far end of a container chain.
  *
  * `rebind-hot-swap` rebinds and resolves on one container, where the lookup cache has one version to
  * compare. A child's cache is stamped with the summed versions of every registry up its chain, which
@@ -9,19 +9,13 @@
  */
 import { Container, token } from "@codefast/di";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import {
+  CHAIN_REBIND_BATCH,
+  CHAIN_REBIND_DEPTH,
+  REBIND_PARENT_RESOLVE_CHILD_DEPTH_3,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
-
-const CHAIN_REBIND_BATCH = 50;
-const CHAIN_DEPTH = 3;
-
-const CHAIN_REBIND_INVALIDATION = {
-  id: `rebind-parent-resolve-child-depth-${String(CHAIN_DEPTH)}`,
-  facets: ["scope"],
-  group: "lifecycle",
-  what: `rebind in the root, then resolve from a depth-${String(CHAIN_DEPTH)} child — the chain-summed version stamp invalidated per iteration (codefast-only)`,
-} as const satisfies ScenarioDescriptor;
 
 function buildChainRebindInvalidationScenario(): BenchScenario {
   const swappedToken = token<number>("bench-cf-chain-rebind");
@@ -30,7 +24,7 @@ function buildChainRebindInvalidationScenario(): BenchScenario {
   root.bind(swappedToken).toConstantValue(0);
 
   let descendant = root;
-  for (let depth = 0; depth < CHAIN_DEPTH; depth++) {
+  for (let depth = 0; depth < CHAIN_REBIND_DEPTH; depth++) {
     descendant = descendant.createChild();
   }
 
@@ -43,7 +37,7 @@ function buildChainRebindInvalidationScenario(): BenchScenario {
   runOneSwap(0);
 
   return {
-    ...CHAIN_REBIND_INVALIDATION,
+    ...REBIND_PARENT_RESOLVE_CHILD_DEPTH_3,
     batch: CHAIN_REBIND_BATCH,
     // The value has to arrive from the root: a descendant that owned the token would never walk.
     sanity: () => !descendant.hasOwn(swappedToken) && runOneSwap(99) === 99,

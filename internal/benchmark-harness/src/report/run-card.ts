@@ -1,6 +1,7 @@
 /** The card that closes a run: what ran, how long, what it found, where it went, and what to do next. */
 import { relative } from "node:path";
 
+import type { BenchScenarioTier } from "#/child/bench-scenario";
 import type { BenchRunArtifactsResult, BenchRunOutputPaths } from "#/parent/bench-run-artifacts";
 import { prefersUnicodeBars } from "#/parent/progress/create-progress-display";
 import { formatElapsed } from "#/parent/progress/render-progress-frame";
@@ -17,6 +18,8 @@ import type { TrialPayload } from "#/shared/protocol";
 export interface RunCardInput {
   readonly runId: string;
   readonly shape: BenchRunShape;
+  /** The tier the run was narrowed to, when it was. */
+  readonly tier: BenchScenarioTier | undefined;
   readonly trialCount: number;
   readonly libraryCount: number;
   readonly scenariosMeasured: number;
@@ -103,7 +106,8 @@ export function renderRunCardLines(input: RunCardInput, options: RenderRunCardOp
   const valueWidth = innerWidth - KEY_WIDTH - 1;
 
   const trials = `${String(input.trialCount)} trial${input.trialCount === 1 ? "" : "s"}`;
-  const profile = `${input.shape.mode} · ${input.shape.isolated ? "isolated" : "shared"} · ${trials}`;
+  const tier = input.tier === undefined ? "" : ` · ${input.tier} tier`;
+  const profile = `${input.shape.mode} · ${input.shape.isolated ? "isolated" : "shared"} · ${trials}${tier}`;
   const rebuild = input.rebuildMs === undefined ? "" : ` · rebuild ${formatElapsed(input.rebuildMs)}`;
   const timing = `wall ${formatElapsed(input.wallMs)}${rebuild} · ${String(input.libraryCount)} libraries · ${String(input.scenariosMeasured)} scenarios · ${String(input.observationRows)} rows`;
   const sanityCount = input.sanityFailures.reduce((total, entry) => total + entry.ids.length, 0);
@@ -181,6 +185,7 @@ export function printRunCard(parameters: PrintRunCardParameters): void {
     {
       runId: paths.runId,
       shape: parameters.shape,
+      tier: comparisonDocument.run.scenarioTier ?? undefined,
       trialCount: pivot.report.trialCount,
       libraryCount: libraries.length,
       scenariosMeasured: comparisonDocument.run.scenariosMeasured,

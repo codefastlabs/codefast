@@ -1,11 +1,15 @@
 import type { BenchSubprocessConfig } from "@internal/benchmark-harness/shared/config";
 
+import type { DiFeature } from "#/fixtures/features";
+
 /** One benched library: how the parent spawns it, heads its column, and describes its wiring. */
 export interface DiBenchLibrary extends BenchSubprocessConfig {
   /** Abbreviation heading the library's ratio column in the comparison table. */
   readonly shortName: string;
   /** How the library wires dependencies at runtime, printed beside its name in the run header. */
   readonly runtime: string;
+  /** Features the library's public API offers; a row it lacks while declaring every feature it requires is a gap. */
+  readonly features: ReadonlyArray<DiFeature>;
 }
 
 /**
@@ -21,6 +25,43 @@ export const CODEFAST_DI = {
   benchEntryFileName: "codefast-benches.ts",
   shortName: "cf",
   runtime: "TC39 Stage 3 decorators + Symbol.metadata",
+  features: [
+    "transient",
+    "transient-root",
+    "optional",
+    "optional-injection",
+    "name-hint",
+    "tag-hint",
+    "multi-tag",
+    "tagged-injection",
+    "contextual-constraint",
+    "resolve-all",
+    "async-resolve",
+    "async-value",
+    "post-construct",
+    "activation-hook",
+    "binding-activation-hook",
+    "deactivation",
+    "child-container",
+    "scoped",
+    "dispose",
+    "rebind",
+    "has",
+    "has-own",
+    "module",
+    "module-unload",
+    "alias",
+    "class-injection",
+    "explicit-deps",
+    "self-binding",
+    "decorators",
+    "property-injection",
+    "cycle-detection",
+    "ambiguity-error",
+    "validate",
+    "introspection",
+    "initialize",
+  ],
 } as const satisfies DiBenchLibrary;
 
 /**
@@ -34,6 +75,40 @@ export const INVERSIFY = {
   displayName: "InversifyJS 8",
   shortName: "inv",
   runtime: "legacy experimental decorators + reflect-metadata, `{ jitless: false }` codegen resolvers",
+  // `get(id, { tag })` takes one tag, so no `multi-tag`; `snapshot()` saves state rather than reading it back.
+  features: [
+    "transient",
+    "transient-root",
+    "optional",
+    "optional-injection",
+    "name-hint",
+    "tag-hint",
+    "tagged-injection",
+    "contextual-constraint",
+    "resolve-all",
+    "async-resolve",
+    "async-value",
+    "post-construct",
+    "activation-hook",
+    "binding-activation-hook",
+    "deactivation",
+    "child-container",
+    "scoped",
+    "dispose",
+    "rebind",
+    "has",
+    "has-own",
+    "module",
+    "module-unload",
+    "alias",
+    "class-injection",
+    "explicit-deps",
+    "self-binding",
+    "decorators",
+    "property-injection",
+    "cycle-detection",
+    "ambiguity-error",
+  ],
 } as const satisfies DiBenchLibrary;
 
 /**
@@ -47,6 +122,22 @@ export const AWILIX = {
   displayName: "Awilix 13",
   shortName: "awi",
   runtime: "decorator-free, `asClass` / `asFunction` registrations resolved through the proxy cradle",
+  // Registrations are keyed by name with no qualifier or collection, and `loadModules` globs files rather than composing units.
+  features: [
+    "transient",
+    "transient-root",
+    "optional",
+    "async-value",
+    "deactivation",
+    "child-container",
+    "scoped",
+    "dispose",
+    "rebind",
+    "has",
+    "class-injection",
+    "alias",
+    "cycle-detection",
+  ],
 } as const satisfies DiBenchLibrary;
 
 /**
@@ -60,6 +151,24 @@ export const TSYRINGE = {
   displayName: "tsyringe 4",
   shortName: "tsy",
   runtime: "legacy experimental decorators + reflect-metadata",
+  // `afterResolution` is its activation hook; a second `register` on a token appends rather than replaces.
+  features: [
+    "transient",
+    "transient-root",
+    "resolve-all",
+    "async-value",
+    "activation-hook",
+    "deactivation",
+    "child-container",
+    "scoped",
+    "dispose",
+    "has",
+    "has-own",
+    "class-injection",
+    "alias",
+    "self-binding",
+    "decorators",
+  ],
 } as const satisfies DiBenchLibrary;
 
 /**
@@ -73,6 +182,20 @@ export const BRANDI = {
   displayName: "Brandi 5",
   shortName: "brn",
   runtime: "decorator-free, tokens wired with `injected()`",
+  // Tags select by the consumer's own tag only; there is no call-site qualifier, collection or teardown.
+  features: [
+    "transient",
+    "transient-root",
+    "optional",
+    "optional-injection",
+    "tagged-injection",
+    "async-value",
+    "child-container",
+    "scoped",
+    "module",
+    "class-injection",
+    "explicit-deps",
+  ],
 } as const satisfies DiBenchLibrary;
 
 /**
@@ -86,6 +209,23 @@ export const DITOX = {
   displayName: "Ditox 3",
   shortName: "dtx",
   runtime: "decorator-free, tokens wired with `bindFactory`",
+  features: [
+    "transient",
+    "transient-root",
+    "optional",
+    "optional-injection",
+    "resolve-all",
+    "async-value",
+    "deactivation",
+    "child-container",
+    "scoped",
+    "dispose",
+    "rebind",
+    "has",
+    "module",
+    "class-injection",
+    "explicit-deps",
+  ],
 } as const satisfies DiBenchLibrary;
 
 /**
@@ -100,6 +240,21 @@ export const INJECTION_JS = {
   displayName: "injection-js 2",
   shortName: "inj",
   runtime: "legacy experimental decorators + reflect-metadata",
+  // `ReflectiveInjector` caches every provider, so only a root can be transient, and nothing is ever unbound.
+  features: [
+    "transient-root",
+    "optional",
+    "optional-injection",
+    "resolve-all",
+    "async-value",
+    "child-container",
+    "alias",
+    "class-injection",
+    "explicit-deps",
+    "self-binding",
+    "decorators",
+    "cycle-detection",
+  ],
 } as const satisfies DiBenchLibrary;
 
 /** Every competitor in comparison-column order; the subject is never in this list. */

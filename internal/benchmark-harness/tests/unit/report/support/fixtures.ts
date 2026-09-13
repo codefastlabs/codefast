@@ -30,6 +30,7 @@ export function scenario(
   return {
     id,
     group,
+    tier: "contract",
     stress: false,
     excludeFromAggregates: false,
     batch: 1,

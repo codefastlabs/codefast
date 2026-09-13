@@ -53,6 +53,7 @@ function flattenLibraryToJsonl(
         trialIndex: trial.trialIndex,
         scenarioId: scenarioResult.id,
         group: scenarioResult.group,
+        tier: scenarioResult.tier,
         stress: scenarioResult.stress,
         excludeFromAggregates: scenarioResult.excludeFromAggregates,
         batch: scenarioResult.batch,

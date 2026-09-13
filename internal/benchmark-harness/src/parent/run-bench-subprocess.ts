@@ -1,6 +1,8 @@
 import { spawn } from "node:child_process";
 import { join } from "node:path";
 
+import type { BenchScenarioTier } from "#/child/bench-scenario";
+import { DEFAULT_BENCH_SCENARIO_TIER } from "#/child/bench-scenario";
 import { PlainProgressDisplay } from "#/parent/progress/plain-progress-display";
 import type { ProgressDisplay } from "#/parent/progress/progress-display";
 import {
@@ -11,10 +13,11 @@ import {
   isEnvFlagEnabled,
   resolveBenchModeFromEnvironment,
   resolveScenarioFilterFromEnvironment,
+  resolveTierFilterFromEnvironment,
 } from "#/shared/env-keys";
 import { parseProgressEvent } from "#/shared/progress";
 import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#/shared/protocol";
-import type { SubprocessPayload, TrialPayload } from "#/shared/protocol";
+import type { ScenarioListing, SubprocessPayload, TrialPayload } from "#/shared/protocol";
 
 /**
  * Failure of a bench subprocess, carrying the exit code the child ended with.
@@ -338,9 +341,11 @@ function mergeIsolatedTrials(workerPayloads: ReadonlyArray<SubprocessPayload>): 
  *
  * @since 0.6.0
  */
-export async function discoverBenchScenarioIds(
-  parameters: RunBenchSubprocessParameters,
-): Promise<{ fingerprint: SubprocessPayload["fingerprint"]; scenarioIds: ReadonlyArray<string> }> {
+export async function discoverBenchScenarioIds(parameters: RunBenchSubprocessParameters): Promise<{
+  fingerprint: SubprocessPayload["fingerprint"];
+  scenarioIds: ReadonlyArray<string>;
+  scenarioListings: ReadonlyArray<ScenarioListing>;
+}> {
   const listPayload = await runBenchSubprocess({
     ...parameters,
     harnessLabel: `${parameters.harnessLabel} [list]`,
@@ -351,7 +356,10 @@ export async function discoverBenchScenarioIds(
   if (scenarioIds.length === 0) {
     throw new Error(`${parameters.harnessLabel} list run returned no scenario ids.`);
   }
-  return { fingerprint: listPayload.fingerprint, scenarioIds };
+  // A child predating listings is read as all-contract, which is what a suite without tiers is.
+  const scenarioListings =
+    listPayload.scenarioListings ?? scenarioIds.map((id) => ({ id, tier: DEFAULT_BENCH_SCENARIO_TIER, requires: [] }));
+  return { fingerprint: listPayload.fingerprint, scenarioIds, scenarioListings };
 }
 
 /**
@@ -414,19 +422,28 @@ export async function runBenchSubprocessesInterleaved(
   // Filtered here rather than in the child: the loop below sets BENCH_ONLY per scenario, so a
   // filter left to the child would be overwritten and the whole suite would run anyway.
   const requestedScenarioIds = resolveScenarioFilterFromEnvironment();
+  const requestedTier = resolveTierFilterFromEnvironment();
   const discoveredScenarioIds = unionScenarioIds(
     libraries.map((library) => discoveries.get(library.key)?.scenarioIds ?? []),
   );
-  const scenarioIds =
-    requestedScenarioIds === undefined
-      ? discoveredScenarioIds
-      : discoveredScenarioIds.filter((id) => requestedScenarioIds.has(id));
+  const tierOf = new Map<string, BenchScenarioTier>();
+  for (const library of libraries) {
+    for (const listing of discoveries.get(library.key)?.scenarioListings ?? []) {
+      tierOf.set(listing.id, listing.tier);
+    }
+  }
+  const scenarioIds = discoveredScenarioIds.filter(
+    (id) =>
+      (requestedScenarioIds === undefined || requestedScenarioIds.has(id)) &&
+      (requestedTier === undefined || (tierOf.get(id) ?? DEFAULT_BENCH_SCENARIO_TIER) === requestedTier),
+  );
   for (const library of libraries) {
     const implemented = discoveries.get(library.key)?.scenarioIds ?? [];
     display?.setScenarioCount(library.key, scenarioIds.filter((id) => implemented.includes(id)).length);
   }
+  const tierNote = requestedTier === undefined ? "" : ` (${requestedTier} tier)`;
   display?.log(
-    `[bench] BENCH_ISOLATE=true: ${String(scenarioIds.length)} scenarios × ${String(libraries.length)} libraries, interleaved with rotating order.`,
+    `[bench] BENCH_ISOLATE=true: ${String(scenarioIds.length)} scenarios${tierNote} × ${String(libraries.length)} libraries, interleaved with rotating order.`,
   );
 
   const workerPayloads = new Map<string, Array<SubprocessPayload>>(libraries.map((library) => [library.key, []]));
@@ -461,6 +478,7 @@ export async function runBenchSubprocessesInterleaved(
       trials: mergeIsolatedTrials(payloads),
       sanityFailures: payloads.flatMap((payload) => payload.sanityFailures),
       scenarioIds: discoveries.get(library.key)!.scenarioIds,
+      scenarioListings: discoveries.get(library.key)!.scenarioListings,
     });
   }
   return merged;

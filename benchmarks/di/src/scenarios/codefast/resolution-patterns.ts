@@ -32,9 +32,11 @@ import {
   OPTIONAL_MISS_BATCH,
   RESOLVE_OPTIONAL_HIT,
   RESOLVE_OPTIONAL_MISS,
+  SLOT_COUNTS,
   TAGGED_BINDING_RESOLVE,
   TAGGED_ENVS,
   TAGGED_RESOLVE_BATCH,
+  taggedResolveSlotsDescriptor,
   TARGET_TAG_VALUE,
 } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
@@ -123,6 +125,29 @@ class ConditionalConsumer {
   constructor(readonly service: TaggedService) {}
 }
 
+// The tagged-selection axis: the last-bound tag value is the target, the far end of any linear scan.
+function buildTaggedResolveSlotsScenario(count: number): BenchScenario {
+  const slotsToken = token<TaggedService>(`bench-cf-rp-tagged-slots-${String(count)}`);
+  const container = Container.create();
+  for (let index = 0; index < count; index++) {
+    const env = `env-${String(index)}`;
+    container.bind(slotsToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
+  }
+  const targetEnv = `env-${String(count - 1)}`;
+  const target = { tags: [ENV_TAG.of(targetEnv)] } as const;
+  container.resolve(slotsToken, target);
+
+  return {
+    ...taggedResolveSlotsDescriptor(count),
+    batch: TAGGED_RESOLVE_BATCH,
+    sanity: () => container.resolve(slotsToken, target).env === targetEnv,
+    build: () =>
+      batched(TAGGED_RESOLVE_BATCH, () => {
+        container.resolve(slotsToken, target);
+      }),
+  };
+}
+
 function buildConditionalInjectionTaggedScenario(): BenchScenario {
   const container = Container.create();
 
@@ -151,6 +176,7 @@ export function buildCodefastResolutionPatternScenarios(): ReadonlyArray<BenchSc
     buildResolveOptionalHitScenario(),
     buildResolveOptionalMissScenario(),
     buildTaggedBindingResolveScenario(),
+    ...SLOT_COUNTS.map((count) => buildTaggedResolveSlotsScenario(count)),
     buildConditionalInjectionTaggedScenario(),
   ];
 }

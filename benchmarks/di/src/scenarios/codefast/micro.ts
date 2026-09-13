@@ -15,14 +15,17 @@
  */
 import { Container, injectable, optional, token } from "@codefast/di";
 
+import { isFreshEachResolve } from "#/fixtures/sanity";
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
   CONSTANT_RESOLVE_BATCH,
   NAMED_CONSTANT_GET,
   NAMED_RESOLVE_BATCH,
+  namedResolveSlotsDescriptor,
   OPTIONAL_MISSING_TRANSIENT,
   SINGLETON_CLASS_1_DEP,
+  SLOT_COUNTS,
   TRANSIENT_CLASS_1_DEP,
 } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
@@ -100,11 +103,11 @@ function buildTransientClassOneDepScenario(): BenchScenario {
   return {
     ...TRANSIENT_CLASS_1_DEP,
     batch: CLASS_RESOLVE_BATCH,
-    sanity: () => {
-      const firstResolution = container.resolve(microServiceWithOneDependencyToken);
-      const secondResolution = container.resolve(microServiceWithOneDependencyToken);
-      return firstResolution !== secondResolution && firstResolution.leafDependency !== secondResolution.leafDependency;
-    },
+    sanity: () =>
+      isFreshEachResolve(
+        () => container.resolve(microServiceWithOneDependencyToken),
+        (service) => service.leafDependency,
+      ),
     build: () =>
       batched(CLASS_RESOLVE_BATCH, () => {
         container.resolve(microServiceWithOneDependencyToken);
@@ -171,12 +174,37 @@ function buildOptionalMissingTransientScenario(): BenchScenario {
   };
 }
 
+// The named-selection axis: the last-bound name is the target, the far end of any linear scan.
+function buildNamedResolveSlotsScenario(count: number): BenchScenario {
+  const slotsToken = token<number>(`bench-cf-micro-named-slots-${String(count)}`);
+  const container = Container.create();
+  for (let index = 0; index < count; index++) {
+    container
+      .bind(slotsToken)
+      .toConstantValue(index)
+      .whenNamed(`slot-${String(index)}`);
+  }
+  const target = { name: `slot-${String(count - 1)}` } as const;
+  container.resolve(slotsToken, target);
+
+  return {
+    ...namedResolveSlotsDescriptor(count),
+    batch: NAMED_RESOLVE_BATCH,
+    sanity: () => container.resolve(slotsToken, target) === count - 1,
+    build: () =>
+      batched(NAMED_RESOLVE_BATCH, () => {
+        container.resolve(slotsToken, target);
+      }),
+  };
+}
+
 export function buildCodefastMicroScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildConstantResolveScenario(),
     buildSingletonClassOneDepScenario(),
     buildTransientClassOneDepScenario(),
     buildNamedConstantGetScenario(),
+    ...SLOT_COUNTS.map((count) => buildNamedResolveSlotsScenario(count)),
     buildOptionalMissingTransientScenario(),
   ];
 }

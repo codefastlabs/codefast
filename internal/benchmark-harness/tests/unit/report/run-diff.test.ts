@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { PreviousRun } from "#/report/run-diff";
-import { buildRunDiff, formatCompactHz, formatDeltaPercent } from "#/report/run-diff";
+import { buildRunDiff, describeDiffTarget, formatCompactHz, formatDeltaPercent } from "#/report/run-diff";
 import { fingerprint, library, scenario, trials } from "#/tests/unit/report/support/fixtures";
 
 const SHAPE = { isolated: false, mode: "fast" as const };
@@ -9,6 +9,7 @@ const SHAPE = { isolated: false, mode: "fast" as const };
 function previousRun(overrides: Partial<PreviousRun> = {}): PreviousRun {
   return {
     runId: "prev",
+    pinned: false,
     shape: SHAPE,
     trialCount: 1,
     libraries: new Map([
@@ -97,6 +98,21 @@ describe("buildRunDiff", () => {
 
     const noSubject = buildRunDiff(current, previousRun({ libraries: new Map() }));
     expect(noSubject.comparable).toBe(false);
+  });
+});
+
+describe("pinned baselines", () => {
+  it("carries the pin through to the diff and names it in the target label", () => {
+    const pinned = buildRunDiff(current, previousRun({ pinned: true }));
+    expect(pinned.pinned).toBe(true);
+    expect(describeDiffTarget(pinned)).toBe("baseline prev");
+    expect(describeDiffTarget(buildRunDiff(current, previousRun()))).toBe("prev");
+  });
+
+  it("keeps the pin on a diff that is not comparable, so the refusal names the baseline", () => {
+    const refused = buildRunDiff(current, previousRun({ pinned: true, trialCount: 3 }));
+    expect(refused.comparable).toBe(false);
+    expect(describeDiffTarget(refused)).toBe("baseline prev");
   });
 });
 

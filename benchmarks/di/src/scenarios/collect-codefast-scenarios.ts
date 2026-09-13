@@ -23,6 +23,7 @@ import { buildCodefastPlanDepthScenarios } from "#/scenarios/codefast/plan-depth
 import { buildCodefastPlanEscapeScenarios } from "#/scenarios/codefast/plan-escape";
 import { buildCodefastProductionScenarios } from "#/scenarios/codefast/production";
 import { buildCodefastRealisticScenarios } from "#/scenarios/codefast/realistic";
+import { buildCodefastRealisticClassScenarios } from "#/scenarios/codefast/realistic-class";
 import { buildCodefastRealisticGraphValidateScenarios } from "#/scenarios/codefast/realistic-graph-validate";
 import { buildCodefastRegistryInvalidationScenarios } from "#/scenarios/codefast/registry-invalidation";
 import { buildCodefastRegistryOpsScenarios } from "#/scenarios/codefast/registry-ops";
@@ -41,6 +42,7 @@ export function collectAllCodefastScenarios(): ReadonlyArray<AnyScenario> {
   return [
     ...buildCodefastMicroScenarios(),
     ...buildCodefastRealisticScenarios(),
+    ...buildCodefastRealisticClassScenarios(),
     ...buildCodefastRealisticGraphValidateScenarios(),
     ...buildCodefastFanOutScenarios(),
     ...buildCodefastAsyncScenarios(),

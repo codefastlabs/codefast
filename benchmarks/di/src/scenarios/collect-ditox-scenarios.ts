@@ -1,17 +1,23 @@
+import { buildDitoxAsyncScenarios } from "#/scenarios/ditox/async";
+import { buildDitoxBindingVariantScenarios } from "#/scenarios/ditox/binding-variants";
+import { buildDitoxBootScenarios } from "#/scenarios/ditox/boot";
+import { buildDitoxDisposeScaleScenarios } from "#/scenarios/ditox/dispose-scale";
+import { buildDitoxFailureScenarios } from "#/scenarios/ditox/failure";
 /**
- * Central list of all ditox bench scenarios. Used by the bench subprocess.
- * Ditox is functional and token-based with singleton/transient scopes and real
- * container hierarchy (`createContainer(parent)`), so it covers the factory/
- * class-binding core subset, the depth-2 child-scope and per-request scoped rows,
- * the `resolveAll` strategy rows (via `bindMultiValue`), cold module composition
- * (`bindModule`), and the disposal row (`onRemoved`) — the codefast-only
- * introspection rows stay absent.
+ * Every ditox scenario, in report order: the rows ditox's factory, hierarchy, module, collection and teardown
+ * APIs express natively.
  */
 import { buildDitoxFanOutScenarios } from "#/scenarios/ditox/fan-out";
+import { buildDitoxFreshChildScenarios } from "#/scenarios/ditox/fresh-child";
 import { buildDitoxLifecycleScenarios } from "#/scenarios/ditox/lifecycle";
 import { buildDitoxMicroScenarios } from "#/scenarios/ditox/micro";
 import { buildDitoxModuleScenarios } from "#/scenarios/ditox/module";
+import { buildDitoxProductionScenarios } from "#/scenarios/ditox/production";
 import { buildDitoxRealisticScenarios } from "#/scenarios/ditox/realistic";
+import { buildDitoxRealisticClassScenarios } from "#/scenarios/ditox/realistic-class";
+import { buildDitoxRegistryOpsScenarios } from "#/scenarios/ditox/registry-ops";
+import { buildDitoxResolutionPatternScenarios } from "#/scenarios/ditox/resolution-patterns";
+import { buildDitoxResolverLaneScenarios } from "#/scenarios/ditox/resolver-lanes";
 import { buildDitoxScaleScenarios } from "#/scenarios/ditox/scale";
 import { buildDitoxScopeScenarios } from "#/scenarios/ditox/scope";
 import type { AnyScenario } from "#/scenarios/types";
@@ -23,10 +29,21 @@ export function collectAllDitoxScenarios(): ReadonlyArray<AnyScenario> {
   return [
     ...buildDitoxMicroScenarios(),
     ...buildDitoxRealisticScenarios(),
+    ...buildDitoxRealisticClassScenarios(),
     ...buildDitoxFanOutScenarios(),
     ...buildDitoxModuleScenarios(),
     ...buildDitoxLifecycleScenarios(),
     ...buildDitoxScaleScenarios(),
     ...buildDitoxScopeScenarios(),
+    ...buildDitoxProductionScenarios(),
+    ...buildDitoxBootScenarios(),
+    ...buildDitoxDisposeScaleScenarios(),
+    ...buildDitoxAsyncScenarios(),
+    ...buildDitoxBindingVariantScenarios(),
+    ...buildDitoxFailureScenarios(),
+    ...buildDitoxFreshChildScenarios(),
+    ...buildDitoxRegistryOpsScenarios(),
+    ...buildDitoxResolutionPatternScenarios(),
+    ...buildDitoxResolverLaneScenarios(),
   ];
 }

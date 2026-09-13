@@ -2,7 +2,7 @@ import type { BenchEvent, BenchOptions, TaskResult } from "tinybench";
 import { Bench } from "tinybench";
 
 import type { AnyBenchScenario } from "#/child/bench-scenario";
-import { isAsyncScenario } from "#/child/bench-scenario";
+import { isAsyncScenario, tierOfScenario } from "#/child/bench-scenario";
 import type { BenchMode } from "#/shared/env-keys";
 import {
   BENCH_TRIALS_ENV_KEY,
@@ -74,6 +74,7 @@ function createZeroedScenarioTrialResult(scenario: AnyBenchScenario, hzPerIterat
   return {
     id: scenario.id,
     group: scenario.group,
+    tier: tierOfScenario(scenario),
     stress: scenario.stress === true,
     excludeFromAggregates: scenario.excludeFromAggregates === true,
     batch,
@@ -249,6 +250,7 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
       trialScenarioResults.push({
         id: scenario.id,
         group: scenario.group,
+        tier: tierOfScenario(scenario),
         stress: scenario.stress === true,
         excludeFromAggregates: scenario.excludeFromAggregates === true,
         batch,

@@ -1,3 +1,5 @@
+import type { BenchScenarioTier } from "#/child/bench-scenario";
+import { DEFAULT_BENCH_SCENARIO_TIER } from "#/child/bench-scenario";
 import type { BenchRunShape } from "#/shared/env-keys";
 import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
 
@@ -21,6 +23,8 @@ export interface JsonlBenchObservationRow {
   readonly trialIndex: number;
   readonly scenarioId: string;
   readonly group: string;
+  /** Absent on rows written before tiers existed, which were all contract rows. */
+  readonly tier?: BenchScenarioTier;
   readonly stress: boolean;
   readonly excludeFromAggregates?: boolean;
   readonly batch: number;
@@ -139,6 +143,7 @@ export function jsonlBenchObservationRowToScenarioTrialResult(row: JsonlBenchObs
   return {
     id: row.scenarioId,
     group: row.group,
+    tier: row.tier ?? DEFAULT_BENCH_SCENARIO_TIER,
     stress: row.stress,
     excludeFromAggregates: row.excludeFromAggregates === true,
     batch: row.batch,

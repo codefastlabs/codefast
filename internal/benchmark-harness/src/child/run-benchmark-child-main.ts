@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import type { BenchOptions } from "tinybench";
 
 import type { AnyBenchScenario } from "#/child/bench-scenario";
+import { tierOfScenario } from "#/child/bench-scenario";
 import { createRunAllTrials } from "#/child/create-run-all-trials";
 import { collectFingerprint } from "#/child/fingerprint";
 import { runSanityChecks } from "#/child/run-sanity-checks";
@@ -12,11 +13,25 @@ import {
   assertBenchEnvKeys,
   BENCH_LIST_ENV_KEY,
   BENCH_ONLY_ENV_KEY,
+  BENCH_TIER_ENV_KEY,
   isEnvFlagEnabled,
   resolveScenarioFilterFromEnvironment,
+  resolveTierFilterFromEnvironment,
 } from "#/shared/env-keys";
 import { formatProgressEvent } from "#/shared/progress";
+import type { ScenarioListing } from "#/shared/protocol";
 import { emitSubprocessPayload } from "#/shared/protocol";
+
+/**
+ * What a child reports about each scenario it collected, measured or not.
+ */
+export function listScenarios(scenarios: ReadonlyArray<AnyBenchScenario>): Array<ScenarioListing> {
+  return scenarios.map((scenario) => ({
+    id: scenario.id,
+    tier: tierOfScenario(scenario),
+    requires: [...(scenario.requires ?? [])],
+  }));
+}
 
 /**
  * Parameters for {@link runBenchmarkChildMain}.
@@ -52,6 +67,7 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
   assertBenchEnvKeys({ allowInternalKeys: true });
   console.error(formatProgressEvent({ kind: "child-started", scenarioName }));
   const allScenarios = collectScenarios();
+  const scenarioListings = listScenarios(allScenarios);
 
   // Discovery mode for BENCH_ISOLATE: report ids only, run nothing.
   if (isEnvFlagEnabled(BENCH_LIST_ENV_KEY)) {
@@ -60,6 +76,7 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
       trials: [],
       sanityFailures: [],
       scenarioIds: allScenarios.map((scenario) => scenario.id),
+      scenarioListings,
     });
     console.error(formatProgressEvent({ kind: "child-completed", scenarioName, listMode: true }));
     return;
@@ -69,14 +86,18 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
   // Matching nothing measures nothing: only some libraries implement any given row, and failing
   // here would take the whole comparison down with them.
   const requestedScenarioIds = resolveScenarioFilterFromEnvironment();
-  const scenarios =
-    requestedScenarioIds === undefined
-      ? allScenarios
-      : allScenarios.filter((scenario) => requestedScenarioIds.has(scenario.id));
+  const requestedTier = resolveTierFilterFromEnvironment();
+  const scenarios = allScenarios.filter(
+    (scenario) =>
+      (requestedScenarioIds === undefined || requestedScenarioIds.has(scenario.id)) &&
+      (requestedTier === undefined || tierOfScenario(scenario) === requestedTier),
+  );
   if (scenarios.length === 0) {
-    console.error(
-      `[bench] ${scenarioName} implements none of ${BENCH_ONLY_ENV_KEY}="${process.env[BENCH_ONLY_ENV_KEY] ?? ""}"; measuring nothing.`,
-    );
+    const asked = [
+      requestedScenarioIds === undefined ? [] : [`${BENCH_ONLY_ENV_KEY}="${process.env[BENCH_ONLY_ENV_KEY] ?? ""}"`],
+      requestedTier === undefined ? [] : [`${BENCH_TIER_ENV_KEY}="${requestedTier}"`],
+    ].flat();
+    console.error(`[bench] ${scenarioName} implements none of ${asked.join(" ")}; measuring nothing.`);
   }
   const sanityFailures = await runSanityChecks(scenarios);
   const { runAllTrials } = createRunAllTrials({ benchDefaults, mode, trialCount });
@@ -89,6 +110,7 @@ export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainPar
     // Every id the library has, not only the measured ones: the parent cannot otherwise tell a
     // filtered run from a whole suite, and a partial run must not read as the current state.
     scenarioIds: allScenarios.map((scenario) => scenario.id),
+    scenarioListings,
   });
   console.error(formatProgressEvent({ kind: "child-completed", scenarioName, listMode: false }));
 }

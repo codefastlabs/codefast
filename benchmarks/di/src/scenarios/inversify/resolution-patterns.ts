@@ -9,16 +9,20 @@
  *     (single-tag shorthand in inversify v8 `GetOptions`)
  */
 import "reflect-metadata";
-import { Container } from "inversify";
+import { Container, inject, injectable, tagged } from "inversify";
 
 import {
+  CONDITIONAL_INJECTION_BATCH,
+  CONDITIONAL_INJECTION_TAGGED,
   OPTIONAL_HIT_BATCH,
   OPTIONAL_MISS_BATCH,
   RESOLVE_OPTIONAL_HIT,
   RESOLVE_OPTIONAL_MISS,
+  SLOT_COUNTS,
   TAGGED_BINDING_RESOLVE,
   TAGGED_ENVS,
   TAGGED_RESOLVE_BATCH,
+  taggedResolveSlotsDescriptor,
   TARGET_TAG_VALUE,
 } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
@@ -105,9 +109,73 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
   };
 }
 
+const conditionalServiceId = Symbol("bench-inv-rp-conditional-service");
+const conditionalConsumerId = Symbol("bench-inv-rp-conditional-consumer");
+
+@injectable()
+class ConditionalConsumer {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(conditionalServiceId)
+    // @ts-ignore reflect-metadata + explicit token injection
+    @tagged("env", TARGET_TAG_VALUE)
+    readonly service: TaggedService,
+  ) {}
+}
+
+function buildConditionalInjectionTaggedScenario(): BenchScenario {
+  const container = new Container({ jitless: false });
+  for (const env of TAGGED_ENVS) {
+    container.bind<TaggedService>(conditionalServiceId).toConstantValue({ env }).whenTagged("env", env);
+  }
+  container.bind<ConditionalConsumer>(conditionalConsumerId).to(ConditionalConsumer).inTransientScope();
+  container.get(conditionalConsumerId);
+
+  return {
+    ...CONDITIONAL_INJECTION_TAGGED,
+    what: `get() a transient consumer whose @tagged parameter selects its binding (1 of ${String(TAGGED_ENVS.length)})`,
+    batch: CONDITIONAL_INJECTION_BATCH,
+    sanity: () => container.get<ConditionalConsumer>(conditionalConsumerId).service.env === TARGET_TAG_VALUE,
+    build: () =>
+      batched(CONDITIONAL_INJECTION_BATCH, () => {
+        container.get(conditionalConsumerId);
+      }),
+  };
+}
+
+// The tagged-selection axis: the last-bound tag value is the target, the far end of any linear scan.
+function buildTaggedResolveSlotsScenario(count: number): BenchScenario {
+  const slotsIdentifier = Symbol(`bench-inv-rp-tagged-slots-${String(count)}`);
+  const container = new Container({ jitless: false });
+  for (let index = 0; index < count; index++) {
+    const env = `env-${String(index)}`;
+    container.bind<TaggedService>(slotsIdentifier).toConstantValue({ env }).whenTagged("env", env);
+  }
+  const targetEnv = `env-${String(count - 1)}`;
+  const target = { tag: { key: "env", value: targetEnv } } as const;
+  container.get<TaggedService>(slotsIdentifier, target);
+
+  return {
+    ...taggedResolveSlotsDescriptor(count),
+    what: `get() one tagged constant out of ${String(count)} whenTagged() bindings on one identifier`,
+    batch: TAGGED_RESOLVE_BATCH,
+    sanity: () => container.get<TaggedService>(slotsIdentifier, target).env === targetEnv,
+    build: () =>
+      batched(TAGGED_RESOLVE_BATCH, () => {
+        container.get(slotsIdentifier, target);
+      }),
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildInversifyResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildGetOptionalHitScenario(), buildGetOptionalMissScenario(), buildTaggedBindingResolveScenario()];
+  return [
+    buildGetOptionalHitScenario(),
+    buildGetOptionalMissScenario(),
+    buildTaggedBindingResolveScenario(),
+    ...SLOT_COUNTS.map((count) => buildTaggedResolveSlotsScenario(count)),
+    buildConditionalInjectionTaggedScenario(),
+  ];
 }

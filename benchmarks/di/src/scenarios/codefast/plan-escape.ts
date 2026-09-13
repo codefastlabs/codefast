@@ -154,6 +154,8 @@ function buildOptionalDepsScenario(): BenchScenario {
 
   return {
     id: "plan-escape-optional-dep",
+    tier: "engine",
+    requires: ["decorators", "optional-injection"],
     facets: ["plan", "optional"],
     group: "resolution",
     what: "resolve a 4-dep transient class whose every dependency is optional and bound — four escapes at optional arity (codefast-only)",
@@ -174,6 +176,8 @@ function buildMultiDepsScenario(): BenchScenario {
 
   return {
     id: "plan-escape-multi-dep",
+    tier: "engine",
+    requires: ["decorators", "resolve-all"],
     facets: ["plan"],
     group: "resolution",
     what: "resolve a 4-dep transient class whose every dependency is injectAll — four escapes at all arity (codefast-only)",
@@ -194,6 +198,8 @@ export function buildCodefastPlanEscapeScenarios(): ReadonlyArray<BenchScenario>
     buildPlainDepsScenario(
       {
         id: "plan-deps-inlined",
+        tier: "engine",
+        requires: ["decorators", "transient"],
         facets: ["plan"],
         group: "resolution",
         what: "resolve a 4-dep transient class whose leaves are transient classes — the plan inlines all four, no escape (codefast-only)",
@@ -203,6 +209,8 @@ export function buildCodefastPlanEscapeScenarios(): ReadonlyArray<BenchScenario>
     buildPlainDepsScenario(
       {
         id: "plan-escape-factory-dep",
+        tier: "engine",
+        requires: ["decorators"],
         facets: ["plan"],
         group: "resolution",
         what: "the same class with toDynamic leaves — four escapes, one per opaque factory (codefast-only)",
@@ -212,6 +220,8 @@ export function buildCodefastPlanEscapeScenarios(): ReadonlyArray<BenchScenario>
     buildPlainDepsScenario(
       {
         id: "plan-escape-scoped-dep",
+        tier: "engine",
+        requires: ["decorators", "scoped"],
         facets: ["scope", "plan"],
         group: "resolution",
         what: "the same class with scoped leaves served from a warm scope — four escapes, no per-resolve rebuild, held out of the aggregates (codefast-only)",
@@ -222,6 +232,8 @@ export function buildCodefastPlanEscapeScenarios(): ReadonlyArray<BenchScenario>
     buildPlainDepsScenario(
       {
         id: "plan-escape-hooked-dep",
+        tier: "engine",
+        requires: ["activation-hook", "decorators"],
         facets: ["plan", "hook"],
         group: "resolution",
         what: "the same class with leaves carrying .onActivation() — four escapes, one per declined leaf plan (codefast-only)",

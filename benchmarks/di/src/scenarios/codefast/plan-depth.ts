@@ -91,6 +91,8 @@ export function buildCodefastPlanDepthScenarios(): ReadonlyArray<BenchScenario> 
     buildClassChainScenario(
       {
         id: `plan-class-chain-${String(SHALLOW_CHAIN_DEPTH)}`,
+        tier: "engine",
+        requires: ["decorators", "transient"],
         facets: ["plan"],
         group: "resolution",
         what: `resolve a ${String(SHALLOW_CHAIN_DEPTH)}-level transient class chain — below the compiler's depth limit, so one plan runs the whole chain (codefast-only)`,
@@ -101,6 +103,8 @@ export function buildCodefastPlanDepthScenarios(): ReadonlyArray<BenchScenario> 
     buildClassChainScenario(
       {
         id: `plan-class-chain-${String(DEEP_CHAIN_DEPTH)}`,
+        tier: "engine",
+        requires: ["decorators", "transient"],
         facets: ["plan"],
         group: "resolution",
         what: `the same chain at ${String(DEEP_CHAIN_DEPTH)} levels — the plan inlines to its depth limit, then escapes into the interpreted tail (codefast-only)`,
@@ -111,6 +115,8 @@ export function buildCodefastPlanDepthScenarios(): ReadonlyArray<BenchScenario> 
     buildClassChainScenario(
       {
         id: `interpreted-class-chain-${String(SHALLOW_CHAIN_DEPTH)}`,
+        tier: "engine",
+        requires: ["decorators", "transient"],
         facets: ["plan"],
         group: "resolution",
         what: `the ${String(SHALLOW_CHAIN_DEPTH)}-level chain with the root's plan declined — the interpreted path, its cycle check still a linear scan (codefast-only)`,
@@ -121,6 +127,8 @@ export function buildCodefastPlanDepthScenarios(): ReadonlyArray<BenchScenario> 
     buildClassChainScenario(
       {
         id: `interpreted-class-chain-${String(DEEP_CHAIN_DEPTH)}`,
+        tier: "engine",
+        requires: ["decorators", "transient"],
         facets: ["plan"],
         group: "resolution",
         what: `the ${String(DEEP_CHAIN_DEPTH)}-level chain with the root's plan declined — the interpreted path past the depth where it attaches a membership set (codefast-only)`,

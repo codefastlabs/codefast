@@ -10,29 +10,32 @@ import "reflect-metadata";
 import { Container } from "inversify";
 
 import {
-  CHILD_DEPTH_2_RESOLVE,
+  CHILD_DEPTHS,
   CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
   CHILD_RESOLVE_BATCH,
+  childDepthResolveDescriptor,
   REQUEST_LIFECYCLE_BATCH,
 } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
-function buildChildDepthTwoResolveScenario(): BenchScenario {
-  const childScopeLeafIdentifier = Symbol("bench-inv-child2-leaf");
+function buildChildDepthResolveScenario(depth: number): BenchScenario {
+  const childScopeLeafIdentifier = Symbol(`bench-inv-child${String(depth)}-leaf`);
   const rootContainer = new Container({ jitless: false });
   rootContainer.bind<number>(childScopeLeafIdentifier).toConstantValue(42);
-  const firstLevelChildContainer = new Container({ jitless: false, parent: rootContainer });
-  const secondLevelChildContainer = new Container({ jitless: false, parent: firstLevelChildContainer });
-  secondLevelChildContainer.get(childScopeLeafIdentifier);
+  let deepestContainer = rootContainer;
+  for (let level = 0; level < depth; level++) {
+    deepestContainer = new Container({ jitless: false, parent: deepestContainer });
+  }
+  deepestContainer.get(childScopeLeafIdentifier);
 
   return {
-    ...CHILD_DEPTH_2_RESOLVE,
+    ...childDepthResolveDescriptor(depth),
     batch: CHILD_RESOLVE_BATCH,
-    sanity: () => secondLevelChildContainer.get<number>(childScopeLeafIdentifier) === 42,
+    sanity: () => deepestContainer.get<number>(childScopeLeafIdentifier) === 42,
     build: () =>
       batched(CHILD_RESOLVE_BATCH, () => {
-        secondLevelChildContainer.get(childScopeLeafIdentifier);
+        deepestContainer.get(childScopeLeafIdentifier);
       }),
   };
 }
@@ -95,5 +98,8 @@ function buildChildRequestLifecycleCreateResolveDisposeScenario(): BenchScenario
  * @since 0.3.16-canary.0
  */
 export function buildInversifyScopeScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildChildDepthTwoResolveScenario(), buildChildRequestLifecycleCreateResolveDisposeScenario()];
+  return [
+    ...CHILD_DEPTHS.map((depth) => buildChildDepthResolveScenario(depth)),
+    buildChildRequestLifecycleCreateResolveDisposeScenario(),
+  ];
 }

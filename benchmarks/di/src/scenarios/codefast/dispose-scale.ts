@@ -1,5 +1,5 @@
 /**
- * `@codefast/di` — teardown at a scale where enumeration shows up (codefast-only).
+ * `@codefast/di` — teardown at a scale where enumeration shows up.
  *
  * `lifecycle-pre-destroy-unbind` tears down one singleton, so it prices the deactivation call and
  * nothing about finding what to deactivate. A singleton's instance lives on its binding, and the
@@ -12,9 +12,12 @@
 import { Container, preDestroy, token } from "@codefast/di";
 
 import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import {
+  DISPOSE_SCALE_SINGLETON_COUNT,
+  MATERIALIZE_100_SINGLETONS,
+  UNBIND_ALL_100_SINGLETONS,
+} from "#/fixtures/scenario-parity";
 import type { BenchScenario } from "#/scenarios/types";
-
-const SINGLETON_COUNT = 100;
 
 class DisposableService {
   preDestroyCallCount: number = 0;
@@ -25,23 +28,9 @@ class DisposableService {
   }
 }
 
-const disposableTokens = Array.from({ length: SINGLETON_COUNT }, (_value, index) =>
+const disposableTokens = Array.from({ length: DISPOSE_SCALE_SINGLETON_COUNT }, (_value, index) =>
   token<DisposableService>(`bench-cf-disposable-${String(index)}`),
 );
-
-const MATERIALIZE_SINGLETONS = {
-  id: `materialize-${String(SINGLETON_COUNT)}-singletons`,
-  facets: ["singleton"],
-  group: "lifecycle",
-  what: `create a container, bind ${String(SINGLETON_COUNT)} singletons with @preDestroy and resolve each once — the row the teardown is read against (codefast-only)`,
-} as const satisfies ScenarioDescriptor;
-
-const UNBIND_ALL_SINGLETONS = {
-  id: `unbind-all-${String(SINGLETON_COUNT)}-singletons`,
-  facets: ["singleton"],
-  group: "lifecycle",
-  what: `the same container, then unbindAll() — the materialized-binding walk plus ${String(SINGLETON_COUNT)} @preDestroy calls (codefast-only)`,
-} as const satisfies ScenarioDescriptor;
 
 function buildDisposeScaleScenario(descriptor: ScenarioDescriptor, tearDown: boolean): BenchScenario {
   function runOneCycle(): DisposableService {
@@ -85,7 +74,19 @@ function buildDisposeScaleScenario(descriptor: ScenarioDescriptor, tearDown: boo
  */
 export function buildCodefastDisposeScaleScenarios(): ReadonlyArray<BenchScenario> {
   return [
-    buildDisposeScaleScenario(MATERIALIZE_SINGLETONS, false),
-    buildDisposeScaleScenario(UNBIND_ALL_SINGLETONS, true),
+    buildDisposeScaleScenario(
+      {
+        ...MATERIALIZE_100_SINGLETONS,
+        what: `create a container, bind ${String(DISPOSE_SCALE_SINGLETON_COUNT)} singletons with @preDestroy and resolve each once — the row the teardown is read against`,
+      },
+      false,
+    ),
+    buildDisposeScaleScenario(
+      {
+        ...UNBIND_ALL_100_SINGLETONS,
+        what: `the same container, then unbindAll() — the materialised-binding walk plus ${String(DISPOSE_SCALE_SINGLETON_COUNT)} @preDestroy calls`,
+      },
+      true,
+    ),
   ];
 }

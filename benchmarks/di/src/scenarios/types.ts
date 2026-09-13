@@ -10,7 +10,10 @@
 import type {
   AsyncBenchScenario as HarnessAsyncBenchScenario,
   BenchScenario as HarnessBenchScenario,
+  BenchScenarioTier,
 } from "@internal/benchmark-harness/child/bench-scenario";
+
+import type { DiFeature } from "#/fixtures/features";
 
 /**
  * Grouping used by the reporter to label scenarios in the comparison table.
@@ -33,13 +36,26 @@ type ScenarioGroup =
   | "resolution";
 
 /**
- * @since 0.3.16-canary.0
+ * What every scenario in this suite declares beyond the harness shape.
+ *
+ * @remarks `tier` says whether the row measures public API (`contract`, compared across libraries)
+ * or this engine's internals (`engine`, deleted with the engine); `requires` names the public-API
+ * features the row cannot be written without, read against each library's declared `features`.
  */
-export type BenchScenario = HarnessBenchScenario & { readonly group: ScenarioGroup };
+interface ScenarioDeclaration {
+  readonly group: ScenarioGroup;
+  readonly tier: BenchScenarioTier;
+  readonly requires: ReadonlyArray<DiFeature>;
+}
+
 /**
  * @since 0.3.16-canary.0
  */
-export type AsyncBenchScenario = HarnessAsyncBenchScenario & { readonly group: ScenarioGroup };
+export type BenchScenario = HarnessBenchScenario & ScenarioDeclaration;
+/**
+ * @since 0.3.16-canary.0
+ */
+export type AsyncBenchScenario = HarnessAsyncBenchScenario & ScenarioDeclaration;
 /**
  * @since 0.3.16-canary.0
  */

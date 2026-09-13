@@ -1,16 +1,19 @@
+import { buildInjectionJsAliasScenarios } from "#/scenarios/injection-js/alias";
+import { buildInjectionJsAsyncScenarios } from "#/scenarios/injection-js/async";
+import { buildInjectionJsBindingVariantScenarios } from "#/scenarios/injection-js/binding-variants";
+import { buildInjectionJsBootScenarios } from "#/scenarios/injection-js/boot";
+import { buildInjectionJsFailureScenarios } from "#/scenarios/injection-js/failure";
 /**
- * Central list of all injection-js bench scenarios. Used by the bench
- * subprocess. `ReflectiveInjector` is singleton-per-injector with a non-cached
- * transient root, so it measures the constant and singleton-class micro rows,
- * the transient-root realistic row, the realistic cold-resolve, the depth-2
- * child-scope row (via `resolveAndCreateChild`), and the `resolveAll` strategy
- * rows (via `multi: true` providers). The transient micro, transient fan-out
- * tree and scale rows have no honest equivalent (sub-deps stay cached
- * singletons) and are omitted.
+ * Every injection-js scenario, in report order: the singleton-friendly rows a `ReflectiveInjector`, which caches
+ * every provider per injector, expresses natively — a transient root, collections, aliases, child injectors.
  */
 import { buildInjectionJsFanOutScenarios } from "#/scenarios/injection-js/fan-out";
 import { buildInjectionJsMicroScenarios } from "#/scenarios/injection-js/micro";
+import { buildInjectionJsProductionScenarios } from "#/scenarios/injection-js/production";
 import { buildInjectionJsRealisticScenarios } from "#/scenarios/injection-js/realistic";
+import { buildInjectionJsRealisticClassScenarios } from "#/scenarios/injection-js/realistic-class";
+import { buildInjectionJsResolutionPatternScenarios } from "#/scenarios/injection-js/resolution-patterns";
+import { buildInjectionJsResolverLaneScenarios } from "#/scenarios/injection-js/resolver-lanes";
 import { buildInjectionJsScopeScenarios } from "#/scenarios/injection-js/scope";
 import type { AnyScenario } from "#/scenarios/types";
 
@@ -21,7 +24,16 @@ export function collectAllInjectionJsScenarios(): ReadonlyArray<AnyScenario> {
   return [
     ...buildInjectionJsMicroScenarios(),
     ...buildInjectionJsRealisticScenarios(),
+    ...buildInjectionJsRealisticClassScenarios(),
     ...buildInjectionJsFanOutScenarios(),
     ...buildInjectionJsScopeScenarios(),
+    ...buildInjectionJsProductionScenarios(),
+    ...buildInjectionJsBootScenarios(),
+    ...buildInjectionJsAliasScenarios(),
+    ...buildInjectionJsAsyncScenarios(),
+    ...buildInjectionJsBindingVariantScenarios(),
+    ...buildInjectionJsFailureScenarios(),
+    ...buildInjectionJsResolutionPatternScenarios(),
+    ...buildInjectionJsResolverLaneScenarios(),
   ];
 }

@@ -1,5 +1,5 @@
 /**
- * `@codefast/di` — the criteria lanes measured from a **fresh** child container (codefast-only).
+ * `@codefast/di` — the criteria lanes measured from a **fresh** child container.
  *
  * `slot-tag-parent-owned` and `slot-name-parent-owned` resolve from a child built once, so they read
  * a warm chain walk against a warm memo. A memo is not paid for there: it is paid for on the first
@@ -22,24 +22,23 @@
 import { Container, token } from "@codefast/di";
 
 import { ENV_TAG } from "#/fixtures/bench-tags";
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
-import { TAGGED_ENVS, TARGET_TAG_VALUE } from "#/fixtures/scenario-parity";
+import type { FreshChildLane as FreshChildLaneId } from "#/fixtures/scenario-parity";
+import {
+  FRESH_CHILD_BATCH,
+  FRESH_CHILD_RESOLVES,
+  freshChildDescriptor,
+  TAGGED_ENVS,
+  TARGET_TAG_VALUE,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
-
-const FRESH_CHILD_BATCH = 100;
-const RESOLVES_PER_CHILD = [1, 4] as const;
 
 interface ChildService {
   readonly env: string;
 }
 
 interface FreshChildLane {
-  /** The lane's segment of every row id it produces. */
-  readonly id: string;
-  /** Feature facets the lane's selection criterion exercises, beyond the shared scope facet. */
-  readonly laneFacets: ReadonlyArray<string>;
-  readonly criterion: string;
+  readonly id: FreshChildLaneId;
   readonly bindInto: (parent: Container) => void;
   readonly resolveFrom: (child: Container) => ChildService;
 }
@@ -54,8 +53,6 @@ const HOISTED_TAGS = [ENV_TAG.of(TARGET_TAG_VALUE)];
 const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
   {
     id: "default",
-    laneFacets: [],
-    criterion: "resolve(token)",
     bindInto: (parent) => {
       parent.bind(defaultLaneToken).toConstantValue({ env: TARGET_TAG_VALUE });
     },
@@ -63,8 +60,6 @@ const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
   },
   {
     id: "name",
-    laneFacets: ["name"],
-    criterion: "resolve(token, { name })",
     bindInto: (parent) => {
       for (const env of TAGGED_ENVS) {
         parent.bind(namedLaneToken).toConstantValue({ env }).whenNamed(env);
@@ -74,8 +69,6 @@ const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
   },
   {
     id: "tag",
-    laneFacets: ["tag"],
-    criterion: "resolve(token, { tags })",
     bindInto: (parent) => {
       for (const env of TAGGED_ENVS) {
         parent.bind(taggedLaneToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
@@ -101,17 +94,10 @@ function buildFreshChildScenario(lane: FreshChildLane, resolvesPerChild: number)
     return resolved;
   }
 
-  const descriptor = {
-    id: `fresh-child-${lane.id}-n${String(resolvesPerChild)}`,
-    facets: ["scope", ...lane.laneFacets],
-    group: "scope",
-    what: `${lane.criterion} ${String(resolvesPerChild)}× inside a per-request child, then teardown — the lane's per-container state paid at duty cycle ${String(resolvesPerChild)} (codefast-only)`,
-  } as const satisfies ScenarioDescriptor;
-
   runOneRequest();
 
   return {
-    ...descriptor,
+    ...freshChildDescriptor(lane.id, resolvesPerChild),
     batch: FRESH_CHILD_BATCH,
     sanity: () => {
       const child = parent.createChild();
@@ -134,6 +120,6 @@ function buildFreshChildScenario(lane: FreshChildLane, resolvesPerChild: number)
  */
 export function buildCodefastFreshChildScenarios(): ReadonlyArray<BenchScenario> {
   return FRESH_CHILD_LANES.flatMap((lane) =>
-    RESOLVES_PER_CHILD.map((resolvesPerChild) => buildFreshChildScenario(lane, resolvesPerChild)),
+    FRESH_CHILD_RESOLVES.map((resolvesPerChild) => buildFreshChildScenario(lane, resolvesPerChild)),
   );
 }

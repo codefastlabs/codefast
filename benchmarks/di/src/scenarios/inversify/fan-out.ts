@@ -17,9 +17,11 @@ import {
 } from "#/fixtures/fan-out-descriptor";
 import type { ResolveAllNamedCount, ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
 import { buildInversifyRealisticContainer } from "#/fixtures/inversify-adapter";
+import { isCompleteCollection } from "#/fixtures/sanity";
 import {
   FAN_OUT_TREE,
   FAN_OUT_TREE_BATCH,
+  resolveAllColdDescriptor,
   resolveAllNamedDescriptor,
   resolveAllStrategiesDescriptor,
 } from "#/fixtures/scenario-parity";
@@ -52,19 +54,49 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
       .toConstantValue(index)
       .when(() => true);
   }
-  const prewarmedStrategies = container.getAll<number>(strategyIdentifier);
+  container.getAll<number>(strategyIdentifier);
 
   return {
     ...resolveAllStrategiesDescriptor(strategyCount),
     // inversify-specific wording — the shared descriptor supplies the paired id/group
     what: `getAll() across ${String(strategyCount)} strategy bindings once`,
     batch: 1,
-    sanity: () => prewarmedStrategies.length === strategyCount,
+    sanity: () => isCompleteCollection(container.getAll<number>(strategyIdentifier), strategyCount),
     build: () => {
       return () => {
         const strategies = container.getAll<number>(strategyIdentifier);
         if (strategies.length !== strategyCount) {
           throw new Error(`Expected ${String(strategyCount)} strategies, received ${String(strategies.length)}`);
+        }
+      };
+    },
+  };
+}
+
+function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
+  const strategyIdentifier = Symbol("bench-inv-fanout-resolve-all-cold");
+  function buildAndRead(): ReadonlyArray<number> {
+    const container = new Container({ jitless: false });
+    for (let index = 0; index < strategyCount; index++) {
+      container
+        .bind<number>(strategyIdentifier)
+        .toConstantValue(index)
+        .when(() => true);
+    }
+    return container.getAll<number>(strategyIdentifier);
+  }
+  const buildAndReadOnce = (): number => buildAndRead().length;
+  buildAndReadOnce();
+
+  return {
+    ...resolveAllColdDescriptor(strategyCount),
+    what: `build a fresh container, bind ${String(strategyCount)} strategies, getAll() once (cold collection)`,
+    batch: 1,
+    sanity: () => isCompleteCollection(buildAndRead(), strategyCount),
+    build: () => {
+      return () => {
+        if (buildAndReadOnce() !== strategyCount) {
+          throw new Error(`Expected ${String(strategyCount)} strategies from a cold container`);
         }
       };
     },
@@ -106,6 +138,7 @@ export function buildInversifyFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildFanOutTreeDepthThreeBreadthFourScenario(),
     ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllStrategiesScenario(strategyCount)),
+    ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllColdScenario(strategyCount)),
     ...RESOLVE_ALL_NAMED_COUNTS.map((namedCount) => buildResolveAllNamedScenario(namedCount)),
   ];
 }

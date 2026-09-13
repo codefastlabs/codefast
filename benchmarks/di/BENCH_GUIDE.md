@@ -42,6 +42,15 @@ A change earns a row when:
 - **Work moves between phases**, bind-time against resolve-time. A resolve row cannot see a cost paid at bind.
 - **A failure path starts being paid per request.** The `failure` group is where those go.
 
+**Every row declares its tier and what it requires.** A `contract` row is written against the public API and only the
+public API — `SPEC.md`, not `ARCHITECTURE.md` — because a row that names an engine lane stops meaning anything the day
+that lane is rewritten, and a rewrite is exactly when the suite is needed most. An `engine` row is allowed to name the
+lane, and in exchange it is instrumentation: excluded from every cross-library figure, owed by no other library, and
+deleted with the engine. A row's `requires` lists the public-API features it cannot be written without, in the
+vocabulary of `src/fixtures/features.ts`; `pnpm bench:list` reads that against each library's declared `features` and
+reports the rows a library owes as **gaps**, apart from the rows it cannot express. Before adding a competitor's row,
+read its gaps — they are the coverage to-do the suite already knows about.
+
 A branch that lands on a measured path but is never taken does **not** earn a row. It needs the other half of the job:
 name the rows that must not move _before_ measuring, and read one that moves as the inlining accident it usually is.
 
@@ -102,6 +111,21 @@ Two things this catches that a before/after comparison cannot:
   faster" changes in this repo were reverted because a row they had no business affecting moved: collapsing a memoised
   accessor into an inlinable expression cost ~6% on a row that only reads the memo, and removing a fast lane that looked
   like duplication cost ~24% elsewhere.
+
+### Pin the baseline before a rewrite
+
+A rewrite is measured against the engine it replaces, not against yesterday. Before the first commit of a rewrite, run
+the whole contract tier once at the citable profile and keep that run's id:
+
+```bash
+BENCH_MODE=full BENCH_TIER=contract pnpm di:bench:isolate
+```
+
+Then read every later run against it — `BENCH_BASELINE=<that run id> pnpm di:bench:isolate` — and the `Δ` column and the
+regression list say `vs baseline <run id>` instead of `vs` the run that happened to land before. Without the pin, a
+rewrite that lands in ten commits is diffed ten times against itself and the line it had to hold is never drawn. A
+pinned run that cannot be read is an error, never a silent fallback to the pointer; and the pin is a directory, so it
+survives everything except `bench-results/` being cleaned — copy it out before that.
 
 ### Measure the floor before you set the threshold
 
@@ -170,7 +194,11 @@ Also required for a comparison to mean anything:
   description and batch factor once and both sides import it. When adding a scenario, put the shared constants there — a
   batch factor that drifts scales `hzPerOp` silently.
 - **The same observable outcome.** Every scenario declares a `sanity()` check that asserts the work actually happened —
-  the hook fired, the instance count matched. A scenario that is fast because it did less is not a win.
+  the hook fired, the instance count matched. A scenario that is fast because it did less is not a win. The checks a
+  feature's meaning turns on live once in `src/fixtures/sanity.ts` and every side calls the same one: a transient row
+  proves two resolves differ down to the dependency, a scoped row proves one instance within a scope and a fresh one in
+  the next, a collection row proves every binding came back once. A side that wrote its own weaker check would be
+  measuring a cheaper feature under the same id.
 
 ## What the harness enforces so you cannot forget
 

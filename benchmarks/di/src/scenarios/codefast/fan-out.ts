@@ -25,9 +25,11 @@ import {
   RESOLVE_ALL_STRATEGY_COUNTS,
 } from "#/fixtures/fan-out-descriptor";
 import type { ResolveAllNamedCount, ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
+import { isCompleteCollection } from "#/fixtures/sanity";
 import {
   FAN_OUT_TREE,
   FAN_OUT_TREE_BATCH,
+  resolveAllColdDescriptor,
   resolveAllNamedDescriptor,
   resolveAllStrategiesDescriptor,
 } from "#/fixtures/scenario-parity";
@@ -65,17 +67,46 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
       .toConstantValue(index)
       .when(() => true);
   }
-  const prewarmedStrategies = container.resolveAll(strategyToken);
+  container.resolveAll(strategyToken);
 
   return {
     ...resolveAllStrategiesDescriptor(strategyCount),
     batch: 1,
-    sanity: () => prewarmedStrategies.length === strategyCount,
+    sanity: () => isCompleteCollection(container.resolveAll(strategyToken), strategyCount),
     build: () => {
       return () => {
         const strategies = container.resolveAll(strategyToken);
         if (strategies.length !== strategyCount) {
           throw new Error(`Expected ${String(strategyCount)} strategies, received ${String(strategies.length)}`);
+        }
+      };
+    },
+  };
+}
+
+function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
+  const strategyToken = token<number>("bench-cf-fanout-resolve-all-cold");
+  function buildAndRead(): ReadonlyArray<number> {
+    const container = Container.create();
+    for (let index = 0; index < strategyCount; index++) {
+      container
+        .bind(strategyToken)
+        .toConstantValue(index)
+        .when(() => true);
+    }
+    return container.resolveAll(strategyToken);
+  }
+  const buildAndReadOnce = (): number => buildAndRead().length;
+  buildAndReadOnce();
+
+  return {
+    ...resolveAllColdDescriptor(strategyCount),
+    batch: 1,
+    sanity: () => isCompleteCollection(buildAndRead(), strategyCount),
+    build: () => {
+      return () => {
+        if (buildAndReadOnce() !== strategyCount) {
+          throw new Error(`Expected ${String(strategyCount)} strategies from a cold container`);
         }
       };
     },
@@ -116,6 +147,7 @@ export function buildCodefastFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildFanOutTreeDepthThreeBreadthFourScenario(),
     ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllStrategiesScenario(strategyCount)),
+    ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllColdScenario(strategyCount)),
     ...RESOLVE_ALL_NAMED_COUNTS.map((namedCount) => buildResolveAllNamedScenario(namedCount)),
   ];
 }

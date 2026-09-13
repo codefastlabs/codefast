@@ -19,11 +19,13 @@
 import { Container, token } from "@codefast/di";
 
 import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
-import { ASYNC_CHAIN_DEPTH } from "#/fixtures/scenario-parity";
+import { ASYNC_CHAIN_DEPTH, ASYNC_DIAMOND_SHARED_LEAF } from "#/fixtures/scenario-parity";
 import type { AsyncBenchScenario } from "#/scenarios/types";
 
 const ASYNC_BRANCH_CHAIN = {
   id: `async-branch-chain-${String(ASYNC_CHAIN_DEPTH)}`,
+  tier: "engine",
+  requires: ["async-resolve"],
   group: "async",
   what: `resolveAsync() through an ${String(ASYNC_CHAIN_DEPTH)}-step async chain whose every factory requests after an await — branch lane at every level (codefast-only)`,
 } as const satisfies ScenarioDescriptor;
@@ -36,14 +38,10 @@ const MID_CHAIN_ESCAPE_LEVEL = Math.floor(ASYNC_CHAIN_DEPTH / 2);
 
 const ASYNC_BRANCH_ESCAPE_MID_CHAIN = {
   id: `async-branch-escape-mid-chain-${String(ASYNC_CHAIN_DEPTH)}`,
+  tier: "engine",
+  requires: ["async-resolve"],
   group: "async",
   what: `resolveAsync() through the same chain with one level requesting after an await — the single cascade→branch crossing (codefast-only)`,
-} as const satisfies ScenarioDescriptor;
-
-const ASYNC_DIAMOND_SHARED_LEAF = {
-  id: "async-diamond-shared-leaf",
-  group: "async",
-  what: "resolveAsync() a root awaiting two siblings in parallel that share one async leaf — the leaf released on promise return, not on settle (codefast-only)",
 } as const satisfies ScenarioDescriptor;
 
 /**

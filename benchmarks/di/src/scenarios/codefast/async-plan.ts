@@ -20,6 +20,8 @@ import type { AsyncBenchScenario } from "#/scenarios/types";
 
 const PLAN_ASYNC_RESOLVED_CHAIN = {
   id: `plan-async-resolved-chain-${String(ASYNC_CHAIN_DEPTH)}`,
+  tier: "engine",
+  requires: ["async-resolve", "explicit-deps"],
   facets: ["plan"],
   group: "async",
   what: `resolveAsync() through an ${String(ASYNC_CHAIN_DEPTH)}-step toResolvedAsync chain — every dependency declared, every factory async (codefast-only)`,
@@ -27,6 +29,8 @@ const PLAN_ASYNC_RESOLVED_CHAIN = {
 
 const PLAN_ASYNC_CLASS_CHAIN = {
   id: `plan-async-class-chain-${String(ASYNC_CHAIN_DEPTH)}`,
+  tier: "engine",
+  requires: ["async-resolve", "decorators"],
   facets: ["plan"],
   group: "async",
   what: `resolveAsync() through an ${String(ASYNC_CHAIN_DEPTH)}-step decorated class chain — a fully synchronous graph entering through the async entry (codefast-only)`,

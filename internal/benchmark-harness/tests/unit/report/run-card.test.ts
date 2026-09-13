@@ -9,6 +9,7 @@ const ESCAPE = String.fromCodePoint(0x1b);
 const input: RunCardInput = {
   runId: "2026-09-12T15-57-55-130Z",
   shape: { isolated: false, mode: "fast" },
+  tier: undefined,
   trialCount: 1,
   libraryCount: 7,
   scenariosMeasured: 111,
@@ -40,6 +41,14 @@ describe("renderRunCardLines", () => {
     expect(lines.some((line) => line.includes("sanity   0 failures"))).toBe(true);
     expect(lines.some((line) => line.includes("latest   moved to this run"))).toBe(true);
     expect(lines.at(-1)).toBe(`+${"-".repeat(78)}+`);
+  });
+
+  it("names the tier in the profile when the run was narrowed to one", () => {
+    const lines = renderRunCardLines(
+      { ...input, tier: "contract", artifacts: { latestPointer: "kept-filtered" } },
+      { palette: PLAIN_PALETTE, width: 80, unicode: false },
+    );
+    expect(lines.some((line) => line.includes("profile  fast · shared · 1 trial · contract tier"))).toBe(true);
   });
 
   it("explains a kept pointer and names sanity failures", () => {

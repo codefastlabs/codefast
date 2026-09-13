@@ -1,16 +1,16 @@
 /**
  * `@codefast/di` — child-container scope scenarios.
  *
- * This package keeps only the production-shaped scope row:
- *   - `child-depth-2-resolve` — resolve from a grandchild.
- *     Shape: app container → per-request child → one nested child.
+ *   - `child-depth-N-resolve` — resolve a root binding from a child N levels down, N over the
+ *     parent-walk axis; depth 2 is the app → per-request child → nested child shape.
  */
 import { Container, token } from "@codefast/di";
 
 import {
-  CHILD_DEPTH_2_RESOLVE,
+  CHILD_DEPTHS,
   CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
   CHILD_RESOLVE_BATCH,
+  childDepthResolveDescriptor,
   REQUEST_LIFECYCLE_BATCH,
 } from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
@@ -21,21 +21,23 @@ interface ScopeResolvedPayload {
   readonly childValue: number;
 }
 
-function buildChildDepthTwoResolveScenario(): BenchScenario {
-  const childScopeLeafToken = token<number>("bench-cf-child2-leaf");
+function buildChildDepthResolveScenario(depth: number): BenchScenario {
+  const childScopeLeafToken = token<number>(`bench-cf-child${String(depth)}-leaf`);
   const rootContainer = Container.create();
   rootContainer.bind(childScopeLeafToken).toConstantValue(42);
-  const firstLevelChildContainer = rootContainer.createChild();
-  const secondLevelChildContainer = firstLevelChildContainer.createChild();
-  secondLevelChildContainer.resolve(childScopeLeafToken);
+  let deepestContainer = rootContainer;
+  for (let level = 0; level < depth; level++) {
+    deepestContainer = deepestContainer.createChild();
+  }
+  deepestContainer.resolve(childScopeLeafToken);
 
   return {
-    ...CHILD_DEPTH_2_RESOLVE,
+    ...childDepthResolveDescriptor(depth),
     batch: CHILD_RESOLVE_BATCH,
-    sanity: () => secondLevelChildContainer.resolve(childScopeLeafToken) === 42,
+    sanity: () => deepestContainer.resolve(childScopeLeafToken) === 42,
     build: () =>
       batched(CHILD_RESOLVE_BATCH, () => {
-        secondLevelChildContainer.resolve(childScopeLeafToken);
+        deepestContainer.resolve(childScopeLeafToken);
       }),
   };
 }
@@ -92,5 +94,8 @@ function buildChildRequestLifecycleCreateResolveDisposeScenario(): BenchScenario
  * @since 0.3.16-canary.0
  */
 export function buildCodefastScopeScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildChildDepthTwoResolveScenario(), buildChildRequestLifecycleCreateResolveDisposeScenario()];
+  return [
+    ...CHILD_DEPTHS.map((depth) => buildChildDepthResolveScenario(depth)),
+    buildChildRequestLifecycleCreateResolveDisposeScenario(),
+  ];
 }
