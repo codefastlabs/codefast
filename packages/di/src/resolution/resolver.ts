@@ -1596,6 +1596,17 @@ export class DependencyResolver implements ResolverCallbacks {
       }
       return owner.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner);
     }
+    // The dominant collection member — a transient factory with no activation, asked with no
+    // options — takes the non-async lane a single resolve takes, so a fan-out costs one factory
+    // promise per member rather than a state machine on top of each.
+    if (
+      options === undefined &&
+      binding.scope === "transient" &&
+      (binding.kind === "dynamic" || binding.kind === "dynamic-async") &&
+      !owner.#hasAnyActivation(binding)
+    ) {
+      return this.#resolveTransientDynamicAsyncFromContext(binding, resolutionStack, branchDepth);
+    }
     return this.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner);
   }
 

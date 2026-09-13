@@ -576,10 +576,13 @@ a cycle crossing the boundary on one path.
 
 The branch lane is the general one. `extendResolutionBranch` appends to a path while this branch still owns the next
 slot, and copies its own prefix once a sibling has claimed it. Nothing is removed there either, so it needs no settle
-listener; it pays a context per level instead. A cycle formed entirely from post-await edges is caught there —
-`post-q → post-p → post-q` — one level in from the true root, because the ancestors before the first escape were never
-written down. That imprecision is the price of the cascade lane, and `tests/unit/resolution/resolver-async.test.ts` pins
-it rather than leaving it to be discovered.
+listener; it pays a context per level instead. The dominant level — a transient factory with no activation, asked with
+no options — is served by a method that is deliberately not `async`, so it costs the factory's own promise and nothing
+on top; a single `resolveAsync` and every member of a `resolveAllAsync` collection take that same lane, and the `async`
+method behind them is reached only by scoped, singleton, activated or option-carrying members. A cycle formed entirely
+from post-await edges is caught there — `post-q → post-p → post-q` — one level in from the true root, because the
+ancestors before the first escape were never written down. That imprecision is the price of the cascade lane, and
+`tests/unit/resolution/resolver-async.test.ts` pins it rather than leaving it to be discovered.
 
 > **Invariant (ownership, held by the compiler).** A branch may only ever append to an array it minted itself. A sync
 > frame's path is one that frame will pop in its own `finally`, and it may carry an `enterResolutionPath` membership
