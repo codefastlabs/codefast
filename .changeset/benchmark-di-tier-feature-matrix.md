@@ -38,3 +38,5 @@ offers.
   dependency, one instance within a scope and a fresh one across, every binding of a collection present once — and the
   transient, scoped and `resolveAll` rows on every library call the same one, so no side can measure a cheaper meaning
   of the feature under the same id.
+- `BENCH_GUIDE.md` gains the recipe a rewrite is measured by: run the contract tier once at the citable profile, pin
+  that run with `BENCH_BASELINE`, and read every later run against it.

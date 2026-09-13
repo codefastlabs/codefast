@@ -40,6 +40,7 @@ measures the working tree rather than a stale `dist/`.
 | `BENCH_TRIALS=<n>`      | Trials per scenario; the harness refuses anything below its minimum                                          |
 | `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use                               |
 | `BENCH_TIER=<tier>`     | Restrict the run to `contract` rows (public API, compared across libraries) or `engine` rows (ours alone)    |
+| `BENCH_BASELINE=<run>`  | Diff every aggregate and row against this run id instead of the run `latest.json` names                      |
 | `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                                             |
 | `PORT=<n>`              | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                         |
 

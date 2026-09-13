@@ -98,6 +98,7 @@ dropped for any run started at the repo root — which looks exactly like the ke
 | `BENCH_ISOLATE=true`   | One subprocess per scenario, libraries interleaved                                                |
 | `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids; a library implementing none of them measures nothing      |
 | `BENCH_TIER=<tier>`    | Restrict the run to one scenario tier, `contract` or `engine`; a narrowed run like `BENCH_ONLY`   |
+| `BENCH_BASELINE=<run>` | Diff against this run id or directory instead of the run `latest.json` names                      |
 | `BENCH_VERBOSE=true`   | Forward each child's stdout through the parent                                                    |
 | `BENCH_PORT=<n>`       | Preferred port for a suite's `bench:serve`                                                        |
 | `PORT=<n>`             | Read by `bench:serve` when `BENCH_PORT` is unset: the port a launcher hands the process it starts |
@@ -174,7 +175,10 @@ architecture, the report also diffs against it (`src/report/run-diff.ts`): a `Δ
 computed over the rows both runs measured; a list of regressions beyond noise, where a scenario's subject throughput
 fell by more than the larger of the noise floor and either side's IQR fraction, rows above the noise ceiling excluded;
 and the count of improvements beyond noise. A run of another configuration is named and skipped rather than compared.
-The previous run is read before the artifacts are written, while the pointer still names it.
+The previous run is read before the artifacts are written, while the pointer still names it. `BENCH_BASELINE=<run id>`
+pins the run to diff against instead, and the `Δ` labels say `vs baseline <run id>`: the question a rewrite has to
+answer is whether it held the line against the last run of the engine it replaces, and that run stops being the previous
+one the moment the second run lands. A pinned run that cannot be read is an error, not a fallback.
 
 A run closes with a card (`src/report/run-card.ts`): wall and rebuild time, library and row counts, the profile, the run
 order and what it means for citing ratios, sanity failures by library, whether `latest.json` moved, every library's

@@ -112,6 +112,21 @@ Two things this catches that a before/after comparison cannot:
   accessor into an inlinable expression cost ~6% on a row that only reads the memo, and removing a fast lane that looked
   like duplication cost ~24% elsewhere.
 
+### Pin the baseline before a rewrite
+
+A rewrite is measured against the engine it replaces, not against yesterday. Before the first commit of a rewrite, run
+the whole contract tier once at the citable profile and keep that run's id:
+
+```bash
+BENCH_MODE=full BENCH_TIER=contract pnpm di:bench:isolate
+```
+
+Then read every later run against it — `BENCH_BASELINE=<that run id> pnpm di:bench:isolate` — and the `Δ` column and the
+regression list say `vs baseline <run id>` instead of `vs` the run that happened to land before. Without the pin, a
+rewrite that lands in ten commits is diffed ten times against itself and the line it had to hold is never drawn. A
+pinned run that cannot be read is an error, never a silent fallback to the pointer; and the pin is a directory, so it
+survives everything except `bench-results/` being cleaned — copy it out before that.
+
 ### Measure the floor before you set the threshold
 
 A "must not regress" threshold is only meaningful above the row's own noise. Get that number the same way you get
