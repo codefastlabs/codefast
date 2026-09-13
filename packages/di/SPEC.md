@@ -2677,7 +2677,8 @@ packages/di/
 │   │   │   │                  @postConstruct, accessor injection, and the `new` call itself
 │   │   │   └── activation-need.ts  Per-binding cache: does the activation pipeline need to run
 │   │   ├── plan/
-│   │   │   └── instantiation-plan.ts   The compiler for a compiled plan + the escape to the runtime path
+│   │   │   ├── instantiation-plan.ts   The compiler for a compiled plan + the escape to the runtime path
+│   │   │   └── plan-codegen.ts         Renders a hot plan as a function of its own; a closure where the runtime forbids it
 │   │   ├── path/
 │   │   │   └── resolution-path.ts      Cycle guard over a path array (linear scan → Set
 │   │   │                      once deep); OwnedBranchPath for async branches
@@ -3118,6 +3119,14 @@ In practice the emit options (`declaration`, `sourceMap`, …) are split out int
 only `outDir`, which the build inherits.
 
 ---
+
+### Code generation and Content Security Policy
+
+A transient class or `toResolved` binding a container has resolved many times has its compiled plan generated as a
+function of its own through the `Function` constructor; a runtime that refuses the constructor (a Content Security
+Policy without `unsafe-eval`) leaves every plan a closure. The two behave identically — the same instances, the same
+errors, the same cycle detection — and only the throughput of a hot plan differs. `RESOLUTION_DIAGNOSTICS` reports how
+many plans a container has generated as `generatedPlanCount`.
 
 ## Testing guide
 

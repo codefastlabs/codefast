@@ -315,15 +315,16 @@ you want to challenge it, the benchmark suite is where.
 
 Everything that needs no cross-instance private access is split out into a collaborator:
 
-| Module                                                                                                                   | Owns                                                                                                               |
-| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| [`binding-lookup-cache.ts`](src/resolution/cache/binding-lookup-cache.ts)                                                | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions |
-| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                                    | per-class metadata: constructor params, `@postConstruct` presence, accessor injection, and the `new` itself        |
-| [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                          | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                           |
-| [`instantiation-plan.ts`](src/resolution/plan/instantiation-plan.ts)                                                     | the plan compiler ([Compiled plans and escapes](#plans))                                                           |
-| [`resolution-path.ts`](src/resolution/path/resolution-path.ts)                                                           | cycle-detection bookkeeping carried on the path array                                                              |
-| [`binding-select.ts`](src/resolution/select/binding-select.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                      |
-| [`resolve-options.ts`](src/injection/resolve-options.ts)                                                                 | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                |
+| Module                                                                                                                   | Owns                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| [`binding-lookup-cache.ts`](src/resolution/cache/binding-lookup-cache.ts)                                                | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions            |
+| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                                    | per-class metadata: constructor params, `@postConstruct` presence, accessor injection, and the `new` itself                   |
+| [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                          | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                                      |
+| [`instantiation-plan.ts`](src/resolution/plan/instantiation-plan.ts)                                                     | the plan compiler ([Compiled plans and escapes](#plans))                                                                      |
+| [`plan-codegen.ts`](src/resolution/plan/plan-codegen.ts)                                                                 | renders a hot plan's `PlanNode` tree as a function of its own, or leaves it a closure where the runtime forbids compiling one |
+| [`resolution-path.ts`](src/resolution/path/resolution-path.ts)                                                           | cycle-detection bookkeeping carried on the path array                                                                         |
+| [`binding-select.ts`](src/resolution/select/binding-select.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                                 |
+| [`resolve-options.ts`](src/injection/resolve-options.ts)                                                                 | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                           |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
 
@@ -366,15 +367,23 @@ would have pushed at that point, and dispatched through exactly the resolve the 
 detection, constraint contexts and error paths are therefore identical to never having compiled. Without escapes, one
 `toDynamic` dependency anywhere would drop the whole graph to the interpreted path.
 
-**Every plan in a process shares one set of call sites.** A plan is a closure created from the compiler's function
-literals, and V8 keeps type feedback per literal, not per closure, so the dependency calls inside one root's thunk see
-the dependency thunks of every plan the process has compiled. While one plan exists those sites are monomorphic; once a
-second plan with a different leaf shape has compiled — an inlined class next to a factory escape, a scoped escape, a
-hooked one — each dependency call becomes a polymorphic dispatch, and every plan in the process pays it, the first one
-included. Anything that makes a sibling plan compile earlier (the shared metadata caches let a child compile on its
-first resolve) therefore moves an isolated plan row without touching the plan itself; the ledger in
-`benchmarks/di/RESULTS.md` prices it. Generated code per plan — one function per plan, hence one feedback vector — is
-the shape that would give each plan its own sites; it is not done.
+**A plan that keeps running is generated as a function of its own.** A plan starts as a closure over the compiler's
+function literals, and V8 keeps type feedback per literal, not per closure: the dependency calls inside one root's
+closure see the dependency thunks of every plan the process has compiled, so a second plan shape — an inlined class next
+to a factory escape, a scoped escape, a hooked one — makes those calls polymorphic for every plan, the first one
+included. The compiler therefore records each sync plan's shape as a `PlanNode` tree beside the closure, and after
+`PLAN_CODEGEN_THRESHOLD` runs renders that tree through the `Function` constructor into a function with a source text of
+its own — hence a feedback vector of its own — and swaps it into the plan map in the closure's place through
+`host.replacePlan`, identity-guarded so a map cleared and recompiled since keeps its newer plan. Below the threshold a
+plan stays a closure, which is all a cold container or a per-request child ever runs, so neither pays a compile. Every
+leaf the compiler could not see through is an opaque thunk in both renderings: an escape keeps its frames, its dispatch
+and its errors. A runtime whose Content Security Policy refuses the constructor leaves every plan a closure, and
+behaviour is identical either way; `RESOLUTION_DIAGNOSTICS` reports `generatedPlanCount`.
+
+> **Invariant (correctness).** The closure and the generated function are two renderings of one `PlanNode` tree, so
+> anything a closure does that its node does not state is a bug in the compiler, not a difference to preserve.
+> `tests/unit/resolution/plan/instantiation-plan-codegen.test.ts` pins the generated tier against the closure's
+> behaviour and `tests/unit/resolution/plan/plan-codegen.test.ts` pins each node kind's rendering.
 
 **An accessor-injected class compiles only as a plan's root.** Its `@inject` accessors resolve while the constructor
 runs, through the ambient container, so the class cannot be a static node: nothing the compiler could bake would be what
@@ -785,12 +794,13 @@ section before changing what the table describes.
 
 **Plans and escapes**
 
-| Invariant                                                                                          | Pinned by                                                       | Where                                |
-| -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------ |
-| An escape is behaviourally indistinguishable from the interpreted path: same ancestors, same call. | `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` | [Compiled plans and escapes](#plans) |
-| An escape thunk copies the frame array; it never lends it.                                         | (structural; see the two mechanisms)                            | [The frame copy](#frame-copy)        |
-| An entry reached by a criterion carries that criterion into every escape.                          | `tests/unit/resolution/plan/instantiation-plan-named.test.ts`   | [Compiled plans and escapes](#plans) |
-| The async plan runs only at a true root and mirrors the interpreted async path exactly.            | `tests/unit/resolution/plan/instantiation-plan-async.test.ts`   | [The async pipeline](#async)         |
+| Invariant                                                                                           | Pinned by                                                       | Where                                |
+| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------ |
+| An escape is behaviourally indistinguishable from the interpreted path: same ancestors, same call.  | `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` | [Compiled plans and escapes](#plans) |
+| An escape thunk copies the frame array; it never lends it.                                          | (structural; see the two mechanisms)                            | [The frame copy](#frame-copy)        |
+| An entry reached by a criterion carries that criterion into every escape.                           | `tests/unit/resolution/plan/instantiation-plan-named.test.ts`   | [Compiled plans and escapes](#plans) |
+| The async plan runs only at a true root and mirrors the interpreted async path exactly.             | `tests/unit/resolution/plan/instantiation-plan-async.test.ts`   | [The async pipeline](#async)         |
+| A generated plan and its closure are two renderings of one `PlanNode` tree, and behave identically. | `tests/unit/resolution/plan/instantiation-plan-codegen.test.ts` | [Compiled plans and escapes](#plans) |
 
 **Cycle detection and paths**
 

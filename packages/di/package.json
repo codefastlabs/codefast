@@ -265,6 +265,11 @@
       "types": "./dist/resolution/plan/instantiation-plan.d.ts",
       "import": "./dist/resolution/plan/instantiation-plan.js"
     },
+    "./resolution/plan/plan-codegen": {
+      "source": "./src/resolution/plan/plan-codegen.ts",
+      "types": "./dist/resolution/plan/plan-codegen.d.ts",
+      "import": "./dist/resolution/plan/plan-codegen.js"
+    },
     "./resolution/resolver": {
       "source": "./src/resolution/resolver.ts",
       "types": "./dist/resolution/resolver.d.ts",

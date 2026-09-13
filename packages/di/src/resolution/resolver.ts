@@ -162,7 +162,7 @@ export class DependencyResolver implements ResolverCallbacks {
   /** Structural counts and the resolver-owned collaborators built so far, for the {@link ResolutionDiagnostics} a container reports. */
   describeCaches(): Pick<
     ResolutionDiagnostics,
-    "compiledPlanCount" | "compiledAsyncPlanCount" | "syncContextPoolSize" | "builtSubsystems"
+    "compiledPlanCount" | "compiledAsyncPlanCount" | "generatedPlanCount" | "syncContextPoolSize" | "builtSubsystems"
   > {
     const builtSubsystems: Array<string> = [];
     if (this.#planCompiler !== undefined) {
@@ -174,9 +174,14 @@ export class DependencyResolver implements ResolverCallbacks {
     if (this.#activation?.isMemoBuilt === true) {
       builtSubsystems.push("resolver.activationNeedMemo");
     }
+    const generatedPlanCount = this.#planCompiler?.generatedPlanCount ?? 0;
+    if (generatedPlanCount > 0) {
+      builtSubsystems.push("resolver.planCodegen");
+    }
     return {
       compiledPlanCount: countCompiledPlans(this.#classPlanByBindingId),
       compiledAsyncPlanCount: countCompiledPlans(this.#asyncPlanByBindingId),
+      generatedPlanCount,
       syncContextPoolSize: this.#syncResolutionContextPool.length,
       builtSubsystems,
     };
@@ -536,6 +541,13 @@ export class DependencyResolver implements ResolverCallbacks {
         return { binding: entry.binding };
       },
       getResolutionFrame: (binding) => this.#getResolutionFrame(binding),
+      // Identity-guarded: a map cleared and recompiled since no longer holds the plan being replaced.
+      replacePlan: (binding, current, next) => {
+        const plans = this.#classPlanByBindingId;
+        if (plans !== undefined && plans.get(binding.identifier) === current) {
+          plans.set(binding.identifier, next);
+        }
+      },
       // Dispatches exactly as #resolveDep does, so an escaped dep is indistinguishable
       // from the same dep on a fully interpreted resolve.
       resolveEscaped: (token, options, arity, resolutionStack) => {
