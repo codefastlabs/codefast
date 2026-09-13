@@ -124,8 +124,9 @@ BENCH_MODE=full BENCH_TIER=contract pnpm di:bench:isolate
 Then read every later run against it — `BENCH_BASELINE=<that run id> pnpm di:bench:isolate` — and the `Δ` column and the
 regression list say `vs baseline <run id>` instead of `vs` the run that happened to land before. Without the pin, a
 rewrite that lands in ten commits is diffed ten times against itself and the line it had to hold is never drawn. A
-pinned run that cannot be read is an error, never a silent fallback to the pointer; and the pin is a directory, so it
-survives everything except `bench-results/` being cleaned — copy it out before that.
+pinned run that cannot be read is an error, never a silent fallback to the pointer. `bench-results/` is git-ignored, so
+the pinned run is copied to `baselines/<run id>/observations.jsonl`, which is tracked, and `pnpm bench:baseline` is the
+full-profile isolated pass read against it — the pass every commit of the rewrite is judged by.
 
 ### Measure the floor before you set the threshold
 

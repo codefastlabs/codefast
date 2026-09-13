@@ -305,7 +305,7 @@ aggregates above because their two sides do incomparable work per op.
 ```bash
 BENCH_MODE=full pnpm bench:isolate                              # from benchmarks/di — the full-profile pass above
 pnpm bench:report                                               # derive report.md + report.json from the newest run
-BENCH_BASELINE=2026-09-13T04-45-37-460Z BENCH_MODE=full pnpm bench:isolate   # read a later run against this one
+pnpm bench:baseline                                             # the same pass, read against this run (baselines/2026-09-13T04-45-37-460Z)
 ```
 
 `bench:isolate` already runs 3 trials per library in its own subprocess — one invocation is one pass, not three. The run
