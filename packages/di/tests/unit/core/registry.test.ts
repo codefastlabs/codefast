@@ -9,7 +9,7 @@ import { Container } from "#/container/container";
 import { tag } from "#/core/tag";
 import { token } from "#/core/token";
 import type { BindingIdentifier } from "#/core/types";
-import { NoMatchingBindingError } from "#/errors/errors";
+import { NoMatchingBindingError, RebindUnboundTokenError } from "#/errors/errors";
 
 const ENV_TAG = tag("env");
 
@@ -145,5 +145,21 @@ describe("a token nobody bound", () => {
 
     expect(container.lookupBindings(unbound)).toEqual([]);
     expect(container.has(unbound)).toBe(false);
+  });
+
+  it("tears down, rebinds and inspects a container that never bound anything", () => {
+    const container = Container.create();
+    const unbound = token<number>("registry-never-bound");
+
+    expect(() => {
+      container.unbindAll();
+    }).not.toThrow();
+    expect(container.inspect().ownBindings).toEqual([]);
+    expect(() => container.rebind(unbound)).toThrow(RebindUnboundTokenError);
+    expect(container.resolveOptional(unbound)).toBeUndefined();
+
+    container.bind(unbound).toConstantValue(1);
+
+    expect(container.resolve(unbound)).toBe(1);
   });
 });

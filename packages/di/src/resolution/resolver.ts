@@ -62,6 +62,19 @@ const MULTI_TAG_INDEX_THRESHOLD = 8;
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 const EMPTY_PARAM_LIST: ReadonlyArray<ParamMetadata> = [];
+/** Plans compiled so far, with the `null` unplannable marks left out. */
+function countCompiledPlans(plans: Map<BindingIdentifier, (() => unknown) | null> | undefined): number {
+  let count = 0;
+  if (plans !== undefined) {
+    for (const plan of plans.values()) {
+      if (plan !== null) {
+        count += 1;
+      }
+    }
+  }
+  return count;
+}
+
 const ROOT_CONSTRAINT_CONTEXT = {
   resolutionPath: EMPTY_STRING_LIST,
   resolutionStack: EMPTY_FRAME_LIST,
@@ -92,12 +105,13 @@ export class DependencyResolver implements ResolverCallbacks {
   // because synchronous code does not interleave.
   readonly #cascadeStack: Array<ResolutionFrame> = [];
   #cascadeContext: AsyncCascadeContext | undefined;
-  // Compiled plans; `null` marks a binding as unplannable under the current cache versions.
-  readonly #classPlanByBindingId = new Map<BindingIdentifier, (() => unknown) | null>();
+  // Compiled plans; `null` marks a binding as unplannable under the current cache versions. Both
+  // maps are allocated by the first plan request, which only a class or resolved binding makes.
+  #classPlanByBindingId: Map<BindingIdentifier, (() => unknown) | null> | undefined;
   #classPlanRegistryVersion = -1;
   #classPlanActivationVersion = -1;
   // The async lane's plans, stamped and invalidated apart so neither lane pays the other's misses.
-  readonly #asyncPlanByBindingId = new Map<BindingIdentifier, (() => unknown) | null>();
+  #asyncPlanByBindingId: Map<BindingIdentifier, (() => unknown) | null> | undefined;
   #asyncPlanRegistryVersion = -1;
   #asyncPlanActivationVersion = -1;
 
@@ -137,27 +151,26 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#metadataReader;
   }
 
-  /** Structural counts for the {@link ResolutionDiagnostics} a container reports. */
+  /** Structural counts and the resolver-owned collaborators built so far, for the {@link ResolutionDiagnostics} a container reports. */
   describeCaches(): Pick<
     ResolutionDiagnostics,
-    "compiledPlanCount" | "compiledAsyncPlanCount" | "syncContextPoolSize"
+    "compiledPlanCount" | "compiledAsyncPlanCount" | "syncContextPoolSize" | "builtSubsystems"
   > {
-    let compiledPlanCount = 0;
-    for (const plan of this.#classPlanByBindingId.values()) {
-      if (plan !== null) {
-        compiledPlanCount += 1;
-      }
+    const builtSubsystems: Array<string> = [];
+    if (this.#planCompiler !== undefined) {
+      builtSubsystems.push("resolver.planCompiler");
     }
-    let compiledAsyncPlanCount = 0;
-    for (const plan of this.#asyncPlanByBindingId.values()) {
-      if (plan !== null) {
-        compiledAsyncPlanCount += 1;
-      }
+    if (this.#lookup.isMemoBuilt) {
+      builtSubsystems.push("resolver.lookupMemo");
+    }
+    if (this.#activation.isMemoBuilt) {
+      builtSubsystems.push("resolver.activationNeedMemo");
     }
     return {
-      compiledPlanCount,
-      compiledAsyncPlanCount,
+      compiledPlanCount: countCompiledPlans(this.#classPlanByBindingId),
+      compiledAsyncPlanCount: countCompiledPlans(this.#asyncPlanByBindingId),
       syncContextPoolSize: this.#syncResolutionContextPool.length,
+      builtSubsystems,
     };
   }
 
@@ -405,75 +418,81 @@ export class DependencyResolver implements ResolverCallbacks {
     const registryVersion = this.#lookup.chainVersion();
     const activationVersion = this.#chainActivationVersion();
     if (registryVersion !== this.#classPlanRegistryVersion || activationVersion !== this.#classPlanActivationVersion) {
-      this.#classPlanByBindingId.clear();
+      this.#classPlanByBindingId?.clear();
       this.#classPlanRegistryVersion = registryVersion;
       this.#classPlanActivationVersion = activationVersion;
     }
-    const cached = this.#classPlanByBindingId.get(binding.id);
+    const plans = (this.#classPlanByBindingId ??= new Map<BindingIdentifier, (() => unknown) | null>());
+    const cached = plans.get(binding.id);
     if (cached !== undefined) {
       return cached;
     }
-    const compiled = this.#planCompiler.compile(binding);
+    const compiled = this.#compiler().compile(binding);
     if (compiled === PLAN_RETRY) {
       // Lifecycle metadata not discovered yet — the fallback resolve discovers it; retry then.
       return null;
     }
-    this.#classPlanByBindingId.set(binding.id, compiled);
+    plans.set(binding.id, compiled);
     return compiled;
   }
 
-  // Compiler behind #getInstantiationPlan — cold path, so the host indirection costs nothing hot.
-  readonly #planCompiler = new InstantiationPlanCompiler({
-    hasActivationHandlers: (binding) => this.#ownerOf(binding).#lifecycle.hasActivationHandlers(binding.token),
-    knownPostConstruct: (target) => this.#classes.knownPostConstruct(target),
-    needsActiveContainer: (target) => this.#classes.needsActiveContainer(target),
-    getConstructorMetadata: (target) => this.#classes.constructorMetadata(target),
-    lookupDependencyEntry: (token) => {
-      const entry = this.#lookup.defaultEntry(token);
-      return entry === null ? null : { binding: entry.binding };
-    },
-    // Exactly what #findBinding's single-criterion lane accepts, minus the half that reads a path:
-    // a predicate is the compiler's cue to leave the selection to the runtime.
-    lookupPathIndependentEntry: (token, options) => {
-      const singleCriterion = singleCriterionOnlyOf(options);
-      if (singleCriterion === undefined) {
-        return null;
-      }
-      const entry = this.#lookup.taggedEntry(token, singleCriterion);
-      if (entry === null || entry.binding.predicate !== undefined || !matchesSlot(entry.binding.slot, options)) {
-        return null;
-      }
-      return { binding: entry.binding };
-    },
-    getResolutionFrame: (binding) => this.#getResolutionFrame(binding),
-    // Dispatches exactly as #resolveDep does, so an escaped dep is indistinguishable
-    // from the same dep on a fully interpreted resolve.
-    resolveEscaped: (token, options, arity, resolutionStack) => {
-      if (arity === "all") {
-        return this.resolveAll(token, options, resolutionStack);
-      }
-      if (arity === "optional") {
-        return this.resolveOptional(token, options, resolutionStack);
-      }
-      if (options === undefined) {
-        return this.resolveFromContext(token, resolutionStack);
-      }
-      return this.resolve(token, options, resolutionStack);
-    },
-    // Dispatches exactly as #resolveDepAsync does, for the async lane's escapes.
-    resolveEscapedAsync: (token, options, arity, resolutionStack) => {
-      if (arity === "all") {
-        return this.resolveAllAsync(token, options, resolutionStack, UNOWNED_BRANCH);
-      }
-      if (arity === "optional") {
-        return this.resolveOptionalAsync(token, options, resolutionStack, UNOWNED_BRANCH);
-      }
-      if (options === undefined) {
-        return this.resolveAsyncFromContext(token, resolutionStack, UNOWNED_BRANCH);
-      }
-      return this.resolveAsync(token, options, resolutionStack, UNOWNED_BRANCH);
-    },
-  });
+  // Compiler behind #getInstantiationPlan — a cold path, and built on the first plan so a container
+  // that never resolves a class or a resolved factory never pays for the host.
+  #planCompiler: InstantiationPlanCompiler | undefined;
+
+  #compiler(): InstantiationPlanCompiler {
+    return (this.#planCompiler ??= new InstantiationPlanCompiler({
+      hasActivationHandlers: (binding) => this.#ownerOf(binding).#lifecycle.hasActivationHandlers(binding.token),
+      knownPostConstruct: (target) => this.#classes.knownPostConstruct(target),
+      needsActiveContainer: (target) => this.#classes.needsActiveContainer(target),
+      getConstructorMetadata: (target) => this.#classes.constructorMetadata(target),
+      lookupDependencyEntry: (token) => {
+        const entry = this.#lookup.defaultEntry(token);
+        return entry === null ? null : { binding: entry.binding };
+      },
+      // Exactly what #findBinding's single-criterion lane accepts, minus the half that reads a path:
+      // a predicate is the compiler's cue to leave the selection to the runtime.
+      lookupPathIndependentEntry: (token, options) => {
+        const singleCriterion = singleCriterionOnlyOf(options);
+        if (singleCriterion === undefined) {
+          return null;
+        }
+        const entry = this.#lookup.taggedEntry(token, singleCriterion);
+        if (entry === null || entry.binding.predicate !== undefined || !matchesSlot(entry.binding.slot, options)) {
+          return null;
+        }
+        return { binding: entry.binding };
+      },
+      getResolutionFrame: (binding) => this.#getResolutionFrame(binding),
+      // Dispatches exactly as #resolveDep does, so an escaped dep is indistinguishable
+      // from the same dep on a fully interpreted resolve.
+      resolveEscaped: (token, options, arity, resolutionStack) => {
+        if (arity === "all") {
+          return this.resolveAll(token, options, resolutionStack);
+        }
+        if (arity === "optional") {
+          return this.resolveOptional(token, options, resolutionStack);
+        }
+        if (options === undefined) {
+          return this.resolveFromContext(token, resolutionStack);
+        }
+        return this.resolve(token, options, resolutionStack);
+      },
+      // Dispatches exactly as #resolveDepAsync does, for the async lane's escapes.
+      resolveEscapedAsync: (token, options, arity, resolutionStack) => {
+        if (arity === "all") {
+          return this.resolveAllAsync(token, options, resolutionStack, UNOWNED_BRANCH);
+        }
+        if (arity === "optional") {
+          return this.resolveOptionalAsync(token, options, resolutionStack, UNOWNED_BRANCH);
+        }
+        if (options === undefined) {
+          return this.resolveAsyncFromContext(token, resolutionStack, UNOWNED_BRANCH);
+        }
+        return this.resolveAsync(token, options, resolutionStack, UNOWNED_BRANCH);
+      },
+    }));
+  }
 
   /** The async lane's plan for a statically-visible transient binding, mirroring the sync getter. */
   #getAsyncInstantiationPlan(
@@ -482,20 +501,21 @@ export class DependencyResolver implements ResolverCallbacks {
     const registryVersion = this.#lookup.chainVersion();
     const activationVersion = this.#chainActivationVersion();
     if (registryVersion !== this.#asyncPlanRegistryVersion || activationVersion !== this.#asyncPlanActivationVersion) {
-      this.#asyncPlanByBindingId.clear();
+      this.#asyncPlanByBindingId?.clear();
       this.#asyncPlanRegistryVersion = registryVersion;
       this.#asyncPlanActivationVersion = activationVersion;
     }
-    const cached = this.#asyncPlanByBindingId.get(binding.id);
+    const plans = (this.#asyncPlanByBindingId ??= new Map<BindingIdentifier, (() => unknown) | null>());
+    const cached = plans.get(binding.id);
     if (cached !== undefined) {
       return cached;
     }
-    const compiled = this.#planCompiler.compileAsync(binding);
+    const compiled = this.#compiler().compileAsync(binding);
     if (compiled === PLAN_RETRY) {
       // Lifecycle metadata not discovered yet — the fallback resolve discovers it; retry then.
       return null;
     }
-    this.#asyncPlanByBindingId.set(binding.id, compiled);
+    plans.set(binding.id, compiled);
     return compiled;
   }
 

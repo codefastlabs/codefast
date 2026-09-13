@@ -224,12 +224,16 @@ class DefaultContainer implements Container {
   }
 
   [RESOLUTION_DIAGNOSTICS](): ResolutionDiagnostics {
+    const resolverCaches = this.#resolver.describeCaches();
     const builtSubsystems: Array<string> = [];
     if (this.#inspector !== undefined) {
       builtSubsystems.push("container.inspector");
     }
     if (this.#moduleRefs !== undefined || this.#moduleBindingIds !== undefined) {
       builtSubsystems.push("container.moduleTables");
+    }
+    if (this.#registry.isIdIndexBuilt) {
+      builtSubsystems.push("registry.idIndex");
     }
     if (this.#registry.isTaggedIndexBuilt) {
       builtSubsystems.push("registry.taggedIndex");
@@ -240,7 +244,8 @@ class DefaultContainer implements Container {
     if (this.#lifecycle.isActivationTableBuilt) {
       builtSubsystems.push("lifecycle.activationHooks");
     }
-    return { ...this.#resolver.describeCaches(), scopedInstanceCount: this.#scope.scopedCount, builtSubsystems };
+    builtSubsystems.push(...resolverCaches.builtSubsystems);
+    return { ...resolverCaches, scopedInstanceCount: this.#scope.scopedCount, builtSubsystems };
   }
 
   #initResolver(configuredReader: MetadataReader | undefined): void {

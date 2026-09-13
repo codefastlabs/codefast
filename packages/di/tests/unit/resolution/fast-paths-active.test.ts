@@ -160,4 +160,70 @@ describe("deferred subsystems stay deferred", () => {
 
     expect(diagnose(child).builtSubsystems).toEqual([]);
   });
+
+  it("builds the plan compiler only once a class binding asks for a plan", () => {
+    @injectable()
+    class Service {}
+
+    const container = Container.create();
+    container.bind(Service).toSelf().transient();
+
+    expect(diagnose(container).builtSubsystems).not.toContain("resolver.planCompiler");
+
+    container.resolve(Service);
+
+    expect(diagnose(container).builtSubsystems).toContain("resolver.planCompiler");
+  });
+
+  it("builds the id index only for an id-keyed operation", () => {
+    const serviceToken = token<string>("deferred-id-index");
+    const container = Container.create();
+    const chain = container.bind(serviceToken).toConstantValue("value");
+    container.resolve(serviceToken);
+
+    expect(diagnose(container).builtSubsystems).not.toContain("registry.idIndex");
+
+    container.unbind(chain.id());
+
+    expect(diagnose(container).builtSubsystems).toContain("registry.idIndex");
+  });
+
+  it("allocates a child's lookup memo only for a second distinct parent-owned token", () => {
+    const first = token<string>("deferred-memo-first");
+    const second = token<string>("deferred-memo-second");
+    const parent = Container.create();
+    parent.bind(first).toConstantValue("first");
+    parent.bind(second).toConstantValue("second");
+    const child = parent.createChild();
+
+    // The per-request shape: one parent-owned token, answered from the one-entry front alone.
+    child.resolve(first);
+    expect(diagnose(child).builtSubsystems).toEqual([]);
+
+    child.resolve(second);
+    expect(diagnose(child).builtSubsystems).toContain("resolver.lookupMemo");
+  });
+
+  it("builds the activation-need memo only once a class asks the question", () => {
+    const serviceToken = token<string>("deferred-need-dynamic");
+
+    @injectable()
+    class Service {}
+
+    const container = Container.create();
+    container
+      .bind(serviceToken)
+      .toDynamic(() => "value")
+      .transient();
+    container.onActivation(serviceToken, (_context, value: string) => value);
+    container.resolve(serviceToken);
+
+    // A dynamic binding's container hooks are answered on its own lane, never through the memo.
+    expect(diagnose(container).builtSubsystems).not.toContain("resolver.activationNeedMemo");
+
+    container.bind(Service).toSelf().transient();
+    container.resolve(Service);
+
+    expect(diagnose(container).builtSubsystems).toContain("resolver.activationNeedMemo");
+  });
 });

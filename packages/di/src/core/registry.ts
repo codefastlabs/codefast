@@ -40,7 +40,9 @@ function createTokenEntry(binding: Binding): TokenEntry {
 export class BindingRegistry {
   // Monotonic mutation counter — lets resolvers version-stamp lookup caches across a container chain.
   #version = 0;
-  readonly #entries = new Map<DependencyKey, TokenEntry>();
+  // Allocated by the first bind, so a container that only resolves through its parent never pays
+  // for the record map — only for the hot map below it.
+  #entries: Map<DependencyKey, TokenEntry> | undefined;
   // The hot read on every resolve: a token's lone default-slot binding, one map probe away.
   readonly #fastDefault = new Map<DependencyKey, Binding>();
   // Built on the first id-keyed read and maintained from then on: a bind-and-resolve container
@@ -83,15 +85,17 @@ export class BindingRegistry {
       this.#heldConstantBinding = true;
     }
     const key: DependencyKey = binding.token;
-    const entry = this.#entries.get(key);
+    const entries = (this.#entries ??= new Map<DependencyKey, TokenEntry>());
+    const entry = entries.get(key);
     if (entry === undefined) {
-      this.#entries.set(key, createTokenEntry(binding));
+      const created = createTokenEntry(binding);
+      entries.set(key, created);
       if (isDefaultSlotBinding(binding)) {
         this.#fastDefault.set(key, binding);
       }
       this.#byId?.set(binding.id, binding);
       if (binding.slot.tags.length > 0) {
-        this.#indexTagged(key, binding);
+        this.#indexTagged(created, binding);
       }
       return undefined;
     }
@@ -115,7 +119,7 @@ export class BindingRegistry {
         : [...entry.bindings.filter((candidate) => candidate !== displacedBinding), binding];
     this.#byId?.set(binding.id, binding);
     if (binding.slot.tags.length > 0) {
-      this.#indexTagged(key, binding);
+      this.#indexTagged(entry, binding);
     }
     this.#refreshFastDefault(key, entry);
     return displacedBinding;
@@ -124,11 +128,12 @@ export class BindingRegistry {
   /** Remove all bindings for a token. Returns removed bindings. */
   removeByToken(token: Token<unknown> | Constructor): Array<Binding> {
     this.#version += 1;
-    const entry = this.#entries.get(token);
-    if (entry === undefined) {
+    const entries = this.#entries;
+    const entry = entries?.get(token);
+    if (entries === undefined || entry === undefined) {
       return [];
     }
-    this.#entries.delete(token);
+    entries.delete(token);
     this.#fastDefault.delete(token);
     if (this.#byId !== undefined) {
       for (const binding of entry.bindings) {
@@ -148,14 +153,15 @@ export class BindingRegistry {
     this.#version += 1;
     byId.delete(id);
     const key: DependencyKey = binding.token;
-    const entry = this.#entries.get(key);
-    if (entry !== undefined) {
+    const entries = this.#entries;
+    const entry = entries?.get(key);
+    if (entries !== undefined && entry !== undefined) {
       const bindingIndex = entry.bindings.findIndex((candidate) => candidate.id === id);
       // Copy-on-write, like `add`: a walk holding the current array must not lose its place.
       const remaining = bindingIndex === -1 ? entry.bindings : entry.bindings.toSpliced(bindingIndex, 1);
       this.#deindexTagged(entry, binding);
       if (remaining.length === 0) {
-        this.#entries.delete(key);
+        entries.delete(key);
         this.#fastDefault.delete(key);
       } else {
         entry.bindings = remaining;
@@ -167,7 +173,7 @@ export class BindingRegistry {
 
   /** Get all bindings for a token. */
   getAll(token: Token<unknown> | Constructor): ReadonlyArray<Binding> {
-    return this.#entries.get(token)?.bindings ?? NO_BINDINGS;
+    return this.#entries?.get(token)?.bindings ?? NO_BINDINGS;
   }
 
   /** Get binding by ID. */
@@ -178,11 +184,14 @@ export class BindingRegistry {
   /** Check if any binding exists for token. */
   has(token: Token<unknown> | Constructor): boolean {
     // An entry is dropped with its last binding, so presence is the whole answer.
-    return this.#entries.has(token);
+    return this.#entries !== undefined && this.#entries.has(token);
   }
 
   /** All bindings in the registry. */
   allBindings(): ReadonlyArray<Binding> {
+    if (this.#entries === undefined) {
+      return NO_BINDINGS;
+    }
     const allBindings: Array<Binding> = [];
     for (const entry of this.#entries.values()) {
       allBindings.push(...entry.bindings);
@@ -194,7 +203,7 @@ export class BindingRegistry {
   clear(): ReadonlyArray<Binding> {
     this.#version += 1;
     const all = this.allBindings();
-    this.#entries.clear();
+    this.#entries?.clear();
     this.#fastDefault.clear();
     this.#byId?.clear();
     return all;
@@ -205,7 +214,7 @@ export class BindingRegistry {
     if (isPurePredicateBinding(binding)) {
       return false;
     }
-    const entry = this.#entries.get(binding.token);
+    const entry = this.#entries?.get(binding.token);
     if (entry === undefined) {
       return false;
     }
@@ -221,7 +230,7 @@ export class BindingRegistry {
    * identity — where a value-keyed map answered by SameValueZero and parted from `Object.is` on ±0.
    */
   getSimpleTagged(token: Token<unknown> | Constructor, criterion: BindingTag): Binding | undefined {
-    return this.#entries.get(token)?.simple?.get(criterion);
+    return this.#entries?.get(token)?.simple?.get(criterion);
   }
 
   /**
@@ -231,7 +240,7 @@ export class BindingRegistry {
    * against the request — first-criterion bucketing only guarantees each candidate appears once.
    */
   getMultiTagged(token: Token<unknown> | Constructor, criterion: BindingTag): ReadonlyArray<Binding> | undefined {
-    return this.#entries.get(token)?.multi?.get(criterion);
+    return this.#entries?.get(token)?.multi?.get(criterion);
   }
 
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
@@ -248,6 +257,11 @@ export class BindingRegistry {
     return this.#taggedIndexBuilt;
   }
 
+  /** Whether an id-keyed operation has had to build the id index. */
+  get isIdIndexBuilt(): boolean {
+    return this.#byId !== undefined;
+  }
+
   #refreshFastDefault(key: DependencyKey, entry: TokenEntry): void {
     const only = entry.bindings.length === 1 ? entry.bindings[0]! : undefined;
     if (only !== undefined && isDefaultSlotBinding(only)) {
@@ -260,9 +274,11 @@ export class BindingRegistry {
   #ensureById(): Map<BindingIdentifier, Binding> {
     if (this.#byId === undefined) {
       const byId = new Map<BindingIdentifier, Binding>();
-      for (const entry of this.#entries.values()) {
-        for (const binding of entry.bindings) {
-          byId.set(binding.id, binding);
+      if (this.#entries !== undefined) {
+        for (const entry of this.#entries.values()) {
+          for (const binding of entry.bindings) {
+            byId.set(binding.id, binding);
+          }
         }
       }
       this.#byId = byId;
@@ -272,8 +288,7 @@ export class BindingRegistry {
 
   // Indexes a slot that carries at least one criterion: one criterion goes in the exact map, more
   // go in the first-criterion bucket.
-  #indexTagged(key: DependencyKey, binding: Binding): void {
-    const entry = this.#entries.get(key)!;
+  #indexTagged(entry: TokenEntry, binding: Binding): void {
     const { tags } = binding.slot;
     this.#taggedIndexBuilt = true;
     if (tags.length === 1) {

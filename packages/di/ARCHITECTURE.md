@@ -185,9 +185,10 @@ registered at selection start still gets its predicate evaluated, and no defensi
 ### The registry keeps one record per token, and one map in front of it
 
 `BindingRegistry` stores one record per token — its binding list, and the two tagged-slot indexes, which stay
-unallocated until a tagged slot lands on that token — in a single map. A bind into a fresh token is therefore one record
-and one map write, and the index a caller almost never uses, binding **id** → binding, is built on the first id-keyed
-operation and maintained from then on, so a bind-and-resolve container never pays for it.
+unallocated until a tagged slot lands on that token — in a single map, itself allocated by the first bind. A bind into a
+fresh token is therefore one record and one map write, and the index a caller almost never uses, binding **id** →
+binding, is built on the first id-keyed operation and maintained from then on, so a bind-and-resolve container never
+pays for it, and a container that only resolves through its parent pays for neither.
 
 One lookup is deliberately not folded into the record. `getFastDefault()` — a token's lone default-slot binding — is the
 first thing every synchronous resolve asks, before the chain-versioned memo, and it keeps its own map so the answer is a
@@ -386,7 +387,9 @@ iteration.
 **`defaultEntry()` is the same shape one layer down.** `BindingLookupCache.defaultEntry()` is reached by exactly two
 cases the registry's direct index cannot serve: an **alias**, whose terminal the index cannot name, and a token owned by
 a **parent**, whose entry has to carry that owner. Both are resolved in a loop over one token. `null` is a real answer
-there ("this shape needs full selection"), so the slot tracks absence by its token, not by its entry.
+there ("this shape needs full selection"), so the slot tracks absence by its token, not by its entry. The map behind the
+slot follows the same deferral as `taggedEntry()` below: the first token a cache generation sees is answered from the
+walk and parked in the slot, and the map is allocated and written only when a second distinct token appears.
 
 > **Invariant (correctness).** Alias hops are not folded into `registry.getFastDefault()`. That method is a bare
 > own-registry `Map.get` returning a binding, and an alias terminal may live in a parent container whose rebind only the
@@ -617,12 +620,18 @@ frame onto, while the shared stack pays one per push.
 ### A container defers most of itself
 
 `DefaultContainer`'s constructor builds only what a resolve cannot happen without: the registry, the scope manager, the
-lifecycle manager and the resolver chain. Everything else arrives on first use — the inspector, the module ref/binding
-tables, the scope's in-flight and scoped caches, the registry's tagged slot indexes, and the class introspector's three
-metadata caches.
+lifecycle manager and the resolver chain — and each of those, in turn, allocates only its hot lane. Everything else
+arrives on first use — the inspector, the module ref/binding tables, the scope's in-flight and scoped caches, the
+registry's record map (first bind), id index (first id-keyed operation) and tagged slot indexes (first tagged slot), the
+class introspector's three metadata caches, the resolver's plan compiler and both plan maps (first plan request, which
+only a `class` or `resolved` binding makes), the lookup cache's memo maps (second distinct token or tag in one cache
+generation), and the activation-need memo (first answer its early returns cannot give).
 
-The reason is that an empty `Map` is not free: V8 gives it a backing store. Those are `Map`s a bind-and-resolve
-container never reads.
+The reason is that an empty `Map` is not free: V8 gives it a backing store, and a closure-heavy host object such as the
+plan compiler's is a dozen allocations. Those are costs a per-request child — created, asked one parent-owned token,
+disposed — never earns back, and that child is the shape `Container.create()` and `createChild()` are priced on. The one
+map every container allocates eagerly is the registry's fast-default map, because `getFastDefault()` is the first read
+of every synchronous resolve ([The registry keeps one record per token](#token-record)).
 
 > **Invariant (correctness).** Deferral is an allocation decision only. A deferred collaborator must answer identically
 > whether or not something touched it first — an unallocated cache reads as a miss, never as an error — which is why
@@ -777,7 +786,7 @@ These are covered in the sections above; this list exists so a perf review can f
 - **`scope` as a total field** — [`scope` is a total field](#scope-total). Keeps the field's type feedback one shape.
 - **Path-independent entries baked into plans** — [Compiled plans and escapes](#plans). Saves a runtime lookup per
   criterion-carrying param.
-- **One-entry inline caches in front of maps**, and the deferred inner map in `taggedEntry()` —
+- **One-entry inline caches in front of maps**, and the deferred memo maps behind `defaultEntry()` and `taggedEntry()` —
   [Lookup caches](#lookup-caches).
 - **Interned criteria as `Map` keys**, and the bitmask prefilter — [Criteria and tag indexes](#criteria). Removes a hash
   level and the stringification of tag values.
