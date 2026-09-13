@@ -266,6 +266,9 @@ export const ALIAS_PARENT_OWNED_TERMINAL = {
 
 /**
  * Two aliases pointing at each other, which must fail fast rather than loop.
+ *
+ * @remarks Excluded from aggregates like `circular-dependency-3`: a side that detects the cycle at
+ * the second hop and a side that recurses until the stack gives out do incomparable work per op.
  */
 export const ALIAS_CYCLE_DETECTED = {
   id: "alias-cycle-detected",
@@ -273,7 +276,8 @@ export const ALIAS_CYCLE_DETECTED = {
   requires: ["alias", "cycle-detection"],
   facets: ["alias"],
   group: "failure",
-  what: "resolve an alias that points back at itself and fail fast",
+  what: "resolve an alias that points back at itself and fail fast (row only — sides do incomparable work)",
+  excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
 // ── slot selection ───────────────────────────────────────────────────────────────────────────────────────────────────
