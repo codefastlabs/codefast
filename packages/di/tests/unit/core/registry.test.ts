@@ -101,3 +101,49 @@ describe("failed lookups report the slots that do exist", () => {
     expect(slots.some((slot) => slot.includes("env=prod"))).toBe(true);
   });
 });
+
+describe("the id index is built on first use and kept in step afterwards", () => {
+  it("answers an id-keyed unbind after many token-keyed binds", () => {
+    const container = Container.create();
+    const tokens = Array.from({ length: 16 }, (_value, index) => token<number>(`registry-lazy-${String(index)}`));
+    const chains = tokens.map((each, index) => container.bind(each).toConstantValue(index));
+
+    container.unbind(chains[7]!.id());
+
+    expect(container.has(tokens[7]!)).toBe(false);
+    expect(container.resolve(tokens[8]!)).toBe(8);
+  });
+
+  it("sees a binding added after the first id-keyed operation", () => {
+    const first = token<number>("registry-lazy-first");
+    const second = token<number>("registry-lazy-second");
+    const container = Container.create();
+    const firstChain = container.bind(first).toConstantValue(1);
+    container.unbind(firstChain.id());
+    const secondChain = container.bind(second).toConstantValue(2);
+
+    container.unbind(secondChain.id());
+
+    expect(container.has(second)).toBe(false);
+  });
+
+  it("forgets a displaced binding's id once last-wins replaced it", () => {
+    const serviceToken = token<number>("registry-lazy-displaced");
+    const container = Container.create();
+    const displaced = container.bind(serviceToken).toConstantValue(1);
+    container.bind(serviceToken).toConstantValue(2);
+
+    expect(() => container.unbind(displaced.id())).not.toThrow();
+    expect(container.resolve(serviceToken)).toBe(2);
+  });
+});
+
+describe("a token nobody bound", () => {
+  it("reports no bindings without allocating a list the caller could mutate", () => {
+    const container = Container.create();
+    const unbound = token<number>("registry-unbound");
+
+    expect(container.lookupBindings(unbound)).toEqual([]);
+    expect(container.has(unbound)).toBe(false);
+  });
+});
