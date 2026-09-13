@@ -33,6 +33,7 @@ const DI_FEATURES = {
   module: "bindings grouped into a reusable unit a container is composed from",
   "module-unload": "a module's bindings removed again as one unit",
   alias: "a token forwarding to another token's binding",
+  "class-injection": "a class the container constructs, its constructor dependencies injected",
   "explicit-deps": "a factory whose dependency tokens are declared, without decorators",
   "self-binding": "a class used as its own token",
   decorators: "constructor wiring declared through class decorators",

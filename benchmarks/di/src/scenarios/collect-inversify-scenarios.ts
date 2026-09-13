@@ -11,6 +11,7 @@ import { buildInversifyMicroScenarios } from "#/scenarios/inversify/micro";
 import { buildInversifyModuleScenarios } from "#/scenarios/inversify/module";
 import { buildInversifyProductionScenarios } from "#/scenarios/inversify/production";
 import { buildInversifyRealisticScenarios } from "#/scenarios/inversify/realistic";
+import { buildInversifyRealisticClassScenarios } from "#/scenarios/inversify/realistic-class";
 import { buildInversifyRegistryOpsScenarios } from "#/scenarios/inversify/registry-ops";
 import { buildInversifyResolutionPatternScenarios } from "#/scenarios/inversify/resolution-patterns";
 import { buildInversifyScaleScenarios } from "#/scenarios/inversify/scale";
@@ -24,6 +25,7 @@ export function collectAllInversifyScenarios(): ReadonlyArray<AnyScenario> {
   return [
     ...buildInversifyMicroScenarios(),
     ...buildInversifyRealisticScenarios(),
+    ...buildInversifyRealisticClassScenarios(),
     ...buildInversifyFanOutScenarios(),
     ...buildInversifyAsyncScenarios(),
     ...buildInversifyLifecycleScenarios(),

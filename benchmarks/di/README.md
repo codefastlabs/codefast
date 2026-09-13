@@ -74,6 +74,13 @@ wiring). Nothing is forced into another library's idiom, and no two libraries sh
 there once, and both sides import them. A batch factor that drifted between two implementations would silently scale
 `hzPerOp`; here it cannot, because the compiler holds it.
 
+The realistic graph runs in two lanes. The factory lane wires `src/fixtures/realistic-graph.ts` through each library's
+factory binding, so the resolver is measured with no class machinery in the way; the class lane (`realistic-class.ts`
+under each library) wires the same ten nodes as constructor-injected classes in that library's own class idiom, which is
+how an application actually declares its services. `src/fixtures/realistic-class-graph.ts` is the one sanity every
+class-lane row runs: the resolved tree matches the descriptor node for node, singletons are one instance wherever they
+appear, and the root is fresh per resolve.
+
 Scenarios are grouped so one kind of work cannot masquerade as another. The shared groups are `micro`, `realistic`,
 `fan-out`, `async`, `lifecycle`, `scope`, `scale`, `boot`, `production`, `introspection`, and `failure` — error paths,
 reported apart because their cost is not comparable to a success path. Two further groups hold `@codefast/di`-only

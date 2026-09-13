@@ -136,6 +136,28 @@ export const REALISTIC_GRAPH_RESOLVED_ROOT = {
   what: "resolve the transient root of the 10-node graph bound via explicit-deps factories (each library's compiled path)",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * The class-lane hot row: the same graph as constructor-injected classes, each library's own class idiom.
+ */
+export const REALISTIC_GRAPH_CLASS_RESOLVE_ROOT = {
+  id: "realistic-graph-class-resolve-root",
+  tier: "contract",
+  requires: ["class-injection", "transient-root"],
+  group: "realistic",
+  what: "resolve the transient root of the 10-node graph bound as constructor-injected classes (each library's class idiom)",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * The class-lane cold row: a fresh container, ten class bindings, one root resolve.
+ */
+export const REALISTIC_GRAPH_CLASS_COLD_RESOLVE = {
+  id: "realistic-graph-class-cold-resolve",
+  tier: "contract",
+  requires: ["class-injection", "transient-root"],
+  group: "realistic",
+  what: "build a fresh container, bind 10 constructor-injected classes, resolve root once (cold start)",
+} as const satisfies ScenarioDescriptor;
+
 // ── fan-out ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**

@@ -9,6 +9,7 @@ import { buildAwilixFanOutScenarios } from "#/scenarios/awilix/fan-out";
 import { buildAwilixMicroScenarios } from "#/scenarios/awilix/micro";
 import { buildAwilixProductionScenarios } from "#/scenarios/awilix/production";
 import { buildAwilixRealisticScenarios } from "#/scenarios/awilix/realistic";
+import { buildAwilixRealisticClassScenarios } from "#/scenarios/awilix/realistic-class";
 import { buildAwilixScaleScenarios } from "#/scenarios/awilix/scale";
 import { buildAwilixScopeScenarios } from "#/scenarios/awilix/scope";
 import type { AnyScenario } from "#/scenarios/types";
@@ -20,6 +21,7 @@ export function collectAllAwilixScenarios(): ReadonlyArray<AnyScenario> {
   return [
     ...buildAwilixMicroScenarios(),
     ...buildAwilixRealisticScenarios(),
+    ...buildAwilixRealisticClassScenarios(),
     ...buildAwilixFanOutScenarios(),
     ...buildAwilixScopeScenarios(),
     ...buildAwilixScaleScenarios(),
