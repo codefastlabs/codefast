@@ -42,6 +42,15 @@ A change earns a row when:
 - **Work moves between phases**, bind-time against resolve-time. A resolve row cannot see a cost paid at bind.
 - **A failure path starts being paid per request.** The `failure` group is where those go.
 
+**Every row declares its tier and what it requires.** A `contract` row is written against the public API and only the
+public API — `SPEC.md`, not `ARCHITECTURE.md` — because a row that names an engine lane stops meaning anything the day
+that lane is rewritten, and a rewrite is exactly when the suite is needed most. An `engine` row is allowed to name the
+lane, and in exchange it is instrumentation: excluded from every cross-library figure, owed by no other library, and
+deleted with the engine. A row's `requires` lists the public-API features it cannot be written without, in the
+vocabulary of `src/fixtures/features.ts`; `pnpm bench:list` reads that against each library's declared `features` and
+reports the rows a library owes as **gaps**, apart from the rows it cannot express. Before adding a competitor's row,
+read its gaps — they are the coverage to-do the suite already knows about.
+
 A branch that lands on a measured path but is never taken does **not** earn a row. It needs the other half of the job:
 name the rows that must not move _before_ measuring, and read one that moves as the inlining accident it usually is.
 

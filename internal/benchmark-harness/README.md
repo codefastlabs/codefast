@@ -97,6 +97,7 @@ dropped for any run started at the repo root — which looks exactly like the ke
 | `BENCH_TRIALS=<n>`     | Trials per scenario; the harness refuses anything below `MINIMUM_TRIAL_COUNT`                     |
 | `BENCH_ISOLATE=true`   | One subprocess per scenario, libraries interleaved                                                |
 | `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids; a library implementing none of them measures nothing      |
+| `BENCH_TIER=<tier>`    | Restrict the run to one scenario tier, `contract` or `engine`; a narrowed run like `BENCH_ONLY`   |
 | `BENCH_VERBOSE=true`   | Forward each child's stdout through the parent                                                    |
 | `BENCH_PORT=<n>`       | Preferred port for a suite's `bench:serve`                                                        |
 | `PORT=<n>`             | Read by `bench:serve` when `BENCH_PORT` is unset: the port a launcher hands the process it starts |
@@ -108,8 +109,23 @@ values rather than a flag per profile because the profiles are mutually exclusiv
 parent/child protocol: the parent sets it per discovery child and strips it from every inherited environment.
 
 Each suite's `bench:list` script (`runBenchScenarioListingMain`) prints the scenario inventory as JSON on stdout — every
-id and which libraries implement it, the list a `BENCH_ONLY` filter needs. Discovery progress goes to stderr, so stdout
-is the JSON document alone.
+id, its tier, the features it requires and which libraries implement it, the list a `BENCH_ONLY` filter needs. Discovery
+progress goes to stderr, so stdout is the JSON document alone.
+
+### Tiers and the feature matrix
+
+A scenario may declare a `tier`. A `contract` row measures public API and is what the libraries are compared on; an
+`engine` row measures one library's internals, is owed by nobody else, and is deleted with the engine it names. A
+scenario that declares none is a contract row. `BENCH_TIER=contract` runs one tier and is a narrowed run: it writes its
+own directory and leaves `latest.json` alone, so a cross-library run can skip the subject's instrumentation without
+becoming the suite's published state. Every observation row records its tier.
+
+A scenario may also declare `requires`, the features of a library's public API it cannot be written without, and each
+library config may declare `features`, the ones its API offers — both in the suite's own vocabulary. When every library
+declares, the inventory splits the libraries missing a row into `gaps` (their features allow it, nobody wrote it) and
+`unsupported` (they cannot express it, so `—` is the honest cell), and prints a coverage line per library on stderr. A
+library implementing a row while not declaring a feature it requires fails the listing, because the matrix is only worth
+reading while the declarations are true.
 
 ## Usage
 

@@ -25,22 +25,23 @@ pnpm di:bench:serve      # browse recorded runs
 From this directory, `pnpm bench` does the same as `pnpm di:bench`. Every run rebuilds `@codefast/di` first, so it
 measures the working tree rather than a stale `dist/`.
 
-| Command                 | What changes                                                                                                |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `pnpm bench`            | Default profile: no `--expose-gc`, the default trial count                                                  |
-| `pnpm bench:fast`       | Smoke profile — shorter sampling windows. For "did I break it", never for a claim                           |
-| `pnpm bench:full`       | `--expose-gc` for every library, forcing collections into the measured loop                                 |
-| `pnpm bench:isolate`    | One subprocess per scenario, so no scenario inherits another's inline caches                                |
-| `pnpm bench:verbose`    | Streams every child line and prints the per-scenario table                                                  |
-| `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout, measuring nothing                                          |
-| `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                                                   |
-| `pnpm bench:<library>`  | One child process alone: `codefast`, `inversify`, `awilix`, `tsyringe`, `brandi`, `ditox` or `injection-js` |
-| `pnpm instrument:alloc` | The allocation instrument (see below)                                                                       |
-| `BENCH_MODE=<mode>`     | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set                                |
-| `BENCH_TRIALS=<n>`      | Trials per scenario; the harness refuses anything below its minimum                                         |
-| `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use                              |
-| `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                                            |
-| `PORT=<n>`              | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                        |
+| Command                 | What changes                                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `pnpm bench`            | Default profile: no `--expose-gc`, the default trial count                                                   |
+| `pnpm bench:fast`       | Smoke profile — shorter sampling windows. For "did I break it", never for a claim                            |
+| `pnpm bench:full`       | `--expose-gc` for every library, forcing collections into the measured loop                                  |
+| `pnpm bench:isolate`    | One subprocess per scenario, so no scenario inherits another's inline caches                                 |
+| `pnpm bench:verbose`    | Streams every child line and prints the per-scenario table                                                   |
+| `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout and a coverage line per library on stderr, measuring nothing |
+| `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                                                    |
+| `pnpm bench:<library>`  | One child process alone: `codefast`, `inversify`, `awilix`, `tsyringe`, `brandi`, `ditox` or `injection-js`  |
+| `pnpm instrument:alloc` | The allocation instrument (see below)                                                                        |
+| `BENCH_MODE=<mode>`     | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set                                 |
+| `BENCH_TRIALS=<n>`      | Trials per scenario; the harness refuses anything below its minimum                                          |
+| `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use                               |
+| `BENCH_TIER=<tier>`     | Restrict the run to `contract` rows (public API, compared across libraries) or `engine` rows (ours alone)    |
+| `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                                             |
+| `PORT=<n>`              | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                         |
 
 Profiles compose: `BENCH_MODE=full pnpm bench:isolate` is the slowest and the most order-independent.
 
@@ -49,7 +50,7 @@ and — for a whole-suite run — points `bench-results/latest.json` at it. `rep
 demand: `pnpm bench:report [run]` rebuilds them from a run's observations (newest by default), and `pnpm bench:serve`
 offers them as downloads. The JSONL carries every per-trial figure a report summarises — including each cell's IQR — and
 stamps every row with the run's profile, isolation and trial count, so a report derived from disk records the
-configuration the run actually used. A run narrowed with `BENCH_ONLY` does not move `latest.json`.
+configuration the run actually used. A run narrowed with `BENCH_ONLY` or `BENCH_TIER` does not move `latest.json`.
 
 ## How it is put together
 
@@ -78,6 +79,21 @@ Scenarios are grouped so one kind of work cannot masquerade as another. The shar
 reported apart because their cost is not comparable to a success path. Two further groups hold `@codefast/di`-only
 instrumentation instead of a head-to-head pair: `slot-selection` for the criteria lanes, and `resolution` for the engine
 lanes — compiled plans and their escapes, the depth thresholds, the sync context pool, the accessor channel.
+
+Every scenario also declares a **tier**. A `contract` row is specified against the public API in
+[`SPEC.md`](../../packages/di/SPEC.md): it names a shape a caller can write, so it survives a rewrite of the engine and
+is what the libraries are compared on. An `engine` row names a lane of the current resolver — a compiled plan and its
+escapes, the tag-key mask, the hoisted-versus-inline options object — so it is instrumentation for this engine, owed by
+no other library, and deleted with the engine it names. `BENCH_TIER=contract pnpm bench:isolate` runs the comparison
+without the instrumentation, as a narrowed run that leaves `latest.json` alone.
+
+Every scenario declares the **features** it requires, and every library in `src/harness/config.ts` declares the features
+its public API offers, both in the vocabulary of `src/fixtures/features.ts` — `transient`, `optional`, `resolve-all`,
+`child-container`, `dispose`, `alias`, and so on, each defined by the public behaviour a library must offer to claim it.
+`pnpm bench:list` reads one against the other: a library missing a row whose features it declares is a **gap**, a row
+somebody owes; a library missing a row it cannot express is **unsupported**, and `—` is the honest cell. The two used to
+look identical. A library implementing a row while not declaring a feature it requires fails the listing, so the matrix
+cannot drift from the rows.
 
 No competitor implements every row. inversify covers nearly every shared descriptor; awilix, tsyringe, brandi and ditox
 cover the factory/class-binding core plus whichever scope, lifecycle, module, multi-binding and async rows their API has
