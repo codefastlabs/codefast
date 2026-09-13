@@ -167,18 +167,57 @@ survives registration.
 
 <a id="copy-on-write"></a>
 
-### A token's binding list is copy-on-write
+### A token's binding list appends in place and replaces on removal
 
-A token can carry several bindings, and the registry keeps them in a list. `add` and `removeById` **replace** that array
-rather than splicing it.
+A token can carry several bindings, and the registry keeps them in a list. An `add` that displaces nothing **appends**
+to that array; a `removeById` or a displacement **replaces** it rather than splicing it.
 
 The reason is selection. Selection walks the registry's own list while running `when()` predicates, and a predicate is
-user code that may rebind the very token being walked. Because the walk holds its pre-mutation array, every candidate
-registered at selection start still gets its predicate evaluated, and no defensive copy is needed on the read side.
+user code that may rebind the very token being walked. The walk reads the list's length once before it starts: a removal
+hands it a new array, so its own is never shifted under it, and an append lands past the length it read, so it never
+sees a candidate that was not there when selection began. Every candidate registered at selection start still gets its
+predicate evaluated, none registered during it does, and no defensive copy is needed on the read side.
 
-> **Invariant (correctness).** A token's binding **list** is copy-on-write: `add` and `removeById` replace the array and
-> never splice one that has been handed out. `tests/unit/resolution/select/binding-select.test.ts` pins the observable
-> half.
+Appending in place is what makes a collection cheap to build: a hundred `when()` bindings on one token used to copy the
+list a hundred times, and a bare `when()` used to re-register the binding to change a field nothing indexes on. The
+predicate is now rewritten in place — the registry moves a lone binding into a record itself — when the chain owns the
+registry's last write and has nothing parked; otherwise the re-slot path re-checks that the binding is still live and
+restores what the new shape frees, exactly as before.
+
+> **Invariant (correctness).** A removal or a displacement replaces a token's binding array and never splices one that
+> has been handed out; an append lands in place, and every selection walk reads its starting length first.
+> `tests/unit/resolution/select/binding-select.test.ts` pins both halves.
+
+<a id="token-record"></a>
+
+### The registry keeps the common token in one map, and a record for the rest
+
+Most tokens are bound once, to the default slot, with no predicate. `BindingRegistry` keeps exactly those in one map,
+token → binding, and nothing else about them: no list, no record, no index. A token that becomes anything more — a
+second binding, a tagged slot, a predicate — moves to a second map of records, where a record is its binding list plus
+the two tagged-slot indexes, which stay unallocated until a tagged slot lands on that token. A token is in exactly one
+of the two maps, and it moves back when a record shrinks to one default-slot binding. The record map itself is allocated
+by the first token that needs one, and the index a caller almost never uses, binding **id** → binding, is built on the
+first id-keyed operation and maintained from then on.
+
+The layout is priced on the two paths that matter. A plain bind is one map write and one binding object, because the
+common token gets no record and no list. A synchronous resolve's first read, `getFastDefault()`, is a bare `Map.get` on
+the lone map returning the binding — no record indirection, no optional chain. Reading the lone binding through a record
+(`entries.get(token)?.fastDefault`) is one dependent load more on the hottest lane there is, and a paired A/B of the two
+layouts read that load as a measurable loss on the warm resolve rows; keeping the lone map as the primary store, rather
+than as a second map beside a record map, is what lets both paths win at once.
+
+The price is paid where it is cold. `getAll()` on a lone token materialises a one-element list, so the resolver's
+selection lanes ask `getFastDefault()` (or `countBindings()`) first and reach `getAll()` only for a token that keeps a
+record, and a presence check with no criteria is `has()`, which also reads the lone map's size before probing it so a
+container that never bound anything — every per-request child — answers without a hash. Snapshots, error reporting and
+module rollback are the callers that pay for the list, and they can.
+
+> **Invariant (performance-load-bearing).** `getFastDefault()` stays a single own-registry `Map.get` returning the
+> binding — no record indirection, no optional chain — and a default-slot-only token never allocates a record. The
+> promote/demote transitions are pinned by `tests/unit/core/registry.test.ts`, the lazily built id index and record map
+> by `tests/unit/resolution/fast-paths-active.test.ts`; the fast-default shape is held by the benchmark suite's warm
+> resolve rows, which is where it was found.
 
 <a id="scope-total"></a>
 
@@ -366,7 +405,9 @@ iteration.
 **`defaultEntry()` is the same shape one layer down.** `BindingLookupCache.defaultEntry()` is reached by exactly two
 cases the registry's direct index cannot serve: an **alias**, whose terminal the index cannot name, and a token owned by
 a **parent**, whose entry has to carry that owner. Both are resolved in a loop over one token. `null` is a real answer
-there ("this shape needs full selection"), so the slot tracks absence by its token, not by its entry.
+there ("this shape needs full selection"), so the slot tracks absence by its token, not by its entry. The map behind the
+slot follows the same deferral as `taggedEntry()` below: the first token a cache generation sees is answered from the
+walk and parked in the slot, and the map is allocated and written only when a second distinct token appears.
 
 > **Invariant (correctness).** Alias hops are not folded into `registry.getFastDefault()`. That method is a bare
 > own-registry `Map.get` returning a binding, and an alias terminal may live in a parent container whose rebind only the
@@ -452,6 +493,12 @@ Two deliberate bounds on that lane:
   `tests/unit/resolution/select/multi-tag-selection.test.ts` pins along with the subset, specificity, predicate and
   index-invalidation behaviour. The residual cost on a small list is one length read.
 
+Under the threshold, and on every request the indexes decline, the list gets a first pass before full selection. One
+slot match carrying no predicate is the whole answer, and no match is a clean miss; neither builds a constraint context,
+a display name or a candidate array, which is what a name-plus-tag request and a tagged miss over a populated token used
+to pay on every resolve. A second match, or a predicate on a match, hands the same list to full selection, which weighs
+specificity and reports ambiguity, so the two lanes answer identically.
+
 <a id="cycles"></a>
 
 ### Cycle detection: two mechanisms, on purpose
@@ -529,10 +576,13 @@ a cycle crossing the boundary on one path.
 
 The branch lane is the general one. `extendResolutionBranch` appends to a path while this branch still owns the next
 slot, and copies its own prefix once a sibling has claimed it. Nothing is removed there either, so it needs no settle
-listener; it pays a context per level instead. A cycle formed entirely from post-await edges is caught there —
-`post-q → post-p → post-q` — one level in from the true root, because the ancestors before the first escape were never
-written down. That imprecision is the price of the cascade lane, and `tests/unit/resolution/resolver-async.test.ts` pins
-it rather than leaving it to be discovered.
+listener; it pays a context per level instead. The dominant level — a transient factory with no activation, asked with
+no options — is served by a method that is deliberately not `async`, so it costs the factory's own promise and nothing
+on top; a single `resolveAsync` and every member of a `resolveAllAsync` collection take that same lane, and the `async`
+method behind them is reached only by scoped, singleton, activated or option-carrying members. A cycle formed entirely
+from post-await edges is caught there — `post-q → post-p → post-q` — one level in from the true root, because the
+ancestors before the first escape were never written down. That imprecision is the price of the cascade lane, and
+`tests/unit/resolution/resolver-async.test.ts` pins it rather than leaving it to be discovered.
 
 > **Invariant (ownership, held by the compiler).** A branch may only ever append to an array it minted itself. A sync
 > frame's path is one that frame will pop in its own `finally`, and it may carry an `enterResolutionPath` membership
@@ -597,12 +647,19 @@ frame onto, while the shared stack pays one per push.
 ### A container defers most of itself
 
 `DefaultContainer`'s constructor builds only what a resolve cannot happen without: the registry, the scope manager, the
-lifecycle manager and the resolver chain. Everything else arrives on first use — the inspector, the module ref/binding
-tables, the scope's in-flight and scoped caches, the registry's tagged slot indexes, and the class introspector's three
-metadata caches.
+lifecycle manager and the resolver chain — and each of those, in turn, allocates only its hot lane. Everything else
+arrives on first use — the inspector, the module ref/binding tables, the scope's in-flight and scoped caches, the
+registry's record map (first token that is more than one default binding), id index (first id-keyed operation) and
+tagged slot indexes (first tagged slot), the class introspector's three metadata caches, the resolver's plan compiler
+and both plan maps (first plan request, which only a `class` or `resolved` binding makes), the lookup cache's memo maps
+(second distinct token or tag in one cache generation), and the activation-need memo (first answer its early returns
+cannot give).
 
-The reason is that an empty `Map` is not free: V8 gives it a backing store. Those are `Map`s a bind-and-resolve
-container never reads.
+The reason is that an empty `Map` is not free: V8 gives it a backing store, and a closure-heavy host object such as the
+plan compiler's is a dozen allocations. Those are costs a per-request child — created, asked one parent-owned token,
+disposed — never earns back, and that child is the shape `Container.create()` and `createChild()` are priced on. The one
+map every container allocates eagerly is the registry's fast-default map, because `getFastDefault()` is the first read
+of every synchronous resolve ([The registry keeps one record per token](#token-record)).
 
 > **Invariant (correctness).** Deferral is an allocation decision only. A deferred collaborator must answer identically
 > whether or not something touched it first — an unallocated cache reads as a miss, never as an error — which is why
@@ -638,11 +695,12 @@ section before changing what the table describes.
 
 | Invariant                                                                                                                                | Pinned by                                                                                 | Where                                             |
 | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| A token's binding list is copy-on-write; `add`/`removeById` never splice a handed-out array.                                             | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Copy-on-write binding list](#copy-on-write)      |
+| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.    | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Binding list](#copy-on-write)                    |
 | Internal lanes take `Binding` and return `unknown`; only the eight public entry points name `Value`. Lifecycle hooks stay method syntax. | `tests/types/binding-variance.test.ts`                                                    | [Value-type erasure](#value-erasure)              |
 | `frame` is cleared whenever `scope` is refined in place.                                                                                 | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#frame-memo)               |
 | Chain refinements are absent from `bind()`'s type **and** throw before `to*()`.                                                          | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#fluent-chain)                 |
 | One binding belongs to one container; the singleton slot lives on the binding.                                                           | `tests/unit/resolution/singleton-on-binding.test.ts`                                      | [Singleton on the binding](#singleton-on-binding) |
+| The common token lives in the lone map alone and only the rest keep a record; `getFastDefault()` is one bare `Map.get`.                  | `tests/unit/core/registry.test.ts`, the suite's warm resolve rows                         | [The common token](#token-record)                 |
 
 **Selection and lookup**
 
@@ -756,7 +814,7 @@ These are covered in the sections above; this list exists so a perf review can f
 - **`scope` as a total field** — [`scope` is a total field](#scope-total). Keeps the field's type feedback one shape.
 - **Path-independent entries baked into plans** — [Compiled plans and escapes](#plans). Saves a runtime lookup per
   criterion-carrying param.
-- **One-entry inline caches in front of maps**, and the deferred inner map in `taggedEntry()` —
+- **One-entry inline caches in front of maps**, and the deferred memo maps behind `defaultEntry()` and `taggedEntry()` —
   [Lookup caches](#lookup-caches).
 - **Interned criteria as `Map` keys**, and the bitmask prefilter — [Criteria and tag indexes](#criteria). Removes a hash
   level and the stringification of tag values.

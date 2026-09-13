@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { token } from "#/core/token";
-import { TokenNotBoundError } from "#/errors/errors";
+import { NoMatchingBindingError, TokenNotBoundError } from "#/errors/errors";
 
 describe("held chains vs later registry mutations", () => {
   it("does not undo an unbind when the chain is refined afterwards", () => {
@@ -33,6 +33,62 @@ describe("held chains vs later registry mutations", () => {
     chain.whenNamed("x");
 
     expect(container.resolve(valueToken)).toBe(3);
+  });
+
+  it("does not undo an unbind when a bare when() follows it", () => {
+    const valueToken = token<number>("chain.unbind-when");
+    const container = Container.create();
+    const chain = container.bind(valueToken).toConstantValue(2);
+    container.unbind(valueToken);
+
+    chain.when(() => true);
+
+    expect(() => container.resolve(valueToken)).toThrow(TokenNotBoundError);
+    expect(container.lookupBindings(valueToken)).toHaveLength(0);
+  });
+
+  it("keeps the newest binding when a displaced chain gets a bare when()", () => {
+    const valueToken = token<number>("chain.newest-when");
+    const container = Container.create();
+    const chain = container.bind(valueToken).toConstantValue(2);
+    container.bind(valueToken).toConstantValue(3);
+
+    chain.when(() => true);
+
+    expect(container.resolve(valueToken)).toBe(3);
+    expect(container.lookupBindings(valueToken)).toHaveLength(1);
+  });
+
+  it("restores the transiently displaced default when a bare when() frees the slot", () => {
+    const valueToken = token<number>("chain.free-when");
+    const container = Container.create();
+    container.bind(valueToken).toConstantValue(1);
+    // Displaces the default, then leaves the default slot again by becoming predicate-only.
+    container
+      .bind(valueToken)
+      .toConstantValue(2)
+      .when(() => false);
+
+    expect(container.lookupBindings(valueToken)).toHaveLength(2);
+    expect(container.resolve(valueToken)).toBe(1);
+  });
+
+  it("narrows a bare when() in place, keeping the chain's id", () => {
+    const valueToken = token<number>("chain.when-in-place");
+    const container = Container.create();
+    const chain = container.bind(valueToken).toConstantValue(2);
+    const before = chain.id();
+    let gate = true;
+
+    chain.when(() => gate).when(() => true);
+
+    expect(chain.id()).toBe(before);
+    expect(container.resolve(valueToken)).toBe(2);
+    gate = false;
+    // The token is still bound; its one candidate now declines, which is a selection miss.
+    expect(() => container.resolve(valueToken)).toThrow(NoMatchingBindingError);
+    container.unbind(before);
+    expect(container.lookupBindings(valueToken)).toHaveLength(0);
   });
 
   it("still restores the transiently displaced default within one chain's own morph", () => {

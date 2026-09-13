@@ -379,6 +379,21 @@ export function refinableFields<Value>(binding: Binding<Value>): RefinableBindin
 }
 
 /**
+ * Writable view of the one selection field a chain may refine without re-registering: nothing
+ * indexes on the predicate, so the registry rewrites it in place and re-homes the binding itself.
+ */
+export interface PredicateField {
+  predicate: BindingConstraint | undefined;
+}
+
+/**
+ * Narrows a registered binding to its predicate for the registry to rewrite.
+ */
+export function writablePredicate(binding: Binding): PredicateField {
+  return binding as PredicateField;
+}
+
+/**
  * Writable view of the memoized frame, which is a cache rather than part of a binding's identity.
  *
  * @remarks Named for the same reason as {@link RefinableBindingFields}: a write view stated once

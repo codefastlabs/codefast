@@ -16,7 +16,9 @@ import type { ClassIntrospector } from "#/resolution/cache/class-introspector";
  * @since 0.5.0-canary.8
  */
 export class ActivationNeedCache {
-  readonly #needByBindingId = new Map<BindingIdentifier, boolean>();
+  // Allocated by the first answer the early returns cannot give, so a hook-free container that
+  // resolves no class or alias never pays for it.
+  #needByBindingId: Map<BindingIdentifier, boolean> | undefined;
   #version = -1;
   readonly #lifecycle: LifecycleManager;
   readonly #classes: ClassIntrospector;
@@ -26,6 +28,11 @@ export class ActivationNeedCache {
     this.#lifecycle = lifecycle;
     this.#classes = classes;
     this.#registry = registry;
+  }
+
+  /** Whether an answer the early returns could not give has had to allocate the memo. */
+  get isMemoBuilt(): boolean {
+    return this.#needByBindingId !== undefined;
   }
 
   needsActivation<Value>(binding: Binding<Value>): boolean {
@@ -43,16 +50,17 @@ export class ActivationNeedCache {
     // The registry version evicts entries for binding ids a rebind has retired.
     const version = lifecycleVersion + this.#registry.version;
     if (this.#version !== version) {
-      this.#needByBindingId.clear();
+      this.#needByBindingId?.clear();
       this.#version = version;
     }
-    const cached = this.#needByBindingId.get(binding.id);
+    const memo = (this.#needByBindingId ??= new Map<BindingIdentifier, boolean>());
+    const cached = memo.get(binding.id);
     if (cached !== undefined) {
       return cached;
     }
     const needsActivation =
       binding.kind === "class" ? this.#classNeedsActivation(binding) : this.#nonClassNeedsActivation(binding);
-    this.#needByBindingId.set(binding.id, needsActivation);
+    memo.set(binding.id, needsActivation);
     return needsActivation;
   }
 
@@ -68,7 +76,7 @@ export class ActivationNeedCache {
       return needsActivation;
     }
     this.#classes.discoverPostConstruct(binding.target);
-    this.#needByBindingId.delete(binding.id);
+    this.#needByBindingId?.delete(binding.id);
     return this.needsActivation(binding);
   }
 

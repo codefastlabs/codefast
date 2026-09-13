@@ -39,14 +39,15 @@ const newTagToEntryMap = <Owner>(): Map<BindingTag, DefaultLookupEntry<Owner> | 
  * @since 0.5.0-canary.9
  */
 export class BindingLookupCache<Owner> {
-  readonly #byToken = new Map<Token<unknown> | Constructor, DefaultLookupEntry<Owner> | null>();
+  #byToken: Map<Token<unknown> | Constructor, DefaultLookupEntry<Owner> | null> | undefined;
   #version = -1;
-  // One entry in front of the map: the two shapes that reach here — an alias, and a token owned by
-  // a parent — are both resolved in a loop over the same token. `null` is a real answer, so absence
-  // is tracked by the token slot rather than by the entry.
+  // One entry in front of the map, and the map is not written until a second distinct token appears
+  // in one generation: the two shapes that reach here — an alias, and a token owned by a parent —
+  // are both resolved in a loop over the same token. `null` is a real answer, so absence is tracked
+  // by the token slot rather than by the entry.
   #lastToken: Token<unknown> | Constructor | undefined;
   #lastEntry: DefaultLookupEntry<Owner> | null = null;
-  readonly #byTokenAndTag = new Map<Token<unknown> | Constructor, Map<BindingTag, DefaultLookupEntry<Owner> | null>>();
+  #byTokenAndTag: Map<Token<unknown> | Constructor, Map<BindingTag, DefaultLookupEntry<Owner> | null>> | undefined;
   #taggedVersion = -1;
   // One entry in front of the tag map, and the map is not written until a second distinct request
   // shape appears: a per-request child usually asks one (token, tag) once, and the inner-map
@@ -65,6 +66,11 @@ export class BindingLookupCache<Owner> {
     this.#parent = parent;
   }
 
+  /** Whether a second distinct token or tag has had to allocate a memo map behind the one-entry fronts. */
+  get isMemoBuilt(): boolean {
+    return this.#byToken !== undefined || this.#byTokenAndTag !== undefined;
+  }
+
   /** Summed registry versions of this cache's whole chain — the memo stamp. */
   chainVersion(): number {
     let version = this.#registry.version;
@@ -78,16 +84,23 @@ export class BindingLookupCache<Owner> {
   defaultEntry(token: Token<unknown> | Constructor): DefaultLookupEntry<Owner> | null {
     const version = this.chainVersion();
     if (version !== this.#version) {
-      this.#byToken.clear();
+      this.#byToken?.clear();
       this.#version = version;
       this.#lastToken = undefined;
     } else if (token === this.#lastToken) {
       return this.#lastEntry;
     }
-    let entry = this.#byToken.get(token);
-    if (entry === undefined) {
+    let entry: DefaultLookupEntry<Owner> | null | undefined;
+    if (this.#lastToken === undefined) {
+      // First token this cache generation sees: answer from the walk and defer the map entirely.
       entry = this.#foldAliases(token);
-      this.#byToken.set(token, entry);
+    } else {
+      const byToken = (this.#byToken ??= new Map<Token<unknown> | Constructor, DefaultLookupEntry<Owner> | null>());
+      entry = byToken.get(token);
+      if (entry === undefined) {
+        entry = this.#foldAliases(token);
+        byToken.set(token, entry);
+      }
     }
     this.#lastToken = token;
     this.#lastEntry = entry;
@@ -98,7 +111,7 @@ export class BindingLookupCache<Owner> {
   taggedEntry(token: Token<unknown> | Constructor, tag: BindingTag): DefaultLookupEntry<Owner> | null {
     const version = this.chainVersion();
     if (version !== this.#taggedVersion) {
-      this.#byTokenAndTag.clear();
+      this.#byTokenAndTag?.clear();
       this.#taggedVersion = version;
       this.#lastTagToken = undefined;
       this.#lastTag = undefined;
@@ -112,7 +125,14 @@ export class BindingLookupCache<Owner> {
     } else {
       // Keyed by the criterion object itself: criteria are interned, so identity is the slot
       // contract's own `Object.is` — the same exactness the registry's tagged index relies on.
-      const byTag = getOrInsertComputed(this.#byTokenAndTag, token, newTagToEntryMap);
+      const byTag = getOrInsertComputed(
+        (this.#byTokenAndTag ??= new Map<
+          Token<unknown> | Constructor,
+          Map<BindingTag, DefaultLookupEntry<Owner> | null>
+        >()),
+        token,
+        newTagToEntryMap,
+      );
       entry = byTag.get(tag);
       if (entry === undefined) {
         entry = this.#findTaggedInChain(token, tag);
