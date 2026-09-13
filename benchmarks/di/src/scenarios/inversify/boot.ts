@@ -1,14 +1,90 @@
 /**
- * InversifyJS 8 — decorator-driven boot scenario.
- *
- * Mirrors `../codefast/boot.ts`: each iteration builds a fresh
- * container, binds a decorated class graph, and resolves the root once.
+ * InversifyJS 8 — boot scenarios: the decorated graph built and resolved per iteration, and the
+ * cold path unbundled from a resolve — an empty container, an empty child, many bindings and no get.
  */
 import "reflect-metadata";
 import { Container, inject, injectable } from "inversify";
 
-import { BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE } from "#/fixtures/scenario-parity";
+import {
+  BIND_128_PLAIN,
+  BIND_TOKEN_COUNT,
+  BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE,
+  CONTAINER_CREATE_BATCH,
+  CONTAINER_CREATE_EMPTY,
+  CREATE_CHILD_EMPTY,
+} from "#/fixtures/scenario-parity";
+import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
+
+interface BoundValue {
+  readonly id: number;
+}
+
+const bindIdentifiers = Array.from({ length: BIND_TOKEN_COUNT }, (_value, index) =>
+  Symbol(`bench-inv-bind-path-${String(index)}`),
+);
+
+function buildBoundValue(): BoundValue {
+  return { id: 1 };
+}
+
+function buildContainerCreateScenario(): BenchScenario {
+  new Container({ jitless: false });
+
+  return {
+    ...CONTAINER_CREATE_EMPTY,
+    what: "new Container({ jitless: false }) with nothing bound",
+    batch: CONTAINER_CREATE_BATCH,
+    sanity: () => !new Container({ jitless: false }).isBound(bindIdentifiers[0]!),
+    build: () =>
+      batched(CONTAINER_CREATE_BATCH, () => {
+        new Container({ jitless: false });
+      }),
+  };
+}
+
+function buildCreateChildScenario(): BenchScenario {
+  const parent = new Container({ jitless: false });
+  parent.bind<BoundValue>(bindIdentifiers[0]!).toConstantValue({ id: 0 });
+  new Container({ jitless: false, parent });
+
+  return {
+    ...CREATE_CHILD_EMPTY,
+    what: "new Container({ parent }) with nothing bound — a per-request container's whole allocation",
+    batch: CONTAINER_CREATE_BATCH,
+    sanity: () => {
+      const child = new Container({ jitless: false, parent });
+      return child.isBound(bindIdentifiers[0]!) && !child.isCurrentBound(bindIdentifiers[0]!);
+    },
+    build: () =>
+      batched(CONTAINER_CREATE_BATCH, () => {
+        new Container({ jitless: false, parent });
+      }),
+  };
+}
+
+function buildBindPlainScenario(): BenchScenario {
+  function bindAll(): Container {
+    const container = new Container({ jitless: false });
+    for (const identifier of bindIdentifiers) {
+      container.bind<BoundValue>(identifier).toDynamicValue(buildBoundValue).inTransientScope();
+    }
+    return container;
+  }
+  bindAll();
+
+  return {
+    ...BIND_128_PLAIN,
+    what: `bind ${String(BIND_TOKEN_COUNT)} transient toDynamicValue() identifiers into a fresh container, no get()`,
+    batch: 1,
+    sanity: () => bindAll().get<BoundValue>(bindIdentifiers[BIND_TOKEN_COUNT - 1]!).id === 1,
+    build: () => {
+      return () => {
+        bindAll();
+      };
+    },
+  };
+}
 
 const bootConfigIdentifier = Symbol("bench-inv-boot-config");
 const bootLoggerIdentifier = Symbol("bench-inv-boot-logger");
@@ -141,5 +217,10 @@ function buildBootDecoratedContainerScenario(): BenchScenario {
  * @since 0.3.16-canary.0
  */
 export function buildInversifyBootScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildBootDecoratedContainerScenario()];
+  return [
+    buildBootDecoratedContainerScenario(),
+    buildContainerCreateScenario(),
+    buildCreateChildScenario(),
+    buildBindPlainScenario(),
+  ];
 }

@@ -1,3 +1,5 @@
+import { buildTsyringeBootScenarios } from "#/scenarios/tsyringe/boot";
+import { buildTsyringeDisposeScaleScenarios } from "#/scenarios/tsyringe/dispose-scale";
 /**
  * Central list of all tsyringe bench scenarios (core subset). Used by the bench
  * subprocess. tsyringe supports the factory/class-binding core scenarios shared by
@@ -28,5 +30,7 @@ export function collectAllTsyringeScenarios(): ReadonlyArray<AnyScenario> {
     ...buildTsyringeLifecycleScenarios(),
     ...buildTsyringeScaleScenarios(),
     ...buildTsyringeProductionScenarios(),
+    ...buildTsyringeBootScenarios(),
+    ...buildTsyringeDisposeScaleScenarios(),
   ];
 }

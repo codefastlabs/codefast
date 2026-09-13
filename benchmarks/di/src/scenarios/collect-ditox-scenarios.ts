@@ -1,3 +1,5 @@
+import { buildDitoxBootScenarios } from "#/scenarios/ditox/boot";
+import { buildDitoxDisposeScaleScenarios } from "#/scenarios/ditox/dispose-scale";
 /**
  * Central list of all ditox bench scenarios. Used by the bench subprocess.
  * Ditox is functional and token-based with singleton/transient scopes and real
@@ -32,5 +34,7 @@ export function collectAllDitoxScenarios(): ReadonlyArray<AnyScenario> {
     ...buildDitoxScaleScenarios(),
     ...buildDitoxScopeScenarios(),
     ...buildDitoxProductionScenarios(),
+    ...buildDitoxBootScenarios(),
+    ...buildDitoxDisposeScaleScenarios(),
   ];
 }

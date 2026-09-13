@@ -28,6 +28,7 @@ import type { ResolveAllNamedCount, ResolveAllStrategyCount } from "#/fixtures/f
 import {
   FAN_OUT_TREE,
   FAN_OUT_TREE_BATCH,
+  resolveAllColdDescriptor,
   resolveAllNamedDescriptor,
   resolveAllStrategiesDescriptor,
 } from "#/fixtures/scenario-parity";
@@ -82,6 +83,34 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   };
 }
 
+function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
+  const strategyToken = token<number>("bench-cf-fanout-resolve-all-cold");
+  function buildAndReadOnce(): number {
+    const container = Container.create();
+    for (let index = 0; index < strategyCount; index++) {
+      container
+        .bind(strategyToken)
+        .toConstantValue(index)
+        .when(() => true);
+    }
+    return container.resolveAll(strategyToken).length;
+  }
+  buildAndReadOnce();
+
+  return {
+    ...resolveAllColdDescriptor(strategyCount),
+    batch: 1,
+    sanity: () => buildAndReadOnce() === strategyCount,
+    build: () => {
+      return () => {
+        if (buildAndReadOnce() !== strategyCount) {
+          throw new Error(`Expected ${String(strategyCount)} strategies from a cold container`);
+        }
+      };
+    },
+  };
+}
+
 function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchScenario {
   const strategyToken = token<number>("bench-cf-fanout-resolve-all-named");
   const targetName = "strategy-0";
@@ -116,6 +145,7 @@ export function buildCodefastFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildFanOutTreeDepthThreeBreadthFourScenario(),
     ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllStrategiesScenario(strategyCount)),
+    ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllColdScenario(strategyCount)),
     ...RESOLVE_ALL_NAMED_COUNTS.map((namedCount) => buildResolveAllNamedScenario(namedCount)),
   ];
 }

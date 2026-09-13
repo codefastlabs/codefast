@@ -1,3 +1,5 @@
+import { buildAwilixBootScenarios } from "#/scenarios/awilix/boot";
+import { buildAwilixDisposeScaleScenarios } from "#/scenarios/awilix/dispose-scale";
 /**
  * Central list of all Awilix bench scenarios (core subset). Used by the bench
  * subprocess. Awilix supports the factory/class-binding core scenarios shared by
@@ -26,5 +28,7 @@ export function collectAllAwilixScenarios(): ReadonlyArray<AnyScenario> {
     ...buildAwilixScopeScenarios(),
     ...buildAwilixScaleScenarios(),
     ...buildAwilixProductionScenarios(),
+    ...buildAwilixBootScenarios(),
+    ...buildAwilixDisposeScaleScenarios(),
   ];
 }

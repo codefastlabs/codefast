@@ -1,3 +1,4 @@
+import { buildInjectionJsBootScenarios } from "#/scenarios/injection-js/boot";
 /**
  * Central list of all injection-js bench scenarios. Used by the bench
  * subprocess. `ReflectiveInjector` is singleton-per-injector with a non-cached
@@ -27,5 +28,6 @@ export function collectAllInjectionJsScenarios(): ReadonlyArray<AnyScenario> {
     ...buildInjectionJsFanOutScenarios(),
     ...buildInjectionJsScopeScenarios(),
     ...buildInjectionJsProductionScenarios(),
+    ...buildInjectionJsBootScenarios(),
   ];
 }

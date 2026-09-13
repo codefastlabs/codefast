@@ -8,6 +8,7 @@
  * absent.
  */
 import { buildBrandiAsyncScenarios } from "#/scenarios/brandi/async";
+import { buildBrandiBootScenarios } from "#/scenarios/brandi/boot";
 import { buildBrandiConditionalScenarios } from "#/scenarios/brandi/conditional";
 import { buildBrandiFanOutScenarios } from "#/scenarios/brandi/fan-out";
 import { buildBrandiMicroScenarios } from "#/scenarios/brandi/micro";
@@ -32,5 +33,6 @@ export function collectAllBrandiScenarios(): ReadonlyArray<AnyScenario> {
     ...buildBrandiAsyncScenarios(),
     ...buildBrandiScopeScenarios(),
     ...buildBrandiScaleScenarios(),
+    ...buildBrandiBootScenarios(),
   ];
 }

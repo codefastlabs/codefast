@@ -191,6 +191,23 @@ export function resolveAllStrategiesDescriptor(strategyCount: number): ScenarioD
 }
 
 /**
+ * The cold half of the `resolve-all-strategies` pair: a fresh container, N bindings, one collection read.
+ *
+ * @remarks Reading a stable set rewards a memoised collection; building the set and reading it once
+ * charges the memoisation instead, so the pair tells a cached-array advantage from a faster gather.
+ */
+export function resolveAllColdDescriptor(strategyCount: number): ScenarioDescriptor {
+  return {
+    id: `resolve-all-cold-${String(strategyCount)}`,
+    tier: "contract",
+    requires: ["resolve-all"],
+    facets: ["resolve-all"],
+    group: "fan-out",
+    what: `build a fresh container, bind ${String(strategyCount)} strategies, resolveAll() once (cold collection)`,
+  };
+}
+
+/**
  * @since 0.5.0-canary.7
  */
 export function resolveAllNamedDescriptor(namedCount: number): ScenarioDescriptor {
@@ -291,6 +308,38 @@ export const LIFECYCLE_PRE_DESTROY_UNBIND = {
   what: "unbind singleton and run onDeactivation + @preDestroy lifecycle",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * How many singletons the teardown pair materialises.
+ */
+export const DISPOSE_SCALE_SINGLETON_COUNT = 100;
+
+/**
+ * The baseline of the teardown pair: the singletons exist, nothing is torn down.
+ */
+export const MATERIALIZE_100_SINGLETONS = {
+  id: `materialize-${String(DISPOSE_SCALE_SINGLETON_COUNT)}-singletons`,
+  tier: "contract",
+  requires: ["deactivation"],
+  facets: ["singleton"],
+  group: "lifecycle",
+  what: `create a container, bind ${String(DISPOSE_SCALE_SINGLETON_COUNT)} singletons with a teardown hook and resolve each once — the row the teardown is read against`,
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * The teardown half: the same container disposed, every hook run once.
+ *
+ * @remarks Paired with `lifecycle-pre-destroy-unbind`, which tears down one singleton: this row is
+ * where finding what to tear down shows up.
+ */
+export const UNBIND_ALL_100_SINGLETONS = {
+  id: `unbind-all-${String(DISPOSE_SCALE_SINGLETON_COUNT)}-singletons`,
+  tier: "contract",
+  requires: ["deactivation", "dispose"],
+  facets: ["singleton"],
+  group: "lifecycle",
+  what: `the same container, then dispose it — the walk over ${String(DISPOSE_SCALE_SINGLETON_COUNT)} materialised singletons plus one teardown hook each`,
+} as const satisfies ScenarioDescriptor;
+
 // ── scope ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -369,6 +418,52 @@ export const SCALE_MID_TRANSIENT_CHAIN_32 = {
 } as const satisfies ScenarioDescriptor;
 
 // ── boot ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Per-iteration op count for the two container-construction rows.
+ */
+export const CONTAINER_CREATE_BATCH = 100;
+/**
+ * How many tokens the bind-path row registers.
+ */
+export const BIND_TOKEN_COUNT = 128;
+
+/**
+ * An empty container: construction alone, unbundled from any bind or resolve.
+ */
+export const CONTAINER_CREATE_EMPTY = {
+  id: "container-create-empty",
+  tier: "contract",
+  requires: [],
+  group: "boot",
+  what: "create a container with nothing bound — construction plus whatever it does not defer",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * An empty child of a warm parent: a per-request container's whole allocation.
+ */
+export const CREATE_CHILD_EMPTY = {
+  id: "create-child-empty",
+  tier: "contract",
+  requires: ["child-container"],
+  facets: ["scope"],
+  group: "boot",
+  what: "create a child of a warm parent with nothing bound — a per-request container's whole allocation",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * Registration alone: a fresh container, many factory bindings, no resolve.
+ *
+ * @remarks Every cold row bundles construction, binding and a resolve; this one prices the bind so
+ * the cold graph row's first resolve becomes subtractable.
+ */
+export const BIND_128_PLAIN = {
+  id: `bind-${String(BIND_TOKEN_COUNT)}-plain`,
+  tier: "contract",
+  requires: [],
+  group: "boot",
+  what: `bind ${String(BIND_TOKEN_COUNT)} transient factory tokens into a fresh container, no resolve — registration only`,
+} as const satisfies ScenarioDescriptor;
 
 /**
  * @since 0.5.0-canary.7

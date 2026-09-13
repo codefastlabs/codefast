@@ -12,7 +12,12 @@ import { buildDitoxRealisticContainer } from "#/fixtures/ditox-adapter";
 import { FAN_OUT_TREE_DEPTH_3_BREADTH_4, RESOLVE_ALL_STRATEGY_COUNTS } from "#/fixtures/fan-out-descriptor";
 import type { ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
 import type { RealisticNode } from "#/fixtures/realistic-graph";
-import { FAN_OUT_TREE, FAN_OUT_TREE_BATCH, resolveAllStrategiesDescriptor } from "#/fixtures/scenario-parity";
+import {
+  FAN_OUT_TREE,
+  FAN_OUT_TREE_BATCH,
+  resolveAllColdDescriptor,
+  resolveAllStrategiesDescriptor,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
 
@@ -58,6 +63,33 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   };
 }
 
+function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
+  const strategyToken = token<ReadonlyArray<number>>("bench-ditox-fanout-resolve-all-cold");
+  function buildAndReadOnce(): number {
+    const container = createContainer();
+    for (let index = 0; index < strategyCount; index++) {
+      bindMultiValue(container, strategyToken, index);
+    }
+    return container.resolve(strategyToken).length;
+  }
+  buildAndReadOnce();
+
+  return {
+    ...resolveAllColdDescriptor(strategyCount),
+    // The cached collection is built here for the first time, so this row charges the memoisation.
+    what: `createContainer(), bindMultiValue ${String(strategyCount)} strategies, resolve() the collection once (cold collection)`,
+    batch: 1,
+    sanity: () => buildAndReadOnce() === strategyCount,
+    build: () => {
+      return () => {
+        if (buildAndReadOnce() !== strategyCount) {
+          throw new Error(`Expected ${String(strategyCount)} strategies from a cold container`);
+        }
+      };
+    },
+  };
+}
+
 /**
  * Builds the ditox fan-out scenarios.
  */
@@ -65,5 +97,6 @@ export function buildDitoxFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildFanOutTreeDepthThreeBreadthFourScenario(),
     ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllStrategiesScenario(strategyCount)),
+    ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllColdScenario(strategyCount)),
   ];
 }

@@ -11,7 +11,12 @@ import { container as tsyringeRootContainer } from "tsyringe";
 import { FAN_OUT_TREE_DEPTH_3_BREADTH_4, RESOLVE_ALL_STRATEGY_COUNTS } from "#/fixtures/fan-out-descriptor";
 import type { ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
 import type { RealisticNode } from "#/fixtures/realistic-graph";
-import { FAN_OUT_TREE, FAN_OUT_TREE_BATCH, resolveAllStrategiesDescriptor } from "#/fixtures/scenario-parity";
+import {
+  FAN_OUT_TREE,
+  FAN_OUT_TREE_BATCH,
+  resolveAllColdDescriptor,
+  resolveAllStrategiesDescriptor,
+} from "#/fixtures/scenario-parity";
 import { buildTsyringeRealisticContainer } from "#/fixtures/tsyringe-adapter";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
@@ -57,6 +62,32 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   };
 }
 
+function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
+  const strategyToken = "bench-tsyringe-fanout-resolve-all-cold";
+  function buildAndReadOnce(): number {
+    const container = tsyringeRootContainer.createChildContainer();
+    for (let index = 0; index < strategyCount; index++) {
+      container.register<number>(strategyToken, { useValue: index });
+    }
+    return container.resolveAll<number>(strategyToken).length;
+  }
+  buildAndReadOnce();
+
+  return {
+    ...resolveAllColdDescriptor(strategyCount),
+    what: `createChildContainer(), register ${String(strategyCount)} strategies, resolveAll() once (cold collection)`,
+    batch: 1,
+    sanity: () => buildAndReadOnce() === strategyCount,
+    build: () => {
+      return () => {
+        if (buildAndReadOnce() !== strategyCount) {
+          throw new Error(`Expected ${String(strategyCount)} strategies from a cold container`);
+        }
+      };
+    },
+  };
+}
+
 /**
  * @since 0.5.0-canary.7
  */
@@ -64,5 +95,6 @@ export function buildTsyringeFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildFanOutTreeDepthThreeBreadthFourScenario(),
     ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllStrategiesScenario(strategyCount)),
+    ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllColdScenario(strategyCount)),
   ];
 }

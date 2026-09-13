@@ -23,3 +23,10 @@ offers.
   `@Inject`), on all seven libraries. `src/fixtures/realistic-class-graph.ts` holds the one sanity every side runs: the
   tree matches the descriptor node for node, singletons are one instance wherever they appear, the root is fresh per
   resolve. The `class-injection` feature names what the rows require.
+- Each loss `RESULTS.md` reports is now a pair whose difference isolates the mechanism. `resolve-all-cold-10/-100` build
+  a fresh container and read the collection once, so a memoised array (ditox, injection-js) is charged for the build the
+  stable row never pays. `materialize-100-singletons` and `unbind-all-100-singletons` move into the shared descriptors
+  and run on inversify (`@preDestroy` + `unbindAll`), awilix (`disposer` + awaited `dispose`), tsyringe (`Disposable` +
+  `dispose`) and ditox (`onRemoved` + `removeAll`), so the teardown walk reads apart from the single unbind.
+  `container-create-empty`, `create-child-empty` and `bind-128-plain` move into the shared descriptors and run on all
+  seven libraries, so a cold graph row's first resolve becomes subtractable from its bind and construction.

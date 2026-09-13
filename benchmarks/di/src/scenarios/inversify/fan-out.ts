@@ -20,6 +20,7 @@ import { buildInversifyRealisticContainer } from "#/fixtures/inversify-adapter";
 import {
   FAN_OUT_TREE,
   FAN_OUT_TREE_BATCH,
+  resolveAllColdDescriptor,
   resolveAllNamedDescriptor,
   resolveAllStrategiesDescriptor,
 } from "#/fixtures/scenario-parity";
@@ -71,6 +72,35 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   };
 }
 
+function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
+  const strategyIdentifier = Symbol("bench-inv-fanout-resolve-all-cold");
+  function buildAndReadOnce(): number {
+    const container = new Container({ jitless: false });
+    for (let index = 0; index < strategyCount; index++) {
+      container
+        .bind<number>(strategyIdentifier)
+        .toConstantValue(index)
+        .when(() => true);
+    }
+    return container.getAll<number>(strategyIdentifier).length;
+  }
+  buildAndReadOnce();
+
+  return {
+    ...resolveAllColdDescriptor(strategyCount),
+    what: `build a fresh container, bind ${String(strategyCount)} strategies, getAll() once (cold collection)`,
+    batch: 1,
+    sanity: () => buildAndReadOnce() === strategyCount,
+    build: () => {
+      return () => {
+        if (buildAndReadOnce() !== strategyCount) {
+          throw new Error(`Expected ${String(strategyCount)} strategies from a cold container`);
+        }
+      };
+    },
+  };
+}
+
 function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchScenario {
   const strategyIdentifier = Symbol("bench-inv-fanout-resolve-all-named");
   const targetName = "strategy-0";
@@ -106,6 +136,7 @@ export function buildInversifyFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildFanOutTreeDepthThreeBreadthFourScenario(),
     ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllStrategiesScenario(strategyCount)),
+    ...RESOLVE_ALL_STRATEGY_COUNTS.map((strategyCount) => buildResolveAllColdScenario(strategyCount)),
     ...RESOLVE_ALL_NAMED_COUNTS.map((namedCount) => buildResolveAllNamedScenario(namedCount)),
   ];
 }

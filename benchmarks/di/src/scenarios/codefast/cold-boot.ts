@@ -1,5 +1,5 @@
 /**
- * `@codefast/di` — the cold path, unbundled from a resolve (codefast-only).
+ * `@codefast/di` — the cold path, unbundled from a resolve.
  *
  * Every cold row the suite has bundles container construction, binding and a resolve into one
  * iteration, so none of them can attribute a change to one of the three. A container defers eleven
@@ -17,32 +17,19 @@
 import { Container, token } from "@codefast/di";
 
 import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import {
+  BIND_128_PLAIN,
+  BIND_TOKEN_COUNT,
+  CONTAINER_CREATE_BATCH,
+  CONTAINER_CREATE_EMPTY,
+  CREATE_CHILD_EMPTY,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
-
-const CONTAINER_CREATE_BATCH = 100;
-const BIND_TOKEN_COUNT = 128;
 
 interface BoundValue {
   readonly id: number;
 }
-
-const CONTAINER_CREATE_EMPTY = {
-  id: "container-create-empty",
-  tier: "contract",
-  requires: [],
-  group: "boot",
-  what: "Container.create() with nothing bound — the constructor plus whatever it does not defer (codefast-only)",
-} as const satisfies ScenarioDescriptor;
-
-const CREATE_CHILD_EMPTY = {
-  id: "create-child-empty",
-  tier: "contract",
-  requires: ["child-container"],
-  facets: ["scope"],
-  group: "boot",
-  what: "parent.createChild() with nothing bound — a per-request container's whole allocation (codefast-only)",
-} as const satisfies ScenarioDescriptor;
 
 const bindTokens = Array.from({ length: BIND_TOKEN_COUNT }, (_value, index) =>
   token<BoundValue>(`bench-cf-bind-path-${String(index)}`),
@@ -132,16 +119,7 @@ export function buildCodefastColdBootScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildContainerCreateScenario(),
     buildCreateChildScenario(),
-    buildBindPathScenario(
-      {
-        id: `bind-${String(BIND_TOKEN_COUNT)}-plain`,
-        tier: "contract",
-        requires: [],
-        group: "boot",
-        what: `bind ${String(BIND_TOKEN_COUNT)} tokens into a fresh container, no refinement — registration only (codefast-only)`,
-      },
-      false,
-    ),
+    buildBindPathScenario(BIND_128_PLAIN, false),
     buildBindPathScenario(
       {
         id: `bind-${String(BIND_TOKEN_COUNT)}-refined`,
