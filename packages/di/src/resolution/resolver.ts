@@ -122,7 +122,8 @@ export class DependencyResolver implements ResolverCallbacks {
   readonly #parent: DependencyResolver | undefined;
   readonly #lookup: BindingLookupCache<DependencyResolver>;
   readonly #classes: ClassIntrospector;
-  readonly #activation: ActivationNeedCache;
+  // Built by the first interpreted resolve that asks; a plan-served or constant-only container never does.
+  #activation: ActivationNeedCache | undefined;
 
   constructor(
     registry: BindingRegistry,
@@ -142,13 +143,20 @@ export class DependencyResolver implements ResolverCallbacks {
       this,
       parent === undefined ? undefined : parent.#lookup,
     );
-    this.#classes = new ClassIntrospector(metadataReader, container);
-    this.#activation = new ActivationNeedCache(lifecycle, this.#classes, registry);
+    this.#classes = new ClassIntrospector(
+      metadataReader,
+      container,
+      parent === undefined ? undefined : parent.#classes,
+    );
   }
 
   /** The reader this resolver was built with, which is the one its container answers with. */
   get metadataReader(): MetadataReader {
     return this.#metadataReader;
+  }
+
+  #activationNeed(): ActivationNeedCache {
+    return (this.#activation ??= new ActivationNeedCache(this.#lifecycle, this.#classes, this.#registry));
   }
 
   /** Structural counts and the resolver-owned collaborators built so far, for the {@link ResolutionDiagnostics} a container reports. */
@@ -163,7 +171,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (this.#lookup.isMemoBuilt) {
       builtSubsystems.push("resolver.lookupMemo");
     }
-    if (this.#activation.isMemoBuilt) {
+    if (this.#activation?.isMemoBuilt === true) {
       builtSubsystems.push("resolver.activationNeedMemo");
     }
     return {
@@ -668,7 +676,7 @@ export class DependencyResolver implements ResolverCallbacks {
     const tokenDisplayName = frame.tokenName;
     const resolutionSet = enterResolutionPath(resolutionStack, frame);
     try {
-      const needsActivation = owner.#activation.needsActivation(binding);
+      const needsActivation = owner.#activationNeed().needsActivation(binding);
       if (!needsActivation && scope === "transient" && binding.kind === "dynamic") {
         const resolutionCtx = this.#acquireSyncResolutionContext(resolutionStack, options);
         const dynamicResult = binding.factory(resolutionCtx);
@@ -686,7 +694,7 @@ export class DependencyResolver implements ResolverCallbacks {
       const instance = this.#instantiateSync(binding, resolutionCtx, resolutionStack);
 
       this.#mirrorPostConstructFromOwner(binding, owner);
-      const activated = owner.#activation.refreshAfterFirstInstantiation(binding, needsActivation)
+      const activated = owner.#activationNeed().refreshAfterFirstInstantiation(binding, needsActivation)
         ? owner.#lifecycle.runActivationSync(
             resolutionCtx as DefaultResolutionContext,
             binding,
@@ -1081,7 +1089,7 @@ export class DependencyResolver implements ResolverCallbacks {
     const levelStack = extendResolutionBranch(resolutionStack, branchDepth, frame);
     const levelDepth = branchDepthOf(levelStack);
 
-    const needsActivation = owner.#activation.needsActivation(binding);
+    const needsActivation = owner.#activationNeed().needsActivation(binding);
     if (!needsActivation && scope === "transient" && (binding.kind === "dynamic" || binding.kind === "dynamic-async")) {
       const resolutionCtx = new AsyncLevelContext(this, levelStack, options);
       if (binding.kind === "dynamic-async") {
@@ -1177,7 +1185,7 @@ export class DependencyResolver implements ResolverCallbacks {
   ): Promise<unknown> {
     const instance = await this.#instantiateAsync(binding, ctx, resolutionStack, branchDepth);
     this.#mirrorPostConstructFromOwner(binding, owner);
-    if (!owner.#activation.refreshAfterFirstInstantiation(binding, needsActivation)) {
+    if (!owner.#activationNeed().refreshAfterFirstInstantiation(binding, needsActivation)) {
       return instance;
     }
     return owner.#lifecycle.runActivation(ctx as AsyncLevelContext, binding, instance, owner.#metadataReader);

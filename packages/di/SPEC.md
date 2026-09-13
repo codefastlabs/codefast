@@ -1848,6 +1848,10 @@ the binding existed, so the resolver keeps the default reader and an undecorated
 > `inspect()`, `generateDependencyGraph()` and `unbind*` all answer using that same reader. Introspection cannot
 > disagree with resolution.
 
+> **Normative — a reader is asked about a class once.** Every container that reads through the same reader (a child
+> inherits its parent's) shares that reader's answers for the life of the process, so a reader must answer from the
+> class alone — never from state that changes after the class is defined.
+
 `MetadataReaderToken` has type `Token<MetadataReader>` and is exported from `@codefast/di`.
 
 #### `SymbolMetadataReader` — reading metadata

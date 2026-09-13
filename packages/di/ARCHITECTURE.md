@@ -708,10 +708,12 @@ frame onto, while the shared stack pays one per push.
 lifecycle manager and the resolver chain — and each of those, in turn, allocates only its hot lane. Everything else
 arrives on first use — the inspector, the module ref/binding tables, the scope's in-flight and scoped caches, the
 registry's record map (first token that is more than one default binding), id index (first id-keyed operation) and
-tagged slot indexes (first tagged slot), the class introspector's three metadata caches, the resolver's plan compiler
-and both plan maps (first plan request, which only a `class` or `resolved` binding makes), the lookup cache's memo maps
-(second distinct token or tag in one cache generation), and the activation-need memo (first answer its early returns
-cannot give).
+tagged slot indexes (first tagged slot), the per-reader metadata caches, which every container reading through the same
+reader shares — a child takes its parent's by hand, a root finds them by reader on its first question — so a child
+inheriting its parent's reader meets no class cold that the parent already met, the resolver's plan compiler and both
+plan maps (first plan request, which only a `class` or `resolved` binding makes), the lookup cache's memo maps (second
+distinct token or tag in one cache generation), the activation-need cache (first interpreted resolve that asks whether a
+binding needs the activation pipeline) and its memo (first answer its early returns cannot give).
 
 The reason is that an empty `Map` is not free: V8 gives it a backing store, and a closure-heavy host object such as the
 plan compiler's is a dozen allocations. Those are costs a per-request child — created, asked one parent-owned token,

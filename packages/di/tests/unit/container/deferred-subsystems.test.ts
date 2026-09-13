@@ -1,8 +1,8 @@
 /**
  * A container builds its rarely-used collaborators on first use rather than in its constructor —
  * the inspector, the module tables, the scope's in-flight and scoped caches, the registry's record
- * map and its indexes, the class introspector's metadata caches, the resolver's plan compiler and
- * the lookup and activation-need memos. Deferral is an allocation
+ * map and its indexes, the per-reader metadata caches, the resolver's plan compiler, the
+ * activation-need cache and the lookup and activation-need memos. Deferral is an allocation
  * decision only, so every one of them must behave identically whether or not something touched it
  * first. These tests exercise each deferred collaborator as the *first* thing a fresh container
  * does, which is the ordering a constructor-time allocation would have hidden.
