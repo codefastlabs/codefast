@@ -75,7 +75,7 @@ export const TRANSIENT_CLASS_1_DEP = {
 export const OPTIONAL_MISSING_TRANSIENT = {
   id: "optional-missing-transient",
   tier: "contract",
-  requires: ["optional", "transient"],
+  requires: ["optional-injection", "transient"],
   facets: ["optional", "transient"],
   group: "micro",
   what: "resolve a transient class whose one optional dependency is unbound",
@@ -191,6 +191,170 @@ export const REALISTIC_GRAPH_CLASS_COLD_RESOLVE = {
   what: "build a fresh container, bind 10 constructor-injected classes, resolve root once (cold start)",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * Per-iteration op count for the two nested-resolve rows.
+ */
+export const RESOLVER_LANE_BATCH = 300;
+
+/**
+ * A transient factory that asks its resolution context for one constant.
+ */
+export const NESTED_CONTEXT_RESOLVE = {
+  id: "nested-context-resolve-in-factory",
+  tier: "contract",
+  requires: [],
+  group: "resolution",
+  what: "resolve a transient factory that asks its resolution context for one constant",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * The same factory reaching for the container instead of its context.
+ */
+export const NESTED_CONTAINER_RESOLVE = {
+  id: "nested-container-resolve-in-factory",
+  tier: "contract",
+  requires: [],
+  group: "resolution",
+  what: "the same transient factory resolving the constant through the container directly",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * A class with one dependency injected into a property rather than its constructor.
+ */
+export const ACCESSOR_INJECTION_CONSTRUCT = {
+  id: "accessor-injection-construct",
+  tier: "contract",
+  requires: ["property-injection"],
+  group: "resolution",
+  what: "resolve a transient class with one property-injected dependency",
+} as const satisfies ScenarioDescriptor;
+
+// ── alias ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Per-iteration op count for the alias rows.
+ */
+export const ALIAS_BATCH = 500;
+/**
+ * How many alias hops the chain row walks.
+ */
+export const ALIAS_CHAIN_HOPS = 3;
+
+/**
+ * An alias chain several hops long ending at a cached singleton.
+ */
+export const ALIAS_CHAIN = {
+  id: `alias-chain-${String(ALIAS_CHAIN_HOPS)}`,
+  tier: "contract",
+  requires: ["alias"],
+  facets: ["alias"],
+  group: "micro",
+  what: `resolve through ${String(ALIAS_CHAIN_HOPS)} chained alias hops to a cached singleton`,
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * A child's alias whose terminal binding the parent owns.
+ */
+export const ALIAS_PARENT_OWNED_TERMINAL = {
+  id: "alias-parent-owned-terminal",
+  tier: "contract",
+  requires: ["alias", "child-container"],
+  facets: ["alias"],
+  group: "micro",
+  what: "resolve a child's alias whose terminal singleton the parent owns",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * Two aliases pointing at each other, which must fail fast rather than loop.
+ */
+export const ALIAS_CYCLE_DETECTED = {
+  id: "alias-cycle-detected",
+  tier: "contract",
+  requires: ["alias", "cycle-detection"],
+  facets: ["alias"],
+  group: "failure",
+  what: "resolve an alias that points back at itself and fail fast",
+} as const satisfies ScenarioDescriptor;
+
+// ── slot selection ───────────────────────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Per-iteration op count for the slot-selection rows.
+ */
+export const SLOT_RESOLVE_BATCH = 300;
+
+/**
+ * A tag whose value is zero: the one value a truthiness check would drop.
+ */
+export const SLOT_TAG_ZERO_VALUE = {
+  id: "slot-tag-zero-value",
+  tier: "contract",
+  requires: ["tag-hint"],
+  facets: ["tag"],
+  group: "slot-selection",
+  what: "resolve(token, { tags: [[k, 0]] }) — select by a tag whose value is zero",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * A binding selected by its name and its tag together.
+ */
+export const SLOT_NAME_AND_TAG = {
+  id: "slot-name-and-tag",
+  tier: "contract",
+  requires: ["name-hint", "tag-hint"],
+  facets: ["name", "tag"],
+  group: "slot-selection",
+  what: "resolve(token, { name, tags }) — select by a name and a tag together",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * Every binding on a token that carries a tag.
+ */
+export const SLOT_TAG_RESOLVE_ALL = {
+  id: "slot-tag-resolve-all",
+  tier: "contract",
+  requires: ["resolve-all", "tag-hint"],
+  facets: ["tag", "resolve-all"],
+  group: "slot-selection",
+  what: "resolveAll(token, { tags }) — every binding on the token carrying the tag",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * A tagged request over a populated token that matches nothing.
+ */
+export const SLOT_TAG_MISS_OPTIONAL = {
+  id: "slot-tag-miss-optional",
+  tier: "contract",
+  requires: ["optional", "tag-hint"],
+  facets: ["tag", "optional"],
+  group: "slot-selection",
+  what: "resolveOptional(token, { tags }) that matches no binding — the failed lookup over a populated token",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * A tagged binding the parent owns, resolved from a long-lived child.
+ */
+export const SLOT_TAG_PARENT_OWNED = {
+  id: "slot-tag-parent-owned",
+  tier: "contract",
+  requires: ["child-container", "tag-hint"],
+  facets: ["tag"],
+  group: "slot-selection",
+  what: "resolve(token, { tags }) from a child for a tagged binding the parent owns",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * A named binding the parent owns, resolved from a long-lived child.
+ */
+export const SLOT_NAME_PARENT_OWNED = {
+  id: "slot-name-parent-owned",
+  tier: "contract",
+  requires: ["child-container", "name-hint"],
+  facets: ["name"],
+  group: "slot-selection",
+  what: "resolve(token, { name }) from a child for a named binding the parent owns",
+} as const satisfies ScenarioDescriptor;
+
 // ── fan-out ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -264,6 +428,46 @@ export const ASYNC_CHAIN_DEPTH = 8;
  * @since 0.5.0-canary.7
  */
 export const ASYNC_CONCURRENT_FANOUT_COUNTS = [8, 16, 32, 64] as const;
+
+/**
+ * How many async bindings the async collection row fans across.
+ */
+export const ASYNC_STRATEGY_COUNT = 8;
+
+/**
+ * Every async binding on one token awaited as a collection.
+ */
+export const RESOLVE_ALL_ASYNC = {
+  id: `resolve-all-async-${String(ASYNC_STRATEGY_COUNT)}`,
+  tier: "contract",
+  requires: ["async-resolve", "resolve-all"],
+  facets: ["resolve-all"],
+  group: "async",
+  what: `resolveAllAsync() across ${String(ASYNC_STRATEGY_COUNT)} async factory bindings on one token`,
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * The async miss: an unbound token resolved optionally, nothing instantiated.
+ */
+export const RESOLVE_OPTIONAL_ASYNC_MISS = {
+  id: "resolve-optional-async-miss",
+  tier: "contract",
+  requires: ["async-resolve", "optional"],
+  facets: ["optional"],
+  group: "async",
+  what: "resolveOptionalAsync() when no binding exists — the async miss, resolved without instantiating",
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * A root awaiting two siblings in parallel that share one async leaf.
+ */
+export const ASYNC_DIAMOND_SHARED_LEAF = {
+  id: "async-diamond-shared-leaf",
+  tier: "contract",
+  requires: ["async-resolve"],
+  group: "async",
+  what: "resolveAsync() a root awaiting two siblings in parallel that share one async leaf",
+} as const satisfies ScenarioDescriptor;
 
 /**
  * @since 0.5.0-canary.7
@@ -373,6 +577,27 @@ export const UNBIND_ALL_100_SINGLETONS = {
   what: `the same container, then dispose it — the walk over ${String(DISPOSE_SCALE_SINGLETON_COUNT)} materialised singletons plus one teardown hook each`,
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * Per-iteration op count for the chain-rebind row.
+ */
+export const CHAIN_REBIND_BATCH = 50;
+/**
+ * How deep the chain-rebind row resolves from.
+ */
+export const CHAIN_REBIND_DEPTH = 3;
+
+/**
+ * A rebind in the root read from the far end of a container chain.
+ */
+export const REBIND_PARENT_RESOLVE_CHILD_DEPTH_3 = {
+  id: `rebind-parent-resolve-child-depth-${String(CHAIN_REBIND_DEPTH)}`,
+  tier: "contract",
+  requires: ["child-container", "rebind"],
+  facets: ["scope"],
+  group: "lifecycle",
+  what: `rebind in the root, then resolve from a depth-${String(CHAIN_REBIND_DEPTH)} child — the whole chain's cached lookup invalidated per iteration`,
+} as const satisfies ScenarioDescriptor;
+
 // ── scope ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -383,6 +608,41 @@ export const CHILD_RESOLVE_BATCH = 500;
  * @since 0.5.0-canary.7
  */
 export const REQUEST_LIFECYCLE_BATCH = 100;
+
+/**
+ * Per-iteration op count for the fresh-child rows.
+ */
+export const FRESH_CHILD_BATCH = 100;
+/**
+ * The duty cycles the fresh-child rows are measured at: a memo paid once and never reused, then amortised.
+ */
+export const FRESH_CHILD_RESOLVES = [1, 4] as const;
+
+/**
+ * The selection criterion a fresh-child row resolves with.
+ */
+export type FreshChildLane = "default" | "name" | "tag";
+
+const FRESH_CHILD_CRITERIA: Readonly<Record<FreshChildLane, string>> = {
+  default: "resolve(token)",
+  name: "resolve(token, { name })",
+  tag: "resolve(token, { tags })",
+};
+
+/**
+ * One cell of the fresh-child matrix: a criterion resolved N times inside a per-request child, then teardown.
+ */
+export function freshChildDescriptor(lane: FreshChildLane, resolvesPerChild: number): ScenarioDescriptor {
+  const laneRequires = lane === "name" ? ["name-hint" as const] : lane === "tag" ? ["tag-hint" as const] : [];
+  return {
+    id: `fresh-child-${lane}-n${String(resolvesPerChild)}`,
+    tier: "contract",
+    requires: ["child-container", "dispose", ...laneRequires],
+    facets: ["scope", ...(lane === "default" ? [] : [lane])],
+    group: "scope",
+    what: `${FRESH_CHILD_CRITERIA[lane]} ${String(resolvesPerChild)}× inside a per-request child, then teardown — the criterion's per-container cost at duty cycle ${String(resolvesPerChild)}`,
+  };
+}
 
 /**
  * The child depths the parent-walk axis is measured at; depth 2 is the realistic per-request shape.
@@ -506,6 +766,17 @@ export const BIND_128_PLAIN = {
   requires: [],
   group: "boot",
   what: `bind ${String(BIND_TOKEN_COUNT)} transient factory tokens into a fresh container, no resolve — registration only`,
+} as const satisfies ScenarioDescriptor;
+
+/**
+ * The same registrations refined after the fact with a name and a singleton scope.
+ */
+export const BIND_128_REFINED = {
+  id: `bind-${String(BIND_TOKEN_COUNT)}-refined`,
+  tier: "contract",
+  requires: ["name-hint"],
+  group: "boot",
+  what: `the same ${String(BIND_TOKEN_COUNT)} bound, then each refined after registration with a name and a singleton scope`,
 } as const satisfies ScenarioDescriptor;
 
 /**
@@ -673,7 +944,7 @@ export const CONTAINER_LEVEL_ACTIVATION_HOOK = {
 export const BINDING_LEVEL_ACTIVATION_HOOK = {
   id: "binding-level-activation-hook",
   tier: "contract",
-  requires: ["activation-hook"],
+  requires: ["binding-activation-hook"],
   facets: ["hook"],
   group: "lifecycle",
   what: "resolve transient through a per-binding .onActivation() hook — measures hook dispatch overhead",

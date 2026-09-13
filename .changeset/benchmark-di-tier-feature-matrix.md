@@ -40,3 +40,10 @@ offers.
   of the feature under the same id.
 - `BENCH_GUIDE.md` gains the recipe a rewrite is measured by: run the contract tier once at the citable profile, pin
   that run with `BENCH_BASELINE`, and read every later run against it.
+- Every gap the matrix reported is closed: each library now implements every row its declared features allow, in its own
+  idiom — inversify 93 rows, ditox 44, tsyringe 43, awilix 40, injection-js 33, brandi 29 of 126. The last codefast-only
+  descriptors (aliases, fresh-child matrix, async entry points, chain rebind, nested factories, property injection,
+  refined bind, the six public slot rows) moved into the shared descriptors, and the six public slot rows now count in
+  the aggregates. Two features split so the matrix stays true: `optional-injection` (dependency-site, which awilix's
+  cradle cannot express) from `optional`, and `binding-activation-hook` (per binding, which tsyringe's interceptors
+  cannot express) from `activation-hook`.

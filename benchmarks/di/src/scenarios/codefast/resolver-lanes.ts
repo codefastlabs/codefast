@@ -1,5 +1,5 @@
 /**
- * `@codefast/di` — two engine lanes taken when the fast shape does not apply (codefast-only).
+ * `@codefast/di` — two engine lanes taken when the fast shape does not apply .
  *
  * The first pair is the sync context pool's lending protocol. A resolve borrows one pooled path/stack
  * pair per resolver, and an empty root stack is the whole protocol: a factory that asks its own
@@ -16,34 +16,14 @@
 import { Container, inject, injectable, token } from "@codefast/di";
 
 import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import {
+  ACCESSOR_INJECTION_CONSTRUCT,
+  NESTED_CONTAINER_RESOLVE,
+  NESTED_CONTEXT_RESOLVE,
+  RESOLVER_LANE_BATCH,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
-
-const RESOLVER_LANE_BATCH = 300;
-
-const NESTED_CONTEXT_RESOLVE = {
-  id: "nested-context-resolve-in-factory",
-  tier: "contract",
-  requires: [],
-  group: "resolution",
-  what: "resolve a transient factory that asks its ResolutionContext for one constant — the borrowed pooled path/stack pair (codefast-only)",
-} as const satisfies ScenarioDescriptor;
-
-const NESTED_CONTAINER_RESOLVE = {
-  id: "nested-container-resolve-in-factory",
-  tier: "contract",
-  requires: [],
-  group: "resolution",
-  what: "the same factory calling container.resolve() instead — the pooled pair is already held, so the nested resolve mints its own (codefast-only)",
-} as const satisfies ScenarioDescriptor;
-
-const ACCESSOR_INJECTION_CONSTRUCT = {
-  id: "accessor-injection-construct",
-  tier: "contract",
-  requires: ["property-injection"],
-  group: "resolution",
-  what: "resolve a transient class with one @inject accessor — the ambient-container channel, whose presence declines the class's plan (codefast-only)",
-} as const satisfies ScenarioDescriptor;
 
 interface LaneDependency {
   readonly id: string;

@@ -19,7 +19,7 @@
 import { Container, token } from "@codefast/di";
 
 import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
-import { ASYNC_CHAIN_DEPTH } from "#/fixtures/scenario-parity";
+import { ASYNC_CHAIN_DEPTH, ASYNC_DIAMOND_SHARED_LEAF } from "#/fixtures/scenario-parity";
 import type { AsyncBenchScenario } from "#/scenarios/types";
 
 const ASYNC_BRANCH_CHAIN = {
@@ -42,14 +42,6 @@ const ASYNC_BRANCH_ESCAPE_MID_CHAIN = {
   requires: ["async-resolve"],
   group: "async",
   what: `resolveAsync() through the same chain with one level requesting after an await — the single cascade→branch crossing (codefast-only)`,
-} as const satisfies ScenarioDescriptor;
-
-const ASYNC_DIAMOND_SHARED_LEAF = {
-  id: "async-diamond-shared-leaf",
-  tier: "contract",
-  requires: ["async-resolve"],
-  group: "async",
-  what: "resolveAsync() a root awaiting two siblings in parallel that share one async leaf — the leaf released on promise return, not on settle (codefast-only)",
 } as const satisfies ScenarioDescriptor;
 
 /**

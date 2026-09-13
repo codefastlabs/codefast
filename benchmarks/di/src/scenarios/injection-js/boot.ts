@@ -5,11 +5,12 @@
  */
 import "reflect-metadata";
 import type { FactoryProvider } from "injection-js";
-import { InjectionToken, ReflectiveInjector } from "injection-js";
+import { Inject, Injectable, InjectionToken, ReflectiveInjector } from "injection-js";
 
 import {
   BIND_128_PLAIN,
   BIND_TOKEN_COUNT,
+  BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE,
   CONTAINER_CREATE_BATCH,
   CONTAINER_CREATE_EMPTY,
   CREATE_CHILD_EMPTY,
@@ -85,9 +86,129 @@ function buildBindPlainScenario(): BenchScenario {
   };
 }
 
+@Injectable()
+class BootConfig {
+  readonly env = "production";
+}
+
+@Injectable()
+class BootLogger {
+  readonly sinkName: string;
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @Inject(BootConfig)
+    config: BootConfig,
+  ) {
+    this.sinkName = `log:${config.env}`;
+  }
+}
+
+@Injectable()
+class BootDatabaseClient {
+  readonly poolName: string;
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @Inject(BootConfig)
+    config: BootConfig,
+  ) {
+    this.poolName = `db:${config.env}`;
+  }
+}
+
+@Injectable()
+class BootCacheClient {
+  readonly cacheName: string;
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @Inject(BootConfig)
+    config: BootConfig,
+  ) {
+    this.cacheName = `cache:${config.env}`;
+  }
+}
+
+@Injectable()
+class BootRepository {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @Inject(BootDatabaseClient)
+    readonly databaseClient: BootDatabaseClient,
+    // @ts-ignore reflect-metadata + explicit token injection
+    @Inject(BootCacheClient)
+    readonly cacheClient: BootCacheClient,
+  ) {}
+}
+
+@Injectable()
+class BootMetricsCollector {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @Inject(BootLogger)
+    readonly logger: BootLogger,
+  ) {}
+}
+
+@Injectable()
+class BootService {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @Inject(BootRepository)
+    readonly repository: BootRepository,
+    // @ts-ignore reflect-metadata + explicit token injection
+    @Inject(BootMetricsCollector)
+    readonly metricsCollector: BootMetricsCollector,
+  ) {}
+}
+
+@Injectable()
+class BootController {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @Inject(BootService)
+    readonly service: BootService,
+    // @ts-ignore reflect-metadata + explicit token injection
+    @Inject(BootLogger)
+    readonly logger: BootLogger,
+  ) {}
+}
+
+const BOOT_CLASSES = [
+  BootConfig,
+  BootLogger,
+  BootDatabaseClient,
+  BootCacheClient,
+  BootRepository,
+  BootMetricsCollector,
+  BootService,
+  BootController,
+];
+
+function buildBootInjectorAndResolveRoot(): BootController {
+  return ReflectiveInjector.resolveAndCreate(BOOT_CLASSES).get(BootController) as BootController;
+}
+
+function buildBootDecoratedContainerScenario(): BenchScenario {
+  return {
+    ...BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE,
+    what: "resolveAndCreate() an injector over a decorated class graph and get() the root once",
+    batch: 1,
+    sanity: () => buildBootInjectorAndResolveRoot().service.repository.databaseClient.poolName === "db:production",
+    build: () => {
+      return () => {
+        buildBootInjectorAndResolveRoot();
+      };
+    },
+  };
+}
+
 /**
  * Builds injection-js's cold-path scenarios.
  */
 export function buildInjectionJsBootScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildContainerCreateScenario(), buildCreateChildScenario(), buildBindPlainScenario()];
+  return [
+    buildBootDecoratedContainerScenario(),
+    buildContainerCreateScenario(),
+    buildCreateChildScenario(),
+    buildBindPlainScenario(),
+  ];
 }

@@ -19,6 +19,7 @@ import { Container, token } from "@codefast/di";
 import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
 import {
   BIND_128_PLAIN,
+  BIND_128_REFINED,
   BIND_TOKEN_COUNT,
   CONTAINER_CREATE_BATCH,
   CONTAINER_CREATE_EMPTY,
@@ -122,11 +123,8 @@ export function buildCodefastColdBootScenarios(): ReadonlyArray<BenchScenario> {
     buildBindPathScenario(BIND_128_PLAIN, false),
     buildBindPathScenario(
       {
-        id: `bind-${String(BIND_TOKEN_COUNT)}-refined`,
-        tier: "contract",
-        requires: ["name-hint"],
-        group: "boot",
-        what: `the same ${String(BIND_TOKEN_COUNT)} refined after registration with .whenNamed().singleton() — one re-slot and one in-place scope write each (codefast-only)`,
+        ...BIND_128_REFINED,
+        what: `the same ${String(BIND_TOKEN_COUNT)} refined after registration with .whenNamed().singleton() — one re-slot and one in-place scope write each`,
       },
       true,
     ),

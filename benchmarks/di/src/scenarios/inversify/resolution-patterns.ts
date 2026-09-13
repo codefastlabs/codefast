@@ -9,9 +9,11 @@
  *     (single-tag shorthand in inversify v8 `GetOptions`)
  */
 import "reflect-metadata";
-import { Container } from "inversify";
+import { Container, inject, injectable, tagged } from "inversify";
 
 import {
+  CONDITIONAL_INJECTION_BATCH,
+  CONDITIONAL_INJECTION_TAGGED,
   OPTIONAL_HIT_BATCH,
   OPTIONAL_MISS_BATCH,
   RESOLVE_OPTIONAL_HIT,
@@ -107,6 +109,40 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
   };
 }
 
+const conditionalServiceId = Symbol("bench-inv-rp-conditional-service");
+const conditionalConsumerId = Symbol("bench-inv-rp-conditional-consumer");
+
+@injectable()
+class ConditionalConsumer {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(conditionalServiceId)
+    // @ts-ignore reflect-metadata + explicit token injection
+    @tagged("env", TARGET_TAG_VALUE)
+    readonly service: TaggedService,
+  ) {}
+}
+
+function buildConditionalInjectionTaggedScenario(): BenchScenario {
+  const container = new Container({ jitless: false });
+  for (const env of TAGGED_ENVS) {
+    container.bind<TaggedService>(conditionalServiceId).toConstantValue({ env }).whenTagged("env", env);
+  }
+  container.bind<ConditionalConsumer>(conditionalConsumerId).to(ConditionalConsumer).inTransientScope();
+  container.get(conditionalConsumerId);
+
+  return {
+    ...CONDITIONAL_INJECTION_TAGGED,
+    what: `get() a transient consumer whose @tagged parameter selects its binding (1 of ${String(TAGGED_ENVS.length)})`,
+    batch: CONDITIONAL_INJECTION_BATCH,
+    sanity: () => container.get<ConditionalConsumer>(conditionalConsumerId).service.env === TARGET_TAG_VALUE,
+    build: () =>
+      batched(CONDITIONAL_INJECTION_BATCH, () => {
+        container.get(conditionalConsumerId);
+      }),
+  };
+}
+
 // The tagged-selection axis: the last-bound tag value is the target, the far end of any linear scan.
 function buildTaggedResolveSlotsScenario(count: number): BenchScenario {
   const slotsIdentifier = Symbol(`bench-inv-rp-tagged-slots-${String(count)}`);
@@ -140,5 +176,6 @@ export function buildInversifyResolutionPatternScenarios(): ReadonlyArray<BenchS
     buildGetOptionalMissScenario(),
     buildTaggedBindingResolveScenario(),
     ...SLOT_COUNTS.map((count) => buildTaggedResolveSlotsScenario(count)),
+    buildConditionalInjectionTaggedScenario(),
   ];
 }

@@ -5,11 +5,12 @@
  */
 import "reflect-metadata";
 import type { DependencyContainer } from "tsyringe";
-import { container as tsyringeRootContainer } from "tsyringe";
+import { container as tsyringeRootContainer, inject, injectable, Lifecycle } from "tsyringe";
 
 import {
   BIND_128_PLAIN,
   BIND_TOKEN_COUNT,
+  BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE,
   CONTAINER_CREATE_BATCH,
   CONTAINER_CREATE_EMPTY,
   CREATE_CHILD_EMPTY,
@@ -87,9 +88,129 @@ function buildBindPlainScenario(): BenchScenario {
   };
 }
 
+@injectable()
+class BootConfig {
+  readonly env = "production";
+}
+
+@injectable()
+class BootLogger {
+  readonly sinkName: string;
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(BootConfig)
+    config: BootConfig,
+  ) {
+    this.sinkName = `log:${config.env}`;
+  }
+}
+
+@injectable()
+class BootDatabaseClient {
+  readonly poolName: string;
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(BootConfig)
+    config: BootConfig,
+  ) {
+    this.poolName = `db:${config.env}`;
+  }
+}
+
+@injectable()
+class BootCacheClient {
+  readonly cacheName: string;
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(BootConfig)
+    config: BootConfig,
+  ) {
+    this.cacheName = `cache:${config.env}`;
+  }
+}
+
+@injectable()
+class BootRepository {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(BootDatabaseClient)
+    readonly databaseClient: BootDatabaseClient,
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(BootCacheClient)
+    readonly cacheClient: BootCacheClient,
+  ) {}
+}
+
+@injectable()
+class BootMetricsCollector {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(BootLogger)
+    readonly logger: BootLogger,
+  ) {}
+}
+
+@injectable()
+class BootService {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(BootRepository)
+    readonly repository: BootRepository,
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(BootMetricsCollector)
+    readonly metricsCollector: BootMetricsCollector,
+  ) {}
+}
+
+@injectable()
+class BootController {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(BootService)
+    readonly service: BootService,
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(BootLogger)
+    readonly logger: BootLogger,
+  ) {}
+}
+
+const SINGLETON = { lifecycle: Lifecycle.Singleton };
+
+function buildBootContainerAndResolveRoot(): BootController {
+  const container = tsyringeRootContainer.createChildContainer();
+  container.register(BootConfig, { useClass: BootConfig }, SINGLETON);
+  container.register(BootLogger, { useClass: BootLogger }, SINGLETON);
+  container.register(BootDatabaseClient, { useClass: BootDatabaseClient }, SINGLETON);
+  container.register(BootCacheClient, { useClass: BootCacheClient }, SINGLETON);
+  container.register(BootRepository, { useClass: BootRepository }, SINGLETON);
+  container.register(BootMetricsCollector, { useClass: BootMetricsCollector }, SINGLETON);
+  container.register(BootService, { useClass: BootService }, SINGLETON);
+  container.register(BootController, { useClass: BootController }, SINGLETON);
+  return container.resolve(BootController);
+}
+
+function buildBootDecoratedContainerScenario(): BenchScenario {
+  return {
+    ...BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE,
+    what: "createChildContainer(), register a decorated class graph as Singleton useClass, resolve root once",
+    batch: 1,
+    sanity: () => buildBootContainerAndResolveRoot().service.repository.databaseClient.poolName === "db:production",
+    build: () => {
+      return () => {
+        buildBootContainerAndResolveRoot();
+      };
+    },
+  };
+}
+
 /**
  * Builds tsyringe's cold-path scenarios.
  */
 export function buildTsyringeBootScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildContainerCreateScenario(), buildCreateChildScenario(), buildBindPlainScenario()];
+  return [
+    buildBootDecoratedContainerScenario(),
+    buildContainerCreateScenario(),
+    buildCreateChildScenario(),
+    buildBindPlainScenario(),
+  ];
 }

@@ -1,5 +1,5 @@
 /**
- * `@codefast/di` — the two public resolve entry points with no row of their own (codefast-only).
+ * `@codefast/di` — the two public resolve entry points with no row of their own.
  *
  * Four of the six are measured elsewhere (`resolve`, `resolveAsync`, `resolveOptional`,
  * `resolveAll`). These are the remaining pair, and neither is a spelling of a measured one:
@@ -8,28 +8,8 @@
  */
 import { Container, token } from "@codefast/di";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import { ASYNC_STRATEGY_COUNT, RESOLVE_ALL_ASYNC, RESOLVE_OPTIONAL_ASYNC_MISS } from "#/fixtures/scenario-parity";
 import type { AsyncBenchScenario } from "#/scenarios/types";
-
-const ASYNC_STRATEGY_COUNT = 8;
-
-const RESOLVE_ALL_ASYNC = {
-  id: "resolve-all-async-8",
-  tier: "contract",
-  requires: ["async-resolve", "resolve-all"],
-  facets: ["resolve-all"],
-  group: "async",
-  what: `resolveAllAsync() across ${String(ASYNC_STRATEGY_COUNT)} async factory bindings on one token (codefast-only)`,
-} as const satisfies ScenarioDescriptor;
-
-const RESOLVE_OPTIONAL_ASYNC_MISS = {
-  id: "resolve-optional-async-miss",
-  tier: "contract",
-  requires: ["async-resolve", "optional"],
-  facets: ["optional"],
-  group: "async",
-  what: "resolveOptionalAsync() when no binding exists — the async miss, resolved without instantiating (codefast-only)",
-} as const satisfies ScenarioDescriptor;
 
 function buildResolveAllAsyncScenario(): AsyncBenchScenario {
   const strategyToken = token<number>("bench-cf-async-resolve-all-strategy");

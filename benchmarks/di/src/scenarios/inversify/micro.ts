@@ -5,7 +5,7 @@
  * library they call — that is the whole point of the side-by-side report.
  */
 import "reflect-metadata";
-import { Container, inject, injectable } from "inversify";
+import { Container, inject, injectable, optional } from "inversify";
 
 import { isFreshEachResolve } from "#/fixtures/sanity";
 import {
@@ -15,6 +15,7 @@ import {
   NAMED_CONSTANT_GET,
   NAMED_RESOLVE_BATCH,
   namedResolveSlotsDescriptor,
+  OPTIONAL_MISSING_TRANSIENT,
   SLOT_COUNTS,
   SINGLETON_CLASS_1_DEP,
   TRANSIENT_CLASS_1_DEP,
@@ -119,6 +120,42 @@ function buildNamedConstantGetScenario(): BenchScenario {
   };
 }
 
+const optionalMissLeafIdentifier = Symbol("bench-inv-micro-optional-miss-leaf");
+const optionalMissServiceIdentifier = Symbol("bench-inv-micro-optional-miss-service");
+
+@injectable()
+class OptionalMissService {
+  constructor(
+    // @ts-ignore reflect-metadata + explicit token injection
+    @inject(optionalMissLeafIdentifier)
+    // @ts-ignore reflect-metadata + explicit token injection
+    @optional()
+    readonly leafDependency: MicroLeafDependency | undefined,
+  ) {}
+}
+
+function buildOptionalMissingTransientScenario(): BenchScenario {
+  const container = new Container({ jitless: false });
+  // The optional leaf identifier is never bound, so every get checks the absent optional.
+  container.bind<OptionalMissService>(optionalMissServiceIdentifier).to(OptionalMissService).inTransientScope();
+  container.get(optionalMissServiceIdentifier);
+
+  return {
+    ...OPTIONAL_MISSING_TRANSIENT,
+    what: "get() a transient class whose one @optional dependency is unbound",
+    batch: CLASS_RESOLVE_BATCH,
+    sanity: () => {
+      const first = container.get<OptionalMissService>(optionalMissServiceIdentifier);
+      const second = container.get<OptionalMissService>(optionalMissServiceIdentifier);
+      return first !== second && first.leafDependency === undefined;
+    },
+    build: () =>
+      batched(CLASS_RESOLVE_BATCH, () => {
+        container.get(optionalMissServiceIdentifier);
+      }),
+  };
+}
+
 // The named-selection axis: the last-bound name is the target, the far end of any linear scan.
 function buildNamedResolveSlotsScenario(count: number): BenchScenario {
   const slotsIdentifier = Symbol(`bench-inv-micro-named-slots-${String(count)}`);
@@ -153,6 +190,7 @@ export function buildInversifyMicroScenarios(): ReadonlyArray<BenchScenario> {
     buildSingletonClassOneDepScenario(),
     buildTransientClassOneDepScenario(),
     buildNamedConstantGetScenario(),
+    buildOptionalMissingTransientScenario(),
     ...SLOT_COUNTS.map((count) => buildNamedResolveSlotsScenario(count)),
   ];
 }

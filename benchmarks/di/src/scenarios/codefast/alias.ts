@@ -1,5 +1,5 @@
 /**
- * `@codefast/di` — the alias shapes past a single hop (codefast-only).
+ * `@codefast/di` — the alias shapes past a single hop.
  *
  * `to-alias-redirect` measures one hop to a cached singleton in the same container. Two properties of
  * the alias lane it cannot see: the walk is iterative, so hops compound; and an alias terminal may be
@@ -12,43 +12,19 @@
  */
 import { Container, token } from "@codefast/di";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import {
+  ALIAS_BATCH,
+  ALIAS_CHAIN,
+  ALIAS_CHAIN_HOPS,
+  ALIAS_CYCLE_DETECTED,
+  ALIAS_PARENT_OWNED_TERMINAL,
+} from "#/fixtures/scenario-parity";
 import { batched } from "#/harness/batched";
 import type { BenchScenario } from "#/scenarios/types";
-
-const ALIAS_BATCH = 500;
-const ALIAS_CHAIN_HOPS = 3;
 
 interface AliasedService {
   readonly name: string;
 }
-
-const ALIAS_CHAIN = {
-  id: `alias-chain-${String(ALIAS_CHAIN_HOPS)}`,
-  tier: "contract",
-  requires: ["alias"],
-  facets: ["alias"],
-  group: "micro",
-  what: `resolve through ${String(ALIAS_CHAIN_HOPS)} chained toAlias() hops to a cached singleton — the iterative alias walk (codefast-only)`,
-} as const satisfies ScenarioDescriptor;
-
-const ALIAS_PARENT_OWNED_TERMINAL = {
-  id: "alias-parent-owned-terminal",
-  tier: "contract",
-  requires: ["alias", "child-container"],
-  facets: ["alias"],
-  group: "micro",
-  what: "resolve a child's alias whose terminal singleton the parent owns — the hop the registry's own-map lookup cannot fold (codefast-only)",
-} as const satisfies ScenarioDescriptor;
-
-const ALIAS_CYCLE_DETECTED = {
-  id: "alias-cycle-detected",
-  tier: "contract",
-  requires: ["alias", "cycle-detection"],
-  facets: ["alias"],
-  group: "failure",
-  what: "resolve an alias that points back at itself and fail fast — the shared alias-walk diagnosis (codefast-only)",
-} as const satisfies ScenarioDescriptor;
 
 function buildAliasChainScenario(): BenchScenario {
   const concreteToken = token<AliasedService>("bench-cf-alias-chain-concrete");

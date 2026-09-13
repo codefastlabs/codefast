@@ -155,7 +155,7 @@ function buildOptionalDepsScenario(): BenchScenario {
   return {
     id: "plan-escape-optional-dep",
     tier: "engine",
-    requires: ["decorators", "optional"],
+    requires: ["decorators", "optional-injection"],
     facets: ["plan", "optional"],
     group: "resolution",
     what: "resolve a 4-dep transient class whose every dependency is optional and bound — four escapes at optional arity (codefast-only)",

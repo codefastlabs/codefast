@@ -1,10 +1,9 @@
 # `@codefast/di` vs InversifyJS · Awilix · tsyringe · Brandi · ditox · injection-js
 
 A tinybench suite that runs the same dependency-injection workloads through seven containers and reports one table.
-`@codefast/di` is the subject; the other six are the comparison. Each rival runs only the scenarios it can express in
-its own idiom — inversify nearly every shared row, awilix/tsyringe/brandi/ditox the factory/class core plus the scope,
-production, lifecycle, module, multi-binding and async rows their APIs have a native form for, injection-js the
-singleton-friendly rows only.
+`@codefast/di` is the subject; the other six are the comparison. Each rival implements every row its public API can
+express, in its own idiom, and nothing else: `pnpm bench:list` proves it by reading each row's required features against
+each library's declared ones, and reports zero gaps.
 
 > **Private benchmark suite.** Never published to npm. Results are recorded in [`RESULTS.md`](./RESULTS.md) and are
 > meant to be re-run, not quoted from memory.
@@ -84,9 +83,10 @@ appear, and the root is fresh per resolve.
 
 Scenarios are grouped so one kind of work cannot masquerade as another. The shared groups are `micro`, `realistic`,
 `fan-out`, `async`, `lifecycle`, `scope`, `scale`, `boot`, `production`, `introspection`, and `failure` — error paths,
-reported apart because their cost is not comparable to a success path. Two further groups hold `@codefast/di`-only
-instrumentation instead of a head-to-head pair: `slot-selection` for the criteria lanes, and `resolution` for the engine
-lanes — compiled plans and their escapes, the depth thresholds, the sync context pool, the accessor channel.
+reported apart because their cost is not comparable to a success path. Two further groups mix head-to-head rows with
+`@codefast/di`-only instrumentation: `slot-selection` holds the public criteria rows every library with a name or tag
+qualifier runs beside the hoisted-versus-inline and injected-slot lanes, and `resolution` holds the nested-factory and
+property-injection rows beside the engine lanes — compiled plans and their escapes, the depth thresholds.
 
 Every scenario also declares a **tier**. A `contract` row is specified against the public API in
 [`SPEC.md`](../../packages/di/SPEC.md): it names a shape a caller can write, so it survives a rewrite of the engine and
@@ -103,14 +103,14 @@ somebody owes; a library missing a row it cannot express is **unsupported**, and
 look identical. A library implementing a row while not declaring a feature it requires fails the listing, so the matrix
 cannot drift from the rows.
 
-No competitor implements every row. inversify covers nearly every shared descriptor; awilix, tsyringe, brandi and ditox
-cover the factory/class-binding core plus whichever scope, lifecycle, module, multi-binding and async rows their API has
-a native form for (each collector's header lists its own); injection-js implements only its singleton-friendly rows,
-because Angular's `ReflectiveInjector` caches every provider per injector, so a fresh root's sub-deps stay cached
-singletons. Every competitor reads `—` on everything it does not measure, and the report counts only the rows it
-actually ran. Forcing a fully-transient tree onto a container that caches its resolutions would measure a proxy rather
-than the library, so those rows are omitted rather than faked. A scenario whose two sides do incomparable amounts of
-work declares `excludeFromAggregates` and stays in the table but out of the medians and geomeans.
+No competitor implements every row, and none is missing one it could express. inversify covers every shared descriptor
+but the multi-tag, validation, introspection and warm-up rows; awilix, tsyringe, brandi and ditox cover everything their
+factory, class, scope, lifecycle, module, collection, alias and async APIs have a native form for; injection-js covers
+the singleton-friendly rows, because Angular's `ReflectiveInjector` caches every provider per injector, so only a root
+can be transient. Every competitor reads `—` on a row its features cannot express, and the report counts only the rows
+it actually ran. Forcing a fully-transient tree onto a container that caches its resolutions would measure a proxy
+rather than the library, so those rows are omitted rather than faked. A scenario whose two sides do incomparable amounts
+of work declares `excludeFromAggregates` and stays in the table but out of the medians and geomeans.
 
 ### Reading the console
 

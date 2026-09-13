@@ -7,6 +7,7 @@ import { Container, inject, injectable } from "inversify";
 
 import {
   BIND_128_PLAIN,
+  BIND_128_REFINED,
   BIND_TOKEN_COUNT,
   BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE,
   CONTAINER_CREATE_BATCH,
@@ -197,6 +198,36 @@ function buildBootContainerAndResolveRoot(): BootController {
   return container.get<BootController>(bootControllerIdentifier);
 }
 
+function buildBindRefinedScenario(): BenchScenario {
+  function bindAll(): Container {
+    const container = new Container({ jitless: false });
+    for (const [index, identifier] of bindIdentifiers.entries()) {
+      container
+        .bind<BoundValue>(identifier)
+        .toDynamicValue(buildBoundValue)
+        .inSingletonScope()
+        .whenNamed(`slot-${String(index)}`);
+    }
+    return container;
+  }
+  bindAll();
+
+  return {
+    ...BIND_128_REFINED,
+    what: `the same ${String(BIND_TOKEN_COUNT)} bound, each then given inSingletonScope() and whenNamed() on the fluent chain`,
+    batch: 1,
+    sanity: () =>
+      bindAll().get<BoundValue>(bindIdentifiers[BIND_TOKEN_COUNT - 1]!, {
+        name: `slot-${String(BIND_TOKEN_COUNT - 1)}`,
+      }).id === 1,
+    build: () => {
+      return () => {
+        bindAll();
+      };
+    },
+  };
+}
+
 function buildBootDecoratedContainerScenario(): BenchScenario {
   return {
     ...BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE,
@@ -222,5 +253,6 @@ export function buildInversifyBootScenarios(): ReadonlyArray<BenchScenario> {
     buildContainerCreateScenario(),
     buildCreateChildScenario(),
     buildBindPlainScenario(),
+    buildBindRefinedScenario(),
   ];
 }
