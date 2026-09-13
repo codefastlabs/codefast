@@ -78,9 +78,13 @@ the suite's published state.
 
 **Narrow the run instead of running the suite.** `BENCH_ONLY=<id>` — a comma-separated list — is read by the parent as
 well as the child, so `BENCH_ONLY=<id> pnpm bench:isolate` runs that row alone, isolated and interleaved, in seconds.
-The rebuild it does first is around half a second, so nothing about the source lane is slow; what used to be slow was
-the whole suite. A library that implements none of the requested ids measures nothing and reads `—` rather than failing
-the run, so a row only this package has is still a legal filter.
+**Narrow the libraries too when the question is about one of them.** A paired A/B compares the subject with itself, so
+the rivals' subprocesses are wall clock spent on nothing: `BENCH_LIBRARY=@codefast/di` (a comma-separated list of
+`libraryName` or `displayName` values) runs only the libraries named, and a run narrowed this way leaves `latest.*`
+alone like any other narrowed run. A filter that leaves the subject out is an error, not an empty report. The rebuild it
+does first is around half a second, so nothing about the source lane is slow; what used to be slow was the whole suite.
+A library that implements none of the requested ids measures nothing and reads `—` rather than failing the run, so a row
+only this package has is still a legal filter.
 
 **Escape hatch — swapping `dist` directly, only when a side is not reachable from the working tree.** The one case the
 source lane cannot serve is comparing against a build you cannot check out — a published version, an old `dist` archived

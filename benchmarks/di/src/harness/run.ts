@@ -73,9 +73,12 @@ async function main(): Promise<void> {
     libraries: BENCH_LIBRARIES,
     verbose: VERBOSE_MODE_ENABLED,
   });
-  const codefastPayload = payloads.get(CODEFAST_DI.libraryName)!;
+  const codefastPayload = payloads.get(CODEFAST_DI.libraryName);
 
-  assertSubjectMeasuredSomething(CODEFAST_DI.libraryName, codefastPayload.trials);
+  assertSubjectMeasuredSomething(CODEFAST_DI.libraryName, codefastPayload?.trials);
+  if (codefastPayload === undefined) {
+    throw new Error(`No observations for the pivot library ${CODEFAST_DI.libraryName}.`);
+  }
 
   const payloadsByLibrary = new Map<string, LibraryPayload>(
     BENCH_LIBRARIES.flatMap((config) => {
