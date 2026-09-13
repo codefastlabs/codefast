@@ -366,6 +366,16 @@ would have pushed at that point, and dispatched through exactly the resolve the 
 detection, constraint contexts and error paths are therefore identical to never having compiled. Without escapes, one
 `toDynamic` dependency anywhere would drop the whole graph to the interpreted path.
 
+**Every plan in a process shares one set of call sites.** A plan is a closure created from the compiler's function
+literals, and V8 keeps type feedback per literal, not per closure, so the dependency calls inside one root's thunk see
+the dependency thunks of every plan the process has compiled. While one plan exists those sites are monomorphic; once a
+second plan with a different leaf shape has compiled — an inlined class next to a factory escape, a scoped escape, a
+hooked one — each dependency call becomes a polymorphic dispatch, and every plan in the process pays it, the first one
+included. Anything that makes a sibling plan compile earlier (the shared metadata caches let a child compile on its
+first resolve) therefore moves an isolated plan row without touching the plan itself; the ledger in
+`benchmarks/di/RESULTS.md` prices it. Generated code per plan — one function per plan, hence one feedback vector — is
+the shape that would give each plan its own sites; it is not done.
+
 **An accessor-injected class compiles only as a plan's root.** Its `@inject` accessors resolve while the constructor
 runs, through the ambient container, so the class cannot be a static node: nothing the compiler could bake would be what
 the accessor reads. As a root it can still be a plan — the constructor parameters compile as usual, and construction
