@@ -220,3 +220,143 @@ describe("a hot plan is generated as a function of its own", () => {
     expect(diagnose(child).builtSubsystems).not.toContain("resolver.planCodegen");
   });
 });
+
+describe("a hot async plan is generated as a function of its own", () => {
+  async function heatAsync(resolveOnce: () => Promise<unknown>): Promise<void> {
+    for (let index = 0; index < PLAN_CODEGEN_THRESHOLD + 4; index += 1) {
+      await resolveOnce();
+    }
+  }
+
+  it("generates an awaiting plan and resolves the same graph", async () => {
+    const leafToken = token<{ readonly n: number }>("codegen-async-leaf");
+    let calls = 0;
+
+    @injectable([leafToken])
+    class Root {
+      constructor(readonly leaf: { readonly n: number }) {}
+    }
+
+    const container = Container.create();
+    container
+      .bind(leafToken)
+      .toDynamicAsync(async () => {
+        calls += 1;
+        return { n: calls };
+      })
+      .transient();
+    container.bind(Root).toSelf().transient();
+
+    await heatAsync(() => container.resolveAsync(Root));
+
+    expect(diagnose(container).compiledAsyncPlanCount).toBe(1);
+    expect(diagnose(container).generatedPlanCount).toBe(1);
+    const before = calls;
+    const instance = await container.resolveAsync(Root);
+    expect(instance).toBeInstanceOf(Root);
+    expect(instance.leaf.n).toBe(before + 1);
+  });
+
+  it("runs a fully synchronous class chain through a generated async plan", async () => {
+    @injectable()
+    class Leaf {}
+
+    @injectable([Leaf, Leaf])
+    class Root {
+      constructor(
+        readonly a: Leaf,
+        readonly b: Leaf,
+      ) {}
+    }
+
+    const container = Container.create();
+    container.bind(Leaf).toSelf().transient();
+    container.bind(Root).toSelf().transient();
+
+    await heatAsync(() => container.resolveAsync(Root));
+
+    expect(diagnose(container).generatedPlanCount).toBe(1);
+    const instance = await container.resolveAsync(Root);
+    expect(instance.a).toBeInstanceOf(Leaf);
+    expect(instance.a).not.toBe(instance.b);
+  });
+
+  it("awaits a promise-valued constant on the generated tier", async () => {
+    const setting = token<number>("codegen-async-promise-constant");
+    const rootToken = token<number>("codegen-async-promise-constant.root");
+    const container = Container.create();
+    container.bind(setting).toConstantValue(Promise.resolve(41) as unknown as number);
+    container
+      .bind(rootToken)
+      .toResolvedAsync(async (value: number) => value + 1, [setting])
+      .transient();
+
+    await heatAsync(() => container.resolveAsync(rootToken));
+
+    expect(diagnose(container).generatedPlanCount).toBe(1);
+    expect(await container.resolveAsync(rootToken)).toBe(42);
+  });
+
+  it("keeps a sync throw inside a generated awaiting plan a rejection", async () => {
+    const leafToken = token<number>("codegen-async-throwing-leaf");
+    const asyncToken = token<number>("codegen-async-sibling");
+    const rootToken = token<Array<number>>("codegen-async-throwing-root");
+    let explode = false;
+    let siblingStarts = 0;
+
+    const container = Container.create();
+    container
+      .bind(leafToken)
+      .toResolved((): number => {
+        if (explode) {
+          throw new Error("leaf exploded");
+        }
+        return 1;
+      }, [])
+      .transient();
+    container
+      .bind(asyncToken)
+      .toResolvedAsync(async () => {
+        siblingStarts += 1;
+        return 2;
+      }, [])
+      .transient();
+    container
+      .bind(rootToken)
+      .toResolvedAsync(async (left: number, right: number) => [left, right], [leafToken, asyncToken])
+      .transient();
+
+    await heatAsync(() => container.resolveAsync(rootToken));
+    expect(diagnose(container).generatedPlanCount).toBe(1);
+
+    explode = true;
+    const startsBefore = siblingStarts;
+
+    await expect(container.resolveAsync(rootToken)).rejects.toThrow("leaf exploded");
+    expect(siblingStarts).toBe(startsBefore + 1);
+  });
+
+  it("still rejects a cycle that closes through an async escape", async () => {
+    const leafToken = token<unknown>("codegen-async-cycling-leaf");
+    let cycle = false;
+
+    @injectable([leafToken])
+    class Root {
+      constructor(readonly leaf: unknown) {}
+    }
+
+    const container = Container.create();
+    container
+      .bind(leafToken)
+      .toDynamicAsync((ctx) => (cycle ? ctx.resolveAsync(Root) : Promise.resolve("leaf")))
+      .transient();
+    container.bind(Root).toSelf().transient();
+
+    await heatAsync(() => container.resolveAsync(Root));
+    expect(diagnose(container).generatedPlanCount).toBe(1);
+
+    cycle = true;
+
+    await expect(container.resolveAsync(Root)).rejects.toThrow(CircularDependencyError);
+  });
+});

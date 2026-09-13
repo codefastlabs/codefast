@@ -3122,11 +3122,11 @@ only `outDir`, which the build inherits.
 
 ### Code generation and Content Security Policy
 
-A transient class or `toResolved` binding a container has resolved many times has its compiled plan generated as a
-function of its own through the `Function` constructor; a runtime that refuses the constructor (a Content Security
-Policy without `unsafe-eval`) leaves every plan a closure. The two behave identically — the same instances, the same
-errors, the same cycle detection — and only the throughput of a hot plan differs. `RESOLUTION_DIAGNOSTICS` reports how
-many plans a container has generated as `generatedPlanCount`.
+A transient class, `toResolved` or `toResolvedAsync` binding a container has resolved many times, through `resolve` or
+`resolveAsync`, has its compiled plan generated as a function of its own through the `Function` constructor; a runtime
+that refuses the constructor (a Content Security Policy without `unsafe-eval`) leaves every plan a closure. The two
+behave identically — the same instances, the same errors, the same cycle detection — and only the throughput of a hot
+plan differs. `RESOLUTION_DIAGNOSTICS` reports how many plans a container has generated as `generatedPlanCount`.
 
 ## Testing guide
 

@@ -687,6 +687,13 @@ dependency, down to unwrapping a promise-valued constant and starting every sibl
 propagates. `tests/unit/resolution/plan/instantiation-plan-async.test.ts` pins the lane being active, the escape
 criteria, the late-hook invalidation, and those two exactness corners.
 
+An async plan that keeps running is generated as a function of its own exactly as a sync one is
+([Compiled plans and escapes](#plans)): the compiler records an `AsyncPlanNode` tree beside the closure, and a node that
+awaits its dependencies renders as an inner function of the same source — every dependency started in order inside its
+own `try`, a sync throw turned into that slot's rejection, `Promise.all` over the slots, the constructor or factory
+applied to the settled values — so the awaiting nodes get call sites of their own too. The threshold, the
+identity-guarded swap (`host.replaceAsyncPlan`, over the async map) and the closure fallback are the sync lane's.
+
 <a id="context-pool"></a>
 
 ### The sync context pool, and the stack it lends

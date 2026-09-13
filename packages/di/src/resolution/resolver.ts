@@ -548,6 +548,12 @@ export class DependencyResolver implements ResolverCallbacks {
           plans.set(binding.identifier, next);
         }
       },
+      replaceAsyncPlan: (binding, current, next) => {
+        const plans = this.#asyncPlanByBindingId;
+        if (plans !== undefined && plans.get(binding.identifier) === current) {
+          plans.set(binding.identifier, next);
+        }
+      },
       // Dispatches exactly as #resolveDep does, so an escaped dep is indistinguishable
       // from the same dep on a fully interpreted resolve.
       resolveEscaped: (token, options, arity, resolutionStack) => {
