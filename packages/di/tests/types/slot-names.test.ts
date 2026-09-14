@@ -42,7 +42,7 @@ describe("a token declaring slot names narrows every `name` it meets", () => {
 
     expectTypeOf(container.resolve(Named, { name: "console" })).toEqualTypeOf<Logger>();
     expectTypeOf(container.resolveOptional(Named, { name: "console" })).toEqualTypeOf<Logger | undefined>();
-    expectTypeOf(container.resolveAll(Named, { name: "console" })).toEqualTypeOf<Array<Logger>>();
+    expectTypeOf(container.resolveAll(Named, { name: "console" })).toEqualTypeOf<ReadonlyArray<Logger>>();
     expect(container.has(Named, { name: "console" })).toBe(true);
     // @ts-expect-error the options side cannot widen the token's names
     expect(() => container.resolve(Named, { name: "consol" })).toThrow(NoMatchingBindingError);

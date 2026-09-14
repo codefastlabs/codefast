@@ -99,7 +99,7 @@ export class Undecorated {
 export class ReportService {
   constructor(
     readonly logger: Logger | undefined,
-    readonly plugins: Array<Plugin>,
+    readonly plugins: ReadonlyArray<Plugin>,
   ) {}
 
   pluginCount(): number {
@@ -151,8 +151,8 @@ export class RepeatedSlotsConsumer {
   constructor(
     readonly firstLogger: Logger | undefined,
     readonly secondLogger: Logger | undefined,
-    readonly pluginsA: Array<Plugin>,
-    readonly pluginsB: Array<Plugin>,
+    readonly pluginsA: ReadonlyArray<Plugin>,
+    readonly pluginsB: ReadonlyArray<Plugin>,
     readonly outboxA: EmailService,
     readonly outboxB: EmailService,
     readonly inbox: EmailService,
@@ -291,7 +291,7 @@ export class BundleService {
 @injectable([injectAll(PluginToken), inject(PluginToken, { name: "primary" })])
 export class MultiAndNamedConsumer {
   constructor(
-    readonly plugins: Array<Plugin>,
+    readonly plugins: ReadonlyArray<Plugin>,
     readonly primary: Plugin,
   ) {}
 }

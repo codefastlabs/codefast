@@ -116,11 +116,11 @@ export interface Container {
   resolveAll<Value, Names extends string = string>(
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
-  ): Array<Value>;
+  ): ReadonlyArray<Value>;
   resolveAllAsync<Value, Names extends string = string>(
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
-  ): Promise<Array<Value>>;
+  ): Promise<ReadonlyArray<Value>>;
 
   createChild(): Container;
 
@@ -674,7 +674,7 @@ class DefaultContainer implements Container {
   resolveAll<Value, Names extends string = string>(
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
-  ): Array<Value> {
+  ): ReadonlyArray<Value> {
     this.#assertNotDisposed();
     const rootStack = this.#resolver.rootStack;
     if (options === undefined && rootStack.length === 0) {
@@ -688,7 +688,7 @@ class DefaultContainer implements Container {
   resolveAllAsync<Value, Names extends string = string>(
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
-  ): Promise<Array<Value>> {
+  ): Promise<ReadonlyArray<Value>> {
     this.#assertNotDisposed();
     if (options === undefined) {
       return this.#resolver.resolveRootCollectionAsync(token);

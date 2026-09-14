@@ -885,7 +885,7 @@ export class DependencyResolver implements ResolverCallbacks {
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
-  ): Array<Value> {
+  ): ReadonlyArray<Value> {
     const candidates = this.#candidateBindings(token, options, resolutionStack);
     const resolved = new Array<Value>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
@@ -901,34 +901,39 @@ export class DependencyResolver implements ResolverCallbacks {
    * @remarks Its own entry rather than a branch in `resolveAll`, so the options lane keeps the exact
    * shape it had; the container routes a top-level read with no options here.
    */
-  resolveRootCollection<Value>(token: Token<Value> | Constructor<Value>): Array<Value> {
+  resolveRootCollection<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<Value> {
     const resolutionStack = this.rootStack;
     const memo = this.#rootCollection(token, resolutionStack);
     if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
-      return memo.values.slice() as Array<Value>;
+      return memo.values as ReadonlyArray<Value>;
     }
     const { candidates } = memo;
     const resolved = new Array<Value>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
       resolved[index] = this.#resolveCandidateSync(candidates[index]!, undefined, resolutionStack) as Value;
     }
+    // The members this read materialised may have made the list stable for the next one.
+    this.#settleCollectionValues(memo);
     return resolved;
   }
 
   /** The async twin of `resolveRootCollection`: a stable value list settles at once, candidates fan out as usual. */
-  resolveRootCollectionAsync<Value>(token: Token<Value> | Constructor<Value>): Promise<Array<Value>> {
+  resolveRootCollectionAsync<Value>(token: Token<Value> | Constructor<Value>): Promise<ReadonlyArray<Value>> {
     // The async lane appends to its branch and never unwinds, so it works on a stack of its own.
     const resolutionStack: Array<ResolutionFrame> = [];
     const memo = this.#rootCollection(token, resolutionStack);
     if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
-      return Promise.resolve(memo.values.slice() as Array<Value>);
+      return Promise.resolve(memo.values as ReadonlyArray<Value>);
     }
     return Promise.all(
       memo.candidates.map(
         (candidate) =>
           this.#resolveCandidateAsync(candidate, undefined, resolutionStack, UNOWNED_BRANCH) as Promise<Value>,
       ),
-    );
+    ).then((values) => {
+      this.#settleCollectionValues(memo);
+      return values;
+    });
   }
 
   /**
@@ -946,12 +951,30 @@ export class DependencyResolver implements ResolverCallbacks {
     }
     const candidates = this.#candidateBindings(token, undefined, resolutionStack);
     const entry: CollectionEntry = { candidates, values: undefined, activationVersion: -1 };
-    if (this.#chainActivationVersion() === 0 && candidates.every(isHookFreeConstant)) {
-      entry.values = candidates.map((candidate) => (candidate as ConstantBinding<unknown>).value);
-      entry.activationVersion = 0;
-    }
+    this.#settleCollectionValues(entry);
     this.#lookup.rememberCollection(token, entry);
     return entry;
+  }
+
+  /**
+   * Fills a collection memo's value list once every member is stable: a hook-free constant, or a
+   * hook-free singleton whose instance is cached — anything that changes either bumps a registry
+   * version the memo is keyed on. A member still to be materialised leaves the list unfilled.
+   */
+  #settleCollectionValues(entry: CollectionEntry): void {
+    if (entry.values !== undefined || this.#chainActivationVersion() !== 0) {
+      return;
+    }
+    const { candidates } = entry;
+    for (let index = 0; index < candidates.length; index += 1) {
+      if (!isStableCollectionMember(candidates[index]!)) {
+        return;
+      }
+    }
+    // Handed out as is, unfrozen: a frozen array iterates through a slow elements kind, so the
+    // contract's read-only return is the guard against a caller writing into the memo.
+    entry.values = candidates.map(stableMemberValue);
+    entry.activationVersion = 0;
   }
 
   /** Every binding in the chain a `resolveAll` request matches, in chain order. */
@@ -1334,7 +1357,7 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
-  ): Promise<Array<Value>> {
+  ): Promise<ReadonlyArray<Value>> {
     const candidates = this.#candidateBindings(token, options, resolutionStack);
     const pending = new Array<Promise<Value>>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
@@ -1813,8 +1836,16 @@ export class DependencyResolver implements ResolverCallbacks {
 }
 
 /** A constant whose value is its answer on every read: no own hook, and the caller has ruled out container hooks. */
-function isHookFreeConstant(binding: Binding): boolean {
-  return binding.kind === "constant" && binding.activationHook === undefined;
+// A cached singleton reads like a constant until a registry change evicts it, which also drops the memo.
+function isStableCollectionMember(binding: Binding): boolean {
+  if (binding.kind === "alias" || binding.activationHook !== undefined) {
+    return false;
+  }
+  return binding.kind === "constant" || (binding.scope === "singleton" && binding.instance !== NO_INSTANCE);
+}
+
+function stableMemberValue(binding: Binding): unknown {
+  return binding.kind === "constant" ? binding.value : binding.instance;
 }
 
 function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {

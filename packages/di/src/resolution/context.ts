@@ -53,12 +53,12 @@ export interface ResolverCallbacks {
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
-  ): Array<Value>;
+  ): ReadonlyArray<Value>;
   resolveAllAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
-  ): Promise<Array<Value>>;
+  ): Promise<ReadonlyArray<Value>>;
 }
 
 /**
@@ -135,11 +135,14 @@ export class DefaultResolutionContext implements ResolutionContext {
     return this.#resolver.resolveOptionalAsync(token, options, this.#resolutionStack);
   }
 
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value> {
     return this.#resolver.resolveAll(token, options, this.#resolutionStack);
   }
 
-  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>> {
+  resolveAllAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<ReadonlyArray<Value>> {
     return this.#resolver.resolveAllAsync(token, options, this.#resolutionStack);
   }
 }
@@ -218,11 +221,14 @@ export class AsyncLevelContext implements ResolutionContext {
     return this.#resolver.resolveOptionalAsync(token, options, this.#exactStack());
   }
 
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value> {
     return this.#resolver.resolveAll(token, options, this.#exactStack());
   }
 
-  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>> {
+  resolveAllAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<ReadonlyArray<Value>> {
     return this.#resolver.resolveAllAsync(token, options, this.#exactStack());
   }
 }
@@ -275,11 +281,14 @@ export class AsyncCascadeContext implements ResolutionContext {
     return this.#resolver.resolveOptionalAsync(token, options, [...this.#cascadeStack]);
   }
 
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value> {
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value> {
     return this.#resolver.resolveAll(token, options, this.#cascadeStack);
   }
 
-  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>> {
+  resolveAllAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<ReadonlyArray<Value>> {
     return this.#resolver.resolveAllAsync(token, options, [...this.#cascadeStack]);
   }
 }

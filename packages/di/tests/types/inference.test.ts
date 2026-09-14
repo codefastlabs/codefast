@@ -54,7 +54,7 @@ describe("compile-time API inference", () => {
   it("injectAll marks multi with array value type", () => {
     const StringToken = token<string>("s");
     const descriptor = injectAll(StringToken);
-    expectTypeOf(descriptor).toExtend<InjectionDescriptor<Array<string>>>();
+    expectTypeOf(descriptor).toExtend<InjectionDescriptor<ReadonlyArray<string>>>();
   });
 
   it("dual-role inject does not use Function#name as slot name", () => {
@@ -87,7 +87,7 @@ describe("toResolved dependency inference", () => {
         (bare, optionalDep, multiDep) => {
           expectTypeOf(bare).toEqualTypeOf<string>();
           expectTypeOf(optionalDep).toEqualTypeOf<number | undefined>();
-          expectTypeOf(multiDep).toEqualTypeOf<Array<string>>();
+          expectTypeOf(multiDep).toEqualTypeOf<ReadonlyArray<string>>();
           return "ok";
         },
         [stringToken, optional(numberToken), injectAll(stringToken)],

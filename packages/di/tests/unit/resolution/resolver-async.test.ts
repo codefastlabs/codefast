@@ -354,7 +354,7 @@ describe("ResolutionContext surface inside factories", () => {
     const itemToken = token<string>("item");
     const probeToken = token<{
       optionalMiss: number | undefined;
-      all: Array<string>;
+      all: ReadonlyArray<string>;
       path: ReadonlyArray<string>;
       parentName: string | undefined;
     }>("probe");

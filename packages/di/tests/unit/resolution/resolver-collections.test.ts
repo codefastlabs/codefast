@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#/container/container";
 import { tag } from "#/core/tag";
 import { token } from "#/core/token";
+import { injectable } from "#/decorators/injectable";
 
 const KIND_TAG = tag("kind");
 
@@ -27,7 +28,7 @@ function bindStrategies(container: Container, values: ReadonlyArray<number>, eva
 const strategyToken = token<number>("collections-strategy");
 
 describe("a root-level collection is memoized against the chain", () => {
-  it("evaluates each predicate once across repeated reads and hands out a fresh array every time", () => {
+  it("evaluates each predicate once across repeated reads and hands out one shared list", () => {
     const container = Container.create();
     const evaluated: Array<number> = [];
     bindStrategies(container, [1, 2, 3], evaluated);
@@ -36,12 +37,10 @@ describe("a root-level collection is memoized against the chain", () => {
     const second = container.resolveAll(strategyToken);
 
     expect(first).toEqual([1, 2, 3]);
-    expect(second).toEqual([1, 2, 3]);
-    expect(second).not.toBe(first);
+    expect(second).toBe(first);
     expect(evaluated).toEqual([1, 2, 3]);
 
-    first.push(99);
-
+    // The list is the memo's own; the read-only return type is what keeps a caller from writing into it.
     expect(container.resolveAll(strategyToken)).toEqual([1, 2, 3]);
   });
 
@@ -116,5 +115,90 @@ describe("a root-level collection is memoized against the chain", () => {
     expect(container.resolve(readerToken)).toBe(3);
     // Two nested reads, two evaluations per predicate: the memo is a root-level affair.
     expect(evaluated.filter((value) => value === 1)).toHaveLength(2);
+  });
+});
+
+describe("a root collection of cached singleton members", () => {
+  it("hands back the same instances on every read once the members are materialised", () => {
+    let constructed = 0;
+
+    @injectable()
+    class Handler {
+      readonly id = (constructed += 1);
+    }
+
+    const handlers = token<Handler>("collection-singleton-members");
+    const container = Container.create();
+    container.bind(handlers).to(Handler).many().singleton();
+    container.bind(handlers).to(Handler).many().singleton();
+    container.bind(handlers).to(Handler).many().singleton();
+
+    const first = container.resolveAll(handlers);
+    const second = container.resolveAll(handlers);
+    const third = container.resolveAll(handlers);
+
+    // The first read materialises the members and answers from a fresh array; the list settles behind it.
+    expect(constructed).toBe(3);
+    expect(second).toEqual(first);
+    expect(second[0]).toBe(first[0]);
+    expect(third).toBe(second);
+    expect(container.resolveAll(handlers)).toHaveLength(3);
+  });
+
+  it("sees a member rebound after the list settled", () => {
+    @injectable()
+    class Handler {}
+
+    const handlers = token<Handler>("collection-singleton-rebound");
+    const container = Container.create();
+    container.bind(handlers).to(Handler).many().singleton();
+    const kept = container.bind(handlers).to(Handler).many().singleton();
+
+    const before = container.resolveAll(handlers);
+    container.resolveAll(handlers);
+    container.unbind(kept.id());
+    container.bind(handlers).to(Handler).many().singleton();
+
+    const after = container.resolveAll(handlers);
+    expect(after).toHaveLength(2);
+    expect(after[0]).toBe(before[0]);
+    expect(after[1]).not.toBe(before[1]);
+  });
+
+  it("keeps materialising a member whose singleton is not cached yet", () => {
+    let constructed = 0;
+
+    @injectable()
+    class Lazy {
+      readonly id = (constructed += 1);
+    }
+
+    const members = token<unknown>("collection-mixed-members");
+    const container = Container.create();
+    container.bind(members).toConstantValue("constant").many();
+    container.bind(members).to(Lazy).many().singleton();
+
+    expect(container.resolveAll(members)).toEqual(["constant", expect.any(Lazy)]);
+    expect(constructed).toBe(1);
+    expect(container.resolveAll(members)[1]).toBe(container.resolveAll(members)[1]);
+    expect(constructed).toBe(1);
+  });
+
+  it("settles the async twin the same way", async () => {
+    @injectable()
+    class Handler {}
+
+    const handlers = token<Handler>("collection-singleton-async");
+    const container = Container.create();
+    container.bind(handlers).to(Handler).many().singleton();
+    container.bind(handlers).to(Handler).many().singleton();
+
+    const first = await container.resolveAllAsync(handlers);
+    const second = await container.resolveAllAsync(handlers);
+    const third = await container.resolveAllAsync(handlers);
+
+    expect(second).toEqual(first);
+    expect(second[1]).toBe(first[1]);
+    expect(third).toBe(second);
   });
 });

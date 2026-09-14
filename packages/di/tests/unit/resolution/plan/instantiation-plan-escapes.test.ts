@@ -213,7 +213,7 @@ describe("escaped dependencies inside a compiled plan", () => {
 
     @injectable([injectAll(pluginToken)])
     class Root {
-      constructor(readonly plugins: Array<string>) {}
+      constructor(readonly plugins: ReadonlyArray<string>) {}
     }
 
     const container = Container.create();

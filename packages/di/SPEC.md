@@ -298,6 +298,9 @@ exactly the ability to resolve within the current context.
 - Six methods, each taking a token plus the same optional hint: `resolve`, `resolveAsync`, `resolveOptional`,
   `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync`.
 - `resolveAll` throws `AsyncResolutionError` if any matching binding is async, and returns `[]` when nothing matches.
+  Both collection reads return a `ReadonlyArray`: a root-level read with no options hands out the engine's own list, the
+  same array on every call while no registry in the chain has changed. Writing into it corrupts what every later read
+  returns, which the return type forbids; a caller that needs its own copy spreads it.
 - `graph` holds the `ConstraintContext` — the dependency-graph context used inside a `when()` predicate. An ordinary
   resolve never needs it.
 
@@ -642,8 +645,8 @@ container
 >   behaviour and may cause an infinite loop or incorrect caching.
 > - Because it is pure, the engine may evaluate it once per container state and reuse the answer where the context
 >   cannot differ: a root-level `resolveAll` with no options keeps its candidate list until any registry in the chain
->   changes, and keeps the value list too while every member is a hook-free constant. A read carrying options, or made
->   from inside a factory, evaluates every predicate afresh.
+>   changes, and keeps the value list too while every member is a hook-free constant or a hook-free singleton whose
+>   instance is cached. A read carrying options, or made from inside a factory, evaluates every predicate afresh.
 > - The predicate **must not** call `ctx.resolve*()` — that causes circular resolution.
 
 > **Performance note.** For a `transient` binding on a hot path (resolved on every request), a complex `when()`
@@ -1722,7 +1725,7 @@ class Reporter {
   ) {}
 }
 
-// injectAll — inject every matching binding as an array, with an optional named filter
+// injectAll — inject every matching binding as a read-only array, with an optional named filter
 @injectable([injectAll(Plugin), injectAll(Logger, { name: "audit" })])
 class Runner {
   constructor(

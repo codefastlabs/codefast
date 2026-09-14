@@ -97,14 +97,16 @@ describe("async construction", () => {
     const presentToken = token<string>("async-present");
     const absentToken = token<string>("async-absent");
     const handlerToken = token<string>("async-handler");
-    const rootToken = token<{ handlers: Array<string>; missing: string | undefined; present: string }>("async-root");
+    const rootToken = token<{ handlers: ReadonlyArray<string>; missing: string | undefined; present: string }>(
+      "async-root",
+    );
 
     @injectable([inject(presentToken), optional(absentToken), injectAll(handlerToken)])
     class Root {
       constructor(
         readonly present: string,
         readonly missing: string | undefined,
-        readonly handlers: Array<string>,
+        readonly handlers: ReadonlyArray<string>,
       ) {}
     }
 

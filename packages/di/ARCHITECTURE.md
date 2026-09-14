@@ -495,13 +495,16 @@ that landed the tagged chain-walk memo.
 **A root-level collection is memoized on the same cache.** `resolveAll` with no options at the top level gathers the
 chain's bindings and runs every `when()` predicate against the root context, which is a constant. The contract makes a
 predicate pure, so that candidate list is a function of the chain's registries alone, and the lookup cache keeps it
-under the same chain-version stamp as its other two memos. When every member is a hook-free constant and no activation
-hook exists anywhere in the chain, the value list is kept as well, stamped with the chain's activation version, and a
-read hands out a copy. A read carrying options or made from inside a factory goes through the full gather, because its
-context is not a constant. The container routes a top-level read with no options to the memo's own entry,
-`resolveRootCollection`, so `resolveAll` itself keeps the exact shape the options lane had — a branch added there was
-measured as a loss on the tagged collection row. `tests/unit/resolution/resolver-collections.test.ts` pins the
-boundaries.
+under the same chain-version stamp as its other two memos. When every member is a hook-free constant or a hook-free
+singleton whose instance is cached, and no activation hook exists anywhere in the chain, the value list is kept as well,
+stamped with the chain's activation version, and a read hands out that list itself, unfrozen — a frozen array iterates
+through a slow elements kind in V8, so the contract's `ReadonlyArray` return is the guard, and a hundred-member read is
+one map lookup and no copy; a read that materialises the last such singleton settles the list for the next one, and any
+registry change that evicts an instance drops the memo with it. A read carrying options or made from inside a factory
+goes through the full gather, because its context is not a constant. The container routes a top-level read with no
+options to the memo's own entry, `resolveRootCollection`, so `resolveAll` itself keeps the exact shape the options lane
+had — a branch added there was measured as a loss on the tagged collection row.
+`tests/unit/resolution/resolver-collections.test.ts` pins the boundaries.
 
 **Late hooks are why the activation-need memo reads the field first.** `.onActivation()` writes the hook field **in
 place** on an already-registered binding and bumps no version. `needsActivation()` therefore answers the binding's own
@@ -741,11 +744,16 @@ plan maps (first plan request, which only a `class` or `resolved` binding makes)
 distinct token or tag in one cache generation), the activation-need cache (first interpreted resolve that asks whether a
 binding needs the activation pipeline) and its memo (first answer its early returns cannot give).
 
-The reason is that an empty `Map` is not free: V8 gives it a backing store, and a closure-heavy host object such as the
-plan compiler's is a dozen allocations. Those are costs a per-request child — created, asked one parent-owned token,
-disposed — never earns back, and that child is the shape `Container.create()` and `createChild()` are priced on. The one
-map every container allocates eagerly is the registry's fast-default map, because `getFastDefault()` is the first read
-of every synchronous resolve ([The registry keeps one record per token](#token-record)).
+The scope manager, the lifecycle manager, the resolver's cascade stack and its sync context pool stay eager on purpose.
+Building them on first use was measured: it saved a per-request child three or four allocations and read as a small gain
+on the empty-child rows, but every warm interpreted lane then reached them through a nullable field or an accessor, and
+the realistic-graph and production rows lost more than the child rows gained. What a child costs is the object count of
+this design, not those four; the ledger prices it. The reason the rest defers is that an empty `Map` is not free: V8
+gives it a backing store, and a closure-heavy host object such as the plan compiler's is a dozen allocations. Those are
+costs a per-request child — created, asked one parent-owned token, disposed — never earns back, and that child is the
+shape `Container.create()` and `createChild()` are priced on. The one map every container allocates eagerly is the
+registry's fast-default map, because `getFastDefault()` is the first read of every synchronous resolve
+([The registry keeps one record per token](#token-record)).
 
 > **Invariant (correctness).** Deferral is an allocation decision only. A deferred collaborator must answer identically
 > whether or not something touched it first — an unallocated cache reads as a miss, never as an error — which is why

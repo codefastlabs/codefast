@@ -1406,7 +1406,7 @@ class ShippingFulfillmentService implements FulfillmentService {
 
   constructor(
     private readonly orderRepository: OrderRepository,
-    private readonly carriers: Array<ShippingCarrier>, // resolveAll — all registered carriers
+    private readonly carriers: ReadonlyArray<ShippingCarrier>, // resolveAll — all registered carriers
     logger: Logger,
   ) {
     this.#log = logger.child({ service: "FulfillmentService" });
@@ -1631,7 +1631,7 @@ class PaymentProcessor implements PaymentService {
   readonly #log: Logger;
 
   constructor(
-    private readonly gateways: Array<PaymentGateway>, // resolveAll — all gateways
+    private readonly gateways: ReadonlyArray<PaymentGateway>, // resolveAll — all gateways
     private readonly orderRepository: OrderRepository,
     private readonly eventBus: EventBus,
     logger: Logger,
@@ -1988,7 +1988,7 @@ class NotificationDispatcher implements NotificationService {
   readonly #log: Logger;
 
   constructor(
-    private readonly channels: Array<NotificationChannel>, // resolveAll — all channels
+    private readonly channels: ReadonlyArray<NotificationChannel>, // resolveAll — all channels
     logger: Logger,
   ) {
     this.#log = logger.child({ service: "NotificationService" });

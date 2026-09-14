@@ -142,8 +142,11 @@ export interface ResolutionContext {
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value>;
-  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>>;
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value>;
+  resolveAllAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<ReadonlyArray<Value>>;
   readonly graph: ConstraintContext;
 }
 

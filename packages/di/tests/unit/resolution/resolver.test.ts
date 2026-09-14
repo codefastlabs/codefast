@@ -314,7 +314,7 @@ describe("optional & multi injection", () => {
     const partToken = token<number>("part");
     @injectable([injectAll(partToken)])
     class Aggregate {
-      constructor(readonly parts: Array<number>) {}
+      constructor(readonly parts: ReadonlyArray<number>) {}
     }
     const aggregateToken = token<Aggregate>("aggregate");
     const container = Container.create();

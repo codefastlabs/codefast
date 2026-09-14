@@ -162,7 +162,7 @@ describe("generateDependencyGraph", () => {
     const validatorToken = token<string>("validator");
     @injectable([injectAll(validatorToken)])
     class Composite {
-      constructor(readonly validators: Array<string>) {}
+      constructor(readonly validators: ReadonlyArray<string>) {}
     }
     const container = Container.create();
     container.bind(validatorToken).toConstantValue("a").whenNamed("first");

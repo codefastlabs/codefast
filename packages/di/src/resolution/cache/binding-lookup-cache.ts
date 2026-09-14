@@ -27,8 +27,9 @@ export interface DefaultLookupEntry<Owner> {
 /**
  * A root-level collection read, memoized until any registry in the chain changes.
  *
- * @remarks `values` is kept only while every member is a hook-free constant, and
- * `activationVersion` is the chain's activation version that promise was made under.
+ * @remarks `values` is kept only while every member is a hook-free constant or a hook-free singleton
+ * whose instance is cached, and `activationVersion` is the chain's activation version that promise was
+ * made under.
  */
 export interface CollectionEntry {
   readonly candidates: ReadonlyArray<Binding>;

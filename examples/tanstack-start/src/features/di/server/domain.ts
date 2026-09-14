@@ -159,12 +159,12 @@ export class UniqueTitleValidator implements TaskValidator {
   }
 }
 
-// injectAll(...) collects every binding on TaskValidatorToken into an Array<TaskValidator>.
+// injectAll(...) collects every binding on TaskValidatorToken into a ReadonlyArray<TaskValidator>.
 @injectable([injectAll(TaskValidatorToken)])
 export class CompositeTaskValidator implements TaskValidation {
   readonly #validators: ReadonlyArray<TaskValidator>;
 
-  constructor(validators: Array<TaskValidator>) {
+  constructor(validators: ReadonlyArray<TaskValidator>) {
     this.#validators = validators;
   }
 
