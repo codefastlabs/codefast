@@ -138,3 +138,54 @@ describe("resolveAll over a one-tag request", () => {
     expect(ENV.of("prod")).not.toBe(ENV.of("staging"));
   });
 });
+
+describe("a one-criterion request the index does not hold is a miss without a scan", () => {
+  it("never evaluates a default-slot predicate for a tagged request", () => {
+    const serviceToken = token<string>("tagged-selection-index-miss");
+    const container = Container.create();
+    let evaluated = 0;
+
+    container
+      .bind(serviceToken)
+      .toConstantValue("default")
+      .when(() => {
+        evaluated += 1;
+        return true;
+      });
+    container.bind(serviceToken).toConstantValue("staging").whenTagged(STAGING);
+
+    expect(container.resolveOptional(serviceToken, { tags: [PROD] })).toBeUndefined();
+    expect(() => container.resolve(serviceToken, { tags: [DEV] })).toThrow(NoMatchingBindingError);
+    expect(evaluated).toBe(0);
+  });
+
+  it("lets last-wins keep the index at one binding per tagged slot", () => {
+    const serviceToken = token<string>("tagged-selection-last-wins");
+    const container = Container.create();
+
+    container
+      .bind(serviceToken)
+      .toConstantValue("first")
+      .whenTagged(PROD)
+      .when(() => true);
+    container
+      .bind(serviceToken)
+      .toConstantValue("second")
+      .whenTagged(PROD)
+      .when(() => true);
+
+    expect(container.resolve(serviceToken, { tags: [PROD] })).toBe("second");
+    expect(container.resolveAll(serviceToken, { tags: [PROD] })).toEqual(["second"]);
+  });
+
+  it("walks to the parent when this container's index misses", () => {
+    const serviceToken = token<string>("tagged-selection-index-miss-parent");
+    const parent = Container.create();
+    parent.bind(serviceToken).toConstantValue("parent-prod").whenTagged(PROD);
+    const child = parent.createChild();
+    child.bind(serviceToken).toConstantValue("child-staging").whenTagged(STAGING);
+
+    expect(child.resolve(serviceToken, { tags: [PROD] })).toBe("parent-prod");
+    expect(child.resolve(serviceToken, { tags: [STAGING] })).toBe("child-staging");
+  });
+});

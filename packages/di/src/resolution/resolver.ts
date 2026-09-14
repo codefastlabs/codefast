@@ -208,7 +208,14 @@ export class DependencyResolver implements ResolverCallbacks {
       }
     } else if (singleCriterion !== undefined) {
       const indexed = this.#registry.getSimpleTagged(token, singleCriterion);
-      if (indexed !== undefined && this.#satisfiesPredicate(indexed, options, resolutionStack)) {
+      if (indexed === undefined) {
+        // A one-criterion request matches only a slot carrying exactly that criterion, and every such
+        // slot is in the index, so a miss here is a miss for this registry: nothing left to scan.
+        return this.#parent === undefined
+          ? undefined
+          : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
+      }
+      if (this.#satisfiesPredicate(indexed, options, resolutionStack)) {
         return { binding: indexed, owner: this };
       }
     } else if (

@@ -550,6 +550,18 @@ is not something a one-criterion index can answer without skipping the ambiguity
 > [SPEC](SPEC.md#resolve-options) makes the two spellings one request;
 > `tests/unit/resolution/select/tag-shorthand-parity.test.ts` pins the lane alongside the answer.
 
+**A one-criterion index miss is a registry miss.** A request carrying one criterion matches only a slot that _is_ that
+criterion: a multi-criterion slot needs every one of its criteria covered, and the default slot matches no request that
+carries any. Every one-criterion slot is in the registry's simple index, so when the index has no entry for the
+criterion the container has nothing to scan and the lookup walks to the parent at once — the tagged-miss row was that
+scan. The index is complete by construction: last-wins keeps one binding per tagged slot, a predicate on a tagged
+binding does not exempt it from that, and a predicate-only binding sits on the default slot, which no criterion reaches.
+
+> **Invariant (correctness).** The simple index holds an entry for every binding whose slot carries exactly one
+> criterion, or a miss the lookup declares from it would hide a live binding. Anything that lets two bindings share a
+> tagged slot has to index both. `tests/unit/resolution/select/tagged-selection.test.ts` pins last-wins on a tagged
+> slot, the parent walk and that a default-slot predicate is never evaluated for a tagged request.
+
 **`resolveAll` reads the tag index too.** A request carrying exactly one criterion (a lone name folds to the reserved
 criterion) matches exactly the bindings whose slot _is_ that criterion: a multi-criterion slot cannot satisfy it, and
 last-wins keeps at most one such binding per registry. So the index holds the whole answer per container, and walking
