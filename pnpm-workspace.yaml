@@ -111,7 +111,7 @@ catalog:
   vite: ^8.2.2
   vitest: ^5.0.0
   yaml: ^2.9.0
-  zod: ^4.5.4
+  zod: ^4.6.2
 
 # `strict`: `pnpm add` routes every dep through the catalog — a new one is
 # inserted there, a range conflicting with an existing entry is refused. A
