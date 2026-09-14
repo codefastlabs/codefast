@@ -232,6 +232,21 @@ one more. Snapshots, error reporting and module rollback are the callers that pa
 > by `tests/unit/resolution/fast-paths-active.test.ts`; the fast-default shape is held by the benchmark suite's warm
 > resolve rows, which is where it was found.
 
+Within a record, a bind's last-wins displacement is answered by slot index, never a list walk. A slot holds one
+occupant, so the record names it three ways: the default slot in `defaultOccupant`, a one-criterion slot in the `simple`
+map, a two-plus-criterion slot in the `multi` buckets. An incoming binding asks the index for the occupant of its own
+slot and displaces exactly that, so registering the _n_-th member of a collection stays constant-time instead of
+scanning the _n_ already there — a token that grows a large collection bound member by member is otherwise quadratic to
+build, which the fan-out cold rows priced. A collection member and a predicate-only binding occupy no slot and are left
+out of every index; the two-plus-criterion slot, which the buckets key by only its first criterion, keeps the list walk,
+because it is rare and either criterion can lead.
+
+> **Invariant (correctness).** A binding that occupies a slot is indexed under it for exactly as long as it holds it: an
+> in-place change that frees the slot — `many()` turning it into a member, a predicate making it predicate-only — drops
+> the index entry in the same step that rewrites the binding, or a later add would displace a binding that has already
+> moved on. `tests/unit/core/registry.test.ts` pins displacement through each slot shape and across those in-place
+> transitions.
+
 <a id="scope-total"></a>
 
 ### `scope` is a total field

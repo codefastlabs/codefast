@@ -242,3 +242,115 @@ describe("a lone default-slot binding and the record it grows into", () => {
     expect(container.inspect().ownBindings).toEqual([]);
   });
 });
+
+describe("last-wins displacement inside a record is answered by slot index", () => {
+  const TIER_TAG = tag("tier");
+
+  it("displaces the default occupant even while collection members share the token", () => {
+    const serviceToken = token<string>("registry-default-among-members");
+    const container = Container.create();
+    // The member forms the record first, so the default binding lands in it rather than the lone seat.
+    container.bind(serviceToken).toConstantValue("member").many();
+    container.bind(serviceToken).toConstantValue("first");
+    container.bind(serviceToken).toConstantValue("second");
+
+    // The member is untouched; the second default binding took the first's slot through the index.
+    expect(container.resolve(serviceToken)).toBe("second");
+    expect(container.resolveAll(serviceToken)).toContain("member");
+    expect(container.lookupBindings(serviceToken)).toHaveLength(2);
+  });
+
+  it("frees the default slot when its occupant becomes a member in place", () => {
+    const serviceToken = token<string>("registry-default-turns-member");
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("member").many();
+    const wasDefault = container.bind(serviceToken).toConstantValue("was-default");
+
+    wasDefault.many();
+    // The next default binding must not resurrect the now-member's freed slot as a displacement.
+    container.bind(serviceToken).toConstantValue("fresh");
+
+    expect(container.resolve(serviceToken)).toBe("fresh");
+    expect(container.resolveAll(serviceToken)).toContain("was-default");
+    expect(container.lookupBindings(serviceToken)).toHaveLength(3);
+  });
+
+  it("frees the default slot when its occupant gains a predicate in place", () => {
+    const serviceToken = token<string>("registry-default-turns-predicate");
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("member").many();
+    const wasDefault = container.bind(serviceToken).toConstantValue("was-default");
+
+    wasDefault.when(() => false);
+    container.bind(serviceToken).toConstantValue("fresh");
+
+    // `fresh` holds the default slot; the predicate binding stays, guarded off, never displaced.
+    expect(container.resolve(serviceToken)).toBe("fresh");
+    expect(container.lookupBindings(serviceToken)).toHaveLength(3);
+  });
+
+  it("displaces a two-criterion slot in either declaration order", () => {
+    const serviceToken = token<string>("registry-two-criterion-last-wins");
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("first").whenNamed("primary").whenTagged(TIER_TAG.of("gold"));
+    container.bind(serviceToken).toConstantValue("second").whenTagged(TIER_TAG.of("gold")).whenNamed("primary");
+
+    expect(container.resolve(serviceToken, { name: "primary", tags: [TIER_TAG.of("gold")] })).toBe("second");
+    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+  });
+
+  it("frees the default slot when a slow reslot moves its occupant onto a tag", () => {
+    const serviceToken = token<string>("registry-default-slow-reslot");
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("member").many();
+    const wasDefault = container.bind(serviceToken).toConstantValue("was-default");
+
+    // whenTagged always goes through the re-slot path, not the in-place fast path setMany/when() take.
+    wasDefault.whenTagged(TIER_TAG.of("gold"));
+    container.bind(serviceToken).toConstantValue("fresh");
+
+    expect(container.resolve(serviceToken)).toBe("fresh");
+    expect(container.resolve(serviceToken, { tags: [TIER_TAG.of("gold")] })).toBe("was-default");
+    expect(container.resolveAll(serviceToken)).toContain("member");
+  });
+
+  it("re-indexes a displaced default binding restored when a member takes the token", () => {
+    const serviceToken = token<string>("registry-default-restore");
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("first-default");
+    // The member's own registration displaces the lone default, then membership restores it.
+    container.bind(serviceToken).toConstantValue("member").many();
+
+    expect(container.resolve(serviceToken)).toBe("first-default");
+    expect(container.resolveAll(serviceToken)).toContain("member");
+
+    // The restore re-indexed the default, so a later default displaces it instead of coexisting.
+    container.bind(serviceToken).toConstantValue("second-default");
+
+    expect(container.resolve(serviceToken)).toBe("second-default");
+    expect(container.lookupBindings(serviceToken)).toHaveLength(2);
+  });
+
+  it("displaces a three-criterion slot declared in a different order", () => {
+    const serviceToken = token<string>("registry-three-criterion");
+    const alpha = tag("alpha");
+    const beta = tag("beta");
+    const gamma = tag("gamma");
+    const container = Container.create();
+    container
+      .bind(serviceToken)
+      .toConstantValue("first")
+      .whenTagged(alpha.of("1"))
+      .whenTagged(beta.of("2"))
+      .whenTagged(gamma.of("3"));
+    container
+      .bind(serviceToken)
+      .toConstantValue("second")
+      .whenTagged(gamma.of("3"))
+      .whenTagged(alpha.of("1"))
+      .whenTagged(beta.of("2"));
+
+    expect(container.resolve(serviceToken, { tags: [alpha.of("1"), beta.of("2"), gamma.of("3")] })).toBe("second");
+    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+  });
+});
