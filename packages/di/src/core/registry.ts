@@ -292,6 +292,15 @@ export class BindingRegistry {
     return this.#records?.get(token)?.simple?.get(criterion);
   }
 
+  /** The binding whose slot is exactly these two criteria, declared in either order, or `undefined`. */
+  getPairTagged(token: Token<unknown> | Constructor, first: BindingTag, second: BindingTag): Binding | undefined {
+    const multi = this.#records?.get(token)?.multi;
+    if (multi === undefined) {
+      return undefined;
+    }
+    return findPairIn(multi.get(first), first, second) ?? findPairIn(multi.get(second), first, second);
+  }
+
   /**
    * The multi-tag bindings whose slot's first criterion is `criterion`.
    *
@@ -479,4 +488,22 @@ function isDefaultSlotBinding(binding: Binding): boolean {
 /** A binding that occupies no slot — a collection member, or a predicate with no slot constraint — so last-wins does not apply to it. */
 function isPurePredicateBinding(binding: Binding): boolean {
   return binding.isMany || (binding.predicate !== undefined && binding.slot.tags.length === 0);
+}
+
+// A bucket is keyed by its members' first criterion, so the pair is read from whichever came first.
+function findPairIn(
+  bucket: ReadonlyArray<Binding> | undefined,
+  first: BindingTag,
+  second: BindingTag,
+): Binding | undefined {
+  if (bucket === undefined) {
+    return undefined;
+  }
+  for (let index = 0; index < bucket.length; index += 1) {
+    const { tags } = bucket[index]!.slot;
+    if (tags.length === 2 && (tags[0] === first ? tags[1] === second : tags[0] === second && tags[1] === first)) {
+      return bucket[index];
+    }
+  }
+  return undefined;
 }

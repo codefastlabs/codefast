@@ -562,6 +562,15 @@ binding does not exempt it from that, and a predicate-only binding sits on the d
 > tagged slot has to index both. `tests/unit/resolution/select/tagged-selection.test.ts` pins last-wins on a tagged
 > slot, the parent walk and that a default-slot predicate is never evaluated for a tagged request.
 
+**A name beside one tag has a lane of its own.** Two criteria at once fell to the scan, because no single index holds a
+two-criterion slot. The request shape a name plus one tag makes is the common one, and its slot is exact — a binding
+whose criteria are precisely those two, in either declaration order — so the lookup cache memoizes it like the
+one-criterion entry: keyed by token, then the interned name criterion, then the tag, stamped with the chain version,
+filled by a walk that reads the registry's first-criterion buckets from either side. A predicate or an alias declines to
+the full path, as the one-criterion memo does, and a name no binding anywhere has declared is a miss before any lookup.
+`tests/unit/resolution/select/tagged-selection.test.ts` pins both declaration orders, the predicate, the parent walk and
+the undeclared name.
+
 **`resolveAll` reads the tag index too.** A request carrying exactly one criterion (a lone name folds to the reserved
 criterion) matches exactly the bindings whose slot _is_ that criterion: a multi-criterion slot cannot satisfy it, and
 last-wins keeps at most one such binding per registry. So the index holds the whole answer per container, and walking

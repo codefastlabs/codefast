@@ -46,6 +46,7 @@ export interface CollectionEntry {
 export const ALIAS_HOP_LIMIT = 32;
 
 const newTagToEntryMap = <Owner>(): Map<BindingTag, DefaultLookupEntry<Owner> | null> => new Map();
+const newNameToTagMap = <Owner>(): Map<BindingTag, Map<BindingTag, DefaultLookupEntry<Owner> | null>> => new Map();
 
 /**
  * A version-stamped cache of binding lookups by token and criterion across the container chain.
@@ -66,6 +67,10 @@ export class BindingLookupCache<Owner> {
   #lastEntry: DefaultLookupEntry<Owner> | null = null;
   #byTokenAndTag: Map<Token<unknown> | Constructor, Map<BindingTag, DefaultLookupEntry<Owner> | null>> | undefined;
   #taggedVersion = -1;
+  #byTokenNameAndTag:
+    | Map<Token<unknown> | Constructor, Map<BindingTag, Map<BindingTag, DefaultLookupEntry<Owner> | null>>>
+    | undefined;
+  #pairVersion = -1;
   // One entry in front of the tag map, and the map is not written until a second distinct request
   // shape appears: a per-request child usually asks one (token, tag) once, and the inner-map
   // allocation was that shape's whole regression when this memo landed.
@@ -88,7 +93,7 @@ export class BindingLookupCache<Owner> {
 
   /** Whether a second distinct token or tag has had to allocate a memo map behind the one-entry fronts. */
   get isMemoBuilt(): boolean {
-    return this.#byToken !== undefined || this.#byTokenAndTag !== undefined;
+    return this.#byToken !== undefined || this.#byTokenAndTag !== undefined || this.#byTokenNameAndTag !== undefined;
   }
 
   /**
@@ -178,6 +183,55 @@ export class BindingLookupCache<Owner> {
     this.#lastTag = tag;
     this.#lastTaggedEntry = entry;
     return entry;
+  }
+
+  /**
+   * The memoized entry for a request carrying a name and one tag, or `null` when the answer is not this lane's.
+   *
+   * @remarks Same contract as the one-criterion memo: a predicate needs a live context and an alias
+   * carries options through the full path, so both decline; a registry that holds the token without the
+   * exact slot declines too, leaving the parent walk to the full lookup.
+   */
+  namedTaggedEntry(
+    token: Token<unknown> | Constructor,
+    nameCriterion: BindingTag,
+    tag: BindingTag,
+  ): DefaultLookupEntry<Owner> | null {
+    const version = this.chainVersion();
+    if (version !== this.#pairVersion) {
+      this.#byTokenNameAndTag?.clear();
+      this.#pairVersion = version;
+    }
+    const byName = getOrInsertComputed(
+      (this.#byTokenNameAndTag ??= new Map<
+        Token<unknown> | Constructor,
+        Map<BindingTag, Map<BindingTag, DefaultLookupEntry<Owner> | null>>
+      >()),
+      token,
+      newNameToTagMap,
+    );
+    const byTag = getOrInsertComputed(byName, nameCriterion, newTagToEntryMap);
+    let entry = byTag.get(tag);
+    if (entry === undefined) {
+      entry = this.#findPairInChain(token, nameCriterion, tag);
+      byTag.set(tag, entry);
+    }
+    return entry;
+  }
+
+  #findPairInChain(
+    token: Token<unknown> | Constructor,
+    nameCriterion: BindingTag,
+    tag: BindingTag,
+  ): DefaultLookupEntry<Owner> | null {
+    const found = this.#registry.getPairTagged(token, nameCriterion, tag);
+    if (found !== undefined) {
+      return found.predicate !== undefined || found.kind === "alias" ? null : { binding: found, owner: this.#owner };
+    }
+    if (this.#registry.has(token)) {
+      return null;
+    }
+    return this.#parent === undefined ? null : this.#parent.#findPairInChain(token, nameCriterion, tag);
   }
 
   /** The memoized root-level collection for a token, or `undefined` once the chain changed since it was stored. */

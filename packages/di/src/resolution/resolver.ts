@@ -28,7 +28,12 @@ import {
   TokenNotBoundError,
 } from "#/errors/errors";
 import type { DependencySlot } from "#/injection/resolve-options";
-import { resolveOptionsForSlot, singleCriterionForSlot, singleCriterionOnlyOf } from "#/injection/resolve-options";
+import {
+  loneTagBesideNameOf,
+  resolveOptionsForSlot,
+  singleCriterionForSlot,
+  singleCriterionOnlyOf,
+} from "#/injection/resolve-options";
 import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
 import type { ScopeManager } from "#/lifecycle/scope-manager";
 import { SCOPED_MISS } from "#/lifecycle/scope-manager";
@@ -218,22 +223,39 @@ export class DependencyResolver implements ResolverCallbacks {
       if (this.#satisfiesPredicate(indexed, options, resolutionStack)) {
         return { binding: indexed, owner: this };
       }
-    } else if (
-      // A threshold switches the data structure, never the semantics: under it the generic scan
-      // below beats walking the indexes, and both paths answer identically. Sized first, so a
-      // small list pays one length read and nothing else.
-      this.#registry.countBindings(token) > MULTI_TAG_INDEX_THRESHOLD &&
-      requestedTagKeyMask(options) !== NO_TAG_KEYS
-    ) {
-      // A multi-criterion request matches only slots whose every criterion it carries, and every
-      // such slot is in the two tag indexes — their union is the whole candidate set, unscanned.
-      const selected = this.#selectMultiTagged(token, options, resolutionStack);
-      if (selected !== undefined) {
-        return { binding: selected, owner: this };
+    } else {
+      if (options.name !== undefined) {
+        const pairTag = loneTagBesideNameOf(options);
+        if (pairTag !== undefined) {
+          const nameCriterion = slotNameCriterionOf(options.name);
+          if (nameCriterion === undefined) {
+            // No binding anywhere has declared this name, so no slot in any registry can carry it.
+            return undefined;
+          }
+          // The exact two-criterion slot, memoized over the chain; a predicate or an alias declines to the scan.
+          const entry = this.#lookup.namedTaggedEntry(token, nameCriterion, pairTag);
+          if (entry !== null) {
+            return entry;
+          }
+        }
       }
-      return this.#parent === undefined
-        ? undefined
-        : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
+      if (
+        // A threshold switches the data structure, never the semantics: under it the generic scan
+        // below beats walking the indexes, and both paths answer identically. Sized first, so a
+        // small list pays one length read and nothing else.
+        this.#registry.countBindings(token) > MULTI_TAG_INDEX_THRESHOLD &&
+        requestedTagKeyMask(options) !== NO_TAG_KEYS
+      ) {
+        // A multi-criterion request matches only slots whose every criterion it carries, and every
+        // such slot is in the two tag indexes — their union is the whole candidate set, unscanned.
+        const selected = this.#selectMultiTagged(token, options, resolutionStack);
+        if (selected !== undefined) {
+          return { binding: selected, owner: this };
+        }
+        return this.#parent === undefined
+          ? undefined
+          : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
+      }
     }
 
     // A lone default-slot candidate is its own selection: the slot match is the whole decision,
