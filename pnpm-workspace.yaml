@@ -101,7 +101,7 @@ catalog:
   tailwind-merge: ^3.6.0
   tailwind-variants: ^3.3.1
   tailwindcss: ^4.3.3
-  tinybench: ^6.1.5
+  tinybench: ^6.2.0
   tsx: ^4.23.13
   tsyringe: ^4.10.0
   turbo: ^2.10.12
