@@ -860,6 +860,18 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     precomputedCriterion?: BindingTag | null,
   ): Value | undefined {
+    if (options === undefined) {
+      // The lane a plain resolve takes: a lone default in this registry is the answer, predicate-free by
+      // construction, and a root that keeps no records has nothing else that could hold the token.
+      const fastBinding = this.#registry.getFastDefault(token);
+      if (fastBinding !== undefined) {
+        if (fastBinding.kind !== "alias") {
+          return this.#resolveDefaultEntry(fastBinding, this, resolutionStack) as Value;
+        }
+      } else if (this.#parent === undefined && !this.#registry.isRecordMapBuilt) {
+        return undefined;
+      }
+    }
     const entry = this.#findBinding(
       token,
       options,

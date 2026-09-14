@@ -146,8 +146,12 @@ class PlanEmitter {
         return `new ${this.#slot(node.target, "C")}(${this.#list(node.deps)})`;
       case "accessors":
         return `${this.#slot(node.construct, "A")}([${this.#list(node.deps)}])`;
-      case "call":
-        return `${this.#slot(node.settle, "S")}(${this.#slot(node.factory, "F")}(${this.#list(node.deps)}))`;
+      case "call": {
+        // The settle only ever throws, so it runs on the promise branch alone and the plain result returns as is.
+        const local = this.#local();
+        const call = `${this.#slot(node.factory, "F")}(${this.#list(node.deps)})`;
+        return `((${local} = ${call}) instanceof ${this.#slot(Promise, "P")} ? ${this.#slot(node.settle, "S")}(${local}) : ${local})`;
+      }
       case "value":
         return this.#slot(node.value, "V");
       case "singleton":
@@ -213,10 +217,15 @@ class PlanEmitter {
     return `${name}()`;
   }
 
-  #singletonRead(binding: Binding, escape: () => unknown): string {
+  #local(): string {
     const locals = this.#localsByFunction.at(-1)!;
     const local = `t${String(locals.length)}`;
     locals.push(local);
+    return local;
+  }
+
+  #singletonRead(binding: Binding, escape: () => unknown): string {
+    const local = this.#local();
     const slot = this.#slot(binding, "B");
     return `((${local} = ${slot}.instance) === ${this.#slot(NO_INSTANCE, "N")} ? ${this.#slot(escape, "E")}() : ${local})`;
   }
