@@ -12,18 +12,21 @@ worth less than the group it sits in. A loss highlighted below points at a direc
 a paired re-run, except where a loss is a structural O(N) difference that reproduces by construction (called out as
 such).
 
-**This run reads against the pinned baseline.** Its id is `2026-09-14T23-41-04-932Z`, over the tree at `3db3447bf`; the
-baseline it is compared to is `2026-09-13T04-45-37-460Z`, the last pass over the engine before the rewrite began, whose
-observations are tracked under `baselines/` and pinned by `pnpm bench:baseline`. Every `Δ` on this page is that
-comparison. The suite is unchanged between the two: 126 rows, 101 contract rows specified against the public API, 25
-engine rows that name a lane of the resolver and enter no cross-library figure; every library implements every row its
-declared features allow, so a `—` below is a feature the library lacks, never a row nobody wrote.
+**This run reads against the pinned baseline.** It is `baselines/2026-09-14T23-41-04-932Z`, over the tree at
+`3db3447bf`; the baseline it is compared to is `baselines/2026-09-13T04-45-37-460Z`, the last pass over the engine
+before the rewrite began, pinned by `pnpm bench:baseline`. Both runs' `observations.jsonl` are committed under
+`baselines/`, so every `Δ` on this page is that comparison read from data in the repository, not from a local
+`bench-results/` run only the author has. The suite is unchanged between the two: 126 rows, 101 contract rows specified
+against the public API, 25 engine rows that name a lane of the resolver and enter no cross-library figure; every library
+implements every row its declared features allow, so a `—` below is a feature the library lacks, never a row nobody
+wrote.
 
-**Environment.** `@codefast/di` 0.9.0 from a `dist` the harness rebuilt first, on Node 26.1.0 / V8 14.6, Apple M3 Max ×
-14, darwin/arm64, `--expose-gc` for every library. inversify 8.2.3 · awilix 13.0.5 · tsyringe 4.10.0 · brandi 5.1.0 ·
-ditox 3.3.0 · injection-js 2.6.1. Each library runs at its canonical decorator mode (inversify legacy decorators +
-`reflect-metadata`, codefast TC39 Stage 3 + `Symbol.metadata`); every inversify container uses `{ jitless: false }`, its
-fastest documented configuration. Run 2026-09-14, 20m22s wall.
+**Environment.** `@codefast/di` 0.10.0 (the pass ran on tree `3db3447bf`, whose runtime is byte-identical to `0.10.0` —
+the version bump added only `@since` tags) from a `dist` the harness rebuilt first, on Node 26.1.0 / V8 14.6, Apple M3
+Max × 14, darwin/arm64, `--expose-gc` for every library. inversify 8.2.3 · awilix 13.0.5 · tsyringe 4.10.0 · brandi
+5.1.0 · ditox 3.3.0 · injection-js 2.6.1. Each library runs at its canonical decorator mode (inversify legacy
+decorators + `reflect-metadata`, codefast TC39 Stage 3 + `Symbol.metadata`); every inversify container uses
+`{ jitless: false }`, its fastest documented configuration. Run 2026-09-14, 20m22s wall.
 
 ## What changed since the baseline
 
@@ -435,12 +438,17 @@ BENCH_MODE=full pnpm bench:isolate                              # the same pass,
 
 `bench:baseline` is `bench:isolate` with `BENCH_BASELINE` pinned to `baselines/2026-09-13T04-45-37-460Z`, the
 pre-rewrite run whose observations are tracked in this repository, so every pass's `Δ` reads against the same run. It
-runs 3 trials per library in its own subprocess — one invocation is one pass, not three. The run writes a timestamped
-directory under `bench-results/` (gitignored) holding `observations.jsonl` with every per-trial `mean ms`, `p99 ms` and
-IQR; `bench:report` turns the newest run into the `report.md` this page is transcribed from. Before quoting any single
-loss as a factor rather than a direction, re-measure it paired and alternating on a quiet machine — a full pass carries
-no between-run variance of its own. The rewrite's own protocol is in [`BENCH_GUIDE.md`](./BENCH_GUIDE.md): swap the
-change's `src` files per side, `BENCH_LIBRARY=@codefast/di` and `BENCH_ONLY` the target rows plus warm canaries, a
-`BENCH_MODE=fast` gate first and one full pass per side only when it wins, and read the per-trial spread, not one ratio.
-`BENCH_TIER=contract` runs the comparison without the 25 engine rows; `pnpm bench:list` prints which rows each library
-implements and confirms there is no row a library's features allow that nobody wrote.
+runs 3 trials per library in its own subprocess — one invocation is one pass, not three. `baselines/` holds exactly the
+committed runs this page cites — the pinned pre-rewrite baseline and `baselines/2026-09-14T23-41-04-932Z`, the run this
+page is transcribed from — so both ends of every `Δ` live in the repository, not in a gitignored local run. A run under
+`baselines/` that nothing here references any more is deleted; re-anchoring the ledger (re-pinning `bench:baseline` to a
+newer run once an engine epoch closes) is what makes the old pre-rewrite baseline unreferenced and removable. The run
+writes a timestamped directory under `bench-results/` (gitignored) holding `observations.jsonl` with every per-trial
+`mean ms`, `p99 ms` and IQR; `bench:report` turns the newest run into the `report.md` this page is transcribed from.
+Before quoting any single loss as a factor rather than a direction, re-measure it paired and alternating on a quiet
+machine — a full pass carries no between-run variance of its own. The rewrite's own protocol is in
+[`BENCH_GUIDE.md`](./BENCH_GUIDE.md): swap the change's `src` files per side, `BENCH_LIBRARY=@codefast/di` and
+`BENCH_ONLY` the target rows plus warm canaries, a `BENCH_MODE=fast` gate first and one full pass per side only when it
+wins, and read the per-trial spread, not one ratio. `BENCH_TIER=contract` runs the comparison without the 25 engine
+rows; `pnpm bench:list` prints which rows each library implements and confirms there is no row a library's features
+allow that nobody wrote.
