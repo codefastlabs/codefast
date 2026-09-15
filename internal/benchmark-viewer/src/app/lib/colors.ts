@@ -12,13 +12,11 @@ export interface PaletteEntry {
 /**
  * The color palette cycled across libraries in charts, metrics, and tables.
  *
+ * @remarks Seven hues spread for the widest pairwise separation so no two lines read alike, each also
+ * kept clear of the ratio colours. Keep at least as many as the largest suite compares — the `di`
+ * suite has seven — or `paletteMap`'s modulo hands two libraries the same colour.
+ *
  * @since 0.3.16-canary.1
- */
-// Seven hues spread for the widest pairwise separation (so no two lines read alike), each also kept
-// clear of the ratio colours. Keep at least as many as the largest suite compares (the `di` suite has
-// seven), or `paletteMap`'s modulo would hand two libraries the same colour.
-/**
- * @since 0.9.0
  */
 export const PALETTE: ReadonlyArray<PaletteEntry> = [
   { border: "#2dd4bf", band: "rgba(45,212,191,0.18)", text: "rgb(187,241,234)" },
