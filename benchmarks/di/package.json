@@ -31,6 +31,7 @@
   },
   "scripts": {
     "bench": "node --import tsx/esm src/harness/run.ts",
+    "bench:ab": "node --import tsx/esm src/harness/ab.ts",
     "bench:awilix": "TSX_TSCONFIG_PATH=tsconfig.awilix.json node --import tsx/esm src/awilix-benches.ts",
     "bench:baseline": "BENCH_BASELINE=baselines/2026-09-13T04-45-37-460Z BENCH_MODE=full BENCH_ISOLATE=true node --import tsx/esm src/harness/run.ts",
     "bench:brandi": "TSX_TSCONFIG_PATH=tsconfig.brandi.json node --import tsx/esm src/brandi-benches.ts",

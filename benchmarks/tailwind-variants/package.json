@@ -33,6 +33,7 @@
   },
   "scripts": {
     "bench": "node --import tsx/esm src/harness/run.ts",
+    "bench:ab": "node --import tsx/esm src/harness/ab.ts",
     "bench:class-variance-authority": "node --import tsx/esm src/class-variance-authority-benches.ts",
     "bench:codefast": "node --import tsx/esm src/codefast-benches.ts",
     "bench:fast": "BENCH_MODE=fast node --import tsx/esm src/harness/run.ts",
