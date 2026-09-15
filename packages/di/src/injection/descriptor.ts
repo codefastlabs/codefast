@@ -54,7 +54,7 @@ export type InjectableDependency<Value = unknown> = Token<Value> | Constructor<V
  * @since 0.5.0-canary.7
  */
 export type ResolvedDependencyValue<Dependency> = Dependency extends { readonly multi: true }
-  ? Array<DescribedValue<Dependency>>
+  ? ReadonlyArray<DescribedValue<Dependency>>
   : Dependency extends { readonly optional: true }
     ? DescribedValue<Dependency> | undefined
     : DescribedValue<Dependency>;
@@ -64,7 +64,7 @@ export type ResolvedDependencyValue<Dependency> = Dependency extends { readonly 
  *
  * @remarks Split out because a hand-written descriptor states its flags and its value type
  * separately, and only the flags are load-bearing: `{ token: Plugin, multi: true }` says `Plugin`
- * and delivers `Array<Plugin>`. `injectAll()` and `optional()` already fold their effect in, so the
+ * and delivers `ReadonlyArray<Plugin>`. `injectAll()` and `optional()` already fold their effect in, so the
  * flags find an array or an optional there and leave it alone.
  */
 type DescribedValue<Dependency> = Dependency extends InjectionDescriptor<infer Value> ? Value : TokenValue<Dependency>;
@@ -205,17 +205,19 @@ export function optional<Value, Names extends string = string>(
 }
 
 /**
- * Creates a descriptor that resolves every matching binding for the token into an array.
+ * Creates a descriptor that resolves every matching binding for the token into a read-only array.
+ *
+ * @remarks Read-only because a root-level read may hand out the engine's own cached list.
  *
  * @since 0.3.16-canary.0
  */
 export function injectAll<Value, Names extends string = string>(
   token: Token<Value, Names> | Constructor<Value>,
   options?: NoInfer<InjectOptions<Names>>,
-): InjectionDescriptor<Array<Value>> {
+): InjectionDescriptor<ReadonlyArray<Value>> {
   return withOptions(
     {
-      token: token as Token<Array<Value>> | Constructor<Array<Value>>,
+      token: token as Token<ReadonlyArray<Value>> | Constructor<ReadonlyArray<Value>>,
       optional: false,
       multi: true,
     },

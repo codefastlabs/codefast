@@ -1,5 +1,6 @@
 import type { Binding } from "#/core/binding";
 import { getOrInsert } from "#/core/map-upsert";
+import { advanceStateEpoch } from "#/core/state-epoch";
 import type { Token } from "#/core/token";
 import { tokenName } from "#/core/token";
 import type {
@@ -31,6 +32,7 @@ export class LifecycleManager {
 
   registerActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
     this.#activationVersion += 1;
+    advanceStateEpoch();
     this.#cachedToken = undefined;
     this.#cachedHooks = undefined;
     this.#activationHooks ??= new Map();
@@ -106,8 +108,8 @@ export class LifecycleManager {
     }
 
     // 2. per-binding onActivation
-    if (binding.kind !== "alias" && binding.onActivation !== undefined) {
-      const activationResult = binding.onActivation(resolutionContext, activatedInstance);
+    if (binding.kind !== "alias" && binding.activationHook !== undefined) {
+      const activationResult = binding.activationHook(resolutionContext, activatedInstance);
       activatedInstance = activationResult instanceof Promise ? await activationResult : activationResult;
     }
 
@@ -139,8 +141,8 @@ export class LifecycleManager {
     }
 
     // 2. per-binding onActivation (must be sync)
-    if (binding.kind !== "alias" && binding.onActivation !== undefined) {
-      const activationResult = binding.onActivation(resolutionContext, activatedInstance);
+    if (binding.kind !== "alias" && binding.activationHook !== undefined) {
+      const activationResult = binding.activationHook(resolutionContext, activatedInstance);
       if (activationResult instanceof Promise) {
         throw new AsyncActivationError(tokenName(binding.token), "onActivation");
       }
@@ -182,8 +184,8 @@ export class LifecycleManager {
     }
 
     // 2. per-binding onDeactivation
-    if (binding.kind !== "alias" && binding.onDeactivation !== undefined) {
-      const hookResult = binding.onDeactivation(instance);
+    if (binding.kind !== "alias" && binding.deactivationHook !== undefined) {
+      const hookResult = binding.deactivationHook(instance);
       if (hookResult instanceof Promise) {
         await hookResult;
       }
@@ -214,8 +216,8 @@ export class LifecycleManager {
     }
 
     // 2. per-binding onDeactivation
-    if (binding.kind !== "alias" && binding.onDeactivation !== undefined) {
-      const hookResult = binding.onDeactivation(instance);
+    if (binding.kind !== "alias" && binding.deactivationHook !== undefined) {
+      const hookResult = binding.deactivationHook(instance);
       if (hookResult instanceof Promise) {
         throw new AsyncDeactivationError(tokenDisplayName);
       }

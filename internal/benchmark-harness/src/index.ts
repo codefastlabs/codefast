@@ -1,7 +1,7 @@
 /** @packageDocumentation Benchmark harness primitives shared across `benchmarks/*` packages. */
 
 export type { BenchSubprocessConfig } from "#/shared/config";
-export { resolveDisplayName } from "#/shared/config";
+export { resolveDisplayName, selectLibraries } from "#/shared/config";
 
 export type { AssertBenchEnvKeysOptions, BenchEnvSpec, BenchMode, IntegerEnvBounds } from "#/shared/env-keys";
 export {
@@ -9,6 +9,7 @@ export {
   BENCH_BASELINE_ENV_KEY,
   BENCH_ENV_SPECS,
   BENCH_ISOLATE_ENV_KEY,
+  BENCH_LIBRARY_ENV_KEY,
   BENCH_LIST_ENV_KEY,
   BENCH_MODE_ENV_KEY,
   BENCH_ONLY_ENV_KEY,
@@ -23,10 +24,12 @@ export {
   MINIMUM_TRIAL_COUNT,
   OBSERVATIONS_FILE_NAME,
   parseEnvInteger,
+  parseLibraryFilter,
   parseScenarioFilter,
   PORT_ENV_KEY,
   resolveBaselineRunFromEnvironment,
   resolveBenchModeFromEnvironment,
+  resolveLibraryFilterFromEnvironment,
   resolvePreferredPortFromEnvironment,
   resolveScenarioFilterFromEnvironment,
   resolveTierFilterFromEnvironment,

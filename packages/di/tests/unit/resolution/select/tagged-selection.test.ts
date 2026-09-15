@@ -138,3 +138,111 @@ describe("resolveAll over a one-tag request", () => {
     expect(ENV.of("prod")).not.toBe(ENV.of("staging"));
   });
 });
+
+describe("a one-criterion request the index does not hold is a miss without a scan", () => {
+  it("never evaluates a default-slot predicate for a tagged request", () => {
+    const serviceToken = token<string>("tagged-selection-index-miss");
+    const container = Container.create();
+    let evaluated = 0;
+
+    container
+      .bind(serviceToken)
+      .toConstantValue("default")
+      .when(() => {
+        evaluated += 1;
+        return true;
+      });
+    container.bind(serviceToken).toConstantValue("staging").whenTagged(STAGING);
+
+    expect(container.resolveOptional(serviceToken, { tags: [PROD] })).toBeUndefined();
+    expect(() => container.resolve(serviceToken, { tags: [DEV] })).toThrow(NoMatchingBindingError);
+    expect(evaluated).toBe(0);
+  });
+
+  it("lets last-wins keep the index at one binding per tagged slot", () => {
+    const serviceToken = token<string>("tagged-selection-last-wins");
+    const container = Container.create();
+
+    container
+      .bind(serviceToken)
+      .toConstantValue("first")
+      .whenTagged(PROD)
+      .when(() => true);
+    container
+      .bind(serviceToken)
+      .toConstantValue("second")
+      .whenTagged(PROD)
+      .when(() => true);
+
+    expect(container.resolve(serviceToken, { tags: [PROD] })).toBe("second");
+    expect(container.resolveAll(serviceToken, { tags: [PROD] })).toEqual(["second"]);
+  });
+
+  it("walks to the parent when this container's index misses", () => {
+    const serviceToken = token<string>("tagged-selection-index-miss-parent");
+    const parent = Container.create();
+    parent.bind(serviceToken).toConstantValue("parent-prod").whenTagged(PROD);
+    const child = parent.createChild();
+    child.bind(serviceToken).toConstantValue("child-staging").whenTagged(STAGING);
+
+    expect(child.resolve(serviceToken, { tags: [PROD] })).toBe("parent-prod");
+    expect(child.resolve(serviceToken, { tags: [STAGING] })).toBe("child-staging");
+  });
+});
+
+describe("a request carrying a name and one tag has an indexed lane", () => {
+  it("answers the exact two-criterion slot in either declaration order", () => {
+    const serviceToken = token<string>("named-tagged-lane");
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("named-prod").whenNamed("primary").whenTagged(PROD);
+    container.bind(serviceToken).toConstantValue("staging-named").whenTagged(STAGING).whenNamed("primary");
+    container.bind(serviceToken).toConstantValue("name-only").whenNamed("primary");
+
+    expect(container.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("named-prod");
+    expect(container.resolve(serviceToken, { name: "primary", tag: STAGING })).toBe("staging-named");
+    expect(container.resolve(serviceToken, { name: "primary" })).toBe("name-only");
+    expect(container.resolveOptional(serviceToken, { tags: [PROD] })).toBeUndefined();
+  });
+
+  it("still evaluates a predicate on the two-criterion binding", () => {
+    const serviceToken = token<string>("named-tagged-lane-predicate");
+    const container = Container.create();
+    let accept = false;
+    container
+      .bind(serviceToken)
+      .toConstantValue("guarded")
+      .whenNamed("primary")
+      .whenTagged(PROD)
+      .when(() => accept);
+
+    expect(container.resolveOptional(serviceToken, { name: "primary", tags: [PROD] })).toBeUndefined();
+    accept = true;
+    expect(container.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("guarded");
+  });
+
+  it("resolves a parent-owned pair from a child until the child binds the same slot", () => {
+    const serviceToken = token<string>("named-tagged-lane-parent");
+    const parent = Container.create();
+    parent.bind(serviceToken).toConstantValue("parent").whenNamed("primary").whenTagged(PROD);
+    const child = parent.createChild();
+
+    expect(child.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("parent");
+    expect(child.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("parent");
+
+    child.bind(serviceToken).toConstantValue("child").whenNamed("primary").whenTagged(PROD);
+
+    expect(child.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("child");
+    expect(parent.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("parent");
+  });
+
+  it("treats a name no binding ever declared as a miss", () => {
+    const serviceToken = token<string>("named-tagged-lane-ghost");
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("prod").whenTagged(PROD);
+
+    expect(container.resolveOptional(serviceToken, { name: "never-declared-anywhere", tags: [PROD] })).toBeUndefined();
+    expect(() => container.resolve(serviceToken, { name: "never-declared-anywhere", tags: [PROD] })).toThrow(
+      NoMatchingBindingError,
+    );
+  });
+});

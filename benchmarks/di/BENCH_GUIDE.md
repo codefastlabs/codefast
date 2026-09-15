@@ -70,17 +70,27 @@ source take effect.
 1. Put each side's code in `packages/di/src` (checkout, stash or patch).
 2. For each scenario, run **one subprocess per side, back to back**, and record the ratio — `bench:isolate` does exactly
    this, and the rebuild it runs first is what installs the side you checked out.
-3. Repeat for at least three passes, **swapping which side goes first each pass**.
-4. Report the median of the per-pass ratios, and show them all.
+3. One full pass per side is the confirmation: the full profile already runs three trials, so a pass per side is three
+   samples a side, and repeating the pass three times would be nine. **Alternate which side goes first** between
+   consecutive experiments rather than within one, and read the per-trial spread each side carries.
+4. Report the ratio of the two medians, and show both sides' spreads.
+
+Gate the full pass with a fast one. `BENCH_MODE=fast`, one pass per side, `BENCH_LIBRARY=@codefast/di` and the target
+rows alone answers "does this win at all?" in seconds; only a change that wins there earns the full pass, which is what
+the number quoted in a commit or the ledger comes from. A fast pass is a direction, never a figure.
 
 A narrowed run writes its own timestamped directory but leaves `latest.*` alone, so an A/B pass cannot quietly become
 the suite's published state.
 
 **Narrow the run instead of running the suite.** `BENCH_ONLY=<id>` — a comma-separated list — is read by the parent as
 well as the child, so `BENCH_ONLY=<id> pnpm bench:isolate` runs that row alone, isolated and interleaved, in seconds.
-The rebuild it does first is around half a second, so nothing about the source lane is slow; what used to be slow was
-the whole suite. A library that implements none of the requested ids measures nothing and reads `—` rather than failing
-the run, so a row only this package has is still a legal filter.
+**Narrow the libraries too when the question is about one of them.** A paired A/B compares the subject with itself, so
+the rivals' subprocesses are wall clock spent on nothing: `BENCH_LIBRARY=@codefast/di` (a comma-separated list of
+`libraryName` or `displayName` values) runs only the libraries named, and a run narrowed this way leaves `latest.*`
+alone like any other narrowed run. A filter that leaves the subject out is an error, not an empty report. The rebuild it
+does first is around half a second, so nothing about the source lane is slow; what used to be slow was the whole suite.
+A library that implements none of the requested ids measures nothing and reads `—` rather than failing the run, so a row
+only this package has is still a legal filter.
 
 **Escape hatch — swapping `dist` directly, only when a side is not reachable from the working tree.** The one case the
 source lane cannot serve is comparing against a build you cannot check out — a published version, an old `dist` archived
@@ -124,8 +134,9 @@ BENCH_MODE=full BENCH_TIER=contract pnpm di:bench:isolate
 Then read every later run against it — `BENCH_BASELINE=<that run id> pnpm di:bench:isolate` — and the `Δ` column and the
 regression list say `vs baseline <run id>` instead of `vs` the run that happened to land before. Without the pin, a
 rewrite that lands in ten commits is diffed ten times against itself and the line it had to hold is never drawn. A
-pinned run that cannot be read is an error, never a silent fallback to the pointer; and the pin is a directory, so it
-survives everything except `bench-results/` being cleaned — copy it out before that.
+pinned run that cannot be read is an error, never a silent fallback to the pointer. `bench-results/` is git-ignored, so
+the pinned run is copied to `baselines/<run id>/observations.jsonl`, which is tracked, and `pnpm bench:baseline` is the
+full-profile isolated pass read against it — the pass every commit of the rewrite is judged by.
 
 ### Measure the floor before you set the threshold
 

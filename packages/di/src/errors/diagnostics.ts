@@ -27,6 +27,8 @@ export interface ResolutionDiagnostics {
   readonly compiledPlanCount: number;
   /** Bindings with a compiled async instantiation plan. */
   readonly compiledAsyncPlanCount: number;
+  /** Plans this container's resolver has generated as functions of their own. */
+  readonly generatedPlanCount: number;
   /** Contexts held by the depth-indexed sync pool. */
   readonly syncContextPoolSize: number;
   /** Scoped instances currently cached by this container's scope manager. */

@@ -8,11 +8,13 @@ import {
   BENCH_MODE_ENV_KEY,
   BENCH_ONLY_ENV_KEY,
   BENCH_PORT_ENV_KEY,
+  BENCH_LIBRARY_ENV_KEY,
   BENCH_TIER_ENV_KEY,
   BENCH_TRIALS_ENV_KEY,
   isEnvFlagEnabled,
   isRunNarrowedByEnvironment,
   parseEnvInteger,
+  parseLibraryFilter,
   parseScenarioFilter,
   PORT_ENV_KEY,
   resolveBaselineRunFromEnvironment,
@@ -292,6 +294,22 @@ describe("isRunNarrowedByEnvironment", () => {
   it("is true under a tier filter alone", () => {
     vi.stubEnv(BENCH_TIER_ENV_KEY, "contract");
     expect(isRunNarrowedByEnvironment()).toBe(true);
+  });
+
+  it("is true under a library filter alone", () => {
+    vi.stubEnv(BENCH_LIBRARY_ENV_KEY, "@codefast/di");
+    expect(isRunNarrowedByEnvironment()).toBe(true);
+  });
+});
+
+describe("parseLibraryFilter", () => {
+  it("treats an unset or empty value as run-every-library", () => {
+    expect(parseLibraryFilter(undefined)).toBeUndefined();
+    expect(parseLibraryFilter(" , ")).toBeUndefined();
+  });
+
+  it("trims and drops empty entries", () => {
+    expect(parseLibraryFilter("@codefast/di, inversify ,")).toEqual(new Set(["@codefast/di", "inversify"]));
   });
 });
 

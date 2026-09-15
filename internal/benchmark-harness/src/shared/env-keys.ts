@@ -63,6 +63,15 @@ export const BENCH_ONLY_ENV_KEY = "BENCH_ONLY";
  */
 export const BENCH_LIST_ENV_KEY = "BENCH_LIST";
 /**
+ * Restricts the run to these libraries, comma-separated, by `libraryName` or `displayName`.
+ *
+ * @remarks Parent-side only: it decides which subprocesses spawn. A paired A/B compares the subject
+ * with itself, so `BENCH_LIBRARY=<subject>` drops the rivals' share of the wall clock, which is most
+ * of it. A library-filtered run is a narrowed run: it writes its own directory and leaves
+ * `latest.json` alone.
+ */
+export const BENCH_LIBRARY_ENV_KEY = "BENCH_LIBRARY";
+/**
  * Restricts the run to one scenario tier: `contract` rows compare libraries on public API, `engine`
  * rows measure the subject's internals.
  *
@@ -150,6 +159,7 @@ export const BENCH_ENV_SPECS: Readonly<Record<string, BenchEnvSpec>> = {
   BENCH_FAST: { audience: "retired", replacement: "BENCH_MODE=fast" },
   BENCH_FULL: { audience: "retired", replacement: "BENCH_MODE=full" },
   BENCH_ISOLATE: { audience: "user", kind: "flag", turboTasks: MEASURING_TURBO_TASKS },
+  BENCH_LIBRARY: { audience: "user", kind: "list", turboTasks: MEASURING_TURBO_TASKS },
   BENCH_LIST: { audience: "internal", kind: "flag" },
   BENCH_MODE: { audience: "user", kind: "enum", turboTasks: MEASURING_TURBO_TASKS, values: BENCH_MODE_VALUES },
   BENCH_ONLY: { audience: "user", kind: "list", turboTasks: MEASURING_TURBO_TASKS },
@@ -375,14 +385,27 @@ export function assertBenchEnvKeys(options: AssertBenchEnvKeysOptions = {}): voi
  * @since 0.6.0
  */
 export function parseScenarioFilter(value: string | undefined): ReadonlySet<string> | undefined {
+  return parseCommaSeparatedSet(value);
+}
+
+/**
+ * Parses {@link BENCH_LIBRARY_ENV_KEY} into the set of library names to keep.
+ *
+ * @returns `undefined` when nothing was requested, which means run every library.
+ */
+export function parseLibraryFilter(value: string | undefined): ReadonlySet<string> | undefined {
+  return parseCommaSeparatedSet(value);
+}
+
+function parseCommaSeparatedSet(value: string | undefined): ReadonlySet<string> | undefined {
   if (value === undefined) {
     return undefined;
   }
-  const ids = value
+  const entries = value
     .split(",")
-    .map((id) => id.trim())
-    .filter((id) => id.length > 0);
-  return ids.length === 0 ? undefined : new Set(ids);
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
+  return entries.length === 0 ? undefined : new Set(entries);
 }
 
 /**
@@ -412,13 +435,22 @@ export function resolveBaselineRunFromEnvironment(): string | undefined {
 }
 
 /**
- * Whether the environment narrows the run below the whole suite, by id or by tier.
+ * Whether the environment narrows the run below the whole suite, by id, by tier or by library.
  *
  * @remarks The one predicate the artifacts writer and the subject guard share: a narrowed run must
  * never move `latest.json`, and a filter that matched nothing on the subject is an error.
  */
 export function isRunNarrowedByEnvironment(): boolean {
-  return resolveScenarioFilterFromEnvironment() !== undefined || resolveTierFilterFromEnvironment() !== undefined;
+  return (
+    resolveScenarioFilterFromEnvironment() !== undefined ||
+    resolveTierFilterFromEnvironment() !== undefined ||
+    resolveLibraryFilterFromEnvironment() !== undefined
+  );
+}
+
+/** Resolves the library filter from {@link BENCH_LIBRARY_ENV_KEY}; `undefined` means every library runs. */
+export function resolveLibraryFilterFromEnvironment(): ReadonlySet<string> | undefined {
+  return parseLibraryFilter(process.env[BENCH_LIBRARY_ENV_KEY]);
 }
 
 /**

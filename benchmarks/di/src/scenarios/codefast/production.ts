@@ -22,7 +22,7 @@
  *
  *   - `production-event-bus-dispatch` — Event bus dispatcher.
  *     Eight singleton event handlers are registered at the same token
- *     using predicate-only bindings (`when(() => true)`).  Each measured
+ *     as collection members (`.many()`).  Each measured
  *     iteration calls `resolveAll()` to retrieve them and then dispatches
  *     an event to each handler in turn.  Tests the full fan-out → iterate
  *     loop that real event-bus implementations pay on every published event.
@@ -251,10 +251,7 @@ function buildProductionEventBusDispatchScenario(): BenchScenario {
   for (let handlerIndex = 0; handlerIndex < EVENT_HANDLER_COUNT; handlerIndex++) {
     const index = handlerIndex;
     const handler: EventHandler = { handle: (_event: string) => void index };
-    container
-      .bind(eventHandlerToken)
-      .toConstantValue(handler)
-      .when(() => true);
+    container.bind(eventHandlerToken).toConstantValue(handler).many();
   }
 
   // Pre-warm so singleton handler list is cached.

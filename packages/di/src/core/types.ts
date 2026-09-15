@@ -26,11 +26,14 @@ export type BindingScope = "singleton" | "transient" | "scoped";
 
 declare const BINDING_ID_BRAND: unique symbol;
 /**
- * A branded string that uniquely identifies one binding.
+ * A branded number that uniquely identifies one binding for the life of the process.
+ *
+ * @remarks Minted from a counter, never parsed or displayed as an identity: the brand is what makes
+ * it opaque, and a number costs a plain bind nothing where a string cost it an allocation.
  *
  * @since 0.3.16-canary.0
  */
-export type BindingIdentifier = string & { readonly [BINDING_ID_BRAND]: true };
+export type BindingIdentifier = number & { readonly [BINDING_ID_BRAND]: true };
 
 // ── BindingKind ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -139,8 +142,11 @@ export interface ResolutionContext {
     token: Token<Value> | Constructor<Value>,
     options?: ResolveOptions,
   ): Promise<Value | undefined>;
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Array<Value>;
-  resolveAllAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Array<Value>>;
+  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value>;
+  resolveAllAsync<Value>(
+    token: Token<Value> | Constructor<Value>,
+    options?: ResolveOptions,
+  ): Promise<ReadonlyArray<Value>>;
   readonly graph: ConstraintContext;
 }
 

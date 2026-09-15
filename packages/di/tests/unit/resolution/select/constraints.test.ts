@@ -34,7 +34,7 @@ function frame(tokenName: string, slot: Partial<BindingSlot> = {}): ResolutionFr
   return {
     tokenName,
     scope: "transient",
-    bindingId: "test" as BindingIdentifier,
+    bindingId: 1 as BindingIdentifier,
     kind: "dynamic",
     slot: { name: slot.name, tags: slot.tags ?? [], keyMask: tagKeyMaskOf(slot.tags ?? []) },
   };

@@ -16,7 +16,7 @@ export function selectBinding(
   ctx: ConstraintContext,
   tokenDisplayName: string,
 ): Binding | undefined {
-  const candidates = filterBindings(bindings, options, ctx, true);
+  const candidates = filterBindings(bindings, options, ctx, true, false);
   if (candidates.length === 0) {
     return undefined;
   }
@@ -47,7 +47,7 @@ export function selectBinding(
   }
   throw new AmbiguousBindingError(
     tokenDisplayName,
-    candidates.map((c) => c.id),
+    candidates.map((c) => c.identifier),
   );
 }
 
@@ -81,7 +81,7 @@ export function selectAllBindings(
 ): Array<Binding> {
   // `resolveAll` matches the slot only when the request carries a criterion; with none it takes
   // every binding, where `resolve` would read an absent criterion as "the default slot".
-  return filterBindings(bindings, options, ctx, options !== undefined && hasSlotCriterion(options));
+  return filterBindings(bindings, options, ctx, options !== undefined && hasSlotCriterion(options), true);
 }
 
 /**
@@ -90,18 +90,24 @@ export function selectAllBindings(
  * @param ctx - what the constraint predicates read
  * @param requiresSlotMatch - `resolve` always matches the slot, where an absent criterion means
  * "the default slot"; `resolveAll` matches only when the request carries one
+ * @param includesMembers - `resolveAll` takes collection members; a single `resolve` never does
  */
 function filterBindings(
   bindings: ReadonlyArray<Binding>,
   options: ResolveOptions | undefined,
   ctx: ConstraintContext,
   requiresSlotMatch: boolean,
+  includesMembers: boolean,
 ): Array<Binding> {
   const result: Array<Binding> = [];
-  // A predicate is user code that may rebind the token mid-walk, but the registry replaces a
-  // token's list on mutation instead of splicing it, so this walk keeps its own list — no copy.
-  for (let index = 0; index < bindings.length; index += 1) {
+  // A predicate is user code that may rebind the token mid-walk. A removal replaces the list, and an
+  // append lands past the length read here, so the walk offers exactly the candidates it started with.
+  const length = bindings.length;
+  for (let index = 0; index < length; index += 1) {
     const binding = bindings[index]!;
+    if (!includesMembers && binding.isMany) {
+      continue;
+    }
     if (requiresSlotMatch && !matchesSlot(binding.slot, options)) {
       continue;
     }

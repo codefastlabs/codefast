@@ -149,36 +149,103 @@ assignability matters.
 
 <a id="one-binding-shape"></a>
 
-### Bindings: one shape, one construction site
+### Bindings: one shape, one construction site — and the chain is the binding
 
-Every binding is built by `createBinding()` in [`binding.ts`](src/core/binding.ts). It is a single object literal that
-lists every kind's fields in one fixed order, so all bindings in a process share one V8 hidden class (the
-engine-internal description of an object's property layout).
+Every binding is a `BindingChain` from [`binding-builders.ts`](src/container/binding-builders.ts): the object `bind()`
+returns is the object the registry stores and the resolver reads. Its class declares every kind's fields first, in one
+fixed order, and the chain's own bookkeeping after them as private fields, so all bindings in a process share one V8
+hidden class (the engine-internal description of an object's property layout). `to*()` fills the fields in place and
+hands the object to the registry; a plain bind is therefore one allocation, where a builder that produced a separate
+binding object was three and a copy of every field.
 
 This matters because the resolver's hot property reads — `kind`, `scope`, `factory` — are then monomorphic: every
 binding they see has the same layout. Mixed layouts would make those reads megamorphic, meaning V8 falls back to slow
 generic property lookup. The registry stores what it is handed **by reference** rather than re-copying it, so the shape
 survives registration.
 
-> **Convention (performance-load-bearing).** Construct bindings through `createBinding()` and keep the literal's key
-> order intact. A bare object literal, or reordered keys, quietly gives that binding a different hidden class and makes
-> the hot reads megamorphic. It still _works_; it just gives back what the single hidden class buys. If you have a
-> reason to change the construction site, measure it against the benchmark suite.
+Two names follow from the merge. The binding's id is `identifier`, because the chain's `.id()` step is a method on the
+same object, and the lifecycle hooks are `activationHook` / `deactivationHook`, because `.onActivation()` /
+`.onDeactivation()` are the steps that set them. A chain registers exactly once: a second `to*()` throws
+`ChainAlreadyRegisteredError` before it can overwrite the registered fields, and another binding for the same token is
+another `bind()`. Refinements write the registered object — a scope or a hook in place, a slot or a predicate through
+`registry.reslot()`, which takes the live binding out of every index, lets the chain rewrite the two fields, and takes
+it back through `add()` under the same object and id, so nothing that holds the binding has to be told.
+
+> **Convention (performance-load-bearing).** `BindingChain` is the only construction site, and its field declarations
+> keep their order. A second construction site, or a reordered field, quietly gives that binding a different hidden
+> class and makes the hot reads megamorphic. It still _works_; it just gives back what the single hidden class buys.
+> `tests/unit/container/bind-to-builder-order.test.ts` pins the single registration; the shape is held by the benchmark
+> suite's warm resolve rows.
 
 <a id="copy-on-write"></a>
 
-### A token's binding list is copy-on-write
+### A token's binding list appends in place and replaces on removal
 
-A token can carry several bindings, and the registry keeps them in a list. `add` and `removeById` **replace** that array
-rather than splicing it.
+A token can carry several bindings, and the registry keeps them in a list. An `add` that displaces nothing **appends**
+to that array; a `removeById` or a displacement **replaces** it rather than splicing it.
 
 The reason is selection. Selection walks the registry's own list while running `when()` predicates, and a predicate is
-user code that may rebind the very token being walked. Because the walk holds its pre-mutation array, every candidate
-registered at selection start still gets its predicate evaluated, and no defensive copy is needed on the read side.
+user code that may rebind the very token being walked. The walk reads the list's length once before it starts: a removal
+hands it a new array, so its own is never shifted under it, and an append lands past the length it read, so it never
+sees a candidate that was not there when selection began. Every candidate registered at selection start still gets its
+predicate evaluated, none registered during it does, and no defensive copy is needed on the read side.
 
-> **Invariant (correctness).** A token's binding **list** is copy-on-write: `add` and `removeById` replace the array and
-> never splice one that has been handed out. `tests/unit/resolution/select/binding-select.test.ts` pins the observable
-> half.
+Appending in place is what makes a collection cheap to build: a hundred `when()` bindings on one token used to copy the
+list a hundred times, and a bare `when()` used to re-register the binding to change a field nothing indexes on. The
+predicate is now rewritten in place — the registry moves a lone binding into a record itself — when the chain owns the
+registry's last write and has nothing parked; otherwise the re-slot path re-checks that the binding is still live and
+restores what the new shape frees, exactly as before.
+
+> **Invariant (correctness).** A removal or a displacement replaces a token's binding array and never splices one that
+> has been handed out; an append lands in place, and every selection walk reads its starting length first.
+> `tests/unit/resolution/select/binding-select.test.ts` pins both halves.
+
+<a id="token-record"></a>
+
+### The registry keeps the common token in one map, and a record for the rest
+
+Most tokens are bound once, to the default slot, with no predicate. `BindingRegistry` keeps exactly those in one map,
+token → binding, and nothing else about them: no list, no record, no index. A token that becomes anything more — a
+second binding, a tagged slot, a predicate, a `many()` member — moves to a second map of records, where a record is its
+binding list plus the two tagged-slot indexes, which stay unallocated until a tagged slot lands on that token. A token
+is in exactly one of the two maps, and it moves back when a record shrinks to one default-slot binding. The record map
+itself is allocated by the first token that needs one, and the index a caller almost never uses, binding **id** →
+binding, is built on the first id-keyed operation and maintained from then on.
+
+The layout is priced on the two paths that matter. A plain bind is one map write and one binding object, because the
+common token gets no record and no list. A synchronous resolve's first read, `getFastDefault()`, is a bare `Map.get` on
+the lone map returning the binding — no record indirection, no optional chain. Reading the lone binding through a record
+(`entries.get(token)?.fastDefault`) is one dependent load more on the hottest lane there is, and a paired A/B of the two
+layouts read that load as a measurable loss on the warm resolve rows; keeping the lone map as the primary store, rather
+than as a second map beside a record map, is what lets both paths win at once.
+
+The price is paid where it is cold. `getAll()` on a lone token materialises a one-element list, so the resolver's
+selection lanes ask `getFastDefault()` (or `countBindings()`) first and reach `getAll()` only for a token that keeps a
+record, and a presence check with no criteria is `has()`, which also reads the lone map's size before probing it so a
+container that never bound anything — every per-request child — answers without a hash. A miss is priced too: once the
+lone probe has failed, `getRecorded()` reads the record map alone, so an unbound token costs one probe per map and not
+one more. Snapshots, error reporting and module rollback are the callers that pay for the list, and they can.
+
+> **Invariant (performance-load-bearing).** `getFastDefault()` stays a single own-registry `Map.get` returning the
+> binding — no record indirection, no optional chain — and a default-slot-only token never allocates a record. The
+> promote/demote transitions are pinned by `tests/unit/core/registry.test.ts`, the lazily built id index and record map
+> by `tests/unit/resolution/fast-paths-active.test.ts`; the fast-default shape is held by the benchmark suite's warm
+> resolve rows, which is where it was found.
+
+Within a record, a bind's last-wins displacement is answered by slot index, never a list walk. A slot holds one
+occupant, so the record names it three ways: the default slot in `defaultOccupant`, a one-criterion slot in the `simple`
+map, a two-plus-criterion slot in the `multi` buckets. An incoming binding asks the index for the occupant of its own
+slot and displaces exactly that, so registering the _n_-th member of a collection stays constant-time instead of
+scanning the _n_ already there — a token that grows a large collection bound member by member is otherwise quadratic to
+build, which the fan-out cold rows priced. A collection member and a predicate-only binding occupy no slot and are left
+out of every index; the two-plus-criterion slot, which the buckets key by only its first criterion, keeps the list walk,
+because it is rare and either criterion can lead.
+
+> **Invariant (correctness).** A binding that occupies a slot is indexed under it for exactly as long as it holds it: an
+> in-place change that frees the slot — `many()` turning it into a member, a predicate making it predicate-only — drops
+> the index entry in the same step that rewrites the binding, or a later add would displace a binding that has already
+> moved on. `tests/unit/core/registry.test.ts` pins displacement through each slot shape and across those in-place
+> transitions.
 
 <a id="scope-total"></a>
 
@@ -263,15 +330,16 @@ you want to challenge it, the benchmark suite is where.
 
 Everything that needs no cross-instance private access is split out into a collaborator:
 
-| Module                                                                                                                   | Owns                                                                                                               |
-| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| [`binding-lookup-cache.ts`](src/resolution/cache/binding-lookup-cache.ts)                                                | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions |
-| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                                    | per-class metadata: constructor params, `@postConstruct` presence, accessor injection, and the `new` itself        |
-| [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                          | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                           |
-| [`instantiation-plan.ts`](src/resolution/plan/instantiation-plan.ts)                                                     | the plan compiler ([Compiled plans and escapes](#plans))                                                           |
-| [`resolution-path.ts`](src/resolution/path/resolution-path.ts)                                                           | cycle-detection bookkeeping carried on the path array                                                              |
-| [`binding-select.ts`](src/resolution/select/binding-select.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                      |
-| [`resolve-options.ts`](src/injection/resolve-options.ts)                                                                 | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                |
+| Module                                                                                                                   | Owns                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| [`binding-lookup-cache.ts`](src/resolution/cache/binding-lookup-cache.ts)                                                | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions            |
+| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                                    | per-class metadata: constructor params, `@postConstruct` presence, accessor injection, and the `new` itself                   |
+| [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                          | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                                      |
+| [`instantiation-plan.ts`](src/resolution/plan/instantiation-plan.ts)                                                     | the plan compiler ([Compiled plans and escapes](#plans))                                                                      |
+| [`plan-codegen.ts`](src/resolution/plan/plan-codegen.ts)                                                                 | renders a hot plan's `PlanNode` tree as a function of its own, or leaves it a closure where the runtime forbids compiling one |
+| [`resolution-path.ts`](src/resolution/path/resolution-path.ts)                                                           | cycle-detection bookkeeping carried on the path array                                                                         |
+| [`binding-select.ts`](src/resolution/select/binding-select.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                                 |
+| [`resolve-options.ts`](src/injection/resolve-options.ts)                                                                 | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                           |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
 
@@ -313,6 +381,36 @@ compiles to an _escape_: a re-entry into the runtime resolver, seeded with exact
 would have pushed at that point, and dispatched through exactly the resolve the interpreter would have called. Cycle
 detection, constraint contexts and error paths are therefore identical to never having compiled. Without escapes, one
 `toDynamic` dependency anywhere would drop the whole graph to the interpreted path.
+
+**A plan that keeps running is generated as a function of its own.** A plan starts as a closure over the compiler's
+function literals, and V8 keeps type feedback per literal, not per closure: the dependency calls inside one root's
+closure see the dependency thunks of every plan the process has compiled, so a second plan shape — an inlined class next
+to a factory escape, a scoped escape, a hooked one — makes those calls polymorphic for every plan, the first one
+included. The compiler therefore records each sync plan's shape as a `PlanNode` tree beside the closure, and after
+`PLAN_CODEGEN_THRESHOLD` runs renders that tree through the `Function` constructor into a function with a source text of
+its own — hence a feedback vector of its own — and swaps it into the plan map in the closure's place through
+`host.replacePlan`, identity-guarded so a map cleared and recompiled since keeps its newer plan. Below the threshold a
+plan stays a closure, which is all a cold container or a per-request child ever runs, so neither pays a compile. Every
+leaf the compiler could not see through is an opaque thunk in both renderings: an escape keeps its frames, its dispatch
+and its errors. A runtime whose Content Security Policy refuses the constructor leaves every plan a closure, and
+behaviour is identical either way; `RESOLUTION_DIAGNOSTICS` reports `generatedPlanCount`.
+
+> **Invariant (correctness).** The closure and the generated function are two renderings of one `PlanNode` tree, so
+> anything a closure does that its node does not state is a bug in the compiler, not a difference to preserve.
+> `tests/unit/resolution/plan/instantiation-plan-codegen.test.ts` pins the generated tier against the closure's
+> behaviour and `tests/unit/resolution/plan/plan-codegen.test.ts` pins each node kind's rendering.
+
+**An accessor-injected class compiles only as a plan's root.** Its `@inject` accessors resolve while the constructor
+runs, through the ambient container, so the class cannot be a static node: nothing the compiler could bake would be what
+the accessor reads. As a root it can still be a plan — the constructor parameters compile as usual, and construction
+goes through the host, which pushes the class's own frame on the root stack, installs the ambient resolution, constructs
+and pops. An accessor that cycles back therefore arrives with its class already on the path and is caught exactly as on
+the interpreted lane. Below the root the class stays an escape, because a nested node has static ancestors a frame push
+would not replay, and a cycle through them would be reported a level late.
+
+> **Invariant (correctness).** An accessor-injected class is planned only at depth zero, and its plan node enters the
+> resolution path before constructing. `tests/unit/resolution/fast-paths-active.test.ts` pins both the compiled plan and
+> the cycle that closes through an accessor.
 
 > **Invariant (correctness).** An escape must stay behaviourally indistinguishable from the interpreted path. If you add
 > a case, seed it with the same ancestors and replay the same call.
@@ -366,12 +464,36 @@ iteration.
 **`defaultEntry()` is the same shape one layer down.** `BindingLookupCache.defaultEntry()` is reached by exactly two
 cases the registry's direct index cannot serve: an **alias**, whose terminal the index cannot name, and a token owned by
 a **parent**, whose entry has to carry that owner. Both are resolved in a loop over one token. `null` is a real answer
-there ("this shape needs full selection"), so the slot tracks absence by its token, not by its entry.
+there ("this shape needs full selection"), so the slot tracks absence by its token, not by its entry. The map behind the
+slot follows the same deferral as `taggedEntry()` below: the first token a cache generation sees is answered from the
+walk and parked in the slot, and the map is allocated and written only when a second distinct token appears.
 
 > **Invariant (correctness).** Alias hops are not folded into `registry.getFastDefault()`. That method is a bare
 > own-registry `Map.get` returning a binding, and an alias terminal may live in a parent container whose rebind only the
 > chain's summed version can see. Alias folding belongs where the version stamp is; moving it into `getFastDefault()`
 > would miss a parent rebind.
+
+**The chain sum is walked only when something, anywhere, changed.** Both memos are stamped with the summed versions of
+every registry up the chain, and the plan caches with the summed activation versions, so a parent's rebind or a
+grandparent's hook registration invalidates a descendant exactly. Summing is a walk of the chain, and it used to run on
+every memo read, which gave the parent walk a slope: a resolve from depth eight paid eight version reads before its
+one-entry front could even answer. Every registry version bump and every activation-hook registration now also advances
+one process-wide **state epoch** (`core/state-epoch.ts`), and the lookup cache memoizes its registry sum against the
+epoch it was taken at. While the epoch stands, no registry in the process has moved, so no sum in any chain has either,
+and the read is one global compare; the moment anything moves, the next read re-sums exactly as before. A loop that
+rebinds on every iteration therefore pays the walk it always paid plus one compare, and a per-request child that binds
+nothing pays the compare alone. A root container is exempt from the memo altogether: its sum is its own version, one
+field read, which is cheaper than the compare and the stamp — and a `resolveAll` over a root asks for it once per
+candidate.
+
+The activation sum is deliberately **not** memoized on the resolver. It is read only by the plan getters and the
+collection lanes, a root answers it with one field read, and the memo that would serve a deep child costs two more
+fields on `DependencyResolver` — which a paired A/B read as a measurable loss on the warm transient class row, with the
+same two fields on the lookup cache costing nothing. The resolver's field count is load-bearing on that lane.
+
+> **Invariant (performance-load-bearing).** `DependencyResolver` carries no per-chain memo fields of its own; a cache
+> that serves one lane lives on the collaborator that owns the lane (`BindingLookupCache` for the registry sum). The
+> warm transient class row in the benchmark suite is what holds it, which is where it was found.
 
 **`taggedEntry()` mirrors `defaultEntry()`, and defers its map.** It is chain-versioned, `null` means "this shape needs
 full selection", and predicate- and alias-carrying hits are declined. The memo key is the criterion object itself:
@@ -384,6 +506,20 @@ So the first shape a cache generation sees is answered from the walk and parked 
 written until a second distinct shape appears. An alternating pair converges after one extra walk per key. The
 warm-vs-fresh numbers that settled this, and the shape's A/B, are recorded in the package `CHANGELOG.md` at the entry
 that landed the tagged chain-walk memo.
+
+**A root-level collection is memoized on the same cache.** `resolveAll` with no options at the top level gathers the
+chain's bindings and runs every `when()` predicate against the root context, which is a constant. The contract makes a
+predicate pure, so that candidate list is a function of the chain's registries alone, and the lookup cache keeps it
+under the same chain-version stamp as its other two memos. When every member is a hook-free constant or a hook-free
+singleton whose instance is cached, and no activation hook exists anywhere in the chain, the value list is kept as well,
+stamped with the chain's activation version, and a read hands out that list itself, unfrozen — a frozen array iterates
+through a slow elements kind in V8, so the contract's `ReadonlyArray` return is the guard, and a hundred-member read is
+one map lookup and no copy; a read that materialises the last such singleton settles the list for the next one, and any
+registry change that evicts an instance drops the memo with it. A read carrying options or made from inside a factory
+goes through the full gather, because its context is not a constant. The container routes a top-level read with no
+options to the memo's own entry, `resolveRootCollection`, so `resolveAll` itself keeps the exact shape the options lane
+had — a branch added there was measured as a loss on the tagged collection row.
+`tests/unit/resolution/resolver-collections.test.ts` pins the boundaries.
 
 **Late hooks are why the activation-need memo reads the field first.** `.onActivation()` writes the hook field **in
 place** on an already-registered binding and bumps no version. `needsActivation()` therefore answers the binding's own
@@ -429,6 +565,27 @@ is not something a one-criterion index can answer without skipping the ambiguity
 > [SPEC](SPEC.md#resolve-options) makes the two spellings one request;
 > `tests/unit/resolution/select/tag-shorthand-parity.test.ts` pins the lane alongside the answer.
 
+**A one-criterion index miss is a registry miss.** A request carrying one criterion matches only a slot that _is_ that
+criterion: a multi-criterion slot needs every one of its criteria covered, and the default slot matches no request that
+carries any. Every one-criterion slot is in the registry's simple index, so when the index has no entry for the
+criterion the container has nothing to scan and the lookup walks to the parent at once — the tagged-miss row was that
+scan. The index is complete by construction: last-wins keeps one binding per tagged slot, a predicate on a tagged
+binding does not exempt it from that, and a predicate-only binding sits on the default slot, which no criterion reaches.
+
+> **Invariant (correctness).** The simple index holds an entry for every binding whose slot carries exactly one
+> criterion, or a miss the lookup declares from it would hide a live binding. Anything that lets two bindings share a
+> tagged slot has to index both. `tests/unit/resolution/select/tagged-selection.test.ts` pins last-wins on a tagged
+> slot, the parent walk and that a default-slot predicate is never evaluated for a tagged request.
+
+**A name beside one tag has a lane of its own.** Two criteria at once fell to the scan, because no single index holds a
+two-criterion slot. The request shape a name plus one tag makes is the common one, and its slot is exact — a binding
+whose criteria are precisely those two, in either declaration order — so the lookup cache memoizes it like the
+one-criterion entry: keyed by token, then the interned name criterion, then the tag, stamped with the chain version,
+filled by a walk that reads the registry's first-criterion buckets from either side. A predicate or an alias declines to
+the full path, as the one-criterion memo does, and a name no binding anywhere has declared is a miss before any lookup.
+`tests/unit/resolution/select/tagged-selection.test.ts` pins both declaration orders, the predicate, the parent walk and
+the undeclared name.
+
 **`resolveAll` reads the tag index too.** A request carrying exactly one criterion (a lone name folds to the reserved
 criterion) matches exactly the bindings whose slot _is_ that criterion: a multi-criterion slot cannot satisfy it, and
 last-wins keeps at most one such binding per registry. So the index holds the whole answer per container, and walking
@@ -451,6 +608,12 @@ Two deliberate bounds on that lane:
   walk. The threshold switches the data structure, never the semantics: both paths answer identically, which
   `tests/unit/resolution/select/multi-tag-selection.test.ts` pins along with the subset, specificity, predicate and
   index-invalidation behaviour. The residual cost on a small list is one length read.
+
+Under the threshold, and on every request the indexes decline, the list gets a first pass before full selection. One
+slot match carrying no predicate is the whole answer, and no match is a clean miss; neither builds a constraint context,
+a display name or a candidate array, which is what a name-plus-tag request and a tagged miss over a populated token used
+to pay on every resolve. A second match, or a predicate on a match, hands the same list to full selection, which weighs
+specificity and reports ambiguity, so the two lanes answer identically.
 
 <a id="cycles"></a>
 
@@ -529,10 +692,13 @@ a cycle crossing the boundary on one path.
 
 The branch lane is the general one. `extendResolutionBranch` appends to a path while this branch still owns the next
 slot, and copies its own prefix once a sibling has claimed it. Nothing is removed there either, so it needs no settle
-listener; it pays a context per level instead. A cycle formed entirely from post-await edges is caught there —
-`post-q → post-p → post-q` — one level in from the true root, because the ancestors before the first escape were never
-written down. That imprecision is the price of the cascade lane, and `tests/unit/resolution/resolver-async.test.ts` pins
-it rather than leaving it to be discovered.
+listener; it pays a context per level instead. The dominant level — a transient factory with no activation, asked with
+no options — is served by a method that is deliberately not `async`, so it costs the factory's own promise and nothing
+on top; a single `resolveAsync` and every member of a `resolveAllAsync` collection take that same lane, and the `async`
+method behind them is reached only by scoped, singleton, activated or option-carrying members. A cycle formed entirely
+from post-await edges is caught there — `post-q → post-p → post-q` — one level in from the true root, because the
+ancestors before the first escape were never written down. That imprecision is the price of the cascade lane, and
+`tests/unit/resolution/resolver-async.test.ts` pins it rather than leaving it to be discovered.
 
 > **Invariant (ownership, held by the compiler).** A branch may only ever append to an array it minted itself. A sync
 > frame's path is one that frame will pop in its own `finally`, and it may carry an `enterResolutionPath` membership
@@ -559,6 +725,13 @@ may yield one routes its dependencies through `Promise.all`. That is exactly how
 dependency, down to unwrapping a promise-valued constant and starting every sibling before the first rejection
 propagates. `tests/unit/resolution/plan/instantiation-plan-async.test.ts` pins the lane being active, the escape
 criteria, the late-hook invalidation, and those two exactness corners.
+
+An async plan that keeps running is generated as a function of its own exactly as a sync one is
+([Compiled plans and escapes](#plans)): the compiler records an `AsyncPlanNode` tree beside the closure, and a node that
+awaits its dependencies renders as an inner function of the same source — every dependency started in order inside its
+own `try`, a sync throw turned into that slot's rejection, `Promise.all` over the slots, the constructor or factory
+applied to the settled values — so the awaiting nodes get call sites of their own too. The threshold, the
+identity-guarded swap (`host.replaceAsyncPlan`, over the async map) and the closure fallback are the sync lane's.
 
 <a id="context-pool"></a>
 
@@ -597,12 +770,26 @@ frame onto, while the shared stack pays one per push.
 ### A container defers most of itself
 
 `DefaultContainer`'s constructor builds only what a resolve cannot happen without: the registry, the scope manager, the
-lifecycle manager and the resolver chain. Everything else arrives on first use — the inspector, the module ref/binding
-tables, the scope's in-flight and scoped caches, the registry's tagged slot indexes, and the class introspector's three
-metadata caches.
+lifecycle manager and the resolver chain — and each of those, in turn, allocates only its hot lane. Everything else
+arrives on first use — the inspector, the module ref/binding tables, the scope's in-flight and scoped caches, the
+registry's record map (first token that is more than one default binding), id index (first id-keyed operation) and
+tagged slot indexes (first tagged slot), the per-reader metadata caches, which every container reading through the same
+reader shares — a child takes its parent's by hand, a root finds them by reader on its first question — so a child
+inheriting its parent's reader meets no class cold that the parent already met, the resolver's plan compiler and both
+plan maps (first plan request, which only a `class` or `resolved` binding makes), the lookup cache's memo maps (second
+distinct token or tag in one cache generation), the activation-need cache (first interpreted resolve that asks whether a
+binding needs the activation pipeline) and its memo (first answer its early returns cannot give).
 
-The reason is that an empty `Map` is not free: V8 gives it a backing store. Those are `Map`s a bind-and-resolve
-container never reads.
+The scope manager, the lifecycle manager, the resolver's cascade stack and its sync context pool stay eager on purpose.
+Building them on first use was measured: it saved a per-request child three or four allocations and read as a small gain
+on the empty-child rows, but every warm interpreted lane then reached them through a nullable field or an accessor, and
+the realistic-graph and production rows lost more than the child rows gained. What a child costs is the object count of
+this design, not those four; the ledger prices it. The reason the rest defers is that an empty `Map` is not free: V8
+gives it a backing store, and a closure-heavy host object such as the plan compiler's is a dozen allocations. Those are
+costs a per-request child — created, asked one parent-owned token, disposed — never earns back, and that child is the
+shape `Container.create()` and `createChild()` are priced on. The one map every container allocates eagerly is the
+registry's fast-default map, because `getFastDefault()` is the first read of every synchronous resolve
+([The registry keeps one record per token](#token-record)).
 
 > **Invariant (correctness).** Deferral is an allocation decision only. A deferred collaborator must answer identically
 > whether or not something touched it first — an unallocated cache reads as a miss, never as an error — which is why
@@ -638,11 +825,12 @@ section before changing what the table describes.
 
 | Invariant                                                                                                                                | Pinned by                                                                                 | Where                                             |
 | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| A token's binding list is copy-on-write; `add`/`removeById` never splice a handed-out array.                                             | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Copy-on-write binding list](#copy-on-write)      |
+| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.    | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Binding list](#copy-on-write)                    |
 | Internal lanes take `Binding` and return `unknown`; only the eight public entry points name `Value`. Lifecycle hooks stay method syntax. | `tests/types/binding-variance.test.ts`                                                    | [Value-type erasure](#value-erasure)              |
 | `frame` is cleared whenever `scope` is refined in place.                                                                                 | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#frame-memo)               |
 | Chain refinements are absent from `bind()`'s type **and** throw before `to*()`.                                                          | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#fluent-chain)                 |
 | One binding belongs to one container; the singleton slot lives on the binding.                                                           | `tests/unit/resolution/singleton-on-binding.test.ts`                                      | [Singleton on the binding](#singleton-on-binding) |
+| The common token lives in the lone map alone and only the rest keep a record; `getFastDefault()` is one bare `Map.get`.                  | `tests/unit/core/registry.test.ts`, the suite's warm resolve rows                         | [The common token](#token-record)                 |
 
 **Selection and lookup**
 
@@ -657,12 +845,13 @@ section before changing what the table describes.
 
 **Plans and escapes**
 
-| Invariant                                                                                          | Pinned by                                                       | Where                                |
-| -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------ |
-| An escape is behaviourally indistinguishable from the interpreted path: same ancestors, same call. | `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` | [Compiled plans and escapes](#plans) |
-| An escape thunk copies the frame array; it never lends it.                                         | (structural; see the two mechanisms)                            | [The frame copy](#frame-copy)        |
-| An entry reached by a criterion carries that criterion into every escape.                          | `tests/unit/resolution/plan/instantiation-plan-named.test.ts`   | [Compiled plans and escapes](#plans) |
-| The async plan runs only at a true root and mirrors the interpreted async path exactly.            | `tests/unit/resolution/plan/instantiation-plan-async.test.ts`   | [The async pipeline](#async)         |
+| Invariant                                                                                           | Pinned by                                                       | Where                                |
+| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------ |
+| An escape is behaviourally indistinguishable from the interpreted path: same ancestors, same call.  | `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` | [Compiled plans and escapes](#plans) |
+| An escape thunk copies the frame array; it never lends it.                                          | (structural; see the two mechanisms)                            | [The frame copy](#frame-copy)        |
+| An entry reached by a criterion carries that criterion into every escape.                           | `tests/unit/resolution/plan/instantiation-plan-named.test.ts`   | [Compiled plans and escapes](#plans) |
+| The async plan runs only at a true root and mirrors the interpreted async path exactly.             | `tests/unit/resolution/plan/instantiation-plan-async.test.ts`   | [The async pipeline](#async)         |
+| A generated plan and its closure are two renderings of one `PlanNode` tree, and behave identically. | `tests/unit/resolution/plan/instantiation-plan-codegen.test.ts` | [Compiled plans and escapes](#plans) |
 
 **Cycle detection and paths**
 
@@ -751,13 +940,16 @@ drops every check that reads the field.
 
 These are covered in the sections above; this list exists so a perf review can find them in one place.
 
-- **One hidden class for all bindings** — [One shape, one construction site](#one-binding-shape). Convention: build
-  through `createBinding()`.
+- **One hidden class for all bindings, and the chain is the binding** —
+  [One shape, one construction site](#one-binding-shape). One allocation per bind; `BindingChain` is the only
+  construction site.
 - **`scope` as a total field** — [`scope` is a total field](#scope-total). Keeps the field's type feedback one shape.
 - **Path-independent entries baked into plans** — [Compiled plans and escapes](#plans). Saves a runtime lookup per
   criterion-carrying param.
-- **One-entry inline caches in front of maps**, and the deferred inner map in `taggedEntry()` —
+- **One-entry inline caches in front of maps**, and the deferred memo maps behind `defaultEntry()` and `taggedEntry()` —
   [Lookup caches](#lookup-caches).
+- **Chain sums memoized against a process-wide state epoch** — [Lookup caches](#lookup-caches). Removes the parent
+  walk's slope while nothing has changed.
 - **Interned criteria as `Map` keys**, and the bitmask prefilter — [Criteria and tag indexes](#criteria). Removes a hash
   level and the stringification of tag values.
 - **Multi-tag bucket index past a size threshold** — [Criteria and tag indexes](#criteria). Semantics identical on both

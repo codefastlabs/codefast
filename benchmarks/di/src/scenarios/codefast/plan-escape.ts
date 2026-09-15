@@ -71,10 +71,10 @@ class OptionalDepsRoot {
 @injectable([injectAll(alphaLeafToken), injectAll(betaLeafToken), injectAll(gammaLeafToken), injectAll(deltaLeafToken)])
 class MultiDepsRoot {
   constructor(
-    readonly alpha: Array<EscapeLeaf>,
-    readonly beta: Array<EscapeLeaf>,
-    readonly gamma: Array<EscapeLeaf>,
-    readonly delta: Array<EscapeLeaf>,
+    readonly alpha: ReadonlyArray<EscapeLeaf>,
+    readonly beta: ReadonlyArray<EscapeLeaf>,
+    readonly gamma: ReadonlyArray<EscapeLeaf>,
+    readonly delta: ReadonlyArray<EscapeLeaf>,
   ) {}
 }
 

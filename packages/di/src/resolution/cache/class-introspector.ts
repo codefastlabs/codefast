@@ -4,7 +4,7 @@
  * @remarks Metadata cannot change once a class is defined, so nothing here needs version stamping.
  */
 
-import { runWithAmbientResolution } from "#/ambient/active-container";
+import { constructWithAmbientResolution, runWithAmbientResolution } from "#/ambient/active-container";
 import type { AmbientResolution } from "#/ambient/active-container";
 import type { Container } from "#/container/container";
 import type { ConstructorInvocation } from "#/core/constructor-type";
@@ -188,31 +188,57 @@ export function verifyAccessorMetadata(
 }
 
 /**
+ * The per-class facts one reader yields, shared by every container that reads through that reader.
+ *
+ * @remarks A reader answers from the class alone, so a child inheriting its parent's reader takes its
+ * answers too and resolves a class the parent already met without reading its metadata again. A root
+ * finds them by reader on its first question; each map waits for a class of its kind.
+ */
+interface MetadataCaches {
+  constructorMetadata: WeakMap<Constructor, ConstructorMetadata | null> | undefined;
+  hasPostConstruct: WeakMap<Constructor, boolean> | undefined;
+  needsActiveContainer: WeakMap<Constructor, boolean> | undefined;
+}
+
+const cachesByReader = new WeakMap<MetadataReader, MetadataCaches>();
+
+function cachesFor(reader: MetadataReader): MetadataCaches {
+  let caches = cachesByReader.get(reader);
+  if (caches === undefined) {
+    caches = { constructorMetadata: undefined, hasPostConstruct: undefined, needsActiveContainer: undefined };
+    cachesByReader.set(reader, caches);
+  }
+  return caches;
+}
+
+/**
  * A per-class cache of constructor metadata and the activation facts derived from it.
  *
  * @since 0.5.0-canary.8
  */
 export class ClassIntrospector {
-  // Unallocated until the container resolves its first class binding — a container bound entirely
-  // to constants, factories or aliases never introspects one.
-  #constructorMetadata: WeakMap<Constructor, ConstructorMetadata | null> | undefined;
-  #hasPostConstruct: WeakMap<Constructor, boolean> | undefined;
-  #needsActiveContainer: WeakMap<Constructor, boolean> | undefined;
+  #caches: MetadataCaches | undefined;
   readonly #reader: MetadataReader;
   readonly #container: Container;
 
-  constructor(reader: MetadataReader, container: Container) {
+  constructor(reader: MetadataReader, container: Container, inherited: ClassIntrospector | undefined) {
+    this.#caches = inherited !== undefined && inherited.#reader === reader ? inherited.#caches : undefined;
     this.#reader = reader;
     this.#container = container;
   }
 
+  #shared(): MetadataCaches {
+    return (this.#caches ??= cachesFor(this.#reader));
+  }
+
   constructorMetadata(target: Constructor): ConstructorMetadata | undefined {
-    const cached = this.#constructorMetadata?.get(target);
+    const caches = this.#shared();
+    const cached = caches.constructorMetadata?.get(target);
     if (cached !== undefined) {
       return cached === null ? undefined : cached;
     }
     const metadata = this.#reader.getConstructorMetadata(target);
-    (this.#constructorMetadata ??= new WeakMap<Constructor, ConstructorMetadata | null>()).set(
+    (caches.constructorMetadata ??= new WeakMap<Constructor, ConstructorMetadata | null>()).set(
       target,
       metadata ?? null,
     );
@@ -225,12 +251,12 @@ export class ClassIntrospector {
    * @remarks Callers treat unknown as "assume it does", so the first activation settles it.
    */
   knownPostConstruct(target: Constructor): boolean | undefined {
-    return this.#hasPostConstruct?.get(target);
+    return this.#shared().hasPostConstruct?.get(target);
   }
 
   discoverPostConstruct(target: Constructor): void {
     const lifecycle = this.#reader.getLifecycleMetadata(target);
-    (this.#hasPostConstruct ??= new WeakMap<Constructor, boolean>()).set(
+    (this.#shared().hasPostConstruct ??= new WeakMap<Constructor, boolean>()).set(
       target,
       lifecycle !== undefined && lifecycle.postConstruct !== undefined && lifecycle.postConstruct.length > 0,
     );
@@ -238,10 +264,11 @@ export class ClassIntrospector {
 
   /** True when the class has accessor injection, which reads the container during construction. */
   needsActiveContainer(target: Constructor): boolean {
-    let needsActiveContainer = this.#needsActiveContainer?.get(target);
+    const caches = this.#shared();
+    let needsActiveContainer = caches.needsActiveContainer?.get(target);
     if (needsActiveContainer === undefined) {
       needsActiveContainer = (this.#reader.getAccessorMetadata?.(target)?.length ?? 0) > 0;
-      (this.#needsActiveContainer ??= new WeakMap<Constructor, boolean>()).set(target, needsActiveContainer);
+      (caches.needsActiveContainer ??= new WeakMap<Constructor, boolean>()).set(target, needsActiveContainer);
     }
     return needsActiveContainer;
   }
@@ -251,6 +278,9 @@ export class ClassIntrospector {
     if (!this.needsActiveContainer(target)) {
       return new invokable(...deps);
     }
-    return runWithAmbientResolution(this.#container, resolution, () => new invokable(...deps));
+    if (resolution === undefined) {
+      return runWithAmbientResolution(this.#container, undefined, () => new invokable(...deps));
+    }
+    return constructWithAmbientResolution(this.#container, resolution, invokable, deps);
   }
 }

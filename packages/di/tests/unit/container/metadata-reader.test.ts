@@ -66,6 +66,46 @@ describe("ContainerOptions.metadataReader", () => {
     expect(child.resolve(Pool).dsn).toBe("postgres://localhost/child");
   });
 
+  it("answers a child from the metadata its parent already read", () => {
+    const reads: Array<Constructor> = [];
+    const reader = tableReader();
+    const root = Container.create({
+      metadataReader: {
+        ...reader,
+        getConstructorMetadata(target: Constructor) {
+          reads.push(target);
+          return reader.getConstructorMetadata(target);
+        },
+      },
+    });
+    root.bind(dsnToken).toConstantValue("postgres://localhost/app");
+    root.bind(Pool).toSelf().transient();
+    root.resolve(Pool);
+
+    const child = root.createChild();
+    child.bind(Pool).toSelf().transient();
+
+    expect(child.resolve(Pool).dsn).toBe("postgres://localhost/app");
+    expect(reads.filter((target) => target === (Pool as Constructor))).toHaveLength(1);
+  });
+
+  it("keeps one reader's answers apart from another's", () => {
+    const described = Container.create({ metadataReader: tableReader() });
+    described.bind(dsnToken).toConstantValue("postgres://localhost/app");
+    described.bind(Pool).toSelf().transient();
+    described.resolve(Pool);
+
+    const bare = Container.create({
+      metadataReader: {
+        getConstructorMetadata: () => ({ params: [] }),
+        getLifecycleMetadata: () => undefined,
+      },
+    });
+    bare.bind(Pool).toSelf().transient();
+
+    expect(bare.resolve(Pool).dsn).toBeUndefined();
+  });
+
   it("drives the lifecycle hooks the reader declares", async () => {
     const container = Container.create({ metadataReader: tableReader({ lifecycle: true }) });
 

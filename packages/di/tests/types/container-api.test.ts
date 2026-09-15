@@ -48,7 +48,7 @@ describe("Container public API inference", () => {
     const container = Container.create();
     container.bind(NumberToken).toConstantValue(1).whenNamed("a");
     container.bind(NumberToken).toConstantValue(2).whenNamed("b");
-    expectTypeOf(container.resolveAll(NumberToken)).toEqualTypeOf<Array<number>>();
+    expectTypeOf(container.resolveAll(NumberToken)).toEqualTypeOf<ReadonlyArray<number>>();
     expect(container.resolveAll(NumberToken).length).toBe(2);
   });
 

@@ -112,7 +112,7 @@ describe("injection declarations are checked against what receives them", () => 
     container
       .bind(Described)
       .toResolved(
-        (all: Array<Logger>, config: Config | undefined) => `${String(all.length)}:${String(config?.port)}`,
+        (all: ReadonlyArray<Logger>, config: Config | undefined) => `${String(all.length)}:${String(config?.port)}`,
         [injectAll(LoggerToken), optional(ConfigToken)],
       );
 

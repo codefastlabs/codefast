@@ -112,7 +112,7 @@ export function bindingSlotToString(slot: BindingSlot): string {
 // ── BindingBase ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 interface BindingBase<Value> {
-  readonly id: BindingIdentifier;
+  readonly identifier: BindingIdentifier;
   /**
    * True while this binding's factory is executing on the current synchronous call stack.
    *
@@ -140,9 +140,12 @@ interface BindingBase<Value> {
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
   readonly predicate?: BindingConstraint | undefined;
+  /**
+   * Whether the binding is a collection member only: `resolveAll` includes it, `resolve` never
+   * selects it, and it neither displaces nor is displaced under slot last-wins.
+   */
+  readonly isMany: boolean;
 }
-
-type BindingBaseKeys = keyof BindingBase<unknown>;
 
 /**
  * The lifecycle hooks every kind but `alias` may carry.
@@ -150,12 +153,13 @@ type BindingBaseKeys = keyof BindingBase<unknown>;
  * @remarks Declared as **methods**, not function-typed properties, so their parameters compare
  * bivariantly and `Binding<Value>` stays assignable to `Binding`. The engine erases the value type at
  * every lane boundary regardless; the public `ActivationHandler` / `DeactivationHandler` keep strict
- * checking, which is where a user's handler is actually verified. Not `readonly`: a fluent chain
- * refines both in place — see {@link RefinableBindingFields}.
+ * checking, which is where a user's handler is actually verified. Named apart from the fluent
+ * `onActivation()` / `onDeactivation()` steps because the chain that registers them is the binding
+ * itself, and a field cannot share a name with a method on the same object.
  */
 interface BindingLifecycleHooks<Value> {
-  onActivation?(ctx: ResolutionContext, instance: Value): Value | Promise<Value>;
-  onDeactivation?(instance: Value): void | Promise<void>;
+  activationHook?(ctx: ResolutionContext, instance: Value): Value | Promise<Value>;
+  deactivationHook?(instance: Value): void | Promise<void>;
 }
 
 // ── Binding kinds ────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -259,19 +263,6 @@ export type Binding<Value = unknown> =
   | ConstantBinding<Value>
   | AliasBinding<Value>;
 
-/** `Omit` applied per union member, since a bare `Omit` would collapse the union into one shape. */
-type DistributiveOmit<Union, Keys extends PropertyKey> = Union extends unknown ? Omit<Union, Keys> : never;
-
-/**
- * Builder-only payload before `id`, `token`, `slot`, and `predicate` are applied.
- *
- * @remarks Derived rather than listed: a new binding kind joins this the moment it joins
- * {@link Binding}, so the two unions cannot diverge.
- *
- * @since 0.3.16-canary.0
- */
-export type PartialBinding<Value> = DistributiveOmit<Binding<Value>, BindingBaseKeys>;
-
 // ── ID generation ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 let bindingIdCounter = 0;
@@ -281,108 +272,40 @@ let bindingIdCounter = 0;
  * @since 0.3.16-canary.0
  */
 export function generateBindingId(): BindingIdentifier {
-  return String(++bindingIdCounter) as BindingIdentifier;
-}
-
-// ── Construction ─────────────────────────────────────────────────────────────────────────────────────────────────────
-
-/** Every key any member declares — a bare `keyof` on a union gives only the shared ones. */
-type KeysOfUnion<Union> = Union extends unknown ? keyof Union : never;
-
-// Superset of every kind's fields, so one literal can copy any binding shape.
-type BindingFieldName = KeysOfUnion<Binding<unknown>>;
-
-/**
- * Completeness guard for {@link createBinding}'s literal.
- *
- * @remarks The literal is `satisfies` this, so a field added to any binding kind that the literal
- * forgets to write is a compile error rather than a binding silently missing it.
- */
-type ConstructedBindingFields = Record<BindingFieldName, unknown>;
-
-type BindingFieldSuperset = {
-  readonly kind: Binding["kind"];
-  readonly instance?: unknown;
-  readonly scope: BindingScope;
-  readonly target?: unknown;
-  readonly factory?: unknown;
-  readonly deps?: unknown;
-  readonly value?: unknown;
-  readonly onActivation?: unknown;
-  readonly onDeactivation?: unknown;
-};
-
-/**
- * The single construction site for bindings — one literal, one V8 hidden class.
- *
- * @remarks Field order is fixed and this is the only construction site, so every binding shares one
- * hidden class. Reordering the fields, or adding a second site, gives that up.
- *
- * @param source - the kind-specific payload, or an existing binding to re-slot
- * @param token - the key requests resolve the binding by
- * @param slot - the name + tags a request must match to select this binding
- * @param predicate - a custom constraint, or `undefined` for none
- * @param id - reuse a caller's id to keep a fluent chain's `id()` stable across refinements
- *
- * @since 0.5.0-canary.8
- */
-export function createBinding<Value>(
-  source: PartialBinding<Value> | Binding<Value>,
-  token: Token<Value> | Constructor<Value>,
-  slot: BindingSlot,
-  predicate: BindingConstraint | undefined,
-  id: BindingIdentifier = generateBindingId(),
-): Binding<Value> {
-  const fields = source as BindingFieldSuperset;
-  return {
-    kind: fields.kind,
-    id,
-    inFlight: false,
-    frame: undefined,
-    // An `in` probe, not `??`: a re-slotted singleton may legitimately hold a cached `undefined`.
-    instance: "instance" in fields ? fields.instance : NO_INSTANCE,
-    token,
-    slot,
-    predicate,
-    scope: fields.scope,
-    target: fields.target,
-    factory: fields.factory,
-    deps: fields.deps,
-    value: fields.value,
-    onActivation: fields.onActivation,
-    onDeactivation: fields.onDeactivation,
-  } satisfies ConstructedBindingFields as Binding<Value>;
+  bindingIdCounter += 1;
+  return bindingIdCounter as BindingIdentifier;
 }
 
 /**
- * Writable view of the only fields a fluent chain may refine after registration.
- *
- * @remarks No registry index is keyed on these, so a builder that owns the registered object
- * can write them directly instead of re-registering. `token`, `slot`, `predicate` and `id`
- * are excluded on purpose — changing those means re-indexing.
- *
- * @since 0.5.0-canary.8
+ * Writable view of the one selection field a chain may refine without re-registering: nothing
+ * indexes on the predicate, so the registry rewrites it in place and re-homes the binding itself.
  */
-export interface RefinableBindingFields<Value> {
-  onActivation: ActivationHandler<Value> | undefined;
-  onDeactivation: DeactivationHandler<Value> | undefined;
-  scope: BindingScope;
+export interface PredicateField {
+  predicate: BindingConstraint | undefined;
 }
 
 /**
- * Narrows a registered binding to the fields a fluent chain may still refine.
- *
- * @since 0.5.0-canary.8
+ * Narrows a registered binding to its predicate for the registry to rewrite.
  */
-export function refinableFields<Value>(binding: Binding<Value>): RefinableBindingFields<Value> {
-  return binding as RefinableBindingFields<Value>;
+export function writablePredicate(binding: Binding): PredicateField {
+  return binding as PredicateField;
+}
+
+/** Writable view of collection membership, which the registry sets because it decides the binding's map. */
+export interface MembershipField {
+  isMany: boolean;
+}
+
+/** Narrows a registered binding to its membership flag for the registry to set. */
+export function writableMembership(binding: Binding): MembershipField {
+  return binding as MembershipField;
 }
 
 /**
  * Writable view of the memoized frame, which is a cache rather than part of a binding's identity.
  *
- * @remarks Named for the same reason as {@link RefinableBindingFields}: a write view stated once
- * cannot drift from `Binding`, where an inline cast at each site can.
+ * @remarks A write view stated once cannot drift from `Binding`, where an inline cast at each site
+ * can.
  */
 interface MemoizedFrameField {
   frame: ResolutionFrame | undefined;
@@ -391,8 +314,8 @@ interface MemoizedFrameField {
 /**
  * Drops the memoized resolution frame, for a refinement that changes what the frame reports.
  *
- * @remarks `scope` is the only field a chain writes in place that the frame derives from — a
- * re-slot builds a fresh binding, whose frame starts empty anyway.
+ * @remarks The frame derives from `scope` and `slot`, both of which a chain now writes in place on
+ * the registered object, so every such refinement clears it.
  *
  * @since 0.5.0-canary.9
  */
@@ -416,6 +339,11 @@ export interface SlotConstrainedBuilder<Names extends string = string> {
   whenTagged(criterion: BindingTag): this;
   /** Keeps the binding on the default slot, the one an unconstrained request selects. */
   whenDefault(): this;
+  /**
+   * Makes the binding a collection member: one of several the token's `resolveAll` returns, never
+   * what a single `resolve` selects, and outside slot last-wins. It keeps the default slot.
+   */
+  many(): this;
   /** The identifier this binding is registered under. */
   id(): BindingIdentifier;
 }

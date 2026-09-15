@@ -15,8 +15,8 @@ function buildResolveAllAsyncScenario(): AsyncBenchScenario {
   const strategyToken = token<number>("bench-cf-async-resolve-all-strategy");
   const container = Container.create();
 
-  // Predicate-only registrations, the same multi-binding shape the sync `resolve-all-*` rows use:
-  // the default slot is last-wins, so N unqualified bindings would collapse to one.
+  // Collection members, the same multi-binding shape the sync `resolve-all-*` rows use: the default
+  // slot is last-wins, so N unqualified bindings would collapse to one.
   for (let index = 0; index < ASYNC_STRATEGY_COUNT; index++) {
     container
       .bind(strategyToken)
@@ -25,7 +25,7 @@ function buildResolveAllAsyncScenario(): AsyncBenchScenario {
 
         return index;
       })
-      .when(() => true)
+      .many()
       .transient();
   }
 

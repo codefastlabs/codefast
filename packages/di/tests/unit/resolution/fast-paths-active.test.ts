@@ -11,9 +11,11 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#/container/container";
 import { token } from "#/core/token";
+import { inject } from "#/decorators/inject";
 import { injectable } from "#/decorators/injectable";
 import type { DiagnosableContainer, ResolutionDiagnostics } from "#/errors/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#/errors/diagnostics";
+import { CircularDependencyError } from "#/errors/errors";
 
 const WARM_ITERATIONS = 5;
 
@@ -159,5 +161,138 @@ describe("deferred subsystems stay deferred", () => {
     child.resolve(serviceToken);
 
     expect(diagnose(child).builtSubsystems).toEqual([]);
+  });
+
+  it("builds the plan compiler only once a class binding asks for a plan", () => {
+    @injectable()
+    class Service {}
+
+    const container = Container.create();
+    container.bind(Service).toSelf().transient();
+
+    expect(diagnose(container).builtSubsystems).not.toContain("resolver.planCompiler");
+
+    container.resolve(Service);
+
+    expect(diagnose(container).builtSubsystems).toContain("resolver.planCompiler");
+  });
+
+  it("builds the record map only for a token that is more than one default binding", () => {
+    const plainToken = token<string>("deferred-records-plain");
+    const namedToken = token<string>("deferred-records-named");
+    const container = Container.create();
+    container.bind(plainToken).toConstantValue("plain");
+    container.resolve(plainToken);
+
+    expect(diagnose(container).builtSubsystems).not.toContain("registry.records");
+
+    container.bind(namedToken).toConstantValue("named").whenNamed("primary");
+
+    expect(diagnose(container).builtSubsystems).toContain("registry.records");
+  });
+
+  it("moves a lone binding into a record when a bare when() gives it a predicate", () => {
+    const serviceToken = token<string>("deferred-records-when");
+    const container = Container.create();
+    const chain = container.bind(serviceToken).toConstantValue("value");
+
+    expect(diagnose(container).builtSubsystems).not.toContain("registry.records");
+
+    chain.when(() => true);
+
+    expect(diagnose(container).builtSubsystems).toContain("registry.records");
+    // Rewritten in place: the id index was never needed to find the binding again.
+    expect(diagnose(container).builtSubsystems).not.toContain("registry.idIndex");
+    expect(container.resolve(serviceToken)).toBe("value");
+  });
+
+  it("builds the id index only for an id-keyed operation", () => {
+    const serviceToken = token<string>("deferred-id-index");
+    const container = Container.create();
+    const chain = container.bind(serviceToken).toConstantValue("value");
+    container.resolve(serviceToken);
+
+    expect(diagnose(container).builtSubsystems).not.toContain("registry.idIndex");
+
+    container.unbind(chain.id());
+
+    expect(diagnose(container).builtSubsystems).toContain("registry.idIndex");
+  });
+
+  it("allocates a child's lookup memo only for a second distinct parent-owned token", () => {
+    const first = token<string>("deferred-memo-first");
+    const second = token<string>("deferred-memo-second");
+    const parent = Container.create();
+    parent.bind(first).toConstantValue("first");
+    parent.bind(second).toConstantValue("second");
+    const child = parent.createChild();
+
+    // The per-request shape: one parent-owned token, answered from the one-entry front alone.
+    child.resolve(first);
+    expect(diagnose(child).builtSubsystems).toEqual([]);
+
+    child.resolve(second);
+    expect(diagnose(child).builtSubsystems).toContain("resolver.lookupMemo");
+  });
+
+  it("builds the activation-need memo only once a class asks the question", () => {
+    const serviceToken = token<string>("deferred-need-dynamic");
+
+    @injectable()
+    class Service {}
+
+    const container = Container.create();
+    container
+      .bind(serviceToken)
+      .toDynamic(() => "value")
+      .transient();
+    container.onActivation(serviceToken, (_context, value: string) => value);
+    container.resolve(serviceToken);
+
+    // A dynamic binding's container hooks are answered on its own lane, never through the memo.
+    expect(diagnose(container).builtSubsystems).not.toContain("resolver.activationNeedMemo");
+
+    container.bind(Service).toSelf().transient();
+    container.resolve(Service);
+
+    expect(diagnose(container).builtSubsystems).toContain("resolver.activationNeedMemo");
+  });
+});
+
+describe("an accessor-injected class compiles as a plan root", () => {
+  it("is served by a compiled plan once warm, and its accessor still resolves", () => {
+    const depToken = token<string>("accessor-plan-dep");
+
+    @injectable([])
+    class WithAccessor {
+      @inject(depToken) accessor dependency!: string;
+    }
+
+    const container = Container.create();
+    container.bind(depToken).toConstantValue("value");
+    container.bind(WithAccessor).toSelf().transient();
+
+    for (let iteration = 0; iteration < WARM_ITERATIONS; iteration += 1) {
+      expect(container.resolve(WithAccessor).dependency).toBe("value");
+    }
+
+    expect(diagnose(container).compiledPlanCount).toBe(1);
+  });
+
+  it("still reports a cycle that closes through an accessor, before and after the plan compiles", () => {
+    const loopToken = token<object>("accessor-plan-loop");
+
+    @injectable([])
+    class Loop {
+      @inject(loopToken) accessor self!: object;
+    }
+
+    const container = Container.create();
+    container.bind(loopToken).to(Loop).transient();
+    container.bind(Loop).toSelf().transient();
+
+    for (let iteration = 0; iteration < WARM_ITERATIONS; iteration += 1) {
+      expect(() => container.resolve(Loop)).toThrow(CircularDependencyError);
+    }
   });
 });

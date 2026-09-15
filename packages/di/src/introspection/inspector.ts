@@ -31,6 +31,8 @@ export interface BindingSnapshot {
     readonly tags: ReadonlyArray<BindingTag>;
   };
   readonly id: BindingIdentifier;
+  /** Whether the binding is a collection member only, taken by `resolveAll` and never by `resolve`. */
+  readonly isMany: boolean;
 }
 
 /**
@@ -79,31 +81,16 @@ export class Inspector {
     return bindings.map((binding) => this.#toSnapshot(binding));
   }
 
-  has(token: Token<unknown> | Constructor, options?: ResolveOptions, parentHas?: () => boolean): boolean {
-    const bindings = this.#registry.getAll(token);
-    if (bindings.length > 0) {
-      // An existence probe answers ambiguity with `true` — several matches still exist; only
-      // resolution has to pick one.
-      if (options !== undefined) {
-        if (selectAllBindings(bindings, options, this.#makeConstraintContext(options)).length > 0) {
-          return true;
-        }
-      } else {
-        return true;
-      }
-    }
-    return parentHas?.() ?? false;
-  }
-
+  /** Whether this container's own registry holds a binding the request could select. */
   hasOwn(token: Token<unknown> | Constructor, options?: ResolveOptions): boolean {
+    // Presence alone is a registry probe; only a request carrying criteria has to see the list.
+    if (options === undefined) {
+      return this.#registry.has(token);
+    }
     const bindings = this.#registry.getAll(token);
-    if (bindings.length === 0) {
-      return false;
-    }
-    if (options !== undefined) {
-      return selectAllBindings(bindings, options, this.#makeConstraintContext(options)).length > 0;
-    }
-    return true;
+    // An existence probe answers ambiguity with `true` — several matches still exist; only
+    // resolution has to pick one.
+    return bindings.length > 0 && selectAllBindings(bindings, options, this.#makeConstraintContext(options)).length > 0;
   }
 
   #makeConstraintContext(options: ResolveOptions): ConstraintContext {
@@ -128,7 +115,8 @@ export class Inspector {
       kind: binding.kind,
       scope: effectiveBindingScope(binding),
       slot,
-      id: binding.id,
+      id: binding.identifier,
+      isMany: binding.isMany,
     };
   }
 }

@@ -41,7 +41,7 @@ describe("a binding of a concrete value is still a binding", () => {
     // against `ActivationHandler<Value>`, which is a function-typed property and stays strict.
     const handler: ActivationHandler<string> = (_ctx: ResolutionContext, instance: string) => instance.toUpperCase();
 
-    expectTypeOf(handler).toExtend<NonNullable<ClassBinding<string>["onActivation"]>>();
+    expectTypeOf(handler).toExtend<NonNullable<ClassBinding<string>["activationHook"]>>();
     expectTypeOf<ActivationHandler<string>>().parameter(1).toEqualTypeOf<string>();
   });
 });

@@ -1,5 +1,6 @@
 /** The container an `@inject` accessor initializer resolves from when it has no other handle. */
 import type { Container } from "#/container/container";
+import type { ConstructorInvocation } from "#/core/constructor-type";
 import type { Token } from "#/core/token";
 import type { Constructor, ResolveOptions } from "#/core/types";
 
@@ -55,6 +56,30 @@ export function runWithAmbientResolution<Result>(
  *
  * @since 0.3.16-canary.0
  */
+/**
+ * Constructs `target` with `container` and `resolution` ambient for the duration of its constructor.
+ *
+ * @remarks The construction is written out rather than wrapped in a closure: an accessor-injected
+ * class pays this on every instantiation, and the closure was one of two allocations it paid for.
+ */
+export function constructWithAmbientResolution(
+  container: Container,
+  resolution: AmbientResolution,
+  target: ConstructorInvocation,
+  deps: ReadonlyArray<unknown>,
+): unknown {
+  const previousContainer = activeContainer;
+  const previousResolution = activeResolution;
+  activeContainer = container;
+  activeResolution = resolution;
+  try {
+    return new target(...deps);
+  } finally {
+    activeContainer = previousContainer;
+    activeResolution = previousResolution;
+  }
+}
+
 export function getActiveContainer(): Container | undefined {
   return activeContainer;
 }

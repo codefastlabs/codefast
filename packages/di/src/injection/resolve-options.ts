@@ -43,6 +43,21 @@ export function singleCriterionOnlyOf(options: ResolveOptions | undefined): Bind
   return listed !== undefined && listed.length === 1 ? listed[0] : undefined;
 }
 
+/**
+ * The one tag a request carries beside its name, for the name-plus-tag lane; `undefined` for every other shape.
+ */
+export function loneTagBesideNameOf(options: ResolveOptions): BindingTag | undefined {
+  if (options.name === undefined) {
+    return undefined;
+  }
+  const listed = options.tags;
+  const shorthand = options.tag;
+  if (shorthand !== undefined) {
+    return listed === undefined || listed.length === 0 ? shorthand : undefined;
+  }
+  return listed !== undefined && listed.length === 1 ? listed[0] : undefined;
+}
+
 /** The name spelling's half of the fold, kept apart so the common body stays small enough to inline. */
 function loneNameCriterionOf(options: ResolveOptions): BindingTag | undefined {
   // A name next to any tag means the request carries two criteria, which no single index answers.

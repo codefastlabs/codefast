@@ -10,8 +10,8 @@ import {
   runBenchSubprocessesInterleaved,
 } from "#/parent/run-bench-subprocess";
 import type { BenchSubprocessConfig } from "#/shared/config";
-import { resolveDisplayName } from "#/shared/config";
-import { resolveBenchModeFromEnvironment } from "#/shared/env-keys";
+import { resolveDisplayName, selectLibraries } from "#/shared/config";
+import { resolveBenchModeFromEnvironment, resolveLibraryFilterFromEnvironment } from "#/shared/env-keys";
 import type { SubprocessPayload } from "#/shared/protocol";
 
 /**
@@ -53,7 +53,8 @@ function describeBenchMode(): string | undefined {
  * the two measurements it divides; a shared run has one process per library and nothing to interleave.
  */
 export async function runBenchLibraries(options: RunBenchLibrariesOptions): Promise<RunBenchLibrariesResult> {
-  const { packageRootDirectory, libraries, verbose } = options;
+  const { packageRootDirectory, verbose } = options;
+  const libraries = selectLibraries(options.libraries, resolveLibraryFilterFromEnvironment());
   const display = options.display ?? createProgressDisplay({ verbose });
   const modeNote = describeBenchMode();
   if (modeNote !== undefined) {

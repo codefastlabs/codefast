@@ -168,12 +168,12 @@ type BindingScope = "singleton" | "transient" | "scoped";
 
 ### `BindingIdentifier`
 
-An opaque branded type — it cannot be constructed by hand from outside the library. It is only obtained through `.id()`
-on a builder.
+An opaque branded number — it cannot be constructed by hand from outside the library. It is only obtained through
+`.id()` on a builder, and it is an identity to hand back to `unbind(id)`, never a value to parse or display.
 
 ```ts
 declare const BINDING_ID_BRAND: unique symbol;
-type BindingIdentifier = string & { readonly [BINDING_ID_BRAND]: true };
+type BindingIdentifier = number & { readonly [BINDING_ID_BRAND]: true };
 ```
 
 ### `Constructor`
@@ -298,6 +298,9 @@ exactly the ability to resolve within the current context.
 - Six methods, each taking a token plus the same optional hint: `resolve`, `resolveAsync`, `resolveOptional`,
   `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync`.
 - `resolveAll` throws `AsyncResolutionError` if any matching binding is async, and returns `[]` when nothing matches.
+  Both collection reads return a `ReadonlyArray`: a root-level read with no options hands out the engine's own list, the
+  same array on every call while no registry in the chain has changed. Writing into it corrupts what every later read
+  returns, which the return type forbids; a caller that needs its own copy spreads it.
 - `graph` holds the `ConstraintContext` — the dependency-graph context used inside a `when()` predicate. An ordinary
   resolve never needs it.
 
@@ -638,9 +641,12 @@ container
 
 > **Normative — rules for a `when()` predicate.**
 >
-> - The predicate is called every time a resolve needs to pick a candidate (never cached).
 > - The predicate **must be pure and deterministic** — no side effects, no I/O. Breaking this rule is undefined
 >   behaviour and may cause an infinite loop or incorrect caching.
+> - Because it is pure, the engine may evaluate it once per container state and reuse the answer where the context
+>   cannot differ: a root-level `resolveAll` with no options keeps its candidate list until any registry in the chain
+>   changes, and keeps the value list too while every member is a hook-free constant or a hook-free singleton whose
+>   instance is cached. A read carrying options, or made from inside a factory, evaluates every predicate afresh.
 > - The predicate **must not** call `ctx.resolve*()` — that causes circular resolution.
 
 > **Performance note.** For a `transient` binding on a hot path (resolved on every request), a complex `when()`
@@ -969,6 +975,15 @@ condition the slot declares. The slot with no conditions is the **default slot**
 > 2 candidates remain after runtime filtering, `resolve`/`resolveAsync` throws `AmbiguousBindingError` (not
 > `InternalError` — this is a user error, not an internal one).
 
+> **Normative — collection members: `many()`.** A binding refined with `.many()` is a **collection member**: several
+> members of one token coexist on the default slot, `resolveAll`/`resolveAllAsync` return every member (plus whatever
+> else the request matches, in registration order), and `resolve`/`resolveAsync` **never select** a member — a token
+> holding only members reads as unbound to a single resolve. A member takes no part in slot last-wins: it neither
+> displaces nor is displaced by the ordinary default binding or by other members. A member keeps the default slot —
+> `many()` on a named or tagged binding, or `whenNamed`/`whenTagged` on a member, throws `ManyBindingSlotError` — and
+> may carry `when()` predicates, which apply as for any candidate. This is the intended form of a strategy set; a
+> predicate that always passes is not.
+
 **Candidate:** a binding whose slot matches the request's criterion set and that passes every `when(ctx)` predicate.
 
 #### The matching rule
@@ -1102,7 +1117,7 @@ runtime. For `constant`, `onActivation` runs the first time the value is resolve
 >   `{ token, optional: false, multi: false }`. The `deps` in `ResolvedBinding`/`ResolvedAsyncBinding` is always
 >   `readonly InjectionDescriptor[]` — never a raw token.
 > - A `BindingIdentifier` is generated **once per fluent chain**, unique across the whole container hierarchy (not
->   merely within one container). Use `crypto.randomUUID()` or a monotonic counter. Later refinement (`.singleton()`,
+>   merely within one container), from a process-wide monotonic counter. Later refinement (`.singleton()`,
 >   `.whenNamed()`, …) does **not** mint a new id — the id taken from `.id()` at any step of the chain stays valid until
 >   the chain ends.
 
@@ -1574,9 +1589,9 @@ Each `BindingSnapshot` carries: `tokenName`, `kind`, `scope`, `slot`, and `id`.
 `ContainerGraphJson` has three parts: `nodes`, `edges`, and `includesParent` (whether parent bindings were folded in —
 it depends on `GraphOptions`).
 
-Each **`GraphNode`** carries `id` (the `BindingIdentifier` itself, or `"unbound:<tokenKey>"` for a placeholder node),
-`tokenName`, `tokenKey` (the token's own identity — two tokens sharing a name still differ by key; stable within one
-process), `kind` (or `"unbound"`), `scope` (or `"unbound"`), and `fromParent`.
+Each **`GraphNode`** carries `id` (the `BindingIdentifier` rendered as a decimal string, or `"unbound:<tokenKey>"` for a
+placeholder node), `tokenName`, `tokenKey` (the token's own identity — two tokens sharing a name still differ by key;
+stable within one process), `kind` (or `"unbound"`), `scope` (or `"unbound"`), and `fromParent`.
 
 Each **`GraphEdge`** runs from the consumer (`from`) to the dependency (`to`), with `optional` and `slotName` (the named
 slot the edge points at, if the binding declares one). The `label` field is **for display only** — read
@@ -1710,7 +1725,7 @@ class Reporter {
   ) {}
 }
 
-// injectAll — inject every matching binding as an array, with an optional named filter
+// injectAll — inject every matching binding as a read-only array, with an optional named filter
 @injectable([injectAll(Plugin), injectAll(Logger, { name: "audit" })])
 class Runner {
   constructor(
@@ -1835,6 +1850,10 @@ the binding existed, so the resolver keeps the default reader and an undecorated
 > **Normative — one container, one reader.** The reader is fixed when the container's resolver is built; `validate()`,
 > `inspect()`, `generateDependencyGraph()` and `unbind*` all answer using that same reader. Introspection cannot
 > disagree with resolution.
+
+> **Normative — a reader is asked about a class once.** Every container that reads through the same reader (a child
+> inherits its parent's) shares that reader's answers for the life of the process, so a reader must answer from the
+> class alone — never from state that changes after the class is defined.
 
 `MetadataReaderToken` has type `Token<MetadataReader>` and is exported from `@codefast/di`.
 
@@ -2513,31 +2532,34 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 > **Normative.** Every error extends `DiError` — an abstract class that forces each subclass to declare a `code` string
 > (machine-readable), alongside a message carrying enough context for a human reader.
 
-| Error                           | `code`                        | Thrown when                                                            | Context fields                                   |
-| ------------------------------- | ----------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------ |
-| `InternalError`                 | `INTERNAL_ERROR`              | An internal assertion failed — **not** a user error                    | —                                                |
-| `TokenNotBoundError`            | `TOKEN_NOT_BOUND`             | The token has no binding at all, even after walking the parent chain   | `tokenName`                                      |
-| `NoMatchingBindingError`        | `NO_MATCHING_BINDING`         | The token **has** bindings but no slot matches the hint                | `tokenName`, `hint`, `availableSlots`            |
-| `AmbiguousBindingError`         | `AMBIGUOUS_BINDING`           | ≥ 2 candidates remain and the more-specific rule cannot decide         | `tokenName`, `candidateIds`                      |
-| `CircularDependencyError`       | `CIRCULAR_DEPENDENCY`         | A → B → A, including a cycle along an alias chain                      | `cycle`                                          |
-| `AsyncResolutionError`          | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain  | `tokenName`, `asyncSourceToken`                  |
-| `AsyncActivationError`          | `ASYNC_ACTIVATION`            | `@postConstruct` or `onActivation` returned a `Promise` on a sync path | `tokenName`, `hookKind`, `methodName`            |
-| `AsyncDeactivationError`        | `ASYNC_DEACTIVATION`          | A sync `unbind()` on a binding with an async `onDeactivation`          | `tokenName`                                      |
-| `ScopeViolationError`           | `SCOPE_VIOLATION`             | Captive dependency — a singleton depending on scoped or transient      | `details`: both tokens + scopes, plus `path`     |
-| `MissingMetadataError`          | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing    | `targetName`                                     |
-| `InvalidMetadataError`          | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use       | `targetName`, `reason`                           |
-| `AsyncModuleLoadError`          | `ASYNC_MODULE_LOAD`           | A sync `load()` received an `AsyncModule`                              | `moduleName`                                     |
-| `SyncDisposalNotSupportedError` | `SYNC_DISPOSAL_NOT_SUPPORTED` | `[Symbol.dispose]()` was called                                        | —                                                |
-| `MissingScopeContextError`      | `MISSING_SCOPE_CONTEXT`       | A `scoped` binding resolved from a container with no child scope       | `tokenName`                                      |
-| `MissingContainerContextError`  | `MISSING_CONTAINER_CONTEXT`   | A class with `@inject accessor` was `new`-ed outside a container       | `className` (may be `undefined`), `accessorName` |
-| `RebindUnboundTokenError`       | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container            | `tokenName`                                      |
-| `DisposedContainerError`        | `DISPOSED_CONTAINER`          | Any operation on an already-disposed container                         | —                                                |
-| `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`       | `tokenName`                                      |
-| `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                              | `tokenName`                                      |
-| `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member        | `decoratorName`, `memberName`                    |
-| `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds         | `tokenName`, `phase`                             |
-| `EmptyTagCriteriaError`         | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                        | `helperName`                                     |
-| `UnreachableConstraintError`    | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares        | `tokenName`, `requiredName`, `helperName`        |
+| Error                           | `code`                        | Thrown when                                                             | Context fields                                   |
+| ------------------------------- | ----------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
+| `InternalError`                 | `INTERNAL_ERROR`              | An internal assertion failed — **not** a user error                     | —                                                |
+| `TokenNotBoundError`            | `TOKEN_NOT_BOUND`             | The token has no binding at all, even after walking the parent chain    | `tokenName`                                      |
+| `NoMatchingBindingError`        | `NO_MATCHING_BINDING`         | The token **has** bindings but no slot matches the hint                 | `tokenName`, `hint`, `availableSlots`            |
+| `AmbiguousBindingError`         | `AMBIGUOUS_BINDING`           | ≥ 2 candidates remain and the more-specific rule cannot decide          | `tokenName`, `candidateIds`                      |
+| `CircularDependencyError`       | `CIRCULAR_DEPENDENCY`         | A → B → A, including a cycle along an alias chain                       | `cycle`                                          |
+| `AsyncResolutionError`          | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain   | `tokenName`, `asyncSourceToken`                  |
+| `AsyncActivationError`          | `ASYNC_ACTIVATION`            | `@postConstruct` or `onActivation` returned a `Promise` on a sync path  | `tokenName`, `hookKind`, `methodName`            |
+| `AsyncDeactivationError`        | `ASYNC_DEACTIVATION`          | A sync `unbind()` on a binding with an async `onDeactivation`           | `tokenName`                                      |
+| `ScopeViolationError`           | `SCOPE_VIOLATION`             | Captive dependency — a singleton depending on scoped or transient       | `details`: both tokens + scopes, plus `path`     |
+| `MissingMetadataError`          | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing     | `targetName`                                     |
+| `InvalidMetadataError`          | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use        | `targetName`, `reason`                           |
+| `AsyncModuleLoadError`          | `ASYNC_MODULE_LOAD`           | A sync `load()` received an `AsyncModule`                               | `moduleName`                                     |
+| `SyncDisposalNotSupportedError` | `SYNC_DISPOSAL_NOT_SUPPORTED` | `[Symbol.dispose]()` was called                                         | —                                                |
+| `MissingScopeContextError`      | `MISSING_SCOPE_CONTEXT`       | A `scoped` binding resolved from a container with no child scope        | `tokenName`                                      |
+| `MissingContainerContextError`  | `MISSING_CONTAINER_CONTEXT`   | A class with `@inject accessor` was `new`-ed outside a container        | `className` (may be `undefined`), `accessorName` |
+| `RebindUnboundTokenError`       | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container             | `tokenName`                                      |
+| `DisposedContainerError`        | `DISPOSED_CONTAINER`          | Any operation on an already-disposed container                          | —                                                |
+| `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`        | `tokenName`                                      |
+| `ChainAlreadyRegisteredError`   | `CHAIN_ALREADY_REGISTERED`    | A second `to*()` on a chain that already registered its binding         | `tokenName`                                      |
+| `ManyBindingSlotError`          | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member | `tokenName`                                      |
+| `ManyBindingSlotError`          | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member | `tokenName`                                      |
+| `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                               | `tokenName`                                      |
+| `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member         | `decoratorName`, `memberName`                    |
+| `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds          | `tokenName`, `phase`                             |
+| `EmptyTagCriteriaError`         | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                         | `helperName`                                     |
+| `UnreachableConstraintError`    | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares         | `tokenName`, `requiredName`, `helperName`        |
 
 > **Exact shape:** `src/errors/errors.ts` — every class above, plus `ScopeViolationDetails`.
 
@@ -2618,9 +2640,9 @@ packages/di/
 │   │   ├── tag.ts             tag() — the one and only tag-key factory; interned BindingTag,
 │   │   │                      TagKeyMask and the subset check over keys
 │   │   ├── binding.ts         The Binding discriminated union + BindingSlot utilities;
-│   │   │                      createBinding() — THE SINGLE BINDING CONSTRUCTION POINT, which
-│   │   │                      guarantees one hidden class for every binding; generateBindingId(),
-│   │   │                      refinableFields(); every public builder interface
+│   │   │                      generateBindingId(); every public builder interface. The one
+│   │   │                      construction point is BindingChain (container/binding-builders.ts):
+│   │   │                      the chain bind() returns IS the binding, one hidden class for all
 │   │   ├── binding-scope.ts   effectiveBindingScope() — internal; use BindingSnapshot.scope
 │   │   ├── registry.ts        BindingRegistry — slot-aware last-wins, the fast lookup indexes,
 │   │   │                      a version counter for memoization; stores bindings BY REFERENCE (no re-copy)
@@ -2658,7 +2680,8 @@ packages/di/
 │   │   │   │                  @postConstruct, accessor injection, and the `new` call itself
 │   │   │   └── activation-need.ts  Per-binding cache: does the activation pipeline need to run
 │   │   ├── plan/
-│   │   │   └── instantiation-plan.ts   The compiler for a compiled plan + the escape to the runtime path
+│   │   │   ├── instantiation-plan.ts   The compiler for a compiled plan + the escape to the runtime path
+│   │   │   └── plan-codegen.ts         Renders a hot plan as a function of its own; a closure where the runtime forbids it
 │   │   ├── path/
 │   │   │   └── resolution-path.ts      Cycle guard over a path array (linear scan → Set
 │   │   │                      once deep); OwnedBranchPath for async branches
@@ -2839,7 +2862,9 @@ export {
   AsyncDeactivationError,
   AsyncModuleLoadError,
   AsyncResolutionError,
+  ChainAlreadyRegisteredError,
   ChainNotRegisteredError,
+  ManyBindingSlotError,
   CircularDependencyError,
   DiError,
   DisposedContainerError,
@@ -3097,6 +3122,14 @@ In practice the emit options (`declaration`, `sourceMap`, …) are split out int
 only `outDir`, which the build inherits.
 
 ---
+
+### Code generation and Content Security Policy
+
+A transient class, `toResolved` or `toResolvedAsync` binding a container has resolved many times, through `resolve` or
+`resolveAsync`, has its compiled plan generated as a function of its own through the `Function` constructor; a runtime
+that refuses the constructor (a Content Security Policy without `unsafe-eval`) leaves every plan a closure. The two
+behave identically — the same instances, the same errors, the same cycle detection — and only the throughput of a hot
+plan differs. `RESOLUTION_DIAGNOSTICS` reports how many plans a container has generated as `generatedPlanCount`.
 
 ## Testing guide
 
