@@ -93,6 +93,8 @@ function buildHasBoundCheckScenario(): BenchScenario {
 
 /**
  * Builds ditox's registry operation scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxRegistryOpsScenarios(): ReadonlyArray<BenchScenario> {
   return [buildRebindHotSwapScenario(), buildChainRebindInvalidationScenario(), buildHasBoundCheckScenario()];

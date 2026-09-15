@@ -48,6 +48,8 @@ function buildFreshChildScenario(resolvesPerChild: number): BenchScenario {
 
 /**
  * Builds Awilix's fresh-child scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildAwilixFreshChildScenarios(): ReadonlyArray<BenchScenario> {
   return FRESH_CHILD_RESOLVES.map((count) => buildFreshChildScenario(count));

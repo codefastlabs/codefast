@@ -30,6 +30,8 @@ export interface DefaultLookupEntry<Owner> {
  * @remarks `values` is kept only while every member is a hook-free constant or a hook-free singleton
  * whose instance is cached, and `activationVersion` is the chain's activation version that promise was
  * made under.
+ *
+ * @since 0.10.0
  */
 export interface CollectionEntry {
   readonly candidates: ReadonlyArray<Binding>;

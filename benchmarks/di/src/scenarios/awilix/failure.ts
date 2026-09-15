@@ -74,6 +74,8 @@ function buildCircularDependencyThreeScenario(): BenchScenario {
 
 /**
  * Builds Awilix's failure scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildAwilixFailureScenarios(): ReadonlyArray<BenchScenario> {
   return [buildMisconfiguredMissingBindingScenario(), buildCircularDependencyThreeScenario()];

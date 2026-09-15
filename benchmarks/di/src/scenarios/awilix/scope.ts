@@ -131,6 +131,8 @@ function buildScopedBindingPerChildScenario(): BenchScenario {
 
 /**
  * Builds Awilix's scope benchmark scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildAwilixScopeScenarios(): ReadonlyArray<BenchScenario> {
   return [

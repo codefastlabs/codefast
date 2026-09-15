@@ -44,6 +44,8 @@ function buildAsyncInitSingleHopScenario(): AsyncBenchScenario {
 
 /**
  * Builds the brandi async scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiAsyncScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [buildAsyncInitSingleHopScenario()];

@@ -39,6 +39,8 @@ function buildAsyncInitSingleHopScenario(): AsyncBenchScenario {
 
 /**
  * Builds Awilix's async scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildAwilixAsyncScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [buildAsyncInitSingleHopScenario()];

@@ -65,6 +65,8 @@ function buildCircularDependencyThreeScenario(): BenchScenario {
 
 /**
  * Builds injection-js's failure scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsFailureScenarios(): ReadonlyArray<BenchScenario> {
   return [buildMisconfiguredMissingBindingScenario(), buildCircularDependencyThreeScenario()];

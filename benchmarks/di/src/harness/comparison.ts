@@ -13,7 +13,11 @@ import { CODEFAST_DI, COMPETITORS } from "#/harness/config";
 import type { DiBenchLibrary } from "#/harness/config";
 import { DI_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
-/** One library's fingerprint and per-trial payloads, live from a run or reconstructed from disk. */
+/**
+ * One library's fingerprint and per-trial payloads, live from a run or reconstructed from disk.
+ *
+ * @since 0.8.0
+ */
 export interface LibraryPayload {
   readonly fingerprint: Fingerprint;
   readonly trials: ReadonlyArray<TrialPayload>;
@@ -25,7 +29,11 @@ function toLibrary(payload: LibraryPayload, library: DiBenchLibrary): Comparison
   return { report, displayName: resolveDisplayName(library), shortName: library.shortName };
 }
 
-/** The assembled comparison: the pivot, its competitors, the markdown report, and the document. */
+/**
+ * The assembled comparison: the pivot, its competitors, the markdown report, and the document.
+ *
+ * @since 0.8.0
+ */
 export interface DiComparison {
   readonly codefastLibrary: ComparisonLibrary;
   readonly competitors: ReadonlyArray<ComparisonLibrary>;
@@ -33,7 +41,11 @@ export interface DiComparison {
   readonly comparisonDocument: ComparisonDocument;
 }
 
-/** Inputs a comparison needs beyond the payloads: the run id, its order caveat, and its shape. */
+/**
+ * Inputs a comparison needs beyond the payloads: the run id, its order caveat, and its shape.
+ *
+ * @since 0.8.0
+ */
 export interface AssembleDiComparisonOptions {
   readonly runId: string;
   readonly runOrder: string;
@@ -46,6 +58,8 @@ export interface AssembleDiComparisonOptions {
  * Assembles the head-to-head comparison from each library's payloads.
  *
  * @throws Error when the pivot library measured nothing.
+ *
+ * @since 0.8.0
  */
 export function assembleDiComparison(
   payloadsByLibrary: ReadonlyMap<string, LibraryPayload>,

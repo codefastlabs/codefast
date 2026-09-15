@@ -19,6 +19,8 @@ import type { AnyScenario } from "#/scenarios/types";
 
 /**
  * Collects every injection-js bench scenario.
+ *
+ * @since 0.8.0
  */
 export function collectAllInjectionJsScenarios(): ReadonlyArray<AnyScenario> {
   return [

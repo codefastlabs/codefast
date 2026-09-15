@@ -27,6 +27,8 @@ function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
 
 /**
  * Builds the brandi fan-out scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiFanOutScenarios(): ReadonlyArray<BenchScenario> {
   return [buildFanOutTreeDepthThreeBreadthFourScenario()];

@@ -14,6 +14,8 @@ import type { TrialPayload } from "#/shared/protocol";
 
 /**
  * Everything the card states.
+ *
+ * @since 0.9.0
  */
 export interface RunCardInput {
   readonly runId: string;
@@ -37,6 +39,8 @@ export interface RunCardInput {
 
 /**
  * Options for {@link renderRunCardLines}.
+ *
+ * @since 0.9.0
  */
 export interface RenderRunCardOptions {
   readonly palette: Palette;
@@ -95,6 +99,8 @@ function truncate(text: string, width: number, unicode: boolean): string {
 
 /**
  * Renders the closing card, boxed to the width, every value padded before it is tinted.
+ *
+ * @since 0.9.0
  */
 export function renderRunCardLines(input: RunCardInput, options: RenderRunCardOptions): Array<string> {
   const { palette, unicode } = options;
@@ -156,6 +162,8 @@ export function renderRunCardLines(input: RunCardInput, options: RenderRunCardOp
 
 /**
  * What a suite's parent entry has in hand when the run is over.
+ *
+ * @since 0.9.0
  */
 export interface PrintRunCardParameters {
   readonly packageRootDirectory: string;
@@ -176,6 +184,8 @@ const MIN_CARD_WIDTH = 60;
 
 /**
  * Prints the closing card on stdout, sized to the terminal.
+ *
+ * @since 0.9.0
  */
 export function printRunCard(parameters: PrintRunCardParameters): void {
   const { pivot, competitors, comparisonDocument, paths } = parameters;

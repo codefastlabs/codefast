@@ -1,5 +1,38 @@
 # @codefast/cli
 
+## 0.11.0
+
+### Minor Changes
+
+- [#855](https://github.com/codefastlabs/codefast/pull/855) [`76cf7a6`](https://github.com/codefastlabs/codefast/commit/76cf7a65372c5f13f779c7b59200cb956d93b882) Thanks [@thevuong](https://github.com/thevuong)! - Fix `codefast arrange simplify` changing rendered output: a mixed `cn()` call moved every static literal to the front,
+  which flipped tailwind-merge precedence and dropped overrides that sat after a variant call. It now coalesces only
+  adjacent static literals and preserves argument order.
+
+  Add `codefast arrange simplify --fold-variant-classname` (alias `--fold-variant-class-name`), which folds
+  `cn(buttonVariants({ size: "sm" }), "flex-1")` into `buttonVariants({ size: "sm", className: "flex-1" })`. The fold is
+  gated on the native TypeScript type server confirming the callee accepts a `className`/`class`, so it loads the
+  `typescript` package (a new optional peer, v7) and applies only inside a `tsconfig`; the default pass is unchanged.
+
+  The fold splices `className` in after the last option, so a trailing comma or line comment in the options object no
+  longer breaks the rewrite. Overlapping edits are now resolved before they are applied — keeping the outermost of any
+  nested `cn()`/variant pair — so nested calls no longer corrupt the output.
+
+- [#854](https://github.com/codefastlabs/codefast/pull/854) [`a7ad2d8`](https://github.com/codefastlabs/codefast/commit/a7ad2d8b24b10b5554a5809be943aca00e22e844) Thanks [@thevuong](https://github.com/thevuong)! - `codefast audit imports` now enforces the Zod namespace form (`import * as z from "zod"`) in every workspace package,
+  not only the front-end/bundled ones. The rule's `scope` restriction is dropped, so a named `import { z } from "zod"` is
+  flagged everywhere — backend/tsc packages such as `cli` itself included. Type-only imports
+  (`import type { ZodType } from "zod"`) stay allowed; only the value `z` is banned.
+
+### Patch Changes
+
+- [#855](https://github.com/codefastlabs/codefast/pull/855) [`9e481c5`](https://github.com/codefastlabs/codefast/commit/9e481c554b7f60216b130495fd157fe3a459721e) Thanks [@thevuong](https://github.com/thevuong)! - Fix `codefast arrange --dry-run --json` printing human-readable preview lines to stdout ahead of the JSON summary, which
+  broke piping the output to a JSON parser. Dry-run previews are now emitted only in human mode; `--json` writes a single
+  JSON object.
+
+- [#854](https://github.com/codefastlabs/codefast/pull/854) [`504a61a`](https://github.com/codefastlabs/codefast/commit/504a61a996684fbd4fb6703141612d3cd97dbfde) Thanks [@thevuong](https://github.com/thevuong)! - Reorganize the CLI source into a uniform per-command and per-subcommand directory layout. Each command follows one
+  skeleton (`command.ts`, `cli-schema.ts`, `prepare.ts`, `run*.ts`, `output.ts`, `cli-result.ts`, `domain/`), and every
+  `audit`/`arrange` subcommand is now its own mini-command directory (`audit/rtl/`, `arrange/inspect/`, …) with the shared
+  runner and grouping engine kept at the command root. Internal refactor only — no public API or behavior change.
+
 ## 0.10.0
 
 ### Minor Changes

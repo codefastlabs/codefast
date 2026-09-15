@@ -6,16 +6,22 @@ import type { BenchProgressEvent } from "#/shared/progress";
  *
  * @remarks `idle` only occurs between per-scenario subprocesses of an isolated run; a shared run
  * moves straight from `running` to `done`.
+ *
+ * @since 0.9.0
  */
 export type LibraryProgressStatus = "queued" | "discovering" | "running" | "idle" | "done" | "failed";
 
 /**
  * What one subprocess covers for a library: its whole suite, or a single scenario of it.
+ *
+ * @since 0.9.0
  */
 export type SubprocessScope = "suite" | "scenario";
 
 /**
  * A read-only view of one library's progress, in registration order when listed.
+ *
+ * @since 0.9.0
  */
 export interface LibraryProgress {
   readonly key: string;
@@ -38,6 +44,8 @@ export interface LibraryProgress {
 
 /**
  * Options for registering a library on a tracker.
+ *
+ * @since 0.9.0
  */
 export interface RegisterLibraryOptions {
   readonly subprocessScope?: SubprocessScope | undefined;
@@ -46,6 +54,8 @@ export interface RegisterLibraryOptions {
 
 /**
  * Fraction of a library's run that is complete, in scenario-trials, or `undefined` before the total is known.
+ *
+ * @since 0.9.0
  */
 export function progressFraction(progress: LibraryProgress): number | undefined {
   if (progress.status === "done") {
@@ -63,6 +73,8 @@ export function progressFraction(progress: LibraryProgress): number | undefined 
 
 /**
  * Accumulates progress for every library of a run; pure state, so it renders identically anywhere.
+ *
+ * @since 0.9.0
  */
 export class ProgressTracker {
   readonly #rows = new Map<string, LibraryProgress>();

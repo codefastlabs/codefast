@@ -42,6 +42,8 @@ function buildAsyncInitSingleHopScenario(): AsyncBenchScenario {
 
 /**
  * Builds tsyringe's async scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeAsyncScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [buildAsyncInitSingleHopScenario()];

@@ -279,6 +279,8 @@ export function generateBindingId(): BindingIdentifier {
 /**
  * Writable view of the one selection field a chain may refine without re-registering: nothing
  * indexes on the predicate, so the registry rewrites it in place and re-homes the binding itself.
+ *
+ * @since 0.10.0
  */
 export interface PredicateField {
   predicate: BindingConstraint | undefined;
@@ -286,17 +288,27 @@ export interface PredicateField {
 
 /**
  * Narrows a registered binding to its predicate for the registry to rewrite.
+ *
+ * @since 0.10.0
  */
 export function writablePredicate(binding: Binding): PredicateField {
   return binding as PredicateField;
 }
 
-/** Writable view of collection membership, which the registry sets because it decides the binding's map. */
+/**
+ * Writable view of collection membership, which the registry sets because it decides the binding's map.
+ *
+ * @since 0.10.0
+ */
 export interface MembershipField {
   isMany: boolean;
 }
 
-/** Narrows a registered binding to its membership flag for the registry to set. */
+/**
+ * Narrows a registered binding to its membership flag for the registry to set.
+ *
+ * @since 0.10.0
+ */
 export function writableMembership(binding: Binding): MembershipField {
   return binding as MembershipField;
 }

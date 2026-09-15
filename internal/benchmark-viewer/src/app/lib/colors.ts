@@ -17,6 +17,9 @@ export interface PaletteEntry {
 // Seven hues spread for the widest pairwise separation (so no two lines read alike), each also kept
 // clear of the ratio colours. Keep at least as many as the largest suite compares (the `di` suite has
 // seven), or `paletteMap`'s modulo would hand two libraries the same colour.
+/**
+ * @since 0.9.0
+ */
 export const PALETTE: ReadonlyArray<PaletteEntry> = [
   { border: "#2dd4bf", band: "rgba(45,212,191,0.18)", text: "rgb(187,241,234)" },
   { border: "#60a5fa", band: "rgba(96,165,250,0.16)", text: "rgb(177,210,251)" },

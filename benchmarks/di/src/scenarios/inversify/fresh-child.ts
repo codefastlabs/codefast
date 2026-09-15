@@ -99,6 +99,8 @@ function buildFreshChildScenario(lane: Lane, resolvesPerChild: number): BenchSce
 
 /**
  * Builds inversify's fresh-child scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInversifyFreshChildScenarios(): ReadonlyArray<BenchScenario> {
   return LANES.flatMap((lane) => FRESH_CHILD_RESOLVES.map((count) => buildFreshChildScenario(lane, count)));

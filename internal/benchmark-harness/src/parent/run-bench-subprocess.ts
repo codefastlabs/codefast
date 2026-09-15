@@ -93,6 +93,8 @@ function createStreamLineForwarder(onLine: (line: string) => void): {
 
 /**
  * Where a subprocess reports its progress: the display and the row it belongs to.
+ *
+ * @since 0.9.0
  */
 export type SubprocessProgressTarget = Readonly<{
   readonly display: ProgressDisplay;
@@ -106,6 +108,8 @@ export type SubprocessProgressTarget = Readonly<{
 
 /**
  * The executable and arguments that start one bench child.
+ *
+ * @since 0.9.0
  */
 export interface SubprocessLaunch {
   readonly command: string;
@@ -114,6 +118,8 @@ export interface SubprocessLaunch {
 
 /**
  * What a launcher is told about the child it starts.
+ *
+ * @since 0.9.0
  */
 export interface SubprocessLaunchTarget {
   readonly tsconfigFileName: string;
@@ -123,11 +129,15 @@ export interface SubprocessLaunchTarget {
 
 /**
  * Builds the command that runs a child; the default runs the TypeScript entry through the suite's own tsx.
+ *
+ * @since 0.9.0
  */
 export type SubprocessLauncher = (target: SubprocessLaunchTarget) => SubprocessLaunch;
 
 /**
  * The launcher every suite uses: `pnpm exec tsx --tsconfig <tsconfig> <entry>` in the suite package.
+ *
+ * @since 0.9.0
  */
 export const launchWithPnpmTsx: SubprocessLauncher = ({ tsconfigFileName, entryPath }) => ({
   command: "pnpm",
@@ -308,15 +318,27 @@ export function isIsolatedBenchRunRequested(): boolean {
   return isEnvFlagEnabled(BENCH_ISOLATE_ENV_KEY);
 }
 
-/** The run-order caveat for an isolated run: scenario-major and rotated, so ratios are citable. */
+/**
+ * The run-order caveat for an isolated run: scenario-major and rotated, so ratios are citable.
+ *
+ * @since 0.9.0
+ */
 export const INTERLEAVED_RUN_ORDER =
   "interleaved — every library runs a scenario before the next scenario starts, rotating which goes first";
 
-/** The run-order caveat for a shared run: one library's whole suite before the next, so ratios are provisional. */
+/**
+ * The run-order caveat for a shared run: one library's whole suite before the next, so ratios are provisional.
+ *
+ * @since 0.9.0
+ */
 export const LIBRARY_MAJOR_RUN_ORDER =
   "library-major — each library's whole suite runs before the next starts, so drift over the run lands on whoever ran later; cross-library ratios from this profile are provisional";
 
-/** Selects the run-order caveat that matches a run's execution shape. */
+/**
+ * Selects the run-order caveat that matches a run's execution shape.
+ *
+ * @since 0.9.0
+ */
 export function runOrderForShape(isolated: boolean): string {
   return isolated ? INTERLEAVED_RUN_ORDER : LIBRARY_MAJOR_RUN_ORDER;
 }

@@ -43,6 +43,8 @@ function buildFactoryResolveScenario(descriptor: ScenarioDescriptor, viaContaine
 
 /**
  * Builds ditox's resolver-lane scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxResolverLaneScenarios(): ReadonlyArray<BenchScenario> {
   return [

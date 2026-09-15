@@ -591,6 +591,9 @@ function buildIntraLibraryTableLines(rows: ReadonlyArray<IntraLibraryRow>): Arra
   ];
 }
 
+/**
+ * @since 0.9.0
+ */
 export function renderComparisonMarkdownReport(
   pivot: ComparisonLibrary,
   competitors: ReadonlyArray<ComparisonLibrary>,
@@ -804,7 +807,11 @@ function renderDiffLines(diff: RunDiff, palette: Palette): Array<string> {
   return lines;
 }
 
-/** One library's ratio of a scenario's throughput to its group baseline's, with reliability. */
+/**
+ * One library's ratio of a scenario's throughput to its group baseline's, with reliability.
+ *
+ * @since 0.9.0
+ */
 export interface IntraLibraryRatioCell {
   readonly libraryDisplayName: string;
   readonly ratio: number;
@@ -812,7 +819,11 @@ export interface IntraLibraryRatioCell {
   readonly unreliable: boolean;
 }
 
-/** A scenario's intra-library comparison: its throughput against the group baseline, per library. */
+/**
+ * A scenario's intra-library comparison: its throughput against the group baseline, per library.
+ *
+ * @since 0.9.0
+ */
 export interface IntraLibraryRow {
   readonly scenarioId: string;
   readonly group: string;
@@ -835,6 +846,8 @@ function indexScenariosById(report: LibraryReport): Map<string, AggregatedScenar
  *
  * @param libraries - Pivot first, then competitors; each contributes one cell per row it measured.
  * @param baselineOf - Each compared scenario id mapped to the baseline scenario id it is measured against.
+ *
+ * @since 0.9.0
  */
 export function buildIntraLibraryRows(
   libraries: ReadonlyArray<ComparisonLibrary>,

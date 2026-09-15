@@ -15,6 +15,8 @@ import type { GraphDescriptor, NodeDescriptor, RealisticNode } from "#/fixtures/
 /**
  * A built container plus every registration token, retained so sanity checks
  * can resolve any node. Scenarios typically only need `rootToken` + `container`.
+ *
+ * @since 0.8.0
  */
 export interface DitoxRealisticBuild {
   readonly container: Container;
@@ -50,6 +52,8 @@ function bindOneNode(
 /**
  * Builds a fresh ditox container from the descriptor. Use per-iteration for
  * `realistic-graph-cold-resolve`, or once in scenario setup for hot paths.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxRealisticContainer(graph: GraphDescriptor): DitoxRealisticBuild {
   assertGraphIsWellFormed(graph);
@@ -71,6 +75,8 @@ export function buildDitoxRealisticContainer(graph: GraphDescriptor): DitoxReali
 
 /**
  * Sanity helper: resolves the root and asserts the expected shape.
+ *
+ * @since 0.8.0
  */
 export function sanityCheckDitoxRealisticResolve(graph: GraphDescriptor): boolean {
   const { container, rootToken } = buildDitoxRealisticContainer(graph);

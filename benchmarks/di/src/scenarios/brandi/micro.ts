@@ -119,6 +119,9 @@ function buildOptionalMissingTransientScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.8.0
+ */
 export function buildBrandiMicroScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildConstantResolveScenario(),

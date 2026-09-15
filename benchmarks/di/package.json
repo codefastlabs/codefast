@@ -1,6 +1,6 @@
 {
   "name": "@benchmark/di",
-  "version": "0.7.4",
+  "version": "0.8.0",
   "private": true,
   "description": "Head-to-head tinybench harness: @codefast/di vs InversifyJS v8 (full suite), Awilix, tsyringe, Brandi and ditox (core subset), plus injection-js (singleton-friendly rows)",
   "keywords": [

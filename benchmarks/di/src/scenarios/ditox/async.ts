@@ -43,6 +43,8 @@ function buildAsyncInitSingleHopScenario(): AsyncBenchScenario {
 
 /**
  * Builds ditox's async scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxAsyncScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [buildAsyncInitSingleHopScenario()];

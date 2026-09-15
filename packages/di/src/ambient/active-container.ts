@@ -61,6 +61,8 @@ export function runWithAmbientResolution<Result>(
  *
  * @remarks The construction is written out rather than wrapped in a closure: an accessor-injected
  * class pays this on every instantiation, and the closure was one of two allocations it paid for.
+ *
+ * @since 0.10.0
  */
 export function constructWithAmbientResolution(
   container: Container,
@@ -80,6 +82,9 @@ export function constructWithAmbientResolution(
   }
 }
 
+/**
+ * @since 0.10.0
+ */
 export function getActiveContainer(): Container | undefined {
   return activeContainer;
 }

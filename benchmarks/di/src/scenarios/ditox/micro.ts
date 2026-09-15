@@ -123,6 +123,9 @@ function buildOptionalMissingTransientScenario(): BenchScenario {
   };
 }
 
+/**
+ * @since 0.8.0
+ */
 export function buildDitoxMicroScenarios(): ReadonlyArray<BenchScenario> {
   return [
     buildConstantResolveScenario(),

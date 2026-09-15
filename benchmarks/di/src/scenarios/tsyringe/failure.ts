@@ -39,6 +39,8 @@ function buildMisconfiguredMissingBindingScenario(): BenchScenario {
 
 /**
  * Builds tsyringe's failure scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeFailureScenarios(): ReadonlyArray<BenchScenario> {
   return [buildMisconfiguredMissingBindingScenario()];

@@ -9,6 +9,8 @@ import type { GraphDescriptor, RealisticNode } from "#/fixtures/realistic-graph"
  *
  * @remarks Walks both trees with one singleton registry, so a singleton that differs between the two
  * resolutions, or a dependency wired out of order, reads as a broken graph rather than a fast one.
+ *
+ * @since 0.8.0
  */
 export function isRealisticClassGraphWellFormed(
   graph: GraphDescriptor,

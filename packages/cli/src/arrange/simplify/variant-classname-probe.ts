@@ -6,6 +6,8 @@ import { AppError, messageFrom } from "#/core/errors";
 
 /**
  * What a variant function's `className`/`class` option accepts, resolved from its type.
+ *
+ * @since 0.11.0
  */
 export interface VariantClassNameAcceptance {
   readonly acceptsString: boolean;
@@ -14,6 +16,8 @@ export interface VariantClassNameAcceptance {
 
 /**
  * A per-file view that resolves a callee's `className` acceptance from a source offset.
+ *
+ * @since 0.11.0
  */
 export interface FileClassNameProbe {
   classNameAcceptance(calleeOffset: number): VariantClassNameAcceptance | null;
@@ -21,6 +25,8 @@ export interface FileClassNameProbe {
 
 /**
  * A whole-run type probe backing the opt-in `className` fold, bound to one type server.
+ *
+ * @since 0.11.0
  */
 export interface VariantClassNameProbe {
   forFile(filePath: string): FileClassNameProbe | null;
@@ -108,6 +114,8 @@ async function loadTypeServer() {
  * Creates a type probe over the native TypeScript type server for the opt-in `className` fold.
  *
  * @throws AppError when the `typescript` package providing the type server cannot be loaded.
+ *
+ * @since 0.11.0
  */
 export async function createVariantClassNameProbe(): Promise<VariantClassNameProbe> {
   const sync = await loadTypeServer();

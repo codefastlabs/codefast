@@ -48,6 +48,8 @@ function buildScaleTransientChainScenario(descriptor: ScenarioDescriptor, chainS
 
 /**
  * Builds the brandi scale scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiScaleScenarios(): ReadonlyArray<BenchScenario> {
   return [

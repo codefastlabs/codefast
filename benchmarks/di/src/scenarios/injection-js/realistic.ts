@@ -50,6 +50,8 @@ function buildRealisticGraphColdResolveScenario(): BenchScenario {
 
 /**
  * Builds the injection-js realistic-graph scenarios it can express.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsRealisticScenarios(): ReadonlyArray<BenchScenario> {
   return [buildRealisticGraphResolveRootScenario(), buildRealisticGraphColdResolveScenario()];

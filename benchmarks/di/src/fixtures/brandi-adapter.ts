@@ -15,6 +15,8 @@ import type { GraphDescriptor, NodeDescriptor, RealisticNode } from "#/fixtures/
 /**
  * A built container plus every registration token, retained so sanity checks
  * can resolve any node. Scenarios typically only need `rootToken` + `container`.
+ *
+ * @since 0.8.0
  */
 export interface BrandiRealisticBuild {
   readonly container: Container;
@@ -58,6 +60,8 @@ function bindOneNode(
 /**
  * Builds a fresh brandi container from the descriptor. Use per-iteration for
  * `realistic-graph-cold-resolve`, or once in scenario setup for hot paths.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiRealisticContainer(graph: GraphDescriptor): BrandiRealisticBuild {
   assertGraphIsWellFormed(graph);
@@ -79,6 +83,8 @@ export function buildBrandiRealisticContainer(graph: GraphDescriptor): BrandiRea
 
 /**
  * Sanity helper: resolves the root and asserts the expected shape.
+ *
+ * @since 0.8.0
  */
 export function sanityCheckBrandiRealisticResolve(graph: GraphDescriptor): boolean {
   const { container, rootToken } = buildBrandiRealisticContainer(graph);
@@ -121,6 +127,8 @@ function bindOneInjectedNode(
 
 /**
  * Builds the same graph through function creators wired with `injected()` — brandi's explicit-deps form.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiRealisticInjectedContainer(graph: GraphDescriptor): BrandiRealisticBuild {
   assertGraphIsWellFormed(graph);

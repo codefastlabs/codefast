@@ -10,6 +10,8 @@ import type { ConstructorInvocation } from "#/core/constructor-type";
  *
  * @remarks Below it a plan stays a closure, which is all a cold container or a per-request child
  * ever runs; above it a plan pays one compile for call sites nothing else feeds.
+ *
+ * @since 0.10.0
  */
 export const PLAN_CODEGEN_THRESHOLD = 32;
 
@@ -18,6 +20,8 @@ export const PLAN_CODEGEN_THRESHOLD = 32;
  *
  * @remarks Every leaf the compiler could not see through is a `thunk` and stays opaque — generated
  * code calls it exactly as the closure did, so an escape keeps its frames, its dispatch and its errors.
+ *
+ * @since 0.10.0
  */
 export type PlanNode =
   | { readonly kind: "construct"; readonly target: ConstructorInvocation; readonly deps: ReadonlyArray<PlanNode> }
@@ -42,6 +46,8 @@ export type PlanNode =
  * @remarks A node that `awaits` has a dependency that may yield a promise, so it runs as the
  * interpreted async path does: every dependency starts in order, a sync throw becomes that slot's
  * rejection, and the constructor or factory runs on the settled values.
+ *
+ * @since 0.10.0
  */
 export type AsyncPlanNode =
   | {
@@ -70,6 +76,8 @@ let generatedCount = 0;
  *
  * @remarks A Content Security Policy without `unsafe-eval` refuses the `Function` constructor; every
  * plan then stays a closure, which behaves identically.
+ *
+ * @since 0.10.0
  */
 export function isPlanCodegenAvailable(): boolean {
   if (codegenAvailable === undefined) {
@@ -89,6 +97,8 @@ export function isPlanCodegenAvailable(): boolean {
  *
  * @remarks The source carries a serial so no two plans share a compilation-cache entry: V8 keys
  * type feedback by function literal, and one literal per plan is the whole point.
+ *
+ * @since 0.10.0
  */
 export function generatePlan(node: PlanNode): (() => unknown) | null {
   if (!isPlanCodegenAvailable()) {
@@ -98,7 +108,11 @@ export function generatePlan(node: PlanNode): (() => unknown) | null {
   return compileRendered(emitter, emitter.expression(node));
 }
 
-/** Generates an async plan as a function of its own, or `null` when the runtime refuses to compile one. */
+/**
+ * Generates an async plan as a function of its own, or `null` when the runtime refuses to compile one.
+ *
+ * @since 0.10.0
+ */
 export function generateAsyncPlan(node: AsyncPlanNode): (() => unknown) | null {
   if (!isPlanCodegenAvailable()) {
     return null;
