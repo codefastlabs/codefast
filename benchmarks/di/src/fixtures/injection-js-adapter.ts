@@ -17,6 +17,8 @@ import type { GraphDescriptor, RealisticNode } from "#/fixtures/realistic-graph"
 /**
  * A built injector plus the resolved root provider, retained so the hot row can
  * re-instantiate a fresh transient root against cached singleton dependencies.
+ *
+ * @since 0.8.0
  */
 export interface InjectionJsRealisticBuild {
   readonly injector: ReflectiveInjector;
@@ -67,6 +69,8 @@ function providerForNode(
 /**
  * Builds a fresh injector from the descriptor plus the resolved root provider
  * used by the transient-root row.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsRealisticInjector(graph: GraphDescriptor): InjectionJsRealisticBuild {
   assertGraphIsWellFormed(graph);
@@ -90,6 +94,8 @@ export function buildInjectionJsRealisticInjector(graph: GraphDescriptor): Injec
 /**
  * Sanity helper for the cold-resolve row: builds a fresh injector and resolves
  * the root once.
+ *
+ * @since 0.8.0
  */
 export function sanityCheckInjectionJsRealisticColdResolve(graph: GraphDescriptor): boolean {
   const { injector, rootToken } = buildInjectionJsRealisticInjector(graph);
@@ -100,6 +106,8 @@ export function sanityCheckInjectionJsRealisticColdResolve(graph: GraphDescripto
 /**
  * Sanity helper for the transient-root row: instantiates the root fresh and
  * asserts a distinct instance each call over shared singleton dependencies.
+ *
+ * @since 0.8.0
  */
 export function sanityCheckInjectionJsRealisticTransientRoot(graph: GraphDescriptor): boolean {
   const { injector, resolvedRootProvider } = buildInjectionJsRealisticInjector(graph);

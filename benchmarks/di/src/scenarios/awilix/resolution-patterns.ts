@@ -50,6 +50,8 @@ function buildResolveOptionalMissScenario(): BenchScenario {
 
 /**
  * Builds Awilix's optional resolve scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildAwilixResolutionPatternScenarios(): ReadonlyArray<BenchScenario> {
   return [buildResolveOptionalHitScenario(), buildResolveOptionalMissScenario()];

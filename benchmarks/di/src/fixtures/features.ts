@@ -49,5 +49,7 @@ const DI_FEATURES = {
 
 /**
  * A feature a scenario may require and a library may declare.
+ *
+ * @since 0.8.0
  */
 export type DiFeature = keyof typeof DI_FEATURES;

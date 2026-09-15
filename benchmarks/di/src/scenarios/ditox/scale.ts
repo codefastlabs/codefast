@@ -47,6 +47,8 @@ function buildScaleTransientChainScenario(descriptor: ScenarioDescriptor, chainS
 
 /**
  * Builds the ditox scale scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxScaleScenarios(): ReadonlyArray<BenchScenario> {
   return [

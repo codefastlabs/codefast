@@ -48,6 +48,8 @@ function buildLifecyclePreDestroyUnbindScenario(): AsyncBenchScenario {
 
 /**
  * Builds Awilix's lifecycle/disposal scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildAwilixLifecycleScenarios(): ReadonlyArray<AsyncBenchScenario> {
   return [buildLifecyclePreDestroyUnbindScenario()];

@@ -22,6 +22,8 @@ export interface BenchSubprocessConfig {
  *
  * @remarks An entry matches a library's `libraryName` or `displayName`, case-insensitively. An entry
  * matching nothing is a typo, and the error names every library the suite knows.
+ *
+ * @since 0.9.0
  */
 export function selectLibraries<Config extends BenchSubprocessConfig>(
   libraries: ReadonlyArray<Config>,

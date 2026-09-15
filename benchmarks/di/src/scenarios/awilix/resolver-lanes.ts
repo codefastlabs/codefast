@@ -46,6 +46,8 @@ function buildFactoryResolveScenario(descriptor: ScenarioDescriptor, viaContaine
 
 /**
  * Builds Awilix's resolver-lane scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildAwilixResolverLaneScenarios(): ReadonlyArray<BenchScenario> {
   return [

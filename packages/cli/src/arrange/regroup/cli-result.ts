@@ -3,6 +3,8 @@ import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
 
 /**
  * Machine-readable `arrange` run summary for `--json`, minus the non-serializable preview plans.
+ *
+ * @since 0.11.0
  */
 export function formatArrangeJsonOutput(result: ArrangeRunResult, write: boolean): string {
   const { previewPlans: _plans, ...serializableResult } = result;
@@ -16,6 +18,8 @@ export function formatArrangeJsonOutput(result: ArrangeRunResult, write: boolean
 
 /**
  * Exit `1` when an after-write hook failed, `0` otherwise.
+ *
+ * @since 0.11.0
  */
 export function exitCodeForArrangeResult(result: ArrangeRunResult): number {
   return result.hookError !== null ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;

@@ -26,6 +26,8 @@ export interface BenchScenarioInventoryEntry {
 
 /**
  * How much of the suite one library covers, and where its declarations and its rows disagree.
+ *
+ * @since 0.9.0
  */
 export interface BenchLibraryCoverage {
   readonly libraryName: string;
@@ -61,6 +63,8 @@ function describeListing(listing: ScenarioListing): string {
  *
  * @param configs - Subject first, so the inventory reads in report order rather than discovery order.
  * @param listingsByLibrary - Each library's `scenarioListings`, keyed by `libraryName`.
+ *
+ * @since 0.9.0
  */
 export function buildScenarioInventoryFromListings(
   configs: ReadonlyArray<BenchSubprocessConfig>,
@@ -164,6 +168,8 @@ export async function buildBenchScenarioInventory(
 
 /**
  * Renders the per-library coverage as one line each, for a person reading the console.
+ *
+ * @since 0.9.0
  */
 export function formatCoverageLines(inventory: BenchScenarioInventory): Array<string> {
   if (inventory.coverage === undefined) {

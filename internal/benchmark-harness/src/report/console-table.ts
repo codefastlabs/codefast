@@ -5,6 +5,8 @@ const IDENTITY: Tint = (text) => text;
 
 /**
  * One cell: the plain text that sets the column width, and the tint applied after padding.
+ *
+ * @since 0.9.0
  */
 export interface ConsoleCell {
   readonly text: string;
@@ -14,6 +16,8 @@ export interface ConsoleCell {
 
 /**
  * Options for {@link renderConsoleTable}.
+ *
+ * @since 0.9.0
  */
 export interface RenderConsoleTableOptions {
   /** Tint for the header row; the header is padded like any other row first. */
@@ -23,6 +27,8 @@ export interface RenderConsoleTableOptions {
 
 /**
  * Turns a plain string into a cell.
+ *
+ * @since 0.9.0
  */
 export function cell(text: string, tint?: Tint, align?: "left" | "right"): ConsoleCell {
   return { text, tint, align };
@@ -30,6 +36,8 @@ export function cell(text: string, tint?: Tint, align?: "left" | "right"): Conso
 
 /**
  * Renders a header and rows into aligned lines; numeric-looking columns should pass `align: "right"`.
+ *
+ * @since 0.9.0
  */
 export function renderConsoleTable(
   header: ReadonlyArray<ConsoleCell>,

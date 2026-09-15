@@ -10,6 +10,8 @@ const HEARTBEAT_POLL_MS = 1000;
 
 /**
  * Options for {@link PlainProgressDisplay}.
+ *
+ * @since 0.9.0
  */
 export interface PlainProgressDisplayOptions {
   readonly write: (line: string) => void;
@@ -34,6 +36,8 @@ function isSilentlyRunning(
 
 /**
  * Prints one line when a subprocess starts, plans, finishes or stays silent too long.
+ *
+ * @since 0.9.0
  */
 export class PlainProgressDisplay implements ProgressDisplay {
   readonly #tracker: ProgressTracker;

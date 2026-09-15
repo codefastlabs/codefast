@@ -63,6 +63,8 @@ function buildDisposeScaleScenario(descriptor: ScenarioDescriptor, tearDown: boo
 
 /**
  * Builds inversify's teardown-at-scale scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInversifyDisposeScaleScenarios(): ReadonlyArray<BenchScenario> {
   return [

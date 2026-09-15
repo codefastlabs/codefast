@@ -42,6 +42,8 @@ function buildFactoryResolveScenario(descriptor: ScenarioDescriptor, viaContaine
 
 /**
  * Builds tsyringe's resolver-lane scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeResolverLaneScenarios(): ReadonlyArray<BenchScenario> {
   return [

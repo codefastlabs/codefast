@@ -8,6 +8,8 @@
  *
  * @remarks `resolve` resolves the transient root once; `dependencyOf` reads the root's transient
  * dependency, which must be fresh too.
+ *
+ * @since 0.8.0
  */
 export function isFreshEachResolve<Value extends object>(
   resolve: () => Value,
@@ -25,6 +27,8 @@ export function isFreshEachResolve<Value extends object>(
  * Whether a scoped binding is one instance within a scope and a fresh one in the next scope.
  *
  * @remarks `resolveTwiceInFreshScope` opens a new scope and resolves the binding twice inside it.
+ *
+ * @since 0.8.0
  */
 export function isSharedWithinScopeFreshAcross<Value extends object>(
   resolveTwiceInFreshScope: () => readonly [Value, Value],
@@ -39,6 +43,8 @@ export function isSharedWithinScopeFreshAcross<Value extends object>(
  *
  * @remarks Order is not asserted: no library documents it, and a row must not fail on a contract it
  * never claimed.
+ *
+ * @since 0.8.0
  */
 export function isCompleteCollection(values: ReadonlyArray<number>, count: number): boolean {
   if (values.length !== count) {

@@ -78,6 +78,8 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
 
 /**
  * Builds the brandi module scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiModuleScenarios(): ReadonlyArray<BenchScenario> {
   return [buildModuleColdFromModulesScenario()];

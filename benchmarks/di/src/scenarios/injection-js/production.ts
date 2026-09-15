@@ -47,6 +47,8 @@ function buildProductionEventBusDispatchScenario(): BenchScenario {
 
 /**
  * Builds injection-js's production-shaped scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildInjectionJsProductionScenarios(): ReadonlyArray<BenchScenario> {
   return [buildProductionEventBusDispatchScenario()];

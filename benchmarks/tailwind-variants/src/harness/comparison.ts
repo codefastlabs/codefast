@@ -14,7 +14,11 @@ import { CODEFAST_TV, COMPETITORS } from "#/harness/config";
 import type { TvBenchLibrary } from "#/harness/config";
 import { TAILWIND_VARIANTS_COMPARISON_MARKDOWN } from "#/harness/presentation";
 
-/** One library's fingerprint and per-trial payloads, live from a run or reconstructed from disk. */
+/**
+ * One library's fingerprint and per-trial payloads, live from a run or reconstructed from disk.
+ *
+ * @since 0.8.0
+ */
 export interface LibraryPayload {
   readonly fingerprint: Fingerprint;
   readonly trials: ReadonlyArray<TrialPayload>;
@@ -26,7 +30,11 @@ function toLibrary(payload: LibraryPayload, library: TvBenchLibrary): Comparison
   return { report, displayName: resolveDisplayName(library), shortName: library.shortName };
 }
 
-/** The assembled comparison: the pivot, its competitors, the markdown report, and the document. */
+/**
+ * The assembled comparison: the pivot, its competitors, the markdown report, and the document.
+ *
+ * @since 0.8.0
+ */
 export interface TvComparison {
   readonly codefastLibrary: ComparisonLibrary;
   readonly competitors: ReadonlyArray<ComparisonLibrary>;
@@ -34,7 +42,11 @@ export interface TvComparison {
   readonly comparisonDocument: ComparisonDocument;
 }
 
-/** Inputs a comparison needs beyond the payloads: the run id, its order caveat, and its shape. */
+/**
+ * Inputs a comparison needs beyond the payloads: the run id, its order caveat, and its shape.
+ *
+ * @since 0.8.0
+ */
 export interface AssembleTvComparisonOptions {
   readonly runId: string;
   readonly runOrder: string;
@@ -47,6 +59,8 @@ export interface AssembleTvComparisonOptions {
  * Assembles the head-to-head comparison from each library's payloads.
  *
  * @throws Error when the pivot library measured nothing.
+ *
+ * @since 0.8.0
  */
 export function assembleTvComparison(
   payloadsByLibrary: ReadonlyMap<string, LibraryPayload>,

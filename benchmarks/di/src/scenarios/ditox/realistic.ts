@@ -44,6 +44,8 @@ function buildRealisticGraphColdResolveScenario(): BenchScenario {
 
 /**
  * Builds the ditox realistic-graph scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildDitoxRealisticScenarios(): ReadonlyArray<BenchScenario> {
   return [buildRealisticGraphResolveRootScenario(), buildRealisticGraphColdResolveScenario()];

@@ -38,6 +38,8 @@ function buildMisconfiguredMissingBindingScenario(): BenchScenario {
 
 /**
  * Builds brandi's failure scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildBrandiFailureScenarios(): ReadonlyArray<BenchScenario> {
   return [buildMisconfiguredMissingBindingScenario()];

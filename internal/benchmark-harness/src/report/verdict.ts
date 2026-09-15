@@ -3,16 +3,22 @@ import type { Palette, Tint } from "#/shared/palette";
 
 /**
  * A ratio within this band of 1.0 is statistical parity, not a win or a loss.
+ *
+ * @since 0.9.0
  */
 export const HEAD_TO_HEAD_PARITY_BAND = 0.03;
 
 /**
  * How a ratio reads from the pivot's side.
+ *
+ * @since 0.9.0
  */
 export type Verdict = "win" | "loss" | "parity";
 
 /**
  * Classifies a pivot ÷ competitor ratio.
+ *
+ * @since 0.9.0
  */
 export function classifyRatio(ratio: number): Verdict {
   if (ratio > 1 + HEAD_TO_HEAD_PARITY_BAND) {
@@ -26,6 +32,8 @@ export function classifyRatio(ratio: number): Verdict {
 
 /**
  * The palette role a verdict is drawn in.
+ *
+ * @since 0.9.0
  */
 export function verdictTint(verdict: Verdict, palette: Palette): Tint {
   switch (verdict) {
@@ -43,6 +51,8 @@ export function verdictTint(verdict: Verdict, palette: Palette): Tint {
 
 /**
  * Tints a ratio by its verdict; a missing or unreliable ratio reads dim instead.
+ *
+ * @since 0.9.0
  */
 export function ratioTint(ratio: number, unreliable: boolean, palette: Palette): Tint {
   if (ratio <= 0 || !Number.isFinite(ratio) || unreliable) {

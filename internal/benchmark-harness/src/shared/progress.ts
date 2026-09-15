@@ -5,6 +5,8 @@
  *
  * @remarks Ordinals (`trial`, `scenario`) are one-based, matching the text a person reads on the
  * child's own stderr — the line is the protocol, and the same module both writes and reads it.
+ *
+ * @since 0.9.0
  */
 export type BenchProgressEvent =
   | { readonly kind: "plan"; readonly trialCount: number; readonly scenarioCount: number }
@@ -30,6 +32,8 @@ const FINISHED_LINE = /^\[bench\] all scenarios wall time: (\d+)ms$/;
 
 /**
  * Formats a progress event as the one stderr line the child prints for it.
+ *
+ * @since 0.9.0
  */
 export function formatProgressEvent(event: BenchProgressEvent): string {
   switch (event.kind) {
@@ -58,6 +62,8 @@ export function formatProgressEvent(event: BenchProgressEvent): string {
  * Parses one child stderr line back into its progress event.
  *
  * @returns `undefined` for any line that is not a progress line, so the caller can forward it as a log.
+ *
+ * @since 0.9.0
  */
 export function parseProgressEvent(line: string): BenchProgressEvent | undefined {
   const trimmed = line.trimEnd();

@@ -99,6 +99,8 @@ export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchO
  * Derives a stable partition key for the run configuration a row was measured under.
  *
  * @remarks Runs sharing a key are comparable; a key change marks a boundary a chart must not cross.
+ *
+ * @since 0.9.0
  */
 export function benchConfigKeyOfRow(row: JsonlBenchObservationRow): string {
   return `${row.isolated ? "iso" : "shared"}|${row.mode}|t${row.trialCount}`;
@@ -106,6 +108,8 @@ export function benchConfigKeyOfRow(row: JsonlBenchObservationRow): string {
 
 /**
  * Derives a human label for the run configuration a row was measured under.
+ *
+ * @since 0.9.0
  */
 export function benchConfigLabelOfRow(row: JsonlBenchObservationRow): string {
   const shape = row.isolated ? "isolated" : "shared";
@@ -160,6 +164,8 @@ export function jsonlBenchObservationRowToScenarioTrialResult(row: JsonlBenchObs
 
 /**
  * One library's fingerprint and per-trial payloads reconstructed from its observation rows.
+ *
+ * @since 0.9.0
  */
 export interface LibraryObservations {
   readonly fingerprint: Fingerprint;
@@ -168,6 +174,8 @@ export interface LibraryObservations {
 
 /**
  * A run reconstructed from its `observations.jsonl`: each library's payloads and the run's shape.
+ *
+ * @since 0.9.0
  */
 export interface ParsedRun {
   readonly libraries: Map<string, LibraryObservations>;
@@ -181,6 +189,8 @@ export interface ParsedRun {
  *
  * @remarks The inverse of {@link writeJsonlRun}: it recovers what a report needs from the one file a
  * run persists, so the comparison document and markdown can be derived on demand.
+ *
+ * @since 0.9.0
  */
 export function parseRunObservations(jsonlContent: string): ParsedRun {
   const grouped = new Map<string, { fingerprint: Fingerprint; trials: Map<number, Array<ScenarioTrialResult>> }>();

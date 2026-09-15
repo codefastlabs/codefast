@@ -405,6 +405,8 @@ export class MissingContainerContextError extends DiError {
  *
  * @remarks A chain is its binding, so it registers exactly once; a token bound twice is two `bind()`
  * calls, the second of which displaces the first under slot last-wins.
+ *
+ * @since 0.10.0
  */
 export class ChainAlreadyRegisteredError extends DiError {
   readonly code = "CHAIN_ALREADY_REGISTERED";
@@ -423,6 +425,8 @@ export class ChainAlreadyRegisteredError extends DiError {
  *
  * @remarks A collection member keeps the default slot: its membership replaces slot last-wins, and a
  * tagged member would have no index able to return every member of the tag.
+ *
+ * @since 0.10.0
  */
 export class ManyBindingSlotError extends DiError {
   readonly code = "MANY_BINDING_SLOT";
@@ -436,6 +440,9 @@ export class ManyBindingSlotError extends DiError {
   }
 }
 
+/**
+ * @since 0.10.0
+ */
 export class ChainNotRegisteredError extends DiError {
   readonly code = "CHAIN_NOT_REGISTERED";
   readonly tokenName: string;

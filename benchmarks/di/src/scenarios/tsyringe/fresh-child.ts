@@ -51,6 +51,8 @@ function buildFreshChildScenario(resolvesPerChild: number): BenchScenario {
 
 /**
  * Builds tsyringe's fresh-child scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeFreshChildScenarios(): ReadonlyArray<BenchScenario> {
   return FRESH_CHILD_RESOLVES.map((count) => buildFreshChildScenario(count));

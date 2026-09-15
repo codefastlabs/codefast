@@ -24,6 +24,8 @@ import { emitSubprocessPayload } from "#/shared/protocol";
 
 /**
  * What a child reports about each scenario it collected, measured or not.
+ *
+ * @since 0.9.0
  */
 export function listScenarios(scenarios: ReadonlyArray<AnyBenchScenario>): Array<ScenarioListing> {
   return scenarios.map((scenario) => ({

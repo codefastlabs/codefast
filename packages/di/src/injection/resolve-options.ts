@@ -45,6 +45,8 @@ export function singleCriterionOnlyOf(options: ResolveOptions | undefined): Bind
 
 /**
  * The one tag a request carries beside its name, for the name-plus-tag lane; `undefined` for every other shape.
+ *
+ * @since 0.10.0
  */
 export function loneTagBesideNameOf(options: ResolveOptions): BindingTag | undefined {
   if (options.name === undefined) {

@@ -16,6 +16,8 @@ export function exitCodeForTagResult(result: TagResult): number {
 
 /**
  * Serializes a tag run's result as the `--json` output string.
+ *
+ * @since 0.11.0
  */
 export function formatTagJsonOutput(result: TagResult, rootDir: string): string {
   return JSON.stringify({

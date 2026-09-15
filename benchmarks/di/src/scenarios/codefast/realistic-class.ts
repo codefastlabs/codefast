@@ -154,6 +154,8 @@ function buildClassColdResolveScenario(): BenchScenario {
 
 /**
  * Builds the class-lane realistic scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildCodefastRealisticClassScenarios(): ReadonlyArray<BenchScenario> {
   return [buildClassResolveRootScenario(), buildClassColdResolveScenario()];

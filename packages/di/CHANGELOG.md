@@ -1,5 +1,142 @@
 # @codefast/di
 
+## 0.10.0
+
+### Minor Changes
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`3621384`](https://github.com/codefastlabs/codefast/commit/36213842e7e64284dfb0c5b0d651368debf20a13) Thanks [@thevuong](https://github.com/thevuong)! - `BindingIdentifier` is a branded number, minted from a process-wide counter, instead of a branded string. The id stays
+  opaque — obtained from `.id()`, handed back to `unbind(id)`, reported by `inspect()` and the dependency graph — and a
+  plain bind no longer allocates a string for it. Code that treated the id as a string (interpolating, parsing or storing
+  it as text) must treat it as a number.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`67c7eb4`](https://github.com/codefastlabs/codefast/commit/67c7eb4a63cee26c8b3d4954965a5fdacbfe3533) Thanks [@thevuong](https://github.com/thevuong)! - The fluent chain `bind()` returns is now the binding it registers: one object is every builder step, the registry's
+  record and what the resolver reads, so a plain bind is one allocation instead of three and a copy of every field. Two
+  names on the `Binding` shapes change to make room for the builder's methods — `id` is `identifier`, and the hook fields
+  are `activationHook` / `deactivationHook` — and a chain registers exactly once: a second `to*()` throws
+  `ChainAlreadyRegisteredError` instead of minting a second binding.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`7f4efc2`](https://github.com/codefastlabs/codefast/commit/7f4efc2faf96ffdd4279241c9bc83aba53bc64af) Thanks [@thevuong](https://github.com/thevuong)! - `resolveAll`, `resolveAllAsync` and the value an `injectAll()` dependency delivers are `ReadonlyArray`s, and a
+  root-level, options-less `resolveAll` hands out the engine's own list — the same array on every call while no registry
+  in the chain has changed — instead of a copy per read. That list is kept while every member is a hook-free constant or a
+  hook-free singleton whose instance is cached, so a collection of singleton handlers is one lookup per read. Callers that
+  mutated the returned array spread it first; a constructor parameter typed `Array<T>` for an `injectAll` dependency
+  becomes `ReadonlyArray<T>`.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`6980f8e`](https://github.com/codefastlabs/codefast/commit/6980f8ee5b804b17946ac959a9581f207e7ad008) Thanks [@thevuong](https://github.com/thevuong)! - `many()` marks a binding as a collection member: several members of one token coexist on the default slot, `resolveAll`
+  returns every member, a single `resolve` never selects one, and membership replaces slot last-wins. A member keeps the
+  default slot (`ManyBindingSlotError` otherwise) and may carry `when()` predicates. It is the intended form of a strategy
+  set, where a predicate that always passes used to stand in — and it is what lets a root-level collection of constants be
+  served from its memo without evaluating anything. `BindingSnapshot` gains `isMany`.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`a56390f`](https://github.com/codefastlabs/codefast/commit/a56390f79bb62e6e33ecb79cbd158ad1349d7bee) Thanks [@thevuong](https://github.com/thevuong)! - A root-level `resolveAll` with no options memoizes its candidate list until any registry in the chain changes, and its
+  value list while every member is a hook-free constant with no activation hook anywhere in the chain. The contract
+  already required `when()` predicates to be pure; the engine now relies on it there, evaluating a predicate once per
+  container state for that read instead of on every call. Reads carrying options, or made from inside a factory, are
+  unchanged.
+
+### Patch Changes
+
+- [#863](https://github.com/codefastlabs/codefast/pull/863) [`ccc5ed1`](https://github.com/codefastlabs/codefast/commit/ccc5ed193f15d9edc7c3e6475a6bfda22e2c6319) Thanks [@thevuong](https://github.com/thevuong)! - Rewrite `benchmarks/di/RESULTS.md` as a single machine-derived snapshot on `@codefast/di` 0.9.0 (full profile,
+  GC-exposed, interleaved) instead of an accreted dated ledger, weighting wins and losses equally so the page shows where
+  the engine is slower. The snapshot records that `@codefast/di` loses the aggregate to ditox (0.79× median) and the
+  geomean to injection-js (0.56×), and breaks down each loss as a real deficit or a by-design work difference — the
+  `resolve-all-strategies` collapse (0.03× at N=100) is the rivals returning a memoized collection where `@codefast/di`
+  re-gathers per op.
+
+  Assert the A/B method in `BENCH_GUIDE.md`: because `run.ts` rebuilds `packages/di/dist` from `src` unconditionally
+  before spawning, swapping the source is the one method, and swapping `dist` directly is a demoted escape hatch that must
+  use the child entries. Repoint the `packages/di/ARCHITECTURE.md` tag-chain-walk-memo reference from `RESULTS.md` to the
+  package `CHANGELOG.md`, where that A/B now lives.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`85adfd0`](https://github.com/codefastlabs/codefast/commit/85adfd004920f99ec8552745b7726e03e971cbb2) Thanks [@thevuong](https://github.com/thevuong)! - Construct an accessor-injected class without the two per-instantiation allocations it used to pay: the ambient
+  resolution handed to its accessors is built once per resolver for the lent root stack, and the construction itself runs
+  inside the ambient scope directly instead of through a wrapping closure.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`d541dee`](https://github.com/codefastlabs/codefast/commit/d541dee97719a3151dd4daa9675846cb11aac82b) Thanks [@thevuong](https://github.com/thevuong)! - Compile an accessor-injected class as a plan root instead of declining the plan: its constructor parameters compile as
+  usual and construction runs through the host, which puts the class's frame on the resolution path and the container
+  ambient before constructing, so an accessor that cycles back is still reported as a `CircularDependencyError`. Below a
+  plan's root such a class stays an escape.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`793f5d0`](https://github.com/codefastlabs/codefast/commit/793f5d0a13092144b2ca83ec23142e68011cd5ca) Thanks [@thevuong](https://github.com/thevuong)! - Route every member of a `resolveAllAsync` collection that is a transient factory with no activation and no request
+  options through the same non-`async` lane a single `resolveAsync` already takes, so a fan-out costs one factory promise
+  per member instead of an async state machine on top of each.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`7a00e30`](https://github.com/codefastlabs/codefast/commit/7a00e306de98a829385e3238095333f094a843f7) Thanks [@thevuong](https://github.com/thevuong)! - Build collections in linear time. A token's binding list now appends in place and is replaced only on removal or
+  displacement, with every selection walk reading its starting length first, so a predicate that binds mid-walk is still
+  invisible to that walk; and a bare `when()` rewrites the binding's predicate in place — moving a lone binding into a
+  record — instead of re-registering it, whenever the chain owns the registry's last write and has nothing parked. A
+  hundred `when()` bindings on one token no longer copy the list a hundred times.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`3613886`](https://github.com/codefastlabs/codefast/commit/36138863480e0fa48ca522ad56fa1ee98a528307) Thanks [@thevuong](https://github.com/thevuong)! - Defer every per-container allocation a resolve can happen without. The resolver builds its plan compiler and plan maps
+  on the first plan request, the lookup cache allocates its memo maps only once a second distinct token or tag appears in
+  one cache generation, the activation-need memo is allocated by the first answer its early returns cannot give, and the
+  registry allocates its record map on the first bind. A per-request child that is created, asked one parent-owned token
+  and disposed now allocates none of them; the registry's fast-default map stays eager so the first read of every
+  synchronous resolve is still a bare `Map.get`.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`b823fc8`](https://github.com/codefastlabs/codefast/commit/b823fc89c09fb200d0d9262f16f34f32cd27a63e) Thanks [@thevuong](https://github.com/thevuong)! - Price the two lanes the full pass showed paying for the rewrite: a request for an unbound or record-less token reads the
+  record map alone once its lone-map probe has missed, instead of probing the lone map again, and a root container's
+  chain-summed versions are read as its own version instead of through the epoch memo, so a `resolveAll` over a root no
+  longer pays a compare and a stamp per candidate.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`5fbc3de`](https://github.com/codefastlabs/codefast/commit/5fbc3dea835987f8eb857529a5a6b1293ac523b6) Thanks [@thevuong](https://github.com/thevuong)! - A request carrying a name and one tag is answered from a memoized lookup of the exact two-criterion slot, in either
+  declaration order, instead of a scan of the token's bindings; a predicate on that binding still runs, and a name no
+  binding has declared is a miss at once.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`b46c0cd`](https://github.com/codefastlabs/codefast/commit/b46c0cd9473a662f294231796c4be2a206c83033) Thanks [@thevuong](https://github.com/thevuong)! - `resolveOptional` with no options answers a lone default binding in its own registry on the lane a plain `resolve`
+  takes, and a root that keeps no records answers a miss without the selection walk; a generated `toResolved` plan checks
+  its factory's result for a promise inline instead of through a call.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`0506f04`](https://github.com/codefastlabs/codefast/commit/0506f046e9f797086708c186f14f96f13026a8bd) Thanks [@thevuong](https://github.com/thevuong)! - A compiled instantiation plan that keeps running — sync or async — is generated as a function of its own through the
+  `Function` constructor and takes the closure's place, so its call sites carry feedback for one plan only instead of for
+  every plan the process has compiled; below the threshold a plan stays a closure, so a cold container or a per-request
+  child never compiles one. A runtime whose Content Security Policy refuses the constructor keeps every plan a closure and
+  behaves identically. `RESOLUTION_DIAGNOSTICS` reports `generatedPlanCount`.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`e3e9257`](https://github.com/codefastlabs/codefast/commit/e3e92571dc64f8eb48006b3310d4334ea61cc149) Thanks [@thevuong](https://github.com/thevuong)! - Keep the common token — one default-slot binding, no predicate — in the registry's fast-default map alone, and give a
+  record (binding list plus tagged indexes) only to a token that carries a second binding, a tagged slot or a predicate,
+  moving it back when the record shrinks to the default slot. A plain bind is now one map write and one binding object;
+  `getFastDefault()` is unchanged, a bare `Map.get` on that map, and `has()`/`hasOwn()` without criteria answer from a
+  registry presence probe instead of materialising the token's list. `RESOLUTION_DIAGNOSTICS` reports the record map under
+  `registry.records`.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`414d495`](https://github.com/codefastlabs/codefast/commit/414d495c6db58106e64ba5f74880e12bd85c2459) Thanks [@thevuong](https://github.com/thevuong)! - The binding registry keeps one record per token — its list and its two tagged indexes — in a single map, and builds the
+  binding-id index only on the first id-keyed operation. A bind into a fresh token is one record and one map write where
+  it was three map writes; `getFastDefault()` keeps its own map so the warm resolve lane still answers from one bare
+  `Map.get`. Measured paired and alternating against the previous layout: the bind path runs at roughly 1.6× on the
+  128-binding registration row and the warm resolve rows hold at parity.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`3db3447`](https://github.com/codefastlabs/codefast/commit/3db3447bfe87b4aaf5f48113cc91b19537eefeb0) Thanks [@thevuong](https://github.com/thevuong)! - Register a binding into a token's record in constant time. Last-wins displacement asked the record's list who occupied
+  the incoming binding's slot, walking every binding already on the token; the default slot now has its own index entry
+  beside the two tagged ones, so an add finds and displaces exactly its occupant without the walk. A token that grows a
+  large collection member by member — the fan-out cold path — was quadratic to build and is now linear: per-bind cost
+  stays flat instead of climbing with the collection size, and the `resolve-all-cold` rows move from a loss to a win
+  against the decorator-free rivals. The slot index is dropped in the same step a binding leaves its slot — `many()`
+  turning it into a member, a predicate making it predicate-only — so a later add never displaces a binding that has
+  already moved on.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`8bb19e3`](https://github.com/codefastlabs/codefast/commit/8bb19e3ab11c4176f307765321e431cfa94d37bb) Thanks [@thevuong](https://github.com/thevuong)! - Answer a request the slot indexes decline with an allocation-free first pass over the token's candidates: one slot match
+  with no predicate is returned outright and no match is a clean miss, without building a constraint context, a display
+  name or a candidate array. A second match, or a predicate on a match, still goes through full selection, so specificity
+  and ambiguity are decided exactly as before.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`5e57752`](https://github.com/codefastlabs/codefast/commit/5e57752b2fcad8a1c44e5bff61d5f91f7cdb27da) Thanks [@thevuong](https://github.com/thevuong)! - A container's class-metadata caches are keyed by the metadata reader and shared by every container that reads through
+  it, so a child inheriting its parent's reader resolves a class the parent already met without reading its metadata
+  again; the activation-need cache is built by the first interpreted resolve that asks for it instead of with the
+  container.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`bee69af`](https://github.com/codefastlabs/codefast/commit/bee69af3688a67234ecd113159ca7e767e14699a) Thanks [@thevuong](https://github.com/thevuong)! - Memoize the lookup cache's chain-summed registry version against a process-wide state epoch that every registry mutation
+  and activation-hook registration advances, and let a root container read both chain sums as its own version. A resolve
+  from a deep child no longer walks its whole ancestor chain on every lookup while nothing has changed; the first read
+  after any change re-sums exactly as before. The activation sum stays a walk: the memo that would serve it costs fields
+  on the resolver that the warm transient class lane pays for.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`f78726e`](https://github.com/codefastlabs/codefast/commit/f78726e00b9c388ceb03f7fad116593d7b752a94) Thanks [@thevuong](https://github.com/thevuong)! - A request carrying one criterion that the token's tagged index does not hold is answered as a miss for that container
+  without scanning its bindings, and walks to the parent directly.
+
+- [#866](https://github.com/codefastlabs/codefast/pull/866) [`5536e62`](https://github.com/codefastlabs/codefast/commit/5536e6208ab58955fb551866c3b9703e7f2c55e0) Thanks [@thevuong](https://github.com/thevuong)! - Allocate the deactivation-pair list only when an unbind, rebind or teardown actually owes a deactivation; the hot-swap
+  shape, a binding nothing ever cached, hands back a shared empty list instead.
+
 ## 0.9.0
 
 ### Minor Changes

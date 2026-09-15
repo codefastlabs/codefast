@@ -20,6 +20,8 @@ import type { AnyScenario } from "#/scenarios/types";
 
 /**
  * Collects every brandi bench scenario.
+ *
+ * @since 0.8.0
  */
 export function collectAllBrandiScenarios(): ReadonlyArray<AnyScenario> {
   return [

@@ -236,6 +236,8 @@ function buildProductionEventBusDispatchScenario(): BenchScenario {
 
 /**
  * Builds tsyringe's production-shaped scenarios.
+ *
+ * @since 0.8.0
  */
 export function buildTsyringeProductionScenarios(): ReadonlyArray<BenchScenario> {
   return [
