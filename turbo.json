@@ -68,6 +68,11 @@
       "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
       "passThroughEnv": ["BENCH_*"]
     },
+    "bench:ab": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
+      "passThroughEnv": ["BENCH_*"]
+    },
     "bench:isolate": {
       "cache": false,
       "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],

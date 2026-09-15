@@ -75,6 +75,16 @@ source take effect.
    consecutive experiments rather than within one, and read the per-trial spread each side carries.
 4. Report the ratio of the two medians, and show both sides' spreads.
 
+**`bench:ab` runs this whole procedure.** The shared driver in `internal/benchmark-harness` (invoked here by
+`src/harness/ab.ts`, and by every suite's own `bench:ab` — `tailwind-variants` has one too) materialises each side's
+`packages/di/src` (a git ref, or the working tree for the new side), measures each side through a narrowed isolated
+pass, alternates which side goes first between experiments, and prints the per-experiment ratio, the median ratio, and
+each side's spread — restoring the working tree on any exit.
+`pnpm di:bench:ab <id>[,<id>…] [--base <ref>] [--new <ref>] [--experiments N] [--mode fast|default|full]` (or
+`pnpm --filter @benchmark/di bench:ab -- <id> …` from the package); `--base` defaults to `HEAD~1`, the new side to the
+working tree, `--experiments` to 2, `--mode` to `full`. It narrows to the subject, so it leaves `latest.*` alone like
+any hand-run pass. Do the manual swap below only for a comparison the driver does not cover.
+
 Gate the full pass with a fast one. `BENCH_MODE=fast`, one pass per side, `BENCH_LIBRARY=@codefast/di` and the target
 rows alone answers "does this win at all?" in seconds; only a change that wins there earns the full pass, which is what
 the number quoted in a commit or the ledger comes from. A fast pass is a direction, never a figure.

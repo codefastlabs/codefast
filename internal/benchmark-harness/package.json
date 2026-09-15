@@ -75,6 +75,16 @@
       "types": "./dist/child/run-sanity-checks.d.ts",
       "import": "./dist/child/run-sanity-checks.js"
     },
+    "./parent/ab-report": {
+      "source": "./src/parent/ab-report.ts",
+      "types": "./dist/parent/ab-report.d.ts",
+      "import": "./dist/parent/ab-report.js"
+    },
+    "./parent/ab-request": {
+      "source": "./src/parent/ab-request.ts",
+      "types": "./dist/parent/ab-request.d.ts",
+      "import": "./dist/parent/ab-request.js"
+    },
     "./parent/assert-subject-measured": {
       "source": "./src/parent/assert-subject-measured.ts",
       "types": "./dist/parent/assert-subject-measured.d.ts",
@@ -119,6 +129,11 @@
       "source": "./src/parent/resolve-bench-parent-exit-code.ts",
       "types": "./dist/parent/resolve-bench-parent-exit-code.d.ts",
       "import": "./dist/parent/resolve-bench-parent-exit-code.js"
+    },
+    "./parent/run-ab-main": {
+      "source": "./src/parent/run-ab-main.ts",
+      "types": "./dist/parent/run-ab-main.d.ts",
+      "import": "./dist/parent/run-ab-main.js"
     },
     "./parent/run-bench-libraries": {
       "source": "./src/parent/run-bench-libraries.ts",
