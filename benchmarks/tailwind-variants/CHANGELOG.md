@@ -1,5 +1,24 @@
 # @codefast/benchmark-tailwind-variants
 
+## 0.9.0
+
+### Minor Changes
+
+- [#879](https://github.com/codefastlabs/codefast/pull/879) [`3d48e46`](https://github.com/codefastlabs/codefast/commit/3d48e4634b20e806c2a603005849637763f31d0a) Thanks [@thevuong](https://github.com/thevuong)! - Add a shared `bench:ab` driver for paired, alternating A/B comparison of a benchmark subject against another build of
+  itself.
+
+  `internal/benchmark-harness` gains `runBenchAbMain`, which swaps the subject package's `src` per side (a git ref, or the
+  working tree for the new side), measures each side through a narrowed isolated pass, alternates which side goes first
+  between experiments, and reports the ratio of medians with each side's spread — restoring the working tree on any exit.
+  `@benchmark/di` and `@benchmark/tailwind-variants` each expose it as `bench:ab` (`pnpm di:bench:ab` / `pnpm tv:bench:ab`
+  from the repo root). It narrows to the subject, so a pass leaves `latest.json` untouched.
+
+### Patch Changes
+
+- Updated dependencies [[`3d48e46`](https://github.com/codefastlabs/codefast/commit/3d48e4634b20e806c2a603005849637763f31d0a)]:
+  - @internal/benchmark-harness@0.10.0
+  - @internal/benchmark-viewer@0.9.1
+
 ## 0.8.0
 
 ### Minor Changes

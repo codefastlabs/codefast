@@ -1,11 +1,19 @@
 /** The A/B request parsed from a `bench:ab` command line: rows, both sides, experiments, profile. */
 
-/** The timing profile a paired A/B run measures each side under. */
+/**
+ * The timing profile a paired A/B run measures each side under.
+ *
+ * @since 0.10.0
+ */
 export type AbMode = "fast" | "default" | "full";
 
 const AB_MODES: ReadonlyArray<AbMode> = ["fast", "default", "full"];
 
-/** A resolved A/B request: the rows, the two sides, how many experiments, and the timing profile. */
+/**
+ * A resolved A/B request: the rows, the two sides, how many experiments, and the timing profile.
+ *
+ * @since 0.10.0
+ */
 export interface AbRequest {
   readonly ids: ReadonlySet<string>;
   readonly baseRef: string;
@@ -20,6 +28,8 @@ export interface AbRequest {
  *
  * @remarks Throws on a malformed flag or value rather than measuring the wrong thing silently; a bare
  * `--` is the runner's separator (pnpm and turbo forward it), not a flag.
+ *
+ * @since 0.10.0
  */
 export function parseAbRequest(argv: ReadonlyArray<string>): AbRequest {
   const positional: Array<string> = [];
