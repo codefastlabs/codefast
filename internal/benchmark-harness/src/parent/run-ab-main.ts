@@ -22,6 +22,8 @@ const GIT_ARCHIVE_MAX_BUFFER = 256 * 1024 * 1024;
  * @remarks The driver is subject-agnostic — it imports nothing of the library it measures. `run.ts`
  * for each suite already rebuilds the subject's `dist` from `src` before every pass, so swapping the
  * `src` on disk is the whole mechanism.
+ *
+ * @since 0.10.0
  */
 export interface RunBenchAbOptions {
   /** The benchmark suite package's root, where `bench-results/` lives and `bench:isolate` runs. */
@@ -32,7 +34,11 @@ export interface RunBenchAbOptions {
   readonly subjectSourcePath: string;
 }
 
-/** Drives the paired, alternating A/B for one subject, reporting failures through its own exit code. */
+/**
+ * Drives the paired, alternating A/B for one subject, reporting failures through its own exit code.
+ *
+ * @since 0.10.0
+ */
 export function runBenchAbMain(argv: ReadonlyArray<string>, options: RunBenchAbOptions): void {
   const repoRootDirectory = join(options.packageRootDirectory, "..", "..");
   const subjectSourceDirectory = join(repoRootDirectory, options.subjectSourcePath);
