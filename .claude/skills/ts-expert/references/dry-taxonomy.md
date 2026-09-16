@@ -27,12 +27,12 @@ badly at the type level.
 ## Layer 3 — Structural
 
 - **3.1** A barrel re-exporting types and values together → split `types.ts` (`export type`) from `index.ts`.
-- **3.2** Duplicated test mocks/fixtures → shared helpers under `tests/<category>/support/**` or
-  `tests/<category>/fixtures/**`, mirroring the `src/` path. Never under `src/**`, never directly under `tests/`, and
-  the filename must not match `*.test.*` or Vitest will not discover the suite.
+- **3.2** Duplicated test mocks/fixtures → shared helpers in the location the project's test setup discovers, mirroring
+  the `src/` path, with a name the test runner won't mistake for a suite. Follow the project's test-file conventions
+  rather than inventing a layout.
 - **3.3** Repeated config objects → `const DEFAULT_CONFIG = {…} as const` plus spread overrides. This covers tsconfig
-  flags copy-pasted across workspaces, which is the most common instance in this repo and the one that silently excludes
-  whichever package nobody edited.
+  flags copy-pasted across a project's tsconfigs — the most common structural instance, and the one that silently
+  excludes whichever config nobody edited.
 
 ## Closing the DRY pass
 
