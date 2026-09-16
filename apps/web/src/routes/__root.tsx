@@ -4,6 +4,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import { TooltipProvider } from "@codefast/ui/tooltip";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
+import type { ErrorComponentProps } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 
@@ -58,12 +59,13 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 });
 
-function SiteError({ error }: { error: Error }) {
+function SiteError({ error }: ErrorComponentProps) {
+  const message = error instanceof Error ? error.message : "";
   return (
     <NotFound
       badge="Error"
       title="Something went wrong"
-      description={error.message || "An unexpected error occurred. Please try again."}
+      description={message || "An unexpected error occurred. Please try again."}
       action={
         <Button asChild>
           <Link to="/">Back to home</Link>

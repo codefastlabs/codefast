@@ -60,8 +60,6 @@ still returns the wrong type.
 
 ## Design principles
 
-<a id="naming"></a>
-
 ### Naming — no `I` or `T` prefix
 
 A name states what a thing is or does; a prefix or suffix that carries no information is dropped.
@@ -99,8 +97,6 @@ preferred form when an abstraction is needed.
 > type-safe: `container.get<WrongType>('my-service')` compiles and returns the wrong type. A branded token makes that
 > call impossible.
 
-<a id="chain-order"></a>
-
 ### Fluent chain — the canonical, invariant order
 
 A binding is declared as a chain of four steps. Only the first is required, and the order never changes.
@@ -130,8 +126,8 @@ bind(token)
   decorator.
 - **Last-wins / override.** `bind()` applies **slot-aware last-wins at registration time**. Same slot (`default`, same
   `whenNamed`, same `whenTagged`) means the new binding replaces the old one; a different slot appends, which is what
-  serves `resolveAll`. The exact definition is in [Slots and last-wins](#slot-matching); worked examples are in
-  [Full examples](#binding-examples).
+  serves `resolveAll`. The exact definition is in [Slots and last-wins](#slots-and-last-wins--the-exact-definition);
+  worked examples are in [Full examples](#full-examples).
 - **Eager commit.** `to*()` commits the binding into the registry immediately — exactly **once** for the whole chain.
   Every read after that (`has`, `resolve*`, `validate`, `inspect`) sees the latest state, even if the chain is abandoned
   midway.
@@ -190,8 +186,6 @@ type Constructor<Value = unknown> = new (...args: unknown[]) => Value;
 > `Constructor<Value>`. To bind an abstract class as a token, use `Token<Value>` instead.
 > `container.bind(AbstractLogger)` with `AbstractLogger` as an abstract class is a TypeScript error.
 
-<a id="lifecycle-handlers"></a>
-
 ### `ActivationHandler` and `DeactivationHandler`
 
 An **activation handler** is the last step before an instance is handed out and cached: it can initialise or wrap the
@@ -224,8 +218,6 @@ instance. A **deactivation handler** is the teardown step when an instance leave
 
 > **Exact shape:** `src/core/types.ts` — `ActivationHandler`, `DeactivationHandler`.
 
-<a id="resolve-options"></a>
-
 ### `ResolveOptions`
 
 **Mental model.** A single resolve may carry a hint made of _criteria_. A criterion is one `[key, value]` pair minted
@@ -240,8 +232,8 @@ one selection model, not two.
 | `tag`  | Exactly one criterion                                                                                                                                                  | Equivalent to a single element of `tags`    |
 | `tags` | An array of criteria, read as a **superset filter**: it matches a binding whose _every_ declared tag is in this array — not "the binding must carry all of these tags" | Several criteria require `tags`             |
 
-The full matching rule is in [Slots and last-wins](#slot-matching). `InjectOptions` accepts both `tag` and `tags` and
-folds `tag` into `tags`, so an `InjectionDescriptor` only ever carries one spelling.
+The full matching rule is in [Slots and last-wins](#slots-and-last-wins--the-exact-definition). `InjectOptions` accepts
+both `tag` and `tags` and folds `tag` into `tags`, so an `InjectionDescriptor` only ever carries one spelling.
 
 > **Exact shape:** `src/core/types.ts` — `ResolveOptions`.
 
@@ -272,8 +264,8 @@ Interning is _how_ the rule is implemented: since each value has exactly one cri
 
 > **Implementer note.** An index keyed by **criterion** is exact and needs no recheck. An index keyed by _value_ instead
 > answers with **SameValueZero**, treating `-0` and `+0` as one key — which contradicts `Object.is` (see
-> [Slots and last-wins](#slot-matching), [Advanced Constraints](#advanced-constraints)) — and forces the fast path to
-> recheck with the matcher.
+> [Slots and last-wins](#slots-and-last-wins--the-exact-definition), [Advanced Constraints](#advanced-constraints)) —
+> and forces the fast path to recheck with the matcher.
 
 #### Passing `tag` and `tags` together
 
@@ -285,10 +277,10 @@ Such a request asks for two or more tags, so it cannot use the single-tag index;
 #### Key sets as a bitmask (implementation note)
 
 The **subset rule is normative**: a slot only matches when the request carries **every** key the slot declares
-([Slots and last-wins](#slot-matching)). The bitmask is not normative — it is how the implementation rejects early. It
-ORs the keys into a word and rejects with `(requestMask & slotMask) !== slotMask` before reading any criterion. Bits
-wrap every 32 keys, so two keys can share a bit: that is a **false positive** which identity eliminates afterwards,
-never a false negative.
+([Slots and last-wins](#slots-and-last-wins--the-exact-definition)). The bitmask is not normative — it is how the
+implementation rejects early. It ORs the keys into a word and rejects with `(requestMask & slotMask) !== slotMask`
+before reading any criterion. Bits wrap every 32 keys, so two keys can share a bit: that is a **false positive** which
+identity eliminates afterwards, never a false negative.
 
 ### `ResolutionContext`
 
@@ -324,7 +316,7 @@ binding asked for it, and every binding above that. A `when()` predicate reads i
 **A `ResolutionFrame`** holds: `tokenName` (for display in error messages), `scope`, `bindingId`, `kind`, and the
 **`slot`** of the binding matched for that frame. A slot is the binding's criterion set: `tags` (every criterion, the
 reserved name criterion included) plus `name`, the derived view of the reserved criterion (`undefined` if the binding
-declares no `whenNamed()`) — see [Slots and last-wins](#slot-matching).
+declares no `whenNamed()`) — see [Slots and last-wins](#slots-and-last-wins--the-exact-definition).
 
 > **Normative.** A frame's `slot` reflects the **constraint registered at bind time**, not the hint passed at resolve
 > time. The advanced constraints in [Advanced Constraints](#advanced-constraints) read exactly this field.
@@ -405,8 +397,6 @@ export const Tokens = {
   Config: token<AppConfig>("app:Config"),
 } as const;
 ```
-
-<a id="display-names"></a>
 
 ### Display names
 
@@ -534,7 +524,7 @@ hooks**.
 
 > **Normative.**
 >
-> - Scope **always** comes after `when*` in the chain ([Fluent chain](#chain-order)).
+> - Scope **always** comes after `when*` in the chain ([Fluent chain](#fluent-chain--the-canonical-invariant-order)).
 > - The default when no scope is declared is `transient`.
 > - The `on*()` lifecycle hooks are **only available after `scope()` is called** explicitly. If you do not need
 >   lifecycle hooks, you can skip `scope()` and take the transient default.
@@ -554,7 +544,7 @@ shorter-lived dependency, which silently freezes that dependency for the consume
 | `transient`           | ✅ OK       | ✅ OK        | ✅ OK        |
 
 `container.validate()` walks the whole dependency graph and throws `ScopeViolationError` for any violation. See
-[`validate`](#validate) for the limits of `validate()`.
+[`validate`](#validate--detecting-captive-dependencies) for the limits of `validate()`.
 
 > **Rationale — why `transient` is the default.** It is the safest row of the matrix — a `transient` consumer may depend
 > on any scope without a captive dependency, so the default can never introduce a violation on its own. It is also a
@@ -576,14 +566,13 @@ no scope choice.
 > - The original value is considered immutable — `onActivation` may return a Proxy wrapper. After activation, the cached
 >   value is the activation result, not the original.
 
-<a id="constraints"></a>
-
 ### Constraints — `when*`
 
 **Mental model.** A constraint decides _when_ a binding is eligible for a request. There are two mechanisms:
 
 - **Slot criteria** — `whenNamed`, `whenTagged`, `whenDefault`. Static, declared at bind time, matched at constant cost
-  against the request's hint. They define the binding's _slot_ ([Slots and last-wins](#slot-matching)).
+  against the request's hint. They define the binding's _slot_
+  ([Slots and last-wins](#slots-and-last-wins--the-exact-definition)).
 - **Predicates** — `when(ctx => boolean)`. Dynamic, evaluated at resolve time against the `ConstraintContext`, after
   slot matching.
 
@@ -627,11 +616,12 @@ container
 
 > **`whenTagged` takes a criterion, not a loose pair.** A criterion can only be minted by `TagKey.of()`, so the key must
 > be declared up front with `tag<Value>(name)` — that is what makes identity comparison enough to stand in for
-> `Object.is` ([`ResolveOptions`](#resolve-options)). The key name is still a `string`, so it follows the display-name
+> `Object.is` ([`ResolveOptions`](#resolveoptions)). The key name is still a `string`, so it follows the display-name
 > convention ([Display names](#display-names)): `tag("mylib:fuel")`, `tag("@scope/pkg:env")`.
 
 > **`whenNamed` is sugar.** A name is a criterion of the reserved key `slotName` — `whenNamed("console")` ≡
-> `whenTagged(slotName.of("console"))`, single-valued per slot ([Slots and last-wins](#slot-matching)).
+> `whenTagged(slotName.of("console"))`, single-valued per slot
+> ([Slots and last-wins](#slots-and-last-wins--the-exact-definition)).
 
 > **Explicit `whenDefault()` vs declaring no constraint.** A binding with no `when*` at all also matches the default
 > slot. `whenDefault()` is useful when you want to document the intent explicitly, or to combine it with a custom
@@ -703,7 +693,8 @@ const logger = container.resolve(AbstractAuditLogger, { name: "audit" });
 ### Builder type interfaces
 
 **Mental model.** Each step in the chain returns a different builder, and it is precisely that builder's method set
-which enforces the order in [Fluent chain](#chain-order). Reading the table row by row tells you what you may call next.
+which enforces the order in [Fluent chain](#fluent-chain--the-canonical-invariant-order). Reading the table row by row
+tells you what you may call next.
 
 | Builder returned by | Constraint | Scope | `onActivation` | `onDeactivation` | `id()` |
 | ------------------- | :--------: | :---: | :------------: | :--------------: | :----: |
@@ -727,7 +718,7 @@ How to read the rows:
 - **`toAlias()`** is the only builder **without a type parameter** — an alias produces no value, so there is nothing to
   infer.
 - **`transient()` and `scoped()`** have no `onDeactivation` because those two scopes have no deactivation
-  ([`ActivationHandler` and `DeactivationHandler`](#lifecycle-handlers)).
+  ([`ActivationHandler` and `DeactivationHandler`](#activationhandler-and-deactivationhandler)).
 
 > **Exact shape:** `src/core/binding.ts` — `BindToBuilder`, `SlotConstrainedBuilder`, `BindingBuilder`,
 > `ConstantBindingBuilder`, `AliasBindingBuilder`, `SingletonBindingBuilder`, `TransientBindingBuilder`,
@@ -863,8 +854,6 @@ container.bind(Database).to(PostgresDatabase)
   });
 ```
 
-<a id="binding-examples"></a>
-
 ### Full examples
 
 ```ts
@@ -927,8 +916,6 @@ container.bind(AbstractLogger).toAlias(Logger);
 container.bind(AbstractAuditLogger).toAlias(Logger).whenNamed("audit");
 ```
 
-<a id="slot-matching"></a>
-
 ### Slots and last-wins — the exact definition
 
 **Mental model.** A **slot** is the set of conditions a binding declares about the request that may select it — its
@@ -955,7 +942,7 @@ condition the slot declares. The slot with no conditions is the **default slot**
 >   token-free ancestor spelling; `whenParentNamed(T, n)` adds the token check
 >   ([Advanced Constraints](#advanced-constraints)).
 > - `{ name: n }` in `ResolveOptions` / `InjectOptions` ≡ `{ tag: slotName.of(n) }` — the request-side sugar
->   ([`ResolveOptions`](#resolve-options)).
+>   ([`ResolveOptions`](#resolveoptions)).
 > - **One criterion per key, reserved key included:** a slot carries at most one criterion of any key — re-declaring a
 >   key, through either verb, replaces that key's criterion. `whenNamed` inherits this rule rather than adding one.
 > - What reserves the key is its **identity**, not its display name. Diagnostics render its criterion as `name:<value>`,
@@ -967,7 +954,7 @@ condition the slot declares. The slot with no conditions is the **default slot**
 >   on one token's slots; a label shared across tokens is what a tag key is for.
 
 > **Normative — slot equality.** Two binding slots are **equal** when their criterion sets are equal by the identity of
-> each criterion (order does not matter). Because criteria are interned ([`ResolveOptions`](#resolve-options)), identity
+> each criterion (order does not matter). Because criteria are interned ([`ResolveOptions`](#resolveoptions)), identity
 > here gives exactly the result of `Object.is` on `[key, value]`. The `default` slot is the empty criterion set.
 
 > **Normative — predicate-only `when()`.** A binding carrying only `.when(predicate)` (with no `whenNamed`/`whenTagged`)
@@ -991,7 +978,7 @@ condition the slot declares. The slot with no conditions is the **default slot**
 > **Normative — filtering `ResolveOptions` → slot.** One rule, whatever mix of spellings the request uses:
 >
 > - **The request's criterion set** is the union of `tags`, `tag`, and — when `name` is present — `slotName.of(name)`
->   ([`ResolveOptions`](#resolve-options)); `tags: []` counts as no criteria.
+>   ([`ResolveOptions`](#resolveoptions)); `tags: []` counts as no criteria.
 > - **A slot matches when every criterion it declares is in the request's criterion set** — a superset filter. Adding a
 >   criterion to the request makes it match **more**, not fewer.
 > - **The default slot is the one exception:** a slot with no criteria matches only a request with no criteria — a
@@ -1133,8 +1120,6 @@ take the scope from there. If the chain ends at another `AliasBinding`, keep fol
 **Mental model.** A container holds bindings, resolves tokens into values, owns the instances it caches, and can spawn
 child containers that see its bindings. Everything a container does falls into nine groups, listed in
 [The Container interface](#the-container-interface).
-
-<a id="container-create"></a>
 
 ### Creating a container
 
@@ -1305,7 +1290,7 @@ unbind-then-bind, never a way to override a parent.
 > - If the old binding **does** have an async `onDeactivation`: a sync `rebind()` throws `AsyncDeactivationError` — the
 >   same behaviour as a sync `unbind()`.
 
-There is no `rebindAsync()` (see [Not adopted from v8](#not-adopted-from-v8)), so the required workaround is:
+There is no `rebindAsync()` (see [Not adopted from v8](#summary-not-adopted-from-v8)), so the required workaround is:
 
 ```ts
 // When the old binding has an async onDeactivation:
@@ -1492,8 +1477,6 @@ fail fast at startup on a config error, and remove lazy-init latency from the fi
 >   not run again.
 > - Bindings added **after** `initializeAsync()` is called are not warmed up automatically — call it again if needed.
 
-<a id="validate"></a>
-
 ### `validate` — detecting captive dependencies
 
 ```ts
@@ -1610,8 +1593,9 @@ slot the edge points at, if the binding declares one). The `label` field is **fo
   edge carrying `optional: true`. That keeps "optional but absent" distinct from "not a dependency".
 - **A required dep that is not bound is skipped** — that is `validate()`'s job, not the graph's.
 - **`injectAll` fans out to every binding** of the token, each edge carrying its `slotName`.
-- **Edge targets are filtered by resolution's own slot rules** ([`validate`](#validate)): a request that names nothing
-  will not connect to a named binding it could never have resolved.
+- **Edge targets are filtered by resolution's own slot rules**
+  ([`validate`](#validate--detecting-captive-dependencies)): a request that names nothing will not connect to a named
+  binding it could never have resolved.
 - **Predicates (`when...`) are not evaluated** — a predicate needs a real resolve context, so the graph keeps every
   candidate that has one.
 - **With `includeParent: true`**, a binding at the current container shadows a binding for the same token at the parent,
@@ -1740,7 +1724,7 @@ class Runner {
 every matching binding into an array.
 
 - `InjectOptions` has three fields: `name`, `tag` (shorthand for one criterion, folded into `tags` when the descriptor
-  is built — see [`ResolveOptions`](#resolve-options)), and `tags`.
+  is built — see [`ResolveOptions`](#resolveoptions)), and `tags`.
 - `InjectionDescriptor` carries: `token`, `optional`, `multi` (true when created by `injectAll`), `name?`, `tags?`. It
   comes with the type guard `isInjectionDescriptor(value)`.
 
@@ -1767,7 +1751,7 @@ type InjectableDependency<Value = unknown> = Token<Value> | Constructor<Value> |
 > - `Constructor<Value>` → `{ token, optional: false, multi: false, name: undefined, tags: undefined }`
 > - `InjectionDescriptor<Value>` → left as-is
 
-`InjectableDependency` is exported from `@codefast/di` (see [Public API](#public-api)).
+`InjectableDependency` is exported from `@codefast/di` (see [Public API](#public-api-indexts)).
 
 #### `InjectableOptions` and the full signature
 
@@ -1800,8 +1784,6 @@ class UserService extends BaseService {
 }
 ```
 
-<a id="metadata-reader"></a>
-
 ### MetadataReader — the port interface
 
 **Mental model.** The container never touches `Symbol.metadata` itself. It asks a `MetadataReader` three questions about
@@ -1816,7 +1798,8 @@ The port has three methods:
 | `getAccessorMetadata(target)`    | The list of `@inject accessor` fields, each with `key` and `descriptor`                                                      | Optional  |
 
 If a reader omits `getAccessorMetadata`, no class ever gets a container context opened for it, so every accessor
-injection throws `MissingContainerContextError` ([Property injection](#accessor-injection)).
+injection throws `MissingContainerContextError`
+([Property injection](#property-injection-through-the-accessor-field-decorator)).
 
 > **Exact shape:** `src/metadata/metadata-types.ts` — `MetadataReader`, `ConstructorMetadata`, `ParamMetadata`,
 > `LifecycleMetadata`.
@@ -1825,7 +1808,7 @@ injection throws `MissingContainerContextError` ([Property injection](#accessor-
 
 > **Normative.** The resolver is **handed** its reader when it is constructed, which happens inside the container's
 > constructor. The only source resolution is guaranteed to read is therefore `ContainerOptions.metadataReader`
-> ([Creating a container](#container-create)). This reader outranks any `MetadataReaderToken` binding, and children
+> ([Creating a container](#creating-a-container)). This reader outranks any `MetadataReaderToken` binding, and children
 > inherit it (a child calls the parent's `#getMetadataReader()` again when building its own resolver).
 
 ```ts
@@ -1884,8 +1867,6 @@ getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
 > **Normative — no leaking of parent metadata.** If a child extends a parent but has no `@injectable()`,
 > `getConstructorMetadata` returns `undefined` and the container throws `MissingMetadataError`. The parent class's
 > metadata is never silently leaked.
-
-<a id="accessor-injection"></a>
 
 ### Property injection through the `accessor` field decorator
 
@@ -2186,7 +2167,8 @@ Ten constraints, each taking configuration parameters and returning a predicate 
 The two negative forms returning `true` on absence are deliberate: "no parent is X" is trivially true when there is no
 parent at all. The two `…TaggedAll` forms are equivalent to AND-composing several individual criteria, but cost one
 predicate call and allocate no intermediate closure. Criteria compare by identity — equivalent to `Object.is` on
-`[key, value]` thanks to interning, consistent with slot equality in [Slots and last-wins](#slot-matching).
+`[key, value]` thanks to interning, consistent with slot equality in
+[Slots and last-wins](#slots-and-last-wins--the-exact-definition).
 
 > **Normative — an empty criterion list is rejected.** `whenParentTaggedAll([])` reads literally as "the parent carries
 > all of nothing", which is true of every parent — the constraint would silently weaken into "there is some parent",
@@ -2233,8 +2215,9 @@ token). `ctx.ancestors` is every frame above `ctx.parent`, ordered from nearest 
 
 > **Why identity comparison is enough.** Criteria are interned, so each `[key, value]` has exactly one object; comparing
 > by identity therefore gives the same answer as `Object.is` on the value — handling `NaN` correctly and keeping `+0`
-> distinct from `-0`, consistent with slot equality in [Slots and last-wins](#slot-matching). This is also why the table
-> above has no pairwise comparison loop.
+> distinct from `-0`, consistent with slot equality in
+> [Slots and last-wins](#slots-and-last-wins--the-exact-definition). This is also why the table above has no pairwise
+> comparison loop.
 
 ### Examples
 
@@ -2370,7 +2353,8 @@ container.bind(Tracer).to(VerboseTracer).when(whenAnyAncestorIs(DebugModule));
 
 ### Rules (normative)
 
-The rules in [Constraints](#constraints) apply in full to advanced constraints — these are ordinary `when()` predicates:
+The rules in [Constraints](#constraints--when) apply in full to advanced constraints — these are ordinary `when()`
+predicates:
 
 - The predicate is called every time a resolve needs to pick a candidate, never cached.
 - The predicate must be pure and deterministic — no side effects, no I/O.
@@ -2582,10 +2566,10 @@ each other), `StaticMemberDecoratorError`, and `ChainNotRegisteredError` — eac
 type rather than `InternalError`.
 
 **Errors for callers outside the type system.** `ChainNotRegisteredError` and `SelfBindingRequiresClassError` are nearly
-unreachable from TypeScript: the chain's return types ([Fluent chain](#chain-order)) and the type of `bind()` already
-block most of the way. They exist for JavaScript callers, or callers who have cast through the types — so that misuse
-**fails loudly** instead of silently doing nothing — and they belong to the `DiError` taxonomy so that a
-`catch (error) { if (error instanceof DiError) … }` does not let them escape.
+unreachable from TypeScript: the chain's return types ([Fluent chain](#fluent-chain--the-canonical-invariant-order)) and
+the type of `bind()` already block most of the way. They exist for JavaScript callers, or callers who have cast through
+the types — so that misuse **fails loudly** instead of silently doing nothing — and they belong to the `DiError`
+taxonomy so that a `catch (error) { if (error instanceof DiError) … }` does not let them escape.
 
 **Why static members are an error.** `StaticMemberDecoratorError` exists because all three of those decorators act on
 **an instance**: `@inject` resolves through the container active while the instance is being constructed, and
@@ -2612,8 +2596,9 @@ swallowed.
 
 ### `AsyncActivationError` vs `AsyncResolutionError`
 
-Both come from the rule in [`ActivationHandler` and `DeactivationHandler`](#lifecycle-handlers) — a hook returning a
-`Promise` means the resolve must be `resolveAsync()`. The difference is _where_ the async source sits:
+Both come from the rule in [`ActivationHandler` and `DeactivationHandler`](#activationhandler-and-deactivationhandler) —
+a hook returning a `Promise` means the resolve must be `resolveAsync()`. The difference is _where_ the async source
+sits:
 
 - `AsyncResolutionError` — the source is a binding's factory, known at the point the binding is selected.
 - `AsyncActivationError` — the source is a hook, which only reveals itself **after** the instance has been created. The
@@ -2746,8 +2731,6 @@ resolver.
 **Why `metadata/metadata-reader-token.ts` is its own file.** `MetadataReaderToken` is the bridge between the decorator
 layer and the container. Keeping it separate avoids a circular import (`container/container.ts` →
 `metadata-reader-token.ts` → nothing pointing back).
-
-<a id="public-api"></a>
 
 ### Public API (`index.ts`)
 
@@ -2982,8 +2965,6 @@ shape of an entry).
 > (`#/tests/*`, `#/examples/*`), every script that is not a lifecycle hook, `devDependencies`, and the `dist` source
 > maps plus their now-dangling `sourceMappingURL` directives — the tarball ships `dist` runtime and types only.
 
-<a id="tsconfig-build"></a>
-
 ### `tsconfig.build.json`
 
 The build uses native `tsc` (TypeScript 7) following the Turborepo "Compiled Packages" model — emitting `.js` + `.d.ts`
@@ -3118,8 +3099,8 @@ subpath `@codefast/di/resolution/select/constraints`: `whenParentIs`, `whenNoPar
 ```
 
 In practice the emit options (`declaration`, `sourceMap`, …) are split out into `tsconfig.build.json`
-([`tsconfig.build.json`](#tsconfig-build)); the base `tsconfig.json` keeps `noEmit: true` for type-checking and carries
-only `outDir`, which the build inherits.
+([`tsconfig.build.json`](#tsconfigbuildjson)); the base `tsconfig.json` keeps `noEmit: true` for type-checking and
+carries only `outDir`, which the build inherits.
 
 ---
 
@@ -3155,8 +3136,6 @@ describe("UserService", () => {
 });
 ```
 
-<a id="test-child-override"></a>
-
 ### A child container — overriding a parent binding
 
 To override a binding defined in a module, use `bind()` at the child container (no `rebind()` is needed, because the
@@ -3185,8 +3164,6 @@ container.bind(Logger).to(ConsoleLogger).singleton();
 container.rebind(Logger).toConstantValue(mockLogger);
 // Note: the old singleton is deactivated (onDeactivation is called if present)
 ```
-
-<a id="test-metadata-reader"></a>
 
 ### Swapping the MetadataReader
 
@@ -3305,10 +3282,10 @@ afterEach(async () => {
 ```
 
 **Do not mock `Symbol.metadata` directly:** use `MetadataReaderToken` instead (see
-[Swapping the MetadataReader](#test-metadata-reader)).
+[Swapping the MetadataReader](#swapping-the-metadatareader)).
 
 **Do not use `rebind()` to override a parent:** use `bind()` at the child container (see
-[A child container](#test-child-override)).
+[A child container](#a-child-container--overriding-a-parent-binding)).
 
 ---
 
@@ -3444,8 +3421,6 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 ---
 
-<a id="not-adopted-from-v8"></a>
-
 ### Summary: not adopted from v8
 
 | InversifyJS v8                                                           | Why not                                                                             |
@@ -3497,8 +3472,10 @@ revision is carried over with its meaning intact.
   its own anchor.
 - The lifecycle-order diagram is followed by a numbered step-by-step gloss; the Container-level hooks section links to
   it instead of restating it in full.
-- Stale cross-references were corrected: "see 2.4" now cites [Fluent chain](#chain-order) by anchor, and the "Last-wins"
-  principle now cites [Slots and last-wins](#slot-matching) for the definition (it previously pointed at the examples).
+- Stale cross-references were corrected: "see 2.4" now cites
+  [Fluent chain](#fluent-chain--the-canonical-invariant-order) by anchor, and the "Last-wins" principle now cites
+  [Slots and last-wins](#slots-and-last-wins--the-exact-definition) for the definition (it previously pointed at the
+  examples).
 - The Container interface table is introduced as "nine groups", matching its nine rows.
 
 **Current rule separated from history or compatibility**

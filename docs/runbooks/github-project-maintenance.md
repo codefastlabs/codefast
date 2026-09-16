@@ -94,8 +94,6 @@ In the UI: `Auto-add to project` → `Edit` → the Filters box.
 There is no autocomplete suggesting fields. The UI shows a red error right under the box when the syntax is wrong — use
 that as your check.
 
-<a id="view-group-by"></a>
-
 ## Changing a view's group-by — UI, and there is a confirmation dialog
 
 GraphQL **cannot** set group-by (`ProjectV2ViewConfigurationInput` only accepts `visibleFieldIds`).
@@ -129,7 +127,8 @@ gh api graphql -f query='mutation { updateProjectV2View(input:{
 }) { projectV2View { number filter } } }'
 ```
 
-Group-by still has to be done in the UI, per [Changing a view's group-by](#view-group-by).
+Group-by still has to be done in the UI, per
+[Changing a view's group-by](#changing-a-views-group-by--ui-and-there-is-a-confirmation-dialog).
 
 Deleting a view: `deleteProjectV2View(input:{viewId:"…"})` — it returns only `clientMutationId`, not the deleted view.
 **A view number is never reissued** after a deletion, so the numbering will have gaps.

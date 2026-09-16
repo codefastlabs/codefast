@@ -97,26 +97,26 @@ export class BindingChain<Value>
 
 `bind()` hands you back the `BindToBuilder` face, on which `singleton()` and `whenTagged()` simply don't exist — so
 `bind(T).singleton()` is a _compile_ error, not a runtime one. This is the **Builder pattern** carrying a **type-level
-ordering guarantee** (see [SPEC — the canonical chain order](SPEC.md#chain-order)). Part 2 covers both the
-[builder](#builder--fluent-interface) and the [type mechanics](#type-level-ordering-guarantee).
+ordering guarantee** (see [SPEC — the canonical chain order](SPEC.md#fluent-chain--the-canonical-invariant-order)). Part
+2 covers both the [builder](#builder--fluent-interface) and the [type mechanics](#type-level-ordering-guarantee).
 
 ### Stop 1 — Registration: one construction site, last-wins, versioned
 
 Every binding object in the process is built by _one_ line of code. That sounds like a triviality; Stop 7 and the
-[hidden-class technique](#one-hidden-class-for-every-binding) explain why it's a deliberate performance decision.
+[hidden-class technique](#one-v8-hidden-class-for-every-binding) explain why it's a deliberate performance decision.
 
 `to()`/`toConstantValue()`/`toDynamic()` all funnel through `#register`, which calls the **single binding construction
 site**, [`createBinding()`](src/core/binding.ts). One object literal, one fixed field order, every time.
 
 The binding lands in the [`BindingRegistry`](src/core/registry.ts) — the **Registry pattern**, a token→bindings store
 with side indexes for id and criterion lookups. Registration is **last-wins**: `add()` finds any existing binding whose
-_slot_ is equal and displaces it (see [SPEC — slots and last-wins](SPEC.md#slot-matching)).
+_slot_ is equal and displaces it (see [SPEC — slots and last-wins](SPEC.md#slots-and-last-wins--the-exact-definition)).
 
 > A **slot** is the name-and-tags label a binding is filed under; a **criterion** is one such label on a request. "Does
 > this request select this binding?" is a slot-vs-criteria question, and Stop 3 is where it gets answered.
 
 Every mutation bumps a monotonic `#version` counter — the seed for all the
-[cache invalidation](#version-stamping--cache-invalidation) later.
+[cache invalidation](#version-stamping-for-cache-invalidation) later.
 
 ### Stop 2 — Asking for a value: a tiered fast-lane dispatch
 
@@ -131,7 +131,7 @@ case first, with the cheapest test that can settle it, and only pays for general
 3. else full candidate selection.
 
 The memo mirrors the container's parent chain, so a child answers from its own cache without re-walking the hierarchy.
-This tiering — and its [inline one-entry cache](#inline-cache-in-front-of-a-map) — is in Part 2.
+This tiering — and its [inline one-entry cache](#inline-one-entry-cache-in-front-of-a-map) — is in Part 2.
 
 ### Stop 3 — Selecting the binding: interning, a bitmask prefilter, and specificity
 
@@ -142,12 +142,14 @@ value would mean walking strings and objects on a hot path. Three techniques sta
   criteria are the _same object_ and can be compared by identity (`===`) instead of by value. See
   [interning](#interning--flyweight).
 - **Bitmask subset prefilter.** Each tag key owns one bit; a slot's keys OR into a single number; one `&` rejects any
-  slot the request doesn't cover before a value is read. See [the bitmask prefilter](#bitmask-subset-prefilter).
+  slot the request doesn't cover before a value is read. See
+  [the bitmask prefilter](#bitmask-subset-prefilter-for-tags).
 - **Most-specific-wins.** Among survivors, [`selectBinding`](src/resolution/select/binding-select.ts) prefers a
   predicate-bearing candidate, then the one with the most tags, else raises `AmbiguousBindingError`.
 
 The one rule for "does this slot match this request" lives in a single function, `matchesSlot()` — a deliberate
-[single source of truth](#one-rule-one-place) so the fast lanes can't drift from the slow one.
+[single source of truth](#one-rule-one-place-single-source-of-truth-for-a-decision) so the fast lanes can't drift from
+the slow one.
 
 ### Stop 4 — Deciding how to build: a tagged union, and compile-vs-interpret
 
@@ -197,7 +199,7 @@ flowchart TD
 
 Notice where the plain-constant test sits: _inside_ the `singleton` branch, under the comment
 `a constant is a singleton that is already its own instance`. That placement is a deliberate
-[dispatcher-ordering technique](#dispatcher-ordering), not an accident of editing.
+[dispatcher-ordering technique](#dispatcher-ordering-test-under-the-branch-that-implies-it), not an accident of editing.
 
 ### Stop 5 — Guarding against cycles: four mechanisms, one per lane
 
@@ -231,7 +233,7 @@ flowchart TD
 
 The sync lanes differ from each other for a second reason: an error has to _name_ the cycle it found, and a boolean
 can't name anything — so anything that must print a path pushes frames instead. See
-[cycle detection](#cycle-detection-four-lanes) for each lane in full.
+[cycle detection](#cycle-detection--four-mechanisms-chosen-per-lane) for each lane in full.
 
 ### Stop 6 — Constructing: ambient context, and reused scratch space
 
@@ -241,7 +243,8 @@ can find it: a module-level [`activeContainer`](src/ambient/active-container.ts)
 — an **ambient-context** pattern.
 
 The scratch arrays that track the resolution stack aren't allocated per call either; they come from an **object pool**
-of resolution contexts reused by depth. See [ambient context](#ambient-context) and [the object pool](#object-pool).
+of resolution contexts reused by depth. See [ambient context](#ambient-context-scoped-implicit-global) and
+[the object pool](#object-pool).
 
 ### Stop 7 — Lifecycle: a sentinel, cached singletons, and hooks
 
@@ -286,11 +289,7 @@ The terms this catalogue leans on, defined once. Each is also re-introduced in a
 | **`SameValueZero` vs `Object.is`** | `Map` keys use SameValueZero (`===`, but `NaN` equals itself); `Object.is` is the same _except_ it keeps `+0` and `-0` apart.                            |
 | **bitmask subset test**            | Encoding a set as bits in one integer, so "is A a subset of B" becomes a single `&` and a comparison.                                                    |
 
-<a id="architecture"></a>
-
 ### A. Architectural patterns
-
-<a id="layering"></a>
 
 **Strict downward-only layering.** A big engine rots when any file may import any other: today's convenience is
 tomorrow's cycle. The fix here is a rule the compiler can hold — the `src/` tree is organised into layers, and _value_
@@ -320,8 +319,6 @@ at build time), so it isn't drawn here.
 > **Lesson** — a dependency direction can be an architectural invariant, and the compiler can hold it if you keep
 > value-imports one-way.
 
-<a id="ports-and-adapters"></a>
-
 **Ports & adapters (hexagonal) — the metadata seam.** Reading decorator metadata is the one place the engine depends on
 the outside world's reflection. Rather than calling it directly, the engine depends on an interface (a _port_) and takes
 an implementation (an _adapter_) — which is what lets a consumer swap in their own.
@@ -334,8 +331,6 @@ answers before use, while the trusted default is passed through untouched.
 > **Lesson** — an injection point for a whole subsystem, plus a validating wrapper that only pays for untrusted
 > implementations.
 
-<a id="registry"></a>
-
 **Registry.** Something has to answer "what is bound to this token?", and a hot path can't afford to scan.
 [`BindingRegistry`](src/core/registry.ts) is that single store of truth: a primary token→bindings map, plus by-id,
 named, and tagged side indexes that exist precisely so the hot lookups don't scan. Each index is a maintenance cost paid
@@ -343,12 +338,12 @@ on every mutation, so it earns its place only where a scan would sit on a hot pa
 
 > **Lesson** — a registry earns its side indexes only where a scan would otherwise be on a hot path.
 
-<a id="plan-compile-vs-interpret"></a>
+#### Plan-compile vs. interpret
 
-**Plan-compile vs. interpret.** Same trade a language runtime makes. Walking the dependency graph on every resolve is
-_interpreting_ it: flexible, works for anything, pays the bookkeeping every time. Working the graph out once and
-emitting a closure that just calls constructors is _compiling_ it: much cheaper per call, but only possible for the part
-of the graph whose shape is known ahead of time.
+Same trade a language runtime makes. Walking the dependency graph on every resolve is _interpreting_ it: flexible, works
+for anything, pays the bookkeeping every time. Working the graph out once and emitting a closure that just calls
+constructors is _compiling_ it: much cheaper per call, but only possible for the part of the graph whose shape is known
+ahead of time.
 
 So this engine does both. The interpreter is the general resolver; the compiler is
 [`InstantiationPlanCompiler`](src/resolution/plan/instantiation-plan.ts), which turns a static subgraph into a
@@ -357,11 +352,11 @@ nested-constructor closure once. The dispatcher picks the compiled path only at 
 
 > **Lesson** — compile the part of the graph that is static and known; keep an interpreter for the part that isn't.
 
-<a id="escape-hatch--partial-compilation"></a>
+#### Escape hatch / partial compilation
 
-**Escape hatch / partial compilation.** A compiler that gave up whenever it met something opaque would compile almost
-nothing — one factory anywhere in a graph would disqualify the whole thing. The alternative is to compile around the
-opaque part and drop back to the interpreter just there.
+A compiler that gave up whenever it met something opaque would compile almost nothing — one factory anywhere in a graph
+would disqualify the whole thing. The alternative is to compile around the opaque part and drop back to the interpreter
+just there.
 
 That drop-back is an _escape thunk_ ([`#compileEscapeThunk`](src/resolution/plan/instantiation-plan.ts)). It re-enters
 the interpreter seeded with the exact ancestors the interpreted path would have had, so cycle detection and constraint
@@ -374,8 +369,6 @@ behaviour is a bug. So "indistinguishable from interpreting" is a correctness in
 
 > **Lesson** — partial compilation is only safe if the escape is behaviourally identical to the slow path — design the
 > seam so that's true by construction.
-
-<a id="fast-lane-dispatch"></a>
 
 **Fast-lane dispatch.** When most calls are easy and a few are hard, answer the easy ones with the cheapest test that
 can settle them and let the rest fall through. `resolveFromContext` in [`resolver.ts`](src/resolution/resolver.ts) is
@@ -407,8 +400,6 @@ flowchart LR
 
 > **Lesson** — order a hot path cheapest-first, and make sure every shortcut yields exactly what the general path would.
 
-<a id="deferred-initialization"></a>
-
 **Deferred (lazy) subsystem initialization.** An empty `Map` isn't free, and most containers never touch most of their
 machinery. So a container's constructor ([`container.ts`](src/container/container.ts)) builds only what a resolve cannot
 happen without — registry, scope manager, lifecycle manager, resolver. The inspector, module tables, scoped/in-flight
@@ -420,11 +411,11 @@ touched. That invariant is pinned by `tests/unit/container/deferred-subsystems.t
 > **Lesson** — pay for a subsystem when it's first used, but only if "never allocated" and "allocated but empty" are
 > indistinguishable to callers.
 
-<a id="ambient-context"></a>
+#### Ambient context (scoped implicit global)
 
-**Ambient context (scoped implicit global).** A property-access `@inject` accessor runs deep inside a constructor and
-needs to know which container is resolving. Threading a container parameter through every signature to reach it would be
-invasive, so the value is left somewhere well-known for the duration of the call — the pattern's whole idea.
+A property-access `@inject` accessor runs deep inside a constructor and needs to know which container is resolving.
+Threading a container parameter through every signature to reach it would be invasive, so the value is left somewhere
+well-known for the duration of the call — the pattern's whole idea.
 
 [`runWithContainer`](src/ambient/active-container.ts) sets and restores a single module-level `activeContainer` around a
 callback. What keeps a global from being a liability here is the discipline around it: set around a strictly synchronous
@@ -432,8 +423,6 @@ callback, and always restored.
 
 > **Lesson** — an ambient is a controlled global — safe when it's strictly set-around-a-synchronous-callback and always
 > restored.
-
-<a id="callbacks-as-interface"></a>
 
 **Narrow callback interface between resolver and context.** A resolution context needs a few things from the resolver;
 handing it the resolver wholesale, or sharing a base class, would couple them to each other's internals. Instead the
@@ -443,11 +432,10 @@ interface — the messages they actually exchange, nothing more.
 > **Lesson** — decouple two collaborators with the smallest interface that carries the messages, not with a shared base
 > class.
 
-<a id="one-rule-one-place"></a>
+#### One rule, one place (single source of truth for a decision)
 
-**One rule, one place (single source of truth for a decision).** The tiered fast lanes above are an optimization risk:
-each is a shortcut that must yield exactly what the general path would. Two copies of a matching rule will agree on the
-day they're written and drift on some later day, silently.
+The tiered fast lanes above are an optimization risk: each is a shortcut that must yield exactly what the general path
+would. Two copies of a matching rule will agree on the day they're written and drift on some later day, silently.
 
 So "does this slot match this request?" is answered by _one_ function, `matchesSlot()`, and "does this request carry
 exactly one criterion?" by `singleCriterionOnlyOf()` ([`binding-select.ts`](src/resolution/select/binding-select.ts),
@@ -459,15 +447,13 @@ refusing.
 > **Lesson** — when several code paths must agree on a decision, put the decision in one function they all call — a
 > duplicated rule is how the fast path and the slow path silently drift.
 
-<a id="design-patterns"></a>
-
 ### B. Design patterns (GoF & idiomatic)
 
-<a id="builder--fluent-interface"></a>
+#### Builder + fluent interface
 
-**Builder + fluent interface.** A chain like `bind(X).to(Y).whenTagged(t).singleton()` reads like a pipeline of objects,
-but allocating a new object per step would be wasteful. [`BindingChain`](src/container/binding-builders.ts) is one
-mutable object that implements every step interface; the _interfaces it returns_ are what create the pipeline feel.
+A chain like `bind(X).to(Y).whenTagged(t).singleton()` reads like a pipeline of objects, but allocating a new object per
+step would be wasteful. [`BindingChain`](src/container/binding-builders.ts) is one mutable object that implements every
+step interface; the _interfaces it returns_ are what create the pipeline feel.
 
 It registers on `to*()` via `#register`, and refines in place via `#reslot`/`#withScope`. Refinement re-registers under
 the _original id_, so `id()` stays stable across a chain:
@@ -486,16 +472,12 @@ the _original id_, so `id()` stays stable across a chain:
 > **Lesson** — a fluent builder can be one mutable object; the interfaces it returns are what make it feel like a
 > pipeline.
 
-<a id="static-factory"></a>
-
 **Static factory objects.** A constructor can only return an instance of its own class and can't attach a brand. A
 factory function can do both, and can hide the construction entirely. `Container` (with `.create`/`.fromModules`),
 `Module.create`, [`token()`](src/core/token.ts), and [`tag()`](src/core/tag.ts) are all factories handing back a typed
 handle.
 
 > **Lesson** — a factory function is the natural home for a brand (below) that a bare constructor can't produce.
-
-<a id="strategy-table-driven"></a>
 
 **Table-driven strategy.** A `switch` over a closed set has a failure mode: add a new case and nothing reminds you to
 handle it. A lookup table typed as a _total_ `Record` does — the missing key is a compile error.
@@ -505,11 +487,11 @@ The scope-application step uses exactly that: a `Record` mapping each `BindingSc
 
 > **Lesson** — a lookup table typed as a total `Record` turns "did I handle every case?" into a type check.
 
-<a id="null-object--sentinels"></a>
+#### Null-object / sentinel values
 
-**Null-object / sentinel values.** Any cache that may legitimately store `undefined` faces one question: does
-`undefined` mean "cached, and the value is `undefined`" or "nothing cached"? A second boolean answers it at the cost of
-a field and a branch; a private sentinel answers it with a value no caller could ever produce.
+Any cache that may legitimately store `undefined` faces one question: does `undefined` mean "cached, and the value is
+`undefined`" or "nothing cached"? A second boolean answers it at the cost of a field and a branch; a private sentinel
+answers it with a value no caller could ever produce.
 
 `unique symbol`s do that job here: [`NO_INSTANCE`](src/core/binding.ts) (unset singleton), `SCOPED_MISS`
 ([`scope-manager.ts`](src/lifecycle/scope-manager.ts)), `PLAN_RETRY`
@@ -517,12 +499,11 @@ a field and a branch; a private sentinel answers it with a value no caller could
 
 > **Lesson** — when `undefined` is a valid value, reach for a private sentinel, not a second boolean.
 
-<a id="interning--flyweight"></a>
+#### Interning / flyweight
 
-**Interning / flyweight.** Comparing two tag criteria by value means walking their contents — every time, on a hot path.
-Interning buys a way out: mint exactly _one_ object per distinct value and hand that same object to everyone, and
-value-equality collapses into reference-equality. `===` is then both faster _and_ indexable, since one object can be a
-map key.
+Comparing two tag criteria by value means walking their contents — every time, on a hot path. Interning buys a way out:
+mint exactly _one_ object per distinct value and hand that same object to everyone, and value-equality collapses into
+reference-equality. `===` is then both faster _and_ indexable, since one object can be a map key.
 
 [`tag.ts`](src/core/tag.ts) does this. `TagKey.of(value)` returns one shared object per value; the miss path that mints
 and stores it lives in `internPair`, kept outside `of()` so the hot wrapper stays small enough for the JIT to inline:
@@ -550,12 +531,10 @@ const internPair = (value: Value): BindingTag<Value> => {
 ```
 
 `of()` itself checks a one-entry cache (`lastValue`/`lastPair`, compared with `Object.is`) before calling that — an
-[inline cache](#inline-cache-in-front-of-a-map) for the call site that keeps asking about the same value.
+[inline cache](#inline-one-entry-cache-in-front-of-a-map) for the call site that keeps asking about the same value.
 
 > **Lesson** — interning turns value-equality into reference-equality, which is both faster and indexable — but read
-> [the ±0 split](#interning-pm-zero) for the correctness subtlety it forces.
-
-<a id="memoization"></a>
+> [the ±0 split](#interning-meets-a-correctness-edge-the-0-split) for the correctness subtlety it forces.
 
 **Memoization, each with its own invalidation.** Caching a derived value is easy; knowing when it goes stale is the
 whole problem. The instructive part of this codebase is that each memo has a _different_ invalidation rule, and each
@@ -570,11 +549,10 @@ rule is derived from the question "what does this value actually depend on?":
 > **Lesson** — a memo is only as correct as its invalidation; write the invalidation rule from "what does this value
 > depend on?", not from habit.
 
-<a id="inline-cache-in-front-of-a-map"></a>
+#### Inline (one-entry) cache in front of a `Map`
 
-**Inline (one-entry) cache in front of a `Map`.** Real access patterns repeat: a loop asks about the same token over and
-over. A hash lookup for each of those still costs a hash and a probe. Remembering just the _last_ key and value skips
-both on a repeat, for the price of two fields.
+Real access patterns repeat: a loop asks about the same token over and over. A hash lookup for each of those still costs
+a hash and a probe. Remembering just the _last_ key and value skips both on a repeat, for the price of two fields.
 
 [`LifecycleManager.activationHandlersFor`](src/lifecycle/lifecycle-manager.ts) and
 [`BindingLookupCache.defaultEntry`](src/resolution/cache/binding-lookup-cache.ts) each keep one last-token/last-value
@@ -582,11 +560,11 @@ slot ahead of the map, as does `TagKey.of` above.
 
 > **Lesson** — a one-entry cache in front of a hash map is nearly free and often wins the actual access pattern.
 
-<a id="object-pool"></a>
+#### Object pool
 
-**Object pool.** A deep resolution needs one small context object per level, and allocating them per call means garbage
-proportional to graph depth times resolve count. A pool reuses the same objects instead: keep them, and `reset()` their
-fields for the next use.
+A deep resolution needs one small context object per level, and allocating them per call means garbage proportional to
+graph depth times resolve count. A pool reuses the same objects instead: keep them, and `reset()` their fields for the
+next use.
 
 Sync resolution contexts are pooled by depth ([`resolver.ts`](src/resolution/resolver.ts)
 `#acquireSyncResolutionContext`, [`context.ts`](src/resolution/context.ts) `reset`). The trade to remember is that a
@@ -595,8 +573,6 @@ pooled object stops being short-lived, which changes what a write into it costs 
 
 > **Lesson** — pool the objects on the hottest path, and remember a pooled object that lives long enough has different
 > GC costs than a fresh one.
-
-<a id="discriminated-union-dispatch"></a>
 
 **Discriminated-union dispatch.** When a closed set of shapes must be handled differently, the object-oriented answer is
 a method per subclass. That costs a megamorphic call on a hot path. The alternative is a plain union of shapes tagged by
@@ -608,8 +584,6 @@ one literal field, plus a `switch` — the compiler still checks you handled eve
 > **Lesson** — a tagged union plus an exhaustive switch is the type-safe alternative to polymorphism when the set of
 > shapes is closed and hot.
 
-<a id="output-adapters"></a>
-
 **Adapter (output formats).** Four output formats could mean four graph walks, each with its own chance of disagreeing
 with the others. Building the graph once as a neutral JSON and converting at the edges means one walk and one truth.
 [`introspection/graph-adapters/`](src/introspection/graph-adapters/mermaid.ts) holds the small conversions to Mermaid,
@@ -617,15 +591,12 @@ DOT, Cytoscape, and React Flow.
 
 > **Lesson** — compute the neutral form once, adapt at the edges.
 
-<a id="algorithms"></a>
-
 ### C. Algorithms & data structures
 
-<a id="cycle-detection-four-lanes"></a>
+#### Cycle detection — four mechanisms, chosen per lane
 
-**Cycle detection — four mechanisms, chosen per lane.** A cycle is `A` needing `B` while `B` needs `A`. Follow one
-naively and the recursion never bottoms out. Detecting it means answering the same question at every hop: _is this
-binding already an ancestor of the resolution I'm in?_
+A cycle is `A` needing `B` while `B` needs `A`. Follow one naively and the recursion never bottoms out. Detecting it
+means answering the same question at every hop: _is this binding already an ancestor of the resolution I'm in?_
 
 That is a membership test, and the cheapest structure that answers it exactly depends entirely on how the surrounding
 code runs:
@@ -669,8 +640,6 @@ from "two siblings legitimately want the same thing".
 
 > **Lesson** — don't pick a cycle detector in the abstract — pick the cheapest structure that is exact for the
 > concurrency model of that specific lane.
-
-<a id="threshold-scan-vs-set"></a>
 
 **Threshold-switched linear-scan vs. `Set`.** A `Set` has O(1) membership and an array has O(n) — but that hides a
 constant factor. For a handful of items, scanning a contiguous array beats hashing a key and probing a table, and it
@@ -720,10 +689,10 @@ dropped rather than repaired, and the next deep frame rebuilds it.
 > **Lesson** — for small n a linear scan often beats a hash set; a threshold lets you have both without changing
 > semantics.
 
-<a id="bitmask-subset-prefilter"></a>
+#### Bitmask subset prefilter for tags
 
-**Bitmask subset prefilter for tags.** Tag matching asks a set question: _does the request carry every key this slot
-declares?_ Comparing two sets of keys means looping over one and looking each up in the other.
+Tag matching asks a set question: _does the request carry every key this slot declares?_ Comparing two sets of keys
+means looping over one and looking each up in the other.
 
 There's a much cheaper representation when the universe of keys is small. Give each key its own bit position, and a
 _set_ of keys becomes a single integer with those bits on. Subset then has a one-instruction answer: `A` is a subset of
@@ -750,10 +719,10 @@ answer.
 > **Lesson** — a bitmask turns a set-subset test into one instruction; when bits can collide, design so collisions cost
 > a re-check, never a wrong answer.
 
-<a id="interning-pm-zero"></a>
+#### Interning meets a correctness edge: the ±0 split
 
-**Interning meets a correctness edge: the ±0 split.** [Interning](#interning--flyweight) stores one object per distinct
-value in a `Map`. That silently inherits the `Map`'s idea of "distinct" — and JavaScript has more than one.
+[Interning](#interning--flyweight) stores one object per distinct value in a `Map`. That silently inherits the `Map`'s
+idea of "distinct" — and JavaScript has more than one.
 
 > `Map` keys compare by **SameValueZero**: like `===`, except `NaN` equals itself. `Object.is` is the same _except_ it
 > also keeps `+0` and `-0` apart. Those two definitions differ on exactly one pair of values.
@@ -777,11 +746,11 @@ Pinned by `tests/unit/resolution/select/tagged-selection.test.ts`.
 > **Lesson** — `Map` equality (`SameValueZero`) and `Object.is` differ on exactly one pair of values — if your identity
 > scheme rides on a `Map`, that difference is a bug waiting unless you handle it.
 
-<a id="version-stamping--cache-invalidation"></a>
+#### Version stamping for cache invalidation
 
-**Version stamping for cache invalidation.** A cache has to know when the world changed under it. Comparing the world
-itself is expensive; comparing one number is not. A counter that only ever increases gives you exactly that: stamp the
-cache with the counter's value, and a later mismatch means "something changed" — cheaply and without false negatives.
+A cache has to know when the world changed under it. Comparing the world itself is expensive; comparing one number is
+not. A counter that only ever increases gives you exactly that: stamp the cache with the counter's value, and a later
+mismatch means "something changed" — cheaply and without false negatives.
 
 The registry keeps a monotonic `#version` that bumps on every mutation ([`registry.ts`](src/core/registry.ts)). Caches
 stamp themselves with a `chainVersion()` and self-clear on a mismatch
@@ -792,8 +761,6 @@ change?" to "did anything change anywhere above me?", still in one comparison.
 
 > **Lesson** — a monotonic version counter is the simplest correct cache key for "has anything changed since?", and
 > summing along a chain extends it to "has anything changed anywhere above me?".
-
-<a id="iterative-alias-resolution"></a>
 
 **Iterative alias resolution with exact cycle detection.** An alias points at another token, which may itself be an
 alias. Following that with recursion means a cyclic alias chain crashes the process with a stack overflow instead of
@@ -807,20 +774,17 @@ short chain, the exact structure handles the rest.
 > **Lesson** — follow a chain iteratively, not recursively, and keep an exact visited-set for the cycle case even when a
 > cheap bound handles the common case.
 
-<a id="dfs-scope-validation"></a>
-
 **DFS for static scope validation.** Some bugs are shaped like graph properties, and can be found before anything runs.
 A **captive dependency** is one: a longer-lived binding depending on a shorter-lived one — a singleton capturing a
 scoped instance, which then outlives the scope it came from.
 
 Finding those is a reachability question, and a plain depth-first search answers it.
 [`validate()`](src/container/container.ts) walks the constructor/`toResolved` dependency edges depth-first, follows
-aliases to their terminals, and throws `ScopeViolationError` on a violation. See [SPEC — `validate`](SPEC.md#validate).
+aliases to their terminals, and throws `ScopeViolationError` on a violation. See
+[SPEC — `validate`](SPEC.md#validate--detecting-captive-dependencies).
 
 > **Lesson** — some correctness properties are graph properties; a plain DFS with a visited set is often all you need to
 > check them ahead of time.
-
-<a id="most-specific-wins"></a>
 
 **Most-specific-wins arbitration.** When several bindings match one request, picking one arbitrarily is how a container
 becomes unpredictable. The alternative is to define "more specific" explicitly and to treat a genuine tie as an error
@@ -832,8 +796,6 @@ it's ambiguous and raises.
 
 > **Lesson** — when several answers match, define specificity explicitly and make ambiguity an error, not a silent pick.
 
-<a id="fixed-arity-specialization"></a>
-
 **Fixed-arity specialization.** `new T(...args)` has to build an array and spread it. Writing out `new T(a, b)` doesn't.
 Since real constructors overwhelmingly take a small number of dependencies, the common cases are worth unrolling.
 
@@ -843,11 +805,7 @@ Both the interpreter (`#resolveDeps`) and the compiler special-case arities up t
 
 > **Lesson** — the common case is usually low-arity; unrolling it a little avoids allocation and helps the JIT.
 
-<a id="typescript"></a>
-
 ### D. TypeScript techniques
-
-<a id="branded-types"></a>
 
 **Branded / nominal types.** TypeScript is structural: any two types with the same shape are interchangeable, so a
 `Token<string>` and any other object with the same fields are the same type to the compiler. A **brand** is a phantom
@@ -869,8 +827,6 @@ narrows to the owned one.
 
 > **Lesson** — a brand encodes a provenance or a permission the structural type system would otherwise ignore.
 
-<a id="variance-annotations"></a>
-
 **Variance annotations (`out`) — and a deliberate omission.** **Variance** describes how a wrapper's assignability
 follows its type argument's. If `Cat` is assignable to `Animal` and that makes `Box<Cat>` assignable to `Box<Animal>`,
 `Box` is **covariant** in its parameter. TypeScript infers variance on its own, but you can also write it down.
@@ -883,11 +839,11 @@ The binding kinds deliberately carry _no_ variance annotation, which is what mak
 
 > **Lesson** — an explicit `out` is documentation the compiler enforces; leaving it off is sometimes just as deliberate.
 
-<a id="method-vs-property-bivariance"></a>
+#### The method-vs-property bivariance trick
 
-**The method-vs-property bivariance trick.** Start with the practical problem. The engine's internal lanes pass bindings
-around with their value type erased — a plain `Binding`, not a `Binding<Value>`. For that to work, a `Binding<Value>`
-has to be assignable to `Binding`. Under `strictFunctionTypes`, it isn't.
+Start with the practical problem. The engine's internal lanes pass bindings around with their value type erased — a
+plain `Binding`, not a `Binding<Value>`. For that to work, a `Binding<Value>` has to be assignable to `Binding`. Under
+`strictFunctionTypes`, it isn't.
 
 The reason is a variance rule that only applies to _some_ declaration syntax:
 
@@ -916,11 +872,10 @@ Pinned by `tests/types/binding-variance.test.ts`.
 > **Lesson** — method syntax and property syntax have different variance under `strictFunctionTypes` — a real tool, not
 > a quirk, when you need the erasure to type-check.
 
-<a id="type-level-ordering-guarantee"></a>
+#### Type-level ordering guarantee
 
-**Type-level ordering guarantee.** A fluent API has an order that makes sense (`bind` → `to` → `when` → scope) and
-orders that don't. Checking that at runtime means the mistake ships and throws later. Encoding it in the _return types_
-means the mistake doesn't compile.
+A fluent API has an order that makes sense (`bind` → `to` → `when` → scope) and orders that don't. Checking that at
+runtime means the mistake ships and throws later. Encoding it in the _return types_ means the mistake doesn't compile.
 
 Each return type is a state, and the methods that type offers are the only legal transitions out of it. The chain's
 legal order (Stop 0) is enforced entirely this way ([`binding.ts`](src/core/binding.ts)); the runtime
@@ -943,12 +898,11 @@ stateDiagram-v2
 
 > **Lesson** — you can encode a small state machine in return types so illegal transitions don't compile.
 
-<a id="satisfies-completeness-guard"></a>
+#### `satisfies` as a completeness guard
 
-**`satisfies` as a completeness guard.** [`createBinding`](src/core/binding.ts) writes one object literal that must
-contain every field any binding kind declares — miss one and some binding kind is silently short a field. A plain type
-annotation would catch that, but it would also widen the literal and lose the exact key order the single hidden class
-depends on. `satisfies` checks without widening:
+[`createBinding`](src/core/binding.ts) writes one object literal that must contain every field any binding kind declares
+— miss one and some binding kind is silently short a field. A plain type annotation would catch that, but it would also
+widen the literal and lose the exact key order the single hidden class depends on. `satisfies` checks without widening:
 
 ```ts
 return {
@@ -973,12 +927,10 @@ return {
 
 `ConstructedBindingFields` is a `Record` of every field name, so forgetting one is a compile error. Note the `instance`
 line: an `in` probe rather than `??`, because a re-slotted singleton may legitimately hold a cached `undefined` — the
-same distinction the [`NO_INSTANCE` sentinel](#null-object--sentinels) exists to preserve.
+same distinction the [`NO_INSTANCE` sentinel](#null-object--sentinel-values) exists to preserve.
 
 > **Lesson** — `satisfies` checks a value against a type without widening it — here it turns "did I write every field?"
 > into a compile error.
-
-<a id="advanced-conditional-types"></a>
 
 **Advanced conditional & mapped types.** Three worth reading, each replacing something a human would otherwise have to
 keep in sync by hand:
@@ -993,16 +945,12 @@ keep in sync by hand:
 > **Lesson** — mapped tuples plus `NoInfer` let a factory's argument types be _derived_ from a dependency list rather
 > than restated.
 
-<a id="type-predicates"></a>
-
 **Type predicates.** A runtime shape check tells you something the compiler doesn't know. A return type of `x is T` is
 how you hand that knowledge back to it — and it keeps the "which shape is this?" logic in one named place instead of
 scattered inline conditions. Small examples: [`isInjectionDescriptor`](src/injection/descriptor.ts), `isSyncModule`,
 `#isPlainConstant`.
 
 > **Lesson** — a `x is T` predicate is how you turn a runtime shape check into type information.
-
-<a id="conditional-package-imports"></a>
 
 **Conditional `package.json#imports`.** During development, `#/…` should mean the TypeScript in `src/`. For a consumer
 who installed the package, the same specifier must mean the built JavaScript in `dist/`. Conditional import maps let one
@@ -1012,8 +960,6 @@ This is a packaging technique as much as a TypeScript one; the root [`CLAUDE.md`
 three-audience reasoning in full.
 
 > **Lesson** — the `imports`/`exports` fields can serve dev and published consumers different files under one specifier.
-
-<a id="symbol-keyed-off-band-data"></a>
 
 **Symbol-keyed off-band data.** The engine sometimes needs to attach bookkeeping to an object that also belongs to the
 user, without that bookkeeping showing up in spreads, `Object.keys`, or `JSON.stringify`. A symbol key does exactly
@@ -1028,30 +974,25 @@ Because spread doesn't copy symbol keys, dropping it takes no code at all.
 > **Lesson** — a symbol key is private-by-convention storage that survives on the object but stays invisible to spreads
 > and serialization — occasionally that invisibility is the feature.
 
-<a id="performance"></a>
-
 ### E. Performance engineering techniques
 
 _Reminder: the following are techniques and the reasoning behind them, not benchmark results. Whether any of them is
 worth it today is an empirical question the [`benchmarks/di`](../../benchmarks/di/README.md) suite answers; the
 [`ARCHITECTURE.md`](ARCHITECTURE.md) notes carry the design rationale._
 
-<a id="one-hidden-class-for-every-binding"></a>
+#### One V8 hidden class for every binding
 
-**One V8 hidden class for every binding.** V8 doesn't store objects as hash maps of names to values. It gives every
-object a **hidden class** describing its property layout, and objects built with the same properties in the same order
-share one. That matters because of how property reads are optimised: a read site that always sees the same hidden class
-is **monomorphic** and compiles to little more than a fixed offset load, while one that sees many shapes goes
-**megamorphic** and falls back to a lookup.
+V8 doesn't store objects as hash maps of names to values. It gives every object a **hidden class** describing its
+property layout, and objects built with the same properties in the same order share one. That matters because of how
+property reads are optimised: a read site that always sees the same hidden class is **monomorphic** and compiles to
+little more than a fixed offset load, while one that sees many shapes goes **megamorphic** and falls back to a lookup.
 
 The resolver reads `kind`, `scope` and `factory` on every hop, so those reads should stay monomorphic. That is why every
 binding in the process is built by the one object literal in [`createBinding`](src/core/binding.ts), in a fixed field
-order (see [the `satisfies` guard](#satisfies-completeness-guard) that keeps the literal complete), and why the registry
-stores bindings by reference rather than re-copying them into new shapes.
+order (see [the `satisfies` guard](#satisfies-as-a-completeness-guard) that keeps the literal complete), and why the
+registry stores bindings by reference rather than re-copying them into new shapes.
 
 > **Lesson** — if a hot object type has many instances read on a fast path, build them all one way.
-
-<a id="totalized-field"></a>
 
 **Totalizing a field to avoid a branch.** An optional field forces every reader to handle its absence, and it gives the
 object a second shape. Filling it in with a harmless default removes both costs.
@@ -1063,12 +1004,12 @@ is kept only because it's the vocabulary validation and introspection speak.
 > **Lesson** — making an optional field total can remove a branch (and keep the hidden class stable) at the cost of a
 > tiny redundancy.
 
-<a id="write-barrier-aware-reset"></a>
+#### Write-barrier-aware reset
 
-**Write-barrier-aware reset.** Pooling an object ([above](#object-pool)) has a consequence: the object stops being
-short-lived and ends up in V8's old space. Storing a pointer into an old-space object triggers a **write barrier** —
-bookkeeping the garbage collector needs so it can track references from old objects to young ones. So a pointer store
-into a pooled object is not free, and an _unnecessary_ one is pure cost.
+Pooling an object ([above](#object-pool)) has a consequence: the object stops being short-lived and ends up in V8's old
+space. Storing a pointer into an old-space object triggers a **write barrier** — bookkeeping the garbage collector needs
+so it can track references from old objects to young ones. So a pointer store into a pooled object is not free, and an
+_unnecessary_ one is pure cost.
 
 `reset()` ([`context.ts`](src/resolution/context.ts)) therefore compares before storing:
 
@@ -1087,8 +1028,6 @@ stack — the comparison is designed to succeed, not merely to be present.
 > **Lesson** — for a long-lived object, an unnecessary pointer write isn't free; comparing first can be cheaper than
 > storing.
 
-<a id="allocation-avoidance"></a>
-
 **Allocation avoidance on the hot path.** An object allocated per resolve is garbage created per resolve. Many shapes in
 this engine exist for no other reason than to move an allocation from per-call to per-slot, per-container, or constant:
 
@@ -1101,8 +1040,6 @@ this engine exist for no other reason than to move an allocation from per-call t
 
 > **Lesson** — the cheapest allocation is the one you don't make; look for per-call objects that could be per-slot,
 > per-container, or constant.
-
-<a id="eager-vs-lazy-upsert"></a>
 
 **`getOrInsert` vs `getOrInsertComputed`, chosen by hit rate.** "Insert if absent" comes in two forms. The eager one
 takes the fallback _value_, so it's computed whether or not it's needed. The lazy one takes a _function_, so the value
@@ -1117,11 +1054,10 @@ uses the lazy `getOrInsertComputed` with a module-scope factory, so the common h
 
 > **Lesson** — eager-vs-lazy isn't a style choice; pick it from which branch dominates.
 
-<a id="dispatcher-ordering"></a>
+#### Dispatcher ordering (test under the branch that implies it)
 
-**Dispatcher ordering (test under the branch that implies it).** In a hot dispatcher, every test at the top is paid by
-every call — including the calls that could never have needed it. Pushing a test down into the branch that already
-implies it makes the other branches cheaper for free.
+In a hot dispatcher, every test at the top is paid by every call — including the calls that could never have needed it.
+Pushing a test down into the branch that already implies it makes the other branches cheaper for free.
 
 In [`#resolveDefaultEntry`](src/resolution/resolver.ts) the plain-constant test lives _inside_ the `singleton` branch,
 because a constant _is_ a singleton that is already its own instance. Hoisting it to the top of the dispatcher would
@@ -1133,8 +1069,6 @@ unrelated benchmark row, because it changed whether the function still fit the J
 > **Lesson** — put a check under the branch that already implies it, and treat hot dispatchers as inlining-sensitive —
 > measure edits near them.
 
-<a id="memory-friendly-weak-caches"></a>
-
 **GC-friendly weak caches.** A normal `Map` keyed by a class keeps that class alive forever — the cache becomes a leak
 whose size follows the program's history rather than its present. A `WeakMap` holds its keys weakly, so an entry
 disappears when its key does.
@@ -1145,8 +1079,6 @@ takes its cache entry with it.
 
 > **Lesson** — key a cache weakly when its lifetime should follow the key's, not the cache's.
 
-<a id="cheap-negative-flags"></a>
-
 **Cheap negative-answer flags.** The fastest way to handle an empty collection is to know it's empty without looking. A
 single boolean, maintained where the collection is written, can skip an entire scan where the collection is read.
 
@@ -1155,18 +1087,14 @@ dispose; `activationVersion === 0` short-circuits all activation-hook checks.
 
 > **Lesson** — a one-time "there is nothing here" flag can save a repeated scan for the common empty case.
 
-<a id="testing"></a>
-
 ### F. Testing techniques
 
 di's tests live under `tests/unit`, `tests/integration`, and `tests/types` (the repo-wide taxonomy is described in
 [`TESTING.md`](../../TESTING.md)). The techniques worth learning from:
 
-<a id="type-level-tests"></a>
-
 **Type-level tests with `expectTypeOf`.** Some of this engine's invariants are properties of the _types_, not of any
-runtime value — the erasure in [the bivariance trick](#method-vs-property-bivariance) either type-checks or it doesn't,
-and no amount of running code can tell you. Those get compile-time assertions instead, where a test that _stops
+runtime value — the erasure in [the bivariance trick](#the-method-vs-property-bivariance-trick) either type-checks or it
+doesn't, and no amount of running code can tell you. Those get compile-time assertions instead, where a test that _stops
 compiling_ is the failure signal.
 
 The load-bearing ones: `tests/types/binding-variance.test.ts` (the method-vs-property trick),
@@ -1174,8 +1102,6 @@ The load-bearing ones: `tests/types/binding-variance.test.ts` (the method-vs-pro
 order).
 
 > **Lesson** — if an invariant is a type property, assert it in the type system — a runtime test can't see it.
-
-<a id="invariant-pinning-tests"></a>
 
 **Invariant-pinning tests, named next to the invariant.** A test named after its assertion tells you nothing when it
 breaks. A test named after the _invariant_ it protects turns a failure into a sentence: "you broke the rule that the
@@ -1189,8 +1115,6 @@ Each correctness invariant in [`ARCHITECTURE.md`](ARCHITECTURE.md) cites the tes
 > **Lesson** — pin a subtle invariant with a test whose name states the invariant, so a failure reads as "you broke X,"
 > not "assertion failed."
 
-<a id="structural-diagnostics-seam"></a>
-
 **Structural (not timing) assertions via a diagnostics seam.** You can't assert "this is fast" in a unit test — timings
 are machine-dependent and flaky. But you _can_ assert the structural fact underneath the speed: that a plan was compiled
 at all, or that a deferred subsystem stayed deferred. Those are deterministic.
@@ -1200,8 +1124,6 @@ A private `RESOLUTION_DIAGNOSTICS` symbol ([`diagnostics.ts`](src/errors/diagnos
 
 > **Lesson** — you can test that an optimization is _active_ (a structural fact) even when you can't test that it's
 > _fast_ (a flaky, machine-dependent fact).
-
-<a id="toggle-then-reresolve"></a>
 
 **Toggle-then-re-resolve for state cleanup.** Proving that a failure path cleaned up after itself is awkward: the state
 in question is private, and after a successful run there's nothing to see. The trick is to force the failure, then use

@@ -1,27 +1,32 @@
 /**
- * GitHub-style heading ids, matching the rule `codefast audit links` checks anchors against: lowercase,
- * drop everything but letters, numbers, spaces and hyphens, then hyphenate spaces. Duplicates take
- * `-1`, `-2`… like GitHub.
+ * GitHub's heading-slug rule: lowercase, strip to letters, numbers, marks, underscore and hyphen, then
+ * turn each remaining space into a hyphen with runs left intact. Rendering ids off the same rule the
+ * link audit enforces keeps an in-doc link that passes the audit working on the page.
  */
 export function slugify(text: string): string {
   return text
     .toLowerCase()
-    .replaceAll(/[^\p{L}\p{N} -]/gu, "")
+    .replaceAll(/[^\p{L}\p{N}\p{M} _-]/gu, "")
     .trim()
-    .replaceAll(/\s+/g, "-");
+    .replaceAll(" ", "-");
 }
 
-/** Hands out unique ids for one document's headings. */
+/** Hands out unique ids for one document's headings, suffixing duplicates `-1`, `-2`… like GitHub. */
 export class Slugger {
   readonly #seen = new Map<string, number>();
 
   slug(text: string): string {
     const base = slugify(text);
-    const count = this.#seen.get(base) ?? 0;
+    let result = base;
 
-    this.#seen.set(base, count + 1);
+    while (this.#seen.has(result)) {
+      this.#seen.set(base, (this.#seen.get(base) ?? 0) + 1);
+      result = `${base}-${this.#seen.get(base)!}`;
+    }
 
-    return count === 0 ? base : `${base}-${count}`;
+    this.#seen.set(result, 0);
+
+    return result;
   }
 }
 

@@ -176,7 +176,6 @@ function auditCheckToPipeline<Request, CheckResult>(
     name: check.name,
     description: check.description,
     positional: { name: "[target]", help: check.targetHelp },
-    jsonHelp: "Print one JSON summary on stdout",
     schema: check.schema,
     configureArgv: check.extraOptions,
     prepare: (fs, input) =>

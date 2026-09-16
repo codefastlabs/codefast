@@ -224,7 +224,8 @@ predicates ship from the root entry:
 | `whenParentTaggedAll(criteria)`      | the parent's slot carries all criteria in the array     |
 | `whenAnyAncestorTaggedAll(criteria)` | some ancestor's slot carries all criteria in the array  |
 
-For the exact matching and most-specific-wins rules, see [`SPEC.md` → Slots and last-wins](./SPEC.md#slot-matching).
+For the exact matching and most-specific-wins rules, see
+[`SPEC.md` → Slots and last-wins](./SPEC.md#slots-and-last-wins--the-exact-definition).
 
 ## Decorators
 

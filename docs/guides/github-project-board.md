@@ -22,7 +22,7 @@ only affects the status of the issue it is linked to, and never appears as a car
 
 | Field     | Type          | Meaning                                                                                                      |
 | --------- | ------------- | ------------------------------------------------------------------------------------------------------------ |
-| `Status`  | single-select | The stage in the workflow — see [Status](#status)                                                            |
+| `Status`  | single-select | The stage in the workflow — see [Status](#status--six-stages)                                                |
 | `Package` | single-select | `ui` · `di` · `tailwind-variants` · `theme` · `tracking` · `cli` · `benchmark` · `apps/web` · `repo-tooling` |
 | `Kind`    | single-select | `feat` · `fix` · `perf` · `docs` · `dx` · `chore` · `idea` · `learn`                                         |
 | `Target`  | text          | **Which downstream project needs this.** Not a version milestone — versions are per package                  |
@@ -34,8 +34,6 @@ The first six `Kind` options match Conventional Commits (which commitlint enforc
 becomes the commit prefix directly.
 
 `Kind` and `Target` have **no workflow filling them in** — set them by hand at triage.
-
-<a id="status"></a>
 
 ## Status — six stages
 
@@ -58,23 +56,21 @@ Three rules keep the board from rotting, and dropping any one of them rots it:
 
 ## The seven automated workflows
 
-| Workflow                       | Trigger                                                                         | Action                 |
-| ------------------------------ | ------------------------------------------------------------------------------- | ---------------------- |
-| `Auto-add to project`          | an issue matches the filter ([What reaches the board](#what-reaches-the-board)) | add it to the board    |
-| `Item added to project`        | an item reaches the board                                                       | `Status: Inbox`        |
-| `Pull request linked to issue` | a PR is linked to an issue                                                      | `Status: In review`    |
-| `Item closed`                  | an issue/PR closes                                                              | `Status: Done`         |
-| `Pull request merged`          | a PR merges                                                                     | `Status: Done`         |
-| `Auto-close issue`             | `Status` changes to `Done`                                                      | **close the issue**    |
-| `Auto-add sub-issues`          | an item has sub-issues                                                          | add the sub-issues too |
+| Workflow                       | Trigger                                                                                           | Action                 |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- | ---------------------- |
+| `Auto-add to project`          | an issue matches the filter ([What reaches the board](#what-reaches-the-board-and-what-does-not)) | add it to the board    |
+| `Item added to project`        | an item reaches the board                                                                         | `Status: Inbox`        |
+| `Pull request linked to issue` | a PR is linked to an issue                                                                        | `Status: In review`    |
+| `Item closed`                  | an issue/PR closes                                                                                | `Status: Done`         |
+| `Pull request merged`          | a PR merges                                                                                       | `Status: Done`         |
+| `Auto-close issue`             | `Status` changes to `Done`                                                                        | **close the issue**    |
+| `Auto-add sub-issues`          | an item has sub-issues                                                                            | add the sub-issues too |
 
 The last two close the loop in both directions: closing an issue moves its card to `Done`, and dragging a card to `Done`
 closes the issue. There is no status left to fix by hand.
 
 `Pull request linked to issue` **does not pull the PR onto the board** — it sets a field on the **issue**. That is why
 the board can know an issue is awaiting review without containing any PRs.
-
-<a id="what-reaches-the-board"></a>
 
 ## What reaches the board, and what does not
 

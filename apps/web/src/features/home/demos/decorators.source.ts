@@ -26,7 +26,7 @@ export class ReceiptMailer {
   constructor(
     readonly transport: Transport,
     readonly logger: Logger | undefined,
-    readonly formatters: Array<Formatter>,
+    readonly formatters: ReadonlyArray<Formatter>,
     readonly fallback: Transport,
   ) {}
 
