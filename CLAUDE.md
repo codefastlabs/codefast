@@ -269,8 +269,8 @@ point of use beats brevity, and every word must convey information:
   `DefaultContainer` — not `ContainerImpl`. **A type parameter is named for what it holds**: `Value`, `Target`, `Deps`,
   `Ctx`, `Result` — not `T`, `TValue`, `TResult`. A bare `T` says nothing at the use site, which is where the reader
   meets it. Verbatim external API quoted for comparison (Inversify's `Newable<T>`) keeps its own spelling. This
-  originated as [the naming principle in `packages/di/SPEC.md`](packages/di/SPEC.md#naming) and applies repo-wide — it
-  lived in one package's spec long enough for another package to drift from it.
+  originated as [the naming principle in `packages/di/SPEC.md`](packages/di/SPEC.md#naming--no-i-or-t-prefix) and
+  applies repo-wide — it lived in one package's spec long enough for another package to drift from it.
 
 - **A display name is spelled like the TS symbol it stands for, under its owner's namespace: `<namespace>:<Name>`.** The
   namespace is the kebab-case slug of the package, app or feature that declares it (or `@scope/pkg`); the library's own
@@ -365,8 +365,10 @@ These are project rules the linters do not fully enforce:
 `pnpm cli:audit:links` scans every `.md` in the repo for a relative path that does not exist, an in-document anchor with
 no matching heading, and an anchor into another document the target does not offer — the last of which fails silently in
 a browser. It gates CI, so a doc link that rots is a red build rather than a discovery months later. Cite a section by
-an explicit `<a id="…"></a>` anchor rather than a number: a number shifts the moment a section is inserted, and nothing
-checks it.
+linking its heading — not a section number, and not a hand-written `<a id="…"></a>` anchor: heading slugs follow
+GitHub's rule, shared by the audit and the `apps/web` docs renderer and pinned by `fixtures/markdown-slug-corpus.json`,
+so the link resolves everywhere and the audit turns red the moment a reworded heading breaks it. If a heading is too
+long to make a comfortable fragment, shorten the heading — do not reach back for an explicit anchor.
 
 ## Releases
 

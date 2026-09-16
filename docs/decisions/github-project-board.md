@@ -95,7 +95,8 @@ Drag a card to `Done` â†’ the issue closes itself. Together with `Item closed` â
 directions, with no idempotency loop because both ends converge.
 
 **A side effect worth knowing:** it applies to draft issues too. That is why the guide's
-[Status section](../guides/github-project-board.md#status) stresses parking ideas in `Someday` rather than `Done`.
+[Status section](../guides/github-project-board.md#status--six-stages) stresses parking ideas in `Someday` rather than
+`Done`.
 
 ### Deleting the `Roadmap` view
 

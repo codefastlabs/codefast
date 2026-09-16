@@ -87,8 +87,6 @@ pnpm --filter @codefast/di test:unit   # or test:integration / test:type / test:
 
 Add coverage for the new behavior.
 
-<a id="guard-performance"></a>
-
 ## Guard performance — (conditional: touched resolver / resolution / registry hot paths)
 
 A resolver refactor's cost isn't known until it's measured. Run the head-to-head, order-independent suite against a

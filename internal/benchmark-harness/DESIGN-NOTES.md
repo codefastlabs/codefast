@@ -44,8 +44,6 @@ demand from one shared function.**
 
 ## The four problems
 
-<a id="p1-combinatorial-space"></a>
-
 ### P1 — The run space is a combination, not a flat list
 
 Two independent axes multiply, plus continuous modifiers:
@@ -61,8 +59,6 @@ The full surface and its parsers live in [`src/shared/env-keys.ts`](./src/shared
 consequence: `isolated × fast` is a dead cell (isolation buys order-independent medians; `fast` has no median). The
 pairs worth naming are `isolated + full` (citable) and `shared + fast` (smoke). This is the mental model the other three
 problems build on: **one run is one point in this space, so its identity has to travel with its data.**
-
-<a id="p2-viewer-mixes-configs"></a>
 
 ### P2 — The viewer overlays incomparable configs on one line
 
@@ -85,8 +81,6 @@ filter in [`use-derived-payload.ts`](../benchmark-viewer/src/app/hooks/use-deriv
 URL-hash encoded in [`hash.ts`](../benchmark-viewer/src/app/lib/hash.ts). The true series identity becomes
 `(envKey × configKey)`; the default view filters to the newest run's config.
 
-<a id="p3-no-intra-library-model"></a>
-
 ### P3 — Comparing a library's own features has no model
 
 **Root:** the harness only knows _pivot-vs-competitors_. Comparing features **within** one library (a `simple` group vs
@@ -105,8 +99,6 @@ just a cross-library pair.
   [`src/report/comparison.ts`](./src/report/comparison.ts). Which sibling is the baseline is a PR #4 detail.
 
 An intra-library ratio composes with P2: it is only citable under `isolated + full`.
-
-<a id="p4-artifact-dry"></a>
 
 ### P4 — The run artifacts duplicate each other
 
@@ -135,14 +127,16 @@ not `report.json`. Dropping the JSONL would lose the per-trial IQR the history b
 
 ## Why the four fixes reinforce each other
 
-- [P2](#p2-viewer-mixes-configs) (stamp config into JSONL) removes `report.json`'s reason to exist, unblocking
-  [P4](#p4-artifact-dry) — dropping it loses nothing, because the `run` block now lives in the JSONL rows.
-- [P4](#p4-artifact-dry) (derive on demand) makes generating a report **per `(env, config, axis)` cell** free, which
-  serves both [P2](#p2-viewer-mixes-configs) and [P3](#p3-no-intra-library-model).
-- [P3](#p3-no-intra-library-model) (baseline axis) is a second mode of the same comparison machine and composes with
-  [P2](#p2-viewer-mixes-configs)'s config partition.
-- [P1](#p1-combinatorial-space) is the mental model underneath: a run is a point in the combination space, so its
-  identity must travel with its data.
+- [P2](#p2--the-viewer-overlays-incomparable-configs-on-one-line) (stamp config into JSONL) removes `report.json`'s
+  reason to exist, unblocking [P4](#p4--the-run-artifacts-duplicate-each-other) — dropping it loses nothing, because the
+  `run` block now lives in the JSONL rows.
+- [P4](#p4--the-run-artifacts-duplicate-each-other) (derive on demand) makes generating a report **per
+  `(env, config, axis)` cell** free, which serves both [P2](#p2--the-viewer-overlays-incomparable-configs-on-one-line)
+  and [P3](#p3--comparing-a-librarys-own-features-has-no-model).
+- [P3](#p3--comparing-a-librarys-own-features-has-no-model) (baseline axis) is a second mode of the same comparison
+  machine and composes with [P2](#p2--the-viewer-overlays-incomparable-configs-on-one-line)'s config partition.
+- [P1](#p1--the-run-space-is-a-combination-not-a-flat-list) is the mental model underneath: a run is a point in the
+  combination space, so its identity must travel with its data.
 
 ## Proposed sequence
 

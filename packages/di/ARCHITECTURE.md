@@ -20,8 +20,6 @@ answers it, and re-running the suite is how you check. No figure belongs in this
 re-measurable, and numbers belong with the method that produced them (the suite, its
 [`RESULTS.md`](../../benchmarks/di/RESULTS.md) ledger, or the commit).
 
-<a id="overview"></a>
-
 ## Overview — the mental model
 
 `@codefast/di` is a dependency-injection container. You register **bindings** (a token → how to build its value) into a
@@ -60,8 +58,6 @@ shapes a read has seen is its **type feedback** (kept in an **inline cache**). O
 moved from **new space** to **old space**; storing a pointer into an old-space object costs a **write barrier**, a small
 bookkeeping step for the garbage collector. Finally, V8 **inlines** small hot functions into their callers, and a
 function that grows past a size heuristic stops being inlined. Each term is explained again briefly where it matters.
-
-<a id="layers"></a>
 
 ## Layered architecture
 
@@ -140,14 +136,10 @@ these three types are covariant. The annotation makes the compiler reject the da
 
 The binding kinds deliberately have **no** variance annotation. Their lifecycle hooks are methods, so their parameters
 compare bivariantly, and pinning a variance there would fight the assignability that
-`tests/types/binding-variance.test.ts` exists to protect. [Value-type erasure](#value-erasure) explains why that
-assignability matters.
-
-<a id="core-model"></a>
+`tests/types/binding-variance.test.ts` exists to protect. [Value-type erasure](#the-engine-erases-the-value-type)
+explains why that assignability matters.
 
 ## Core model
-
-<a id="one-binding-shape"></a>
 
 ### Bindings: one shape, one construction site — and the chain is the binding
 
@@ -177,8 +169,6 @@ it back through `add()` under the same object and id, so nothing that holds the 
 > `tests/unit/container/bind-to-builder-order.test.ts` pins the single registration; the shape is held by the benchmark
 > suite's warm resolve rows.
 
-<a id="copy-on-write"></a>
-
 ### A token's binding list appends in place and replaces on removal
 
 A token can carry several bindings, and the registry keeps them in a list. An `add` that displaces nothing **appends**
@@ -199,8 +189,6 @@ restores what the new shape frees, exactly as before.
 > **Invariant (correctness).** A removal or a displacement replaces a token's binding array and never splices one that
 > has been handed out; an append lands in place, and every selection walk reads its starting length first.
 > `tests/unit/resolution/select/binding-select.test.ts` pins both halves.
-
-<a id="token-record"></a>
 
 ### The registry keeps the common token in one map, and a record for the rest
 
@@ -247,8 +235,6 @@ because it is rare and either criterion can lead.
 > moved on. `tests/unit/core/registry.test.ts` pins displacement through each slot shape and across those in-place
 > transitions.
 
-<a id="scope-total"></a>
-
 ### `scope` is a total field
 
 Every binding kind declares a `scope`, including `AliasBinding`, which declares `scope: "transient"`. An alias defers
@@ -258,8 +244,6 @@ Because no kind is missing the field, the engine reads `scope` as a plain field 
 `effectiveBindingScope()` is that read, kept as a named function because it is the vocabulary validation and
 introspection speak. The gain is not the removed `??`: it is that the field's type feedback (V8's per-site record of the
 shapes a read has seen) stays one shape.
-
-<a id="value-erasure"></a>
 
 ### The engine erases the value type
 
@@ -280,19 +264,16 @@ property, so a user's handler is still checked strictly.
 > supplies it through an unchecked cast, so it documents an intent the compiler never verified.
 > `tests/types/binding-variance.test.ts` fails to compile if the hooks lose method syntax.
 
-<a id="frame-memo"></a>
-
 ### The memoised `frame` and scope refinement
 
 A binding memoises a `frame` — the record a resolution path and a `when()` predicate see for it. `frame` derives from
 the token name, id, kind, slot **and scope**.
 
 A memo on a binding is only sound while what it derives from is immutable, and `scope` is the one field a fluent chain
-writes in place after registration (see [The fluent chain](#fluent-chain)). So `singleton()`, `transient()` and
-`scoped()` call `clearBindingFrame()`. Without it, a chain refined after its first resolve would report the old scope to
-every `when()` predicate that reads `ctx.parent.scope`. `tests/unit/resolution/cache-invalidation.test.ts` pins it.
-
-<a id="fluent-chain"></a>
+writes in place after registration (see [The fluent chain](#the-fluent-chain-one-object-one-registration)). So
+`singleton()`, `transient()` and `scoped()` call `clearBindingFrame()`. Without it, a chain refined after its first
+resolve would report the old scope to every `when()` predicate that reads `ctx.parent.scope`.
+`tests/unit/resolution/cache-invalidation.test.ts` pins it.
 
 ### The fluent chain: one object, one registration
 
@@ -307,17 +288,15 @@ stable for the whole chain.
 **One object per `bind()`.** A single `BindingChain` plays every role: the `BindToBuilder` before `to*()`, the
 kind-specific builder after, and it commits to the registry itself. `bind()` is typed as `BindToBuilder`, so
 `when*()`/`singleton()` are not reachable before a `to*()`. The ordering is a **type-level** guarantee, matching
-[SPEC's fluent-chain section](SPEC.md#chain-order) ("Compiler enforce"). A caller who has no types, or casts past them,
-gets a `ChainNotRegisteredError` naming the token, never a silent no-op. `whenDefault()` asserts registration too, for
-that reason alone, since it otherwise has nothing to do.
+[SPEC's fluent-chain section](SPEC.md#fluent-chain--the-canonical-invariant-order) ("Compiler enforce"). A caller who
+has no types, or casts past them, gets a `ChainNotRegisteredError` naming the token, never a silent no-op.
+`whenDefault()` asserts registration too, for that reason alone, since it otherwise has nothing to do.
 
 > **Invariant (contract, two-part).** Both halves of the ordering contract are pinned, by two different kinds of test.
 > `tests/types/container-api.test.ts` asserts the refinements are absent from `bind()`'s **type**;
 > `tests/unit/container/bind-to-builder-order.test.ts` asserts every one of them **throws** before `to*()`. Asserting
 > instead that the methods are absent from the _object_ would pin an implementation detail and forbid this single-object
 > shape. If you change the class, check which of the two a failing test is actually holding.
-
-<a id="resolution"></a>
 
 ## Resolution and planning
 
@@ -335,15 +314,13 @@ Everything that needs no cross-instance private access is split out into a colla
 | [`binding-lookup-cache.ts`](src/resolution/cache/binding-lookup-cache.ts)                                                | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions            |
 | [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                                    | per-class metadata: constructor params, `@postConstruct` presence, accessor injection, and the `new` itself                   |
 | [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                          | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                                      |
-| [`instantiation-plan.ts`](src/resolution/plan/instantiation-plan.ts)                                                     | the plan compiler ([Compiled plans and escapes](#plans))                                                                      |
+| [`instantiation-plan.ts`](src/resolution/plan/instantiation-plan.ts)                                                     | the plan compiler ([Compiled plans and escapes](#compiled-plans-and-escapes))                                                 |
 | [`plan-codegen.ts`](src/resolution/plan/plan-codegen.ts)                                                                 | renders a hot plan's `PlanNode` tree as a function of its own, or leaves it a closure where the runtime forbids compiling one |
 | [`resolution-path.ts`](src/resolution/path/resolution-path.ts)                                                           | cycle-detection bookkeeping carried on the path array                                                                         |
 | [`binding-select.ts`](src/resolution/select/binding-select.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                                 |
 | [`resolve-options.ts`](src/injection/resolve-options.ts)                                                                 | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                           |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
-
-<a id="one-slot-shape"></a>
 
 ### Two dependency sources, one slot shape
 
@@ -365,9 +342,8 @@ the rule.
 
 > **Invariant (single source of truth).** Whether a slot matches a request is answered by `matchesSlot()` alone, and
 > whether a request carries exactly one criterion by `singleCriterionOnlyOf()`. A fast lane that re-implements either
-> rule is how the spellings drift apart. (A lesson on this is recorded in [Lessons](#lessons).)
-
-<a id="plans"></a>
+> rule is how the spellings drift apart. (A lesson on this is recorded in
+> [Lessons](#lessons-the-engine-has-already-taught).)
 
 ### Compiled plans and escapes
 
@@ -426,15 +402,15 @@ The memoised object is **frozen**. One object now answers every resolve of that 
 handed it as `currentResolveOptions`; a write through that reference would rewrite what the dependency asks for from
 then on. Frozen, the attempt throws where it is made.
 
-<a id="frame-copy"></a>
+#### The frame copy in `#compileEscapeThunk` is load-bearing
 
-**The frame copy in `#compileEscapeThunk` is load-bearing.** An escape hands the runtime a _copy_ of the frame array
-(`[...frames]`), never the array itself. Two mechanisms defeat any scheme that shares or lends that array:
+An escape hands the runtime a _copy_ of the frame array (`[...frames]`), never the array itself. Two mechanisms defeat
+any scheme that shares or lends that array:
 
 - The membership `Set` that `enterResolutionPath` attaches past `RESOLUTION_SET_THRESHOLD` (see
-  [Cycle detection](#cycles)) lives on the **array object**. A lent array would carry it into a lane that does not
-  maintain it; a spread does not copy symbol-keyed properties, so `[...frames]` hands the escape an array with no set at
-  all.
+  [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)) lives on the **array object**. A lent array would carry
+  it into a lane that does not maintain it; a spread does not copy symbol-keyed properties, so `[...frames]` hands the
+  escape an array with no set at all.
 - A constraint predicate runs on a live seed **before any push**, at exactly the length a depth guard reads as idle, and
   can re-enter the same cached plan. One indexed write into a lent seed would then survive forever, whereas the
   interpreted lane's `rootStack` drains to zero after each top-level resolve and self-heals.
@@ -451,8 +427,6 @@ predicate reads the resolution path, so it is the runtime's to evaluate.
 > to. `#compileDepThunk`'s escapes replay `resolveFromContext` — the _default_ slot — when handed no options, so a named
 > singleton's cold materialisation or a named factory would silently resolve a different binding without this.
 > `tests/unit/resolution/plan/instantiation-plan-named.test.ts` pins it.
-
-<a id="lookup-caches"></a>
 
 ### Lookup caches and inline caches
 
@@ -497,8 +471,8 @@ same two fields on the lookup cache costing nothing. The resolver's field count 
 
 **`taggedEntry()` mirrors `defaultEntry()`, and defers its map.** It is chain-versioned, `null` means "this shape needs
 full selection", and predicate- and alias-carrying hits are declined. The memo key is the criterion object itself:
-interning (see [Criteria and tag indexes](#criteria)) makes identity the slot contract's own `Object.is`, so an indexed
-hit needs no value re-check.
+interning (see [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes)) makes identity the slot contract's
+own `Object.is`, so an indexed hit needs no value re-check.
 
 One difference came out of measuring fresh containers against warm ones. A per-request child usually asks one
 `(token, tag)` exactly once, and allocating an inner map on that first ask was the whole cost of the memo on that shape.
@@ -525,19 +499,17 @@ had — a branch added there was measured as a loss on the tagged collection row
 place** on an already-registered binding and bumps no version. `needsActivation()` therefore answers the binding's own
 hook from the field itself before touching the memo, and stamps the memo with the registry version too, so a rebind loop
 cannot grow it. `tests/unit/resolution/cache-invalidation.test.ts` pins all the lanes. (The silent failure this guards
-against is recorded in [Lessons](#lessons).)
+against is recorded in [Lessons](#lessons-the-engine-has-already-taught).)
 
 **One alias walk, one set of not-bound diagnostics.** `resolve` and `resolveAsync` both take their terminal binding from
 `#requireBinding`, so the alias-cycle walk and the diagnostics exist once. The stack frame that adds is charged only to
 a resolve that fails, and constructing the error at the throw site rather than in the helper keeps most of the cost
 there.
 
-<a id="criteria"></a>
-
 ### Criteria: interning and the tag indexes
 
 **A criterion is interned.** A tag key is minted by `tag()` and its criteria by `TagKey.of()`, which caches one object
-per value. So the `Object.is` equality the contract specifies ([SPEC — ResolveOptions](SPEC.md#resolve-options)) becomes
+per value. So the `Object.is` equality the contract specifies ([SPEC — ResolveOptions](SPEC.md#resolveoptions)) becomes
 object identity, and the registry keys tagged bindings by the criterion itself rather than by key-then-value.
 
 Interning removes a hash level from every tagged lookup. More importantly, it removes a divergence: a value-keyed `Map`
@@ -561,9 +533,9 @@ all three the same way. A request carrying criteria from **two** sources at once
 is not something a one-criterion index can answer without skipping the ambiguity check the full path runs.
 
 > **Invariant (consistency of contract).** Two spellings SPEC calls equivalent have to reach the same lane, or the
-> shorter one becomes the slower one and the documentation recommending it becomes wrong.
-> [SPEC](SPEC.md#resolve-options) makes the two spellings one request;
-> `tests/unit/resolution/select/tag-shorthand-parity.test.ts` pins the lane alongside the answer.
+> shorter one becomes the slower one and the documentation recommending it becomes wrong. [SPEC](SPEC.md#resolveoptions)
+> makes the two spellings one request; `tests/unit/resolution/select/tag-shorthand-parity.test.ts` pins the lane
+> alongside the answer.
 
 **A one-criterion index miss is a registry miss.** A request carrying one criterion matches only a slot that _is_ that
 criterion: a multi-criterion slot needs every one of its criteria covered, and the default slot matches no request that
@@ -598,7 +570,7 @@ index that serves it buckets every multi-criterion slot under its **first** crit
 is in the request, its first included, so walking the request's few buckets (plus the single-tag index under each
 request criterion, the folded name criterion among them) finds each candidate **exactly once**. There is no dedup set,
 no per-resolve allocation beyond the candidate list selection was already building, and no stringified tag values —
-buckets are keyed by the interned criterion, so the `Object.is` rule in [SPEC](SPEC.md#resolve-options) still holds.
+buckets are keyed by the interned criterion, so the `Object.is` rule in [SPEC](SPEC.md#resolveoptions) still holds.
 
 Two deliberate bounds on that lane:
 
@@ -614,8 +586,6 @@ slot match carrying no predicate is the whole answer, and no match is a clean mi
 a display name or a candidate array, which is what a name-plus-tag request and a tagged miss over a populated token used
 to pay on every resolve. A second match, or a predicate on a match, hands the same list to full selection, which weighs
 specificity and reports ambiguity, so the two lanes answer identically.
-
-<a id="cycles"></a>
 
 ### Cycle detection: two mechanisms, on purpose
 
@@ -650,19 +620,17 @@ consumers shifts, or the collector's behaviour changes.
 
 **The set is seeded from the stack, so it has to notice when it has gone stale.** The frames already on the stack when
 the set attaches are handed no set and delete nothing on unwind. The array outlives a resolve — the resolver lends one
-stack (see [The context pool](#context-pool)) — so a set that survived the unwind would refuse bindings nobody is
-resolving. A live set mirrors the stack exactly (ids on an acyclic path are unique), so `enterResolutionPath` drops one
-whose size no longer matches the stack's length, and the next deep frame rebuilds it.
+stack (see [The context pool](#the-sync-context-pool-and-the-stack-it-lends)) — so a set that survived the unwind would
+refuse bindings nobody is resolving. A live set mirrors the stack exactly (ids on an acyclic path are unique), so
+`enterResolutionPath` drops one whose size no longer matches the stack's length, and the next deep frame rebuilds it.
 `tests/unit/resolution/path/resolution-path.test.ts` pins the three ways the seed becomes observable: a second resolve
 of the same deep graph, a sibling branch below the attach depth, and the entry point called directly.
 
 > **Invariant (correctness).** A threshold in this engine may choose an implementation; it must not choose a semantics.
 > Both sides of `RESOLUTION_SET_THRESHOLD` answer identically, and so do both sides of the multi-tag size threshold in
-> [Criteria and tag indexes](#criteria). A threshold that switched _lanes_ once changed context identity, stack frames
-> and promise shape at the crossing point, and reported a false cycle for a diamond dependency past it; that story is in
-> [Lessons](#lessons).
-
-<a id="async"></a>
+> [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes). A threshold that switched _lanes_ once changed
+> context identity, stack frames and promise shape at the crossing point, and reported a false cycle for a diamond
+> dependency past it; that story is in [Lessons](#lessons-the-engine-has-already-taught).
 
 ### The async pipeline: a cascade lane and a branch lane
 
@@ -713,10 +681,10 @@ The cascade entry answers a plain constant and a cached singleton itself rather 
 singleton that escaped would snapshot both cascade arrays for a resolve that never reads a path. (A perf shape, not a
 correctness matter.)
 
-**Async plans.** The sync lane's compiled plan ([Compiled plans and escapes](#plans)) ports to async exactly as far as
-the graph is visible. `class`, `resolved` and `resolved-async` bindings declare their dependencies, so `compileAsync`
-compiles those into an async plan. A `dynamic-async` factory stays opaque and keeps the cascade, which needs no graph
-because it reads the ancestors off the call stack that is already there.
+**Async plans.** The sync lane's compiled plan ([Compiled plans and escapes](#compiled-plans-and-escapes)) ports to
+async exactly as far as the graph is visible. `class`, `resolved` and `resolved-async` bindings declare their
+dependencies, so `compileAsync` compiles those into an async plan. A `dynamic-async` factory stays opaque and keeps the
+cascade, which needs no graph because it reads the ancestors off the call stack that is already there.
 
 The async plan runs only at a **true root**: a `resolveAsync` arriving with the cascade idle. Inside an open cascade the
 same binding escapes instead, because a plan does no bookkeeping and its escapes must carry the live ancestors. Each
@@ -727,13 +695,12 @@ propagates. `tests/unit/resolution/plan/instantiation-plan-async.test.ts` pins t
 criteria, the late-hook invalidation, and those two exactness corners.
 
 An async plan that keeps running is generated as a function of its own exactly as a sync one is
-([Compiled plans and escapes](#plans)): the compiler records an `AsyncPlanNode` tree beside the closure, and a node that
-awaits its dependencies renders as an inner function of the same source — every dependency started in order inside its
-own `try`, a sync throw turned into that slot's rejection, `Promise.all` over the slots, the constructor or factory
-applied to the settled values — so the awaiting nodes get call sites of their own too. The threshold, the
-identity-guarded swap (`host.replaceAsyncPlan`, over the async map) and the closure fallback are the sync lane's.
-
-<a id="context-pool"></a>
+([Compiled plans and escapes](#compiled-plans-and-escapes)): the compiler records an `AsyncPlanNode` tree beside the
+closure, and a node that awaits its dependencies renders as an inner function of the same source — every dependency
+started in order inside its own `try`, a sync throw turned into that slot's rejection, `Promise.all` over the slots, the
+constructor or factory applied to the settled values — so the awaiting nodes get call sites of their own too. The
+threshold, the identity-guarded swap (`host.replaceAsyncPlan`, over the async map) and the closure fallback are the sync
+lane's.
 
 ### The sync context pool, and the stack it lends
 
@@ -765,8 +732,6 @@ frame onto, while the shared stack pays one per push.
 > pointer compare on the hot lane. Asking the context whether it holds the requested array answered the same question
 > but cost the acquire its inlining. `tests/unit/resolution/context-pool-isolation.test.ts` pins the behaviour.
 
-<a id="deferral"></a>
-
 ### A container defers most of itself
 
 `DefaultContainer`'s constructor builds only what a resolve cannot happen without: the registry, the scope manager, the
@@ -789,13 +754,11 @@ gives it a backing store, and a closure-heavy host object such as the plan compi
 costs a per-request child — created, asked one parent-owned token, disposed — never earns back, and that child is the
 shape `Container.create()` and `createChild()` are priced on. The one map every container allocates eagerly is the
 registry's fast-default map, because `getFastDefault()` is the first read of every synchronous resolve
-([The registry keeps one record per token](#token-record)).
+([The registry keeps one record per token](#the-registry-keeps-the-common-token-in-one-map-and-a-record-for-the-rest)).
 
 > **Invariant (correctness).** Deferral is an allocation decision only. A deferred collaborator must answer identically
 > whether or not something touched it first — an unallocated cache reads as a miss, never as an error — which is why
 > `tests/unit/container/deferred-subsystems.test.ts` exercises each one as the _first_ thing a fresh container does.
-
-<a id="singleton-on-binding"></a>
 
 ### One binding, one container, and the singleton slot that follows
 
@@ -814,8 +777,6 @@ list of the bindings that have materialised, so disposal and `inspect()` can sti
 > invalidation on unbind and rebind, enumeration for disposal, and a cached `undefined` that must stay distinguishable
 > from a miss.
 
-<a id="invariants"></a>
-
 ## Important invariants
 
 Every invariant above, grouped, with the test that pins it. Read this table before touching a file; read the linked
@@ -823,63 +784,59 @@ section before changing what the table describes.
 
 **Model and types**
 
-| Invariant                                                                                                                                | Pinned by                                                                                 | Where                                             |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.    | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Binding list](#copy-on-write)                    |
-| Internal lanes take `Binding` and return `unknown`; only the eight public entry points name `Value`. Lifecycle hooks stay method syntax. | `tests/types/binding-variance.test.ts`                                                    | [Value-type erasure](#value-erasure)              |
-| `frame` is cleared whenever `scope` is refined in place.                                                                                 | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#frame-memo)               |
-| Chain refinements are absent from `bind()`'s type **and** throw before `to*()`.                                                          | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#fluent-chain)                 |
-| One binding belongs to one container; the singleton slot lives on the binding.                                                           | `tests/unit/resolution/singleton-on-binding.test.ts`                                      | [Singleton on the binding](#singleton-on-binding) |
-| The common token lives in the lone map alone and only the rest keep a record; `getFastDefault()` is one bare `Map.get`.                  | `tests/unit/core/registry.test.ts`, the suite's warm resolve rows                         | [The common token](#token-record)                 |
+| Invariant                                                                                                                                | Pinned by                                                                                 | Where                                                                                         |
+| ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.    | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Binding list](#a-tokens-binding-list-appends-in-place-and-replaces-on-removal)               |
+| Internal lanes take `Binding` and return `unknown`; only the eight public entry points name `Value`. Lifecycle hooks stay method syntax. | `tests/types/binding-variance.test.ts`                                                    | [Value-type erasure](#the-engine-erases-the-value-type)                                       |
+| `frame` is cleared whenever `scope` is refined in place.                                                                                 | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#the-memoised-frame-and-scope-refinement)                              |
+| Chain refinements are absent from `bind()`'s type **and** throw before `to*()`.                                                          | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#the-fluent-chain-one-object-one-registration)                             |
+| One binding belongs to one container; the singleton slot lives on the binding.                                                           | `tests/unit/resolution/singleton-on-binding.test.ts`                                      | [Singleton on the binding](#one-binding-one-container-and-the-singleton-slot-that-follows)    |
+| The common token lives in the lone map alone and only the rest keep a record; `getFastDefault()` is one bare `Map.get`.                  | `tests/unit/core/registry.test.ts`, the suite's warm resolve rows                         | [The common token](#the-registry-keeps-the-common-token-in-one-map-and-a-record-for-the-rest) |
 
 **Selection and lookup**
 
-| Invariant                                                                                                                          | Pinned by                                                       | Where                                 |
-| ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------- |
-| `matchesSlot()` and `singleCriterionOnlyOf()` are the only places their two rules are decided.                                     | (design rule; the parity and selection tests below exercise it) | [One slot shape](#one-slot-shape)     |
-| A `BindingTag` is only constructed through `TagKey.of()`; the index never conflates `+0` and `-0`.                                 | `tests/unit/resolution/select/tagged-selection.test.ts`         | [Criteria and tag indexes](#criteria) |
-| Equivalent spellings (`tag`, `tags`, folded `name`) reach the same lane.                                                           | `tests/unit/resolution/select/tag-shorthand-parity.test.ts`     | [Criteria and tag indexes](#criteria) |
-| The multi-tag size threshold switches data structure only; both sides answer identically.                                          | `tests/unit/resolution/select/multi-tag-selection.test.ts`      | [Criteria and tag indexes](#criteria) |
-| Alias hops are folded where the chain version stamp is, never in `registry.getFastDefault()`.                                      | (structural)                                                    | [Lookup caches](#lookup-caches)       |
-| `needsActivation()` reads a binding's own late hook from the field before the memo, and stamps the memo with the registry version. | `tests/unit/resolution/cache-invalidation.test.ts`              | [Lookup caches](#lookup-caches)       |
+| Invariant                                                                                                                          | Pinned by                                                       | Where                                                               |
+| ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `matchesSlot()` and `singleCriterionOnlyOf()` are the only places their two rules are decided.                                     | (design rule; the parity and selection tests below exercise it) | [One slot shape](#two-dependency-sources-one-slot-shape)            |
+| A `BindingTag` is only constructed through `TagKey.of()`; the index never conflates `+0` and `-0`.                                 | `tests/unit/resolution/select/tagged-selection.test.ts`         | [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes) |
+| Equivalent spellings (`tag`, `tags`, folded `name`) reach the same lane.                                                           | `tests/unit/resolution/select/tag-shorthand-parity.test.ts`     | [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes) |
+| The multi-tag size threshold switches data structure only; both sides answer identically.                                          | `tests/unit/resolution/select/multi-tag-selection.test.ts`      | [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes) |
+| Alias hops are folded where the chain version stamp is, never in `registry.getFastDefault()`.                                      | (structural)                                                    | [Lookup caches](#lookup-caches-and-inline-caches)                   |
+| `needsActivation()` reads a binding's own late hook from the field before the memo, and stamps the memo with the registry version. | `tests/unit/resolution/cache-invalidation.test.ts`              | [Lookup caches](#lookup-caches-and-inline-caches)                   |
 
 **Plans and escapes**
 
-| Invariant                                                                                           | Pinned by                                                       | Where                                |
-| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------ |
-| An escape is behaviourally indistinguishable from the interpreted path: same ancestors, same call.  | `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` | [Compiled plans and escapes](#plans) |
-| An escape thunk copies the frame array; it never lends it.                                          | (structural; see the two mechanisms)                            | [The frame copy](#frame-copy)        |
-| An entry reached by a criterion carries that criterion into every escape.                           | `tests/unit/resolution/plan/instantiation-plan-named.test.ts`   | [Compiled plans and escapes](#plans) |
-| The async plan runs only at a true root and mirrors the interpreted async path exactly.             | `tests/unit/resolution/plan/instantiation-plan-async.test.ts`   | [The async pipeline](#async)         |
-| A generated plan and its closure are two renderings of one `PlanNode` tree, and behave identically. | `tests/unit/resolution/plan/instantiation-plan-codegen.test.ts` | [Compiled plans and escapes](#plans) |
+| Invariant                                                                                           | Pinned by                                                       | Where                                                                      |
+| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| An escape is behaviourally indistinguishable from the interpreted path: same ancestors, same call.  | `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` | [Compiled plans and escapes](#compiled-plans-and-escapes)                  |
+| An escape thunk copies the frame array; it never lends it.                                          | (structural; see the two mechanisms)                            | [The frame copy](#the-frame-copy-in-compileescapethunk-is-load-bearing)    |
+| An entry reached by a criterion carries that criterion into every escape.                           | `tests/unit/resolution/plan/instantiation-plan-named.test.ts`   | [Compiled plans and escapes](#compiled-plans-and-escapes)                  |
+| The async plan runs only at a true root and mirrors the interpreted async path exactly.             | `tests/unit/resolution/plan/instantiation-plan-async.test.ts`   | [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane) |
+| A generated plan and its closure are two renderings of one `PlanNode` tree, and behave identically. | `tests/unit/resolution/plan/instantiation-plan-codegen.test.ts` | [Compiled plans and escapes](#compiled-plans-and-escapes)                  |
 
 **Cycle detection and paths**
 
-| Invariant                                                                                    | Pinned by                                            | Where                        |
-| -------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ---------------------------- |
-| `binding.inFlight` is set and released on every exit path, with or without activation hooks. | `tests/unit/resolution/in-flight-invariants.test.ts` | [Cycle detection](#cycles)   |
-| Path checks key on binding identity, never on a display name.                                | (structural)                                         | [Cycle detection](#cycles)   |
-| A stale membership set is detected by size mismatch and rebuilt.                             | `tests/unit/resolution/path/resolution-path.test.ts` | [Cycle detection](#cycles)   |
-| A threshold may choose an implementation, never a semantics.                                 | the two threshold tests above                        | [Cycle detection](#cycles)   |
-| A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.          | `tests/types/async-branch-ownership.test.ts`         | [The async pipeline](#async) |
-| A post-await-only cycle is reported one level in from the true root.                         | `tests/unit/resolution/resolver-async.test.ts`       | [The async pipeline](#async) |
+| Invariant                                                                                    | Pinned by                                            | Where                                                                      |
+| -------------------------------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------- |
+| `binding.inFlight` is set and released on every exit path, with or without activation hooks. | `tests/unit/resolution/in-flight-invariants.test.ts` | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
+| Path checks key on binding identity, never on a display name.                                | (structural)                                         | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
+| A stale membership set is detected by size mismatch and rebuilt.                             | `tests/unit/resolution/path/resolution-path.test.ts` | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
+| A threshold may choose an implementation, never a semantics.                                 | the two threshold tests above                        | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
+| A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.          | `tests/types/async-branch-ownership.test.ts`         | [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane) |
+| A post-await-only cycle is reported one level in from the true root.                         | `tests/unit/resolution/resolver-async.test.ts`       | [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane) |
 
 **Pooling, lending and deferral**
 
-| Invariant                                                                                             | Pinned by                                              | Where                             |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | --------------------------------- |
-| An empty `rootStack` is the lending protocol; a nested resolve sees it empty, a throw returns it.     | `tests/unit/resolution/in-flight-invariants.test.ts`   | [The context pool](#context-pool) |
-| A pooled context is reused only for the stack it already holds; pools are keyed by stack.             | `tests/unit/resolution/context-pool-isolation.test.ts` | [The context pool](#context-pool) |
-| Deferral is an allocation decision only; a deferred subsystem answers identically when first touched. | `tests/unit/container/deferred-subsystems.test.ts`     | [Deferral](#deferral)             |
-
-<a id="performance"></a>
+| Invariant                                                                                             | Pinned by                                              | Where                                                             |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------- |
+| An empty `rootStack` is the lending protocol; a nested resolve sees it empty, a throw returns it.     | `tests/unit/resolution/in-flight-invariants.test.ts`   | [The context pool](#the-sync-context-pool-and-the-stack-it-lends) |
+| A pooled context is reused only for the stack it already holds; pools are keyed by stack.             | `tests/unit/resolution/context-pool-isolation.test.ts` | [The context pool](#the-sync-context-pool-and-the-stack-it-lends) |
+| Deferral is an allocation decision only; a deferred subsystem answers identically when first touched. | `tests/unit/container/deferred-subsystems.test.ts`     | [Deferral](#a-container-defers-most-of-itself)                    |
 
 ## Performance-sensitive decisions
 
 Every item here is a shape kept because it measured well at the time. None is an axiom. If you touch one, re-run the
 benchmark suite before and after; if the arities or workloads the suite measures have changed, the trade may have too.
-
-<a id="fast-lanes"></a>
 
 ### Fast lanes that read as duplication
 
@@ -934,38 +891,41 @@ drops every check that reads the field.
 
 > **Practical note.** "Almost always hits" is a claim about a long-lived container. It inverts in a per-request one,
 > where every first criterion-carrying resolve of a token buys a map it will not read again. Measure fresh vs warm if
-> you revisit this; the deferred inner map in [Lookup caches](#lookup-caches) is what that measurement produced.
+> you revisit this; the deferred inner map in [Lookup caches](#lookup-caches-and-inline-caches) is what that measurement
+> produced.
 
 ### Shapes described elsewhere that are perf decisions
 
 These are covered in the sections above; this list exists so a perf review can find them in one place.
 
 - **One hidden class for all bindings, and the chain is the binding** —
-  [One shape, one construction site](#one-binding-shape). One allocation per bind; `BindingChain` is the only
-  construction site.
-- **`scope` as a total field** — [`scope` is a total field](#scope-total). Keeps the field's type feedback one shape.
-- **Path-independent entries baked into plans** — [Compiled plans and escapes](#plans). Saves a runtime lookup per
-  criterion-carrying param.
+  [One shape, one construction site](#bindings-one-shape-one-construction-site--and-the-chain-is-the-binding). One
+  allocation per bind; `BindingChain` is the only construction site.
+- **`scope` as a total field** — [`scope` is a total field](#scope-is-a-total-field). Keeps the field's type feedback
+  one shape.
+- **Path-independent entries baked into plans** — [Compiled plans and escapes](#compiled-plans-and-escapes). Saves a
+  runtime lookup per criterion-carrying param.
 - **One-entry inline caches in front of maps**, and the deferred memo maps behind `defaultEntry()` and `taggedEntry()` —
-  [Lookup caches](#lookup-caches).
-- **Chain sums memoized against a process-wide state epoch** — [Lookup caches](#lookup-caches). Removes the parent
-  walk's slope while nothing has changed.
-- **Interned criteria as `Map` keys**, and the bitmask prefilter — [Criteria and tag indexes](#criteria). Removes a hash
-  level and the stringification of tag values.
-- **Multi-tag bucket index past a size threshold** — [Criteria and tag indexes](#criteria). Semantics identical on both
-  sides.
-- **Membership `Set` past `RESOLUTION_SET_THRESHOLD` (32)** — [Cycle detection](#cycles). A depth-sweep tuning constant.
+  [Lookup caches](#lookup-caches-and-inline-caches).
+- **Chain sums memoized against a process-wide state epoch** — [Lookup caches](#lookup-caches-and-inline-caches).
+  Removes the parent walk's slope while nothing has changed.
+- **Interned criteria as `Map` keys**, and the bitmask prefilter —
+  [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes). Removes a hash level and the stringification of
+  tag values.
+- **Multi-tag bucket index past a size threshold** —
+  [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes). Semantics identical on both sides.
+- **Membership `Set` past `RESOLUTION_SET_THRESHOLD` (32)** —
+  [Cycle detection](#cycle-detection-two-mechanisms-on-purpose). A depth-sweep tuning constant.
 - **The cascade lane allocating nothing per level**, and the cascade entry answering constants and cached singletons
-  itself — [The async pipeline](#async).
-- **The depth-indexed context pool** and the shared, lent `rootStack` — [The context pool](#context-pool). Write
-  barriers are the cost model.
-- **Deferred subsystems** — [Deferral](#deferral). An empty `Map` has a backing store.
-- **Singleton instance on the binding** — [Singleton on the binding](#singleton-on-binding). Field read instead of keyed
-  lookup.
-- **Errors built at the throw site** — [Layered architecture](#layers) and `#requireBinding` in
-  [Lookup caches](#lookup-caches).
-
-<a id="practical-notes"></a>
+  itself — [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane).
+- **The depth-indexed context pool** and the shared, lent `rootStack` —
+  [The context pool](#the-sync-context-pool-and-the-stack-it-lends). Write barriers are the cost model.
+- **Deferred subsystems** — [Deferral](#a-container-defers-most-of-itself). An empty `Map` has a backing store.
+- **Singleton instance on the binding** —
+  [Singleton on the binding](#one-binding-one-container-and-the-singleton-slot-that-follows). Field read instead of
+  keyed lookup.
+- **Errors built at the throw site** — [Layered architecture](#layered-architecture) and `#requireBinding` in
+  [Lookup caches](#lookup-caches-and-inline-caches).
 
 ## Practical notes for maintainers
 
@@ -974,12 +934,13 @@ These are covered in the sections above; this list exists so a perf review can f
 There is no gate to clear, just a suggested order that tends to save time:
 
 1. Understand the invariant(s) the code you are touching depends on (the labelled blocks above and the table in
-   [Important invariants](#invariants)), and check the test named next to each. If a test is what is holding an
-   invariant, it will tell you fast whether your change broke it.
+   [Important invariants](#important-invariants)), and check the test named next to each. If a test is what is holding
+   an invariant, it will tell you fast whether your change broke it.
 2. If the change is about speed, measure it. What a shape costs, and whether a new idea beats it, is an empirical
    question. The benchmark suite ([`benchmarks/di`](../../benchmarks/di/README.md)) is the source of truth,
    [`BENCH_GUIDE.md`](../../benchmarks/di/BENCH_GUIDE.md) is the method, and the performance step of
-   [CONTRIBUTING.md](./CONTRIBUTING.md#guard-performance) is the checklist.
+   [CONTRIBUTING.md](./CONTRIBUTING.md#guard-performance--conditional-touched-resolver--resolution--registry-hot-paths)
+   is the checklist.
 
 Two things that guide does not cover and this engine keeps demonstrating:
 
@@ -997,11 +958,9 @@ container-API test and the branch-ownership test alike.
 
 ### Two tests can hold one contract
 
-The fluent-chain ordering ([The fluent chain](#fluent-chain)) is pinned by a type test and a runtime test that assert
-different things. When one fails, work out which half it is holding before reshaping the class; asserting on the
-object's shape instead would forbid the single-object design.
-
-<a id="lessons"></a>
+The fluent-chain ordering ([The fluent chain](#the-fluent-chain-one-object-one-registration)) is pinned by a type test
+and a runtime test that assert different things. When one fails, work out which half it is holding before reshaping the
+class; asserting on the object's shape instead would forbid the single-object design.
 
 ### Lessons the engine has already taught
 
@@ -1010,11 +969,11 @@ general pattern, not just a fixed bug.
 
 - **A fast lane that re-decides a rule drifts from the full path.** `resolveAll`'s name lane once returned a binding
   whose `when()` predicate `resolve` was refusing, because it re-implemented the slot match instead of calling
-  `matchesSlot()`. That is why [One slot shape](#one-slot-shape) insists on one matcher.
+  `matchesSlot()`. That is why [One slot shape](#two-dependency-sources-one-slot-shape) insists on one matcher.
 - **Reading the presence of a key as a reason to give up hid the recommended spelling from the index.**
   `singleCriterionOnlyOf` once treated a present `tag` field as "not a single criterion", which made the shorthand — the
   form the README reaches for — the only spelling the index never served. The parity test in
-  [Criteria and tag indexes](#criteria) exists because of it.
+  [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes) exists because of it.
 - **A restriction can outlive the fact that justified it.** `simpleTagOf` once excluded predicate-bearing bindings from
   the tag index "because the index is read without a re-check". That justification stayed in place long after the `±0`
   fix had given every indexed hit a predicate evaluation. The predicate evaluation is now pinned by
@@ -1022,27 +981,28 @@ general pattern, not just a fixed bug.
   hit reaching a caller past a predicate that refused it — cannot land quietly. When you read _any_ comment justifying a
   restriction, check whether the reason is still true.
 - **A dependency escaped too early.** A named or tagged dependency used to escape on `options !== undefined`, before
-  anything tried to look it up. `lookupPathIndependentEntry` ([Compiled plans and escapes](#plans)) is the fix: a
-  criterion the registry can settle is not opaque.
+  anything tried to look it up. `lookupPathIndependentEntry` ([Compiled plans and escapes](#compiled-plans-and-escapes))
+  is the fix: a criterion the registry can settle is not opaque.
 - **A memo keyed on binding id missed a late hook.** The activation-need memo once cached "no activation" per binding id
   and skipped a late `.onActivation()` hook on every lane that consulted it, while the default dynamic lane read the
-  field fresh and honoured it. The failure was silent. [Lookup caches](#lookup-caches) describes the fix.
+  field fresh and honoured it. The failure was silent. [Lookup caches](#lookup-caches-and-inline-caches) describes the
+  fix.
 - **A name-keyed cycle check reported a false cycle.** Two `token("app:Config")` from different modules are distinct
   tokens, and a check keyed on display name reported a cycle for a legitimately acyclic chain that held both. Every path
-  check now keys on `bindingId` ([Cycle detection](#cycles)).
+  check now keys on `bindingId` ([Cycle detection](#cycle-detection-two-mechanisms-on-purpose)).
 - **A threshold that switched lanes changed semantics.** A removed constant, `DEEP_LANE_THRESHOLD`, switched the async
   pipeline between _lanes_ past a depth. That silently changed context identity, stack frames and promise shape at the
   crossing point, and reported a false `CircularDependencyError` for a diamond dependency past it.
   `RESOLUTION_SET_THRESHOLD` broke the same rule once while looking like it was only choosing a data structure, which is
-  why the invariant in [Cycle detection](#cycles) is stated as a rule about thresholds in general.
+  why the invariant in [Cycle detection](#cycle-detection-two-mechanisms-on-purpose) is stated as a rule about
+  thresholds in general.
 - **The old shared async path reported a false cycle for a diamond.** Before the cascade lane, a settle-scoped path
   reported `Circular dependency detected: a → b → d → c → d` for `A` awaiting `B` and `C` in parallel, both needing `D`.
-  Clearing `inFlight` on promise-return ([The async pipeline](#async)) removed it.
+  Clearing `inFlight` on promise-return ([The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane))
+  removed it.
 - **The cheapest answer to "what should this return when there is nothing to return" is no method.**
   `ScopeManager.getAllScoped()` was the only bulk reader that could meet an unallocated cache, and it had no callers, so
   it was removed rather than given an empty-map fallback.
-
-<a id="changelog"></a>
 
 ## Changelog of this rewrite
 
@@ -1055,17 +1015,17 @@ heuristic, test reference, benchmark reference and design rationale — is carri
   Performance decisions → Practical notes. The original had a flat sequence of topic sections. Headings are unnumbered
   so a section can be inserted later without renumbering, and the rendered docs site builds its own table of contents
   from them.
-- Added the [Overview](#overview): a one-screen mental model (the six steps of a resolve, the four organising ideas) and
-  a short glossary of the V8 terms the document relies on. The original assumed them.
-- Added [Important invariants](#invariants): every invariant in one grouped table with its pinning test and a link back
-  to the section that explains it. Previously invariants were only findable by reading the whole document.
-- Added an index of every perf-motivated shape under [Performance-sensitive decisions](#performance), so a perf review
-  can find them in one place.
+- Added the [Overview](#overview--the-mental-model): a one-screen mental model (the six steps of a resolve, the four
+  organising ideas) and a short glossary of the V8 terms the document relies on. The original assumed them.
+- Added [Important invariants](#important-invariants): every invariant in one grouped table with its pinning test and a
+  link back to the section that explains it. Previously invariants were only findable by reading the whole document.
+- Added an index of every perf-motivated shape under
+  [Performance-sensitive decisions](#performance-sensitive-decisions), so a perf review can find them in one place.
 - Moved the two "looks like duplication" fast lanes and the upsert discussion out of the resolution narrative into
-  [Performance-sensitive decisions](#performance), since they are purely perf decisions.
-- Collected every historical failure into [Lessons](#lessons), each stated as a general pattern with a link to the
-  section it now motivates. Previously these were interleaved with the mechanism they explained, often as the opening
-  sentence of a paragraph.
+  [Performance-sensitive decisions](#performance-sensitive-decisions), since they are purely perf decisions.
+- Collected every historical failure into [Lessons](#lessons-the-engine-has-already-taught), each stated as a general
+  pattern with a link to the section it now motivates. Previously these were interleaved with the mechanism they
+  explained, often as the opening sentence of a paragraph.
 - Added explicit `<a id>` anchors on every section, and every cross-reference uses a descriptive label rather than a
   section number, so links survive both reordering and rewording.
 
@@ -1077,25 +1037,28 @@ heuristic, test reference, benchmark reference and design rationale — is carri
 - Fast lanes: "Two shapes here look like copy-paste … and aren't" became a description of each shape, its cost model,
   and then a practical note on the DRY pass that removed and restored them.
 - Criteria: "Agreeing on the answer is not agreeing on the lane" became "Three spellings are one request", with the
-  lane-admission function named first and the historical miss moved to [Lessons](#lessons).
+  lane-admission function named first and the historical miss moved to
+  [Lessons](#lessons-the-engine-has-already-taught).
 - Cycle detection: the invariant "A threshold may choose an implementation; it must not choose a semantics" now appears
   _after_ the paragraph that introduces what `RESOLUTION_SET_THRESHOLD` is and what it switches, and names the multi-tag
-  threshold as the second instance. The `DEEP_LANE_THRESHOLD` story moved to [Lessons](#lessons).
+  threshold as the second instance. The `DEEP_LANE_THRESHOLD` story moved to
+  [Lessons](#lessons-the-engine-has-already-taught).
 - Fluent chain: "Registration happens once." and "One object per `bind()`." now sit under a heading that first shows the
   chain (`bind(T).toDynamic(f).singleton()`) so the reader knows what is being registered.
 - Frame copy: the section now states what the escape does (hands a copy) before listing the two mechanisms that make
   lending unsafe.
 - Path-independent entries: "A criterion the registry can settle is not opaque" opened with "used to escape on
-  `options !== undefined`". The rewrite states the current mechanism first; the history is in [Lessons](#lessons).
+  `options !== undefined`". The rewrite states the current mechanism first; the history is in
+  [Lessons](#lessons-the-engine-has-already-taught).
 - Async: the section now leads with what the cascade lane is and how the flag is maintained, and presents the diamond
   case as a consequence of that design. The original led with "Async resolution was assumed to have neither property".
 - Context pool: the write-barrier cost model is introduced before the comparison it motivates, with "old space" and
   "write barrier" explained inline.
 - `resolveAll` and the tag index: the `simpleTagOf` "caution this lane earned the hard way" moved from the middle of the
-  mechanism to [Lessons](#lessons).
+  mechanism to [Lessons](#lessons-the-engine-has-already-taught).
 - Removed early-placed hedges such as "if you ever want to challenge it" and "past attempts were mostly wrong" from the
-  body sections; the second survives once, under [Practical notes](#practical-notes), where it is advice rather than
-  framing.
+  body sections; the second survives once, under [Practical notes](#practical-notes-for-maintainers), where it is advice
+  rather than framing.
 
 **Corrections**
 
