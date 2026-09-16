@@ -763,9 +763,12 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  /** Path-continuing resolution handed to the ambient slot while an accessor class constructs. */
-  // The ambient resolution a top-level construction hands its accessors: the lent root stack is one
-  // array for the resolver's lifetime, so the pair of closures over it is built once and reused.
+  /**
+   * Path-continuing resolution handed to the ambient slot while an accessor class constructs.
+   *
+   * @remarks The lent root stack is one array for the resolver's lifetime, so the closure pair over
+   * it is built once and reused.
+   */
   #rootAmbientResolution: AmbientResolution | undefined;
 
   #ambientResolutionFor(resolutionStack: Array<ResolutionFrame>): AmbientResolution {
@@ -1876,8 +1879,13 @@ export class DependencyResolver implements ResolverCallbacks {
   }
 }
 
-/** A constant whose value is its answer on every read: no own hook, and the caller has ruled out container hooks. */
-// A cached singleton reads like a constant until a registry change evicts it, which also drops the memo.
+/**
+ * Whether a binding answers a collection read with a fixed value: a hook-free constant, or a
+ * singleton whose instance is already cached.
+ *
+ * @remarks A cached singleton reads like a constant until a registry change evicts it, which also
+ * drops the memo.
+ */
 function isStableCollectionMember(binding: Binding): boolean {
   if (binding.kind === "alias" || binding.activationHook !== undefined) {
     return false;
