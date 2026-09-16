@@ -16,7 +16,7 @@ encode an opinionated house style (called out below) that you can adopt, ignore,
 
 - **Safe by default.** Every writing command supports `--dry-run`, and every audit is read-only except
   `audit comments --fix`.
-- **Scriptable.** `--json` prints one JSON object on stdout and suppresses the human progress output.
+- **Scriptable.** `--json` prints one JSON object on stdout instead of the human-readable output.
 - **CI-ready.** Audits exit non-zero when findings remain, so they gate a pipeline with no extra glue.
 - **Configurable.** An optional `codefast.config.*` file, validated by a strict schema, adjusts every command.
 
@@ -75,10 +75,61 @@ codefast audit links                               # find broken markdown cross-
   `codefast mirror --no-color`.
 - **Writing commands write by default; pass `--dry-run` to preview.** The audits are read-only — the one exception is
   `audit comments --fix`, which repairs section dividers in place.
-- **`--json` prints a single JSON object on stdout** and suppresses the human-readable progress output, so any command
-  can gate a script or a CI job.
+- **`--json` prints a single JSON object on stdout** instead of the human-readable output, so any command can gate a
+  script or a CI job.
+- **Set `CODEFAST_VERBOSE=1` (or `true`) for verbose error diagnostics.** On an unexpected infrastructure failure the
+  CLI also prints the underlying stack trace. This is distinct from `mirror --verbose`, which adds per-package progress
+  detail to that one command.
 
 ## Commands at a glance
+
+```text
+codefast                              # Codefast monorepo developer CLI
+│  ├─ --no-color                      # disable ANSI color output
+│  └─ --version
+│
+├─ arrange [target]                   # regroup Tailwind classes in cn()/tv() in render-pipeline order
+│  │   ├─ --dry-run                   # preview, without writing files
+│  │   ├─ --with-class-name           # append className as the final cn() argument (alias: --with-classname)
+│  │   ├─ --cn-import <spec>          # override the module specifier when adding a cn import
+│  │   └─ --json
+│  │
+│  ├─ inspect [target]                # report long strings, cn nested in tv() (read-only)
+│  │   └─ --json
+│  ├─ simplify [target]               # flatten grouped arrays & static cn() to plain strings in tv() slots
+│  │   ├─ --dry-run
+│  │   └─ --fold-variant-class-name   # fold cn() overrides into the variant's className option (uses the TS type server)
+│  └─ group <tokens...>               # group a pasted class string (stdout: cn(...) or a tv() array with --tv)
+│      ├─ --tv                        # emit a tv()-style array instead of a cn() call
+│      ├─ --with-class-name
+│      └─ --json
+│
+├─ audit                              # source audits (read-only source scans)
+│  ├─ rtl [target]                    # physical-direction Tailwind classes to make logical / rtl:-paired
+│  ├─ links [target]                  # markdown links pointing at a missing path/anchor
+│  ├─ imports [target]                # banned import forms (React by-name, Zod namespace in front-end, …)
+│  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
+│  └─ comments [target]               # section dividers not in the one allowed form
+│      └─ --fix                       # rewrite every fixable divider in place (the only audit that writes)
+│      (each audit also takes [target] + --json)
+│
+├─ mirror [package]                   # write package.json#exports from dist/ for workspace packages
+│  ├─ --dry-run
+│  ├─ -v, --verbose
+│  └─ --json
+│
+├─ pack-slim [package]                # strip src, source conditions, dev-only scripts/devDeps, source maps before publish
+│  ├─ --dry-run
+│  ├─ --force                         # run even if the git working tree has uncommitted changes
+│  └─ --json
+│
+└─ tag [target]                       # add @since <version> to exported declarations
+   ├─ --dry-run
+   └─ --json
+```
+
+Every command also responds to `--help`; the per-command sections below give each flag's full description and its
+hyphenated alias where one exists.
 
 | Command               | What it does                                                               | Writes?           |
 | --------------------- | -------------------------------------------------------------------------- | ----------------- |
@@ -86,11 +137,11 @@ codefast audit links                               # find broken markdown cross-
 | `mirror`              | Write each package's `package.json#exports` from its built `dist/`         | yes (`--dry-run`) |
 | `pack-slim`           | Strip the dev-only surface from a package right before publish             | yes (`--dry-run`) |
 | `tag`                 | Stamp `@since <version>` on exported declarations that lack one            | yes (`--dry-run`) |
-| `audit links`         | Report markdown cross-references that resolve to nothing                   | no                |
 | `audit rtl`           | Report physical-direction Tailwind classes that should be logical          | no                |
+| `audit links`         | Report markdown cross-references that resolve to nothing                   | no                |
 | `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)      | no (report only)  |
-| `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
+| `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
 
 **Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, and `audit links` are general-purpose — they
 work for any pnpm workspace or single package that builds with `tsc`. The other four audits encode codefast's own house
@@ -125,7 +176,7 @@ Long static JSX `className` strings are regrouped regardless of where `cn` comes
 | `--dry-run`          | Preview suggested replacements without writing files.                         |
 | `--with-classname`   | Append `className` as the final `cn()` argument (alias: `--with-class-name`). |
 | `--cn-import <spec>` | Override the module specifier used when a missing `cn` import is added.       |
-| `--json`             | Print one JSON summary on stdout (suppresses human progress).                 |
+| `--json`             | Print one JSON object on stdout instead of the human-readable output.         |
 
 Exits `1` when the `arrange.onAfterWrite` hook fails, `0` otherwise.
 
@@ -143,7 +194,7 @@ precedence is unchanged (a later argument still overrides an earlier one).
 | -------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `--dry-run`                | Show what simplify would change without writing files.                                                   |
 | `--fold-variant-classname` | Fold `cn()` overrides into a variant function's `className` option (alias: `--fold-variant-class-name`). |
-| `--json`                   | Print one JSON summary on stdout.                                                                        |
+| `--json`                   | Print one JSON object on stdout instead of the human-readable output.                                    |
 
 With `--fold-variant-classname`, `cn(buttonVariants({ size: "sm" }), "flex-1")` becomes
 `buttonVariants({ size: "sm", className: "flex-1" })`, and a dynamic or multi-part override folds into a `className`
@@ -166,7 +217,9 @@ codefast arrange group --tv "flex items-center gap-2"
 | ------------------ | ----------------------------------------------------------------------------- |
 | `--tv`             | Emit a `tv()`-style array instead of a `cn()` call.                           |
 | `--with-classname` | Append `className` as the final `cn()` argument (alias: `--with-class-name`). |
-| `--json`           | Emit `{ schemaVersion, primaryLine, bucketsCommentLine }` on stdout.          |
+| `--json`           | Print one JSON object on stdout instead of the human-readable output.         |
+
+With `--json`, that object is `{ schemaVersion, primaryLine, bucketsCommentLine }`.
 
 ## `mirror`
 
@@ -181,11 +234,11 @@ codefast mirror packages/ui     # one package (path relative to repo root)
 codefast mirror --dry-run       # report changes without writing
 ```
 
-| Flag              | Description                                                   |
-| ----------------- | ------------------------------------------------------------- |
-| `--dry-run`       | Report what would change without writing any `package.json`.  |
-| `-v`, `--verbose` | Print extra diagnostics.                                      |
-| `--json`          | Print one JSON summary on stdout (suppresses human progress). |
+| Flag              | Description                                                           |
+| ----------------- | --------------------------------------------------------------------- |
+| `--dry-run`       | Report what would change without writing any `package.json`.          |
+| `-v`, `--verbose` | Print extra diagnostics.                                              |
+| `--json`          | Print one JSON object on stdout instead of the human-readable output. |
 
 Exits `1` when any package fails, `0` otherwise.
 
@@ -235,11 +288,11 @@ codefast pack-slim packages/ui     # one package (path relative to repo root)
 codefast pack-slim --dry-run       # report what would be stripped without touching a file
 ```
 
-| Flag        | Description                                                       |
-| ----------- | ----------------------------------------------------------------- |
-| `--dry-run` | Report what would be stripped without touching any file.          |
-| `--force`   | Run even if the git working tree has uncommitted tracked changes. |
-| `--json`    | Print one JSON summary on stdout (suppresses human progress).     |
+| Flag        | Description                                                           |
+| ----------- | --------------------------------------------------------------------- |
+| `--dry-run` | Report what would be stripped without touching any file.              |
+| `--force`   | Run even if the git working tree has uncommitted tracked changes.     |
+| `--json`    | Print one JSON object on stdout instead of the human-readable output. |
 
 Exits `1` when any package fails, `0` otherwise.
 
@@ -256,10 +309,10 @@ codefast tag packages/ui/src   # tag one directory or file
 codefast tag --dry-run         # summary only, no writes
 ```
 
-| Flag        | Description                                                   |
-| ----------- | ------------------------------------------------------------- |
-| `--dry-run` | Show summary without writing files.                           |
-| `--json`    | Print one JSON summary on stdout (suppresses human progress). |
+| Flag        | Description                                                           |
+| ----------- | --------------------------------------------------------------------- |
+| `--dry-run` | Show summary without writing files.                                   |
+| `--json`    | Print one JSON object on stdout instead of the human-readable output. |
 
 Exits `1` when no target is selected, when any target fails, or when the `tag.onAfterWrite` hook fails.
 
@@ -331,10 +384,10 @@ codefast audit comments --fix              # rewrite fixable dividers in place
 codefast audit comments --json             # machine-readable summary
 ```
 
-| Flag     | Description                                          |
-| -------- | ---------------------------------------------------- |
-| `--fix`  | Rewrite every mechanically fixable divider in place. |
-| `--json` | Print one JSON summary on stdout.                    |
+| Flag     | Description                                                           |
+| -------- | --------------------------------------------------------------------- |
+| `--fix`  | Rewrite every mechanically fixable divider in place.                  |
+| `--json` | Print one JSON object on stdout instead of the human-readable output. |
 
 Configure exceptions via `audit.comments.allowlist` — each entry is a divider line as written or
 `repo/relative/path.ts:<divider>`.
