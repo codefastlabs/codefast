@@ -91,7 +91,6 @@ const inspectPipeline: NamedCommandPipeline<
   name: "inspect",
   description: "Report long strings, nested cn in tv(), and related findings (read-only)",
   positional: { name: "[target]", help: targetHelp },
-  jsonHelp: "Print one JSON object on stdout instead of a human report",
   schema: arrangeAnalyzeDirectoryRequestSchema,
   prepare: prepareWorkspace,
   buildRequest: ({ prelude }) => ({ analyzeRootPath: prelude.resolvedTarget }),
@@ -160,7 +159,7 @@ export function createArrangeCommand(): Command {
     .argument("<tokens...>", "Class tokens (quote a single string if it contains spaces)")
     .option("--tv", "Emit tv()-style array instead of cn() call", false)
     .option("--with-classname, --with-class-name", "Append className as final cn() argument", false)
-    .option("--json", "Print one JSON object on stdout instead of plain lines", false)
+    .option("--json", "Print one JSON object on stdout instead of the human-readable output", false)
     .action(async (classTokenSeries: Array<string>, opts: Record<string, unknown>) => {
       const parsed = parseWithSchema(arrangeSuggestGroupsRequestSchema, {
         inlineClasses: classTokenSeries.join(" ").trim(),

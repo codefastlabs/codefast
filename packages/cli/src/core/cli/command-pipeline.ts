@@ -71,7 +71,6 @@ export interface CommandPipeline<
   readonly name?: string | undefined;
   readonly description?: string | undefined;
   readonly positional?: { readonly name: string; readonly help: string } | undefined;
-  readonly jsonHelp?: string | undefined;
   readonly configureArgv?: ((command: Command) => void) | undefined;
   readonly prepare: CommandPrepare<Prelude>;
   readonly guard?:
@@ -106,7 +105,7 @@ export type NamedCommandPipeline<
   readonly description: string;
 };
 
-const DEFAULT_JSON_HELP = "Print one JSON summary on stdout (suppresses human progress)";
+const DEFAULT_JSON_HELP = "Print one JSON object on stdout instead of the human-readable output";
 
 function readGlobalOptions(command: Command): Record<string, unknown> {
   return (
@@ -188,7 +187,7 @@ export function applyCommandPipeline<Prelude, Request, RunResult, Presenter, Opt
   if (pipeline.positional) {
     command.argument(pipeline.positional.name, pipeline.positional.help);
   }
-  command.option("--json", pipeline.jsonHelp ?? DEFAULT_JSON_HELP, false);
+  command.option("--json", DEFAULT_JSON_HELP, false);
   pipeline.configureArgv?.(command);
   command.action(makeAction(fs, pipeline));
   return command;
