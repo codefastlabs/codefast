@@ -92,6 +92,7 @@
     "@types/node": "catalog:",
     "@types/picomatch": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "github-slugger": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

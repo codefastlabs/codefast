@@ -67,6 +67,7 @@ catalog:
   ditox: ^3.3.0
   embla-carousel-autoplay: ^8.6.0
   embla-carousel-react: ^8.6.0
+  github-slugger: ^2.0.0
   hono: ^4.13.7
   injection-js: ^2.6.1
   input-otp: ^1.5.0
