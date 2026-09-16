@@ -31,9 +31,9 @@ const EXTERNAL = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 /**
  * The anchor ids a rendered document exposes: explicit `<a id>` targets plus every heading's slug.
  *
- * @remarks Slugging matches GitHub's — lowercase, drop everything that is not a letter, number, space
- * or hyphen, then hyphenate spaces. Duplicate headings get a `-1` suffix there; this returns the base
- * only, so a link to the second copy reads as dangling rather than being silently accepted.
+ * @remarks Slugs follow GitHub's own algorithm so a link that resolves on GitHub resolves here.
+ * Repeated slugs take a `-1`, `-2`, … suffix in heading order, exactly as GitHub disambiguates them,
+ * so a link to the second copy of a heading resolves instead of reading as dangling.
  *
  * @since 0.5.0
  */
@@ -43,17 +43,31 @@ export function collectMarkdownAnchors(content: string): Set<string> {
   for (const match of content.matchAll(/<a\s+id="([^"]+)"\s*><\/a>/g)) {
     anchors.add(match[1]!);
   }
+
+  const occurrences = new Map<string, number>();
   for (const match of content.matchAll(/^#{1,6}\s+(.+?)\s*$/gm)) {
-    anchors.add(
-      match[1]!
-        .toLowerCase()
-        .replaceAll(/[^\p{L}\p{N} -]/gu, "")
-        .trim()
-        .replaceAll(/\s+/g, "-"),
-    );
+    const base = slugifyHeading(match[1]!);
+    let result = base;
+    while (occurrences.has(result)) {
+      occurrences.set(base, (occurrences.get(base) ?? 0) + 1);
+      result = `${base}-${occurrences.get(base)!}`;
+    }
+    occurrences.set(result, 0);
+    anchors.add(result);
   }
 
   return anchors;
+}
+
+/**
+ * A heading's GitHub slug: lowercased, stripped to letters, numbers, marks, underscore and hyphen,
+ * with each remaining space turned into a hyphen — runs are kept, not collapsed, matching GitHub.
+ */
+function slugifyHeading(heading: string): string {
+  return heading
+    .toLowerCase()
+    .replaceAll(/[^\p{L}\p{N}\p{M} _-]/gu, "")
+    .replaceAll(" ", "-");
 }
 
 /**
