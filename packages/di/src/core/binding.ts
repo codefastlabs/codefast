@@ -118,8 +118,8 @@ interface BindingBase<Value> {
    *
    * @remarks Both cycle guards that can use an `O(1)` flag read this — the sync transient-dynamic
    * lane and the async cascade lane — because synchronous code does not interleave, so the flag *is*
-   * exact path membership. Not optional: `createBinding` always sets it, and a field that may be
-   * absent is a field that can cost the shared hidden class. Resolver-owned; callers never set it.
+   * exact path membership. Not optional: the binding builder always initializes it, and a field that
+   * may be absent is a field that can cost the shared hidden class. Resolver-owned; callers never set it.
    */
   inFlight: boolean;
   /**
