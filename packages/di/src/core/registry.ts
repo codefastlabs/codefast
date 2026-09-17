@@ -356,19 +356,14 @@ export class BindingRegistry {
    */
   setMany(binding: Binding): void {
     this.#bump();
-    const key: DependencyKey = binding.token;
-    if (this.#lone.get(key) === binding) {
-      writableMembership(binding).isMany = true;
-      this.#lone.delete(key);
-      this.#createRecord(key, [binding]);
+    // Set before any (re)indexing so `#indexSlot` sees a member and leaves it out of every slot.
+    writableMembership(binding).isMany = true;
+    if (this.#promoteLoneToRecord(binding.token, binding)) {
       return;
     }
-    // A default occupant that becomes a member frees its slot, so drop the stale index entry.
-    const record = this.#records?.get(key);
-    if (record?.defaultOccupant === binding) {
-      record.defaultOccupant = undefined;
-    }
-    writableMembership(binding).isMany = true;
+    // A default occupant that becomes a member frees its slot, so drop the stale index entry. A
+    // member cannot collapse a record back to lone, so this path does not settle.
+    this.#clearDefaultOccupant(binding.token, binding);
   }
 
   /**
@@ -380,21 +375,40 @@ export class BindingRegistry {
    */
   setPredicate(binding: Binding, predicate: BindingConstraint): void {
     this.#bump();
+    // Set before any (re)indexing: a predicate-only binding holds no default slot.
     writablePredicate(binding).predicate = predicate;
-    const key: DependencyKey = binding.token;
-    if (this.#lone.get(key) === binding) {
-      this.#lone.delete(key);
-      this.#createRecord(key, [binding]);
+    if (this.#promoteLoneToRecord(binding.token, binding)) {
       return;
     }
+    // The binding may have vacated the default slot, and a narrowed record can collapse back to lone.
+    const record = this.#clearDefaultOccupant(binding.token, binding);
+    if (record !== undefined) {
+      this.#settle(binding.token, record);
+    }
+  }
+
+  /**
+   * Moves a binding still holding the lone seat into a fresh one-binding record, returning whether it did.
+   *
+   * @remarks Its field (`isMany` or `predicate`) is written before this call, so the founding
+   * `#indexSlot` files it under the slot it now holds.
+   */
+  #promoteLoneToRecord(key: DependencyKey, binding: Binding): boolean {
+    if (this.#lone.get(key) !== binding) {
+      return false;
+    }
+    this.#lone.delete(key);
+    this.#createRecord(key, [binding]);
+    return true;
+  }
+
+  /** Clears the default-slot index entry a binding has vacated, returning its record if one exists. */
+  #clearDefaultOccupant(key: DependencyKey, binding: Binding): TokenRecord | undefined {
     const record = this.#records?.get(key);
-    // The binding is now predicate-only, so it no longer holds the default slot it may have held.
     if (record?.defaultOccupant === binding) {
       record.defaultOccupant = undefined;
     }
-    if (record !== undefined) {
-      this.#settle(key, record);
-    }
+    return record;
   }
 
   /** Summarize available slot strings for a token (for error messages). */
