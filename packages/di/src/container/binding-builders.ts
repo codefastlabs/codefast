@@ -224,6 +224,27 @@ export class BindingChain<Value, Names extends string = string>
 
   // ── Refinement ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
+  /**
+   * Whether this chain provably still owns the registry's last write with nothing parked.
+   *
+   * @remarks When it does, a refinement rewrites the live binding in place; otherwise `#reslot`
+   * re-checks liveness and restores what the new shape frees.
+   */
+  get #isProvablyLive(): boolean {
+    return this.#registration.registry.version === this.#versionAfterLastWrite && this.#displacedByChain === undefined;
+  }
+
+  /** Stamps this chain's last-write version after a mutation it made in place. */
+  #recordWrite(): void {
+    this.#versionAfterLastWrite = this.#registration.registry.version;
+  }
+
+  /** Bumps the registry for an index-neutral mutation (scope, hook) and records this chain's write. */
+  #touchAndRecordWrite(): void {
+    this.#registration.registry.touch();
+    this.#recordWrite();
+  }
+
   // Slot and predicate are what the registry indexes on, so a re-slot takes the binding out of the
   // registry, rewrites the two fields while it is out, and registers it again — same object, same id.
   #reslot(slot: BindingSlot, predicate: BindingConstraint | undefined): this {
@@ -248,8 +269,7 @@ export class BindingChain<Value, Names extends string = string>
     }
     // The frame reports the scope, so a resolve before this call memoized the previous one.
     clearBindingFrame(this.#binding);
-    this.#registration.registry.touch();
-    this.#versionAfterLastWrite = this.#registration.registry.version;
+    this.#touchAndRecordWrite();
     return this;
   }
 
@@ -263,13 +283,10 @@ export class BindingChain<Value, Names extends string = string>
       previous === undefined
         ? predicate
         : mergingConstraintRequirements((ctx) => previous(ctx) && predicate(ctx), previous, predicate);
-    const { registry } = this.#registration;
-    // The slot is unchanged, so nothing has to be re-indexed or displaced. With the last registry
-    // write this chain's own and nothing parked, the binding is provably live and is rewritten in
-    // place; otherwise the re-slot path re-checks liveness and restores what the shape frees.
-    if (registry.version === this.#versionAfterLastWrite && this.#displacedByChain === undefined) {
-      registry.setPredicate(this.#binding, narrowed);
-      this.#versionAfterLastWrite = registry.version;
+    // The slot is unchanged, so a provably-live binding just takes the predicate in place.
+    if (this.#isProvablyLive) {
+      this.#registration.registry.setPredicate(this.#binding, narrowed);
+      this.#recordWrite();
       return this;
     }
     return this.#reslot(this.slot, narrowed);
@@ -295,14 +312,11 @@ export class BindingChain<Value, Names extends string = string>
     if (this.isMany) {
       return this;
     }
-    const { registry } = this.#registration;
-    // With the last registry write this chain's own and nothing parked, the binding is provably live
-    // and displaced nobody, so membership is written in place and the registry only moves it out of
-    // the lone map. Otherwise it goes through the re-slot path, which re-checks liveness and restores
-    // an ordinary binding this chain's `to*()` displaced, now that the member frees its slot.
-    if (registry.version === this.#versionAfterLastWrite && this.#displacedByChain === undefined) {
-      registry.setMany(this.#binding);
-      this.#versionAfterLastWrite = registry.version;
+    // A provably-live binding takes membership in place; the registry only moves it out of the lone
+    // map. Otherwise `#commit` re-checks liveness and restores what the freed slot lets back in.
+    if (this.#isProvablyLive) {
+      this.#registration.registry.setMany(this.#binding);
+      this.#recordWrite();
       return this;
     }
     this.#commit(() => {
@@ -333,16 +347,14 @@ export class BindingChain<Value, Names extends string = string>
   onActivation(fn: ActivationHandler<Value>): this {
     this.#requireRegistered();
     this.activationHook = fn;
-    this.#registration.registry.touch();
-    this.#versionAfterLastWrite = this.#registration.registry.version;
+    this.#touchAndRecordWrite();
     return this;
   }
 
   onDeactivation(fn: DeactivationHandler<Value>): this {
     this.#requireRegistered();
     this.deactivationHook = fn;
-    this.#registration.registry.touch();
-    this.#versionAfterLastWrite = this.#registration.registry.version;
+    this.#touchAndRecordWrite();
     return this;
   }
 

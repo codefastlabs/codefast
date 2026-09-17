@@ -13,7 +13,7 @@ import {
 import { SHOP_TESTS } from "#/features/home/demos/shop-tests";
 
 /** One value a test looked at: the expression the sample reads and what it held, both as the reader would write them. */
-export interface Observation {
+interface Observation {
   readonly expression: string;
   readonly value: string;
 }

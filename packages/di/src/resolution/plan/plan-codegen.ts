@@ -6,7 +6,7 @@ import { NO_INSTANCE } from "#/core/binding";
 import type { ConstructorInvocation } from "#/core/constructor-type";
 
 /**
- * Runs a plan's closure makes before the plan is generated as its own function.
+ * The number of runs a plan's closure makes before the plan is generated as its own function.
  *
  * @remarks Below it a plan stays a closure, which is all a cold container or a per-request child
  * ever runs; above it a plan pays one compile for call sites nothing else feeds.
