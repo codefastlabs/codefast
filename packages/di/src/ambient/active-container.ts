@@ -52,11 +52,6 @@ export function runWithAmbientResolution<Result>(
 }
 
 /**
- * Returns the ambient container for the construction in flight, if one is installed.
- *
- * @since 0.3.16-canary.0
- */
-/**
  * Constructs `target` with `container` and `resolution` ambient for the duration of its constructor.
  *
  * @remarks The construction is written out rather than wrapped in a closure: an accessor-injected
@@ -83,6 +78,8 @@ export function constructWithAmbientResolution(
 }
 
 /**
+ * Returns the ambient container for the construction in flight, if one is installed.
+ *
  * @since 0.10.0
  */
 export function getActiveContainer(): Container | undefined {
