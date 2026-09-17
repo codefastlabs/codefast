@@ -58,6 +58,7 @@ import {
   ROOT_BRANCH,
   UNOWNED_BRANCH,
 } from "#/resolution/path/resolution-path";
+import type { InstantiationPlanHost } from "#/resolution/plan/instantiation-plan";
 import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/plan/instantiation-plan";
 import { matchesSlot, requestedTagKeyMask, selectAllBindings, selectBinding } from "#/resolution/select/binding-select";
 
@@ -534,7 +535,13 @@ export class DependencyResolver implements ResolverCallbacks {
   #planCompiler: InstantiationPlanCompiler | undefined;
 
   #compiler(): InstantiationPlanCompiler {
-    return (this.#planCompiler ??= new InstantiationPlanCompiler({
+    return (this.#planCompiler ??= new InstantiationPlanCompiler(this.#buildPlanCompilerHost()));
+  }
+
+  // The behaviour the plan compiler needs from this resolver — lookups, escapes, plan swaps, and the
+  // accessor construction path. Built once with the compiler, so each closure is allocated once.
+  #buildPlanCompilerHost(): InstantiationPlanHost {
+    return {
       hasActivationHandlers: (binding) => this.#ownerOf(binding).#lifecycle.hasActivationHandlers(binding.token),
       knownPostConstruct: (target) => this.#classes.knownPostConstruct(target),
       needsActiveContainer: (target) => this.#classes.needsActiveContainer(target),
@@ -610,7 +617,7 @@ export class DependencyResolver implements ResolverCallbacks {
         }
         return this.resolveAsync(token, options, resolutionStack, UNOWNED_BRANCH);
       },
-    }));
+    };
   }
 
   /** The async lane's plan for a statically-visible transient binding, mirroring the sync getter. */
