@@ -58,6 +58,7 @@ import {
   ROOT_BRANCH,
   UNOWNED_BRANCH,
 } from "#/resolution/path/resolution-path";
+import type { InstantiationPlanHost } from "#/resolution/plan/instantiation-plan";
 import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/plan/instantiation-plan";
 import { matchesSlot, requestedTagKeyMask, selectAllBindings, selectBinding } from "#/resolution/select/binding-select";
 
@@ -534,7 +535,13 @@ export class DependencyResolver implements ResolverCallbacks {
   #planCompiler: InstantiationPlanCompiler | undefined;
 
   #compiler(): InstantiationPlanCompiler {
-    return (this.#planCompiler ??= new InstantiationPlanCompiler({
+    return (this.#planCompiler ??= new InstantiationPlanCompiler(this.#buildPlanCompilerHost()));
+  }
+
+  // The behaviour the plan compiler needs from this resolver — lookups, escapes, plan swaps, and the
+  // accessor construction path. Built once with the compiler, so each closure is allocated once.
+  #buildPlanCompilerHost(): InstantiationPlanHost {
+    return {
       hasActivationHandlers: (binding) => this.#ownerOf(binding).#lifecycle.hasActivationHandlers(binding.token),
       knownPostConstruct: (target) => this.#classes.knownPostConstruct(target),
       needsActiveContainer: (target) => this.#classes.needsActiveContainer(target),
@@ -610,7 +617,7 @@ export class DependencyResolver implements ResolverCallbacks {
         }
         return this.resolveAsync(token, options, resolutionStack, UNOWNED_BRANCH);
       },
-    }));
+    };
   }
 
   /** The async lane's plan for a statically-visible transient binding, mirroring the sync getter. */
@@ -763,9 +770,12 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  /** Path-continuing resolution handed to the ambient slot while an accessor class constructs. */
-  // The ambient resolution a top-level construction hands its accessors: the lent root stack is one
-  // array for the resolver's lifetime, so the pair of closures over it is built once and reused.
+  /**
+   * Path-continuing resolution handed to the ambient slot while an accessor class constructs.
+   *
+   * @remarks The lent root stack is one array for the resolver's lifetime, so the closure pair over
+   * it is built once and reused.
+   */
   #rootAmbientResolution: AmbientResolution | undefined;
 
   #ambientResolutionFor(resolutionStack: Array<ResolutionFrame>): AmbientResolution {
@@ -1876,8 +1886,13 @@ export class DependencyResolver implements ResolverCallbacks {
   }
 }
 
-/** A constant whose value is its answer on every read: no own hook, and the caller has ruled out container hooks. */
-// A cached singleton reads like a constant until a registry change evicts it, which also drops the memo.
+/**
+ * Whether a binding answers a collection read with a fixed value: a hook-free constant, or a
+ * singleton whose instance is already cached.
+ *
+ * @remarks A cached singleton reads like a constant until a registry change evicts it, which also
+ * drops the memo.
+ */
 function isStableCollectionMember(binding: Binding): boolean {
   if (binding.kind === "alias" || binding.activationHook !== undefined) {
     return false;

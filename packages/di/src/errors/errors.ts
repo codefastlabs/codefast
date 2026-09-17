@@ -392,15 +392,6 @@ export class MissingContainerContextError extends DiError {
 }
 
 /**
- * A fluent chain was refined before a `to*()` call gave it a binding to refine.
- *
- * @remarks The builder types make this unreachable from TypeScript — `bind()` returns
- * `BindToBuilder`, which exposes only `to*()`. It exists for JavaScript callers and for anyone who
- * casts past the types, so the misuse fails loudly instead of mutating nothing.
- *
- * @since 0.5.0-canary.8
- */
-/**
  * A second `to*()` on a chain that already registered its binding.
  *
  * @remarks A chain is its binding, so it registers exactly once; a token bound twice is two `bind()`
@@ -441,6 +432,12 @@ export class ManyBindingSlotError extends DiError {
 }
 
 /**
+ * A fluent chain was refined before a `to*()` call gave it a binding to refine.
+ *
+ * @remarks The builder types make this unreachable from TypeScript — `bind()` returns
+ * `BindToBuilder`, which exposes only `to*()`. It exists for JavaScript callers and for anyone who
+ * casts past the types, so the misuse fails loudly instead of mutating nothing.
+ *
  * @since 0.10.0
  */
 export class ChainNotRegisteredError extends DiError {

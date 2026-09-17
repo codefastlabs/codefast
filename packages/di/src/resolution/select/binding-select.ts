@@ -5,8 +5,9 @@ import type { ConstraintContext, ResolveOptions } from "#/core/types";
 import { AmbiguousBindingError } from "#/errors/errors";
 
 /**
- * Selects a single candidate from a list of bindings using slot matching + predicates.
- * Returns undefined if no match, throws AmbiguousBindingError if multiple match.
+ * The single candidate a request selects from a list, by slot match then predicate.
+ *
+ * @remarks `undefined` when nothing matches; throws {@link AmbiguousBindingError} when several do.
  *
  * @since 0.3.16-canary.0
  */
