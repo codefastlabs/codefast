@@ -90,7 +90,7 @@ interface PlacedNode {
 }
 
 /** A point an edge passes through on its way across a column it does not stop in. */
-export interface Waypoint {
+interface Waypoint {
   readonly x: number;
   readonly y: number;
 }
