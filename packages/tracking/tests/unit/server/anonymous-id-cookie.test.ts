@@ -4,7 +4,7 @@ import {
   isValidAnonymousId,
   resolveAnonymousIdCookie,
   resolveClearAnonymousIdCookie,
-} from "#/server/anonymous-id-cookie";
+} from "#server/anonymous-id-cookie";
 
 const COOKIE_NAME = "test-anon-id";
 const VALID_ID = "3b241101-e2bb-4255-8caf-4136c566a962";

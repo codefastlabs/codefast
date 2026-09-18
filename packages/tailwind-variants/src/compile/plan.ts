@@ -6,11 +6,11 @@
  * resolution never calls clsx.
  */
 
-import type { PlanClasses } from "#/compile/class-values";
-import { hasBooleanVariantValues, toClassText, toPlanClasses, toVariantKey } from "#/compile/class-values";
-import type { CompoundPlanEntry, CompoundSlotPlanEntry } from "#/compile/compound";
-import { compileCompoundSlots, compileCompoundVariants } from "#/compile/compound";
-import { hasSlotsConfig } from "#/compile/configuration";
+import type { PlanClasses } from "#compile/class-values";
+import { hasBooleanVariantValues, toClassText, toPlanClasses, toVariantKey } from "#compile/class-values";
+import type { CompoundPlanEntry, CompoundSlotPlanEntry } from "#compile/compound";
+import { compileCompoundSlots, compileCompoundVariants } from "#compile/compound";
+import { hasSlotsConfig } from "#compile/configuration";
 import type {
   ClassValue,
   CompoundSlot,
@@ -19,7 +19,7 @@ import type {
   SlotVariantConfig,
   VariantConfig,
   VariantSchema,
-} from "#/types";
+} from "#types";
 
 /**
  * One variant group with the classes its default selects already resolved.

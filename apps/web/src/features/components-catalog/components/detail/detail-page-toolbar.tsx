@@ -4,9 +4,9 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { CopyPageMenu } from "#/features/components-catalog/components/detail/copy-page-menu";
-import type { ComponentMeta } from "#/registry/_core/components";
-import { NEIGHBORS_BY_SLUG } from "#/registry/_core/components";
+import { CopyPageMenu } from "#features/components-catalog/components/detail/copy-page-menu";
+import type { ComponentMeta } from "#registry/_core/components";
+import { NEIGHBORS_BY_SLUG } from "#registry/_core/components";
 
 interface DetailPageToolbarProps extends Omit<ComponentProps<"div">, "children"> {
   readonly component: ComponentMeta;

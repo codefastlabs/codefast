@@ -1,7 +1,7 @@
-import { suggestCnGroups, summarizeGroupBucketLabels } from "#/arrange/domain/grouping";
-import { formatArray, formatCnCall } from "#/arrange/domain/source-text-formatters";
-import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
-import type { ArrangeSuggestGroupsRequest } from "#/arrange/group/cli-schema";
+import { suggestCnGroups, summarizeGroupBucketLabels } from "#arrange/domain/grouping";
+import { formatArray, formatCnCall } from "#arrange/domain/source-text-formatters";
+import type { ArrangeSuggestGroupsOutput } from "#arrange/domain/types";
+import type { ArrangeSuggestGroupsRequest } from "#arrange/group/cli-schema";
 
 /**
  * Formats the suggested grouping for an inline class string as `arrange group` output lines.

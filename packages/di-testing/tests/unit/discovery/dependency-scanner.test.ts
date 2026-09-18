@@ -1,8 +1,8 @@
 import { defaultMetadataReader } from "@codefast/di";
 import { describe, expect, it } from "vitest";
 
-import { scanDependencies } from "#/discovery/dependency-scanner";
-import { NotInjectableError } from "#/errors/errors";
+import { scanDependencies } from "#discovery/dependency-scanner";
+import { NotInjectableError } from "#errors/errors";
 import {
   AccessorConsumer,
   AccessorOnlyService,
@@ -15,7 +15,7 @@ import {
   Standalone,
   Undecorated,
   UserServiceToken,
-} from "#/tests/unit/support/fixtures";
+} from "#tests/unit/support/fixtures";
 
 describe("scanDependencies", () => {
   it("reads every constructor dependency in order", () => {

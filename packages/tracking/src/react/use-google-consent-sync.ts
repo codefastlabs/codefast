@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 
-import { updateGoogleConsent } from "#/destinations/google-analytics";
-import type { UseConsentResult } from "#/react/use-consent";
+import { updateGoogleConsent } from "#destinations/google-analytics";
+import type { UseConsentResult } from "#react/use-consent";
 
 /**
  * Options for `useGoogleConsentSync`.

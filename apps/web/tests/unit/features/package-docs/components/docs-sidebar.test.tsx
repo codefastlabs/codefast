@@ -1,10 +1,10 @@
 import { cleanup, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { DocsSidebar } from "#/features/package-docs/components/docs-sidebar";
-import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
-import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
-import { renderAtPath } from "#/tests/unit/support/render-at-path";
+import { DocsSidebar } from "#features/package-docs/components/docs-sidebar";
+import type { DocRef } from "#features/package-docs/lib/doc-kinds";
+import type { PackageSummary } from "#features/package-docs/lib/rendered-doc";
+import { renderAtPath } from "#tests/unit/support/render-at-path";
 
 const PACKAGES: ReadonlyArray<PackageSummary> = [
   {

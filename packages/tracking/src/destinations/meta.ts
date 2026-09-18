@@ -1,8 +1,8 @@
-import type { ConsentDecision } from "#/core/consent";
-import type { Destination } from "#/core/destination";
-import { toAdConsentState } from "#/destinations/ad-consent";
-import type { FlatPropertyValue } from "#/destinations/shared";
-import { flattenEventProps } from "#/destinations/shared";
+import type { ConsentDecision } from "#core/consent";
+import type { Destination } from "#core/destination";
+import { toAdConsentState } from "#destinations/ad-consent";
+import type { FlatPropertyValue } from "#destinations/shared";
+import { flattenEventProps } from "#destinations/shared";
 
 /**
  * Meta's `dataProcessingOptions` restriction. `['LDU'], 0, 0` turns on Limited Data Use and

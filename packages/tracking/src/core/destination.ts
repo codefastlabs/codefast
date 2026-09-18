@@ -1,4 +1,4 @@
-import type { TrackedEvent } from "#/core/tracked-event";
+import type { TrackedEvent } from "#core/tracked-event";
 
 /**
  * Fan-out target for tracked events. The tracker depends only on this interface, never

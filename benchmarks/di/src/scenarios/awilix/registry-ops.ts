@@ -12,9 +12,9 @@ import {
   REBIND_BATCH,
   REBIND_HOT_SWAP,
   REBIND_PARENT_RESOLVE_CHILD_DEPTH_3,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildRebindHotSwapScenario(): BenchScenario {
   const container = createContainer();

@@ -1,7 +1,7 @@
 /** The `PaymentIntent` value object — the outcome of charging a payment gateway. */
 
-import type { OrderId } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-id";
-import type { Money } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/money";
+import type { OrderId } from "#examples/21-explicit-architecture-ecommerce/domain/order/order-id";
+import type { Money } from "#examples/21-explicit-architecture-ecommerce/domain/shared/money";
 
 /** Whether a charge succeeded. */
 export type PaymentStatus = "captured" | "failed";

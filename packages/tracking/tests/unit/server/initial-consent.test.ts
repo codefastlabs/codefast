@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveInitialConsent } from "#/server/initial-consent";
+import { resolveInitialConsent } from "#server/initial-consent";
 
 describe("resolveInitialConsent", () => {
   it("resolves an EU visitor to opt-in with analytics denied", () => {

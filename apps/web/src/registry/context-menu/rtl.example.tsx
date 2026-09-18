@@ -17,8 +17,8 @@ import {
 import { ArrowLeftIcon, ArrowRightIcon, RotateCwIcon } from "lucide-react";
 import { useState } from "react";
 
-import type { Translations } from "#/features/components-catalog/components/detail/language";
-import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
+import type { Translations } from "#features/components-catalog/components/detail/language";
+import { useTranslation } from "#features/components-catalog/components/detail/language-context";
 
 const translations: Translations = {
   en: {

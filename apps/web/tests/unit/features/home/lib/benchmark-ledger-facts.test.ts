@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseLedgerFacts } from "#/features/home/lib/benchmark-ledger-facts";
+import { parseLedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
 
 const LEDGER = `# Results
 

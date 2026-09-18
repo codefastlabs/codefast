@@ -1,6 +1,6 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { NavigationMenuRtl } from "#/registry/navigation-menu/rtl.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { NavigationMenuRtl } from "#registry/navigation-menu/rtl.example";
 
 export const navigationMenuDoc: ComponentDoc = {
   examples: [

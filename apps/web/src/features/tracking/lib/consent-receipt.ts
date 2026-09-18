@@ -4,8 +4,8 @@ import type { ReceiptStore } from "@codefast/tracking/server/consent-receipt-sto
 import { createInMemoryReceiptStore } from "@codefast/tracking/server/consent-receipt-store";
 import { createServerFn } from "@tanstack/react-start";
 
-import { forwardConsentDecisionToGa4 } from "#/features/tracking/lib/ga4-measurement-protocol.server";
-import { createReceiptSigner } from "#/features/tracking/lib/receipt-signer.server";
+import { forwardConsentDecisionToGa4 } from "#features/tracking/lib/ga4-measurement-protocol.server";
+import { createReceiptSigner } from "#features/tracking/lib/receipt-signer.server";
 
 /**
  * Dev-only in-memory receipt store — a production deployment swaps in a durable backend (a

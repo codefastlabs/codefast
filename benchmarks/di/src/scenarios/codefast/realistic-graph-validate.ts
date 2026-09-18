@@ -7,10 +7,10 @@
  * registry mutation between the hot-loop calls; this is repeated worst-case static
  * validation work on a warm graph.
  */
-import { buildCodefastRealisticContainer } from "#/fixtures/codefast-adapter";
-import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import { buildCodefastRealisticContainer } from "#fixtures/codefast-adapter";
+import { REALISTIC_GRAPH } from "#fixtures/realistic-graph";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 const REALISTIC_VALIDATE_BATCH = 10;
 

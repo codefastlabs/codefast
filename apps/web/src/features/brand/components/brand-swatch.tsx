@@ -1,7 +1,7 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
-import type { BrandColor } from "#/features/brand/data";
+import type { BrandColor } from "#features/brand/data";
 
 // `color` shadows the deprecated HTML attribute of the same name, so that attribute is dropped from the base.
 interface BrandSwatchProps extends Omit<ComponentProps<"div">, "children" | "color"> {

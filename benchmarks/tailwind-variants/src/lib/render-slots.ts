@@ -1,5 +1,5 @@
 /** The slot calls every side makes per render, so both libraries do the same work under one scenario id. */
-import type { CompoundPaginationSlots, ExtremeDialogSlots, ServicePreviewSlots } from "#/fixtures/slot-types";
+import type { CompoundPaginationSlots, ExtremeDialogSlots, ServicePreviewSlots } from "#fixtures/slot-types";
 
 /**
  * Renders the card slots a service preview shows.

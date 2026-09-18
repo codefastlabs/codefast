@@ -1,4 +1,4 @@
-import { COMPONENTS } from "#/registry/_core/components";
+import { COMPONENTS } from "#registry/_core/components";
 
 /** One numbered point in a features section. */
 export interface Feature {

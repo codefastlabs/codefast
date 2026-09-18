@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
-import type { ComparisonLibrary, ComparisonMarkdownReportOptions } from "#/report/comparison";
+import type { AggregatedScenarioResult, LibraryReport } from "#report/aggregate";
+import type { ComparisonLibrary, ComparisonMarkdownReportOptions } from "#report/comparison";
 import {
   buildComparisonRows,
   buildIntraLibraryRows,
@@ -9,7 +9,7 @@ import {
   renderComparisonMarkdownReport,
   summarizeAgainstCompetitor,
   summarizeComparison,
-} from "#/report/comparison";
+} from "#report/comparison";
 import {
   NOISY_IQR_FRACTION,
   NOISY_IQR_MARKER,
@@ -17,9 +17,9 @@ import {
   UNRELIABLE_RATIO_MARKER,
   formatNoisyIqrCaveatLine,
   formatReliabilityCaveatLine,
-} from "#/report/reliability";
-import { createPalette } from "#/shared/palette";
-import type { Fingerprint } from "#/shared/protocol";
+} from "#report/reliability";
+import { createPalette } from "#shared/palette";
+import type { Fingerprint } from "#shared/protocol";
 
 const FINGERPRINT: Fingerprint = {
   nodeVersion: "v26.1.0",

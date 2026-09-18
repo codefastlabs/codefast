@@ -1,7 +1,7 @@
 /** validate() over the live shop, with OrderService bound as shipped or as the captive singleton. */
 import type { Container } from "@codefast/di";
 
-import { createShop } from "#/features/home/demos/shop";
+import { createShop } from "#features/home/demos/shop";
 
 /** The live shop's container; `fixed` keeps OrderService transient, otherwise it becomes the singleton validate() refuses. */
 export function createCaptiveContainer(fixed: boolean): Container {

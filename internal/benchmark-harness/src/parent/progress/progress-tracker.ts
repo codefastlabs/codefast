@@ -1,5 +1,5 @@
 /** Per-library progress state the parent accumulates from subprocess lifecycle and child progress events. */
-import type { BenchProgressEvent } from "#/shared/progress";
+import type { BenchProgressEvent } from "#shared/progress";
 
 /**
  * Where a library's run stands.

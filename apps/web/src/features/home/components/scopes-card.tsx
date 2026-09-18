@@ -3,10 +3,10 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useState } from "react";
 
-import { ScrollFade } from "#/components/shared/scroll-fade";
-import { DemoVerdict } from "#/features/home/components/demo-verdict";
-import { createCaptiveContainer, validationMessage } from "#/features/home/demos/captive";
-import { track } from "#/features/tracking/lib/tracking";
+import { ScrollFade } from "#components/shared/scroll-fade";
+import { DemoVerdict } from "#features/home/components/demo-verdict";
+import { createCaptiveContainer, validationMessage } from "#features/home/demos/captive";
+import { track } from "#features/tracking/lib/tracking";
 
 type ScopesCardProps = Omit<ComponentProps<"article">, "children">;
 

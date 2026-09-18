@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { classifyRatio, HEAD_TO_HEAD_PARITY_BAND, ratioTint } from "#/report/verdict";
-import { createPalette } from "#/shared/palette";
+import { classifyRatio, HEAD_TO_HEAD_PARITY_BAND, ratioTint } from "#report/verdict";
+import { createPalette } from "#shared/palette";
 
 describe("classifyRatio", () => {
   it("reads the parity band as parity and everything outside it as a win or a loss", () => {

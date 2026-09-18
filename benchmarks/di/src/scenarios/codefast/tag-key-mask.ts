@@ -22,8 +22,8 @@
 import type { BindingTag, TagKey } from "@codefast/di";
 import { Container, tag, token } from "@codefast/di";
 
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 const MASK_BATCH = 300;
 

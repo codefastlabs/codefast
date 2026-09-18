@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { collectSweepOutcomes } from "#/tests/unit/support/behaviour-sweep";
+import { collectSweepOutcomes } from "#tests/unit/support/behaviour-sweep";
 
 describe("behaviour sweep", () => {
   test("a resolver that remembers answers exactly what one that does not answers", () => {

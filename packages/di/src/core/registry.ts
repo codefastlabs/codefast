@@ -1,10 +1,10 @@
-import type { Binding, BindingSlot } from "#/core/binding";
-import { bindingSlotEquals, bindingSlotToString, writableMembership, writablePredicate } from "#/core/binding";
-import { getOrInsert } from "#/core/map-upsert";
-import { advanceStateEpoch } from "#/core/state-epoch";
-import type { BindingTag } from "#/core/tag";
-import type { Token } from "#/core/token";
-import type { BindingConstraint, BindingIdentifier, Constructor, DependencyKey } from "#/core/types";
+import type { Binding, BindingSlot } from "#core/binding";
+import { bindingSlotEquals, bindingSlotToString, writableMembership, writablePredicate } from "#core/binding";
+import { getOrInsert } from "#core/map-upsert";
+import { advanceStateEpoch } from "#core/state-epoch";
+import type { BindingTag } from "#core/tag";
+import type { Token } from "#core/token";
+import type { BindingConstraint, BindingIdentifier, Constructor, DependencyKey } from "#core/types";
 
 /**
  * Everything the registry knows about a token that is more than one default-slot binding.

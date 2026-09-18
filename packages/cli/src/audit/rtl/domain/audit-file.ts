@@ -1,4 +1,4 @@
-import type { RtlClassToken, RtlViolation } from "#/audit/domain/types";
+import type { RtlClassToken, RtlViolation } from "#audit/domain/types";
 import {
   DIRECTION_RESOLVED_VARIANT,
   PHYSICAL_SIDE_VARIANT,
@@ -7,8 +7,8 @@ import {
   RTL_SWAP_MAPPINGS,
   RTL_TRANSLATE_X_MAPPINGS,
   SLIDE_PREFIXES,
-} from "#/audit/rtl/domain/mappings";
-import { collectTokens } from "#/audit/rtl/domain/tokenize";
+} from "#audit/rtl/domain/mappings";
+import { collectTokens } from "#audit/rtl/domain/tokenize";
 
 /**
  * A token satisfies an "rtl companion" requirement when the same file has a

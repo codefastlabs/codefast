@@ -1,12 +1,12 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { MessageActions } from "#/registry/message/actions.example";
-import { MessageAvatarDemo } from "#/registry/message/avatar.example";
-import { MessageGroupDemo } from "#/registry/message/group.example";
-import { MessageHeaderFooter } from "#/registry/message/header-footer.example";
-import { MessageMarkdown } from "#/registry/message/markdown.example";
-import { MessageAttachment } from "#/registry/message/message-attachment.example";
-import { MessageThread } from "#/registry/message/thread.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { MessageActions } from "#registry/message/actions.example";
+import { MessageAvatarDemo } from "#registry/message/avatar.example";
+import { MessageGroupDemo } from "#registry/message/group.example";
+import { MessageHeaderFooter } from "#registry/message/header-footer.example";
+import { MessageMarkdown } from "#registry/message/markdown.example";
+import { MessageAttachment } from "#registry/message/message-attachment.example";
+import { MessageThread } from "#registry/message/thread.example";
 
 export const messageDoc: ComponentDoc = {
   usage: docUsage("message"),

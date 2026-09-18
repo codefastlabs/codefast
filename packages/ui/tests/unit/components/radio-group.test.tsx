@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { createRef } from "react";
 
-import { RadioGroup, RadioGroupItem } from "#/components/radio-group";
+import { RadioGroup, RadioGroupItem } from "#components/radio-group";
 
 describe("radio-group", () => {
   describe("RadioGroup component", () => {

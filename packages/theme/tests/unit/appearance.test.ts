@@ -1,4 +1,4 @@
-import { appearances, appearanceSchema } from "#/appearance";
+import { appearances, appearanceSchema } from "#appearance";
 
 describe("Appearance Schema Validation", () => {
   describe("appearanceSchema", () => {

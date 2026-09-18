@@ -10,7 +10,7 @@ describe("createVercelAnalyticsDestination", () => {
   });
 
   it("forwards the event name and allowed-type properties to Vercel's track()", async () => {
-    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
+    const { createVercelAnalyticsDestination } = await import("#destinations/vercel-analytics");
     const destination = createVercelAnalyticsDestination();
 
     void destination.send({
@@ -26,7 +26,7 @@ describe("createVercelAnalyticsDestination", () => {
   });
 
   it("stringifies properties that Vercel's track() can't accept (nested objects/arrays)", async () => {
-    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
+    const { createVercelAnalyticsDestination } = await import("#destinations/vercel-analytics");
     const destination = createVercelAnalyticsDestination();
 
     void destination.send({
@@ -42,7 +42,7 @@ describe("createVercelAnalyticsDestination", () => {
   });
 
   it("drops undefined properties instead of forwarding them", async () => {
-    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
+    const { createVercelAnalyticsDestination } = await import("#destinations/vercel-analytics");
     const destination = createVercelAnalyticsDestination();
 
     void destination.send({
@@ -58,13 +58,13 @@ describe("createVercelAnalyticsDestination", () => {
   });
 
   it("uses the given destination name", async () => {
-    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
+    const { createVercelAnalyticsDestination } = await import("#destinations/vercel-analytics");
 
     expect(createVercelAnalyticsDestination({ name: "va" }).name).toBe("va");
   });
 
   it("defaults to requiring consent, with exempt as an explicit opt-in", async () => {
-    const { createVercelAnalyticsDestination } = await import("#/destinations/vercel-analytics");
+    const { createVercelAnalyticsDestination } = await import("#destinations/vercel-analytics");
 
     expect(createVercelAnalyticsDestination().consentRequirement).toBe("required");
     expect(createVercelAnalyticsDestination({ consentRequirement: "exempt" }).consentRequirement).toBe("exempt");

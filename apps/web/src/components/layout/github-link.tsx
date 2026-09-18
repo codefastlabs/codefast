@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 
-import { track } from "#/features/tracking/lib/tracking";
-import { GITHUB_URL } from "#/lib/nav-links";
+import { track } from "#features/tracking/lib/tracking";
+import { GITHUB_URL } from "#lib/nav-links";
 
 /** Outbound link to the GitHub repository. */
 export function GitHubLink({ className, onClick, ...props }: ComponentProps<"a">) {

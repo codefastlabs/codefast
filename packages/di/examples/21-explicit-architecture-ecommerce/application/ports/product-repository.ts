@@ -2,8 +2,8 @@
 
 import { token } from "@codefast/di";
 
-import type { Product } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product";
-import type { ProductId } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
+import type { Product } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product";
+import type { ProductId } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
 
 /** Persists and retrieves `Product` aggregates, hiding the storage engine behind it. */
 export interface ProductRepository {

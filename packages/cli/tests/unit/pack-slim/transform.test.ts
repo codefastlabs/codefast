@@ -6,7 +6,7 @@ import {
   isSourceMapFile,
   slimPublishManifest,
   stripSourceMappingComment,
-} from "#/pack-slim/domain/transform";
+} from "#pack-slim/domain/transform";
 
 describe("slimPublishManifest", () => {
   it("drops src, source conditions, unshipped imports, dev-only scripts, and devDependencies", () => {
@@ -19,9 +19,9 @@ describe("slimPublishManifest", () => {
         "./package.json": "./package.json",
       },
       imports: {
-        "#/tests/*": ["./tests/*", "./tests/*.ts"],
-        "#/examples/*": ["./examples/*"],
-        "#/*": { source: ["./src/*", "./src/*.ts"], types: "./dist/*.d.ts", default: "./dist/*.js" },
+        "#tests/*": ["./tests/*", "./tests/*.ts"],
+        "#examples/*": ["./examples/*"],
+        "#*": { source: ["./src/*", "./src/*.ts"], types: "./dist/*.d.ts", default: "./dist/*.js" },
       },
       scripts: { build: "tsc -p tsconfig.build.json", test: "vitest run", postinstall: "node setup.js" },
       devDependencies: { typescript: "^7.0.2", vitest: "^5.0.0" },
@@ -35,7 +35,7 @@ describe("slimPublishManifest", () => {
       "./button": { types: "./dist/button.d.ts", import: "./dist/button.js" },
       "./package.json": "./package.json",
     });
-    expect(slimmed.imports).toEqual({ "#/*": { types: "./dist/*.d.ts", default: "./dist/*.js" } });
+    expect(slimmed.imports).toEqual({ "#*": { types: "./dist/*.d.ts", default: "./dist/*.js" } });
     expect(slimmed.scripts).toEqual({ postinstall: "node setup.js" });
     expect(slimmed).not.toHaveProperty("devDependencies");
     expect(report).toEqual({
@@ -52,7 +52,7 @@ describe("slimPublishManifest", () => {
   it("drops an imports entry whose only lane was source, and the field once it is empty", () => {
     const { manifest: slimmed, report } = slimPublishManifest({
       files: ["dist", "src"],
-      imports: { "#/*": { source: "./src/*" } },
+      imports: { "#*": { source: "./src/*" } },
     });
 
     expect(slimmed).not.toHaveProperty("imports");
@@ -61,7 +61,7 @@ describe("slimPublishManifest", () => {
   });
 
   it("keeps an imports entry a glob files entry may ship", () => {
-    const manifest = { files: ["*.json", "lib"], imports: { "#/presets/*": "./presets/*.json" } };
+    const manifest = { files: ["*.json", "lib"], imports: { "#presets/*": "./presets/*.json" } };
 
     const { manifest: slimmed, report } = slimPublishManifest(manifest);
 
@@ -70,7 +70,7 @@ describe("slimPublishManifest", () => {
   });
 
   it("keeps every imports entry when the manifest declares no files", () => {
-    const manifest = { imports: { "#/tests/*": "./tests/*" } };
+    const manifest = { imports: { "#tests/*": "./tests/*" } };
 
     const { manifest: slimmed, report } = slimPublishManifest(manifest);
 
@@ -90,7 +90,7 @@ describe("slimPublishManifest", () => {
     const manifest = {
       files: ["dist", "src"],
       exports: { ".": { source: "./src/index.ts" } },
-      imports: { "#/tests/*": "./tests/*" },
+      imports: { "#tests/*": "./tests/*" },
       scripts: { build: "tsc" },
       devDependencies: { typescript: "^7.0.2" },
     };
@@ -99,7 +99,7 @@ describe("slimPublishManifest", () => {
 
     expect(manifest.files).toEqual(["dist", "src"]);
     expect(manifest.exports["."].source).toBe("./src/index.ts");
-    expect(manifest.imports["#/tests/*"]).toBe("./tests/*");
+    expect(manifest.imports["#tests/*"]).toBe("./tests/*");
     expect(manifest.scripts.build).toBe("tsc");
     expect(manifest.devDependencies.typescript).toBe("^7.0.2");
   });
@@ -108,7 +108,7 @@ describe("slimPublishManifest", () => {
     const { report } = slimPublishManifest({
       files: ["dist"],
       exports: { ".": { types: "./dist/index.d.ts", import: "./dist/index.js" } },
-      imports: { "#/*": { types: "./dist/*.d.ts", default: "./dist/*.js" } },
+      imports: { "#*": { types: "./dist/*.d.ts", default: "./dist/*.js" } },
       scripts: { postinstall: "node setup.js" },
     });
 

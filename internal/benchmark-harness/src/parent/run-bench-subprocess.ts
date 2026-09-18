@@ -1,10 +1,10 @@
 import { spawn } from "node:child_process";
 import { join } from "node:path";
 
-import type { BenchScenarioTier } from "#/child/bench-scenario";
-import { DEFAULT_BENCH_SCENARIO_TIER } from "#/child/bench-scenario";
-import { PlainProgressDisplay } from "#/parent/progress/plain-progress-display";
-import type { ProgressDisplay } from "#/parent/progress/progress-display";
+import type { BenchScenarioTier } from "#child/bench-scenario";
+import { DEFAULT_BENCH_SCENARIO_TIER } from "#child/bench-scenario";
+import { PlainProgressDisplay } from "#parent/progress/plain-progress-display";
+import type { ProgressDisplay } from "#parent/progress/progress-display";
 import {
   BENCH_ISOLATE_ENV_KEY,
   BENCH_LIST_ENV_KEY,
@@ -14,10 +14,10 @@ import {
   resolveBenchModeFromEnvironment,
   resolveScenarioFilterFromEnvironment,
   resolveTierFilterFromEnvironment,
-} from "#/shared/env-keys";
-import { parseProgressEvent } from "#/shared/progress";
-import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#/shared/protocol";
-import type { ScenarioListing, SubprocessPayload, TrialPayload } from "#/shared/protocol";
+} from "#shared/env-keys";
+import { parseProgressEvent } from "#shared/progress";
+import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#shared/protocol";
+import type { ScenarioListing, SubprocessPayload, TrialPayload } from "#shared/protocol";
 
 /**
  * Failure of a bench subprocess, carrying the exit code the child ended with.

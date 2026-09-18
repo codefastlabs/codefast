@@ -7,13 +7,13 @@ import {
   OpenAccountUseCaseToken,
   TransferMoneyUseCaseToken,
   WithdrawMoneyUseCaseToken,
-} from "#/examples/20-explicit-architecture/application/ports/use-cases.port";
-import { DepositMoney } from "#/examples/20-explicit-architecture/application/use-cases/deposit-money";
-import { OpenAccount } from "#/examples/20-explicit-architecture/application/use-cases/open-account";
-import { TransferMoney } from "#/examples/20-explicit-architecture/application/use-cases/transfer-money";
-import { WithdrawMoney } from "#/examples/20-explicit-architecture/application/use-cases/withdraw-money";
-import { BankingControllerToken } from "#/examples/20-explicit-architecture/composition/tokens";
-import { BankingController } from "#/examples/20-explicit-architecture/primary/banking-controller";
+} from "#examples/20-explicit-architecture/application/ports/use-cases.port";
+import { DepositMoney } from "#examples/20-explicit-architecture/application/use-cases/deposit-money";
+import { OpenAccount } from "#examples/20-explicit-architecture/application/use-cases/open-account";
+import { TransferMoney } from "#examples/20-explicit-architecture/application/use-cases/transfer-money";
+import { WithdrawMoney } from "#examples/20-explicit-architecture/application/use-cases/withdraw-money";
+import { BankingControllerToken } from "#examples/20-explicit-architecture/composition/tokens";
+import { BankingController } from "#examples/20-explicit-architecture/primary/banking-controller";
 
 /** Binds the inbound ports to their decorated use-case classes; the container reads each class's deps. */
 export const applicationModule = Module.create("explicit-architecture:Application", (builder) => {

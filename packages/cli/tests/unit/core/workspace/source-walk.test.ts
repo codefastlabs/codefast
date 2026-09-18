@@ -2,8 +2,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { sourceCommentLanguage, walkSourceFiles } from "#/core/workspace/source-walk";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { sourceCommentLanguage, walkSourceFiles } from "#core/workspace/source-walk";
 
 describe("sourceCommentLanguage", () => {
   it("maps each recognised extension to its comment syntax", () => {

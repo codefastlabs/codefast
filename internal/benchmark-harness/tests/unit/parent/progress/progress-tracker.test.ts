@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { ProgressTracker, progressFraction } from "#/parent/progress/progress-tracker";
+import { ProgressTracker, progressFraction } from "#parent/progress/progress-tracker";
 
 function trackerAt(clock: { nowMs: number }): ProgressTracker {
   return new ProgressTracker(() => clock.nowMs);

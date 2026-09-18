@@ -1,9 +1,9 @@
 import * as TabsPrimitive from "radix-ui/tabs";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-import type { TabsListVariants } from "#/variants/tabs";
-import { tabsListVariants } from "#/variants/tabs";
+import { cn } from "#lib/utils";
+import type { TabsListVariants } from "#variants/tabs";
+import { tabsListVariants } from "#variants/tabs";
 
 // ── Component: Tabs ──────────────────────────────────────────────────────────────────────────────────────────────────
 

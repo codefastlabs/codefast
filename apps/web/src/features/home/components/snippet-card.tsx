@@ -2,7 +2,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import { BracesIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { CodeBlock } from "#/components/shared/code-block";
+import { CodeBlock } from "#components/shared/code-block";
 
 interface SnippetCardProps extends Omit<ComponentProps<"div">, "children"> {
   /** What the sample shows, in the card's header. */

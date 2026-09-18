@@ -4,8 +4,8 @@
  */
 import { asFunction, createContainer } from "awilix";
 
-import { CIRCULAR_DEPENDENCY_3, MISCONFIGURED_MISSING_BINDING } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { CIRCULAR_DEPENDENCY_3, MISCONFIGURED_MISSING_BINDING } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 function failsFast(attempt: () => unknown): boolean {
   try {

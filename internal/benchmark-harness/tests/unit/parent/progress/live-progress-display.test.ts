@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { LiveProgressDisplay } from "#/parent/progress/live-progress-display";
+import { LiveProgressDisplay } from "#parent/progress/live-progress-display";
 
 const ESCAPE = String.fromCodePoint(0x1b);
 

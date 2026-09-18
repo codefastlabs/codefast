@@ -1,8 +1,8 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { InputNumberFormats } from "#/registry/input-number/formats.example";
-import { InputNumberQuantity } from "#/registry/input-number/quantity.example";
-import { InputNumberStates } from "#/registry/input-number/states.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { InputNumberFormats } from "#registry/input-number/formats.example";
+import { InputNumberQuantity } from "#registry/input-number/quantity.example";
+import { InputNumberStates } from "#registry/input-number/states.example";
 
 export const inputNumberDoc: ComponentDoc = {
   usage: docUsage("input-number"),

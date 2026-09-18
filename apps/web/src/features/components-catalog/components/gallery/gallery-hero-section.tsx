@@ -2,9 +2,9 @@ import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { PageHeader } from "#/components/shared/page-header";
-import { ALPHABET_GROUPS, GALLERY_STATS } from "#/features/components-catalog/data";
-import { COMPONENTS } from "#/registry/_core/components";
+import { PageHeader } from "#components/shared/page-header";
+import { ALPHABET_GROUPS, GALLERY_STATS } from "#features/components-catalog/data";
+import { COMPONENTS } from "#registry/_core/components";
 
 const firstLetterGroupId = ALPHABET_GROUPS[0]?.id ?? "letter-A";
 

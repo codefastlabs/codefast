@@ -1,4 +1,4 @@
-import type { ConsentCategory } from "#/core/consent";
+import type { ConsentCategory } from "#core/consent";
 
 /**
  * The consent constants every surface must agree on. The React hooks, the client

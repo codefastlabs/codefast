@@ -9,8 +9,8 @@ import {
 import { navigationMenuTriggerVariants } from "@codefast/ui/variants/navigation-menu";
 import type { ComponentPropsWithoutRef } from "react";
 
-import type { Translations } from "#/features/components-catalog/components/detail/language";
-import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
+import type { Translations } from "#features/components-catalog/components/detail/language";
+import { useTranslation } from "#features/components-catalog/components/detail/language-context";
 
 const translations: Translations = {
   en: {

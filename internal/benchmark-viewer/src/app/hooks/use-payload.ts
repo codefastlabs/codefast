@@ -1,7 +1,7 @@
 import { useCallback, useState, useTransition } from "react";
 
-import { DEFAULT_MAX_RUNS } from "#/constants";
-import type { EmbeddedViewerPayload } from "#/types";
+import { DEFAULT_MAX_RUNS } from "#constants";
+import type { EmbeddedViewerPayload } from "#types";
 
 interface BenchPayloadOptions {
   initialPayload: EmbeddedViewerPayload | undefined;

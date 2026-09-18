@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { handleSkipToChartClick, skipToChartTarget } from "#/app/lib/skip-chart";
+import { handleSkipToChartClick, skipToChartTarget } from "#app/lib/skip-chart";
 
 describe("skipToChartTarget", () => {
   it("scrolls and focuses the target element", () => {

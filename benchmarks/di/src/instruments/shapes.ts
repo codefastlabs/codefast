@@ -10,9 +10,9 @@ import { Container, injectable, token } from "@codefast/di";
 import type { BenchScenario } from "@internal/benchmark-harness/child/bench-scenario";
 import { isAsyncScenario } from "@internal/benchmark-harness/child/bench-scenario";
 
-import { batched } from "#/harness/batched";
-import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
-import type { AnyScenario } from "#/scenarios/types";
+import { batched } from "#harness/batched";
+import { collectAllCodefastScenarios } from "#scenarios/collect-codefast-scenarios";
+import type { AnyScenario } from "#scenarios/types";
 
 /**
  * The measured operation, plus how many logical operations one call of it performs.

@@ -1,8 +1,8 @@
 import type { JSX } from "react";
 
-import { appearances, appearanceSchema } from "#/appearance";
-import type { Appearance } from "#/appearance";
-import { DEFAULT_APPEARANCE, MEDIA, STORAGE_KEY } from "#/constants";
+import { appearances, appearanceSchema } from "#appearance";
+import type { Appearance } from "#appearance";
+import { DEFAULT_APPEARANCE, MEDIA, STORAGE_KEY } from "#constants";
 
 /* JSON.stringify does not escape </script>, so we replace the three characters that
  * can form a closing tag: < > /. Unicode escapes are valid JS and safe in HTML. */

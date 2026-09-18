@@ -10,9 +10,9 @@ import {
 } from "@internal/benchmark-harness/shared/env-keys";
 import { startBenchServer } from "@internal/benchmark-viewer/server";
 
-import { assembleDiComparison } from "#/harness/comparison";
-import { BENCH_LIBRARIES, CODEFAST_DI, SERVE_TITLE } from "#/harness/config";
-import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
+import { assembleDiComparison } from "#harness/comparison";
+import { BENCH_LIBRARIES, CODEFAST_DI, SERVE_TITLE } from "#harness/config";
+import { collectAllCodefastScenarios } from "#scenarios/collect-codefast-scenarios";
 
 /** Chip display order; the labels themselves are declared on the scenario definitions. */
 const FACET_LABEL_ORDER = [

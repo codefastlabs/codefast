@@ -2,21 +2,21 @@
 
 import { toDotGraph } from "@codefast/di";
 
-import { PaymentGatewayToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
-import type { PaymentGateway } from "#/examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
-import { ProductRepositoryToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
-import { createContainer } from "#/examples/21-explicit-architecture-ecommerce/composition/container";
-import { Product } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product";
-import { toProductId } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
-import type { OrderId } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-id";
-import type { PaymentIntent } from "#/examples/21-explicit-architecture-ecommerce/domain/payment/payment-intent";
-import { Money } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/money";
-import { PlaceOrderCommandCliToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/cli/place-order-command";
-import { RequestContextToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/middleware/request-context";
-import { CatalogControllerToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/routes/catalog-routes";
-import { CheckoutControllerToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/routes/checkout-routes";
-import { HttpServerToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/server";
-import { banner, item, ok, section, step } from "#/examples/support/log";
+import { PaymentGatewayToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
+import type { PaymentGateway } from "#examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
+import { ProductRepositoryToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
+import { createContainer } from "#examples/21-explicit-architecture-ecommerce/composition/container";
+import { Product } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product";
+import { toProductId } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
+import type { OrderId } from "#examples/21-explicit-architecture-ecommerce/domain/order/order-id";
+import type { PaymentIntent } from "#examples/21-explicit-architecture-ecommerce/domain/payment/payment-intent";
+import { Money } from "#examples/21-explicit-architecture-ecommerce/domain/shared/money";
+import { PlaceOrderCommandCliToken } from "#examples/21-explicit-architecture-ecommerce/presentation/cli/place-order-command";
+import { RequestContextToken } from "#examples/21-explicit-architecture-ecommerce/presentation/http/middleware/request-context";
+import { CatalogControllerToken } from "#examples/21-explicit-architecture-ecommerce/presentation/http/routes/catalog-routes";
+import { CheckoutControllerToken } from "#examples/21-explicit-architecture-ecommerce/presentation/http/routes/checkout-routes";
+import { HttpServerToken } from "#examples/21-explicit-architecture-ecommerce/presentation/http/server";
+import { banner, item, ok, section, step } from "#examples/support/log";
 
 // ── Test doubles ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

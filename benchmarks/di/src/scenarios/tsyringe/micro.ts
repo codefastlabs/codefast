@@ -7,16 +7,16 @@
 import "reflect-metadata";
 import { container as rootContainer, inject, injectable, Lifecycle } from "tsyringe";
 
-import { isFreshEachResolve } from "#/fixtures/sanity";
+import { isFreshEachResolve } from "#fixtures/sanity";
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
   CONSTANT_RESOLVE_BATCH,
   SINGLETON_CLASS_1_DEP,
   TRANSIENT_CLASS_1_DEP,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 const MICRO_LEAF_TOKEN = Symbol("bench-tsyringe-micro-leaf");
 const MICRO_CONSTANT_TOKEN = Symbol("bench-tsyringe-micro-constant");

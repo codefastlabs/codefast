@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { buildHash, parseHash } from "#/app/lib/hash";
-import type { ViewState } from "#/app/lib/hash";
-import { CHART_SKIP_TARGET_ID } from "#/app/lib/skip-chart";
-import type { EmbeddedViewerPayload } from "#/types";
+import { buildHash, parseHash } from "#app/lib/hash";
+import type { ViewState } from "#app/lib/hash";
+import { CHART_SKIP_TARGET_ID } from "#app/lib/skip-chart";
+import type { EmbeddedViewerPayload } from "#types";
 
 function minimalPayload(overrides: Partial<EmbeddedViewerPayload> = {}): EmbeddedViewerPayload {
   return {

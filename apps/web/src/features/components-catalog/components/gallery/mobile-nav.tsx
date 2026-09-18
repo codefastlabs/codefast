@@ -2,9 +2,9 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useRef } from "react";
 
-import { NavChip } from "#/features/components-catalog/components/gallery/nav-chip";
-import type { ComponentGroup } from "#/features/components-catalog/data";
-import { useScrollChipIntoView } from "#/features/components-catalog/hooks/use-scroll-chip-into-view";
+import { NavChip } from "#features/components-catalog/components/gallery/nav-chip";
+import type { ComponentGroup } from "#features/components-catalog/data";
+import { useScrollChipIntoView } from "#features/components-catalog/hooks/use-scroll-chip-into-view";
 
 interface MobileNavProps extends ComponentProps<"div"> {
   readonly groups: ReadonlyArray<ComponentGroup>;

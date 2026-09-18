@@ -6,12 +6,12 @@ import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync } fro
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import type { ExperimentPass, SideRun } from "#/parent/ab-report";
-import { buildAbReportLines, extractSubjectHz } from "#/parent/ab-report";
-import type { AbRequest } from "#/parent/ab-request";
-import { parseAbRequest } from "#/parent/ab-request";
-import { resolveBenchParentExitCode } from "#/parent/resolve-bench-parent-exit-code";
-import { OBSERVATIONS_FILE_NAME } from "#/shared/env-keys";
+import type { ExperimentPass, SideRun } from "#parent/ab-report";
+import { buildAbReportLines, extractSubjectHz } from "#parent/ab-report";
+import type { AbRequest } from "#parent/ab-request";
+import { parseAbRequest } from "#parent/ab-request";
+import { resolveBenchParentExitCode } from "#parent/resolve-bench-parent-exit-code";
+import { OBSERVATIONS_FILE_NAME } from "#shared/env-keys";
 
 // A source tree's tar can exceed the child-process default, so give the archive room.
 const GIT_ARCHIVE_MAX_BUFFER = 256 * 1024 * 1024;

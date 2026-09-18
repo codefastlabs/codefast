@@ -1,11 +1,11 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps, ReactNode } from "react";
 
-import { CodeBlock } from "#/components/shared/code-block";
-import { ExampleChrome } from "#/components/shared/example-chrome";
-import { LanguageProvider } from "#/features/components-catalog/components/detail/language-context";
-import { PreviewSurface } from "#/features/components-catalog/components/detail/preview-surface";
-import { RtlPreviewSurface } from "#/features/components-catalog/components/detail/rtl-preview-surface";
+import { CodeBlock } from "#components/shared/code-block";
+import { ExampleChrome } from "#components/shared/example-chrome";
+import { LanguageProvider } from "#features/components-catalog/components/detail/language-context";
+import { PreviewSurface } from "#features/components-catalog/components/detail/preview-surface";
+import { RtlPreviewSurface } from "#features/components-catalog/components/detail/rtl-preview-surface";
 
 interface ExamplePreviewProps extends ComponentProps<"div"> {
   /** Anchor id for deep-linking and the On-this-page TOC. */

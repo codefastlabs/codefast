@@ -1,9 +1,9 @@
 import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-import type { BubbleReactionsVariants, BubbleVariants } from "#/variants/bubble";
-import { bubbleReactionsVariants, bubbleVariants } from "#/variants/bubble";
+import { cn } from "#lib/utils";
+import type { BubbleReactionsVariants, BubbleVariants } from "#variants/bubble";
+import { bubbleReactionsVariants, bubbleVariants } from "#variants/bubble";
 
 // ── Component: BubbleGroup ───────────────────────────────────────────────────────────────────────────────────────────
 

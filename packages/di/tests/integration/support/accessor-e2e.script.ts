@@ -7,11 +7,11 @@
  * that can arise when `context.access.set(this, …)` crosses a module boundary inside a
  * single Vitest worker.
  */
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { inject } from "#/decorators/inject";
-import { injectable } from "#/decorators/injectable";
-import { postConstruct } from "#/decorators/lifecycle-decorators";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { inject } from "#decorators/inject";
+import { injectable } from "#decorators/injectable";
+import { postConstruct } from "#decorators/lifecycle-decorators";
 
 const AccessorDepToken = token<{ tag: "dep" }>("accessor-e2e.dep");
 const container = Container.create();

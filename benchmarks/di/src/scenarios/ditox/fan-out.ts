@@ -8,19 +8,19 @@
  */
 import { bindMultiValue, createContainer, token } from "ditox";
 
-import { buildDitoxRealisticContainer } from "#/fixtures/ditox-adapter";
-import { FAN_OUT_TREE_DEPTH_3_BREADTH_4, RESOLVE_ALL_STRATEGY_COUNTS } from "#/fixtures/fan-out-descriptor";
-import type { ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
-import type { RealisticNode } from "#/fixtures/realistic-graph";
-import { isCompleteCollection } from "#/fixtures/sanity";
+import { buildDitoxRealisticContainer } from "#fixtures/ditox-adapter";
+import { FAN_OUT_TREE_DEPTH_3_BREADTH_4, RESOLVE_ALL_STRATEGY_COUNTS } from "#fixtures/fan-out-descriptor";
+import type { ResolveAllStrategyCount } from "#fixtures/fan-out-descriptor";
+import type { RealisticNode } from "#fixtures/realistic-graph";
+import { isCompleteCollection } from "#fixtures/sanity";
 import {
   FAN_OUT_TREE,
   FAN_OUT_TREE_BATCH,
   resolveAllColdDescriptor,
   resolveAllStrategiesDescriptor,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
   const { container, rootToken } = buildDitoxRealisticContainer(FAN_OUT_TREE_DEPTH_3_BREADTH_4);

@@ -2,8 +2,8 @@ import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps, ReactNode } from "react";
 
-import { CopyButton } from "#/components/shared/copy-button";
-import { SectionHeader } from "#/components/shared/section-header";
+import { CopyButton } from "#components/shared/copy-button";
+import { SectionHeader } from "#components/shared/section-header";
 
 interface InstallCtaProps extends Omit<ComponentProps<"section">, "children" | "title"> {
   /** The install command shown and copied. */

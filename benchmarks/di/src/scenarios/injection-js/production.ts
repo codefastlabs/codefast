@@ -10,9 +10,9 @@ import "reflect-metadata";
 import type { ValueProvider } from "injection-js";
 import { InjectionToken, ReflectiveInjector } from "injection-js";
 
-import { EVENT_DISPATCH_BATCH, EVENT_HANDLER_COUNT, PRODUCTION_EVENT_BUS_DISPATCH } from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import { EVENT_DISPATCH_BATCH, EVENT_HANDLER_COUNT, PRODUCTION_EVENT_BUS_DISPATCH } from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface EventHandler {
   handle(event: string): void;

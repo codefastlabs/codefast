@@ -1,4 +1,4 @@
-import { indentOfLineContaining } from "#/core/source-text-edit";
+import { indentOfLineContaining } from "#core/source-text-edit";
 
 /**
  * Escapes backslashes and double quotes for embedding in a double-quoted TypeScript string literal.

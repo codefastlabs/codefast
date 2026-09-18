@@ -1,12 +1,12 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { EmptyAvatarGroup } from "#/registry/empty/avatar-group.example";
-import { EmptyAvatar } from "#/registry/empty/avatar.example";
-import { EmptyMuted } from "#/registry/empty/background.example";
-import { EmptyInCard } from "#/registry/empty/card.example";
-import { EmptyInputGroup } from "#/registry/empty/input-group.example";
-import { EmptyOutline } from "#/registry/empty/outline.example";
-import { EmptyRtl } from "#/registry/empty/rtl.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { EmptyAvatarGroup } from "#registry/empty/avatar-group.example";
+import { EmptyAvatar } from "#registry/empty/avatar.example";
+import { EmptyMuted } from "#registry/empty/background.example";
+import { EmptyInCard } from "#registry/empty/card.example";
+import { EmptyInputGroup } from "#registry/empty/input-group.example";
+import { EmptyOutline } from "#registry/empty/outline.example";
+import { EmptyRtl } from "#registry/empty/rtl.example";
 
 export const emptyDoc: ComponentDoc = {
   examples: [

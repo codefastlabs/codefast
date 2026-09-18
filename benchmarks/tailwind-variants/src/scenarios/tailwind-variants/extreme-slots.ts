@@ -1,10 +1,10 @@
-import { extremeSlotsTestProps, extremeSlotsVariants } from "#/fixtures/extreme";
-import { EXTREME_SLOTS_WITH_MERGE, EXTREME_SLOTS_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
-import type { DialogRenderer } from "#/fixtures/slot-types";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import { renderDialogSlots } from "#/lib/render-slots";
-import { tailwindVariantsTv } from "#/lib/tv-shims";
-import type { BenchScenario } from "#/scenarios/types";
+import { extremeSlotsTestProps, extremeSlotsVariants } from "#fixtures/extreme";
+import { EXTREME_SLOTS_WITH_MERGE, EXTREME_SLOTS_WITHOUT_MERGE } from "#fixtures/scenario-parity";
+import type { DialogRenderer } from "#fixtures/slot-types";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#harness/bench-options";
+import { renderDialogSlots } from "#lib/render-slots";
+import { tailwindVariantsTv } from "#lib/tv-shims";
+import type { BenchScenario } from "#scenarios/types";
 
 const npmNoMerge = tailwindVariantsTv(extremeSlotsVariants, TV_MERGE_DISABLED) as DialogRenderer;
 const npmWithMerge = tailwindVariantsTv(extremeSlotsVariants, TV_MERGE_ENABLED) as DialogRenderer;

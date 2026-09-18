@@ -1,13 +1,13 @@
 import { useEffect, useMemo } from "react";
 
-import { PALETTE } from "#/app/lib/colors";
-import type { PaletteEntry } from "#/app/lib/colors";
-import { searchNorm } from "#/app/lib/format";
-import type { ViewState } from "#/app/lib/hash";
-import { buildMetrics, buildSnapshotRow, pickDefaultScenarioId } from "#/app/lib/metrics";
-import type { MetricsResult, SnapshotRow } from "#/app/lib/metrics";
-import { runIndicesWithData } from "#/app/lib/overlay";
-import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries, EmbeddedViewerPayload } from "#/types";
+import { PALETTE } from "#app/lib/colors";
+import type { PaletteEntry } from "#app/lib/colors";
+import { searchNorm } from "#app/lib/format";
+import type { ViewState } from "#app/lib/hash";
+import { buildMetrics, buildSnapshotRow, pickDefaultScenarioId } from "#app/lib/metrics";
+import type { MetricsResult, SnapshotRow } from "#app/lib/metrics";
+import { runIndicesWithData } from "#app/lib/overlay";
+import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries, EmbeddedViewerPayload } from "#types";
 
 interface DerivedPayloadOptions {
   payload: EmbeddedViewerPayload | null;

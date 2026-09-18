@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import type { PreviousRun } from "#/report/run-diff";
-import { buildRunDiff, describeDiffTarget, formatCompactHz, formatDeltaPercent } from "#/report/run-diff";
-import { fingerprint, library, scenario, trials } from "#/tests/unit/report/support/fixtures";
+import type { PreviousRun } from "#report/run-diff";
+import { buildRunDiff, describeDiffTarget, formatCompactHz, formatDeltaPercent } from "#report/run-diff";
+import { fingerprint, library, scenario, trials } from "#tests/unit/report/support/fixtures";
 
 const SHAPE = { isolated: false, mode: "fast" as const };
 

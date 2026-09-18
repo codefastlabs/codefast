@@ -5,7 +5,7 @@ import { Label } from "@codefast/ui/label";
 import { Switch } from "@codefast/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 
-import { DemoSection } from "#/components/demo-section";
+import { DemoSection } from "#components/demo-section";
 
 export function CompositionSection() {
   return (

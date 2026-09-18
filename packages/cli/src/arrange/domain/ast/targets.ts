@@ -4,30 +4,30 @@ import {
   isDomainPropertyAssignment,
   isDomainTailwindClassLiteral,
   forEachDomainChild,
-} from "#/arrange/domain/ast/ast-node";
-import type { DomainAstNode, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
-import { isUnsafeLiteralForCnStyleApplySplit } from "#/arrange/domain/ast/collectors-cn";
-import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx";
-import { collectGroupableStringNodes, slotClassString } from "#/arrange/domain/ast/collectors-tv";
-import { APPLY_MIN_TOKENS } from "#/arrange/domain/constants";
+} from "#arrange/domain/ast/ast-node";
+import type { DomainAstNode, DomainSourceFile } from "#arrange/domain/ast/ast-node";
+import { isUnsafeLiteralForCnStyleApplySplit } from "#arrange/domain/ast/collectors-cn";
+import { jsxClassNameStaticLiteral } from "#arrange/domain/ast/collectors-jsx";
+import { collectGroupableStringNodes, slotClassString } from "#arrange/domain/ast/collectors-tv";
+import { APPLY_MIN_TOKENS } from "#arrange/domain/constants";
 import {
   areCnTailwindPartitionsEquivalent,
   suggestCnGroups,
   summarizeGroupBucketLabels,
-} from "#/arrange/domain/grouping";
+} from "#arrange/domain/grouping";
 import {
   escapeTsStringLiteralContent,
   formatArray,
   formatArrayElementsAsSiblingLines,
   formatJsxCnAttributeValue,
-} from "#/arrange/domain/source-text-formatters";
-import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
-import type { GroupTarget, PlannedGroupEdit, StringNode } from "#/arrange/domain/types";
+} from "#arrange/domain/source-text-formatters";
+import { tokenizeClassString } from "#arrange/domain/tailwind-token";
+import type { GroupTarget, PlannedGroupEdit, StringNode } from "#arrange/domain/types";
 import {
   endAfterOptionalCommaFollowingInSource,
   indentOfLineContaining,
   textPrefixFromLineStartToPosition,
-} from "#/core/source-text-edit";
+} from "#core/source-text-edit";
 
 /**
  * Resolves the source position where a group target's replacement begins.

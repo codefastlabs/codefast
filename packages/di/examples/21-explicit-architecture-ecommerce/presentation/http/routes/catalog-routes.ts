@@ -2,12 +2,12 @@
 
 import { inject, injectable, token } from "@codefast/di";
 
-import type { GetProduct } from "#/examples/21-explicit-architecture-ecommerce/application/catalog/get-product";
-import { GetProductToken } from "#/examples/21-explicit-architecture-ecommerce/application/catalog/get-product";
-import type { ListProducts } from "#/examples/21-explicit-architecture-ecommerce/application/catalog/list-products";
-import { ListProductsToken } from "#/examples/21-explicit-architecture-ecommerce/application/catalog/list-products";
-import type { Product } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product";
-import type { HttpServer } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/server";
+import type { GetProduct } from "#examples/21-explicit-architecture-ecommerce/application/catalog/get-product";
+import { GetProductToken } from "#examples/21-explicit-architecture-ecommerce/application/catalog/get-product";
+import type { ListProducts } from "#examples/21-explicit-architecture-ecommerce/application/catalog/list-products";
+import { ListProductsToken } from "#examples/21-explicit-architecture-ecommerce/application/catalog/list-products";
+import type { Product } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product";
+import type { HttpServer } from "#examples/21-explicit-architecture-ecommerce/presentation/http/server";
 
 /** A JSON-safe view of a product, decoupled from the domain entity. */
 function toProductView(product: Product): Record<string, unknown> {

@@ -2,7 +2,7 @@ import { SearchIcon, XIcon } from "lucide-react";
 import { useControllableState } from "radix-ui/internal";
 import type { ComponentProps, JSX } from "react";
 
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "#/components/input-group";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "#components/input-group";
 
 // ── Component: InputSearch ───────────────────────────────────────────────────────────────────────────────────────────
 

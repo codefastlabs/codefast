@@ -6,15 +6,15 @@ import { Switch } from "@codefast/ui/switch";
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { DemoSection } from "#/components/demo-section";
-import type { BoardSnapshot } from "#/features/di/server/tasks";
+import { DemoSection } from "#components/demo-section";
+import type { BoardSnapshot } from "#features/di/server/tasks";
 import {
   addTaskServerFn,
   removeTaskServerFn,
   resetBoardServerFn,
   setMetricsServerFn,
   toggleTaskServerFn,
-} from "#/features/di/server/tasks";
+} from "#features/di/server/tasks";
 
 interface TaskBoardProps {
   board: BoardSnapshot;

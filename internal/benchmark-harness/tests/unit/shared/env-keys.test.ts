@@ -22,7 +22,7 @@ import {
   resolvePreferredPortFromEnvironment,
   resolveRunShapeFromEnvironment,
   resolveTierFilterFromEnvironment,
-} from "#/shared/env-keys";
+} from "#shared/env-keys";
 
 const FLAG_KEY = "BENCH_TEST_FLAG";
 

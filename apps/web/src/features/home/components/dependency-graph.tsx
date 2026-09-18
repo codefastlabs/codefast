@@ -2,7 +2,7 @@ import type { ContainerGraphJson, GraphNode } from "@codefast/di";
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
-import { NODE_HEIGHT, NODE_WIDTH, edgePath, layoutGraph } from "#/features/home/demos/wiring-order";
+import { NODE_HEIGHT, NODE_WIDTH, edgePath, layoutGraph } from "#features/home/demos/wiring-order";
 
 interface DependencyGraphProps extends Omit<ComponentProps<"svg">, "children" | "viewBox"> {
   readonly graph: ContainerGraphJson;

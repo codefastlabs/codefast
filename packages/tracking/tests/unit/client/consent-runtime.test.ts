@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createConsentRuntime } from "#/client/consent-runtime";
-import type { InitialConsent } from "#/core/consent";
+import { createConsentRuntime } from "#client/consent-runtime";
+import type { InitialConsent } from "#core/consent";
 
 const OPT_OUT_US: InitialConsent = {
   defaultConsent: { ads: false, analytics: true },

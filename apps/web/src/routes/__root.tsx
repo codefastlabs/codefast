@@ -8,16 +8,16 @@ import type { ErrorComponentProps } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 
-import { Footer } from "#/components/layout/footer";
-import { Header } from "#/components/layout/header";
-import { NotFound } from "#/components/shared/not-found";
-import { SiteNotFound } from "#/components/shared/site-not-found";
-import { Analytics } from "#/features/tracking/components/analytics";
-import { GoogleTag } from "#/features/tracking/components/google-tag";
-import { SITE_OG_IMAGE } from "#/lib/seo";
-import { COMPONENTS } from "#/registry/_core/components";
+import { Footer } from "#components/layout/footer";
+import { Header } from "#components/layout/header";
+import { NotFound } from "#components/shared/not-found";
+import { SiteNotFound } from "#components/shared/site-not-found";
+import { Analytics } from "#features/tracking/components/analytics";
+import { GoogleTag } from "#features/tracking/components/google-tag";
+import { SITE_OG_IMAGE } from "#lib/seo";
+import { COMPONENTS } from "#registry/_core/components";
 
-import appCss from "#/styles.css?url";
+import appCss from "#styles.css?url";
 
 const SITE_NAME = "Codefast Labs";
 const SITE_TITLE = "Codefast Labs — TypeScript packages for React 19 products";

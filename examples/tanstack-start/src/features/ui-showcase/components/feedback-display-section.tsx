@@ -8,7 +8,7 @@ import { Progress } from "@codefast/ui/progress";
 import { Skeleton } from "@codefast/ui/skeleton";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@codefast/ui/table";
 
-import { DemoSection } from "#/components/demo-section";
+import { DemoSection } from "#components/demo-section";
 
 export function FeedbackDisplaySection() {
   return (

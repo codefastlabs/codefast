@@ -2,7 +2,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { consentConfig } from "#/features/tracking/lib/consent";
+import { consentConfig } from "#features/tracking/lib/consent";
 
 /**
  * Renders the real `<GoogleTag />` and returns the inline script it mounts — the env id
@@ -13,7 +13,7 @@ async function renderBootstrapScript(gaMeasurementId: string | undefined): Promi
   vi.resetModules();
   vi.stubEnv("VITE_GA4_MEASUREMENT_ID", gaMeasurementId ?? "");
 
-  const { GoogleTag } = await import("#/features/tracking/components/google-tag");
+  const { GoogleTag } = await import("#features/tracking/components/google-tag");
   const { container } = render(<GoogleTag />);
 
   return container.querySelector("script")?.innerHTML;

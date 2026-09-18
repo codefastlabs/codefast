@@ -4,9 +4,9 @@
  * Components without a doc fall back to the card demo from `demos.ts`. To add one:
  * export a `ComponentDoc` from `doc.ts` pointing at example files via `docSource`.
  */
-import type { HighlightedSource } from "#/registry/_core/highlight";
-import { getHighlightedSources } from "#/registry/_core/highlight-source";
-import type { ComponentDoc, ResolvedComponentDoc, ResolvedDocExample, SourceRef } from "#/registry/_core/types";
+import type { HighlightedSource } from "#registry/_core/highlight";
+import { getHighlightedSources } from "#registry/_core/highlight-source";
+import type { ComponentDoc, ResolvedComponentDoc, ResolvedDocExample, SourceRef } from "#registry/_core/types";
 
 /** Doc module loaders, keyed by path e.g. `./button/doc.ts`. */
 const docModules = import.meta.glob<Record<string, unknown>>("../*/doc.ts");
@@ -79,7 +79,7 @@ export async function loadDoc(slug: string): Promise<ResolvedComponentDoc | unde
   const sources = await getHighlightedSources({ data: [...new Set(refs)] });
 
   // Loaded here, not at module top: the examples map is ~500 lazy imports that only a doc render needs.
-  const { rememberExampleComponent } = await import("#/registry/_core/examples");
+  const { rememberExampleComponent } = await import("#registry/_core/examples");
   const examples = doc.examples.map((example) => resolveExample(example, sources, rememberExampleComponent));
   const usage = doc.usage ? requireSource(sources, doc.usage) : undefined;
 

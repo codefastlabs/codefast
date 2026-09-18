@@ -6,12 +6,12 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { Module } from "#/core/module";
-import { tag } from "#/core/tag";
-import { token } from "#/core/token";
-import { createAutoRegisterRegistry } from "#/decorators/injectable";
-import { AsyncModuleLoadError, DisposedContainerError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { Module } from "#core/module";
+import { tag } from "#core/tag";
+import { token } from "#core/token";
+import { createAutoRegisterRegistry } from "#decorators/injectable";
+import { AsyncModuleLoadError, DisposedContainerError } from "#errors/errors";
 
 describe("unbinding", () => {
   it("removes the binding and runs deactivation on the cached singleton", () => {

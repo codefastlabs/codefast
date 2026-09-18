@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { compareVersionPrecedence, scanImpossibleSinceTags } from "#/audit/comments/domain/since-versions";
+import { compareVersionPrecedence, scanImpossibleSinceTags } from "#audit/comments/domain/since-versions";
 
 describe("compareVersionPrecedence", () => {
   it("orders the numeric core", () => {

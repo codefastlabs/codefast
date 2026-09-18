@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { hasGppApi, hasTcfApi, reconcileAdFrameworkConsent } from "#/client/ad-framework-consent";
+import { hasGppApi, hasTcfApi, reconcileAdFrameworkConsent } from "#client/ad-framework-consent";
 
 const NATIVE = { ads: true, analytics: true } as const;
 

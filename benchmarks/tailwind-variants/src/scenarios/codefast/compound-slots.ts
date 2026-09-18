@@ -1,10 +1,10 @@
-import { compoundSlotsTestProps, compoundSlotsVariants } from "#/fixtures/compound-slots";
-import { COMPOUND_SLOTS_WITH_MERGE, COMPOUND_SLOTS_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
-import type { PaginationRenderer } from "#/fixtures/slot-types";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import { renderPaginationSlots } from "#/lib/render-slots";
-import { codefastTvFn } from "#/lib/tv-shims";
-import type { BenchScenario } from "#/scenarios/types";
+import { compoundSlotsTestProps, compoundSlotsVariants } from "#fixtures/compound-slots";
+import { COMPOUND_SLOTS_WITH_MERGE, COMPOUND_SLOTS_WITHOUT_MERGE } from "#fixtures/scenario-parity";
+import type { PaginationRenderer } from "#fixtures/slot-types";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#harness/bench-options";
+import { renderPaginationSlots } from "#lib/render-slots";
+import { codefastTvFn } from "#lib/tv-shims";
+import type { BenchScenario } from "#scenarios/types";
 
 const codefastNoMerge = codefastTvFn(compoundSlotsVariants, TV_MERGE_DISABLED) as PaginationRenderer;
 const codefastWithMerge = codefastTvFn(compoundSlotsVariants, TV_MERGE_ENABLED) as PaginationRenderer;

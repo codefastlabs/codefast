@@ -1,4 +1,4 @@
-import type { Constructor } from "#/core/constructor-type";
+import type { Constructor } from "#core/constructor-type";
 
 declare const TOKEN_BRAND: unique symbol;
 declare const TOKEN_NAMES_BRAND: unique symbol;

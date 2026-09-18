@@ -1,4 +1,4 @@
-import { logger } from "#/core/logger";
+import { logger } from "#core/logger";
 
 const yellowAnsi = "\x1b[33m";
 const resetAnsi = "\x1b[0m";

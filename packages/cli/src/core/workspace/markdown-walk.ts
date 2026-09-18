@@ -1,5 +1,5 @@
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { walkFiles } from "#/core/workspace/walk-files";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { walkFiles } from "#core/workspace/walk-files";
 
 /**
  * Every markdown file under a root, skipping build output and vendored trees.

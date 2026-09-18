@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createMicrosoftUetDestination, toMicrosoftUetConsent } from "#/destinations/microsoft-uet";
+import { createMicrosoftUetDestination, toMicrosoftUetConsent } from "#destinations/microsoft-uet";
 
 const event = {
   anonymousId: "anon-1",

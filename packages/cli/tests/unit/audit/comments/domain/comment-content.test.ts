@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { scanCommentContent } from "#/audit/comments/domain/comment-content";
+import { scanCommentContent } from "#audit/comments/domain/comment-content";
 
 describe("scanCommentContent", () => {
   it("flags a repo-document pointer in every comment syntax", () => {

@@ -2,15 +2,15 @@
 /* oxlint-disable react-hooks/exhaustive-deps */
 import { useCallback } from "react";
 
-import type { MessageScrollerRefs } from "#/hooks/use-message-scroller-refs";
+import type { MessageScrollerRefs } from "#hooks/use-message-scroller-refs";
 import {
   getElementScrollTop,
   getElementViewportTop,
   getMaxScrollTop,
   getTailSpacerHeight,
-} from "#/lib/message-scroller/geometry";
-import { AUTOSCROLLING_CLEAR_DELAY, SCROLL_POSITION_EPSILON } from "#/lib/message-scroller/types";
-import type { MessageScrollerScrollOptions } from "#/lib/message-scroller/types";
+} from "#lib/message-scroller/geometry";
+import { AUTOSCROLLING_CLEAR_DELAY, SCROLL_POSITION_EPSILON } from "#lib/message-scroller/types";
+import type { MessageScrollerScrollOptions } from "#lib/message-scroller/types";
 
 /**
  * Imperative scroll primitives, split from the controller so the move mechanics

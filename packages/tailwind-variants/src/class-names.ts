@@ -5,7 +5,7 @@
 import type { ConfigExtension } from "tailwind-merge";
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
-import type { ClassValue } from "#/types";
+import type { ClassValue } from "#types";
 
 /**
  * One class value flattened to the classes it contributes.

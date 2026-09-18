@@ -1,7 +1,7 @@
 import path from "node:path";
 
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { walkFiles } from "#/core/workspace/walk-files";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { walkFiles } from "#core/workspace/walk-files";
 
 // Ignore files carry the divider convention over `#` comments — the content rules stay code-only.
 const ignoreFileNames: ReadonlySet<string> = new Set([

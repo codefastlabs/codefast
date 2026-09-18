@@ -13,11 +13,11 @@ import { CheckIcon, ChevronDownIcon, CopyIcon, ExternalLinkIcon, FileTextIcon } 
 import type { ComponentProps } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { buildComponentMarkdown } from "#/features/components-catalog/lib/component-markdown";
-import { track } from "#/features/tracking/lib/tracking";
-import { absoluteUrl } from "#/lib/seo";
-import type { ComponentMeta } from "#/registry/_core/components";
-import { loadDoc } from "#/registry/_core/docs";
+import { buildComponentMarkdown } from "#features/components-catalog/lib/component-markdown";
+import { track } from "#features/tracking/lib/tracking";
+import { absoluteUrl } from "#lib/seo";
+import type { ComponentMeta } from "#registry/_core/components";
+import { loadDoc } from "#registry/_core/docs";
 
 type CopyPageVariant = "markdown" | "markdown-menu";
 

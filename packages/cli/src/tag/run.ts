@@ -1,12 +1,12 @@
 import path from "node:path";
 
-import type { CodefastAfterWriteHook, CodefastTagConfig } from "#/core/config/schema";
-import { AppError } from "#/core/errors";
-import { messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { filterSkippedCandidates } from "#/tag/domain/skip-filter";
+import type { CodefastAfterWriteHook, CodefastTagConfig } from "#core/config/schema";
+import { AppError } from "#core/errors";
+import { messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { filterSkippedCandidates } from "#tag/domain/skip-filter";
 import type {
   TagExecutionInput,
   TagFileResult,
@@ -15,10 +15,10 @@ import type {
   TagResult,
   TagTargetCandidate,
   TagTargetExecutionResult,
-} from "#/tag/domain/types";
-import { extractDistinctVersions, summarizeVersions } from "#/tag/domain/version-summary";
-import { resolveTagTargetCandidates } from "#/tag/target/candidates";
-import { runTagOnTarget } from "#/tag/target/runner";
+} from "#tag/domain/types";
+import { extractDistinctVersions, summarizeVersions } from "#tag/domain/version-summary";
+import { resolveTagTargetCandidates } from "#tag/target/candidates";
+import { runTagOnTarget } from "#tag/target/runner";
 
 /**
  * Applies `@since` tags across the selected targets and returns the aggregate result.

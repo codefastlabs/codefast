@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { GalleryHeroSection } from "#/features/components-catalog/components/gallery/gallery-hero-section";
-import { GalleryLayout } from "#/features/components-catalog/components/gallery/gallery-layout";
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
-import { canonicalHead } from "#/lib/seo";
+import { GalleryHeroSection } from "#features/components-catalog/components/gallery/gallery-hero-section";
+import { GalleryLayout } from "#features/components-catalog/components/gallery/gallery-layout";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
+import { canonicalHead } from "#lib/seo";
 
 export const Route = createFileRoute("/ui/components/")({
   // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.

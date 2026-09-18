@@ -2,9 +2,9 @@
  * The `head()` of a `/docs/*` page, built from its loader data so title, description, canonical URL,
  * and structured data all describe the same document.
  */
-import { DOC_KIND_BY_SLUG, docPath } from "#/features/package-docs/lib/doc-kinds";
-import type { DocPageData } from "#/features/package-docs/lib/rendered-doc";
-import { absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
+import { DOC_KIND_BY_SLUG, docPath } from "#features/package-docs/lib/doc-kinds";
+import type { DocPageData } from "#features/package-docs/lib/rendered-doc";
+import { absoluteUrl, canonicalHead, jsonLdScript } from "#lib/seo";
 
 interface DocPageHead {
   readonly meta: Array<

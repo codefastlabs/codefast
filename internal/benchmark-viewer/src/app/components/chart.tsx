@@ -3,10 +3,10 @@ import type { ChartDataset, ScriptableContext } from "chart.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ComponentProps, RefObject } from "react";
 
-import { ChevronDownIcon } from "#/app/components/icons";
-import { Kbd } from "#/app/components/kbd";
-import { OverlayLegend } from "#/app/components/overlay-legend";
-import { createMarkersPlugin, definitionChangeMarkers, versionChangeMarkers } from "#/app/lib/annotations";
+import { ChevronDownIcon } from "#app/components/icons";
+import { Kbd } from "#app/components/kbd";
+import { OverlayLegend } from "#app/components/overlay-legend";
+import { createMarkersPlugin, definitionChangeMarkers, versionChangeMarkers } from "#app/lib/annotations";
 import {
   ALL_TOOLBAR_DISABLED,
   applyRelativeCategoryView,
@@ -14,10 +14,10 @@ import {
   categoryXScaleWindow,
   computeChartToolbarDisabled,
   computeInitialCategoryWindow,
-} from "#/app/lib/chart-view";
-import type { ChartToolbarDisabled, RelativeCategoryView } from "#/app/lib/chart-view";
-import { PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X, withAlpha } from "#/app/lib/colors";
-import type { PaletteEntry } from "#/app/lib/colors";
+} from "#app/lib/chart-view";
+import type { ChartToolbarDisabled, RelativeCategoryView } from "#app/lib/chart-view";
+import { PAN_PIXELS_X, RATIO_COLORS, ZOOM_STEP_X, withAlpha } from "#app/lib/colors";
+import type { PaletteEntry } from "#app/lib/colors";
 import {
   fmtHz,
   fmtHzCompact,
@@ -26,13 +26,13 @@ import {
   formatLocal,
   isMacLikePlatform,
   spreadTierLabel,
-} from "#/app/lib/format";
-import { ratioFrom } from "#/app/lib/metrics";
-import { buildOverlaySeries, indexToFirst, isSparseLogTick, rowShortLabel } from "#/app/lib/overlay";
-import type { OverlaySeries } from "#/app/lib/overlay";
-import { CHART_SKIP_TARGET_ID } from "#/app/lib/skip-chart";
-import { cn } from "#/app/lib/utils";
-import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
+} from "#app/lib/format";
+import { ratioFrom } from "#app/lib/metrics";
+import { buildOverlaySeries, indexToFirst, isSparseLogTick, rowShortLabel } from "#app/lib/overlay";
+import type { OverlaySeries } from "#app/lib/overlay";
+import { CHART_SKIP_TARGET_ID } from "#app/lib/skip-chart";
+import { cn } from "#app/lib/utils";
+import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#types";
 
 /** Drops any alpha so a tooltip swatch shows the line's true hue, not the faint fill under the curve. */
 function toOpaqueColor(color: unknown): string {

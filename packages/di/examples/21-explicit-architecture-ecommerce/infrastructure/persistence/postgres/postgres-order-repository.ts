@@ -2,11 +2,11 @@
 
 import { inject, injectable } from "@codefast/di";
 
-import type { OrderRepository } from "#/examples/21-explicit-architecture-ecommerce/application/ports/order-repository";
-import type { Order } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order";
-import type { OrderId } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-id";
-import { PgPoolToken } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/pg-pool";
-import type { PgPool } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/pg-pool";
+import type { OrderRepository } from "#examples/21-explicit-architecture-ecommerce/application/ports/order-repository";
+import type { Order } from "#examples/21-explicit-architecture-ecommerce/domain/order/order";
+import type { OrderId } from "#examples/21-explicit-architecture-ecommerce/domain/order/order-id";
+import { PgPoolToken } from "#examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/pg-pool";
+import type { PgPool } from "#examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/pg-pool";
 
 /** Persists orders through Postgres SQL; the mock pool logs each statement and an in-memory map holds the rows. */
 @injectable([inject(PgPoolToken)])

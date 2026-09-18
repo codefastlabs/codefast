@@ -6,8 +6,8 @@ import {
   AMBIGUOUS_MULTI_BINDING,
   CIRCULAR_DEPENDENCY_3,
   MISCONFIGURED_MISSING_BINDING,
-} from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 interface CircularNodeA {
   readonly value: "a";

@@ -2,7 +2,7 @@ import fsSync from "node:fs";
 import fsPromises from "node:fs/promises";
 import path from "node:path";
 
-import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
+import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
 
 /**
  * The `Filesystem` implementation backed by Node's real filesystem.

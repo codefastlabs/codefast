@@ -1,18 +1,18 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { SidebarControlledExample } from "#/registry/sidebar/controlled.example";
-import { SidebarFooterExample } from "#/registry/sidebar/footer.example";
-import { SidebarGroupActionExample } from "#/registry/sidebar/group-action.example";
-import { SidebarGroupCollapsibleExample } from "#/registry/sidebar/group-collapsible.example";
-import { SidebarGroupExample } from "#/registry/sidebar/group.example";
-import { SidebarHeaderExample } from "#/registry/sidebar/header.example";
-import { SidebarMenuActionExample } from "#/registry/sidebar/menu-action.example";
-import { SidebarMenuBadgeExample } from "#/registry/sidebar/menu-badge.example";
-import { SidebarMenuCollapsibleExample } from "#/registry/sidebar/menu-collapsible.example";
-import { SidebarMenuSubExample } from "#/registry/sidebar/menu-sub.example";
-import { SidebarMenuExample } from "#/registry/sidebar/menu.example";
-import { SidebarRsc } from "#/registry/sidebar/rsc.example";
-import { SidebarRtl } from "#/registry/sidebar/rtl.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { SidebarControlledExample } from "#registry/sidebar/controlled.example";
+import { SidebarFooterExample } from "#registry/sidebar/footer.example";
+import { SidebarGroupActionExample } from "#registry/sidebar/group-action.example";
+import { SidebarGroupCollapsibleExample } from "#registry/sidebar/group-collapsible.example";
+import { SidebarGroupExample } from "#registry/sidebar/group.example";
+import { SidebarHeaderExample } from "#registry/sidebar/header.example";
+import { SidebarMenuActionExample } from "#registry/sidebar/menu-action.example";
+import { SidebarMenuBadgeExample } from "#registry/sidebar/menu-badge.example";
+import { SidebarMenuCollapsibleExample } from "#registry/sidebar/menu-collapsible.example";
+import { SidebarMenuSubExample } from "#registry/sidebar/menu-sub.example";
+import { SidebarMenuExample } from "#registry/sidebar/menu.example";
+import { SidebarRsc } from "#registry/sidebar/rsc.example";
+import { SidebarRtl } from "#registry/sidebar/rtl.example";
 
 export const sidebarDoc: ComponentDoc = {
   examples: [

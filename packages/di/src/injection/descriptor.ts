@@ -1,7 +1,7 @@
 /** The one shape every declared dependency is normalised to, whatever channel declared it. */
-import type { Token } from "#/core/token";
-import type { BindingTag, Constructor, TokenValue } from "#/core/types";
-import type { DependencySlot } from "#/injection/resolve-options";
+import type { Token } from "#core/token";
+import type { BindingTag, Constructor, TokenValue } from "#core/types";
+import type { DependencySlot } from "#injection/resolve-options";
 
 /**
  * Slot-selection options — a name and tags — a declared dependency narrows its binding with.

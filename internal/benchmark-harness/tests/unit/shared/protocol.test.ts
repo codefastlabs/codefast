@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#/shared/protocol";
+import { BENCH_RESULT_JSON_END, BENCH_RESULT_JSON_START, extractSubprocessPayload } from "#shared/protocol";
 
 describe("extractSubprocessPayload", () => {
   it("extracts framed payload from noisy stdout", () => {

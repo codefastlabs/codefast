@@ -1,9 +1,9 @@
 /** @packageDocumentation Benchmark harness primitives shared across `benchmarks/*` packages. */
 
-export type { BenchSubprocessConfig } from "#/shared/config";
-export { resolveDisplayName, selectLibraries } from "#/shared/config";
+export type { BenchSubprocessConfig } from "#shared/config";
+export { resolveDisplayName, selectLibraries } from "#shared/config";
 
-export type { AssertBenchEnvKeysOptions, BenchEnvSpec, BenchMode, IntegerEnvBounds } from "#/shared/env-keys";
+export type { AssertBenchEnvKeysOptions, BenchEnvSpec, BenchMode, IntegerEnvBounds } from "#shared/env-keys";
 export {
   assertBenchEnvKeys,
   BENCH_BASELINE_ENV_KEY,
@@ -34,9 +34,9 @@ export {
   resolveScenarioFilterFromEnvironment,
   resolveTierFilterFromEnvironment,
   USER_BENCH_ENV_KEYS,
-} from "#/shared/env-keys";
+} from "#shared/env-keys";
 
-export { assertSubjectMeasuredSomething } from "#/parent/assert-subject-measured";
+export { assertSubjectMeasuredSomething } from "#parent/assert-subject-measured";
 
 export type {
   Fingerprint,
@@ -44,35 +44,35 @@ export type {
   ScenarioTrialResult,
   SubprocessPayload,
   TrialPayload,
-} from "#/shared/protocol";
+} from "#shared/protocol";
 export {
   BENCH_RESULT_JSON_END,
   BENCH_RESULT_JSON_START,
   emitSubprocessPayload,
   extractSubprocessPayload,
-} from "#/shared/protocol";
+} from "#shared/protocol";
 
-export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#/child/bench-options";
+export { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "#child/bench-options";
 
-export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario, BenchScenarioTier } from "#/child/bench-scenario";
-export { DEFAULT_BENCH_SCENARIO_TIER, isAsyncScenario, tierOfScenario } from "#/child/bench-scenario";
+export type { AsyncBenchScenario, AnyBenchScenario, BenchScenario, BenchScenarioTier } from "#child/bench-scenario";
+export { DEFAULT_BENCH_SCENARIO_TIER, isAsyncScenario, tierOfScenario } from "#child/bench-scenario";
 
-export type { CreateRunAllTrialsParameters, RunAllTrials } from "#/child/create-run-all-trials";
-export { createRunAllTrials } from "#/child/create-run-all-trials";
+export type { CreateRunAllTrialsParameters, RunAllTrials } from "#child/create-run-all-trials";
+export { createRunAllTrials } from "#child/create-run-all-trials";
 
-export { collectFingerprint } from "#/child/fingerprint";
+export { collectFingerprint } from "#child/fingerprint";
 
-export type { RunBenchmarkChildMainParameters } from "#/child/run-benchmark-child-main";
+export type { RunBenchmarkChildMainParameters } from "#child/run-benchmark-child-main";
 export {
   exitBenchmarkChildProcessOnFailure,
   listScenarios,
   resolveBenchmarkPackageRootFromImportMetaUrl,
   runBenchmarkChildMain,
-} from "#/child/run-benchmark-child-main";
+} from "#child/run-benchmark-child-main";
 
-export { runSanityChecks } from "#/child/run-sanity-checks";
+export { runSanityChecks } from "#child/run-sanity-checks";
 
-export { resolveBenchParentExitCode } from "#/parent/resolve-bench-parent-exit-code";
+export { resolveBenchParentExitCode } from "#parent/resolve-bench-parent-exit-code";
 
 export type {
   InterleavedLibraryRun,
@@ -81,7 +81,7 @@ export type {
   SubprocessLaunchTarget,
   SubprocessLauncher,
   SubprocessProgressTarget,
-} from "#/parent/run-bench-subprocess";
+} from "#parent/run-bench-subprocess";
 export {
   SubprocessExecutionError,
   buildSubprocessEnvironment,
@@ -90,72 +90,72 @@ export {
   isIsolatedBenchRunRequested,
   runBenchSubprocess,
   runBenchSubprocessesInterleaved,
-} from "#/parent/run-bench-subprocess";
+} from "#parent/run-bench-subprocess";
 
-export type { RunBenchLibrariesOptions, RunBenchLibrariesResult } from "#/parent/run-bench-libraries";
-export { runBenchLibraries } from "#/parent/run-bench-libraries";
+export type { RunBenchLibrariesOptions, RunBenchLibrariesResult } from "#parent/run-bench-libraries";
+export { runBenchLibraries } from "#parent/run-bench-libraries";
 
-export type { CreatePaletteOptions, Palette, Tint } from "#/shared/palette";
-export { PLAIN_PALETTE, createPalette, shouldColor } from "#/shared/palette";
+export type { CreatePaletteOptions, Palette, Tint } from "#shared/palette";
+export { PLAIN_PALETTE, createPalette, shouldColor } from "#shared/palette";
 
-export type { BenchProgressEvent } from "#/shared/progress";
-export { formatProgressEvent, parseProgressEvent } from "#/shared/progress";
+export type { BenchProgressEvent } from "#shared/progress";
+export { formatProgressEvent, parseProgressEvent } from "#shared/progress";
 
-export type { ProgressDisplay } from "#/parent/progress/progress-display";
+export type { ProgressDisplay } from "#parent/progress/progress-display";
 export type {
   LibraryProgress,
   LibraryProgressStatus,
   RegisterLibraryOptions,
   SubprocessScope,
-} from "#/parent/progress/progress-tracker";
-export { ProgressTracker, progressFraction } from "#/parent/progress/progress-tracker";
-export type { RenderProgressFrameOptions } from "#/parent/progress/render-progress-frame";
-export { formatElapsed, renderProgressFrame } from "#/parent/progress/render-progress-frame";
-export type { LiveProgressDisplayOptions } from "#/parent/progress/live-progress-display";
-export { LiveProgressDisplay } from "#/parent/progress/live-progress-display";
-export type { PlainProgressDisplayOptions } from "#/parent/progress/plain-progress-display";
-export { PlainProgressDisplay } from "#/parent/progress/plain-progress-display";
-export type { CreateProgressDisplayOptions } from "#/parent/progress/create-progress-display";
+} from "#parent/progress/progress-tracker";
+export { ProgressTracker, progressFraction } from "#parent/progress/progress-tracker";
+export type { RenderProgressFrameOptions } from "#parent/progress/render-progress-frame";
+export { formatElapsed, renderProgressFrame } from "#parent/progress/render-progress-frame";
+export type { LiveProgressDisplayOptions } from "#parent/progress/live-progress-display";
+export { LiveProgressDisplay } from "#parent/progress/live-progress-display";
+export type { PlainProgressDisplayOptions } from "#parent/progress/plain-progress-display";
+export { PlainProgressDisplay } from "#parent/progress/plain-progress-display";
+export type { CreateProgressDisplayOptions } from "#parent/progress/create-progress-display";
 export {
   canDrawLiveProgress,
   createProgressDisplay,
   prefersUnicodeBars,
-} from "#/parent/progress/create-progress-display";
+} from "#parent/progress/create-progress-display";
 
 export type {
   BenchRunArtifactsResult,
   BenchRunOutputPaths,
   WriteBenchRunArtifactsParameters,
-} from "#/parent/bench-run-artifacts";
-export { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#/parent/bench-run-artifacts";
+} from "#parent/bench-run-artifacts";
+export { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#parent/bench-run-artifacts";
 
 export type {
   BenchLibraryCoverage,
   BenchScenarioInventory,
   BenchScenarioInventoryEntry,
-} from "#/parent/run-bench-listing-main";
+} from "#parent/run-bench-listing-main";
 export {
   buildBenchScenarioInventory,
   buildScenarioInventoryFromListings,
   formatCoverageLines,
   runBenchScenarioListingMain,
-} from "#/parent/run-bench-listing-main";
+} from "#parent/run-bench-listing-main";
 
-export type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
-export { buildLibraryReport } from "#/report/aggregate";
+export type { AggregatedScenarioResult, LibraryReport } from "#report/aggregate";
+export { buildLibraryReport } from "#report/aggregate";
 
-export { formatRatioMultiple, formatThroughputOpsPerSecond, formatThroughputRatio } from "#/report/format";
+export { formatRatioMultiple, formatThroughputOpsPerSecond, formatThroughputRatio } from "#report/format";
 
-export type { JsonlBenchObservationRow } from "#/report/jsonl";
+export type { JsonlBenchObservationRow } from "#report/jsonl";
 export {
   isJsonlBenchObservationRow,
   jsonlBenchObservationRowToFingerprint,
   jsonlBenchObservationRowToScenarioTrialResult,
-} from "#/report/jsonl";
+} from "#report/jsonl";
 
-export { quantile, sortAscending } from "#/report/quantiles";
+export { quantile, sortAscending } from "#report/quantiles";
 
-export type { ThroughputQuality } from "#/report/reliability";
+export type { ThroughputQuality } from "#report/reliability";
 export {
   NOISY_IQR_FRACTION,
   NOISY_IQR_MARKER,
@@ -170,7 +170,7 @@ export {
   isThroughputCellNoisy,
   markRatioQuality,
   markThroughputQuality,
-} from "#/report/reliability";
+} from "#report/reliability";
 
 export type {
   ComparisonCompetitorCell,
@@ -182,14 +182,14 @@ export type {
   ComparisonLibrary,
   ComparisonMarkdownReportOptions,
   ComparisonScenarioRow,
-} from "#/report/comparison";
+} from "#report/comparison";
 export {
   buildComparisonRows,
   renderComparisonConsoleReport,
   renderComparisonMarkdownReport,
   summarizeAgainstCompetitor,
   summarizeComparison,
-} from "#/report/comparison";
+} from "#report/comparison";
 
 export type {
   ComparisonDocument,
@@ -199,18 +199,18 @@ export type {
   ComparisonDocumentRun,
   ComparisonDocumentRunInput,
   ComparisonDocumentScenario,
-} from "#/report/comparison-document";
-export { COMPARISON_DOCUMENT_SCHEMA_VERSION, buildComparisonDocument } from "#/report/comparison-document";
+} from "#report/comparison-document";
+export { COMPARISON_DOCUMENT_SCHEMA_VERSION, buildComparisonDocument } from "#report/comparison-document";
 
-export { writeJsonFile, writeJsonlRun, writeMarkdownFile } from "#/report/write";
+export { writeJsonFile, writeJsonlRun, writeMarkdownFile } from "#report/write";
 
-export type { Verdict } from "#/report/verdict";
-export { HEAD_TO_HEAD_PARITY_BAND, classifyRatio, ratioTint, verdictTint } from "#/report/verdict";
-export type { ConsoleCell, RenderConsoleTableOptions } from "#/report/console-table";
-export { cell, renderConsoleTable } from "#/report/console-table";
-export type { RenderScoreboardOptions } from "#/report/console-scoreboard";
-export { renderScoreboardLines } from "#/report/console-scoreboard";
-export type { CompetitorDelta, CurrentRun, PreviousRun, RunDiff, ScenarioDelta } from "#/report/run-diff";
+export type { Verdict } from "#report/verdict";
+export { HEAD_TO_HEAD_PARITY_BAND, classifyRatio, ratioTint, verdictTint } from "#report/verdict";
+export type { ConsoleCell, RenderConsoleTableOptions } from "#report/console-table";
+export { cell, renderConsoleTable } from "#report/console-table";
+export type { RenderScoreboardOptions } from "#report/console-scoreboard";
+export { renderScoreboardLines } from "#report/console-scoreboard";
+export type { CompetitorDelta, CurrentRun, PreviousRun, RunDiff, ScenarioDelta } from "#report/run-diff";
 export {
   buildRunDiff,
   describeDiffTarget,
@@ -218,6 +218,6 @@ export {
   formatDeltaPercent,
   prepareRunDiff,
   readPreviousRun,
-} from "#/report/run-diff";
-export type { PrintRunCardParameters, RenderRunCardOptions, RunCardInput } from "#/report/run-card";
-export { printRunCard, renderRunCardLines } from "#/report/run-card";
+} from "#report/run-diff";
+export type { PrintRunCardParameters, RenderRunCardOptions, RunCardInput } from "#report/run-card";
+export { printRunCard, renderRunCardLines } from "#report/run-card";

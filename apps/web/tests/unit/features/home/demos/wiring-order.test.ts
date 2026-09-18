@@ -8,7 +8,7 @@ import {
   edgePath,
   layoutGraph,
   nodeColumns,
-} from "#/features/home/demos/wiring-order";
+} from "#features/home/demos/wiring-order";
 
 const node = (id: string, tokenName: string): ContainerGraphJson["nodes"][number] => ({
   id,

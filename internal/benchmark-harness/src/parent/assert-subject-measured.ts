@@ -6,8 +6,8 @@ import {
   resolveLibraryFilterFromEnvironment,
   resolveScenarioFilterFromEnvironment,
   resolveTierFilterFromEnvironment,
-} from "#/shared/env-keys";
-import type { TrialPayload } from "#/shared/protocol";
+} from "#shared/env-keys";
+import type { TrialPayload } from "#shared/protocol";
 
 /**
  * Fails when a scenario filter left the suite's subject with nothing measured.

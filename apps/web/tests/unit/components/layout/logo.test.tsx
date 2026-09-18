@@ -9,7 +9,7 @@ import {
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { Logo } from "#/components/layout/logo";
+import { Logo } from "#components/layout/logo";
 
 afterEach(() => {
   cleanup();

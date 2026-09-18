@@ -1,4 +1,4 @@
-import { useActiveAnchor } from "#/features/components-catalog/hooks/use-active-anchor";
+import { useActiveAnchor } from "#features/components-catalog/hooks/use-active-anchor";
 
 /** Gallery scroll-spy band — set lower than the default to clear the sticky header plus the mobile jump nav. */
 const GALLERY_BAND = { bandTop: 0.2, bandBottom: 0.3 };

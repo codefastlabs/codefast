@@ -3,10 +3,10 @@ import {
   DomainSyntaxKind,
   isDomainArrayLiteralExpression,
   isDomainTailwindClassLiteral,
-} from "#/arrange/domain/ast/ast-node";
-import type { DomainAstNode } from "#/arrange/domain/ast/ast-node";
-import { MAX_CLASS_EXPR_DEPTH } from "#/arrange/domain/constants";
-import type { ForEachStringLiteralInClassExpressionOptions, TailwindClassLiteral } from "#/arrange/domain/types";
+} from "#arrange/domain/ast/ast-node";
+import type { DomainAstNode } from "#arrange/domain/ast/ast-node";
+import { MAX_CLASS_EXPR_DEPTH } from "#arrange/domain/constants";
+import type { ForEachStringLiteralInClassExpressionOptions, TailwindClassLiteral } from "#arrange/domain/types";
 
 /**
  * Visits every static class literal reachable inside a class expression.

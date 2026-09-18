@@ -1,9 +1,9 @@
 import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { SectionHeader } from "#/components/shared/section-header";
-import { DemoTile } from "#/features/home/components/demo-tile";
-import { COMPONENT_COUNT, DEMO_WALL } from "#/features/home/data";
+import { SectionHeader } from "#components/shared/section-header";
+import { DemoTile } from "#features/home/components/demo-tile";
+import { COMPONENT_COUNT, DEMO_WALL } from "#features/home/data";
 
 /** Home playground: a bento grid of live, interactive registry demos. */
 export function DemoWallSection() {

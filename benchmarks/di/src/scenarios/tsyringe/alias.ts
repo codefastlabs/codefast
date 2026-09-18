@@ -13,9 +13,9 @@ import {
   ALIAS_PARENT_OWNED_TERMINAL,
   TO_ALIAS_BATCH,
   TO_ALIAS_REDIRECT,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface AliasedService {
   readonly name: string;

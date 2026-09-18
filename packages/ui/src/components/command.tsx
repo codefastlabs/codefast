@@ -2,9 +2,9 @@ import { Command as CommandPrimitive } from "cmdk";
 import { CheckIcon, SearchIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "#/components/dialog";
-import { InputGroup, InputGroupAddon } from "#/components/input-group";
-import { cn } from "#/lib/utils";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "#components/dialog";
+import { InputGroup, InputGroupAddon } from "#components/input-group";
+import { cn } from "#lib/utils";
 
 // ── Component: Command ───────────────────────────────────────────────────────────────────────────────────────────────
 

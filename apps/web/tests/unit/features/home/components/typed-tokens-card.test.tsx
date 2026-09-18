@@ -2,11 +2,11 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { TypedTokensCard } from "#/features/home/components/typed-tokens-card";
+import { TypedTokensCard } from "#features/home/components/typed-tokens-card";
 
 const { track } = vi.hoisted(() => ({ track: vi.fn() }));
 
-vi.mock("#/features/tracking/lib/tracking", () => ({ track }));
+vi.mock("#features/tracking/lib/tracking", () => ({ track }));
 
 const RIGHT = `<pre class="shiki"><code>@injectable([LoggerToken])</code></pre>`;
 const WRONG = `<pre class="shiki"><code>@injectable([ShopConfigToken])</code></pre>`;

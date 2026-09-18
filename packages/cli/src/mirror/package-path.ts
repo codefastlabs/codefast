@@ -1,10 +1,10 @@
 import path from "node:path";
 
-import { AppError } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { normalizePath } from "#/mirror/domain/path-normalizer";
+import { AppError } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { normalizePath } from "#mirror/domain/path-normalizer";
 
 /**
  * Resolves the optional positional package argument to a root-relative path, or `undefined` when absent.

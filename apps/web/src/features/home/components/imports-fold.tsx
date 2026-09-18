@@ -2,7 +2,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { CodeBlock } from "#/components/shared/code-block";
+import { CodeBlock } from "#components/shared/code-block";
 
 interface ImportsFoldProps extends Omit<ComponentProps<"details">, "children"> {
   /** What the fold says while closed, naming where the imports come from. */

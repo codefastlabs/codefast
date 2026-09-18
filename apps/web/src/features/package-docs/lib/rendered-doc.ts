@@ -1,9 +1,9 @@
-import type { TocItem } from "#/features/components-catalog/components/detail/toc";
+import type { TocItem } from "#features/components-catalog/components/detail/toc";
 /**
  * The serialisable shape of a package document after rendering — what a route loader ships to the
  * client, so nothing here may reference the markdown or highlighter engines.
  */
-import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
+import type { DocKindSlug } from "#features/package-docs/lib/doc-kinds";
 
 /** One document kind a package ships, with the pages beneath it when the kind is a directory. */
 export interface PackageDoc {

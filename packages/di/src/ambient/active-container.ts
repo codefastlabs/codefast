@@ -1,8 +1,8 @@
 /** The container an `@inject` accessor initializer resolves from when it has no other handle. */
-import type { Container } from "#/container/container";
-import type { ConstructorInvocation } from "#/core/constructor-type";
-import type { Token } from "#/core/token";
-import type { Constructor, ResolveOptions } from "#/core/types";
+import type { Container } from "#container/container";
+import type { ConstructorInvocation } from "#core/constructor-type";
+import type { Token } from "#core/token";
+import type { Constructor, ResolveOptions } from "#core/types";
 
 /**
  * Path-continuing resolution the engine installs while constructing a class with `@inject` accessors.

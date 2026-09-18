@@ -1,9 +1,9 @@
-import { COLD_DEFINITIONS_PER_LOOP, DEFINE_ONLY_SIMPLE, DEFINE_ONLY_SLOTS } from "#/fixtures/scenario-parity";
-import { buttonVariants } from "#/fixtures/simple";
-import { slotsVariants } from "#/fixtures/slots";
-import { TV_MERGE_ENABLED } from "#/harness/bench-options";
-import { tailwindVariantsTv } from "#/lib/tv-shims";
-import type { BenchScenario } from "#/scenarios/types";
+import { COLD_DEFINITIONS_PER_LOOP, DEFINE_ONLY_SIMPLE, DEFINE_ONLY_SLOTS } from "#fixtures/scenario-parity";
+import { buttonVariants } from "#fixtures/simple";
+import { slotsVariants } from "#fixtures/slots";
+import { TV_MERGE_ENABLED } from "#harness/bench-options";
+import { tailwindVariantsTv } from "#lib/tv-shims";
+import type { BenchScenario } from "#scenarios/types";
 
 const defineButton = (): unknown => tailwindVariantsTv(buttonVariants, TV_MERGE_ENABLED);
 const defineCard = (): unknown => tailwindVariantsTv(slotsVariants, TV_MERGE_ENABLED);

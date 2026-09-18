@@ -2,7 +2,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import * as AccordionPrimitive from "radix-ui/accordion";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
+import { cn } from "#lib/utils";
 
 // ── Component: Accordion ─────────────────────────────────────────────────────────────────────────────────────────────
 

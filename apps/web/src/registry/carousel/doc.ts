@@ -1,12 +1,12 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { CarouselDApiDemo } from "#/registry/carousel/api.example";
-import { CarouselMultiple } from "#/registry/carousel/multiple.example";
-import { CarouselOrientation } from "#/registry/carousel/orientation.example";
-import { CarouselPlugin } from "#/registry/carousel/plugin.example";
-import { CarouselRtl } from "#/registry/carousel/rtl.example";
-import { CarouselSize } from "#/registry/carousel/size.example";
-import { CarouselSpacing } from "#/registry/carousel/spacing.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { CarouselDApiDemo } from "#registry/carousel/api.example";
+import { CarouselMultiple } from "#registry/carousel/multiple.example";
+import { CarouselOrientation } from "#registry/carousel/orientation.example";
+import { CarouselPlugin } from "#registry/carousel/plugin.example";
+import { CarouselRtl } from "#registry/carousel/rtl.example";
+import { CarouselSize } from "#registry/carousel/size.example";
+import { CarouselSpacing } from "#registry/carousel/spacing.example";
 
 export const carouselDoc: ComponentDoc = {
   usage: docUsage("carousel"),

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { formatLocal } from "#/app/lib/format";
-import type { EmbeddedRun } from "#/types";
+import { formatLocal } from "#app/lib/format";
+import type { EmbeddedRun } from "#types";
 
 interface KpiGridProps {
   runCount: number;

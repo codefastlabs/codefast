@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { bindingSlotEquals, bindingSlotToString, DEFAULT_BINDING_SLOT, generateBindingId } from "#/core/binding";
-import { slotName, tag, tagKeyMaskOf } from "#/core/tag";
+import { bindingSlotEquals, bindingSlotToString, DEFAULT_BINDING_SLOT, generateBindingId } from "#core/binding";
+import { slotName, tag, tagKeyMaskOf } from "#core/tag";
 
 const A_TAG = tag("a");
 const B_TAG = tag("b");

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { renderMarkdown } from "#/features/package-docs/lib/markdown/render.impl";
+import { renderMarkdown } from "#features/package-docs/lib/markdown/render.impl";
 
 const context = { pkg: "di", file: "README.md" };
 

@@ -28,7 +28,7 @@ import type {
 } from "@codefast/di";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { tag } from "#/core/tag";
+import { tag } from "#core/tag";
 
 const ENV_TAG = tag("env");
 

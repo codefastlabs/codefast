@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { PageHeader } from "#/components/shared/page-header";
-import { PackageCard } from "#/features/package-docs/components/package-card";
-import { getPackages } from "#/features/package-docs/lib/package-docs";
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
-import { canonicalHead } from "#/lib/seo";
+import { PageHeader } from "#components/shared/page-header";
+import { PackageCard } from "#features/package-docs/components/package-card";
+import { getPackages } from "#features/package-docs/lib/package-docs";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
+import { canonicalHead } from "#lib/seo";
 
 export const Route = createFileRoute("/docs/")({
   // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.

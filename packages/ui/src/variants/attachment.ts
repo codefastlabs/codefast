@@ -1,5 +1,5 @@
-import type { VariantProps } from "#/lib/utils";
-import { tv } from "#/lib/utils";
+import type { VariantProps } from "#lib/utils";
+import { tv } from "#lib/utils";
 
 // ── Variant: Attachment ──────────────────────────────────────────────────────────────────────────────────────────────
 

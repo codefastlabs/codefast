@@ -25,8 +25,8 @@ one, and prefer a small helper or a maintained polyfill where the target can't g
 - `Temporal` over `Date` arithmetic — still Stage 3 with limited native support; verify before proposing.
 - `using` / `await using` for connections, file handles, listeners — needs TypeScript ≥ 5.2 and a runtime (or polyfill)
   providing `Symbol.dispose` / `Symbol.asyncDispose`.
-- Node subpath imports (`#/…` from `package.json#imports`) over `../../..` chains — this is a package.json feature, not
-  a TypeScript one; propose it only where the project already uses it, and confirm the target lists its extension
+- Node subpath imports (`#…` from `package.json#imports`) over `../../..` chains — this is a package.json feature, not a
+  TypeScript one; propose it only where the project already uses it, and confirm the target lists its extension
   candidates.
 
 ## C. tsconfig hygiene

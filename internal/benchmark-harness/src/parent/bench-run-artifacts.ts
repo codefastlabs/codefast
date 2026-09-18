@@ -1,10 +1,10 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, isAbsolute, join, resolve } from "node:path";
 
-import type { ComparisonDocument } from "#/report/comparison-document";
-import { writeJsonFile, writeJsonlRun } from "#/report/write";
-import { BENCH_RESULTS_DIR_NAME, LATEST_RUN_POINTER_FILE_NAME, OBSERVATIONS_FILE_NAME } from "#/shared/env-keys";
-import type { Fingerprint, TrialPayload } from "#/shared/protocol";
+import type { ComparisonDocument } from "#report/comparison-document";
+import { writeJsonFile, writeJsonlRun } from "#report/write";
+import { BENCH_RESULTS_DIR_NAME, LATEST_RUN_POINTER_FILE_NAME, OBSERVATIONS_FILE_NAME } from "#shared/env-keys";
+import type { Fingerprint, TrialPayload } from "#shared/protocol";
 
 /**
  * Where one run's single artifact goes: a timestamped directory holding `observations.jsonl`, plus

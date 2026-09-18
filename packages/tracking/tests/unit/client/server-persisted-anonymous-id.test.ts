@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createServerPersistedAnonymousId } from "#/client/server-persisted-anonymous-id";
+import { createServerPersistedAnonymousId } from "#client/server-persisted-anonymous-id";
 
 const COOKIE_NAME = "test-persisted-anon-id";
 

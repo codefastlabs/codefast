@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createInitialConsentStore } from "#/client/initial-consent-store";
-import type { InitialConsent } from "#/core/consent";
-import { STRICTEST_INITIAL_CONSENT } from "#/core/consent";
+import { createInitialConsentStore } from "#client/initial-consent-store";
+import type { InitialConsent } from "#core/consent";
+import { STRICTEST_INITIAL_CONSENT } from "#core/consent";
 
 const SESSION_KEY = "test-initial-consent";
 

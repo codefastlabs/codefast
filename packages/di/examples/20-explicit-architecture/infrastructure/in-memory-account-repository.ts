@@ -2,9 +2,9 @@
 
 import { injectable } from "@codefast/di";
 
-import type { AccountRepository } from "#/examples/20-explicit-architecture/application/ports/account-repository.port";
-import type { Account } from "#/examples/20-explicit-architecture/domain/account";
-import type { AccountId } from "#/examples/20-explicit-architecture/domain/account-id";
+import type { AccountRepository } from "#examples/20-explicit-architecture/application/ports/account-repository.port";
+import type { Account } from "#examples/20-explicit-architecture/domain/account";
+import type { AccountId } from "#examples/20-explicit-architecture/domain/account-id";
 
 /** Keeps accounts in a `Map`; swap it for a SQL adapter and no domain or use-case code changes. */
 @injectable()

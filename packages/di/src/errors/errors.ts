@@ -1,7 +1,7 @@
-import type { ConstraintRequirement } from "#/core/constraint-requirement";
-import type { BindingTag } from "#/core/tag";
-import { slotName } from "#/core/tag";
-import type { BindingIdentifier, BindingScope, ResolveOptions } from "#/core/types";
+import type { ConstraintRequirement } from "#core/constraint-requirement";
+import type { BindingTag } from "#core/tag";
+import { slotName } from "#core/tag";
+import type { BindingIdentifier, BindingScope, ResolveOptions } from "#core/types";
 
 /**
  * Base class for every error the library throws, each carrying a machine-readable `code`.

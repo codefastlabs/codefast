@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
-import { ANONYMOUS_ID_COOKIE_NAME } from "#/features/tracking/lib/anonymous-id";
-import { consentConfig } from "#/features/tracking/lib/consent";
-import { INITIAL_CONSENT_SESSION_KEY } from "#/features/tracking/lib/visitor-consent";
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
-import { canonicalHead } from "#/lib/seo";
+import { PrivacyChoices } from "#features/privacy/components/privacy-choices";
+import { ANONYMOUS_ID_COOKIE_NAME } from "#features/tracking/lib/anonymous-id";
+import { consentConfig } from "#features/tracking/lib/consent";
+import { INITIAL_CONSENT_SESSION_KEY } from "#features/tracking/lib/visitor-consent";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
+import { canonicalHead } from "#lib/seo";
 
 export const Route = createFileRoute("/privacy")({
   // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.

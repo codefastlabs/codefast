@@ -1,8 +1,8 @@
-import type { BindingScope, Constructor } from "#/core/types";
-import type { InjectableDependency, ResolvedDependencyValue } from "#/injection/descriptor";
-import { normalizeToDescriptor } from "#/injection/descriptor";
-import { INJECTABLE_KEY } from "#/metadata/metadata-keys";
-import type { ParamMetadata } from "#/metadata/metadata-types";
+import type { BindingScope, Constructor } from "#core/types";
+import type { InjectableDependency, ResolvedDependencyValue } from "#injection/descriptor";
+import { normalizeToDescriptor } from "#injection/descriptor";
+import { INJECTABLE_KEY } from "#metadata/metadata-keys";
+import type { ParamMetadata } from "#metadata/metadata-types";
 
 // ── AutoRegisterRegistry ─────────────────────────────────────────────────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import type { EmbeddedViewerPayload } from "#/types";
+import type { EmbeddedViewerPayload } from "#types";
 
 const ITEMS = [
   { id: "intro-howto-details", key: "bh-howto-open" },

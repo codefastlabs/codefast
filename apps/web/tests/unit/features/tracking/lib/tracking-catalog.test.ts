@@ -1,7 +1,7 @@
 import { assertValidEventProperties } from "@codefast/tracking";
 import { describe, expect, it } from "vitest";
 
-import { catalog } from "#/features/tracking/lib/tracking";
+import { catalog } from "#features/tracking/lib/tracking";
 
 describe("apps/web tracking catalog", () => {
   it("accepts search_query metadata without free-form query text", () => {

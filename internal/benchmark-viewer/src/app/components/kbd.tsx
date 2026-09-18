@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 
-import { cn } from "#/app/lib/utils";
+import { cn } from "#app/lib/utils";
 
 /**
  * Renders a keyboard key inline with the surrounding text.

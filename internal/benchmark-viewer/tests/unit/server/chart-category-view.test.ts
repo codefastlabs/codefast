@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { categoryXScaleWindow, computeInitialCategoryWindow } from "#/app/lib/chart-view";
+import { categoryXScaleWindow, computeInitialCategoryWindow } from "#app/lib/chart-view";
 
 describe("chart-category-view", () => {
   it("uses full index range for short series and omits explicit scale bounds", () => {

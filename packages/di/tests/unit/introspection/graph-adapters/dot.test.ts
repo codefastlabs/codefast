@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { toDotGraph } from "#/introspection/graph-adapters/dot";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { toDotGraph } from "#introspection/graph-adapters/dot";
 
 describe("toDotGraph", () => {
   it("renders a digraph with every node and edge", () => {

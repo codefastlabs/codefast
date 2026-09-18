@@ -12,7 +12,7 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 
-import { isSharedWithinScopeFreshAcross } from "#/fixtures/sanity";
+import { isSharedWithinScopeFreshAcross } from "#fixtures/sanity";
 import {
   ACTIVATION_HOOK_BATCH,
   CHAIN_REBIND_BATCH,
@@ -27,9 +27,9 @@ import {
   REBIND_PARENT_RESOLVE_CHILD_DEPTH_3,
   SCOPED_BINDING_PER_CHILD,
   SCOPED_PER_CHILD_BATCH,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 // ── scenario 1: rebind hot-swap ──────────────────────────────────────────────────────────────────────────────────────
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { ImportsAuditResult } from "#/audit/domain/types";
-import { exitCodeForImportsAuditResult, formatImportsAuditJsonOutput } from "#/audit/imports/cli-result";
+import type { ImportsAuditResult } from "#audit/domain/types";
+import { exitCodeForImportsAuditResult, formatImportsAuditJsonOutput } from "#audit/imports/cli-result";
 
 const clean: ImportsAuditResult = { files: [], violationCount: 0, allowlistedCount: 0, scannedFileCount: 3 };
 const dirty: ImportsAuditResult = {

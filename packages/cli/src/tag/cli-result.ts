@@ -1,5 +1,5 @@
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
-import type { TagResult } from "#/tag/domain/types";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
+import type { TagResult } from "#tag/domain/types";
 
 /**
  * Maps a tag run's result to the process exit code.

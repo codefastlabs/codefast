@@ -24,9 +24,9 @@ import {
   TAGGED_RESOLVE_BATCH,
   taggedResolveSlotsDescriptor,
   TARGET_TAG_VALUE,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 // Hoisted like the codefast side's TARGET_TAGS, so the measured closures allocate alike.
 const OPTIONAL_GET = { optional: true } as const;

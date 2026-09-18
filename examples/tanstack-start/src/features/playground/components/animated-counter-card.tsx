@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@code
 import { useMediaQuery } from "@codefast/ui/hooks/use-media-query";
 import { useState } from "react";
 
-import { AnimatedStat } from "#/features/playground/components/animated-stat";
+import { AnimatedStat } from "#features/playground/components/animated-stat";
 
 const COUNTER_STEPS = [0, 42, 128, 512, 1024] as const;
 

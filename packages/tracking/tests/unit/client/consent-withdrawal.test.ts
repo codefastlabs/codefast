@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createConsentWithdrawalHandler } from "#/client/consent-withdrawal";
+import { createConsentWithdrawalHandler } from "#client/consent-withdrawal";
 
 describe("createConsentWithdrawalHandler", () => {
   it("clears first-party tracking state when analytics is denied", () => {

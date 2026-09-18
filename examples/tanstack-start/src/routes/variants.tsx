@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Callout } from "#/components/callout";
-import { DemoSection } from "#/components/demo-section";
+import { Callout } from "#components/callout";
+import { DemoSection } from "#components/demo-section";
 
 export const Route = createFileRoute("/variants")({
   component: VariantsPage,

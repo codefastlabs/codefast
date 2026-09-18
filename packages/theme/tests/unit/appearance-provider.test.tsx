@@ -3,11 +3,11 @@ import userEvent from "@testing-library/user-event";
 import type { ReactElement } from "react";
 import { renderToString } from "react-dom/server";
 
-import type { Appearance } from "#/appearance";
-import { AppearanceProvider } from "#/appearance-provider";
-import { DEFAULT_COLOR_SCHEME, STORAGE_KEY, SYNC_CHANNEL } from "#/constants";
-import { createMockMediaQueryList, mockMatchMedia } from "#/tests/unit/support/mocks";
-import { useAppearance } from "#/use-appearance";
+import type { Appearance } from "#appearance";
+import { AppearanceProvider } from "#appearance-provider";
+import { DEFAULT_COLOR_SCHEME, STORAGE_KEY, SYNC_CHANNEL } from "#constants";
+import { createMockMediaQueryList, mockMatchMedia } from "#tests/unit/support/mocks";
+import { useAppearance } from "#use-appearance";
 
 // Dispatch a storage-like event. Builds it via Event + defineProperties rather than the
 // `new StorageEvent(type, init)` overload, which static analysis flags as superfluous args.

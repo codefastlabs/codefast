@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { fmtRunTick, formatLocal, resolveTimeConventions } from "#/app/lib/format";
+import { fmtRunTick, formatLocal, resolveTimeConventions } from "#app/lib/format";
 
 // Mid-month noon UTC: whatever the test machine's timezone, the month stays August.
 const MID_MONTH_ISO = "2026-08-17T12:00:00.000Z";

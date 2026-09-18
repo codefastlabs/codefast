@@ -1,5 +1,5 @@
-import type { ArrangeRunResult } from "#/arrange/domain/types";
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
+import type { ArrangeRunResult } from "#arrange/domain/types";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 
 /**
  * Machine-readable `arrange` run summary for `--json`, minus the non-serializable preview plans.

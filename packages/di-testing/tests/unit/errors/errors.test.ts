@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { NotInjectableError, TestingError, UndeclaredDependencyError } from "#/errors/errors";
+import { NotInjectableError, TestingError, UndeclaredDependencyError } from "#errors/errors";
 
 describe("NotInjectableError", () => {
   it("carries its code, name, and target", () => {

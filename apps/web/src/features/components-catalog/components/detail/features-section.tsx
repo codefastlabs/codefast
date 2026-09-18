@@ -1,7 +1,7 @@
 import { SparkleIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { DocSection } from "#/features/components-catalog/components/detail/doc-section";
+import { DocSection } from "#features/components-catalog/components/detail/doc-section";
 
 interface FeaturesSectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   readonly items: ReadonlyArray<string>;

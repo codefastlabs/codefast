@@ -1,7 +1,7 @@
 import { use } from "react";
 
-import type { AppearanceContextValue } from "#/appearance";
-import { AppearanceContext } from "#/appearance-context";
+import type { AppearanceContextValue } from "#appearance";
+import { AppearanceContext } from "#appearance-context";
 
 // ── Hook ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 

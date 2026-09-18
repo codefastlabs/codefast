@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createCaptiveContainer, validationMessage } from "#/features/home/demos/captive";
+import { createCaptiveContainer, validationMessage } from "#features/home/demos/captive";
 
 describe("validationMessage", () => {
   it("reports the singleton OrderService holding the scoped RequestContext captive", () => {

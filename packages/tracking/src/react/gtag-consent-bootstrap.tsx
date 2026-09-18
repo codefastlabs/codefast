@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode } from "react";
 
-import type { GtagConsentBootstrapOptions } from "#/destinations/google-analytics";
-import { buildGtagConsentBootstrapScript } from "#/destinations/google-analytics";
+import type { GtagConsentBootstrapOptions } from "#destinations/google-analytics";
+import { buildGtagConsentBootstrapScript } from "#destinations/google-analytics";
 
 /**
  * Props for {@link GtagConsentBootstrap}.

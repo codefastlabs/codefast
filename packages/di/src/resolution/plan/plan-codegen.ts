@@ -1,9 +1,9 @@
 /**
  * Generates a hot instantiation plan as a function of its own, so its call sites answer for one plan only.
  */
-import type { Binding } from "#/core/binding";
-import { NO_INSTANCE } from "#/core/binding";
-import type { ConstructorInvocation } from "#/core/constructor-type";
+import type { Binding } from "#core/binding";
+import { NO_INSTANCE } from "#core/binding";
+import type { ConstructorInvocation } from "#core/constructor-type";
 
 /**
  * The number of runs a plan's closure makes before the plan is generated as its own function.

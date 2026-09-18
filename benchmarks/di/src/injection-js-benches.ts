@@ -12,8 +12,8 @@ import {
   runBenchmarkChildMain,
 } from "@internal/benchmark-harness/child/run-benchmark-child-main";
 
-import { INJECTION_JS } from "#/harness/config";
-import { collectAllInjectionJsScenarios } from "#/scenarios/collect-injection-js-scenarios";
+import { INJECTION_JS } from "#harness/config";
+import { collectAllInjectionJsScenarios } from "#scenarios/collect-injection-js-scenarios";
 
 void runBenchmarkChildMain({
   libraryName: INJECTION_JS.libraryName,

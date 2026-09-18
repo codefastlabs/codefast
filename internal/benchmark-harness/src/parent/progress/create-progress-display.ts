@@ -1,8 +1,8 @@
 /** Picks the progress display a run gets from what its stderr can draw. */
-import { LiveProgressDisplay } from "#/parent/progress/live-progress-display";
-import { PlainProgressDisplay } from "#/parent/progress/plain-progress-display";
-import type { ProgressDisplay } from "#/parent/progress/progress-display";
-import { createPalette } from "#/shared/palette";
+import { LiveProgressDisplay } from "#parent/progress/live-progress-display";
+import { PlainProgressDisplay } from "#parent/progress/plain-progress-display";
+import type { ProgressDisplay } from "#parent/progress/progress-display";
+import { createPalette } from "#shared/palette";
 
 /**
  * Options for {@link createProgressDisplay}.

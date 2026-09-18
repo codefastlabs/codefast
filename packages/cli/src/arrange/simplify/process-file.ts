@@ -1,11 +1,11 @@
-import { collectSimplifyTargets } from "#/arrange/domain/ast/simplify-targets";
-import { dropCnImportIfUnused } from "#/arrange/domain/imports";
-import type { GroupFileResult } from "#/arrange/domain/types";
-import { collectClassNameFoldTargets } from "#/arrange/simplify/fold-targets";
-import type { FileClassNameProbe, VariantClassNameProbe } from "#/arrange/simplify/variant-classname-probe";
-import { parseDomainSourceFile } from "#/arrange/source-parse";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { applyEditsDescending, dropOverlappingEdits } from "#/core/source-text-edit";
+import { collectSimplifyTargets } from "#arrange/domain/ast/simplify-targets";
+import { dropCnImportIfUnused } from "#arrange/domain/imports";
+import type { GroupFileResult } from "#arrange/domain/types";
+import { collectClassNameFoldTargets } from "#arrange/simplify/fold-targets";
+import type { FileClassNameProbe, VariantClassNameProbe } from "#arrange/simplify/variant-classname-probe";
+import { parseDomainSourceFile } from "#arrange/source-parse";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { applyEditsDescending, dropOverlappingEdits } from "#core/source-text-edit";
 
 // A file simplify can act on names `cn`/`tv` (a call or an import to prune) or carries a `class`/`className`;
 // a source with none of these has nothing to flatten or fold, so it never needs parsing.

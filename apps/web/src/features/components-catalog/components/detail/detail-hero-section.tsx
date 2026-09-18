@@ -13,9 +13,9 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRightIcon, CodeIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { DetailPageToolbar } from "#/features/components-catalog/components/detail/detail-page-toolbar";
-import type { ComponentMeta } from "#/registry/_core/components";
-import { CATEGORIES } from "#/registry/_core/components";
+import { DetailPageToolbar } from "#features/components-catalog/components/detail/detail-page-toolbar";
+import type { ComponentMeta } from "#registry/_core/components";
+import { CATEGORIES } from "#registry/_core/components";
 
 const GITHUB_SRC = "https://github.com/codefastlabs/codefast/tree/main/packages/ui/src/components";
 

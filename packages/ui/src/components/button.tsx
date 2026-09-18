@@ -1,8 +1,8 @@
 import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX } from "react";
 
-import type { ButtonVariants } from "#/variants/button";
-import { buttonVariants } from "#/variants/button";
+import type { ButtonVariants } from "#variants/button";
+import { buttonVariants } from "#variants/button";
 
 // ── Component: Button ────────────────────────────────────────────────────────────────────────────────────────────────
 

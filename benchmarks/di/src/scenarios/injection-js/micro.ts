@@ -13,9 +13,9 @@ import {
   CONSTANT_RESOLVE,
   CONSTANT_RESOLVE_BATCH,
   SINGLETON_CLASS_1_DEP,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 @Injectable()
 class MicroLeafDependency {}

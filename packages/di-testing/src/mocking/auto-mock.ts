@@ -1,7 +1,7 @@
 /** The lazy `Proxy` that mocks an erased interface one accessed property at a time. */
 
-import type { MockFactory, MockFunction } from "#/mocking/mock-factory";
-import type { Spy } from "#/mocking/spy";
+import type { MockFactory, MockFunction } from "#mocking/mock-factory";
+import type { Spy } from "#mocking/spy";
 
 /**
  * A mocked view of `Dependency`: every member becomes a spy, nested objects are mocked in turn.

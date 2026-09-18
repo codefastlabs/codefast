@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { auditDisplayNames } from "#/audit/display-names/domain/display-names";
+import { auditDisplayNames } from "#audit/display-names/domain/display-names";
 
 describe("auditDisplayNames", () => {
   it("flags a token(), a tag() and a module name without a namespace, with their lines", () => {

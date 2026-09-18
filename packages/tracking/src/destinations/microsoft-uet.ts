@@ -1,8 +1,8 @@
-import type { ConsentDecision } from "#/core/consent";
-import type { Destination } from "#/core/destination";
-import { toAdConsentState } from "#/destinations/ad-consent";
-import type { FlatPropertyValue } from "#/destinations/shared";
-import { flattenEventProps } from "#/destinations/shared";
+import type { ConsentDecision } from "#core/consent";
+import type { Destination } from "#core/destination";
+import { toAdConsentState } from "#destinations/ad-consent";
+import type { FlatPropertyValue } from "#destinations/shared";
+import { flattenEventProps } from "#destinations/shared";
 
 /**
  * Microsoft UET consent. UET enforces **only** `ad_storage` — it has no `analytics_storage`,

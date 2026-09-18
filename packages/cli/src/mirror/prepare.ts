@@ -1,12 +1,12 @@
-import type { GlobalCliOptions } from "#/core/cli/global-options";
-import { resolveProjectRootResult } from "#/core/cli/resolve-root";
-import { loadCodefastConfig } from "#/core/config";
-import type { AppError } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { ok } from "#/core/result";
-import type { MirrorSyncCommandPrelude } from "#/mirror/domain/types";
-import { resolveMirrorPackageFromCliArg } from "#/mirror/package-path";
+import type { GlobalCliOptions } from "#core/cli/global-options";
+import { resolveProjectRootResult } from "#core/cli/resolve-root";
+import { loadCodefastConfig } from "#core/config";
+import type { AppError } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { ok } from "#core/result";
+import type { MirrorSyncCommandPrelude } from "#mirror/domain/types";
+import { resolveMirrorPackageFromCliArg } from "#mirror/package-path";
 
 /**
  * Resolves the repo root, config, and package filter into the prelude a mirror run starts from.

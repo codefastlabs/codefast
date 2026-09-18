@@ -5,16 +5,16 @@
  */
 import { describe, expect, it } from "vitest";
 
-import type { Binding } from "#/core/binding";
-import { NO_INSTANCE } from "#/core/binding";
-import type { ConstructorInvocation } from "#/core/constructor-type";
-import type { AsyncPlanNode, PlanNode } from "#/resolution/plan/plan-codegen";
+import type { Binding } from "#core/binding";
+import { NO_INSTANCE } from "#core/binding";
+import type { ConstructorInvocation } from "#core/constructor-type";
+import type { AsyncPlanNode, PlanNode } from "#resolution/plan/plan-codegen";
 import {
   generateAsyncPlan,
   generatePlan,
   isPlanCodegenAvailable,
   PLAN_CODEGEN_THRESHOLD,
-} from "#/resolution/plan/plan-codegen";
+} from "#resolution/plan/plan-codegen";
 
 class Leaf {
   constructor(readonly tag: unknown) {}

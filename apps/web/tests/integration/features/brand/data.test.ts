@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { BRAND_COLORS, BRAND_DOWNLOADS, NEUTRAL_COLORS } from "#/features/brand/data";
+import { BRAND_COLORS, BRAND_DOWNLOADS, NEUTRAL_COLORS } from "#features/brand/data";
 
 // Vitest runs from the package root, and `import.meta.url` is not a `file:` URL under jsdom.
 const publicDir = path.resolve(process.cwd(), "public");

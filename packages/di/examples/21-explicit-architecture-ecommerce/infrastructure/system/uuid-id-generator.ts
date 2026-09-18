@@ -2,7 +2,7 @@
 
 import { injectable } from "@codefast/di";
 
-import type { IdGenerator } from "#/examples/21-explicit-architecture-ecommerce/application/ports/id-generator";
+import type { IdGenerator } from "#examples/21-explicit-architecture-ecommerce/application/ports/id-generator";
 
 /** Mints deterministic counter-backed ids — not real UUIDs — so example output stays reproducible. */
 @injectable()

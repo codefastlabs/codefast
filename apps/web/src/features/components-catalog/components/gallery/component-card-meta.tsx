@@ -3,8 +3,8 @@ import { Link } from "@tanstack/react-router";
 import { ArrowUpRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { NewBadge } from "#/components/shared/new-badge";
-import { track } from "#/features/tracking/lib/tracking";
+import { NewBadge } from "#components/shared/new-badge";
+import { track } from "#features/tracking/lib/tracking";
 
 interface ComponentCardMetaProps extends ComponentProps<"div"> {
   readonly name: string;

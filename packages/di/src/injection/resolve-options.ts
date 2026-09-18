@@ -1,7 +1,7 @@
-import type { BindingTag } from "#/core/tag";
-import { slotName, slotNameCriterionOf } from "#/core/tag";
-import type { Token } from "#/core/token";
-import type { Constructor, ResolveOptions } from "#/core/types";
+import type { BindingTag } from "#core/tag";
+import { slotName, slotNameCriterionOf } from "#core/tag";
+import type { Token } from "#core/token";
+import type { Constructor, ResolveOptions } from "#core/types";
 
 /**
  * What one resolvable dependency declares.

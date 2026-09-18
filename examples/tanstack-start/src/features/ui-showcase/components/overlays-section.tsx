@@ -49,7 +49,7 @@ import {
 } from "@codefast/ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@codefast/ui/tooltip";
 
-import { DemoSection } from "#/components/demo-section";
+import { DemoSection } from "#components/demo-section";
 
 export function OverlaysSection() {
   return (

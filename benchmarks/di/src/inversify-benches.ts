@@ -12,8 +12,8 @@ import {
   runBenchmarkChildMain,
 } from "@internal/benchmark-harness/child/run-benchmark-child-main";
 
-import { INVERSIFY } from "#/harness/config";
-import { collectAllInversifyScenarios } from "#/scenarios/collect-inversify-scenarios";
+import { INVERSIFY } from "#harness/config";
+import { collectAllInversifyScenarios } from "#scenarios/collect-inversify-scenarios";
 
 void runBenchmarkChildMain({
   libraryName: INVERSIFY.libraryName,

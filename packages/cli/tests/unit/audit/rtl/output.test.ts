@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type { RtlAuditResult } from "#/audit/domain/types";
-import { presentRtlAuditResult } from "#/audit/rtl/output";
-import { logger } from "#/core/logger";
+import type { RtlAuditResult } from "#audit/domain/types";
+import { presentRtlAuditResult } from "#audit/rtl/output";
+import { logger } from "#core/logger";
 
 function captureOut(run: () => void): string {
   const spy = vi.spyOn(logger, "out").mockImplementation(() => {});

@@ -1,12 +1,12 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { DatePickerBasic } from "#/registry/date-picker/basic.example";
-import { DatePickerDob } from "#/registry/date-picker/dob.example";
-import { DatePickerInput } from "#/registry/date-picker/input.example";
-import { DatePickerNaturalLanguage } from "#/registry/date-picker/natural-language.example";
-import { DatePickerRange } from "#/registry/date-picker/range.example";
-import { DatePickerRtl } from "#/registry/date-picker/rtl.example";
-import { DatePickerTime } from "#/registry/date-picker/time.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { DatePickerBasic } from "#registry/date-picker/basic.example";
+import { DatePickerDob } from "#registry/date-picker/dob.example";
+import { DatePickerInput } from "#registry/date-picker/input.example";
+import { DatePickerNaturalLanguage } from "#registry/date-picker/natural-language.example";
+import { DatePickerRange } from "#registry/date-picker/range.example";
+import { DatePickerRtl } from "#registry/date-picker/rtl.example";
+import { DatePickerTime } from "#registry/date-picker/time.example";
 
 export const datePickerDoc: ComponentDoc = {
   examples: [

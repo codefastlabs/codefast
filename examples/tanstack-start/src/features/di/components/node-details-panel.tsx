@@ -1,7 +1,7 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps, ReactElement } from "react";
 
-import type { NodeDetails } from "#/features/di/lib/node-details";
+import type { NodeDetails } from "#features/di/lib/node-details";
 
 interface NodeDetailsPanelProps extends ComponentProps<"aside"> {
   details: NodeDetails;

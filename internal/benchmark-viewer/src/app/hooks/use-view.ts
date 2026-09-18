@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 
-import type { ViewState } from "#/app/lib/hash";
-import { pickDefaultScenarioId } from "#/app/lib/metrics";
-import type { EmbeddedViewerPayload } from "#/types";
+import type { ViewState } from "#app/lib/hash";
+import { pickDefaultScenarioId } from "#app/lib/metrics";
+import type { EmbeddedViewerPayload } from "#types";
 
 /**
  * Holds the chart view state and returns it with a callback for partial patches.

@@ -4,16 +4,16 @@ import * as Slot from "radix-ui/slot";
 import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 import { useCallback, useEffect, useId, useState } from "react";
 
-import { Button } from "#/components/button";
-import { Input } from "#/components/input";
-import { Separator } from "#/components/separator";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "#/components/sheet";
-import { Skeleton } from "#/components/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#/components/tooltip";
-import { useIsMobile } from "#/hooks/use-is-mobile";
-import { cn } from "#/lib/utils";
-import type { SidebarMenuButtonVariants } from "#/variants/sidebar";
-import { sidebarMenuButtonVariants } from "#/variants/sidebar";
+import { Button } from "#components/button";
+import { Input } from "#components/input";
+import { Separator } from "#components/separator";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "#components/sheet";
+import { Skeleton } from "#components/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#components/tooltip";
+import { useIsMobile } from "#hooks/use-is-mobile";
+import { cn } from "#lib/utils";
+import type { SidebarMenuButtonVariants } from "#variants/sidebar";
+import { sidebarMenuButtonVariants } from "#variants/sidebar";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;

@@ -2,8 +2,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { prepareLinkAudit } from "#/audit/links/prepare";
-import { createWorkspaceFilesystem } from "#/tests/unit/support/fake-workspace-filesystem";
+import { prepareLinkAudit } from "#audit/links/prepare";
+import { createWorkspaceFilesystem } from "#tests/unit/support/fake-workspace-filesystem";
 
 const rootDir = path.join(path.sep, "fake-repo-links");
 

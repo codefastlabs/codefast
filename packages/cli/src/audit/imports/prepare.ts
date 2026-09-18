@@ -1,8 +1,8 @@
-import type { AuditCommandPrelude } from "#/audit/prepare";
-import { prepareRepoRootAudit } from "#/audit/prepare";
-import type { AppError } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
+import type { AuditCommandPrelude } from "#audit/prepare";
+import { prepareRepoRootAudit } from "#audit/prepare";
+import type { AppError } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
 
 /**
  * Loads config and resolves the scan target for `audit imports`.

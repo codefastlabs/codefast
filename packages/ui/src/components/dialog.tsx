@@ -2,8 +2,8 @@ import { XIcon } from "lucide-react";
 import * as DialogPrimitive from "radix-ui/dialog";
 import type { ComponentProps, JSX } from "react";
 
-import { Button } from "#/components/button";
-import { cn } from "#/lib/utils";
+import { Button } from "#components/button";
+import { cn } from "#lib/utils";
 
 // ── Component: Dialog ────────────────────────────────────────────────────────────────────────────────────────────────
 

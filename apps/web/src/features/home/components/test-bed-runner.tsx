@@ -4,10 +4,10 @@ import { CheckIcon, PlayIcon, XIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import { useEffect, useRef, useState } from "react";
 
-import type { ShopTestResult } from "#/features/home/demos/shop-test-run";
-import { runShopTests } from "#/features/home/demos/shop-test-run";
-import { SHOP_TESTS } from "#/features/home/demos/shop-tests";
-import { track } from "#/features/tracking/lib/tracking";
+import type { ShopTestResult } from "#features/home/demos/shop-test-run";
+import { runShopTests } from "#features/home/demos/shop-test-run";
+import { SHOP_TESTS } from "#features/home/demos/shop-tests";
+import { track } from "#features/tracking/lib/tracking";
 
 // The beds finish in a few milliseconds, so the results are revealed one by one: a run has to be seen to be believed.
 const REVEAL_STEP_MS = 160;

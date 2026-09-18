@@ -12,12 +12,12 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import type { Appearance, AppearanceContextValue, ColorScheme } from "#/appearance";
-import { appearanceSchema } from "#/appearance";
-import { AppearanceContext } from "#/appearance-context";
-import { getSystemColorScheme } from "#/color-scheme";
-import { DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME, MEDIA, STORAGE_KEY, SYNC_CHANNEL } from "#/constants";
-import { applyColorScheme, suppressTransitions } from "#/dom";
+import type { Appearance, AppearanceContextValue, ColorScheme } from "#appearance";
+import { appearanceSchema } from "#appearance";
+import { AppearanceContext } from "#appearance-context";
+import { getSystemColorScheme } from "#color-scheme";
+import { DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME, MEDIA, STORAGE_KEY, SYNC_CHANNEL } from "#constants";
+import { applyColorScheme, suppressTransitions } from "#dom";
 
 /* -----------------------------------------------------------------------------
  * System Color Scheme Subscription

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { mirrorConfigSchema } from "#/core/config/schema";
-import type { CliFileEncoding, Filesystem } from "#/core/filesystem/filesystem";
-import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
-import { createPathTransform, generateExports } from "#/mirror/domain/exports";
-import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
+import { mirrorConfigSchema } from "#core/config/schema";
+import type { CliFileEncoding, Filesystem } from "#core/filesystem/filesystem";
+import type { DistFilesystem } from "#mirror/domain/dist-filesystem";
+import { createPathTransform, generateExports } from "#mirror/domain/exports";
+import { writePackageJsonExportsAtomic } from "#mirror/write-exports";
 
 function createDistFilesystemStub(files: Array<string>): DistFilesystem {
   return {

@@ -4,10 +4,10 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { injectable } from "#/decorators/injectable";
-import { preDestroy } from "#/decorators/lifecycle-decorators";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { injectable } from "#decorators/injectable";
+import { preDestroy } from "#decorators/lifecycle-decorators";
 
 describe("deactivation on unbind", () => {
   it("runs the binding-level onDeactivation with the cached singleton", async () => {

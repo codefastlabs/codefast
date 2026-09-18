@@ -7,7 +7,7 @@
 import "reflect-metadata";
 import { Container, inject, injectable, optional } from "inversify";
 
-import { isFreshEachResolve } from "#/fixtures/sanity";
+import { isFreshEachResolve } from "#fixtures/sanity";
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
@@ -19,9 +19,9 @@ import {
   SLOT_COUNTS,
   SINGLETON_CLASS_1_DEP,
   TRANSIENT_CLASS_1_DEP,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 const microLeafDependencyIdentifier = Symbol("bench-inv-micro-leaf");
 const microServiceWithOneDependencyIdentifier = Symbol("bench-inv-micro-svc");

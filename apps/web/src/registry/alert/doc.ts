@@ -1,10 +1,10 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { AlertActionExample } from "#/registry/alert/action.example";
-import { AlertBasic } from "#/registry/alert/basic.example";
-import { AlertColors } from "#/registry/alert/colors.example";
-import { AlertDestructive } from "#/registry/alert/destructive.example";
-import { AlertRtl } from "#/registry/alert/rtl.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { AlertActionExample } from "#registry/alert/action.example";
+import { AlertBasic } from "#registry/alert/basic.example";
+import { AlertColors } from "#registry/alert/colors.example";
+import { AlertDestructive } from "#registry/alert/destructive.example";
+import { AlertRtl } from "#registry/alert/rtl.example";
 
 export const alertDoc: ComponentDoc = {
   examples: [

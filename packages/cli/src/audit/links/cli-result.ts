@@ -1,5 +1,5 @@
-import type { LinkAuditResult } from "#/audit/domain/types";
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
+import type { LinkAuditResult } from "#audit/domain/types";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 
 /**
  * Exit `1` when any non-allowlisted broken link remains.

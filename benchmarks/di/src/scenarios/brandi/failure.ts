@@ -3,8 +3,8 @@
  */
 import { createContainer, token } from "brandi";
 
-import { MISCONFIGURED_MISSING_BINDING } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { MISCONFIGURED_MISSING_BINDING } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 const MISSING = token<number>("bench-brandi-failure-missing");
 

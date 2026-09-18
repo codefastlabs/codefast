@@ -11,8 +11,8 @@ import {
   ANONYMOUS_ID_COOKIE_NAME,
   clearAnonymousIdCookie,
   persistAnonymousIdCookie,
-} from "#/features/tracking/lib/anonymous-id";
-import { isAnalyticsAllowed, isExemptionAllowed } from "#/features/tracking/lib/visitor-consent";
+} from "#features/tracking/lib/anonymous-id";
+import { isAnalyticsAllowed, isExemptionAllowed } from "#features/tracking/lib/visitor-consent";
 
 /**
  * Custom events carry identifiers and metadata only — never free-form search text,

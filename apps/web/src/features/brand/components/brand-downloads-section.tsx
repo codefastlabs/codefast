@@ -1,7 +1,7 @@
 import { DownloadIcon } from "lucide-react";
 
-import { SectionHeader } from "#/components/shared/section-header";
-import { BRAND_DOWNLOADS } from "#/features/brand/data";
+import { SectionHeader } from "#components/shared/section-header";
+import { BRAND_DOWNLOADS } from "#features/brand/data";
 
 /** Every asset as a direct download from `public/`. */
 export function BrandDownloadsSection() {

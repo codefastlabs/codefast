@@ -2,12 +2,12 @@ import path from "node:path";
 
 import { parse as parseYaml } from "yaml";
 
-import { messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { createAnyGlobMatcher } from "#/core/glob";
-import { logger } from "#/core/logger";
-import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
-import { packageJsonFileName, workspaceYamlFileName } from "#/core/workspace/well-known-files";
+import { messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { createAnyGlobMatcher } from "#core/glob";
+import { logger } from "#core/logger";
+import { findNearestAncestor } from "#core/workspace/ancestor-directories";
+import { packageJsonFileName, workspaceYamlFileName } from "#core/workspace/well-known-files";
 
 /**
  * A resolved project root and whether it is a pnpm workspace or a standalone single package.

@@ -10,8 +10,8 @@ import {
   ASYNC_STRATEGY_COUNT,
   RESOLVE_ALL_ASYNC,
   RESOLVE_OPTIONAL_ASYNC_MISS,
-} from "#/fixtures/scenario-parity";
-import type { AsyncBenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import type { AsyncBenchScenario } from "#scenarios/types";
 
 function buildResolveAllAsyncScenario(): AsyncBenchScenario {
   const strategyIdentifier = Symbol("bench-inv-async-resolve-all-strategy");

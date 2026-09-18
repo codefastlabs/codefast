@@ -1,4 +1,4 @@
-import type { ContainerGraphJson } from "#/introspection/dependency-graph";
+import type { ContainerGraphJson } from "#introspection/dependency-graph";
 
 // Token names are caller-supplied and Mermaid labels are HTML-bearing quoted strings, so quotes
 // and markup are neutralized with Mermaid's decimal entity codes before they reach a renderer.

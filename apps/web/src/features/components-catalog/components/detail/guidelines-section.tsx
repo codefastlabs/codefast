@@ -1,7 +1,7 @@
 import { CheckIcon, XIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { DocSection } from "#/features/components-catalog/components/detail/doc-section";
+import { DocSection } from "#features/components-catalog/components/detail/doc-section";
 
 interface GuidelinesSectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   readonly do?: ReadonlyArray<string> | undefined;

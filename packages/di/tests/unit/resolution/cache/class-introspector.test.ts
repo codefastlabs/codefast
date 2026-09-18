@@ -6,12 +6,12 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import type { Constructor } from "#/core/types";
-import { InvalidMetadataError } from "#/errors/errors";
-import type { ConstructorMetadata, MetadataReader } from "#/metadata/metadata-types";
-import { assertConstructorMetadata, verifyConstructorMetadata } from "#/resolution/cache/class-introspector";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import type { Constructor } from "#core/types";
+import { InvalidMetadataError } from "#errors/errors";
+import type { ConstructorMetadata, MetadataReader } from "#metadata/metadata-types";
+import { assertConstructorMetadata, verifyConstructorMetadata } from "#resolution/cache/class-introspector";
 
 const dsnToken = token<string>("class-introspector.dsn");
 

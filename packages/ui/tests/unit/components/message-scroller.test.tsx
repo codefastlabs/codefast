@@ -9,7 +9,7 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "#/components/message-scroller";
+} from "#components/message-scroller";
 
 // jsdom has no layout, so these cover rendering, slot wiring, and the
 // primitive context contract; the scroll math is covered by the geometry unit

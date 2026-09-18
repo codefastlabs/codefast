@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import { useHasHydrated } from "#/app/hooks/use-has-hydrated";
-import { formatLocal } from "#/app/lib/format";
+import { useHasHydrated } from "#app/hooks/use-has-hydrated";
+import { formatLocal } from "#app/lib/format";
 
 /**
  * Formats `generatedAtIso` with the viewer's locale/TZ after hydration only,

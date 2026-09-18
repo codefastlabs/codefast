@@ -7,9 +7,9 @@ import "reflect-metadata";
 import type { ResolvedReflectiveProvider } from "injection-js";
 import { Inject, Injectable, InjectionToken, ReflectiveInjector } from "injection-js";
 
-import { buildInjectionJsRealisticInjector } from "#/fixtures/injection-js-adapter";
-import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
-import type { RealisticNode } from "#/fixtures/realistic-graph";
+import { buildInjectionJsRealisticInjector } from "#fixtures/injection-js-adapter";
+import { REALISTIC_GRAPH } from "#fixtures/realistic-graph";
+import type { RealisticNode } from "#fixtures/realistic-graph";
 import {
   REALISTIC_GRAPH_RESOLVED_ROOT,
   REALISTIC_RESOLVE_BATCH,
@@ -17,9 +17,9 @@ import {
   TO_RESOLVED_BATCH,
   TO_SELF_BATCH,
   TO_SELF_BINDING,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface ResolvedDep {
   readonly id: string;

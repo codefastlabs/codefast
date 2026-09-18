@@ -1,10 +1,10 @@
 /** Renders one pivot library against any number of competitors; a head-to-head is the two-library case. */
 
-import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
-import { renderScoreboardLines } from "#/report/console-scoreboard";
-import { formatRatioMultiple, formatThroughputOpsPerSecond, formatThroughputRatio } from "#/report/format";
-import { quantile } from "#/report/quantiles";
-import type { ThroughputQuality } from "#/report/reliability";
+import type { AggregatedScenarioResult, LibraryReport } from "#report/aggregate";
+import { renderScoreboardLines } from "#report/console-scoreboard";
+import { formatRatioMultiple, formatThroughputOpsPerSecond, formatThroughputRatio } from "#report/format";
+import { quantile } from "#report/quantiles";
+import type { ThroughputQuality } from "#report/reliability";
 import {
   UNRELIABLE_RATIO_MARKER,
   formatNoisyIqrCaveatLine,
@@ -15,12 +15,12 @@ import {
   isThroughputCellNoisy,
   markRatioQuality,
   markThroughputQuality,
-} from "#/report/reliability";
-import type { RunDiff, ScenarioDelta } from "#/report/run-diff";
-import { describeDiffTarget, formatCompactHz, formatDeltaPercent } from "#/report/run-diff";
-import { HEAD_TO_HEAD_PARITY_BAND, ratioTint } from "#/report/verdict";
-import type { Palette, Tint } from "#/shared/palette";
-import { createPalette } from "#/shared/palette";
+} from "#report/reliability";
+import type { RunDiff, ScenarioDelta } from "#report/run-diff";
+import { describeDiffTarget, formatCompactHz, formatDeltaPercent } from "#report/run-diff";
+import { HEAD_TO_HEAD_PARITY_BAND, ratioTint } from "#report/verdict";
+import type { Palette, Tint } from "#shared/palette";
+import { createPalette } from "#shared/palette";
 
 /**
  * One library column: its aggregated report plus the labels used in table headers.

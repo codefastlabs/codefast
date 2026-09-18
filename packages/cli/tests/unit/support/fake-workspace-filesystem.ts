@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
+import type { DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
 
 /**
  * A {@link Filesystem} that reports a pnpm workspace at `rootDir` and treats only the listed paths

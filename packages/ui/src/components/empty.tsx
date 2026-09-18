@@ -1,8 +1,8 @@
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-import type { EmptyMediaVariants } from "#/variants/empty";
-import { emptyMediaVariants } from "#/variants/empty";
+import { cn } from "#lib/utils";
+import type { EmptyMediaVariants } from "#variants/empty";
+import { emptyMediaVariants } from "#variants/empty";
 
 // ── Component: Empty ─────────────────────────────────────────────────────────────────────────────────────────────────
 

@@ -4,7 +4,7 @@ import { ChevronDownIcon, CodeIcon, MaximizeIcon } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { useId, useState } from "react";
 
-import { CopyButton } from "#/components/shared/copy-button";
+import { CopyButton } from "#components/shared/copy-button";
 
 /** Collapsed code peek — roughly four lines of `text-xs` Shiki output. */
 const CODE_PEEK_MAX_HEIGHT = "max-h-28";

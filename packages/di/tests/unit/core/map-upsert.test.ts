@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { getOrInsert, getOrInsertComputed } from "#/core/map-upsert";
+import { getOrInsert, getOrInsertComputed } from "#core/map-upsert";
 
 describe("getOrInsert", () => {
   it("stores and returns the fallback when the key is absent", () => {

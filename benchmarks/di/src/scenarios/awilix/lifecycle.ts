@@ -5,8 +5,8 @@
  */
 import { asFunction, createContainer } from "awilix";
 
-import { LIFECYCLE_PRE_DESTROY_UNBIND } from "#/fixtures/scenario-parity";
-import type { AsyncBenchScenario } from "#/scenarios/types";
+import { LIFECYCLE_PRE_DESTROY_UNBIND } from "#fixtures/scenario-parity";
+import type { AsyncBenchScenario } from "#scenarios/types";
 
 interface DisposableService {
   disposeCallCount: number;

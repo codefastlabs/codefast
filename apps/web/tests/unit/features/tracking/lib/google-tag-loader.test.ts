@@ -14,7 +14,7 @@ async function importLoader(measurementId: string | undefined) {
     vi.stubEnv("VITE_GA4_MEASUREMENT_ID", measurementId);
   }
 
-  return import("#/features/tracking/lib/google-tag-loader");
+  return import("#features/tracking/lib/google-tag-loader");
 }
 
 beforeEach(() => {

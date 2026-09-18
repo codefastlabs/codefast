@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { trimChangelog } from "#/features/package-docs/lib/markdown/trim-changelog";
+import { trimChangelog } from "#features/package-docs/lib/markdown/trim-changelog";
 
 const changelog = [
   "# @codefast/di",

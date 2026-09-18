@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { SHOP_TESTS } from "#/features/home/demos/shop-tests";
-import { highlightHomeSnippets } from "#/features/home/lib/home-snippets.impl";
+import { SHOP_TESTS } from "#features/home/demos/shop-tests";
+import { highlightHomeSnippets } from "#features/home/lib/home-snippets.impl";
 
 describe("highlightHomeSnippets", () => {
   it("renders every sample as a dual-theme Shiki tree", async () => {

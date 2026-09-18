@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { AboutHeroSection } from "#/features/about/components/about-hero-section";
-import { InstallationSection } from "#/features/about/components/installation-section";
-import { LibrarySection } from "#/features/about/components/library-section";
-import { NextStepsSection } from "#/features/about/components/next-steps-section";
-import { RequirementsSection } from "#/features/about/components/requirements-section";
-import { ThemeSection } from "#/features/about/components/theme-section";
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
-import { canonicalHead } from "#/lib/seo";
+import { AboutHeroSection } from "#features/about/components/about-hero-section";
+import { InstallationSection } from "#features/about/components/installation-section";
+import { LibrarySection } from "#features/about/components/library-section";
+import { NextStepsSection } from "#features/about/components/next-steps-section";
+import { RequirementsSection } from "#features/about/components/requirements-section";
+import { ThemeSection } from "#features/about/components/theme-section";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
+import { canonicalHead } from "#lib/seo";
 
 export const Route = createFileRoute("/ui/about")({
   // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.

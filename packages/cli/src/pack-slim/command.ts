@@ -1,18 +1,18 @@
 import { Command } from "commander";
 
-import type { CommandPipeline } from "#/core/cli/command-pipeline";
-import { applyCommandPipeline } from "#/core/cli/command-pipeline";
-import { nodeFilesystem } from "#/core/filesystem/node";
-import { ok } from "#/core/result";
-import { exitCodeForPackSlimResult, formatPackSlimJsonOutput } from "#/pack-slim/cli-result";
-import { packSlimRunRequestSchema } from "#/pack-slim/cli-schema";
-import type { PackSlimRunRequest } from "#/pack-slim/cli-schema";
-import type { PackSlimRunStats } from "#/pack-slim/domain/types";
-import { PackSlimProgressPresenter } from "#/pack-slim/output";
-import type { PackSlimCommandPrelude } from "#/pack-slim/prepare";
-import { preparePackSlim } from "#/pack-slim/prepare";
-import { runPackSlim } from "#/pack-slim/run";
-import { ensureWorkingTreeClean } from "#/pack-slim/working-tree";
+import type { CommandPipeline } from "#core/cli/command-pipeline";
+import { applyCommandPipeline } from "#core/cli/command-pipeline";
+import { nodeFilesystem } from "#core/filesystem/node";
+import { ok } from "#core/result";
+import { exitCodeForPackSlimResult, formatPackSlimJsonOutput } from "#pack-slim/cli-result";
+import { packSlimRunRequestSchema } from "#pack-slim/cli-schema";
+import type { PackSlimRunRequest } from "#pack-slim/cli-schema";
+import type { PackSlimRunStats } from "#pack-slim/domain/types";
+import { PackSlimProgressPresenter } from "#pack-slim/output";
+import type { PackSlimCommandPrelude } from "#pack-slim/prepare";
+import { preparePackSlim } from "#pack-slim/prepare";
+import { runPackSlim } from "#pack-slim/run";
+import { ensureWorkingTreeClean } from "#pack-slim/working-tree";
 
 type PackSlimCommandOptions = { readonly dryRun?: boolean; readonly force?: boolean; readonly json?: boolean };
 

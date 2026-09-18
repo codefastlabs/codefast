@@ -98,7 +98,7 @@ export function isLifecycleScript(name: string): boolean {
  * Produces a publish manifest carrying only what a consumer's `tsc` and Node read.
  *
  * @remarks Operates on a structural clone, so the caller's manifest is left intact. A consumer never enables `source`
- * and resolves `#/` through `types`/`default` to `dist`, so dropping the source lane, the `imports` left pointing
+ * and resolves `#` through `types`/`default` to `dist`, so dropping the source lane, the `imports` left pointing
  * outside `files`, the scripts that are not lifecycle hooks, and `devDependencies` leaves the published surface whole.
  *
  * @since 0.8.1

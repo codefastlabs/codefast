@@ -6,14 +6,14 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { inject } from "#/decorators/inject";
-import { injectable } from "#/decorators/injectable";
-import type { DiagnosableContainer, ResolutionDiagnostics } from "#/errors/diagnostics";
-import { RESOLUTION_DIAGNOSTICS } from "#/errors/diagnostics";
-import { AsyncResolutionError, CircularDependencyError } from "#/errors/errors";
-import { PLAN_CODEGEN_THRESHOLD } from "#/resolution/plan/plan-codegen";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { inject } from "#decorators/inject";
+import { injectable } from "#decorators/injectable";
+import type { DiagnosableContainer, ResolutionDiagnostics } from "#errors/diagnostics";
+import { RESOLUTION_DIAGNOSTICS } from "#errors/diagnostics";
+import { AsyncResolutionError, CircularDependencyError } from "#errors/errors";
+import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/plan-codegen";
 
 function diagnose(container: unknown): ResolutionDiagnostics {
   return (container as DiagnosableContainer)[RESOLUTION_DIAGNOSTICS]();

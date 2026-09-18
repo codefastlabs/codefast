@@ -3,9 +3,9 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useState } from "react";
 
-import { CodeBlock } from "#/components/shared/code-block";
-import { DemoVerdict } from "#/features/home/components/demo-verdict";
-import { track } from "#/features/tracking/lib/tracking";
+import { CodeBlock } from "#components/shared/code-block";
+import { DemoVerdict } from "#features/home/components/demo-verdict";
+import { track } from "#features/tracking/lib/tracking";
 
 interface TypedTokensCardProps extends Omit<ComponentProps<"article">, "children"> {
   /** The quick start's OrderService with its list right, as dual-theme highlighted HTML. */

@@ -25,10 +25,10 @@ import {
   resolveRunShapeFromEnvironment,
 } from "@internal/benchmark-harness/shared/env-keys";
 
-import { assembleTvComparison } from "#/harness/comparison";
-import type { LibraryPayload } from "#/harness/comparison";
-import { BENCH_LIBRARIES, CODEFAST_TV } from "#/harness/config";
-import { TAILWIND_VARIANTS_COMPARISON_CONSOLE } from "#/harness/presentation";
+import { assembleTvComparison } from "#harness/comparison";
+import type { LibraryPayload } from "#harness/comparison";
+import { BENCH_LIBRARIES, CODEFAST_TV } from "#harness/config";
+import { TAILWIND_VARIANTS_COMPARISON_CONSOLE } from "#harness/presentation";
 
 const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 

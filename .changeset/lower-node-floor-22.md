@@ -23,3 +23,10 @@ floor stays mechanical, not advisory: `@codefast/di` keeps its own `Map` upsert 
 `Map.prototype.getOrInsert` (which would raise the floor to 26) and its `lib` stays `ES2024`. `@codefast/cli`'s mirror
 step now calls the `node:path` functions directly instead of aliasing them, which the floor's types correctly flag as
 unbound methods.
+
+Internal subpath imports move from a `#/` prefix to a bare `#` (`#core/token`, not `#/core/token`), and the
+`package.json#imports` keys become `#*`/`#tests/*`/`#examples/*` to match. Node's native ESM resolver rejects a
+`#/`-prefixed specifier with `ERR_INVALID_MODULE_SPECIFIER` on the whole Node 22 line (and on Node 24 before 24.14), and
+each package ships those specifiers verbatim inside its published `dist/*.js` for a consumer's Node to resolve — so this
+rename is what actually lets the packages import on the new floor. Purely internal: a consumer's own import paths are
+unchanged.

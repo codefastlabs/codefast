@@ -7,9 +7,9 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import type { ConstraintContext } from "#/core/types";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import type { ConstraintContext } from "#core/types";
 
 const WARM_ITERATIONS = 5;
 

@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
-import { Carousel, CarouselContent, CarouselItem } from "#/components/carousel";
-import { DirectionProvider } from "#/components/direction";
+import { Carousel, CarouselContent, CarouselItem } from "#components/carousel";
+import { DirectionProvider } from "#components/direction";
 
 // Embla needs real layout, so stub it: the api is controllable and we capture
 // the options it was constructed with to assert direction is forwarded.

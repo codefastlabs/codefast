@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { ConsentConfig } from "#/core/consent-config";
+import type { ConsentConfig } from "#core/consent-config";
 import {
   buildGtagConsentBootstrapScript,
   clearGoogleAnalyticsCookies,
@@ -8,7 +8,7 @@ import {
   ensureGtag,
   loadGtagScript,
   updateGoogleConsent,
-} from "#/destinations/google-analytics";
+} from "#destinations/google-analytics";
 
 type GtagFunction = (...args: Array<unknown>) => void;
 

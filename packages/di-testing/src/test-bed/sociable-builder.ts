@@ -3,16 +3,16 @@
 import type { Constructor, DependencySlot, InjectOptions } from "@codefast/di";
 import { Container, token } from "@codefast/di";
 
-import { scanSociableDependencies } from "#/discovery/dependency-scanner";
-import { bindMocks } from "#/discovery/mock-binder";
-import { ExposureError } from "#/errors/errors";
-import type { MockFunction } from "#/mocking/mock-factory";
-import type { Spy } from "#/mocking/spy";
-import type { MockOverrideBuilder, PreparedBed } from "#/test-bed/bed-builder";
-import { BedBuilder } from "#/test-bed/bed-builder";
-import type { SociableUnitTestBed } from "#/test-bed/unit-test-bed";
-import { createSociableUnitTestBed, createUnitTestBed } from "#/test-bed/unit-test-bed";
-import type { InjectionIdentifier } from "#/types";
+import { scanSociableDependencies } from "#discovery/dependency-scanner";
+import { bindMocks } from "#discovery/mock-binder";
+import { ExposureError } from "#errors/errors";
+import type { MockFunction } from "#mocking/mock-factory";
+import type { Spy } from "#mocking/spy";
+import type { MockOverrideBuilder, PreparedBed } from "#test-bed/bed-builder";
+import { BedBuilder } from "#test-bed/bed-builder";
+import type { SociableUnitTestBed } from "#test-bed/unit-test-bed";
+import { createSociableUnitTestBed, createUnitTestBed } from "#test-bed/unit-test-bed";
+import type { InjectionIdentifier } from "#types";
 
 /**
  * A sociable build in progress: expose real collaborators, override the rest, then compile.

@@ -14,9 +14,9 @@
 import type { Constructor } from "@codefast/di";
 import { Container, injectable, token } from "@codefast/di";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
-import { ASYNC_CHAIN_DEPTH } from "#/fixtures/scenario-parity";
-import type { AsyncBenchScenario } from "#/scenarios/types";
+import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
+import { ASYNC_CHAIN_DEPTH } from "#fixtures/scenario-parity";
+import type { AsyncBenchScenario } from "#scenarios/types";
 
 const PLAN_ASYNC_RESOLVED_CHAIN = {
   id: `plan-async-resolved-chain-${String(ASYNC_CHAIN_DEPTH)}`,

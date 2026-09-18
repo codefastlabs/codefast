@@ -2,17 +2,17 @@ import { cn } from "@codefast/ui/lib/utils";
 import { useLocation } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
-import { DetailMobileToc } from "#/features/components-catalog/components/detail/detail-mobile-toc";
-import { OnThisPage } from "#/features/components-catalog/components/detail/on-this-page";
-import { useHashScroll } from "#/features/components-catalog/hooks/use-hash-scroll";
-import { DocBreadcrumb } from "#/features/package-docs/components/doc-breadcrumb";
-import { DocHeader } from "#/features/package-docs/components/doc-header";
-import { DocPager } from "#/features/package-docs/components/doc-pager";
-import { DocTabs } from "#/features/package-docs/components/doc-tabs";
-import { DocsSidebar } from "#/features/package-docs/components/docs-sidebar";
-import { MarkdownBody } from "#/features/package-docs/components/markdown-body";
-import { DOC_KIND_BY_SLUG, docAnalyticsName } from "#/features/package-docs/lib/doc-kinds";
-import type { DocPageData } from "#/features/package-docs/lib/rendered-doc";
+import { DetailMobileToc } from "#features/components-catalog/components/detail/detail-mobile-toc";
+import { OnThisPage } from "#features/components-catalog/components/detail/on-this-page";
+import { useHashScroll } from "#features/components-catalog/hooks/use-hash-scroll";
+import { DocBreadcrumb } from "#features/package-docs/components/doc-breadcrumb";
+import { DocHeader } from "#features/package-docs/components/doc-header";
+import { DocPager } from "#features/package-docs/components/doc-pager";
+import { DocTabs } from "#features/package-docs/components/doc-tabs";
+import { DocsSidebar } from "#features/package-docs/components/docs-sidebar";
+import { MarkdownBody } from "#features/package-docs/components/markdown-body";
+import { DOC_KIND_BY_SLUG, docAnalyticsName } from "#features/package-docs/lib/doc-kinds";
+import type { DocPageData } from "#features/package-docs/lib/rendered-doc";
 
 interface DocPageProps extends Omit<ComponentProps<"main">, "children"> {
   /** The page data resolved by the `/docs/$pkg[/$kind[/$page]]` route loader. */

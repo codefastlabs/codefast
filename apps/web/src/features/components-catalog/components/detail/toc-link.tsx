@@ -1,7 +1,7 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
-import type { TocItem } from "#/features/components-catalog/components/detail/toc";
+import type { TocItem } from "#features/components-catalog/components/detail/toc";
 
 interface TocLinkProps extends ComponentProps<"a"> {
   readonly item: TocItem;

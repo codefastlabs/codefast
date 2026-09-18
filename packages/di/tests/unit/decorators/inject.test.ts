@@ -11,13 +11,13 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { tag } from "#/core/tag";
-import { token } from "#/core/token";
-import { inject } from "#/decorators/inject";
-import { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
-import { StaticMemberDecoratorError } from "#/errors/errors";
-import type { InjectionDescriptor } from "#/injection/descriptor";
-import { injectAll, isInjectionDescriptor, normalizeToDescriptor, optional } from "#/injection/descriptor";
+import { tag } from "#core/tag";
+import { token } from "#core/token";
+import { inject } from "#decorators/inject";
+import { postConstruct, preDestroy } from "#decorators/lifecycle-decorators";
+import { StaticMemberDecoratorError } from "#errors/errors";
+import type { InjectionDescriptor } from "#injection/descriptor";
+import { injectAll, isInjectionDescriptor, normalizeToDescriptor, optional } from "#injection/descriptor";
 
 const ENV_TAG = tag("env");
 const KIND_TAG = tag("kind");

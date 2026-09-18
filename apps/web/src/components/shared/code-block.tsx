@@ -1,4 +1,4 @@
-import { ShikiSurface } from "#/components/shared/shiki-surface";
+import { ShikiSurface } from "#components/shared/shiki-surface";
 
 // Not a `ComponentProps` extension — forwards a curated subset, not arbitrary div attrs.
 interface CodeBlockProps {

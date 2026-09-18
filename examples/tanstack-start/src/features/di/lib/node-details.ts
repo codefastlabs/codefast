@@ -1,4 +1,4 @@
-import type { PreparedGraph } from "#/features/di/lib/graph-layout";
+import type { PreparedGraph } from "#features/di/lib/graph-layout";
 
 export interface NodeDetails {
   readonly label: string;

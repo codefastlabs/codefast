@@ -4,13 +4,13 @@ import type { Constructor, Container, DependencyKey, InjectOptions, MetadataRead
 import { defaultMetadataReader } from "@codefast/di";
 import { verifyingMetadataReader } from "@codefast/di/metadata/verifying-metadata-reader";
 
-import type { BoundMock, SlotCriteria, SlottedOverride } from "#/discovery/mock-binder";
-import { criteriaEquals, normalizeCriteria } from "#/discovery/mock-binder";
-import type { DeepPartial } from "#/mocking/auto-mock";
-import type { MockFactory, MockFunction } from "#/mocking/mock-factory";
-import { defaultMockFactory } from "#/mocking/mock-factory";
-import type { Spy } from "#/mocking/spy";
-import type { InjectionIdentifier } from "#/types";
+import type { BoundMock, SlotCriteria, SlottedOverride } from "#discovery/mock-binder";
+import { criteriaEquals, normalizeCriteria } from "#discovery/mock-binder";
+import type { DeepPartial } from "#mocking/auto-mock";
+import type { MockFactory, MockFunction } from "#mocking/mock-factory";
+import { defaultMockFactory } from "#mocking/mock-factory";
+import type { Spy } from "#mocking/spy";
+import type { InjectionIdentifier } from "#types";
 
 /**
  * Options that configure a whole test-bed compile.

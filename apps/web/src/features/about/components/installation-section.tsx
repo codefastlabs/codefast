@@ -1,6 +1,6 @@
-import { CopySnippet } from "#/components/shared/copy-snippet";
-import { SectionHeader } from "#/components/shared/section-header";
-import { INSTALL_STEPS } from "#/features/about/data";
+import { CopySnippet } from "#components/shared/copy-snippet";
+import { SectionHeader } from "#components/shared/section-header";
+import { INSTALL_STEPS } from "#features/about/data";
 
 export function InstallationSection() {
   return (

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { auditFileContent } from "#/audit/rtl/domain/audit-file";
-import { splitClassName } from "#/audit/rtl/domain/tokenize";
+import { auditFileContent } from "#audit/rtl/domain/audit-file";
+import { splitClassName } from "#audit/rtl/domain/tokenize";
 
 describe("splitClassName", () => {
   it("splits variant, value, and opacity modifier", () => {

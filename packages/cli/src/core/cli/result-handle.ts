@@ -1,11 +1,11 @@
 import process from "node:process";
 
-import { formatAppError } from "#/core/cli/format-error";
-import type { AppError } from "#/core/errors";
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#/core/exit-codes";
-import { logger } from "#/core/logger";
-import type { Result } from "#/core/result";
-import { isVerboseCliDiagnostics } from "#/core/verbose-diagnostics";
+import { formatAppError } from "#core/cli/format-error";
+import type { AppError } from "#core/errors";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_USAGE } from "#core/exit-codes";
+import { logger } from "#core/logger";
+import type { Result } from "#core/result";
+import { isVerboseCliDiagnostics } from "#core/verbose-diagnostics";
 
 function exitCodeForAppError(error: AppError): number {
   switch (error.code) {

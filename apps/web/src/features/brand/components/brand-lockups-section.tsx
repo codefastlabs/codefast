@@ -1,6 +1,6 @@
-import { SectionHeader } from "#/components/shared/section-header";
-import { BrandMark } from "#/features/brand/components/brand-mark";
-import { BrandWordmark } from "#/features/brand/components/brand-wordmark";
+import { SectionHeader } from "#components/shared/section-header";
+import { BrandMark } from "#features/brand/components/brand-mark";
+import { BrandWordmark } from "#features/brand/components/brand-wordmark";
 
 /** The horizontal and stacked lockups on light and on dark. */
 export function BrandLockupsSection() {

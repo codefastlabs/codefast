@@ -1,7 +1,7 @@
 import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { SectionHeader } from "#/components/shared/section-header";
+import { SectionHeader } from "#components/shared/section-header";
 
 export function DetailCtaSection() {
   return (

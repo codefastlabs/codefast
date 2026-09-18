@@ -1,4 +1,4 @@
-import { SectionHeader } from "#/components/shared/section-header";
+import { SectionHeader } from "#components/shared/section-header";
 
 /** How the name is written: the organisation, the monorepo, the packages. */
 export function BrandNamingSection() {

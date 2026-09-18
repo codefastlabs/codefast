@@ -1,5 +1,5 @@
-import { cn, cx } from "#/class-names";
-import { isSlotClassMap } from "#/compile/class-values";
+import { cn, cx } from "#class-names";
+import { isSlotClassMap } from "#compile/class-values";
 
 describe("Tailwind Variants (TV) - Class Helper Edge Cases", () => {
   describe("cx function edge cases", () => {

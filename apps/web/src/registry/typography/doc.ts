@@ -1,19 +1,19 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { TypographyBlockquote } from "#/registry/typography/blockquote.example";
-import { TypographyH1 } from "#/registry/typography/h1.example";
-import { TypographyH2 } from "#/registry/typography/h2.example";
-import { TypographyH3 } from "#/registry/typography/h3.example";
-import { TypographyH4 } from "#/registry/typography/h4.example";
-import { TypographyInlineCode } from "#/registry/typography/inline-code.example";
-import { TypographyLarge } from "#/registry/typography/large.example";
-import { TypographyLead } from "#/registry/typography/lead.example";
-import { TypographyList } from "#/registry/typography/list.example";
-import { TypographyMuted } from "#/registry/typography/muted.example";
-import { TypographyP } from "#/registry/typography/p.example";
-import { TypographyRtl } from "#/registry/typography/rtl.example";
-import { TypographySmall } from "#/registry/typography/small.example";
-import { TypographyTable } from "#/registry/typography/table.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { TypographyBlockquote } from "#registry/typography/blockquote.example";
+import { TypographyH1 } from "#registry/typography/h1.example";
+import { TypographyH2 } from "#registry/typography/h2.example";
+import { TypographyH3 } from "#registry/typography/h3.example";
+import { TypographyH4 } from "#registry/typography/h4.example";
+import { TypographyInlineCode } from "#registry/typography/inline-code.example";
+import { TypographyLarge } from "#registry/typography/large.example";
+import { TypographyLead } from "#registry/typography/lead.example";
+import { TypographyList } from "#registry/typography/list.example";
+import { TypographyMuted } from "#registry/typography/muted.example";
+import { TypographyP } from "#registry/typography/p.example";
+import { TypographyRtl } from "#registry/typography/rtl.example";
+import { TypographySmall } from "#registry/typography/small.example";
+import { TypographyTable } from "#registry/typography/table.example";
 
 export const typographyDoc: ComponentDoc = {
   examples: [

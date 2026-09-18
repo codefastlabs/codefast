@@ -1,16 +1,16 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { CalendarBasic } from "#/registry/calendar/basic.example";
-import { CalendarBookedDates } from "#/registry/calendar/booked-dates.example";
-import { CalendarCaption } from "#/registry/calendar/caption.example";
-import { CalendarCustomDays } from "#/registry/calendar/custom-days.example";
-import { CalendarHijri } from "#/registry/calendar/hijri.example";
-import { CalendarMultiple } from "#/registry/calendar/multiple.example";
-import { CalendarWithPresets } from "#/registry/calendar/presets.example";
-import { CalendarRange } from "#/registry/calendar/range.example";
-import { CalendarRtl } from "#/registry/calendar/rtl.example";
-import { CalendarWithTime } from "#/registry/calendar/time.example";
-import { CalendarWeekNumbers } from "#/registry/calendar/week-numbers.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { CalendarBasic } from "#registry/calendar/basic.example";
+import { CalendarBookedDates } from "#registry/calendar/booked-dates.example";
+import { CalendarCaption } from "#registry/calendar/caption.example";
+import { CalendarCustomDays } from "#registry/calendar/custom-days.example";
+import { CalendarHijri } from "#registry/calendar/hijri.example";
+import { CalendarMultiple } from "#registry/calendar/multiple.example";
+import { CalendarWithPresets } from "#registry/calendar/presets.example";
+import { CalendarRange } from "#registry/calendar/range.example";
+import { CalendarRtl } from "#registry/calendar/rtl.example";
+import { CalendarWithTime } from "#registry/calendar/time.example";
+import { CalendarWeekNumbers } from "#registry/calendar/week-numbers.example";
 
 export const calendarDoc: ComponentDoc = {
   examples: [

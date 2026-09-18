@@ -11,8 +11,8 @@ import {
   runBenchmarkChildMain,
 } from "@internal/benchmark-harness/child/run-benchmark-child-main";
 
-import { BRANDI } from "#/harness/config";
-import { collectAllBrandiScenarios } from "#/scenarios/collect-brandi-scenarios";
+import { BRANDI } from "#harness/config";
+import { collectAllBrandiScenarios } from "#scenarios/collect-brandi-scenarios";
 
 void runBenchmarkChildMain({
   libraryName: BRANDI.libraryName,

@@ -9,8 +9,8 @@ import {
   PriceCatalogToken,
   RequestContextToken,
   ShopConfigToken,
-} from "#/features/home/demos/shop";
-import { SHOP_TESTS } from "#/features/home/demos/shop-tests";
+} from "#features/home/demos/shop";
+import { SHOP_TESTS } from "#features/home/demos/shop-tests";
 
 /** One value a test looked at: the expression the sample reads and what it held, both as the reader would write them. */
 interface Observation {

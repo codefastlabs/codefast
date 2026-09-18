@@ -1,5 +1,5 @@
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { findNearestPackageVersion } from "#/core/workspace/package-version";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { findNearestPackageVersion } from "#core/workspace/package-version";
 
 /**
  * Returns the `version` of the nearest enclosing `package.json` above a target path.

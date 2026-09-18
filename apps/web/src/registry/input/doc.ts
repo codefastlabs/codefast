@@ -1,19 +1,19 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { InputBadge } from "#/registry/input/badge.example";
-import { InputBasic } from "#/registry/input/basic.example";
-import { InputButtonGroup } from "#/registry/input/button-group.example";
-import { InputDisabled } from "#/registry/input/disabled.example";
-import { InputField } from "#/registry/input/field.example";
-import { InputFieldgroup } from "#/registry/input/fieldgroup.example";
-import { InputFile } from "#/registry/input/file.example";
-import { InputForm } from "#/registry/input/form.example";
-import { InputGrid } from "#/registry/input/grid.example";
-import { InputInline } from "#/registry/input/inline.example";
-import { InputInputGroup } from "#/registry/input/input-group.example";
-import { InputInvalid } from "#/registry/input/invalid.example";
-import { InputRequired } from "#/registry/input/required.example";
-import { InputRtl } from "#/registry/input/rtl.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { InputBadge } from "#registry/input/badge.example";
+import { InputBasic } from "#registry/input/basic.example";
+import { InputButtonGroup } from "#registry/input/button-group.example";
+import { InputDisabled } from "#registry/input/disabled.example";
+import { InputField } from "#registry/input/field.example";
+import { InputFieldgroup } from "#registry/input/fieldgroup.example";
+import { InputFile } from "#registry/input/file.example";
+import { InputForm } from "#registry/input/form.example";
+import { InputGrid } from "#registry/input/grid.example";
+import { InputInline } from "#registry/input/inline.example";
+import { InputInputGroup } from "#registry/input/input-group.example";
+import { InputInvalid } from "#registry/input/invalid.example";
+import { InputRequired } from "#registry/input/required.example";
+import { InputRtl } from "#registry/input/rtl.example";
 
 export const inputDoc: ComponentDoc = {
   examples: [

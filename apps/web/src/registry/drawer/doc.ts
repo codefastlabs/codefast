@@ -1,9 +1,9 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { DrawerDialogDemo } from "#/registry/drawer/dialog.example";
-import { DrawerRtl } from "#/registry/drawer/rtl.example";
-import { DrawerScrollableContent } from "#/registry/drawer/scrollable-content.example";
-import { DrawerWithSides } from "#/registry/drawer/sides.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { DrawerDialogDemo } from "#registry/drawer/dialog.example";
+import { DrawerRtl } from "#registry/drawer/rtl.example";
+import { DrawerScrollableContent } from "#registry/drawer/scrollable-content.example";
+import { DrawerWithSides } from "#registry/drawer/sides.example";
 
 export const drawerDoc: ComponentDoc = {
   usage: docUsage("drawer"),

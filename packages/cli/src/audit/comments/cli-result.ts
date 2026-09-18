@@ -1,5 +1,5 @@
-import type { CommentAuditResult } from "#/audit/domain/types";
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
+import type { CommentAuditResult } from "#audit/domain/types";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 
 /**
  * Exit `1` when any non-allowlisted divider still breaks the convention.

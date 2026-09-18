@@ -1,10 +1,10 @@
 import type { ComponentProps } from "react";
 
-import { RefreshCwIcon } from "#/app/components/icons";
-import { useCompactOnScroll } from "#/app/hooks/use-compact-on-scroll";
-import type { ViewState } from "#/app/lib/hash";
-import { cn } from "#/app/lib/utils";
-import type { EmbeddedScenarioSeries } from "#/types";
+import { RefreshCwIcon } from "#app/components/icons";
+import { useCompactOnScroll } from "#app/hooks/use-compact-on-scroll";
+import type { ViewState } from "#app/lib/hash";
+import { cn } from "#app/lib/utils";
+import type { EmbeddedScenarioSeries } from "#types";
 
 const RUN_WINDOW_VALUES = ["all", "10", "20"] as const satisfies ReadonlyArray<ViewState["runWindow"]>;
 

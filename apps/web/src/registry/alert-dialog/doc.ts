@@ -1,11 +1,11 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { AlertDialogBasic } from "#/registry/alert-dialog/basic.example";
-import { AlertDialogDestructive } from "#/registry/alert-dialog/destructive.example";
-import { AlertDialogWithMedia } from "#/registry/alert-dialog/media.example";
-import { AlertDialogRtl } from "#/registry/alert-dialog/rtl.example";
-import { AlertDialogSmallWithMedia } from "#/registry/alert-dialog/small-media.example";
-import { AlertDialogSmall } from "#/registry/alert-dialog/small.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { AlertDialogBasic } from "#registry/alert-dialog/basic.example";
+import { AlertDialogDestructive } from "#registry/alert-dialog/destructive.example";
+import { AlertDialogWithMedia } from "#registry/alert-dialog/media.example";
+import { AlertDialogRtl } from "#registry/alert-dialog/rtl.example";
+import { AlertDialogSmallWithMedia } from "#registry/alert-dialog/small-media.example";
+import { AlertDialogSmall } from "#registry/alert-dialog/small.example";
 
 export const alertDialogDoc: ComponentDoc = {
   examples: [

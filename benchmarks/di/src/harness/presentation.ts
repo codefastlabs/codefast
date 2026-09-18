@@ -4,7 +4,7 @@ import type {
 } from "@internal/benchmark-harness/report/comparison";
 import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
 
-import { BENCH_LIBRARIES, VERSUS_LINE } from "#/harness/config";
+import { BENCH_LIBRARIES, VERSUS_LINE } from "#harness/config";
 
 // Derived from the library configs so a new competitor lands in the intro without a prose edit.
 const RUNTIME_LINES = BENCH_LIBRARIES.map((library) => `- **${resolveDisplayName(library)}** — ${library.runtime}`);

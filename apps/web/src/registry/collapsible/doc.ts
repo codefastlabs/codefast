@@ -1,9 +1,9 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { CollapsibleBasic } from "#/registry/collapsible/basic.example";
-import { CollapsibleFileTree } from "#/registry/collapsible/file-tree.example";
-import { CollapsibleRtl } from "#/registry/collapsible/rtl.example";
-import { CollapsibleSettings } from "#/registry/collapsible/settings.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { CollapsibleBasic } from "#registry/collapsible/basic.example";
+import { CollapsibleFileTree } from "#registry/collapsible/file-tree.example";
+import { CollapsibleRtl } from "#registry/collapsible/rtl.example";
+import { CollapsibleSettings } from "#registry/collapsible/settings.example";
 
 export const collapsibleDoc: ComponentDoc = {
   usage: docUsage("collapsible"),

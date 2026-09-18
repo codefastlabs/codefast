@@ -1,7 +1,7 @@
 /** The pluggable seam that decides which spy backend the auto-mocks are built from. */
 
-import type { Spy } from "#/mocking/spy";
-import { createSpy } from "#/mocking/spy";
+import type { Spy } from "#mocking/spy";
+import { createSpy } from "#mocking/spy";
 
 /**
  * The loose callable an auto-mock materializes for each accessed property.

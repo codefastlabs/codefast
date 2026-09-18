@@ -1,4 +1,4 @@
-import type { ConsentDecision } from "#/core/consent";
+import type { ConsentDecision } from "#core/consent";
 
 /**
  * Options for `createConsentWithdrawalHandler`.

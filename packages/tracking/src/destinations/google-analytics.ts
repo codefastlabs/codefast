@@ -1,16 +1,16 @@
-import type { ConsentDecision } from "#/core/consent";
-import type { ConsentConfig } from "#/core/consent-config";
-import type { Destination } from "#/core/destination";
-import type { GoogleConsentParams } from "#/destinations/google-consent";
+import type { ConsentDecision } from "#core/consent";
+import type { ConsentConfig } from "#core/consent-config";
+import type { Destination } from "#core/destination";
+import type { GoogleConsentParams } from "#destinations/google-consent";
 import {
   buildGoogleConsentBootstrapPreamble,
   DEFAULT_DATA_LAYER_NAME,
   ensureDataLayer,
   toGoogleConsentParams,
   warnUnlessGa4EventName,
-} from "#/destinations/google-consent";
-import type { FlatPropertyValue } from "#/destinations/shared";
-import { flattenEventProps } from "#/destinations/shared";
+} from "#destinations/google-consent";
+import type { FlatPropertyValue } from "#destinations/shared";
+import { flattenEventProps } from "#destinations/shared";
 
 const GTAG_SCRIPT_BASE_URL = "https://www.googletagmanager.com/gtag/js";
 

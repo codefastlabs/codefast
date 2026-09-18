@@ -8,8 +8,8 @@
  */
 import { Container, token } from "@codefast/di";
 
-import { ASYNC_STRATEGY_COUNT, RESOLVE_ALL_ASYNC, RESOLVE_OPTIONAL_ASYNC_MISS } from "#/fixtures/scenario-parity";
-import type { AsyncBenchScenario } from "#/scenarios/types";
+import { ASYNC_STRATEGY_COUNT, RESOLVE_ALL_ASYNC, RESOLVE_OPTIONAL_ASYNC_MISS } from "#fixtures/scenario-parity";
+import type { AsyncBenchScenario } from "#scenarios/types";
 
 function buildResolveAllAsyncScenario(): AsyncBenchScenario {
   const strategyToken = token<number>("bench-cf-async-resolve-all-strategy");

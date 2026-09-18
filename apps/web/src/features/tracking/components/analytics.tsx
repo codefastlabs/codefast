@@ -1,8 +1,8 @@
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 import { useEffect } from "react";
 
-import { refreshAnonymousId } from "#/features/tracking/lib/tracking";
-import { consentRuntime } from "#/features/tracking/lib/visitor-consent";
+import { refreshAnonymousId } from "#features/tracking/lib/tracking";
+import { consentRuntime } from "#features/tracking/lib/visitor-consent";
 
 /**
  * Mounted once in the root document. Renders Vercel's own script/pageview component and

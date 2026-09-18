@@ -1,18 +1,18 @@
 /** Runs every library of a suite behind one progress display, in the run shape the environment asks for. */
-import { createProgressDisplay } from "#/parent/progress/create-progress-display";
-import type { ProgressDisplay } from "#/parent/progress/progress-display";
-import type { RunBenchSubprocessParameters } from "#/parent/run-bench-subprocess";
+import { createProgressDisplay } from "#parent/progress/create-progress-display";
+import type { ProgressDisplay } from "#parent/progress/progress-display";
+import type { RunBenchSubprocessParameters } from "#parent/run-bench-subprocess";
 import {
   INTERLEAVED_RUN_ORDER,
   isIsolatedBenchRunRequested,
   LIBRARY_MAJOR_RUN_ORDER,
   runBenchSubprocess,
   runBenchSubprocessesInterleaved,
-} from "#/parent/run-bench-subprocess";
-import type { BenchSubprocessConfig } from "#/shared/config";
-import { resolveDisplayName, selectLibraries } from "#/shared/config";
-import { resolveBenchModeFromEnvironment, resolveLibraryFilterFromEnvironment } from "#/shared/env-keys";
-import type { SubprocessPayload } from "#/shared/protocol";
+} from "#parent/run-bench-subprocess";
+import type { BenchSubprocessConfig } from "#shared/config";
+import { resolveDisplayName, selectLibraries } from "#shared/config";
+import { resolveBenchModeFromEnvironment, resolveLibraryFilterFromEnvironment } from "#shared/env-keys";
+import type { SubprocessPayload } from "#shared/protocol";
 
 /**
  * Options for {@link runBenchLibraries}.

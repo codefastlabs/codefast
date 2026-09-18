@@ -1,4 +1,4 @@
-import type { ConsentRecord, ConsentStorage } from "#/core/consent";
+import type { ConsentRecord, ConsentStorage } from "#core/consent";
 
 export function createMemoryConsentStorage(initial?: ConsentRecord): ConsentStorage {
   const listeners = new Set<() => void>();

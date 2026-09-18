@@ -1,11 +1,11 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { SwitchChoiceCard } from "#/registry/switch/choice-card.example";
-import { SwitchDescription } from "#/registry/switch/description.example";
-import { SwitchDisabled } from "#/registry/switch/disabled.example";
-import { SwitchInvalid } from "#/registry/switch/invalid.example";
-import { SwitchRtl } from "#/registry/switch/rtl.example";
-import { SwitchSizes } from "#/registry/switch/sizes.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { SwitchChoiceCard } from "#registry/switch/choice-card.example";
+import { SwitchDescription } from "#registry/switch/description.example";
+import { SwitchDisabled } from "#registry/switch/disabled.example";
+import { SwitchInvalid } from "#registry/switch/invalid.example";
+import { SwitchRtl } from "#registry/switch/rtl.example";
+import { SwitchSizes } from "#registry/switch/sizes.example";
 
 export const switchDoc: ComponentDoc = {
   usage: docUsage("switch"),

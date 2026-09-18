@@ -3,16 +3,16 @@ import { fileURLToPath } from "node:url";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type { ProgressDisplay } from "#/parent/progress/progress-display";
-import type { RunBenchSubprocessParameters, SubprocessLauncher } from "#/parent/run-bench-subprocess";
+import type { ProgressDisplay } from "#parent/progress/progress-display";
+import type { RunBenchSubprocessParameters, SubprocessLauncher } from "#parent/run-bench-subprocess";
 import {
   buildSubprocessEnvironment,
   discoverBenchScenarioIds,
   runBenchSubprocess,
   runBenchSubprocessesInterleaved,
   SubprocessExecutionError,
-} from "#/parent/run-bench-subprocess";
-import { BENCH_LIST_ENV_KEY, BENCH_MODE_ENV_KEY, BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#/shared/env-keys";
+} from "#parent/run-bench-subprocess";
+import { BENCH_LIST_ENV_KEY, BENCH_MODE_ENV_KEY, BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#shared/env-keys";
 
 const FAKE_SUITE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "fixtures", "fake-suite");
 

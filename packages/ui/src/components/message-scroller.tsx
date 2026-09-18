@@ -1,8 +1,8 @@
 import { ArrowDownIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 
-import { Button } from "#/components/button";
-import { cn } from "#/lib/utils";
+import { Button } from "#components/button";
+import { cn } from "#lib/utils";
 import {
   MessageScroller as MessageScrollerPrimitive,
   MessageScrollerButton as MessageScrollerButtonPrimitive,
@@ -13,7 +13,7 @@ import {
   useMessageScroller,
   useMessageScrollerScrollable,
   useMessageScrollerVisibility,
-} from "#/primitives/message-scroller";
+} from "#primitives/message-scroller";
 
 // ── Component: MessageScrollerProvider ───────────────────────────────────────────────────────────────────────────────
 
@@ -196,4 +196,4 @@ export type {
   MessageScrollerScrollable,
   MessageScrollerScrollOptions,
   MessageScrollerVisibilityState,
-} from "#/lib/message-scroller/types";
+} from "#lib/message-scroller/types";

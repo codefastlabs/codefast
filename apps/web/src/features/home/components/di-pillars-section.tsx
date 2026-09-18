@@ -1,12 +1,12 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
-import { SectionHeader } from "#/components/shared/section-header";
-import { DecoratorsCard } from "#/features/home/components/decorators-card";
-import { IntrospectionCard } from "#/features/home/components/introspection-card";
-import { ScopesCard } from "#/features/home/components/scopes-card";
-import { TypedTokensCard } from "#/features/home/components/typed-tokens-card";
-import type { FoldedSnippet } from "#/features/home/lib/home-snippets";
+import { SectionHeader } from "#components/shared/section-header";
+import { DecoratorsCard } from "#features/home/components/decorators-card";
+import { IntrospectionCard } from "#features/home/components/introspection-card";
+import { ScopesCard } from "#features/home/components/scopes-card";
+import { TypedTokensCard } from "#features/home/components/typed-tokens-card";
+import type { FoldedSnippet } from "#features/home/lib/home-snippets";
 
 interface DiPillarsSectionProps extends Omit<ComponentProps<"section">, "children"> {
   /** The well-declared class for the typed-tokens card, as dual-theme highlighted HTML. */

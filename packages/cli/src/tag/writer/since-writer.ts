@@ -1,8 +1,8 @@
 import { parseSync } from "oxc-parser";
 
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { applyEditsDescending, indentOfLineContaining } from "#/core/source-text-edit";
-import type { TagFileResult } from "#/tag/domain/types";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { applyEditsDescending, indentOfLineContaining } from "#core/source-text-edit";
+import type { TagFileResult } from "#tag/domain/types";
 
 type TextEdit = {
   start: number;

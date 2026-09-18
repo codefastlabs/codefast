@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { buildComparisonRows } from "#/report/comparison";
-import { renderScoreboardLines } from "#/report/console-scoreboard";
-import { PLAIN_PALETTE } from "#/shared/palette";
+import { buildComparisonRows } from "#report/comparison";
+import { renderScoreboardLines } from "#report/console-scoreboard";
+import { PLAIN_PALETTE } from "#shared/palette";
 
 const squeeze = (line: string): string => line.replaceAll(/ {2,}/g, " ").trimEnd();
-import { library, scenario } from "#/tests/unit/report/support/fixtures";
+import { library, scenario } from "#tests/unit/report/support/fixtures";
 
 describe("renderScoreboardLines", () => {
   const pivot = library("cf", [

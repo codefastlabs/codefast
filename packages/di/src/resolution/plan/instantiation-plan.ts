@@ -4,23 +4,23 @@
  * @remarks A dependency the compiler cannot inline escapes to a resolver callback instead; the
  * closure must stay callable for it, which is what bounds what may be inlined.
  */
-import type { Binding } from "#/core/binding";
-import { NO_INSTANCE } from "#/core/binding";
-import type { ConstructorInvocation } from "#/core/constructor-type";
-import type { Token } from "#/core/token";
-import { tokenName } from "#/core/token";
-import type { Constructor, ResolutionFrame, ResolveOptions } from "#/core/types";
-import { AsyncResolutionError } from "#/errors/errors";
-import type { DependencySlot } from "#/injection/resolve-options";
-import { injectionSlotToResolveOptions } from "#/injection/resolve-options";
-import type { ConstructorMetadata } from "#/metadata/metadata-types";
-import type { AsyncPlanNode, PlanNode } from "#/resolution/plan/plan-codegen";
+import type { Binding } from "#core/binding";
+import { NO_INSTANCE } from "#core/binding";
+import type { ConstructorInvocation } from "#core/constructor-type";
+import type { Token } from "#core/token";
+import { tokenName } from "#core/token";
+import type { Constructor, ResolutionFrame, ResolveOptions } from "#core/types";
+import { AsyncResolutionError } from "#errors/errors";
+import type { DependencySlot } from "#injection/resolve-options";
+import { injectionSlotToResolveOptions } from "#injection/resolve-options";
+import type { ConstructorMetadata } from "#metadata/metadata-types";
+import type { AsyncPlanNode, PlanNode } from "#resolution/plan/plan-codegen";
 import {
   generateAsyncPlan,
   generatePlan,
   isPlanCodegenAvailable,
   PLAN_CODEGEN_THRESHOLD,
-} from "#/resolution/plan/plan-codegen";
+} from "#resolution/plan/plan-codegen";
 
 // Past this depth a dependency escapes to the runtime path rather than inlining further —
 // compiled closures nest one JS frame per level, and pathological graphs are the runtime's job.

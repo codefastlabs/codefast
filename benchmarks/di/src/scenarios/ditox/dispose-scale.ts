@@ -4,13 +4,13 @@
  */
 import { createContainer, token } from "ditox";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
 import {
   DISPOSE_SCALE_SINGLETON_COUNT,
   MATERIALIZE_100_SINGLETONS,
   UNBIND_ALL_100_SINGLETONS,
-} from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 interface DisposableService {
   removedCallCount: number;

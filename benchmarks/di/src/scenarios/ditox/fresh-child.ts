@@ -10,9 +10,9 @@ import {
   FRESH_CHILD_RESOLVES,
   freshChildDescriptor,
   TARGET_TAG_VALUE,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface ChildService {
   readonly env: string;

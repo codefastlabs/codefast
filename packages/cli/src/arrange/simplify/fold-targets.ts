@@ -8,17 +8,17 @@ import {
   isDomainPropertyAccessExpression,
   isDomainPropertyAssignment,
   isDomainTailwindClassLiteral,
-} from "#/arrange/domain/ast/ast-node";
+} from "#arrange/domain/ast/ast-node";
 import type {
   DomainAstNode,
   DomainCallExpression,
   DomainObjectLiteralExpression,
   DomainSourceFile,
-} from "#/arrange/domain/ast/ast-node";
-import { buildKnownCnTvBindings, isCnOrTvIdentifier, propertyAssignmentNameText } from "#/arrange/domain/ast/helpers";
-import type { PlannedSimplifyEdit } from "#/arrange/domain/ast/simplify-targets";
-import { escapeTsStringLiteralContent } from "#/arrange/domain/source-text-formatters";
-import type { FileClassNameProbe } from "#/arrange/simplify/variant-classname-probe";
+} from "#arrange/domain/ast/ast-node";
+import { buildKnownCnTvBindings, isCnOrTvIdentifier, propertyAssignmentNameText } from "#arrange/domain/ast/helpers";
+import type { PlannedSimplifyEdit } from "#arrange/domain/ast/simplify-targets";
+import { escapeTsStringLiteralContent } from "#arrange/domain/source-text-formatters";
+import type { FileClassNameProbe } from "#arrange/simplify/variant-classname-probe";
 
 type ClassPiece =
   | { readonly kind: "static"; readonly texts: Array<string> }

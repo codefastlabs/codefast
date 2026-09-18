@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createAnyGlobMatcher } from "#/core/glob";
+import { createAnyGlobMatcher } from "#core/glob";
 
 describe("createAnyGlobMatcher", () => {
   it("matches nothing when no patterns are configured", () => {

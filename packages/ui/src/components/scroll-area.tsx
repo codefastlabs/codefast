@@ -2,9 +2,9 @@ import { Context } from "radix-ui/internal";
 import * as ScrollAreaPrimitive from "radix-ui/scroll-area";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-import type { ScrollAreaScrollbarVariants } from "#/variants/scroll-area";
-import { scrollAreaScrollbarVariants } from "#/variants/scroll-area";
+import { cn } from "#lib/utils";
+import type { ScrollAreaScrollbarVariants } from "#variants/scroll-area";
+import { scrollAreaScrollbarVariants } from "#variants/scroll-area";
 
 // ── Context: ScrollArea ──────────────────────────────────────────────────────────────────────────────────────────────
 

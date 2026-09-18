@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { cell, renderConsoleTable } from "#/report/console-table";
-import { createPalette } from "#/shared/palette";
+import { cell, renderConsoleTable } from "#report/console-table";
+import { createPalette } from "#shared/palette";
 
 const ESCAPE = String.fromCodePoint(0x1b);
 

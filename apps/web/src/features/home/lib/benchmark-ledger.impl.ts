@@ -1,6 +1,6 @@
 /** Server-only reader of the benchmark ledger, bundled at build through a raw glob like the package documents. */
-import type { LedgerFacts } from "#/features/home/lib/benchmark-ledger-facts";
-import { parseLedgerFacts } from "#/features/home/lib/benchmark-ledger-facts";
+import type { LedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
+import { parseLedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
 
 const ledgers = import.meta.glob<string>("../../../../../../benchmarks/di/RESULTS.md", {
   query: "?raw",

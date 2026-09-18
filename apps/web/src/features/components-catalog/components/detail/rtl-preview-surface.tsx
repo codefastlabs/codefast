@@ -1,10 +1,10 @@
 import { DirectionProvider } from "@codefast/ui/direction";
 import type { ComponentProps, ReactNode } from "react";
 
-import type { Translations } from "#/features/components-catalog/components/detail/language";
-import { useLanguageContext, useTranslation } from "#/features/components-catalog/components/detail/language-context";
-import { LanguageSelector } from "#/features/components-catalog/components/detail/language-selector";
-import { PreviewSurface } from "#/features/components-catalog/components/detail/preview-surface";
+import type { Translations } from "#features/components-catalog/components/detail/language";
+import { useLanguageContext, useTranslation } from "#features/components-catalog/components/detail/language-context";
+import { LanguageSelector } from "#features/components-catalog/components/detail/language-selector";
+import { PreviewSurface } from "#features/components-catalog/components/detail/preview-surface";
 
 /** Tracks the document direction for the active language. */
 const directionTranslations: Translations<Record<string, never>> = {

@@ -1,5 +1,5 @@
-import { ComponentCard } from "#/features/components-catalog/components/gallery/component-card";
-import type { ComponentGroup } from "#/features/components-catalog/data";
+import { ComponentCard } from "#features/components-catalog/components/gallery/component-card";
+import type { ComponentGroup } from "#features/components-catalog/data";
 
 /** A titled band with a count badge and the responsive card grid. */
 export function GroupSection({ group }: { group: ComponentGroup }) {

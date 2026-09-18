@@ -1,4 +1,4 @@
-import type { RtlClassToken } from "#/audit/domain/types";
+import type { RtlClassToken } from "#audit/domain/types";
 
 /**
  * Splits a class token into [variant, value, modifier], colon/slash-aware of

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createMetaDestination, toMetaDataProcessingOptions } from "#/destinations/meta";
+import { createMetaDestination, toMetaDataProcessingOptions } from "#destinations/meta";
 
 describe("toMetaDataProcessingOptions", () => {
   it("enables geolocated LDU when ads is denied", () => {

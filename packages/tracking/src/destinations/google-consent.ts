@@ -1,5 +1,5 @@
-import type { ConsentCategory, ConsentDecision } from "#/core/consent";
-import { CONSENT_CATEGORIES } from "#/core/consent";
+import type { ConsentCategory, ConsentDecision } from "#core/consent";
+import { CONSENT_CATEGORIES } from "#core/consent";
 
 /**
  * gtag.js/gtm.js's default queue-array name — shared so the gtag and GTM helpers cannot disagree.

@@ -12,8 +12,8 @@ import {
   runBenchmarkChildMain,
 } from "@internal/benchmark-harness/child/run-benchmark-child-main";
 
-import { TSYRINGE } from "#/harness/config";
-import { collectAllTsyringeScenarios } from "#/scenarios/collect-tsyringe-scenarios";
+import { TSYRINGE } from "#harness/config";
+import { collectAllTsyringeScenarios } from "#scenarios/collect-tsyringe-scenarios";
 
 void runBenchmarkChildMain({
   libraryName: TSYRINGE.libraryName,

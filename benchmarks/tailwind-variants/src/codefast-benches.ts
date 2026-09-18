@@ -6,8 +6,8 @@ import {
   runBenchmarkChildMain,
 } from "@internal/benchmark-harness/child/run-benchmark-child-main";
 
-import { CODEFAST_TV } from "#/harness/config";
-import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
+import { CODEFAST_TV } from "#harness/config";
+import { collectAllCodefastScenarios } from "#scenarios/collect-codefast-scenarios";
 
 void runBenchmarkChildMain({
   libraryName: CODEFAST_TV.libraryName,

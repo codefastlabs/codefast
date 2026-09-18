@@ -1,7 +1,7 @@
 import { expectTypeOf } from "vitest";
 
-import type { VariantProps } from "#/index";
-import { createTV, tv } from "#/index";
+import type { VariantProps } from "#index";
+import { createTV, tv } from "#index";
 
 describe("Real-World Type Inference Tests", () => {
   test("should infer types for button component in real usage", () => {

@@ -1,29 +1,25 @@
 import path from "node:path";
 
-import type { CommentContentDefectKind } from "#/audit/comments/domain/comment-content";
-import { scanCommentContent } from "#/audit/comments/domain/comment-content";
-import type { DividerDefectKind } from "#/audit/comments/domain/comment-dividers";
-import {
-  applyCommentDividerFixes,
-  DIVIDER_COLUMN,
-  scanCommentDividers,
-} from "#/audit/comments/domain/comment-dividers";
-import type { LinkReference } from "#/audit/comments/domain/link-references";
+import type { CommentContentDefectKind } from "#audit/comments/domain/comment-content";
+import { scanCommentContent } from "#audit/comments/domain/comment-content";
+import type { DividerDefectKind } from "#audit/comments/domain/comment-dividers";
+import { applyCommentDividerFixes, DIVIDER_COLUMN, scanCommentDividers } from "#audit/comments/domain/comment-dividers";
+import type { LinkReference } from "#audit/comments/domain/link-references";
 import {
   countHeadMentions,
   isPathLinkTarget,
   linkTargetHead,
   scanLinkReferences,
-} from "#/audit/comments/domain/link-references";
-import { scanImpossibleSinceTags } from "#/audit/comments/domain/since-versions";
-import { scanTsdocSyntax } from "#/audit/comments/domain/tsdoc-syntax";
-import type { CommentAuditResult, DividerBreakage, DividerFileBreakages } from "#/audit/domain/types";
-import { AppError, messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { findNearestPackageVersion } from "#/core/workspace/package-version";
-import { sourceCommentLanguage, walkSourceFiles } from "#/core/workspace/source-walk";
+} from "#audit/comments/domain/link-references";
+import { scanImpossibleSinceTags } from "#audit/comments/domain/since-versions";
+import { scanTsdocSyntax } from "#audit/comments/domain/tsdoc-syntax";
+import type { CommentAuditResult, DividerBreakage, DividerFileBreakages } from "#audit/domain/types";
+import { AppError, messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { findNearestPackageVersion } from "#core/workspace/package-version";
+import { sourceCommentLanguage, walkSourceFiles } from "#core/workspace/source-walk";
 
 const reasonByDefect: Record<CommentContentDefectKind | DividerDefectKind | "dead-link" | "since-impossible", string> =
   {

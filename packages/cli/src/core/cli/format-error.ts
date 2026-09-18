@@ -1,4 +1,4 @@
-import type { AppError } from "#/core/errors";
+import type { AppError } from "#core/errors";
 
 /**
  * Formats an `AppError` as a `[CODE] message` line for CLI output.

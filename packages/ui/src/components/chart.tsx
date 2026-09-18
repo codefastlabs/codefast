@@ -5,7 +5,7 @@ import type { TooltipContentProps, TooltipProps } from "recharts";
 import * as RechartsPrimitive from "recharts";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
-import { cn } from "#/lib/utils";
+import { cn } from "#lib/utils";
 
 // ── Type Definitions and Utilities ───────────────────────────────────────────────────────────────────────────────────
 

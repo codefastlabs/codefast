@@ -1,5 +1,5 @@
-import type { ArrangeRunResult } from "#/arrange/domain/types";
-import { logger } from "#/core/logger";
+import type { ArrangeRunResult } from "#arrange/domain/types";
+import { logger } from "#core/logger";
 
 /**
  * Presents the totals for an `arrange simplify` run.

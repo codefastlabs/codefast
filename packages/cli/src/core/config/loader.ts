@@ -3,10 +3,10 @@ import path from "node:path";
 import jiti from "jiti";
 import type { ZodError } from "zod";
 
-import { codefastConfigRootSchema } from "#/core/config/schema";
-import type { CodefastConfig } from "#/core/config/schema";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { ancestorDirectories } from "#/core/workspace/ancestor-directories";
+import { codefastConfigRootSchema } from "#core/config/schema";
+import type { CodefastConfig } from "#core/config/schema";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { ancestorDirectories } from "#core/workspace/ancestor-directories";
 
 /**
  * A loaded config together with its schema warnings and the path it was read from.

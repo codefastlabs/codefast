@@ -1,7 +1,7 @@
 import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { NotFound } from "#/components/shared/not-found";
+import { NotFound } from "#components/shared/not-found";
 
 /**
  * App-wide 404. Wired to the root route's `notFoundComponent`, so every

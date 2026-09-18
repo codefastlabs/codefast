@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { DOC_PACKAGES, PACKAGES, PACKAGE_ORDER, docSource } from "#/features/package-docs/lib/doc-source.impl";
+import { DOC_PACKAGES, PACKAGES, PACKAGE_ORDER, docSource } from "#features/package-docs/lib/doc-source.impl";
 
 describe("package discovery", () => {
   it("lists every published package with its documents, the flagship first", () => {

@@ -1,5 +1,5 @@
 /** Fixed-width console tables that pad every cell as plain text before any colour goes on. */
-import type { Tint } from "#/shared/palette";
+import type { Tint } from "#shared/palette";
 
 const IDENTITY: Tint = (text) => text;
 

@@ -4,10 +4,10 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { Module } from "#/core/module";
-import { token } from "#/core/token";
-import { DisposedContainerError, TokenNotBoundError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { Module } from "#core/module";
+import { token } from "#core/token";
+import { DisposedContainerError, TokenNotBoundError } from "#errors/errors";
 
 describe("dispose with throwing hooks", () => {
   it("runs the remaining deactivations after one throws, and reports the failure", async () => {

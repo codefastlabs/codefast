@@ -1,7 +1,7 @@
 /**
  * The published packages' external homes, shared by the landing cards, the docs header, and `llms.txt`.
  */
-import { GITHUB_URL } from "#/lib/nav-links";
+import { GITHUB_URL } from "#lib/nav-links";
 
 /** A repo file on GitHub, at `main`. */
 export function repoBlobUrl(repoPath: string): string {

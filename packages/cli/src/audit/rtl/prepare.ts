@@ -1,11 +1,11 @@
-import type { AuditCommandPrelude } from "#/audit/prepare";
-import { resolveRepoRelativePath } from "#/audit/prepare";
-import { loadCodefastConfig } from "#/core/config";
-import { AppError, messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { resolveProjectRoot } from "#/core/workspace/resolver";
+import type { AuditCommandPrelude } from "#audit/prepare";
+import { resolveRepoRelativePath } from "#audit/prepare";
+import { loadCodefastConfig } from "#core/config";
+import { AppError, messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { resolveProjectRoot } from "#core/workspace/resolver";
 
 /**
  * Loads config and resolves the scan target for `audit rtl`.

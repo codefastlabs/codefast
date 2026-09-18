@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { quantile, sortAscending } from "#/report/quantiles";
+import { quantile, sortAscending } from "#report/quantiles";
 
 describe("sortAscending", () => {
   it("returns values sorted in ascending order", () => {

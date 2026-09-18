@@ -4,16 +4,16 @@
  */
 import { createContainer, injectable, token } from "ditox";
 
-import { buildDitoxRealisticContainer } from "#/fixtures/ditox-adapter";
-import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
+import { buildDitoxRealisticContainer } from "#fixtures/ditox-adapter";
+import { REALISTIC_GRAPH } from "#fixtures/realistic-graph";
 import {
   REALISTIC_GRAPH_RESOLVED_ROOT,
   REALISTIC_RESOLVE_BATCH,
   TO_RESOLVED_3_DEPS,
   TO_RESOLVED_BATCH,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface ResolvedDep {
   readonly id: string;

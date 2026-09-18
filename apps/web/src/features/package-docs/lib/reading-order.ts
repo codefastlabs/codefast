@@ -1,8 +1,8 @@
 /**
  * The reading order of a package's documents — each kind's own page followed by the pages beneath it.
  */
-import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
-import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
+import type { DocRef } from "#features/package-docs/lib/doc-kinds";
+import type { PackageSummary } from "#features/package-docs/lib/rendered-doc";
 
 /** Every document of `pkg` as one sequence in sidebar order, for the pager and the command palette. */
 export function readingOrder(pkg: PackageSummary): ReadonlyArray<DocRef> {

@@ -1,6 +1,6 @@
-import { buildLibraryReport } from "#/report/aggregate";
-import type { ComparisonLibrary } from "#/report/comparison";
-import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
+import { buildLibraryReport } from "#report/aggregate";
+import type { ComparisonLibrary } from "#report/comparison";
+import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#shared/protocol";
 
 /** A fingerprint for a library with an optional environment override. */
 export function fingerprint(libraryName: string, overrides: Partial<Fingerprint> = {}): Fingerprint {

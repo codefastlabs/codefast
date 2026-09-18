@@ -2,11 +2,11 @@ import { XIcon } from "lucide-react";
 import * as SheetPrimitive from "radix-ui/dialog";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-import type { ButtonVariants } from "#/variants/button";
-import { buttonVariants } from "#/variants/button";
-import type { SheetContentVariants } from "#/variants/sheet";
-import { sheetContentVariants } from "#/variants/sheet";
+import { cn } from "#lib/utils";
+import type { ButtonVariants } from "#variants/button";
+import { buttonVariants } from "#variants/button";
+import type { SheetContentVariants } from "#variants/sheet";
+import { sheetContentVariants } from "#variants/sheet";
 
 // ── Component: Sheet ─────────────────────────────────────────────────────────────────────────────────────────────────
 

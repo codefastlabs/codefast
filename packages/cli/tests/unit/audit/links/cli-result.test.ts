@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { LinkAuditResult } from "#/audit/domain/types";
-import { exitCodeForLinkAuditResult, formatLinkAuditJsonOutput } from "#/audit/links/cli-result";
+import type { LinkAuditResult } from "#audit/domain/types";
+import { exitCodeForLinkAuditResult, formatLinkAuditJsonOutput } from "#audit/links/cli-result";
 
 const clean: LinkAuditResult = { files: [], breakageCount: 0, allowlistedCount: 0, linkCount: 4, scannedFileCount: 2 };
 const dirty: LinkAuditResult = {

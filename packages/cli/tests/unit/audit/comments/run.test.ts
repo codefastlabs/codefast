@@ -2,8 +2,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { runCommentAudit } from "#/audit/comments/run";
-import type { Filesystem } from "#/core/filesystem/filesystem";
+import { runCommentAudit } from "#audit/comments/run";
+import type { Filesystem } from "#core/filesystem/filesystem";
 
 const rootDir = path.join(path.sep, "repo");
 const srcDir = path.join(rootDir, "src");

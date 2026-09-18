@@ -11,8 +11,8 @@ import {
   mergingConstraintRequirements,
   requiringAncestorSlotName,
   requiringAncestorSlotNames,
-} from "#/core/constraint-requirement";
-import type { BindingConstraint } from "#/core/types";
+} from "#core/constraint-requirement";
+import type { BindingConstraint } from "#core/types";
 
 function bare(): BindingConstraint {
   return () => true;

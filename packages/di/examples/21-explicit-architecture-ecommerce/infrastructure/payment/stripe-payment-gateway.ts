@@ -1,9 +1,9 @@
 /** A `PaymentGateway` adapter charging Stripe — a runnable mock, not a real API client. */
 
-import type { PaymentGateway } from "#/examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
-import type { OrderId } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-id";
-import type { PaymentIntent } from "#/examples/21-explicit-architecture-ecommerce/domain/payment/payment-intent";
-import type { Money } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/money";
+import type { PaymentGateway } from "#examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
+import type { OrderId } from "#examples/21-explicit-architecture-ecommerce/domain/order/order-id";
+import type { PaymentIntent } from "#examples/21-explicit-architecture-ecommerce/domain/payment/payment-intent";
+import type { Money } from "#examples/21-explicit-architecture-ecommerce/domain/shared/money";
 
 /** Settles USD, EUR, and GBP; captures immediately and returns a `pi_stripe_*` intent. */
 export class StripePaymentGateway implements PaymentGateway {

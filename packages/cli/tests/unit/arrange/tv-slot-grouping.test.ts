@@ -4,8 +4,8 @@ import {
   buildGroupFileUnwrapState,
   mergeGroupFileBodyText,
   tryBuildGroupFileWorkPlan,
-} from "#/arrange/domain/grouping-service";
-import { parseDomainSourceFile } from "#/arrange/source-parse";
+} from "#arrange/domain/grouping-service";
+import { parseDomainSourceFile } from "#arrange/source-parse";
 
 function applyArrange(filePath: string, sourceText: string): string {
   const domainSfInitial = parseDomainSourceFile(filePath, sourceText);
@@ -25,7 +25,7 @@ function applyArrange(filePath: string, sourceText: string): string {
 describe("arrange tv slot grouping", () => {
   it("wraps a bare string slot in an array instead of duplicating the property key", () => {
     const source = [
-      `import { tv } from "#/lib/utils";`,
+      `import { tv } from "#lib/utils";`,
       ``,
       `const variants = tv({`,
       `  slots: {`,
@@ -50,7 +50,7 @@ describe("arrange tv slot grouping", () => {
 
   it("preserves an existing multi-element array slot as an array", () => {
     const source = [
-      `import { tv } from "#/lib/utils";`,
+      `import { tv } from "#lib/utils";`,
       ``,
       `const variants = tv({`,
       `  slots: {`,

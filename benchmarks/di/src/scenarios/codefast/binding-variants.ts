@@ -27,9 +27,9 @@ import {
   TO_RESOLVED_BATCH,
   TO_SELF_BATCH,
   TO_SELF_BINDING,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 // ── scenario 1: toResolved explicit deps ─────────────────────────────────────────────────────────────────────────────
 

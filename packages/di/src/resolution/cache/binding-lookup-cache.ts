@@ -4,13 +4,13 @@
  * @remarks Each cache links to its parent's, so a child answers from its own chain without walking
  * the container hierarchy again.
  */
-import type { Binding } from "#/core/binding";
-import { getOrInsertComputed } from "#/core/map-upsert";
-import type { BindingRegistry } from "#/core/registry";
-import { stateEpoch } from "#/core/state-epoch";
-import type { BindingTag } from "#/core/tag";
-import type { Token } from "#/core/token";
-import type { Constructor } from "#/core/types";
+import type { Binding } from "#core/binding";
+import { getOrInsertComputed } from "#core/map-upsert";
+import type { BindingRegistry } from "#core/registry";
+import { stateEpoch } from "#core/state-epoch";
+import type { BindingTag } from "#core/tag";
+import type { Token } from "#core/token";
+import type { Constructor } from "#core/types";
 
 /**
  * A token's terminal binding with alias hops already folded, plus the container that owns it.

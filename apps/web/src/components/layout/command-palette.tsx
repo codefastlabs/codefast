@@ -13,21 +13,21 @@ import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 
-import { NewBadge } from "#/components/shared/new-badge";
-import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
-import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
-import { getPackages } from "#/features/package-docs/lib/package-docs";
-import { readingOrder } from "#/features/package-docs/lib/reading-order";
-import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
-import { track } from "#/features/tracking/lib/tracking";
+import { NewBadge } from "#components/shared/new-badge";
+import { DOC_KIND_BY_SLUG } from "#features/package-docs/lib/doc-kinds";
+import type { DocRef } from "#features/package-docs/lib/doc-kinds";
+import { getPackages } from "#features/package-docs/lib/package-docs";
+import { readingOrder } from "#features/package-docs/lib/reading-order";
+import type { PackageSummary } from "#features/package-docs/lib/rendered-doc";
+import { track } from "#features/tracking/lib/tracking";
 import {
   getCommandPaletteAriaKeyshortcuts,
   getCommandPaletteKeyboardAction,
   getIsMacPlatform,
-} from "#/lib/command-palette-keyboard";
-import type { PrimaryNavPath } from "#/lib/nav-links";
-import { ALL_NAV } from "#/lib/nav-links";
-import { COMPONENTS } from "#/registry/_core/components";
+} from "#lib/command-palette-keyboard";
+import type { PrimaryNavPath } from "#lib/nav-links";
+import { ALL_NAV } from "#lib/nav-links";
+import { COMPONENTS } from "#registry/_core/components";
 
 /** A palette row for one package document: where it goes, and the label after the package name (empty for the README). */
 interface PackageDocRow {

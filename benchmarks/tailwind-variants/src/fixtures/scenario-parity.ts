@@ -1,13 +1,13 @@
 /** Scenario descriptors every side spreads, so a row's id, group, description, and batch cannot drift. */
-import { complexTestProps } from "#/fixtures/complex";
-import { compoundSlotsTestProps } from "#/fixtures/compound-slots";
-import { simpleTestProps as createTvTestProps } from "#/fixtures/create-tv";
-import { extendsTestProps } from "#/fixtures/extends";
-import { extremeSlotsTestProps, extremeTestProps } from "#/fixtures/extreme";
-import { repeatSimpleTestProps, repeatSlotsTestProps } from "#/fixtures/repeat";
-import { simpleTestProps } from "#/fixtures/simple";
-import { slotsTestProps } from "#/fixtures/slots";
-import type { BenchScenario } from "#/scenarios/types";
+import { complexTestProps } from "#fixtures/complex";
+import { compoundSlotsTestProps } from "#fixtures/compound-slots";
+import { simpleTestProps as createTvTestProps } from "#fixtures/create-tv";
+import { extendsTestProps } from "#fixtures/extends";
+import { extremeSlotsTestProps, extremeTestProps } from "#fixtures/extreme";
+import { repeatSimpleTestProps, repeatSlotsTestProps } from "#fixtures/repeat";
+import { simpleTestProps } from "#fixtures/simple";
+import { slotsTestProps } from "#fixtures/slots";
+import type { BenchScenario } from "#scenarios/types";
 
 type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what"> &
   Partial<Pick<BenchScenario, "batch" | "excludeFromAggregates" | "comparesWithin">>;

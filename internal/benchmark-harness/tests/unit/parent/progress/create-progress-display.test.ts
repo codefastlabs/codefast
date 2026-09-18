@@ -4,9 +4,9 @@ import {
   canDrawLiveProgress,
   createProgressDisplay,
   prefersUnicodeBars,
-} from "#/parent/progress/create-progress-display";
-import { LiveProgressDisplay } from "#/parent/progress/live-progress-display";
-import { PlainProgressDisplay } from "#/parent/progress/plain-progress-display";
+} from "#parent/progress/create-progress-display";
+import { LiveProgressDisplay } from "#parent/progress/live-progress-display";
+import { PlainProgressDisplay } from "#parent/progress/plain-progress-display";
 
 function stream(isTTY: boolean): NodeJS.WriteStream {
   return { isTTY, columns: 80, write: () => true } as unknown as NodeJS.WriteStream;

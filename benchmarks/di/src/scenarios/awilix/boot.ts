@@ -10,9 +10,9 @@ import {
   CONTAINER_CREATE_BATCH,
   CONTAINER_CREATE_EMPTY,
   CREATE_CHILD_EMPTY,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface BoundValue {
   readonly id: number;

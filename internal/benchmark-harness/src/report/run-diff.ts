@@ -1,13 +1,13 @@
 /** The change since the previous comparable run: per scenario against noise, and per competitor aggregate. */
-import { readRunObservations, resolveRunDirectory } from "#/parent/bench-run-artifacts";
-import { buildLibraryReport } from "#/report/aggregate";
-import type { ComparisonLibrary } from "#/report/comparison";
-import { summarizeComparison } from "#/report/comparison";
-import { parseRunObservations } from "#/report/jsonl";
-import { isThroughputAboveNoiseCeiling, NOISY_IQR_FRACTION } from "#/report/reliability";
-import type { BenchRunShape } from "#/shared/env-keys";
-import { resolveBaselineRunFromEnvironment } from "#/shared/env-keys";
-import type { Fingerprint, TrialPayload } from "#/shared/protocol";
+import { readRunObservations, resolveRunDirectory } from "#parent/bench-run-artifacts";
+import { buildLibraryReport } from "#report/aggregate";
+import type { ComparisonLibrary } from "#report/comparison";
+import { summarizeComparison } from "#report/comparison";
+import { parseRunObservations } from "#report/jsonl";
+import { isThroughputAboveNoiseCeiling, NOISY_IQR_FRACTION } from "#report/reliability";
+import type { BenchRunShape } from "#shared/env-keys";
+import { resolveBaselineRunFromEnvironment } from "#shared/env-keys";
+import type { Fingerprint, TrialPayload } from "#shared/protocol";
 
 /**
  * A run read back from disk to diff against.

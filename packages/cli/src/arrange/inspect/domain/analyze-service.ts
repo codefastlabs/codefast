@@ -8,20 +8,20 @@ import {
   isDomainJsxAttribute,
   isDomainObjectLiteralExpression,
   forEachDomainChild,
-} from "#/arrange/domain/ast/ast-node";
+} from "#arrange/domain/ast/ast-node";
 import type {
   DomainAstNode,
   DomainCallExpression,
   DomainJsxAttribute,
   DomainSourceFile,
-} from "#/arrange/domain/ast/ast-node";
-import { forEachStringLiteralInClassExpression } from "#/arrange/domain/ast/collectors-cn";
-import { jsxClassNameStaticLiteral } from "#/arrange/domain/ast/collectors-jsx";
-import { collectCnCallsInsideTv, traverseTvObject } from "#/arrange/domain/ast/collectors-tv";
-import { buildKnownCnTvBindings, isCnOrTvIdentifier, lineOf } from "#/arrange/domain/ast/helpers";
-import { LONG_STRING_TOKEN_THRESHOLD } from "#/arrange/domain/constants";
-import { tokenizeClassString } from "#/arrange/domain/tailwind-token";
-import type { AnalyzeReport } from "#/arrange/domain/types";
+} from "#arrange/domain/ast/ast-node";
+import { forEachStringLiteralInClassExpression } from "#arrange/domain/ast/collectors-cn";
+import { jsxClassNameStaticLiteral } from "#arrange/domain/ast/collectors-jsx";
+import { collectCnCallsInsideTv, traverseTvObject } from "#arrange/domain/ast/collectors-tv";
+import { buildKnownCnTvBindings, isCnOrTvIdentifier, lineOf } from "#arrange/domain/ast/helpers";
+import { LONG_STRING_TOKEN_THRESHOLD } from "#arrange/domain/constants";
+import { tokenizeClassString } from "#arrange/domain/tailwind-token";
+import type { AnalyzeReport } from "#arrange/domain/types";
 
 const PREVIEW_MAX_LENGTH = 72;
 

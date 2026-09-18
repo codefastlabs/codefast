@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { BadgesSection } from "#/features/ui-showcase/components/badges-section";
-import { ButtonVariantsSection } from "#/features/ui-showcase/components/button-variants-section";
-import { CompositionSection } from "#/features/ui-showcase/components/composition-section";
-import { FeedbackDisplaySection } from "#/features/ui-showcase/components/feedback-display-section";
-import { FormControlsSection } from "#/features/ui-showcase/components/form-controls-section";
-import { OverlaysSection } from "#/features/ui-showcase/components/overlays-section";
-import { ToastSection } from "#/features/ui-showcase/components/toast-section";
+import { BadgesSection } from "#features/ui-showcase/components/badges-section";
+import { ButtonVariantsSection } from "#features/ui-showcase/components/button-variants-section";
+import { CompositionSection } from "#features/ui-showcase/components/composition-section";
+import { FeedbackDisplaySection } from "#features/ui-showcase/components/feedback-display-section";
+import { FormControlsSection } from "#features/ui-showcase/components/form-controls-section";
+import { OverlaysSection } from "#features/ui-showcase/components/overlays-section";
+import { ToastSection } from "#features/ui-showcase/components/toast-section";
 
 export const Route = createFileRoute("/ui")({
   component: UiPage,

@@ -7,8 +7,8 @@ import {
   DYNAMIC_ASYNC_CHAIN_8,
   RESOLVE_ASYNC_SINGLE_HOP,
   asyncFanoutConcurrentDescriptor,
-} from "#/fixtures/scenario-parity";
-import type { AsyncBenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import type { AsyncBenchScenario } from "#scenarios/types";
 
 class AsyncInitService {
   readonly ready = true;

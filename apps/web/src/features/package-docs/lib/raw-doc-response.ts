@@ -3,15 +3,15 @@
  * module lazily: server routes run only on the server, but the raw documents still have no business
  * in the route module graph.
  */
-import { isDocKindSlug } from "#/features/package-docs/lib/doc-kinds";
-import { CONTENT_CACHE_CONTROL, CONTENT_CDN_CACHE_CONTROL } from "#/lib/cache";
+import { isDocKindSlug } from "#features/package-docs/lib/doc-kinds";
+import { CONTENT_CACHE_CONTROL, CONTENT_CDN_CACHE_CONTROL } from "#lib/cache";
 
 export async function rawDocResponse(pkg: string, kind: string, page?: string): Promise<Response> {
   if (!isDocKindSlug(kind)) {
     return new Response("Not found", { status: 404 });
   }
 
-  const { docSource } = await import("#/features/package-docs/lib/doc-source.impl");
+  const { docSource } = await import("#features/package-docs/lib/doc-source.impl");
   const source = docSource(pkg, kind, page);
 
   if (!source) {

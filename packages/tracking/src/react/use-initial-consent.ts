@@ -2,7 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 
-import type { InitialConsentSnapshot, InitialConsentStore } from "#/client/initial-consent-store";
+import type { InitialConsentSnapshot, InitialConsentStore } from "#client/initial-consent-store";
 
 /**
  * Reactive view of a `createInitialConsentStore` — kicks off resolution on mount (a no-op

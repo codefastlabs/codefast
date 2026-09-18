@@ -2,8 +2,8 @@ import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ConsentGate } from "#/features/tracking/components/consent-gate";
-import type { InitialConsent } from "#/features/tracking/lib/consent";
+import { ConsentGate } from "#features/tracking/components/consent-gate";
+import type { InitialConsent } from "#features/tracking/lib/consent";
 
 const { clearAnonymousId, clearGoogleAnalyticsCookies, currentAnonymousId, getAnonymousId, useVisitorConsent } =
   vi.hoisted(() => ({
@@ -14,7 +14,7 @@ const { clearAnonymousId, clearGoogleAnalyticsCookies, currentAnonymousId, getAn
     useVisitorConsent: vi.fn(),
   }));
 
-vi.mock(import("#/features/tracking/lib/visitor-consent"), async (importOriginal) => ({
+vi.mock(import("#features/tracking/lib/visitor-consent"), async (importOriginal) => ({
   ...(await importOriginal()),
   ensureVisitorConsentResolved: () => {},
   useVisitorConsent,
@@ -25,7 +25,7 @@ function setRegion(initialConsent: InitialConsent): void {
   useVisitorConsent.mockReturnValue({ initialConsent, isResolved: true });
 }
 
-vi.mock("#/features/tracking/lib/tracking", () => ({
+vi.mock("#features/tracking/lib/tracking", () => ({
   clearAnonymousId,
   currentAnonymousId,
   getAnonymousId,

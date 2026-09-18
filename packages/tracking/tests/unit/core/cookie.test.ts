@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { readCookieValue } from "#/core/cookie";
+import { readCookieValue } from "#core/cookie";
 
 describe("readCookieValue", () => {
   it("reads a value out of a multi-cookie string", () => {

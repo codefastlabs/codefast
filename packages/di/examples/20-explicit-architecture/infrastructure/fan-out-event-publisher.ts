@@ -2,9 +2,9 @@
 
 import { injectable, injectAll } from "@codefast/di";
 
-import { EventHandlerToken } from "#/examples/20-explicit-architecture/application/ports/events.port";
-import type { EventHandler, EventPublisher } from "#/examples/20-explicit-architecture/application/ports/events.port";
-import type { DomainEvent } from "#/examples/20-explicit-architecture/domain/events";
+import { EventHandlerToken } from "#examples/20-explicit-architecture/application/ports/events.port";
+import type { EventHandler, EventPublisher } from "#examples/20-explicit-architecture/application/ports/events.port";
+import type { DomainEvent } from "#examples/20-explicit-architecture/domain/events";
 
 /** Broadcasts every published event to every adapter bound to the `EventHandler` port. */
 @injectable([injectAll(EventHandlerToken)])

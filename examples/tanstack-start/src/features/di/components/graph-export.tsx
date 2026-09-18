@@ -1,9 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import type { ReactElement } from "react";
 
-import { CopyButton } from "#/features/di/components/copy-button";
-import { GraphSource } from "#/features/di/components/graph-source";
-import type { GraphExports } from "#/features/di/server/tasks";
+import { CopyButton } from "#features/di/components/copy-button";
+import { GraphSource } from "#features/di/components/graph-source";
+import type { GraphExports } from "#features/di/server/tasks";
 
 interface GraphExportProps {
   exports: GraphExports;

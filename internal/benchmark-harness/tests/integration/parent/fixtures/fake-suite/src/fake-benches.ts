@@ -1,14 +1,14 @@
 // A stand-in bench child: speaks the parent's stderr progress protocol and stdout framing without the harness.
 // Behaviour comes from the environment so one script covers every path the parent has to handle. Node runs
 // it as-is through type stripping, so every annotation here must be erasable syntax.
-import type { BenchScenarioTier } from "#/child/bench-scenario";
+import type { BenchScenarioTier } from "#child/bench-scenario";
 import type {
   Fingerprint,
   ScenarioListing,
   ScenarioTrialResult,
   SubprocessPayload,
   TrialPayload,
-} from "#/shared/protocol";
+} from "#shared/protocol";
 
 const scenarioIds = (process.env["FAKE_SCENARIOS"] ?? "alpha,beta").split(",").filter((id) => id.length > 0);
 // FAKE_TIERS names the engine rows (`beta,gamma`); everything else is a contract row, as in a real suite.

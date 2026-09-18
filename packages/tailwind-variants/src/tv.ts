@@ -3,16 +3,16 @@
  * once, compiles it into a plan on its second call, and runs that plan on every call after.
  */
 
-import { createTailwindMergeFn, cx } from "#/class-names";
-import { hasExtendConfig, hasSlotsConfig, mergeVariantConfigs } from "#/compile/configuration";
-import type { VariantPlan } from "#/compile/plan";
-import { compileVariantPlan } from "#/compile/plan";
-import { compileSelectionEncoder, UNENCODABLE } from "#/compile/selection";
-import type { ResolutionCache } from "#/resolve/cache";
-import { createResolutionCache } from "#/resolve/cache";
-import { createColdSlotResolvers, resolveColdVariantClasses } from "#/resolve/cold";
-import { createSlotResolvers } from "#/resolve/slots";
-import { resolveVariantClasses } from "#/resolve/variants";
+import { createTailwindMergeFn, cx } from "#class-names";
+import { hasExtendConfig, hasSlotsConfig, mergeVariantConfigs } from "#compile/configuration";
+import type { VariantPlan } from "#compile/plan";
+import { compileVariantPlan } from "#compile/plan";
+import { compileSelectionEncoder, UNENCODABLE } from "#compile/selection";
+import type { ResolutionCache } from "#resolve/cache";
+import { createResolutionCache } from "#resolve/cache";
+import { createColdSlotResolvers, resolveColdVariantClasses } from "#resolve/cold";
+import { createSlotResolvers } from "#resolve/slots";
+import { resolveVariantClasses } from "#resolve/variants";
 import type {
   ClassValue,
   SlotClassResolver,
@@ -28,7 +28,7 @@ import type {
   TailwindVariantsApi,
   VariantResolverResult,
   VariantResolver,
-} from "#/types";
+} from "#types";
 
 /** Shared stand-in for a call that passed no props, so the common case allocates nothing. */
 const EMPTY_PROPS: Record<string, unknown> = {};

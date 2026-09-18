@@ -2,19 +2,19 @@
 
 import { inject, injectable } from "@codefast/di";
 
-import { AccountRepositoryToken } from "#/examples/20-explicit-architecture/application/ports/account-repository.port";
-import type { AccountRepository } from "#/examples/20-explicit-architecture/application/ports/account-repository.port";
-import { ClockToken } from "#/examples/20-explicit-architecture/application/ports/clock.port";
-import type { Clock } from "#/examples/20-explicit-architecture/application/ports/clock.port";
-import { EventPublisherToken } from "#/examples/20-explicit-architecture/application/ports/events.port";
-import type { EventPublisher } from "#/examples/20-explicit-architecture/application/ports/events.port";
+import { AccountRepositoryToken } from "#examples/20-explicit-architecture/application/ports/account-repository.port";
+import type { AccountRepository } from "#examples/20-explicit-architecture/application/ports/account-repository.port";
+import { ClockToken } from "#examples/20-explicit-architecture/application/ports/clock.port";
+import type { Clock } from "#examples/20-explicit-architecture/application/ports/clock.port";
+import { EventPublisherToken } from "#examples/20-explicit-architecture/application/ports/events.port";
+import type { EventPublisher } from "#examples/20-explicit-architecture/application/ports/events.port";
 import type {
   TransferMoneyCommand,
   TransferMoneyUseCase,
-} from "#/examples/20-explicit-architecture/application/ports/use-cases.port";
-import { toAccountId } from "#/examples/20-explicit-architecture/domain/account-id";
-import { AccountNotFoundError } from "#/examples/20-explicit-architecture/domain/errors";
-import { Money } from "#/examples/20-explicit-architecture/domain/money";
+} from "#examples/20-explicit-architecture/application/ports/use-cases.port";
+import { toAccountId } from "#examples/20-explicit-architecture/domain/account-id";
+import { AccountNotFoundError } from "#examples/20-explicit-architecture/domain/errors";
+import { Money } from "#examples/20-explicit-architecture/domain/money";
 
 // The threshold, in minor units, above which a transfer is announced for fraud and compliance review.
 const LARGE_TRANSFER_THRESHOLD_MINOR = 100_000_000;

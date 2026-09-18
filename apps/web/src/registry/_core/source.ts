@@ -3,7 +3,7 @@
  * don't read content; `docs.ts` resolves a ref to raw text + highlighted HTML via
  * `getHighlightedSources`, so `doc.ts` modules stay free of embedded source.
  */
-import type { SourceRef } from "#/registry/_core/types";
+import type { SourceRef } from "#registry/_core/types";
 
 /** Ref to `registry/<slug>/<name>.example.tsx` — e.g. `docSource("button", "sizes")`. */
 export function docSource(slug: string, name: string): SourceRef {

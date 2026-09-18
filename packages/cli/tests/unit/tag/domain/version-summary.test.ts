@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { TagTargetExecutionResult } from "#/tag/domain/types";
-import { extractDistinctVersions, summarizeVersions } from "#/tag/domain/version-summary";
+import type { TagTargetExecutionResult } from "#tag/domain/types";
+import { extractDistinctVersions, summarizeVersions } from "#tag/domain/version-summary";
 
 // extractDistinctVersions only reads `.result?.version`, so a minimal stub stands in for the full result.
 function targetWithVersion(version: string | undefined): TagTargetExecutionResult {

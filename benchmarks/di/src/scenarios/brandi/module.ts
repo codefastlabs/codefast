@@ -8,8 +8,8 @@
  */
 import { createContainer, createDependencyModule, injected, token } from "brandi";
 
-import { MODULE_COLD_FROM_MODULES } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { MODULE_COLD_FROM_MODULES } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 interface ModuleConfig {
   readonly env: string;

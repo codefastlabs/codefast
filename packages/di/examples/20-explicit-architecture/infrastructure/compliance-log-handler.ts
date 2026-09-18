@@ -2,8 +2,8 @@
 
 import { injectable } from "@codefast/di";
 
-import type { EventHandler } from "#/examples/20-explicit-architecture/application/ports/events.port";
-import type { DomainEvent } from "#/examples/20-explicit-architecture/domain/events";
+import type { EventHandler } from "#examples/20-explicit-architecture/application/ports/events.port";
+import type { DomainEvent } from "#examples/20-explicit-architecture/domain/events";
 
 /** Reacts only to `LargeTransferAttempted`, keeping a human-readable ledger of large movements. */
 @injectable()

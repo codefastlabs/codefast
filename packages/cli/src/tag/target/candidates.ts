@@ -2,10 +2,10 @@ import path from "node:path";
 
 import * as z from "zod";
 
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { listWorkspacePackageDirectories } from "#/core/workspace/resolver";
-import { packageJsonFileName } from "#/core/workspace/well-known-files";
-import type { TagTargetCandidate } from "#/tag/domain/types";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
+import { packageJsonFileName } from "#core/workspace/well-known-files";
+import type { TagTargetCandidate } from "#tag/domain/types";
 
 const packageJsonNameSchema = z.looseObject({
   name: z.string().min(1).optional(),

@@ -1,4 +1,4 @@
-import type { Bucket } from "#/arrange/domain/types";
+import type { Bucket } from "#arrange/domain/types";
 
 /**
  * Analyze report: long literal threshold (token count).

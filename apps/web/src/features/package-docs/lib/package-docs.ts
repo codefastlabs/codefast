@@ -6,12 +6,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 
-import { isDocKindSlug } from "#/features/package-docs/lib/doc-kinds";
-import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
-import { CHANGELOG_RELEASES_SHOWN, trimChangelog } from "#/features/package-docs/lib/markdown/trim-changelog";
-import type { DocPageData, PackageSummary, RenderedDoc } from "#/features/package-docs/lib/rendered-doc";
-import { repoBlobUrl } from "#/features/package-docs/lib/site";
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
+import { isDocKindSlug } from "#features/package-docs/lib/doc-kinds";
+import type { DocKindSlug } from "#features/package-docs/lib/doc-kinds";
+import { CHANGELOG_RELEASES_SHOWN, trimChangelog } from "#features/package-docs/lib/markdown/trim-changelog";
+import type { DocPageData, PackageSummary, RenderedDoc } from "#features/package-docs/lib/rendered-doc";
+import { repoBlobUrl } from "#features/package-docs/lib/site";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
 
 /** The address of a doc page as the route params carry it; `page` is present only under a directory kind. */
 interface DocPageParams {
@@ -42,8 +42,8 @@ function trimmedChangelog(source: string, pkg: string, file: string): string {
 /** Renders one package document, or `null` when the package, kind, or page does not exist. */
 async function renderDoc(pkg: string, kind: DocKindSlug, page?: string): Promise<RenderedDoc | null> {
   const [{ docKind, docSource }, { renderMarkdown }] = await Promise.all([
-    import("#/features/package-docs/lib/doc-source.impl"),
-    import("#/features/package-docs/lib/markdown/render.impl"),
+    import("#features/package-docs/lib/doc-source.impl"),
+    import("#features/package-docs/lib/markdown/render.impl"),
   ]);
   const source = docSource(pkg, kind, page);
 
@@ -72,7 +72,7 @@ export const getPackages = createServerFn({ method: "GET" }).handler(
   async (): Promise<ReadonlyArray<PackageSummary>> => {
     setContentCacheHeaders();
 
-    const { PACKAGES } = await import("#/features/package-docs/lib/doc-source.impl");
+    const { PACKAGES } = await import("#features/package-docs/lib/doc-source.impl");
 
     return PACKAGES;
   },
@@ -89,7 +89,7 @@ export const getDocPage = createServerFn({ method: "GET" })
     }
 
     const [{ DOC_PACKAGES }, doc] = await Promise.all([
-      import("#/features/package-docs/lib/doc-source.impl"),
+      import("#features/package-docs/lib/doc-source.impl"),
       renderDoc(data.pkg, data.kind, data.page),
     ]);
 

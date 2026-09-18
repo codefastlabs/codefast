@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
 
 /** A sample with its import block split off, so a card can fold the imports and start at the code that matters. */
 export interface FoldedSnippet {
@@ -42,7 +42,7 @@ export const getHomeSnippets = createServerFn({ method: "GET" }).handler(async (
     setResponseHeader(name, value);
   }
 
-  const { highlightHomeSnippets } = await import("#/features/home/lib/home-snippets.impl");
+  const { highlightHomeSnippets } = await import("#features/home/lib/home-snippets.impl");
 
   return highlightHomeSnippets();
 });

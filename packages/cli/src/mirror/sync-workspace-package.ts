@@ -1,15 +1,15 @@
 import path from "node:path";
 
-import type { MirrorConfig } from "#/core/config/schema";
-import { messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { distDirName, packageJsonFileName } from "#/core/workspace/well-known-files";
-import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-node";
-import { createPathTransform, generateExports } from "#/mirror/domain/exports";
-import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
-import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";
-import { buildSourcePathResolver, supplementExportsInPackageJson } from "#/mirror/supplement-exports";
-import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
+import type { MirrorConfig } from "#core/config/schema";
+import { messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { distDirName, packageJsonFileName } from "#core/workspace/well-known-files";
+import { createMirrorDistFilesystem } from "#mirror/dist-filesystem-node";
+import { createPathTransform, generateExports } from "#mirror/domain/exports";
+import { resolvePackageDisplayName } from "#mirror/domain/package-display-name";
+import type { PackageJsonShape, PackageStats } from "#mirror/domain/types";
+import { buildSourcePathResolver, supplementExportsInPackageJson } from "#mirror/supplement-exports";
+import { writePackageJsonExportsAtomic } from "#mirror/write-exports";
 
 /**
  * Regenerates one package's `package.json#exports` from its `dist/` and returns the package's stats.

@@ -5,11 +5,11 @@ import { fileURLToPath } from "node:url";
 
 import { Command } from "commander";
 
-import { createArrangeCommand } from "#/arrange/command";
-import { createAuditCommand } from "#/audit/command";
-import { createMirrorCommand } from "#/mirror/command";
-import { createPackSlimCommand } from "#/pack-slim/command";
-import { createTagCommand } from "#/tag/command";
+import { createArrangeCommand } from "#arrange/command";
+import { createAuditCommand } from "#audit/command";
+import { createMirrorCommand } from "#mirror/command";
+import { createPackSlimCommand } from "#pack-slim/command";
+import { createTagCommand } from "#tag/command";
 
 function readVersion(): string {
   try {

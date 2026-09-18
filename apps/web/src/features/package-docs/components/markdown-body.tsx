@@ -2,8 +2,8 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useEffect, useRef } from "react";
 
-import { useMermaidDiagrams } from "#/features/package-docs/lib/use-mermaid-diagrams";
-import { track } from "#/features/tracking/lib/tracking";
+import { useMermaidDiagrams } from "#features/package-docs/lib/use-mermaid-diagrams";
+import { track } from "#features/tracking/lib/tracking";
 
 interface MarkdownBodyProps extends Omit<ComponentProps<"article">, "children" | "dangerouslySetInnerHTML"> {
   /** Rendered document HTML from the server — repo-authored markdown, never user input. */

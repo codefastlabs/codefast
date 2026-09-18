@@ -1,7 +1,7 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { HoverCardRtl } from "#/registry/hover-card/rtl.example";
-import { HoverCardSides } from "#/registry/hover-card/sides.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { HoverCardRtl } from "#registry/hover-card/rtl.example";
+import { HoverCardSides } from "#registry/hover-card/sides.example";
 
 export const hoverCardDoc: ComponentDoc = {
   examples: [

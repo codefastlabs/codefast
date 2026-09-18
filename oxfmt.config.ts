@@ -1,6 +1,6 @@
 import { defineConfig } from "oxfmt";
 
-import { ignorePatterns } from "#/oxc.shared";
+import { ignorePatterns } from "#oxc.shared";
 
 export default defineConfig({
   // ── Layout ─────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -10,9 +10,9 @@ export default defineConfig({
 
   // ── Code organization ──────────────────────────────────────────────────────────────────────────────────────────────
   // Deterministic import order (perfectionist-compatible algorithm). The repo
-  // uses Node subpath imports ("#/") and "@/" aliases as internal modules.
+  // uses Node subpath imports ("#") and "@/" aliases as internal modules.
   sortImports: {
-    internalPattern: ["#/", "@/", "~/"],
+    internalPattern: ["#", "@/", "~/"],
   },
   // Stable key order across all workspace package.json files (scripts keep
   // their hand-curated order).

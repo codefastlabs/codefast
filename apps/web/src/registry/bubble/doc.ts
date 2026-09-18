@@ -1,14 +1,14 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { BubbleAlignment } from "#/registry/bubble/alignment.example";
-import { BubbleCollapsible } from "#/registry/bubble/collapsible.example";
-import { BubbleGroupDemo } from "#/registry/bubble/group-demo.example";
-import { BubbleLinkButton } from "#/registry/bubble/link-button.example";
-import { BubbleMarkdown } from "#/registry/bubble/markdown.example";
-import { BubblePopover } from "#/registry/bubble/popover.example";
-import { BubbleReactionsDemo } from "#/registry/bubble/reactions.example";
-import { BubbleTooltip } from "#/registry/bubble/tooltip.example";
-import { BubbleVariants } from "#/registry/bubble/variants.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { BubbleAlignment } from "#registry/bubble/alignment.example";
+import { BubbleCollapsible } from "#registry/bubble/collapsible.example";
+import { BubbleGroupDemo } from "#registry/bubble/group-demo.example";
+import { BubbleLinkButton } from "#registry/bubble/link-button.example";
+import { BubbleMarkdown } from "#registry/bubble/markdown.example";
+import { BubblePopover } from "#registry/bubble/popover.example";
+import { BubbleReactionsDemo } from "#registry/bubble/reactions.example";
+import { BubbleTooltip } from "#registry/bubble/tooltip.example";
+import { BubbleVariants } from "#registry/bubble/variants.example";
 
 export const bubbleDoc: ComponentDoc = {
   usage: docUsage("bubble"),

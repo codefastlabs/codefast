@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { buildComponentMarkdown } from "#/features/components-catalog/lib/component-markdown";
-import { CONTENT_CACHE_CONTROL, CONTENT_CDN_CACHE_CONTROL } from "#/lib/cache";
-import { COMPONENT_BY_SLUG } from "#/registry/_core/components";
-import { loadDoc } from "#/registry/_core/docs";
+import { buildComponentMarkdown } from "#features/components-catalog/lib/component-markdown";
+import { CONTENT_CACHE_CONTROL, CONTENT_CDN_CACHE_CONTROL } from "#lib/cache";
+import { COMPONENT_BY_SLUG } from "#registry/_core/components";
+import { loadDoc } from "#registry/_core/docs";
 
 /**
  * Serves the Markdown twin of a detail page at `/ui/components/<slug>.md` — the

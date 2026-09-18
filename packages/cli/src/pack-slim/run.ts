@@ -1,19 +1,19 @@
 import path from "node:path";
 
-import { AppError, messageFrom } from "#/core/errors";
-import type { DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { listWorkspacePackageDirectories } from "#/core/workspace/resolver";
-import { distDirName, packageJsonFileName } from "#/core/workspace/well-known-files";
-import type { PackSlimRunRequest } from "#/pack-slim/cli-schema";
+import { AppError, messageFrom } from "#core/errors";
+import type { DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
+import { distDirName, packageJsonFileName } from "#core/workspace/well-known-files";
+import type { PackSlimRunRequest } from "#pack-slim/cli-schema";
 import {
   isMapAnnotatedFile,
   isSourceMapFile,
   slimPublishManifest,
   stripSourceMappingComment,
-} from "#/pack-slim/domain/transform";
-import type { PackSlimPackageStats, PackSlimProgressListener, PackSlimRunStats } from "#/pack-slim/domain/types";
+} from "#pack-slim/domain/transform";
+import type { PackSlimPackageStats, PackSlimProgressListener, PackSlimRunStats } from "#pack-slim/domain/types";
 
 /**
  * A pack-slim run request paired with an optional progress listener.

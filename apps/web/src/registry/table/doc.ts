@@ -1,8 +1,8 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { TableActions } from "#/registry/table/actions.example";
-import { TableFooterExample } from "#/registry/table/footer.example";
-import { TableRtl } from "#/registry/table/rtl.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { TableActions } from "#registry/table/actions.example";
+import { TableFooterExample } from "#registry/table/footer.example";
+import { TableRtl } from "#registry/table/rtl.example";
 
 export const tableDoc: ComponentDoc = {
   usage: docUsage("table"),

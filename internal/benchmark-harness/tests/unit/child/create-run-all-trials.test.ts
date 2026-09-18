@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createRunAllTrials } from "#/child/create-run-all-trials";
-import { BENCH_MODE_ENV_KEY, BENCH_TRIALS_ENV_KEY } from "#/shared/env-keys";
+import { createRunAllTrials } from "#child/create-run-all-trials";
+import { BENCH_MODE_ENV_KEY, BENCH_TRIALS_ENV_KEY } from "#shared/env-keys";
 
 const BENCH_DEFAULTS = { time: 1, iterations: 1, warmupTime: 0, warmupIterations: 0 };
 

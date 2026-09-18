@@ -4,9 +4,9 @@
 import "reflect-metadata";
 import { container as tsyringeRootContainer, inject, injectable, Lifecycle } from "tsyringe";
 
-import { TO_SELF_BATCH, TO_SELF_BINDING } from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import { TO_SELF_BATCH, TO_SELF_BINDING } from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 @injectable()
 class SelfBoundLeaf {

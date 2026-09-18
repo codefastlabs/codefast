@@ -6,14 +6,14 @@ import {
   setResponseHeader,
 } from "@tanstack/react-start/server";
 
-import type { ConsentCategory, InitialConsent } from "#/core/consent";
-import type { ConsentReceipt, ConsentReceiptInput } from "#/core/consent-receipt";
-import { isConsentReceiptInput } from "#/core/consent-receipt";
-import type { AnonymousIdCookieOptions } from "#/server/anonymous-id-cookie";
-import { resolveAnonymousIdCookie, resolveClearAnonymousIdCookie } from "#/server/anonymous-id-cookie";
-import { buildConsentReceipt } from "#/server/consent-receipt";
-import type { ReceiptStore } from "#/server/consent-receipt-store";
-import { resolveInitialConsent } from "#/server/initial-consent";
+import type { ConsentCategory, InitialConsent } from "#core/consent";
+import type { ConsentReceipt, ConsentReceiptInput } from "#core/consent-receipt";
+import { isConsentReceiptInput } from "#core/consent-receipt";
+import type { AnonymousIdCookieOptions } from "#server/anonymous-id-cookie";
+import { resolveAnonymousIdCookie, resolveClearAnonymousIdCookie } from "#server/anonymous-id-cookie";
+import { buildConsentReceipt } from "#server/consent-receipt";
+import type { ReceiptStore } from "#server/consent-receipt-store";
+import { resolveInitialConsent } from "#server/initial-consent";
 
 /**
  * Options for `resolveInitialConsentFromRequest`.

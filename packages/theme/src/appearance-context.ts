@@ -1,7 +1,7 @@
 import type { Context } from "react";
 import { createContext } from "react";
 
-import type { AppearanceContextValue } from "#/appearance";
+import type { AppearanceContextValue } from "#appearance";
 
 // ── Context ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 

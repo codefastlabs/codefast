@@ -1,11 +1,11 @@
-import { OVERLAY_DASHES, OVERLAY_POINT_STYLES } from "#/app/lib/colors";
-import type { PaletteEntry } from "#/app/lib/colors";
-import { fmtHzCompact, fmtRatio } from "#/app/lib/format";
-import { ratioFrom } from "#/app/lib/metrics";
-import type { OverlaySeries } from "#/app/lib/overlay";
-import { rowShortLabel } from "#/app/lib/overlay";
-import { cn } from "#/app/lib/utils";
-import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
+import { OVERLAY_DASHES, OVERLAY_POINT_STYLES } from "#app/lib/colors";
+import type { PaletteEntry } from "#app/lib/colors";
+import { fmtHzCompact, fmtRatio } from "#app/lib/format";
+import { ratioFrom } from "#app/lib/metrics";
+import type { OverlaySeries } from "#app/lib/overlay";
+import { rowShortLabel } from "#app/lib/overlay";
+import { cn } from "#app/lib/utils";
+import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#types";
 
 interface OverlayLegendProps {
   hiddenRows: ReadonlyArray<string>;

@@ -8,9 +8,9 @@
 import "reflect-metadata";
 import { InjectionToken, ReflectiveInjector } from "injection-js";
 
-import { CHILD_DEPTHS, CHILD_RESOLVE_BATCH, childDepthResolveDescriptor } from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import { CHILD_DEPTHS, CHILD_RESOLVE_BATCH, childDepthResolveDescriptor } from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildChildDepthResolveScenario(depth: number): BenchScenario {
   const childScopeLeafToken = new InjectionToken<number>(`bench-injection-js-child${String(depth)}-leaf`);

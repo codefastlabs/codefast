@@ -1,4 +1,4 @@
-import { Container, tag, token } from "#/index";
+import { Container, tag, token } from "#index";
 
 interface Engine {
   readonly id: string;

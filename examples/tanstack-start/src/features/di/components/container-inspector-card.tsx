@@ -1,7 +1,7 @@
 import { Badge } from "@codefast/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 
-import type { BindingInfo, TransientProof } from "#/features/di/server/tasks";
+import type { BindingInfo, TransientProof } from "#features/di/server/tasks";
 
 interface ContainerInspectorCardProps {
   bindings: Array<BindingInfo>;

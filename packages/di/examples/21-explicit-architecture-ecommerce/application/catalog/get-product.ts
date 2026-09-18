@@ -2,11 +2,11 @@
 
 import { inject, injectable, token } from "@codefast/di";
 
-import { ProductRepositoryToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
-import type { ProductRepository } from "#/examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
-import { ProductNotFoundError } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/catalog-errors";
-import type { Product } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product";
-import { toProductId } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
+import { ProductRepositoryToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
+import type { ProductRepository } from "#examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
+import { ProductNotFoundError } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/catalog-errors";
+import type { Product } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product";
+import { toProductId } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
 
 /** Loads one product by id through the repository port. */
 @injectable([inject(ProductRepositoryToken)])

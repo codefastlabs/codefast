@@ -1,11 +1,11 @@
-import { loadCodefastConfig } from "#/core/config";
-import type { AppError } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { ok } from "#/core/result";
-import { resolveProjectRoot } from "#/core/workspace/resolver";
-import type { TagCommandPrelude } from "#/tag/domain/types";
-import { resolveProvidedTagTargetPath } from "#/tag/target/resolve-path";
+import { loadCodefastConfig } from "#core/config";
+import type { AppError } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { ok } from "#core/result";
+import { resolveProjectRoot } from "#core/workspace/resolver";
+import type { TagCommandPrelude } from "#tag/domain/types";
+import { resolveProvidedTagTargetPath } from "#tag/target/resolve-path";
 
 /**
  * Resolves the repo root, config, and optional target path into the prelude a tag run starts from.

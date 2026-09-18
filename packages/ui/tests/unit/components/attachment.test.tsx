@@ -11,7 +11,7 @@ import {
   AttachmentMedia,
   AttachmentTitle,
   AttachmentTrigger,
-} from "#/components/attachment";
+} from "#components/attachment";
 
 describe("attachment", () => {
   describe("Attachment component", () => {

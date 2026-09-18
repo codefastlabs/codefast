@@ -1,8 +1,8 @@
-import { extremeTestProps, extremeVariants } from "#/fixtures/extreme";
-import { EXTREME_WITH_MERGE, EXTREME_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import { codefastTvFn } from "#/lib/tv-shims";
-import type { BenchScenario } from "#/scenarios/types";
+import { extremeTestProps, extremeVariants } from "#fixtures/extreme";
+import { EXTREME_WITH_MERGE, EXTREME_WITHOUT_MERGE } from "#fixtures/scenario-parity";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#harness/bench-options";
+import { codefastTvFn } from "#lib/tv-shims";
+import type { BenchScenario } from "#scenarios/types";
 
 const codefastNoMerge = codefastTvFn(extremeVariants, TV_MERGE_DISABLED);
 const codefastWithMerge = codefastTvFn(extremeVariants, TV_MERGE_ENABLED);

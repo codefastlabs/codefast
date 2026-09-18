@@ -1,4 +1,4 @@
-import type { AnalyzeReport } from "#/arrange/domain/types";
+import type { AnalyzeReport } from "#arrange/domain/types";
 
 /**
  * Machine-readable `arrange inspect` report for `--json`.

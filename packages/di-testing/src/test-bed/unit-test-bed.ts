@@ -5,13 +5,13 @@
 import type { Constructor, Container, DependencyKey, InjectOptions, TokenValue } from "@codefast/di";
 import { tokenName } from "@codefast/di";
 
-import type { BoundMock } from "#/discovery/mock-binder";
-import { criteriaEquals, normalizeCriteria } from "#/discovery/mock-binder";
-import { ExposureError, SealedDependencyError, UndeclaredDependencyError } from "#/errors/errors";
-import type { Mocked } from "#/mocking/auto-mock";
-import { MOCK_RESET } from "#/mocking/auto-mock";
-import type { MockFunction } from "#/mocking/mock-factory";
-import type { Spy } from "#/mocking/spy";
+import type { BoundMock } from "#discovery/mock-binder";
+import { criteriaEquals, normalizeCriteria } from "#discovery/mock-binder";
+import { ExposureError, SealedDependencyError, UndeclaredDependencyError } from "#errors/errors";
+import type { Mocked } from "#mocking/auto-mock";
+import { MOCK_RESET } from "#mocking/auto-mock";
+import type { MockFunction } from "#mocking/mock-factory";
+import type { Spy } from "#mocking/spy";
 
 /**
  * A lookup from a dependency's token or class to the mock the unit was built with.

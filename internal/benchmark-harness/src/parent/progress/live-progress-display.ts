@@ -1,11 +1,11 @@
 /** In-place progress block for a TTY: one redrawn line per library, logs kept above it. */
-import type { ProgressDisplay } from "#/parent/progress/progress-display";
-import type { LibraryProgress, RegisterLibraryOptions } from "#/parent/progress/progress-tracker";
-import { ProgressTracker } from "#/parent/progress/progress-tracker";
-import { renderProgressFrame } from "#/parent/progress/render-progress-frame";
-import type { Palette } from "#/shared/palette";
-import { PLAIN_PALETTE } from "#/shared/palette";
-import type { BenchProgressEvent } from "#/shared/progress";
+import type { ProgressDisplay } from "#parent/progress/progress-display";
+import type { LibraryProgress, RegisterLibraryOptions } from "#parent/progress/progress-tracker";
+import { ProgressTracker } from "#parent/progress/progress-tracker";
+import { renderProgressFrame } from "#parent/progress/render-progress-frame";
+import type { Palette } from "#shared/palette";
+import { PLAIN_PALETTE } from "#shared/palette";
+import type { BenchProgressEvent } from "#shared/progress";
 
 const REDRAW_INTERVAL_MS = 100;
 const FALLBACK_WIDTH = 80;

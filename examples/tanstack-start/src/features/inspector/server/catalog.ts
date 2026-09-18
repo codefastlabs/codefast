@@ -2,9 +2,9 @@
 import type { BindingIdentifier, Container } from "@codefast/di";
 import { token, whenParentIs } from "@codefast/di";
 
-import type { Region, SlotTags, TenantContext } from "#/features/inspector/shared/tenant";
-import { REGION_TAG, TIER_TAG } from "#/features/inspector/shared/tenant";
-import { paymentRequest, REGIONS } from "#/features/inspector/shared/tenant";
+import type { Region, SlotTags, TenantContext } from "#features/inspector/shared/tenant";
+import { REGION_TAG, TIER_TAG } from "#features/inspector/shared/tenant";
+import { paymentRequest, REGIONS } from "#features/inspector/shared/tenant";
 
 export interface Storage {
   readonly adapter: string;

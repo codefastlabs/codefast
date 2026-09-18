@@ -138,4 +138,4 @@ export function shadeOf(hex: string, step: number): string {
   );
 }
 
-export { PAN_PIXELS_X, ZOOM_STEP_X } from "#/app/lib/constants";
+export { PAN_PIXELS_X, ZOOM_STEP_X } from "#app/lib/constants";

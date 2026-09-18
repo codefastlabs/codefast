@@ -4,8 +4,8 @@
 import "reflect-metadata";
 import { container as tsyringeRootContainer } from "tsyringe";
 
-import { MISCONFIGURED_MISSING_BINDING } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { MISCONFIGURED_MISSING_BINDING } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 const missingToken = Symbol("bench-tsyringe-failure-missing");
 

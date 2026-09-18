@@ -2,28 +2,28 @@
 
 import { Module } from "@codefast/di";
 
-import { AccountRepositoryToken } from "#/examples/20-explicit-architecture/application/ports/account-repository.port";
-import { ClockToken } from "#/examples/20-explicit-architecture/application/ports/clock.port";
+import { AccountRepositoryToken } from "#examples/20-explicit-architecture/application/ports/account-repository.port";
+import { ClockToken } from "#examples/20-explicit-architecture/application/ports/clock.port";
 import {
   EventHandlerToken,
   EventPublisherToken,
-} from "#/examples/20-explicit-architecture/application/ports/events.port";
-import { IdGeneratorToken } from "#/examples/20-explicit-architecture/application/ports/id-generator.port";
-import { RequestContextToken } from "#/examples/20-explicit-architecture/application/ports/request-context.port";
+} from "#examples/20-explicit-architecture/application/ports/events.port";
+import { IdGeneratorToken } from "#examples/20-explicit-architecture/application/ports/id-generator.port";
+import { RequestContextToken } from "#examples/20-explicit-architecture/application/ports/request-context.port";
 import {
   AuditLogToken,
   ComplianceToken,
   FraudEngineToken,
   MetricsToken,
-} from "#/examples/20-explicit-architecture/composition/tokens";
-import { AuditLogHandler } from "#/examples/20-explicit-architecture/infrastructure/audit-log-handler";
-import { ComplianceLogHandler } from "#/examples/20-explicit-architecture/infrastructure/compliance-log-handler";
-import { FanOutEventPublisher } from "#/examples/20-explicit-architecture/infrastructure/fan-out-event-publisher";
-import { FraudEngineHandler } from "#/examples/20-explicit-architecture/infrastructure/fraud-engine-handler";
-import { InMemoryAccountRepository } from "#/examples/20-explicit-architecture/infrastructure/in-memory-account-repository";
-import { MetricsHandler } from "#/examples/20-explicit-architecture/infrastructure/metrics-handler";
-import { SequentialIdGenerator } from "#/examples/20-explicit-architecture/infrastructure/sequential-id-generator";
-import { SystemClock } from "#/examples/20-explicit-architecture/infrastructure/system-clock";
+} from "#examples/20-explicit-architecture/composition/tokens";
+import { AuditLogHandler } from "#examples/20-explicit-architecture/infrastructure/audit-log-handler";
+import { ComplianceLogHandler } from "#examples/20-explicit-architecture/infrastructure/compliance-log-handler";
+import { FanOutEventPublisher } from "#examples/20-explicit-architecture/infrastructure/fan-out-event-publisher";
+import { FraudEngineHandler } from "#examples/20-explicit-architecture/infrastructure/fraud-engine-handler";
+import { InMemoryAccountRepository } from "#examples/20-explicit-architecture/infrastructure/in-memory-account-repository";
+import { MetricsHandler } from "#examples/20-explicit-architecture/infrastructure/metrics-handler";
+import { SequentialIdGenerator } from "#examples/20-explicit-architecture/infrastructure/sequential-id-generator";
+import { SystemClock } from "#examples/20-explicit-architecture/infrastructure/system-clock";
 
 // Stands in for a real per-request id source; scoped caching gives each unit of work its own value.
 let requestSequence = 0;

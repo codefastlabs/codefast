@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { Filesystem } from "#/core/filesystem/filesystem";
+import type { Filesystem } from "#core/filesystem/filesystem";
 
 /**
  * Canonicalizes the user-provided target path, or returns `undefined` when none was given.

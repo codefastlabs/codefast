@@ -1,7 +1,7 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps, ReactNode } from "react";
 
-import { ComponentCardMeta } from "#/features/components-catalog/components/gallery/component-card-meta";
+import { ComponentCardMeta } from "#features/components-catalog/components/gallery/component-card-meta";
 
 interface PreviewCardProps extends ComponentProps<"div"> {
   name: string;

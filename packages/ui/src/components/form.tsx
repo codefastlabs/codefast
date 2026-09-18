@@ -6,8 +6,8 @@ import { useId } from "react";
 import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
 import { Controller, FormProvider, useFormContext, useFormState } from "react-hook-form";
 
-import { Label } from "#/components/label";
-import { cn } from "#/lib/utils";
+import { Label } from "#components/label";
+import { cn } from "#lib/utils";
 
 // ── Component: Form ──────────────────────────────────────────────────────────────────────────────────────────────────
 

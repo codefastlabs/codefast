@@ -2,8 +2,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { runImportsAudit } from "#/audit/imports/run";
-import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
+import { runImportsAudit } from "#audit/imports/run";
+import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
 
 describe("runImportsAudit", () => {
   it("matches allowlist keys as repo-relative posix paths", () => {

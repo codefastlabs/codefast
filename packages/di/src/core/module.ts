@@ -1,6 +1,6 @@
-import type { BindToBuilder } from "#/core/binding";
-import type { Token } from "#/core/token";
-import type { Constructor } from "#/core/types";
+import type { BindToBuilder } from "#core/binding";
+import type { Token } from "#core/token";
+import type { Constructor } from "#core/types";
 
 // ── Branded types (runtime symbols for branding) ─────────────────────────────────────────────────────────────────────
 

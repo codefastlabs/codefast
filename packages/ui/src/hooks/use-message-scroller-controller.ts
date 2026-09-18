@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import type { RefObject } from "react";
 
-import { useMessageScrollerCommands } from "#/hooks/use-message-scroller-commands";
-import { useMessageScrollerRefs } from "#/hooks/use-message-scroller-refs";
-import type { MessageScrollerRefs } from "#/hooks/use-message-scroller-refs";
+import { useMessageScrollerCommands } from "#hooks/use-message-scroller-commands";
+import { useMessageScrollerRefs } from "#hooks/use-message-scroller-refs";
+import type { MessageScrollerRefs } from "#hooks/use-message-scroller-refs";
 import {
   getContentBottom,
   getElementTop,
@@ -19,21 +19,21 @@ import {
   getNewScrollAnchor,
   getUnanchoredScrollAnchor,
   hasMultipleNewScrollAnchors,
-} from "#/lib/message-scroller/geometry";
+} from "#lib/message-scroller/geometry";
 import {
   DEFAULT_SCROLL_EDGE_THRESHOLD,
   DEFAULT_SCROLL_MARGIN,
   DEFAULT_SCROLL_PREVIOUS_ITEM_PEEK,
   EMPTY_MESSAGE_SCROLLER_VISIBILITY_STATE,
   SCROLL_POSITION_EPSILON,
-} from "#/lib/message-scroller/types";
+} from "#lib/message-scroller/types";
 import type {
   MessageScrollerContextValue,
   MessageScrollerProviderProps,
   MessageScrollerRegisterMessage,
   MessageScrollerScrollEdges,
   MessageScrollerScrollable,
-} from "#/lib/message-scroller/types";
+} from "#lib/message-scroller/types";
 
 // Builds a ref callback that stores the node and runs onMount once it attaches.
 function useElementRef(elementRef: RefObject<HTMLDivElement | null>, onMount: () => void) {

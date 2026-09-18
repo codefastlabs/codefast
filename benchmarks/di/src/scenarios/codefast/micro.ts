@@ -15,7 +15,7 @@
  */
 import { Container, injectable, optional, token } from "@codefast/di";
 
-import { isFreshEachResolve } from "#/fixtures/sanity";
+import { isFreshEachResolve } from "#fixtures/sanity";
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
@@ -27,9 +27,9 @@ import {
   SINGLETON_CLASS_1_DEP,
   SLOT_COUNTS,
   TRANSIENT_CLASS_1_DEP,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 @injectable()
 class MicroLeafDependency {}

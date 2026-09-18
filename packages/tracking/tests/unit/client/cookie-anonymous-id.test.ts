@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createCookieAnonymousId } from "#/client/cookie-anonymous-id";
+import { createCookieAnonymousId } from "#client/cookie-anonymous-id";
 
 const COOKIE_NAME = "test-anon-id";
 

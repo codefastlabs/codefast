@@ -2,8 +2,8 @@
 
 import { token } from "@codefast/di";
 
-import type { Account } from "#/examples/20-explicit-architecture/domain/account";
-import type { AccountId } from "#/examples/20-explicit-architecture/domain/account-id";
+import type { Account } from "#examples/20-explicit-architecture/domain/account";
+import type { AccountId } from "#examples/20-explicit-architecture/domain/account-id";
 
 /** Stores and reloads `Account` aggregates, hiding whatever storage engine sits behind it. */
 export interface AccountRepository {

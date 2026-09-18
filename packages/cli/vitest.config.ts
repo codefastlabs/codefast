@@ -10,7 +10,7 @@ import { defineConfig } from "vitest/config";
  *   tests/types/**        — pre-wired (none yet)
  */
 export default defineConfig({
-  // Vitest 4 resolves test modules through the SSR pipeline; gate `#/` on the
+  // Vitest 4 resolves test modules through the SSR pipeline; gate `#` on the
   // `source` condition there so tests run against `src`, not the built `dist`.
   ssr: {
     resolve: {

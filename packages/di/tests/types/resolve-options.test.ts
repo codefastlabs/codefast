@@ -1,11 +1,11 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { DEFAULT_BINDING_SLOT } from "#/core/binding";
-import type { BindingTag, ResolveOptions } from "#/core/types";
-import type { InjectableOptions } from "#/decorators/injectable";
-import type { InjectOptions } from "#/injection/descriptor";
-import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/injection/resolve-options";
-import type { GraphOptions } from "#/introspection/dependency-graph";
+import { DEFAULT_BINDING_SLOT } from "#core/binding";
+import type { BindingTag, ResolveOptions } from "#core/types";
+import type { InjectableOptions } from "#decorators/injectable";
+import type { InjectOptions } from "#injection/descriptor";
+import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#injection/resolve-options";
+import type { GraphOptions } from "#introspection/dependency-graph";
 
 describe("ResolveOptions helpers (EOPT-friendly)", () => {
   it("bindingSlotToResolveOptions returns undefined for default slot", () => {

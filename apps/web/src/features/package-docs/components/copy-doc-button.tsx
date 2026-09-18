@@ -3,9 +3,9 @@ import { useCopyToClipboard } from "@codefast/ui/hooks/use-copy-to-clipboard";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import type { DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
-import { docAnalyticsName, docPath } from "#/features/package-docs/lib/doc-kinds";
-import { track } from "#/features/tracking/lib/tracking";
+import type { DocKindSlug } from "#features/package-docs/lib/doc-kinds";
+import { docAnalyticsName, docPath } from "#features/package-docs/lib/doc-kinds";
+import { track } from "#features/tracking/lib/tracking";
 
 interface CopyDocButtonProps extends Omit<ComponentProps<typeof Button>, "children" | "onClick"> {
   readonly pkg: string;

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { buildScenarioInventoryFromListings, formatCoverageLines } from "#/parent/run-bench-listing-main";
-import type { BenchSubprocessConfig } from "#/shared/config";
-import type { ScenarioListing } from "#/shared/protocol";
+import { buildScenarioInventoryFromListings, formatCoverageLines } from "#parent/run-bench-listing-main";
+import type { BenchSubprocessConfig } from "#shared/config";
+import type { ScenarioListing } from "#shared/protocol";
 
 function config(libraryName: string, features?: ReadonlyArray<string>): BenchSubprocessConfig {
   return {

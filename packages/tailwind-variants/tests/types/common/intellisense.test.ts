@@ -1,7 +1,7 @@
 import { expectTypeOf } from "vitest";
 
-import type { VariantProps, VariantValue } from "#/index";
-import { tv } from "#/index";
+import type { VariantProps, VariantValue } from "#index";
+import { tv } from "#index";
 
 /**
  * What an editor offers at each authoring site is exactly the literal union the checker holds there,

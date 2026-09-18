@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { collectClassNameFoldTargets } from "#/arrange/simplify/fold-targets";
-import type { FileClassNameProbe, VariantClassNameAcceptance } from "#/arrange/simplify/variant-classname-probe";
-import { parseDomainSourceFile } from "#/arrange/source-parse";
-import { applyEditsDescending } from "#/core/source-text-edit";
+import { collectClassNameFoldTargets } from "#arrange/simplify/fold-targets";
+import type { FileClassNameProbe, VariantClassNameAcceptance } from "#arrange/simplify/variant-classname-probe";
+import { parseDomainSourceFile } from "#arrange/source-parse";
+import { applyEditsDescending } from "#core/source-text-edit";
 
 function probeReturning(acceptance: VariantClassNameAcceptance | null): FileClassNameProbe {
   return { classNameAcceptance: () => acceptance };
@@ -17,7 +17,7 @@ function fold(sourceText: string, probe: FileClassNameProbe): string {
   return edits.length > 0 ? applyEditsDescending(sourceText, edits) : sourceText;
 }
 
-const importCn = `import { cn } from "#/lib/utils";`;
+const importCn = `import { cn } from "#lib/utils";`;
 const acceptsBoth = probeReturning({ acceptsString: true, acceptsArray: true });
 
 describe("simplify className fold", () => {

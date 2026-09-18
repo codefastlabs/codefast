@@ -1,8 +1,8 @@
 /** The `Product` entity — a catalog item that owns its own stock invariant. */
 
-import { OutOfStockError } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/catalog-errors";
-import type { ProductId } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
-import type { Money } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/money";
+import { OutOfStockError } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/catalog-errors";
+import type { ProductId } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
+import type { Money } from "#examples/21-explicit-architecture-ecommerce/domain/shared/money";
 
 /** A sellable catalog item; stock only decreases through `reserve`, which enforces availability. */
 export class Product {

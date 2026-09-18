@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode, RefObject } from "react";
 
-import type { UseRenderComponentProps } from "#/lib/use-render";
+import type { UseRenderComponentProps } from "#lib/use-render";
 
 /**
  * Default scrollEdgeThreshold. Sub-pixel tolerance so edge detection does not

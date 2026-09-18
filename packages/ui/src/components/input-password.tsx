@@ -2,7 +2,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import type { ComponentProps, JSX, MouseEventHandler } from "react";
 import { useCallback, useState } from "react";
 
-import { InputGroup, InputGroupButton, InputGroupInput } from "#/components/input-group";
+import { InputGroup, InputGroupButton, InputGroupInput } from "#components/input-group";
 
 // ── Component: InputPassword ─────────────────────────────────────────────────────────────────────────────────────────
 

@@ -6,8 +6,8 @@
  */
 import { Container, injectable } from "@codefast/di";
 
-import { BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 @injectable()
 class BootConfig {

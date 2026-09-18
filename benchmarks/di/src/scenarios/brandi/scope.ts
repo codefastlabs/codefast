@@ -12,16 +12,16 @@
  */
 import { createContainer, token } from "brandi";
 
-import { isSharedWithinScopeFreshAcross } from "#/fixtures/sanity";
+import { isSharedWithinScopeFreshAcross } from "#fixtures/sanity";
 import {
   CHILD_DEPTHS,
   CHILD_RESOLVE_BATCH,
   childDepthResolveDescriptor,
   SCOPED_BINDING_PER_CHILD,
   SCOPED_PER_CHILD_BATCH,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildChildDepthResolveScenario(depth: number): BenchScenario {
   const childScopeLeafToken = token<number>(`bench-brandi-child${String(depth)}-leaf`);

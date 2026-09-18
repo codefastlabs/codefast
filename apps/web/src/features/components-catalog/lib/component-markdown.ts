@@ -1,9 +1,9 @@
-import { anatomyToText } from "#/features/components-catalog/lib/anatomy";
-import { INSTALL_COMMAND } from "#/lib/install";
-import { absoluteUrl } from "#/lib/seo";
-import type { ComponentMeta } from "#/registry/_core/components";
-import { COMPONENT_BY_SLUG, componentImportLabel } from "#/registry/_core/components";
-import type { ResolvedComponentDoc } from "#/registry/_core/types";
+import { anatomyToText } from "#features/components-catalog/lib/anatomy";
+import { INSTALL_COMMAND } from "#lib/install";
+import { absoluteUrl } from "#lib/seo";
+import type { ComponentMeta } from "#registry/_core/components";
+import { COMPONENT_BY_SLUG, componentImportLabel } from "#registry/_core/components";
+import type { ResolvedComponentDoc } from "#registry/_core/types";
 
 /** Escape a value for use inside a Markdown table cell (pipes break columns). */
 function escapeCell(value: string): string {

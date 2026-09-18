@@ -1,14 +1,14 @@
 import path from "node:path";
 
-import type { ImportPolicyFileViolations, ImportsAuditResult } from "#/audit/domain/types";
-import { defaultImportPolicyRules } from "#/audit/imports/domain/import-policy";
-import { auditImportPolicySource } from "#/audit/imports/domain/import-policy";
-import { AppError, messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { createAnyGlobMatcher } from "#/core/glob";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { walkTsxFiles } from "#/core/workspace/typescript-walk";
+import type { ImportPolicyFileViolations, ImportsAuditResult } from "#audit/domain/types";
+import { defaultImportPolicyRules } from "#audit/imports/domain/import-policy";
+import { auditImportPolicySource } from "#audit/imports/domain/import-policy";
+import { AppError, messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { createAnyGlobMatcher } from "#core/glob";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { walkTsxFiles } from "#core/workspace/typescript-walk";
 
 /**
  * Scans a target path for import-policy violations, applying each rule only to files in its scope.

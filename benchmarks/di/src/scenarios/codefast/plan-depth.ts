@@ -22,8 +22,8 @@
 import type { Token } from "@codefast/di";
 import { Container, injectable, token } from "@codefast/di";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 const SHALLOW_CHAIN_DEPTH = 24;
 const DEEP_CHAIN_DEPTH = 40;

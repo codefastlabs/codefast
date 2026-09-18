@@ -1,7 +1,7 @@
 import type { RefObject } from "react";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 
-import type { ViewState } from "#/app/lib/hash";
+import type { ViewState } from "#app/lib/hash";
 
 /**
  * The command palette's built-in actions, in display order.

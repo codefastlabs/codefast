@@ -1,6 +1,6 @@
-import { SectionHeader } from "#/components/shared/section-header";
-import { BrandSwatch } from "#/features/brand/components/brand-swatch";
-import { BRAND_COLORS, NEUTRAL_COLORS } from "#/features/brand/data";
+import { SectionHeader } from "#components/shared/section-header";
+import { BrandSwatch } from "#features/brand/components/brand-swatch";
+import { BRAND_COLORS, NEUTRAL_COLORS } from "#features/brand/data";
 
 /** The palette: one hue for the brand, neutrals for everything else. */
 export function BrandColorSection() {

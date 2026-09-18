@@ -1,10 +1,10 @@
 import { quantile, sortAscending } from "@internal/benchmark-harness/report/quantiles";
 import { NOISY_IQR_FRACTION } from "@internal/benchmark-harness/report/reliability";
 
-import type { PaletteEntry } from "#/app/lib/colors";
-import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";
-import { fmtHz, fmtPctChange, fmtRatio, formatLocal } from "#/app/lib/format";
-import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
+import type { PaletteEntry } from "#app/lib/colors";
+import { DISPERSION_IQR_ALERT } from "#app/lib/constants";
+import { fmtHz, fmtPctChange, fmtRatio, formatLocal } from "#app/lib/format";
+import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#types";
 
 /**
  * How loud a library's worst per-trial IQR is, tiered on the harness's noise thresholds.

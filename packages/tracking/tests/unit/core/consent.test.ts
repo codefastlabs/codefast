@@ -8,8 +8,8 @@ import {
   resolveConsentMode,
   resolveDefaultConsent,
   resolveEffectiveConsent,
-} from "#/core/consent";
-import { createMemoryConsentStorage } from "#/tests/unit/core/support/memory-consent-storage";
+} from "#core/consent";
+import { createMemoryConsentStorage } from "#tests/unit/core/support/memory-consent-storage";
 
 describe("resolveConsentMode", () => {
   it.each([

@@ -15,7 +15,7 @@ import {
 import { OBSERVATIONS_FILE_NAME } from "@internal/benchmark-harness/shared/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "@internal/benchmark-harness/shared/protocol";
 
-import { DEFAULT_MAX_RUNS } from "#/constants";
+import { DEFAULT_MAX_RUNS } from "#constants";
 import type {
   BenchServerOptions,
   ScenarioFacets,
@@ -25,7 +25,7 @@ import type {
   EmbeddedScenarioChange,
   EmbeddedScenarioSeries,
   EmbeddedViewerPayload,
-} from "#/types";
+} from "#types";
 
 // ── Run scanning ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

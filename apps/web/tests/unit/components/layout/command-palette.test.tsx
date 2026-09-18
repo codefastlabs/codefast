@@ -2,7 +2,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { CommandPalette } from "#/components/layout/command-palette";
+import { CommandPalette } from "#components/layout/command-palette";
 
 const { track, navigate, getPackages } = vi.hoisted(() => ({
   track: vi.fn(),
@@ -10,9 +10,9 @@ const { track, navigate, getPackages } = vi.hoisted(() => ({
   getPackages: vi.fn(),
 }));
 
-vi.mock("#/features/tracking/lib/tracking", () => ({ track }));
+vi.mock("#features/tracking/lib/tracking", () => ({ track }));
 // The real server function would fetch; the palette only needs the resolved list.
-vi.mock("#/features/package-docs/lib/package-docs", () => ({ getPackages }));
+vi.mock("#features/package-docs/lib/package-docs", () => ({ getPackages }));
 
 vi.mock(import("@tanstack/react-router"), async (importOriginal) => ({
   ...(await importOriginal()),

@@ -4,16 +4,16 @@ import { BracesIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import { Suspense, lazy, useState } from "react";
 
-import { CodeBlock } from "#/components/shared/code-block";
-import { LazyVisible } from "#/components/shared/lazy-visible";
-import { PreviewSkeleton } from "#/components/shared/preview-skeleton";
-import { ImportsFold } from "#/features/home/components/imports-fold";
-import { SHOP_TESTS } from "#/features/home/demos/shop-tests";
-import type { TestBedSnippet } from "#/features/home/lib/home-snippets";
+import { CodeBlock } from "#components/shared/code-block";
+import { LazyVisible } from "#components/shared/lazy-visible";
+import { PreviewSkeleton } from "#components/shared/preview-skeleton";
+import { ImportsFold } from "#features/home/components/imports-fold";
+import { SHOP_TESTS } from "#features/home/demos/shop-tests";
+import type { TestBedSnippet } from "#features/home/lib/home-snippets";
 
 // Loaded when the card scrolls near, so @codefast/di-testing stays out of the home page's first chunk.
 const TestBedRunner = lazy(() =>
-  import("#/features/home/components/test-bed-runner").then((module) => ({ default: module.TestBedRunner })),
+  import("#features/home/components/test-bed-runner").then((module) => ({ default: module.TestBedRunner })),
 );
 
 interface TestBedCardProps extends Omit<ComponentProps<"div">, "children"> {

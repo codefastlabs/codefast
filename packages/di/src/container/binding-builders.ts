@@ -17,20 +17,20 @@ import type {
   SingletonBindingBuilder,
   SingletonLifecycleBuilder,
   TransientBindingBuilder,
-} from "#/core/binding";
+} from "#core/binding";
 import {
   clearBindingFrame,
   createBindingSlot,
   DEFAULT_BINDING_SLOT,
   generateBindingId,
   NO_INSTANCE,
-} from "#/core/binding";
-import { mergingConstraintRequirements } from "#/core/constraint-requirement";
-import type { BindingRegistry } from "#/core/registry";
-import type { BindingTag } from "#/core/tag";
-import { slotName } from "#/core/tag";
-import type { Token } from "#/core/token";
-import { tokenName } from "#/core/token";
+} from "#core/binding";
+import { mergingConstraintRequirements } from "#core/constraint-requirement";
+import type { BindingRegistry } from "#core/registry";
+import type { BindingTag } from "#core/tag";
+import { slotName } from "#core/tag";
+import type { Token } from "#core/token";
+import { tokenName } from "#core/token";
 import type {
   ActivationHandler,
   BindingConstraint,
@@ -41,16 +41,16 @@ import type {
   DeactivationHandler,
   ResolutionContext,
   ResolutionFrame,
-} from "#/core/types";
+} from "#core/types";
 import {
   ChainAlreadyRegisteredError,
   ChainNotRegisteredError,
   ManyBindingSlotError,
   SelfBindingRequiresClassError,
-} from "#/errors/errors";
-import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#/injection/descriptor";
-import { normalizeToDescriptor } from "#/injection/descriptor";
-import type { ScopeManager } from "#/lifecycle/scope-manager";
+} from "#errors/errors";
+import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#injection/descriptor";
+import { normalizeToDescriptor } from "#injection/descriptor";
+import type { ScopeManager } from "#lifecycle/scope-manager";
 
 /** One criterion per key: re-tagging the same key replaces it rather than asking for both values. */
 function updateSlotTag(slot: BindingSlot, criterion: BindingTag): BindingSlot {

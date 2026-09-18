@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#/*": "./*.ts"
+    "#*": "./*.ts"
   },
   "scripts": {
     "bench": "turbo run bench --concurrency=1",

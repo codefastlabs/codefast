@@ -5,7 +5,7 @@ import {
   isPathLinkTarget,
   linkTargetHead,
   scanLinkReferences,
-} from "#/audit/comments/domain/link-references";
+} from "#audit/comments/domain/link-references";
 
 const link = (target: string): string => "{@" + `link ${target}}`;
 

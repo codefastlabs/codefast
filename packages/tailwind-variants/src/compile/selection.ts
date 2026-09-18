@@ -8,8 +8,8 @@
  * `"true"` share a group key while comparing differently.
  */
 
-import { toVariantKey } from "#/compile/class-values";
-import type { VariantPlan } from "#/compile/plan";
+import { toVariantKey } from "#compile/class-values";
+import type { VariantPlan } from "#compile/plan";
 
 /**
  * The selection of a call this encoder cannot represent, and which therefore must not be cached.

@@ -1,17 +1,17 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { COMPONENTS } from "#/registry/_core/components";
-import { DEMO_BY_SLUG } from "#/registry/_core/demos";
-import { DOC_SLUGS, loadDoc } from "#/registry/_core/docs";
-import { EXAMPLE_COMPONENT_BY_REF } from "#/registry/_core/examples";
-import { docDemo } from "#/registry/_core/source";
+import { COMPONENTS } from "#registry/_core/components";
+import { DEMO_BY_SLUG } from "#registry/_core/demos";
+import { DOC_SLUGS, loadDoc } from "#registry/_core/docs";
+import { EXAMPLE_COMPONENT_BY_REF } from "#registry/_core/examples";
+import { docDemo } from "#registry/_core/source";
 
 // `getHighlightedSources` is a server function; its RPC transport (and the
 // response-header write) can't run in the test runner, so delegate straight to
 // the impl here — the same highlighting code path the server executes, minus
 // the transport. This keeps `loadDoc`/`loadSource` exercising the real pipeline.
-vi.mock("#/registry/_core/highlight-source", async () => {
-  const { highlightSources } = await import("#/registry/_core/highlight-source.impl");
+vi.mock("#registry/_core/highlight-source", async () => {
+  const { highlightSources } = await import("#registry/_core/highlight-source.impl");
 
   return { getHighlightedSources: ({ data }: { data: ReadonlyArray<string> }) => highlightSources(data) };
 });

@@ -2,7 +2,7 @@
 
 import { token } from "@codefast/di";
 
-import type { DomainEvent } from "#/examples/20-explicit-architecture/domain/events";
+import type { DomainEvent } from "#examples/20-explicit-architecture/domain/events";
 
 // ── Ports ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 

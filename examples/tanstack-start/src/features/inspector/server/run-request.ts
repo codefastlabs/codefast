@@ -5,9 +5,9 @@ import type { Container } from "@codefast/di";
 import { Container as DiContainer, DiError, token } from "@codefast/di";
 import { createServerFn } from "@tanstack/react-start";
 
-import type { BootReport } from "#/features/inspector/server/boot";
-import { bindPricingConfig, warmAndReport } from "#/features/inspector/server/boot";
-import type { CatalogEntry } from "#/features/inspector/server/catalog";
+import type { BootReport } from "#features/inspector/server/boot";
+import { bindPricingConfig, warmAndReport } from "#features/inspector/server/boot";
+import type { CatalogEntry } from "#features/inspector/server/catalog";
 import {
   auditLoggerToken,
   notifierToken,
@@ -16,12 +16,12 @@ import {
   settlementToken,
   storageToken,
   tenantContextToken,
-} from "#/features/inspector/server/catalog";
-import type { Decision, NestedObservation } from "#/features/inspector/server/explain";
-import { explainSlot } from "#/features/inspector/server/explain";
-import { loadFeatureModules, riskCheckToken } from "#/features/inspector/server/feature-modules";
-import type { Region, TenantContext, Tier } from "#/features/inspector/shared/tenant";
-import { paymentRequest, REGIONS, storageRequest, TIERS } from "#/features/inspector/shared/tenant";
+} from "#features/inspector/server/catalog";
+import type { Decision, NestedObservation } from "#features/inspector/server/explain";
+import { explainSlot } from "#features/inspector/server/explain";
+import { loadFeatureModules, riskCheckToken } from "#features/inspector/server/feature-modules";
+import type { Region, TenantContext, Tier } from "#features/inspector/shared/tenant";
+import { paymentRequest, REGIONS, storageRequest, TIERS } from "#features/inspector/shared/tenant";
 
 export interface RequestInput {
   readonly region: Region;

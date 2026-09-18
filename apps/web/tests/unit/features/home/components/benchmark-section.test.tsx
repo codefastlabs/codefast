@@ -1,10 +1,10 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { BenchmarkSection } from "#/features/home/components/benchmark-section";
-import type { LedgerFacts } from "#/features/home/lib/benchmark-ledger-facts";
+import { BenchmarkSection } from "#features/home/components/benchmark-section";
+import type { LedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
 
-vi.mock("#/features/tracking/lib/tracking", () => ({ track: vi.fn() }));
+vi.mock("#features/tracking/lib/tracking", () => ({ track: vi.fn() }));
 
 afterEach(() => {
   cleanup();

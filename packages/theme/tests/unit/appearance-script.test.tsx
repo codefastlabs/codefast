@@ -3,8 +3,8 @@ import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 
-import { AppearanceScript } from "#/appearance-script";
-import { DEFAULT_APPEARANCE, STORAGE_KEY } from "#/constants";
+import { AppearanceScript } from "#appearance-script";
+import { DEFAULT_APPEARANCE, STORAGE_KEY } from "#constants";
 
 describe("AppearanceScript", () => {
   describe("rendering", () => {

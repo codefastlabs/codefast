@@ -1,9 +1,9 @@
 import type { CSSProperties } from "react";
 
-import { fmtHz, fmtHzCompact } from "#/app/lib/format";
-import type { MetaItem, MetricCardProps, MetricsResult } from "#/app/lib/metrics";
-import { cn, tv } from "#/app/lib/utils";
-import type { EmbeddedScenarioSeries } from "#/types";
+import { fmtHz, fmtHzCompact } from "#app/lib/format";
+import type { MetaItem, MetricCardProps, MetricsResult } from "#app/lib/metrics";
+import { cn, tv } from "#app/lib/utils";
+import type { EmbeddedScenarioSeries } from "#types";
 
 const iqrValue = tv({
   base: "shrink-0 font-mono tracking-[-0.02em] tabular-nums",

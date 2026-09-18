@@ -1,5 +1,5 @@
 /** The `ResolutionContext` a factory is handed, and the callbacks the resolver answers it with. */
-import type { Token } from "#/core/token";
+import type { Token } from "#core/token";
 import type {
   BindingIdentifier,
   BindingKind,
@@ -9,9 +9,9 @@ import type {
   ResolutionFrame,
   ResolutionContext,
   ResolveOptions,
-} from "#/core/types";
-import type { BranchDepth, OwnedBranchStack } from "#/resolution/path/resolution-path";
-import { UNOWNED_BRANCH } from "#/resolution/path/resolution-path";
+} from "#core/types";
+import type { BranchDepth, OwnedBranchStack } from "#resolution/path/resolution-path";
+import { UNOWNED_BRANCH } from "#resolution/path/resolution-path";
 
 // ── ResolutionContext implementation ─────────────────────────────────────────────────────────────────────────────────
 

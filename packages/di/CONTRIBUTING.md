@@ -38,7 +38,7 @@ Ground rules that bite in this package specifically:
 
 ## Write the code
 
-- Internal imports use the `#/` subpath imports declared in `package.json#imports` (e.g. `#/resolution/resolver`). Do
+- Internal imports use the `#` subpath imports declared in `package.json#imports` (e.g. `#resolution/resolver`). Do
   **not** add `compilerOptions.paths` for internal aliases.
 - Keep `import type` separate from value imports.
 - Doc comments are **TSDoc**, one concise line stating the _why_. **Never hand-write an `@since` tag** — `codefast tag`

@@ -13,9 +13,9 @@ import type {
   DomainCallExpression,
   DomainSourceFile,
   DomainTailwindClassLiteral,
-} from "#/arrange/domain/ast/ast-node";
-import type { GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
-import type { CodefastConfig } from "#/core/config/schema";
+} from "#arrange/domain/ast/ast-node";
+import type { GroupFileWorkPlan } from "#arrange/domain/grouping-service";
+import type { CodefastConfig } from "#core/config/schema";
 
 /**
  * The render-pipeline bucket a Tailwind token classifies into.

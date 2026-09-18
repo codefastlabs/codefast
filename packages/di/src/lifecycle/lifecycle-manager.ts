@@ -1,17 +1,17 @@
-import type { Binding } from "#/core/binding";
-import { getOrInsert } from "#/core/map-upsert";
-import { advanceStateEpoch } from "#/core/state-epoch";
-import type { Token } from "#/core/token";
-import { tokenName } from "#/core/token";
+import type { Binding } from "#core/binding";
+import { getOrInsert } from "#core/map-upsert";
+import { advanceStateEpoch } from "#core/state-epoch";
+import type { Token } from "#core/token";
+import { tokenName } from "#core/token";
 import type {
   ActivationHandler,
   Constructor,
   DeactivationHandler,
   DependencyKey,
   ResolutionContext,
-} from "#/core/types";
-import { AsyncActivationError, AsyncDeactivationError, InvalidMetadataError } from "#/errors/errors";
-import type { MetadataReader } from "#/metadata/metadata-types";
+} from "#core/types";
+import { AsyncActivationError, AsyncDeactivationError, InvalidMetadataError } from "#errors/errors";
+import type { MetadataReader } from "#metadata/metadata-types";
 
 /**
  * One container's registry of container-level activation and deactivation hooks, keyed by token.

@@ -1,5 +1,5 @@
-import type { ConsentRecord, ConsentStorage } from "#/core/consent";
-import { isConsentRecord } from "#/core/consent";
+import type { ConsentRecord, ConsentStorage } from "#core/consent";
+import { isConsentRecord } from "#core/consent";
 
 /**
  * `localStorage`-backed consent storage. Corrupt state, a private-mode/quota error, or no

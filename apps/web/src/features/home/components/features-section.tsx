@@ -1,8 +1,8 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps, ReactNode } from "react";
 
-import { SectionHeader } from "#/components/shared/section-header";
-import type { Feature } from "#/features/home/data";
+import { SectionHeader } from "#components/shared/section-header";
+import type { Feature } from "#features/home/data";
 
 interface FeaturesSectionProps extends Omit<ComponentProps<"section">, "children" | "title"> {
   readonly eyebrow: string;

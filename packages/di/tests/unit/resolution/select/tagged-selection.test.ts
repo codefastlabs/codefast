@@ -7,11 +7,11 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { tag } from "#/core/tag";
-import { token } from "#/core/token";
-import type { BindingConstraint } from "#/core/types";
-import { NoMatchingBindingError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { tag } from "#core/tag";
+import { token } from "#core/token";
+import type { BindingConstraint } from "#core/types";
+import { NoMatchingBindingError } from "#errors/errors";
 
 const ENV = tag<number | string>("env");
 const PROD = ENV.of("prod");

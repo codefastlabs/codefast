@@ -952,7 +952,7 @@ scattered inline conditions. Small examples: [`isInjectionDescriptor`](src/injec
 
 > **Lesson** — a `x is T` predicate is how you turn a runtime shape check into type information.
 
-**Conditional `package.json#imports`.** During development, `#/…` should mean the TypeScript in `src/`. For a consumer
+**Conditional `package.json#imports`.** During development, `#…` should mean the TypeScript in `src/`. For a consumer
 who installed the package, the same specifier must mean the built JavaScript in `dist/`. Conditional import maps let one
 specifier serve both audiences ([`package.json`](package.json)) — no `tsconfig` path aliases needed.
 

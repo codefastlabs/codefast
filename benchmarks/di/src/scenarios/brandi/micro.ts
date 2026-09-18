@@ -6,7 +6,7 @@
  */
 import { createContainer, injected, token } from "brandi";
 
-import { isFreshEachResolve } from "#/fixtures/sanity";
+import { isFreshEachResolve } from "#fixtures/sanity";
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
@@ -14,9 +14,9 @@ import {
   OPTIONAL_MISSING_TRANSIENT,
   SINGLETON_CLASS_1_DEP,
   TRANSIENT_CLASS_1_DEP,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 class MicroLeafDependency {}
 

@@ -4,8 +4,8 @@ import { join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#/parent/bench-run-artifacts";
-import type { ComparisonDocument } from "#/report/comparison-document";
+import { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#parent/bench-run-artifacts";
+import type { ComparisonDocument } from "#report/comparison-document";
 
 let temporaryRoot: string;
 

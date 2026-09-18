@@ -1,4 +1,4 @@
-import { Kbd } from "#/app/components/kbd";
+import { Kbd } from "#app/components/kbd";
 
 interface PageHeaderProps {
   title: string;

@@ -2,13 +2,13 @@
 
 import type { Constructor } from "@codefast/di";
 
-import type { MockFunction } from "#/mocking/mock-factory";
-import type { Spy } from "#/mocking/spy";
-import type { TestBedOptions } from "#/test-bed/bed-builder";
-import { SociableBuilder } from "#/test-bed/sociable-builder";
-import type { SociableTestBedBuilder } from "#/test-bed/sociable-builder";
-import { SolitaryBuilder } from "#/test-bed/solitary-builder";
-import type { SolitaryTestBedBuilder } from "#/test-bed/solitary-builder";
+import type { MockFunction } from "#mocking/mock-factory";
+import type { Spy } from "#mocking/spy";
+import type { TestBedOptions } from "#test-bed/bed-builder";
+import { SociableBuilder } from "#test-bed/sociable-builder";
+import type { SociableTestBedBuilder } from "#test-bed/sociable-builder";
+import { SolitaryBuilder } from "#test-bed/solitary-builder";
+import type { SolitaryTestBedBuilder } from "#test-bed/solitary-builder";
 
 /**
  * The factory surface for building isolated units under test.

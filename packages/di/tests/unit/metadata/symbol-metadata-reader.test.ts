@@ -9,11 +9,11 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { token } from "#/core/token";
-import { inject } from "#/decorators/inject";
-import { injectable } from "#/decorators/injectable";
-import { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
-import { SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
+import { token } from "#core/token";
+import { inject } from "#decorators/inject";
+import { injectable } from "#decorators/injectable";
+import { postConstruct, preDestroy } from "#decorators/lifecycle-decorators";
+import { SymbolMetadataReader } from "#metadata/symbol-metadata-reader";
 
 const configToken = token<string>("reader.config");
 const extraToken = token<number>("reader.extra");

@@ -1,20 +1,20 @@
 import { useRef, useState } from "react";
 import type { RefObject } from "react";
 
-import { useLatest } from "#/hooks/use-latest";
+import { useLatest } from "#hooks/use-latest";
 import {
   areScrollStatesEqual,
   createMessageScrollerStore,
   createMessageScrollerVisibilityStore,
-} from "#/lib/message-scroller/stores";
-import { EMPTY_MESSAGE_SCROLLER_SCROLLABLE } from "#/lib/message-scroller/types";
+} from "#lib/message-scroller/stores";
+import { EMPTY_MESSAGE_SCROLLER_SCROLLABLE } from "#lib/message-scroller/types";
 import type {
   MessageScrollerMode,
   MessageScrollerScrollable,
   MessageScrollerScrollOptions,
   MessageScrollerStore,
   MessageScrollerVisibilityStore,
-} from "#/lib/message-scroller/types";
+} from "#lib/message-scroller/types";
 
 /**
  * Shared mutable ref bag for one MessageScroller, closed over by both the

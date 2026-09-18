@@ -11,8 +11,8 @@
 import type { Constructor, Token } from "@codefast/di";
 import { Container, injectable, token } from "@codefast/di";
 
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 const GRAPH_EXPORT_BATCH = 10;
 

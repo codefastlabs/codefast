@@ -14,9 +14,9 @@ import {
   LIFECYCLE_POST_CONSTRUCT_BATCH,
   LIFECYCLE_POST_CONSTRUCT_SINGLETON,
   LIFECYCLE_PRE_DESTROY_UNBIND,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 @injectable()
 class LifecycleLeafDependency {

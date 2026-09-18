@@ -1,4 +1,4 @@
-import type { CodefastConfig } from "#/core/config/schema";
+import type { CodefastConfig } from "#core/config/schema";
 
 /**
  * Per-file outcome of a tag run.

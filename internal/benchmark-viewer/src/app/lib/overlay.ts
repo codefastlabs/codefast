@@ -1,7 +1,7 @@
 /** Series for the group overlay: every row of one group plotted together, one line per row and library. */
-import { OVERLAY_DASHES, OVERLAY_POINT_STYLES, shadeOf } from "#/app/lib/colors";
-import type { PaletteEntry } from "#/app/lib/colors";
-import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
+import { OVERLAY_DASHES, OVERLAY_POINT_STYLES, shadeOf } from "#app/lib/colors";
+import type { PaletteEntry } from "#app/lib/colors";
+import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#types";
 
 /**
  * One plotted line of a group overlay, with the row and library it came from.

@@ -1,16 +1,16 @@
 /** The card that closes a run: what ran, how long, what it found, where it went, and what to do next. */
 import { relative } from "node:path";
 
-import type { BenchScenarioTier } from "#/child/bench-scenario";
-import type { BenchRunArtifactsResult, BenchRunOutputPaths } from "#/parent/bench-run-artifacts";
-import { prefersUnicodeBars } from "#/parent/progress/create-progress-display";
-import { formatElapsed } from "#/parent/progress/render-progress-frame";
-import type { ComparisonLibrary } from "#/report/comparison";
-import type { ComparisonDocument } from "#/report/comparison-document";
-import type { BenchRunShape } from "#/shared/env-keys";
-import type { Palette } from "#/shared/palette";
-import { createPalette } from "#/shared/palette";
-import type { TrialPayload } from "#/shared/protocol";
+import type { BenchScenarioTier } from "#child/bench-scenario";
+import type { BenchRunArtifactsResult, BenchRunOutputPaths } from "#parent/bench-run-artifacts";
+import { prefersUnicodeBars } from "#parent/progress/create-progress-display";
+import { formatElapsed } from "#parent/progress/render-progress-frame";
+import type { ComparisonLibrary } from "#report/comparison";
+import type { ComparisonDocument } from "#report/comparison-document";
+import type { BenchRunShape } from "#shared/env-keys";
+import type { Palette } from "#shared/palette";
+import { createPalette } from "#shared/palette";
+import type { TrialPayload } from "#shared/protocol";
 
 /**
  * Everything the card states.

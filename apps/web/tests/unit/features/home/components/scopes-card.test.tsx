@@ -2,11 +2,11 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ScopesCard } from "#/features/home/components/scopes-card";
+import { ScopesCard } from "#features/home/components/scopes-card";
 
 const { track } = vi.hoisted(() => ({ track: vi.fn() }));
 
-vi.mock("#/features/tracking/lib/tracking", () => ({ track }));
+vi.mock("#features/tracking/lib/tracking", () => ({ track }));
 
 beforeEach(() => {
   track.mockClear();

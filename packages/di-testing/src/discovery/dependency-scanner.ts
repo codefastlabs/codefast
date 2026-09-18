@@ -2,7 +2,7 @@
 
 import type { Constructor, DependencySlot, MetadataReader } from "@codefast/di";
 
-import { NotInjectableError } from "#/errors/errors";
+import { NotInjectableError } from "#errors/errors";
 
 /**
  * Reads every dependency a class declares — constructor parameters first, then accessor injections.

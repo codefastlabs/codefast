@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@codefast/ui/slider";
 import { Textarea } from "@codefast/ui/textarea";
 
-import { DemoSection } from "#/components/demo-section";
+import { DemoSection } from "#components/demo-section";
 
 export function FormControlsSection() {
   return (

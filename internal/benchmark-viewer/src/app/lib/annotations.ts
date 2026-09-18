@@ -1,7 +1,7 @@
 /** Vertical markers on the run axis for the points where what a series measures changed. */
 import type { Chart, Plugin } from "chart.js";
 
-import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
+import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#types";
 
 /**
  * One marker: the plotted point it sits on and the text drawn beside it.

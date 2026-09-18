@@ -2,8 +2,8 @@ import { createConsentRuntime } from "@codefast/tracking/client/consent-runtime"
 import type { InitialConsentSnapshot } from "@codefast/tracking/client/initial-consent-store";
 import { useInitialConsent } from "@codefast/tracking/react/use-initial-consent";
 
-import { consentConfig } from "#/features/tracking/lib/consent";
-import { resolveVisitorConsent } from "#/features/tracking/lib/resolve-visitor-consent";
+import { consentConfig } from "#features/tracking/lib/consent";
+import { resolveVisitorConsent } from "#features/tracking/lib/resolve-visitor-consent";
 
 /**
  * Session cache for the resolved region default, so only the first page load of a

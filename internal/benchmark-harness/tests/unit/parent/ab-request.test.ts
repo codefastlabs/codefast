@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseAbRequest } from "#/parent/ab-request";
+import { parseAbRequest } from "#parent/ab-request";
 
 describe("parseAbRequest", () => {
   it("applies defaults when only a scenario id is given", () => {

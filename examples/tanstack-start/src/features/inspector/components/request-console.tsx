@@ -6,8 +6,8 @@ import { Label } from "@codefast/ui/label";
 import { Switch } from "@codefast/ui/switch";
 import { PlayIcon } from "lucide-react";
 
-import type { Region, Tier } from "#/features/inspector/shared/tenant";
-import { plannedRequests, REGIONS, TIERS } from "#/features/inspector/shared/tenant";
+import type { Region, Tier } from "#features/inspector/shared/tenant";
+import { plannedRequests, REGIONS, TIERS } from "#features/inspector/shared/tenant";
 
 interface RequestConsoleProps {
   tenant: string;

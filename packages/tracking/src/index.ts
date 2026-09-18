@@ -25,7 +25,7 @@ export type {
   InitialConsent,
   ResolveDefaultConsentOptions,
   ResolveEffectiveConsentOptions,
-} from "#/core/consent";
+} from "#core/consent";
 export {
   CONSENT_CATEGORIES,
   CONSENT_REGIONS,
@@ -40,10 +40,10 @@ export {
   resolveDefaultConsent,
   resolveEffectiveConsent,
   STRICTEST_INITIAL_CONSENT,
-} from "#/core/consent";
+} from "#core/consent";
 
-export type { ConsentConfig } from "#/core/consent-config";
-export { defineConsentConfig } from "#/core/consent-config";
+export type { ConsentConfig } from "#core/consent-config";
+export { defineConsentConfig } from "#core/consent-config";
 
 export type {
   ConsentReceipt,
@@ -51,52 +51,52 @@ export type {
   ConsentReceiptInput,
   ConsentReceiptMethod,
   ConsentReceiptSubjectIdType,
-} from "#/core/consent-receipt";
-export { isConsentReceiptInput } from "#/core/consent-receipt";
+} from "#core/consent-receipt";
+export { isConsentReceiptInput } from "#core/consent-receipt";
 
-export { readCookieValue } from "#/core/cookie";
+export { readCookieValue } from "#core/cookie";
 
-export type { Destination } from "#/core/destination";
+export type { Destination } from "#core/destination";
 
-export type { EventCatalog, EventDefinition } from "#/core/event-catalog";
-export { assertValidEventProperties, defineEventCatalog } from "#/core/event-catalog";
+export type { EventCatalog, EventDefinition } from "#core/event-catalog";
+export { assertValidEventProperties, defineEventCatalog } from "#core/event-catalog";
 
-export { generateEventId } from "#/core/event-id";
+export { generateEventId } from "#core/event-id";
 
-export type { TrackedEvent } from "#/core/tracked-event";
+export type { TrackedEvent } from "#core/tracked-event";
 
 // ── Client ───────────────────────────────────────────────────────────────────────────────────────────────────────────
-export type { CmpConsentSignal, CmpStatus, ReconcileAdFrameworkConsentOptions } from "#/client/ad-framework-consent";
-export { hasGppApi, hasTcfApi, reconcileAdFrameworkConsent } from "#/client/ad-framework-consent";
+export type { CmpConsentSignal, CmpStatus, ReconcileAdFrameworkConsentOptions } from "#client/ad-framework-consent";
+export { hasGppApi, hasTcfApi, reconcileAdFrameworkConsent } from "#client/ad-framework-consent";
 
-export type { ConsentRuntime, ConsentRuntimeOptions } from "#/client/consent-runtime";
-export { createConsentRuntime } from "#/client/consent-runtime";
+export type { ConsentRuntime, ConsentRuntimeOptions } from "#client/consent-runtime";
+export { createConsentRuntime } from "#client/consent-runtime";
 
-export { createLocalStorageConsentStorage } from "#/client/consent-storage";
+export { createLocalStorageConsentStorage } from "#client/consent-storage";
 
-export type { ConsentWithdrawalHandlerOptions } from "#/client/consent-withdrawal";
-export { createConsentWithdrawalHandler } from "#/client/consent-withdrawal";
+export type { ConsentWithdrawalHandlerOptions } from "#client/consent-withdrawal";
+export { createConsentWithdrawalHandler } from "#client/consent-withdrawal";
 
-export type { CookieAnonymousId, CookieAnonymousIdOptions } from "#/client/cookie-anonymous-id";
-export { createCookieAnonymousId } from "#/client/cookie-anonymous-id";
+export type { CookieAnonymousId, CookieAnonymousIdOptions } from "#client/cookie-anonymous-id";
+export { createCookieAnonymousId } from "#client/cookie-anonymous-id";
 
-export type { ClientTracker, ClientTrackerOptions, DeliveryErrorContext } from "#/client/create-client-tracker";
-export { createClientTracker } from "#/client/create-client-tracker";
+export type { ClientTracker, ClientTrackerOptions, DeliveryErrorContext } from "#client/create-client-tracker";
+export { createClientTracker } from "#client/create-client-tracker";
 
-export { hasGlobalPrivacyControlSignal } from "#/client/gpc";
+export { hasGlobalPrivacyControlSignal } from "#client/gpc";
 
 export type {
   InitialConsentSnapshot,
   InitialConsentStore,
   InitialConsentStoreOptions,
-} from "#/client/initial-consent-store";
-export { createInitialConsentStore } from "#/client/initial-consent-store";
+} from "#client/initial-consent-store";
+export { createInitialConsentStore } from "#client/initial-consent-store";
 
-export type { IsAnalyticsAllowedOptions } from "#/client/is-analytics-allowed";
-export { createIsAnalyticsAllowed } from "#/client/is-analytics-allowed";
+export type { IsAnalyticsAllowedOptions } from "#client/is-analytics-allowed";
+export { createIsAnalyticsAllowed } from "#client/is-analytics-allowed";
 
-export type { ServerPersistedAnonymousIdOptions } from "#/client/server-persisted-anonymous-id";
-export { createServerPersistedAnonymousId } from "#/client/server-persisted-anonymous-id";
+export type { ServerPersistedAnonymousIdOptions } from "#client/server-persisted-anonymous-id";
+export { createServerPersistedAnonymousId } from "#client/server-persisted-anonymous-id";
 
 // ── React ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 export type {
@@ -111,7 +111,7 @@ export type {
   ConsentBannerSaveProps,
   ConsentBannerTitleProps,
   ConsentToggleProps,
-} from "#/react/consent-banner";
+} from "#react/consent-banner";
 export {
   ConsentBanner,
   ConsentBannerAccept,
@@ -124,22 +124,22 @@ export {
   ConsentBannerSave,
   ConsentBannerTitle,
   ConsentToggle,
-} from "#/react/consent-banner";
+} from "#react/consent-banner";
 
-export type { GtagConsentBootstrapProps } from "#/react/gtag-consent-bootstrap";
-export { GtagConsentBootstrap } from "#/react/gtag-consent-bootstrap";
+export type { GtagConsentBootstrapProps } from "#react/gtag-consent-bootstrap";
+export { GtagConsentBootstrap } from "#react/gtag-consent-bootstrap";
 
-export type { UseConsentOptions, UseConsentResult } from "#/react/use-consent";
-export { useConsent } from "#/react/use-consent";
+export type { UseConsentOptions, UseConsentResult } from "#react/use-consent";
+export { useConsent } from "#react/use-consent";
 
-export type { UseGoogleConsentSyncOptions } from "#/react/use-google-consent-sync";
-export { useGoogleConsentSync } from "#/react/use-google-consent-sync";
+export type { UseGoogleConsentSyncOptions } from "#react/use-google-consent-sync";
+export { useGoogleConsentSync } from "#react/use-google-consent-sync";
 
-export { useInitialConsent } from "#/react/use-initial-consent";
+export { useInitialConsent } from "#react/use-initial-consent";
 
 // ── Destinations (client-lane; Vercel stays on its own subpath) ──────────────────────────────────────────────────────
-export type { AdConsentState } from "#/destinations/ad-consent";
-export { toAdConsentState } from "#/destinations/ad-consent";
+export type { AdConsentState } from "#destinations/ad-consent";
+export { toAdConsentState } from "#destinations/ad-consent";
 
 export type {
   EnsureGtagOptions,
@@ -147,7 +147,7 @@ export type {
   GtagConsentBootstrapOptions,
   GtagFunction,
   LoadGtagScriptOptions,
-} from "#/destinations/google-analytics";
+} from "#destinations/google-analytics";
 export {
   buildGtagConsentBootstrapScript,
   clearGoogleAnalyticsCookies,
@@ -155,17 +155,17 @@ export {
   ensureGtag,
   loadGtagScript,
   updateGoogleConsent,
-} from "#/destinations/google-analytics";
+} from "#destinations/google-analytics";
 
-export type { MetaDataProcessingOptions, MetaDestinationOptions, MetaEventPayload } from "#/destinations/meta";
-export { createMetaDestination, toMetaDataProcessingOptions } from "#/destinations/meta";
+export type { MetaDataProcessingOptions, MetaDestinationOptions, MetaEventPayload } from "#destinations/meta";
+export { createMetaDestination, toMetaDataProcessingOptions } from "#destinations/meta";
 
 export type {
   MicrosoftUetConsent,
   MicrosoftUetDestinationOptions,
   MicrosoftUetEventPayload,
-} from "#/destinations/microsoft-uet";
-export { createMicrosoftUetDestination, toMicrosoftUetConsent } from "#/destinations/microsoft-uet";
+} from "#destinations/microsoft-uet";
+export { createMicrosoftUetDestination, toMicrosoftUetConsent } from "#destinations/microsoft-uet";
 
-export type { TiktokConsent, TiktokDestinationOptions, TiktokEventPayload } from "#/destinations/tiktok";
-export { createTiktokDestination, toTiktokConsent } from "#/destinations/tiktok";
+export type { TiktokConsent, TiktokDestinationOptions, TiktokEventPayload } from "#destinations/tiktok";
+export { createTiktokDestination, toTiktokConsent } from "#destinations/tiktok";

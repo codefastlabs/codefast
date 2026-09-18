@@ -9,8 +9,8 @@ import {
   TableRow,
 } from "@codefast/ui/table";
 
-import type { Translations } from "#/features/components-catalog/components/detail/language";
-import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
+import type { Translations } from "#features/components-catalog/components/detail/language";
+import { useTranslation } from "#features/components-catalog/components/detail/language-context";
 
 const translations: Translations = {
   en: {

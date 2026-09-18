@@ -1,6 +1,6 @@
 import { Badge } from "@codefast/ui/badge";
 
-import { PageHeader } from "#/components/shared/page-header";
+import { PageHeader } from "#components/shared/page-header";
 
 /** Getting Started page hero — eyebrow badge, title, and intro copy. */
 export function AboutHeroSection() {

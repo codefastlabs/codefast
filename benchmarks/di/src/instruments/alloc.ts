@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 
 import { assertBenchEnvKeys, parseEnvInteger } from "@internal/benchmark-harness/shared/env-keys";
 
-import { findShape, INSTRUMENT_SHAPES } from "#/instruments/shapes";
+import { findShape, INSTRUMENT_SHAPES } from "#instruments/shapes";
 
 const OPERATIONS_ENV_KEY = "BENCH_ALLOC_OPERATIONS";
 const SHAPE_ENV_KEY = "BENCH_ALLOC_SHAPE";

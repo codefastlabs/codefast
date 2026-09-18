@@ -18,9 +18,9 @@
  */
 import { Container, token } from "@codefast/di";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
-import { ASYNC_CHAIN_DEPTH, ASYNC_DIAMOND_SHARED_LEAF } from "#/fixtures/scenario-parity";
-import type { AsyncBenchScenario } from "#/scenarios/types";
+import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
+import { ASYNC_CHAIN_DEPTH, ASYNC_DIAMOND_SHARED_LEAF } from "#fixtures/scenario-parity";
+import type { AsyncBenchScenario } from "#scenarios/types";
 
 const ASYNC_BRANCH_CHAIN = {
   id: `async-branch-chain-${String(ASYNC_CHAIN_DEPTH)}`,

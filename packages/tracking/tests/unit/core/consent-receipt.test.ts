@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { ConsentReceiptInput } from "#/core/consent-receipt";
-import { isConsentReceiptInput } from "#/core/consent-receipt";
+import type { ConsentReceiptInput } from "#core/consent-receipt";
+import { isConsentReceiptInput } from "#core/consent-receipt";
 
 const validInput: ConsentReceiptInput = {
   decision: { ads: false, analytics: true },

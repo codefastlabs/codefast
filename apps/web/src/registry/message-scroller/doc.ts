@@ -1,15 +1,15 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { MessageScrollerAnchoring } from "#/registry/message-scroller/anchoring.example";
-import { MessageScrollerAnimation } from "#/registry/message-scroller/animation.example";
-import { MessageScrollerCommands } from "#/registry/message-scroller/commands.example";
-import { MessageScrollerGroupChat } from "#/registry/message-scroller/group-chat.example";
-import { MessageScrollerLoadHistory } from "#/registry/message-scroller/load-history.example";
-import { MessageScrollerOpeningPosition } from "#/registry/message-scroller/opening-position.example";
-import { MessageScrollerPreviousContext } from "#/registry/message-scroller/previous-context.example";
-import { MessageScrollerScrollable } from "#/registry/message-scroller/scrollable.example";
-import { MessageScrollerStreaming } from "#/registry/message-scroller/streaming.example";
-import { MessageScrollerVisibility } from "#/registry/message-scroller/visibility.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { MessageScrollerAnchoring } from "#registry/message-scroller/anchoring.example";
+import { MessageScrollerAnimation } from "#registry/message-scroller/animation.example";
+import { MessageScrollerCommands } from "#registry/message-scroller/commands.example";
+import { MessageScrollerGroupChat } from "#registry/message-scroller/group-chat.example";
+import { MessageScrollerLoadHistory } from "#registry/message-scroller/load-history.example";
+import { MessageScrollerOpeningPosition } from "#registry/message-scroller/opening-position.example";
+import { MessageScrollerPreviousContext } from "#registry/message-scroller/previous-context.example";
+import { MessageScrollerScrollable } from "#registry/message-scroller/scrollable.example";
+import { MessageScrollerStreaming } from "#registry/message-scroller/streaming.example";
+import { MessageScrollerVisibility } from "#registry/message-scroller/visibility.example";
 
 export const messageScrollerDoc: ComponentDoc = {
   usage: docUsage("message-scroller"),

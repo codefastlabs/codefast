@@ -1,9 +1,9 @@
 import { slotName } from "@codefast/di";
 import { describe, expect, it } from "vitest";
 
-import { OverrideMismatchError, SealedDependencyError, UndeclaredDependencyError } from "#/errors/errors";
-import { TestBed } from "#/test-bed/test-bed";
-import type { EmailService, Plugin } from "#/tests/unit/support/fixtures";
+import { OverrideMismatchError, SealedDependencyError, UndeclaredDependencyError } from "#errors/errors";
+import { TestBed } from "#test-bed/test-bed";
+import type { EmailService, Plugin } from "#tests/unit/support/fixtures";
 import {
   DualLoggerConsumer,
   MultiAndNamedConsumer,
@@ -19,7 +19,7 @@ import {
   ReservedTagConsumer,
   TaggedConsumer,
   UserServiceToken,
-} from "#/tests/unit/support/fixtures";
+} from "#tests/unit/support/fixtures";
 
 describe("TestBed.solitary overrides", () => {
   it("binds a fixed value with .using() and seals it", () => {

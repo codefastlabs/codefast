@@ -7,10 +7,10 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import type { ResolutionContext } from "#/core/types";
-import { AsyncResolutionError, CircularDependencyError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import type { ResolutionContext } from "#core/types";
+import { AsyncResolutionError, CircularDependencyError } from "#errors/errors";
 
 describe("binding.inFlight is released on every exit path", () => {
   it("survives a factory that throws", () => {

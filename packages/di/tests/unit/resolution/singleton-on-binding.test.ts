@@ -6,8 +6,8 @@
  */
 import { describe, expect, it, vi } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
+import { Container } from "#container/container";
+import { token } from "#core/token";
 
 describe("singleton caching", () => {
   it("gives a child container the parent's instance, not a second one", () => {

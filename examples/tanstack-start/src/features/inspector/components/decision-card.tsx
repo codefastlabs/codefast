@@ -2,8 +2,8 @@ import { Badge } from "@codefast/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import { TriangleAlertIcon } from "lucide-react";
 
-import { CandidateRow } from "#/features/inspector/components/candidate-row";
-import type { Decision } from "#/features/inspector/server/explain";
+import { CandidateRow } from "#features/inspector/components/candidate-row";
+import type { Decision } from "#features/inspector/server/explain";
 
 interface DecisionCardProps {
   decision: Decision;

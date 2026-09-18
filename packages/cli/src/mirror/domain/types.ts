@@ -1,5 +1,5 @@
-import type { GlobalCliOptions } from "#/core/cli/global-options";
-import type { CodefastConfig } from "#/core/config/schema";
+import type { GlobalCliOptions } from "#core/cli/global-options";
+import type { CodefastConfig } from "#core/config/schema";
 
 /**
  * One conditional exports entry, keyed by resolution condition.

@@ -8,7 +8,7 @@ import {
   MessageFooter,
   MessageGroup,
   MessageHeader,
-} from "#/components/message";
+} from "#components/message";
 
 describe("message", () => {
   describe("Message component", () => {

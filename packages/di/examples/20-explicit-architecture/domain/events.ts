@@ -1,6 +1,6 @@
 /** The domain events an account emits as its state changes. */
 
-import type { AccountId } from "#/examples/20-explicit-architecture/domain/account-id";
+import type { AccountId } from "#examples/20-explicit-architecture/domain/account-id";
 
 // ── Events ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 

@@ -2,31 +2,31 @@
 
 import { Module } from "@codefast/di";
 
-import { ClockToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/clock";
-import { IdGeneratorToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/id-generator";
-import { NotificationSenderToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/notification-sender";
-import { OrderRepositoryToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/order-repository";
-import { PaymentGatewayToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
-import { ProductRepositoryToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
-import { UnitOfWorkToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/unit-of-work";
-import { loadEnvConfig } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/config/env-config";
-import { DiscordNotificationSender } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/notification/discord-notification-sender";
-import { EmailNotificationSender } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/notification/email-notification-sender";
-import { SmsNotificationSender } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/notification/sms-notification-sender";
-import { PayPalPaymentGateway } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/payment/paypal-payment-gateway";
-import { StripePaymentGateway } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/payment/stripe-payment-gateway";
-import { InMemoryOrderRepository } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/persistence/in-memory/in-memory-order-repository";
-import { InMemoryProductRepository } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/persistence/in-memory/in-memory-product-repository";
-import { InMemoryUnitOfWork } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/persistence/in-memory/in-memory-unit-of-work";
+import { ClockToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/clock";
+import { IdGeneratorToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/id-generator";
+import { NotificationSenderToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/notification-sender";
+import { OrderRepositoryToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/order-repository";
+import { PaymentGatewayToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
+import { ProductRepositoryToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
+import { UnitOfWorkToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/unit-of-work";
+import { loadEnvConfig } from "#examples/21-explicit-architecture-ecommerce/infrastructure/config/env-config";
+import { DiscordNotificationSender } from "#examples/21-explicit-architecture-ecommerce/infrastructure/notification/discord-notification-sender";
+import { EmailNotificationSender } from "#examples/21-explicit-architecture-ecommerce/infrastructure/notification/email-notification-sender";
+import { SmsNotificationSender } from "#examples/21-explicit-architecture-ecommerce/infrastructure/notification/sms-notification-sender";
+import { PayPalPaymentGateway } from "#examples/21-explicit-architecture-ecommerce/infrastructure/payment/paypal-payment-gateway";
+import { StripePaymentGateway } from "#examples/21-explicit-architecture-ecommerce/infrastructure/payment/stripe-payment-gateway";
+import { InMemoryOrderRepository } from "#examples/21-explicit-architecture-ecommerce/infrastructure/persistence/in-memory/in-memory-order-repository";
+import { InMemoryProductRepository } from "#examples/21-explicit-architecture-ecommerce/infrastructure/persistence/in-memory/in-memory-product-repository";
+import { InMemoryUnitOfWork } from "#examples/21-explicit-architecture-ecommerce/infrastructure/persistence/in-memory/in-memory-unit-of-work";
 import {
   PgPool,
   PgPoolToken,
-} from "#/examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/pg-pool";
-import { PostgresOrderRepository } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/postgres-order-repository";
-import { PostgresProductRepository } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/postgres-product-repository";
-import { SystemClock } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/system/system-clock";
-import { UuidIdGenerator } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/system/uuid-id-generator";
-import { RequestContextToken } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/middleware/request-context";
+} from "#examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/pg-pool";
+import { PostgresOrderRepository } from "#examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/postgres-order-repository";
+import { PostgresProductRepository } from "#examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/postgres-product-repository";
+import { SystemClock } from "#examples/21-explicit-architecture-ecommerce/infrastructure/system/system-clock";
+import { UuidIdGenerator } from "#examples/21-explicit-architecture-ecommerce/infrastructure/system/uuid-id-generator";
+import { RequestContextToken } from "#examples/21-explicit-architecture-ecommerce/presentation/http/middleware/request-context";
 
 // Config is a composition-time value, read once — never resolved from the container at runtime.
 const config = loadEnvConfig();

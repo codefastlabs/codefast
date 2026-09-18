@@ -9,7 +9,7 @@
  * To add a component: create `registry/<slug>/meta.ts` exporting one
  * `ComponentMetaInput` (+ optional `demo.tsx` / `doc.ts`).
  */
-import { DEMO_BY_SLUG } from "#/registry/_core/demos";
+import { DEMO_BY_SLUG } from "#registry/_core/demos";
 
 // ── Categories ───────────────────────────────────────────────────────────────────────────────────────────────────────
 

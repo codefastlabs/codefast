@@ -2,7 +2,7 @@
 
 import { token } from "@codefast/di";
 
-import type { AccountId } from "#/examples/20-explicit-architecture/domain/account-id";
+import type { AccountId } from "#examples/20-explicit-architecture/domain/account-id";
 
 // ── Commands ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 

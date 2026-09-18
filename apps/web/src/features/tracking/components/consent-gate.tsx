@@ -4,10 +4,10 @@ import { useGoogleConsentSync } from "@codefast/tracking/react/use-google-consen
 import { CookieIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { ConsentBannerCard } from "#/features/tracking/components/consent-banner-card";
-import { PrivacyChoicesIcon } from "#/features/tracking/components/privacy-choices-icon";
-import { loadGoogleTagScript } from "#/features/tracking/lib/google-tag-loader";
-import { useSiteConsent } from "#/features/tracking/lib/site-consent";
+import { ConsentBannerCard } from "#features/tracking/components/consent-banner-card";
+import { PrivacyChoicesIcon } from "#features/tracking/components/privacy-choices-icon";
+import { loadGoogleTagScript } from "#features/tracking/lib/google-tag-loader";
+import { useSiteConsent } from "#features/tracking/lib/site-consent";
 
 /**
  * Region-aware consent UI, rendered inside the footer: an opt-in banner plus a "Cookie

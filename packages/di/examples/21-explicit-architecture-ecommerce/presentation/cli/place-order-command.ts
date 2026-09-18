@@ -2,9 +2,9 @@
 
 import { inject, injectable, token } from "@codefast/di";
 
-import type { PlaceOrder } from "#/examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
-import { PlaceOrderToken } from "#/examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
-import type { PlaceOrderLine } from "#/examples/21-explicit-architecture-ecommerce/application/checkout/place-order.dto";
+import type { PlaceOrder } from "#examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
+import { PlaceOrderToken } from "#examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
+import type { PlaceOrderLine } from "#examples/21-explicit-architecture-ecommerce/application/checkout/place-order.dto";
 
 /** Drives the place-order use case from the command line — proof the use case is transport-agnostic. */
 @injectable([inject(PlaceOrderToken)])

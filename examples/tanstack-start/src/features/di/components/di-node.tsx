@@ -5,7 +5,7 @@ import { Handle, Position } from "@xyflow/react";
 import type { ReactElement } from "react";
 import { memo } from "react";
 
-import { ScopeDot } from "#/features/di/components/scope-dot";
+import { ScopeDot } from "#features/di/components/scope-dot";
 
 interface DiNodeData extends Record<string, unknown> {
   readonly label: string;

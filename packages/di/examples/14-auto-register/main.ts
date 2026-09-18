@@ -17,7 +17,7 @@
 import { Container, createAutoRegisterRegistry, inject, injectable, token } from "@codefast/di";
 import type { AutoRegisterRegistry } from "@codefast/di";
 
-import { section } from "#/examples/support/log";
+import { section } from "#examples/support/log";
 
 // ── Tokens ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 

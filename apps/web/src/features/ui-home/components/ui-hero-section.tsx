@@ -2,8 +2,8 @@ import { Badge } from "@codefast/ui/badge";
 import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { COMPONENT_COUNT } from "#/features/home/data";
-import { UiHeroShowcase } from "#/features/ui-home/components/ui-hero-showcase";
+import { COMPONENT_COUNT } from "#features/home/data";
+import { UiHeroShowcase } from "#features/ui-home/components/ui-hero-showcase";
 
 /** The `/ui` landing hero — the library's own pitch, staged beside a collage of real components. */
 export function UiHeroSection() {
