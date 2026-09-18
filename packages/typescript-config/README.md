@@ -15,8 +15,11 @@ The presets are plain JSON `tsconfig` files. There's no runtime code, and nothin
 
 - **Strict by default.** `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, and `verbatimModuleSyntax` come
   from the base that every preset extends.
-- **Bundler-first.** An ESNext target and module with `moduleResolution: "bundler"`, so `exports` and `imports` maps
-  resolve the way Vite, esbuild, and friends resolve them.
+- **Bundler-first.** An ESNext `module` with `moduleResolution: "bundler"`, so `exports` and `imports` maps resolve the
+  way Vite, esbuild, and friends resolve them.
+- **`lib` and `target` are `ES2024`, matching the Node floor** (`engines.node >= 22.12`). ES2024 is the newest edition
+  Node 22.12 fully supports, so an ES2025 builtin such as `Map.prototype.getOrInsert` is a type error here rather than a
+  runtime crash on the floor. Bump both together only when the floor moves.
 - **Type-check only.** The presets set `noEmit`; a separate build overlay turns on emit and `.d.ts` generation.
 - **Plain JSON.** No runtime code, nothing to import.
 
@@ -48,7 +51,7 @@ Options you set locally always win, so overriding a preset value takes one line:
 {
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ESNext"]
+    "lib": ["DOM", "DOM.Iterable", "ES2024"]
   }
 }
 ```
@@ -57,8 +60,8 @@ Options you set locally always win, so overriding a preset value takes one line:
 
 | Preset               | Extends     | Purpose                                                                                                                                           |
 | -------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `base.json`          | —           | Strict, bundler-first baseline: ESNext target and module, DOM + ESNext libs, type-check only.                                                     |
-| `library.json`       | `base.json` | Headless packages: `lib` is `ESNext` only, so relying on a browser global is a type error.                                                        |
+| `base.json`          | —           | Strict, bundler-first baseline: ES2024 target, ESNext module, DOM + ES2024 libs, type-check only.                                                 |
+| `library.json`       | `base.json` | Headless packages: `lib` is `ES2024` only, so relying on a browser global is a type error.                                                        |
 | `react.json`         | `base.json` | React with the automatic JSX runtime (`jsx: "react-jsx"`) — components need no `React` import.                                                    |
 | `next.json`          | `base.json` | Next.js apps: `jsx: "preserve"`, `incremental` builds, and the `next` TypeScript plugin.                                                          |
 | `library-build.json` | (overlay)   | Build-emit overrides for a build config: `noEmit: false`, `declaration` + `isolatedDeclarations`, declaration and source maps, `types: ["node"]`. |

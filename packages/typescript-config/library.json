@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "lib": ["ESNext"]
+    "lib": ["ES2024"]
   },
   "display": "Library development configuration",
   "extends": "./base.json"

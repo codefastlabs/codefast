@@ -24,6 +24,11 @@ floor stays mechanical, not advisory: `@codefast/di` keeps its own `Map` upsert 
 step now calls the `node:path` functions directly instead of aliasing them, which the floor's types correctly flag as
 unbound methods.
 
+The shared `@codefast/typescript-config` presets pin `lib` and `target` to `ES2024` (was `ESNext`) so the compiler's
+ECMAScript surface matches the Node floor: an ES2025 builtin such as `Map.prototype.getOrInsert` now fails to type-check
+rather than compiling and crashing on Node 22.12. `@codefast/di` and `@codefast/di-testing` already pinned `lib` and are
+unchanged.
+
 Internal subpath imports move from a `#/` prefix to a bare `#` (`#core/token`, not `#/core/token`), and the
 `package.json#imports` keys become `#*`/`#tests/*`/`#examples/*` to match. Node's native ESM resolver rejects a
 `#/`-prefixed specifier with `ERR_INVALID_MODULE_SPECIFIER` on the whole Node 22 line (and on Node 24 before 24.14), and
