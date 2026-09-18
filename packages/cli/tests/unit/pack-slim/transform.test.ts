@@ -6,6 +6,7 @@ import {
   isSourceMapFile,
   slimPublishManifest,
   stripSourceMappingComment,
+  unshippedPublishTargets,
 } from "#pack-slim/domain/transform";
 
 describe("slimPublishManifest", () => {
@@ -137,6 +138,26 @@ describe("slimPublishManifest", () => {
     expect(report.importsUnshippedRemoved).toBe(0);
     expect(report.scriptsRemoved).toBe(0);
     expect(report.devDependenciesRemoved).toBe(0);
+  });
+});
+
+describe("unshippedPublishTargets", () => {
+  it("flags a stylesheet export whose src subtree the slim would drop", () => {
+    // Only `files: ["dist"]` ships, but `./css/*` points into src — the slim cannot keep it.
+    const unshipped = unshippedPublishTargets({ files: ["dist"], exports: { "./css/*": "./src/css/*" } });
+
+    expect(unshipped).toEqual([{ field: "exports", subpath: "./css/*", target: "./src/css/*" }]);
+  });
+
+  it("is clean once the slim keeps the referenced src subtree", () => {
+    const unshipped = unshippedPublishTargets({ files: ["dist", "src"], exports: { "./css/*": "./src/css/*" } });
+
+    expect(unshipped).toEqual([]);
+  });
+
+  it("ignores package.json, which npm always ships, and reports nothing with no files field", () => {
+    expect(unshippedPublishTargets({ files: ["dist"], exports: { "./package.json": "./package.json" } })).toEqual([]);
+    expect(unshippedPublishTargets({ exports: { "./css/*": "./src/css/*" } })).toEqual([]);
   });
 });
 

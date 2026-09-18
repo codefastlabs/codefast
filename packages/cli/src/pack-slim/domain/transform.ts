@@ -129,6 +129,53 @@ export function slimPublishManifest(manifest: Record<string, unknown>): SlimMani
 }
 
 /**
+ * A published `exports`/`imports` target the slimmed manifest points at but does not ship.
+ */
+export interface UnshippedTarget {
+  readonly field: "exports" | "imports";
+  readonly subpath: string;
+  readonly target: string;
+}
+
+/**
+ * The publish targets a package would resolve to a file it does not ship.
+ *
+ * @remarks Runs the same slim the publish step applies, then checks each surviving `exports`/`imports`
+ * target against the shipped `files`. A non-empty result means a consumer resolves that subpath to a
+ * missing file — the failure dropping a stylesheet's `src` subtree produces. With no `files` field npm
+ * ships everything, so nothing is unshipped.
+ */
+export function unshippedPublishTargets(manifest: Record<string, unknown>): Array<UnshippedTarget> {
+  const { manifest: slimmed } = slimPublishManifest(manifest);
+  const files = Array.isArray(slimmed.files)
+    ? slimmed.files.filter((entry): entry is string => typeof entry === "string")
+    : [];
+  if (files.length === 0) {
+    return [];
+  }
+
+  const unshipped: Array<UnshippedTarget> = [];
+  for (const field of ["exports", "imports"] as const) {
+    const node = slimmed[field];
+    if (!isRecord(node)) {
+      continue;
+    }
+    for (const subpath of Object.keys(node)) {
+      for (const target of collectTargets(node[subpath])) {
+        // Only relative file targets can be unshipped; npm always includes package.json.
+        if (!target.startsWith("./") || stripDotSlash(target) === "package.json") {
+          continue;
+        }
+        if (!isShippedTarget(target, files)) {
+          unshipped.push({ field, subpath, target });
+        }
+      }
+    }
+  }
+  return unshipped;
+}
+
+/**
  * Strips every `sourceMappingURL` directive line from an emitted file's text.
  *
  * @since 0.8.1

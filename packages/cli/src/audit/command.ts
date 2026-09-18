@@ -18,6 +18,7 @@ import type {
   DisplayNameAuditResult,
   ImportsAuditResult,
   LinkAuditResult,
+  PublishAuditResult,
   RtlAuditResult,
 } from "#audit/domain/types";
 import { exitCodeForImportsAuditResult, formatImportsAuditJsonOutput } from "#audit/imports/cli-result";
@@ -33,6 +34,12 @@ import { presentLinkAuditResult } from "#audit/links/output";
 import { prepareLinkAudit } from "#audit/links/prepare";
 import { runLinkAudit } from "#audit/links/run";
 import type { AuditCommandPrelude } from "#audit/prepare";
+import { exitCodeForPublishAuditResult, formatPublishAuditJsonOutput } from "#audit/publish/cli-result";
+import type { PublishAuditRunRequest } from "#audit/publish/cli-schema";
+import { publishAuditRunRequestSchema } from "#audit/publish/cli-schema";
+import { presentPublishAuditResult } from "#audit/publish/output";
+import { preparePublishAudit } from "#audit/publish/prepare";
+import { runPublishAudit } from "#audit/publish/run";
 import { exitCodeForRtlAuditResult, formatRtlAuditJsonOutput } from "#audit/rtl/cli-result";
 import type { RtlAuditRunRequest } from "#audit/rtl/cli-schema";
 import { rtlAuditRunRequestSchema } from "#audit/rtl/cli-schema";
@@ -64,7 +71,10 @@ interface AuditCheck<Request, CheckResult> {
     input: { readonly currentWorkingDirectory: string; readonly rawTarget: string | undefined },
   ) => Promise<Result<AuditCommandPrelude, AppError>>;
   readonly buildRequest: (prelude: AuditCommandPrelude, opts: AuditActionOptions) => unknown;
-  readonly run: (fs: Filesystem, request: Request) => Result<CheckResult, AppError>;
+  readonly run: (
+    fs: Filesystem,
+    request: Request,
+  ) => Result<CheckResult, AppError> | Promise<Result<CheckResult, AppError>>;
   readonly present: (result: CheckResult) => void;
   readonly formatJson: (result: CheckResult, rootDir: string) => string;
   readonly exitCode: (result: CheckResult) => number;
@@ -166,6 +176,19 @@ const commentsCheck: AuditCheck<CommentAuditRunRequest, CommentAuditResult> = {
   },
 };
 
+const publishCheck: AuditCheck<PublishAuditRunRequest, PublishAuditResult> = {
+  name: "publish",
+  description: "Report what breaks a consumer's install: #/ imports and exports/imports targets not shipped",
+  targetHelp: "Directory or file to scan (default: the repo root)",
+  schema: publishAuditRunRequestSchema,
+  prepare: preparePublishAudit,
+  buildRequest: baseAuditRequest,
+  run: (fs, request) => runPublishAudit(fs, { rootDir: request.rootDir, targetPath: request.targetPath }),
+  present: presentPublishAuditResult,
+  formatJson: formatPublishAuditJsonOutput,
+  exitCode: exitCodeForPublishAuditResult,
+};
+
 /**
  * Adapts an `AuditCheck` descriptor onto the shared command pipeline.
  */
@@ -202,6 +225,7 @@ export function createAuditCommand(): Command {
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(importsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(displayNamesCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(commentsCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(publishCheck));
 
   return cmd;
 }

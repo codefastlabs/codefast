@@ -22,11 +22,11 @@ jobs:
     # test + coverage suite here (run-tests defaults to true).
     secrets: inherit
 
-  # Exercise the supported Node lines that `verify` (on the latest, from .node-version) does not: run the
-  # unit suite and import the packed packages on each — the floor catches a module-resolution break the
-  # in-repo runners hide — and lint the slimmed publish manifests once, on the floor.
-  publish-check:
-    name: Publish Check (Node ${{ matrix.node }})
+  # Run the unit suite on the supported Node lines `verify` (on the latest, from .node-version) does not
+  # cover, so the floor is a contract CI proves. Publish-surface correctness is a static check in
+  # `verify` (audit publish), not a per-Node runtime step.
+  node-matrix:
+    name: Node Matrix (${{ matrix.node }})
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -53,10 +53,3 @@ jobs:
 
       - name: Run Unit Tests
         run: npx turbo run test:unit --filter="./packages/**" --filter="./internal/**"
-
-      - name: Smoke-import Packed Packages
-        run: pnpm pack-smoke
-
-      - name: Lint Slimmed Publish Manifests
-        if: ${{ matrix.node == '22.12.0' }}
-        run: pnpm check:publish

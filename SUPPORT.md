@@ -19,9 +19,9 @@ The `@codefast/*` packages support the Node.js **Active LTS** and **Maintenance 
   error rather than a runtime crash.
 - **Internal subpath imports** use a bare `#` prefix (`#core/token`), which Node's ESM resolver accepts on every
   supported line — `#/`-prefixed specifiers are rejected below Node 24.14.
-- **CI** develops on the Current line (`.node-version`) for speed, and a matrix runs the unit suite and imports each
-  packed package on the Maintenance and Active LTS lines, so the floor is a contract CI proves. `publint` lints every
-  slimmed publish manifest.
+- **CI** develops on the Current line (`.node-version`) for speed, and a matrix runs the unit suite on the Maintenance
+  and Active LTS lines, so the floor is a contract CI proves. `codefast audit publish` statically checks the publish
+  surface — no `#/` imports, and every `exports`/`imports` target ships.
 
 Development uses the latest Node for speed and tooling; nothing about the contributor's local Node version can leak into
 the published packages, because the floor is checked by the compiler and by CI. The published packages run on Node

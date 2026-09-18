@@ -77,6 +77,11 @@ jobs:
       - name: Verify Display Names
         run: pnpm cli:audit:display-names
 
+      # Static publish-surface check: a "#/"-prefixed import Node rejects on the floor, and an
+      # exports/imports target the slimmed manifest would not ship (e.g. a dropped stylesheet subtree).
+      - name: Verify Publish Surface
+        run: pnpm cli:audit:publish
+
       - name: Execute Automated Tests with Coverage
         if: ${{ inputs.run-tests }}
         run: npx turbo run test:coverage --filter="./packages/**" --filter="./internal/**"

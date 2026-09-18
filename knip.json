@@ -3,8 +3,7 @@
   "workspaces": {
     ".": {
       "entry": ["package.json", "codefast.config.js"],
-      "ignoreBinaries": ["read"],
-      "ignoreDependencies": ["publint"]
+      "ignoreBinaries": ["read"]
     },
     "apps/web": {
       "entry": ["src/registry/**/usage.tsx", "src/features/home/demos/*.source.ts"]

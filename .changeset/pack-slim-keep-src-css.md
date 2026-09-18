@@ -10,4 +10,4 @@ Fix `pack-slim` stripping the stylesheet source of packages that export CSS.
 `@codefast/tracking` ship Tailwind source through `./css/*` → `./src/css/*`, so their published tarballs went out with
 no CSS at all and the `./css/*` export resolved to nothing. pack-slim now keeps the `src` subtrees a surviving
 `exports`/`imports` target still points into (e.g. `src/css`) and drops the rest of `src`, so the stylesheets ship while
-the TypeScript source stays out. Surfaced by the new `publint` publish check.
+the TypeScript source stays out. Surfaced and now guarded by the new `codefast audit publish` check.
