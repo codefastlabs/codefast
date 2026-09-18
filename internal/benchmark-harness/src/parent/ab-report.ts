@@ -1,6 +1,6 @@
 /** Pure reducers turning a paired A/B run's raw observations into the lines its report prints. */
-import type { AbRequest } from "#/parent/ab-request";
-import { parseRunObservations } from "#/report/jsonl";
+import type { AbRequest } from "#parent/ab-request";
+import { parseRunObservations } from "#report/jsonl";
 
 /** One side's narrowed run: its run id and the subject's per-trial `hz/op` for each requested row. */
 export interface SideRun {

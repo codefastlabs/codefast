@@ -2,7 +2,7 @@ import { Badge } from "@codefast/ui/badge";
 import { cn } from "@codefast/ui/lib/utils";
 import { CheckIcon, MinusIcon, ShieldQuestionMarkIcon } from "lucide-react";
 
-import type { CandidateView } from "#/features/inspector/server/explain";
+import type { CandidateView } from "#features/inspector/server/explain";
 
 interface CandidateRowProps {
   candidate: CandidateView;

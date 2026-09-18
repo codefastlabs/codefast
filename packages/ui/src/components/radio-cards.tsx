@@ -1,8 +1,8 @@
 import * as RadioGroupPrimitive from "radix-ui/radio-group";
 import type { ComponentProps, JSX } from "react";
 
-import { Label } from "#/components/label";
-import { cn } from "#/lib/utils";
+import { Label } from "#components/label";
+import { cn } from "#lib/utils";
 
 // ── Component: RadioCards ────────────────────────────────────────────────────────────────────────────────────────────
 

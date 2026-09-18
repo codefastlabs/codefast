@@ -1,8 +1,8 @@
 import path from "node:path";
 
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { findNearestAncestor } from "#/core/workspace/ancestor-directories";
-import { packageJsonFileName } from "#/core/workspace/well-known-files";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { findNearestAncestor } from "#core/workspace/ancestor-directories";
+import { packageJsonFileName } from "#core/workspace/well-known-files";
 
 /**
  * Resolves the arrange target to a canonical path, defaulting to the nearest package directory.

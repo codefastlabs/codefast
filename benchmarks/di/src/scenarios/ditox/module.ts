@@ -9,8 +9,8 @@
 import { bindModule, createContainer, token } from "ditox";
 import type { Module, ModuleDeclaration } from "ditox";
 
-import { MODULE_COLD_FROM_MODULES } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { MODULE_COLD_FROM_MODULES } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 interface ModuleConfig {
   readonly env: string;

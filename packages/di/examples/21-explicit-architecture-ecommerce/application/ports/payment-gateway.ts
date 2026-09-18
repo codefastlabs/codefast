@@ -2,9 +2,9 @@
 
 import { token } from "@codefast/di";
 
-import type { OrderId } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-id";
-import type { PaymentIntent } from "#/examples/21-explicit-architecture-ecommerce/domain/payment/payment-intent";
-import type { Money } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/money";
+import type { OrderId } from "#examples/21-explicit-architecture-ecommerce/domain/order/order-id";
+import type { PaymentIntent } from "#examples/21-explicit-architecture-ecommerce/domain/payment/payment-intent";
+import type { Money } from "#examples/21-explicit-architecture-ecommerce/domain/shared/money";
 
 /** Authorizes and captures a charge; the selector picks one by the currency it `supports`. */
 export interface PaymentGateway {

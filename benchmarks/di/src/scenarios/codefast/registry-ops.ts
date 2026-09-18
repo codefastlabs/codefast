@@ -26,7 +26,7 @@
  */
 import { Container, token } from "@codefast/di";
 
-import { isSharedWithinScopeFreshAcross } from "#/fixtures/sanity";
+import { isSharedWithinScopeFreshAcross } from "#fixtures/sanity";
 import {
   ACTIVATION_HOOK_BATCH,
   CONTAINER_LEVEL_ACTIVATION_HOOK,
@@ -38,9 +38,9 @@ import {
   REBIND_HOT_SWAP,
   SCOPED_BINDING_PER_CHILD,
   SCOPED_PER_CHILD_BATCH,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 // ── scenario 1: rebind hot-swap ──────────────────────────────────────────────────────────────────────────────────────
 

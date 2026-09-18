@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { JsonlBenchObservationRow } from "#/report/jsonl";
-import { isJsonlBenchObservationRow, jsonlBenchObservationRowToScenarioTrialResult } from "#/report/jsonl";
+import type { JsonlBenchObservationRow } from "#report/jsonl";
+import { isJsonlBenchObservationRow, jsonlBenchObservationRowToScenarioTrialResult } from "#report/jsonl";
 
 /** A minimal row carrying every field the guard requires, config identity included. */
 function validRow(): Record<string, unknown> {

@@ -1,7 +1,7 @@
 import { MissingScopeContextError } from "@codefast/di";
 import { describe, expect, it } from "vitest";
 
-import { OrderServiceToken, createShop } from "#/features/home/demos/shop";
+import { OrderServiceToken, createShop } from "#features/home/demos/shop";
 
 describe("createShop", () => {
   it("derives a graph rooted at OrderService with its five dependencies", () => {

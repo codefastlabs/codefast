@@ -1,12 +1,12 @@
 import path from "node:path";
 
-import type { RtlAuditResult, RtlFileViolations } from "#/audit/domain/types";
-import { auditFileContent } from "#/audit/rtl/domain/audit-file";
-import { AppError, messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { walkTsxFiles } from "#/core/workspace/typescript-walk";
+import type { RtlAuditResult, RtlFileViolations } from "#audit/domain/types";
+import { auditFileContent } from "#audit/rtl/domain/audit-file";
+import { AppError, messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { walkTsxFiles } from "#core/workspace/typescript-walk";
 
 /**
  * Scans a target path for physical-direction Tailwind class violations.

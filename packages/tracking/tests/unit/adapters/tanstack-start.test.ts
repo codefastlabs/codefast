@@ -5,9 +5,9 @@ import {
   recordConsentReceiptFromRequest,
   resolveInitialConsentFromRequest,
   setAnonymousIdResponseCookie,
-} from "#/adapters/tanstack-start";
-import type { ConsentReceiptInput } from "#/core/consent-receipt";
-import type { ReceiptStore } from "#/server/consent-receipt-store";
+} from "#adapters/tanstack-start";
+import type { ConsentReceiptInput } from "#core/consent-receipt";
+import type { ReceiptStore } from "#server/consent-receipt-store";
 
 const { deleteCookie, getRequestHeader, getRequestIP, setCookie, setResponseHeader } = vi.hoisted(() => ({
   deleteCookie: vi.fn<(name: string, options?: unknown) => void>(),

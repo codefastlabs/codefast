@@ -2,7 +2,7 @@ import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
+import { cn } from "#lib/utils";
 
 // ── Component: Breadcrumb ────────────────────────────────────────────────────────────────────────────────────────────
 

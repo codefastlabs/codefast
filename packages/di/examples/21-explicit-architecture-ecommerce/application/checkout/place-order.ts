@@ -5,31 +5,31 @@ import { inject, injectAll, injectable, token } from "@codefast/di";
 import type {
   PlaceOrderCommand,
   PlaceOrderResult,
-} from "#/examples/21-explicit-architecture-ecommerce/application/checkout/place-order.dto";
-import { ClockToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/clock";
-import type { Clock } from "#/examples/21-explicit-architecture-ecommerce/application/ports/clock";
-import { IdGeneratorToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/id-generator";
-import type { IdGenerator } from "#/examples/21-explicit-architecture-ecommerce/application/ports/id-generator";
-import { NotificationSenderToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/notification-sender";
-import type { NotificationSender } from "#/examples/21-explicit-architecture-ecommerce/application/ports/notification-sender";
-import { OrderRepositoryToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/order-repository";
-import type { OrderRepository } from "#/examples/21-explicit-architecture-ecommerce/application/ports/order-repository";
-import { PaymentGatewayToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
-import type { PaymentGateway } from "#/examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
-import { ProductRepositoryToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
-import type { ProductRepository } from "#/examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
-import { UnitOfWorkToken } from "#/examples/21-explicit-architecture-ecommerce/application/ports/unit-of-work";
-import type { UnitOfWork } from "#/examples/21-explicit-architecture-ecommerce/application/ports/unit-of-work";
+} from "#examples/21-explicit-architecture-ecommerce/application/checkout/place-order.dto";
+import { ClockToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/clock";
+import type { Clock } from "#examples/21-explicit-architecture-ecommerce/application/ports/clock";
+import { IdGeneratorToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/id-generator";
+import type { IdGenerator } from "#examples/21-explicit-architecture-ecommerce/application/ports/id-generator";
+import { NotificationSenderToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/notification-sender";
+import type { NotificationSender } from "#examples/21-explicit-architecture-ecommerce/application/ports/notification-sender";
+import { OrderRepositoryToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/order-repository";
+import type { OrderRepository } from "#examples/21-explicit-architecture-ecommerce/application/ports/order-repository";
+import { PaymentGatewayToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
+import type { PaymentGateway } from "#examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
+import { ProductRepositoryToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
+import type { ProductRepository } from "#examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
+import { UnitOfWorkToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/unit-of-work";
+import type { UnitOfWork } from "#examples/21-explicit-architecture-ecommerce/application/ports/unit-of-work";
 import {
   PaymentDeclinedError,
   UnsupportedCurrencyError,
-} from "#/examples/21-explicit-architecture-ecommerce/application/shared/application-errors";
-import { ProductNotFoundError } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/catalog-errors";
-import type { Product } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product";
-import { toProductId } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
-import { Order } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order";
-import type { OrderLine } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order";
-import { toOrderId } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-id";
+} from "#examples/21-explicit-architecture-ecommerce/application/shared/application-errors";
+import { ProductNotFoundError } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/catalog-errors";
+import type { Product } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product";
+import { toProductId } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
+import { Order } from "#examples/21-explicit-architecture-ecommerce/domain/order/order";
+import type { OrderLine } from "#examples/21-explicit-architecture-ecommerce/domain/order/order";
+import { toOrderId } from "#examples/21-explicit-architecture-ecommerce/domain/order/order-id";
 
 /** Reserves stock, prices the order, charges a gateway, persists atomically, and notifies the customer. */
 @injectable([

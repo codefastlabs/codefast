@@ -1,5 +1,5 @@
-import type { DisplayNameAuditResult } from "#/audit/domain/types";
-import { logger } from "#/core/logger";
+import type { DisplayNameAuditResult } from "#audit/domain/types";
+import { logger } from "#core/logger";
 
 /**
  * Human-readable display-name report.

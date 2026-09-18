@@ -1,5 +1,5 @@
-import type { Binding } from "#/core/binding";
-import type { BindingScope } from "#/core/types";
+import type { Binding } from "#core/binding";
+import type { BindingScope } from "#core/types";
 
 /**
  * The scope a binding resolves under.

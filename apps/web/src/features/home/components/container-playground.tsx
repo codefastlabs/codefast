@@ -5,15 +5,15 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { ScrollFade } from "#/components/shared/scroll-fade";
-import { DependencyGraph } from "#/features/home/components/dependency-graph";
-import type { LogEntry } from "#/features/home/components/resolution-log";
-import { ResolutionLog } from "#/features/home/components/resolution-log";
-import type { OrderService } from "#/features/home/demos/shop";
-import { OrderServiceToken, createShop } from "#/features/home/demos/shop";
-import { constructionOrder } from "#/features/home/demos/wiring-order";
-import { track } from "#/features/tracking/lib/tracking";
-import { useInView } from "#/hooks/use-in-view";
+import { ScrollFade } from "#components/shared/scroll-fade";
+import { DependencyGraph } from "#features/home/components/dependency-graph";
+import type { LogEntry } from "#features/home/components/resolution-log";
+import { ResolutionLog } from "#features/home/components/resolution-log";
+import type { OrderService } from "#features/home/demos/shop";
+import { OrderServiceToken, createShop } from "#features/home/demos/shop";
+import { constructionOrder } from "#features/home/demos/wiring-order";
+import { track } from "#features/tracking/lib/tracking";
+import { useInView } from "#hooks/use-in-view";
 
 const STEP_MS = 180;
 

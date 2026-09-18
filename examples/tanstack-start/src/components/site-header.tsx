@@ -2,7 +2,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { ComponentProps, ReactElement } from "react";
 
-import { AppearanceToggle } from "#/components/appearance-toggle";
+import { AppearanceToggle } from "#components/appearance-toggle";
 
 type SiteHeaderProps = ComponentProps<"header">;
 

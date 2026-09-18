@@ -1,13 +1,13 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type { ConsentConfig } from "#/core/consent-config";
-import { updateGoogleConsent } from "#/destinations/google-analytics";
-import { useConsent } from "#/react/use-consent";
-import { useGoogleConsentSync } from "#/react/use-google-consent-sync";
-import { createMemoryConsentStorage } from "#/tests/unit/core/support/memory-consent-storage";
+import type { ConsentConfig } from "#core/consent-config";
+import { updateGoogleConsent } from "#destinations/google-analytics";
+import { useConsent } from "#react/use-consent";
+import { useGoogleConsentSync } from "#react/use-google-consent-sync";
+import { createMemoryConsentStorage } from "#tests/unit/core/support/memory-consent-storage";
 
-vi.mock(import("#/destinations/google-analytics"), async (importOriginal) => ({
+vi.mock(import("#destinations/google-analytics"), async (importOriginal) => ({
   ...(await importOriginal()),
   updateGoogleConsent: vi.fn(),
 }));

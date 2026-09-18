@@ -5,14 +5,14 @@
 import type { AwilixContainer } from "awilix";
 import { asFunction, asValue, createContainer, InjectionMode, Lifetime } from "awilix";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
 import {
   SCALE_CHAIN_SIZE,
   SCALE_DEEP_TRANSIENT_CHAIN_512,
   SCALE_MID_CHAIN_SIZE,
   SCALE_MID_TRANSIENT_CHAIN_32,
-} from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildScaleTransientChainScenario(descriptor: ScenarioDescriptor, chainSize: number): BenchScenario {
   const chainNames = Array.from(

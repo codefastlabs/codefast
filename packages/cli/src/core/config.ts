@@ -1,10 +1,10 @@
-import { loadConfigPayload } from "#/core/config/loader";
-import type { CodefastConfig } from "#/core/config/schema";
-import { reportSchemaWarnings } from "#/core/config/warnings";
-import { AppError, messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
+import { loadConfigPayload } from "#core/config/loader";
+import type { CodefastConfig } from "#core/config/schema";
+import { reportSchemaWarnings } from "#core/config/warnings";
+import { AppError, messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
 
 /**
  * Loads the `codefast.config.js` for a workspace root, reporting schema warnings along the way.

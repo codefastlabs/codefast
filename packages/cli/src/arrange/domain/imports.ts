@@ -4,9 +4,9 @@ import {
   isDomainImportDeclaration,
   isDomainNamedImports,
   isDomainStringLiteral,
-} from "#/arrange/domain/ast/ast-node";
-import type { DomainAstNode, DomainImportSpecifier, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
-import { endAfterOptionalCommaFollowingInSource } from "#/core/source-text-edit";
+} from "#arrange/domain/ast/ast-node";
+import type { DomainAstNode, DomainImportSpecifier, DomainSourceFile } from "#arrange/domain/ast/ast-node";
+import { endAfterOptionalCommaFollowingInSource } from "#core/source-text-edit";
 
 function sourceFileImportsCn(sourceFile: DomainSourceFile): boolean {
   for (const statement of sourceFile.statements) {

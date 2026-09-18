@@ -2,8 +2,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { runLinkAudit } from "#/audit/links/run";
-import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
+import { runLinkAudit } from "#audit/links/run";
+import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
 
 const rootDir = path.join(path.sep, "repo");
 const docsDir = path.join(rootDir, "docs");

@@ -1,25 +1,25 @@
 import path from "node:path";
 
-import type { MirrorConfig } from "#/core/config/schema";
-import { AppError } from "#/core/errors";
-import { messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { listWorkspacePackageDirectories } from "#/core/workspace/resolver";
-import type { WorkspacePackageLayoutOutcome } from "#/core/workspace/resolver";
-import { normalizePath } from "#/mirror/domain/path-normalizer";
+import type { MirrorConfig } from "#core/config/schema";
+import { AppError } from "#core/errors";
+import { messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
+import type { WorkspacePackageLayoutOutcome } from "#core/workspace/resolver";
+import { normalizePath } from "#mirror/domain/path-normalizer";
 import type {
   FindWorkspacePackagesResult,
   GlobalStats,
   PackageStats,
   WorkspaceMultiDiscoverySource,
-} from "#/mirror/domain/types";
-import type { MirrorSyncExecutionInput } from "#/mirror/domain/types";
-import { resolvePackageFilterUnderRoot } from "#/mirror/package-path";
-import { syncExportsForWorkspacePackage } from "#/mirror/sync-workspace-package";
+} from "#mirror/domain/types";
+import type { MirrorSyncExecutionInput } from "#mirror/domain/types";
+import { resolvePackageFilterUnderRoot } from "#mirror/package-path";
+import { syncExportsForWorkspacePackage } from "#mirror/sync-workspace-package";
 
-export type { MirrorSyncExecutionInput } from "#/mirror/domain/types";
+export type { MirrorSyncExecutionInput } from "#mirror/domain/types";
 
 /**
  * Runs the mirror sync across the targeted packages and returns the aggregate stats.

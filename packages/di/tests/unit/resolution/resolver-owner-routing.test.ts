@@ -5,9 +5,9 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { AsyncResolutionError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { AsyncResolutionError } from "#errors/errors";
 
 const depToken = token<string>("owner.dep");
 

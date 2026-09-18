@@ -3,7 +3,7 @@ import { createHmac } from "node:crypto";
 import type { ConsentReceipt } from "@codefast/tracking";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { createReceiptSigner } from "#/features/tracking/lib/receipt-signer.server";
+import { createReceiptSigner } from "#features/tracking/lib/receipt-signer.server";
 
 const SAMPLE: Omit<ConsentReceipt, "integrityKey"> = {
   decision: { ads: false, analytics: true },

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveActiveAnchor } from "#/features/components-catalog/lib/active-anchor";
+import { resolveActiveAnchor } from "#features/components-catalog/lib/active-anchor";
 
 /** A section anchor whose only geometry is its distance from the viewport top. */
 function anchor(id: string, top: number, parent?: Element): HTMLElement {

@@ -1,7 +1,7 @@
 import * as AvatarPrimitive from "radix-ui/avatar";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
+import { cn } from "#lib/utils";
 
 // ── Component: Avatar ────────────────────────────────────────────────────────────────────────────────────────────────
 

@@ -1,5 +1,5 @@
 /** What a constraint needs to exist before it can ever match, so `validate()` can check for it. */
-import type { BindingConstraint } from "#/core/types";
+import type { BindingConstraint } from "#core/types";
 
 /**
  * Key the requirement is attached under.

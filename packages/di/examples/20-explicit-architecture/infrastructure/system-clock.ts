@@ -2,7 +2,7 @@
 
 import { injectable } from "@codefast/di";
 
-import type { Clock } from "#/examples/20-explicit-architecture/application/ports/clock.port";
+import type { Clock } from "#examples/20-explicit-architecture/application/ports/clock.port";
 
 /** Returns the actual current time; tests substitute a fixed clock through the same port. */
 @injectable()

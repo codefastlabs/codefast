@@ -3,10 +3,10 @@
  * `import.meta.glob` — the deployed function has no `packages/` directory to read — and imported only
  * behind the server functions, so neither the raw documents nor the manifests reach a client chunk.
  */
-import { DOC_KINDS, docRefFor } from "#/features/package-docs/lib/doc-kinds";
-import type { DocKind, DocKindSlug } from "#/features/package-docs/lib/doc-kinds";
-import { FLAGSHIP_SLUG } from "#/features/package-docs/lib/flagship";
-import type { PackageDoc, PackageSummary } from "#/features/package-docs/lib/rendered-doc";
+import { DOC_KINDS, docRefFor } from "#features/package-docs/lib/doc-kinds";
+import type { DocKind, DocKindSlug } from "#features/package-docs/lib/doc-kinds";
+import { FLAGSHIP_SLUG } from "#features/package-docs/lib/flagship";
+import type { PackageDoc, PackageSummary } from "#features/package-docs/lib/rendered-doc";
 
 interface PackageManifest {
   readonly name: string;

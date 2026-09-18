@@ -2,8 +2,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import type { DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
-import { runPackSlim } from "#/pack-slim/run";
+import type { DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
+import { runPackSlim } from "#pack-slim/run";
 
 function createFakeRepo(files: Record<string, string>): {
   readonly fs: Filesystem;
@@ -65,8 +65,8 @@ function seedPackage(): Record<string, string> {
         files: ["dist", "src", "README.md"],
         exports: { ".": { source: "./src/index.ts", types: "./dist/index.d.ts", import: "./dist/index.js" } },
         imports: {
-          "#/tests/*": ["./tests/*"],
-          "#/*": { source: ["./src/*"], types: "./dist/*.d.ts", default: "./dist/*.js" },
+          "#tests/*": ["./tests/*"],
+          "#*": { source: ["./src/*"], types: "./dist/*.d.ts", default: "./dist/*.js" },
         },
         scripts: { build: "tsc -p tsconfig.build.json", test: "vitest run" },
         devDependencies: { typescript: "^7.0.2" },
@@ -96,7 +96,7 @@ describe("runPackSlim", () => {
     const manifest = JSON.parse(store.get(`${PKG}/package.json`)!) as Record<string, unknown>;
     expect(manifest.files).toEqual(["dist", "README.md"]);
     expect(manifest.exports).toEqual({ ".": { types: "./dist/index.d.ts", import: "./dist/index.js" } });
-    expect(manifest.imports).toEqual({ "#/*": { types: "./dist/*.d.ts", default: "./dist/*.js" } });
+    expect(manifest.imports).toEqual({ "#*": { types: "./dist/*.d.ts", default: "./dist/*.js" } });
     expect(manifest).not.toHaveProperty("scripts");
     expect(manifest).not.toHaveProperty("devDependencies");
 

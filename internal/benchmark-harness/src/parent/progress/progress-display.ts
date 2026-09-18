@@ -1,6 +1,6 @@
 /** The surface a run drives to show progress, whatever the terminal can draw. */
-import type { RegisterLibraryOptions } from "#/parent/progress/progress-tracker";
-import type { BenchProgressEvent } from "#/shared/progress";
+import type { RegisterLibraryOptions } from "#parent/progress/progress-tracker";
+import type { BenchProgressEvent } from "#shared/progress";
 
 /**
  * Everything a parent run reports while subprocesses measure.

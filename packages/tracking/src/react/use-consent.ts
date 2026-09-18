@@ -2,9 +2,9 @@
 
 import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
 
-import type { ConsentDecision, ConsentMode, ConsentStorage } from "#/core/consent";
-import { CONSENT_CATEGORIES, createConsentDecision, readStoredDecision, resolveDefaultConsent } from "#/core/consent";
-import type { ConsentConfig } from "#/core/consent-config";
+import type { ConsentDecision, ConsentMode, ConsentStorage } from "#core/consent";
+import { CONSENT_CATEGORIES, createConsentDecision, readStoredDecision, resolveDefaultConsent } from "#core/consent";
+import type { ConsentConfig } from "#core/consent-config";
 
 /**
  * Options for `useConsent`.

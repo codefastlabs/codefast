@@ -9,13 +9,13 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { inject } from "#/decorators/inject";
-import { injectable } from "#/decorators/injectable";
-import type { DiagnosableContainer, ResolutionDiagnostics } from "#/errors/diagnostics";
-import { RESOLUTION_DIAGNOSTICS } from "#/errors/diagnostics";
-import { CircularDependencyError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { inject } from "#decorators/inject";
+import { injectable } from "#decorators/injectable";
+import type { DiagnosableContainer, ResolutionDiagnostics } from "#errors/diagnostics";
+import { RESOLUTION_DIAGNOSTICS } from "#errors/diagnostics";
+import { CircularDependencyError } from "#errors/errors";
 
 const WARM_ITERATIONS = 5;
 

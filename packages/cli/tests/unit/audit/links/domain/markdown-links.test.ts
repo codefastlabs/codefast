@@ -1,7 +1,7 @@
 import GithubSlugger, { slug as githubSlug } from "github-slugger";
 import { describe, expect, it } from "vitest";
 
-import { collectMarkdownAnchors, scanMarkdownLinks } from "#/audit/links/domain/markdown-links";
+import { collectMarkdownAnchors, scanMarkdownLinks } from "#audit/links/domain/markdown-links";
 
 // Inputs that exercise where a naive slugger diverges from GitHub — a dot, an em dash with and without
 // surrounding spaces, an underscore, a middle dot, parentheses, an ampersand, a colon, and a non-ASCII letter.

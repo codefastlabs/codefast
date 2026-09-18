@@ -1,8 +1,8 @@
 import { StrictMode } from "react";
 import { renderToReadableStream } from "react-dom/server";
 
-import { App } from "#/app/components/app";
-import type { EmbeddedViewerPayload } from "#/types";
+import { App } from "#app/components/app";
+import type { EmbeddedViewerPayload } from "#types";
 
 const htmlEncoder = new TextEncoder();
 const HTML_DOCTYPE = htmlEncoder.encode("<!DOCTYPE html>");

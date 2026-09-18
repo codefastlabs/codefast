@@ -1,8 +1,8 @@
-import type { BenchScenarioTier } from "#/child/bench-scenario";
-import { discoverBenchScenarioIds } from "#/parent/run-bench-subprocess";
-import type { BenchSubprocessConfig } from "#/shared/config";
-import { assertBenchEnvKeys } from "#/shared/env-keys";
-import type { ScenarioListing } from "#/shared/protocol";
+import type { BenchScenarioTier } from "#child/bench-scenario";
+import { discoverBenchScenarioIds } from "#parent/run-bench-subprocess";
+import type { BenchSubprocessConfig } from "#shared/config";
+import { assertBenchEnvKeys } from "#shared/env-keys";
+import type { ScenarioListing } from "#shared/protocol";
 
 /**
  * One scenario, the libraries that implement it, and the libraries that owe it.

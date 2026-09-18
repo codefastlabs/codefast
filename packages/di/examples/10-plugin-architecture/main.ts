@@ -48,7 +48,7 @@
 
 import { Container, inject, injectable, Module, token } from "@codefast/di";
 
-import { ok, section } from "#/examples/support/log";
+import { ok, section } from "#examples/support/log";
 
 // ── Core contracts ───────────────────────────────────────────────────────────────────────────────────────────────────
 

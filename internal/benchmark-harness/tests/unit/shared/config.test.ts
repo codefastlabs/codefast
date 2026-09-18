@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { BenchSubprocessConfig } from "#/shared/config";
-import { selectLibraries } from "#/shared/config";
+import type { BenchSubprocessConfig } from "#shared/config";
+import { selectLibraries } from "#shared/config";
 
 const LIBRARIES: ReadonlyArray<BenchSubprocessConfig> = [
   { libraryName: "@codefast/di", scenarioName: "codefast", tsconfigFileName: "a.json", benchEntryFileName: "a.ts" },

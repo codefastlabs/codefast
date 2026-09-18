@@ -8,18 +8,18 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { NO_TAG_KEYS } from "#/core/tag";
-import type { Token } from "#/core/token";
-import { token } from "#/core/token";
-import type { BindingIdentifier, Constructor, ResolutionContext, ResolutionFrame } from "#/core/types";
-import { injectable } from "#/decorators/injectable";
+import { Container } from "#container/container";
+import { NO_TAG_KEYS } from "#core/tag";
+import type { Token } from "#core/token";
+import { token } from "#core/token";
+import type { BindingIdentifier, Constructor, ResolutionContext, ResolutionFrame } from "#core/types";
+import { injectable } from "#decorators/injectable";
 import {
   RESOLUTION_SET_THRESHOLD,
   UNOWNED_BRANCH,
   enterResolutionPath,
   extendResolutionBranch,
-} from "#/resolution/path/resolution-path";
+} from "#resolution/path/resolution-path";
 
 const DEEP = RESOLUTION_SET_THRESHOLD + 8;
 const SHALLOW = RESOLUTION_SET_THRESHOLD - 8;

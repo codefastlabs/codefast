@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { readLedgerFacts } from "#/features/home/lib/benchmark-ledger.impl";
+import { readLedgerFacts } from "#features/home/lib/benchmark-ledger.impl";
 
 describe("readLedgerFacts", () => {
   it("reads the real ledger: the flagship among the libraries, and a dated entry", () => {

@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#/*": "./*.ts"
+    "#*": "./*.ts"
   },
   "scripts": {
     "bench": "turbo run bench --concurrency=1",
@@ -31,6 +31,7 @@
     "cli:audit:display-names": "pnpm run codefast audit display-names",
     "cli:audit:imports": "pnpm run codefast audit imports",
     "cli:audit:links": "pnpm run codefast audit links",
+    "cli:audit:publish": "pnpm run codefast audit publish",
     "cli:audit:rtl": "pnpm run codefast audit rtl",
     "cli:mirror": "pnpm run codefast mirror",
     "cli:mirror:preview": "pnpm run codefast mirror --dry-run",
@@ -98,7 +99,7 @@
     "turbo": "catalog:"
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.12.0"
   },
   "packageManager": "pnpm@11.25.0"
 }

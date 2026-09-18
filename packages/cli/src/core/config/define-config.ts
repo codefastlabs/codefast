@@ -1,4 +1,4 @@
-import type { CodefastConfig } from "#/core/config/schema";
+import type { CodefastConfig } from "#core/config/schema";
 
 /**
  * Types a `codefast.config.*` object for editor autocomplete and type-checking; returns it unchanged.

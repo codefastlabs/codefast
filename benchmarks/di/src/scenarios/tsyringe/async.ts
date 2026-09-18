@@ -5,8 +5,8 @@
 import "reflect-metadata";
 import { container as tsyringeRootContainer } from "tsyringe";
 
-import { ASYNC_INIT_SINGLE_HOP } from "#/fixtures/scenario-parity";
-import type { AsyncBenchScenario } from "#/scenarios/types";
+import { ASYNC_INIT_SINGLE_HOP } from "#fixtures/scenario-parity";
+import type { AsyncBenchScenario } from "#scenarios/types";
 
 class AsyncInitService {
   readonly ready = true;

@@ -1,4 +1,4 @@
-import type { ConsentCategory, ConsentDecision } from "#/core/consent";
+import type { ConsentCategory, ConsentDecision } from "#core/consent";
 
 /**
  * TCF/GPP interop reconciler (spec-ad-consent-frameworks): the system **reads** an external

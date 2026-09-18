@@ -1,4 +1,4 @@
-import { useMediaQuery } from "#/hooks/use-media-query";
+import { useMediaQuery } from "#hooks/use-media-query";
 
 /**
  * Determines whether the current viewport should be treated as mobile.

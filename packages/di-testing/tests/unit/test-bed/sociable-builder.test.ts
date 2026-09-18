@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { ExposureError, OverrideMismatchError, SealedDependencyError } from "#/errors/errors";
-import { TestBed } from "#/test-bed/test-bed";
+import { ExposureError, OverrideMismatchError, SealedDependencyError } from "#errors/errors";
+import { TestBed } from "#test-bed/test-bed";
 import {
   BundleService,
   CheckoutService,
@@ -17,7 +17,7 @@ import {
   TaxPolicyToken,
   ThrowingHost,
   ThrowingService,
-} from "#/tests/unit/support/fixtures";
+} from "#tests/unit/support/fixtures";
 
 describe("TestBed.sociable", () => {
   const bedFor = () =>

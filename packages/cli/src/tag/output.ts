@@ -1,5 +1,5 @@
-import { logger } from "#/core/logger";
-import type { TagProgressListener, TagResolvedTarget, TagResult, TagTargetExecutionResult } from "#/tag/domain/types";
+import { logger } from "#core/logger";
+import type { TagProgressListener, TagResolvedTarget, TagResult, TagTargetExecutionResult } from "#tag/domain/types";
 
 type TagProgressEvent =
   | { type: "target-started"; target: TagResolvedTarget }

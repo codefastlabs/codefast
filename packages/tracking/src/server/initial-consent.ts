@@ -1,6 +1,6 @@
-import type { ConsentCategory, InitialConsent } from "#/core/consent";
-import { resolveConsentMode, resolveDefaultConsent, STRICTEST_INITIAL_CONSENT } from "#/core/consent";
-import { resolveRegionFromCountryCode } from "#/server/region";
+import type { ConsentCategory, InitialConsent } from "#core/consent";
+import { resolveConsentMode, resolveDefaultConsent, STRICTEST_INITIAL_CONSENT } from "#core/consent";
+import { resolveRegionFromCountryCode } from "#server/region";
 
 /**
  * Options for `resolveInitialConsent`.

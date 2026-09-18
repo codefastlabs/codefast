@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { OVERLAY_DASHES, OVERLAY_POINT_STYLES, PALETTE, shadeOf } from "#/app/lib/colors";
-import type { PaletteEntry } from "#/app/lib/colors";
+import { OVERLAY_DASHES, OVERLAY_POINT_STYLES, PALETTE, shadeOf } from "#app/lib/colors";
+import type { PaletteEntry } from "#app/lib/colors";
 import {
   buildOverlaySeries,
   indexToFirst,
@@ -9,8 +9,8 @@ import {
   overlaySeriesLabel,
   rowShortLabel,
   runIndicesWithData,
-} from "#/app/lib/overlay";
-import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#/types";
+} from "#app/lib/overlay";
+import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#types";
 
 const libraries: Array<EmbeddedLibraryMeta> = [
   { key: "cf", displayName: "cf", isPrimary: true },

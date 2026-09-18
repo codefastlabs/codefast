@@ -31,7 +31,7 @@ production — and you assert against the mocks the bed created.
 pnpm add -D @codefast/di-testing
 ```
 
-`@codefast/di-testing` requires Node.js 24 or later and a peer install of `@codefast/di` (`>=0.8.0`), with the same
+`@codefast/di-testing` requires Node.js 22.12 or later and a peer install of `@codefast/di` (`>=0.8.0`), with the same
 TypeScript setup: native Stage 3 decorators, `experimentalDecorators` off. The package is published on 0.x and versioned
 on its own track: breaking changes ship as minor versions, so pin the minor version when you need stability.
 

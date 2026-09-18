@@ -1,6 +1,6 @@
 /** The catalog error taxonomy — failures the catalog rules raise. */
 
-import { DomainError } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/domain-error";
+import { DomainError } from "#examples/21-explicit-architecture-ecommerce/domain/shared/domain-error";
 
 /** Raised when a catalog lookup finds no product for an id. */
 export class ProductNotFoundError extends DomainError {

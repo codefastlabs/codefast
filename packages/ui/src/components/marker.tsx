@@ -1,9 +1,9 @@
 import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-import type { MarkerVariants } from "#/variants/marker";
-import { markerVariants } from "#/variants/marker";
+import { cn } from "#lib/utils";
+import type { MarkerVariants } from "#variants/marker";
+import { markerVariants } from "#variants/marker";
 
 // ── Component: Marker ────────────────────────────────────────────────────────────────────────────────────────────────
 

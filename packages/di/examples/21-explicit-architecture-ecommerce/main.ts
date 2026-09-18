@@ -16,6 +16,6 @@
  * The thin file below just runs the composition root's bootstrap so the example runner can pick it up.
  */
 
-import { bootstrap } from "#/examples/21-explicit-architecture-ecommerce/composition/bootstrap";
+import { bootstrap } from "#examples/21-explicit-architecture-ecommerce/composition/bootstrap";
 
 await bootstrap();

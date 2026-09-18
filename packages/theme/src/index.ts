@@ -13,20 +13,20 @@
  */
 
 // Types & Schema
-export type { Appearance, AppearanceContextValue, ColorScheme } from "#/appearance";
-export { appearances, appearanceSchema } from "#/appearance";
+export type { Appearance, AppearanceContextValue, ColorScheme } from "#appearance";
+export { appearances, appearanceSchema } from "#appearance";
 
 // Constants
-export { DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME } from "#/constants";
+export { DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME } from "#constants";
 
 // Provider & Hook (use `@codefast/theme/appearance-context` for `AppearanceContext`)
-export { AppearanceProvider } from "#/appearance-provider";
-export type { AppearanceProviderProps } from "#/appearance-provider";
-export { useAppearance } from "#/use-appearance";
+export { AppearanceProvider } from "#appearance-provider";
+export type { AppearanceProviderProps } from "#appearance-provider";
+export { useAppearance } from "#use-appearance";
 
 // Script (FOUC prevention)
-export { AppearanceScript } from "#/appearance-script";
-export type { AppearanceScriptProps } from "#/appearance-script";
+export { AppearanceScript } from "#appearance-script";
+export type { AppearanceScriptProps } from "#appearance-script";
 
 // Resolution: `getSystemColorScheme` lives under `@codefast/theme/color-scheme`
-export { resolveColorScheme } from "#/color-scheme";
+export { resolveColorScheme } from "#color-scheme";

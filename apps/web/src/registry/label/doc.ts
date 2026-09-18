@@ -1,7 +1,7 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { LabelInField } from "#/registry/label/field.example";
-import { LabelRtl } from "#/registry/label/rtl.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { LabelInField } from "#registry/label/field.example";
+import { LabelRtl } from "#registry/label/rtl.example";
 
 export const labelDoc: ComponentDoc = {
   examples: [

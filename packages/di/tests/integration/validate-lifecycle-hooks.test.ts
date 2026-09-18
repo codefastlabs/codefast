@@ -5,9 +5,9 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { UnreachableLifecycleHookError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { UnreachableLifecycleHookError } from "#errors/errors";
 
 class Connection {
   readonly id = "connection";

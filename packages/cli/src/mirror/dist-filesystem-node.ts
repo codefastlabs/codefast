@@ -1,9 +1,9 @@
 import path from "node:path";
 
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { isDirentList } from "#/mirror/domain/dirent-guard";
-import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
-import { normalizePath } from "#/mirror/domain/path-normalizer";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { isDirentList } from "#mirror/domain/dirent-guard";
+import type { DistFilesystem } from "#mirror/domain/dist-filesystem";
+import { normalizePath } from "#mirror/domain/path-normalizer";
 
 /**
  * Creates the `DistFilesystem` the mirror scan uses, backed by a `Filesystem`.

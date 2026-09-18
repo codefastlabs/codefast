@@ -16,8 +16,8 @@
 import "reflect-metadata";
 import { Container, ContainerModule } from "inversify";
 
-import { MODULE_COLD_FROM_MODULES, MODULE_LOAD_UNLOAD } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { MODULE_COLD_FROM_MODULES, MODULE_LOAD_UNLOAD } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 // ── shared identifiers ───────────────────────────────────────────────────────────────────────────────────────────────
 

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11 — every package holds that one floor, `di`
+Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 22.12, pnpm 11 — every package holds that one floor, `di`
 included, which is why it keeps its own `Map` upsert helpers instead of the ES2025 methods) publishing the `@codefast/*`
 packages. The flagship is `@codefast/di`, lightweight dependency injection on TC39 Stage 3 decorators; `@codefast/ui` is
 the Radix-based, Tailwind CSS 4 component library. `apps/web` is the TanStack Start site behind codefastlabs.com: a
@@ -26,7 +26,7 @@ is private until it is published, so it starts in `internal/`.
   TypeScript with **`oxc-parser`** (its `arrange`/`tag` AST tooling), so nothing in the repo depends on the classic
   `typescript` runtime. (TanStack Start's Vite plugins build fine on TS 7 — verified.)
 - **Library and bin packages build with native `tsc`** — per-package `tsconfig.build.json`, the Turborepo "Compiled
-  Packages" model, emitting per-file `.js` + `.d.ts` to `dist/`. tsc leaves internal `#/` subpath imports verbatim, so
+  Packages" model, emitting per-file `.js` + `.d.ts` to `dist/`. tsc leaves internal `#` subpath imports verbatim, so
   each `package.json#imports` is conditional (`source` → `src` for dev/tests, `types`/`default` → `dist` for consumers),
   and `apps/web` consumes the built `dist/`. Exports are generated from `dist/` by `codefast mirror`. The **only**
   bundler is **Vite** (Rolldown), reserved for genuine browser bundles: `apps/web`/`examples` (TanStack Start) and the
@@ -123,35 +123,40 @@ Rules: **no tests under** `src/**`; no test files directly under `tests/` (must 
 ## Imports & aliases
 
 - Internal imports use **Node subpath imports** declared in each package's `package.json#imports` — e.g.
-  `#/components/button` for src, `#/tests/...` for test helpers. Do **not** add `compilerOptions.paths` for internal
+  `#components/button` for src, `#tests/...` for test helpers. Do **not** add `compilerOptions.paths` for internal
   aliases (reserve TS path mapping for external-compat needs only).
-- **`tsc` resolves `#/` through the `imports` field itself, so no `tsconfig` under `packages/*`, `apps/*`, or
+- **The prefix is a bare `#`, never `#/`.** Node's native ESM resolver rejects a `#/`-prefixed specifier with
+  `ERR_INVALID_MODULE_SPECIFIER` on the whole Node 22 line and on Node 24 before 24.14, and the published `dist/*.js`
+  ships these `#` specifiers verbatim for a **consumer's** Node to resolve — so a leading slash silently breaks every
+  package on the engine floor while the in-repo runners (tsc/Vite/Vitest/tsx), which resolve `#/` themselves, stay green
+  and hide it. The `imports` keys are `#*`, `#tests/*`, `#examples/*` to match.
+- **`tsc` resolves `#` through the `imports` field itself, so no `tsconfig` under `packages/*`, `apps/*`, or
   `examples/*` declares `paths`** — and neither Vite nor Vitest needs `resolve.tsconfigPaths`. Two requirements make
-  that work: every `#/*` target lists its extension candidates (`./src/*`, `./src/*.ts`, `./src/*.tsx`, plus
+  that work: every `#*` target lists its extension candidates (`./src/*`, `./src/*.ts`, `./src/*.tsx`, plus
   `./src/*/index.ts`, `./src/*/index.tsx` everywhere except `benchmarks/*`) because `tsc` does no extension substitution
   on a bare `"./src/*"`; and each `packages/*` tsconfig sets `"customConditions": ["source"]` to pick the `src` lane,
   since TS's default conditions (`import`, `types`) match the `types` lane and would silently type-check `src/` against
-  stale `dist/*.d.ts`. Keep `./src/*` first in the array — `#/styles.css?url` resolves on that candidate alone. That
+  stale `dist/*.d.ts`. Keep `./src/*` first in the array — `#styles.css?url` resolves on that candidate alone. That
   condition also makes cross-package imports (`@codefast/ui` → `@codefast/tailwind-variants`) resolve to the other
   package's `src`, so `check-types` no longer needs a prior build; `apps/*`, `examples/*`, and `benchmarks/*` set no
-  custom condition and keep consuming the built `dist/`. Every runner in the repo resolves `#/` through that field —
+  custom condition and keep consuming the built `dist/`. Every runner in the repo resolves `#` through that field —
   `tsc`, Vite, Vitest, and `tsx` (the benchmarks) — so `paths` exists nowhere.
-- **The three conditions are three audiences, not three spellings of one path.** `tsc` emits `#/` specifiers verbatim
+- **The three conditions are three audiences, not three spellings of one path.** `tsc` emits `#` specifiers verbatim
   into both `.d.ts` and `.js`, so the field keeps resolving after the package leaves this repo: `source` → `./src/*` is
-  you during dev; `types` → `./dist/*.d.ts` is a **consumer's** `tsc` resolving a `#/` it found inside your shipped
-  declarations; `default` → `./dist/*.js` is a **consumer's** Node resolving a `#/` it found inside your shipped JS.
+  you during dev; `types` → `./dist/*.d.ts` is a **consumer's** `tsc` resolving a `#` it found inside your shipped
+  declarations; `default` → `./dist/*.js` is a **consumer's** Node resolving a `#` it found inside your shipped JS.
   Never repoint the two `dist` lanes at `src` — that hands consumers unbuilt source to type-check and execute, and it
   only appears to work because `files` still ships `src`. Confirm a lane with
-  `tsc --noEmit --traceResolution | grep "'#/…'"`, which prints the condition it matched.
+  `tsc --noEmit --traceResolution | grep "'#…'"`, which prints the condition it matched.
 - **A fallback array belongs only in a lane no real Node reads.** Node takes the first array entry it can parse, never
   checks that the file exists, and never falls through — so `["./dist/*.js", "./dist/*/index.js"]` is a safety net that
   cannot fire, and a missing first candidate throws `ERR_MODULE_NOT_FOUND` instead of trying the second. The `source`
   lane keeps its extension candidates because only `tsc` and Vite read it and both probe; `types` and `default` are
   single strings. `apps/*` and `examples/*` may keep a bare array because nothing but `tsc`/Vite/Vitest reads it — the
-  one exception is `vite.config.ts`, which Vite externalises so raw Node resolves it, hence its `#/lib/cache.ts` import
+  one exception is `vite.config.ts`, which Vite externalises so raw Node resolves it, hence its `#lib/cache.ts` import
   spells the extension to hit the first candidate exactly. `benchmarks/*` is the second exception, and the sharper one:
   **tsx reads only the first candidate**, applying its own extension probing to it, so a `./src/*/index.ts` entry can
-  never fire there — a `#/` specifier landing on a directory throws `ERR_UNSUPPORTED_DIR_IMPORT` at bench time while
+  never fire there — a `#` specifier landing on a directory throws `ERR_UNSUPPORTED_DIR_IMPORT` at bench time while
   `check-types` stays green. Both bench packages therefore drop the two `index` candidates and keep `src/` flat: one
   `<group>.ts` per module, never an `index.ts`.
 - **The condition is named `source` deliberately — do not "standardise" it to `development`.** Vite and webpack both

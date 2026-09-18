@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { rewriteDocImage, rewriteDocLink } from "#/features/package-docs/lib/markdown/rewrite-link";
+import { rewriteDocImage, rewriteDocLink } from "#features/package-docs/lib/markdown/rewrite-link";
 
 const inDiReadme = { pkg: "di", file: "README.md" };
 const inDiSpec = { pkg: "di", file: "SPEC.md" };

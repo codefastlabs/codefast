@@ -11,8 +11,8 @@ import {
   runBenchmarkChildMain,
 } from "@internal/benchmark-harness/child/run-benchmark-child-main";
 
-import { AWILIX } from "#/harness/config";
-import { collectAllAwilixScenarios } from "#/scenarios/collect-awilix-scenarios";
+import { AWILIX } from "#harness/config";
+import { collectAllAwilixScenarios } from "#scenarios/collect-awilix-scenarios";
 
 void runBenchmarkChildMain({
   libraryName: AWILIX.libraryName,

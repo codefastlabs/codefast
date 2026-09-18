@@ -21,17 +21,17 @@
  */
 import { Container, token } from "@codefast/di";
 
-import { ENV_TAG } from "#/fixtures/bench-tags";
-import type { FreshChildLane as FreshChildLaneId } from "#/fixtures/scenario-parity";
+import { ENV_TAG } from "#fixtures/bench-tags";
+import type { FreshChildLane as FreshChildLaneId } from "#fixtures/scenario-parity";
 import {
   FRESH_CHILD_BATCH,
   FRESH_CHILD_RESOLVES,
   freshChildDescriptor,
   TAGGED_ENVS,
   TARGET_TAG_VALUE,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface ChildService {
   readonly env: string;

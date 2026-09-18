@@ -1,10 +1,10 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import type { ConsentRecord, ConsentStorage } from "#/core/consent";
-import type { ConsentConfig } from "#/core/consent-config";
-import { useConsent } from "#/react/use-consent";
-import { createMemoryConsentStorage } from "#/tests/unit/core/support/memory-consent-storage";
+import type { ConsentRecord, ConsentStorage } from "#core/consent";
+import type { ConsentConfig } from "#core/consent-config";
+import { useConsent } from "#react/use-consent";
+import { createMemoryConsentStorage } from "#tests/unit/core/support/memory-consent-storage";
 
 const V1_CONFIG: ConsentConfig = {
   policyVersion: "v1",

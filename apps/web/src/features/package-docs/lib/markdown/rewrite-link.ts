@@ -2,8 +2,8 @@
  * Rewrites the repo-relative links a package's markdown carries so they resolve on the site: a
  * package document becomes its `/docs/<pkg>/…` page, anything else in the repo points at GitHub.
  */
-import { docPath, docRefFor } from "#/features/package-docs/lib/doc-kinds";
-import { GITHUB_URL } from "#/lib/nav-links";
+import { docPath, docRefFor } from "#features/package-docs/lib/doc-kinds";
+import { GITHUB_URL } from "#lib/nav-links";
 
 /** Where a link was written: the package and the document's path inside it, so relative paths resolve from its directory. */
 export interface LinkContext {

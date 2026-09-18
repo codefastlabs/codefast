@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { tv } from "#/index";
+import { tv } from "#index";
 
 describe("resolver metadata", () => {
   test("lists variant keys in declaration order", () => {

@@ -5,9 +5,9 @@ import { Context } from "radix-ui/internal";
 import type { ComponentProps, JSX, KeyboardEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 
-import { Button } from "#/components/button";
-import { useDirection } from "#/components/direction";
-import { cn } from "#/lib/utils";
+import { Button } from "#components/button";
+import { useDirection } from "#components/direction";
+import { cn } from "#lib/utils";
 
 // ── Context: Carousel ────────────────────────────────────────────────────────────────────────────────────────────────
 

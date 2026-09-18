@@ -5,10 +5,10 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import type { BindingSlot } from "#/core/binding";
-import { tag, tagKeyMaskOf } from "#/core/tag";
-import { token } from "#/core/token";
+import { Container } from "#container/container";
+import type { BindingSlot } from "#core/binding";
+import { tag, tagKeyMaskOf } from "#core/tag";
+import { token } from "#core/token";
 
 const TIER = tag<number | string>("tier");
 const ENV = tag<string>("env");
@@ -16,7 +16,7 @@ const X = tag<number>("x");
 const REGION = tag<string>("region");
 const EXTRA = tag<number>("extra");
 const Y = tag<number>("y");
-import type { BindingIdentifier, ConstraintContext, ResolutionFrame } from "#/core/types";
+import type { BindingIdentifier, ConstraintContext, ResolutionFrame } from "#core/types";
 import {
   whenAnyAncestorIs,
   whenAnyAncestorNamed,
@@ -28,7 +28,7 @@ import {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
-} from "#/resolution/select/constraints";
+} from "#resolution/select/constraints";
 
 function frame(tokenName: string, slot: Partial<BindingSlot> = {}): ResolutionFrame {
   return {

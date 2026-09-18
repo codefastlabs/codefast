@@ -11,9 +11,9 @@ import {
   ALIAS_CHAIN_HOPS,
   ALIAS_CYCLE_DETECTED,
   ALIAS_PARENT_OWNED_TERMINAL,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface AliasedService {
   readonly name: string;

@@ -1,9 +1,9 @@
 import { CodeIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { CodeBlock } from "#/components/shared/code-block";
-import { CopyButton } from "#/components/shared/copy-button";
-import { DocSection } from "#/features/components-catalog/components/detail/doc-section";
+import { CodeBlock } from "#components/shared/code-block";
+import { CopyButton } from "#components/shared/copy-button";
+import { DocSection } from "#features/components-catalog/components/detail/doc-section";
 
 interface UsageSectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   /** Raw source for the Copy button and the line count in the toolbar. */

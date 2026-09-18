@@ -13,9 +13,9 @@ import {
   CONDITIONAL_INJECTION_TAGGED,
   TAGGED_ENVS,
   TARGET_TAG_VALUE,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface TaggedService {
   readonly env: string;

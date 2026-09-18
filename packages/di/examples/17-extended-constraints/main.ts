@@ -39,7 +39,7 @@ import {
   tag,
 } from "@codefast/di";
 
-import { section, step } from "#/examples/support/log";
+import { section, step } from "#examples/support/log";
 
 const BACKEND_TAG = tag<"memcached" | "redis">("extended-constraints:backend");
 const REGION_TAG = tag<"eu" | "us">("extended-constraints:region");

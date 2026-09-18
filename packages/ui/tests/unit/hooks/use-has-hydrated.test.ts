@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
 
-import { useHasHydrated } from "#/hooks/use-has-hydrated";
+import { useHasHydrated } from "#hooks/use-has-hydrated";
 
 function HydrationProbe() {
   return createElement("span", null, String(useHasHydrated()));

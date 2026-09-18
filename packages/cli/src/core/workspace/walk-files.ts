@@ -1,7 +1,7 @@
 import path from "node:path";
 
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { defaultSkipDirectoryNames } from "#/core/workspace/skip-directories";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { defaultSkipDirectoryNames } from "#core/workspace/skip-directories";
 
 /**
  * Every file under a root the predicate accepts, skipping build output and vendored trees.

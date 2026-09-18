@@ -1,7 +1,7 @@
-import type { DomainSourceFile } from "#/arrange/domain/ast/ast-node";
-import { TypeScriptAstTranslator } from "#/arrange/domain/ast/translator";
-import { messageFrom } from "#/core/errors";
-import { logger } from "#/core/logger";
+import type { DomainSourceFile } from "#arrange/domain/ast/ast-node";
+import { TypeScriptAstTranslator } from "#arrange/domain/ast/translator";
+import { messageFrom } from "#core/errors";
+import { logger } from "#core/logger";
 
 const translator = new TypeScriptAstTranslator();
 

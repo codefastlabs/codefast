@@ -6,13 +6,13 @@ import type { Edge } from "@xyflow/react";
 import type { ReactElement } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import type { DiNode } from "#/features/di/components/di-node";
-import { DiServiceNode } from "#/features/di/components/di-node";
-import { NodeDetailsPanel } from "#/features/di/components/node-details-panel";
-import type { LaneNode } from "#/features/di/components/swimlane-node";
-import { SwimlaneNode } from "#/features/di/components/swimlane-node";
-import { layoutLanes, prepareGraph, slotNamesByNode } from "#/features/di/lib/graph-layout";
-import { describeNode } from "#/features/di/lib/node-details";
+import type { DiNode } from "#features/di/components/di-node";
+import { DiServiceNode } from "#features/di/components/di-node";
+import { NodeDetailsPanel } from "#features/di/components/node-details-panel";
+import type { LaneNode } from "#features/di/components/swimlane-node";
+import { SwimlaneNode } from "#features/di/components/swimlane-node";
+import { layoutLanes, prepareGraph, slotNamesByNode } from "#features/di/lib/graph-layout";
+import { describeNode } from "#features/di/lib/node-details";
 
 import "@xyflow/react/dist/style.css";
 

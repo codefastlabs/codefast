@@ -1,4 +1,4 @@
-import type { DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
+import type { DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
 
 type TagTestFilesystemState = {
   readonly path: string;

@@ -1,5 +1,5 @@
-import type { Appearance, ColorScheme } from "#/appearance";
-import { DEFAULT_COLOR_SCHEME, MEDIA } from "#/constants";
+import type { Appearance, ColorScheme } from "#appearance";
+import { DEFAULT_COLOR_SCHEME, MEDIA } from "#constants";
 
 // ── Color Scheme Resolution ──────────────────────────────────────────────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { resolveActiveAnchor } from "#/features/components-catalog/lib/active-anchor";
+import { resolveActiveAnchor } from "#features/components-catalog/lib/active-anchor";
 
 interface UseActiveAnchorOptions {
   /** Where the observation band starts, as a fraction of the viewport height — tune per page for its sticky chrome. */

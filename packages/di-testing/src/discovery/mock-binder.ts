@@ -3,10 +3,10 @@
 import type { BindingTag, Constructor, Container, DependencyKey, DependencySlot, InjectOptions } from "@codefast/di";
 import { slotName, tokenName } from "@codefast/di";
 
-import { OverrideMismatchError, UndeclaredDependencyError } from "#/errors/errors";
-import type { DeepPartial } from "#/mocking/auto-mock";
-import { createAutoMock } from "#/mocking/auto-mock";
-import type { MockFactory } from "#/mocking/mock-factory";
+import { OverrideMismatchError, UndeclaredDependencyError } from "#errors/errors";
+import type { DeepPartial } from "#mocking/auto-mock";
+import { createAutoMock } from "#mocking/auto-mock";
+import type { MockFactory } from "#mocking/mock-factory";
 
 /**
  * How one dependency is supplied instead of a plain auto-mock.

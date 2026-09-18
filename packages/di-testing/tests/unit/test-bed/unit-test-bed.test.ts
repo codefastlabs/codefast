@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import type { Mocked } from "#/mocking/auto-mock";
-import { TestBed } from "#/test-bed/test-bed";
-import type { Logger } from "#/tests/unit/support/fixtures";
-import { LifecycleService, LoggerToken } from "#/tests/unit/support/fixtures";
+import type { Mocked } from "#mocking/auto-mock";
+import { TestBed } from "#test-bed/test-bed";
+import type { Logger } from "#tests/unit/support/fixtures";
+import { LifecycleService, LoggerToken } from "#tests/unit/support/fixtures";
 
 describe("TestBed.solitary lifecycle", () => {
   it("runs @postConstruct during compile", () => {

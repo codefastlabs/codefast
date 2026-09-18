@@ -1,4 +1,4 @@
-import type { ConsentReceipt, ConsentReceiptInput } from "#/core/consent-receipt";
+import type { ConsentReceipt, ConsentReceiptInput } from "#core/consent-receipt";
 
 /**
  * The receipt information-structure version this builder emits (ISO/IEC TS 27560-shaped).

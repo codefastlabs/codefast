@@ -1,8 +1,8 @@
 /** The public surface of `@codefast/tailwind-variants`: `tv`, `createTV`, the class utilities, and their types. */
 
-export { createTV, tv } from "#/tv";
+export { createTV, tv } from "#tv";
 
-export { cn, cx } from "#/class-names";
+export { cn, cx } from "#class-names";
 
 export type {
   ClassValue,
@@ -28,4 +28,4 @@ export type {
   VariantSchema,
   VariantSelection,
   VariantValue,
-} from "#/types";
+} from "#types";

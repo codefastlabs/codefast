@@ -1,12 +1,12 @@
 import { useLocation } from "@tanstack/react-router";
 
-import { GalleryCtaSection } from "#/features/components-catalog/components/gallery/gallery-cta-section";
-import { GroupSection } from "#/features/components-catalog/components/gallery/group-section";
-import { MobileNav } from "#/features/components-catalog/components/gallery/mobile-nav";
-import { SidebarNav } from "#/features/components-catalog/components/gallery/sidebar-nav";
-import { ALPHABET_GROUPS, ALPHABET_NAV_IDS } from "#/features/components-catalog/data";
-import { useActiveSection } from "#/features/components-catalog/hooks/use-active-section";
-import { useHashScroll } from "#/features/components-catalog/hooks/use-hash-scroll";
+import { GalleryCtaSection } from "#features/components-catalog/components/gallery/gallery-cta-section";
+import { GroupSection } from "#features/components-catalog/components/gallery/group-section";
+import { MobileNav } from "#features/components-catalog/components/gallery/mobile-nav";
+import { SidebarNav } from "#features/components-catalog/components/gallery/sidebar-nav";
+import { ALPHABET_GROUPS, ALPHABET_NAV_IDS } from "#features/components-catalog/data";
+import { useActiveSection } from "#features/components-catalog/hooks/use-active-section";
+import { useHashScroll } from "#features/components-catalog/hooks/use-hash-scroll";
 
 export function GalleryLayout() {
   const activeSection = useActiveSection(ALPHABET_NAV_IDS);

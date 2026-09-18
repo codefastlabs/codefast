@@ -1,9 +1,9 @@
 import path from "node:path";
 
-import { messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { logger } from "#/core/logger";
-import { walkTsxFiles } from "#/core/workspace/typescript-walk";
+import { messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { logger } from "#core/logger";
+import { walkTsxFiles } from "#core/workspace/typescript-walk";
 
 const TEST_FILE_PATTERN = /\.(?:test|spec)\.[cm]?[jt]sx?$/;
 

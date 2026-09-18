@@ -4,11 +4,11 @@ import { join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { parseRunObservations } from "#/report/jsonl";
-import type { JsonlBenchObservationRow } from "#/report/jsonl";
-import { writeJsonlRun } from "#/report/write";
-import { BENCH_ISOLATE_ENV_KEY, BENCH_MODE_ENV_KEY } from "#/shared/env-keys";
-import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
+import { parseRunObservations } from "#report/jsonl";
+import type { JsonlBenchObservationRow } from "#report/jsonl";
+import { writeJsonlRun } from "#report/write";
+import { BENCH_ISOLATE_ENV_KEY, BENCH_MODE_ENV_KEY } from "#shared/env-keys";
+import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#shared/protocol";
 
 let temporaryRoot: string;
 

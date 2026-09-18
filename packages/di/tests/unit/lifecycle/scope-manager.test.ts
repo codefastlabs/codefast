@@ -4,13 +4,13 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import type { Binding } from "#/core/binding";
-import { token } from "#/core/token";
-import type { BindingIdentifier } from "#/core/types";
-import type { DiagnosableContainer } from "#/errors/diagnostics";
-import { RESOLUTION_DIAGNOSTICS } from "#/errors/diagnostics";
-import { SCOPED_MISS, ScopeManager } from "#/lifecycle/scope-manager";
+import { Container } from "#container/container";
+import type { Binding } from "#core/binding";
+import { token } from "#core/token";
+import type { BindingIdentifier } from "#core/types";
+import type { DiagnosableContainer } from "#errors/diagnostics";
+import { RESOLUTION_DIAGNOSTICS } from "#errors/diagnostics";
+import { SCOPED_MISS, ScopeManager } from "#lifecycle/scope-manager";
 
 function scopedInstanceCount(container: unknown): number {
   return (container as DiagnosableContainer)[RESOLUTION_DIAGNOSTICS]().scopedInstanceCount;

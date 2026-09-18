@@ -1,6 +1,6 @@
-import type { BindingTag, TagKeyMask } from "#/core/tag";
-import { NO_TAG_KEYS, slotName, tagKeyMaskOf } from "#/core/tag";
-import type { Token } from "#/core/token";
+import type { BindingTag, TagKeyMask } from "#core/tag";
+import { NO_TAG_KEYS, slotName, tagKeyMaskOf } from "#core/tag";
+import type { Token } from "#core/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
@@ -10,8 +10,8 @@ import type {
   ResolutionContext,
   ResolutionFrame,
   BindingConstraint,
-} from "#/core/types";
-import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#/injection/descriptor";
+} from "#core/types";
+import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#injection/descriptor";
 
 // ── BindingSlot ──────────────────────────────────────────────────────────────────────────────────────────────────────
 

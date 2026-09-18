@@ -1,18 +1,18 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { ButtonAsChild } from "#/registry/button/aschild.example";
-import { ButtonDefault } from "#/registry/button/default.example";
-import { ButtonDestructive } from "#/registry/button/destructive.example";
-import { ButtonGhost } from "#/registry/button/ghost.example";
-import { ButtonIcon } from "#/registry/button/icon.example";
-import { ButtonLink } from "#/registry/button/link.example";
-import { ButtonOutline } from "#/registry/button/outline.example";
-import { ButtonRounded } from "#/registry/button/rounded.example";
-import { ButtonRtl } from "#/registry/button/rtl.example";
-import { ButtonSecondary } from "#/registry/button/secondary.example";
-import { ButtonSize } from "#/registry/button/size.example";
-import { ButtonSpinner } from "#/registry/button/spinner.example";
-import { ButtonWithIcon } from "#/registry/button/with-icon.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { ButtonAsChild } from "#registry/button/aschild.example";
+import { ButtonDefault } from "#registry/button/default.example";
+import { ButtonDestructive } from "#registry/button/destructive.example";
+import { ButtonGhost } from "#registry/button/ghost.example";
+import { ButtonIcon } from "#registry/button/icon.example";
+import { ButtonLink } from "#registry/button/link.example";
+import { ButtonOutline } from "#registry/button/outline.example";
+import { ButtonRounded } from "#registry/button/rounded.example";
+import { ButtonRtl } from "#registry/button/rtl.example";
+import { ButtonSecondary } from "#registry/button/secondary.example";
+import { ButtonSize } from "#registry/button/size.example";
+import { ButtonSpinner } from "#registry/button/spinner.example";
+import { ButtonWithIcon } from "#registry/button/with-icon.example";
 
 export const buttonDoc: ComponentDoc = {
   examples: [

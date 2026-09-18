@@ -2,11 +2,11 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useRef } from "react";
 
-import { CommandPaletteHint } from "#/features/components-catalog/components/gallery/command-palette-hint";
-import { SidebarComponentLink } from "#/features/components-catalog/components/gallery/sidebar-component-link";
-import { SidebarGroupHeader } from "#/features/components-catalog/components/gallery/sidebar-group-header";
-import type { ComponentGroup } from "#/features/components-catalog/data";
-import { useScrollActiveIntoView } from "#/features/components-catalog/hooks/use-scroll-active-into-view";
+import { CommandPaletteHint } from "#features/components-catalog/components/gallery/command-palette-hint";
+import { SidebarComponentLink } from "#features/components-catalog/components/gallery/sidebar-component-link";
+import { SidebarGroupHeader } from "#features/components-catalog/components/gallery/sidebar-group-header";
+import type { ComponentGroup } from "#features/components-catalog/data";
+import { useScrollActiveIntoView } from "#features/components-catalog/hooks/use-scroll-active-into-view";
 
 interface SidebarNavProps extends ComponentProps<"aside"> {
   readonly groups: ReadonlyArray<ComponentGroup>;

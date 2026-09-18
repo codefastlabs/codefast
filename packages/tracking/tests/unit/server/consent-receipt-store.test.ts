@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { ConsentReceipt } from "#/core/consent-receipt";
-import type { ReceiptStoreBackend } from "#/server/consent-receipt-store";
-import { createDurableReceiptStore, createInMemoryReceiptStore } from "#/server/consent-receipt-store";
+import type { ConsentReceipt } from "#core/consent-receipt";
+import type { ReceiptStoreBackend } from "#server/consent-receipt-store";
+import { createDurableReceiptStore, createInMemoryReceiptStore } from "#server/consent-receipt-store";
 
 function receipt(receiptId: string): ConsentReceipt {
   return {

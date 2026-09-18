@@ -1,9 +1,9 @@
 /** Line-per-milestone progress for logs, pipes and verbose runs: nothing is redrawn. */
-import type { ProgressDisplay } from "#/parent/progress/progress-display";
-import type { LibraryProgress, RegisterLibraryOptions } from "#/parent/progress/progress-tracker";
-import { ProgressTracker } from "#/parent/progress/progress-tracker";
-import { formatElapsed } from "#/parent/progress/render-progress-frame";
-import type { BenchProgressEvent } from "#/shared/progress";
+import type { ProgressDisplay } from "#parent/progress/progress-display";
+import type { LibraryProgress, RegisterLibraryOptions } from "#parent/progress/progress-tracker";
+import { ProgressTracker } from "#parent/progress/progress-tracker";
+import { formatElapsed } from "#parent/progress/render-progress-frame";
+import type { BenchProgressEvent } from "#shared/progress";
 
 const HEARTBEAT_SILENCE_MS = 10_000;
 const HEARTBEAT_POLL_MS = 1000;

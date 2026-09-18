@@ -2,10 +2,10 @@
 
 import { inject, injectable, token } from "@codefast/di";
 
-import type { PlaceOrder } from "#/examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
-import { PlaceOrderToken } from "#/examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
-import type { PlaceOrderCommand } from "#/examples/21-explicit-architecture-ecommerce/application/checkout/place-order.dto";
-import type { HttpServer } from "#/examples/21-explicit-architecture-ecommerce/presentation/http/server";
+import type { PlaceOrder } from "#examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
+import { PlaceOrderToken } from "#examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
+import type { PlaceOrderCommand } from "#examples/21-explicit-architecture-ecommerce/application/checkout/place-order.dto";
+import type { HttpServer } from "#examples/21-explicit-architecture-ecommerce/presentation/http/server";
 
 /** Binds `POST /checkout` to the place-order use case, mapping domain failures to `422`. */
 @injectable([inject(PlaceOrderToken)])

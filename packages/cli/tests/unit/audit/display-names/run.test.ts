@@ -2,8 +2,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { runDisplayNameAudit } from "#/audit/display-names/run";
-import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#/core/filesystem/filesystem";
+import { runDisplayNameAudit } from "#audit/display-names/run";
+import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
 
 describe("runDisplayNameAudit", () => {
   it("scans TypeScript and markdown, skips tests, benchmarks, changesets and changelogs", () => {

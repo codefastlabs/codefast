@@ -1,9 +1,9 @@
 import * as SeparatorPrimitive from "radix-ui/separator";
 import type { ComponentProps, JSX } from "react";
 
-import { cn } from "#/lib/utils";
-import type { SeparatorVariants } from "#/variants/separator";
-import { separatorVariants } from "#/variants/separator";
+import { cn } from "#lib/utils";
+import type { SeparatorVariants } from "#variants/separator";
+import { separatorVariants } from "#variants/separator";
 
 // ── Component: Separator ─────────────────────────────────────────────────────────────────────────────────────────────
 

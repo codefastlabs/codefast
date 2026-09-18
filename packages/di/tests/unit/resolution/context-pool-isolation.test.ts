@@ -4,9 +4,9 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { whenParentIs } from "#/resolution/select/constraints";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { whenParentIs } from "#resolution/select/constraints";
 
 describe("sync context pool isolation", () => {
   it("ctx keeps its path after a nested container.resolve at the same depth", () => {

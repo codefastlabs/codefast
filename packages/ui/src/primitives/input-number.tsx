@@ -13,8 +13,8 @@ import type {
 } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import * as InputPrimitive from "#/primitives/input";
-import { createInputScope } from "#/primitives/input";
+import * as InputPrimitive from "#primitives/input";
+import { createInputScope } from "#primitives/input";
 
 // ── Context: InputNumber ─────────────────────────────────────────────────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
-import type { BindingIdentifier, ResolutionFrame } from "#/core/types";
+import type { BindingIdentifier, ResolutionFrame } from "#core/types";
 /** Cycle-detection bookkeeping carried on the resolution stack itself. */
-import { CircularDependencyError } from "#/errors/errors";
+import { CircularDependencyError } from "#errors/errors";
 
 const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
 /**

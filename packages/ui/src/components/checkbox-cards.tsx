@@ -1,9 +1,9 @@
 import { CheckIcon, MinusIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 
-import { Label } from "#/components/label";
-import { cn } from "#/lib/utils";
-import * as CheckboxGroupPrimitive from "#/primitives/checkbox-group";
+import { Label } from "#components/label";
+import { cn } from "#lib/utils";
+import * as CheckboxGroupPrimitive from "#primitives/checkbox-group";
 
 // ── Component: CheckboxCards ─────────────────────────────────────────────────────────────────────────────────────────
 

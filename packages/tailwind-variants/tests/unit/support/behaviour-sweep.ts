@@ -8,8 +8,8 @@
  * exactly as it answered the first.
  */
 
-import { createTV, tv } from "#/index";
-import type { TailwindVariantsOptions } from "#/types";
+import { createTV, tv } from "#index";
+import type { TailwindVariantsOptions } from "#types";
 
 type AnyConfig = Record<string, unknown>;
 type AnyResolver = (props?: Record<string, unknown>) => unknown;

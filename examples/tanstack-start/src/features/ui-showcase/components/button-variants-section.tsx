@@ -1,6 +1,6 @@
 import { Button } from "@codefast/ui/button";
 
-import { DemoSection } from "#/components/demo-section";
+import { DemoSection } from "#components/demo-section";
 
 export function ButtonVariantsSection() {
   return (

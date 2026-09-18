@@ -9,9 +9,9 @@ import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
 import type { BenchRunShape } from "@internal/benchmark-harness/shared/env-keys";
 import type { Fingerprint, TrialPayload } from "@internal/benchmark-harness/shared/protocol";
 
-import { CODEFAST_DI, COMPETITORS } from "#/harness/config";
-import type { DiBenchLibrary } from "#/harness/config";
-import { DI_COMPARISON_MARKDOWN } from "#/harness/presentation";
+import { CODEFAST_DI, COMPETITORS } from "#harness/config";
+import type { DiBenchLibrary } from "#harness/config";
+import { DI_COMPARISON_MARKDOWN } from "#harness/presentation";
 
 /**
  * One library's fingerprint and per-trial payloads, live from a run or reconstructed from disk.

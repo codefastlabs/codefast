@@ -6,13 +6,13 @@
 import "reflect-metadata";
 import { container as tsyringeRootContainer, injectable, Lifecycle } from "tsyringe";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
 import {
   DISPOSE_SCALE_SINGLETON_COUNT,
   MATERIALIZE_100_SINGLETONS,
   UNBIND_ALL_100_SINGLETONS,
-} from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 @injectable()
 class DisposableService {

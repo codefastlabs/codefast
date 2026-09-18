@@ -2,8 +2,8 @@
 
 import { token } from "@codefast/di";
 
-import type { Order } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order";
-import type { OrderId } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-id";
+import type { Order } from "#examples/21-explicit-architecture-ecommerce/domain/order/order";
+import type { OrderId } from "#examples/21-explicit-architecture-ecommerce/domain/order/order-id";
 
 /** Persists and retrieves `Order` aggregates. */
 export interface OrderRepository {

@@ -1,11 +1,11 @@
 /** The `Order` aggregate — owns its total, its lifecycle state, and the events it emits. */
 
-import type { ProductId } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
-import type { OrderId } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-id";
-import type { OrderStatus } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-status";
-import { DomainError } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/domain-error";
-import type { DomainEvent } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/domain-event";
-import type { Money } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/money";
+import type { ProductId } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
+import type { OrderId } from "#examples/21-explicit-architecture-ecommerce/domain/order/order-id";
+import type { OrderStatus } from "#examples/21-explicit-architecture-ecommerce/domain/order/order-status";
+import { DomainError } from "#examples/21-explicit-architecture-ecommerce/domain/shared/domain-error";
+import type { DomainEvent } from "#examples/21-explicit-architecture-ecommerce/domain/shared/domain-event";
+import type { Money } from "#examples/21-explicit-architecture-ecommerce/domain/shared/money";
 
 /** One priced line of an order. */
 export interface OrderLine {

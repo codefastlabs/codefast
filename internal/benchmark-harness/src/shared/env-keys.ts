@@ -3,7 +3,7 @@
  *
  * @since 0.3.16-canary.0
  */
-import type { BenchScenarioTier } from "#/child/bench-scenario";
+import type { BenchScenarioTier } from "#child/bench-scenario";
 
 /**
  * Timing profile for the run: `fast`, `default`, or `full`.

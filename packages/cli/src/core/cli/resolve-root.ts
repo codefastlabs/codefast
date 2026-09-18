@@ -1,8 +1,8 @@
-import { AppError, messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { resolveProjectRoot } from "#/core/workspace/resolver";
+import { AppError, messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { resolveProjectRoot } from "#core/workspace/resolver";
 
 /**
  * Resolves the project root as a `Result`, mapping a resolution failure to an `INFRA_FAILURE` error.

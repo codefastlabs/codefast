@@ -7,11 +7,11 @@ import {
   groupFileWorkHasNothingToReport,
   mergeGroupFileBodyText,
   tryBuildGroupFileWorkPlan,
-} from "#/arrange/domain/grouping-service";
-import { ensureCnImport } from "#/arrange/domain/imports";
-import type { ArrangeGroupFileOptions, GroupFileResult } from "#/arrange/domain/types";
-import { parseDomainSourceFile } from "#/arrange/source-parse";
-import type { Filesystem } from "#/core/filesystem/filesystem";
+} from "#arrange/domain/grouping-service";
+import { ensureCnImport } from "#arrange/domain/imports";
+import type { ArrangeGroupFileOptions, GroupFileResult } from "#arrange/domain/types";
+import { parseDomainSourceFile } from "#arrange/source-parse";
+import type { Filesystem } from "#core/filesystem/filesystem";
 
 /**
  * Runs the grouping pipeline on one file — preview or write — and returns its per-file result.

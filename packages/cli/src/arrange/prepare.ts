@@ -1,11 +1,11 @@
-import type { ArrangeTargetWorkspaceAndConfig } from "#/arrange/domain/types";
-import { resolveArrangeTargetPath } from "#/arrange/resolve-target";
-import { resolveProjectRootResult } from "#/core/cli/resolve-root";
-import { loadCodefastConfig } from "#/core/config";
-import { AppError } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
+import type { ArrangeTargetWorkspaceAndConfig } from "#arrange/domain/types";
+import { resolveArrangeTargetPath } from "#arrange/resolve-target";
+import { resolveProjectRootResult } from "#core/cli/resolve-root";
+import { loadCodefastConfig } from "#core/config";
+import { AppError } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
 
 /**
  * Resolves the arrange target, repo root, and loaded config an arrange run needs.

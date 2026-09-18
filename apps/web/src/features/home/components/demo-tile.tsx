@@ -3,10 +3,10 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRightIcon } from "lucide-react";
 import { Suspense } from "react";
 
-import { LazyVisible } from "#/components/shared/lazy-visible";
-import { PreviewSkeleton } from "#/components/shared/preview-skeleton";
-import { COMPONENT_BY_SLUG } from "#/registry/_core/components";
-import { DEMO_BY_SLUG } from "#/registry/_core/demos";
+import { LazyVisible } from "#components/shared/lazy-visible";
+import { PreviewSkeleton } from "#components/shared/preview-skeleton";
+import { COMPONENT_BY_SLUG } from "#registry/_core/components";
+import { DEMO_BY_SLUG } from "#registry/_core/demos";
 
 interface DemoTileProps {
   /** Registry slug of the component to preview. */

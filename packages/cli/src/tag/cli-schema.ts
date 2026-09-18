@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import type { TagRunRequest } from "#/tag/domain/types";
+import type { TagRunRequest } from "#tag/domain/types";
 
 /**
  * Zod schema validating a `TagRunRequest`.

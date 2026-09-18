@@ -4,13 +4,13 @@ import { Link } from "@tanstack/react-router";
 import { MenuIcon } from "lucide-react";
 import { useState } from "react";
 
-import { AppearanceSelector } from "#/components/layout/appearance-selector";
-import { AppearanceToggle } from "#/components/layout/appearance-toggle";
-import { CommandPalette } from "#/components/layout/command-palette";
-import { GitHubLink } from "#/components/layout/github-link";
-import { Logo } from "#/components/layout/logo";
-import { UiNavMenu } from "#/components/layout/ui-nav-menu";
-import { PRIMARY_NAV, UI_NAV } from "#/lib/nav-links";
+import { AppearanceSelector } from "#components/layout/appearance-selector";
+import { AppearanceToggle } from "#components/layout/appearance-toggle";
+import { CommandPalette } from "#components/layout/command-palette";
+import { GitHubLink } from "#components/layout/github-link";
+import { Logo } from "#components/layout/logo";
+import { UiNavMenu } from "#components/layout/ui-nav-menu";
+import { PRIMARY_NAV, UI_NAV } from "#lib/nav-links";
 
 export function Header() {
   const [open, setOpen] = useState(false);

@@ -2,8 +2,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { findNearestPackageVersion } from "#/core/workspace/package-version";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { findNearestPackageVersion } from "#core/workspace/package-version";
 
 const rootDir = path.join(path.sep, "repo");
 

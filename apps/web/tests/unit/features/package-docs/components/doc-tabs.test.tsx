@@ -1,9 +1,9 @@
 import { cleanup, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { DocTabs } from "#/features/package-docs/components/doc-tabs";
-import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
-import { renderAtPath } from "#/tests/unit/support/render-at-path";
+import { DocTabs } from "#features/package-docs/components/doc-tabs";
+import type { PackageSummary } from "#features/package-docs/lib/rendered-doc";
+import { renderAtPath } from "#tests/unit/support/render-at-path";
 
 const TRACKING: PackageSummary = {
   slug: "tracking",

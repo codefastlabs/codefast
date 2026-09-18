@@ -4,8 +4,8 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
+import { Container } from "#container/container";
+import { token } from "#core/token";
 
 describe("candidate list stability under a mutating predicate", () => {
   it("still evaluates every candidate when a predicate unbinds one mid-selection", () => {

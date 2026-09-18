@@ -20,9 +20,9 @@ import {
   PRODUCTION_HTTP_HANDLER,
   PRODUCTION_UNIT_OF_WORK,
   UOW_BATCH,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 // ── scenario 1: HTTP request pipeline ────────────────────────────────────────────────────────────────────────────────
 

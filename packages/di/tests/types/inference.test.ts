@@ -1,11 +1,11 @@
 import { describe, expectTypeOf, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import type { DependencyKey, TokenValue } from "#/core/types";
-import { inject } from "#/decorators/inject";
-import { injectAll, normalizeToDescriptor, optional } from "#/injection/descriptor";
-import type { InjectionDescriptor } from "#/injection/descriptor";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import type { DependencyKey, TokenValue } from "#core/types";
+import { inject } from "#decorators/inject";
+import { injectAll, normalizeToDescriptor, optional } from "#injection/descriptor";
+import type { InjectionDescriptor } from "#injection/descriptor";
 
 describe("compile-time API inference", () => {
   it("resolves instance type from constructor token", () => {

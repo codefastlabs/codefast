@@ -1,5 +1,5 @@
-import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
-import { logger } from "#/core/logger";
+import type { ArrangeSuggestGroupsOutput } from "#arrange/domain/types";
+import { logger } from "#core/logger";
 
 /**
  * Presents the suggested grouping lines for an `arrange group` run.

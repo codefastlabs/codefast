@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { injectable } from "#/decorators/injectable";
-import { injectAll, optional } from "#/injection/descriptor";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { injectable } from "#decorators/injectable";
+import { injectAll, optional } from "#injection/descriptor";
 
 interface Logger {
   log: () => void;

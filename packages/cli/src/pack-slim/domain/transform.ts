@@ -98,7 +98,7 @@ export function isLifecycleScript(name: string): boolean {
  * Produces a publish manifest carrying only what a consumer's `tsc` and Node read.
  *
  * @remarks Operates on a structural clone, so the caller's manifest is left intact. A consumer never enables `source`
- * and resolves `#/` through `types`/`default` to `dist`, so dropping the source lane, the `imports` left pointing
+ * and resolves `#` through `types`/`default` to `dist`, so dropping the source lane, the `imports` left pointing
  * outside `files`, the scripts that are not lifecycle hooks, and `devDependencies` leaves the published surface whole.
  *
  * @since 0.8.1
@@ -106,9 +106,9 @@ export function isLifecycleScript(name: string): boolean {
 export function slimPublishManifest(manifest: Record<string, unknown>): SlimManifestResult {
   const draft = structuredClone(manifest);
 
-  const filesSrcRemoved = removeSrcFromFiles(draft);
   const exportsSourceRemoved = deleteSourceConditions(draft.exports);
   const importsSourceRemoved = deleteSourceConditions(draft.imports);
+  const filesSrcRemoved = removeSrcFromFiles(draft);
   const importsUnshippedRemoved = deleteUnshippedImports(draft);
   const scriptsRemoved = deleteDevOnlyScripts(draft);
   const devDependenciesRemoved = deleteDevDependencies(draft);
@@ -129,6 +129,53 @@ export function slimPublishManifest(manifest: Record<string, unknown>): SlimMani
 }
 
 /**
+ * A published `exports`/`imports` target the slimmed manifest points at but does not ship.
+ */
+export interface UnshippedTarget {
+  readonly field: "exports" | "imports";
+  readonly subpath: string;
+  readonly target: string;
+}
+
+/**
+ * The publish targets a package would resolve to a file it does not ship.
+ *
+ * @remarks Runs the same slim the publish step applies, then checks each surviving `exports`/`imports`
+ * target against the shipped `files`. A non-empty result means a consumer resolves that subpath to a
+ * missing file — the failure dropping a stylesheet's `src` subtree produces. With no `files` field npm
+ * ships everything, so nothing is unshipped.
+ */
+export function unshippedPublishTargets(manifest: Record<string, unknown>): Array<UnshippedTarget> {
+  const { manifest: slimmed } = slimPublishManifest(manifest);
+  const files = Array.isArray(slimmed.files)
+    ? slimmed.files.filter((entry): entry is string => typeof entry === "string")
+    : [];
+  if (files.length === 0) {
+    return [];
+  }
+
+  const unshipped: Array<UnshippedTarget> = [];
+  for (const field of ["exports", "imports"] as const) {
+    const node = slimmed[field];
+    if (!isRecord(node)) {
+      continue;
+    }
+    for (const subpath of Object.keys(node)) {
+      for (const target of collectTargets(node[subpath])) {
+        // Only relative file targets can be unshipped; npm always includes package.json.
+        if (!target.startsWith("./") || stripDotSlash(target) === "package.json") {
+          continue;
+        }
+        if (!isShippedTarget(target, files)) {
+          unshipped.push({ field, subpath, target });
+        }
+      }
+    }
+  }
+  return unshipped;
+}
+
+/**
  * Strips every `sourceMappingURL` directive line from an emitted file's text.
  *
  * @since 0.8.1
@@ -142,17 +189,37 @@ export function stripSourceMappingComment(text: string): StripCommentResult {
   return { text: kept.join("\n"), stripped: true };
 }
 
+// Replaces the `src` files entry with only the src subtrees the published surface still points into —
+// a stylesheet export like `./css/*` -> `./src/css/*` ships Tailwind source, so dropping all of src
+// would ship a broken export. Runs after the source conditions are stripped, so the `#*` source lane
+// no longer counts; with nothing left pointing into src the entry is dropped outright.
 function removeSrcFromFiles(manifest: Record<string, unknown>): boolean {
   const files = manifest.files;
-  if (!Array.isArray(files)) {
+  if (!Array.isArray(files) || !files.includes("src")) {
     return false;
   }
-  const next = files.filter((entry) => entry !== "src");
-  if (next.length === files.length) {
-    return false;
-  }
-  manifest.files = next;
+  const keep = srcPathsShippedBySurface(manifest);
+  manifest.files = files.flatMap((entry) => (entry === "src" ? keep : [entry]));
   return true;
+}
+
+// The src subtrees a surviving `exports`/`imports` target still ships, e.g. `./src/css/*` -> `src/css`.
+function srcPathsShippedBySurface(manifest: Record<string, unknown>): Array<string> {
+  const targets = [...collectTargets(manifest.exports), ...collectTargets(manifest.imports)];
+  const kept = new Set<string>();
+  for (const target of targets) {
+    const relative = stripDotSlash(target);
+    if (relative !== "src" && !relative.startsWith("src/")) {
+      continue;
+    }
+    const segments = relative.split("/");
+    // A glob tail (`*`, `**`) ships its directory; a concrete file ships itself.
+    if (segments.at(-1)?.includes("*")) {
+      segments.pop();
+    }
+    kept.add(segments.join("/"));
+  }
+  return [...kept].sort();
 }
 
 // Walks a conditions tree deleting every `source` key. A subpath key always starts with ".", so only real condition

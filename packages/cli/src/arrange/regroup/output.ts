@@ -1,8 +1,8 @@
-import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
-import { lineOf } from "#/arrange/domain/ast/helpers";
-import type { GroupFileUnwrapPlan, GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
-import type { ArrangeRunResult, PlannedGroupEdit } from "#/arrange/domain/types";
-import { logger } from "#/core/logger";
+import type { DomainCallExpression, DomainSourceFile } from "#arrange/domain/ast/ast-node";
+import { lineOf } from "#arrange/domain/ast/helpers";
+import type { GroupFileUnwrapPlan, GroupFileWorkPlan } from "#arrange/domain/grouping-service";
+import type { ArrangeRunResult, PlannedGroupEdit } from "#arrange/domain/types";
+import { logger } from "#core/logger";
 
 /**
  * Presents the totals and follow-up hints for an `arrange` run.

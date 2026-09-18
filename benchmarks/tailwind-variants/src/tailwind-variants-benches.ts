@@ -6,8 +6,8 @@ import {
   runBenchmarkChildMain,
 } from "@internal/benchmark-harness/child/run-benchmark-child-main";
 
-import { TAILWIND_VARIANTS } from "#/harness/config";
-import { collectAllTailwindVariantsNpmScenarios } from "#/scenarios/collect-tailwind-variants-scenarios";
+import { TAILWIND_VARIANTS } from "#harness/config";
+import { collectAllTailwindVariantsNpmScenarios } from "#scenarios/collect-tailwind-variants-scenarios";
 
 void runBenchmarkChildMain({
   libraryName: TAILWIND_VARIANTS.libraryName,

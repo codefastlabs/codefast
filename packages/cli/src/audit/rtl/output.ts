@@ -1,5 +1,5 @@
-import type { RtlAuditResult } from "#/audit/domain/types";
-import { logger } from "#/core/logger";
+import type { RtlAuditResult } from "#audit/domain/types";
+import { logger } from "#core/logger";
 
 /**
  * Human-readable RTL audit report (matches the former packages/ui script shape).

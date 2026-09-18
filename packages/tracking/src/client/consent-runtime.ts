@@ -1,10 +1,10 @@
-import { createLocalStorageConsentStorage } from "#/client/consent-storage";
-import { hasGlobalPrivacyControlSignal } from "#/client/gpc";
-import type { InitialConsentStore } from "#/client/initial-consent-store";
-import { createInitialConsentStore } from "#/client/initial-consent-store";
-import { createIsAnalyticsAllowed } from "#/client/is-analytics-allowed";
-import type { ConsentStorage, InitialConsent } from "#/core/consent";
-import type { ConsentConfig } from "#/core/consent-config";
+import { createLocalStorageConsentStorage } from "#client/consent-storage";
+import { hasGlobalPrivacyControlSignal } from "#client/gpc";
+import type { InitialConsentStore } from "#client/initial-consent-store";
+import { createInitialConsentStore } from "#client/initial-consent-store";
+import { createIsAnalyticsAllowed } from "#client/is-analytics-allowed";
+import type { ConsentStorage, InitialConsent } from "#core/consent";
+import type { ConsentConfig } from "#core/consent-config";
 
 /**
  * Options for `createConsentRuntime`.

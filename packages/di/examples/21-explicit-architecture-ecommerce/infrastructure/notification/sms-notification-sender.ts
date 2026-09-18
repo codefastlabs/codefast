@@ -2,7 +2,7 @@
 
 import { injectable } from "@codefast/di";
 
-import type { NotificationSender } from "#/examples/21-explicit-architecture-ecommerce/application/ports/notification-sender";
+import type { NotificationSender } from "#examples/21-explicit-architecture-ecommerce/application/ports/notification-sender";
 
 /** Delivers over the `sms` channel by printing the message after a short simulated latency. */
 @injectable()

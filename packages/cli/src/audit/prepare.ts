@@ -1,12 +1,12 @@
 import path from "node:path";
 
-import { loadCodefastConfig } from "#/core/config";
-import type { CodefastConfig } from "#/core/config/schema";
-import { AppError, messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { resolveProjectRoot } from "#/core/workspace/resolver";
+import { loadCodefastConfig } from "#core/config";
+import type { CodefastConfig } from "#core/config/schema";
+import { AppError, messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { resolveProjectRoot } from "#core/workspace/resolver";
 
 /**
  * Shared prelude for an audit: repo root and the canonicalized scan target with its allowlist.

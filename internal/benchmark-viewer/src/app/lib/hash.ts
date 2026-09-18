@@ -1,4 +1,4 @@
-import type { EmbeddedViewerPayload } from "#/types";
+import type { EmbeddedViewerPayload } from "#types";
 
 /**
  * The client view state synced to the URL hash: filters, selected scenario, and display toggles.

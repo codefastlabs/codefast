@@ -1,9 +1,9 @@
 import * as AlertDialogPrimitive from "radix-ui/alert-dialog";
 import type { ComponentProps, JSX } from "react";
 
-import { Button } from "#/components/button";
-import type { ButtonProps } from "#/components/button";
-import { cn } from "#/lib/utils";
+import { Button } from "#components/button";
+import type { ButtonProps } from "#components/button";
+import { cn } from "#lib/utils";
 
 // ── Component: AlertDialog ───────────────────────────────────────────────────────────────────────────────────────────
 

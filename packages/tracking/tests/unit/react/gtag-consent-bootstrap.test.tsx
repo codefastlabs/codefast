@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { GtagConsentBootstrap } from "#/react/gtag-consent-bootstrap";
+import { GtagConsentBootstrap } from "#react/gtag-consent-bootstrap";
 
 describe("GtagConsentBootstrap", () => {
   it("renders an inline script whose source matches the consent bootstrap builder", () => {

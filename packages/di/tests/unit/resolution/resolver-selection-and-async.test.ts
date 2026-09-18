@@ -5,13 +5,13 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { tag } from "#/core/tag";
-import { token } from "#/core/token";
-import { inject } from "#/decorators/inject";
-import { injectable } from "#/decorators/injectable";
-import { AsyncResolutionError, NoMatchingBindingError } from "#/errors/errors";
-import { injectAll, optional } from "#/injection/descriptor";
+import { Container } from "#container/container";
+import { tag } from "#core/tag";
+import { token } from "#core/token";
+import { inject } from "#decorators/inject";
+import { injectable } from "#decorators/injectable";
+import { AsyncResolutionError, NoMatchingBindingError } from "#errors/errors";
+import { injectAll, optional } from "#injection/descriptor";
 
 const ENV_TAG = tag("env");
 const N_TAG = tag("n");

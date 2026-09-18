@@ -1,5 +1,5 @@
-import { SectionHeader } from "#/components/shared/section-header";
-import { BrandWordmark } from "#/features/brand/components/brand-wordmark";
+import { SectionHeader } from "#components/shared/section-header";
+import { BrandWordmark } from "#features/brand/components/brand-wordmark";
 
 /** The type system: one face, four roles. */
 export function BrandTypeSection() {

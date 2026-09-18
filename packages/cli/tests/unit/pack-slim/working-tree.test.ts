@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { hasUncommittedTrackedChanges } from "#/pack-slim/working-tree";
+import { hasUncommittedTrackedChanges } from "#pack-slim/working-tree";
 
 describe("hasUncommittedTrackedChanges", () => {
   it("is false for empty or whitespace-only porcelain output", () => {

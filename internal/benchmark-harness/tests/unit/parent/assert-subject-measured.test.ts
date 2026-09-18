@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { assertSubjectMeasuredSomething } from "#/parent/assert-subject-measured";
-import { BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#/shared/env-keys";
-import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
+import { assertSubjectMeasuredSomething } from "#parent/assert-subject-measured";
+import { BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#shared/env-keys";
+import type { ScenarioTrialResult, TrialPayload } from "#shared/protocol";
 
 const SUBJECT = "@codefast/tailwind-variants";
 

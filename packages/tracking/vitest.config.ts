@@ -14,7 +14,7 @@ import { defineConfig } from "vitest/config";
  */
 export default defineConfig({
   plugins: [react()],
-  // jsdom tests resolve through the client pipeline, so `#/` is gated on the
+  // jsdom tests resolve through the client pipeline, so `#` is gated on the
   // `source` condition here (not `ssr.resolve`) to run against `src`, not `dist`.
   // Keep the React-relevant defaults so `react`/jsx still resolve correctly.
   resolve: {

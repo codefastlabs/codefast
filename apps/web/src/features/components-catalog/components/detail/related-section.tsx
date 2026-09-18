@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
-import { DocSection } from "#/features/components-catalog/components/detail/doc-section";
-import { COMPONENT_BY_SLUG } from "#/registry/_core/components";
+import { DocSection } from "#features/components-catalog/components/detail/doc-section";
+import { COMPONENT_BY_SLUG } from "#registry/_core/components";
 
 interface RelatedSectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   /** Third-party packages the component is built on. */

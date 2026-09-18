@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { auditImportPolicySource, defaultImportPolicyRules } from "#/audit/imports/domain/import-policy";
+import { auditImportPolicySource, defaultImportPolicyRules } from "#audit/imports/domain/import-policy";
 
 function audit(filePath: string, source: string) {
   return auditImportPolicySource(filePath, source, defaultImportPolicyRules);

@@ -1,17 +1,17 @@
 import type { BenchEvent, BenchOptions, TaskResult } from "tinybench";
 import { Bench } from "tinybench";
 
-import type { AnyBenchScenario } from "#/child/bench-scenario";
-import { isAsyncScenario, tierOfScenario } from "#/child/bench-scenario";
-import type { BenchMode } from "#/shared/env-keys";
+import type { AnyBenchScenario } from "#child/bench-scenario";
+import { isAsyncScenario, tierOfScenario } from "#child/bench-scenario";
+import type { BenchMode } from "#shared/env-keys";
 import {
   BENCH_TRIALS_ENV_KEY,
   MINIMUM_TRIAL_COUNT,
   parseEnvInteger,
   resolveBenchModeFromEnvironment,
-} from "#/shared/env-keys";
-import { formatProgressEvent } from "#/shared/progress";
-import type { ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
+} from "#shared/env-keys";
+import { formatProgressEvent } from "#shared/progress";
+import type { ScenarioTrialResult, TrialPayload } from "#shared/protocol";
 
 /**
  * Keeps GC sampling in full mode, but reduces forced collection pressure so

@@ -1,10 +1,10 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
-import type { Destination } from "#/core/destination";
-import type { EventCatalog } from "#/core/event-catalog";
-import { assertValidEventProperties } from "#/core/event-catalog";
-import { generateEventId } from "#/core/event-id";
-import type { TrackedEvent } from "#/core/tracked-event";
+import type { Destination } from "#core/destination";
+import type { EventCatalog } from "#core/event-catalog";
+import { assertValidEventProperties } from "#core/event-catalog";
+import { generateEventId } from "#core/event-id";
+import type { TrackedEvent } from "#core/tracked-event";
 
 /**
  * Context handed to {@link ClientTrackerOptions.onDeliveryError} for one failed delivery.

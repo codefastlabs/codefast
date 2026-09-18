@@ -2,9 +2,9 @@
  * The detail page's data: what the `$slug` route loader awaits. Deliberately free of UI and registry-map
  * imports — the route module is part of every page's critical chunk, so anything imported here ships site-wide.
  */
-import type { ComponentMeta } from "#/registry/_core/components";
-import { docDemo } from "#/registry/_core/source";
-import type { ResolvedComponentDoc, ResolvedDocExample } from "#/registry/_core/types";
+import type { ComponentMeta } from "#registry/_core/components";
+import { docDemo } from "#registry/_core/source";
+import type { ResolvedComponentDoc, ResolvedDocExample } from "#registry/_core/types";
 
 export interface ComponentDetail {
   readonly component: ComponentMeta;
@@ -22,8 +22,8 @@ async function loadDetail(component: ComponentMeta): Promise<ComponentDetail> {
   // The registries' lazy-import maps stay out of this module's static graph, so the `$slug` route —
   // part of every page's critical chunk — does not carry them.
   const [{ loadDoc }, { DEMO_BY_SLUG }] = await Promise.all([
-    import("#/registry/_core/docs"),
-    import("#/registry/_core/demos"),
+    import("#registry/_core/docs"),
+    import("#registry/_core/demos"),
   ]);
   const doc = await loadDoc(component.slug);
 

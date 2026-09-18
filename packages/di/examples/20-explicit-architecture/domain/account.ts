@@ -1,8 +1,8 @@
 /** The `Account` aggregate — the entity that owns every balance invariant. */
 
-import type { AccountId } from "#/examples/20-explicit-architecture/domain/account-id";
-import { InsufficientFundsError } from "#/examples/20-explicit-architecture/domain/errors";
-import { Money } from "#/examples/20-explicit-architecture/domain/money";
+import type { AccountId } from "#examples/20-explicit-architecture/domain/account-id";
+import { InsufficientFundsError } from "#examples/20-explicit-architecture/domain/errors";
+import { Money } from "#examples/20-explicit-architecture/domain/money";
 
 /** A bank account whose balance can only change through its own guarded operations. */
 export class Account {

@@ -19,21 +19,21 @@
 
 import { toDotGraph } from "@codefast/di";
 
-import { AccountRepositoryToken } from "#/examples/20-explicit-architecture/application/ports/account-repository.port";
-import { ClockToken } from "#/examples/20-explicit-architecture/application/ports/clock.port";
-import type { Clock } from "#/examples/20-explicit-architecture/application/ports/clock.port";
-import { IdGeneratorToken } from "#/examples/20-explicit-architecture/application/ports/id-generator.port";
-import { RequestContextToken } from "#/examples/20-explicit-architecture/application/ports/request-context.port";
-import { buildContainer } from "#/examples/20-explicit-architecture/composition/build-container";
+import { AccountRepositoryToken } from "#examples/20-explicit-architecture/application/ports/account-repository.port";
+import { ClockToken } from "#examples/20-explicit-architecture/application/ports/clock.port";
+import type { Clock } from "#examples/20-explicit-architecture/application/ports/clock.port";
+import { IdGeneratorToken } from "#examples/20-explicit-architecture/application/ports/id-generator.port";
+import { RequestContextToken } from "#examples/20-explicit-architecture/application/ports/request-context.port";
+import { buildContainer } from "#examples/20-explicit-architecture/composition/build-container";
 import {
   AuditLogToken,
   BankingControllerToken,
   ComplianceToken,
   FraudEngineToken,
   MetricsToken,
-} from "#/examples/20-explicit-architecture/composition/tokens";
-import { toAccountId } from "#/examples/20-explicit-architecture/domain/account-id";
-import { banner, caughtError, item, ok, section, step } from "#/examples/support/log";
+} from "#examples/20-explicit-architecture/composition/tokens";
+import { toAccountId } from "#examples/20-explicit-architecture/domain/account-id";
+import { banner, caughtError, item, ok, section, step } from "#examples/support/log";
 
 // ── Test doubles ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

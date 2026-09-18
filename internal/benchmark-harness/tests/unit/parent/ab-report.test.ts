@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import type { ExperimentPass, SideRun } from "#/parent/ab-report";
-import { buildAbReportLines, extractSubjectHz, median } from "#/parent/ab-report";
-import type { AbRequest } from "#/parent/ab-request";
-import type { JsonlBenchObservationRow } from "#/report/jsonl";
+import type { ExperimentPass, SideRun } from "#parent/ab-report";
+import { buildAbReportLines, extractSubjectHz, median } from "#parent/ab-report";
+import type { AbRequest } from "#parent/ab-request";
+import type { JsonlBenchObservationRow } from "#report/jsonl";
 
 const SUBJECT = "@codefast/di";
 

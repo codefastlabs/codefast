@@ -2,7 +2,7 @@
  * The sanity every class-lane realistic row shares: the resolved tree matches the descriptor node
  * for node, singletons are one instance wherever they appear, and the root is fresh per resolve.
  */
-import type { GraphDescriptor, RealisticNode } from "#/fixtures/realistic-graph";
+import type { GraphDescriptor, RealisticNode } from "#fixtures/realistic-graph";
 
 /**
  * Whether two root resolutions of a class-wired graph carry the descriptor's exact shape and lifetimes.

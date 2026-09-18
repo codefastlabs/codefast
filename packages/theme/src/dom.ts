@@ -1,4 +1,4 @@
-import type { ColorScheme } from "#/appearance";
+import type { ColorScheme } from "#appearance";
 
 // ── DOM Utilities ────────────────────────────────────────────────────────────────────────────────────────────────────
 

@@ -1,9 +1,9 @@
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 
-import type { VariantProps } from "#/lib/utils";
-import { cn } from "#/lib/utils";
-import { buttonVariants } from "#/variants/button";
+import type { VariantProps } from "#lib/utils";
+import { cn } from "#lib/utils";
+import { buttonVariants } from "#variants/button";
 
 // ── Component: Pagination ────────────────────────────────────────────────────────────────────────────────────────────
 

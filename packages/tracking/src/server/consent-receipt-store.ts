@@ -1,4 +1,4 @@
-import type { ConsentReceipt } from "#/core/consent-receipt";
+import type { ConsentReceipt } from "#core/consent-receipt";
 
 /**
  * Persistence backend for consent receipts — the durable store is the consumer's to supply

@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import * as z from "zod";
 
-import { createClientTracker } from "#/client/create-client-tracker";
-import { defineEventCatalog } from "#/core/event-catalog";
-import { createRecordingDestination } from "#/tests/unit/client/support/fakes";
+import { createClientTracker } from "#client/create-client-tracker";
+import { defineEventCatalog } from "#core/event-catalog";
+import { createRecordingDestination } from "#tests/unit/client/support/fakes";
 
 const catalog = defineEventCatalog({
   button_clicked: { schema: z.object({ id: z.string() }) },

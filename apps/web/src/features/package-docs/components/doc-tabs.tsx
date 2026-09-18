@@ -2,9 +2,9 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
-import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
-import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
-import { CURRENT_PAGE_ONLY } from "#/lib/nav-links";
+import { DOC_KIND_BY_SLUG } from "#features/package-docs/lib/doc-kinds";
+import type { PackageSummary } from "#features/package-docs/lib/rendered-doc";
+import { CURRENT_PAGE_ONLY } from "#lib/nav-links";
 
 interface DocTabsProps extends ComponentProps<"nav"> {
   readonly pkg: PackageSummary;

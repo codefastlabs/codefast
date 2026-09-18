@@ -1,7 +1,7 @@
 import { Badge } from "@codefast/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 
-import type { RequestOutcome } from "#/features/inspector/server/run-request";
+import type { RequestOutcome } from "#features/inspector/server/run-request";
 
 interface OutcomeSummaryProps {
   outcome: RequestOutcome;

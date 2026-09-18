@@ -35,7 +35,7 @@ its keep as the dependency graph grows.
 pnpm add @codefast/di
 ```
 
-`@codefast/di` requires Node.js 24 or later and TypeScript 5.9 or later, with native Stage 3 decorators. Leave
+`@codefast/di` requires Node.js 22.12 or later and TypeScript 5.9 or later, with native Stage 3 decorators. Leave
 `experimentalDecorators` off — it's off by default. The package is published on 0.x and versioned on its own track:
 breaking changes ship as minor versions, so pin the minor version when you need stability.
 

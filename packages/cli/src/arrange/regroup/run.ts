@@ -1,14 +1,14 @@
-import type { GroupFileWorkPlan } from "#/arrange/domain/grouping-service";
-import type { ArrangeRunResult } from "#/arrange/domain/types";
-import type { ArrangeRunRequest } from "#/arrange/regroup/cli-schema";
-import { processArrangeGroupFile } from "#/arrange/regroup/process-file";
-import { scanArrangeTargets } from "#/arrange/scan-target";
-import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#/core/config/schema";
-import type { AppError } from "#/core/errors";
-import { messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { ok } from "#/core/result";
+import type { GroupFileWorkPlan } from "#arrange/domain/grouping-service";
+import type { ArrangeRunResult } from "#arrange/domain/types";
+import type { ArrangeRunRequest } from "#arrange/regroup/cli-schema";
+import { processArrangeGroupFile } from "#arrange/regroup/process-file";
+import { scanArrangeTargets } from "#arrange/scan-target";
+import type { CodefastAfterWriteHook, CodefastArrangeConfig } from "#core/config/schema";
+import type { AppError } from "#core/errors";
+import { messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { ok } from "#core/result";
 
 async function runOnAfterWriteHook(
   hook: CodefastAfterWriteHook | undefined,

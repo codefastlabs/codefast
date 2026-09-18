@@ -1,9 +1,9 @@
 import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { SectionHeader } from "#/components/shared/section-header";
-import { COMPONENT_COUNT } from "#/features/about/data";
-import { COMPONENTS } from "#/registry/_core/components";
+import { SectionHeader } from "#components/shared/section-header";
+import { COMPONENT_COUNT } from "#features/about/data";
+import { COMPONENTS } from "#registry/_core/components";
 
 export function LibrarySection() {
   return (

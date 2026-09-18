@@ -1,7 +1,7 @@
 import { NOISY_IQR_FRACTION } from "@internal/benchmark-harness/report/reliability";
 import { format } from "date-fns";
 
-import { DISPERSION_IQR_ALERT } from "#/app/lib/constants";
+import { DISPERSION_IQR_ALERT } from "#app/lib/constants";
 
 /**
  * The date-fns patterns one region's readers expect for the viewer's timestamps.

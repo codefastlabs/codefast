@@ -4,7 +4,7 @@ import {
   getCommandPaletteAriaKeyshortcuts,
   getCommandPaletteKeyboardAction,
   isEditableTarget,
-} from "#/lib/command-palette-keyboard";
+} from "#lib/command-palette-keyboard";
 
 function createKeyboardEvent(init: KeyboardEventInit & { target?: EventTarget | null }): KeyboardEvent {
   const { target = document.body, ...eventInit } = init;

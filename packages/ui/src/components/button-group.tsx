@@ -1,10 +1,10 @@
 import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX } from "react";
 
-import { Separator } from "#/components/separator";
-import { cn } from "#/lib/utils";
-import type { ButtonGroupVariants } from "#/variants/button-group";
-import { buttonGroupVariants } from "#/variants/button-group";
+import { Separator } from "#components/separator";
+import { cn } from "#lib/utils";
+import type { ButtonGroupVariants } from "#variants/button-group";
+import { buttonGroupVariants } from "#variants/button-group";
 
 // ── Component: ButtonGroup ───────────────────────────────────────────────────────────────────────────────────────────
 

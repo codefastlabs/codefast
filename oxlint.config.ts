@@ -1,6 +1,6 @@
 import { defineConfig } from "oxlint";
 
-import { ignorePatterns } from "#/oxc.shared";
+import { ignorePatterns } from "#oxc.shared";
 
 export default defineConfig({
   env: {

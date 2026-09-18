@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { docPath, docRefFor } from "#/features/package-docs/lib/doc-kinds";
+import { docPath, docRefFor } from "#features/package-docs/lib/doc-kinds";
 
 describe("docRefFor", () => {
   it("maps a kind's file at the package root to the kind", () => {

@@ -5,9 +5,9 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { NoMatchingBindingError, TokenNotBoundError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { NoMatchingBindingError, TokenNotBoundError } from "#errors/errors";
 
 describe("held chains vs later registry mutations", () => {
   it("does not undo an unbind when the chain is refined afterwards", () => {

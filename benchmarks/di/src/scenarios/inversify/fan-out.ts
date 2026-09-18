@@ -14,19 +14,19 @@ import {
   FAN_OUT_TREE_DEPTH_3_BREADTH_4,
   RESOLVE_ALL_NAMED_COUNTS,
   RESOLVE_ALL_STRATEGY_COUNTS,
-} from "#/fixtures/fan-out-descriptor";
-import type { ResolveAllNamedCount, ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
-import { buildInversifyRealisticContainer } from "#/fixtures/inversify-adapter";
-import { isCompleteCollection } from "#/fixtures/sanity";
+} from "#fixtures/fan-out-descriptor";
+import type { ResolveAllNamedCount, ResolveAllStrategyCount } from "#fixtures/fan-out-descriptor";
+import { buildInversifyRealisticContainer } from "#fixtures/inversify-adapter";
+import { isCompleteCollection } from "#fixtures/sanity";
 import {
   FAN_OUT_TREE,
   FAN_OUT_TREE_BATCH,
   resolveAllColdDescriptor,
   resolveAllNamedDescriptor,
   resolveAllStrategiesDescriptor,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildFanOutTreeDepthThreeBreadthFourScenario(): BenchScenario {
   const { container, rootIdentifier } = buildInversifyRealisticContainer(FAN_OUT_TREE_DEPTH_3_BREADTH_4);

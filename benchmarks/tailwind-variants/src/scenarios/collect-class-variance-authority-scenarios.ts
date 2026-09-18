@@ -1,6 +1,6 @@
-import { buildClassVarianceAuthorityComplexScenarios } from "#/scenarios/class-variance-authority/complex";
-import { buildClassVarianceAuthoritySimpleScenarios } from "#/scenarios/class-variance-authority/simple";
-import type { BenchScenario } from "#/scenarios/types";
+import { buildClassVarianceAuthorityComplexScenarios } from "#scenarios/class-variance-authority/complex";
+import { buildClassVarianceAuthoritySimpleScenarios } from "#scenarios/class-variance-authority/simple";
+import type { BenchScenario } from "#scenarios/types";
 
 /**
  * @since 0.3.16-canary.0

@@ -1,5 +1,5 @@
-import type { ConsentDecision } from "#/core/consent";
-import { isConsentDecision } from "#/core/consent";
+import type { ConsentDecision } from "#core/consent";
+import { isConsentDecision } from "#core/consent";
 
 /**
  * Which consent event a receipt records. Receipts are append-only: an `update` or

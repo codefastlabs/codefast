@@ -4,7 +4,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
-import { SnippetCard } from "#/features/home/components/snippet-card";
+import { SnippetCard } from "#features/home/components/snippet-card";
 
 interface HeroSectionProps extends Omit<ComponentProps<"section">, "children"> {
   /** The flagship's quick start as dual-theme highlighted HTML, from the route loader. */

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { createMarkersPlugin, definitionChangeMarkers, versionChangeMarkers } from "#/app/lib/annotations";
-import type { EmbeddedRun, EmbeddedScenarioSeries } from "#/types";
+import { createMarkersPlugin, definitionChangeMarkers, versionChangeMarkers } from "#app/lib/annotations";
+import type { EmbeddedRun, EmbeddedScenarioSeries } from "#types";
 
 function run(folder: string, version: string): EmbeddedRun {
   return {

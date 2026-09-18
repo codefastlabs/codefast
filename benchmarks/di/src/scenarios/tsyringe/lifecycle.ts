@@ -8,8 +8,8 @@
 import "reflect-metadata";
 import { container as tsyringeRootContainer, injectable, Lifecycle } from "tsyringe";
 
-import { LIFECYCLE_PRE_DESTROY_UNBIND } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { LIFECYCLE_PRE_DESTROY_UNBIND } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 let disposeCallCount = 0;
 

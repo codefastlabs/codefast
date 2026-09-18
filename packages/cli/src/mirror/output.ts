@@ -1,7 +1,7 @@
 import process from "node:process";
 
-import { messageFrom } from "#/core/errors";
-import { logger } from "#/core/logger";
+import { messageFrom } from "#core/errors";
+import { logger } from "#core/logger";
 import type {
   CliLoggerLike,
   GlobalStats,
@@ -9,7 +9,7 @@ import type {
   MirrorProcessingModeInput,
   MirrorSyncProgressListener,
   PackageStats,
-} from "#/mirror/domain/types";
+} from "#mirror/domain/types";
 
 const cliLogger: CliLoggerLike = logger;
 

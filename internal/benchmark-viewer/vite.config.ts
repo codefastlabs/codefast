@@ -10,7 +10,7 @@ import { defineConfig } from "vite";
  * `emptyOutDir: false` preserves the tsc-emitted Node output already in `dist/`.
  */
 export default defineConfig({
-  // Resolve internal `#/` to `src` so the browser entry bundles TS source, not `dist`.
+  // Resolve internal `#` to `src` so the browser entry bundles TS source, not `dist`.
   resolve: {
     conditions: ["source", "module", "browser"],
   },

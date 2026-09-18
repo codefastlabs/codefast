@@ -39,14 +39,14 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "imports": {
-    "#/tests/*": [
+    "#tests/*": [
       "./tests/*",
       "./tests/*.ts",
       "./tests/*.tsx",
       "./tests/*/index.ts",
       "./tests/*/index.tsx"
     ],
-    "#/*": {
+    "#*": {
       "source": [
         "./src/*",
         "./src/*.ts",
@@ -672,6 +672,6 @@
     }
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.12.0"
   }
 }

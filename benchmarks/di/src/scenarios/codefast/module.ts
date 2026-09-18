@@ -17,8 +17,8 @@
  */
 import { Container, Module, token } from "@codefast/di";
 
-import { MODULE_COLD_FROM_MODULES, MODULE_LOAD_UNLOAD } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { MODULE_COLD_FROM_MODULES, MODULE_LOAD_UNLOAD } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 // ── shared tokens ────────────────────────────────────────────────────────────────────────────────────────────────────
 

@@ -1,4 +1,4 @@
-import { cx, tv } from "#/index";
+import { cx, tv } from "#index";
 
 /**
  * The paths taken when the usual assumptions do not hold: a selection space too large to encode, a

@@ -13,8 +13,8 @@ import { defineConfig } from "vite";
 
 // The `.ts` extension is required: Vite externalizes these imports out of the bundled config,
 // so raw Node resolves them via package.json#imports — no extension probing, type-stripped.
-import { DOC_KIND_BY_SLUG, docPath, docRefFor } from "#/features/package-docs/lib/doc-kinds.ts";
-import { CONTENT_CACHE_CONTROL } from "#/lib/cache.ts";
+import { DOC_KIND_BY_SLUG, docPath, docRefFor } from "#features/package-docs/lib/doc-kinds.ts";
+import { CONTENT_CACHE_CONTROL } from "#lib/cache.ts";
 
 /**
  * The `public/` files excluded from `publicCacheRoutePatterns`, kept fresh on every crawl

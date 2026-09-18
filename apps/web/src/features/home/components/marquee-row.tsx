@@ -1,7 +1,7 @@
 import { cn } from "@codefast/ui/lib/utils";
 
-import { MarqueePills } from "#/features/home/components/marquee-pills";
-import type { ComponentMeta } from "#/registry/_core/components";
+import { MarqueePills } from "#features/home/components/marquee-pills";
+import type { ComponentMeta } from "#registry/_core/components";
 
 interface MarqueeRowProps {
   readonly components: ReadonlyArray<ComponentMeta>;

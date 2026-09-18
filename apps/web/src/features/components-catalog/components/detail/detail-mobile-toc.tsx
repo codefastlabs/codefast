@@ -2,9 +2,9 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useRef } from "react";
 
-import type { TocItem } from "#/features/components-catalog/components/detail/toc";
-import { useActiveAnchor } from "#/features/components-catalog/hooks/use-active-anchor";
-import { useScrollChipIntoView } from "#/features/components-catalog/hooks/use-scroll-chip-into-view";
+import type { TocItem } from "#features/components-catalog/components/detail/toc";
+import { useActiveAnchor } from "#features/components-catalog/hooks/use-active-anchor";
+import { useScrollChipIntoView } from "#features/components-catalog/hooks/use-scroll-chip-into-view";
 
 interface DetailMobileTocProps extends ComponentProps<"div"> {
   readonly items: ReadonlyArray<TocItem>;

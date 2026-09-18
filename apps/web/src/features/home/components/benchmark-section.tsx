@@ -2,13 +2,13 @@ import { Button } from "@codefast/ui/button";
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
-import { ScrollFade } from "#/components/shared/scroll-fade";
-import { SectionHeader } from "#/components/shared/section-header";
-import { LedgerDate } from "#/features/home/components/ledger-date";
-import { ScoreBar } from "#/features/home/components/score-bar";
-import type { LedgerFacts } from "#/features/home/lib/benchmark-ledger-facts";
-import { track } from "#/features/tracking/lib/tracking";
-import { GITHUB_URL } from "#/lib/nav-links";
+import { ScrollFade } from "#components/shared/scroll-fade";
+import { SectionHeader } from "#components/shared/section-header";
+import { LedgerDate } from "#features/home/components/ledger-date";
+import { ScoreBar } from "#features/home/components/score-bar";
+import type { LedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
+import { track } from "#features/tracking/lib/tracking";
+import { GITHUB_URL } from "#lib/nav-links";
 
 const LEDGER_URL = `${GITHUB_URL}/blob/main/benchmarks/di/RESULTS.md`;
 const LOSSES_URL = `${LEDGER_URL}#where-it-loses`;

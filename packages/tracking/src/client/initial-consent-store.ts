@@ -1,5 +1,5 @@
-import type { InitialConsent } from "#/core/consent";
-import { isInitialConsent, STRICTEST_INITIAL_CONSENT } from "#/core/consent";
+import type { InitialConsent } from "#core/consent";
+import { isInitialConsent, STRICTEST_INITIAL_CONSENT } from "#core/consent";
 
 /**
  * External-store view of the visitor's region default — the strictest value until the

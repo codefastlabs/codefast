@@ -4,9 +4,9 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { tag } from "#/core/tag";
-import { token } from "#/core/token";
+import { Container } from "#container/container";
+import { tag } from "#core/tag";
+import { token } from "#core/token";
 
 describe("has and hasOwn as existence probes", () => {
   it("answers true when several bindings match instead of throwing AmbiguousBindingError", () => {

@@ -9,7 +9,7 @@
  * the inversify side overrides `what` after the spread where its API vocabulary
  * differs. Constants used by only one side stay local to that scenario file.
  */
-import type { BenchScenario } from "#/scenarios/types";
+import type { BenchScenario } from "#scenarios/types";
 
 /**
  * @since 0.5.0-canary.7

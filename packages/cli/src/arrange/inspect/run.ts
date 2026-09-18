@@ -1,15 +1,15 @@
-import type { AnalyzeReport } from "#/arrange/domain/types";
+import type { AnalyzeReport } from "#arrange/domain/types";
 import {
   accumulateAnalyzeReportForSourceFile,
   createEmptyAnalyzeReport,
-} from "#/arrange/inspect/domain/analyze-service";
-import { scanArrangeTargets } from "#/arrange/scan-target";
-import { parseDomainSourceFile } from "#/arrange/source-parse";
-import { AppError } from "#/core/errors";
-import { messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
+} from "#arrange/inspect/domain/analyze-service";
+import { scanArrangeTargets } from "#arrange/scan-target";
+import { parseDomainSourceFile } from "#arrange/source-parse";
+import { AppError } from "#core/errors";
+import { messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
 
 /**
  * Scans a directory's arrange targets and returns the accumulated analyze report.

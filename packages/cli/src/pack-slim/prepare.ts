@@ -1,8 +1,8 @@
-import { resolveProjectRootResult } from "#/core/cli/resolve-root";
-import type { AppError } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { ok } from "#/core/result";
+import { resolveProjectRootResult } from "#core/cli/resolve-root";
+import type { AppError } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { ok } from "#core/result";
 
 /**
  * The repo root and package filter a pack-slim run starts from.

@@ -107,6 +107,6 @@ first test in a new category is purely additive — no config or script change n
 
 1. Decide the category (unit / integration / e2e / type).
 2. Place the file under `tests/<category>/<mirrored path>.test.ts`.
-3. Use `#/...` aliases for production imports and `#/tests/...` for helpers.
+3. Use `#...` aliases for production imports and `#tests/...` for helpers.
 4. Run `pnpm --filter <pkg> test:<category>` locally.
 5. Run `pnpm verify` before pushing (packages).

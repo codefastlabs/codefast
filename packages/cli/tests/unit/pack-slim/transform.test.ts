@@ -6,7 +6,8 @@ import {
   isSourceMapFile,
   slimPublishManifest,
   stripSourceMappingComment,
-} from "#/pack-slim/domain/transform";
+  unshippedPublishTargets,
+} from "#pack-slim/domain/transform";
 
 describe("slimPublishManifest", () => {
   it("drops src, source conditions, unshipped imports, dev-only scripts, and devDependencies", () => {
@@ -19,9 +20,9 @@ describe("slimPublishManifest", () => {
         "./package.json": "./package.json",
       },
       imports: {
-        "#/tests/*": ["./tests/*", "./tests/*.ts"],
-        "#/examples/*": ["./examples/*"],
-        "#/*": { source: ["./src/*", "./src/*.ts"], types: "./dist/*.d.ts", default: "./dist/*.js" },
+        "#tests/*": ["./tests/*", "./tests/*.ts"],
+        "#examples/*": ["./examples/*"],
+        "#*": { source: ["./src/*", "./src/*.ts"], types: "./dist/*.d.ts", default: "./dist/*.js" },
       },
       scripts: { build: "tsc -p tsconfig.build.json", test: "vitest run", postinstall: "node setup.js" },
       devDependencies: { typescript: "^7.0.2", vitest: "^5.0.0" },
@@ -35,7 +36,7 @@ describe("slimPublishManifest", () => {
       "./button": { types: "./dist/button.d.ts", import: "./dist/button.js" },
       "./package.json": "./package.json",
     });
-    expect(slimmed.imports).toEqual({ "#/*": { types: "./dist/*.d.ts", default: "./dist/*.js" } });
+    expect(slimmed.imports).toEqual({ "#*": { types: "./dist/*.d.ts", default: "./dist/*.js" } });
     expect(slimmed.scripts).toEqual({ postinstall: "node setup.js" });
     expect(slimmed).not.toHaveProperty("devDependencies");
     expect(report).toEqual({
@@ -52,7 +53,7 @@ describe("slimPublishManifest", () => {
   it("drops an imports entry whose only lane was source, and the field once it is empty", () => {
     const { manifest: slimmed, report } = slimPublishManifest({
       files: ["dist", "src"],
-      imports: { "#/*": { source: "./src/*" } },
+      imports: { "#*": { source: "./src/*" } },
     });
 
     expect(slimmed).not.toHaveProperty("imports");
@@ -60,8 +61,27 @@ describe("slimPublishManifest", () => {
     expect(report.importsUnshippedRemoved).toBe(1);
   });
 
+  it("keeps only the src subtrees a surviving export still ships, dropping the rest of src", () => {
+    const { manifest: slimmed, report } = slimPublishManifest({
+      files: ["dist", "src", "README.md"],
+      exports: {
+        "./button": { source: "./src/button.tsx", types: "./dist/button.d.ts", default: "./dist/button.js" },
+        "./css/*": "./src/css/*",
+      },
+    });
+
+    // The source lane is stripped, so the TS source drops, but the stylesheet export still points into
+    // src — `src` is narrowed to that subtree rather than removed, so the published export resolves.
+    expect(slimmed.files).toEqual(["dist", "src/css", "README.md"]);
+    expect(slimmed.exports).toEqual({
+      "./button": { types: "./dist/button.d.ts", default: "./dist/button.js" },
+      "./css/*": "./src/css/*",
+    });
+    expect(report.filesSrcRemoved).toBe(true);
+  });
+
   it("keeps an imports entry a glob files entry may ship", () => {
-    const manifest = { files: ["*.json", "lib"], imports: { "#/presets/*": "./presets/*.json" } };
+    const manifest = { files: ["*.json", "lib"], imports: { "#presets/*": "./presets/*.json" } };
 
     const { manifest: slimmed, report } = slimPublishManifest(manifest);
 
@@ -70,7 +90,7 @@ describe("slimPublishManifest", () => {
   });
 
   it("keeps every imports entry when the manifest declares no files", () => {
-    const manifest = { imports: { "#/tests/*": "./tests/*" } };
+    const manifest = { imports: { "#tests/*": "./tests/*" } };
 
     const { manifest: slimmed, report } = slimPublishManifest(manifest);
 
@@ -90,7 +110,7 @@ describe("slimPublishManifest", () => {
     const manifest = {
       files: ["dist", "src"],
       exports: { ".": { source: "./src/index.ts" } },
-      imports: { "#/tests/*": "./tests/*" },
+      imports: { "#tests/*": "./tests/*" },
       scripts: { build: "tsc" },
       devDependencies: { typescript: "^7.0.2" },
     };
@@ -99,7 +119,7 @@ describe("slimPublishManifest", () => {
 
     expect(manifest.files).toEqual(["dist", "src"]);
     expect(manifest.exports["."].source).toBe("./src/index.ts");
-    expect(manifest.imports["#/tests/*"]).toBe("./tests/*");
+    expect(manifest.imports["#tests/*"]).toBe("./tests/*");
     expect(manifest.scripts.build).toBe("tsc");
     expect(manifest.devDependencies.typescript).toBe("^7.0.2");
   });
@@ -108,7 +128,7 @@ describe("slimPublishManifest", () => {
     const { report } = slimPublishManifest({
       files: ["dist"],
       exports: { ".": { types: "./dist/index.d.ts", import: "./dist/index.js" } },
-      imports: { "#/*": { types: "./dist/*.d.ts", default: "./dist/*.js" } },
+      imports: { "#*": { types: "./dist/*.d.ts", default: "./dist/*.js" } },
       scripts: { postinstall: "node setup.js" },
     });
 
@@ -118,6 +138,26 @@ describe("slimPublishManifest", () => {
     expect(report.importsUnshippedRemoved).toBe(0);
     expect(report.scriptsRemoved).toBe(0);
     expect(report.devDependenciesRemoved).toBe(0);
+  });
+});
+
+describe("unshippedPublishTargets", () => {
+  it("flags a stylesheet export whose src subtree the slim would drop", () => {
+    // Only `files: ["dist"]` ships, but `./css/*` points into src — the slim cannot keep it.
+    const unshipped = unshippedPublishTargets({ files: ["dist"], exports: { "./css/*": "./src/css/*" } });
+
+    expect(unshipped).toEqual([{ field: "exports", subpath: "./css/*", target: "./src/css/*" }]);
+  });
+
+  it("is clean once the slim keeps the referenced src subtree", () => {
+    const unshipped = unshippedPublishTargets({ files: ["dist", "src"], exports: { "./css/*": "./src/css/*" } });
+
+    expect(unshipped).toEqual([]);
+  });
+
+  it("ignores package.json, which npm always ships, and reports nothing with no files field", () => {
+    expect(unshippedPublishTargets({ files: ["dist"], exports: { "./package.json": "./package.json" } })).toEqual([]);
+    expect(unshippedPublishTargets({ exports: { "./css/*": "./src/css/*" } })).toEqual([]);
   });
 });
 

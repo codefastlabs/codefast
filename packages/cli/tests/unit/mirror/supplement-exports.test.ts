@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { CliFileEncoding, Filesystem } from "#/core/filesystem/filesystem";
-import { supplementExportsInPackageJson } from "#/mirror/supplement-exports";
+import type { CliFileEncoding, Filesystem } from "#core/filesystem/filesystem";
+import { supplementExportsInPackageJson } from "#mirror/supplement-exports";
 
 function createFilesystemHarness(
   initialPackageJson: Record<string, unknown>,

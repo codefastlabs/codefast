@@ -9,10 +9,10 @@ import { resolveDisplayName } from "@internal/benchmark-harness/shared/config";
 import type { BenchRunShape } from "@internal/benchmark-harness/shared/env-keys";
 import type { Fingerprint, TrialPayload } from "@internal/benchmark-harness/shared/protocol";
 
-import { SCENARIO_BASELINES } from "#/fixtures/scenario-parity";
-import { CODEFAST_TV, COMPETITORS } from "#/harness/config";
-import type { TvBenchLibrary } from "#/harness/config";
-import { TAILWIND_VARIANTS_COMPARISON_MARKDOWN } from "#/harness/presentation";
+import { SCENARIO_BASELINES } from "#fixtures/scenario-parity";
+import { CODEFAST_TV, COMPETITORS } from "#harness/config";
+import type { TvBenchLibrary } from "#harness/config";
+import { TAILWIND_VARIANTS_COMPARISON_MARKDOWN } from "#harness/presentation";
 
 /**
  * One library's fingerprint and per-trial payloads, live from a run or reconstructed from disk.

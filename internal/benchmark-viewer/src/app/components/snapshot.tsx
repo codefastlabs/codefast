@@ -1,10 +1,10 @@
 import type { ComponentProps } from "react";
 
-import type { PaletteEntry } from "#/app/lib/colors";
-import { formatLocal } from "#/app/lib/format";
-import type { SnapshotRow } from "#/app/lib/metrics";
-import { cn } from "#/app/lib/utils";
-import type { EmbeddedLibraryMeta, EmbeddedRun } from "#/types";
+import type { PaletteEntry } from "#app/lib/colors";
+import { formatLocal } from "#app/lib/format";
+import type { SnapshotRow } from "#app/lib/metrics";
+import { cn } from "#app/lib/utils";
+import type { EmbeddedLibraryMeta, EmbeddedRun } from "#types";
 
 function Th({ className, ...props }: ComponentProps<"th">) {
   return (

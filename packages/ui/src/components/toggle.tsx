@@ -1,8 +1,8 @@
 import * as TogglePrimitive from "radix-ui/toggle";
 import type { ComponentProps, JSX } from "react";
 
-import type { ToggleVariants } from "#/variants/toggle";
-import { toggleVariants } from "#/variants/toggle";
+import type { ToggleVariants } from "#variants/toggle";
+import { toggleVariants } from "#variants/toggle";
 
 // ── Component: Toggle ────────────────────────────────────────────────────────────────────────────────────────────────
 

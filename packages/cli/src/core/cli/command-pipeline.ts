@@ -3,15 +3,15 @@ import process from "node:process";
 import type { Command } from "commander";
 import type { ZodType } from "zod";
 
-import type { GlobalCliOptions } from "#/core/cli/global-options";
-import { globalCliCommanderOptionsSchema } from "#/core/cli/global-options";
-import { readOptionalPositionalArg } from "#/core/cli/positional";
-import { consumeCliAppError } from "#/core/cli/result-handle";
-import type { AppError } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { logger } from "#/core/logger";
-import type { Result } from "#/core/result";
-import { parseWithSchema } from "#/core/schema-parse";
+import type { GlobalCliOptions } from "#core/cli/global-options";
+import { globalCliCommanderOptionsSchema } from "#core/cli/global-options";
+import { readOptionalPositionalArg } from "#core/cli/positional";
+import { consumeCliAppError } from "#core/cli/result-handle";
+import type { AppError } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { logger } from "#core/logger";
+import type { Result } from "#core/result";
+import { parseWithSchema } from "#core/schema-parse";
 
 /**
  * The options every command shares: the `--json` machine-output flag. Per-command option shapes extend this.

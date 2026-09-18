@@ -1,7 +1,7 @@
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  // Gate `#/` on `source` so tests run against `src`, not the built `dist`.
+  // Gate `#` on `source` so tests run against `src`, not the built `dist`.
   ssr: {
     resolve: {
       conditions: ["source"],

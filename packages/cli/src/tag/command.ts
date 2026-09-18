@@ -1,14 +1,14 @@
 import { Command } from "commander";
 
-import type { CommandPipeline } from "#/core/cli/command-pipeline";
-import { applyCommandPipeline } from "#/core/cli/command-pipeline";
-import { nodeFilesystem } from "#/core/filesystem/node";
-import { exitCodeForTagResult, formatTagJsonOutput } from "#/tag/cli-result";
-import { tagRunRequestSchema } from "#/tag/cli-schema";
-import type { TagCommandPrelude, TagResult, TagRunRequest } from "#/tag/domain/types";
-import { presentTagResult, TagProgressPresenter } from "#/tag/output";
-import { prepareTag } from "#/tag/prepare";
-import { runTag } from "#/tag/run";
+import type { CommandPipeline } from "#core/cli/command-pipeline";
+import { applyCommandPipeline } from "#core/cli/command-pipeline";
+import { nodeFilesystem } from "#core/filesystem/node";
+import { exitCodeForTagResult, formatTagJsonOutput } from "#tag/cli-result";
+import { tagRunRequestSchema } from "#tag/cli-schema";
+import type { TagCommandPrelude, TagResult, TagRunRequest } from "#tag/domain/types";
+import { presentTagResult, TagProgressPresenter } from "#tag/output";
+import { prepareTag } from "#tag/prepare";
+import { runTag } from "#tag/run";
 
 type TagCommandOptions = { readonly dryRun?: boolean; readonly json?: boolean };
 

@@ -16,7 +16,7 @@
  */
 import { Container, token } from "@codefast/di";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
 import {
   BIND_128_PLAIN,
   BIND_128_REFINED,
@@ -24,9 +24,9 @@ import {
   CONTAINER_CREATE_BATCH,
   CONTAINER_CREATE_EMPTY,
   CREATE_CHILD_EMPTY,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface BoundValue {
   readonly id: number;

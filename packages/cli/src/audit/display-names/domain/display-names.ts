@@ -1,5 +1,5 @@
 /** The display-name convention: a name is spelled like the TS symbol it stands for, under its owner's namespace. */
-import type { DisplayNameViolation } from "#/audit/domain/types";
+import type { DisplayNameViolation } from "#audit/domain/types";
 
 /** The owner: a kebab-case package, app or feature slug, or a scoped package name. */
 const NAMESPACE = /^(?:@[a-z0-9-]+\/)?[a-z0-9]+(?:-[a-z0-9]+)*$/;

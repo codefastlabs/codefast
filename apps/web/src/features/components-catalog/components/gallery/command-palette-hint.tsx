@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 import { useSyncExternalStore } from "react";
 
-import { getIsMacPlatform } from "#/lib/command-palette-keyboard";
+import { getIsMacPlatform } from "#lib/command-palette-keyboard";
 
 /** Keyboard shortcut reminder for the global component search palette. */
 export function CommandPaletteHint(props: ComponentProps<"p">) {

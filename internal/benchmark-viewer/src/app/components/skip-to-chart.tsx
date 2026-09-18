@@ -1,4 +1,4 @@
-import { CHART_SKIP_TARGET_ID, handleSkipToChartClick } from "#/app/lib/skip-chart";
+import { CHART_SKIP_TARGET_ID, handleSkipToChartClick } from "#app/lib/skip-chart";
 
 /**
  * Bypass link to the chart plot. Render only when the chart target is in the document.

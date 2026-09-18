@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import type { LibraryProgress } from "#/parent/progress/progress-tracker";
-import { formatElapsed, renderProgressFrame } from "#/parent/progress/render-progress-frame";
-import { createPalette } from "#/shared/palette";
+import type { LibraryProgress } from "#parent/progress/progress-tracker";
+import { formatElapsed, renderProgressFrame } from "#parent/progress/render-progress-frame";
+import { createPalette } from "#shared/palette";
 
 const ESCAPE = String.fromCodePoint(0x1b);
 const ANSI_CODE = new RegExp(`${ESCAPE}\\[[0-9;]*m`, "g");

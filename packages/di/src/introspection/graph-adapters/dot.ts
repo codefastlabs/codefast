@@ -1,4 +1,4 @@
-import type { ContainerGraphJson } from "#/introspection/dependency-graph";
+import type { ContainerGraphJson } from "#introspection/dependency-graph";
 
 // Token names are caller-supplied and land inside DOT quoted strings — ids included, since an
 // unbound placeholder id embeds the name it was minted from.

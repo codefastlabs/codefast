@@ -13,7 +13,7 @@
 import "reflect-metadata";
 import { container as tsyringeRootContainer, injectable, Lifecycle } from "tsyringe";
 
-import { isSharedWithinScopeFreshAcross } from "#/fixtures/sanity";
+import { isSharedWithinScopeFreshAcross } from "#fixtures/sanity";
 import {
   CHILD_DEPTHS,
   CHILD_REQUEST_LIFECYCLE_CREATE_RESOLVE_DISPOSE,
@@ -22,9 +22,9 @@ import {
   REQUEST_LIFECYCLE_BATCH,
   SCOPED_BINDING_PER_CHILD,
   SCOPED_PER_CHILD_BATCH,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildChildDepthResolveScenario(depth: number): BenchScenario {
   const childScopeLeafToken = Symbol(`bench-tsyringe-child${String(depth)}-leaf`);

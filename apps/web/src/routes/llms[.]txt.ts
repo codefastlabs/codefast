@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { DOC_KIND_BY_SLUG, docPath } from "#/features/package-docs/lib/doc-kinds";
-import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
-import { CONTENT_CACHE_CONTROL, CONTENT_CDN_CACHE_CONTROL } from "#/lib/cache";
-import { GITHUB_URL } from "#/lib/nav-links";
-import { absoluteUrl } from "#/lib/seo";
-import { COMPONENTS } from "#/registry/_core/components";
+import { DOC_KIND_BY_SLUG, docPath } from "#features/package-docs/lib/doc-kinds";
+import type { PackageSummary } from "#features/package-docs/lib/rendered-doc";
+import { CONTENT_CACHE_CONTROL, CONTENT_CDN_CACHE_CONTROL } from "#lib/cache";
+import { GITHUB_URL } from "#lib/nav-links";
+import { absoluteUrl } from "#lib/seo";
+import { COMPONENTS } from "#registry/_core/components";
 
 const NPM_ORG_URL = "https://www.npmjs.com/org/codefast";
 
@@ -74,7 +74,7 @@ export const Route = createFileRoute("/llms.txt")({
   server: {
     handlers: {
       GET: async () => {
-        const { PACKAGES } = await import("#/features/package-docs/lib/doc-source.impl");
+        const { PACKAGES } = await import("#features/package-docs/lib/doc-source.impl");
 
         return new Response(buildLlmsTxt(PACKAGES), {
           headers: {

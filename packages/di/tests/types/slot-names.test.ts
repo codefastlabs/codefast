@@ -1,14 +1,14 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { Container } from "#/container/container";
-import type { SlotNamesOf, Token } from "#/core/token";
-import { token } from "#/core/token";
-import type { ResolveOptions } from "#/core/types";
-import { inject } from "#/decorators/inject";
-import { NoMatchingBindingError } from "#/errors/errors";
-import type { InjectOptions } from "#/injection/descriptor";
-import { injectAll, optional } from "#/injection/descriptor";
-import { whenAnyAncestorNamed, whenParentNamed } from "#/resolution/select/constraints";
+import { Container } from "#container/container";
+import type { SlotNamesOf, Token } from "#core/token";
+import { token } from "#core/token";
+import type { ResolveOptions } from "#core/types";
+import { inject } from "#decorators/inject";
+import { NoMatchingBindingError } from "#errors/errors";
+import type { InjectOptions } from "#injection/descriptor";
+import { injectAll, optional } from "#injection/descriptor";
+import { whenAnyAncestorNamed, whenParentNamed } from "#resolution/select/constraints";
 
 interface Logger {
   log(message: string): void;

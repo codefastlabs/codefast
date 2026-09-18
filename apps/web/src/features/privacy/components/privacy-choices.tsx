@@ -3,7 +3,7 @@ import { useHasHydrated } from "@codefast/ui/hooks/use-has-hydrated";
 import { Switch } from "@codefast/ui/switch";
 import type { ReactNode } from "react";
 
-import { useSiteConsent } from "#/features/tracking/lib/site-consent";
+import { useSiteConsent } from "#features/tracking/lib/site-consent";
 
 /**
  * The interactive "Your privacy choices" panel on `/privacy`: a switch over the site's

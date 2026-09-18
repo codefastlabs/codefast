@@ -1,6 +1,6 @@
 import { cn } from "@codefast/ui/lib/utils";
 
-import type { ComponentGroup } from "#/features/components-catalog/data";
+import type { ComponentGroup } from "#features/components-catalog/data";
 
 // Renders either an <a> (gallery jump link) or a <p> (static label) depending on
 // `jumpToBand`, so the props are a plain named interface rather than an extension

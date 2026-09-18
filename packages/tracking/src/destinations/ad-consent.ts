@@ -1,4 +1,4 @@
-import type { ConsentDecision } from "#/core/consent";
+import type { ConsentDecision } from "#core/consent";
 
 /**
  * The normalized two-lever ad-platform consent state derived from one `{ ads, analytics }`

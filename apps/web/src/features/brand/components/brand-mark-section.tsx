@@ -1,5 +1,5 @@
-import { SectionHeader } from "#/components/shared/section-header";
-import { BrandMark } from "#/features/brand/components/brand-mark";
+import { SectionHeader } from "#components/shared/section-header";
+import { BrandMark } from "#features/brand/components/brand-mark";
 
 /** The mark on light, on dark and in mono, plus the rule for small sizes. */
 export function BrandMarkSection() {

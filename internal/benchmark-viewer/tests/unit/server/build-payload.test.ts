@@ -1,9 +1,9 @@
 import type { JsonlBenchObservationRow } from "@internal/benchmark-harness/report/jsonl";
 import { describe, expect, it } from "vitest";
 
-import { buildEmbeddedPayload, resolveScenarioFacets } from "#/server/payload";
-import type { RunLines } from "#/server/payload";
-import type { BenchServerOptions } from "#/types";
+import { buildEmbeddedPayload, resolveScenarioFacets } from "#server/payload";
+import type { RunLines } from "#server/payload";
+import type { BenchServerOptions } from "#types";
 
 function observationLine(libraryName: string, overrides: Partial<JsonlBenchObservationRow> = {}): string {
   const row: JsonlBenchObservationRow = {

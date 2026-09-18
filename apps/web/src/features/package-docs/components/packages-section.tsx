@@ -1,8 +1,8 @@
 import type { ComponentProps } from "react";
 
-import { SectionHeader } from "#/components/shared/section-header";
-import { PackageCard } from "#/features/package-docs/components/package-card";
-import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
+import { SectionHeader } from "#components/shared/section-header";
+import { PackageCard } from "#features/package-docs/components/package-card";
+import type { PackageSummary } from "#features/package-docs/lib/rendered-doc";
 
 interface PackagesSectionProps extends Omit<ComponentProps<"section">, "children"> {
   readonly packages: ReadonlyArray<PackageSummary>;

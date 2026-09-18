@@ -13,7 +13,7 @@ import type {
   BenchScenarioTier,
 } from "@internal/benchmark-harness/child/bench-scenario";
 
-import type { DiFeature } from "#/fixtures/features";
+import type { DiFeature } from "#fixtures/features";
 
 /**
  * Grouping used by the reporter to label scenarios in the comparison table.

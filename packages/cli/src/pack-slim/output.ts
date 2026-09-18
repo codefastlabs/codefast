@@ -1,5 +1,5 @@
-import { logger } from "#/core/logger";
-import type { PackSlimPackageStats, PackSlimProgressListener, PackSlimRunStats } from "#/pack-slim/domain/types";
+import { logger } from "#core/logger";
+import type { PackSlimPackageStats, PackSlimProgressListener, PackSlimRunStats } from "#pack-slim/domain/types";
 
 /**
  * A progress listener that renders pack-slim run events as human-readable CLI lines.

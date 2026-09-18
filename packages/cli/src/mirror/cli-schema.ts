@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import type { MirrorSyncRunRequest } from "#/mirror/domain/types";
+import type { MirrorSyncRunRequest } from "#mirror/domain/types";
 
 /**
  * Zod schema validating a `MirrorSyncRunRequest`.

@@ -1,13 +1,13 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { CheckboxBasic } from "#/registry/checkbox/basic.example";
-import { CheckboxDescription } from "#/registry/checkbox/description.example";
-import { CheckboxDisabled } from "#/registry/checkbox/disabled.example";
-import { CheckboxGroup } from "#/registry/checkbox/group.example";
-import { CheckboxIndeterminate } from "#/registry/checkbox/indeterminate.example";
-import { CheckboxInvalid } from "#/registry/checkbox/invalid.example";
-import { CheckboxRtl } from "#/registry/checkbox/rtl.example";
-import { CheckboxInTable } from "#/registry/checkbox/table.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { CheckboxBasic } from "#registry/checkbox/basic.example";
+import { CheckboxDescription } from "#registry/checkbox/description.example";
+import { CheckboxDisabled } from "#registry/checkbox/disabled.example";
+import { CheckboxGroup } from "#registry/checkbox/group.example";
+import { CheckboxIndeterminate } from "#registry/checkbox/indeterminate.example";
+import { CheckboxInvalid } from "#registry/checkbox/invalid.example";
+import { CheckboxRtl } from "#registry/checkbox/rtl.example";
+import { CheckboxInTable } from "#registry/checkbox/table.example";
 
 export const checkboxDoc: ComponentDoc = {
   usage: docUsage("checkbox"),

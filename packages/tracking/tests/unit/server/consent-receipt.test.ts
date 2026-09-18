@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { ConsentReceiptInput } from "#/core/consent-receipt";
-import { buildConsentReceipt, coarsenIp, RECEIPT_SCHEMA_VERSION } from "#/server/consent-receipt";
+import type { ConsentReceiptInput } from "#core/consent-receipt";
+import { buildConsentReceipt, coarsenIp, RECEIPT_SCHEMA_VERSION } from "#server/consent-receipt";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

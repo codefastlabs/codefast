@@ -1,4 +1,4 @@
-import { MAX_STRIP_VARIANT_PASSES } from "#/arrange/domain/constants";
+import { MAX_STRIP_VARIANT_PASSES } from "#arrange/domain/constants";
 
 /**
  * Splits a class string into its whitespace-separated tokens.

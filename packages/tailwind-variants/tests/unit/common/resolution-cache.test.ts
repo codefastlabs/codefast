@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { tv } from "#/index";
+import { tv } from "#index";
 
 describe("resolution cache", () => {
   test("answers a repeated selection with the same slot resolvers once the plan is compiled", () => {

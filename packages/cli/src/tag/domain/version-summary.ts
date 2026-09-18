@@ -1,4 +1,4 @@
-import type { TagTargetExecutionResult } from "#/tag/domain/types";
+import type { TagTargetExecutionResult } from "#tag/domain/types";
 
 /**
  * Collects the distinct, non-empty package versions stamped across a run's target results.

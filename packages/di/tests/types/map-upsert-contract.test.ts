@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from "vitest";
 
-import { getOrInsert, getOrInsertComputed } from "#/core/map-upsert";
+import { getOrInsert, getOrInsertComputed } from "#core/map-upsert";
 
 describe("map upsert value constraint", () => {
   it("infers key and value from the map alone", () => {

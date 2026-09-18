@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { TestBed } from "#/test-bed/test-bed";
+import { TestBed } from "#test-bed/test-bed";
 import {
   AccessorConsumer,
   AccessorOnlyService,
@@ -18,7 +18,7 @@ import {
   TaggedConsumer,
   ThrowingService,
   UserServiceToken,
-} from "#/tests/unit/support/fixtures";
+} from "#tests/unit/support/fixtures";
 
 describe("TestBed.solitary", () => {
   it("auto-mocks every constructor dependency (zero-dep backend)", () => {

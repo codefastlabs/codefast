@@ -1,50 +1,57 @@
 import { Command } from "commander";
 import type { ZodType } from "zod";
 
-import { exitCodeForCommentAuditResult, formatCommentAuditJsonOutput } from "#/audit/comments/cli-result";
-import type { CommentAuditRunRequest } from "#/audit/comments/cli-schema";
-import { commentAuditRunRequestSchema } from "#/audit/comments/cli-schema";
-import { presentCommentAuditResult } from "#/audit/comments/output";
-import { prepareCommentAudit } from "#/audit/comments/prepare";
-import { runCommentAudit } from "#/audit/comments/run";
-import { exitCodeForDisplayNameAuditResult, formatDisplayNameAuditJsonOutput } from "#/audit/display-names/cli-result";
-import type { DisplayNameAuditRunRequest } from "#/audit/display-names/cli-schema";
-import { displayNameAuditRunRequestSchema } from "#/audit/display-names/cli-schema";
-import { presentDisplayNameAuditResult } from "#/audit/display-names/output";
-import { prepareDisplayNameAudit } from "#/audit/display-names/prepare";
-import { runDisplayNameAudit } from "#/audit/display-names/run";
+import { exitCodeForCommentAuditResult, formatCommentAuditJsonOutput } from "#audit/comments/cli-result";
+import type { CommentAuditRunRequest } from "#audit/comments/cli-schema";
+import { commentAuditRunRequestSchema } from "#audit/comments/cli-schema";
+import { presentCommentAuditResult } from "#audit/comments/output";
+import { prepareCommentAudit } from "#audit/comments/prepare";
+import { runCommentAudit } from "#audit/comments/run";
+import { exitCodeForDisplayNameAuditResult, formatDisplayNameAuditJsonOutput } from "#audit/display-names/cli-result";
+import type { DisplayNameAuditRunRequest } from "#audit/display-names/cli-schema";
+import { displayNameAuditRunRequestSchema } from "#audit/display-names/cli-schema";
+import { presentDisplayNameAuditResult } from "#audit/display-names/output";
+import { prepareDisplayNameAudit } from "#audit/display-names/prepare";
+import { runDisplayNameAudit } from "#audit/display-names/run";
 import type {
   CommentAuditResult,
   DisplayNameAuditResult,
   ImportsAuditResult,
   LinkAuditResult,
+  PublishAuditResult,
   RtlAuditResult,
-} from "#/audit/domain/types";
-import { exitCodeForImportsAuditResult, formatImportsAuditJsonOutput } from "#/audit/imports/cli-result";
-import type { ImportsAuditRunRequest } from "#/audit/imports/cli-schema";
-import { importsAuditRunRequestSchema } from "#/audit/imports/cli-schema";
-import { presentImportsAuditResult } from "#/audit/imports/output";
-import { prepareImportsAudit } from "#/audit/imports/prepare";
-import { runImportsAudit } from "#/audit/imports/run";
-import { exitCodeForLinkAuditResult, formatLinkAuditJsonOutput } from "#/audit/links/cli-result";
-import type { LinkAuditRunRequest } from "#/audit/links/cli-schema";
-import { linkAuditRunRequestSchema } from "#/audit/links/cli-schema";
-import { presentLinkAuditResult } from "#/audit/links/output";
-import { prepareLinkAudit } from "#/audit/links/prepare";
-import { runLinkAudit } from "#/audit/links/run";
-import type { AuditCommandPrelude } from "#/audit/prepare";
-import { exitCodeForRtlAuditResult, formatRtlAuditJsonOutput } from "#/audit/rtl/cli-result";
-import type { RtlAuditRunRequest } from "#/audit/rtl/cli-schema";
-import { rtlAuditRunRequestSchema } from "#/audit/rtl/cli-schema";
-import { presentRtlAuditResult } from "#/audit/rtl/output";
-import { prepareRtlAudit } from "#/audit/rtl/prepare";
-import { runRtlAudit } from "#/audit/rtl/run";
-import type { NamedCommandPipeline } from "#/core/cli/command-pipeline";
-import { registerPipelineSubcommand } from "#/core/cli/command-pipeline";
-import type { AppError } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { nodeFilesystem } from "#/core/filesystem/node";
-import type { Result } from "#/core/result";
+} from "#audit/domain/types";
+import { exitCodeForImportsAuditResult, formatImportsAuditJsonOutput } from "#audit/imports/cli-result";
+import type { ImportsAuditRunRequest } from "#audit/imports/cli-schema";
+import { importsAuditRunRequestSchema } from "#audit/imports/cli-schema";
+import { presentImportsAuditResult } from "#audit/imports/output";
+import { prepareImportsAudit } from "#audit/imports/prepare";
+import { runImportsAudit } from "#audit/imports/run";
+import { exitCodeForLinkAuditResult, formatLinkAuditJsonOutput } from "#audit/links/cli-result";
+import type { LinkAuditRunRequest } from "#audit/links/cli-schema";
+import { linkAuditRunRequestSchema } from "#audit/links/cli-schema";
+import { presentLinkAuditResult } from "#audit/links/output";
+import { prepareLinkAudit } from "#audit/links/prepare";
+import { runLinkAudit } from "#audit/links/run";
+import type { AuditCommandPrelude } from "#audit/prepare";
+import { exitCodeForPublishAuditResult, formatPublishAuditJsonOutput } from "#audit/publish/cli-result";
+import type { PublishAuditRunRequest } from "#audit/publish/cli-schema";
+import { publishAuditRunRequestSchema } from "#audit/publish/cli-schema";
+import { presentPublishAuditResult } from "#audit/publish/output";
+import { preparePublishAudit } from "#audit/publish/prepare";
+import { runPublishAudit } from "#audit/publish/run";
+import { exitCodeForRtlAuditResult, formatRtlAuditJsonOutput } from "#audit/rtl/cli-result";
+import type { RtlAuditRunRequest } from "#audit/rtl/cli-schema";
+import { rtlAuditRunRequestSchema } from "#audit/rtl/cli-schema";
+import { presentRtlAuditResult } from "#audit/rtl/output";
+import { prepareRtlAudit } from "#audit/rtl/prepare";
+import { runRtlAudit } from "#audit/rtl/run";
+import type { NamedCommandPipeline } from "#core/cli/command-pipeline";
+import { registerPipelineSubcommand } from "#core/cli/command-pipeline";
+import type { AppError } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { nodeFilesystem } from "#core/filesystem/node";
+import type { Result } from "#core/result";
 
 type AuditActionOptions = {
   readonly json?: boolean;
@@ -64,7 +71,10 @@ interface AuditCheck<Request, CheckResult> {
     input: { readonly currentWorkingDirectory: string; readonly rawTarget: string | undefined },
   ) => Promise<Result<AuditCommandPrelude, AppError>>;
   readonly buildRequest: (prelude: AuditCommandPrelude, opts: AuditActionOptions) => unknown;
-  readonly run: (fs: Filesystem, request: Request) => Result<CheckResult, AppError>;
+  readonly run: (
+    fs: Filesystem,
+    request: Request,
+  ) => Result<CheckResult, AppError> | Promise<Result<CheckResult, AppError>>;
   readonly present: (result: CheckResult) => void;
   readonly formatJson: (result: CheckResult, rootDir: string) => string;
   readonly exitCode: (result: CheckResult) => number;
@@ -166,6 +176,19 @@ const commentsCheck: AuditCheck<CommentAuditRunRequest, CommentAuditResult> = {
   },
 };
 
+const publishCheck: AuditCheck<PublishAuditRunRequest, PublishAuditResult> = {
+  name: "publish",
+  description: "Report what breaks a consumer's install: #/ imports and exports/imports targets not shipped",
+  targetHelp: "Directory or file to scan (default: the repo root)",
+  schema: publishAuditRunRequestSchema,
+  prepare: preparePublishAudit,
+  buildRequest: baseAuditRequest,
+  run: (fs, request) => runPublishAudit(fs, { rootDir: request.rootDir, targetPath: request.targetPath }),
+  present: presentPublishAuditResult,
+  formatJson: formatPublishAuditJsonOutput,
+  exitCode: exitCodeForPublishAuditResult,
+};
+
 /**
  * Adapts an `AuditCheck` descriptor onto the shared command pipeline.
  */
@@ -202,6 +225,7 @@ export function createAuditCommand(): Command {
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(importsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(displayNamesCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(commentsCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(publishCheck));
 
   return cmd;
 }

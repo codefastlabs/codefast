@@ -2,7 +2,7 @@
 
 import { injectable } from "@codefast/di";
 
-import type { UnitOfWork } from "#/examples/21-explicit-architecture-ecommerce/application/ports/unit-of-work";
+import type { UnitOfWork } from "#examples/21-explicit-architecture-ecommerce/application/ports/unit-of-work";
 
 /** Runs `work` as-is; a real adapter would open a transaction and commit or roll it back around the block. */
 @injectable()

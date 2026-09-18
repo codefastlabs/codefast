@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type { AggregatedScenarioResult, LibraryReport } from "#/report/aggregate";
-import type { ComparisonLibrary } from "#/report/comparison";
-import { buildComparisonDocument, COMPARISON_DOCUMENT_SCHEMA_VERSION } from "#/report/comparison-document";
-import { NOISY_IQR_FRACTION, THROUGHPUT_NOISE_CEILING_HZ_PER_OP } from "#/report/reliability";
-import { BENCH_ISOLATE_ENV_KEY, BENCH_MODE_ENV_KEY, BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#/shared/env-keys";
-import type { Fingerprint } from "#/shared/protocol";
+import type { AggregatedScenarioResult, LibraryReport } from "#report/aggregate";
+import type { ComparisonLibrary } from "#report/comparison";
+import { buildComparisonDocument, COMPARISON_DOCUMENT_SCHEMA_VERSION } from "#report/comparison-document";
+import { NOISY_IQR_FRACTION, THROUGHPUT_NOISE_CEILING_HZ_PER_OP } from "#report/reliability";
+import { BENCH_ISOLATE_ENV_KEY, BENCH_MODE_ENV_KEY, BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#shared/env-keys";
+import type { Fingerprint } from "#shared/protocol";
 
 const RUN = { runId: "2026-08-12T00-00-00-000Z" };
 

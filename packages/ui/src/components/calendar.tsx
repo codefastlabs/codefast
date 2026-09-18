@@ -4,9 +4,9 @@ import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react
 import type { ComponentProps, JSX } from "react";
 import { useEffect, useRef } from "react";
 
-import { Button } from "#/components/button";
-import { cn } from "#/lib/utils";
-import { buttonVariants } from "#/variants/button";
+import { Button } from "#components/button";
+import { cn } from "#lib/utils";
+import { buttonVariants } from "#variants/button";
 
 // ── Component: Calendar ──────────────────────────────────────────────────────────────────────────────────────────────
 

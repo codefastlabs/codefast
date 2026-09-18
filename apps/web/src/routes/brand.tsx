@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { PageHeader } from "#/components/shared/page-header";
-import { BrandColorSection } from "#/features/brand/components/brand-color-section";
-import { BrandDownloadsSection } from "#/features/brand/components/brand-downloads-section";
-import { BrandLockupsSection } from "#/features/brand/components/brand-lockups-section";
-import { BrandMarkSection } from "#/features/brand/components/brand-mark-section";
-import { BrandNamingSection } from "#/features/brand/components/brand-naming-section";
-import { BrandTypeSection } from "#/features/brand/components/brand-type-section";
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
-import { canonicalHead } from "#/lib/seo";
+import { PageHeader } from "#components/shared/page-header";
+import { BrandColorSection } from "#features/brand/components/brand-color-section";
+import { BrandDownloadsSection } from "#features/brand/components/brand-downloads-section";
+import { BrandLockupsSection } from "#features/brand/components/brand-lockups-section";
+import { BrandMarkSection } from "#features/brand/components/brand-mark-section";
+import { BrandNamingSection } from "#features/brand/components/brand-naming-section";
+import { BrandTypeSection } from "#features/brand/components/brand-type-section";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
+import { canonicalHead } from "#lib/seo";
 
 export const Route = createFileRoute("/brand")({
   // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.

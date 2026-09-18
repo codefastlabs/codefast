@@ -1,10 +1,10 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
-import { DocNotFound } from "#/features/package-docs/components/doc-not-found";
-import { DocPage } from "#/features/package-docs/components/doc-page";
-import { docPageHead } from "#/features/package-docs/lib/doc-page-head";
-import { getDocPage } from "#/features/package-docs/lib/package-docs";
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
+import { DocNotFound } from "#features/package-docs/components/doc-not-found";
+import { DocPage } from "#features/package-docs/components/doc-page";
+import { docPageHead } from "#features/package-docs/lib/doc-page-head";
+import { getDocPage } from "#features/package-docs/lib/package-docs";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
 
 export const Route = createFileRoute("/docs/$pkg_/$kind")({
   // Effective in dev and any live render; once prerendered, `routeRules` in vite.config.ts applies instead.

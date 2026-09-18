@@ -1,9 +1,9 @@
 import { render, renderHook, screen } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
 
-import type { Appearance, AppearanceContextValue } from "#/appearance";
-import { AppearanceContext } from "#/appearance-context";
-import { useAppearance } from "#/use-appearance";
+import type { Appearance, AppearanceContextValue } from "#appearance";
+import { AppearanceContext } from "#appearance-context";
+import { useAppearance } from "#use-appearance";
 
 /**
  * Helper to create a wrapper component for renderHook

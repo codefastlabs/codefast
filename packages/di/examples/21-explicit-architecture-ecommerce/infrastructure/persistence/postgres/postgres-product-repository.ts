@@ -2,11 +2,11 @@
 
 import { inject, injectable } from "@codefast/di";
 
-import type { ProductRepository } from "#/examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
-import type { Product } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product";
-import type { ProductId } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
-import { PgPoolToken } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/pg-pool";
-import type { PgPool } from "#/examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/pg-pool";
+import type { ProductRepository } from "#examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
+import type { Product } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product";
+import type { ProductId } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
+import { PgPoolToken } from "#examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/pg-pool";
+import type { PgPool } from "#examples/21-explicit-architecture-ecommerce/infrastructure/persistence/postgres/pg-pool";
 
 /** Persists products through Postgres SQL; the mock pool logs each statement and an in-memory map holds the rows. */
 @injectable([inject(PgPoolToken)])

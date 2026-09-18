@@ -1,7 +1,7 @@
 import { expectTypeOf } from "vitest";
 
-import type { VariantProps } from "#/index";
-import { tv } from "#/index";
+import type { VariantProps } from "#index";
+import { tv } from "#index";
 
 /**
  * The other type tests prove what compiles. These prove what must not, because every gap they cover

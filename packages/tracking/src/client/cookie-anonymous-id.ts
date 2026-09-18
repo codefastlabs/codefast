@@ -1,5 +1,5 @@
-import { writeBrowserCookie } from "#/client/browser-cookie";
-import { ONE_YEAR_IN_SECONDS, readCookieValue } from "#/core/cookie";
+import { writeBrowserCookie } from "#client/browser-cookie";
+import { ONE_YEAR_IN_SECONDS, readCookieValue } from "#core/cookie";
 
 /**
  * Options for `createCookieAnonymousId`.

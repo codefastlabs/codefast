@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { ThroughputQuality } from "#/report/reliability";
+import type { ThroughputQuality } from "#report/reliability";
 import {
   NOISY_IQR_FRACTION,
   NOISY_IQR_MARKER,
@@ -15,7 +15,7 @@ import {
   isThroughputCellNoisy,
   markRatioQuality,
   markThroughputQuality,
-} from "#/report/reliability";
+} from "#report/reliability";
 
 const ABOVE_CEILING = THROUGHPUT_NOISE_CEILING_HZ_PER_OP + 1;
 const BELOW_CEILING = THROUGHPUT_NOISE_CEILING_HZ_PER_OP - 1;

@@ -1,6 +1,6 @@
-import type { Constructor } from "#/core/types";
-import type { InjectionDescriptor } from "#/injection/descriptor";
-import type { DependencySlot } from "#/injection/resolve-options";
+import type { Constructor } from "#core/types";
+import type { InjectionDescriptor } from "#injection/descriptor";
+import type { DependencySlot } from "#injection/resolve-options";
 
 /**
  * One constructor parameter's declaration.

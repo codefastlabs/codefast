@@ -1,7 +1,7 @@
 import { resolveInitialConsentFromRequest } from "@codefast/tracking/adapters/tanstack-start";
 
-import type { InitialConsent } from "#/features/tracking/lib/consent";
-import { consentConfig } from "#/features/tracking/lib/consent";
+import type { InitialConsent } from "#features/tracking/lib/consent";
+import { consentConfig } from "#features/tracking/lib/consent";
 
 /**
  * Server-only module — the `.server` suffix makes any client-graph leak a traced

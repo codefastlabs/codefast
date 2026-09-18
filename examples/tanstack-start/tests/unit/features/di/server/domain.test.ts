@@ -17,8 +17,8 @@ import {
   TaskValidationToken,
   TaskValidatorToken,
   UniqueTitleValidator,
-} from "#/features/di/server/domain";
-import type { Task } from "#/features/di/server/domain";
+} from "#features/di/server/domain";
+import type { Task } from "#features/di/server/domain";
 
 // Vitest-backed spies: matchers work on every auto-mock, and the factory's return type flows into
 // the bed, so vitest-only APIs like mockReturnValueOnce type-check on mocks.get(...).method.

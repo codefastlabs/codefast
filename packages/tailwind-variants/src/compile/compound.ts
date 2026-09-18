@@ -5,9 +5,9 @@
  * it reads are one contract; splitting them would put the two halves out of each other's sight.
  */
 
-import { toClassText, toPlanClasses } from "#/compile/class-values";
-import type { PlanClasses } from "#/compile/class-values";
-import type { ClassValue, CompoundSlot, CompoundVariant, SlotCompoundVariant, VariantSchema } from "#/types";
+import { toClassText, toPlanClasses } from "#compile/class-values";
+import type { PlanClasses } from "#compile/class-values";
+import type { ClassValue, CompoundSlot, CompoundVariant, SlotCompoundVariant, VariantSchema } from "#types";
 
 /** Condition satisfied when the resolved value strictly equals the configured one. */
 const CONDITION_STRICT = 0;

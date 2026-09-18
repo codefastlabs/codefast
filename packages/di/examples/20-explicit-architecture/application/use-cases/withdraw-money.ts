@@ -2,19 +2,19 @@
 
 import { inject, injectable } from "@codefast/di";
 
-import { AccountRepositoryToken } from "#/examples/20-explicit-architecture/application/ports/account-repository.port";
-import type { AccountRepository } from "#/examples/20-explicit-architecture/application/ports/account-repository.port";
-import { ClockToken } from "#/examples/20-explicit-architecture/application/ports/clock.port";
-import type { Clock } from "#/examples/20-explicit-architecture/application/ports/clock.port";
-import { EventPublisherToken } from "#/examples/20-explicit-architecture/application/ports/events.port";
-import type { EventPublisher } from "#/examples/20-explicit-architecture/application/ports/events.port";
+import { AccountRepositoryToken } from "#examples/20-explicit-architecture/application/ports/account-repository.port";
+import type { AccountRepository } from "#examples/20-explicit-architecture/application/ports/account-repository.port";
+import { ClockToken } from "#examples/20-explicit-architecture/application/ports/clock.port";
+import type { Clock } from "#examples/20-explicit-architecture/application/ports/clock.port";
+import { EventPublisherToken } from "#examples/20-explicit-architecture/application/ports/events.port";
+import type { EventPublisher } from "#examples/20-explicit-architecture/application/ports/events.port";
 import type {
   WithdrawMoneyCommand,
   WithdrawMoneyUseCase,
-} from "#/examples/20-explicit-architecture/application/ports/use-cases.port";
-import { toAccountId } from "#/examples/20-explicit-architecture/domain/account-id";
-import { AccountNotFoundError } from "#/examples/20-explicit-architecture/domain/errors";
-import { Money } from "#/examples/20-explicit-architecture/domain/money";
+} from "#examples/20-explicit-architecture/application/ports/use-cases.port";
+import { toAccountId } from "#examples/20-explicit-architecture/domain/account-id";
+import { AccountNotFoundError } from "#examples/20-explicit-architecture/domain/errors";
+import { Money } from "#examples/20-explicit-architecture/domain/money";
 
 /** Removes funds from an account, letting the aggregate refuse an overdraft through its own invariant. */
 @injectable([inject(AccountRepositoryToken), inject(ClockToken), inject(EventPublisherToken)])

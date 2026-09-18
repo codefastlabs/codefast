@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { exitCodeForCommentAuditResult, formatCommentAuditJsonOutput } from "#/audit/comments/cli-result";
-import type { CommentAuditResult } from "#/audit/domain/types";
+import { exitCodeForCommentAuditResult, formatCommentAuditJsonOutput } from "#audit/comments/cli-result";
+import type { CommentAuditResult } from "#audit/domain/types";
 
 const clean: CommentAuditResult = {
   files: [],

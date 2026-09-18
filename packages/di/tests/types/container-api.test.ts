@@ -1,8 +1,8 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import type { BindingScope, ResolutionContext } from "#/core/types";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import type { BindingScope, ResolutionContext } from "#core/types";
 
 describe("Container public API inference", () => {
   /**

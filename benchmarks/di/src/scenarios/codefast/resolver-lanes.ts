@@ -15,15 +15,15 @@
  */
 import { Container, inject, injectable, token } from "@codefast/di";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
+import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
 import {
   ACCESSOR_INJECTION_CONSTRUCT,
   NESTED_CONTAINER_RESOLVE,
   NESTED_CONTEXT_RESOLVE,
   RESOLVER_LANE_BATCH,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface LaneDependency {
   readonly id: string;

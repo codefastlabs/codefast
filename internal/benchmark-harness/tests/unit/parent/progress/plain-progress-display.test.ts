@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { PlainProgressDisplay } from "#/parent/progress/plain-progress-display";
+import { PlainProgressDisplay } from "#parent/progress/plain-progress-display";
 
 describe("PlainProgressDisplay", () => {
   beforeEach(() => {

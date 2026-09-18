@@ -1,5 +1,5 @@
-import type { LinkAuditResult } from "#/audit/domain/types";
-import { logger } from "#/core/logger";
+import type { LinkAuditResult } from "#audit/domain/types";
+import { logger } from "#core/logger";
 
 /**
  * Human-readable link audit report.

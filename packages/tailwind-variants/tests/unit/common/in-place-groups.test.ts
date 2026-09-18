@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { tv } from "#/index";
+import { tv } from "#index";
 
 /**
  * A string-only variant group is read in place rather than copied, so these pin what that must never

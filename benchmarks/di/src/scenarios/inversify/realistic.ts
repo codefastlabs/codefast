@@ -13,16 +13,16 @@ import {
   buildInversifyRealisticResolvedContainer,
   sanityCheckInversifyRealisticResolve,
   sanityCheckInversifyRealisticResolvedResolve,
-} from "#/fixtures/inversify-adapter";
-import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
+} from "#fixtures/inversify-adapter";
+import { REALISTIC_GRAPH } from "#fixtures/realistic-graph";
 import {
   REALISTIC_GRAPH_COLD_RESOLVE,
   REALISTIC_GRAPH_RESOLVE_ROOT,
   REALISTIC_GRAPH_RESOLVED_ROOT,
   REALISTIC_RESOLVE_BATCH,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildRealisticGraphResolveRootScenario(): BenchScenario {
   const { container, rootIdentifier } = buildInversifyRealisticContainer(REALISTIC_GRAPH);

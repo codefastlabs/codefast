@@ -3,7 +3,7 @@ import { MinusIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 import { use } from "react";
 
-import { cn } from "#/lib/utils";
+import { cn } from "#lib/utils";
 
 // ── Component: InputOtp ──────────────────────────────────────────────────────────────────────────────────────────────
 

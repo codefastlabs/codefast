@@ -1,4 +1,4 @@
-import type { ContainerGraphJson, GraphNode } from "#/introspection/dependency-graph";
+import type { ContainerGraphJson, GraphNode } from "#introspection/dependency-graph";
 
 /**
  * A dependency-graph node in React Flow's node format.

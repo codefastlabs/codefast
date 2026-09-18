@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 
-import { BrandMark } from "#/features/brand/components/brand-mark";
-import { BrandWordmark } from "#/features/brand/components/brand-wordmark";
+import { BrandMark } from "#features/brand/components/brand-mark";
+import { BrandWordmark } from "#features/brand/components/brand-wordmark";
 
 /** Mark + wordmark linking home; a right-click opens the brand page instead of the browser menu. */
 export function Logo() {

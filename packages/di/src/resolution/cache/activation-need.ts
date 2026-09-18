@@ -4,11 +4,11 @@
  * @remarks Versioned on the lifecycle manager plus the own registry, since `onActivation` can be
  * registered at any time and a rebind mints binding ids the memo must not keep forever.
  */
-import type { Binding } from "#/core/binding";
-import type { BindingRegistry } from "#/core/registry";
-import type { BindingIdentifier } from "#/core/types";
-import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
-import type { ClassIntrospector } from "#/resolution/cache/class-introspector";
+import type { Binding } from "#core/binding";
+import type { BindingRegistry } from "#core/registry";
+import type { BindingIdentifier } from "#core/types";
+import type { LifecycleManager } from "#lifecycle/lifecycle-manager";
+import type { ClassIntrospector } from "#resolution/cache/class-introspector";
 
 /**
  * A per-binding cache of whether activation work — hooks or `@postConstruct` — is needed on resolve.

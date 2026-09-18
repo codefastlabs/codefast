@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { applyEditsDescending, dropOverlappingEdits } from "#/core/source-text-edit";
+import { applyEditsDescending, dropOverlappingEdits } from "#core/source-text-edit";
 
 describe("dropOverlappingEdits", () => {
   it("keeps disjoint edits untouched", () => {

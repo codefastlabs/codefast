@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
 
-import { Marker, MarkerContent, MarkerIcon } from "#/components/marker";
+import { Marker, MarkerContent, MarkerIcon } from "#components/marker";
 
 describe("marker", () => {
   describe("Marker component", () => {

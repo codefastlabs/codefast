@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { toAdConsentState } from "#/destinations/ad-consent";
+import { toAdConsentState } from "#destinations/ad-consent";
 
 describe("toAdConsentState", () => {
   it("drives transmission by analytics and LDU by !ads, as independent levers", () => {

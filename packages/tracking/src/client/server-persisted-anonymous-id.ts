@@ -1,6 +1,6 @@
-import type { CookieAnonymousId } from "#/client/cookie-anonymous-id";
-import { createCookieAnonymousId } from "#/client/cookie-anonymous-id";
-import { readCookieValue } from "#/core/cookie";
+import type { CookieAnonymousId } from "#client/cookie-anonymous-id";
+import { createCookieAnonymousId } from "#client/cookie-anonymous-id";
+import { readCookieValue } from "#core/cookie";
 
 /**
  * Options for `createServerPersistedAnonymousId`.

@@ -1,13 +1,13 @@
 import path from "node:path";
 
-import { auditDisplayNames } from "#/audit/display-names/domain/display-names";
-import type { DisplayNameAuditResult, DisplayNameFileViolations } from "#/audit/domain/types";
-import { AppError, messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { walkMarkdownFiles } from "#/core/workspace/markdown-walk";
-import { walkTsxFiles } from "#/core/workspace/typescript-walk";
+import { auditDisplayNames } from "#audit/display-names/domain/display-names";
+import type { DisplayNameAuditResult, DisplayNameFileViolations } from "#audit/domain/types";
+import { AppError, messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { walkMarkdownFiles } from "#core/workspace/markdown-walk";
+import { walkTsxFiles } from "#core/workspace/typescript-walk";
 
 /**
  * Trees the convention does not reach: a test or benchmark token is scoped by its file and never

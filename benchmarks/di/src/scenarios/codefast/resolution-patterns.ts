@@ -24,7 +24,7 @@
 import type { BindingTag } from "@codefast/di";
 import { Container, inject, injectable, token } from "@codefast/di";
 
-import { ENV_TAG } from "#/fixtures/bench-tags";
+import { ENV_TAG } from "#fixtures/bench-tags";
 import {
   CONDITIONAL_INJECTION_BATCH,
   CONDITIONAL_INJECTION_TAGGED,
@@ -38,9 +38,9 @@ import {
   TAGGED_RESOLVE_BATCH,
   taggedResolveSlotsDescriptor,
   TARGET_TAG_VALUE,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 // ── scenario 1: resolveOptional — hit ────────────────────────────────────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
-import type { ConsentMode, ConsentStorage } from "#/core/consent";
-import { resolveEffectiveConsent } from "#/core/consent";
-import type { ConsentConfig } from "#/core/consent-config";
+import type { ConsentMode, ConsentStorage } from "#core/consent";
+import { resolveEffectiveConsent } from "#core/consent";
+import type { ConsentConfig } from "#core/consent-config";
 
 /**
  * Options for `createIsAnalyticsAllowed`.

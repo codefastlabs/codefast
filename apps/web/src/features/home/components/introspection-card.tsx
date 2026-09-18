@@ -1,7 +1,7 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
-import { createShop } from "#/features/home/demos/shop";
+import { createShop } from "#features/home/demos/shop";
 
 const RENDERERS = ["DOT", "Mermaid", "Cytoscape", "React Flow"];
 

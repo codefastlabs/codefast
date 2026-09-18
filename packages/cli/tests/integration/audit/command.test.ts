@@ -4,8 +4,8 @@ import path from "node:path";
 
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { createAuditCommand } from "#/audit/command";
-import { logger } from "#/core/logger";
+import { createAuditCommand } from "#audit/command";
+import { logger } from "#core/logger";
 
 let fixtureDir: string;
 let cleanDoc: string;

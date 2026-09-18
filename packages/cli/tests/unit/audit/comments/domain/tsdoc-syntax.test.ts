@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { scanTsdocSyntax } from "#/audit/comments/domain/tsdoc-syntax";
+import { scanTsdocSyntax } from "#audit/comments/domain/tsdoc-syntax";
 
 const doc = (...lines: Array<string>): string => ["/**", ...lines.map((l) => ` * ${l}`), " */"].join("\n");
 

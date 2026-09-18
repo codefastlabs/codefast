@@ -5,9 +5,9 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { Module } from "#/core/module";
-import { token } from "#/core/token";
+import { Container } from "#container/container";
+import { Module } from "#core/module";
+import { token } from "#core/token";
 
 describe("constant deactivation", () => {
   it("runs the hook on dispose with no activation hook beside it", async () => {

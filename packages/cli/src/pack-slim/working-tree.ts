@@ -1,8 +1,8 @@
 import { execFileSync } from "node:child_process";
 
-import { AppError, messageFrom } from "#/core/errors";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
+import { AppError, messageFrom } from "#core/errors";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
 
 /**
  * Whether git's tracked-only porcelain output reports any uncommitted change.

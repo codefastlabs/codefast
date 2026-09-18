@@ -1,20 +1,20 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 
-import { BenchmarkSection } from "#/features/home/components/benchmark-section";
-import { DiPillarsSection } from "#/features/home/components/di-pillars-section";
-import { DiTestingSection } from "#/features/home/components/di-testing-section";
-import { HeroSection } from "#/features/home/components/hero-section";
-import { InstallCta } from "#/features/home/components/install-cta";
-import { WiringSection } from "#/features/home/components/wiring-section";
-import { DI_INSTALL_COMMAND } from "#/features/home/data";
-import { getBenchmarkLedger } from "#/features/home/lib/benchmark-ledger";
-import { getHomeSnippets } from "#/features/home/lib/home-snippets";
-import { PackagesSection } from "#/features/package-docs/components/packages-section";
-import { getPackages } from "#/features/package-docs/lib/package-docs";
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
-import { GITHUB_URL } from "#/lib/nav-links";
-import { SITE_URL, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
-import { COMPONENTS } from "#/registry/_core/components";
+import { BenchmarkSection } from "#features/home/components/benchmark-section";
+import { DiPillarsSection } from "#features/home/components/di-pillars-section";
+import { DiTestingSection } from "#features/home/components/di-testing-section";
+import { HeroSection } from "#features/home/components/hero-section";
+import { InstallCta } from "#features/home/components/install-cta";
+import { WiringSection } from "#features/home/components/wiring-section";
+import { DI_INSTALL_COMMAND } from "#features/home/data";
+import { getBenchmarkLedger } from "#features/home/lib/benchmark-ledger";
+import { getHomeSnippets } from "#features/home/lib/home-snippets";
+import { PackagesSection } from "#features/package-docs/components/packages-section";
+import { getPackages } from "#features/package-docs/lib/package-docs";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
+import { GITHUB_URL } from "#lib/nav-links";
+import { SITE_URL, absoluteUrl, canonicalHead, jsonLdScript } from "#lib/seo";
+import { COMPONENTS } from "#registry/_core/components";
 
 const NPM_URL = "https://www.npmjs.com/org/codefast";
 

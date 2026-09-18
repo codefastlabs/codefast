@@ -2,10 +2,10 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { TestBedCard } from "#/features/home/components/test-bed-card";
-import { SHOP_TESTS } from "#/features/home/demos/shop-tests";
+import { TestBedCard } from "#features/home/components/test-bed-card";
+import { SHOP_TESTS } from "#features/home/demos/shop-tests";
 
-vi.mock("#/features/tracking/lib/tracking", () => ({ track: vi.fn() }));
+vi.mock("#features/tracking/lib/tracking", () => ({ track: vi.fn() }));
 
 // jsdom has no IntersectionObserver; this one reports every target as visible at once, so the lazy footer mounts.
 beforeAll(() => {

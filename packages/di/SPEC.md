@@ -2388,7 +2388,7 @@ export {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
-} from "#/resolution/select/constraints";
+} from "#resolution/select/constraints";
 ```
 
 Exported from both the root `@codefast/di` and the subpath `@codefast/di/resolution/select/constraints` — both import
@@ -2751,15 +2751,15 @@ export type {
   ResolveOptions,
   ResolutionContext,
   TokenValue,
-} from "#/core/types";
+} from "#core/types";
 
 // Token
-export { token, tokenName } from "#/core/token";
-export type { Token } from "#/core/token";
+export { token, tokenName } from "#core/token";
+export type { Token } from "#core/token";
 
 // Tag — the interned slot criteria a `whenTagged` and a resolve both take
-export { coversTagKeys, NO_TAG_KEYS, slotName, tag, tagKeyMaskOf } from "#/core/tag";
-export type { TagKey, TagKeyMask } from "#/core/tag";
+export { coversTagKeys, NO_TAG_KEYS, slotName, tag, tagKeyMaskOf } from "#core/tag";
+export type { TagKey, TagKeyMask } from "#core/tag";
 
 // Binding builders — types only
 export type {
@@ -2772,15 +2772,15 @@ export type {
   SingletonLifecycleBuilder,
   SlotConstrainedBuilder,
   TransientBindingBuilder,
-} from "#/core/binding";
+} from "#core/binding";
 
 // Container
-export { Container } from "#/container/container";
-export type { Container as ContainerInterface, ContainerOptions, ContainerStatic } from "#/container/container";
+export { Container } from "#container/container";
+export type { Container as ContainerInterface, ContainerOptions, ContainerStatic } from "#container/container";
 
 // Ambient container — the context an `@inject` accessor initializer resolves from. `resolution/context`
 // stays internal: it hands out resolver callbacks, not public values.
-export { getActiveContainer, runWithContainer } from "#/ambient/active-container";
+export { getActiveContainer, runWithContainer } from "#ambient/active-container";
 
 // `effectiveBindingScope` is deliberately absent: it reads a `Binding`, which is internal, and no
 // public API hands one out. `BindingSnapshot.scope` and `GraphNode.scope` are the public answers.
@@ -2788,41 +2788,41 @@ export {
   bindingSlotToResolveOptions,
   injectionSlotToResolveOptions,
   resolveOptionsForSlot,
-} from "#/injection/resolve-options";
-export type { DependencySlot } from "#/injection/resolve-options";
+} from "#injection/resolve-options";
+export type { DependencySlot } from "#injection/resolve-options";
 
 // Introspection types
-export type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspector";
+export type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";
 
 // Graph types
-export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#/introspection/dependency-graph";
+export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#introspection/dependency-graph";
 
 // Module
-export { AsyncModule, isSyncModule, Module, SyncModule } from "#/core/module";
-export type { AsyncModuleBuilder, ModuleBuilder } from "#/core/module";
+export { AsyncModule, isSyncModule, Module, SyncModule } from "#core/module";
+export type { AsyncModuleBuilder, ModuleBuilder } from "#core/module";
 
 // Decorators
-export { inject } from "#/decorators/inject";
-export { injectAll, isInjectionDescriptor, optional } from "#/injection/descriptor";
-export type { InjectionDescriptor, InjectOptions } from "#/injection/descriptor";
-export { injectable } from "#/decorators/injectable";
-export type { InjectableDependency, InjectableOptions } from "#/decorators/injectable";
-export { postConstruct, preDestroy } from "#/decorators/lifecycle-decorators";
+export { inject } from "#decorators/inject";
+export { injectAll, isInjectionDescriptor, optional } from "#injection/descriptor";
+export type { InjectionDescriptor, InjectOptions } from "#injection/descriptor";
+export { injectable } from "#decorators/injectable";
+export type { InjectableDependency, InjectableOptions } from "#decorators/injectable";
+export { postConstruct, preDestroy } from "#decorators/lifecycle-decorators";
 
 // Auto-register
-export { createAutoRegisterRegistry } from "#/decorators/injectable";
-export type { AutoRegisterRegistry } from "#/decorators/injectable";
+export { createAutoRegisterRegistry } from "#decorators/injectable";
+export type { AutoRegisterRegistry } from "#decorators/injectable";
 
 // MetadataReader — everything a consumer needs to write one and pass it to Container.create()
-export { MetadataReaderToken } from "#/metadata/metadata-reader-token";
+export { MetadataReaderToken } from "#metadata/metadata-reader-token";
 export type {
   ConstructorMetadata,
   LifecycleMetadata,
   MetadataReader,
   MutableLifecycleMetadata,
   ParamMetadata,
-} from "#/metadata/metadata-types";
-export { defaultMetadataReader, SymbolMetadataReader } from "#/metadata/symbol-metadata-reader";
+} from "#metadata/metadata-types";
+export { defaultMetadataReader, SymbolMetadataReader } from "#metadata/symbol-metadata-reader";
 
 // Constraints — contextual injection predicates for .when()
 export {
@@ -2836,7 +2836,7 @@ export {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
-} from "#/resolution/select/constraints";
+} from "#resolution/select/constraints";
 
 // Errors
 export {
@@ -2866,16 +2866,16 @@ export {
   TokenNotBoundError,
   UnreachableConstraintError,
   UnreachableLifecycleHookError,
-} from "#/errors/errors";
-export type { ScopeViolationDetails } from "#/errors/errors";
+} from "#errors/errors";
+export type { ScopeViolationDetails } from "#errors/errors";
 
 // Graph adapters — render `generateDependencyGraph()` output for common viewers
-export { toDotGraph } from "#/introspection/graph-adapters/dot";
-export { toCytoscapeGraph } from "#/introspection/graph-adapters/cytoscape";
-export type { CytoscapeEdge, CytoscapeElements, CytoscapeNode } from "#/introspection/graph-adapters/cytoscape";
-export { toReactFlowGraph } from "#/introspection/graph-adapters/reactflow";
-export type { ReactFlowEdge, ReactFlowGraph, ReactFlowNode } from "#/introspection/graph-adapters/reactflow";
-export { toMermaidGraph } from "#/introspection/graph-adapters/mermaid";
+export { toDotGraph } from "#introspection/graph-adapters/dot";
+export { toCytoscapeGraph } from "#introspection/graph-adapters/cytoscape";
+export type { CytoscapeEdge, CytoscapeElements, CytoscapeNode } from "#introspection/graph-adapters/cytoscape";
+export { toReactFlowGraph } from "#introspection/graph-adapters/reactflow";
+export type { ReactFlowEdge, ReactFlowGraph, ReactFlowNode } from "#introspection/graph-adapters/reactflow";
+export { toMermaidGraph } from "#introspection/graph-adapters/mermaid";
 
 // ── Subpaths: a full mirror, nothing excluded ───────────────────────────────
 //
@@ -2910,7 +2910,7 @@ export { toMermaidGraph } from "#/introspection/graph-adapters/mermaid";
 
 ### `package.json`
 
-ESM-only. `engines.node >= 24.0.0` — the monorepo's floor, held by the package's own `core/map-upsert` helpers instead
+ESM-only. `engines.node >= 22.12.0` — the monorepo's floor, held by the package's own `core/map-upsert` helpers instead
 of the ES2025 `Map.prototype.getOrInsert`, which would raise it to 26.
 
 Each public subpath is a conditional entry: `source` → `src` for dev/test inside the repo (gated on the `source`
@@ -2949,7 +2949,7 @@ shape of an entry).
   },
   "files": ["dist", "src", "CHANGELOG.md", "README.md", "LICENSE"],
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.12.0"
   }
 }
 ```
@@ -2958,12 +2958,12 @@ shape of an entry).
 > condition lets dev/test run the TypeScript sources directly with no prior build, and the `dist` source maps
 > (`declarationMap`/`sourceMap`, which point at `../src` without inlining sources) give in-repo consumers of the built
 > `dist` — `apps/web`, `examples` — go-to-definition and debugger step-into against the original `.ts`. None of that is
-> a consumer's concern: `tsc` leaves `#/` verbatim in `dist/*.js`, and a consumer resolves those through the `imports`
+> a consumer's concern: `tsc` leaves `#` verbatim in `dist/*.js`, and a consumer resolves those through the `imports`
 > map's `types`/`default` → `dist` conditions, never the `source` one (nothing enables `source` unasked). So
 > `codefast pack-slim` runs on the CI checkout right before `changeset publish` (never committed) and drops `src` from
 > `files`, every `source` condition from `exports`/`imports`, the `imports` entries left pointing outside `files`
-> (`#/tests/*`, `#/examples/*`), every script that is not a lifecycle hook, `devDependencies`, and the `dist` source
-> maps plus their now-dangling `sourceMappingURL` directives — the tarball ships `dist` runtime and types only.
+> (`#tests/*`, `#examples/*`), every script that is not a lifecycle hook, `devDependencies`, and the `dist` source maps
+> plus their now-dangling `sourceMappingURL` directives — the tarball ships `dist` runtime and types only.
 
 ### `tsconfig.build.json`
 
@@ -2975,7 +2975,7 @@ The shared emit flags live in the `@codefast/typescript-config/library-build.jso
 inherits the package base (flags + `paths`) and pulls in the emit block, keeping only a local `rootDir` (a relative path
 — placing it in the preset would resolve it against the preset's directory) plus `include`/`exclude`. `outDir` is
 declared in `tsconfig.json` rather than here: `noEmit` keeps it inert for type-checking, the build inherits it, and knip
-derives its `dist` → `src` mapping from that file, which is what lets it follow `#/` imports back to source.
+derives its `dist` → `src` mapping from that file, which is what lets it follow `#` imports back to source.
 
 ```json
 {
@@ -3307,7 +3307,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | No special flags needed                           |
 | Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 5.9+) |
 | Module format      | ESM-only                                                      | ESM-only                                          |
-| Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 24.0.0                                     |
+| Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 22.12.0                                    |
 
 #### Binding API
 

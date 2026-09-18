@@ -1,4 +1,4 @@
-import type { ConsentRegion } from "#/core/consent";
+import type { ConsentRegion } from "#core/consent";
 
 /**
  * EU member states — GDPR opt-in via `resolveConsentMode("eu")`.

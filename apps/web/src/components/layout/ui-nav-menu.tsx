@@ -3,7 +3,7 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Link, useLocation } from "@tanstack/react-router";
 import { ChevronDownIcon } from "lucide-react";
 
-import { UI_NAV } from "#/lib/nav-links";
+import { UI_NAV } from "#lib/nav-links";
 
 /** The header's "UI" group: one trigger for the `@codefast/ui` section, lit while the visitor is inside it. */
 export function UiNavMenu() {

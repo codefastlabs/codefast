@@ -40,7 +40,7 @@ packages' built `dist/`, and Oxlint's type-aware rules need them too. Run it aga
 ## Writing the change
 
 - **Internal imports use Node subpath imports** declared in each package's `package.json#imports` —
-  `#/components/button`, `#/tests/...`. Do not add `compilerOptions.paths` for internal aliases.
+  `#components/button`, `#tests/...`. Do not add `compilerOptions.paths` for internal aliases.
 - Keep `import type` separate from value imports.
 - **`package.json#exports` is generated** from `dist/` by `codefast mirror`, never hand-edited. Regenerate it after
   adding, moving, or renaming a module:

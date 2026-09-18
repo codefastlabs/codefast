@@ -1,10 +1,10 @@
 import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX } from "react";
 
-import { Button } from "#/components/button";
-import { cn } from "#/lib/utils";
-import type { AttachmentMediaVariants, AttachmentVariants } from "#/variants/attachment";
-import { attachmentMediaVariants, attachmentVariants } from "#/variants/attachment";
+import { Button } from "#components/button";
+import { cn } from "#lib/utils";
+import type { AttachmentMediaVariants, AttachmentVariants } from "#variants/attachment";
+import { attachmentMediaVariants, attachmentVariants } from "#variants/attachment";
 
 // ── Component: Attachment ────────────────────────────────────────────────────────────────────────────────────────────
 

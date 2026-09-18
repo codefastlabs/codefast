@@ -1,5 +1,5 @@
-import { createAnyGlobMatcher } from "#/core/glob";
-import type { TagTargetCandidate } from "#/tag/domain/types";
+import { createAnyGlobMatcher } from "#core/glob";
+import type { TagTargetCandidate } from "#tag/domain/types";
 
 /**
  * Partitions tag target candidates into those to tag and those to skip, matching each candidate's

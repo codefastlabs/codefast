@@ -5,7 +5,7 @@
 
 import { parseSync } from "oxc-parser";
 
-import { DomainBinaryOperator, DomainSyntaxKind } from "#/arrange/domain/ast/ast-node";
+import { DomainBinaryOperator, DomainSyntaxKind } from "#arrange/domain/ast/ast-node";
 import type {
   DomainArrayLiteralExpression,
   DomainAsExpression,
@@ -33,7 +33,7 @@ import type {
   DomainSpreadElement,
   DomainStringLiteral,
   DomainUnknownAstNode,
-} from "#/arrange/domain/ast/ast-node";
+} from "#arrange/domain/ast/ast-node";
 
 /**
  * Minimal structural view over an oxc ESTree node: every node carries a `type`

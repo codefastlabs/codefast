@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 
-import { AppearanceToggle } from "#/components/layout/appearance-toggle";
-import { Logo } from "#/components/layout/logo";
-import { ConsentGate } from "#/features/tracking/components/consent-gate";
-import { track } from "#/features/tracking/lib/tracking";
-import { PRIMARY_NAV, RESOURCE_LINKS, UI_NAV } from "#/lib/nav-links";
+import { AppearanceToggle } from "#components/layout/appearance-toggle";
+import { Logo } from "#components/layout/logo";
+import { ConsentGate } from "#features/tracking/components/consent-gate";
+import { track } from "#features/tracking/lib/tracking";
+import { PRIMARY_NAV, RESOURCE_LINKS, UI_NAV } from "#lib/nav-links";
 
 export function Footer() {
   const year = new Date().getFullYear();

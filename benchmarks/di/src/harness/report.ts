@@ -8,7 +8,7 @@ import { runOrderForShape } from "@internal/benchmark-harness/parent/run-bench-s
 import { parseRunObservations } from "@internal/benchmark-harness/report/jsonl";
 import { writeJsonFile, writeMarkdownFile } from "@internal/benchmark-harness/report/write";
 
-import { assembleDiComparison } from "#/harness/comparison";
+import { assembleDiComparison } from "#harness/comparison";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 

@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import { useLayoutEffect } from "react";
 
-import { useLatest } from "#/hooks/use-latest";
+import { useLatest } from "#hooks/use-latest";
 
 describe("useLatest", () => {
   test("holds the initial value on mount", () => {

@@ -1,10 +1,10 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { KbdButton } from "#/registry/kbd/button.example";
-import { KbdGroupExample } from "#/registry/kbd/group.example";
-import { KbdInputGroup } from "#/registry/kbd/input-group.example";
-import { KbdRtl } from "#/registry/kbd/rtl.example";
-import { KbdTooltip } from "#/registry/kbd/tooltip.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { KbdButton } from "#registry/kbd/button.example";
+import { KbdGroupExample } from "#registry/kbd/group.example";
+import { KbdInputGroup } from "#registry/kbd/input-group.example";
+import { KbdRtl } from "#registry/kbd/rtl.example";
+import { KbdTooltip } from "#registry/kbd/tooltip.example";
 
 export const kbdDoc: ComponentDoc = {
   usage: docUsage("kbd"),

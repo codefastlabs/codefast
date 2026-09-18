@@ -1,8 +1,8 @@
-import { messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { PACKAGE_JSON_EXPORT } from "#/mirror/domain/constants";
-import { MirrorError, MirrorErrorCode } from "#/mirror/domain/errors";
-import type { ExportMapData, ExportOriginalPathBySpecifier, PackageJsonShape } from "#/mirror/domain/types";
+import { messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { PACKAGE_JSON_EXPORT } from "#mirror/domain/constants";
+import { MirrorError, MirrorErrorCode } from "#mirror/domain/errors";
+import type { ExportMapData, ExportOriginalPathBySpecifier, PackageJsonShape } from "#mirror/domain/types";
 
 /**
  * Writes `exports` into `package.json` via a temp file + rename (atomic on same volume).

@@ -1,16 +1,16 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 
-import { DemoWallSection } from "#/features/home/components/demo-wall-section";
-import { FeaturesSection } from "#/features/home/components/features-section";
-import { InstallCta } from "#/features/home/components/install-cta";
-import { StatsSection } from "#/features/home/components/stats-section";
-import { FEATURES } from "#/features/home/data";
-import { UiHeroSection } from "#/features/ui-home/components/ui-hero-section";
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
-import { INSTALL_COMMAND } from "#/lib/install";
-import { GITHUB_URL } from "#/lib/nav-links";
-import { SITE_URL, absoluteUrl, canonicalHead, jsonLdScript } from "#/lib/seo";
-import { COMPONENTS } from "#/registry/_core/components";
+import { DemoWallSection } from "#features/home/components/demo-wall-section";
+import { FeaturesSection } from "#features/home/components/features-section";
+import { InstallCta } from "#features/home/components/install-cta";
+import { StatsSection } from "#features/home/components/stats-section";
+import { FEATURES } from "#features/home/data";
+import { UiHeroSection } from "#features/ui-home/components/ui-hero-section";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
+import { INSTALL_COMMAND } from "#lib/install";
+import { GITHUB_URL } from "#lib/nav-links";
+import { SITE_URL, absoluteUrl, canonicalHead, jsonLdScript } from "#lib/seo";
+import { COMPONENTS } from "#registry/_core/components";
 
 const NPM_URL = "https://www.npmjs.com/package/@codefast/ui";
 

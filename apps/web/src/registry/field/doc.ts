@@ -1,17 +1,17 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { FieldCheckbox } from "#/registry/field/checkbox.example";
-import { FieldChoiceCard } from "#/registry/field/choice-card.example";
-import { FieldFieldset } from "#/registry/field/fieldset.example";
-import { FieldGroupExample } from "#/registry/field/group.example";
-import { FieldInput } from "#/registry/field/input.example";
-import { FieldRadio } from "#/registry/field/radio.example";
-import { FieldResponsive } from "#/registry/field/responsive.example";
-import { FieldRtl } from "#/registry/field/rtl.example";
-import { FieldSelect } from "#/registry/field/select.example";
-import { FieldSlider } from "#/registry/field/slider.example";
-import { FieldSwitch } from "#/registry/field/switch.example";
-import { FieldTextarea } from "#/registry/field/textarea.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { FieldCheckbox } from "#registry/field/checkbox.example";
+import { FieldChoiceCard } from "#registry/field/choice-card.example";
+import { FieldFieldset } from "#registry/field/fieldset.example";
+import { FieldGroupExample } from "#registry/field/group.example";
+import { FieldInput } from "#registry/field/input.example";
+import { FieldRadio } from "#registry/field/radio.example";
+import { FieldResponsive } from "#registry/field/responsive.example";
+import { FieldRtl } from "#registry/field/rtl.example";
+import { FieldSelect } from "#registry/field/select.example";
+import { FieldSlider } from "#registry/field/slider.example";
+import { FieldSwitch } from "#registry/field/switch.example";
+import { FieldTextarea } from "#registry/field/textarea.example";
 
 export const fieldDoc: ComponentDoc = {
   usage: docUsage("field"),

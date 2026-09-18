@@ -5,10 +5,10 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { tag } from "#/core/tag";
-import { token } from "#/core/token";
-import { ManyBindingSlotError, NoMatchingBindingError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { tag } from "#core/tag";
+import { token } from "#core/token";
+import { ManyBindingSlotError, NoMatchingBindingError } from "#errors/errors";
 
 const strategyToken = token<number>("many-strategy");
 const KIND_TAG = tag("kind");

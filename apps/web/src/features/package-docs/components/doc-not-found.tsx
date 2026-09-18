@@ -1,7 +1,7 @@
 import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { NotFound } from "#/components/shared/not-found";
+import { NotFound } from "#components/shared/not-found";
 
 /** 404 body for `/docs/*` — an unknown package or a document the package does not publish. */
 export function DocNotFound() {

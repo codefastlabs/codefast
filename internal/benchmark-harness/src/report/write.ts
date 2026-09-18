@@ -1,10 +1,10 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 
-import type { JsonlBenchObservationRow } from "#/report/jsonl";
-import { resolveRunShapeFromEnvironment } from "#/shared/env-keys";
-import type { BenchRunShape } from "#/shared/env-keys";
-import type { Fingerprint, TrialPayload } from "#/shared/protocol";
+import type { JsonlBenchObservationRow } from "#report/jsonl";
+import { resolveRunShapeFromEnvironment } from "#shared/env-keys";
+import type { BenchRunShape } from "#shared/env-keys";
+import type { Fingerprint, TrialPayload } from "#shared/protocol";
 
 /**
  * Writes a pre-rendered markdown string to `outputPath`, creating parent directories as needed.

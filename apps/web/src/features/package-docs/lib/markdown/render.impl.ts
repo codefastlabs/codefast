@@ -9,10 +9,10 @@ import type { HighlighterCore } from "shiki/core";
 import { createHighlighterCore } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 
-import type { TocItem } from "#/features/components-catalog/components/detail/toc";
-import { rewriteDocImage, rewriteDocLink } from "#/features/package-docs/lib/markdown/rewrite-link";
-import type { LinkContext } from "#/features/package-docs/lib/markdown/rewrite-link";
-import { Slugger, plainHeadingText } from "#/features/package-docs/lib/markdown/slug";
+import type { TocItem } from "#features/components-catalog/components/detail/toc";
+import { rewriteDocImage, rewriteDocLink } from "#features/package-docs/lib/markdown/rewrite-link";
+import type { LinkContext } from "#features/package-docs/lib/markdown/rewrite-link";
+import { Slugger, plainHeadingText } from "#features/package-docs/lib/markdown/slug";
 
 /** The output of one render: the HTML plus what the page chrome needs from the document. */
 export interface RenderedMarkdown {

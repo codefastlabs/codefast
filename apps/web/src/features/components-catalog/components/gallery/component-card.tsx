@@ -1,11 +1,11 @@
 import { Suspense } from "react";
 
-import { LazyVisible } from "#/components/shared/lazy-visible";
-import { PreviewSkeleton } from "#/components/shared/preview-skeleton";
-import { ComponentCardMeta } from "#/features/components-catalog/components/gallery/component-card-meta";
-import { PreviewCard } from "#/features/components-catalog/components/gallery/preview-card";
-import type { ComponentMeta } from "#/registry/_core/components";
-import { DEMO_BY_SLUG } from "#/registry/_core/demos";
+import { LazyVisible } from "#components/shared/lazy-visible";
+import { PreviewSkeleton } from "#components/shared/preview-skeleton";
+import { ComponentCardMeta } from "#features/components-catalog/components/gallery/component-card-meta";
+import { PreviewCard } from "#features/components-catalog/components/gallery/preview-card";
+import type { ComponentMeta } from "#registry/_core/components";
+import { DEMO_BY_SLUG } from "#registry/_core/demos";
 
 // Branches between a bare `<div>` and `<PreviewCard>` and forwards no native
 // attributes, so the props are a plain named interface, not an extension of

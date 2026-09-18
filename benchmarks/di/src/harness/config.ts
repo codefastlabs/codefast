@@ -1,6 +1,6 @@
 import type { BenchSubprocessConfig } from "@internal/benchmark-harness/shared/config";
 
-import type { DiFeature } from "#/fixtures/features";
+import type { DiFeature } from "#fixtures/features";
 
 /**
  * One benched library: how the parent spawns it, heads its column, and describes its wiring.

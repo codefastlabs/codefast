@@ -5,11 +5,11 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { tag } from "#/core/tag";
-import { token } from "#/core/token";
-import type { BindingIdentifier } from "#/core/types";
-import { NoMatchingBindingError, RebindUnboundTokenError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { tag } from "#core/tag";
+import { token } from "#core/token";
+import type { BindingIdentifier } from "#core/types";
+import { NoMatchingBindingError, RebindUnboundTokenError } from "#errors/errors";
 
 const ENV_TAG = tag("env");
 

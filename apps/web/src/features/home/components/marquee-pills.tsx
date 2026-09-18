@@ -1,7 +1,7 @@
 import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 
-import type { ComponentMeta } from "#/registry/_core/components";
+import type { ComponentMeta } from "#registry/_core/components";
 
 interface MarqueePillsProps {
   readonly components: ReadonlyArray<ComponentMeta>;

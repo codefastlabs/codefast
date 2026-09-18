@@ -1,9 +1,9 @@
 import path from "node:path";
 
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { distDirName } from "#/core/workspace/well-known-files";
-import type { PackageJsonShape } from "#/mirror/domain/types";
-import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { distDirName } from "#core/workspace/well-known-files";
+import type { PackageJsonShape } from "#mirror/domain/types";
+import { writePackageJsonExportsAtomic } from "#mirror/write-exports";
 
 const DTS_EXTENSIONS = [".d.mts", ".d.ts", ".d.cts"] as const;
 const JS_EXTENSIONS = [".mjs", ".js"] as const;

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import * as z from "zod";
 import * as zm from "zod/mini";
 
-import { assertValidEventProperties, defineEventCatalog } from "#/core/event-catalog";
+import { assertValidEventProperties, defineEventCatalog } from "#core/event-catalog";
 
 describe("defineEventCatalog", () => {
   it("returns the catalog unchanged — it exists purely for inference", () => {

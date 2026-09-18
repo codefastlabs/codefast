@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createLocalStorageConsentStorage } from "#/client/consent-storage";
+import { createLocalStorageConsentStorage } from "#client/consent-storage";
 
 describe("createLocalStorageConsentStorage", () => {
   it("round-trips a consent record", () => {

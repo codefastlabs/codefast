@@ -7,8 +7,8 @@ import {
   getMessageScrollerScrollable,
   getNewScrollAnchor,
   getUnanchoredScrollAnchor,
-} from "#/lib/message-scroller/geometry";
-import { createDomRect } from "#/tests/unit/support/dom-rect";
+} from "#lib/message-scroller/geometry";
+import { createDomRect } from "#tests/unit/support/dom-rect";
 
 // jsdom does not compute layout, so each element's rect, scroll position, and
 // dimensions are stubbed directly. Rects are expressed in viewport (client)

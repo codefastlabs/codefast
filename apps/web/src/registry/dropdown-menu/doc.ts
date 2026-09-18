@@ -1,17 +1,17 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { DropdownMenuAvatar } from "#/registry/dropdown-menu/avatar.example";
-import { DropdownMenuBasic } from "#/registry/dropdown-menu/basic.example";
-import { DropdownMenuCheckboxesIcons } from "#/registry/dropdown-menu/checkboxes-icons.example";
-import { DropdownMenuCheckboxes } from "#/registry/dropdown-menu/checkboxes.example";
-import { DropdownMenuComplex } from "#/registry/dropdown-menu/complex.example";
-import { DropdownMenuDestructive } from "#/registry/dropdown-menu/destructive.example";
-import { DropdownMenuIcons } from "#/registry/dropdown-menu/icons.example";
-import { DropdownMenuRadioGroupDemo } from "#/registry/dropdown-menu/radio-group.example";
-import { DropdownMenuRadioIcons } from "#/registry/dropdown-menu/radio-icons.example";
-import { DropdownMenuRtl } from "#/registry/dropdown-menu/rtl.example";
-import { DropdownMenuShortcuts } from "#/registry/dropdown-menu/shortcuts.example";
-import { DropdownMenuSubmenu } from "#/registry/dropdown-menu/submenu.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { DropdownMenuAvatar } from "#registry/dropdown-menu/avatar.example";
+import { DropdownMenuBasic } from "#registry/dropdown-menu/basic.example";
+import { DropdownMenuCheckboxesIcons } from "#registry/dropdown-menu/checkboxes-icons.example";
+import { DropdownMenuCheckboxes } from "#registry/dropdown-menu/checkboxes.example";
+import { DropdownMenuComplex } from "#registry/dropdown-menu/complex.example";
+import { DropdownMenuDestructive } from "#registry/dropdown-menu/destructive.example";
+import { DropdownMenuIcons } from "#registry/dropdown-menu/icons.example";
+import { DropdownMenuRadioGroupDemo } from "#registry/dropdown-menu/radio-group.example";
+import { DropdownMenuRadioIcons } from "#registry/dropdown-menu/radio-icons.example";
+import { DropdownMenuRtl } from "#registry/dropdown-menu/rtl.example";
+import { DropdownMenuShortcuts } from "#registry/dropdown-menu/shortcuts.example";
+import { DropdownMenuSubmenu } from "#registry/dropdown-menu/submenu.example";
 
 export const dropdownMenuDoc: ComponentDoc = {
   examples: [

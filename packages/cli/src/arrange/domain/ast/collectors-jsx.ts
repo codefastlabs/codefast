@@ -1,6 +1,6 @@
-import { isDomainIdentifier, isDomainJsxExpression, isDomainTailwindClassLiteral } from "#/arrange/domain/ast/ast-node";
-import type { DomainJsxAttribute } from "#/arrange/domain/ast/ast-node";
-import type { JsxClassNameStatic } from "#/arrange/domain/types";
+import { isDomainIdentifier, isDomainJsxExpression, isDomainTailwindClassLiteral } from "#arrange/domain/ast/ast-node";
+import type { DomainJsxAttribute } from "#arrange/domain/ast/ast-node";
+import type { JsxClassNameStatic } from "#arrange/domain/types";
 
 /**
  * Extracts the static literal of a JSX `className` attribute, or `undefined` when it is not static.

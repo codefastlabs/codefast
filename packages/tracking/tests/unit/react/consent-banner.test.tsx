@@ -14,8 +14,8 @@ import {
   ConsentBannerSave,
   ConsentBannerTitle,
   ConsentToggle,
-} from "#/react/consent-banner";
-import type { UseConsentResult } from "#/react/use-consent";
+} from "#react/consent-banner";
+import type { UseConsentResult } from "#react/use-consent";
 
 function buildConsent(overrides: Partial<UseConsentResult> = {}): UseConsentResult {
   return {

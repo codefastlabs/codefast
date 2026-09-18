@@ -2,11 +2,11 @@
 
 import { token } from "@codefast/di";
 
-import type { AuditLogHandler } from "#/examples/20-explicit-architecture/infrastructure/audit-log-handler";
-import type { ComplianceLogHandler } from "#/examples/20-explicit-architecture/infrastructure/compliance-log-handler";
-import type { FraudEngineHandler } from "#/examples/20-explicit-architecture/infrastructure/fraud-engine-handler";
-import type { MetricsHandler } from "#/examples/20-explicit-architecture/infrastructure/metrics-handler";
-import type { BankingController } from "#/examples/20-explicit-architecture/primary/banking-controller";
+import type { AuditLogHandler } from "#examples/20-explicit-architecture/infrastructure/audit-log-handler";
+import type { ComplianceLogHandler } from "#examples/20-explicit-architecture/infrastructure/compliance-log-handler";
+import type { FraudEngineHandler } from "#examples/20-explicit-architecture/infrastructure/fraud-engine-handler";
+import type { MetricsHandler } from "#examples/20-explicit-architecture/infrastructure/metrics-handler";
+import type { BankingController } from "#examples/20-explicit-architecture/primary/banking-controller";
 
 /** The audit-trail subscriber, addressable on its own for inspection. */
 export const AuditLogToken = token<AuditLogHandler>("explicit-architecture:AuditLogHandler");

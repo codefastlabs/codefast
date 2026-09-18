@@ -10,8 +10,8 @@
 import type { ComponentType, LazyExoticComponent } from "react";
 import { lazy } from "react";
 
-import type { HighlightedSource } from "#/registry/_core/highlight";
-import { getHighlightedSources } from "#/registry/_core/highlight-source";
+import type { HighlightedSource } from "#registry/_core/highlight";
+import { getHighlightedSources } from "#registry/_core/highlight-source";
 
 export interface DemoEntry {
   /** Code-split demo — render inside `<Suspense>`; the chunk loads on first render. */

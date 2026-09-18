@@ -2,8 +2,8 @@
 
 import { Container, Module } from "@codefast/di";
 
-import { applicationModule } from "#/examples/20-explicit-architecture/composition/application.module";
-import { infrastructureModule } from "#/examples/20-explicit-architecture/composition/infrastructure.module";
+import { applicationModule } from "#examples/20-explicit-architecture/composition/application.module";
+import { infrastructureModule } from "#examples/20-explicit-architecture/composition/infrastructure.module";
 
 /** Assembles the infrastructure and application modules and validates the graph before returning it. */
 export function buildContainer(): Container {

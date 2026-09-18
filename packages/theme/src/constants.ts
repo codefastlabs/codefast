@@ -1,4 +1,4 @@
-import type { Appearance, ColorScheme } from "#/appearance";
+import type { Appearance, ColorScheme } from "#appearance";
 
 // ── Public Constants ─────────────────────────────────────────────────────────────────────────────────────────────────
 

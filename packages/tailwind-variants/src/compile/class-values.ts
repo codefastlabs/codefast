@@ -5,8 +5,8 @@
  * concatenates strings and never reaches clsx.
  */
 
-import { flattenClassValues } from "#/class-names";
-import type { ClassValue } from "#/types";
+import { flattenClassValues } from "#class-names";
+import type { ClassValue } from "#types";
 
 /**
  * Classes a variant value contributes to named slots, each slot already resolved to its position

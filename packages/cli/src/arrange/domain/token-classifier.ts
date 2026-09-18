@@ -1,6 +1,6 @@
-import { COMPATIBLE_BUCKET_SETS, RESPONSIVE_PREFIX, STATE_PREFIXES } from "#/arrange/domain/constants";
-import { indexOfFirstVariantColon, stripVariants } from "#/arrange/domain/tailwind-token";
-import type { Bucket } from "#/arrange/domain/types";
+import { COMPATIBLE_BUCKET_SETS, RESPONSIVE_PREFIX, STATE_PREFIXES } from "#arrange/domain/constants";
+import { indexOfFirstVariantColon, stripVariants } from "#arrange/domain/tailwind-token";
+import type { Bucket } from "#arrange/domain/types";
 
 /**
  * Bare-token classification is **total** (always returns a {@link Bucket}). The `Result` pattern

@@ -1,15 +1,15 @@
 import path from "node:path";
 
-import type { MirrorConfig } from "#/core/config/schema";
-import { messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { distDirName, packageJsonFileName } from "#/core/workspace/well-known-files";
-import { createMirrorDistFilesystem } from "#/mirror/dist-filesystem-node";
-import { createPathTransform, generateExports } from "#/mirror/domain/exports";
-import { resolvePackageDisplayName } from "#/mirror/domain/package-display-name";
-import type { PackageJsonShape, PackageStats } from "#/mirror/domain/types";
-import { buildSourcePathResolver, supplementExportsInPackageJson } from "#/mirror/supplement-exports";
-import { writePackageJsonExportsAtomic } from "#/mirror/write-exports";
+import type { MirrorConfig } from "#core/config/schema";
+import { messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { distDirName, packageJsonFileName } from "#core/workspace/well-known-files";
+import { createMirrorDistFilesystem } from "#mirror/dist-filesystem-node";
+import { createPathTransform, generateExports } from "#mirror/domain/exports";
+import { resolvePackageDisplayName } from "#mirror/domain/package-display-name";
+import type { PackageJsonShape, PackageStats } from "#mirror/domain/types";
+import { buildSourcePathResolver, supplementExportsInPackageJson } from "#mirror/supplement-exports";
+import { writePackageJsonExportsAtomic } from "#mirror/write-exports";
 
 /**
  * Regenerates one package's `package.json#exports` from its `dist/` and returns the package's stats.
@@ -23,14 +23,10 @@ export async function syncExportsForWorkspacePackage(
   config: MirrorConfig,
   write = true,
 ): Promise<PackageStats> {
-  const pathJoin = path.join;
-  const pathResolve = path.resolve;
-  const pathBasename = path.basename;
-
-  const packageDir = pathResolve(rootDir, packagePathStr);
-  const distDir = pathJoin(packageDir, distDirName);
-  const packageJsonPath = pathJoin(packageDir, packageJsonFileName);
-  const folderBasename = pathBasename(packageDir);
+  const packageDir = path.resolve(rootDir, packagePathStr);
+  const distDir = path.join(packageDir, distDirName);
+  const packageJsonPath = path.join(packageDir, packageJsonFileName);
+  const folderBasename = path.basename(packageDir);
 
   const distFilesystem = createMirrorDistFilesystem(fs);
 

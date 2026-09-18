@@ -9,8 +9,8 @@
 import type { Container, Token } from "brandi";
 import { createContainer, injected, token } from "brandi";
 
-import { assertGraphIsWellFormed, topologicallyOrderedNodeIds } from "#/fixtures/realistic-graph";
-import type { GraphDescriptor, NodeDescriptor, RealisticNode } from "#/fixtures/realistic-graph";
+import { assertGraphIsWellFormed, topologicallyOrderedNodeIds } from "#fixtures/realistic-graph";
+import type { GraphDescriptor, NodeDescriptor, RealisticNode } from "#fixtures/realistic-graph";
 
 /**
  * A built container plus every registration token, retained so sanity checks

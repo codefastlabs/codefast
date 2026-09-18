@@ -1,7 +1,7 @@
 import { track } from "@vercel/analytics";
 
-import type { Destination } from "#/core/destination";
-import { flattenEventProps } from "#/destinations/shared";
+import type { Destination } from "#core/destination";
+import { flattenEventProps } from "#destinations/shared";
 
 /**
  * Options for `createVercelAnalyticsDestination`.

@@ -66,7 +66,7 @@ stays wired by hand. `mirror`, `pack-slim` and `tag` have no subcommands, so the
 
 ## Imports
 
-Internal code uses the `#/…` alias (see `package.json` `imports`). Prefer `#/core/…`, `#/arrange/…`, etc., over deep
+Internal code uses the `#…` alias (see `package.json` `imports`). Prefer `#core/…`, `#arrange/…`, etc., over deep
 relative paths.
 
 ## File naming

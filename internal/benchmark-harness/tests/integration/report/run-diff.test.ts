@@ -4,11 +4,11 @@ import { join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#/parent/bench-run-artifacts";
-import type { ComparisonDocument } from "#/report/comparison-document";
-import { prepareRunDiff, readPreviousRun } from "#/report/run-diff";
-import { BENCH_BASELINE_ENV_KEY } from "#/shared/env-keys";
-import { fingerprint, library, scenario, trials } from "#/tests/unit/report/support/fixtures";
+import { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#parent/bench-run-artifacts";
+import type { ComparisonDocument } from "#report/comparison-document";
+import { prepareRunDiff, readPreviousRun } from "#report/run-diff";
+import { BENCH_BASELINE_ENV_KEY } from "#shared/env-keys";
+import { fingerprint, library, scenario, trials } from "#tests/unit/report/support/fixtures";
 
 let temporaryRoot: string;
 

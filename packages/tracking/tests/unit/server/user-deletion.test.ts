@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { buildGa4UserDeletionRequest, submitGa4UserDeletion } from "#/server/user-deletion";
+import { buildGa4UserDeletionRequest, submitGa4UserDeletion } from "#server/user-deletion";
 
 describe("buildGa4UserDeletionRequest", () => {
   // DSR-V3 (updated for the current Admin API, which supersedes the sunset v3 shape).

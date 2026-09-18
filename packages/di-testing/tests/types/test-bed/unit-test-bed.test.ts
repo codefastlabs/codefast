@@ -1,11 +1,11 @@
 import { describe, expectTypeOf, it, vi } from "vitest";
 import type { Mock } from "vitest";
 
-import type { Mocked } from "#/mocking/auto-mock";
-import type { Spy } from "#/mocking/spy";
-import { TestBed } from "#/test-bed/test-bed";
-import type { EmailService, UserService } from "#/tests/unit/support/fixtures";
-import { EmailServiceToken, OrderProcessor, UserServiceToken } from "#/tests/unit/support/fixtures";
+import type { Mocked } from "#mocking/auto-mock";
+import type { Spy } from "#mocking/spy";
+import { TestBed } from "#test-bed/test-bed";
+import type { EmailService, UserService } from "#tests/unit/support/fixtures";
+import { EmailServiceToken, OrderProcessor, UserServiceToken } from "#tests/unit/support/fixtures";
 
 describe("UnitReference.get", () => {
   it("types the unit as the class under test", () => {

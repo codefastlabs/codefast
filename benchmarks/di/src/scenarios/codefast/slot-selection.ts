@@ -31,7 +31,7 @@
 import type { BindingTag } from "@codefast/di";
 import { Container, inject, injectable, token } from "@codefast/di";
 
-import { ENV_TAG, LEVEL_TAG } from "#/fixtures/bench-tags";
+import { ENV_TAG, LEVEL_TAG } from "#fixtures/bench-tags";
 import {
   SLOT_NAME_AND_TAG,
   SLOT_NAME_PARENT_OWNED,
@@ -42,9 +42,9 @@ import {
   SLOT_TAG_ZERO_VALUE,
   TAGGED_ENVS,
   TARGET_TAG_VALUE,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface TaggedService {
   readonly env: string;

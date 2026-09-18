@@ -1,8 +1,8 @@
-import type { Binding } from "#/core/binding";
-import { effectiveBindingScope } from "#/core/binding-scope";
-import type { BindingRegistry } from "#/core/registry";
-import type { Token } from "#/core/token";
-import { tokenName } from "#/core/token";
+import type { Binding } from "#core/binding";
+import { effectiveBindingScope } from "#core/binding-scope";
+import type { BindingRegistry } from "#core/registry";
+import type { Token } from "#core/token";
+import { tokenName } from "#core/token";
 import type {
   BindingIdentifier,
   BindingKind,
@@ -11,9 +11,9 @@ import type {
   ConstraintContext,
   Constructor,
   ResolveOptions,
-} from "#/core/types";
-import type { ScopeManager } from "#/lifecycle/scope-manager";
-import { selectAllBindings } from "#/resolution/select/binding-select";
+} from "#core/types";
+import type { ScopeManager } from "#lifecycle/scope-manager";
+import { selectAllBindings } from "#resolution/select/binding-select";
 
 // ── Public types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

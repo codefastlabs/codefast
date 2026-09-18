@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
 
-import { Bubble, BubbleContent, BubbleGroup, BubbleReactions } from "#/components/bubble";
+import { Bubble, BubbleContent, BubbleGroup, BubbleReactions } from "#components/bubble";
 
 describe("bubble", () => {
   describe("Bubble component", () => {

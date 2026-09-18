@@ -5,10 +5,10 @@ import { Label } from "@codefast/ui/label";
 import { Switch } from "@codefast/ui/switch";
 import { useState } from "react";
 
-import { DependencyGraph } from "#/features/di/components/dependency-graph";
-import { GraphExport } from "#/features/di/components/graph-export";
-import { SCOPE_ORDER, ScopeDot } from "#/features/di/components/scope-dot";
-import type { GraphExports } from "#/features/di/server/tasks";
+import { DependencyGraph } from "#features/di/components/dependency-graph";
+import { GraphExport } from "#features/di/components/graph-export";
+import { SCOPE_ORDER, ScopeDot } from "#features/di/components/scope-dot";
+import type { GraphExports } from "#features/di/server/tasks";
 
 interface DependencyGraphCardProps {
   graph: ReactFlowGraph;

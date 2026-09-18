@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { AnyBenchScenario } from "#/child/bench-scenario";
-import { runBenchmarkChildMain } from "#/child/run-benchmark-child-main";
-import { BENCH_LIST_ENV_KEY, BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#/shared/env-keys";
-import { extractSubprocessPayload } from "#/shared/protocol";
+import type { AnyBenchScenario } from "#child/bench-scenario";
+import { runBenchmarkChildMain } from "#child/run-benchmark-child-main";
+import { BENCH_LIST_ENV_KEY, BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#shared/env-keys";
+import { extractSubprocessPayload } from "#shared/protocol";
 
 const BENCH_DEFAULTS = { time: 1, iterations: 1, warmupTime: 0, warmupIterations: 0 };
 

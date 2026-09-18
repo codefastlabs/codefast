@@ -2,9 +2,9 @@
 
 import { injectable } from "@codefast/di";
 
-import type { ProductRepository } from "#/examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
-import type { Product } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product";
-import type { ProductId } from "#/examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
+import type { ProductRepository } from "#examples/21-explicit-architecture-ecommerce/application/ports/product-repository";
+import type { Product } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product";
+import type { ProductId } from "#examples/21-explicit-architecture-ecommerce/domain/catalog/product-id";
 
 /** Keeps products in a `Map`; swap it for the Postgres adapter and no domain or use-case code changes. */
 @injectable()

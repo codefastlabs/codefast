@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createSpy } from "#/mocking/spy";
+import { createSpy } from "#mocking/spy";
 
 describe("createSpy", () => {
   it("records each call's arguments", () => {

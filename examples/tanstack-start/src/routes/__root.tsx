@@ -6,9 +6,9 @@ import { Toaster } from "@codefast/ui/sonner";
 import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { SiteHeader } from "#/components/site-header";
+import { SiteHeader } from "#components/site-header";
 
-import appCss from "#/styles.css?url";
+import appCss from "#styles.css?url";
 
 const TITLE = "Codefast × TanStack Start — npm consumer demo";
 const DESCRIPTION =

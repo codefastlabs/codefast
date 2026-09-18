@@ -1,8 +1,8 @@
 import path from "node:path";
 
-import { LONG_STRING_TOKEN_THRESHOLD, MAX_REPORT_LINES } from "#/arrange/domain/constants";
-import type { AnalyzeReport } from "#/arrange/domain/types";
-import { logger } from "#/core/logger";
+import { LONG_STRING_TOKEN_THRESHOLD, MAX_REPORT_LINES } from "#arrange/domain/constants";
+import type { AnalyzeReport } from "#arrange/domain/types";
+import { logger } from "#core/logger";
 
 /**
  * Presents the human-readable summary of an `arrange inspect` report.

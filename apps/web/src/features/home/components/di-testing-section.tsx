@@ -3,9 +3,9 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
-import { SectionHeader } from "#/components/shared/section-header";
-import { TestBedCard } from "#/features/home/components/test-bed-card";
-import type { TestBedSnippet } from "#/features/home/lib/home-snippets";
+import { SectionHeader } from "#components/shared/section-header";
+import { TestBedCard } from "#features/home/components/test-bed-card";
+import type { TestBedSnippet } from "#features/home/lib/home-snippets";
 
 interface DiTestingSectionProps extends Omit<ComponentProps<"section">, "children"> {
   /** The `@codefast/di-testing` test file, split per test and highlighted by the route loader. */

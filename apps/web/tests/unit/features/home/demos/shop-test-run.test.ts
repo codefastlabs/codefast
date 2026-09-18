@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { runShopTests } from "#/features/home/demos/shop-test-run";
-import { SHOP_TESTS } from "#/features/home/demos/shop-tests";
+import { runShopTests } from "#features/home/demos/shop-test-run";
+import { SHOP_TESTS } from "#features/home/demos/shop-tests";
 
 // The sample the testing section shows, so the runnable twin can be held to its titles.
 const sample = import.meta.glob<string>("../../../../../src/features/home/demos/shop-test.source.ts", {

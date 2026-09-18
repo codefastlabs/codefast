@@ -7,10 +7,10 @@ import type { UseConsentResult } from "@codefast/tracking/react/use-consent";
 import { useConsent } from "@codefast/tracking/react/use-consent";
 import { useEffect } from "react";
 
-import { consentConfig } from "#/features/tracking/lib/consent";
-import { recordConsentReceipt } from "#/features/tracking/lib/consent-receipt";
-import { clearAnonymousId, currentAnonymousId, getAnonymousId } from "#/features/tracking/lib/tracking";
-import { consentRuntime, useVisitorConsent } from "#/features/tracking/lib/visitor-consent";
+import { consentConfig } from "#features/tracking/lib/consent";
+import { recordConsentReceipt } from "#features/tracking/lib/consent-receipt";
+import { clearAnonymousId, currentAnonymousId, getAnonymousId } from "#features/tracking/lib/tracking";
+import { consentRuntime, useVisitorConsent } from "#features/tracking/lib/visitor-consent";
 
 /**
  * Records a server-side consent receipt for a decision made on this surface. Fired from

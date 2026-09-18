@@ -6,9 +6,9 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { token } from "#/core/token";
-import { injectable } from "#/decorators/injectable";
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import { injectable } from "#decorators/injectable";
 
 const WARM_ITERATIONS = 5;
 

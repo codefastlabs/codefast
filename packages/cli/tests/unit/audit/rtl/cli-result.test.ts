@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { RtlAuditResult } from "#/audit/domain/types";
-import { exitCodeForRtlAuditResult, formatRtlAuditJsonOutput } from "#/audit/rtl/cli-result";
+import type { RtlAuditResult } from "#audit/domain/types";
+import { exitCodeForRtlAuditResult, formatRtlAuditJsonOutput } from "#audit/rtl/cli-result";
 
 const clean: RtlAuditResult = { files: [], violationCount: 0, allowlistedCount: 0, scannedFileCount: 2 };
 const dirty: RtlAuditResult = {

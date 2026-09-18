@@ -1,13 +1,13 @@
-import type { BenchScenarioTier } from "#/child/bench-scenario";
-import type { ComparisonCompetitorSummary, ComparisonLibrary, IntraLibraryRow } from "#/report/comparison";
-import { buildComparisonRows, buildIntraLibraryRows, summarizeComparison } from "#/report/comparison";
-import { isIqrNoisy, isRatioUnreliable } from "#/report/reliability";
+import type { BenchScenarioTier } from "#child/bench-scenario";
+import type { ComparisonCompetitorSummary, ComparisonLibrary, IntraLibraryRow } from "#report/comparison";
+import { buildComparisonRows, buildIntraLibraryRows, summarizeComparison } from "#report/comparison";
+import { isIqrNoisy, isRatioUnreliable } from "#report/reliability";
 import {
   resolveRunShapeFromEnvironment,
   resolveScenarioFilterFromEnvironment,
   resolveTierFilterFromEnvironment,
-} from "#/shared/env-keys";
-import type { BenchRunShape } from "#/shared/env-keys";
+} from "#shared/env-keys";
+import type { BenchRunShape } from "#shared/env-keys";
 
 /**
  * Shape of {@link ComparisonDocument}, so a reader of an older run directory can tell that the file

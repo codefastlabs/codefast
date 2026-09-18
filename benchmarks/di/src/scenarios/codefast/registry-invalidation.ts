@@ -9,13 +9,9 @@
  */
 import { Container, token } from "@codefast/di";
 
-import {
-  CHAIN_REBIND_BATCH,
-  CHAIN_REBIND_DEPTH,
-  REBIND_PARENT_RESOLVE_CHILD_DEPTH_3,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import { CHAIN_REBIND_BATCH, CHAIN_REBIND_DEPTH, REBIND_PARENT_RESOLVE_CHILD_DEPTH_3 } from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildChainRebindInvalidationScenario(): BenchScenario {
   const swappedToken = token<number>("bench-cf-chain-rebind");

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { isSameDoc, readingOrder } from "#/features/package-docs/lib/reading-order";
-import type { PackageSummary } from "#/features/package-docs/lib/rendered-doc";
+import { isSameDoc, readingOrder } from "#features/package-docs/lib/reading-order";
+import type { PackageSummary } from "#features/package-docs/lib/rendered-doc";
 
 const tracking: PackageSummary = {
   slug: "tracking",

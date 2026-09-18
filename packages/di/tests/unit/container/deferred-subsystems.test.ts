@@ -9,12 +9,12 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { Module } from "#/core/module";
-import { tag } from "#/core/tag";
-import { token } from "#/core/token";
-import { injectable } from "#/decorators/injectable";
-import { MissingScopeContextError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { Module } from "#core/module";
+import { tag } from "#core/tag";
+import { token } from "#core/token";
+import { injectable } from "#decorators/injectable";
+import { MissingScopeContextError } from "#errors/errors";
 
 const ENV_TAG = tag("env");
 

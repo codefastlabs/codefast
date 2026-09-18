@@ -1,8 +1,8 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
-import type { CopyAnalyticsKind } from "#/components/shared/copy-button";
-import { CopyButton } from "#/components/shared/copy-button";
+import type { CopyAnalyticsKind } from "#components/shared/copy-button";
+import { CopyButton } from "#components/shared/copy-button";
 
 interface CopySnippetProps extends ComponentProps<"div"> {
   readonly code: string;

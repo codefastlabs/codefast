@@ -1,12 +1,12 @@
 import path from "node:path";
 
-import type { LinkAuditResult, LinkFileBreakages, LinkBreakage } from "#/audit/domain/types";
-import { collectMarkdownAnchors, scanMarkdownLinks } from "#/audit/links/domain/markdown-links";
-import { AppError, messageFrom } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { err, ok } from "#/core/result";
-import { walkMarkdownFiles } from "#/core/workspace/markdown-walk";
+import type { LinkAuditResult, LinkFileBreakages, LinkBreakage } from "#audit/domain/types";
+import { collectMarkdownAnchors, scanMarkdownLinks } from "#audit/links/domain/markdown-links";
+import { AppError, messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { walkMarkdownFiles } from "#core/workspace/markdown-walk";
 
 /**
  * Reports markdown links that point at nothing — a missing path, or an anchor the target does not offer.

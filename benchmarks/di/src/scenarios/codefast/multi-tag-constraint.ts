@@ -19,9 +19,9 @@
 import type { BindingTag } from "@codefast/di";
 import { Container, token, whenParentTaggedAll } from "@codefast/di";
 
-import { ENV_TAG, TIER_TAG } from "#/fixtures/bench-tags";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import { ENV_TAG, TIER_TAG } from "#fixtures/bench-tags";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 // ── scenario 1: multi-tag slot resolve ───────────────────────────────────────────────────────────────────────────────
 

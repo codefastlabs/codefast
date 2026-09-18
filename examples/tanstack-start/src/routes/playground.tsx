@@ -3,12 +3,12 @@ import { Badge } from "@codefast/ui/badge";
 import { useHasHydrated } from "@codefast/ui/hooks/use-has-hydrated";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Callout } from "#/components/callout";
-import { DemoSection } from "#/components/demo-section";
-import { AnimatedCounterCard } from "#/features/playground/components/animated-counter-card";
-import { CopyField } from "#/features/playground/components/copy-field";
-import { PaginatedList } from "#/features/playground/components/paginated-list";
-import { ViewportBadge } from "#/features/playground/components/viewport-badge";
+import { Callout } from "#components/callout";
+import { DemoSection } from "#components/demo-section";
+import { AnimatedCounterCard } from "#features/playground/components/animated-counter-card";
+import { CopyField } from "#features/playground/components/copy-field";
+import { PaginatedList } from "#features/playground/components/paginated-list";
+import { ViewportBadge } from "#features/playground/components/viewport-badge";
 
 export const Route = createFileRoute("/playground")({
   component: PlaygroundPage,

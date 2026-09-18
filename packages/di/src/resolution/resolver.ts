@@ -1,11 +1,11 @@
-import type { AmbientResolution } from "#/ambient/active-container";
-import type { Container } from "#/container/container";
-import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#/core/binding";
-import { NO_INSTANCE } from "#/core/binding";
-import type { BindingRegistry } from "#/core/registry";
-import { NO_TAG_KEYS, slotNameCriterionOf } from "#/core/tag";
-import type { Token } from "#/core/token";
-import { tokenName } from "#/core/token";
+import type { AmbientResolution } from "#ambient/active-container";
+import type { Container } from "#container/container";
+import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#core/binding";
+import { NO_INSTANCE } from "#core/binding";
+import type { BindingRegistry } from "#core/registry";
+import { NO_TAG_KEYS, slotNameCriterionOf } from "#core/tag";
+import type { Token } from "#core/token";
+import { tokenName } from "#core/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
@@ -14,8 +14,8 @@ import type {
   Constructor,
   ResolutionFrame,
   ResolveOptions,
-} from "#/core/types";
-import type { ResolutionDiagnostics } from "#/errors/diagnostics";
+} from "#core/types";
+import type { ResolutionDiagnostics } from "#errors/diagnostics";
 import {
   AsyncActivationError,
   AsyncResolutionError,
@@ -26,30 +26,30 @@ import {
   MissingScopeContextError,
   NoMatchingBindingError,
   TokenNotBoundError,
-} from "#/errors/errors";
-import type { DependencySlot } from "#/injection/resolve-options";
+} from "#errors/errors";
+import type { DependencySlot } from "#injection/resolve-options";
 import {
   loneTagBesideNameOf,
   resolveOptionsForSlot,
   singleCriterionForSlot,
   singleCriterionOnlyOf,
-} from "#/injection/resolve-options";
-import type { LifecycleManager } from "#/lifecycle/lifecycle-manager";
-import type { ScopeManager } from "#/lifecycle/scope-manager";
-import { SCOPED_MISS } from "#/lifecycle/scope-manager";
-import type { MetadataReader, ParamMetadata } from "#/metadata/metadata-types";
-import { ActivationNeedCache } from "#/resolution/cache/activation-need";
-import type { CollectionEntry, DefaultLookupEntry } from "#/resolution/cache/binding-lookup-cache";
-import { BindingLookupCache } from "#/resolution/cache/binding-lookup-cache";
-import { ClassIntrospector } from "#/resolution/cache/class-introspector";
-import type { ResolverCallbacks } from "#/resolution/context";
+} from "#injection/resolve-options";
+import type { LifecycleManager } from "#lifecycle/lifecycle-manager";
+import type { ScopeManager } from "#lifecycle/scope-manager";
+import { SCOPED_MISS } from "#lifecycle/scope-manager";
+import type { MetadataReader, ParamMetadata } from "#metadata/metadata-types";
+import { ActivationNeedCache } from "#resolution/cache/activation-need";
+import type { CollectionEntry, DefaultLookupEntry } from "#resolution/cache/binding-lookup-cache";
+import { BindingLookupCache } from "#resolution/cache/binding-lookup-cache";
+import { ClassIntrospector } from "#resolution/cache/class-introspector";
+import type { ResolverCallbacks } from "#resolution/context";
 import {
   AsyncCascadeContext,
   AsyncLevelContext,
   buildResolutionFrame,
   DefaultResolutionContext,
-} from "#/resolution/context";
-import type { BranchDepth, OwnedBranchStack } from "#/resolution/path/resolution-path";
+} from "#resolution/context";
+import type { BranchDepth, OwnedBranchStack } from "#resolution/path/resolution-path";
 import {
   branchDepthOf,
   cycleNamesOf,
@@ -57,10 +57,10 @@ import {
   extendResolutionBranch,
   ROOT_BRANCH,
   UNOWNED_BRANCH,
-} from "#/resolution/path/resolution-path";
-import type { InstantiationPlanHost } from "#/resolution/plan/instantiation-plan";
-import { InstantiationPlanCompiler, PLAN_RETRY } from "#/resolution/plan/instantiation-plan";
-import { matchesSlot, requestedTagKeyMask, selectAllBindings, selectBinding } from "#/resolution/select/binding-select";
+} from "#resolution/path/resolution-path";
+import type { InstantiationPlanHost } from "#resolution/plan/instantiation-plan";
+import { InstantiationPlanCompiler, PLAN_RETRY } from "#resolution/plan/instantiation-plan";
+import { matchesSlot, requestedTagKeyMask, selectAllBindings, selectBinding } from "#resolution/select/binding-select";
 
 // Where a multi-tag resolve switches from scanning the token's list to walking the tag indexes.
 const MULTI_TAG_INDEX_THRESHOLD = 8;

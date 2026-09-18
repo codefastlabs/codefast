@@ -5,16 +5,16 @@
 import "reflect-metadata";
 import { Container, inject, injectable } from "inversify";
 
-import { isRealisticClassGraphWellFormed } from "#/fixtures/realistic-class-graph";
-import type { RealisticNode } from "#/fixtures/realistic-graph";
-import { REALISTIC_GRAPH } from "#/fixtures/realistic-graph";
+import { isRealisticClassGraphWellFormed } from "#fixtures/realistic-class-graph";
+import type { RealisticNode } from "#fixtures/realistic-graph";
+import { REALISTIC_GRAPH } from "#fixtures/realistic-graph";
 import {
   REALISTIC_GRAPH_CLASS_COLD_RESOLVE,
   REALISTIC_GRAPH_CLASS_RESOLVE_ROOT,
   REALISTIC_RESOLVE_BATCH,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 @injectable()
 class LoggerService implements RealisticNode {

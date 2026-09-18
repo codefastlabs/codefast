@@ -5,10 +5,10 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { slotName, tag } from "#/core/tag";
-import { token } from "#/core/token";
-import { EmptyTagCriteriaError, UnreachableConstraintError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { slotName, tag } from "#core/tag";
+import { token } from "#core/token";
+import { EmptyTagCriteriaError, UnreachableConstraintError } from "#errors/errors";
 import {
   whenAnyAncestorNamed,
   whenAnyAncestorTagged,
@@ -16,7 +16,7 @@ import {
   whenParentNamed,
   whenParentTagged,
   whenParentTaggedAll,
-} from "#/index";
+} from "#index";
 
 describe("a …TaggedAll constraint with no criteria", () => {
   it("refuses an empty list on whenParentTaggedAll", () => {

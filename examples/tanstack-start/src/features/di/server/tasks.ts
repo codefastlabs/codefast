@@ -23,8 +23,8 @@ import {
   TaskServiceToken,
   TaskValidatorToken,
   validationModule,
-} from "#/features/di/server/domain";
-import type { RequestContext, Task } from "#/features/di/server/domain";
+} from "#features/di/server/domain";
+import type { RequestContext, Task } from "#features/di/server/domain";
 
 // ── Presentation model ───────────────────────────────────────────────────────────────────────────────────────────────
 

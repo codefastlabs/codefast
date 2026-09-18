@@ -1,10 +1,10 @@
 import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { SectionHeader } from "#/components/shared/section-header";
-import { MarqueeRow } from "#/features/home/components/marquee-row";
-import { COMPONENT_COUNT, STATS } from "#/features/home/data";
-import { COMPONENTS } from "#/registry/_core/components";
+import { SectionHeader } from "#components/shared/section-header";
+import { MarqueeRow } from "#features/home/components/marquee-row";
+import { COMPONENT_COUNT, STATS } from "#features/home/data";
+import { COMPONENTS } from "#registry/_core/components";
 
 // Round-robin thirds keep the three marquee rows near-equal width and alphabet-mixed.
 const MARQUEE_ROW_A = COMPONENTS.filter((_, index) => index % 3 === 0);

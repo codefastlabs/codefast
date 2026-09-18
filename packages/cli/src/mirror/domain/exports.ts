@@ -1,13 +1,13 @@
 import * as nodePath from "node:path";
 
-import { PACKAGE_JSON_EXPORT, VALID_DTS_EXTENSIONS, VALID_JS_EXTENSIONS } from "#/mirror/domain/constants";
-import type { DistFilesystem } from "#/mirror/domain/dist-filesystem";
+import { PACKAGE_JSON_EXPORT, VALID_DTS_EXTENSIONS, VALID_JS_EXTENSIONS } from "#mirror/domain/constants";
+import type { DistFilesystem } from "#mirror/domain/dist-filesystem";
 import type {
   DistModule,
   ExportEntry,
   ExportOriginalPathBySpecifier,
   GenerateExportsResult,
-} from "#/mirror/domain/types";
+} from "#mirror/domain/types";
 
 function groupDistFilesByModule(relativeDistFiles: Array<string>): Map<string, DistModule> {
   const distModulesByPath = new Map<string, DistModule>();

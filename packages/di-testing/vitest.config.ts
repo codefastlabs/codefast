@@ -15,7 +15,7 @@ export default defineConfig({
       plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]],
     }),
   ],
-  // Vitest 4 resolves test modules through the SSR pipeline; gate `#/` on the
+  // Vitest 4 resolves test modules through the SSR pipeline; gate `#` on the
   // `source` condition so tests (and `@codefast/di`) run against `src`, not `dist`.
   ssr: {
     resolve: {

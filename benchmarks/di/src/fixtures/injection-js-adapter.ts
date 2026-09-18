@@ -11,8 +11,8 @@ import "reflect-metadata";
 import type { Provider, ResolvedReflectiveProvider } from "injection-js";
 import { InjectionToken, ReflectiveInjector } from "injection-js";
 
-import { assertGraphIsWellFormed, topologicallyOrderedNodeIds } from "#/fixtures/realistic-graph";
-import type { GraphDescriptor, RealisticNode } from "#/fixtures/realistic-graph";
+import { assertGraphIsWellFormed, topologicallyOrderedNodeIds } from "#fixtures/realistic-graph";
+import type { GraphDescriptor, RealisticNode } from "#fixtures/realistic-graph";
 
 /**
  * A built injector plus the resolved root provider, retained so the hot row can

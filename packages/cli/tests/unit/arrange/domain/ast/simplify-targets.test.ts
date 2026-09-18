@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { collectSimplifyTargets } from "#/arrange/domain/ast/simplify-targets";
-import { parseDomainSourceFile } from "#/arrange/source-parse";
-import { applyEditsDescending } from "#/core/source-text-edit";
+import { collectSimplifyTargets } from "#arrange/domain/ast/simplify-targets";
+import { parseDomainSourceFile } from "#arrange/source-parse";
+import { applyEditsDescending } from "#core/source-text-edit";
 
 function simplify(sourceText: string): string {
   const sourceFile = parseDomainSourceFile("/virtual/x.tsx", sourceText);
@@ -12,7 +12,7 @@ function simplify(sourceText: string): string {
   return edits.length > 0 ? applyEditsDescending(sourceText, edits) : sourceText;
 }
 
-const importCn = `import { cn } from "#/lib/utils";`;
+const importCn = `import { cn } from "#lib/utils";`;
 
 describe("simplify mixed cn() merge", () => {
   it("leaves a lone static override after a dynamic argument untouched", () => {

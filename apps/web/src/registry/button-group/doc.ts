@@ -1,16 +1,16 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { ButtonGroupDropdown } from "#/registry/button-group/dropdown.example";
-import { ButtonGroupInputGroup } from "#/registry/button-group/input-group.example";
-import { ButtonGroupInput } from "#/registry/button-group/input.example";
-import { ButtonGroupNested } from "#/registry/button-group/nested.example";
-import { ButtonGroupOrientation } from "#/registry/button-group/orientation.example";
-import { ButtonGroupPopover } from "#/registry/button-group/popover.example";
-import { ButtonGroupRtl } from "#/registry/button-group/rtl.example";
-import { ButtonGroupSelect } from "#/registry/button-group/select.example";
-import { ButtonGroupSeparatorDemo } from "#/registry/button-group/separator.example";
-import { ButtonGroupSize } from "#/registry/button-group/size.example";
-import { ButtonGroupSplit } from "#/registry/button-group/split.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { ButtonGroupDropdown } from "#registry/button-group/dropdown.example";
+import { ButtonGroupInputGroup } from "#registry/button-group/input-group.example";
+import { ButtonGroupInput } from "#registry/button-group/input.example";
+import { ButtonGroupNested } from "#registry/button-group/nested.example";
+import { ButtonGroupOrientation } from "#registry/button-group/orientation.example";
+import { ButtonGroupPopover } from "#registry/button-group/popover.example";
+import { ButtonGroupRtl } from "#registry/button-group/rtl.example";
+import { ButtonGroupSelect } from "#registry/button-group/select.example";
+import { ButtonGroupSeparatorDemo } from "#registry/button-group/separator.example";
+import { ButtonGroupSize } from "#registry/button-group/size.example";
+import { ButtonGroupSplit } from "#registry/button-group/split.example";
 
 export const buttonGroupDoc: ComponentDoc = {
   usage: docUsage("button-group"),

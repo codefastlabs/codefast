@@ -2,10 +2,10 @@ import { cn } from "@codefast/ui/lib/utils";
 import { Link, linkOptions } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 
-import { DOC_KIND_BY_SLUG } from "#/features/package-docs/lib/doc-kinds";
-import type { DocRef } from "#/features/package-docs/lib/doc-kinds";
-import type { PackageDoc, PackageSummary } from "#/features/package-docs/lib/rendered-doc";
-import { CURRENT_PAGE_ONLY } from "#/lib/nav-links";
+import { DOC_KIND_BY_SLUG } from "#features/package-docs/lib/doc-kinds";
+import type { DocRef } from "#features/package-docs/lib/doc-kinds";
+import type { PackageDoc, PackageSummary } from "#features/package-docs/lib/rendered-doc";
+import { CURRENT_PAGE_ONLY } from "#lib/nav-links";
 
 /** `@codefast/ui` documents live in its own section, so its sidebar group lists those pages instead of markdown kinds. */
 const UI_SECTION_LINKS = linkOptions([

@@ -1,5 +1,5 @@
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
-import type { PackSlimRunStats } from "#/pack-slim/domain/types";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
+import type { PackSlimRunStats } from "#pack-slim/domain/types";
 
 /**
  * Maps a pack-slim run's stats to the process exit code.

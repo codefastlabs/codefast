@@ -1,5 +1,5 @@
 /** The one place a pivot-over-competitor ratio is read as a win, a loss or parity. */
-import type { Palette, Tint } from "#/shared/palette";
+import type { Palette, Tint } from "#shared/palette";
 
 /**
  * A ratio within this band of 1.0 is statistical parity, not a win or a loss.

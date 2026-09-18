@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import type { RunCardInput } from "#/report/run-card";
-import { renderRunCardLines } from "#/report/run-card";
-import { createPalette, PLAIN_PALETTE } from "#/shared/palette";
+import type { RunCardInput } from "#report/run-card";
+import { renderRunCardLines } from "#report/run-card";
+import { createPalette, PLAIN_PALETTE } from "#shared/palette";
 
 const ESCAPE = String.fromCodePoint(0x1b);
 

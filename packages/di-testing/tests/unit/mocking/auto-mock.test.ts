@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Mock } from "vitest";
 
-import { createAutoMock, MOCK_RESET } from "#/mocking/auto-mock";
-import type { Mocked } from "#/mocking/auto-mock";
-import { defaultMockFactory } from "#/mocking/mock-factory";
-import { createSpy } from "#/mocking/spy";
+import { createAutoMock, MOCK_RESET } from "#mocking/auto-mock";
+import type { Mocked } from "#mocking/auto-mock";
+import { defaultMockFactory } from "#mocking/mock-factory";
+import { createSpy } from "#mocking/spy";
 
 interface Service {
   find(id: string): string;

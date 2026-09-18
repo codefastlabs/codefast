@@ -5,15 +5,15 @@ import { Module } from "@codefast/di";
 import {
   GetProduct,
   GetProductToken,
-} from "#/examples/21-explicit-architecture-ecommerce/application/catalog/get-product";
+} from "#examples/21-explicit-architecture-ecommerce/application/catalog/get-product";
 import {
   ListProducts,
   ListProductsToken,
-} from "#/examples/21-explicit-architecture-ecommerce/application/catalog/list-products";
+} from "#examples/21-explicit-architecture-ecommerce/application/catalog/list-products";
 import {
   PlaceOrder,
   PlaceOrderToken,
-} from "#/examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
+} from "#examples/21-explicit-architecture-ecommerce/application/checkout/place-order";
 
 /** Binds the use cases; each `@injectable` class carries its own `inject`/`injectAll` deps. */
 export const applicationModule = Module.create("explicit-architecture-ecommerce:Application", (builder) => {

@@ -4,10 +4,10 @@ import { cn } from "@codefast/ui/lib/utils";
 import { ExternalLinkIcon, FileTextIcon, ScaleIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { CopyDocButton } from "#/features/package-docs/components/copy-doc-button";
-import { DOC_KIND_BY_SLUG, docPath } from "#/features/package-docs/lib/doc-kinds";
-import type { PackageSummary, RenderedDoc } from "#/features/package-docs/lib/rendered-doc";
-import { packageNpmUrl, repoBlobUrl } from "#/features/package-docs/lib/site";
+import { CopyDocButton } from "#features/package-docs/components/copy-doc-button";
+import { DOC_KIND_BY_SLUG, docPath } from "#features/package-docs/lib/doc-kinds";
+import type { PackageSummary, RenderedDoc } from "#features/package-docs/lib/rendered-doc";
+import { packageNpmUrl, repoBlobUrl } from "#features/package-docs/lib/site";
 
 interface DocHeaderProps extends Omit<ComponentProps<"header">, "children"> {
   readonly pkg: PackageSummary;

@@ -14,8 +14,8 @@ import { useState } from "react";
 import type { CSSProperties } from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis } from "recharts";
 
-import type { Translations } from "#/features/components-catalog/components/detail/language";
-import { useTranslation } from "#/features/components-catalog/components/detail/language-context";
+import type { Translations } from "#features/components-catalog/components/detail/language";
+import { useTranslation } from "#features/components-catalog/components/detail/language-context";
 
 const data = [
   {

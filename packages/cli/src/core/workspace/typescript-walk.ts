@@ -1,5 +1,5 @@
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import { walkFiles } from "#/core/workspace/walk-files";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { walkFiles } from "#core/workspace/walk-files";
 
 /**
  * Recursively collects the `.ts`/`.tsx` file paths under a root, skipping `.d.ts` and skip-listed directories.

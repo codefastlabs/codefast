@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createLocalStorageConsentStorage } from "#/client/consent-storage";
-import { createIsAnalyticsAllowed } from "#/client/is-analytics-allowed";
+import { createLocalStorageConsentStorage } from "#client/consent-storage";
+import { createIsAnalyticsAllowed } from "#client/is-analytics-allowed";
 
 describe("createIsAnalyticsAllowed", () => {
   it("follows the region default before a stored decision exists", () => {

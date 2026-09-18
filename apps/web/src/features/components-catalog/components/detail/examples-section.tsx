@@ -1,10 +1,10 @@
 import type { ComponentProps } from "react";
 import { Suspense } from "react";
 
-import { DocSection } from "#/features/components-catalog/components/detail/doc-section";
-import { ExampleLive } from "#/features/components-catalog/components/detail/example-live";
-import { ExamplePreview } from "#/features/components-catalog/components/detail/example-preview";
-import type { ResolvedDocExample } from "#/registry/_core/types";
+import { DocSection } from "#features/components-catalog/components/detail/doc-section";
+import { ExampleLive } from "#features/components-catalog/components/detail/example-live";
+import { ExamplePreview } from "#features/components-catalog/components/detail/example-preview";
+import type { ResolvedDocExample } from "#registry/_core/types";
 
 interface ExamplesSectionProps extends Omit<ComponentProps<typeof DocSection>, "id" | "title" | "children"> {
   /** Examples with their source already resolved to raw text + Shiki HTML. */

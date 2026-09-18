@@ -5,20 +5,20 @@
  * preview components can't cross the serialization boundary, so they're resolved client-side from
  * `EXAMPLE_COMPONENT_BY_REF`.
  */
-import { AccessibilitySection } from "#/features/components-catalog/components/detail/accessibility-section";
-import { AnatomySection } from "#/features/components-catalog/components/detail/anatomy-section";
-import { ApiSection } from "#/features/components-catalog/components/detail/api-section";
-import { ComponentPager } from "#/features/components-catalog/components/detail/component-pager";
-import { DetailMobileToc } from "#/features/components-catalog/components/detail/detail-mobile-toc";
-import { ExamplesSection } from "#/features/components-catalog/components/detail/examples-section";
-import { FeaturesSection } from "#/features/components-catalog/components/detail/features-section";
-import { GuidelinesSection } from "#/features/components-catalog/components/detail/guidelines-section";
-import { OnThisPage } from "#/features/components-catalog/components/detail/on-this-page";
-import { RelatedSection } from "#/features/components-catalog/components/detail/related-section";
-import type { TocItem } from "#/features/components-catalog/components/detail/toc";
-import { UsageSection } from "#/features/components-catalog/components/detail/usage-section";
-import type { ComponentDetail } from "#/features/components-catalog/lib/detail";
-import { NEIGHBORS_BY_SLUG } from "#/registry/_core/components";
+import { AccessibilitySection } from "#features/components-catalog/components/detail/accessibility-section";
+import { AnatomySection } from "#features/components-catalog/components/detail/anatomy-section";
+import { ApiSection } from "#features/components-catalog/components/detail/api-section";
+import { ComponentPager } from "#features/components-catalog/components/detail/component-pager";
+import { DetailMobileToc } from "#features/components-catalog/components/detail/detail-mobile-toc";
+import { ExamplesSection } from "#features/components-catalog/components/detail/examples-section";
+import { FeaturesSection } from "#features/components-catalog/components/detail/features-section";
+import { GuidelinesSection } from "#features/components-catalog/components/detail/guidelines-section";
+import { OnThisPage } from "#features/components-catalog/components/detail/on-this-page";
+import { RelatedSection } from "#features/components-catalog/components/detail/related-section";
+import type { TocItem } from "#features/components-catalog/components/detail/toc";
+import { UsageSection } from "#features/components-catalog/components/detail/usage-section";
+import type { ComponentDetail } from "#features/components-catalog/lib/detail";
+import { NEIGHBORS_BY_SLUG } from "#registry/_core/components";
 
 /** Builds the "On this page" entries from whichever sections are present. */
 function buildToc({ doc, examples }: ComponentDetail): Array<TocItem> {

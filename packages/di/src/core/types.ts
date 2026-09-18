@@ -1,10 +1,10 @@
-import type { Constructor } from "#/core/constructor-type";
-import type { BindingTag, TagKeyMask } from "#/core/tag";
-import type { Token } from "#/core/token";
+import type { Constructor } from "#core/constructor-type";
+import type { BindingTag, TagKeyMask } from "#core/tag";
+import type { Token } from "#core/token";
 
-// Re-export for consumers that import from `#/types`
-export type { Constructor } from "#/core/constructor-type";
-export type { BindingTag, TagKey, TagKeyMask } from "#/core/tag";
+// Re-export for consumers that import from `#types`
+export type { Constructor } from "#core/constructor-type";
+export type { BindingTag, TagKey, TagKeyMask } from "#core/tag";
 
 /**
  * Token or class constructor used as a binding / injection / resolve key.

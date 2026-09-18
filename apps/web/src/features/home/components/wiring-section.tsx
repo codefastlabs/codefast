@@ -1,5 +1,5 @@
-import { SectionHeader } from "#/components/shared/section-header";
-import { ContainerPlayground } from "#/features/home/components/container-playground";
+import { SectionHeader } from "#components/shared/section-header";
+import { ContainerPlayground } from "#features/home/components/container-playground";
 
 /** The live section: a real container in the browser, its graph, its scopes, and what it builds. */
 export function WiringSection() {

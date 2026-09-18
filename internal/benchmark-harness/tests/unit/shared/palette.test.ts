@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createPalette, PLAIN_PALETTE, shouldColor } from "#/shared/palette";
+import { createPalette, PLAIN_PALETTE, shouldColor } from "#shared/palette";
 
 const ESCAPE = String.fromCodePoint(0x1b);
 

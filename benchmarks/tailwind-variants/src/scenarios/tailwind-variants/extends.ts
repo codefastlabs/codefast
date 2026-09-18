@@ -1,8 +1,8 @@
-import { extendsBaseVariants, extendsExtensionVariants, extendsTestProps } from "#/fixtures/extends";
-import { EXTENDS_WITH_MERGE, EXTENDS_WITHOUT_MERGE } from "#/fixtures/scenario-parity";
-import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#/harness/bench-options";
-import { tailwindVariantsTv } from "#/lib/tv-shims";
-import type { BenchScenario } from "#/scenarios/types";
+import { extendsBaseVariants, extendsExtensionVariants, extendsTestProps } from "#fixtures/extends";
+import { EXTENDS_WITH_MERGE, EXTENDS_WITHOUT_MERGE } from "#fixtures/scenario-parity";
+import { TV_MERGE_DISABLED, TV_MERGE_ENABLED } from "#harness/bench-options";
+import { tailwindVariantsTv } from "#lib/tv-shims";
+import type { BenchScenario } from "#scenarios/types";
 
 const npmBaseNoMerge = tailwindVariantsTv(extendsBaseVariants, TV_MERGE_DISABLED);
 const npmBaseWithMerge = tailwindVariantsTv(extendsBaseVariants, TV_MERGE_ENABLED);

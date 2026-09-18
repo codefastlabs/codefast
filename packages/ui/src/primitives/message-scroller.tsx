@@ -10,8 +10,8 @@ import {
 } from "react";
 import type { KeyboardEvent, MouseEvent, TouchEvent, UIEvent, WheelEvent } from "react";
 
-import { useMessageScrollerController } from "#/hooks/use-message-scroller-controller";
-import { USER_SCROLL_KEYS } from "#/lib/message-scroller/types";
+import { useMessageScrollerController } from "#hooks/use-message-scroller-controller";
+import { USER_SCROLL_KEYS } from "#lib/message-scroller/types";
 import type {
   MessageScrollerButtonProps,
   MessageScrollerContentProps,
@@ -21,8 +21,8 @@ import type {
   MessageScrollerProviderProps,
   MessageScrollerRegisterMessage,
   MessageScrollerViewportProps,
-} from "#/lib/message-scroller/types";
-import { composeRefs, mergeProps, useRender } from "#/lib/use-render";
+} from "#lib/message-scroller/types";
+import { composeRefs, mergeProps, useRender } from "#lib/use-render";
 
 const MessageScrollerContext = createContext<MessageScrollerContextValue | null>(null);
 const MessageScrollerItemContext = createContext<MessageScrollerRegisterMessage | null>(null);

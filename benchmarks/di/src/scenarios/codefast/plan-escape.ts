@@ -26,9 +26,9 @@
 import type { Constructor } from "@codefast/di";
 import { Container, injectAll, injectable, optional, token } from "@codefast/di";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 const PLAN_RESOLVE_BATCH = 300;
 

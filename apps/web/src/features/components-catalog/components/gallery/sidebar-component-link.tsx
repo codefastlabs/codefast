@@ -3,9 +3,9 @@ import { Link } from "@tanstack/react-router";
 import { LocateFixedIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
-import { NewBadge } from "#/components/shared/new-badge";
-import { track } from "#/features/tracking/lib/tracking";
-import { CURRENT_PAGE_ONLY } from "#/lib/nav-links";
+import { NewBadge } from "#components/shared/new-badge";
+import { track } from "#features/tracking/lib/tracking";
+import { CURRENT_PAGE_ONLY } from "#lib/nav-links";
 
 interface SidebarComponentLinkProps extends ComponentProps<"div"> {
   readonly slug: string;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { pageTitle } from "#/features/package-docs/lib/doc-page-head";
+import { pageTitle } from "#features/package-docs/lib/doc-page-head";
 
 describe("pageTitle", () => {
   it("names a README after its package and kind", () => {

@@ -1,9 +1,9 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
-import { CodeBlock } from "#/components/shared/code-block";
-import { ImportsFold } from "#/features/home/components/imports-fold";
-import type { FoldedSnippet } from "#/features/home/lib/home-snippets";
+import { CodeBlock } from "#components/shared/code-block";
+import { ImportsFold } from "#features/home/components/imports-fold";
+import type { FoldedSnippet } from "#features/home/lib/home-snippets";
 
 interface DecoratorsCardProps extends Omit<ComponentProps<"article">, "children"> {
   /** Every decorator in one class, its import block split off, as dual-theme highlighted HTML. */

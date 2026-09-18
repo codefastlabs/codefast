@@ -6,10 +6,10 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { tag } from "#/core/tag";
-import { token } from "#/core/token";
-import { injectable } from "#/decorators/injectable";
+import { Container } from "#container/container";
+import { tag } from "#core/tag";
+import { token } from "#core/token";
+import { injectable } from "#decorators/injectable";
 
 const KIND_TAG = tag("kind");
 

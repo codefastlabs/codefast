@@ -19,8 +19,8 @@ import {
   runBenchmarkChildMain,
 } from "@internal/benchmark-harness/child/run-benchmark-child-main";
 
-import { CODEFAST_DI } from "#/harness/config";
-import { collectAllCodefastScenarios } from "#/scenarios/collect-codefast-scenarios";
+import { CODEFAST_DI } from "#harness/config";
+import { collectAllCodefastScenarios } from "#scenarios/collect-codefast-scenarios";
 
 void runBenchmarkChildMain({
   libraryName: CODEFAST_DI.libraryName,

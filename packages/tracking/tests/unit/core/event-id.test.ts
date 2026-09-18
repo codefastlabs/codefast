@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { generateEventId } from "#/core/event-id";
+import { generateEventId } from "#core/event-id";
 
 describe("generateEventId", () => {
   it("returns a well-formed, unique UUID on every call", () => {

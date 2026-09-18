@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import type { ReactElement } from "react";
 
-import type { Appearance } from "#/appearance";
-import { AppearanceContext } from "#/appearance-context";
+import type { Appearance } from "#appearance";
+import { AppearanceContext } from "#appearance-context";
 
 describe("AppearanceContext", () => {
   test("should be a valid React context", () => {

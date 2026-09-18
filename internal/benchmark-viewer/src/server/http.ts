@@ -12,10 +12,10 @@ import { parseRunObservations } from "@internal/benchmark-harness/report/jsonl";
 import { Hono } from "hono";
 import { stream } from "hono/streaming";
 
-import { DEFAULT_MAX_RUNS } from "#/constants";
-import { buildEmbeddedPayload, listRawRuns } from "#/server/payload";
-import { renderDocument } from "#/server/render";
-import type { BenchServerOptions, EmbeddedViewerPayload } from "#/types";
+import { DEFAULT_MAX_RUNS } from "#constants";
+import { buildEmbeddedPayload, listRawRuns } from "#server/payload";
+import { renderDocument } from "#server/render";
+import type { BenchServerOptions, EmbeddedViewerPayload } from "#types";
 
 const appDir = join(dirname(fileURLToPath(import.meta.url)), "..", "app");
 const publicDir = join(dirname(fileURLToPath(import.meta.url)), "..", "public");

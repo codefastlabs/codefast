@@ -1,4 +1,4 @@
-import type { ConsentDecision } from "#/core/consent";
+import type { ConsentDecision } from "#core/consent";
 
 /**
  * A GA4 event for the Measurement Protocol. `params` are flat scalars — GA4 rejects nested values and booleans.

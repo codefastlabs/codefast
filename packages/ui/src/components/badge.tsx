@@ -1,8 +1,8 @@
 import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX } from "react";
 
-import type { BadgeVariants } from "#/variants/badge";
-import { badgeVariants } from "#/variants/badge";
+import type { BadgeVariants } from "#variants/badge";
+import { badgeVariants } from "#variants/badge";
 
 // ── Component: Badge ─────────────────────────────────────────────────────────────────────────────────────────────────
 

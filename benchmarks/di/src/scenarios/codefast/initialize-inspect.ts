@@ -21,8 +21,8 @@
  */
 import { Container, token } from "@codefast/di";
 
-import { batched } from "#/harness/batched";
-import type { AsyncBenchScenario, BenchScenario } from "#/scenarios/types";
+import { batched } from "#harness/batched";
+import type { AsyncBenchScenario, BenchScenario } from "#scenarios/types";
 
 // ── scenario 1: initializeAsync warm-up ──────────────────────────────────────────────────────────────────────────────
 

@@ -6,12 +6,12 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { Container } from "#/container/container";
-import { tag } from "#/core/tag";
-import { token } from "#/core/token";
-import { injectable } from "#/decorators/injectable";
-import { postConstruct } from "#/decorators/lifecycle-decorators";
-import { NoMatchingBindingError, TokenNotBoundError } from "#/errors/errors";
+import { Container } from "#container/container";
+import { tag } from "#core/tag";
+import { token } from "#core/token";
+import { injectable } from "#decorators/injectable";
+import { postConstruct } from "#decorators/lifecycle-decorators";
+import { NoMatchingBindingError, TokenNotBoundError } from "#errors/errors";
 
 const WARM_ITERATIONS = 5;
 

@@ -1,14 +1,14 @@
 /** The console summary: one scoreboard row per competitor, geomeans by group, and the reliable losses. */
-import type { ComparisonEntry, ComparisonLibrary, ComparisonScenarioRow } from "#/report/comparison";
-import { summarizeComparison } from "#/report/comparison";
-import type { ConsoleCell } from "#/report/console-table";
-import { cell, renderConsoleTable } from "#/report/console-table";
-import { formatRatioMultiple } from "#/report/format";
-import { UNRELIABLE_RATIO_MARKER } from "#/report/reliability";
-import type { RunDiff } from "#/report/run-diff";
-import { describeDiffTarget, formatDeltaPercent } from "#/report/run-diff";
-import { HEAD_TO_HEAD_PARITY_BAND, ratioTint } from "#/report/verdict";
-import type { Palette, Tint } from "#/shared/palette";
+import type { ComparisonEntry, ComparisonLibrary, ComparisonScenarioRow } from "#report/comparison";
+import { summarizeComparison } from "#report/comparison";
+import type { ConsoleCell } from "#report/console-table";
+import { cell, renderConsoleTable } from "#report/console-table";
+import { formatRatioMultiple } from "#report/format";
+import { UNRELIABLE_RATIO_MARKER } from "#report/reliability";
+import type { RunDiff } from "#report/run-diff";
+import { describeDiffTarget, formatDeltaPercent } from "#report/run-diff";
+import { HEAD_TO_HEAD_PARITY_BAND, ratioTint } from "#report/verdict";
+import type { Palette, Tint } from "#shared/palette";
 
 /**
  * Options for {@link renderScoreboardLines}.

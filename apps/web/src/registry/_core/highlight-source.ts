@@ -9,9 +9,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
-import type { HighlightedSource } from "#/registry/_core/highlight";
-import type { SourceRef } from "#/registry/_core/types";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
+import type { HighlightedSource } from "#registry/_core/highlight";
+import type { SourceRef } from "#registry/_core/types";
 
 /** Resolves registry source refs to their raw text + pre-highlighted HTML. */
 export const getHighlightedSources = createServerFn({ method: "GET" })
@@ -21,7 +21,7 @@ export const getHighlightedSources = createServerFn({ method: "GET" })
       setResponseHeader(name, value);
     }
 
-    const { highlightSources } = await import("#/registry/_core/highlight-source.impl");
+    const { highlightSources } = await import("#registry/_core/highlight-source.impl");
 
     return highlightSources(refs);
   });

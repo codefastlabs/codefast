@@ -1,9 +1,9 @@
 /** A `PaymentGateway` adapter charging PayPal — a runnable mock, not a real API client. */
 
-import type { PaymentGateway } from "#/examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
-import type { OrderId } from "#/examples/21-explicit-architecture-ecommerce/domain/order/order-id";
-import type { PaymentIntent } from "#/examples/21-explicit-architecture-ecommerce/domain/payment/payment-intent";
-import type { Money } from "#/examples/21-explicit-architecture-ecommerce/domain/shared/money";
+import type { PaymentGateway } from "#examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
+import type { OrderId } from "#examples/21-explicit-architecture-ecommerce/domain/order/order-id";
+import type { PaymentIntent } from "#examples/21-explicit-architecture-ecommerce/domain/payment/payment-intent";
+import type { Money } from "#examples/21-explicit-architecture-ecommerce/domain/shared/money";
 
 /** Settles USD and EUR; captures immediately and returns a `pp_*` intent. */
 export class PayPalPaymentGateway implements PaymentGateway {

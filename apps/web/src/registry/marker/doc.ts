@@ -1,12 +1,12 @@
-import { docSource, docUsage } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { MarkerBorder } from "#/registry/marker/border.example";
-import { MarkerIconExample } from "#/registry/marker/icon.example";
-import { MarkerLinkButton } from "#/registry/marker/link-button.example";
-import { MarkerSeparator } from "#/registry/marker/separator.example";
-import { MarkerShimmer } from "#/registry/marker/shimmer.example";
-import { MarkerStatus } from "#/registry/marker/status.example";
-import { MarkerVariants } from "#/registry/marker/variants.example";
+import { docSource, docUsage } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { MarkerBorder } from "#registry/marker/border.example";
+import { MarkerIconExample } from "#registry/marker/icon.example";
+import { MarkerLinkButton } from "#registry/marker/link-button.example";
+import { MarkerSeparator } from "#registry/marker/separator.example";
+import { MarkerShimmer } from "#registry/marker/shimmer.example";
+import { MarkerStatus } from "#registry/marker/status.example";
+import { MarkerVariants } from "#registry/marker/variants.example";
 
 export const markerDoc: ComponentDoc = {
   usage: docUsage("marker"),

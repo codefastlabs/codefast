@@ -10,11 +10,11 @@ import "reflect-metadata";
 import { InjectionToken, ReflectiveInjector } from "injection-js";
 import type { ValueProvider } from "injection-js";
 
-import { RESOLVE_ALL_STRATEGY_COUNTS } from "#/fixtures/fan-out-descriptor";
-import type { ResolveAllStrategyCount } from "#/fixtures/fan-out-descriptor";
-import { isCompleteCollection } from "#/fixtures/sanity";
-import { resolveAllColdDescriptor, resolveAllStrategiesDescriptor } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { RESOLVE_ALL_STRATEGY_COUNTS } from "#fixtures/fan-out-descriptor";
+import type { ResolveAllStrategyCount } from "#fixtures/fan-out-descriptor";
+import { isCompleteCollection } from "#fixtures/sanity";
+import { resolveAllColdDescriptor, resolveAllStrategiesDescriptor } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCount): BenchScenario {
   const strategyToken = new InjectionToken<ReadonlyArray<number>>("bench-injection-js-fanout-resolve-all-strategy");

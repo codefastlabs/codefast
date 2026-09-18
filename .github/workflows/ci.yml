@@ -21,3 +21,35 @@ jobs:
     # No merge queue, so the PR run is the only pre-merge gate — run the full
     # test + coverage suite here (run-tests defaults to true).
     secrets: inherit
+
+  # Run the unit suite on the supported Node lines `verify` (on the latest, from .node-version) does not
+  # cover, so the floor is a contract CI proves. Publish-surface correctness is a static check in
+  # `verify` (audit publish), not a per-Node runtime step.
+  node-matrix:
+    name: Node Matrix (${{ matrix.node }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22.13.0 is the lowest Node the dev toolchain (pnpm) runs on — the closest CI can get to the
+        # 22.12 engines floor, which is a consumer contract that needs no pnpm. 24 is the active LTS;
+        # the current line (26) is covered by `verify`.
+        node: ["22.13.0", "24"]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Configure Build Environment
+        uses: ./.github/actions/setup-environment
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Build Workspace Packages
+        run: npx turbo build --filter="./packages/**" --filter="./internal/**"
+
+      - name: Run Unit Tests
+        run: npx turbo run test:unit --filter="./packages/**" --filter="./internal/**"

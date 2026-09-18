@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type { ImportsAuditResult } from "#/audit/domain/types";
-import { presentImportsAuditResult } from "#/audit/imports/output";
-import { logger } from "#/core/logger";
+import type { ImportsAuditResult } from "#audit/domain/types";
+import { presentImportsAuditResult } from "#audit/imports/output";
+import { logger } from "#core/logger";
 
 function captureOut(run: () => void): string {
   const spy = vi.spyOn(logger, "out").mockImplementation(() => {});

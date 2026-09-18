@@ -3,12 +3,12 @@ import { fileURLToPath } from "node:url";
 
 import type { BenchOptions } from "tinybench";
 
-import type { AnyBenchScenario } from "#/child/bench-scenario";
-import { tierOfScenario } from "#/child/bench-scenario";
-import { createRunAllTrials } from "#/child/create-run-all-trials";
-import { collectFingerprint } from "#/child/fingerprint";
-import { runSanityChecks } from "#/child/run-sanity-checks";
-import type { BenchMode } from "#/shared/env-keys";
+import type { AnyBenchScenario } from "#child/bench-scenario";
+import { tierOfScenario } from "#child/bench-scenario";
+import { createRunAllTrials } from "#child/create-run-all-trials";
+import { collectFingerprint } from "#child/fingerprint";
+import { runSanityChecks } from "#child/run-sanity-checks";
+import type { BenchMode } from "#shared/env-keys";
 import {
   assertBenchEnvKeys,
   BENCH_LIST_ENV_KEY,
@@ -17,10 +17,10 @@ import {
   isEnvFlagEnabled,
   resolveScenarioFilterFromEnvironment,
   resolveTierFilterFromEnvironment,
-} from "#/shared/env-keys";
-import { formatProgressEvent } from "#/shared/progress";
-import type { ScenarioListing } from "#/shared/protocol";
-import { emitSubprocessPayload } from "#/shared/protocol";
+} from "#shared/env-keys";
+import { formatProgressEvent } from "#shared/progress";
+import type { ScenarioListing } from "#shared/protocol";
+import { emitSubprocessPayload } from "#shared/protocol";
 
 /**
  * What a child reports about each scenario it collected, measured or not.

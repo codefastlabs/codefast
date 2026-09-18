@@ -9,9 +9,9 @@ import {
   OPTIONAL_MISS_BATCH,
   RESOLVE_OPTIONAL_HIT,
   RESOLVE_OPTIONAL_MISS,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 const ALLOW_UNREGISTERED = { allowUnregistered: true } as const;
 

@@ -3,11 +3,11 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { PrivacyChoices } from "#/features/privacy/components/privacy-choices";
-import { ConsentGate } from "#/features/tracking/components/consent-gate";
-import { consentConfig } from "#/features/tracking/lib/consent";
-import { getTracker } from "#/features/tracking/lib/tracking";
-import { resetVisitorConsentForTests } from "#/features/tracking/lib/visitor-consent";
+import { PrivacyChoices } from "#features/privacy/components/privacy-choices";
+import { ConsentGate } from "#features/tracking/components/consent-gate";
+import { consentConfig } from "#features/tracking/lib/consent";
+import { getTracker } from "#features/tracking/lib/tracking";
+import { resetVisitorConsentForTests } from "#features/tracking/lib/visitor-consent";
 
 /**
  * End-to-end consent matrix over the real wiring: real `useSiteConsent`/`consent-state`,
@@ -23,7 +23,7 @@ const { resolveVisitorConsent, vercelTrack } = vi.hoisted(() => ({
   vercelTrack: vi.fn(),
 }));
 
-vi.mock("#/features/tracking/lib/resolve-visitor-consent", () => ({ resolveVisitorConsent }));
+vi.mock("#features/tracking/lib/resolve-visitor-consent", () => ({ resolveVisitorConsent }));
 // Destination imports `track` from `@vercel/analytics` (not `/react`) — mock the base package.
 vi.mock("@vercel/analytics", () => ({ track: vercelTrack }));
 vi.mock("@vercel/analytics/react", () => ({ Analytics: () => null, track: vercelTrack }));

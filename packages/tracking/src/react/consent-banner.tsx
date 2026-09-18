@@ -3,8 +3,8 @@
 import type { ComponentProps, Dispatch, ReactNode, SetStateAction } from "react";
 import { createContext, useContext, useState } from "react";
 
-import type { ConsentCategory, ConsentDecision } from "#/core/consent";
-import type { UseConsentResult } from "#/react/use-consent";
+import type { ConsentCategory, ConsentDecision } from "#core/consent";
+import type { UseConsentResult } from "#react/use-consent";
 
 interface ConsentBannerContextValue {
   consent: UseConsentResult;

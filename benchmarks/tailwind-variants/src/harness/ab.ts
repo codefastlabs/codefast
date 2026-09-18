@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import { runBenchAbMain } from "@internal/benchmark-harness/parent/run-ab-main";
 
-import { CODEFAST_TV } from "#/harness/config";
+import { CODEFAST_TV } from "#harness/config";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 

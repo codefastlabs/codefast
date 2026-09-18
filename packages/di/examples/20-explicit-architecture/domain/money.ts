@@ -1,6 +1,6 @@
 /** The `Money` value object — an immutable amount in minor units, closed under same-currency arithmetic. */
 
-import { CurrencyMismatchError } from "#/examples/20-explicit-architecture/domain/errors";
+import { CurrencyMismatchError } from "#examples/20-explicit-architecture/domain/errors";
 
 /** An immutable amount of a single currency, stored in minor units to avoid floating-point drift. */
 export class Money {

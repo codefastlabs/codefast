@@ -1,10 +1,10 @@
 import * as Slot from "radix-ui/slot";
 import type { ComponentProps, JSX } from "react";
 
-import { Separator } from "#/components/separator";
-import { cn } from "#/lib/utils";
-import type { ItemMediaVariants, ItemVariants } from "#/variants/item";
-import { itemMediaVariants, itemVariants } from "#/variants/item";
+import { Separator } from "#components/separator";
+import { cn } from "#lib/utils";
+import type { ItemMediaVariants, ItemVariants } from "#variants/item";
+import { itemMediaVariants, itemVariants } from "#variants/item";
 
 // ── Component: ItemGroup ─────────────────────────────────────────────────────────────────────────────────────────────
 

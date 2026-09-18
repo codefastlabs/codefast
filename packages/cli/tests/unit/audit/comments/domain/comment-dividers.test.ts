@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import type { DividerLanguage } from "#/audit/comments/domain/comment-dividers";
+import type { DividerLanguage } from "#audit/comments/domain/comment-dividers";
 import {
   applyCommentDividerFixes,
   DIVIDER_COLUMN,
   renderDivider,
   scanCommentDividers,
-} from "#/audit/comments/domain/comment-dividers";
+} from "#audit/comments/domain/comment-dividers";
 
 function fix(lines: Array<string>, language: DividerLanguage = "js"): Array<string> {
   return applyCommentDividerFixes(lines.join("\n"), language).content.split("\n");

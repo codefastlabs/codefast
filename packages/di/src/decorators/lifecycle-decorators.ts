@@ -1,6 +1,6 @@
-import { StaticMemberDecoratorError } from "#/errors/errors";
-import { LIFECYCLE_KEY } from "#/metadata/metadata-keys";
-import type { MutableLifecycleMetadata } from "#/metadata/metadata-types";
+import { StaticMemberDecoratorError } from "#errors/errors";
+import { LIFECYCLE_KEY } from "#metadata/metadata-keys";
+import type { MutableLifecycleMetadata } from "#metadata/metadata-types";
 
 type MethodDecorator = (target: unknown, context: ClassMethodDecoratorContext) => void;
 

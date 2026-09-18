@@ -1,4 +1,4 @@
-import type { ArrangeSuggestGroupsOutput } from "#/arrange/domain/types";
+import type { ArrangeSuggestGroupsOutput } from "#arrange/domain/types";
 
 /**
  * Machine-readable `arrange group` suggestion for `--json`.

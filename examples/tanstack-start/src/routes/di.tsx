@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { ActivityLogCard } from "#/features/di/components/activity-log-card";
-import { ContainerInspectorCard } from "#/features/di/components/container-inspector-card";
-import { DependencyGraphCard } from "#/features/di/components/dependency-graph-card";
-import { TaskBoard } from "#/features/di/components/task-board";
-import { getBoardServerFn } from "#/features/di/server/tasks";
+import { ActivityLogCard } from "#features/di/components/activity-log-card";
+import { ContainerInspectorCard } from "#features/di/components/container-inspector-card";
+import { DependencyGraphCard } from "#features/di/components/dependency-graph-card";
+import { TaskBoard } from "#features/di/components/task-board";
+import { getBoardServerFn } from "#features/di/server/tasks";
 
 export const Route = createFileRoute("/di")({
   // The loader calls a server function, so the DI container resolves a per-request TaskService on

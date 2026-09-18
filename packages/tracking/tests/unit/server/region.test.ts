@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveRegionFromCountryCode } from "#/server/region";
+import { resolveRegionFromCountryCode } from "#server/region";
 
 describe("resolveRegionFromCountryCode", () => {
   it.each([

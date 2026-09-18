@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
-import type { Direction, Language, Translations } from "#/features/components-catalog/components/detail/language";
+import type { Direction, Language, Translations } from "#features/components-catalog/components/detail/language";
 
 interface LanguageContextValue {
   language: Language;

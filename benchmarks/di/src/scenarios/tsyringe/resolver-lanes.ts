@@ -5,10 +5,10 @@
 import "reflect-metadata";
 import { container as tsyringeRootContainer } from "tsyringe";
 
-import type { ScenarioDescriptor } from "#/fixtures/scenario-parity";
-import { NESTED_CONTAINER_RESOLVE, NESTED_CONTEXT_RESOLVE, RESOLVER_LANE_BATCH } from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
+import { NESTED_CONTAINER_RESOLVE, NESTED_CONTEXT_RESOLVE, RESOLVER_LANE_BATCH } from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface LaneDependency {
   readonly id: string;

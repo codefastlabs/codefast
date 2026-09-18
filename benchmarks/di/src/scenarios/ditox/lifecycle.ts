@@ -6,8 +6,8 @@
  */
 import { createContainer, token } from "ditox";
 
-import { LIFECYCLE_PRE_DESTROY_UNBIND } from "#/fixtures/scenario-parity";
-import type { BenchScenario } from "#/scenarios/types";
+import { LIFECYCLE_PRE_DESTROY_UNBIND } from "#fixtures/scenario-parity";
+import type { BenchScenario } from "#scenarios/types";
 
 interface DisposableService {
   readonly value: number;

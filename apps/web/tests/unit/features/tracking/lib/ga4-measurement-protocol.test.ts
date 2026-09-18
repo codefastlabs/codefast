@@ -1,7 +1,7 @@
 import type { ConsentReceiptInput } from "@codefast/tracking";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { forwardConsentDecisionToGa4 } from "#/features/tracking/lib/ga4-measurement-protocol.server";
+import { forwardConsentDecisionToGa4 } from "#features/tracking/lib/ga4-measurement-protocol.server";
 
 const { getCookie, sendMeasurementProtocolEvents } = vi.hoisted(() => ({
   getCookie: vi.fn<(name: string) => string | undefined>(),

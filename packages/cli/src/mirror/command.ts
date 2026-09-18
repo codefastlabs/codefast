@@ -1,14 +1,14 @@
 import { Command } from "commander";
 
-import type { CommandPipeline } from "#/core/cli/command-pipeline";
-import { applyCommandPipeline } from "#/core/cli/command-pipeline";
-import { nodeFilesystem } from "#/core/filesystem/node";
-import { exitCodeForMirrorSyncResult, formatMirrorSyncJsonOutput } from "#/mirror/cli-result";
-import { mirrorSyncRunRequestSchema } from "#/mirror/cli-schema";
-import type { GlobalStats, MirrorSyncCommandPrelude, MirrorSyncRunRequest } from "#/mirror/domain/types";
-import { MirrorSyncProgressPresenter } from "#/mirror/output";
-import { prepareMirrorSync } from "#/mirror/prepare";
-import { runMirrorSync } from "#/mirror/run";
+import type { CommandPipeline } from "#core/cli/command-pipeline";
+import { applyCommandPipeline } from "#core/cli/command-pipeline";
+import { nodeFilesystem } from "#core/filesystem/node";
+import { exitCodeForMirrorSyncResult, formatMirrorSyncJsonOutput } from "#mirror/cli-result";
+import { mirrorSyncRunRequestSchema } from "#mirror/cli-schema";
+import type { GlobalStats, MirrorSyncCommandPrelude, MirrorSyncRunRequest } from "#mirror/domain/types";
+import { MirrorSyncProgressPresenter } from "#mirror/output";
+import { prepareMirrorSync } from "#mirror/prepare";
+import { runMirrorSync } from "#mirror/run";
 
 type MirrorCommandOptions = { readonly dryRun?: boolean; readonly verbose?: boolean; readonly json?: boolean };
 

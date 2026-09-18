@@ -17,8 +17,8 @@ import type {
   DynamicBinding,
   ResolvedAsyncBinding,
   ResolvedBinding,
-} from "#/core/binding";
-import type { ActivationHandler, ResolutionContext } from "#/core/types";
+} from "#core/binding";
+import type { ActivationHandler, ResolutionContext } from "#core/types";
 
 describe("a binding of a concrete value is still a binding", () => {
   it("widens to the erased union", () => {

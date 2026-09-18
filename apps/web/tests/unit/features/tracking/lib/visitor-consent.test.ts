@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { STRICTEST_INITIAL_CONSENT } from "#/features/tracking/lib/consent";
+import { STRICTEST_INITIAL_CONSENT } from "#features/tracking/lib/consent";
 import {
   ensureVisitorConsentResolved,
   isAnalyticsAllowed,
@@ -9,7 +9,7 @@ import {
   resetVisitorConsentForTests,
   useVisitorConsent,
   INITIAL_CONSENT_SESSION_KEY,
-} from "#/features/tracking/lib/visitor-consent";
+} from "#features/tracking/lib/visitor-consent";
 
 const { hasGlobalPrivacyControlSignal, resolveVisitorConsent } = vi.hoisted(() => ({
   hasGlobalPrivacyControlSignal: vi.fn(() => false),
@@ -17,7 +17,7 @@ const { hasGlobalPrivacyControlSignal, resolveVisitorConsent } = vi.hoisted(() =
 }));
 
 // The server-function network boundary — the store itself runs for real.
-vi.mock("#/features/tracking/lib/resolve-visitor-consent", () => ({ resolveVisitorConsent }));
+vi.mock("#features/tracking/lib/resolve-visitor-consent", () => ({ resolveVisitorConsent }));
 vi.mock(import("@codefast/tracking/client/gpc"), async (importOriginal) => ({
   ...(await importOriginal()),
   hasGlobalPrivacyControlSignal,

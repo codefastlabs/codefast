@@ -2,11 +2,11 @@ import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 import { useRef } from "react";
 
-import { RailCurve } from "#/features/components-catalog/components/detail/rail-curve";
-import type { TocItem } from "#/features/components-catalog/components/detail/toc";
-import { TocLink } from "#/features/components-catalog/components/detail/toc-link";
-import { useActiveAnchor } from "#/features/components-catalog/hooks/use-active-anchor";
-import { useScrollActiveIntoView } from "#/features/components-catalog/hooks/use-scroll-active-into-view";
+import { RailCurve } from "#features/components-catalog/components/detail/rail-curve";
+import type { TocItem } from "#features/components-catalog/components/detail/toc";
+import { TocLink } from "#features/components-catalog/components/detail/toc-link";
+import { useActiveAnchor } from "#features/components-catalog/hooks/use-active-anchor";
+import { useScrollActiveIntoView } from "#features/components-catalog/hooks/use-scroll-active-into-view";
 
 interface OnThisPageProps extends ComponentProps<"nav"> {
   readonly items: ReadonlyArray<TocItem>;

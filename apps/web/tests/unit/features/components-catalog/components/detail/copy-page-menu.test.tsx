@@ -2,14 +2,14 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { CopyPageMenu } from "#/features/components-catalog/components/detail/copy-page-menu";
-import type { ComponentMeta } from "#/registry/_core/components";
+import { CopyPageMenu } from "#features/components-catalog/components/detail/copy-page-menu";
+import type { ComponentMeta } from "#registry/_core/components";
 
 const { track } = vi.hoisted(() => ({ track: vi.fn() }));
 
-vi.mock("#/features/tracking/lib/tracking", () => ({ track }));
+vi.mock("#features/tracking/lib/tracking", () => ({ track }));
 
-vi.mock("#/registry/_core/docs", () => ({
+vi.mock("#registry/_core/docs", () => ({
   loadDoc: vi.fn().mockResolvedValue(undefined),
 }));
 

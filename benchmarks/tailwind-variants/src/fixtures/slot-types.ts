@@ -1,7 +1,7 @@
 /** Renderer shapes derived from the slot fixtures, so a renamed slot fails at compile time. */
-import type { compoundSlotsVariants } from "#/fixtures/compound-slots";
-import type { extremeSlotsVariants } from "#/fixtures/extreme";
-import type { slotsVariants } from "#/fixtures/slots";
+import type { compoundSlotsVariants } from "#fixtures/compound-slots";
+import type { extremeSlotsVariants } from "#fixtures/extreme";
+import type { slotsVariants } from "#fixtures/slots";
 
 type SlotCallable = () => string;
 

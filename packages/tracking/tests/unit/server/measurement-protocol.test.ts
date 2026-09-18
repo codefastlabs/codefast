@@ -4,7 +4,7 @@ import {
   extractGaClientId,
   sendMeasurementProtocolEvents,
   toMeasurementProtocolConsent,
-} from "#/server/measurement-protocol";
+} from "#server/measurement-protocol";
 
 describe("extractGaClientId", () => {
   it("strips the GA1.<version>. prefix to the client id", () => {

@@ -1,5 +1,5 @@
-import type { CommentAuditResult } from "#/audit/domain/types";
-import { logger } from "#/core/logger";
+import type { CommentAuditResult } from "#audit/domain/types";
+import { logger } from "#core/logger";
 
 /**
  * Human-readable comment-divider report.

@@ -1,8 +1,8 @@
 /** Turns a tracker snapshot into the fixed-width lines a terminal shows, one per library. */
-import type { LibraryProgress } from "#/parent/progress/progress-tracker";
-import { progressFraction } from "#/parent/progress/progress-tracker";
-import type { Palette, Tint } from "#/shared/palette";
-import { PLAIN_PALETTE } from "#/shared/palette";
+import type { LibraryProgress } from "#parent/progress/progress-tracker";
+import { progressFraction } from "#parent/progress/progress-tracker";
+import type { Palette, Tint } from "#shared/palette";
+import { PLAIN_PALETTE } from "#shared/palette";
 
 /**
  * Layout inputs for one frame.

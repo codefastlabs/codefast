@@ -1,6 +1,6 @@
-import { token } from "#/core/token";
-import type { Token } from "#/core/token";
-import type { MetadataReader } from "#/metadata/metadata-types";
+import { token } from "#core/token";
+import type { Token } from "#core/token";
+import type { MetadataReader } from "#metadata/metadata-types";
 
 /**
  * The token a custom `MetadataReader` is bound to for a container to pick up.

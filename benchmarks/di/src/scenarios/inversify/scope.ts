@@ -15,9 +15,9 @@ import {
   CHILD_RESOLVE_BATCH,
   childDepthResolveDescriptor,
   REQUEST_LIFECYCLE_BATCH,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 function buildChildDepthResolveScenario(depth: number): BenchScenario {
   const childScopeLeafIdentifier = Symbol(`bench-inv-child${String(depth)}-leaf`);

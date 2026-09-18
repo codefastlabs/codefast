@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { BENCH_ENV_SPECS, INTERNAL_BENCH_ENV_KEYS, USER_BENCH_ENV_KEYS } from "#/shared/env-keys";
+import { BENCH_ENV_SPECS, INTERNAL_BENCH_ENV_KEYS, USER_BENCH_ENV_KEYS } from "#shared/env-keys";
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..", "..");
 

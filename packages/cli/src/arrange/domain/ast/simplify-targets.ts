@@ -8,17 +8,17 @@ import {
   isDomainPropertyAssignment,
   isDomainSpreadElement,
   isDomainTailwindClassLiteral,
-} from "#/arrange/domain/ast/ast-node";
+} from "#arrange/domain/ast/ast-node";
 import type {
   DomainAstNode,
   DomainCallExpression,
   DomainObjectLiteralExpression,
   DomainSourceFile,
-} from "#/arrange/domain/ast/ast-node";
-import { buildKnownCnTvBindings, isCnOrTvIdentifier } from "#/arrange/domain/ast/helpers";
-import { MAX_OBJECT_DEPTH } from "#/arrange/domain/constants";
-import { escapeTsStringLiteralContent } from "#/arrange/domain/source-text-formatters";
-import { indentOfLineContaining } from "#/core/source-text-edit";
+} from "#arrange/domain/ast/ast-node";
+import { buildKnownCnTvBindings, isCnOrTvIdentifier } from "#arrange/domain/ast/helpers";
+import { MAX_OBJECT_DEPTH } from "#arrange/domain/constants";
+import { escapeTsStringLiteralContent } from "#arrange/domain/source-text-formatters";
+import { indentOfLineContaining } from "#core/source-text-edit";
 
 /**
  * A planned text replacement produced by the simplify pass.

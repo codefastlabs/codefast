@@ -10,9 +10,9 @@ import {
   MessageScrollerProvider,
   MessageScrollerViewport,
   useMessageScrollerScrollable,
-} from "#/components/message-scroller";
-import type { MessageScrollerDefaultScrollPosition, MessageScrollerScrollable } from "#/components/message-scroller";
-import { createDomRect } from "#/tests/unit/support/dom-rect";
+} from "#components/message-scroller";
+import type { MessageScrollerDefaultScrollPosition, MessageScrollerScrollable } from "#components/message-scroller";
+import { createDomRect } from "#tests/unit/support/dom-rect";
 
 // jsdom has no layout, so this harness fakes it: element heights come from
 // data-test-height, rects and scroll math are derived from them, and rAF runs

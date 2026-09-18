@@ -6,15 +6,15 @@ import {
   isDomainPropertyAccessExpression,
   isDomainStringLiteral,
   lineOfSourcePosition,
-} from "#/arrange/domain/ast/ast-node";
+} from "#arrange/domain/ast/ast-node";
 import type {
   DomainAstNode,
   DomainCallExpression,
   DomainPropertyAssignment,
   DomainSourceFile,
-} from "#/arrange/domain/ast/ast-node";
-import { EMPTY_CN_TV_BINDINGS } from "#/arrange/domain/constants";
-import { applyEditsDescending, indentOfLineContaining } from "#/core/source-text-edit";
+} from "#arrange/domain/ast/ast-node";
+import { EMPTY_CN_TV_BINDINGS } from "#arrange/domain/constants";
+import { applyEditsDescending, indentOfLineContaining } from "#core/source-text-edit";
 
 /**
  * Known module specifiers that export `cn` / `tv`.
@@ -27,7 +27,6 @@ const KNOWN_CN_TV_MODULES = new Set([
   // from "tailwind-variants"; new code should prefer "@codefast/tailwind-variants".
   "tailwind-variants",
   "#lib/utils",
-  "#/lib/utils",
   "~/lib/utils",
   "@/lib/utils",
 ]);

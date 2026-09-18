@@ -1,16 +1,16 @@
-import type { BindingRegistration } from "#/container/binding-builders";
-import { BindingChain } from "#/container/binding-builders";
-import type { Binding, BindingBuilder, BindToBuilder, ConstantBinding } from "#/core/binding";
-import { NO_INSTANCE } from "#/core/binding";
-import { effectiveBindingScope } from "#/core/binding-scope";
-import type { ConstraintRequirement } from "#/core/constraint-requirement";
-import { constraintRequirementsOf } from "#/core/constraint-requirement";
-import { getOrInsert, getOrInsertComputed } from "#/core/map-upsert";
-import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#/core/module";
-import { isSyncModule, MODULE_SETUP } from "#/core/module";
-import { BindingRegistry } from "#/core/registry";
-import type { Token } from "#/core/token";
-import { tokenName } from "#/core/token";
+import type { BindingRegistration } from "#container/binding-builders";
+import { BindingChain } from "#container/binding-builders";
+import type { Binding, BindingBuilder, BindToBuilder, ConstantBinding } from "#core/binding";
+import { NO_INSTANCE } from "#core/binding";
+import { effectiveBindingScope } from "#core/binding-scope";
+import type { ConstraintRequirement } from "#core/constraint-requirement";
+import { constraintRequirementsOf } from "#core/constraint-requirement";
+import { getOrInsert, getOrInsertComputed } from "#core/map-upsert";
+import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#core/module";
+import { isSyncModule, MODULE_SETUP } from "#core/module";
+import { BindingRegistry } from "#core/registry";
+import type { Token } from "#core/token";
+import { tokenName } from "#core/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
@@ -18,10 +18,10 @@ import type {
   Constructor,
   DeactivationHandler,
   ResolveOptions,
-} from "#/core/types";
-import type { AutoRegisterRegistry } from "#/decorators/injectable";
-import type { ResolutionDiagnostics } from "#/errors/diagnostics";
-import { RESOLUTION_DIAGNOSTICS } from "#/errors/diagnostics";
+} from "#core/types";
+import type { AutoRegisterRegistry } from "#decorators/injectable";
+import type { ResolutionDiagnostics } from "#errors/diagnostics";
+import { RESOLUTION_DIAGNOSTICS } from "#errors/diagnostics";
 import {
   AsyncModuleLoadError,
   CircularDependencyError,
@@ -32,21 +32,21 @@ import {
   SyncDisposalNotSupportedError,
   UnreachableConstraintError,
   UnreachableLifecycleHookError,
-} from "#/errors/errors";
-import type { DependencySlot } from "#/injection/resolve-options";
-import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#/injection/resolve-options";
-import type { ContainerGraphJson, GraphOptions } from "#/introspection/dependency-graph";
-import { buildDependencyGraph } from "#/introspection/dependency-graph";
-import type { BindingSnapshot, ContainerSnapshot } from "#/introspection/inspector";
-import { Inspector } from "#/introspection/inspector";
-import { LifecycleManager } from "#/lifecycle/lifecycle-manager";
-import { ScopeManager } from "#/lifecycle/scope-manager";
-import { MetadataReaderToken } from "#/metadata/metadata-reader-token";
-import type { MetadataReader } from "#/metadata/metadata-types";
-import { defaultMetadataReader } from "#/metadata/symbol-metadata-reader";
-import { verifyingMetadataReader } from "#/metadata/verifying-metadata-reader";
-import { ROOT_BRANCH } from "#/resolution/path/resolution-path";
-import { DependencyResolver } from "#/resolution/resolver";
+} from "#errors/errors";
+import type { DependencySlot } from "#injection/resolve-options";
+import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#injection/resolve-options";
+import type { ContainerGraphJson, GraphOptions } from "#introspection/dependency-graph";
+import { buildDependencyGraph } from "#introspection/dependency-graph";
+import type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";
+import { Inspector } from "#introspection/inspector";
+import { LifecycleManager } from "#lifecycle/lifecycle-manager";
+import { ScopeManager } from "#lifecycle/scope-manager";
+import { MetadataReaderToken } from "#metadata/metadata-reader-token";
+import type { MetadataReader } from "#metadata/metadata-types";
+import { defaultMetadataReader } from "#metadata/symbol-metadata-reader";
+import { verifyingMetadataReader } from "#metadata/verifying-metadata-reader";
+import { ROOT_BRANCH } from "#resolution/path/resolution-path";
+import { DependencyResolver } from "#resolution/resolver";
 
 /** Whether a requirement's name is declared — on its token when it names one, on any token otherwise. */
 function isSlotNameDeclared(

@@ -1,12 +1,12 @@
-import type { ArrangeRunResult } from "#/arrange/domain/types";
-import { scanArrangeTargets } from "#/arrange/scan-target";
-import { processArrangeSimplifyFile } from "#/arrange/simplify/process-file";
-import type { VariantClassNameProbe } from "#/arrange/simplify/variant-classname-probe";
-import { createVariantClassNameProbe } from "#/arrange/simplify/variant-classname-probe";
-import type { AppError } from "#/core/errors";
-import type { Filesystem } from "#/core/filesystem/filesystem";
-import type { Result } from "#/core/result";
-import { ok } from "#/core/result";
+import type { ArrangeRunResult } from "#arrange/domain/types";
+import { scanArrangeTargets } from "#arrange/scan-target";
+import { processArrangeSimplifyFile } from "#arrange/simplify/process-file";
+import type { VariantClassNameProbe } from "#arrange/simplify/variant-classname-probe";
+import { createVariantClassNameProbe } from "#arrange/simplify/variant-classname-probe";
+import type { AppError } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import type { Result } from "#core/result";
+import { ok } from "#core/result";
 
 /**
  * Runs the simplify pass over every target file and returns the aggregated result.

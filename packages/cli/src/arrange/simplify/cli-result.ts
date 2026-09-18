@@ -1,4 +1,4 @@
-import type { ArrangeRunResult } from "#/arrange/domain/types";
+import type { ArrangeRunResult } from "#arrange/domain/types";
 
 /**
  * Machine-readable `arrange simplify` summary for `--json`.

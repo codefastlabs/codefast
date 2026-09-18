@@ -1,8 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 
-import type { LedgerFacts } from "#/features/home/lib/benchmark-ledger-facts";
-import { CONTENT_CACHE_HEADERS } from "#/lib/cache";
+import type { LedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
+import { CONTENT_CACHE_HEADERS } from "#lib/cache";
 
 /**
  * What the benchmark ledger says about its own runs, read on the server so the markdown never reaches a client
@@ -13,7 +13,7 @@ export const getBenchmarkLedger = createServerFn({ method: "GET" }).handler(asyn
     setResponseHeader(name, value);
   }
 
-  const { readLedgerFacts } = await import("#/features/home/lib/benchmark-ledger.impl");
+  const { readLedgerFacts } = await import("#features/home/lib/benchmark-ledger.impl");
 
   return readLedgerFacts();
 });

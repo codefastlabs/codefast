@@ -3,8 +3,8 @@
  * into the single configuration a plan is compiled from.
  */
 
-import { cx } from "#/class-names";
-import { isSlotClassMap } from "#/compile/class-values";
+import { cx } from "#class-names";
+import { isSlotClassMap } from "#compile/class-values";
 import type {
   ClassValue,
   CompoundSlot,
@@ -14,7 +14,7 @@ import type {
   ExtendedVariantConfig,
   SlotSchema,
   VariantResolver,
-} from "#/types";
+} from "#types";
 
 /**
  * Whether a configuration declares slots.

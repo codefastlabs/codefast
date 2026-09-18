@@ -8,8 +8,8 @@ import type { HighlighterCore } from "shiki/core";
 import { createHighlighterCore } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 
-import type { HighlightedSource } from "#/registry/_core/highlight";
-import type { SourceRef } from "#/registry/_core/types";
+import type { HighlightedSource } from "#registry/_core/highlight";
+import type { SourceRef } from "#registry/_core/types";
 
 /** Raw-text loaders for every highlightable registry file, keyed by `SourceRef`. */
 const rawSources = import.meta.glob<string>(["../*/*.example.tsx", "../*/demo.tsx", "../*/usage.tsx"], {

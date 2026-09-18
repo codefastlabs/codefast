@@ -1,9 +1,9 @@
 import { Button } from "@codefast/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { CopySnippet } from "#/components/shared/copy-snippet";
-import { SectionHeader } from "#/components/shared/section-header";
-import { INSTALL_COMMAND } from "#/lib/install";
+import { CopySnippet } from "#components/shared/copy-snippet";
+import { SectionHeader } from "#components/shared/section-header";
+import { INSTALL_COMMAND } from "#lib/install";
 
 export function GalleryCtaSection() {
   return (

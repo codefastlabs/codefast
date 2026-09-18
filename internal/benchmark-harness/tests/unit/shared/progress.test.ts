@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { BenchProgressEvent } from "#/shared/progress";
-import { formatProgressEvent, parseProgressEvent } from "#/shared/progress";
+import type { BenchProgressEvent } from "#shared/progress";
+import { formatProgressEvent, parseProgressEvent } from "#shared/progress";
 
 const EVENTS: ReadonlyArray<BenchProgressEvent> = [
   { kind: "plan", trialCount: 3, scenarioCount: 111 },

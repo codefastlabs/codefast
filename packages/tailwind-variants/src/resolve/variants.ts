@@ -2,10 +2,10 @@
  * The flat lane: turning a plan plus one set of props into a single class string.
  */
 
-import { toClassText, toVariantKey } from "#/compile/class-values";
-import { matchesCompoundConditions } from "#/compile/compound";
-import type { VariantPlan } from "#/compile/plan";
-import type { ClassValue } from "#/types";
+import { toClassText, toVariantKey } from "#compile/class-values";
+import { matchesCompoundConditions } from "#compile/compound";
+import type { VariantPlan } from "#compile/plan";
+import type { ClassValue } from "#types";
 
 /**
  * Resolves classes for a configuration without slots, appending `customClasses` last so the

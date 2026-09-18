@@ -3,14 +3,14 @@ import {
   UNCACHED_SIMPLE_WITHOUT_MERGE,
   UNCACHED_SLOTS_WITH_MERGE,
   UNCACHED_SLOTS_WITHOUT_MERGE,
-} from "#/fixtures/scenario-parity";
-import { buttonVariants, simpleTestProps } from "#/fixtures/simple";
-import type { CardRenderer, FlatRenderer } from "#/fixtures/slot-types";
-import { slotsTestProps, slotsVariants } from "#/fixtures/slots";
-import { TV_CACHE_AND_MERGE_DISABLED, TV_CACHE_DISABLED } from "#/harness/bench-options";
-import { renderCardSlots } from "#/lib/render-slots";
-import { codefastTvFn } from "#/lib/tv-shims";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { buttonVariants, simpleTestProps } from "#fixtures/simple";
+import type { CardRenderer, FlatRenderer } from "#fixtures/slot-types";
+import { slotsTestProps, slotsVariants } from "#fixtures/slots";
+import { TV_CACHE_AND_MERGE_DISABLED, TV_CACHE_DISABLED } from "#harness/bench-options";
+import { renderCardSlots } from "#lib/render-slots";
+import { codefastTvFn } from "#lib/tv-shims";
+import type { BenchScenario } from "#scenarios/types";
 
 const flat = codefastTvFn(buttonVariants, TV_CACHE_DISABLED) as FlatRenderer;
 const flatNoMerge = codefastTvFn(buttonVariants, TV_CACHE_AND_MERGE_DISABLED) as FlatRenderer;

@@ -1,7 +1,7 @@
 import { createElement } from "react";
 
-import { EXAMPLE_COMPONENT_BY_REF, getLoadedExampleComponent } from "#/registry/_core/examples";
-import type { SourceRef } from "#/registry/_core/types";
+import { EXAMPLE_COMPONENT_BY_REF, getLoadedExampleComponent } from "#registry/_core/examples";
+import type { SourceRef } from "#registry/_core/types";
 
 interface ExampleLiveProps {
   /** Source ref of the example whose live preview component should render. */

@@ -2,11 +2,11 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { TestBedRunner } from "#/features/home/components/test-bed-runner";
+import { TestBedRunner } from "#features/home/components/test-bed-runner";
 
 const { track } = vi.hoisted(() => ({ track: vi.fn() }));
 
-vi.mock("#/features/tracking/lib/tracking", () => ({ track }));
+vi.mock("#features/tracking/lib/tracking", () => ({ track }));
 
 beforeEach(() => {
   track.mockClear();

@@ -1,14 +1,14 @@
-import { docSource } from "#/registry/_core/source";
-import type { ComponentDoc } from "#/registry/_core/types";
-import { AvatarBadgeIconExample } from "#/registry/avatar/badge-icon.example";
-import { AvatarWithBadge } from "#/registry/avatar/badge.example";
-import { AvatarBasic } from "#/registry/avatar/basic.example";
-import { AvatarDropdown } from "#/registry/avatar/dropdown.example";
-import { AvatarGroupCountIconExample } from "#/registry/avatar/group-count-icon.example";
-import { AvatarGroupCountExample } from "#/registry/avatar/group-count.example";
-import { AvatarGroupExample } from "#/registry/avatar/group.example";
-import { AvatarRtl } from "#/registry/avatar/rtl.example";
-import { AvatarSizeExample } from "#/registry/avatar/size.example";
+import { docSource } from "#registry/_core/source";
+import type { ComponentDoc } from "#registry/_core/types";
+import { AvatarBadgeIconExample } from "#registry/avatar/badge-icon.example";
+import { AvatarWithBadge } from "#registry/avatar/badge.example";
+import { AvatarBasic } from "#registry/avatar/basic.example";
+import { AvatarDropdown } from "#registry/avatar/dropdown.example";
+import { AvatarGroupCountIconExample } from "#registry/avatar/group-count-icon.example";
+import { AvatarGroupCountExample } from "#registry/avatar/group-count.example";
+import { AvatarGroupExample } from "#registry/avatar/group.example";
+import { AvatarRtl } from "#registry/avatar/rtl.example";
+import { AvatarSizeExample } from "#registry/avatar/size.example";
 
 export const avatarDoc: ComponentDoc = {
   examples: [

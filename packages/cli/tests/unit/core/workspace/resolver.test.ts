@@ -2,8 +2,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import type { CliFileEncoding, Filesystem } from "#/core/filesystem/filesystem";
-import { listWorkspacePackageDirectories, resolveProjectRoot } from "#/core/workspace/resolver";
+import type { CliFileEncoding, Filesystem } from "#core/filesystem/filesystem";
+import { listWorkspacePackageDirectories, resolveProjectRoot } from "#core/workspace/resolver";
 
 function createExistsOnlyFilesystem(existingPaths: Iterable<string>): Filesystem {
   const present = new Set(existingPaths);

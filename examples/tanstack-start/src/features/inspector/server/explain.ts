@@ -2,8 +2,8 @@
 import type { BindingIdentifier, Container, Token } from "@codefast/di";
 import { DiError } from "@codefast/di";
 
-import type { CatalogEntry } from "#/features/inspector/server/catalog";
-import type { SlotTags } from "#/features/inspector/shared/tenant";
+import type { CatalogEntry } from "#features/inspector/server/catalog";
+import type { SlotTags } from "#features/inspector/shared/tenant";
 
 /** The request as it crosses to the client: tag values are rendered, because `unknown` is not serialisable. */
 interface RequestView {

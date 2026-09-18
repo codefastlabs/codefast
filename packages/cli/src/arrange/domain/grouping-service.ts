@@ -3,15 +3,15 @@
  * Pure: only DomainSourceFile, source strings, and options — no I/O.
  */
 
-import type { DomainCallExpression, DomainSourceFile } from "#/arrange/domain/ast/ast-node";
-import { listAllCnCallsInsideTvInSourceFile } from "#/arrange/domain/ast/collectors-tv";
+import type { DomainCallExpression, DomainSourceFile } from "#arrange/domain/ast/ast-node";
+import { listAllCnCallsInsideTvInSourceFile } from "#arrange/domain/ast/collectors-tv";
 import {
   applyEditsDescending,
   buildKnownCnTvBindings,
   unwrapCnInsideTvCallReplacement,
-} from "#/arrange/domain/ast/helpers";
-import { collectGroupTargets, planGroupEditForTarget, targetReplaceStart } from "#/arrange/domain/ast/targets";
-import type { GroupFileResult, PlannedGroupEdit } from "#/arrange/domain/types";
+} from "#arrange/domain/ast/helpers";
+import { collectGroupTargets, planGroupEditForTarget, targetReplaceStart } from "#arrange/domain/ast/targets";
+import type { GroupFileResult, PlannedGroupEdit } from "#arrange/domain/types";
 
 /**
  * A planned replacement unwrapping one `cn()` call nested in `tv({ ... })`.

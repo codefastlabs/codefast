@@ -3,7 +3,7 @@
  *
  * @since 0.3.16-canary.0
  */
-import type { BenchScenarioTier } from "#/child/bench-scenario";
+import type { BenchScenarioTier } from "#child/bench-scenario";
 
 /**
  * Marker line opening the framed JSON payload on child stdout — the parent reads only

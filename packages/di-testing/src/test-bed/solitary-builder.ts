@@ -3,15 +3,15 @@
 import type { InjectOptions } from "@codefast/di";
 import { Container } from "@codefast/di";
 
-import { scanDependencies } from "#/discovery/dependency-scanner";
-import { bindMocks } from "#/discovery/mock-binder";
-import type { MockFunction } from "#/mocking/mock-factory";
-import type { Spy } from "#/mocking/spy";
-import type { MockOverrideBuilder, PreparedBed } from "#/test-bed/bed-builder";
-import { BedBuilder } from "#/test-bed/bed-builder";
-import type { UnitTestBed } from "#/test-bed/unit-test-bed";
-import { createUnitTestBed } from "#/test-bed/unit-test-bed";
-import type { InjectionIdentifier } from "#/types";
+import { scanDependencies } from "#discovery/dependency-scanner";
+import { bindMocks } from "#discovery/mock-binder";
+import type { MockFunction } from "#mocking/mock-factory";
+import type { Spy } from "#mocking/spy";
+import type { MockOverrideBuilder, PreparedBed } from "#test-bed/bed-builder";
+import { BedBuilder } from "#test-bed/bed-builder";
+import type { UnitTestBed } from "#test-bed/unit-test-bed";
+import { createUnitTestBed } from "#test-bed/unit-test-bed";
+import type { InjectionIdentifier } from "#types";
 
 /**
  * A solitary build in progress: register overrides, then compile.

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createTiktokDestination, toTiktokConsent } from "#/destinations/tiktok";
+import { createTiktokDestination, toTiktokConsent } from "#destinations/tiktok";
 
 const event = {
   anonymousId: "anon-1",

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import { initialConsentFromRequest } from "#/features/tracking/lib/initial-consent-from-request.server";
+import { initialConsentFromRequest } from "#features/tracking/lib/initial-consent-from-request.server";
 
 /**
  * Resolves the visitor's region-correct consent default on the per-request server lane —

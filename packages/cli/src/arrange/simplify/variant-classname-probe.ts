@@ -2,7 +2,7 @@
 
 import type { Checker, SignatureKind, Type } from "typescript/unstable/sync";
 
-import { AppError, messageFrom } from "#/core/errors";
+import { AppError, messageFrom } from "#core/errors";
 
 /**
  * What a variant function's `className`/`class` option accepts, resolved from its type.

@@ -1,10 +1,10 @@
 import { ChevronDownIcon, ChevronUpIcon, MinusIcon, PlusIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 
-import { Spinner } from "#/components/spinner";
-import { cn } from "#/lib/utils";
-import * as InputNumberPrimitive from "#/primitives/input-number";
-import { buttonVariants } from "#/variants/button";
+import { Spinner } from "#components/spinner";
+import { cn } from "#lib/utils";
+import * as InputNumberPrimitive from "#primitives/input-number";
+import { buttonVariants } from "#variants/button";
 
 // ── Component: InputNumber ───────────────────────────────────────────────────────────────────────────────────────────
 

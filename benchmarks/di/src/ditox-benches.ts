@@ -11,8 +11,8 @@ import {
   runBenchmarkChildMain,
 } from "@internal/benchmark-harness/child/run-benchmark-child-main";
 
-import { DITOX } from "#/harness/config";
-import { collectAllDitoxScenarios } from "#/scenarios/collect-ditox-scenarios";
+import { DITOX } from "#harness/config";
+import { collectAllDitoxScenarios } from "#scenarios/collect-ditox-scenarios";
 
 void runBenchmarkChildMain({
   libraryName: DITOX.libraryName,

@@ -1,7 +1,7 @@
-import type { BenchScenarioTier } from "#/child/bench-scenario";
-import { DEFAULT_BENCH_SCENARIO_TIER } from "#/child/bench-scenario";
-import type { BenchRunShape } from "#/shared/env-keys";
-import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#/shared/protocol";
+import type { BenchScenarioTier } from "#child/bench-scenario";
+import { DEFAULT_BENCH_SCENARIO_TIER } from "#child/bench-scenario";
+import type { BenchRunShape } from "#shared/env-keys";
+import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#shared/protocol";
 
 /**
  * One serialised observation line in bench `observations.jsonl` ({@link writeJsonlRun} output).

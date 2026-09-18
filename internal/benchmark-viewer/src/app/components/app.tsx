@@ -1,25 +1,25 @@
 import type { RefObject } from "react";
 
-import type { ChartInstance } from "#/app/components/chart";
-import { ChartPanel } from "#/app/components/chart";
-import { ChartControlPanel } from "#/app/components/controls";
-import { ClientPageOpenedClock, ClientSnapshotClock } from "#/app/components/footer";
-import { PageHeader } from "#/app/components/header";
-import { KpiGrid } from "#/app/components/kpi";
-import { MetricsPanel } from "#/app/components/metrics";
-import { CommandPalette } from "#/app/components/palette";
-import { SkipToChartLink } from "#/app/components/skip-to-chart";
-import { SnapshotSection } from "#/app/components/snapshot";
-import { PALETTE_ACTIONS, PALETTE_SCENARIO_ACTION_PREFIX, useCommandPalette } from "#/app/hooks/use-command-palette";
-import { useDerivedPayload } from "#/app/hooks/use-derived-payload";
-import { useDetailsPersist } from "#/app/hooks/use-details-persist";
-import { useHashSync } from "#/app/hooks/use-hash";
-import { useBenchPayload } from "#/app/hooks/use-payload";
-import { useToast } from "#/app/hooks/use-toast";
-import { useViewState } from "#/app/hooks/use-view";
-import { buildHash } from "#/app/lib/hash";
-import { cn } from "#/app/lib/utils";
-import type { EmbeddedViewerPayload } from "#/types";
+import type { ChartInstance } from "#app/components/chart";
+import { ChartPanel } from "#app/components/chart";
+import { ChartControlPanel } from "#app/components/controls";
+import { ClientPageOpenedClock, ClientSnapshotClock } from "#app/components/footer";
+import { PageHeader } from "#app/components/header";
+import { KpiGrid } from "#app/components/kpi";
+import { MetricsPanel } from "#app/components/metrics";
+import { CommandPalette } from "#app/components/palette";
+import { SkipToChartLink } from "#app/components/skip-to-chart";
+import { SnapshotSection } from "#app/components/snapshot";
+import { PALETTE_ACTIONS, PALETTE_SCENARIO_ACTION_PREFIX, useCommandPalette } from "#app/hooks/use-command-palette";
+import { useDerivedPayload } from "#app/hooks/use-derived-payload";
+import { useDetailsPersist } from "#app/hooks/use-details-persist";
+import { useHashSync } from "#app/hooks/use-hash";
+import { useBenchPayload } from "#app/hooks/use-payload";
+import { useToast } from "#app/hooks/use-toast";
+import { useViewState } from "#app/hooks/use-view";
+import { buildHash } from "#app/lib/hash";
+import { cn } from "#app/lib/utils";
+import type { EmbeddedViewerPayload } from "#types";
 
 /**
  * Renders the whole bench history viewer page, wiring its data hooks into the panel components.

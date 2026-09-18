@@ -9,7 +9,7 @@ import {
   InputNumberDecrementButton,
   InputNumberField,
   InputNumberIncrementButton,
-} from "#/primitives/input-number";
+} from "#primitives/input-number";
 
 describe("input-number", () => {
   describe("InputNumber", () => {

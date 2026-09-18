@@ -3,11 +3,11 @@ import userEvent from "@testing-library/user-event";
 import type { ComponentProps, ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { SidebarComponentLink } from "#/features/components-catalog/components/gallery/sidebar-component-link";
+import { SidebarComponentLink } from "#features/components-catalog/components/gallery/sidebar-component-link";
 
 const { track } = vi.hoisted(() => ({ track: vi.fn() }));
 
-vi.mock("#/features/tracking/lib/tracking", () => ({ track }));
+vi.mock("#features/tracking/lib/tracking", () => ({ track }));
 
 vi.mock(import("@tanstack/react-router"), async (importOriginal) => {
   const actual = await importOriginal();

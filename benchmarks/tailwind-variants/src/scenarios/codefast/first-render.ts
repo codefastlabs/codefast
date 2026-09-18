@@ -1,11 +1,11 @@
-import { COLD_DEFINITIONS_PER_LOOP, FIRST_RENDER_SIMPLE, FIRST_RENDER_SLOTS } from "#/fixtures/scenario-parity";
-import { buttonVariants } from "#/fixtures/simple";
-import type { CardRenderer, FlatRenderer } from "#/fixtures/slot-types";
-import { slotsVariants } from "#/fixtures/slots";
-import { TV_MERGE_ENABLED } from "#/harness/bench-options";
-import { renderEverySlot } from "#/lib/render-slots";
-import { codefastTvFn } from "#/lib/tv-shims";
-import type { BenchScenario } from "#/scenarios/types";
+import { COLD_DEFINITIONS_PER_LOOP, FIRST_RENDER_SIMPLE, FIRST_RENDER_SLOTS } from "#fixtures/scenario-parity";
+import { buttonVariants } from "#fixtures/simple";
+import type { CardRenderer, FlatRenderer } from "#fixtures/slot-types";
+import { slotsVariants } from "#fixtures/slots";
+import { TV_MERGE_ENABLED } from "#harness/bench-options";
+import { renderEverySlot } from "#lib/render-slots";
+import { codefastTvFn } from "#lib/tv-shims";
+import type { BenchScenario } from "#scenarios/types";
 
 const defineAndRenderButton = (): number =>
   (codefastTvFn(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer)({ size: "sm", variant: "outline" }).length;

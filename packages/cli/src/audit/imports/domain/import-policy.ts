@@ -1,6 +1,6 @@
 import { parseSync } from "oxc-parser";
 
-import type { ImportPolicyViolation } from "#/audit/domain/types";
+import type { ImportPolicyViolation } from "#audit/domain/types";
 
 interface OxcNode {
   readonly type: string;

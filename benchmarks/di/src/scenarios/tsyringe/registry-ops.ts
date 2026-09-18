@@ -12,9 +12,9 @@ import {
   HAS_BOUND_CHECK,
   HAS_OWN_BATCH,
   HAS_OWN_UNBOUND_CHECK,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 interface HookPayload {
   value: number;

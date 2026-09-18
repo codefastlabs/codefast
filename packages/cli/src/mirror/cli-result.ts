@@ -1,5 +1,5 @@
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#/core/exit-codes";
-import type { GlobalStats } from "#/mirror/domain/types";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
+import type { GlobalStats } from "#mirror/domain/types";
 
 /**
  * Maps a mirror run's stats to the process exit code.

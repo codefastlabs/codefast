@@ -1,6 +1,6 @@
 import { Badge } from "@codefast/ui/badge";
 
-import { DemoSection } from "#/components/demo-section";
+import { DemoSection } from "#components/demo-section";
 
 export function BadgesSection() {
   return (

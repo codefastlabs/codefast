@@ -6,16 +6,16 @@
  */
 import { asClass, asValue, createContainer, InjectionMode, Lifetime } from "awilix";
 
-import { isFreshEachResolve } from "#/fixtures/sanity";
+import { isFreshEachResolve } from "#fixtures/sanity";
 import {
   CLASS_RESOLVE_BATCH,
   CONSTANT_RESOLVE,
   CONSTANT_RESOLVE_BATCH,
   SINGLETON_CLASS_1_DEP,
   TRANSIENT_CLASS_1_DEP,
-} from "#/fixtures/scenario-parity";
-import { batched } from "#/harness/batched";
-import type { BenchScenario } from "#/scenarios/types";
+} from "#fixtures/scenario-parity";
+import { batched } from "#harness/batched";
+import type { BenchScenario } from "#scenarios/types";
 
 class MicroLeafDependency {}
 

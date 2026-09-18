@@ -2,8 +2,8 @@
  * The cold lane: one resolution read straight from the configuration, before a plan exists.
  */
 
-import { hasBooleanVariantValues, isSlotClassMap, toClassText, toVariantKey } from "#/compile/class-values";
-import { getCompoundClass } from "#/compile/compound";
+import { hasBooleanVariantValues, isSlotClassMap, toClassText, toVariantKey } from "#compile/class-values";
+import { getCompoundClass } from "#compile/compound";
 import type {
   ClassValue,
   SlotClassResolver,
@@ -12,7 +12,7 @@ import type {
   SlotVariantConfig,
   VariantConfig,
   VariantSchema,
-} from "#/types";
+} from "#types";
 
 type Definition = SlotVariantConfig<VariantSchema, SlotSchema> | VariantConfig<VariantSchema>;
 type Props = Record<string, unknown>;
