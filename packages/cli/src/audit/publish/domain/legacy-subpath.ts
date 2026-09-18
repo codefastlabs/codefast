@@ -8,6 +8,8 @@ const LEGACY_SUBPATH_SPECIFIER = /(?:\bfrom|\bimport|\brequire)\b\s*\(?\s*(["']#
 
 /**
  * Every `#/`-prefixed import specifier in a source file, with its line number.
+ *
+ * @since 0.12.0
  */
 export function scanLegacySubpathImports(content: string): Array<LegacySubpathImport> {
   const found: Array<LegacySubpathImport> = [];

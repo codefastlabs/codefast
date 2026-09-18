@@ -2,13 +2,21 @@
 import type { AbRequest } from "#parent/ab-request";
 import { parseRunObservations } from "#report/jsonl";
 
-/** One side's narrowed run: its run id and the subject's per-trial `hz/op` for each requested row. */
+/**
+ * One side's narrowed run: its run id and the subject's per-trial `hz/op` for each requested row.
+ *
+ * @since 0.10.0
+ */
 export interface SideRun {
   readonly runId: string;
   readonly hzById: ReadonlyMap<string, ReadonlyArray<number>>;
 }
 
-/** One experiment: the two sides measured back to back, tagged with which side went first. */
+/**
+ * One experiment: the two sides measured back to back, tagged with which side went first.
+ *
+ * @since 0.10.0
+ */
 export interface ExperimentPass {
   readonly experiment: number;
   readonly order: "base→new" | "new→base";
@@ -16,7 +24,11 @@ export interface ExperimentPass {
   readonly newRun: SideRun;
 }
 
-/** The median of the values, or `undefined` when there are none. */
+/**
+ * The median of the values, or `undefined` when there are none.
+ *
+ * @since 0.10.0
+ */
 export function median(values: ReadonlyArray<number>): number | undefined {
   if (values.length === 0) {
     return undefined;
@@ -50,7 +62,11 @@ function formatSpread(values: ReadonlyArray<number>): string {
   return `${formatHz(low)}…${formatHz(high)} (±${swing.toFixed(1)}% of median)`;
 }
 
-/** Reads one run's `observations.jsonl` content into the subject's per-row `hz/op` samples. */
+/**
+ * Reads one run's `observations.jsonl` content into the subject's per-row `hz/op` samples.
+ *
+ * @since 0.10.0
+ */
 export function extractSubjectHz(
   jsonlContent: string,
   subjectLibraryName: string,
@@ -69,7 +85,11 @@ export function extractSubjectHz(
   return hzById;
 }
 
-/** Builds the console report lines for a completed paired A/B run. */
+/**
+ * Builds the console report lines for a completed paired A/B run.
+ *
+ * @since 0.10.0
+ */
 export function buildAbReportLines(
   passes: ReadonlyArray<ExperimentPass>,
   request: AbRequest,

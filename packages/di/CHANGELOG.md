@@ -1,5 +1,33 @@
 # @codefast/di
 
+## 0.10.1
+
+### Patch Changes
+
+- [#892](https://github.com/codefastlabs/codefast/pull/892) [`4c97c5b`](https://github.com/codefastlabs/codefast/commit/4c97c5b8c2314f25ee9df7eac5a4b5dd723d6d90) Thanks [@thevuong](https://github.com/thevuong)! - Lower the monorepo's Node floor from 24 to 22.12, so the packages install and run on the active Node 22 LTS line.
+
+  `engines.node` becomes `>=22.12.0` across every package — the floor the shared toolchain (oxlint, Vite, Vitest, TanStack
+  Start) already requires. Development stays on the latest Node (`.node-version`) for speed, and a CI matrix exercises the
+  floor and the active LTS directly, so the floor is a contract CI proves rather than one everyone has to run.
+  `@types/node` is pinned to the floor's major (`^22`), with a workspace override holding the whole tree there so a dev
+  tool's `@types/node: "*"` peer can no longer pull a newer major and mask an API the floor lacks. The floor stays
+  mechanical, not advisory: `@codefast/di` keeps its own `Map` upsert helpers rather than the ES2025
+  `Map.prototype.getOrInsert` (which would raise the floor to 26) and its `lib` stays `ES2024`. `@codefast/cli`'s mirror
+  step now calls the `node:path` functions directly instead of aliasing them, which the floor's types correctly flag as
+  unbound methods.
+
+  The shared `@codefast/typescript-config` presets pin `lib` and `target` to `ES2024` (was `ESNext`) so the compiler's
+  ECMAScript surface matches the Node floor: an ES2025 builtin such as `Map.prototype.getOrInsert` now fails to type-check
+  rather than compiling and crashing on Node 22.12. `@codefast/di` and `@codefast/di-testing` already pinned `lib` and are
+  unchanged.
+
+  Internal subpath imports move from a `#/` prefix to a bare `#` (`#core/token`, not `#/core/token`), and the
+  `package.json#imports` keys become `#*`/`#tests/*`/`#examples/*` to match. Node's native ESM resolver rejects a
+  `#/`-prefixed specifier with `ERR_INVALID_MODULE_SPECIFIER` on the whole Node 22 line (and on Node 24 before 24.14), and
+  each package ships those specifiers verbatim inside its published `dist/*.js` for a consumer's Node to resolve — so this
+  rename is what actually lets the packages import on the new floor. Purely internal: a consumer's own import paths are
+  unchanged.
+
 ## 0.10.0
 
 ### Minor Changes

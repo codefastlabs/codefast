@@ -2,6 +2,8 @@ import * as z from "zod";
 
 /**
  * Resolved request for a single publish audit run.
+ *
+ * @since 0.12.0
  */
 export type PublishAuditRunRequest = {
   readonly rootDir: string;
@@ -12,6 +14,8 @@ export type PublishAuditRunRequest = {
 
 /**
  * Zod schema for {@link PublishAuditRunRequest}.
+ *
+ * @since 0.12.0
  */
 export const publishAuditRunRequestSchema: z.ZodType<PublishAuditRunRequest> = z.object({
   rootDir: z.string().min(1),

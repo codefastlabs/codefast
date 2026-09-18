@@ -14,6 +14,8 @@ import { unshippedPublishTargets } from "#pack-slim/domain/transform";
 /**
  * Reports what would break a consumer's install: a `#/`-prefixed import Node's ESM resolver rejects on
  * the floor, and an `exports`/`imports` target the slimmed publish manifest does not ship.
+ *
+ * @since 0.12.0
  */
 export async function runPublishAudit(
   fs: Filesystem,
