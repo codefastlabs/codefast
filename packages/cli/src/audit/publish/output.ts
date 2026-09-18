@@ -3,6 +3,8 @@ import { logger } from "#core/logger";
 
 /**
  * Human-readable publish audit report.
+ *
+ * @since 0.12.0
  */
 export function presentPublishAuditResult(result: PublishAuditResult): void {
   for (const file of result.legacyImportFiles) {

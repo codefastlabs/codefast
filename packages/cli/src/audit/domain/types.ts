@@ -188,6 +188,8 @@ export type CommentAuditResult = {
 /**
  * A `#/`-prefixed internal import specifier — valid to the in-repo runners but rejected by Node's ESM
  * resolver on the supported floor, so it breaks the published package.
+ *
+ * @since 0.12.0
  */
 export type LegacySubpathImport = {
   readonly line: number;
@@ -197,6 +199,8 @@ export type LegacySubpathImport = {
 
 /**
  * The `#/` imports found in one source file.
+ *
+ * @since 0.12.0
  */
 export type LegacySubpathFile = {
   readonly relativePath: string;
@@ -205,6 +209,8 @@ export type LegacySubpathFile = {
 
 /**
  * A published package whose slimmed manifest exports or imports a target it does not ship.
+ *
+ * @since 0.12.0
  */
 export type UnshippedTargetViolation = {
   readonly packageName: string;
@@ -215,6 +221,8 @@ export type UnshippedTargetViolation = {
 
 /**
  * Outcome of one `audit publish` run.
+ *
+ * @since 0.12.0
  */
 export type PublishAuditResult = {
   readonly legacyImportFiles: Array<LegacySubpathFile>;

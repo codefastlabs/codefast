@@ -9,6 +9,8 @@ import type { Result } from "#core/result";
  *
  * @remarks Defaults to the repo root: the audit walks every published package's source and manifest, so
  * a single-package target would miss the cross-package surface. It takes no allowlist.
+ *
+ * @since 0.12.0
  */
 export async function preparePublishAudit(
   fs: Filesystem,

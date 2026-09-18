@@ -130,6 +130,8 @@ export function slimPublishManifest(manifest: Record<string, unknown>): SlimMani
 
 /**
  * A published `exports`/`imports` target the slimmed manifest points at but does not ship.
+ *
+ * @since 0.12.0
  */
 export interface UnshippedTarget {
   readonly field: "exports" | "imports";
@@ -144,6 +146,8 @@ export interface UnshippedTarget {
  * target against the shipped `files`. A non-empty result means a consumer resolves that subpath to a
  * missing file — the failure dropping a stylesheet's `src` subtree produces. With no `files` field npm
  * ships everything, so nothing is unshipped.
+ *
+ * @since 0.12.0
  */
 export function unshippedPublishTargets(manifest: Record<string, unknown>): Array<UnshippedTarget> {
   const { manifest: slimmed } = slimPublishManifest(manifest);
