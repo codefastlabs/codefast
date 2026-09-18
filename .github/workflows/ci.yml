@@ -21,3 +21,28 @@ jobs:
     # No merge queue, so the PR run is the only pre-merge gate — run the full
     # test + coverage suite here (run-tests defaults to true).
     secrets: inherit
+
+  # Validate what consumers actually install: import the packed packages on the Node floor (catches a
+  # module-resolution break the in-repo runners hide) and lint the slimmed publish manifests.
+  publish-check:
+    name: Publish Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Configure Build Environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Build Workspace Packages
+        run: npx turbo build --filter="./packages/**" --filter="./internal/**"
+
+      - name: Smoke-import Packed Packages
+        run: pnpm pack-smoke
+
+      - name: Lint Slimmed Publish Manifests
+        run: pnpm check:publish

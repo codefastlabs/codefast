@@ -106,9 +106,9 @@ export function isLifecycleScript(name: string): boolean {
 export function slimPublishManifest(manifest: Record<string, unknown>): SlimManifestResult {
   const draft = structuredClone(manifest);
 
-  const filesSrcRemoved = removeSrcFromFiles(draft);
   const exportsSourceRemoved = deleteSourceConditions(draft.exports);
   const importsSourceRemoved = deleteSourceConditions(draft.imports);
+  const filesSrcRemoved = removeSrcFromFiles(draft);
   const importsUnshippedRemoved = deleteUnshippedImports(draft);
   const scriptsRemoved = deleteDevOnlyScripts(draft);
   const devDependenciesRemoved = deleteDevDependencies(draft);
@@ -142,17 +142,37 @@ export function stripSourceMappingComment(text: string): StripCommentResult {
   return { text: kept.join("\n"), stripped: true };
 }
 
+// Replaces the `src` files entry with only the src subtrees the published surface still points into —
+// a stylesheet export like `./css/*` -> `./src/css/*` ships Tailwind source, so dropping all of src
+// would ship a broken export. Runs after the source conditions are stripped, so the `#*` source lane
+// no longer counts; with nothing left pointing into src the entry is dropped outright.
 function removeSrcFromFiles(manifest: Record<string, unknown>): boolean {
   const files = manifest.files;
-  if (!Array.isArray(files)) {
+  if (!Array.isArray(files) || !files.includes("src")) {
     return false;
   }
-  const next = files.filter((entry) => entry !== "src");
-  if (next.length === files.length) {
-    return false;
-  }
-  manifest.files = next;
+  const keep = srcPathsShippedBySurface(manifest);
+  manifest.files = files.flatMap((entry) => (entry === "src" ? keep : [entry]));
   return true;
+}
+
+// The src subtrees a surviving `exports`/`imports` target still ships, e.g. `./src/css/*` -> `src/css`.
+function srcPathsShippedBySurface(manifest: Record<string, unknown>): Array<string> {
+  const targets = [...collectTargets(manifest.exports), ...collectTargets(manifest.imports)];
+  const kept = new Set<string>();
+  for (const target of targets) {
+    const relative = stripDotSlash(target);
+    if (relative !== "src" && !relative.startsWith("src/")) {
+      continue;
+    }
+    const segments = relative.split("/");
+    // A glob tail (`*`, `**`) ships its directory; a concrete file ships itself.
+    if (segments.at(-1)?.includes("*")) {
+      segments.pop();
+    }
+    kept.add(segments.join("/"));
+  }
+  return [...kept].sort();
 }
 
 // Walks a conditions tree deleting every `source` key. A subpath key always starts with ".", so only real condition

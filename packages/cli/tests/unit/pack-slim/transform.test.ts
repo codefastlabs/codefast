@@ -60,6 +60,25 @@ describe("slimPublishManifest", () => {
     expect(report.importsUnshippedRemoved).toBe(1);
   });
 
+  it("keeps only the src subtrees a surviving export still ships, dropping the rest of src", () => {
+    const { manifest: slimmed, report } = slimPublishManifest({
+      files: ["dist", "src", "README.md"],
+      exports: {
+        "./button": { source: "./src/button.tsx", types: "./dist/button.d.ts", default: "./dist/button.js" },
+        "./css/*": "./src/css/*",
+      },
+    });
+
+    // The source lane is stripped, so the TS source drops, but the stylesheet export still points into
+    // src — `src` is narrowed to that subtree rather than removed, so the published export resolves.
+    expect(slimmed.files).toEqual(["dist", "src/css", "README.md"]);
+    expect(slimmed.exports).toEqual({
+      "./button": { types: "./dist/button.d.ts", default: "./dist/button.js" },
+      "./css/*": "./src/css/*",
+    });
+    expect(report.filesSrcRemoved).toBe(true);
+  });
+
   it("keeps an imports entry a glob files entry may ship", () => {
     const manifest = { files: ["*.json", "lib"], imports: { "#presets/*": "./presets/*.json" } };
 
