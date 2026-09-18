@@ -22,13 +22,19 @@ jobs:
     # test + coverage suite here (run-tests defaults to true).
     secrets: inherit
 
-  # Validate what consumers actually install: import the packed packages on the Node floor (catches a
-  # module-resolution break the in-repo runners hide) and lint the slimmed publish manifests.
+  # Exercise the supported Node lines that `verify` (on the latest, from .node-version) does not: run the
+  # unit suite and import the packed packages on each — the floor catches a module-resolution break the
+  # in-repo runners hide — and lint the slimmed publish manifests once, on the floor.
   publish-check:
-    name: Publish Check
+    name: Publish Check (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22.12.0 is the engines floor; 24 is the active LTS. The current line (26) is covered by `verify`.
+        node: ["22.12.0", "24"]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -37,12 +43,18 @@ jobs:
 
       - name: Configure Build Environment
         uses: ./.github/actions/setup-environment
+        with:
+          node-version: ${{ matrix.node }}
 
       - name: Build Workspace Packages
         run: npx turbo build --filter="./packages/**" --filter="./internal/**"
+
+      - name: Run Unit Tests
+        run: npx turbo run test:unit --filter="./packages/**" --filter="./internal/**"
 
       - name: Smoke-import Packed Packages
         run: pnpm pack-smoke
 
       - name: Lint Slimmed Publish Manifests
+        if: ${{ matrix.node == '22.12.0' }}
         run: pnpm check:publish

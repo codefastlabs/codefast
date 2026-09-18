@@ -4,6 +4,11 @@ description: "Sets up Node.js, pnpm, and project dependencies with caching for
 author: "codefastlabs"
 
 inputs:
+  node-version:
+    description: "Explicit Node.js version; overrides node-version-file when set (e.g. a CI matrix leg)"
+    default: ""
+    required: false
+
   node-version-file:
     description: "File containing the Node.js version to use (e.g. .node-version)"
     default: ".node-version"
@@ -60,7 +65,9 @@ runs:
       id: node-setup
       uses: actions/setup-node@v7
       with:
-        node-version-file: ${{ inputs.node-version-file }}
+        # An explicit node-version wins; an empty string falls back to node-version-file (.node-version).
+        node-version: ${{ inputs.node-version }}
+        node-version-file: ${{ inputs.node-version == '' && inputs.node-version-file || '' }}
         cache: "pnpm"
 
     - name: "Install Project Dependencies (pnpm)"

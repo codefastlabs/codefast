@@ -16,10 +16,11 @@
 Lower the monorepo's Node floor from 24 to 22.12, so the packages install and run on the active Node 22 LTS line.
 
 `engines.node` becomes `>=22.12.0` across every package — the floor the shared toolchain (oxlint, Vite, Vitest, TanStack
-Start) already requires — and `.node-version` moves to the latest 22 LTS so local and CI runs exercise that floor rather
-than a newer engine. `@types/node` is pinned to the floor's major (`^22`), with a workspace override holding the whole
-tree there so a dev tool's `@types/node: "*"` peer can no longer pull a newer major and mask an API the floor lacks. The
-floor stays mechanical, not advisory: `@codefast/di` keeps its own `Map` upsert helpers rather than the ES2025
+Start) already requires. Development stays on the latest Node (`.node-version`) for speed, and a CI matrix exercises the
+floor and the active LTS directly, so the floor is a contract CI proves rather than one everyone has to run.
+`@types/node` is pinned to the floor's major (`^22`), with a workspace override holding the whole tree there so a dev
+tool's `@types/node: "*"` peer can no longer pull a newer major and mask an API the floor lacks. The floor stays
+mechanical, not advisory: `@codefast/di` keeps its own `Map` upsert helpers rather than the ES2025
 `Map.prototype.getOrInsert` (which would raise the floor to 26) and its `lib` stays `ES2024`. `@codefast/cli`'s mirror
 step now calls the `node:path` functions directly instead of aliasing them, which the floor's types correctly flag as
 unbound methods.
