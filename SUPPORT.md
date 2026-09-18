@@ -20,11 +20,12 @@ The `@codefast/*` packages support the Node.js **Active LTS** and **Maintenance 
 - **Internal subpath imports** use a bare `#` prefix (`#core/token`), which Node's ESM resolver accepts on every
   supported line — `#/`-prefixed specifiers are rejected below Node 24.14.
 - **CI** develops on the Current line (`.node-version`) for speed, and a matrix runs the unit suite and imports each
-  packed package on the floor and the Active LTS, so the floor is a contract CI proves. `publint` lints every slimmed
-  publish manifest.
+  packed package on the Maintenance and Active LTS lines, so the floor is a contract CI proves. `publint` lints every
+  slimmed publish manifest.
 
 Development uses the latest Node for speed and tooling; nothing about the contributor's local Node version can leak into
-the published packages, because the floor is checked by the compiler and by CI.
+the published packages, because the floor is checked by the compiler and by CI. The published packages run on Node
+22.12+, but the repo's own toolchain (pnpm) needs Node 22.13+, so a contributor's local Node must be at least 22.13.
 
 ## Reporting issues
 
