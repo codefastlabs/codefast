@@ -23,14 +23,10 @@ export async function syncExportsForWorkspacePackage(
   config: MirrorConfig,
   write = true,
 ): Promise<PackageStats> {
-  const pathJoin = path.join;
-  const pathResolve = path.resolve;
-  const pathBasename = path.basename;
-
-  const packageDir = pathResolve(rootDir, packagePathStr);
-  const distDir = pathJoin(packageDir, distDirName);
-  const packageJsonPath = pathJoin(packageDir, packageJsonFileName);
-  const folderBasename = pathBasename(packageDir);
+  const packageDir = path.resolve(rootDir, packagePathStr);
+  const distDir = path.join(packageDir, distDirName);
+  const packageJsonPath = path.join(packageDir, packageJsonFileName);
+  const folderBasename = path.basename(packageDir);
 
   const distFilesystem = createMirrorDistFilesystem(fs);
 

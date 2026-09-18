@@ -33,8 +33,8 @@ resolves the region-correct default per visitor over a private server-function l
 pnpm add @codefast/tracking
 ```
 
-`@codefast/tracking` requires Node.js 24 or later. Its one runtime dependency is `@standard-schema/spec`. Every peer is
-optional, needed only by the surface that uses it: `react` and `react-dom` (19 or later) for the `react/*` subpaths,
+`@codefast/tracking` requires Node.js 22.12 or later. Its one runtime dependency is `@standard-schema/spec`. Every peer
+is optional, needed only by the surface that uses it: `react` and `react-dom` (19 or later) for the `react/*` subpaths,
 `@tanstack/react-start` (1.168 or later) for `adapters/tanstack-start`, and `@vercel/analytics` for
 `destinations/vercel-analytics`.
 

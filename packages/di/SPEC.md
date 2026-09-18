@@ -2910,7 +2910,7 @@ export { toMermaidGraph } from "#/introspection/graph-adapters/mermaid";
 
 ### `package.json`
 
-ESM-only. `engines.node >= 24.0.0` — the monorepo's floor, held by the package's own `core/map-upsert` helpers instead
+ESM-only. `engines.node >= 22.12.0` — the monorepo's floor, held by the package's own `core/map-upsert` helpers instead
 of the ES2025 `Map.prototype.getOrInsert`, which would raise it to 26.
 
 Each public subpath is a conditional entry: `source` → `src` for dev/test inside the repo (gated on the `source`
@@ -2949,7 +2949,7 @@ shape of an entry).
   },
   "files": ["dist", "src", "CHANGELOG.md", "README.md", "LICENSE"],
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.12.0"
   }
 }
 ```
@@ -3307,7 +3307,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | No special flags needed                           |
 | Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 5.9+) |
 | Module format      | ESM-only                                                      | ESM-only                                          |
-| Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 24.0.0                                     |
+| Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 22.12.0                                    |
 
 #### Binding API
 

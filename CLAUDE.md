@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24, pnpm 11 — every package holds that one floor, `di`
+Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 22.12, pnpm 11 — every package holds that one floor, `di`
 included, which is why it keeps its own `Map` upsert helpers instead of the ES2025 methods) publishing the `@codefast/*`
 packages. The flagship is `@codefast/di`, lightweight dependency injection on TC39 Stage 3 decorators; `@codefast/ui` is
 the Radix-based, Tailwind CSS 4 component library. `apps/web` is the TanStack Start site behind codefastlabs.com: a
