@@ -21,6 +21,7 @@ import { buildCodefastModuleScenarios } from "#scenarios/codefast/module";
 import { buildCodefastMultiTagScenarios } from "#scenarios/codefast/multi-tag-constraint";
 import { buildCodefastPlanDepthScenarios } from "#scenarios/codefast/plan-depth";
 import { buildCodefastPlanEscapeScenarios } from "#scenarios/codefast/plan-escape";
+import { buildCodefastPlanRunsScenarios } from "#scenarios/codefast/plan-runs";
 import { buildCodefastProductionScenarios } from "#scenarios/codefast/production";
 import { buildCodefastRealisticScenarios } from "#scenarios/codefast/realistic";
 import { buildCodefastRealisticClassScenarios } from "#scenarios/codefast/realistic-class";
@@ -71,6 +72,7 @@ export function collectAllCodefastScenarios(): ReadonlyArray<AnyScenario> {
     ...buildCodefastSlotSelectionScenarios(),
     ...buildCodefastPlanEscapeScenarios(),
     ...buildCodefastPlanDepthScenarios(),
+    ...buildCodefastPlanRunsScenarios(),
     ...buildCodefastResolverLaneScenarios(),
   ];
 }
