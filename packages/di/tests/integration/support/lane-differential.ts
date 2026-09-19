@@ -122,15 +122,15 @@ export const graphSpecArb: fc.Arbitrary<GraphSpec> = fc
 /**
  * A linear chain of classes `depth` deep, optionally closing a cycle from the tail back to a level.
  *
- * @remarks Deep enough to cross the plan depth limit and the membership-set threshold, so the
- * escape-seeded stack and the attached set are both exercised on every lane.
+ * @remarks Deep enough that a compiled plan renders dozens of levels and the interpreted lanes push as
+ * many frames, so a depth-dependent divergence on any lane has room to appear.
  */
 export const chainSpecArb: fc.Arbitrary<GraphSpec> = fc
   .record({
-    depth: fc.integer({ min: 1, max: 48 }),
+    depth: fc.integer({ min: 1, max: 80 }),
     tailKind: fc.constantFrom<NodeKind>("class", "dynamic", "resolved", "constant"),
-    cycleBack: fc.option(fc.integer({ min: 0, max: 47 }), { nil: undefined, freq: 2 }),
-    hookAt: fc.option(fc.integer({ min: 0, max: 47 }), { nil: undefined, freq: 3 }),
+    cycleBack: fc.option(fc.integer({ min: 0, max: 79 }), { nil: undefined, freq: 2 }),
+    hookAt: fc.option(fc.integer({ min: 0, max: 79 }), { nil: undefined, freq: 3 }),
   })
   .map(({ depth, tailKind, cycleBack, hookAt }) => {
     const nodes: Array<NodeSpec> = [];
