@@ -253,7 +253,13 @@ export class AsyncLevelContext implements ResolutionContext {
   }
 }
 
-class DefaultConstraintContext implements ConstraintContext {
+/**
+ * The one constraint context every predicate reads, whatever lane built it.
+ *
+ * @remarks One shape for the shared root, a selection over a live synchronous stack, an async
+ * level's prefix and an inspector's probe, so a predicate's call site stays monomorphic.
+ */
+export class DefaultConstraintContext implements ConstraintContext {
   readonly resolutionStack: ReadonlyArray<ResolutionFrame>;
   readonly parent: ResolutionFrame | undefined;
   readonly currentResolveOptions: Readonly<ResolveOptions> | undefined;

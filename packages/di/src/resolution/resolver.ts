@@ -45,7 +45,7 @@ import type { CollectionEntry, DefaultLookupEntry } from "#resolution/cache/bind
 import { BindingLookupCache } from "#resolution/cache/binding-lookup-cache";
 import { ClassIntrospector } from "#resolution/cache/class-introspector";
 import type { ResolverCallbacks } from "#resolution/context";
-import { AsyncLevelContext, DefaultResolutionContext } from "#resolution/context";
+import { AsyncLevelContext, DefaultConstraintContext, DefaultResolutionContext } from "#resolution/context";
 import type { BranchDepth, OwnedBranchStack } from "#resolution/path/resolution-path";
 import {
   branchDepthOf,
@@ -63,7 +63,6 @@ import { matchesSlot, selectAllBindings, selectBinding } from "#resolution/selec
 
 // Where a multi-tag resolve switches from scanning the token's list to walking the tag indexes.
 
-const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 
 const EMPTY_PARAM_LIST: ReadonlyArray<ParamMetadata> = [];
@@ -80,13 +79,7 @@ function countCompiledPlans(plans: Map<BindingIdentifier, (() => unknown) | null
   return count;
 }
 
-const ROOT_CONSTRAINT_CONTEXT = {
-  resolutionPath: EMPTY_STRING_LIST,
-  resolutionStack: EMPTY_FRAME_LIST,
-  parent: undefined,
-  ancestors: EMPTY_FRAME_LIST,
-  currentResolveOptions: undefined,
-};
+const ROOT_CONSTRAINT_CONTEXT = new DefaultConstraintContext(EMPTY_FRAME_LIST, undefined);
 
 /**
  * The resolution engine driving binding selection, instantiation, scoping, and lifecycle hooks.
@@ -1539,7 +1532,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (options === undefined && resolutionStack.length === 0) {
       return ROOT_CONSTRAINT_CONTEXT;
     }
-    return buildConstraintContext(resolutionStack, options);
+    return new DefaultConstraintContext(resolutionStack, options);
   }
 
   /** The predicate half of a match, for a lane whose index has already settled the slot. */
@@ -1790,26 +1783,6 @@ function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
     }
   }
   return false;
-}
-
-function buildConstraintContext(
-  resolutionStack: Array<ResolutionFrame>,
-  options: ResolveOptions | undefined,
-): ConstraintContext {
-  return {
-    // Derived per read, never cached: the stack may be live, and the names must report it as it stands.
-    get resolutionPath(): ReadonlyArray<string> {
-      const names = new Array<string>(resolutionStack.length);
-      for (let index = 0; index < resolutionStack.length; index += 1) {
-        names[index] = resolutionStack[index]!.tokenName;
-      }
-      return names;
-    },
-    resolutionStack,
-    parent: resolutionStack.at(-1),
-    ancestors: resolutionStack.length > 1 ? resolutionStack.slice(0, -1) : [],
-    currentResolveOptions: options,
-  };
 }
 
 /**
