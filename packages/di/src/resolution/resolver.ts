@@ -1,7 +1,7 @@
 import type { AmbientResolution } from "#ambient/active-container";
 import type { Container } from "#container/container";
 import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#core/binding";
-import { NO_INSTANCE } from "#core/binding";
+import { bindingSlotToString, NO_INSTANCE } from "#core/binding";
 import type { BindingRegistry } from "#core/registry";
 import { NO_TAG_KEYS, slotNameCriterionOf } from "#core/tag";
 import type { Token } from "#core/token";
@@ -351,12 +351,14 @@ export class DependencyResolver implements ResolverCallbacks {
 
     if (found === undefined) {
       // Thrown here rather than from a helper: the error captures this stack, and an error path is
-      // dominated by that capture. Bindings under the token mean the request matched none of them.
-      if (this.#registry.getAll(currentToken).length > 0) {
+      // dominated by that capture. Bindings under the token anywhere in the chain mean the request
+      // matched none of them, so a child reports the same miss its parent would.
+      const bound = this.#allBindingsFromChain(currentToken);
+      if (bound.length > 0) {
         throw new NoMatchingBindingError(
           tokenName(currentToken),
           options ?? {},
-          this.#registry.availableSlotStrings(currentToken),
+          bound.map((binding) => bindingSlotToString(binding.slot)),
         );
       }
       throw new TokenNotBoundError(tokenName(currentToken));
