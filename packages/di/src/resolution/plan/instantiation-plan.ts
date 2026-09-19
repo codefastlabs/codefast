@@ -14,6 +14,7 @@ import { AsyncResolutionError } from "#errors/errors";
 import type { DependencySlot } from "#injection/resolve-options";
 import { injectionSlotToResolveOptions } from "#injection/resolve-options";
 import type { ConstructorMetadata } from "#metadata/metadata-types";
+import { settleInOrder } from "#resolution/async-fan-out";
 import { enterSeededPath, leaveSeededPath } from "#resolution/path/resolution-path";
 import type { AsyncPlanNode, PlanNode } from "#resolution/plan/plan-codegen";
 import {
@@ -81,15 +82,30 @@ function allSynchronous(deps: ReadonlyArray<AsyncNodeThunk>): boolean {
 }
 
 /**
- * The promise-aware combinator: run every dep thunk, await them together, then apply.
+ * The promise-aware combinator: run every dep thunk, settle them together, then apply.
  *
  * @remarks A dep's sync throw becomes that slot's rejection so its siblings still start — the
- * interpreted path starts every sibling before the first rejection propagates, and so does this.
+ * interpreted path starts every sibling before any failure is reported, and so does this; a failure
+ * is the first in declaration order, as it is on every other lane.
  */
 function settleThenApply(
   deps: ReadonlyArray<AsyncNodeThunk>,
   apply: (values: Array<unknown>) => unknown,
 ): () => Promise<unknown> {
+  if (deps.length === 1) {
+    // One dependency has one outcome, so there is nothing to order and no fan-out to settle.
+    const only = deps[0]!.run;
+    const applyOne = (value: unknown): unknown => apply([value]);
+    return () => {
+      let pending: unknown;
+      try {
+        pending = only();
+      } catch (dependencyError) {
+        pending = Promise.reject(dependencyError);
+      }
+      return Promise.resolve(pending).then(applyOne);
+    };
+  }
   return () => {
     const pending = new Array<unknown>(deps.length);
     for (let index = 0; index < deps.length; index += 1) {
@@ -99,7 +115,7 @@ function settleThenApply(
         pending[index] = Promise.reject(dependencyError);
       }
     }
-    return Promise.all(pending).then(apply);
+    return settleInOrder(pending, apply);
   };
 }
 

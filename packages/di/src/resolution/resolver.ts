@@ -39,6 +39,7 @@ import type { LifecycleManager } from "#lifecycle/lifecycle-manager";
 import type { ScopeManager } from "#lifecycle/scope-manager";
 import { SCOPED_MISS } from "#lifecycle/scope-manager";
 import type { MetadataReader, ParamMetadata } from "#metadata/metadata-types";
+import { settleInOrder } from "#resolution/async-fan-out";
 import { ActivationNeedCache } from "#resolution/cache/activation-need";
 import type { CollectionEntry, DefaultLookupEntry } from "#resolution/cache/binding-lookup-cache";
 import { BindingLookupCache } from "#resolution/cache/binding-lookup-cache";
@@ -984,15 +985,15 @@ export class DependencyResolver implements ResolverCallbacks {
     if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
       return Promise.resolve(memo.values.slice() as Array<Value>);
     }
-    return Promise.all(
-      memo.candidates.map(
-        (candidate) =>
-          this.#resolveCandidateAsync(candidate, undefined, resolutionStack, UNOWNED_BRANCH) as Promise<Value>,
+    return settleInOrder(
+      memo.candidates.map((candidate) =>
+        this.#resolveCandidateAsync(candidate, undefined, resolutionStack, UNOWNED_BRANCH),
       ),
-    ).then((values) => {
-      this.#settleCollectionValues(memo);
-      return values;
-    });
+      (values) => {
+        this.#settleCollectionValues(memo);
+        return values as Array<Value>;
+      },
+    );
   }
 
   /**
@@ -1362,7 +1363,7 @@ export class DependencyResolver implements ResolverCallbacks {
     for (let index = 0; index < count; index += 1) {
       pending[index] = this.#resolveDepAsync(deps[index]!, resolutionStack, branchDepth);
     }
-    return Promise.all(pending);
+    return settleInOrder(pending, identity);
   }
 
   #resolveDepAsync(
@@ -1421,11 +1422,11 @@ export class DependencyResolver implements ResolverCallbacks {
     const path = ownPrefixOf(resolutionStack, branchDepth);
     const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
     const candidates = this.#candidateBindings(token, options, path);
-    const pending = new Array<Promise<Value>>(candidates.length);
+    const pending = new Array<Promise<unknown>>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
-      pending[index] = this.#resolveCandidateAsync(candidates[index]!, options, path, depth) as Promise<Value>;
+      pending[index] = this.#resolveCandidateAsync(candidates[index]!, options, path, depth);
     }
-    return Promise.all(pending);
+    return settleInOrder(pending, identity) as Promise<ReadonlyArray<Value>>;
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1933,6 +1934,11 @@ function asyncResolutionErrorFor(
 ): AsyncResolutionError {
   const sourceName = tokenName(binding.token);
   return new AsyncResolutionError(resolutionStack[0]?.tokenName ?? sourceName, sourceName);
+}
+
+/** The settled values of a fan-out, as they are. */
+function identity(values: Array<unknown>): Array<unknown> {
+  return values;
 }
 
 /** Only a factory is handed the resolution context; everything else gets its deps directly. */
