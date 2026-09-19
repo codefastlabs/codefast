@@ -28,7 +28,7 @@ function bindStrategies(container: Container, values: ReadonlyArray<number>, eva
 const strategyToken = token<number>("collections-strategy");
 
 describe("a root-level collection is memoized against the chain", () => {
-  it("evaluates each predicate once across repeated reads and hands out one shared list", () => {
+  it("evaluates each predicate once across repeated reads and hands each read its own list", () => {
     const container = Container.create();
     const evaluated: Array<number> = [];
     bindStrategies(container, [1, 2, 3], evaluated);
@@ -37,11 +37,15 @@ describe("a root-level collection is memoized against the chain", () => {
     const second = container.resolveAll(strategyToken);
 
     expect(first).toEqual([1, 2, 3]);
-    expect(second).toBe(first);
+    expect(second).toEqual(first);
+    expect(second).not.toBe(first);
     expect(evaluated).toEqual([1, 2, 3]);
 
-    // The list is the memo's own; the read-only return type is what keeps a caller from writing into it.
+    // A caller that writes into its list rewrites nothing the next caller reads.
+    (first as Array<number>).reverse();
+    (first as Array<number>).push(99);
     expect(container.resolveAll(strategyToken)).toEqual([1, 2, 3]);
+    expect(evaluated).toEqual([1, 2, 3]);
   });
 
   it("sees a binding added after the first read", () => {
@@ -137,11 +141,12 @@ describe("a root collection of cached singleton members", () => {
     const second = container.resolveAll(handlers);
     const third = container.resolveAll(handlers);
 
-    // The first read materialises the members and answers from a fresh array; the list settles behind it.
+    // The first read materialises the members; every read answers with the same instances in a list of its own.
     expect(constructed).toBe(3);
     expect(second).toEqual(first);
     expect(second[0]).toBe(first[0]);
-    expect(third).toBe(second);
+    expect(third).toEqual(second);
+    expect(third).not.toBe(second);
     expect(container.resolveAll(handlers)).toHaveLength(3);
   });
 
@@ -199,6 +204,7 @@ describe("a root collection of cached singleton members", () => {
 
     expect(second).toEqual(first);
     expect(second[1]).toBe(first[1]);
-    expect(third).toBe(second);
+    expect(third).toEqual(second);
+    expect(third).not.toBe(second);
   });
 });
