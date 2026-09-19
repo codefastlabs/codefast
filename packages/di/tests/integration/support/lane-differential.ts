@@ -20,6 +20,7 @@ import type { BindingScope, Constructor, ResolutionContext } from "#core/types";
 import type { InjectableDependency } from "#injection/descriptor";
 import { injectAll, optional } from "#injection/descriptor";
 import type { ConstructorMetadata, MetadataReader, ParamMetadata } from "#metadata/metadata-types";
+import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/plan-codegen";
 import { whenParentIs } from "#resolution/select/constraints";
 
 // ── Spec ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -448,7 +449,7 @@ async function attemptAsync(run: () => Promise<unknown>): Promise<unknown> {
  * How many times the tiered lane resolves: past the interpreted first resolve, through the closure
  * tier, and into the generated tier, with room to spare.
  */
-const TIERED_RESOLVE_COUNT = 40;
+const TIERED_RESOLVE_COUNT = PLAN_CODEGEN_THRESHOLD + 8;
 
 /** One host's resolve entry points, each reduced to a snapshot, keyed by lane name. */
 export type LaneSnapshots = ReadonlyMap<string, unknown>;

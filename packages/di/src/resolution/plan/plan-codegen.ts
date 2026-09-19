@@ -10,11 +10,12 @@ import { settleInOrder } from "#resolution/async-fan-out";
  * The number of runs a plan's closure makes before the plan is generated as its own function.
  *
  * @remarks Below it a plan stays a closure, which is all a cold container or a per-request child
- * ever runs; above it a plan pays one compile for call sites nothing else feeds.
+ * ever runs; above it a plan pays one generation and a cold start — new code, where the closure's
+ * is shared and hot — for call sites nothing else feeds, which repays only over runs in the thousands.
  *
  * @since 0.10.0
  */
-export const PLAN_CODEGEN_THRESHOLD = 32;
+export const PLAN_CODEGEN_THRESHOLD = 1024;
 
 /**
  * The shape of a compiled sync plan: what its closure does, stated as data the generator can read.
