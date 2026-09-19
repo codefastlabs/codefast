@@ -1131,12 +1131,14 @@ export class DependencyResolver implements ResolverCallbacks {
     branchDepth: BranchDepth = UNOWNED_BRANCH,
     precomputedCriterion?: BindingTag | null,
   ): Promise<Value> {
-    const { binding, owner } = this.#requireBinding(token, options, resolutionStack, precomputedCriterion);
+    const path = ownPrefixOf(resolutionStack, branchDepth);
+    const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
+    const { binding, owner } = this.#requireBinding(token, options, path, precomputedCriterion);
 
     if (binding.scope === "singleton" && owner !== this) {
-      return owner.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner) as Promise<Value>;
+      return owner.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
     }
-    return this.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner) as Promise<Value>;
+    return this.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
   }
 
   async #resolveBindingAsync(
@@ -1385,10 +1387,12 @@ export class DependencyResolver implements ResolverCallbacks {
     branchDepth: BranchDepth = UNOWNED_BRANCH,
     precomputedCriterion?: BindingTag | null,
   ): Promise<Value | undefined> {
+    const path = ownPrefixOf(resolutionStack, branchDepth);
+    const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
     const entry = this.#findBinding(
       token,
       options,
-      resolutionStack,
+      path,
       precomputedCriterion === undefined ? singleCriterionOnlyOf(options) : (precomputedCriterion ?? undefined),
     );
     if (entry === undefined) {
@@ -1397,12 +1401,12 @@ export class DependencyResolver implements ResolverCallbacks {
     // Same single-evaluation contract as the sync lane: resolve what the probe found.
     const { binding, owner } = entry;
     if (binding.kind === "alias") {
-      return this.resolveAsync(token, options, resolutionStack, branchDepth);
+      return this.resolveAsync(token, options, path, depth);
     }
     if (binding.scope === "singleton" && owner !== this) {
-      return owner.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner) as Promise<Value>;
+      return owner.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
     }
-    return this.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner) as Promise<Value>;
+    return this.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
   }
 
   async resolveAllAsync<Value>(
@@ -1411,15 +1415,12 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
   ): Promise<ReadonlyArray<Value>> {
-    const candidates = this.#candidateBindings(token, options, resolutionStack);
+    const path = ownPrefixOf(resolutionStack, branchDepth);
+    const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
+    const candidates = this.#candidateBindings(token, options, path);
     const pending = new Array<Promise<Value>>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
-      pending[index] = this.#resolveCandidateAsync(
-        candidates[index]!,
-        options,
-        resolutionStack,
-        branchDepth,
-      ) as Promise<Value>;
+      pending[index] = this.#resolveCandidateAsync(candidates[index]!, options, path, depth) as Promise<Value>;
     }
     return Promise.all(pending);
   }
@@ -1933,6 +1934,21 @@ function buildConstraintContext(
     ancestors: resolutionStack.length > 1 ? resolutionStack.slice(0, -1) : [],
     currentResolveOptions: options,
   };
+}
+
+/**
+ * The frames a level may read as its own path: the array itself while nothing has grown it past the
+ * level's depth, else a copy of the level's prefix.
+ *
+ * @remarks Siblings start concurrently on one branch and the first appends in place, so a later
+ * sibling that read the whole array would hand a `when()` predicate the first sibling's frame as its
+ * parent. The copy is the one the branch lane would take for that sibling anyway, and it owns itself.
+ */
+function ownPrefixOf(resolutionStack: Array<ResolutionFrame>, branchDepth: BranchDepth): Array<ResolutionFrame> {
+  if (branchDepth === UNOWNED_BRANCH || resolutionStack.length === branchDepth) {
+    return resolutionStack;
+  }
+  return resolutionStack.slice(0, branchDepth);
 }
 
 /** The async-resolution failure for a binding reached on a sync path, naming what to await instead. */
