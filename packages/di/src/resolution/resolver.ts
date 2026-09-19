@@ -54,8 +54,10 @@ import type { BranchDepth, OwnedBranchStack } from "#resolution/path/resolution-
 import {
   branchDepthOf,
   cycleNamesOf,
-  enterResolutionPath,
+  enterSyncPath,
   extendResolutionBranch,
+  leaveSyncPath,
+  linkFrameBinding,
   ROOT_BRANCH,
   UNOWNED_BRANCH,
 } from "#resolution/path/resolution-path";
@@ -552,13 +554,11 @@ export class DependencyResolver implements ResolverCallbacks {
       // with the root stack held mints its own path, exactly as the interpreted lane would.
       constructWithAccessors: (binding, target, deps) => {
         const stack = this.rootStack.length === 0 ? this.rootStack : [];
-        const frame = this.#getResolutionFrame(binding);
-        const resolutionSet = enterResolutionPath(stack, frame);
+        enterSyncPath(stack, binding, this.#getResolutionFrame(binding));
         try {
           return this.#classes.instantiate(target, deps, this.#ambientResolutionFor(stack));
         } finally {
-          stack.pop();
-          resolutionSet?.delete(frame.bindingId);
+          leaveSyncPath(stack, binding);
         }
       },
       getConstructorMetadata: (target) => this.#classes.constructorMetadata(target),
@@ -731,12 +731,13 @@ export class DependencyResolver implements ResolverCallbacks {
 
     const frame = this.#getResolutionFrame(binding);
     const tokenDisplayName = frame.tokenName;
-    const resolutionSet = enterResolutionPath(resolutionStack, frame);
+    // The level holds its binding's flag for its whole duration, so a factory below runs bare.
+    enterSyncPath(resolutionStack, binding, frame);
     try {
       const needsActivation = owner.#activationNeed().needsActivation(binding);
       if (!needsActivation && scope === "transient" && binding.kind === "dynamic") {
         const resolutionCtx = this.#acquireSyncResolutionContext(resolutionStack, options);
-        const dynamicResult = runFactoryPrefix(binding, resolutionCtx, resolutionStack);
+        const dynamicResult = binding.factory(resolutionCtx);
         if (dynamicResult instanceof Promise) {
           throw new AsyncResolutionError(resolutionStack[0]?.tokenName ?? tokenDisplayName, tokenDisplayName);
         }
@@ -768,8 +769,7 @@ export class DependencyResolver implements ResolverCallbacks {
 
       return activated;
     } finally {
-      resolutionStack.pop();
-      resolutionSet?.delete(frame.bindingId);
+      leaveSyncPath(resolutionStack, binding);
     }
   }
 
@@ -812,7 +812,7 @@ export class DependencyResolver implements ResolverCallbacks {
         if (ctx === undefined) {
           throw new InternalError("dynamic binding requires resolution context");
         }
-        const factoryResult = runFactoryPrefix(binding, ctx, resolutionStack);
+        const factoryResult = binding.factory(ctx);
         if (factoryResult instanceof Promise) {
           throw asyncResolutionErrorFor(binding, resolutionStack);
         }
@@ -1833,6 +1833,7 @@ export class DependencyResolver implements ResolverCallbacks {
       binding.kind,
       binding.slot,
     );
+    linkFrameBinding(frame, binding);
     binding.frame = frame;
     return frame;
   }
@@ -1927,12 +1928,13 @@ function buildConstraintContext(
 }
 
 /**
- * Runs a factory with its binding flagged in flight for the factory's synchronous prefix.
+ * Runs an async lane's factory with its binding flagged in flight for the factory's synchronous prefix.
  *
  * @remarks The flag is exact path membership only while synchronous code runs, so it is cleared when
  * the factory returns — its promise included — never when that promise settles: two branches that
  * await one binding are a diamond, not a cycle. A factory that resolves its own token from that
- * prefix is caught before it runs again, on the branch lane as on the cascade and sync lanes.
+ * prefix is caught before it runs again, on the branch lane as on the cascade and sync lanes, where
+ * the level's own flag already covers the whole call.
  */
 function runFactoryPrefix(
   binding: DynamicBinding<unknown> | DynamicAsyncBinding<unknown>,
