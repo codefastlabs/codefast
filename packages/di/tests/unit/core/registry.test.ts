@@ -3,13 +3,18 @@
  * dropping every binding for a token in one pass, dropping a single binding by id, and the
  * slot summary a failed lookup reports back.
  */
+import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 
+import type { BindingRegistration } from "#container/binding-builders";
+import { BindingChain } from "#container/binding-builders";
 import { Container } from "#container/container";
+import { BindingRegistry } from "#core/registry";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import type { BindingIdentifier } from "#core/types";
 import { NoMatchingBindingError, RebindUnboundTokenError } from "#errors/errors";
+import { ScopeManager } from "#lifecycle/scope-manager";
 
 const ENV_TAG = tag("env");
 
@@ -352,5 +357,101 @@ describe("last-wins displacement inside a record is answered by slot index", () 
 
     expect(container.resolve(serviceToken, { tags: [alpha.of("1"), beta.of("2"), gamma.of("3")] })).toBe("second");
     expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+  });
+});
+
+describe("the version is a strictly increasing count of mutations", () => {
+  // Every version-stamped memo in the engine compares a sum of registry versions across a chain for
+  // equality, which is sound only while each version can never take a value it already took.
+  it("rises on every mutation the registry accepts, in any order", () => {
+    const tokens = [token<string>("mono-a"), token<string>("mono-b")];
+    const criterion = ENV_TAG.of("mono");
+
+    expect(() => {
+      fc.assert(
+        fc.property(fc.array(fc.tuple(fc.nat(8), fc.nat(64)), { maxLength: 40 }), (steps) => {
+          const registry = new BindingRegistry();
+          const scope = new ScopeManager();
+          const registration: BindingRegistration = { registry, scope, moduleBindingIds: undefined };
+          const chains: Array<BindingChain<string>> = [];
+          let previous = registry.version;
+
+          const expectRose = (what: string): void => {
+            if (registry.version <= previous) {
+              throw new Error(`${what}: version ${String(registry.version)} did not rise past ${String(previous)}`);
+            }
+            previous = registry.version;
+          };
+          // A refinement on a chain the registry no longer holds is inert by contract, so it moves nothing.
+          const liveChain = (pick: number): BindingChain<string> | undefined => {
+            const chain = chains[pick % Math.max(chains.length, 1)];
+            return chain !== undefined && registry.getById(chain.identifier) === chain ? chain : undefined;
+          };
+
+          for (const [operation, pick] of steps) {
+            switch (operation) {
+              case 0: {
+                const chain = new BindingChain<string>(tokens[pick % tokens.length]!, registration);
+                chain.toConstantValue(`v${String(pick)}`);
+                chains.push(chain);
+                expectRose("bind");
+                break;
+              }
+              case 1: {
+                const chain = liveChain(pick);
+                if (chain !== undefined && !chain.isMany) {
+                  chain.whenTagged(criterion);
+                  expectRose("whenTagged");
+                }
+                break;
+              }
+              case 2: {
+                const chain = liveChain(pick);
+                if (chain !== undefined) {
+                  chain.when(() => true);
+                  expectRose("when");
+                }
+                break;
+              }
+              case 3: {
+                const chain = liveChain(pick);
+                if (chain !== undefined && chain.slot.tags.length === 0 && !chain.isMany) {
+                  chain.many();
+                  expectRose("many");
+                }
+                break;
+              }
+              case 4: {
+                const chain = liveChain(pick);
+                if (chain !== undefined) {
+                  chain.onActivation((_ctx, instance) => instance);
+                  expectRose("onActivation");
+                }
+                break;
+              }
+              case 5:
+                registry.removeByToken(tokens[pick % tokens.length]!);
+                expectRose("removeByToken");
+                break;
+              case 6: {
+                const chain = chains[pick % Math.max(chains.length, 1)];
+                if (chain !== undefined && registry.removeById(chain.identifier) !== undefined) {
+                  expectRose("removeById");
+                }
+                break;
+              }
+              case 7:
+                registry.clear();
+                expectRose("clear");
+                break;
+              default:
+                registry.touch();
+                expectRose("touch");
+            }
+          }
+        }),
+        { numRuns: 200 },
+      );
+    }).not.toThrow();
   });
 });
