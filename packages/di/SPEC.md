@@ -2657,7 +2657,7 @@ packages/di/
 │   │   │                      `#` privates cannot span files and both pipelines share the same
 │   │   │                      private state at every hop
 │   │   ├── context.ts         DefaultResolutionContext (pooled), AsyncLevelContext,
-│   │   │                      AsyncCascadeContext, ResolverCallbacks
+│   │   │                      ResolverCallbacks
 │   │   ├── cache/
 │   │   │   ├── binding-lookup-cache.ts  Memo of option-free lookups per chain, aliases already
 │   │   │   │                  folded; stamped with the summed version of the whole chain registry

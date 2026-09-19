@@ -1,13 +1,16 @@
 /**
  * Async resolution semantics: dynamic-async chains, inflight singleton dedupe,
  * sync/async mixing errors, the `toResolved*` factory lane, the ResolutionContext
- * surface inside factories, and the deep-chain paths past RESOLUTION_SET_THRESHOLD (32).
+ * surface inside factories, and the deep-chain paths.
  */
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
+import { injectable } from "#decorators/injectable";
 import { AsyncResolutionError, CircularDependencyError } from "#errors/errors";
+import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/plan-codegen";
+import { whenParentIs } from "#resolution/select/constraints";
 
 describe("async chains", () => {
   it("resolves a dynamic-async chain in order", async () => {
@@ -177,9 +180,9 @@ describe("concurrent branches of one async chain", () => {
     await expect(container.resolveAsync(chainTokens[DEPTH - 1]!)).resolves.toBe(DEPTH - 1);
   });
 
-  it("reports a cycle whose every edge is requested after an await", async () => {
-    // The cascade lane cannot see these edges — a continuation's ancestors are on no call stack — so
-    // the request escapes to the branch lane, which accumulates its own path and catches the repeat.
+  it("reports a cycle whose every edge is requested after an await, from the true root", async () => {
+    // Every level owns its branch of the path for as long as its factory holds the context, so a
+    // continuation's request still carries the root it was started under.
     const firstToken = token<number>("post-first");
     const secondToken = token<number>("post-second");
     const container = Container.create();
@@ -198,9 +201,7 @@ describe("concurrent branches of one async chain", () => {
       })
       .transient();
 
-    // Named from the first escaped level, not the true root: the ancestors before the escape were
-    // never written down — that is the cascade lane's price.
-    await expect(container.resolveAsync(firstToken)).rejects.toThrow(/post-second → post-first → post-second/);
+    await expect(container.resolveAsync(firstToken)).rejects.toThrow(/post-first → post-second → post-first/);
   });
 
   it("leaves nothing behind between chains", async () => {
@@ -468,5 +469,166 @@ describe("deep chains past the resolution-set threshold", () => {
     }
 
     await expect(container.resolveAsync(tokens[DEPTH - 1]!)).resolves.toBe(DEPTH - 1);
+  });
+});
+
+describe("sibling failures are reported in declaration order, as the sync lanes report them", () => {
+  it("names the first declared failing dependency on the interpreted, closure and generated tiers", async () => {
+    const slowToken = token<string>("fan-out-slow");
+    const missingToken = token<string>("fan-out-missing");
+
+    @injectable([slowToken, missingToken])
+    class Root {
+      constructor(
+        readonly slow: string,
+        readonly missing: string,
+      ) {}
+    }
+
+    const container = Container.create();
+    container
+      .bind(slowToken)
+      .toDynamicAsync(async () => {
+        // Settles after the unbound sibling has already rejected, so settlement order would name the sibling.
+        await Promise.resolve();
+        await Promise.resolve();
+        throw new Error("slow boom");
+      })
+      .transient();
+    container.bind(Root).toSelf().transient();
+
+    for (let index = 0; index < PLAN_CODEGEN_THRESHOLD + 4; index += 1) {
+      await expect(container.resolveAsync(Root)).rejects.toThrow("slow boom");
+    }
+    await expect(container.resolveAsync(Root, {})).rejects.toThrow("slow boom");
+  });
+
+  it("names the first declared failing member of a collection", async () => {
+    const members = token<string>("fan-out-members");
+    const container = Container.create();
+    container
+      .bind(members)
+      .toDynamicAsync(async () => {
+        await Promise.resolve();
+        throw new Error("first boom");
+      })
+      .many()
+      .transient();
+    container
+      .bind(members)
+      .toDynamic(() => {
+        throw new Error("second boom");
+      })
+      .many()
+      .transient();
+
+    await expect(container.resolveAllAsync(members)).rejects.toThrow("first boom");
+    await expect(container.resolveAllAsync(members, {})).rejects.toThrow("first boom");
+  });
+
+  it("still starts every sibling before reporting", async () => {
+    const failingToken = token<string>("fan-out-failing");
+    const laterToken = token<string>("fan-out-later");
+    let laterStarted = false;
+
+    @injectable([failingToken, laterToken])
+    class Root {
+      constructor(
+        readonly failing: string,
+        readonly later: string,
+      ) {}
+    }
+
+    const container = Container.create();
+    container
+      .bind(failingToken)
+      .toDynamic(() => {
+        throw new Error("failing boom");
+      })
+      .transient();
+    container
+      .bind(laterToken)
+      .toDynamicAsync(async () => {
+        laterStarted = true;
+        return "later";
+      })
+      .transient();
+    container.bind(Root).toSelf().transient();
+
+    await expect(container.resolveAsync(Root, {})).rejects.toThrow("failing boom");
+    expect(laterStarted).toBe(true);
+  });
+});
+
+describe("a factory's context after an await", () => {
+  it("still selects by the level's own parent on the options-less root lane", async () => {
+    const selectedToken = token<string>("post-await-selected");
+    const rootToken = token<string>("post-await-root");
+    const container = Container.create();
+    container.bind(selectedToken).toConstantValue("top");
+    container.bind(selectedToken).toConstantValue("under-root").when(whenParentIs(rootToken));
+    container
+      .bind(rootToken)
+      .toDynamicAsync(async (ctx) => {
+        await Promise.resolve();
+        return ctx.resolve(selectedToken);
+      })
+      .transient();
+
+    await expect(container.resolveAsync(rootToken, {})).resolves.toBe("under-root");
+    await expect(container.resolveAsync(rootToken)).resolves.toBe("under-root");
+  });
+
+  it("never reads another chain's frames as its own ancestors", async () => {
+    const selectedToken = token<string>("post-await-selected-2");
+    const rootToken = token<string>("post-await-root-2");
+    const otherToken = token<string>("post-await-other-2");
+    const container = Container.create();
+    container.bind(selectedToken).toConstantValue("top");
+    container.bind(selectedToken).toConstantValue("under-other").when(whenParentIs(otherToken));
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    container
+      .bind(rootToken)
+      .toDynamicAsync(async (ctx) => {
+        await gate;
+        return ctx.resolve(selectedToken);
+      })
+      .transient();
+    container
+      .bind(otherToken)
+      .toDynamicAsync((ctx) => {
+        release();
+        return Promise.resolve(ctx.resolve(selectedToken));
+      })
+      .transient();
+
+    const rootPromise = container.resolveAsync(rootToken);
+    await expect(container.resolveAsync(otherToken)).resolves.toBe("under-other");
+    await expect(rootPromise).resolves.toBe("top");
+  });
+
+  it("reports the level's own path after an await", async () => {
+    const leafToken = token<ReadonlyArray<string>>("post-await-path-leaf");
+    const rootToken = token<ReadonlyArray<string>>("post-await-path-root");
+    const container = Container.create();
+    container
+      .bind(leafToken)
+      .toDynamicAsync(async (ctx) => {
+        await Promise.resolve();
+        return ctx.graph.resolutionPath;
+      })
+      .transient();
+    container
+      .bind(rootToken)
+      .toDynamicAsync(async (ctx) => {
+        await Promise.resolve();
+        return ctx.resolveAsync(leafToken);
+      })
+      .transient();
+
+    await expect(container.resolveAsync(rootToken)).resolves.toEqual(["post-await-path-root", "post-await-path-leaf"]);
   });
 });

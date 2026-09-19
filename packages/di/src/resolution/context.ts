@@ -1,3 +1,4 @@
+import type { Binding } from "#core/binding";
 /** The `ResolutionContext` a factory is handed, and the callbacks the resolver answers it with. */
 import type { Token } from "#core/token";
 import type {
@@ -11,7 +12,7 @@ import type {
   ResolveOptions,
 } from "#core/types";
 import type { BranchDepth, OwnedBranchStack } from "#resolution/path/resolution-path";
-import { UNOWNED_BRANCH } from "#resolution/path/resolution-path";
+import { bindingsOf, enterSeededPath, leaveSeededPath, UNOWNED_BRANCH } from "#resolution/path/resolution-path";
 
 // ── ResolutionContext implementation ─────────────────────────────────────────────────────────────────────────────────
 
@@ -32,8 +33,6 @@ export interface ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth,
   ): Promise<Value>;
-  /** Not one of the eight `Value`-naming entry points: its caller is, and casts once. */
-  resolveAsyncFromCascade(token: Token<unknown> | Constructor): Promise<unknown>;
   resolveAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
@@ -181,6 +180,7 @@ export class AsyncLevelContext implements ResolutionContext {
 
   #graph: ConstraintContext | undefined;
   #exactStackCache: Array<ResolutionFrame> | undefined;
+  #exactBindingsCache: Array<Binding> | undefined;
 
   get graph(): ConstraintContext {
     if (this.#graph === undefined) {
@@ -195,11 +195,26 @@ export class AsyncLevelContext implements ResolutionContext {
     return (this.#exactStackCache ??= this.#resolutionStack.slice(0, this.#branchDepth));
   }
 
+  // The bindings a synchronous call from this level marks in flight, read off the frames once.
+  #exactBindings(): Array<Binding> {
+    return (this.#exactBindingsCache ??= bindingsOf(this.#exactStack()));
+  }
+
+  // A synchronous call from an async level runs over a path no synchronous frame pushed, so the
+  // level's ancestors are marked in flight for its duration — and the level itself, whose factory is
+  // the caller: a factory resolving its own token synchronously has closed a cycle.
   resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
-    if (options === undefined) {
-      return this.#resolver.resolveFromContext(token, this.#exactStack());
+    const path = this.#exactStack();
+    const marked = this.#exactBindings();
+    const alreadyInFlight = enterSeededPath(marked);
+    try {
+      if (options === undefined) {
+        return this.#resolver.resolveFromContext(token, path);
+      }
+      return this.#resolver.resolve(token, options, path);
+    } finally {
+      leaveSeededPath(marked, alreadyInFlight);
     }
-    return this.#resolver.resolve(token, options, this.#exactStack());
   }
 
   resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
@@ -211,7 +226,14 @@ export class AsyncLevelContext implements ResolutionContext {
   }
 
   resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
-    return this.#resolver.resolveOptional(token, options, this.#exactStack());
+    const path = this.#exactStack();
+    const marked = this.#exactBindings();
+    const alreadyInFlight = enterSeededPath(marked);
+    try {
+      return this.#resolver.resolveOptional(token, options, path);
+    } finally {
+      leaveSeededPath(marked, alreadyInFlight);
+    }
   }
 
   resolveOptionalAsync<Value>(
@@ -222,7 +244,14 @@ export class AsyncLevelContext implements ResolutionContext {
   }
 
   resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value> {
-    return this.#resolver.resolveAll(token, options, this.#exactStack());
+    const path = this.#exactStack();
+    const marked = this.#exactBindings();
+    const alreadyInFlight = enterSeededPath(marked);
+    try {
+      return this.#resolver.resolveAll(token, options, path);
+    } finally {
+      leaveSeededPath(marked, alreadyInFlight);
+    }
   }
 
   resolveAllAsync<Value>(
@@ -230,66 +259,6 @@ export class AsyncLevelContext implements ResolutionContext {
     options?: ResolveOptions,
   ): Promise<ReadonlyArray<Value>> {
     return this.#resolver.resolveAllAsync(token, options, this.#exactStack());
-  }
-}
-
-/**
- * The one context every level of an open synchronous factory cascade shares.
- *
- * @remarks It carries no per-level state at all: while the cascade is open, the resolver's stack
- * *is* this level's ancestor chain, so nothing has to be allocated per level.
- *
- * @since 0.5.0-canary.9
- */
-export class AsyncCascadeContext implements ResolutionContext {
-  readonly #resolver: ResolverCallbacks;
-  readonly #cascadeStack: Array<ResolutionFrame>;
-
-  constructor(resolver: ResolverCallbacks, cascadeStack: Array<ResolutionFrame>) {
-    this.#resolver = resolver;
-    this.#cascadeStack = cascadeStack;
-  }
-
-  get graph(): ConstraintContext {
-    // Not memoized: this context outlives every level, so a cached graph would describe whichever
-    // level asked first. The cascade stack is only this level's ancestors while it is open.
-    return new DefaultConstraintContext(this.#cascadeStack, undefined);
-  }
-
-  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
-    if (options === undefined) {
-      return this.#resolver.resolveFromContext(token, this.#cascadeStack);
-    }
-    return this.#resolver.resolve(token, options, this.#cascadeStack);
-  }
-
-  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
-    if (options === undefined) {
-      return this.#resolver.resolveAsyncFromCascade(token) as Promise<Value>;
-    }
-    return this.#resolver.resolveAsync(token, options, [...this.#cascadeStack]);
-  }
-
-  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
-    return this.#resolver.resolveOptional(token, options, this.#cascadeStack);
-  }
-
-  resolveOptionalAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
-  ): Promise<Value | undefined> {
-    return this.#resolver.resolveOptionalAsync(token, options, [...this.#cascadeStack]);
-  }
-
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value> {
-    return this.#resolver.resolveAll(token, options, this.#cascadeStack);
-  }
-
-  resolveAllAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
-  ): Promise<ReadonlyArray<Value>> {
-    return this.#resolver.resolveAllAsync(token, options, [...this.#cascadeStack]);
   }
 }
 

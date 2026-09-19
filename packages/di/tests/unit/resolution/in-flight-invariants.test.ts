@@ -1,9 +1,9 @@
 /**
- * Cycle detection keeps mutable state that outlives a single level: `binding.inFlight`, read by both
- * the sync transient-dynamic lane and the async cascade, plus the cascade's own path and stack. All
- * of it is correctness-critical on the *failure* paths — a flag left set makes every later resolve
- * report a cycle that is not there, and a cascade that fails to pop hands one branch another's
- * ancestors.
+ * Cycle detection keeps mutable state that outlives a single level: `binding.inFlight`, set by every
+ * synchronous lane and by an async factory's synchronous prefix, plus the branch each async level
+ * owns. All of it is correctness-critical on the *failure* paths — a flag left set makes every later
+ * resolve report a cycle that is not there, and a level that leaks its frames hands another branch
+ * its ancestors.
  */
 import { describe, expect, it } from "vitest";
 
@@ -149,7 +149,7 @@ describe("binding.inFlight is released on every exit path", () => {
   });
 });
 
-describe("the async cascade is released on every exit path", () => {
+describe("an async factory's prefix flag is released on every exit path", () => {
   it("survives a factory that throws synchronously", async () => {
     const serviceToken = token<string>("chain-sync-throw");
     let shouldThrow = true;
@@ -233,7 +233,7 @@ describe("the async cascade is released on every exit path", () => {
   });
 });
 
-describe("a nested cascade unwinds to exactly where it started", () => {
+describe("a nested async level leaves its branch exactly as it found it", () => {
   /** Depth-3 chain whose middle level can be made to fail three different ways. */
   function buildThreeLevelChain(middle: (ctx: ResolutionContext) => Promise<string>): {
     container: Container;
@@ -295,7 +295,7 @@ describe("a nested cascade unwinds to exactly where it started", () => {
     expect(await container.resolveAsync(outer)).toBe("outer:mid");
   });
 
-  it("leaves the cascade empty between chains, so a later diamond is not a cycle", async () => {
+  it("leaves nothing between chains, so a later diamond is not a cycle", async () => {
     const shared = token<string>("cascade-unwind-shared");
     const left = token<string>("cascade-unwind-left");
     const right = token<string>("cascade-unwind-right");
@@ -318,16 +318,14 @@ describe("a nested cascade unwinds to exactly where it started", () => {
       .toDynamicAsync(async (ctx) => (await Promise.all([ctx.resolveAsync(left), ctx.resolveAsync(right)])).join("+"))
       .transient();
 
-    // A cascade that failed to pop would leave `shared` on the path for the second sibling.
+    // A level that leaked its frame would leave `shared` on the path for the second sibling.
     for (let attempt = 0; attempt < 3; attempt += 1) {
       expect(await container.resolveAsync(root)).toBe("s+s");
     }
   });
 
-  it("reports only this chain's ancestors, so a missed pop fails here instead of recursing", async () => {
-    // The cascade's arrays are shared across every chain a resolver runs. If a level fails to pop
-    // them, the next chain sees the previous chain's names — and the only *other* symptom is that a
-    // post-await request stops escaping, which recurses until the worker dies rather than failing.
+  it("reports only this chain's ancestors, never an earlier chain's", async () => {
+    // A chain that reused another's branch would read the previous chain's names as its own.
     const leaf = token<string>("cascade-path-leaf");
     const root = token<string>("cascade-path-root");
     const seen: Array<ReadonlyArray<string>> = [];
@@ -400,5 +398,49 @@ describe("the reused root frames are only lent to one resolve at a time", () => 
     // Depth 1, not 2: the failed resolve popped its frame on the way out.
     expect(container.resolve(workingToken)).toBe("ok:1");
     expect(container.resolve(workingToken)).toBe("ok:1");
+  });
+});
+
+describe("a factory that resolves its own token from its synchronous prefix runs once on every lane", () => {
+  function bindSelfResolving(): {
+    container: Container;
+    selfToken: ReturnType<typeof token<string>>;
+    runs: () => number;
+  } {
+    const selfToken = token<string>("in-flight-self");
+    let runs = 0;
+    const container = Container.create();
+    container
+      .bind(selfToken)
+      .toDynamic((ctx) => {
+        runs += 1;
+        return ctx.resolve(selfToken);
+      })
+      .transient();
+    return { container, selfToken, runs: () => runs };
+  }
+
+  it("on the options-less sync lane", () => {
+    const { container, selfToken, runs } = bindSelfResolving();
+    expect(() => container.resolve(selfToken)).toThrow("in-flight-self → in-flight-self");
+    expect(runs()).toBe(1);
+  });
+
+  it("on the sync lane a request with options takes", () => {
+    const { container, selfToken, runs } = bindSelfResolving();
+    expect(() => container.resolve(selfToken, {})).toThrow("in-flight-self → in-flight-self");
+    expect(runs()).toBe(1);
+  });
+
+  it("on the async branch lane", async () => {
+    const { container, selfToken, runs } = bindSelfResolving();
+    await expect(container.resolveAsync(selfToken, {})).rejects.toThrow("in-flight-self → in-flight-self");
+    expect(runs()).toBe(1);
+  });
+
+  it("on the async root lane", async () => {
+    const { container, selfToken, runs } = bindSelfResolving();
+    await expect(container.resolveAsync(selfToken)).rejects.toThrow("in-flight-self → in-flight-self");
+    expect(runs()).toBe(1);
   });
 });

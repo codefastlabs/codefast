@@ -67,6 +67,7 @@ catalog:
   date-fns: ^4.4.0
   date-fns-jalali: 4.4.0-0
   ditox: ^3.3.0
+  fast-check: ^4.10.1
   embla-carousel-autoplay: ^8.6.0
   embla-carousel-react: ^8.6.0
   github-slugger: ^2.0.0

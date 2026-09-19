@@ -352,11 +352,11 @@ nested-constructor closure. The static subgraph is cycle-checked **at compile ti
 per-resolve bookkeeping at all.
 
 **What an escape is.** Some dependencies the compiler cannot see through: a factory, a scoped binding, an activation
-hook, a class past the depth limit, a multi/optional/named param. Such a dependency does **not** sink the plan. It
-compiles to an _escape_: a re-entry into the runtime resolver, seeded with exactly the ancestors the interpreted path
-would have pushed at that point, and dispatched through exactly the resolve the interpreter would have called. Cycle
-detection, constraint contexts and error paths are therefore identical to never having compiled. Without escapes, one
-`toDynamic` dependency anywhere would drop the whole graph to the interpreted path.
+hook, a multi/optional/named param. Such a dependency does **not** sink the plan. It compiles to an _escape_: a re-entry
+into the runtime resolver, seeded with exactly the ancestors the interpreted path would have pushed at that point, and
+dispatched through exactly the resolve the interpreter would have called. Cycle detection, constraint contexts and error
+paths are therefore identical to never having compiled. Without escapes, one `toDynamic` dependency anywhere would drop
+the whole graph to the interpreted path.
 
 **A plan that keeps running is generated as a function of its own.** A plan starts as a closure over the compiler's
 function literals, and V8 keeps type feedback per literal, not per closure: the dependency calls inside one root's
@@ -404,19 +404,12 @@ then on. Frozen, the attempt throws where it is made.
 
 #### The frame copy in `#compileEscapeThunk` is load-bearing
 
-An escape hands the runtime a _copy_ of the frame array (`[...frames]`), never the array itself. Two mechanisms defeat
-any scheme that shares or lends that array:
-
-- The membership `Set` that `enterResolutionPath` attaches past `RESOLUTION_SET_THRESHOLD` (see
-  [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)) lives on the **array object**. A lent array would carry
-  it into a lane that does not maintain it; a spread does not copy symbol-keyed properties, so `[...frames]` hands the
-  escape an array with no set at all.
-- A constraint predicate runs on a live seed **before any push**, at exactly the length a depth guard reads as idle, and
-  can re-enter the same cached plan. One indexed write into a lent seed would then survive forever, whereas the
-  interpreted lane's `rootStack` drains to zero after each top-level resolve and self-heals.
-
-A poisoned frame changes which binding is selected — a wrong value, not just a wrong diagnostic. That is why this one is
-firm rather than a matter of taste; anything faster here has to keep both mechanisms from firing.
+An escape hands the runtime a _copy_ of the frame array (`[...frames]`), never the array itself — or the one owned copy
+it lends and reclaims when a call hands it back at the seed's length. A constraint predicate runs on a live seed
+**before any push**, at exactly the length a depth guard reads as idle, and can re-enter the same cached plan. One
+indexed write into a lent seed would then survive forever, whereas the interpreted lane's `rootStack` drains to zero
+after each top-level resolve and self-heals. A poisoned frame changes which binding is selected — a wrong value, not
+just a wrong diagnostic. That is why this one is firm rather than a matter of taste.
 
 **A criterion the registry can settle is baked into the plan.** `whenNamed`/`whenTagged` write criteria into the slot
 rather than a predicate, so a single-criterion request is usually a plain index hit. `lookupPathIndependentEntry` bakes
@@ -587,120 +580,114 @@ a display name or a candidate array, which is what a name-plus-tag request and a
 to pay on every resolve. A second match, or a predicate on a match, hands the same list to full selection, which weighs
 specificity and reports ambiguity, so the two lanes answer identically.
 
-### Cycle detection: two mechanisms, on purpose
+### Cycle detection: one flag for synchronous paths, one scan for async branches
 
 A **resolution path** is the chain of ancestors a level is being resolved under — "A is resolving B, which is resolving
-C". A cycle is a binding that appears on its own path. How that path is represented depends on whether the code
-producing it runs on one synchronous call stack.
+C". A cycle is a binding that appears on its own path. How membership in that path is checked depends on one structural
+fact: whether the code producing the path runs on one synchronous call stack.
 
-| Lane                   | Mechanism                                                            | Why not the other one                                                                                               |
-| ---------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Sync transient-dynamic | `binding.inFlight`, set on factory-enter and cleared on exit         | Sync resolution runs on one call stack, so the flag _is_ exact path membership: `O(1)`, no hashing, no side table   |
-| Everything else sync   | `enterResolutionPath` — push and pop one shared path/stack pair      | One call stack, so the array _is_ a stack; a per-binding flag cannot name the path in the error                     |
-| Async, in a cascade    | `binding.inFlight`, cleared when the factory returns its **promise** | The request that closes a cycle comes from a factory's synchronous prefix, and synchronous code does not interleave |
-| Async, out of one      | `extendResolutionBranch` — append-only path, read by branch depth    | A continuation's ancestors are on no call stack, so they have to be carried explicitly                              |
+| Lane                      | Mechanism                                                            | Why                                                                                                               |
+| ------------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Every synchronous lane    | `binding.inFlight`, set on entering the level and cleared on leaving | Synchronous code does not interleave, so the flag _is_ exact path membership — `O(1)` at any depth, no side table |
+| Async, a factory's prefix | `binding.inFlight`, held for the factory's synchronous prefix        | The request that closes a cycle comes from that prefix, and synchronous code does not interleave                  |
+| Async, on a branch        | `extendResolutionBranch` — append-only path, scanned by branch depth | A continuation's ancestors are on no call stack and several branches interleave, so a flag cannot name the branch |
 
-**Both variants of the first lane take the flag**, with and without activation hooks, because the argument for it does
-not mention hooks: a hook runs on the same call stack the factory did. A hook that re-resolves its own token still
-reports `CircularDependencyError` rather than recursing, and the flag is still released on every exit path.
-`tests/unit/resolution/in-flight-invariants.test.ts` pins both for the hooked lane too.
+`enterSyncPath` / `leaveSyncPath` in `resolution/path/resolution-path.ts` are the whole synchronous mechanism: check the
+flag, set it, push the frame; pop, clear. The stack is still kept — it is what names the path in an error and what a
+constraint predicate reads — but nothing scans it and nothing is sized.
+
+**A seeded path is marked before a synchronous call runs over it.** Two paths reach a synchronous call without any
+synchronous frame having pushed them: the static ancestors a compiled plan seeds into an escape, and the branch prefix
+an async level hands a factory's synchronous `ctx.resolve`. Their bindings carry no flag, so `enterSeededPath` marks
+them and `leaveSeededPath` clears them around the call, reading the bindings through a `WeakMap` from resolver-built
+frames (`linkFrameBinding`, set where the frame is minted) so the public frame shape is untouched. An escape marks the
+ancestor bindings the compiler already held, and the one-ancestor escape — a plan root's own opaque dependency, the
+common shape — is written out with no loop and no call.
+
+> **Invariant (correctness).** Marking a seed is idempotent. A binding a seed finds already flagged was flagged by an
+> enclosing synchronous frame that is still running — an async factory's own prefix — and is the same fact stated once
+> already, not a cycle. It is left as it is on the way in and on the way out; a genuine cycle is reported where the path
+> re-enters the binding, which is where the frames to name it are. A version that threw on an already-flagged seed
+> reported false cycles on every async level whose factory made a synchronous call, and the lane differential test
+> (`tests/integration/resolution-lanes-differential.test.ts`) caught it on the fourth random graph.
 
 **Every path-based check keys on binding identity, never on a token's display name.** A display name is not unique: two
-`token("app:Config")` from different modules are distinct tokens. `enterResolutionPath` and `extendResolutionBranch`
-compare `bindingId` read off the frame stack. The names an error or `ctx.resolutionPath` reports are **derived from the
-frames** at the moment they are asked for, so no name array exists to keep in step. A hop pushes and pops one stack, the
-branch helper takes one depth, and an escape thunk copies one frame array; the error path pays for name materialisation,
-not the hot path.
+`token("app:Config")` from different modules are distinct tokens. The flag lives on the binding and
+`extendResolutionBranch` compares `bindingId` read off the frames. The names an error or `ctx.resolutionPath` reports
+are **derived from the frames** at the moment they are asked for, so no name array exists to keep in step.
 
-**A membership set past a depth threshold.** `enterResolutionPath` scans the frames linearly while the stack is short,
-and attaches a membership `Set` of binding ids to the array once the stack passes `RESOLUTION_SET_THRESHOLD`, which
-is 32. The threshold switches a **data structure**, not a behaviour: both branches answer identically. The 32 is a
-tuning constant from a depth sweep; re-sweeping it with the benchmark is cheap if the typical graph depth in real
-consumers shifts, or the collector's behaviour changes.
+> **Invariant (correctness).** Every lane answers a graph identically — the same value, the same sharing pattern, the
+> same error class and message. The lane differential test generates random graphs and deep chains and holds the
+> interpreted lane, the tiered plan lanes, the collection and optional reads, a per-request child and the async entry
+> points to one snapshot. A mechanism that catches a cycle one hop late on one lane, or runs a factory twice before
+> catching it, fails that test; three such divergences were found and fixed when it was first run.
 
-**The set is seeded from the stack, so it has to notice when it has gone stale.** The frames already on the stack when
-the set attaches are handed no set and delete nothing on unwind. The array outlives a resolve — the resolver lends one
-stack (see [The context pool](#the-sync-context-pool-and-the-stack-it-lends)) — so a set that survived the unwind would
-refuse bindings nobody is resolving. A live set mirrors the stack exactly (ids on an acyclic path are unique), so
-`enterResolutionPath` drops one whose size no longer matches the stack's length, and the next deep frame rebuilds it.
-`tests/unit/resolution/path/resolution-path.test.ts` pins the three ways the seed becomes observable: a second resolve
-of the same deep graph, a sibling branch below the attach depth, and the entry point called directly.
-
-> **Invariant (correctness).** A threshold in this engine may choose an implementation; it must not choose a semantics.
-> Both sides of `RESOLUTION_SET_THRESHOLD` answer identically, and so do both sides of the multi-tag size threshold in
-> [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes). A threshold that switched _lanes_ once changed
-> context identity, stack frames and promise shape at the crossing point, and reported a false cycle for a diamond
-> dependency past it; that story is in [Lessons](#lessons-the-engine-has-already-taught).
-
-### The async pipeline: a cascade lane and a branch lane
+### The async pipeline: one branch lane
 
 The sync pipeline gets two things for free from the call stack: one array pushed and popped **is** the ancestor chain,
-and `binding.inFlight` is exact membership in it. The async pipeline has both properties too, for the requests that
-matter, and one lane exists to exploit them.
+and `binding.inFlight` is exact membership in it. The async pipeline has neither for long: a factory's request for a
+dependency is made from its synchronous prefix — `async ctx => await ctx.resolveAsync(dep)` calls `resolveAsync` before
+it awaits anything — but a request made from a continuation, after an `await`, has ancestors on no call stack. So every
+async level owns a **branch**: its prefix of the path, which it keeps for as long as its factory holds the context,
+across an `await` included.
 
-**The cascade lane.** A factory's request for a dependency is made from its synchronous prefix:
-`async ctx => await ctx.resolveAsync(dep)` calls `resolveAsync` before it awaits anything. So the chain of "who is
-resolving whom" at the moment of a request is the synchronous call stack, and a whole eight-level chain is built inside
-**one** synchronous cascade before any of it settles.
+**The branch lane.** `resolveAsyncFromRoot` opens a branch over a fresh array; `extendResolutionBranch` appends to a
+path while this branch still owns the next slot, and copies its own prefix once a sibling has claimed it. Nothing is
+removed there, so it needs no settle listener; it pays a context per level instead — `AsyncLevelContext`, which reads
+its depth off the branch it was handed rather than taking it as a parameter, so the two cannot disagree. The dominant
+level — a transient factory with no activation, asked with no options — is served by a method that is deliberately not
+`async`, so it costs the factory's own promise and nothing on top; a single `resolveAsync` and every member of a
+`resolveAllAsync` collection take that same lane, and the `async` method behind them is reached only by scoped,
+singleton, activated or option-carrying members.
 
-While that cascade is open, the resolver's own `#cascadeStack` is the ancestor chain: pushed on factory-enter, popped
-when the factory returns **its promise**, not when that promise settles. Two cascades can never interleave, so
-`binding.inFlight` is exact path membership again, and every level shares one `AsyncCascadeContext`. Nothing is
-allocated per level, and nothing observes its own settlement.
+A factory's flag is held for its synchronous prefix and cleared when it returns **its promise**, not when that promise
+settles. That is what makes a **diamond** resolve: when `A` awaits `B` and `C` in parallel and both need `D`, `D`'s flag
+is already clear when the second sibling reaches it, so no cycle is reported for `b → d → c`, which is not a dependency
+edge at all. A cycle formed entirely from post-await edges is caught by the branch scan and named from the true root.
 
-A consequence of clearing the flag on promise-return is that a **diamond** resolves correctly. When `A` awaits `B` and
-`C` in parallel and both need `D`, `D`'s flag is already clear when the second sibling reaches it, so no cycle is
-reported for `b → d → c`, which is not a dependency edge at all.
-
-**The branch lane.** A request made from a continuation, after an `await`, has ancestors on no call stack. Such a
-request arrives with the cascade empty, which is an exact test — a continuation never runs inside a synchronous cascade
-— so it **escapes** to the branch lane, seeded with a snapshot of the ancestors the cascade had reached. Anything the
-cascade lane does not serve escapes the same way. Once a subtree leaves the cascade it stays off it, which is what keeps
-a cycle crossing the boundary on one path.
-
-The branch lane is the general one. `extendResolutionBranch` appends to a path while this branch still owns the next
-slot, and copies its own prefix once a sibling has claimed it. Nothing is removed there either, so it needs no settle
-listener; it pays a context per level instead. The dominant level — a transient factory with no activation, asked with
-no options — is served by a method that is deliberately not `async`, so it costs the factory's own promise and nothing
-on top; a single `resolveAsync` and every member of a `resolveAllAsync` collection take that same lane, and the `async`
-method behind them is reached only by scoped, singleton, activated or option-carrying members. A cycle formed entirely
-from post-await edges is caught there — `post-q → post-p → post-q` — one level in from the true root, because the
-ancestors before the first escape were never written down. That imprecision is the price of the cascade lane, and
-`tests/unit/resolution/resolver-async.test.ts` pins it rather than leaving it to be discovered.
+> **Invariant (correctness).** A level's context answers from that level's own prefix whenever it is asked — before an
+> `await`, after one, and while other chains are in flight. `whenParentIs` selects the same binding a synchronous
+> resolve would, and `ctx.graph.resolutionPath` names the level's own ancestors. A shared per-chain context that read a
+> live stack once answered a post-await `ctx.resolve` from another chain's frames; that is why every level owns one.
+> `tests/unit/resolution/resolver-async.test.ts` pins the three shapes.
 
 > **Invariant (ownership, held by the compiler).** A branch may only ever append to an array it minted itself. A sync
-> frame's path is one that frame will pop in its own `finally`, and it may carry an `enterResolutionPath` membership
-> `Set` this lane cannot keep true. So `extendResolutionBranch` is the only thing that mints an `OwnedBranchStack`,
+> frame's path is one that frame will pop in its own `finally`, so appending to it would hand a synchronous level a
+> frame it never pushed. So `extendResolutionBranch` is the only thing that mints an `OwnedBranchStack`,
 > `AsyncLevelContext` accepts nothing else, and a `BranchDepth` is branded so a bare number cannot stand in for one — a
 > depth from anywhere but this branch silently re-parents a level. `AsyncLevelContext` reads its depth off the branch it
 > was handed rather than taking it as a parameter, so the two cannot disagree.
 > `tests/types/async-branch-ownership.test.ts` fails to compile if either brand is removed. Check that it still fails
 > before trusting it: a type test that compiles once its invariant is gone asserts nothing.
 
-The cascade entry answers a plain constant and a cached singleton itself rather than escaping. A materialised async
-singleton that escaped would snapshot both cascade arrays for a resolve that never reads a path. (A perf shape, not a
-correctness matter.)
+**A level's context lives only as long as its chain, and the collector notices.** A full collection that finds no live
+instance of `AsyncLevelContext` clears something the optimized code of the lane had embedded weakly, and every such site
+deoptimizes — on that collection and on every one after, for as long as instances keep dying between chains. Measured
+under a forced collection every thousand resolves, that was forty deoptimization marks per thirty collections and
+roughly half the throughput; with one instance kept live, none and parity. So the resolver keeps its most recent root
+level's context in one field. What is embedded was narrowed — not the class's map, not the branch array — but not named;
+the field is the measured remedy, not an explanation.
 
 **Async plans.** The sync lane's compiled plan ([Compiled plans and escapes](#compiled-plans-and-escapes)) ports to
 async exactly as far as the graph is visible. `class`, `resolved` and `resolved-async` bindings declare their
-dependencies, so `compileAsync` compiles those into an async plan. A `dynamic-async` factory stays opaque and keeps the
-cascade, which needs no graph because it reads the ancestors off the call stack that is already there.
-
-The async plan runs only at a **true root**: a `resolveAsync` arriving with the cascade idle. Inside an open cascade the
-same binding escapes instead, because a plan does no bookkeeping and its escapes must carry the live ancestors. Each
-node's promise-ness is settled at compile time: a fully synchronous subtree touches no promise at all, and anything that
-may yield one routes its dependencies through `Promise.all`. That is exactly how the interpreted async path treats every
-dependency, down to unwrapping a promise-valued constant and starting every sibling before the first rejection
-propagates. `tests/unit/resolution/plan/instantiation-plan-async.test.ts` pins the lane being active, the escape
-criteria, the late-hook invalidation, and those two exactness corners.
+dependencies, so `compileAsync` compiles those into an async plan; a `dynamic-async` factory stays opaque and runs on
+the branch lane. The async plan runs only at a **root**: a `resolveAsync` the container starts with no options. A
+request from inside a factory keeps the live path instead, because a plan does no bookkeeping and its escapes must carry
+the live ancestors. Each node's promise-ness is settled at compile time: a fully synchronous subtree touches no promise
+at all; a node with one awaiting dependency awaits it directly; anything with several routes them through
+`settleInOrder`, which is `Promise.all` on the happy path and, on a failure, every sibling settled and the earliest
+rejection in declaration order — the order the synchronous lanes report. That is exactly how the interpreted async path
+treats every dependency, down to unwrapping a promise-valued constant and starting every sibling before any failure is
+reported. `tests/unit/resolution/plan/instantiation-plan-async.test.ts` pins the lane being active, the escape criteria,
+the late-hook invalidation, and those exactness corners.
 
 An async plan that keeps running is generated as a function of its own exactly as a sync one is
 ([Compiled plans and escapes](#compiled-plans-and-escapes)): the compiler records an `AsyncPlanNode` tree beside the
 closure, and a node that awaits its dependencies renders as an inner function of the same source — every dependency
-started in order inside its own `try`, a sync throw turned into that slot's rejection, `Promise.all` over the slots, the
-constructor or factory applied to the settled values — so the awaiting nodes get call sites of their own too. The
-threshold, the identity-guarded swap (`host.replaceAsyncPlan`, over the async map) and the closure fallback are the sync
-lane's.
+started in order inside its own `try`, a sync throw turned into that slot's rejection, the settle in declaration order
+over the slots, the constructor or factory applied to the settled values — so the awaiting nodes get call sites of their
+own too. The threshold, the identity-guarded swap (`host.replaceAsyncPlan`, over the async map) and the closure fallback
+are the sync lane's.
 
 ### The sync context pool, and the stack it lends
 
@@ -723,14 +710,14 @@ frame onto, while the shared stack pays one per push.
 > back; `tests/unit/resolution/in-flight-invariants.test.ts` pins both. If the stack ever leaks dirty, the failure mode
 > is lost reuse (slower), never a wrong path — the protocol is built so that the correctness case cannot break here.
 
-> **Invariant (correctness).** A pooled context is reused only for the stack it already holds. The pools are keyed by
-> stack — one for the root stack, one for the cascade stack, each depth-indexed — and any other stack (a nested
-> resolve's minted array, an async level's snapshot) mints a context per call. A nested top-level resolve reaches the
-> same depth while the outer factory still holds that depth's pooled context; re-pointing it at the nested resolve's
-> freshly minted stack would leave the outer factory's `ctx` answering from the wrong path, so a `when()` predicate
-> reading `ctx.parent` would select the wrong binding. Keying the pools by stack holds this structurally, with one
-> pointer compare on the hot lane. Asking the context whether it holds the requested array answered the same question
-> but cost the acquire its inlining. `tests/unit/resolution/context-pool-isolation.test.ts` pins the behaviour.
+> **Invariant (correctness).** A pooled context is reused only for the stack it already holds. The pool is keyed by the
+> root stack, depth-indexed, and any other stack (a nested resolve's minted array, an async level's prefix) mints a
+> context per call. A nested top-level resolve reaches the same depth while the outer factory still holds that depth's
+> pooled context; re-pointing it at the nested resolve's freshly minted stack would leave the outer factory's `ctx`
+> answering from the wrong path, so a `when()` predicate reading `ctx.parent` would select the wrong binding. Keying the
+> pools by stack holds this structurally, with one pointer compare on the hot lane. Asking the context whether it holds
+> the requested array answered the same question but cost the acquire its inlining.
+> `tests/unit/resolution/context-pool-isolation.test.ts` pins the behaviour.
 
 ### A container defers most of itself
 
@@ -745,15 +732,15 @@ plan maps (first plan request, which only a `class` or `resolved` binding makes)
 distinct token or tag in one cache generation), the activation-need cache (first interpreted resolve that asks whether a
 binding needs the activation pipeline) and its memo (first answer its early returns cannot give).
 
-The scope manager, the lifecycle manager, the resolver's cascade stack and its sync context pool stay eager on purpose.
-Building them on first use was measured: it saved a per-request child three or four allocations and read as a small gain
-on the empty-child rows, but every warm interpreted lane then reached them through a nullable field or an accessor, and
-the realistic-graph and production rows lost more than the child rows gained. What a child costs is the object count of
-this design, not those four; the ledger prices it. The reason the rest defers is that an empty `Map` is not free: V8
-gives it a backing store, and a closure-heavy host object such as the plan compiler's is a dozen allocations. Those are
-costs a per-request child — created, asked one parent-owned token, disposed — never earns back, and that child is the
-shape `Container.create()` and `createChild()` are priced on. The one map every container allocates eagerly is the
-registry's fast-default map, because `getFastDefault()` is the first read of every synchronous resolve
+The scope manager, the lifecycle manager and the resolver's sync context pool stay eager on purpose. Building them on
+first use was measured: it saved a per-request child three or four allocations and read as a small gain on the
+empty-child rows, but every warm interpreted lane then reached them through a nullable field or an accessor, and the
+realistic-graph and production rows lost more than the child rows gained. What a child costs is the object count of this
+design, not those four; the ledger prices it. The reason the rest defers is that an empty `Map` is not free: V8 gives it
+a backing store, and a closure-heavy host object such as the plan compiler's is a dozen allocations. Those are costs a
+per-request child — created, asked one parent-owned token, disposed — never earns back, and that child is the shape
+`Container.create()` and `createChild()` are priced on. The one map every container allocates eagerly is the registry's
+fast-default map, because `getFastDefault()` is the first read of every synchronous resolve
 ([The registry keeps one record per token](#the-registry-keeps-the-common-token-in-one-map-and-a-record-for-the-rest)).
 
 > **Invariant (correctness).** Deferral is an allocation decision only. A deferred collaborator must answer identically
@@ -806,24 +793,24 @@ section before changing what the table describes.
 
 **Plans and escapes**
 
-| Invariant                                                                                           | Pinned by                                                       | Where                                                                      |
-| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| An escape is behaviourally indistinguishable from the interpreted path: same ancestors, same call.  | `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` | [Compiled plans and escapes](#compiled-plans-and-escapes)                  |
-| An escape thunk copies the frame array; it never lends it.                                          | (structural; see the two mechanisms)                            | [The frame copy](#the-frame-copy-in-compileescapethunk-is-load-bearing)    |
-| An entry reached by a criterion carries that criterion into every escape.                           | `tests/unit/resolution/plan/instantiation-plan-named.test.ts`   | [Compiled plans and escapes](#compiled-plans-and-escapes)                  |
-| The async plan runs only at a true root and mirrors the interpreted async path exactly.             | `tests/unit/resolution/plan/instantiation-plan-async.test.ts`   | [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane) |
-| A generated plan and its closure are two renderings of one `PlanNode` tree, and behave identically. | `tests/unit/resolution/plan/instantiation-plan-codegen.test.ts` | [Compiled plans and escapes](#compiled-plans-and-escapes)                  |
+| Invariant                                                                                           | Pinned by                                                       | Where                                                                   |
+| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| An escape is behaviourally indistinguishable from the interpreted path: same ancestors, same call.  | `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` | [Compiled plans and escapes](#compiled-plans-and-escapes)               |
+| An escape thunk copies the frame array; it never lends it.                                          | (structural; see the two mechanisms)                            | [The frame copy](#the-frame-copy-in-compileescapethunk-is-load-bearing) |
+| An entry reached by a criterion carries that criterion into every escape.                           | `tests/unit/resolution/plan/instantiation-plan-named.test.ts`   | [Compiled plans and escapes](#compiled-plans-and-escapes)               |
+| The async plan runs only at a root and mirrors the interpreted async path exactly.                  | `tests/unit/resolution/plan/instantiation-plan-async.test.ts`   | [The async pipeline](#the-async-pipeline-one-branch-lane)               |
+| A generated plan and its closure are two renderings of one `PlanNode` tree, and behave identically. | `tests/unit/resolution/plan/instantiation-plan-codegen.test.ts` | [Compiled plans and escapes](#compiled-plans-and-escapes)               |
 
 **Cycle detection and paths**
 
-| Invariant                                                                                    | Pinned by                                            | Where                                                                      |
-| -------------------------------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------- |
-| `binding.inFlight` is set and released on every exit path, with or without activation hooks. | `tests/unit/resolution/in-flight-invariants.test.ts` | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
-| Path checks key on binding identity, never on a display name.                                | (structural)                                         | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
-| A stale membership set is detected by size mismatch and rebuilt.                             | `tests/unit/resolution/path/resolution-path.test.ts` | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
-| A threshold may choose an implementation, never a semantics.                                 | the two threshold tests above                        | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
-| A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.          | `tests/types/async-branch-ownership.test.ts`         | [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane) |
-| A post-await-only cycle is reported one level in from the true root.                         | `tests/unit/resolution/resolver-async.test.ts`       | [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane) |
+| Invariant                                                                                    | Pinned by                                                 | Where                                                                                          |
+| -------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `binding.inFlight` is set and released on every exit path, with or without activation hooks. | `tests/unit/resolution/in-flight-invariants.test.ts`      | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| Path checks key on binding identity, never on a display name.                                | (structural)                                              | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| A seeded path is marked idempotently; an enclosing frame's flag is left as found.            | `tests/unit/resolution/path/resolution-path.test.ts`      | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| Every lane answers a graph identically — value, sharing and error.                           | `tests/integration/resolution-lanes-differential.test.ts` | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.          | `tests/types/async-branch-ownership.test.ts`              | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
+| A level's context answers from its own prefix before and after an `await`.                   | `tests/unit/resolution/resolver-async.test.ts`            | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
 
 **Pooling, lending and deferral**
 
@@ -914,10 +901,11 @@ These are covered in the sections above; this list exists so a perf review can f
   tag values.
 - **Multi-tag bucket index past a size threshold** —
   [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes). Semantics identical on both sides.
-- **Membership `Set` past `RESOLUTION_SET_THRESHOLD` (32)** —
-  [Cycle detection](#cycle-detection-two-mechanisms-on-purpose). A depth-sweep tuning constant.
-- **The cascade lane allocating nothing per level**, and the cascade entry answering constants and cached singletons
-  itself — [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane).
+- **The synchronous cycle check is a flag on the binding** — one field read and two writes per level, at any depth,
+  where a scan grew with the path and a `Set` past a depth threshold cost an allocation and a hash per level. The seeded
+  paths an escape and an async level's synchronous call hand the runtime are marked around the call instead.
+- **One live level context kept per resolver** — [The async pipeline](#the-async-pipeline-one-branch-lane). A collector
+  that finds none deoptimizes the lane on every collection.
 - **The depth-indexed context pool** and the shared, lent `rootStack` —
   [The context pool](#the-sync-context-pool-and-the-stack-it-lends). Write barriers are the cost model.
 - **Deferred subsystems** — [Deferral](#a-container-defers-most-of-itself). An empty `Map` has a backing store.
@@ -989,17 +977,21 @@ general pattern, not just a fixed bug.
   fix.
 - **A name-keyed cycle check reported a false cycle.** Two `token("app:Config")` from different modules are distinct
   tokens, and a check keyed on display name reported a cycle for a legitimately acyclic chain that held both. Every path
-  check now keys on `bindingId` ([Cycle detection](#cycle-detection-two-mechanisms-on-purpose)).
+  check now keys on `bindingId`
+  ([Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches)).
 - **A threshold that switched lanes changed semantics.** A removed constant, `DEEP_LANE_THRESHOLD`, switched the async
   pipeline between _lanes_ past a depth. That silently changed context identity, stack frames and promise shape at the
-  crossing point, and reported a false `CircularDependencyError` for a diamond dependency past it.
-  `RESOLUTION_SET_THRESHOLD` broke the same rule once while looking like it was only choosing a data structure, which is
-  why the invariant in [Cycle detection](#cycle-detection-two-mechanisms-on-purpose) is stated as a rule about
-  thresholds in general.
-- **The old shared async path reported a false cycle for a diamond.** Before the cascade lane, a settle-scoped path
-  reported `Circular dependency detected: a → b → d → c → d` for `A` awaiting `B` and `C` in parallel, both needing `D`.
-  Clearing `inFlight` on promise-return ([The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane))
-  removed it.
+  crossing point, and reported a false `CircularDependencyError` for a diamond dependency past it. The membership-set
+  threshold that later replaced it broke the same rule once while looking like it was only choosing a data structure;
+  the synchronous check is now a flag with no threshold at all, and the invariant in
+  [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) is stated as a rule
+  about thresholds in general.
+- **A shared async path reported a false cycle for a diamond.** A settle-scoped path once reported
+  `Circular dependency detected: a → b → d → c → d` for `A` awaiting `B` and `C` in parallel, both needing `D`. Clearing
+  `inFlight` on promise-return ([The async pipeline](#the-async-pipeline-one-branch-lane)) removed it.
+- **A context shared by every level of a chain answered a continuation from another chain's frames.** One context per
+  chain read a live stack; after an `await` that stack held whatever was resolving then, so `whenParentIs` picked the
+  wrong binding. Every level now owns its context and its prefix. The lane differential test's probes found it.
 - **The cheapest answer to "what should this return when there is nothing to return" is no method.**
   `ScopeManager.getAllScoped()` was the only bulk reader that could meet an unallocated cache, and it had no callers, so
   it was removed rather than given an empty-map fallback.
@@ -1050,7 +1042,7 @@ heuristic, test reference, benchmark reference and design rationale — is carri
 - Path-independent entries: "A criterion the registry can settle is not opaque" opened with "used to escape on
   `options !== undefined`". The rewrite states the current mechanism first; the history is in
   [Lessons](#lessons-the-engine-has-already-taught).
-- Async: the section now leads with what the cascade lane is and how the flag is maintained, and presents the diamond
+- Async: the section now leads with what a level's branch is and how the flag is maintained, and presents the diamond
   case as a consequence of that design. The original led with "Async resolution was assumed to have neither property".
 - Context pool: the write-barrier cost model is introduced before the comparison it motivates, with "old space" and
   "write barrier" explained inline.

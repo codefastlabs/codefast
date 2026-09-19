@@ -5,11 +5,17 @@
  * back to the full selection path — a predicate or an alias behind a name — and the parent-chain
  * walk, where a child's cache defers to its parent's.
  */
+import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 
+import { BindingChain } from "#container/binding-builders";
 import { Container } from "#container/container";
+import { BindingRegistry } from "#core/registry";
 import { token } from "#core/token";
 import type { ConstraintContext } from "#core/types";
+import { CircularDependencyError } from "#errors/errors";
+import { ScopeManager } from "#lifecycle/scope-manager";
+import { BindingLookupCache } from "#resolution/cache/binding-lookup-cache";
 
 const WARM_ITERATIONS = 5;
 
@@ -91,5 +97,91 @@ describe("named lookup across the container chain", () => {
     parent.bind(driverToken).toConstantValue("after").whenNamed("primary");
 
     expect(child.resolve(driverToken, { name: "primary" })).toBe("after");
+  });
+});
+
+describe("alias folding in the memo", () => {
+  it("folds a chain of any length to its terminal binding", () => {
+    // Longer than any cap the fold ever carried, so a bound would surface as a slower path, not a wrong one.
+    const hops = 64;
+    const terminal = token<string>("fold-terminal");
+    const container = Container.create();
+    container.bind(terminal).toConstantValue("end");
+    let previous = terminal;
+    for (let hop = 0; hop < hops; hop += 1) {
+      const next = token<string>(`fold-hop-${String(hop)}`);
+      container.bind(next).toAlias(previous);
+      previous = next;
+    }
+
+    warm(() => container.resolve(previous));
+
+    expect(container.resolve(previous)).toBe("end");
+    expect(container.resolveOptional(previous)).toBe("end");
+  });
+
+  it("reports a cycle of aliases as the resolve loop does, however long it is", () => {
+    const first = token<string>("fold-cycle-0");
+    const second = token<string>("fold-cycle-1");
+    const third = token<string>("fold-cycle-2");
+    const container = Container.create();
+    container.bind(first).toAlias(second);
+    container.bind(second).toAlias(third);
+    container.bind(third).toAlias(second);
+
+    // The origin is not on the cycle: the fold must decline on the revisit of `second`, not the origin.
+    expect(() => container.resolve(first)).toThrow(CircularDependencyError);
+    expect(() => container.resolve(first)).toThrow(CircularDependencyError);
+    expect(() => container.resolve(second)).toThrow(CircularDependencyError);
+  });
+
+  it("reports an alias that points at itself", () => {
+    const self = token<string>("fold-self");
+    const container = Container.create();
+    container.bind(self).toAlias(self);
+
+    expect(() => container.resolve(self)).toThrow(CircularDependencyError);
+    expect(() => container.resolveOptional(self)).toThrow(CircularDependencyError);
+  });
+});
+
+describe("the chain version moves on every mutation anywhere in the chain", () => {
+  // The memo stamps are sums of registry versions read against a process-wide epoch; a mutation in
+  // any registry of the chain must change the sum a descendant reads, or its memo answers stale.
+  it("rises for a child's cache when either the parent or the child mutates", () => {
+    const parentRegistry = new BindingRegistry();
+    const childRegistry = new BindingRegistry();
+    const parentCache = new BindingLookupCache<string>(parentRegistry, "parent", undefined);
+    const childCache = new BindingLookupCache<string>(childRegistry, "child", parentCache);
+    const tokens = [token<string>("chain-mono-a"), token<string>("chain-mono-b")];
+    let previous = childCache.chainVersion();
+
+    expect(() => {
+      fc.assert(
+        fc.property(fc.array(fc.tuple(fc.boolean(), fc.nat(2), fc.nat(1)), { maxLength: 40 }), (steps) => {
+          for (const [onParent, operation, pick] of steps) {
+            const registry = onParent ? parentRegistry : childRegistry;
+            if (operation === 0) {
+              const chain = new BindingChain<string>(tokens[pick]!, {
+                registry,
+                scope: new ScopeManager(!onParent),
+                moduleBindingIds: undefined,
+              });
+              chain.toConstantValue("v");
+            } else if (operation === 1) {
+              registry.removeByToken(tokens[pick]!);
+            } else {
+              registry.touch();
+            }
+            const current = childCache.chainVersion();
+            if (current <= previous) {
+              throw new Error(`${onParent ? "parent" : "child"} op ${String(operation)}: chain version did not rise`);
+            }
+            previous = current;
+          }
+        }),
+        { numRuns: 200 },
+      );
+    }).not.toThrow();
   });
 });

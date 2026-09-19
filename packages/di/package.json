@@ -235,6 +235,11 @@
       "types": "./dist/metadata/verifying-metadata-reader.d.ts",
       "import": "./dist/metadata/verifying-metadata-reader.js"
     },
+    "./resolution/async-fan-out": {
+      "source": "./src/resolution/async-fan-out.ts",
+      "types": "./dist/resolution/async-fan-out.d.ts",
+      "import": "./dist/resolution/async-fan-out.js"
+    },
     "./resolution/cache/activation-need": {
       "source": "./src/resolution/cache/activation-need.ts",
       "types": "./dist/resolution/cache/activation-need.d.ts",
@@ -310,6 +315,7 @@
     "@rolldown/plugin-babel": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "fast-check": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

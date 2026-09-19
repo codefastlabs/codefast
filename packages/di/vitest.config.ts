@@ -34,6 +34,14 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html", "lcov"],
       reportsDirectory: "./coverage",
+      // A floor a little under where the suite stands, so a lane that loses its tests is a red run
+      // rather than a discovery; raise it when the suite does, never lower it to pass.
+      thresholds: {
+        statements: 95,
+        branches: 90,
+        functions: 95,
+        lines: 95,
+      },
     },
     environment: "node",
     globals: true,

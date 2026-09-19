@@ -1,23 +1,20 @@
 /**
- * `@codefast/di` — the two depth thresholds the engine crosses, priced apart (codefast-only).
+ * `@codefast/di` — a class chain at two depths, compiled and interpreted (codefast-only).
  *
  * `scale-mid-transient-chain-32` and `scale-deep-transient-chain-512` are `toDynamic` chains, so they
- * run the transient-dynamic lane and its `binding.inFlight` flag: they never compile a plan and never
- * touch the resolution path. A **class** chain crosses both thresholds instead — the plan compiler
- * stops inlining past its depth limit, and the resolution path swaps its linear scan for a membership
- * set past its own. These four rows are that 2×2:
+ * run the transient-dynamic lane: they never compile a plan. A **class** chain is the shape the plan
+ * compiler inlines, and the interpreted lane pushes one frame per level. These four rows are a 2×2:
  *
  *                       shallow (24)                 deep (40)
  *   plan compiled       plan-class-chain-24          plan-class-chain-40
  *   plan declined       interpreted-class-chain-24   interpreted-class-chain-40
  *
- *   - across a row  → what crossing the depth limit costs, once for the compiler's escape into the
- *     interpreted tail and once for the tail's own bookkeeping.
+ *   - across a row  → how each lane's cost scales with depth: a generated plan is one statement per
+ *     level, the interpreted path one frame, one flag and one dispatch per level.
  *   - down a column → what the compiled plan is worth at that depth, since the only difference is an
  *     activation hook on the root, which declines the plan.
  *
- * Each level is its own decorated class, so every binding is `kind: "class"` and inlinable — the one
- * shape that reaches the compiler's depth limit at all.
+ * Each level is its own decorated class, so every binding is `kind: "class"` and inlinable.
  */
 import type { Token } from "@codefast/di";
 import { Container, injectable, token } from "@codefast/di";
@@ -95,7 +92,7 @@ export function buildCodefastPlanDepthScenarios(): ReadonlyArray<BenchScenario> 
         requires: ["decorators", "transient"],
         facets: ["plan"],
         group: "resolution",
-        what: `resolve a ${String(SHALLOW_CHAIN_DEPTH)}-level transient class chain — below the compiler's depth limit, so one plan runs the whole chain (codefast-only)`,
+        what: `resolve a ${String(SHALLOW_CHAIN_DEPTH)}-level transient class chain — one generated plan runs the whole chain (codefast-only)`,
       },
       SHALLOW_CHAIN_DEPTH,
       false,
@@ -107,7 +104,7 @@ export function buildCodefastPlanDepthScenarios(): ReadonlyArray<BenchScenario> 
         requires: ["decorators", "transient"],
         facets: ["plan"],
         group: "resolution",
-        what: `the same chain at ${String(DEEP_CHAIN_DEPTH)} levels — the plan inlines to its depth limit, then escapes into the interpreted tail (codefast-only)`,
+        what: `the same chain at ${String(DEEP_CHAIN_DEPTH)} levels — one generated plan, one statement per level (codefast-only)`,
       },
       DEEP_CHAIN_DEPTH,
       false,
@@ -119,7 +116,7 @@ export function buildCodefastPlanDepthScenarios(): ReadonlyArray<BenchScenario> 
         requires: ["decorators", "transient"],
         facets: ["plan"],
         group: "resolution",
-        what: `the ${String(SHALLOW_CHAIN_DEPTH)}-level chain with the root's plan declined — the interpreted path, its cycle check still a linear scan (codefast-only)`,
+        what: `the ${String(SHALLOW_CHAIN_DEPTH)}-level chain with the root's plan declined — the interpreted path, one frame and one flag per level (codefast-only)`,
       },
       SHALLOW_CHAIN_DEPTH,
       true,
@@ -131,7 +128,7 @@ export function buildCodefastPlanDepthScenarios(): ReadonlyArray<BenchScenario> 
         requires: ["decorators", "transient"],
         facets: ["plan"],
         group: "resolution",
-        what: `the ${String(DEEP_CHAIN_DEPTH)}-level chain with the root's plan declined — the interpreted path past the depth where it attaches a membership set (codefast-only)`,
+        what: `the ${String(DEEP_CHAIN_DEPTH)}-level chain with the root's plan declined — the same interpreted path, deeper (codefast-only)`,
       },
       DEEP_CHAIN_DEPTH,
       true,
