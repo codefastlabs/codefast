@@ -12,6 +12,7 @@ import type {
   BindingTag,
   ConstraintContext,
   Constructor,
+  ResolutionContext,
   ResolutionFrame,
   ResolveOptions,
 } from "#core/types";
@@ -735,7 +736,7 @@ export class DependencyResolver implements ResolverCallbacks {
       const needsActivation = owner.#activationNeed().needsActivation(binding);
       if (!needsActivation && scope === "transient" && binding.kind === "dynamic") {
         const resolutionCtx = this.#acquireSyncResolutionContext(resolutionStack, options);
-        const dynamicResult = binding.factory(resolutionCtx);
+        const dynamicResult = runFactoryPrefix(binding, resolutionCtx, resolutionStack);
         if (dynamicResult instanceof Promise) {
           throw new AsyncResolutionError(resolutionStack[0]?.tokenName ?? tokenDisplayName, tokenDisplayName);
         }
@@ -811,7 +812,7 @@ export class DependencyResolver implements ResolverCallbacks {
         if (ctx === undefined) {
           throw new InternalError("dynamic binding requires resolution context");
         }
-        const factoryResult = binding.factory(ctx);
+        const factoryResult = runFactoryPrefix(binding, ctx, resolutionStack);
         if (factoryResult instanceof Promise) {
           throw asyncResolutionErrorFor(binding, resolutionStack);
         }
@@ -1188,10 +1189,7 @@ export class DependencyResolver implements ResolverCallbacks {
     const needsActivation = owner.#activationNeed().needsActivation(binding);
     if (!needsActivation && scope === "transient" && (binding.kind === "dynamic" || binding.kind === "dynamic-async")) {
       const resolutionCtx = new AsyncLevelContext(this, levelStack, options);
-      if (binding.kind === "dynamic-async") {
-        return await binding.factory(resolutionCtx);
-      }
-      const dynamicResult = binding.factory(resolutionCtx);
+      const dynamicResult = runFactoryPrefix(binding, resolutionCtx, levelStack);
       return dynamicResult instanceof Promise ? await dynamicResult : dynamicResult;
     }
 
@@ -1297,19 +1295,14 @@ export class DependencyResolver implements ResolverCallbacks {
       case "constant":
         return binding.value;
 
-      case "dynamic": {
+      case "dynamic":
+      case "dynamic-async": {
         if (ctx === undefined) {
           throw new InternalError("dynamic binding requires resolution context");
         }
-        const factoryResult = binding.factory(ctx);
+        const factoryResult = runFactoryPrefix(binding, ctx, resolutionStack);
         return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
       }
-
-      case "dynamic-async":
-        if (ctx === undefined) {
-          throw new InternalError("dynamic-async binding requires resolution context");
-        }
-        return binding.factory(ctx);
 
       case "class": {
         const deps = await this.#resolveDepsAsync(
@@ -1637,10 +1630,7 @@ export class DependencyResolver implements ResolverCallbacks {
     // Nothing this level appended is ever removed, so no level observes its own settlement.
     const ctx = new AsyncLevelContext(this, levelStack, undefined);
     try {
-      if (binding.kind === "dynamic-async") {
-        return binding.factory(ctx);
-      }
-      const factoryResult = binding.factory(ctx);
+      const factoryResult = runFactoryPrefix(binding, ctx, levelStack);
       return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
     } catch (factoryError) {
       return Promise.reject(factoryError);
@@ -1934,6 +1924,31 @@ function buildConstraintContext(
     ancestors: resolutionStack.length > 1 ? resolutionStack.slice(0, -1) : [],
     currentResolveOptions: options,
   };
+}
+
+/**
+ * Runs a factory with its binding flagged in flight for the factory's synchronous prefix.
+ *
+ * @remarks The flag is exact path membership only while synchronous code runs, so it is cleared when
+ * the factory returns — its promise included — never when that promise settles: two branches that
+ * await one binding are a diamond, not a cycle. A factory that resolves its own token from that
+ * prefix is caught before it runs again, on the branch lane as on the cascade and sync lanes.
+ */
+function runFactoryPrefix(
+  binding: DynamicBinding<unknown> | DynamicAsyncBinding<unknown>,
+  ctx: ResolutionContext,
+  levelStack: ReadonlyArray<ResolutionFrame>,
+): unknown {
+  if (binding.inFlight) {
+    // The level's own frame is the last one, and the path an error names ends where the cycle closed.
+    throw new CircularDependencyError(cycleNamesOf(levelStack.slice(0, -1), tokenName(binding.token)));
+  }
+  binding.inFlight = true;
+  try {
+    return binding.factory(ctx);
+  } finally {
+    binding.inFlight = false;
+  }
 }
 
 /**
