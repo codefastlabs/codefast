@@ -12,6 +12,7 @@ import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
 import { AsyncResolutionError, NoMatchingBindingError } from "#errors/errors";
 import { injectAll, optional } from "#injection/descriptor";
+import { whenParentIs } from "#resolution/select/constraints";
 
 const ENV_TAG = tag("env");
 const N_TAG = tag("n");
@@ -259,5 +260,34 @@ describe("slot selection", () => {
 
   it("resolveOptional returns undefined for a slot that does not exist", () => {
     expect(containerWithSlots().resolveOptional(serviceToken, { name: "nope" })).toBeUndefined();
+  });
+});
+
+describe("sibling dependencies on the async interpreted lane", () => {
+  it("selects a later sibling's binding against the root's frame, not the earlier sibling's", async () => {
+    const pickToken = token<string>("sibling-pick");
+
+    @injectable([])
+    class Leaf {}
+
+    @injectable([Leaf, pickToken])
+    class Root {
+      constructor(
+        readonly leaf: Leaf,
+        readonly pick: string,
+      ) {}
+    }
+
+    const container = Container.create();
+    container.bind(Leaf).toSelf().transient();
+    container.bind(pickToken).toConstantValue("under-root").when(whenParentIs(Root));
+    container.bind(pickToken).toConstantValue("under-leaf").when(whenParentIs(Leaf));
+    container.bind(Root).toSelf().transient();
+
+    // Options force the interpreted lane on both sides; the first sibling has already appended its
+    // frame to the branch when the second is selected.
+    expect(container.resolve(Root, {}).pick).toBe("under-root");
+    expect((await container.resolveAsync(Root, {})).pick).toBe("under-root");
+    expect((await container.resolveAsync(Root)).pick).toBe("under-root");
   });
 });

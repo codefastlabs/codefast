@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
-import { AsyncResolutionError } from "#errors/errors";
+import { AsyncResolutionError, NoMatchingBindingError, TokenNotBoundError } from "#errors/errors";
 
 const depToken = token<string>("owner.dep");
 
@@ -166,5 +166,22 @@ describe("container-level hooks belong to the binding's owner", () => {
     });
 
     expect(child.resolve(PlanService).tags).toEqual(["late-hook"]);
+  });
+});
+
+describe("a miss is classified against the whole chain", () => {
+  it("reports no matching binding from a child when the parent holds bindings that all decline", () => {
+    const guardedToken = token<string>("owner.guarded");
+    const parent = Container.create();
+    parent
+      .bind(guardedToken)
+      .toConstantValue("only under a parent frame")
+      .when((ctx) => ctx.parent !== undefined);
+    const child = parent.createChild();
+
+    // The same miss, the same diagnosis: the token is bound, nothing matched this request.
+    expect(() => parent.resolve(guardedToken)).toThrow(NoMatchingBindingError);
+    expect(() => child.resolve(guardedToken)).toThrow(NoMatchingBindingError);
+    expect(() => child.resolve(guardedToken)).not.toThrow(TokenNotBoundError);
   });
 });

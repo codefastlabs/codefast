@@ -402,3 +402,47 @@ describe("the reused root frames are only lent to one resolve at a time", () => 
     expect(container.resolve(workingToken)).toBe("ok:1");
   });
 });
+
+describe("a factory that resolves its own token from its synchronous prefix runs once on every lane", () => {
+  function bindSelfResolving(): {
+    container: Container;
+    selfToken: ReturnType<typeof token<string>>;
+    runs: () => number;
+  } {
+    const selfToken = token<string>("in-flight-self");
+    let runs = 0;
+    const container = Container.create();
+    container
+      .bind(selfToken)
+      .toDynamic((ctx) => {
+        runs += 1;
+        return ctx.resolve(selfToken);
+      })
+      .transient();
+    return { container, selfToken, runs: () => runs };
+  }
+
+  it("on the options-less sync lane", () => {
+    const { container, selfToken, runs } = bindSelfResolving();
+    expect(() => container.resolve(selfToken)).toThrow("in-flight-self → in-flight-self");
+    expect(runs()).toBe(1);
+  });
+
+  it("on the sync lane a request with options takes", () => {
+    const { container, selfToken, runs } = bindSelfResolving();
+    expect(() => container.resolve(selfToken, {})).toThrow("in-flight-self → in-flight-self");
+    expect(runs()).toBe(1);
+  });
+
+  it("on the async branch lane", async () => {
+    const { container, selfToken, runs } = bindSelfResolving();
+    await expect(container.resolveAsync(selfToken, {})).rejects.toThrow("in-flight-self → in-flight-self");
+    expect(runs()).toBe(1);
+  });
+
+  it("on the async cascade lane", async () => {
+    const { container, selfToken, runs } = bindSelfResolving();
+    await expect(container.resolveAsync(selfToken)).rejects.toThrow("in-flight-self → in-flight-self");
+    expect(runs()).toBe(1);
+  });
+});
