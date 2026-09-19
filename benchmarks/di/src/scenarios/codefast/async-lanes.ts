@@ -1,20 +1,19 @@
 /**
  * `@codefast/di` — the async lanes the existing async rows never reach (codefast-only).
  *
- * Every row in `async.ts` requests its dependency from a factory's **synchronous prefix**, which is
- * the one shape the cascade lane serves: the ancestor chain is the live call stack, so nothing is
- * allocated per level. A request made after an `await` has no such stack, so it escapes to the
- * append-only branch lane, which carries a context and a path per level instead. The first two rows
- * price that boundary as a ladder against `dynamic-async-chain-8` — the same eight-level chain with
- * no crossing at all:
+ * Every row in `async.ts` requests its dependency from a factory's **synchronous prefix**, where
+ * the factory's own flag still guards the request. A request made after an `await` runs from a
+ * continuation, and only the level's owned branch of the path can answer it. The first two rows
+ * price that difference as a ladder against `dynamic-async-chain-8` — the same eight-level chain
+ * requesting from the prefix at every level:
  *
- *   dynamic-async-chain-8               0 crossings — cascade at every level
- *   async-branch-escape-mid-chain-8     1 crossing  — cascade above it, branch below
- *   async-branch-chain-8                8 crossings — branch at every level
+ *   dynamic-async-chain-8               0 continuations — every request from the prefix
+ *   async-branch-escape-mid-chain-8     1 continuation  — one level requests after an await
+ *   async-branch-chain-8                8 continuations — every level requests after an await
  *
  * The third row is the diamond: two siblings awaited in parallel needing one leaf. It is the shape
- * that says whether the cascade releases a binding when its factory returns its promise, since the
- * second sibling reaches the leaf while the first is still unsettled.
+ * that says whether a binding is released when its factory returns its promise, since the second
+ * sibling reaches the leaf while the first is still unsettled.
  */
 import { Container, token } from "@codefast/di";
 
@@ -27,7 +26,7 @@ const ASYNC_BRANCH_CHAIN = {
   tier: "engine",
   requires: ["async-resolve"],
   group: "async",
-  what: `resolveAsync() through an ${String(ASYNC_CHAIN_DEPTH)}-step async chain whose every factory requests after an await — branch lane at every level (codefast-only)`,
+  what: `resolveAsync() through an ${String(ASYNC_CHAIN_DEPTH)}-step async chain whose every factory requests after an await — a continuation at every level (codefast-only)`,
 } as const satisfies ScenarioDescriptor;
 
 /**
@@ -41,12 +40,12 @@ const ASYNC_BRANCH_ESCAPE_MID_CHAIN = {
   tier: "engine",
   requires: ["async-resolve"],
   group: "async",
-  what: `resolveAsync() through the same chain with one level requesting after an await — the single cascade→branch crossing (codefast-only)`,
+  what: `resolveAsync() through the same chain with one level requesting after an await — a single continuation (codefast-only)`,
 } as const satisfies ScenarioDescriptor;
 
 /**
  * An eight-level async chain whose factories request their dependency either from the synchronous
- * prefix (cascade) or from a continuation (branch), per level.
+ * prefix or from a continuation, per level.
  *
  * @param descriptor - the row identity the scenario reports under
  * @param requestsAfterAwait - given a level's index, whether that factory awaits before requesting
@@ -121,7 +120,7 @@ function buildAsyncDiamondSharedLeafScenario(): AsyncBenchScenario {
   }
   container
     .bind(rootToken)
-    // Both requests are made before the await, so both siblings join the root's one cascade.
+    // Both requests are made before the await, from the root factory's synchronous prefix.
     .toDynamicAsync(async (resolutionContext) => {
       const [left, right] = await Promise.all([
         resolutionContext.resolveAsync(leftToken),
