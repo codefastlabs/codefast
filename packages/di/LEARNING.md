@@ -767,9 +767,10 @@ alias. Following that with recursion means a cyclic alias chain crashes the proc
 raising a usable error.
 
 So `toAlias` bindings are followed in a `while` loop in [`#requireBinding`](src/resolution/resolver.ts), with a lazily
-created `Set` of visited tokens that throws `CircularDependencyError` instead. The cache uses a bounded fold
-(`ALIAS_HOP_LIMIT`) as a fast pre-check and defers to the exact loop past the cap — the cheap bound handles the common
-short chain, the exact structure handles the rest.
+created `Set` of visited tokens that throws `CircularDependencyError` instead. The lookup memo folds the same chain with
+the same exactness and no cap: it compares the origin and the current token by hand and keeps a `Set` only of the tokens
+between them, so the common one-hop alias allocates nothing, and a revisited token makes the memo decline with `null` so
+the full loop reports the cycle.
 
 > **Lesson** — follow a chain iteratively, not recursively, and keep an exact visited-set for the cycle case even when a
 > cheap bound handles the common case.
