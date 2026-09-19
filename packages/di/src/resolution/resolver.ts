@@ -961,7 +961,10 @@ export class DependencyResolver implements ResolverCallbacks {
     const resolutionStack = this.rootStack;
     const memo = this.#rootCollection(token, resolutionStack);
     if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
-      return memo.values as ReadonlyArray<Value>;
+      // A copy, never the memo itself: a caller that writes into its result must not rewrite the
+      // next caller's. Reading a frozen array is several times slower than reading a plain one, so
+      // the copy is the cheaper guard by far, and it costs one allocation the read already paid before the memo.
+      return memo.values.slice() as Array<Value>;
     }
     const { candidates } = memo;
     const resolved = new Array<Value>(candidates.length);
@@ -979,7 +982,7 @@ export class DependencyResolver implements ResolverCallbacks {
     const resolutionStack: Array<ResolutionFrame> = [];
     const memo = this.#rootCollection(token, resolutionStack);
     if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
-      return Promise.resolve(memo.values as ReadonlyArray<Value>);
+      return Promise.resolve(memo.values.slice() as Array<Value>);
     }
     return Promise.all(
       memo.candidates.map(
@@ -1027,8 +1030,7 @@ export class DependencyResolver implements ResolverCallbacks {
         return;
       }
     }
-    // Handed out as is, unfrozen: a frozen array iterates through a slow elements kind, so the
-    // contract's read-only return is the guard against a caller writing into the memo.
+    // Kept unfrozen: a frozen array reads through a slow elements kind, and every read copies it anyway.
     entry.values = candidates.map(stableMemberValue);
     entry.activationVersion = 0;
   }
