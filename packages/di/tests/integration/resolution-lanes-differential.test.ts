@@ -26,6 +26,8 @@ import {
 } from "#tests/integration/support/lane-differential";
 
 const NUM_RUNS = Number(process.env["DIFF_RUNS"] ?? "250");
+// Hundreds of graphs through a dozen lanes each: seconds here, tens of seconds on a CI runner.
+const PROPERTY_TIMEOUT_MS = 300_000;
 
 function isEmptyCollection(snapshot: unknown): boolean {
   return (
@@ -161,30 +163,42 @@ async function disagreementsOf(spec: GraphSpec, errors: ErrorAgreement): Promise
 }
 
 describe("every resolution lane answers a random graph identically", () => {
-  it("random graphs: kinds, scopes, slots, members, predicates, siblings, cycles and misses", async () => {
-    await fc.assert(
-      fc.asyncProperty(graphSpecArb, async (spec) => {
-        expect(await disagreementsOf(spec, "both-fail")).toEqual([]);
-      }),
-      { numRuns: NUM_RUNS },
-    );
-  });
+  it(
+    "random graphs: kinds, scopes, slots, members, predicates, siblings, cycles and misses",
+    async () => {
+      await fc.assert(
+        fc.asyncProperty(graphSpecArb, async (spec) => {
+          expect(await disagreementsOf(spec, "both-fail")).toEqual([]);
+        }),
+        { numRuns: NUM_RUNS },
+      );
+    },
+    PROPERTY_TIMEOUT_MS,
+  );
 
-  it("sibling dependencies: selection by parent while the async lane starts siblings concurrently", async () => {
-    await fc.assert(
-      fc.asyncProperty(siblingSpecArb, async (spec) => {
-        expect(await disagreementsOf(spec, "both-fail")).toEqual([]);
-      }),
-      { numRuns: NUM_RUNS },
-    );
-  });
+  it(
+    "sibling dependencies: selection by parent while the async lane starts siblings concurrently",
+    async () => {
+      await fc.assert(
+        fc.asyncProperty(siblingSpecArb, async (spec) => {
+          expect(await disagreementsOf(spec, "both-fail")).toEqual([]);
+        }),
+        { numRuns: NUM_RUNS },
+      );
+    },
+    PROPERTY_TIMEOUT_MS,
+  );
 
-  it("deep chains: across the plan depth limit and the membership-set threshold, with and without a cycle", async () => {
-    await fc.assert(
-      fc.asyncProperty(chainSpecArb, async (spec) => {
-        expect(await disagreementsOf(spec, "exact")).toEqual([]);
-      }),
-      { numRuns: NUM_RUNS },
-    );
-  });
+  it(
+    "deep chains: dozens of levels compiled and interpreted, with and without a cycle",
+    async () => {
+      await fc.assert(
+        fc.asyncProperty(chainSpecArb, async (spec) => {
+          expect(await disagreementsOf(spec, "exact")).toEqual([]);
+        }),
+        { numRuns: NUM_RUNS },
+      );
+    },
+    PROPERTY_TIMEOUT_MS,
+  );
 });
