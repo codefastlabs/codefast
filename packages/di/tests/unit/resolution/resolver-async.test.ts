@@ -7,7 +7,9 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
+import { injectable } from "#decorators/injectable";
 import { AsyncResolutionError, CircularDependencyError } from "#errors/errors";
+import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/plan-codegen";
 
 describe("async chains", () => {
   it("resolves a dynamic-async chain in order", async () => {
@@ -468,5 +470,93 @@ describe("deep chains past the resolution-set threshold", () => {
     }
 
     await expect(container.resolveAsync(tokens[DEPTH - 1]!)).resolves.toBe(DEPTH - 1);
+  });
+});
+
+describe("sibling failures are reported in declaration order, as the sync lanes report them", () => {
+  it("names the first declared failing dependency on the interpreted, closure and generated tiers", async () => {
+    const slowToken = token<string>("fan-out-slow");
+    const missingToken = token<string>("fan-out-missing");
+
+    @injectable([slowToken, missingToken])
+    class Root {
+      constructor(
+        readonly slow: string,
+        readonly missing: string,
+      ) {}
+    }
+
+    const container = Container.create();
+    container
+      .bind(slowToken)
+      .toDynamicAsync(async () => {
+        // Settles after the unbound sibling has already rejected, so settlement order would name the sibling.
+        await Promise.resolve();
+        await Promise.resolve();
+        throw new Error("slow boom");
+      })
+      .transient();
+    container.bind(Root).toSelf().transient();
+
+    for (let index = 0; index < PLAN_CODEGEN_THRESHOLD + 4; index += 1) {
+      await expect(container.resolveAsync(Root)).rejects.toThrow("slow boom");
+    }
+    await expect(container.resolveAsync(Root, {})).rejects.toThrow("slow boom");
+  });
+
+  it("names the first declared failing member of a collection", async () => {
+    const members = token<string>("fan-out-members");
+    const container = Container.create();
+    container
+      .bind(members)
+      .toDynamicAsync(async () => {
+        await Promise.resolve();
+        throw new Error("first boom");
+      })
+      .many()
+      .transient();
+    container
+      .bind(members)
+      .toDynamic(() => {
+        throw new Error("second boom");
+      })
+      .many()
+      .transient();
+
+    await expect(container.resolveAllAsync(members)).rejects.toThrow("first boom");
+    await expect(container.resolveAllAsync(members, {})).rejects.toThrow("first boom");
+  });
+
+  it("still starts every sibling before reporting", async () => {
+    const failingToken = token<string>("fan-out-failing");
+    const laterToken = token<string>("fan-out-later");
+    let laterStarted = false;
+
+    @injectable([failingToken, laterToken])
+    class Root {
+      constructor(
+        readonly failing: string,
+        readonly later: string,
+      ) {}
+    }
+
+    const container = Container.create();
+    container
+      .bind(failingToken)
+      .toDynamic(() => {
+        throw new Error("failing boom");
+      })
+      .transient();
+    container
+      .bind(laterToken)
+      .toDynamicAsync(async () => {
+        laterStarted = true;
+        return "later";
+      })
+      .transient();
+    container.bind(Root).toSelf().transient();
+
+    await expect(container.resolveAsync(Root, {})).rejects.toThrow("failing boom");
+    expect(laterStarted).toBe(true);
   });
 });
