@@ -610,21 +610,24 @@ code runs:
 
 Hence four detectors rather than one:
 
-| Lane                    | Structure                               | Why this one is exact here                                                    |
-| ----------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
-| sync transient-dynamic  | `binding.inFlight` boolean              | one call stack, so the flag _is_ path membership — O(1), no allocation        |
-| everything else sync    | one shared frame stack, push/pop        | the error must _name_ the cycle, and a boolean can't name anything            |
-| async, inside a cascade | `binding.inFlight`, cleared early       | cleared when the factory returns its _promise_, which is what allows diamonds |
-| async, across an await  | append-only branch stack, read by depth | no call stack to lean on; nothing is removed, so no level observes settlement |
+| Lane                    | Structure                                   | Why this one is exact here                                                    |
+| ----------------------- | ------------------------------------------- | ----------------------------------------------------------------------------- |
+| every sync lane         | `binding.inFlight` boolean, set and cleared | one call stack, so the flag _is_ path membership — O(1) at any depth          |
+| async, inside a cascade | `binding.inFlight`, cleared early           | cleared when the factory returns its _promise_, which is what allows diamonds |
+| async, across an await  | append-only branch stack, read by depth     | no call stack to lean on; nothing is removed, so no level observes settlement |
 
 Lane by lane:
 
-- **Sync transient-dynamic** uses `binding.inFlight`. The lane's own comment states the reasoning: this is still one
-  sync call stack, so the flag is exact path membership.
-- **Everything else sync** pushes and pops frames on one shared stack
-  ([`enterResolutionPath`](src/resolution/path/resolution-path.ts)). The check keys on **binding identity**
-  (`frame.bindingId`) rather than on a display name, because two distinct tokens may print the same name; the names an
-  error shows are derived from the frames at the throw site by `cycleNamesOf`.
+- **Every synchronous lane** uses `binding.inFlight` ([`enterSyncPath`](src/resolution/path/resolution-path.ts) sets it
+  and pushes the frame, `leaveSyncPath` pops and clears). Synchronous code does not interleave, so the flag is exact
+  path membership. The frame stack is still kept — it is what names the cycle in the error, derived at the throw site by
+  `cycleNamesOf`, and what a constraint predicate reads — but nothing scans it. The check keys on the **binding**, never
+  on a display name, because two distinct tokens may print the same name.
+- **A seeded path is marked first.** A compiled plan pushes no frames for the nodes it inlines, so an escape hands the
+  runtime a copy of its static ancestors; an async level hands a factory's synchronous `ctx.resolve` its branch prefix.
+  Neither path's bindings carry a flag, so [`enterSeededPath`](src/resolution/path/resolution-path.ts) marks them around
+  the call and `leaveSeededPath` clears them. Marking is idempotent: a binding already flagged was flagged by an
+  enclosing synchronous frame still running, which is the same fact stated once — not a cycle — and it is left alone.
 - **Async in a cascade** reuses the `inFlight` flag but clears it when the factory returns its _promise_, not when that
   promise settles.
 - **Async across an await** carries an append-only stack read by branch depth
@@ -641,53 +644,14 @@ from "two siblings legitimately want the same thing".
 > **Lesson** — don't pick a cycle detector in the abstract — pick the cheapest structure that is exact for the
 > concurrency model of that specific lane.
 
-**Threshold-switched linear-scan vs. `Set`.** A `Set` has O(1) membership and an array has O(n) — but that hides a
-constant factor. For a handful of items, scanning a contiguous array beats hashing a key and probing a table, and it
-allocates nothing. For a large one, the asymptotics win. Neither structure is right at both sizes.
+**Where a threshold used to be.** The synchronous check once scanned the frame stack and attached a membership `Set` to
+it past a measured depth — two implementations of one answer, switched by a constant. The flag replaced both: the fact
+that makes it exact (one call stack) holds at every depth, so there was nothing left for a threshold to choose between.
+What the threshold had been protecting was the cost of a scan on a path the plan compiler seeded into an escape, and
+marking the seed's bindings once, around the call, is cheaper than scanning them at every level below.
 
-So the shared-stack detector uses both, switching at a measured depth. Membership is a linear frame scan while the stack
-is short, and a `Set` attached to the array (under a symbol key) once it grows past the threshold:
-
-```ts
-export const RESOLUTION_SET_THRESHOLD = 32;
-```
-
-```ts
-export function enterResolutionPath(
-  resolutionStack: Array<ResolutionFrame>,
-  frame: ResolutionFrame,
-): Set<BindingIdentifier> | undefined {
-  const stackWithSet = resolutionStack as ResolutionStackWithSet;
-  let resolutionSet = stackWithSet[RESOLUTION_SET_KEY];
-  // A live set mirrors the stack exactly, so a size that disagrees means it is holding ids of
-  // frames that unwound: the ones already on the stack when it attached were handed no set to
-  // delete from. Dropped rather than repaired, because the next deep frame rebuilds it.
-  if (resolutionSet !== undefined && resolutionSet.size !== resolutionStack.length) {
-    resolutionSet = undefined;
-    stackWithSet[RESOLUTION_SET_KEY] = undefined;
-  }
-  if (resolutionSet === undefined && resolutionStack.length >= RESOLUTION_SET_THRESHOLD) {
-    resolutionSet = new Set<BindingIdentifier>();
-    for (let index = 0; index < resolutionStack.length; index += 1) {
-      resolutionSet.add(resolutionStack[index]!.bindingId);
-    }
-    stackWithSet[RESOLUTION_SET_KEY] = resolutionSet;
-  }
-  …
-}
-```
-
-The rule that keeps this honest: the two branches must answer _identically_ — the threshold switches the data structure,
-never the behaviour.
-
-The size check at the top is what preserves that. Frames already on the stack when the set attached were handed no set
-to delete from on their way out, so a set whose size disagrees with the stack is holding unwound frames' ids. It gets
-dropped rather than repaired, and the next deep frame rebuilds it.
-
-(The value 32 is a tuning constant from a depth sweep; it's the kind of number worth re-measuring rather than trusting.)
-
-> **Lesson** — for small n a linear scan often beats a hash set; a threshold lets you have both without changing
-> semantics.
+> **Lesson** — before tuning the constant that switches two data structures, ask whether one structural fact makes one
+> of them exact everywhere; a threshold that survives that question is the rare one.
 
 #### Bitmask subset prefilter for tags
 
