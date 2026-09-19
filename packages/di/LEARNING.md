@@ -215,19 +215,17 @@ The cheapest correct way to answer that depends on how the code around it runs:
 
 That's why there are four detectors, not one:
 
-| Lane                    | Mechanism                                                                                       |
-| ----------------------- | ----------------------------------------------------------------------------------------------- |
-| sync transient-dynamic  | a boolean `binding.inFlight` flag — O(1) exact membership                                       |
-| everything else sync    | push/pop one shared path array ([`resolution-path.ts`](src/resolution/path/resolution-path.ts)) |
-| async, inside a cascade | `inFlight` again, cleared when the factory returns its _promise_                                |
-| async, across an await  | an append-only branch path read by depth                                                        |
+| Lane                      | Mechanism                                                                                                 |
+| ------------------------- | --------------------------------------------------------------------------------------------------------- |
+| every sync lane           | a boolean `binding.inFlight` flag — O(1) exact membership at any depth                                    |
+| async, a factory's prefix | `inFlight` again, cleared when the factory returns its _promise_                                          |
+| async, across an await    | an append-only branch path read by depth ([`resolution-path.ts`](src/resolution/path/resolution-path.ts)) |
 
 ```mermaid
 flowchart TD
   Q{"which resolution lane?"}
-  Q -->|"sync transient-dynamic"| S1["binding.inFlight flag — O(1); the sync call stack IS the path"]
-  Q -->|"sync, everything else"| S2["shared frame stack, push/pop; linear scan, then a Set past depth 32"]
-  Q -->|"async, inside one cascade"| S3["binding.inFlight flag, cleared when the factory returns its promise"]
+  Q -->|"any sync lane"| S1["binding.inFlight flag — O(1); the sync call stack IS the path"]
+  Q -->|"async, a factory's prefix"| S3["binding.inFlight flag, cleared when the factory returns its promise"]
   Q -->|"async, across an await"| S4["append-only branch stack, read by depth, copy-on-fork"]
 ```
 
@@ -610,11 +608,11 @@ code runs:
 
 Hence four detectors rather than one:
 
-| Lane                    | Structure                                   | Why this one is exact here                                                    |
-| ----------------------- | ------------------------------------------- | ----------------------------------------------------------------------------- |
-| every sync lane         | `binding.inFlight` boolean, set and cleared | one call stack, so the flag _is_ path membership — O(1) at any depth          |
-| async, inside a cascade | `binding.inFlight`, cleared early           | cleared when the factory returns its _promise_, which is what allows diamonds |
-| async, across an await  | append-only branch stack, read by depth     | no call stack to lean on; nothing is removed, so no level observes settlement |
+| Lane                      | Structure                                   | Why this one is exact here                                                    |
+| ------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------- |
+| every sync lane           | `binding.inFlight` boolean, set and cleared | one call stack, so the flag _is_ path membership — O(1) at any depth          |
+| async, a factory's prefix | `binding.inFlight`, cleared early           | cleared when the factory returns its _promise_, which is what allows diamonds |
+| async, across an await    | append-only branch stack, read by depth     | no call stack to lean on; nothing is removed, so no level observes settlement |
 
 Lane by lane:
 
@@ -628,18 +626,18 @@ Lane by lane:
   Neither path's bindings carry a flag, so [`enterSeededPath`](src/resolution/path/resolution-path.ts) marks them around
   the call and `leaveSeededPath` clears them. Marking is idempotent: a binding already flagged was flagged by an
   enclosing synchronous frame still running, which is the same fact stated once — not a cycle — and it is left alone.
-- **Async in a cascade** reuses the `inFlight` flag but clears it when the factory returns its _promise_, not when that
-  promise settles.
+- **An async factory's prefix** reuses the `inFlight` flag but clears it when the factory returns its _promise_, not
+  when that promise settles.
 - **Async across an await** carries an append-only stack read by branch depth
   ([`extendResolutionBranch`](src/resolution/path/resolution-path.ts)). It appends in place while this branch still owns
   the next slot, and copies its own prefix once a sibling has claimed it. Nothing is ever removed, so no async level has
   to observe its own settlement in order to unwind.
 
-The early-clear in the cascade lane is worth dwelling on, because it's where a naive detector gets the _wrong_ answer.
-Consider a diamond: `D` depends on `B` and `C`, and both `B` and `C` depend on `A`. There is no cycle. But if `A`'s flag
-stayed set until `A` fully settled, then `C` asking for `A` while `B`'s request is still pending would look exactly like
-a cycle. Clearing when the factory hands back its promise is what distinguishes "this is genuinely re-entering itself"
-from "two siblings legitimately want the same thing".
+The early-clear is worth dwelling on, because it's where a naive detector gets the _wrong_ answer. Consider a diamond:
+`D` depends on `B` and `C`, and both `B` and `C` depend on `A`. There is no cycle. But if `A`'s flag stayed set until
+`A` fully settled, then `C` asking for `A` while `B`'s request is still pending would look exactly like a cycle.
+Clearing when the factory hands back its promise is what distinguishes "this is genuinely re-entering itself" from "two
+siblings legitimately want the same thing".
 
 > **Lesson** — don't pick a cycle detector in the abstract — pick the cheapest structure that is exact for the
 > concurrency model of that specific lane.
@@ -999,7 +997,6 @@ this engine exist for no other reason than to move an allocation from per-call t
 - the singleton stored on `binding.instance` — a field, not a `Map` entry;
 - shared `ROOT_CONSTRAINT_CONTEXT`/`EMPTY_*` constants for the root case;
 - one frozen `ResolveOptions` per slot, reused across every resolve;
-- one `AsyncCascadeContext` shared across all levels of a cascade;
 - a deliberately non-`async` helper, to avoid a promise plus a state machine per level
   ([`resolver.ts`](src/resolution/resolver.ts)).
 
