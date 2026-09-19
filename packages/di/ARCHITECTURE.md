@@ -352,11 +352,11 @@ nested-constructor closure. The static subgraph is cycle-checked **at compile ti
 per-resolve bookkeeping at all.
 
 **What an escape is.** Some dependencies the compiler cannot see through: a factory, a scoped binding, an activation
-hook, a class past the depth limit, a multi/optional/named param. Such a dependency does **not** sink the plan. It
-compiles to an _escape_: a re-entry into the runtime resolver, seeded with exactly the ancestors the interpreted path
-would have pushed at that point, and dispatched through exactly the resolve the interpreter would have called. Cycle
-detection, constraint contexts and error paths are therefore identical to never having compiled. Without escapes, one
-`toDynamic` dependency anywhere would drop the whole graph to the interpreted path.
+hook, a multi/optional/named param. Such a dependency does **not** sink the plan. It compiles to an _escape_: a re-entry
+into the runtime resolver, seeded with exactly the ancestors the interpreted path would have pushed at that point, and
+dispatched through exactly the resolve the interpreter would have called. Cycle detection, constraint contexts and error
+paths are therefore identical to never having compiled. Without escapes, one `toDynamic` dependency anywhere would drop
+the whole graph to the interpreted path.
 
 **A plan that keeps running is generated as a function of its own.** A plan starts as a closure over the compiler's
 function literals, and V8 keeps type feedback per literal, not per closure: the dependency calls inside one root's
