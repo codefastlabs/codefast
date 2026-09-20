@@ -95,11 +95,11 @@ pnpm --filter @codefast/ui exec vitest run tests/unit/path/to.test.ts -t "name"
 
 ## Performance changes
 
-A refactor on a hot path is not free until measured. Run the head-to-head suite with process isolation so the numbers
-are order-independent:
+A refactor on a hot path is not free until measured. Run the head-to-head suite; `bench` isolates every scenario in its
+own subprocess, so the numbers are order-independent:
 
 ```bash
-pnpm --filter @benchmark/di bench:isolate
+pnpm --filter @benchmark/di bench
 ```
 
 The rules that make a result publishable — learned the hard way, and enforced on ourselves:
@@ -120,13 +120,13 @@ The rules that make a result publishable — learned the hard way, and enforced 
 For anything material, run the publishable profile and update `RESULTS.md`:
 
 ```bash
-BENCH_MODE=full BENCH_TRIALS=3 pnpm --filter @benchmark/di bench:isolate
+pnpm --filter @benchmark/di bench:baseline
 ```
 
-`bench:isolate` runs **scenario-major and interleaved** — every library measures a scenario before the next one starts,
-rotating who goes first — so drift over the run no longer lands on whoever was scheduled last. The report states the
-policy it used. Without `bench:isolate` there is one process per library and nothing to interleave, so a cross-library
-ratio from that profile stays provisional; see [`benchmarks/di/BENCH_GUIDE.md`](benchmarks/di/BENCH_GUIDE.md).
+`bench` runs **scenario-major and interleaved** — every library measures a scenario before the next one starts, rotating
+who goes first — so drift over the run no longer lands on whoever was scheduled last. The report states the policy it
+used. `bench:fast` runs one process per library with nothing to interleave, so a cross-library ratio from that smoke
+profile stays provisional; see [`benchmarks/di/BENCH_GUIDE.md`](benchmarks/di/BENCH_GUIDE.md).
 
 ## Changesets
 

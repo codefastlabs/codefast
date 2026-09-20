@@ -432,24 +432,24 @@ excluded from the aggregates above because their two sides do incomparable work 
 ```bash
 pnpm bench:baseline                                             # from benchmarks/di — the full-profile pass above, read against the pinned baseline
 pnpm bench:report                                               # derive report.md + report.json from the newest run
-BENCH_MODE=full pnpm bench:isolate                              # the same pass, read against whatever run landed before
+BENCH_MODE=full pnpm bench                                      # the same pass, read against whatever run landed before
 ```
 
-`bench:baseline` is `bench:isolate` with `BENCH_BASELINE` pinned to `baselines/2026-09-14T23-41-04-932Z`, the last full
-pass over the previous engine, whose observations are tracked in this repository, so every pass's `Δ` reads against the
-same run. It runs 3 trials per library in its own subprocess — one invocation is one pass, not three. `baselines/` holds
-exactly the committed runs the repository cites: the pinned baseline, `baselines/2026-09-20T08-51-37-761Z`, the run this
-page is transcribed from, and the two contract-tier runs the cold-path redesign's decision record reads its before and
-after from (`2026-09-20T02-07-56-518Z`, `2026-09-20T05-28-49-997Z`). A run under `baselines/` that nothing cites any
-more is deleted; re-anchoring the ledger (re-pinning `bench:baseline` to a newer run once an engine epoch closes, as
-this page did with the pre-rewrite run) is what makes an older baseline unreferenced and removable. The run writes a
-timestamped directory under `bench-results/` (gitignored) holding `observations.jsonl` with every per-trial `mean ms`,
-`p99 ms` and IQR; `bench:report` turns the newest run into the `report.md` this page is transcribed from. Before quoting
-any single loss as a factor rather than a direction, re-measure it paired and alternating on a quiet machine — a full
-pass carries no between-run variance of its own. The rewrite's own protocol is in [`BENCH_GUIDE.md`](./BENCH_GUIDE.md):
-swap the change's `src` files per side, `BENCH_LIBRARY=@codefast/di` and `BENCH_ONLY` the target rows plus warm
-canaries, a `BENCH_MODE=fast` gate first and one full pass per side only when it wins, and read the per-trial spread,
-not one ratio; the redesign's record adds the cheaper gate that came first, a standalone probe of the scenario's own
-function for time, bytes and objects per op. `BENCH_TIER=contract` runs the comparison without the engine rows;
-`pnpm bench:list` prints which rows each library implements and confirms there is no row a library's features allow that
-nobody wrote.
+`bench:baseline` is `bench` in the full profile with `BENCH_BASELINE` pinned to `baselines/2026-09-14T23-41-04-932Z`,
+the last full pass over the previous engine, whose observations are tracked in this repository, so every pass's `Δ`
+reads against the same run. It runs 3 trials per library in its own subprocess — one invocation is one pass, not three.
+`baselines/` holds exactly the committed runs the repository cites: the pinned baseline,
+`baselines/2026-09-20T08-51-37-761Z`, the run this page is transcribed from, and the two contract-tier runs the
+cold-path redesign's decision record reads its before and after from (`2026-09-20T02-07-56-518Z`,
+`2026-09-20T05-28-49-997Z`). A run under `baselines/` that nothing cites any more is deleted; re-anchoring the ledger
+(re-pinning `bench:baseline` to a newer run once an engine epoch closes, as this page did with the pre-rewrite run) is
+what makes an older baseline unreferenced and removable. The run writes a timestamped directory under `bench-results/`
+(gitignored) holding `observations.jsonl` with every per-trial `mean ms`, `p99 ms` and IQR; `bench:report` turns the
+newest run into the `report.md` this page is transcribed from. Before quoting any single loss as a factor rather than a
+direction, re-measure it paired and alternating on a quiet machine — a full pass carries no between-run variance of its
+own. The rewrite's own protocol is in [`BENCH_GUIDE.md`](./BENCH_GUIDE.md): swap the change's `src` files per side,
+`BENCH_LIBRARY=@codefast/di` and `BENCH_ONLY` the target rows plus warm canaries, a `BENCH_MODE=fast` gate first and one
+full pass per side only when it wins, and read the per-trial spread, not one ratio; the redesign's record adds the
+cheaper gate that came first, a standalone probe of the scenario's own function for time, bytes and objects per op.
+`BENCH_TIER=contract` runs the comparison without the engine rows; `pnpm bench:list` prints which rows each library
+implements and confirms there is no row a library's features allow that nobody wrote.

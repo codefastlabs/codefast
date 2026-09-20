@@ -340,7 +340,7 @@ guard; `plan/` — the instantiation-plan compiler; `select/` — binding select
 and async pipelines stay in one class because `#` private fields can't span files and both touch the same private state
 per hop; anything that doesn't is already extracted. Tests mirror these paths (`tests/unit/resolution/…`).
 `package.json#exports` is generated from `dist/` by `codefast mirror` — rerun it after moving/adding modules. Verify
-hot-path changes against `benchmarks/di` (`pnpm bench:isolate` for order-independent numbers, ≥3 trials, best-of across
+hot-path changes against `benchmarks/di` (`pnpm di:bench`, which isolates every scenario, ≥3 trials, best-of across
 several processes) before assuming a refactor is free — and measure cold paths too, which the hot loops hide.
 
 ## UI/component conventions (apps/web and packages/ui)

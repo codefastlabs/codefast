@@ -48,10 +48,10 @@ demand from one shared function.**
 
 Two independent axes multiply, plus continuous modifiers:
 
-- **Execution shape** — `shared` / `isolated` (`BENCH_ISOLATE`): one child per library vs one child per scenario. Only
-  `isolated` yields order-independent, citable cross-library ratios.
+- **Execution shape** — `shared` / `isolated` (`BENCH_ISOLATE`, which the `bench` lane sets and `bench:fast` leaves
+  off): one child per library vs one child per scenario. Only `isolated` yields order-independent, citable ratios.
 - **Timing profile** — `fast` / `default` / `full` (`BENCH_MODE`): `fast` is a one-trial smoke run with no median;
-  `full` adds `--expose-gc` for stability.
+  `full` adds longer windows and `--expose-gc` for one collection between trials, never inside a sample.
 - **Modifiers** — `BENCH_TRIALS` (turns the profile's trial count continuous), `BENCH_ONLY` (narrows to a row subset).
 - **A separate kind of measurement** — `instrument:alloc` measures memory allocation, not throughput.
 
@@ -150,7 +150,7 @@ Each PR is independently verifiable. All four batches are **implemented** on `fe
 | 4   | harness + suites + viewer: **P3** | scenario `comparesWithin: "<baseline-id>"`, within-group ratio in the report and the viewer                | done   |
 
 Per-PR verification: `pnpm build:packages` (so the viewer sees the harness's new types) → the harness unit tests → a
-live `pnpm di:bench:isolate` and `pnpm di:bench:serve`.
+live `pnpm di:bench` and `pnpm di:bench:serve`.
 
 ## Decisions (locked 2026-09-10)
 
