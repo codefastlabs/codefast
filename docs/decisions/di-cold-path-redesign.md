@@ -82,7 +82,7 @@ tables a user sees — and the pinned isolate pass at the citable profile.
 | 0.99× | `has-bound-check`                            | awilix        |    166,640,543 | 168,031,824 |
 | 1.00× | `nested-container-resolve-in-factory`        | ditox         |     31,165,765 |  31,226,305 |
 
-**Pinned isolate pass** — `BENCH_MODE=full BENCH_TIER=contract pnpm di:bench:isolate`, 28m30s, committed as
+**Pinned isolate pass** — `BENCH_MODE=full BENCH_TIER=contract pnpm di:bench`, 28m30s, committed as
 `baselines/2026-09-20T02-07-56-518Z` — 91 head-to-head rows, 28 below 1.00×. Every later isolate run of this branch is
 read against it (`BENCH_BASELINE=baselines/2026-09-20T02-07-56-518Z`).
 
@@ -645,10 +645,10 @@ with `@codefast/di`'s own time in nanoseconds per op, so a ratio that moved on t
 | `to-resolved-3-deps`                         |  0.59× | 0.74× |                    12 → 10 | ditox         |
 | `unbind-all-100-singletons`                  |  0.37× | 0.51× |            24 473 → 17 762 | ditox         |
 
-**`pnpm di:bench:isolate`** (full profile, contract tier; `baselines/2026-09-20T02-07-56-518Z` against
-`baselines/2026-09-20T05-28-49-997Z`) — 91 head-to-head rows; 28 below 1.00× before, 23 after. Every row that was or is
-below 1.00×, with `@codefast/di`'s own time in nanoseconds per op, so a ratio that moved on the rival's side reads as
-such:
+**`BENCH_MODE=full BENCH_TIER=contract pnpm di:bench`** (full profile, contract tier;
+`baselines/2026-09-20T02-07-56-518Z` against `baselines/2026-09-20T05-28-49-997Z`) — 91 head-to-head rows; 28 below
+1.00× before, 23 after. Every row that was or is below 1.00×, with `@codefast/di`'s own time in nanoseconds per op, so a
+ratio that moved on the rival's side reads as such:
 
 | row                                          | before | after | codefast ns before → after | fastest rival |
 | -------------------------------------------- | -----: | ----: | -------------------------: | ------------- |

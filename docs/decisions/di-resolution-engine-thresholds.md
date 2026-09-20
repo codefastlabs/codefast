@@ -105,7 +105,7 @@ races, holds errors to verbatim equality; the graph properties require the async
 ## Baseline measured on this machine
 
 Run `2026-09-19T13-37-14-179Z` under `benchmarks/di/bench-results/` (git-ignored; reproduce with
-`BENCH_TIER=contract pnpm di:bench:isolate`): default profile, no `--expose-gc`, one subprocess per scenario, libraries
+`BENCH_TIER=contract pnpm di:bench`): default profile, no `--expose-gc`, one subprocess per scenario, libraries
 interleaved with rotating order, 3 trials, 101 contract rows × 7 libraries, 13m22s wall on the same Apple M3 Max and
 Node 26.1.0 as `RESULTS.md`, over commit `10b5f9db3` (0.10.1). 137 rows sat above the ~30M ops/s ceiling and 213 cells
 carried a per-trial IQR above 5%, so this is a direction check on the aggregates, not a re-publication of the ledger.
