@@ -11,7 +11,6 @@ import { track } from "#features/tracking/lib/tracking";
 import { GITHUB_URL } from "#lib/nav-links";
 
 const LEDGER_URL = `${GITHUB_URL}/blob/main/benchmarks/di/RESULTS.md`;
-const LOSSES_URL = `${LEDGER_URL}#where-it-loses`;
 const GUIDE_URL = `${GITHUB_URL}/blob/main/benchmarks/di/BENCH_GUIDE.md`;
 
 /** The ledger's `name version` for a competitor line, matched by name prefix; the line's own label otherwise. */
@@ -157,13 +156,13 @@ export function BenchmarkSection({ ledger, className, ...props }: BenchmarkSecti
                     : " "}
                   stay published, with the reason, under{" "}
                   <a
-                    href={LOSSES_URL}
+                    href={ledger.lossesAnchor ? `${LEDGER_URL}#${ledger.lossesAnchor}` : LEDGER_URL}
                     target="_blank"
                     rel="noreferrer"
                     onClick={trackLedgerClick}
                     className="text-ui-fg underline underline-offset-4 hover:text-ui-brand"
                   >
-                    Where it loses
+                    where it loses
                   </a>
                   .
                 </>
