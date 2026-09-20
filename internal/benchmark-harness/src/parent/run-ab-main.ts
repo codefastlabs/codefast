@@ -26,7 +26,7 @@ const GIT_ARCHIVE_MAX_BUFFER = 256 * 1024 * 1024;
  * @since 0.10.0
  */
 export interface RunBenchAbOptions {
-  /** The benchmark suite package's root, where `bench-results/` lives and `bench:isolate` runs. */
+  /** The benchmark suite package's root, where `bench-results/` lives and the isolated `bench` lane runs. */
   readonly packageRootDirectory: string;
   /** The subject's package name, passed to the isolated `bench` lane as the library filter. */
   readonly subjectLibraryName: string;
