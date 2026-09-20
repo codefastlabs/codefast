@@ -36,9 +36,6 @@ export {
   USER_BENCH_ENV_KEYS,
 } from "#shared/env-keys";
 
-export type { CompareHarnessSources, HarnessProvenance, HarnessSourceComparison } from "#shared/provenance";
-export { createHarnessSourceComparer, HARNESS_MEASURING_PATHS, readHarnessProvenance } from "#shared/provenance";
-
 export { assertSubjectMeasuredSomething } from "#parent/assert-subject-measured";
 
 export type {

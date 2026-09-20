@@ -82,10 +82,6 @@ export interface ComparisonDocumentEnvironment {
   readonly gcExposed: boolean;
   /** The 1-minute load average when the pivot's child started, when the run recorded it. */
   readonly loadAverage1m?: number | undefined;
-  /** The commit the harness ran from, when the run recorded it. */
-  readonly harnessCommit?: string | undefined;
-  /** Whether the harness's measuring sources were uncommitted, when the run recorded it. */
-  readonly harnessDirty?: boolean | undefined;
   readonly timestampIso: string;
 }
 
@@ -212,8 +208,6 @@ export function buildComparisonDocument(
       gcExposed: fingerprint.gcExposed,
       // Spread rather than assigned: the document must survive a JSON round trip, which drops an `undefined` key.
       ...(fingerprint.loadAverage1m === undefined ? {} : { loadAverage1m: fingerprint.loadAverage1m }),
-      ...(fingerprint.harnessCommit === undefined ? {} : { harnessCommit: fingerprint.harnessCommit }),
-      ...(fingerprint.harnessDirty === undefined ? {} : { harnessDirty: fingerprint.harnessDirty }),
       timestampIso: fingerprint.timestampIso,
     },
     pivot: toDocumentLibrary(pivot),

@@ -77,10 +77,6 @@ export interface Fingerprint {
   readonly gcExposed: boolean;
   /** The 1-minute load average when the child started; absent on payloads written before it was recorded. */
   readonly loadAverage1m?: number | undefined;
-  /** The commit the harness ran from; absent on payloads written before it was recorded. */
-  readonly harnessCommit?: string | undefined;
-  /** Whether the harness's measuring sources were uncommitted; absent together with `harnessCommit`. */
-  readonly harnessDirty?: boolean | undefined;
   readonly timestampIso: string;
 }
 

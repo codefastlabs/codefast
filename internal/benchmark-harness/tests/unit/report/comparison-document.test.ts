@@ -81,22 +81,6 @@ describe("buildComparisonDocument", () => {
     expect(document.competitors[0]).toMatchObject({ displayName: "Rival 1", libraryVersion: "1.2.3" });
   });
 
-  it("carries the harness commit when the run recorded it, and no key when it did not", () => {
-    const pivot = library("pivot", [scenario("a", 100)]);
-    const measured = {
-      ...pivot,
-      report: {
-        ...pivot.report,
-        fingerprint: { ...pivot.report.fingerprint, harnessCommit: "abc", harnessDirty: false },
-      },
-    };
-    expect(buildComparisonDocument(measured, [], RUN).environment).toMatchObject({
-      harnessCommit: "abc",
-      harnessDirty: false,
-    });
-    expect("harnessCommit" in buildComparisonDocument(pivot, [], RUN).environment).toBe(false);
-  });
-
   // The markdown table rounds to three significant figures, which cannot resolve a few percent.
   it("keeps ratios at full precision rather than the rendered rounding", () => {
     const document = buildComparisonDocument(

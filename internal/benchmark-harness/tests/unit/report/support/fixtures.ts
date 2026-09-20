@@ -2,9 +2,6 @@ import { buildLibraryReport } from "#report/aggregate";
 import type { ComparisonLibrary } from "#report/comparison";
 import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#shared/protocol";
 
-/** The commit every fixture fingerprint claims to have been measured from. */
-const FIXTURE_HARNESS_COMMIT = "0123456789abcdef0123456789abcdef01234567";
-
 /** A fingerprint for a library with an optional environment override. */
 export function fingerprint(libraryName: string, overrides: Partial<Fingerprint> = {}): Fingerprint {
   return {
@@ -18,8 +15,6 @@ export function fingerprint(libraryName: string, overrides: Partial<Fingerprint>
     libraryName,
     libraryVersion: "1.0.0",
     gcExposed: false,
-    harnessCommit: FIXTURE_HARNESS_COMMIT,
-    harnessDirty: false,
     timestampIso: "2026-09-12T00:00:00.000Z",
     ...overrides,
   };

@@ -8,8 +8,6 @@ import { isThroughputAboveNoiseCeiling, NOISY_IQR_FRACTION } from "#report/relia
 import type { BenchRunShape } from "#shared/env-keys";
 import { resolveBaselineRunFromEnvironment } from "#shared/env-keys";
 import type { Fingerprint, TrialPayload } from "#shared/protocol";
-import type { CompareHarnessSources } from "#shared/provenance";
-import { createHarnessSourceComparer } from "#shared/provenance";
 
 /**
  * A run read back from disk to diff against.
@@ -133,44 +131,6 @@ function sameEnvironment(left: Fingerprint, right: Fingerprint): boolean {
   return left.cpuModel === right.cpuModel && left.nodeVersion === right.nodeVersion && left.arch === right.arch;
 }
 
-// The abbreviation the ledger pages spell a commit with.
-const COMMIT_ABBREVIATION_LENGTH = 9;
-
-function abbreviateCommit(commit: string): string {
-  return commit.slice(0, COMMIT_ABBREVIATION_LENGTH);
-}
-
-// A Δ is the engine's only when one harness measured both sides, so a harness change is refused, never folded in.
-function describeProvenanceRefusal(
-  current: Fingerprint,
-  previous: Fingerprint,
-  compareHarnessSources: CompareHarnessSources,
-): string | undefined {
-  if (previous.harnessCommit === undefined) {
-    return "it recorded no harness commit; re-measure it with this harness";
-  }
-  if (current.harnessCommit === undefined) {
-    return "this run recorded no harness commit";
-  }
-  if (previous.harnessDirty === true) {
-    return `the harness had uncommitted measuring sources when it measured ${abbreviateCommit(previous.harnessCommit)}`;
-  }
-  if (current.harnessDirty === true) {
-    return "the harness has uncommitted measuring sources in this run";
-  }
-  if (previous.harnessCommit === current.harnessCommit) {
-    return undefined;
-  }
-  const comparison = compareHarnessSources(previous.harnessCommit, current.harnessCommit);
-  if (comparison === "changed") {
-    return `the harness's measuring sources changed between ${abbreviateCommit(previous.harnessCommit)} and ${abbreviateCommit(current.harnessCommit)}`;
-  }
-  if (comparison === "unknown") {
-    return `its harness commit ${abbreviateCommit(previous.harnessCommit)} is not in this checkout, so the harness change between the runs cannot be read`;
-  }
-  return undefined;
-}
-
 /**
  * Reads the run to diff against: the one `requested` names, else the one `latest.json` names.
  *
@@ -208,16 +168,9 @@ export function readPreviousRun(packageRootDirectory: string, requested?: string
 /**
  * Diffs the current run against a previous one, or explains why the two are not comparable.
  *
- * @remarks The comparer answers whether the harness's measuring sources differ between the two runs'
- * commits; the diff never asks git itself.
- *
  * @since 0.9.0
  */
-export function buildRunDiff(
-  current: CurrentRun,
-  previous: PreviousRun,
-  compareHarnessSources: CompareHarnessSources,
-): RunDiff {
+export function buildRunDiff(current: CurrentRun, previous: PreviousRun): RunDiff {
   const previousPivot = previous.libraries.get(current.pivot.report.fingerprint.libraryName);
   if (previousPivot === undefined) {
     return {
@@ -244,14 +197,6 @@ export function buildRunDiff(
       pinned: previous.pinned,
       reason: "it ran on a different CPU, Node or architecture",
     };
-  }
-  const provenanceRefusal = describeProvenanceRefusal(
-    current.pivot.report.fingerprint,
-    previousPivot.fingerprint,
-    compareHarnessSources,
-  );
-  if (provenanceRefusal !== undefined) {
-    return { comparable: false, previousRunId: previous.runId, pinned: previous.pinned, reason: provenanceRefusal };
   }
 
   const previousPivotReport = buildLibraryReport(previousPivot.fingerprint, previousPivot.trials, []);
@@ -335,7 +280,5 @@ export function buildRunDiff(
  */
 export function prepareRunDiff(packageRootDirectory: string, current: CurrentRun): RunDiff | undefined {
   const previous = readPreviousRun(packageRootDirectory, resolveBaselineRunFromEnvironment());
-  return previous === undefined
-    ? undefined
-    : buildRunDiff(current, previous, createHarnessSourceComparer(packageRootDirectory));
+  return previous === undefined ? undefined : buildRunDiff(current, previous);
 }
