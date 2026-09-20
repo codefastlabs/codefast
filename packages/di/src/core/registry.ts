@@ -48,8 +48,10 @@ function createTokenRecord(bindings: Array<Binding>): TokenRecord {
  *
  * @since 0.3.16-canary.0
  */
-// One shared empty map answers every read of a registry nothing was bound into, so a container
-// that only ever resolves through its parent — every per-request child — allocates no map.
+/**
+ * One shared empty map answers every read of a registry nothing was bound into, so a container
+ * that only ever resolves through its parent — every per-request child — allocates no map.
+ */
 const EMPTY_LONE: Map<DependencyKey, Binding> = new Map();
 
 export class BindingRegistry {
