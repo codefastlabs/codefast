@@ -1,5 +1,16 @@
 # @codefast/benchmark-tailwind-variants
 
+## 0.9.1
+
+### Patch Changes
+
+- [#899](https://github.com/codefastlabs/codefast/pull/899) [`3e10c03`](https://github.com/codefastlabs/codefast/commit/3e10c03d7a778f3666f345b43fb651e5f67bade9) Thanks [@thevuong](https://github.com/thevuong)! - `pnpm bench` isolates every scenario in its own subprocess and is the lane to cite; `pnpm bench:fast` is the
+  shared-process smoke run; `pnpm bench:ab` compares two builds. `bench:isolate`, `bench:full` and `bench:verbose` are
+  removed; `BENCH_MODE=full` and `BENCH_VERBOSE=true` compose with `bench`.
+- Updated dependencies [[`6156c2c`](https://github.com/codefastlabs/codefast/commit/6156c2c8dba025b9d8a2201222e510954ea1487a), [`3e10c03`](https://github.com/codefastlabs/codefast/commit/3e10c03d7a778f3666f345b43fb651e5f67bade9), [`e865821`](https://github.com/codefastlabs/codefast/commit/e865821ecff1a3ec59f64564e4d43109f73eb76d), [`42ad920`](https://github.com/codefastlabs/codefast/commit/42ad9207b05cbefce702d46271437e41c8f8174d)]:
+  - @internal/benchmark-harness@0.11.0
+  - @internal/benchmark-viewer@0.9.2
+
 ## 0.9.0
 
 ### Minor Changes

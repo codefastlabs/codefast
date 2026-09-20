@@ -1,5 +1,34 @@
 # @codefast/benchmark-harness
 
+## 0.11.0
+
+### Minor Changes
+
+- [#900](https://github.com/codefastlabs/codefast/pull/900) [`6156c2c`](https://github.com/codefastlabs/codefast/commit/6156c2c8dba025b9d8a2201222e510954ea1487a) Thanks [@thevuong](https://github.com/thevuong)! - A bench child is spawned as the running Node with the suite's `tsx` loader on its entry, the tsconfig handed over
+  through `TSX_TSCONFIG_PATH`, instead of through `pnpm exec tsx`: the package-manager start cost more than a whole short
+  child, once per scenario per library. `launchWithPnpmTsx` is `launchWithNodeTsx`, and a `SubprocessLaunch` may carry the
+  environment its launcher needs.
+
+- [#899](https://github.com/codefastlabs/codefast/pull/899) [`3e10c03`](https://github.com/codefastlabs/codefast/commit/3e10c03d7a778f3666f345b43fb651e5f67bade9) Thanks [@thevuong](https://github.com/thevuong)! - The full profile no longer forces a collection inside the measured loop: a collection runs between trials only, so a
+  class whose instances die between resolves is no longer thrown into a deoptimize-and-reoptimize cycle by the harness
+  itself. Every child records the 1-minute load average at its start, and the report's Environment section prints it,
+  flagged when any reading exceeded half the cores. The measuring lanes are two Turbo tasks: `bench` (isolated, the one to
+  cite) and `bench:fast` (shared, smoke); `bench:isolate`, `bench:full` and `bench:verbose` are gone — `BENCH_MODE`,
+  `BENCH_VERBOSE` and the other switches compose with the two.
+
+- [#903](https://github.com/codefastlabs/codefast/pull/903) [`e865821`](https://github.com/codefastlabs/codefast/commit/e865821ecff1a3ec59f64564e4d43109f73eb76d) Thanks [@thevuong](https://github.com/thevuong)! - Every trial runs the one closure built from a scenario before the first trial. A fresh closure per trial — a second
+  closure from the same function literal — turned off V8's function-context specialization for it, so the first trial read
+  the specialized code and the others did not, and the median of three was the unspecialized number: about a fifth lower
+  on the fastest rows, a third for the pivot. Both sides of every ratio read the same thing now, and the figure is the one
+  a call site in an application sees.
+
+- [#908](https://github.com/codefastlabs/codefast/pull/908) [`42ad920`](https://github.com/codefastlabs/codefast/commit/42ad9207b05cbefce702d46271437e41c8f8174d) Thanks [@thevuong](https://github.com/thevuong)! - Every observation records the commit the harness ran from and whether its measuring sources (`src/child`, `src/shared`)
+  were clean, and the report's Environment names it. A diff between two runs is refused, as a diff across a different
+  profile already is, when those sources differ between the two commits, when either side ran from uncommitted harness
+  sources, or when either recorded no commit: a `Δ` read across a harness change credits the harness's fix to the engine,
+  so the anchor is re-measured with the harness that reads against it. `buildRunDiff` takes the comparer that answers
+  whether two commits share the measuring sources; `prepareRunDiff` builds it from the checkout.
+
 ## 0.10.0
 
 ### Minor Changes

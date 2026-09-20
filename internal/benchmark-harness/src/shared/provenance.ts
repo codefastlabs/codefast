@@ -5,6 +5,8 @@ import { spawnSync } from "node:child_process";
  * Where a run's harness came from: the commit it ran at, and whether its measuring sources were clean.
  *
  * @remarks Stamped on every observation so a later diff can tell an engine change from a harness change.
+ *
+ * @since 0.11.0
  */
 export interface HarnessProvenance {
   /** The repository commit the harness ran from, as a full SHA. */
@@ -17,16 +19,26 @@ export interface HarnessProvenance {
  * The harness sources a child executes, relative to the repository root.
  *
  * @remarks A change here changes what a measurement means; the report renderers do not, so they stay out.
+ *
+ * @since 0.11.0
  */
 export const HARNESS_MEASURING_PATHS: ReadonlyArray<string> = [
   "internal/benchmark-harness/src/child",
   "internal/benchmark-harness/src/shared",
 ];
 
-/** How the measuring sources at one commit compare to those at another. */
+/**
+ * How the measuring sources at one commit compare to those at another.
+ *
+ * @since 0.11.0
+ */
 export type HarnessSourceComparison = "same" | "changed" | "unknown";
 
-/** Answers whether the measuring sources differ between two commits. */
+/**
+ * Answers whether the measuring sources differ between two commits.
+ *
+ * @since 0.11.0
+ */
 export type CompareHarnessSources = (fromCommit: string, toCommit: string) => HarnessSourceComparison;
 
 interface GitResult {
@@ -51,6 +63,8 @@ function repositoryTop(directory: string): string | undefined {
  * Reads the harness's provenance for a run started from `directory`, or nothing outside a git checkout.
  *
  * @remarks A run that records nothing can never be diffed against, the honest outcome for a tree git cannot describe.
+ *
+ * @since 0.11.0
  */
 export function readHarnessProvenance(directory: string): HarnessProvenance | undefined {
   const top = repositoryTop(directory);
@@ -72,6 +86,8 @@ export function readHarnessProvenance(directory: string): HarnessProvenance | un
  * Creates a comparer that asks the checkout at `directory` whether the measuring sources differ between two commits.
  *
  * @remarks Equal commits are the same without asking; a commit the checkout cannot see reads as unknown, never as same.
+ *
+ * @since 0.11.0
  */
 export function createHarnessSourceComparer(directory: string): CompareHarnessSources {
   return (fromCommit, toCommit) => {

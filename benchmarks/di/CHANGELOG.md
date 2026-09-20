@@ -1,5 +1,45 @@
 # @codefast/benchmark-di
 
+## 0.10.0
+
+### Minor Changes
+
+- [#896](https://github.com/codefastlabs/codefast/pull/896) [`599e019`](https://github.com/codefastlabs/codefast/commit/599e0198329c570a431e9fdf83c41f21dcb85258) Thanks [@thevuong](https://github.com/thevuong)! - Add the `plan-runs-*` engine rows: a fresh container resolving a transient class chain exactly `k` times, at two depths,
+  so the compiled plan's closure tier, its generation on the thirty-second run, the generated function's warm-up and its
+  warm run are each priced as the difference between two rows.
+
+### Patch Changes
+
+- [#899](https://github.com/codefastlabs/codefast/pull/899) [`3e10c03`](https://github.com/codefastlabs/codefast/commit/3e10c03d7a778f3666f345b43fb651e5f67bade9) Thanks [@thevuong](https://github.com/thevuong)! - Four ways to run, each with one purpose: `pnpm bench` isolates every scenario in its own subprocess and is the lane to
+  cite; `pnpm bench:fast` is the shared-process smoke run; `pnpm bench:baseline` is the ledger's full pass against the
+  pinned baseline; `pnpm bench:ab` compares two builds of `@codefast/di`. `bench:isolate`, `bench:full` and
+  `bench:verbose` are removed; `BENCH_MODE=full` and `BENCH_VERBOSE=true` compose with `bench`.
+
+- [#901](https://github.com/codefastlabs/codefast/pull/901) [`a0f7a76`](https://github.com/codefastlabs/codefast/commit/a0f7a76fe595342a5f1279340aebea8eb70961b8) Thanks [@thevuong](https://github.com/thevuong)! - `RESULTS.md` is rewritten from a full pass of the harness that collects only between trials, over the same engine as the
+  previous page: 23 codefast rows had read 15–150% lower under the forced in-loop collections, the plan rows most. The
+  run's `observations.jsonl` is committed under `baselines/`; the pass it replaces is removed. The recipe names the pass's
+  length — a little over two minutes — and the load average the report now records.
+
+- [#906](https://github.com/codefastlabs/codefast/pull/906) [`c778525`](https://github.com/codefastlabs/codefast/commit/c7785251c3c262a0fa87ebf51b53110e86a1525b) Thanks [@thevuong](https://github.com/thevuong)! - `RESULTS.md` is rewritten from a pass over `main` after the lookup memo's hit became inlinable: the alias rows the
+  previous page listed as the one deficit the fixed harness uncovered read at parity with injection-js now, and the page
+  names what still loses there. The run's `observations.jsonl` is committed under `baselines/`; the pass it replaces is
+  removed.
+
+- [#904](https://github.com/codefastlabs/codefast/pull/904) [`ca05245`](https://github.com/codefastlabs/codefast/commit/ca052451640702698e9299d7bdd18da9361af940) Thanks [@thevuong](https://github.com/thevuong)! - `RESULTS.md` is rewritten from a pass of the harness that runs every trial over the one closure built before the first,
+  on the same engine as the previous page. The previous harness built a fresh closure per trial and so measured two of
+  every three trials without V8's function-context specialization; the median moved on 43 codefast rows by more than 10%
+  for that alone, and the warm-read gap the page had filed as harness-only is gone with it. The run's `observations.jsonl`
+  is committed under `baselines/`; the pass it replaces is removed.
+
+- [#898](https://github.com/codefastlabs/codefast/pull/898) [`c749c38`](https://github.com/codefastlabs/codefast/commit/c749c387644299784fa4d978b70251fb39f9e6c9) Thanks [@thevuong](https://github.com/thevuong)! - `RESULTS.md` is rewritten from a full-profile isolated pass over the suite on the tree after the cold-path redesign and
+  the one-async-lane series, read against `baselines/2026-09-14T23-41-04-932Z` — the last full pass over the previous
+  engine, now the pinned baseline of `pnpm bench:baseline`. The run's `observations.jsonl` is committed under
+  `baselines/`; the pre-rewrite run the page no longer cites is removed.
+- Updated dependencies [[`6156c2c`](https://github.com/codefastlabs/codefast/commit/6156c2c8dba025b9d8a2201222e510954ea1487a), [`3e10c03`](https://github.com/codefastlabs/codefast/commit/3e10c03d7a778f3666f345b43fb651e5f67bade9), [`e865821`](https://github.com/codefastlabs/codefast/commit/e865821ecff1a3ec59f64564e4d43109f73eb76d), [`42ad920`](https://github.com/codefastlabs/codefast/commit/42ad9207b05cbefce702d46271437e41c8f8174d), [`79c16fb`](https://github.com/codefastlabs/codefast/commit/79c16fbb5ac08d95c6ce2717993835b46418f200), [`a4eed7d`](https://github.com/codefastlabs/codefast/commit/a4eed7dc90d804d66d6e4bbb4e5e52870195d919), [`12de5e9`](https://github.com/codefastlabs/codefast/commit/12de5e99582fbc03571c9f3fa0b85c16b7f4a876), [`30bd38a`](https://github.com/codefastlabs/codefast/commit/30bd38a8abb3e7d5e4d3e8e737394fa1f9a5632b), [`12de5e9`](https://github.com/codefastlabs/codefast/commit/12de5e99582fbc03571c9f3fa0b85c16b7f4a876), [`3d400ae`](https://github.com/codefastlabs/codefast/commit/3d400ae8e4a8294e72f18adaa04e5f6fa3371e10), [`c43befa`](https://github.com/codefastlabs/codefast/commit/c43befa6491c4d5f0f63cb2d07febfeceaa4bf46), [`9d19b93`](https://github.com/codefastlabs/codefast/commit/9d19b933521e5a1dd4c981b129f17d025431d8bf), [`12de5e9`](https://github.com/codefastlabs/codefast/commit/12de5e99582fbc03571c9f3fa0b85c16b7f4a876)]:
+  - @internal/benchmark-harness@0.11.0
+  - @codefast/di@0.11.0
+  - @internal/benchmark-viewer@0.9.2
+
 ## 0.9.0
 
 ### Minor Changes

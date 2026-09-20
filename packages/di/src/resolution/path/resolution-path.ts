@@ -31,7 +31,11 @@ export function buildResolutionFrame(binding: Binding, tokenName: string): Resol
   return frame;
 }
 
-/** The bindings behind the resolver-built frames of a path, in path order. */
+/**
+ * The bindings behind the resolver-built frames of a path, in path order.
+ *
+ * @since 0.11.0
+ */
 export function bindingsOf(frames: ReadonlyArray<ResolutionFrame>): Array<Binding> {
   const bindings: Array<Binding> = [];
   for (let index = 0; index < frames.length; index += 1) {
@@ -65,6 +69,8 @@ export function cycleNamesOf(resolutionStack: ReadonlyArray<ResolutionFrame>, cl
  * keys on the binding, never on a token's display name, and the names an error prints are read off
  * the frames at the throw site. Unmark with {@link leaveSyncPath}. Sync only: the async branch lane
  * never unwinds, so it extends a branch instead; see {@link extendResolutionBranch}.
+ *
+ * @since 0.11.0
  */
 export function enterSyncPath(resolutionStack: Array<ResolutionFrame>, binding: Binding, frame: ResolutionFrame): void {
   if (binding.inFlight) {
@@ -76,6 +82,8 @@ export function enterSyncPath(resolutionStack: Array<ResolutionFrame>, binding: 
 
 /**
  * Pops the level {@link enterSyncPath} pushed and clears its binding's flag.
+ *
+ * @since 0.11.0
  */
 export function leaveSyncPath(resolutionStack: Array<ResolutionFrame>, binding: Binding): void {
   resolutionStack.pop();
@@ -93,6 +101,8 @@ export function leaveSyncPath(resolutionStack: Array<ResolutionFrame>, binding: 
  * path re-enters that binding, which is where the frames to name it are.
  *
  * @returns the bindings this call left flagged as it found them, when there were any, for {@link leaveSeededPath}
+ *
+ * @since 0.11.0
  */
 export function enterSeededPath(bindings: ReadonlyArray<Binding>): Set<Binding> | undefined {
   let alreadyInFlight: Set<Binding> | undefined;
@@ -109,6 +119,8 @@ export function enterSeededPath(bindings: ReadonlyArray<Binding>): Set<Binding> 
 
 /**
  * Clears the flags {@link enterSeededPath} set, leaving the ones it found already set.
+ *
+ * @since 0.11.0
  */
 export function leaveSeededPath(bindings: ReadonlyArray<Binding>, alreadyInFlight: Set<Binding> | undefined): void {
   for (let index = 0; index < bindings.length; index += 1) {

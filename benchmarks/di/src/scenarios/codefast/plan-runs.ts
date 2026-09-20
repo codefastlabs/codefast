@@ -252,6 +252,9 @@ function buildPlanRunsScenario(
   };
 }
 
+/**
+ * @since 0.10.0
+ */
 export function buildCodefastPlanRunsScenarios(): ReadonlyArray<BenchScenario> {
   const chain = buildChain(PLAN_RUNS_CHAIN_DEPTH, "plan-runs");
   const deepChain = buildChain(PLAN_RUNS_DEEP_CHAIN_DEPTH, "plan-runs-deep");

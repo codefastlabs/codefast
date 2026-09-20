@@ -1,5 +1,12 @@
 # @codefast/benchmark-viewer
 
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies [[`6156c2c`](https://github.com/codefastlabs/codefast/commit/6156c2c8dba025b9d8a2201222e510954ea1487a), [`3e10c03`](https://github.com/codefastlabs/codefast/commit/3e10c03d7a778f3666f345b43fb651e5f67bade9), [`e865821`](https://github.com/codefastlabs/codefast/commit/e865821ecff1a3ec59f64564e4d43109f73eb76d), [`42ad920`](https://github.com/codefastlabs/codefast/commit/42ad9207b05cbefce702d46271437e41c8f8174d)]:
+  - @internal/benchmark-harness@0.11.0
+
 ## 0.9.1
 
 ### Patch Changes

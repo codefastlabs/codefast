@@ -1,5 +1,14 @@
 # @codefast/cli
 
+## 0.13.0
+
+### Minor Changes
+
+- [#894](https://github.com/codefastlabs/codefast/pull/894) [`7a56be4`](https://github.com/codefastlabs/codefast/commit/7a56be4568fe28c0176e7de385bb058c0902f2ed) Thanks [@thevuong](https://github.com/thevuong)! - `codefast audit constants` reports every upper-case `const` bound to a number in a library's sources whose comment names
+  none of the three kinds a number may be — a constant of the machine, a value the contract fixes, or one derived from
+  bind-time data. Sentinel values (`0`, `1`, `-1`) are exempt; `audit.constants.target` and `audit.constants.allowlist` in
+  `codefast.config` scope and except it.
+
 ## 0.12.0
 
 ### Minor Changes

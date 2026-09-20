@@ -1,5 +1,61 @@
 # @codefast/di
 
+## 0.11.0
+
+### Minor Changes
+
+- [#896](https://github.com/codefastlabs/codefast/pull/896) [`a4eed7d`](https://github.com/codefastlabs/codefast/commit/a4eed7dc90d804d66d6e4bbb4e5e52870195d919) Thanks [@thevuong](https://github.com/thevuong)! - Retire the async cascade lane: every `resolveAsync` now runs on the branch lane, so a factory's context answers from its
+  own ancestors before and after an `await`. A `whenParentIs` binding requested after an `await` is now selected as the
+  sync lane selects it, `ctx.graph.resolutionPath` names the level's own ancestors, and a cycle formed entirely from
+  post-`await` edges is named from the true root. A transient class or factory root with a statically visible graph is
+  answered by the compiled async plan. `AsyncCascadeContext` and `resolveAsyncFromCascade` are removed from
+  `resolution/context`; `ResolutionDiagnostics.builtSubsystems` reports `resolver.asyncRootLevel` once the async lane has
+  been entered.
+
+- [#894](https://github.com/codefastlabs/codefast/pull/894) [`12de5e9`](https://github.com/codefastlabs/codefast/commit/12de5e99582fbc03571c9f3fa0b85c16b7f4a876) Thanks [@thevuong](https://github.com/thevuong)! - Four size thresholds are gone, each replaced by the algorithm it approximated: alias chains fold exactly to any length
+  (`ALIAS_HOP_LIMIT` is removed from `resolution/cache/binding-lookup-cache`); a generated plan is one statement per node
+  and inlines to any depth; every synchronous lane checks a cycle by the binding's in-flight flag at any depth
+  (`RESOLUTION_SET_THRESHOLD` and `enterResolutionPath` are removed from `resolution/path/resolution-path`); a
+  multi-criterion request is selected by one scan at any binding count. `PLAN_CODEGEN_THRESHOLD` is 1024, the measured
+  break-even of generating a plan against running its closure.
+
+### Patch Changes
+
+- [#896](https://github.com/codefastlabs/codefast/pull/896) [`79c16fb`](https://github.com/codefastlabs/codefast/commit/79c16fbb5ac08d95c6ce2717993835b46418f200) Thanks [@thevuong](https://github.com/thevuong)! - An async level with several dependencies, and a `resolveAllAsync` collection, report the first failing dependency in
+  declaration order — the order the sync lanes report — instead of whichever rejection happened to settle first. Every
+  dependency still starts before anything is reported. A node with one dependency awaits it directly, with no fan-out to
+  settle.
+
+- [#894](https://github.com/codefastlabs/codefast/pull/894) [`12de5e9`](https://github.com/codefastlabs/codefast/commit/12de5e99582fbc03571c9f3fa0b85c16b7f4a876) Thanks [@thevuong](https://github.com/thevuong)! - The cold path allocates only what it uses: a container builds its lookup memo, class introspector, context pools and
+  lone map on first use; a root's plan is compiled on the request that repeats it, so a container that resolves a root
+  once never compiles; a binding's activation need is stamped on the binding instead of memoized in a per-resolver map
+  (`ResolutionDiagnostics.builtSubsystems` no longer lists `resolver.activationNeedMemo`); teardown clears instances
+  without splicing the singleton list or pairing each binding; a rebind of a lone token is one registration whose
+  displaced binding is deactivated on the spot; a fresh registration is one probe and one write; a chain's own `.many()`
+  re-slots without probing the registry; each error class names itself with a literal.
+
+- [#894](https://github.com/codefastlabs/codefast/pull/894) [`30bd38a`](https://github.com/codefastlabs/codefast/commit/30bd38a8abb3e7d5e4d3e8e737394fa1f9a5632b) Thanks [@thevuong](https://github.com/thevuong)! - The React Flow graph export lays its nodes out on a square grid derived from the node count rather than a fixed five
+  columns.
+
+- [#894](https://github.com/codefastlabs/codefast/pull/894) [`12de5e9`](https://github.com/codefastlabs/codefast/commit/12de5e99582fbc03571c9f3fa0b85c16b7f4a876) Thanks [@thevuong](https://github.com/thevuong)! - Every resolution lane now answers a graph identically. A per-request child that misses a token its parent's bindings all
+  declined reports `NoMatchingBindingError` as the parent does, not `TokenNotBoundError`; a sibling on the async
+  interpreted lane is selected against its own path rather than the earlier sibling's frame; a dynamic factory that
+  resolves its own token from its synchronous prefix is reported as a cycle before it runs a second time.
+
+- [#905](https://github.com/codefastlabs/codefast/pull/905) [`3d400ae`](https://github.com/codefastlabs/codefast/commit/3d400ae8e4a8294e72f18adaa04e5f6fa3371e10) Thanks [@thevuong](https://github.com/thevuong)! - The chain-versioned lookup memo answers a repeated token from a method small enough for its hot callers to inline: the
+  hit is the whole of `defaultEntry`, and everything that fills the memo is the miss. An alias resolve, a parent-owned
+  resolve from a child and every other lookup that reaches the memo pays one inlined compare where it paid a call.
+
+- [#896](https://github.com/codefastlabs/codefast/pull/896) [`c43befa`](https://github.com/codefastlabs/codefast/commit/c43befa6491c4d5f0f63cb2d07febfeceaa4bf46) Thanks [@thevuong](https://github.com/thevuong)! - Every binding predicate now reads one `ConstraintContext` shape: the shared root context, the context a selection builds
+  over a live path, an async level's prefix and the inspector's probe are all `DefaultConstraintContext`, exported from
+  `resolution/context`. A predicate's call site stays monomorphic, and the per-selection object literal with its eager
+  `ancestors` slice is gone — `ancestors` is now sliced on first read, as `ctx.graph` already did.
+
+- [#902](https://github.com/codefastlabs/codefast/pull/902) [`9d19b93`](https://github.com/codefastlabs/codefast/commit/9d19b933521e5a1dd4c981b129f17d025431d8bf) Thanks [@thevuong](https://github.com/thevuong)! - A transient factory root resolved with `resolveAsync()` is handed one resolution context per binding, built on the first
+  resolve and reused by every later one — its path is its own frame alone and the request carries no options, so the
+  context is a function of the binding. The root allocated an array and a context per resolve; it allocates nothing now,
+  and a concurrent root reads the same, correct, path after an `await`.
+
 ## 0.10.1
 
 ### Patch Changes

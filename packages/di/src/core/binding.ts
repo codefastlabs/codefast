@@ -340,7 +340,11 @@ interface MemoizedFrameField {
   rootContext: ResolutionContext | undefined;
 }
 
-/** The stamp of a binding whose activation need has not been computed under the current versions. */
+/**
+ * The stamp of a binding whose activation need has not been computed under the current versions.
+ *
+ * @since 0.11.0
+ */
 export const NO_ACTIVATION_STAMP = -1;
 
 /**

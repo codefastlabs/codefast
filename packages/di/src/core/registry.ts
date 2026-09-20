@@ -54,6 +54,9 @@ function createTokenRecord(bindings: Array<Binding>): TokenRecord {
  */
 const EMPTY_LONE: Map<DependencyKey, Binding> = new Map();
 
+/**
+ * @since 0.11.0
+ */
 export class BindingRegistry {
   // Monotonic mutation counter — lets resolvers version-stamp lookup caches across a container chain.
   #version = 0;

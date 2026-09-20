@@ -7,6 +7,8 @@
  * settles first — a fact about microtask depth, not about the graph. The synchronous lanes report
  * the first failing dependency in declaration order, so this does too: the happy path is `Promise.all`,
  * and only a failure waits for every sibling to settle and then picks the earliest one that did not.
+ *
+ * @since 0.11.0
  */
 export function settleInOrder<Result>(
   pending: ReadonlyArray<unknown>,
