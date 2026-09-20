@@ -8,12 +8,14 @@ import type { ConstructorInvocation } from "#core/constructor-type";
 /**
  * The number of runs a plan's closure makes before the plan is generated as its own function.
  *
- * @remarks Below it a plan stays a closure, which is all a cold container or a per-request child
- * ever runs; above it a plan pays one compile for call sites nothing else feeds.
+ * @remarks A measured policy, not a machine width, a contract value or bind-time data: generating
+ * costs some fifty closure runs and the new function runs cold for thirty more, so it repays only
+ * over runs in the thousands. Below it a plan stays a closure, which is all a cold container or a
+ * per-request child ever runs.
  *
  * @since 0.10.0
  */
-export const PLAN_CODEGEN_THRESHOLD = 32;
+export const PLAN_CODEGEN_THRESHOLD = 1024;
 
 /**
  * The shape of a compiled sync plan: what its closure does, stated as data the generator can read.
@@ -121,10 +123,10 @@ export function generateAsyncPlan(node: AsyncPlanNode): (() => unknown) | null {
   return compileRendered(emitter, emitter.asyncExpression(node));
 }
 
-function compileRendered(emitter: PlanEmitter, expression: string): (() => unknown) | null {
+function compileRendered(emitter: PlanEmitter, result: string): (() => unknown) | null {
   generatedCount += 1;
   const locals = emitter.locals.length === 0 ? "" : `let ${emitter.locals.join(", ")};`;
-  const body = `"use strict";/* plan ${String(generatedCount)} */${emitter.hoisted.join("")}return () => {${locals}return ${expression};};`;
+  const body = `"use strict";/* plan ${String(generatedCount)} */${emitter.hoisted.join("")}return () => {${locals}${emitter.statements.join("")}return ${result};};`;
   try {
     // Compiling from source is the mechanism: one function literal per plan is what gives it its own feedback.
     // oxlint-disable-next-line typescript/no-implied-eval
@@ -136,42 +138,55 @@ function compileRendered(emitter: PlanEmitter, expression: string): (() => unkno
 }
 
 /**
- * Renders a plan tree as one expression over parameters that carry every value the plan closes over.
+ * Renders a plan tree as a flat sequence of statements over parameters that carry every value the plan closes over.
  *
- * @remarks A node that awaits its dependencies renders as an inner function of the same source, so
- * every plan's awaiting nodes have call sites of their own too.
+ * @remarks Each node becomes one assignment to a local after its dependencies' assignments, in declaration
+ * order, so the generated function evaluates exactly as the nested closure did while nesting nothing: a
+ * graph of any depth renders as that many statements, never as an expression that deep. A node that awaits
+ * its dependencies renders as an inner function of the same shape, so every plan's awaiting nodes have call
+ * sites of their own too.
  */
 class PlanEmitter {
   readonly names: Array<string> = [];
   readonly values: Array<unknown> = [];
   readonly hoisted: Array<string> = [];
-  readonly #localsByFunction: Array<Array<string>> = [[]];
+  readonly #frames: Array<{ readonly locals: Array<string>; readonly statements: Array<string> }> = [
+    { locals: [], statements: [] },
+  ];
   #hoistedCount = 0;
   readonly #slotByValue = new Map<unknown, string>();
 
   /** The plan function's own temporaries. */
   get locals(): ReadonlyArray<string> {
-    return this.#localsByFunction[0]!;
+    return this.#frames[0]!.locals;
   }
 
+  /** The plan function's statements, in evaluation order. */
+  get statements(): ReadonlyArray<string> {
+    return this.#frames[0]!.statements;
+  }
+
+  /** Emits a node's statements and returns the reference that holds its value. */
   expression(node: PlanNode): string {
     switch (node.kind) {
       case "construct":
-        return `new ${this.#slot(node.target, "C")}(${this.#list(node.deps)})`;
+        return this.#define(`new ${this.#slot(node.target, "C")}(${this.#list(node.deps)})`);
       case "accessors":
-        return `${this.#slot(node.construct, "A")}([${this.#list(node.deps)}])`;
+        return this.#define(`${this.#slot(node.construct, "A")}([${this.#list(node.deps)}])`);
       case "call": {
-        // The settle only ever throws, so it runs on the promise branch alone and the plain result returns as is.
-        const local = this.#local();
-        const call = `${this.#slot(node.factory, "F")}(${this.#list(node.deps)})`;
-        return `((${local} = ${call}) instanceof ${this.#slot(Promise, "P")} ? ${this.#slot(node.settle, "S")}(${local}) : ${local})`;
+        // The settle only ever throws, so it runs on the promise branch alone and the plain result stands.
+        const local = this.#define(`${this.#slot(node.factory, "F")}(${this.#list(node.deps)})`);
+        this.#statement(
+          `if (${local} instanceof ${this.#slot(Promise, "P")}) ${local} = ${this.#slot(node.settle, "S")}(${local});`,
+        );
+        return local;
       }
       case "value":
         return this.#slot(node.value, "V");
       case "singleton":
         return this.#singletonRead(node.binding, node.escape);
       case "thunk":
-        return `${this.#slot(node.run, "T")}()`;
+        return this.#define(`${this.#slot(node.run, "T")}()`);
     }
   }
 
@@ -181,20 +196,20 @@ class PlanEmitter {
         const target = this.#slot(node.target, "C");
         return node.awaits
           ? this.#settled(node.deps, (values) => `new ${target}(${values})`)
-          : `new ${target}(${this.#asyncList(node.deps)})`;
+          : this.#define(`new ${target}(${this.#asyncList(node.deps)})`);
       }
       case "call": {
         const factory = this.#slot(node.factory, "F");
         return node.awaits
           ? this.#settled(node.deps, (values) => `${factory}(${values})`)
-          : `${factory}(${this.#asyncList(node.deps)})`;
+          : this.#define(`${factory}(${this.#asyncList(node.deps)})`);
       }
       case "value":
         return this.#slot(node.value, "V");
       case "singleton":
         return this.#singletonRead(node.binding, node.escape);
       case "thunk":
-        return `${this.#slot(node.run, "T")}()`;
+        return this.#define(`${this.#slot(node.run, "T")}()`);
     }
   }
 
@@ -215,33 +230,48 @@ class PlanEmitter {
     const applyName = `a${String(index)}`;
     const reject = this.#slot(rejectWith, "R");
     const promise = this.#slot(Promise, "P");
-    this.#localsByFunction.push([]);
+    const frame = { locals: [] as Array<string>, statements: [] as Array<string> };
+    this.#frames.push(frame);
     const pendings: Array<string> = [];
-    const statements: Array<string> = [];
     for (let position = 0; position < deps.length; position += 1) {
       const pending = `p${String(position)}`;
       pendings.push(pending);
-      statements.push(`try{${pending}=${this.asyncExpression(deps[position]!)};}catch(e){${pending}=${reject}(e);}`);
+      // A dependency's own statements run inside its try, so its sync throw is its rejection alone.
+      const mark = frame.statements.length;
+      const reference = this.asyncExpression(deps[position]!);
+      const inner = frame.statements.splice(mark).join("");
+      frame.statements.push(`try{${inner}${pending}=${reference};}catch(e){${pending}=${reject}(e);}`);
     }
-    const locals = [...pendings, ...this.#localsByFunction.pop()!];
+    this.#frames.pop();
+    const locals = [...pendings, ...frame.locals];
     const values = deps.map((_dep, position) => `v[${String(position)}]`).join(",");
     this.hoisted.push(
-      `const ${applyName}=(v)=>${apply(values)};const ${name}=()=>{let ${locals.join(",")};${statements.join("")}return ${promise}.all([${pendings.join(",")}]).then(${applyName});};`,
+      `const ${applyName}=(v)=>${apply(values)};const ${name}=()=>{let ${locals.join(",")};${frame.statements.join("")}return ${promise}.all([${pendings.join(",")}]).then(${applyName});};`,
     );
-    return `${name}()`;
+    return this.#define(`${name}()`);
+  }
+
+  #define(expression: string): string {
+    const local = this.#local();
+    this.#statement(`${local} = ${expression};`);
+    return local;
+  }
+
+  #statement(statement: string): void {
+    this.#frames.at(-1)!.statements.push(statement);
   }
 
   #local(): string {
-    const locals = this.#localsByFunction.at(-1)!;
+    const locals = this.#frames.at(-1)!.locals;
     const local = `t${String(locals.length)}`;
     locals.push(local);
     return local;
   }
 
   #singletonRead(binding: Binding, escape: () => unknown): string {
-    const local = this.#local();
-    const slot = this.#slot(binding, "B");
-    return `((${local} = ${slot}.instance) === ${this.#slot(NO_INSTANCE, "N")} ? ${this.#slot(escape, "E")}() : ${local})`;
+    const local = this.#define(`${this.#slot(binding, "B")}.instance`);
+    this.#statement(`if (${local} === ${this.#slot(NO_INSTANCE, "N")}) ${local} = ${this.#slot(escape, "E")}();`);
+    return local;
   }
 
   // One parameter per distinct value, so a class constructed four times is one constructor with four sites.

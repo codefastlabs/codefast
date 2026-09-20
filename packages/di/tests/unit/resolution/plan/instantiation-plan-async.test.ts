@@ -31,6 +31,9 @@ describe("async instantiation plans", () => {
       .toResolvedAsync(async (value: number) => value + 1, [second])
       .transient();
 
+    // The first request interprets; the plan is compiled on the request that repeats it.
+    expect(await container.resolveAsync(third)).toBe(3);
+    expect(asyncPlanCount(container)).toBe(0);
     expect(await container.resolveAsync(third)).toBe(3);
     // The optimization must be active, not merely the answer correct.
     expect(asyncPlanCount(container)).toBeGreaterThan(0);
@@ -104,6 +107,7 @@ describe("async instantiation plans", () => {
       .toResolvedAsync(async () => 1, [])
       .transient();
 
+    expect(await container.resolveAsync(value)).toBe(1);
     expect(await container.resolveAsync(value)).toBe(1);
     expect(asyncPlanCount(container)).toBeGreaterThan(0);
 

@@ -20,6 +20,7 @@ import type {
 } from "#core/binding";
 import {
   clearBindingFrame,
+  NO_ACTIVATION_STAMP,
   createBindingSlot,
   DEFAULT_BINDING_SLOT,
   generateBindingId,
@@ -78,6 +79,8 @@ export interface BindingRegistration {
   readonly registry: BindingRegistry;
   readonly scope: ScopeManager;
   readonly moduleBindingIds: Array<BindingIdentifier> | undefined;
+  /** Runs for a binding this registration displaces, instead of parking it for a later restore. */
+  readonly deactivateDisplaced?: ((binding: Binding) => void) | undefined;
 }
 
 // ── BindingChain ─────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -108,6 +111,7 @@ export class BindingChain<Value, Names extends string = string>
   readonly identifier: BindingIdentifier = generateBindingId();
   inFlight = false;
   frame: ResolutionFrame | undefined = undefined;
+  activationStamp: number = NO_ACTIVATION_STAMP;
   instance: unknown = NO_INSTANCE;
   readonly token: Token<Value, Names> | Constructor<Value>;
   slot: BindingSlot = DEFAULT_BINDING_SLOT;
@@ -157,7 +161,21 @@ export class BindingChain<Value, Names extends string = string>
     this.kind = kind;
     this.scope = scope;
     this.#isRegistered = true;
-    this.#commit(undefined);
+    // A fresh registration parks nothing yet and restores nothing: one add, then the version.
+    const registration = this.#registration;
+    const registry = registration.registry;
+    const displaced = registry.add(this.#binding);
+    if (displaced !== undefined) {
+      if (registration.deactivateDisplaced !== undefined) {
+        registration.deactivateDisplaced(displaced);
+      } else {
+        this.#displacedByChain = [displaced];
+      }
+    }
+    if (registration.moduleBindingIds !== undefined) {
+      registration.moduleBindingIds.push(this.identifier);
+    }
+    this.#versionAfterLastWrite = registry.version;
     return this;
   }
 
@@ -397,7 +415,11 @@ export class BindingChain<Value, Names extends string = string>
     }
     const displaced = registry.add(registered);
     if (displaced !== undefined) {
-      (this.#displacedByChain ??= []).push(displaced);
+      if (this.#registration.deactivateDisplaced !== undefined && rewrite === undefined) {
+        this.#registration.deactivateDisplaced(displaced);
+      } else {
+        (this.#displacedByChain ??= []).push(displaced);
+      }
     }
     if (rewrite !== undefined && this.#displacedByChain !== undefined) {
       this.#restoreNonConflicting(this.#displacedByChain);

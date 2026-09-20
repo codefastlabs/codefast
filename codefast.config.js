@@ -55,6 +55,16 @@ const config = {
     displayNames: {
       allowlist: [],
     },
+    constants: {
+      target: "packages/di/src",
+      allowlist: [
+        // The generated tier's trigger is a measured policy, the one count the record keeps by name.
+        "PLAN_CODEGEN_THRESHOLD",
+        // A graph export's starting cell, in pixels a viewer re-lays out; no contract fixes it.
+        "GRID_CELL_WIDTH_PX",
+        "GRID_CELL_HEIGHT_PX",
+      ],
+    },
     rtl: {
       target: "packages/ui/src",
       // Sheet: slides live in tv() side (left/right) buckets — the side is physical,

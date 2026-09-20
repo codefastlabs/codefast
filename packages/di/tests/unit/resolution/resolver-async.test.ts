@@ -1,7 +1,7 @@
 /**
  * Async resolution semantics: dynamic-async chains, inflight singleton dedupe,
  * sync/async mixing errors, the `toResolved*` factory lane, the ResolutionContext
- * surface inside factories, and the deep-chain paths past RESOLUTION_SET_THRESHOLD (32).
+ * surface inside factories, and the deep-chain paths.
  */
 import { describe, expect, it } from "vitest";
 

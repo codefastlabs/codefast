@@ -114,12 +114,13 @@ export function bindingSlotToString(slot: BindingSlot): string {
 interface BindingBase<Value> {
   readonly identifier: BindingIdentifier;
   /**
-   * True while this binding's factory is executing on the current synchronous call stack.
+   * True while this binding is being resolved on the current synchronous call stack.
    *
-   * @remarks Both cycle guards that can use an `O(1)` flag read this — the sync transient-dynamic
-   * lane and the async cascade lane — because synchronous code does not interleave, so the flag *is*
-   * exact path membership. Not optional: the binding builder always initializes it, and a field that
-   * may be absent is a field that can cost the shared hidden class. Resolver-owned; callers never set it.
+   * @remarks Every synchronous cycle guard reads this flag and nothing else: synchronous code does not
+   * interleave, so the flag *is* exact path membership at any depth. The async lanes hold it only for a
+   * factory's synchronous prefix, or for the seeded path a synchronous call from an async level runs
+   * over. Not optional: the binding builder always initializes it, and a field that may be absent is a
+   * field that can cost the shared hidden class. Resolver-owned; callers never set it.
    */
   inFlight: boolean;
   /**
@@ -130,6 +131,14 @@ interface BindingBase<Value> {
    * @remarks Resolver-owned bookkeeping — `registry.add` normalizes it, so callers never set it.
    */
   frame: ResolutionFrame | undefined;
+  /**
+   * The activation need last computed for this binding, stamped with the versions it was computed
+   * under, or {@link NO_ACTIVATION_STAMP}.
+   *
+   * @remarks Resolver-owned bookkeeping: a field the level reads beats a per-resolver map that a
+   * container resolving each binding once would build and never read again.
+   */
+  activationStamp: number;
   /**
    * Cached singleton instance, or {@link NO_INSTANCE}.
    *
@@ -322,6 +331,9 @@ export function writableMembership(binding: Binding): MembershipField {
 interface MemoizedFrameField {
   frame: ResolutionFrame | undefined;
 }
+
+/** The stamp of a binding whose activation need has not been computed under the current versions. */
+export const NO_ACTIVATION_STAMP = -1;
 
 /**
  * Drops the memoized resolution frame, for a refinement that changes what the frame reports.

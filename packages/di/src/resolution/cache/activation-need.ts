@@ -5,8 +5,8 @@
  * registered at any time and a rebind mints binding ids the memo must not keep forever.
  */
 import type { Binding } from "#core/binding";
+import { NO_ACTIVATION_STAMP } from "#core/binding";
 import type { BindingRegistry } from "#core/registry";
-import type { BindingIdentifier } from "#core/types";
 import type { LifecycleManager } from "#lifecycle/lifecycle-manager";
 import type { ClassIntrospector } from "#resolution/cache/class-introspector";
 
@@ -16,10 +16,6 @@ import type { ClassIntrospector } from "#resolution/cache/class-introspector";
  * @since 0.5.0-canary.8
  */
 export class ActivationNeedCache {
-  // Allocated by the first answer the early returns cannot give, so a hook-free container that
-  // resolves no class or alias never pays for it.
-  #needByBindingId: Map<BindingIdentifier, boolean> | undefined;
-  #version = -1;
   readonly #lifecycle: LifecycleManager;
   readonly #classes: ClassIntrospector;
   readonly #registry: BindingRegistry;
@@ -31,9 +27,6 @@ export class ActivationNeedCache {
   }
 
   /** Whether an answer the early returns could not give has had to allocate the memo. */
-  get isMemoBuilt(): boolean {
-    return this.#needByBindingId !== undefined;
-  }
 
   needsActivation<Value>(binding: Binding<Value>): boolean {
     // The chain writes a binding's own hook in place with no version anything here can see, so it
@@ -47,20 +40,19 @@ export class ActivationNeedCache {
     if (lifecycleVersion === 0 && binding.kind !== "class" && binding.kind !== "alias") {
       return false;
     }
-    // The registry version evicts entries for binding ids a rebind has retired.
-    const version = lifecycleVersion + this.#registry.version;
-    if (this.#version !== version) {
-      this.#needByBindingId?.clear();
-      this.#version = version;
+    // The stamp is the version pair the answer was computed under, doubled, plus the answer: a
+    // registry or lifecycle mutation moves the version and retires every stamp at once.
+    const stampBase = (lifecycleVersion + this.#registry.version) * 2;
+    const stamp = binding.activationStamp;
+    if (stamp === stampBase) {
+      return false;
     }
-    const memo = (this.#needByBindingId ??= new Map<BindingIdentifier, boolean>());
-    const cached = memo.get(binding.identifier);
-    if (cached !== undefined) {
-      return cached;
+    if (stamp === stampBase + 1) {
+      return true;
     }
     const needsActivation =
       binding.kind === "class" ? this.#classNeedsActivation(binding) : this.#nonClassNeedsActivation(binding);
-    memo.set(binding.identifier, needsActivation);
+    binding.activationStamp = needsActivation ? stampBase + 1 : stampBase;
     return needsActivation;
   }
 
@@ -76,7 +68,7 @@ export class ActivationNeedCache {
       return needsActivation;
     }
     this.#classes.discoverPostConstruct(binding.target);
-    this.#needByBindingId?.delete(binding.identifier);
+    binding.activationStamp = NO_ACTIVATION_STAMP;
     return this.needsActivation(binding);
   }
 

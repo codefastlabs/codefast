@@ -115,6 +115,40 @@ export type DisplayNameAuditResult = {
 };
 
 /**
+ * A numeric constant whose comment names none of the three kinds.
+ *
+ * @since 0.11.0
+ */
+export type ConstantViolation = {
+  readonly line: number;
+  /** The declaration's name and value, as `NAME = 32`. */
+  readonly raw: string;
+  readonly reason: string;
+};
+
+/**
+ * The numeric-constant violations found in one file.
+ *
+ * @since 0.11.0
+ */
+export type ConstantFileViolations = {
+  readonly relativePath: string;
+  readonly violations: Array<ConstantViolation>;
+};
+
+/**
+ * Outcome of one `audit constants` run.
+ *
+ * @since 0.11.0
+ */
+export type ConstantAuditResult = {
+  readonly files: Array<ConstantFileViolations>;
+  readonly violationCount: number;
+  readonly allowlistedCount: number;
+  readonly scannedFileCount: number;
+};
+
+/**
  * A broken link or anchor found by the link audit.
  *
  * @since 0.5.0

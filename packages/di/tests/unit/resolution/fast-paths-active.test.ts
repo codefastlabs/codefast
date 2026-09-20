@@ -163,7 +163,7 @@ describe("deferred subsystems stay deferred", () => {
     expect(diagnose(child).builtSubsystems).toEqual([]);
   });
 
-  it("builds the plan compiler only once a class binding asks for a plan", () => {
+  it("builds the plan compiler only once a class binding is resolved a second time", () => {
     @injectable()
     class Service {}
 
@@ -172,8 +172,11 @@ describe("deferred subsystems stay deferred", () => {
 
     expect(diagnose(container).builtSubsystems).not.toContain("resolver.planCompiler");
 
+    // The first resolve interprets: a container that resolves a root once never compiles a plan.
     container.resolve(Service);
+    expect(diagnose(container).builtSubsystems).not.toContain("resolver.planCompiler");
 
+    container.resolve(Service);
     expect(diagnose(container).builtSubsystems).toContain("resolver.planCompiler");
   });
 
@@ -235,7 +238,7 @@ describe("deferred subsystems stay deferred", () => {
     expect(diagnose(child).builtSubsystems).toContain("resolver.lookupMemo");
   });
 
-  it("builds the activation-need memo only once a class asks the question", () => {
+  it("answers the activation need from the binding itself, never from a memo it has to build", () => {
     const serviceToken = token<string>("deferred-need-dynamic");
 
     @injectable()
@@ -248,14 +251,11 @@ describe("deferred subsystems stay deferred", () => {
       .transient();
     container.onActivation(serviceToken, (_context, value: string) => value);
     container.resolve(serviceToken);
-
-    // A dynamic binding's container hooks are answered on its own lane, never through the memo.
-    expect(diagnose(container).builtSubsystems).not.toContain("resolver.activationNeedMemo");
-
     container.bind(Service).toSelf().transient();
     container.resolve(Service);
 
-    expect(diagnose(container).builtSubsystems).toContain("resolver.activationNeedMemo");
+    // The need is stamped on each binding under the versions it was computed for.
+    expect(diagnose(container).builtSubsystems).not.toContain("resolver.activationNeedMemo");
   });
 });
 

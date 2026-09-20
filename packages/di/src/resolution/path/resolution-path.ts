@@ -1,17 +1,47 @@
-import type { BindingIdentifier, ResolutionFrame } from "#core/types";
+import type { Binding } from "#core/binding";
+import type { ResolutionFrame } from "#core/types";
 /** Cycle-detection bookkeeping carried on the resolution stack itself. */
 import { CircularDependencyError } from "#errors/errors";
 
-const RESOLUTION_SET_KEY: unique symbol = Symbol("di:resolution-set");
+/** The key under which a resolver-built frame carries its binding, for marking a seeded path. */
+const FRAME_BINDING: unique symbol = Symbol("di:frame-binding");
+
+interface LinkedFrame extends ResolutionFrame {
+  readonly [FRAME_BINDING]?: Binding;
+}
+
 /**
- * Where the cycle check switches from a linear frame scan to an attached Set.
+ * Creates the resolution-stack frame for one in-flight resolve of a binding.
  *
- * @remarks Measured rather than guessed: below this depth the linear scan wins, above it the Set does.
+ * @remarks A literal, because the engine's hot loads read frames: a class instance costs every level
+ * a few nanoseconds, and a weak map beside the frames costs every cold container an ephemeron insert
+ * per binding. The binding rides under a symbol no caller enumerates.
  *
- * @since 0.5.0-canary.7
+ * @since 0.3.16-canary.0
  */
-export const RESOLUTION_SET_THRESHOLD = 32;
-type ResolutionStackWithSet = Array<ResolutionFrame> & { [RESOLUTION_SET_KEY]?: Set<BindingIdentifier> | undefined };
+export function buildResolutionFrame(binding: Binding, tokenName: string): ResolutionFrame {
+  const frame: LinkedFrame = {
+    tokenName,
+    scope: binding.scope,
+    bindingId: binding.identifier,
+    kind: binding.kind,
+    slot: binding.slot,
+    [FRAME_BINDING]: binding,
+  };
+  return frame;
+}
+
+/** The bindings behind the resolver-built frames of a path, in path order. */
+export function bindingsOf(frames: ReadonlyArray<ResolutionFrame>): Array<Binding> {
+  const bindings: Array<Binding> = [];
+  for (let index = 0; index < frames.length; index += 1) {
+    const binding = (frames[index] as LinkedFrame)[FRAME_BINDING];
+    if (binding !== undefined) {
+      bindings.push(binding);
+    }
+  }
+  return bindings;
+}
 
 /**
  * The token names along a stack plus the frame that closed the cycle — built only to throw.
@@ -28,49 +58,65 @@ export function cycleNamesOf(resolutionStack: ReadonlyArray<ResolutionFrame>, cl
 }
 
 /**
- * Marks a level as in-flight on this stack, throwing if its binding is already an ancestor.
+ * Marks a level in flight on a synchronous path and pushes its frame, throwing if its binding already is.
  *
- * @remarks The check keys on binding identity — two distinct tokens may share a display name — and
- * the names an error prints are derived from the frames at the throw site. Unmark by popping the
- * stack plus `set?.delete(frame.bindingId)`. Sync only — the async lane never removes an entry, so
- * it extends a branch instead; see {@link extendResolutionBranch}.
- *
- * @returns the membership set once the stack is deep enough to carry one, else `undefined`.
- *
- * @since 0.5.0-canary.7
+ * @remarks Synchronous code does not interleave, so the flag on the binding is exact membership in the
+ * path one call stack is resolving — at any depth, with no side table and nothing to size. The check
+ * keys on the binding, never on a token's display name, and the names an error prints are read off
+ * the frames at the throw site. Unmark with {@link leaveSyncPath}. Sync only: the async branch lane
+ * never unwinds, so it extends a branch instead; see {@link extendResolutionBranch}.
  */
-export function enterResolutionPath(
-  resolutionStack: Array<ResolutionFrame>,
-  frame: ResolutionFrame,
-): Set<BindingIdentifier> | undefined {
-  const stackWithSet = resolutionStack as ResolutionStackWithSet;
-  let resolutionSet = stackWithSet[RESOLUTION_SET_KEY];
-  // A live set mirrors the stack exactly, so a size that disagrees means it is holding ids of
-  // frames that unwound: the ones already on the stack when it attached were handed no set to
-  // delete from. Dropped rather than repaired, because the next deep frame rebuilds it.
-  if (resolutionSet !== undefined && resolutionSet.size !== resolutionStack.length) {
-    resolutionSet = undefined;
-    stackWithSet[RESOLUTION_SET_KEY] = undefined;
-  }
-  if (resolutionSet === undefined && resolutionStack.length >= RESOLUTION_SET_THRESHOLD) {
-    resolutionSet = new Set<BindingIdentifier>();
-    for (let index = 0; index < resolutionStack.length; index += 1) {
-      resolutionSet.add(resolutionStack[index]!.bindingId);
-    }
-    stackWithSet[RESOLUTION_SET_KEY] = resolutionSet;
-  }
-  if (resolutionSet === undefined) {
-    for (let index = 0; index < resolutionStack.length; index += 1) {
-      if (resolutionStack[index]!.bindingId === frame.bindingId) {
-        throw new CircularDependencyError(cycleNamesOf(resolutionStack, frame.tokenName));
-      }
-    }
-  } else if (resolutionSet.has(frame.bindingId)) {
+export function enterSyncPath(resolutionStack: Array<ResolutionFrame>, binding: Binding, frame: ResolutionFrame): void {
+  if (binding.inFlight) {
     throw new CircularDependencyError(cycleNamesOf(resolutionStack, frame.tokenName));
   }
+  binding.inFlight = true;
   resolutionStack.push(frame);
-  resolutionSet?.add(frame.bindingId);
-  return resolutionSet;
+}
+
+/**
+ * Pops the level {@link enterSyncPath} pushed and clears its binding's flag.
+ */
+export function leaveSyncPath(resolutionStack: Array<ResolutionFrame>, binding: Binding): void {
+  resolutionStack.pop();
+  binding.inFlight = false;
+}
+
+/**
+ * Marks every binding of a seeded path in flight for the synchronous call about to run over it.
+ *
+ * @remarks A seed is a path no synchronous frame pushed — a plan's static ancestors handed to an
+ * escape, or an async level's branch handed to a factory's synchronous call — so its bindings carry no
+ * flag, and marking them is what keeps the flag the one check. A binding already in flight was
+ * flagged by an enclosing synchronous frame that is still running, which is the same fact stated
+ * once already, so it is left as it is and left alone on the way out; a cycle is reported where the
+ * path re-enters that binding, which is where the frames to name it are.
+ *
+ * @returns the bindings this call left flagged as it found them, when there were any, for {@link leaveSeededPath}
+ */
+export function enterSeededPath(bindings: ReadonlyArray<Binding>): Set<Binding> | undefined {
+  let alreadyInFlight: Set<Binding> | undefined;
+  for (let index = 0; index < bindings.length; index += 1) {
+    const binding = bindings[index]!;
+    if (binding.inFlight) {
+      (alreadyInFlight ??= new Set()).add(binding);
+      continue;
+    }
+    binding.inFlight = true;
+  }
+  return alreadyInFlight;
+}
+
+/**
+ * Clears the flags {@link enterSeededPath} set, leaving the ones it found already set.
+ */
+export function leaveSeededPath(bindings: ReadonlyArray<Binding>, alreadyInFlight: Set<Binding> | undefined): void {
+  for (let index = 0; index < bindings.length; index += 1) {
+    const binding = bindings[index]!;
+    if (alreadyInFlight === undefined || !alreadyInFlight.has(binding)) {
+      binding.inFlight = false;
+    }
+  }
 }
 
 declare const BRANCH_BRAND: unique symbol;
