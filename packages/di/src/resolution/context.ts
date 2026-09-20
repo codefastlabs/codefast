@@ -186,6 +186,11 @@ export class AsyncLevelContext implements ResolutionContext {
     return (this.#exactStackCache ??= this.#resolutionStack.slice(0, this.#branchDepth));
   }
 
+  /** This level's own path, fixed for its lifetime, for a caller that names it in an error. */
+  get ownPath(): ReadonlyArray<ResolutionFrame> {
+    return this.#exactStack();
+  }
+
   // The bindings a synchronous call from this level marks in flight, read off the frames once.
   #exactBindings(): Array<Binding> {
     return (this.#exactBindingsCache ??= bindingsOf(this.#exactStack()));
