@@ -39,14 +39,6 @@ export interface CollectionEntry {
   activationVersion: number;
 }
 
-/**
- * Alias folding gives up past this many hops and defers to the full resolve loop, whose
- * Set-based traversal detects genuine cycles exactly rather than by an arbitrary cap.
- *
- * @since 0.5.0-canary.8
- */
-export const ALIAS_HOP_LIMIT = 32;
-
 const newTagToEntryMap = <Owner>(): Map<BindingTag, DefaultLookupEntry<Owner> | null> => new Map();
 const newNameToTagMap = <Owner>(): Map<BindingTag, Map<BindingTag, DefaultLookupEntry<Owner> | null>> => new Map();
 
@@ -252,19 +244,30 @@ export class BindingLookupCache<Owner> {
     (this.#collections ??= new Map<Token<unknown> | Constructor, CollectionEntry>()).set(token, entry);
   }
 
+  /**
+   * Follows alias hops to the terminal entry, or declines with `null` on a cycle, which the full
+   * resolve loop reports.
+   *
+   * @remarks The origin and the current token are compared by hand and the set holds only what lies
+   * between them, so the common one-hop alias allocates nothing and any chain is folded exactly.
+   */
   #foldAliases(token: Token<unknown> | Constructor): DefaultLookupEntry<Owner> | null {
     let current = token;
-    for (let hop = 0; hop < ALIAS_HOP_LIMIT; hop += 1) {
+    let visited: Set<Token<unknown> | Constructor> | undefined;
+    for (;;) {
       const entry = this.#findDefaultInChain(current);
-      if (entry === null) {
-        return null;
-      }
-      if (entry.binding.kind !== "alias") {
+      if (entry === null || entry.binding.kind !== "alias") {
         return entry;
       }
-      current = entry.binding.target;
+      const next = entry.binding.target;
+      if (next === token || next === current || visited?.has(next) === true) {
+        return null;
+      }
+      if (current !== token) {
+        (visited ??= new Set()).add(current);
+      }
+      current = next;
     }
-    return null;
   }
 
   #findDefaultInChain(token: Token<unknown> | Constructor): DefaultLookupEntry<Owner> | null {
