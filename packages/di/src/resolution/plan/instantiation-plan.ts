@@ -14,6 +14,7 @@ import { AsyncResolutionError } from "#errors/errors";
 import type { DependencySlot } from "#injection/resolve-options";
 import { injectionSlotToResolveOptions } from "#injection/resolve-options";
 import type { ConstructorMetadata } from "#metadata/metadata-types";
+import { enterSeededPath, leaveSeededPath } from "#resolution/path/resolution-path";
 import type { AsyncPlanNode, PlanNode } from "#resolution/plan/plan-codegen";
 import {
   generateAsyncPlan,
@@ -240,6 +241,9 @@ export class InstantiationPlanCompiler {
    * root-stack rule one level down: every sync lane pops what it pushes, so the owned array still
    * holds exactly the seed when a call returns. A reentrant call finds it claimed and mints its
    * own copy; a return that did not restore the length hands nothing back, so the next call mints.
+   * The plan pushed no frame for the ancestors it inlined, so the seed's bindings are marked in
+   * flight around the call: an escaped factory cycling back into one is caught as the interpreted
+   * path would catch it.
    */
   #compileEscapeThunk(
     token: Token<unknown> | Constructor,
@@ -251,17 +255,42 @@ export class InstantiationPlanCompiler {
     const frames = ancestors.map((ancestor) => host.getResolutionFrame(ancestor));
     const depth = frames.length;
     let owned: Array<ResolutionFrame> | undefined = [...frames];
-    const run = (): unknown => {
-      const stack = owned ?? [...frames];
-      owned = undefined;
-      try {
-        return host.resolveEscaped(token, options, arity, stack);
-      } finally {
-        if (stack.length === depth) {
-          owned = stack;
-        }
-      }
-    };
+    // A plan root's own opaque dependency has one ancestor, and it is the common escape, so its
+    // marking is written out: one flag read and at most two writes, no loop and no call.
+    const only = ancestors.length === 1 ? ancestors[0] : undefined;
+    const run =
+      only === undefined
+        ? (): unknown => {
+            const stack = owned ?? [...frames];
+            owned = undefined;
+            const alreadyInFlight = enterSeededPath(ancestors);
+            try {
+              return host.resolveEscaped(token, options, arity, stack);
+            } finally {
+              leaveSeededPath(ancestors, alreadyInFlight);
+              if (stack.length === depth) {
+                owned = stack;
+              }
+            }
+          }
+        : (): unknown => {
+            const stack = owned ?? [...frames];
+            owned = undefined;
+            const wasInFlight = only.inFlight;
+            if (!wasInFlight) {
+              only.inFlight = true;
+            }
+            try {
+              return host.resolveEscaped(token, options, arity, stack);
+            } finally {
+              if (!wasInFlight) {
+                only.inFlight = false;
+              }
+              if (stack.length === depth) {
+                owned = stack;
+              }
+            }
+          };
     return { run, node: { kind: "thunk", run } };
   }
 

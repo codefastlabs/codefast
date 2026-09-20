@@ -1,17 +1,9 @@
+import type { Binding } from "#core/binding";
 /** The `ResolutionContext` a factory is handed, and the callbacks the resolver answers it with. */
 import type { Token } from "#core/token";
-import type {
-  BindingIdentifier,
-  BindingKind,
-  BindingScope,
-  ConstraintContext,
-  Constructor,
-  ResolutionFrame,
-  ResolutionContext,
-  ResolveOptions,
-} from "#core/types";
+import type { ConstraintContext, Constructor, ResolutionFrame, ResolutionContext, ResolveOptions } from "#core/types";
 import type { BranchDepth, OwnedBranchStack } from "#resolution/path/resolution-path";
-import { UNOWNED_BRANCH } from "#resolution/path/resolution-path";
+import { bindingsOf, enterSeededPath, leaveSeededPath, UNOWNED_BRANCH } from "#resolution/path/resolution-path";
 
 // ── ResolutionContext implementation ─────────────────────────────────────────────────────────────────────────────────
 
@@ -181,6 +173,7 @@ export class AsyncLevelContext implements ResolutionContext {
 
   #graph: ConstraintContext | undefined;
   #exactStackCache: Array<ResolutionFrame> | undefined;
+  #exactBindingsCache: Array<Binding> | undefined;
 
   get graph(): ConstraintContext {
     if (this.#graph === undefined) {
@@ -195,11 +188,26 @@ export class AsyncLevelContext implements ResolutionContext {
     return (this.#exactStackCache ??= this.#resolutionStack.slice(0, this.#branchDepth));
   }
 
+  // The bindings a synchronous call from this level marks in flight, read off the frames once.
+  #exactBindings(): Array<Binding> {
+    return (this.#exactBindingsCache ??= bindingsOf(this.#exactStack()));
+  }
+
+  // A synchronous call from an async level runs over a path no synchronous frame pushed, so the
+  // level's ancestors are marked in flight for its duration — and the level itself, whose factory is
+  // the caller: a factory resolving its own token synchronously has closed a cycle.
   resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
-    if (options === undefined) {
-      return this.#resolver.resolveFromContext(token, this.#exactStack());
+    const path = this.#exactStack();
+    const marked = this.#exactBindings();
+    const alreadyInFlight = enterSeededPath(marked);
+    try {
+      if (options === undefined) {
+        return this.#resolver.resolveFromContext(token, path);
+      }
+      return this.#resolver.resolve(token, options, path);
+    } finally {
+      leaveSeededPath(marked, alreadyInFlight);
     }
-    return this.#resolver.resolve(token, options, this.#exactStack());
   }
 
   resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
@@ -211,7 +219,14 @@ export class AsyncLevelContext implements ResolutionContext {
   }
 
   resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
-    return this.#resolver.resolveOptional(token, options, this.#exactStack());
+    const path = this.#exactStack();
+    const marked = this.#exactBindings();
+    const alreadyInFlight = enterSeededPath(marked);
+    try {
+      return this.#resolver.resolveOptional(token, options, path);
+    } finally {
+      leaveSeededPath(marked, alreadyInFlight);
+    }
   }
 
   resolveOptionalAsync<Value>(
@@ -222,7 +237,14 @@ export class AsyncLevelContext implements ResolutionContext {
   }
 
   resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value> {
-    return this.#resolver.resolveAll(token, options, this.#exactStack());
+    const path = this.#exactStack();
+    const marked = this.#exactBindings();
+    const alreadyInFlight = enterSeededPath(marked);
+    try {
+      return this.#resolver.resolveAll(token, options, path);
+    } finally {
+      leaveSeededPath(marked, alreadyInFlight);
+    }
   }
 
   resolveAllAsync<Value>(
@@ -322,19 +344,4 @@ class DefaultConstraintContext implements ConstraintContext {
     }
     return this.#ancestors;
   }
-}
-
-/**
- * Creates the resolution-stack frame for one in-flight resolve.
- *
- * @since 0.3.16-canary.0
- */
-export function buildResolutionFrame(
-  tokenName: string,
-  scope: BindingScope,
-  bindingId: BindingIdentifier,
-  kind: BindingKind,
-  slot: ResolutionFrame["slot"],
-): ResolutionFrame {
-  return { tokenName, scope, bindingId, kind, slot };
 }

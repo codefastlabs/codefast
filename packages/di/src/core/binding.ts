@@ -114,12 +114,13 @@ export function bindingSlotToString(slot: BindingSlot): string {
 interface BindingBase<Value> {
   readonly identifier: BindingIdentifier;
   /**
-   * True while this binding's factory is executing on the current synchronous call stack.
+   * True while this binding is being resolved on the current synchronous call stack.
    *
-   * @remarks Both cycle guards that can use an `O(1)` flag read this — the sync transient-dynamic
-   * lane and the async cascade lane — because synchronous code does not interleave, so the flag *is*
-   * exact path membership. Not optional: the binding builder always initializes it, and a field that
-   * may be absent is a field that can cost the shared hidden class. Resolver-owned; callers never set it.
+   * @remarks Every synchronous cycle guard reads this flag and nothing else: synchronous code does not
+   * interleave, so the flag *is* exact path membership at any depth. The async lanes hold it only for a
+   * factory's synchronous prefix, or for the seeded path a synchronous call from an async level runs
+   * over. Not optional: the binding builder always initializes it, and a field that may be absent is a
+   * field that can cost the shared hidden class. Resolver-owned; callers never set it.
    */
   inFlight: boolean;
   /**
