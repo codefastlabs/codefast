@@ -13,10 +13,7 @@ import {
 import { formatProgressEvent } from "#shared/progress";
 import type { ScenarioTrialResult, TrialPayload } from "#shared/protocol";
 
-/**
- * Keeps GC sampling in full mode, but reduces forced collection pressure so
- * long-running suites do not balloon due to GC-heavy beforeEach hooks.
- */
+// The full profile collects once before each trial and never inside a sample.
 const FULL_MODE_TRIAL_COUNT = 3;
 // Fast mode is a smoke profile: one trial answers "does it run and roughly how fast",
 // and anything needing a median belongs in the default or full profile.

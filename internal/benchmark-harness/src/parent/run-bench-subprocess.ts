@@ -114,6 +114,8 @@ export type SubprocessProgressTarget = Readonly<{
 export interface SubprocessLaunch {
   readonly command: string;
   readonly args: ReadonlyArray<string>;
+  /** Variables the launcher needs in the child, merged over the pinned bench environment. */
+  readonly env?: Readonly<Record<string, string>> | undefined;
 }
 
 /**
@@ -135,13 +137,18 @@ export interface SubprocessLaunchTarget {
 export type SubprocessLauncher = (target: SubprocessLaunchTarget) => SubprocessLaunch;
 
 /**
- * The launcher every suite uses: `pnpm exec tsx --tsconfig <tsconfig> <entry>` in the suite package.
+ * The launcher every suite uses: the running Node with the suite's tsx loader on the entry, the tsconfig handed
+ * over through `TSX_TSCONFIG_PATH`.
+ *
+ * @remarks Spawned directly rather than through the package manager: a package-manager start costs more than the
+ * whole child on a short row, and a pass spawns one child per scenario per library.
  *
  * @since 0.9.0
  */
-export const launchWithPnpmTsx: SubprocessLauncher = ({ tsconfigFileName, entryPath }) => ({
-  command: "pnpm",
-  args: ["exec", "tsx", "--tsconfig", tsconfigFileName, entryPath],
+export const launchWithNodeTsx: SubprocessLauncher = ({ tsconfigFileName, entryPath }) => ({
+  command: process.execPath,
+  args: ["--import", "tsx/esm", entryPath],
+  env: { TSX_TSCONFIG_PATH: tsconfigFileName },
 });
 
 /**
@@ -150,7 +157,7 @@ export const launchWithPnpmTsx: SubprocessLauncher = ({ tsconfigFileName, entryP
  * @since 0.3.16-canary.0
  */
 export type RunBenchSubprocessParameters = Readonly<{
-  /** Benchmark package directory (directory that contains package.json used for `pnpm exec`). */
+  /** Benchmark package directory: the child's working directory, where its `tsx` and libraries resolve. */
   readonly packageRootDirectory: string;
   readonly tsconfigFileName: string;
   /** Filename only — joined with `src/`. Example: `"codefast-benches.ts"`. */
@@ -203,14 +210,14 @@ export async function runBenchSubprocess(parameters: RunBenchSubprocessParameter
     exitCode: number | null;
     signal: NodeJS.Signals | null;
   }>((resolve, reject) => {
-    const launch = (parameters.launch ?? launchWithPnpmTsx)({
+    const launch = (parameters.launch ?? launchWithNodeTsx)({
       tsconfigFileName,
       entryPath: join("src", benchEntryFileNameUnderSrc),
     });
     const childProcess = spawn(launch.command, [...launch.args], {
       cwd: packageRootDirectory,
       stdio: ["ignore", "pipe", "pipe"],
-      env: { ...buildSubprocessEnvironment(), ...environmentOverrides },
+      env: { ...buildSubprocessEnvironment(), ...launch.env, ...environmentOverrides },
     });
 
     let stdout = "";
