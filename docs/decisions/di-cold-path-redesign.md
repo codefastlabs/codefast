@@ -461,6 +461,11 @@ against 5. The engine's warm lookup is already at the `Map.get` floor; the harne
 explained by anything the resolve executes, and finding it means running the harness itself with variants, which this
 record defers rather than spend on the machine. It is the one open item in the loss table.
 
+The two dynamic chain rows (`scale-mid-transient-chain-32`, `scale-deep-transient-chain-512`) and the two nested-factory
+rows are the same kind of open item at the other end: a full-suite process mode the branch makes near-certain and `main`
+draws about half the time (the numbers are in the last section), invisible with the rows isolated and in the isolate
+pass, where the mid chain reads 1.64×.
+
 ## The accessor row
 
 `accessor-injection-construct` (0.26–0.41× of inversify) measures the benchmark's transpiler, not the engine: `tsx`
@@ -495,10 +500,13 @@ The numeric constants left in `packages/di/src`, each with its kind:
 
 | Measure            |              Before |               After |             Budget |
 | ------------------ | ------------------: | ------------------: | -----------------: |
-| `src/` lines       |              10 885 |              11 134 |                  — |
-| `src/` files       |                  45 |                  46 |                  — |
-| longest file       | `resolver.ts` 1 948 | `resolver.ts` 1 951 | 500 (resolver 400) |
-| `dist/` JavaScript |              321 KB |              332 KB |             160 KB |
+| `src/` lines       |              10 744 |              10 965 |                  — |
+| `src/` files       |                  45 |                  45 |                  — |
+| longest file       | `resolver.ts` 1 948 | `resolver.ts` 1 939 | 500 (resolver 400) |
+| `dist/` JavaScript |              321 KB |              331 KB |             160 KB |
+
+Lines and files are every `.ts` under `packages/di/src`; the JavaScript figure is the byte sum of `dist/**/*.js` after a
+`tsc -p tsconfig.build.json`, in kilobytes of a thousand bytes.
 
 Every slice above changed what a path allocates and which algorithm it runs; none reshaped the codebase, and the three
 lane fixes, the seeded-path marking and the exact fold added lines. The generated tier stays because deleting it costs
@@ -522,9 +530,179 @@ binding on its first resolve — `child-request-lifecycle` 373 → 1 701 ns, `ma
 commit on deep chains only, and this record's own probe of it read the deep chains and the warm canaries and no cold
 row: the rows with a causal path were listed by the algorithm, not by the allocation.
 
-The frame is now a class that carries its binding in a private field, invisible to the predicate that reads the frame
-and to equality in tests, built once per binding as before: the cold rows read as they did before the commit (379, 13
-795, 569) and the deep chains keep their gain. Two lessons the record keeps: a slice's causal rows include every row
-that allocates what the slice allocates, not only the rows whose algorithm it changes; and the three user commands are
-the gate, run once but run — the harness-level A/B and the probe both missed a 4× regression that the first user-facing
-run showed in its first table.
+The frame became a class carrying its binding in a private field, invisible to the predicate that reads the frame and to
+equality in tests, built once per binding as before: the cold rows read as they did before the commit (379, 13 795, 569)
+and the deep chains kept their gain. Two lessons the record keeps: a slice's causal rows include every row that
+allocates what the slice allocates, not only the rows whose algorithm it changes; and the three user commands are the
+gate, run once but run — the harness-level A/B and the probe both missed a 4× regression that the first user-facing run
+showed in its first table.
+
+The class was not free either. The paired probe of every row the shared runs read lower on the finished tree — the same
+scenario function on `main`'s build and on the branch's, three processes each, interleaved — put the 32-level dynamic
+chain at 570–619 ns on `main` against 675–699 on the branch with zero allocation on both, on a lane whose code the
+branch never touched; a ladder over the commits stepped at the cycle-check commit, and four processes per variant
+separated the carriers: a bare literal frame reads as `main` does (547–619), the class instance 635–827, a literal with
+the binding under a non-enumerable property 674–716, a literal with the binding under an enumerable symbol 591–630. The
+frame is a literal again, with its binding under a module-private symbol that no predicate, log or structural comparison
+enumerates; `bindingsOf` reads that key. The lesson is the same one at a finer grain: the object a hot load reads must
+keep the shape it had, and the only way to know it kept it is the probe on the row.
+
+The harness then read the same chain rows lower still with the literal frame in place, and a ladder of the user's own
+`pnpm di:bench:fast` over the branch's commits — `main`'s source, six commits, the finished tree, one run each in one
+session — read `scale-mid-transient-chain-32` at 1 204–1 248 ns on every point, `main` included, where the B0 run of
+`main` had read 890. No commit moves the row in the harness; the B0 run and this session's runs sit in two modes of the
+same code, and the mode is the process's, not the source's (the standalone probe shows the same two modes on one build).
+The two shared commands were therefore re-run on `main`'s source in the same session as the after side, and the B6
+tables read against that run; the isolate pass, one process per scenario, did not show the mode and keeps its pinned
+baseline. The third lesson, then: a before/after pair is only a pair when both sides ran in one session, and a row that
+moves against a stale baseline is re-run on the baseline's source before it is called a regression.
+
+What that re-run then showed stays open. In this session `main`'s own source read the 32-level chain fast (890 ns) in
+one of four full-suite runs and slow (1 200–1 256) in the other three, while every branch point — eight commits, the
+finished tree, and the finished tree with the context pool eager again — read slow, thirteen runs of thirteen. With the
+three chain rows alone in the process the two sides read 748 against 780 ns, and standalone they read equal, so the mode
+lives in the full suite's process and the branch makes it near-certain where `main` draws it about half the time. No
+commit is the cause by the ladder, the pool is not by the eager run, and the frame is not by the probe; the row's
+per-scenario reading in the isolate pass is 1.64× (from 1.55×). The record lists it under what did not close, with
+`nested-context-resolve-in-factory` and `nested-container-resolve-in-factory`, which move with it.
+
+## B6 — the three commands, before and after
+
+The same three commands as B0, run once on the finished tree. The isolate pass reads against the pinned baseline and its
+after run is pinned beside it, so every ratio in its table can be recomputed from the two committed files. The two
+shared commands are read against a second run of `main`'s source made in the same session as the after run — the B0 run
+of the same source read the dynamic chain rows in a different mode (`scale-mid-transient-chain-32` 890 ns there, 1 248
+ns in this session's ladder, on identical code) — so their before side is the machine as it was when the after side ran.
+
+**`pnpm di:bench`** (default profile) — 91 head-to-head rows; 25 below 1.00× before, 26 after. Every row that was or is
+below 1.00×, with `@codefast/di`'s own time in nanoseconds per op, so a ratio that moved on the rival's side reads as
+such:
+
+| row                                          | before | after | codefast ns before → after | fastest rival |
+| -------------------------------------------- | -----: | ----: | -------------------------: | ------------- |
+| `accessor-injection-construct`               |  0.28× | 0.29× |                  133 → 125 | inversify     |
+| `alias-parent-owned-terminal`                |  0.77× | 0.92× |                    20 → 18 | injection-js  |
+| `async-init-single-hop`                      |  0.94× | 0.97× |                  141 → 140 | ditox         |
+| `bind-128-plain`                             |  0.42× | 0.41× |              5 145 → 5 171 | ditox         |
+| `boot-decorated-container-build-and-resolve` |  0.82× | 0.96× |              1 719 → 1 527 | tsyringe      |
+| `constant-resolve`                           |  0.72× | 0.79× |                    11 → 10 | ditox         |
+| `container-create-empty`                     |  0.48× | 0.60× |                    51 → 41 | injection-js  |
+| `create-child-empty`                         |  0.41× | 0.50× |                    55 → 45 | injection-js  |
+| `has-bound-check`                            |  0.87× | 1.03× |                      7 → 7 | awilix        |
+| `lifecycle-pre-destroy-unbind`               |  0.90× | 1.11× |                  362 → 302 | ditox         |
+| `materialize-100-singletons`                 |  0.44× | 0.52× |            16 713 → 13 945 | ditox         |
+| `misconfigured-missing-binding`              |  0.52× | 0.57× |              4 153 → 4 103 | tsyringe      |
+| `nested-container-resolve-in-factory`        |  0.89× | 0.86× |                    34 → 34 | injection-js  |
+| `nested-context-resolve-in-factory`          |  0.75× | 0.82× |                    32 → 33 | injection-js  |
+| `production-event-bus-dispatch`              |  0.72× | 0.73× |                    25 → 25 | ditox         |
+| `realistic-graph-class-cold-resolve`         |  0.50× | 0.60× |              2 748 → 2 308 | ditox         |
+| `rebind-hot-swap`                            |  0.17× | 0.28× |                    82 → 49 | ditox         |
+| `resolve-all-async-8`                        |  0.97× | 0.96× |              1 023 → 1 036 | inversify     |
+| `resolve-all-cold-10`                        |  0.43× | 0.46× |                  684 → 638 | tsyringe      |
+| `resolve-all-cold-100`                       |  0.32× | 0.35× |              5 500 → 5 006 | tsyringe      |
+| `resolve-all-strategies-100`                 |  1.03× | 0.89× |                    28 → 35 | ditox         |
+| `resolve-optional-hit`                       |  0.77× | 0.77× |                    10 → 10 | ditox         |
+| `scale-deep-transient-chain-512`             |  1.00× | 0.92× |            20 729 → 25 172 | ditox         |
+| `scale-mid-transient-chain-32`               |  1.16× | 0.82× |                946 → 1 218 | ditox         |
+| `singleton-class-1-dep`                      |  0.75× | 0.74× |                    11 → 11 | ditox         |
+| `to-alias-redirect`                          |  1.01× | 0.95× |                    18 → 17 | injection-js  |
+| `to-resolved-3-deps`                         |  0.63× | 0.68× |                    13 → 12 | ditox         |
+| `unbind-all-100-singletons`                  |  0.40× | 0.56× |            23 608 → 17 049 | ditox         |
+
+**`pnpm di:bench:fast`** — 91 head-to-head rows; 27 below 1.00× before, 28 after. Every row that was or is below 1.00×,
+with `@codefast/di`'s own time in nanoseconds per op, so a ratio that moved on the rival's side reads as such:
+
+| row                                          | before | after | codefast ns before → after | fastest rival |
+| -------------------------------------------- | -----: | ----: | -------------------------: | ------------- |
+| `accessor-injection-construct`               |  0.25× | 0.28× |                  127 → 126 | inversify     |
+| `alias-parent-owned-terminal`                |  0.70× | 1.00× |                    16 → 16 | injection-js  |
+| `async-init-single-hop`                      |  0.99× | 0.91× |                  132 → 144 | ditox         |
+| `bind-128-plain`                             |  0.42× | 0.38× |              5 181 → 5 595 | ditox         |
+| `boot-decorated-container-build-and-resolve` |  0.90× | 0.89× |              1 692 → 1 672 | tsyringe      |
+| `constant-resolve`                           |  1.01× | 1.00× |                      7 → 7 | ditox         |
+| `container-create-empty`                     |  0.48× | 0.58× |                    49 → 40 | injection-js  |
+| `create-child-empty`                         |  0.39× | 0.48× |                    55 → 45 | injection-js  |
+| `has-bound-check`                            |  0.91× | 0.89× |                      6 → 6 | awilix        |
+| `lifecycle-pre-destroy-unbind`               |  0.88× | 0.87× |                  373 → 377 | ditox         |
+| `materialize-100-singletons`                 |  0.39× | 0.47× |            18 329 → 14 994 | ditox         |
+| `misconfigured-missing-binding`              |  0.54× | 0.61× |              4 367 → 3 960 | tsyringe      |
+| `nested-container-resolve-in-factory`        |  0.98× | 0.86× |                    33 → 36 | ditox         |
+| `nested-context-resolve-in-factory`          |  0.98× | 0.96× |                    31 → 33 | injection-js  |
+| `production-event-bus-dispatch`              |  0.80× | 0.72× |                    22 → 24 | ditox         |
+| `realistic-graph-class-cold-resolve`         |  0.47× | 0.60× |              3 142 → 2 423 | ditox         |
+| `realistic-graph-cold-resolve`               |  0.98× | 0.94× |              3 927 → 4 079 | ditox         |
+| `rebind-hot-swap`                            |  0.15× | 0.28× |                    89 → 47 | ditox         |
+| `rebind-parent-resolve-child-depth-3`        |  0.92× | 1.43× |                   125 → 83 | awilix        |
+| `resolve-all-async-8`                        |  0.95× | 0.85× |              1 072 → 1 169 | inversify     |
+| `resolve-all-cold-10`                        |  0.43× | 0.45× |                  719 → 674 | tsyringe      |
+| `resolve-all-cold-100`                       |  0.32× | 0.35× |              5 614 → 5 008 | tsyringe      |
+| `resolve-all-strategies-10`                  |  1.33× | 0.98× |                    28 → 30 | ditox         |
+| `resolve-optional-hit`                       |  0.86× | 0.89× |                      9 → 9 | ditox         |
+| `scale-deep-transient-chain-512`             |  1.04× | 0.82× |            23 712 → 24 652 | ditox         |
+| `scale-mid-transient-chain-32`               |  0.88× | 0.84× |              1 212 → 1 194 | ditox         |
+| `singleton-class-1-dep`                      |  0.63× | 0.75× |                    12 → 10 | ditox         |
+| `to-alias-redirect`                          |  0.94× | 0.94× |                    15 → 15 | injection-js  |
+| `to-resolved-3-deps`                         |  0.59× | 0.74× |                    12 → 10 | ditox         |
+| `unbind-all-100-singletons`                  |  0.37× | 0.51× |            24 473 → 17 762 | ditox         |
+
+**`pnpm di:bench:isolate`** (full profile, contract tier; `baselines/2026-09-20T02-07-56-518Z` against
+`baselines/2026-09-20T05-28-49-997Z`) — 91 head-to-head rows; 28 below 1.00× before, 23 after. Every row that was or is
+below 1.00×, with `@codefast/di`'s own time in nanoseconds per op, so a ratio that moved on the rival's side reads as
+such:
+
+| row                                          | before | after | codefast ns before → after | fastest rival |
+| -------------------------------------------- | -----: | ----: | -------------------------: | ------------- |
+| `accessor-injection-construct`               |  0.41× | 0.43× |                  119 → 115 | inversify     |
+| `alias-parent-owned-terminal`                |  0.97× | 1.06× |                    12 → 12 | injection-js  |
+| `async-init-single-hop`                      |  0.88× | 0.85× |                  224 → 233 | injection-js  |
+| `bind-128-plain`                             |  0.43× | 0.41× |              5 328 → 5 503 | ditox         |
+| `boot-decorated-container-build-and-resolve` |  0.76× | 0.89× |              2 021 → 1 824 | tsyringe      |
+| `constant-resolve`                           |  0.79× | 0.80× |                      7 → 7 | ditox         |
+| `container-create-empty`                     |  0.79× | 0.78× |                    40 → 39 | injection-js  |
+| `create-child-empty`                         |  0.51× | 0.66× |                    58 → 44 | injection-js  |
+| `lifecycle-pre-destroy-unbind`               |  0.85× | 0.91× |                  457 → 445 | ditox         |
+| `materialize-100-singletons`                 |  0.38× | 0.48× |            19 238 → 15 227 | ditox         |
+| `misconfigured-missing-binding`              |  0.66× | 0.69× |              3 481 → 3 297 | tsyringe      |
+| `nested-container-resolve-in-factory`        |  0.92× | 0.89× |                    28 → 28 | injection-js  |
+| `nested-context-resolve-in-factory`          |  0.95× | 0.96× |                    24 → 23 | injection-js  |
+| `production-event-bus-dispatch`              |  0.85× | 0.88× |                    20 → 20 | ditox         |
+| `realistic-graph-class-cold-resolve`         |  0.52× | 0.69× |              2 956 → 2 263 | ditox         |
+| `realistic-graph-cold-resolve`               |  0.99× | 1.02× |              3 856 → 3 772 | ditox         |
+| `rebind-hot-swap`                            |  0.15× | 0.26× |                    84 → 48 | ditox         |
+| `rebind-parent-resolve-child-depth-3`        |  0.97× | 1.56× |                   121 → 76 | awilix        |
+| `resolve-all-async-8`                        |  0.59× | 0.98× |              1 848 → 1 106 | inversify     |
+| `resolve-all-cold-10`                        |  0.67× | 0.74× |                  723 → 734 | ditox         |
+| `resolve-all-cold-100`                       |  0.49× | 0.56× |              5 680 → 5 201 | tsyringe      |
+| `resolve-all-strategies-10`                  |  0.99× | 1.01× |                    36 → 36 | ditox         |
+| `resolve-all-strategies-100`                 |  0.89× | 0.90× |                    40 → 42 | ditox         |
+| `resolve-optional-hit`                       |  0.76× | 0.78× |                      7 → 7 | ditox         |
+| `singleton-class-1-dep`                      |  0.72× | 0.73× |                      8 → 8 | ditox         |
+| `to-alias-redirect`                          |  1.00× | 1.01× |                    12 → 12 | injection-js  |
+| `to-resolved-3-deps`                         |  0.72× | 0.74× |                      8 → 8 | ditox         |
+| `unbind-all-100-singletons`                  |  0.33× | 0.49× |            29 809 → 19 979 | ditox         |
+
+### The four rows the brief named, objects and bytes per op
+
+Method as in B1 (the scenario's own function, one process per side, three processes each, interleaved), `main`'s build
+against the finished tree's, with the rival the row loses to from the B1 table. Bytes are the sampled heap figure;
+objects are the size-weighted estimate; time is the median of the three processes' medians.
+
+| Row                      | side          | ns/op |    bytes/op | objects/op |
+| ------------------------ | ------------- | ----: | ----------: | ---------: |
+| `container-create-empty` | `main`        |    43 |       1 040 |       ≈6–8 |
+|                          | finished tree |    35 |         792 |       ≈3–5 |
+|                          | injection-js  |    25 |         418 |         ≈8 |
+| `create-child-empty`     | `main`        |    55 |       1 040 |       ≈6–7 |
+|                          | finished tree |    40 |         792 |         ≈4 |
+|                          | injection-js  |    24 |         418 |         ≈8 |
+| `bind-128-plain`         | `main`        | 5 125 |      47 147 |       ≈145 |
+|                          | finished tree | 5 312 |      48 107 |       ≈143 |
+|                          | ditox         | 2 285 |      17 504 |       ≈139 |
+| `resolve-all-cold-10`    | `main`        |   733 |       5 414 |        ≈52 |
+|                          | finished tree |   736 | 5 439–5 566 |     ≈51–54 |
+|                          | tsyringe      |   384 |       2 746 |        ≈56 |
+
+Two of the four moved where the slices aimed — a container and a child allocate a quarter less and a third fewer objects
+— and two did not: a bind carries the activation stamp's word on every chain object, and a ten-member cold collection
+allocates what it did, its gain (the re-slot without a probe) showing on the hundred-member row instead. Neither reaches
+its rival, for the reason the bind-floor probe gave.
