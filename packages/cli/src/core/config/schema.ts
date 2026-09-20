@@ -78,6 +78,7 @@ interface CodefastAuditConfig {
   imports?: CodefastAuditAllowlistConfig | undefined;
   displayNames?: CodefastAuditAllowlistConfig | undefined;
   constants?: { target?: string | undefined; allowlist?: Array<string> | undefined } | undefined;
+  runs?: { target?: string | undefined } | undefined;
 }
 
 /**
@@ -156,6 +157,12 @@ const codefastAuditAllowlistConfigSchema = z
   })
   .strict();
 
+const codefastAuditRunsConfigSchema = z
+  .object({
+    target: z.string().optional(),
+  })
+  .strict();
+
 const codefastAuditConfigSchema = z
   .object({
     rtl: codefastAuditRtlConfigSchema.optional(),
@@ -164,6 +171,7 @@ const codefastAuditConfigSchema = z
     imports: codefastAuditAllowlistConfigSchema.optional(),
     displayNames: codefastAuditAllowlistConfigSchema.optional(),
     constants: codefastAuditRtlConfigSchema.optional(),
+    runs: codefastAuditRunsConfigSchema.optional(),
   })
   .strict();
 

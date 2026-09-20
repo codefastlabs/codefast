@@ -265,3 +265,22 @@ export type PublishAuditResult = {
   readonly scannedFileCount: number;
   readonly packageCount: number;
 };
+
+/**
+ * A committed-bench-run rule violation: an unpinned or extra `baselines/` entry, an uncited
+ * `runs/` entry, a wrong-shaped run directory, or a tracked `observations.jsonl` outside any
+ * recognized run.
+ */
+export type BenchRunFinding = {
+  readonly relativePath: string;
+  readonly reason: string;
+};
+
+/**
+ * Outcome of one `audit runs` run.
+ */
+export type RunsAuditResult = {
+  readonly findings: Array<BenchRunFinding>;
+  readonly findingCount: number;
+  readonly scannedSuiteCount: number;
+};

@@ -27,6 +27,7 @@ import type {
   LinkAuditResult,
   PublishAuditResult,
   RtlAuditResult,
+  RunsAuditResult,
 } from "#audit/domain/types";
 import { exitCodeForImportsAuditResult, formatImportsAuditJsonOutput } from "#audit/imports/cli-result";
 import type { ImportsAuditRunRequest } from "#audit/imports/cli-schema";
@@ -53,6 +54,12 @@ import { rtlAuditRunRequestSchema } from "#audit/rtl/cli-schema";
 import { presentRtlAuditResult } from "#audit/rtl/output";
 import { prepareRtlAudit } from "#audit/rtl/prepare";
 import { runRtlAudit } from "#audit/rtl/run";
+import { exitCodeForRunsAuditResult, formatRunsAuditJsonOutput } from "#audit/runs/cli-result";
+import type { RunsAuditRunRequest } from "#audit/runs/cli-schema";
+import { runsAuditRunRequestSchema } from "#audit/runs/cli-schema";
+import { presentRunsAuditResult } from "#audit/runs/output";
+import { prepareRunsAudit } from "#audit/runs/prepare";
+import { runRunsAudit } from "#audit/runs/run";
 import type { NamedCommandPipeline } from "#core/cli/command-pipeline";
 import { registerPipelineSubcommand } from "#core/cli/command-pipeline";
 import type { AppError } from "#core/errors";
@@ -214,6 +221,19 @@ const publishCheck: AuditCheck<PublishAuditRunRequest, PublishAuditResult> = {
   exitCode: exitCodeForPublishAuditResult,
 };
 
+const runsCheck: AuditCheck<RunsAuditRunRequest, RunsAuditResult> = {
+  name: "runs",
+  description: "Report committed bench runs that break the baselines/ vs runs/ role split",
+  targetHelp: "Suite-root glob to scan (default: audit.runs.target from config)",
+  schema: runsAuditRunRequestSchema,
+  prepare: prepareRunsAudit,
+  buildRequest: (prelude, opts) => ({ rootDir: prelude.rootDir, targetPath: prelude.targetPath, json: !!opts.json }),
+  run: (fs, request) => runRunsAudit(fs, { rootDir: request.rootDir, targetPath: request.targetPath }),
+  present: presentRunsAuditResult,
+  formatJson: formatRunsAuditJsonOutput,
+  exitCode: exitCodeForRunsAuditResult,
+};
+
 /**
  * Adapts an `AuditCheck` descriptor onto the shared command pipeline.
  */
@@ -252,6 +272,7 @@ export function createAuditCommand(): Command {
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(constantsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(commentsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(publishCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(runsCheck));
 
   return cmd;
 }
