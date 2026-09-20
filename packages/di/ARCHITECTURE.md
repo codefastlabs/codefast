@@ -653,7 +653,10 @@ its depth off the branch it was handed rather than taking it as a parameter, so 
 level — a transient factory with no activation, asked with no options — is served by a method that is deliberately not
 `async`, so it costs the factory's own promise and nothing on top; a single `resolveAsync` and every member of a
 `resolveAllAsync` collection take that same lane, and the `async` method behind them is reached only by scoped,
-singleton, activated or option-carrying members.
+singleton, activated or option-carrying members. A transient factory **root** — asked with no options, its path its own
+frame alone — is handed the one context its binding keeps, built on the first resolve and reused by every later one,
+concurrent roots included: the level allocates nothing per resolve, and a descendant that outgrows the kept branch
+copies its prefix as any sibling would. `clearBindingFrame` drops it with the frame it was built over.
 
 A factory's flag is held for its synchronous prefix and cleared when it returns **its promise**, not when that promise
 settles. That is what makes a **diamond** resolve: when `A` awaits `B` and `C` in parallel and both need `D`, `D`'s flag
