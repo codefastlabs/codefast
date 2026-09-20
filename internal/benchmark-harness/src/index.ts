@@ -85,7 +85,7 @@ export type {
 export {
   SubprocessExecutionError,
   buildSubprocessEnvironment,
-  launchWithPnpmTsx,
+  launchWithNodeTsx,
   discoverBenchScenarioIds,
   isIsolatedBenchRunRequested,
   runBenchSubprocess,
