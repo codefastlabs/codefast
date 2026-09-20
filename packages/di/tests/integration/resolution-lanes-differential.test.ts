@@ -95,10 +95,9 @@ function hostDisagreements(left: LaneSnapshots, right: LaneSnapshots, where: str
 /**
  * How the async lane's outcome is held to the sync lane's.
  *
- * @remarks Siblings resolve concurrently on the async lane, so when two of them fail the error that
- * settles first is reported, where the sync lane reports the first in declaration order. A graph
- * with sibling dependencies therefore requires the async lane to fail where the sync lane fails; a
- * chain has one dependency per level and no race, so its errors must match verbatim.
+ * @remarks Every lane reports the first failing dependency in declaration order — the async lanes
+ * start siblings concurrently but settle them in order before reporting — so errors match verbatim.
+ * `both-fail` stays available for a generator that deliberately loosens that; none does today.
  */
 type ErrorAgreement = "exact" | "both-fail";
 
@@ -168,7 +167,7 @@ describe("every resolution lane answers a random graph identically", () => {
     async () => {
       await fc.assert(
         fc.asyncProperty(graphSpecArb, async (spec) => {
-          expect(await disagreementsOf(spec, "both-fail")).toEqual([]);
+          expect(await disagreementsOf(spec, "exact")).toEqual([]);
         }),
         { numRuns: NUM_RUNS },
       );
@@ -181,7 +180,7 @@ describe("every resolution lane answers a random graph identically", () => {
     async () => {
       await fc.assert(
         fc.asyncProperty(siblingSpecArb, async (spec) => {
-          expect(await disagreementsOf(spec, "both-fail")).toEqual([]);
+          expect(await disagreementsOf(spec, "exact")).toEqual([]);
         }),
         { numRuns: NUM_RUNS },
       );

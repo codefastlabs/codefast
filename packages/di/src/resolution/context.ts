@@ -24,8 +24,6 @@ export interface ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth,
   ): Promise<Value>;
-  /** Not one of the eight `Value`-naming entry points: its caller is, and casts once. */
-  resolveAsyncFromCascade(token: Token<unknown> | Constructor): Promise<unknown>;
   resolveAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
@@ -256,66 +254,12 @@ export class AsyncLevelContext implements ResolutionContext {
 }
 
 /**
- * The one context every level of an open synchronous factory cascade shares.
+ * The one constraint context every predicate reads, whatever lane built it.
  *
- * @remarks It carries no per-level state at all: while the cascade is open, the resolver's stack
- * *is* this level's ancestor chain, so nothing has to be allocated per level.
- *
- * @since 0.5.0-canary.9
+ * @remarks One shape for the shared root, a selection over a live synchronous stack, an async
+ * level's prefix and an inspector's probe, so a predicate's call site stays monomorphic.
  */
-export class AsyncCascadeContext implements ResolutionContext {
-  readonly #resolver: ResolverCallbacks;
-  readonly #cascadeStack: Array<ResolutionFrame>;
-
-  constructor(resolver: ResolverCallbacks, cascadeStack: Array<ResolutionFrame>) {
-    this.#resolver = resolver;
-    this.#cascadeStack = cascadeStack;
-  }
-
-  get graph(): ConstraintContext {
-    // Not memoized: this context outlives every level, so a cached graph would describe whichever
-    // level asked first. The cascade stack is only this level's ancestors while it is open.
-    return new DefaultConstraintContext(this.#cascadeStack, undefined);
-  }
-
-  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
-    if (options === undefined) {
-      return this.#resolver.resolveFromContext(token, this.#cascadeStack);
-    }
-    return this.#resolver.resolve(token, options, this.#cascadeStack);
-  }
-
-  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
-    if (options === undefined) {
-      return this.#resolver.resolveAsyncFromCascade(token) as Promise<Value>;
-    }
-    return this.#resolver.resolveAsync(token, options, [...this.#cascadeStack]);
-  }
-
-  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
-    return this.#resolver.resolveOptional(token, options, this.#cascadeStack);
-  }
-
-  resolveOptionalAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
-  ): Promise<Value | undefined> {
-    return this.#resolver.resolveOptionalAsync(token, options, [...this.#cascadeStack]);
-  }
-
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value> {
-    return this.#resolver.resolveAll(token, options, this.#cascadeStack);
-  }
-
-  resolveAllAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
-  ): Promise<ReadonlyArray<Value>> {
-    return this.#resolver.resolveAllAsync(token, options, [...this.#cascadeStack]);
-  }
-}
-
-class DefaultConstraintContext implements ConstraintContext {
+export class DefaultConstraintContext implements ConstraintContext {
   readonly resolutionStack: ReadonlyArray<ResolutionFrame>;
   readonly parent: ResolutionFrame | undefined;
   readonly currentResolveOptions: Readonly<ResolveOptions> | undefined;

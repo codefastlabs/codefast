@@ -5,11 +5,16 @@
  * back to the full selection path — a predicate or an alias behind a name — and the parent-chain
  * walk, where a child's cache defers to its parent's.
  */
+import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 
+import { BindingChain } from "#container/binding-builders";
 import { Container } from "#container/container";
+import { BindingRegistry } from "#core/registry";
 import { token } from "#core/token";
 import type { ConstraintContext } from "#core/types";
+import { ScopeManager } from "#lifecycle/scope-manager";
+import { BindingLookupCache } from "#resolution/cache/binding-lookup-cache";
 
 const WARM_ITERATIONS = 5;
 
@@ -91,5 +96,46 @@ describe("named lookup across the container chain", () => {
     parent.bind(driverToken).toConstantValue("after").whenNamed("primary");
 
     expect(child.resolve(driverToken, { name: "primary" })).toBe("after");
+  });
+});
+
+describe("the chain version moves on every mutation anywhere in the chain", () => {
+  // The memo stamps are sums of registry versions read against a process-wide epoch; a mutation in
+  // any registry of the chain must change the sum a descendant reads, or its memo answers stale.
+  it("rises for a child's cache when either the parent or the child mutates", () => {
+    const parentRegistry = new BindingRegistry();
+    const childRegistry = new BindingRegistry();
+    const parentCache = new BindingLookupCache<string>(parentRegistry, "parent", undefined);
+    const childCache = new BindingLookupCache<string>(childRegistry, "child", parentCache);
+    const tokens = [token<string>("chain-mono-a"), token<string>("chain-mono-b")];
+    let previous = childCache.chainVersion();
+
+    expect(() => {
+      fc.assert(
+        fc.property(fc.array(fc.tuple(fc.boolean(), fc.nat(2), fc.nat(1)), { maxLength: 40 }), (steps) => {
+          for (const [onParent, operation, pick] of steps) {
+            const registry = onParent ? parentRegistry : childRegistry;
+            if (operation === 0) {
+              const chain = new BindingChain<string>(tokens[pick]!, {
+                registry,
+                scope: new ScopeManager(!onParent),
+                moduleBindingIds: undefined,
+              });
+              chain.toConstantValue("v");
+            } else if (operation === 1) {
+              registry.removeByToken(tokens[pick]!);
+            } else {
+              registry.touch();
+            }
+            const current = childCache.chainVersion();
+            if (current <= previous) {
+              throw new Error(`${onParent ? "parent" : "child"} op ${String(operation)}: chain version did not rise`);
+            }
+            previous = current;
+          }
+        }),
+        { numRuns: 200 },
+      );
+    }).not.toThrow();
   });
 });

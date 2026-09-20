@@ -131,9 +131,9 @@ describe("async instantiation plans", () => {
     await expect(container.resolveAsync(left)).rejects.toBeInstanceOf(CircularDependencyError);
   });
 
-  it("escapes instead of planning when requested inside an open cascade", async () => {
-    const planned = token<number>("async-plan.mid-cascade.planned");
-    const entry = token<number>("async-plan.mid-cascade.entry");
+  it("interprets a plannable graph requested from inside a factory rather than planning it", async () => {
+    const planned = token<number>("async-plan.nested.planned");
+    const entry = token<number>("async-plan.nested.entry");
     const container = Container.create();
     container
       .bind(planned)
@@ -141,7 +141,7 @@ describe("async instantiation plans", () => {
       .transient();
     container
       .bind(entry)
-      // The request runs in the factory's synchronous prefix — the cascade is open.
+      // Only a root resolve takes a plan; a request from a factory keeps the live path.
       .toDynamicAsync(async (ctx) => (await ctx.resolveAsync(planned)) + 1)
       .transient();
 

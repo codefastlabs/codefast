@@ -3,7 +3,7 @@
  *
  * Four of the six are measured elsewhere (`resolve`, `resolveAsync`, `resolveOptional`,
  * `resolveAll`). These are the remaining pair, and neither is a spelling of a measured one:
- * `resolveAllAsync` fans a whole candidate set into one cascade, and `resolveOptionalAsync` is the
+ * `resolveAllAsync` fans a whole candidate set out at once, and `resolveOptionalAsync` is the
  * async lane's miss — the one shape that reaches a caller without ever instantiating anything.
  */
 import { Container, token } from "@codefast/di";

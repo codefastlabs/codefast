@@ -39,12 +39,13 @@ import type { LifecycleManager } from "#lifecycle/lifecycle-manager";
 import type { ScopeManager } from "#lifecycle/scope-manager";
 import { SCOPED_MISS } from "#lifecycle/scope-manager";
 import type { MetadataReader, ParamMetadata } from "#metadata/metadata-types";
+import { settleInOrder } from "#resolution/async-fan-out";
 import { ActivationNeedCache } from "#resolution/cache/activation-need";
 import type { CollectionEntry, DefaultLookupEntry } from "#resolution/cache/binding-lookup-cache";
 import { BindingLookupCache } from "#resolution/cache/binding-lookup-cache";
 import { ClassIntrospector } from "#resolution/cache/class-introspector";
 import type { ResolverCallbacks } from "#resolution/context";
-import { AsyncCascadeContext, AsyncLevelContext, DefaultResolutionContext } from "#resolution/context";
+import { AsyncLevelContext, DefaultConstraintContext, DefaultResolutionContext } from "#resolution/context";
 import type { BranchDepth, OwnedBranchStack } from "#resolution/path/resolution-path";
 import {
   branchDepthOf,
@@ -62,7 +63,6 @@ import { matchesSlot, selectAllBindings, selectBinding } from "#resolution/selec
 
 // Where a multi-tag resolve switches from scanning the token's list to walking the tag indexes.
 
-const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 
 const EMPTY_PARAM_LIST: ReadonlyArray<ParamMetadata> = [];
@@ -79,13 +79,7 @@ function countCompiledPlans(plans: Map<BindingIdentifier, (() => unknown) | null
   return count;
 }
 
-const ROOT_CONSTRAINT_CONTEXT = {
-  resolutionPath: EMPTY_STRING_LIST,
-  resolutionStack: EMPTY_FRAME_LIST,
-  parent: undefined,
-  ancestors: EMPTY_FRAME_LIST,
-  currentResolveOptions: undefined,
-};
+const ROOT_CONSTRAINT_CONTEXT = new DefaultConstraintContext(EMPTY_FRAME_LIST, undefined);
 
 /**
  * The resolution engine driving binding selection, instantiation, scoping, and lifecycle hooks.
@@ -95,8 +89,6 @@ const ROOT_CONSTRAINT_CONTEXT = {
 export class DependencyResolver implements ResolverCallbacks {
   // Contexts pooled by depth over the root stack — deferred: a plan-served or constant-only container never needs one.
   #syncResolutionContextPool: Array<DefaultResolutionContext> | undefined;
-  // Contexts bound to the cascade pair — deferred: only an async cascade's sync resolves need it.
-  #cascadeContextPool: Array<DefaultResolutionContext> | undefined;
   /**
    * The stack a top-level **sync** resolve reuses instead of minting an array per call.
    *
@@ -106,10 +98,10 @@ export class DependencyResolver implements ResolverCallbacks {
    * mints its own. Keeping it stable is also what lets a pooled context skip re-storing it.
    */
   readonly rootStack: Array<ResolutionFrame> = [];
-  // The open synchronous factory cascade: its stack is the ancestor chain, and it is balanced
-  // because synchronous code does not interleave. Minted by the first async resolve.
-  #cascadeStack: Array<ResolutionFrame> | undefined;
-  #cascadeContext: AsyncCascadeContext | undefined;
+  // The last root level's context, kept so one instance is always live: a full collection that finds
+  // none deoptimizes every optimized site that embedded the class's shape, and does so on every
+  // collection after — measured on the async chain rows, and removed by this one field.
+  #recentRootLevelContext: AsyncLevelContext | undefined;
   // Compiled plans; `null` marks a binding as unplannable under the current cache versions. Both
   // maps are allocated by the first plan request, which only a class or resolved binding makes. A
   // root is compiled on the request that repeats it — the first interprets, so a container that
@@ -189,6 +181,9 @@ export class DependencyResolver implements ResolverCallbacks {
     const generatedPlanCount = this.#planCompiler?.generatedPlanCount ?? 0;
     if (generatedPlanCount > 0) {
       builtSubsystems.push("resolver.planCodegen");
+    }
+    if (this.#recentRootLevelContext !== undefined) {
+      builtSubsystems.push("resolver.asyncRootLevel");
     }
     return {
       compiledPlanCount: countCompiledPlans(this.#classPlanByBindingId),
@@ -961,7 +956,10 @@ export class DependencyResolver implements ResolverCallbacks {
     const resolutionStack = this.rootStack;
     const memo = this.#rootCollection(token, resolutionStack);
     if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
-      return memo.values as ReadonlyArray<Value>;
+      // A copy, never the memo itself: a caller that writes into its result must not rewrite the
+      // next caller's. Reading a frozen array is several times slower than reading a plain one, so
+      // the copy is the cheaper guard by far, and it costs one allocation the read already paid before the memo.
+      return memo.values.slice() as Array<Value>;
     }
     const { candidates } = memo;
     const resolved = new Array<Value>(candidates.length);
@@ -979,17 +977,17 @@ export class DependencyResolver implements ResolverCallbacks {
     const resolutionStack: Array<ResolutionFrame> = [];
     const memo = this.#rootCollection(token, resolutionStack);
     if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
-      return Promise.resolve(memo.values as ReadonlyArray<Value>);
+      return Promise.resolve(memo.values.slice() as Array<Value>);
     }
-    return Promise.all(
-      memo.candidates.map(
-        (candidate) =>
-          this.#resolveCandidateAsync(candidate, undefined, resolutionStack, UNOWNED_BRANCH) as Promise<Value>,
+    return settleInOrder(
+      memo.candidates.map((candidate) =>
+        this.#resolveCandidateAsync(candidate, undefined, resolutionStack, UNOWNED_BRANCH),
       ),
-    ).then((values) => {
-      this.#settleCollectionValues(memo);
-      return values;
-    });
+      (values) => {
+        this.#settleCollectionValues(memo);
+        return values as Array<Value>;
+      },
+    );
   }
 
   /**
@@ -1027,8 +1025,7 @@ export class DependencyResolver implements ResolverCallbacks {
         return;
       }
     }
-    // Handed out as is, unfrozen: a frozen array iterates through a slow elements kind, so the
-    // contract's read-only return is the guard against a caller writing into the memo.
+    // Kept unfrozen: a frozen array reads through a slow elements kind, and every read copies it anyway.
     entry.values = candidates.map(stableMemberValue);
     entry.activationVersion = 0;
   }
@@ -1191,6 +1188,9 @@ export class DependencyResolver implements ResolverCallbacks {
     const needsActivation = owner.#activationNeed().needsActivation(binding);
     if (!needsActivation && scope === "transient" && (binding.kind === "dynamic" || binding.kind === "dynamic-async")) {
       const resolutionCtx = new AsyncLevelContext(this, levelStack, options);
+      if (branchDepth === ROOT_BRANCH) {
+        this.#recentRootLevelContext = resolutionCtx;
+      }
       const dynamicResult = runFactoryPrefix(binding, resolutionCtx, levelStack);
       return dynamicResult instanceof Promise ? await dynamicResult : dynamicResult;
     }
@@ -1199,6 +1199,9 @@ export class DependencyResolver implements ResolverCallbacks {
       needsActivation || requiresResolutionContext(binding)
         ? new AsyncLevelContext(this, levelStack, options)
         : undefined;
+    if (resolutionCtx !== undefined && branchDepth === ROOT_BRANCH) {
+      this.#recentRootLevelContext = resolutionCtx;
+    }
 
     if (scope === "singleton") {
       // The promise is published before it settles, so concurrent callers dedup onto it.
@@ -1360,7 +1363,7 @@ export class DependencyResolver implements ResolverCallbacks {
     for (let index = 0; index < count; index += 1) {
       pending[index] = this.#resolveDepAsync(deps[index]!, resolutionStack, branchDepth);
     }
-    return Promise.all(pending);
+    return settleInOrder(pending, identity);
   }
 
   #resolveDepAsync(
@@ -1419,11 +1422,11 @@ export class DependencyResolver implements ResolverCallbacks {
     const path = ownPrefixOf(resolutionStack, branchDepth);
     const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
     const candidates = this.#candidateBindings(token, options, path);
-    const pending = new Array<Promise<Value>>(candidates.length);
+    const pending = new Array<Promise<unknown>>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
-      pending[index] = this.#resolveCandidateAsync(candidates[index]!, options, path, depth) as Promise<Value>;
+      pending[index] = this.#resolveCandidateAsync(candidates[index]!, options, path, depth);
     }
-    return Promise.all(pending);
+    return settleInOrder(pending, identity) as Promise<ReadonlyArray<Value>>;
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1529,7 +1532,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (options === undefined && resolutionStack.length === 0) {
       return ROOT_CONSTRAINT_CONTEXT;
     }
-    return buildConstraintContext(resolutionStack, options);
+    return new DefaultConstraintContext(resolutionStack, options);
   }
 
   /** The predicate half of a match, for a lane whose index has already settled the slot. */
@@ -1587,6 +1590,9 @@ export class DependencyResolver implements ResolverCallbacks {
 
     // Nothing this level appended is ever removed, so no level observes its own settlement.
     const ctx = new AsyncLevelContext(this, levelStack, undefined);
+    if (branchDepth === ROOT_BRANCH) {
+      this.#recentRootLevelContext = ctx;
+    }
     try {
       const factoryResult = runFactoryPrefix(binding, ctx, levelStack);
       return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
@@ -1595,63 +1601,29 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  // ── The cascade lane ───────────────────────────────────────────────────────────────────────────────────────────────
+  // ── The async root ─────────────────────────────────────────────────────────────────────────────────────────────────
 
   /**
-   * Entry for a request a factory makes from inside an open synchronous cascade.
+   * Entry for an options-less resolve the container starts: the root of a branch of its own.
    *
-   * @remarks A request arriving with no cascade open came out of a continuation, so its ancestors
-   * are on no call stack — it escapes to the branch lane.
+   * @remarks A statically-visible transient graph answers from its compiled async plan; everything
+   * else opens a branch over a fresh array, so every level's context keeps its own ancestors for as
+   * long as the factory holds it — across an `await` included.
    */
-  resolveAsyncFromCascade(token: Token<unknown> | Constructor): Promise<unknown> {
-    if (this.#cascadeStack === undefined || this.#cascadeStack.length === 0) {
-      return this.resolveAsyncFromContext(token, [], ROOT_BRANCH);
-    }
-    return this.#dispatchCascade(token);
-  }
-
-  /** Entry for a resolve the container starts, which opens the cascade rather than joining one. */
   resolveAsyncFromRoot(token: Token<unknown> | Constructor): Promise<unknown> {
-    return this.#dispatchCascade(token);
-  }
-
-  #dispatchCascade(token: Token<unknown> | Constructor): Promise<unknown> {
     const fastBinding = this.#registry.getFastDefault(token);
     if (fastBinding !== undefined) {
-      if (
-        (fastBinding.kind === "dynamic-async" || fastBinding.kind === "dynamic") &&
-        fastBinding.scope === "transient" &&
-        !this.#hasAnyActivation(fastBinding)
-      ) {
-        return this.#resolveTransientDynamicAsyncCascade(fastBinding);
-      }
-      // A value that already exists answers here: escaping would snapshot the cascade for a resolve
-      // that never looks at a path.
-      if (this.#isPlainConstant(fastBinding)) {
-        return Promise.resolve(fastBinding.value);
-      }
-      if (fastBinding.scope === "singleton" && fastBinding.instance !== NO_INSTANCE) {
-        return Promise.resolve(fastBinding.instance);
-      }
-      const planned = this.#plannedCascadeAnswer(fastBinding);
+      const planned = this.#plannedRootAnswer(fastBinding);
       if (planned !== null) {
         return planned;
       }
     }
-    // Anything else leaves the cascade lane for good, seeded with a snapshot of the ancestors it
-    // accumulated — so a cycle across the boundary is still on one path.
-    return this.resolveAsyncFromContext(token, [...this.#cascade()], UNOWNED_BRANCH);
+    return this.resolveAsyncFromContext(token, [], ROOT_BRANCH);
   }
 
-  /**
-   * A statically-visible transient graph at a true root answers from its compiled async plan.
-   *
-   * @remarks Kept out of the dispatcher so its size stays inlinable. Inside an open cascade the
-   * graph must escape instead, so its escapes carry the live ancestors — hence the idle gate.
-   */
-  #plannedCascadeAnswer(fastBinding: Binding): Promise<unknown> | null {
+  /** The compiled async plan's answer for a transient class or factory root, or `null` when there is none. */
+  #plannedRootAnswer(fastBinding: Binding): Promise<unknown> | null {
     if (
-      (this.#cascadeStack !== undefined && this.#cascadeStack.length !== 0) ||
       fastBinding.scope !== "transient" ||
       (fastBinding.kind !== "class" && fastBinding.kind !== "resolved" && fastBinding.kind !== "resolved-async")
     ) {
@@ -1667,33 +1639,6 @@ export class DependencyResolver implements ResolverCallbacks {
     } catch (planError) {
       // The interpreted lane is async, so a sync throw is a rejection there too.
       return Promise.reject(planError);
-    }
-  }
-
-  #resolveTransientDynamicAsyncCascade(
-    binding: DynamicBinding<unknown> | DynamicAsyncBinding<unknown>,
-  ): Promise<unknown> {
-    const frame = this.#getResolutionFrame(binding);
-    // The request that closes a cycle is made from a factory's synchronous prefix, and synchronous
-    // code does not interleave — so the O(1) flag is exact path membership here, as it is for the
-    // sync lane. It is cleared when the factory returns its promise, not when that promise settles.
-    if (binding.inFlight) {
-      return Promise.reject(new CircularDependencyError(cycleNamesOf(this.#cascade(), frame.tokenName)));
-    }
-    const ctx = (this.#cascadeContext ??= new AsyncCascadeContext(this, this.#cascade()));
-    binding.inFlight = true;
-    this.#cascade().push(frame);
-    try {
-      if (binding.kind === "dynamic-async") {
-        return binding.factory(ctx);
-      }
-      const factoryResult = binding.factory(ctx);
-      return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
-    } catch (factoryError) {
-      return Promise.reject(factoryError);
-    } finally {
-      this.#cascade().pop();
-      binding.inFlight = false;
     }
   }
 
@@ -1789,10 +1734,6 @@ export class DependencyResolver implements ResolverCallbacks {
     return frame;
   }
 
-  #cascade(): Array<ResolutionFrame> {
-    return (this.#cascadeStack ??= []);
-  }
-
   // A pool is keyed by the one array pair its contexts hold, so reuse can never re-point a context
   // a live frame still reads — a nested top-level resolve reaches the same depth while the outer
   // factory runs, and it must get its own context, not the outer frame's re-bound.
@@ -1812,27 +1753,8 @@ export class DependencyResolver implements ResolverCallbacks {
       pool[depth] = created;
       return created;
     }
-    return this.#acquireOffRootSyncContext(resolutionStack, options);
-  }
-
-  /** The cascade pair pools separately; a throwaway pair (nested resolve, async snapshot) mints per call. */
-  #acquireOffRootSyncContext(
-    resolutionStack: Array<ResolutionFrame>,
-    options: ResolveOptions | undefined,
-  ): DefaultResolutionContext {
-    if (resolutionStack !== this.#cascadeStack) {
-      return new DefaultResolutionContext(this, resolutionStack, options);
-    }
-    const depth = resolutionStack.length;
-    const pool = (this.#cascadeContextPool ??= []);
-    const existing = pool[depth];
-    if (existing !== undefined) {
-      existing.reset(this, resolutionStack, options);
-      return existing;
-    }
-    const created = new DefaultResolutionContext(this, resolutionStack, options);
-    pool[depth] = created;
-    return created;
+    // A throwaway pair — a nested resolve, an async level's prefix — mints per call.
+    return new DefaultResolutionContext(this, resolutionStack, options);
   }
 }
 
@@ -1863,34 +1785,14 @@ function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
   return false;
 }
 
-function buildConstraintContext(
-  resolutionStack: Array<ResolutionFrame>,
-  options: ResolveOptions | undefined,
-): ConstraintContext {
-  return {
-    // Derived per read, never cached: the stack may be live, and the names must report it as it stands.
-    get resolutionPath(): ReadonlyArray<string> {
-      const names = new Array<string>(resolutionStack.length);
-      for (let index = 0; index < resolutionStack.length; index += 1) {
-        names[index] = resolutionStack[index]!.tokenName;
-      }
-      return names;
-    },
-    resolutionStack,
-    parent: resolutionStack.at(-1),
-    ancestors: resolutionStack.length > 1 ? resolutionStack.slice(0, -1) : [],
-    currentResolveOptions: options,
-  };
-}
-
 /**
  * Runs an async lane's factory with its binding flagged in flight for the factory's synchronous prefix.
  *
  * @remarks The flag is exact path membership only while synchronous code runs, so it is cleared when
  * the factory returns — its promise included — never when that promise settles: two branches that
  * await one binding are a diamond, not a cycle. A factory that resolves its own token from that
- * prefix is caught before it runs again, on the branch lane as on the cascade and sync lanes, where
- * the level's own flag already covers the whole call.
+ * prefix is caught before it runs again, on the branch lane as on the sync lanes, where the level's
+ * own flag already covers the whole call.
  */
 function runFactoryPrefix(
   binding: DynamicBinding<unknown> | DynamicAsyncBinding<unknown>,
@@ -1931,6 +1833,11 @@ function asyncResolutionErrorFor(
 ): AsyncResolutionError {
   const sourceName = tokenName(binding.token);
   return new AsyncResolutionError(resolutionStack[0]?.tokenName ?? sourceName, sourceName);
+}
+
+/** The settled values of a fan-out, as they are. */
+function identity(values: Array<unknown>): Array<unknown> {
+  return values;
 }
 
 /** Only a factory is handed the resolution context; everything else gets its deps directly. */

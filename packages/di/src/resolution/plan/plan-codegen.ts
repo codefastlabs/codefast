@@ -4,6 +4,7 @@
 import type { Binding } from "#core/binding";
 import { NO_INSTANCE } from "#core/binding";
 import type { ConstructorInvocation } from "#core/constructor-type";
+import { settleInOrder } from "#resolution/async-fan-out";
 
 /**
  * The number of runs a plan's closure makes before the plan is generated as its own function.
@@ -47,7 +48,8 @@ export type PlanNode =
  *
  * @remarks A node that `awaits` has a dependency that may yield a promise, so it runs as the
  * interpreted async path does: every dependency starts in order, a sync throw becomes that slot's
- * rejection, and the constructor or factory runs on the settled values.
+ * rejection, the constructor or factory runs on the settled values, and a failure is reported in
+ * declaration order.
  *
  * @since 0.10.0
  */
@@ -229,7 +231,6 @@ class PlanEmitter {
     const name = `n${String(index)}`;
     const applyName = `a${String(index)}`;
     const reject = this.#slot(rejectWith, "R");
-    const promise = this.#slot(Promise, "P");
     const frame = { locals: [] as Array<string>, statements: [] as Array<string> };
     this.#frames.push(frame);
     const pendings: Array<string> = [];
@@ -244,10 +245,12 @@ class PlanEmitter {
     }
     this.#frames.pop();
     const locals = [...pendings, ...frame.locals];
-    const values = deps.map((_dep, position) => `v[${String(position)}]`).join(",");
-    this.hoisted.push(
-      `const ${applyName}=(v)=>${apply(values)};const ${name}=()=>{let ${locals.join(",")};${frame.statements.join("")}return ${promise}.all([${pendings.join(",")}]).then(${applyName});};`,
-    );
+    // One dependency has one outcome, so there is nothing to order and no fan-out to settle.
+    const settled =
+      deps.length === 1
+        ? `const ${applyName}=(v0)=>${apply("v0")};const ${name}=()=>{let ${locals.join(",")};${frame.statements.join("")}return ${this.#slot(Promise, "P")}.resolve(p0).then(${applyName});};`
+        : `const ${applyName}=(v)=>${apply(deps.map((_dep, position) => `v[${String(position)}]`).join(","))};const ${name}=()=>{let ${locals.join(",")};${frame.statements.join("")}return ${this.#slot(settleInOrder, "W")}([${pendings.join(",")}],${applyName});};`;
+    this.hoisted.push(settled);
     return this.#define(`${name}()`);
   }
 

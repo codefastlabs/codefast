@@ -13,6 +13,7 @@ import type {
   ResolveOptions,
 } from "#core/types";
 import type { ScopeManager } from "#lifecycle/scope-manager";
+import { DefaultConstraintContext } from "#resolution/context";
 import { selectAllBindings } from "#resolution/select/binding-select";
 
 // ── Public types ─────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -94,13 +95,7 @@ export class Inspector {
   }
 
   #makeConstraintContext(options: ResolveOptions): ConstraintContext {
-    return {
-      resolutionPath: [],
-      resolutionStack: [],
-      parent: undefined,
-      ancestors: [],
-      currentResolveOptions: options,
-    };
+    return new DefaultConstraintContext([], options);
   }
 
   #toSnapshot(binding: Binding): BindingSnapshot {
