@@ -111,6 +111,7 @@ export class BindingChain<Value, Names extends string = string>
   readonly identifier: BindingIdentifier = generateBindingId();
   inFlight = false;
   frame: ResolutionFrame | undefined = undefined;
+  rootContext: ResolutionContext | undefined = undefined;
   activationStamp: number = NO_ACTIVATION_STAMP;
   instance: unknown = NO_INSTANCE;
   readonly token: Token<Value, Names> | Constructor<Value>;

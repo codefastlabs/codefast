@@ -1617,8 +1617,40 @@ export class DependencyResolver implements ResolverCallbacks {
       if (planned !== null) {
         return planned;
       }
+      if (
+        fastBinding.scope === "transient" &&
+        (fastBinding.kind === "dynamic" || fastBinding.kind === "dynamic-async") &&
+        !this.#hasAnyActivation(fastBinding)
+      ) {
+        return this.#rootFactoryAnswer(fastBinding);
+      }
     }
     return this.resolveAsyncFromContext(token, [], ROOT_BRANCH);
+  }
+
+  /**
+   * A transient factory root's answer: its factory run over the one context the binding keeps.
+   *
+   * @remarks The root's path is its own frame alone and the request carries no options, so the level's
+   * context is a function of the binding, built on the first resolve and reused by every later one —
+   * a concurrent root reads the same path, and a descendant that outgrows the branch copies its prefix.
+   */
+  #rootFactoryAnswer(binding: DynamicBinding<unknown> | DynamicAsyncBinding<unknown>): Promise<unknown> {
+    let ctx = binding.rootContext as AsyncLevelContext | undefined;
+    if (ctx === undefined) {
+      ctx = new AsyncLevelContext(
+        this,
+        extendResolutionBranch([], ROOT_BRANCH, this.#getResolutionFrame(binding)),
+        undefined,
+      );
+      binding.rootContext = ctx;
+    }
+    try {
+      const factoryResult = runFactoryPrefix(binding, ctx, ctx.ownPath);
+      return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
+    } catch (factoryError) {
+      return Promise.reject(factoryError);
+    }
   }
 
   /** The compiled async plan's answer for a transient class or factory root, or `null` when there is none. */

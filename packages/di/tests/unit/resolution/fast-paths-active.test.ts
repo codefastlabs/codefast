@@ -296,3 +296,51 @@ describe("an accessor-injected class compiles as a plan root", () => {
     }
   });
 });
+
+describe("a transient factory root's context", () => {
+  it("is built once per binding and answers every concurrent root from the root's own path", async () => {
+    const container = Container.create();
+    const leafToken = token<number>("test:Leaf");
+    const rootToken = token<{ readonly path: ReadonlyArray<string>; readonly leaf: number }>("test:Root");
+    const contexts: Array<object> = [];
+    container.bind(leafToken).toConstantValue(1);
+    container
+      .bind(rootToken)
+      .toDynamicAsync(async (ctx) => {
+        contexts.push(ctx);
+        await Promise.resolve();
+        return { path: ctx.graph.resolutionPath, leaf: await ctx.resolveAsync(leafToken) };
+      })
+      .transient();
+
+    const [first, second] = await Promise.all([container.resolveAsync(rootToken), container.resolveAsync(rootToken)]);
+    const third = await container.resolveAsync(rootToken);
+
+    expect(first.path).toEqual(["test:Root"]);
+    expect(second.path).toEqual(["test:Root"]);
+    expect(third.path).toEqual(["test:Root"]);
+    expect([first.leaf, second.leaf, third.leaf]).toEqual([1, 1, 1]);
+    expect(contexts).toHaveLength(3);
+    expect(contexts[1]).toBe(contexts[0]);
+    expect(contexts[2]).toBe(contexts[0]);
+  });
+
+  it("rejects a factory that throws from its synchronous prefix, and reports a self-cycle from it", async () => {
+    const container = Container.create();
+    const throwingToken = token<number>("test:Throwing");
+    const selfToken = token<number>("test:SelfCycle");
+    container
+      .bind(throwingToken)
+      .toDynamicAsync(() => {
+        throw new Error("prefix failure");
+      })
+      .transient();
+    container
+      .bind(selfToken)
+      .toDynamicAsync((ctx) => ctx.resolveAsync(selfToken))
+      .transient();
+
+    await expect(container.resolveAsync(throwingToken)).rejects.toThrow("prefix failure");
+    await expect(container.resolveAsync(selfToken)).rejects.toThrow(CircularDependencyError);
+  });
+});

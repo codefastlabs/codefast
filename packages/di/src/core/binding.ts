@@ -132,6 +132,13 @@ interface BindingBase<Value> {
    */
   frame: ResolutionFrame | undefined;
   /**
+   * The context a transient factory root is handed, built once per binding: the root's path is its own frame
+   * alone, so every resolve of the root reads the same one.
+   *
+   * @remarks Resolver-owned bookkeeping, cleared with the frame it is built over.
+   */
+  rootContext: ResolutionContext | undefined;
+  /**
    * The activation need last computed for this binding, stamped with the versions it was computed
    * under, or {@link NO_ACTIVATION_STAMP}.
    *
@@ -330,6 +337,7 @@ export function writableMembership(binding: Binding): MembershipField {
  */
 interface MemoizedFrameField {
   frame: ResolutionFrame | undefined;
+  rootContext: ResolutionContext | undefined;
 }
 
 /** The stamp of a binding whose activation need has not been computed under the current versions. */
@@ -345,6 +353,7 @@ export const NO_ACTIVATION_STAMP = -1;
  */
 export function clearBindingFrame<Value>(binding: Binding<Value>): void {
   (binding as MemoizedFrameField).frame = undefined;
+  (binding as MemoizedFrameField).rootContext = undefined;
 }
 
 // ── Builder interfaces ───────────────────────────────────────────────────────────────────────────────────────────────
