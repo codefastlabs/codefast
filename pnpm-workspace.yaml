@@ -69,6 +69,7 @@ catalog:
   ditox: ^3.3.0
   embla-carousel-autoplay: ^8.6.0
   embla-carousel-react: ^8.6.0
+  fast-check: ^4.10.1
   github-slugger: ^2.0.0
   hono: ^4.13.8
   injection-js: ^2.6.1
