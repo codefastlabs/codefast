@@ -1,5 +1,5 @@
 import type { Binding, BindingSlot } from "#core/binding";
-import { bindingSlotEquals, bindingSlotToString, writableMembership, writablePredicate } from "#core/binding";
+import { bindingSlotEquals, writableMembership, writablePredicate } from "#core/binding";
 import { getOrInsert } from "#core/map-upsert";
 import { advanceStateEpoch } from "#core/state-epoch";
 import type { BindingTag } from "#core/tag";
@@ -439,11 +439,6 @@ export class BindingRegistry {
       record.defaultOccupant = undefined;
     }
     return record;
-  }
-
-  /** Summarize available slot strings for a token (for error messages). */
-  availableSlotStrings(token: Token<unknown> | Constructor): Array<string> {
-    return this.getAll(token).map((binding) => bindingSlotToString(binding.slot));
   }
 
   #createRecord(key: DependencyKey, bindings: Array<Binding>): TokenRecord {

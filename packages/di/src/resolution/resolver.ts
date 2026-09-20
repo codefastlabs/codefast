@@ -1,7 +1,7 @@
 import type { AmbientResolution } from "#ambient/active-container";
 import type { Container } from "#container/container";
 import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#core/binding";
-import { NO_INSTANCE } from "#core/binding";
+import { bindingSlotToString, NO_INSTANCE } from "#core/binding";
 import type { BindingRegistry } from "#core/registry";
 import { slotNameCriterionOf } from "#core/tag";
 import type { Token } from "#core/token";
@@ -12,6 +12,7 @@ import type {
   BindingTag,
   ConstraintContext,
   Constructor,
+  ResolutionContext,
   ResolutionFrame,
   ResolveOptions,
 } from "#core/types";
@@ -342,12 +343,14 @@ export class DependencyResolver implements ResolverCallbacks {
 
     if (found === undefined) {
       // Thrown here rather than from a helper: the error captures this stack, and an error path is
-      // dominated by that capture. Bindings under the token mean the request matched none of them.
-      if (this.#registry.has(currentToken)) {
+      // dominated by that capture. Bindings under the token anywhere in the chain mean the request
+      // matched none of them, so a child reports the same miss its parent would.
+      const bound = this.#allBindingsFromChain(currentToken);
+      if (bound.length > 0) {
         throw new NoMatchingBindingError(
           tokenName(currentToken),
           options ?? {},
-          this.#registry.availableSlotStrings(currentToken),
+          bound.map((binding) => bindingSlotToString(binding.slot)),
         );
       }
       throw new TokenNotBoundError(tokenName(currentToken));
@@ -738,7 +741,7 @@ export class DependencyResolver implements ResolverCallbacks {
       const needsActivation = owner.#activationNeed().needsActivation(binding);
       if (!needsActivation && scope === "transient" && binding.kind === "dynamic") {
         const resolutionCtx = this.#acquireSyncResolutionContext(resolutionStack, options);
-        const dynamicResult = binding.factory(resolutionCtx);
+        const dynamicResult = runFactoryPrefix(binding, resolutionCtx, resolutionStack);
         if (dynamicResult instanceof Promise) {
           throw new AsyncResolutionError(resolutionStack[0]?.tokenName ?? tokenDisplayName, tokenDisplayName);
         }
@@ -814,7 +817,7 @@ export class DependencyResolver implements ResolverCallbacks {
         if (ctx === undefined) {
           throw new InternalError("dynamic binding requires resolution context");
         }
-        const factoryResult = binding.factory(ctx);
+        const factoryResult = runFactoryPrefix(binding, ctx, resolutionStack);
         if (factoryResult instanceof Promise) {
           throw asyncResolutionErrorFor(binding, resolutionStack);
         }
@@ -1136,12 +1139,14 @@ export class DependencyResolver implements ResolverCallbacks {
     branchDepth: BranchDepth = UNOWNED_BRANCH,
     precomputedCriterion?: BindingTag | null,
   ): Promise<Value> {
-    const { binding, owner } = this.#requireBinding(token, options, resolutionStack, precomputedCriterion);
+    const path = ownPrefixOf(resolutionStack, branchDepth);
+    const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
+    const { binding, owner } = this.#requireBinding(token, options, path, precomputedCriterion);
 
     if (binding.scope === "singleton" && owner !== this) {
-      return owner.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner) as Promise<Value>;
+      return owner.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
     }
-    return this.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner) as Promise<Value>;
+    return this.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
   }
 
   async #resolveBindingAsync(
@@ -1191,10 +1196,7 @@ export class DependencyResolver implements ResolverCallbacks {
     const needsActivation = owner.#activationNeed().needsActivation(binding);
     if (!needsActivation && scope === "transient" && (binding.kind === "dynamic" || binding.kind === "dynamic-async")) {
       const resolutionCtx = new AsyncLevelContext(this, levelStack, options);
-      if (binding.kind === "dynamic-async") {
-        return await binding.factory(resolutionCtx);
-      }
-      const dynamicResult = binding.factory(resolutionCtx);
+      const dynamicResult = runFactoryPrefix(binding, resolutionCtx, levelStack);
       return dynamicResult instanceof Promise ? await dynamicResult : dynamicResult;
     }
 
@@ -1304,19 +1306,14 @@ export class DependencyResolver implements ResolverCallbacks {
       case "constant":
         return binding.value;
 
-      case "dynamic": {
+      case "dynamic":
+      case "dynamic-async": {
         if (ctx === undefined) {
           throw new InternalError("dynamic binding requires resolution context");
         }
-        const factoryResult = binding.factory(ctx);
+        const factoryResult = runFactoryPrefix(binding, ctx, resolutionStack);
         return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
       }
-
-      case "dynamic-async":
-        if (ctx === undefined) {
-          throw new InternalError("dynamic-async binding requires resolution context");
-        }
-        return binding.factory(ctx);
 
       case "class": {
         const deps = await this.#resolveDepsAsync(
@@ -1396,10 +1393,12 @@ export class DependencyResolver implements ResolverCallbacks {
     branchDepth: BranchDepth = UNOWNED_BRANCH,
     precomputedCriterion?: BindingTag | null,
   ): Promise<Value | undefined> {
+    const path = ownPrefixOf(resolutionStack, branchDepth);
+    const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
     const entry = this.#findBinding(
       token,
       options,
-      resolutionStack,
+      path,
       precomputedCriterion === undefined ? singleCriterionOnlyOf(options) : (precomputedCriterion ?? undefined),
     );
     if (entry === undefined) {
@@ -1408,12 +1407,12 @@ export class DependencyResolver implements ResolverCallbacks {
     // Same single-evaluation contract as the sync lane: resolve what the probe found.
     const { binding, owner } = entry;
     if (binding.kind === "alias") {
-      return this.resolveAsync(token, options, resolutionStack, branchDepth);
+      return this.resolveAsync(token, options, path, depth);
     }
     if (binding.scope === "singleton" && owner !== this) {
-      return owner.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner) as Promise<Value>;
+      return owner.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
     }
-    return this.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner) as Promise<Value>;
+    return this.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
   }
 
   async resolveAllAsync<Value>(
@@ -1422,15 +1421,12 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
   ): Promise<ReadonlyArray<Value>> {
-    const candidates = this.#candidateBindings(token, options, resolutionStack);
+    const path = ownPrefixOf(resolutionStack, branchDepth);
+    const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
+    const candidates = this.#candidateBindings(token, options, path);
     const pending = new Array<Promise<Value>>(candidates.length);
     for (let index = 0; index < candidates.length; index += 1) {
-      pending[index] = this.#resolveCandidateAsync(
-        candidates[index]!,
-        options,
-        resolutionStack,
-        branchDepth,
-      ) as Promise<Value>;
+      pending[index] = this.#resolveCandidateAsync(candidates[index]!, options, path, depth) as Promise<Value>;
     }
     return Promise.all(pending);
   }
@@ -1597,10 +1593,7 @@ export class DependencyResolver implements ResolverCallbacks {
     // Nothing this level appended is ever removed, so no level observes its own settlement.
     const ctx = new AsyncLevelContext(this, levelStack, undefined);
     try {
-      if (binding.kind === "dynamic-async") {
-        return binding.factory(ctx);
-      }
-      const factoryResult = binding.factory(ctx);
+      const factoryResult = runFactoryPrefix(binding, ctx, levelStack);
       return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
     } catch (factoryError) {
       return Promise.reject(factoryError);
@@ -1899,6 +1892,46 @@ function buildConstraintContext(
     ancestors: resolutionStack.length > 1 ? resolutionStack.slice(0, -1) : [],
     currentResolveOptions: options,
   };
+}
+
+/**
+ * Runs a factory with its binding flagged in flight for the factory's synchronous prefix.
+ *
+ * @remarks The flag is exact path membership only while synchronous code runs, so it is cleared when
+ * the factory returns — its promise included — never when that promise settles: two branches that
+ * await one binding are a diamond, not a cycle. A factory that resolves its own token from that
+ * prefix is caught before it runs again, on the branch lane as on the cascade and sync lanes.
+ */
+function runFactoryPrefix(
+  binding: DynamicBinding<unknown> | DynamicAsyncBinding<unknown>,
+  ctx: ResolutionContext,
+  levelStack: ReadonlyArray<ResolutionFrame>,
+): unknown {
+  if (binding.inFlight) {
+    // The level's own frame is the last one, and the path an error names ends where the cycle closed.
+    throw new CircularDependencyError(cycleNamesOf(levelStack.slice(0, -1), tokenName(binding.token)));
+  }
+  binding.inFlight = true;
+  try {
+    return binding.factory(ctx);
+  } finally {
+    binding.inFlight = false;
+  }
+}
+
+/**
+ * The frames a level may read as its own path: the array itself while nothing has grown it past the
+ * level's depth, else a copy of the level's prefix.
+ *
+ * @remarks Siblings start concurrently on one branch and the first appends in place, so a later
+ * sibling that read the whole array would hand a `when()` predicate the first sibling's frame as its
+ * parent. The copy is the one the branch lane would take for that sibling anyway, and it owns itself.
+ */
+function ownPrefixOf(resolutionStack: Array<ResolutionFrame>, branchDepth: BranchDepth): Array<ResolutionFrame> {
+  if (branchDepth === UNOWNED_BRANCH || resolutionStack.length === branchDepth) {
+    return resolutionStack;
+  }
+  return resolutionStack.slice(0, branchDepth);
 }
 
 /** The async-resolution failure for a binding reached on a sync path, naming what to await instead. */
