@@ -116,13 +116,19 @@ export class BindingLookupCache<Owner> {
 
   /** `null` when the token's shape needs the full selection path. */
   defaultEntry(token: Token<unknown> | Constructor): DefaultLookupEntry<Owner> | null {
+    // The repeat hit is the whole method, small enough for a hot caller to inline; the fill is the miss.
+    if (token === this.#lastToken && this.chainVersion() === this.#version) {
+      return this.#lastEntry;
+    }
+    return this.#defaultEntryMiss(token);
+  }
+
+  #defaultEntryMiss(token: Token<unknown> | Constructor): DefaultLookupEntry<Owner> | null {
     const version = this.chainVersion();
     if (version !== this.#version) {
       this.#byToken?.clear();
       this.#version = version;
       this.#lastToken = undefined;
-    } else if (token === this.#lastToken) {
-      return this.#lastEntry;
     }
     let entry: DefaultLookupEntry<Owner> | null | undefined;
     if (this.#lastToken === undefined) {

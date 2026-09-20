@@ -448,7 +448,10 @@ cases the registry's direct index cannot serve: an **alias**, whose terminal the
 a **parent**, whose entry has to carry that owner. Both are resolved in a loop over one token. `null` is a real answer
 there ("this shape needs full selection"), so the slot tracks absence by its token, not by its entry. The map behind the
 slot follows the same deferral as `taggedEntry()` below: the first token a cache generation sees is answered from the
-walk and parked in the slot, and the map is allocated and written only when a second distinct token appears.
+walk and parked in the slot, and the map is allocated and written only when a second distinct token appears. The repeat
+hit — same token, same chain version — is the whole of `defaultEntry()`, small enough for the two callers that reach it
+to inline; everything that fills the slot or the map is a separate miss, so an alias resolve and a parent-owned resolve
+from a child pay one inlined compare where a call used to sit.
 
 > **Invariant (correctness).** Alias hops are not folded into `registry.getFastDefault()`. That method is a bare
 > own-registry `Map.get` returning a binding, and an alias terminal may live in a parent container whose rebind only the
