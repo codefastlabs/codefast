@@ -1,7 +1,12 @@
 # `@codefast/di` — one resolution pipeline, one lane at a time — decision record
 
-**Date:** 2026-09-19 · **Status:** in progress on `research/di-unified-engine` · **Package:** `packages/di` ·
-**Precedes:** [`di-resolution-engine-thresholds.md`](di-resolution-engine-thresholds.md)
+**Date:** 2026-09-19 · **Status:** restacked on the cold-path redesign 2026-09-20 · **Package:** `packages/di` ·
+**Precedes:** [`di-resolution-engine-thresholds.md`](di-resolution-engine-thresholds.md) · **Follows:**
+[`di-cold-path-redesign.md`](di-cold-path-redesign.md)
+
+The safety net, the three lane fixes, the alias fold, the flat plans, the flag-only cycle check and the codegen count
+landed on `main` through the cold-path redesign; what this branch still carries is the two records, the version
+canaries, the `resolveAll` copy, the coverage thresholds, steps 1a, 1b and 2a below, and the `plan-runs-*` rows.
 
 The first record left the engine with one synchronous cycle mechanism and no size thresholds, and a lane differential
 test that holds every entry point to one answer. This record folds the pipeline itself: the contracts the lanes still
@@ -127,6 +132,17 @@ read against a build that kept one instance live. The standalone loop of that sh
 an `await`, two hundred thousand resolves — reads the two builds within 2% with no forced collection, and 0.52M against
 0.80M resolves per second under one every thousand: the shipped engine paid this on every real collection, and the
 harness's denser cadence is what turned it into 2.8×.
+
+**Re-measured on the redesigned engine, in the user's fast profile.** Restacked on the cold-path redesign and read with
+`pnpm di:bench:fast` — the whole suite in one child, no forced collections — one run per point, `BENCH_ONLY` on the
+async rows: step 1a reads as the redesign head does (`async-fanout-concurrent-8` 892 against 899 ns,
+`async-init-single-hop` 131 against 141, `dynamic-async-chain-8` 422 against 433); step 1b then reads 1 042, 158 and
+472, with `async-diamond-shared-leaf` 462 → 514 — the three allocations a level owns, at a sixth to a fifth on the
+fan-out and the single hop without the forced-GC churn that made the full profile read the branch rows as a win. The
+rows keep their rivals beaten (`async-fanout-concurrent-8` 1.60× → 1.23× of inversify, `dynamic-async-chain-8` 1.63× →
+1.33×) except `async-init-single-hop`, already below ditox at 0.95× and 0.76× after. The step stays in because the
+answer it replaces is wrong, not slow: a factory that asks after an `await` is handed another chain's ancestors by the
+cascade, and no cheaper shape answers a continuation from its own path.
 
 ## Step 2 — folding the pairs
 
