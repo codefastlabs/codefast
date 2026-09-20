@@ -109,8 +109,9 @@ codefast                              # Codefast monorepo developer CLI
 │  ├─ links [target]                  # markdown links pointing at a missing path/anchor
 │  ├─ imports [target]                # banned import forms (React by-name, Zod namespace in front-end, …)
 │  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
-│  └─ comments [target]               # section dividers not in the one allowed form
-│      └─ --fix                       # rewrite every fixable divider in place (the only audit that writes)
+│  ├─ comments [target]               # section dividers not in the one allowed form
+│  │   └─ --fix                       # rewrite every fixable divider in place (the only audit that writes)
+│  └─ runs [target]                   # committed bench runs breaking the baselines/ vs runs/ role split
 │      (each audit also takes [target] + --json)
 │
 ├─ mirror [package]                   # write package.json#exports from dist/ for workspace packages
@@ -141,6 +142,7 @@ Every command also responds to `--help`; each command's section below explains w
 | `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)      | no (report only)  |
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
 | `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
+| `audit runs`          | Report committed bench runs breaking the `baselines/` vs `runs/` split     | no                |
 
 **Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, and `audit links` are general-purpose — they
 work for any pnpm workspace or single package that builds with `tsc`. The other four audits encode codefast's own house
@@ -367,6 +369,24 @@ codefast audit display-names --json                # machine-readable summary
 Configure exceptions via `audit.displayNames.allowlist` — each entry is the call as written, through its closing quote
 (or parenthesis when the name is the only argument), or `repo/relative/path.ts:<call>`.
 
+### `audit runs`
+
+_House style._ Checks every benchmark suite's committed bench runs against its `baselines/` vs `runs/` role split:
+`baselines/<suite>/` holds exactly the one run its `bench:baseline` script pins through a
+`BENCH_BASELINE=baselines/<id>` token; every `runs/<id>/` directory is cited by at least one relative link from a
+tracked markdown document (a bare mention does not count); every `baselines/<id>/` and `runs/<id>/` directory holds
+exactly one file, `observations.jsonl`; and no tracked `observations.jsonl` exists outside one of those directories. It
+takes no allowlist — a suite fails until its committed runs actually match one of the two roles.
+
+```bash
+codefast audit runs                        # uses audit.runs.target from config (default: benchmarks/*)
+codefast audit runs benchmarks/di          # explicit suite
+codefast audit runs --json                 # machine-readable summary
+```
+
+Unlike every other audit's `[target]`, this one is a glob over suite root directories rather than a single path.
+Configure the default via `audit.runs.target`.
+
 ## Configuration
 
 **You do not need a config file.** Every command has sensible defaults and works with none. Add a `codefast.config.*`
@@ -501,6 +521,7 @@ export default {
     comments: { allowlist: [] }, // divider as written, or `repo/relative/path.ts:<divider>`
     imports: { allowlist: [] }, // offending import text as written, or `repo/relative/path.tsx:<text>`
     displayNames: { allowlist: [] }, // call as written, or `repo/relative/path.ts:<call>`
+    runs: { target: "benchmarks/*" }, // glob over suite roots; no allowlist
   },
 };
 ```
