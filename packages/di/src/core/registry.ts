@@ -249,15 +249,6 @@ export class BindingRegistry {
     return this.#records?.get(token)?.bindings ?? NO_BINDINGS;
   }
 
-  /** How many bindings a token holds, without materialising a lone binding's list. */
-  countBindings(token: Token<unknown> | Constructor): number {
-    const record = this.#records?.get(token);
-    if (record !== undefined) {
-      return record.bindings.length;
-    }
-    return this.#lone.has(token) ? 1 : 0;
-  }
-
   /** Get binding by ID. */
   getById(id: BindingIdentifier): Binding | undefined {
     return this.#ensureById().get(id);

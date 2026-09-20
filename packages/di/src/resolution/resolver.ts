@@ -3,7 +3,7 @@ import type { Container } from "#container/container";
 import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#core/binding";
 import { NO_INSTANCE } from "#core/binding";
 import type { BindingRegistry } from "#core/registry";
-import { NO_TAG_KEYS, slotNameCriterionOf } from "#core/tag";
+import { slotNameCriterionOf } from "#core/tag";
 import type { Token } from "#core/token";
 import { tokenName } from "#core/token";
 import type {
@@ -60,10 +60,9 @@ import {
 } from "#resolution/path/resolution-path";
 import type { InstantiationPlanHost } from "#resolution/plan/instantiation-plan";
 import { InstantiationPlanCompiler, PLAN_RETRY } from "#resolution/plan/instantiation-plan";
-import { matchesSlot, requestedTagKeyMask, selectAllBindings, selectBinding } from "#resolution/select/binding-select";
+import { matchesSlot, selectAllBindings, selectBinding } from "#resolution/select/binding-select";
 
 // Where a multi-tag resolve switches from scanning the token's list to walking the tag indexes.
-const MULTI_TAG_INDEX_THRESHOLD = 8;
 
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
@@ -248,23 +247,6 @@ export class DependencyResolver implements ResolverCallbacks {
             return entry;
           }
         }
-      }
-      if (
-        // A threshold switches the data structure, never the semantics: under it the generic scan
-        // below beats walking the indexes, and both paths answer identically. Sized first, so a
-        // small list pays one length read and nothing else.
-        this.#registry.countBindings(token) > MULTI_TAG_INDEX_THRESHOLD &&
-        requestedTagKeyMask(options) !== NO_TAG_KEYS
-      ) {
-        // A multi-criterion request matches only slots whose every criterion it carries, and every
-        // such slot is in the two tag indexes — their union is the whole candidate set, unscanned.
-        const selected = this.#selectMultiTagged(token, options, resolutionStack);
-        if (selected !== undefined) {
-          return { binding: selected, owner: this };
-        }
-        return this.#parent === undefined
-          ? undefined
-          : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
       }
     }
 
@@ -1557,56 +1539,6 @@ export class DependencyResolver implements ResolverCallbacks {
       return ROOT_CONSTRAINT_CONTEXT;
     }
     return buildConstraintContext(resolutionStack, options);
-  }
-
-  /** Selection for a multi-criterion request, over the union of the two tag indexes. */
-  #selectMultiTagged(
-    token: Token<unknown> | Constructor,
-    options: ResolveOptions,
-    resolutionStack: Array<ResolutionFrame>,
-  ): Binding | undefined {
-    const candidates: Array<Binding> = [];
-    const gathered: Array<BindingTag> = [];
-    if (options.name !== undefined) {
-      // Read, not minted: an unminted name has no criterion, so no slot can carry it.
-      this.#gatherTagCandidates(token, slotNameCriterionOf(options.name), candidates, gathered);
-    }
-    this.#gatherTagCandidates(token, options.tag, candidates, gathered);
-    const listed = options.tags;
-    if (listed !== undefined) {
-      for (let index = 0; index < listed.length; index += 1) {
-        this.#gatherTagCandidates(token, listed[index], candidates, gathered);
-      }
-    }
-    if (candidates.length === 0) {
-      return undefined;
-    }
-    return selectBinding(candidates, options, this.#makeConstraintContext(resolutionStack, options), tokenName(token));
-  }
-
-  /** One request criterion's candidates: its exact single-tag binding, plus its first-tag bucket. */
-  #gatherTagCandidates(
-    token: Token<unknown> | Constructor,
-    criterion: BindingTag | undefined,
-    out: Array<Binding>,
-    gathered: Array<BindingTag>,
-  ): void {
-    // Distinct criteria never share a binding — a slot lives in exactly one bucket — so deduping
-    // by criterion covers a request repeating one across its spellings, without scanning `out`.
-    if (criterion === undefined || gathered.includes(criterion)) {
-      return;
-    }
-    gathered.push(criterion);
-    const single = this.#registry.getSimpleTagged(token, criterion);
-    if (single !== undefined) {
-      out.push(single);
-    }
-    const bucket = this.#registry.getMultiTagged(token, criterion);
-    if (bucket !== undefined) {
-      for (let index = 0; index < bucket.length; index += 1) {
-        out.push(bucket[index]!);
-      }
-    }
   }
 
   /** The predicate half of a match, for a lane whose index has already settled the slot. */
