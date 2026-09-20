@@ -79,6 +79,8 @@ export interface BindingRegistration {
   readonly registry: BindingRegistry;
   readonly scope: ScopeManager;
   readonly moduleBindingIds: Array<BindingIdentifier> | undefined;
+  /** Runs for a binding this registration displaces, instead of parking it for a later restore. */
+  readonly deactivateDisplaced?: ((binding: Binding) => void) | undefined;
 }
 
 // ── BindingChain ─────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -399,7 +401,11 @@ export class BindingChain<Value, Names extends string = string>
     }
     const displaced = registry.add(registered);
     if (displaced !== undefined) {
-      (this.#displacedByChain ??= []).push(displaced);
+      if (this.#registration.deactivateDisplaced !== undefined && rewrite === undefined) {
+        this.#registration.deactivateDisplaced(displaced);
+      } else {
+        (this.#displacedByChain ??= []).push(displaced);
+      }
     }
     if (rewrite !== undefined && this.#displacedByChain !== undefined) {
       this.#restoreNonConflicting(this.#displacedByChain);

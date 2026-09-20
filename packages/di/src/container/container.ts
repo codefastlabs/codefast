@@ -431,12 +431,31 @@ class DefaultContainer implements Container {
     token: Token<Value, Names> | Constructor<Value>,
   ): BindToBuilder<Value, Names> {
     this.#assertNotDisposed();
-    if (!this.#registry.has(token)) {
-      throw new RebindUnboundTokenError(tokenName(token));
+    // A token held as its lone default binding is replaced by the new chain's own registration,
+    // which displaces it; the displaced binding is deactivated then, so the swap unbinds nothing
+    // up front. Any other shape is unbound first (sync — an async deactivation throws).
+    if (this.#registry.getFastDefault(token) === undefined) {
+      if (!this.#registry.has(token)) {
+        throw new RebindUnboundTokenError(tokenName(token));
+      }
+      this.#unbindSync(token);
+      return this.#createBindToBuilder(token);
     }
-    // Unbind existing (sync — if async deactivation, will throw AsyncDeactivationError)
-    this.#unbindSync(token);
-    return this.#createBindToBuilder(token);
+    return new BindingChain<Value>(token, this.#rebindRegistration());
+  }
+
+  #displacingRegistration: BindingRegistration | undefined;
+
+  /** A registration whose displaced binding is deactivated instead of parked, for `rebind`. */
+  #rebindRegistration(): BindingRegistration {
+    return (this.#displacingRegistration ??= {
+      registry: this.#registry,
+      scope: this.#scope,
+      moduleBindingIds: undefined,
+      deactivateDisplaced: (binding) => {
+        this.#deactivatePairsSync(this.#drainSingletons([binding]));
+      },
+    });
   }
 
   // ── Module ─────────────────────────────────────────────────────────────────────────────────────────────────────────
