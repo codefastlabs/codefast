@@ -153,20 +153,11 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
     trialIndex: number,
     trialCount: number,
     scenarios: ReadonlyArray<AnyBenchScenario>,
-    sanityFailures: ReadonlyArray<string>,
+    preBuiltClosuresByScenarioId: ReadonlyMap<string, () => void | Promise<void>>,
   ): Promise<TrialPayload> {
     const bench = new Bench(benchOptions);
-    const sanityFailureSet = new Set(sanityFailures);
-    const runnableScenarioCount = scenarios.filter((scenario) => !sanityFailureSet.has(scenario.id)).length;
+    const runnableScenarioCount = preBuiltClosuresByScenarioId.size;
     let completedScenarioCount = 0;
-
-    const preBuiltClosuresByScenarioId = new Map<string, () => void | Promise<void>>();
-    for (const scenario of scenarios) {
-      if (sanityFailureSet.has(scenario.id)) {
-        continue;
-      }
-      preBuiltClosuresByScenarioId.set(scenario.id, scenario.build());
-    }
 
     for (const scenario of scenarios) {
       const preBuiltClosure = preBuiltClosuresByScenarioId.get(scenario.id);
@@ -263,10 +254,19 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
         scenarioCount: scenarios.filter((scenario) => !sanityFailureSet.has(scenario.id)).length,
       }),
     );
+    // One closure per scenario for every trial: a second closure from the same literal turns off V8's
+    // function-context specialization, and a trial read without it is a different measurement, not
+    // another sample of the same one.
+    const preBuiltClosuresByScenarioId = new Map<string, () => void | Promise<void>>();
+    for (const scenario of scenarios) {
+      if (!sanityFailureSet.has(scenario.id)) {
+        preBuiltClosuresByScenarioId.set(scenario.id, scenario.build());
+      }
+    }
     const scenarioStartedAtMs = performance.now();
     for (let trialIndex = 0; trialIndex < trialCount; trialIndex++) {
       runFullGcIfExposed();
-      const trial = await runOneTrial(trialIndex, trialCount, scenarios, sanityFailures);
+      const trial = await runOneTrial(trialIndex, trialCount, scenarios, preBuiltClosuresByScenarioId);
       trials.push(trial);
       console.error(formatProgressEvent({ kind: "trial-done", trial: trialIndex + 1, trialCount }));
       if (trialIndex === trialCount - 1) {
