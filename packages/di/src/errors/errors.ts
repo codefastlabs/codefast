@@ -10,11 +10,9 @@ import type { BindingIdentifier, BindingScope, ResolveOptions } from "#core/type
  */
 export abstract class DiError extends Error {
   abstract readonly code: string;
-
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
+  // Each subclass names itself with a literal: a constructor lookup per throw is what a
+  // twenty-five-way polymorphic read costs, on top of the stack capture every error pays.
+  abstract override readonly name: string;
 }
 
 /**
@@ -23,6 +21,7 @@ export abstract class DiError extends Error {
  * @since 0.3.16-canary.0
  */
 export class InternalError extends DiError {
+  override readonly name = "InternalError";
   readonly code = "INTERNAL_ERROR";
 
   constructor(message: string) {
@@ -36,6 +35,7 @@ export class InternalError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class TokenNotBoundError extends DiError {
+  override readonly name = "TokenNotBoundError";
   readonly code = "TOKEN_NOT_BOUND";
   readonly tokenName: string;
 
@@ -85,6 +85,7 @@ function describeResolveOptions(options: ResolveOptions): string {
  * @since 0.3.16-canary.0
  */
 export class NoMatchingBindingError extends DiError {
+  override readonly name = "NoMatchingBindingError";
   readonly code = "NO_MATCHING_BINDING";
   readonly tokenName: string;
   readonly options: ResolveOptions;
@@ -106,6 +107,7 @@ export class NoMatchingBindingError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class AmbiguousBindingError extends DiError {
+  override readonly name = "AmbiguousBindingError";
   readonly code = "AMBIGUOUS_BINDING";
   readonly tokenName: string;
   readonly candidateIds: ReadonlyArray<BindingIdentifier>;
@@ -125,6 +127,7 @@ export class AmbiguousBindingError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class CircularDependencyError extends DiError {
+  override readonly name = "CircularDependencyError";
   readonly code = "CIRCULAR_DEPENDENCY";
   readonly cycle: Array<string>;
 
@@ -140,6 +143,7 @@ export class CircularDependencyError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class AsyncResolutionError extends DiError {
+  override readonly name = "AsyncResolutionError";
   readonly code = "ASYNC_RESOLUTION";
   /** The token the caller asked for — what `resolveAsync` has to be called with. */
   readonly tokenName: string;
@@ -163,6 +167,7 @@ export class AsyncResolutionError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class AsyncDeactivationError extends DiError {
+  override readonly name = "AsyncDeactivationError";
   readonly code = "ASYNC_DEACTIVATION";
   readonly tokenName: string;
 
@@ -191,6 +196,7 @@ export interface ScopeViolationDetails {
  * @since 0.3.16-canary.0
  */
 export class ScopeViolationError extends DiError {
+  override readonly name = "ScopeViolationError";
   readonly code = "SCOPE_VIOLATION";
   readonly details: ScopeViolationDetails;
 
@@ -212,6 +218,7 @@ export class ScopeViolationError extends DiError {
  * @since 0.6.0
  */
 export class EmptyTagCriteriaError extends DiError {
+  override readonly name = "EmptyTagCriteriaError";
   readonly code = "EMPTY_TAG_CRITERIA";
   readonly helperName: string;
 
@@ -233,6 +240,7 @@ export class EmptyTagCriteriaError extends DiError {
  * @since 0.6.0
  */
 export class UnreachableConstraintError extends DiError {
+  override readonly name = "UnreachableConstraintError";
   readonly code = "UNREACHABLE_CONSTRAINT";
   readonly tokenName: string;
   readonly requiredName: string;
@@ -264,6 +272,7 @@ export class UnreachableConstraintError extends DiError {
  * @since 0.6.0
  */
 export class UnreachableLifecycleHookError extends DiError {
+  override readonly name = "UnreachableLifecycleHookError";
   readonly code = "UNREACHABLE_LIFECYCLE_HOOK";
   readonly tokenName: string;
   readonly phase: "onActivation" | "onDeactivation";
@@ -287,6 +296,7 @@ export class UnreachableLifecycleHookError extends DiError {
  * @since 0.6.0
  */
 export class InvalidMetadataError extends DiError {
+  override readonly name = "InvalidMetadataError";
   readonly code = "INVALID_METADATA";
   readonly targetName: string;
   readonly reason: string;
@@ -306,6 +316,7 @@ export class InvalidMetadataError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class MissingMetadataError extends DiError {
+  override readonly name = "MissingMetadataError";
   readonly code = "MISSING_METADATA";
   readonly targetName: string;
 
@@ -323,6 +334,7 @@ export class MissingMetadataError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class AsyncModuleLoadError extends DiError {
+  override readonly name = "AsyncModuleLoadError";
   readonly code = "ASYNC_MODULE_LOAD";
   readonly moduleName: string;
 
@@ -338,6 +350,7 @@ export class AsyncModuleLoadError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class SyncDisposalNotSupportedError extends DiError {
+  override readonly name = "SyncDisposalNotSupportedError";
   readonly code = "SYNC_DISPOSAL_NOT_SUPPORTED";
 
   constructor() {
@@ -353,6 +366,7 @@ export class SyncDisposalNotSupportedError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class MissingScopeContextError extends DiError {
+  override readonly name = "MissingScopeContextError";
   readonly code = "MISSING_SCOPE_CONTEXT";
   readonly tokenName: string;
 
@@ -374,6 +388,7 @@ export class MissingScopeContextError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class MissingContainerContextError extends DiError {
+  override readonly name = "MissingContainerContextError";
   readonly code = "MISSING_CONTAINER_CONTEXT";
   /** The class being constructed, or `undefined` when it has no readable name. */
   readonly className: string | undefined;
@@ -400,6 +415,7 @@ export class MissingContainerContextError extends DiError {
  * @since 0.10.0
  */
 export class ChainAlreadyRegisteredError extends DiError {
+  override readonly name = "ChainAlreadyRegisteredError";
   readonly code = "CHAIN_ALREADY_REGISTERED";
   readonly tokenName: string;
 
@@ -420,6 +436,7 @@ export class ChainAlreadyRegisteredError extends DiError {
  * @since 0.10.0
  */
 export class ManyBindingSlotError extends DiError {
+  override readonly name = "ManyBindingSlotError";
   readonly code = "MANY_BINDING_SLOT";
   readonly tokenName: string;
 
@@ -441,6 +458,7 @@ export class ManyBindingSlotError extends DiError {
  * @since 0.10.0
  */
 export class ChainNotRegisteredError extends DiError {
+  override readonly name = "ChainNotRegisteredError";
   readonly code = "CHAIN_NOT_REGISTERED";
   readonly tokenName: string;
 
@@ -458,6 +476,7 @@ export class ChainNotRegisteredError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class RebindUnboundTokenError extends DiError {
+  override readonly name = "RebindUnboundTokenError";
   readonly code = "REBIND_UNBOUND_TOKEN";
   readonly tokenName: string;
 
@@ -475,6 +494,7 @@ export class RebindUnboundTokenError extends DiError {
  * @since 0.5.0-canary.9
  */
 export class SelfBindingRequiresClassError extends DiError {
+  override readonly name = "SelfBindingRequiresClassError";
   readonly code = "SELF_BINDING_REQUIRES_CLASS";
   readonly tokenName: string;
 
@@ -496,6 +516,7 @@ export class SelfBindingRequiresClassError extends DiError {
  * @since 0.6.0
  */
 export class StaticMemberDecoratorError extends DiError {
+  override readonly name = "StaticMemberDecoratorError";
   readonly code = "STATIC_MEMBER_DECORATOR";
   readonly decoratorName: string;
   readonly memberName: string;
@@ -515,6 +536,7 @@ export class StaticMemberDecoratorError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class DisposedContainerError extends DiError {
+  override readonly name = "DisposedContainerError";
   readonly code = "DISPOSED_CONTAINER";
 
   constructor() {
@@ -528,6 +550,7 @@ export class DisposedContainerError extends DiError {
  * @since 0.3.16-canary.0
  */
 export class AsyncActivationError extends DiError {
+  override readonly name = "AsyncActivationError";
   readonly code = "ASYNC_ACTIVATION";
   readonly tokenName: string;
   readonly hookKind: "postConstruct" | "onActivation";

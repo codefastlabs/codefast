@@ -361,7 +361,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (found === undefined) {
       // Thrown here rather than from a helper: the error captures this stack, and an error path is
       // dominated by that capture. Bindings under the token mean the request matched none of them.
-      if (this.#registry.getAll(currentToken).length > 0) {
+      if (this.#registry.has(currentToken)) {
         throw new NoMatchingBindingError(
           tokenName(currentToken),
           options ?? {},
