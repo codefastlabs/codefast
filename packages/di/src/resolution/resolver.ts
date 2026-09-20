@@ -189,9 +189,6 @@ export class DependencyResolver implements ResolverCallbacks {
     if (this.#lookup.isMemoBuilt) {
       builtSubsystems.push("resolver.lookupMemo");
     }
-    if (this.#activation?.isMemoBuilt === true) {
-      builtSubsystems.push("resolver.activationNeedMemo");
-    }
     const generatedPlanCount = this.#planCompiler?.generatedPlanCount ?? 0;
     if (generatedPlanCount > 0) {
       builtSubsystems.push("resolver.planCodegen");

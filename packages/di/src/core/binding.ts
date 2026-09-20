@@ -131,6 +131,14 @@ interface BindingBase<Value> {
    */
   frame: ResolutionFrame | undefined;
   /**
+   * The activation need last computed for this binding, stamped with the versions it was computed
+   * under, or {@link NO_ACTIVATION_STAMP}.
+   *
+   * @remarks Resolver-owned bookkeeping: a field the level reads beats a per-resolver map that a
+   * container resolving each binding once would build and never read again.
+   */
+  activationStamp: number;
+  /**
    * Cached singleton instance, or {@link NO_INSTANCE}.
    *
    * @remarks A binding belongs to exactly one container, so its singleton slot is per-binding —
@@ -322,6 +330,9 @@ export function writableMembership(binding: Binding): MembershipField {
 interface MemoizedFrameField {
   frame: ResolutionFrame | undefined;
 }
+
+/** The stamp of a binding whose activation need has not been computed under the current versions. */
+export const NO_ACTIVATION_STAMP = -1;
 
 /**
  * Drops the memoized resolution frame, for a refinement that changes what the frame reports.

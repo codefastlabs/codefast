@@ -20,6 +20,7 @@ import type {
 } from "#core/binding";
 import {
   clearBindingFrame,
+  NO_ACTIVATION_STAMP,
   createBindingSlot,
   DEFAULT_BINDING_SLOT,
   generateBindingId,
@@ -108,6 +109,7 @@ export class BindingChain<Value, Names extends string = string>
   readonly identifier: BindingIdentifier = generateBindingId();
   inFlight = false;
   frame: ResolutionFrame | undefined = undefined;
+  activationStamp: number = NO_ACTIVATION_STAMP;
   instance: unknown = NO_INSTANCE;
   readonly token: Token<Value, Names> | Constructor<Value>;
   slot: BindingSlot = DEFAULT_BINDING_SLOT;
