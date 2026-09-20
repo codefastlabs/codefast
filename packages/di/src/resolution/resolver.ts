@@ -67,6 +67,7 @@ const MULTI_TAG_INDEX_THRESHOLD = 8;
 
 const EMPTY_STRING_LIST: ReadonlyArray<string> = [];
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
+
 const EMPTY_PARAM_LIST: ReadonlyArray<ParamMetadata> = [];
 /** Plans compiled so far, with the `null` unplannable marks left out. */
 function countCompiledPlans(plans: Map<BindingIdentifier, (() => unknown) | null> | undefined): number {
@@ -113,12 +114,16 @@ export class DependencyResolver implements ResolverCallbacks {
   #cascadeStack: Array<ResolutionFrame> | undefined;
   #cascadeContext: AsyncCascadeContext | undefined;
   // Compiled plans; `null` marks a binding as unplannable under the current cache versions. Both
-  // maps are allocated by the first plan request, which only a class or resolved binding makes.
+  // maps are allocated by the first plan request, which only a class or resolved binding makes. A
+  // root is compiled on the request that repeats it — the first interprets, so a container that
+  // resolves a root once never compiles — and the set below remembers the first.
   #classPlanByBindingId: Map<BindingIdentifier, (() => unknown) | null> | undefined;
+  #classPlanRequestedOnce: Set<BindingIdentifier> | undefined;
   #classPlanRegistryVersion = -1;
   #classPlanActivationVersion = -1;
   // The async lane's plans, stamped and invalidated apart so neither lane pays the other's misses.
   #asyncPlanByBindingId: Map<BindingIdentifier, (() => unknown) | null> | undefined;
+  #asyncPlanRequestedOnce: Set<BindingIdentifier> | undefined;
   #asyncPlanRegistryVersion = -1;
   #asyncPlanActivationVersion = -1;
 
@@ -519,6 +524,7 @@ export class DependencyResolver implements ResolverCallbacks {
         this.#classPlanByBindingId = new Map<BindingIdentifier, (() => unknown) | null>();
       } else {
         this.#classPlanByBindingId.clear();
+        this.#classPlanRequestedOnce?.clear();
       }
       this.#classPlanRegistryVersion = registryVersion;
       this.#classPlanActivationVersion = activationVersion;
@@ -527,6 +533,12 @@ export class DependencyResolver implements ResolverCallbacks {
     const cached = plans.get(binding.identifier);
     if (cached !== undefined) {
       return cached;
+    }
+    const requestedOnce = (this.#classPlanRequestedOnce ??= new Set<BindingIdentifier>());
+    if (!requestedOnce.has(binding.identifier)) {
+      // The first request interprets; the one that repeats it compiles.
+      requestedOnce.add(binding.identifier);
+      return null;
     }
     const compiled = this.#compiler().compile(binding);
     if (compiled === PLAN_RETRY) {
@@ -639,6 +651,7 @@ export class DependencyResolver implements ResolverCallbacks {
         this.#asyncPlanByBindingId = new Map<BindingIdentifier, (() => unknown) | null>();
       } else {
         this.#asyncPlanByBindingId.clear();
+        this.#asyncPlanRequestedOnce?.clear();
       }
       this.#asyncPlanRegistryVersion = registryVersion;
       this.#asyncPlanActivationVersion = activationVersion;
@@ -647,6 +660,11 @@ export class DependencyResolver implements ResolverCallbacks {
     const cached = plans.get(binding.identifier);
     if (cached !== undefined) {
       return cached;
+    }
+    const requestedOnce = (this.#asyncPlanRequestedOnce ??= new Set<BindingIdentifier>());
+    if (!requestedOnce.has(binding.identifier)) {
+      requestedOnce.add(binding.identifier);
+      return null;
     }
     const compiled = this.#compiler().compileAsync(binding);
     if (compiled === PLAN_RETRY) {

@@ -163,7 +163,7 @@ describe("deferred subsystems stay deferred", () => {
     expect(diagnose(child).builtSubsystems).toEqual([]);
   });
 
-  it("builds the plan compiler only once a class binding asks for a plan", () => {
+  it("builds the plan compiler only once a class binding is resolved a second time", () => {
     @injectable()
     class Service {}
 
@@ -172,8 +172,11 @@ describe("deferred subsystems stay deferred", () => {
 
     expect(diagnose(container).builtSubsystems).not.toContain("resolver.planCompiler");
 
+    // The first resolve interprets: a container that resolves a root once never compiles a plan.
     container.resolve(Service);
+    expect(diagnose(container).builtSubsystems).not.toContain("resolver.planCompiler");
 
+    container.resolve(Service);
     expect(diagnose(container).builtSubsystems).toContain("resolver.planCompiler");
   });
 
