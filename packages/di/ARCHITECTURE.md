@@ -269,6 +269,11 @@ property, so a user's handler is still checked strictly.
 A binding memoises a `frame` — the record a resolution path and a `when()` predicate see for it. `frame` derives from
 the token name, id, kind, slot **and scope**.
 
+A binding carries a second memo, its `activationStamp`: whether it needs the activation pipeline, stamped with the
+lifecycle and registry versions it was computed under, doubled, plus the answer. A mutation anywhere moves the version
+and retires every stamp at once; a first instantiation that discovers lifecycle metadata resets its own. A field the
+level compares twice replaces a per-resolver map a one-shot container would have built and never read again.
+
 A memo on a binding is only sound while what it derives from is immutable, and `scope` is the one field a fluent chain
 writes in place after registration (see [The fluent chain](#the-fluent-chain-one-object-one-registration)). So
 `singleton()`, `transient()` and `scoped()` call `clearBindingFrame()`. Without it, a chain refined after its first
@@ -280,10 +285,17 @@ resolve would report the old scope to every `when()` predicate that reads `ctx.p
 A binding is declared through a fluent chain such as `bind(T).toDynamic(f).singleton()`. Two facts about that chain
 shape the rest of the model.
 
-**Registration happens on `to*()`.** `toDynamic()` registers the binding. A refinement that follows, such as
-`singleton()`, then writes `scope` in place on that same registered object. Only `when*()` re-slots the binding, because
-slot and predicate are what the registry indexes on, and it re-registers under the chain's original id, so `id()` is
-stable for the whole chain.
+**Registration happens on `to*()`.** `toDynamic()` registers the binding: one probe of the lone map, one write and one
+version read, nothing parked and nothing restored. A refinement that follows, such as `singleton()`, then writes `scope`
+in place on that same registered object. Only `when*()` re-slots the binding, because slot and predicate are what the
+registry indexes on, and it re-registers under the chain's original id, so `id()` is stable for the whole chain.
+`many()` re-slots too, and the registry remembers the binding its last `add` placed and where, so the member that every
+collection declares — `toConstantValue(v).many()` — moves out of the lone map or clears its default slot with no probe;
+any removal or re-slot forgets that memory.
+
+**A rebind of a lone token is one registration.** `rebind(token)` hands out a chain whose registration deactivates the
+binding it displaces instead of parking it, so a token held as its lone default binding is swapped by the new chain's
+own `add`; a token holding several slots is unbound first, as before, and an unbound token still throws.
 
 **One object per `bind()`.** A single `BindingChain` plays every role: the `BindToBuilder` before `to*()`, the
 kind-specific builder after, and it commits to the registry itself. `bind()` is typed as `BindToBuilder`, so
@@ -349,7 +361,10 @@ the rule.
 
 **What a plan is.** A transient `class`/`resolved` binding resolved at the top level compiles once into a
 nested-constructor closure. The static subgraph is cycle-checked **at compile time**, so executing the plan does no
-per-resolve bookkeeping at all.
+per-resolve bookkeeping at all. The first request for a root interprets and the request that repeats it compiles — a
+container that resolves a root once never builds the compiler, its host or a plan it would not run again — and the plan
+map keeps its two states, a plan or "unplannable", with a set beside it remembering which roots have been asked once, so
+the warm path reads exactly what it read before.
 
 **What an escape is.** Some dependencies the compiler cannot see through: a factory, a scoped binding, an activation
 hook, a multi/optional/named param. Such a dependency does **not** sink the plan. It compiles to an _escape_: a re-entry
@@ -735,16 +750,17 @@ plan maps (first plan request, which only a `class` or `resolved` binding makes)
 distinct token or tag in one cache generation), the activation-need cache (first interpreted resolve that asks whether a
 binding needs the activation pipeline) and its memo (first answer its early returns cannot give).
 
-The scope manager, the lifecycle manager, the resolver's cascade stack and its sync context pool stay eager on purpose.
-Building them on first use was measured: it saved a per-request child three or four allocations and read as a small gain
-on the empty-child rows, but every warm interpreted lane then reached them through a nullable field or an accessor, and
-the realistic-graph and production rows lost more than the child rows gained. What a child costs is the object count of
-this design, not those four; the ledger prices it. The reason the rest defers is that an empty `Map` is not free: V8
-gives it a backing store, and a closure-heavy host object such as the plan compiler's is a dozen allocations. Those are
-costs a per-request child — created, asked one parent-owned token, disposed — never earns back, and that child is the
-shape `Container.create()` and `createChild()` are priced on. The one map every container allocates eagerly is the
-registry's fast-default map, because `getFastDefault()` is the first read of every synchronous resolve
-([The registry keeps one record per token](#the-registry-keeps-the-common-token-in-one-map-and-a-record-for-the-rest)).
+The scope manager and the lifecycle manager stay eager on purpose: every generic level reads them, and a nullable field
+there is a branch on every hop. The resolver's lookup memo, its class introspector, its sync context pool and its
+cascade stack are built by the first request that needs them — a container that never misses its own lone map, never
+resolves a class, never runs a factory with a context and never resolves asynchronously pays for none of them — and the
+plan host holds the introspector it was built with, so no plan run reaches it through an accessor. The registry's
+fast-default map is one shared empty map until the first `add` mints one, so a container that only resolves through its
+parent — every per-request child — allocates no map at all, and `getFastDefault()` on it is a read of an empty map, the
+same miss it always was. The reason the rest defers is that an empty `Map` is not free: V8 gives it a backing store, and
+a closure-heavy host object such as the plan compiler's is a dozen allocations. Those are costs a per-request child —
+created, asked one parent-owned token, disposed — never earns back, and that child is the shape `Container.create()` and
+`createChild()` are priced on.
 
 > **Invariant (correctness).** Deferral is an allocation decision only. A deferred collaborator must answer identically
 > whether or not something touched it first — an unallocated cache reads as a miss, never as an error — which is why
@@ -758,7 +774,9 @@ resolving a parent's token delegates to the parent resolver, which owns the same
 Because of that, a singleton's slot is **per-binding, not per-container**. The instance lives on `binding.instance`
 (`NO_INSTANCE` when unset) instead of in a `Map` keyed by binding id. That replaces a keyed lookup with a field read on
 the most common resolve shape there is: a transient over cached singletons. `ScopeManager` keeps only a lazily-created
-list of the bindings that have materialised, so disposal and `inspect()` can still enumerate them.
+list of the bindings that have materialised, so disposal and `inspect()` can still enumerate them; a removal clears the
+binding's instance and marks the list, and the next enumeration compacts it, keeping each live binding once at its
+latest position — a teardown of a hundred singletons is a hundred field writes, not a hundred splices.
 
 > **Invariant (correctness).** This is only sound while one binding maps to one owning container. Anything that would
 > share a binding object between two registries — a snapshot that re-registers into a different container, a clone that
