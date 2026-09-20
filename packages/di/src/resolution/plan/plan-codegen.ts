@@ -8,12 +8,14 @@ import type { ConstructorInvocation } from "#core/constructor-type";
 /**
  * The number of runs a plan's closure makes before the plan is generated as its own function.
  *
- * @remarks Below it a plan stays a closure, which is all a cold container or a per-request child
- * ever runs; above it a plan pays one compile for call sites nothing else feeds.
+ * @remarks A measured policy, not a machine width, a contract value or bind-time data: generating
+ * costs some fifty closure runs and the new function runs cold for thirty more, so it repays only
+ * over runs in the thousands. Below it a plan stays a closure, which is all a cold container or a
+ * per-request child ever runs.
  *
  * @since 0.10.0
  */
-export const PLAN_CODEGEN_THRESHOLD = 32;
+export const PLAN_CODEGEN_THRESHOLD = 1024;
 
 /**
  * The shape of a compiled sync plan: what its closure does, stated as data the generator can read.
