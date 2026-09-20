@@ -49,9 +49,33 @@ export class ScopeManager {
     binding.instance = instance;
   }
 
+  // A removal only clears the instance; the list keeps its entry until a read compacts it, so a
+  // teardown of a hundred singletons is a hundred field writes, not a hundred splices.
+  #compacted = true;
+
   /** Every binding in this container holding a cached singleton. */
   cachedSingletons(): ReadonlyArray<Binding<unknown>> {
-    return this.#singletonBindings ?? EMPTY_BINDINGS;
+    const tracked = this.#singletonBindings;
+    if (tracked === undefined) {
+      return EMPTY_BINDINGS;
+    }
+    if (!this.#compacted) {
+      // Latest materialization wins the position: walk from the end keeping each live binding once.
+      const seen = new Set<Binding<unknown>>();
+      const live: Array<Binding<unknown>> = [];
+      for (let index = tracked.length - 1; index >= 0; index -= 1) {
+        const binding = tracked[index]!;
+        if (binding.instance !== NO_INSTANCE && !seen.has(binding)) {
+          seen.add(binding);
+          live.push(binding);
+        }
+      }
+      live.reverse();
+      this.#singletonBindings = live;
+      this.#compacted = true;
+      return live;
+    }
+    return tracked;
   }
 
   deleteSingleton<Value>(binding: Binding<Value>): boolean {
@@ -59,13 +83,7 @@ export class ScopeManager {
       return false;
     }
     binding.instance = NO_INSTANCE;
-    const tracked = this.#singletonBindings;
-    if (tracked !== undefined) {
-      const index = tracked.indexOf(binding as Binding<unknown>);
-      if (index !== -1) {
-        tracked.splice(index, 1);
-      }
-    }
+    this.#compacted = false;
     return true;
   }
 
@@ -132,10 +150,11 @@ export class ScopeManager {
   clearAll(): void {
     const tracked = this.#singletonBindings;
     if (tracked !== undefined) {
-      for (const binding of tracked) {
-        binding.instance = NO_INSTANCE;
+      for (let index = 0; index < tracked.length; index += 1) {
+        tracked[index]!.instance = NO_INSTANCE;
       }
       tracked.length = 0;
+      this.#compacted = true;
     }
     this.#inflight?.clear();
     this.#scoped?.clear();

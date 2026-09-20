@@ -185,7 +185,9 @@ const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown
   },
 };
 
-const NO_DEACTIVATION_PAIRS: ReadonlyArray<[Binding, unknown]> = Object.freeze([]);
+/** Bindings owing a deactivation, each followed by the instance it is owed for. */
+type DeactivationPairs = ReadonlyArray<unknown>;
+const NO_DEACTIVATION_PAIRS: DeactivationPairs = Object.freeze([]);
 
 // ── DefaultContainer ─────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -327,9 +329,7 @@ class DefaultContainer implements Container {
   }
 
   /** Remove bindings from registry + scope and collect [binding, instance] pairs for deactivation. */
-  #collectDeactivationPairs(
-    tokenOrId: Token<unknown> | Constructor | BindingIdentifier,
-  ): ReadonlyArray<[Binding, unknown]> {
+  #collectDeactivationPairs(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): DeactivationPairs {
     if (typeof tokenOrId === "number") {
       const binding = this.#registry.removeById(tokenOrId);
       return binding === undefined ? NO_DEACTIVATION_PAIRS : this.#drainSingletons([binding]);
@@ -340,16 +340,17 @@ class DefaultContainer implements Container {
   }
 
   /** Drain scope entries for already-removed bindings, and pair each one that still owes a deactivation. */
-  #drainSingletons(bindings: ReadonlyArray<Binding>): ReadonlyArray<[Binding, unknown]> {
-    // Allocated by the first pair owed: an unbind or rebind of a binding nothing ever cached — the
-    // hot-swap shape — owes no deactivation and hands the shared empty list back.
-    let pairs: Array<[Binding, unknown]> | undefined;
-    for (const binding of bindings) {
+  #drainSingletons(bindings: ReadonlyArray<Binding>): DeactivationPairs {
+    // One flat list, allocated by the first pair owed: an unbind or rebind of a binding nothing
+    // ever cached — the hot-swap shape — owes no deactivation and hands the shared empty list back.
+    let pairs: Array<unknown> | undefined;
+    for (let index = 0; index < bindings.length; index += 1) {
+      const binding = bindings[index]!;
       if (binding.instance !== NO_INSTANCE) {
-        (pairs ??= []).push([binding, binding.instance]);
+        (pairs ??= []).push(binding, binding.instance);
         this.#scope.deleteSingleton(binding);
       } else if (this.#owesConstantDeactivation(binding)) {
-        (pairs ??= []).push([binding, binding.value]);
+        (pairs ??= []).push(binding, binding.value);
       }
       this.#scope.deleteScoped(binding.identifier);
     }
@@ -371,36 +372,40 @@ class DefaultContainer implements Container {
   }
 
   /** Runs every pair's deactivation even when one throws, then reports what threw. */
-  #deactivatePairsSync(pairs: ReadonlyArray<[Binding, unknown]>): void {
+  #deactivatePairsSync(pairs: DeactivationPairs): void {
     if (pairs.length === 0) {
       return;
     }
     const reader = this.#getMetadataReader();
-    const errors: Array<unknown> = [];
-    for (const [binding, instance] of pairs) {
+    let errors: Array<unknown> | undefined;
+    for (let index = 0; index < pairs.length; index += 2) {
       try {
-        this.#lifecycle.runDeactivationSync(binding, instance, reader);
+        this.#lifecycle.runDeactivationSync(pairs[index] as Binding, pairs[index + 1], reader);
       } catch (error) {
-        errors.push(error);
+        (errors ??= []).push(error);
       }
     }
-    throwCollected(errors, "unbind completed, but deactivation hooks threw");
+    if (errors !== undefined) {
+      throwCollected(errors, "unbind completed, but deactivation hooks threw");
+    }
   }
 
-  async #deactivatePairs(pairs: ReadonlyArray<[Binding, unknown]>): Promise<void> {
+  async #deactivatePairs(pairs: DeactivationPairs): Promise<void> {
     if (pairs.length === 0) {
       return;
     }
     const reader = this.#getMetadataReader();
-    const errors: Array<unknown> = [];
-    for (const [binding, instance] of pairs) {
+    let errors: Array<unknown> | undefined;
+    for (let index = 0; index < pairs.length; index += 2) {
       try {
-        await this.#lifecycle.runDeactivation(binding, instance, reader);
+        await this.#lifecycle.runDeactivation(pairs[index] as Binding, pairs[index + 1], reader);
       } catch (error) {
-        errors.push(error);
+        (errors ??= []).push(error);
       }
     }
-    throwCollected(errors, "unbind completed, but deactivation hooks threw");
+    if (errors !== undefined) {
+      throwCollected(errors, "unbind completed, but deactivation hooks threw");
+    }
   }
 
   #unbindSync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void {
@@ -561,7 +566,7 @@ class DefaultContainer implements Container {
   }
 
   /** Unregister module bindings and collect [binding, instance] pairs for deactivation. */
-  #removeModuleBindings(ref: object): ReadonlyArray<[Binding, unknown]> {
+  #removeModuleBindings(ref: object): DeactivationPairs {
     this.#moduleRefs?.delete(ref);
     const ids = this.#moduleBindingIds?.get(ref) ?? [];
     this.#moduleBindingIds?.delete(ref);
