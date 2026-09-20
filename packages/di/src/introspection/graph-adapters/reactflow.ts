@@ -42,11 +42,11 @@ export interface ReactFlowGraph {
 }
 
 /**
- * Initial grid layout: React Flow expects concrete positions; viewers re-layout anyway.
+ * Initial grid cell, in the pixels React Flow positions in: a starting layout viewers re-lay out,
+ * fixed by no contract.
  *
  * @since 0.3.16-canary.0
  */
-const GRID_COLUMN_COUNT = 5;
 const GRID_CELL_WIDTH_PX = 200;
 const GRID_CELL_HEIGHT_PX = 100;
 
@@ -56,6 +56,8 @@ const GRID_CELL_HEIGHT_PX = 100;
  * @since 0.5.0-canary.7
  */
 export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
+  // A square grid over the graph: as many columns as rows, derived from the node count.
+  const columnCount = Math.max(1, Math.ceil(Math.sqrt(graph.nodes.length)));
   const nodes: Array<ReactFlowNode> = graph.nodes.map((node, idx) => ({
     id: node.id,
     data: {
@@ -66,8 +68,8 @@ export function toReactFlowGraph(graph: ContainerGraphJson): ReactFlowGraph {
       fromParent: node.fromParent,
     },
     position: {
-      x: (idx % GRID_COLUMN_COUNT) * GRID_CELL_WIDTH_PX,
-      y: Math.floor(idx / GRID_COLUMN_COUNT) * GRID_CELL_HEIGHT_PX,
+      x: (idx % columnCount) * GRID_CELL_WIDTH_PX,
+      y: Math.floor(idx / columnCount) * GRID_CELL_HEIGHT_PX,
     },
   }));
 
