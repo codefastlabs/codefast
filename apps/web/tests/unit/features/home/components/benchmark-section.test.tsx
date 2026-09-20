@@ -27,6 +27,7 @@ const ledger: LedgerFacts = {
     { competitor: "tsyringe 4", wins: 7, parities: 0, losses: 1, median: 6, geomean: 4.89 },
   ],
   losses: [{ scenario: "realistic-graph-cold-resolve", ratio: 0.89, competitor: "tsyringe" }],
+  lossesAnchor: "where-it-loses",
 };
 
 describe("BenchmarkSection", () => {
@@ -43,7 +44,7 @@ describe("BenchmarkSection", () => {
     ]);
     expect(screen.getByText("6.00×")).toBeInTheDocument();
     expect(screen.getByText(/The one loss: realistic-graph-cold-resolve at 0.89× of tsyringe/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Where it loses" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "where it loses" })).toHaveAttribute(
       "href",
       expect.stringContaining("#where-it-loses"),
     );

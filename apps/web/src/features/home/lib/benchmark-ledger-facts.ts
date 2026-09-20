@@ -1,3 +1,5 @@
+import { slugify } from "#features/package-docs/lib/markdown/slug";
+
 /** A library the suite compares, with the version the ledger last measured. */
 interface LedgerLibrary {
   readonly name: string;
@@ -29,28 +31,44 @@ interface LedgerLoss {
 
 /** What the ledger states about its own runs: the cast, the profile, the aggregates, and where it loses. */
 export interface LedgerFacts {
-  /** The libraries the suite runs the same workloads through, in the ledger's order. */
+  /** The libraries the suite runs the same workloads through, the flagship first, in the ledger's order. */
   readonly libraries: ReadonlyArray<LedgerLibrary>;
-  /** The runtime and machine the environment line names, or an empty string when the ledger has none. */
+  /** The runtime and machine the environment paragraph names, or an empty string when the ledger has none. */
   readonly environment: string;
-  /** The most recent dated entry, or null when the ledger has no dated heading. */
+  /** The most recent dated entry, or the pass the ledger records, or null when it dates nothing. */
   readonly latestEntry: LedgerEntry | null;
   /** The day of the last full re-measure, or null when the ledger records none. */
   readonly lastFullRemeasure: string | null;
-  /** The profile the suite aggregates were measured under, or an empty string when the section is missing. */
+  /** The profile the suite aggregates were measured under, or an empty string when the ledger states none. */
   readonly aggregateProfile: string;
   /** The suite aggregates table, one line per competitor, in the ledger's order. */
   readonly aggregates: ReadonlyArray<LedgerAggregate>;
   /** The rows the ledger publishes as losses, in the ledger's order. */
   readonly losses: ReadonlyArray<LedgerLoss>;
+  /** The GitHub anchor of the section that explains the losses, or an empty string when the ledger has none. */
+  readonly lossesAnchor: string;
 }
 
 const ENVIRONMENT_LEAD = "**Environment.**";
 const DATED_HEADING = /^## (\d{4}-\d{2}-\d{2}) — (.+)$/m;
+const HEADING = /^## (.+)$/gm;
+const FIRST_HEADING = /^## (.+)$/m;
 const LAST_FULL_REMEASURE = /\*\*Last full re-measure: (\d{4}-\d{2}-\d{2})\*\*/;
+const RUN_DATE = /\bRun (\d{4}-\d{2}-\d{2})\b/;
+const RUNTIME = /Node \d[^,]*,\s*[^,]+,\s*[\w/-]+/;
 const LIBRARY = /^`?([^`\s]+)`?\s+(\S+)$/;
-const AGGREGATE_ROW = /^\|\s*([^|]+?)\s*\|\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\|\s*([\d.]+)×\s*\|\s*([\d.]+)×\s*\|/gm;
+const FLAGSHIP_LEAD = /^`?(@[\w-]+\/[\w-]+)`?\s+(\d\S*)/;
+const AGGREGATE_HEADER = /^\|[^\n]*Win \/ parity \/ loss[^\n]*$/m;
+const AGGREGATE_ROW =
+  /^\|\s*([^|]+?)\s*\|(?:\s*\d+ of \d+\s*\|)?\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\|\s*([\d.]+)×\s*\|\s*([\d.]+)×\s*\|/gm;
 const LOSS = /\*\*`([\w-]+)` — ([\d.]+)× of ([^*]+?)\*\*/g;
+const LOSSES_HEADING = /\b(?:loss|losses|loses)\b/i;
+const PROFILE_MARK = "subprocess per scenario";
+
+/** The paragraphs of the markdown, blank-line separated, each collapsed to one line. */
+function paragraphsOf(markdown: string): Array<string> {
+  return markdown.split(/\n\s*\n/).map((paragraph) => paragraph.replaceAll(/\s+/g, " ").trim());
+}
 
 /** The body of the `## heading` section, up to the next `## ` heading; empty when the heading is missing. */
 function sectionBody(markdown: string, heading: string): string {
@@ -80,20 +98,24 @@ function environmentParagraph(markdown: string): string {
   return (end === -1 ? body : body.slice(0, end)).replaceAll(/\s+/g, " ").trim();
 }
 
-/** The `name version · name version` sentence of the environment paragraph as libraries; empty when absent. */
+/**
+ * The libraries the environment paragraph names: a flagship clause that opens it, then the
+ * `name version · name version` sentence; a library named in both is listed once.
+ */
 function librariesOf(paragraph: string): Array<LedgerLibrary> {
-  const sentence = paragraph.split(/\.\s+/).find((part) => part.includes(" · "));
+  const libraries: Array<LedgerLibrary> = [];
+  const flagship = FLAGSHIP_LEAD.exec(paragraph);
 
-  if (sentence === undefined) {
-    return [];
+  if (flagship?.[1] !== undefined && flagship[2] !== undefined) {
+    libraries.push({ name: flagship[1], version: flagship[2] });
   }
 
-  const libraries: Array<LedgerLibrary> = [];
+  const sentence = paragraph.split(/\.\s+/).find((part) => part.includes(" · "));
 
-  for (const part of sentence.split(" · ")) {
+  for (const part of sentence?.split(" · ") ?? []) {
     const match = LIBRARY.exec(part.trim().replace(/\.$/, ""));
 
-    if (match?.[1] !== undefined && match[2] !== undefined) {
+    if (match?.[1] !== undefined && match[2] !== undefined && !libraries.some((known) => known.name === match[1])) {
       libraries.push({ name: match[1], version: match[2] });
     }
   }
@@ -101,19 +123,28 @@ function librariesOf(paragraph: string): Array<LedgerLibrary> {
   return libraries;
 }
 
-/** The first clause of the aggregates section's opening paragraph, with its markdown emphasis removed. */
-function aggregateProfileOf(section: string): string {
-  const paragraph = section.trim().split(/\n\s*\n/)[0] ?? "";
-  const [clause = ""] = paragraph.replaceAll(/\s+/g, " ").split(" — ");
+/** The first paragraph that states the profile, with its bold lead-in dropped and its first clause kept. */
+function aggregateProfileOf(markdown: string): string {
+  const paragraph = paragraphsOf(markdown).find((candidate) => candidate.includes(PROFILE_MARK)) ?? "";
+  const [clause = ""] = paragraph.replace(/^\*\*[^*]+\*\*\s*/, "").split(" — ");
 
   return clause.replaceAll(/[`*]/g, "").replace(/\.$/, "").trim();
 }
 
-/** Every competitor line of the aggregates table; empty when the section or its table is missing. */
-function aggregatesOf(section: string): Array<LedgerAggregate> {
+/** Every competitor line of the table headed `Win / parity / loss`; empty when the ledger has no such table. */
+function aggregatesOf(markdown: string): Array<LedgerAggregate> {
+  const header = AGGREGATE_HEADER.exec(markdown);
+
+  if (header === null) {
+    return [];
+  }
+
+  const body = markdown.slice(header.index + header[0].length);
+  const end = body.search(/\n\s*\n/);
+  const table = end === -1 ? body : body.slice(0, end);
   const aggregates: Array<LedgerAggregate> = [];
 
-  for (const match of section.matchAll(AGGREGATE_ROW)) {
+  for (const match of table.matchAll(AGGREGATE_ROW)) {
     const [, competitor, wins, parities, losses, median, geomean] = match;
 
     if (competitor && wins && parities && losses && median && geomean) {
@@ -131,6 +162,19 @@ function aggregatesOf(section: string): Array<LedgerAggregate> {
   return aggregates;
 }
 
+/** The first `## ` heading about losses, as written; empty when the ledger has none. */
+function lossesHeadingOf(markdown: string): string {
+  for (const match of markdown.matchAll(HEADING)) {
+    const heading = match[1] ?? "";
+
+    if (LOSSES_HEADING.test(heading)) {
+      return heading.trim();
+    }
+  }
+
+  return "";
+}
+
 /** Every loss the section leads a paragraph with, as the bold `row — ratio× of competitor` the ledger uses. */
 function lossesOf(section: string): Array<LedgerLoss> {
   const losses: Array<LedgerLoss> = [];
@@ -146,24 +190,34 @@ function lossesOf(section: string): Array<LedgerLoss> {
   return losses;
 }
 
+/** The first dated `## ` entry, else the pass the environment paragraph dates under the first `## ` heading. */
+function latestEntryOf(markdown: string, paragraph: string): LedgerEntry | null {
+  const heading = DATED_HEADING.exec(markdown);
+
+  if (heading?.[1] !== undefined && heading[2] !== undefined) {
+    return { date: heading[1], title: heading[2].replaceAll("`", "").trim() };
+  }
+
+  const runDate = RUN_DATE.exec(paragraph)?.[1];
+  const first = FIRST_HEADING.exec(markdown)?.[1];
+
+  return runDate === undefined ? null : { date: runDate, title: (first ?? "").replaceAll("`", "").trim() };
+}
+
 /** Reads the ledger's self-description out of its markdown; every field degrades to empty or null, never throws. */
 export function parseLedgerFacts(markdown: string): LedgerFacts {
   const paragraph = environmentParagraph(markdown);
-  const [environment = ""] = paragraph.split(/\.\s+/);
-  const heading = DATED_HEADING.exec(markdown);
-  const remeasure = LAST_FULL_REMEASURE.exec(markdown);
-  const aggregates = sectionBody(markdown, "Suite aggregates");
+  const remeasure = LAST_FULL_REMEASURE.exec(markdown)?.[1] ?? RUN_DATE.exec(paragraph)?.[1] ?? null;
+  const lossesHeading = lossesHeadingOf(markdown);
 
   return {
     libraries: librariesOf(paragraph),
-    environment: environment.replace(/\.$/, ""),
-    latestEntry:
-      heading?.[1] !== undefined && heading[2] !== undefined
-        ? { date: heading[1], title: heading[2].replaceAll("`", "").trim() }
-        : null,
-    lastFullRemeasure: remeasure?.[1] ?? null,
-    aggregateProfile: aggregateProfileOf(aggregates),
-    aggregates: aggregatesOf(aggregates),
-    losses: lossesOf(sectionBody(markdown, "Where it loses")),
+    environment: RUNTIME.exec(paragraph)?.[0] ?? "",
+    latestEntry: latestEntryOf(markdown, paragraph),
+    lastFullRemeasure: remeasure,
+    aggregateProfile: aggregateProfileOf(markdown),
+    aggregates: aggregatesOf(markdown),
+    losses: lossesOf(sectionBody(markdown, lossesHeading)),
+    lossesAnchor: lossesHeading === "" ? "" : slugify(lossesHeading.replaceAll("`", "")),
   };
 }
