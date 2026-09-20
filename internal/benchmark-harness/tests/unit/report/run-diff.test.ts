@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
 
-import type { PreviousRun } from "#report/run-diff";
+import type { CurrentRun, PreviousRun, RunDiff } from "#report/run-diff";
 import { buildRunDiff, describeDiffTarget, formatCompactHz, formatDeltaPercent } from "#report/run-diff";
+import type { CompareHarnessSources } from "#shared/provenance";
 import { fingerprint, library, scenario, trials } from "#tests/unit/report/support/fixtures";
 
 const SHAPE = { isolated: false, mode: "fast" as const };
+
+const sameSources: CompareHarnessSources = () => "same";
+
+function diffWith(currentRun: CurrentRun, previous: PreviousRun): RunDiff {
+  return buildRunDiff(currentRun, previous, sameSources);
+}
 
 function previousRun(overrides: Partial<PreviousRun> = {}): PreviousRun {
   return {
@@ -46,7 +53,7 @@ const current = {
 
 describe("buildRunDiff", () => {
   it("classifies deltas against the noise floor and keeps unreliable rows out of the verdicts", () => {
-    const diff = buildRunDiff(current, previousRun());
+    const diff = diffWith(current, previousRun());
     if (!diff.comparable) {
       throw new Error(diff.reason);
     }
@@ -58,7 +65,7 @@ describe("buildRunDiff", () => {
   });
 
   it("diffs each competitor's median and geomean against the previous run", () => {
-    const diff = buildRunDiff(current, previousRun());
+    const diff = diffWith(current, previousRun());
     if (!diff.comparable) {
       throw new Error(diff.reason);
     }
@@ -73,7 +80,7 @@ describe("buildRunDiff", () => {
       pivot: library("cf", [scenario("steady", 100)]),
       competitors: [library("inv", [scenario("steady", 50)])],
     };
-    const diff = buildRunDiff(narrowed, previousRun());
+    const diff = diffWith(narrowed, previousRun());
     if (!diff.comparable) {
       throw new Error(diff.reason);
     }
@@ -82,11 +89,11 @@ describe("buildRunDiff", () => {
   });
 
   it("refuses to diff across a different config or environment, and says why", () => {
-    const otherConfig = buildRunDiff(current, previousRun({ trialCount: 3 }));
+    const otherConfig = diffWith(current, previousRun({ trialCount: 3 }));
     expect(otherConfig.comparable).toBe(false);
     expect(otherConfig.comparable ? "" : otherConfig.reason).toContain("3 trials");
 
-    const otherMachine = buildRunDiff(
+    const otherMachine = diffWith(
       current,
       previousRun({
         libraries: new Map([
@@ -96,21 +103,21 @@ describe("buildRunDiff", () => {
     );
     expect(otherMachine.comparable).toBe(false);
 
-    const noSubject = buildRunDiff(current, previousRun({ libraries: new Map() }));
+    const noSubject = diffWith(current, previousRun({ libraries: new Map() }));
     expect(noSubject.comparable).toBe(false);
   });
 });
 
 describe("pinned baselines", () => {
   it("carries the pin through to the diff and names it in the target label", () => {
-    const pinned = buildRunDiff(current, previousRun({ pinned: true }));
+    const pinned = diffWith(current, previousRun({ pinned: true }));
     expect(pinned.pinned).toBe(true);
     expect(describeDiffTarget(pinned)).toBe("baseline prev");
-    expect(describeDiffTarget(buildRunDiff(current, previousRun()))).toBe("prev");
+    expect(describeDiffTarget(diffWith(current, previousRun()))).toBe("prev");
   });
 
   it("keeps the pin on a diff that is not comparable, so the refusal names the baseline", () => {
-    const refused = buildRunDiff(current, previousRun({ pinned: true, trialCount: 3 }));
+    const refused = diffWith(current, previousRun({ pinned: true, trialCount: 3 }));
     expect(refused.comparable).toBe(false);
     expect(describeDiffTarget(refused)).toBe("baseline prev");
   });
@@ -125,5 +132,67 @@ describe("formatting", () => {
     expect(formatCompactHz(22_344_016)).toBe("22.3M");
     expect(formatCompactHz(146_925)).toBe("146.9K");
     expect(formatCompactHz(830.4)).toBe("830");
+  });
+});
+
+describe("harness provenance", () => {
+  const otherCommit = "fedcba9876543210fedcba9876543210fedcba98";
+
+  function previousMeasuredBy(overrides: { harnessCommit?: string | undefined; harnessDirty?: boolean | undefined }) {
+    return previousRun({
+      libraries: new Map([
+        ["cf", { fingerprint: fingerprint("cf", overrides), trials: trials([scenario("steady", 100)]) }],
+      ]),
+    });
+  }
+
+  function reasonOf(diff: RunDiff): string {
+    return diff.comparable ? "" : diff.reason;
+  }
+
+  it("refuses a previous run that recorded no harness commit, and says to re-measure it", () => {
+    const refused = diffWith(current, previousMeasuredBy({ harnessCommit: undefined, harnessDirty: undefined }));
+    expect(refused.comparable).toBe(false);
+    expect(reasonOf(refused)).toContain("no harness commit");
+  });
+
+  it("refuses a side the harness measured from uncommitted measuring sources", () => {
+    expect(reasonOf(diffWith(current, previousMeasuredBy({ harnessDirty: true })))).toContain("uncommitted");
+    const dirtyNow = {
+      ...current,
+      pivot: library("cf", [scenario("steady", 100)], { fingerprint: fingerprint("cf", { harnessDirty: true }) }),
+    };
+    expect(reasonOf(diffWith(dirtyNow, previousRun()))).toContain("uncommitted");
+  });
+
+  it("never asks the comparer when both sides ran from the same commit", () => {
+    const neverAsked: CompareHarnessSources = () => {
+      throw new Error("asked");
+    };
+    expect(buildRunDiff(current, previousRun(), neverAsked).comparable).toBe(true);
+  });
+
+  it("refuses when the measuring sources changed between the two commits, naming both", () => {
+    const changed: CompareHarnessSources = () => "changed";
+    const refused = buildRunDiff(current, previousMeasuredBy({ harnessCommit: otherCommit }), changed);
+    expect(refused.comparable).toBe(false);
+    expect(reasonOf(refused)).toContain(otherCommit.slice(0, 9));
+    expect(reasonOf(refused)).toContain("changed between");
+  });
+
+  it("refuses when the previous commit is not in the checkout, rather than assuming the sources match", () => {
+    const unknown: CompareHarnessSources = () => "unknown";
+    const refused = buildRunDiff(current, previousMeasuredBy({ harnessCommit: otherCommit }), unknown);
+    expect(refused.comparable).toBe(false);
+    expect(reasonOf(refused)).toContain("not in this checkout");
+  });
+
+  it("compares two commits whose measuring sources the comparer reads as the same", () => {
+    const same: CompareHarnessSources = (fromCommit, toCommit) => {
+      expect(fromCommit).toBe(otherCommit);
+      expect(toCommit).toBe(fingerprint("cf").harnessCommit);
+      return "same";
+    };
+    expect(buildRunDiff(current, previousMeasuredBy({ harnessCommit: otherCommit }), same).comparable).toBe(true);
   });
 });

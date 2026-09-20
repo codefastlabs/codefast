@@ -70,6 +70,20 @@ describe("writeJsonlRun config identity", () => {
     vi.unstubAllEnvs();
   });
 
+  it("stamps the harness provenance the fingerprint carries, and nothing when it carries none", () => {
+    const outputPath = join(temporaryRoot, "provenance.jsonl");
+    writeJsonlRun(outputPath, [
+      { fingerprint: { ...fingerprint(), harnessCommit: "abc", harnessDirty: true }, trials: trials(2) },
+    ]);
+    const rows = readFileSync(outputPath, "utf8")
+      .split("\n")
+      .filter((line) => line.trim().length > 0)
+      .map((line) => JSON.parse(line) as JsonlBenchObservationRow);
+    expect(rows).toHaveLength(2);
+    expect(rows.every((row) => row.harnessCommit === "abc" && row.harnessDirty === true)).toBe(true);
+    expect(writtenRows().every((row) => !("harnessCommit" in row) && !("harnessDirty" in row))).toBe(true);
+  });
+
   it("stamps the default shape when the env asks for nothing", () => {
     const [row] = writtenRows();
     expect(row).toMatchObject({ isolated: false, mode: "default", trialCount: 2 });
