@@ -76,6 +76,11 @@ const config = {
         "packages/ui/src/variants/sheet.ts:data-closed:slide-out-to-right-10",
       ],
     },
+    // Every benchmark suite's baselines/ holds exactly the run bench:baseline pins, and every
+    // runs/ entry is cited by a link from some tracked document — see each suite's package.json.
+    runs: {
+      target: "benchmarks/*",
+    },
   },
 
   tag: {

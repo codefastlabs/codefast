@@ -31,6 +31,7 @@
     "cli:audit:links": "pnpm run codefast audit links",
     "cli:audit:publish": "pnpm run codefast audit publish",
     "cli:audit:rtl": "pnpm run codefast audit rtl",
+    "cli:audit:runs": "pnpm run codefast audit runs",
     "cli:mirror": "pnpm run codefast mirror",
     "cli:mirror:preview": "pnpm run codefast mirror --dry-run",
     "codefast": "node ./packages/cli/dist/bin.js",

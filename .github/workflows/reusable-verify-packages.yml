@@ -66,6 +66,11 @@ jobs:
       - name: Verify Documentation Cross-References
         run: pnpm cli:audit:links
 
+      # A benchmark suite's baselines/ pins exactly one anchor run and runs/ holds only what a
+      # tracked document cites — this is what keeps bench-results/ disposable and baselines/ small.
+      - name: Verify Committed Bench Runs
+        run: pnpm cli:audit:runs
+
       # oxlint bans namespace/default React imports natively, but an implicit `React.*` UMD-global
       # type reference — and a named `import { z } from "zod"` vs the namespace form — pass both
       # lint and tsc; only this audit sees them.
