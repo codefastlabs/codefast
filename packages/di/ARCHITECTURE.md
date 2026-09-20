@@ -208,11 +208,11 @@ layouts read that load as a measurable loss on the warm resolve rows; keeping th
 than as a second map beside a record map, is what lets both paths win at once.
 
 The price is paid where it is cold. `getAll()` on a lone token materialises a one-element list, so the resolver's
-selection lanes ask `getFastDefault()` (or `countBindings()`) first and reach `getAll()` only for a token that keeps a
-record, and a presence check with no criteria is `has()`, which also reads the lone map's size before probing it so a
-container that never bound anything — every per-request child — answers without a hash. A miss is priced too: once the
-lone probe has failed, `getRecorded()` reads the record map alone, so an unbound token costs one probe per map and not
-one more. Snapshots, error reporting and module rollback are the callers that pay for the list, and they can.
+selection lanes ask `getFastDefault()` first and reach `getAll()` only for a token that keeps a record, and a presence
+check with no criteria is `has()`, which also reads the lone map's size before probing it so a container that never
+bound anything — every per-request child — answers without a hash. A miss is priced too: once the lone probe has failed,
+`getRecorded()` reads the record map alone, so an unbound token costs one probe per map and not one more. Snapshots,
+error reporting and module rollback are the callers that pay for the list, and they can.
 
 > **Invariant (performance-load-bearing).** `getFastDefault()` stays a single own-registry `Map.get` returning the
 > binding — no record indirection, no optional chain — and a default-slot-only token never allocates a record. The
@@ -352,11 +352,11 @@ nested-constructor closure. The static subgraph is cycle-checked **at compile ti
 per-resolve bookkeeping at all.
 
 **What an escape is.** Some dependencies the compiler cannot see through: a factory, a scoped binding, an activation
-hook, a class past the depth limit, a multi/optional/named param. Such a dependency does **not** sink the plan. It
-compiles to an _escape_: a re-entry into the runtime resolver, seeded with exactly the ancestors the interpreted path
-would have pushed at that point, and dispatched through exactly the resolve the interpreter would have called. Cycle
-detection, constraint contexts and error paths are therefore identical to never having compiled. Without escapes, one
-`toDynamic` dependency anywhere would drop the whole graph to the interpreted path.
+hook, a multi/optional/named param. Such a dependency does **not** sink the plan. It compiles to an _escape_: a re-entry
+into the runtime resolver, seeded with exactly the ancestors the interpreted path would have pushed at that point, and
+dispatched through exactly the resolve the interpreter would have called. Cycle detection, constraint contexts and error
+paths are therefore identical to never having compiled. Without escapes, one `toDynamic` dependency anywhere would drop
+the whole graph to the interpreted path.
 
 **A plan that keeps running is generated as a function of its own.** A plan starts as a closure over the compiler's
 function literals, and V8 keeps type feedback per literal, not per closure: the dependency calls inside one root's
@@ -404,19 +404,12 @@ then on. Frozen, the attempt throws where it is made.
 
 #### The frame copy in `#compileEscapeThunk` is load-bearing
 
-An escape hands the runtime a _copy_ of the frame array (`[...frames]`), never the array itself. Two mechanisms defeat
-any scheme that shares or lends that array:
-
-- The membership `Set` that `enterResolutionPath` attaches past `RESOLUTION_SET_THRESHOLD` (see
-  [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)) lives on the **array object**. A lent array would carry
-  it into a lane that does not maintain it; a spread does not copy symbol-keyed properties, so `[...frames]` hands the
-  escape an array with no set at all.
-- A constraint predicate runs on a live seed **before any push**, at exactly the length a depth guard reads as idle, and
-  can re-enter the same cached plan. One indexed write into a lent seed would then survive forever, whereas the
-  interpreted lane's `rootStack` drains to zero after each top-level resolve and self-heals.
-
-A poisoned frame changes which binding is selected — a wrong value, not just a wrong diagnostic. That is why this one is
-firm rather than a matter of taste; anything faster here has to keep both mechanisms from firing.
+An escape hands the runtime a _copy_ of the frame array (`[...frames]`), never the array itself — or the one owned copy
+it lends and reclaims when a call hands it back at the seed's length. A constraint predicate runs on a live seed
+**before any push**, at exactly the length a depth guard reads as idle, and can re-enter the same cached plan. One
+indexed write into a lent seed would then survive forever, whereas the interpreted lane's `rootStack` drains to zero
+after each top-level resolve and self-heals. A poisoned frame changes which binding is selected — a wrong value, not
+just a wrong diagnostic. That is why this one is firm rather than a matter of taste.
 
 **A criterion the registry can settle is baked into the plan.** `whenNamed`/`whenTagged` write criteria into the slot
 rather than a predicate, so a single-criterion request is usually a plain index hit. `lookupPathIndependentEntry` bakes
@@ -587,50 +580,47 @@ a display name or a candidate array, which is what a name-plus-tag request and a
 to pay on every resolve. A second match, or a predicate on a match, hands the same list to full selection, which weighs
 specificity and reports ambiguity, so the two lanes answer identically.
 
-### Cycle detection: two mechanisms, on purpose
+### Cycle detection: one flag for synchronous paths, one scan for async branches
 
 A **resolution path** is the chain of ancestors a level is being resolved under — "A is resolving B, which is resolving
-C". A cycle is a binding that appears on its own path. How that path is represented depends on whether the code
-producing it runs on one synchronous call stack.
+C". A cycle is a binding that appears on its own path. How membership in that path is checked depends on one structural
+fact: whether the code producing the path runs on one synchronous call stack.
 
-| Lane                   | Mechanism                                                            | Why not the other one                                                                                               |
-| ---------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Sync transient-dynamic | `binding.inFlight`, set on factory-enter and cleared on exit         | Sync resolution runs on one call stack, so the flag _is_ exact path membership: `O(1)`, no hashing, no side table   |
-| Everything else sync   | `enterResolutionPath` — push and pop one shared path/stack pair      | One call stack, so the array _is_ a stack; a per-binding flag cannot name the path in the error                     |
-| Async, in a cascade    | `binding.inFlight`, cleared when the factory returns its **promise** | The request that closes a cycle comes from a factory's synchronous prefix, and synchronous code does not interleave |
-| Async, out of one      | `extendResolutionBranch` — append-only path, read by branch depth    | A continuation's ancestors are on no call stack, so they have to be carried explicitly                              |
+| Lane                   | Mechanism                                                            | Why                                                                                                               |
+| ---------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Every synchronous lane | `binding.inFlight`, set on entering the level and cleared on leaving | Synchronous code does not interleave, so the flag _is_ exact path membership — `O(1)` at any depth, no side table |
+| Async, in a cascade    | `binding.inFlight`, held for the factory's synchronous prefix        | The request that closes a cycle comes from that prefix, and synchronous code does not interleave                  |
+| Async, on a branch     | `extendResolutionBranch` — append-only path, scanned by branch depth | A continuation's ancestors are on no call stack and several branches interleave, so a flag cannot name the branch |
 
-**Both variants of the first lane take the flag**, with and without activation hooks, because the argument for it does
-not mention hooks: a hook runs on the same call stack the factory did. A hook that re-resolves its own token still
-reports `CircularDependencyError` rather than recursing, and the flag is still released on every exit path.
-`tests/unit/resolution/in-flight-invariants.test.ts` pins both for the hooked lane too.
+`enterSyncPath` / `leaveSyncPath` in `resolution/path/resolution-path.ts` are the whole synchronous mechanism: check the
+flag, set it, push the frame; pop, clear. The stack is still kept — it is what names the path in an error and what a
+constraint predicate reads — but nothing scans it and nothing is sized.
+
+**A seeded path is marked before a synchronous call runs over it.** Two paths reach a synchronous call without any
+synchronous frame having pushed them: the static ancestors a compiled plan seeds into an escape, and the branch prefix
+an async level hands a factory's synchronous `ctx.resolve`. Their bindings carry no flag, so `enterSeededPath` marks
+them and `leaveSeededPath` clears them around the call, reading the bindings through a `WeakMap` from resolver-built
+frames (`linkFrameBinding`, set where the frame is minted) so the public frame shape is untouched. An escape marks the
+ancestor bindings the compiler already held, and the one-ancestor escape — a plan root's own opaque dependency, the
+common shape — is written out with no loop and no call.
+
+> **Invariant (correctness).** Marking a seed is idempotent. A binding a seed finds already flagged was flagged by an
+> enclosing synchronous frame that is still running — an async factory's own prefix, or a cascade level's — and is the
+> same fact stated once already, not a cycle. It is left as it is on the way in and on the way out; a genuine cycle is
+> reported where the path re-enters the binding, which is where the frames to name it are. A version that threw on an
+> already-flagged seed reported false cycles on every async level whose factory made a synchronous call, and the lane
+> differential test (`tests/integration/resolution-lanes-differential.test.ts`) caught it on the fourth random graph.
 
 **Every path-based check keys on binding identity, never on a token's display name.** A display name is not unique: two
-`token("app:Config")` from different modules are distinct tokens. `enterResolutionPath` and `extendResolutionBranch`
-compare `bindingId` read off the frame stack. The names an error or `ctx.resolutionPath` reports are **derived from the
-frames** at the moment they are asked for, so no name array exists to keep in step. A hop pushes and pops one stack, the
-branch helper takes one depth, and an escape thunk copies one frame array; the error path pays for name materialisation,
-not the hot path.
+`token("app:Config")` from different modules are distinct tokens. The flag lives on the binding and
+`extendResolutionBranch` compares `bindingId` read off the frames. The names an error or `ctx.resolutionPath` reports
+are **derived from the frames** at the moment they are asked for, so no name array exists to keep in step.
 
-**A membership set past a depth threshold.** `enterResolutionPath` scans the frames linearly while the stack is short,
-and attaches a membership `Set` of binding ids to the array once the stack passes `RESOLUTION_SET_THRESHOLD`, which
-is 32. The threshold switches a **data structure**, not a behaviour: both branches answer identically. The 32 is a
-tuning constant from a depth sweep; re-sweeping it with the benchmark is cheap if the typical graph depth in real
-consumers shifts, or the collector's behaviour changes.
-
-**The set is seeded from the stack, so it has to notice when it has gone stale.** The frames already on the stack when
-the set attaches are handed no set and delete nothing on unwind. The array outlives a resolve — the resolver lends one
-stack (see [The context pool](#the-sync-context-pool-and-the-stack-it-lends)) — so a set that survived the unwind would
-refuse bindings nobody is resolving. A live set mirrors the stack exactly (ids on an acyclic path are unique), so
-`enterResolutionPath` drops one whose size no longer matches the stack's length, and the next deep frame rebuilds it.
-`tests/unit/resolution/path/resolution-path.test.ts` pins the three ways the seed becomes observable: a second resolve
-of the same deep graph, a sibling branch below the attach depth, and the entry point called directly.
-
-> **Invariant (correctness).** A threshold in this engine may choose an implementation; it must not choose a semantics.
-> Both sides of `RESOLUTION_SET_THRESHOLD` answer identically, and so do both sides of the multi-tag size threshold in
-> [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes). A threshold that switched _lanes_ once changed
-> context identity, stack frames and promise shape at the crossing point, and reported a false cycle for a diamond
-> dependency past it; that story is in [Lessons](#lessons-the-engine-has-already-taught).
+> **Invariant (correctness).** Every lane answers a graph identically — the same value, the same sharing pattern, the
+> same error class and message. The lane differential test generates random graphs and deep chains and holds the
+> interpreted lane, the tiered plan lanes, the collection and optional reads, a per-request child and the async entry
+> points to one snapshot. A mechanism that catches a cycle one hop late on one lane, or runs a factory twice before
+> catching it, fails that test; three such divergences were found and fixed when it was first run.
 
 ### The async pipeline: a cascade lane and a branch lane
 
@@ -669,8 +659,8 @@ ancestors before the first escape were never written down. That imprecision is t
 `tests/unit/resolution/resolver-async.test.ts` pins it rather than leaving it to be discovered.
 
 > **Invariant (ownership, held by the compiler).** A branch may only ever append to an array it minted itself. A sync
-> frame's path is one that frame will pop in its own `finally`, and it may carry an `enterResolutionPath` membership
-> `Set` this lane cannot keep true. So `extendResolutionBranch` is the only thing that mints an `OwnedBranchStack`,
+> frame's path is one that frame will pop in its own `finally`, so appending to it would hand a synchronous level a
+> frame it never pushed. So `extendResolutionBranch` is the only thing that mints an `OwnedBranchStack`,
 > `AsyncLevelContext` accepts nothing else, and a `BranchDepth` is branded so a bare number cannot stand in for one — a
 > depth from anywhere but this branch silently re-parents a level. `AsyncLevelContext` reads its depth off the branch it
 > was handed rather than taking it as a parameter, so the two cannot disagree.
@@ -816,14 +806,14 @@ section before changing what the table describes.
 
 **Cycle detection and paths**
 
-| Invariant                                                                                    | Pinned by                                            | Where                                                                      |
-| -------------------------------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------- |
-| `binding.inFlight` is set and released on every exit path, with or without activation hooks. | `tests/unit/resolution/in-flight-invariants.test.ts` | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
-| Path checks key on binding identity, never on a display name.                                | (structural)                                         | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
-| A stale membership set is detected by size mismatch and rebuilt.                             | `tests/unit/resolution/path/resolution-path.test.ts` | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
-| A threshold may choose an implementation, never a semantics.                                 | the two threshold tests above                        | [Cycle detection](#cycle-detection-two-mechanisms-on-purpose)              |
-| A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.          | `tests/types/async-branch-ownership.test.ts`         | [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane) |
-| A post-await-only cycle is reported one level in from the true root.                         | `tests/unit/resolution/resolver-async.test.ts`       | [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane) |
+| Invariant                                                                                    | Pinned by                                            | Where                                                                                          |
+| -------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `binding.inFlight` is set and released on every exit path, with or without activation hooks. | `tests/unit/resolution/in-flight-invariants.test.ts` | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| Path checks key on binding identity, never on a display name.                                | (structural)                                         | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| A stale membership set is detected by size mismatch and rebuilt.                             | `tests/unit/resolution/path/resolution-path.test.ts` | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| A threshold may choose an implementation, never a semantics.                                 | the two threshold tests above                        | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.          | `tests/types/async-branch-ownership.test.ts`         | [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane)                     |
+| A post-await-only cycle is reported one level in from the true root.                         | `tests/unit/resolution/resolver-async.test.ts`       | [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane)                     |
 
 **Pooling, lending and deferral**
 
@@ -914,8 +904,9 @@ These are covered in the sections above; this list exists so a perf review can f
   tag values.
 - **Multi-tag bucket index past a size threshold** —
   [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes). Semantics identical on both sides.
-- **Membership `Set` past `RESOLUTION_SET_THRESHOLD` (32)** —
-  [Cycle detection](#cycle-detection-two-mechanisms-on-purpose). A depth-sweep tuning constant.
+- **The synchronous cycle check is a flag on the binding** — one field read and two writes per level, at any depth,
+  where a scan grew with the path and a `Set` past a depth threshold cost an allocation and a hash per level. The seeded
+  paths an escape and an async level's synchronous call hand the runtime are marked around the call instead.
 - **The cascade lane allocating nothing per level**, and the cascade entry answering constants and cached singletons
   itself — [The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane).
 - **The depth-indexed context pool** and the shared, lent `rootStack` —
@@ -989,13 +980,15 @@ general pattern, not just a fixed bug.
   fix.
 - **A name-keyed cycle check reported a false cycle.** Two `token("app:Config")` from different modules are distinct
   tokens, and a check keyed on display name reported a cycle for a legitimately acyclic chain that held both. Every path
-  check now keys on `bindingId` ([Cycle detection](#cycle-detection-two-mechanisms-on-purpose)).
+  check now keys on `bindingId`
+  ([Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches)).
 - **A threshold that switched lanes changed semantics.** A removed constant, `DEEP_LANE_THRESHOLD`, switched the async
   pipeline between _lanes_ past a depth. That silently changed context identity, stack frames and promise shape at the
-  crossing point, and reported a false `CircularDependencyError` for a diamond dependency past it.
-  `RESOLUTION_SET_THRESHOLD` broke the same rule once while looking like it was only choosing a data structure, which is
-  why the invariant in [Cycle detection](#cycle-detection-two-mechanisms-on-purpose) is stated as a rule about
-  thresholds in general.
+  crossing point, and reported a false `CircularDependencyError` for a diamond dependency past it. The membership-set
+  threshold that later replaced it broke the same rule once while looking like it was only choosing a data structure;
+  the synchronous check is now a flag with no threshold at all, and the invariant in
+  [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) is stated as a rule
+  about thresholds in general.
 - **The old shared async path reported a false cycle for a diamond.** Before the cascade lane, a settle-scoped path
   reported `Circular dependency detected: a → b → d → c → d` for `A` awaiting `B` and `C` in parallel, both needing `D`.
   Clearing `inFlight` on promise-return ([The async pipeline](#the-async-pipeline-a-cascade-lane-and-a-branch-lane))
