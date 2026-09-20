@@ -161,10 +161,12 @@ noisier ratio: the work per sample shrinks while the timer's error does not.
 
 Throughput alone does not settle it, though, which is why the floor is measured and not inferred. Six same-build passes
 of `binding-level-activation-hook` — 31 M ops/s, inside the band above — put its medians at 30.53–31.34 M ops/s, **2.7%
-peak-to-peak**. The median of three trials is what buys that: wherever the trial order was recorded, on both libraries
-and on both activation rows, the **first** trial came back high — around 12% on the inversify rows, around 25% on the
-codefast ones — and never landed on the median. `BENCH_MODE=fast`, which runs one trial, inherits that spread instead of
-discarding it.
+peak-to-peak**. The median of three trials is what buys that. One thing the median used to hide has a name now: the
+harness once built a fresh closure from each scenario's `build()` for every trial, and a second closure from the same
+function literal turns off V8's function-context specialization for it, so the first trial read the specialized code and
+the other two did not — around 12% higher on the inversify rows, around 25% on the codefast ones, never landing on the
+median. Every trial now runs the one closure built before the first, which is also how a call site in an application
+behaves; `BENCH_MODE=fast`, which runs one trial, always read that closure.
 
 So a threshold of 0.98× on a ±12% row is not strict, it is meaningless — it will fire on noise about as often as it
 fires on a regression, and it fired exactly that way here, rejecting a change on two rows the change could not reach.
