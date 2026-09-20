@@ -22,10 +22,6 @@ import {
   PLAN_CODEGEN_THRESHOLD,
 } from "#resolution/plan/plan-codegen";
 
-// Past this depth a dependency escapes to the runtime path rather than inlining further —
-// compiled closures nest one JS frame per level, and pathological graphs are the runtime's job.
-const PLAN_DEPTH_LIMIT = 32;
-
 /**
  * Compilation asked to retry later (class lifecycle metadata not discovered yet).
  *
@@ -465,12 +461,7 @@ export class InstantiationPlanCompiler {
         node: { kind: "singleton", binding: singletonBinding, escape },
       };
     }
-    if (
-      scope === "transient" &&
-      binding.kind === "class" &&
-      depth < PLAN_DEPTH_LIMIT &&
-      !compileStack.has(binding.identifier)
-    ) {
+    if (scope === "transient" && binding.kind === "class" && !compileStack.has(binding.identifier)) {
       const inlined = this.#compileClassPlan(
         binding as Binding & { kind: "class" },
         compileStack,
@@ -702,7 +693,7 @@ export class InstantiationPlanCompiler {
         node: { kind: "singleton", binding: singletonBinding, escape },
       };
     }
-    if (scope === "transient" && depth < PLAN_DEPTH_LIMIT && !compileStack.has(binding.identifier)) {
+    if (scope === "transient" && !compileStack.has(binding.identifier)) {
       let inlined: AsyncNodeThunk | null | typeof PLAN_RETRY = null;
       if (binding.kind === "class") {
         inlined = this.#compileAsyncClassNode(
