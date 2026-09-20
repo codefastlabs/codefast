@@ -28,7 +28,7 @@ const GIT_ARCHIVE_MAX_BUFFER = 256 * 1024 * 1024;
 export interface RunBenchAbOptions {
   /** The benchmark suite package's root, where `bench-results/` lives and `bench:isolate` runs. */
   readonly packageRootDirectory: string;
-  /** The subject's package name, passed to `bench:isolate` as the library filter. */
+  /** The subject's package name, passed to the isolated `bench` lane as the library filter. */
   readonly subjectLibraryName: string;
   /** The subject package's `src`, relative to the repo root, e.g. `packages/di/src`. */
   readonly subjectSourcePath: string;
@@ -77,7 +77,8 @@ export function runBenchAbMain(argv: ReadonlyArray<string>, options: RunBenchAbO
     cpSync(sideSourceDirectory, subjectSourceDirectory, { recursive: true });
     const before = listRunDirectories();
     console.log(`\n▸ measuring ${label} (mode=${request.mode}, isolate)`);
-    const run = spawnSync("pnpm", ["bench:isolate"], {
+    // The suite's own `bench` script, run in its package directory, not a binary of this one.
+    const run = spawnSync("pnpm", ["bench"], {
       cwd: options.packageRootDirectory,
       stdio: "inherit",
       env: {

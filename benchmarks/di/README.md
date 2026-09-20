@@ -16,34 +16,35 @@ workload we optimised for, and a re-runnable way to check the claim" — not as 
 ## Run it
 
 ```bash
-pnpm di:bench            # from the repo root
-pnpm di:bench:isolate    # one subprocess per scenario, libraries interleaved
+pnpm di:bench            # from the repo root — one subprocess per scenario, libraries interleaved; the lane to cite
+pnpm di:bench:fast       # smoke: one shared process per library, one trial, never a claim
 pnpm di:bench:serve      # browse recorded runs
 ```
 
 From this directory, `pnpm bench` does the same as `pnpm di:bench`. Every run rebuilds `@codefast/di` first, so it
 measures the working tree rather than a stale `dist/`.
 
-| Command                 | What changes                                                                                                 |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `pnpm bench`            | Default profile: no `--expose-gc`, the default trial count                                                   |
-| `pnpm bench:fast`       | Smoke profile — shorter sampling windows. For "did I break it", never for a claim                            |
-| `pnpm bench:full`       | `--expose-gc` for every library, forcing collections into the measured loop                                  |
-| `pnpm bench:isolate`    | One subprocess per scenario, so no scenario inherits another's inline caches                                 |
-| `pnpm bench:verbose`    | Streams every child line and prints the per-scenario table                                                   |
-| `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout and a coverage line per library on stderr, measuring nothing |
-| `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                                                    |
-| `pnpm bench:<library>`  | One child process alone: `codefast`, `inversify`, `awilix`, `tsyringe`, `brandi`, `ditox` or `injection-js`  |
-| `pnpm instrument:alloc` | The allocation instrument (see below)                                                                        |
-| `BENCH_MODE=<mode>`     | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set                                 |
-| `BENCH_TRIALS=<n>`      | Trials per scenario; the harness refuses anything below its minimum                                          |
-| `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use                               |
-| `BENCH_TIER=<tier>`     | Restrict the run to `contract` rows (public API, compared across libraries) or `engine` rows (ours alone)    |
-| `BENCH_BASELINE=<run>`  | Diff every aggregate and row against this run id instead of the run `latest.json` names                      |
-| `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                                             |
-| `PORT=<n>`              | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                         |
+| Command                 | What changes                                                                                                      |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `pnpm bench`            | The lane to cite: one subprocess per scenario, libraries interleaved, default profile, three trials               |
+| `pnpm bench:fast`       | Smoke profile — one shared process per library, shorter windows, one trial. For "did I break it", never a claim   |
+| `pnpm bench:baseline`   | The ledger's pass: `bench` in the full profile, read against the pinned baseline run                              |
+| `pnpm bench:ab`         | Two builds of `@codefast/di`, paired and alternating, on the rows you name (the guide has the recipe)             |
+| `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout and a coverage line per library on stderr, measuring nothing      |
+| `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                                                         |
+| `pnpm bench:<library>`  | One child process alone: `codefast`, `inversify`, `awilix`, `tsyringe`, `brandi`, `ditox` or `injection-js`       |
+| `pnpm instrument:alloc` | The allocation instrument (see below)                                                                             |
+| `BENCH_MODE=<mode>`     | Timing profile: `fast`, `default` or `full` (longer windows, a collection between trials) — composes with `bench` |
+| `BENCH_VERBOSE=true`    | Streams every child line and prints the per-scenario table                                                        |
+| `BENCH_TRIALS=<n>`      | Trials per scenario; the harness refuses anything below its minimum                                               |
+| `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use                                    |
+| `BENCH_TIER=<tier>`     | Restrict the run to `contract` rows (public API, compared across libraries) or `engine` rows (ours alone)         |
+| `BENCH_BASELINE=<run>`  | Diff every aggregate and row against this run id instead of the run `latest.json` names                           |
+| `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                                                  |
+| `PORT=<n>`              | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                              |
 
-Profiles compose: `BENCH_MODE=full pnpm bench:isolate` is the slowest and the most order-independent.
+Switches compose with the lanes: `BENCH_MODE=full pnpm bench` is what `bench:baseline` runs, without the pinned
+baseline.
 
 Every run writes a timestamped directory under `bench-results/` (git-ignored) holding one file, `observations.jsonl`,
 and — for a whole-suite run — points `bench-results/latest.json` at it. `report.md` and `report.json` are derived on
@@ -92,8 +93,8 @@ Every scenario also declares a **tier**. A `contract` row is specified against t
 [`SPEC.md`](../../packages/di/SPEC.md): it names a shape a caller can write, so it survives a rewrite of the engine and
 is what the libraries are compared on. An `engine` row names a lane of the current resolver — a compiled plan and its
 escapes, the tag-key mask, the hoisted-versus-inline options object — so it is instrumentation for this engine, owed by
-no other library, and deleted with the engine it names. `BENCH_TIER=contract pnpm bench:isolate` runs the comparison
-without the instrumentation, as a narrowed run that leaves `latest.json` alone.
+no other library, and deleted with the engine it names. `BENCH_TIER=contract pnpm bench` runs the comparison without the
+instrumentation, as a narrowed run that leaves `latest.json` alone.
 
 Every scenario declares the **features** it requires, and every library in `src/harness/config.ts` declares the features
 its public API offers, both in the vocabulary of `src/fixtures/features.ts` — `transient`, `optional`, `resolve-all`,
@@ -120,7 +121,7 @@ the reliable losses one per line, the `†` ones counted rather than listed. Whe
 of the same profile, shape and trial count on this machine, each aggregate gains a `Δ prev` over the rows both runs
 measured and the regressions beyond noise are listed — the A/B question the guide asks, answered on the spot. A closing
 card states the timing, the profile, the run order, sanity failures, whether `latest.json` moved, and the library
-versions. The per-scenario table is one `pnpm bench:verbose` or `pnpm bench:report` away.
+versions. The per-scenario table is one `BENCH_VERBOSE=true` or `pnpm bench:report` away.
 
 ## Instruments
 
@@ -155,9 +156,8 @@ thing is strictly worse and should not be written.
 
 ## Run order, and why it decides the ratio
 
-`bench:isolate` runs **scenario-major and interleaved**: every library measures a scenario before the next scenario
-starts, and which library goes first rotates each time. The report's Environment section states which policy produced
-the numbers.
+`bench` runs **scenario-major and interleaved**: every library measures a scenario before the next scenario starts, and
+which library goes first rotates each time. The report's Environment section states which policy produced the numbers.
 
 That is not a detail. Scheduling one library's whole suite before the next one starts puts minutes between the two sides
 of every ratio, so any drift over the run lands entirely on whoever was scheduled later — and in a suite written to
@@ -165,8 +165,8 @@ promote one library, that is never the one being promoted. The same scenario, me
 interleaved, reads a materially different ratio against the same competitor; the measured gap is recorded in
 [`RESULTS.md`](./RESULTS.md).
 
-**Without `bench:isolate` there is nothing to interleave** — one process per library runs that library's whole suite —
-so a cross-library ratio from the plain profile stays provisional, and the report says so in the same place.
+**In `bench:fast` there is nothing to interleave** — one process per library runs that library's whole suite — so a
+cross-library ratio from the smoke profile stays provisional, and the report says so in the same place.
 
 ## Documentation
 

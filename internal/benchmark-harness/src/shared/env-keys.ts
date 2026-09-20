@@ -131,7 +131,7 @@ const BENCH_MODE_VALUES = ["fast", "default", "full"] as const;
 const BENCH_TIER_VALUES: ReadonlyArray<BenchScenarioTier> = ["contract", "engine"];
 
 /** The Turbo tasks that actually run a suite, as opposed to serving its history. */
-const MEASURING_TURBO_TASKS = ["bench", "bench:fast", "bench:full", "bench:isolate", "bench:verbose"] as const;
+const MEASURING_TURBO_TASKS = ["bench", "bench:fast"] as const;
 
 type BenchEnvValueSpec =
   | { readonly kind: "flag" }

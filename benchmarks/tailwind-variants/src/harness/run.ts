@@ -69,7 +69,7 @@ async function main(): Promise<void> {
   console.log(
     VERBOSE_MODE_ENABLED
       ? "Verbose: every child line streams here, and the per-scenario table prints after the run.\n"
-      : `Progress per library follows. \`${BENCH_VERBOSE_ENV_KEY}=true\` (\`pnpm bench:verbose\`) streams every child line and prints the per-scenario table.\n`,
+      : `Progress per library follows. \`${BENCH_VERBOSE_ENV_KEY}=true\` streams every child line and prints the per-scenario table.\n`,
   );
 
   const rebuildMs = rebuildCodefastTailwindVariantsPackage();

@@ -38,5 +38,5 @@ export const TAILWIND_VARIANTS_COMPARISON_MARKDOWN: ComparisonMarkdownReportOpti
 export const TAILWIND_VARIANTS_COMPARISON_CONSOLE: ComparisonConsoleReportOptions = {
   sectionHeading: "Comparable scenarios",
   footerHintLine:
-    "Cite the aggregates above, never a row. `pnpm bench:report` derives the per-scenario table as report.md; `pnpm bench:verbose` prints it here.",
+    "Cite the aggregates above, never a row. `pnpm bench:report` derives the per-scenario table as report.md; `BENCH_VERBOSE=true` prints it here.",
 };

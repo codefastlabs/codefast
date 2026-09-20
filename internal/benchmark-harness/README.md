@@ -9,8 +9,8 @@ renders a pivot library against any number of competitors.
 
 - **One process per library.** Each library benchmarks in its own subprocess under its own tsconfig, so no two libraries
   share a heap and nothing is forced into another library's idiom.
-- **Isolated runs are interleaved.** With `BENCH_ISOLATE=true` every library measures a scenario before the next
-  scenario starts, and the starting library rotates, so drift over the run cannot land on one side of a ratio.
+- **Isolated runs are interleaved.** In the `bench` lane every library measures a scenario before the next scenario
+  starts, and the starting library rotates, so drift over the run cannot land on one side of a ratio.
 - **The report travels with its caveats.** Cells the reader should not cite carry a marker, the summary counts them, and
   every figure the markdown rounds is kept at full precision in `report.json`.
 - **Nothing in `BENCH_*` fails quietly.** An unknown key, a misspelled value, or an out-of-range number throws before
@@ -35,11 +35,11 @@ application, but earlier scenarios train the library's hot-path inline caches fo
 order-dependent — and libraries run one after another, so any drift over the run lands on whoever ran later. The report
 states this run order and treats cross-library ratios from it as provisional.
 
-**Isolated** (`runBenchSubprocessesInterleaved`, opted into with `BENCH_ISOLATE=true`): one child **per scenario** per
-library. A discovery child (`BENCH_LIST`) reports each library's scenario ids, then `BENCH_ONLY=<id>` workers run one
-scenario each. The parent schedules scenario-major — every library on the same scenario before the next scenario — and
-rotates which library goes first, then merges the trials back into one payload per library. Order-independent, and the
-only shape whose cross-library ratios the report considers citable.
+**Isolated** (`runBenchSubprocessesInterleaved`, what the `bench` lane sets through `BENCH_ISOLATE=true`): one child
+**per scenario** per library. A discovery child (`BENCH_LIST`) reports each library's scenario ids, then
+`BENCH_ONLY=<id>` workers run one scenario each. The parent schedules scenario-major — every library on the same
+scenario before the next scenario — and rotates which library goes first, then merges the trials back into one payload
+per library. Order-independent, and the only shape whose cross-library ratios the report considers citable.
 
 ## The report
 
@@ -93,9 +93,9 @@ dropped for any run started at the repo root — which looks exactly like the ke
 | ---------------------- | ------------------------------------------------------------------------------------------------- |
 | `BENCH_MODE=fast`      | Smoke profile: shorter sampling windows, a single trial. Never a citable number                   |
 | `BENCH_MODE=default`   | The default profile — the same as leaving `BENCH_MODE` unset                                      |
-| `BENCH_MODE=full`      | Extended profile: `--expose-gc` in every child, with collections forced into the measured loop    |
+| `BENCH_MODE=full`      | Extended profile: longer windows, three trials, `--expose-gc` for one collection between trials   |
 | `BENCH_TRIALS=<n>`     | Trials per scenario; the harness refuses anything below `MINIMUM_TRIAL_COUNT`                     |
-| `BENCH_ISOLATE=true`   | One subprocess per scenario, libraries interleaved                                                |
+| `BENCH_ISOLATE=true`   | One subprocess per scenario, libraries interleaved — what the `bench` lane sets                   |
 | `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids; a library implementing none of them measures nothing      |
 | `BENCH_TIER=<tier>`    | Restrict the run to one scenario tier, `contract` or `engine`; a narrowed run like `BENCH_ONLY`   |
 | `BENCH_BASELINE=<run>` | Diff against this run id or directory instead of the run `latest.json` names                      |
@@ -133,11 +133,10 @@ reading while the declarations are true.
 From the repo root:
 
 ```bash
-pnpm bench            # run every suite, shared profile
-pnpm bench:isolate    # run every suite, one subprocess per scenario, interleaved
-pnpm bench:fast       # smoke profile — shorter windows, for "did I break it"
-pnpm bench:full       # --expose-gc for every library
-pnpm bench:verbose    # stream every child line and print the per-scenario table
+pnpm bench            # run every suite, one subprocess per scenario, interleaved — the lane to cite
+pnpm bench:fast       # smoke profile — one shared process per library, shorter windows, for "did I break it"
+BENCH_MODE=full pnpm bench     # longer windows, a collection between trials
+BENCH_VERBOSE=true pnpm bench  # stream every child line and print the per-scenario table
 pnpm bench:list       # every suite's scenario inventory as JSON, measuring nothing
 pnpm bench:report     # derive report.md / report.json from each suite's latest run
 pnpm bench:serve      # browse recorded runs (see ../benchmark-viewer)

@@ -68,8 +68,8 @@ the mechanism. Edit, checkout, stash or patch `packages/di/src` per side, and th
 source take effect.
 
 1. Put each side's code in `packages/di/src` (checkout, stash or patch).
-2. For each scenario, run **one subprocess per side, back to back**, and record the ratio — `bench:isolate` does exactly
-   this, and the rebuild it runs first is what installs the side you checked out.
+2. For each scenario, run **one subprocess per side, back to back**, and record the ratio — `bench` does exactly this,
+   and the rebuild it runs first is what installs the side you checked out.
 3. One full pass per side is the confirmation: the full profile already runs three trials, so a pass per side is three
    samples a side, and repeating the pass three times would be nine. **Alternate which side goes first** between
    consecutive experiments rather than within one, and read the per-trial spread each side carries.
@@ -93,9 +93,9 @@ A narrowed run writes its own timestamped directory but leaves `latest.*` alone,
 the suite's published state.
 
 **Narrow the run instead of running the suite.** `BENCH_ONLY=<id>` — a comma-separated list — is read by the parent as
-well as the child, so `BENCH_ONLY=<id> pnpm bench:isolate` runs that row alone, isolated and interleaved, in seconds.
-**Narrow the libraries too when the question is about one of them.** A paired A/B compares the subject with itself, so
-the rivals' subprocesses are wall clock spent on nothing: `BENCH_LIBRARY=@codefast/di` (a comma-separated list of
+well as the child, so `BENCH_ONLY=<id> pnpm bench` runs that row alone, isolated and interleaved, in seconds. **Narrow
+the libraries too when the question is about one of them.** A paired A/B compares the subject with itself, so the
+rivals' subprocesses are wall clock spent on nothing: `BENCH_LIBRARY=@codefast/di` (a comma-separated list of
 `libraryName` or `displayName` values) runs only the libraries named, and a run narrowed this way leaves `latest.*`
 alone like any other narrowed run. A filter that leaves the subject out is an error, not an empty report. The rebuild it
 does first is around half a second, so nothing about the source lane is slow; what used to be slow was the whole suite.
@@ -106,13 +106,13 @@ only this package has is still a legal filter.
 source lane cannot serve is comparing against a build you cannot check out — a published version, an old `dist` archived
 outside the tree. Then copy the two prebuilt dirs over `packages/di/dist` per side and run the **child entries**
 (`bench:<library>` — `bench:codefast`, `bench:inversify`, … — `node --import tsx/esm src/*-benches.ts`), which do
-**not** go through `run.ts`. You must never use a `run.ts` lane here — `bench`, `bench:isolate`, `bench:full`,
-`bench:fast`, `bench:verbose` — for two reasons: its unconditional rebuild overwrites your swapped `dist` from `src`
-before the first sample, so both sides measure HEAD and **every row reports parity** — an A/B that compared nothing —
-and none of those lanes isolates per scenario anyway. Prove the swap is live before trusting a number: install a build
-whose target function throws, and check the row fails. This gives up what the parent provides — interleaving, the
-Environment header, the instability flags, and a citable cross-library ratio — leaves `dist` disagreeing with `src`
-until someone rebuilds, and ties the measurement to a directory rather than a commit.
+**not** go through `run.ts`. You must never use a `run.ts` lane here — `bench`, `bench:fast`, `bench:baseline` — for two
+reasons: its unconditional rebuild overwrites your swapped `dist` from `src` before the first sample, so both sides
+measure HEAD and **every row reports parity** — an A/B that compared nothing — and `bench:fast` does not isolate per
+scenario anyway. Prove the swap is live before trusting a number: install a build whose target function throws, and
+check the row fails. This gives up what the parent provides — interleaving, the Environment header, the instability
+flags, and a citable cross-library ratio — leaves `dist` disagreeing with `src` until someone rebuilds, and ties the
+measurement to a directory rather than a commit.
 
 Running a side's whole suite in one process is not a cheaper version of the same measurement either: scenarios that
 share an isolate share inline caches and optimisation state, so a change to a function several rows exercise shows up
@@ -138,10 +138,10 @@ A rewrite is measured against the engine it replaces, not against yesterday. Bef
 the whole contract tier once at the citable profile and keep that run's id:
 
 ```bash
-BENCH_MODE=full BENCH_TIER=contract pnpm di:bench:isolate
+BENCH_MODE=full BENCH_TIER=contract pnpm di:bench
 ```
 
-Then read every later run against it — `BENCH_BASELINE=<that run id> pnpm di:bench:isolate` — and the `Δ` column and the
+Then read every later run against it — `BENCH_BASELINE=<that run id> pnpm di:bench` — and the `Δ` column and the
 regression list say `vs baseline <run id>` instead of `vs` the run that happened to land before. Without the pin, a
 rewrite that lands in ten commits is diffed ten times against itself and the line it had to hold is never drawn. A
 pinned run that cannot be read is an error, never a silent fallback to the pointer. `bench-results/` is git-ignored, so
@@ -201,9 +201,9 @@ stream reports a confident zero.
 
 ## Comparing two libraries: interleave, and say you did
 
-Run every library on the **same scenario** before moving to the next, rotating which library goes first. `bench:isolate`
-does exactly that, and the report's Environment section names the policy it used — so a cross-library figure from an
-isolated run is citable, and one from the plain profile is not, because there one process per library runs that
+Run every library on the **same scenario** before moving to the next, rotating which library goes first. `bench` does
+exactly that, and the report's Environment section names the policy it used — so a cross-library figure from an isolated
+run is citable, and one from the `bench:fast` smoke profile is not, because there one process per library runs that
 library's whole suite and there is nothing to interleave.
 
 Also required for a comparison to mean anything:

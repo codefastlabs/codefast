@@ -33,7 +33,7 @@ export const DI_COMPARISON_MARKDOWN: ComparisonMarkdownReportOptions = {
     "",
     "Cite the summary, not the rows. `hz/op` is operations per second per logical operation (tinybench `throughput.mean` multiplied by `batch`); a competitor's own throughput is that figure divided by its ratio, and its exact value, along with `mean ms`, `p99 ms` and every per-trial IQR, is in the run's `observations.jsonl`.",
     "",
-    "Run with `BENCH_ISOLATE=true` to bench each scenario in its own subprocess, removing cross-scenario inline-cache wear (~30% on async chains in a shared process).",
+    "`pnpm bench` runs each scenario in its own subprocess, so no scenario inherits another's inline caches; `pnpm bench:fast` shares one process per library and is a smoke run, never a citation.",
   ],
 };
 
@@ -43,5 +43,5 @@ export const DI_COMPARISON_MARKDOWN: ComparisonMarkdownReportOptions = {
 export const DI_COMPARISON_CONSOLE: ComparisonConsoleReportOptions = {
   sectionHeading: "Comparable scenarios",
   footerHintLine:
-    "Cite the aggregates above, never a row. `pnpm bench:report` derives the per-scenario table as report.md; `pnpm bench:verbose` prints it here.",
+    "Cite the aggregates above, never a row. `pnpm bench:report` derives the per-scenario table as report.md; `BENCH_VERBOSE=true` prints it here.",
 };

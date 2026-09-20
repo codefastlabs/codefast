@@ -17,7 +17,6 @@ import type { ScenarioTrialResult, TrialPayload } from "#shared/protocol";
  * Keeps GC sampling in full mode, but reduces forced collection pressure so
  * long-running suites do not balloon due to GC-heavy beforeEach hooks.
  */
-const FULL_MODE_SAMPLE_GC_STRIDE = 100;
 const FULL_MODE_TRIAL_COUNT = 3;
 // Fast mode is a smoke profile: one trial answers "does it run and roughly how fast",
 // and anything needing a median belongs in the default or full profile.
@@ -41,26 +40,12 @@ const FULL_MODE_BENCH_OPTIONS = {
   warmupIterations: 3,
 } satisfies BenchOptions;
 
+// A collection between trials, never inside a sample: forcing one into the measured loop deoptimizes
+// every site that embedded a short-lived shape, and measures that churn instead of the code.
 function runFullGcIfExposed(): void {
   if (typeof globalThis.gc === "function") {
     globalThis.gc();
   }
-}
-
-function createBeforeEachGcHook(fullModeEnabled: boolean): () => void {
-  if (!fullModeEnabled) {
-    return (): void => {};
-  }
-  let callIndex = 0;
-  return (): void => {
-    if (typeof globalThis.gc !== "function") {
-      return;
-    }
-    if (callIndex++ % FULL_MODE_SAMPLE_GC_STRIDE !== 0) {
-      return;
-    }
-    globalThis.gc();
-  };
 }
 
 type TaskResultWithStatisticsState = Extract<TaskResult, { state: "completed" | "aborted-with-statistics" }>;
@@ -173,7 +158,6 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
     scenarios: ReadonlyArray<AnyBenchScenario>,
     sanityFailures: ReadonlyArray<string>,
   ): Promise<TrialPayload> {
-    const beforeEachGc = createBeforeEachGcHook(mode === "full");
     const bench = new Bench(benchOptions);
     const sanityFailureSet = new Set(sanityFailures);
     const runnableScenarioCount = scenarios.filter((scenario) => !sanityFailureSet.has(scenario.id)).length;
@@ -193,13 +177,9 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
         continue;
       }
       if (isAsyncScenario(scenario)) {
-        bench.add(scenario.id, preBuiltClosure as () => Promise<void>, {
-          beforeEach: beforeEachGc,
-        });
+        bench.add(scenario.id, preBuiltClosure as () => Promise<void>);
       } else {
-        bench.add(scenario.id, preBuiltClosure as () => void, {
-          beforeEach: beforeEachGc,
-        });
+        bench.add(scenario.id, preBuiltClosure as () => void);
       }
     }
 

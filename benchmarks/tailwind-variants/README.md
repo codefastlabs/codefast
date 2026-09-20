@@ -3,8 +3,8 @@
 A tinybench suite for variant-styling APIs. `@codefast/tailwind-variants` is the subject; `tailwind-variants` is the API
 it replaces, and `class-variance-authority` is the smaller-surface alternative people reach for instead.
 
-> **Private benchmark suite.** Never published to npm. Run it rather than quoting it: every figure is one
-> `pnpm bench:isolate` away.
+> **Private benchmark suite.** Never published to npm. Run it rather than quoting it: every figure is one `pnpm bench`
+> away.
 
 **This is a first-party benchmark** — the same repository owns the library and the harness. Read it as a re-runnable
 claim, not a neutral verdict. The measurement standard is the DI suite's [`BENCH_GUIDE.md`](../di/BENCH_GUIDE.md); it is
@@ -19,23 +19,23 @@ pnpm bench
 From the repo root, `pnpm bench` runs every suite; filter with `pnpm --filter @benchmark/tailwind-variants bench`. Every
 run rebuilds `@codefast/tailwind-variants` first, so it measures the working tree rather than a stale `dist/`.
 
-| Command                               | What changes                                                                           |
-| ------------------------------------- | -------------------------------------------------------------------------------------- |
-| `pnpm bench`                          | Default profile, the default trial count                                               |
-| `pnpm bench:fast`                     | Smoke profile — shorter windows. For "did I break it", not for a claim                 |
-| `pnpm bench:full`                     | `--expose-gc` for every library                                                        |
-| `pnpm bench:isolate`                  | Isolated profile — one subprocess per scenario, libraries interleaved (citable ratios) |
-| `pnpm bench:list`                     | Prints the scenario inventory as JSON on stdout, measuring nothing                     |
-| `pnpm bench:verbose`                  | Streams every child line and prints the per-scenario table                             |
-| `pnpm bench:serve`                    | Serves the run history from `bench-results/` in a browser                              |
-| `pnpm bench:codefast`                 | The `@codefast/tailwind-variants` child process alone                                  |
-| `pnpm bench:tailwind-variants`        | The `tailwind-variants` child process alone                                            |
-| `pnpm bench:class-variance-authority` | The `class-variance-authority` child process alone                                     |
-| `BENCH_MODE=<mode>`                   | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set           |
-| `BENCH_TRIALS=<n>`                    | Trials per scenario; the harness refuses anything below its minimum                    |
-| `BENCH_ONLY=<id>,<id>`                | Restrict the run to these scenario ids                                                 |
-| `BENCH_PORT=<n>`                      | Preferred port for `bench:serve`                                                       |
-| `PORT=<n>`                            | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process   |
+| Command                               | What changes                                                                            |
+| ------------------------------------- | --------------------------------------------------------------------------------------- |
+| `pnpm bench`                          | The lane to cite: one subprocess per scenario, libraries interleaved, default profile   |
+| `pnpm bench:fast`                     | Smoke profile — one shared process per library, shorter windows, one trial. Not a claim |
+| `pnpm bench:ab`                       | Two builds of `@codefast/tailwind-variants`, paired and alternating, on the rows named  |
+| `pnpm bench:list`                     | Prints the scenario inventory as JSON on stdout, measuring nothing                      |
+| `BENCH_MODE=full pnpm bench`          | Longer windows, three trials, a collection between trials                               |
+| `BENCH_VERBOSE=true pnpm bench`       | Streams every child line and prints the per-scenario table                              |
+| `pnpm bench:serve`                    | Serves the run history from `bench-results/` in a browser                               |
+| `pnpm bench:codefast`                 | The `@codefast/tailwind-variants` child process alone                                   |
+| `pnpm bench:tailwind-variants`        | The `tailwind-variants` child process alone                                             |
+| `pnpm bench:class-variance-authority` | The `class-variance-authority` child process alone                                      |
+| `BENCH_MODE=<mode>`                   | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set            |
+| `BENCH_TRIALS=<n>`                    | Trials per scenario; the harness refuses anything below its minimum                     |
+| `BENCH_ONLY=<id>,<id>`                | Restrict the run to these scenario ids                                                  |
+| `BENCH_PORT=<n>`                      | Preferred port for `bench:serve`                                                        |
+| `PORT=<n>`                            | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process    |
 
 Every run writes a timestamped directory under `bench-results/` (git-ignored) holding one file, `observations.jsonl`,
 and — for a whole-suite run — points `bench-results/latest.json` at it. `report.md` and `report.json` are derived on
@@ -113,16 +113,15 @@ Same rules as the DI suite: cite the aggregates rather than a row; `†` marks r
 ceiling, whose ratio moves between runs of the same build; `‡` marks cells whose per-trial IQR exceeded the harness's
 noise fraction; a ratio inside the summary's parity band is parity, not a win or a loss.
 
-Use `pnpm bench:isolate` (or `BENCH_ISOLATE=true`) for a citable cross-library ratio. It gives each scenario its own
-subprocess and runs the libraries **interleaved** — every library measures a scenario before the next scenario starts,
-rotating which goes first — so drift over the run no longer lands on whoever was scheduled last. The report's
-Environment section names the policy it used. Without it, one process per library runs that library's whole suite and
-there is nothing to interleave, so those ratios stay provisional.
+Use `pnpm bench` for a citable cross-library ratio. It gives each scenario its own subprocess and runs the libraries
+**interleaved** — every library measures a scenario before the next scenario starts, rotating which goes first — so
+drift over the run no longer lands on whoever was scheduled last. The report's Environment section names the policy it
+used. `pnpm bench:fast` runs one process per library with nothing to interleave, so its ratios stay provisional.
 
 The console closes with a scoreboard — `W · P · L`, comparable count, median, geomean and worst loss per competitor — a
 geomean per group, the reliable losses, a diff against the run `latest.json` names when it is the same configuration on
 this machine, and a run card with timing, profile, sanity failures and versions. The per-scenario table is one
-`pnpm bench:verbose` or `pnpm bench:report` away.
+`BENCH_VERBOSE=true` or `pnpm bench:report` away.
 
 ## Documentation
 

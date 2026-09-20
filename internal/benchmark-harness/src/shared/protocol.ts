@@ -75,6 +75,8 @@ export interface Fingerprint {
   readonly libraryName: string;
   readonly libraryVersion: string;
   readonly gcExposed: boolean;
+  /** The 1-minute load average when the child started; absent on payloads written before it was recorded. */
+  readonly loadAverage1m?: number | undefined;
   readonly timestampIso: string;
 }
 

@@ -188,8 +188,8 @@ Treat every edit under `resolve/`, and any reshape of `compileVariantPlan`, as a
 A/B. The method is in [`benchmarks/di/BENCH_GUIDE.md`](../../benchmarks/di/BENCH_GUIDE.md); both of the mechanisms it
 describes work here, and **pairing them wrong fails silently**:
 
-- **Swap the source** — check out or stash `packages/tailwind-variants/src` per side, then run `bench:isolate`. That
-  runner rebuilds the package before sampling, which is exactly what makes the swap take effect.
+- **Swap the source** — check out or stash `packages/tailwind-variants/src` per side, then run `bench`. That runner
+  rebuilds the package before sampling, which is exactly what makes the swap take effect.
 - **Swap the build** — copy a prebuilt `dist` over `packages/tailwind-variants/dist` per side, then drive the child
   entry directly, one scenario at a time:
 
@@ -197,9 +197,8 @@ describes work here, and **pairing them wrong fails silently**:
   BENCH_ONLY=slots-without-merge node --import tsx/esm src/codefast-benches.ts
   ```
 
-  The child entry is mandatory here. `bench`, `bench:isolate`, `bench:fast`, `bench:full` and `bench:verbose` all run
-  `src/harness/run.ts`, whose unconditional rebuild would overwrite the swapped `dist` from `src` — both sides then
-  measure the same build and every row reports parity.
+  The child entry is mandatory here. `bench` and `bench:fast` both run `src/harness/run.ts`, whose unconditional rebuild
+  would overwrite the swapped `dist` from `src` — both sides then measure the same build and every row reports parity.
 
 Scenario ids come from `BENCH_LIST=1`.
 
