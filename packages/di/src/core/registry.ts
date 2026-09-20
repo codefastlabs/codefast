@@ -119,22 +119,29 @@ export class BindingRegistry {
    */
   add(binding: Binding): Binding | undefined {
     this.#bump();
-    if (this.#lone === EMPTY_LONE) {
-      this.#lone = new Map<DependencyKey, Binding>();
-    }
     if (binding.kind === "constant") {
       this.#heldConstantBinding = true;
     }
     const key: DependencyKey = binding.token;
-    const record = this.#records?.get(key);
-    if (record !== undefined) {
-      return this.#addToRecord(key, record, binding);
+    const records = this.#records;
+    if (records !== undefined) {
+      const record = records.get(key);
+      if (record !== undefined) {
+        return this.#addToRecord(key, record, binding);
+      }
     }
-    const lone = this.#lone.get(key);
-    if (lone === undefined) {
-      this.#byId?.set(binding.identifier, binding);
+    let lone = this.#lone;
+    if (lone === EMPTY_LONE) {
+      lone = this.#lone = new Map<DependencyKey, Binding>();
+    }
+    const occupant = lone.get(key);
+    if (occupant === undefined) {
+      // The common bind: a fresh token taking the lone seat, one probe and one write.
+      if (this.#byId !== undefined) {
+        this.#byId.set(binding.identifier, binding);
+      }
       if (isDefaultSlotBinding(binding)) {
-        this.#lone.set(key, binding);
+        lone.set(key, binding);
       } else {
         this.#createRecord(key, [binding]);
       }
@@ -142,17 +149,17 @@ export class BindingRegistry {
     }
     // Same slot, last wins: the newcomer takes the lone seat and nothing else moves.
     if (isDefaultSlotBinding(binding)) {
-      this.#lone.set(key, binding);
+      lone.set(key, binding);
       if (this.#byId !== undefined) {
-        this.#byId.delete(lone.identifier);
+        this.#byId.delete(occupant.identifier);
         this.#byId.set(binding.identifier, binding);
       }
-      return lone;
+      return occupant;
     }
     // A second shape joins the token, which is what a record is for.
-    this.#lone.delete(key);
+    lone.delete(key);
     this.#byId?.set(binding.identifier, binding);
-    this.#createRecord(key, [lone, binding]);
+    this.#createRecord(key, [occupant, binding]);
     return undefined;
   }
 

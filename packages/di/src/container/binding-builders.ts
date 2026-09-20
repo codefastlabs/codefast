@@ -161,7 +161,21 @@ export class BindingChain<Value, Names extends string = string>
     this.kind = kind;
     this.scope = scope;
     this.#isRegistered = true;
-    this.#commit(undefined);
+    // A fresh registration parks nothing yet and restores nothing: one add, then the version.
+    const registration = this.#registration;
+    const registry = registration.registry;
+    const displaced = registry.add(this.#binding);
+    if (displaced !== undefined) {
+      if (registration.deactivateDisplaced !== undefined) {
+        registration.deactivateDisplaced(displaced);
+      } else {
+        this.#displacedByChain = [displaced];
+      }
+    }
+    if (registration.moduleBindingIds !== undefined) {
+      registration.moduleBindingIds.push(this.identifier);
+    }
+    this.#versionAfterLastWrite = registry.version;
     return this;
   }
 
