@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { arch as osArch, cpus, platform as osPlatform } from "node:os";
+import { arch as osArch, cpus, loadavg, platform as osPlatform } from "node:os";
 import { join } from "node:path";
 
 import type { Fingerprint } from "#shared/protocol";
@@ -43,6 +43,7 @@ export function collectFingerprint(libraryName: string, workspacePackageRoot: st
     libraryName,
     libraryVersion: readLibraryVersion(libraryName, workspacePackageRoot),
     gcExposed: typeof globalThis.gc === "function",
+    loadAverage1m: Math.round((loadavg()[0] ?? 0) * 100) / 100,
     timestampIso: new Date().toISOString(),
   };
 }

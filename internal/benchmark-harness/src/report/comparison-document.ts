@@ -80,6 +80,8 @@ export interface ComparisonDocumentEnvironment {
   readonly cpuCount: number;
   readonly nodeOptions: string;
   readonly gcExposed: boolean;
+  /** The 1-minute load average when the pivot's child started, when the run recorded it. */
+  readonly loadAverage1m?: number | undefined;
   readonly timestampIso: string;
 }
 
@@ -204,6 +206,8 @@ export function buildComparisonDocument(
       cpuCount: fingerprint.cpuCount,
       nodeOptions: fingerprint.nodeOptions,
       gcExposed: fingerprint.gcExposed,
+      // Spread rather than assigned: the document must survive a JSON round trip, which drops an `undefined` key.
+      ...(fingerprint.loadAverage1m === undefined ? {} : { loadAverage1m: fingerprint.loadAverage1m }),
       timestampIso: fingerprint.timestampIso,
     },
     pivot: toDocumentLibrary(pivot),

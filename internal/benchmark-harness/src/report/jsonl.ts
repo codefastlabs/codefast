@@ -20,6 +20,8 @@ export interface JsonlBenchObservationRow {
   readonly cpuCount: number;
   readonly nodeOptions: string;
   readonly gcExposed: boolean;
+  /** Absent on rows written before the load average was recorded. */
+  readonly loadAverage1m?: number | undefined;
   readonly trialIndex: number;
   readonly scenarioId: string;
   readonly group: string;
@@ -91,6 +93,7 @@ export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchO
     stringFields.every((field) => typeof candidate[field] === "string") &&
     numberFields.every((field) => typeof candidate[field] === "number") &&
     typeof candidate["gcExposed"] === "boolean" &&
+    (candidate["loadAverage1m"] === undefined || typeof candidate["loadAverage1m"] === "number") &&
     typeof candidate["stress"] === "boolean"
   );
 }
@@ -134,6 +137,7 @@ export function jsonlBenchObservationRowToFingerprint(row: JsonlBenchObservation
     libraryName: row.libraryName,
     libraryVersion: row.libraryVersion,
     gcExposed: row.gcExposed,
+    ...(row.loadAverage1m === undefined ? {} : { loadAverage1m: row.loadAverage1m }),
     timestampIso: row.timestampIso,
   };
 }

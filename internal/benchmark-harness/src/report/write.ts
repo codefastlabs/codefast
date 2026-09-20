@@ -50,6 +50,7 @@ function flattenLibraryToJsonl(
         cpuCount: fingerprint.cpuCount,
         nodeOptions: fingerprint.nodeOptions,
         gcExposed: fingerprint.gcExposed,
+        loadAverage1m: fingerprint.loadAverage1m,
         trialIndex: trial.trialIndex,
         scenarioId: scenarioResult.id,
         group: scenarioResult.group,

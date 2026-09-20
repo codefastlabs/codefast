@@ -523,9 +523,26 @@ function buildEnvironmentBullets(
     `- ${fingerprint.platform}/${fingerprint.arch} · ${fingerprint.cpuModel} × ${String(fingerprint.cpuCount)}`,
     `- NODE_OPTIONS: \`${fingerprint.nodeOptions || "(empty)"}\``,
     `- GC exposed: ${everyLibrary.map((library) => `${library.displayName}=${String(library.report.fingerprint.gcExposed)}`).join(", ")}`,
+    ...buildLoadBullet(everyLibrary, fingerprint.cpuCount),
     `- Library versions: ${everyLibrary.map((library) => `${library.displayName} ${library.report.fingerprint.libraryVersion}`).join(", ")}`,
     `- Trials per library: ${everyLibrary.map((library) => `${library.displayName} ${String(library.report.trialCount)}`).join(", ")}`,
     `- Timestamp: ${everyLibrary.map((library) => `${library.displayName} ${library.report.fingerprint.timestampIso}`).join(", ")}`,
+  ];
+}
+
+/** The 1-minute load average each child read at its start, flagged when any reading exceeded half the cores. */
+function buildLoadBullet(libraries: ReadonlyArray<ComparisonLibrary>, cpuCount: number): Array<string> {
+  const readings = libraries.flatMap((library) => {
+    const load = library.report.fingerprint.loadAverage1m;
+    return load === undefined ? [] : [{ displayName: library.displayName, load }];
+  });
+  if (readings.length === 0) {
+    return [];
+  }
+  const busy = readings.some((reading) => reading.load > cpuCount / 2);
+  const note = busy ? " — above half the cores at some point: the machine was not quiet" : "";
+  return [
+    `- Load average (1 min) at each child's start: ${readings.map((reading) => `${reading.displayName} ${reading.load.toFixed(2)}`).join(", ")}${note}`,
   ];
 }
 
