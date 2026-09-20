@@ -95,7 +95,8 @@ const ROOT_CONSTRAINT_CONTEXT = {
  * @since 0.3.16-canary.0
  */
 export class DependencyResolver implements ResolverCallbacks {
-  readonly #syncResolutionContextPool: Array<DefaultResolutionContext> = [];
+  // Contexts pooled by depth over the root stack — deferred: a plan-served or constant-only container never needs one.
+  #syncResolutionContextPool: Array<DefaultResolutionContext> | undefined;
   // Contexts bound to the cascade pair — deferred: only an async cascade's sync resolves need it.
   #cascadeContextPool: Array<DefaultResolutionContext> | undefined;
   /**
@@ -108,8 +109,8 @@ export class DependencyResolver implements ResolverCallbacks {
    */
   readonly rootStack: Array<ResolutionFrame> = [];
   // The open synchronous factory cascade: its stack is the ancestor chain, and it is balanced
-  // because synchronous code does not interleave.
-  readonly #cascadeStack: Array<ResolutionFrame> = [];
+  // because synchronous code does not interleave. Minted by the first async resolve.
+  #cascadeStack: Array<ResolutionFrame> | undefined;
   #cascadeContext: AsyncCascadeContext | undefined;
   // Compiled plans; `null` marks a binding as unplannable under the current cache versions. Both
   // maps are allocated by the first plan request, which only a class or resolved binding makes.
@@ -125,9 +126,11 @@ export class DependencyResolver implements ResolverCallbacks {
   readonly #scope: ScopeManager;
   readonly #lifecycle: LifecycleManager;
   readonly #metadataReader: MetadataReader;
+  readonly #container: Container;
   readonly #parent: DependencyResolver | undefined;
   readonly #lookup: BindingLookupCache<DependencyResolver>;
-  readonly #classes: ClassIntrospector;
+  // Built by the first class resolve: a container that never resolves a class never pays for it.
+  #classes: ClassIntrospector | undefined;
   // Built by the first interpreted resolve that asks; a plan-served or constant-only container never does.
   #activation: ActivationNeedCache | undefined;
 
@@ -143,17 +146,21 @@ export class DependencyResolver implements ResolverCallbacks {
     this.#scope = scope;
     this.#lifecycle = lifecycle;
     this.#metadataReader = metadataReader;
+    this.#container = container;
     this.#parent = parent;
     this.#lookup = new BindingLookupCache<DependencyResolver>(
       registry,
       this,
       parent === undefined ? undefined : parent.#lookup,
     );
-    this.#classes = new ClassIntrospector(
-      metadataReader,
-      container,
-      parent === undefined ? undefined : parent.#classes,
-    );
+  }
+
+  #introspector(): ClassIntrospector {
+    return (this.#classes ??= new ClassIntrospector(
+      this.#metadataReader,
+      this.#container,
+      this.#parent === undefined ? undefined : this.#parent.#introspector(),
+    ));
   }
 
   /** The reader this resolver was built with, which is the one its container answers with. */
@@ -162,7 +169,7 @@ export class DependencyResolver implements ResolverCallbacks {
   }
 
   #activationNeed(): ActivationNeedCache {
-    return (this.#activation ??= new ActivationNeedCache(this.#lifecycle, this.#classes, this.#registry));
+    return (this.#activation ??= new ActivationNeedCache(this.#lifecycle, this.#introspector(), this.#registry));
   }
 
   /** Structural counts and the resolver-owned collaborators built so far, for the {@link ResolutionDiagnostics} a container reports. */
@@ -188,7 +195,7 @@ export class DependencyResolver implements ResolverCallbacks {
       compiledPlanCount: countCompiledPlans(this.#classPlanByBindingId),
       compiledAsyncPlanCount: countCompiledPlans(this.#asyncPlanByBindingId),
       generatedPlanCount,
-      syncContextPoolSize: this.#syncResolutionContextPool.length,
+      syncContextPoolSize: this.#syncResolutionContextPool?.length ?? 0,
       builtSubsystems,
     };
   }
@@ -541,10 +548,11 @@ export class DependencyResolver implements ResolverCallbacks {
   // The behaviour the plan compiler needs from this resolver — lookups, escapes, plan swaps, and the
   // accessor construction path. Built once with the compiler, so each closure is allocated once.
   #buildPlanCompilerHost(): InstantiationPlanHost {
+    const classes = this.#introspector();
     return {
       hasActivationHandlers: (binding) => this.#ownerOf(binding).#lifecycle.hasActivationHandlers(binding.token),
-      knownPostConstruct: (target) => this.#classes.knownPostConstruct(target),
-      needsActiveContainer: (target) => this.#classes.needsActiveContainer(target),
+      knownPostConstruct: (target) => classes.knownPostConstruct(target),
+      needsActiveContainer: (target) => classes.needsActiveContainer(target),
       // A plan runs at the top level, so the lent root stack is free when it is; a plan reached
       // with the root stack held mints its own path, exactly as the interpreted lane would.
       constructWithAccessors: (binding, target, deps) => {
@@ -552,13 +560,13 @@ export class DependencyResolver implements ResolverCallbacks {
         const frame = this.#getResolutionFrame(binding);
         const resolutionSet = enterResolutionPath(stack, frame);
         try {
-          return this.#classes.instantiate(target, deps, this.#ambientResolutionFor(stack));
+          return classes.instantiate(target, deps, this.#ambientResolutionFor(stack));
         } finally {
           stack.pop();
           resolutionSet?.delete(frame.bindingId);
         }
       },
-      getConstructorMetadata: (target) => this.#classes.constructorMetadata(target),
+      getConstructorMetadata: (target) => classes.constructorMetadata(target),
       lookupDependencyEntry: (token) => {
         const entry = this.#lookup.defaultEntry(token);
         return entry === null ? null : { binding: entry.binding };
@@ -821,10 +829,12 @@ export class DependencyResolver implements ResolverCallbacks {
 
       case "class": {
         const deps = this.#resolveDeps(this.#constructorParams(binding.target), resolutionStack);
-        return this.#classes.instantiate(
+        return this.#introspector().instantiate(
           binding.target,
           deps,
-          this.#classes.needsActiveContainer(binding.target) ? this.#ambientResolutionFor(resolutionStack) : undefined,
+          this.#introspector().needsActiveContainer(binding.target)
+            ? this.#ambientResolutionFor(resolutionStack)
+            : undefined,
         );
       }
 
@@ -852,7 +862,7 @@ export class DependencyResolver implements ResolverCallbacks {
    * no parameters; anything else is a missing `@injectable()`.
    */
   #constructorParams(target: Constructor): ReadonlyArray<ParamMetadata> {
-    const meta = this.#classes.constructorMetadata(target);
+    const meta = this.#introspector().constructorMetadata(target);
     if (meta !== undefined) {
       return meta.params;
     }
@@ -1262,8 +1272,12 @@ export class DependencyResolver implements ResolverCallbacks {
    * this binding on every call, forever.
    */
   #mirrorPostConstructFromOwner(binding: Binding, owner: DependencyResolver): void {
-    if (owner !== this && binding.kind === "class" && this.#classes.knownPostConstruct(binding.target) === undefined) {
-      this.#classes.discoverPostConstruct(binding.target);
+    if (
+      owner !== this &&
+      binding.kind === "class" &&
+      this.#introspector().knownPostConstruct(binding.target) === undefined
+    ) {
+      this.#introspector().discoverPostConstruct(binding.target);
     }
   }
 
@@ -1314,10 +1328,12 @@ export class DependencyResolver implements ResolverCallbacks {
           branchDepth,
         );
         // Accessor initializers resolve synchronously, so the branch-owned path serves them directly.
-        return this.#classes.instantiate(
+        return this.#introspector().instantiate(
           binding.target,
           deps,
-          this.#classes.needsActiveContainer(binding.target) ? this.#ambientResolutionFor(resolutionStack) : undefined,
+          this.#introspector().needsActiveContainer(binding.target)
+            ? this.#ambientResolutionFor(resolutionStack)
+            : undefined,
         );
       }
 
@@ -1653,7 +1669,7 @@ export class DependencyResolver implements ResolverCallbacks {
    * are on no call stack — it escapes to the branch lane.
    */
   resolveAsyncFromCascade(token: Token<unknown> | Constructor): Promise<unknown> {
-    if (this.#cascadeStack.length === 0) {
+    if (this.#cascadeStack === undefined || this.#cascadeStack.length === 0) {
       return this.resolveAsyncFromContext(token, [], ROOT_BRANCH);
     }
     return this.#dispatchCascade(token);
@@ -1689,7 +1705,7 @@ export class DependencyResolver implements ResolverCallbacks {
     }
     // Anything else leaves the cascade lane for good, seeded with a snapshot of the ancestors it
     // accumulated — so a cycle across the boundary is still on one path.
-    return this.resolveAsyncFromContext(token, [...this.#cascadeStack], UNOWNED_BRANCH);
+    return this.resolveAsyncFromContext(token, [...this.#cascade()], UNOWNED_BRANCH);
   }
 
   /**
@@ -1700,7 +1716,7 @@ export class DependencyResolver implements ResolverCallbacks {
    */
   #plannedCascadeAnswer(fastBinding: Binding): Promise<unknown> | null {
     if (
-      this.#cascadeStack.length !== 0 ||
+      (this.#cascadeStack !== undefined && this.#cascadeStack.length !== 0) ||
       fastBinding.scope !== "transient" ||
       (fastBinding.kind !== "class" && fastBinding.kind !== "resolved" && fastBinding.kind !== "resolved-async")
     ) {
@@ -1727,11 +1743,11 @@ export class DependencyResolver implements ResolverCallbacks {
     // code does not interleave — so the O(1) flag is exact path membership here, as it is for the
     // sync lane. It is cleared when the factory returns its promise, not when that promise settles.
     if (binding.inFlight) {
-      return Promise.reject(new CircularDependencyError(cycleNamesOf(this.#cascadeStack, frame.tokenName)));
+      return Promise.reject(new CircularDependencyError(cycleNamesOf(this.#cascade(), frame.tokenName)));
     }
-    const ctx = (this.#cascadeContext ??= new AsyncCascadeContext(this, this.#cascadeStack));
+    const ctx = (this.#cascadeContext ??= new AsyncCascadeContext(this, this.#cascade()));
     binding.inFlight = true;
-    this.#cascadeStack.push(frame);
+    this.#cascade().push(frame);
     try {
       if (binding.kind === "dynamic-async") {
         return binding.factory(ctx);
@@ -1741,7 +1757,7 @@ export class DependencyResolver implements ResolverCallbacks {
     } catch (factoryError) {
       return Promise.reject(factoryError);
     } finally {
-      this.#cascadeStack.pop();
+      this.#cascade().pop();
       binding.inFlight = false;
     }
   }
@@ -1844,6 +1860,10 @@ export class DependencyResolver implements ResolverCallbacks {
     return frame;
   }
 
+  #cascade(): Array<ResolutionFrame> {
+    return (this.#cascadeStack ??= []);
+  }
+
   // A pool is keyed by the one array pair its contexts hold, so reuse can never re-point a context
   // a live frame still reads — a nested top-level resolve reaches the same depth while the outer
   // factory runs, and it must get its own context, not the outer frame's re-bound.
@@ -1853,13 +1873,14 @@ export class DependencyResolver implements ResolverCallbacks {
   ): DefaultResolutionContext {
     if (resolutionStack === this.rootStack) {
       const depth = resolutionStack.length;
-      const existing = this.#syncResolutionContextPool[depth];
+      const pool = (this.#syncResolutionContextPool ??= []);
+      const existing = pool[depth];
       if (existing !== undefined) {
         existing.reset(this, resolutionStack, options);
         return existing;
       }
       const created = new DefaultResolutionContext(this, resolutionStack, options);
-      this.#syncResolutionContextPool[depth] = created;
+      pool[depth] = created;
       return created;
     }
     return this.#acquireOffRootSyncContext(resolutionStack, options);

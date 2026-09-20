@@ -48,12 +48,16 @@ function createTokenRecord(bindings: Array<Binding>): TokenRecord {
  *
  * @since 0.3.16-canary.0
  */
+// One shared empty map answers every read of a registry nothing was bound into, so a container
+// that only ever resolves through its parent — every per-request child — allocates no map.
+const EMPTY_LONE: Map<DependencyKey, Binding> = new Map();
+
 export class BindingRegistry {
   // Monotonic mutation counter — lets resolvers version-stamp lookup caches across a container chain.
   #version = 0;
   // The common token lives here and nowhere else: exactly one default-slot binding, so the hot read
   // of every resolve is a bare `Map.get` and a plain bind is one map write.
-  readonly #lone = new Map<DependencyKey, Binding>();
+  #lone: Map<DependencyKey, Binding> = EMPTY_LONE;
   // Every other token — several bindings, a tagged slot, a predicate — has a record here, and a
   // token is in exactly one of the two maps. Allocated by the first token that needs a record.
   #records: Map<DependencyKey, TokenRecord> | undefined;
@@ -115,6 +119,9 @@ export class BindingRegistry {
    */
   add(binding: Binding): Binding | undefined {
     this.#bump();
+    if (this.#lone === EMPTY_LONE) {
+      this.#lone = new Map<DependencyKey, Binding>();
+    }
     if (binding.kind === "constant") {
       this.#heldConstantBinding = true;
     }
@@ -472,6 +479,9 @@ export class BindingRegistry {
       this.#records!.delete(key);
     } else if (bindings.length === 1 && isDefaultSlotBinding(bindings[0]!)) {
       this.#records!.delete(key);
+      if (this.#lone === EMPTY_LONE) {
+        this.#lone = new Map<DependencyKey, Binding>();
+      }
       this.#lone.set(key, bindings[0]!);
     }
   }
