@@ -53,7 +53,7 @@ const KEY_WIDTH = 8;
 function orderLine(shape: BenchRunShape): string {
   return shape.isolated
     ? "interleaved per scenario — cross-library ratios citable"
-    : "library-major — ratios provisional; run bench:isolate to cite them";
+    : "library-major — smoke ratios, provisional; `pnpm bench` isolates and cites";
 }
 
 function pointerLine(input: RunCardInput): string {

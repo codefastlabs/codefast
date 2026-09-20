@@ -36,7 +36,7 @@ function entryCovers(entry: string, key: string): boolean {
 
 const HARNESS_NAMESPACE_WILDCARD = "BENCH_*";
 
-const benchTaskNames = ["bench", "bench:fast", "bench:full", "bench:isolate", "bench:serve", "bench:verbose"];
+const benchTaskNames = ["bench", "bench:fast", "bench:serve"];
 
 // Turbo runs in strict env mode, so a user-facing key no entry covers is silently dropped for
 // every run started at the repo root — the key looks set and changes nothing.

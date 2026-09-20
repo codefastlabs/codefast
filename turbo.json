@@ -74,22 +74,7 @@
       "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
       "passThroughEnv": ["BENCH_*"]
     },
-    "bench:isolate": {
-      "cache": false,
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
-      "passThroughEnv": ["BENCH_*"]
-    },
     "bench:fast": {
-      "cache": false,
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
-      "passThroughEnv": ["BENCH_*"]
-    },
-    "bench:full": {
-      "cache": false,
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
-      "passThroughEnv": ["BENCH_*"]
-    },
-    "bench:verbose": {
       "cache": false,
       "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
       "passThroughEnv": ["BENCH_*"]
