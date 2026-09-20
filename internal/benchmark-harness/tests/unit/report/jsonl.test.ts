@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import type { JsonlBenchObservationRow } from "#report/jsonl";
-import { isJsonlBenchObservationRow, jsonlBenchObservationRowToScenarioTrialResult } from "#report/jsonl";
+import {
+  isJsonlBenchObservationRow,
+  jsonlBenchObservationRowToFingerprint,
+  jsonlBenchObservationRowToScenarioTrialResult,
+} from "#report/jsonl";
 
 /** A minimal row carrying every field the guard requires, config identity included. */
 function validRow(): Record<string, unknown> {
@@ -59,6 +63,12 @@ describe("isJsonlBenchObservationRow", () => {
     expect(isJsonlBenchObservationRow({ ...validRow(), trialCount: "3" })).toBe(false);
   });
 
+  it("rejects a harness provenance of the wrong type, and accepts a row that carries none", () => {
+    expect(isJsonlBenchObservationRow({ ...validRow(), harnessDirty: "yes" })).toBe(false);
+    expect(isJsonlBenchObservationRow({ ...validRow(), harnessCommit: 42 })).toBe(false);
+    expect(isJsonlBenchObservationRow({ ...validRow(), harnessCommit: "abc", harnessDirty: false })).toBe(true);
+  });
+
   it("rejects a row missing a required measurement field", () => {
     const row = validRow();
     delete row["samples"];
@@ -76,5 +86,27 @@ describe("jsonlBenchObservationRowToScenarioTrialResult", () => {
   it("keeps the tier a row carries", () => {
     const row = { ...validRow(), tier: "engine" } as unknown as JsonlBenchObservationRow;
     expect(jsonlBenchObservationRowToScenarioTrialResult(row).tier).toBe("engine");
+  });
+});
+
+describe("jsonlBenchObservationRowToFingerprint", () => {
+  function parsed(row: Record<string, unknown>): JsonlBenchObservationRow {
+    if (!isJsonlBenchObservationRow(row)) {
+      throw new Error("fixture is not a valid row");
+    }
+    return row;
+  }
+
+  it("carries the harness provenance a row records", () => {
+    const print = jsonlBenchObservationRowToFingerprint(
+      parsed({ ...validRow(), harnessCommit: "abc", harnessDirty: true }),
+    );
+    expect(print).toMatchObject({ harnessCommit: "abc", harnessDirty: true });
+  });
+
+  it("leaves the provenance absent on a row written before it was recorded", () => {
+    const print = jsonlBenchObservationRowToFingerprint(parsed(validRow()));
+    expect("harnessCommit" in print).toBe(false);
+    expect("harnessDirty" in print).toBe(false);
   });
 });

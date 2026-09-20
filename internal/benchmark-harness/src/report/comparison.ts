@@ -21,6 +21,7 @@ import { describeDiffTarget, formatCompactHz, formatDeltaPercent } from "#report
 import { HEAD_TO_HEAD_PARITY_BAND, ratioTint } from "#report/verdict";
 import type { Palette, Tint } from "#shared/palette";
 import { createPalette } from "#shared/palette";
+import type { Fingerprint } from "#shared/protocol";
 
 /**
  * One library column: its aggregated report plus the labels used in table headers.
@@ -524,10 +525,20 @@ function buildEnvironmentBullets(
     `- NODE_OPTIONS: \`${fingerprint.nodeOptions || "(empty)"}\``,
     `- GC exposed: ${everyLibrary.map((library) => `${library.displayName}=${String(library.report.fingerprint.gcExposed)}`).join(", ")}`,
     ...buildLoadBullet(everyLibrary, fingerprint.cpuCount),
+    ...buildHarnessBullet(fingerprint),
     `- Library versions: ${everyLibrary.map((library) => `${library.displayName} ${library.report.fingerprint.libraryVersion}`).join(", ")}`,
     `- Trials per library: ${everyLibrary.map((library) => `${library.displayName} ${String(library.report.trialCount)}`).join(", ")}`,
     `- Timestamp: ${everyLibrary.map((library) => `${library.displayName} ${library.report.fingerprint.timestampIso}`).join(", ")}`,
   ];
+}
+
+/** The commit the harness ran from, flagged when its measuring sources were uncommitted. */
+function buildHarnessBullet(fingerprint: Fingerprint): Array<string> {
+  if (fingerprint.harnessCommit === undefined) {
+    return [];
+  }
+  const dirty = fingerprint.harnessDirty === true ? ", with uncommitted changes in its measuring sources" : "";
+  return [`- Harness commit: ${fingerprint.harnessCommit}${dirty}`];
 }
 
 /** The 1-minute load average each child read at its start, flagged when any reading exceeded half the cores. */

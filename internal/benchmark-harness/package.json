@@ -240,6 +240,11 @@
       "types": "./dist/shared/protocol.d.ts",
       "import": "./dist/shared/protocol.js"
     },
+    "./shared/provenance": {
+      "source": "./src/shared/provenance.ts",
+      "types": "./dist/shared/provenance.d.ts",
+      "import": "./dist/shared/provenance.js"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

@@ -177,7 +177,12 @@ and the count of improvements beyond noise. A run of another configuration is na
 The previous run is read before the artifacts are written, while the pointer still names it. `BENCH_BASELINE=<run id>`
 pins the run to diff against instead, and the `Δ` labels say `vs baseline <run id>`: the question a rewrite has to
 answer is whether it held the line against the last run of the engine it replaces, and that run stops being the previous
-one the moment the second run lands. A pinned run that cannot be read is an error, not a fallback.
+one the moment the second run lands. A pinned run that cannot be read is an error, not a fallback. Every observation
+also records the commit the harness ran from and whether its measuring sources (`src/child`, `src/shared`) were clean,
+and the report's Environment names it; the diff is refused when those sources differ between the two commits, when
+either side ran from uncommitted harness sources, or when either recorded no commit — a `Δ` read across a harness change
+would credit the harness's fix to the engine, so the anchor is re-measured with the harness that reads against it
+instead.
 
 A run closes with a card (`src/report/run-card.ts`): wall and rebuild time, library and row counts, the profile, the run
 order and what it means for citing ratios, sanity failures by library, whether `latest.json` moved, every library's

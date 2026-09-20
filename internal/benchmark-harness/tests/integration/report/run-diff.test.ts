@@ -8,6 +8,7 @@ import { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#parent/bench-
 import type { ComparisonDocument } from "#report/comparison-document";
 import { prepareRunDiff, readPreviousRun } from "#report/run-diff";
 import { BENCH_BASELINE_ENV_KEY } from "#shared/env-keys";
+import type { Fingerprint } from "#shared/protocol";
 import { fingerprint, library, scenario, trials } from "#tests/unit/report/support/fixtures";
 
 let temporaryRoot: string;
@@ -54,13 +55,15 @@ function waitForNextMillisecond(): void {
 }
 
 // Writes one whole-suite run holding a single subject row at the given throughput, and returns its id.
-function writeRun(hzPerOp: number): string {
+function writeRun(hzPerOp: number, fingerprintOverrides: Partial<Fingerprint> = {}): string {
   waitForNextMillisecond();
   const paths = buildBenchRunOutputPaths(temporaryRoot);
   writeBenchRunArtifacts({
     paths,
     comparisonDocument: wholeSuiteDocument(paths.runId),
-    librariesForJsonl: [{ fingerprint: fingerprint("cf"), trials: trials([scenario("steady", hzPerOp)]) }],
+    librariesForJsonl: [
+      { fingerprint: fingerprint("cf", fingerprintOverrides), trials: trials([scenario("steady", hzPerOp)]) },
+    ],
   });
   return paths.runId;
 }
@@ -132,5 +135,14 @@ describe("prepareRunDiff", () => {
     writeRun(100);
     const latest = writeRun(110);
     expect(prepareRunDiff(temporaryRoot, current)).toMatchObject({ previousRunId: latest, pinned: false });
+  });
+
+  // An anchor measured before the harness stamped its commit is re-measured, never silently read against.
+  it("refuses a pinned baseline that recorded no harness commit", () => {
+    const baseline = writeRun(100, { harnessCommit: undefined, harnessDirty: undefined });
+    vi.stubEnv(BENCH_BASELINE_ENV_KEY, baseline);
+    const diff = prepareRunDiff(temporaryRoot, current);
+    expect(diff).toMatchObject({ comparable: false, pinned: true, previousRunId: baseline });
+    expect(diff?.comparable === false ? diff.reason : "").toContain("no harness commit");
   });
 });

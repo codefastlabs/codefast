@@ -22,6 +22,10 @@ export interface JsonlBenchObservationRow {
   readonly gcExposed: boolean;
   /** Absent on rows written before the load average was recorded. */
   readonly loadAverage1m?: number | undefined;
+  /** The commit the harness ran from; absent on rows written before it was recorded. */
+  readonly harnessCommit?: string | undefined;
+  /** Whether the harness's measuring sources were uncommitted; absent together with `harnessCommit`. */
+  readonly harnessDirty?: boolean | undefined;
   readonly trialIndex: number;
   readonly scenarioId: string;
   readonly group: string;
@@ -94,6 +98,8 @@ export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchO
     numberFields.every((field) => typeof candidate[field] === "number") &&
     typeof candidate["gcExposed"] === "boolean" &&
     (candidate["loadAverage1m"] === undefined || typeof candidate["loadAverage1m"] === "number") &&
+    (candidate["harnessCommit"] === undefined || typeof candidate["harnessCommit"] === "string") &&
+    (candidate["harnessDirty"] === undefined || typeof candidate["harnessDirty"] === "boolean") &&
     typeof candidate["stress"] === "boolean"
   );
 }
@@ -138,6 +144,8 @@ export function jsonlBenchObservationRowToFingerprint(row: JsonlBenchObservation
     libraryVersion: row.libraryVersion,
     gcExposed: row.gcExposed,
     ...(row.loadAverage1m === undefined ? {} : { loadAverage1m: row.loadAverage1m }),
+    ...(row.harnessCommit === undefined ? {} : { harnessCommit: row.harnessCommit }),
+    ...(row.harnessDirty === undefined ? {} : { harnessDirty: row.harnessDirty }),
     timestampIso: row.timestampIso,
   };
 }

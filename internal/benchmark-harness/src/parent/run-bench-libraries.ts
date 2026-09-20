@@ -13,6 +13,8 @@ import type { BenchSubprocessConfig } from "#shared/config";
 import { resolveDisplayName, selectLibraries } from "#shared/config";
 import { resolveBenchModeFromEnvironment, resolveLibraryFilterFromEnvironment } from "#shared/env-keys";
 import type { SubprocessPayload } from "#shared/protocol";
+import type { HarnessProvenance } from "#shared/provenance";
+import { readHarnessProvenance } from "#shared/provenance";
 
 /**
  * Options for {@link runBenchLibraries}.
@@ -50,6 +52,22 @@ function describeBenchMode(): string | undefined {
   return undefined;
 }
 
+// The parent stamps it: every child of a run ran the same harness, and a child knows nothing about git.
+function stampHarnessProvenance(
+  payloads: ReadonlyMap<string, SubprocessPayload>,
+  provenance: HarnessProvenance | undefined,
+): ReadonlyMap<string, SubprocessPayload> {
+  if (provenance === undefined) {
+    return payloads;
+  }
+  return new Map(
+    [...payloads].map(([key, payload]) => [
+      key,
+      { ...payload, fingerprint: { ...payload.fingerprint, ...provenance } },
+    ]),
+  );
+}
+
 /**
  * Runs the libraries library-major, or interleaved per scenario under `BENCH_ISOLATE`, reporting to one display.
  *
@@ -65,6 +83,10 @@ export async function runBenchLibraries(options: RunBenchLibrariesOptions): Prom
   const modeNote = describeBenchMode();
   if (modeNote !== undefined) {
     display.log(modeNote);
+  }
+  const provenance = readHarnessProvenance(packageRootDirectory);
+  if (provenance === undefined) {
+    display.log("[bench] Not a git checkout: the run records no harness commit, so no later run can diff against it.");
   }
 
   const parametersFor = (config: BenchSubprocessConfig): RunBenchSubprocessParameters => ({
@@ -82,7 +104,7 @@ export async function runBenchLibraries(options: RunBenchLibrariesOptions): Prom
         libraries.map((config) => ({ key: config.libraryName, parameters: parametersFor(config) })),
         display,
       );
-      return { payloads, runOrder: INTERLEAVED_RUN_ORDER };
+      return { payloads: stampHarnessProvenance(payloads, provenance), runOrder: INTERLEAVED_RUN_ORDER };
     }
     for (const config of libraries) {
       display.register(config.libraryName, resolveDisplayName(config));
@@ -94,7 +116,7 @@ export async function runBenchLibraries(options: RunBenchLibrariesOptions): Prom
         await runBenchSubprocess({ ...parametersFor(config), progress: { display, key: config.libraryName } }),
       );
     }
-    return { payloads, runOrder: LIBRARY_MAJOR_RUN_ORDER };
+    return { payloads: stampHarnessProvenance(payloads, provenance), runOrder: LIBRARY_MAJOR_RUN_ORDER };
   } finally {
     display.finish();
   }
