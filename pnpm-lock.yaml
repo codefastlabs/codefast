@@ -177,6 +177,9 @@ catalogs:
     jiti:
       specifier: ^2.7.0
       version: 2.7.0
+    jsdom:
+      specifier: ^30.1.0
+      version: 30.1.0
     knip:
       specifier: ^6.36.0
       version: 6.36.0
@@ -290,7 +293,6 @@ catalogs:
       version: 4.6.5
 
 overrides:
-  jsdom: 30.1.0
   '@types/node': ^22.20.3
 
 importers:
@@ -473,7 +475,7 @@ importers:
         specifier: 'catalog:'
         version: 2.0.0
       jsdom:
-        specifier: 30.1.0
+        specifier: 'catalog:'
         version: 30.1.0
       typescript:
         specifier: 'catalog:'
@@ -918,7 +920,7 @@ importers:
         specifier: 'catalog:'
         version: 5.0.1(vitest@5.0.1)
       jsdom:
-        specifier: 30.1.0
+        specifier: 'catalog:'
         version: 30.1.0
       typescript:
         specifier: 'catalog:'
@@ -973,7 +975,7 @@ importers:
         specifier: 'catalog:'
         version: 5.0.1(vitest@5.0.1)
       jsdom:
-        specifier: 30.1.0
+        specifier: 'catalog:'
         version: 30.1.0
       react:
         specifier: 'catalog:'
@@ -1091,7 +1093,7 @@ importers:
         specifier: 'catalog:'
         version: 11.0.0
       jsdom:
-        specifier: 30.1.0
+        specifier: 'catalog:'
         version: 30.1.0
       postcss:
         specifier: 'catalog:'
@@ -6276,7 +6278,7 @@ packages:
       '@vitest/coverage-v8': 5.0.1
       '@vitest/ui': 5.0.1
       happy-dom: '*'
-      jsdom: 30.1.0
+      jsdom: '*'
       vite: ^6.4.0 || ^7.0.0 || ^8.0.0
     peerDependenciesMeta:
       '@edge-runtime/vm':
