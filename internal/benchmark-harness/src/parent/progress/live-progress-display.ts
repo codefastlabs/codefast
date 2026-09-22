@@ -29,8 +29,9 @@ export interface LiveProgressDisplayOptions {
   readonly now?: (() => number) | undefined;
 }
 
+// Only a live measuring subprocess changes a frame between events; an idle row's busy time is frozen.
 function isTicking(row: LibraryProgress): boolean {
-  return row.startedAtMs !== undefined && row.finishedAtMs === undefined;
+  return row.subprocessStartedAtMs !== undefined;
 }
 
 /**

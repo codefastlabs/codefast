@@ -106,11 +106,13 @@ function renderTrial(row: LibraryProgress): string {
   return `t${String(trial)}/${String(row.trialCount)}`;
 }
 
-function renderElapsed(row: LibraryProgress, nowMs: number): string {
-  if (row.startedAtMs === undefined) {
+// Interleaving gives every row the same wall-clock span, so the column shows measuring time instead.
+function renderBusy(row: LibraryProgress, nowMs: number): string {
+  if (row.busyMs === 0 && row.subprocessStartedAtMs === undefined) {
     return "";
   }
-  return formatElapsed((row.finishedAtMs ?? nowMs) - row.startedAtMs);
+  const inFlightMs = row.subprocessStartedAtMs === undefined ? 0 : nowMs - row.subprocessStartedAtMs;
+  return formatElapsed(row.busyMs + inFlightMs);
 }
 
 function renderTail(row: LibraryProgress): string {
@@ -157,7 +159,7 @@ export function renderProgressFrame(
   const labelWidth = Math.max(0, ...rows.map((row) => row.label.length));
   const countsWidth = Math.max(0, ...rows.map((row) => renderCounts(row).length));
   const trialWidth = Math.max(0, ...rows.map((row) => renderTrial(row).length));
-  const elapsedWidth = Math.max(0, ...rows.map((row) => renderElapsed(row, options.nowMs).length));
+  const busyWidth = Math.max(0, ...rows.map((row) => renderBusy(row, options.nowMs).length));
 
   const palette = options.palette ?? PLAIN_PALETTE;
   const gap = COLUMN_GAP.length;
@@ -167,7 +169,7 @@ export function renderProgressFrame(
     BAR_CELLS +
     (countsWidth === 0 ? 0 : gap + countsWidth) +
     (trialWidth === 0 ? 0 : gap + trialWidth) +
-    (elapsedWidth === 0 ? 0 : gap + elapsedWidth);
+    (busyWidth === 0 ? 0 : gap + busyWidth);
 
   // A column nobody fills yet is left out entirely, so an all-queued frame has no doubled gaps.
   // Every cell is padded and clipped as plain text first; colour codes go on last.
@@ -177,7 +179,7 @@ export function renderProgressFrame(
       renderBar(row, options.unicode, palette),
       ...(countsWidth === 0 ? [] : [renderCounts(row).padStart(countsWidth)]),
       ...(trialWidth === 0 ? [] : [palette.dim(renderTrial(row).padEnd(trialWidth))]),
-      ...(elapsedWidth === 0 ? [] : [palette.dim(renderElapsed(row, options.nowMs).padStart(elapsedWidth))]),
+      ...(busyWidth === 0 ? [] : [palette.dim(renderBusy(row, options.nowMs).padStart(busyWidth))]),
     ].join(COLUMN_GAP);
     const tail = renderTail(row);
     const tailWidth = options.width - plainHeadWidth - gap;

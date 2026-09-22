@@ -45,7 +45,6 @@ export class PlainProgressDisplay implements ProgressDisplay {
   readonly #now: () => number;
   readonly #heartbeatSilenceMs: number;
   readonly #lastActivityAtMs = new Map<string, number>();
-  readonly #subprocessStartedAtMs = new Map<string, number>();
   #timer: NodeJS.Timeout | undefined;
 
   constructor(options: PlainProgressDisplayOptions) {
@@ -77,7 +76,6 @@ export class PlainProgressDisplay implements ProgressDisplay {
   subprocessStarted(key: string, scenarioId?: string): void {
     this.#tracker.subprocessStarted(key, scenarioId);
     this.#touch(key);
-    this.#subprocessStartedAtMs.set(key, this.#now());
     this.#write(`Running ${this.#label(key)}${scenarioId === undefined ? "" : ` [${scenarioId}]`}…`);
   }
 
@@ -96,7 +94,7 @@ export class PlainProgressDisplay implements ProgressDisplay {
   }
 
   subprocessFinished(key: string, exitCode: number | undefined): void {
-    const startedAtMs = this.#subprocessStartedAtMs.get(key);
+    const startedAtMs = this.#tracker.get(key)?.subprocessStartedAtMs;
     this.#tracker.subprocessFinished(key, exitCode);
     this.#touch(key);
     const elapsed = startedAtMs === undefined ? "" : ` in ${formatElapsed(this.#now() - startedAtMs)}`;
@@ -107,7 +105,9 @@ export class PlainProgressDisplay implements ProgressDisplay {
     this.#tracker.libraryDone(key);
     const row = this.#tracker.get(key);
     if (row?.subprocessScope === "scenario") {
-      this.#write(`${this.#label(key)}: all ${String(row.passScenario)} scenario(s) measured.`);
+      this.#write(
+        `${this.#label(key)}: all ${String(row.passScenario)} scenario(s) measured in ${formatElapsed(row.busyMs)}.`,
+      );
     }
   }
 
