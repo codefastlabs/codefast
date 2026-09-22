@@ -17,7 +17,6 @@ describe("package discovery", () => {
       "readme",
       "spec",
       "architecture",
-      "learning",
       "contributing",
       "changelog",
     ]);

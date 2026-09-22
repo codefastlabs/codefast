@@ -50,7 +50,7 @@ only joined by a newer audit.
 | **di**                                                                    | [README.md](../../packages/di/README.md)                                        | Guide (usage)                                          |
 |                                                                           | [SPEC.md](../../packages/di/SPEC.md)                                            | Spec — external behavioural contract (source of truth) |
 |                                                                           | [ARCHITECTURE.md](../../packages/di/ARCHITECTURE.md)                            | Design doc — internal shape & invariants               |
-|                                                                           | [LEARNING.md](../../packages/di/LEARNING.md)                                    | Guide (educational)                                    |
+|                                                                           | LEARNING.md                                                                     | Guide (educational)                                    |
 |                                                                           | [CONTRIBUTING.md](../../packages/di/CONTRIBUTING.md)                            | Runbook (contributor workflow)                         |
 |                                                                           | [examples/README.md](../../packages/di/examples/README.md) + 19 example READMEs | Guide / reference (uniform family)                     |
 | **cli**                                                                   | [README.md](../../packages/cli/README.md)                                       | Guide                                                  |
