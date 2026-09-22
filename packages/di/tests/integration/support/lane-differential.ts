@@ -551,16 +551,45 @@ export function isLoneRootBinding(spec: GraphSpec): boolean {
   return onRoot.length === 1 && !onRoot[0]!.many && onRoot[0]!.slotTags.length === 0;
 }
 
+/** The tokens the root's alias edges can reach, so a chain dangling at one of them is the root's own miss. */
+function aliasReachableTokens(spec: GraphSpec): Set<number> {
+  const reachable = new Set<number>();
+  const queue: Array<number> = [0];
+  while (queue.length > 0) {
+    const token = queue.pop()!;
+    for (const node of spec.nodes) {
+      if (node.token === token && node.kind === "alias" && !reachable.has(node.aliasTarget)) {
+        reachable.add(node.aliasTarget);
+        queue.push(node.aliasTarget);
+      }
+    }
+  }
+  return reachable;
+}
+
 /**
  * Whether a snapshot is the miss a root-level optional read answers with `undefined` instead.
  *
  * @remarks Necessary, not sufficient: the same error thrown from deeper in the graph propagates
- * through an optional read too, so a lane answering `undefined` for any other error is a defect.
+ * through an optional read too, so a lane answering `undefined` for any other error is a defect. A
+ * dangling alias off the root is a root miss too — the error names the terminal token, not `t0`, so
+ * the root's alias-reachable set is accepted alongside `t0`, while a dependency miss stays flagged.
  */
-export function isRootLevelMiss(snapshot: unknown): boolean {
+export function isRootLevelMiss(snapshot: unknown, spec: GraphSpec): boolean {
   if (typeof snapshot !== "object" || snapshot === null || !("error" in snapshot)) {
     return false;
   }
   const { error, message } = snapshot as { error: string; message: string };
-  return (error === "TokenNotBoundError" || error === "NoMatchingBindingError") && message.includes("'t0'");
+  if (error !== "TokenNotBoundError" && error !== "NoMatchingBindingError") {
+    return false;
+  }
+  if (message.includes("'t0'")) {
+    return true;
+  }
+  for (const target of aliasReachableTokens(spec)) {
+    if (message.includes(`'t${String(target)}'`)) {
+      return true;
+    }
+  }
+  return false;
 }
