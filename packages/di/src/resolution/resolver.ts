@@ -225,15 +225,13 @@ export class DependencyResolver implements ResolverCallbacks {
       if (this.#satisfiesPredicate(indexed, options, resolutionStack)) {
         return { binding: indexed, owner: this };
       }
-    } else {
-      if (options.name !== undefined) {
-        const pairTag = loneTagBesideNameOf(options);
-        if (pairTag !== undefined) {
-          const nameCriterion = slotNameCriterionOf(options.name);
-          if (nameCriterion === undefined) {
-            // No binding anywhere has declared this name, so no slot in any registry can carry it.
-            return undefined;
-          }
+    } else if (options.name !== undefined) {
+      const pairTag = loneTagBesideNameOf(options);
+      if (pairTag !== undefined) {
+        const nameCriterion = slotNameCriterionOf(options.name);
+        // A name interned nowhere cannot key a slot, but a slot whose criteria are a subset of the
+        // request's still matches — so an index miss falls through to the scan, never a clean miss.
+        if (nameCriterion !== undefined) {
           // The exact two-criterion slot, memoized over the chain; a predicate or an alias declines to the scan.
           const entry = this.#lookup.namedTaggedEntry(token, nameCriterion, pairTag);
           if (entry !== null) {
