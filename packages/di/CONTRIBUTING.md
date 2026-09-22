@@ -77,6 +77,13 @@ pnpm --filter @codefast/di build   # rm -rf dist && tsc -p tsconfig.build.json (
 TS7 emits `.js` + `.d.ts` per file; there is no bundler. `apps/web` consumes the built `dist/`, so run
 `pnpm build:packages` before testing an app against your change.
 
+`package.json#files` ships `src` on purpose: the `source` export condition lets dev and tests run the TypeScript
+directly with no prior build, and `dist`'s source maps point back at it so in-repo consumers get go-to-definition. None
+of that reaches npm — `codefast pack-slim` runs on the CI checkout right before `changeset publish` and strips `src`,
+every `source` condition, the dev-only scripts and the source maps, so the tarball carries `dist` runtime and types
+only. Do not "tidy" `src` out of `files`, and do not repoint the `types`/`default` conditions at `src`: those two lanes
+are a consumer's compiler and a consumer's Node.
+
 ## Test
 
 Tests live under exactly one of `tests/{unit,integration,e2e,types}/**`, mirroring the `src/` path
@@ -86,7 +93,10 @@ Tests live under exactly one of `tests/{unit,integration,e2e,types}/**`, mirrori
 pnpm --filter @codefast/di test:unit   # or test:integration / test:type / test:e2e
 ```
 
-Add coverage for the new behavior.
+Add coverage for the new behavior. Vitest transforms with OXC by default; a test that needs Stage 3 decorators goes
+through `@rolldown/plugin-babel` with `@babel/plugin-proposal-decorators` (`version: "2023-11"`), configured in
+[`vitest.config.ts`](./vitest.config.ts). A transform touching decorator metadata has to keep `inject()` a callable
+object — use `isInjectionDescriptor(value)` before walking a deps array.
 
 ## Guard performance — (conditional: touched resolver / resolution / registry hot paths)
 

@@ -20,41 +20,30 @@ Three kinds of callout recur:
 - **Rationale / Compatibility** — explanation of _why_ a rule exists, or how it relates to InversifyJS. These notes
   never add a rule.
 
+Everything specified here is observable through the public API. What the engine is made of — its layers, caches and
+compiled plans — is in [`ARCHITECTURE.md`](./ARCHITECTURE.md); why the API is shaped like this rather than InversifyJS
+v8's is in [`DECISIONS.md`](./DECISIONS.md); how to use it is in [`README.md`](./README.md); and how to build, test and
+release the package is in [`CONTRIBUTING.md`](./CONTRIBUTING.md). A rule a caller cannot see broken does not belong
+here.
+
 ---
 
-## Background and goals
+## Scope and requirements
 
-### What InversifyJS v8 solved
+`@codefast/di` is a dependency-injection container for TypeScript with no runtime dependencies. It is not compatible
+with any version of InversifyJS, by design.
 
-InversifyJS v8 (released March 2026) brought substantial improvements over v7: a consistent naming convention
-(unqualified = sync, `Async` suffix = async), `Provider` dropped in favour of `Factory`, better type safety for
-`ServiceIdentifier`, and a move to ESM-only. Those are the right calls, and this library learns from them.
+> **Normative — what a consumer must bring.**
+>
+> - **ESM only.** There is no CommonJS build and no dual build.
+> - **Node.js ≥ 22.12.**
+> - **TypeScript ≥ 5.9**, for a stable `Symbol.metadata`. Stage 3 decorators have been the default since TypeScript 5.0,
+>   so `experimentalDecorators` and `emitDecoratorMetadata` stay **off** and `reflect-metadata` is never loaded
+>   ([tsconfig setup](#tsconfig-setup)).
+> - Decorators themselves are optional: an application that declares every binding explicitly needs nothing beyond the
+>   runtime and the module format.
 
-### What InversifyJS v8 still has not solved
-
-**`reflect-metadata` is still there.** The v8 getting-started guide still requires:
-
-```
-npm install inversify reflect-metadata
-```
-
-And it still needs `experimentalDecorators: true` plus `emitDecoratorMetadata: true` in tsconfig — two legacy flags tied
-to a TC39 proposal that has since been replaced. v8 has no plan to drop `reflect-metadata`, because its entire decorator
-layer still depends on `emitDecoratorMetadata` to read constructor types.
-
-**`ServiceIdentifier` is still not a branded type.** v8 narrowed it from `string | symbol | Function` down to
-`string | symbol | AbstractNewable<T> | Newable<T>` (the `T` spelling is kept verbatim from Inversify's own API) — a
-small improvement over v7 — but it is still not branded. `container.get<WrongType>('my-service')` still compiles and
-still returns the wrong type.
-
-### Goals of this library
-
-- **Zero `reflect-metadata`** — no polyfill, no legacy flags
-- **TC39 Decorator Stage 3** — `Symbol.metadata` stable (TypeScript 5.9+), no `experimentalDecorators`
-- **Branded `Token<Value>`** — fully type-safe, never leaks `any`
-- **ESM-only** — like InversifyJS v8, no dual build
-- **Learn the good API from v8** — lifecycle hooks, fluent builder, naming convention — but rebuild it from scratch
-- **No backward compatibility** with any version of InversifyJS
+The entry points a consumer imports from are in [Public API](#public-api).
 
 ---
 
@@ -259,28 +248,13 @@ container.resolve(Storage, { tag: Region.of("eu") });
 > **Normative — tag values compare by `Object.is`, on the fast path too.** The intern cache must keep `-0` separate from
 > `+0` to preserve this rule. `NaN` folds to one criterion, because `Object.is(NaN, NaN)` is `true`.
 
-Interning is _how_ the rule is implemented: since each value has exactly one criterion, comparing criteria by
-**identity** gives the same answer as `Object.is` on the value.
-
-> **Implementer note.** An index keyed by **criterion** is exact and needs no recheck. An index keyed by _value_ instead
-> answers with **SameValueZero**, treating `-0` and `+0` as one key — which contradicts `Object.is` (see
-> [Slots and last-wins](#slots-and-last-wins--the-exact-definition), [Advanced Constraints](#advanced-constraints)) —
-> and forces the fast path to recheck with the matcher.
+Because interning gives each value exactly one criterion, comparing criteria by **identity** answers exactly as
+`Object.is` on the value does — which is why a criterion may never be constructed any other way.
 
 #### Passing `tag` and `tags` together
 
 > **Normative.** The request carries the **union** of both sources — equivalent to `tags: [tag, ...tags]`, and
 > `InjectOptions` folds it into exactly that shape.
-
-Such a request asks for two or more tags, so it cannot use the single-tag index; it takes the full selection path.
-
-#### Key sets as a bitmask (implementation note)
-
-The **subset rule is normative**: a slot only matches when the request carries **every** key the slot declares
-([Slots and last-wins](#slots-and-last-wins--the-exact-definition)). The bitmask is not normative — it is how the
-implementation rejects early. It ORs the keys into a word and rejects with `(requestMask & slotMask) !== slotMask`
-before reading any criterion. Bits wrap every 32 keys, so two keys can share a bit: that is a **false positive** which
-identity eliminates afterwards, never a false negative.
 
 ### `ResolutionContext`
 
@@ -359,8 +333,8 @@ ancestors       = []
 
 > **`resolutionPath` vs `resolutionStack`.** `resolutionPath` is an array of `tokenName` strings, enough to display in
 > an error message (`"App → Database → Logger"`). `resolutionStack` holds full `ResolutionFrame`s (scope, bindingId,
-> slot) — used by advanced constraints and by validate. The implementer must maintain both structures in parallel inside
-> the resolver: the string path (cheaper) and the frame stack (richer).
+> slot) — used by advanced constraints and by validate. Both describe the same path, and a rule stated over one holds
+> over the other.
 
 ### `TokenValue`
 
@@ -714,9 +688,9 @@ tells you what you may call next.
 How to read the rows:
 
 - **`bind(token)`** returns a builder with **only** the `to*` group and nothing else.
-- **The shared part** — the four constraint methods (`when`, `whenNamed`, `whenTagged`, `whenDefault`) plus `id()` — is
-  factored into a `SlotConstrainedBuilder` interface that the three concrete builders inherit. It never appears in the
-  chain, and no call returns it.
+- **The shared part** — the four constraint methods (`when`, `whenNamed`, `whenTagged`, `whenDefault`) plus `many()` and
+  `id()` — is factored into a `SlotConstrainedBuilder` interface that the three concrete builders inherit. It never
+  appears in the chain, and no call returns it.
 - **`toConstantValue()`** has no scope step because a constant binding is always a singleton. Calling a lifecycle hook
   on it moves to a builder with only lifecycle and `id()` left — a one-way state: calling a hook locks the constraint
   part.
@@ -1074,14 +1048,10 @@ when exactly one must be chosen.
 > and specificity decides as usual (case-table row 9). Outcomes differ **only** for a request carrying both a `name` and
 > at least one tag. A request carrying only a name, only tags, or nothing resolves exactly as before.
 
-### The `Binding` discriminated union — internal data model
+### The `Binding` discriminated union
 
-`Binding<Value>` is the union type representing a binding committed into the registry. The implementer must define it in
-`binding.ts`. Fields are `readonly` to library users.
-
-> **Internal refinement.** A fluent chain **may refine in place** exactly those fields no registry index depends on
-> (`scope`, `onActivation`, `onDeactivation`) on the very object already registered; changing `slot`/`predicate`
-> requires re-indexing, so those still build a new object. See `ARCHITECTURE.md`.
+`Binding<Value>` is the committed form of a binding: what the registry holds, what selection matches against, and what
+`BindingSnapshot` and `GraphNode` are the public views of. Its fields are `readonly`.
 
 **`BindingSlot` — used for slot-aware last-wins and for resolution matching.** `BindingSlot` carries `tags` — the
 binding's whole criterion set, the reserved name criterion included (`[]` = the default slot) — and `name`, the derived
@@ -1089,7 +1059,7 @@ view of the reserved criterion (`undefined` when the slot carries none). Order i
 
 Two `BindingSlot`s are equal when their criterion sets are equal by the identity of each criterion (order does not
 matter) — equivalent to `Object.is` on `[key, value]` thanks to interning; `name`, being derived, needs no separate
-comparison. The implementer should provide a `bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolean` helper.
+comparison.
 
 **Fields common to every binding (except where noted).** Every committed binding carries: `id`, `token`, `slot`, and an
 optional `predicate` coming from `.when()`. `whenNamed`/`whenTagged` do **not** become part of the predicate — they go
@@ -1252,6 +1222,16 @@ const [a, b] = await Promise.all([container.resolveAsync(Database), container.re
 // a === b: true
 ```
 
+#### Code generation and Content Security Policy
+
+A transient class, `toResolved` or `toResolvedAsync` binding a container has resolved many times, through `resolve` or
+`resolveAsync`, has its compiled plan generated as a function of its own through the `Function` constructor; a runtime
+that refuses the constructor (a Content Security Policy without `unsafe-eval`) leaves every plan a closure.
+
+> **Normative.** The two paths are indistinguishable to a caller — the same instances, the same errors, the same cycle
+> detection — and only the throughput of a hot plan differs. A container reports how many plans it has generated as
+> `generatedPlanCount`, through the `RESOLUTION_DIAGNOSTICS` symbol ([Public API](#public-api)).
+
 ### Managing bindings
 
 ```ts
@@ -1317,7 +1297,8 @@ unbind-then-bind, never a way to override a parent.
 > - If the old binding **does** have an async `onDeactivation`: a sync `rebind()` throws `AsyncDeactivationError` — the
 >   same behaviour as a sync `unbind()`.
 
-There is no `rebindAsync()` (see [Not adopted from v8](#summary-not-adopted-from-v8)), so the required workaround is:
+There is no `rebindAsync()` (see [Not adopted from v8](./DECISIONS.md#not-adopted-from-v8)), so the required workaround
+is:
 
 ```ts
 // When the old binding has an async onDeactivation:
@@ -1789,7 +1770,7 @@ type InjectableDependency<Value = unknown> = Token<Value> | Constructor<Value> |
 > - `Constructor<Value>` → `{ token, optional: false, multi: false, name: undefined, tags: undefined }`
 > - `InjectionDescriptor<Value>` → left as-is
 
-`InjectableDependency` is exported from `@codefast/di` (see [Public API](#public-api-indexts)).
+`InjectableDependency` is exported from `@codefast/di` (see [Public API](#public-api)).
 
 #### `InjectableOptions` and the full signature
 
@@ -1894,18 +1875,6 @@ The list of `@inject accessor` fields is obtained through `getAccessorMetadata(t
 `getConstructorMetadata(target)` only describes the constructor's dependencies; it does not stand in for accessor
 fields.
 
-```ts
-getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined {
-  const own = Object.getOwnPropertyDescriptor(target, METADATA_SYMBOL);
-  if (own === undefined) return undefined;
-  const meta = own.value;
-  if (!meta || typeof meta !== "object" || !Object.hasOwn(meta, INJECTABLE_KEY)) {
-    return undefined;
-  }
-  return meta[INJECTABLE_KEY] as ConstructorMetadata;
-}
-```
-
 > **Normative — no leaking of parent metadata.** If a child extends a parent but has no `@injectable()`,
 > `getConstructorMetadata` returns `undefined` and the container throws `MissingMetadataError`. The parent class's
 > metadata is never silently leaked.
@@ -1985,12 +1954,8 @@ const instance = runWithContainer(container, () => new Dashboard());
 
 > **Exact shape:** `src/ambient/active-container.ts`.
 
-**The resolver uses `runWithContainer` when it `new`s a class:**
-
-```ts
-// resolver.ts — when instantiating a ClassBinding, or a class using @inject accessors
-const instance = runWithContainer(this.container, () => new target(...constructorArgs));
-```
+The container opens that context itself around every `new` it performs for a class with accessor injection, so a resolve
+needs no `runWithContainer` at the call site — only a hand-built instance does.
 
 **The `inject()` accessor decorator uses `getActiveContainer` in the initializer.** In its accessor-decorator role, the
 implementation of `inject()` does three things:
@@ -2024,11 +1989,6 @@ resolver.resolve(Dashboard)
 > event loop) this is safe, because JS has no true parallelism. `runWithContainer` with `try/finally` guarantees that
 > nested construction (A injects B injects C) stacks correctly. Should the library ever need to support Worker threads,
 > each Worker has its own module scope — there is no shared state.
-
-> **`INJECT_ACCESSOR_KEY`.** A `unique symbol` in `metadata-keys.ts`, not exported. `SymbolMetadataReader` reads it
-> through `getAccessorMetadata(target)` and a WeakMap mirror keyed by `context.metadata`. The resolver uses
-> `getAccessorMetadata` to detect accessor injection and to wrap `new` in `runWithContainer` when a class needs an
-> active container inside its initializers.
 
 #### Design choices
 
@@ -2582,7 +2542,6 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`        | `tokenName`                                      |
 | `ChainAlreadyRegisteredError`   | `CHAIN_ALREADY_REGISTERED`    | A second `to*()` on a chain that already registered its binding         | `tokenName`                                      |
 | `ManyBindingSlotError`          | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member | `tokenName`                                      |
-| `ManyBindingSlotError`          | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member | `tokenName`                                      |
 | `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                               | `tokenName`                                      |
 | `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member         | `decoratorName`, `memberName`                    |
 | `SymbolKeyedLifecycleError`     | `SYMBOL_KEYED_LIFECYCLE`      | `@postConstruct` / `@preDestroy` on a symbol-keyed method               | `decoratorName`, `memberName`                    |
@@ -2658,903 +2617,41 @@ sits:
 
 ---
 
-## File structure
+## Public API
 
-```
-packages/di/
-├── ARCHITECTURE.md            Layering, hot-path invariants, and the rules for changing resolution/
-│                              — read it before touching anything under src/resolution/
-│                                (per-shape costs are measured by the benchmarks/di suite, not recorded here)
-├── src/                       Directory = layer. Imports only flow downward in the order below.
-│   │  ── layer 0: core/, errors/, injection/ ──────────────────────────────
-│   ├── core/
-│   │   ├── constructor-type.ts Constructor<Value>, ConstructorInvocation (re-exported via types.ts)
-│   │   ├── types.ts           DependencyKey, BindingScope, BindingIdentifier, BindingKind,
-│   │   │                      ActivationHandler, DeactivationHandler, ResolveOptions,
-│   │   │                      ResolutionFrame, ConstraintContext, ResolutionContext, TokenValue
-│   │   ├── token.ts           Token<Value> branded type; token(), tokenName()
-│   │   ├── tag.ts             tag() — the one and only tag-key factory; interned BindingTag,
-│   │   │                      TagKeyMask and the subset check over keys
-│   │   ├── binding.ts         The Binding discriminated union + BindingSlot utilities;
-│   │   │                      generateBindingId(); every public builder interface. The one
-│   │   │                      construction point is BindingChain (container/binding-builders.ts):
-│   │   │                      the chain bind() returns IS the binding, one hidden class for all
-│   │   ├── binding-scope.ts   effectiveBindingScope() — internal; use BindingSnapshot.scope
-│   │   ├── registry.ts        BindingRegistry — slot-aware last-wins, the fast lookup indexes,
-│   │   │                      a version counter for memoization; stores bindings BY REFERENCE (no re-copy)
-│   │   ├── constraint-requirement.ts  What a constraint needs before it can match, so validate() can check for it
-│   │   ├── map-upsert.ts      getOrInsert()/getOrInsertComputed() — the two Map upserts every index allocates through
-│   │   └── module.ts          SyncModule / AsyncModule, MODULE_SETUP
-│   ├── errors/
-│   │   ├── errors.ts          Every error class
-│   │   └── diagnostics.ts     RESOLUTION_DIAGNOSTICS — the channel for reading the resolver's runtime counters
-│   ├── injection/
-│   │   ├── descriptor.ts      The inject-descriptor layer: optional(), injectAll(),
-│   │   │                      isInjectionDescriptor(), normalizeToDescriptor(); folds `tag`
-│   │   │                      into `tags` so everything downstream sees one spelling
-│   │   └── resolve-options.ts injectionSlotToResolveOptions(), bindingSlotToResolveOptions()
-│   │
-│   │  ── layer 1: lifecycle/, ambient/ ────────────────────────────────────
-│   ├── lifecycle/
-│   │   ├── scope-manager.ts   ScopeManager — singleton/scoped cache, async serialization
-│   │   └── lifecycle-manager.ts LifecycleManager — the onActivation/onDeactivation chain
-│   ├── ambient/
-│   │   └── active-container.ts runWithContainer() / getActiveContainer() — the module-level
-│   │                          active variable that accessor injection reads during `new`
-│   │
-│   │  ── layer 2: resolution/ (perf-critical core) ────────────────────────
-│   ├── resolution/
-│   │   ├── resolver.ts        DependencyResolver — the sync + async pipelines. One class because
-│   │   │                      `#` privates cannot span files and both pipelines share the same
-│   │   │                      private state at every hop
-│   │   ├── context.ts         DefaultResolutionContext (pooled), AsyncLevelContext,
-│   │   │                      ResolverCallbacks
-│   │   ├── cache/
-│   │   │   ├── binding-lookup-cache.ts  Memo of option-free lookups per chain, aliases already
-│   │   │   │                  folded; stamped with the summed version of the whole chain registry
-│   │   │   ├── class-introspector.ts    Per-class cache: constructor metadata, detection of
-│   │   │   │                  @postConstruct, accessor injection, and the `new` call itself
-│   │   │   └── activation-need.ts  Per-binding cache: does the activation pipeline need to run
-│   │   ├── plan/
-│   │   │   ├── instantiation-plan.ts   The compiler for a compiled plan + the escape to the runtime path
-│   │   │   └── plan-codegen.ts         Renders a hot plan as a function of its own; a closure where the runtime forbids it
-│   │   ├── path/
-│   │   │   └── resolution-path.ts      Cycle guard over a path array (linear scan → Set
-│   │   │                      once deep); OwnedBranchPath for async branches
-│   │   └── select/
-│   │       ├── binding-select.ts   selectBinding(), selectAllBindings(), matchesSlot()
-│   │       └── constraints.ts      The advanced constraint predicates (whenParentNamed, …)
-│   │
-│   │  ── layer 3: decorators/, metadata/ ──────────────────────────────────
-│   ├── decorators/
-│   │   ├── injectable.ts      @injectable(), the auto-register registry
-│   │   ├── inject.ts          inject() and the @inject accessor field decorator
-│   │   └── lifecycle-decorators.ts  @postConstruct(), @preDestroy()
-│   ├── metadata/
-│   │   ├── metadata-types.ts  MetadataReader, ConstructorMetadata, ParamMetadata
-│   │   ├── metadata-keys.ts   Symbol.metadata keys
-│   │   ├── symbol-metadata-reader.ts   defaultMetadataReader
-│   │   ├── verifying-metadata-reader.ts  Wraps a user-supplied reader, checking once
-│   │   │                      per (reader, class) pair — the source of InvalidMetadataError
-│   │   └── metadata-reader-token.ts    MetadataReaderToken
-│   │
-│   │  ── layer 4: container/, introspection/ ──────────────────────────────
-│   ├── container/
-│   │   ├── container.ts       DefaultContainer; collaborators built on first use
-│   │   └── binding-builders.ts BindingChain — ONE object for the whole chain, registered ONCE
-│   │                          then refined in place, committing itself into the registry;
-│   │                          BindingRegistration (where the chain registered, and for whom)
-│   ├── introspection/
-│   │   ├── inspector.ts       inspect(), lookupBindings()
-│   │   ├── dependency-graph.ts buildDependencyGraph()
-│   │   └── graph-adapters/    dot.ts, cytoscape.ts, mermaid.ts, reactflow.ts
-│   └── index.ts               Public API exports (root entrypoint)
-│
-├── tests/                     Mirrors the src/ path inside exactly one category
-│   ├── unit/                  architecture, core/, container/, decorators/, lifecycle/,
-│   │                          introspection/, resolution/{cache,plan,select}
-│   ├── integration/           decorators end-to-end, validate-scope, support/ fixtures
-│   └── types/                 expectTypeOf — inference, container API, resolve-options
-│
-├── package.json               #exports generated from dist/ by `codefast mirror`
-├── tsconfig.json
-└── tsconfig.build.json
-```
+> **Normative — the root entry point is complete.** Every name this document specifies is exported from `@codefast/di`:
+> the foundation types, `token` and `tag`, `Container`, the builder interfaces, the module factories, the decorators and
+> injection helpers, the metadata port, the advanced constraints, the introspection and graph types with their adapters,
+> and every error class alongside `DiError`. A caller never needs a subpath to reach a specified name, and each section
+> above is the authority on the names it introduces.
 
-> **Normative — a directory is a layer, and imports only go one way.** `{core, errors, injection}` →
-> `{lifecycle, ambient}` → `resolution` → `{decorators, metadata}` → `{container, introspection}`. Imports within a
-> layer are free; only a value import back up to a higher layer is a violation. `index.ts` is exempt — gathering every
-> layer into a barrel is its job. Type-only imports do not count, because they evaporate at build time and constrain
-> nothing at runtime.
+> **Normative — a subpath mirrors the source layout, and that layout is not frozen.** Every module is also published at
+> a subpath derived from the built output, so `@codefast/di/core/token`, `@codefast/di/container/container` and the rest
+> resolve to the same modules the root re-exports. The introspection group is flattened: `@codefast/di/inspector`,
+> `@codefast/di/dependency-graph`, and `@codefast/di/graph-adapters/{dot,mermaid,cytoscape,reactflow}`. Because the map
+> follows the source tree, moving a module renames its specifier — import from the root unless you are deliberately
+> trimming a bundle.
 
-**Ownership of `core/types.ts`.** The foundation types (`BindingScope`, `BindingIdentifier`, `BindingKind`,
-`Constructor`, `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`,
-`ResolutionFrame`, `TokenValue`) are declared here — a file with a single responsibility that depends on no other file
-in the package. `core/binding.ts`, `resolution/resolver.ts`, `lifecycle/scope-manager.ts` and the rest all import from
-it. Re-exported from `index.ts`.
-
-**Why `resolution/select/binding-select.ts` is separate from `core/registry.ts`.** The registry is the storage layer —
-it stores bindings and handles slot-aware last-wins. `binding-select.ts` is the runtime filtering layer — it takes a
-token plus `ResolveOptions` plus the `when()` predicates and returns candidates. `resolver.ts` consumes its result. This
-split makes each layer independently testable, and keeps the registry at layer 0 while selection sits alongside the
-resolver.
-
-**Why `metadata/metadata-reader-token.ts` is its own file.** `MetadataReaderToken` is the bridge between the decorator
-layer and the container. Keeping it separate avoids a circular import (`container/container.ts` →
-`metadata-reader-token.ts` → nothing pointing back).
-
-### Public API (`index.ts`)
-
-```ts
-// Foundation types
-export type {
-  ActivationHandler,
-  BindingConstraint,
-  BindingIdentifier,
-  BindingKind,
-  BindingScope,
-  BindingTag,
-  ConstraintContext,
-  Constructor,
-  DependencyKey,
-  DeactivationHandler,
-  ResolutionFrame,
-  ResolveOptions,
-  ResolutionContext,
-  TokenValue,
-} from "#core/types";
-
-// Token
-export { token, tokenName } from "#core/token";
-export type { Token } from "#core/token";
-
-// Tag — the interned slot criteria a `whenTagged` and a resolve both take
-export { coversTagKeys, NO_TAG_KEYS, slotName, tag, tagKeyMaskOf } from "#core/tag";
-export type { TagKey, TagKeyMask } from "#core/tag";
-
-// Binding builders — types only
-export type {
-  AliasBindingBuilder,
-  BindToBuilder,
-  BindingBuilder,
-  ConstantBindingBuilder,
-  ScopedBindingBuilder,
-  SingletonBindingBuilder,
-  SingletonLifecycleBuilder,
-  SlotConstrainedBuilder,
-  TransientBindingBuilder,
-} from "#core/binding";
-
-// Container
-export { Container } from "#container/container";
-export type { Container as ContainerInterface, ContainerOptions, ContainerStatic } from "#container/container";
-
-// Ambient container — the context an `@inject` accessor initializer resolves from. `resolution/context`
-// stays internal: it hands out resolver callbacks, not public values.
-export { getActiveContainer, runWithContainer } from "#ambient/active-container";
-
-// `effectiveBindingScope` is deliberately absent: it reads a `Binding`, which is internal, and no
-// public API hands one out. `BindingSnapshot.scope` and `GraphNode.scope` are the public answers.
-export {
-  bindingSlotToResolveOptions,
-  injectionSlotToResolveOptions,
-  resolveOptionsForSlot,
-} from "#injection/resolve-options";
-export type { DependencySlot } from "#injection/resolve-options";
-
-// Introspection types
-export type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";
-
-// Graph types
-export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#introspection/dependency-graph";
-
-// Module
-export { AsyncModule, isSyncModule, Module, SyncModule } from "#core/module";
-export type { AsyncModuleBuilder, ModuleBuilder } from "#core/module";
-
-// Decorators
-export { inject } from "#decorators/inject";
-export { injectAll, isInjectionDescriptor, optional } from "#injection/descriptor";
-export type { InjectionDescriptor, InjectOptions } from "#injection/descriptor";
-export { injectable } from "#decorators/injectable";
-export type { InjectableDependency, InjectableOptions } from "#decorators/injectable";
-export { postConstruct, preDestroy } from "#decorators/lifecycle-decorators";
-
-// Auto-register
-export { createAutoRegisterRegistry } from "#decorators/injectable";
-export type { AutoRegisterRegistry } from "#decorators/injectable";
-
-// MetadataReader — everything a consumer needs to write one and pass it to Container.create()
-export { MetadataReaderToken } from "#metadata/metadata-reader-token";
-export type {
-  ConstructorMetadata,
-  LifecycleMetadata,
-  MetadataReader,
-  MutableLifecycleMetadata,
-  ParamMetadata,
-} from "#metadata/metadata-types";
-export { defaultMetadataReader, SymbolMetadataReader } from "#metadata/symbol-metadata-reader";
-
-// Constraints — contextual injection predicates for .when()
-export {
-  whenAnyAncestorIs,
-  whenAnyAncestorNamed,
-  whenAnyAncestorTagged,
-  whenAnyAncestorTaggedAll,
-  whenNoAncestorIs,
-  whenNoParentIs,
-  whenParentIs,
-  whenParentNamed,
-  whenParentTagged,
-  whenParentTaggedAll,
-} from "#resolution/select/constraints";
-
-// Errors
-export {
-  AmbiguousBindingError,
-  AsyncActivationError,
-  AsyncDeactivationError,
-  AsyncModuleLoadError,
-  AsyncResolutionError,
-  ChainAlreadyRegisteredError,
-  ChainNotRegisteredError,
-  ManyBindingSlotError,
-  CircularDependencyError,
-  DiError,
-  DisposedContainerError,
-  InternalError,
-  InvalidMetadataError,
-  MissingContainerContextError,
-  MissingMetadataError,
-  MissingScopeContextError,
-  NoMatchingBindingError,
-  RebindUnboundTokenError,
-  ScopeViolationError,
-  SelfBindingRequiresClassError,
-  StaticMemberDecoratorError,
-  SyncDisposalNotSupportedError,
-  EmptyTagCriteriaError,
-  TokenNotBoundError,
-  UnreachableConstraintError,
-  UnreachableLifecycleHookError,
-} from "#errors/errors";
-export type { ScopeViolationDetails } from "#errors/errors";
-
-// Graph adapters — render `generateDependencyGraph()` output for common viewers
-export { toDotGraph } from "#introspection/graph-adapters/dot";
-export { toCytoscapeGraph } from "#introspection/graph-adapters/cytoscape";
-export type { CytoscapeEdge, CytoscapeElements, CytoscapeNode } from "#introspection/graph-adapters/cytoscape";
-export { toReactFlowGraph } from "#introspection/graph-adapters/reactflow";
-export type { ReactFlowEdge, ReactFlowGraph, ReactFlowNode } from "#introspection/graph-adapters/reactflow";
-export { toMermaidGraph } from "#introspection/graph-adapters/mermaid";
-
-// ── Subpaths: a full mirror, nothing excluded ───────────────────────────────
-//
-// `codefast mirror` generates an entry for EVERY module under src/, so each file
-// here is a subpath running parallel to the root. This package's config is a
-// single line — `strip: "./introspection/"` — and there is no `exclude` key
-// anywhere in codefast.config.js.
-//
-// @codefast/di/core/{token,types,binding,tag,registry,module,binding-scope,constructor-type}
-// @codefast/di/errors/{errors,diagnostics}
-// @codefast/di/injection/{descriptor,resolve-options}
-// @codefast/di/lifecycle/{scope-manager,lifecycle-manager}
-// @codefast/di/ambient/active-container
-// @codefast/di/container/{container,binding-builders}
-// @codefast/di/resolution/{resolver,context}
-// @codefast/di/resolution/cache/{binding-lookup-cache,class-introspector,activation-need}
-// @codefast/di/resolution/{plan/instantiation-plan,path/resolution-path}
-// @codefast/di/resolution/select/{binding-select,constraints}
-// @codefast/di/decorators/{inject,injectable,lifecycle-decorators}
-// @codefast/di/metadata/{metadata-types,metadata-keys,symbol-metadata-reader,verifying-metadata-reader,metadata-reader-token}
-//
-// `strip` removes the introspection/ prefix, so those four modules sit at flat specifiers:
-// @codefast/di/{inspector,dependency-graph}, @codefast/di/graph-adapters/{dot,cytoscape,mermaid,reactflow}
-//
-// Exposing the engine internals is deliberate: this package has exactly one
-// consumer — this repo — so narrowing the export surface buys nothing, while
-// opening it lets benchmarks and tests reach straight into the layer being
-// measured. Their invariants live in ARCHITECTURE.md, not in hiding the module.
-//
-// buildDependencyGraph() from dependency-graph.ts — already wrapped as container.generateDependencyGraph()
-```
-
-### `package.json`
-
-ESM-only. `engines.node >= 22.12.0` — the monorepo's floor, held by the package's own `core/map-upsert` helpers instead
-of the ES2025 `Map.prototype.getOrInsert`, which would raise it to 26.
-
-Each public subpath is a conditional entry: `source` → `src` for dev/test inside the repo (gated on the `source`
-condition), `types`/`import` → `dist` for consumers. The whole `exports` map is **generated automatically by
-`codefast mirror`** from `dist/` after a build — never written by hand (the list below is a partial excerpt to show the
-shape of an entry).
-
-```json
-{
-  "name": "@codefast/di",
-  "type": "module",
-  "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json"
-  },
-  "exports": {
-    ".": {
-      "source": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./resolution/select/constraints": {
-      "source": "./src/resolution/select/constraints.ts",
-      "types": "./dist/resolution/select/constraints.d.ts",
-      "import": "./dist/resolution/select/constraints.js"
-    },
-    // `strip: "./introspection/"` in codefast.config.js keeps the introspection
-    // group's specifiers flat, so the subpath carries no source-directory prefix.
-    "./graph-adapters/dot": {
-      "source": "./src/introspection/graph-adapters/dot.ts",
-      "types": "./dist/introspection/graph-adapters/dot.d.ts",
-      "import": "./dist/introspection/graph-adapters/dot.js"
-    }
-    // … every other subpath follows the same shape (core/registry, resolution/resolver,
-    // lifecycle/scope-manager, lifecycle/lifecycle-manager, resolution/select/binding-select,
-    // inspector, decorators/*, injection/*, metadata/*, …)
-  },
-  "files": ["dist", "src", "CHANGELOG.md", "README.md", "LICENSE"],
-  "engines": {
-    "node": ">=22.12.0"
-  }
-}
-```
-
-> **Why `src` is in `files`, and why it never reaches npm.** In the repo, `src` earns its place three ways: the `source`
-> condition lets dev/test run the TypeScript sources directly with no prior build, and the `dist` source maps
-> (`declarationMap`/`sourceMap`, which point at `../src` without inlining sources) give in-repo consumers of the built
-> `dist` — `apps/web`, `examples` — go-to-definition and debugger step-into against the original `.ts`. None of that is
-> a consumer's concern: `tsc` leaves `#` verbatim in `dist/*.js`, and a consumer resolves those through the `imports`
-> map's `types`/`default` → `dist` conditions, never the `source` one (nothing enables `source` unasked). So
-> `codefast pack-slim` runs on the CI checkout right before `changeset publish` (never committed) and drops `src` from
-> `files`, every `source` condition from `exports`/`imports`, the `imports` entries left pointing outside `files`
-> (`#tests/*`, `#examples/*`), every script that is not a lifecycle hook, `devDependencies`, and the `dist` source maps
-> plus their now-dangling `sourceMappingURL` directives — the tarball ships `dist` runtime and types only.
-
-### `tsconfig.build.json`
-
-The build uses native `tsc` (TypeScript 7) following the Turborepo "Compiled Packages" model — emitting `.js` + `.d.ts`
-file by file into `dist/`, with no bundler. `tsdown` is gone.
-
-The shared emit flags live in the `@codefast/typescript-config/library-build.json` preset (`noEmit: false`,
-`declaration`, `declarationMap`, `sourceMap`, `types: ["node"]`). The build file uses an **`extends` array** so it both
-inherits the package base (flags + `paths`) and pulls in the emit block, keeping only a local `rootDir` (a relative path
-— placing it in the preset would resolve it against the preset's directory) plus `include`/`exclude`. `outDir` is
-declared in `tsconfig.json` rather than here: `noEmit` keeps it inert for type-checking, the build inherits it, and knip
-derives its `dist` → `src` mapping from that file, which is what lets it follow `#` imports back to source.
-
-```json
-{
-  "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
-  "compilerOptions": {
-    "rootDir": "./src"
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", ".turbo", "coverage", "src/**/*.test.ts", "tests"]
-}
-```
-
-Array order decides the override: `library-build.json` comes last, so its `noEmit: false` and `types: ["node"]` beat
-`tsconfig.json`. The bin package (`cli`) additionally overrides `declaration: false` + `declarationMap: false`, because
-no consumer imports its types.
+One subpath carries a name the root does not: **`@codefast/di/errors/diagnostics`** exports `RESOLUTION_DIAGNOSTICS`,
+the symbol a container answers to with its runtime counters — `generatedPlanCount` among them
+([Code generation and Content Security Policy](#code-generation-and-content-security-policy)). It is a diagnostic
+channel, not part of the resolution contract: a counter may be added or renamed without a rule above changing.
 
 ---
 
 ## Roadmap
 
-### Core container
+Nothing here is normative. It is intent, and intent is not a commitment — what the library guarantees today is
+everything above this section.
 
-- `types.ts` — every foundation type: `BindingScope`, `BindingIdentifier`, `BindingKind`, `Constructor`,
-  `ActivationHandler`, `DeactivationHandler`, `ResolveOptions`, `ResolutionContext`, `ConstraintContext`,
-  `ResolutionFrame`, `TokenValue`
-- `Token<Value>` branded type, the `token()` factory, `TOKEN_BRAND`
-- The `Binding` discriminated union: `ClassBinding`, `ConstantBinding`, `DynamicBinding`, `DynamicAsyncBinding`,
-  `ResolvedBinding`, `ResolvedAsyncBinding`, `AliasBinding`
-- Builder interfaces with chain enforcement: `BindingBuilder` does not expose `on*()` — forcing scope before lifecycle
-- `BindingRegistry` — slot-aware last-wins at registration time, eager commit
-- `ScopeManager` — singleton cache per container, in-flight Promise map (async serialization), scoped cache per child
-- `LifecycleManager` — per-binding + container-level, the canonical order, `AsyncDeactivationError` on a sync unbind
-  with an async handler
-- `DependencyResolver` — graph walk, circular detection via `Set`, async contamination propagation
-- `DefaultContainer` — composes everything, `isDisposed` state, `DisposedContainerError` guard
-- Child containers via `createChild()`, singleton cache ownership at the defining container
-- `dispose()` idempotent, `[Symbol.asyncDispose]()`, `[Symbol.dispose](): never`
-- `unbindAll()`, `unbindAllAsync()`, `initializeAsync()`
-- `validate()` — the scope matrix, transitive alias checking, `toDynamic` treated as opaque
-- `has()` / `hasOwn()` with the canonical hint semantics (any binding vs slot match)
-- `lookupBindings()` returning `BindingSnapshot[]` (never `undefined`)
-- `resolveAll` / `resolveAllAsync` with filter semantics, returning `[]`
-- `resolveOptionalAsync` — `undefined` when there is no binding/hint match; runtime errors re-thrown
-- `rebind()` throwing `RebindUnboundTokenError` when the token has no own binding
-- `loadAutoRegistered(registry)` on the container
+- **`explain()` — why this binding and not another.** A read-only answer for one request: the candidates, the rule that
+  decided among them, and the binding that won. The container inspector in `examples/tanstack-start` reimplements the
+  selection rules outside the engine and cannot evaluate `when()` predicates, which is the gap this closes.
 
-### Decorator layer
-
-- `@injectable(deps?, options?)` — TC39 Stage 3, deps array, `autoRegister` taking an explicit registry
-- `inject()` + `optional()` + `injectAll()` — plain fn + accessor decorator, `isInjectionDescriptor()` type guard
-- `@postConstruct()` + `@preDestroy()` — several methods per class supported, top-down order
-- `SymbolMetadataReader` with an `Object.hasOwn` guard — no leaking of parent metadata
-- `MetadataReaderToken` — `Token<MetadataReader>` for swapping in tests
-- `createAutoRegisterRegistry()` — explicit, not global
-
-### Module system
-
-- `SyncModule.create()` and `AsyncModule.create()` with branded types
-- `ModuleBuilder.import()` accepting only `SyncModule[]` — enforced at compile time
-- Import graph resolution; `ModuleBuilder` additive-only
-- `Container.fromModules()` / `Container.fromModulesAsync()` with documented dedup
-- `load` / `loadAsync` / `unload` / `unloadAsync` with reference-count tracking
-- `unload` sync + deactivation behaviour: sync deactivation only; async needs `unloadAsync`
-
-### Error classes
-
-Every error subclass with a `readonly code` and full context fields, as in [Error hierarchy](#error-hierarchy).
-Including the new `AmbiguousBindingError`, `AsyncDeactivationError` and `DisposedContainerError`.
-
-### Introspection and diagnostics
-
-- `inspect(): ContainerSnapshot` — a typed snapshot including `isDisposed`
-- `lookupBindings(token)` — `BindingSnapshot[]` (never `undefined`)
-- `generateDependencyGraph(options?): ContainerGraphJson` — with an `includeParent` option
-- `toDotGraph()` from `@codefast/di/graph-adapters/dot`
-
-### Advanced constraints
-
-Fully spec'd in [Advanced Constraints](#advanced-constraints). Exported from the root `@codefast/di` and from the
-subpath `@codefast/di/resolution/select/constraints`: `whenParentIs`, `whenNoParentIs`, `whenAnyAncestorIs`,
-`whenNoAncestorIs`, `whenParentNamed`, `whenAnyAncestorNamed`, `whenParentTagged`, `whenAnyAncestorTagged`,
-`whenParentTaggedAll`, `whenAnyAncestorTaggedAll`.
-
-### Integration packages
-
-- `@codefast/di-hono` — middleware + a scoped container per request, for Hono
-- `@codefast/di-fastify` — plugin + a scoped container per request, for Fastify
+Framework adapter packages are **not** planned. A per-request scope is `createChild()` plus `await using`
+([Child containers](#child-containers)) — a pattern to document, not a package to publish.
 
 ---
-
-## Technical stack
-
-| Tool                    | Role                                                                                                                 |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| TypeScript 7            | Stage 3 decorators, stable `Symbol.metadata`, strict; `tsc` for both build and type-check                            |
-| `tsc` (native TS 7)     | Emits ESM `.js` + `.d.ts` file by file into `dist/` (Turborepo Compiled model, no bundler)                           |
-| Vitest (OXC by default) | Unit tests and integration tests                                                                                     |
-| Babel decorators        | Test-time only, inside Vitest: `@rolldown/plugin-babel` + `@babel/plugin-proposal-decorators` (`version: "2023-11"`) |
-| publint                 | Checks package exports correctness                                                                                   |
-| `@arethetypeswrong/cli` | Checks type resolution correctness                                                                                   |
-| pnpm                    | Package manager (workspace monorepo)                                                                                 |
-
-### tsconfig
-
-```json
-{
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "strict": true,
-    "exactOptionalPropertyTypes": true,
-    "noUncheckedIndexedAccess": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "./dist"
-  },
-  "include": ["src"]
-}
-```
-
-In practice the emit options (`declaration`, `sourceMap`, …) are split out into `tsconfig.build.json`
-([`tsconfig.build.json`](#tsconfigbuildjson)); the base `tsconfig.json` keeps `noEmit: true` for type-checking and
-carries only `outDir`, which the build inherits.
-
----
-
-### Code generation and Content Security Policy
-
-A transient class, `toResolved` or `toResolvedAsync` binding a container has resolved many times, through `resolve` or
-`resolveAsync`, has its compiled plan generated as a function of its own through the `Function` constructor; a runtime
-that refuses the constructor (a Content Security Policy without `unsafe-eval`) leaves every plan a closure. The two
-behave identically — the same instances, the same errors, the same cycle detection — and only the throughput of a hot
-plan differs. `RESOLUTION_DIAGNOSTICS` reports how many plans a container has generated as `generatedPlanCount`.
-
-## Testing guide
-
-### An isolated container — no modules loaded
-
-The simplest pattern: create a fresh container and bind only what the test needs:
-
-```ts
-import { Container } from "@codefast/di";
-import { describe, expect, it } from "vitest";
-
-describe("UserService", () => {
-  it("registers user and logs action", () => {
-    const noopLogger: LoggerService = { log: () => {} };
-    const container = Container.create();
-    container.bind(Logger).toConstantValue(noopLogger);
-    container.bind(UserRepo).toConstantValue(mockUserRepo);
-    container.bind(UserService).toSelf();
-
-    const service = container.resolve(UserService);
-    expect(service).toBeInstanceOf(UserService);
-  });
-});
-```
-
-### A child container — overriding a parent binding
-
-To override a binding defined in a module, use `bind()` at the child container (no `rebind()` is needed, because the
-child has no own binding):
-
-```ts
-const testContainer = Container.fromModules(AppModule);
-
-// Override the Database binding — child resolution takes priority over the parent
-testContainer.bind(Database).toConstantValue(mockDatabase);
-
-const userService = testContainer.resolve(UserService);
-// userService.database === mockDatabase
-```
-
-### Rebind — overriding a binding in the same container
-
-Use `rebind()` when replacing a binding that **already exists** in the same container (hot-reload or reconfiguration,
-for instance):
-
-```ts
-const container = Container.create();
-container.bind(Logger).to(ConsoleLogger).singleton();
-
-// Override within the same container
-container.rebind(Logger).toConstantValue(mockLogger);
-// Note: the old singleton is deactivated (onDeactivation is called if present)
-```
-
-### Swapping the MetadataReader
-
-The container takes its `MetadataReader` through `MetadataReaderToken`. To test container behaviour without depending on
-`Symbol.metadata`:
-
-```ts
-import { MetadataReaderToken } from "@codefast/di";
-
-const customReader: MetadataReader = {
-  getConstructorMetadata: (target) => ({
-    params: [{ index: 0, token: Logger, optional: false, multi: false }],
-  }),
-  getLifecycleMetadata: () => ({ postConstruct: [], preDestroy: [] }),
-};
-
-const container = Container.create();
-container.bind(MetadataReaderToken).toConstantValue(customReader);
-container.bind(UserService).toSelf();
-
-const service = container.resolve(UserService);
-```
-
-### Testing a scoped binding
-
-```ts
-it("scoped binding isolated per child", () => {
-  const container = Container.create();
-  container.bind(RequestId).toConstantValue("request-1");
-  container.bind(RequestHandler).toSelf().scoped();
-
-  const child1 = container.createChild();
-  child1.bind(RequestId).toConstantValue("req-1");
-
-  const child2 = container.createChild();
-  child2.bind(RequestId).toConstantValue("req-2");
-
-  const h1 = child1.resolve(RequestHandler);
-  const h2 = child2.resolve(RequestHandler);
-
-  expect(h1).not.toBe(h2); // different instances — each child is its own scope
-  expect(child1.resolve(RequestHandler)).toBe(h1); // the same instance within child1
-});
-```
-
-### Testing an async binding
-
-```ts
-it("resolves async binding", async () => {
-  const container = Container.create();
-  container
-    .bind(Database)
-    .toDynamicAsync(async () => {
-      return new MockDatabase();
-    })
-    .singleton();
-
-  const db = await container.resolveAsync(Database);
-  expect(db).toBeInstanceOf(MockDatabase);
-
-  // Cleanup
-  await container.dispose();
-});
-```
-
-### Testing dispose behaviour
-
-```ts
-it("calls onDeactivation on dispose", async () => {
-  const disconnected = vi.fn();
-  const container = Container.create();
-  container.bind(Database).to(MockDatabase).singleton().onDeactivation(disconnected);
-
-  await container.resolveAsync(Database);
-  await container.dispose();
-
-  expect(disconnected).toHaveBeenCalledOnce();
-});
-
-it("throws DisposedContainerError after dispose", async () => {
-  const container = Container.create();
-  await container.dispose();
-
-  expect(() => container.resolve(Logger)).toThrow(DisposedContainerError);
-});
-```
-
-### Testing `validate()`
-
-```ts
-it("detects captive dependency violation", () => {
-  const container = Container.create();
-  container.bind(Cache).to(InMemoryCache).scoped();
-  container.bind(UserService).to(UserServiceImpl).singleton();
-  // UserServiceImpl depends on Cache — a singleton depending on scoped → violation
-
-  expect(() => container.validate()).toThrow(ScopeViolationError);
-});
-```
-
-### Anti-patterns to avoid
-
-**Do not use a global container in tests:** global state makes tests depend on each other:
-
-```ts
-// ❌ Anti-pattern
-const container = Container.create(); // global — leaks between tests
-
-// ✅ Right — each test creates its own container
-beforeEach(() => {
-  container = Container.create();
-});
-afterEach(async () => {
-  await container.dispose();
-});
-```
-
-**Do not mock `Symbol.metadata` directly:** use `MetadataReaderToken` instead (see
-[Swapping the MetadataReader](#swapping-the-metadatareader)).
-
-**Do not use `rebind()` to override a parent:** use `bind()` at the child container (see
-[A child container](#a-child-container--overriding-a-parent-binding)).
-
----
-
-## Comparison with InversifyJS v8
-
-This section compares the whole public API of InversifyJS v8.0.0 (March 2026) against `@codefast/di`. Each feature group
-is examined along three axes: **learned from v8**, **improved over v8**, **not adopted from v8**.
-
----
-
-### API comparison by group
-
-#### Setup and requirements
-
-| Aspect             | InversifyJS v8                                                | `@codefast/di`                                    |
-| ------------------ | ------------------------------------------------------------- | ------------------------------------------------- |
-| Installation       | `npm install inversify reflect-metadata`                      | `npm install @codefast/di`                        |
-| reflect-metadata   | Required — `import 'reflect-metadata'` at the entry point     | Not needed — zero dependencies                    |
-| tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | No special flags needed                           |
-| Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 5.9+) |
-| Module format      | ESM-only                                                      | ESM-only                                          |
-| Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 22.12.0                                    |
-
-#### Binding API
-
-| Feature                | InversifyJS v8                                    | `@codefast/di`                                                      |
-| ---------------------- | ------------------------------------------------- | ------------------------------------------------------------------- |
-| Async binding          | `toDynamicValue` takes both sync and async        | `toDynamic` vs `toDynamicAsync` — enforced by the compiler          |
-| Explicit async deps    | No `toResolvedValueAsync`                         | `toResolvedAsync(factory, deps)` — symmetric with the sync one      |
-| Scope naming           | `inSingletonScope()` / `inTransientScope()` / ... | `singleton()` / `transient()` / `scoped()`                          |
-| Lifecycle after scope  | `when*` available after scope (v8)                | `on*()` only after scope — the chain order is invariant             |
-| `onDeactivation` guard | Runtime error on a non-singleton                  | Compile time: only on `SingletonBindingBuilder`                     |
-| Alias                  | `toService()` returns `void`                      | `toAlias()` returns an `AliasBindingBuilder` — with `when*`/`.id()` |
-| Alias + hint forward   | Not specified                                     | The hint is forwarded to the target resolution                      |
-
-#### Container API
-
-| Feature                  | InversifyJS v8                                          | `@codefast/di`                                             |
-| ------------------------ | ------------------------------------------------------- | ---------------------------------------------------------- |
-| Creating a container     | `new Container()`                                       | `Container.create()` — a static factory                    |
-| Child container          | `new Container({ parent })`                             | `container.createChild()` — explicit                       |
-| Optional resolution      | `container.get(id, { optional: true })`                 | `resolveOptional()` / `resolveOptionalAsync()`             |
-| Multi resolution         | `getAll()` is sync only                                 | `resolveAll()` + `resolveAllAsync()`                       |
-| Singleton async safety   | Not specified                                           | Concurrent `resolveAsync` shares one in-flight Promise     |
-| Container lifecycle      | No `isDisposed`; operations after dispose are undefined | An `isDisposed` getter, `DisposedContainerError`           |
-| `isBound()`              | Unclear semantics with a hint                           | `has(token, hint?)` — has a binding / matches a given hint |
-| `isCurrentBound()`       | An easily confused name                                 | `hasOwn(token, hint?)` — clearer                           |
-| `lookupBindings()`       | Absent                                                  | `lookupBindings()` returns `[]` (never `undefined`)        |
-| Disposed container guard | Absent                                                  | `DisposedContainerError` on every operation                |
-| Warming up singletons    | Absent                                                  | `initializeAsync()` — fail fast at startup                 |
-| Dependency graph export  | Absent                                                  | `generateDependencyGraph({ includeParent? })` → JSON + DOT |
-
-#### Error handling
-
-| Case                           | InversifyJS v8                    | `@codefast/di`                              |
-| ------------------------------ | --------------------------------- | ------------------------------------------- |
-| Predicate ambiguity            | `InternalError` (the wrong type)  | `AmbiguousBindingError` with `candidateIds` |
-| Async handler on a sync unbind | Silent failure or a runtime error | `AsyncDeactivationError` — explicit         |
-| Disposed container             | Undefined behaviour               | `DisposedContainerError`                    |
-| No typed error hierarchy       | No `code` field                   | `DiError` abstract + a `code` string        |
-
-#### Module system
-
-| Feature                       | InversifyJS v8                                                   | `@codefast/di`                                                     |
-| ----------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Module type distinction       | `ContainerModule` / `AsyncContainerModule` are not distinguished | `SyncModule` / `AsyncModule` branded — `load(async)` is a TS error |
-| Module coupling               | The `ContainerModule` callback has `unbind`, `rebind`            | `ModuleBuilder` is additive-only — avoids hidden coupling          |
-| Module deduplication          | Not specified                                                    | Object-identity dedup + documented reference counting              |
-| SyncModule importing an Async | Not guarded                                                      | Compile error — `ModuleBuilder.import()` only takes `SyncModule[]` |
-| Unload + deactivation         | Not specified                                                    | Singletons deactivated when the ref-count reaches 0                |
-
----
-
-### Summary: learned from v8
-
-| v8 feature                                                     | How it is done here                                                                |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Naming: unqualified=sync, `Async`=async                        | Kept: `resolve`/`resolveAsync`, `load`/`loadAsync`, `unbind`/`unbindAsync`, …      |
-| ESM-only                                                       | Same as v8                                                                         |
-| Per-binding `onActivation` / `onDeactivation`                  | Kept, with the callback inferring its type from the binding — no manual annotation |
-| Container-level `onActivation` / `onDeactivation`              | Kept; children do not inherit the parent's hooks                                   |
-| `toResolvedValue(factory, injectOptions)`                      | `toResolved(factory, deps)` sync, plus the new `toResolvedAsync`                   |
-| The `toService()` alias concept                                | `toAlias()` — a clearer name, with hint forwarding specified                       |
-| `BindingIdentifier` / `.getIdentifier()`                       | Concept kept, renamed to `.id()` — shorter                                         |
-| `whenNamed` / `whenTagged` / `whenDefault` / `when(predicate)` | Kept; tag keys are declared with `tag()`, criteria minted with `TagKey.of()`       |
-| `isBound()` checking the hierarchy                             | `has()` — same semantics, with hint support                                        |
-| `isCurrentBound()` checking the current container only         | `hasOwn()` — a clearer name                                                        |
-| `unbindAll()` / `unbindAllAsync()`                             | Kept as-is                                                                         |
-| `@postConstruct()` / `@preDestroy()` method decorators         | Kept, on TC39 Stage 3, supporting several methods per class rather than just one   |
-| `getAll` filter semantics                                      | `resolveAll` — filter semantics, returning `[]` when nothing matches               |
-| `bind(id).unbind(bindingId)` — unbinding one specific binding  | Kept, via `container.unbind(bindingId)`                                            |
-
----
-
-### Summary: improved over v8
-
-| InversifyJS v8                                                           | This library                                                                                           |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `reflect-metadata` + `experimentalDecorators` required                   | Zero `reflect-metadata` — TC39 Stage 3, no legacy flags                                                |
-| `ServiceIdentifier` is a union type, not branded                         | `Token<Value>` branded — `resolve` always has the right type                                           |
-| `container.get<WrongType>('id')` compiles                                | Impossible — `Token<Value>` carries the type at compile time                                           |
-| `inSingletonScope()` / `inTransientScope()` / `inRequestScope()`         | `singleton()` / `transient()` / `scoped()` — shorter names, no `in` prefix                             |
-| `toDynamicValue` takes sync and async, with no compiler enforcement      | `toDynamic` vs `toDynamicAsync` — the compiler enforces `resolveAsync()` where needed                  |
-| No `toResolvedValueAsync`                                                | `toResolvedAsync(factory, deps)` — symmetric with `toResolved`                                         |
-| `when*` available after scope                                            | `on*()` only after scope — an invariant chain order that removes the ambiguity                         |
-| `onDeactivation` has no compile-time guard                               | Builder type narrowing — `onDeactivation` exists only on `SingletonBindingBuilder`                     |
-| `toService()` returns `void`                                             | `toAlias()` returns an `AliasBindingBuilder` — with `when*`, `.id()` and hint forwarding               |
-| `@inject` on a parameter needs `experimentalDecorators`                  | `@injectable([deps])` + `inject()` — pure TC39 Stage 3                                                 |
-| `@inject` on a plain property                                            | `@inject accessor field` — using the TC39 `accessor` keyword                                           |
-| `getAll()` is sync only                                                  | `resolveAll()` + `resolveAllAsync()`                                                                   |
-| `container.get()` + `{ optional: true }` — hidden inside options         | `resolveOptional()` + `resolveOptionalAsync()` — an explicit method name                               |
-| `tag` is a single tag object — no multi-tag support                      | `tags` is a `ReadonlyArray<BindingTag>`, interned — multi-tag, compared by identity                    |
-| The `Symbol.metadata` prototype chain is not handled                     | `SymbolMetadataReader` uses an `Object.hasOwn` guard — no leaking of parent metadata                   |
-| `ContainerModule` / `AsyncContainerModule` are not distinguished by type | `SyncModule` / `AsyncModule` branded — `load(asyncModule)` is a TypeScript error                       |
-| `@postConstruct` allows only one method per class                        | Arrays supported — several `@postConstruct()` / `@preDestroy()` per class                              |
-| No `validate()`                                                          | `container.validate()` — static captive-dependency detection, transitive through aliases               |
-| No `initializeAsync()`                                                   | Idempotent warm-up, with the cross-container trigger documented                                        |
-| No typed error hierarchy                                                 | `DiError` abstract + a `code` string + context fields on every subclass                                |
-| A module can `unbind` / `rebind` another module's bindings               | `ModuleBuilder` is additive-only — avoids hidden coupling between modules                              |
-| Module deduplication is not specified                                    | Object-identity deduplication + explicit reference counting                                            |
-| `rebind` does not throw when the token is unbound                        | `RebindUnboundTokenError` — an explicit contract                                                       |
-| Predicate ambiguity throws `InternalError`                               | `AmbiguousBindingError` with `candidateIds` — a user error, not an internal one                        |
-| Concurrent async singleton resolution is not specified                   | Serialized through an in-flight Promise map — the factory runs exactly once                            |
-| A container after dispose: undefined behaviour                           | `DisposedContainerError` + an `isDisposed` getter                                                      |
-| Async unbind called synchronously: silent failure                        | `AsyncDeactivationError` — explicit                                                                    |
-| No `lookupBindings`                                                      | `lookupBindings()` returns `BindingSnapshot[]` — never `undefined`                                     |
-| `toService()` + hint semantics are not specified                         | `toAlias()` hint forwarding is documented                                                              |
-| No testing guide                                                         | [Testing guide](#testing-guide) with patterns for isolated containers, child overrides, MetadataReader |
-| `autoRegister` through a global option or per-get                        | `createAutoRegisterRegistry()` — an explicit registry, no global state                                 |
-| `[Symbol.asyncDispose]()` is not specified                               | `dispose()` + `[Symbol.asyncDispose]()` — `await using` support                                        |
-| `[Symbol.dispose]()` is not specified                                    | `[Symbol.dispose](): never` — throws `SyncDisposalNotSupportedError`, plainly                          |
-| No `lookupBindings()`, `inspect()`, `generateDependencyGraph()`          | A full introspection API — typed snapshot, JSON graph, DOT export                                      |
-
----
-
-### Summary: not adopted from v8
-
-| InversifyJS v8                                                           | Why not                                                                             |
-| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| `string \| symbol` as a service identifier                               | Not type-safe — use a branded `Token<Value>`                                        |
-| `new Container({ parent })`                                              | Use `container.createChild()` — explicit, no mixing config with hierarchy           |
-| `new Container({ autobind })`                                            | Not supported — the "zero magic" principle                                          |
-| `new Container({ defaultScope })`                                        | No overriding the default scope at container level — avoids hidden behaviour        |
-| `container.get(id, { autobind: true })` per resolve                      | Not supported — the "zero magic" principle                                          |
-| `container.getAll(id, { chained: true })` chained resolution             | Absent — walking up the parent chain is automatic, no opt-in needed                 |
-| `snapshot()` / `restore()`                                               | Module composition + `bind()` at a child replaces it in test workflows              |
-| `container.register(PluginClass)`                                        | No plugin system — avoids a hidden extension mechanism                              |
-| `toFactory(ctx => curriedFn)`                                            | `toConstantValue(fn)` or `toDynamic` — less indirection                             |
-| `rebindAsync()` — async unbind then bind again                           | Use `unbindAsync()` then `bind()` — two clear steps, explicit semantics             |
-| Parameter decorators `@inject` / `@optional` / `@named` / `@tagged`      | TS1206 — they do not exist in TC39 Stage 3                                          |
-| `@multiInject(id)` on a parameter / property                             | `injectAll(token)` in the deps array — a plain function, no decorator needed        |
-| `@injectFromBase()` / `@injectFromHierarchy()`                           | An explicit deps array replaces them — no implicit inheritance injection            |
-| `@unmanaged()` on a parameter                                            | In a deps array, simply do not declare an arg that needs no injection               |
-| `decorate(decorator, target, idx)`                                       | Third-party class integration is not a target                                       |
-| `LazyServiceIdentifier<T>` — deferred evaluation for circular deps       | `accessor` property injection solves circular deps directly                         |
-| The `ContainerModule` callback has `bind`, `unbind`, `rebind`, `isBound` | `ModuleBuilder` has only `bind` + `import` — avoids hidden coupling between modules |
-| `when*` ancestor/parent constraints on the main API surface              | Present at the root, plus a dedicated subpath for anyone wanting a narrow import    |
-| `inRequestScope()` per-resolve-tree semantics                            | `scoped()` per child container — a clearer lifecycle boundary                       |
-| `toResolvedValue` with per-dep name/tag injection options                | `toResolved` takes a plain token array — for name/tag, use `toDynamic`              |
-
----
-
-## Changelog of this rewrite
-
-This revision changes how the specification is **presented**. It adds no rule, removes no rule, and softens no rule;
-every normative statement, case table, scope matrix, lifecycle order, error code and source pointer of the previous
-revision is carried over with its meaning intact.
-
-**Structure and presentation**
-
-- Added a [How to read this document](#how-to-read-this-document) preface naming the three callout kinds (_Normative_,
-  _Exact shape_, _Rationale / Compatibility_). No hand-written table of contents: the docs site at codefastlabs.com
-  generates one from the headings.
-- Every section now follows one order: what the concept is, the governing rule, a short example, edge cases and tables,
-  then rationale or compatibility notes last.
-- Normative content that was previously inline bold prose is set in labelled `> **Normative.**` blockquotes; rationale
-  that was previously interleaved with rules is set in labelled `> **Rationale.**` blockquotes at the end of its
-  section.
-- Long mixed paragraphs were split into bullet lists or tables: the deactivation-by-scope rules, the `ResolveOptions`
-  fields, the `ConstraintContext` fields, the `MetadataReader` port, the six resolve methods, the module interface, and
-  the "how to read the rows" notes under the builder table.
-- Sub-headings were added inside the dense sections (`ResolveOptions`, `ConstraintContext`, Slots and last-wins,
-  Resolution, Managing bindings, Module management, Introspection, MetadataReader, Property injection) so each rule has
-  its own anchor.
-- The lifecycle-order diagram is followed by a numbered step-by-step gloss; the Container-level hooks section links to
-  it instead of restating it in full.
-- Stale cross-references were corrected: "see 2.4" now cites
-  [Fluent chain](#fluent-chain--the-canonical-invariant-order) by anchor, and the "Last-wins" principle now cites
-  [Slots and last-wins](#slots-and-last-wins--the-exact-definition) for the definition (it previously pointed at the
-  examples).
-- The Container interface table is introduced as "nine groups", matching its nine rows.
-
-**Current rule separated from history or compatibility**
-
-- Slots and last-wins: the one-rule model is stated on its own; the comparison with the earlier two-rule model is a
-  single _Compatibility_ note at the end of the section.
-- Token replaces ServiceIdentifier: the branded-token rule is stated first; the InversifyJS `container.get<WrongType>`
-  observation is a _Compatibility_ note.
-- Binding kinds: the `toDynamicValue` comparison with InversifyJS is marked as compatibility text inside its note.
-- The boundary between a library bug and a caller error: the three errors that exist because of the `InternalError` rule
-  are named without recounting what they threw before.
-- Advanced Constraints, "Why identity comparison is enough": the observation that the implementation table has no
-  pairwise loop is stated in the present tense.
-- Slots and last-wins, container-local rule: stated as a rule about locality, without the historical aside.
-
-**Mental-model openers added**
-
-`ResolveOptions` · `ConstraintContext` · `ActivationHandler` and `DeactivationHandler` · Binding API · Scope ·
-Constraints — `when*` · Builder type interfaces · Slots and last-wins · Container API · Resolution · Async contamination
-· Singleton async creation · `rebind` semantics · Reference counting · Child containers · `has(token)` vs
-`has(token, hint)` · Decorator layer · MetadataReader · Property injection through `accessor` · Auto-registration ·
-Advanced Constraints · Module system · Error hierarchy. The Foundation types section also gained a map table listing
-each type, what it is, and where a reader meets it.
-
----
-
-_Document version: 8.2 — September 2026_ _Inspired by InversifyJS v8.0.0 (March 2026) — researched from
-docs.inversify.io_
 
 ## License
 

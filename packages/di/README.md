@@ -385,6 +385,45 @@ const container = Container.fromModules(AppModule);
 `Container.fromModulesAsync` or `container.loadAsync`. Modules are ref-counted: loading one twice counts once, and
 `unload` removes its bindings only when the count reaches zero.
 
+## Testing
+
+Give every test its own container and dispose it afterwards. A container shared across tests carries cached singletons
+from one into the next.
+
+```ts
+let container: Container;
+
+beforeEach(() => {
+  container = Container.create();
+});
+
+afterEach(async () => {
+  await container.dispose();
+});
+```
+
+To swap one binding out of a module you already loaded, bind it at a **child** container — the child has no binding of
+its own yet, and resolution prefers the child over its parent:
+
+```ts
+const testContainer = Container.fromModules(AppModule).createChild();
+testContainer.bind(DbToken).toConstantValue(fakeDatabase);
+```
+
+`rebind()` is for replacing a binding that already exists in the **same** container — it throws
+`RebindUnboundTokenError` when the token is only bound at a parent, so it is the wrong tool for the override above.
+
+To construct a class the container was never told about — plain JavaScript, generated code, a class you cannot decorate
+— supply the metadata yourself. Pass the reader to `Container.create`: a reader bound through `MetadataReaderToken` on
+the container you are about to use is read too late, because the resolver was built with the container.
+
+```ts
+const container = Container.create({ metadataReader: customReader });
+```
+
+For unit tests where every collaborator should be a mock, [`@codefast/di-testing`](../di-testing/README.md) builds the
+mocks from the class's own declared dependencies, through a real container.
+
 ## Errors
 
 Every error extends `DiError` and carries a stable `code`, so you can branch on the code rather than the message:
@@ -427,6 +466,7 @@ alongside the method that produced them. Run it yourself rather than taking any 
 - [Rendered docs on codefastlabs.com](https://codefastlabs.com/docs/di)
 - [`SPEC.md`](./SPEC.md) — the behavioural contract: public API, semantics, and errors.
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md) — the internal shape and the invariants the hot paths depend on.
+- [`DECISIONS.md`](./DECISIONS.md) — why the API looks like this, and what it did not take from InversifyJS v8.
 - [`examples/`](./examples/README.md) — runnable examples from basic tokens to a multi-file Ports & Adapters app.
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md) — the package workflow: build, exports mirror, tests, and the perf guard.
 - [`CHANGELOG.md`](./CHANGELOG.md) — release history.
