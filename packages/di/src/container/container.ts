@@ -207,6 +207,8 @@ class DefaultContainer implements Container {
   #moduleRefs: Map<object, number> | undefined;
   // Module bindings: module -> array of binding IDs registered by it
   #moduleBindingIds: Map<object, Array<BindingIdentifier>> | undefined;
+  // Module imports: module -> the modules it imported, so unload decrements their ref-count too.
+  #moduleImports: Map<object, Array<object>> | undefined;
   // One shared registration for every chain this container's own `bind()` creates.
   #registration: BindingRegistration | undefined;
   // Constants a plain last-wins `bind()` displaced out of the registry with their deactivation still
@@ -236,7 +238,7 @@ class DefaultContainer implements Container {
     if (this.#inspector !== undefined) {
       builtSubsystems.push("container.inspector");
     }
-    if (this.#moduleRefs !== undefined || this.#moduleBindingIds !== undefined) {
+    if (this.#moduleRefs !== undefined || this.#moduleBindingIds !== undefined || this.#moduleImports !== undefined) {
       builtSubsystems.push("container.moduleTables");
     }
     if (this.#registry.isRecordMapBuilt) {
@@ -441,11 +443,21 @@ class DefaultContainer implements Container {
   unbindAll(): void {
     this.#assertNotDisposed();
     this.#deactivatePairsSync(this.#drainSingletons(this.#registry.clear()));
+    this.#resetModuleTables();
   }
 
   async unbindAllAsync(): Promise<void> {
     this.#assertNotDisposed();
     await this.#deactivatePairs(this.#drainSingletons(this.#registry.clear()));
+    this.#resetModuleTables();
+  }
+
+  // Clearing the registry also clears module bookkeeping, so a later `load()` of the same module is
+  // not silently skipped as already-loaded. Run after deactivation so the module's hooks still fire.
+  #resetModuleTables(): void {
+    this.#moduleRefs = undefined;
+    this.#moduleBindingIds = undefined;
+    this.#moduleImports = undefined;
   }
 
   rebind<Value, Names extends string = string>(
@@ -580,6 +592,7 @@ class DefaultContainer implements Container {
       bind: <Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
         this.#createBindToBuilder(token, registration),
       import: (...modules: Array<SyncModule>): void => {
+        this.#recordModuleImports(moduleRef, modules);
         this.#loadSyncModules(modules);
       },
     };
@@ -591,11 +604,21 @@ class DefaultContainer implements Container {
       bind: <Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
         this.#createBindToBuilder(token, registration),
       import: (...modules: Array<SyncModule | AsyncModule>): void => {
+        this.#recordModuleImports(moduleRef, modules);
         for (const module of modules) {
           importPromises.push(this.#loadOneModuleAsync(module));
         }
       },
     };
+  }
+
+  // Records that `moduleRef` imported each module, so unloading it later releases the reference the
+  // import took — otherwise an imported module's ref-count only ever climbs.
+  #recordModuleImports(moduleRef: object, modules: ReadonlyArray<SyncModule | AsyncModule>): void {
+    const list = getOrInsert((this.#moduleImports ??= new Map<object, Array<object>>()), moduleRef, []);
+    for (const module of modules) {
+      list.push(module as object);
+    }
   }
 
   unload(...modules: Array<SyncModule>): void {
@@ -608,6 +631,7 @@ class DefaultContainer implements Container {
   /** Unregister module bindings and collect [binding, instance] pairs for deactivation. */
   #removeModuleBindings(ref: object): DeactivationPairs {
     this.#moduleRefs?.delete(ref);
+    this.#moduleImports?.delete(ref);
     const ids = this.#moduleBindingIds?.get(ref) ?? [];
     this.#moduleBindingIds?.delete(ref);
     const removed: Array<Binding> = [];
@@ -623,7 +647,15 @@ class DefaultContainer implements Container {
   #unloadModuleSync(ref: object): void {
     const count = this.#moduleRefs?.get(ref) ?? 0;
     if (count <= 1) {
+      // Read the imports before removal clears them, then release each — a child only unbinds once
+      // its own ref-count reaches zero, mirroring the increment `import` took on load.
+      const imported = this.#moduleImports?.get(ref);
       this.#deactivatePairsSync(this.#removeModuleBindings(ref));
+      if (imported !== undefined) {
+        for (const child of imported) {
+          this.#unloadModuleSync(child);
+        }
+      }
     } else {
       this.#moduleRefs!.set(ref, count - 1);
     }
@@ -639,7 +671,13 @@ class DefaultContainer implements Container {
   async #unloadModuleAsync(ref: object): Promise<void> {
     const count = this.#moduleRefs?.get(ref) ?? 0;
     if (count <= 1) {
+      const imported = this.#moduleImports?.get(ref);
       await this.#deactivatePairs(this.#removeModuleBindings(ref));
+      if (imported !== undefined) {
+        for (const child of imported) {
+          await this.#unloadModuleAsync(child);
+        }
+      }
     } else {
       this.#moduleRefs!.set(ref, count - 1);
     }
