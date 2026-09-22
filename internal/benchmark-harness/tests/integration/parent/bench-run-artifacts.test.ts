@@ -1,11 +1,12 @@
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { buildBenchRunOutputPaths, writeBenchRunArtifacts } from "#parent/bench-run-artifacts";
+import { buildBenchRunOutputPaths, resolveRunDirectory, writeBenchRunArtifacts } from "#parent/bench-run-artifacts";
 import type { ComparisonDocument } from "#report/comparison-document";
+import { OBSERVATIONS_FILE_NAME } from "#shared/env-keys";
 
 let temporaryRoot: string;
 
@@ -101,5 +102,36 @@ describe("writeBenchRunArtifacts", () => {
   it("does not move latest.json when the subject measured no rows", () => {
     const paths = write(documentWith({ scenariosMeasured: 0 }));
     expect(existsSync(paths.latestPointerPath)).toBe(false);
+  });
+});
+
+describe("resolveRunDirectory", () => {
+  function writeRun(directory: string, runId: string): string {
+    const runDirectory = join(directory, runId);
+    mkdirSync(runDirectory, { recursive: true });
+    writeFileSync(join(runDirectory, OBSERVATIONS_FILE_NAME), "");
+    return runDirectory;
+  }
+
+  beforeEach(() => {
+    temporaryRoot = mkdtempSync(join(tmpdir(), "bench-resolve-"));
+  });
+
+  afterEach(() => {
+    rmSync(temporaryRoot, { force: true, recursive: true });
+  });
+
+  it("resolves a directory of runs to its newest member", () => {
+    writeRun(join(temporaryRoot, "baselines"), "2026-01-01T00-00-00-000Z");
+    writeRun(join(temporaryRoot, "baselines"), "2026-06-01T00-00-00-000Z");
+    expect(resolveRunDirectory(temporaryRoot, "baselines").runId).toBe("2026-06-01T00-00-00-000Z");
+  });
+
+  it("resolves an explicit run directory to itself rather than scanning for a newer one", () => {
+    writeRun(join(temporaryRoot, "baselines"), "2026-01-01T00-00-00-000Z");
+    writeRun(join(temporaryRoot, "baselines"), "2026-06-01T00-00-00-000Z");
+    expect(resolveRunDirectory(temporaryRoot, "baselines/2026-01-01T00-00-00-000Z").runId).toBe(
+      "2026-01-01T00-00-00-000Z",
+    );
   });
 });

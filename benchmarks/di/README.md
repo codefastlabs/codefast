@@ -28,7 +28,7 @@ measures the working tree rather than a stale `dist/`.
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `pnpm bench`            | The lane to cite: one subprocess per scenario, libraries interleaved, default profile, three trials               |
 | `pnpm bench:fast`       | Smoke profile — one shared process per library, shorter windows, one trial. For "did I break it", never a claim   |
-| `pnpm bench:baseline`   | The ledger's pass: `bench` in the full profile, read against the pinned baseline run                              |
+| `pnpm bench:baseline`   | The ledger's pass: `bench` in the full profile, read against the anchor in `baselines/`                           |
 | `pnpm bench:ab`         | Two builds of `@codefast/di`, paired and alternating, on the rows you name (the guide has the recipe)             |
 | `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout and a coverage line per library on stderr, measuring nothing      |
 | `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                                                         |
@@ -39,12 +39,12 @@ measures the working tree rather than a stale `dist/`.
 | `BENCH_TRIALS=<n>`      | Trials per scenario; the harness refuses anything below its minimum                                               |
 | `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use                                    |
 | `BENCH_TIER=<tier>`     | Restrict the run to `contract` rows (public API, compared across libraries) or `engine` rows (ours alone)         |
-| `BENCH_BASELINE=<run>`  | Diff every aggregate and row against this run id instead of the run `latest.json` names                           |
+| `BENCH_BASELINE=<run>`  | Diff against this run id, or a directory of runs — its newest member — instead of what `latest.json` names        |
 | `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                                                  |
 | `PORT=<n>`              | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                              |
 
-Switches compose with the lanes: `BENCH_MODE=full pnpm bench` is what `bench:baseline` runs, without the pinned
-baseline.
+Switches compose with the lanes: `BENCH_MODE=full pnpm bench` is what `bench:baseline` runs, without the anchor — it
+reads against whatever run landed before instead.
 
 Every run writes a timestamped directory under `bench-results/` (git-ignored) holding one file, `observations.jsonl`,
 and — for a whole-suite run — points `bench-results/latest.json` at it. `report.md` and `report.json` are derived on

@@ -7,7 +7,6 @@ export const DOC_KINDS = [
   { slug: "spec", file: "SPEC.md", label: "Specification" },
   { slug: "architecture", file: "ARCHITECTURE.md", label: "Architecture" },
   { slug: "decisions", file: "DECISIONS.md", label: "Decisions" },
-  { slug: "learning", file: "LEARNING.md", label: "Learning" },
   { slug: "contributing", file: "CONTRIBUTING.md", label: "Contributing" },
   { slug: "changelog", file: "CHANGELOG.md", label: "Changelog" },
 ] as const;

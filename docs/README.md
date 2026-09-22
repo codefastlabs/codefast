@@ -69,8 +69,6 @@ A document that concerns exactly one package stays in that package rather than m
 
 - `packages/di/ARCHITECTURE.md` — the source of truth for `resolution/`, read it before touching a hot path; what each
   shape costs is measured empirically by the `benchmarks/di` suite rather than recorded in a doc alongside it
-- `packages/di/LEARNING.md` — a guided read of the patterns, algorithms, and TypeScript/performance techniques the
-  engine applies, for someone learning from the codebase
 - `packages/tracking/spec/` — the behavioural contract
 - `packages/cli/ARCHITECTURE.md`, `packages/tailwind-variants/ARCHITECTURE.md` — the internal design doc for those
   packages, in the same role as `packages/di/ARCHITECTURE.md` above

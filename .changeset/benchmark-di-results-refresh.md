@@ -1,8 +1,11 @@
 ---
-"@benchmark/di": patch
+"@benchmark/di": minor
 ---
 
-`RESULTS.md` is rewritten from a full-profile isolated pass over the suite on the tree after the cold-path redesign and
-the one-async-lane series, read against `baselines/2026-09-14T23-41-04-932Z` — the last full pass over the previous
-engine, now the pinned baseline of `pnpm bench:baseline`. The run's `observations.jsonl` is committed under
-`baselines/`; the pre-rewrite run the page no longer cites is removed.
+`baselines/` now holds exactly the one run `RESULTS.md` transcribes, and `bench:baseline` derives it rather than naming
+it: the lane passes `BENCH_BASELINE=baselines`, so a run id is never hand-edited into the script or copied into the
+page's prose. The directory had accumulated three runs that were not baselines at all — the page's own transcript and
+two contract-tier exhibits kept for a document that cited them — which left the baseline's identity nowhere in the data
+and made any read of the directory pick up the wrong run. `RESULTS.md` is rewritten from a fresh full-profile isolated
+pass (`2026-09-21T09-29-37-156Z`) as a self-contained snapshot of where the engine stands, dropping the deltas that were
+carried against the retired pre-rewrite engine; the runs nothing transcribes any more are removed.

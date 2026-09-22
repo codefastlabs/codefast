@@ -121,14 +121,15 @@ function readLatestPointerRunId(benchResultsRoot: string): string | undefined {
   return undefined;
 }
 
-function newestRunDirName(benchResultsRoot: string): string | undefined {
-  if (!existsSync(benchResultsRoot)) {
+// Run ids are fixed-width ISO stamps, so the lexicographically last run directory is the most recent.
+function newestRunDirName(runsDirectory: string): string | undefined {
+  if (!existsSync(runsDirectory)) {
     return undefined;
   }
-  return readdirSync(benchResultsRoot, { withFileTypes: true })
+  return readdirSync(runsDirectory, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
-    .filter((name) => hasObservations(join(benchResultsRoot, name)))
+    .filter((name) => hasObservations(join(runsDirectory, name)))
     .toSorted((left, right) => left.localeCompare(right))
     .at(-1);
 }
@@ -138,7 +139,8 @@ function newestRunDirName(benchResultsRoot: string): string | undefined {
  * otherwise the run the `latest.json` pointer names, otherwise the newest directory on disk.
  *
  * @param packageRootDirectory - The benchmark package root; `bench-results/` is resolved under it.
- * @param requested - A run directory path, a run id, `"latest"`, or omitted for the newest run.
+ * @param requested - A run directory, a directory of runs (its newest member is read), a run id,
+ * `"latest"`, or omitted for the newest run.
  *
  * @since 0.9.0
  */
@@ -148,6 +150,11 @@ export function resolveRunDirectory(packageRootDirectory: string, requested?: st
     const asPath = isAbsolute(requested) ? requested : resolve(packageRootDirectory, requested);
     if (hasObservations(asPath)) {
       return { runId: basename(asPath), runDirectory: asPath };
+    }
+    // A directory of runs — a suite's committed `baselines/`, say — resolves to its newest member.
+    const newestInDirectory = newestRunDirName(asPath);
+    if (newestInDirectory !== undefined) {
+      return { runId: newestInDirectory, runDirectory: join(asPath, newestInDirectory) };
     }
     const asRunId = join(benchResultsRoot, requested);
     if (hasObservations(asRunId)) {

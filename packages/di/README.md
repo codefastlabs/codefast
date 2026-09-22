@@ -426,7 +426,6 @@ alongside the method that produced them. Run it yourself rather than taking any 
 - [Rendered docs on codefastlabs.com](https://codefastlabs.com/docs/di)
 - [`SPEC.md`](./SPEC.md) — the behavioural contract: public API, semantics, and errors.
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md) — the internal shape and the invariants the hot paths depend on.
-- [`LEARNING.md`](./LEARNING.md) — a guided tour of the techniques the engine applies, pointing at the code.
 - [`examples/`](./examples/README.md) — runnable examples from basic tokens to a multi-file Ports & Adapters app.
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md) — the package workflow: build, exports mirror, tests, and the perf guard.
 - [`CHANGELOG.md`](./CHANGELOG.md) — release history.
