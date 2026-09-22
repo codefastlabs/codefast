@@ -9,7 +9,12 @@ import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
 import { postConstruct, preDestroy } from "#decorators/lifecycle-decorators";
-import { CircularDependencyError, StaticMemberDecoratorError, MissingContainerContextError } from "#errors/errors";
+import {
+  CircularDependencyError,
+  StaticMemberDecoratorError,
+  MissingContainerContextError,
+  SymbolKeyedLifecycleError,
+} from "#errors/errors";
 import { defaultMetadataReader } from "#metadata/symbol-metadata-reader";
 
 const integrationDir = dirname(fileURLToPath(import.meta.url));
@@ -101,6 +106,28 @@ describe("Stage 3 decorators — metadata & lifecycle", () => {
       }
       void StaticPreDestroyTarget;
     }).toThrow(StaticMemberDecoratorError);
+  });
+
+  it("rejects @postConstruct on a symbol-keyed method at class evaluation time", () => {
+    const hook = Symbol("probe:post-construct");
+    expect(() => {
+      class SymbolPostConstructTarget {
+        @postConstruct()
+        [hook](): void {}
+      }
+      void SymbolPostConstructTarget;
+    }).toThrow(SymbolKeyedLifecycleError);
+  });
+
+  it("rejects @preDestroy on a symbol-keyed method at class evaluation time", () => {
+    const hook = Symbol("probe:pre-destroy");
+    expect(() => {
+      class SymbolPreDestroyTarget {
+        @preDestroy()
+        [hook](): void {}
+      }
+      void SymbolPreDestroyTarget;
+    }).toThrow(SymbolKeyedLifecycleError);
   });
 });
 

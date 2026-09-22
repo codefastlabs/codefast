@@ -124,6 +124,7 @@ export {
   ScopeViolationError,
   SelfBindingRequiresClassError,
   StaticMemberDecoratorError,
+  SymbolKeyedLifecycleError,
   SyncDisposalNotSupportedError,
   EmptyTagCriteriaError,
   TokenNotBoundError,

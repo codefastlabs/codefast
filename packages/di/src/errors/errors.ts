@@ -533,6 +533,27 @@ export class StaticMemberDecoratorError extends DiError {
 }
 
 /**
+ * A `@postConstruct` or `@preDestroy` on a method whose key is a symbol, which the lifecycle reader cannot name.
+ *
+ * @remarks Reported at decoration rather than at resolve, so the error points at the declaration
+ * instead of a `MetadataReader` the caller never configured.
+ */
+export class SymbolKeyedLifecycleError extends DiError {
+  override readonly name = "SymbolKeyedLifecycleError";
+  readonly code = "SYMBOL_KEYED_LIFECYCLE";
+  readonly decoratorName: string;
+  readonly memberName: string;
+
+  constructor(decoratorName: string, memberName: string) {
+    super(
+      `@${decoratorName}() does not support a symbol-keyed method ('${memberName}'). Give the lifecycle method a string name.`,
+    );
+    this.decoratorName = decoratorName;
+    this.memberName = memberName;
+  }
+}
+
+/**
  * An operation attempted on a container that has already been disposed.
  *
  * @since 0.3.16-canary.0

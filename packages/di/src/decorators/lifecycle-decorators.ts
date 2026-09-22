@@ -1,4 +1,4 @@
-import { StaticMemberDecoratorError } from "#errors/errors";
+import { StaticMemberDecoratorError, SymbolKeyedLifecycleError } from "#errors/errors";
 import { LIFECYCLE_KEY } from "#metadata/metadata-keys";
 import type { MutableLifecycleMetadata } from "#metadata/metadata-types";
 
@@ -9,6 +9,11 @@ function recordLifecycleMethod(phase: "postConstruct" | "preDestroy"): MethodDec
   return function (target: unknown, context: ClassMethodDecoratorContext): void {
     if (context.static) {
       throw new StaticMemberDecoratorError(phase, String(context.name));
+    }
+    // The lifecycle reader keys methods by their string name, so a symbol-keyed method can never be
+    // found again — fail here, where the declaration is, rather than at resolve.
+    if (typeof context.name === "symbol") {
+      throw new SymbolKeyedLifecycleError(phase, String(context.name));
     }
     const meta = context.metadata as Record<string | symbol, unknown>;
     // Own bucket only: `context.metadata` inherits the base class's record, and writing through an
