@@ -1264,11 +1264,16 @@ await container.unbindAsync(dbBindingId);
 // Unbind every binding in the container (the parent is untouched)
 container.unbindAll();
 await container.unbindAllAsync();
+// unbindAll also clears module bookkeeping, so a previously-loaded module can be load()ed again
 
 // Rebind — remove every own binding of the token, then bind again
 // If the token has no own binding yet → throws RebindUnboundTokenError
 container.rebind(Logger).to(FileLogger).singleton();
 ```
+
+> **Normative — `unbindAll` resets module bookkeeping.** Clearing every binding also clears the module ref-counts,
+> binding-id lists and import records, so a module loaded before `unbindAll` can be `load()`ed again rather than being
+> silently skipped as already-loaded. Deactivation runs first, so a module singleton's hook still fires.
 
 #### `rebind` semantics
 

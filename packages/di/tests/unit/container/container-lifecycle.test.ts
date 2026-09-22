@@ -171,6 +171,63 @@ describe("sync modules", () => {
     const container = Container.fromModules(valueModule);
     expect(container.resolve(valueToken)).toBe("from-module");
   });
+
+  it("unload releases only the imports the unloaded module took", () => {
+    const sharedToken = token<string>("module-shared");
+    const shared = Module.create("shared", (builder) => {
+      builder.bind(sharedToken).toConstantValue("shared");
+    });
+    const moduleA = Module.create("module-a", (builder) => {
+      builder.import(shared);
+    });
+    const app = Module.create("app", (builder) => {
+      builder.import(shared);
+    });
+
+    const container = Container.create();
+    container.load(moduleA);
+    container.load(app);
+    expect(container.has(sharedToken)).toBe(true);
+
+    container.unload(moduleA);
+    expect(container.has(sharedToken)).toBe(true); // ref-count 2 → 1
+
+    container.unload(app);
+    expect(container.has(sharedToken)).toBe(false); // ref-count 1 → 0
+  });
+
+  it("unload recurses through a chain of imports", () => {
+    const leafToken = token<string>("module-leaf");
+    const leaf = Module.create("leaf", (builder) => {
+      builder.bind(leafToken).toConstantValue("leaf");
+    });
+    const mid = Module.create("mid", (builder) => {
+      builder.import(leaf);
+    });
+    const top = Module.create("top", (builder) => {
+      builder.import(mid);
+    });
+
+    const container = Container.create();
+    container.load(top);
+    expect(container.has(leafToken)).toBe(true);
+
+    container.unload(top);
+    expect(container.has(leafToken)).toBe(false);
+  });
+
+  it("unbindAll clears module bookkeeping so a later load re-registers", () => {
+    const container = Container.create();
+    container.load(valueModule);
+    expect(container.has(valueToken)).toBe(true);
+
+    container.unbindAll();
+    expect(container.has(valueToken)).toBe(false);
+
+    // Before the reset this was a permanent no-op: the ref-count still recorded the module.
+    container.load(valueModule);
+    expect(container.has(valueToken)).toBe(true);
+  });
 });
 
 describe("async modules", () => {

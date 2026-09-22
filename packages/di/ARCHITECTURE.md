@@ -744,14 +744,16 @@ frame onto, while the shared stack pays one per push.
 
 `DefaultContainer`'s constructor builds only what a resolve cannot happen without: the registry, the scope manager, the
 lifecycle manager and the resolver chain — and each of those, in turn, allocates only its hot lane. Everything else
-arrives on first use — the inspector, the module ref/binding tables, the scope's in-flight and scoped caches, the
-registry's record map (first token that is more than one default binding), id index (first id-keyed operation) and
-tagged slot indexes (first tagged slot), the per-reader metadata caches, which every container reading through the same
-reader shares — a child takes its parent's by hand, a root finds them by reader on its first question — so a child
-inheriting its parent's reader meets no class cold that the parent already met, the resolver's plan compiler and both
-plan maps (first plan request, which only a `class` or `resolved` binding makes), the lookup cache's memo maps (second
-distinct token or tag in one cache generation), the activation-need cache (first interpreted resolve that asks whether a
-binding needs the activation pipeline) and its memo (first answer its early returns cannot give).
+arrives on first use — the inspector, the module ref/binding/import tables (the import table records which modules a
+module imported, so an unload releases their ref-counts as symmetrically as the import took them), the scope's in-flight
+and scoped caches, the registry's record map (first token that is more than one default binding), id index (first
+id-keyed operation) and tagged slot indexes (first tagged slot), the per-reader metadata caches, which every container
+reading through the same reader shares — a child takes its parent's by hand, a root finds them by reader on its first
+question — so a child inheriting its parent's reader meets no class cold that the parent already met, the resolver's
+plan compiler and both plan maps (first plan request, which only a `class` or `resolved` binding makes), the lookup
+cache's memo maps (second distinct token or tag in one cache generation), the activation-need cache (first interpreted
+resolve that asks whether a binding needs the activation pipeline) and its memo (first answer its early returns cannot
+give).
 
 The scope manager and the lifecycle manager stay eager on purpose: every generic level reads them, and a nullable field
 there is a branch on every hop. The resolver's lookup memo, its class introspector and its sync context pool are built
