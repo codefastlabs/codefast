@@ -115,8 +115,10 @@ describe("dispose vs in-flight async materialization", () => {
 
     await parent.dispose();
 
+    // Both lanes now refuse at the container gate — resolveAsync guards synchronously, as it already
+    // did for a self-disposed container, so the refusal is a throw rather than a rejected promise.
     expect(() => child.resolve(serviceToken)).toThrow(DisposedContainerError);
-    await expect(child.resolveAsync(serviceToken)).rejects.toThrow(DisposedContainerError);
+    expect(() => child.resolveAsync(serviceToken)).toThrow(DisposedContainerError);
     expect(constructed).toBe(1);
   });
 });
@@ -211,33 +213,42 @@ describe("module load failure", () => {
   });
 });
 
-describe("has() on a live child of a disposed parent", () => {
-  it("answers without asserting on the disposed parent", async () => {
+describe("a container with a disposed ancestor is itself disposed", () => {
+  it("answers has() through a live parent chain before any dispose", () => {
+    const shared = token<string>("teardown.live-has");
+    const parent = Container.create();
+    parent.bind(shared).toConstantValue("v");
+    const child = parent.createChild();
+
+    // A live chain: has() recurses to the parent's registry without asserting on each hop.
+    expect(child.has(shared)).toBe(true);
+    expect(child.hasOwn(shared)).toBe(false);
+  });
+
+  it("refuses has() and resolve() on a child once its parent is disposed", async () => {
     const shared = token<string>("teardown.child-has");
     const parent = Container.create();
     parent.bind(shared).toConstantValue("v");
     const child = parent.createChild();
     await parent.dispose();
 
-    expect(child.isDisposed).toBe(false);
-    expect(() => child.has(shared)).not.toThrow();
-    expect(child.has(shared)).toBe(true);
-    expect(child.hasOwn(shared)).toBe(false);
-    // The parent's own public entry point still guards.
-    expect(() => parent.has(shared)).toThrow(DisposedContainerError);
+    expect(child.isDisposed).toBe(true);
+    expect(() => child.has(shared)).toThrow(DisposedContainerError);
+    expect(() => child.resolve(shared)).toThrow(DisposedContainerError);
   });
 
-  it("answers through a grandparent chain", async () => {
+  it("refuses a grandchild whose grandparent is disposed", async () => {
     const shared = token<string>("teardown.grandchild-has");
     const parent = Container.create();
     parent.bind(shared).toConstantValue("v");
     const grandchild = parent.createChild().createChild();
     await parent.dispose();
 
-    expect(grandchild.has(shared)).toBe(true);
+    expect(grandchild.isDisposed).toBe(true);
+    expect(() => grandchild.has(shared)).toThrow(DisposedContainerError);
   });
 
-  it("still guards has() on a child that is itself disposed", async () => {
+  it("still guards a child that is itself disposed", async () => {
     const shared = token<string>("teardown.child-self-disposed");
     const parent = Container.create();
     parent.bind(shared).toConstantValue("v");
@@ -245,5 +256,71 @@ describe("has() on a live child of a disposed parent", () => {
     await child.dispose();
 
     expect(() => child.has(shared)).toThrow(DisposedContainerError);
+  });
+
+  it("refuses a transient resolve through a disposed ancestor, building nothing", async () => {
+    const service = token<object>("teardown.transient");
+    let built = 0;
+    const parent = Container.create();
+    parent
+      .bind(service)
+      .toDynamic(() => {
+        built += 1;
+        return {};
+      })
+      .transient();
+    const child = parent.createChild();
+    await parent.dispose();
+
+    expect(() => child.resolve(service)).toThrow(DisposedContainerError);
+    expect(built).toBe(0);
+  });
+
+  it("refuses a constant resolve through a disposed ancestor", async () => {
+    const service = token<string>("teardown.constant");
+    const parent = Container.create();
+    parent.bind(service).toConstantValue("v");
+    const child = parent.createChild();
+    await parent.dispose();
+
+    expect(() => child.resolve(service)).toThrow(DisposedContainerError);
+  });
+
+  it("refuses a resolve that would run a compiled plan through a disposed ancestor", async () => {
+    const depToken = token<string>("teardown.plan-dep");
+    const service = token<{ dep: string }>("teardown.plan");
+    const parent = Container.create();
+    parent.bind(depToken).toConstantValue("d");
+    parent
+      .bind(service)
+      .toResolved((dep: string) => ({ dep }), [depToken])
+      .transient();
+    // Repeat the resolve so the plan compiles — a compiled plan reads no container field of its own.
+    parent.resolve(service);
+    parent.resolve(service);
+    const child = parent.createChild();
+    await parent.dispose();
+
+    expect(() => child.resolve(service)).toThrow(DisposedContainerError);
+  });
+
+  it("refuses the child's own binding once the parent is disposed", async () => {
+    const own = token<string>("teardown.child-own");
+    const parent = Container.create();
+    const child = parent.createChild();
+    child.bind(own).toConstantValue("child-owned");
+    await parent.dispose();
+
+    expect(() => child.resolve(own)).toThrow(DisposedContainerError);
+  });
+
+  it("lets a child dispose after its parent is disposed", async () => {
+    const parent = Container.create();
+    const child = parent.createChild();
+    await parent.dispose();
+
+    // The `using` protocol calls this at scope exit; dispose is ungated, so it must not throw.
+    await expect(child[Symbol.asyncDispose]()).resolves.toBeUndefined();
+    expect(child.isDisposed).toBe(true);
   });
 });

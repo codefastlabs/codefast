@@ -9,6 +9,7 @@ import { getOrInsert, getOrInsertComputed } from "#core/map-upsert";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#core/module";
 import { isSyncModule, MODULE_SETUP } from "#core/module";
 import { BindingRegistry } from "#core/registry";
+import { advanceDisposeEpoch, disposeEpochRef } from "#core/state-epoch";
 import type { Token } from "#core/token";
 import { tokenName } from "#core/token";
 import type {
@@ -193,6 +194,9 @@ const NO_DEACTIVATION_PAIRS: DeactivationPairs = Object.freeze([]);
 
 class DefaultContainer implements Container {
   #disposed = false;
+  // The dispose epoch at which this child's chain was last confirmed live. Every dispose anywhere
+  // bumps the epoch, so an unchanged epoch means no ancestor closed since — the chain needs no walk.
+  #liveGeneration = -1;
   // The one teardown run — every dispose() call returns it once it exists.
   #disposePromise: Promise<void> | undefined;
   readonly #registry: BindingRegistry;
@@ -294,7 +298,7 @@ class DefaultContainer implements Container {
   }
 
   get isDisposed(): boolean {
-    return this.#disposed;
+    return this.#isChainDisposed();
   }
 
   // ── Binding ────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -798,6 +802,8 @@ class DefaultContainer implements Container {
     this.#disposed = true;
     // Refuses new materializations immediately; in-flight ones are drained just below.
     this.#scope.markClosed();
+    // Descendants read this to learn their chain closed — a resolve through a disposed ancestor is refused.
+    advanceDisposeEpoch();
     await this.#scope.settleInflight();
 
     const reader = this.#getMetadataReader();
@@ -1143,10 +1149,38 @@ class DefaultContainer implements Container {
 
   // ── Internal ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
+  // Hot guard, one call-free epoch read and one compare for every container, root or child. Every
+  // dispose anywhere — self-dispose included, since `#runDispose` bumps the epoch — moves the epoch,
+  // so an epoch unchanged since we last confirmed the chain live means it is still live. A moved epoch
+  // drops to the cold refresh, which walks self and ancestors and either re-confirms or throws.
+  // Hot guard. A root's whole answer is its own `#disposed`, kept the one field read it always was —
+  // the epoch is never read on the root path. A child adds a call-free epoch compare: an unchanged
+  // epoch means no container anywhere has been disposed since we last confirmed the chain live, so the
+  // ancestors need no walk; a moved epoch drops to the cold refresh that walks them and re-confirms or throws.
   #assertNotDisposed(): void {
     if (this.#disposed) {
       throw new DisposedContainerError();
     }
+    if (this.#parent !== undefined && disposeEpochRef.value !== this.#liveGeneration) {
+      this.#refreshAncestors();
+    }
+  }
+
+  #refreshAncestors(): void {
+    if (this.#parent!.#isChainDisposed()) {
+      throw new DisposedContainerError();
+    }
+    this.#liveGeneration = disposeEpochRef.value;
+  }
+
+  // Whether this container or any ancestor is disposed — the plain walk, taken only on the cold refresh
+  // and by the `isDisposed` getter, so it needs no memo of its own.
+  #isChainDisposed(): boolean {
+    if (this.#disposed) {
+      return true;
+    }
+    const parent = this.#parent;
+    return parent !== undefined && parent.#isChainDisposed();
   }
 }
 
