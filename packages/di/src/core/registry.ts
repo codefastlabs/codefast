@@ -335,6 +335,23 @@ export class BindingRegistry {
     return this.#records?.get(token)?.multi?.get(criterion);
   }
 
+  /**
+   * Whether any binding for the token carries a `when()` predicate.
+   *
+   * @remarks Only a token that keeps a record can hold a predicate — a lone binding is default-slot
+   * with none — so an index fast lane consults this to decline to full selection when the
+   * more-specific rule's predicate step could apply.
+   */
+  hasPredicateCandidate(token: Token<unknown> | Constructor): boolean {
+    const bindings = this.getRecorded(token);
+    for (let index = 0; index < bindings.length; index += 1) {
+      if (bindings[index]!.predicate !== undefined) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /** A token's lone default-slot binding — the first read of every synchronous resolve. */
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
     return this.#lone.get(token);

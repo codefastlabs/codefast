@@ -226,7 +226,12 @@ export class BindingLookupCache<Owner> {
   ): DefaultLookupEntry<Owner> | null {
     const found = this.#registry.getPairTagged(token, nameCriterion, tag);
     if (found !== undefined) {
-      return found.predicate !== undefined || found.kind === "alias" ? null : { binding: found, owner: this.#owner };
+      // A predicate candidate at this level can win the more-specific rule's first step, which this
+      // lane cannot weigh; an alias carries options through the full path. Either declines to selection.
+      if (found.kind === "alias" || this.#registry.hasPredicateCandidate(token)) {
+        return null;
+      }
+      return { binding: found, owner: this.#owner };
     }
     if (this.#registry.has(token)) {
       return null;

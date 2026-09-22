@@ -235,13 +235,19 @@ describe("a request carrying a name and one tag has an indexed lane", () => {
     expect(parent.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("parent");
   });
 
-  it("treats a name no binding ever declared as a miss", () => {
+  it("falls through to a tag-only slot the request covers, whether or not the name was declared", () => {
     const serviceToken = token<string>("named-tagged-lane-ghost");
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("prod").whenTagged(PROD);
 
-    expect(container.resolveOptional(serviceToken, { name: "never-declared-anywhere", tags: [PROD] })).toBeUndefined();
-    expect(() => container.resolve(serviceToken, { name: "never-declared-anywhere", tags: [PROD] })).toThrow(
+    // The request carries PROD plus a name no binding declared; the slot needs only PROD, so it matches.
+    expect(container.resolve(serviceToken, { name: "never-declared-anywhere", tags: [PROD] })).toBe("prod");
+    expect(container.resolveOptional(serviceToken, { name: "never-declared-anywhere", tags: [PROD] })).toBe("prod");
+    // A tag the slot does not carry is the genuine miss.
+    expect(
+      container.resolveOptional(serviceToken, { name: "never-declared-anywhere", tags: [STAGING] }),
+    ).toBeUndefined();
+    expect(() => container.resolve(serviceToken, { name: "never-declared-anywhere", tags: [STAGING] })).toThrow(
       NoMatchingBindingError,
     );
   });
