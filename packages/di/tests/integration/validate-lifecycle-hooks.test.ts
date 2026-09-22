@@ -116,4 +116,59 @@ describe("container.validate() — container-level lifecycle hooks", () => {
       container.validate();
     }).not.toThrow();
   });
+
+  it("throws for a deactivation hook on a token whose only binding is scoped", () => {
+    const connectionToken = token<Connection>("scoped-deactivation");
+
+    const container = Container.create();
+    container.bind(connectionToken).to(Connection).scoped();
+    container.onDeactivation(connectionToken, () => {
+      // a scoped binding is never deactivated, so this can never run
+    });
+
+    expect(() => {
+      container.validate();
+    }).toThrow(UnreachableLifecycleHookError);
+  });
+
+  it("throws for a deactivation hook on a token whose only binding is transient", () => {
+    const connectionToken = token<Connection>("transient-deactivation");
+
+    const container = Container.create();
+    container.bind(connectionToken).to(Connection).transient();
+    container.onDeactivation(connectionToken, () => {
+      // a transient binding is never deactivated
+    });
+
+    expect(() => {
+      container.validate();
+    }).toThrow(UnreachableLifecycleHookError);
+  });
+
+  it("accepts a deactivation hook when a singleton binding sits beside a scoped one", () => {
+    const connectionToken = token<Connection>("mixed-deactivation");
+
+    const container = Container.create();
+    container.bind(connectionToken).to(Connection).singleton();
+    container.bind(connectionToken).to(Connection).whenNamed("scoped").scoped();
+    container.onDeactivation(connectionToken, () => {
+      // the singleton binding can be deactivated, so the hook is reachable
+    });
+
+    expect(() => {
+      container.validate();
+    }).not.toThrow();
+  });
+
+  it("accepts an activation hook on a scoped binding, which does activate", () => {
+    const connectionToken = token<Connection>("scoped-activation");
+
+    const container = Container.create();
+    container.bind(connectionToken).to(Connection).scoped();
+    container.onActivation(connectionToken, (_ctx, instance) => instance);
+
+    expect(() => {
+      container.validate();
+    }).not.toThrow();
+  });
 });

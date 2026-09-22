@@ -798,6 +798,9 @@ container.unbind(consoleId);
 `onActivation` runs after `@postConstruct()`, before the instance is cached into its scope. It must return an instance.
 
 `onDeactivation` is only available on `singleton` and `toConstantValue` — enforced at compile time by the builder type.
+The container-level `container.onDeactivation(token, handler)` takes any token, so the type gate does not apply there;
+`validate()` reports an `UnreachableLifecycleHookError` when such a hook is keyed to a token whose every binding is
+`scoped` or `transient` (nothing it could ever deactivate). An `onActivation` hook stays valid on any scope.
 
 ```ts
 container

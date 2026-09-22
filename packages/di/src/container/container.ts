@@ -830,6 +830,11 @@ class DefaultContainer implements Container {
       if (!this.#isBoundInChain(hookToken)) {
         throw new UnreachableLifecycleHookError(tokenName(hookToken), phase);
       }
+      // A deactivation only ever runs for a singleton or constant, so a hook on a token whose every
+      // binding is scoped or transient can never fire — the builder blocks it, `container.onDeactivation` cannot.
+      if (phase === "onDeactivation" && !this.#hasDeactivatableBindingInChain(hookToken)) {
+        throw new UnreachableLifecycleHookError(tokenName(hookToken), phase);
+      }
     }
 
     this.#validateConstraintRequirements(allBindings);
@@ -876,6 +881,17 @@ class DefaultContainer implements Container {
     }
     const parent = this.#parent;
     return parent !== undefined && parent.#isBoundInChain(token);
+  }
+
+  // Whether the token has a binding a deactivation hook can run for — a singleton or a constant.
+  #hasDeactivatableBindingInChain(token: Token<unknown> | Constructor): boolean {
+    for (const binding of this.#registry.getAll(token)) {
+      if (effectiveBindingScope(binding) === "singleton") {
+        return true;
+      }
+    }
+    const parent = this.#parent;
+    return parent !== undefined && parent.#hasDeactivatableBindingInChain(token);
   }
 
   #isSingletonStaticAnalyzableBinding(binding: Binding): boolean {
