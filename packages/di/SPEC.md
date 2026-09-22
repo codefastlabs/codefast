@@ -1025,6 +1025,11 @@ condition the slot declares. The slot with no conditions is the **default slot**
 bindings but no slot matches the empty hint. The message lists the available slots:
 `"Available slots: [name:a, name:b]"`.
 
+> **Normative — a displaced binding still deactivates.** When a plain last-wins `bind()` (rows 2, 3, 7) displaces a
+> binding that owns a deactivation — a `singleton` or `toConstantValue` with an `onDeactivation` hook — the displaced
+> binding leaves the selection but its instance is still torn down at `dispose()`. Last-wins changes which binding
+> answers a resolve; it does not silently drop a lifecycle the container still owes.
+
 **Rows 8 and 9 — a more detailed hint satisfies more bindings, hence the need for a tie-breaker.** A binding's criteria
 are **its conditions**, not a filter that must match exactly. In row 8 the hint `{fuel:petrol}` rules out B because B
 also demands `size`; the hint `{fuel:petrol, size:v8}` satisfies **both** A and B, because A's only condition is stated

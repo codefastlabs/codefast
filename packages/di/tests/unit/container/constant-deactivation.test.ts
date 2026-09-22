@@ -202,4 +202,54 @@ describe("constant deactivation", () => {
 
     expect(closed).toEqual(["hooked"]);
   });
+
+  it("runs the hook of a constant a plain last-wins bind() displaced", async () => {
+    const serviceToken = token<string>("constant-displaced");
+    const log: Array<string> = [];
+    const container = Container.create();
+    container
+      .bind(serviceToken)
+      .toConstantValue("A")
+      .onDeactivation((value) => {
+        log.push(`deact:${value}`);
+      });
+    container
+      .bind(serviceToken)
+      .toConstantValue("B")
+      .onDeactivation((value) => {
+        log.push(`deact:${value}`);
+      });
+
+    await container.dispose();
+
+    // Both the winner and the displaced constant get their hook, exactly once each.
+    expect(new Set(log)).toStrictEqual(new Set(["deact:A", "deact:B"]));
+    expect(log).toHaveLength(2);
+  });
+
+  it("does not double-run a displaced constant that a refinement restores", async () => {
+    const serviceToken = token<string>("constant-displaced-restored");
+    const log: Array<string> = [];
+    const container = Container.create();
+    container
+      .bind(serviceToken)
+      .toConstantValue("A")
+      .onDeactivation((value) => {
+        log.push(`deact:${value}`);
+      });
+    // The named slot moves B aside, so the default-slot A is restored rather than orphaned.
+    container
+      .bind(serviceToken)
+      .toConstantValue("B")
+      .whenNamed("secondary")
+      .onDeactivation((value) => {
+        log.push(`deact:${value}`);
+      });
+
+    expect(container.resolve(serviceToken)).toBe("A");
+    await container.dispose();
+
+    expect(new Set(log)).toStrictEqual(new Set(["deact:A", "deact:B"]));
+    expect(log).toHaveLength(2);
+  });
 });
