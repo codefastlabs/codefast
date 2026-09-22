@@ -61,8 +61,6 @@ import type { InstantiationPlanHost } from "#resolution/plan/instantiation-plan"
 import { InstantiationPlanCompiler, PLAN_RETRY } from "#resolution/plan/instantiation-plan";
 import { matchesSlot, selectAllBindings, selectBinding } from "#resolution/select/binding-select";
 
-// Where a multi-tag resolve switches from scanning the token's list to walking the tag indexes.
-
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 
 const EMPTY_PARAM_LIST: ReadonlyArray<ParamMetadata> = [];
