@@ -1773,7 +1773,11 @@ an `InjectableOptions`.
 
 ### Inheritance — explicit, no magic
 
-> **Normative.** Every dep must be declared explicitly — there is no implicit inheritance injection.
+> **Normative.** Every dep must be declared explicitly — there is no implicit inheritance injection. A subclass that
+> declares none of its own constructor metadata yet inherits a base that declares some — the natural
+> `class Derived extends Base {}` with an implicit constructor — is **rejected with `MissingMetadataError`**, not built
+> with `undefined` arguments. Give it its own `@injectable([...])`, or an explicit constructor. A subclass whose own
+> `@injectable([])` declares zero deps is built with zero arguments, as declared.
 
 ```ts
 @injectable([Logger])
