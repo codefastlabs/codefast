@@ -1461,13 +1461,24 @@ const handler = req.container.resolve(UserController);
 > with no binding copies. `dispose()` only clears the child's singleton cache. The pattern is safe for high-throughput
 > request handling.
 
+> **Normative — disposing a container reaches its descendants.** A container whose parent (or any ancestor) has been
+> disposed is itself disposed: `isDisposed` reads `true`, and every resolve, `has` and mutation is refused with
+> `DisposedContainerError`, including the child's own bindings — a child never keeps building instances from a torn-down
+> chain. `createChild()` stays O(1), and the resolve path stays cheap: a root reads only its own disposed flag, and a
+> child adds one call-free dispose-epoch compare, walking the ancestors only after some container in the process is
+> disposed. A child of a disposed ancestor cannot be revived — open a fresh `Container.create()` for an independent one.
+
 ### Container state lifecycle
 
 > **Normative.** A container has an `isDisposed` state, exposed as a readonly property. After `dispose()` is called:
 >
 > - Every mutation (`bind`, `unbind`, `rebind`, `load`, `unload`) throws `DisposedContainerError`.
-> - Resolution operations (`resolve*`, `has*`, `inspect`) throw `DisposedContainerError` too.
-> - `dispose()` is idempotent: calling it again is a no-op — no throw, no double-deactivation.
+> - Resolution operations (`resolve*`, `has*`, `inspect`) throw `DisposedContainerError` too. `resolveAsync` guards
+>   synchronously at the entry, so a disposed container refuses it with a throw rather than a rejected promise.
+> - `dispose()` is idempotent: calling it again is a no-op — no throw, no double-deactivation. This holds for a child
+>   whose ancestor is already disposed, so an `await using` child still tears down cleanly at scope exit.
+> - A descendant of a disposed container is disposed too — it reports `isDisposed` and refuses the same operations,
+>   because its resolution walks a chain that is gone.
 
 ```ts
 const container = Container.create();
