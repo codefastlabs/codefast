@@ -1098,15 +1098,15 @@ cost, the predicate is checked afterwards at runtime.
 
 **Seven binding kinds**, each adding its own fields on top of the common part above:
 
-| `kind`           | From                      | Own fields                                                          |
-| ---------------- | ------------------------- | ------------------------------------------------------------------- |
-| `class`          | `.to(Class)`, `.toSelf()` | `target` (constructor), `scope`, `onActivation?`, `onDeactivation?` |
-| `dynamic`        | `.toDynamic()`            | sync `factory`, `scope`, both hooks                                 |
-| `dynamic-async`  | `.toDynamicAsync()`       | `factory` returning a `Promise`, `scope`, both hooks                |
-| `resolved`       | `.toResolved()`           | sync `factory`, normalized `deps`, `scope`, both hooks              |
-| `resolved-async` | `.toResolvedAsync()`      | `factory` returning a `Promise`, `deps`, `scope`, both hooks        |
-| `constant`       | `.toConstantValue()`      | `value`; `scope` is always `"singleton"`, with no choice            |
-| `alias`          | `.toAlias()`              | `target` token. No `scope`, no lifecycle — it is only a pointer     |
+| `kind`           | From                      | Own fields                                                                                           |
+| ---------------- | ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `class`          | `.to(Class)`, `.toSelf()` | `target` (constructor), `scope`, `onActivation?`, `onDeactivation?`                                  |
+| `dynamic`        | `.toDynamic()`            | sync `factory`, `scope`, both hooks                                                                  |
+| `dynamic-async`  | `.toDynamicAsync()`       | `factory` returning a `Promise`, `scope`, both hooks                                                 |
+| `resolved`       | `.toResolved()`           | sync `factory`, normalized `deps`, `scope`, both hooks                                               |
+| `resolved-async` | `.toResolvedAsync()`      | `factory` returning a `Promise`, `deps`, `scope`, both hooks                                         |
+| `constant`       | `.toConstantValue()`      | `value`; `scope` is always `"singleton"`, with no choice                                             |
+| `alias`          | `.toAlias()`              | `target` token; `scope` is always `"transient"` (a placeholder), no lifecycle — it is only a pointer |
 
 `onDeactivation` only means anything when `scope` is `"singleton"`; that is enforced by the builder's type, not at
 runtime. For `constant`, `onActivation` runs the first time the value is resolved and its result is what gets cached.
@@ -1125,10 +1125,11 @@ runtime. For `constant`, `onActivation` runs the first time the value is resolve
 >   `.whenNamed()`, …) does **not** mint a new id — the id taken from `.id()` at any step of the chain stays valid until
 >   the chain ends.
 
-**Reaching the scope of an `AliasBinding` — at resolve time.** `AliasBinding` has no `scope` field. When the scope is
-needed (to build a `ResolutionFrame`, for instance), the resolver must follow the alias chain to the final binding and
-take the scope from there. If the chain ends at another `AliasBinding`, keep following. If there is a cycle →
-`CircularDependencyError`.
+**The scope of an alias is its target's — at resolve time.** An `AliasBinding` does carry a `scope` field, but it is
+always `"transient"`: a placeholder declared only so the engine reads `scope` as a plain field on every kind rather than
+testing for the one that would lack it. An alias is followed to its terminal binding before anything is built, so the
+resolved value's scope and lifecycle are the terminal binding's, never the alias's own `"transient"`. If the chain ends
+at another `AliasBinding`, keep following. If there is a cycle → `CircularDependencyError`.
 
 ---
 
