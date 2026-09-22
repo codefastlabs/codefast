@@ -1967,7 +1967,9 @@ const instance = runWithContainer(container, () => new Dashboard());
 >
 > - `runWithContainer(container, fn)` sets the active variable to the given container, runs `fn`, then restores the
 >   previous value in a `finally` block — so it is correct even when the constructor throws, and nested calls (A builds
->   B builds C) restore in the right order.
+>   B builds C) restore in the right order. It is **synchronous only**: the `finally` restores the previous value the
+>   moment `fn`'s synchronous run returns, so the context does not survive an `await`. A callback returning a `Promise`
+>   is rejected by the return type (it resolves to `never`).
 > - `getActiveContainer()` reads the currently active container, returning `undefined` when no context is open.
 
 > **Exact shape:** `src/ambient/active-container.ts`.

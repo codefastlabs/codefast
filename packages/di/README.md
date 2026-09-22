@@ -282,7 +282,8 @@ const byHand = runWithContainer(container, () => new Controller());
 
 An accessor resolves from the container that's constructing the instance. When something else owns the `new` — a router,
 an ORM, a test helper — open that context with `runWithContainer`. Without one, the accessor throws
-`MissingContainerContextError`. `getActiveContainer()` reads the open context.
+`MissingContainerContextError`. `getActiveContainer()` reads the open context. `runWithContainer` is **synchronous
+only**: the context does not survive an `await`, so a callback returning a `Promise` resolves to `never`.
 
 ### Auto-registration
 
