@@ -1024,7 +1024,20 @@ class DefaultContainer implements Container {
     options?: NoInfer<ResolveOptions<Names>>,
   ): boolean {
     this.#assertNotDisposed();
-    return this.#getInspector().hasOwn(token, options) || (this.#parent?.has(token, options) ?? false);
+    return this.#hasInChain(token, options);
+  }
+
+  // Recurses through the parent's registry, not its public `has`, so a live child answers even when
+  // an ancestor is disposed — the disposed-guard belongs on the entry point, not every chain hop.
+  #hasInChain<Names extends string = string>(
+    token: Token<unknown, Names> | Constructor,
+    options: NoInfer<ResolveOptions<Names>> | undefined,
+  ): boolean {
+    if (this.#getInspector().hasOwn(token, options)) {
+      return true;
+    }
+    const parent = this.#parent;
+    return parent !== undefined && parent.#hasInChain(token, options);
   }
 
   hasOwn<Names extends string = string>(
