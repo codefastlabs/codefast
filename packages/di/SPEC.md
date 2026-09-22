@@ -847,6 +847,10 @@ Step by step:
 In short: constructor → accessor initializers (`@inject accessor`) → `@postConstruct()` → `onActivation`.
 `@postConstruct()` always runs after the accessor fields have been injected.
 
+> **`@postConstruct` / `@preDestroy` require a string-named method.** The lifecycle reader keys methods by name, so a
+> symbol-keyed method cannot be found again. Decorating one throws `SymbolKeyedLifecycleError` at the declaration,
+> rather than a misleading metadata error at resolve.
+
 **Type inference — no annotation needed:**
 
 ```ts
@@ -2567,6 +2571,7 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | `ManyBindingSlotError`          | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member | `tokenName`                                      |
 | `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                               | `tokenName`                                      |
 | `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member         | `decoratorName`, `memberName`                    |
+| `SymbolKeyedLifecycleError`     | `SYMBOL_KEYED_LIFECYCLE`      | `@postConstruct` / `@preDestroy` on a symbol-keyed method               | `decoratorName`, `memberName`                    |
 | `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds          | `tokenName`, `phase`                             |
 | `EmptyTagCriteriaError`         | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                         | `helperName`                                     |
 | `UnreachableConstraintError`    | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares         | `tokenName`, `requiredName`, `helperName`        |
