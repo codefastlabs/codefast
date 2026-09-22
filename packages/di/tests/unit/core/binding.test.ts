@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { bindingSlotEquals, bindingSlotToString, DEFAULT_BINDING_SLOT, generateBindingId } from "#core/binding";
+import {
+  bindingSlotEquals,
+  bindingSlotToString,
+  DEFAULT_BINDING_SLOT,
+  generateBindingId,
+  stringifyTagValue,
+} from "#core/binding";
 import { slotName, tag, tagKeyMaskOf } from "#core/tag";
 
 const A_TAG = tag("a");
@@ -60,6 +66,37 @@ describe("bindingSlotToString", () => {
         keyMask: tagKeyMaskOf([nameCriterion, TIER_TAG.of("gold")]),
       }),
     ).toBe("name:primary,tag:tier=gold");
+  });
+
+  it("renders an unprintable tag value without throwing", () => {
+    const nullProto = A_TAG.of(Object.create(null) as unknown);
+    const thrower = B_TAG.of({
+      toString() {
+        throw new Error("boom");
+      },
+    } as unknown);
+
+    expect(bindingSlotToString({ name: undefined, tags: [nullProto], keyMask: tagKeyMaskOf([nullProto]) })).toBe(
+      "tag:a=<unprintable>",
+    );
+    expect(bindingSlotToString({ name: undefined, tags: [thrower], keyMask: tagKeyMaskOf([thrower]) })).toBe(
+      "tag:b=<unprintable>",
+    );
+  });
+});
+
+describe("stringifyTagValue", () => {
+  it("stringifies an ordinary value and falls back for one that cannot be converted", () => {
+    expect(stringifyTagValue("prod")).toBe("prod");
+    expect(stringifyTagValue(10n)).toBe("10");
+    expect(stringifyTagValue(Object.create(null))).toBe("<unprintable>");
+    expect(
+      stringifyTagValue({
+        toString() {
+          throw new Error("boom");
+        },
+      }),
+    ).toBe("<unprintable>");
   });
 });
 

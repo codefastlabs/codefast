@@ -87,6 +87,20 @@ export const NO_INSTANCE: unique symbol = Symbol("di:no-instance");
 export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: Object.freeze([]), keyMask: NO_TAG_KEYS };
 
 /**
+ * Renders a tag value for a diagnostic, never throwing.
+ *
+ * @remarks A tag value is caller data — a bigint, a null-prototype object, a throwing `toString` —
+ * so stringifying it must not become the error that masks the real one.
+ */
+export function stringifyTagValue(value: unknown): string {
+  try {
+    return String(value);
+  } catch {
+    return "<unprintable>";
+  }
+}
+
+/**
  * Formats a slot for diagnostics — `default`, or its `name:`/`tag:` parts.
  *
  * @since 0.3.16-canary.0
@@ -104,7 +118,7 @@ export function bindingSlotToString(slot: BindingSlot): string {
     if (criterion.key === slotName) {
       continue;
     }
-    parts.push(`tag:${criterion.key.name}=${String(criterion.value)}`);
+    parts.push(`tag:${criterion.key.name}=${stringifyTagValue(criterion.value)}`);
   }
   return parts.join(",");
 }

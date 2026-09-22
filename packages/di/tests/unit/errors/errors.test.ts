@@ -28,4 +28,38 @@ describe("NoMatchingBindingError diagnostics", () => {
 
     expect(() => container.resolve(serviceToken, { tags: [contextTag.of(cyclic)] })).toThrow(NoMatchingBindingError);
   });
+
+  it("survives an unprintable tag value on a bound slot rendered in the available slots", () => {
+    const serviceToken = token<number>("errors.slot-nullproto");
+    const contextTag = tag<object>("slot-context");
+    const container = Container.create();
+    container
+      .bind(serviceToken)
+      .toConstantValue(1)
+      .whenTagged(contextTag.of(Object.create(null) as object));
+
+    // The bound value cannot be stringified; the miss must still surface as the domain error.
+    expect(() => container.resolve(serviceToken, { tags: [contextTag.of({ shape: "other" })] })).toThrow(
+      NoMatchingBindingError,
+    );
+    expect(() => container.resolve(serviceToken, { tags: [contextTag.of({ shape: "other" })] })).toThrow(
+      /<unprintable>/,
+    );
+  });
+
+  it("survives a throwing toString on a bound slot value", () => {
+    const serviceToken = token<number>("errors.slot-thrower");
+    const contextTag = tag<object>("slot-thrower-context");
+    const thrower = {
+      toString() {
+        throw new Error("boom");
+      },
+    };
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue(1).whenTagged(contextTag.of(thrower));
+
+    expect(() => container.resolve(serviceToken, { tags: [contextTag.of({ shape: "other" })] })).toThrow(
+      NoMatchingBindingError,
+    );
+  });
 });

@@ -1,4 +1,5 @@
 import type { Binding } from "#core/binding";
+import { stringifyTagValue } from "#core/binding";
 import { effectiveBindingScope } from "#core/binding-scope";
 import type { BindingRegistry } from "#core/registry";
 import { slotName } from "#core/tag";
@@ -113,7 +114,7 @@ function edgeLabel(ref: DependencySlot, index: number): string {
     name !== undefined
       ? `name:${name}`
       : firstPlainTag !== undefined
-        ? `tag:${firstPlainTag.key.name}=${String(firstPlainTag.value)}`
+        ? `tag:${firstPlainTag.key.name}=${stringifyTagValue(firstPlainTag.value)}`
         : `[${index}]`;
 
   return ref.optional ? `${criterion} optional` : criterion;
