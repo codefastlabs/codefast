@@ -143,6 +143,7 @@ This section declares every foundation type used throughout the spec. The implem
 | `ResolveOptions`                            | The hint a single resolve carries (name and/or tags)   | `resolve(token, options)`, `inject(token, options)` |
 | `ResolutionContext`                         | What a dynamic factory receives                        | `.toDynamic((ctx) => …)`                            |
 | `ConstraintContext`                         | Where the current resolve sits in the dependency graph | `.when((ctx) => …)`, advanced constraints           |
+| `DependencySlot`                            | What one resolvable dependency declares                | `@injectable([…])` deps, `ParamMetadata`            |
 | `TokenValue`                                | Extracts `Value` from a token or constructor           | Type-level helper                                   |
 
 ### `BindingScope`
@@ -335,6 +336,28 @@ ancestors       = []
 > an error message (`"App → Database → Logger"`). `resolutionStack` holds full `ResolutionFrame`s (scope, bindingId,
 > slot) — used by advanced constraints and by validate. Both describe the same path, and a rule stated over one holds
 > over the other.
+
+### `DependencySlot`
+
+The shape **one resolvable dependency** declares, whichever source it came from: a constructor parameter read through
+the `MetadataReader`, or an element of a `toResolved` deps array.
+
+```ts
+interface DependencySlot {
+  readonly token: Token<unknown> | Constructor;
+  readonly optional: boolean;
+  readonly multi: boolean;
+  readonly name?: string | undefined;
+  readonly tags?: ReadonlyArray<BindingTag> | undefined;
+}
+```
+
+> **Normative — both dependency sources are this shape.** `InjectionDescriptor` (what `inject`, `optional` and
+> `injectAll` return) and `ParamMetadata` (what a `MetadataReader` reports per constructor parameter) each extend it,
+> adding only what is theirs: a value type parameter and an `index` respectively. Every rule this document states about
+> a dependency's `optional`, `multi`, `name` and `tags` therefore holds for both.
+
+> **Exact shape:** `src/injection/resolve-options.ts` — `DependencySlot`.
 
 ### `TokenValue`
 
@@ -694,8 +717,8 @@ How to read the rows:
 - **`toConstantValue()`** has no scope step because a constant binding is always a singleton. Calling a lifecycle hook
   on it moves to a builder with only lifecycle and `id()` left — a one-way state: calling a hook locks the constraint
   part.
-- **`toAlias()`** is the only builder **without a type parameter** — an alias produces no value, so there is nothing to
-  infer.
+- **`toAlias()`** is the only builder **without a value type parameter** — an alias produces no value of its own, so
+  there is nothing to infer. It still carries the token's slot names, so `whenNamed` stays checked.
 - **`transient()` and `scoped()`** have no `onDeactivation` because those two scopes have no deactivation
   ([`ActivationHandler` and `DeactivationHandler`](#activationhandler-and-deactivationhandler)).
 
@@ -1582,9 +1605,32 @@ container.resolve(Logger, { name: "file" }); // FileLogger
 `ContainerSnapshot` carries: `ownBindings` (every binding at this container, excluding the parent),
 `cachedSingletonCount` (how many singletons are cached here, also excluding the parent), `hasParent`, and `isDisposed`.
 
-Each `BindingSnapshot` carries: `tokenName`, `kind`, `scope`, `slot`, and `id`.
+Each `BindingSnapshot` carries: `tokenName`, `kind`, `scope`, `slot`, `id`, and `isMany` — `true` for a collection
+member, the binding `resolveAll` takes and `resolve` never selects
+([Slots and last-wins](#slots-and-last-wins--the-exact-definition)).
 
 > **Exact shape:** `src/introspection/inspector.ts` — `ContainerSnapshot`, `BindingSnapshot`.
+
+#### Resolving what a snapshot points at
+
+A snapshot's `slot` states the binding's criteria; `bindingSlotToResolveOptions(slot)` turns them into the
+`ResolveOptions` that selects it, so a caller can go from introspection back to a resolve without rebuilding the hint by
+hand.
+
+```ts
+for (const binding of container.lookupBindings(Logger)) {
+  const value = container.resolve(Logger, bindingSlotToResolveOptions(binding.slot));
+}
+```
+
+> **Normative.** The default slot — no name, no criteria — yields `undefined`, the hint a `resolve` with no criteria
+> takes. Otherwise the reserved criterion **folds into `name`** rather than being restated in `tags`, an already-present
+> `name` winning over it, and the remaining criteria are returned as `tags`, omitted when none remain
+> ([`ResolveOptions`](#resolveoptions)). The result therefore matches exactly the slot it came from, whichever spelling
+> declared it.
+
+A collection member's slot is the default slot, so the options it yields select the token's ordinary default binding
+rather than the member — read members with `resolveAll`.
 
 #### The `ContainerGraphJson` interface
 
@@ -1744,8 +1790,8 @@ every matching binding into an array.
 
 - `InjectOptions` has three fields: `name`, `tag` (shorthand for one criterion, folded into `tags` when the descriptor
   is built — see [`ResolveOptions`](#resolveoptions)), and `tags`.
-- `InjectionDescriptor` carries: `token`, `optional`, `multi` (true when created by `injectAll`), `name?`, `tags?`. It
-  comes with the type guard `isInjectionDescriptor(value)`.
+- `InjectionDescriptor` is a [`DependencySlot`](#dependencyslot) carrying a value type parameter — `multi` is `true`
+  exactly when `injectAll` created it. It comes with the type guard `isInjectionDescriptor(value)`.
 
 > **Exact shape:** `src/injection/descriptor.ts` — `injectAll`, `optional`, `isInjectionDescriptor`,
 > `InjectionDescriptor`, `InjectOptions`; `src/decorators/inject.ts` — `inject`.
@@ -1814,11 +1860,11 @@ a class — constructor deps, lifecycle methods, accessor fields — and a test 
 
 The port has three methods:
 
-| Method                           | Answers                                                                                                                      | Required? |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | :-------: |
-| `getConstructorMetadata(target)` | The constructor's dependencies: a list of `ParamMetadata`, each with `index`, `token`, `optional`, `multi`, `name?`, `tags?` |    Yes    |
-| `getLifecycleMetadata(target)`   | Two lists of method names, `postConstruct` and `preDestroy`, called in the order they appear in the class (top-down)         |    Yes    |
-| `getAccessorMetadata(target)`    | The list of `@inject accessor` fields, each with `key` and `descriptor`                                                      | Optional  |
+| Method                           | Answers                                                                                                              | Required? |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------- | :-------: |
+| `getConstructorMetadata(target)` | The constructor's dependencies: a list of `ParamMetadata` — a [`DependencySlot`](#dependencyslot) plus its `index`   |    Yes    |
+| `getLifecycleMetadata(target)`   | Two lists of method names, `postConstruct` and `preDestroy`, called in the order they appear in the class (top-down) |    Yes    |
+| `getAccessorMetadata(target)`    | The list of `@inject accessor` fields, each with `key` and `descriptor`                                              | Optional  |
 
 If a reader omits `getAccessorMetadata`, no class ever gets a container context opened for it, so every accessor
 injection throws `MissingContainerContextError`
