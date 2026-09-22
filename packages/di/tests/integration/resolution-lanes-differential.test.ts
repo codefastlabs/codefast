@@ -63,14 +63,18 @@ function laneDisagreements(
   referenceName: string,
   where: string,
   collections: boolean,
+  spec: GraphSpec,
 ): Array<Disagreement> {
   const reference = lanes.get(referenceName);
   const found: Array<Disagreement> = [];
   for (const [lane, actual] of lanes) {
-    if (lane.includes("collection") && (!collections || (isEmptyCollection(actual) && isRootLevelMiss(reference)))) {
+    if (
+      lane.includes("collection") &&
+      (!collections || (isEmptyCollection(actual) && isRootLevelMiss(reference, spec)))
+    ) {
       continue;
     }
-    if (lane.includes("optional") && actual === undefined && isRootLevelMiss(reference)) {
+    if (lane.includes("optional") && actual === undefined && isRootLevelMiss(reference, spec)) {
       continue;
     }
     if (differs(reference, actual)) {
@@ -109,15 +113,15 @@ async function disagreementsOf(spec: GraphSpec, errors: ErrorAgreement): Promise
 
   const rootContainer = rootHost(spec, materials);
   const rootSync = syncLanes(rootContainer, root);
-  found.push(...laneDisagreements(rootSync, "interpreted", "root sync", collections));
+  found.push(...laneDisagreements(rootSync, "interpreted", "root sync", collections, spec));
   const rootAsync = await asyncLanes(rootContainer, root);
-  found.push(...laneDisagreements(rootAsync, "async-interpreted", "root async", collections));
+  found.push(...laneDisagreements(rootAsync, "async-interpreted", "root async", collections, spec));
 
   const childContainer = childHost(spec, materials);
   const childSync = syncLanes(childContainer, root);
-  found.push(...laneDisagreements(childSync, "interpreted", "child sync", collections));
+  found.push(...laneDisagreements(childSync, "interpreted", "child sync", collections, spec));
   const childAsync = await asyncLanes(childContainer, root);
-  found.push(...laneDisagreements(childAsync, "async-interpreted", "child async", collections));
+  found.push(...laneDisagreements(childAsync, "async-interpreted", "child async", collections, spec));
 
   // A sync lane that reached an async node fails where the async lane succeeds; every other outcome
   // — a value, or an error raised before any async node — is the async lane's outcome too.

@@ -690,6 +690,11 @@ const logger = container.resolve(AbstractAuditLogger, { name: "audit" });
 > **An alias has no scope of its own.** The scope is decided by the target binding. An alias is only a pointer — it
 > caches no instance.
 
+> **A dangling alias is a miss, not an error.** Because an alias is transparent, an optional or collection read whose
+> alias chain ends at a token nothing matches answers `undefined` / skips the member, exactly as it would for the target
+> directly; only a required `resolve` / `resolveAsync` throws. An alias **cycle** always throws
+> `CircularDependencyError`.
+
 ### Builder type interfaces
 
 **Mental model.** Each step in the chain returns a different builder, and it is precisely that builder's method set
@@ -1182,6 +1187,10 @@ const petrolEngine = container.resolve(Engine, { tag: Fuel.of("petrol") });
 > - The token has a binding but the async binding throws at runtime (a failed DB connect, say) → **re-throw** that
 >   error, do not turn it into `undefined`.
 > - The token has a binding but nothing matches the hint → returns `undefined` (no `NoMatchingBindingError`).
+> - The token is an alias whose chain ends at a token nothing matches → returns `undefined`: an alias is transparent, so
+>   a dangling chain is the same miss the target would be. An alias **cycle** still throws `CircularDependencyError` — a
+>   cycle has no absent reading. The same holds for `resolveAll` / `resolveAllAsync`: a dangling alias member is
+>   skipped, never thrown.
 
 #### `resolveAll` + `ResolveOptions` — filter semantics
 

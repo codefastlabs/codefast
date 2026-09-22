@@ -349,6 +349,36 @@ export class DependencyResolver implements ResolverCallbacks {
   }
 
   /**
+   * Follows an alias binding's chain to its terminal binding, or `undefined` when the chain ends at
+   * a token nothing matches.
+   *
+   * @remarks The non-throwing twin of {@link DependencyResolver.#requireBinding}'s alias walk, for
+   * the optional and collection lanes: a dangling chain is a miss, but a revisited alias token still
+   * raises {@link CircularDependencyError} — a cycle has no absent reading.
+   */
+  #terminalOfAliasBinding(
+    alias: Binding,
+    options: ResolveOptions | undefined,
+    resolutionStack: Array<ResolutionFrame>,
+    singleCriterion: BindingTag | undefined,
+  ): DefaultLookupEntry<DependencyResolver> | undefined {
+    let currentToken: Token<unknown> | Constructor = alias.token;
+    let found: DefaultLookupEntry<DependencyResolver> | undefined = { binding: alias, owner: this };
+    let visitedAliasTokens: Set<Token<unknown> | Constructor> | undefined;
+    while (found !== undefined && found.binding.kind === "alias") {
+      const target = found.binding.target;
+      visitedAliasTokens ??= new Set([currentToken]);
+      if (visitedAliasTokens.has(target)) {
+        throw new CircularDependencyError([...visitedAliasTokens, target].map((entry) => tokenName(entry)));
+      }
+      visitedAliasTokens.add(target);
+      currentToken = target;
+      found = this.#findBinding(currentToken, options, resolutionStack, singleCriterion);
+    }
+    return found;
+  }
+
+  /**
    * Binding lookup aligned with `resolve` — used by `Container.validate` without instantiating.
    */
   peekBindingForValidate(
@@ -909,21 +939,19 @@ export class DependencyResolver implements ResolverCallbacks {
         return undefined;
       }
     }
-    const entry = this.#findBinding(
-      token,
-      options,
-      resolutionStack,
-      precomputedCriterion === undefined ? singleCriterionOnlyOf(options) : (precomputedCriterion ?? undefined),
-    );
+    const singleCriterion =
+      precomputedCriterion === undefined ? singleCriterionOnlyOf(options) : (precomputedCriterion ?? undefined);
+    let entry = this.#findBinding(token, options, resolutionStack, singleCriterion);
+    // Resolve the entry the probe found: re-looking the token up would evaluate every `when()`
+    // predicate a second time, and a changed answer would throw where `undefined` was promised.
+    if (entry !== undefined && entry.binding.kind === "alias") {
+      // Follow the alias off the throwing path: a chain that ends nowhere is a miss, not an error.
+      entry = this.#terminalOfAliasBinding(entry.binding, options, resolutionStack, singleCriterion);
+    }
     if (entry === undefined) {
       return undefined;
     }
-    // Resolve the entry the probe found: re-looking the token up would evaluate every `when()`
-    // predicate a second time, and a changed answer would throw where `undefined` was promised.
     const { binding, owner } = entry;
-    if (binding.kind === "alias") {
-      return this.resolve(token, options, resolutionStack);
-    }
     if (binding.scope === "singleton" && owner !== this) {
       return owner.#resolveBinding(binding, options, resolutionStack, owner) as Value;
     }
@@ -1037,14 +1065,45 @@ export class DependencyResolver implements ResolverCallbacks {
     if (options !== undefined) {
       const indexed = this.#indexedCandidates(token, options, resolutionStack);
       if (indexed !== null) {
-        return indexed;
+        return this.#withoutDanglingAliases(indexed, options, resolutionStack);
       }
     }
     const allBindings = this.#allBindingsFromChain(token);
     if (allBindings.length === 0) {
       return allBindings;
     }
-    return selectAllBindings(allBindings, options, this.#makeConstraintContext(resolutionStack, options));
+    const selected = selectAllBindings(allBindings, options, this.#makeConstraintContext(resolutionStack, options));
+    return this.#withoutDanglingAliases(selected, options, resolutionStack);
+  }
+
+  /**
+   * The candidates with any alias whose chain ends nowhere dropped, so a fan-out skips a dangling
+   * alias rather than throwing on it.
+   *
+   * @remarks A live alias stays and resolves as before; the common list carries no alias at all and
+   * is returned untouched, so nothing is allocated for it.
+   */
+  #withoutDanglingAliases(
+    candidates: ReadonlyArray<Binding>,
+    options: ResolveOptions | undefined,
+    resolutionStack: Array<ResolutionFrame>,
+  ): ReadonlyArray<Binding> {
+    let hasAlias = false;
+    for (let index = 0; index < candidates.length; index += 1) {
+      if (candidates[index]!.kind === "alias") {
+        hasAlias = true;
+        break;
+      }
+    }
+    if (!hasAlias) {
+      return candidates;
+    }
+    const singleCriterion = singleCriterionOnlyOf(options);
+    return candidates.filter(
+      (candidate) =>
+        candidate.kind !== "alias" ||
+        this.#terminalOfAliasBinding(candidate, options, resolutionStack, singleCriterion) !== undefined,
+    );
   }
 
   // ── Async resolve ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1391,20 +1450,18 @@ export class DependencyResolver implements ResolverCallbacks {
   ): Promise<Value | undefined> {
     const path = ownPrefixOf(resolutionStack, branchDepth);
     const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
-    const entry = this.#findBinding(
-      token,
-      options,
-      path,
-      precomputedCriterion === undefined ? singleCriterionOnlyOf(options) : (precomputedCriterion ?? undefined),
-    );
+    const singleCriterion =
+      precomputedCriterion === undefined ? singleCriterionOnlyOf(options) : (precomputedCriterion ?? undefined);
+    let entry = this.#findBinding(token, options, path, singleCriterion);
+    // Same single-evaluation contract as the sync lane: resolve what the probe found.
+    if (entry !== undefined && entry.binding.kind === "alias") {
+      // Follow the alias off the throwing path: a chain that ends nowhere is a miss, not an error.
+      entry = this.#terminalOfAliasBinding(entry.binding, options, path, singleCriterion);
+    }
     if (entry === undefined) {
       return undefined;
     }
-    // Same single-evaluation contract as the sync lane: resolve what the probe found.
     const { binding, owner } = entry;
-    if (binding.kind === "alias") {
-      return this.resolveAsync(token, options, path, depth);
-    }
     if (binding.scope === "singleton" && owner !== this) {
       return owner.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
     }
