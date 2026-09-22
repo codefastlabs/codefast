@@ -146,7 +146,9 @@ regression list say `vs baseline <run id>` instead of `vs` the run that happened
 rewrite that lands in ten commits is diffed ten times against itself and the line it had to hold is never drawn. A
 pinned run that cannot be read is an error, never a silent fallback to the pointer. `bench-results/` is git-ignored, so
 the pinned run is copied to `baselines/<run id>/observations.jsonl`, which is tracked, and `pnpm bench:baseline` is the
-full-profile isolated pass read against it — the pass every commit of the rewrite is judged by.
+full-profile isolated pass read against it — the pass every commit of the rewrite is judged by. `baselines/` holds that
+anchor alone, which is how the lane names it without a pinned id; a run a document merely cites belongs under
+`cited-runs/`.
 
 ### Measure the floor before you set the threshold
 
