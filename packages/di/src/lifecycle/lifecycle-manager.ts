@@ -135,7 +135,11 @@ export class LifecycleManager {
 
     // 1. @postConstruct() — must be sync (instance fully constructed per TC39 order)
     for (const methodName of lifecycleMethods(binding, metadataReader, "postConstruct")) {
-      if (callHook(activatedInstance, methodName) instanceof Promise) {
+      const hookResult = callHook(activatedInstance, methodName);
+      if (hookResult instanceof Promise) {
+        // The hook has already run; adopt its rejection so a failing async hook cannot become an
+        // unhandled rejection that ends the process, then report the sync-lane violation.
+        void hookResult.catch(() => {});
         throw new AsyncActivationError(tokenName(binding.token), "postConstruct", methodName);
       }
     }
@@ -144,6 +148,7 @@ export class LifecycleManager {
     if (binding.kind !== "alias" && binding.activationHook !== undefined) {
       const activationResult = binding.activationHook(resolutionContext, activatedInstance);
       if (activationResult instanceof Promise) {
+        void activationResult.catch(() => {});
         throw new AsyncActivationError(tokenName(binding.token), "onActivation");
       }
       activatedInstance = activationResult;
@@ -156,6 +161,7 @@ export class LifecycleManager {
       for (const hook of containerHooks) {
         const activationResult = hook(resolutionContext, activatedInstance);
         if (activationResult instanceof Promise) {
+          void activationResult.catch(() => {});
           throw new AsyncActivationError(tokenDisplayName, "onActivation");
         }
         activatedInstance = activationResult as Value;
@@ -210,6 +216,9 @@ export class LifecycleManager {
       for (const hook of containerHooks) {
         const hookResult = hook(instance);
         if (hookResult instanceof Promise) {
+          // The hook has already run; adopt its rejection so a failing async hook cannot become an
+          // unhandled rejection that ends the process, then report the sync-lane violation.
+          void hookResult.catch(() => {});
           throw new AsyncDeactivationError(tokenDisplayName);
         }
       }
@@ -219,13 +228,16 @@ export class LifecycleManager {
     if (binding.kind !== "alias" && binding.deactivationHook !== undefined) {
       const hookResult = binding.deactivationHook(instance);
       if (hookResult instanceof Promise) {
+        void hookResult.catch(() => {});
         throw new AsyncDeactivationError(tokenDisplayName);
       }
     }
 
     // 3. @preDestroy()
     for (const methodName of lifecycleMethods(binding, metadataReader, "preDestroy")) {
-      if (callHook(instance, methodName) instanceof Promise) {
+      const hookResult = callHook(instance, methodName);
+      if (hookResult instanceof Promise) {
+        void hookResult.catch(() => {});
         throw new AsyncDeactivationError(tokenDisplayName);
       }
     }
