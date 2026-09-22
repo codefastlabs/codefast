@@ -21,12 +21,20 @@ let activeContainer: Container | undefined;
 let activeResolution: AmbientResolution | undefined;
 
 /**
- * Runs a callback with the given container installed as the ambient one and returns its result.
+ * Runs a synchronous callback with the given container installed as the ambient one and returns its result.
+ *
+ * @remarks The context lives in a module-level variable restored in a `finally`, so it lasts only the
+ * synchronous run of `fn` — it does not survive an `await`. A callback returning a `Promise` is a
+ * mistake the return type flags: it resolves to `never`, and the ambient context would already be torn
+ * down by the time the promise settled.
  *
  * @since 0.3.16-canary.0
  */
-export function runWithContainer<Result>(container: Container, fn: () => Result): Result {
-  return runWithAmbientResolution(container, undefined, fn);
+export function runWithContainer<Result>(
+  container: Container,
+  fn: () => Result,
+): Result extends Promise<unknown> ? never : Result {
+  return runWithAmbientResolution(container, undefined, fn) as Result extends Promise<unknown> ? never : Result;
 }
 
 /**
