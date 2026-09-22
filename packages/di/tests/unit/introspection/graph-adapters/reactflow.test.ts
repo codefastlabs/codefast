@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
+import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
 import { optional } from "#injection/descriptor";
 import { toReactFlowGraph } from "#introspection/graph-adapters/reactflow";
@@ -45,5 +46,19 @@ describe("toReactFlowGraph", () => {
     expect(flow.nodes.every((node) => node.data.tokenKey.length > 0)).toBe(true);
     expect(placeholder?.data.kind).toBe("unbound");
     expect(flow.edges).toContainEqual(expect.objectContaining({ target: placeholder!.id, optional: true }));
+  });
+
+  it("carries a named dependency's label and slot name onto the edge", () => {
+    const depToken = token<string>("rf:dep");
+    const consumerToken = token<{ dep: string }>("rf:consumer");
+    const container = Container.create();
+    container.bind(depToken).toConstantValue("primary-value").whenNamed("primary");
+    container.bind(consumerToken).toResolved((dep: string) => ({ dep }), [inject(depToken, { name: "primary" })]);
+
+    const flow = toReactFlowGraph(container.generateDependencyGraph());
+    const namedEdge = flow.edges.find((edge) => edge.slotName === "primary");
+
+    expect(namedEdge).toBeDefined();
+    expect(namedEdge?.label).toBe("name:primary");
   });
 });

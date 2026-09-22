@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
+import { inject } from "#decorators/inject";
 import { toCytoscapeGraph } from "#introspection/graph-adapters/cytoscape";
 
 describe("toCytoscapeGraph", () => {
@@ -23,5 +24,21 @@ describe("toCytoscapeGraph", () => {
       expect.arrayContaining(["config", "service"]),
     );
     expect(edges[0]?.data).toMatchObject({ id: "edge-0" });
+  });
+
+  it("carries a named dependency's label and slot name onto the edge", () => {
+    const depToken = token<string>("cy:dep");
+    const consumerToken = token<{ dep: string }>("cy:consumer");
+    const container = Container.create();
+    container.bind(depToken).toConstantValue("primary-value").whenNamed("primary");
+    container.bind(consumerToken).toResolved((dep: string) => ({ dep }), [inject(depToken, { name: "primary" })]);
+
+    const elements = toCytoscapeGraph(container.generateDependencyGraph());
+    const namedEdge = elements.find(
+      (element) => "source" in element.data && (element.data as { slotName?: string }).slotName === "primary",
+    );
+
+    expect(namedEdge).toBeDefined();
+    expect((namedEdge!.data as { label?: string }).label).toBe("name:primary");
   });
 });
