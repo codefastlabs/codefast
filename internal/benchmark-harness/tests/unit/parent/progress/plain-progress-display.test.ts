@@ -37,23 +37,31 @@ describe("PlainProgressDisplay", () => {
     ]);
   });
 
-  it("names the scenario on a per-scenario subprocess and sums them up when the library is done", () => {
+  it("names the scenario on a per-scenario subprocess and sums measuring time, skipping the gaps", () => {
     const lines: Array<string> = [];
     const display = new PlainProgressDisplay({ write: (line) => lines.push(line), now: () => Date.now() });
     display.register("inv", "inversify", { subprocessScope: "scenario" });
     display.discovering("inv");
-    display.setScenarioCount("inv", 1);
+    display.setScenarioCount("inv", 2);
     display.subprocessStarted("inv", "alpha");
     display.event("inv", { kind: "plan", trialCount: 1, scenarioCount: 1 });
+    vi.advanceTimersByTime(300);
+    display.subprocessFinished("inv", 0);
+    // The interleaved loop measures the other libraries here; the gap belongs to no row.
+    vi.advanceTimersByTime(5000);
+    display.subprocessStarted("inv", "beta");
+    vi.advanceTimersByTime(700);
     display.subprocessFinished("inv", 0);
     display.libraryDone("inv");
     display.finish();
     expect(lines).toEqual([
       "Discovering inversify scenarios…",
-      "inversify: 1 scenario(s) to measure",
+      "inversify: 2 scenario(s) to measure",
       "Running inversify [alpha]…",
-      "inversify subprocess finished in 0.0s (exit 0).",
-      "inversify: all 1 scenario(s) measured.",
+      "inversify subprocess finished in 0.3s (exit 0).",
+      "Running inversify [beta]…",
+      "inversify subprocess finished in 0.7s (exit 0).",
+      "inversify: all 2 scenario(s) measured in 1.0s.",
     ]);
   });
 

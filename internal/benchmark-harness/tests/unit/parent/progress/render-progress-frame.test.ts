@@ -19,6 +19,8 @@ function row(overrides: Partial<LibraryProgress> & Pick<LibraryProgress, "key" |
     currentScenarioId: undefined,
     startedAtMs: undefined,
     finishedAtMs: undefined,
+    busyMs: 0,
+    subprocessStartedAtMs: undefined,
     exitCode: undefined,
     ...overrides,
   };
@@ -49,6 +51,7 @@ describe("renderProgressFrame", () => {
       unitsDone: 111,
       startedAtMs: 0,
       finishedAtMs: 4200,
+      busyMs: 4200,
     }),
     row({
       key: "inv",
@@ -61,6 +64,7 @@ describe("renderProgressFrame", () => {
       unitsDone: 47,
       currentScenarioId: "resolve-all-named-16",
       startedAtMs: 4200,
+      subprocessStartedAtMs: 4200,
     }),
     row({ key: "awi", label: "Awilix 13" }),
   ];
@@ -90,9 +94,22 @@ describe("renderProgressFrame", () => {
       passTrial: 2,
       unitsDone: 12,
       startedAtMs: 0,
+      subprocessStartedAtMs: 0,
     });
     const [line] = renderProgressFrame([multi], { nowMs: 1000, width: 120, unicode: false });
     expect(line).toBe("cf  ########............  2/10  t2/3  1.0s");
+  });
+
+  it("sums measuring time per library, frozen between subprocesses and ticking during one", () => {
+    const lines = renderProgressFrame(
+      [
+        row({ key: "cf", label: "cf", status: "running", busyMs: 3000, subprocessStartedAtMs: 9500 }),
+        row({ key: "inv", label: "inv", status: "idle", busyMs: 3000 }),
+      ],
+      { nowMs: 10_000, width: 120, unicode: false },
+    );
+    expect(lines[0]).toContain("3.5s");
+    expect(lines[1]).toContain("3.0s");
   });
 
   it("never exceeds the width, clipping the tail with an ellipsis and dropping it when no room is left", () => {
@@ -122,7 +139,7 @@ describe("renderProgressFrame", () => {
   it("names the exit code on a failed row and labels discovery", () => {
     const lines = renderProgressFrame(
       [
-        row({ key: "a", label: "a", status: "failed", exitCode: 1, startedAtMs: 0, finishedAtMs: 500 }),
+        row({ key: "a", label: "a", status: "failed", exitCode: 1, startedAtMs: 0, finishedAtMs: 500, busyMs: 500 }),
         row({ key: "b", label: "b", status: "discovering", startedAtMs: 0 }),
       ],
       { nowMs: 500, width: 120, unicode: false },

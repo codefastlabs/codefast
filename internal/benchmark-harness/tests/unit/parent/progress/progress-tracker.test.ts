@@ -108,6 +108,33 @@ describe("ProgressTracker", () => {
     expect(tracker.get("tsy")).toMatchObject({ status: "failed", exitCode: 1 });
   });
 
+  it("sums only the spans its measuring subprocesses were alive for", () => {
+    const clock = { nowMs: 0 };
+    const tracker = trackerAt(clock);
+    tracker.register("dtx", "ditox", { subprocessScope: "scenario", scenarioCount: 2 });
+    tracker.subprocessStarted("dtx", "alpha");
+    clock.nowMs = 300;
+    tracker.subprocessFinished("dtx", 0);
+    expect(tracker.get("dtx")).toMatchObject({ busyMs: 300, subprocessStartedAtMs: undefined });
+
+    clock.nowMs = 5300;
+    tracker.subprocessStarted("dtx", "beta");
+    clock.nowMs = 6000;
+    tracker.subprocessFinished("dtx", 0);
+    tracker.libraryDone("dtx");
+    expect(tracker.get("dtx")).toMatchObject({ busyMs: 1000, startedAtMs: 0, finishedAtMs: 6000 });
+  });
+
+  it("folds a failed subprocess into the busy total it was measuring for", () => {
+    const clock = { nowMs: 0 };
+    const tracker = trackerAt(clock);
+    tracker.register("brn", "brandi", { subprocessScope: "scenario", scenarioCount: 1 });
+    tracker.subprocessStarted("brn", "alpha");
+    clock.nowMs = 450;
+    tracker.subprocessFinished("brn", 1);
+    expect(tracker.get("brn")).toMatchObject({ status: "failed", busyMs: 450, subprocessStartedAtMs: undefined });
+  });
+
   it("reads an empty plan as complete rather than dividing by zero", () => {
     const tracker = trackerAt({ nowMs: 0 });
     tracker.register("awi", "awilix");

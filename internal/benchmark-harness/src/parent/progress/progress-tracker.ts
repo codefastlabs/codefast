@@ -39,6 +39,10 @@ export interface LibraryProgress {
   readonly currentScenarioId: string | undefined;
   readonly startedAtMs: number | undefined;
   readonly finishedAtMs: number | undefined;
+  /** Measuring time this library owns: its measuring subprocesses summed, excluding discovery and idle gaps. */
+  readonly busyMs: number;
+  /** When the live measuring subprocess started; `undefined` between subprocesses. */
+  readonly subprocessStartedAtMs: number | undefined;
   readonly exitCode: number | undefined;
 }
 
@@ -102,6 +106,8 @@ export class ProgressTracker {
       currentScenarioId: undefined,
       startedAtMs: undefined,
       finishedAtMs: undefined,
+      busyMs: 0,
+      subprocessStartedAtMs: undefined,
       exitCode: undefined,
     });
   }
@@ -122,6 +128,7 @@ export class ProgressTracker {
       ...row,
       status: "running",
       startedAtMs: row.startedAtMs ?? this.#now(),
+      subprocessStartedAtMs: this.#now(),
       currentScenarioId: scenarioId ?? row.currentScenarioId,
     }));
   }
@@ -160,16 +167,22 @@ export class ProgressTracker {
     });
   }
 
-  /** Records a measuring subprocess ending; a per-scenario child that succeeded counts one scenario. */
+  /** Records a measuring subprocess ending, folding its span into `busyMs`; a per-scenario child counts one scenario. */
   subprocessFinished(key: string, exitCode: number | undefined): void {
     this.#update(key, (row) => {
+      const nowMs = this.#now();
+      const settled = {
+        ...row,
+        busyMs: row.busyMs + (row.subprocessStartedAtMs === undefined ? 0 : nowMs - row.subprocessStartedAtMs),
+        subprocessStartedAtMs: undefined,
+      };
       if (exitCode !== 0) {
-        return { ...row, status: "failed", exitCode, finishedAtMs: this.#now() };
+        return { ...settled, status: "failed", exitCode, finishedAtMs: nowMs };
       }
       if (row.subprocessScope === "scenario") {
-        return { ...row, status: "idle", passScenario: row.passScenario + 1, exitCode };
+        return { ...settled, status: "idle", passScenario: row.passScenario + 1, exitCode };
       }
-      return { ...row, status: "done", exitCode, finishedAtMs: this.#now() };
+      return { ...settled, status: "done", exitCode, finishedAtMs: nowMs };
     });
   }
 

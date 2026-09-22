@@ -53,7 +53,7 @@ describe("LiveProgressDisplay", () => {
     display.finish();
   });
 
-  it("ticks the elapsed time while a library runs and stops after finish", () => {
+  it("ticks the busy time while a subprocess runs and stops after finish", () => {
     const { stream, writes } = fakeStream(80);
     const display = new LiveProgressDisplay({ stream, unicode: false, now: () => Date.now() });
     display.register("cf", "cf");
@@ -66,5 +66,18 @@ describe("LiveProgressDisplay", () => {
     writes.length = 0;
     vi.advanceTimersByTime(1000);
     expect(writes).toEqual([]);
+  });
+
+  it("stops redrawing between the subprocesses of an isolated library", () => {
+    const { stream, writes } = fakeStream(80);
+    const display = new LiveProgressDisplay({ stream, unicode: false, now: () => Date.now() });
+    display.register("cf", "cf", { subprocessScope: "scenario", scenarioCount: 2 });
+    display.subprocessStarted("cf", "alpha");
+    vi.advanceTimersByTime(300);
+    display.subprocessFinished("cf", 0);
+    writes.length = 0;
+    vi.advanceTimersByTime(1000);
+    expect(writes).toEqual([]);
+    display.finish();
   });
 });
