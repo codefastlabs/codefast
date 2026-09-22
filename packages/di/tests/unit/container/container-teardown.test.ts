@@ -210,3 +210,40 @@ describe("module load failure", () => {
     expect(() => container.resolve(aToken)).toThrow(TokenNotBoundError);
   });
 });
+
+describe("has() on a live child of a disposed parent", () => {
+  it("answers without asserting on the disposed parent", async () => {
+    const shared = token<string>("teardown.child-has");
+    const parent = Container.create();
+    parent.bind(shared).toConstantValue("v");
+    const child = parent.createChild();
+    await parent.dispose();
+
+    expect(child.isDisposed).toBe(false);
+    expect(() => child.has(shared)).not.toThrow();
+    expect(child.has(shared)).toBe(true);
+    expect(child.hasOwn(shared)).toBe(false);
+    // The parent's own public entry point still guards.
+    expect(() => parent.has(shared)).toThrow(DisposedContainerError);
+  });
+
+  it("answers through a grandparent chain", async () => {
+    const shared = token<string>("teardown.grandchild-has");
+    const parent = Container.create();
+    parent.bind(shared).toConstantValue("v");
+    const grandchild = parent.createChild().createChild();
+    await parent.dispose();
+
+    expect(grandchild.has(shared)).toBe(true);
+  });
+
+  it("still guards has() on a child that is itself disposed", async () => {
+    const shared = token<string>("teardown.child-self-disposed");
+    const parent = Container.create();
+    parent.bind(shared).toConstantValue("v");
+    const child = parent.createChild();
+    await child.dispose();
+
+    expect(() => child.has(shared)).toThrow(DisposedContainerError);
+  });
+});
