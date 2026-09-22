@@ -885,6 +885,15 @@ export class DependencyResolver implements ResolverCallbacks {
       return meta.params;
     }
     if (target.length === 0) {
+      // A subclass with an implicit constructor and no own metadata inherits its base's declared
+      // deps but would be built with zero arguments, injecting `undefined` silently — reject it.
+      const inherited = this.#introspector().inheritedConstructorMetadata(target);
+      if (inherited !== undefined && inherited.metadata.params.length > 0) {
+        throw new MissingMetadataError(target.name, {
+          baseName: inherited.base.name,
+          dependencyCount: inherited.metadata.params.length,
+        });
+      }
       return EMPTY_PARAM_LIST;
     }
     throw new MissingMetadataError(target.name);

@@ -254,6 +254,25 @@ export class ClassIntrospector {
   }
 
   /**
+   * The nearest ancestor's own constructor metadata, for a subclass that declares none of its own.
+   *
+   * @remarks Constructor metadata is never borrowed down the chain, so a subclass with an implicit
+   * constructor would be built with zero arguments; this lets the resolver name the base whose
+   * declared deps the subclass silently drops.
+   */
+  inheritedConstructorMetadata(target: Constructor): { base: Constructor; metadata: ConstructorMetadata } | undefined {
+    let current: unknown = Object.getPrototypeOf(target);
+    while (typeof current === "function" && current !== Function.prototype) {
+      const metadata = this.constructorMetadata(current as Constructor);
+      if (metadata !== undefined) {
+        return { base: current as Constructor, metadata };
+      }
+      current = Object.getPrototypeOf(current);
+    }
+    return undefined;
+  }
+
+  /**
    * Whether the class has a `@postConstruct` hook, or `undefined` until {@link discoverPostConstruct}.
    *
    * @remarks Callers treat unknown as "assume it does", so the first activation settles it.

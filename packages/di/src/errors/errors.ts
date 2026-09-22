@@ -320,9 +320,11 @@ export class MissingMetadataError extends DiError {
   readonly code = "MISSING_METADATA";
   readonly targetName: string;
 
-  constructor(targetName: string) {
+  constructor(targetName: string, inheritedFrom?: { readonly baseName: string; readonly dependencyCount: number }) {
     super(
-      `Class '${targetName}' is missing @injectable() decorator. Add @injectable([...deps]) or use toDynamic()/toResolved() instead.`,
+      inheritedFrom === undefined
+        ? `Class '${targetName}' is missing @injectable() decorator. Add @injectable([...deps]) or use toDynamic()/toResolved() instead.`
+        : `Class '${targetName}' inherits ${String(inheritedFrom.dependencyCount)} declared constructor ${inheritedFrom.dependencyCount === 1 ? "dependency" : "dependencies"} from '${inheritedFrom.baseName}' but declares none of its own. Add @injectable([...deps]) to '${targetName}', or give it an explicit constructor.`,
     );
     this.targetName = targetName;
   }
