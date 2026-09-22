@@ -209,6 +209,9 @@ class DefaultContainer implements Container {
   #moduleBindingIds: Map<object, Array<BindingIdentifier>> | undefined;
   // One shared registration for every chain this container's own `bind()` creates.
   #registration: BindingRegistration | undefined;
+  // Constants a plain last-wins `bind()` displaced out of the registry with their deactivation still
+  // owed: kept so dispose runs their hook, since they are in neither the registry nor the singleton cache.
+  #orphanedConstants: Set<ConstantBinding<unknown>> | undefined;
 
   constructor(parent?: DefaultContainer, options?: ContainerOptions) {
     this.#parent = parent;
@@ -303,7 +306,25 @@ class DefaultContainer implements Container {
 
   /** The registration every non-module chain shares, so `bind()` allocates only the builder. */
   #ownRegistration(): BindingRegistration {
-    return (this.#registration ??= { registry: this.#registry, scope: this.#scope, moduleBindingIds: undefined });
+    return (this.#registration ??= {
+      registry: this.#registry,
+      scope: this.#scope,
+      moduleBindingIds: undefined,
+      onDisplaced: (binding) => {
+        this.#recordDisplacedConstant(binding);
+      },
+      onRestored: (binding) => {
+        this.#orphanedConstants?.delete(binding as ConstantBinding<unknown>);
+      },
+    });
+  }
+
+  // A displaced constant that still owes a deactivation is remembered until dispose; a later restore
+  // takes it back out of the set, and every other displaced binding is dropped as before.
+  #recordDisplacedConstant(binding: Binding): void {
+    if (this.#owesConstantDeactivation(binding)) {
+      (this.#orphanedConstants ??= new Set()).add(binding);
+    }
   }
 
   /** One registration per module load, holding that module's id list directly. */
@@ -760,6 +781,20 @@ class DefaultContainer implements Container {
     if (this.#registry.hasHeldConstantBinding) {
       for (const binding of this.#registry.allBindings()) {
         if (binding.instance === NO_INSTANCE && this.#owesConstantDeactivation(binding)) {
+          try {
+            await this.#lifecycle.runDeactivation(binding, binding.value, reader);
+          } catch (error) {
+            errors.push(error);
+          }
+        }
+      }
+    }
+
+    // Constants a plain last-wins bind() displaced left the registry with their hook still owed; one
+    // whose activation cached an instance was drained above, so only the untouched ones remain.
+    if (this.#orphanedConstants !== undefined) {
+      for (const binding of this.#orphanedConstants) {
+        if (binding.instance === NO_INSTANCE) {
           try {
             await this.#lifecycle.runDeactivation(binding, binding.value, reader);
           } catch (error) {

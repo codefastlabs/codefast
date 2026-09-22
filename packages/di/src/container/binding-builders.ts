@@ -81,6 +81,10 @@ export interface BindingRegistration {
   readonly moduleBindingIds: Array<BindingIdentifier> | undefined;
   /** Runs for a binding this registration displaces, instead of parking it for a later restore. */
   readonly deactivateDisplaced?: ((binding: Binding) => void) | undefined;
+  /** Notes a parked displaced binding so the container can still tear it down if no restore reclaims it. */
+  readonly onDisplaced?: ((binding: Binding) => void) | undefined;
+  /** Undoes {@link BindingRegistration.onDisplaced} when a refinement restores the binding to the registry. */
+  readonly onRestored?: ((binding: Binding) => void) | undefined;
 }
 
 // ── BindingChain ─────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -171,6 +175,7 @@ export class BindingChain<Value, Names extends string = string>
         registration.deactivateDisplaced(displaced);
       } else {
         this.#displacedByChain = [displaced];
+        registration.onDisplaced?.(displaced);
       }
     }
     if (registration.moduleBindingIds !== undefined) {
@@ -420,6 +425,7 @@ export class BindingChain<Value, Names extends string = string>
         this.#registration.deactivateDisplaced(displaced);
       } else {
         (this.#displacedByChain ??= []).push(displaced);
+        this.#registration.onDisplaced?.(displaced);
       }
     }
     if (rewrite !== undefined && this.#displacedByChain !== undefined) {
@@ -438,6 +444,7 @@ export class BindingChain<Value, Names extends string = string>
       // the candidate stays parked.
       if (!this.#registration.registry.hasSlotOccupant(candidate)) {
         this.#registration.registry.add(candidate);
+        this.#registration.onRestored?.(candidate);
         displaced.splice(index, 1);
       }
     }
