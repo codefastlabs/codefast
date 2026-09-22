@@ -357,6 +357,11 @@ interface DependencySlot {
 > adding only what is theirs: a value type parameter and an `index` respectively. Every rule this document states about
 > a dependency's `optional`, `multi`, `name` and `tags` therefore holds for both.
 
+A slot's criteria are a request waiting to be made: `injectionSlotToResolveOptions(slot)` turns the `name` and `tags` of
+one into the [`ResolveOptions`](#resolveoptions) that asks for them, omitting a key rather than setting it to
+`undefined`, and answering `undefined` when the slot states no criteria. The binding side has its own converter
+([Resolving what a snapshot points at](#resolving-what-a-snapshot-points-at)).
+
 > **Exact shape:** `src/injection/resolve-options.ts` — `DependencySlot`.
 
 ### `TokenValue`
@@ -1615,7 +1620,7 @@ member, the binding `resolveAll` takes and `resolve` never selects
 
 A snapshot's `slot` states the binding's criteria; `bindingSlotToResolveOptions(slot)` turns them into the
 `ResolveOptions` that selects it, so a caller can go from introspection back to a resolve without rebuilding the hint by
-hand.
+hand. It is the binding-side twin of `injectionSlotToResolveOptions` ([`DependencySlot`](#dependencyslot)).
 
 ```ts
 for (const binding of container.lookupBindings(Logger)) {
