@@ -6,7 +6,13 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
-import { NoMatchingBindingError } from "#errors/errors";
+import {
+  AsyncActivationError,
+  AsyncDeactivationError,
+  InternalError,
+  NoMatchingBindingError,
+  SyncDisposalNotSupportedError,
+} from "#errors/errors";
 
 describe("NoMatchingBindingError diagnostics", () => {
   it("survives a bigint tag value in the request options", () => {
@@ -61,5 +67,40 @@ describe("NoMatchingBindingError diagnostics", () => {
     expect(() => container.resolve(serviceToken, { tags: [contextTag.of({ shape: "other" })] })).toThrow(
       NoMatchingBindingError,
     );
+  });
+});
+
+describe("error classes carry their name, code and message", () => {
+  it("InternalError names an internal invariant breach", () => {
+    const error = new InternalError("cache invariant broke");
+    expect(error.name).toBe("InternalError");
+    expect(error.code).toBe("INTERNAL_ERROR");
+    expect(error.message).toBe("cache invariant broke");
+  });
+
+  it("AsyncActivationError distinguishes postConstruct from onActivation", () => {
+    const fromMethod = new AsyncActivationError("svc", "postConstruct", "init");
+    expect(fromMethod.name).toBe("AsyncActivationError");
+    expect(fromMethod.code).toBe("ASYNC_ACTIVATION");
+    expect(fromMethod.hookKind).toBe("postConstruct");
+    expect(fromMethod.methodName).toBe("init");
+    expect(fromMethod.message).toContain("@postConstruct method 'init'");
+
+    const fromHook = new AsyncActivationError("svc", "onActivation");
+    expect(fromHook.methodName).toBeUndefined();
+    expect(fromHook.message).toContain("onActivation for 'svc'");
+  });
+
+  it("AsyncDeactivationError names the token and points at unbindAsync", () => {
+    const error = new AsyncDeactivationError("svc");
+    expect(error.name).toBe("AsyncDeactivationError");
+    expect(error.code).toBe("ASYNC_DEACTIVATION");
+    expect(error.tokenName).toBe("svc");
+    expect(error.message).toContain("unbindAsync()");
+  });
+
+  it("SyncDisposalNotSupportedError is thrown by the sync dispose protocol", () => {
+    const container = Container.create();
+    expect(() => container[Symbol.dispose]()).toThrow(SyncDisposalNotSupportedError);
   });
 });
