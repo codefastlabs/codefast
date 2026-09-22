@@ -17,6 +17,7 @@ describe("package discovery", () => {
       "readme",
       "spec",
       "architecture",
+      "decisions",
       "contributing",
       "changelog",
     ]);
@@ -46,7 +47,8 @@ describe("package discovery", () => {
     expect(docSource("tracking", "spec", "vectors")?.file).toBe("spec/vectors/README.md");
     expect(docSource("tracking", "spec", "nope")).toBeNull();
     expect(docSource("di", "spec", "spec-consent")).toBeNull();
-    expect(docSource("di", "decisions")).toBeNull();
+    expect(docSource("di", "decisions")?.file).toBe("DECISIONS.md");
+    expect(docSource("theme", "decisions")).toBeNull();
     expect(docSource("ui", "readme")).toBeNull();
     expect(docSource("nope", "readme")).toBeNull();
   });
