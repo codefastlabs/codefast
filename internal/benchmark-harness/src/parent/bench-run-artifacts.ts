@@ -78,8 +78,8 @@ export function writeBenchRunArtifacts(parameters: WriteBenchRunArtifactsParamet
 
   writeJsonlRun(paths.jsonlPath, librariesForJsonl);
 
-  const { scenarioFilter, scenarioTier, scenariosMeasured } = comparisonDocument.run;
-  if (scenarioFilter !== null || scenarioTier !== null) {
+  const { scenarioFilter, scenarioTier, libraryFilter, scenariosMeasured } = comparisonDocument.run;
+  if (scenarioFilter !== null || scenarioTier !== null || libraryFilter !== null) {
     return { latestPointer: "kept-filtered" };
   }
   // A run whose subject measured nothing (every row errored or failed sanity) is not the suite either.

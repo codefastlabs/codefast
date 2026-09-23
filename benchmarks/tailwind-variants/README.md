@@ -19,28 +19,26 @@ pnpm bench
 From the repo root, `pnpm bench` runs every suite; filter with `pnpm --filter @benchmark/tailwind-variants bench`. Every
 run rebuilds `@codefast/tailwind-variants` first, so it measures the working tree rather than a stale `dist/`.
 
-| Command                               | What changes                                                                            |
-| ------------------------------------- | --------------------------------------------------------------------------------------- |
-| `pnpm bench`                          | The lane to cite: one subprocess per scenario, libraries interleaved, default profile   |
-| `pnpm bench:fast`                     | Smoke profile — one shared process per library, shorter windows, one trial. Not a claim |
-| `pnpm bench:ab`                       | Two builds of `@codefast/tailwind-variants`, paired and alternating, on the rows named  |
-| `pnpm bench:list`                     | Prints the scenario inventory as JSON on stdout, measuring nothing                      |
-| `BENCH_MODE=full pnpm bench`          | Longer windows, three trials, a collection between trials                               |
-| `BENCH_VERBOSE=true pnpm bench`       | Streams every child line and prints the per-scenario table                              |
-| `pnpm bench:serve`                    | Serves the run history from `bench-results/` in a browser                               |
-| `pnpm bench:codefast`                 | The `@codefast/tailwind-variants` child process alone                                   |
-| `pnpm bench:tailwind-variants`        | The `tailwind-variants` child process alone                                             |
-| `pnpm bench:class-variance-authority` | The `class-variance-authority` child process alone                                      |
-| `BENCH_MODE=<mode>`                   | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set            |
-| `BENCH_TRIALS=<n>`                    | Trials per scenario; the harness refuses anything below its minimum                     |
-| `BENCH_ONLY=<id>,<id>`                | Restrict the run to these scenario ids                                                  |
-| `BENCH_PORT=<n>`                      | Preferred port for `bench:serve`                                                        |
-| `PORT=<n>`                            | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process    |
+| Command                         | What changes                                                                            |
+| ------------------------------- | --------------------------------------------------------------------------------------- |
+| `pnpm bench`                    | The lane to cite: one subprocess per scenario, libraries interleaved, default profile   |
+| `pnpm bench:fast`               | Smoke profile — one shared process per library, shorter windows, one trial. Not a claim |
+| `pnpm bench:ab`                 | Two builds of `@codefast/tailwind-variants`, paired and alternating, on the rows named  |
+| `pnpm bench:list`               | Prints the scenario inventory as JSON on stdout, measuring nothing                      |
+| `BENCH_MODE=full pnpm bench`    | Longer windows, three trials, a collection between trials                               |
+| `BENCH_VERBOSE=true pnpm bench` | Streams every child line and prints the per-scenario table                              |
+| `pnpm bench:serve`              | Serves the run history from `bench-results/` in a browser                               |
+| `BENCH_MODE=<mode>`             | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set            |
+| `BENCH_TRIALS=<n>`              | Trials per scenario; the harness refuses anything below its minimum                     |
+| `BENCH_ONLY=<id>,<id>`          | Restrict the run to these scenario ids                                                  |
+| `BENCH_LIBRARY=<name>`          | Restrict the run to these libraries; `@codefast/tailwind-variants` must be among them   |
+| `BENCH_PORT=<n>`                | Preferred port for `bench:serve`                                                        |
+| `PORT=<n>`                      | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process    |
 
 Every run writes a timestamped directory under `bench-results/` (git-ignored) holding one file, `observations.jsonl`,
 and — for a whole-suite run — points `bench-results/latest.json` at it. `report.md` and `report.json` are derived on
 demand: `pnpm bench:report [run]` rebuilds them from a run's observations, and `pnpm bench:serve` offers them as
-downloads. A run narrowed with `BENCH_ONLY` does not move `latest.json`.
+downloads. A run narrowed with `BENCH_ONLY` or `BENCH_LIBRARY` does not move `latest.json`.
 
 ## What it measures
 

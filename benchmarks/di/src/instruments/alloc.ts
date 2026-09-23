@@ -2,8 +2,8 @@
  * How much a resolve allocates, counted as scavenges under a fixed young generation.
  *
  * The only question here the suite does not already answer — for time,
- * `BENCH_ONLY=<id> pnpm bench:codefast` reports ns/op with trials and percentiles, which no
- * single loop improves on.
+ * `BENCH_LIBRARY=@codefast/di BENCH_ONLY=<id> pnpm bench` records per-trial means and percentiles,
+ * which no single loop improves on.
  *
  * Counting rather than measuring, because the two obvious instruments are silently wrong: a
  * `heapUsed` window is invalidated by any collection inside it and `PerformanceObserver` does not

@@ -78,8 +78,9 @@ The comparison document and the markdown report are **derived on demand**, never
 carries `isolated`, `mode` and `trialCount`, so a report derived from disk records the configuration the run actually
 used rather than the shell's.
 
-**A filtered run does not move `latest.json`.** It writes its own directory and says so on stdout; `latest.json` has to
-mean the whole suite. A run whose subject measured no rows does not move it either.
+**A filtered run does not move `latest.json`** — narrowed by scenario, by tier or by library. It writes its own
+directory and says so on stdout; `latest.json` has to mean the whole suite. A run whose subject measured no rows does
+not move it either.
 
 ## Environment keys
 
@@ -98,6 +99,7 @@ dropped for any run started at the repo root — which looks exactly like the ke
 | `BENCH_ISOLATE=true`   | One subprocess per scenario, libraries interleaved — what the `bench` lane sets                   |
 | `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids; a library implementing none of them measures nothing      |
 | `BENCH_TIER=<tier>`    | Restrict the run to one scenario tier, `contract` or `engine`; a narrowed run like `BENCH_ONLY`   |
+| `BENCH_LIBRARY=<name>` | Restrict the run to these libraries, which must include the subject; a narrowed run               |
 | `BENCH_BASELINE=<run>` | Diff against this run id or directory instead of the run `latest.json` names                      |
 | `BENCH_VERBOSE=true`   | Forward each child's stdout through the parent                                                    |
 | `BENCH_PORT=<n>`       | Preferred port for a suite's `bench:serve`                                                        |
@@ -143,7 +145,8 @@ pnpm bench:serve      # browse recorded runs (see ../benchmark-viewer)
 ```
 
 Every root script has a `di:` and a `tv:` twin (`pnpm di:bench:fast`, `pnpm tv:bench:list`, …) that filters to one
-suite; the per-library child entries (`bench:<library>`) stay suite-local.
+suite. A per-library child entry has no script of its own: the parent spawns it, and `BENCH_LIBRARY` narrows a run to
+the libraries named.
 
 ## Progress display
 
@@ -154,9 +157,9 @@ child output kept above it. Piped, under `CI`, or with `BENCH_VERBOSE=true`, it 
 plus a "still running" heartbeat after ten quiet seconds, so a log stays readable.
 
 The child does not know which display it feeds. Its stderr lines are the protocol: `src/shared/progress.ts` holds the
-formatter the child prints with and the parser the parent reads with, so `bench:<library>` run alone prints the same
-readable lines a parent consumes, and a round-trip test pins the format. An isolated run counts a library's scenarios
-across its per-scenario children; the scheduler tells the display the total after discovery.
+formatter the child prints with and the parser the parent reads with, so a child run alone prints the same readable
+lines a parent consumes, and a round-trip test pins the format. An isolated run counts a library's scenarios across its
+per-scenario children; the scheduler tells the display the total after discovery.
 
 Both the block and the console report colour their verdicts through `node:util`'s `styleText`, resolved once per stream
 by `createPalette`: a reliable win green, a loss red, a parity or an unreliable cell dim, a finished library green and a

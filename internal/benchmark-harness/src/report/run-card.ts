@@ -22,6 +22,8 @@ export interface RunCardInput {
   readonly shape: BenchRunShape;
   /** The tier the run was narrowed to, when it was. */
   readonly tier: BenchScenarioTier | undefined;
+  /** The libraries the run was narrowed to, when it was. */
+  readonly libraryFilter: ReadonlyArray<string> | undefined;
   readonly trialCount: number;
   readonly libraryCount: number;
   readonly scenariosMeasured: number;
@@ -56,13 +58,23 @@ function orderLine(shape: BenchRunShape): string {
     : "library-major — smoke ratios, provisional; `pnpm bench` isolates and cites";
 }
 
+// A library filter that kept every row names the libraries; a row count alone would read as unfiltered.
+function narrowingLabel(input: RunCardInput): string {
+  const rows = `${String(input.scenariosMeasured)} of ${String(input.scenariosAvailable ?? "?")} rows`;
+  if (input.libraryFilter === undefined) {
+    return rows;
+  }
+  const libraries = input.libraryFilter.join(", ");
+  return input.scenariosMeasured === input.scenariosAvailable ? libraries : `${rows} of ${libraries}`;
+}
+
 function pointerLine(input: RunCardInput): string {
   switch (input.artifacts.latestPointer) {
     case "moved": {
       return "moved to this run";
     }
     case "kept-filtered": {
-      return `kept — filtered to ${String(input.scenariosMeasured)} of ${String(input.scenariosAvailable ?? "?")} rows`;
+      return `kept — filtered to ${narrowingLabel(input)}`;
     }
     case "kept-empty": {
       return "kept — the subject measured no rows";
@@ -196,6 +208,7 @@ export function printRunCard(parameters: PrintRunCardParameters): void {
       runId: paths.runId,
       shape: parameters.shape,
       tier: comparisonDocument.run.scenarioTier ?? undefined,
+      libraryFilter: comparisonDocument.run.libraryFilter ?? undefined,
       trialCount: pivot.report.trialCount,
       libraryCount: libraries.length,
       scenariosMeasured: comparisonDocument.run.scenariosMeasured,

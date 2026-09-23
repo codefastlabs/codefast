@@ -33,12 +33,12 @@ measures the working tree rather than a stale `dist/`.
 | `pnpm bench:ab`         | Two builds of `@codefast/di`, paired and alternating, on the rows you name (the guide has the recipe)             |
 | `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout and a coverage line per library on stderr, measuring nothing      |
 | `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                                                         |
-| `pnpm bench:<library>`  | One child process alone: `codefast`, `inversify`, `awilix`, `tsyringe`, `brandi`, `ditox` or `injection-js`       |
 | `pnpm instrument:alloc` | The allocation instrument (see below)                                                                             |
 | `BENCH_MODE=<mode>`     | Timing profile: `fast`, `default` or `full` (longer windows, a collection between trials) — composes with `bench` |
 | `BENCH_VERBOSE=true`    | Streams every child line and prints the per-scenario table                                                        |
 | `BENCH_TRIALS=<n>`      | Trials per scenario; the harness refuses anything below its minimum                                               |
 | `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use                                    |
+| `BENCH_LIBRARY=<name>`  | Restrict the run to these libraries, comma-separated; `@codefast/di` must be among them                           |
 | `BENCH_TIER=<tier>`     | Restrict the run to `contract` rows (public API, compared across libraries) or `engine` rows (ours alone)         |
 | `BENCH_BASELINE=<run>`  | Diff against this run id, or a directory of runs — its newest member — instead of what `latest.json` names        |
 | `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                                                  |
@@ -52,7 +52,8 @@ and — for a whole-suite run — points `bench-results/latest.json` at it. `rep
 demand: `pnpm bench:report [run]` rebuilds them from a run's observations (newest by default), and `pnpm bench:serve`
 offers them as downloads. The JSONL carries every per-trial figure a report summarises — including each cell's IQR — and
 stamps every row with the run's profile, isolation and trial count, so a report derived from disk records the
-configuration the run actually used. A run narrowed with `BENCH_ONLY` or `BENCH_TIER` does not move `latest.json`.
+configuration the run actually used. A run narrowed with `BENCH_ONLY`, `BENCH_TIER` or `BENCH_LIBRARY` does not move
+`latest.json`.
 
 ## How it is put together
 
@@ -141,9 +142,10 @@ A shape measures the **bench row's own scenario**, so its construction, batch fa
 place that owns them. A shape the suite has no row for says so, which is what stops an unmeasured lane from staying
 invisible.
 
-**For time, there is no instrument, because the suite already is one.** `BENCH_ONLY=<id> pnpm bench:codefast` runs a
-single scenario through the `@codefast/di` child alone and reports its per-trial figures; a bare loop measuring the same
-thing is strictly worse and should not be written.
+**For time, there is no instrument, because the suite already is one.**
+`BENCH_LIBRARY=@codefast/di BENCH_ONLY=<id> pnpm bench` runs a single scenario through the `@codefast/di` child alone,
+isolated and over the profile's trials, and records each trial's figures in the run's `observations.jsonl`
+(`BENCH_VERBOSE=true` prints its row); a bare loop measuring the same thing is strictly worse and should not be written.
 
 ## Reading the output
 

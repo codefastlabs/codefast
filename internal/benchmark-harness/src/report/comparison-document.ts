@@ -3,6 +3,7 @@ import type { ComparisonCompetitorSummary, ComparisonLibrary, IntraLibraryRow } 
 import { buildComparisonRows, buildIntraLibraryRows, summarizeComparison } from "#report/comparison";
 import { isIqrNoisy, isRatioUnreliable } from "#report/reliability";
 import {
+  resolveLibraryFilterFromEnvironment,
   resolveRunShapeFromEnvironment,
   resolveScenarioFilterFromEnvironment,
   resolveTierFilterFromEnvironment,
@@ -42,6 +43,8 @@ export interface ComparisonDocumentRun {
   readonly scenarioFilter: ReadonlyArray<string> | null;
   /** The tier requested through `BENCH_TIER`, or `null` when every tier ran. */
   readonly scenarioTier: BenchScenarioTier | null;
+  /** Libraries requested through `BENCH_LIBRARY`, as written, or `null` when every library ran. */
+  readonly libraryFilter: ReadonlyArray<string> | null;
   readonly trialCount: number;
   readonly scenariosMeasured: number;
   /** Rows the subject collects, filtered or not; above `scenariosMeasured` means a partial run. */
@@ -182,6 +185,7 @@ export function buildComparisonDocument(
   const { fingerprint } = pivot.report;
   const scenarioFilter = resolveScenarioFilterFromEnvironment();
   const scenarioTier = resolveTierFilterFromEnvironment();
+  const libraryFilter = resolveLibraryFilterFromEnvironment();
   const scenariosMeasured = pivot.report.scenarios.length;
   const shape = run.shape ?? resolveRunShapeFromEnvironment();
   return {
@@ -192,6 +196,7 @@ export function buildComparisonDocument(
       isolated: shape.isolated,
       scenarioFilter: scenarioFilter === undefined ? null : [...scenarioFilter],
       scenarioTier: scenarioTier ?? null,
+      libraryFilter: libraryFilter === undefined ? null : [...libraryFilter],
       trialCount: pivot.report.trialCount,
       scenariosMeasured,
       scenariosAvailable: run.scenariosAvailable ?? scenariosMeasured,
