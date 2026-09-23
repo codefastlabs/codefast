@@ -173,11 +173,14 @@ When `latest.json` names a run of the same configuration — shape, profile and 
 architecture, the report also diffs against it (`src/report/run-diff.ts`): a `Δ prev` column beside each aggregate,
 computed over the rows both runs measured; a list of regressions beyond noise, where a scenario's subject throughput
 fell by more than the larger of the noise floor and either side's IQR fraction, rows above the noise ceiling excluded;
-and the count of improvements beyond noise. A run of another configuration is named and skipped rather than compared.
-The previous run is read before the artifacts are written, while the pointer still names it. `BENCH_BASELINE=<run id>`
-pins the run to diff against instead, and the `Δ` labels say `vs baseline <run id>`: the question a rewrite has to
-answer is whether it held the line against the last run of the engine it replaces, and that run stops being the previous
-one the moment the second run lands. A pinned run that cannot be read is an error, not a fallback.
+and the improvements beyond noise, the same test in the other direction. Both lists print every row in the same columns
+— throughput now, the delta, and what it was — because a jump needs the same scrutiny as a drop: a scenario that
+suddenly runs faster may have stopped doing its work. An empty list says `none`. A run of another configuration is named
+and skipped rather than compared. The previous run is read before the artifacts are written, while the pointer still
+names it. `BENCH_BASELINE=<run id>` pins the run to diff against instead, and the `Δ` labels say `vs baseline <run id>`:
+the question a rewrite has to answer is whether it held the line against the last run of the engine it replaces, and
+that run stops being the previous one the moment the second run lands. A pinned run that cannot be read is an error, not
+a fallback.
 
 A run closes with a card (`src/report/run-card.ts`): wall and rebuild time, library and row counts, the profile, the run
 order and what it means for citing ratios, sanity failures by library, whether `latest.json` moved, every library's

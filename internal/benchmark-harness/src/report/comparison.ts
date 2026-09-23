@@ -782,46 +782,66 @@ export function renderComparisonConsoleReport(
   console.log("");
 }
 
-const MAX_LISTED_IMPROVEMENTS = 5;
+interface DiffListColumns {
+  readonly idWidth: number;
+  readonly groupWidth: number;
+}
+
+function renderDiffList(
+  heading: string,
+  entries: ReadonlyArray<ScenarioDelta>,
+  tints: { readonly delta: Tint; readonly none: Tint },
+  target: string,
+  columns: DiffListColumns,
+  palette: Palette,
+): Array<string> {
+  if (entries.length === 0) {
+    return [`${palette.heading(heading)}  ${tints.none(`none vs ${target}`)}`];
+  }
+  return [
+    `${palette.heading(`${heading} (${String(entries.length)})`)}  ${palette.dim(`vs ${target}`)}`,
+    ...entries.map((entry) =>
+      [
+        entry.id.padEnd(columns.idWidth),
+        palette.dim(entry.group.padEnd(columns.groupWidth)),
+        `${formatCompactHz(entry.currentHzPerOp)} hz`.padStart(10),
+        tints.delta(formatDeltaPercent(entry.delta).padStart(CONSOLE_DELTA_COLUMN_WIDTH)),
+        palette.dim(`was ${formatCompactHz(entry.previousHzPerOp)}`),
+      ].join(CLI_TABLE_COLUMN_GAP),
+    ),
+  ];
+}
 
 function renderDiffLines(diff: RunDiff, palette: Palette): Array<string> {
   if (!diff.comparable) {
     return [palette.dim(`No diff against ${describeDiffTarget(diff)}: ${diff.reason}.`)];
   }
-  const lines: Array<string> = [];
-  const count = diff.regressions.length;
-  if (count === 0) {
-    lines.push(
-      `${palette.heading("Regressions beyond noise")}  ${palette.done(`none vs ${describeDiffTarget(diff)}`)}`,
-    );
-  } else {
-    lines.push(
-      `${palette.heading(`Regressions beyond noise (${String(count)})`)}  ${palette.dim(`vs ${describeDiffTarget(diff)}`)}`,
-    );
-    const idWidth = Math.max(...diff.regressions.map((entry) => entry.id.length));
-    const groupWidth = Math.max(...diff.regressions.map((entry) => entry.group.length));
-    for (const entry of diff.regressions) {
-      lines.push(
-        [
-          entry.id.padEnd(idWidth),
-          palette.dim(entry.group.padEnd(groupWidth)),
-          `${formatCompactHz(entry.currentHzPerOp)} hz`.padStart(10),
-          palette.loss(formatDeltaPercent(entry.delta).padStart(CONSOLE_DELTA_COLUMN_WIDTH)),
-          palette.dim(`was ${formatCompactHz(entry.previousHzPerOp)}`),
-        ].join(CLI_TABLE_COLUMN_GAP),
-      );
-    }
-  }
-  if (diff.improvements.length > 0) {
-    const listed = diff.improvements
-      .slice(0, MAX_LISTED_IMPROVEMENTS)
-      .map((entry) => `${entry.id} ${formatDeltaPercent(entry.delta)}`);
-    const more = diff.improvements.length - listed.length;
-    lines.push(
-      `${palette.heading(`Improvements beyond noise (${String(diff.improvements.length)})`)}  ${palette.win(listed.join(" · "))}${more > 0 ? palette.dim(` · +${String(more)} more`) : ""}`,
-    );
-  }
-  return lines;
+  const target = describeDiffTarget(diff);
+  // One width across both lists, so their columns line up.
+  const listed = [...diff.regressions, ...diff.improvements];
+  const columns: DiffListColumns = {
+    idWidth: Math.max(0, ...listed.map((entry) => entry.id.length)),
+    groupWidth: Math.max(0, ...listed.map((entry) => entry.group.length)),
+  };
+  return [
+    ...renderDiffList(
+      "Regressions beyond noise",
+      diff.regressions,
+      { delta: palette.loss, none: palette.done },
+      target,
+      columns,
+      palette,
+    ),
+    "",
+    ...renderDiffList(
+      "Improvements beyond noise",
+      diff.improvements,
+      { delta: palette.win, none: palette.dim },
+      target,
+      columns,
+      palette,
+    ),
+  ];
 }
 
 /**

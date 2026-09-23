@@ -119,9 +119,10 @@ The run ends with a scoreboard rather than the per-scenario table: one row per c
 comparable count, the median and geomean ratio and the worst loss; a geomean per group with a column per competitor; and
 the reliable losses one per line, the `†` ones counted rather than listed. When `bench-results/latest.json` names a run
 of the same profile, shape and trial count on this machine, each aggregate gains a `Δ prev` over the rows both runs
-measured and the regressions beyond noise are listed — the A/B question the guide asks, answered on the spot. A closing
-card states the timing, the profile, the run order, sanity failures, whether `latest.json` moved, and the library
-versions. The per-scenario table is one `BENCH_VERBOSE=true` or `pnpm bench:report` away.
+measured and the regressions and improvements beyond noise are listed row by row, each with its throughput now and
+before — the A/B question the guide asks, answered on the spot. A closing card states the timing, the profile, the run
+order, sanity failures, whether `latest.json` moved, and the library versions. The per-scenario table is one
+`BENCH_VERBOSE=true` or `pnpm bench:report` away.
 
 ## Instruments
 
