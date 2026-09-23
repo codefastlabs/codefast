@@ -900,6 +900,25 @@ export const MODULE_COLD_FROM_MODULES = {
 } as const satisfies ScenarioDescriptor;
 
 /**
+ * How many bindings the single-module cold row declares: the first half constants, the rest singleton factories.
+ */
+export const MODULE_BINDING_COUNT = 128;
+
+/**
+ * Building a fresh container from one module of many bindings and resolving the last, per iteration.
+ *
+ * @remarks The two-module cold row prices composition at a handful of bindings; this one scales it, since the
+ * cost of filing a module grows with its binding count.
+ */
+export const MODULE_COLD_128 = {
+  id: `module-cold-${String(MODULE_BINDING_COUNT)}`,
+  tier: "contract",
+  requires: ["module"],
+  group: "boot",
+  what: `build a fresh container from 1 module of ${String(MODULE_BINDING_COUNT)} bindings — half constants, half singleton factories — and resolve the last`,
+} as const satisfies ScenarioDescriptor;
+
+/**
  * @since 0.5.0-canary.7
  */
 export const BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE = {

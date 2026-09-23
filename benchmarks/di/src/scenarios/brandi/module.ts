@@ -5,10 +5,14 @@
  * container pulls them in with `container.use(...tokens).from(module)`. A fresh
  * container composes the two modules and resolves the root. Brandi has no
  * `load`/`unload`, so the load-unload row stays absent.
+ *
+ * `module-cold-128`: one dependency module of many bindings, every token pulled in
+ * by a single `use(...).from(module)`; its singletons are `inContainerScope()`, one per container.
  */
 import { createContainer, createDependencyModule, injected, token } from "brandi";
 
-import { MODULE_COLD_FROM_MODULES } from "#fixtures/scenario-parity";
+import { isComposedModule } from "#fixtures/sanity";
+import { MODULE_BINDING_COUNT, MODULE_COLD_128, MODULE_COLD_FROM_MODULES } from "#fixtures/scenario-parity";
 import type { BenchScenario } from "#scenarios/types";
 
 interface ModuleConfig {
@@ -76,11 +80,68 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
   };
 }
 
+interface ModuleValue {
+  readonly id: number;
+}
+
+function buildModuleCold128Scenario(): BenchScenario {
+  const singletonFrom = MODULE_BINDING_COUNT / 2;
+  const valueTokens = Array.from({ length: MODULE_BINDING_COUNT }, (_value, index) =>
+    token<ModuleValue>(`bench-brandi-mod128-${String(index)}`),
+  );
+  const largeModule = createDependencyModule();
+  for (const [index, valueToken] of valueTokens.entries()) {
+    if (index < singletonFrom) {
+      largeModule.bind(valueToken).toConstant({ id: index });
+    } else {
+      // A module's `inSingletonScope()` caches on the module's own binding, shared by every container that uses it.
+      largeModule
+        .bind(valueToken)
+        .toInstance((): ModuleValue => ({ id: index }))
+        .inContainerScope();
+    }
+  }
+  const lastToken = valueTokens[MODULE_BINDING_COUNT - 1]!;
+
+  function composeContainer(): ReturnType<typeof createContainer> {
+    const container = createContainer();
+    container.use(...valueTokens).from(largeModule);
+    return container;
+  }
+
+  function runOneColdStart(): number {
+    return composeContainer().get(lastToken).id;
+  }
+
+  // Pre-warm
+  runOneColdStart();
+
+  return {
+    ...MODULE_COLD_128,
+    what: `createContainer() + use(${String(MODULE_BINDING_COUNT)} tokens).from(1 dependency module) + get the last (cold start); singletons are inContainerScope(), one per container`,
+    batch: 1,
+    sanity: () =>
+      isComposedModule(
+        () => {
+          const container = composeContainer();
+          return (index) => container.get(valueTokens[index]!);
+        },
+        MODULE_BINDING_COUNT,
+        singletonFrom,
+      ),
+    build: () => {
+      return () => {
+        runOneColdStart();
+      };
+    },
+  };
+}
+
 /**
  * Builds the brandi module scenarios.
  *
  * @since 0.8.0
  */
 export function buildBrandiModuleScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildModuleColdFromModulesScenario()];
+  return [buildModuleColdFromModulesScenario(), buildModuleCold128Scenario()];
 }

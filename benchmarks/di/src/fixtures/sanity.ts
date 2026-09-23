@@ -61,3 +61,28 @@ export function isCompleteCollection(values: ReadonlyArray<number>, count: numbe
   }
   return true;
 }
+
+/**
+ * Whether a module composes every binding it declares: each index resolves, constants are shared, singletons are per container.
+ *
+ * @remarks `composeResolver` builds a fresh container from the module and returns a resolver by index; the
+ * indices below `singletonFrom` are constants, the rest singleton factories.
+ */
+export function isComposedModule(
+  composeResolver: () => (index: number) => { readonly id: number },
+  count: number,
+  singletonFrom: number,
+): boolean {
+  const first = composeResolver();
+  const second = composeResolver();
+  for (let index = 0; index < count; index++) {
+    const value = first(index);
+    if (value.id !== index || first(index) !== value) {
+      return false;
+    }
+    if ((second(index) === value) !== index < singletonFrom) {
+      return false;
+    }
+  }
+  return true;
+}
