@@ -128,19 +128,30 @@ interface GraphAccumulator {
   readonly unboundNodeIds: Map<string, string>;
 }
 
-/** Own bindings shadow the fallback, mirroring resolution's upward walk. */
-type BindingLookup = (token: Token<unknown> | Constructor) => ReadonlyArray<Binding>;
+/** A binding's registry followed by the ancestors resolution would walk to, nearest first. */
+type RegistryChain = ReadonlyArray<BindingRegistry>;
 
-function bindingLookup(sourceRegistry: BindingRegistry, fallbackRegistry: BindingRegistry | undefined): BindingLookup {
-  return (token) => {
-    const own = sourceRegistry.getAll(token);
-
-    if (own.length > 0 || fallbackRegistry === undefined) {
-      return own;
+/**
+ * The bindings a dependency reaches, found the way resolution finds them.
+ *
+ * @remarks A single dependency stops at the nearest registry holding a binding its slot matches, and
+ * a collection gathers every registry's matches — `resolve` and `resolveAll` respectively.
+ */
+function dependencyTargets(chain: RegistryChain, ref: DependencySlot): ReadonlyArray<Binding> {
+  if (ref.multi) {
+    const gathered: Array<Binding> = [];
+    for (const registry of chain) {
+      gathered.push(...matchingTargets(registry.getAll(ref.token), ref));
     }
-
-    return fallbackRegistry.getAll(token);
-  };
+    return gathered;
+  }
+  for (const registry of chain) {
+    const targets = matchingTargets(registry.getAll(ref.token), ref);
+    if (targets.length > 0) {
+      return targets;
+    }
+  }
+  return [];
 }
 
 /** The placeholder node an optional-but-unbound dependency points at, minted once per token. */
@@ -172,9 +183,9 @@ function addDependencyEdges(
   from: string,
   ref: DependencySlot,
   index: number,
-  lookup: BindingLookup,
+  chain: RegistryChain,
 ): void {
-  const targets = matchingTargets(lookup(ref.token), ref);
+  const targets = dependencyTargets(chain, ref);
   const label = edgeLabel(ref, index);
 
   if (targets.length === 0) {
@@ -219,14 +230,14 @@ function addBindingEdges(
   accumulator: GraphAccumulator,
   binding: Binding,
   metadataReader: MetadataReader,
-  lookup: BindingLookup,
+  chain: RegistryChain,
 ): void {
   if (binding.kind === "class") {
     const meta = metadataReader.getConstructorMetadata(binding.target);
 
     if (meta !== undefined) {
       for (const [index, param] of meta.params.entries()) {
-        addDependencyEdges(accumulator, String(binding.identifier), param, index, lookup);
+        addDependencyEdges(accumulator, String(binding.identifier), param, index, chain);
       }
     }
 
@@ -235,7 +246,7 @@ function addBindingEdges(
 
   if (binding.kind === "resolved" || binding.kind === "resolved-async") {
     for (const [index, dependency] of binding.deps.entries()) {
-      addDependencyEdges(accumulator, String(binding.identifier), dependency, index, lookup);
+      addDependencyEdges(accumulator, String(binding.identifier), dependency, index, chain);
     }
 
     return;
@@ -244,7 +255,7 @@ function addBindingEdges(
   if (binding.kind === "alias") {
     const aliasRef: DependencySlot = { token: binding.target, optional: false, multi: false };
 
-    for (const target of matchingTargets(lookup(binding.target), aliasRef)) {
+    for (const target of dependencyTargets(chain, aliasRef)) {
       accumulator.edges.push({
         from: String(binding.identifier),
         to: String(target.identifier),
@@ -255,16 +266,14 @@ function addBindingEdges(
   }
 }
 
+/** Adds the nodes of `chain[0]`, the registry the chain starts at, and the edges each of its bindings declares. */
 function addRegistryBindings(
   accumulator: GraphAccumulator,
-  sourceRegistry: BindingRegistry,
+  chain: RegistryChain,
   metadataReader: MetadataReader,
   fromParent: boolean,
-  fallbackRegistry?: BindingRegistry,
 ): void {
-  const lookup = bindingLookup(sourceRegistry, fallbackRegistry);
-
-  for (const binding of sourceRegistry.allBindings()) {
+  for (const binding of chain[0]!.allBindings()) {
     accumulator.nodes.push({
       id: String(binding.identifier),
       tokenName: tokenName(binding.token),
@@ -274,12 +283,17 @@ function addRegistryBindings(
       fromParent,
     });
 
-    addBindingEdges(accumulator, binding, metadataReader, lookup);
+    addBindingEdges(accumulator, binding, metadataReader, chain);
   }
 }
 
 /**
- * Builds the JSON dependency graph of a registry's bindings, optionally including the parent's.
+ * Builds the JSON dependency graph of a registry's bindings, optionally including its ancestors'.
+ *
+ * @param registry - The registry whose bindings the graph is for.
+ * @param metadataReader - The reader class dependencies are read through.
+ * @param options - Whether the ancestors' bindings join the graph.
+ * @param ancestorRegistries - The ancestor containers' registries, nearest first.
  *
  * @since 0.3.16-canary.0
  */
@@ -287,15 +301,19 @@ export function buildDependencyGraph(
   registry: BindingRegistry,
   metadataReader: MetadataReader,
   options: GraphOptions | undefined,
-  parentRegistry?: BindingRegistry,
+  ancestorRegistries: ReadonlyArray<BindingRegistry> = [],
 ): ContainerGraphJson {
   const accumulator: GraphAccumulator = { nodes: [], edges: [], unboundNodeIds: new Map() };
   const includesParent = options?.includeParent === true;
 
-  addRegistryBindings(accumulator, registry, metadataReader, false, includesParent ? parentRegistry : undefined);
+  if (!includesParent) {
+    addRegistryBindings(accumulator, [registry], metadataReader, false);
+    return { nodes: accumulator.nodes, edges: accumulator.edges, includesParent };
+  }
 
-  if (includesParent && parentRegistry !== undefined) {
-    addRegistryBindings(accumulator, parentRegistry, metadataReader, true);
+  const chain = [registry, ...ancestorRegistries];
+  for (let depth = 0; depth < chain.length; depth += 1) {
+    addRegistryBindings(accumulator, chain.slice(depth), metadataReader, depth > 0);
   }
 
   return { nodes: accumulator.nodes, edges: accumulator.edges, includesParent };

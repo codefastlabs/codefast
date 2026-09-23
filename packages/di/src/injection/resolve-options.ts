@@ -75,15 +75,17 @@ function buildOptions(
   name: string | undefined,
   tags: ReadonlyArray<BindingTag> | undefined,
 ): ResolveOptions | undefined {
-  if (name === undefined && tags === undefined) {
+  // An empty criterion list selects nothing, so it states no criterion at all.
+  const criteria = tags !== undefined && tags.length > 0 ? tags : undefined;
+  if (name === undefined && criteria === undefined) {
     return undefined;
   }
   const options: ResolveOptions = {};
   if (name !== undefined) {
     options.name = name;
   }
-  if (tags !== undefined) {
-    options.tags = tags;
+  if (criteria !== undefined) {
+    options.tags = criteria;
   }
   return options;
 }
@@ -122,7 +124,7 @@ interface SlotWithMemoizedOptions {
  */
 export function resolveOptionsForSlot(injectionSlot: DependencySlot): ResolveOptions | undefined {
   const { name, tags } = injectionSlot;
-  if (name === undefined && tags === undefined) {
+  if (name === undefined && (tags === undefined || tags.length === 0)) {
     return undefined;
   }
   const slot = injectionSlot as SlotWithMemoizedOptions;

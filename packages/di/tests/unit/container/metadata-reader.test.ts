@@ -151,6 +151,24 @@ describe("ContainerOptions.metadataReader", () => {
 
     expect(container.resolve(Pool).dsn).toBe("postgres://localhost/app");
   });
+
+  it("outranks that binding for the children too, at every depth", () => {
+    const root = Container.create({ metadataReader: tableReader() });
+
+    // A reader that describes nothing: a child that inherited it instead would fail to build Pool.
+    root.bind(MetadataReaderToken).toConstantValue({
+      getConstructorMetadata: () => undefined,
+      getLifecycleMetadata: () => undefined,
+    });
+    const child = root.createChild();
+    const grandchild = child.createChild();
+
+    for (const container of [child, grandchild]) {
+      container.bind(dsnToken).toConstantValue("postgres://localhost/app");
+      container.bind(Pool).toSelf().singleton();
+      expect(container.resolve(Pool).dsn).toBe("postgres://localhost/app");
+    }
+  });
 });
 
 describe("MetadataReaderToken binding", () => {

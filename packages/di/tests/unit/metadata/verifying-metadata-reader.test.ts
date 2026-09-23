@@ -65,3 +65,39 @@ describe("verifying a foreign reader's accessor metadata", () => {
     expect(() => container.resolve(Probe)).toThrow(/descriptor\.token is not a token or a class/);
   });
 });
+
+describe("asking a foreign reader about a class", () => {
+  it("asks once per class for the life of the reader, across resolves and containers", () => {
+    class Counted {
+      init(): void {}
+    }
+    const calls = { constructor: 0, lifecycle: 0, accessor: 0 };
+    const reader: MetadataReader = {
+      getConstructorMetadata: () => {
+        calls.constructor += 1;
+        return { params: [] };
+      },
+      getLifecycleMetadata: () => {
+        calls.lifecycle += 1;
+        return { postConstruct: ["init"], preDestroy: [] };
+      },
+      getAccessorMetadata: () => {
+        calls.accessor += 1;
+        return undefined;
+      },
+    };
+
+    for (const container of [
+      Container.create({ metadataReader: reader }),
+      Container.create({ metadataReader: reader }),
+    ]) {
+      container.bind(Counted).toSelf().transient();
+      for (let index = 0; index < 5; index += 1) {
+        container.resolve(Counted);
+      }
+      container.createChild().resolve(Counted);
+    }
+
+    expect(calls).toStrictEqual({ constructor: 1, lifecycle: 1, accessor: 1 });
+  });
+});

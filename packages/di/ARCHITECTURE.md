@@ -171,8 +171,10 @@ it back through `add()` under the same object and id, so nothing that holds the 
 
 ### A token's binding list appends in place and replaces on removal
 
-A token can carry several bindings, and the registry keeps them in a list. An `add` that displaces nothing **appends**
-to that array; a `removeById` or a displacement **replaces** it rather than splicing it.
+A token can carry several bindings, and the registry keeps them in a list, in registration order. An `add` that
+displaces nothing **appends** to that array; a `removeById`, a displacement, or a binding a chain puts back ahead of
+later registrations **replaces** it rather than splicing it. A binding's `registrationOrder` is stamped by its first
+`add` and never changes, which is how a re-slotted or restored binding finds its place again.
 
 The reason is selection. Selection walks the registry's own list while running `when()` predicates, and a predicate is
 user code that may rebind the very token being walked. The walk reads the list's length once before it starts: a removal
@@ -186,9 +188,9 @@ predicate is now rewritten in place — the registry moves a lone binding into a
 registry's last write and has nothing parked; otherwise the re-slot path re-checks that the binding is still live and
 restores what the new shape frees, exactly as before.
 
-> **Invariant (correctness).** A removal or a displacement replaces a token's binding array and never splices one that
-> has been handed out; an append lands in place, and every selection walk reads its starting length first.
-> `tests/unit/resolution/select/binding-select.test.ts` pins both halves.
+> **Invariant (correctness).** A removal, a displacement or an out-of-order insert replaces a token's binding array and
+> never splices one that has been handed out; an append lands in place, and every selection walk reads its starting
+> length first. `tests/unit/resolution/select/binding-select.test.ts` pins both halves.
 
 ### The registry keeps the common token in one map, and a record for the rest
 

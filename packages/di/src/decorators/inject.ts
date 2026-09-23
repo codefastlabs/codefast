@@ -2,6 +2,7 @@ import { getActiveContainer, getAmbientResolution } from "#ambient/active-contai
 /** `@inject` — the accessor-decorator channel, resolving from the ambient container. */
 import type { Token } from "#core/token";
 import type { Constructor } from "#core/types";
+import { decoratorMetadataOf } from "#decorators/decorator-metadata";
 import { MissingContainerContextError, StaticMemberDecoratorError } from "#errors/errors";
 import type { InjectionDescriptor, InjectOptions } from "#injection/descriptor";
 import { buildInjectionDescriptor } from "#injection/descriptor";
@@ -57,7 +58,7 @@ export function inject<Value, Names extends string = string>(
     if (context.static) {
       throw new StaticMemberDecoratorError("inject", String(context.name));
     }
-    const meta = context.metadata as Record<string | symbol, unknown>;
+    const meta = decoratorMetadataOf(context, "inject");
     // Own bucket only: the metadata record inherits the base class's, and pushing into an inherited
     // array would register this accessor on the base class instead.
     if (!Object.hasOwn(meta, INJECT_ACCESSOR_KEY) || !Array.isArray(meta[INJECT_ACCESSOR_KEY])) {

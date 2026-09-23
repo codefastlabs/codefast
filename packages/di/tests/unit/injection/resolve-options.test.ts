@@ -10,7 +10,11 @@ import type { ConstraintContext } from "#core/types";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
 import type { DependencySlot } from "#injection/resolve-options";
-import { resolveOptionsForSlot } from "#injection/resolve-options";
+import {
+  bindingSlotToResolveOptions,
+  injectionSlotToResolveOptions,
+  resolveOptionsForSlot,
+} from "#injection/resolve-options";
 
 function slotFor(criteria: Partial<Pick<DependencySlot, "name" | "tags">>): DependencySlot {
   return { token: token<string>("slot-subject"), optional: false, multi: false, ...criteria };
@@ -19,6 +23,13 @@ function slotFor(criteria: Partial<Pick<DependencySlot, "name" | "tags">>): Depe
 describe("resolveOptionsForSlot", () => {
   it("answers a slot with no criterion without building anything", () => {
     expect(resolveOptionsForSlot(slotFor({}))).toBeUndefined();
+  });
+
+  it("reads an empty criterion list as no criterion, as the binding side does", () => {
+    expect(resolveOptionsForSlot(slotFor({ tags: [] }))).toBeUndefined();
+    expect(injectionSlotToResolveOptions({ tags: [] })).toBeUndefined();
+    expect(bindingSlotToResolveOptions({ tags: [] })).toBeUndefined();
+    expect(injectionSlotToResolveOptions({ name: "primary", tags: [] })).toStrictEqual({ name: "primary" });
   });
 
   it("hands out one object for the life of a slot", () => {

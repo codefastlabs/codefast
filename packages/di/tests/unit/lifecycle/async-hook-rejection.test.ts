@@ -72,6 +72,31 @@ describe("an async activation hook reached from a sync resolve", () => {
     expect(thrown).toBeInstanceOf(AsyncActivationError);
     expect(rejections).toStrictEqual([]);
   });
+
+  it("adopts a rejected per-binding onActivation on a transient factory", async () => {
+    const service = token<string>("ah:transientFactoryActivation");
+    const container = Container.create();
+    container
+      .bind(service)
+      .toDynamic(() => "v")
+      .transient()
+      .onActivation(() => Promise.reject(new Error("boom")));
+
+    const { thrown, rejections } = await runCollectingRejections(() => container.resolve(service));
+    expect(thrown).toBeInstanceOf(AsyncActivationError);
+    expect(rejections).toStrictEqual([]);
+  });
+
+  it("adopts a rejected container-level onActivation on a transient factory", async () => {
+    const service = token<string>("ah:transientFactoryContainerActivation");
+    const container = Container.create();
+    container.bind(service).toDynamic(() => "v");
+    container.onActivation(service, () => Promise.reject(new Error("boom")));
+
+    const { thrown, rejections } = await runCollectingRejections(() => container.resolve(service));
+    expect(thrown).toBeInstanceOf(AsyncActivationError);
+    expect(rejections).toStrictEqual([]);
+  });
 });
 
 describe("an async deactivation hook reached from a sync unbind", () => {

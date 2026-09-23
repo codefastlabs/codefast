@@ -668,6 +668,13 @@ container.resolve(Logger, { name: "audit", tag: Env.of("production") });
 An alias points at another token. When the alias is resolved, the hint is **forwarded** to the target token's
 resolution.
 
+> **Normative — a default-slot alias is transparent.** An alias with no slot, predicate or membership of its own answers
+> a request whose criteria no slot of its token matches, and forwards those criteria to its target unchanged. An exact
+> slot on the alias's own token is tried first and still wins, and the nearest container that can answer does, as for
+> any binding. This holds for `resolve`, `resolveOptional` and their async forms, and `has` agrees with them;
+> `resolveAll` filters the alias's token by its own slots, so a default-slot alias does not join a collection read that
+> carries criteria.
+
 ```ts
 container.bind(Logger).to(ConsoleLogger).whenNamed("console").singleton();
 container.bind(Logger).to(FileLogger).whenNamed("file").singleton();
@@ -686,7 +693,7 @@ container.bind(AbstractAuditLogger).toAlias(Logger).whenNamed("audit");
 // This binding is only selected when resolving AbstractAuditLogger with the hint { name: "audit" }
 // Once selected, the hint { name: "audit" } is forwarded to the Logger resolution
 const logger = container.resolve(AbstractAuditLogger, { name: "audit" });
-// → the Logger binding matching { name: "audit" } (if any), otherwise the default
+// → the Logger binding matching { name: "audit" }; with none, NoMatchingBindingError names Logger
 ```
 
 > **An alias has no scope of its own.** The scope is decided by the target binding. An alias is only a pointer — it
@@ -1294,8 +1301,9 @@ container.rebind(Logger).to(FileLogger).singleton();
 unbind-then-bind, never a way to override a parent.
 
 > **Normative.** `rebind(token)` only affects the **own** bindings of the current container. If the token is only bound
-> at the parent (not at the child), `child.rebind(token)` throws `RebindUnboundTokenError`. After the unbind, `to*()`
-> commits immediately — there is no gap between the unbind and the bind.
+> at the parent (not at the child), `child.rebind(token)` throws `RebindUnboundTokenError`. When the old bindings owe no
+> deactivation, `rebind()` removes nothing up front and `to*()` swaps in place — there is no gap between the unbind and
+> the bind. When they owe one, `rebind()` unbinds and deactivates them itself, before any replacement exists.
 
 > **`rebind` and the parent chain.** To override a parent binding from a child container (the common test pattern), use
 > `bind()` at the child — resolution prefers the child over the parent:
@@ -1323,7 +1331,8 @@ unbind-then-bind, never a way to override a parent.
 >
 > - If the old binding has **no** async `onDeactivation` (or no `onDeactivation` at all): a sync `rebind()` is safe.
 > - If the old binding **does** have an async `onDeactivation`: a sync `rebind()` throws `AsyncDeactivationError` — the
->   same behaviour as a sync `unbind()`.
+>   same behaviour as a sync `unbind()`. The throw comes from `rebind()` itself, the old bindings are already removed,
+>   and no replacement is committed, whatever shape the token had.
 
 There is no `rebindAsync()` (see [Not adopted from v8](./DECISIONS.md#not-adopted-from-v8)), so the required workaround
 is:
@@ -1530,7 +1539,9 @@ fail fast at startup on a config error, and remove lazy-init latency from the fi
 container.validate();
 ```
 
-Walks the dependency graph and throws `ScopeViolationError` for any violation of the scope matrix in [Scope](#scope).
+Walks the dependency graph and throws `ScopeViolationError` for any violation of the scope matrix in [Scope](#scope). An
+`optional()` dependency counts whenever it is bound — a singleton captures it just the same — and imposes nothing when
+it is not.
 
 > **Normative — analysis scope.** `validate()` can only statically analyse bindings whose deps are declared explicitly:
 >
@@ -1668,9 +1679,10 @@ slot the edge points at, if the binding declares one). The `label` field is **fo
   binding it could never have resolved.
 - **Predicates (`when...`) are not evaluated** — a predicate needs a real resolve context, so the graph keeps every
   candidate that has one.
-- **With `includeParent: true`**, a binding at the current container shadows a binding for the same token at the parent,
-  exactly as resolution order walks up; an edge from the child connects directly to the parent binding that satisfies
-  it.
+- **With `includeParent: true`**, every ancestor's bindings join the graph (`fromParent: true`), and each edge follows
+  resolution's own walk up the chain: a single dependency connects to the nearest container holding a binding its slot
+  matches — a child binding the request cannot select shadows nothing — and an `injectAll` connects to every match in
+  the chain, as `resolveAll` does.
 
 ### The Container interface
 
@@ -2169,8 +2181,20 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 }
 ```
 
-`experimentalDecorators: true` is not needed. Stage 3 decorators have been standard since TypeScript 5.0;
-`Symbol.metadata` is stable from TypeScript 5.9.
+`experimentalDecorators: true` is not needed. Stage 3 decorators have been standard since TypeScript 5.0.
+
+> **Normative — `Symbol.metadata` must exist before a decorated class is defined.** TypeScript emits `context.metadata`
+> as `undefined` on a runtime without `Symbol.metadata`, and every decorator here then throws
+> `MissingDecoratorMetadataError` at the declaration. The library does not install it — the package declares no side
+> effects — so an app on such a runtime installs it in a module imported first:
+>
+> ```ts
+> Symbol.metadata ??= Symbol.for("Symbol.metadata");
+> ```
+>
+> `Symbol.for` is the key the default reader falls back to and the one esbuild emits, so every toolchain agrees on it.
+> Node also cannot parse decorator syntax itself: `target: "ESNext"` leaves decorators in the output, so the code must
+> go through a transpiler that lowers them (a lower `target`, esbuild, or Babel's `2023-11` decorators plugin).
 
 ---
 
@@ -2571,34 +2595,35 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 > **Normative.** Every error extends `DiError` — an abstract class that forces each subclass to declare a `code` string
 > (machine-readable), alongside a message carrying enough context for a human reader.
 
-| Error                           | `code`                        | Thrown when                                                             | Context fields                                   |
-| ------------------------------- | ----------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
-| `InternalError`                 | `INTERNAL_ERROR`              | An internal assertion failed — **not** a user error                     | —                                                |
-| `TokenNotBoundError`            | `TOKEN_NOT_BOUND`             | The token has no binding at all, even after walking the parent chain    | `tokenName`                                      |
-| `NoMatchingBindingError`        | `NO_MATCHING_BINDING`         | The token **has** bindings but no slot matches the hint                 | `tokenName`, `hint`, `availableSlots`            |
-| `AmbiguousBindingError`         | `AMBIGUOUS_BINDING`           | ≥ 2 candidates remain and the more-specific rule cannot decide          | `tokenName`, `candidateIds`                      |
-| `CircularDependencyError`       | `CIRCULAR_DEPENDENCY`         | A → B → A, including a cycle along an alias chain                       | `cycle`                                          |
-| `AsyncResolutionError`          | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain   | `tokenName`, `asyncSourceToken`                  |
-| `AsyncActivationError`          | `ASYNC_ACTIVATION`            | `@postConstruct` or `onActivation` returned a `Promise` on a sync path  | `tokenName`, `hookKind`, `methodName`            |
-| `AsyncDeactivationError`        | `ASYNC_DEACTIVATION`          | A sync `unbind()` on a binding with an async `onDeactivation`           | `tokenName`                                      |
-| `ScopeViolationError`           | `SCOPE_VIOLATION`             | Captive dependency — a singleton depending on scoped or transient       | `details`: both tokens + scopes, plus `path`     |
-| `MissingMetadataError`          | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing     | `targetName`                                     |
-| `InvalidMetadataError`          | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use        | `targetName`, `reason`                           |
-| `AsyncModuleLoadError`          | `ASYNC_MODULE_LOAD`           | A sync `load()` received an `AsyncModule`                               | `moduleName`                                     |
-| `SyncDisposalNotSupportedError` | `SYNC_DISPOSAL_NOT_SUPPORTED` | `[Symbol.dispose]()` was called                                         | —                                                |
-| `MissingScopeContextError`      | `MISSING_SCOPE_CONTEXT`       | A `scoped` binding resolved from a container with no child scope        | `tokenName`                                      |
-| `MissingContainerContextError`  | `MISSING_CONTAINER_CONTEXT`   | A class with `@inject accessor` was `new`-ed outside a container        | `className` (may be `undefined`), `accessorName` |
-| `RebindUnboundTokenError`       | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container             | `tokenName`                                      |
-| `DisposedContainerError`        | `DISPOSED_CONTAINER`          | Any operation on an already-disposed container                          | —                                                |
-| `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`        | `tokenName`                                      |
-| `ChainAlreadyRegisteredError`   | `CHAIN_ALREADY_REGISTERED`    | A second `to*()` on a chain that already registered its binding         | `tokenName`                                      |
-| `ManyBindingSlotError`          | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member | `tokenName`                                      |
-| `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                               | `tokenName`                                      |
-| `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member         | `decoratorName`, `memberName`                    |
-| `SymbolKeyedLifecycleError`     | `SYMBOL_KEYED_LIFECYCLE`      | `@postConstruct` / `@preDestroy` on a symbol-keyed method               | `decoratorName`, `memberName`                    |
-| `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds          | `tokenName`, `phase`                             |
-| `EmptyTagCriteriaError`         | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                         | `helperName`                                     |
-| `UnreachableConstraintError`    | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares         | `tokenName`, `requiredName`, `helperName`        |
+| Error                           | `code`                        | Thrown when                                                                    | Context fields                                   |
+| ------------------------------- | ----------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------ |
+| `InternalError`                 | `INTERNAL_ERROR`              | An internal assertion failed — **not** a user error                            | —                                                |
+| `TokenNotBoundError`            | `TOKEN_NOT_BOUND`             | The token has no binding at all, even after walking the parent chain           | `tokenName`                                      |
+| `NoMatchingBindingError`        | `NO_MATCHING_BINDING`         | The token **has** bindings but no slot matches the hint                        | `tokenName`, `hint`, `availableSlots`            |
+| `AmbiguousBindingError`         | `AMBIGUOUS_BINDING`           | ≥ 2 candidates remain and the more-specific rule cannot decide                 | `tokenName`, `candidateIds`                      |
+| `CircularDependencyError`       | `CIRCULAR_DEPENDENCY`         | A → B → A, including a cycle along an alias chain                              | `cycle`                                          |
+| `AsyncResolutionError`          | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain          | `tokenName`, `asyncSourceToken`                  |
+| `AsyncActivationError`          | `ASYNC_ACTIVATION`            | `@postConstruct` or `onActivation` returned a `Promise` on a sync path         | `tokenName`, `hookKind`, `methodName`            |
+| `AsyncDeactivationError`        | `ASYNC_DEACTIVATION`          | A sync `unbind()` on a binding with an async `onDeactivation`                  | `tokenName`                                      |
+| `ScopeViolationError`           | `SCOPE_VIOLATION`             | Captive dependency — a singleton depending on scoped or transient              | `details`: both tokens + scopes, plus `path`     |
+| `MissingMetadataError`          | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing            | `targetName`                                     |
+| `InvalidMetadataError`          | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use               | `targetName`, `reason`                           |
+| `AsyncModuleLoadError`          | `ASYNC_MODULE_LOAD`           | A sync `load()` received an `AsyncModule`                                      | `moduleName`                                     |
+| `SyncDisposalNotSupportedError` | `SYNC_DISPOSAL_NOT_SUPPORTED` | `[Symbol.dispose]()` was called                                                | —                                                |
+| `MissingScopeContextError`      | `MISSING_SCOPE_CONTEXT`       | A `scoped` binding resolved from a container with no child scope               | `tokenName`                                      |
+| `MissingContainerContextError`  | `MISSING_CONTAINER_CONTEXT`   | A class with `@inject accessor` was `new`-ed outside a container               | `className` (may be `undefined`), `accessorName` |
+| `RebindUnboundTokenError`       | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container                    | `tokenName`                                      |
+| `DisposedContainerError`        | `DISPOSED_CONTAINER`          | Any operation on an already-disposed container                                 | —                                                |
+| `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`               | `tokenName`                                      |
+| `ChainAlreadyRegisteredError`   | `CHAIN_ALREADY_REGISTERED`    | A second `to*()` on a chain that already registered its binding                | `tokenName`                                      |
+| `ManyBindingSlotError`          | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member        | `tokenName`                                      |
+| `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                                      | `tokenName`                                      |
+| `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member                | `decoratorName`, `memberName`                    |
+| `SymbolKeyedLifecycleError`     | `SYMBOL_KEYED_LIFECYCLE`      | `@postConstruct` / `@preDestroy` on a symbol-keyed method                      | `decoratorName`, `memberName`                    |
+| `MissingDecoratorMetadataError` | `MISSING_DECORATOR_METADATA`  | A decorator handed no `context.metadata` — the runtime lacks `Symbol.metadata` | `decoratorName`                                  |
+| `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds                 | `tokenName`, `phase`, `reason`                   |
+| `EmptyTagCriteriaError`         | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                                | `helperName`                                     |
+| `UnreachableConstraintError`    | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares                | `tokenName`, `requiredName`, `helperName`        |
 
 > **Exact shape:** `src/errors/errors.ts` — every class above, plus `ScopeViolationDetails`.
 

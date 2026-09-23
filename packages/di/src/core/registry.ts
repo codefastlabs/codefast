@@ -1,5 +1,5 @@
 import type { Binding, BindingSlot } from "#core/binding";
-import { bindingSlotEquals, writableMembership, writablePredicate } from "#core/binding";
+import { bindingSlotEquals, UNREGISTERED_ORDER, writableMembership, writablePredicate } from "#core/binding";
 import { getOrInsert } from "#core/map-upsert";
 import { advanceStateEpoch } from "#core/state-epoch";
 import type { BindingTag } from "#core/tag";
@@ -53,6 +53,9 @@ function createTokenRecord(bindings: Array<Binding>): TokenRecord {
  * that only ever resolves through its parent — every per-request child — allocates no map.
  */
 const EMPTY_LONE: Map<DependencyKey, Binding> = new Map();
+
+// Process-wide, so registration order compares across every registry a binding could be restored into.
+let registrationCounter = 0;
 
 export class BindingRegistry {
   // Monotonic mutation counter — lets resolvers version-stamp lookup caches across a container chain.
@@ -125,6 +128,10 @@ export class BindingRegistry {
    */
   add(binding: Binding): Binding | undefined {
     this.#bump();
+    if (binding.registrationOrder === UNREGISTERED_ORDER) {
+      registrationCounter += 1;
+      binding.registrationOrder = registrationCounter;
+    }
     if (binding.kind === "constant") {
       this.#heldConstantBinding = true;
     }
@@ -170,7 +177,10 @@ export class BindingRegistry {
     // A second shape joins the token, which is what a record is for.
     lone.delete(key);
     this.#byId?.set(binding.identifier, binding);
-    this.#lastAddedRecord = this.#createRecord(key, [occupant, binding]);
+    this.#lastAddedRecord = this.#createRecord(
+      key,
+      occupant.registrationOrder < binding.registrationOrder ? [occupant, binding] : [binding, occupant],
+    );
     return undefined;
   }
 
@@ -352,6 +362,11 @@ export class BindingRegistry {
     return false;
   }
 
+  /** The binding holding a token's default slot — lone or recorded — or `undefined` when none does. */
+  getDefaultSlotBinding(token: Token<unknown> | Constructor): Binding | undefined {
+    return this.#lone.get(token) ?? this.#records?.get(token)?.defaultOccupant;
+  }
+
   /** A token's lone default-slot binding — the first read of every synchronous resolve. */
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
     return this.#lone.get(token);
@@ -498,11 +513,10 @@ export class BindingRegistry {
     }
     // A selection may be walking this list inside a `when()` predicate. An append past the length it
     // read cannot shift it, so it lands in place; a displacement replaces the array instead.
-    if (displacedBinding === undefined) {
-      record.bindings.push(binding);
-    } else {
-      record.bindings = [...record.bindings.filter((candidate) => candidate !== displacedBinding), binding];
+    if (displacedBinding !== undefined) {
+      record.bindings = record.bindings.filter((candidate) => candidate !== displacedBinding);
     }
+    insertInRegistrationOrder(record, binding);
     this.#byId?.set(binding.identifier, binding);
     this.#indexSlot(record, binding);
     this.#settle(key, record);
@@ -586,6 +600,25 @@ export class BindingRegistry {
       }
     }
   }
+}
+
+/**
+ * Places a binding in its record by registration order: a fresh registration appends, and a binding a
+ * chain took out and put back returns to its place.
+ */
+function insertInRegistrationOrder(record: TokenRecord, binding: Binding): void {
+  const { bindings } = record;
+  const order = binding.registrationOrder;
+  if (bindings.length === 0 || bindings.at(-1)!.registrationOrder < order) {
+    bindings.push(binding);
+    return;
+  }
+  let index = bindings.length - 1;
+  while (index > 0 && bindings[index - 1]!.registrationOrder > order) {
+    index -= 1;
+  }
+  // Replaced, never spliced: a walk holding the current array must not lose its place.
+  record.bindings = bindings.toSpliced(index, 0, binding);
 }
 
 /** A binding nothing has to be matched against: the default slot, no predicate, not a collection member. */

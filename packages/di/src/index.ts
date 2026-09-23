@@ -117,6 +117,7 @@ export {
   InternalError,
   InvalidMetadataError,
   MissingContainerContextError,
+  MissingDecoratorMetadataError,
   MissingMetadataError,
   MissingScopeContextError,
   NoMatchingBindingError,

@@ -11,7 +11,7 @@ import type { BindingIdentifier, BindingScope, ResolveOptions } from "#core/type
 export abstract class DiError extends Error {
   abstract readonly code: string;
   // Each subclass names itself with a literal: a constructor lookup per throw is what a
-  // twenty-five-way polymorphic read costs, on top of the stack capture every error pays.
+  // polymorphic read across every error class costs, on top of the stack capture every error pays.
   abstract override readonly name: string;
 }
 
@@ -276,13 +276,22 @@ export class UnreachableLifecycleHookError extends DiError {
   readonly code = "UNREACHABLE_LIFECYCLE_HOOK";
   readonly tokenName: string;
   readonly phase: "onActivation" | "onDeactivation";
+  /** Nothing binds the token, or — for a deactivation hook — every binding it has is transient or scoped. */
+  readonly reason: "unbound" | "no-deactivatable-binding";
 
-  constructor(tokenName: string, phase: "onActivation" | "onDeactivation") {
+  constructor(
+    tokenName: string,
+    phase: "onActivation" | "onDeactivation",
+    reason: "unbound" | "no-deactivatable-binding" = "unbound",
+  ) {
     super(
-      `${phase}() is registered for '${tokenName}', which nothing is bound to in this container or its ancestors, so the hook can never run. Bind the token, or — if '${tokenName}' is a class you bound as an implementation via .to(${tokenName}) — register the hook against the token you bound instead.`,
+      reason === "unbound"
+        ? `${phase}() is registered for '${tokenName}', which nothing is bound to in this container or its ancestors, so the hook can never run. Bind the token, or — if '${tokenName}' is a class you bound as an implementation via .to(${tokenName}) — register the hook against the token you bound instead.`
+        : `${phase}() is registered for '${tokenName}', whose every binding in this container and its ancestors is transient or scoped, so the hook can never run: only a singleton or a constant is deactivated. Make one of its bindings a singleton, or drop the hook.`,
     );
     this.tokenName = tokenName;
     this.phase = phase;
+    this.reason = reason;
   }
 }
 
@@ -550,6 +559,25 @@ export class SymbolKeyedLifecycleError extends DiError {
     );
     this.decoratorName = decoratorName;
     this.memberName = memberName;
+  }
+}
+
+/**
+ * A decorator handed no metadata object, because the runtime has no `Symbol.metadata` to key one by.
+ *
+ * @remarks TypeScript compiles `context.metadata` to `undefined` when `Symbol.metadata` is missing, so
+ * the fix is installing it before any decorated class is defined — the key this library reads.
+ */
+export class MissingDecoratorMetadataError extends DiError {
+  override readonly name = "MissingDecoratorMetadataError";
+  readonly code = "MISSING_DECORATOR_METADATA";
+  readonly decoratorName: string;
+
+  constructor(decoratorName: string) {
+    super(
+      `@${decoratorName}() received no decorator metadata: this runtime has no Symbol.metadata. Install it before any decorated class is defined, e.g. in a module imported first: Symbol.metadata ??= Symbol.for("Symbol.metadata");`,
+    );
+    this.decoratorName = decoratorName;
   }
 }
 

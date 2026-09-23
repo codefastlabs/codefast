@@ -203,6 +203,8 @@ class DefaultContainer implements Container {
   readonly #scope: ScopeManager;
   readonly #lifecycle: LifecycleManager;
   #resolver!: DependencyResolver;
+  // Whether the reader came from `ContainerOptions` here or on an ancestor, which no token binding may override.
+  #hasConfiguredReader = false;
   // Built on the first introspecting call — a container that only binds and resolves never needs it.
   #inspector: Inspector | undefined;
   readonly #parent: DefaultContainer | undefined;
@@ -266,6 +268,7 @@ class DefaultContainer implements Container {
 
   #initResolver(configuredReader: MetadataReader | undefined): void {
     const parent = this.#parent;
+    this.#hasConfiguredReader = configuredReader !== undefined || (parent !== undefined && parent.#hasConfiguredReader);
     const metadataReader = verifyingMetadataReader(
       configuredReader ?? (parent === undefined ? defaultMetadataReader : parent.#readerForChild()),
     );
@@ -280,9 +283,9 @@ class DefaultContainer implements Container {
     );
   }
 
-  /** What a container being constructed under this one inherits: a reader bound here, else this one's. */
+  /** What a container being constructed under this one inherits: a configured reader, else one bound here, else this one's. */
   #readerForChild(): MetadataReader {
-    if (this.#registry.has(MetadataReaderToken)) {
+    if (!this.#hasConfiguredReader && this.#registry.has(MetadataReaderToken)) {
       try {
         return this.#resolver.resolve(MetadataReaderToken, undefined, []);
       } catch {
@@ -468,10 +471,11 @@ class DefaultContainer implements Container {
     token: Token<Value, Names> | Constructor<Value>,
   ): BindToBuilder<Value, Names> {
     this.#assertNotDisposed();
-    // A token held as its lone default binding is replaced by the new chain's own registration,
-    // which displaces it; the displaced binding is deactivated then, so the swap unbinds nothing
-    // up front. Any other shape is unbound first (sync — an async deactivation throws).
-    if (this.#registry.getFastDefault(token) === undefined) {
+    // A lone default binding that owes no deactivation is replaced by the new chain's own
+    // registration, so the swap unbinds nothing up front. Anything else is unbound first, so an
+    // async deactivation throws here — before a replacement exists — exactly as `unbind()` does.
+    const lone = this.#registry.getFastDefault(token);
+    if (lone === undefined || lone.instance !== NO_INSTANCE || this.#owesConstantDeactivation(lone)) {
       if (!this.#registry.has(token)) {
         throw new RebindUnboundTokenError(tokenName(token));
       }
@@ -912,7 +916,7 @@ class DefaultContainer implements Container {
       // A deactivation only ever runs for a singleton or constant, so a hook on a token whose every
       // binding is scoped or transient can never fire — the builder blocks it, `container.onDeactivation` cannot.
       if (phase === "onDeactivation" && !this.#hasDeactivatableBindingInChain(hookToken)) {
-        throw new UnreachableLifecycleHookError(tokenName(hookToken), phase);
+        throw new UnreachableLifecycleHookError(tokenName(hookToken), phase, "no-deactivatable-binding");
       }
     }
 
@@ -1080,10 +1084,7 @@ class DefaultContainer implements Container {
     const edges: Array<{ terminal: Binding; depTokenName: string }> = [];
 
     for (const dep of this.#staticDependencies(binding, reader)) {
-      // An optional dependency imposes no scope constraint: it may legitimately be absent.
-      if (dep.optional) {
-        continue;
-      }
+      // An optional dependency that is absent peeks no candidate; one that is bound is captured like any other.
       const depOptions = injectionSlotToResolveOptions(dep);
       for (const candidate of this.#peekDependencyCandidates(dep, depOptions)) {
         const terminal = this.#followAliasChainToTerminal(candidate, depOptions);
@@ -1139,12 +1140,11 @@ class DefaultContainer implements Container {
 
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
     this.#assertNotDisposed();
-    return buildDependencyGraph(
-      this.#registry,
-      this.#getMetadataReader(),
-      options,
-      this.#parent === undefined ? undefined : this.#parent.#registry,
-    );
+    const ancestorRegistries: Array<BindingRegistry> = [];
+    for (let ancestor = this.#parent; ancestor !== undefined; ancestor = ancestor.#parent) {
+      ancestorRegistries.push(ancestor.#registry);
+    }
+    return buildDependencyGraph(this.#registry, this.#getMetadataReader(), options, ancestorRegistries);
   }
 
   // ── Internal ───────────────────────────────────────────────────────────────────────────────────────────────────────

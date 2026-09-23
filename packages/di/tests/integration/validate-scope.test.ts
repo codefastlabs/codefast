@@ -5,6 +5,7 @@ import { Module } from "#core/module";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
 import { AsyncModuleLoadError, CircularDependencyError, ScopeViolationError } from "#errors/errors";
+import { optional } from "#injection/descriptor";
 
 describe("container.validate() — transitive scope + alias chain", () => {
   it("throws ScopeViolationError when a singleton transitively depends on a scoped binding", () => {
@@ -222,5 +223,39 @@ describe("AsyncModuleLoadError", () => {
     const asyncModule = Module.createAsync("async-mod", async () => {});
     const container = Container.create();
     expect(() => container.load(asyncModule as never)).toThrow(AsyncModuleLoadError);
+  });
+});
+
+describe("container.validate() — optional dependencies", () => {
+  it("reports a singleton that captures a bound optional transient", () => {
+    const Dep = token<object>("vs:OptionalDep");
+    const Svc = token<object>("vs:OptionalConsumer");
+    const container = Container.create();
+    container
+      .bind(Dep)
+      .toDynamic(() => ({}))
+      .transient();
+    container
+      .bind(Svc)
+      .toResolved((dep) => ({ dep }), [optional(Dep)])
+      .singleton();
+
+    expect(() => {
+      container.validate();
+    }).toThrow(ScopeViolationError);
+  });
+
+  it("accepts a singleton whose optional dependency is not bound", () => {
+    const Dep = token<object>("vs:AbsentOptionalDep");
+    const Svc = token<object>("vs:AbsentOptionalConsumer");
+    const container = Container.create();
+    container
+      .bind(Svc)
+      .toResolved((dep) => ({ dep }), [optional(Dep)])
+      .singleton();
+
+    expect(() => {
+      container.validate();
+    }).not.toThrow();
   });
 });

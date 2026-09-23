@@ -71,6 +71,67 @@ describe("generateDependencyGraph", () => {
     expect(graph.edges).toContainEqual(expect.objectContaining({ from: serviceNode!.id, to: configNode!.id }));
   });
 
+  it("connects to the parent binding when the child's own bindings for the token cannot satisfy the request", () => {
+    const logToken = token<string>("log");
+    @injectable([logToken])
+    class Service {
+      constructor(readonly log: string) {}
+    }
+    const root = Container.create();
+    root.bind(logToken).toConstantValue("parent-default");
+    const child = root.createChild();
+    // Named only: resolution skips it for a hint-less request and walks up to the parent's default.
+    child.bind(logToken).toConstantValue("child-named").whenNamed("audit");
+    child.bind(Service).toSelf();
+
+    expect(child.resolve(Service).log).toBe("parent-default");
+    const graph = child.generateDependencyGraph({ includeParent: true });
+    const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
+    const parentLog = graph.nodes.find((node) => node.tokenName === "log" && node.fromParent);
+
+    expect(graph.edges).toContainEqual(expect.objectContaining({ from: serviceNode!.id, to: parentLog!.id }));
+  });
+
+  it("walks past the parent to a grandparent binding, as resolution does", () => {
+    const configToken = token<number>("config");
+    @injectable([configToken])
+    class Service {
+      constructor(readonly config: number) {}
+    }
+    const root = Container.create();
+    root.bind(configToken).toConstantValue(1);
+    const child = root.createChild().createChild();
+    child.bind(Service).toSelf();
+
+    expect(child.resolve(Service).config).toBe(1);
+    const graph = child.generateDependencyGraph({ includeParent: true });
+    const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
+    const configNode = graph.nodes.find((node) => node.tokenName === "config");
+
+    expect(configNode?.fromParent).toBe(true);
+    expect(graph.edges).toContainEqual(expect.objectContaining({ from: serviceNode!.id, to: configNode!.id }));
+  });
+
+  it("fans an injectAll out across the whole chain, as resolveAll does", () => {
+    const pluginToken = token<string>("plugin");
+    @injectable([injectAll(pluginToken)])
+    class Host {
+      constructor(readonly plugins: ReadonlyArray<string>) {}
+    }
+    const root = Container.create();
+    root.bind(pluginToken).toConstantValue("root").many();
+    const child = root.createChild();
+    child.bind(pluginToken).toConstantValue("child").many();
+    child.bind(Host).toSelf();
+
+    expect(child.resolve(Host).plugins).toStrictEqual(["child", "root"]);
+    const graph = child.generateDependencyGraph({ includeParent: true });
+    const hostNode = graph.nodes.find((node) => node.tokenName === "Host");
+    const pluginIds = graph.nodes.filter((node) => node.tokenName === "plugin").map((node) => node.id);
+
+    expect(graph.edges.filter((edge) => edge.from === hostNode!.id).map((edge) => edge.to)).toStrictEqual(pluginIds);
+  });
+
   it("reports an optional dependency as a field, not only in the label", () => {
     const metricsToken = token<number>("metrics");
     @injectable([optional(metricsToken)])

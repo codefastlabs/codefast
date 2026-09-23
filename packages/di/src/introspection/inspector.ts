@@ -90,8 +90,12 @@ export class Inspector {
     }
     const bindings = this.#registry.getAll(token);
     // An existence probe answers ambiguity with `true` — several matches still exist; only
-    // resolution has to pick one.
-    return bindings.length > 0 && selectAllBindings(bindings, options, this.#makeConstraintContext(options)).length > 0;
+    // resolution has to pick one. A default-slot alias answers any criteria by forwarding them.
+    return (
+      bindings.length > 0 &&
+      (selectAllBindings(bindings, options, this.#makeConstraintContext(options)).length > 0 ||
+        this.#registry.getDefaultSlotBinding(token)?.kind === "alias")
+    );
   }
 
   #makeConstraintContext(options: ResolveOptions): ConstraintContext {

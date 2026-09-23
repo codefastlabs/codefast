@@ -1,3 +1,4 @@
+import { decoratorMetadataOf } from "#decorators/decorator-metadata";
 import { StaticMemberDecoratorError, SymbolKeyedLifecycleError } from "#errors/errors";
 import { LIFECYCLE_KEY } from "#metadata/metadata-keys";
 import type { MutableLifecycleMetadata } from "#metadata/metadata-types";
@@ -15,7 +16,7 @@ function recordLifecycleMethod(phase: "postConstruct" | "preDestroy"): MethodDec
     if (typeof context.name === "symbol") {
       throw new SymbolKeyedLifecycleError(phase, String(context.name));
     }
-    const meta = context.metadata as Record<string | symbol, unknown>;
+    const meta = decoratorMetadataOf(context, phase);
     // Own bucket only: `context.metadata` inherits the base class's record, and writing through an
     // inherited bucket would register this hook on the base class instead.
     if (!Object.hasOwn(meta, LIFECYCLE_KEY)) {

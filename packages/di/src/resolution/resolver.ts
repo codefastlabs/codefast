@@ -216,9 +216,7 @@ export class DependencyResolver implements ResolverCallbacks {
       if (indexed === undefined) {
         // A one-criterion request matches only a slot carrying exactly that criterion, and every such
         // slot is in the index, so a miss here is a miss for this registry: nothing left to scan.
-        return this.#parent === undefined
-          ? undefined
-          : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
+        return this.#forwardingAliasOrParent(token, options, resolutionStack, singleCriterion);
       }
       if (this.#satisfiesPredicate(indexed, options, resolutionStack)) {
         return { binding: indexed, owner: this };
@@ -257,10 +255,35 @@ export class DependencyResolver implements ResolverCallbacks {
         }
       }
     }
-    if (this.#parent !== undefined) {
-      return this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
+    if (options === undefined) {
+      return this.#parent === undefined
+        ? undefined
+        : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
     }
-    return undefined;
+    return this.#forwardingAliasOrParent(token, options, resolutionStack, singleCriterion);
+  }
+
+  /**
+   * What a request with criteria finds once no slot of this registry matches them: the token's
+   * default-slot alias, which forwards them to its target, else the parent's answer.
+   *
+   * @remarks A default-slot alias carries no criterion, predicate or membership, so it is a pointer
+   * rather than a candidate — every exact slot here was tried first, and the nearest container that
+   * can answer still does.
+   */
+  #forwardingAliasOrParent(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions,
+    resolutionStack: Array<ResolutionFrame>,
+    singleCriterion: BindingTag | undefined,
+  ): DefaultLookupEntry<DependencyResolver> | undefined {
+    const defaultSlot = this.#registry.getDefaultSlotBinding(token);
+    if (defaultSlot !== undefined && defaultSlot.kind === "alias") {
+      return { binding: defaultSlot, owner: this };
+    }
+    return this.#parent === undefined
+      ? undefined
+      : this.#parent.#findBinding(token, options, resolutionStack, singleCriterion);
   }
 
   /**
@@ -480,6 +503,8 @@ export class DependencyResolver implements ResolverCallbacks {
       if (binding.activationHook !== undefined) {
         const activationResult = binding.activationHook(resolutionCtx, activated);
         if (activationResult instanceof Promise) {
+          // The hook has already run; adopt its rejection so it cannot surface as unhandled.
+          void activationResult.catch(() => {});
           throw new AsyncActivationError(tokenDisplayName, "onActivation");
         }
         activated = activationResult;
@@ -488,6 +513,7 @@ export class DependencyResolver implements ResolverCallbacks {
         for (let index = 0; index < containerHooks.length; index += 1) {
           const activationResult = containerHooks[index]!(resolutionCtx, activated);
           if (activationResult instanceof Promise) {
+            void activationResult.catch(() => {});
             throw new AsyncActivationError(tokenDisplayName, "onActivation");
           }
           activated = activationResult;
