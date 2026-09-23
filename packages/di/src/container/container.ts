@@ -203,6 +203,8 @@ class DefaultContainer implements Container {
   readonly #scope: ScopeManager;
   readonly #lifecycle: LifecycleManager;
   #resolver!: DependencyResolver;
+  // Whether the reader came from `ContainerOptions` here or on an ancestor, which no token binding may override.
+  #hasConfiguredReader = false;
   // Built on the first introspecting call — a container that only binds and resolves never needs it.
   #inspector: Inspector | undefined;
   readonly #parent: DefaultContainer | undefined;
@@ -266,6 +268,7 @@ class DefaultContainer implements Container {
 
   #initResolver(configuredReader: MetadataReader | undefined): void {
     const parent = this.#parent;
+    this.#hasConfiguredReader = configuredReader !== undefined || (parent !== undefined && parent.#hasConfiguredReader);
     const metadataReader = verifyingMetadataReader(
       configuredReader ?? (parent === undefined ? defaultMetadataReader : parent.#readerForChild()),
     );
@@ -280,9 +283,9 @@ class DefaultContainer implements Container {
     );
   }
 
-  /** What a container being constructed under this one inherits: a reader bound here, else this one's. */
+  /** What a container being constructed under this one inherits: a configured reader, else one bound here, else this one's. */
   #readerForChild(): MetadataReader {
-    if (this.#registry.has(MetadataReaderToken)) {
+    if (!this.#hasConfiguredReader && this.#registry.has(MetadataReaderToken)) {
       try {
         return this.#resolver.resolve(MetadataReaderToken, undefined, []);
       } catch {
