@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { Module } from "#core/module";
+import type { ModuleBuilder } from "#core/module";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import { createAutoRegisterRegistry } from "#decorators/injectable";
@@ -227,6 +228,138 @@ describe("sync modules", () => {
     // Before the reset this was a permanent no-op: the ref-count still recorded the module.
     container.load(valueModule);
     expect(container.has(valueToken)).toBe(true);
+  });
+});
+
+describe("unload of a module whose binding was displaced", () => {
+  const displacers: Array<
+    [string, (container: Container, displace: (binder: Pick<ModuleBuilder, "bind">) => void) => void]
+  > = [
+    [
+      "the container's bind()",
+      (container, displace) => {
+        displace(container);
+      },
+    ],
+    [
+      "another module's bind",
+      (container, displace) => {
+        container.load(Module.create("displaced-unload:Displacing", displace));
+      },
+    ],
+  ];
+
+  it.each(displacers)("runs a displaced constant's hook once, on unload (%s)", async (_by, displaceWith) => {
+    const serviceToken = token<string>("displaced-unload-constant");
+    const log: Array<string> = [];
+    const owner = Module.create("displaced-unload:Owner", (builder) => {
+      builder
+        .bind(serviceToken)
+        .toConstantValue("owned")
+        .onDeactivation((value) => {
+          log.push(value);
+        });
+    });
+    const container = Container.create();
+    container.load(owner);
+    displaceWith(container, (builder) => {
+      builder.bind(serviceToken).toConstantValue("winner");
+    });
+
+    container.unload(owner);
+
+    expect(log).toStrictEqual(["owned"]);
+    expect(container.resolve(serviceToken)).toBe("winner");
+    await container.dispose();
+    expect(log).toStrictEqual(["owned"]);
+  });
+
+  it.each(displacers)("deactivates a displaced cached singleton once, on unload (%s)", async (_by, displaceWith) => {
+    const serviceToken = token<{ id: string }>("displaced-unload-singleton");
+    const log: Array<string> = [];
+    const owner = Module.create("displaced-unload:Owner", (builder) => {
+      builder
+        .bind(serviceToken)
+        .toDynamic(() => ({ id: "owned" }))
+        .singleton()
+        .onDeactivation((instance) => {
+          log.push(instance.id);
+        });
+    });
+    const container = Container.create();
+    container.load(owner);
+    container.resolve(serviceToken);
+    displaceWith(container, (builder) => {
+      builder.bind(serviceToken).toConstantValue({ id: "winner" });
+    });
+
+    container.unload(owner);
+
+    expect(log).toStrictEqual(["owned"]);
+    await container.dispose();
+    expect(log).toStrictEqual(["owned"]);
+  });
+
+  it("builds nothing to tear down for a displaced singleton nothing resolved", async () => {
+    const serviceToken = token<{ id: string }>("displaced-unload-unbuilt");
+    const log: Array<string> = [];
+    const owner = Module.create("displaced-unload:Owner", (builder) => {
+      builder
+        .bind(serviceToken)
+        .toDynamic(() => ({ id: "owned" }))
+        .singleton()
+        .onDeactivation((instance) => {
+          log.push(instance.id);
+        });
+    });
+    const container = Container.create();
+    container.load(owner);
+    container.bind(serviceToken).toConstantValue({ id: "winner" });
+
+    container.unload(owner);
+    await container.dispose();
+
+    expect(log).toStrictEqual([]);
+  });
+
+  it("awaits a displaced singleton's async deactivation on unloadAsync", async () => {
+    const serviceToken = token<{ id: string }>("displaced-unload-async");
+    const log: Array<string> = [];
+    const owner = Module.create("displaced-unload:Owner", (builder) => {
+      builder
+        .bind(serviceToken)
+        .toDynamic(() => ({ id: "owned" }))
+        .singleton()
+        .onDeactivation(async (instance) => {
+          await Promise.resolve();
+          log.push(instance.id);
+        });
+    });
+    const container = Container.create();
+    container.load(owner);
+    container.resolve(serviceToken);
+    container.bind(serviceToken).toConstantValue({ id: "winner" });
+
+    await container.unloadAsync(owner);
+
+    expect(log).toStrictEqual(["owned"]);
+  });
+
+  // The displacing chain still holds the owner's binding parked; a later refinement must not put an
+  // unloaded module's binding back.
+  it("keeps a later refinement from restoring the unloaded module's binding", () => {
+    const serviceToken = token<string>("displaced-unload-restore");
+    const owner = Module.create("displaced-unload:Owner", (builder) => {
+      builder.bind(serviceToken).toConstantValue("owned");
+    });
+    const container = Container.create();
+    container.load(owner);
+    const winner = container.bind(serviceToken).toConstantValue("winner");
+
+    container.unload(owner);
+    winner.whenNamed("secondary");
+
+    expect(container.resolveAll(serviceToken)).toStrictEqual(["winner"]);
   });
 });
 

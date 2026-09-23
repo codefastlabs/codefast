@@ -217,9 +217,9 @@ class DefaultContainer implements Container {
   #moduleImports: Map<object, Array<object>> | undefined;
   // One shared registration for every chain this container's own `bind()` creates.
   #registration: BindingRegistration | undefined;
-  // Constants a plain last-wins bind, the container's or a module's, displaced with their deactivation
-  // still owed: kept so dispose runs their hook, since they are in neither the registry nor the singleton cache.
-  #orphanedConstants: Set<ConstantBinding<unknown>> | undefined;
+  // Bindings a plain last-wins bind displaced with a teardown still owed, by id: an unload of the module
+  // that bound one drains it, and dispose runs a constant's hook, which neither the registry nor the cache holds.
+  #orphanedBindings: Map<BindingIdentifier, Binding> | undefined;
 
   constructor(parent?: DefaultContainer, options?: ContainerOptions) {
     this.#parent = parent;
@@ -320,19 +320,19 @@ class DefaultContainer implements Container {
       scope: this.#scope,
       moduleBindingIds: undefined,
       onDisplaced: (binding) => {
-        this.#recordDisplacedConstant(binding);
+        this.#recordDisplaced(binding);
       },
       onRestored: (binding) => {
-        this.#orphanedConstants?.delete(binding as ConstantBinding<unknown>);
+        this.#orphanedBindings?.delete(binding.identifier);
       },
     });
   }
 
-  // A displaced constant that still owes a deactivation is remembered until dispose; a later restore
-  // takes it back out of the set, and every other displaced binding is dropped as before.
-  #recordDisplacedConstant(binding: Binding): void {
-    if (this.#owesConstantDeactivation(binding)) {
-      (this.#orphanedConstants ??= new Set()).add(binding);
+  // A displaced binding holding a cached instance or owing a constant's deactivation is remembered;
+  // a later restore takes it back out, and every other displaced binding is dropped as before.
+  #recordDisplaced(binding: Binding): void {
+    if (binding.instance !== NO_INSTANCE || this.#owesConstantDeactivation(binding)) {
+      (this.#orphanedBindings ??= new Map()).set(binding.identifier, binding);
     }
   }
 
@@ -655,11 +655,24 @@ class DefaultContainer implements Container {
     const ids = this.#moduleBindingIds?.get(ref) ?? [];
     this.#moduleBindingIds?.delete(ref);
     const removed: Array<Binding> = [];
+    let missedAny = false;
     for (const id of ids) {
       const binding = this.#registry.removeById(id);
       if (binding !== undefined) {
         removed.push(binding);
+        continue;
       }
+      // Not live: displaced or unbound. A displaced one still owing a teardown is drained with the rest.
+      missedAny = true;
+      const orphaned = this.#orphanedBindings?.get(id);
+      if (orphaned !== undefined) {
+        this.#orphanedBindings!.delete(id);
+        removed.push(orphaned);
+      }
+    }
+    // Counts as a registry write even with nothing live removed, so no chain restores an unloaded binding.
+    if (missedAny) {
+      this.#registry.touch();
     }
     return this.#drainSingletons(removed);
   }
@@ -852,9 +865,9 @@ class DefaultContainer implements Container {
 
     // Constants a plain last-wins bind() displaced left the registry with their hook still owed; one
     // whose activation cached an instance was drained above, so only the untouched ones remain.
-    if (this.#orphanedConstants !== undefined) {
-      for (const binding of this.#orphanedConstants) {
-        if (binding.instance === NO_INSTANCE) {
+    if (this.#orphanedBindings !== undefined) {
+      for (const binding of this.#orphanedBindings.values()) {
+        if (binding.instance === NO_INSTANCE && this.#owesConstantDeactivation(binding)) {
           try {
             await this.#lifecycle.runDeactivation(binding, binding.value, reader);
           } catch (error) {
