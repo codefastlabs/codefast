@@ -145,11 +145,7 @@ export class BindingRegistry {
         return this.#addToRecord(key, record, binding);
       }
     }
-    let lone = this.#lone;
-    if (lone === EMPTY_LONE) {
-      lone = this.#lone = new Map<DependencyKey, Binding>();
-    }
-    const occupant = lone.get(key);
+    const occupant = this.#lone.get(key);
     this.#lastAdded = binding;
     if (occupant === undefined) {
       // The common bind: a fresh token taking the lone seat, one probe and one write.
@@ -157,7 +153,7 @@ export class BindingRegistry {
         this.#byId.set(binding.identifier, binding);
       }
       if (isDefaultSlotBinding(binding)) {
-        lone.set(key, binding);
+        this.#setLone(key, binding);
         this.#lastAddedRecord = undefined;
       } else {
         this.#lastAddedRecord = this.#createRecord(key, [binding]);
@@ -166,7 +162,7 @@ export class BindingRegistry {
     }
     // Same slot, last wins: the newcomer takes the lone seat and nothing else moves.
     if (isDefaultSlotBinding(binding)) {
-      lone.set(key, binding);
+      this.#setLone(key, binding);
       this.#lastAddedRecord = undefined;
       if (this.#byId !== undefined) {
         this.#byId.delete(occupant.identifier);
@@ -175,7 +171,7 @@ export class BindingRegistry {
       return occupant;
     }
     // A second shape joins the token, which is what a record is for.
-    lone.delete(key);
+    this.#deleteLone(key);
     this.#byId?.set(binding.identifier, binding);
     this.#lastAddedRecord = this.#createRecord(
       key,
@@ -190,7 +186,7 @@ export class BindingRegistry {
     this.#lastAdded = undefined;
     const lone = this.#lone.get(token);
     if (lone !== undefined) {
-      this.#lone.delete(token);
+      this.#deleteLone(token);
       this.#byId?.delete(lone.identifier);
       return [lone];
     }
@@ -220,7 +216,7 @@ export class BindingRegistry {
     byId.delete(id);
     const key: DependencyKey = binding.token;
     if (this.#lone.get(key)?.identifier === id) {
-      this.#lone.delete(key);
+      this.#deleteLone(key);
       return binding;
     }
     const record = this.#records?.get(key);
@@ -294,7 +290,7 @@ export class BindingRegistry {
     this.#bump();
     this.#lastAdded = undefined;
     const all = this.allBindings();
-    this.#lone.clear();
+    this.#clearLone();
     this.#records?.clear();
     this.#byId?.clear();
     return all;
@@ -385,7 +381,7 @@ export class BindingRegistry {
     if (this.#lone.get(key) === binding) {
       this.#bump();
       this.#lastAdded = undefined;
-      this.#lone.delete(key);
+      this.#deleteLone(key);
     } else {
       const record = this.#records?.get(key);
       const index = record === undefined ? -1 : record.bindings.indexOf(binding);
@@ -415,7 +411,7 @@ export class BindingRegistry {
       // The chain refining what it just added: where the binding sits is known without a probe.
       const record = this.#lastAddedRecord;
       if (record === undefined) {
-        this.#lone.delete(binding.token);
+        this.#deleteLone(binding.token);
         this.#lastAddedRecord = this.#createRecord(binding.token, [binding]);
       } else if (record.defaultOccupant === binding) {
         record.defaultOccupant = undefined;
@@ -461,7 +457,7 @@ export class BindingRegistry {
     if (this.#lone.get(key) !== binding) {
       return false;
     }
-    this.#lone.delete(key);
+    this.#deleteLone(key);
     this.#createRecord(key, [binding]);
     return true;
   }
@@ -530,11 +526,25 @@ export class BindingRegistry {
       this.#records!.delete(key);
     } else if (bindings.length === 1 && isDefaultSlotBinding(bindings[0]!)) {
       this.#records!.delete(key);
-      if (this.#lone === EMPTY_LONE) {
-        this.#lone = new Map<DependencyKey, Binding>();
-      }
-      this.#lone.set(key, bindings[0]!);
+      this.#setLone(key, bindings[0]!);
     }
+  }
+
+  // Every write to the lone map goes through these three, so a cache of its entries has one place to follow them.
+  #setLone(key: DependencyKey, binding: Binding): void {
+    let lone = this.#lone;
+    if (lone === EMPTY_LONE) {
+      lone = this.#lone = new Map<DependencyKey, Binding>();
+    }
+    lone.set(key, binding);
+  }
+
+  #deleteLone(key: DependencyKey): void {
+    this.#lone.delete(key);
+  }
+
+  #clearLone(): void {
+    this.#lone.clear();
   }
 
   #ensureById(): Map<BindingIdentifier, Binding> {
