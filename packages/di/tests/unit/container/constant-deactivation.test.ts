@@ -6,7 +6,9 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { binding } from "#core/binding-declaration";
 import { Module } from "#core/module";
+import type { SyncModule } from "#core/module";
 import { token } from "#core/token";
 
 describe("constant deactivation", () => {
@@ -251,5 +253,85 @@ describe("constant deactivation", () => {
 
     expect(new Set(log)).toStrictEqual(new Set(["deact:A", "deact:B"]));
     expect(log).toHaveLength(2);
+  });
+
+  describe("displaced by a module's bind", () => {
+    const forms: Array<[string, (serviceToken: ReturnType<typeof token<string>>) => SyncModule]> = [
+      [
+        "Module.create",
+        (serviceToken) =>
+          Module.create("constant-deactivation:Displacing", (builder) => {
+            builder.bind(serviceToken).toConstantValue("B");
+          }),
+      ],
+      [
+        "Module.fromBindings",
+        (serviceToken) =>
+          Module.fromBindings("constant-deactivation:Displacing", [binding(serviceToken, { toConstantValue: "B" })]),
+      ],
+    ];
+
+    it.each(forms)("runs the displaced constant's hook on dispose (%s)", async (_form, displacing) => {
+      const serviceToken = token<string>("constant-displaced-by-module");
+      const log: Array<string> = [];
+      const container = Container.create();
+      container
+        .bind(serviceToken)
+        .toConstantValue("A")
+        .onDeactivation((value) => {
+          log.push(`deact:${value}`);
+        });
+      container.load(displacing(serviceToken));
+
+      expect(container.resolve(serviceToken)).toBe("B");
+      await container.dispose();
+
+      expect(log).toStrictEqual(["deact:A"]);
+    });
+
+    // Unload removes only what the module registered; the displaced constant stays out of the
+    // registry, and its hook is still owed to dispose.
+    it.each(forms)("leaves the displaced constant unrestored after unload (%s)", async (_form, displacing) => {
+      const serviceToken = token<string>("constant-displaced-by-unloaded-module");
+      const log: Array<string> = [];
+      const container = Container.create();
+      container
+        .bind(serviceToken)
+        .toConstantValue("A")
+        .onDeactivation((value) => {
+          log.push(`deact:${value}`);
+        });
+      const module = displacing(serviceToken);
+      container.load(module);
+      container.unload(module);
+
+      expect(container.has(serviceToken)).toBe(false);
+      expect(log).toStrictEqual([]);
+      await container.dispose();
+
+      expect(log).toStrictEqual(["deact:A"]);
+    });
+
+    it("does not double-run a displaced constant a module's refinement restores", async () => {
+      const serviceToken = token<string>("constant-displaced-restored-by-module");
+      const log: Array<string> = [];
+      const container = Container.create();
+      container
+        .bind(serviceToken)
+        .toConstantValue("A")
+        .onDeactivation((value) => {
+          log.push(`deact:${value}`);
+        });
+      container.load(
+        Module.create("constant-deactivation:Restoring", (builder) => {
+          builder.bind(serviceToken).toConstantValue("B").whenNamed("secondary");
+        }),
+      );
+
+      expect(container.resolve(serviceToken)).toBe("A");
+      await container.dispose();
+
+      expect(log).toStrictEqual(["deact:A"]);
+    });
   });
 });

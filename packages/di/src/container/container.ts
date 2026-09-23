@@ -217,8 +217,8 @@ class DefaultContainer implements Container {
   #moduleImports: Map<object, Array<object>> | undefined;
   // One shared registration for every chain this container's own `bind()` creates.
   #registration: BindingRegistration | undefined;
-  // Constants a plain last-wins `bind()` displaced out of the registry with their deactivation still
-  // owed: kept so dispose runs their hook, since they are in neither the registry nor the singleton cache.
+  // Constants a plain last-wins bind, the container's or a module's, displaced with their deactivation
+  // still owed: kept so dispose runs their hook, since they are in neither the registry nor the singleton cache.
   #orphanedConstants: Set<ConstantBinding<unknown>> | undefined;
 
   constructor(parent?: DefaultContainer, options?: ContainerOptions) {
@@ -336,13 +336,21 @@ class DefaultContainer implements Container {
     }
   }
 
-  /** One registration per module load, holding that module's id list directly. */
+  /**
+   * One registration per module load, holding that module's id list directly.
+   *
+   * @remarks It borrows the container's own displacement callbacks, so a constant a module's bind
+   * displaces is parked for dispose exactly as one displaced by `bind()` is.
+   */
   #moduleRegistration(moduleRef: object): BindingRegistration {
     this.#moduleBindingIds ??= new Map();
+    const { onDisplaced, onRestored } = this.#ownRegistration();
     return {
       registry: this.#registry,
       scope: this.#scope,
       moduleBindingIds: getOrInsert(this.#moduleBindingIds, moduleRef, []),
+      onDisplaced,
+      onRestored,
     };
   }
 
