@@ -480,6 +480,8 @@ export class DependencyResolver implements ResolverCallbacks {
       if (binding.activationHook !== undefined) {
         const activationResult = binding.activationHook(resolutionCtx, activated);
         if (activationResult instanceof Promise) {
+          // The hook has already run; adopt its rejection so it cannot surface as unhandled.
+          void activationResult.catch(() => {});
           throw new AsyncActivationError(tokenDisplayName, "onActivation");
         }
         activated = activationResult;
@@ -488,6 +490,7 @@ export class DependencyResolver implements ResolverCallbacks {
         for (let index = 0; index < containerHooks.length; index += 1) {
           const activationResult = containerHooks[index]!(resolutionCtx, activated);
           if (activationResult instanceof Promise) {
+            void activationResult.catch(() => {});
             throw new AsyncActivationError(tokenDisplayName, "onActivation");
           }
           activated = activationResult;
