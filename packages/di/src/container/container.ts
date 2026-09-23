@@ -1140,12 +1140,11 @@ class DefaultContainer implements Container {
 
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
     this.#assertNotDisposed();
-    return buildDependencyGraph(
-      this.#registry,
-      this.#getMetadataReader(),
-      options,
-      this.#parent === undefined ? undefined : this.#parent.#registry,
-    );
+    const ancestorRegistries: Array<BindingRegistry> = [];
+    for (let ancestor = this.#parent; ancestor !== undefined; ancestor = ancestor.#parent) {
+      ancestorRegistries.push(ancestor.#registry);
+    }
+    return buildDependencyGraph(this.#registry, this.#getMetadataReader(), options, ancestorRegistries);
   }
 
   // ── Internal ───────────────────────────────────────────────────────────────────────────────────────────────────────

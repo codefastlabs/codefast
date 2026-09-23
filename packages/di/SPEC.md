@@ -1670,9 +1670,10 @@ slot the edge points at, if the binding declares one). The `label` field is **fo
   binding it could never have resolved.
 - **Predicates (`when...`) are not evaluated** — a predicate needs a real resolve context, so the graph keeps every
   candidate that has one.
-- **With `includeParent: true`**, a binding at the current container shadows a binding for the same token at the parent,
-  exactly as resolution order walks up; an edge from the child connects directly to the parent binding that satisfies
-  it.
+- **With `includeParent: true`**, every ancestor's bindings join the graph (`fromParent: true`), and each edge follows
+  resolution's own walk up the chain: a single dependency connects to the nearest container holding a binding its slot
+  matches — a child binding the request cannot select shadows nothing — and an `injectAll` connects to every match in
+  the chain, as `resolveAll` does.
 
 ### The Container interface
 
