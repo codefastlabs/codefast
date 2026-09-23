@@ -69,6 +69,22 @@ export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolea
 }
 
 /**
+ * Returns the slot with one criterion added, replacing any earlier criterion of the same key.
+ *
+ * @remarks One criterion per key: re-tagging a key replaces it rather than asking for both values.
+ */
+export function withSlotCriterion(slot: BindingSlot, criterion: BindingTag): BindingSlot {
+  const tags = [...slot.tags];
+  const existingIndex = tags.findIndex((existing) => existing.key === criterion.key);
+  if (existingIndex === -1) {
+    tags.push(criterion);
+  } else {
+    tags[existingIndex] = criterion;
+  }
+  return createBindingSlot(tags);
+}
+
+/**
  * Cached singleton absent — distinguishes "not resolved yet" from a cached `undefined`.
  *
  * @since 0.5.0-canary.8

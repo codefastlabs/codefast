@@ -305,6 +305,15 @@ any removal or re-slot forgets that memory.
 binding it displaces instead of parking it, so a token held as its lone default binding is swapped by the new chain's
 own `add`; a token holding several slots is unbound first, as before, and an unbound token still throws.
 
+**A declared binding is a chain that skips its steps.** `binding()` checks a definition and normalises it into a
+`DeclaredBinding` once, when the module is defined: the strategy's kind and default scope, the slot `whenNamed` and each
+`whenTagged` build, the deps descriptors. Each load then makes one `BindingChain` per declaration, so the single hidden
+class holds, copies the final shape into it and registers it with one `add` — the displacement, parking and restore that
+a fluent re-slot pays never happen, because the shape never changes after registration. The chain is never handed out,
+so nothing refines it and a binding it displaces is handled as `to*()` handles one, never parked.
+`tests/integration/declared-module-parity.test.ts` holds the declared path to a fluent setup written independently of
+it.
+
 **One object per `bind()`.** A single `BindingChain` plays every role: the `BindToBuilder` before `to*()`, the
 kind-specific builder after, and it commits to the registry itself. `bind()` is typed as `BindToBuilder`, so
 `when*()`/`singleton()` are not reachable before a `to*()`. The ordering is a **type-level** guarantee, matching
@@ -936,10 +945,15 @@ gained. They are recorded so the next attempt starts from here.
   differential test to hold: a displacement is decided when the displacer registers, and any later write invalidates
   what it parked.
 
-What would move registration's cost is an API that registers without a chain object per binding — a bulk form — which is
-a decision for the [specification](SPEC.md), not a change to the engine. Resolution outnumbers registration by orders of
-magnitude in any application, so a shape that taxes the resolve lane to shorten the bind lane is the wrong trade even
-where the bind rows show it winning.
+What moves registration's cost is the step count, not the lookup: a declared module
+([the fluent chain](#the-fluent-chain-one-object-one-registration)) registers each binding in its final shape and leaves
+the resolve lane untouched. Resolution outnumbers registration by orders of magnitude in any application, so a shape
+that taxes the resolve lane to shorten the bind lane is the wrong trade even where the bind rows show it winning.
+
+Two refinements of the declared path were measured and dropped. **One version bump for the whole list** saved nothing a
+probe could see, and filing the list as a second pass over chains built first cost more than adding each chain as it is
+built. **A frozen declaration list** put every element read of every load on V8's slower path for frozen arrays, so
+`Module.fromBindings` copies the caller's list and leaves the copy unfrozen.
 
 ### Shapes described elsewhere that are perf decisions
 

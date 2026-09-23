@@ -1,4 +1,6 @@
 import type { BindToBuilder } from "#core/binding";
+import type { BindingDeclaration, DeclaredBinding } from "#core/binding-declaration";
+import { asDeclaredBinding } from "#core/binding-declaration";
 import type { Token } from "#core/token";
 import type { Constructor } from "#core/types";
 
@@ -8,8 +10,8 @@ const SYNC_MODULE_BRAND: unique symbol = Symbol("di:sync-module");
 const ASYNC_MODULE_BRAND: unique symbol = Symbol("di:async-module");
 
 /**
- * Key for the module's setup callback. A symbol (not exported from the package root)
- * keeps the container-only member out of consumer-facing autocomplete entirely.
+ * Key for what a module applies when it loads: its setup callback, or a declared module's
+ * declarations. A symbol (not exported from the package root) keeps it out of autocomplete.
  *
  * @since 0.5.0-canary.7
  */
@@ -23,7 +25,7 @@ export const MODULE_SETUP: unique symbol = Symbol("di:module-setup");
 export interface SyncModule {
   readonly name: string;
   readonly [SYNC_MODULE_BRAND]: true;
-  readonly [MODULE_SETUP]: (builder: ModuleBuilder) => void;
+  readonly [MODULE_SETUP]: ((builder: ModuleBuilder) => void) | ReadonlyArray<DeclaredBinding>;
 }
 
 /**
@@ -74,6 +76,16 @@ export const SyncModule = {
       [MODULE_SETUP]: setup,
     };
   },
+  fromBindings(name: string, declarations: ReadonlyArray<BindingDeclaration>): SyncModule {
+    // Copied, so a later write to the caller's list cannot change what the module loads. Not frozen:
+    // every load walks this list, and V8 reads a frozen array's elements on a slower path.
+    const declared = declarations.map((declaration, index) => asDeclaredBinding(declaration, name, index));
+    return {
+      name,
+      [SYNC_MODULE_BRAND]: true as const,
+      [MODULE_SETUP]: declared,
+    };
+  },
 };
 
 /**
@@ -94,13 +106,16 @@ export const AsyncModule = {
 // ── Module — unified API ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * The unified module factory — `create` for sync modules, `createAsync` for async ones.
+ * The unified module factory — `create` and `fromBindings` for sync modules, `createAsync` for async ones.
  *
  * @since 0.3.16-canary.0
  */
 export const Module = {
   create(name: string, setup: (builder: ModuleBuilder) => void): SyncModule {
     return SyncModule.create(name, setup);
+  },
+  fromBindings(name: string, declarations: ReadonlyArray<BindingDeclaration>): SyncModule {
+    return SyncModule.fromBindings(name, declarations);
   },
   createAsync(name: string, setup: (builder: AsyncModuleBuilder) => Promise<void>): AsyncModule {
     return AsyncModule.create(name, setup);

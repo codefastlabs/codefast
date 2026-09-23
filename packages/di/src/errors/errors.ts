@@ -582,6 +582,25 @@ export class MissingDecoratorMetadataError extends DiError {
 }
 
 /**
+ * A `binding()` definition no chain could spell: no strategy, several, or a key its strategy does not allow.
+ *
+ * @remarks Raised where the declaration is written, for callers the compiler cannot reach, so a
+ * declared module that was built can always be loaded.
+ */
+export class InvalidBindingDeclarationError extends DiError {
+  override readonly name = "InvalidBindingDeclarationError";
+  readonly code = "INVALID_BINDING_DECLARATION";
+  readonly tokenName: string;
+  readonly reason: string;
+
+  constructor(tokenName: string, reason: string) {
+    super(`Invalid binding declaration for '${tokenName}': ${reason}.`);
+    this.tokenName = tokenName;
+    this.reason = reason;
+  }
+}
+
+/**
  * An operation attempted on a container that has already been disposed.
  *
  * @since 0.3.16-canary.0

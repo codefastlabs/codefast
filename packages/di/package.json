@@ -85,6 +85,11 @@
       "types": "./dist/core/binding.d.ts",
       "import": "./dist/core/binding.js"
     },
+    "./core/binding-declaration": {
+      "source": "./src/core/binding-declaration.ts",
+      "types": "./dist/core/binding-declaration.d.ts",
+      "import": "./dist/core/binding-declaration.js"
+    },
     "./core/binding-scope": {
       "source": "./src/core/binding-scope.ts",
       "types": "./dist/core/binding-scope.d.ts",
