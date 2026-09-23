@@ -1081,10 +1081,7 @@ class DefaultContainer implements Container {
     const edges: Array<{ terminal: Binding; depTokenName: string }> = [];
 
     for (const dep of this.#staticDependencies(binding, reader)) {
-      // An optional dependency imposes no scope constraint: it may legitimately be absent.
-      if (dep.optional) {
-        continue;
-      }
+      // An optional dependency that is absent peeks no candidate; one that is bound is captured like any other.
       const depOptions = injectionSlotToResolveOptions(dep);
       for (const candidate of this.#peekDependencyCandidates(dep, depOptions)) {
         const terminal = this.#followAliasChainToTerminal(candidate, depOptions);

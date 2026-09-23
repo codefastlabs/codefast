@@ -1532,7 +1532,9 @@ fail fast at startup on a config error, and remove lazy-init latency from the fi
 container.validate();
 ```
 
-Walks the dependency graph and throws `ScopeViolationError` for any violation of the scope matrix in [Scope](#scope).
+Walks the dependency graph and throws `ScopeViolationError` for any violation of the scope matrix in [Scope](#scope). An
+`optional()` dependency counts whenever it is bound — a singleton captures it just the same — and imposes nothing when
+it is not.
 
 > **Normative — analysis scope.** `validate()` can only statically analyse bindings whose deps are declared explicitly:
 >
