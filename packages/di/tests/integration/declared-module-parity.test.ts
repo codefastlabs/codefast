@@ -50,6 +50,8 @@ const QUERIES: ReadonlyArray<ResolveOptions<"primary" | "replica">> = [
 ];
 const PREDICATES: ReadonlyArray<BindingConstraint> = [() => true, () => false];
 const NUM_RUNS = Number(process.env["DIFF_RUNS"] ?? "400");
+// Hundreds of lists, each loaded, observed and unloaded twice: seconds here, more under a CI runner's coverage.
+const PROPERTY_TIMEOUT_MS = 120_000;
 
 // ── Declarations as data ─────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -351,32 +353,40 @@ function compareForms(
 }
 
 describe("a declared module against the fluent setup it stands for", () => {
-  it("loads, answers and unloads identically for any list", () => {
-    expect(() => {
-      fc.assert(
-        fc.property(run, (input) => {
-          const { declared, fluent } = compareForms(input, (module) => module);
-          expect(declared).toStrictEqual(fluent);
-        }),
-        { numRuns: NUM_RUNS },
-      );
-    }).not.toThrow();
-  });
+  it(
+    "loads, answers and unloads identically for any list",
+    () => {
+      expect(() => {
+        fc.assert(
+          fc.property(run, (input) => {
+            const { declared, fluent } = compareForms(input, (module) => module);
+            expect(declared).toStrictEqual(fluent);
+          }),
+          { numRuns: NUM_RUNS },
+        );
+      }).not.toThrow();
+    },
+    PROPERTY_TIMEOUT_MS,
+  );
 
-  it("does the same when a fluent module imports it", () => {
-    expect(() => {
-      fc.assert(
-        fc.property(run, (input) => {
-          const { declared, fluent } = compareForms(input, (module, name) =>
-            Module.create(name, (builder) => {
-              builder.bind(AliasTarget).toConstantValue("imported-beside");
-              builder.import(module);
-            }),
-          );
-          expect(declared).toStrictEqual(fluent);
-        }),
-        { numRuns: Math.ceil(NUM_RUNS / 3) },
-      );
-    }).not.toThrow();
-  });
+  it(
+    "does the same when a fluent module imports it",
+    () => {
+      expect(() => {
+        fc.assert(
+          fc.property(run, (input) => {
+            const { declared, fluent } = compareForms(input, (module, name) =>
+              Module.create(name, (builder) => {
+                builder.bind(AliasTarget).toConstantValue("imported-beside");
+                builder.import(module);
+              }),
+            );
+            expect(declared).toStrictEqual(fluent);
+          }),
+          { numRuns: Math.ceil(NUM_RUNS / 3) },
+        );
+      }).not.toThrow();
+    },
+    PROPERTY_TIMEOUT_MS,
+  );
 });
