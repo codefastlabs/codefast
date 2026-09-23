@@ -95,7 +95,7 @@ export const mergeVariantConfigs = (
       : extensionConfiguration.base
     : resolvedBaseConfiguration.base;
 
-  const mergedVariantGroups = { ...resolvedBaseConfiguration.variants } as VariantSchema;
+  const mergedVariantGroups = { ...resolvedBaseConfiguration.variants };
 
   if (extensionConfiguration.variants) {
     const extensionKeys = Object.keys(extensionConfiguration.variants);

@@ -99,15 +99,15 @@ export class TypeScriptAstTranslator {
       if (Array.isArray(value)) {
         for (const element of value) {
           if (isOxcNode(element)) {
-            childList.push(this.translateNode(element, self as DomainUnknownAstNode));
+            childList.push(this.translateNode(element, self));
           }
         }
       } else if (isOxcNode(value)) {
-        childList.push(this.translateNode(value, self as DomainUnknownAstNode));
+        childList.push(this.translateNode(value, self));
       }
     }
     self.children = childList;
-    return self as DomainUnknownAstNode;
+    return self;
   }
 
   private stringLiteralText(node: OxcNode): string | undefined {
@@ -150,14 +150,12 @@ export class TypeScriptAstTranslator {
     };
 
     if (specifiers.length > 0) {
-      self.importClause = this.buildImportClause(node, specifiers, self as DomainImportDeclaration);
+      self.importClause = this.buildImportClause(node, specifiers, self);
     }
 
     const source = isOxcNode(node.source) ? node.source : undefined;
-    self.moduleSpecifier = source
-      ? this.translateNode(source, self as DomainImportDeclaration)
-      : this.translateUnknown(node, self as DomainImportDeclaration);
-    return self as DomainImportDeclaration;
+    self.moduleSpecifier = source ? this.translateNode(source, self) : this.translateUnknown(node, self);
+    return self;
   }
 
   private buildImportClause(
@@ -182,16 +180,16 @@ export class TypeScriptAstTranslator {
     };
 
     if (defaultSpecifier && isOxcNode(defaultSpecifier.local)) {
-      self.name = this.translateIdentifier(defaultSpecifier.local, self as DomainImportClause);
+      self.name = this.translateIdentifier(defaultSpecifier.local, self);
     }
 
     if (namespaceSpecifier && isOxcNode(namespaceSpecifier.local)) {
-      self.namedBindings = this.buildNamespaceImport(namespaceSpecifier, self as DomainImportClause);
+      self.namedBindings = this.buildNamespaceImport(namespaceSpecifier, self);
     } else if (namedSpecifiers.length > 0) {
-      self.namedBindings = this.buildNamedImports(namedSpecifiers, self as DomainImportClause);
+      self.namedBindings = this.buildNamedImports(namedSpecifiers, self);
     }
 
-    return self as DomainImportClause;
+    return self;
   }
 
   private buildNamespaceImport(specifier: OxcNode, parent: DomainImportClause): DomainNamespaceImport {
@@ -203,8 +201,8 @@ export class TypeScriptAstTranslator {
       parent,
       name: undefined as unknown as DomainIdentifier,
     };
-    self.name = this.translateIdentifier(local, self as DomainNamespaceImport);
-    return self as DomainNamespaceImport;
+    self.name = this.translateIdentifier(local, self);
+    return self;
   }
 
   private buildNamedImports(specifiers: ReadonlyArray<OxcNode>, parent: DomainImportClause): DomainNamedImports {
@@ -218,7 +216,7 @@ export class TypeScriptAstTranslator {
       elements: [],
     };
     const elements = specifiers.map((specifier) => this.buildImportSpecifier(specifier, self as DomainNamedImports));
-    return { ...self, elements } as DomainNamedImports;
+    return { ...self, elements };
   }
 
   private buildImportSpecifier(specifier: OxcNode, parent: DomainNamedImports): DomainImportSpecifier {
@@ -233,10 +231,10 @@ export class TypeScriptAstTranslator {
       name: undefined as unknown as DomainIdentifier,
     };
     if (imported && imported.type === "Identifier" && nodeName(imported) !== nodeName(local)) {
-      self.propertyName = this.translateIdentifier(imported, self as DomainImportSpecifier);
+      self.propertyName = this.translateIdentifier(imported, self);
     }
-    self.name = this.translateIdentifier(local, self as DomainImportSpecifier);
-    return self as DomainImportSpecifier;
+    self.name = this.translateIdentifier(local, self);
+    return self;
   }
 
   private translateIdentifier(node: OxcNode, parent: DomainAstNode | null): DomainIdentifier {
@@ -298,9 +296,9 @@ export class TypeScriptAstTranslator {
           expression: undefined as unknown as DomainAstNode,
           arguments: [],
         };
-        self.expression = this.translateNode(callee, self as DomainCallExpression);
+        self.expression = this.translateNode(callee, self);
         self.arguments = args.map((arg) => this.translateNode(arg, self as DomainCallExpression));
-        return self as DomainCallExpression;
+        return self;
       }
       case "MemberExpression": {
         if (node.computed === true) {
@@ -316,9 +314,9 @@ export class TypeScriptAstTranslator {
           expression: undefined as unknown as DomainAstNode,
           name: undefined as unknown as DomainIdentifier,
         };
-        self.expression = this.translateNode(object, self as DomainPropertyAccessExpression);
-        self.name = this.translateNode(property, self as DomainPropertyAccessExpression) as DomainIdentifier;
-        return self as DomainPropertyAccessExpression;
+        self.expression = this.translateNode(object, self);
+        self.name = this.translateNode(property, self) as DomainIdentifier;
+        return self;
       }
       case "ObjectExpression": {
         const properties = Array.isArray(node.properties) ? (node.properties as ReadonlyArray<OxcNode>) : [];
@@ -336,7 +334,7 @@ export class TypeScriptAstTranslator {
             ? this.translateUnknown(prop, self as DomainObjectLiteralExpression)
             : this.translateNode(prop, self as DomainObjectLiteralExpression),
         );
-        return { ...self, properties: mapped } as DomainObjectLiteralExpression;
+        return { ...self, properties: mapped };
       }
       case "Property": {
         if (node.shorthand === true || node.method === true || node.kind !== "init") {
@@ -352,9 +350,9 @@ export class TypeScriptAstTranslator {
           name: undefined as unknown as DomainAstNode,
           initializer: undefined as unknown as DomainAstNode,
         };
-        self.name = this.translateNode(key, self as DomainPropertyAssignment);
-        self.initializer = this.translateNode(value, self as DomainPropertyAssignment);
-        return self as DomainPropertyAssignment;
+        self.name = this.translateNode(key, self);
+        self.initializer = this.translateNode(value, self);
+        return self;
       }
       case "ArrayExpression": {
         const elements = Array.isArray(node.elements) ? (node.elements as ReadonlyArray<OxcNode | null>) : [];
@@ -370,9 +368,9 @@ export class TypeScriptAstTranslator {
           if (element === null) {
             continue;
           }
-          mapped.push(this.translateNode(element, self as DomainArrayLiteralExpression));
+          mapped.push(this.translateNode(element, self));
         }
-        return { ...self, elements: mapped } as DomainArrayLiteralExpression;
+        return { ...self, elements: mapped };
       }
       case "SpreadElement": {
         const argument = node.argument as OxcNode;
@@ -383,8 +381,8 @@ export class TypeScriptAstTranslator {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = this.translateNode(argument, self as DomainSpreadElement);
-        return self as DomainSpreadElement;
+        self.expression = this.translateNode(argument, self);
+        return self;
       }
       case "ParenthesizedExpression": {
         const expression = node.expression as OxcNode;
@@ -395,8 +393,8 @@ export class TypeScriptAstTranslator {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = this.translateNode(expression, self as DomainParenthesizedExpression);
-        return self as DomainParenthesizedExpression;
+        self.expression = this.translateNode(expression, self);
+        return self;
       }
       case "TSAsExpression": {
         const expression = node.expression as OxcNode;
@@ -407,8 +405,8 @@ export class TypeScriptAstTranslator {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = this.translateNode(expression, self as DomainAsExpression);
-        return self as DomainAsExpression;
+        self.expression = this.translateNode(expression, self);
+        return self;
       }
       case "TSSatisfiesExpression": {
         const expression = node.expression as OxcNode;
@@ -419,8 +417,8 @@ export class TypeScriptAstTranslator {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = this.translateNode(expression, self as DomainSatisfiesExpression);
-        return self as DomainSatisfiesExpression;
+        self.expression = this.translateNode(expression, self);
+        return self;
       }
       case "TSNonNullExpression": {
         const expression = node.expression as OxcNode;
@@ -431,8 +429,8 @@ export class TypeScriptAstTranslator {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = this.translateNode(expression, self as DomainNonNullExpression);
-        return self as DomainNonNullExpression;
+        self.expression = this.translateNode(expression, self);
+        return self;
       }
       case "ConditionalExpression": {
         const test = node.test as OxcNode;
@@ -447,10 +445,10 @@ export class TypeScriptAstTranslator {
           whenTrue: undefined as unknown as DomainAstNode,
           whenFalse: undefined as unknown as DomainAstNode,
         };
-        self.condition = this.translateNode(test, self as DomainConditionalExpression);
-        self.whenTrue = this.translateNode(consequent, self as DomainConditionalExpression);
-        self.whenFalse = this.translateNode(alternate, self as DomainConditionalExpression);
-        return self as DomainConditionalExpression;
+        self.condition = this.translateNode(test, self);
+        self.whenTrue = this.translateNode(consequent, self);
+        self.whenFalse = this.translateNode(alternate, self);
+        return self;
       }
       case "BinaryExpression": {
         const left = node.left as OxcNode;
@@ -464,9 +462,9 @@ export class TypeScriptAstTranslator {
           operator: this.mapBinaryOperator(node.operator),
           right: undefined as unknown as DomainAstNode,
         };
-        self.left = this.translateNode(left, self as DomainBinaryExpression);
-        self.right = this.translateNode(right, self as DomainBinaryExpression);
-        return self as DomainBinaryExpression;
+        self.left = this.translateNode(left, self);
+        self.right = this.translateNode(right, self);
+        return self;
       }
       case "ExpressionStatement": {
         const expression = node.expression as OxcNode;
@@ -477,8 +475,8 @@ export class TypeScriptAstTranslator {
           parent,
           expression: undefined as unknown as DomainAstNode,
         };
-        self.expression = this.translateNode(expression, self as DomainExpressionStatement);
-        return self as DomainExpressionStatement;
+        self.expression = this.translateNode(expression, self);
+        return self;
       }
       case "JSXAttribute": {
         const name = node.name as OxcNode;
@@ -491,11 +489,11 @@ export class TypeScriptAstTranslator {
           name: undefined as unknown as DomainAstNode,
           initializer: undefined,
         };
-        self.name = this.translateNode(name, self as DomainJsxAttribute);
+        self.name = this.translateNode(name, self);
         if (value) {
-          self.initializer = this.translateNode(value, self as DomainJsxAttribute);
+          self.initializer = this.translateNode(value, self);
         }
-        return self as DomainJsxAttribute;
+        return self;
       }
       case "JSXExpressionContainer": {
         const expression = isOxcNode(node.expression) ? node.expression : undefined;
@@ -507,9 +505,9 @@ export class TypeScriptAstTranslator {
           expression: undefined,
         };
         if (expression && expression.type !== "JSXEmptyExpression") {
-          self.expression = this.translateNode(expression, self as DomainJsxExpression);
+          self.expression = this.translateNode(expression, self);
         }
-        return self as DomainJsxExpression;
+        return self;
       }
       default:
         return this.translateUnknown(node, parent);

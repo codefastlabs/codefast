@@ -111,7 +111,7 @@ describe("createAutoMock", () => {
     const iterate = (): Iterator<number> => [1, 2][Symbol.iterator]();
     const mock = createAutoMock<Iterable<number>>(defaultMockFactory, {
       [Symbol.iterator]: iterate,
-    } as never);
+    });
 
     expect([...mock]).toEqual([1, 2]);
   });

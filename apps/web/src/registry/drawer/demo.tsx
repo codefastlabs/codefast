@@ -10,7 +10,6 @@ import {
   DrawerTrigger,
 } from "@codefast/ui/drawer";
 import { Minus, Plus } from "lucide-react";
-import type { CSSProperties } from "react";
 import { useState } from "react";
 import { Bar, BarChart, ResponsiveContainer } from "recharts";
 
@@ -82,7 +81,7 @@ export function DrawerDemo() {
             <div className="mt-3 h-[120px]">
               <ResponsiveContainer height="100%" width="100%">
                 <BarChart data={data}>
-                  <Bar dataKey="goal" style={{ fill: "var(--chart-1)" } as CSSProperties} />
+                  <Bar dataKey="goal" style={{ fill: "var(--chart-1)" }} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

@@ -4,7 +4,6 @@ import type { BindingTag, Constructor, Container, DependencyKey, DependencySlot,
 import { slotName, tokenName } from "@codefast/di";
 
 import { OverrideMismatchError, UndeclaredDependencyError } from "#errors/errors";
-import type { DeepPartial } from "#mocking/auto-mock";
 import { createAutoMock } from "#mocking/auto-mock";
 import type { MockFactory } from "#mocking/mock-factory";
 
@@ -330,5 +329,5 @@ function buildMock(
     return override.value;
   }
   // The stub's seed is built here, once per compile, so beds never share seeded spies.
-  return createAutoMock(mockFactory, override.setup(mockFactory) as DeepPartial<unknown>);
+  return createAutoMock(mockFactory, override.setup(mockFactory));
 }

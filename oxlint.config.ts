@@ -59,6 +59,8 @@ export default defineConfig({
     // Type-aware promise safety (requires `typeAware: true`).
     "typescript/no-floating-promises": "error",
     "typescript/no-misused-promises": "error",
+    // An assertion the checker already agrees with asserts nothing, and hides the one that matters.
+    "typescript/no-unnecessary-type-assertion": "error",
 
     // Module graph hygiene.
     "import/no-cycle": "error",

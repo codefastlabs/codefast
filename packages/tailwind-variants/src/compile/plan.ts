@@ -11,15 +11,7 @@ import { hasBooleanVariantValues, toClassText, toPlanClasses, toVariantKey } fro
 import type { CompoundPlanEntry, CompoundSlotPlanEntry } from "#compile/compound";
 import { compileCompoundSlots, compileCompoundVariants } from "#compile/compound";
 import { hasSlotsConfig } from "#compile/configuration";
-import type {
-  ClassValue,
-  CompoundSlot,
-  SlotCompoundVariant,
-  SlotSchema,
-  SlotVariantConfig,
-  VariantConfig,
-  VariantSchema,
-} from "#types";
+import type { ClassValue, CompoundSlot, SlotSchema, SlotVariantConfig, VariantConfig, VariantSchema } from "#types";
 
 /**
  * One variant group with the classes its default selects already resolved.
@@ -170,10 +162,7 @@ const compileVariantEntries = (
         : toVariantKey(configuredDefault);
 
     entries.push({
-      defaultClasses:
-        defaultKey === undefined || !Object.hasOwn(group, defaultKey as PropertyKey)
-          ? undefined
-          : group[defaultKey as string],
+      defaultClasses: defaultKey === undefined || !Object.hasOwn(group, defaultKey) ? undefined : group[defaultKey],
       group,
       name,
       valueCount: Object.keys(variantGroup).length,
@@ -236,7 +225,7 @@ export const compileVariantPlan = (
   );
   // Only the flat lane treats a boolean absent from props and defaults as false.
   const compounds = compileCompoundVariants(
-    configuration.compoundVariants as ReadonlyArray<SlotCompoundVariant<VariantSchema, never>> | undefined,
+    configuration.compoundVariants,
     defaultVariantProps,
     slotIndexByName,
     slotIndexByName === null,

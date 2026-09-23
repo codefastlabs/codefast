@@ -651,14 +651,14 @@ class DefaultContainer implements Container {
   #recordModuleImports(moduleRef: object, modules: ReadonlyArray<SyncModule | AsyncModule>): void {
     const list = getOrInsert((this.#moduleImports ??= new Map<object, Array<object>>()), moduleRef, []);
     for (const module of modules) {
-      list.push(module as object);
+      list.push(module);
     }
   }
 
   unload(...modules: Array<SyncModule>): void {
     this.#assertNotDisposed();
     for (const module of modules) {
-      this.#unloadModuleSync(module as object);
+      this.#unloadModuleSync(module);
     }
   }
 
@@ -698,7 +698,7 @@ class DefaultContainer implements Container {
   async unloadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void> {
     this.#assertNotDisposed();
     for (const module of modules) {
-      await this.#unloadModuleAsync(module as object);
+      await this.#unloadModuleAsync(module);
     }
   }
 

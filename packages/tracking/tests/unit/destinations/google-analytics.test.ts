@@ -19,7 +19,7 @@ describe("createGoogleAnalyticsDestination", () => {
 
   beforeEach(() => {
     gtag = vi.fn<GtagFunction>();
-    window.gtag = gtag as never;
+    window.gtag = gtag;
   });
 
   afterEach(() => {
@@ -122,7 +122,7 @@ describe("updateGoogleConsent", () => {
 
   beforeEach(() => {
     gtag = vi.fn<GtagFunction>();
-    window.gtag = gtag as never;
+    window.gtag = gtag;
   });
 
   afterEach(() => {

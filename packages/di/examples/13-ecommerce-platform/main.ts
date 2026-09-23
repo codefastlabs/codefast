@@ -1312,7 +1312,7 @@ class OrderPostgresRepository implements OrderRepository {
       id,
     ]);
     this.#log.info("order status updated", { orderId: id, status });
-    return { ...makeFakeOrder(id), status, ...metadata } as Order;
+    return { ...makeFakeOrder(id), status, ...metadata };
   }
 }
 
@@ -1674,7 +1674,7 @@ class PaymentProcessor implements PaymentService {
 
     await this.orderRepository.updateStatus(order.id, "payment_confirmed", {
       paymentId: intent.id,
-    } as Partial<Order>);
+    });
     await this.eventBus.publish("payment.completed", {
       orderId: order.id,
       paymentId: intent.id,
@@ -2154,10 +2154,7 @@ class CheckoutOrchestrator implements CheckoutApplicationService {
     checkoutLog: Logger,
   ): Promise<{ reservedCart: Cart; selectedShippingQuote: ShippingQuote }> {
     const reservedCart = await this.cartService.reserveInventoryForCheckout(cart.id);
-    const shippingQuotes = await this.fulfillmentService.listShippingQuotes(
-      shippingAddress,
-      reservedCart.items as Array<OrderItem>,
-    );
+    const shippingQuotes = await this.fulfillmentService.listShippingQuotes(shippingAddress, reservedCart.items);
     checkoutLog.info("shipping quotes received", {
       carriers: shippingQuotes.map(
         (quote) => `${quote.carrierName} $${(quote.cost / 100).toFixed(2)} (${quote.estimatedDays}d)`,

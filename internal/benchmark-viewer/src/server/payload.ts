@@ -472,7 +472,7 @@ export function buildEmbeddedPayload(
     const libraryData: Record<string, EmbeddedLibraryRunData> = {};
     const perLib = seriesAccum.get(scenarioId)!;
     for (const libName of libraryNames) {
-      libraryData[libName] = perLib.get(libName)! as EmbeddedLibraryRunData;
+      libraryData[libName] = perLib.get(libName)!;
     }
     const changes = definitionChanges(runs, scenarioId, primaryName);
     const rescaledRunCount = rescaledRuns.get(scenarioId)?.size ?? 0;

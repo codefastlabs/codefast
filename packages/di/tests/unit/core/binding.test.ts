@@ -74,7 +74,7 @@ describe("bindingSlotToString", () => {
       toString() {
         throw new Error("boom");
       },
-    } as unknown);
+    });
 
     expect(bindingSlotToString({ name: undefined, tags: [nullProto], keyMask: tagKeyMaskOf([nullProto]) })).toBe(
       "tag:a=<unprintable>",

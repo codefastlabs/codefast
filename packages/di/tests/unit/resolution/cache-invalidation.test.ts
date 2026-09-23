@@ -346,7 +346,7 @@ describe("the tagged-lookup memo", () => {
     warm(() => container.resolve(configToken, { tag: Env.of("prod") }));
     expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(1);
 
-    container.onActivation(configToken, (_ctx, value) => (value as number) + 10);
+    container.onActivation(configToken, (_ctx, value) => value + 10);
     expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(11);
   });
 

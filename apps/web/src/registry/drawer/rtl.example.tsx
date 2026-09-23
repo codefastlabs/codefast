@@ -11,7 +11,6 @@ import {
 } from "@codefast/ui/drawer";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
-import type { CSSProperties } from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis } from "recharts";
 
 import type { Translations } from "#features/components-catalog/components/detail/language";
@@ -163,11 +162,9 @@ export function DrawerRtl() {
                   />
                   <Bar
                     dataKey="goal"
-                    style={
-                      {
-                        fill: "var(--chart-2)",
-                      } as CSSProperties
-                    }
+                    style={{
+                      fill: "var(--chart-2)",
+                    }}
                   />
                 </BarChart>
               </ResponsiveContainer>

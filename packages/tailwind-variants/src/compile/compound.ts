@@ -116,13 +116,8 @@ export const compileCompoundVariants = <Variants extends VariantSchema>(
 
   for (const compoundVariant of compoundVariants) {
     entries.push({
-      classes: toPlanClasses(getCompoundClass(compoundVariant) as ClassValue, slotIndexByName),
-      conditions: compileConditions(
-        compoundVariant as Record<string, unknown>,
-        defaultVariantProps,
-        coerceMissingBoolean,
-        false,
-      ),
+      classes: toPlanClasses(getCompoundClass(compoundVariant), slotIndexByName),
+      conditions: compileConditions(compoundVariant, defaultVariantProps, coerceMissingBoolean, false),
     });
   }
 
@@ -158,12 +153,7 @@ export const compileCompoundSlots = <Variants extends VariantSchema>(
 
     entries.push({
       classes: toClassText(getCompoundClass(compoundSlot)),
-      conditions: compileConditions(
-        compoundSlot as unknown as Record<string, unknown>,
-        defaultVariantProps,
-        true,
-        true,
-      ),
+      conditions: compileConditions(compoundSlot, defaultVariantProps, true, true),
       slotIndexes,
     });
   }

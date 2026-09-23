@@ -1313,7 +1313,7 @@ export class DependencyResolver implements ResolverCallbacks {
           throw error;
         },
       );
-      this.#scope.setInflight(binding.identifier, singletonPromise as Promise<unknown>);
+      this.#scope.setInflight(binding.identifier, singletonPromise);
       return await singletonPromise;
     }
 
@@ -1337,7 +1337,7 @@ export class DependencyResolver implements ResolverCallbacks {
           throw error;
         },
       );
-      this.#scope.setInflight(binding.identifier, scopedPromise as Promise<unknown>);
+      this.#scope.setInflight(binding.identifier, scopedPromise);
       return await scopedPromise;
     }
 
