@@ -121,7 +121,7 @@ export const resolveColdVariantClasses = (
   props: Props,
 ): string | undefined => {
   const variants = configuration.variants;
-  const defaults = (configuration.defaultVariants ?? EMPTY_DEFAULTS) as Props;
+  const defaults = configuration.defaultVariants ?? EMPTY_DEFAULTS;
   let text = toClassText(configuration.base);
 
   if (variants !== undefined) {
@@ -144,7 +144,7 @@ export const resolveColdVariantClasses = (
 
   if (compounds !== undefined) {
     for (const compound of compounds) {
-      if (matchesColdCompound(compound as Props, props, defaults, null, true, false)) {
+      if (matchesColdCompound(compound, props, defaults, null, true, false)) {
         text = append(text, toClassText(getCompoundClass(compound)));
       }
     }
@@ -212,7 +212,7 @@ const coldSlotText = (
 
   if (compounds !== undefined) {
     for (const compound of compounds) {
-      if (matchesColdCompound(compound as Props, props, defaults, overrides, false, false)) {
+      if (matchesColdCompound(compound, props, defaults, overrides, false, false)) {
         text = append(text, slotContribution(getCompoundClass(compound), slotName));
       }
     }
@@ -223,13 +223,13 @@ const coldSlotText = (
   if (compoundSlots !== undefined) {
     for (const compoundSlot of compoundSlots) {
       // Compound slots read the call's props only, never a slot's own overrides.
-      if (!matchesColdCompound(compoundSlot as unknown as Props, props, defaults, null, true, true)) {
+      if (!matchesColdCompound(compoundSlot, props, defaults, null, true, true)) {
         continue;
       }
 
       const classes = toClassText(getCompoundClass(compoundSlot));
 
-      for (const target of compoundSlot.slots as ReadonlyArray<string>) {
+      for (const target of compoundSlot.slots) {
         if (target === slotName) {
           text = append(text, classes);
         }
@@ -251,7 +251,7 @@ export const createColdSlotResolvers = (
   tailwindMerge: (classes: string) => string,
   props: Props,
 ): Record<string, SlotClassResolver<VariantSchema>> => {
-  const defaults = (configuration.defaultVariants ?? EMPTY_DEFAULTS) as Props;
+  const defaults = configuration.defaultVariants ?? EMPTY_DEFAULTS;
   const resolvers: Record<string, SlotClassResolver<VariantSchema>> = {};
   const names = ["base"];
 

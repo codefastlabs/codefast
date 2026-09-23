@@ -1,4 +1,4 @@
-import type { ComponentProps, CSSProperties, JSX } from "react";
+import type { ComponentProps, JSX } from "react";
 import { useCallback, useMemo } from "react";
 
 import { useAnimatedValue } from "#hooks/use-animated-value";
@@ -123,12 +123,10 @@ function ProgressCircle({
           <ProgressCirclePrimitive.Track className={slots.track({ className: classNames?.track })} />
           <ProgressCirclePrimitive.Indicator
             className={slots.indicator({ className: classNames?.indicator })}
-            style={
-              {
-                transitionDuration: `${animationDuration.toString()}ms`,
-                transitionProperty: "stroke-dashoffset",
-              } as CSSProperties
-            }
+            style={{
+              transitionDuration: `${animationDuration.toString()}ms`,
+              transitionProperty: "stroke-dashoffset",
+            }}
           />
         </ProgressCirclePrimitive.SVG>
         {shouldShowLabel ? (

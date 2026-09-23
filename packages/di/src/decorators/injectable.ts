@@ -128,7 +128,7 @@ export function injectable(
 
     if (options?.autoRegister !== undefined) {
       const scope: BindingScope = options.scope ?? "transient";
-      options.autoRegister.register(target as Constructor, scope);
+      options.autoRegister.register(target, scope);
     }
   };
 }

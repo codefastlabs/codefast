@@ -311,7 +311,7 @@ export function prepareGraph(spec: GraphSpec): GraphMaterials {
     };
     Object.defineProperty(built, "name", { value: `N${String(nodeIndex)}` });
     metadata.set(built, { params: node.deps.map((dep, index) => paramOf(keys, dep, index)) });
-    return built as Constructor;
+    return built;
   });
   const constants = spec.nodes.map((node, nodeIndex) =>
     node.kind === "constant" ? { constant: nodeIndex } : undefined,

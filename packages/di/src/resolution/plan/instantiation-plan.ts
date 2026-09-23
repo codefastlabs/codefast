@@ -507,12 +507,7 @@ export class InstantiationPlanCompiler {
       };
     }
     if (scope === "transient" && binding.kind === "class" && !compileStack.has(binding.identifier)) {
-      const inlined = this.#compileClassPlan(
-        binding as Binding & { kind: "class" },
-        compileStack,
-        depth + 1,
-        ancestors,
-      );
+      const inlined = this.#compileClassPlan(binding, compileStack, depth + 1, ancestors);
       if (inlined !== null) {
         return inlined;
       }
@@ -741,19 +736,9 @@ export class InstantiationPlanCompiler {
     if (scope === "transient" && !compileStack.has(binding.identifier)) {
       let inlined: AsyncNodeThunk | null | typeof PLAN_RETRY = null;
       if (binding.kind === "class") {
-        inlined = this.#compileAsyncClassNode(
-          binding as Binding & { kind: "class" },
-          compileStack,
-          depth + 1,
-          ancestors,
-        );
+        inlined = this.#compileAsyncClassNode(binding, compileStack, depth + 1, ancestors);
       } else if (binding.kind === "resolved" || binding.kind === "resolved-async") {
-        inlined = this.#compileAsyncResolvedNode(
-          binding as Binding & { kind: "resolved" | "resolved-async" },
-          compileStack,
-          depth + 1,
-          ancestors,
-        );
+        inlined = this.#compileAsyncResolvedNode(binding, compileStack, depth + 1, ancestors);
       }
       if (inlined !== null) {
         return inlined;

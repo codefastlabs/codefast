@@ -363,7 +363,7 @@ export interface MembershipField {
  * @since 0.10.0
  */
 export function writableMembership(binding: Binding): MembershipField {
-  return binding as MembershipField;
+  return binding;
 }
 
 /**

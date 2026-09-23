@@ -44,7 +44,7 @@ export class ScopeManager {
 
   setSingleton<Value>(binding: Binding<Value>, instance: unknown): void {
     if (binding.instance === NO_INSTANCE) {
-      (this.#singletonBindings ??= []).push(binding as Binding<unknown>);
+      (this.#singletonBindings ??= []).push(binding);
     }
     binding.instance = instance;
   }
@@ -93,9 +93,9 @@ export class ScopeManager {
     if (tracked === undefined) {
       return;
     }
-    const index = tracked.indexOf(previous as Binding<unknown>);
+    const index = tracked.indexOf(previous);
     if (index !== -1) {
-      tracked[index] = next as Binding<unknown>;
+      tracked[index] = next;
     }
   }
 

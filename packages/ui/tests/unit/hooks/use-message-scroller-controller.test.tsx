@@ -65,7 +65,7 @@ class TestResizeObserver {
   }
 
   trigger(): void {
-    this.callback([], this as unknown as ResizeObserver);
+    this.callback([], this);
   }
 
   unobserve(element: Element): void {
@@ -161,7 +161,7 @@ beforeEach(() => {
   window.cancelAnimationFrame = (handle) => {
     window.clearTimeout(handle);
   };
-  window.ResizeObserver = TestResizeObserver as unknown as typeof ResizeObserver;
+  window.ResizeObserver = TestResizeObserver;
 
   Object.defineProperty(HTMLElement.prototype, "clientHeight", {
     configurable: true,
@@ -199,7 +199,7 @@ beforeEach(() => {
     if (typeof top === "number") {
       this.scrollTop = Math.max(0, top);
     }
-  } as typeof HTMLElement.prototype.scrollTo;
+  };
 
   HTMLElement.prototype.getBoundingClientRect = function getBoundingClientRect() {
     return getTestRect(this);

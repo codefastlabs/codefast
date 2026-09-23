@@ -75,7 +75,7 @@ async function readConfigFromPath(filePath: string, jitiBaseDir: string, fs: Fil
   const moduleConfig = loadWithJiti(filePath) as unknown;
   const unwrappedConfig =
     typeof moduleConfig === "object" && moduleConfig !== null && "default" in moduleConfig
-      ? (moduleConfig as { default: unknown }).default
+      ? moduleConfig.default
       : moduleConfig;
   return parseLoadedConfig(unwrappedConfig, filePath);
 }

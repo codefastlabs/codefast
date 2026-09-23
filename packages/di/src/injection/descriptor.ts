@@ -75,20 +75,16 @@ type DescribedValue<Dependency> = Dependency extends InjectionDescriptor<infer V
  * @since 0.3.16-canary.0
  */
 export function isInjectionDescriptor(value: unknown): value is InjectionDescriptor {
-  if (value === null || value === undefined) {
-    return false;
-  }
-  const type = typeof value;
-  // inject() returns a function (dual-role), so must check both object and function
-  if (type !== "object" && type !== "function") {
+  // inject() returns a function (dual-role), so both an object and a function qualify.
+  if ((typeof value !== "object" && typeof value !== "function") || value === null) {
     return false;
   }
   return (
-    "token" in (value as object) &&
-    "optional" in (value as object) &&
-    "multi" in (value as object) &&
-    typeof (value as InjectionDescriptor).optional === "boolean" &&
-    typeof (value as InjectionDescriptor).multi === "boolean"
+    "token" in value &&
+    "optional" in value &&
+    "multi" in value &&
+    typeof value.optional === "boolean" &&
+    typeof value.multi === "boolean"
   );
 }
 
@@ -196,7 +192,7 @@ export function optional<Value, Names extends string = string>(
 ): InjectionDescriptor<Value | undefined> {
   return withOptions(
     {
-      token: token as Token<Value | undefined> | Constructor<Value | undefined>,
+      token,
       optional: true,
       multi: false,
     },

@@ -68,9 +68,9 @@ describe("resolution cache", () => {
       variants: { size: { md: "p-4", sm: "p-2" } },
     } as never) as (props?: Record<string, unknown>) => string | undefined;
 
-    expect(badge({ ghost: true, size: "sm" } as never)).toBe("block p-2 text-red-500");
-    expect(badge({ size: "sm" } as never)).toBe("block p-2");
-    expect(badge({ ghost: false, size: "sm" } as never)).toBe("block p-2");
+    expect(badge({ ghost: true, size: "sm" })).toBe("block p-2 text-red-500");
+    expect(badge({ size: "sm" })).toBe("block p-2");
+    expect(badge({ ghost: false, size: "sm" })).toBe("block p-2");
   });
 
   test("does not mistake an inherited key for an already-assigned id", () => {

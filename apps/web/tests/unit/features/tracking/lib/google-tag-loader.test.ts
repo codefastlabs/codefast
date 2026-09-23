@@ -66,7 +66,7 @@ describe("loadGoogleTagScript", () => {
     window.gtag = function gtag() {
       // eslint-style rest params would break gtag.js — mirror the real stub shape
       pushed.push(arguments);
-    } as NonNullable<Window["gtag"]>;
+    };
 
     const { loadGoogleTagScript } = await importLoader("G-TEST123");
 

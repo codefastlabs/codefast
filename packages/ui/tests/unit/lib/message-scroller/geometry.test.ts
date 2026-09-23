@@ -32,7 +32,7 @@ afterEach(() => {
 function stubComputedStyle() {
   const original = window.getComputedStyle;
 
-  window.getComputedStyle = ((element: Element) => {
+  window.getComputedStyle = (element: Element) => {
     const style = original(element);
 
     if (element instanceof HTMLElement && element.dataset.paddingStart) {
@@ -49,7 +49,7 @@ function stubComputedStyle() {
     }
 
     return style;
-  }) as typeof window.getComputedStyle;
+  };
 
   cleanups.push(() => {
     window.getComputedStyle = original;

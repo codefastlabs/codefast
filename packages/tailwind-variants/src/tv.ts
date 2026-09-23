@@ -173,7 +173,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
   const variantResolverFunction = (
     variantProps?: VariantSelection<Variants>,
   ): Slots extends Record<string, never> ? string | undefined : VariantResolverResult<Variants, Slots> => {
-    const props = (variantProps ?? EMPTY_PROPS) as Record<string, unknown>;
+    const props = variantProps ?? EMPTY_PROPS;
 
     type Result = Slots extends Record<string, never> ? string | undefined : VariantResolverResult<Variants, Slots>;
 

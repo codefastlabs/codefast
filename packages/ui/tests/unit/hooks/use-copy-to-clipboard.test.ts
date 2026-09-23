@@ -13,7 +13,7 @@ describe("useCopyToClipboard", () => {
       configurable: true,
       value: {
         writeText: mockWriteText,
-      } as unknown as Clipboard,
+      },
     });
 
     vi.useFakeTimers();

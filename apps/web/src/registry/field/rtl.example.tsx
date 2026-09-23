@@ -151,7 +151,7 @@ export function FieldRtl() {
     if (value === null) {
       return t.monthPlaceholder ?? "";
     }
-    const monthKey = `month${value}` as keyof typeof t;
+    const monthKey = `month${value}`;
     return t[monthKey] || value;
   };
 

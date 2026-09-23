@@ -165,9 +165,9 @@ export function createRunAllTrials(parameters: CreateRunAllTrialsParameters): {
         continue;
       }
       if (isAsyncScenario(scenario)) {
-        bench.add(scenario.id, preBuiltClosure as () => Promise<void>);
+        bench.add(scenario.id, preBuiltClosure);
       } else {
-        bench.add(scenario.id, preBuiltClosure as () => void);
+        bench.add(scenario.id, preBuiltClosure);
       }
     }
 

@@ -12,7 +12,7 @@ function createDomRect(top: number, height: number): DOMRect {
     toJSON() {
       return {};
     },
-  } as DOMRect;
+  };
 }
 
 export { createDomRect };
