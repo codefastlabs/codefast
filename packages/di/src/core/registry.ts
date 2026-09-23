@@ -362,6 +362,11 @@ export class BindingRegistry {
     return false;
   }
 
+  /** The binding holding a token's default slot — lone or recorded — or `undefined` when none does. */
+  getDefaultSlotBinding(token: Token<unknown> | Constructor): Binding | undefined {
+    return this.#lone.get(token) ?? this.#records?.get(token)?.defaultOccupant;
+  }
+
   /** A token's lone default-slot binding — the first read of every synchronous resolve. */
   getFastDefault(token: Token<unknown> | Constructor): Binding | undefined {
     return this.#lone.get(token);

@@ -668,6 +668,13 @@ container.resolve(Logger, { name: "audit", tag: Env.of("production") });
 An alias points at another token. When the alias is resolved, the hint is **forwarded** to the target token's
 resolution.
 
+> **Normative — a default-slot alias is transparent.** An alias with no slot, predicate or membership of its own answers
+> a request whose criteria no slot of its token matches, and forwards those criteria to its target unchanged. An exact
+> slot on the alias's own token is tried first and still wins, and the nearest container that can answer does, as for
+> any binding. This holds for `resolve`, `resolveOptional` and their async forms, and `has` agrees with them;
+> `resolveAll` filters the alias's token by its own slots, so a default-slot alias does not join a collection read that
+> carries criteria.
+
 ```ts
 container.bind(Logger).to(ConsoleLogger).whenNamed("console").singleton();
 container.bind(Logger).to(FileLogger).whenNamed("file").singleton();
@@ -686,7 +693,7 @@ container.bind(AbstractAuditLogger).toAlias(Logger).whenNamed("audit");
 // This binding is only selected when resolving AbstractAuditLogger with the hint { name: "audit" }
 // Once selected, the hint { name: "audit" } is forwarded to the Logger resolution
 const logger = container.resolve(AbstractAuditLogger, { name: "audit" });
-// → the Logger binding matching { name: "audit" } (if any), otherwise the default
+// → the Logger binding matching { name: "audit" }; with none, NoMatchingBindingError names Logger
 ```
 
 > **An alias has no scope of its own.** The scope is decided by the target binding. An alias is only a pointer — it
