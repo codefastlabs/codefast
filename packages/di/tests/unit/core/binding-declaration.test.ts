@@ -36,9 +36,11 @@ describe("binding() checks what the compiler cannot reach", () => {
     }
 
     expect(caught).toBeInstanceOf(InvalidBindingDeclarationError);
-    expect((caught as InvalidBindingDeclarationError).code).toBe("INVALID_BINDING_DECLARATION");
-    expect((caught as InvalidBindingDeclarationError).tokenName).toBe("bd-unit:Port");
-    expect((caught as InvalidBindingDeclarationError).reason).toBe("`toConstantValue` takes no `scope`");
+    expect(caught).toMatchObject({
+      code: "INVALID_BINDING_DECLARATION",
+      tokenName: "bd-unit:Port",
+      reason: "`toConstantValue` takes no `scope`",
+    });
   });
 
   it("rejects a key no strategy allows", () => {

@@ -187,7 +187,7 @@ export class BindingChain<Value, Names extends string = string>
     const { registry, moduleBindingIds, deactivateDisplaced, onDisplaced } = registration;
     for (let index = 0; index < declarations.length; index += 1) {
       const declaration = declarations[index]!;
-      const binding = new BindingChain(declaration.token, registration).#adopt(declaration);
+      const binding = BindingChain.#fromDeclaration(declaration, registration);
       const displaced = registry.add(binding);
       if (displaced !== undefined) {
         if (deactivateDisplaced === undefined) {
@@ -200,21 +200,26 @@ export class BindingChain<Value, Names extends string = string>
     }
   }
 
-  /** Takes the shape a declaration's chain steps would have left, and marks the chain registered. */
-  #adopt(declaration: DeclaredBinding): Binding {
-    this.kind = declaration.kind;
-    this.slot = declaration.slot;
-    this.predicate = declaration.predicate;
-    this.isMany = declaration.isMany;
-    this.scope = declaration.scope;
-    this.target = declaration.target;
-    this.factory = declaration.factory;
-    this.deps = declaration.deps;
-    this.value = declaration.value;
-    this.activationHook = declaration.activationHook as ActivationHandler<Value> | undefined;
-    this.deactivationHook = declaration.deactivationHook as DeactivationHandler<Value> | undefined;
-    this.#isRegistered = true;
-    return this.#binding;
+  /**
+   * A registered chain in the shape a declaration's steps would have left.
+   *
+   * @remarks Typed `unknown` like the declaration it copies, so the value type is never asserted here.
+   */
+  static #fromDeclaration(declaration: DeclaredBinding, registration: BindingRegistration): Binding {
+    const chain = new BindingChain<unknown>(declaration.token, registration);
+    chain.kind = declaration.kind;
+    chain.slot = declaration.slot;
+    chain.predicate = declaration.predicate;
+    chain.isMany = declaration.isMany;
+    chain.scope = declaration.scope;
+    chain.target = declaration.target;
+    chain.factory = declaration.factory;
+    chain.deps = declaration.deps;
+    chain.value = declaration.value;
+    chain.activationHook = declaration.activationHook;
+    chain.deactivationHook = declaration.deactivationHook;
+    chain.#isRegistered = true;
+    return chain.#binding;
   }
 
   // ── Registration ───────────────────────────────────────────────────────────────────────────────────────────────────
