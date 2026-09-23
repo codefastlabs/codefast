@@ -9,7 +9,9 @@ import { LiveProgressDisplay } from "#parent/progress/live-progress-display";
 import { PlainProgressDisplay } from "#parent/progress/plain-progress-display";
 
 function stream(isTTY: boolean): NodeJS.WriteStream {
-  return { isTTY, columns: 80, write: () => true } as unknown as NodeJS.WriteStream;
+  // The display reads these three members; the rest of a real stream stays out of the test.
+  const members: Partial<NodeJS.WriteStream> = { isTTY, columns: 80, write: () => true };
+  return members as NodeJS.WriteStream;
 }
 
 describe("canDrawLiveProgress", () => {

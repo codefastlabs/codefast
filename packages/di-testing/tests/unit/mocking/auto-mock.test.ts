@@ -11,6 +11,15 @@ interface Service {
   save(value: string): void;
 }
 
+/** Runs an auto-mock's reset hook, which the bed's `resetMocks` reaches the same way. */
+function resetAutoMock(mock: object): void {
+  const reset: unknown = Reflect.get(mock, MOCK_RESET);
+  if (typeof reset !== "function") {
+    throw new TypeError("not an auto-mock: it carries no reset hook");
+  }
+  Reflect.apply(reset, mock, []);
+}
+
 describe("createAutoMock", () => {
   it("materializes a spy per property lazily and caches it", () => {
     const mock = createAutoMock<Service>(defaultMockFactory);
@@ -38,7 +47,7 @@ describe("createAutoMock", () => {
     mock.find("u1");
     mock.save("v");
 
-    (mock as unknown as { [MOCK_RESET]: () => void })[MOCK_RESET]();
+    resetAutoMock(mock);
 
     expect(mock.find.mock.calls).toEqual([]);
     expect(mock.save.mock.calls).toEqual([]);
@@ -54,11 +63,11 @@ describe("createAutoMock", () => {
 
     const sinonMock = createAutoMock<Service, Callable & { reset(): void }>(sinonish);
     void sinonMock.find;
-    (sinonMock as unknown as { [MOCK_RESET]: () => void })[MOCK_RESET]();
+    resetAutoMock(sinonMock);
 
     const historyMock = createAutoMock<Service, Callable & { resetHistory(): void }>(historyish);
     void historyMock.find;
-    (historyMock as unknown as { [MOCK_RESET]: () => void })[MOCK_RESET]();
+    resetAutoMock(historyMock);
 
     // Each variant resets its root spy plus the one materialized member.
     expect(resets).toEqual(["reset", "reset", "history", "history"]);
@@ -66,7 +75,7 @@ describe("createAutoMock", () => {
     // A backend with no reset method at all is left alone rather than crashed on.
     const bare = createAutoMock<Service, Callable>(() => () => undefined);
     void bare.find;
-    expect(() => (bare as unknown as { [MOCK_RESET]: () => void })[MOCK_RESET]()).not.toThrow();
+    expect(() => resetAutoMock(bare)).not.toThrow();
   });
 
   it("prefers seeded members over lazy spies", () => {
@@ -124,12 +133,12 @@ describe("createAutoMock", () => {
   });
 
   it("does not mint spies for serializer probes", () => {
-    const mock = createAutoMock<Service>(defaultMockFactory) as unknown as Record<string, unknown>;
+    const mock = createAutoMock<Service>(defaultMockFactory);
 
-    expect(mock["toJSON"]).toBeUndefined();
-    expect(mock["asymmetricMatch"]).toBeUndefined();
-    expect(typeof mock["name"]).toBe("string");
-    expect(typeof mock["hasOwnProperty"]).toBe("function");
+    expect(Reflect.get(mock, "toJSON")).toBeUndefined();
+    expect(Reflect.get(mock, "asymmetricMatch")).toBeUndefined();
+    expect(typeof Reflect.get(mock, "name")).toBe("string");
+    expect(typeof Reflect.get(mock, "hasOwnProperty")).toBe("function");
   });
 
   it("answers `in` consistently with property access", () => {
@@ -210,7 +219,7 @@ describe("createAutoMock", () => {
     const mock = createAutoMock<Service & { label: string }>(defaultMockFactory, { find: seeded, label: "x" });
     mock.find("u1");
 
-    (mock as unknown as { [MOCK_RESET]: () => void })[MOCK_RESET]();
+    resetAutoMock(mock);
 
     expect(seeded.mock.calls).toEqual([]);
     expect(seeded("x")).toBeUndefined();

@@ -1,10 +1,10 @@
-import type { Chart } from "chart.js";
 import { describe, expect, it } from "vitest";
 
+import type { ChartScaleWindows } from "#app/lib/chart-view";
 import { applyRelativeCategoryView, captureRelativeCategoryView } from "#app/lib/chart-view";
 
-function chartWithWindow(min: number, max: number): Chart {
-  return { scales: { x: { min, max } } } as unknown as Chart;
+function chartWithWindow(min: number, max: number): ChartScaleWindows {
+  return { scales: { x: { min, max } } };
 }
 
 describe("captureRelativeCategoryView", () => {

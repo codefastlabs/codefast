@@ -5,7 +5,9 @@ import { createPalette, PLAIN_PALETTE, shouldColor } from "#shared/palette";
 const ESCAPE = String.fromCodePoint(0x1b);
 
 function stream(isTTY: boolean): NodeJS.WriteStream {
-  return { isTTY, write: () => true } as unknown as NodeJS.WriteStream;
+  // The palette reads these two members; the rest of a real stream stays out of the test.
+  const members: Partial<NodeJS.WriteStream> = { isTTY, write: () => true };
+  return members as NodeJS.WriteStream;
 }
 
 describe("shouldColor", () => {

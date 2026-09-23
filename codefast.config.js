@@ -52,6 +52,10 @@ const config = {
     imports: {
       allowlist: [],
     },
+    // A kept double assertion carries its reason inline, beside the code it excuses.
+    assertions: {
+      allowlist: [],
+    },
     displayNames: {
       allowlist: [],
     },

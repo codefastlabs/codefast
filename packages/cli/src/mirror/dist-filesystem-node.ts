@@ -1,7 +1,6 @@
 import path from "node:path";
 
 import type { Filesystem } from "#core/filesystem/filesystem";
-import { isDirentList } from "#mirror/domain/dirent-guard";
 import type { DistFilesystem } from "#mirror/domain/dist-filesystem";
 import { normalizePath } from "#mirror/domain/path-normalizer";
 
@@ -14,11 +13,8 @@ export function createMirrorDistFilesystem(fs: Filesystem): DistFilesystem {
   return {
     async listRelativeFilesRecursively(dirPath: string): Promise<Array<string>> {
       try {
-        const raw = await fs.readdir(dirPath, { recursive: true, withFileTypes: true });
-        if (!isDirentList(raw)) {
-          return [];
-        }
-        return raw
+        const entries = await fs.readdirEntries(dirPath, { recursive: true });
+        return entries
           .filter((dirent) => dirent.isFile())
           .map((dirent) => {
             const fullPath = path.join(dirent.parentPath, dirent.name);
@@ -35,14 +31,8 @@ export function createMirrorDistFilesystem(fs: Filesystem): DistFilesystem {
 
     async isDirectoryCssOnly(distDir: string, dirPath: string): Promise<boolean> {
       try {
-        const raw = await fs.readdir(path.join(distDir, dirPath), { withFileTypes: true });
-        if (!isDirentList(raw)) {
-          return false;
-        }
-        if (raw.length === 0) {
-          return true;
-        }
-        return raw.every((dirent) => dirent.isFile() && dirent.name.endsWith(".css"));
+        const entries = await fs.readdirEntries(path.join(distDir, dirPath));
+        return entries.every((dirent) => dirent.isFile() && dirent.name.endsWith(".css"));
       } catch {
         return false;
       }

@@ -108,6 +108,7 @@ codefast                              # Codefast monorepo developer CLI
 │  ├─ rtl [target]                    # physical-direction Tailwind classes to make logical / rtl:-paired
 │  ├─ links [target]                  # markdown links pointing at a missing path/anchor
 │  ├─ imports [target]                # banned import forms (React by-name, Zod namespace in front-end, …)
+│  ├─ assertions [target]             # double type assertions through unknown/any (x as unknown as T)
 │  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
 │  └─ comments [target]               # section dividers not in the one allowed form
 │      └─ --fix                       # rewrite every fixable divider in place (the only audit that writes)
@@ -139,14 +140,15 @@ Every command also responds to `--help`; each command's section below explains w
 | `audit rtl`           | Report physical-direction Tailwind classes that should be logical          | no                |
 | `audit links`         | Report markdown cross-references that resolve to nothing                   | no                |
 | `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)      | no (report only)  |
+| `audit assertions`    | Report double type assertions through `unknown` / `any`, tests included    | no                |
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
 | `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
 
-**Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, and `audit links` are general-purpose — they
-work for any pnpm workspace or single package that builds with `tsc`. The other four audits encode codefast's own house
-style (logical Tailwind directions, named React imports, a specific comment/divider grammar, a `namespace:Name` scheme
-for `@codefast/di` tokens). Adopt them if they fit your project; otherwise skip them, or use an allowlist to narrow
-their scope.
+**Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, `audit links`, and `audit assertions` are
+general-purpose — they work for any pnpm workspace or single package that builds with `tsc`. The other four audits
+encode codefast's own house style (logical Tailwind directions, named React imports, a specific comment/divider grammar,
+a `namespace:Name` scheme for `@codefast/di` tokens). Adopt them if they fit your project; otherwise skip them, or use
+an allowlist to narrow their scope.
 
 ## `arrange`
 
@@ -332,6 +334,31 @@ codefast audit imports --json                # machine-readable summary
 Configure exceptions via `audit.imports.allowlist` — each entry is the offending source text as written or
 `repo/relative/path.tsx:<text>`.
 
+### `audit assertions`
+
+Reports every double type assertion through `unknown` or `any` in `.ts`/`.tsx` files, tests included —
+`x as unknown as T`, `(x as unknown) as T`, `<T><unknown>x` and the `any` spellings. The pair tells the compiler two
+types are unrelated and silences it anyway; no oxlint rule targets it (`typescript/no-unnecessary-type-assertion`
+catches the redundant ones only). Make the types agree, narrow with a type guard, or — where the erasure is the point —
+keep it with a directive that states why, on the assertion's line or the line above:
+
+```ts
+// codefast-allow-double-assertion: nothing ties an omitted factory to the default Backend yet
+this.mockFactory = options?.mockFactory ?? (defaultMockFactory as unknown as MockFactory<Backend>);
+```
+
+A directive with no reason, or one that keeps no assertion, is itself reported, so a kept assertion cannot outlive its
+cause.
+
+```bash
+codefast audit assertions                  # whole repo
+codefast audit assertions packages/di      # explicit target
+codefast audit assertions --json           # machine-readable summary
+```
+
+Configure exceptions via `audit.assertions.allowlist` — each entry is the assertion as written or
+`repo/relative/path.ts:<assertion>` — though the inline directive keeps the reason beside the code it excuses.
+
 ### `audit comments`
 
 _House style._ Checks doc-comment conventions. Section dividers not in the one allowed form are mechanical, so `--fix`
@@ -500,6 +527,7 @@ export default {
     links: { allowlist: [] }, // bare link target, or `repo/relative/doc.md:target`
     comments: { allowlist: [] }, // divider as written, or `repo/relative/path.ts:<divider>`
     imports: { allowlist: [] }, // offending import text as written, or `repo/relative/path.tsx:<text>`
+    assertions: { allowlist: [] }, // assertion as written, or `repo/relative/path.ts:<assertion>`
     displayNames: { allowlist: [] }, // call as written, or `repo/relative/path.ts:<call>`
   },
 };
@@ -551,6 +579,7 @@ pnpm run cli:audit:links            # codefast audit links
 pnpm run cli:audit:rtl              # codefast audit rtl
 pnpm run cli:audit:comments         # codefast audit comments
 pnpm run cli:audit:imports          # codefast audit imports
+pnpm run cli:audit:assertions       # codefast audit assertions
 pnpm run cli:audit:display-names    # codefast audit display-names
 ```
 

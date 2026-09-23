@@ -136,7 +136,7 @@ export class BindingChain<Value, Names extends string = string>
 
   /** This object as the registry and the resolver see it: the value type erased once, here. */
   get #binding(): Binding {
-    return this as unknown as Binding;
+    return this as Binding;
   }
 
   /** Loud failure for a refinement before `to*()`. */

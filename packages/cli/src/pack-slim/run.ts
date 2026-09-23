@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { AppError, messageFrom } from "#core/errors";
-import type { DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
+import type { Filesystem } from "#core/filesystem/filesystem";
 import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
 import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
@@ -159,7 +159,7 @@ async function pruneDist(
   if (!fs.existsSync(distDir)) {
     return;
   }
-  const entries = (await fs.readdir(distDir, { recursive: true, withFileTypes: true })) as Array<DirectoryEntry>;
+  const entries = await fs.readdirEntries(distDir, { recursive: true });
   for (const entry of entries) {
     if (!entry.isFile()) {
       continue;

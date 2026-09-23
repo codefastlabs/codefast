@@ -5,22 +5,19 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
-import type { Binding } from "#core/binding";
 import { token } from "#core/token";
 import type { BindingIdentifier } from "#core/types";
 import type { DiagnosableContainer } from "#errors/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#errors/diagnostics";
 import { SCOPED_MISS, ScopeManager } from "#lifecycle/scope-manager";
+import { registeredBinding } from "#tests/unit/support/registered-binding";
 
 function scopedInstanceCount(container: unknown): number {
   return (container as DiagnosableContainer)[RESOLUTION_DIAGNOSTICS]().scopedInstanceCount;
 }
 
-// `setScoped` takes the binding so a scope failure can name the token, as `setSingleton` does. The
-// chain `bind()` returns is the binding, so a throwaway container is the one construction site.
-const FIRST_BINDING = Container.create()
-  .bind(token<number>("scoped-first"))
-  .toConstantValue(1) as unknown as Binding<number>;
+// `setScoped` takes the binding so a scope failure can name the token, as `setSingleton` does.
+const FIRST_BINDING = registeredBinding("scoped-first").binding;
 const FIRST_ID: BindingIdentifier = FIRST_BINDING.identifier;
 const UNSEEN_ID = -1 as BindingIdentifier;
 

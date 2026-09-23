@@ -89,6 +89,7 @@ export abstract class BedBuilder<Class, Backend extends MockFunction = Spy> {
     // A supplied reader is a claim — verify it the way the container itself does.
     this.reader = verifyingMetadataReader(options?.metadataReader ?? defaultMetadataReader);
     // With no factory the caller's Backend defaulted to Spy, which is what the default produces.
+    // codefast-allow-double-assertion: nothing ties an omitted factory to the default Backend yet
     this.mockFactory = options?.mockFactory ?? (defaultMockFactory as unknown as MockFactory<Backend>);
   }
 

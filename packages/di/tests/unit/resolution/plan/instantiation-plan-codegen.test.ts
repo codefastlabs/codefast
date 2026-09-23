@@ -126,9 +126,10 @@ describe("a hot plan is generated as a function of its own", () => {
   });
 
   it("keeps a generated toResolved plan throwing on a factory that returns a promise", () => {
-    const valueToken = token<number>("codegen-resolved-async");
+    // A sync factory the caller let return a promise: the engine, not the type, has to catch it.
+    const valueToken = token<number | Promise<number>>("codegen-resolved-async");
     const container = Container.create();
-    container.bind(valueToken).toResolved(() => Promise.resolve(1) as unknown as number, []);
+    container.bind(valueToken).toResolved(() => Promise.resolve(1), []);
 
     for (let index = 0; index < PLAN_CODEGEN_THRESHOLD + 4; index += 1) {
       expect(() => container.resolve(valueToken)).toThrow(AsyncResolutionError);
@@ -282,13 +283,20 @@ describe("a hot async plan is generated as a function of its own", () => {
   });
 
   it("awaits a promise-valued constant on the generated tier", async () => {
-    const setting = token<number>("codegen-async-promise-constant");
+    const setting = token<Promise<number>>("codegen-async-promise-constant");
     const rootToken = token<number>("codegen-async-promise-constant.root");
     const container = Container.create();
-    container.bind(setting).toConstantValue(Promise.resolve(41) as unknown as number);
+    container.bind(setting).toConstantValue(Promise.resolve(41));
     container
       .bind(rootToken)
-      .toResolvedAsync(async (value: number) => value + 1, [setting])
+      .toResolvedAsync(
+        async (value) => {
+          // The async lane hands a factory the settled value, which the dependency's type does not say.
+          expect(value).toBe(41);
+          return 42;
+        },
+        [setting],
+      )
       .transient();
 
     await heatAsync(() => container.resolveAsync(rootToken));

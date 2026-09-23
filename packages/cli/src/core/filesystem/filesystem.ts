@@ -31,10 +31,10 @@ export interface Filesystem {
   readdirSync(filePath: string): Array<string>;
   readFile(filePath: string, encoding: CliFileEncoding): Promise<string>;
   writeFile(filePath: string, data: string, encoding: CliFileEncoding): Promise<void>;
-  readdir(
+  readdirEntries(
     filePath: string,
-    options?: { recursive?: boolean; withFileTypes?: boolean },
-  ): Promise<Array<string> | Array<DirectoryEntry>>;
+    options?: { readonly recursive?: boolean | undefined },
+  ): Promise<Array<DirectoryEntry>>;
   globSync(pattern: string, options: { readonly cwd: string }): Array<string>;
   rename(oldPath: string, newPath: string): Promise<void>;
   unlink(filePath: string): Promise<void>;

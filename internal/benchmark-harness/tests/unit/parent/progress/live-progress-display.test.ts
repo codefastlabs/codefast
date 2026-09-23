@@ -6,15 +6,16 @@ const ESCAPE = String.fromCodePoint(0x1b);
 
 function fakeStream(columns: number): { stream: NodeJS.WriteStream; writes: Array<string> } {
   const writes: Array<string> = [];
-  const stream = {
+  // The display reads these three members; the rest of a real stream stays out of the test.
+  const members: Partial<NodeJS.WriteStream> = {
     isTTY: true,
     columns,
     write: (chunk: string): boolean => {
       writes.push(chunk);
       return true;
     },
-  } as unknown as NodeJS.WriteStream;
-  return { stream, writes };
+  };
+  return { stream: members as NodeJS.WriteStream, writes };
 }
 
 describe("LiveProgressDisplay", () => {

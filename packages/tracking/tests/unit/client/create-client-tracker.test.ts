@@ -42,8 +42,10 @@ describe("createClientTracker", () => {
       destinations: [destination],
     });
 
+    // Properties that reached the tracker untyped, as JavaScript or a JSON body would hand them over.
+    const untyped: Record<string, unknown> = { id: 42 };
     expect(() => {
-      tracker.track("button_clicked", { id: 42 as unknown as string });
+      tracker.track("button_clicked", untyped as { id: string });
     }).toThrow(/Invalid properties/);
     expect(destination.received).toHaveLength(0);
   });

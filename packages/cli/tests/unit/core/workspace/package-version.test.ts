@@ -34,7 +34,7 @@ function createFilesystem(files: Record<string, string>): Filesystem {
     readdirSync: () => [],
     readFile: () => Promise.reject(new Error("unexpected async read")),
     writeFile: () => Promise.reject(new Error("unexpected async write")),
-    readdir: () => Promise.reject(new Error("unexpected async readdir")),
+    readdirEntries: () => Promise.reject(new Error("unexpected async readdir")),
     rename: () => Promise.reject(new Error("unexpected rename")),
     unlink: () => Promise.reject(new Error("unexpected unlink")),
   };

@@ -114,7 +114,7 @@ function createAuditTestFilesystem(files: Record<string, string>): Filesystem {
     },
     readFile: async () => "",
     writeFile: async (_filePath: string, _data: string, _encoding: CliFileEncoding) => {},
-    readdir: async (): Promise<Array<string> | Array<DirectoryEntry>> => [],
+    readdirEntries: async (): Promise<Array<DirectoryEntry>> => [],
     rename: async () => {},
     unlink: async () => {},
   };

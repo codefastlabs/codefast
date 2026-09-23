@@ -28,9 +28,9 @@ Object.defineProperty(window, "BroadcastChannel", {
 
 Object.defineProperty(window, "requestAnimationFrame", {
   value: (callback: FrameRequestCallback): number => {
-    return setTimeout(() => {
+    return window.setTimeout(() => {
       callback(performance.now());
-    }, 0) as unknown as number;
+    }, 0);
   },
   writable: true,
 });

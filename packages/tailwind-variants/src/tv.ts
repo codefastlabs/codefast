@@ -26,7 +26,6 @@ import type {
   SlotSchema,
   TailwindVariantsOptions,
   TailwindVariantsApi,
-  VariantResolverResult,
   VariantResolver,
 } from "#types";
 
@@ -170,25 +169,19 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
   let compiled: CompiledResolver | null = null;
   let isColdCall = true;
 
+  // Typed as what the engine builds; the public, per-config result type is applied once, below.
   const variantResolverFunction = (
     variantProps?: VariantSelection<Variants>,
-  ): Slots extends Record<string, never> ? string | undefined : VariantResolverResult<Variants, Slots> => {
+  ): string | undefined | Record<string, SlotClassResolver<VariantSchema>> => {
     const props = variantProps ?? EMPTY_PROPS;
-
-    type Result = Slots extends Record<string, never> ? string | undefined : VariantResolverResult<Variants, Slots>;
 
     if (compiled === null) {
       if (isColdCall) {
         isColdCall = false;
 
-        return (slotConfiguration === null
+        return slotConfiguration === null
           ? resolveColdVariantClasses(mergedConfiguration, shouldMergeClasses, tailwindMergeFn, props)
-          : createColdSlotResolvers(
-              slotConfiguration,
-              shouldMergeClasses,
-              tailwindMergeFn,
-              props,
-            )) as unknown as Result;
+          : createColdSlotResolvers(slotConfiguration, shouldMergeClasses, tailwindMergeFn, props);
       }
 
       compiled = compileResolver(mergedConfiguration, shouldMergeClasses, tailwindMergeFn, shouldCacheResolutions);
@@ -207,18 +200,18 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
           const hit = memo.cache.get(selectionKey);
 
           if (hit !== undefined) {
-            return hit as unknown as Result;
+            return hit;
           }
 
           const resolvers = createSlotResolvers(plan, slots, props);
 
           memo.cache.set(selectionKey, resolvers);
 
-          return resolvers as unknown as Result;
+          return resolvers;
         }
       }
 
-      return createSlotResolvers(plan, slots, props) as unknown as Result;
+      return createSlotResolvers(plan, slots, props);
     }
 
     const className = props.className as ClassValue;
@@ -234,18 +227,18 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
         const hit = memo.cache.get(cacheKey);
 
         if (hit !== undefined) {
-          return (hit === NO_CLASSES ? undefined : hit) as unknown as Result;
+          return hit === NO_CLASSES ? undefined : hit;
         }
 
         const resolved = resolveVariantClasses(plan, props, customClasses);
 
         memo.cache.set(cacheKey, resolved ?? NO_CLASSES);
 
-        return resolved as unknown as Result;
+        return resolved;
       }
     }
 
-    return resolveVariantClasses(plan, props, customClasses) as unknown as Result;
+    return resolveVariantClasses(plan, props, customClasses);
   };
 
   const configuredVariantResolver = variantResolverFunction as VariantResolver<Variants, Slots>;

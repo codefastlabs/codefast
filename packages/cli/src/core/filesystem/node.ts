@@ -2,7 +2,7 @@ import fsSync from "node:fs";
 import fsPromises from "node:fs/promises";
 import path from "node:path";
 
-import type { CliFileEncoding, DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
+import type { CliFileEncoding, Filesystem } from "#core/filesystem/filesystem";
 
 /**
  * The `Filesystem` implementation backed by Node's real filesystem.
@@ -28,13 +28,8 @@ export const nodeFilesystem: Filesystem = {
 
   writeFile: (filePath: string, data: string, enc: CliFileEncoding) => fsPromises.writeFile(filePath, data, enc),
 
-  readdir: async (filePath: string, opts?: { recursive?: boolean; withFileTypes?: boolean }) => {
-    const raw = await fsPromises.readdir(filePath, opts as Parameters<typeof fsPromises.readdir>[1]);
-    if (!opts?.withFileTypes) {
-      return raw as unknown as Array<string>;
-    }
-    return raw as unknown as Array<DirectoryEntry>;
-  },
+  readdirEntries: (filePath: string, options?: { readonly recursive?: boolean | undefined }) =>
+    fsPromises.readdir(filePath, { recursive: options?.recursive ?? false, withFileTypes: true }),
 
   globSync: (pattern: string, options: { cwd: string }) => fsSync.globSync(pattern, options),
 

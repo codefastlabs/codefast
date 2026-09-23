@@ -106,8 +106,13 @@ describe("resolveOptionsForSlot", () => {
 
     expect(container.resolve(Root).driver).toBe("primary-driver");
     expect(seen).toEqual({ name: "primary" });
+    // Narrowed first: a write to `undefined` throws a TypeError too, and would pass for the wrong reason.
+    const captured = seen;
+    if (captured === undefined) {
+      throw new Error("the constraint never saw the request's options");
+    }
     expect(() => {
-      (seen as unknown as { name?: string }).name = "backup";
+      Object.assign(captured, { name: "backup" });
     }).toThrow(TypeError);
     expect(container.resolve(Root).driver).toBe("primary-driver");
   });

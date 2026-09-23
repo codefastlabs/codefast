@@ -2516,15 +2516,13 @@ async function handleCheckoutRequest(
 
 async function main(): Promise<void> {
   await using platform = {
-    container: null as unknown as Awaited<ReturnType<typeof bootstrap>>,
+    container: await bootstrap(),
     [Symbol.asyncDispose]: async function () {
       console.log("\n[Shutdown] Initiating graceful shutdown...");
       await this.container.dispose();
       console.log("[Shutdown] ✅ All connections closed. Goodbye!");
     },
   };
-
-  platform.container = await bootstrap();
 
   // ── Register user & simulate full customer journey ─────────────────────────────────────────────────────────────────
 

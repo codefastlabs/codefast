@@ -1,6 +1,12 @@
 import { Command } from "commander";
 import type { ZodType } from "zod";
 
+import { exitCodeForAssertionAuditResult, formatAssertionAuditJsonOutput } from "#audit/assertions/cli-result";
+import type { AssertionAuditRunRequest } from "#audit/assertions/cli-schema";
+import { assertionAuditRunRequestSchema } from "#audit/assertions/cli-schema";
+import { presentAssertionAuditResult } from "#audit/assertions/output";
+import { prepareAssertionAudit } from "#audit/assertions/prepare";
+import { runAssertionAudit } from "#audit/assertions/run";
 import { exitCodeForCommentAuditResult, formatCommentAuditJsonOutput } from "#audit/comments/cli-result";
 import type { CommentAuditRunRequest } from "#audit/comments/cli-schema";
 import { commentAuditRunRequestSchema } from "#audit/comments/cli-schema";
@@ -20,6 +26,7 @@ import { presentDisplayNameAuditResult } from "#audit/display-names/output";
 import { prepareDisplayNameAudit } from "#audit/display-names/prepare";
 import { runDisplayNameAudit } from "#audit/display-names/run";
 import type {
+  AssertionAuditResult,
   CommentAuditResult,
   ConstantAuditResult,
   DisplayNameAuditResult,
@@ -143,6 +150,24 @@ const importsCheck: AuditCheck<ImportsAuditRunRequest, ImportsAuditResult> = {
   exitCode: exitCodeForImportsAuditResult,
 };
 
+const assertionsCheck: AuditCheck<AssertionAuditRunRequest, AssertionAuditResult> = {
+  name: "assertions",
+  description: "Report double type assertions through unknown or any (x as unknown as T), tests included",
+  targetHelp: "Directory or file to scan (default: the repo root)",
+  schema: assertionAuditRunRequestSchema,
+  prepare: prepareAssertionAudit,
+  buildRequest: baseAuditRequest,
+  run: (fs, request) =>
+    runAssertionAudit(fs, {
+      rootDir: request.rootDir,
+      targetPath: request.targetPath,
+      allowlist: request.allowlist ?? [],
+    }),
+  present: presentAssertionAuditResult,
+  formatJson: formatAssertionAuditJsonOutput,
+  exitCode: exitCodeForAssertionAuditResult,
+};
+
 const displayNamesCheck: AuditCheck<DisplayNameAuditRunRequest, DisplayNameAuditResult> = {
   name: "display-names",
   description: "Report token(), tag() and module display names that break the <namespace>:<Name> convention",
@@ -248,6 +273,7 @@ export function createAuditCommand(): Command {
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(rtlCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(linksCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(importsCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(assertionsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(displayNamesCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(constantsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(commentsCheck));

@@ -112,11 +112,7 @@ function bindOneInjectedNode(
     __id: node.id,
     resolvedDependencies,
   });
-  // `injected` types its tokens against the creator's parameters; a rest parameter needs the cast.
-  (injected as unknown as (target: typeof creator, ...tokens: ReadonlyArray<Token<RealisticNode>>) => typeof creator)(
-    creator,
-    ...dependencyTokens,
-  );
+  injected(creator, ...dependencyTokens);
   const scope = container.bind(nodeToken).toInstance(creator);
   if (node.lifetime === "singleton") {
     scope.inSingletonScope();

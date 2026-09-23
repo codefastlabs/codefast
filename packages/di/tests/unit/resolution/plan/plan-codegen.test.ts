@@ -5,8 +5,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import type { Binding } from "#core/binding";
-import { NO_INSTANCE } from "#core/binding";
 import type { ConstructorInvocation } from "#core/constructor-type";
 import type { AsyncPlanNode, PlanNode } from "#resolution/plan/plan-codegen";
 import {
@@ -15,6 +13,7 @@ import {
   isPlanCodegenAvailable,
   PLAN_CODEGEN_THRESHOLD,
 } from "#resolution/plan/plan-codegen";
+import { registeredBinding } from "#tests/unit/support/registered-binding";
 
 class Leaf {
   constructor(readonly tag: unknown) {}
@@ -28,8 +27,8 @@ class Root {
   ) {}
 }
 
-const leaf = Leaf as unknown as ConstructorInvocation;
-const root = Root as unknown as ConstructorInvocation;
+const leaf: ConstructorInvocation = Leaf;
+const root: ConstructorInvocation = Root;
 
 function generated(node: PlanNode): () => unknown {
   const plan = generatePlan(node);
@@ -81,7 +80,7 @@ describe("generatePlan", () => {
   });
 
   it("reads a singleton's cached instance and escapes only while it has none", () => {
-    const binding = { instance: NO_INSTANCE } as unknown as { instance: unknown };
+    const { chain, binding } = registeredBinding("plan-codegen:Cached");
     let escapes = 0;
     const materialized = { materialized: true };
     const plan = generated({
@@ -90,7 +89,7 @@ describe("generatePlan", () => {
       deps: [
         {
           kind: "singleton",
-          binding: binding as unknown as Binding,
+          binding,
           escape: () => {
             escapes += 1;
             return materialized;
@@ -102,7 +101,7 @@ describe("generatePlan", () => {
     expect((plan() as Leaf).tag).toBe(materialized);
     expect(escapes).toBe(1);
 
-    binding.instance = materialized;
+    chain.instance = materialized;
 
     expect((plan() as Leaf).tag).toBe(materialized);
     expect(escapes).toBe(1);
@@ -289,7 +288,7 @@ describe("generateAsyncPlan", () => {
   });
 
   it("reads a singleton's cache inside an awaiting node", async () => {
-    const binding = { instance: NO_INSTANCE } as unknown as { instance: unknown };
+    const { chain, binding } = registeredBinding("plan-codegen:Cached");
     let escapes = 0;
     const plan = generatedAsync({
       kind: "construct",
@@ -301,7 +300,7 @@ describe("generateAsyncPlan", () => {
           deps: [
             {
               kind: "singleton",
-              binding: binding as unknown as Binding,
+              binding,
               escape: () => {
                 escapes += 1;
                 return Promise.resolve("materialized");
@@ -318,7 +317,7 @@ describe("generateAsyncPlan", () => {
     expect(((await plan()) as Leaf).tag).toEqual(["materialized", "tag"]);
     expect(escapes).toBe(1);
 
-    binding.instance = "cached";
+    chain.instance = "cached";
 
     expect(((await plan()) as Leaf).tag).toEqual(["cached", "tag"]);
     expect(escapes).toBe(1);

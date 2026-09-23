@@ -4,19 +4,22 @@ import { Container } from "#container/container";
 import { binding } from "#core/binding-declaration";
 import type { BindingDeclaration } from "#core/binding-declaration";
 import { Module } from "#core/module";
+import type { SyncModule } from "#core/module";
 import { token } from "#core/token";
 import { InvalidBindingDeclarationError } from "#errors/errors";
 
 const Port = token<number>("module-unit:Port");
 
+/** `Module.fromBindings` as plain JavaScript reaches it, with list entries the types never checked. */
+function fromUntypedList(name: string, entries: ReadonlyArray<unknown>): SyncModule {
+  return Module.fromBindings(name, entries as ReadonlyArray<BindingDeclaration>);
+}
+
 describe("Module.fromBindings", () => {
   it("rejects an entry binding() did not make, naming the module and the position", () => {
     let caught: unknown;
     try {
-      Module.fromBindings("module-unit:Forged", [
-        binding(Port, { toConstantValue: 1 }),
-        { toConstantValue: 2 } as unknown as BindingDeclaration,
-      ]);
+      fromUntypedList("module-unit:Forged", [binding(Port, { toConstantValue: 1 }), { toConstantValue: 2 }]);
     } catch (error) {
       caught = error;
     }
@@ -24,9 +27,7 @@ describe("Module.fromBindings", () => {
     expect(caught).toBeInstanceOf(InvalidBindingDeclarationError);
     expect(caught).toMatchObject({ tokenName: "module-unit:Forged[1]" });
     // Plain JavaScript can list `null`: still the library's error, never a TypeError from reading it.
-    expect(() => Module.fromBindings("module-unit:Null", [null as unknown as BindingDeclaration])).toThrow(
-      InvalidBindingDeclarationError,
-    );
+    expect(() => fromUntypedList("module-unit:Null", [null])).toThrow(InvalidBindingDeclarationError);
   });
 
   it("loads what the list held when the module was made", () => {

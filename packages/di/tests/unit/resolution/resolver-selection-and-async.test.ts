@@ -56,11 +56,12 @@ describe("activation on transient dynamic bindings", () => {
   });
 
   it("rejects a promise returned from a transient dynamic factory resolved synchronously", () => {
-    const serviceToken = token<string>("sync-async-mismatch");
+    // A sync factory the caller let return a promise: the engine, not the type, has to catch it.
+    const serviceToken = token<string | Promise<string>>("sync-async-mismatch");
     const container = Container.create();
     container
       .bind(serviceToken)
-      .toDynamic((() => Promise.resolve("late")) as unknown as () => string)
+      .toDynamic(() => Promise.resolve("late"))
       .transient()
       .onActivation((_ctx, instance) => instance);
 
