@@ -81,6 +81,34 @@ export type ImportsAuditResult = {
 };
 
 /**
+ * A double assertion through `unknown` or `any`, or a directive that keeps one without cause.
+ */
+export type AssertionViolation = {
+  readonly line: number;
+  /** The assertion or the directive as written, up to its first line break. */
+  readonly raw: string;
+  readonly reason: string;
+};
+
+/**
+ * The type-assertion violations found in one file.
+ */
+export type AssertionFileViolations = {
+  readonly relativePath: string;
+  readonly violations: Array<AssertionViolation>;
+};
+
+/**
+ * Outcome of one `audit assertions` run.
+ */
+export type AssertionAuditResult = {
+  readonly files: Array<AssertionFileViolations>;
+  readonly violationCount: number;
+  readonly allowlistedCount: number;
+  readonly scannedFileCount: number;
+};
+
+/**
  * A `token()`, `tag()` or module display name that breaks the display-name convention.
  *
  * @since 0.9.0
