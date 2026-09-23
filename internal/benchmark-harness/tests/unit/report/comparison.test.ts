@@ -18,6 +18,7 @@ import {
   formatNoisyIqrCaveatLine,
   formatReliabilityCaveatLine,
 } from "#report/reliability";
+import type { RunDiff, ScenarioDelta } from "#report/run-diff";
 import { createPalette } from "#shared/palette";
 import type { Fingerprint } from "#shared/protocol";
 
@@ -438,6 +439,67 @@ describe("renderComparisonConsoleReport", () => {
       });
     });
     expect(withoutHint).not.toContain("Cite the table.");
+  });
+
+  describe("the diff against the previous run", () => {
+    function delta(id: string, group: string, currentHzPerOp: number, previousHzPerOp: number): ScenarioDelta {
+      return {
+        id,
+        group,
+        currentHzPerOp,
+        previousHzPerOp,
+        delta: currentHzPerOp / previousHzPerOp - 1,
+        threshold: NOISY_IQR_FRACTION,
+        unreliable: false,
+      };
+    }
+
+    function renderDiff(
+      regressions: ReadonlyArray<ScenarioDelta>,
+      improvements: ReadonlyArray<ScenarioDelta>,
+    ): Array<string> {
+      const diff: RunDiff = {
+        comparable: true,
+        previousRunId: "prev",
+        pinned: false,
+        scenarios: [...regressions, ...improvements],
+        regressions,
+        improvements,
+        competitors: [],
+      };
+      return captureConsole(() => {
+        renderComparisonConsoleReport(library("di", [scenario("a", 200)]), [library("inv", [scenario("a", 100)])], {
+          sectionHeading: "Section",
+          palette: createPalette({ enabled: false }),
+          diff,
+        });
+      }).split("\n");
+    }
+
+    it("lists every improvement in the columns the regressions use", () => {
+      const improvements = Array.from({ length: 6 }, (_, index) =>
+        delta(`faster-${String(index)}`, "scope", 1100, 1000),
+      );
+      const lines = renderDiff([delta("a-much-longer-scenario-id", "lifecycle", 800, 1000)], improvements);
+
+      expect(lines).toContain("Improvements beyond noise (6)  vs prev");
+      expect(lines.join("\n")).not.toContain("more");
+      const regression = lines.find((line) => line.startsWith("a-much-longer-scenario-id"));
+      const rows = lines.filter((line) => line.startsWith("faster-"));
+      expect(rows).toHaveLength(6);
+      for (const row of rows) {
+        expect(row).toContain("+10.0%");
+        expect(row).toContain("was 1.0K");
+        expect(row.indexOf(" hz")).toBe(regression?.indexOf(" hz"));
+      }
+    });
+
+    it("says none for an empty list, on both sides", () => {
+      const lines = renderDiff([], []);
+
+      expect(lines).toContain("Regressions beyond noise  none vs prev");
+      expect(lines).toContain("Improvements beyond noise  none vs prev");
+    });
   });
 });
 
