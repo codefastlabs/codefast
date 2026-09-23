@@ -2570,7 +2570,8 @@ real source path; **there is no `@codefast/di/constraints` alias**.
 ## Module system
 
 **Mental model.** A module is a named, reusable description of bindings — a function that receives a builder and calls
-`bind`/`import` on it. It holds no runtime state; a container decides when to run it and remembers what it produced.
+`bind`/`import` on it, or a list of declared bindings. It holds no runtime state; a container decides when to load it
+and remembers what it produced.
 
 ### Sync module
 
@@ -2612,6 +2613,95 @@ const container = Container.create();
 await container.loadAsync(DatabaseModule);
 ```
 
+### Declared module
+
+> **Status — specified, not yet implemented.** This section is the contract the implementation is built against. The
+> pull request that implements it removes this note; until then nothing below is exported.
+
+**Mental model.** A declared module is a module written as a list rather than a function: each entry states one binding
+as data, so the whole list is checked once, where it is written, and a container files it in one pass when it loads the
+module. It is a `SyncModule` like any other — `load`, `fromModules`, `import`, reference counting and `unload` treat it
+exactly as they treat one built by `SyncModule.create`.
+
+```ts
+import { binding, Module } from "@codefast/di";
+
+export const InfraModule = Module.fromBindings("app:Infra", [
+  binding(Logger, { to: ConsoleLogger, scope: "singleton" }),
+  binding(Logger, { to: FileLogger, whenNamed: "file", scope: "singleton", onDeactivation: (log) => log.flush() }),
+  binding(Config, { toConstantValue: loadConfig() }),
+  binding(Clock, { toDynamic: () => new SystemClock() }),
+  binding(Repository, { toResolved: (db, log) => new Repository(db, log), deps: [Database, Logger] }),
+  binding(Storage, { to: S3Storage, whenTagged: Region.of("eu") }),
+  binding(Plugin, { toConstantValue: auditPlugin, many: true }),
+  binding(ConsoleLogger, { toSelf: true }),
+  binding(AuditLogger, { toAlias: Logger }),
+]);
+
+const container = Container.fromModules(InfraModule);
+```
+
+`binding(key, definition)` returns a `BindingDeclaration`; `Module.fromBindings(name, declarations)` — also reachable as
+`SyncModule.fromBindings` — returns a `SyncModule`. A `BindingDefinition` spells a binding with the fluent chain's own
+vocabulary, one key per step:
+
+| Key                                               | The fluent step it stands for                                                   |
+| ------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `to`, `toSelf: true`, `toConstantValue`           | `to(Class)`, `toSelf()`, `toConstantValue(value)`                               |
+| `toDynamic`, `toDynamicAsync`                     | `toDynamic(factory)`, `toDynamicAsync(factory)`                                 |
+| `toResolved` + `deps`, `toResolvedAsync` + `deps` | `toResolved(factory, deps)`, `toResolvedAsync(factory, deps)`                   |
+| `toAlias`                                         | `toAlias(target)`                                                               |
+| `whenNamed`, `whenTagged`, `when`, `many: true`   | `whenNamed(name)`, `whenTagged(criterion)` once per criterion, `when`, `many`   |
+| `scope`                                           | `singleton()` / `transient()` / `scoped()`; absent means the strategy's default |
+| `onActivation`, `onDeactivation`                  | `onActivation(handler)`, `onDeactivation(handler)`                              |
+
+> **Normative — a definition is typed exactly as the chain is.** The key alone decides the value type and the slot names
+> — a `Token<Value, Names>` or a `Constructor<Value>` — and the definition never widens them. The compiler rejects, as
+> the chain's return types do:
+>
+> - no strategy key, or more than one;
+> - a value, class or factory whose type is not the key's value type, and a `whenNamed` outside the token's `Names`;
+> - `toSelf` on a key that is not a class;
+> - `scope` on `toConstantValue` or `toAlias`, and a hook on `toAlias`;
+> - `onDeactivation` on any scope but `"singleton"` — `toConstantValue` excepted, as it is always a singleton;
+> - `many: true` beside `whenNamed` or `whenTagged`.
+>
+> `toResolved` / `toResolvedAsync` infer the factory's parameters from `deps` exactly as their chain steps do.
+
+> **Normative — `whenTagged` takes one criterion or several.** `whenTagged: Region.of("eu")` and
+> `whenTagged: [Region.of("eu"), Size.of("l")]` are both accepted. An array stands for one `whenTagged()` per element,
+> in order, so a key repeated within it keeps its last criterion — the rule a slot applies to any repeated key
+> ([Slots and last-wins](#slots-and-last-wins--the-exact-definition)).
+
+> **Normative — equivalence.** Loading a declared module is indistinguishable from loading a `SyncModule.create` whose
+> setup binds each declaration, in list order, through the chain steps its keys stand for — strategy, then slot
+> (`whenNamed`, each `whenTagged`), then `when`, then `many`, then scope, then hooks. Slot last-wins, the displacement
+> of an earlier binding and what it still owes, registration order, the binding ids the module records, `unload`,
+> `validate`, `inspect` and `generateDependencyGraph` all answer exactly as they would for that setup. Each load builds
+> bindings of its own, so one declared module loaded into several containers shares nothing between them, as any module
+> does.
+
+> **Normative — a malformed declaration fails where it is written.** `binding()` checks its definition when it is
+> called, for callers the compiler cannot reach — plain JavaScript, a value built from `any`:
+>
+> - a slot on a member throws `ManyBindingSlotError`, and `toSelf` on a non-class throws
+>   `SelfBindingRequiresClassError`, as the chain does;
+> - no strategy key, several, or a key the strategy does not allow (a hook on an alias, `onDeactivation` on a
+>   non-singleton, a `scope` on a constant or an alias) throws `InvalidBindingDeclarationError`, naming the token and
+>   the rule.
+>
+> `Module.fromBindings()` throws `InvalidBindingDeclarationError` for a list entry that is not a `BindingDeclaration`. A
+> declared module that was built can therefore always be loaded; loading it raises only what binding itself raises.
+
+**What a declared module deliberately cannot do.** It has no per-declaration `.id()` — its bindings are removed by
+`unload` or by token — and no logic that runs at load time: a binding that depends on something only known when the
+module loads, or on an `await`, belongs in `Module.create` or `Module.createAsync`. The two compose without a third API:
+a fluent module mixes in a declared one with `builder.import(InfraModule)`.
+
+> **Non-normative — why it exists.** A declared module's list is checked and normalised once, when the module is
+> defined, and a load files it in one registry pass, where a fluent setup pays the chain's per-bind work every time the
+> module loads. It changes nothing a resolve reads.
+
 ### Using modules
 
 ```ts
@@ -2632,8 +2722,9 @@ scoped.bind(Database).toConstantValue(mockDatabase); // the child's binding shad
 ```
 
 > **Normative — a module is a pure description, holding no runtime state.** The same `SyncModule` / `AsyncModule` object
-> can be loaded into several independent containers in parallel. A module only holds its `name` and its `setup`
-> callback; the container tracks "which modules are loaded" and "which binding belongs to which module".
+> can be loaded into several independent containers in parallel. A module only holds its `name` and either its `setup`
+> callback or its declarations; the container tracks "which modules are loaded" and "which binding belongs to which
+> module".
 
 > **Normative — deduplication.** Calling `container.load(M)` repeatedly, or `m.import(M)` from several modules, is a
 > no-op from the second time on. Dedup is based on **object identity**, not on `name`. Unload reference-counting uses
@@ -2658,14 +2749,15 @@ export const AppModule = AsyncModule.create("app:Root", async (builder) => {
 
 ### Module interface
 
-| Type                 | What it offers                                                                                                                                  |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ModuleBuilder`      | Exists only inside a `SyncModule.create()` callback. Exactly two things: `bind(token)` and `import(...modules)` accepting **only** `SyncModule` |
-| `AsyncModuleBuilder` | The same two things, but its `import` accepts both `SyncModule` and `AsyncModule`                                                               |
-| `SyncModule`         | Carries a `name` and a **branded field**; built by `SyncModule.create(name, setup)` with a sync `setup`                                         |
-| `AsyncModule`        | Carries a `name` and a **branded field**; built by `AsyncModule.create(name, setup)` with an async `setup`                                      |
-| `Module`             | `Module.create` / `Module.createAsync` only forward to the two factories above, for call sites that prefer importing a single name              |
-| `isSyncModule`       | Type guard for telling the two apart at runtime when all you hold is the union                                                                  |
+| Type                 | What it offers                                                                                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ModuleBuilder`      | Exists only inside a `SyncModule.create()` callback. Exactly two things: `bind(token)` and `import(...modules)` accepting **only** `SyncModule`              |
+| `AsyncModuleBuilder` | The same two things, but its `import` accepts both `SyncModule` and `AsyncModule`                                                                            |
+| `SyncModule`         | Carries a `name` and a **branded field**; built by `SyncModule.create(name, setup)` with a sync `setup`, or by `SyncModule.fromBindings(name, declarations)` |
+| `AsyncModule`        | Carries a `name` and a **branded field**; built by `AsyncModule.create(name, setup)` with an async `setup`                                                   |
+| `Module`             | `Module.create` / `Module.createAsync` / `Module.fromBindings` only forward to the factories above, for call sites that prefer importing a single name       |
+| `binding`            | Builds one `BindingDeclaration` from a key and a `BindingDefinition` ([Declared module](#declared-module))                                                   |
+| `isSyncModule`       | Type guard for telling the two apart at runtime when all you hold is the union                                                                               |
 
 > **Exact shape:** `src/core/module.ts` — `ModuleBuilder`, `AsyncModuleBuilder`, `SyncModule`, `AsyncModule`, `Module`,
 > `isSyncModule`.
@@ -2689,35 +2781,36 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 > **Normative.** Every error extends `DiError` — an abstract class that forces each subclass to declare a `code` string
 > (machine-readable), alongside a message carrying enough context for a human reader.
 
-| Error                           | `code`                        | Thrown when                                                                    | Context fields                                                 |
-| ------------------------------- | ----------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------- |
-| `InternalError`                 | `INTERNAL_ERROR`              | An internal assertion failed — **not** a user error                            | —                                                              |
-| `TokenNotBoundError`            | `TOKEN_NOT_BOUND`             | The token has no binding at all, even after walking the parent chain           | `tokenName`                                                    |
-| `NoMatchingBindingError`        | `NO_MATCHING_BINDING`         | The token **has** bindings but no slot matches the hint                        | `tokenName`, `options`, `availableSlots`                       |
-| `AmbiguousBindingError`         | `AMBIGUOUS_BINDING`           | ≥ 2 candidates remain and the more-specific rule cannot decide                 | `tokenName`, `candidateIds`                                    |
-| `CircularDependencyError`       | `CIRCULAR_DEPENDENCY`         | A → B → A, including a cycle along an alias chain                              | `cycle`                                                        |
-| `AsyncResolutionError`          | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain          | `tokenName`, `asyncSourceToken`                                |
-| `AsyncActivationError`          | `ASYNC_ACTIVATION`            | `@postConstruct` or `onActivation` returned a `Promise` on a sync path         | `tokenName`, `hookKind`, `methodName`                          |
-| `AsyncDeactivationError`        | `ASYNC_DEACTIVATION`          | A sync `unbind()`/`rebind()` owing an async deactivation (a cached singleton)  | `tokenName`                                                    |
-| `ScopeViolationError`           | `SCOPE_VIOLATION`             | `validate()` — a captive dependency: a singleton depending on scoped/transient | `details`: both tokens + scopes, plus `path`                   |
-| `MissingMetadataError`          | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing            | `targetName`                                                   |
-| `InvalidMetadataError`          | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use               | `targetName`, `reason`                                         |
-| `AsyncModuleLoadError`          | `ASYNC_MODULE_LOAD`           | A sync `load()` received an `AsyncModule`                                      | `moduleName`                                                   |
-| `SyncDisposalNotSupportedError` | `SYNC_DISPOSAL_NOT_SUPPORTED` | `[Symbol.dispose]()` was called                                                | —                                                              |
-| `MissingScopeContextError`      | `MISSING_SCOPE_CONTEXT`       | A `scoped` binding resolved from a container with no child scope               | `tokenName`                                                    |
-| `MissingContainerContextError`  | `MISSING_CONTAINER_CONTEXT`   | A class with `@inject accessor` was `new`-ed outside a container               | `className` (may be `undefined`), `accessorName`               |
-| `RebindUnboundTokenError`       | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container                    | `tokenName`                                                    |
-| `DisposedContainerError`        | `DISPOSED_CONTAINER`          | Any operation on an already-disposed container                                 | —                                                              |
-| `ChainNotRegisteredError`       | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`               | `tokenName`                                                    |
-| `ChainAlreadyRegisteredError`   | `CHAIN_ALREADY_REGISTERED`    | A second `to*()` on a chain that already registered its binding                | `tokenName`                                                    |
-| `ManyBindingSlotError`          | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member        | `tokenName`                                                    |
-| `SelfBindingRequiresClassError` | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                                      | `tokenName`                                                    |
-| `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member                | `decoratorName`, `memberName`                                  |
-| `SymbolKeyedLifecycleError`     | `SYMBOL_KEYED_LIFECYCLE`      | `@postConstruct` / `@preDestroy` on a symbol-keyed method                      | `decoratorName`, `memberName`                                  |
-| `MissingDecoratorMetadataError` | `MISSING_DECORATOR_METADATA`  | A decorator handed no `context.metadata` — the runtime lacks `Symbol.metadata` | `decoratorName`                                                |
-| `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds                 | `tokenName`, `phase`, `reason`                                 |
-| `EmptyTagCriteriaError`         | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                                | `helperName`                                                   |
-| `UnreachableConstraintError`    | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares                | `tokenName`, `requiredName`, `requiredTokenName`, `helperName` |
+| Error                            | `code`                        | Thrown when                                                                                                             | Context fields                                                 |
+| -------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `InternalError`                  | `INTERNAL_ERROR`              | An internal assertion failed — **not** a user error                                                                     | —                                                              |
+| `TokenNotBoundError`             | `TOKEN_NOT_BOUND`             | The token has no binding at all, even after walking the parent chain                                                    | `tokenName`                                                    |
+| `NoMatchingBindingError`         | `NO_MATCHING_BINDING`         | The token **has** bindings but no slot matches the hint                                                                 | `tokenName`, `options`, `availableSlots`                       |
+| `AmbiguousBindingError`          | `AMBIGUOUS_BINDING`           | ≥ 2 candidates remain and the more-specific rule cannot decide                                                          | `tokenName`, `candidateIds`                                    |
+| `CircularDependencyError`        | `CIRCULAR_DEPENDENCY`         | A → B → A, including a cycle along an alias chain                                                                       | `cycle`                                                        |
+| `AsyncResolutionError`           | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain                                                   | `tokenName`, `asyncSourceToken`                                |
+| `AsyncActivationError`           | `ASYNC_ACTIVATION`            | `@postConstruct` or `onActivation` returned a `Promise` on a sync path                                                  | `tokenName`, `hookKind`, `methodName`                          |
+| `AsyncDeactivationError`         | `ASYNC_DEACTIVATION`          | A sync `unbind()`/`rebind()` owing an async deactivation (a cached singleton)                                           | `tokenName`                                                    |
+| `ScopeViolationError`            | `SCOPE_VIOLATION`             | `validate()` — a captive dependency: a singleton depending on scoped/transient                                          | `details`: both tokens + scopes, plus `path`                   |
+| `MissingMetadataError`           | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing                                                     | `targetName`                                                   |
+| `InvalidMetadataError`           | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use                                                        | `targetName`, `reason`                                         |
+| `AsyncModuleLoadError`           | `ASYNC_MODULE_LOAD`           | A sync `load()` received an `AsyncModule`                                                                               | `moduleName`                                                   |
+| `SyncDisposalNotSupportedError`  | `SYNC_DISPOSAL_NOT_SUPPORTED` | `[Symbol.dispose]()` was called                                                                                         | —                                                              |
+| `MissingScopeContextError`       | `MISSING_SCOPE_CONTEXT`       | A `scoped` binding resolved from a container with no child scope                                                        | `tokenName`                                                    |
+| `MissingContainerContextError`   | `MISSING_CONTAINER_CONTEXT`   | A class with `@inject accessor` was `new`-ed outside a container                                                        | `className` (may be `undefined`), `accessorName`               |
+| `RebindUnboundTokenError`        | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container                                                             | `tokenName`                                                    |
+| `DisposedContainerError`         | `DISPOSED_CONTAINER`          | Any operation on an already-disposed container                                                                          | —                                                              |
+| `ChainNotRegisteredError`        | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`                                                        | `tokenName`                                                    |
+| `ChainAlreadyRegisteredError`    | `CHAIN_ALREADY_REGISTERED`    | A second `to*()` on a chain that already registered its binding                                                         | `tokenName`                                                    |
+| `ManyBindingSlotError`           | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member                                                 | `tokenName`                                                    |
+| `SelfBindingRequiresClassError`  | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                                                                               | `tokenName`                                                    |
+| `StaticMemberDecoratorError`     | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member                                                         | `decoratorName`, `memberName`                                  |
+| `SymbolKeyedLifecycleError`      | `SYMBOL_KEYED_LIFECYCLE`      | `@postConstruct` / `@preDestroy` on a symbol-keyed method                                                               | `decoratorName`, `memberName`                                  |
+| `InvalidBindingDeclarationError` | `INVALID_BINDING_DECLARATION` | `binding()` — no strategy, several, or a key the strategy does not allow (pending: [Declared module](#declared-module)) | `tokenName`, `reason`                                          |
+| `MissingDecoratorMetadataError`  | `MISSING_DECORATOR_METADATA`  | A decorator handed no `context.metadata` — the runtime lacks `Symbol.metadata`                                          | `decoratorName`                                                |
+| `UnreachableLifecycleHookError`  | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds                                                          | `tokenName`, `phase`, `reason`                                 |
+| `EmptyTagCriteriaError`          | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                                                                         | `helperName`                                                   |
+| `UnreachableConstraintError`     | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares                                                         | `tokenName`, `requiredName`, `requiredTokenName`, `helperName` |
 
 > **Exact shape:** `src/errors/errors.ts` — every class above, plus `ScopeViolationDetails`.
 
