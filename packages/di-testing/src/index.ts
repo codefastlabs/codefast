@@ -1,6 +1,6 @@
 /** Solitary and sociable auto-mocking test beds for `@codefast/di`. */
 
-export { TestBed } from "#test-bed/test-bed";
+export { createTestBed, TestBed } from "#test-bed/test-bed";
 export type { TestBedStatic } from "#test-bed/test-bed";
 export type { MockOverrideBuilder, PreparedBed, TestBedOptions } from "#test-bed/bed-builder";
 export type { SolitaryTestBedBuilder } from "#test-bed/solitary-builder";
@@ -16,6 +16,7 @@ export type { Spy, SpyResult, SpyState } from "#mocking/spy";
 
 export type { InjectionIdentifier } from "#types";
 export {
+  MissingMockFactoryError,
   ExposureError,
   NotInjectableError,
   OverrideMismatchError,

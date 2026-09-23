@@ -1,4 +1,4 @@
-import { TestBed } from "@codefast/di-testing";
+import { createTestBed, TestBed } from "@codefast/di-testing";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -20,16 +20,16 @@ import {
 } from "#features/di/server/domain";
 import type { Task } from "#features/di/server/domain";
 
-// Vitest-backed spies: matchers work on every auto-mock, and the factory's return type flows into
-// the bed, so vitest-only APIs like mockReturnValueOnce type-check on mocks.get(...).method.
-const withVitestSpies = { mockFactory: () => vi.fn() };
+// The suite's entry point on Vitest spies: matchers work on every auto-mock, and the factory's return
+// type flows into each bed, so vitest-only APIs like mockReturnValueOnce type-check on mocks.get(...).method.
+const VitestTestBed = createTestBed({ mockFactory: () => vi.fn() });
 
 describe("TaskService", () => {
   // Must stay a factory: `.stub` seeds are built eagerly at `.mock()` time, so a shared builder
   // would leak spy call logs between tests. Overrides are last-write-wins, so a test may re-mock
   // a token the helper already stubbed — replacing that stub wholesale, not merging with it.
   const bedFor = (tasks: Array<Task> = []) =>
-    TestBed.solitary(TaskService, withVitestSpies)
+    VitestTestBed.solitary(TaskService)
       .mock(TaskRepositoryToken)
       .stub((fn) => ({ list: fn().mockReturnValue(tasks) }))
       .mock(TaskValidationToken)
@@ -156,7 +156,7 @@ describe("task validators", () => {
 
 describe("CompositeTaskValidator", () => {
   it("collects the messages its validators return", () => {
-    const { unit, mocks } = TestBed.solitary(CompositeTaskValidator, withVitestSpies)
+    const { unit, mocks } = VitestTestBed.solitary(CompositeTaskValidator)
       .mock(TaskValidatorToken)
       .stub((fn) => ({ validate: fn().mockReturnValue("Title cannot be empty.") }))
       .compile();
@@ -167,7 +167,7 @@ describe("CompositeTaskValidator", () => {
 
   it("returns no messages when every validator passes", () => {
     // The auto-mocked validator's validate() returns undefined, which reads as "no objection".
-    const { unit } = TestBed.solitary(CompositeTaskValidator, withVitestSpies).compile();
+    const { unit } = VitestTestBed.solitary(CompositeTaskValidator).compile();
 
     expect(unit.collect("Fine title", [])).toEqual([]);
   });
@@ -177,7 +177,7 @@ describe("InMemoryTaskRepository", () => {
   const FROZEN_NOW = "2026-08-31T09:00:00.000Z";
 
   const compileRepository = () =>
-    TestBed.solitary(InMemoryTaskRepository, withVitestSpies)
+    VitestTestBed.solitary(InMemoryTaskRepository)
       .mock(ClockToken)
       .using({ now: () => FROZEN_NOW })
       .compile();
@@ -227,7 +227,7 @@ describe("InMemoryTaskRepository", () => {
 
 describe("ActivityLogMetricsExporter", () => {
   it("prefixes events into the activity log (built-in spy backend)", () => {
-    // No mockFactory: this bed demonstrates the zero-dependency default spy and its .mock.calls log.
+    // The package's own TestBed: the zero-dependency built-in spy and its .mock.calls log.
     const { unit, mocks } = TestBed.solitary(ActivityLogMetricsExporter).compile();
 
     unit.record("task.added");

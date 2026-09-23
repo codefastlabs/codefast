@@ -8,21 +8,20 @@ import type { BoundMock, SlotCriteria, SlottedOverride } from "#discovery/mock-b
 import { criteriaEquals, normalizeCriteria } from "#discovery/mock-binder";
 import type { DeepPartial } from "#mocking/auto-mock";
 import type { MockFactory, MockFunction } from "#mocking/mock-factory";
-import { defaultMockFactory } from "#mocking/mock-factory";
 import type { Spy } from "#mocking/spy";
 import type { InjectionIdentifier } from "#types";
 
 /**
- * Options that configure a whole test-bed compile.
+ * What `createTestBed` is configured with: the mock backend and the reader every bed it begins shares.
  *
  * @typeParam Backend - The spy type the mock factory produces; it flows into every `Mocked` member,
  * `mocks.get`, and the `.stub` callback, so `() => vi.fn()` yields Vitest's own mock typing.
  *
  * @since 0.1.0
  */
-export interface TestBedOptions<Backend extends MockFunction = Spy> {
-  /** Spy factory each auto-mock property is materialized with; defaults to the built-in spy. */
-  readonly mockFactory?: MockFactory<Backend> | undefined;
+export interface TestBedOptions<Backend extends MockFunction> {
+  /** Spy factory each auto-mock property is materialized with; its return type is the beds' backend. */
+  readonly mockFactory: MockFactory<Backend>;
   /** Reader the dependency scan and the compile container both consult; defaults to di's reader. */
   readonly metadataReader?: MetadataReader | undefined;
 }
@@ -84,13 +83,11 @@ export abstract class BedBuilder<Class, Backend extends MockFunction = Spy> {
   protected readonly mockFactory: MockFactory<Backend>;
   protected readonly overrides: ReadonlyMap<DependencyKey, ReadonlyArray<SlottedOverride>> = new Map();
 
-  constructor(target: Constructor<Class>, options?: TestBedOptions<Backend>) {
+  constructor(target: Constructor<Class>, options: TestBedOptions<Backend>) {
     this.target = target;
     // A supplied reader is a claim — verify it the way the container itself does.
-    this.reader = verifyingMetadataReader(options?.metadataReader ?? defaultMetadataReader);
-    // With no factory the caller's Backend defaulted to Spy, which is what the default produces.
-    // codefast-allow-double-assertion: nothing ties an omitted factory to the default Backend yet
-    this.mockFactory = options?.mockFactory ?? (defaultMockFactory as unknown as MockFactory<Backend>);
+    this.reader = verifyingMetadataReader(options.metadataReader ?? defaultMetadataReader);
+    this.mockFactory = options.mockFactory;
   }
 
   /**

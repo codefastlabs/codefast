@@ -3,9 +3,12 @@ import type { Mock } from "vitest";
 
 import type { Mocked } from "#mocking/auto-mock";
 import type { Spy } from "#mocking/spy";
-import { TestBed } from "#test-bed/test-bed";
+import { createTestBed, TestBed } from "#test-bed/test-bed";
 import type { EmailService, UserService } from "#tests/unit/support/fixtures";
 import { EmailServiceToken, OrderProcessor, UserServiceToken } from "#tests/unit/support/fixtures";
+
+/** The entry point on Vitest spies, so every mock carries Vitest's own surface. */
+const VitestTestBed = createTestBed({ mockFactory: () => vi.fn() });
 
 describe("UnitReference.get", () => {
   it("types the unit as the class under test", () => {
@@ -22,7 +25,7 @@ describe("UnitReference.get", () => {
   });
 
   it("flows the vitest backend into every mock surface", () => {
-    const { mocks } = TestBed.solitary(OrderProcessor, { mockFactory: () => vi.fn() }).compile();
+    const { mocks } = VitestTestBed.solitary(OrderProcessor).compile();
     const send = mocks.get(EmailServiceToken).send;
 
     // Vitest-native APIs type-check without any adapter or module augmentation.
@@ -33,7 +36,7 @@ describe("UnitReference.get", () => {
   });
 
   it("hands the .stub callback the active backend's factory", () => {
-    TestBed.solitary(OrderProcessor, { mockFactory: () => vi.fn() })
+    VitestTestBed.solitary(OrderProcessor)
       .mock(UserServiceToken)
       .stub((fn) => {
         expectTypeOf(fn()).toEqualTypeOf<Mock>();
@@ -55,7 +58,7 @@ describe("UnitReference.get", () => {
       });
       return stub;
     };
-    const bed = TestBed.solitary(OrderProcessor, { mockFactory: fakeSinonStub });
+    const bed = createTestBed({ mockFactory: fakeSinonStub }).solitary(OrderProcessor);
 
     bed.mock(UserServiceToken).stub((fn) => {
       expectTypeOf(fn()).toHaveProperty("returns");
