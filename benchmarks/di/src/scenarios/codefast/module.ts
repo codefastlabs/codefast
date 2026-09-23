@@ -20,7 +20,7 @@
  */
 import { binding, Container, Module, token } from "@codefast/di";
 
-import { isComposedModule } from "#fixtures/sanity";
+import { isComposedModule, isSharedWithinScopeFreshAcross } from "#fixtures/sanity";
 import {
   MODULE_BINDING_COUNT,
   MODULE_COLD_128,
@@ -146,10 +146,12 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
     ...MODULE_COLD_FROM_MODULES,
     what: "Container.fromModules(2 modules) — fresh container build + resolve root (cold start)",
     batch: 1,
-    sanity: () => {
-      const result = runOneColdStart();
-      return result.startsWith("service@postgres://");
-    },
+    sanity: () =>
+      runOneColdStart().startsWith("service@postgres://") &&
+      isSharedWithinScopeFreshAcross(() => {
+        const container = Container.fromModules(infraModule, appModule);
+        return [container.resolve(moduleServiceToken), container.resolve(moduleServiceToken)] as const;
+      }),
     build: () => {
       return () => {
         runOneColdStart();

@@ -7,11 +7,14 @@
  * `load`/`unload`, so the load-unload row stays absent.
  *
  * `module-cold-128`: one dependency module of many bindings, every token pulled in
- * by a single `use(...).from(module)`; its singletons are `inContainerScope()`, one per container.
+ * by a single `use(...).from(module)`.
+ *
+ * Both rows bind their singletons `inContainerScope()`, one per container: a module's
+ * `inSingletonScope()` caches on the module's own binding, shared by every container that uses it.
  */
 import { createContainer, createDependencyModule, injected, token } from "brandi";
 
-import { isComposedModule } from "#fixtures/sanity";
+import { isComposedModule, isSharedWithinScopeFreshAcross } from "#fixtures/sanity";
 import { MODULE_BINDING_COUNT, MODULE_COLD_128, MODULE_COLD_FROM_MODULES } from "#fixtures/scenario-parity";
 import type { BenchScenario } from "#scenarios/types";
 
@@ -51,10 +54,10 @@ injected(ModuleServiceImpl, moduleDbToken);
 // Modules are built once and reused; only the container is fresh per iteration — matching di's `fromModules` shape.
 const infraModule = createDependencyModule();
 infraModule.bind(moduleConfigToken).toConstant({ env: "production" });
-infraModule.bind(moduleDbToken).toInstance(ModuleDbImpl).inSingletonScope();
+infraModule.bind(moduleDbToken).toInstance(ModuleDbImpl).inContainerScope();
 
 const appModule = createDependencyModule();
-appModule.bind(moduleServiceToken).toInstance(ModuleServiceImpl).inSingletonScope();
+appModule.bind(moduleServiceToken).toInstance(ModuleServiceImpl).inContainerScope();
 
 function buildModuleColdFromModulesScenario(): BenchScenario {
   function runOneColdStart(): string {
@@ -69,9 +72,16 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
 
   return {
     ...MODULE_COLD_FROM_MODULES,
-    what: "createContainer() + use().from(2 dependency modules) + get root (cold start)",
+    what: "createContainer() + use().from(2 dependency modules) + get root (cold start); singletons are inContainerScope(), one per container",
     batch: 1,
-    sanity: () => runOneColdStart().startsWith("service@postgres://"),
+    sanity: () =>
+      runOneColdStart().startsWith("service@postgres://") &&
+      isSharedWithinScopeFreshAcross(() => {
+        const container = createContainer();
+        container.use(moduleConfigToken, moduleDbToken).from(infraModule);
+        container.use(moduleServiceToken).from(appModule);
+        return [container.get(moduleServiceToken), container.get(moduleServiceToken)] as const;
+      }),
     build: () => {
       return () => {
         runOneColdStart();
@@ -94,7 +104,6 @@ function buildModuleCold128Scenario(): BenchScenario {
     if (index < singletonFrom) {
       largeModule.bind(valueToken).toConstant({ id: index });
     } else {
-      // A module's `inSingletonScope()` caches on the module's own binding, shared by every container that uses it.
       largeModule
         .bind(valueToken)
         .toInstance((): ModuleValue => ({ id: index }))
