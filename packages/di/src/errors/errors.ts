@@ -333,7 +333,7 @@ export class MissingMetadataError extends DiError {
     super(
       inheritedFrom === undefined
         ? `Class '${targetName}' is missing @injectable() decorator. Add @injectable([...deps]) or use toDynamic()/toResolved() instead.`
-        : `Class '${targetName}' inherits ${String(inheritedFrom.dependencyCount)} declared constructor ${inheritedFrom.dependencyCount === 1 ? "dependency" : "dependencies"} from '${inheritedFrom.baseName}' but declares none of its own. Add @injectable([...deps]) to '${targetName}', or give it an explicit constructor.`,
+        : `Class '${targetName}' inherits ${String(inheritedFrom.dependencyCount)} declared constructor ${inheritedFrom.dependencyCount === 1 ? "dependency" : "dependencies"} from '${inheritedFrom.baseName}' but declares none of its own. Add @injectable([...deps]) to '${targetName}' — @injectable([]) if it takes none — or bind it with toDynamic()/toResolved().`,
     );
     this.targetName = targetName;
   }
