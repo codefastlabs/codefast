@@ -1,6 +1,8 @@
 import { parseSync } from "oxc-parser";
 
 import type { Filesystem } from "#core/filesystem/filesystem";
+import type { OxcNode } from "#core/oxc-node";
+import { isOxcNode, programStatements } from "#core/oxc-node";
 import { applyEditsDescending, indentOfLineContaining } from "#core/source-text-edit";
 import type { TagFileResult } from "#tag/domain/types";
 
@@ -9,13 +11,6 @@ type TextEdit = {
   end: number;
   replacement: string;
 };
-
-interface OxcNode {
-  readonly type: string;
-  readonly start: number;
-  readonly end: number;
-  readonly [key: string]: unknown;
-}
 
 interface OxcComment {
   readonly type: "Block" | "Line";
@@ -37,10 +32,6 @@ const TAGGABLE_DECLARATION_TYPES = new Set([
   "VariableDeclaration",
 ]);
 
-function isOxcNode(value: unknown): value is OxcNode {
-  return typeof value === "object" && value !== null && typeof (value as { type?: unknown }).type === "string";
-}
-
 function identifierName(node: unknown): string | undefined {
   if (isOxcNode(node) && node.type === "Identifier" && typeof node.name === "string") {
     return node.name;
@@ -61,7 +52,7 @@ export class TagSinceWriter {
   applySinceTagsToFile(filePath: string, version: string, write: boolean): TagFileResult {
     const sourceText = this.fs.readFileSync(filePath, "utf8");
     const { program, comments } = parseSync(filePath, sourceText);
-    const statements = (program as unknown as { body: ReadonlyArray<OxcNode> }).body;
+    const statements = programStatements(program);
     const jsDocComments = (comments as ReadonlyArray<OxcComment>).filter(
       (comment) => comment.type === "Block" && comment.value.startsWith("*"),
     );

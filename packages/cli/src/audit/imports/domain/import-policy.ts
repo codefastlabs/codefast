@@ -1,13 +1,9 @@
 import { parseSync } from "oxc-parser";
 
 import type { ImportPolicyViolation } from "#audit/domain/types";
-
-interface OxcNode {
-  readonly type: string;
-  readonly start: number;
-  readonly end: number;
-  readonly [key: string]: unknown;
-}
+import type { OxcNode } from "#core/oxc-node";
+import { isOxcNode, programStatements } from "#core/oxc-node";
+import { firstLineOf, lineOfOffset } from "#core/source-position";
 
 /**
  * One library's import policy: which forms of importing `module` are banned, optionally limited to
@@ -48,10 +44,6 @@ export const defaultImportPolicyRules: ReadonlyArray<ImportPolicyRule> = [
   },
 ];
 
-function isOxcNode(value: unknown): value is OxcNode {
-  return typeof value === "object" && value !== null && typeof (value as { type?: unknown }).type === "string";
-}
-
 function isIdentifierNamed(node: unknown, name: string): boolean {
   return isOxcNode(node) && node.type === "Identifier" && node.name === name;
 }
@@ -76,7 +68,7 @@ export function auditImportPolicySource(
   rules: ReadonlyArray<ImportPolicyRule>,
 ): Array<ImportPolicyViolation> {
   const { program } = parseSync(filePath, sourceText);
-  const statements = (program as unknown as { body: ReadonlyArray<OxcNode> }).body;
+  const statements = programStatements(program);
   const violations: Array<ImportPolicyViolation> = [];
   const boundUmdNames = new Set<string>();
 
@@ -125,8 +117,8 @@ export function auditImportPolicySource(
   }
 
   for (const rule of rules) {
-    if (rule.umdGlobal !== undefined && !boundUmdNames.has(rule.umdGlobal)) {
-      collectUmdGlobalReferences(program as unknown as OxcNode, sourceText, rule, violations);
+    if (rule.umdGlobal !== undefined && !boundUmdNames.has(rule.umdGlobal) && isOxcNode(program)) {
+      collectUmdGlobalReferences(program, sourceText, rule, violations);
     }
   }
 
@@ -167,19 +159,4 @@ function collectUmdGlobalReferences(
       collectUmdGlobalReferences(value, sourceText, rule, violations);
     }
   }
-}
-
-function lineOfOffset(sourceText: string, offset: number): number {
-  let line = 1;
-  for (let index = 0; index < offset; index++) {
-    if (sourceText.charCodeAt(index) === 10) {
-      line++;
-    }
-  }
-  return line;
-}
-
-function firstLineOf(text: string): string {
-  const newlineIndex = text.indexOf("\n");
-  return newlineIndex === -1 ? text : text.slice(0, newlineIndex);
 }

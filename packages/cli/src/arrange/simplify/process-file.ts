@@ -17,7 +17,7 @@ const SIMPLIFY_MARKER = /\b(?:cn|tv)\b|className|\bclass\s*[=:]/;
  * @since 0.3.16-canary.0
  */
 export function processArrangeSimplifyFile(
-  fs: Filesystem,
+  fs: Pick<Filesystem, "readFileSync" | "writeFileSync">,
   args: {
     readonly filePath: string;
     readonly write: boolean;

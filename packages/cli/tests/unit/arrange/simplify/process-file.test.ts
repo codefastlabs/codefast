@@ -4,12 +4,12 @@ import { processArrangeSimplifyFile } from "#arrange/simplify/process-file";
 import type { VariantClassNameProbe } from "#arrange/simplify/variant-classname-probe";
 import type { Filesystem } from "#core/filesystem/filesystem";
 
-/** A read-only filesystem exposing a single file's text; only the reads process-file makes are backed. */
-function fileWith(text: string): Filesystem {
+/** A filesystem holding one file's text, backing exactly the two calls process-file makes. */
+function fileWith(text: string): Pick<Filesystem, "readFileSync" | "writeFileSync"> {
   return {
     readFileSync: () => text,
     writeFileSync: () => undefined,
-  } as unknown as Filesystem;
+  };
 }
 
 function run(text: string): { totalFound: number } {
@@ -25,12 +25,12 @@ const acceptAllProbe: VariantClassNameProbe = {
 /** Runs the fold-enabled pass with write on, capturing the text written back. */
 function foldWrite(text: string): string {
   let written = text;
-  const fs = {
+  const fs: Pick<Filesystem, "readFileSync" | "writeFileSync"> = {
     readFileSync: () => text,
-    writeFileSync: (_path: string, next: string) => {
+    writeFileSync: (_path, next) => {
       written = next;
     },
-  } as unknown as Filesystem;
+  };
   processArrangeSimplifyFile(fs, { filePath: "/virtual/x.tsx", write: true, probe: acceptAllProbe });
   return written;
 }

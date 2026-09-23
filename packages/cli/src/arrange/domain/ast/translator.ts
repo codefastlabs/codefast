@@ -34,21 +34,8 @@ import type {
   DomainStringLiteral,
   DomainUnknownAstNode,
 } from "#arrange/domain/ast/ast-node";
-
-/**
- * Minimal structural view over an oxc ESTree node: every node carries a `type`
- * discriminant plus `start`/`end` char offsets (UTF-16, matching source string slicing).
- */
-interface OxcNode {
-  readonly type: string;
-  readonly start: number;
-  readonly end: number;
-  readonly [key: string]: unknown;
-}
-
-interface OxcProgram {
-  readonly body: ReadonlyArray<OxcNode>;
-}
+import type { OxcNode } from "#core/oxc-node";
+import { isOxcNode, programStatements } from "#core/oxc-node";
 
 /**
  * Mutable build view for wiring `parent` links; results satisfy readonly domain types.
@@ -57,9 +44,26 @@ type WritableDomainAst<T extends DomainAstNode> = {
   -readonly [K in keyof T]: T[K] extends ReadonlyArray<infer U> ? Array<U> : T[K];
 };
 
-function isOxcNode(value: unknown): value is OxcNode {
-  return typeof value === "object" && value !== null && typeof (value as { type?: unknown }).type === "string";
-}
+/**
+ * Stands in for a child while its parent is built first, so the child has a parent to point at; the
+ * build replaces it before the node leaves the translator.
+ */
+const PENDING_NODE: DomainUnknownAstNode = Object.freeze({
+  kind: DomainSyntaxKind.Unknown,
+  pos: -1,
+  end: -1,
+  parent: null,
+  children: [],
+});
+
+/** The same stand-in for a child typed as an identifier. */
+const PENDING_IDENTIFIER: DomainIdentifier = Object.freeze({
+  kind: DomainSyntaxKind.Identifier,
+  pos: -1,
+  end: -1,
+  parent: null,
+  text: "",
+});
 
 function nodeName(node: OxcNode): string {
   return typeof node.name === "string" ? node.name : "";
@@ -146,7 +150,7 @@ export class TypeScriptAstTranslator {
       end: node.end,
       parent,
       importClause: undefined,
-      moduleSpecifier: undefined as unknown as DomainAstNode,
+      moduleSpecifier: PENDING_NODE,
     };
 
     if (specifiers.length > 0) {
@@ -199,7 +203,7 @@ export class TypeScriptAstTranslator {
       pos: specifier.start,
       end: specifier.end,
       parent,
-      name: undefined as unknown as DomainIdentifier,
+      name: PENDING_IDENTIFIER,
     };
     self.name = this.translateIdentifier(local, self);
     return self;
@@ -228,7 +232,7 @@ export class TypeScriptAstTranslator {
       end: specifier.end,
       parent,
       propertyName: undefined,
-      name: undefined as unknown as DomainIdentifier,
+      name: PENDING_IDENTIFIER,
     };
     if (imported && imported.type === "Identifier" && nodeName(imported) !== nodeName(local)) {
       self.propertyName = this.translateIdentifier(imported, self);
@@ -293,7 +297,7 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          expression: undefined as unknown as DomainAstNode,
+          expression: PENDING_NODE,
           arguments: [],
         };
         self.expression = this.translateNode(callee, self);
@@ -311,8 +315,8 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          expression: undefined as unknown as DomainAstNode,
-          name: undefined as unknown as DomainIdentifier,
+          expression: PENDING_NODE,
+          name: PENDING_IDENTIFIER,
         };
         self.expression = this.translateNode(object, self);
         self.name = this.translateNode(property, self) as DomainIdentifier;
@@ -347,8 +351,8 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          name: undefined as unknown as DomainAstNode,
-          initializer: undefined as unknown as DomainAstNode,
+          name: PENDING_NODE,
+          initializer: PENDING_NODE,
         };
         self.name = this.translateNode(key, self);
         self.initializer = this.translateNode(value, self);
@@ -379,7 +383,7 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          expression: undefined as unknown as DomainAstNode,
+          expression: PENDING_NODE,
         };
         self.expression = this.translateNode(argument, self);
         return self;
@@ -391,7 +395,7 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          expression: undefined as unknown as DomainAstNode,
+          expression: PENDING_NODE,
         };
         self.expression = this.translateNode(expression, self);
         return self;
@@ -403,7 +407,7 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          expression: undefined as unknown as DomainAstNode,
+          expression: PENDING_NODE,
         };
         self.expression = this.translateNode(expression, self);
         return self;
@@ -415,7 +419,7 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          expression: undefined as unknown as DomainAstNode,
+          expression: PENDING_NODE,
         };
         self.expression = this.translateNode(expression, self);
         return self;
@@ -427,7 +431,7 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          expression: undefined as unknown as DomainAstNode,
+          expression: PENDING_NODE,
         };
         self.expression = this.translateNode(expression, self);
         return self;
@@ -441,9 +445,9 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          condition: undefined as unknown as DomainAstNode,
-          whenTrue: undefined as unknown as DomainAstNode,
-          whenFalse: undefined as unknown as DomainAstNode,
+          condition: PENDING_NODE,
+          whenTrue: PENDING_NODE,
+          whenFalse: PENDING_NODE,
         };
         self.condition = this.translateNode(test, self);
         self.whenTrue = this.translateNode(consequent, self);
@@ -458,9 +462,9 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          left: undefined as unknown as DomainAstNode,
+          left: PENDING_NODE,
           operator: this.mapBinaryOperator(node.operator),
-          right: undefined as unknown as DomainAstNode,
+          right: PENDING_NODE,
         };
         self.left = this.translateNode(left, self);
         self.right = this.translateNode(right, self);
@@ -473,7 +477,7 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          expression: undefined as unknown as DomainAstNode,
+          expression: PENDING_NODE,
         };
         self.expression = this.translateNode(expression, self);
         return self;
@@ -486,7 +490,7 @@ export class TypeScriptAstTranslator {
           pos,
           end,
           parent,
-          name: undefined as unknown as DomainAstNode,
+          name: PENDING_NODE,
           initializer: undefined,
         };
         self.name = this.translateNode(name, self);
@@ -517,8 +521,9 @@ export class TypeScriptAstTranslator {
   private parseDomainSourceFile(filePath: string, sourceText: string): DomainSourceFile {
     // Best-effort parse to mirror `ts.createSourceFile` leniency — recoverable syntax
     // errors still yield a usable tree, so `parseSync` errors are intentionally ignored.
-    const program = parseSync(filePath, sourceText).program as unknown as OxcProgram;
-    const statements = program.body.map((statement) => this.translateNode(statement, null));
+    const statements = programStatements(parseSync(filePath, sourceText).program).map((statement) =>
+      this.translateNode(statement, null),
+    );
     return {
       fileName: filePath,
       text: sourceText,

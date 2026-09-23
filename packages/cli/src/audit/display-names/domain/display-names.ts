@@ -1,5 +1,6 @@
 /** The display-name convention: a name is spelled like the TS symbol it stands for, under its owner's namespace. */
 import type { DisplayNameViolation } from "#audit/domain/types";
+import { lineOfOffset } from "#core/source-position";
 
 /** The owner: a kebab-case package, app or feature slug, or a scoped package name. */
 const NAMESPACE = /^(?:@[a-z0-9-]+\/)?[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -69,14 +70,4 @@ function reasonFor(kind: DisplayNameKind, name: string): string | null {
   return PASCAL_CASE.test(local)
     ? null
     : `${label} '${local}' in '${name}' is not PascalCase — a ${kind} stands for a ${kind === "token" ? "type" : "unit of composition"}`;
-}
-
-function lineOfOffset(sourceText: string, offset: number): number {
-  let line = 1;
-  for (let index = 0; index < offset; index++) {
-    if (sourceText.charCodeAt(index) === 10) {
-      line++;
-    }
-  }
-  return line;
 }

@@ -56,7 +56,7 @@ function createPackageJsonFilesystemHarness(initialPackageJson: Record<string, u
       async writeFile(filePath, data, _encoding: CliFileEncoding) {
         virtualFiles.set(filePath, data);
       },
-      async readdir() {
+      async readdirEntries() {
         return [];
       },
       async rename(oldPath, newPath) {

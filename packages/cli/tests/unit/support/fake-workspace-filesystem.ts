@@ -27,7 +27,7 @@ export function createWorkspaceFilesystem(options: {
     readdirSync: () => [],
     readFile: async () => "",
     writeFile: async () => {},
-    readdir: async (): Promise<Array<string> | Array<DirectoryEntry>> => [],
+    readdirEntries: async (): Promise<Array<DirectoryEntry>> => [],
     globSync: () => [],
     rename: async () => {},
     unlink: async () => {},

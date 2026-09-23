@@ -20,7 +20,7 @@ function createExistsOnlyFilesystem(existingPaths: Iterable<string>): Filesystem
     globSync: () => unsupported("globSync"),
     readFile: (_filePath: string, _encoding: CliFileEncoding) => Promise.reject(new Error("unsupported: readFile")),
     writeFile: () => Promise.reject(new Error("unsupported: writeFile")),
-    readdir: () => Promise.reject(new Error("unsupported: readdir")),
+    readdirEntries: () => Promise.reject(new Error("unsupported: readdir")),
     rename: () => Promise.reject(new Error("unsupported: rename")),
     unlink: () => Promise.reject(new Error("unsupported: unlink")),
   };
@@ -51,7 +51,7 @@ function createWorkspaceFilesystem(options: {
       return Promise.resolve(content);
     },
     writeFile: () => Promise.reject(new Error("unsupported: writeFile")),
-    readdir: () => Promise.reject(new Error("unsupported: readdir")),
+    readdirEntries: () => Promise.reject(new Error("unsupported: readdir")),
     rename: () => Promise.reject(new Error("unsupported: rename")),
     unlink: () => Promise.reject(new Error("unsupported: unlink")),
   };

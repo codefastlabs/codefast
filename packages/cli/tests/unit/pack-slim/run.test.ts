@@ -37,7 +37,7 @@ function createFakeRepo(files: Record<string, string>): {
     writeFile: async (filePath, data) => {
       store.set(filePath, data);
     },
-    readdir: async (dirPath): Promise<Array<DirectoryEntry>> =>
+    readdirEntries: async (dirPath): Promise<Array<DirectoryEntry>> =>
       [...store.keys()]
         .filter((key) => key.startsWith(`${dirPath}/`))
         .map((key) => ({

@@ -1,11 +1,11 @@
-import type { TagTargetExecutionResult } from "#tag/domain/types";
-
 /**
  * Collects the distinct, non-empty package versions stamped across a run's target results.
  *
  * @since 0.11.0
  */
-export function extractDistinctVersions(targetResults: Array<TagTargetExecutionResult>): Set<string> {
+export function extractDistinctVersions(
+  targetResults: ReadonlyArray<{ readonly result: { readonly version: string } | null }>,
+): Set<string> {
   return new Set(
     targetResults
       .map((targetResult) => targetResult.result?.version)

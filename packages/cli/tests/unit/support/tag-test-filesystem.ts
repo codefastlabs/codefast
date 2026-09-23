@@ -38,7 +38,7 @@ export function createTagTestFilesystem(initial: TagTestFilesystemState): {
     readdirSync: () => [],
     readFile: async () => "",
     writeFile: async () => {},
-    readdir: async (): Promise<Array<string> | Array<DirectoryEntry>> => [],
+    readdirEntries: async (): Promise<Array<DirectoryEntry>> => [],
     rename: async () => {},
     unlink: async () => {},
   };

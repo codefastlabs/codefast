@@ -33,7 +33,7 @@ function createFilesystemHarness(
       async writeFile(p, data, _encoding: CliFileEncoding) {
         virtualFiles.set(p, data);
       },
-      async readdir() {
+      async readdirEntries() {
         return [];
       },
       async rename(oldPath, newPath) {
