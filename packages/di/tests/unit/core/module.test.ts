@@ -22,7 +22,11 @@ describe("Module.fromBindings", () => {
     }
 
     expect(caught).toBeInstanceOf(InvalidBindingDeclarationError);
-    expect((caught as InvalidBindingDeclarationError).tokenName).toBe("module-unit:Forged[1]");
+    expect(caught).toMatchObject({ tokenName: "module-unit:Forged[1]" });
+    // Plain JavaScript can list `null`: still the library's error, never a TypeError from reading it.
+    expect(() => Module.fromBindings("module-unit:Null", [null as unknown as BindingDeclaration])).toThrow(
+      InvalidBindingDeclarationError,
+    );
   });
 
   it("loads what the list held when the module was made", () => {

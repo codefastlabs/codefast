@@ -6,6 +6,7 @@
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 
+import type { BindingChain } from "#container/binding-builders";
 import { Container } from "#container/container";
 import { binding } from "#core/binding-declaration";
 import type { BindingDeclaration } from "#core/binding-declaration";
@@ -100,6 +101,9 @@ function valueOf(index: number): string {
   return `v${String(index)}`;
 }
 
+/** `binding()` as a definition assembled at run time reaches it, one key per spec field. */
+const looseBinding = binding as (key: Key, definition: object) => BindingDeclaration;
+
 function declare(spec: DeclarationSpec, index: number, log: HookLog): BindingDeclaration {
   const key = KEYS[spec.key]!;
   const value = valueOf(index);
@@ -151,7 +155,7 @@ function declare(spec: DeclarationSpec, index: number, log: HookLog): BindingDec
       log.push(`deactivate ${value}`);
     };
   }
-  return (binding as (key: Key, definition: object) => BindingDeclaration)(key, definition);
+  return looseBinding(key, definition);
 }
 
 /**
@@ -159,63 +163,58 @@ function declare(spec: DeclarationSpec, index: number, log: HookLog): BindingDec
  * `when`, `many`, scope, hooks — written without reading the declared path.
  */
 function bindFluently(builder: ModuleBuilder, spec: DeclarationSpec, index: number, log: HookLog): void {
-  const key = KEYS[spec.key]!;
   const value = valueOf(index);
-  const start = builder.bind<unknown>(key);
-  // The chain's step types are what forbid a bad order; this reference drives the one object freely.
-  type Chain = Record<string, (...args: Array<unknown>) => Chain>;
-  let chain: Chain;
+  // `bind()` returns the one builder class. Its step types are what forbid a bad order, and this
+  // reference drives the steps in SPEC's order on the object itself, so it needs the whole class.
+  const chain = builder.bind<unknown>(KEYS[spec.key]!) as BindingChain<unknown>;
   switch (spec.strategy) {
     case "constant":
-      chain = start.toConstantValue(value) as unknown as Chain;
+      chain.toConstantValue(value);
       break;
     case "dynamic":
-      chain = start.toDynamic(() => value) as unknown as Chain;
+      chain.toDynamic(() => value);
       break;
     case "resolved":
-      chain = start.toResolved(
-        (secondary) => `${value}<${String(secondary)}>`,
-        [optional(Secondary)],
-      ) as unknown as Chain;
+      chain.toResolved((secondary) => `${value}<${String(secondary)}>`, [optional(Secondary)]);
       break;
     case "class":
-      chain = start.to(
+      chain.to(
         class extends Built {
           override readonly value = value;
         },
-      ) as unknown as Chain;
+      );
       break;
     case "alias":
-      chain = start.toAlias(AliasTarget) as unknown as Chain;
+      chain.toAlias(AliasTarget);
       break;
     case "self":
-      chain = start.toSelf() as unknown as Chain;
+      chain.toSelf();
       break;
   }
   if (spec.slot === "named") {
-    chain = chain["whenNamed"]!(NAMES[spec.name]);
+    chain.whenNamed(NAMES[spec.name]!);
   } else if (spec.slot === "tagged") {
     for (const criterion of spec.criteria) {
-      chain = chain["whenTagged"]!(CRITERIA[criterion]);
+      chain.whenTagged(CRITERIA[criterion]!);
     }
   }
   if (spec.when !== undefined) {
-    chain = chain["when"]!(PREDICATES[spec.when]);
+    chain.when(PREDICATES[spec.when]!);
   }
   if (spec.slot === "member") {
-    chain = chain["many"]!();
+    chain.many();
   }
   if (spec.scope !== undefined) {
-    chain = chain[spec.scope]!();
+    chain[spec.scope]();
   }
   if (spec.activation) {
-    chain = chain["onActivation"]!((_ctx: unknown, instance: unknown) => {
+    chain.onActivation((_ctx, instance) => {
       log.push(`activate ${value}`);
       return instance;
     });
   }
   if (spec.deactivation) {
-    chain["onDeactivation"]!(() => {
+    chain.onDeactivation(() => {
       log.push(`deactivate ${value}`);
     });
   }
@@ -262,18 +261,18 @@ function attempt(read: () => unknown): unknown {
   try {
     return describeValue(read());
   } catch (error) {
-    return { error: (error as Error).name };
+    return { error: error instanceof Error ? error.name : String(error) };
   }
 }
 
-/** Ids renumbered by rank, since ids are process-wide and the two containers minted theirs apart. */
-function rankIds(ids: ReadonlyArray<BindingIdentifier>): Map<BindingIdentifier, number> {
-  return new Map([...ids].sort((left, right) => left - right).map((id, rank) => [id, rank]));
+/** Ids renumbered by rank, keyed as the graph spells them, since ids are process-wide and each host minted its own. */
+function rankIds(ids: ReadonlyArray<BindingIdentifier>): Map<string, number> {
+  return new Map([...ids].sort((left, right) => left - right).map((id, rank) => [String(id), rank]));
 }
 
 /** A graph with its binding-id node ids renumbered by the same ranks as the snapshot. */
-function rankGraph(graph: ContainerGraphJson, ranks: Map<BindingIdentifier, number>): unknown {
-  const rank = (id: string): string => String(ranks.get(Number(id) as BindingIdentifier) ?? id);
+function rankGraph(graph: ContainerGraphJson, ranks: Map<string, number>): unknown {
+  const rank = (id: string): string => String(ranks.get(id) ?? id);
   const byJson = (left: unknown, right: unknown): number => JSON.stringify(left).localeCompare(JSON.stringify(right));
   return {
     ...graph,
@@ -298,7 +297,7 @@ function observe(container: Container): unknown {
   return {
     // A token's bindings keep registration order; the order between tokens is not a contract.
     bindings: snapshot
-      .map((entry) => ({ ...entry, id: ranks.get(entry.id) }))
+      .map((entry) => ({ ...entry, id: ranks.get(String(entry.id)) }))
       .toSorted((left, right) => left.tokenName.localeCompare(right.tokenName)),
     answers,
     validate: attempt(() => {
@@ -326,7 +325,7 @@ function compareForms(
   { preexisting, declarations }: Run,
   wrap: (module: SyncModule, name: string) => SyncModule,
 ): { declared: Array<unknown>; fluent: Array<unknown> } {
-  const reports = { declared: [] as Array<unknown>, fluent: [] as Array<unknown> };
+  const reports: Record<"declared" | "fluent", Array<unknown>> = { declared: [], fluent: [] };
   for (const form of ["declared", "fluent"] as const) {
     const log: HookLog = [];
     const host = createHost(preexisting, log);

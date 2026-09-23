@@ -13,7 +13,8 @@ export function decoratorMetadataOf(
   context: DecoratorContext,
   decoratorName: string,
 ): Record<string | symbol, unknown> {
-  const metadata = context.metadata as Record<string | symbol, unknown> | undefined;
+  // Widened, not asserted: the lib types promise a record that a runtime without `Symbol.metadata` never hands over.
+  const metadata: DecoratorMetadataObject | null | undefined = context.metadata;
   if (metadata === undefined || metadata === null) {
     throw new MissingDecoratorMetadataError(decoratorName);
   }
