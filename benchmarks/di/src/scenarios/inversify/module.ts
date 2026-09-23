@@ -13,7 +13,7 @@
 import "reflect-metadata";
 import { Container, ContainerModule } from "inversify";
 
-import { isComposedModule } from "#fixtures/sanity";
+import { isComposedModule, isSharedWithinScopeFreshAcross } from "#fixtures/sanity";
 import {
   MODULE_BINDING_COUNT,
   MODULE_COLD_128,
@@ -137,7 +137,13 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
     ...MODULE_COLD_FROM_MODULES,
     what: "new Container() + load(2 ContainerModules) + get root (cold start)",
     batch: 1,
-    sanity: () => runOneColdStart().startsWith("service@postgres://"),
+    sanity: () =>
+      runOneColdStart().startsWith("service@postgres://") &&
+      isSharedWithinScopeFreshAcross(() => {
+        const container = new Container({ jitless: false });
+        container.load(infraModule, appModule);
+        return [container.get<ModuleService>(moduleServiceId), container.get<ModuleService>(moduleServiceId)] as const;
+      }),
     build: () => {
       return () => {
         runOneColdStart();

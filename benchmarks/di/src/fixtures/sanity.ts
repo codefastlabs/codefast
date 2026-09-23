@@ -24,9 +24,10 @@ export function isFreshEachResolve<Value extends object>(
 }
 
 /**
- * Whether a scoped binding is one instance within a scope and a fresh one in the next scope.
+ * Whether a binding is one instance within a scope and a fresh one in the next scope.
  *
- * @remarks `resolveTwiceInFreshScope` opens a new scope and resolves the binding twice inside it.
+ * @remarks `resolveTwiceInFreshScope` opens a new scope — a child for a scoped binding, a fresh container for a
+ * per-container singleton — and resolves the binding twice inside it.
  *
  * @since 0.8.0
  */

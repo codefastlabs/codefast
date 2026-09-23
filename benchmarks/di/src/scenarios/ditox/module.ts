@@ -12,7 +12,7 @@
 import { bindModule, createContainer, token } from "ditox";
 import type { Module, ModuleDeclaration, Token } from "ditox";
 
-import { isComposedModule } from "#fixtures/sanity";
+import { isComposedModule, isSharedWithinScopeFreshAcross } from "#fixtures/sanity";
 import { MODULE_BINDING_COUNT, MODULE_COLD_128, MODULE_COLD_FROM_MODULES } from "#fixtures/scenario-parity";
 import type { BenchScenario } from "#scenarios/types";
 
@@ -68,7 +68,13 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
     ...MODULE_COLD_FROM_MODULES,
     what: "createContainer() + bindModule(app imports infra) + resolve root (cold start)",
     batch: 1,
-    sanity: () => runOneColdStart().startsWith("service@postgres://"),
+    sanity: () =>
+      runOneColdStart().startsWith("service@postgres://") &&
+      isSharedWithinScopeFreshAcross(() => {
+        const container = createContainer();
+        bindModule(container, appModule);
+        return [container.resolve(moduleServiceToken), container.resolve(moduleServiceToken)] as const;
+      }),
     build: () => {
       return () => {
         runOneColdStart();
