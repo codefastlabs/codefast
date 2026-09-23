@@ -36,6 +36,9 @@ describe("a subclass that inherits declared constructor deps", () => {
 
     expect(() => container.resolve(DerivedNoCtor)).toThrow(MissingMetadataError);
     expect(() => container.resolve(DerivedNoCtor)).toThrow(/inherits 1 declared constructor dependency from 'Base'/);
+    // An explicit constructor would be rejected just the same, so the message must not offer it as the way out.
+    expect(() => container.resolve(DerivedNoCtor)).toThrow(/@injectable\(\[\]\) if it takes none/);
+    expect(() => container.resolve(DerivedNoCtor)).not.toThrow(/explicit constructor/);
   });
 
   it("rejects the subclass on the async lane too", async () => {
