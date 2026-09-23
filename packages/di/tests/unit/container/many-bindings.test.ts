@@ -41,8 +41,8 @@ describe("many() bindings", () => {
 
     expect(container.resolve(strategyToken)).toBe(10);
     // `toConstantValue(2)` displaced the default binding for the instant before `many()` freed the
-    // slot again; the restore re-registers it, so it follows the member — as it does after `whenNamed`.
-    expect(container.resolveAll(strategyToken)).toEqual([1, 2, 10]);
+    // slot again; the restore puts it back where it was registered, ahead of the later member.
+    expect(container.resolveAll(strategyToken)).toEqual([1, 10, 2]);
   });
 
   it("neither displace nor are displaced under last-wins", () => {

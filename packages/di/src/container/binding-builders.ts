@@ -25,6 +25,7 @@ import {
   DEFAULT_BINDING_SLOT,
   generateBindingId,
   NO_INSTANCE,
+  UNREGISTERED_ORDER,
 } from "#core/binding";
 import { mergingConstraintRequirements } from "#core/constraint-requirement";
 import type { BindingRegistry } from "#core/registry";
@@ -117,6 +118,7 @@ export class BindingChain<Value, Names extends string = string>
   frame: ResolutionFrame | undefined = undefined;
   rootContext: ResolutionContext | undefined = undefined;
   activationStamp: number = NO_ACTIVATION_STAMP;
+  registrationOrder: number = UNREGISTERED_ORDER;
   instance: unknown = NO_INSTANCE;
   readonly token: Token<Value, Names> | Constructor<Value>;
   slot: BindingSlot = DEFAULT_BINDING_SLOT;

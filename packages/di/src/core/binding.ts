@@ -161,6 +161,13 @@ interface BindingBase<Value> {
    */
   activationStamp: number;
   /**
+   * Where the binding stands in registration order, or {@link UNREGISTERED_ORDER} before its first add.
+   *
+   * @remarks Registry-owned: stamped by the first `add` and kept through every re-slot and restore, so a
+   * binding taken out and put back returns to its place rather than behind later registrations.
+   */
+  registrationOrder: number;
+  /**
    * Cached singleton instance, or {@link NO_INSTANCE}.
    *
    * @remarks A binding belongs to exactly one container, so its singleton slot is per-binding —
@@ -356,6 +363,9 @@ interface MemoizedFrameField {
 
 /** The stamp of a binding whose activation need has not been computed under the current versions. */
 export const NO_ACTIVATION_STAMP = -1;
+
+/** The registration order of a binding no registry has added yet. */
+export const UNREGISTERED_ORDER = -1;
 
 /**
  * Drops the memoized resolution frame, for a refinement that changes what the frame reports.
