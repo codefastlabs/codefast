@@ -8,10 +8,41 @@
       "cache": false
     },
     "//#format:check": {},
-    "//#lint": {},
     "//#knip": {},
+    "//#lint": {},
     "//#lint:fix": {
       "cache": false
+    },
+    "bench": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
+      "passThroughEnv": ["BENCH_*"]
+    },
+    "bench:ab": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
+      "passThroughEnv": ["BENCH_*"]
+    },
+    "bench:baseline": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
+      "passThroughEnv": ["BENCH_*"]
+    },
+    "bench:fast": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
+      "passThroughEnv": ["BENCH_*"]
+    },
+    "bench:list": {
+      "cache": false
+    },
+    "bench:report": {
+      "cache": false
+    },
+    "bench:serve": {
+      "cache": false,
+      "persistent": true,
+      "passThroughEnv": ["BENCH_*", "PORT"]
     },
     "build": {
       "dependsOn": ["^build"],
@@ -63,37 +94,6 @@
     "test:watch": {
       "cache": false,
       "persistent": true
-    },
-    "bench": {
-      "cache": false,
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
-      "passThroughEnv": ["BENCH_*"]
-    },
-    "bench:ab": {
-      "cache": false,
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
-      "passThroughEnv": ["BENCH_*"]
-    },
-    "bench:baseline": {
-      "cache": false,
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
-      "passThroughEnv": ["BENCH_*"]
-    },
-    "bench:fast": {
-      "cache": false,
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
-      "passThroughEnv": ["BENCH_*"]
-    },
-    "bench:list": {
-      "cache": false
-    },
-    "bench:report": {
-      "cache": false
-    },
-    "bench:serve": {
-      "cache": false,
-      "persistent": true,
-      "passThroughEnv": ["BENCH_*", "PORT"]
     }
   }
 }
