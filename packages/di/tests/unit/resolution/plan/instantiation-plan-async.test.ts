@@ -60,13 +60,20 @@ describe("async instantiation plans", () => {
   });
 
   it("awaits a promise-valued constant exactly as the interpreted path does", async () => {
-    const setting = token<number>("async-plan.promise-constant");
+    const setting = token<Promise<number>>("async-plan.promise-constant");
     const root = token<number>("async-plan.promise-constant.root");
     const container = Container.create();
-    container.bind(setting).toConstantValue(Promise.resolve(41) as unknown as number);
+    container.bind(setting).toConstantValue(Promise.resolve(41));
     container
       .bind(root)
-      .toResolvedAsync(async (value: number) => value + 1, [setting])
+      .toResolvedAsync(
+        async (value) => {
+          // The async lane hands a factory the settled value, which the dependency's type does not say.
+          expect(value).toBe(41);
+          return 42;
+        },
+        [setting],
+      )
       .transient();
 
     expect(await container.resolveAsync(root)).toBe(42);

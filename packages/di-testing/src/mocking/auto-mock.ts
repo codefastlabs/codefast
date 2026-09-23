@@ -239,5 +239,5 @@ export function createAutoMock<Dependency, Backend extends MockFunction = Spy>(
 
   self = proxy;
 
-  return proxy as unknown as Mocked<Dependency, Backend>;
+  return proxy as Mocked<Dependency, Backend>;
 }

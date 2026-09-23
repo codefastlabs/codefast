@@ -6,7 +6,7 @@ describe("skipToChartTarget", () => {
   it("scrolls and focuses the target element", () => {
     const scrollIntoView = vi.fn();
     const focus = vi.fn();
-    const target = { scrollIntoView, focus } as unknown as HTMLElement;
+    const target = { scrollIntoView, focus };
 
     skipToChartTarget(target);
 

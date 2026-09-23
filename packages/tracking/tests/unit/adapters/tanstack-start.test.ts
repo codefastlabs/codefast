@@ -111,7 +111,7 @@ describe("recordConsentReceiptFromRequest", () => {
   function fakeStore(): { append: ReturnType<typeof vi.fn>; store: ReceiptStore } {
     const append = vi.fn<(receipt: unknown) => Promise<void>>(() => Promise.resolve());
 
-    return { append, store: { append } as unknown as ReceiptStore };
+    return { append, store: { append, get: () => undefined } };
   }
 
   it("appends a coarsened-IP receipt, stamps no-store, and returns a PII-free ack", async () => {

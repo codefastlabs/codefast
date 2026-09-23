@@ -2,9 +2,16 @@
  * Category-axis initial window + toolbar disabled state for the bench chart (Chart.js +
  * chartjs-plugin-zoom). Keeps scale bounds logic DRY between imperative chart setup and UI.
  */
-import type { Chart } from "chart.js";
-
 import { CHART_CATEGORY_VIEW_EPS, CHART_MIN_X_SPAN_FOR_ZOOM_IN } from "#app/lib/constants";
+
+/**
+ * The part of a chart the window helpers read: each scale's current bounds, the `x` one among them.
+ *
+ * @remarks A Chart.js `Chart` is one; a test hands over only the bounds it sets.
+ */
+export interface ChartScaleWindows {
+  readonly scales: Readonly<Record<string, { readonly min: number; readonly max: number } | undefined>>;
+}
 
 /**
  * The disabled flag for each chart toolbar control at the current zoom/pan window.
@@ -83,7 +90,7 @@ export interface RelativeCategoryView {
  * @since 0.7.2
  */
 export function captureRelativeCategoryView(
-  chart: Chart,
+  chart: ChartScaleWindows,
   initial: { max: number; min: number },
   pointCount: number,
 ): RelativeCategoryView | undefined {
@@ -128,14 +135,14 @@ export function applyRelativeCategoryView(
  * @since 0.3.16-canary.1
  */
 export function computeChartToolbarDisabled(
-  chart: Chart,
+  chart: ChartScaleWindows,
   initial: { max: number; min: number },
   pointCount: number,
 ): ChartToolbarDisabled {
   if (pointCount < 2) {
     return ALL_TOOLBAR_DISABLED;
   }
-  const xScale = chart.scales.x;
+  const xScale = chart.scales["x"];
   if (!xScale || typeof xScale.min !== "number" || typeof xScale.max !== "number") {
     return ALL_TOOLBAR_DISABLED;
   }

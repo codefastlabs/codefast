@@ -414,47 +414,50 @@ describe("AppearanceProvider", () => {
     const OriginalBroadcastChannel = globalThis.BroadcastChannel;
 
     beforeAll(() => {
-      globalThis.BroadcastChannel = class MockBroadcastChannel {
-        readonly name: string;
+      vi.stubGlobal(
+        "BroadcastChannel",
+        class MockBroadcastChannel {
+          readonly name: string;
 
-        constructor(name: string) {
-          this.name = name;
-        }
+          constructor(name: string) {
+            this.name = name;
+          }
 
-        addEventListener(type: string, listener: EventListener): void {
-          if (type !== "message") {
-            return;
+          addEventListener(type: string, listener: EventListener): void {
+            if (type !== "message") {
+              return;
+            }
+            let set = listenersByName.get(this.name);
+            if (!set) {
+              set = new Set();
+              listenersByName.set(this.name, set);
+            }
+            set.add(listener as (event: MessageEvent) => void);
           }
-          let set = listenersByName.get(this.name);
-          if (!set) {
-            set = new Set();
-            listenersByName.set(this.name, set);
-          }
-          set.add(listener as (event: MessageEvent) => void);
-        }
 
-        removeEventListener(type: string, listener: EventListener): void {
-          if (type !== "message") {
-            return;
+          removeEventListener(type: string, listener: EventListener): void {
+            if (type !== "message") {
+              return;
+            }
+            listenersByName.get(this.name)?.delete(listener as (event: MessageEvent) => void);
           }
-          listenersByName.get(this.name)?.delete(listener as (event: MessageEvent) => void);
-        }
 
-        postMessage(data: unknown): void {
-          const set = listenersByName.get(this.name);
-          if (!set) {
-            return;
+          postMessage(data: unknown): void {
+            const set = listenersByName.get(this.name);
+            if (!set) {
+              return;
+            }
+            const event = { data } as MessageEvent;
+            for (const fn of Array.from(set)) {
+              fn(event);
+            }
           }
-          const event = { data } as MessageEvent;
-          for (const fn of Array.from(set)) {
-            fn(event);
-          }
-        }
 
-        close(): void {
-          /* real BC disconnects this port only; listener cleanup uses removeEventListener */
-        }
-      } as unknown as typeof BroadcastChannel;
+          close(): void {
+            /* real BC disconnects this port only; listener cleanup uses removeEventListener */
+          }
+        },
+      );
     });
 
     afterAll(() => {
@@ -568,11 +571,14 @@ describe("AppearanceProvider", () => {
     });
 
     test("does not crash when BroadcastChannel constructor throws", () => {
-      globalThis.BroadcastChannel = class BrokenBroadcastChannel {
-        constructor(_name: string) {
-          throw new Error("constructor blocked");
-        }
-      } as unknown as typeof BroadcastChannel;
+      vi.stubGlobal(
+        "BroadcastChannel",
+        class BrokenBroadcastChannel {
+          constructor(_name: string) {
+            throw new Error("constructor blocked");
+          }
+        },
+      );
 
       expect(() => {
         render(

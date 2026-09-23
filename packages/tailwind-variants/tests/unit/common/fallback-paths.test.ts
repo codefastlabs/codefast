@@ -1,5 +1,11 @@
 import { cx, tv } from "#index";
 
+/** A slot resolver as plain JavaScript reaches one, from a configuration the types would reject. */
+type UntypedSlotsResolver = (props?: Record<string, unknown>) => Record<string, (() => string | undefined) | undefined>;
+
+/** `tv()` taking a configuration as data it has not checked, the way a JavaScript caller hands it one. */
+const untypedSlotsTv = tv as (configuration: object) => UntypedSlotsResolver;
+
 /**
  * The paths taken when the usual assumptions do not hold: a selection space too large to encode, a
  * resolution that produces nothing, a configuration naming something it never declared.
@@ -67,10 +73,10 @@ describe("Fallback Paths", () => {
     }
 
     // A slot map may name one too, and it must be dropped rather than resolve to a prototype member.
-    const odd = tv({
+    const odd = untypedSlotsTv({
       slots: { base: "rounded" },
       variants: { size: { sm: { base: "p-2", toString: "p-9" } } },
-    } as never) as unknown as (props?: Record<string, unknown>) => Record<string, () => string | undefined>;
+    });
 
     expect(odd({ size: "sm" }).base?.()).toBe("rounded p-2");
   });
@@ -157,10 +163,10 @@ describe("Fallback Paths", () => {
 
   test("drops a class map entry naming a slot the configuration never declared", () => {
     // Unreachable through the types, which reject it — but a JavaScript caller still gets here.
-    const card = tv({
+    const card = untypedSlotsTv({
       slots: { base: "rounded", title: "text-xl" },
       variants: { size: { sm: { notASlot: "p-3", title: "text-lg" } } },
-    } as never) as unknown as (props?: Record<string, unknown>) => Record<string, () => string | undefined>;
+    });
 
     const slots = card({ size: "sm" });
 

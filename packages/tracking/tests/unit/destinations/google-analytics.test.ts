@@ -10,6 +10,15 @@ import {
   updateGoogleConsent,
 } from "#destinations/google-analytics";
 
+/** The queue gtag writes to under a custom name, read off `window` by that name. */
+function dataLayerNamed(name: string): Array<ArrayLike<unknown>> {
+  const layer: unknown = Reflect.get(window, name);
+  if (!Array.isArray(layer)) {
+    throw new TypeError(`window carries no data layer named ${name}`);
+  }
+  return layer;
+}
+
 type GtagFunction = (...args: Array<unknown>) => void;
 
 const BOOTSTRAP_CONFIG: ConsentConfig = { policyVersion: "1", requestedCategories: ["analytics"], storageKey: "k" };
@@ -266,7 +275,7 @@ describe("buildGtagConsentBootstrapScript", () => {
 
     runScript(script);
 
-    const customLayer = (window as unknown as { appDataLayer: Array<ArrayLike<unknown>> }).appDataLayer;
+    const customLayer = dataLayerNamed("appDataLayer");
 
     expect(customLayer).toHaveLength(3);
     expect(Array.from(customLayer[0]!)).toEqual([
@@ -352,7 +361,7 @@ describe("ensureGtag / loadGtagScript", () => {
     expect(gtag).toBeTypeOf("function");
     gtag?.("js", new Date());
 
-    const layer = (window as unknown as { appDataLayer: Array<ArrayLike<unknown>> }).appDataLayer;
+    const layer = dataLayerNamed("appDataLayer");
 
     expect(layer).toHaveLength(1);
     expect(Array.from(layer[0]!)[0]).toBe("js");
@@ -366,7 +375,7 @@ describe("ensureGtag / loadGtagScript", () => {
       nonce: "csp-nonce-2",
     });
 
-    const layer = (window as unknown as { appDataLayer: Array<ArrayLike<unknown>> }).appDataLayer;
+    const layer = dataLayerNamed("appDataLayer");
     const configCall = Array.from(layer[1]!);
     const script = document.querySelector(
       'script[src^="https://www.googletagmanager.com/gtag/js"]',

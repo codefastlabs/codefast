@@ -48,9 +48,14 @@ describe("UnitReference.get", () => {
       returns(value: unknown): FakeSinonStub;
       resetHistory(): void;
     }
-    const bed = TestBed.solitary(OrderProcessor, {
-      mockFactory: () => ({}) as unknown as FakeSinonStub,
-    });
+    const fakeSinonStub = (): FakeSinonStub => {
+      const stub: FakeSinonStub = Object.assign((..._args: ReadonlyArray<unknown>): unknown => undefined, {
+        returns: (): FakeSinonStub => stub,
+        resetHistory: (): void => {},
+      });
+      return stub;
+    };
+    const bed = TestBed.solitary(OrderProcessor, { mockFactory: fakeSinonStub });
 
     bed.mock(UserServiceToken).stub((fn) => {
       expectTypeOf(fn()).toHaveProperty("returns");

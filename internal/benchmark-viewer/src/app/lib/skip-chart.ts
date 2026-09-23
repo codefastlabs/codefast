@@ -10,7 +10,7 @@ export const CHART_SKIP_TARGET_ID = "bench-chart-host";
  *
  * @since 0.3.16-canary.3
  */
-export function skipToChartTarget(target: HTMLElement | null): void {
+export function skipToChartTarget(target: Pick<HTMLElement, "scrollIntoView" | "focus"> | null): void {
   if (!target) {
     return;
   }

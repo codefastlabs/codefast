@@ -55,11 +55,12 @@ describe("binding.inFlight is released on every exit path", () => {
   });
 
   it("survives an async factory reached through the sync path", () => {
-    const serviceToken = token<string>("in-flight-async-misuse");
+    // A sync factory the caller let return a promise: the engine, not the type, has to catch it.
+    const serviceToken = token<string | Promise<string>>("in-flight-async-misuse");
     const container = Container.create();
     container
       .bind(serviceToken)
-      .toDynamic((() => Promise.resolve("late")) as unknown as () => string)
+      .toDynamic(() => Promise.resolve("late"))
       .transient();
 
     expect(() => container.resolve(serviceToken)).toThrow(AsyncResolutionError);

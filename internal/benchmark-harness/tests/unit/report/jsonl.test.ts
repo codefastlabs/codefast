@@ -4,6 +4,14 @@ import type { JsonlBenchObservationRow } from "#report/jsonl";
 import { isJsonlBenchObservationRow, jsonlBenchObservationRowToScenarioTrialResult } from "#report/jsonl";
 
 /** A minimal row carrying every field the guard requires, config identity included. */
+/** A row narrowed by the reader's own guard, as the reader narrows every line it parses. */
+function asObservationRow(row: Record<string, unknown>): JsonlBenchObservationRow {
+  if (!isJsonlBenchObservationRow(row)) {
+    throw new Error("the fixture row is no longer a valid observation row");
+  }
+  return row;
+}
+
 function validRow(): Record<string, unknown> {
   return {
     timestampIso: "2026-09-10T00:00:00.000Z",
@@ -69,12 +77,12 @@ describe("isJsonlBenchObservationRow", () => {
 describe("jsonlBenchObservationRowToScenarioTrialResult", () => {
   // Rows written before tiers existed were all contract rows, so the reader says so.
   it("defaults a row without a tier to contract", () => {
-    const result = jsonlBenchObservationRowToScenarioTrialResult(validRow() as unknown as JsonlBenchObservationRow);
+    const result = jsonlBenchObservationRowToScenarioTrialResult(asObservationRow(validRow()));
     expect(result.tier).toBe("contract");
   });
 
   it("keeps the tier a row carries", () => {
-    const row = { ...validRow(), tier: "engine" } as unknown as JsonlBenchObservationRow;
+    const row = asObservationRow({ ...validRow(), tier: "engine" });
     expect(jsonlBenchObservationRowToScenarioTrialResult(row).tier).toBe("engine");
   });
 });
