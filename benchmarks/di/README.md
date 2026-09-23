@@ -18,6 +18,7 @@ workload we optimised for, and a re-runnable way to check the claim" — not as 
 ```bash
 pnpm di:bench            # from the repo root — one subprocess per scenario, libraries interleaved; the lane to cite
 pnpm di:bench:fast       # smoke: one shared process per library, one trial, never a claim
+pnpm di:bench:baseline   # the ledger's pass: full profile, read against the anchor in baselines/
 pnpm di:bench:serve      # browse recorded runs
 ```
 

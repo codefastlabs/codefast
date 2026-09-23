@@ -42,6 +42,7 @@
     "dev": "turbo run dev",
     "di:bench": "turbo run bench --filter=@benchmark/di",
     "di:bench:ab": "turbo run bench:ab --filter=@benchmark/di --",
+    "di:bench:baseline": "turbo run bench:baseline --filter=@benchmark/di",
     "di:bench:fast": "turbo run bench:fast --filter=@benchmark/di",
     "di:bench:list": "turbo run bench:list --filter=@benchmark/di",
     "di:bench:report": "turbo run bench:report --filter=@benchmark/di",
