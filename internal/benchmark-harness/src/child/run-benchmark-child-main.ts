@@ -64,8 +64,8 @@ export type RunBenchmarkChildMainParameters = Readonly<{
 export async function runBenchmarkChildMain(parameters: RunBenchmarkChildMainParameters): Promise<void> {
   const { libraryName, scenarioName, packageRoot, collectScenarios, benchDefaults, mode, trialCount } = parameters;
 
-  // A child is also a supported entry point (`bench:codefast`), so it validates its own environment
-  // rather than trusting a parent to have done it.
+  // A child is also run directly, when a swapped `dist` must skip the parent's rebuild, so it
+  // validates its own environment rather than trusting a parent to have done it.
   assertBenchEnvKeys({ allowInternalKeys: true });
   console.error(formatProgressEvent({ kind: "child-started", scenarioName }));
   const allScenarios = collectScenarios();

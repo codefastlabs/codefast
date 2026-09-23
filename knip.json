@@ -11,6 +11,9 @@
     "benchmarks/di": {
       "entry": ["src/*-benches.ts"]
     },
+    "benchmarks/tailwind-variants": {
+      "entry": ["src/*-benches.ts"]
+    },
     "internal/benchmark-harness": {
       "ignore": ["tests/integration/parent/fixtures/**"],
       "ignoreBinaries": ["bench"]

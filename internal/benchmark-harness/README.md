@@ -145,7 +145,8 @@ pnpm bench:serve      # browse recorded runs (see ../benchmark-viewer)
 ```
 
 Every root script has a `di:` and a `tv:` twin (`pnpm di:bench:fast`, `pnpm tv:bench:list`, …) that filters to one
-suite; the per-library child entries (`bench:<library>`) stay suite-local.
+suite. A per-library child entry has no script of its own: the parent spawns it, and `BENCH_LIBRARY` narrows a run to
+the libraries named.
 
 ## Progress display
 
@@ -156,9 +157,9 @@ child output kept above it. Piped, under `CI`, or with `BENCH_VERBOSE=true`, it 
 plus a "still running" heartbeat after ten quiet seconds, so a log stays readable.
 
 The child does not know which display it feeds. Its stderr lines are the protocol: `src/shared/progress.ts` holds the
-formatter the child prints with and the parser the parent reads with, so `bench:<library>` run alone prints the same
-readable lines a parent consumes, and a round-trip test pins the format. An isolated run counts a library's scenarios
-across its per-scenario children; the scheduler tells the display the total after discovery.
+formatter the child prints with and the parser the parent reads with, so a child run alone prints the same readable
+lines a parent consumes, and a round-trip test pins the format. An isolated run counts a library's scenarios across its
+per-scenario children; the scheduler tells the display the total after discovery.
 
 Both the block and the console report colour their verdicts through `node:util`'s `styleText`, resolved once per stream
 by `createPalette`: a reliable win green, a loss red, a parity or an unreliable cell dim, a finished library green and a
