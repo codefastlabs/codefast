@@ -221,6 +221,12 @@ error reporting and module rollback are the callers that pay for the list, and t
 > promote/demote transitions are pinned by `tests/unit/core/registry.test.ts`, the lazily built id index and record map
 > by `tests/unit/resolution/fast-paths-active.test.ts`; the fast-default shape is held by the benchmark suite's warm
 > resolve rows, which is where it was found.
+>
+> The method is also kept under V8's small-function bytecode threshold, below which a callee is inlined at every call
+> site whatever the inlining budget holds. Any test added to its body — a flag, a cache probe, a check for pending work,
+> even a `??` falling back to a helper — moves it into the budgeted pool, where the resolve lanes that reach it lose it
+> as a whole. [Tried on the lookup lane, and rejected](#tried-on-the-lookup-lane-and-rejected) is what that cost looked
+> like.
 
 Within a record, a bind's last-wins displacement is answered by slot index, never a list walk. A slot holds one
 occupant, so the record names it three ways: the default slot in `defaultOccupant`, a one-criterion slot in the `simple`
@@ -798,14 +804,16 @@ section before changing what the table describes.
 
 **Model and types**
 
-| Invariant                                                                                                                                | Pinned by                                                                                 | Where                                                                                         |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.    | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Binding list](#a-tokens-binding-list-appends-in-place-and-replaces-on-removal)               |
-| Internal lanes take `Binding` and return `unknown`; only the eight public entry points name `Value`. Lifecycle hooks stay method syntax. | `tests/types/binding-variance.test.ts`                                                    | [Value-type erasure](#the-engine-erases-the-value-type)                                       |
-| `frame` is cleared whenever `scope` is refined in place.                                                                                 | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#the-memoised-frame-and-scope-refinement)                              |
-| Chain refinements are absent from `bind()`'s type **and** throw before `to*()`.                                                          | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#the-fluent-chain-one-object-one-registration)                             |
-| One binding belongs to one container; the singleton slot lives on the binding.                                                           | `tests/unit/resolution/singleton-on-binding.test.ts`                                      | [Singleton on the binding](#one-binding-one-container-and-the-singleton-slot-that-follows)    |
-| The common token lives in the lone map alone and only the rest keep a record; `getFastDefault()` is one bare `Map.get`.                  | `tests/unit/core/registry.test.ts`, the suite's warm resolve rows                         | [The common token](#the-registry-keeps-the-common-token-in-one-map-and-a-record-for-the-rest) |
+| Invariant                                                                                                                                                       | Pinned by                                                                                 | Where                                                                                         |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.                           | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Binding list](#a-tokens-binding-list-appends-in-place-and-replaces-on-removal)               |
+| Internal lanes take `Binding` and return `unknown`; only the eight public entry points name `Value`. Lifecycle hooks stay method syntax.                        | `tests/types/binding-variance.test.ts`                                                    | [Value-type erasure](#the-engine-erases-the-value-type)                                       |
+| `frame` is cleared whenever `scope` is refined in place.                                                                                                        | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#the-memoised-frame-and-scope-refinement)                              |
+| Chain refinements are absent from `bind()`'s type **and** throw before `to*()`.                                                                                 | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#the-fluent-chain-one-object-one-registration)                             |
+| One binding belongs to one container; the singleton slot lives on the binding.                                                                                  | `tests/unit/resolution/singleton-on-binding.test.ts`                                      | [Singleton on the binding](#one-binding-one-container-and-the-singleton-slot-that-follows)    |
+| The common token lives in the lone map alone and only the rest keep a record; `getFastDefault()` is one bare `Map.get`.                                         | `tests/unit/core/registry.test.ts`, the suite's warm resolve rows                         | [The common token](#the-registry-keeps-the-common-token-in-one-map-and-a-record-for-the-rest) |
+| Every lookup agrees with a history-free model of the bindings, across any sequence of binds, refinements, removals and rebinds on containers that share tokens. | `tests/integration/binding-lookup-parity.test.ts`                                         | [Tried on the lookup lane](#tried-on-the-lookup-lane-and-rejected)                            |
+| A module-scoped token keeps no disposed or displaced container reachable.                                                                                       | `tests/integration/container-retention.test.ts`                                           | [Tried on the lookup lane](#tried-on-the-lookup-lane-and-rejected)                            |
 
 **Selection and lookup**
 
@@ -907,6 +915,31 @@ drops every check that reads the field.
 > where every first criterion-carrying resolve of a token buys a map it will not read again. Measure fresh vs warm if
 > you revisit this; the deferred inner map in [Lookup caches](#lookup-caches-and-inline-caches) is what that measurement
 > produced.
+
+### Tried on the lookup lane, and rejected
+
+Two restructurings of the registry's hot lookup were built, gated by `tests/integration/binding-lookup-parity.test.ts`
+and `tests/integration/container-retention.test.ts`, measured with paired A/B passes against a same-build A/A, and
+dropped. Each looked like a win in isolation; both paid on every resolve for something only binding or a narrow lane
+gained. They are recorded so the next attempt starts from here.
+
+- **A lookup cache on the token.** A token carried a slot naming the binding a registry last answered it with, checked
+  against a `loneRegistry` field on the binding, so a hit skipped the hash. The check, or the flag choosing whether a
+  registry used the cache at all, took `getFastDefault()` past the small-function threshold; where it stayed small, a
+  root's resolve won in one call-site context and lost in another. Every variant also paid on a lane it could not serve:
+  a child-owned binding read hot, a per-request child seating a cache it never read again, a token rebound before each
+  single read writing into a long-lived object.
+- **Filing registrations lazily.** A bind appended to a log the registry filed on its next read, skipping the last-wins
+  probe while nothing had been read. Binding-only work sped up and the cold bind-then-resolve path a little, but a read
+  then has to know whether a log is waiting. That test sat either in `getFastDefault()`, past the threshold, or at every
+  entry point a resolve can start from, which is every resolve. Equivalence with immediate registration also took a
+  differential test to hold: a displacement is decided when the displacer registers, and any later write invalidates
+  what it parked.
+
+What would move registration's cost is an API that registers without a chain object per binding — a bulk form — which is
+a decision for the [specification](SPEC.md), not a change to the engine. Resolution outnumbers registration by orders of
+magnitude in any application, so a shape that taxes the resolve lane to shorten the bind lane is the wrong trade even
+where the bind rows show it winning.
 
 ### Shapes described elsewhere that are perf decisions
 
