@@ -1,4 +1,5 @@
 import type { BindingScope, Constructor } from "#core/types";
+import { decoratorMetadataOf } from "#decorators/decorator-metadata";
 import type { InjectableDependency, ResolvedDependencyValue } from "#injection/descriptor";
 import { normalizeToDescriptor } from "#injection/descriptor";
 import { INJECTABLE_KEY } from "#metadata/metadata-keys";
@@ -98,6 +99,7 @@ export function injectable(
   options?: InjectableOptions,
 ): (target: never, context: ClassDecoratorContext) => void {
   return function (target: never, context: ClassDecoratorContext): void {
+    const meta = decoratorMetadataOf(context, "injectable");
     const parameterMetadataList: Array<ParamMetadata> = (deps ?? []).map((dependency, index) => {
       const descriptor = normalizeToDescriptor(dependency);
       const baseParameterMetadata: Pick<ParamMetadata, "index" | "token" | "optional" | "multi"> = {
@@ -120,7 +122,7 @@ export function injectable(
 
     // Field decorators run before the class decorator — accessor @inject entries are
     // already on context.metadata by the time this runs.
-    (context.metadata as Record<string | symbol, unknown>)[INJECTABLE_KEY] = {
+    meta[INJECTABLE_KEY] = {
       params: parameterMetadataList,
     };
 

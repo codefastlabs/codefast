@@ -135,6 +135,11 @@
       "types": "./dist/core/types.d.ts",
       "import": "./dist/core/types.js"
     },
+    "./decorators/decorator-metadata": {
+      "source": "./src/decorators/decorator-metadata.ts",
+      "types": "./dist/decorators/decorator-metadata.d.ts",
+      "import": "./dist/decorators/decorator-metadata.js"
+    },
     "./decorators/inject": {
       "source": "./src/decorators/inject.ts",
       "types": "./dist/decorators/inject.d.ts",
