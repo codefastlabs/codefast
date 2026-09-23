@@ -154,8 +154,9 @@ live `pnpm di:bench` and `pnpm di:bench:serve`.
 
 ## Decisions (locked 2026-09-10)
 
-1. **`latest` pointer form** — a one-line `latest.json` = `{ runId }`. Safe on every filesystem and in git; costs one
-   extra read to resolve. No data is copied.
+1. **`latest` pointer form** — one `latest.json` mapping each run configuration key to `{ runId }`. Safe on every
+   filesystem and in git; costs one extra read to resolve. No data is copied. One pointer per configuration, because a
+   diff only compares runs of one configuration and a pass of another must not displace its target.
 2. **`report.json`** — dropped entirely; the comparison document and the markdown are derived on demand (in the viewer
    and via `bench:report`). Nothing aggregated is persisted next to the trials.
 3. **Intra-library comparison** — declared with `comparesWithin: "<group>"` on a scenario, naming the comparison set

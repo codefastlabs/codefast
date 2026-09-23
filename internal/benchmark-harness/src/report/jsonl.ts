@@ -1,6 +1,6 @@
 import type { BenchScenarioTier } from "#child/bench-scenario";
 import { DEFAULT_BENCH_SCENARIO_TIER } from "#child/bench-scenario";
-import type { BenchRunShape } from "#shared/env-keys";
+import type { BenchRunConfiguration, BenchRunShape } from "#shared/env-keys";
 import type { Fingerprint, ScenarioTrialResult, TrialPayload } from "#shared/protocol";
 
 /**
@@ -99,25 +99,26 @@ export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchO
 }
 
 /**
- * Derives a stable partition key for the run configuration a row was measured under.
+ * Derives a stable partition key for a run configuration, such as the one a row was measured under.
  *
- * @remarks Runs sharing a key are comparable; a key change marks a boundary a chart must not cross.
+ * @remarks Runs sharing a key are comparable: a chart must not cross a key change, a diff refuses
+ * one, and `latest.json` keeps one pointer per key.
  *
  * @since 0.9.0
  */
-export function benchConfigKeyOfRow(row: JsonlBenchObservationRow): string {
-  return `${row.isolated ? "iso" : "shared"}|${row.mode}|t${row.trialCount}`;
+export function benchConfigKey(configuration: BenchRunConfiguration): string {
+  return `${configuration.isolated ? "iso" : "shared"}|${configuration.mode}|t${configuration.trialCount}`;
 }
 
 /**
- * Derives a human label for the run configuration a row was measured under.
+ * Derives a human label for a run configuration.
  *
  * @since 0.9.0
  */
-export function benchConfigLabelOfRow(row: JsonlBenchObservationRow): string {
-  const shape = row.isolated ? "isolated" : "shared";
-  const trials = row.trialCount === 1 ? "1 trial" : `${row.trialCount} trials`;
-  return `${shape} · ${row.mode} · ${trials}`;
+export function benchConfigLabel(configuration: BenchRunConfiguration): string {
+  const shape = configuration.isolated ? "isolated" : "shared";
+  const trials = configuration.trialCount === 1 ? "1 trial" : `${configuration.trialCount} trials`;
+  return `${shape} · ${configuration.mode} · ${trials}`;
 }
 
 /**

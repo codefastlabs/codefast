@@ -36,9 +36,10 @@ run rebuilds `@codefast/tailwind-variants` first, so it measures the working tre
 | `PORT=<n>`                      | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process    |
 
 Every run writes a timestamped directory under `bench-results/` (git-ignored) holding one file, `observations.jsonl`,
-and — for a whole-suite run — points `bench-results/latest.json` at it. `report.md` and `report.json` are derived on
-demand: `pnpm bench:report [run]` rebuilds them from a run's observations, and `pnpm bench:serve` offers them as
-downloads. A run narrowed with `BENCH_ONLY` or `BENCH_LIBRARY` does not move `latest.json`.
+and — for a whole-suite run — points its configuration's entry in `bench-results/latest.json` at it, one pointer per
+profile, shape and trial count. `report.md` and `report.json` are derived on demand: `pnpm bench:report [run]` rebuilds
+them from a run's observations, and `pnpm bench:serve` offers them as downloads. A run narrowed with `BENCH_ONLY` or
+`BENCH_LIBRARY` does not move `latest.json`.
 
 ## What it measures
 
@@ -117,8 +118,8 @@ drift over the run no longer lands on whoever was scheduled last. The report's E
 used. `pnpm bench:fast` runs one process per library with nothing to interleave, so its ratios stay provisional.
 
 The console closes with a scoreboard — `W · P · L`, comparable count, median, geomean and worst loss per competitor — a
-geomean per group, the reliable losses, a diff against the run `latest.json` names when it is the same configuration on
-this machine, and a run card with timing, profile, sanity failures and versions. The per-scenario table is one
+geomean per group, the reliable losses, a diff against the previous whole-suite run of the same configuration on this
+machine, and a run card with timing, profile, sanity failures and versions. The per-scenario table is one
 `BENCH_VERBOSE=true` or `pnpm bench:report` away.
 
 ## Documentation
