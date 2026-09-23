@@ -85,7 +85,7 @@ export const BENCH_LIBRARY_ENV_KEY = "BENCH_LIBRARY";
 export const BENCH_TIER_ENV_KEY = "BENCH_TIER";
 /**
  * Pins the run the report diffs against: a run id or directory under `bench-results/`, instead of the
- * run `latest.json` names.
+ * run the configuration's `latest.json` pointer names.
  *
  * @remarks For the question "did the rewrite hold the line" — pin the last run of the old engine and
  * every later run reads its `Δ` against that run, however many runs land in between.
@@ -107,7 +107,7 @@ export const OBSERVATIONS_FILE_NAME = "observations.jsonl";
 export const BENCH_RESULTS_DIR_NAME = "bench-results";
 
 /**
- * File in the bench-results root that points at the newest whole-suite run by its id.
+ * File in the bench-results root that maps each run configuration to its newest whole-suite run.
  *
  * @since 0.9.0
  */
@@ -333,6 +333,16 @@ export interface BenchRunShape {
 }
 
 /**
+ * A run's whole configuration identity: its shape plus its trial count.
+ *
+ * @remarks Two runs are comparable only when all three agree, so each configuration keeps its own
+ * `latest.json` pointer.
+ */
+export interface BenchRunConfiguration extends BenchRunShape {
+  readonly trialCount: number;
+}
+
+/**
  * Resolves the env-derived half of a run's configuration identity: its execution shape and profile.
  *
  * @remarks The one resolver the JSONL writer and the comparison `run` block share, so the config
@@ -443,7 +453,7 @@ export function resolveTierFilterFromEnvironment(): BenchScenarioTier | undefine
 }
 
 /**
- * Resolves the pinned baseline run from {@link BENCH_BASELINE_ENV_KEY}; `undefined` means diff against `latest.json`.
+ * Resolves the pinned baseline run from {@link BENCH_BASELINE_ENV_KEY}; `undefined` means diff against the pointer.
  *
  * @since 0.9.0
  */

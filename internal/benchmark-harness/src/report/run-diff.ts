@@ -1,11 +1,11 @@
 /** The change since the previous comparable run: per scenario against noise, and per competitor aggregate. */
-import { readRunObservations, resolveRunDirectory } from "#parent/bench-run-artifacts";
+import { readRunObservations, resolveLatestRunDirectory, resolveRunDirectory } from "#parent/bench-run-artifacts";
 import { buildLibraryReport } from "#report/aggregate";
 import type { ComparisonLibrary } from "#report/comparison";
 import { summarizeComparison } from "#report/comparison";
-import { parseRunObservations } from "#report/jsonl";
+import { benchConfigKey, benchConfigLabel, parseRunObservations } from "#report/jsonl";
 import { isThroughputAboveNoiseCeiling, NOISY_IQR_FRACTION } from "#report/reliability";
-import type { BenchRunShape } from "#shared/env-keys";
+import type { BenchRunConfiguration, BenchRunShape } from "#shared/env-keys";
 import { resolveBaselineRunFromEnvironment } from "#shared/env-keys";
 import type { Fingerprint, TrialPayload } from "#shared/protocol";
 
@@ -119,39 +119,33 @@ export function formatCompactHz(hzPerOp: number): string {
   return String(Math.round(hzPerOp));
 }
 
-function configKey(shape: BenchRunShape, trialCount: number): string {
-  return `${shape.isolated ? "iso" : "shared"}|${shape.mode}|t${String(trialCount)}`;
-}
-
-function configLabel(shape: BenchRunShape, trialCount: number): string {
-  return `${shape.isolated ? "isolated" : "shared"} · ${shape.mode} · ${String(trialCount)} trial${trialCount === 1 ? "" : "s"}`;
-}
-
 function sameEnvironment(left: Fingerprint, right: Fingerprint): boolean {
   return left.cpuModel === right.cpuModel && left.nodeVersion === right.nodeVersion && left.arch === right.arch;
 }
 
 /**
- * Reads the run to diff against: the one `requested` names, else the one `latest.json` names.
+ * Reads the run to diff against: the one `requested` names, else the newest whole-suite run of the same configuration.
  *
- * @remarks Call it before the current run moves the pointer, so it still names the run before this
- * one. A missing or unreadable pointer reads as no previous run; a requested run that cannot be read
- * throws, since a mistyped baseline must not silently become a diff against something else.
+ * @remarks Call it before the current run moves its pointer, so it still names the run before this
+ * one. No pointer for the configuration reads as no previous run; a requested run that cannot be
+ * read throws, since a mistyped baseline must not silently become a diff against something else.
  *
  * @param packageRootDirectory - The suite package; `bench-results/` is resolved under it.
+ * @param configuration - The current run's; it picks the pointer, and a pinned run is still checked against it later.
  * @param requested - A run id or directory to pin, or omitted for the pointer.
  *
  * @since 0.9.0
  */
-export function readPreviousRun(packageRootDirectory: string, requested?: string): PreviousRun | undefined {
+export function readPreviousRun(
+  packageRootDirectory: string,
+  configuration: BenchRunConfiguration,
+  requested?: string,
+): PreviousRun | undefined {
   const pinned = requested !== undefined;
-  let resolved: ReturnType<typeof resolveRunDirectory>;
-  try {
-    resolved = resolveRunDirectory(packageRootDirectory, requested);
-  } catch (error) {
-    if (pinned) {
-      throw error;
-    }
+  const resolved = pinned
+    ? resolveRunDirectory(packageRootDirectory, requested)
+    : resolveLatestRunDirectory(packageRootDirectory, configuration);
+  if (resolved === undefined) {
     return undefined;
   }
   const { libraries, shape } = parseRunObservations(readRunObservations(resolved.runDirectory));
@@ -180,14 +174,14 @@ export function buildRunDiff(current: CurrentRun, previous: PreviousRun): RunDif
       reason: "the previous run has no rows for the subject",
     };
   }
-  const currentKey = configKey(current.shape, current.trialCount);
-  const previousKey = configKey(previous.shape, previous.trialCount);
-  if (currentKey !== previousKey) {
+  const currentConfiguration: BenchRunConfiguration = { ...current.shape, trialCount: current.trialCount };
+  const previousConfiguration: BenchRunConfiguration = { ...previous.shape, trialCount: previous.trialCount };
+  if (benchConfigKey(currentConfiguration) !== benchConfigKey(previousConfiguration)) {
     return {
       comparable: false,
       previousRunId: previous.runId,
       pinned: previous.pinned,
-      reason: `it ran ${configLabel(previous.shape, previous.trialCount)}, this run is ${configLabel(current.shape, current.trialCount)}`,
+      reason: `it ran ${benchConfigLabel(previousConfiguration)}, this run is ${benchConfigLabel(currentConfiguration)}`,
     };
   }
   if (!sameEnvironment(current.pivot.report.fingerprint, previousPivot.fingerprint)) {
@@ -272,13 +266,17 @@ export function buildRunDiff(current: CurrentRun, previous: PreviousRun): RunDif
 /**
  * Reads the previous run and diffs the current one against it, for a suite's parent entry.
  *
- * @remarks Call it before the artifacts are written, while `latest.json` still names the run before
- * this one. `BENCH_BASELINE` pins the run instead, so a rewrite can be read against the last run of
- * the engine it replaces however many runs land in between.
+ * @remarks Call it before the artifacts are written, while this configuration's pointer still names
+ * the run before this one. `BENCH_BASELINE` pins the run instead, so a rewrite can be read against
+ * the last run of the engine it replaces however many runs land in between.
  *
  * @since 0.9.0
  */
 export function prepareRunDiff(packageRootDirectory: string, current: CurrentRun): RunDiff | undefined {
-  const previous = readPreviousRun(packageRootDirectory, resolveBaselineRunFromEnvironment());
+  const previous = readPreviousRun(
+    packageRootDirectory,
+    { ...current.shape, trialCount: current.trialCount },
+    resolveBaselineRunFromEnvironment(),
+  );
   return previous === undefined ? undefined : buildRunDiff(current, previous);
 }

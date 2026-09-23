@@ -40,7 +40,7 @@ measures the working tree rather than a stale `dist/`.
 | `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use                                    |
 | `BENCH_LIBRARY=<name>`  | Restrict the run to these libraries, comma-separated; `@codefast/di` must be among them                           |
 | `BENCH_TIER=<tier>`     | Restrict the run to `contract` rows (public API, compared across libraries) or `engine` rows (ours alone)         |
-| `BENCH_BASELINE=<run>`  | Diff against this run id, or a directory of runs — its newest member — instead of what `latest.json` names        |
+| `BENCH_BASELINE=<run>`  | Diff against this run id, or a directory of runs — its newest member — instead of the `latest.json` pointer       |
 | `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                                                  |
 | `PORT=<n>`              | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                              |
 
@@ -48,12 +48,13 @@ Switches compose with the lanes: `BENCH_MODE=full pnpm bench` is what `bench:bas
 reads against whatever run landed before instead.
 
 Every run writes a timestamped directory under `bench-results/` (git-ignored) holding one file, `observations.jsonl`,
-and — for a whole-suite run — points `bench-results/latest.json` at it. `report.md` and `report.json` are derived on
-demand: `pnpm bench:report [run]` rebuilds them from a run's observations (newest by default), and `pnpm bench:serve`
-offers them as downloads. The JSONL carries every per-trial figure a report summarises — including each cell's IQR — and
-stamps every row with the run's profile, isolation and trial count, so a report derived from disk records the
-configuration the run actually used. A run narrowed with `BENCH_ONLY`, `BENCH_TIER` or `BENCH_LIBRARY` does not move
-`latest.json`.
+and — for a whole-suite run — points its configuration's entry in `bench-results/latest.json` at it: one pointer per
+profile, shape and trial count, so a `bench:baseline` pass never displaces the run a plain `bench` diffs against.
+`report.md` and `report.json` are derived on demand: `pnpm bench:report [run]` rebuilds them from a run's observations
+(newest by default), and `pnpm bench:serve` offers them as downloads. The JSONL carries every per-trial figure a report
+summarises — including each cell's IQR — and stamps every row with the run's profile, isolation and trial count, so a
+report derived from disk records the configuration the run actually used. A run narrowed with `BENCH_ONLY`, `BENCH_TIER`
+or `BENCH_LIBRARY` does not move `latest.json`.
 
 ## How it is put together
 
@@ -119,7 +120,7 @@ of work declares `excludeFromAggregates` and stays in the table but out of the m
 
 The run ends with a scoreboard rather than the per-scenario table: one row per competitor with `W · P · L`, the
 comparable count, the median and geomean ratio and the worst loss; a geomean per group with a column per competitor; and
-the reliable losses one per line, the `†` ones counted rather than listed. When `bench-results/latest.json` names a run
+the reliable losses one per line, the `†` ones counted rather than listed. When `bench-results/latest.json` holds a run
 of the same profile, shape and trial count on this machine, each aggregate gains a `Δ prev` over the rows both runs
 measured and the regressions and improvements beyond noise are listed row by row, each with its throughput now and
 before — the A/B question the guide asks, answered on the spot. A closing card states the timing, the profile, the run

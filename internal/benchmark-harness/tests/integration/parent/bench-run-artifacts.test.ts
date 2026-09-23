@@ -1,10 +1,16 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { buildBenchRunOutputPaths, resolveRunDirectory, writeBenchRunArtifacts } from "#parent/bench-run-artifacts";
+import type { BenchRunOutputPaths } from "#parent/bench-run-artifacts";
+import {
+  buildBenchRunOutputPaths,
+  resolveLatestRunDirectory,
+  resolveRunDirectory,
+  writeBenchRunArtifacts,
+} from "#parent/bench-run-artifacts";
 import type { ComparisonDocument } from "#report/comparison-document";
 import { OBSERVATIONS_FILE_NAME } from "#shared/env-keys";
 
@@ -51,6 +57,15 @@ function write(comparisonDocument: ComparisonDocument): ReturnType<typeof buildB
   return paths;
 }
 
+// A fixed run id, so two writes in one millisecond still land in two directories.
+function writeAs(runId: string, run: Partial<ComparisonDocument["run"]>): BenchRunOutputPaths {
+  const base = buildBenchRunOutputPaths(temporaryRoot);
+  const runDirectory = join(dirname(base.latestPointerPath), runId);
+  const paths = { ...base, runId, runDirectory, jsonlPath: join(runDirectory, OBSERVATIONS_FILE_NAME) };
+  writeBenchRunArtifacts({ paths, comparisonDocument: documentWith({ runId, ...run }), librariesForJsonl: [] });
+  return paths;
+}
+
 describe("writeBenchRunArtifacts", () => {
   beforeEach(() => {
     temporaryRoot = mkdtempSync(join(tmpdir(), "bench-artifacts-"));
@@ -74,10 +89,32 @@ describe("writeBenchRunArtifacts", () => {
     expect(existsSync(join(paths.runDirectory, "report.json"))).toBe(false);
   });
 
-  it("points latest.json at an unfiltered run", () => {
+  it("points its configuration's latest.json entry at an unfiltered run", () => {
     const paths = write(documentWith({}));
     expect(existsSync(paths.latestPointerPath)).toBe(true);
-    expect(JSON.parse(readFileSync(paths.latestPointerPath, "utf8"))).toStrictEqual({ runId: paths.runId });
+    expect(JSON.parse(readFileSync(paths.latestPointerPath, "utf8"))).toStrictEqual({
+      "shared|default|t3": { runId: paths.runId },
+    });
+  });
+
+  it("keeps one pointer per configuration, so a run of one leaves the others where they were", () => {
+    const defaultRun = writeAs("2026-08-12T00-00-00-000Z", {});
+    const fullRun = writeAs("2026-08-12T00-00-01-000Z", { isolated: true, mode: "full" });
+    expect(JSON.parse(readFileSync(fullRun.latestPointerPath, "utf8"))).toStrictEqual({
+      "iso|full|t3": { runId: fullRun.runId },
+      "shared|default|t3": { runId: defaultRun.runId },
+    });
+  });
+
+  // An entry of another shape names no configuration, so the next write drops it rather than carrying it forward.
+  it("reads a pointer entry of another shape as absent and drops it on the next write", () => {
+    const paths = buildBenchRunOutputPaths(temporaryRoot);
+    mkdirSync(dirname(paths.latestPointerPath), { recursive: true });
+    writeFileSync(paths.latestPointerPath, JSON.stringify({ runId: "2026-01-01T00-00-00-000Z" }));
+    writeBenchRunArtifacts({ paths, comparisonDocument: documentWith({ runId: paths.runId }), librariesForJsonl: [] });
+    expect(JSON.parse(readFileSync(paths.latestPointerPath, "utf8"))).toStrictEqual({
+      "shared|default|t3": { runId: paths.runId },
+    });
   });
 
   // latest.json has to mean the whole suite, so a narrowed run must not move it.
@@ -126,6 +163,34 @@ describe("resolveRunDirectory", () => {
 
   afterEach(() => {
     rmSync(temporaryRoot, { force: true, recursive: true });
+  });
+
+  it("resolves no request to the newest run any pointer names, past a newer run no pointer names", () => {
+    const benchResultsRoot = join(temporaryRoot, "bench-results");
+    writeRun(benchResultsRoot, "2026-01-01T00-00-00-000Z");
+    writeRun(benchResultsRoot, "2026-02-01T00-00-00-000Z");
+    writeRun(benchResultsRoot, "2026-03-01T00-00-00-000Z");
+    writeFileSync(
+      join(benchResultsRoot, "latest.json"),
+      JSON.stringify({
+        "iso|default|t3": { runId: "2026-01-01T00-00-00-000Z" },
+        "iso|full|t3": { runId: "2026-02-01T00-00-00-000Z" },
+      }),
+    );
+    expect(resolveRunDirectory(temporaryRoot).runId).toBe("2026-02-01T00-00-00-000Z");
+  });
+
+  // Falling back to the newest directory could hand a diff a narrowed run or another configuration.
+  it("reads a configuration's pointer to a run that is gone as no run", () => {
+    const benchResultsRoot = join(temporaryRoot, "bench-results");
+    writeRun(benchResultsRoot, "2026-03-01T00-00-00-000Z");
+    writeFileSync(
+      join(benchResultsRoot, "latest.json"),
+      JSON.stringify({ "iso|default|t3": { runId: "2026-01-01T00-00-00-000Z" } }),
+    );
+    expect(
+      resolveLatestRunDirectory(temporaryRoot, { isolated: true, mode: "default", trialCount: 3 }),
+    ).toBeUndefined();
   });
 
   it("resolves a directory of runs to its newest member", () => {

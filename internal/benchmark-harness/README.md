@@ -64,13 +64,13 @@ stay comparable.
 ## Run artifacts
 
 A run persists exactly one file. `writeBenchRunArtifacts` writes `observations.jsonl` into a timestamped directory under
-`bench-results/`, and — when the run is the whole suite — points `bench-results/latest.json` at it with a one-line
-`{ runId }`:
+`bench-results/`, and — when the run is the whole suite — points its configuration's entry in
+`bench-results/latest.json` at it:
 
 | File                 | For                                                                                                                       |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `observations.jsonl` | Raw per-trial rows, one per `(library, trial, scenario)`, with the fingerprint and the run's config identity on every row |
-| `latest.json`        | A pointer — the `runId` of the newest whole-suite run                                                                     |
+| `latest.json`        | One pointer per run configuration (shape, profile, trial count): `{ runId }` of its newest whole-suite run                |
 
 The comparison document and the markdown report are **derived on demand**, never persisted next to the trials:
 `parseRunObservations` recovers each library's payloads and the run's shape from the one file, and a suite's
@@ -79,8 +79,8 @@ carries `isolated`, `mode` and `trialCount`, so a report derived from disk recor
 used rather than the shell's.
 
 **A filtered run does not move `latest.json`** — narrowed by scenario, by tier or by library. It writes its own
-directory and says so on stdout; `latest.json` has to mean the whole suite. A run whose subject measured no rows does
-not move it either.
+directory and says so on stdout; each pointer has to mean the whole suite. A run whose subject measured no rows does not
+move it either.
 
 ## Environment keys
 
@@ -100,7 +100,7 @@ dropped for any run started at the repo root — which looks exactly like the ke
 | `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids; a library implementing none of them measures nothing      |
 | `BENCH_TIER=<tier>`    | Restrict the run to one scenario tier, `contract` or `engine`; a narrowed run like `BENCH_ONLY`   |
 | `BENCH_LIBRARY=<name>` | Restrict the run to these libraries, which must include the subject; a narrowed run               |
-| `BENCH_BASELINE=<run>` | Diff against this run id or directory instead of the run `latest.json` names                      |
+| `BENCH_BASELINE=<run>` | Diff against this run id or directory instead of the configuration's `latest.json` pointer        |
 | `BENCH_VERBOSE=true`   | Forward each child's stdout through the parent                                                    |
 | `BENCH_PORT=<n>`       | Preferred port for a suite's `bench:serve`                                                        |
 | `PORT=<n>`             | Read by `bench:serve` when `BENCH_PORT` is unset: the port a launcher hands the process it starts |
@@ -172,18 +172,19 @@ competitor; the reliable losses follow one per line, with the count of losses hi
 throughput noise ceiling. The per-scenario table prints only in verbose mode, and `bench:report` derives it as
 `report.md`.
 
-When `latest.json` names a run of the same configuration — shape, profile and trial count — on the same CPU, Node and
-architecture, the report also diffs against it (`src/report/run-diff.ts`): a `Δ prev` column beside each aggregate,
-computed over the rows both runs measured; a list of regressions beyond noise, where a scenario's subject throughput
-fell by more than the larger of the noise floor and either side's IQR fraction, rows above the noise ceiling excluded;
-and the improvements beyond noise, the same test in the other direction. Both lists print every row in the same columns
-— throughput now, the delta, and what it was — because a jump needs the same scrutiny as a drop: a scenario that
-suddenly runs faster may have stopped doing its work. An empty list says `none`. A run of another configuration is named
-and skipped rather than compared. The previous run is read before the artifacts are written, while the pointer still
-names it. `BENCH_BASELINE=<run id>` pins the run to diff against instead, and the `Δ` labels say `vs baseline <run id>`:
-the question a rewrite has to answer is whether it held the line against the last run of the engine it replaces, and
-that run stops being the previous one the moment the second run lands. A pinned run that cannot be read is an error, not
-a fallback.
+`latest.json` keeps one pointer per configuration — shape, profile and trial count — so a run of one never displaces
+another's. When the pointer for this run's configuration names a run on the same CPU, Node and architecture, the report
+diffs against it (`src/report/run-diff.ts`): a `Δ prev` column beside each aggregate, computed over the rows both runs
+measured; a list of regressions beyond noise, where a scenario's subject throughput fell by more than the larger of the
+noise floor and either side's IQR fraction, rows above the noise ceiling excluded; and the improvements beyond noise,
+the same test in the other direction. Both lists print every row in the same columns — throughput now, the delta, and
+what it was — because a jump needs the same scrutiny as a drop: a scenario that suddenly runs faster may have stopped
+doing its work. An empty list says `none`. A pinned run of another configuration is named and skipped rather than
+compared. The previous run is read before the artifacts are written, while its pointer still names it.
+`BENCH_BASELINE=<run id>` pins the run to diff against instead, and the `Δ` labels say `vs baseline <run id>`: the
+question a rewrite has to answer is whether it held the line against the last run of the engine it replaces, and that
+run stops being the previous one the moment the second run lands. A pinned run that cannot be read is an error, not a
+fallback.
 
 A run closes with a card (`src/report/run-card.ts`): wall and rebuild time, library and row counts, the profile, the run
 order and what it means for citing ratios, sanity failures by library, whether `latest.json` moved, every library's
