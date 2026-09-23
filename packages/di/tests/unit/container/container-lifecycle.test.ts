@@ -116,6 +116,86 @@ describe("unbinding", () => {
   });
 });
 
+describe("unbind by the id of a displaced binding", () => {
+  it("runs a displaced constant's hook once, on unbind", async () => {
+    const serviceToken = token<string>("displaced-unbind-constant");
+    const log: Array<string> = [];
+    const container = Container.create();
+    const displacedId = container
+      .bind(serviceToken)
+      .toConstantValue("displaced")
+      .onDeactivation((value) => {
+        log.push(value);
+      })
+      .id();
+    container.bind(serviceToken).toConstantValue("winner");
+
+    container.unbind(displacedId);
+
+    expect(log).toStrictEqual(["displaced"]);
+    expect(container.resolve(serviceToken)).toBe("winner");
+    await container.dispose();
+    expect(log).toStrictEqual(["displaced"]);
+  });
+
+  it("deactivates a displaced cached singleton once, on unbind", async () => {
+    const serviceToken = token<{ id: string }>("displaced-unbind-singleton");
+    const log: Array<string> = [];
+    const container = Container.create();
+    const displacedId = container
+      .bind(serviceToken)
+      .toDynamic(() => ({ id: "displaced" }))
+      .singleton()
+      .onDeactivation((instance) => {
+        log.push(instance.id);
+      })
+      .id();
+    container.resolve(serviceToken);
+    container.bind(serviceToken).toConstantValue({ id: "winner" });
+
+    container.unbind(displacedId);
+
+    expect(log).toStrictEqual(["displaced"]);
+    await container.dispose();
+    expect(log).toStrictEqual(["displaced"]);
+  });
+
+  it("awaits a displaced singleton's async deactivation on unbindAsync", async () => {
+    const serviceToken = token<{ id: string }>("displaced-unbind-async");
+    const log: Array<string> = [];
+    const container = Container.create();
+    const displacedId = container
+      .bind(serviceToken)
+      .toDynamic(() => ({ id: "displaced" }))
+      .singleton()
+      .onDeactivation(async (instance) => {
+        await Promise.resolve();
+        log.push(instance.id);
+      })
+      .id();
+    container.resolve(serviceToken);
+    container.bind(serviceToken).toConstantValue({ id: "winner" });
+
+    await container.unbindAsync(displacedId);
+
+    expect(log).toStrictEqual(["displaced"]);
+  });
+
+  // The displacing chain still holds the binding parked; a later refinement must not put an
+  // unbound binding back.
+  it("keeps a later refinement from restoring the unbound binding", () => {
+    const serviceToken = token<string>("displaced-unbind-restore");
+    const container = Container.create();
+    const displacedId = container.bind(serviceToken).toConstantValue("displaced").id();
+    const winner = container.bind(serviceToken).toConstantValue("winner");
+
+    container.unbind(displacedId);
+    winner.whenNamed("secondary");
+
+    expect(container.resolveAll(serviceToken)).toStrictEqual(["winner"]);
+  });
+});
+
 describe("sync modules", () => {
   const valueToken = token<string>("module-value");
 

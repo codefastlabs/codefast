@@ -217,8 +217,8 @@ class DefaultContainer implements Container {
   #moduleImports: Map<object, Array<object>> | undefined;
   // One shared registration for every chain this container's own `bind()` creates.
   #registration: BindingRegistration | undefined;
-  // Bindings a plain last-wins bind displaced with a teardown still owed, by id: an unload of the module
-  // that bound one drains it, and dispose runs a constant's hook, which neither the registry nor the cache holds.
+  // Bindings a plain last-wins bind displaced with a teardown still owed, by id: an unbind of that id or an
+  // unload of its module drains it, and dispose runs a constant's hook, which neither the registry nor the cache holds.
   #orphanedBindings: Map<BindingIdentifier, Binding> | undefined;
 
   constructor(parent?: DefaultContainer, options?: ContainerOptions) {
@@ -369,12 +369,26 @@ class DefaultContainer implements Container {
   /** Remove bindings from registry + scope and collect [binding, instance] pairs for deactivation. */
   #collectDeactivationPairs(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): DeactivationPairs {
     if (typeof tokenOrId === "number") {
-      const binding = this.#registry.removeById(tokenOrId);
+      const binding = this.#registry.removeById(tokenOrId) ?? this.#retireNotLive(tokenOrId);
       return binding === undefined ? NO_DEACTIVATION_PAIRS : this.#drainSingletons([binding]);
     }
     // Dropping the whole token in one pass: removing each binding by id instead would re-scan and
     // re-index the token's binding list once per binding.
     return this.#drainSingletons(this.#registry.removeByToken(tokenOrId));
+  }
+
+  /**
+   * Retires an id the registry no longer holds, returning the displaced binding still owed a teardown.
+   *
+   * @remarks Counts as a registry write, so no chain holding the binding parked can restore it.
+   */
+  #retireNotLive(id: BindingIdentifier): Binding | undefined {
+    this.#registry.touch();
+    const orphaned = this.#orphanedBindings?.get(id);
+    if (orphaned !== undefined) {
+      this.#orphanedBindings!.delete(id);
+    }
+    return orphaned;
   }
 
   /** Drain scope entries for already-removed bindings, and pair each one that still owes a deactivation. */
@@ -655,24 +669,11 @@ class DefaultContainer implements Container {
     const ids = this.#moduleBindingIds?.get(ref) ?? [];
     this.#moduleBindingIds?.delete(ref);
     const removed: Array<Binding> = [];
-    let missedAny = false;
     for (const id of ids) {
-      const binding = this.#registry.removeById(id);
+      const binding = this.#registry.removeById(id) ?? this.#retireNotLive(id);
       if (binding !== undefined) {
         removed.push(binding);
-        continue;
       }
-      // Not live: displaced or unbound. A displaced one still owing a teardown is drained with the rest.
-      missedAny = true;
-      const orphaned = this.#orphanedBindings?.get(id);
-      if (orphaned !== undefined) {
-        this.#orphanedBindings!.delete(id);
-        removed.push(orphaned);
-      }
-    }
-    // Counts as a registry write even with nothing live removed, so no chain restores an unloaded binding.
-    if (missedAny) {
-      this.#registry.touch();
     }
     return this.#drainSingletons(removed);
   }

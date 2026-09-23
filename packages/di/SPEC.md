@@ -1068,11 +1068,12 @@ since B replaced A on the one slot both declared; row 4 lists `[name:a, name:b]`
 
 > **Normative — a displaced binding still deactivates.** When a plain last-wins `bind()` (rows 2, 3, 7) displaces a
 > binding that owns a deactivation — a `singleton` or `toConstantValue` with an `onDeactivation` hook — the displaced
-> binding leaves the selection but its instance is still torn down — at `dispose()`, or earlier when the module that
-> registered it is unloaded ([`unload` and cached singletons](#unload-and-cached-singletons)). Last-wins changes which
-> binding answers a resolve; it does not silently drop a lifecycle the container still owes. The same holds when the
-> displacing bind runs inside a module load — `Module.create` setup or a declared module alike — and unloading that
-> module does not restore the displaced binding: it stays out of the selection, and its deactivation stays owed.
+> binding leaves the selection but its instance is still torn down — at `dispose()`, or earlier when its id is unbound
+> ([`unbind` and singleton deactivation](#unbind-and-singleton-deactivation)) or the module that registered it is
+> unloaded ([`unload` and cached singletons](#unload-and-cached-singletons)). Last-wins changes which binding answers a
+> resolve; it does not silently drop a lifecycle the container still owes. The same holds when the displacing bind runs
+> inside a module load — `Module.create` setup or a declared module alike — and unloading that module does not restore
+> the displaced binding: it stays out of the selection, and its deactivation stays owed.
 
 **Rows 8 and 9 — a more detailed hint satisfies more bindings, hence the need for a tie-breaker.** A binding's criteria
 are **its conditions**, not a filter that must match exactly. In row 8 the hint `{fuel:petrol}` rules out B because B
@@ -1369,6 +1370,9 @@ unbind-then-bind, never a way to override a parent.
 >   when the handlers are sync.
 > - If a handler is async, `unbindAsync()` must be used — a sync `unbind()` on a binding with async deactivation throws
 >   `AsyncDeactivationError`.
+> - `unbind(bindingId)` reaches a binding a later last-wins bind displaced, too: its cached singleton, or a constant's
+>   owed `onDeactivation`, runs then rather than at `dispose()`, and no refinement of the displacing chain can restore
+>   it afterwards.
 
 #### `rebind` and async deactivation
 
