@@ -21,6 +21,7 @@ function wholeSuiteDocument(runId: string): ComparisonDocument {
       isolated: false,
       scenarioFilter: null,
       scenarioTier: null,
+      libraryFilter: null,
       trialCount: 1,
       scenariosMeasured: 1,
       scenariosAvailable: 1,

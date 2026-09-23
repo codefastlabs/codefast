@@ -10,6 +10,7 @@ const input: RunCardInput = {
   runId: "2026-09-12T15-57-55-130Z",
   shape: { isolated: false, mode: "fast" },
   tier: undefined,
+  libraryFilter: undefined,
   trialCount: 1,
   libraryCount: 7,
   scenariosMeasured: 111,
@@ -64,6 +65,23 @@ describe("renderRunCardLines", () => {
     expect(lines.some((line) => line.includes("latest   kept — filtered to 2 of 111 rows"))).toBe(true);
     expect(lines.some((line) => line.includes("sanity   2 failures — inversify: alpha, beta"))).toBe(true);
     expect(lines[0]?.startsWith("┌─ Run ")).toBe(true);
+  });
+
+  it("names the libraries a kept pointer was filtered to, with the rows only when some were left out", () => {
+    const render = (scenariosMeasured: number): Array<string> =>
+      renderRunCardLines(
+        {
+          ...input,
+          scenariosMeasured,
+          libraryFilter: ["@codefast/di"],
+          artifacts: { latestPointer: "kept-filtered" },
+        },
+        { palette: PLAIN_PALETTE, width: 100, unicode: true },
+      );
+    expect(render(111).some((line) => line.includes("latest   kept — filtered to @codefast/di"))).toBe(true);
+    expect(render(2).some((line) => line.includes("latest   kept — filtered to 2 of 111 rows of @codefast/di"))).toBe(
+      true,
+    );
   });
 
   it("wraps a long versions list and strips back to the plain card when coloured", () => {

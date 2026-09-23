@@ -78,8 +78,9 @@ The comparison document and the markdown report are **derived on demand**, never
 carries `isolated`, `mode` and `trialCount`, so a report derived from disk records the configuration the run actually
 used rather than the shell's.
 
-**A filtered run does not move `latest.json`.** It writes its own directory and says so on stdout; `latest.json` has to
-mean the whole suite. A run whose subject measured no rows does not move it either.
+**A filtered run does not move `latest.json`** — narrowed by scenario, by tier or by library. It writes its own
+directory and says so on stdout; `latest.json` has to mean the whole suite. A run whose subject measured no rows does
+not move it either.
 
 ## Environment keys
 
@@ -98,6 +99,7 @@ dropped for any run started at the repo root — which looks exactly like the ke
 | `BENCH_ISOLATE=true`   | One subprocess per scenario, libraries interleaved — what the `bench` lane sets                   |
 | `BENCH_ONLY=<id>,<id>` | Restrict the run to these scenario ids; a library implementing none of them measures nothing      |
 | `BENCH_TIER=<tier>`    | Restrict the run to one scenario tier, `contract` or `engine`; a narrowed run like `BENCH_ONLY`   |
+| `BENCH_LIBRARY=<name>` | Restrict the run to these libraries, which must include the subject; a narrowed run               |
 | `BENCH_BASELINE=<run>` | Diff against this run id or directory instead of the run `latest.json` names                      |
 | `BENCH_VERBOSE=true`   | Forward each child's stdout through the parent                                                    |
 | `BENCH_PORT=<n>`       | Preferred port for a suite's `bench:serve`                                                        |

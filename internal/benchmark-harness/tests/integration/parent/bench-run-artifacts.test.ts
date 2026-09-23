@@ -19,6 +19,7 @@ function documentWith(run: Partial<ComparisonDocument["run"]>): ComparisonDocume
       isolated: false,
       scenarioFilter: null,
       scenarioTier: null,
+      libraryFilter: null,
       trialCount: 3,
       scenariosMeasured: 24,
       scenariosAvailable: 24,
@@ -95,6 +96,12 @@ describe("writeBenchRunArtifacts", () => {
 
   it("does not move latest.json for a run narrowed to one tier", () => {
     const paths = write(documentWith({ scenarioTier: "contract", scenariosMeasured: 50 }));
+    expect(existsSync(paths.jsonlPath)).toBe(true);
+    expect(existsSync(paths.latestPointerPath)).toBe(false);
+  });
+
+  it("does not move latest.json for a run narrowed to some libraries, even with every row measured", () => {
+    const paths = write(documentWith({ libraryFilter: ["pivot"] }));
     expect(existsSync(paths.jsonlPath)).toBe(true);
     expect(existsSync(paths.latestPointerPath)).toBe(false);
   });
