@@ -916,7 +916,7 @@ class DefaultContainer implements Container {
       // A deactivation only ever runs for a singleton or constant, so a hook on a token whose every
       // binding is scoped or transient can never fire — the builder blocks it, `container.onDeactivation` cannot.
       if (phase === "onDeactivation" && !this.#hasDeactivatableBindingInChain(hookToken)) {
-        throw new UnreachableLifecycleHookError(tokenName(hookToken), phase);
+        throw new UnreachableLifecycleHookError(tokenName(hookToken), phase, "no-deactivatable-binding");
       }
     }
 

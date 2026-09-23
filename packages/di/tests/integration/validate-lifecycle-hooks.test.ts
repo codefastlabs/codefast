@@ -46,6 +46,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     expect((caught as UnreachableLifecycleHookError).tokenName).toBe("Connection");
     expect((caught as UnreachableLifecycleHookError).phase).toBe("onActivation");
     expect((caught as UnreachableLifecycleHookError).code).toBe("UNREACHABLE_LIFECYCLE_HOOK");
+    expect((caught as UnreachableLifecycleHookError).reason).toBe("unbound");
   });
 
   it("throws for a hook on a token nothing was ever bound to", () => {
@@ -129,6 +130,12 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     expect(() => {
       container.validate();
     }).toThrow(UnreachableLifecycleHookError);
+    // The token is bound, so the error must say why the hook is unreachable rather than claim it is not.
+    expect(() => {
+      container.validate();
+    }).toThrow(
+      expect.objectContaining({ reason: "no-deactivatable-binding", message: expect.stringContaining("scoped") }),
+    );
   });
 
   it("throws for a deactivation hook on a token whose only binding is transient", () => {

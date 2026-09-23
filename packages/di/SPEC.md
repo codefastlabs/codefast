@@ -2614,7 +2614,7 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | `StaticMemberDecoratorError`    | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member                | `decoratorName`, `memberName`                    |
 | `SymbolKeyedLifecycleError`     | `SYMBOL_KEYED_LIFECYCLE`      | `@postConstruct` / `@preDestroy` on a symbol-keyed method                      | `decoratorName`, `memberName`                    |
 | `MissingDecoratorMetadataError` | `MISSING_DECORATOR_METADATA`  | A decorator handed no `context.metadata` — the runtime lacks `Symbol.metadata` | `decoratorName`                                  |
-| `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds                 | `tokenName`, `phase`                             |
+| `UnreachableLifecycleHookError` | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds                 | `tokenName`, `phase`, `reason`                   |
 | `EmptyTagCriteriaError`         | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                                | `helperName`                                     |
 | `UnreachableConstraintError`    | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares                | `tokenName`, `requiredName`, `helperName`        |
 
