@@ -14,10 +14,19 @@
  *     creates a fresh container from two pre-built modules and resolves the
  *     root service.  Each iteration repeats the full cold start, measuring the
  *     `fromModules` bootstrap cost including module dedup and binding commit.
+ *
+ *   - `module-cold-128` — the same cold start from one declared module
+ *     (`Module.fromBindings`), scaling the binding count a load files.
  */
-import { Container, Module, token } from "@codefast/di";
+import { binding, Container, Module, token } from "@codefast/di";
 
-import { MODULE_COLD_FROM_MODULES, MODULE_LOAD_UNLOAD } from "#fixtures/scenario-parity";
+import { isComposedModule } from "#fixtures/sanity";
+import {
+  MODULE_BINDING_COUNT,
+  MODULE_COLD_128,
+  MODULE_COLD_FROM_MODULES,
+  MODULE_LOAD_UNLOAD,
+} from "#fixtures/scenario-parity";
 import type { BenchScenario } from "#scenarios/types";
 
 // ── shared tokens ────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -149,9 +158,58 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
   };
 }
 
+// ── scenario 3: one declared module of many bindings, cold start ─────────────────────────────────────────────────────
+
+interface ModuleValue {
+  readonly id: number;
+}
+
+function buildModuleCold128Scenario(): BenchScenario {
+  const singletonFrom = MODULE_BINDING_COUNT / 2;
+  const valueTokens = Array.from({ length: MODULE_BINDING_COUNT }, (_value, index) =>
+    token<ModuleValue>(`bench-cf-mod128-${String(index)}`),
+  );
+  const declaredModule = Module.fromBindings(
+    "bench-cf-mod128",
+    valueTokens.map((valueToken, index) =>
+      index < singletonFrom
+        ? binding(valueToken, { toConstantValue: { id: index } })
+        : binding(valueToken, { toDynamic: () => ({ id: index }), scope: "singleton" }),
+    ),
+  );
+  const lastToken = valueTokens[MODULE_BINDING_COUNT - 1]!;
+
+  function runOneColdStart(): number {
+    return Container.fromModules(declaredModule).resolve(lastToken).id;
+  }
+
+  // Pre-warm
+  runOneColdStart();
+
+  return {
+    ...MODULE_COLD_128,
+    what: `Container.fromModules(Module.fromBindings(${String(MODULE_BINDING_COUNT)} declarations)) + resolve the last (cold start)`,
+    batch: 1,
+    sanity: () =>
+      isComposedModule(
+        () => {
+          const container = Container.fromModules(declaredModule);
+          return (index) => container.resolve(valueTokens[index]!);
+        },
+        MODULE_BINDING_COUNT,
+        singletonFrom,
+      ),
+    build: () => {
+      return () => {
+        runOneColdStart();
+      };
+    },
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildCodefastModuleScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildModuleLoadUnloadScenario(), buildModuleColdFromModulesScenario()];
+  return [buildModuleLoadUnloadScenario(), buildModuleColdFromModulesScenario(), buildModuleCold128Scenario()];
 }

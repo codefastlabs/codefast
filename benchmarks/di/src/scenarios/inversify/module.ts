@@ -8,15 +8,18 @@
  *   - `container.unload(...modules)` → `container.unload(...modules)`
  *   - `Container.fromModules(...)` → no direct equivalent; approximated by
  *     `new Container({ jitless: false })` + `container.load(modules)` to match the cold-start shape.
- *
- * Note: inversify's `ContainerModule` does NOT support the `module-cold-from-modules`
- * scenario ID (no `fromModules` static), so that row appears as codefast-only in
- * the comparison table.
+ *   - `Module.fromBindings(name, declarations)` → a `ContainerModule` whose callback binds each one.
  */
 import "reflect-metadata";
 import { Container, ContainerModule } from "inversify";
 
-import { MODULE_COLD_FROM_MODULES, MODULE_LOAD_UNLOAD } from "#fixtures/scenario-parity";
+import { isComposedModule } from "#fixtures/sanity";
+import {
+  MODULE_BINDING_COUNT,
+  MODULE_COLD_128,
+  MODULE_COLD_FROM_MODULES,
+  MODULE_LOAD_UNLOAD,
+} from "#fixtures/scenario-parity";
 import type { BenchScenario } from "#scenarios/types";
 
 // ── shared identifiers ───────────────────────────────────────────────────────────────────────────────────────────────
@@ -143,9 +146,71 @@ function buildModuleColdFromModulesScenario(): BenchScenario {
   };
 }
 
+// ── scenario 3: one module of many bindings, cold start ──────────────────────────────────────────────────────────────
+
+interface ModuleValue {
+  readonly id: number;
+}
+
+function buildModuleCold128Scenario(): BenchScenario {
+  const singletonFrom = MODULE_BINDING_COUNT / 2;
+  const valueIds = Array.from({ length: MODULE_BINDING_COUNT }, (_value, index) =>
+    Symbol(`bench-inv-mod128-${String(index)}`),
+  );
+  const constants = valueIds.slice(0, singletonFrom).map((_valueId, index): ModuleValue => ({ id: index }));
+  const factories = valueIds.slice(singletonFrom).map((_valueId, offset) => (): ModuleValue => ({
+    id: singletonFrom + offset,
+  }));
+  const largeModule = new ContainerModule(({ bind }) => {
+    for (const [index, valueId] of valueIds.entries()) {
+      if (index < singletonFrom) {
+        bind<ModuleValue>(valueId).toConstantValue(constants[index]!);
+      } else {
+        bind<ModuleValue>(valueId)
+          .toDynamicValue(factories[index - singletonFrom]!)
+          .inSingletonScope();
+      }
+    }
+  });
+  const lastId = valueIds[MODULE_BINDING_COUNT - 1]!;
+
+  function composeContainer(): Container {
+    const container = new Container({ jitless: false });
+    container.load(largeModule);
+    return container;
+  }
+
+  function runOneColdStart(): number {
+    return composeContainer().get<ModuleValue>(lastId).id;
+  }
+
+  // Pre-warm
+  runOneColdStart();
+
+  return {
+    ...MODULE_COLD_128,
+    what: `new Container() + load(1 ContainerModule binding ${String(MODULE_BINDING_COUNT)} identifiers) + get the last (cold start)`,
+    batch: 1,
+    sanity: () =>
+      isComposedModule(
+        () => {
+          const container = composeContainer();
+          return (index) => container.get<ModuleValue>(valueIds[index]!);
+        },
+        MODULE_BINDING_COUNT,
+        singletonFrom,
+      ),
+    build: () => {
+      return () => {
+        runOneColdStart();
+      };
+    },
+  };
+}
+
 /**
  * @since 0.3.16-canary.0
  */
 export function buildInversifyModuleScenarios(): ReadonlyArray<BenchScenario> {
-  return [buildModuleLoadUnloadScenario(), buildModuleColdFromModulesScenario()];
+  return [buildModuleLoadUnloadScenario(), buildModuleColdFromModulesScenario(), buildModuleCold128Scenario()];
 }
