@@ -521,12 +521,21 @@ class DefaultContainer implements Container {
         continue;
       }
       moduleRefs.set(moduleRef, 1);
-      const builder = this.#createModuleBuilder(moduleRef);
-      try {
-        module[MODULE_SETUP](builder);
-      } catch (error) {
-        throw this.#rollbackFailedLoadSync(moduleRef, error);
+      this.#applySyncModule(module, moduleRef);
+    }
+  }
+
+  /** Runs a sync module's setup, or files its declarations, rolling the load back if either throws. */
+  #applySyncModule(module: SyncModule, moduleRef: object): void {
+    const setup = module[MODULE_SETUP];
+    try {
+      if (typeof setup === "function") {
+        setup(this.#createModuleBuilder(moduleRef));
+      } else {
+        BindingChain.registerDeclared(setup, this.#moduleRegistration(moduleRef));
       }
+    } catch (error) {
+      throw this.#rollbackFailedLoadSync(moduleRef, error);
     }
   }
 
@@ -570,12 +579,7 @@ class DefaultContainer implements Container {
     moduleRefs.set(moduleRef, 1);
 
     if (isSyncModule(module)) {
-      const builder = this.#createModuleBuilder(moduleRef);
-      try {
-        module[MODULE_SETUP](builder);
-      } catch (error) {
-        throw this.#rollbackFailedLoadSync(moduleRef, error);
-      }
+      this.#applySyncModule(module, moduleRef);
     } else {
       const importPromises: Array<Promise<void>> = [];
       const builder = this.#createAsyncModuleBuilder(moduleRef, importPromises);

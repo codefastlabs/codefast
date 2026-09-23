@@ -63,6 +63,8 @@ export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#in
 // Module
 export { AsyncModule, isSyncModule, Module, SyncModule } from "#core/module";
 export type { AsyncModuleBuilder, ModuleBuilder } from "#core/module";
+export { binding } from "#core/binding-declaration";
+export type { BindingDeclaration, BindingDefinition } from "#core/binding-declaration";
 
 // Decorators
 export { inject } from "#decorators/inject";
@@ -115,6 +117,7 @@ export {
   DiError,
   DisposedContainerError,
   InternalError,
+  InvalidBindingDeclarationError,
   InvalidMetadataError,
   MissingContainerContextError,
   MissingDecoratorMetadataError,

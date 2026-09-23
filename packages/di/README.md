@@ -385,6 +385,23 @@ const container = Container.fromModules(AppModule);
 `Container.fromModulesAsync` or `container.loadAsync`. Modules are ref-counted: loading one twice counts once, and
 `unload` removes its bindings only when the count reaches zero.
 
+A module with no logic of its own can be written as a list instead. Each `binding()` states one binding with the fluent
+chain's own vocabulary, is typed exactly as the chain is, and is checked where it is written:
+
+```ts
+import { binding, Module } from "@codefast/di";
+
+const InfrastructureModule = Module.fromBindings("app:Infra", [
+  binding(LoggerToken, { toConstantValue: console }),
+  binding(UserRepository, { toSelf: true, scope: "singleton" }),
+  binding(CacheToken, { toDynamic: () => new Map(), whenNamed: "session", scope: "scoped" }),
+]);
+```
+
+It loads exactly as the equivalent `Module.create` would, and never slower: each binding registers in its final shape,
+so one with a slot, a scope or a hook skips the chain steps a fluent setup pays on every load. A declared module mixes
+into a fluent one with `api.import(...)`.
+
 ## Testing
 
 Give every test its own container and dispose it afterwards. A container shared across tests carries cached singletons
@@ -442,7 +459,8 @@ Every error extends `DiError` and carries a stable `code`, so you can branch on 
 | `DisposedContainerError`       | `DISPOSED_CONTAINER`        | A disposed container is used                                               |
 
 The full taxonomy — including `MissingMetadataError`, `InvalidMetadataError`, `RebindUnboundTokenError`,
-`AsyncModuleLoadError`, and the rest — is exported from the root entry and from `@codefast/di/errors/errors`.
+`AsyncModuleLoadError`, `InvalidBindingDeclarationError`, and the rest — is exported from the root entry and from
+`@codefast/di/errors/errors`.
 
 ## Subpath exports
 

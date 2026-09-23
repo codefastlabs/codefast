@@ -21,12 +21,13 @@ import type {
 import {
   clearBindingFrame,
   NO_ACTIVATION_STAMP,
-  createBindingSlot,
   DEFAULT_BINDING_SLOT,
   generateBindingId,
   NO_INSTANCE,
   UNREGISTERED_ORDER,
+  withSlotCriterion,
 } from "#core/binding";
+import type { DeclaredBinding } from "#core/binding-declaration";
 import { mergingConstraintRequirements } from "#core/constraint-requirement";
 import type { BindingRegistry } from "#core/registry";
 import type { BindingTag } from "#core/tag";
@@ -53,18 +54,6 @@ import {
 import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#injection/descriptor";
 import { normalizeToDescriptor } from "#injection/descriptor";
 import type { ScopeManager } from "#lifecycle/scope-manager";
-
-/** One criterion per key: re-tagging the same key replaces it rather than asking for both values. */
-function updateSlotTag(slot: BindingSlot, criterion: BindingTag): BindingSlot {
-  const tags = [...slot.tags];
-  const existingIndex = tags.findIndex((existing) => existing.key === criterion.key);
-  if (existingIndex === -1) {
-    tags.push(criterion);
-  } else {
-    tags[existingIndex] = criterion;
-  }
-  return createBindingSlot(tags);
-}
 
 // ── Registration target ──────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -185,6 +174,47 @@ export class BindingChain<Value, Names extends string = string>
     }
     this.#versionAfterLastWrite = registry.version;
     return this;
+  }
+
+  /**
+   * Registers a declared module's bindings in list order, each a chain of its own that no step
+   * will ever refine.
+   *
+   * @remarks A displaced binding is handled as `to*()` handles it, never parked: nothing refines the
+   * chain, so nothing could restore it.
+   */
+  static registerDeclared(declarations: ReadonlyArray<DeclaredBinding>, registration: BindingRegistration): void {
+    const { registry, moduleBindingIds, deactivateDisplaced, onDisplaced } = registration;
+    for (let index = 0; index < declarations.length; index += 1) {
+      const declaration = declarations[index]!;
+      const binding = new BindingChain(declaration.token, registration).#adopt(declaration);
+      const displaced = registry.add(binding);
+      if (displaced !== undefined) {
+        if (deactivateDisplaced === undefined) {
+          onDisplaced?.(displaced);
+        } else {
+          deactivateDisplaced(displaced);
+        }
+      }
+      moduleBindingIds?.push(binding.identifier);
+    }
+  }
+
+  /** Takes the shape a declaration's chain steps would have left, and marks the chain registered. */
+  #adopt(declaration: DeclaredBinding): Binding {
+    this.kind = declaration.kind;
+    this.slot = declaration.slot;
+    this.predicate = declaration.predicate;
+    this.isMany = declaration.isMany;
+    this.scope = declaration.scope;
+    this.target = declaration.target;
+    this.factory = declaration.factory;
+    this.deps = declaration.deps;
+    this.value = declaration.value;
+    this.activationHook = declaration.activationHook as ActivationHandler<Value> | undefined;
+    this.deactivationHook = declaration.deactivationHook as DeactivationHandler<Value> | undefined;
+    this.#isRegistered = true;
+    return this.#binding;
   }
 
   // ── Registration ───────────────────────────────────────────────────────────────────────────────────────────────────
@@ -327,7 +357,7 @@ export class BindingChain<Value, Names extends string = string>
     if (this.isMany) {
       throw new ManyBindingSlotError(tokenName(this.token));
     }
-    return this.#reslot(updateSlotTag(this.slot, criterion), this.predicate);
+    return this.#reslot(withSlotCriterion(this.slot, criterion), this.predicate);
   }
 
   many(): this {
