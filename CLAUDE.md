@@ -33,6 +33,11 @@ is private until it is published, so it starts in `internal/`.
   `benchmark-viewer` browser app (its Node/SSR lane is plain tsc).
 - **`exactOptionalPropertyTypes` is enabled** — an optional prop that may receive an explicit value must be typed
   `?: T | undefined`.
+- **No double assertions — source and tests alike.** `x as unknown as T` tells the compiler two types are unrelated and
+  silences it anyway: make the types agree, narrow with a type guard, or narrow a parameter to what the function reads.
+  `pnpm cli:audit:assertions` gates CI on it (oxlint has no rule for the pair; `no-unnecessary-type-assertion` catches
+  only the redundant kind). Where the erasure is the point, keep it with `// codefast-allow-double-assertion: <reason>`
+  on its line or the line above — the audit rejects one with no reason or nothing to keep.
 
 ## Fast-moving dependencies (verify, don't recall)
 

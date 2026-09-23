@@ -72,6 +72,11 @@ jobs:
       - name: Verify Import Policy
         run: pnpm cli:audit:imports
 
+      # `x as unknown as T` tells the compiler two types are unrelated and silences it anyway; no oxlint
+      # rule targets the pair, so this audit is what holds source and tests to making the types agree.
+      - name: Verify Type Assertions
+        run: pnpm cli:audit:assertions
+
       # A display name is a bare string: two owners can mint the same one and no type catches it.
       # The `<namespace>:<Name>` rule is what keeps diagnostics and constraints unambiguous.
       - name: Verify Display Names
