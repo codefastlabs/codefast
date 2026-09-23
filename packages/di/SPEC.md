@@ -1294,8 +1294,9 @@ container.rebind(Logger).to(FileLogger).singleton();
 unbind-then-bind, never a way to override a parent.
 
 > **Normative.** `rebind(token)` only affects the **own** bindings of the current container. If the token is only bound
-> at the parent (not at the child), `child.rebind(token)` throws `RebindUnboundTokenError`. After the unbind, `to*()`
-> commits immediately — there is no gap between the unbind and the bind.
+> at the parent (not at the child), `child.rebind(token)` throws `RebindUnboundTokenError`. When the old bindings owe no
+> deactivation, `rebind()` removes nothing up front and `to*()` swaps in place — there is no gap between the unbind and
+> the bind. When they owe one, `rebind()` unbinds and deactivates them itself, before any replacement exists.
 
 > **`rebind` and the parent chain.** To override a parent binding from a child container (the common test pattern), use
 > `bind()` at the child — resolution prefers the child over the parent:
@@ -1323,7 +1324,8 @@ unbind-then-bind, never a way to override a parent.
 >
 > - If the old binding has **no** async `onDeactivation` (or no `onDeactivation` at all): a sync `rebind()` is safe.
 > - If the old binding **does** have an async `onDeactivation`: a sync `rebind()` throws `AsyncDeactivationError` — the
->   same behaviour as a sync `unbind()`.
+>   same behaviour as a sync `unbind()`. The throw comes from `rebind()` itself, the old bindings are already removed,
+>   and no replacement is committed, whatever shape the token had.
 
 There is no `rebindAsync()` (see [Not adopted from v8](./DECISIONS.md#not-adopted-from-v8)), so the required workaround
 is:

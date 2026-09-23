@@ -468,10 +468,11 @@ class DefaultContainer implements Container {
     token: Token<Value, Names> | Constructor<Value>,
   ): BindToBuilder<Value, Names> {
     this.#assertNotDisposed();
-    // A token held as its lone default binding is replaced by the new chain's own registration,
-    // which displaces it; the displaced binding is deactivated then, so the swap unbinds nothing
-    // up front. Any other shape is unbound first (sync — an async deactivation throws).
-    if (this.#registry.getFastDefault(token) === undefined) {
+    // A lone default binding that owes no deactivation is replaced by the new chain's own
+    // registration, so the swap unbinds nothing up front. Anything else is unbound first, so an
+    // async deactivation throws here — before a replacement exists — exactly as `unbind()` does.
+    const lone = this.#registry.getFastDefault(token);
+    if (lone === undefined || lone.instance !== NO_INSTANCE || this.#owesConstantDeactivation(lone)) {
       if (!this.#registry.has(token)) {
         throw new RebindUnboundTokenError(tokenName(token));
       }
