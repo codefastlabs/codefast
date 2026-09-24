@@ -31,8 +31,12 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     include: ["tests/{unit,integration,e2e,types}/**/*.test.ts?(x)"],
+    // Each file models one page load, so module state must not carry over to the next file.
+    isolate: true,
     /** Empty test tree is valid during refactors; `verify` must not fail. */
     passWithNoTests: true,
+    // Not a vm pool: a VM realm's `location` cannot be redefined by `vi.stubGlobal`.
+    pool: "threads",
     setupFiles: ["./vitest.setup.ts"],
   },
 });

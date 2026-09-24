@@ -31,6 +31,7 @@ export default defineConfig({
     include: ["tests/{unit,integration,e2e,types}/**/*.test.ts?(x)"],
     /** Empty test tree is valid during refactors; `verify` must not fail. */
     passWithNoTests: true,
+    pool: "threads",
     setupFiles: ["./vitest.setup.ts"],
   },
 });

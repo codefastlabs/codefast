@@ -24,8 +24,12 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     include: ["tests/{unit,integration,e2e,types}/**/*.test.ts?(x)"],
+    // DOM one file leaves in the document breaks the next file's queries.
+    isolate: true,
     /** Empty test tree is valid during refactors; `verify` must not fail. */
     passWithNoTests: true,
+    // Not a vm pool: the observer jsdom passes back fails `instanceof MutationObserver` across the realm.
+    pool: "threads",
     setupFiles: ["./vitest.setup.ts"],
   },
 });

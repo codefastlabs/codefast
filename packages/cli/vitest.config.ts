@@ -26,8 +26,13 @@ export default defineConfig({
       reportsDirectory: "./coverage",
     },
     environment: "node",
+    // Reading cached transforms back is no faster than redoing them for this suite.
+    fsModuleCache: false,
     globals: true,
     include: ["tests/{unit,integration,e2e,types}/**/*.test.ts"],
+    // The config loader caches per directory for the process, so each file keeps its own module state.
+    isolate: true,
     passWithNoTests: true,
+    pool: "threads",
   },
 });
