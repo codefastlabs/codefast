@@ -42,7 +42,7 @@ When you're about to write the left column, write the right column instead. Thes
 
 | If muscle memory says (React 18)              | Write this (React 19)                                            |
 | --------------------------------------------- | ---------------------------------------------------------------- |
-| `forwardRef((props, ref) => …)`               | `ref` is an ordinary prop — see below                            |
+| `forwardRef((props, ref) => …)`               | `ref` is an ordinary prop on a function component                |
 | `<Ctx.Provider value={…}>`                    | `<Ctx value={…}>` (Context itself is the provider)               |
 | `Comp.propTypes = {…}`                        | TypeScript prop types (`interface Props`)                        |
 | `Comp.defaultProps = {…}` (function comp.)    | ES default params: `function C({ x = 1 }: Props)`                |
@@ -56,139 +56,12 @@ The full removals-and-migrations catalog (with before/after and codemods) is in
 [references/breaking-changes-18-to-19.md](references/breaking-changes-18-to-19.md). Read it before doing any 18 → 19
 migration or reviewing code that predates 19.
 
-## The idioms you'll use most — the 19 way
+## The 19.0 idioms
 
-Examples use **named imports** (`import { useState } from "react"`): React 19 with the modern JSX transform needs no
-`import * as React` and no `React.*` namespace.
-
-### `ref` as a prop — no `forwardRef`
-
-A function component receives `ref` in its props like any other prop. `forwardRef` still works but is on its way out;
-don't reach for it in new code.
-
-```tsx
-import type { ComponentProps, Ref } from "react";
-
-interface TextInputProps extends ComponentProps<"input"> {
-  ref?: Ref<HTMLInputElement>;
-}
-
-function TextInput({ ref, ...props }: TextInputProps) {
-  return <input ref={ref} {...props} />;
-}
-```
-
-Ref callbacks may return a **cleanup** function; an implicit return is now a type error, so use a block body:
-
-```tsx
-<div
-  ref={(node) => {
-    // setup
-    return () => {
-      // cleanup
-    };
-  }}
-/>
-```
-
-### `<Context>` is its own provider
-
-```tsx
-import type { ReactNode } from "react";
-
-import { createContext, use } from "react";
-
-const ThemeContext = createContext<"light" | "dark">("light");
-
-function App({ children }: { children: ReactNode }) {
-  return <ThemeContext value="dark">{children}</ThemeContext>;
-}
-
-// `use` can read context inside a conditional — `useContext` cannot.
-function Heading({ children }: { children: ReactNode }) {
-  const theme = use(ThemeContext);
-  return <h1 className={theme === "dark" ? "text-white" : "text-black"}>{children}</h1>;
-}
-```
-
-### Actions: `useActionState`, `useFormStatus`, `useOptimistic`
-
-An async function passed to `<form action>` (or run via `startTransition`) is an **Action**; React tracks its pending
-state, errors, and optimistic updates for you. Reach for this instead of hand-rolling `isPending`/`error` state.
-
-```tsx
-import { useActionState, useOptimistic } from "react";
-import { useFormStatus } from "react-dom";
-
-function ProfileForm({ currentName }: { currentName: string }) {
-  const [optimisticName, setOptimisticName] = useOptimistic(currentName);
-
-  // useActionState returns [state, dispatchAction, isPending].
-  const [error, submitAction, isPending] = useActionState(async (_prev: string | null, formData: FormData) => {
-    const next = String(formData.get("name"));
-    setOptimisticName(next);
-    return (await updateName(next)) ?? null; // return the error, or null on success
-  }, null);
-
-  return (
-    <form action={submitAction}>
-      <p>{optimisticName}</p>
-      <input name="name" disabled={isPending} />
-      {error ? <p role="alert">{error}</p> : null}
-      <SubmitButton />
-    </form>
-  );
-}
-
-// useFormStatus reads the enclosing <form>'s pending state — no prop drilling.
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return <button disabled={pending}>Save</button>;
-}
-```
-
-### `use` for promises
-
-`use` unwraps a promise during render and integrates with Suspense. Unlike a hook, it may be called conditionally.
-
-```tsx
-import { use, Suspense } from "react";
-
-function Comments({ commentsPromise }: { commentsPromise: Promise<string[]> }) {
-  const comments = use(commentsPromise); // suspends until resolved
-  return comments.map((c, i) => <p key={i}>{c}</p>);
-}
-
-function Page({ commentsPromise }: { commentsPromise: Promise<string[]> }) {
-  return (
-    <Suspense fallback={<p>Loading…</p>}>
-      <Comments commentsPromise={commentsPromise} />
-    </Suspense>
-  );
-}
-```
-
-### Document metadata & resource loading
-
-Render `<title>`/`<meta>`/`<link>` anywhere; React hoists them to `<head>`. Stylesheets take a `precedence`. Preload
-from `react-dom`.
-
-```tsx
-import { preinit, preload } from "react-dom";
-
-function Article({ title }: { title: string }) {
-  preload("https://example.com/font.woff2", { as: "font" });
-  preinit("https://example.com/analytics.js", { as: "script" });
-  return (
-    <article>
-      <title>{title}</title>
-      <meta name="description" content={title} />
-      <link rel="stylesheet" href="/article.css" precedence="default" />
-      <h1>{title}</h1>
-    </article>
-  );
-}
-```
+`ref` as a prop, `<Context>` as its own provider, Actions (`useActionState`, `useFormStatus`, `useOptimistic`), `use`
+for promises and context, and document metadata with resource loading. Version-correct examples of each are in
+[references/whats-new-19.md](references/whats-new-19.md#190--the-major-api-shift) — load it before writing one whose
+exact shape you are not certain of.
 
 ## Prioritize what 19.1 → 19.3 added
 

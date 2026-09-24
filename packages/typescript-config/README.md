@@ -18,8 +18,8 @@ The presets are plain JSON `tsconfig` files. There's no runtime code, and nothin
 - **Bundler-first.** An ESNext `module` with `moduleResolution: "bundler"`, so `exports` and `imports` maps resolve the
   way Vite, esbuild, and friends resolve them.
 - **`lib` and `target` are `ES2024`, matching the Node floor** (`engines.node >= 22.12`). ES2024 is the newest edition
-  Node 22.12 fully supports, so an ES2025 builtin such as `Map.prototype.getOrInsert` is a type error here rather than a
-  runtime crash on the floor. Bump both together only when the floor moves.
+  Node 22.12 fully supports, so a builtin newer than ES2024, such as `Map.prototype.getOrInsert`, is a type error here
+  rather than a runtime crash on the floor. Bump both together only when the floor moves.
 - **Type-check only.** The presets set `noEmit`; a separate build overlay turns on emit and `.d.ts` generation.
 - **Plain JSON.** No runtime code, nothing to import.
 

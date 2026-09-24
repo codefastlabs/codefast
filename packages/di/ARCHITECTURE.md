@@ -911,10 +911,10 @@ follows which case dominates:
   the value that gets stored, and the eager form wins. (`add()` itself no longer upserts — its list is copy-on-write, so
   it always builds the next array.)
 
-Both forms are in the tree on purpose. They stay the package's own rather than the platform's ES2025 `Map` methods,
-which would move the Node floor to 26 for two call shapes a local helper already covers. Both reject a value type that
-admits `undefined`, because they read absence with one `get` rather than a second `has`; a map that stores `undefined`
-needs `ScopeManager.readScoped()`'s shape, not this one.
+Both forms are in the tree on purpose. They stay the package's own rather than the platform's
+`Map.prototype.getOrInsert` pair, which would move the Node floor to 26 for two call shapes a local helper already
+covers. Both reject a value type that admits `undefined`, because they read absence with one `get` rather than a second
+`has`; a map that stores `undefined` needs `ScopeManager.readScoped()`'s shape, not this one.
 
 A lazily allocated index also spells its type arguments — `this.#field ??= new Map<Key, Value>()` — because TypeScript
 does not contextually type the right-hand side of `??=`. A bare `new Map()` there becomes `Map<any, any>` and silently

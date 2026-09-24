@@ -1,7 +1,7 @@
 ---
 name: commit
 description:
-  Group changes by relatedness and commit each group separately (Conventional Commits). Use whenever asked to commit.
+  Groups changes by relatedness and commits each group separately (Conventional Commits). Use whenever asked to commit.
 allowed-tools:
   - Bash(git status *)
   - Bash(git diff *)
