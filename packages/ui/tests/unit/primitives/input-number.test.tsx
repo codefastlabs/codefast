@@ -637,10 +637,14 @@ describe("input-number", () => {
         const input = screen.getByTestId("input-item");
         const incrementButton = screen.getByTestId("increment-btn");
 
-        fireEvent.pointerDown(incrementButton);
+        await act(async () => {
+          fireEvent.pointerDown(incrementButton);
+        });
         expect(input).toHaveValue("6");
 
-        await vi.advanceTimersByTimeAsync(200);
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(200);
+        });
         expect(input).toHaveValue("7");
 
         fireEvent.pointerLeave(incrementButton);

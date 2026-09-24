@@ -44,9 +44,12 @@ export default defineConfig({
       },
     },
     environment: "node",
+    // The suite is bound by its differential graph runs, not transforms, so caching them buys nothing.
+    fsModuleCache: false,
     globals: true,
     include: ["tests/{unit,integration,e2e,types}/**/*.test.ts"],
     /** Empty test tree is valid during refactors; `verify` must not fail. */
     passWithNoTests: true,
+    pool: "threads",
   },
 });

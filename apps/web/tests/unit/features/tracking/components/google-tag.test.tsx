@@ -1,20 +1,22 @@
 // Window.dataLayer is declared globally by @codefast/tracking's google-analytics module.
-import { cleanup, render } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { consentConfig } from "#features/tracking/lib/consent";
 
 /**
- * Renders the real `<GoogleTag />` and returns the inline script it mounts — the env id
- * is read at module scope, so each render stubs the env and re-imports the component.
- * jsdom never executes a script element created through the DOM, so rendering is inert.
+ * Server-renders the real `<GoogleTag />` as it ships and returns its inline script — the env
+ * id is read at module scope, so each render stubs the env and re-imports the component.
+ * A script parsed through `innerHTML` never executes, so rendering is inert.
  */
 async function renderBootstrapScript(gaMeasurementId: string | undefined): Promise<string | undefined> {
   vi.resetModules();
   vi.stubEnv("VITE_GA4_MEASUREMENT_ID", gaMeasurementId ?? "");
 
   const { GoogleTag } = await import("#features/tracking/components/google-tag");
-  const { container } = render(<GoogleTag />);
+  const container = document.createElement("div");
+
+  container.innerHTML = renderToString(<GoogleTag />);
 
   return container.querySelector("script")?.innerHTML;
 }
@@ -28,7 +30,6 @@ function runScript(script: string | undefined): void {
 
 describe("GoogleTag", () => {
   afterEach(() => {
-    cleanup();
     vi.unstubAllEnvs();
     delete window.dataLayer;
     window.localStorage.removeItem(consentConfig.storageKey);

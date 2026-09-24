@@ -25,6 +25,9 @@ export default defineConfig({
       reportsDirectory: "./coverage",
     },
     environment: "node",
+    // The Babel decorator transform dominates this run, so persist it across runs.
+    fsModuleCache: true,
     include: ["tests/{unit,integration,e2e,types}/**/*.test.ts"],
+    pool: "threads",
   },
 });

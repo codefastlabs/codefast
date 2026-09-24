@@ -1,7 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
-import { Carousel, CarouselContent, CarouselItem } from "#components/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious } from "#components/carousel";
 import { DirectionProvider } from "#components/direction";
 
 // Embla needs real layout, so stub it: the api is controllable and we capture
@@ -9,16 +9,18 @@ import { DirectionProvider } from "#components/direction";
 const mocks = vi.hoisted(() => {
   const scrollNext = vi.fn();
   const scrollPrev = vi.fn();
+  const bounds = { next: true, previous: true };
 
   return {
+    bounds,
     scrollNext,
     scrollPrev,
     options: vi.fn(),
     api: {
       scrollNext,
       scrollPrev,
-      canScrollNext: () => true,
-      canScrollPrev: () => true,
+      canScrollNext: () => bounds.next,
+      canScrollPrev: () => bounds.previous,
       on: vi.fn(),
       off: vi.fn(),
     },
@@ -51,6 +53,58 @@ function renderCarousel(dir: "ltr" | "rtl") {
 describe("carousel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.bounds.next = true;
+    mocks.bounds.previous = true;
+  });
+
+  describe("scroll bounds", () => {
+    test("re-reads them when embla emits select", () => {
+      mocks.bounds.previous = false;
+
+      render(
+        <Carousel>
+          <CarouselContent>
+            <CarouselItem>1</CarouselItem>
+          </CarouselContent>
+          <CarouselPrevious />
+        </Carousel>,
+      );
+
+      const previousButton = screen.getByRole("button", { name: "Previous slide" });
+
+      expect(previousButton).toBeDisabled();
+
+      mocks.bounds.previous = true;
+      act(() => {
+        for (const [event, listener] of mocks.api.on.mock.calls) {
+          if (event === "select") {
+            listener();
+          }
+        }
+      });
+
+      expect(previousButton).toBeEnabled();
+    });
+
+    test("removes every embla listener it adds on unmount", () => {
+      const { unmount } = render(
+        <Carousel>
+          <CarouselContent>
+            <CarouselItem>1</CarouselItem>
+          </CarouselContent>
+        </Carousel>,
+      );
+
+      expect(mocks.api.on).toHaveBeenCalledWith("reInit", expect.any(Function));
+      expect(mocks.api.on).toHaveBeenCalledWith("select", expect.any(Function));
+
+      unmount();
+
+      expect(mocks.api.off).toHaveBeenCalledTimes(mocks.api.on.mock.calls.length);
+      for (const [event, listener] of mocks.api.on.mock.calls) {
+        expect(mocks.api.off).toHaveBeenCalledWith(event, listener);
+      }
+    });
   });
 
   describe("keyboard navigation", () => {

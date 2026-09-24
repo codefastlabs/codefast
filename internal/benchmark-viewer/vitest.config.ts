@@ -17,8 +17,10 @@ export default defineConfig({
       reportsDirectory: "./coverage",
     },
     environment: "node",
+    fsModuleCache: true,
     globals: true,
     include: ["tests/{unit,integration,e2e,types}/**/*.test.ts"],
     passWithNoTests: true,
+    pool: "threads",
   },
 });

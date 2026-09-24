@@ -23,8 +23,14 @@ export default defineConfig({
         plugins: [viteReact(), babel({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] })],
         test: {
           environment: "jsdom",
+          // Babel and React transforms dominate this run, so persist them across runs.
+          fsModuleCache: true,
           include: ["tests/{unit,integration,types}/**/*.test.ts?(x)"],
+          // gtag.js loads once per document, so a window shared across files skips the load under test.
+          isolate: true,
           name: "unit",
+          // Not a vm pool: its realm lacks the Web Streams globals such as `ByteLengthQueuingStrategy`.
+          pool: "threads",
           setupFiles: ["./vitest.setup.ts"],
         },
       },
