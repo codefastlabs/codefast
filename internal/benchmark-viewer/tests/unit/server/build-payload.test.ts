@@ -1,5 +1,5 @@
 import type { JsonlBenchObservationRow } from "@internal/benchmark-harness/report/jsonl";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 
 import { buildEmbeddedPayload, resolveScenarioFacets } from "#server/payload";
 import type { RunLines } from "#server/payload";
@@ -61,7 +61,12 @@ describe("buildEmbeddedPayload", () => {
     expect(payload.runs[0]?.cpuModel).toBe("From-B");
   });
 
-  it("skips malformed JSONL lines instead of failing the whole payload", () => {
+  it("skips malformed JSONL lines instead of failing the whole payload, and says so", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    onTestFinished(() => {
+      warn.mockRestore();
+    });
+
     const options: BenchServerOptions = {
       benchResultsDir: "/tmp",
       libraries: [{ name: "only-lib", displayName: "Only", isPrimary: true }],
@@ -74,6 +79,7 @@ describe("buildEmbeddedPayload", () => {
     const payload = buildEmbeddedPayload(rawRuns, options, false, 200);
     expect(payload.runs).toHaveLength(1);
     expect(payload.scenarios.length).toBeGreaterThan(0);
+    expect(warn).toHaveBeenCalledExactlyOnceWith("[bench-payload] run-1: skipped 1 malformed JSONL line(s)");
   });
 
   it("includes benchResultsWarning in the payload when provided", () => {
