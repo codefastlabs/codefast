@@ -1,11 +1,14 @@
-import { render } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { GtagConsentBootstrap } from "#react/gtag-consent-bootstrap";
 
 describe("GtagConsentBootstrap", () => {
   it("renders an inline script whose source matches the consent bootstrap builder", () => {
-    const { container } = render(
+    const container = document.createElement("div");
+
+    // Server-rendered as it ships: React never runs a script it creates on the client, and warns about one.
+    container.innerHTML = renderToString(
       <GtagConsentBootstrap
         config={{ policyVersion: "1", requestedCategories: ["analytics"], storageKey: "k" }}
         defaultConsent={{ ads: false, analytics: true }}
