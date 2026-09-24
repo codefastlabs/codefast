@@ -2278,9 +2278,11 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 > effects — so an app on such a runtime installs it in a module imported first:
 >
 > ```ts
-> Symbol.metadata ??= Symbol.for("Symbol.metadata");
+> (Symbol as { metadata?: symbol }).metadata ??= Symbol.for("Symbol.metadata");
 > ```
 >
+> The widening is what lets it type-check: TypeScript declares `Symbol.metadata` `readonly`, and a `lib` without
+> `ESNext.Decorators` does not declare it at all, so the bare `Symbol.metadata ??= …` compiles only in a `.js` file.
 > `Symbol.for` is the key the default reader falls back to and the one esbuild emits, so every toolchain agrees on it.
 > Node also cannot parse decorator syntax itself: `target: "ESNext"` leaves decorators in the output, so the code must
 > go through a transpiler that lowers them (a lower `target`, esbuild, or Babel's `2023-11` decorators plugin).

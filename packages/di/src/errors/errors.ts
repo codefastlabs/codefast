@@ -575,7 +575,7 @@ export class MissingDecoratorMetadataError extends DiError {
 
   constructor(decoratorName: string) {
     super(
-      `@${decoratorName}() received no decorator metadata: this runtime has no Symbol.metadata. Install it before any decorated class is defined, e.g. in a module imported first: Symbol.metadata ??= Symbol.for("Symbol.metadata");`,
+      `@${decoratorName}() received no decorator metadata: this runtime has no Symbol.metadata. Install it before any decorated class is defined, e.g. in a module imported first: (Symbol as { metadata?: symbol }).metadata ??= Symbol.for("Symbol.metadata");`,
     );
     this.decoratorName = decoratorName;
   }
