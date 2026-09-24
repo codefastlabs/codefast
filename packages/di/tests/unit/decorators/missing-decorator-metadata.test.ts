@@ -62,6 +62,8 @@ describe("a decorator given no metadata object", () => {
 
     expect(error).toBeInstanceOf(MissingDecoratorMetadataError);
     expect(error).toMatchObject({ code: "MISSING_DECORATOR_METADATA", decoratorName });
-    expect((error as Error).message).toContain('Symbol.metadata ??= Symbol.for("Symbol.metadata")');
+    expect((error as Error).message).toContain(
+      '(Symbol as { metadata?: symbol }).metadata ??= Symbol.for("Symbol.metadata")',
+    );
   });
 });
