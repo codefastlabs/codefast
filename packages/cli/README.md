@@ -343,8 +343,8 @@ catches the redundant ones only). Make the types agree, narrow with a type guard
 keep it with a directive that states why, on the assertion's line or the line above:
 
 ```ts
-// codefast-allow-double-assertion: nothing ties an omitted factory to the default Backend yet
-this.mockFactory = options?.mockFactory ?? (defaultMockFactory as unknown as MockFactory<Backend>);
+// codefast-allow-double-assertion: the host stores each plugin's config untyped; the plugin owns its shape
+const config = host.configFor(plugin.id) as unknown as PluginConfig;
 ```
 
 A directive with no reason, or one that keeps no assertion, is itself reported, so a kept assertion cannot outlive its

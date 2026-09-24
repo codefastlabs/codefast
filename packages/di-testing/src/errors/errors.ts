@@ -35,6 +35,22 @@ export class NotInjectableError extends TestingError {
 }
 
 /**
+ * A `createTestBed(...)` call with no mock factory to build its beds' mocks from.
+ *
+ * @remarks The types require the factory; this reaches a caller the compiler cannot, and stops the
+ * built-in spy from standing in for a backend nobody chose.
+ */
+export class MissingMockFactoryError extends TestingError {
+  readonly code = "MISSING_MOCK_FACTORY";
+
+  constructor() {
+    super(
+      "createTestBed() needs a mockFactory to build every bed's mocks from: pass defaultMockFactory for the built-in spy, or a factory such as () => vi.fn().",
+    );
+  }
+}
+
+/**
  * A `.mock(...)` override or a `mocks.get(...)` lookup named a token or slot the unit does not use.
  *
  * @remarks Almost always a typo or a stale token reference; failing loudly beats silently binding an

@@ -19,11 +19,13 @@ production — and you assert against the mocks the bed created.
   and builds a mock for each — no per-collaborator `bind(...).toConstantValue(...)`.
 - **Real instance, real wiring.** The unit is constructed through a container, so `@postConstruct`, accessor injection,
   and `@preDestroy` run exactly as in production.
-- **Zero test-framework dependency.** The default mock is a small built-in spy. Pass `() => vi.fn()` — or `jest.fn`,
-  `() => sinon.stub()` — to build the mocks from that backend and use its matchers instead.
-- **Backend-typed lookups.** The factory's return type flows through the whole bed: with `() => vi.fn()`,
-  `mocks.get(EmailToken).send` carries Vitest's own mock surface (`mockReturnValueOnce`, `mockClear`, and so on), with
-  no adapter package and no module augmentation.
+- **Zero test-framework dependency.** The default `TestBed` mocks with a small built-in spy. Create your suite's own
+  with `createTestBed({ mockFactory: () => vi.fn() })` — or `jest.fn`, `() => sinon.stub()` — to build every mock from
+  that backend and use its matchers instead.
+- **Backend-typed lookups.** The factory's return type flows through every bed the entry point begins: with
+  `() => vi.fn()`, `mocks.get(EmailToken).send` carries Vitest's own mock surface (`mockReturnValueOnce`, `mockClear`,
+  and so on), with no adapter package and no module augmentation. A bed can have no other backend than its entry point,
+  so a mock is never typed as one backend and built from another.
 
 ## Installation
 
@@ -39,8 +41,11 @@ on its own track: breaking changes ship as minor versions, so pin the minor vers
 
 ```ts
 import { injectable, token } from "@codefast/di";
-import { TestBed } from "@codefast/di-testing";
+import { createTestBed } from "@codefast/di-testing";
 import { expect, it, vi } from "vitest";
+
+// The suite's entry point on Vitest spies, so matchers and mockReturnValue work on every mock.
+const TestBed = createTestBed({ mockFactory: () => vi.fn() });
 
 interface UserService {
   findUser(id: string): { id: string; email: string };
@@ -73,7 +78,7 @@ class OrderProcessor {
 }
 
 it("charges then emails a confirmation", () => {
-  const { unit, mocks } = TestBed.solitary(OrderProcessor, { mockFactory: () => vi.fn() })
+  const { unit, mocks } = TestBed.solitary(OrderProcessor)
     .mock(UserServiceToken)
     .stub((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "alice@example.com" }) }))
     .compile();
@@ -85,8 +90,8 @@ it("charges then emails a confirmation", () => {
 });
 ```
 
-The zero-dependency default reads the same, minus the `mockFactory`. Assert against the built-in spy's `.mock.calls` and
-stub with `.mockReturnValue()`:
+The zero-dependency default is the `TestBed` export itself. Assert against the built-in spy's `.mock.calls` and stub
+with `.mockReturnValue()`:
 
 ```ts
 import { TestBed } from "@codefast/di-testing";
@@ -97,13 +102,28 @@ unit.placeOrder("u1", 42);
 assert.deepEqual(mocks.get(PaymentGatewayToken).charge.mock.calls[0], ["u1", 42]);
 ```
 
+## Entry points
+
+A suite states its mock backend once. `createTestBed(options)` returns the entry point every bed in the suite begins
+from — typically created in one shared test-support module:
+
+```ts
+import { createTestBed } from "@codefast/di-testing";
+import { vi } from "vitest";
+
+export const TestBed = createTestBed({ mockFactory: () => vi.fn() });
+```
+
+- `mockFactory: () => spy` — required: the spy backend each auto-mock is built from. Its return type is the entry
+  point's backend and types every bed it begins. Pass `defaultMockFactory` for the built-in spy.
+- `metadataReader?: MetadataReader` — the reader dependencies are discovered through. Defaults to di's reader.
+
+The `TestBed` export is `createTestBed({ mockFactory: defaultMockFactory })`: the built-in spy, no framework needed.
+
 ## Solitary beds
 
-`TestBed.solitary(target, options?)` begins a bed for `target` and auto-mocks every dependency it declares. Nothing is
-instantiated until you call `compile()`. The options:
-
-- `mockFactory?: () => spy` — the spy backend each auto-mock is built from. Defaults to the built-in spy.
-- `metadataReader?: MetadataReader` — the reader dependencies are discovered through. Defaults to di's reader.
+`TestBed.solitary(target)` begins a bed for `target` and auto-mocks every dependency it declares with the entry point's
+backend. Nothing is instantiated until you call `compile()`.
 
 The builder records overrides, then compiles:
 
@@ -127,13 +147,16 @@ The builder records overrides, then compiles:
 ## Sociable beds
 
 A sociable bed keeps chosen collaborators real while everything else stays mocked — a unit test over a small real
-subtree, not an integration test. `TestBed.sociable(target, options?)` takes the same options and returns only
-`.expose()`, because a sociable bed with nothing exposed is a solitary bed.
+subtree, not an integration test. `TestBed.sociable(target)` mocks with the entry point's backend like `solitary` and
+returns only `.expose()`, because a sociable bed with nothing exposed is a solitary bed.
 
 ```ts
 import { injectable, token } from "@codefast/di";
-import { TestBed } from "@codefast/di-testing";
+import { createTestBed } from "@codefast/di-testing";
 import { expect, it, vi } from "vitest";
+
+// The suite's entry point on Vitest spies, so matchers and mockReturnValue work on every mock.
+const TestBed = createTestBed({ mockFactory: () => vi.fn() });
 
 interface TaxPolicy {
   rateFor(currency: string): number;
@@ -160,7 +183,7 @@ class CheckoutService {
 }
 
 it("prices through the real PricingService over a mocked tax boundary", () => {
-  const bed = TestBed.sociable(CheckoutService, { mockFactory: () => vi.fn() })
+  const bed = TestBed.sociable(CheckoutService)
     .expose(PricingService)
     .mock(TaxPolicyToken)
     .stub((fn) => ({ rateFor: fn().mockReturnValue(0.1) }))
@@ -209,7 +232,7 @@ The bed implements `AsyncDisposable`, so `await using bed = TestBed.solitary(X).
 block; that needs the `esnext.disposable` lib in your TypeScript configuration if your `target` does not include it.
 
 The lower-level pieces are exported too: `createAutoMock`, `createSpy`, `defaultMockFactory`, and the `Mocked`,
-`DeepPartial`, `MockFactory`, and `Spy` types.
+`DeepPartial`, `MockFactory`, `Spy`, and `TestBedOptions` types.
 
 ## Errors
 

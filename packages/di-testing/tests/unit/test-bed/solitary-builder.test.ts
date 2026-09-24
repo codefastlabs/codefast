@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { TestBed } from "#test-bed/test-bed";
+import { createTestBed, TestBed } from "#test-bed/test-bed";
 import {
   AccessorConsumer,
   AccessorOnlyService,
@@ -20,6 +20,9 @@ import {
   UserServiceToken,
 } from "#tests/unit/support/fixtures";
 
+/** The entry point on Vitest spies, so every mock carries Vitest's own surface. */
+const VitestTestBed = createTestBed({ mockFactory: () => vi.fn() });
+
 describe("TestBed.solitary", () => {
   it("auto-mocks every constructor dependency (zero-dep backend)", () => {
     const { unit, mocks } = TestBed.solitary(OrderProcessor)
@@ -35,7 +38,7 @@ describe("TestBed.solitary", () => {
   });
 
   it("works with a Vitest mock factory and its matchers", () => {
-    const { unit, mocks } = TestBed.solitary(OrderProcessor, { mockFactory: () => vi.fn() })
+    const { unit, mocks } = VitestTestBed.solitary(OrderProcessor)
       .mock(UserServiceToken)
       .stub((fn) => ({ findUser: fn().mockReturnValue({ id: "u1", email: "alice@example.com" }) }))
       .compile();

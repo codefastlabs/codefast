@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { ExposureError, OverrideMismatchError, SealedDependencyError } from "#errors/errors";
-import { TestBed } from "#test-bed/test-bed";
+import { createTestBed, TestBed } from "#test-bed/test-bed";
 import {
   BundleService,
   CheckoutService,
@@ -19,9 +19,12 @@ import {
   ThrowingService,
 } from "#tests/unit/support/fixtures";
 
+/** The entry point on Vitest spies, so every mock carries Vitest's own surface. */
+const VitestTestBed = createTestBed({ mockFactory: () => vi.fn() });
+
 describe("TestBed.sociable", () => {
   const bedFor = () =>
-    TestBed.sociable(CheckoutService, { mockFactory: () => vi.fn() })
+    VitestTestBed.sociable(CheckoutService)
       .expose(PricingService)
       .mock(TaxPolicyToken)
       .stub((fn) => ({ rateFor: fn().mockReturnValue(0.1) }));
@@ -88,9 +91,7 @@ describe("TestBed.sociable", () => {
   });
 
   it("runs the exposed collaborator's lifecycle through the container", async () => {
-    const bed = TestBed.sociable(LifecycleHost, { mockFactory: () => vi.fn() })
-      .expose(LifecycleService)
-      .compile();
+    const bed = VitestTestBed.sociable(LifecycleHost).expose(LifecycleService).compile();
     const log = bed.mocks.get(LoggerToken);
 
     expect(log.log).toHaveBeenCalledWith("start");
@@ -107,7 +108,7 @@ describe("TestBed.sociable", () => {
   });
 
   it("shares one real instance across a diamond of exposed paths", () => {
-    const bed = TestBed.sociable(BundleService, { mockFactory: () => vi.fn() })
+    const bed = VitestTestBed.sociable(BundleService)
       .expose(PricingService)
       .expose(DiscountPolicy)
       .mock(TaxPolicyToken)
@@ -125,7 +126,7 @@ describe("TestBed.sociable", () => {
   });
 
   it("keeps a collaborator exposed through a named slot real and singular", () => {
-    const bed = TestBed.sociable(NamedPricingHost, { mockFactory: () => vi.fn() })
+    const bed = VitestTestBed.sociable(NamedPricingHost)
       .expose(PricingService)
       .mock(TaxPolicyToken)
       .stub((fn) => ({ rateFor: fn().mockReturnValue(0) }))
@@ -139,7 +140,7 @@ describe("TestBed.sociable", () => {
   });
 
   it("keeps a collaborator exposed through a tagged slot real and singular", () => {
-    const bed = TestBed.sociable(TaggedPricingHost, { mockFactory: () => vi.fn() })
+    const bed = VitestTestBed.sociable(TaggedPricingHost)
       .expose(PricingService)
       .mock(TaxPolicyToken)
       .stub((fn) => ({ rateFor: fn().mockReturnValue(0) }))
