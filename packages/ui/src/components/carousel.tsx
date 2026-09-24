@@ -3,7 +3,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Context } from "radix-ui/internal";
 import type { ComponentProps, JSX, KeyboardEvent } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 
 import { Button } from "#components/button";
 import { useDirection } from "#components/direction";
@@ -75,17 +75,34 @@ function Carousel({
     plugins,
   );
 
-  const [canScrollPrevious, setCanScrollPrevious] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
+  const subscribe = useCallback(
+    (onStoreChange: () => void) => {
+      if (!api) {
+        return (): void => {};
+      }
 
-  const onSelect = useCallback((carouselApi: CarouselApi) => {
-    if (!carouselApi) {
-      return;
-    }
+      api.on("reInit", onStoreChange);
+      api.on("select", onStoreChange);
 
-    setCanScrollPrevious(carouselApi.canScrollPrev());
-    setCanScrollNext(carouselApi.canScrollNext());
-  }, []);
+      return (): void => {
+        api.off("reInit", onStoreChange);
+        api.off("select", onStoreChange);
+      };
+    },
+    [api],
+  );
+
+  // Embla is an external store: read its scroll bounds during render instead of mirroring them into state.
+  const canScrollPrevious = useSyncExternalStore(
+    subscribe,
+    () => api?.canScrollPrev() ?? false,
+    () => false,
+  );
+  const canScrollNext = useSyncExternalStore(
+    subscribe,
+    () => api?.canScrollNext() ?? false,
+    () => false,
+  );
 
   const scrollPrevious = useCallback(() => {
     api?.scrollPrev();
@@ -119,23 +136,6 @@ function Carousel({
 
     setApi(api);
   }, [api, setApi]);
-
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
-
-    // Defer onSelect to avoid synchronous setState in effect
-    queueMicrotask(() => {
-      onSelect(api);
-    });
-    api.on("reInit", onSelect);
-    api.on("select", onSelect);
-
-    return (): void => {
-      api.off("select", onSelect);
-    };
-  }, [api, onSelect]);
 
   return (
     <CarouselContextProvider
