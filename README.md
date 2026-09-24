@@ -130,7 +130,7 @@ A new package starts in `internal/` and moves to `packages/` when it is publishe
 
 ### Prerequisites
 
-- **Node.js** ≥ 24
+- **Node.js** ≥ 22.13 ([why](SUPPORT.md#nodejs))
 - **pnpm** 11 (pinned via `packageManager`)
 
 ### Setup
