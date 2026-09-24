@@ -35,7 +35,7 @@ still returns the wrong type.
 ### Goals of this library
 
 - **Zero `reflect-metadata`** — no polyfill, no legacy flags
-- **TC39 Decorator Stage 3** — `Symbol.metadata` stable (TypeScript 5.9+), no `experimentalDecorators`
+- **TC39 Decorator Stage 3** — `Symbol.metadata` (typed since TypeScript 5.2), no `experimentalDecorators`
 - **Branded `Token<Value>`** — fully type-safe, never leaks `any`
 - **ESM-only** — like InversifyJS v8, no dual build
 - **Learn the good API from v8** — lifecycle hooks, fluent builder, naming convention — but rebuild it from scratch
@@ -59,7 +59,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | Installation       | `npm install inversify reflect-metadata`                      | `npm install @codefast/di`                        |
 | reflect-metadata   | Required — `import 'reflect-metadata'` at the entry point     | Not needed — zero dependencies                    |
 | tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | No special flags needed                           |
-| Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 5.9+) |
+| Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 5.4+) |
 | Module format      | ESM-only                                                      | ESM-only                                          |
 | Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 22.12.0                                    |
 

@@ -1,6 +1,6 @@
 # DI Library — Design Specification
 
-> Inspired by InversifyJS v8 · Built from scratch · Zero `reflect-metadata` · TC39 Decorators Stage 3 · TypeScript 5.9+
+> Inspired by InversifyJS v8 · Built from scratch · Zero `reflect-metadata` · TC39 Decorators Stage 3 · TypeScript 5.4+
 > · ESM-only
 
 ---
@@ -37,9 +37,9 @@ with any version of InversifyJS, by design.
 >
 > - **ESM only.** There is no CommonJS build and no dual build.
 > - **Node.js ≥ 22.12.**
-> - **TypeScript ≥ 5.9**, for a stable `Symbol.metadata`. Stage 3 decorators have been the default since TypeScript 5.0,
->   so `experimentalDecorators` and `emitDecoratorMetadata` stay **off** and `reflect-metadata` is never loaded
->   ([tsconfig setup](#tsconfig-setup)).
+> - **TypeScript ≥ 5.4**, because the published declarations use `NoInfer`. Stage 3 decorators have been the default
+>   since TypeScript 5.0, so `experimentalDecorators` and `emitDecoratorMetadata` stay **off** and `reflect-metadata` is
+>   never loaded ([tsconfig setup](#tsconfig-setup)).
 > - Decorators themselves are optional: an application that declares every binding explicitly needs nothing beyond the
 >   runtime and the module format.
 
