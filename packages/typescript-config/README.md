@@ -29,8 +29,8 @@ The presets are plain JSON `tsconfig` files. There's no runtime code, and nothin
 pnpm add -D @codefast/typescript-config
 ```
 
-`@codefast/typescript-config` requires Node.js 22.12 or later, and `typescript` 5 or later as a peer dependency —
-`moduleResolution: "bundler"` is a TypeScript 5 option. The package is published on 0.x and versioned on its own track:
+`@codefast/typescript-config` requires Node.js 22.12 or later, and `typescript` 5.7 or later as a peer dependency — the
+`ES2024` `target` and `lib` arrived in TypeScript 5.7. The package is published on 0.x and versioned on its own track:
 breaking changes ship as minor versions, so pin the minor version when you need stability.
 
 ## Quick start
