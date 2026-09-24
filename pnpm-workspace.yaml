@@ -14,6 +14,9 @@ overrides:
   # Hold the whole tree to the Node floor's types — a dev tool's `@types/node: "*"` peer
   # (commitlint's cosmiconfig loader) would otherwise pull a newer major and mask floor-missing APIs.
   "@types/node": ^22.20.3
+  # mermaid pins chevrotain `~11.1.2`, whose packages pin an exact lodash-es below the fix for
+  # GHSA-r5fr-rjxr-66jc and GHSA-f23m-r3pf-42rh; scoped to the vulnerable range so it lapses once chevrotain moves on.
+  "lodash-es@<4.18.0": ^4.18.0
 
 catalog:
   "@babel/core": ^8.0.5
