@@ -7,13 +7,16 @@ for each. Confirm the installed version covers a minor before emitting its APIs
 ## Table of contents
 
 - [19.0 — the major API shift](#190--the-major-api-shift)
+  - [`ref` as a prop](#ref-as-a-prop--no-forwardref), [`<Context>` as provider](#context-is-its-own-provider),
+    [Actions](#actions-useactionstate-useformstatus-useoptimistic), [`use`](#use-for-promises),
+    [metadata](#document-metadata--resource-loading)
 - [19.1 — Owner Stacks](#191--owner-stacks)
 - [19.2 — Activity, Effect Events, resume](#192--activity-effect-events-resume)
 - [19.3 — View Transitions, Fragment refs, browser()](#193--view-transitions-fragment-refs-browser)
 
 ## 19.0 — the major API shift
 
-The idioms that replaced React 18 patterns. Covered with examples in SKILL.md; summary here.
+The idioms that replaced React 18 patterns: a summary, then an example of each.
 
 - **Actions** — async functions in `<form action>` / `startTransition`; `useActionState`, `useFormStatus`,
   `useOptimistic` track pending/error/optimistic state.
@@ -26,6 +29,155 @@ The idioms that replaced React 18 patterns. Covered with examples in SKILL.md; s
 - **Root error options** — `onCaughtError`, `onUncaughtError`, `onRecoverableError`.
 - **Static SSG** — `prerender` / `prerenderToNodeStream` from `react-dom/static`.
 - **Custom elements** — full property/attribute support.
+
+### `ref` as a prop — no `forwardRef`
+
+A function component receives `ref` in its props like any other prop. `forwardRef` still works but is on its way out;
+don't reach for it in new code.
+
+```tsx
+import type { ComponentProps, Ref } from "react";
+
+interface TextInputProps extends ComponentProps<"input"> {
+  ref?: Ref<HTMLInputElement>;
+}
+
+function TextInput({ ref, ...props }: TextInputProps) {
+  return <input ref={ref} {...props} />;
+}
+```
+
+Ref callbacks may return a **cleanup** function; an implicit return is now a type error, so use a block body:
+
+```tsx
+<div
+  ref={(node) => {
+    // setup
+    return () => {
+      // cleanup
+    };
+  }}
+/>
+```
+
+### `<Context>` is its own provider
+
+```tsx
+import type { ReactNode } from "react";
+
+import { createContext, use } from "react";
+
+const ColorSchemeContext = createContext<"light" | "dark">("light");
+
+interface AppProps {
+  children: ReactNode;
+}
+
+function App({ children }: AppProps) {
+  return <ColorSchemeContext value="dark">{children}</ColorSchemeContext>;
+}
+
+interface HeadingProps {
+  children: ReactNode;
+}
+
+// `use` can read context inside a conditional — `useContext` cannot.
+function Heading({ children }: HeadingProps) {
+  const colorScheme = use(ColorSchemeContext);
+  return <h1 className={colorScheme === "dark" ? "text-white" : "text-black"}>{children}</h1>;
+}
+```
+
+### Actions: `useActionState`, `useFormStatus`, `useOptimistic`
+
+An async function passed to `<form action>` (or run via `startTransition`) is an **Action**; React tracks its pending
+state, errors, and optimistic updates for you. Reach for this instead of hand-rolling `isPending`/`error` state.
+
+```tsx
+import { useActionState, useOptimistic } from "react";
+import { useFormStatus } from "react-dom";
+
+interface ProfileFormProps {
+  currentName: string;
+}
+
+function ProfileForm({ currentName }: ProfileFormProps) {
+  const [optimisticName, setOptimisticName] = useOptimistic(currentName);
+
+  // useActionState returns [state, dispatchAction, isPending].
+  const [error, submitAction, isPending] = useActionState(async (_prev: string | null, formData: FormData) => {
+    const next = String(formData.get("name"));
+    setOptimisticName(next);
+    return (await updateName(next)) ?? null; // return the error, or null on success
+  }, null);
+
+  return (
+    <form action={submitAction}>
+      <p>{optimisticName}</p>
+      <input name="name" disabled={isPending} />
+      {error ? <p role="alert">{error}</p> : null}
+      <SubmitButton />
+    </form>
+  );
+}
+
+// useFormStatus reads the enclosing <form>'s pending state — no prop drilling.
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>Save</button>;
+}
+```
+
+### `use` for promises
+
+`use` unwraps a promise during render and integrates with Suspense. Unlike a hook, it may be called conditionally.
+
+```tsx
+import { use, Suspense } from "react";
+
+interface CommentsProps {
+  commentsPromise: Promise<string[]>;
+}
+
+function Comments({ commentsPromise }: CommentsProps) {
+  const comments = use(commentsPromise); // suspends until resolved
+  return comments.map((c, i) => <p key={i}>{c}</p>);
+}
+
+function Page({ commentsPromise }: CommentsProps) {
+  return (
+    <Suspense fallback={<p>Loading…</p>}>
+      <Comments commentsPromise={commentsPromise} />
+    </Suspense>
+  );
+}
+```
+
+### Document metadata & resource loading
+
+Render `<title>`/`<meta>`/`<link>` anywhere; React hoists them to `<head>`. Stylesheets take a `precedence`. Preload
+from `react-dom`.
+
+```tsx
+import { preinit, preload } from "react-dom";
+
+interface ArticleProps {
+  title: string;
+}
+
+function Article({ title }: ArticleProps) {
+  preload("https://example.com/font.woff2", { as: "font" });
+  preinit("https://example.com/analytics.js", { as: "script" });
+  return (
+    <article>
+      <title>{title}</title>
+      <meta name="description" content={title} />
+      <link rel="stylesheet" href="/article.css" precedence="default" />
+      <h1>{title}</h1>
+    </article>
+  );
+}
+```
 
 ## 19.1 — Owner Stacks
 
@@ -42,7 +194,12 @@ import type { ReactNode } from "react";
 
 import { Activity } from "react";
 
-function Router({ isVisible, children }: { isVisible: boolean; children: ReactNode }) {
+interface RouterProps {
+  isVisible: boolean;
+  children: ReactNode;
+}
+
+function Router({ isVisible, children }: RouterProps) {
   // "hidden": children hidden, effects unmounted, updates deferred until idle — state is preserved.
   return <Activity mode={isVisible ? "visible" : "hidden"}>{children}</Activity>;
 }
@@ -58,9 +215,14 @@ the dependency array.
 ```tsx
 import { useEffect, useEffectEvent } from "react";
 
-function ChatRoom({ roomId, theme }: { roomId: string; theme: string }) {
+interface ChatRoomProps {
+  roomId: string;
+  colorScheme: string;
+}
+
+function ChatRoom({ roomId, colorScheme }: ChatRoomProps) {
   const onConnected = useEffectEvent(() => {
-    showNotification("Connected!", theme); // always sees the latest theme…
+    showNotification("Connected!", colorScheme); // always sees the latest color scheme…
   });
 
   useEffect(() => {
@@ -68,7 +230,7 @@ function ChatRoom({ roomId, theme }: { roomId: string; theme: string }) {
     connection.on("connected", onConnected);
     connection.connect();
     return () => connection.disconnect();
-  }, [roomId]); // …yet theme is NOT a dependency, so changing it won't reconnect
+  }, [roomId]); // …yet colorScheme is NOT a dependency, so changing it won't reconnect
 }
 ```
 
@@ -117,7 +279,12 @@ import type { ReactNode } from "react";
 
 import { ViewTransition, startTransition, addTransitionType } from "react";
 
-function Gallery({ showing, children }: { showing: boolean; children: ReactNode }) {
+interface GalleryProps {
+  showing: boolean;
+  children: ReactNode;
+}
+
+function Gallery({ showing, children }: GalleryProps) {
   return showing ? <ViewTransition>{children}</ViewTransition> : null;
 }
 
@@ -144,7 +311,16 @@ structure.
 ```tsx
 import { Fragment, useEffect, useRef } from "react";
 
-function List({ items }: { items: { id: string; label: string }[] }) {
+interface ListItem {
+  id: string;
+  label: string;
+}
+
+interface ListProps {
+  items: readonly ListItem[];
+}
+
+function List({ items }: ListProps) {
   const fragmentRef = useRef<FragmentInstance>(null);
 
   useEffect(() => {
