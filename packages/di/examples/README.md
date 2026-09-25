@@ -27,7 +27,9 @@ its own domain logging.
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ESNext"],
-    "moduleResolution": "bundler"
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"]
   }
 }
 ```
