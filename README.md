@@ -91,7 +91,7 @@ container.bind(CheckoutService).toSelf();
 container.resolve(CheckoutService).complete("ORD-1001");
 ```
 
-`@codefast/di` requires Node.js 22.12 or later and TypeScript 5.9 or later with native Stage 3 decorators — no
+`@codefast/di` requires Node.js 22.12 or later and TypeScript 5.4 or later with native Stage 3 decorators — no
 `reflect-metadata`, no `experimentalDecorators`. Its README, specification, and architecture notes live at
 [codefastlabs.com/docs/di](https://codefastlabs.com/docs/di); the component library at
 [codefastlabs.com/ui](https://codefastlabs.com/ui); every other package at `https://codefastlabs.com/docs/<pkg>`.
@@ -130,7 +130,7 @@ A new package starts in `internal/` and moves to `packages/` when it is publishe
 
 ### Prerequisites
 
-- **Node.js** ≥ 24
+- **Node.js** ≥ 22.13 ([why](SUPPORT.md#nodejs))
 - **pnpm** 11 (pinned via `packageManager`)
 
 ### Setup

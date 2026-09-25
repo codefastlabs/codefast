@@ -997,7 +997,7 @@ importers:
   packages/typescript-config:
     dependencies:
       typescript:
-        specifier: '>=5.0.0'
+        specifier: '>=5.7.0'
         version: 7.0.2
 
   packages/ui:
