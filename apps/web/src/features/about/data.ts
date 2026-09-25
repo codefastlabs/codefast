@@ -5,9 +5,9 @@ export const COMPONENT_COUNT = COMPONENTS.length;
 
 export const REQUIREMENTS = [
   { label: "React", value: "≥ 19.0.0" },
-  { label: "TypeScript", value: "≥ 5.0" },
+  { label: "TypeScript", value: "≥ 7" },
   { label: "Tailwind CSS", value: "v4" },
-  { label: "Node.js", value: "≥ 24" },
+  { label: "Node.js", value: "≥ 22.12" },
 ] as const;
 
 export const INSTALL_STEPS = [
