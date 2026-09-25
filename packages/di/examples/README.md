@@ -26,11 +26,16 @@ its own domain logging.
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022"],
-    "moduleResolution": "bundler"
+    "lib": ["ES2024"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"]
   }
 }
 ```
+
+`lib` stays at `ES2024`, the Node floor's edition, so a newer builtin is a type error. `types: ["node"]` loads the Node
+globals the examples use, along with the `Symbol.asyncDispose` and `Symbol.dispose` declarations `@codefast/di` needs.
 
 ---
 
