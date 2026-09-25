@@ -2287,6 +2287,24 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 > Node also cannot parse decorator syntax itself: `target: "ESNext"` leaves decorators in the output, so the code must
 > go through a transpiler that lowers them (a lower `target`, esbuild, or Babel's `2023-11` decorators plugin).
 
+> **Normative — a lower `target` keeps `ESNext.Disposable` in `lib`.** `target` also picks the default `lib`, and below
+> `ESNext` that default leaves out `ESNext.Disposable` and `ESNext.Decorators`, so a lowered build lists them itself —
+> or sets `"lib": ["ESNext"]`, which includes both:
+>
+> ```json
+> {
+>   "compilerOptions": {
+>     "target": "ES2022",
+>     "lib": ["ES2022", "ESNext.Disposable", "ESNext.Decorators"]
+>   }
+> }
+> ```
+>
+> `ESNext.Disposable` declares `Symbol.asyncDispose` and `Symbol.dispose`, the keys of two methods in the published
+> `Container` declaration: without it the package's own declarations fail to type-check (TS2550), and `skipLibCheck`
+> hides that but not a consumer's own `await using`, which needs the same lib. `ESNext.Decorators` declares
+> `Symbol.metadata`, which only code reading it directly needs — the install snippet above type-checks without it.
+
 ---
 
 ## Advanced Constraints

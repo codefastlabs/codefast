@@ -26,11 +26,14 @@ its own domain logging.
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": ["ESNext"],
     "moduleResolution": "bundler"
   }
 }
 ```
+
+A `target` below `ESNext` narrows the default `lib`, so it is set to `ESNext` here: the package's declarations need
+`ESNext.Disposable` ([tsconfig setup](../SPEC.md#tsconfig-setup)).
 
 ---
 
