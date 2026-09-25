@@ -34,8 +34,8 @@ pnpm add @codefast/tailwind-variants tailwind-merge
 ```
 
 `@codefast/tailwind-variants` ships ESM only. `tailwind-merge` is a peer dependency (`>=3.0.0`), and the package
-requires Node.js 22.12 or later. It's published on 0.x and versioned on its own track: breaking changes ship as minor
-versions, so pin the minor version when you need stability.
+requires Node.js 22.12 or later and TypeScript 7 or later for its types. It's published on 0.x and versioned on its own
+track: breaking changes ship as minor versions, so pin the minor version when you need stability.
 
 ## Quick start
 

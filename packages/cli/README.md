@@ -23,6 +23,8 @@ encode an opinionated house style (called out below) that you can adopt, ignore,
 ## Requirements
 
 - **Node.js ≥ 22.12** (the CLI is published as ESM).
+- **TypeScript ≥ 7** to type-check a config written with `defineConfig`, and for
+  `arrange simplify --fold-variant-classname`, the one command that loads `typescript` (an optional peer).
 - **A project root — workspace or single package.** Commands resolve their root by walking up from the current
   directory: the nearest `pnpm-workspace.yaml` marks a **workspace** (every package under it is in scope), and with no
   workspace file the nearest `package.json` marks a **single package** (that one package is the whole scope). Only

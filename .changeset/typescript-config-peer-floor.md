@@ -1,7 +1,11 @@
 ---
-"@codefast/typescript-config": patch
+"@codefast/typescript-config": minor
 ---
 
-The `typescript` peer range is now `>=5.7.0`, matching what the presets need: every preset sets `target` and `lib` to
-`ES2024`, which TypeScript 5.6 and older reject (`TS6046`), so the old `>=5.0.0` range promised releases that could
-never compile against them. Installs that already worked are unaffected.
+pr: #965
+
+The `typescript` peer range is now `>=7.0.0`, up from `>=5.0.0`: TypeScript 7 is the one compiler the presets are
+checked against, so it is the floor they support. A project pinned to TypeScript 6 or older now fails npm's peer
+resolution (`ERESOLVE`) and gets a pnpm peer warning. Move it to TypeScript 7, or stay on 0.9.x while its tooling still
+needs TypeScript 6. A Next.js app on `next.json` needs Next.js 16.3 or later, the first release that type-checks with
+TypeScript 7.

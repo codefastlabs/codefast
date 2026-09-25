@@ -98,7 +98,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "typescript": "catalog:"
+    "typescript": ">=7.0.0"
   },
   "peerDependenciesMeta": {
     "typescript": {

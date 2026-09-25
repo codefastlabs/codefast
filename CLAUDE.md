@@ -24,7 +24,10 @@ demos. A new package is private until it is published, so it starts in `internal
   builds with plain `tsc` (no bundler — see below). There is no `@typescript/native` alias and no classic
   `@typescript/typescript6` anymore: `@codefast/cli` — the only place that needed the classic compiler API — now parses
   TypeScript with **`oxc-parser`** (its `arrange`/`tag` AST tooling), so nothing in the repo depends on the classic
-  `typescript` runtime. (TanStack Start's Vite plugins build fine on TS 7 — verified.)
+  `typescript` runtime. (TanStack Start's Vite plugins build fine on TS 7 — verified.) TS 7 is also every package's
+  **consumer floor** ([`SUPPORT.md`](SUPPORT.md#typescript)): the floor is the compiler the repo builds and checks with,
+  so never lower it to the oldest release that happens to parse the declarations, and a `typescript` major bump raises
+  it in the same PR.
 - **Library and bin packages build with native `tsc`** — per-package `tsconfig.build.json`, the Turborepo "Compiled
   Packages" model, emitting per-file `.js` + `.d.ts` to `dist/`. tsc leaves internal `#` subpath imports verbatim, so
   each `package.json#imports` is conditional (`source` → `src` for dev/tests, `types`/`default` → `dist` for consumers),

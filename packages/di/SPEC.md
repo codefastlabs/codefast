@@ -1,7 +1,7 @@
 # DI Library — Design Specification
 
-> Inspired by InversifyJS v8 · Built from scratch · Zero `reflect-metadata` · TC39 Decorators Stage 3 · TypeScript 5.4+
-> · ESM-only
+> Inspired by InversifyJS v8 · Built from scratch · Zero `reflect-metadata` · TC39 Decorators Stage 3 · TypeScript 7+ ·
+> ESM-only
 
 ---
 
@@ -37,9 +37,9 @@ with any version of InversifyJS, by design.
 >
 > - **ESM only.** There is no CommonJS build and no dual build.
 > - **Node.js ≥ 22.12.**
-> - **TypeScript ≥ 5.4**, because the published declarations use `NoInfer`. Stage 3 decorators have been the default
->   since TypeScript 5.0, so `experimentalDecorators` and `emitDecoratorMetadata` stay **off** and `reflect-metadata` is
->   never loaded ([tsconfig setup](#tsconfig-setup)).
+> - **TypeScript ≥ 7**, the one compiler that type-checks this package and emits its published declarations. Stage 3
+>   decorators are TypeScript's default, so `experimentalDecorators` and `emitDecoratorMetadata` stay **off** and
+>   `reflect-metadata` is never loaded ([tsconfig setup](#tsconfig-setup)).
 > - Decorators themselves are optional: an application that declares every binding explicitly needs nothing beyond the
 >   runtime and the module format.
 
@@ -1497,7 +1497,7 @@ const handler = requestContainer.resolve(RequestHandler);
 // Dispose: deactivate every singleton DEFINED at the child (the parent is untouched)
 await requestContainer.dispose();
 
-// `await using` — TC39 Explicit Resource Management (TypeScript 5.2+)
+// `await using` — TC39 Explicit Resource Management
 {
   await using scoped = container.createChild();
   scoped.bind(RequestId).toConstantValue(crypto.randomUUID());
@@ -2270,7 +2270,7 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 }
 ```
 
-`experimentalDecorators: true` is not needed. Stage 3 decorators have been standard since TypeScript 5.0.
+`experimentalDecorators: true` is not needed: Stage 3 decorators are TypeScript's default.
 
 > **Normative — `Symbol.metadata` must exist before a decorated class is defined.** TypeScript emits `context.metadata`
 > as `undefined` on a runtime without `Symbol.metadata`, and every decorator here then throws

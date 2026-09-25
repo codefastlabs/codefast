@@ -27,6 +27,17 @@ Development uses the latest Node for speed and tooling; nothing about the contri
 the published packages, because the floor is checked by the compiler and by CI. The published packages run on Node
 22.12+, but the repo's own toolchain (pnpm) needs Node 22.13+, so a contributor's local Node must be at least 22.13.
 
+## TypeScript
+
+The `@codefast/*` packages support **TypeScript 7 or later**. The floor is the compiler the repo builds and type-checks
+every package with — TypeScript 7 alone emits the published `.d.ts` files — not the oldest release that happens to
+accept them.
+
+- **`@codefast/typescript-config`** declares it as its `typescript` peer range (`>=7.0.0`).
+- **`@codefast/cli`** declares it as an optional `typescript` peer (`>=7.0.0`), which only
+  `arrange simplify --fold-variant-classname` loads.
+- **The other packages** state it in their README and declare no `typescript` peer.
+
 ## Reporting issues
 
 Open an issue with the environment details the bug-report template asks for — Node and package-manager versions, plus
