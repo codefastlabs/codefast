@@ -29,9 +29,9 @@ The presets are plain JSON `tsconfig` files. There's no runtime code, and nothin
 pnpm add -D @codefast/typescript-config
 ```
 
-`@codefast/typescript-config` requires Node.js 22.12 or later, and `typescript` 5.7 or later as a peer dependency — the
-`ES2024` `target` and `lib` arrived in TypeScript 5.7. The package is published on 0.x and versioned on its own track:
-breaking changes ship as minor versions, so pin the minor version when you need stability.
+`@codefast/typescript-config` requires Node.js 22.12 or later, and `typescript` 7 or later as a peer dependency —
+TypeScript 7 is the one compiler the presets are checked against. The package is published on 0.x and versioned on its
+own track: breaking changes ship as minor versions, so pin the minor version when you need stability.
 
 ## Quick start
 
@@ -94,6 +94,10 @@ A Next.js app:
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
 ```
+
+Next.js 16.3 and later type-check with TypeScript 7 through its `tsc` CLI (`experimental.useTypeScriptCli`, on by
+default). Earlier Next.js releases need TypeScript 6's compiler API, so an app on one of them stays on 0.9.x of this
+package.
 
 ### Building with `tsc`
 
