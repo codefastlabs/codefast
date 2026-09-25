@@ -15,6 +15,7 @@ The `@codefast/*` packages support the Node.js **Active LTS** and **Maintenance 
 `engines.node` is `>=22.12.0` on every package, and the floor is enforced mechanically rather than by convention:
 
 - **`@types/node`** is pinned to the floor's major (`^22`), so a Node API newer than the floor is a type error.
+  Dependabot ignores its major updates (`.github/dependabot.yml`), so the pin moves only when the floor does.
 - **`lib` and `target`** are `ES2024` (the newest edition Node 22.12 fully supports), so an ES2025 builtin is a type
   error rather than a runtime crash.
 - **Internal subpath imports** use a bare `#` prefix (`#core/token`), which Node's ESM resolver accepts on every

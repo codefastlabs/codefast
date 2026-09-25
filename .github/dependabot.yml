@@ -25,6 +25,9 @@ updates:
       # Zod is shared via catalog across apps/web, packages/cli, packages/theme; bump majors deliberately.
       - dependency-name: "zod"
         update-types: ["version-update:semver-major"]
+      # @types/node stays on the Node floor's major so a newer Node API is a type error; bumped by hand with the floor.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
       # Published @codefast/* consumed by examples/* — bumped by hand per release, not by Dependabot.
       - dependency-name: "@codefast/*"
     groups:
