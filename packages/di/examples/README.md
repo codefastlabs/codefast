@@ -1,7 +1,7 @@
 # @codefast/di — Examples
 
 A progressive set of runnable examples covering every feature of `@codefast/di`. Each example is a standalone TypeScript
-file you can run with `tsx` or `ts-node`.
+file you can run with `tsx`.
 
 ```sh
 npx tsx examples/01-basic-tokens/main.ts
