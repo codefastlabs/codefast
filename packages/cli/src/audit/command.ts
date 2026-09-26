@@ -228,7 +228,8 @@ const commentsCheck: AuditCheck<CommentAuditRunRequest, CommentAuditResult> = {
 
 const publishCheck: AuditCheck<PublishAuditRunRequest, PublishAuditResult> = {
   name: "publish",
-  description: "Report what breaks a consumer's install: #/ imports and exports/imports targets not shipped",
+  description:
+    "Report what breaks a consumer's install: #/ imports, unshipped exports/imports targets, and stylesheet @source paths reaching nothing shipped",
   targetHelp: "Directory or file to scan (default: the repo root)",
   schema: publishAuditRunRequestSchema,
   prepare: preparePublishAudit,

@@ -112,6 +112,7 @@ codefast                              # Codefast monorepo developer CLI
 │  ├─ imports [target]                # banned import forms (React by-name, Zod namespace in front-end, …)
 │  ├─ assertions [target]             # double type assertions through unknown/any (x as unknown as T)
 │  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
+│  ├─ publish [target]                # what breaks a consumer's install: #/ imports, unshipped targets, @source paths
 │  └─ comments [target]               # section dividers not in the one allowed form
 │      └─ --fix                       # rewrite every fixable divider in place (the only audit that writes)
 │      (each audit also takes [target] + --json)
@@ -144,13 +145,14 @@ Every command also responds to `--help`; each command's section below explains w
 | `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)      | no (report only)  |
 | `audit assertions`    | Report double type assertions through `unknown` / `any`, tests included    | no                |
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
+| `audit publish`       | Report what would break a consumer's install of a published package        | no                |
 | `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
 
-**Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, `audit links`, and `audit assertions` are
-general-purpose — they work for any pnpm workspace or single package that builds with `tsc`. The other four audits
-encode codefast's own house style (logical Tailwind directions, named React imports, a specific comment/divider grammar,
-a `namespace:Name` scheme for `@codefast/di` tokens). Adopt them if they fit your project; otherwise skip them, or use
-an allowlist to narrow their scope.
+**Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, `audit links`, `audit assertions`, and
+`audit publish` are general-purpose — they work for any pnpm workspace or single package that builds with `tsc`. The
+other four audits encode codefast's own house style (logical Tailwind directions, named React imports, a specific
+comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens). Adopt them if they fit your project;
+otherwise skip them, or use an allowlist to narrow their scope.
 
 ## `arrange`
 
@@ -248,12 +250,13 @@ apply (see the [Configuration](#configuration) example for their shape):
 ## `pack-slim`
 
 Slims a published package down to what a consumer's `tsc` and Node actually read, so the npm tarball ships `dist`
-runtime and types only. Where `mirror` writes the full exports — including the `source` condition — for local
-development, `pack-slim` removes that development lane for publish: it drops `src` from `files`, every `source`
-condition from `exports`/`imports`, every `imports` entry left pointing outside `files`, every script that is not an
-install or publish lifecycle hook, `devDependencies`, and the `dist` source maps plus their dangling `sourceMappingURL`
-directives. Private packages are skipped. It is meant to run on an ephemeral CI checkout right before publish, so its
-result is **never committed**.
+runtime and types, plus any `src` subtree an export still points into (a raw stylesheet export such as `./css/*`). Where
+`mirror` writes the full exports — including the `source` condition — for local development, `pack-slim` removes that
+development lane for publish: it drops the rest of `src` from `files`, every `source` condition from
+`exports`/`imports`, every `imports` entry left pointing outside `files`, every script that is not an install or publish
+lifecycle hook, `devDependencies`, and the `dist` source maps plus their dangling `sourceMappingURL` directives. Private
+packages are skipped. It is meant to run on an ephemeral CI checkout right before publish, so its result is **never
+committed**.
 
 Because that result must never be committed, `pack-slim` refuses to write when the git working tree has uncommitted
 tracked changes — a guard against an accidental local run landing on real work. `--dry-run` is exempt (it writes
@@ -360,6 +363,25 @@ codefast audit assertions --json           # machine-readable summary
 
 Configure exceptions via `audit.assertions.allowlist` — each entry is the assertion as written or
 `repo/relative/path.ts:<assertion>` — though the inline directive keeps the reason beside the code it excuses.
+
+### `audit publish`
+
+Reports what would break a consumer's install of a published package, while it can still be fixed:
+
+- a `#/`-prefixed internal import, which Node's ESM resolver rejects on Node 24 before 24.14 while every in-repo runner
+  accepts it;
+- an `exports`/`imports` target the slimmed manifest does not ship, found by applying the same slim as `pack-slim`;
+- a shipped stylesheet whose Tailwind `@source` paths reach none of the files the tarball ships. A workspace still
+  resolves them against `src`, so only the published layout shows it: the consumer's Tailwind registers no class names
+  and the components render unstyled.
+
+It reads the built output, so run it after the build; a `files` entry missing on disk, such as an unbuilt `dist`, is
+named in the report. Private packages are skipped, and it takes no allowlist.
+
+```bash
+codefast audit publish                     # every published package in the workspace
+codefast audit publish --json              # machine-readable summary
+```
 
 ### `audit comments`
 

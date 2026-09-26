@@ -18,12 +18,24 @@ export function presentPublishAuditResult(result: PublishAuditResult): void {
     logger.out(`\n${packageName}: ${field}["${subpath}"] → ${target} is not shipped by "files"`);
   }
 
-  const problems = result.legacyImportCount + result.unshipped.length;
+  for (const { packageName, stylesheet, sources, missingFilesEntries } of result.unreachableStylesheets) {
+    logger.out(`\n${packageName}: ${stylesheet} registers no file the tarball ships`);
+    for (const { line, pattern } of sources) {
+      logger.out(`  ${line}: @source "${pattern}"`);
+    }
+    if (missingFilesEntries.length > 0) {
+      logger.out(`  not on disk: ${missingFilesEntries.join(", ")} — build the package first`);
+    }
+  }
+
+  const problems = result.legacyImportCount + result.unshipped.length + result.unreachableStylesheets.length;
   if (problems > 0) {
-    logger.out(`\n✖ ${result.legacyImportCount} legacy "#/" import(s), ${result.unshipped.length} unshipped target(s)`);
+    logger.out(
+      `\n✖ ${result.legacyImportCount} legacy "#/" import(s), ${result.unshipped.length} unshipped target(s), ${result.unreachableStylesheets.length} stylesheet(s) registering nothing shipped`,
+    );
   } else {
     logger.out(
-      `✓ No "#/" imports across ${result.scannedFileCount} file(s); every publish target ships across ${result.packageCount} package(s)`,
+      `✓ No "#/" imports across ${result.scannedFileCount} file(s); every publish target and stylesheet source ships across ${result.packageCount} package(s)`,
     );
   }
 }

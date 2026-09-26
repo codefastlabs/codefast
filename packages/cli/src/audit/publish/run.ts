@@ -1,7 +1,14 @@
 import path from "node:path";
 
-import type { LegacySubpathFile, PublishAuditResult, UnshippedTargetViolation } from "#audit/domain/types";
+import type {
+  LegacySubpathFile,
+  PublishAuditResult,
+  UnreachableStylesheetViolation,
+  UnshippedTargetViolation,
+} from "#audit/domain/types";
 import { scanLegacySubpathImports } from "#audit/publish/domain/legacy-subpath";
+import { missesShippedFiles, scanStylesheetSources } from "#audit/publish/domain/stylesheet-sources";
+import { listShippedFiles } from "#audit/publish/shipped-files";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import type { Result } from "#core/result";
@@ -13,7 +20,8 @@ import { unshippedPublishTargets } from "#pack-slim/domain/transform";
 
 /**
  * Reports what would break a consumer's install: a `#/`-prefixed import Node's ESM resolver rejects on
- * the floor, and an `exports`/`imports` target the slimmed publish manifest does not ship.
+ * the floor, an `exports`/`imports` target the slimmed publish manifest does not ship, and a shipped
+ * stylesheet whose `@source` paths reach none of the files that do ship.
  *
  * @since 0.12.0
  */
@@ -44,6 +52,7 @@ export async function runPublishAudit(
 
     const layout = await listWorkspacePackageDirectories(rootDir, fs, true);
     const unshipped: Array<UnshippedTargetViolation> = [];
+    const unreachableStylesheets: Array<UnreachableStylesheetViolation> = [];
     let packageCount = 0;
     for (const packageDir of layout.packageDirectoryPathsAbsolute) {
       const manifestPath = path.join(packageDir, packageJsonFileName);
@@ -60,11 +69,15 @@ export async function runPublishAudit(
       for (const target of unshippedPublishTargets(manifest)) {
         unshipped.push({ packageName, field: target.field, subpath: target.subpath, target: target.target });
       }
+      for (const violation of unreachableStylesheetsOf(fs, { rootDir, packageDir, manifest })) {
+        unreachableStylesheets.push({ packageName, ...violation });
+      }
     }
 
     return ok({
       legacyImportFiles,
       unshipped,
+      unreachableStylesheets,
       legacyImportCount,
       scannedFileCount: sourceFiles.length,
       packageCount,
@@ -72,6 +85,35 @@ export async function runPublishAudit(
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
+}
+
+// The shipped stylesheets whose `@source` paths register nothing the tarball ships — what a consumer's Tailwind scans.
+function unreachableStylesheetsOf(
+  fs: Filesystem,
+  args: {
+    readonly rootDir: string;
+    readonly packageDir: string;
+    readonly manifest: Record<string, unknown>;
+  },
+): Array<Omit<UnreachableStylesheetViolation, "packageName">> {
+  const { rootDir, packageDir, manifest } = args;
+  const shipped = listShippedFiles(fs, packageDir, manifest);
+  if (shipped === null) {
+    return [];
+  }
+  const violations: Array<Omit<UnreachableStylesheetViolation, "packageName">> = [];
+  for (const stylesheet of shipped.files.filter((file) => file.endsWith(".css"))) {
+    const stylesheetPath = path.join(packageDir, stylesheet);
+    const sources = scanStylesheetSources(fs.readFileSync(stylesheetPath, "utf8"));
+    if (sources.length > 0 && missesShippedFiles(stylesheet, sources, shipped.files)) {
+      violations.push({
+        stylesheet: toPosixPath(path.relative(rootDir, stylesheetPath)),
+        sources,
+        missingFilesEntries: shipped.missingEntries,
+      });
+    }
+  }
+  return violations;
 }
 
 function toPosixPath(filePath: string): string {

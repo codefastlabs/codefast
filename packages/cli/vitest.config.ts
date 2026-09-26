@@ -5,7 +5,7 @@ import { defineConfig } from "vitest/config";
  *
  * Test taxonomy:
  *   tests/unit/**         — unit tests
- *   tests/integration/**  — pre-wired (no integration tests yet)
+ *   tests/integration/**  — real files in a temp directory
  *   tests/e2e/**          — pre-wired (none yet)
  *   tests/types/**        — pre-wired (none yet)
  */

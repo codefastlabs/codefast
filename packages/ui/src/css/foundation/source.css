@@ -1,10 +1,14 @@
 /* -------------------------------------------------------------------------
  * Source
  *
- * Third-party imports and the Tailwind content source scanned for class
- * usage across the package.
+ * Third-party imports and the Tailwind content sources scanned for the
+ * class names the components use.
  * ------------------------------------------------------------------------- */
 
 @import "tw-animate-css";
 
+/* Workspace apps read `src` in dev, through the `source` export condition. */
 @source "../../**/*.{ts,tsx}";
+
+/* Consumers read `dist`: the published tarball ships no `src` beyond `src/css`. */
+@source "../../../dist/**/*.js";

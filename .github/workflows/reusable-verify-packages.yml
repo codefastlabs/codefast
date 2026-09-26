@@ -82,8 +82,9 @@ jobs:
       - name: Verify Display Names
         run: pnpm cli:audit:display-names
 
-      # Static publish-surface check: a "#/"-prefixed import Node rejects on the floor, and an
-      # exports/imports target the slimmed manifest would not ship (e.g. a dropped stylesheet subtree).
+      # Static publish-surface check: a "#/"-prefixed import Node rejects on the floor, an exports/imports
+      # target the slimmed manifest would not ship (e.g. a dropped stylesheet subtree), and a shipped
+      # stylesheet whose @source paths reach nothing shipped. It reads `dist`, so it runs after the build.
       - name: Verify Publish Surface
         run: pnpm cli:audit:publish
 
