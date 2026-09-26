@@ -155,8 +155,8 @@ export default defineConfig(({ command }) => {
        * `source` condition, and keeps dual CJS/ESM third-party dependencies on their ESM
        * build in both dev and prod via `module` — avoiding the tslib `__extends` SSR interop
        * error. `source` is the only condition that differs between dev and prod; `@codefast/*`
-       * packages have no `module` key, so they fall back to the always-on `import` condition
-       * (`dist/*.mjs`) in prod.
+       * exports carry no `module` condition, so they fall back to the always-on `import`
+       * condition (`dist/*.js`) in prod.
        */
       conditions: isDev ? ["source", "module"] : ["module"],
     },

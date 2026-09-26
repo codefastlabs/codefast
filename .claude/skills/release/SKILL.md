@@ -86,6 +86,17 @@ pnpm run release:canary:exit    # changeset pre exit — leave canary mode
 Checking the state and reading a near-empty `.changeset/` during canary are covered in CLAUDE.md's "Releases" section.
 The id each consumed changeset is recorded under in `pre.json.changesets` is `pre/<name>`.
 
+Leaving canary mode does not touch npm: every package keeps its `canary` dist-tag on its last canary, so
+`pnpm add @codefast/<pkg>@canary` installs a version older than `latest`. Trusted publishing authenticates `npm publish`
+only, so CI cannot move a dist-tag; after `release:canary:exit`, a maintainer logged in to npm clears them, and the next
+canary publish sets the tag again:
+
+```bash
+for pkg in $(pnpm -r ls --json --depth -1 | jq -r '.[] | select(.private | not) | .name'); do
+  if [ -n "$(npm view "$pkg" dist-tags.canary)" ]; then npm dist-tag rm "$pkg" canary; fi
+done
+```
+
 ## Adding a brand-new package (first publish + trusted publishing)
 
 A trusted publisher is configured **per package** on npmjs.com and can only be added **after the package exists** there,
