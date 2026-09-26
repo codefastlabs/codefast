@@ -945,6 +945,17 @@ and no ambiguity to report.
 > That is their honest status: the duplication earns its keep at the arities the suite measures, and if those change the
 > trade is worth revisiting. Re-run the benchmark before assuming either way.
 
+### The disposed guard stays inside the inline budget
+
+Every public entry point calls `#assertNotDisposed()` first, and V8 inlines it into whichever caller inlines the entry
+point, so its bytecode is charged against that caller's cumulative inline budget. The hot part is therefore two field
+reads — `#disposed || #parent !== undefined` — and a live root never leaves it. The child path, the dispose-epoch
+compare and both throws sit in `#assertChainLive()`, out of line. The obvious spellings are all losses: checking
+`#disposed` and then the parent's epoch inline spends enough budget that a root's tagged lookup stops inlining its
+lookup-cache reads, folding both checks into one epoch compare puts the epoch read on every root resolve, and a combined
+condition with a cold helper is no smaller than the two checks it replaced. A child's compare is the price of an O(1)
+check that every ancestor is live.
+
 ### Upserts: eager or computed, by hit rate
 
 The package's own upsert helpers in [`core/map-upsert.ts`](src/core/map-upsert.ts) come in two forms. `getOrInsert`
