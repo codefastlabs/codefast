@@ -8,6 +8,7 @@ export const REQUIREMENTS = [
   { label: "TypeScript", value: "≥ 7" },
   { label: "Tailwind CSS", value: "v4" },
   { label: "Node.js", value: "≥ 24" },
+  { label: "Browsers", value: "Chrome 136 · Firefox 136 · Safari 18.4" },
 ] as const;
 
 export const INSTALL_STEPS = [
