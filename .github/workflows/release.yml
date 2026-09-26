@@ -32,6 +32,10 @@ jobs:
   verify-code:
     name: Verify packages
     uses: ./.github/workflows/reusable-verify-packages.yml
+    # A called workflow can only keep or drop the caller's permissions, so the OIDC grant starts here.
+    permissions:
+      contents: read
+      id-token: write
     secrets: inherit
 
   release:
@@ -46,8 +50,7 @@ jobs:
       id-token: write
     env:
       NODE_ENV: production
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7

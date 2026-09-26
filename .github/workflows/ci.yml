@@ -18,6 +18,10 @@ jobs:
   verify:
     name: Verify
     uses: ./.github/workflows/reusable-verify-packages.yml
+    # A called workflow can only keep or drop the caller's permissions, so the OIDC grant starts here.
+    permissions:
+      contents: read
+      id-token: write
     # No merge queue, so the PR run is the only pre-merge gate — run the full
     # test + coverage suite here (run-tests defaults to true).
     secrets: inherit
@@ -46,6 +50,8 @@ jobs:
         uses: ./.github/actions/setup-environment
         with:
           node-version: ${{ matrix.node }}
+          # Turbo leaves the runtime out of the task hash, so a shared cache could replay another Node line's results.
+          enable-remote-cache: false
 
       - name: Build Workspace Packages
         run: npx turbo build --filter="./packages/**" --filter="./internal/**"
