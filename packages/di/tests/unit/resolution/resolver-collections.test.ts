@@ -10,6 +10,7 @@ import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
+import { CircularDependencyError } from "#errors/errors";
 
 const KIND_TAG = tag("kind");
 
@@ -58,6 +59,38 @@ describe("a root-level collection is memoized against the chain", () => {
     bindStrategies(container, [3], evaluated);
 
     expect(container.resolveAll(strategyToken)).toEqual([1, 2, 3]);
+  });
+
+  it("answers two tokens read in turn, each from its own memo", () => {
+    const container = Container.create();
+    const evaluated: Array<number> = [];
+    bindStrategies(container, [1, 2], evaluated);
+    const otherToken = token<string>("collections-other");
+    container.bind(otherToken).toConstantValue("a").many();
+    container.bind(otherToken).toConstantValue("b").many();
+
+    for (let round = 0; round < 3; round += 1) {
+      expect(container.resolveAll(strategyToken)).toEqual([1, 2]);
+      expect(container.resolveAll(otherToken)).toEqual(["a", "b"]);
+    }
+    expect(evaluated).toEqual([1, 2]);
+  });
+
+  it("throws on every read once a member alias into a cycle joins a warm collection", () => {
+    const members = token<string>("collections-cycle-members");
+    const first = token<string>("collections-cycle-first");
+    const second = token<string>("collections-cycle-second");
+    const container = Container.create();
+    container.bind(members).toConstantValue("a").many();
+    expect(container.resolveAll(members)).toEqual(["a"]);
+
+    container.bind(first).toAlias(second);
+    container.bind(second).toAlias(first);
+    container.bind(members).toAlias(first).many();
+
+    // Rebuilding the list is what throws, so no read may answer from the list the first one kept.
+    expect(() => container.resolveAll(members)).toThrow(CircularDependencyError);
+    expect(() => container.resolveAll(members)).toThrow(CircularDependencyError);
   });
 
   it("drops a value memo once a container hook can change what a member resolves to", () => {
