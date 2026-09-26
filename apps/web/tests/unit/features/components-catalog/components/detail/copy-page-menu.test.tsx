@@ -50,4 +50,19 @@ describe("CopyPageMenu tracking", () => {
 
     expect(payload).not.toHaveProperty("markdown");
   });
+
+  it("tracks open_external when opening ChatGPT", async () => {
+    const user = userEvent.setup();
+
+    render(<CopyPageMenu component={component} />);
+
+    await user.click(screen.getByRole("button", { name: /more copy options/i }));
+    await user.click(screen.getByRole("menuitem", { name: /open in chatgpt/i }));
+
+    expect(track).toHaveBeenCalledWith("open_external", {
+      destination: "chatgpt",
+      surface: "copy-page-menu",
+      slug: "button",
+    });
+  });
 });
