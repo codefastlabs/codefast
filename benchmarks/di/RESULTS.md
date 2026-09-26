@@ -69,38 +69,51 @@ correctness property paid for with its price known).
   hundred-member row shows against ditox and the ten-member row does not; what the pair still pays is the registration
   above, ten or a hundred times. **Real deficit against tsyringe and at N=10 against ditox — the registration cost seen
   from the collection side.**
-- **Teardown at scale is a registration loss wearing a lifecycle label.** `materialize-100-singletons` (bind and resolve
-  100 singletons, no teardown) is 0.47× ditox and 1.55× tsyringe; `unbind-all-100-singletons` (the same, then dispose)
-  0.50×‡ and 1.42×‡. The two ratios against ditox are within a hair of each other, so the teardown walk costs nothing
-  the rivals do not pay — the loss is the 100 bindings above it. `lifecycle-pre-destroy-unbind` (one singleton, one
-  hook) is 1.04× ditox and 2.16× tsyringe. **Real deficit on the registration underneath, not on the hook.**
+- **Teardown at scale is a registration loss and a cold-class loss wearing a lifecycle label.**
+  `materialize-100-singletons` (bind and resolve 100 singletons, no teardown) is 0.47× ditox and 1.55× tsyringe;
+  `unbind-all-100-singletons` (the same, then dispose) 0.50×‡ and 1.42×‡. The two ratios against ditox are within a hair
+  of each other, so the teardown walk costs nothing the rivals do not pay. What sits above it is two costs of about
+  equal size: the 100 bindings, and the first resolve of each, because codefast's side binds a class with
+  `.to(Class).singleton()` where ditox binds a factory. A standalone probe puts the cold first resolve of a class
+  singleton at about twice that of a dynamic singleton, and the dynamic one already level with ditox's factory.
+  `lifecycle-pre-destroy-unbind` (one singleton, one hook) is 1.04× ditox and 2.16× tsyringe. **Real deficit on the
+  registration and the cold class lane underneath, not on the hook.**
 - **The stable-set collections are a chosen cost.** `resolve-all-strategies-10` 0.75×†‡ ditox and 0.88×† injection-js,
-  `-100` 0.64×†‡ and 0.64×†: a root-level `resolveAll` hands each caller a copy of its memoized list rather than the
-  list itself, so no caller can mutate the engine's memo. A frozen list was measured and rejected — a frozen array
-  iterates through a slow elements kind for every consumer. **Chosen cost**, its own commit, reversible alone.
+  `-100` 0.64×†‡ and 0.64×†, and `production-event-bus-dispatch` 0.69×† ditox and 0.82×† injection-js: a root-level
+  `resolveAll` hands each caller a copy of its memoized list rather than the list itself, so no caller can mutate the
+  engine's memo, while both rivals hand out the cached array they share. The event bus is that copy plus the dispatch;
+  what it pays beyond the copy is one map read, which a one-entry cell in front of the collection memo absorbs since
+  this baseline. A frozen list was measured and rejected — a frozen array iterates through a slow elements kind for
+  every consumer. **Chosen cost**, its own commit, reversible alone.
 - **Rebind wins awilix and still loses ditox above the ceiling.** `rebind-hot-swap` 1.45× awilix and 0.21×† ditox;
   `rebind-parent-resolve-child-depth-3` 1.40× awilix and 1.68× ditox. A rebind of a lone token is one registration whose
   displaced binding is deactivated on the spot; what it pays against ditox's bare map write is the builder object and
   the deactivation walk. **Work difference**, above the ceiling.
-- **Four rows lose injection-js above the ceiling.** `nested-context-resolve-in-factory` 0.81×† and
+- **Three rows lose injection-js above the ceiling.** `nested-context-resolve-in-factory` 0.81×† and
   `nested-container-resolve-in-factory` 0.84×† — a factory that resolves from its context or from the container
-  mid-construction — `production-event-bus-dispatch` 0.82×† (and 0.69×† ditox), and `alias-parent-owned-terminal`
-  0.84×†. injection-js's `get` inside a factory is the same call as at the root, which is why the shape costs it
-  nothing. The same-container alias rows are level (`alias-chain-3` 1.02×† injection-js); what the parent-owned one pays
-  is the chain-version sum a child reads before it trusts the memo. **Real deficit**, and the parent-owned alias is the
-  row that names its own next step.
+  mid-construction — and `alias-parent-owned-terminal` 0.84×†. Measured on their own, outside the harness, codefast is
+  ahead of injection-js on both nested-factory shapes. The loss appears in the harness child, which builds every
+  scenario before it measures one, so the factory call site that the transient dynamic lane inlines has already seen
+  hundreds of factories and V8 stops inlining through it; injection-js's lane inlines nothing to begin with, so the same
+  state costs it nothing. The harness keeps that state on purpose, as [`BENCH_GUIDE.md`](./BENCH_GUIDE.md) records. The
+  parent-owned alias is structural: injection-js caches the alias's answer in the child's own slot on the first read,
+  while codefast never caches a parent's instance in a child, so every read is a child resolve that finds the alias in
+  the child and the instance on the parent. **Harness state** for the two nested rows, **work difference** for the
+  alias.
 - **`accessor-injection-construct` 0.22×†‡ inversify.** The row measures the benchmark's transpiler as much as the
-  engine: esbuild lowers the scenario's own `accessor` field to `WeakMap`-backed privates (`__privateAdd`,
-  `__accessCheck`), a third of the row's self time. What the engine pays is the ambient scope around construction and
-  the accessor's own `resolve` through the container, where inversify's property injection is a metadata read on the
-  same plan. **Work difference**, and a harness change proposed (a `tsc` compile of the codefast scenarios), not made.
+  engine: tsx's esbuild lowers the scenario's decorated `accessor` field to `WeakMap`-backed privates (`__privateAdd`,
+  `__accessCheck`) and its own decorator runtime. A standalone probe of the same class compiled by the repo's `tsc`,
+  which keeps a native private field, resolves in 44 ns against 139 ns through esbuild, so the lowering is most of the
+  row. What the engine pays is the ambient scope around construction and the accessor's own `resolve` through the
+  container, where inversify's property injection is a metadata read on the same plan. **Work difference**, and the
+  harness stays as it is: a codefast user on Vite or tsx pays the same lowering, and a different transpiler for one
+  library would move every codefast row, canaries included.
 - **Failing fast costs more here: `misconfigured-missing-binding` 0.75×‡ tsyringe, 0.78×‡ brandi, 0.79×‡ ditox, 0.90×‡
   injection-js.** codefast builds a structured error carrying the resolution path; the rivals throw a string, and the
   stack capture both pay is most of the row. **Work difference** on a path a production request should never take.
 - **Two warm reads sit on the parity line's wrong side by a hair** — `singleton-class-1-dep` 0.97×† and
   `to-resolved-3-deps` 0.97×† against ditox — both above the throughput ceiling, where the ratio moves between runs of
-  the same build. **Open**: these and the four injection-js rows above are the ones to re-measure paired before the next
-  change to the nested-factory or alias lanes.
+  the same build. **Open**: these two are the ones to re-measure paired before the next change to their lanes.
 
 ## The wins
 
@@ -126,9 +139,10 @@ correctness property paid for with its price known).
   that binds many things and the two stable sets — `lifecycle` is its one winning group (0.62×), which is the
   100-singleton pair.
 - **injection-js — 18 rows to 11, 1.31× median, 1.39× geomean.** `realistic` 2.40×, `scope` 1.83×, `micro` 1.59×; level
-  on `async` (1.08×) and `boot` (1.04×). Its wins are the four ceiling rows above plus `fan-out` (0.91×), `failure`
-  (0.90×), `production` (0.82×) and `resolution` (0.82×) — every one of them a shape where a `ReflectiveInjector` that
-  caches every provider per injector does less work than a container that does not.
+  on `async` (1.08×) and `boot` (1.04×). Its wins are the three ceiling rows and the event bus above, plus the `fan-out`
+  (0.91×), `failure` (0.90×), `production` (0.82×) and `resolution` (0.82×) groups. The alias and the event bus are
+  shapes where a `ReflectiveInjector` that caches every provider's answer per injector does less work than a container
+  that does not; the two nested-factory rows are the harness state the loss list names.
 
 ## Geomean by group
 

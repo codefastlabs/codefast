@@ -119,6 +119,17 @@ share an isolate share inline caches and optimisation state, so a change to a fu
 compressed. A whole-suite paired A/B once read a change as a clean win whose real cost, measured per-scenario, was
 0.87×–0.93× on three rows — and mis-blamed two neighbouring commits before the isolation was added.
 
+**Isolation covers the measuring loop, not the setup.** An isolated child still builds every scenario of its library
+before it filters to the row it measures (`run-benchmark-child-main.ts` collects, then applies `BENCH_ONLY`), so by the
+time the row runs, the resolver's shared call sites have already seen every factory, class and binding kind in the
+suite. That is deliberate and it stays: an application's resolver sees many shapes too, and the published figures are
+measured in that state. It does mean a row's number includes how much its lane leans on inlining, and a library with
+more scenarios brings more of that feedback into each row. When a row reads slower in the harness than its function
+measures alone, time the closure the row's `build()` returns in both states before calling it an engine deficit: a
+standalone probe that builds only the row's own family (clean) against one that calls the library's full collector first
+(polluted). The gap between the two is the lane's dependence on inlining, not a regression — it is how
+`nested-context-resolve-in-factory` turned out to be a win at the function level and a loss only in the harness.
+
 Swapping the order is what makes drift cancel instead of accumulate. Reporting every pass is what lets a reader see a
 pass that disagrees — if pass 2 says 0.81 and the rest say 0.99, that is worth knowing, and a lone median hides it.
 
