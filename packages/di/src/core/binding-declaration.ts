@@ -261,8 +261,9 @@ export function binding<Value, const Deps extends ReadonlyArray<InjectableDepend
   key: Constructor<Value>,
   definition: BindingDefinition<NoInfer<Value>, string, Deps> | SelfDefinition<NoInfer<Value>>,
 ): BindingDeclaration;
-// The value type is erased here, once: the overloads above are what a caller is checked against.
 /**
+ * Implements both overloads with the value type erased once, since a caller is checked against the overloads above.
+ *
  * @since 0.11.0
  */
 export function binding(key: Token<unknown> | Constructor, definition: AnyDefinition): BindingDeclaration {

@@ -69,6 +69,11 @@ jobs:
       - name: Verify Documentation Cross-References
         run: pnpm cli:audit:links
 
+      # Neither oxlint nor tsc validates comments, so TSDoc grammar, `@since` order and the divider form
+      # rest on this audit — including the doc blocks `codefast tag` rewrites in the release PR.
+      - name: Verify Comment Conventions
+        run: pnpm cli:audit:comments
+
       # oxlint bans namespace/default React imports natively, but an implicit `React.*` UMD-global
       # type reference — and a named `import { z } from "zod"` vs the namespace form — pass both
       # lint and tsc; only this audit sees them.
