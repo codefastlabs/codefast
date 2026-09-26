@@ -42,6 +42,12 @@ outputs:
 runs:
   using: "composite"
   steps:
+    # Job-wide, not on the install step: `pnpm run` reinstalls when a manifest is rewritten after the install, and the
+    # root `prepare` in that install would add hooks for a CI commit or push to run.
+    - name: "Skip Git Hook Installation"
+      shell: bash
+      run: echo "SKIP_INSTALL_SIMPLE_GIT_HOOKS=true" >> "$GITHUB_ENV"
+
     - name: "Setup Turborepo Cache"
       id: turbo-cache
       uses: actions/cache@v6
@@ -75,8 +81,6 @@ runs:
       shell: bash
       if: ${{ inputs.install-dependencies == 'true' }}
       run: pnpm install ${{ inputs.install-options }}
-      env:
-        SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
 
     - name: "Log Turborepo remote cache context"
       id: turbo-remote-cache
