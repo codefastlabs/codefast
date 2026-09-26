@@ -103,7 +103,11 @@ export class Inspector {
   }
 }
 
-/** The public snapshot of one binding, the shape every introspection read reports a binding in. */
+/**
+ * The public snapshot of one binding, the shape every introspection read reports a binding in.
+ *
+ * @since 0.12.0
+ */
 export function snapshotOf(binding: Binding): BindingSnapshot {
   // Aliased, not copied: slot tags are frozen where they are built, so a caller's write throws
   // instead of corrupting the registry — and the snapshot skips an allocation per binding.

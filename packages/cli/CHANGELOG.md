@@ -1,5 +1,26 @@
 # @codefast/cli
 
+## 0.14.0
+
+### Minor Changes
+
+- [#990](https://github.com/codefastlabs/codefast/pull/990) Remove `codefast audit constants`, the audit that required every upper-case numeric `const` to name its kind in the
+  comment above it.
+
+  Breaking: the `audit constants` subcommand is gone, and `audit.constants` is no longer a config key, so a
+  `codefast.config` that still sets it fails validation as an unknown key; delete that section.
+
+- [#992](https://github.com/codefastlabs/codefast/pull/992) `codefast tag` stamps every overload signature again, each in its own doc block. Since the move to `oxc-parser` it
+  stamped only an overloaded function's implementation, the one signature a `.d.ts` drops, so a released overload reached
+  consumers with no `@since` on any signature they can see.
+
+  A declaration with no doc block and a `//` comment on the line above it now fails the run instead of getting a fresh
+  block there, where the block would stack under a note (which `audit comments` rejects) or split a directive from the
+  code it governs. The run names each such declaration by file and line, lists it under `blockedDeclarations` in `--json`,
+  leaves its file untouched, and exits `1`: once a release ships the declaration unstamped, a later run can only stamp a
+  version that did not introduce it. The `--json` `ok` field now follows the exit code, so a failed target also reports
+  `ok: false`.
+
 ## 0.13.0
 
 ### Minor Changes

@@ -200,6 +200,8 @@ export function verifyAccessorMetadata(
  *
  * @remarks One record per class, so a cold resolve looks the class up once and hands the record down
  * rather than asking a map per fact.
+ *
+ * @since 0.12.0
  */
 export interface ClassFacts {
   /** The reader's constructor metadata, `null` once it answered that it knows nothing about the class. */

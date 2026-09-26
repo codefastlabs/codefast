@@ -5,6 +5,8 @@ import type { CodefastConfig } from "#core/config/schema";
  *
  * @remarks A block written there would stack under a note or split a directive from the code it governs, so the
  * writer leaves the whole file as it is until a person writes that doc block.
+ *
+ * @since 0.14.0
  */
 export type TagBlockedDeclaration = {
   filePath: string;
