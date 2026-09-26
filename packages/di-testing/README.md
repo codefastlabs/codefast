@@ -230,7 +230,8 @@ it("prices through the real PricingService over a mocked tax boundary", () => {
 - `dispose()` — run the unit's `@preDestroy` hooks and dispose the container.
 
 The bed implements `AsyncDisposable`, so `await using bed = TestBed.solitary(X).compile()` disposes it at the end of the
-block; that needs the `esnext.disposable` lib in your TypeScript configuration if your `target` does not include it.
+block. The package's declarations carry the disposal types this needs, so no `lib` or `types` entry is required; at
+runtime, `await using` needs `Symbol.asyncDispose`, which every supported Node line defines.
 
 The lower-level pieces are exported too: `createAutoMock`, `createSpy`, `defaultMockFactory`, and the `Mocked`,
 `DeepPartial`, `MockFactory`, `Spy`, and `TestBedOptions` types.
