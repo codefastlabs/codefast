@@ -138,8 +138,9 @@ syntax only — it never type-checks — which is all `arrange` and `tag` need.
 
 ## Audits are read-only and mechanical
 
-**Context.** `audit rtl`, `audit links`, `audit comments`, `audit imports` and `audit display-names` gate CI. A gate
-that needs judgment to interpret, or that can only be fixed by hand, is ignored under time pressure.
+**Context.** `audit links`, `audit comments`, `audit imports`, `audit assertions`, `audit display-names`, `audit rtl`,
+`audit constants` and `audit publish` gate CI. A gate that needs judgment to interpret, or that can only be fixed by
+hand, is ignored under time pressure.
 
 **Decision.** Every audit reports a location and a one-line reason, exits non-zero on any finding, and where the fix is
 mechanical offers `--fix` (comment dividers) so a red run is one command from green. Allowlists live in
