@@ -9,10 +9,8 @@ import { settleInOrder } from "#resolution/async-fan-out";
 /**
  * The number of runs a plan's closure makes before the plan is generated as its own function.
  *
- * @remarks A measured policy, not a machine width, a contract value or bind-time data: generating
- * costs some fifty closure runs and the new function runs cold for thirty more, so it repays only
- * over runs in the thousands. Below it a plan stays a closure, which is all a cold container or a
- * per-request child ever runs.
+ * @remarks A measured policy: the generated function costs a compile and a warm-up, so it repays only over
+ * many runs of one plan in one container, and a cold container or a per-request child keeps the closure.
  *
  * @since 0.10.0
  */
