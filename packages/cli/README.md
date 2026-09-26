@@ -274,9 +274,15 @@ Exits `1` when any package fails, `0` otherwise.
 ## `tag`
 
 Adds `@since <version>` tags to the doc comments of exported declarations that lack one, creating the doc block when
-there is none. The version comes from the nearest `package.json` above each target file, and declarations that already
-carry `@since` are left alone. Run it at release time so published APIs carry accurate version metadata — never
-hand-write `@since`.
+there is none. Overload signatures are declarations too, each stamped on its own, because the `.d.ts` keeps every
+overload's doc block and drops the implementation's. The version comes from the nearest `package.json` above each target
+file, and declarations that already carry `@since` are left alone. Run it at release time so published APIs carry
+accurate version metadata — never hand-write `@since`.
+
+A declaration with no doc block and a `//` comment on the line above it is reported instead: a block written there would
+stack under a note, which `audit comments` rejects, or split a directive from the code it governs. Its file is left as
+it is, so every reported line stays accurate. Write the doc block by hand before the release that ships the declaration,
+since a later run can only stamp a version that did not introduce it.
 
 ```bash
 codefast tag                   # auto-discover packages from cwd (or the single package)
@@ -284,7 +290,8 @@ codefast tag packages/ui/src   # tag one directory or file
 codefast tag --dry-run         # summary only, no writes
 ```
 
-Exits `1` when no target is selected, when any target fails, or when the `tag.onAfterWrite` hook fails.
+Exits `1` when no target is selected, when any target fails, when a declaration is left unstamped, or when the
+`tag.onAfterWrite` hook fails.
 
 ## `audit`
 

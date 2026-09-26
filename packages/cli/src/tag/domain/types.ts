@@ -1,6 +1,18 @@
 import type { CodefastConfig } from "#core/config/schema";
 
 /**
+ * An exported declaration left unstamped because it has no doc block and a `//` comment holds the line above it.
+ *
+ * @remarks A block written there would stack under a note or split a directive from the code it governs, so the
+ * writer leaves the whole file as it is until a person writes that doc block.
+ */
+export type TagBlockedDeclaration = {
+  filePath: string;
+  line: number;
+  name: string;
+};
+
+/**
  * Per-file outcome of a tag run.
  *
  * @since 0.3.16-canary.0
@@ -8,6 +20,7 @@ import type { CodefastConfig } from "#core/config/schema";
 export type TagFileResult = {
   filePath: string;
   taggedDeclarations: number;
+  blockedDeclarations: Array<TagBlockedDeclaration>;
   changed: boolean;
 };
 
@@ -107,6 +120,7 @@ export type TagResult = {
   filesScanned: number;
   filesChanged: number;
   taggedDeclarations: number;
+  blockedDeclarations: Array<TagBlockedDeclaration>;
   versionSummary: string;
   distinctVersions: Array<string>;
   modifiedFiles: Array<string>;

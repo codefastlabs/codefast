@@ -4,6 +4,9 @@ import type { TagResult } from "#tag/domain/types";
 /**
  * Maps a tag run's result to the process exit code.
  *
+ * @remarks A blocked declaration fails the run: once its release ships unstamped, the only stamp a
+ * later run can add names a version that did not introduce it.
+ *
  * @since 0.3.16-canary.0
  */
 export function exitCodeForTagResult(result: TagResult): number {
@@ -11,7 +14,10 @@ export function exitCodeForTagResult(result: TagResult): number {
     return CLI_EXIT_GENERAL_ERROR;
   }
   const hasRunErrors = result.targetResults.some((targetResult) => targetResult.runError !== null);
-  return hasRunErrors || result.hookError !== null ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
+  const hasBlockedDeclarations = result.blockedDeclarations.length > 0;
+  return hasRunErrors || hasBlockedDeclarations || result.hookError !== null
+    ? CLI_EXIT_GENERAL_ERROR
+    : CLI_EXIT_SUCCESS;
 }
 
 /**
@@ -22,7 +28,7 @@ export function exitCodeForTagResult(result: TagResult): number {
 export function formatTagJsonOutput(result: TagResult, rootDir: string): string {
   return JSON.stringify({
     schemaVersion: 1 as const,
-    ok: result.hookError === null,
+    ok: exitCodeForTagResult(result) === CLI_EXIT_SUCCESS,
     cwd: rootDir,
     result,
   });
