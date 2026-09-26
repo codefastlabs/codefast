@@ -71,6 +71,26 @@ const newSlotNameSet = (): Set<string> => new Set<string>();
 // ── Container interface ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * The disposal globals `Container` is keyed by and `await using` checks it against, declared one by one because the
+ * `esnext.disposable` lib would also declare `DisposableStack` and the rest the Node floor lacks. Each member matches
+ * TypeScript's own, so it merges with a `lib` or `@types/node` copy.
+ */
+declare global {
+  interface SymbolConstructor {
+    readonly dispose: unique symbol;
+    readonly asyncDispose: unique symbol;
+  }
+
+  interface Disposable {
+    [Symbol.dispose](): void;
+  }
+
+  interface AsyncDisposable {
+    [Symbol.asyncDispose](): PromiseLike<void>;
+  }
+}
+
+/**
  * The public surface: binding, resolving, modules, lifecycle hooks, child scopes, and disposal.
  *
  * @since 0.3.16-canary.0
