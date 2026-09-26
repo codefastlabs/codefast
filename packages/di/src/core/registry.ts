@@ -57,6 +57,9 @@ const EMPTY_LONE: Map<DependencyKey, Binding> = new Map();
 // Process-wide, so registration order compares across every registry a binding could be restored into.
 let registrationCounter = 0;
 
+/**
+ * @since 0.11.0
+ */
 export class BindingRegistry {
   // Monotonic mutation counter — lets resolvers version-stamp lookup caches across a container chain.
   #version = 0;

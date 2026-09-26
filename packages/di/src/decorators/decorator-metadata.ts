@@ -8,6 +8,8 @@ import { MissingDecoratorMetadataError } from "#errors/errors";
  *
  * @throws `MissingDecoratorMetadataError` when the transpiler handed none, which is how a runtime
  * without `Symbol.metadata` shows up.
+ *
+ * @since 0.11.0
  */
 export function decoratorMetadataOf(
   context: DecoratorContext,

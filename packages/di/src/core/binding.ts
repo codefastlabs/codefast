@@ -72,6 +72,8 @@ export function bindingSlotEquals(left: BindingSlot, right: BindingSlot): boolea
  * Returns the slot with one criterion added, replacing any earlier criterion of the same key.
  *
  * @remarks One criterion per key: re-tagging a key replaces it rather than asking for both values.
+ *
+ * @since 0.11.0
  */
 export function withSlotCriterion(slot: BindingSlot, criterion: BindingTag): BindingSlot {
   const tags = [...slot.tags];
@@ -107,6 +109,8 @@ export const DEFAULT_BINDING_SLOT: BindingSlot = { name: undefined, tags: Object
  *
  * @remarks A tag value is caller data — a bigint, a null-prototype object, a throwing `toString` —
  * so stringifying it must not become the error that masks the real one.
+ *
+ * @since 0.11.0
  */
 export function stringifyTagValue(value: unknown): string {
   try {
@@ -377,10 +381,18 @@ interface MemoizedFrameField {
   rootContext: ResolutionContext | undefined;
 }
 
-/** The stamp of a binding whose activation need has not been computed under the current versions. */
+/**
+ * The stamp of a binding whose activation need has not been computed under the current versions.
+ *
+ * @since 0.11.0
+ */
 export const NO_ACTIVATION_STAMP = -1;
 
-/** The registration order of a binding no registry has added yet. */
+/**
+ * The registration order of a binding no registry has added yet.
+ *
+ * @since 0.11.0
+ */
 export const UNREGISTERED_ORDER = -1;
 
 /**

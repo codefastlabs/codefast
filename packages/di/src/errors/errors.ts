@@ -546,6 +546,8 @@ export class StaticMemberDecoratorError extends DiError {
  *
  * @remarks Reported at decoration rather than at resolve, so the error points at the declaration
  * instead of a `MetadataReader` the caller never configured.
+ *
+ * @since 0.11.0
  */
 export class SymbolKeyedLifecycleError extends DiError {
   override readonly name = "SymbolKeyedLifecycleError";
@@ -567,6 +569,8 @@ export class SymbolKeyedLifecycleError extends DiError {
  *
  * @remarks TypeScript compiles `context.metadata` to `undefined` when `Symbol.metadata` is missing, so
  * the fix is installing it before any decorated class is defined — the key this library reads.
+ *
+ * @since 0.11.0
  */
 export class MissingDecoratorMetadataError extends DiError {
   override readonly name = "MissingDecoratorMetadataError";
@@ -586,6 +590,8 @@ export class MissingDecoratorMetadataError extends DiError {
  *
  * @remarks Raised where the declaration is written, for callers the compiler cannot reach, so a
  * declared module that was built can always be loaded.
+ *
+ * @since 0.11.0
  */
 export class InvalidBindingDeclarationError extends DiError {
   override readonly name = "InvalidBindingDeclarationError";

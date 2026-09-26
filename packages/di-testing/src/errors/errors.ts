@@ -39,6 +39,8 @@ export class NotInjectableError extends TestingError {
  *
  * @remarks The types require the factory; this reaches a caller the compiler cannot, and stops the
  * built-in spy from standing in for a backend nobody chose.
+ *
+ * @since 0.2.0
  */
 export class MissingMockFactoryError extends TestingError {
   readonly code = "MISSING_MOCK_FACTORY";

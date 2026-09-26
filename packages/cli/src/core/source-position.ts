@@ -4,6 +4,8 @@
 
 /**
  * Returns the one-based line an offset falls on.
+ *
+ * @since 0.13.0
  */
 export function lineOfOffset(sourceText: string, offset: number): number {
   let line = 1;
@@ -17,6 +19,8 @@ export function lineOfOffset(sourceText: string, offset: number): number {
 
 /**
  * Returns a text up to its first line break, so a multi-line node reports as one line.
+ *
+ * @since 0.13.0
  */
 export function firstLineOf(text: string): string {
   const newlineIndex = text.indexOf("\n");

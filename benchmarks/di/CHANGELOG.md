@@ -1,5 +1,81 @@
 # @codefast/benchmark-di
 
+## 0.10.0
+
+### Minor Changes
+
+- [#941](https://github.com/codefastlabs/codefast/pull/941) Add the `module-cold-128` row: a fresh container built from one module of 128 bindings — half constants, half singleton
+  factories — resolving the last, per iteration, in each library's native module idiom (`@codefast/di` declared modules,
+  inversify `ContainerModule`, brandi `createDependencyModule` + `use().from()`, ditox `bindModule`). A shared
+  `isComposedModule` sanity check asserts every binding resolves, constants are shared and singletons are one per
+  container.
+
+- [#896](https://github.com/codefastlabs/codefast/pull/896) Add the `plan-runs-*` engine rows: a fresh container resolving a transient class chain exactly `k` times, at two depths,
+  so the compiled plan's closure tier, its generation on the thirty-second run, the generated function's warm-up and its
+  warm run are each priced as the difference between two rows.
+
+- [#898](https://github.com/codefastlabs/codefast/pull/898) `baselines/` now holds exactly the one run `RESULTS.md` transcribes, and `bench:baseline` derives it rather than naming
+  it: the lane passes `BENCH_BASELINE=baselines`, so a run id is never hand-edited into the script or copied into the
+  page's prose. The directory had accumulated three runs that were not baselines at all — the page's own transcript and
+  two contract-tier exhibits kept for a document that cited them — which left the baseline's identity nowhere in the data
+  and made any read of the directory pick up the wrong run. `RESULTS.md` is rewritten from a fresh full-profile isolated
+  pass (`2026-09-21T09-29-37-156Z`) as a self-contained snapshot of where the engine stands, dropping the deltas that were
+  carried against the retired pre-rewrite engine; the runs nothing transcribes any more are removed.
+
+- [#946](https://github.com/codefastlabs/codefast/pull/946) Drop the per-library `bench:<library>` scripts. The parent already spawns every library's child itself, and a child run
+  by hand gave up the interleaving, trials and diff that make a number worth reading. `BENCH_LIBRARY` narrows a real run
+  to the libraries named instead, and the dist-swap escape hatch spells the child's own command.
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) `engines.node` is now `>=24.0.0`, up from `>=22.12.0`, and Node 22 is no longer supported. Node 24.0.0 is the first
+  release with explicit resource management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`,
+  `SuppressedError`) and all of ES2025, so the packages use both as the platform ships them instead of shimming them for
+  an older line, and the CI matrix runs the unit suite on 24.0.0 itself. Move to Node 24, or stay on the current minor
+  while a deployment still runs Node 22.
+
+### Patch Changes
+
+- [#942](https://github.com/codefastlabs/codefast/pull/942) Fix brandi's `module-cold-from-modules` cell, which measured a warm cache: a dependency module's `inSingletonScope()`
+  caches on the module's own binding, so every container after the pre-warm reused one instance. The row now binds
+  `inContainerScope()`, one instance per container like every other side, so **brandi's figure on this row changes
+  meaning** — it now constructs the graph per iteration and reads slower than before; earlier brandi figures on this row
+  are not comparable. Every side's sanity check now also asserts one instance within a container and a fresh one in the
+  next (`isSharedWithinScopeFreshAcross`); the other libraries' measured work is unchanged.
+
+- [#899](https://github.com/codefastlabs/codefast/pull/899) Four ways to run, each with one purpose: `pnpm bench` isolates every scenario in its own subprocess and is the lane to
+  cite; `pnpm bench:fast` is the shared-process smoke run; `pnpm bench:baseline` is the ledger's full pass against the
+  pinned baseline; `pnpm bench:ab` compares two builds of `@codefast/di`. `bench:isolate`, `bench:full` and
+  `bench:verbose` are removed; `BENCH_MODE=full` and `BENCH_VERBOSE=true` compose with `bench`.
+
+- [#901](https://github.com/codefastlabs/codefast/pull/901) `RESULTS.md` is rewritten from a full pass of the harness that collects only between trials, over the same engine as the
+  previous page: 23 codefast rows had read 15–150% lower under the forced in-loop collections, the plan rows most. The
+  run's `observations.jsonl` is committed under `baselines/`; the pass it replaces is removed. The recipe names the pass's
+  length — a little over two minutes — and the load average the report now records.
+
+- [#906](https://github.com/codefastlabs/codefast/pull/906) `RESULTS.md` is rewritten from a pass over `main` after the lookup memo's hit became inlinable: the alias rows the
+  previous page listed as the one deficit the fixed harness uncovered read at parity with injection-js now, and the page
+  names what still loses there. The run's `observations.jsonl` is committed under `baselines/`; the pass it replaces is
+  removed.
+
+- [#904](https://github.com/codefastlabs/codefast/pull/904) `RESULTS.md` is rewritten from a pass of the harness that runs every trial over the one closure built before the first,
+  on the same engine as the previous page. The previous harness built a fresh closure per trial and so measured two of
+  every three trials without V8's function-context specialization; the median moved on 43 codefast rows by more than 10%
+  for that alone, and the warm-read gap the page had filed as harness-only is gone with it. The run's `observations.jsonl`
+  is committed under `baselines/`; the pass it replaces is removed.
+
+- [#917](https://github.com/codefastlabs/codefast/pull/917) Show measuring time per library in the progress block instead of wall-clock elapsed.
+
+  An isolated run is scenario-major, so every library's clock started at its discovery child and stopped when the whole
+  run ended — all seven rows printed the same span no matter how many scenarios they measured. `ProgressTracker` now
+  accumulates `busyMs` across a library's measuring subprocesses and the frame renders that, so the column says what each
+  row actually cost the machine. Wall-clock still appears once, in the run card. The live display also stops redrawing a
+  row that sits idle between subprocesses, and the plain lane closes a library with
+  `all N scenario(s) measured in <time>`.
+
+- Updated dependencies:
+  - @internal/benchmark-harness@0.11.0
+  - @codefast/di@0.11.0
+  - @internal/benchmark-viewer@0.10.0
+
 ## 0.9.0
 
 ### Minor Changes

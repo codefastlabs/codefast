@@ -1,5 +1,52 @@
 # @codefast/di-testing
 
+## 0.2.0
+
+### Minor Changes
+
+- [#952](https://github.com/codefastlabs/codefast/pull/952) A suite now states its mock backend once, and a test bed can no longer be typed against one backend and built from
+  another. `createTestBed({ mockFactory, metadataReader? })` returns the entry point every bed begins from, its `Backend`
+  inferred from the factory; `TestBed.solitary(target)` and `TestBed.sociable(target)` take the target only. The `TestBed`
+  export is `createTestBed({ mockFactory: defaultMockFactory })`, the built-in spy with no framework needed.
+
+  Before, the backend was chosen per call — `TestBed.solitary(Unit, { mockFactory: () => vi.fn() })` — and
+  `TestBed.solitary<Unit, SinonStub>(Unit)` with no factory type-checked, typed every mock as `SinonStub`, and built the
+  default spy. Migrate by creating the suite's entry point once:
+
+  ```ts
+  import { createTestBed } from "@codefast/di-testing";
+  import { vi } from "vitest";
+
+  export const TestBed = createTestBed({ mockFactory: () => vi.fn() });
+  ```
+
+  `TestBedOptions<Backend>` configures `createTestBed` and requires `mockFactory`; `TestBedStatic<Backend>` names the
+  entry point's backend and has no default. `createTestBed` throws the new `MissingMockFactoryError`
+  (`MISSING_MOCK_FACTORY`) for a caller past the types who passes no factory, instead of standing the built-in spy in for
+  a backend nobody chose.
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) `engines.node` is now `>=24.0.0`, up from `>=22.12.0`, and Node 22 is no longer supported. Node 24.0.0 is the first
+  release with explicit resource management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`,
+  `SuppressedError`) and all of ES2025, so the packages use both as the platform ships them instead of shimming them for
+  an older line, and the CI matrix runs the unit suite on 24.0.0 itself. Move to Node 24, or stay on the current minor
+  while a deployment still runs Node 22.
+
+### Patch Changes
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) The README states what a program needs for the declarations' disposal members: the explicit resource management types,
+  which no numbered `lib` declares before ES2027. `@types/node` 24 or later loads them, and so does `ESNext.Disposable` in
+  `lib`. Without either, TypeScript 7 fails inside `container.d.ts` with TS2550 under `skipLibCheck: false`, and at
+  `await using` with TS2318. `@codefast/di-testing` drops a `/// <reference lib="esnext.disposable" />` that TypeScript 7
+  stripped from its emitted declarations anyway, and takes the lib from its `tsconfig.json` instead.
+
+- [#956](https://github.com/codefastlabs/codefast/pull/956) `README.md` no longer quotes the `@codefast/di` peer range, which had fallen behind `package.json` — the release tooling
+  moves that range, so the manifest is the one place it is stated.
+
+- [#965](https://github.com/codefastlabs/codefast/pull/965) `README.md` now states TypeScript 7 or later as the floor for the package's types — the one compiler every `@codefast/*`
+  package is built and checked with. No code or declaration changed.
+- Updated dependencies:
+  - @codefast/di@0.11.0
+
 ## 0.1.4
 
 ### Patch Changes

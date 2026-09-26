@@ -1,5 +1,41 @@
 # @codefast/cli
 
+## 0.13.0
+
+### Minor Changes
+
+- [#951](https://github.com/codefastlabs/codefast/pull/951) Add `codefast audit assertions`, which reports every double type assertion through `unknown` or `any` —
+  `x as unknown as T`, `(x as unknown) as T`, `<T><unknown>x` and the `any` spellings — in `.ts`/`.tsx` files, tests
+  included. Where the erasure is the point, keep one with `// codefast-allow-double-assertion: <reason>` on its line or
+  the line above; a directive with no reason, or one that keeps no assertion, is reported too. Exceptions can also go in
+  `audit.assertions.allowlist`.
+
+  `Filesystem.readdir` is replaced by `readdirEntries(path, { recursive })`, which always returns directory entries: every
+  caller asked for them, and the old `string[] | DirectoryEntry[]` union forced each one to cast or guard.
+
+- [#894](https://github.com/codefastlabs/codefast/pull/894) `codefast audit constants` reports every upper-case `const` bound to a number in a library's sources whose comment names
+  none of the three kinds a number may be — a constant of the machine, a value the contract fixes, or one derived from
+  bind-time data. Sentinel values (`0`, `1`, `-1`) are exempt; `audit.constants.target` and `audit.constants.allowlist` in
+  `codefast.config` scope and except it.
+
+- [#980](https://github.com/codefastlabs/codefast/pull/980) `audit publish` also reports a shipped stylesheet whose Tailwind `@source` paths reach none of the files the slimmed
+  tarball ships, naming any `files` entry missing on disk so an unbuilt `dist` reads as such. A workspace resolves those
+  paths against `src`, so only the published layout used to show the failure.
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) `engines.node` is now `>=24.0.0`, up from `>=22.12.0`, and Node 22 is no longer supported. Node 24.0.0 is the first
+  release with explicit resource management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`,
+  `SuppressedError`) and all of ES2025, so the packages use both as the platform ships them instead of shimming them for
+  an older line, and the CI matrix runs the unit suite on 24.0.0 itself. Move to Node 24, or stay on the current minor
+  while a deployment still runs Node 22.
+
+### Patch Changes
+
+- [#965](https://github.com/codefastlabs/codefast/pull/965) The optional `typescript` peer is now `>=7.0.0`. It was published as the repository's own `^7.0.2` pin, which excluded
+  TypeScript 8 and would have risen with each pin bump instead of staying at the supported floor.
+
+- [#965](https://github.com/codefastlabs/codefast/pull/965) `README.md` now states TypeScript 7 or later as the floor for the package's types — the one compiler every `@codefast/*`
+  package is built and checked with. No code or declaration changed.
+
 ## 0.12.0
 
 ### Minor Changes

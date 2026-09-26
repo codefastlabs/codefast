@@ -93,6 +93,8 @@ type SelfDefinition<Value> = { readonly toSelf: true } & Never<Exclude<StrategyK
  *
  * @typeParam Names - The slot names `whenNamed` accepts, the token's own.
  * @typeParam Deps - The dependencies `toResolved` and `toResolvedAsync` infer their parameters from.
+ *
+ * @since 0.11.0
  */
 export type BindingDefinition<
   Value,
@@ -110,6 +112,8 @@ const declarationBrand: unique symbol = Symbol("di:binding-declaration");
  * A checked, normalised binding that `Module.fromBindings` groups into a declared module.
  *
  * @remarks Opaque: only `binding()` makes one, so a declared module that was built can always load.
+ *
+ * @since 0.11.0
  */
 export interface BindingDeclaration {
   readonly [declarationBrand]: true;
@@ -121,6 +125,8 @@ export interface BindingDeclaration {
  * The runtime form of a `BindingDeclaration`: the binding fields a container copies into each binding it registers.
  *
  * @remarks Built at one site in `binding()`, so every declaration shares a hidden class.
+ *
+ * @since 0.11.0
  */
 export interface DeclaredBinding extends BindingDeclaration {
   readonly token: Token<unknown> | Constructor;
@@ -145,6 +151,8 @@ function isDeclaredBinding(entry: BindingDeclaration): entry is DeclaredBinding 
 
 /**
  * Narrows a list entry to the declaration it must be, or throws for anything `binding()` did not make.
+ *
+ * @since 0.11.0
  */
 export function asDeclaredBinding(entry: BindingDeclaration, moduleName: string, index: number): DeclaredBinding {
   if (!isDeclaredBinding(entry)) {
@@ -247,6 +255,9 @@ export function binding<Value, const Deps extends ReadonlyArray<InjectableDepend
   definition: BindingDefinition<NoInfer<Value>, string, Deps> | SelfDefinition<NoInfer<Value>>,
 ): BindingDeclaration;
 // The value type is erased here, once: the overloads above are what a caller is checked against.
+/**
+ * @since 0.11.0
+ */
 export function binding(key: Token<unknown> | Constructor, definition: AnyDefinition): BindingDeclaration {
   const name = tokenName(key);
   const strategy = strategyOf(name, definition);

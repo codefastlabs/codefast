@@ -3,6 +3,8 @@ import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 
 /**
  * Exit `1` when any non-allowlisted type-assertion violation remains.
+ *
+ * @since 0.13.0
  */
 export function exitCodeForAssertionAuditResult(result: AssertionAuditResult): number {
   return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
@@ -10,6 +12,8 @@ export function exitCodeForAssertionAuditResult(result: AssertionAuditResult): n
 
 /**
  * Machine-readable type-assertion summary for `--json`.
+ *
+ * @since 0.13.0
  */
 export function formatAssertionAuditJsonOutput(result: AssertionAuditResult, rootDir: string): string {
   return JSON.stringify({

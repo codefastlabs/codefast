@@ -1,5 +1,24 @@
 # @codefast/theme
 
+## 0.9.0
+
+### Minor Changes
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) `engines.node` is now `>=24.0.0`, up from `>=22.12.0`, and Node 22 is no longer supported. Node 24.0.0 is the first
+  release with explicit resource management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`,
+  `SuppressedError`) and all of ES2025, so the packages use both as the platform ships them instead of shimming them for
+  an older line, and the CI matrix runs the unit suite on 24.0.0 itself. Move to Node 24, or stay on the current minor
+  while a deployment still runs Node 22.
+
+### Patch Changes
+
+- [#977](https://github.com/codefastlabs/codefast/pull/977) The README states the browser floor: Chrome and Edge 136, Firefox 136, and Safari 18.4 or later, the first releases that
+  ship every ES2025 builtin. `@codefast/di`'s README also says what a browser program without explicit resource management
+  does: it keeps `skipLibCheck` on and calls `dispose()` instead of `await using`.
+
+- [#965](https://github.com/codefastlabs/codefast/pull/965) `README.md` now states TypeScript 7 or later as the floor for the package's types — the one compiler every `@codefast/*`
+  package is built and checked with. No code or declaration changed.
+
 ## 0.8.4
 
 ### Patch Changes

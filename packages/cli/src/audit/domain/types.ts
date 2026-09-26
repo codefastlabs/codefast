@@ -82,6 +82,8 @@ export type ImportsAuditResult = {
 
 /**
  * A double assertion through `unknown` or `any`, or a directive that keeps one without cause.
+ *
+ * @since 0.13.0
  */
 export type AssertionViolation = {
   readonly line: number;
@@ -92,6 +94,8 @@ export type AssertionViolation = {
 
 /**
  * The type-assertion violations found in one file.
+ *
+ * @since 0.13.0
  */
 export type AssertionFileViolations = {
   readonly relativePath: string;
@@ -100,6 +104,8 @@ export type AssertionFileViolations = {
 
 /**
  * Outcome of one `audit assertions` run.
+ *
+ * @since 0.13.0
  */
 export type AssertionAuditResult = {
   readonly files: Array<AssertionFileViolations>;
@@ -283,6 +289,8 @@ export type UnshippedTargetViolation = {
 
 /**
  * A path a stylesheet registers with Tailwind's `@source`, as written.
+ *
+ * @since 0.13.0
  */
 export type StylesheetSource = {
   readonly line: number;
@@ -291,6 +299,8 @@ export type StylesheetSource = {
 
 /**
  * A shipped stylesheet whose `@source` paths reach no file its package's tarball ships.
+ *
+ * @since 0.13.0
  */
 export type UnreachableStylesheetViolation = {
   readonly packageName: string;

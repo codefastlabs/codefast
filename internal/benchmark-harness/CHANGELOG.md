@@ -1,5 +1,68 @@
 # @codefast/benchmark-harness
 
+## 0.11.0
+
+### Minor Changes
+
+- [#916](https://github.com/codefastlabs/codefast/pull/916) `resolveRunDirectory` resolves a directory of runs to its newest member, so `BENCH_BASELINE` can name a suite's
+  committed-baseline directory instead of one run id that has to be edited whenever the baseline moves. A path that is
+  itself a run directory still wins, and a directory holding no readable run falls through to the run-id lookup as before.
+
+- [#900](https://github.com/codefastlabs/codefast/pull/900) A bench child is spawned as the running Node with the suite's `tsx` loader on its entry, the tsconfig handed over
+  through `TSX_TSCONFIG_PATH`, instead of through `pnpm exec tsx`: the package-manager start cost more than a whole short
+  child, once per scenario per library. `launchWithPnpmTsx` is `launchWithNodeTsx`, and a `SubprocessLaunch` may carry the
+  environment its launcher needs.
+
+- [#899](https://github.com/codefastlabs/codefast/pull/899) The full profile no longer forces a collection inside the measured loop: a collection runs between trials only, so a
+  class whose instances die between resolves is no longer thrown into a deoptimize-and-reoptimize cycle by the harness
+  itself. Every child records the 1-minute load average at its start, and the report's Environment section prints it,
+  flagged when any reading exceeded half the cores. The measuring lanes are two Turbo tasks: `bench` (isolated, the one to
+  cite) and `bench:fast` (shared, smoke); `bench:isolate`, `bench:full` and `bench:verbose` are gone — `BENCH_MODE`,
+  `BENCH_VERBOSE` and the other switches compose with the two.
+
+- [#943](https://github.com/codefastlabs/codefast/pull/943) The run diff lists improvements beyond noise the way it lists regressions: one row per scenario with its group,
+  throughput now, delta and what it was, in columns shared with the regression list, and `none` when there are none. The
+  one-line summary showed five names and folded the rest into `+N more`, which hid rows the console is the only place to
+  read — and a jump needs the same scrutiny as a drop, since a scenario that suddenly runs faster may have stopped doing
+  its work.
+
+- [#947](https://github.com/codefastlabs/codefast/pull/947) `latest.json` keeps one pointer per run configuration — shape, profile and trial count — mapping each configuration key
+  to `{ runId }` of its newest whole-suite run. A run moves only its own configuration's pointer, and the diff reads the
+  pointer for the current run's configuration, so a `bench:baseline` or `bench:fast` pass no longer leaves the next plain
+  `bench` with `No diff … it ran isolated · full`. A configuration with no pointer yet shows no diff rather than falling
+  back to the newest directory, which could be a narrowed run. `readPreviousRun` takes the current configuration,
+  `resolveLatestRunDirectory` resolves one configuration's run, and `benchConfigKeyOfRow`/`benchConfigLabelOfRow` are
+  `benchConfigKey`/`benchConfigLabel`, taking any `BenchRunConfiguration`. A single-run `latest.json` from before reads as
+  no pointer and is replaced by the first whole-suite run of each configuration.
+
+- [#903](https://github.com/codefastlabs/codefast/pull/903) Every trial runs the one closure built from a scenario before the first trial. A fresh closure per trial — a second
+  closure from the same function literal — turned off V8's function-context specialization for it, so the first trial read
+  the specialized code and the others did not, and the median of three was the unspecialized number: about a fifth lower
+  on the fastest rows, a third for the pivot. Both sides of every ratio read the same thing now, and the figure is the one
+  a call site in an application sees.
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) `engines.node` is now `>=24.0.0`, up from `>=22.12.0`, and Node 22 is no longer supported. Node 24.0.0 is the first
+  release with explicit resource management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`,
+  `SuppressedError`) and all of ES2025, so the packages use both as the platform ships them instead of shimming them for
+  an older line, and the CI matrix runs the unit suite on 24.0.0 itself. Move to Node 24, or stay on the current minor
+  while a deployment still runs Node 22.
+
+- [#917](https://github.com/codefastlabs/codefast/pull/917) Show measuring time per library in the progress block instead of wall-clock elapsed.
+
+  An isolated run is scenario-major, so every library's clock started at its discovery child and stopped when the whole
+  run ended — all seven rows printed the same span no matter how many scenarios they measured. `ProgressTracker` now
+  accumulates `busyMs` across a library's measuring subprocesses and the frame renders that, so the column says what each
+  row actually cost the machine. Wall-clock still appears once, in the run card. The live display also stops redrawing a
+  row that sits idle between subprocesses, and the plain lane closes a library with
+  `all N scenario(s) measured in <time>`.
+
+### Patch Changes
+
+- [#946](https://github.com/codefastlabs/codefast/pull/946) A run narrowed with `BENCH_LIBRARY` no longer moves `latest.json`. The pointer check read only the scenario and tier
+  filters, so a one-library run that measured every row became the run the next whole-suite pass diffed against. The
+  comparison document's `run` block records the filter as `libraryFilter`, the writer keeps the pointer when it is set,
+  and the run card names the libraries a kept pointer was filtered to.
+
 ## 0.10.0
 
 ### Minor Changes

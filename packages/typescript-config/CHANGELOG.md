@@ -1,5 +1,32 @@
 # @codefast/typescript-config
 
+## 0.10.0
+
+### Minor Changes
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) `engines.node` is now `>=24.0.0`, up from `>=22.12.0`, and Node 22 is no longer supported. Node 24.0.0 is the first
+  release with explicit resource management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`,
+  `SuppressedError`) and all of ES2025, so the packages use both as the platform ships them instead of shimming them for
+  an older line, and the CI matrix runs the unit suite on 24.0.0 itself. Move to Node 24, or stay on the current minor
+  while a deployment still runs Node 22.
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) The presets' `lib` and `target` move from `ES2024` to `ES2025`, the newest edition that Node 24 and the supported
+  browsers both ship. `base.json`, and so `react.json` and `next.json`, lists `DOM`, `DOM.Iterable` and `ES2025`;
+  `library.json` lists `ES2025`. A program on a preset can use ES2025 builtins with no `lib` entry of its own, and a
+  builtin newer than that, such as `Map.prototype.getOrInsert`, is still a type error.
+
+- [#965](https://github.com/codefastlabs/codefast/pull/965) The `typescript` peer range is now `>=7.0.0`, up from `>=5.0.0`: TypeScript 7 is the one compiler the presets are
+  checked against, so it is the floor they support. A project pinned to TypeScript 6 or older now fails npm's peer
+  resolution (`ERESOLVE`) and gets a pnpm peer warning. Move it to TypeScript 7, or stay on 0.9.x while its tooling still
+  needs TypeScript 6. A Next.js app on `next.json` needs Next.js 16.3 or later, the first release that type-checks with
+  TypeScript 7.
+
+- [#977](https://github.com/codefastlabs/codefast/pull/977) `library-build.json` sets `types: []` instead of `["node"]`, so a build loads only the ambient types its own config
+  names. A package that runs on Node adds `types: ["node"]` to its `tsconfig.build.json`, which also brings explicit
+  resource management. A browser or universal package leaves it empty, so a Node global in its source fails the build. No
+  preset lists `ESNext.Disposable`: a Node program gets explicit resource management from `@types/node` 24 or later, and a
+  browser program adds it once the browsers it targets ship it, which Safari has not.
+
 ## 0.9.1
 
 ### Patch Changes

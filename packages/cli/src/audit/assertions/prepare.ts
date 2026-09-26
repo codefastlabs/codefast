@@ -9,6 +9,8 @@ import type { Result } from "#core/result";
  *
  * @remarks Defaults to the repo root, tests included: a double assertion in a test silences the
  * compiler on the code the test is meant to hold to its types.
+ *
+ * @since 0.13.0
  */
 export async function prepareAssertionAudit(
   fs: Filesystem,

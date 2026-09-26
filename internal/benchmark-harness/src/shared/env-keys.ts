@@ -337,6 +337,8 @@ export interface BenchRunShape {
  *
  * @remarks Two runs are comparable only when all three agree, so each configuration keeps its own
  * `latest.json` pointer.
+ *
+ * @since 0.11.0
  */
 export interface BenchRunConfiguration extends BenchRunShape {
   readonly trialCount: number;

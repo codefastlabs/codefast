@@ -10,6 +10,8 @@ import { walkTsxFiles } from "#core/workspace/typescript-walk";
 
 /**
  * Scans a target path for double assertions through `unknown` or `any`, tests included.
+ *
+ * @since 0.13.0
  */
 export function runAssertionAudit(
   fs: Filesystem,
