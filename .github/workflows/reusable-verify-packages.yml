@@ -90,6 +90,11 @@ jobs:
       - name: Verify Logical Tailwind Directions
         run: pnpm cli:audit:rtl
 
+      # oxlint and tsc cannot tell a guessed count from a justified one; this audit makes the comment above
+      # each upper-case numeric `const` say whether the machine, the contract or bind-time data fixes it.
+      - name: Verify Numeric Constant Kinds
+        run: pnpm cli:audit:constants
+
       # Static publish-surface check: a "#/"-prefixed import Node rejects on the floor, an exports/imports
       # target the slimmed manifest would not ship (e.g. a dropped stylesheet subtree), and a shipped
       # stylesheet whose @source paths reach nothing shipped. It reads `dist`, so it runs after the build.
