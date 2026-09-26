@@ -27,6 +27,19 @@
 @custom-variant data-side-bottom (&:where([data-side="bottom"]));
 @custom-variant data-side-left (&:where([data-side="left"]));
 
+/* ── Layout — sidebar breakpoint ─────────────────────────────────────────────────────────────────────────────────── */
+
+/* Mints the `sidebar:` variant: the width from which `Sidebar` docks instead of opening as a sheet. An app moves it
+   with its own `@theme { --breakpoint-sidebar: … }`, placed before or after this preset. */
+@theme default {
+  --breakpoint-sidebar: 48rem;
+}
+
+/* The resolved breakpoint, which `SidebarProvider` reads to match the same media query in JS. */
+:root {
+  --sidebar-breakpoint: --theme(--breakpoint-sidebar inline);
+}
+
 /* -------------------------------------------------------------------------
  * State — boolean & Radix data-state
  *
