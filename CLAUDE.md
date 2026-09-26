@@ -93,14 +93,15 @@ HTTP endpoints — see `packages/tracking/spec/` for the behavioral contract.
 ## Commands
 
 Build packages before running apps, type-checking, or type-aware lint — `@codefast/ui` consumes other packages' built
-`dist/` and Oxlint's type-aware rules need them.
+`dist/`, the benchmarks consume `internal/benchmark-harness`'s, and Oxlint's type-aware rules read them. `pnpm check`,
+`pnpm check:fix` and `pnpm verify` build first on their own; a bare `pnpm lint` does not.
 
 ```bash
-pnpm build:packages   # build only packages/* (run after editing any package src)
+pnpm build:packages   # build every library workspace, packages/* and internal/* (run after editing any package src)
 pnpm dev              # start all apps + packages in watch mode (no upfront build — run build:packages once on a fresh clone)
 pnpm check-types      # native tsc --noEmit type check across the repo (no auto-fix — fix by hand)
-pnpm check            # lint + format:check + check-types (static gate, no fixes)
-pnpm check:fix        # lint --fix + format write
+pnpm check            # check-types + format:check + knip, then lint once the builds exist (static gate, no fixes)
+pnpm check:fix        # build:packages, then lint --fix + format write
 pnpm verify           # full gate: build:packages + lint:fix + format + check-types + test:coverage
 ```
 

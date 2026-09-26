@@ -145,20 +145,20 @@ pnpm dev              # start all apps and packages in watch mode
 
 ### Scripts
 
-| Command                | Description                                                                  |
-| ---------------------- | ---------------------------------------------------------------------------- |
-| `pnpm dev`             | Start all apps and packages in watch mode                                    |
-| `pnpm build:packages`  | Build only `packages/*` (run after editing any package source)               |
-| `pnpm check-types`     | Type-check the whole repo with native `tsc --noEmit`                         |
-| `pnpm check`           | Lint + format check + type check (static gate, no fixes)                     |
-| `pnpm check:fix`       | Lint with `--fix` + format write                                             |
-| `pnpm test`            | Run every test category across the monorepo                                  |
-| `pnpm test:unit`       | Run only the unit category (`test:integration`, `test:e2e`, `test:type` too) |
-| `pnpm test:coverage`   | Run tests with coverage reports                                              |
-| `pnpm verify`          | Full gate: build, lint, format, type check, and tests with coverage          |
-| `pnpm bench`           | Run the benchmark suites                                                     |
-| `pnpm cli:audit:links` | Check every Markdown link and anchor in the repo                             |
-| `pnpm release`         | Add a changeset for a package change                                         |
+| Command                | Description                                                                                         |
+| ---------------------- | --------------------------------------------------------------------------------------------------- |
+| `pnpm dev`             | Start all apps and packages in watch mode                                                           |
+| `pnpm build:packages`  | Build every library workspace, `packages/*` and `internal/*` (run after editing any package source) |
+| `pnpm check-types`     | Type-check the whole repo with native `tsc --noEmit`                                                |
+| `pnpm check`           | Type check + format check + knip, then lint once the builds it reads exist (static gate, no fixes)  |
+| `pnpm check:fix`       | Build the packages, then lint with `--fix` + format write                                           |
+| `pnpm test`            | Run every test category across the monorepo                                                         |
+| `pnpm test:unit`       | Run only the unit category (`test:integration`, `test:e2e`, `test:type` too)                        |
+| `pnpm test:coverage`   | Run tests with coverage reports                                                                     |
+| `pnpm verify`          | Full gate: build, lint, format, type check, and tests with coverage                                 |
+| `pnpm bench`           | Run the benchmark suites                                                                            |
+| `pnpm cli:audit:links` | Check every Markdown link and anchor in the repo                                                    |
+| `pnpm release`         | Add a changeset for a package change                                                                |
 
 Linting and formatting run on [Oxc](https://oxc.rs) (Oxlint + Oxfmt). Native
 [TypeScript 7](https://www.typescriptlang.org) (`tsc`) handles both type checking and library builds, emitting `.js` and
