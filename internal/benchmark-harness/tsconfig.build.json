@@ -2,6 +2,8 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": ["./tsconfig.json", "@codefast/typescript-config/library-build.json"],
   "compilerOptions": {
+    // This code runs on Node, and the shared build overlay loads no ambient types of its own.
+    "types": ["node"],
     "rootDir": "./src"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
