@@ -35,7 +35,7 @@ export const inputPasswordDoc: ComponentDoc = {
   anatomy: [{ name: "InputPassword" }],
   features: [
     "Built-in show/hide toggle — internally an InputGroupInput plus an InputGroupButton, no extra markup needed.",
-    'The toggle’s aria-label swaps between "Show password" and "Hide password" as it’s clicked; it does not set aria-pressed.',
+    'The toggle’s aria-label swaps between revealLabel and concealLabel ("Show password" / "Hide password" by default) as it’s clicked; it does not set aria-pressed.',
     "Forwards every native input prop except type, which the component manages internally.",
   ],
   api: [
@@ -59,12 +59,24 @@ export const inputPasswordDoc: ComponentDoc = {
           default: "false",
           description: "Disables the field and the toggle.",
         },
+        {
+          name: "revealLabel",
+          type: "string",
+          default: '"Show password"',
+          description: "The toggle’s accessible name while the password is hidden.",
+        },
+        {
+          name: "concealLabel",
+          type: "string",
+          default: '"Hide password"',
+          description: "The toggle’s accessible name while the password is shown.",
+        },
       ],
     },
   ],
   accessibility: {
     notes: [
-      'The reveal button relabels itself ("Show password" / "Hide password") as it toggles — that changing label, not aria-pressed, is what gets announced.',
+      "The reveal button relabels itself (revealLabel / concealLabel) as it toggles — that changing label, not aria-pressed, is what gets announced, so set both in the page’s language.",
       "Set autoComplete (current-password / new-password) to help password managers.",
       "Associate a Label via htmlFor / id.",
     ],

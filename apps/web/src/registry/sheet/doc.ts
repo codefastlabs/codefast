@@ -84,6 +84,12 @@ export const sheetDoc: ComponentDoc = {
           default: '"right"',
           description: "Which edge the panel slides in from.",
         },
+        {
+          name: "closeLabel",
+          type: "string",
+          default: '"Close"',
+          description: "The accessible name of the built-in close button.",
+        },
       ],
     },
   ],
