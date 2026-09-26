@@ -58,8 +58,9 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
+      # `--force` compiles instead of replaying: a published tarball must never be an artifact another run uploaded.
       - name: Build packages
-        run: npx turbo build --filter="./packages/**"
+        run: npx turbo build --filter="./packages/**" --force
 
       - name: Configure Git identity
         run: |

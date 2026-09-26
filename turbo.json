@@ -2,6 +2,7 @@
   "$schema": "./node_modules/turbo/schema.json",
   "cacheMaxAge": "7d",
   "noUpdateNotifier": true,
+  "globalDependencies": [".node-version"],
   "globalPassThroughEnv": ["SKIP_INSTALL_SIMPLE_GIT_HOOKS"],
   "tasks": {
     "//#format": {
