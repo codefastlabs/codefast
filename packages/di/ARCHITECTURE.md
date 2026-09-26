@@ -68,7 +68,7 @@ type-only one erases at build time and couples nothing.
 
 ```
 container/        Container, fluent binding chain             ← the public surface
-introspection/    inspector, dependency graph, adapters
+introspection/    inspector, explain, dependency graph, adapters
   ↓
 decorators/       @injectable, @inject, lifecycle decorators
 metadata/         the reader port and its default reader
@@ -360,7 +360,7 @@ Everything that needs no cross-instance private access is split out into a colla
 | [`instantiation-plan.ts`](src/resolution/plan/instantiation-plan.ts)                                                     | the plan compiler ([Compiled plans and escapes](#compiled-plans-and-escapes))                                                 |
 | [`plan-codegen.ts`](src/resolution/plan/plan-codegen.ts)                                                                 | renders a hot plan's `PlanNode` tree as a function of its own, or leaves it a closure where the runtime forbids compiling one |
 | [`resolution-path.ts`](src/resolution/path/resolution-path.ts)                                                           | cycle-detection bookkeeping carried on the path array                                                                         |
-| [`binding-select.ts`](src/resolution/select/binding-select.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, and `matchesSlot()` — the one slot matcher                                 |
+| [`binding-select.ts`](src/resolution/select/binding-select.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, `matchesSlot()` — the one slot matcher — and `chooseCandidate()`           |
 | [`resolve-options.ts`](src/injection/resolve-options.ts)                                                                 | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                           |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
@@ -635,6 +635,23 @@ a display name or a candidate array, which is what a name-plus-tag request and a
 to pay on every resolve. A second match, or a predicate on a match, hands the same list to full selection, which weighs
 specificity and reports ambiguity, so the two lanes answer identically.
 
+### `explain()` reads the full path and shares the one decision
+
+`explain()` answers why a request selects the binding it does, so it must not have an opinion of its own. It reads each
+registry of the chain through `getAll()`, the token's whole list, never through `getFastDefault()`, the tagged index or
+the lookup memo, and classifies every binding with the resolver's own pieces: membership, `matchesSlot()`, then the
+`when()` predicate against a `DefaultConstraintContext` built the way the resolver builds one. The eligible candidates
+are settled by `chooseCandidate()`, the same function `selectBinding()` calls, and alias hops restart at the asked
+container and stop on a revisited token exactly as `#requireBinding()` does. The rule it reports is read off the answer
+by `candidateRuleOf()`, beside the decision, so `resolve` pays nothing for the label. `chooseCandidate()` keeps its
+predicate loop written out rather than delegating to the helper the label uses: splitting the decision into two calls
+was measured as a loss on the multi-candidate lane. The fast lanes are held to this walk by
+`tests/integration/explain-parity.test.ts`, which compares both answers for generated bindings on a root and its child.
+
+Nested requests take their ancestors as tokens. Each is selected with the same walk and pushed as the frame the resolver
+would push, so a predicate that reads the parent sees the one it would inside the parent's factory. The walk runs on the
+container asked; it does not model an owner resolving its own dependencies.
+
 ### Cycle detection: one flag for synchronous paths, one scan for async branches
 
 A **resolution path** is the chain of ancestors a level is being resolved under — "A is resolving B, which is resolving
@@ -857,7 +874,8 @@ section before changing what the table describes.
 
 | Invariant                                                                                                                          | Pinned by                                                       | Where                                                               |
 | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `matchesSlot()` and `singleCriterionOnlyOf()` are the only places their two rules are decided.                                     | (design rule; the parity and selection tests below exercise it) | [One slot shape](#two-dependency-sources-one-slot-shape)            |
+| `matchesSlot()` and `singleCriterionOnlyOf()` are the only places their two rules are decided.                                     | (design rule; the parity and selection tests below exercise it) |
+| `explain()` selects the binding `resolve` answers with, whichever lane `resolve` takes, and ends where `resolve` throws.           | `tests/integration/explain-parity.test.ts`                      | [One slot shape](#two-dependency-sources-one-slot-shape)            |
 | A `BindingTag` is only constructed through `TagKey.of()`; the index never conflates `+0` and `-0`.                                 | `tests/unit/resolution/select/tagged-selection.test.ts`         | [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes) |
 | Equivalent spellings (`tag`, `tags`, folded `name`) reach the same lane.                                                           | `tests/unit/resolution/select/tag-shorthand-parity.test.ts`     | [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes) |
 | The multi-tag size threshold switches data structure only; both sides answer identically.                                          | `tests/unit/resolution/select/multi-tag-selection.test.ts`      | [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes) |

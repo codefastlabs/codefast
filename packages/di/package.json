@@ -185,6 +185,11 @@
       "types": "./dist/introspection/dependency-graph.d.ts",
       "import": "./dist/introspection/dependency-graph.js"
     },
+    "./explanation": {
+      "source": "./src/introspection/explanation.ts",
+      "types": "./dist/introspection/explanation.d.ts",
+      "import": "./dist/introspection/explanation.js"
+    },
     "./graph-adapters/cytoscape": {
       "source": "./src/introspection/graph-adapters/cytoscape.ts",
       "types": "./dist/introspection/graph-adapters/cytoscape.d.ts",

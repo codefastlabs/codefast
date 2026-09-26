@@ -70,7 +70,7 @@ export class Inspector {
 
   inspect(): ContainerSnapshot {
     return {
-      ownBindings: this.#registry.allBindings().map((binding) => this.#toSnapshot(binding)),
+      ownBindings: this.#registry.allBindings().map((binding) => snapshotOf(binding)),
       cachedSingletonCount: this.#scope.cachedSingletons().length,
       hasParent: this.#hasParent,
       isDisposed: this.#isDisposed(),
@@ -79,7 +79,7 @@ export class Inspector {
 
   lookupBindings<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
     const bindings = this.#registry.getAll(token);
-    return bindings.map((binding) => this.#toSnapshot(binding));
+    return bindings.map((binding) => snapshotOf(binding));
   }
 
   /** Whether this container's own registry holds a binding the request could select. */
@@ -101,21 +101,22 @@ export class Inspector {
   #makeConstraintContext(options: ResolveOptions): ConstraintContext {
     return new DefaultConstraintContext([], options);
   }
+}
 
-  #toSnapshot(binding: Binding): BindingSnapshot {
-    // Aliased, not copied: slot tags are frozen where they are built, so a caller's write throws
-    // instead of corrupting the registry — and the snapshot skips an allocation per binding.
-    const slot: BindingSnapshot["slot"] =
-      binding.slot.name !== undefined
-        ? { name: binding.slot.name, tags: binding.slot.tags }
-        : { tags: binding.slot.tags };
-    return {
-      tokenName: tokenName(binding.token),
-      kind: binding.kind,
-      scope: effectiveBindingScope(binding),
-      slot,
-      id: binding.identifier,
-      isMany: binding.isMany,
-    };
-  }
+/** The public snapshot of one binding, the shape every introspection read reports a binding in. */
+export function snapshotOf(binding: Binding): BindingSnapshot {
+  // Aliased, not copied: slot tags are frozen where they are built, so a caller's write throws
+  // instead of corrupting the registry — and the snapshot skips an allocation per binding.
+  const slot: BindingSnapshot["slot"] =
+    binding.slot.name !== undefined
+      ? { name: binding.slot.name, tags: binding.slot.tags }
+      : { tags: binding.slot.tags };
+  return {
+    tokenName: tokenName(binding.token),
+    kind: binding.kind,
+    scope: effectiveBindingScope(binding),
+    slot,
+    id: binding.identifier,
+    isMany: binding.isMany,
+  };
 }

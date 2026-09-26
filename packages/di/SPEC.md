@@ -1652,6 +1652,9 @@ const bindings = container.lookupBindings(Logger); // readonly BindingSnapshot[]
 // A snapshot at the moment of the call
 const snapshot = container.inspect(); // ContainerSnapshot
 
+// Why a request selects the binding it does — read-only, nothing is instantiated
+const explanation = container.explain(Logger, { name: "file" }); // ResolutionExplanation
+
 // The dependency graph as JSON
 const graph = container.generateDependencyGraph({ includeParent: false }); // ContainerGraphJson
 ```
@@ -1697,6 +1700,50 @@ member, the binding `resolveAll` takes and `resolve` never selects
 ([Slots and last-wins](#slots-and-last-wins--the-exact-definition)).
 
 > **Exact shape:** `src/introspection/inspector.ts` — `ContainerSnapshot`, `BindingSnapshot`.
+
+#### `explain(token, options?)` — why this binding and not another
+
+`explain()` answers for one request what `resolve(token, options)` would do with it, without instantiating anything: the
+bindings each registry offered, what selection made of each, the rule that settled it, and the binding the request ends
+on. It reads the chain in the order `resolve` does — the container asked, then each parent — and decides by the same
+rules, so its answer is the engine's, not a model of it.
+
+```ts
+container.bind(Settlement).toSelf();
+container.bind(Logger).to(ConsoleLogger);
+container.bind(Logger).to(AuditLogger).when(whenParentIs(Settlement));
+
+container.explain(Logger).steps[0].candidates.map((candidate) => candidate.verdict);
+// ["eligible", "predicate-refused"] — no parent, so the predicate refuses
+
+container.explain(Logger, { ancestors: [Settlement] }).steps[0].rule;
+// "sole-predicate" — inside Settlement's factory, the guarded binding wins
+```
+
+- **`steps`** holds one entry per registry that holds a token the lookup asked for, in reading order, and again for each
+  alias the lookup follows. Each step carries `tokenName`, `depth` (`0` is the container asked, `1` its parent), every
+  binding the registry holds for the token as `candidates` in registration order, the `rule` that settled the step, and
+  the binding it `selected`. A step with no eligible candidate has neither, and the lookup moves up.
+- **A candidate's `verdict`** is `eligible`, `slot-mismatch` (the slot declares a criterion the request does not carry,
+  or the request carries criteria and the slot is the default one), `predicate-refused` (the slot matched and `when()`
+  returned `false`), or `collection-member` (a `many()` binding, which only `resolveAll` takes).
+- **The `rule`** is the step of [the more-specific rule](#the-more-specific-rule) that decided, in its order:
+  `sole-candidate`, `sole-predicate` (the only eligible candidate carrying a predicate), `most-criteria` (the slot
+  declaring more criteria than every other), or `ambiguous`. `default-alias` marks a request whose criteria matched no
+  slot and that the token's default-slot alias forwards ([`toAlias`](#toalias--hint-forwarding)).
+- **`selected`** is the binding the request resolves to after every alias hop, and **`outcome`** says how the lookup
+  ended: `selected`, or the error `resolve` throws in its place — `unbound` (`TokenNotBoundError`), `unmatched`
+  (`NoMatchingBindingError`), `ambiguous` (`AmbiguousBindingError`), `alias-cycle` (`CircularDependencyError`).
+- **`options.ancestors`** names the resolutions the request is nested in, outermost first. Each is selected as a request
+  with no criteria nested in the ones before it, and becomes a frame of the path the request's predicates read — the
+  parent is the last one. An ancestor that selects nothing makes `explain()` throw the error its own `resolve` would.
+  The lookup runs on the container asked, the way a factory's `ctx.resolve()` runs on its own container.
+
+`explain()` runs `when()` predicates exactly as `resolve` does, which is safe because the contract makes a predicate
+pure. On a disposed container it throws `DisposedContainerError`, like every other read.
+
+> **Exact shape:** `src/introspection/explanation.ts` — `ResolutionExplanation`, `ExplanationStep`,
+> `CandidateExplanation`, `ExplainOptions`.
 
 #### Resolving what a snapshot points at
 
@@ -2949,10 +2996,6 @@ channel, not part of the resolution contract: a counter may be added or renamed 
 
 Nothing here is normative. It is intent, and intent is not a commitment — what the library guarantees today is
 everything above this section.
-
-- **`explain()` — why this binding and not another.** A read-only answer for one request: the candidates, the rule that
-  decided among them, and the binding that won. The container inspector in `examples/tanstack-start` reimplements the
-  selection rules outside the engine and cannot evaluate `when()` predicates, which is the gap this closes.
 
 Framework adapter packages are **not** planned. A per-request scope is `createChild()` plus `await using`
 ([Child containers](#child-containers)) — a pattern to document, not a package to publish.

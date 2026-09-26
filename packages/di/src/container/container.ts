@@ -38,6 +38,8 @@ import type { DependencySlot } from "#injection/resolve-options";
 import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#injection/resolve-options";
 import type { ContainerGraphJson, GraphOptions } from "#introspection/dependency-graph";
 import { buildDependencyGraph } from "#introspection/dependency-graph";
+import type { ExplainOptions, ResolutionExplanation } from "#introspection/explanation";
+import { explainRequest } from "#introspection/explanation";
 import type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";
 import { Inspector } from "#introspection/inspector";
 import { LifecycleManager } from "#lifecycle/lifecycle-manager";
@@ -142,6 +144,17 @@ export interface Container {
   ): boolean;
   lookupBindings<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot>;
   inspect(): ContainerSnapshot;
+  /**
+   * Explains why a request selects the binding it does, reading each registry the way `resolve` does and deciding
+   * by the same rules, without instantiating anything.
+   *
+   * @remarks A `when()` predicate runs here as it would in `resolve`. `options.ancestors` names the resolutions the
+   * request is nested in, so a predicate that reads the parent sees the one it would.
+   */
+  explain<Names extends string = string>(
+    token: Token<unknown, Names> | Constructor,
+    options?: NoInfer<ExplainOptions<Names>>,
+  ): ResolutionExplanation;
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
 }
 
@@ -1164,13 +1177,26 @@ class DefaultContainer implements Container {
     return this.#getInspector().inspect();
   }
 
+  explain<Names extends string = string>(
+    token: Token<unknown, Names> | Constructor,
+    options?: NoInfer<ExplainOptions<Names>>,
+  ): ResolutionExplanation {
+    this.#assertNotDisposed();
+    return explainRequest([this.#registry, ...this.#ancestorRegistries()], token, options);
+  }
+
   generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
     this.#assertNotDisposed();
-    const ancestorRegistries: Array<BindingRegistry> = [];
+    return buildDependencyGraph(this.#registry, this.#getMetadataReader(), options, this.#ancestorRegistries());
+  }
+
+  /** The registries above this container, nearest first — the order every chain walk reads them in. */
+  #ancestorRegistries(): Array<BindingRegistry> {
+    const registries: Array<BindingRegistry> = [];
     for (let ancestor = this.#parent; ancestor !== undefined; ancestor = ancestor.#parent) {
-      ancestorRegistries.push(ancestor.#registry);
+      registries.push(ancestor.#registry);
     }
-    return buildDependencyGraph(this.#registry, this.#getMetadataReader(), options, ancestorRegistries);
+    return registries;
   }
 
   // ── Internal ───────────────────────────────────────────────────────────────────────────────────────────────────────

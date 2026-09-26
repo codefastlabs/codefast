@@ -9,12 +9,13 @@ interface DecisionCardProps {
   decision: Decision;
 }
 
-const RULE_COPY: Record<Decision["rule"], string> = {
-  "sole candidate": "one binding matched the request, so there was nothing to weigh",
-  predicate: "several matched and one carries a when() guard, so only the live resolve can settle it",
-  "more tags": "several matched; the one declaring more of what the request named is the more specific",
+const RULE_COPY: Record<NonNullable<Decision["rule"]> | "none", string> = {
+  "sole-candidate": "one binding matched the request, so there was nothing to weigh",
+  "sole-predicate": "several matched and only one carries a when() guard, which passed, so it wins",
+  "most-criteria": "several matched; the one declaring more of what the request named is the more specific",
+  "default-alias": "no slot matched, and the token's default alias forwarded the request to its target",
   ambiguous: "several matched and none was more specific — the container refuses to guess",
-  "no candidate": "no binding's slot could satisfy this request",
+  none: "no binding's slot could satisfy this request",
 };
 
 /** One slot, the request that hit it, every candidate weighed, and the rule that settled it. */
@@ -38,9 +39,13 @@ export function DecisionCard({ decision }: DecisionCardProps) {
             )}
           </CardTitle>
           <div className="flex items-center gap-2">
-            {decision.check === "disagrees" ? <Badge variant="destructive">trace disagreed with resolve</Badge> : null}
-            {decision.check === "not predicted" ? <Badge variant="outline">settled at resolve time</Badge> : null}
-            <Badge variant={decision.error === undefined ? "secondary" : "destructive"}>{decision.rule}</Badge>
+            {decision.check === "disagrees" ? (
+              <Badge variant="destructive">explain() disagreed with resolve</Badge>
+            ) : null}
+            {decision.check === "unreached" ? <Badge variant="outline">{decision.via} failed first</Badge> : null}
+            <Badge variant={decision.error === undefined ? "secondary" : "destructive"}>
+              {decision.rule ?? decision.outcome}
+            </Badge>
           </div>
         </div>
         <CardDescription>
@@ -48,7 +53,7 @@ export function DecisionCard({ decision }: DecisionCardProps) {
           {decision.via === undefined
             ? " at the top level, so no parent frame exists for a guard to read"
             : ` as a dependency of ${decision.via}, so a guard reading the parent frame can fire`}{" "}
-          — {RULE_COPY[decision.rule]}
+          — {RULE_COPY[decision.rule ?? "none"]}
         </CardDescription>
       </CardHeader>
 

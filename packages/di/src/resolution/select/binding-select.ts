@@ -24,9 +24,37 @@ export function selectBinding(
   if (candidates.length === 1) {
     return candidates[0];
   }
-  // Most specific wins, predicate before tag count: a lone predicate-carrying candidate beats
-  // predicate-less ones, a predicate being a deliberate specialization of the default. This order is
-  // what keeps every resolution that already succeeds deciding the same way.
+  const chosen = chooseCandidate(candidates);
+  if (chosen !== undefined) {
+    return chosen;
+  }
+  throw new AmbiguousBindingError(
+    tokenDisplayName,
+    candidates.map((c) => c.identifier),
+  );
+}
+
+/**
+ * The rule that settles a request's eligible candidates, in the order selection applies them.
+ *
+ * @remarks `sole-candidate`: one candidate is eligible. `sole-predicate`: the only candidate carrying a `when()`
+ * predicate beats those without. `most-criteria`: the slot declaring more criteria than every other wins.
+ * `ambiguous`: a tie, which `resolve` reports as `AmbiguousBindingError`.
+ */
+export type CandidateRule = "sole-candidate" | "sole-predicate" | "most-criteria" | "ambiguous";
+
+/**
+ * The candidate a non-empty eligible list settles on, or `undefined` for a tie — the one decision `resolve` and
+ * `explain()` share.
+ *
+ * @remarks Most specific wins, predicate before criterion count: a lone predicate-carrying candidate
+ * is a deliberate specialization of the default, and a slot declaring more of what the request
+ * carries is the more specific match, so an over-specified request resolves instead of tying.
+ */
+export function chooseCandidate(candidates: ReadonlyArray<Binding>): Binding | undefined {
+  if (candidates.length === 1) {
+    return candidates[0];
+  }
   let predicatedCandidate: Binding | undefined;
   for (const candidate of candidates) {
     if (candidate.predicate !== undefined) {
@@ -40,16 +68,37 @@ export function selectBinding(
   if (predicatedCandidate !== undefined) {
     return predicatedCandidate;
   }
-  // Reached only where the throw was: a slot declaring more of what the request carries is the more
-  // specific match, so an over-specified request resolves instead of being ambiguous.
-  const mostSpecific = mostSpecificByCriterionCount(candidates);
-  if (mostSpecific !== undefined) {
-    return mostSpecific;
+  return mostSpecificByCriterionCount(candidates);
+}
+
+/**
+ * The rule behind what {@link chooseCandidate} returned for the same list, read off its answer.
+ *
+ * @remarks Kept beside the decision and derived from it, so the order lives in one function and resolve
+ * pays nothing for the label.
+ */
+export function candidateRuleOf(candidates: ReadonlyArray<Binding>, chosen: Binding | undefined): CandidateRule {
+  if (chosen === undefined) {
+    return "ambiguous";
   }
-  throw new AmbiguousBindingError(
-    tokenDisplayName,
-    candidates.map((c) => c.identifier),
-  );
+  if (candidates.length === 1) {
+    return "sole-candidate";
+  }
+  return solePredicatedCandidate(candidates) === chosen ? "sole-predicate" : "most-criteria";
+}
+
+/** The one candidate carrying a predicate, or `undefined` when none or several do. */
+function solePredicatedCandidate(candidates: ReadonlyArray<Binding>): Binding | undefined {
+  let predicatedCandidate: Binding | undefined;
+  for (const candidate of candidates) {
+    if (candidate.predicate !== undefined) {
+      if (predicatedCandidate !== undefined) {
+        return undefined;
+      }
+      predicatedCandidate = candidate;
+    }
+  }
+  return predicatedCandidate;
 }
 
 /** The lone candidate declaring more criteria than every other, or `undefined` when that is a tie. */

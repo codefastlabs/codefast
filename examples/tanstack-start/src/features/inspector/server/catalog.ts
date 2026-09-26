@@ -2,7 +2,7 @@
 import type { BindingIdentifier, Container } from "@codefast/di";
 import { token, whenParentIs } from "@codefast/di";
 
-import type { Region, SlotTags, TenantContext } from "#features/inspector/shared/tenant";
+import type { Region, TenantContext } from "#features/inspector/shared/tenant";
 import { REGION_TAG, TIER_TAG } from "#features/inspector/shared/tenant";
 import { paymentRequest, REGIONS } from "#features/inspector/shared/tenant";
 
@@ -38,14 +38,11 @@ export const auditLoggerToken = token<AuditLogger>("inspector:AuditLogger");
 export const settlementToken = token<Settlement>("inspector:Settlement");
 export const tenantContextToken = token<TenantContext>("inspector:TenantContext");
 
-/** What the trace needs about one registered binding, including what the snapshot cannot tell it. */
+/** What the trace shows about one registered binding that `explain()` cannot know: its label and its guard in words. */
 export interface CatalogEntry {
   readonly id: BindingIdentifier;
-  /** Which token this binding serves, so a trace can gather one slot's candidates exactly. */
-  readonly tokenName: string;
   readonly label: string;
-  readonly slot: { readonly name?: string; readonly tags: SlotTags };
-  /** Present when a `when()` predicate guards the binding, which no snapshot reports. */
+  /** Present when a `when()` predicate guards the binding: what the guard checks, in words. */
   readonly guard?: string;
   /** Server-side only: used to identify which entry a real resolve returned. */
   readonly value: unknown;
@@ -75,9 +72,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
     entries.push({
       id: storageBinding.id(),
-      tokenName: "inspector:Storage",
       label: storage.adapter,
-      slot: { tags: [REGION_TAG.of(region)] },
       value: storage,
     });
 
@@ -86,9 +81,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
     entries.push({
       id: paymentBinding.id(),
-      tokenName: "inspector:PaymentGateway",
       label: `${payment.gateway} (list rate)`,
-      slot: { tags: [REGION_TAG.of(region)] },
       value: payment,
     });
   }
@@ -105,11 +98,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
     entries.push({
       id: binding.id(),
-      tokenName: "inspector:PaymentGateway",
       label: gateway,
-      slot: {
-        tags: [REGION_TAG.of(region), TIER_TAG.of("enterprise")],
-      },
       value: negotiated,
     });
   }
@@ -122,9 +111,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
   entries.push({
     id: promoBinding.id(),
-    tokenName: "inspector:PaymentGateway",
     label: promo.gateway,
-    slot: { tags: [TIER_TAG.of("enterprise")] },
     value: promo,
   });
 
@@ -137,9 +124,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
     entries.push({
       id: binding.id(),
-      tokenName: "inspector:Notifier",
       label: `${channel} notifier`,
-      slot: { name, tags: [] },
       value: notifier,
     });
   }
@@ -151,9 +136,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
   entries.push({
     id: appLogBinding.id(),
-    tokenName: "inspector:AuditLogger",
     label: appLog.sink,
-    slot: { tags: [] },
     value: appLog,
   });
 
@@ -165,9 +148,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
   entries.push({
     id: paymentsLogBinding.id(),
-    tokenName: "inspector:AuditLogger",
     label: paymentsLog.sink,
-    slot: { tags: [] },
     guard: "when the parent is Settlement",
     value: paymentsLog,
   });
