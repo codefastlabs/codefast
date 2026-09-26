@@ -56,6 +56,16 @@ export type { DependencySlot } from "#injection/resolve-options";
 
 // Introspection types
 export type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";
+export type {
+  CandidateExplanation,
+  CandidateVerdict,
+  ExplainOptions,
+  ExplanationOutcome,
+  ExplanationStep,
+  ResolutionExplanation,
+  SelectionRule,
+} from "#introspection/explanation";
+export type { CandidateRule } from "#resolution/select/binding-select";
 
 // Graph types
 export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#introspection/dependency-graph";

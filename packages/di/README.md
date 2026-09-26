@@ -367,6 +367,18 @@ exits. Synchronous `using` isn't supported — `onDeactivation` may be async —
 token's bindings; and `container.generateDependencyGraph()` returns a JSON graph. Adapters render that graph for common
 viewers: `toDotGraph`, `toMermaidGraph`, `toCytoscapeGraph`, and `toReactFlowGraph`.
 
+`container.explain(token, options)` answers why a request selects the binding it does, without instantiating anything:
+every candidate each registry offered and what selection made of it, the rule that decided, and the binding it ends on.
+It evaluates `when()` predicates the way `resolve` does, and `options.ancestors` explains a request made from inside
+other resolutions, so a predicate that reads the parent sees the one it would:
+
+```ts
+const explanation = container.explain(Logger, { ancestors: [Settlement] });
+
+explanation.selected?.id; // the binding `resolve` would answer with
+explanation.steps[0]?.rule; // "sole-predicate": the only candidate with a `when()` beat the rest
+```
+
 ## Modules
 
 A module is a reusable, stateless bundle of related bindings. Group them once, then load them into any container.
@@ -476,7 +488,8 @@ Every module is also published as a subpath that mirrors the source layout: the 
 (`core/token`, `core/tag`, `core/module`, …), errors under `errors/*`, the runtime under `container/*`, `injection/*`,
 `lifecycle/*`, and `resolution/*` (for example `@codefast/di/resolution/select/constraints`), and decorators and
 metadata under `decorators/*` and `metadata/*`. Introspection ships at flat specifiers: `@codefast/di/inspector`,
-`@codefast/di/dependency-graph`, and `@codefast/di/graph-adapters/{dot,mermaid,cytoscape,reactflow}`.
+`@codefast/di/explanation`, `@codefast/di/dependency-graph`, and
+`@codefast/di/graph-adapters/{dot,mermaid,cytoscape,reactflow}`.
 
 ## Benchmarks
 

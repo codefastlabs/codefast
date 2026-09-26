@@ -22,8 +22,10 @@ import type {
   ConstructorMetadata,
   Constructor,
   ContainerInterface,
+  ExplanationStep,
   LifecycleMetadata,
   MetadataReader,
+  ResolutionExplanation,
   ResolveOptions,
 } from "@codefast/di";
 import { describe, expect, expectTypeOf, it } from "vitest";
@@ -40,6 +42,17 @@ describe("every exported function is callable with public values", () => {
     container.bind(serviceToken).toConstantValue(1).whenNamed("primary");
     return container.lookupBindings(serviceToken)[0]!;
   }
+
+  it("explains a request in public types, down to options rebuilt from the selected slot", () => {
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue(1).whenNamed("primary");
+    const explanation: ResolutionExplanation = container.explain(serviceToken, { name: "primary" });
+
+    expectTypeOf(explanation.steps).toEqualTypeOf<ReadonlyArray<ExplanationStep>>();
+    expect(
+      explanation.selected === undefined ? undefined : bindingSlotToResolveOptions(explanation.selected.slot),
+    ).toEqual({ name: "primary" });
+  });
 
   it("derives resolve options from the slot a snapshot hands out", () => {
     const options = bindingSlotToResolveOptions(snapshot().slot);
