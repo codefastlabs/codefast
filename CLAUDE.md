@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 22.12, pnpm 11 — every package holds that one floor, `di`
-included, which is why it keeps its own `Map` upsert helpers instead of the platform's `getOrInsert`) publishing the
-`@codefast/*` packages. The flagship is `@codefast/di`, lightweight dependency injection on TC39 Stage 3 decorators;
+Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24.0.0, pnpm 11 — every package holds that one floor,
+`di` included, which is why it keeps its own `Map` upsert helpers instead of the platform's `getOrInsert`) publishing
+the `@codefast/*` packages. The flagship is `@codefast/di`, lightweight dependency injection on TC39 Stage 3 decorators;
 `@codefast/ui` is the Radix-based, Tailwind CSS 4 component library. `apps/web` is the TanStack Start site behind
 codefastlabs.com: a landing page over every published package, the `@codefast/ui` showcase, and `/docs/<pkg>` pages
 rendered at build time from each package's own `README.md`/`SPEC.md`/`ARCHITECTURE.md`/… — or from a directory named
@@ -134,10 +134,10 @@ Rules: **no tests under** `src/**`; no test files directly under `tests/` (must 
   `#components/button` for src, `#tests/...` for test helpers. Do **not** add `compilerOptions.paths` for internal
   aliases (reserve TS path mapping for external-compat needs only).
 - **The prefix is a bare `#`, never `#/`.** Node's native ESM resolver rejects a `#/`-prefixed specifier with
-  `ERR_INVALID_MODULE_SPECIFIER` on the whole Node 22 line and on Node 24 before 24.14, and the published `dist/*.js`
-  ships these `#` specifiers verbatim for a **consumer's** Node to resolve — so a leading slash silently breaks every
-  package on the engine floor while the in-repo runners (tsc/Vite/Vitest/tsx), which resolve `#/` themselves, stay green
-  and hide it. The `imports` keys are `#*`, `#tests/*`, `#examples/*` to match.
+  `ERR_INVALID_MODULE_SPECIFIER` on Node 24 before 24.14, the engine floor included, and the published `dist/*.js` ships
+  these `#` specifiers verbatim for a **consumer's** Node to resolve — so a leading slash silently breaks every package
+  on the engine floor while the in-repo runners (tsc/Vite/Vitest/tsx), which resolve `#/` themselves, stay green and
+  hide it. The `imports` keys are `#*`, `#tests/*`, `#examples/*` to match.
 - **`tsc` resolves `#` through the `imports` field itself, so no `tsconfig` under `packages/*`, `apps/*`, or
   `examples/*` declares `paths`** — and neither Vite nor Vitest needs `resolve.tsconfigPaths`. Two requirements make
   that work: every `#*` target lists its extension candidates (`./src/*`, `./src/*.ts`, `./src/*.tsx`, plus

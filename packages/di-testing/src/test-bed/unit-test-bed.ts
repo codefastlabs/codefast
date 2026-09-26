@@ -1,5 +1,3 @@
-/// <reference lib="esnext.disposable" />
-
 /** The compiled result of a test bed: the real unit plus handles to its mocks. */
 
 import type { Constructor, Container, DependencyKey, InjectOptions, TokenValue } from "@codefast/di";

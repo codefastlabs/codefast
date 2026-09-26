@@ -36,10 +36,13 @@ with any version of InversifyJS, by design.
 > **Normative — what a consumer must bring.**
 >
 > - **ESM only.** There is no CommonJS build and no dual build.
-> - **Node.js ≥ 22.12.**
+> - **Node.js ≥ 24**, the first line with explicit resource management built in.
 > - **TypeScript ≥ 7**, the one compiler that type-checks this package and emits its published declarations. Stage 3
 >   decorators are TypeScript's default, so `experimentalDecorators` and `emitDecoratorMetadata` stay **off** and
 >   `reflect-metadata` is never loaded ([tsconfig setup](#tsconfig-setup)).
+> - **The explicit resource management types.** The declarations key `Container`'s disposal methods by
+>   `Symbol.asyncDispose` and `Symbol.dispose`, which no numbered `lib` declares before ES2027. `@types/node` 24 or
+>   later loads them, and so does `ESNext.Disposable` in `lib` ([tsconfig setup](#tsconfig-setup)).
 > - Decorators themselves are optional: an application that declares every binding explicitly needs nothing beyond the
 >   runtime and the module format.
 
@@ -2271,6 +2274,18 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 ```
 
 `experimentalDecorators: true` is not needed: Stage 3 decorators are TypeScript's default.
+
+> **Normative — the program declares explicit resource management; the package does not.** The published declarations
+> name `Symbol.asyncDispose` and `Symbol.dispose`, and `await using` checks a container against `AsyncDisposable` and
+> `Disposable`. A Node program gets all four from `@types/node` 24 or later (`types: ["node"]`), which loads
+> TypeScript's `ESNext.Disposable` lib, and every `@codefast/typescript-config` preset lists that lib. Any other program
+> adds `ESNext.Disposable` to its own `lib`. In a browser program it goes beside `DOM`, and there it also asserts that
+> the targeted browsers ship explicit resource management. `target: "ESNext"`, as above, loads all of `ESNext` and needs
+> nothing more. Without the types, `container.d.ts` fails with TS2550 under `skipLibCheck: false`, and the program's own
+> `await using` fails with TS2318 even under `skipLibCheck: true`.
+>
+> At runtime, `await using` needs `Symbol.asyncDispose` when `@codefast/di` is evaluated, because the container's
+> methods are keyed by it then. Every supported Node line ships it. On a browser that does not, `dispose()` still works.
 
 > **Normative — `Symbol.metadata` must exist before a decorated class is defined.** TypeScript emits `context.metadata`
 > as `undefined` on a runtime without `Symbol.metadata`, and every decorator here then throws

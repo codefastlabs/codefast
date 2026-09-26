@@ -33,10 +33,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 22.13.0 is the lowest Node the dev toolchain (pnpm) runs on — the closest CI can get to the
-        # 22.12 engines floor, which is a consumer contract that needs no pnpm. 24 is the active LTS;
-        # the current line (26) is covered by `verify`.
-        node: ["22.13.0", "24"]
+        # 24.0.0 is the engines floor itself, which the dev toolchain (pnpm) runs on too; the current
+        # line (26) is covered by `verify`.
+        node: ["24.0.0"]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
