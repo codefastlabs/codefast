@@ -85,6 +85,11 @@ jobs:
       - name: Verify Display Names
         run: pnpm cli:audit:display-names
 
+      # A Tailwind class is an opaque string to oxlint and tsc, so a physical `ml-*` or `text-left` passes
+      # both and breaks only in a right-to-left render; this audit wants the logical class or an `rtl:` pair.
+      - name: Verify Logical Tailwind Directions
+        run: pnpm cli:audit:rtl
+
       # Static publish-surface check: a "#/"-prefixed import Node rejects on the floor, an exports/imports
       # target the slimmed manifest would not ship (e.g. a dropped stylesheet subtree), and a shipped
       # stylesheet whose @source paths reach nothing shipped. It reads `dist`, so it runs after the build.

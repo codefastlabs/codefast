@@ -13,12 +13,6 @@ import { commentAuditRunRequestSchema } from "#audit/comments/cli-schema";
 import { presentCommentAuditResult } from "#audit/comments/output";
 import { prepareCommentAudit } from "#audit/comments/prepare";
 import { runCommentAudit } from "#audit/comments/run";
-import { exitCodeForConstantAuditResult, formatConstantAuditJsonOutput } from "#audit/constants/cli-result";
-import type { ConstantAuditRunRequest } from "#audit/constants/cli-schema";
-import { constantAuditRunRequestSchema } from "#audit/constants/cli-schema";
-import { presentConstantAuditResult } from "#audit/constants/output";
-import { prepareConstantAudit } from "#audit/constants/prepare";
-import { runConstantAudit } from "#audit/constants/run";
 import { exitCodeForDisplayNameAuditResult, formatDisplayNameAuditJsonOutput } from "#audit/display-names/cli-result";
 import type { DisplayNameAuditRunRequest } from "#audit/display-names/cli-schema";
 import { displayNameAuditRunRequestSchema } from "#audit/display-names/cli-schema";
@@ -28,7 +22,6 @@ import { runDisplayNameAudit } from "#audit/display-names/run";
 import type {
   AssertionAuditResult,
   CommentAuditResult,
-  ConstantAuditResult,
   DisplayNameAuditResult,
   ImportsAuditResult,
   LinkAuditResult,
@@ -186,24 +179,6 @@ const displayNamesCheck: AuditCheck<DisplayNameAuditRunRequest, DisplayNameAudit
   exitCode: exitCodeForDisplayNameAuditResult,
 };
 
-const constantsCheck: AuditCheck<ConstantAuditRunRequest, ConstantAuditResult> = {
-  name: "constants",
-  description: "Report numeric constants whose comment names none of the three kinds a number may be",
-  targetHelp: "Directory or file to scan (default: audit.constants.target from config)",
-  schema: constantAuditRunRequestSchema,
-  prepare: prepareConstantAudit,
-  buildRequest: baseAuditRequest,
-  run: (fs, request) =>
-    runConstantAudit(fs, {
-      rootDir: request.rootDir,
-      targetPath: request.targetPath,
-      allowlist: request.allowlist ?? [],
-    }),
-  present: presentConstantAuditResult,
-  formatJson: formatConstantAuditJsonOutput,
-  exitCode: exitCodeForConstantAuditResult,
-};
-
 const commentsCheck: AuditCheck<CommentAuditRunRequest, CommentAuditResult> = {
   name: "comments",
   description: "Report section dividers that are not in the repo's one allowed form",
@@ -276,7 +251,6 @@ export function createAuditCommand(): Command {
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(importsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(assertionsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(displayNamesCheck));
-  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(constantsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(commentsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(publishCheck));
 

@@ -26,7 +26,6 @@
     "cli:arrange:simplify:preview": "pnpm run codefast arrange simplify --dry-run",
     "cli:audit:assertions": "pnpm run codefast audit assertions",
     "cli:audit:comments": "pnpm run codefast audit comments",
-    "cli:audit:constants": "pnpm run codefast audit constants",
     "cli:audit:display-names": "pnpm run codefast audit display-names",
     "cli:audit:imports": "pnpm run codefast audit imports",
     "cli:audit:links": "pnpm run codefast audit links",
