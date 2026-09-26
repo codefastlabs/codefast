@@ -64,7 +64,13 @@ export class ActivationNeedCache {
    * conservative `true`.
    */
   refreshAfterFirstInstantiation<Value>(binding: Binding<Value>, needsActivation: boolean): boolean {
-    if (binding.kind !== "class" || this.#classes.knownPostConstruct(binding.target) !== undefined) {
+    // A class binding answers `false` only once its lifecycle metadata is known, so only a conservative
+    // `true` can still settle, and a `false` needs no second look at the class.
+    if (
+      !needsActivation ||
+      binding.kind !== "class" ||
+      this.#classes.knownPostConstruct(binding.target) !== undefined
+    ) {
       return needsActivation;
     }
     this.#classes.discoverPostConstruct(binding.target);

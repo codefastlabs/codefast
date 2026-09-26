@@ -89,6 +89,37 @@ describe("ContainerOptions.metadataReader", () => {
     expect(reads.filter((target) => target === (Pool as Constructor))).toHaveLength(1);
   });
 
+  it("asks for a class's lifecycle metadata only after its first construction", () => {
+    const log: Array<string> = [];
+    class Probe {
+      constructor() {
+        log.push("construct");
+      }
+    }
+    const container = Container.create({
+      metadataReader: {
+        getConstructorMetadata: () => {
+          log.push("constructor-metadata");
+          return { params: [] };
+        },
+        getLifecycleMetadata: () => {
+          log.push("lifecycle-metadata");
+          return undefined;
+        },
+      },
+    });
+    const firstToken = token<Probe>("metadata-reader.first");
+    const secondToken = token<Probe>("metadata-reader.second");
+    container.bind(firstToken).to(Probe).singleton();
+    container.bind(secondToken).to(Probe).singleton();
+
+    container.resolve(firstToken);
+    container.resolve(secondToken);
+
+    // The second binding of the class reads nothing: its facts were settled by the first.
+    expect(log).toStrictEqual(["constructor-metadata", "construct", "lifecycle-metadata", "construct"]);
+  });
+
   it("keeps one reader's answers apart from another's", () => {
     const described = Container.create({ metadataReader: tableReader() });
     described.bind(dsnToken).toConstantValue("postgres://localhost/app");

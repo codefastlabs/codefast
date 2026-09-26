@@ -784,6 +784,15 @@ cache's memo maps (second distinct token or tag in one cache generation), the ac
 resolve that asks whether a binding needs the activation pipeline) and its memo (first answer its early returns cannot
 give).
 
+The per-reader metadata cache holds one record per class — its constructor metadata, whether it has a `@postConstruct`
+hook, whether accessor injection reads the container — each field unknown until first asked. A cold class resolve looks
+the record up once and hands it to the params read, the accessor check and the construction, and a class with no params
+is constructed with no arguments, so no dependency array is built for it. `hasPostConstruct` must start unknown, never
+`false`: unknown is what makes the first instantiation activate conservatively and read the lifecycle metadata, and
+filling it early would ask a custom `MetadataReader` — a public seam — for lifecycle metadata before construction. The
+same fact lets `refreshAfterFirstInstantiation()` return at once on a `false` answer, because a class binding answers
+`false` only once its lifecycle metadata is known.
+
 The scope manager and the lifecycle manager stay eager on purpose: every generic level reads them, and a nullable field
 there is a branch on every hop. The resolver's lookup memo, its class introspector and its sync context pool are built
 by the first request that needs them — a container that never misses its own lone map, never resolves a class and never
@@ -980,6 +989,8 @@ These are covered in the sections above; this list exists so a perf review can f
   runtime lookup per criterion-carrying param.
 - **One-entry inline caches in front of maps**, and the deferred memo maps behind `defaultEntry()` and `taggedEntry()` —
   [Lookup caches](#lookup-caches-and-inline-caches).
+- **One facts record per class, looked up once per cold class resolve** —
+  [A container defers most of itself](#a-container-defers-most-of-itself).
 - **Chain sums memoized against a process-wide state epoch** — [Lookup caches](#lookup-caches-and-inline-caches).
   Removes the parent walk's slope while nothing has changed.
 - **Interned criteria as `Map` keys**, and the bitmask prefilter —

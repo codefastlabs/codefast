@@ -43,6 +43,7 @@ import { settleInOrder } from "#resolution/async-fan-out";
 import { ActivationNeedCache } from "#resolution/cache/activation-need";
 import type { CollectionEntry, DefaultLookupEntry } from "#resolution/cache/binding-lookup-cache";
 import { BindingLookupCache } from "#resolution/cache/binding-lookup-cache";
+import type { ClassFacts } from "#resolution/cache/class-introspector";
 import { ClassIntrospector } from "#resolution/cache/class-introspector";
 import type { ResolverCallbacks } from "#resolution/context";
 import { AsyncLevelContext, DefaultConstraintContext, DefaultResolutionContext } from "#resolution/context";
@@ -64,6 +65,8 @@ import { matchesSlot, selectAllBindings, selectBinding } from "#resolution/selec
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 
 const EMPTY_PARAM_LIST: ReadonlyArray<ParamMetadata> = [];
+// A class with no params is constructed with no arguments, so no dependency array is built for it.
+const NO_ARGUMENTS: ReadonlyArray<unknown> = [];
 /** Plans compiled so far, with the `null` unplannable marks left out. */
 function countCompiledPlans(plans: Map<BindingIdentifier, (() => unknown) | null> | undefined): number {
   let count = 0;
@@ -870,13 +873,17 @@ export class DependencyResolver implements ResolverCallbacks {
         throw asyncResolutionErrorFor(binding, resolutionStack);
 
       case "class": {
-        const deps = this.#resolveDeps(this.#constructorParams(binding.target), resolutionStack);
-        return this.#introspector().instantiate(
-          binding.target,
-          deps,
-          this.#introspector().needsActiveContainer(binding.target)
-            ? this.#ambientResolutionFor(resolutionStack)
-            : undefined,
+        // One lookup of the class's facts serves the params, the accessor need and the construction.
+        const introspector = this.#introspector();
+        const target = binding.target;
+        const facts = introspector.facts(target);
+        const params = this.#constructorParams(target, facts);
+        const needsActiveContainer = introspector.needsActiveContainerOf(target, facts);
+        return introspector.construct(
+          target,
+          params.length === 0 ? NO_ARGUMENTS : this.#resolveDeps(params, resolutionStack),
+          needsActiveContainer,
+          needsActiveContainer ? this.#ambientResolutionFor(resolutionStack) : undefined,
         );
       }
 
@@ -903,8 +910,8 @@ export class DependencyResolver implements ResolverCallbacks {
    * @remarks A class the metadata reader knows nothing about is constructible only if it declares
    * no parameters; anything else is a missing `@injectable()`.
    */
-  #constructorParams(target: Constructor): ReadonlyArray<ParamMetadata> {
-    const meta = this.#introspector().constructorMetadata(target);
+  #constructorParams(target: Constructor, facts: ClassFacts): ReadonlyArray<ParamMetadata> {
+    const meta = this.#introspector().constructorMetadataOf(target, facts);
     if (meta !== undefined) {
       return meta.params;
     }
@@ -1404,18 +1411,19 @@ export class DependencyResolver implements ResolverCallbacks {
       }
 
       case "class": {
-        const deps = await this.#resolveDepsAsync(
-          this.#constructorParams(binding.target),
-          resolutionStack,
-          branchDepth,
-        );
+        const introspector = this.#introspector();
+        const target = binding.target;
+        const facts = introspector.facts(target);
+        const params = this.#constructorParams(target, facts);
+        const deps =
+          params.length === 0 ? NO_ARGUMENTS : await this.#resolveDepsAsync(params, resolutionStack, branchDepth);
+        const needsActiveContainer = introspector.needsActiveContainerOf(target, facts);
         // Accessor initializers resolve synchronously, so the branch-owned path serves them directly.
-        return this.#introspector().instantiate(
-          binding.target,
+        return introspector.construct(
+          target,
           deps,
-          this.#introspector().needsActiveContainer(binding.target)
-            ? this.#ambientResolutionFor(resolutionStack)
-            : undefined,
+          needsActiveContainer,
+          needsActiveContainer ? this.#ambientResolutionFor(resolutionStack) : undefined,
         );
       }
 
