@@ -79,8 +79,8 @@
     "web:preview": "turbo run preview --filter=@apps/web"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "catalog:",
     "@changesets/cli": "catalog:",
+    "@changesets/get-github-info": "catalog:",
     "@codefast/cli": "workspace:*",
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",

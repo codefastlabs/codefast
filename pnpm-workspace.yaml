@@ -21,8 +21,8 @@ overrides:
 catalog:
   "@babel/core": ^8.0.6
   "@babel/plugin-proposal-decorators": 8.0.2
-  "@changesets/changelog-github": ^1.0.1
   "@changesets/cli": ^3.0.3
+  "@changesets/get-github-info": ^1.0.1
   "@commitlint/cli": ^21.2.3
   "@commitlint/config-conventional": ^21.2.3
   # Static Inter TTFs for the OG-image script — resvg cannot read @fontsource-variable/inter's woff2.
