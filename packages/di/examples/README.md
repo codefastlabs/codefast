@@ -25,7 +25,7 @@ its own domain logging.
 // tsconfig.json — native Stage 3 decorators, NO experimentalDecorators
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2025",
     "lib": ["ES2025"],
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -34,8 +34,9 @@ its own domain logging.
 }
 ```
 
-`lib` stays at `ES2025`, the Node floor's edition, so a newer builtin is a type error. `types: ["node"]` loads the Node
-globals the examples use, along with the `ESNext.Disposable` lib that `@codefast/di`'s declarations need.
+`target` and `lib` stay at `ES2025`, the Node floor's edition, so a newer builtin is a type error, and TypeScript still
+lowers the decorators, which no runtime parses yet. `types: ["node"]` loads the Node globals the examples use, along
+with the `ESNext.Disposable` lib that `@codefast/di`'s declarations need.
 
 ---
 
