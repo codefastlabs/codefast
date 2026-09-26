@@ -282,6 +282,26 @@ export type UnshippedTargetViolation = {
 };
 
 /**
+ * A path a stylesheet registers with Tailwind's `@source`, as written.
+ */
+export type StylesheetSource = {
+  readonly line: number;
+  readonly pattern: string;
+};
+
+/**
+ * A shipped stylesheet whose `@source` paths reach no file its package's tarball ships.
+ */
+export type UnreachableStylesheetViolation = {
+  readonly packageName: string;
+  /** Repo-relative path of the stylesheet. */
+  readonly stylesheet: string;
+  readonly sources: Array<StylesheetSource>;
+  /** The `files` entries missing on disk, which is how an unbuilt `dist` shows up. */
+  readonly missingFilesEntries: Array<string>;
+};
+
+/**
  * Outcome of one `audit publish` run.
  *
  * @since 0.12.0
@@ -289,6 +309,7 @@ export type UnshippedTargetViolation = {
 export type PublishAuditResult = {
   readonly legacyImportFiles: Array<LegacySubpathFile>;
   readonly unshipped: Array<UnshippedTargetViolation>;
+  readonly unreachableStylesheets: Array<UnreachableStylesheetViolation>;
   readonly legacyImportCount: number;
   readonly scannedFileCount: number;
   readonly packageCount: number;
