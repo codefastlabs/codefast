@@ -124,6 +124,37 @@ describe("scope refinement vs the cached instance", () => {
     expect(container.resolve(serviceToken)).toBe(fresh);
   });
 
+  it("keeps the cached singleton through a refinement that leaves the scope as it was", () => {
+    const serviceToken = token<{ n: number }>("scope.same");
+    let constructed = 0;
+    const container = Container.create();
+    const chain = container.bind(serviceToken).toDynamic(() => ({ n: (constructed += 1) }));
+    chain.singleton();
+    const first = container.resolve(serviceToken);
+
+    chain.singleton();
+
+    expect(container.resolve(serviceToken)).toBe(first);
+    expect(constructed).toBe(1);
+  });
+
+  it("discards the scoped instance the registering child cached when the scope changes", () => {
+    const serviceToken = token<{ n: number }>("scope.flip-scoped");
+    let constructed = 0;
+    const request = Container.create().createChild();
+    const chain = request.bind(serviceToken).toDynamic(() => ({ n: (constructed += 1) }));
+    chain.scoped();
+    const first = request.resolve(serviceToken);
+    expect(request.resolve(serviceToken)).toBe(first);
+
+    chain.transient();
+    chain.scoped();
+
+    const fresh = request.resolve(serviceToken);
+    expect(fresh).not.toBe(first);
+    expect(request.resolve(serviceToken)).toBe(fresh);
+  });
+
   it("deactivates a re-slotted singleton exactly once", async () => {
     const serviceToken = token<{ closed: number }>("reslot.deactivate");
     const instance = { closed: 0 };

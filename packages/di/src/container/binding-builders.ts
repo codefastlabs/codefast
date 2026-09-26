@@ -328,15 +328,24 @@ export class BindingChain<Value, Names extends string = string>
 
   #withScope(scope: BindingScope): this {
     this.#requireRegistered();
-    if (this.scope !== scope) {
-      // An instance cached under the old scope must not survive the change — a later flip back
-      // to that scope would resurrect it.
-      this.#registration.scope.deleteSingleton(this.#binding);
-      this.#registration.scope.deleteScoped(this.identifier);
-      this.scope = scope;
+    // Nothing a cache, a frame or the version answers for depends on a scope that did not change.
+    if (this.scope === scope) {
+      return this;
     }
+    // An instance cached under the old scope must not survive the change — a later flip back to that
+    // scope would resurrect it.
+    const registration = this.#registration;
+    if (this.instance !== NO_INSTANCE) {
+      registration.scope.deleteSingleton(this.#binding);
+    }
+    if (registration.scope.isScopedCacheBuilt) {
+      registration.scope.deleteScoped(this.identifier);
+    }
+    this.scope = scope;
     // The frame reports the scope, so a resolve before this call memoized the previous one.
-    clearBindingFrame(this.#binding);
+    if (this.frame !== undefined || this.rootContext !== undefined) {
+      clearBindingFrame(this.#binding);
+    }
     this.#touchAndRecordWrite();
     return this;
   }

@@ -284,9 +284,15 @@ level compares twice replaces a per-resolver map a one-shot container would have
 
 A memo on a binding is only sound while what it derives from is immutable, and `scope` is the one field a fluent chain
 writes in place after registration (see [The fluent chain](#the-fluent-chain-one-object-one-registration)). So
-`singleton()`, `transient()` and `scoped()` call `clearBindingFrame()`. Without it, a chain refined after its first
-resolve would report the old scope to every `when()` predicate that reads `ctx.parent.scope`.
-`tests/unit/resolution/cache-invalidation.test.ts` pins it.
+`singleton()`, `transient()` and `scoped()` call `clearBindingFrame()` when they change the scope of a binding that has
+memoised a frame. Without it, a chain refined after its first resolve would report the old scope to every `when()`
+predicate that reads `ctx.parent.scope`. `tests/unit/resolution/cache-invalidation.test.ts` pins it.
+
+A scope verb that leaves the scope as it was returns before touching anything, since no cache, frame or version derives
+from a scope that did not change. One that does change it releases only what exists: the cached singleton, the scoped
+entry, the frame. A chain refined straight after `to*()` — the `bind(T).to(X).singleton()` idiom — has none of the three
+yet, so it pays for none. The three guards are load-bearing together rather than one by one: each alone buys little, and
+with all of them the refinement no longer calls into the scope manager at all on that idiom.
 
 ### The fluent chain: one object, one registration
 
