@@ -93,7 +93,7 @@
     "turbo": "catalog:"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=24.0.0"
   },
   "packageManager": "pnpm@11.25.0"
 }

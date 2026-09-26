@@ -61,7 +61,7 @@ body:
       label: Environment
       description: "Node and package manager, plus the peers that matter for your package — React for `ui`/`theme`/`tracking`, Tailwind CSS for `ui`/`tailwind-variants`, TanStack Start for `tracking`."
       placeholder: |
-        Node 22.23.2
+        Node 24.19.0
         pnpm 11.16.0
         react 19.2.0
         tailwindcss 4.2.0
