@@ -1,10 +1,12 @@
 import { parseSync } from "oxc-parser";
 
+import { isDirectiveLine, isNoteLine } from "#audit/comments/domain/comment-content";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import type { OxcNode } from "#core/oxc-node";
 import { isOxcNode, programStatements } from "#core/oxc-node";
+import { lineOfOffset } from "#core/source-position";
 import { applyEditsDescending, indentOfLineContaining } from "#core/source-text-edit";
-import type { TagFileResult } from "#tag/domain/types";
+import type { TagBlockedDeclaration, TagFileResult } from "#tag/domain/types";
 
 type TextEdit = {
   start: number;
@@ -20,11 +22,12 @@ interface OxcComment {
 }
 
 /**
- * Top-level statement kinds that carry a `@since` tag: function, class, interface,
- * type alias, enum, and variable declaration.
+ * Top-level statement kinds that carry a `@since` tag. `TSDeclareFunction` is a function with no body —
+ * an overload signature or a `declare function` — which the `.d.ts` keeps with its own doc block.
  */
 const TAGGABLE_DECLARATION_TYPES = new Set([
   "FunctionDeclaration",
+  "TSDeclareFunction",
   "ClassDeclaration",
   "TSInterfaceDeclaration",
   "TSTypeAliasDeclaration",
@@ -37,6 +40,15 @@ function identifierName(node: unknown): string | undefined {
     return node.name;
   }
   return undefined;
+}
+
+function lineAboveOffset(sourceText: string, offset: number): string | undefined {
+  const lineStart = sourceText.lastIndexOf("\n", offset - 1) + 1;
+  if (lineStart === 0) {
+    return undefined;
+  }
+  const lineAboveStart = lineStart >= 2 ? sourceText.lastIndexOf("\n", lineStart - 2) + 1 : 0;
+  return sourceText.slice(lineAboveStart, lineStart - 1);
 }
 
 /**
@@ -58,22 +70,36 @@ export class TagSinceWriter {
     );
 
     const edits: Array<TextEdit> = [];
+    const blockedDeclarations: Array<TagBlockedDeclaration> = [];
     for (const declaration of this.collectExportedDeclarations(statements)) {
-      const edit = this.makeDeclarationSinceLine(declaration, jsDocComments, sourceText, version);
+      const existing = this.associatedJsDoc(declaration, jsDocComments, sourceText);
+      if (existing === undefined && this.isDocBlockLineTaken(declaration, sourceText)) {
+        const names = this.taggableDeclarationOf(declaration)?.names ?? [];
+        blockedDeclarations.push({
+          filePath,
+          line: lineOfOffset(sourceText, declaration.start),
+          name: names.length > 0 ? names.join(", ") : "default",
+        });
+        continue;
+      }
+      const edit = this.makeDeclarationSinceLine(declaration, existing, sourceText, version);
       if (edit) {
         edits.push(edit);
       }
     }
 
-    if (edits.length > 0 && write) {
-      const updated = applyEditsDescending(sourceText, edits);
+    // A blocked declaration holds its whole file back, so every reported line matches the file on disk.
+    const appliedEdits = blockedDeclarations.length > 0 ? [] : edits;
+    if (appliedEdits.length > 0 && write) {
+      const updated = applyEditsDescending(sourceText, appliedEdits);
       this.fs.writeFileSync(filePath, updated, "utf8");
     }
 
     return {
       filePath,
-      taggedDeclarations: edits.length,
-      changed: edits.length > 0,
+      taggedDeclarations: appliedEdits.length,
+      blockedDeclarations,
+      changed: appliedEdits.length > 0,
     };
   }
 
@@ -257,13 +283,21 @@ export class TagSinceWriter {
     return `/**\n${declarationIndent} * ${tag} ${version}\n${declarationIndent} */`;
   }
 
+  /**
+   * Returns whether the line above `anchor` holds a `//` note, which a fresh block would stack under,
+   * or a directive, which would then govern the block instead of the declaration.
+   */
+  private isDocBlockLineTaken(anchor: OxcNode, sourceText: string): boolean {
+    const lineAbove = lineAboveOffset(sourceText, anchor.start);
+    return lineAbove !== undefined && (isNoteLine(lineAbove) || isDirectiveLine(lineAbove));
+  }
+
   private makeDeclarationSinceLine(
     anchor: OxcNode,
-    jsDocComments: ReadonlyArray<OxcComment>,
+    existing: OxcComment | undefined,
     sourceText: string,
     version: string,
   ): TextEdit | undefined {
-    const existing = this.associatedJsDoc(anchor, jsDocComments, sourceText);
     if (existing) {
       if (this.jsDocHasSinceTag(existing)) {
         return undefined;

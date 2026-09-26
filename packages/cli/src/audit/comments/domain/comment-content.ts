@@ -47,6 +47,20 @@ const dividerLinePattern = /^[ \t]*\/\/[ \t]*[-=─_*~#]{2,}/;
 const directiveLinePattern = /^[ \t]*\/\/[ \t]*(?:oxlint-|eslint-|@ts-|prettier-)/;
 
 /**
+ * Returns whether a line is a `//` note: a line comment that is neither a divider nor a tooling directive.
+ */
+export function isNoteLine(line: string): boolean {
+  return lineCommentPattern.test(line) && !dividerLinePattern.test(line) && !isDirectiveLine(line);
+}
+
+/**
+ * Returns whether a line is a `//` tooling directive, which governs the code below it.
+ */
+export function isDirectiveLine(line: string): boolean {
+  return directiveLinePattern.test(line);
+}
+
+/**
  * Scans a source file's comments for banned content, in source order.
  *
  * @since 0.6.0
@@ -66,12 +80,7 @@ export function scanCommentContent(content: string, language: "css" | "js"): Arr
     // A `//` run stacked directly above a doc block reads as a second doc — it belongs inside.
     if (language === "js" && !insideBlock && trimmed.startsWith("/**")) {
       let runStart = index;
-      while (
-        runStart > 0 &&
-        lineCommentPattern.test(lines[runStart - 1]!) &&
-        !dividerLinePattern.test(lines[runStart - 1]!) &&
-        !directiveLinePattern.test(lines[runStart - 1]!)
-      ) {
+      while (runStart > 0 && isNoteLine(lines[runStart - 1]!)) {
         runStart--;
       }
       if (runStart < index) {
