@@ -3,6 +3,8 @@ import { logger } from "#core/logger";
 
 /**
  * Human-readable type-assertion report.
+ *
+ * @since 0.13.0
  */
 export function presentAssertionAuditResult(result: AssertionAuditResult): void {
   for (const file of result.files) {

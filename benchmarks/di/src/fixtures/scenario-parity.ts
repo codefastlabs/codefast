@@ -901,6 +901,8 @@ export const MODULE_COLD_FROM_MODULES = {
 
 /**
  * How many bindings the single-module cold row declares: the first half constants, the rest singleton factories.
+ *
+ * @since 0.10.0
  */
 export const MODULE_BINDING_COUNT = 128;
 
@@ -909,6 +911,8 @@ export const MODULE_BINDING_COUNT = 128;
  *
  * @remarks The two-module cold row prices composition at a handful of bindings; this one scales it, since the
  * cost of filing a module grows with its binding count.
+ *
+ * @since 0.10.0
  */
 export const MODULE_COLD_128 = {
   id: `module-cold-${String(MODULE_BINDING_COUNT)}`,

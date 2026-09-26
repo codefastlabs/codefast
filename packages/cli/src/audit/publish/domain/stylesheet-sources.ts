@@ -17,6 +17,8 @@ const GLOB_CHARACTERS = /[*?[\]{}]/;
 
 /**
  * Every path a stylesheet registers with `@source`, with the line it sits on.
+ *
+ * @since 0.13.0
  */
 export function scanStylesheetSources(content: string): Array<StylesheetSource> {
   // Blanking comments keeps every offset in place, so a commented-out directive drops out and lines still count.
@@ -44,6 +46,8 @@ export function scanStylesheetSources(content: string): Array<StylesheetSource> 
  * @param stylesheetPath - The stylesheet, relative to its package root.
  * @param sources - What {@link scanStylesheetSources} found in it.
  * @param shippedFiles - Every file the package's tarball ships, relative to the package root.
+ *
+ * @since 0.13.0
  */
 export function missesShippedFiles(
   stylesheetPath: string,

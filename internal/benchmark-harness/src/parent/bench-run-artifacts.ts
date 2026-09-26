@@ -193,6 +193,8 @@ export function resolveRunDirectory(packageRootDirectory: string, requested?: st
  *
  * @remarks A missing pointer, or one naming a run that is gone, reads as no run: the newest directory
  * could be a narrowed run or another configuration, which is exactly what a diff must not read.
+ *
+ * @since 0.11.0
  */
 export function resolveLatestRunDirectory(
   packageRootDirectory: string,

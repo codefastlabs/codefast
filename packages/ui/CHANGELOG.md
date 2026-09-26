@@ -1,5 +1,76 @@
 # @codefast/ui
 
+## 0.10.0
+
+### Minor Changes
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) `engines.node` is now `>=24.0.0`, up from `>=22.12.0`, and Node 22 is no longer supported. Node 24.0.0 is the first
+  release with explicit resource management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`,
+  `SuppressedError`) and all of ES2025, so the packages use both as the platform ships them instead of shimming them for
+  an older line, and the CI matrix runs the unit suite on 24.0.0 itself. Move to Node 24, or stay on the current minor
+  while a deployment still runs Node 22.
+
+- [#983](https://github.com/codefastlabs/codefast/pull/983) Every string a component renders on an element the app cannot reach through props now comes from a prop that defaults to
+  the English text, so a UI in another language can name those controls: `InputPassword` takes `revealLabel` and
+  `concealLabel`; `InputSearch` takes `clearLabel`; `DialogContent`, `DialogFooter`, `SheetContent` and `CommandDialog`
+  take `closeLabel`; and `Sidebar` takes `mobileTitle` for its mobile sheet, which drops its filler description.
+  `PaginationEllipsis` and `BreadcrumbEllipsis` drop screen-reader text that their `aria-hidden` wrapper kept from ever
+  being read.
+
+  **Breaking:** `InputNumber`'s `ariaIncrementLabel` and `ariaDecrementLabel` are renamed `incrementLabel` and
+  `decrementLabel`, so every such prop is named for its action plus `Label`.
+
+- [#982](https://github.com/codefastlabs/codefast/pull/982) The width where `Sidebar` switches between the docked panel and the mobile sheet is one theme variable,
+  `--breakpoint-sidebar` (default `48rem`), which also mints a `sidebar:` variant. Redefine it in the app's `@theme`,
+  before or after the preset, and the docked layout, `SidebarInset`'s inset spacing, `SidebarRail`, the hover-only menu
+  actions and the JS switch to the sheet all follow it. The JS side matches `(width < …)`, the exact complement of the CSS
+  query, so a fractional width just under 768px no longer shows no sidebar at all; `SidebarRail` no longer shows inside
+  the mobile sheet.
+
+- [#982](https://github.com/codefastlabs/codefast/pull/982) `SidebarProvider`'s ⌘B / Ctrl+B shortcut leaves the key alone while focus is in an `input`, `textarea`, `select` or
+  contenteditable element, during IME composition, on auto-repeat, with Shift or Alt held, and once another handler has
+  called `preventDefault()`, so ⌘B in a rich-text editor bolds without collapsing the sidebar. The new `shortcutKey` prop
+  picks the key, matched case-insensitively, or turns the shortcut off with `false`.
+
+### Patch Changes
+
+- [#977](https://github.com/codefastlabs/codefast/pull/977) The README states the browser floor: Chrome and Edge 136, Firefox 136, and Safari 18.4 or later, the first releases that
+  ship every ES2025 builtin. `@codefast/di`'s README also says what a browser program without explicit resource management
+  does: it keeps `skipLibCheck` on and calls `dispose()` instead of `await using`.
+
+- [#965](https://github.com/codefastlabs/codefast/pull/965) `README.md` now states TypeScript 7 or later as the floor for the package's types — the one compiler every `@codefast/*`
+  package is built and checked with. No code or declaration changed.
+
+- [#953](https://github.com/codefastlabs/codefast/pull/953) `Carousel` reads Embla's scroll bounds with `useSyncExternalStore` instead of copying them into state from a deferred
+  effect. Its cleanup now removes the `reInit` listener as well as `select`; before, an effect re-run on the same Embla
+  instance — as React's Strict Mode does in development — left a second `reInit` listener behind. `CarouselPrevious` and
+  `CarouselNext` also reflect the real bounds on the first render that has an Embla instance, rather than starting
+  disabled until a queued microtask ran, and that update no longer lands outside React's `act` in tests.
+
+- [#983](https://github.com/codefastlabs/codefast/pull/983) `InputSearch` keeps its clear button disabled on a read-only field when `disabled={false}` is passed alongside
+  `readOnly`; the button stayed enabled there and cleared the read-only value.
+
+- [#980](https://github.com/codefastlabs/codefast/pull/980) The preset registers the published `dist` with Tailwind's `@source`, so an installed package styles its components
+  again. It registered only `src/**/*.{ts,tsx}`, which the tarball no longer ships, so the Quick start generated none of
+  the utilities the components use outside the monorepo.
+
+- [#981](https://github.com/codefastlabs/codefast/pull/981) `Progress` forwards `value` and `max` to Radix, so a bar exposes `aria-valuenow`, `aria-valuetext`, `data-value` and a
+  `loading`/`complete` `data-state`, and `getValueLabel` takes effect. It kept `value` to place the fill and never passed
+  it on, so every bar announced as indeterminate. The fill now scales by `max` and clamps to it, so `value={3} max={5}`
+  fills 60% of the bar, not 3%, and what the bar draws is what it announces.
+
+- [#984](https://github.com/codefastlabs/codefast/pull/984) `SidebarProvider` registers its shortcut listener once, reading the latest state through an Effect Event, instead of
+  re-registering it after every toggle. With several providers on a page, the first one now keeps the shortcut on every
+  press. Re-registering moved the provider that had just toggled to the back of the listener queue, so a different sidebar
+  toggled on each press.
+
+- [#982](https://github.com/codefastlabs/codefast/pull/982) `useMediaQuery` reports `false` while hydrating and then the live match, so markup server-rendered for a desktop
+  hydrates on a phone. It read `matchMedia` during the first client render, so a matching query hydrated different markup
+  than the server sent and React discarded the tree to render it again; `SidebarProvider`, through `useIsMobile`, did this
+  on every phone.
+- Updated dependencies:
+  - @codefast/tailwind-variants@0.9.0
+
 ## 0.9.3
 
 ### Patch Changes

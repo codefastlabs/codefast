@@ -263,6 +263,8 @@ export class AsyncLevelContext implements ResolutionContext {
  *
  * @remarks One shape for the shared root, a selection over a live synchronous stack, an async
  * level's prefix and an inspector's probe, so a predicate's call site stays monomorphic.
+ *
+ * @since 0.11.0
  */
 export class DefaultConstraintContext implements ConstraintContext {
   readonly resolutionStack: ReadonlyArray<ResolutionFrame>;

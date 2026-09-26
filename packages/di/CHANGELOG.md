@@ -1,5 +1,270 @@
 # @codefast/di
 
+## 0.11.0
+
+### Minor Changes
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) A default-slot alias is a transparent pointer: a request whose criteria no slot of the alias's own token matches is
+  forwarded, criteria and all, to its target — `resolve(AbstractLogger, { name: "file" })` reaches `Logger`'s `"file"`
+  binding. An exact slot on the alias's token still wins, the nearest container still answers first, and `has` agrees;
+  `resolveAll` keeps filtering by the alias token's own slots.
+
+- [#896](https://github.com/codefastlabs/codefast/pull/896) Retire the async cascade lane: every `resolveAsync` now runs on the branch lane, so a factory's context answers from its
+  own ancestors before and after an `await`. A `whenParentIs` binding requested after an `await` is now selected as the
+  sync lane selects it, `ctx.graph.resolutionPath` names the level's own ancestors, and a cycle formed entirely from
+  post-`await` edges is named from the true root. A transient class or factory root with a statically visible graph is
+  answered by the compiled async plan. `AsyncCascadeContext` and `resolveAsyncFromCascade` are removed from
+  `resolution/context`; `ResolutionDiagnostics.builtSubsystems` reports `resolver.asyncRootLevel` once the async lane has
+  been entered.
+
+- [#937](https://github.com/codefastlabs/codefast/pull/937) Add declared modules: `Module.fromBindings(name, [binding(key, definition), …])` (also `SyncModule.fromBindings`) builds
+  a `SyncModule` from a list, each `binding()` stating one binding with the fluent chain's own vocabulary — `to`,
+  `toSelf: true`, `toConstantValue`, `toDynamic`, `toDynamicAsync`, `toResolved` / `toResolvedAsync` with `deps`,
+  `toAlias`, then `whenNamed`, `whenTagged` (one criterion or several), `when`, `many: true`, `scope` and the lifecycle
+  hooks. A definition is typed exactly as the chain is — the key alone decides the value type and the slot names, and the
+  compiler rejects a second strategy, a scope on a constant or an alias, a hook on an alias, `onDeactivation` off a
+  singleton, and a slot on a collection member. `binding()` checks the same rules at runtime for plain JavaScript and
+  throws the new `InvalidBindingDeclarationError` (`INVALID_BINDING_DECLARATION`, with `tokenName` and `reason`), or
+  `ManyBindingSlotError` / `SelfBindingRequiresClassError` as the chain does.
+
+  A declared module loads, unloads, ref-counts and imports exactly as the equivalent `Module.create` setup would, and
+  registers each binding already in its final shape, so a binding with a slot, a scope or a hook skips the chain steps a
+  fluent setup pays on every load. Nothing a resolve reads changes. `SyncModule`'s `MODULE_SETUP` member now holds either
+  the setup callback or the declarations.
+
+- [#925](https://github.com/codefastlabs/codefast/pull/925) A constant that a plain last-wins `bind()` displaces now still runs its `onDeactivation` hook at `dispose()`. A
+  displaced constant left the registry — so the dispose sweep, which walks the registry, never reached it — and, carrying
+  no cached instance, it was absent from the singleton cache too, falling between the two. The container now records a
+  displaced constant that still owes a deactivation and drains it at dispose; a refinement that restores the binding (a
+  `when*()` that moves the winner off the slot) takes it back out of that set, so nothing deactivates twice. The
+  park-and-restore behaviour of `bind()` is otherwise unchanged.
+
+- [#931](https://github.com/codefastlabs/codefast/pull/931) Disposing a container now reaches its descendants. A child whose parent (or any ancestor) has been disposed is itself
+  disposed: `isDisposed` reads `true`, and every `resolve`, `has` and mutation is refused with `DisposedContainerError`,
+  including the child's own bindings — previously a child kept building transients and constants from a torn-down chain,
+  and `child.has` and `child.resolve` disagreed. The guard keeps the resolve path cheap: a root still reads only its own
+  `#disposed` field, and a child adds one call-free compare of a dedicated dispose-epoch cell against the epoch at which
+  its chain was last confirmed live — the ancestor walk runs only after some container in the process is disposed. The
+  dispose epoch is separate from the state epoch, so a per-request child's dispose does not invalidate the chain-version
+  memo that keeps deep resolves cheap, and `createChild()` is untouched. `resolveAsync` refuses a disposed chain with a
+  synchronous throw at the entry, matching how it already guarded a self-disposed container, and `dispose()` stays ungated
+  so an `await using` child of a disposed ancestor still tears down cleanly.
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) `generateDependencyGraph({ includeParent: true })` follows resolution's own walk up the chain: every ancestor's bindings
+  join the graph, a single dependency connects to the nearest container holding a binding its slot matches — a child
+  binding the request cannot select no longer hides the parent's — and an `injectAll` fans out across the whole chain.
+  `buildDependencyGraph` takes the ancestor registries, nearest first, in place of the parent registry.
+
+- [#921](https://github.com/codefastlabs/codefast/pull/921) A subclass that inherits declared constructor dependencies but declares none of its own — the natural
+  `class Derived extends Base {}` with an implicit constructor — is now rejected with `MissingMetadataError` instead of
+  being built with `undefined` arguments. Constructor metadata is opt-in per class, so an implicit constructor previously
+  slipped through the `target.length === 0` check and produced a silently-broken instance. The error names the base and
+  how many dependencies it declares. A subclass whose own `@injectable([])` declares zero deps is unaffected — it is built
+  with zero arguments, as declared.
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) Decorators report a runtime without `Symbol.metadata` as `MissingDecoratorMetadataError` at the declaration, naming the
+  decorator and the fix (`(Symbol as { metadata?: symbol }).metadata ??= Symbol.for("Symbol.metadata")` in a module
+  imported first), instead of failing with a bare `TypeError` on the first metadata write. TypeScript compiles
+  `context.metadata` to `undefined` on such a runtime; the library does not install the symbol itself, since the package
+  declares no side effects.
+
+- [#926](https://github.com/codefastlabs/codefast/pull/926) Module `unload` is now symmetric with `import`, and `unbindAll` resets module bookkeeping. An `import` inside a module's
+  setup incremented the imported module's ref-count but nothing ever decremented it, so `unload(A)` left a module `A`
+  imported behind bound forever — the container now records each module's imports and, when a module's own ref-count
+  reaches 0, releases the imports it took, unbinding an imported module only when its ref-count reaches 0. And
+  `unbindAll()` / `unbindAllAsync()` now clear the module ref-count, binding-id and import tables after deactivation, so a
+  module loaded before `unbindAll` can be `load()`ed again instead of being silently skipped as already-loaded.
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) A sync `rebind()` whose old binding owes an async deactivation now fails exactly like a sync `unbind()` whatever shape
+  the token has: `rebind()` itself throws `AsyncDeactivationError`, the old bindings are removed, and nothing is
+  committed. A lone default binding used to let `rebind()` pass and then throw from `.to*()` after the replacement was
+  already registered.
+
+- [#929](https://github.com/codefastlabs/codefast/pull/929) `runWithContainer` is now typed as synchronous-only. The ambient container lives in a module-level variable restored in
+  a `finally`, so it lasts only the callback's synchronous run — it does not survive an `await`. A callback returning a
+  `Promise` was silently accepted and lost the context; its return type is now
+  `Result extends Promise<unknown> ? never : Result`, so an async callback resolves to `never`.
+  `MissingContainerContextError` now says the context does not survive an `await`, and the TSDoc, README and SPEC state
+  the sync-only constraint. The engine internals are unchanged — they only ever ran synchronous callbacks.
+
+- [#894](https://github.com/codefastlabs/codefast/pull/894) Four size thresholds are gone, each replaced by the algorithm it approximated: alias chains fold exactly to any length
+  (`ALIAS_HOP_LIMIT` is removed from `resolution/cache/binding-lookup-cache`); a generated plan is one statement per node
+  and inlines to any depth; every synchronous lane checks a cycle by the binding's in-flight flag at any depth
+  (`RESOLUTION_SET_THRESHOLD` and `enterResolutionPath` are removed from `resolution/path/resolution-path`); a
+  multi-criterion request is selected by one scan at any binding count. `PLAN_CODEGEN_THRESHOLD` is 1024, the measured
+  break-even of generating a plan against running its closure.
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) `UnreachableLifecycleHookError` carries a `reason` — `"unbound"` or `"no-deactivatable-binding"` — and an
+  `onDeactivation` hook on a token whose every binding is transient or scoped is reported as that, rather than as a token
+  nothing is bound to.
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) `validate()` checks an `optional()` dependency whenever it is bound, so a singleton capturing a bound transient or
+  scoped dependency through `optional()` is a `ScopeViolationError`; an optional dependency that is not bound still
+  imposes nothing.
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) `engines.node` is now `>=24.0.0`, up from `>=22.12.0`, and Node 22 is no longer supported. Node 24.0.0 is the first
+  release with explicit resource management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`,
+  `SuppressedError`) and all of ES2025, so the packages use both as the platform ships them instead of shimming them for
+  an older line, and the CI matrix runs the unit suite on 24.0.0 itself. Move to Node 24, or stay on the current minor
+  while a deployment still runs Node 22.
+
+### Patch Changes
+
+- [#977](https://github.com/codefastlabs/codefast/pull/977) The README states the browser floor: Chrome and Edge 136, Firefox 136, and Safari 18.4 or later, the first releases that
+  ship every ES2025 builtin. `@codefast/di`'s README also says what a browser program without explicit resource management
+  does: it keeps `skipLibCheck` on and calls `dispose()` instead of `await using`.
+
+- [#922](https://github.com/codefastlabs/codefast/pull/922) A lifecycle hook that returns a rejecting `Promise` when reached from a synchronous lane no longer crashes the process.
+  `runActivationSync` and `runDeactivationSync` call each hook before they can tell it is async, so on discovering a
+  returned `Promise` they now adopt its rejection (a no-op `.catch`) before throwing `AsyncActivationError` /
+  `AsyncDeactivationError` — a rejecting `@postConstruct`, `onActivation`, `onDeactivation` or `@preDestroy` can no longer
+  become an unhandled rejection that ends the process. The hook has still run; retry on `resolveAsync` / `unbindAsync` to
+  await it properly.
+
+- [#896](https://github.com/codefastlabs/codefast/pull/896) An async level with several dependencies, and a `resolveAllAsync` collection, report the first failing dependency in
+  declaration order — the order the sync lanes report — instead of whichever rejection happened to settle first. Every
+  dependency still starts before anything is reported. A node with one dependency awaits it directly, with no fan-out to
+  settle.
+
+- [#924](https://github.com/codefastlabs/codefast/pull/924) `child.has(token)` no longer throws when a parent container is disposed but the child is not. `has` recursed through the
+  parent's **public** `has`, which asserts the container is live, so a live child that could still `resolve` a
+  parent-owned token threw `DisposedContainerError` from `has` alone — breaking the `if (c.has(token)) c.resolve(token)`
+  guard on a healthy container. It now recurses through an internal `#hasInChain` that reads the parent's registry
+  directly, keeping the disposed-guard on the public entry point of the container being called.
+
+- [#894](https://github.com/codefastlabs/codefast/pull/894) The cold path allocates only what it uses: a container builds its lookup memo, class introspector, context pools and
+  lone map on first use; a root's plan is compiled on the request that repeats it, so a container that resolves a root
+  once never compiles; a binding's activation need is stamped on the binding instead of memoized in a per-resolver map
+  (`ResolutionDiagnostics.builtSubsystems` no longer lists `resolver.activationNeedMemo`); teardown clears instances
+  without splicing the singleton list or pairing each binding; a rebind of a lone token is one registration whose
+  displaced binding is deactivated on the spot; a fresh registration is one probe and one write; a chain's own `.many()`
+  re-slots without probing the registry; each error class names itself with a literal.
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) A reader passed through `ContainerOptions.metadataReader` now outranks a `MetadataReaderToken` binding for that
+  container's children too, at every depth, as it already did for the container itself; a token binding still reaches the
+  children of a container given no reader.
+
+- [#920](https://github.com/codefastlabs/codefast/pull/920) `resolveOptional`, `resolveOptionalAsync`, `resolveAll` and `resolveAllAsync` no longer throw when they reach an alias
+  whose chain ends at a token nothing matches. An alias is a transparent pointer, so a dangling chain is the same miss the
+  target itself would be: the optional lanes return `undefined`, and a dangling alias member is skipped from a collection
+  rather than failing the whole fan-out. A required `resolve` / `resolveAsync` still throws, and an alias **cycle** still
+  throws `CircularDependencyError` — a cycle has no absent reading.
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) The README states what a program needs for the declarations' disposal members: the explicit resource management types,
+  which no numbered `lib` declares before ES2027. `@types/node` 24 or later loads them, and so does `ESNext.Disposable` in
+  `lib`. Without either, TypeScript 7 fails inside `container.d.ts` with TS2550 under `skipLibCheck: false`, and at
+  `await using` with TS2318. `@codefast/di-testing` drops a `/// <reference lib="esnext.disposable" />` that TypeScript 7
+  stripped from its emitted declarations anyway, and takes the lib from its `tsconfig.json` instead.
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) A dependency slot declaring `tags: []` states no criterion, as a binding slot already did:
+  `injectionSlotToResolveOptions` answers `undefined` for it, and such a dependency no longer escapes a compiled plan.
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) A `MetadataReader` passed through `ContainerOptions` is asked about a class once for the life of the reader: its answers
+  are memoized per class, and every container handed the same reader shares one verifying wrapper. Lifecycle metadata used
+  to be read on every activation, and each root container asked again.
+
+- [#894](https://github.com/codefastlabs/codefast/pull/894) The React Flow graph export lays its nodes out on a square grid derived from the node count rather than a fixed five
+  columns.
+
+- [#934](https://github.com/codefastlabs/codefast/pull/934) `MissingMetadataError` for a subclass that inherits declared constructor dependencies no longer advises giving it an
+  explicit constructor, which is rejected the same way. It points at `@injectable([...deps])` — `@injectable([])` for a
+  class that takes none — or a `toDynamic()`/`toResolved()` binding.
+
+- [#894](https://github.com/codefastlabs/codefast/pull/894) Every resolution lane now answers a graph identically. A per-request child that misses a token its parent's bindings all
+  declined reports `NoMatchingBindingError` as the parent does, not `TokenNotBoundError`; a sibling on the async
+  interpreted lane is selected against its own path rather than the earlier sibling's frame; a dynamic factory that
+  resolves its own token from its synchronous prefix is reported as a cycle before it runs a second time.
+
+- [#905](https://github.com/codefastlabs/codefast/pull/905) The chain-versioned lookup memo answers a repeated token from a method small enough for its hot callers to inline: the
+  hit is the whole of `defaultEntry`, and everything that fills the memo is the miss. An alias resolve, a parent-owned
+  resolve from a child and every other lookup that reaches the memo pays one inlined compare where it paid a call.
+
+- [#938](https://github.com/codefastlabs/codefast/pull/938) A constant with an `onDeactivation` hook that a bind inside a module load displaces now runs that hook at `dispose()`,
+  as it already did when a plain `container.bind()` displaced it. A module's chains registered without the container's
+  displacement bookkeeping, so the displaced constant left the registry untracked and nothing ever tore it down; this held
+  for `Module.create` setups and declared modules (`Module.fromBindings`) alike. Unloading the displacing module still
+  does not restore the displaced binding — its deactivation stays owed to `dispose()`.
+
+- [#918](https://github.com/codefastlabs/codefast/pull/918) A `{ name, tag }` request now selects the same binding as its `{ tags: [slotName.of(n), tag] }` spelling, closing two
+  selection bugs. A name that has been interned nowhere in the process no longer makes the request a miss: the request's
+  criteria can still be a superset of a slot's, so an index miss falls through to the scan and the parent walk instead of
+  returning early — the answer no longer depends on whether unrelated code has ever called `whenNamed` with that string.
+  And the name-plus-tag fast lane now declines to full selection whenever the token carries any `when()` predicate
+  candidate, so the more-specific rule's predicate step is honoured on this lane as on every other.
+
+- [#896](https://github.com/codefastlabs/codefast/pull/896) Every binding predicate now reads one `ConstraintContext` shape: the shared root context, the context a selection builds
+  over a live path, an async level's prefix and the inspector's probe are all `DefaultConstraintContext`, exported from
+  `resolution/context`. A predicate's call site stays monomorphic, and the per-selection object literal with its eager
+  `ancestors` slice is gone — `ancestors` is now sliced on first read, as `ctx.graph` already did.
+
+- [#916](https://github.com/codefastlabs/codefast/pull/916) `LEARNING.md` is removed, and with it the Learning page the docs site rendered for this package. What a shape is and
+  what it guarantees stays in `ARCHITECTURE.md`, the behavioural contract in `SPEC.md`, and usage in `README.md`, whose
+  document list no longer points at the removed file.
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) `resolveAll` returns a token's bindings in registration order however a chain refines its own binding. Binding a default
+  and then a named, tagged, member or predicate binding used to list the later one first, because the refinement re-added
+  what it had displaced behind it; each binding now keeps the place its first registration gave it.
+
+- [#902](https://github.com/codefastlabs/codefast/pull/902) A transient factory root resolved with `resolveAsync()` is handed one resolution context per binding, built on the first
+  resolve and reused by every later one — its path is its own frame alone and the request carries no options, so the
+  context is a function of the binding. The root allocated an array and a context per resolve; it allocates nothing now,
+  and a concurrent root reads the same, correct, path after an `await`.
+
+- [#919](https://github.com/codefastlabs/codefast/pull/919) A `NoMatchingBindingError`'s "Available slots" diagnostic no longer throws when a bound slot carries a tag value that
+  cannot be stringified — a bigint, a null-prototype object, or one whose `toString` throws. `bindingSlotToString` (and
+  the dependency-graph edge label) now render such a value as `<unprintable>` through a shared `stringifyTagValue` guard,
+  so the real `NoMatchingBindingError` surfaces instead of a masking `TypeError`, matching the guard the request-side
+  diagnostic already had.
+
+- [#932](https://github.com/codefastlabs/codefast/pull/932) `SPEC.md` carries the behavioural contract and nothing else. The source-tree listing, the copied export barrel, the
+  build configuration and the roadmap of already-shipped work are gone — a reader can now rename any file under `src/`
+  without contradicting the spec. `Public API` states the surface as a rule instead of a second copy of `index.ts`, which
+  had already drifted from it, and `Scope and requirements` states the runtime, module format and TypeScript floor a
+  consumer must bring. New `DECISIONS.md` takes the background and the whole InversifyJS v8 comparison, `README.md` takes
+  the testing patterns with the `MetadataReader` example corrected to `Container.create({ metadataReader })`, and
+  `CONTRIBUTING.md` takes the packaging and decorator-toolchain notes.
+
+  Checking the spec against the source turned up four public names it never described: `BindingSnapshot.isMany`, the
+  `DependencySlot` that both `InjectionDescriptor` and `ParamMetadata` extend, and `bindingSlotToResolveOptions`, which
+  turns a snapshot's slot back into the `ResolveOptions` that selects it. All three are specified now, and the claim that
+  `toAlias()` returns the one builder with no type parameter is corrected — it has no _value_ type parameter, but it does
+  carry the token's slot names.
+
+- [#927](https://github.com/codefastlabs/codefast/pull/927) `@postConstruct` / `@preDestroy` on a symbol-keyed method now fail at the declaration with the new
+  `SymbolKeyedLifecycleError`, instead of a misleading `InvalidMetadataError` at resolve that blamed a `MetadataReader`
+  the caller never configured. The lifecycle reader keys methods by their string name, so a symbol-keyed method could
+  never be found again; the decorator now rejects it up front, where the mistake is.
+
+- [#957](https://github.com/codefastlabs/codefast/pull/957) `MissingDecoratorMetadataError` suggests installing `Symbol.metadata` as
+  `(Symbol as { metadata?: symbol }).metadata ??= Symbol.for("Symbol.metadata")`, which type-checks in a `.ts` file; the
+  bare `Symbol.metadata ??= …` it quoted failed with TS2540, since TypeScript declares the symbol `readonly`.
+
+- [#933](https://github.com/codefastlabs/codefast/pull/933) A rejected async `onActivation` on a transient `toDynamic` binding — per-binding or container-level — no longer surfaces
+  as an unhandled rejection: the sync resolve still throws `AsyncActivationError`, and the hook's promise is adopted as it
+  already was on every other lane.
+
+- [#965](https://github.com/codefastlabs/codefast/pull/965) The documented TypeScript floor is now 7, up from 5.9: TypeScript 7 is the one compiler that type-checks the package and
+  emits its published declarations, so it is the floor they support. `README.md`, `SPEC.md` and `DECISIONS.md` state it;
+  no code or declaration changed.
+
+- [#940](https://github.com/codefastlabs/codefast/pull/940) `unbind(id)` and `unbindAsync(id)` now tear down a binding that a later last-wins bind displaced: its cached singleton
+  is deactivated, and a displaced constant runs its `onDeactivation`, at that call instead of waiting for `dispose()`. The
+  id lookup asked only the registry, which a displaced binding had already left, so the call did nothing. The unbind also
+  invalidates what the displacing chain holds parked, so a later `when*()` refinement of that chain can no longer restore
+  the unbound binding.
+
+- [#939](https://github.com/codefastlabs/codefast/pull/939) Unloading a module now tears down a binding it registered that a later last-wins bind displaced: a displaced cached
+  singleton is deactivated, and a displaced constant runs its `onDeactivation`, at that `unload()`/`unloadAsync()` instead
+  of waiting for `dispose()`. Unload looked each of the module's bindings up in the registry, which a displaced binding
+  had already left, so it was skipped. The unload also invalidates what the displacing chain holds parked, so a later
+  `when*()` refinement of that chain can no longer restore a binding of the unloaded module.
+
+- [#923](https://github.com/codefastlabs/codefast/pull/923) `validate()` now reports a container-level `onDeactivation` hook that can never run. The builder type blocks
+  `onDeactivation` on `scoped`/`transient` bindings, but `container.onDeactivation(token, handler)` takes any token with
+  no such gate, so a hook keyed to a token whose every binding is scoped or transient used to pass validation silently.
+  `validate()` now raises `UnreachableLifecycleHookError` for it, reusing the mechanism that already catches a hook on an
+  unbound token. A token that also has a singleton or constant binding, and any `onActivation` hook, stay valid.
+
 ## 0.10.1
 
 ### Patch Changes

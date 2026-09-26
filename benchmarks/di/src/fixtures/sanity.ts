@@ -68,6 +68,8 @@ export function isCompleteCollection(values: ReadonlyArray<number>, count: numbe
  *
  * @remarks `composeResolver` builds a fresh container from the module and returns a resolver by index; the
  * indices below `singletonFrom` are constants, the rest singleton factories.
+ *
+ * @since 0.10.0
  */
 export function isComposedModule(
   composeResolver: () => (index: number) => { readonly id: number },

@@ -1,6 +1,6 @@
 {
   "name": "@codefast/typescript-config",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "Shared TypeScript configuration for the monorepo",
   "keywords": [
     "browser",

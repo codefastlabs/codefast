@@ -11,6 +11,8 @@ import { firstLineOf, lineOfOffset } from "#core/source-position";
  *
  * @remarks It covers an assertion on its own line or the line below it, and must carry a reason
  * after the colon; one that covers nothing is reported, so a kept assertion cannot outlive its cause.
+ *
+ * @since 0.13.0
  */
 export const DOUBLE_ASSERTION_DIRECTIVE = "codefast-allow-double-assertion";
 
@@ -91,6 +93,8 @@ function parseDirective(sourceText: string, comment: Comment): Directive | undef
  *
  * @remarks `x as unknown as T`, `(x as unknown) as T` and `<T><unknown>x` are one shape: the
  * compiler found the two types unrelated, and the pair silences it instead of reconciling them.
+ *
+ * @since 0.13.0
  */
 export function auditDoubleAssertionSource(filePath: string, sourceText: string): Array<AssertionViolation> {
   if (!CANDIDATE_TEXT.test(sourceText)) {

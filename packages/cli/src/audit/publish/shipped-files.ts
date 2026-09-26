@@ -7,6 +7,8 @@ import { isSourceMapFile, slimPublishManifest } from "#pack-slim/domain/transfor
 
 /**
  * What a package's tarball ships, plus the `files` entries that match nothing on disk.
+ *
+ * @since 0.13.0
  */
 export interface ShippedFiles {
   /** Package-relative POSIX paths, sorted. */
@@ -19,6 +21,8 @@ export interface ShippedFiles {
  *
  * @remarks Applies the same slim as `pack-slim`, so a subtree it drops is absent here too, and leaves out source maps,
  * which the publish step deletes. Without a `files` field npm ships the whole directory, which leaves nothing to judge.
+ *
+ * @since 0.13.0
  */
 export function listShippedFiles(
   fs: Filesystem,

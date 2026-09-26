@@ -8,6 +8,8 @@ import { CHART_CATEGORY_VIEW_EPS, CHART_MIN_X_SPAN_FOR_ZOOM_IN } from "#app/lib/
  * The part of a chart the window helpers read: each scale's current bounds, the `x` one among them.
  *
  * @remarks A Chart.js `Chart` is one; a test hands over only the bounds it sets.
+ *
+ * @since 0.10.0
  */
 export interface ChartScaleWindows {
   readonly scales: Readonly<Record<string, { readonly min: number; readonly max: number } | undefined>>;

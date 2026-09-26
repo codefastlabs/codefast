@@ -1,5 +1,21 @@
 # @codefast/benchmark-viewer
 
+## 0.10.0
+
+### Minor Changes
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) `engines.node` is now `>=24.0.0`, up from `>=22.12.0`, and Node 22 is no longer supported. Node 24.0.0 is the first
+  release with explicit resource management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`,
+  `SuppressedError`) and all of ES2025, so the packages use both as the platform ships them instead of shimming them for
+  an older line, and the CI matrix runs the unit suite on 24.0.0 itself. Move to Node 24, or stay on the current minor
+  while a deployment still runs Node 22.
+
+### Patch Changes
+
+- Updated dependencies:
+  - @internal/benchmark-harness@0.11.0
+  - @codefast/tailwind-variants@0.9.0
+
 ## 0.9.1
 
 ### Patch Changes

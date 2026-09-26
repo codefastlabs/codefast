@@ -42,6 +42,8 @@ export interface TestBedStatic<Backend extends MockFunction> {
  * surface. A bed can have no other backend than the entry point it was begun from.
  *
  * @throws MissingMockFactoryError When no factory is passed, which only a caller past the types can do.
+ *
+ * @since 0.2.0
  */
 export function createTestBed<Backend extends MockFunction>(options: TestBedOptions<Backend>): TestBedStatic<Backend> {
   // Read once, so a later write to the caller's object cannot change the beds already begun.

@@ -1,5 +1,39 @@
 # @codefast/benchmark-tailwind-variants
 
+## 0.10.0
+
+### Minor Changes
+
+- [#946](https://github.com/codefastlabs/codefast/pull/946) Drop the per-library `bench:<library>` scripts. The parent already spawns every library's child itself, and a child run
+  by hand gave up the interleaving, trials and diff that make a number worth reading. `BENCH_LIBRARY` narrows a real run
+  to the libraries named instead, and the dist-swap escape hatch spells the child's own command.
+
+- [#976](https://github.com/codefastlabs/codefast/pull/976) `engines.node` is now `>=24.0.0`, up from `>=22.12.0`, and Node 22 is no longer supported. Node 24.0.0 is the first
+  release with explicit resource management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`,
+  `SuppressedError`) and all of ES2025, so the packages use both as the platform ships them instead of shimming them for
+  an older line, and the CI matrix runs the unit suite on 24.0.0 itself. Move to Node 24, or stay on the current minor
+  while a deployment still runs Node 22.
+
+### Patch Changes
+
+- [#899](https://github.com/codefastlabs/codefast/pull/899) `pnpm bench` isolates every scenario in its own subprocess and is the lane to cite; `pnpm bench:fast` is the
+  shared-process smoke run; `pnpm bench:ab` compares two builds. `bench:isolate`, `bench:full` and `bench:verbose` are
+  removed; `BENCH_MODE=full` and `BENCH_VERBOSE=true` compose with `bench`.
+
+- [#917](https://github.com/codefastlabs/codefast/pull/917) Show measuring time per library in the progress block instead of wall-clock elapsed.
+
+  An isolated run is scenario-major, so every library's clock started at its discovery child and stopped when the whole
+  run ended — all seven rows printed the same span no matter how many scenarios they measured. `ProgressTracker` now
+  accumulates `busyMs` across a library's measuring subprocesses and the frame renders that, so the column says what each
+  row actually cost the machine. Wall-clock still appears once, in the run card. The live display also stops redrawing a
+  row that sits idle between subprocesses, and the plain lane closes a library with
+  `all N scenario(s) measured in <time>`.
+
+- Updated dependencies:
+  - @internal/benchmark-harness@0.11.0
+  - @codefast/tailwind-variants@0.9.0
+  - @internal/benchmark-viewer@0.10.0
+
 ## 0.9.0
 
 ### Minor Changes

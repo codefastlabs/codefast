@@ -28,11 +28,15 @@ export function advanceStateEpoch(): void {
  * paying a cross-module call — apart from {@link stateEpoch} so a per-request child's `dispose()`
  * does not invalidate the chain-version memo that keeps deep resolves cheap. A child compares it to
  * learn whether an ancestor was disposed, re-walking the chain only after a disposal somewhere.
+ *
+ * @since 0.11.0
  */
 export const disposeEpochRef: { value: number } = { value: 0 };
 
 /**
  * Advances the dispose epoch; a container's teardown calls it so descendants re-check the chain.
+ *
+ * @since 0.11.0
  */
 export function advanceDisposeEpoch(): void {
   disposeEpochRef.value += 1;
