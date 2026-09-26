@@ -35,11 +35,14 @@ its keep as the dependency graph grows.
 pnpm add @codefast/di
 ```
 
-`@codefast/di` requires Node.js 24 or later and TypeScript 7 or later, with native Stage 3 decorators. Leave
+`@codefast/di` runs on Node.js 24 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
+([support policy](../../SUPPORT.md#browsers)). It requires TypeScript 7 or later, with native Stage 3 decorators. Leave
 `experimentalDecorators` off — it's off by default. Its declarations use explicit resource management, which no numbered
-`lib` declares yet, so your program needs those types: `@types/node` 24 or later loads them, and any other setup adds
-`ESNext.Disposable` to `lib`. The package is published on 0.x and versioned on its own track: breaking changes ship as
-minor versions, so pin the minor version when you need stability.
+`lib` declares yet, so your program needs those types: `@types/node` 24 or later loads them, and any other program adds
+`ESNext.Disposable` to `lib` once its runtime ships explicit resource management. A browser program that targets Safari,
+which has not shipped it, keeps `skipLibCheck` on and calls `dispose()` instead of `await using`. The package is
+published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the minor version when
+you need stability.
 
 ## Quick start
 
