@@ -1,4 +1,7 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, render, renderHook, screen } from "@testing-library/react";
+import { createElement } from "react";
+import type { ReactNode } from "react";
+import { renderToString } from "react-dom/server";
 import type { Mock } from "vitest";
 
 import { useMediaQuery } from "#hooks/use-media-query";
@@ -111,5 +114,28 @@ describe("useMediaQuery", () => {
     rerender("(min-width: 800px)");
     expect(mockRemoveEventListener).toHaveBeenCalledWith("change", expect.any(Function));
     expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 800px)");
+  });
+
+  test("reports false while hydrating so the markup matches the server's, then the live match", async () => {
+    function Probe(): ReactNode {
+      return createElement("output", { "data-testid": "probe" }, String(useMediaQuery("(min-width: 600px)")));
+    }
+
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(createElement(Probe));
+    document.body.append(container);
+    expect(container.textContent).toBe("false");
+
+    setupMockMatchMedia(true);
+    const onRecoverableError = vi.fn();
+
+    await act(async () => {
+      render(createElement(Probe), { container, hydrate: true, onRecoverableError });
+      await Promise.resolve();
+    });
+
+    expect(onRecoverableError).not.toHaveBeenCalled();
+    expect(screen.getByTestId("probe")).toHaveTextContent("true");
+    container.remove();
   });
 });

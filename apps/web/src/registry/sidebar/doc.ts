@@ -151,7 +151,8 @@ export const sidebarDoc: ComponentDoc = {
   ],
   features: [
     "Persists the open/collapsed state in a sidebar_state cookie (7-day max-age), so a full page reload keeps the sidebar as the user left it.",
-    "Automatically switches to a Sheet-based drawer on mobile via useIsMobile() — no separate mobile layout to build.",
+    "Becomes a Sheet-based drawer below the sidebar breakpoint (48rem by default) — no separate mobile layout to build.",
+    "Move that breakpoint with @theme { --breakpoint-sidebar: 40rem; } in your stylesheet: the docked layout, the sidebar: variant it mints, and the switch to the sheet all follow the one value.",
   ],
   api: [
     {
@@ -174,6 +175,12 @@ export const sidebarDoc: ComponentDoc = {
           type: "(open: boolean) => void",
           description: "Called when the open state changes.",
         },
+        {
+          name: "shortcutKey",
+          type: "string | false",
+          default: '"b"',
+          description: "The key that toggles the sidebar together with ⌘ or Ctrl. false turns the shortcut off.",
+        },
       ],
     },
     {
@@ -194,7 +201,11 @@ export const sidebarDoc: ComponentDoc = {
   ],
   accessibility: {
     keyboard: [
-      { keys: ["⌘/Ctrl", "B"], description: "Toggles the sidebar from anywhere in the app." },
+      {
+        keys: ["⌘/Ctrl", "B"],
+        description:
+          "Toggles the sidebar, except while typing in a field or when another handler already used the key. shortcutKey changes or turns it off.",
+      },
       { keys: ["Tab"], description: "Moves through the menu buttons." },
       { keys: ["Enter"], description: "Activates the focused item." },
     ],

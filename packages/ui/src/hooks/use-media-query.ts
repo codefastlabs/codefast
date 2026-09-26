@@ -1,17 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 /**
- * Event handler for MediaQueryList changes.
+ * Subscribes to a CSS media query and returns whether it matches.
  *
- * @param event - Media query change event providing the updated match status.
- */
-type MediaQueryChangeHandler = (event: MediaQueryListEvent) => void;
-
-/**
- * Subscribe to a CSS media query and receive its match state.
- *
- * Evaluates the query immediately (when supported) and updates on changes
- * via an event listener.
+ * Reports `false` during SSR and hydration, so the first client render matches the server markup, then the live
+ * match state, updating whenever the query flips.
  *
  * @param query - A valid media query string (e.g., "(max-width: 768px)").
  * @returns true when the media query currently matches; otherwise false.
@@ -24,46 +17,32 @@ type MediaQueryChangeHandler = (event: MediaQueryListEvent) => void;
  * @since 0.3.16-canary.0
  */
 export function useMediaQuery(query: string): boolean {
-  /**
-   * State to store whether the query matches.
-   * The initial value is calculated based on the current window state.
-   */
-  const [matches, setMatches] = useState<boolean>(() => {
-    // Ensure initial state matches current media query status
-    if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
-      return window.matchMedia(query).matches;
-    }
+  const subscribe = useCallback(
+    (onChange: () => void): (() => void) => {
+      if (!canMatchMedia()) {
+        return () => {};
+      }
 
-    return false;
-  });
+      const mediaQueryList = window.matchMedia(query);
 
-  useEffect(() => {
-    // Only run in a browser environment where matchMedia is available
-    if (typeof window === "undefined") {
-      return;
-    }
+      mediaQueryList.addEventListener("change", onChange);
 
-    /**
-     * MediaQueryList to evaluate and observe the provided query.
-     */
-    const mediaQueryList = window.matchMedia(query);
+      return (): void => {
+        mediaQueryList.removeEventListener("change", onChange);
+      };
+    },
+    [query],
+  );
 
-    /**
-     * Update state when the media query status changes.
-     */
-    const onChange: MediaQueryChangeHandler = (event): void => {
-      setMatches(event.matches);
-    };
+  const getSnapshot = useCallback((): boolean => canMatchMedia() && window.matchMedia(query).matches, [query]);
 
-    mediaQueryList.addEventListener("change", onChange);
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
 
-    /**
-     * Removes the event listener on unmount or when the query changes.
-     */
-    return (): void => {
-      mediaQueryList.removeEventListener("change", onChange);
-    };
-  }, [query]);
+function getServerSnapshot(): boolean {
+  return false;
+}
 
-  return matches;
+function canMatchMedia(): boolean {
+  return typeof window !== "undefined" && typeof window.matchMedia === "function";
 }

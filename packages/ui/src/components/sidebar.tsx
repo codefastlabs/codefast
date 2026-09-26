@@ -10,7 +10,7 @@ import { Separator } from "#components/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "#components/sheet";
 import { Skeleton } from "#components/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#components/tooltip";
-import { useIsMobile } from "#hooks/use-is-mobile";
+import { useMediaQuery } from "#hooks/use-media-query";
 import { cn } from "#lib/utils";
 import type { SidebarMenuButtonVariants } from "#variants/sidebar";
 import { sidebarMenuButtonVariants } from "#variants/sidebar";
@@ -20,7 +20,9 @@ const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3.0625rem";
-const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+const SIDEBAR_SHORTCUT_KEY = "b";
+// The preset's `--breakpoint-sidebar` default, for a page that has not loaded the preset.
+const SIDEBAR_BREAKPOINT_FALLBACK = "48rem";
 
 interface SidebarContextValue {
   isMobile: boolean;
@@ -55,6 +57,12 @@ interface SidebarProviderProps extends ComponentProps<"div"> {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
+  /**
+   * The key that toggles the sidebar together with ⌘ or Ctrl, or `false` for no shortcut.
+   *
+   * @defaultValue `"b"`
+   */
+  shortcutKey?: string | false | undefined;
 }
 
 /**
@@ -66,10 +74,11 @@ function SidebarProvider({
   defaultOpen = true,
   onOpenChange: setOpenProperty,
   open: openProperty,
+  shortcutKey = SIDEBAR_SHORTCUT_KEY,
   style,
   ...props
 }: SidebarProviderProps): JSX.Element {
-  const isMobile = useIsMobile();
+  const isMobile = useIsBelowSidebarBreakpoint();
   const [openMobile, setOpenMobile] = useState(false);
 
   // This is the internal state of the sidebar.
@@ -103,8 +112,12 @@ function SidebarProvider({
 
   // Adds a keyboard shortcut to toggle the sidebar.
   useEffect(() => {
+    if (shortcutKey === false) {
+      return;
+    }
+
     const handleKeyDown: (event: KeyboardEvent) => void = (event: KeyboardEvent) => {
-      if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
+      if (isSidebarShortcut(event, shortcutKey)) {
         event.preventDefault();
         toggleSidebar();
       }
@@ -115,7 +128,7 @@ function SidebarProvider({
     return (): void => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [toggleSidebar]);
+  }, [shortcutKey, toggleSidebar]);
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
@@ -216,7 +229,7 @@ function Sidebar({
 
   return (
     <div
-      className={cn("group peer hidden text-sidebar-foreground md:block", className)}
+      className={cn("group peer hidden text-sidebar-foreground sidebar:block", className)}
       data-collapsible={state === "collapsed" ? collapsible : ""}
       data-side={side}
       data-slot="sidebar"
@@ -235,7 +248,7 @@ function Sidebar({
       />
       <div
         className={cn(
-          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-gentle md:flex data-side-right:right-0 data-side-right:group-data-[collapsible=offcanvas]:-right-(--sidebar-width) data-side-left:left-0 data-side-left:group-data-[collapsible=offcanvas]:-left-(--sidebar-width)",
+          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-gentle sidebar:flex data-side-right:right-0 data-side-right:group-data-[collapsible=offcanvas]:-right-(--sidebar-width) data-side-left:left-0 data-side-left:group-data-[collapsible=offcanvas]:-left-(--sidebar-width)",
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
             : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-side-right:border-l group-data-side-left:border-r",
@@ -308,7 +321,7 @@ function SidebarRail({ className, ...props }: SidebarRailProps): JSX.Element {
   return (
     <button
       className={cn(
-        "absolute inset-y-0 z-20 hidden w-4 transition-all ease-gentle group-data-[collapsible=offcanvas]:translate-x-0 group-data-side-right:left-0 group-data-side-left:-right-4 after:absolute after:inset-y-0 after:inset-s-1/2 after:w-0.5 group-data-[collapsible=offcanvas]:after:start-full hover:group-data-[collapsible=offcanvas]:bg-sidebar hover:after:bg-sidebar-border in-data-side-right:cursor-e-resize in-data-side-left:cursor-w-resize sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2 rtl:group-data-[collapsible=offcanvas]:translate-x-0 rtl:in-data-side-right:cursor-w-resize rtl:in-data-side-left:cursor-e-resize [[data-side=left][data-collapsible=offcanvas]_&]:-right-2 [[data-side=left][data-state=collapsed]_&]:cursor-e-resize rtl:[[data-side=left][data-state=collapsed]_&]:cursor-w-resize [[data-side=right][data-collapsible=offcanvas]_&]:-left-2 [[data-side=right][data-state=collapsed]_&]:cursor-w-resize rtl:[[data-side=right][data-state=collapsed]_&]:cursor-e-resize",
+        "absolute inset-y-0 z-20 hidden w-4 transition-all ease-gentle group-data-[collapsible=offcanvas]:translate-x-0 group-data-side-right:left-0 group-data-side-left:-right-4 after:absolute after:inset-y-0 after:inset-s-1/2 after:w-0.5 group-data-[collapsible=offcanvas]:after:start-full hover:group-data-[collapsible=offcanvas]:bg-sidebar hover:after:bg-sidebar-border in-data-side-right:cursor-e-resize in-data-side-left:cursor-w-resize sidebar:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2 rtl:group-data-[collapsible=offcanvas]:translate-x-0 rtl:in-data-side-right:cursor-w-resize rtl:in-data-side-left:cursor-e-resize [[data-side=left][data-collapsible=offcanvas]_&]:-right-2 [[data-side=left][data-state=collapsed]_&]:cursor-e-resize rtl:[[data-side=left][data-state=collapsed]_&]:cursor-w-resize [[data-side=right][data-collapsible=offcanvas]_&]:-left-2 [[data-side=right][data-state=collapsed]_&]:cursor-w-resize rtl:[[data-side=right][data-state=collapsed]_&]:cursor-e-resize",
         className,
       )}
       data-sidebar="rail"
@@ -335,7 +348,7 @@ function SidebarInset({ className, ...props }: SidebarInsetProps): JSX.Element {
   return (
     <main
       className={cn(
-        "relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ms-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-collapsed:ms-2",
+        "relative flex w-full flex-1 flex-col bg-background sidebar:peer-data-[variant=inset]:m-2 sidebar:peer-data-[variant=inset]:ms-0 sidebar:peer-data-[variant=inset]:rounded-xl sidebar:peer-data-[variant=inset]:shadow-sm sidebar:peer-data-[variant=inset]:peer-data-collapsed:ms-2",
         className,
       )}
       data-slot="sidebar-inset"
@@ -519,7 +532,7 @@ function SidebarGroupAction({ asChild = false, className, ...props }: SidebarGro
   return (
     <Component
       className={cn(
-        "absolute inset-e-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
+        "absolute inset-e-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 sidebar:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
         className,
       )}
       data-sidebar="group-action"
@@ -673,9 +686,9 @@ function SidebarMenuAction({
   return (
     <Component
       className={cn(
-        "absolute inset-e-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
+        "absolute inset-e-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 sidebar:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
         showOnHover &&
-          "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 peer-data-active/menu-button:text-sidebar-accent-foreground aria-expanded:opacity-100 md:opacity-0",
+          "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 peer-data-active/menu-button:text-sidebar-accent-foreground aria-expanded:opacity-100 sidebar:opacity-0",
         className,
       )}
       data-sidebar="menu-action"
@@ -834,6 +847,44 @@ function SidebarMenuSubButton({
       {...props}
     />
   );
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+// The sheet takes over below the preset's `sidebar:` breakpoint, so JS matches the value that CSS resolved.
+function useIsBelowSidebarBreakpoint(): boolean {
+  const [breakpoint] = useState(readSidebarBreakpoint);
+
+  return useMediaQuery(`(width < ${breakpoint})`);
+}
+
+function readSidebarBreakpoint(): string {
+  if (typeof document === "undefined") {
+    return SIDEBAR_BREAKPOINT_FALLBACK;
+  }
+
+  const breakpoint = getComputedStyle(document.documentElement).getPropertyValue("--sidebar-breakpoint").trim();
+
+  return breakpoint === "" ? SIDEBAR_BREAKPOINT_FALLBACK : breakpoint;
+}
+
+// Leaves the key to a handler that already took it, to an IME mid-composition, and to fields where it edits text.
+function isSidebarShortcut(event: KeyboardEvent, shortcutKey: string): boolean {
+  if (
+    event.defaultPrevented ||
+    event.isComposing ||
+    event.repeat ||
+    event.altKey ||
+    event.shiftKey ||
+    !(event.metaKey || event.ctrlKey) ||
+    event.key.toLowerCase() !== shortcutKey.toLowerCase()
+  ) {
+    return false;
+  }
+
+  const target = event.composedPath()[0];
+
+  return !(target instanceof HTMLElement && (target.isContentEditable || target.matches("input, select, textarea")));
 }
 
 // ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
