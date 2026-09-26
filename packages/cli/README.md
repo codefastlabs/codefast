@@ -111,7 +111,6 @@ codefast                              # Codefast monorepo developer CLI
 │  ├─ links [target]                  # markdown links pointing at a missing path/anchor
 │  ├─ imports [target]                # banned import forms (React by-name, Zod namespace in front-end, …)
 │  ├─ assertions [target]             # double type assertions through unknown/any (x as unknown as T)
-│  ├─ constants [target]              # numeric constants whose comment names none of the three kinds
 │  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
 │  ├─ publish [target]                # what breaks a consumer's install: #/ imports, unshipped targets, @source paths
 │  └─ comments [target]               # section dividers not in the one allowed form
@@ -145,16 +144,15 @@ Every command also responds to `--help`; each command's section below explains w
 | `audit links`         | Report markdown cross-references that resolve to nothing                   | no                |
 | `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)      | no (report only)  |
 | `audit assertions`    | Report double type assertions through `unknown` / `any`, tests included    | no                |
-| `audit constants`     | Require every tuned numeric constant to name the kind of number it is      | no                |
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
 | `audit publish`       | Report what would break a consumer's install of a published package        | no                |
 | `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
 
 **Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, `audit links`, `audit assertions`, and
 `audit publish` are general-purpose — they work for any pnpm workspace or single package that builds with `tsc`. The
-other five audits encode codefast's own house style (logical Tailwind directions, named React imports, a specific
-comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens, a named kind for every tuned numeric
-constant). Adopt them if they fit your project; otherwise skip them, or use an allowlist to narrow their scope.
+other four audits encode codefast's own house style (logical Tailwind directions, named React imports, a specific
+comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens). Adopt them if they fit your project;
+otherwise skip them, or use an allowlist to narrow their scope.
 
 ## `arrange`
 
@@ -276,9 +274,15 @@ Exits `1` when any package fails, `0` otherwise.
 ## `tag`
 
 Adds `@since <version>` tags to the doc comments of exported declarations that lack one, creating the doc block when
-there is none. The version comes from the nearest `package.json` above each target file, and declarations that already
-carry `@since` are left alone. Run it at release time so published APIs carry accurate version metadata — never
-hand-write `@since`.
+there is none. Overload signatures are declarations too, each stamped on its own, because the `.d.ts` keeps every
+overload's doc block and drops the implementation's. The version comes from the nearest `package.json` above each target
+file, and declarations that already carry `@since` are left alone. Run it at release time so published APIs carry
+accurate version metadata — never hand-write `@since`.
+
+A declaration with no doc block and a `//` comment on the line above it is reported instead: a block written there would
+stack under a note, which `audit comments` rejects, or split a directive from the code it governs. Its file is left as
+it is, so every reported line stays accurate. Write the doc block by hand before the release that ships the declaration,
+since a later run can only stamp a version that did not introduce it.
 
 ```bash
 codefast tag                   # auto-discover packages from cwd (or the single package)
@@ -286,7 +290,8 @@ codefast tag packages/ui/src   # tag one directory or file
 codefast tag --dry-run         # summary only, no writes
 ```
 
-Exits `1` when no target is selected, when any target fails, or when the `tag.onAfterWrite` hook fails.
+Exits `1` when no target is selected, when any target fails, when a declaration is left unstamped, or when the
+`tag.onAfterWrite` hook fails.
 
 ## `audit`
 
@@ -419,30 +424,6 @@ codefast audit display-names --json                # machine-readable summary
 
 Configure exceptions via `audit.displayNames.allowlist` — each entry is the call as written, through its closing quote
 (or parenthesis when the name is the only argument), or `repo/relative/path.ts:<call>`.
-
-### `audit constants`
-
-_House style._ Holds library sources to one rule for tuned numbers: a numeric constant says which kind of number it is.
-It flags an upper-case `const NAME = <number>` in a `.ts`/`.tsx` file under a `src` directory — tests, benchmarks, apps,
-and examples are out of scope — unless the comment directly above it, a `/* … */` block or a run of `//` lines, names
-one of three kinds:
-
-- `a constant of the machine` — a width of the platform the code runs on;
-- `a value the contract fixes` — a number the documented contract promises;
-- `derived from bind-time data` — a figure computed from what a caller hands in.
-
-A count that merely looks reasonable is none of them, so it is reported. `0`, `1`, and `-1` are skipped: they stand for
-absence or identity, not for a tuned size.
-
-```bash
-codefast audit constants                   # uses audit.constants.target from config
-codefast audit constants packages/di/src   # explicit target
-codefast audit constants --json            # machine-readable summary
-```
-
-With no `[target]`, the scan root is `audit.constants.target` from the config; when neither is set the command fails.
-Configure exceptions via `audit.constants.allowlist` — each entry is the constant's name or `repo/relative/path.ts:NAME`
-— for a measured policy that has to stay a tuned number.
 
 ## Configuration
 
@@ -579,10 +560,6 @@ export default {
     imports: { allowlist: [] }, // offending import text as written, or `repo/relative/path.tsx:<text>`
     assertions: { allowlist: [] }, // assertion as written, or `repo/relative/path.ts:<assertion>`
     displayNames: { allowlist: [] }, // call as written, or `repo/relative/path.ts:<call>`
-    constants: {
-      target: "packages/core/src", // default scan root when no CLI arg is passed
-      allowlist: [], // constant name, or `repo/relative/path.ts:NAME`
-    },
   },
 };
 ```
@@ -635,7 +612,6 @@ pnpm run cli:audit:comments         # codefast audit comments
 pnpm run cli:audit:imports          # codefast audit imports
 pnpm run cli:audit:assertions       # codefast audit assertions
 pnpm run cli:audit:display-names    # codefast audit display-names
-pnpm run cli:audit:constants        # codefast audit constants
 pnpm run cli:audit:publish          # codefast audit publish
 ```
 

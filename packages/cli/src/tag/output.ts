@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import { logger } from "#core/logger";
 import type { TagProgressListener, TagResolvedTarget, TagResult, TagTargetExecutionResult } from "#tag/domain/types";
 
@@ -49,7 +51,7 @@ export function presentTagResult(result: TagResult, rootDir: string): void {
     logger.err("No packages found in workspace. Check your pnpm-workspace.yaml or provide an explicit target path.");
     return;
   }
-  const warningsAndErrorsSection = formatWarningsAndErrors(result);
+  const warningsAndErrorsSection = formatWarningsAndErrors(result, rootDir);
   if (warningsAndErrorsSection) {
     logger.err(warningsAndErrorsSection);
   }
@@ -60,12 +62,17 @@ function withColorizedLine(line: string, colorCode: string): string {
   return `${colorCode}${line}${colorReset}`;
 }
 
-function warningsAndErrorsFromResult(result: TagResult): Array<string> {
+function warningsAndErrorsFromResult(result: TagResult, rootDir: string): Array<string> {
   const entries: Array<string> = [];
   for (const targetResult of result.targetResults) {
     if (targetResult.runError) {
       entries.push(targetResult.runError);
     }
+  }
+  for (const blocked of result.blockedDeclarations) {
+    entries.push(
+      `${path.relative(rootDir, blocked.filePath)}:${blocked.line} \`${blocked.name}\` left unstamped: it has no doc block and a // comment holds the line above it — write the block by hand, then rerun`,
+    );
   }
   if (result.hookError) {
     entries.push(result.hookError);
@@ -90,8 +97,8 @@ function formatTargetTable(targets: Array<TagResolvedTarget>, rootDir: string): 
   return lines.join("\n");
 }
 
-function formatWarningsAndErrors(result: TagResult): string | null {
-  const entries = warningsAndErrorsFromResult(result);
+function formatWarningsAndErrors(result: TagResult, rootDir: string): string | null {
+  const entries = warningsAndErrorsFromResult(result, rootDir);
   if (entries.length === 0) {
     return null;
   }
@@ -110,11 +117,14 @@ function formatSummary(result: TagResult): string {
       ? ` [${result.distinctVersions.join(", ")}]`
       : "";
   const hasError =
-    result.targetResults.some((targetResult) => targetResult.runError !== null) || result.hookError !== null;
+    result.targetResults.some((targetResult) => targetResult.runError !== null) ||
+    result.blockedDeclarations.length > 0 ||
+    result.hookError !== null;
   const summaryColor = hasError ? colors.red : isDryRun ? colors.yellow : colors.green;
+  const blockedSuffix = result.blockedDeclarations.length > 0 ? ` blocked=${result.blockedDeclarations.length}` : "";
   const lines = [
     withColorizedLine(
-      `${summaryPrefix} version=${result.versionSummary}${versionSuffix} files=${result.filesChanged}/${result.filesScanned} declarations=${result.taggedDeclarations}`,
+      `${summaryPrefix} version=${result.versionSummary}${versionSuffix} files=${result.filesChanged}/${result.filesScanned} declarations=${result.taggedDeclarations}${blockedSuffix}`,
       summaryColor,
     ),
   ];

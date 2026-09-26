@@ -32,6 +32,10 @@ jobs:
   verify-code:
     name: Verify packages
     uses: ./.github/workflows/reusable-verify-packages.yml
+    # A called workflow can only keep or drop the caller's permissions, so the OIDC grant starts here.
+    permissions:
+      contents: read
+      id-token: write
     secrets: inherit
 
   release:
@@ -46,8 +50,7 @@ jobs:
       id-token: write
     env:
       NODE_ENV: production
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -58,8 +61,9 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
+      # `--force` compiles instead of replaying: a published tarball must never be an artifact another run uploaded.
       - name: Build packages
-        run: npx turbo build --filter="./packages/**"
+        run: npx turbo build --filter="./packages/**" --force
 
       - name: Configure Git identity
         run: |

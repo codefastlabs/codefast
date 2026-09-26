@@ -49,6 +49,7 @@ export async function runTag(fs: Filesystem, input: TagExecutionInput): Promise<
       taggedDeclarations += runResult.taggedDeclarations;
     }
     const modifiedFiles = allFileResults.filter((entry) => entry.changed).map((entry) => entry.filePath);
+    const blockedDeclarations = allFileResults.flatMap((entry) => entry.blockedDeclarations);
     const hookError =
       input.write && modifiedFiles.length > 0
         ? await runTagOnAfterWriteHook(tagConfig?.onAfterWrite, modifiedFiles)
@@ -64,6 +65,7 @@ export async function runTag(fs: Filesystem, input: TagExecutionInput): Promise<
       filesScanned,
       filesChanged,
       taggedDeclarations,
+      blockedDeclarations,
       versionSummary: summarizeVersions(versionsSet),
       distinctVersions,
       modifiedFiles,

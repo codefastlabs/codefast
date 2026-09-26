@@ -245,11 +245,18 @@ function slotOf(definition: AnyDefinition): BindingSlot {
  * @throws `InvalidBindingDeclarationError` for no strategy, several, or a key the strategy does not allow.
  * @throws `ManyBindingSlotError` for a slot on a collection member.
  * @throws `SelfBindingRequiresClassError` for `toSelf` on a key that is not a class.
+ *
+ * @since 0.11.0
  */
 export function binding<Value, Names extends string, const Deps extends ReadonlyArray<InjectableDependency> = []>(
   key: Token<Value, Names>,
   definition: BindingDefinition<NoInfer<Value>, NoInfer<Names>, Deps>,
 ): BindingDeclaration;
+/**
+ * Declares one binding keyed by a class, the one kind of key `toSelf` accepts.
+ *
+ * @since 0.11.0
+ */
 export function binding<Value, const Deps extends ReadonlyArray<InjectableDependency> = []>(
   key: Constructor<Value>,
   definition: BindingDefinition<NoInfer<Value>, string, Deps> | SelfDefinition<NoInfer<Value>>,

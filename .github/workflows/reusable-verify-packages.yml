@@ -22,10 +22,13 @@ jobs:
     name: Workspace Package Verification
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      # Traded for a short-lived Turborepo Remote Cache token.
+      id-token: write
     env:
       NODE_ENV: production
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -86,6 +89,11 @@ jobs:
       # The `<namespace>:<Name>` rule is what keeps diagnostics and constraints unambiguous.
       - name: Verify Display Names
         run: pnpm cli:audit:display-names
+
+      # A Tailwind class is an opaque string to oxlint and tsc, so a physical `ml-*` or `text-left` passes
+      # both and breaks only in a right-to-left render; this audit wants the logical class or an `rtl:` pair.
+      - name: Verify Logical Tailwind Directions
+        run: pnpm cli:audit:rtl
 
       # Static publish-surface check: a "#/"-prefixed import Node rejects on the floor, an exports/imports
       # target the slimmed manifest would not ship (e.g. a dropped stylesheet subtree), and a shipped

@@ -30,7 +30,8 @@ inputs:
     required: false
 
   enable-remote-cache:
-    description: "Whether to enable Turborepo remote caching"
+    description: "Whether to connect Turborepo to the Vercel Remote Cache over OIDC; the job needs `id-token: write`
+      and a `TURBO_TEAM` env"
     default: "true"
     required: false
 
@@ -42,17 +43,11 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: "Setup Turborepo Cache"
-      id: turbo-cache
-      uses: actions/cache@v6
-      with:
-        path: .turbo
-        # Primary key excludes commit SHA so restores apply across commits for the same ref and lockfile.
-        key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{
-          github.ref_name }}
-        restore-keys: |
-          ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
-          ${{ runner.os }}-turbo-
+    # Job-wide, not on the install step: `pnpm run` reinstalls when a manifest is rewritten after the install, and the
+    # root `prepare` in that install would add hooks for a CI commit or push to run.
+    - name: "Skip Git Hook Installation"
+      shell: bash
+      run: echo "SKIP_INSTALL_SIMPLE_GIT_HOOKS=true" >> "$GITHUB_ENV"
 
     - name: "Set Up pnpm Package Manager"
       id: pnpm-setup
@@ -70,19 +65,28 @@ runs:
         node-version-file: ${{ inputs.node-version == '' && inputs.node-version-file || '' }}
         cache: "pnpm"
 
+    - name: "Setup Turborepo Cache"
+      id: turbo-cache
+      uses: actions/cache@v6
+      with:
+        path: .turbo
+        # One entry per commit, restored from the newest: Turbo replays only artifacts whose task hash still matches.
+        # The installed Node version gives each runtime its own lineage, since Turbo leaves it out of the task hash.
+        key: ${{ runner.os }}-turbo-${{ steps.node-setup.outputs.node-version }}-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-turbo-${{ steps.node-setup.outputs.node-version }}-
+
     - name: "Install Project Dependencies (pnpm)"
       id: pnpm-install
       shell: bash
       if: ${{ inputs.install-dependencies == 'true' }}
       run: pnpm install ${{ inputs.install-options }}
-      env:
-        SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
 
-    - name: "Log Turborepo remote cache context"
-      id: turbo-remote-cache
-      shell: bash
-      if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TOKEN != '' &&
-        env.TURBO_TEAM != '' }}
-      run: |
-        echo "Turborepo remote cache credentials are present for team: $TURBO_TEAM"
-        npx turbo --version
+    # Trades the job's GitHub OIDC token for a short-lived Remote Cache token. The cache speeds CI up but must never
+    # fail it, so a run that cannot get an OIDC token, such as a fork's pull request, keeps the local cache only.
+    - name: "Connect Turborepo Remote Cache"
+      if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TEAM != '' }}
+      continue-on-error: true
+      uses: vercel/setup-turborepo-remote-cache-action@v1.1.0
+      with:
+        team: ${{ env.TURBO_TEAM }}

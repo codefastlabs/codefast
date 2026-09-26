@@ -4,7 +4,7 @@ declare const TAG_KEY_BRAND: unique symbol;
 declare const BINDING_TAG_BRAND: unique symbol;
 
 /**
- * The bits a tag-key mask holds: the width of a 32-bit integer, a constant of the machine.
+ * The bits a tag-key mask holds: the width of a 32-bit integer.
  *
  * @remarks Ids past this wrap, so two keys can share a bit. The mask is a prefilter only — a shared
  * bit costs a false positive that the identity comparison then rejects, never a false negative.
