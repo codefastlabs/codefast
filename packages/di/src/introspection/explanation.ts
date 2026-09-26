@@ -244,8 +244,8 @@ function findInChain(
       return selected === undefined ? { kind: "tie", eligible } : { kind: "binding", binding: selected };
     }
     // A request carrying criteria that no slot here matches is forwarded by the token's default-slot alias.
-    const defaultSlot = request === undefined ? undefined : registry.getDefaultSlotBinding(token);
-    if (defaultSlot !== undefined && defaultSlot.kind === "alias") {
+    const defaultSlot = request === undefined ? undefined : registry.defaultSlotAlias(token);
+    if (defaultSlot !== undefined) {
       steps.push({ tokenName: name, depth, candidates, rule: "default-alias", selected: snapshotOf(defaultSlot) });
       return { kind: "binding", binding: defaultSlot };
     }

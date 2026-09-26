@@ -94,7 +94,7 @@ export class Inspector {
     return (
       bindings.length > 0 &&
       (selectAllBindings(bindings, options, this.#makeConstraintContext(options)).length > 0 ||
-        this.#registry.getDefaultSlotBinding(token)?.kind === "alias")
+        this.#registry.defaultSlotAlias(token) !== undefined)
     );
   }
 
