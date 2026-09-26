@@ -127,6 +127,29 @@ describe("sidebar", () => {
       expect(sidebarState()).toBe("collapsed");
     });
 
+    test("lets the first of several providers keep the key on every press", () => {
+      render(
+        <>
+          <SidebarProvider>
+            <SidebarState />
+          </SidebarProvider>
+          <SidebarProvider>
+            <SidebarState />
+          </SidebarProvider>
+        </>,
+      );
+
+      const [first, second] = screen.getAllByTestId("sidebar-state");
+
+      fireEvent.keyDown(document.body, { key: "b", metaKey: true });
+      expect(first).toHaveAttribute("data-state", "collapsed");
+      expect(second).toHaveAttribute("data-state", "expanded");
+
+      fireEvent.keyDown(document.body, { key: "b", metaKey: true });
+      expect(first).toHaveAttribute("data-state", "expanded");
+      expect(second).toHaveAttribute("data-state", "expanded");
+    });
+
     test("listens for nothing when shortcutKey is false", () => {
       render(<Shell shortcutKey={false} />);
 

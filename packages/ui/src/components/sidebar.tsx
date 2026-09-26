@@ -2,7 +2,7 @@ import { PanelLeftIcon } from "lucide-react";
 import { Context } from "radix-ui/internal";
 import * as Slot from "radix-ui/slot";
 import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useId, useState } from "react";
 
 import { Button } from "#components/button";
 import { Input } from "#components/input";
@@ -110,25 +110,27 @@ function SidebarProvider({
     }
   }, [isMobile, setOpen]);
 
+  // Reads the latest state through an Effect Event, so the listener stays registered across toggles and, with several
+  // providers mounted, the first one keeps the key while the rest see it already handled.
+  const onShortcutKeyDown = useEffectEvent((event: KeyboardEvent): void => {
+    if (shortcutKey !== false && isSidebarShortcut(event, shortcutKey)) {
+      event.preventDefault();
+      toggleSidebar();
+    }
+  });
+
   // Adds a keyboard shortcut to toggle the sidebar.
   useEffect(() => {
     if (shortcutKey === false) {
       return;
     }
 
-    const handleKeyDown: (event: KeyboardEvent) => void = (event: KeyboardEvent) => {
-      if (isSidebarShortcut(event, shortcutKey)) {
-        event.preventDefault();
-        toggleSidebar();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", onShortcutKeyDown);
 
     return (): void => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", onShortcutKeyDown);
     };
-  }, [shortcutKey, toggleSidebar]);
+  }, [shortcutKey]);
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
