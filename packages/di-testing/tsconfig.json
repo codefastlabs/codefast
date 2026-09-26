@@ -5,7 +5,7 @@
     // `outDir` sits here, not only in tsconfig.build.json: knip derives its dist → src mapping from this file.
     "outDir": "./dist",
     "customConditions": ["source"],
-    "lib": ["ES2024", "ESNext.Decorators"],
+    "lib": ["ES2025", "ESNext.Decorators", "ESNext.Disposable"],
     "experimentalDecorators": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
