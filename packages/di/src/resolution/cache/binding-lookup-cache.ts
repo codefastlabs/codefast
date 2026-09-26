@@ -39,6 +39,16 @@ export interface CollectionEntry {
   activationVersion: number;
 }
 
+/** The root-level collection memo: one per cache, built on its first root read, stamped with one chain version. */
+interface RootCollections {
+  version: number;
+  // The entry in front of the map. Until a second token appears the map is absent and this is the only entry;
+  // once it exists, the map holds every entry of the generation.
+  lastToken: Token<unknown> | Constructor | undefined;
+  lastEntry: CollectionEntry | undefined;
+  byToken: Map<Token<unknown> | Constructor, CollectionEntry> | undefined;
+}
+
 const newTagToEntryMap = <Owner>(): Map<BindingTag, DefaultLookupEntry<Owner> | null> => new Map();
 const newNameToTagMap = <Owner>(): Map<BindingTag, Map<BindingTag, DefaultLookupEntry<Owner> | null>> => new Map();
 
@@ -71,9 +81,9 @@ export class BindingLookupCache<Owner> {
   #lastTagToken: Token<unknown> | Constructor | undefined;
   #lastTag: BindingTag | undefined;
   #lastTaggedEntry: DefaultLookupEntry<Owner> | null = null;
-  // Root-level collections by token, stamped with the chain version like the two memos above.
-  #collections: Map<Token<unknown> | Constructor, CollectionEntry> | undefined;
-  #collectionsVersion = -1;
+  // Root-level collections, stamped with the chain version like the memos above. Deferred into one object,
+  // because every per-request child builds this cache and almost none reads a collection at the root.
+  #collections: RootCollections | undefined;
 
   readonly #registry: BindingRegistry;
   readonly #owner: Owner;
@@ -242,17 +252,48 @@ export class BindingLookupCache<Owner> {
   /** The memoized root-level collection for a token, or `undefined` once the chain changed since it was stored. */
   collection(token: Token<unknown> | Constructor): CollectionEntry | undefined {
     const version = this.chainVersion();
-    if (version !== this.#collectionsVersion) {
-      this.#collections?.clear();
-      this.#collectionsVersion = version;
+    const memo = this.#collections;
+    if (memo === undefined) {
+      this.#collections = { version, lastToken: undefined, lastEntry: undefined, byToken: undefined };
       return undefined;
     }
-    return this.#collections?.get(token);
+    if (version !== memo.version) {
+      memo.version = version;
+      memo.byToken?.clear();
+      // The rebuild that follows can throw, so the entry in front must not outlive the generation.
+      memo.lastToken = undefined;
+      return undefined;
+    }
+    if (token === memo.lastToken) {
+      return memo.lastEntry;
+    }
+    const entry = memo.byToken?.get(token);
+    if (entry !== undefined) {
+      memo.lastToken = token;
+      memo.lastEntry = entry;
+    }
+    return entry;
   }
 
-  /** Stores a root-level collection under the chain version the last `collection()` read stamped. */
+  /**
+   * Stores a root-level collection under the chain version the last `collection()` read stamped, so a
+   * predicate that binds during the gather leaves the entry stale rather than current.
+   */
   rememberCollection(token: Token<unknown> | Constructor, entry: CollectionEntry): void {
-    (this.#collections ??= new Map<Token<unknown> | Constructor, CollectionEntry>()).set(token, entry);
+    const memo = this.#collections;
+    if (memo === undefined) {
+      return;
+    }
+    if (memo.byToken !== undefined) {
+      memo.byToken.set(token, entry);
+    } else if (memo.lastToken !== undefined && memo.lastEntry !== undefined) {
+      memo.byToken = new Map([
+        [memo.lastToken, memo.lastEntry],
+        [token, entry],
+      ]);
+    }
+    memo.lastToken = token;
+    memo.lastEntry = entry;
   }
 
   /**

@@ -10,6 +10,7 @@ import { Container } from "#container/container";
 import { Module } from "#core/module";
 import type { ModuleBuilder } from "#core/module";
 import { tag } from "#core/tag";
+import type { Token } from "#core/token";
 import { token } from "#core/token";
 import { createAutoRegisterRegistry } from "#decorators/injectable";
 import { AsyncModuleLoadError, DisposedContainerError } from "#errors/errors";
@@ -191,6 +192,51 @@ describe("unbind by the id of a displaced binding", () => {
 
     container.unbind(displacedId);
     winner.whenNamed("secondary");
+
+    expect(container.resolveAll(serviceToken)).toStrictEqual(["winner"]);
+  });
+
+  // An in-place refinement between the unbind and the re-slot must not make the parked snapshot
+  // look current again.
+  it.each<[string, (container: Container, serviceToken: Token<string>) => () => void]>([
+    [
+      "a scope change",
+      (container, serviceToken) => {
+        const winner = container.bind(serviceToken).toDynamic(() => "winner");
+        return () => {
+          winner.singleton();
+          winner.whenNamed("secondary");
+        };
+      },
+    ],
+    [
+      "an activation hook",
+      (container, serviceToken) => {
+        const winner = container.bind(serviceToken).toConstantValue("winner");
+        return () => {
+          winner.onActivation((_ctx, value) => value);
+          winner.whenNamed("secondary");
+        };
+      },
+    ],
+    [
+      "a deactivation hook",
+      (container, serviceToken) => {
+        const winner = container.bind(serviceToken).toConstantValue("winner");
+        return () => {
+          winner.onDeactivation(() => undefined);
+          winner.whenNamed("secondary");
+        };
+      },
+    ],
+  ])("keeps %s between the unbind and a re-slot from restoring the unbound binding", (_label, bindWinner) => {
+    const serviceToken = token<string>("displaced-unbind-refine-restore");
+    const container = Container.create();
+    const displacedId = container.bind(serviceToken).toConstantValue("displaced").id();
+    const refineAndReslot = bindWinner(container, serviceToken);
+
+    container.unbind(displacedId);
+    refineAndReslot();
 
     expect(container.resolveAll(serviceToken)).toStrictEqual(["winner"]);
   });

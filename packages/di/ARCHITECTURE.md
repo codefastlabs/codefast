@@ -284,9 +284,23 @@ level compares twice replaces a per-resolver map a one-shot container would have
 
 A memo on a binding is only sound while what it derives from is immutable, and `scope` is the one field a fluent chain
 writes in place after registration (see [The fluent chain](#the-fluent-chain-one-object-one-registration)). So
-`singleton()`, `transient()` and `scoped()` call `clearBindingFrame()`. Without it, a chain refined after its first
-resolve would report the old scope to every `when()` predicate that reads `ctx.parent.scope`.
-`tests/unit/resolution/cache-invalidation.test.ts` pins it.
+`singleton()`, `transient()` and `scoped()` call `clearBindingFrame()` when they change the scope of a binding that has
+memoised a frame. Without it, a chain refined after its first resolve would report the old scope to every `when()`
+predicate that reads `ctx.parent.scope`. `tests/unit/resolution/cache-invalidation.test.ts` pins it.
+
+A scope verb that leaves the scope as it was returns before touching anything, since no cache, frame or version derives
+from a scope that did not change. One that does change it releases only what exists: the cached singleton, the scoped
+entries, the frame. A chain refined straight after `to*()` — the `bind(T).to(X).singleton()` idiom — has none of the
+three yet, so it pays for none. The guards are load-bearing together rather than one by one: each alone buys little, and
+with all of them the refinement no longer calls into the scope manager at all on that idiom.
+
+A scoped instance lives in the scope manager of the child that resolved it, which the chain cannot reach, so every scope
+manager files it under the binding's `scopedCacheKey` rather than its id. The key starts as the id, and leaving `scoped`
+mints a new one from the id counter: every entry any child filed under the old key is then unreachable, and a later flip
+back to `scoped` materialises a fresh instance. The hit stays one field load and one `Map.get` — a generation compared
+on each read was measured as a clear loss on the scoped hit — and the id itself never changes, as SPEC requires of
+`id()`. `tests/unit/container/binding-builders.test.ts` pins it for the registering child, a child of the registering
+container, and the async lane.
 
 ### The fluent chain: one object, one registration
 
@@ -514,13 +528,19 @@ chain's bindings and runs every `when()` predicate against the root context, whi
 predicate pure, so that candidate list is a function of the chain's registries alone, and the lookup cache keeps it
 under the same chain-version stamp as its other two memos. When every member is a hook-free constant or a hook-free
 singleton whose instance is cached, and no activation hook exists anywhere in the chain, the value list is kept as well,
-stamped with the chain's activation version, and a read hands out that list itself, unfrozen — a frozen array iterates
-through a slow elements kind in V8, so the contract's `ReadonlyArray` return is the guard, and a hundred-member read is
-one map lookup and no copy; a read that materialises the last such singleton settles the list for the next one, and any
-registry change that evicts an instance drops the memo with it. A read carrying options or made from inside a factory
-goes through the full gather, because its context is not a constant. The container routes a top-level read with no
-options to the memo's own entry, `resolveRootCollection`, so `resolveAll` itself keeps the exact shape the options lane
-had — a branch added there was measured as a loss on the tagged collection row.
+stamped with the chain's activation version, and kept unfrozen, because a frozen array iterates through a slow elements
+kind in V8. Every read hands out a copy of that list, as SPEC requires, so no caller can rewrite what the next one
+reads; a read that materialises the last such singleton settles the list for the next one, and any registry change that
+evicts an instance drops the memo with it. The memo is one object the cache builds on its first root read, because every
+per-request child builds a lookup cache and almost none reads a collection at the root; a field per piece of it would be
+paid on every `createChild()`. Inside it one entry sits in front of a map written only once a second token appears, as
+for `defaultEntry()`, because a collection is read in a loop over one token — an event bus dispatching each event.
+`collection()` stamps the chain version before the gather, so a predicate that binds during it leaves the entry stale
+rather than current, and the version branch clears the entry in front before the rebuild, since the rebuild can throw on
+an alias cycle and a read after the throw must not answer from the list the generation before kept. A read carrying
+options or made from inside a factory goes through the full gather, because its context is not a constant. The container
+routes a top-level read with no options to the memo's own entry, `resolveRootCollection`, so `resolveAll` itself keeps
+the exact shape the options lane had — a branch added there was measured as a loss on the tagged collection row.
 `tests/unit/resolution/resolver-collections.test.ts` pins the boundaries.
 
 **Late hooks are why the activation-need memo reads the field first.** `.onActivation()` writes the hook field **in
@@ -772,6 +792,15 @@ cache's memo maps (second distinct token or tag in one cache generation), the ac
 resolve that asks whether a binding needs the activation pipeline) and its memo (first answer its early returns cannot
 give).
 
+The per-reader metadata cache holds one record per class — its constructor metadata, whether it has a `@postConstruct`
+hook, whether accessor injection reads the container — each field unknown until first asked. A cold class resolve looks
+the record up once and hands it to the params read, the accessor check and the construction, and a class with no params
+is constructed with no arguments, so no dependency array is built for it. `hasPostConstruct` must start unknown, never
+`false`: unknown is what makes the first instantiation activate conservatively and read the lifecycle metadata, and
+filling it early would ask a custom `MetadataReader` — a public seam — for lifecycle metadata before construction. The
+same fact lets `refreshAfterFirstInstantiation()` return at once on a `false` answer, because a class binding answers
+`false` only once its lifecycle metadata is known.
+
 The scope manager and the lifecycle manager stay eager on purpose: every generic level reads them, and a nullable field
 there is a branch on every hop. The resolver's lookup memo, its class introspector and its sync context pool are built
 by the first request that needs them — a container that never misses its own lone map, never resolves a class and never
@@ -968,6 +997,8 @@ These are covered in the sections above; this list exists so a perf review can f
   runtime lookup per criterion-carrying param.
 - **One-entry inline caches in front of maps**, and the deferred memo maps behind `defaultEntry()` and `taggedEntry()` —
   [Lookup caches](#lookup-caches-and-inline-caches).
+- **One facts record per class, looked up once per cold class resolve** —
+  [A container defers most of itself](#a-container-defers-most-of-itself).
 - **Chain sums memoized against a process-wide state epoch** — [Lookup caches](#lookup-caches-and-inline-caches).
   Removes the parent walk's slope while nothing has changed.
 - **Interned criteria as `Map` keys**, and the bitmask prefilter —

@@ -117,16 +117,16 @@ export class ScopeManager {
    * @remarks One map read answers both existence and value; a cached `undefined` is the only
    * shape that pays for a second, and it is the rare one.
    */
-  readScoped(id: BindingIdentifier): unknown {
+  readScoped(key: BindingIdentifier): unknown {
     const scoped = this.#scoped;
     if (scoped === undefined) {
       return SCOPED_MISS;
     }
-    const cached = scoped.get(id);
+    const cached = scoped.get(key);
     if (cached !== undefined) {
       return cached;
     }
-    return scoped.has(id) ? undefined : SCOPED_MISS;
+    return scoped.has(key) ? undefined : SCOPED_MISS;
   }
 
   /** Takes the binding rather than its id, so a failure here can name the token — as `setSingleton` does. */
@@ -134,12 +134,12 @@ export class ScopeManager {
     if (!this.isChild) {
       throw new MissingScopeContextError(tokenName(binding.token));
     }
-    (this.#scoped ??= new Map<BindingIdentifier, unknown>()).set(binding.identifier, instance);
+    (this.#scoped ??= new Map<BindingIdentifier, unknown>()).set(binding.scopedCacheKey, instance);
   }
 
-  /** Releases a removed binding's scoped instance. A scoped instance has no deactivation. */
-  deleteScoped(id: BindingIdentifier): void {
-    this.#scoped?.delete(id);
+  /** Releases a removed binding's scoped instance, by its scoped cache key. A scoped instance has no deactivation. */
+  deleteScoped(key: BindingIdentifier): void {
+    this.#scoped?.delete(key);
   }
 
   /** Scoped instances currently cached — a structural count for diagnostics. */

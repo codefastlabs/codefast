@@ -109,6 +109,7 @@ export class BindingChain<Value, Names extends string = string>
   activationStamp: number = NO_ACTIVATION_STAMP;
   registrationOrder: number = UNREGISTERED_ORDER;
   instance: unknown = NO_INSTANCE;
+  scopedCacheKey: BindingIdentifier = this.identifier;
   readonly token: Token<Value, Names> | Constructor<Value>;
   slot: BindingSlot = DEFAULT_BINDING_SLOT;
   predicate: BindingConstraint | undefined = undefined;
@@ -300,10 +301,17 @@ export class BindingChain<Value, Names extends string = string>
     this.#versionAfterLastWrite = this.#registration.registry.version;
   }
 
-  /** Bumps the registry for an index-neutral mutation (scope, hook) and records this chain's write. */
+  /**
+   * Bumps the registry for an index-neutral mutation (scope, hook), recording this chain's write only
+   * when nothing else wrote since its last one, so a snapshot another write invalidated stays invalid.
+   */
   #touchAndRecordWrite(): void {
-    this.#registration.registry.touch();
-    this.#recordWrite();
+    const registry = this.#registration.registry;
+    const isCurrent = registry.version === this.#versionAfterLastWrite;
+    registry.touch();
+    if (isCurrent) {
+      this.#versionAfterLastWrite = registry.version;
+    }
   }
 
   // Slot and predicate are what the registry indexes on, so a re-slot takes the binding out of the
@@ -321,15 +329,26 @@ export class BindingChain<Value, Names extends string = string>
 
   #withScope(scope: BindingScope): this {
     this.#requireRegistered();
-    if (this.scope !== scope) {
-      // An instance cached under the old scope must not survive the change — a later flip back
-      // to that scope would resurrect it.
-      this.#registration.scope.deleteSingleton(this.#binding);
-      this.#registration.scope.deleteScoped(this.identifier);
-      this.scope = scope;
+    // Nothing a cache, a frame or the version answers for depends on a scope that did not change.
+    if (this.scope === scope) {
+      return this;
     }
+    // An instance cached under the old scope must not survive the change — a later flip back to that
+    // scope would resurrect it. A child's scoped cache is out of reach here, so leaving `scoped` retires
+    // the key every child filed its instance under.
+    const registration = this.#registration;
+    if (this.instance !== NO_INSTANCE) {
+      registration.scope.deleteSingleton(this.#binding);
+    }
+    if (this.scope === "scoped") {
+      registration.scope.deleteScoped(this.scopedCacheKey);
+      this.scopedCacheKey = generateBindingId();
+    }
+    this.scope = scope;
     // The frame reports the scope, so a resolve before this call memoized the previous one.
-    clearBindingFrame(this.#binding);
+    if (this.frame !== undefined || this.rootContext !== undefined) {
+      clearBindingFrame(this.#binding);
+    }
     this.#touchAndRecordWrite();
     return this;
   }

@@ -196,61 +196,74 @@ export function verifyAccessorMetadata(
 }
 
 /**
- * The per-class facts one reader yields, shared by every container that reads through that reader.
+ * What one reader has answered about one class so far, each field unknown until first asked.
  *
- * @remarks A reader answers from the class alone, so a child inheriting its parent's reader takes its
- * answers too and resolves a class the parent already met without reading its metadata again. A root
- * finds them by reader on its first question; each map waits for a class of its kind.
+ * @remarks One record per class, so a cold resolve looks the class up once and hands the record down
+ * rather than asking a map per fact.
  */
-interface MetadataCaches {
-  constructorMetadata: WeakMap<Constructor, ConstructorMetadata | null> | undefined;
-  hasPostConstruct: WeakMap<Constructor, boolean> | undefined;
-  needsActiveContainer: WeakMap<Constructor, boolean> | undefined;
+export interface ClassFacts {
+  /** The reader's constructor metadata, `null` once it answered that it knows nothing about the class. */
+  constructorMetadata: ConstructorMetadata | null | undefined;
+  /** Unknown until the first instantiation reads lifecycle metadata; callers read unknown as "it does". */
+  hasPostConstruct: boolean | undefined;
+  needsActiveContainer: boolean | undefined;
 }
 
-const cachesByReader = new WeakMap<MetadataReader, MetadataCaches>();
+// A reader answers from the class alone, so its facts are shared by every container reading through it.
+const factsByReader = new WeakMap<MetadataReader, WeakMap<Constructor, ClassFacts>>();
 
-function cachesFor(reader: MetadataReader): MetadataCaches {
-  let caches = cachesByReader.get(reader);
-  if (caches === undefined) {
-    caches = { constructorMetadata: undefined, hasPostConstruct: undefined, needsActiveContainer: undefined };
-    cachesByReader.set(reader, caches);
+function factsFor(reader: MetadataReader): WeakMap<Constructor, ClassFacts> {
+  let byClass = factsByReader.get(reader);
+  if (byClass === undefined) {
+    byClass = new WeakMap<Constructor, ClassFacts>();
+    factsByReader.set(reader, byClass);
   }
-  return caches;
+  return byClass;
 }
 
 /**
  * A per-class cache of constructor metadata and the activation facts derived from it.
  *
+ * @remarks A child inheriting its parent's reader takes the parent's facts too, and resolves a class
+ * the parent already met without reading its metadata again; a root finds them by reader on its first
+ * question.
+ *
  * @since 0.5.0-canary.8
  */
 export class ClassIntrospector {
-  #caches: MetadataCaches | undefined;
+  #byClass: WeakMap<Constructor, ClassFacts> | undefined;
   readonly #reader: MetadataReader;
   readonly #container: Container;
 
   constructor(reader: MetadataReader, container: Container, inherited: ClassIntrospector | undefined) {
-    this.#caches = inherited !== undefined && inherited.#reader === reader ? inherited.#caches : undefined;
+    this.#byClass = inherited !== undefined && inherited.#reader === reader ? inherited.#byClass : undefined;
     this.#reader = reader;
     this.#container = container;
   }
 
-  #shared(): MetadataCaches {
-    return (this.#caches ??= cachesFor(this.#reader));
+  /** The record of what this reader has answered about a class, allocated on the class's first question. */
+  facts(target: Constructor): ClassFacts {
+    const byClass = (this.#byClass ??= factsFor(this.#reader));
+    let facts = byClass.get(target);
+    if (facts === undefined) {
+      facts = { constructorMetadata: undefined, hasPostConstruct: undefined, needsActiveContainer: undefined };
+      byClass.set(target, facts);
+    }
+    return facts;
   }
 
   constructorMetadata(target: Constructor): ConstructorMetadata | undefined {
-    const caches = this.#shared();
-    const cached = caches.constructorMetadata?.get(target);
-    if (cached !== undefined) {
-      return cached === null ? undefined : cached;
+    return this.constructorMetadataOf(target, this.facts(target));
+  }
+
+  /** The constructor metadata of a class whose facts the caller already holds. */
+  constructorMetadataOf(target: Constructor, facts: ClassFacts): ConstructorMetadata | undefined {
+    let metadata = facts.constructorMetadata;
+    if (metadata === undefined) {
+      metadata = this.#reader.getConstructorMetadata(target) ?? null;
+      facts.constructorMetadata = metadata;
     }
-    const metadata = this.#reader.getConstructorMetadata(target);
-    (caches.constructorMetadata ??= new WeakMap<Constructor, ConstructorMetadata | null>()).set(
-      target,
-      metadata ?? null,
-    );
-    return metadata;
+    return metadata === null ? undefined : metadata;
   }
 
   /**
@@ -278,32 +291,44 @@ export class ClassIntrospector {
    * @remarks Callers treat unknown as "assume it does", so the first activation settles it.
    */
   knownPostConstruct(target: Constructor): boolean | undefined {
-    return this.#shared().hasPostConstruct?.get(target);
+    return (this.#byClass ??= factsFor(this.#reader)).get(target)?.hasPostConstruct;
   }
 
   discoverPostConstruct(target: Constructor): void {
     const lifecycle = this.#reader.getLifecycleMetadata(target);
-    (this.#shared().hasPostConstruct ??= new WeakMap<Constructor, boolean>()).set(
-      target,
-      lifecycle !== undefined && lifecycle.postConstruct !== undefined && lifecycle.postConstruct.length > 0,
-    );
+    this.facts(target).hasPostConstruct =
+      lifecycle !== undefined && lifecycle.postConstruct !== undefined && lifecycle.postConstruct.length > 0;
   }
 
   /** True when the class has accessor injection, which reads the container during construction. */
   needsActiveContainer(target: Constructor): boolean {
-    const caches = this.#shared();
-    let needsActiveContainer = caches.needsActiveContainer?.get(target);
+    return this.needsActiveContainerOf(target, this.facts(target));
+  }
+
+  /** Whether a class whose facts the caller already holds reads the container during construction. */
+  needsActiveContainerOf(target: Constructor, facts: ClassFacts): boolean {
+    let needsActiveContainer = facts.needsActiveContainer;
     if (needsActiveContainer === undefined) {
       needsActiveContainer = (this.#reader.getAccessorMetadata?.(target)?.length ?? 0) > 0;
-      (caches.needsActiveContainer ??= new WeakMap<Constructor, boolean>()).set(target, needsActiveContainer);
+      facts.needsActiveContainer = needsActiveContainer;
     }
     return needsActiveContainer;
   }
 
   instantiate(target: Constructor, deps: Array<unknown>, resolution?: AmbientResolution): unknown {
+    return this.construct(target, deps, this.needsActiveContainer(target), resolution);
+  }
+
+  /** Builds an instance whose accessor need the caller already knows; an empty `deps` is a call with no arguments. */
+  construct(
+    target: Constructor,
+    deps: ReadonlyArray<unknown>,
+    needsActiveContainer: boolean,
+    resolution: AmbientResolution | undefined,
+  ): unknown {
     const invokable = target as ConstructorInvocation;
-    if (!this.needsActiveContainer(target)) {
-      return new invokable(...deps);
+    if (!needsActiveContainer) {
+      return deps.length === 0 ? new invokable() : new invokable(...deps);
     }
     if (resolution === undefined) {
       return runWithAmbientResolution(this.#container, undefined, () => new invokable(...deps));
