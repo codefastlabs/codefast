@@ -1,5 +1,3 @@
-/// <reference lib="esnext.disposable" />
-
 /** The compiled result of a test bed: the real unit plus handles to its mocks. */
 
 import type { Constructor, Container, DependencyKey, InjectOptions, TokenValue } from "@codefast/di";
@@ -36,6 +34,26 @@ export interface UnitReference<Backend extends MockFunction = Spy> {
     identifier: Identifier,
     options?: InjectOptions,
   ): Mocked<TokenValue<Identifier>, Backend>;
+}
+
+/**
+ * The disposal globals `UnitTestBed` extends and `await using` checks it against, declared one by one because the
+ * `esnext.disposable` lib would also declare `DisposableStack` and the rest the Node floor lacks. Each member matches
+ * TypeScript's own, so it merges with a `lib` or `@types/node` copy.
+ */
+declare global {
+  interface SymbolConstructor {
+    readonly dispose: unique symbol;
+    readonly asyncDispose: unique symbol;
+  }
+
+  interface Disposable {
+    [Symbol.dispose](): void;
+  }
+
+  interface AsyncDisposable {
+    [Symbol.asyncDispose](): PromiseLike<void>;
+  }
 }
 
 /**
