@@ -404,7 +404,7 @@ class DefaultContainer implements Container {
       } else if (this.#owesConstantDeactivation(binding)) {
         (pairs ??= []).push(binding, binding.value);
       }
-      this.#scope.deleteScoped(binding.identifier);
+      this.#scope.deleteScoped(binding.scopedCacheKey);
     }
     return pairs ?? NO_DEACTIVATION_PAIRS;
   }

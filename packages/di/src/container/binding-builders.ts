@@ -109,6 +109,7 @@ export class BindingChain<Value, Names extends string = string>
   activationStamp: number = NO_ACTIVATION_STAMP;
   registrationOrder: number = UNREGISTERED_ORDER;
   instance: unknown = NO_INSTANCE;
+  scopedCacheKey: BindingIdentifier = this.identifier;
   readonly token: Token<Value, Names> | Constructor<Value>;
   slot: BindingSlot = DEFAULT_BINDING_SLOT;
   predicate: BindingConstraint | undefined = undefined;
@@ -333,13 +334,15 @@ export class BindingChain<Value, Names extends string = string>
       return this;
     }
     // An instance cached under the old scope must not survive the change — a later flip back to that
-    // scope would resurrect it.
+    // scope would resurrect it. A child's scoped cache is out of reach here, so leaving `scoped` retires
+    // the key every child filed its instance under.
     const registration = this.#registration;
     if (this.instance !== NO_INSTANCE) {
       registration.scope.deleteSingleton(this.#binding);
     }
-    if (registration.scope.isScopedCacheBuilt) {
-      registration.scope.deleteScoped(this.identifier);
+    if (this.scope === "scoped") {
+      registration.scope.deleteScoped(this.scopedCacheKey);
+      this.scopedCacheKey = generateBindingId();
     }
     this.scope = scope;
     // The frame reports the scope, so a resolve before this call memoized the previous one.

@@ -138,11 +138,17 @@ describe("scope refinement vs the cached instance", () => {
     expect(constructed).toBe(1);
   });
 
-  it("discards the scoped instance the registering child cached when the scope changes", () => {
+  it.each([
+    ["the child that registered it", false],
+    ["a child of the container that registered it", true],
+  ])("discards the scoped instance %s cached when the scope changes", (_label, registeredOnParent) => {
     const serviceToken = token<{ n: number }>("scope.flip-scoped");
     let constructed = 0;
-    const request = Container.create().createChild();
-    const chain = request.bind(serviceToken).toDynamic(() => ({ n: (constructed += 1) }));
+    const parent = Container.create();
+    const request = parent.createChild();
+    const chain = (registeredOnParent ? parent : request)
+      .bind(serviceToken)
+      .toDynamic(() => ({ n: (constructed += 1) }));
     chain.scoped();
     const first = request.resolve(serviceToken);
     expect(request.resolve(serviceToken)).toBe(first);
@@ -153,6 +159,23 @@ describe("scope refinement vs the cached instance", () => {
     const fresh = request.resolve(serviceToken);
     expect(fresh).not.toBe(first);
     expect(request.resolve(serviceToken)).toBe(fresh);
+  });
+
+  it("discards a parent-registered scoped instance a child cached through the async lane", async () => {
+    const serviceToken = token<{ n: number }>("scope.flip-scoped-async");
+    let constructed = 0;
+    const parent = Container.create();
+    const request = parent.createChild();
+    const chain = parent.bind(serviceToken).toDynamic(() => ({ n: (constructed += 1) }));
+    chain.scoped();
+    const first = await request.resolveAsync(serviceToken);
+
+    chain.transient();
+    chain.scoped();
+
+    const fresh = await request.resolveAsync(serviceToken);
+    expect(fresh).not.toBe(first);
+    expect(await request.resolveAsync(serviceToken)).toBe(fresh);
   });
 
   it("deactivates a re-slotted singleton exactly once", async () => {

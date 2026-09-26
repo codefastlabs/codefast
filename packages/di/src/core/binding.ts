@@ -194,6 +194,13 @@ interface BindingBase<Value> {
    * a field read replaces a keyed lookup on the hottest resolve shape there is.
    */
   instance: unknown;
+  /**
+   * The key every container's scoped cache files this binding's instance under.
+   *
+   * @remarks Chain-owned. It starts as the binding's id, and a scope verb that changes the scope mints a new one, so
+   * a scoped instance any child cached under an earlier scope is never found again. The id itself stays stable.
+   */
+  scopedCacheKey: BindingIdentifier;
   readonly token: Token<Value> | Constructor<Value>;
   readonly slot: BindingSlot;
   readonly predicate?: BindingConstraint | undefined;

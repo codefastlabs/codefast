@@ -1200,7 +1200,7 @@ export class DependencyResolver implements ResolverCallbacks {
         return owner.#resolveBindingAsync(binding, undefined, resolutionStack, branchDepth, owner);
       }
     } else if (this.#scope.isChild) {
-      const cachedScoped = this.#scope.readScoped(binding.identifier);
+      const cachedScoped = this.#scope.readScoped(binding.scopedCacheKey);
       if (cachedScoped !== SCOPED_MISS) {
         return Promise.resolve(cachedScoped);
       }
@@ -1616,7 +1616,7 @@ export class DependencyResolver implements ResolverCallbacks {
     if (!this.#scope.isChild) {
       throw new MissingScopeContextError(tokenName(binding.token));
     }
-    return this.#scope.readScoped(binding.identifier);
+    return this.#scope.readScoped(binding.scopedCacheKey);
   }
 
   // The shared root context answers every top-level request; building one is the rarer half and

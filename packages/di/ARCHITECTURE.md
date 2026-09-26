@@ -290,9 +290,17 @@ predicate that reads `ctx.parent.scope`. `tests/unit/resolution/cache-invalidati
 
 A scope verb that leaves the scope as it was returns before touching anything, since no cache, frame or version derives
 from a scope that did not change. One that does change it releases only what exists: the cached singleton, the scoped
-entry, the frame. A chain refined straight after `to*()` — the `bind(T).to(X).singleton()` idiom — has none of the three
-yet, so it pays for none. The three guards are load-bearing together rather than one by one: each alone buys little, and
+entries, the frame. A chain refined straight after `to*()` — the `bind(T).to(X).singleton()` idiom — has none of the
+three yet, so it pays for none. The guards are load-bearing together rather than one by one: each alone buys little, and
 with all of them the refinement no longer calls into the scope manager at all on that idiom.
+
+A scoped instance lives in the scope manager of the child that resolved it, which the chain cannot reach, so every scope
+manager files it under the binding's `scopedCacheKey` rather than its id. The key starts as the id, and leaving `scoped`
+mints a new one from the id counter: every entry any child filed under the old key is then unreachable, and a later flip
+back to `scoped` materialises a fresh instance. The hit stays one field load and one `Map.get` — a generation compared
+on each read was measured as a clear loss on the scoped hit — and the id itself never changes, as SPEC requires of
+`id()`. `tests/unit/container/binding-builders.test.ts` pins it for the registering child, a child of the registering
+container, and the async lane.
 
 ### The fluent chain: one object, one registration
 
