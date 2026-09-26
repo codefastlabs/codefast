@@ -11,9 +11,9 @@ allowBuilds:
   simple-git-hooks: true
 
 overrides:
-  # Hold the whole tree to the Node floor's types — a dev tool's `@types/node: "*"` peer
-  # (commitlint's cosmiconfig loader) would otherwise pull a newer major and mask floor-missing APIs.
-  "@types/node": ^24.19.0
+  # Hold the whole tree to the Node floor's release line: a later minor types APIs the floor lacks, and a dev tool's
+  # `@types/node: "*"` peer (commitlint's cosmiconfig loader) would otherwise pull one in.
+  "@types/node": ~24.0.15
   # mermaid pins chevrotain `~11.1.2`, whose packages pin an exact lodash-es below the fix for
   # GHSA-r5fr-rjxr-66jc and GHSA-f23m-r3pf-42rh; scoped to the vulnerable range so it lapses once chevrotain moves on.
   "lodash-es@<4.18.0": ^4.18.0
@@ -46,7 +46,7 @@ catalog:
   "@testing-library/react": ^16.3.3
   "@testing-library/user-event": ^14.6.7
   "@types/jest-axe": ^3.5.9
-  "@types/node": ^24.19.0
+  "@types/node": ~24.0.15
   "@types/picomatch": ^4.0.3
   "@types/react": ^19.3.0
   "@types/react-dom": ^19.3.0
