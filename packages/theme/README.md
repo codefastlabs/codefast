@@ -34,7 +34,7 @@ pnpm add @codefast/theme
 # yarn add @codefast/theme
 ```
 
-`react` and `react-dom` 19 or later are peer dependencies, and `@codefast/theme` requires Node.js 22.12 or later and
+`react` and `react-dom` 19 or later are peer dependencies, and `@codefast/theme` requires Node.js 24 or later and
 TypeScript 7 or later for its types. The package is published on 0.x and versioned on its own track: breaking changes
 ship as minor versions, so pin the minor version when you need stability.
 

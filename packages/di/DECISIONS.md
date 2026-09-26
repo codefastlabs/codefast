@@ -61,7 +61,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | No special flags needed                         |
 | Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 7+) |
 | Module format      | ESM-only                                                      | ESM-only                                        |
-| Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 22.12.0                                  |
+| Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 24.0.0                                   |
 
 #### Binding API
 

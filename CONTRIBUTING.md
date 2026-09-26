@@ -25,7 +25,7 @@ Four things routinely surprise newcomers:
 
 ## Setup
 
-Node ≥ 22.13 ([why](SUPPORT.md#nodejs)) and pnpm 11, pinned via `packageManager`.
+Node ≥ 24.0 ([why](SUPPORT.md#nodejs)) and pnpm 11, pinned via `packageManager`.
 
 ```bash
 git clone https://github.com/codefastlabs/codefast.git

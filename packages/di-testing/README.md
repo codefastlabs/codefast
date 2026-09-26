@@ -33,10 +33,10 @@ production — and you assert against the mocks the bed created.
 pnpm add -D @codefast/di-testing
 ```
 
-`@codefast/di-testing` requires Node.js 22.12 or later, TypeScript 7 or later, and a peer install of `@codefast/di`,
-with the same TypeScript setup: native Stage 3 decorators, `experimentalDecorators` off. The package is published on 0.x
-and versioned on its own track: breaking changes ship as minor versions, so pin the minor version when you need
-stability.
+`@codefast/di-testing` requires Node.js 24 or later, TypeScript 7 or later, and a peer install of `@codefast/di`, with
+the same TypeScript setup: native Stage 3 decorators, `experimentalDecorators` off, and the explicit resource management
+types, from `@types/node` 24 or later or from `ESNext.Disposable` in `lib`. The package is published on 0.x and
+versioned on its own track: breaking changes ship as minor versions, so pin the minor version when you need stability.
 
 ## Quick start
 
@@ -230,7 +230,7 @@ it("prices through the real PricingService over a mocked tax boundary", () => {
 - `dispose()` — run the unit's `@preDestroy` hooks and dispose the container.
 
 The bed implements `AsyncDisposable`, so `await using bed = TestBed.solitary(X).compile()` disposes it at the end of the
-block; that needs the `esnext.disposable` lib in your TypeScript configuration if your `target` does not include it.
+block.
 
 The lower-level pieces are exported too: `createAutoMock`, `createSpy`, `defaultMockFactory`, and the `Mocked`,
 `DeepPartial`, `MockFactory`, `Spy`, and `TestBedOptions` types.

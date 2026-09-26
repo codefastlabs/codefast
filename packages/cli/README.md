@@ -22,7 +22,7 @@ encode an opinionated house style (called out below) that you can adopt, ignore,
 
 ## Requirements
 
-- **Node.js ≥ 22.12** (the CLI is published as ESM).
+- **Node.js ≥ 24** (the CLI is published as ESM).
 - **TypeScript ≥ 7** to type-check a config written with `defineConfig`, and for
   `arrange simplify --fold-variant-classname`, the one command that loads `typescript` (an optional peer).
 - **A project root — workspace or single package.** Commands resolve their root by walking up from the current

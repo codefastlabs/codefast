@@ -11,13 +11,13 @@ changes.
 
 Ground rules that bite in this package specifically:
 
-- **Node ≥ 22.12** — `engines.node` is `>=22.12.0`, and the package keeps its own `Map` upsert helpers
+- **Node ≥ 24** — `engines.node` is `>=24.0.0`, and the package keeps its own `Map` upsert helpers
   ([`core/map-upsert.ts`](./src/core/map-upsert.ts)) to hold that floor. Calling the platform's
   `Map.prototype.getOrInsert` instead would raise it to 26, which the serverless runtimes this package deploys to do not
   offer. That floor is mechanical, not a reminder: this package's `tsconfig.json` pins `lib` to
-  `["ES2024", "ESNext.Decorators"]`, so a builtin newer than ES2024 is a compile error here even on an engine that ships
-  it, where runtime alone would never catch the floor violation. Reaching for one means proving the floor's Node ships
-  it and widening `lib` deliberately.
+  `["ES2025", "ESNext.Decorators", "ESNext.Disposable"]`, so a builtin newer than those is a compile error here even on
+  an engine that ships it, where runtime alone would never catch the floor violation. Reaching for one means proving the
+  floor's Node ships it and widening `lib` deliberately.
 - `exactOptionalPropertyTypes` is on — an optional prop that may receive an explicit value is typed `?: T | undefined`.
 - The sync and async resolve pipelines live in **one class** (`resolution/resolver.ts`) because `#` private fields
   cannot span files and both pipelines touch the same private state on every hop. Everything that does _not_ need that

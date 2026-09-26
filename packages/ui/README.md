@@ -33,7 +33,7 @@ Or the equivalent with your package manager: `npm install @codefast/ui`, `yarn a
 
 `@codefast/ui` requires:
 
-- Node.js 22.12 or later.
+- Node.js 24 or later.
 - TypeScript 7 or later for its types.
 - React 19 — `react` and `react-dom` (19 or later) are peer dependencies; `@types/react` and `@types/react-dom` are
   optional peers.
