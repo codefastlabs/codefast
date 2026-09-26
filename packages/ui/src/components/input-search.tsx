@@ -56,7 +56,7 @@ function InputSearch({
           aria-label="Clear search"
           className="rounded-full"
           data-slot="input-search-clear"
-          disabled={disabled ?? readOnly}
+          disabled={disabled || readOnly}
           size="icon-sm"
           type="button"
           variant="ghost"
