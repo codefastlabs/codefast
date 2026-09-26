@@ -40,6 +40,9 @@ with any version of InversifyJS, by design.
 > - **TypeScript ≥ 7**, the one compiler that type-checks this package and emits its published declarations. Stage 3
 >   decorators are TypeScript's default, so `experimentalDecorators` and `emitDecoratorMetadata` stay **off** and
 >   `reflect-metadata` is never loaded ([tsconfig setup](#tsconfig-setup)).
+> - **No `lib` or `types` entry for disposal.** The published declarations carry the disposal types they use, with or
+>   without `@types/node`; `await using` still needs the runtime's `Symbol.asyncDispose`, which every supported Node
+>   line defines ([tsconfig setup](#tsconfig-setup)).
 > - Decorators themselves are optional: an application that declares every binding explicitly needs nothing beyond the
 >   runtime and the module format.
 
@@ -2286,6 +2289,24 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 > `Symbol.for` is the key the default reader falls back to and the one esbuild emits, so every toolchain agrees on it.
 > Node also cannot parse decorator syntax itself: `target: "ESNext"` leaves decorators in the output, so the code must
 > go through a transpiler that lowers them (a lower `target`, esbuild, or Babel's `2023-11` decorators plugin).
+
+> **Normative — the declarations carry their disposal types; the runtime supplies the symbol.** The published
+> declarations declare `Symbol.asyncDispose`, `Symbol.dispose`, `AsyncDisposable` and `Disposable` — the symbols
+> `Container` keys its disposal methods by and the interfaces `await using` checks it against — member for member as
+> TypeScript's `ESNext.Disposable` lib and `@types/node` do, so they merge with either and need neither. They declare
+> nothing else from that lib, so — as on Node 22 — `DisposableStack`, `AsyncDisposableStack` and `SuppressedError` stay
+> a type error, and so does `using` on a built-in iterator, unless the consumer's own `lib` declares them.
+>
+> `await using` also needs `Symbol.asyncDispose` to exist when `@codefast/di` is evaluated, because the container's
+> method is keyed by it then. Every supported Node line defines it. On a runtime without it, such as a browser that has
+> not shipped explicit resource management, install it in a module imported first, or call `dispose()` instead:
+>
+> ```ts
+> (Symbol as { asyncDispose?: symbol }).asyncDispose ??= Symbol.for("Symbol.asyncDispose");
+> ```
+>
+> The widening is needed because the declaration is `readonly`, as `Symbol.metadata`'s is. `Symbol.for` matches the key
+> esbuild's lowered `await using` falls back to when the symbol is missing.
 
 ---
 

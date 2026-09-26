@@ -140,9 +140,9 @@ async function main(): Promise<void> {
 } // container.dispose() called automatically here, firing all onDeactivation hooks
 ```
 
-`await using` is TC39 explicit resource management, which no ES20xx `lib` declares yet: its types come from
-`@types/node` or TypeScript's `ESNext.Disposable` lib. The container implements `Symbol.asyncDispose` so cleanup is
-guaranteed even if an exception is thrown.
+`await using` is TC39 explicit resource management, which no ES20xx `lib` declares yet: `@codefast/di`'s declarations
+carry the types it needs, so no `lib` or `types` entry is required. The container implements `Symbol.asyncDispose` so
+cleanup is guaranteed even if an exception is thrown.
 
 ---
 
