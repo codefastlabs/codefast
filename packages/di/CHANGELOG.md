@@ -1,5 +1,41 @@
 # @codefast/di
 
+## 0.12.0
+
+### Minor Changes
+
+- [#995](https://github.com/codefastlabs/codefast/pull/995) Add `container.explain(token, options)`, which answers why a request selects the binding it does without instantiating
+  anything. It reads the container chain the way `resolve` does and decides by the same rules, so its answer is the
+  engine's own. It reports each registry it read with every candidate and its verdict (`eligible`, `slot-mismatch`,
+  `predicate-refused`, `collection-member`), the rule that decided (`sole-candidate`, `sole-predicate`, `most-criteria`,
+  `default-alias`, `ambiguous`), the binding the request ends on after every alias, and an `outcome` naming the error
+  `resolve` would throw when it ends on none. `when()` predicates run as they would in `resolve`, and `options.ancestors`
+  explains a request made from inside other resolutions, so a predicate that reads the parent sees the one it would.
+
+### Patch Changes
+
+- [#994](https://github.com/codefastlabs/codefast/pull/994) A scope refinement costs less at bind time. `singleton()`, `transient()` and `scoped()` now do nothing when the scope
+  does not change, and release only what exists when it does, so `bind(T).to(X).singleton()` straight after registration
+  no longer calls into the scope manager.
+
+- [#994](https://github.com/codefastlabs/codefast/pull/994) Resolving a class binding for the first time is cheaper. The metadata cache now keeps one record per class, which a cold
+  resolve looks up once instead of reading a separate map for each fact, and a class with no constructor parameters is
+  built without allocating an empty argument list. This mostly speeds up containers that bind and resolve many class
+  singletons at startup.
+
+- [#994](https://github.com/codefastlabs/codefast/pull/994) A root-level `resolveAll()` read in a loop over the same token, as an event bus does for every event, is cheaper: the
+  lookup cache keeps the last collection in front of its map, so a repeat read skips the map lookup.
+
+- [#994](https://github.com/codefastlabs/codefast/pull/994) A binding unbound by its id stays unbound when the chain that displaced it is refined later. A scope change or an
+  `onActivation`/`onDeactivation` hook between the `unbind()` and a re-slot such as `whenNamed()` made the displacing
+  chain treat its parked copy of the unbound binding as current again, so the re-slot put that binding back in the
+  registry.
+
+- [#994](https://github.com/codefastlabs/codefast/pull/994) A scoped binding whose scope changes stops handing children the instance they cached before the change. A binding
+  registered on a parent, resolved from a child, then refined `scoped()` → `transient()` → `scoped()` gave that child its
+  old scoped instance back, because only the registering container's cache was cleared. Every container now files a scoped
+  instance under a key the binding replaces when it leaves `scoped`, so the cached instance is never found again.
+
 ## 0.11.0
 
 ### Minor Changes
