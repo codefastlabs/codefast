@@ -26,8 +26,7 @@ export function batched(factor: number, operation: () => void): () => void {
   if (factor === 1) {
     return operation;
   }
-  // Unrolled-ish: Node v22's V8 inlines tight loops well enough that a simple
-  // `for` is as fast as manual unrolling for this shape of work.
+  // A plain `for`, not manual unrolling: V8 inlines a tight loop of this shape just as well.
   return () => {
     for (let iterationIndex = 0; iterationIndex < factor; iterationIndex++) {
       operation();

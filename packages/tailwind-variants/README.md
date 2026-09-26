@@ -33,9 +33,11 @@ pnpm add @codefast/tailwind-variants tailwind-merge
 # yarn add @codefast/tailwind-variants tailwind-merge
 ```
 
-`@codefast/tailwind-variants` ships ESM only. `tailwind-merge` is a peer dependency (`>=3.0.0`), and the package
-requires Node.js 24 or later and TypeScript 7 or later for its types. It's published on 0.x and versioned on its own
-track: breaking changes ship as minor versions, so pin the minor version when you need stability.
+`@codefast/tailwind-variants` ships ESM only. `tailwind-merge` is a peer dependency (`>=3.0.0`), and the package runs on
+Node.js 24 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
+([support policy](../../SUPPORT.md#browsers)). It requires TypeScript 7 or later for its types. It's published on 0.x
+and versioned on its own track: breaking changes ship as minor versions, so pin the minor version when you need
+stability.
 
 ## Quick start
 

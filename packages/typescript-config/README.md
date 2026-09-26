@@ -17,10 +17,12 @@ The presets are plain JSON `tsconfig` files. There's no runtime code, and nothin
   from the base that every preset extends.
 - **Bundler-first.** An ESNext `module` with `moduleResolution: "bundler"`, so `exports` and `imports` maps resolve the
   way Vite, esbuild, and friends resolve them.
-- **`lib` and `target` match the Node floor** (`engines.node >= 24`): both are `ES2025`, the newest edition Node 24
-  fully supports, and `lib` adds `ESNext.Disposable` for the explicit resource management Node 24 ships natively. A
-  builtin newer than both, such as `Map.prototype.getOrInsert`, is a type error here rather than a runtime crash on the
-  floor. Move them together only when the floor moves.
+- **`lib` and `target` match the runtime floors**: both are `ES2025`, the newest edition that Node 24 and the browser
+  floor both ship ([support policy](../../SUPPORT.md)). A builtin newer than that, such as `Map.prototype.getOrInsert`,
+  is a type error here rather than a runtime crash on the floor. Move them together only when a floor moves.
+- **Ambient types follow the runtime.** No preset loads `@types/node` or lists `ESNext.Disposable`. A program that runs
+  on Node adds `types: ["node"]`, which brings the Node globals and explicit resource management with it. A browser
+  program leaves both out: Safari has not shipped explicit resource management yet.
 - **Type-check only.** The presets set `noEmit`; a separate build overlay turns on emit and `.d.ts` generation.
 - **Plain JSON.** No runtime code, nothing to import.
 
@@ -46,34 +48,46 @@ full file names only.
 }
 ```
 
-Options you set locally always win, so overriding a preset value takes one line:
+Options you set locally always win, so adjusting a preset takes one line — here, a package that runs on Node:
 
 ```json
 {
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2025", "ESNext.Disposable"]
+    "types": ["node"]
   }
 }
 ```
 
 ## Presets
 
-| Preset               | Extends     | Purpose                                                                                                                                           |
-| -------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `base.json`          | —           | Strict, bundler-first baseline: ES2025 target, ESNext module, DOM + ES2025 + `ESNext.Disposable` libs, type-check only.                           |
-| `library.json`       | `base.json` | Headless packages: `lib` is `ES2025` and `ESNext.Disposable` only, so relying on a browser global is a type error.                                |
-| `react.json`         | `base.json` | React with the automatic JSX runtime (`jsx: "react-jsx"`) — components need no `React` import.                                                    |
-| `next.json`          | `base.json` | Next.js apps: `jsx: "preserve"`, `incremental` builds, and the `next` TypeScript plugin.                                                          |
-| `library-build.json` | (overlay)   | Build-emit overrides for a build config: `noEmit: false`, `declaration` + `isolatedDeclarations`, declaration and source maps, `types: ["node"]`. |
+| Preset               | Extends     | Purpose                                                                                                                                                                                           |
+| -------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base.json`          | —           | Strict, bundler-first baseline: ES2025 target, ESNext module, DOM + ES2025 libs, type-check only.                                                                                                 |
+| `library.json`       | `base.json` | Headless packages: `lib` is `ES2025` only, so relying on a browser global is a type error. A package that runs on Node adds `types: ["node"]`.                                                    |
+| `react.json`         | `base.json` | React with the automatic JSX runtime (`jsx: "react-jsx"`) — components need no `React` import.                                                                                                    |
+| `next.json`          | `base.json` | Next.js apps: `jsx: "preserve"`, `incremental` builds, and the `next` TypeScript plugin.                                                                                                          |
+| `library-build.json` | (overlay)   | Build-emit overrides for a build config: `noEmit: false`, `declaration` + `isolatedDeclarations`, declaration and source maps, and `types: []`, so test-only ambient types stay out of the build. |
 
 ### Choosing a preset
 
-A publishable package with no browser coupling:
+A publishable package with no browser coupling, which runs wherever JavaScript runs:
 
 ```json
 {
   "extends": "@codefast/typescript-config/library.json",
+  "include": ["src"]
+}
+```
+
+A package or CLI that runs on Node:
+
+```json
+{
+  "extends": "@codefast/typescript-config/library.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
   "include": ["src"]
 }
 ```
@@ -120,6 +134,10 @@ development config in a separate `tsconfig.build.json`. List both in `extends` t
 
 Then `tsc -p tsconfig.build.json` emits `.js`, `.d.ts`, and their maps into `dist/`. `isolatedDeclarations` requires an
 explicit type annotation on every export, which is what lets declarations be produced file by file.
+
+The overlay sets `types: []`, so the test types your development config loads (`vitest/globals`, for example) stay out
+of the build. A package that runs on Node sets `types: ["node"]` again in its `tsconfig.build.json`. A browser or
+universal package leaves it empty, so a Node global in its source fails the build.
 
 ## Notable compiler options
 

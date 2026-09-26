@@ -131,8 +131,8 @@ pnpm --filter @benchmark/di bench:baseline
 ## Static checks
 
 ```bash
-pnpm check       # lint + format:check + check-types (no auto-fix)
-pnpm check:fix   # lint:fix + format (writes fixes)
+pnpm check       # check-types + format:check + knip, then lint (no auto-fix)
+pnpm check:fix   # build:packages, then lint:fix + format (writes fixes)
 ```
 
 Lint/format is Oxc (`oxlint --deny-warnings`, `oxfmt`). If you edited files via a script rather than the editor, run

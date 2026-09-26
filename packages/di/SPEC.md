@@ -37,6 +37,9 @@ with any version of InversifyJS, by design.
 >
 > - **ESM only.** There is no CommonJS build and no dual build.
 > - **Node.js ≥ 24**, the first line with explicit resource management built in.
+> - **In a browser, Chrome and Edge 136, Firefox 136, or Safari 18.4**, the first releases that ship every ES2025
+>   builtin ([support policy](../../SUPPORT.md#browsers)). `await using` also needs the browser to ship explicit
+>   resource management, which Safari has not; `dispose()` needs nothing extra.
 > - **TypeScript ≥ 7**, the one compiler that type-checks this package and emits its published declarations. Stage 3
 >   decorators are TypeScript's default, so `experimentalDecorators` and `emitDecoratorMetadata` stay **off** and
 >   `reflect-metadata` is never loaded ([tsconfig setup](#tsconfig-setup)).
@@ -2278,10 +2281,11 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 > **Normative — the program declares explicit resource management; the package does not.** The published declarations
 > name `Symbol.asyncDispose` and `Symbol.dispose`, and `await using` checks a container against `AsyncDisposable` and
 > `Disposable`. A Node program gets all four from `@types/node` 24 or later (`types: ["node"]`), which loads
-> TypeScript's `ESNext.Disposable` lib, and every `@codefast/typescript-config` preset lists that lib. Any other program
-> adds `ESNext.Disposable` to its own `lib`. In a browser program it goes beside `DOM`, and there it also asserts that
-> the targeted browsers ship explicit resource management. `target: "ESNext"`, as above, loads all of `ESNext` and needs
-> nothing more. Without the types, `container.d.ts` fails with TS2550 under `skipLibCheck: false`, and the program's own
+> TypeScript's `ESNext.Disposable` lib. Any other program adds `ESNext.Disposable` to its own `lib`. In a browser
+> program it goes beside `DOM`, and there it also asserts that the targeted browsers ship explicit resource management,
+> which Safari does not yet — so the `@codefast/typescript-config` presets leave it out, and a browser program on them
+> keeps `skipLibCheck` on and calls `dispose()`. `target: "ESNext"`, as above, loads all of `ESNext` and needs nothing
+> more. Without the types, `container.d.ts` fails with TS2550 under `skipLibCheck: false`, and the program's own
 > `await using` fails with TS2318 even under `skipLibCheck: true`.
 >
 > At runtime, `await using` needs `Symbol.asyncDispose` when `@codefast/di` is evaluated, because the container's

@@ -14,7 +14,7 @@ export function RequirementsSection() {
         className="mb-8"
       />
 
-      <div className="grid grid-cols-2 gap-6 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:grid-cols-4 sm:gap-8">
+      <div className="grid grid-cols-2 gap-6 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:grid-cols-3 sm:gap-8 lg:grid-cols-5">
         {REQUIREMENTS.map(({ label, value }) => (
           <div key={label}>
             <p className="mb-1 text-xs font-semibold tracking-widest text-ui-muted uppercase">{label}</p>

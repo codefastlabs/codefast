@@ -7,6 +7,6 @@
     "isolatedDeclarations": true,
     "declarationMap": true,
     "sourceMap": true,
-    "types": ["node"]
+    "types": []
   }
 }

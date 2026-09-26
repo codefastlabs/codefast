@@ -35,6 +35,8 @@ Or the equivalent with your package manager: `npm install @codefast/ui`, `yarn a
 
 - Node.js 24 or later.
 - TypeScript 7 or later for its types.
+- Chrome and Edge 136, Firefox 136, or Safari 18.4 or later in the browser
+  ([support policy](../../SUPPORT.md#browsers)).
 - React 19 — `react` and `react-dom` (19 or later) are peer dependencies; `@types/react` and `@types/react-dom` are
   optional peers.
 - Tailwind CSS 4 at build time — the stylesheets are Tailwind source, and rely on your Tailwind pipeline to compile

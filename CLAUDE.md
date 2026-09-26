@@ -34,6 +34,12 @@ demos. A new package is private until it is published, so it starts in `internal
   and `apps/web` consumes the built `dist/`. Exports are generated from `dist/` by `codefast mirror`. The **only**
   bundler is **Vite** (Rolldown), reserved for genuine browser bundles: `apps/web`/`examples` (TanStack Start) and the
   `benchmark-viewer` browser app (its Node/SSR lane is plain tsc).
+- **A build loads only its runtime's ambient types.** `library-build.json` sets `types: []`; a package whose code runs
+  on Node (`cli`, the benchmark harness, the viewer's SSR lane) sets `types: ["node"]` in its `tsconfig.build.json`, and
+  every browser or universal package leaves it empty, so a Node global in its `src` fails the build. Explicit resource
+  management fails it too, except in `di` and `di-testing`, whose API names it and whose `lib` lists
+  `ESNext.Disposable`. The browser floor behind this is in [`SUPPORT.md`](SUPPORT.md#browsers); copy a build config from
+  a package in the same lane.
 - **`exactOptionalPropertyTypes` is enabled** — an optional prop that may receive an explicit value must be typed
   `?: T | undefined`.
 - **No double assertions — source and tests alike.** `x as unknown as T` tells the compiler two types are unrelated and
@@ -87,14 +93,15 @@ HTTP endpoints — see `packages/tracking/spec/` for the behavioral contract.
 ## Commands
 
 Build packages before running apps, type-checking, or type-aware lint — `@codefast/ui` consumes other packages' built
-`dist/` and Oxlint's type-aware rules need them.
+`dist/`, the benchmarks consume `internal/benchmark-harness`'s, and Oxlint's type-aware rules read them. `pnpm check`,
+`pnpm check:fix` and `pnpm verify` build first on their own; a bare `pnpm lint` does not.
 
 ```bash
-pnpm build:packages   # build only packages/* (run after editing any package src)
+pnpm build:packages   # build every library workspace, packages/* and internal/* (run after editing any package src)
 pnpm dev              # start all apps + packages in watch mode (no upfront build — run build:packages once on a fresh clone)
 pnpm check-types      # native tsc --noEmit type check across the repo (no auto-fix — fix by hand)
-pnpm check            # lint + format:check + check-types (static gate, no fixes)
-pnpm check:fix        # lint --fix + format write
+pnpm check            # check-types + format:check + knip, then lint once the builds exist (static gate, no fixes)
+pnpm check:fix        # build:packages, then lint --fix + format write
 pnpm verify           # full gate: build:packages + lint:fix + format + check-types + test:coverage
 ```
 
