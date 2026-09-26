@@ -42,6 +42,12 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
  * @since 0.3.16-canary.0
  */
 interface SheetContentProps extends ComponentProps<typeof SheetPrimitive.Content>, SheetContentVariants {
+  /**
+   * The accessible name of the built-in close button.
+   *
+   * @defaultValue `"Close"`
+   */
+  closeLabel?: string | undefined;
   showCloseButton?: boolean;
 }
 
@@ -51,6 +57,7 @@ interface SheetContentProps extends ComponentProps<typeof SheetPrimitive.Content
 function SheetContent({
   children,
   className,
+  closeLabel = "Close",
   showCloseButton = true,
   side = "right",
   ...props
@@ -80,7 +87,7 @@ function SheetContent({
             data-slot="sheet-close"
           >
             <XIcon />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{closeLabel}</span>
           </SheetPrimitive.Close>
         ) : null}
       </SheetPrimitive.Content>

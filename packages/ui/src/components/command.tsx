@@ -36,6 +36,12 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
  */
 interface CommandDialogProps extends ComponentProps<typeof Dialog> {
   className?: string;
+  /**
+   * The accessible name of the close button `showCloseButton` adds.
+   *
+   * @defaultValue `"Close"`
+   */
+  closeLabel?: string | undefined;
   description?: string;
   showCloseButton?: boolean;
   title?: string;
@@ -47,6 +53,7 @@ interface CommandDialogProps extends ComponentProps<typeof Dialog> {
 function CommandDialog({
   children,
   className,
+  closeLabel,
   description = "Search for a command to run...",
   showCloseButton = false,
   title = "Command Palette",
@@ -60,6 +67,7 @@ function CommandDialog({
       </DialogHeader>
       <DialogContent
         className={cn("top-1/3 translate-y-0 overflow-hidden rounded-xl p-0", className)}
+        closeLabel={closeLabel}
         data-slot="command-dialog-content"
         showCloseButton={showCloseButton}
       >

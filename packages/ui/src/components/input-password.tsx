@@ -9,12 +9,32 @@ import { InputGroup, InputGroupButton, InputGroupInput } from "#components/input
 /**
  * @since 0.3.16-canary.0
  */
-type InputPasswordProps = Omit<ComponentProps<typeof InputGroupInput>, "type">;
+interface InputPasswordProps extends Omit<ComponentProps<typeof InputGroupInput>, "type"> {
+  /**
+   * The accessible name of the reveal toggle while the password is shown.
+   *
+   * @defaultValue `"Hide password"`
+   */
+  concealLabel?: string | undefined;
+  /**
+   * The accessible name of the reveal toggle while the password is hidden.
+   *
+   * @defaultValue `"Show password"`
+   */
+  revealLabel?: string | undefined;
+}
 
 /**
  * @since 0.3.16-canary.0
  */
-function InputPassword({ className, disabled, readOnly, ...props }: InputPasswordProps): JSX.Element {
+function InputPassword({
+  className,
+  concealLabel = "Hide password",
+  disabled,
+  readOnly,
+  revealLabel = "Show password",
+  ...props
+}: InputPasswordProps): JSX.Element {
   const [type, setType] = useState<"password" | "text">("password");
 
   const togglePasswordVisibility = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
@@ -25,7 +45,7 @@ function InputPassword({ className, disabled, readOnly, ...props }: InputPasswor
     <InputGroup className={className} data-disabled={disabled ? "true" : undefined} data-slot="input-password">
       <InputGroupInput autoCapitalize="none" disabled={disabled} readOnly={readOnly} type={type} {...props} />
       <InputGroupButton
-        aria-label={type === "password" ? "Show password" : "Hide password"}
+        aria-label={type === "password" ? revealLabel : concealLabel}
         className="rounded-full"
         data-slot="input-password-toggle"
         disabled={disabled}

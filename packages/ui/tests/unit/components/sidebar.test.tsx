@@ -1,8 +1,16 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { renderToString } from "react-dom/server";
 
-import { Sidebar, SidebarContent, SidebarInset, SidebarProvider, useSidebar } from "#components/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from "#components/sidebar";
 
 // A viewport the provider's media query reads: `matches` answers every query at once, which is all it asks.
 function stubViewport(options: { readonly isBelowBreakpoint: boolean }): { readonly queries: Array<string> } {
@@ -179,6 +187,45 @@ describe("sidebar", () => {
       expect(onRecoverableError).not.toHaveBeenCalled();
       expect(screen.getByTestId("sidebar-state")).toHaveAttribute("data-mobile", "true");
       container.remove();
+    });
+  });
+
+  describe("mobile sheet", () => {
+    function MobileShell({ mobileTitle }: { readonly mobileTitle?: string }): ReactNode {
+      return (
+        <SidebarProvider>
+          <Sidebar {...(mobileTitle === undefined ? {} : { mobileTitle })}>
+            <SidebarContent>nav</SidebarContent>
+          </Sidebar>
+          <SidebarInset>
+            <SidebarTrigger />
+          </SidebarInset>
+        </SidebarProvider>
+      );
+    }
+
+    test("names the sheet in English by default, with no filler description", async () => {
+      stubViewport({ isBelowBreakpoint: true });
+      const user = userEvent.setup();
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      render(<MobileShell />);
+
+      await user.click(screen.getByRole("button", { name: "Toggle Sidebar" }));
+
+      const sheet = screen.getByRole("dialog", { name: "Sidebar" });
+      expect(sheet).not.toHaveAttribute("aria-describedby");
+      expect(warn).not.toHaveBeenCalledWith(expect.stringContaining("Missing `Description`"));
+      warn.mockRestore();
+    });
+
+    test("takes the sheet's name from mobileTitle", async () => {
+      stubViewport({ isBelowBreakpoint: true });
+      const user = userEvent.setup();
+      render(<MobileShell mobileTitle="Điều hướng" />);
+
+      await user.click(screen.getByRole("button", { name: "Toggle Sidebar" }));
+
+      expect(screen.getByRole("dialog", { name: "Điều hướng" })).toBeInTheDocument();
     });
   });
 });

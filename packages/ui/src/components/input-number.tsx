@@ -21,21 +21,21 @@ type InputNumberProps = ComponentProps<typeof InputNumberPrimitive.Root>;
  * @since 0.3.16-canary.0
  */
 function InputNumber({
-  ariaDecrementLabel = "Decrement",
-  ariaIncrementLabel = "Increment",
   className,
+  decrementLabel = "Decrement",
+  incrementLabel = "Increment",
   spinner,
   ...props
 }: InputNumberProps): JSX.Element {
   return (
     <InputNumberPrimitive.Root
-      ariaDecrementLabel={ariaDecrementLabel}
-      ariaIncrementLabel={ariaIncrementLabel}
       className={cn(
         "group/input-number relative flex h-8 w-full min-w-0 items-center overflow-hidden rounded-lg bg-transparent text-base inset-ring inset-ring-input transition-[color,box-shadow] not-has-[input:disabled]:shadow-xs has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 has-aria-invalid:inset-ring-destructive has-[input:disabled]:bg-input/50 has-[input:disabled]:opacity-50 has-[input:focus-visible]:ring-3 has-[input:focus-visible]:ring-ring/50 has-[input:focus-visible]:inset-ring-ring motion-reduce:transition-none md:text-sm dark:bg-input/30 dark:has-aria-invalid:ring-destructive/40 dark:has-aria-invalid:inset-ring-destructive/50 dark:has-[input:disabled]:bg-input/80 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="input-number"
+      decrementLabel={decrementLabel}
+      incrementLabel={incrementLabel}
       spinner={spinner ?? <Spinner />}
       {...props}
     />

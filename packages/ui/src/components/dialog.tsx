@@ -39,13 +39,25 @@ function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
  * @since 0.3.16-canary.0
  */
 interface DialogContentProps extends ComponentProps<typeof DialogPrimitive.Content> {
+  /**
+   * The accessible name of the built-in close button.
+   *
+   * @defaultValue `"Close"`
+   */
+  closeLabel?: string | undefined;
   showCloseButton?: boolean;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-function DialogContent({ children, className, showCloseButton = true, ...props }: DialogContentProps): JSX.Element {
+function DialogContent({
+  children,
+  className,
+  closeLabel = "Close",
+  showCloseButton = true,
+  ...props
+}: DialogContentProps): JSX.Element {
   return (
     <DialogPrimitive.Portal data-slot="dialog-portal">
       <DialogPrimitive.Overlay
@@ -67,7 +79,7 @@ function DialogContent({ children, className, showCloseButton = true, ...props }
           <DialogPrimitive.Close asChild data-slot="dialog-close">
             <Button className="absolute inset-e-2 top-2" size="icon-sm" variant="ghost">
               <XIcon />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">{closeLabel}</span>
             </Button>
           </DialogPrimitive.Close>
         ) : null}
@@ -117,13 +129,25 @@ function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
  * @since 0.3.16-canary.0
  */
 interface DialogFooterProps extends ComponentProps<"div"> {
+  /**
+   * The label of the close button `showCloseButton` adds.
+   *
+   * @defaultValue `"Close"`
+   */
+  closeLabel?: string | undefined;
   showCloseButton?: boolean;
 }
 
 /**
  * @since 0.3.16-canary.0
  */
-function DialogFooter({ children, className, showCloseButton = false, ...props }: DialogFooterProps): JSX.Element {
+function DialogFooter({
+  children,
+  className,
+  closeLabel = "Close",
+  showCloseButton = false,
+  ...props
+}: DialogFooterProps): JSX.Element {
   return (
     <div
       className={cn(
@@ -136,7 +160,7 @@ function DialogFooter({ children, className, showCloseButton = false, ...props }
       {children}
       {showCloseButton ? (
         <DialogPrimitive.Close asChild>
-          <Button variant="outline">Close</Button>
+          <Button variant="outline">{closeLabel}</Button>
         </DialogPrimitive.Close>
       ) : null}
     </div>
