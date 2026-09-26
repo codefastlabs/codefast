@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { renderToString } from "react-dom/server";
 
@@ -32,17 +32,25 @@ function SidebarState(): ReactNode {
   return <output data-mobile={isMobile ? "true" : "false"} data-state={state} data-testid="sidebar-state" />;
 }
 
-function Shell(): ReactNode {
+function Shell({ shortcutKey }: { readonly shortcutKey?: string | false }): ReactNode {
   return (
-    <SidebarProvider>
+    <SidebarProvider {...(shortcutKey === undefined ? {} : { shortcutKey })}>
       <Sidebar collapsible="icon">
         <SidebarContent>nav</SidebarContent>
       </Sidebar>
       <SidebarInset>
         <SidebarState />
+        <textarea aria-label="Notes" />
+        <input aria-label="Title" />
+        <div aria-label="Editor" contentEditable suppressContentEditableWarning />
+        <button type="button">Plain</button>
       </SidebarInset>
     </SidebarProvider>
   );
+}
+
+function sidebarState(): string | null {
+  return screen.getByTestId("sidebar-state").getAttribute("data-state");
 }
 
 beforeEach(() => {
@@ -54,6 +62,80 @@ afterEach(() => {
 });
 
 describe("sidebar", () => {
+  describe("keyboard shortcut", () => {
+    test("toggles with ⌘B or Ctrl+B outside a text field", () => {
+      render(<Shell />);
+
+      fireEvent.keyDown(screen.getByRole("button", { name: "Plain" }), { key: "b", metaKey: true });
+      expect(sidebarState()).toBe("collapsed");
+
+      fireEvent.keyDown(document.body, { ctrlKey: true, key: "B" });
+      expect(sidebarState()).toBe("expanded");
+    });
+
+    test("leaves the key to a text field, where it edits text", () => {
+      render(<Shell />);
+
+      // jsdom does not compute `isContentEditable`, which a browser derives from the attribute.
+      Object.defineProperty(screen.getByLabelText("Editor"), "isContentEditable", { value: true });
+
+      for (const label of ["Notes", "Title", "Editor"]) {
+        fireEvent.keyDown(screen.getByLabelText(label), { key: "b", metaKey: true });
+        expect(sidebarState()).toBe("expanded");
+      }
+    });
+
+    test("leaves the key to a handler that already took it", () => {
+      render(<Shell />);
+
+      // Stands in for an editor that binds ⌘B itself; the element is not editable, so only the handled event stops it.
+      const target = screen.getByRole("button", { name: "Plain" });
+      target.addEventListener("keydown", (event) => {
+        event.preventDefault();
+      });
+      fireEvent.keyDown(target, { key: "b", metaKey: true });
+
+      expect(sidebarState()).toBe("expanded");
+    });
+
+    test("ignores IME composition, auto-repeat, and other modifier chords", () => {
+      render(<Shell />);
+
+      const target = screen.getByRole("button", { name: "Plain" });
+      const chords = [
+        { isComposing: true, key: "b", metaKey: true },
+        { key: "b", metaKey: true, repeat: true },
+        { key: "b", metaKey: true, shiftKey: true },
+        { altKey: true, key: "b", metaKey: true },
+        { key: "b" },
+      ];
+
+      for (const chord of chords) {
+        fireEvent.keyDown(target, chord);
+        expect(sidebarState()).toBe("expanded");
+      }
+    });
+
+    test("uses the key shortcutKey names", () => {
+      render(<Shell shortcutKey="j" />);
+
+      const target = screen.getByRole("button", { name: "Plain" });
+      fireEvent.keyDown(target, { key: "b", metaKey: true });
+      expect(sidebarState()).toBe("expanded");
+
+      fireEvent.keyDown(target, { key: "j", metaKey: true });
+      expect(sidebarState()).toBe("collapsed");
+    });
+
+    test("listens for nothing when shortcutKey is false", () => {
+      render(<Shell shortcutKey={false} />);
+
+      fireEvent.keyDown(screen.getByRole("button", { name: "Plain" }), { key: "b", metaKey: true });
+
+      expect(sidebarState()).toBe("expanded");
+    });
+  });
+
   describe("breakpoint", () => {
     test("matches the preset's default breakpoint when the page defines none", () => {
       const { queries } = stubViewport({ isBelowBreakpoint: false });

@@ -20,7 +20,7 @@ const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3.0625rem";
-const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+const SIDEBAR_SHORTCUT_KEY = "b";
 // The preset's `--breakpoint-sidebar` default, for a page that has not loaded the preset.
 const SIDEBAR_BREAKPOINT_FALLBACK = "48rem";
 
@@ -57,6 +57,12 @@ interface SidebarProviderProps extends ComponentProps<"div"> {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
+  /**
+   * The key that toggles the sidebar together with ⌘ or Ctrl, or `false` for no shortcut.
+   *
+   * @defaultValue `"b"`
+   */
+  shortcutKey?: string | false | undefined;
 }
 
 /**
@@ -68,6 +74,7 @@ function SidebarProvider({
   defaultOpen = true,
   onOpenChange: setOpenProperty,
   open: openProperty,
+  shortcutKey = SIDEBAR_SHORTCUT_KEY,
   style,
   ...props
 }: SidebarProviderProps): JSX.Element {
@@ -105,8 +112,12 @@ function SidebarProvider({
 
   // Adds a keyboard shortcut to toggle the sidebar.
   useEffect(() => {
+    if (shortcutKey === false) {
+      return;
+    }
+
     const handleKeyDown: (event: KeyboardEvent) => void = (event: KeyboardEvent) => {
-      if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
+      if (isSidebarShortcut(event, shortcutKey)) {
         event.preventDefault();
         toggleSidebar();
       }
@@ -117,7 +128,7 @@ function SidebarProvider({
     return (): void => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [toggleSidebar]);
+  }, [shortcutKey, toggleSidebar]);
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
@@ -855,6 +866,25 @@ function readSidebarBreakpoint(): string {
   const breakpoint = getComputedStyle(document.documentElement).getPropertyValue("--sidebar-breakpoint").trim();
 
   return breakpoint === "" ? SIDEBAR_BREAKPOINT_FALLBACK : breakpoint;
+}
+
+// Leaves the key to a handler that already took it, to an IME mid-composition, and to fields where it edits text.
+function isSidebarShortcut(event: KeyboardEvent, shortcutKey: string): boolean {
+  if (
+    event.defaultPrevented ||
+    event.isComposing ||
+    event.repeat ||
+    event.altKey ||
+    event.shiftKey ||
+    !(event.metaKey || event.ctrlKey) ||
+    event.key.toLowerCase() !== shortcutKey.toLowerCase()
+  ) {
+    return false;
+  }
+
+  const target = event.composedPath()[0];
+
+  return !(target instanceof HTMLElement && (target.isContentEditable || target.matches("input, select, textarea")));
 }
 
 // ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────
