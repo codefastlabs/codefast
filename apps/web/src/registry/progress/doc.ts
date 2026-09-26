@@ -34,7 +34,8 @@ export const progressDoc: ComponentDoc = {
   features: [
     'max (default 100) changes the denominator value is measured against — pass a non-100 max for domains like "3 of 5 steps."',
     "Style the fill colour or gradient via **:data-[slot=progress-indicator] instead of overriding the root's background.",
-    'Built on Radix Progress — exposes role="progressbar" with aria-valuenow/valuemin/valuemax for free.',
+    'Built on Radix Progress — exposes role="progressbar" with aria-valuenow/valuemin/valuemax/valuetext for free.',
+    "value is clamped to 0–max, so the value announced is always the one the bar draws.",
   ],
   api: [
     {
@@ -43,15 +44,20 @@ export const progressDoc: ComponentDoc = {
       props: [
         {
           name: "value",
-          type: "number",
+          type: "number | null",
           default: "0",
-          description: "Current progress from 0 to max.",
+          description: "Current progress from 0 to max. null marks indeterminate work and leaves out aria-valuenow.",
         },
         {
           name: "max",
           type: "number",
           default: "100",
           description: "Upper bound of value.",
+        },
+        {
+          name: "getValueLabel",
+          type: "(value: number, max: number) => string",
+          description: "Builds the aria-valuetext announced for the value. Defaults to the rounded percentage.",
         },
         {
           name: "className",
@@ -63,7 +69,7 @@ export const progressDoc: ComponentDoc = {
   ],
   accessibility: {
     notes: [
-      "Has role=progressbar with aria-valuenow / valuemin / valuemax set for you.",
+      "Has role=progressbar with aria-valuenow / valuemin / valuemax / valuetext set for you.",
       "Pair with a visible label or percentage — don’t rely on the bar alone.",
       "For unknown-duration work, prefer a Spinner over a fake-moving bar.",
     ],
