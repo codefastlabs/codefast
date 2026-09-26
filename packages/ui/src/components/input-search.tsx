@@ -13,6 +13,12 @@ interface InputSearchProps extends Omit<
   ComponentProps<typeof InputGroupInput>,
   "defaultValue" | "onChange" | "type" | "value"
 > {
+  /**
+   * The accessible name of the button that clears the query.
+   *
+   * @defaultValue `"Clear search"`
+   */
+  clearLabel?: string | undefined;
   defaultValue?: string;
   onChange?: (value?: string) => void;
   value?: string;
@@ -23,6 +29,7 @@ interface InputSearchProps extends Omit<
  */
 function InputSearch({
   className,
+  clearLabel = "Clear search",
   defaultValue,
   disabled,
   onChange,
@@ -53,10 +60,10 @@ function InputSearch({
       />
       {value ? (
         <InputGroupButton
-          aria-label="Clear search"
+          aria-label={clearLabel}
           className="rounded-full"
           data-slot="input-search-clear"
-          disabled={disabled ?? readOnly}
+          disabled={disabled || readOnly}
           size="icon-sm"
           type="button"
           variant="ghost"

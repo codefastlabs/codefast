@@ -155,7 +155,6 @@ function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): J
       {...props}
     >
       <MoreHorizontalIcon />
-      <span className="sr-only">More pages</span>
     </span>
   );
 }

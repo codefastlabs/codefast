@@ -90,12 +90,7 @@ interface InputNumberContextValue {
   /**
    * Accessible label for the decrement button
    */
-  ariaDecrementLabel?: string | undefined;
-
-  /**
-   * Accessible label for the increment button
-   */
-  ariaIncrementLabel?: string | undefined;
+  decrementLabel?: string | undefined;
 
   /**
    * Initial value used when the input is uncontrolled
@@ -111,6 +106,11 @@ interface InputNumberContextValue {
    * Unique identifier for the input
    */
   id?: string | undefined;
+
+  /**
+   * Accessible label for the increment button
+   */
+  incrementLabel?: string | undefined;
 
   /**
    * Maximum allowed value
@@ -152,12 +152,7 @@ interface InputNumberProps extends ComponentProps<typeof InputPrimitive.Root> {
   /**
    * Accessible label for the decrement button
    */
-  ariaDecrementLabel?: string;
-
-  /**
-   * Accessible label for the increment button
-   */
-  ariaIncrementLabel?: string;
+  decrementLabel?: string;
 
   /**
    * Initial value when uncontrolled
@@ -173,6 +168,11 @@ interface InputNumberProps extends ComponentProps<typeof InputPrimitive.Root> {
    * Unique identifier for the input
    */
   id?: string;
+
+  /**
+   * Accessible label for the increment button
+   */
+  incrementLabel?: string;
 
   /**
    * Locale used for number formatting
@@ -211,11 +211,11 @@ interface InputNumberProps extends ComponentProps<typeof InputPrimitive.Root> {
 function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Element {
   const {
     __scopeInputNumber,
-    ariaDecrementLabel,
-    ariaIncrementLabel,
+    decrementLabel,
     defaultValue,
     formatOptions = { minimumFractionDigits: 0, style: "decimal" },
     id,
+    incrementLabel,
     locale,
     max,
     min,
@@ -357,13 +357,13 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
 
   return (
     <InputNumberContextProvider
-      ariaDecrementLabel={ariaDecrementLabel}
-      ariaIncrementLabel={ariaIncrementLabel}
+      decrementLabel={decrementLabel}
       defaultValue={defaultValue}
       disabled={props.disabled}
       formatOptions={stableFormatOptions}
       formatValue={formatValue}
       id={id}
+      incrementLabel={incrementLabel}
       inputRef={inputRef}
       max={max}
       min={min}
@@ -730,7 +730,7 @@ function NumberStepperButton({
   ...props
 }: ScopedProps<NumberStepperButtonProps>): JSX.Element {
   // Destructures relevant context values for the button functionality.
-  const { ariaDecrementLabel, ariaIncrementLabel, disabled, id, max, min, onDecrement, onIncrement, value } =
+  const { decrementLabel, disabled, id, incrementLabel, max, min, onDecrement, onIncrement, value } =
     useInputNumberContext(NUMBER_STEPPER_BUTTON_NAME, __scopeInputNumber);
 
   const isDisabled = useMemo(() => {
@@ -831,7 +831,7 @@ function NumberStepperButton({
   return (
     <button
       aria-controls={id}
-      aria-label={operation === "increment" ? ariaIncrementLabel : ariaDecrementLabel}
+      aria-label={operation === "increment" ? incrementLabel : decrementLabel}
       disabled={isDisabled}
       type="button"
       onContextMenu={handleContextMenu}

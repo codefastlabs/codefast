@@ -7,7 +7,7 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { Button } from "#components/button";
 import { Input } from "#components/input";
 import { Separator } from "#components/separator";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "#components/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "#components/sheet";
 import { Skeleton } from "#components/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "#components/tooltip";
 import { useMediaQuery } from "#hooks/use-media-query";
@@ -173,6 +173,12 @@ const SIDEBAR_NAME = "Sidebar";
  */
 interface SidebarProps extends ComponentProps<"div"> {
   collapsible?: "icon" | "none" | "offcanvas";
+  /**
+   * The accessible name of the sheet the sidebar opens as on narrow screens.
+   *
+   * @defaultValue `"Sidebar"`
+   */
+  mobileTitle?: string | undefined;
   side?: "left" | "right";
   variant?: "floating" | "inset" | "sidebar";
 }
@@ -184,6 +190,7 @@ function Sidebar({
   children,
   className,
   collapsible = "offcanvas",
+  mobileTitle = "Sidebar",
   side = "left",
   variant = "sidebar",
   ...props
@@ -206,6 +213,7 @@ function Sidebar({
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetContent
+          aria-describedby={undefined}
           className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
           data-mobile="true"
           data-sidebar="sidebar"
@@ -218,8 +226,7 @@ function Sidebar({
           }
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+            <SheetTitle>{mobileTitle}</SheetTitle>
           </SheetHeader>
           <div className="flex h-full w-full flex-col">{children}</div>
         </SheetContent>

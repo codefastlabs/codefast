@@ -86,6 +86,18 @@ export const inputNumberDoc: ComponentDoc = {
           type: "Intl.NumberFormatOptions",
           description: 'Format the display, e.g. { style: "currency", currency: "USD" }.',
         },
+        {
+          name: "incrementLabel",
+          type: "string",
+          default: '"Increment"',
+          description: "The accessible name of the increment button.",
+        },
+        {
+          name: "decrementLabel",
+          type: "string",
+          default: '"Decrement"',
+          description: "The accessible name of the decrement button.",
+        },
       ],
     },
     {

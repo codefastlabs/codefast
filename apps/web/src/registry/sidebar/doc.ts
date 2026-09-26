@@ -184,6 +184,36 @@ export const sidebarDoc: ComponentDoc = {
       ],
     },
     {
+      name: "Sidebar",
+      description: "The panel: docked from the sidebar breakpoint up, a sheet below it.",
+      props: [
+        {
+          name: "side",
+          type: '"left" | "right"',
+          default: '"left"',
+          description: "Which edge the sidebar sits on.",
+        },
+        {
+          name: "variant",
+          type: '"sidebar" | "floating" | "inset"',
+          default: '"sidebar"',
+          description: "How the docked panel is drawn.",
+        },
+        {
+          name: "collapsible",
+          type: '"offcanvas" | "icon" | "none"',
+          default: '"offcanvas"',
+          description: "How the docked panel collapses.",
+        },
+        {
+          name: "mobileTitle",
+          type: "string",
+          default: '"Sidebar"',
+          description: "The accessible name of the sheet it opens as below the breakpoint.",
+        },
+      ],
+    },
+    {
       name: "Sidebar parts",
       props: [
         {

@@ -61,6 +61,12 @@ export const inputSearchDoc: ComponentDoc = {
           type: "string",
           description: "Hint text shown when empty.",
         },
+        {
+          name: "clearLabel",
+          type: "string",
+          default: '"Clear search"',
+          description: "The accessible name of the clear (×) button.",
+        },
       ],
     },
   ],
@@ -73,7 +79,7 @@ export const inputSearchDoc: ComponentDoc = {
       },
     ],
     notes: [
-      "Renders type=search with an accessible clear button.",
+      "Renders type=search with an accessible clear button, named by clearLabel.",
       "Give it a label (visible or aria-label) describing what is searched.",
       "Debounce expensive queries; don’t fetch on every keystroke.",
     ],

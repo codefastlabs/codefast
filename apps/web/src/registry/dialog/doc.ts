@@ -66,6 +66,7 @@ export const dialogDoc: ComponentDoc = {
     "DialogBody is a codefast addition over upstream Radix — long content scrolls on its own while DialogHeader/DialogFooter stay pinned, instead of the whole panel scrolling.",
     'DialogFooter\'s showCloseButton renders a ready-made "Close" button — no need to wire DialogClose asChild yourself.',
     "DialogContent's showCloseButton (default true) toggles the built-in corner × button.",
+    "Both close buttons take their text from closeLabel, so a dialog in another language names them in that language.",
     "modal={false} lets content outside the dialog stay interactive instead of becoming inert.",
   ],
   api: [
@@ -105,6 +106,36 @@ export const dialogDoc: ComponentDoc = {
           name: "onEscapeKeyDown",
           type: "(event) => void",
           description: "Intercept the Escape-to-close behaviour.",
+        },
+        {
+          name: "showCloseButton",
+          type: "boolean",
+          default: "true",
+          description: "Renders the corner × button.",
+        },
+        {
+          name: "closeLabel",
+          type: "string",
+          default: '"Close"',
+          description: "The accessible name of the corner × button.",
+        },
+      ],
+    },
+    {
+      name: "DialogFooter",
+      description: "The action row, pinned below DialogBody.",
+      props: [
+        {
+          name: "showCloseButton",
+          type: "boolean",
+          default: "false",
+          description: "Adds a Close button that dismisses the dialog.",
+        },
+        {
+          name: "closeLabel",
+          type: "string",
+          default: '"Close"',
+          description: "The text of that Close button.",
         },
       ],
     },
