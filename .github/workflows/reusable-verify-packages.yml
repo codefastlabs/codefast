@@ -22,10 +22,13 @@ jobs:
     name: Workspace Package Verification
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      # Traded for a short-lived Turborepo Remote Cache token.
+      id-token: write
     env:
       NODE_ENV: production
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7

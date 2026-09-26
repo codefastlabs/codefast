@@ -30,7 +30,8 @@ inputs:
     required: false
 
   enable-remote-cache:
-    description: "Whether to enable Turborepo remote caching"
+    description: "Whether to connect Turborepo to the Vercel Remote Cache over OIDC; the job needs `id-token: write`
+      and a `TURBO_TEAM` env"
     default: "true"
     required: false
 
@@ -81,11 +82,11 @@ runs:
       if: ${{ inputs.install-dependencies == 'true' }}
       run: pnpm install ${{ inputs.install-options }}
 
-    - name: "Log Turborepo remote cache context"
-      id: turbo-remote-cache
-      shell: bash
-      if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TOKEN != '' &&
-        env.TURBO_TEAM != '' }}
-      run: |
-        echo "Turborepo remote cache credentials are present for team: $TURBO_TEAM"
-        npx turbo --version
+    # Trades the job's GitHub OIDC token for a short-lived Remote Cache token. The cache speeds CI up but must never
+    # fail it, so a run that cannot get an OIDC token, such as a fork's pull request, keeps the local cache only.
+    - name: "Connect Turborepo Remote Cache"
+      if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TEAM != '' }}
+      continue-on-error: true
+      uses: vercel/setup-turborepo-remote-cache-action@v1.1.0
+      with:
+        team: ${{ env.TURBO_TEAM }}
