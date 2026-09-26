@@ -1,6 +1,6 @@
 import { Badge } from "@codefast/ui/badge";
 import { cn } from "@codefast/ui/lib/utils";
-import { CheckIcon, MinusIcon, ShieldQuestionMarkIcon } from "lucide-react";
+import { CheckIcon, MinusIcon, ShieldCheckIcon } from "lucide-react";
 
 import type { CandidateView } from "#features/inspector/server/explain";
 
@@ -27,8 +27,8 @@ export function CandidateRow({ candidate }: CandidateRowProps) {
       <span aria-hidden className={cn("shrink-0", candidate.won ? "text-primary" : "text-muted-foreground")}>
         {candidate.won ? (
           <CheckIcon className="size-4" />
-        ) : verdict.kind === "guarded" ? (
-          <ShieldQuestionMarkIcon className="size-4" />
+        ) : verdict.kind === "eligible" && verdict.guard !== undefined ? (
+          <ShieldCheckIcon className="size-4" />
         ) : (
           <MinusIcon className="size-4" />
         )}
@@ -49,7 +49,9 @@ export function CandidateRow({ candidate }: CandidateRowProps) {
             {verdict.tagCount} {verdict.tagCount === 1 ? "tag" : "tags"}
           </Badge>
         )}
-        {verdict.kind === "guarded" ? <span className="text-xs">guard: {verdict.guard}</span> : null}
+        {verdict.kind === "eligible" && verdict.guard !== undefined ? (
+          <span className="text-xs">guard passed: {verdict.guard}</span>
+        ) : null}
         {candidate.won ? <Badge>selected</Badge> : null}
       </span>
     </li>

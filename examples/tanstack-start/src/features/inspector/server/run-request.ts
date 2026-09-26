@@ -125,10 +125,11 @@ function introduceCaptiveDependency(request: Container): void {
 /** The logger `Settlement` was handed, or the error that stopped it from being handed one. */
 function observeSettlementAudit(request: Container): NestedObservation {
   try {
-    return { via: "Settlement", observed: request.resolve(settlementToken).audit };
+    return { via: "Settlement", ancestors: [settlementToken], observed: request.resolve(settlementToken).audit };
   } catch (caught) {
     return {
       via: "Settlement",
+      ancestors: [settlementToken],
       observed: undefined,
       error: {
         name: caught instanceof DiError ? caught.constructor.name : "Error",
@@ -167,22 +168,19 @@ async function runRequest(input: RequestInput): Promise<RequestOutcome> {
     introduceCaptiveDependency(request);
   }
 
-  const candidatesFor = (tokenName: string): Array<CatalogEntry> =>
-    root.entries.filter((entry) => entry.tokenName === tokenName);
+  const { entries } = root;
   const decisions: Array<Decision> = [
-    explainSlot(request, storageToken, "Storage", storageRequest(context), candidatesFor("Storage")),
-    explainSlot(request, paymentToken, "PaymentGateway", paymentRequest(context), candidatesFor("PaymentGateway")),
-    explainSlot(request, notifierToken, "Notifier", { name: "transactional", tags: [] }, candidatesFor("Notifier")),
-    explainSlot(request, auditLoggerToken, "AuditLogger", { tags: [] }, candidatesFor("AuditLogger")),
+    explainSlot(request, storageToken, "Storage", storageRequest(context), entries),
+    explainSlot(request, paymentToken, "PaymentGateway", paymentRequest(context), entries),
+    explainSlot(request, notifierToken, "Notifier", { name: "transactional", tags: [] }, entries),
+    explainSlot(request, auditLoggerToken, "AuditLogger", { tags: [] }, entries),
   ];
 
-  // Resolving Settlement fills the logger slot from inside it, which is the only way the guard sees a
-  // parent frame at all. Observing the result is how the nested decision learns which one won.
+  // Resolving Settlement fills the logger slot from inside it, where the guard reads a parent frame;
+  // `explain()` is handed the same frame through `ancestors`, and the observed result checks it.
   const settlementAudit = observeSettlementAudit(request);
 
-  decisions.push(
-    explainSlot(request, auditLoggerToken, "AuditLogger", { tags: [] }, candidatesFor("AuditLogger"), settlementAudit),
-  );
+  decisions.push(explainSlot(request, auditLoggerToken, "AuditLogger", { tags: [] }, entries, settlementAudit));
 
   const risk = request.resolveOptional(riskCheckToken);
   const scope: ScopeProof = {

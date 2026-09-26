@@ -1,5 +1,14 @@
-/** Why the container picked the binding it picked, checked against what the real resolve returned. */
-import type { BindingIdentifier, Container, Token } from "@codefast/di";
+/** Why the container picked the binding it picked, in the container's own words, checked against the real resolve. */
+import type {
+  BindingIdentifier,
+  BindingSnapshot,
+  CandidateVerdict,
+  Container,
+  ExplanationOutcome,
+  ResolveOptions,
+  SelectionRule,
+  Token,
+} from "@codefast/di";
 import { DiError } from "@codefast/di";
 
 import type { CatalogEntry } from "#features/inspector/server/catalog";
@@ -17,9 +26,8 @@ export interface SlotRequest {
   readonly tags: SlotTags;
 }
 
-type CandidateVerdict =
-  | { readonly kind: "matched"; readonly tagCount: number }
-  | { readonly kind: "guarded"; readonly tagCount: number; readonly guard: string }
+type CandidateVerdictView =
+  | { readonly kind: "eligible"; readonly tagCount: number; readonly guard?: string }
   | { readonly kind: "rejected"; readonly because: string };
 
 export interface CandidateView {
@@ -27,12 +35,9 @@ export interface CandidateView {
   readonly id: BindingIdentifier;
   readonly label: string;
   readonly slotLabel: string;
-  readonly verdict: CandidateVerdict;
+  readonly verdict: CandidateVerdictView;
   readonly won: boolean;
 }
-
-/** Which rule settled a slot, in the order the engine applies them. */
-type DecidingRule = "sole candidate" | "predicate" | "more tags" | "ambiguous" | "no candidate";
 
 export interface Decision {
   readonly token: string;
@@ -41,17 +46,30 @@ export interface Decision {
   readonly request: RequestView;
   readonly candidates: ReadonlyArray<CandidateView>;
   readonly winner: string | undefined;
-  readonly rule: DecidingRule;
+  /** The rule the container applied, or `undefined` when no candidate was eligible anywhere in the chain. */
+  readonly rule: SelectionRule | undefined;
+  readonly outcome: ExplanationOutcome;
   /** What the container did with this request, when it refused to answer at all. */
   readonly error?: { readonly name: string; readonly message: string };
   /**
-   * Whether the derived explanation matched the real resolve. `not predicted` is the honest answer
-   * when a `when()` guard is in play: this model cannot evaluate a predicate, so it does not guess.
+   * Whether `explain()` named the binding the real resolve returned; `unreached` when the resolve this slot is nested
+   * in failed before it asked for the slot at all.
    */
-  readonly check: "agrees" | "disagrees" | "not predicted";
+  readonly check: "agrees" | "disagrees" | "unreached";
 }
 
-const slotLabel = (slot: { name?: string; tags: SlotTags }): string => {
+/**
+ * A slot resolved as somebody else's dependency: the parent has already run, so the value is observed from its
+ * result, and `ancestors` hands `explain()` the same parent frame the resolve saw.
+ */
+export interface NestedObservation {
+  readonly via: string;
+  readonly ancestors: ReadonlyArray<Token<unknown>>;
+  readonly observed: unknown;
+  readonly error?: { readonly name: string; readonly message: string };
+}
+
+const slotLabel = (slot: BindingSnapshot["slot"]): string => {
   const parts = [
     ...(slot.name === undefined ? [] : [`name:${slot.name}`]),
     ...slot.tags.map((criterion) => `${criterion.key.name}:${String(criterion.value)}`),
@@ -60,96 +78,43 @@ const slotLabel = (slot: { name?: string; tags: SlotTags }): string => {
   return parts.length === 0 ? "default slot" : `{ ${parts.join(", ")} }`;
 };
 
-/** A slot matches when every tag it declares is named by the request. */
-function verdictFor(entry: CatalogEntry, request: SlotRequest): CandidateVerdict {
-  const { name, tags } = entry.slot;
-
-  if (name !== undefined && name !== request.name) {
-    return { kind: "rejected", because: `wants name:${name}` };
-  }
-  if (name === undefined && request.name !== undefined) {
-    return { kind: "rejected", because: "has no name slot" };
-  }
-  if (tags.length === 0 && request.tags.length > 0) {
-    return { kind: "rejected", because: "untagged, and the request carries tags" };
+function optionsOf(request: SlotRequest): ResolveOptions | undefined {
+  if (request.name === undefined && request.tags.length === 0) {
+    return undefined;
   }
 
-  for (const criterion of tags) {
-    if (request.tags.includes(criterion)) {
-      continue;
-    }
-    // Criteria are interned, so a miss is either the key absent or its value different — the
-    // distinction still worth showing, read off the key rather than compared pair by pair.
-    const sameKey = request.tags.find((other) => other.key === criterion.key);
-
-    return sameKey === undefined
-      ? { kind: "rejected", because: `request never names ${criterion.key.name}` }
-      : { kind: "rejected", because: `wants ${criterion.key.name}:${String(criterion.value)}` };
-  }
-
-  return entry.guard === undefined
-    ? { kind: "matched", tagCount: tags.length }
-    : { kind: "guarded", tagCount: tags.length, guard: entry.guard };
+  return request.name === undefined ? { tags: request.tags } : { name: request.name, tags: request.tags };
 }
 
-/** The entry the rules predict, plus which rule got there — computed without looking at the answer. */
-function predict(
-  matched: ReadonlyArray<CatalogEntry>,
-  verdicts: Map<CatalogEntry, CandidateVerdict>,
-): {
-  entry: CatalogEntry | undefined;
-  rule: DecidingRule;
-  predictable: boolean;
-} {
-  if (matched.length === 0) {
-    return { entry: undefined, rule: "no candidate", predictable: true };
+function errorOf(caught: unknown): { readonly name: string; readonly message: string } {
+  return {
+    name: caught instanceof DiError ? caught.constructor.name : "Error",
+    message: caught instanceof Error ? caught.message : String(caught),
+  };
+}
+
+function verdictView(
+  verdict: CandidateVerdict,
+  snapshot: BindingSnapshot,
+  entry: CatalogEntry | undefined,
+): CandidateVerdictView {
+  switch (verdict) {
+    case "eligible":
+      return entry?.guard === undefined
+        ? { kind: "eligible", tagCount: snapshot.slot.tags.length }
+        : { kind: "eligible", tagCount: snapshot.slot.tags.length, guard: entry.guard };
+    case "slot-mismatch":
+      return { kind: "rejected", because: "its slot does not match the request" };
+    case "predicate-refused":
+      return { kind: "rejected", because: `its guard refused: ${entry?.guard ?? "when()"}` };
+    case "collection-member":
+      return { kind: "rejected", because: "a collection member, which only resolveAll takes" };
   }
-  if (matched.length === 1) {
-    return { entry: matched[0], rule: "sole candidate", predictable: true };
-  }
-
-  // A guard can refuse as easily as it can accept, and evaluating one needs the live resolution
-  // context this model does not have — so the rule is named and the winner is left to the engine.
-  if (matched.some((entry) => entry.guard !== undefined)) {
-    return { entry: undefined, rule: "predicate", predictable: false };
-  }
-
-  let best: CatalogEntry | undefined;
-  let bestCount = -1;
-  let tied = false;
-
-  for (const entry of matched) {
-    const verdict = verdicts.get(entry);
-    const count = verdict !== undefined && verdict.kind !== "rejected" ? verdict.tagCount : 0;
-
-    if (count > bestCount) {
-      best = entry;
-      bestCount = count;
-      tied = false;
-    } else if (count === bestCount) {
-      tied = true;
-    }
-  }
-
-  return tied
-    ? { entry: undefined, rule: "ambiguous", predictable: true }
-    : { entry: best, rule: "more tags", predictable: true };
 }
 
 /**
- * A slot resolved as somebody else's dependency: the parent has already run, so the value is observed
- * from its result rather than resolved again — resolving again would lose the parent frame the guard
- * reads.
- */
-export interface NestedObservation {
-  readonly via: string;
-  readonly observed: unknown;
-  readonly error?: { readonly name: string; readonly message: string };
-}
-
-/**
- * Runs one request for real and explains the slot it landed on, given every descriptor registered
- * under that token. Pass an observation to explain a slot that was filled inside another resolve.
+ * Explains one request with `explain()` and checks the answer against a real resolve. Pass an observation to explain
+ * a slot filled inside another resolve.
  */
 export function explainSlot(
   container: Container,
@@ -159,64 +124,56 @@ export function explainSlot(
   entries: ReadonlyArray<CatalogEntry>,
   nested?: NestedObservation,
 ): Decision {
-  const verdicts = new Map<CatalogEntry, CandidateVerdict>();
-
-  for (const entry of entries) {
-    verdicts.set(entry, verdictFor(entry, request));
-  }
-
-  const matched = entries.filter((entry) => verdicts.get(entry)?.kind !== "rejected");
-  const { entry: predicted, rule, predictable } = predict(matched, verdicts);
+  const options = optionsOf(request);
+  const explanation = container.explain(
+    slotToken,
+    nested === undefined ? options : { ...options, ancestors: nested.ancestors },
+  );
 
   let resolvedEntry: CatalogEntry | undefined;
   let error: Decision["error"];
 
-  if (nested !== undefined) {
-    resolvedEntry = entries.find((entry) => entry.value === nested.observed);
-    error = nested.error;
-  } else {
+  if (nested === undefined) {
     try {
-      const options = request.name === undefined ? { tags: request.tags } : { name: request.name, tags: request.tags };
-      const resolved = container.resolve(
-        slotToken,
-        request.tags.length === 0 && request.name === undefined ? undefined : options,
-      );
+      const resolved = container.resolve(slotToken, options);
 
       resolvedEntry = entries.find((entry) => entry.value === resolved);
     } catch (caught) {
-      error = {
-        name: caught instanceof DiError ? caught.constructor.name : "Error",
-        message: caught instanceof Error ? caught.message : String(caught),
-      };
+      error = errorOf(caught);
     }
+  } else {
+    resolvedEntry = entries.find((entry) => entry.value === nested.observed);
+    error = nested.error;
   }
 
-  const winner = resolvedEntry?.label;
-  const check: Decision["check"] = !predictable
-    ? "not predicted"
-    : (error === undefined ? predicted?.id === resolvedEntry?.id : predicted === undefined)
-      ? "agrees"
-      : "disagrees";
-
-  const requestView: RequestView = {
-    ...(request.name === undefined ? {} : { name: request.name }),
-    tags: request.tags.map((criterion) => [criterion.key.name, String(criterion.value)] as const),
-  };
+  const entryOf = (id: BindingIdentifier): CatalogEntry | undefined => entries.find((entry) => entry.id === id);
+  const selectedId = explanation.selected?.id;
+  const deciding = explanation.steps.findLast((step) => step.rule !== undefined);
 
   return {
     token: tokenName,
     ...(nested === undefined ? {} : { via: nested.via }),
-    request: requestView,
-    candidates: entries.map((entry) => ({
-      id: entry.id,
-      label: entry.label,
-      slotLabel: slotLabel(entry.slot),
-      verdict: verdicts.get(entry) ?? { kind: "rejected", because: "unknown" },
-      won: resolvedEntry !== undefined && entry.id === resolvedEntry.id,
-    })),
-    winner,
-    rule,
+    request: {
+      ...(request.name === undefined ? {} : { name: request.name }),
+      tags: request.tags.map((criterion) => [criterion.key.name, String(criterion.value)] as const),
+    },
+    candidates: explanation.steps.flatMap((step) =>
+      step.candidates.map(({ binding, verdict }) => {
+        const entry = entryOf(binding.id);
+
+        return {
+          id: binding.id,
+          label: entry?.label ?? binding.tokenName,
+          slotLabel: slotLabel(binding.slot),
+          verdict: verdictView(verdict, binding, entry),
+          won: binding.id === selectedId,
+        };
+      }),
+    ),
+    winner: selectedId === undefined ? undefined : entryOf(selectedId)?.label,
+    rule: deciding?.rule,
+    outcome: explanation.outcome,
     ...(error === undefined ? {} : { error }),
-    check,
+    check: nested?.error !== undefined ? "unreached" : selectedId === resolvedEntry?.id ? "agrees" : "disagrees",
   };
 }
