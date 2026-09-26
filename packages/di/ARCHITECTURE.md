@@ -243,6 +243,14 @@ because it is rare and either criterion can lead.
 > moved on. `tests/unit/core/registry.test.ts` pins displacement through each slot shape and across those in-place
 > transitions.
 
+The registry also remembers which kinds it has ever held, as one bitmask that is set on `add()` and never cleared. Only
+the negative answers have to be exact: a registry that never held a constant skips its teardown sweep, and one that
+never held an alias answers `defaultSlotAlias()` without probing. That probe is what a request carrying criteria pays
+when it misses every slot of a token, because a default-slot alias forwards those criteria to its target
+([`toAlias` — hint forwarding](SPEC.md#toalias--hint-forwarding)); resolve, `hasOwn()` and `explain()` all ask through
+the one method, so the rule and its shortcut live in one place. The two flags share one field because the registry is
+allocated by every container, and a field there is paid on every `createChild()`.
+
 ### `scope` is a total field
 
 Every binding kind declares a `scope`, including `AliasBinding`, which declares `scope: "transient"`. An alias defers

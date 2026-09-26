@@ -280,9 +280,9 @@ export class DependencyResolver implements ResolverCallbacks {
     resolutionStack: Array<ResolutionFrame>,
     singleCriterion: BindingTag | undefined,
   ): DefaultLookupEntry<DependencyResolver> | undefined {
-    const defaultSlot = this.#registry.getDefaultSlotBinding(token);
-    if (defaultSlot !== undefined && defaultSlot.kind === "alias") {
-      return { binding: defaultSlot, owner: this };
+    const defaultSlotAlias = this.#registry.defaultSlotAlias(token);
+    if (defaultSlotAlias !== undefined) {
+      return { binding: defaultSlotAlias, owner: this };
     }
     return this.#parent === undefined
       ? undefined
