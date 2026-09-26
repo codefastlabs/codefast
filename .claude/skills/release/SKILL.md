@@ -61,7 +61,8 @@ pnpm exec changeset status --output=/tmp/plan.json
 
 Prefer that over the mutating route. If you do need the real thing: temporarily set `changelog: false` in
 `.changeset/config.json`, run `pnpm exec changeset version`, read the numbers, then `git checkout -- .`
-(changelog-github needs a token by default, so `changeset version` bails out — that is not a version-logic error).
+(`.changeset/changelog.js` looks up each changeset's pull request on GitHub, so without `GITHUB_TOKEN`
+`changeset version` bails out — that is not a version-logic error).
 
 ## Stable release
 
