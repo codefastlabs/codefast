@@ -300,10 +300,17 @@ export class BindingChain<Value, Names extends string = string>
     this.#versionAfterLastWrite = this.#registration.registry.version;
   }
 
-  /** Bumps the registry for an index-neutral mutation (scope, hook) and records this chain's write. */
+  /**
+   * Bumps the registry for an index-neutral mutation (scope, hook), recording this chain's write only
+   * when nothing else wrote since its last one, so a snapshot another write invalidated stays invalid.
+   */
   #touchAndRecordWrite(): void {
-    this.#registration.registry.touch();
-    this.#recordWrite();
+    const registry = this.#registration.registry;
+    const isCurrent = registry.version === this.#versionAfterLastWrite;
+    registry.touch();
+    if (isCurrent) {
+      this.#versionAfterLastWrite = registry.version;
+    }
   }
 
   // Slot and predicate are what the registry indexes on, so a re-slot takes the binding out of the
