@@ -93,11 +93,11 @@ qualifier runs beside the hoisted-versus-inline and injected-slot lanes, and `re
 property-injection rows beside the engine lanes — compiled plans and their escapes, the depth thresholds.
 
 Every scenario also declares a **tier**. A `contract` row is specified against the public API in
-[`SPEC.md`](../../packages/di/SPEC.md): it names a shape a caller can write, so it survives a rewrite of the engine and
-is what the libraries are compared on. An `engine` row names a lane of the current resolver — a compiled plan and its
-escapes, the tag-key mask, the hoisted-versus-inline options object — so it is instrumentation for this engine, owed by
-no other library, and deleted with the engine it names. `BENCH_TIER=contract pnpm bench` runs the comparison without the
-instrumentation, as a narrowed run that leaves `latest.json` alone.
+[`spec/`](../../packages/di/spec/README.md): it names a shape a caller can write, so it survives a rewrite of the engine
+and is what the libraries are compared on. An `engine` row names a lane of the current resolver — a compiled plan and
+its escapes, the tag-key mask, the hoisted-versus-inline options object — so it is instrumentation for this engine, owed
+by no other library, and deleted with the engine it names. `BENCH_TIER=contract pnpm bench` runs the comparison without
+the instrumentation, as a narrowed run that leaves `latest.json` alone.
 
 Every scenario declares the **features** it requires, and every library in `src/harness/config.ts` declares the features
 its public API offers, both in the vocabulary of `src/fixtures/features.ts` — `transient`, `optional`, `resolve-all`,

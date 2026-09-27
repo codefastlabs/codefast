@@ -251,7 +251,7 @@ extending it, so setup failures can be caught separately from resolution failure
 ## Documentation
 
 - [Rendered docs on codefastlabs.com](https://codefastlabs.com/docs/di-testing)
-- [`@codefast/di`](../di/README.md) — the container this package builds on, including its `SPEC.md`.
+- [`@codefast/di`](../di/README.md) — the container this package builds on, including its specification under `spec/`.
 - [`CHANGELOG.md`](./CHANGELOG.md) — release history.
 
 ## Contributing

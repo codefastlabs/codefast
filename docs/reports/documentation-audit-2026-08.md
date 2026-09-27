@@ -48,7 +48,7 @@ only joined by a newer audit.
 | Package                                                                   | File                                                                            | Type                                                   |
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | **di**                                                                    | [README.md](../../packages/di/README.md)                                        | Guide (usage)                                          |
-|                                                                           | [SPEC.md](../../packages/di/SPEC.md)                                            | Spec — external behavioural contract (source of truth) |
+|                                                                           | [SPEC.md](../../packages/di/spec/README.md)                                     | Spec — external behavioural contract (source of truth) |
 |                                                                           | [ARCHITECTURE.md](../../packages/di/ARCHITECTURE.md)                            | Design doc — internal shape & invariants               |
 |                                                                           | LEARNING.md                                                                     | Guide (educational)                                    |
 |                                                                           | [CONTRIBUTING.md](../../packages/di/CONTRIBUTING.md)                            | Runbook (contributor workflow)                         |

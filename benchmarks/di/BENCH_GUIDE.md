@@ -43,7 +43,7 @@ A change earns a row when:
 - **A failure path starts being paid per request.** The `failure` group is where those go.
 
 **Every row declares its tier and what it requires.** A `contract` row is written against the public API and only the
-public API — `SPEC.md`, not `ARCHITECTURE.md` — because a row that names an engine lane stops meaning anything the day
+public API — `spec/`, not `ARCHITECTURE.md` — because a row that names an engine lane stops meaning anything the day
 that lane is rewritten, and a rewrite is exactly when the suite is needed most. An `engine` row is allowed to name the
 lane, and in exchange it is instrumentation: excluded from every cross-library figure, owed by no other library, and
 deleted with the engine. A row's `requires` lists the public-API features it cannot be written without, in the
