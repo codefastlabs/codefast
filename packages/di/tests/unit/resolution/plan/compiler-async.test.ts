@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { CircularDependencyError } from "#errors/errors";
+import { CircularDependencyError } from "#errors";
 import type { DiagnosableContainer } from "#introspection/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
 

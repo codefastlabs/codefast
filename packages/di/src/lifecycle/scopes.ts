@@ -2,7 +2,7 @@ import type { Binding } from "#core/binding";
 import { NO_INSTANCE } from "#core/binding";
 import { tokenName } from "#core/token";
 import type { BindingIdentifier } from "#core/types";
-import { MissingScopeContextError } from "#errors/errors";
+import { MissingScopeContextError } from "#errors";
 
 /**
  * One container's instance caches — singletons, in-flight async creations, and the scoped cache.

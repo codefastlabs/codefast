@@ -10,7 +10,7 @@ import { Container } from "#container/container";
 import { token } from "#core/token";
 import type { Token } from "#core/token";
 import type { BindingIdentifier, Constructor } from "#core/types";
-import { RebindUnboundTokenError } from "#errors/errors";
+import { RebindUnboundTokenError } from "#errors";
 
 /** A class key, so the lane a constructor takes is covered beside the token lane. */
 class KeyedService {}

@@ -7,8 +7,8 @@ import { tokenName } from "#core/token";
 import type { BindingKind, BindingScope, Constructor } from "#core/types";
 import type { DependencySlot } from "#injection/dependency-slot";
 import { bindingSlotToResolveOptions } from "#injection/dependency-slot";
-import type { MetadataReader } from "#metadata/metadata-types";
-import { matchesSlot } from "#resolution/select/binding-select";
+import type { MetadataReader } from "#metadata/types";
+import { matchesSlot } from "#resolution/select/candidates";
 
 // ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 

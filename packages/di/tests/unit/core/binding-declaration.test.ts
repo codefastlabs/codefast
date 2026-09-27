@@ -6,7 +6,7 @@ import type { BindingDeclaration } from "#core/binding-declaration";
 import { Module } from "#core/module";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
-import { InvalidBindingDeclarationError } from "#errors/errors";
+import { InvalidBindingDeclarationError } from "#errors";
 
 const Port = token<number, "admin">("bd-unit:Port");
 const Region = tag<"eu" | "us">("bd-unit:region");

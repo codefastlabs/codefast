@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { MissingMetadataError } from "#errors/errors";
+import { MissingMetadataError } from "#errors";
 
 const depToken = token<string>("ic:dep");
 

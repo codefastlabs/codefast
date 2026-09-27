@@ -6,7 +6,7 @@ import { Module } from "#core/module";
 import type { SyncModule } from "#core/module";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
-import { InvalidBindingDeclarationError, ManyBindingSlotError, SelfBindingRequiresClassError } from "#errors/errors";
+import { InvalidBindingDeclarationError, ManyBindingSlotError, SelfBindingRequiresClassError } from "#errors";
 import { optional } from "#injection/descriptor";
 
 interface Logger {

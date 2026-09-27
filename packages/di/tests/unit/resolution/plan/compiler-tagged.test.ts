@@ -13,7 +13,7 @@ import { tag } from "#core/tag";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { NoMatchingBindingError } from "#errors/errors";
+import { NoMatchingBindingError } from "#errors";
 
 const WARM_ITERATIONS = 5;
 

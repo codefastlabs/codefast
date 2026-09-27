@@ -2,7 +2,7 @@
 import type { BindingTag } from "@codefast/di";
 // The subpath, not the barrel: this module is client-reachable, so only the tag module should
 // follow it into the console's chunk.
-import { tag } from "@codefast/di/core/tag";
+import { tag } from "@codefast/di";
 
 export const REGIONS = ["eu", "us", "apac"] as const;
 export const TIERS = ["free", "pro", "enterprise"] as const;

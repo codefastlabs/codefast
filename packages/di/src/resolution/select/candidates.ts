@@ -2,7 +2,7 @@ import type { Binding, BindingSlot } from "#core/binding";
 import type { BindingTag, TagKeyMask } from "#core/tag";
 import { coversTagKeys, NO_TAG_KEYS, slotName, slotNameCriterionOf } from "#core/tag";
 import type { ConstraintContext, ResolveOptions } from "#core/types";
-import { AmbiguousBindingError } from "#errors/errors";
+import { AmbiguousBindingError } from "#errors";
 
 /**
  * The single candidate a request selects from a list, by slot match then predicate.

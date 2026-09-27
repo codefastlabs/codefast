@@ -14,7 +14,7 @@ import { token } from "#core/token";
 import type { ConstraintContext, ResolutionContext } from "#core/types";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { CircularDependencyError, MissingScopeContextError } from "#errors/errors";
+import { CircularDependencyError, MissingScopeContextError } from "#errors";
 import { injectAll, optional } from "#injection/descriptor";
 
 const WARM_ITERATIONS = 5;

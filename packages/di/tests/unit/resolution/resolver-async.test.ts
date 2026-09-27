@@ -8,8 +8,8 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { AsyncResolutionError, CircularDependencyError } from "#errors/errors";
-import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/plan-codegen";
+import { AsyncResolutionError, CircularDependencyError } from "#errors";
+import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/codegen";
 import { whenParentIs } from "#resolution/select/constraints";
 
 describe("async chains", () => {

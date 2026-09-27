@@ -11,12 +11,7 @@ import { tag } from "#core/tag";
 import { token } from "#core/token";
 import type { Token } from "#core/token";
 import type { BindingIdentifier, ResolveOptions } from "#core/types";
-import {
-  AmbiguousBindingError,
-  CircularDependencyError,
-  NoMatchingBindingError,
-  TokenNotBoundError,
-} from "#errors/errors";
+import { AmbiguousBindingError, CircularDependencyError, NoMatchingBindingError, TokenNotBoundError } from "#errors";
 import type { ExplanationOutcome } from "#introspection/explanation";
 
 const REGION = tag("explain-parity:region");

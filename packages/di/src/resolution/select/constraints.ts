@@ -5,7 +5,7 @@ import { coversTagKeys, slotName, tagKeyMaskOf } from "#core/tag";
 import type { Token } from "#core/token";
 import { tokenName } from "#core/token";
 import type { BindingConstraint, Constructor } from "#core/types";
-import { EmptyTagCriteriaError } from "#errors/errors";
+import { EmptyTagCriteriaError } from "#errors";
 
 /**
  * Matches when the direct parent frame resolves the given token.

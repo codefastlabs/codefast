@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
-import { ChainAlreadyRegisteredError, NoMatchingBindingError } from "#errors/errors";
+import { ChainAlreadyRegisteredError, NoMatchingBindingError } from "#errors";
 
 describe("slot steps before to*()", () => {
   it.each(["when", "whenNamed", "whenTagged", "whenDefault", "many"])(

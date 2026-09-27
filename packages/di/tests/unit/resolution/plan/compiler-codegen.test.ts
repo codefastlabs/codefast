@@ -10,10 +10,10 @@ import { Container } from "#container/container";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { AsyncResolutionError, CircularDependencyError } from "#errors/errors";
+import { AsyncResolutionError, CircularDependencyError } from "#errors";
 import type { DiagnosableContainer, ResolutionDiagnostics } from "#introspection/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
-import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/plan-codegen";
+import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/codegen";
 
 function diagnose(container: unknown): ResolutionDiagnostics {
   return (container as DiagnosableContainer)[RESOLUTION_DIAGNOSTICS]();

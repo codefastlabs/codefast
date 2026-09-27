@@ -24,7 +24,7 @@ import {
   leaveSyncPath,
   buildResolutionFrame,
   UNOWNED_BRANCH,
-} from "#resolution/path/resolution-path";
+} from "#resolution/path";
 
 // Deeper than the plan compiler inlines, so the interpreted tail and its escape seed are both exercised.
 const DEEP = 40;

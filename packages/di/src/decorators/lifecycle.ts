@@ -1,7 +1,7 @@
-import { decoratorMetadataOf } from "#decorators/decorator-metadata";
-import { StaticMemberDecoratorError, SymbolKeyedLifecycleError } from "#errors/errors";
-import { LIFECYCLE_KEY } from "#metadata/metadata-keys";
-import type { MutableLifecycleMetadata } from "#metadata/metadata-types";
+import { decoratorMetadataOf } from "#decorators/metadata-record";
+import { StaticMemberDecoratorError, SymbolKeyedLifecycleError } from "#errors";
+import { LIFECYCLE_KEY } from "#metadata/keys";
+import type { MutableLifecycleMetadata } from "#metadata/types";
 
 type MethodDecorator = (target: unknown, context: ClassMethodDecoratorContext) => void;
 

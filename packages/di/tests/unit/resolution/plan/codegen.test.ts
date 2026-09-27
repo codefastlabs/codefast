@@ -6,13 +6,13 @@
 import { describe, expect, it } from "vitest";
 
 import type { ConstructorInvocation } from "#core/constructor-type";
-import type { AsyncPlanNode, PlanNode } from "#resolution/plan/plan-codegen";
+import type { AsyncPlanNode, PlanNode } from "#resolution/plan/codegen";
 import {
   generateAsyncPlan,
   generatePlan,
   isPlanCodegenAvailable,
   PLAN_CODEGEN_THRESHOLD,
-} from "#resolution/plan/plan-codegen";
+} from "#resolution/plan/codegen";
 import { registeredBinding } from "#tests/unit/support/registered-binding";
 
 class Leaf {
@@ -80,7 +80,7 @@ describe("generatePlan", () => {
   });
 
   it("reads a singleton's cached instance and escapes only while it has none", () => {
-    const { chain, binding } = registeredBinding("plan-codegen:Cached");
+    const { chain, binding } = registeredBinding("codegen:Cached");
     let escapes = 0;
     const materialized = { materialized: true };
     const plan = generated({
@@ -288,7 +288,7 @@ describe("generateAsyncPlan", () => {
   });
 
   it("reads a singleton's cache inside an awaiting node", async () => {
-    const { chain, binding } = registeredBinding("plan-codegen:Cached");
+    const { chain, binding } = registeredBinding("codegen:Cached");
     let escapes = 0;
     const plan = generatedAsync({
       kind: "construct",

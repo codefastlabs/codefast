@@ -13,7 +13,7 @@ import { Container } from "#container/container";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { CircularDependencyError } from "#errors/errors";
+import { CircularDependencyError } from "#errors";
 import type { DiagnosableContainer, ResolutionDiagnostics } from "#introspection/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
 

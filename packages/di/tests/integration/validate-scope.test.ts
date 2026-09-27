@@ -4,7 +4,7 @@ import { Container } from "#container/container";
 import { Module } from "#core/module";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { AsyncModuleLoadError, CircularDependencyError, ScopeViolationError } from "#errors/errors";
+import { AsyncModuleLoadError, CircularDependencyError, ScopeViolationError } from "#errors";
 import { optional } from "#injection/descriptor";
 
 describe("container.validate() — transitive scope + alias chain", () => {

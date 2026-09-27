@@ -4,12 +4,12 @@
  * @remarks Metadata cannot change once a class is defined, so nothing here needs version stamping.
  */
 
-import { constructWithAmbientResolution, runWithAmbientResolution } from "#ambient/active-container";
-import type { AmbientResolution } from "#ambient/active-container";
+import { constructWithAmbientResolution, runWithAmbientResolution } from "#ambient-container";
+import type { AmbientResolution } from "#ambient-container";
 import type { Container } from "#container/container";
 import type { ConstructorInvocation } from "#core/constructor-type";
 import type { Constructor } from "#core/types";
-import type { ConstructorMetadata, MetadataReader, ParamMetadata } from "#metadata/metadata-types";
+import type { ConstructorMetadata, MetadataReader, ParamMetadata } from "#metadata/types";
 
 /**
  * What one reader has answered about one class so far, each field unknown until first asked.

@@ -1,7 +1,7 @@
 /**
  * The metadata record a decorator writes into, checked once for every decorator the library ships.
  */
-import { MissingDecoratorMetadataError } from "#errors/errors";
+import { MissingDecoratorMetadataError } from "#errors";
 
 /**
  * Returns the metadata record a decorator context carries.

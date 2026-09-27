@@ -8,14 +8,14 @@ import { Container } from "#container/container";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { postConstruct, preDestroy } from "#decorators/lifecycle-decorators";
+import { postConstruct, preDestroy } from "#decorators/lifecycle";
 import {
   CircularDependencyError,
   StaticMemberDecoratorError,
   MissingContainerContextError,
   SymbolKeyedLifecycleError,
-} from "#errors/errors";
-import { defaultMetadataReader } from "#metadata/symbol-metadata-reader";
+} from "#errors";
+import { defaultMetadataReader } from "#metadata/symbol-reader";
 
 const integrationDir = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(integrationDir, "..", "..");

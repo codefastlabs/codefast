@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
-import { NoMatchingBindingError } from "#errors/errors";
+import { NoMatchingBindingError } from "#errors";
 
 const REGION = tag("ahf:region");
 

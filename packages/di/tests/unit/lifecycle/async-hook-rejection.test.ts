@@ -8,8 +8,8 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { postConstruct, preDestroy } from "#decorators/lifecycle-decorators";
-import { AsyncActivationError, AsyncDeactivationError } from "#errors/errors";
+import { postConstruct, preDestroy } from "#decorators/lifecycle";
+import { AsyncActivationError, AsyncDeactivationError } from "#errors";
 
 /** Runs a synchronous operation, returning what it threw and any promise rejection left unhandled. */
 async function runCollectingRejections(run: () => void): Promise<{ thrown: unknown; rejections: Array<unknown> }> {

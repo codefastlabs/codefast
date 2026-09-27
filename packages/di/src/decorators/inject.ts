@@ -1,13 +1,13 @@
-import { getActiveContainer, getAmbientResolution } from "#ambient/active-container";
+import { getActiveContainer, getAmbientResolution } from "#ambient-container";
 /** `@inject` — the accessor-decorator channel, resolving from the ambient container. */
 import type { Token } from "#core/token";
 import type { Constructor } from "#core/types";
-import { decoratorMetadataOf } from "#decorators/decorator-metadata";
-import { MissingContainerContextError, StaticMemberDecoratorError } from "#errors/errors";
+import { decoratorMetadataOf } from "#decorators/metadata-record";
+import { MissingContainerContextError, StaticMemberDecoratorError } from "#errors";
 import { injectionSlotToResolveOptions } from "#injection/dependency-slot";
 import type { InjectionDescriptor, InjectOptions } from "#injection/descriptor";
 import { buildInjectionDescriptor } from "#injection/descriptor";
-import { INJECT_ACCESSOR_KEY } from "#metadata/metadata-keys";
+import { INJECT_ACCESSOR_KEY } from "#metadata/keys";
 
 /**
  * The name of the class being constructed, or `undefined` when there is none to report.

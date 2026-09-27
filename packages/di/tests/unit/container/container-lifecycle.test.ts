@@ -12,7 +12,7 @@ import type { ModuleBuilder } from "#core/module";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import { createAutoRegisterRegistry } from "#decorators/injectable";
-import { AsyncModuleLoadError, DisposedContainerError } from "#errors/errors";
+import { AsyncModuleLoadError, DisposedContainerError } from "#errors";
 
 describe("unbinding", () => {
   it("removes the binding and runs deactivation on the cached singleton", () => {

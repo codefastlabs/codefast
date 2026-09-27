@@ -7,7 +7,7 @@ import { Container } from "#container/container";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { MissingContainerContextError } from "#errors/errors";
+import { MissingContainerContextError } from "#errors";
 import { getActiveContainer, runWithContainer } from "#index";
 
 describe("runWithContainer", () => {

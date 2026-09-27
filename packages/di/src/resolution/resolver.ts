@@ -1,4 +1,4 @@
-import type { AmbientResolution } from "#ambient/active-container";
+import type { AmbientResolution } from "#ambient-container";
 import type { Container } from "#container/container";
 import type { Binding, ConstantBinding, DynamicAsyncBinding, DynamicBinding } from "#core/binding";
 import { bindingSlotToString, NO_INSTANCE } from "#core/binding";
@@ -26,7 +26,7 @@ import {
   MissingScopeContextError,
   NoMatchingBindingError,
   TokenNotBoundError,
-} from "#errors/errors";
+} from "#errors";
 import type { DependencySlot } from "#injection/dependency-slot";
 import {
   loneTagBesideNameOf,
@@ -35,19 +35,19 @@ import {
   singleCriterionOnlyOf,
 } from "#injection/dependency-slot";
 import type { ResolutionDiagnostics } from "#introspection/diagnostics";
-import type { LifecycleManager } from "#lifecycle/lifecycle-manager";
-import type { ScopeManager } from "#lifecycle/scope-manager";
-import { SCOPED_MISS } from "#lifecycle/scope-manager";
-import type { MetadataReader, ParamMetadata } from "#metadata/metadata-types";
+import type { LifecycleManager } from "#lifecycle/hooks";
+import type { ScopeManager } from "#lifecycle/scopes";
+import { SCOPED_MISS } from "#lifecycle/scopes";
+import type { MetadataReader, ParamMetadata } from "#metadata/types";
 import { settleInOrder } from "#resolution/async-fan-out";
 import { ActivationNeedCache } from "#resolution/cache/activation-need";
-import type { CollectionEntry, DefaultLookupEntry } from "#resolution/cache/binding-lookup-cache";
-import { BindingLookupCache } from "#resolution/cache/binding-lookup-cache";
 import type { ClassFacts } from "#resolution/cache/class-introspector";
 import { ClassIntrospector } from "#resolution/cache/class-introspector";
+import type { CollectionEntry, DefaultLookupEntry } from "#resolution/cache/lookup";
+import { BindingLookupCache } from "#resolution/cache/lookup";
 import type { ResolverCallbacks } from "#resolution/context";
 import { AsyncLevelContext, DefaultConstraintContext, DefaultResolutionContext } from "#resolution/context";
-import type { BranchDepth, OwnedBranchStack } from "#resolution/path/resolution-path";
+import type { BranchDepth, OwnedBranchStack } from "#resolution/path";
 import {
   branchDepthOf,
   buildResolutionFrame,
@@ -57,10 +57,10 @@ import {
   leaveSyncPath,
   ROOT_BRANCH,
   UNOWNED_BRANCH,
-} from "#resolution/path/resolution-path";
-import type { InstantiationPlanHost } from "#resolution/plan/instantiation-plan";
-import { InstantiationPlanCompiler, PLAN_RETRY } from "#resolution/plan/instantiation-plan";
-import { matchesSlot, selectAllBindings, selectBinding } from "#resolution/select/binding-select";
+} from "#resolution/path";
+import type { InstantiationPlanHost } from "#resolution/plan/compiler";
+import { InstantiationPlanCompiler, PLAN_RETRY } from "#resolution/plan/compiler";
+import { matchesSlot, selectAllBindings, selectBinding } from "#resolution/select/candidates";
 
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 

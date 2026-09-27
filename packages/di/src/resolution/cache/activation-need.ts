@@ -7,7 +7,7 @@
 import type { Binding } from "#core/binding";
 import { NO_ACTIVATION_STAMP } from "#core/binding";
 import type { BindingRegistry } from "#core/registry";
-import type { LifecycleManager } from "#lifecycle/lifecycle-manager";
+import type { LifecycleManager } from "#lifecycle/hooks";
 import type { ClassIntrospector } from "#resolution/cache/class-introspector";
 
 /**

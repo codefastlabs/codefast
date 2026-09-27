@@ -10,19 +10,19 @@ import type { ConstructorInvocation } from "#core/constructor-type";
 import type { Token } from "#core/token";
 import { tokenName } from "#core/token";
 import type { Constructor, ResolutionFrame, ResolveOptions } from "#core/types";
-import { AsyncResolutionError } from "#errors/errors";
+import { AsyncResolutionError } from "#errors";
 import type { DependencySlot } from "#injection/dependency-slot";
 import { injectionSlotToResolveOptions } from "#injection/dependency-slot";
-import type { ConstructorMetadata } from "#metadata/metadata-types";
+import type { ConstructorMetadata } from "#metadata/types";
 import { settleInOrder } from "#resolution/async-fan-out";
-import { enterSeededPath, leaveSeededPath } from "#resolution/path/resolution-path";
-import type { AsyncPlanNode, PlanNode } from "#resolution/plan/plan-codegen";
+import { enterSeededPath, leaveSeededPath } from "#resolution/path";
+import type { AsyncPlanNode, PlanNode } from "#resolution/plan/codegen";
 import {
   generateAsyncPlan,
   generatePlan,
   isPlanCodegenAvailable,
   PLAN_CODEGEN_THRESHOLD,
-} from "#resolution/plan/plan-codegen";
+} from "#resolution/plan/codegen";
 
 /**
  * Compilation asked to retry later (class lifecycle metadata not discovered yet).

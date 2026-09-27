@@ -137,7 +137,7 @@ function bindOneResolvedNode(
 
 /**
  * Builds the same graph through `toResolved` (explicit dep tokens) — the shape the
- * instantiation-plan compiler serves, mirroring inversify's `toResolvedValue` adapter.
+ * plan compiler serves, mirroring inversify's `toResolvedValue` adapter.
  *
  * @since 0.5.0-canary.9
  */

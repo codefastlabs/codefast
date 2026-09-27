@@ -9,9 +9,9 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import type { Constructor } from "#core/types";
-import { InvalidMetadataError, MissingMetadataError } from "#errors/errors";
-import { MetadataReaderToken } from "#metadata/metadata-reader-token";
-import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#metadata/metadata-types";
+import { InvalidMetadataError, MissingMetadataError } from "#errors";
+import { MetadataReaderToken } from "#metadata/reader-token";
+import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#metadata/types";
 
 const dsnToken = token<string>("metadata-reader.dsn");
 

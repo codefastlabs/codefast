@@ -2,9 +2,9 @@
  * Verification of what a foreign `MetadataReader` claims about a class, done once per reader and class.
  */
 import type { Constructor } from "#core/types";
-import { InvalidMetadataError } from "#errors/errors";
+import { InvalidMetadataError } from "#errors";
 import type { InjectionDescriptor } from "#injection/descriptor";
-import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#metadata/metadata-types";
+import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#metadata/types";
 
 // Verified pairs, not verified classes: two readers may disagree about the same class, and a reader
 // that goes out of scope takes its record with it.

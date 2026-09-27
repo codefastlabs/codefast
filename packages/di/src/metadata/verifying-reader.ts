@@ -4,8 +4,8 @@
  */
 
 import type { Constructor } from "#core/types";
-import type { MetadataReader } from "#metadata/metadata-types";
-import { defaultMetadataReader } from "#metadata/symbol-metadata-reader";
+import { defaultMetadataReader } from "#metadata/symbol-reader";
+import type { MetadataReader } from "#metadata/types";
 import { verifyAccessorMetadata, verifyConstructorMetadata, verifyLifecycleMetadata } from "#metadata/verify";
 
 // Wrapping a wrapper would stack a layer per child container, so each one is remembered.

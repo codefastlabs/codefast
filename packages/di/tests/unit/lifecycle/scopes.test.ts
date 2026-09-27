@@ -9,7 +9,7 @@ import { token } from "#core/token";
 import type { BindingIdentifier } from "#core/types";
 import type { DiagnosableContainer } from "#introspection/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
-import { SCOPED_MISS, ScopeManager } from "#lifecycle/scope-manager";
+import { SCOPED_MISS, ScopeManager } from "#lifecycle/scopes";
 import { registeredBinding } from "#tests/unit/support/registered-binding";
 
 function scopedInstanceCount(container: unknown): number {

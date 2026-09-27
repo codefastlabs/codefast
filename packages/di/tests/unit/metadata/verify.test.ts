@@ -9,8 +9,8 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import type { Constructor } from "#core/types";
-import { InvalidMetadataError } from "#errors/errors";
-import type { ConstructorMetadata, MetadataReader } from "#metadata/metadata-types";
+import { InvalidMetadataError } from "#errors";
+import type { ConstructorMetadata, MetadataReader } from "#metadata/types";
 import { assertConstructorMetadata, verifyConstructorMetadata } from "#metadata/verify";
 
 const dsnToken = token<string>("verify.dsn");

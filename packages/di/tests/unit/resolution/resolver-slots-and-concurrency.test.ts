@@ -14,8 +14,8 @@ import { slotName, tag } from "#core/tag";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { postConstruct } from "#decorators/lifecycle-decorators";
-import { CircularDependencyError } from "#errors/errors";
+import { postConstruct } from "#decorators/lifecycle";
+import { CircularDependencyError } from "#errors";
 import { injectAll, optional } from "#injection/descriptor";
 
 const ENV_TAG = tag("env");

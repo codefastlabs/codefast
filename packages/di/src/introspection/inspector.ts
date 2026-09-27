@@ -12,9 +12,9 @@ import type {
   Constructor,
   ResolveOptions,
 } from "#core/types";
-import type { ScopeManager } from "#lifecycle/scope-manager";
+import type { ScopeManager } from "#lifecycle/scopes";
 import { DefaultConstraintContext } from "#resolution/context";
-import { selectAllBindings } from "#resolution/select/binding-select";
+import { selectAllBindings } from "#resolution/select/candidates";
 
 // ── Public types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

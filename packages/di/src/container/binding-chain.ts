@@ -48,10 +48,10 @@ import {
   ChainNotRegisteredError,
   ManyBindingSlotError,
   SelfBindingRequiresClassError,
-} from "#errors/errors";
+} from "#errors";
 import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#injection/descriptor";
 import { normalizeToDescriptor } from "#injection/descriptor";
-import type { ScopeManager } from "#lifecycle/scope-manager";
+import type { ScopeManager } from "#lifecycle/scopes";
 
 // ── Registration target ──────────────────────────────────────────────────────────────────────────────────────────────
 

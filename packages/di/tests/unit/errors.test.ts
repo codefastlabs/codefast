@@ -12,7 +12,7 @@ import {
   InternalError,
   NoMatchingBindingError,
   SyncDisposalNotSupportedError,
-} from "#errors/errors";
+} from "#errors";
 
 describe("NoMatchingBindingError diagnostics", () => {
   it("survives a bigint tag value in the request options", () => {

@@ -2,8 +2,8 @@ import type { Binding } from "#core/binding";
 /** The `ResolutionContext` a factory is handed, and the callbacks the resolver answers it with. */
 import type { Token } from "#core/token";
 import type { ConstraintContext, Constructor, ResolutionFrame, ResolutionContext, ResolveOptions } from "#core/types";
-import type { BranchDepth, OwnedBranchStack } from "#resolution/path/resolution-path";
-import { bindingsOf, enterSeededPath, leaveSeededPath, UNOWNED_BRANCH } from "#resolution/path/resolution-path";
+import type { BranchDepth, OwnedBranchStack } from "#resolution/path";
+import { bindingsOf, enterSeededPath, leaveSeededPath, UNOWNED_BRANCH } from "#resolution/path";
 
 // ── ResolutionContext implementation ─────────────────────────────────────────────────────────────────────────────────
 

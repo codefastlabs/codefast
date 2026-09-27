@@ -18,8 +18,8 @@ import { token } from "#core/token";
 import type { BindingScope, Constructor, ResolutionContext } from "#core/types";
 import type { InjectableDependency } from "#injection/descriptor";
 import { injectAll, optional } from "#injection/descriptor";
-import type { ConstructorMetadata, MetadataReader, ParamMetadata } from "#metadata/metadata-types";
-import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/plan-codegen";
+import type { ConstructorMetadata, MetadataReader, ParamMetadata } from "#metadata/types";
+import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/codegen";
 import { whenParentIs } from "#resolution/select/constraints";
 
 // ── Spec ─────────────────────────────────────────────────────────────────────────────────────────────────────────────

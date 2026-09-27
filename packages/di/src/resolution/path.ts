@@ -1,7 +1,7 @@
 import type { Binding } from "#core/binding";
 import type { ResolutionFrame } from "#core/types";
 /** Cycle-detection bookkeeping carried on the resolution stack itself. */
-import { CircularDependencyError } from "#errors/errors";
+import { CircularDependencyError } from "#errors";
 
 /** The key under which a resolver-built frame carries its binding, for marking a seeded path. */
 const FRAME_BINDING: unique symbol = Symbol("di:frame-binding");

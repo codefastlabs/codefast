@@ -10,8 +10,8 @@ import type {
   DependencyKey,
   ResolutionContext,
 } from "#core/types";
-import { AsyncActivationError, AsyncDeactivationError, InvalidMetadataError } from "#errors/errors";
-import type { LifecycleMetadata, MetadataReader } from "#metadata/metadata-types";
+import { AsyncActivationError, AsyncDeactivationError, InvalidMetadataError } from "#errors";
+import type { LifecycleMetadata, MetadataReader } from "#metadata/types";
 
 /**
  * One container's registry of container-level activation and deactivation hooks, keyed by token.

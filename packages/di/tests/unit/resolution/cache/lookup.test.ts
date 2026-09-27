@@ -13,8 +13,8 @@ import { Container } from "#container/container";
 import { BindingRegistry } from "#core/registry";
 import { token } from "#core/token";
 import type { ConstraintContext } from "#core/types";
-import { ScopeManager } from "#lifecycle/scope-manager";
-import { BindingLookupCache } from "#resolution/cache/binding-lookup-cache";
+import { ScopeManager } from "#lifecycle/scopes";
+import { BindingLookupCache } from "#resolution/cache/lookup";
 
 const WARM_ITERATIONS = 5;
 

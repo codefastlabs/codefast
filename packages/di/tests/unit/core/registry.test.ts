@@ -13,8 +13,8 @@ import { BindingRegistry } from "#core/registry";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import type { BindingIdentifier } from "#core/types";
-import { NoMatchingBindingError, RebindUnboundTokenError } from "#errors/errors";
-import { ScopeManager } from "#lifecycle/scope-manager";
+import { NoMatchingBindingError, RebindUnboundTokenError } from "#errors";
+import { ScopeManager } from "#lifecycle/scopes";
 
 const ENV_TAG = tag("env");
 

@@ -6,8 +6,8 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
-import { InvalidMetadataError } from "#errors/errors";
-import type { MetadataReader } from "#metadata/metadata-types";
+import { InvalidMetadataError } from "#errors";
+import type { MetadataReader } from "#metadata/types";
 
 class Probe {
   init(): void {}

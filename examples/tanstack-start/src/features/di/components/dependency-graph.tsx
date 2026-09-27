@@ -1,4 +1,4 @@
-import type { ReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
+import type { ReactFlowGraph } from "@codefast/di";
 import { useAppearance } from "@codefast/theme";
 import { useHasHydrated } from "@codefast/ui/hooks/use-has-hydrated";
 import { Background, Controls, MarkerType, Position, ReactFlow, ReactFlowProvider } from "@xyflow/react";
