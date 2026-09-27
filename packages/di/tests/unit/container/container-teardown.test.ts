@@ -304,6 +304,29 @@ describe("a container with a disposed ancestor is itself disposed", () => {
     expect(() => child.resolve(service)).toThrow(DisposedContainerError);
   });
 
+  it("refuses a child that resolved before its parent was disposed", async () => {
+    const shared = token<string>("teardown.confirmed-then-disposed");
+    const parent = Container.create();
+    parent.bind(shared).toConstantValue("v");
+    const child = parent.createChild();
+    expect(child.resolve(shared)).toBe("v");
+    await parent.dispose();
+
+    expect(() => child.resolve(shared)).toThrow(DisposedContainerError);
+  });
+
+  it("keeps a child live when an unrelated container is disposed", async () => {
+    const shared = token<string>("teardown.unrelated-dispose");
+    const parent = Container.create();
+    parent.bind(shared).toConstantValue("v");
+    const child = parent.createChild();
+    expect(child.resolve(shared)).toBe("v");
+    await Container.create().createChild().dispose();
+
+    expect(child.resolve(shared)).toBe("v");
+    expect(child.isDisposed).toBe(false);
+  });
+
   it("refuses the child's own binding once the parent is disposed", async () => {
     const own = token<string>("teardown.child-own");
     const parent = Container.create();
