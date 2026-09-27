@@ -1201,28 +1201,25 @@ class DefaultContainer implements Container {
 
   // ── Internal ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  // Hot guard, one call-free epoch read and one compare for every container, root or child. Every
-  // dispose anywhere — self-dispose included, since `#runDispose` bumps the epoch — moves the epoch,
-  // so an epoch unchanged since we last confirmed the chain live means it is still live. A moved epoch
-  // drops to the cold refresh, which walks self and ancestors and either re-confirms or throws.
-  // Hot guard. A root's whole answer is its own `#disposed`, kept the one field read it always was —
-  // the epoch is never read on the root path. A child adds a call-free epoch compare: an unchanged
-  // epoch means no container anywhere has been disposed since we last confirmed the chain live, so the
-  // ancestors need no walk; a moved epoch drops to the cold refresh that walks them and re-confirms or throws.
+  // Two field reads and no epoch on a live root, so every entry point that inlines this stays in the
+  // inline budget; the epoch compare and both throws live in the out-of-line child path.
   #assertNotDisposed(): void {
-    if (this.#disposed) {
-      throw new DisposedContainerError();
-    }
-    if (this.#parent !== undefined && disposeEpochRef.value !== this.#liveGeneration) {
-      this.#refreshAncestors();
+    if (this.#disposed || this.#parent !== undefined) {
+      this.#assertChainLive();
     }
   }
 
-  #refreshAncestors(): void {
-    if (this.#parent!.#isChainDisposed()) {
+  // An unchanged dispose epoch means no container anywhere closed since this chain was last confirmed live.
+  #assertChainLive(): void {
+    if (this.#disposed) {
       throw new DisposedContainerError();
     }
-    this.#liveGeneration = disposeEpochRef.value;
+    if (disposeEpochRef.value !== this.#liveGeneration) {
+      if (this.#parent!.#isChainDisposed()) {
+        throw new DisposedContainerError();
+      }
+      this.#liveGeneration = disposeEpochRef.value;
+    }
   }
 
   // Whether this container or any ancestor is disposed — the plain walk, taken only on the cold refresh

@@ -57,6 +57,9 @@ const EMPTY_LONE: Map<DependencyKey, Binding> = new Map();
 // Process-wide, so registration order compares across every registry a binding could be restored into.
 let registrationCounter = 0;
 
+const HELD_CONSTANT = 1;
+const HELD_ALIAS = 2;
+
 /**
  * @since 0.11.0
  */
@@ -79,9 +82,9 @@ export class BindingRegistry {
   // Set when the first tagged slot lands and never cleared, like the tagged maps it stands for.
   #taggedIndexBuilt = false;
 
-  // Set on the first constant registered and never cleared. Teardown only needs the negative answer
-  // to be exact, and that is what lets a container holding no constant skip its sweep entirely.
-  #heldConstantBinding = false;
+  // Kinds registered here at least once, never cleared: only the negative answers must be exact, so a
+  // container holding no constant skips its teardown sweep and one holding no alias skips its forwarding probe.
+  #heldKinds = 0;
 
   /** Monotonic version — increments on every mutation. */
   get version(): number {
@@ -97,7 +100,7 @@ export class BindingRegistry {
 
   /** Whether a constant has ever been registered here, and so whether teardown has anything to sweep. */
   get hasHeldConstantBinding(): boolean {
-    return this.#heldConstantBinding;
+    return (this.#heldKinds & HELD_CONSTANT) !== 0;
   }
 
   /** Whether the deferred tagged-slot index has had to be built. */
@@ -136,7 +139,9 @@ export class BindingRegistry {
       binding.registrationOrder = registrationCounter;
     }
     if (binding.kind === "constant") {
-      this.#heldConstantBinding = true;
+      this.#heldKinds |= HELD_CONSTANT;
+    } else if (binding.kind === "alias") {
+      this.#heldKinds |= HELD_ALIAS;
     }
     const key: DependencyKey = binding.token;
     const records = this.#records;
@@ -364,6 +369,20 @@ export class BindingRegistry {
   /** The binding holding a token's default slot — lone or recorded — or `undefined` when none does. */
   getDefaultSlotBinding(token: Token<unknown> | Constructor): Binding | undefined {
     return this.#lone.get(token) ?? this.#records?.get(token)?.defaultOccupant;
+  }
+
+  /**
+   * The token's default-slot alias, which forwards a request's criteria to its target, or `undefined`.
+   *
+   * @remarks A registry that never held an alias answers without probing, so a request missing every slot of a
+   * token pays for forwarding only where forwarding can happen.
+   */
+  defaultSlotAlias(token: Token<unknown> | Constructor): Binding | undefined {
+    if ((this.#heldKinds & HELD_ALIAS) === 0) {
+      return undefined;
+    }
+    const occupant = this.getDefaultSlotBinding(token);
+    return occupant !== undefined && occupant.kind === "alias" ? occupant : undefined;
   }
 
   /** A token's lone default-slot binding — the first read of every synchronous resolve. */

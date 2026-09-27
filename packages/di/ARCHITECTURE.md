@@ -243,6 +243,14 @@ because it is rare and either criterion can lead.
 > moved on. `tests/unit/core/registry.test.ts` pins displacement through each slot shape and across those in-place
 > transitions.
 
+The registry also remembers which kinds it has ever held, as one bitmask that is set on `add()` and never cleared. Only
+the negative answers have to be exact: a registry that never held a constant skips its teardown sweep, and one that
+never held an alias answers `defaultSlotAlias()` without probing. That probe is what a request carrying criteria pays
+when it misses every slot of a token, because a default-slot alias forwards those criteria to its target
+([`toAlias` — hint forwarding](SPEC.md#toalias--hint-forwarding)); resolve, `hasOwn()` and `explain()` all ask through
+the one method, so the rule and its shortcut live in one place. The two flags share one field because the registry is
+allocated by every container, and a field there is paid on every `createChild()`.
+
 ### `scope` is a total field
 
 Every binding kind declares a `scope`, including `AliasBinding`, which declares `scope: "transient"`. An alias defers
@@ -944,6 +952,17 @@ and no ambiguity to report.
 > **Practical note.** Both duplicated shapes were removed on a DRY pass and put back after measuring the regression.
 > That is their honest status: the duplication earns its keep at the arities the suite measures, and if those change the
 > trade is worth revisiting. Re-run the benchmark before assuming either way.
+
+### The disposed guard stays inside the inline budget
+
+Every public entry point calls `#assertNotDisposed()` first, and V8 inlines it into whichever caller inlines the entry
+point, so its bytecode is charged against that caller's cumulative inline budget. The hot part is therefore two field
+reads — `#disposed || #parent !== undefined` — and a live root never leaves it. The child path, the dispose-epoch
+compare and both throws sit in `#assertChainLive()`, out of line. The obvious spellings are all losses: checking
+`#disposed` and then the parent's epoch inline spends enough budget that a root's tagged lookup stops inlining its
+lookup-cache reads, folding both checks into one epoch compare puts the epoch read on every root resolve, and a combined
+condition with a cold helper is no smaller than the two checks it replaced. A child's compare is the price of an O(1)
+check that every ancestor is live.
 
 ### Upserts: eager or computed, by hit rate
 
