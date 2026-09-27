@@ -16,7 +16,6 @@ import type {
   ResolutionFrame,
   ResolveOptions,
 } from "#core/types";
-import type { ResolutionDiagnostics } from "#errors/diagnostics";
 import {
   AsyncActivationError,
   AsyncResolutionError,
@@ -28,13 +27,14 @@ import {
   NoMatchingBindingError,
   TokenNotBoundError,
 } from "#errors/errors";
-import type { DependencySlot } from "#injection/resolve-options";
+import type { DependencySlot } from "#injection/dependency-slot";
 import {
   loneTagBesideNameOf,
   resolveOptionsForSlot,
   singleCriterionForSlot,
   singleCriterionOnlyOf,
-} from "#injection/resolve-options";
+} from "#injection/dependency-slot";
+import type { ResolutionDiagnostics } from "#introspection/diagnostics";
 import type { LifecycleManager } from "#lifecycle/lifecycle-manager";
 import type { ScopeManager } from "#lifecycle/scope-manager";
 import { SCOPED_MISS } from "#lifecycle/scope-manager";

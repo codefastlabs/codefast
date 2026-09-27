@@ -6,18 +6,7 @@
  * binding in the process shares one hidden class; the return type of each step pins the chain's
  * order, slot before strategy, so the binding registers once and is never re-slotted.
  */
-import type {
-  AliasBindingBuilder,
-  Binding,
-  BindingBuilder,
-  BindingSlot,
-  BindToBuilder,
-  ConstantBindingBuilder,
-  ScopedBindingBuilder,
-  SingletonBindingBuilder,
-  SingletonLifecycleBuilder,
-  TransientBindingBuilder,
-} from "#core/binding";
+import type { Binding, BindingSlot } from "#core/binding";
 import {
   clearBindingFrame,
   NO_ACTIVATION_STAMP,
@@ -26,6 +15,16 @@ import {
   NO_INSTANCE,
   withSlotCriterion,
 } from "#core/binding";
+import type {
+  AliasBindingBuilder,
+  BindingBuilder,
+  BindToBuilder,
+  ConstantBindingBuilder,
+  ScopedBindingBuilder,
+  SingletonBindingBuilder,
+  SingletonLifecycleBuilder,
+  TransientBindingBuilder,
+} from "#core/binding-builders";
 import type { DeclaredBinding } from "#core/binding-declaration";
 import { mergingConstraintRequirements } from "#core/constraint-requirement";
 import type { BindingRegistry } from "#core/registry";

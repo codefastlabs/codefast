@@ -7,9 +7,9 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import type { DiagnosableContainer } from "#errors/diagnostics";
-import { RESOLUTION_DIAGNOSTICS } from "#errors/diagnostics";
 import { CircularDependencyError } from "#errors/errors";
+import type { DiagnosableContainer } from "#introspection/diagnostics";
+import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
 
 function asyncPlanCount(container: unknown): number {
   return (container as DiagnosableContainer)[RESOLUTION_DIAGNOSTICS]().compiledAsyncPlanCount;

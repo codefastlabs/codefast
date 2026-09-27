@@ -70,10 +70,10 @@
       "types": "./dist/ambient/active-container.d.ts",
       "import": "./dist/ambient/active-container.js"
     },
-    "./container/binding-builders": {
-      "source": "./src/container/binding-builders.ts",
-      "types": "./dist/container/binding-builders.d.ts",
-      "import": "./dist/container/binding-builders.js"
+    "./container/binding-chain": {
+      "source": "./src/container/binding-chain.ts",
+      "types": "./dist/container/binding-chain.d.ts",
+      "import": "./dist/container/binding-chain.js"
     },
     "./container/container": {
       "source": "./src/container/container.ts",
@@ -85,15 +85,15 @@
       "types": "./dist/core/binding.d.ts",
       "import": "./dist/core/binding.js"
     },
+    "./core/binding-builders": {
+      "source": "./src/core/binding-builders.ts",
+      "types": "./dist/core/binding-builders.d.ts",
+      "import": "./dist/core/binding-builders.js"
+    },
     "./core/binding-declaration": {
       "source": "./src/core/binding-declaration.ts",
       "types": "./dist/core/binding-declaration.d.ts",
       "import": "./dist/core/binding-declaration.js"
-    },
-    "./core/binding-scope": {
-      "source": "./src/core/binding-scope.ts",
-      "types": "./dist/core/binding-scope.d.ts",
-      "import": "./dist/core/binding-scope.js"
     },
     "./core/constraint-requirement": {
       "source": "./src/core/constraint-requirement.ts",
@@ -160,30 +160,30 @@
       "types": "./dist/decorators/lifecycle-decorators.d.ts",
       "import": "./dist/decorators/lifecycle-decorators.js"
     },
-    "./errors/diagnostics": {
-      "source": "./src/errors/diagnostics.ts",
-      "types": "./dist/errors/diagnostics.d.ts",
-      "import": "./dist/errors/diagnostics.js"
-    },
     "./errors/errors": {
       "source": "./src/errors/errors.ts",
       "types": "./dist/errors/errors.d.ts",
       "import": "./dist/errors/errors.js"
+    },
+    "./injection/dependency-slot": {
+      "source": "./src/injection/dependency-slot.ts",
+      "types": "./dist/injection/dependency-slot.d.ts",
+      "import": "./dist/injection/dependency-slot.js"
     },
     "./injection/descriptor": {
       "source": "./src/injection/descriptor.ts",
       "types": "./dist/injection/descriptor.d.ts",
       "import": "./dist/injection/descriptor.js"
     },
-    "./injection/resolve-options": {
-      "source": "./src/injection/resolve-options.ts",
-      "types": "./dist/injection/resolve-options.d.ts",
-      "import": "./dist/injection/resolve-options.js"
-    },
     "./dependency-graph": {
       "source": "./src/introspection/dependency-graph.ts",
       "types": "./dist/introspection/dependency-graph.d.ts",
       "import": "./dist/introspection/dependency-graph.js"
+    },
+    "./diagnostics": {
+      "source": "./src/introspection/diagnostics.ts",
+      "types": "./dist/introspection/diagnostics.d.ts",
+      "import": "./dist/introspection/diagnostics.js"
     },
     "./explanation": {
       "source": "./src/introspection/explanation.ts",
@@ -244,6 +244,11 @@
       "source": "./src/metadata/symbol-metadata-reader.ts",
       "types": "./dist/metadata/symbol-metadata-reader.d.ts",
       "import": "./dist/metadata/symbol-metadata-reader.js"
+    },
+    "./metadata/verify": {
+      "source": "./src/metadata/verify.ts",
+      "types": "./dist/metadata/verify.d.ts",
+      "import": "./dist/metadata/verify.js"
     },
     "./metadata/verifying-metadata-reader": {
       "source": "./src/metadata/verifying-metadata-reader.ts",

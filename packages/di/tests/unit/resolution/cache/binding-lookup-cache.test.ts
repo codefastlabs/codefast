@@ -8,7 +8,7 @@
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 
-import { BindingChain } from "#container/binding-builders";
+import { BindingChain } from "#container/binding-chain";
 import { Container } from "#container/container";
 import { BindingRegistry } from "#core/registry";
 import { token } from "#core/token";

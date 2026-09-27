@@ -2,7 +2,7 @@ import type { Constructor } from "#core/constructor-type";
 import type { BindingTag, TagKeyMask } from "#core/tag";
 import type { Token } from "#core/token";
 
-// Re-export for consumers that import from `#types`
+// Re-exported so the vocabulary reads from one specifier.
 export type { Constructor } from "#core/constructor-type";
 export type { BindingTag, TagKey, TagKeyMask } from "#core/tag";
 

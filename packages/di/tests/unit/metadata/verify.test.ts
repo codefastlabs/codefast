@@ -11,9 +11,9 @@ import { token } from "#core/token";
 import type { Constructor } from "#core/types";
 import { InvalidMetadataError } from "#errors/errors";
 import type { ConstructorMetadata, MetadataReader } from "#metadata/metadata-types";
-import { assertConstructorMetadata, verifyConstructorMetadata } from "#resolution/cache/class-introspector";
+import { assertConstructorMetadata, verifyConstructorMetadata } from "#metadata/verify";
 
-const dsnToken = token<string>("class-introspector.dsn");
+const dsnToken = token<string>("verify.dsn");
 
 class Pool {
   constructor(readonly dsn: string) {}

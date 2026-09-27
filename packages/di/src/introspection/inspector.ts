@@ -1,5 +1,5 @@
 import type { Binding } from "#core/binding";
-import { effectiveBindingScope } from "#core/binding-scope";
+import { effectiveBindingScope } from "#core/binding";
 import type { BindingRegistry } from "#core/registry";
 import type { Token } from "#core/token";
 import { tokenName } from "#core/token";

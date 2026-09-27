@@ -9,12 +9,12 @@ import { token } from "#core/token";
 import type { ConstraintContext } from "#core/types";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import type { DependencySlot } from "#injection/resolve-options";
+import type { DependencySlot } from "#injection/dependency-slot";
 import {
   bindingSlotToResolveOptions,
   injectionSlotToResolveOptions,
   resolveOptionsForSlot,
-} from "#injection/resolve-options";
+} from "#injection/dependency-slot";
 
 function slotFor(criteria: Partial<Pick<DependencySlot, "name" | "tags">>): DependencySlot {
   return { token: token<string>("slot-subject"), optional: false, multi: false, ...criteria };

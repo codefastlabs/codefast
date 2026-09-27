@@ -35,7 +35,7 @@ export type {
   SingletonLifecycleBuilder,
   SlotConstrainedBuilder,
   TransientBindingBuilder,
-} from "#core/binding";
+} from "#core/binding-builders";
 
 // Container
 export { Container } from "#container/container";
@@ -51,8 +51,8 @@ export {
   bindingSlotToResolveOptions,
   injectionSlotToResolveOptions,
   resolveOptionsForSlot,
-} from "#injection/resolve-options";
-export type { DependencySlot } from "#injection/resolve-options";
+} from "#injection/dependency-slot";
+export type { DependencySlot } from "#injection/dependency-slot";
 
 // Introspection types
 export type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";

@@ -10,8 +10,8 @@ import { Container } from "#container/container";
 import { slotName, tag } from "#core/tag";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
+import { bindingSlotToResolveOptions, singleCriterionForSlot, singleCriterionOnlyOf } from "#injection/dependency-slot";
 import { injectAll, normalizeToDescriptor, optional } from "#injection/descriptor";
-import { bindingSlotToResolveOptions, singleCriterionForSlot, singleCriterionOnlyOf } from "#injection/resolve-options";
 
 const SLOT = tag("slot");
 const ENV = tag("env");

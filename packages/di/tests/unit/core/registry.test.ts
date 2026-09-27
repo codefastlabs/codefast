@@ -6,8 +6,8 @@
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 
-import type { BindingRegistration } from "#container/binding-builders";
-import { BindingChain } from "#container/binding-builders";
+import type { BindingRegistration } from "#container/binding-chain";
+import { BindingChain } from "#container/binding-chain";
 import { Container } from "#container/container";
 import { BindingRegistry } from "#core/registry";
 import { tag } from "#core/tag";

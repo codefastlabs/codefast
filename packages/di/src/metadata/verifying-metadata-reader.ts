@@ -6,11 +6,7 @@
 import type { Constructor } from "#core/types";
 import type { MetadataReader } from "#metadata/metadata-types";
 import { defaultMetadataReader } from "#metadata/symbol-metadata-reader";
-import {
-  verifyAccessorMetadata,
-  verifyConstructorMetadata,
-  verifyLifecycleMetadata,
-} from "#resolution/cache/class-introspector";
+import { verifyAccessorMetadata, verifyConstructorMetadata, verifyLifecycleMetadata } from "#metadata/verify";
 
 // Wrapping a wrapper would stack a layer per child container, so each one is remembered.
 const verifyingReaders = new WeakSet<MetadataReader>();

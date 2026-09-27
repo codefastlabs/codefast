@@ -7,8 +7,8 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import type { BindingIdentifier } from "#core/types";
-import type { DiagnosableContainer } from "#errors/diagnostics";
-import { RESOLUTION_DIAGNOSTICS } from "#errors/diagnostics";
+import type { DiagnosableContainer } from "#introspection/diagnostics";
+import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
 import { SCOPED_MISS, ScopeManager } from "#lifecycle/scope-manager";
 import { registeredBinding } from "#tests/unit/support/registered-binding";
 

@@ -6,7 +6,7 @@
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 
-import type { BindingChain } from "#container/binding-builders";
+import type { BindingChain } from "#container/binding-chain";
 import { Container } from "#container/container";
 import { binding } from "#core/binding-declaration";
 import type { BindingDeclaration } from "#core/binding-declaration";

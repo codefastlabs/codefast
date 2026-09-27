@@ -4,9 +4,9 @@ import type { Token } from "#core/token";
 import type { Constructor } from "#core/types";
 import { decoratorMetadataOf } from "#decorators/decorator-metadata";
 import { MissingContainerContextError, StaticMemberDecoratorError } from "#errors/errors";
+import { injectionSlotToResolveOptions } from "#injection/dependency-slot";
 import type { InjectionDescriptor, InjectOptions } from "#injection/descriptor";
 import { buildInjectionDescriptor } from "#injection/descriptor";
-import { injectionSlotToResolveOptions } from "#injection/resolve-options";
 import { INJECT_ACCESSOR_KEY } from "#metadata/metadata-keys";
 
 /**
