@@ -28,6 +28,7 @@
     "cli:audit:comments": "pnpm run codefast audit comments",
     "cli:audit:display-names": "pnpm run codefast audit display-names",
     "cli:audit:imports": "pnpm run codefast audit imports",
+    "cli:audit:layers": "pnpm run codefast audit layers",
     "cli:audit:links": "pnpm run codefast audit links",
     "cli:audit:publish": "pnpm run codefast audit publish",
     "cli:audit:rtl": "pnpm run codefast audit rtl",

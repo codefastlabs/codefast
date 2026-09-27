@@ -353,12 +353,13 @@ scope managers, **`decorators/`** the decorators, **`resolution/`** the engine c
 lane (`cache/` — binding lookup, class introspector, activation need; `path.ts` — the resolution-path cycle guard;
 `plan/` — the plan compiler and its codegen; `select/` — candidate selection and constraints), **`container/`** the
 container + the fluent binding chain, and **`introspection/`** the inspector, explain, dependency graph, diagnostics and
-graph adapters. Value imports point down that list only, and the published subpaths are that tree with no exception. The
-sync and async pipelines stay in one class because `#` private fields can't span files and both touch the same private
-state per hop; anything that doesn't is already extracted. Tests mirror these paths (`tests/unit/resolution/…`).
-`package.json#exports` is generated from `dist/` by `codefast mirror` — rerun it after moving/adding modules. Verify
-hot-path changes against `benchmarks/di` (`pnpm di:bench`, which isolates every scenario, ≥3 trials, best-of across
-several processes) before assuming a refactor is free — and measure cold paths too, which the hot loops hide.
+graph adapters. Value imports point down that list only — `pnpm cli:audit:layers` holds it, from the `audit.layers`
+entry in `codefast.config.js` — and the published subpaths are that tree with no exception. The sync and async pipelines
+stay in one class because `#` private fields can't span files and both touch the same private state per hop; anything
+that doesn't is already extracted. Tests mirror these paths (`tests/unit/resolution/…`). `package.json#exports` is
+generated from `dist/` by `codefast mirror` — rerun it after moving/adding modules. Verify hot-path changes against
+`benchmarks/di` (`pnpm di:bench`, which isolates every scenario, ≥3 trials, best-of across several processes) before
+assuming a refactor is free — and measure cold paths too, which the hot loops hide.
 
 ## UI/component conventions (apps/web and packages/ui)
 

@@ -24,6 +24,7 @@ import type {
   CommentAuditResult,
   DisplayNameAuditResult,
   ImportsAuditResult,
+  LayersAuditResult,
   LinkAuditResult,
   PublishAuditResult,
   RtlAuditResult,
@@ -34,6 +35,13 @@ import { importsAuditRunRequestSchema } from "#audit/imports/cli-schema";
 import { presentImportsAuditResult } from "#audit/imports/output";
 import { prepareImportsAudit } from "#audit/imports/prepare";
 import { runImportsAudit } from "#audit/imports/run";
+import { exitCodeForLayersAuditResult, formatLayersAuditJsonOutput } from "#audit/layers/cli-result";
+import type { LayersAuditRunRequest } from "#audit/layers/cli-schema";
+import { layersAuditRunRequestSchema } from "#audit/layers/cli-schema";
+import { presentLayersAuditResult } from "#audit/layers/output";
+import type { LayersAuditPrelude } from "#audit/layers/prepare";
+import { prepareLayersAudit } from "#audit/layers/prepare";
+import { runLayersAudit } from "#audit/layers/run";
 import { exitCodeForLinkAuditResult, formatLinkAuditJsonOutput } from "#audit/links/cli-result";
 import type { LinkAuditRunRequest } from "#audit/links/cli-schema";
 import { linkAuditRunRequestSchema } from "#audit/links/cli-schema";
@@ -67,8 +75,11 @@ type AuditActionOptions = {
 
 /**
  * One source audit: its argv contract, the prelude/run pipeline, and how it reports.
+ *
+ * @remarks `Prelude` widens the shared prelude for an audit whose config resolves to more than an
+ * allowlist — the layered packages of `audit layers` — and stays the shared one everywhere else.
  */
-interface AuditCheck<Request, CheckResult> {
+interface AuditCheck<Request, CheckResult, Prelude extends AuditCommandPrelude = AuditCommandPrelude> {
   readonly name: string;
   readonly description: string;
   readonly targetHelp: string;
@@ -76,8 +87,8 @@ interface AuditCheck<Request, CheckResult> {
   readonly prepare: (
     fs: Filesystem,
     input: { readonly currentWorkingDirectory: string; readonly rawTarget: string | undefined },
-  ) => Promise<Result<AuditCommandPrelude, AppError>>;
-  readonly buildRequest: (prelude: AuditCommandPrelude, opts: AuditActionOptions) => unknown;
+  ) => Promise<Result<Prelude, AppError>>;
+  readonly buildRequest: (prelude: Prelude, opts: AuditActionOptions) => unknown;
   readonly run: (
     fs: Filesystem,
     request: Request,
@@ -201,6 +212,25 @@ const commentsCheck: AuditCheck<CommentAuditRunRequest, CommentAuditResult> = {
   },
 };
 
+const layersCheck: AuditCheck<LayersAuditRunRequest, LayersAuditResult, LayersAuditPrelude> = {
+  name: "layers",
+  description: "Report value imports that point up a package's configured layers, and modules sitting in no layer",
+  targetHelp: "Directory or file to scan (default: the repo root, reaching every package audit.layers names)",
+  schema: layersAuditRunRequestSchema,
+  prepare: prepareLayersAudit,
+  buildRequest: (prelude, opts) => ({ ...baseAuditRequest(prelude, opts), packages: prelude.packages }),
+  run: (fs, request) =>
+    runLayersAudit(fs, {
+      rootDir: request.rootDir,
+      targetPath: request.targetPath,
+      allowlist: request.allowlist ?? [],
+      packages: request.packages,
+    }),
+  present: presentLayersAuditResult,
+  formatJson: formatLayersAuditJsonOutput,
+  exitCode: exitCodeForLayersAuditResult,
+};
+
 const publishCheck: AuditCheck<PublishAuditRunRequest, PublishAuditResult> = {
   name: "publish",
   description:
@@ -218,9 +248,9 @@ const publishCheck: AuditCheck<PublishAuditRunRequest, PublishAuditResult> = {
 /**
  * Adapts an `AuditCheck` descriptor onto the shared command pipeline.
  */
-function auditCheckToPipeline<Request, CheckResult>(
-  check: AuditCheck<Request, CheckResult>,
-): NamedCommandPipeline<AuditCommandPrelude, Request, CheckResult, never, AuditActionOptions> {
+function auditCheckToPipeline<Request, CheckResult, Prelude extends AuditCommandPrelude>(
+  check: AuditCheck<Request, CheckResult, Prelude>,
+): NamedCommandPipeline<Prelude, Request, CheckResult, never, AuditActionOptions> {
   return {
     name: check.name,
     description: check.description,
@@ -252,6 +282,7 @@ export function createAuditCommand(): Command {
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(assertionsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(displayNamesCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(commentsCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(layersCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(publishCheck));
 
   return cmd;

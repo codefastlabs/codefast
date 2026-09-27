@@ -80,6 +80,12 @@ jobs:
       - name: Verify Import Policy
         run: pnpm cli:audit:imports
 
+      # tsc accepts an import from a package's model into its engine as readily as the reverse, so a
+      # layering stated in ARCHITECTURE holds only while something reads it; this audit reads it from
+      # `audit.layers` and refuses a value import that points up, or a module no layer places.
+      - name: Verify Layering
+        run: pnpm cli:audit:layers
+
       # `x as unknown as T` tells the compiler two types are unrelated and silences it anyway; no oxlint
       # rule targets the pair, so this audit is what holds source and tests to making the types agree.
       - name: Verify Type Assertions

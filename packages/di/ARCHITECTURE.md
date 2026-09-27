@@ -64,7 +64,9 @@ function that grows past a size heuristic stops being inlined. Each term is expl
 ### The six levels
 
 Dependencies point downward only. Nothing below knows about anything above. An upward **value** import is a violation; a
-type-only one erases at build time and couples nothing.
+type-only one erases at build time and couples nothing. `pnpm cli:audit:layers` holds the order, from this package's
+`audit.layers` entry in [`codefast.config.js`](../../codefast.config.js), so a new family under `src/` is placed in a
+layer before CI goes green.
 
 ```
 container/             Container, fluent binding chain                              ← the public surface

@@ -43,6 +43,23 @@ export async function prepareRepoRootAudit(
   },
   selectAllowlist: (config: CodefastConfig) => ReadonlyArray<string>,
 ): Promise<Result<AuditCommandPrelude, AppError>> {
+  return prepareRepoRootAuditWith(fs, args, (config) => Promise.resolve(ok({ allowlist: selectAllowlist(config) })));
+}
+
+/**
+ * Loads config and resolves the repo root as the scan target, taking whatever the caller selects from the config.
+ *
+ * @remarks The selection runs with the root resolved, so it may read the workspace and refuse a
+ * config that names what the workspace does not hold, before anything is scanned.
+ */
+export async function prepareRepoRootAuditWith<Selected extends Pick<AuditCommandPrelude, "allowlist">>(
+  fs: Filesystem,
+  args: {
+    readonly currentWorkingDirectory: string;
+    readonly rawTarget: string | undefined;
+  },
+  select: (config: CodefastConfig, rootDir: string) => Promise<Result<Selected, AppError>>,
+): Promise<Result<Omit<AuditCommandPrelude, "allowlist"> & Selected, AppError>> {
   let rootDir: string;
   try {
     rootDir = fs.canonicalPathSync(resolveProjectRoot(args.currentWorkingDirectory, fs).rootDir);
@@ -61,9 +78,14 @@ export async function prepareRepoRootAudit(
     return err(new AppError("NOT_FOUND", `Not found: ${targetPath}`));
   }
 
+  const selected = await select(loadedOutcome.value.config, rootDir);
+  if (!selected.ok) {
+    return selected;
+  }
+
   return ok({
     rootDir,
     targetPath: fs.canonicalPathSync(targetPath),
-    allowlist: selectAllowlist(loadedOutcome.value.config),
+    ...selected.value,
   });
 }
