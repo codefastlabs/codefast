@@ -113,6 +113,7 @@ codefast                              # Codefast monorepo developer CLI
 │  ├─ assertions [target]             # double type assertions through unknown/any (x as unknown as T)
 │  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
 │  ├─ publish [target]                # what breaks a consumer's install: #/ imports, unshipped targets, @source paths
+│  ├─ layers [target]                 # value imports pointing up a package's configured layers
 │  └─ comments [target]               # section dividers not in the one allowed form
 │      └─ --fix                       # rewrite every fixable divider in place (the only audit that writes)
 │      (each audit also takes [target] + --json)
@@ -146,13 +147,14 @@ Every command also responds to `--help`; each command's section below explains w
 | `audit assertions`    | Report double type assertions through `unknown` / `any`, tests included    | no                |
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
 | `audit publish`       | Report what would break a consumer's install of a published package        | no                |
+| `audit layers`        | Report value imports that point up a package's configured layers           | no                |
 | `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
 
-**Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, `audit links`, `audit assertions`, and
-`audit publish` are general-purpose — they work for any pnpm workspace or single package that builds with `tsc`. The
-other four audits encode codefast's own house style (logical Tailwind directions, named React imports, a specific
-comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens). Adopt them if they fit your project;
-otherwise skip them, or use an allowlist to narrow their scope.
+**Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, `audit links`, `audit assertions`,
+`audit layers`, and `audit publish` are general-purpose — they work for any pnpm workspace or single package that builds
+with `tsc`. The other four audits encode codefast's own house style (logical Tailwind directions, named React imports, a
+specific comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens). Adopt them if they fit your
+project; otherwise skip them, or use an allowlist to narrow their scope.
 
 ## `arrange`
 
@@ -390,6 +392,41 @@ codefast audit publish                     # every published package in the work
 codefast audit publish --json              # machine-readable summary
 ```
 
+### `audit layers`
+
+_General-purpose._ Holds a package's `src/` to the layering its architecture states. You list the layers in
+configuration, bottom to top, each naming the families directly under the root — a directory, or a lone module sitting
+flat (`errors.ts`) — and the audit reports every value import or re-export that points up the list, plus every module no
+layer places. Type-only imports erase at build time and couple nothing, so they may point anywhere; a dynamic `import()`
+counts as a value import wherever it sits.
+
+```js
+// codefast.config.js
+export default {
+  audit: {
+    layers: {
+      packages: {
+        "@acme/di": {
+          root: "src", // where the layers sit, relative to the package (default)
+          layers: [["core", "errors.ts"], ["engine"], ["container"], ["index.ts"]],
+        },
+      },
+      allowlist: [],
+    },
+  },
+};
+```
+
+```bash
+codefast audit layers                        # every package audit.layers.packages names
+codefast audit layers packages/di            # one package, or a directory beneath its root
+codefast audit layers --json                 # machine-readable summary
+```
+
+A configured package name the workspace does not hold, a layer entry nested below the root, and a family placed twice
+are refused before anything is scanned. Configure exceptions via `audit.layers.allowlist` — each entry is the offending
+import as written or `repo/relative/path.ts:<import>`.
+
 ### `audit comments`
 
 _House style._ Checks doc-comment conventions. Section dividers not in the one allowed form are mechanical, so `--fix`
@@ -560,6 +597,11 @@ export default {
     imports: { allowlist: [] }, // offending import text as written, or `repo/relative/path.tsx:<text>`
     assertions: { allowlist: [] }, // assertion as written, or `repo/relative/path.ts:<assertion>`
     displayNames: { allowlist: [] }, // call as written, or `repo/relative/path.ts:<call>`
+    layers: {
+      // per package: its layers bottom to top, each entry a directory or module file under `root` (default `src`)
+      packages: { "@acme/di": { layers: [["core", "errors.ts"], ["engine"], ["index.ts"]] } },
+      allowlist: [], // import as written, or `repo/relative/path.ts:<import>`
+    },
   },
 };
 ```
@@ -612,6 +654,7 @@ pnpm run cli:audit:comments         # codefast audit comments
 pnpm run cli:audit:imports          # codefast audit imports
 pnpm run cli:audit:assertions       # codefast audit assertions
 pnpm run cli:audit:display-names    # codefast audit display-names
+pnpm run cli:audit:layers           # codefast audit layers
 pnpm run cli:audit:publish          # codefast audit publish
 ```
 

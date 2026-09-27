@@ -290,3 +290,32 @@ export type PublishAuditResult = {
   readonly scannedFileCount: number;
   readonly packageCount: number;
 };
+
+/**
+ * A module outside every configured layer, or a value import that points up the layers.
+ */
+export type LayerViolation = {
+  readonly line: number;
+  /** The import or re-export as written, or the module path when the module itself is unplaced. */
+  readonly raw: string;
+  readonly reason: string;
+};
+
+/**
+ * The layering violations found in one file.
+ */
+export type LayerFileViolations = {
+  readonly relativePath: string;
+  readonly violations: Array<LayerViolation>;
+};
+
+/**
+ * Outcome of one `audit layers` run.
+ */
+export type LayersAuditResult = {
+  readonly files: Array<LayerFileViolations>;
+  readonly violationCount: number;
+  readonly allowlistedCount: number;
+  readonly scannedFileCount: number;
+  readonly packageCount: number;
+};

@@ -70,6 +70,19 @@ interface CodefastAuditAllowlistConfig {
   allowlist?: Array<string> | undefined;
 }
 
+/** One package's layering: `layers` bottom to top, each naming the directories and module files it holds under `root`. */
+interface CodefastAuditLayersPackageConfig {
+  /** The directory the layers sit under, relative to the package directory. Defaults to `src`. */
+  root?: string | undefined;
+  layers: Array<Array<string>>;
+}
+
+/** The `audit layers` defaults: the layered packages by name, and the entries to ignore. */
+interface CodefastAuditLayersConfig {
+  packages?: Record<string, CodefastAuditLayersPackageConfig> | undefined;
+  allowlist?: Array<string> | undefined;
+}
+
 /** Per-audit defaults grouped under `audit`; the scan always starts at the repo root. */
 interface CodefastAuditConfig {
   rtl?: { target?: string | undefined; allowlist?: Array<string> | undefined } | undefined;
@@ -78,6 +91,7 @@ interface CodefastAuditConfig {
   imports?: CodefastAuditAllowlistConfig | undefined;
   assertions?: CodefastAuditAllowlistConfig | undefined;
   displayNames?: CodefastAuditAllowlistConfig | undefined;
+  layers?: CodefastAuditLayersConfig | undefined;
 }
 
 /**
@@ -156,6 +170,20 @@ const codefastAuditAllowlistConfigSchema = z
   })
   .strict();
 
+const codefastAuditLayersPackageConfigSchema = z
+  .object({
+    root: z.string().min(1).optional(),
+    layers: z.array(z.array(z.string().min(1)).min(1)).min(1),
+  })
+  .strict();
+
+const codefastAuditLayersConfigSchema = z
+  .object({
+    packages: z.record(z.string(), codefastAuditLayersPackageConfigSchema).optional(),
+    allowlist: z.array(z.string()).optional(),
+  })
+  .strict();
+
 const codefastAuditConfigSchema = z
   .object({
     rtl: codefastAuditRtlConfigSchema.optional(),
@@ -164,6 +192,7 @@ const codefastAuditConfigSchema = z
     imports: codefastAuditAllowlistConfigSchema.optional(),
     assertions: codefastAuditAllowlistConfigSchema.optional(),
     displayNames: codefastAuditAllowlistConfigSchema.optional(),
+    layers: codefastAuditLayersConfigSchema.optional(),
   })
   .strict();
 
