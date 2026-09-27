@@ -37,8 +37,8 @@ describe("a tagged dependency inside a compiled plan", () => {
 
     const container = Container.create();
     container.bind(driverToken).toConstantValue("default-driver");
-    container.bind(driverToken).toConstantValue("primary-driver").whenTagged(Role.of("primary"));
-    container.bind(driverToken).toConstantValue("backup-driver").whenTagged(Role.of("backup"));
+    container.bind(driverToken).whenTagged(Role.of("primary")).toConstantValue("primary-driver");
+    container.bind(driverToken).whenTagged(Role.of("backup")).toConstantValue("backup-driver");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));
@@ -61,8 +61,8 @@ describe("a tagged dependency inside a compiled plan", () => {
       .singleton();
     container
       .bind(driverToken)
-      .toDynamic(() => ({ id: "primary" }))
       .whenTagged(Role.of("primary"))
+      .toDynamic(() => ({ id: "primary" }))
       .singleton();
     container.bind(Root).toSelf().transient();
 
@@ -89,8 +89,8 @@ describe("a tagged dependency inside a compiled plan", () => {
     container.bind(driverToken).toDynamic(() => "default-driver");
     container
       .bind(driverToken)
-      .toDynamic(() => "primary-driver")
-      .whenTagged(Role.of("primary"));
+      .whenTagged(Role.of("primary"))
+      .toDynamic(() => "primary-driver");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));
@@ -110,9 +110,9 @@ describe("a tagged dependency inside a compiled plan", () => {
     const container = Container.create();
     container
       .bind(driverToken)
-      .toConstantValue("gated-driver")
       .whenTagged(Role.of("primary"))
-      .when(() => admit);
+      .when(() => admit)
+      .toConstantValue("gated-driver");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));
@@ -132,14 +132,14 @@ describe("a tagged dependency inside a compiled plan", () => {
     }
 
     const container = Container.create();
-    container.bind(driverToken).toConstantValue("first-driver").whenTagged(Role.of("primary"));
+    container.bind(driverToken).whenTagged(Role.of("primary")).toConstantValue("first-driver");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));
     expect(container.resolve(Root).driver).toBe("first-driver");
 
     container.unbind(driverToken);
-    container.bind(driverToken).toConstantValue("second-driver").whenTagged(Role.of("primary"));
+    container.bind(driverToken).whenTagged(Role.of("primary")).toConstantValue("second-driver");
 
     expect(container.resolve(Root).driver).toBe("second-driver");
   });
@@ -153,7 +153,7 @@ describe("a tagged dependency inside a compiled plan", () => {
     }
 
     const container = Container.create();
-    container.bind(driverToken).toConstantValue("present-driver").whenTagged(Role.of("present"));
+    container.bind(driverToken).whenTagged(Role.of("present")).toConstantValue("present-driver");
     container.bind(Root).toSelf().transient();
 
     expect(() => container.resolve(Root)).toThrow(NoMatchingBindingError);
@@ -168,7 +168,7 @@ describe("a tagged dependency inside a compiled plan", () => {
     }
 
     const parent = Container.create();
-    parent.bind(driverToken).toConstantValue("parent-primary").whenTagged(Role.of("primary"));
+    parent.bind(driverToken).whenTagged(Role.of("primary")).toConstantValue("parent-primary");
 
     const child = parent.createChild();
     child.bind(Root).toSelf().transient();
@@ -188,7 +188,7 @@ describe("a tagged dependency inside a compiled plan", () => {
 
     const container = Container.create();
     container.bind(driverToken).toConstantValue("default-driver");
-    container.bind(driverToken).toConstantValue("primary-driver").whenTagged(Role.of("primary"));
+    container.bind(driverToken).whenTagged(Role.of("primary")).toConstantValue("primary-driver");
     container.bind(Root).toSelf().transient();
 
     for (let index = 0; index < WARM_ITERATIONS; index += 1) {
@@ -207,12 +207,12 @@ describe("a tagged dependency inside a compiled plan", () => {
     }
 
     const container = Container.create();
-    container.bind(driverToken).toConstantValue("single-tag-driver").whenTagged(Role.of("primary"));
+    container.bind(driverToken).whenTagged(Role.of("primary")).toConstantValue("single-tag-driver");
     container
       .bind(driverToken)
-      .toConstantValue("two-tag-driver")
       .whenTagged(Role.of("primary"))
-      .whenTagged(Size.of("large"));
+      .whenTagged(Size.of("large"))
+      .toConstantValue("two-tag-driver");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));

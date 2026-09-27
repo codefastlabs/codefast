@@ -16,9 +16,9 @@ function loggers(): { container: Container; abstract: ReturnType<typeof token<st
   const logger = token<string>("ahf:Logger");
   const abstract = token<string>("ahf:AbstractLogger");
   const container = Container.create();
-  container.bind(logger).toConstantValue("console").whenNamed("console");
-  container.bind(logger).toConstantValue("file").whenNamed("file");
-  container.bind(logger).toConstantValue("eu").whenTagged(REGION.of("eu"));
+  container.bind(logger).whenNamed("console").toConstantValue("console");
+  container.bind(logger).whenNamed("file").toConstantValue("file");
+  container.bind(logger).whenTagged(REGION.of("eu")).toConstantValue("eu");
   container.bind(abstract).toAlias(logger);
   return { container, abstract };
 }
@@ -55,7 +55,7 @@ describe("hint forwarding through a default-slot alias", () => {
 
   it("lets an exact slot on the alias's own token win over forwarding", () => {
     const { container, abstract } = loggers();
-    container.bind(abstract).toConstantValue("own-file").whenNamed("file");
+    container.bind(abstract).whenNamed("file").toConstantValue("own-file");
 
     expect(container.resolve(abstract, { name: "file" })).toBe("own-file");
     expect(container.resolve(abstract, { name: "console" })).toBe("console");
@@ -65,8 +65,8 @@ describe("hint forwarding through a default-slot alias", () => {
     const logger = token<string>("ahf:AuditLogger");
     const abstract = token<string>("ahf:AbstractAuditLogger");
     const container = Container.create();
-    container.bind(logger).toConstantValue("audit").whenNamed("audit");
-    container.bind(abstract).toAlias(logger).whenNamed("audit");
+    container.bind(logger).whenNamed("audit").toConstantValue("audit");
+    container.bind(abstract).whenNamed("audit").toAlias(logger);
 
     expect(container.resolve(abstract, { name: "audit" })).toBe("audit");
     expect(() => container.resolve(abstract, { name: "other" })).toThrow(NoMatchingBindingError);
@@ -76,9 +76,9 @@ describe("hint forwarding through a default-slot alias", () => {
     const logger = token<string>("ahf:ChildLogger");
     const abstract = token<string>("ahf:ChildAbstract");
     const root = Container.create();
-    root.bind(abstract).toConstantValue("parent-file").whenNamed("file");
+    root.bind(abstract).whenNamed("file").toConstantValue("parent-file");
     const child = root.createChild();
-    child.bind(logger).toConstantValue("child-file").whenNamed("file");
+    child.bind(logger).whenNamed("file").toConstantValue("child-file");
     child.bind(abstract).toAlias(logger);
 
     // The nearest container that can answer does, as it would for any other binding.

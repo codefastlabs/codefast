@@ -62,7 +62,7 @@ const logger = container.resolveOptional(LoggerToken); // undefined, no throw
 Thrown when a binding exists for the token but none of them match the supplied name or tags:
 
 ```ts
-container.bind(LoggerToken).toConstantValue(consoleLogger).whenNamed("console");
+container.bind(LoggerToken).whenNamed("console").toConstantValue(consoleLogger);
 container.resolve(LoggerToken, { name: "file" }); // ← throws: "file" not bound
 ```
 

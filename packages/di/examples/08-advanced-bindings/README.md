@@ -118,14 +118,14 @@ When multiple bindings share a token, `.unbind(token)` removes _all_ of them. To
 ```ts
 const logPluginId = container
   .bind(PluginToken)
-  .toConstantValue({ name: "log", run: () => {} })
   .whenNamed("log")
+  .toConstantValue({ name: "log", run: () => {} })
   .id(); // ← returns BindingIdentifier
 
 const metricsPluginId = container
   .bind(PluginToken)
-  .toConstantValue({ name: "metrics", run: () => {} })
   .whenNamed("metrics")
+  .toConstantValue({ name: "metrics", run: () => {} })
   .id();
 ```
 

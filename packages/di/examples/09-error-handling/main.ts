@@ -66,8 +66,8 @@ section("2. NoMatchingBindingError");
 const namedBindingContainer = Container.create();
 namedBindingContainer
   .bind(LoggerToken)
-  .toConstantValue({ log: (message: string) => console.log(message) })
-  .whenNamed("console");
+  .whenNamed("console")
+  .toConstantValue({ log: (message: string) => console.log(message) });
 
 try {
   // Binding exists for name "console" but not "file"

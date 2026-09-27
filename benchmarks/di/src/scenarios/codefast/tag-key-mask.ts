@@ -49,8 +49,8 @@ function buildMaskRejectWideCatalogScenario(): BenchScenario {
   for (const [index, key] of WIDE_KEYS.entries()) {
     container
       .bind(serviceToken)
-      .toConstantValue({ label: `k${String(index)}` })
-      .whenTagged(key.of(index));
+      .whenTagged(key.of(index))
+      .toConstantValue({ label: `k${String(index)}` });
   }
 
   const request: ReadonlyArray<BindingTag> = [WIDE_KEYS[0]!.of(0)];
@@ -89,14 +89,14 @@ function buildMaskAcceptTwoOfFourScenario(): BenchScenario {
 
   container
     .bind(serviceToken)
-    .toConstantValue({ label: "ab" })
     .whenTagged(ACCEPT_A.of("x"))
-    .whenTagged(ACCEPT_B.of("y"));
+    .whenTagged(ACCEPT_B.of("y"))
+    .toConstantValue({ label: "ab" });
   container
     .bind(serviceToken)
-    .toConstantValue({ label: "cd" })
     .whenTagged(ACCEPT_C.of("x"))
-    .whenTagged(ACCEPT_D.of("y"));
+    .whenTagged(ACCEPT_D.of("y"))
+    .toConstantValue({ label: "cd" });
 
   // Four keys requested; each candidate declares two of them, so both pass the mask and only the
   // criterion identities separate them.
@@ -137,8 +137,8 @@ function buildMaskCollisionScenario(): BenchScenario {
   const serviceToken = token<MaskedService>("bench-cf-mask-collide");
   const container = Container.create();
 
-  container.bind(serviceToken).toConstantValue({ label: "first" }).whenTagged(COLLIDE_FIRST.of("v"));
-  container.bind(serviceToken).toConstantValue({ label: "second" }).whenTagged(COLLIDE_SECOND.of("v"));
+  container.bind(serviceToken).whenTagged(COLLIDE_FIRST.of("v")).toConstantValue({ label: "first" });
+  container.bind(serviceToken).whenTagged(COLLIDE_SECOND.of("v")).toConstantValue({ label: "second" });
 
   const request: ReadonlyArray<BindingTag> = [COLLIDE_FIRST.of("v")];
 

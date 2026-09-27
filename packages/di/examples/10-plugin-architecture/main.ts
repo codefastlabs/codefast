@@ -364,28 +364,28 @@ class Platform {
     // Register plugin descriptors directly on the container with named slots.
     this.#container
       .bind(PluginDescriptorToken)
+      .whenNamed("storage")
       .toConstantValue({
         name: "S3StoragePlugin",
         version: "2.1.0",
         capabilities: ["storage"],
-      })
-      .whenNamed("storage");
+      });
     this.#container
       .bind(PluginDescriptorToken)
+      .whenNamed("analytics")
       .toConstantValue({
         name: "SegmentAnalyticsPlugin",
         version: "1.4.2",
         capabilities: ["analytics"],
-      })
-      .whenNamed("analytics");
+      });
     this.#container
       .bind(PluginDescriptorToken)
+      .whenNamed("notifications")
       .toConstantValue({
         name: "SlackNotificationPlugin",
         version: "3.0.1",
         capabilities: ["notifications"],
-      })
-      .whenNamed("notifications");
+      });
 
     // Register DocumentService — resolves via async tokens, so use toDynamicAsync
     this.#container
@@ -442,7 +442,7 @@ class Platform {
     await this.#container.resolveAsync(StorageProviderToken);
 
     // Register new descriptor in the same named slot to replace old storage descriptor.
-    this.#container.bind(PluginDescriptorToken).toConstantValue(newDescriptor).whenNamed("storage");
+    this.#container.bind(PluginDescriptorToken).whenNamed("storage").toConstantValue(newDescriptor);
 
     const activePlugins = this.#container.resolveAll(PluginDescriptorToken);
     console.log(

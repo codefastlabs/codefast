@@ -159,21 +159,21 @@ class AlertEventHandler implements EventHandler {
 const namedContainer = Container.create();
 
 // Named loggers
-namedContainer.bind(LoggerToken).toConstantValue(consoleLogger).whenNamed("console");
-namedContainer.bind(LoggerToken).toConstantValue(fileLogger).whenNamed("file");
-namedContainer.bind(LoggerToken).toConstantValue(silentLogger).whenNamed("silent");
+namedContainer.bind(LoggerToken).whenNamed("console").toConstantValue(consoleLogger);
+namedContainer.bind(LoggerToken).whenNamed("file").toConstantValue(fileLogger);
+namedContainer.bind(LoggerToken).whenNamed("silent").toConstantValue(silentLogger);
 
 const appContainer = Container.create();
 
 // Constraint-based: OrderService gets console logger
-appContainer.bind(LoggerToken).toConstantValue(consoleLogger).when(whenParentIs(OrderServiceToken));
+appContainer.bind(LoggerToken).when(whenParentIs(OrderServiceToken)).toConstantValue(consoleLogger);
 
 // PaymentService uses a dedicated logger token to avoid ambiguity.
 appContainer.bind(PaymentLoggerToken).toConstantValue(fileLogger);
 
 // Tagged storages
-appContainer.bind(StorageToken).to(S3Storage).whenTagged(PROVIDER_TAG.of("s3")).singleton();
-appContainer.bind(StorageToken).to(LocalStorage).whenTagged(PROVIDER_TAG.of("local")).singleton();
+appContainer.bind(StorageToken).whenTagged(PROVIDER_TAG.of("s3")).to(S3Storage).singleton();
+appContainer.bind(StorageToken).whenTagged(PROVIDER_TAG.of("local")).to(LocalStorage).singleton();
 appContainer.bind(S3StorageToken).to(S3Storage).singleton();
 appContainer.bind(LocalStorageToken).to(LocalStorage).singleton();
 
@@ -182,9 +182,9 @@ appContainer.bind(OrderServiceToken).to(OrderManager).singleton();
 appContainer.bind(PaymentServiceToken).to(PaymentProcessor).singleton();
 
 // Multi-binding: three handlers under the same token
-appContainer.bind(EventHandlerToken).to(LogEventHandler).whenNamed("log");
-appContainer.bind(EventHandlerToken).to(MetricsEventHandler).whenNamed("metrics");
-appContainer.bind(EventHandlerToken).to(AlertEventHandler).whenNamed("alert");
+appContainer.bind(EventHandlerToken).whenNamed("log").to(LogEventHandler);
+appContainer.bind(EventHandlerToken).whenNamed("metrics").to(MetricsEventHandler);
+appContainer.bind(EventHandlerToken).whenNamed("alert").to(AlertEventHandler);
 
 // ── Usage ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 

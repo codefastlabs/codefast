@@ -242,8 +242,8 @@ describe("constant deactivation", () => {
     // The named slot moves B aside, so the default-slot A is restored rather than orphaned.
     container
       .bind(serviceToken)
-      .toConstantValue("B")
       .whenNamed("secondary")
+      .toConstantValue("B")
       .onDeactivation((value) => {
         log.push(`deact:${value}`);
       });
@@ -324,7 +324,7 @@ describe("constant deactivation", () => {
         });
       container.load(
         Module.create("constant-deactivation:Restoring", (builder) => {
-          builder.bind(serviceToken).toConstantValue("B").whenNamed("secondary");
+          builder.bind(serviceToken).whenNamed("secondary").toConstantValue("B");
         }),
       );
 

@@ -137,8 +137,8 @@ describe("unbind with throwing hooks", () => {
       });
     container
       .bind(serviceToken)
-      .toConstantValue("b")
       .whenNamed("x")
+      .toConstantValue("b")
       .onDeactivation(() => {
         ran.push("named");
       });

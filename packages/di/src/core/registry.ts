@@ -1,10 +1,10 @@
 import type { Binding, BindingSlot } from "#core/binding";
-import { bindingSlotEquals, UNREGISTERED_ORDER, writableMembership, writablePredicate } from "#core/binding";
+import { bindingSlotEquals } from "#core/binding";
 import { getOrInsert } from "#core/map-upsert";
 import { advanceStateEpoch } from "#core/state-epoch";
 import type { BindingTag } from "#core/tag";
 import type { Token } from "#core/token";
-import type { BindingConstraint, BindingIdentifier, Constructor, DependencyKey } from "#core/types";
+import type { BindingIdentifier, Constructor, DependencyKey } from "#core/types";
 
 /**
  * Everything the registry knows about a token that is more than one default-slot binding.
@@ -54,9 +54,6 @@ function createTokenRecord(bindings: Array<Binding>): TokenRecord {
  */
 const EMPTY_LONE: Map<DependencyKey, Binding> = new Map();
 
-// Process-wide, so registration order compares across every registry a binding could be restored into.
-let registrationCounter = 0;
-
 const HELD_CONSTANT = 1;
 const HELD_ALIAS = 2;
 
@@ -72,10 +69,6 @@ export class BindingRegistry {
   // Every other token — several bindings, a tagged slot, a predicate — has a record here, and a
   // token is in exactly one of the two maps. Allocated by the first token that needs a record.
   #records: Map<DependencyKey, TokenRecord> | undefined;
-  // The binding the last `add` placed and where it landed: the fluent chain refines what it just
-  // registered, so a refinement that follows its own add re-slots without a map probe.
-  #lastAdded: Binding | undefined;
-  #lastAddedRecord: TokenRecord | undefined;
   // Built on the first id-keyed read and maintained from then on: a bind-and-resolve container
   // never asks by id, so it never pays for the second map.
   #byId: Map<BindingIdentifier, Binding> | undefined;
@@ -134,10 +127,6 @@ export class BindingRegistry {
    */
   add(binding: Binding): Binding | undefined {
     this.#bump();
-    if (binding.registrationOrder === UNREGISTERED_ORDER) {
-      registrationCounter += 1;
-      binding.registrationOrder = registrationCounter;
-    }
     if (binding.kind === "constant") {
       this.#heldKinds |= HELD_CONSTANT;
     } else if (binding.kind === "alias") {
@@ -148,13 +137,10 @@ export class BindingRegistry {
     if (records !== undefined) {
       const record = records.get(key);
       if (record !== undefined) {
-        this.#lastAdded = binding;
-        this.#lastAddedRecord = record;
         return this.#addToRecord(key, record, binding);
       }
     }
     const occupant = this.#lone.get(key);
-    this.#lastAdded = binding;
     if (occupant === undefined) {
       // The common bind: a fresh token taking the lone seat, one probe and one write.
       if (this.#byId !== undefined) {
@@ -162,36 +148,30 @@ export class BindingRegistry {
       }
       if (isDefaultSlotBinding(binding)) {
         this.#setLone(key, binding);
-        this.#lastAddedRecord = undefined;
       } else {
-        this.#lastAddedRecord = this.#createRecord(key, [binding]);
+        this.#createRecord(key, [binding]);
       }
       return undefined;
     }
     // Same slot, last wins: the newcomer takes the lone seat and nothing else moves.
     if (isDefaultSlotBinding(binding)) {
       this.#setLone(key, binding);
-      this.#lastAddedRecord = undefined;
       if (this.#byId !== undefined) {
         this.#byId.delete(occupant.identifier);
         this.#byId.set(binding.identifier, binding);
       }
       return occupant;
     }
-    // A second shape joins the token, which is what a record is for.
+    // A second shape joins the token, which is what a record is for; every add is the newest, so it goes last.
     this.#deleteLone(key);
     this.#byId?.set(binding.identifier, binding);
-    this.#lastAddedRecord = this.#createRecord(
-      key,
-      occupant.registrationOrder < binding.registrationOrder ? [occupant, binding] : [binding, occupant],
-    );
+    this.#createRecord(key, [occupant, binding]);
     return undefined;
   }
 
   /** Remove all bindings for a token. Returns removed bindings. */
   removeByToken(token: Token<unknown> | Constructor): Array<Binding> {
     this.#bump();
-    this.#lastAdded = undefined;
     const lone = this.#lone.get(token);
     if (lone !== undefined) {
       this.#deleteLone(token);
@@ -220,7 +200,6 @@ export class BindingRegistry {
       return undefined;
     }
     this.#bump();
-    this.#lastAdded = undefined;
     byId.delete(id);
     const key: DependencyKey = binding.token;
     if (this.#lone.get(key)?.identifier === id) {
@@ -296,28 +275,11 @@ export class BindingRegistry {
   /** Remove all bindings. Returns all removed. */
   clear(): ReadonlyArray<Binding> {
     this.#bump();
-    this.#lastAdded = undefined;
     const all = this.allBindings();
     this.#clearLone();
     this.#records?.clear();
     this.#byId?.clear();
     return all;
-  }
-
-  /** Whether a slot-based binding currently occupies `binding`'s slot, so adding it would displace. */
-  hasSlotOccupant(binding: Binding): boolean {
-    if (isPurePredicateBinding(binding)) {
-      return false;
-    }
-    if (this.#lone.has(binding.token)) {
-      // The lone seat is the default slot, so only a default-slot newcomer collides with it.
-      return binding.slot.tags.length === 0;
-    }
-    const record = this.#records?.get(binding.token);
-    if (record === undefined) {
-      return false;
-    }
-    return this.#slotOccupant(record, binding.slot) !== undefined;
   }
 
   /**
@@ -390,109 +352,6 @@ export class BindingRegistry {
     return this.#lone.get(token);
   }
 
-  /**
-   * Takes a live binding out of every index, lets `rewrite` change its slot or predicate, and reports
-   * whether it was live; the caller registers it again with `add`.
-   *
-   * @remarks The binding keeps its object and its id, so the id index needs no touch and nothing
-   * that holds the object has to be told. `false` means the binding was unbound or displaced since
-   * it registered, and a refinement must not resurrect it.
-   */
-  reslot(binding: Binding, rewrite: () => void): boolean {
-    const key: DependencyKey = binding.token;
-    if (this.#lone.get(key) === binding) {
-      this.#bump();
-      this.#lastAdded = undefined;
-      this.#deleteLone(key);
-    } else {
-      const record = this.#records?.get(key);
-      const index = record === undefined ? -1 : record.bindings.indexOf(binding);
-      if (record === undefined || index === -1) {
-        return false;
-      }
-      this.#bump();
-      this.#lastAdded = undefined;
-      // Replaced, never spliced: a walk holding the current array must not lose its place.
-      record.bindings = record.bindings.toSpliced(index, 1);
-      this.#deindexSlot(record, binding);
-      this.#settle(key, record);
-    }
-    rewrite();
-    return true;
-  }
-
-  /**
-   * Marks a live binding as a collection member in place, moving it out of the lone map: a member is
-   * never the token's lone default answer, and nothing else indexes on membership.
-   */
-  setMany(binding: Binding): void {
-    this.#bump();
-    // Set before any (re)indexing so `#indexSlot` sees a member and leaves it out of every slot.
-    writableMembership(binding).isMany = true;
-    if (binding === this.#lastAdded) {
-      // The chain refining what it just added: where the binding sits is known without a probe.
-      const record = this.#lastAddedRecord;
-      if (record === undefined) {
-        this.#deleteLone(binding.token);
-        this.#lastAddedRecord = this.#createRecord(binding.token, [binding]);
-      } else if (record.defaultOccupant === binding) {
-        record.defaultOccupant = undefined;
-      }
-      return;
-    }
-    if (this.#promoteLoneToRecord(binding.token, binding)) {
-      return;
-    }
-    // A default occupant that becomes a member frees its slot, so drop the stale index entry. A
-    // member cannot collapse a record back to lone, so this path does not settle.
-    this.#clearDefaultOccupant(binding.token, binding);
-  }
-
-  /**
-   * Adds a predicate to a live binding in place.
-   *
-   * @remarks Only ever narrows — `when()` composes with any existing predicate — so the argument is
-   * never absent. Nothing indexes on the predicate, so the binding object and its id stay; a lone
-   * binding moves to a record because the lone map holds default-slot bindings with no predicate.
-   */
-  setPredicate(binding: Binding, predicate: BindingConstraint): void {
-    this.#bump();
-    // Set before any (re)indexing: a predicate-only binding holds no default slot.
-    writablePredicate(binding).predicate = predicate;
-    if (this.#promoteLoneToRecord(binding.token, binding)) {
-      return;
-    }
-    // The binding may have vacated the default slot, and a narrowed record can collapse back to lone.
-    const record = this.#clearDefaultOccupant(binding.token, binding);
-    if (record !== undefined) {
-      this.#settle(binding.token, record);
-    }
-  }
-
-  /**
-   * Moves a binding still holding the lone seat into a fresh one-binding record, returning whether it did.
-   *
-   * @remarks Its field (`isMany` or `predicate`) is written before this call, so the founding
-   * `#indexSlot` files it under the slot it now holds.
-   */
-  #promoteLoneToRecord(key: DependencyKey, binding: Binding): boolean {
-    if (this.#lone.get(key) !== binding) {
-      return false;
-    }
-    this.#deleteLone(key);
-    this.#createRecord(key, [binding]);
-    return true;
-  }
-
-  /** Clears the default-slot index entry a binding has vacated, returning its record if one exists. */
-  #clearDefaultOccupant(key: DependencyKey, binding: Binding): TokenRecord | undefined {
-    const record = this.#records?.get(key);
-    if (record?.defaultOccupant === binding) {
-      record.defaultOccupant = undefined;
-    }
-    return record;
-  }
-
   #createRecord(key: DependencyKey, bindings: Array<Binding>): TokenRecord {
     const record = createTokenRecord(bindings);
     (this.#records ??= new Map<DependencyKey, TokenRecord>()).set(key, record);
@@ -534,7 +393,7 @@ export class BindingRegistry {
     if (displacedBinding !== undefined) {
       record.bindings = record.bindings.filter((candidate) => candidate !== displacedBinding);
     }
-    insertInRegistrationOrder(record, binding);
+    record.bindings.push(binding);
     this.#byId?.set(binding.identifier, binding);
     this.#indexSlot(record, binding);
     this.#settle(key, record);
@@ -638,21 +497,6 @@ export class BindingRegistry {
  * Places a binding in its record by registration order: a fresh registration appends, and a binding a
  * chain took out and put back returns to its place.
  */
-function insertInRegistrationOrder(record: TokenRecord, binding: Binding): void {
-  const { bindings } = record;
-  const order = binding.registrationOrder;
-  if (bindings.length === 0 || bindings.at(-1)!.registrationOrder < order) {
-    bindings.push(binding);
-    return;
-  }
-  let index = bindings.length - 1;
-  while (index > 0 && bindings[index - 1]!.registrationOrder > order) {
-    index -= 1;
-  }
-  // Replaced, never spliced: a walk holding the current array must not lose its place.
-  record.bindings = bindings.toSpliced(index, 0, binding);
-}
-
 /** A binding nothing has to be matched against: the default slot, no predicate, not a collection member. */
 function isDefaultSlotBinding(binding: Binding): boolean {
   return binding.slot.tags.length === 0 && binding.predicate === undefined && !binding.isMany;

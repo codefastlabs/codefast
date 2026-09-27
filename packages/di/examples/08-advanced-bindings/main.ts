@@ -160,20 +160,20 @@ const pluginContainer = Container.create();
 // Register three plugins — each bind() returns a BindingBuilder with .id()
 const logPluginId = pluginContainer
   .bind(PluginToken)
-  .toConstantValue({ name: "log", run: () => console.log("[LogPlugin] running") })
   .whenNamed("log")
+  .toConstantValue({ name: "log", run: () => console.log("[LogPlugin] running") })
   .id();
 
 const metricsPluginId = pluginContainer
   .bind(PluginToken)
-  .toConstantValue({ name: "metrics", run: () => console.log("[MetricsPlugin] running") })
   .whenNamed("metrics")
+  .toConstantValue({ name: "metrics", run: () => console.log("[MetricsPlugin] running") })
   .id();
 
 pluginContainer
   .bind(PluginToken)
-  .toConstantValue({ name: "audit", run: () => console.log("[AuditPlugin] running") })
-  .whenNamed("audit");
+  .whenNamed("audit")
+  .toConstantValue({ name: "audit", run: () => console.log("[AuditPlugin] running") });
 
 section("All plugins");
 const allPlugins = pluginContainer.resolveAll(PluginToken);

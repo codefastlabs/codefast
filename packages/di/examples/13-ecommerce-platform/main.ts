@@ -2389,9 +2389,9 @@ const CartModule = Module.create("ecommerce-platform:Cart", (builder) => {
 // ── Orders ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const ShippingModule = Module.create("ecommerce-platform:Shipping", (builder) => {
-  builder.bind(ShippingCarrierToken).to(FedExCarrier).whenNamed("fedex").singleton();
-  builder.bind(ShippingCarrierToken).to(UpsCarrier).whenNamed("ups").singleton();
-  builder.bind(ShippingCarrierToken).to(DhlCarrier).whenNamed("dhl").singleton();
+  builder.bind(ShippingCarrierToken).whenNamed("fedex").to(FedExCarrier).singleton();
+  builder.bind(ShippingCarrierToken).whenNamed("ups").to(UpsCarrier).singleton();
+  builder.bind(ShippingCarrierToken).whenNamed("dhl").to(DhlCarrier).singleton();
 });
 
 const OrderModule = Module.create("ecommerce-platform:Orders", (builder) => {
@@ -2404,9 +2404,9 @@ const OrderModule = Module.create("ecommerce-platform:Orders", (builder) => {
 // ── Payments ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const PaymentModule = Module.create("ecommerce-platform:Payments", (builder) => {
-  builder.bind(PaymentGatewayToken).to(StripeGateway).whenNamed("stripe").singleton();
-  builder.bind(PaymentGatewayToken).to(PayPalGateway).whenNamed("paypal").singleton();
-  builder.bind(PaymentGatewayToken).to(CashOnDeliveryGateway).whenNamed("cod").singleton();
+  builder.bind(PaymentGatewayToken).whenNamed("stripe").to(StripeGateway).singleton();
+  builder.bind(PaymentGatewayToken).whenNamed("paypal").to(PayPalGateway).singleton();
+  builder.bind(PaymentGatewayToken).whenNamed("cod").to(CashOnDeliveryGateway).singleton();
   builder.bind(PaymentServiceToken).to(PaymentProcessor).singleton();
 });
 
@@ -2423,9 +2423,9 @@ const UserModule = Module.create("ecommerce-platform:Users", (builder) => {
 // ── Notifications ────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const NotificationModule = Module.create("ecommerce-platform:Notifications", (builder) => {
-  builder.bind(NotificationChannelToken).to(EmailChannel).whenNamed("email").singleton();
-  builder.bind(NotificationChannelToken).to(SmsChannel).whenNamed("sms").singleton();
-  builder.bind(NotificationChannelToken).to(PushChannel).whenNamed("push").singleton();
+  builder.bind(NotificationChannelToken).whenNamed("email").to(EmailChannel).singleton();
+  builder.bind(NotificationChannelToken).whenNamed("sms").to(SmsChannel).singleton();
+  builder.bind(NotificationChannelToken).whenNamed("push").to(PushChannel).singleton();
   builder.bind(NotificationServiceToken).to(NotificationDispatcher).singleton();
 });
 

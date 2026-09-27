@@ -26,7 +26,7 @@ describe("multi-tag slot matching", () => {
 
   function container(): ReturnType<typeof Container.create> {
     const instance = Container.create();
-    instance.bind(serviceToken).toConstantValue("both").whenTagged(ENV_TAG.of("prod")).whenTagged(REGION_TAG.of("eu"));
+    instance.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).whenTagged(REGION_TAG.of("eu")).toConstantValue("both");
     return instance;
   }
 
@@ -59,7 +59,7 @@ describe("multi-tag slot matching", () => {
 
   it("keeps a name-only binding matching when the request also carries tags", () => {
     const named = Container.create();
-    named.bind(serviceToken).toConstantValue("named").whenNamed("primary");
+    named.bind(serviceToken).whenNamed("primary").toConstantValue("named");
 
     // The binding's only condition — its name — is stated, so the extra tag rules nothing out.
     expect(named.resolve(serviceToken, { name: "primary" })).toBe("named");
@@ -70,8 +70,8 @@ describe("multi-tag slot matching", () => {
 
   it("dispatches a name-plus-tag request to the most specific candidate", () => {
     const instance = Container.create();
-    instance.bind(serviceToken).toConstantValue("tagged").whenTagged(ENV_TAG.of("prod"));
-    instance.bind(serviceToken).toConstantValue("named-tagged").whenNamed("primary").whenTagged(ENV_TAG.of("prod"));
+    instance.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("tagged");
+    instance.bind(serviceToken).whenNamed("primary").whenTagged(ENV_TAG.of("prod")).toConstantValue("named-tagged");
 
     expect(instance.resolve(serviceToken, { tag: ENV_TAG.of("prod") })).toBe("tagged");
     // Both candidates' conditions are stated; the one declaring more of the request wins.
@@ -85,11 +85,11 @@ describe("multi-tag slot matching", () => {
     for (let index = 0; index < 9; index += 1) {
       instance
         .bind(bigToken)
-        .toConstantValue(`filler-${String(index)}`)
-        .whenNamed(`filler-${String(index)}`);
+        .whenNamed(`filler-${String(index)}`)
+        .toConstantValue(`filler-${String(index)}`);
     }
-    instance.bind(bigToken).toConstantValue("tagged").whenTagged(ENV_TAG.of("prod"));
-    instance.bind(bigToken).toConstantValue("named-tagged").whenNamed("primary").whenTagged(ENV_TAG.of("prod"));
+    instance.bind(bigToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("tagged");
+    instance.bind(bigToken).whenNamed("primary").whenTagged(ENV_TAG.of("prod")).toConstantValue("named-tagged");
 
     expect(instance.resolve(bigToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBe("named-tagged");
     // The name repeated as the reserved criterion is one criterion — the gather dedups it.
@@ -97,7 +97,7 @@ describe("multi-tag slot matching", () => {
       "named-tagged",
     );
     // A name-less multi-criterion request takes the same lane.
-    instance.bind(bigToken).toConstantValue("both-tags").whenTagged(ENV_TAG.of("prod")).whenTagged(REGION_TAG.of("eu"));
+    instance.bind(bigToken).whenTagged(ENV_TAG.of("prod")).whenTagged(REGION_TAG.of("eu")).toConstantValue("both-tags");
     expect(instance.resolve(bigToken, { tags: [ENV_TAG.of("prod"), REGION_TAG.of("eu")] })).toBe("both-tags");
     // A union miss answers undefined at the root, and reaches the parent when there is one.
     expect(instance.resolveOptional(bigToken, { name: "primary", tag: ENV_TAG.of("dev") })).toBeUndefined();
@@ -105,17 +105,17 @@ describe("multi-tag slot matching", () => {
     for (let index = 0; index < 9; index += 1) {
       child
         .bind(bigToken)
-        .toConstantValue(`child-${String(index)}`)
-        .whenNamed(`child-${String(index)}`);
+        .whenNamed(`child-${String(index)}`)
+        .toConstantValue(`child-${String(index)}`);
     }
-    child.bind(bigToken).toConstantValue("child-tagged").whenTagged(ENV_TAG.of("dev"));
+    child.bind(bigToken).whenTagged(ENV_TAG.of("dev")).toConstantValue("child-tagged");
     expect(child.resolve(bigToken, { name: "primary", tag: ENV_TAG.of("prod") })).toBe("named-tagged");
   });
 
   it("treats whenNamed and whenTagged of the reserved criterion as one slot", () => {
     const instance = Container.create();
-    instance.bind(serviceToken).toConstantValue("first").whenNamed("primary");
-    instance.bind(serviceToken).toConstantValue("second").whenTagged(slotName.of("primary"));
+    instance.bind(serviceToken).whenNamed("primary").toConstantValue("first");
+    instance.bind(serviceToken).whenTagged(slotName.of("primary")).toConstantValue("second");
 
     // Same criterion set — last-wins replaced the first binding, whichever spelling asks.
     expect(instance.resolve(serviceToken, { name: "primary" })).toBe("second");
@@ -170,7 +170,7 @@ describe("toResolved with injection descriptors", () => {
     const container = Container.create();
     container.bind(presentToken).toConstantValue("here");
     container.bind(pluginToken).toConstantValue("p1");
-    container.bind(pluginToken).toConstantValue("p2").whenNamed("second");
+    container.bind(pluginToken).whenNamed("second").toConstantValue("p2");
     container
       .bind(rootToken)
       .toResolved(

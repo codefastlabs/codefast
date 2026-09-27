@@ -42,8 +42,8 @@ describe("a dangling alias is a miss on the optional and collection lanes", () =
     const service = token<string>("da:Svc");
     const missing = token<string>("da:SvcMissing");
     const container = Container.create();
-    container.bind(service).toConstantValue("live").many();
-    container.bind(service).toAlias(missing).many();
+    container.bind(service).many().toConstantValue("live");
+    container.bind(service).many().toAlias(missing);
 
     expect(container.resolveAll(service)).toStrictEqual(["live"]);
   });
@@ -54,7 +54,7 @@ describe("a dangling alias is a miss on the optional and collection lanes", () =
     const container = Container.create();
     container.bind(facade).toAlias(impl);
     // The target is bound, but only on a named slot the hint-less request cannot select.
-    container.bind(impl).toConstantValue("named").whenNamed("primary");
+    container.bind(impl).whenNamed("primary").toConstantValue("named");
 
     expect(container.resolveOptional(facade)).toBeUndefined();
     expect(container.resolveAll(facade)).toStrictEqual([]);

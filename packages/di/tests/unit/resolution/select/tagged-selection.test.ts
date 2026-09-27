@@ -25,7 +25,7 @@ function taggedContainer(predicate: BindingConstraint): {
   const serviceToken = token<string>("tagged-selection-service");
   const container = Container.create();
 
-  container.bind(serviceToken).toConstantValue("guarded").whenTagged(PROD).when(predicate);
+  container.bind(serviceToken).whenTagged(PROD).when(predicate).toConstantValue("guarded");
 
   return { container, serviceToken };
 }
@@ -52,10 +52,10 @@ describe("an indexed tagged binding still answers to its predicate", () => {
 
     container
       .bind(serviceToken)
-      .toConstantValue("guarded")
       .whenTagged(PROD)
-      .when(() => false);
-    container.bind(serviceToken).toConstantValue("plain").whenTagged(STAGING);
+      .when(() => false)
+      .toConstantValue("guarded");
+    container.bind(serviceToken).whenTagged(STAGING).toConstantValue("plain");
 
     expect(container.resolveOptional(serviceToken, { tags: [PROD] })).toBeUndefined();
     expect(container.resolve(serviceToken, { tags: [STAGING] })).toBe("plain");
@@ -73,10 +73,10 @@ describe("resolveAll over a one-tag request", () => {
   it("collects the tagged binding from every container in the chain, nearest first", () => {
     const serviceToken = token<string>("tagged-selection-chain");
     const parent = Container.create();
-    parent.bind(serviceToken).toConstantValue("from-parent").whenTagged(PROD);
+    parent.bind(serviceToken).whenTagged(PROD).toConstantValue("from-parent");
 
     const child = parent.createChild();
-    child.bind(serviceToken).toConstantValue("from-child").whenTagged(PROD);
+    child.bind(serviceToken).whenTagged(PROD).toConstantValue("from-child");
 
     expect(child.resolveAll(serviceToken, { tags: [PROD] })).toStrictEqual(["from-child", "from-parent"]);
     expect(child.resolveAll(serviceToken, { tag: PROD })).toStrictEqual(["from-child", "from-parent"]);
@@ -85,7 +85,7 @@ describe("resolveAll over a one-tag request", () => {
   it("answers from the parent when the child owns nothing under the tag", () => {
     const serviceToken = token<string>("tagged-selection-child-empty");
     const parent = Container.create();
-    parent.bind(serviceToken).toConstantValue("from-parent").whenTagged(PROD);
+    parent.bind(serviceToken).whenTagged(PROD).toConstantValue("from-parent");
 
     // The child starts the walk with an empty result — the shape a per-request container takes.
     const child = parent.createChild();
@@ -96,11 +96,11 @@ describe("resolveAll over a one-tag request", () => {
   it("steps over a container in the chain that has nothing under the tag", () => {
     const serviceToken = token<string>("tagged-selection-chain-gap");
     const grandparent = Container.create();
-    grandparent.bind(serviceToken).toConstantValue("from-grandparent").whenTagged(PROD);
+    grandparent.bind(serviceToken).whenTagged(PROD).toConstantValue("from-grandparent");
 
     const parent = grandparent.createChild();
     const child = parent.createChild();
-    child.bind(serviceToken).toConstantValue("from-child").whenTagged(PROD);
+    child.bind(serviceToken).whenTagged(PROD).toConstantValue("from-child");
 
     expect(child.resolveAll(serviceToken, { tags: [PROD] })).toStrictEqual(["from-child", "from-grandparent"]);
   });
@@ -109,9 +109,9 @@ describe("resolveAll over a one-tag request", () => {
     const serviceToken = token<string>("tagged-selection-slots");
     const container = Container.create();
 
-    container.bind(serviceToken).toConstantValue("prod").whenTagged(PROD);
-    container.bind(serviceToken).toConstantValue("dev").whenTagged(DEV);
-    container.bind(serviceToken).toConstantValue("named").whenNamed("primary").whenTagged(PROD);
+    container.bind(serviceToken).whenTagged(PROD).toConstantValue("prod");
+    container.bind(serviceToken).whenTagged(DEV).toConstantValue("dev");
+    container.bind(serviceToken).whenNamed("primary").whenTagged(PROD).toConstantValue("named");
     container.bind(serviceToken).toConstantValue("untagged");
 
     expect(container.resolveAll(serviceToken, { tags: [PROD] })).toStrictEqual(["prod"]);
@@ -123,7 +123,7 @@ describe("resolveAll over a one-tag request", () => {
     const positiveZero = ENV.of(0);
     const negativeZero = ENV.of(-0);
 
-    container.bind(serviceToken).toConstantValue("zero").whenTagged(positiveZero);
+    container.bind(serviceToken).whenTagged(positiveZero).toConstantValue("zero");
 
     // Interning splits them, so the identity-keyed index answers as `Object.is` does — a
     // value-keyed map would have conflated the two under SameValueZero.
@@ -147,12 +147,12 @@ describe("a one-criterion request the index does not hold is a miss without a sc
 
     container
       .bind(serviceToken)
-      .toConstantValue("default")
       .when(() => {
         evaluated += 1;
         return true;
-      });
-    container.bind(serviceToken).toConstantValue("staging").whenTagged(STAGING);
+      })
+      .toConstantValue("default");
+    container.bind(serviceToken).whenTagged(STAGING).toConstantValue("staging");
 
     expect(container.resolveOptional(serviceToken, { tags: [PROD] })).toBeUndefined();
     expect(() => container.resolve(serviceToken, { tags: [DEV] })).toThrow(NoMatchingBindingError);
@@ -165,14 +165,14 @@ describe("a one-criterion request the index does not hold is a miss without a sc
 
     container
       .bind(serviceToken)
-      .toConstantValue("first")
       .whenTagged(PROD)
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue("first");
     container
       .bind(serviceToken)
-      .toConstantValue("second")
       .whenTagged(PROD)
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue("second");
 
     expect(container.resolve(serviceToken, { tags: [PROD] })).toBe("second");
     expect(container.resolveAll(serviceToken, { tags: [PROD] })).toEqual(["second"]);
@@ -181,9 +181,9 @@ describe("a one-criterion request the index does not hold is a miss without a sc
   it("walks to the parent when this container's index misses", () => {
     const serviceToken = token<string>("tagged-selection-index-miss-parent");
     const parent = Container.create();
-    parent.bind(serviceToken).toConstantValue("parent-prod").whenTagged(PROD);
+    parent.bind(serviceToken).whenTagged(PROD).toConstantValue("parent-prod");
     const child = parent.createChild();
-    child.bind(serviceToken).toConstantValue("child-staging").whenTagged(STAGING);
+    child.bind(serviceToken).whenTagged(STAGING).toConstantValue("child-staging");
 
     expect(child.resolve(serviceToken, { tags: [PROD] })).toBe("parent-prod");
     expect(child.resolve(serviceToken, { tags: [STAGING] })).toBe("child-staging");
@@ -194,9 +194,9 @@ describe("a request carrying a name and one tag has an indexed lane", () => {
   it("answers the exact two-criterion slot in either declaration order", () => {
     const serviceToken = token<string>("named-tagged-lane");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("named-prod").whenNamed("primary").whenTagged(PROD);
-    container.bind(serviceToken).toConstantValue("staging-named").whenTagged(STAGING).whenNamed("primary");
-    container.bind(serviceToken).toConstantValue("name-only").whenNamed("primary");
+    container.bind(serviceToken).whenNamed("primary").whenTagged(PROD).toConstantValue("named-prod");
+    container.bind(serviceToken).whenTagged(STAGING).whenNamed("primary").toConstantValue("staging-named");
+    container.bind(serviceToken).whenNamed("primary").toConstantValue("name-only");
 
     expect(container.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("named-prod");
     expect(container.resolve(serviceToken, { name: "primary", tag: STAGING })).toBe("staging-named");
@@ -210,10 +210,10 @@ describe("a request carrying a name and one tag has an indexed lane", () => {
     let accept = false;
     container
       .bind(serviceToken)
-      .toConstantValue("guarded")
       .whenNamed("primary")
       .whenTagged(PROD)
-      .when(() => accept);
+      .when(() => accept)
+      .toConstantValue("guarded");
 
     expect(container.resolveOptional(serviceToken, { name: "primary", tags: [PROD] })).toBeUndefined();
     accept = true;
@@ -223,13 +223,13 @@ describe("a request carrying a name and one tag has an indexed lane", () => {
   it("resolves a parent-owned pair from a child until the child binds the same slot", () => {
     const serviceToken = token<string>("named-tagged-lane-parent");
     const parent = Container.create();
-    parent.bind(serviceToken).toConstantValue("parent").whenNamed("primary").whenTagged(PROD);
+    parent.bind(serviceToken).whenNamed("primary").whenTagged(PROD).toConstantValue("parent");
     const child = parent.createChild();
 
     expect(child.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("parent");
     expect(child.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("parent");
 
-    child.bind(serviceToken).toConstantValue("child").whenNamed("primary").whenTagged(PROD);
+    child.bind(serviceToken).whenNamed("primary").whenTagged(PROD).toConstantValue("child");
 
     expect(child.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("child");
     expect(parent.resolve(serviceToken, { name: "primary", tags: [PROD] })).toBe("parent");
@@ -238,7 +238,7 @@ describe("a request carrying a name and one tag has an indexed lane", () => {
   it("falls through to a tag-only slot the request covers, whether or not the name was declared", () => {
     const serviceToken = token<string>("named-tagged-lane-ghost");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("prod").whenTagged(PROD);
+    container.bind(serviceToken).whenTagged(PROD).toConstantValue("prod");
 
     // The request carries PROD plus a name no binding declared; the slot needs only PROD, so it matches.
     expect(container.resolve(serviceToken, { name: "never-declared-anywhere", tags: [PROD] })).toBe("prod");

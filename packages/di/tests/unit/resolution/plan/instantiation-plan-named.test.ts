@@ -32,8 +32,8 @@ describe("a named dependency inside a compiled plan", () => {
 
     const container = Container.create();
     container.bind(driverToken).toConstantValue("default-driver");
-    container.bind(driverToken).toConstantValue("primary-driver").whenNamed("primary");
-    container.bind(driverToken).toConstantValue("backup-driver").whenNamed("backup");
+    container.bind(driverToken).whenNamed("primary").toConstantValue("primary-driver");
+    container.bind(driverToken).whenNamed("backup").toConstantValue("backup-driver");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));
@@ -46,7 +46,7 @@ describe("a named dependency inside a compiled plan", () => {
     const rootToken = token<{ driver: string }>("named-plan-async-root");
 
     const container = Container.create();
-    container.bind(driverToken).toConstantValue("primary-driver").whenNamed("primary");
+    container.bind(driverToken).whenNamed("primary").toConstantValue("primary-driver");
     container
       .bind(rootToken)
       .toResolvedAsync(async (driver: string) => ({ driver }), [inject(driverToken, { name: "primary" })] as const)
@@ -66,9 +66,9 @@ describe("a named dependency inside a compiled plan", () => {
     const container = Container.create();
     container
       .bind(driverToken)
-      .toConstantValue("primary-driver")
       .whenNamed("primary")
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue("primary-driver");
     container
       .bind(rootToken)
       .toResolvedAsync(async (driver: string) => ({ driver }), [inject(driverToken, { name: "primary" })] as const)
@@ -96,8 +96,8 @@ describe("a named dependency inside a compiled plan", () => {
       .singleton();
     container
       .bind(driverToken)
-      .toDynamic(() => ({ id: "primary" }))
       .whenNamed("primary")
+      .toDynamic(() => ({ id: "primary" }))
       .singleton();
     container.bind(Root).toSelf().transient();
 
@@ -124,8 +124,8 @@ describe("a named dependency inside a compiled plan", () => {
     container.bind(driverToken).toDynamic(() => "default-driver");
     container
       .bind(driverToken)
-      .toDynamic(() => "primary-driver")
-      .whenNamed("primary");
+      .whenNamed("primary")
+      .toDynamic(() => "primary-driver");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));
@@ -145,9 +145,9 @@ describe("a named dependency inside a compiled plan", () => {
     const container = Container.create();
     container
       .bind(driverToken)
-      .toConstantValue("gated-driver")
       .whenNamed("primary")
-      .when(() => admit);
+      .when(() => admit)
+      .toConstantValue("gated-driver");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));
@@ -167,14 +167,14 @@ describe("a named dependency inside a compiled plan", () => {
     }
 
     const container = Container.create();
-    container.bind(driverToken).toConstantValue("first-driver").whenNamed("primary");
+    container.bind(driverToken).whenNamed("primary").toConstantValue("first-driver");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));
     expect(container.resolve(Root).driver).toBe("first-driver");
 
     container.unbind(driverToken);
-    container.bind(driverToken).toConstantValue("second-driver").whenNamed("primary");
+    container.bind(driverToken).whenNamed("primary").toConstantValue("second-driver");
 
     expect(container.resolve(Root).driver).toBe("second-driver");
   });
@@ -188,7 +188,7 @@ describe("a named dependency inside a compiled plan", () => {
     }
 
     const container = Container.create();
-    container.bind(driverToken).toConstantValue("present-driver").whenNamed("present");
+    container.bind(driverToken).whenNamed("present").toConstantValue("present-driver");
     container.bind(Root).toSelf().transient();
 
     expect(() => container.resolve(Root)).toThrow(NoMatchingBindingError);
@@ -203,7 +203,7 @@ describe("a named dependency inside a compiled plan", () => {
     }
 
     const parent = Container.create();
-    parent.bind(driverToken).toConstantValue("parent-primary").whenNamed("primary");
+    parent.bind(driverToken).whenNamed("primary").toConstantValue("parent-primary");
 
     const child = parent.createChild();
     child.bind(Root).toSelf().transient();

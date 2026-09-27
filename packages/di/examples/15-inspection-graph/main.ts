@@ -183,8 +183,8 @@ item("hasOwn(LoggerToken)", container.hasOwn(LoggerToken)); // true
 
 // Named / tagged existence checks
 const PluginToken = token<{ name: string }>("inspection-graph:Plugin");
-container.bind(PluginToken).toConstantValue({ name: "alpha" }).whenNamed("alpha");
-container.bind(PluginToken).toConstantValue({ name: "beta" }).whenNamed("beta");
+container.bind(PluginToken).whenNamed("alpha").toConstantValue({ name: "alpha" });
+container.bind(PluginToken).whenNamed("beta").toConstantValue({ name: "beta" });
 
 item("has(PluginToken, {name:'alpha'})", container.has(PluginToken, { name: "alpha" })); // true
 item("has(PluginToken, {name:'gamma'})", container.has(PluginToken, { name: "gamma" })); // false

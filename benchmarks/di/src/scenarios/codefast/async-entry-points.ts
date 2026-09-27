@@ -20,12 +20,12 @@ function buildResolveAllAsyncScenario(): AsyncBenchScenario {
   for (let index = 0; index < ASYNC_STRATEGY_COUNT; index++) {
     container
       .bind(strategyToken)
+      .many()
       .toDynamicAsync(async () => {
         await Promise.resolve();
 
         return index;
       })
-      .many()
       .transient();
   }
 

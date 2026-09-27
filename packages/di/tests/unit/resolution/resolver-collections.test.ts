@@ -18,11 +18,11 @@ function bindStrategies(container: Container, values: ReadonlyArray<number>, eva
   for (const value of values) {
     container
       .bind(strategyToken)
-      .toConstantValue(value)
       .when(() => {
         evaluated.push(value);
         return true;
-      });
+      })
+      .toConstantValue(value);
   }
 }
 
@@ -66,8 +66,8 @@ describe("a root-level collection is memoized against the chain", () => {
     const evaluated: Array<number> = [];
     bindStrategies(container, [1, 2], evaluated);
     const otherToken = token<string>("collections-other");
-    container.bind(otherToken).toConstantValue("a").many();
-    container.bind(otherToken).toConstantValue("b").many();
+    container.bind(otherToken).many().toConstantValue("a");
+    container.bind(otherToken).many().toConstantValue("b");
 
     for (let round = 0; round < 3; round += 1) {
       expect(container.resolveAll(strategyToken)).toEqual([1, 2]);
@@ -81,12 +81,12 @@ describe("a root-level collection is memoized against the chain", () => {
     const first = token<string>("collections-cycle-first");
     const second = token<string>("collections-cycle-second");
     const container = Container.create();
-    container.bind(members).toConstantValue("a").many();
+    container.bind(members).many().toConstantValue("a");
     expect(container.resolveAll(members)).toEqual(["a"]);
 
     container.bind(first).toAlias(second);
     container.bind(second).toAlias(first);
-    container.bind(members).toAlias(first).many();
+    container.bind(members).many().toAlias(first);
 
     // Rebuilding the list is what throws, so no read may answer from the list the first one kept.
     expect(() => container.resolveAll(members)).toThrow(CircularDependencyError);
@@ -121,16 +121,16 @@ describe("a root-level collection is memoized against the chain", () => {
     let calls = 0;
     container
       .bind(strategyToken)
+      .when(() => true)
       .toDynamic(() => {
         calls += 1;
         return calls;
       })
-      .when(() => true)
       .transient();
     container
       .bind(strategyToken)
-      .toConstantValue(100)
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue(100);
 
     expect(container.resolveAll(strategyToken)).toEqual([1, 100]);
     expect(container.resolveAll(strategyToken)).toEqual([2, 100]);
@@ -140,7 +140,7 @@ describe("a root-level collection is memoized against the chain", () => {
     const container = Container.create();
     const evaluated: Array<number> = [];
     bindStrategies(container, [1, 2], evaluated);
-    container.bind(strategyToken).toConstantValue(7).whenTagged(KIND_TAG.of("extra"));
+    container.bind(strategyToken).whenTagged(KIND_TAG.of("extra")).toConstantValue(7);
     const readerToken = token<number>("collections-reader");
     container
       .bind(readerToken)
@@ -166,9 +166,9 @@ describe("a root collection of cached singleton members", () => {
 
     const handlers = token<Handler>("collection-singleton-members");
     const container = Container.create();
-    container.bind(handlers).to(Handler).many().singleton();
-    container.bind(handlers).to(Handler).many().singleton();
-    container.bind(handlers).to(Handler).many().singleton();
+    container.bind(handlers).many().to(Handler).singleton();
+    container.bind(handlers).many().to(Handler).singleton();
+    container.bind(handlers).many().to(Handler).singleton();
 
     const first = container.resolveAll(handlers);
     const second = container.resolveAll(handlers);
@@ -189,13 +189,13 @@ describe("a root collection of cached singleton members", () => {
 
     const handlers = token<Handler>("collection-singleton-rebound");
     const container = Container.create();
-    container.bind(handlers).to(Handler).many().singleton();
-    const kept = container.bind(handlers).to(Handler).many().singleton();
+    container.bind(handlers).many().to(Handler).singleton();
+    const kept = container.bind(handlers).many().to(Handler).singleton();
 
     const before = container.resolveAll(handlers);
     container.resolveAll(handlers);
     container.unbind(kept.id());
-    container.bind(handlers).to(Handler).many().singleton();
+    container.bind(handlers).many().to(Handler).singleton();
 
     const after = container.resolveAll(handlers);
     expect(after).toHaveLength(2);
@@ -213,8 +213,8 @@ describe("a root collection of cached singleton members", () => {
 
     const members = token<unknown>("collection-mixed-members");
     const container = Container.create();
-    container.bind(members).toConstantValue("constant").many();
-    container.bind(members).to(Lazy).many().singleton();
+    container.bind(members).many().toConstantValue("constant");
+    container.bind(members).many().to(Lazy).singleton();
 
     expect(container.resolveAll(members)).toEqual(["constant", expect.any(Lazy)]);
     expect(constructed).toBe(1);
@@ -228,8 +228,8 @@ describe("a root collection of cached singleton members", () => {
 
     const handlers = token<Handler>("collection-singleton-async");
     const container = Container.create();
-    container.bind(handlers).to(Handler).many().singleton();
-    container.bind(handlers).to(Handler).many().singleton();
+    container.bind(handlers).many().to(Handler).singleton();
+    container.bind(handlers).many().to(Handler).singleton();
 
     const first = await container.resolveAllAsync(handlers);
     const second = await container.resolveAllAsync(handlers);

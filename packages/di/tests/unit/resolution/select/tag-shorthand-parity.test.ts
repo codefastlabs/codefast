@@ -45,8 +45,8 @@ function containerWith(value: unknown): { container: Container; serviceToken: Re
   const serviceToken = token<string>("tag-parity-service");
   const container = Container.create();
 
-  container.bind(serviceToken).toConstantValue("hit").whenTagged(SLOT.of(value));
-  container.bind(serviceToken).toConstantValue("other").whenTagged(SLOT.of("other-slot"));
+  container.bind(serviceToken).whenTagged(SLOT.of(value)).toConstantValue("hit");
+  container.bind(serviceToken).whenTagged(SLOT.of("other-slot")).toConstantValue("other");
 
   return { container, serviceToken };
 }
@@ -127,8 +127,8 @@ describe("tag shorthand on the injection surface", () => {
 
     for (const options of [{ tag: pair }, { tags: [pair] }] as const) {
       const container = Container.create();
-      container.bind(dependency).toConstantValue("hit").whenTagged(pair);
-      container.bind(dependency).toConstantValue("other").whenTagged(ENV.of("dev"));
+      container.bind(dependency).whenTagged(pair).toConstantValue("hit");
+      container.bind(dependency).whenTagged(ENV.of("dev")).toConstantValue("other");
 
       const consumer = token<string>("inject-resolve-consumer");
       container.bind(consumer).toResolved((value: string) => value, [inject(dependency, options)]);
@@ -158,7 +158,7 @@ describe("singleCriterionOnlyOf", () => {
   it("never interns a request-side name no binding declared", () => {
     const container = Container.create();
     const probe = token<string>("parity-leak-probe-target");
-    container.bind(probe).toConstantValue("v").whenNamed("declared");
+    container.bind(probe).whenNamed("declared").toConstantValue("v");
 
     expect(container.resolveOptional(probe, { name: "never-declared-name" })).toBeUndefined();
     // The miss folded through peek, so the name minted nothing.
@@ -169,7 +169,7 @@ describe("singleCriterionOnlyOf", () => {
   it("renders the reserved criterion as name in NoMatchingBindingError", () => {
     const container = Container.create();
     const probe = token<string>("parity-error-probe");
-    container.bind(probe).toConstantValue("v").whenNamed("x");
+    container.bind(probe).whenNamed("x").toConstantValue("v");
 
     expect(() => container.resolve(probe, { tag: slotName.of("y") })).toThrow(/"name":"y"/);
   });

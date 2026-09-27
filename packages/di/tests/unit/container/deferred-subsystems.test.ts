@@ -106,7 +106,7 @@ describe("registry slot indexes built on first use", () => {
   it("resolves a named binding registered as the container's only binding", () => {
     const serviceToken = token<string>("deferred-named");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("primary").whenNamed("primary");
+    container.bind(serviceToken).whenNamed("primary").toConstantValue("primary");
 
     expect(container.resolve(serviceToken, { name: "primary" })).toBe("primary");
   });
@@ -114,7 +114,7 @@ describe("registry slot indexes built on first use", () => {
   it("resolves a tagged binding registered as the container's only binding", () => {
     const serviceToken = token<string>("deferred-tagged");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("prod").whenTagged(ENV_TAG.of("prod"));
+    container.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("prod");
 
     expect(container.resolve(serviceToken, { tags: [ENV_TAG.of("prod")] })).toBe("prod");
   });
@@ -122,9 +122,9 @@ describe("registry slot indexes built on first use", () => {
   it("drops the named index again when its last binding goes", () => {
     const serviceToken = token<string>("deferred-named-unbind");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("primary").whenNamed("primary");
+    container.bind(serviceToken).whenNamed("primary").toConstantValue("primary");
     container.unbind(serviceToken);
-    container.bind(serviceToken).toConstantValue("replacement").whenNamed("primary");
+    container.bind(serviceToken).whenNamed("primary").toConstantValue("replacement");
 
     expect(container.resolve(serviceToken, { name: "primary" })).toBe("replacement");
   });

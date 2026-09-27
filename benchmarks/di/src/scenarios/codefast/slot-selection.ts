@@ -61,7 +61,7 @@ function buildTaggedContainer(): Container {
   const container = Container.create();
 
   for (const env of TAGGED_ENVS) {
-    container.bind(taggedServiceToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
+    container.bind(taggedServiceToken).whenTagged(ENV_TAG.of(env)).toConstantValue({ env });
   }
 
   return container;
@@ -168,7 +168,7 @@ function buildZeroValueScenario(): BenchScenario {
   const container = Container.create();
 
   for (const level of NUMBERED_LEVELS) {
-    container.bind(numberedServiceToken).toConstantValue({ level }).whenTagged(LEVEL_TAG.of(level));
+    container.bind(numberedServiceToken).whenTagged(LEVEL_TAG.of(level)).toConstantValue({ level });
   }
 
   container.resolve(numberedServiceToken, { tags: ZERO_TAGS });
@@ -194,7 +194,7 @@ function buildNameAndTagScenario(): BenchScenario {
   const container = Container.create();
 
   for (const env of TAGGED_ENVS) {
-    container.bind(namedTaggedToken).toConstantValue({ env }).whenNamed(NAMED_TAG_NAME).whenTagged(ENV_TAG.of(env));
+    container.bind(namedTaggedToken).whenNamed(NAMED_TAG_NAME).whenTagged(ENV_TAG.of(env)).toConstantValue({ env });
   }
 
   container.resolve(namedTaggedToken, { name: NAMED_TAG_NAME, tags: NAMED_TAGS });
@@ -271,7 +271,7 @@ function buildTaggedParentOwnedScenario(): BenchScenario {
   const appContainer = Container.create();
 
   for (const env of TAGGED_ENVS) {
-    appContainer.bind(parentTaggedToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
+    appContainer.bind(parentTaggedToken).whenTagged(ENV_TAG.of(env)).toConstantValue({ env });
   }
   const longLivedChild = appContainer.createChild();
 
@@ -295,7 +295,7 @@ function buildNamedParentOwnedScenario(): BenchScenario {
   const appContainer = Container.create();
 
   for (const env of TAGGED_ENVS) {
-    appContainer.bind(parentNamedToken).toConstantValue({ env }).whenNamed(env);
+    appContainer.bind(parentNamedToken).whenNamed(env).toConstantValue({ env });
   }
   const longLivedChild = appContainer.createChild();
 
@@ -343,7 +343,7 @@ function buildInjectedNamedContainer(declinePlan: boolean): Container {
   const container = Container.create();
 
   for (const name of INJECTED_SLOT_NAMES) {
-    container.bind(injectedLeafToken).toConstantValue({ id: name }).whenNamed(name);
+    container.bind(injectedLeafToken).whenNamed(name).toConstantValue({ id: name });
   }
   const binding = container.bind(InjectedNamedRoot).toSelf().transient();
 
@@ -420,7 +420,7 @@ function buildInjectedTaggedContainer(declinePlan: boolean): Container {
   const container = Container.create();
 
   for (const name of INJECTED_SLOT_NAMES) {
-    container.bind(injectedTaggedLeafToken).toConstantValue({ id: name }).whenTagged(ENV_TAG.of(name));
+    container.bind(injectedTaggedLeafToken).whenTagged(ENV_TAG.of(name)).toConstantValue({ id: name });
   }
   const binding = container.bind(InjectedTaggedRoot).toSelf().transient();
 

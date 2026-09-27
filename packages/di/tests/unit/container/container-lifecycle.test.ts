@@ -10,7 +10,6 @@ import { Container } from "#container/container";
 import { Module } from "#core/module";
 import type { ModuleBuilder } from "#core/module";
 import { tag } from "#core/tag";
-import type { Token } from "#core/token";
 import { token } from "#core/token";
 import { createAutoRegisterRegistry } from "#decorators/injectable";
 import { AsyncModuleLoadError, DisposedContainerError } from "#errors/errors";
@@ -39,8 +38,8 @@ describe("unbinding", () => {
   it("unbinds by binding id, leaving the other binding for the same token", () => {
     const serviceToken = token<string>("unbind-by-id");
     const container = Container.create();
-    const first = container.bind(serviceToken).toConstantValue("a").whenNamed("a");
-    container.bind(serviceToken).toConstantValue("b").whenNamed("b");
+    const first = container.bind(serviceToken).whenNamed("a").toConstantValue("a");
+    container.bind(serviceToken).whenNamed("b").toConstantValue("b");
 
     container.unbind(first.id());
 
@@ -180,65 +179,6 @@ describe("unbind by the id of a displaced binding", () => {
     await container.unbindAsync(displacedId);
 
     expect(log).toStrictEqual(["displaced"]);
-  });
-
-  // The displacing chain still holds the binding parked; a later refinement must not put an
-  // unbound binding back.
-  it("keeps a later refinement from restoring the unbound binding", () => {
-    const serviceToken = token<string>("displaced-unbind-restore");
-    const container = Container.create();
-    const displacedId = container.bind(serviceToken).toConstantValue("displaced").id();
-    const winner = container.bind(serviceToken).toConstantValue("winner");
-
-    container.unbind(displacedId);
-    winner.whenNamed("secondary");
-
-    expect(container.resolveAll(serviceToken)).toStrictEqual(["winner"]);
-  });
-
-  // An in-place refinement between the unbind and the re-slot must not make the parked snapshot
-  // look current again.
-  it.each<[string, (container: Container, serviceToken: Token<string>) => () => void]>([
-    [
-      "a scope change",
-      (container, serviceToken) => {
-        const winner = container.bind(serviceToken).toDynamic(() => "winner");
-        return () => {
-          winner.singleton();
-          winner.whenNamed("secondary");
-        };
-      },
-    ],
-    [
-      "an activation hook",
-      (container, serviceToken) => {
-        const winner = container.bind(serviceToken).toConstantValue("winner");
-        return () => {
-          winner.onActivation((_ctx, value) => value);
-          winner.whenNamed("secondary");
-        };
-      },
-    ],
-    [
-      "a deactivation hook",
-      (container, serviceToken) => {
-        const winner = container.bind(serviceToken).toConstantValue("winner");
-        return () => {
-          winner.onDeactivation(() => undefined);
-          winner.whenNamed("secondary");
-        };
-      },
-    ],
-  ])("keeps %s between the unbind and a re-slot from restoring the unbound binding", (_label, bindWinner) => {
-    const serviceToken = token<string>("displaced-unbind-refine-restore");
-    const container = Container.create();
-    const displacedId = container.bind(serviceToken).toConstantValue("displaced").id();
-    const refineAndReslot = bindWinner(container, serviceToken);
-
-    container.unbind(displacedId);
-    refineAndReslot();
-
-    expect(container.resolveAll(serviceToken)).toStrictEqual(["winner"]);
   });
 });
 
@@ -470,23 +410,6 @@ describe("unload of a module whose binding was displaced", () => {
 
     expect(log).toStrictEqual(["owned"]);
   });
-
-  // The displacing chain still holds the owner's binding parked; a later refinement must not put an
-  // unloaded module's binding back.
-  it("keeps a later refinement from restoring the unloaded module's binding", () => {
-    const serviceToken = token<string>("displaced-unload-restore");
-    const owner = Module.create("displaced-unload:Owner", (builder) => {
-      builder.bind(serviceToken).toConstantValue("owned");
-    });
-    const container = Container.create();
-    container.load(owner);
-    const winner = container.bind(serviceToken).toConstantValue("winner");
-
-    container.unload(owner);
-    winner.whenNamed("secondary");
-
-    expect(container.resolveAll(serviceToken)).toStrictEqual(["winner"]);
-  });
 });
 
 describe("async modules", () => {
@@ -548,20 +471,20 @@ describe("initializeAsync", () => {
     let warmBuilt = 0;
     container
       .bind(serviceToken)
+      .whenTagged(fuel.of("x"))
+      .when(() => true)
       .toDynamic(() => {
         hijackBuilt += 1;
         return "hijack";
-      })
-      .whenTagged(fuel.of("x"))
-      .when(() => true);
+      });
     container
       .bind(serviceToken)
+      .whenNamed("a")
+      .whenTagged(fuel.of("x"))
       .toDynamic(() => {
         warmBuilt += 1;
         return "warm";
       })
-      .whenNamed("a")
-      .whenTagged(fuel.of("x"))
       .singleton();
 
     await container.initializeAsync();

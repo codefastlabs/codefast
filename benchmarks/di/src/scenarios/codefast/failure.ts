@@ -104,12 +104,12 @@ function buildAmbiguousMultiBindingScenario(): BenchScenario {
   const container = Container.create();
   container
     .bind(ambiguousToken)
-    .toConstantValue("first")
-    .when(() => true);
+    .when(() => true)
+    .toConstantValue("first");
   container
     .bind(ambiguousToken)
-    .toConstantValue("second")
-    .when(() => true);
+    .when(() => true)
+    .toConstantValue("second");
 
   return {
     ...AMBIGUOUS_MULTI_BINDING,

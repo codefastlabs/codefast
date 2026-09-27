@@ -17,7 +17,7 @@ describe("resolveAll registration order", () => {
     const service = token<string>("ro:DefaultThenNamed");
     const container = Container.create();
     container.bind(service).toConstantValue("A");
-    container.bind(service).toConstantValue("B").whenNamed("x");
+    container.bind(service).whenNamed("x").toConstantValue("B");
 
     expect(container.resolveAll(service)).toStrictEqual(["A", "B"]);
     expect(container.resolve(service)).toBe("A");
@@ -26,8 +26,8 @@ describe("resolveAll registration order", () => {
   it("keeps a smaller tag set ahead of a larger one registered after it", () => {
     const service = token<string>("ro:TagSets");
     const container = Container.create();
-    container.bind(service).toConstantValue("A").whenTagged(FUEL.of("petrol"));
-    container.bind(service).toConstantValue("B").whenTagged(FUEL.of("petrol")).whenTagged(SIZE.of("v8"));
+    container.bind(service).whenTagged(FUEL.of("petrol")).toConstantValue("A");
+    container.bind(service).whenTagged(FUEL.of("petrol")).whenTagged(SIZE.of("v8")).toConstantValue("B");
 
     expect(container.resolveAll(service)).toStrictEqual(["A", "B"]);
   });
@@ -36,30 +36,20 @@ describe("resolveAll registration order", () => {
     const service = token<string>("ro:DefaultThenMemberThenPredicate");
     const container = Container.create();
     container.bind(service).toConstantValue("A");
-    container.bind(service).toConstantValue("B").many();
+    container.bind(service).many().toConstantValue("B");
     container
       .bind(service)
-      .toConstantValue("C")
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue("C");
 
     expect(container.resolveAll(service)).toStrictEqual(["A", "B", "C"]);
-  });
-
-  it("keeps a chain's binding in place when the chain is refined after later registrations", () => {
-    const service = token<string>("ro:LateRefinement");
-    const container = Container.create();
-    const first = container.bind(service).toConstantValue("A").whenNamed("a");
-    container.bind(service).toConstantValue("B").whenNamed("b");
-    first.whenTagged(FUEL.of("petrol"));
-
-    expect(container.resolveAll(service)).toStrictEqual(["A", "B"]);
   });
 
   it("orders the async lane and the lookup snapshot the same way", async () => {
     const service = token<string>("ro:AsyncAndSnapshot");
     const container = Container.create();
     container.bind(service).toConstantValue("A");
-    container.bind(service).toConstantValue("B").whenNamed("x");
+    container.bind(service).whenNamed("x").toConstantValue("B");
 
     await expect(container.resolveAllAsync(service)).resolves.toStrictEqual(["A", "B"]);
     expect(container.lookupBindings(service)?.map((binding) => binding.slot.name)).toStrictEqual([undefined, "x"]);

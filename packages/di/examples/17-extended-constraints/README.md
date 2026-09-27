@@ -106,9 +106,9 @@ graph TB
 **Scenario:** `OrderService` gets a verbose logger; everything else gets a silent one.
 
 ```ts
-container.bind(LoggerToken).toConstantValue(makeLogger("verbose")).when(whenParentIs(OrderServiceToken)); // only for OrderService
+container.bind(LoggerToken).when(whenParentIs(OrderServiceToken)).toConstantValue(makeLogger("verbose")); // only for OrderService
 
-container.bind(LoggerToken).toConstantValue(makeLogger("silent")).when(whenNoParentIs(OrderServiceToken)); // everyone else
+container.bind(LoggerToken).when(whenNoParentIs(OrderServiceToken)).toConstantValue(makeLogger("silent")); // everyone else
 ```
 
 `whenParentIs` checks the **immediate** parent. Use it when a specific consumer should receive a different
@@ -126,9 +126,9 @@ PaymentOrchestrator → FraudChecker → RiskScorer → Logger
 ```
 
 ```ts
-container.bind(LoggerToken).toConstantValue(makeLogger("audit")).when(whenAnyAncestorIs(PaymentOrchestratorToken));
+container.bind(LoggerToken).when(whenAnyAncestorIs(PaymentOrchestratorToken)).toConstantValue(makeLogger("audit"));
 
-container.bind(LoggerToken).toConstantValue(makeLogger("standard")).when(whenNoAncestorIs(PaymentOrchestratorToken));
+container.bind(LoggerToken).when(whenNoAncestorIs(PaymentOrchestratorToken)).toConstantValue(makeLogger("standard"));
 ```
 
 Even though `RiskScorer`'s direct parent is `FraudChecker`, `whenAnyAncestorIs` scans the entire chain upward and finds
@@ -147,16 +147,16 @@ const DataSourceToken = token<DataSource, "primary" | "replica">("extended-const
 
 container
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("primary-logger"))
-  .when(whenParentNamed(DataSourceToken, "primary"));
+  .when(whenParentNamed(DataSourceToken, "primary"))
+  .toConstantValue(makeLogger("primary-logger"));
 
 container
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("replica-logger"))
-  .when(whenParentNamed(DataSourceToken, "replica"));
+  .when(whenParentNamed(DataSourceToken, "replica"))
+  .toConstantValue(makeLogger("replica-logger"));
 
-container.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
-container.bind(DataSourceToken).to(DataSource).whenNamed("replica").singleton();
+container.bind(DataSourceToken).whenNamed("primary").to(DataSource).singleton();
+container.bind(DataSourceToken).whenNamed("replica").to(DataSource).singleton();
 
 // QueryRunner resolves DataSource named "replica" → gets replica-logger
 container.bind(QueryRunnerToken).to(QueryRunner).singleton();
@@ -172,15 +172,15 @@ const ArchiveSourceToken = token<DataSource, "primary">("extended-constraints:Ar
 
 container
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("datasource-primary-logger"))
-  .when(whenParentNamed(DataSourceToken, "primary"));
+  .when(whenParentNamed(DataSourceToken, "primary"))
+  .toConstantValue(makeLogger("datasource-primary-logger"));
 container
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("archive-primary-logger"))
-  .when(whenParentNamed(ArchiveSourceToken, "primary"));
+  .when(whenParentNamed(ArchiveSourceToken, "primary"))
+  .toConstantValue(makeLogger("archive-primary-logger"));
 
-container.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
-container.bind(ArchiveSourceToken).to(DataSource).whenNamed("primary").singleton();
+container.bind(DataSourceToken).whenNamed("primary").to(DataSource).singleton();
+container.bind(ArchiveSourceToken).whenNamed("primary").to(DataSource).singleton();
 
 container.resolve(DataSourceToken, { name: "primary" }).connect(); // [datasource-primary-logger]
 container.resolve(ArchiveSourceToken, { name: "primary" }).connect(); // [archive-primary-logger]
@@ -238,21 +238,21 @@ const TIER_TAG = tag<"free" | "paid">("extended-constraints:tier");
 // Enterprise audit logger: parent chain must carry tenant=enterprise AND tier=paid on the same frame
 container
   .bind(AuditLoggerToken)
-  .toConstantValue({ tier: "enterprise", audit: (e) => console.log(`[ENTERPRISE] ${e}`) })
-  .when(whenAnyAncestorTaggedAll([TENANT_TAG.of("enterprise"), TIER_TAG.of("paid")]));
+  .when(whenAnyAncestorTaggedAll([TENANT_TAG.of("enterprise"), TIER_TAG.of("paid")]))
+  .toConstantValue({ tier: "enterprise", audit: (e) => console.log(`[ENTERPRISE] ${e}`) });
 
 // Starter: single tag sufficient
 container
   .bind(AuditLoggerToken)
-  .toConstantValue({ tier: "starter", audit: (e) => console.log(`[starter] ${e}`) })
-  .when(whenAnyAncestorTagged(TENANT_TAG.of("starter")));
+  .when(whenAnyAncestorTagged(TENANT_TAG.of("starter")))
+  .toConstantValue({ tier: "starter", audit: (e) => console.log(`[starter] ${e}`) });
 
 // Root bindings carry the tags; intermediate nodes are untagged
 container
   .bind(AnalyticsDashboardToken)
-  .to(AnalyticsDashboard)
   .whenTagged(TENANT_TAG.of("enterprise"))
   .whenTagged(TIER_TAG.of("paid"))
+  .to(AnalyticsDashboard)
   .singleton();
 ```
 

@@ -222,8 +222,8 @@ const ServiceModule = Module.create("real-world-web-app:Service", (builder) => {
 const MiddlewareModule = Module.create("real-world-web-app:Middleware", (builder) => {
   builder.import(ServiceModule);
   // Multi-binding: each middleware uses a distinct binding slot via whenNamed()
-  builder.bind(MiddlewareToken).to(LoggingMiddleware).whenNamed("logging");
-  builder.bind(MiddlewareToken).to(AuthMiddleware).whenNamed("auth");
+  builder.bind(MiddlewareToken).whenNamed("logging").to(LoggingMiddleware);
+  builder.bind(MiddlewareToken).whenNamed("auth").to(AuthMiddleware);
 });
 
 const ControllerModule = Module.create("real-world-web-app:Controller", (builder) => {

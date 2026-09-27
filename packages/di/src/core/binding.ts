@@ -181,13 +181,6 @@ interface BindingBase<Value> {
    */
   activationStamp: number;
   /**
-   * Where the binding stands in registration order, or {@link UNREGISTERED_ORDER} before its first add.
-   *
-   * @remarks Registry-owned: stamped by the first `add` and kept through every re-slot and restore, so a
-   * binding taken out and put back returns to its place rather than behind later registrations.
-   */
-  registrationOrder: number;
-  /**
    * Cached singleton instance, or {@link NO_INSTANCE}.
    *
    * @remarks A binding belongs to exactly one container, so its singleton slot is per-binding —
@@ -341,43 +334,6 @@ export function generateBindingId(): BindingIdentifier {
 }
 
 /**
- * Writable view of the one selection field a chain may refine without re-registering: nothing
- * indexes on the predicate, so the registry rewrites it in place and re-homes the binding itself.
- *
- * @since 0.10.0
- */
-export interface PredicateField {
-  predicate: BindingConstraint | undefined;
-}
-
-/**
- * Narrows a registered binding to its predicate for the registry to rewrite.
- *
- * @since 0.10.0
- */
-export function writablePredicate(binding: Binding): PredicateField {
-  return binding as PredicateField;
-}
-
-/**
- * Writable view of collection membership, which the registry sets because it decides the binding's map.
- *
- * @since 0.10.0
- */
-export interface MembershipField {
-  isMany: boolean;
-}
-
-/**
- * Narrows a registered binding to its membership flag for the registry to set.
- *
- * @since 0.10.0
- */
-export function writableMembership(binding: Binding): MembershipField {
-  return binding;
-}
-
-/**
  * Writable view of the memoized frame, which is a cache rather than part of a binding's identity.
  *
  * @remarks A write view stated once cannot drift from `Binding`, where an inline cast at each site
@@ -396,17 +352,10 @@ interface MemoizedFrameField {
 export const NO_ACTIVATION_STAMP = -1;
 
 /**
- * The registration order of a binding no registry has added yet.
+ * Drops the memoized resolution frame, for a scope change that alters what the frame reports.
  *
- * @since 0.11.0
- */
-export const UNREGISTERED_ORDER = -1;
-
-/**
- * Drops the memoized resolution frame, for a refinement that changes what the frame reports.
- *
- * @remarks The frame derives from `scope` and `slot`, both of which a chain now writes in place on
- * the registered object, so every such refinement clears it.
+ * @remarks The frame derives from `scope` and `slot`; the slot is final once the binding registers, so
+ * only a scope written in place on the registered object clears it.
  *
  * @since 0.5.0-canary.9
  */
@@ -418,7 +367,7 @@ export function clearBindingFrame<Value>(binding: Binding<Value>): void {
 // ── Builder interfaces ───────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Common slot-constraint + id methods shared by all concrete binding builders.
+ * The slot steps of the fluent chain, taken before `to*()` so the binding registers once, in its final shape.
  *
  * @since 0.3.16-canary.0
  */
@@ -436,41 +385,41 @@ export interface SlotConstrainedBuilder<Names extends string = string> {
    * what a single `resolve` selects, and outside slot last-wins. It keeps the default slot.
    */
   many(): this;
-  /** The identifier this binding is registered under. */
-  id(): BindingIdentifier;
 }
 
 /**
- * The `to*` step of the fluent chain, choosing what a token resolves to.
+ * The first step of the fluent chain: the slot, then the `to*` strategy that registers the binding.
  *
  * @since 0.3.16-canary.0
  */
-export interface BindToBuilder<Value, Names extends string = string> {
-  to(type: Constructor<Value>): BindingBuilder<Value, Names>;
-  toSelf(): BindingBuilder<Value, Names>;
-  toConstantValue(value: Value): ConstantBindingBuilder<Value, Names>;
-  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value, Names>;
-  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value, Names>;
+export interface BindToBuilder<Value, Names extends string = string> extends SlotConstrainedBuilder<Names> {
+  to(type: Constructor<Value>): BindingBuilder<Value>;
+  toSelf(): BindingBuilder<Value>;
+  toConstantValue(value: Value): ConstantBindingBuilder<Value>;
+  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value>;
+  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value>;
   toResolved<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
-  ): BindingBuilder<Value, Names>;
+  ): BindingBuilder<Value>;
   toResolvedAsync<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
-  ): BindingBuilder<Value, Names>;
-  toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder<Names>;
+  ): BindingBuilder<Value>;
+  toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder;
 }
 
 /**
- * The scope-selection step of the fluent chain.
+ * The scope-selection step of the fluent chain, which the binding enters once registered.
  *
  * @since 0.3.16-canary.0
  */
-export interface BindingBuilder<Value, Names extends string = string> extends SlotConstrainedBuilder<Names> {
+export interface BindingBuilder<Value> {
   singleton(): SingletonBindingBuilder<Value>;
   transient(): TransientBindingBuilder<Value>;
   scoped(): ScopedBindingBuilder<Value>;
+  /** The identifier this binding is registered under. */
+  id(): BindingIdentifier;
 }
 
 /**
@@ -478,17 +427,22 @@ export interface BindingBuilder<Value, Names extends string = string> extends Sl
  *
  * @since 0.3.16-canary.0
  */
-export interface ConstantBindingBuilder<Value, Names extends string = string> extends SlotConstrainedBuilder<Names> {
+export interface ConstantBindingBuilder<Value> {
   onActivation(fn: ActivationHandler<Value>): SingletonLifecycleBuilder<Value>;
   onDeactivation(fn: DeactivationHandler<Value>): SingletonLifecycleBuilder<Value>;
+  /** The identifier this binding is registered under. */
+  id(): BindingIdentifier;
 }
 
 /**
- * The fluent chain for an alias — slot constraints only, since scoping belongs to the target.
+ * The fluent chain for an alias — nothing to add, since scoping belongs to the target.
  *
  * @since 0.3.16-canary.0
  */
-export interface AliasBindingBuilder<Names extends string = string> extends SlotConstrainedBuilder<Names> {}
+export interface AliasBindingBuilder {
+  /** The identifier this binding is registered under. */
+  id(): BindingIdentifier;
+}
 
 /**
  * The fluent chain after `singleton()`, where both lifecycle hooks stay available.

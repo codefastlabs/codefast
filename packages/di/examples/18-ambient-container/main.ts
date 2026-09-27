@@ -81,12 +81,12 @@ const container = Container.create();
 container.bind(ClockToken).toConstantValue({ now: () => "2026-08-01T09:00:00Z" });
 container
   .bind(TransportToken)
-  .toConstantValue({ send: (message) => console.log(`  email → ${message}`) })
-  .whenNamed("email");
+  .whenNamed("email")
+  .toConstantValue({ send: (message) => console.log(`  email → ${message}`) });
 container
   .bind(TransportToken)
-  .toConstantValue({ send: (message) => console.log(`  sms   → ${message}`) })
-  .whenNamed("sms");
+  .whenNamed("sms")
+  .toConstantValue({ send: (message) => console.log(`  sms   → ${message}`) });
 container.bind(Stopwatch).toSelf().transient();
 container.bind(Notifier).toSelf().transient();
 

@@ -189,22 +189,24 @@ describe("deferred subsystems stay deferred", () => {
 
     expect(diagnose(container).builtSubsystems).not.toContain("registry.records");
 
-    container.bind(namedToken).toConstantValue("named").whenNamed("primary");
+    container.bind(namedToken).whenNamed("primary").toConstantValue("named");
 
     expect(diagnose(container).builtSubsystems).toContain("registry.records");
   });
 
-  it("moves a lone binding into a record when a bare when() gives it a predicate", () => {
+  it("files a binding with a bare when() in a record, never in the lone map", () => {
     const serviceToken = token<string>("deferred-records-when");
     const container = Container.create();
-    const chain = container.bind(serviceToken).toConstantValue("value");
+    container.bind(token<string>("deferred-records-plain")).toConstantValue("plain");
 
     expect(diagnose(container).builtSubsystems).not.toContain("registry.records");
 
-    chain.when(() => true);
+    container
+      .bind(serviceToken)
+      .when(() => true)
+      .toConstantValue("value");
 
     expect(diagnose(container).builtSubsystems).toContain("registry.records");
-    // Rewritten in place: the id index was never needed to find the binding again.
     expect(diagnose(container).builtSubsystems).not.toContain("registry.idIndex");
     expect(container.resolve(serviceToken)).toBe("value");
   });

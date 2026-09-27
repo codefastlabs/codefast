@@ -14,8 +14,8 @@ function buildGeneralAndSpecialised(): { container: Container; engineToken: Retu
   const engineToken = token<Engine>("engine");
   const container = Container.create();
 
-  container.bind(engineToken).toConstantValue({ id: "petrol" }).whenTagged(FUEL.of(PETROL));
-  container.bind(engineToken).toConstantValue({ id: "turbo-v8" }).whenTagged(FUEL.of(PETROL)).whenTagged(SIZE.of(V8));
+  container.bind(engineToken).whenTagged(FUEL.of(PETROL)).toConstantValue({ id: "petrol" });
+  container.bind(engineToken).whenTagged(FUEL.of(PETROL)).whenTagged(SIZE.of(V8)).toConstantValue({ id: "turbo-v8" });
 
   return { container, engineToken };
 }
@@ -58,8 +58,8 @@ describe("tag-count specificity", () => {
     const engineToken = token<Engine>("engine");
     const container = Container.create();
 
-    container.bind(engineToken).toConstantValue({ id: "by-fuel" }).whenTagged(FUEL.of(PETROL));
-    container.bind(engineToken).toConstantValue({ id: "by-size" }).whenTagged(SIZE.of(V8));
+    container.bind(engineToken).whenTagged(FUEL.of(PETROL)).toConstantValue({ id: "by-fuel" });
+    container.bind(engineToken).whenTagged(SIZE.of(V8)).toConstantValue({ id: "by-size" });
 
     expect(() =>
       container.resolve(engineToken, {
@@ -72,14 +72,14 @@ describe("tag-count specificity", () => {
     const engineToken = token<Engine>("engine");
     const container = Container.create();
 
-    container.bind(engineToken).toConstantValue({ id: "one" }).whenTagged(FUEL.of(PETROL));
-    container.bind(engineToken).toConstantValue({ id: "two" }).whenTagged(FUEL.of(PETROL)).whenTagged(SIZE.of(V8));
+    container.bind(engineToken).whenTagged(FUEL.of(PETROL)).toConstantValue({ id: "one" });
+    container.bind(engineToken).whenTagged(FUEL.of(PETROL)).whenTagged(SIZE.of(V8)).toConstantValue({ id: "two" });
     container
       .bind(engineToken)
-      .toConstantValue({ id: "three" })
       .whenTagged(FUEL.of(PETROL))
       .whenTagged(SIZE.of(V8))
-      .whenTagged(TURBO.of(true));
+      .whenTagged(TURBO.of(true))
+      .toConstantValue({ id: "three" });
 
     expect(
       container.resolve(engineToken, {
@@ -100,10 +100,10 @@ describe("tag-count specificity", () => {
     // The predicate sits on the *less* specific slot: predicate order is first, so it wins.
     container
       .bind(engineToken)
-      .toConstantValue({ id: "guarded-general" })
       .whenTagged(FUEL.of(PETROL))
-      .when(() => true);
-    container.bind(engineToken).toConstantValue({ id: "turbo-v8" }).whenTagged(FUEL.of(PETROL)).whenTagged(SIZE.of(V8));
+      .when(() => true)
+      .toConstantValue({ id: "guarded-general" });
+    container.bind(engineToken).whenTagged(FUEL.of(PETROL)).whenTagged(SIZE.of(V8)).toConstantValue({ id: "turbo-v8" });
 
     expect(
       container.resolve(engineToken, {
@@ -118,12 +118,12 @@ describe("tag-count specificity", () => {
 
     container
       .bind(engineToken)
-      .toDynamic(() => ({ id: "first" }))
-      .when(() => true);
+      .when(() => true)
+      .toDynamic(() => ({ id: "first" }));
     container
       .bind(engineToken)
-      .toDynamic(() => ({ id: "second" }))
-      .when(() => true);
+      .when(() => true)
+      .toDynamic(() => ({ id: "second" }));
 
     expect(() => container.resolve(engineToken)).toThrow(/without a clear winner/);
   });

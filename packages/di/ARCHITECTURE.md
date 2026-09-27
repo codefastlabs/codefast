@@ -159,9 +159,10 @@ Two names follow from the merge. The binding's id is `identifier`, because the c
 same object, and the lifecycle hooks are `activationHook` / `deactivationHook`, because `.onActivation()` /
 `.onDeactivation()` are the steps that set them. A chain registers exactly once: a second `to*()` throws
 `ChainAlreadyRegisteredError` before it can overwrite the registered fields, and another binding for the same token is
-another `bind()`. Refinements write the registered object — a scope or a hook in place, a slot or a predicate through
-`registry.reslot()`, which takes the live binding out of every index, lets the chain rewrite the two fields, and takes
-it back through `add()` under the same object and id, so nothing that holds the binding has to be told.
+another `bind()`. The slot steps come before `to*()` and write the fields on the unregistered object, so `to*()` hands
+the registry a binding already in its final slot, and the one `add()` is the only time the registry indexes it. A slot
+step after `to*()` throws the same error. What follows `to*()` — a scope, a hook — is written in place on the registered
+object, and none of it is anything the registry indexes on.
 
 > **Convention (performance-load-bearing).** `BindingChain` is the only construction site, and its field declarations
 > keep their order. A second construction site, or a reordered field, quietly gives that binding a different hidden
@@ -171,10 +172,10 @@ it back through `add()` under the same object and id, so nothing that holds the 
 
 ### A token's binding list appends in place and replaces on removal
 
-A token can carry several bindings, and the registry keeps them in a list, in registration order. An `add` that
-displaces nothing **appends** to that array; a `removeById`, a displacement, or a binding a chain puts back ahead of
-later registrations **replaces** it rather than splicing it. A binding's `registrationOrder` is stamped by its first
-`add` and never changes, which is how a re-slotted or restored binding finds its place again.
+A token can carry several bindings, and the registry keeps them in a list, in registration order. Every `add` is the
+newest registration, so it **appends** to that array; a `removeById` or a displacement **replaces** it rather than
+splicing it. Nothing is ever put back, so the list's order is the order of the adds and no binding carries a stamp of
+its own.
 
 The reason is selection. Selection walks the registry's own list while running `when()` predicates, and a predicate is
 user code that may rebind the very token being walked. The walk reads the list's length once before it starts: a removal
@@ -182,15 +183,12 @@ hands it a new array, so its own is never shifted under it, and an append lands 
 sees a candidate that was not there when selection began. Every candidate registered at selection start still gets its
 predicate evaluated, none registered during it does, and no defensive copy is needed on the read side.
 
-Appending in place is what makes a collection cheap to build: a hundred `when()` bindings on one token used to copy the
-list a hundred times, and a bare `when()` used to re-register the binding to change a field nothing indexes on. The
-predicate is now rewritten in place — the registry moves a lone binding into a record itself — when the chain owns the
-registry's last write and has nothing parked; otherwise the re-slot path re-checks that the binding is still live and
-restores what the new shape frees, exactly as before.
+Appending in place is what makes a collection cheap to build: a hundred `when()` bindings on one token append a hundred
+times and copy the list never.
 
-> **Invariant (correctness).** A removal, a displacement or an out-of-order insert replaces a token's binding array and
-> never splices one that has been handed out; an append lands in place, and every selection walk reads its starting
-> length first. `tests/unit/resolution/select/binding-select.test.ts` pins both halves.
+> **Invariant (correctness).** A removal or a displacement replaces a token's binding array and never splices one that
+> has been handed out; an append lands in place, and every selection walk reads its starting length first.
+> `tests/unit/resolution/select/binding-select.test.ts` pins both halves.
 
 ### The registry keeps the common token in one map, and a record for the rest
 
@@ -293,14 +291,14 @@ level compares twice replaces a per-resolver map a one-shot container would have
 A memo on a binding is only sound while what it derives from is immutable, and `scope` is the one field a fluent chain
 writes in place after registration (see [The fluent chain](#the-fluent-chain-one-object-one-registration)). So
 `singleton()`, `transient()` and `scoped()` call `clearBindingFrame()` when they change the scope of a binding that has
-memoised a frame. Without it, a chain refined after its first resolve would report the old scope to every `when()`
-predicate that reads `ctx.parent.scope`. `tests/unit/resolution/cache-invalidation.test.ts` pins it.
+memoised a frame. Without it, a chain whose scope changes after its first resolve would report the old scope to every
+`when()` predicate that reads `ctx.parent.scope`. `tests/unit/resolution/cache-invalidation.test.ts` pins it.
 
 A scope verb that leaves the scope as it was returns before touching anything, since no cache, frame or version derives
 from a scope that did not change. One that does change it releases only what exists: the cached singleton, the scoped
-entries, the frame. A chain refined straight after `to*()` — the `bind(T).to(X).singleton()` idiom — has none of the
+entries, the frame. A chain scoped straight after `to*()` — the `bind(T).to(X).singleton()` idiom — has none of the
 three yet, so it pays for none. The guards are load-bearing together rather than one by one: each alone buys little, and
-with all of them the refinement no longer calls into the scope manager at all on that idiom.
+with all of them the scope verb no longer calls into the scope manager at all on that idiom.
 
 A scoped instance lives in the scope manager of the child that resolved it, which the chain cannot reach, so every scope
 manager files it under the binding's `scopedCacheKey` rather than its id. The key starts as the id, and leaving `scoped`
@@ -312,42 +310,44 @@ container, and the async lane.
 
 ### The fluent chain: one object, one registration
 
-A binding is declared through a fluent chain such as `bind(T).toDynamic(f).singleton()`. Two facts about that chain
-shape the rest of the model.
+A binding is declared through a fluent chain such as `bind(T).whenNamed("a").toDynamic(f).singleton()`. Two facts about
+that chain shape the rest of the model.
 
-**Registration happens on `to*()`.** `toDynamic()` registers the binding: one probe of the lone map, one write and one
-version read, nothing parked and nothing restored. A refinement that follows, such as `singleton()`, then writes `scope`
-in place on that same registered object. Only `when*()` re-slots the binding, because slot and predicate are what the
-registry indexes on, and it re-registers under the chain's original id, so `id()` is stable for the whole chain.
-`many()` re-slots too, and the registry remembers the binding its last `add` placed and where, so the member that every
-collection declares — `toConstantValue(v).many()` — moves out of the lone map or clears its default slot with no probe;
-any removal or re-slot forgets that memory.
+**Registration happens on `to*()`, once, in the final slot.** The slot steps — `when*()`, `many()` — only write fields
+on the unregistered object, so `toDynamic()` registers a binding whose slot, predicate and membership are already
+settled: one probe and one write, and a displaced binding is either deactivated or kept for its owed teardown, never
+parked. What follows, such as `singleton()`, writes `scope` in place on that same registered object, and nothing after
+`to*()` is anything the registry indexes on. Nothing re-registers, so `id()` is stable for the whole chain by
+construction. A registry that let a chain move its binding after the add would have to take it out, re-index it,
+remember what the old shape displaced and put that back when the new shape frees it; that machinery, and the correctness
+fixes it kept needing, is what the slot-first order removes.
 
 **A rebind of a lone token is one registration.** `rebind(token)` hands out a chain whose registration deactivates the
-binding it displaces instead of parking it, so a token held as its lone default binding is swapped by the new chain's
-own `add`; a token holding several slots is unbound first, as before, and an unbound token still throws.
+binding it displaces on the spot, so a token held as its lone default binding is swapped by the new chain's own `add`; a
+token holding several slots is unbound first, as before, and an unbound token still throws.
 
 **A declared binding is a chain that skips its steps.** `binding()` checks a definition and normalises it into a
 `DeclaredBinding` once, when the module is defined: the strategy's kind and default scope, the slot `whenNamed` and each
 `whenTagged` build, the deps descriptors. Each load then makes one `BindingChain` per declaration, so the single hidden
-class holds, copies the final shape into it and registers it with one `add` — the displacement, parking and restore that
-a fluent re-slot pays never happen, because the shape never changes after registration. The chain is never handed out,
-so nothing refines it and a binding it displaces is handled as `to*()` handles one, never parked.
-`tests/integration/declared-module-parity.test.ts` holds the declared path to a fluent setup written independently of
-it.
+class holds, copies the final shape into it and registers it with one `add`, exactly what a fluent chain's `to*()` does
+once its slot steps have run. The chain is never handed out, and a binding it displaces is handled as `to*()` handles
+one. `tests/integration/declared-module-parity.test.ts` holds the declared path to a fluent setup written independently
+of it.
 
 **One object per `bind()`.** A single `BindingChain` plays every role: the `BindToBuilder` before `to*()`, the
-kind-specific builder after, and it commits to the registry itself. `bind()` is typed as `BindToBuilder`, so
-`when*()`/`singleton()` are not reachable before a `to*()`. The ordering is a **type-level** guarantee, matching
-[SPEC's fluent-chain section](SPEC.md#fluent-chain--the-canonical-invariant-order) ("Compiler enforce"). A caller who
-has no types, or casts past them, gets a `ChainNotRegisteredError` naming the token, never a silent no-op.
-`whenDefault()` asserts registration too, for that reason alone, since it otherwise has nothing to do.
+kind-specific builder after, and it commits to the registry itself. `bind()` is typed as `BindToBuilder`, which offers
+the slot steps and `to*()` only, and each `to*()` returns a builder with no slot step, so `singleton()` is not reachable
+before a `to*()` and `whenNamed()` is not reachable after one. The ordering is a **type-level** guarantee, matching
+[SPEC's fluent-chain section](SPEC.md#fluent-chain--the-canonical-invariant-order). A caller who has no types, or casts
+past them, gets `ChainNotRegisteredError` for a scope, a hook or `id()` before `to*()`, and
+`ChainAlreadyRegisteredError` for a slot step after it, each naming the token, never a silent no-op. `whenDefault()`
+checks the order too, for that reason alone, since it otherwise has nothing to do.
 
 > **Invariant (contract, two-part).** Both halves of the ordering contract are pinned, by two different kinds of test.
-> `tests/types/container-api.test.ts` asserts the refinements are absent from `bind()`'s **type**;
-> `tests/unit/container/bind-to-builder-order.test.ts` asserts every one of them **throws** before `to*()`. Asserting
-> instead that the methods are absent from the _object_ would pin an implementation detail and forbid this single-object
-> shape. If you change the class, check which of the two a failing test is actually holding.
+> `tests/types/container-api.test.ts` asserts each step is absent from the **type** on the wrong side of `to*()`;
+> `tests/unit/container/bind-to-builder-order.test.ts` and `binding-builders.test.ts` assert each one **throws** there.
+> Asserting instead that the methods are absent from the _object_ would pin an implementation detail and forbid this
+> single-object shape. If you change the class, check which of the two a failing test is actually holding.
 
 ## Resolution and planning
 
@@ -869,16 +869,16 @@ section before changing what the table describes.
 
 **Model and types**
 
-| Invariant                                                                                                                                                       | Pinned by                                                                                 | Where                                                                                         |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.                           | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Binding list](#a-tokens-binding-list-appends-in-place-and-replaces-on-removal)               |
-| Internal lanes take `Binding` and return `unknown`; only the eight public entry points name `Value`. Lifecycle hooks stay method syntax.                        | `tests/types/binding-variance.test.ts`                                                    | [Value-type erasure](#the-engine-erases-the-value-type)                                       |
-| `frame` is cleared whenever `scope` is refined in place.                                                                                                        | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#the-memoised-frame-and-scope-refinement)                              |
-| Chain refinements are absent from `bind()`'s type **and** throw before `to*()`.                                                                                 | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#the-fluent-chain-one-object-one-registration)                             |
-| One binding belongs to one container; the singleton slot lives on the binding.                                                                                  | `tests/unit/resolution/singleton-on-binding.test.ts`                                      | [Singleton on the binding](#one-binding-one-container-and-the-singleton-slot-that-follows)    |
-| The common token lives in the lone map alone and only the rest keep a record; `getFastDefault()` is one bare `Map.get`.                                         | `tests/unit/core/registry.test.ts`, the suite's warm resolve rows                         | [The common token](#the-registry-keeps-the-common-token-in-one-map-and-a-record-for-the-rest) |
-| Every lookup agrees with a history-free model of the bindings, across any sequence of binds, refinements, removals and rebinds on containers that share tokens. | `tests/integration/binding-lookup-parity.test.ts`                                         | [Tried on the lookup lane](#tried-on-the-lookup-lane-and-rejected)                            |
-| A module-scoped token keeps no disposed or displaced container reachable.                                                                                       | `tests/integration/container-retention.test.ts`                                           | [Tried on the lookup lane](#tried-on-the-lookup-lane-and-rejected)                            |
+| Invariant                                                                                                                                                         | Pinned by                                                                                 | Where                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.                             | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Binding list](#a-tokens-binding-list-appends-in-place-and-replaces-on-removal)               |
+| Internal lanes take `Binding` and return `unknown`; only the eight public entry points name `Value`. Lifecycle hooks stay method syntax.                          | `tests/types/binding-variance.test.ts`                                                    | [Value-type erasure](#the-engine-erases-the-value-type)                                       |
+| `frame` is cleared whenever `scope` changes in place.                                                                                                             | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#the-memoised-frame-and-scope-refinement)                              |
+| Chain steps are absent from the type **and** throw on the wrong side of `to*()`.                                                                                  | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#the-fluent-chain-one-object-one-registration)                             |
+| One binding belongs to one container; the singleton slot lives on the binding.                                                                                    | `tests/unit/resolution/singleton-on-binding.test.ts`                                      | [Singleton on the binding](#one-binding-one-container-and-the-singleton-slot-that-follows)    |
+| The common token lives in the lone map alone and only the rest keep a record; `getFastDefault()` is one bare `Map.get`.                                           | `tests/unit/core/registry.test.ts`, the suite's warm resolve rows                         | [The common token](#the-registry-keeps-the-common-token-in-one-map-and-a-record-for-the-rest) |
+| Every lookup agrees with a history-free model of the bindings, across any sequence of binds, scope changes, removals and rebinds on containers that share tokens. | `tests/integration/binding-lookup-parity.test.ts`                                         | [Tried on the lookup lane](#tried-on-the-lookup-lane-and-rejected)                            |
+| A module-scoped token keeps no disposed or displaced container reachable.                                                                                         | `tests/integration/container-retention.test.ts`                                           | [Tried on the lookup lane](#tried-on-the-lookup-lane-and-rejected)                            |
 
 **Selection and lookup**
 
@@ -1027,12 +1027,12 @@ gained. They are recorded so the next attempt starts from here.
   then has to know whether a log is waiting. That test sat either in `getFastDefault()`, past the threshold, or at every
   entry point a resolve can start from, which is every resolve. Equivalence with immediate registration also took a
   differential test to hold: a displacement is decided when the displacer registers, and any later write invalidates
-  what it parked.
+  what that decision assumed.
 
-What moves registration's cost is the step count, not the lookup: a declared module
-([the fluent chain](#the-fluent-chain-one-object-one-registration)) registers each binding in its final shape and leaves
-the resolve lane untouched. Resolution outnumbers registration by orders of magnitude in any application, so a shape
-that taxes the resolve lane to shorten the bind lane is the wrong trade even where the bind rows show it winning.
+What moves registration's cost is the step count, not the lookup: a fluent chain and a declared module
+([the fluent chain](#the-fluent-chain-one-object-one-registration)) each register a binding once, in its final shape,
+and leave the resolve lane untouched. Resolution outnumbers registration by orders of magnitude in any application, so a
+shape that taxes the resolve lane to shorten the bind lane is the wrong trade even where the bind rows show it winning.
 
 Two refinements of the declared path were measured and dropped. **One version bump for the whole list** saved nothing a
 probe could see, and filing the list as a second pass over chains built first cost more than adding each chain as it is

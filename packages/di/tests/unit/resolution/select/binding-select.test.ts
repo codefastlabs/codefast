@@ -18,7 +18,6 @@ describe("candidate list stability under a mutating predicate", () => {
     let alreadyUnbound = false;
     const firstId = container
       .bind(serviceToken)
-      .toConstantValue("first")
       .when(() => {
         evaluated.push("first");
         if (!alreadyUnbound) {
@@ -27,21 +26,22 @@ describe("candidate list stability under a mutating predicate", () => {
         }
         return true;
       })
+      .toConstantValue("first")
       .id();
     container
       .bind(serviceToken)
-      .toConstantValue("second")
       .when(() => {
         evaluated.push("second");
         return true;
-      });
+      })
+      .toConstantValue("second");
     container
       .bind(serviceToken)
-      .toConstantValue("third")
       .when(() => {
         evaluated.push("third");
         return true;
-      });
+      })
+      .toConstantValue("third");
 
     const resolved = container.resolveAll(serviceToken);
 
@@ -59,28 +59,28 @@ describe("candidate list stability under a mutating predicate", () => {
     let alreadyBound = false;
     container
       .bind(serviceToken)
-      .toConstantValue("first")
       .when(() => {
         evaluated.push("first");
         if (!alreadyBound) {
           alreadyBound = true;
           container
             .bind(serviceToken)
-            .toConstantValue("late")
             .when(() => {
               evaluated.push("late");
               return true;
-            });
+            })
+            .toConstantValue("late");
         }
         return true;
-      });
+      })
+      .toConstantValue("first");
     container
       .bind(serviceToken)
-      .toConstantValue("second")
       .when(() => {
         evaluated.push("second");
         return true;
-      });
+      })
+      .toConstantValue("second");
 
     // A binding registered mid-walk is not part of this selection; the next one sees it.
     expect(container.resolveAll(serviceToken)).toEqual(["first", "second"]);
@@ -91,8 +91,8 @@ describe("candidate list stability under a mutating predicate", () => {
   it("leaves a predicate-free candidate list alone", () => {
     const serviceToken = token<string>("select-no-predicate");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("a").whenNamed("a");
-    container.bind(serviceToken).toConstantValue("b").whenNamed("b");
+    container.bind(serviceToken).whenNamed("a").toConstantValue("a");
+    container.bind(serviceToken).whenNamed("b").toConstantValue("b");
 
     expect(container.resolveAll(serviceToken)).toEqual(["a", "b"]);
     expect(container.resolve(serviceToken, { name: "b" })).toBe("b");

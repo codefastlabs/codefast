@@ -161,14 +161,27 @@ function declare(spec: DeclarationSpec, index: number, log: HookLog): BindingDec
 }
 
 /**
- * The reference: each spec bound through the chain steps SPEC names, in its order — strategy, slot,
- * `when`, `many`, scope, hooks — written without reading the declared path.
+ * The reference: each spec bound through the chain steps SPEC names, in its order — slot, `when`,
+ * `many`, strategy, scope, hooks — written without reading the declared path.
  */
 function bindFluently(builder: ModuleBuilder, spec: DeclarationSpec, index: number, log: HookLog): void {
   const value = valueOf(index);
   // `bind()` returns the one builder class. Its step types are what forbid a bad order, and this
   // reference drives the steps in SPEC's order on the object itself, so it needs the whole class.
   const chain = builder.bind<unknown>(KEYS[spec.key]!) as BindingChain<unknown>;
+  if (spec.slot === "named") {
+    chain.whenNamed(NAMES[spec.name]!);
+  } else if (spec.slot === "tagged") {
+    for (const criterion of spec.criteria) {
+      chain.whenTagged(CRITERIA[criterion]!);
+    }
+  }
+  if (spec.when !== undefined) {
+    chain.when(PREDICATES[spec.when]!);
+  }
+  if (spec.slot === "member") {
+    chain.many();
+  }
   switch (spec.strategy) {
     case "constant":
       chain.toConstantValue(value);
@@ -192,19 +205,6 @@ function bindFluently(builder: ModuleBuilder, spec: DeclarationSpec, index: numb
     case "self":
       chain.toSelf();
       break;
-  }
-  if (spec.slot === "named") {
-    chain.whenNamed(NAMES[spec.name]!);
-  } else if (spec.slot === "tagged") {
-    for (const criterion of spec.criteria) {
-      chain.whenTagged(CRITERIA[criterion]!);
-    }
-  }
-  if (spec.when !== undefined) {
-    chain.when(PREDICATES[spec.when]!);
-  }
-  if (spec.slot === "member") {
-    chain.many();
   }
   if (spec.scope !== undefined) {
     chain[spec.scope]();
@@ -242,13 +242,13 @@ function createHost(preexisting: ReadonlyArray<PreexistingSpec>, log: HookLog): 
   container.bind(AliasTarget).toConstantValue("aliased");
   for (const [index, spec] of preexisting.entries()) {
     const value = `pre${String(index)}`;
-    const chain = container.bind<unknown, "primary" | "replica">(KEYS[spec.key]!).toConstantValue(value);
+    const bound = container.bind<unknown, "primary" | "replica">(KEYS[spec.key]!);
     if (spec.slot === "named") {
-      chain.whenNamed(NAMES[spec.name]!);
+      bound.whenNamed(NAMES[spec.name]!);
     } else if (spec.slot === "member") {
-      chain.many();
+      bound.many();
     }
-    chain.onDeactivation(() => {
+    bound.toConstantValue(value).onDeactivation(() => {
       log.push(`deactivate ${value}`);
     });
   }

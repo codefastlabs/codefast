@@ -154,8 +154,8 @@ describe("predicates gate binding selection end-to-end", () => {
     container.bind(loggerToken).toConstantValue({ source: "default" });
     container
       .bind(loggerToken)
-      .toDynamic(() => ({ source: "api" }))
-      .when(whenParentIs(apiToken));
+      .when(whenParentIs(apiToken))
+      .toDynamic(() => ({ source: "api" }));
     container.bind(apiToken).toDynamic((ctx) => ({ logger: ctx.resolve(loggerToken) }));
     container.bind(jobToken).toDynamic((ctx) => ({ logger: ctx.resolve(loggerToken) }));
 
@@ -170,12 +170,12 @@ describe("predicates gate binding selection end-to-end", () => {
     const container = Container.create();
     container
       .bind(loggerToken)
-      .toDynamic(() => ({ source: "first" }))
-      .when(() => true);
+      .when(() => true)
+      .toDynamic(() => ({ source: "first" }));
     container
       .bind(loggerToken)
-      .toDynamic(() => ({ source: "second" }))
-      .when(() => true);
+      .when(() => true)
+      .toDynamic(() => ({ source: "second" }));
 
     expect(() => container.resolve(loggerToken)).toThrow(/without a clear winner/);
   });
@@ -188,8 +188,8 @@ describe("predicates gate binding selection end-to-end", () => {
     container.bind(loggerToken).toConstantValue({ source: "default" });
     container
       .bind(loggerToken)
-      .toDynamic(() => ({ source: "narrow" }))
-      .when(() => false);
+      .when(() => false)
+      .toDynamic(() => ({ source: "narrow" }));
 
     expect(container.resolve(loggerToken).source).toBe("default");
   });
@@ -198,7 +198,7 @@ describe("predicates gate binding selection end-to-end", () => {
     const loggerToken = token<Logger>("logger");
     const container = Container.create();
     container.bind(loggerToken).toConstantValue({ source: "default" });
-    container.bind(loggerToken).toConstantValue({ source: "named" }).whenNamed("special");
+    container.bind(loggerToken).whenNamed("special").toConstantValue({ source: "named" });
 
     expect(container.resolve(loggerToken).source).toBe("default");
     expect(container.resolve(loggerToken, { name: "special" }).source).toBe("named");

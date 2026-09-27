@@ -96,7 +96,7 @@ function buildTaggedBindingResolveScenario(): BenchScenario {
   const container = Container.create();
 
   for (const env of TAGGED_ENVS) {
-    container.bind(taggedServiceToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
+    container.bind(taggedServiceToken).whenTagged(ENV_TAG.of(env)).toConstantValue({ env });
   }
 
   container.resolve(taggedServiceToken, { tags: TARGET_TAGS });
@@ -131,7 +131,7 @@ function buildTaggedResolveSlotsScenario(count: number): BenchScenario {
   const container = Container.create();
   for (let index = 0; index < count; index++) {
     const env = `env-${String(index)}`;
-    container.bind(slotsToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
+    container.bind(slotsToken).whenTagged(ENV_TAG.of(env)).toConstantValue({ env });
   }
   const targetEnv = `env-${String(count - 1)}`;
   const target = { tags: [ENV_TAG.of(targetEnv)] } as const;
@@ -152,7 +152,7 @@ function buildConditionalInjectionTaggedScenario(): BenchScenario {
   const container = Container.create();
 
   for (const env of TAGGED_ENVS) {
-    container.bind(conditionalServiceToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
+    container.bind(conditionalServiceToken).whenTagged(ENV_TAG.of(env)).toConstantValue({ env });
   }
   container.bind(conditionalConsumerToken).to(ConditionalConsumer).transient();
   container.resolve(conditionalConsumerToken);

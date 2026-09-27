@@ -22,7 +22,7 @@ function containerOwingAsyncDeactivation(withNamedSibling: boolean): {
     .singleton()
     .onDeactivation(async () => {});
   if (withNamedSibling) {
-    container.bind(service).toConstantValue("named").whenNamed("n");
+    container.bind(service).whenNamed("n").toConstantValue("named");
   }
   container.resolve(service);
   return { container, service };

@@ -62,7 +62,7 @@ const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
     id: "name",
     bindInto: (parent) => {
       for (const env of TAGGED_ENVS) {
-        parent.bind(namedLaneToken).toConstantValue({ env }).whenNamed(env);
+        parent.bind(namedLaneToken).whenNamed(env).toConstantValue({ env });
       }
     },
     resolveFrom: (child) => child.resolve(namedLaneToken, { name: TARGET_TAG_VALUE }),
@@ -71,7 +71,7 @@ const FRESH_CHILD_LANES: ReadonlyArray<FreshChildLane> = [
     id: "tag",
     bindInto: (parent) => {
       for (const env of TAGGED_ENVS) {
-        parent.bind(taggedLaneToken).toConstantValue({ env }).whenTagged(ENV_TAG.of(env));
+        parent.bind(taggedLaneToken).whenTagged(ENV_TAG.of(env)).toConstantValue({ env });
       }
     },
     resolveFrom: (child) => child.resolve(taggedLaneToken, { tags: HOISTED_TAGS }),

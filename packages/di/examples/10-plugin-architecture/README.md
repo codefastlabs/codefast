@@ -98,12 +98,12 @@ enumerate every loaded plugin:
 // After loading modules, register a named descriptor for each capability
 container
   .bind(PluginToken)
-  .toConstantValue({ name: "s3", version: "1.0", capabilities: ["upload"] })
-  .whenNamed("storage");
+  .whenNamed("storage")
+  .toConstantValue({ name: "s3", version: "1.0", capabilities: ["upload"] });
 container
   .bind(PluginToken)
-  .toConstantValue({ name: "segment", version: "2.1", capabilities: ["track"] })
-  .whenNamed("analytics");
+  .whenNamed("analytics")
+  .toConstantValue({ name: "segment", version: "2.1", capabilities: ["track"] });
 
 const plugins = container.resolveAll(PluginToken);
 plugins.forEach((p) => console.log(p.name)); // "s3", "segment", ...

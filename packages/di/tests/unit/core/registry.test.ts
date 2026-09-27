@@ -23,8 +23,8 @@ describe("removing every binding for a token", () => {
     const serviceToken = token<string>("registry-multi-slot");
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("default");
-    container.bind(serviceToken).toConstantValue("named").whenNamed("primary");
-    container.bind(serviceToken).toConstantValue("tagged").whenTagged(ENV_TAG.of("prod"));
+    container.bind(serviceToken).whenNamed("primary").toConstantValue("named");
+    container.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("tagged");
 
     expect(container.lookupBindings(serviceToken)).toHaveLength(3);
 
@@ -60,8 +60,8 @@ describe("removing a single binding by id", () => {
   it("keeps the token's remaining slots and their indexes usable", () => {
     const serviceToken = token<string>("registry-by-id");
     const container = Container.create();
-    const named = container.bind(serviceToken).toConstantValue("named").whenNamed("primary");
-    container.bind(serviceToken).toConstantValue("tagged").whenTagged(ENV_TAG.of("prod"));
+    const named = container.bind(serviceToken).whenNamed("primary").toConstantValue("named");
+    container.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("tagged");
 
     container.unbind(named.id());
 
@@ -73,7 +73,7 @@ describe("removing a single binding by id", () => {
   it("drops the token entirely once its last binding is removed", () => {
     const serviceToken = token<string>("registry-last-binding");
     const container = Container.create();
-    const only = container.bind(serviceToken).toConstantValue("only").whenNamed("solo");
+    const only = container.bind(serviceToken).whenNamed("solo").toConstantValue("only");
 
     container.unbind(only.id());
 
@@ -90,8 +90,8 @@ describe("failed lookups report the slots that do exist", () => {
   it("lists each registered slot on the error", () => {
     const serviceToken = token<string>("registry-slot-summary");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("named").whenNamed("primary");
-    container.bind(serviceToken).toConstantValue("tagged").whenTagged(ENV_TAG.of("prod"));
+    container.bind(serviceToken).whenNamed("primary").toConstantValue("named");
+    container.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("tagged");
 
     let thrown: unknown;
     try {
@@ -174,7 +174,7 @@ describe("a lone default-slot binding and the record it grows into", () => {
     const serviceToken = token<string>("registry-lone-promote");
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("default");
-    container.bind(serviceToken).toConstantValue("prod").whenTagged(ENV_TAG.of("prod"));
+    container.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("prod");
 
     expect(container.lookupBindings(serviceToken)).toHaveLength(2);
     expect(container.resolve(serviceToken)).toBe("default");
@@ -185,7 +185,7 @@ describe("a lone default-slot binding and the record it grows into", () => {
     const serviceToken = token<string>("registry-lone-demote");
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("default");
-    const tagged = container.bind(serviceToken).toConstantValue("prod").whenTagged(ENV_TAG.of("prod"));
+    const tagged = container.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("prod");
 
     container.unbind(tagged.id());
 
@@ -194,7 +194,7 @@ describe("a lone default-slot binding and the record it grows into", () => {
     expect(() => container.resolve(serviceToken, { tags: [ENV_TAG.of("prod")] })).toThrow(NoMatchingBindingError);
 
     // The token can grow a record again after it went back to being lone.
-    container.bind(serviceToken).toConstantValue("staging").whenTagged(ENV_TAG.of("staging"));
+    container.bind(serviceToken).whenTagged(ENV_TAG.of("staging")).toConstantValue("staging");
 
     expect(container.resolve(serviceToken, { tags: [ENV_TAG.of("staging")] })).toBe("staging");
     expect(container.resolve(serviceToken)).toBe("default");
@@ -219,8 +219,8 @@ describe("a lone default-slot binding and the record it grows into", () => {
     container.bind(serviceToken).toConstantValue("default");
     const guarded = container
       .bind(serviceToken)
-      .toConstantValue("guarded")
-      .when(() => false);
+      .when(() => false)
+      .toConstantValue("guarded");
 
     expect(container.lookupBindings(serviceToken)).toHaveLength(2);
     expect(container.resolve(serviceToken)).toBe("default");
@@ -236,8 +236,8 @@ describe("a lone default-slot binding and the record it grows into", () => {
     const recordToken = token<string>("registry-record-remove");
     const container = Container.create();
     container.bind(loneToken).toConstantValue("lone");
-    container.bind(recordToken).toConstantValue("a").whenNamed("a");
-    container.bind(recordToken).toConstantValue("b").whenNamed("b");
+    container.bind(recordToken).whenNamed("a").toConstantValue("a");
+    container.bind(recordToken).whenNamed("b").toConstantValue("b");
 
     container.unbind(loneToken);
     container.unbind(recordToken);
@@ -255,7 +255,7 @@ describe("last-wins displacement inside a record is answered by slot index", () 
     const serviceToken = token<string>("registry-default-among-members");
     const container = Container.create();
     // The member forms the record first, so the default binding lands in it rather than the lone seat.
-    container.bind(serviceToken).toConstantValue("member").many();
+    container.bind(serviceToken).many().toConstantValue("member");
     container.bind(serviceToken).toConstantValue("first");
     container.bind(serviceToken).toConstantValue("second");
 
@@ -265,58 +265,14 @@ describe("last-wins displacement inside a record is answered by slot index", () 
     expect(container.lookupBindings(serviceToken)).toHaveLength(2);
   });
 
-  it("frees the default slot when its occupant becomes a member in place", () => {
-    const serviceToken = token<string>("registry-default-turns-member");
-    const container = Container.create();
-    container.bind(serviceToken).toConstantValue("member").many();
-    const wasDefault = container.bind(serviceToken).toConstantValue("was-default");
-
-    wasDefault.many();
-    // The next default binding must not resurrect the now-member's freed slot as a displacement.
-    container.bind(serviceToken).toConstantValue("fresh");
-
-    expect(container.resolve(serviceToken)).toBe("fresh");
-    expect(container.resolveAll(serviceToken)).toContain("was-default");
-    expect(container.lookupBindings(serviceToken)).toHaveLength(3);
-  });
-
-  it("frees the default slot when its occupant gains a predicate in place", () => {
-    const serviceToken = token<string>("registry-default-turns-predicate");
-    const container = Container.create();
-    container.bind(serviceToken).toConstantValue("member").many();
-    const wasDefault = container.bind(serviceToken).toConstantValue("was-default");
-
-    wasDefault.when(() => false);
-    container.bind(serviceToken).toConstantValue("fresh");
-
-    // `fresh` holds the default slot; the predicate binding stays, guarded off, never displaced.
-    expect(container.resolve(serviceToken)).toBe("fresh");
-    expect(container.lookupBindings(serviceToken)).toHaveLength(3);
-  });
-
   it("displaces a two-criterion slot in either declaration order", () => {
     const serviceToken = token<string>("registry-two-criterion-last-wins");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("first").whenNamed("primary").whenTagged(TIER_TAG.of("gold"));
-    container.bind(serviceToken).toConstantValue("second").whenTagged(TIER_TAG.of("gold")).whenNamed("primary");
+    container.bind(serviceToken).whenNamed("primary").whenTagged(TIER_TAG.of("gold")).toConstantValue("first");
+    container.bind(serviceToken).whenTagged(TIER_TAG.of("gold")).whenNamed("primary").toConstantValue("second");
 
     expect(container.resolve(serviceToken, { name: "primary", tags: [TIER_TAG.of("gold")] })).toBe("second");
     expect(container.lookupBindings(serviceToken)).toHaveLength(1);
-  });
-
-  it("frees the default slot when a slow reslot moves its occupant onto a tag", () => {
-    const serviceToken = token<string>("registry-default-slow-reslot");
-    const container = Container.create();
-    container.bind(serviceToken).toConstantValue("member").many();
-    const wasDefault = container.bind(serviceToken).toConstantValue("was-default");
-
-    // whenTagged always goes through the re-slot path, not the in-place fast path setMany/when() take.
-    wasDefault.whenTagged(TIER_TAG.of("gold"));
-    container.bind(serviceToken).toConstantValue("fresh");
-
-    expect(container.resolve(serviceToken)).toBe("fresh");
-    expect(container.resolve(serviceToken, { tags: [TIER_TAG.of("gold")] })).toBe("was-default");
-    expect(container.resolveAll(serviceToken)).toContain("member");
   });
 
   it("re-indexes a displaced default binding restored when a member takes the token", () => {
@@ -324,7 +280,7 @@ describe("last-wins displacement inside a record is answered by slot index", () 
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("first-default");
     // The member's own registration displaces the lone default, then membership restores it.
-    container.bind(serviceToken).toConstantValue("member").many();
+    container.bind(serviceToken).many().toConstantValue("member");
 
     expect(container.resolve(serviceToken)).toBe("first-default");
     expect(container.resolveAll(serviceToken)).toContain("member");
@@ -344,16 +300,16 @@ describe("last-wins displacement inside a record is answered by slot index", () 
     const container = Container.create();
     container
       .bind(serviceToken)
-      .toConstantValue("first")
       .whenTagged(alpha.of("1"))
       .whenTagged(beta.of("2"))
-      .whenTagged(gamma.of("3"));
+      .whenTagged(gamma.of("3"))
+      .toConstantValue("first");
     container
       .bind(serviceToken)
-      .toConstantValue("second")
       .whenTagged(gamma.of("3"))
       .whenTagged(alpha.of("1"))
-      .whenTagged(beta.of("2"));
+      .whenTagged(beta.of("2"))
+      .toConstantValue("second");
 
     expect(container.resolve(serviceToken, { tags: [alpha.of("1"), beta.of("2"), gamma.of("3")] })).toBe("second");
     expect(container.lookupBindings(serviceToken)).toHaveLength(1);
@@ -382,7 +338,7 @@ describe("the version is a strictly increasing count of mutations", () => {
             }
             previous = registry.version;
           };
-          // A refinement on a chain the registry no longer holds is inert by contract, so it moves nothing.
+          // A hook goes on a chain the registry still holds, the one whose mutation the version must count.
           const liveChain = (pick: number): BindingChain<string> | undefined => {
             const chain = chains[pick % Math.max(chains.length, 1)];
             return chain !== undefined && registry.getById(chain.identifier) === chain ? chain : undefined;
@@ -390,35 +346,22 @@ describe("the version is a strictly increasing count of mutations", () => {
 
           for (const [operation, pick] of steps) {
             switch (operation) {
-              case 0: {
+              case 0:
+              case 1:
+              case 2:
+              case 3: {
+                // A bind in each final shape: plain, tagged, predicate-only, and a collection member.
                 const chain = new BindingChain<string>(tokens[pick % tokens.length]!, registration);
+                if (operation === 1) {
+                  chain.whenTagged(criterion);
+                } else if (operation === 2) {
+                  chain.when(() => true);
+                } else if (operation === 3) {
+                  chain.many();
+                }
                 chain.toConstantValue(`v${String(pick)}`);
                 chains.push(chain);
                 expectRose("bind");
-                break;
-              }
-              case 1: {
-                const chain = liveChain(pick);
-                if (chain !== undefined && !chain.isMany) {
-                  chain.whenTagged(criterion);
-                  expectRose("whenTagged");
-                }
-                break;
-              }
-              case 2: {
-                const chain = liveChain(pick);
-                if (chain !== undefined) {
-                  chain.when(() => true);
-                  expectRose("when");
-                }
-                break;
-              }
-              case 3: {
-                const chain = liveChain(pick);
-                if (chain !== undefined && chain.slot.tags.length === 0 && !chain.isMany) {
-                  chain.many();
-                  expectRose("many");
-                }
                 break;
               }
               case 4: {
