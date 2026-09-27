@@ -27,6 +27,8 @@ import { candidateRuleOf, chooseCandidate, matchesSlot } from "#resolution/selec
  * A request to explain: the criteria a `resolve` would carry, and the resolutions it is nested in.
  *
  * @typeParam Names - the slot names the token declares, as `ResolveOptions` narrows them
+ *
+ * @since 0.12.0
  */
 export interface ExplainOptions<Names extends string = string> extends ResolveOptions<Names> {
   /**
@@ -45,6 +47,8 @@ export interface ExplainOptions<Names extends string = string> extends ResolveOp
  * @remarks `slot-mismatch`: the slot declares a criterion the request does not carry, or the request carries
  * criteria and the slot is the default one. `predicate-refused`: the slot matched and the `when()` predicate
  * returned `false`. `collection-member`: a `many()` binding, which only `resolveAll` takes.
+ *
+ * @since 0.12.0
  */
 export type CandidateVerdict = "eligible" | "slot-mismatch" | "predicate-refused" | "collection-member";
 
@@ -53,6 +57,8 @@ export type CandidateVerdict = "eligible" | "slot-mismatch" | "predicate-refused
  *
  * @remarks The four candidate rules of `CandidateRule`, plus `default-alias`: no slot matched, and the token's
  * default-slot alias forwards the request's criteria to its target.
+ *
+ * @since 0.12.0
  */
 export type SelectionRule = CandidateRule | "default-alias";
 
@@ -61,16 +67,26 @@ export type SelectionRule = CandidateRule | "default-alias";
  *
  * @remarks `unbound` and `unmatched` are the lookups `resolve` reports as `TokenNotBoundError` and
  * `NoMatchingBindingError`; `ambiguous` and `alias-cycle` are `AmbiguousBindingError` and `CircularDependencyError`.
+ *
+ * @since 0.12.0
  */
 export type ExplanationOutcome = "selected" | "unbound" | "unmatched" | "ambiguous" | "alias-cycle";
 
-/** One binding a registry offered the request, and what selection made of it. */
+/**
+ * One binding a registry offered the request, and what selection made of it.
+ *
+ * @since 0.12.0
+ */
 export interface CandidateExplanation {
   readonly binding: BindingSnapshot;
   readonly verdict: CandidateVerdict;
 }
 
-/** One registry the lookup read, in the order `resolve` reads them. */
+/**
+ * One registry the lookup read, in the order `resolve` reads them.
+ *
+ * @since 0.12.0
+ */
 export interface ExplanationStep {
   /** The token looked up here, which an alias hop changes. */
   readonly tokenName: string;
@@ -84,7 +100,11 @@ export interface ExplanationStep {
   readonly selected: BindingSnapshot | undefined;
 }
 
-/** Why one request selects the binding it does, or why it selects none. */
+/**
+ * Why one request selects the binding it does, or why it selects none.
+ *
+ * @since 0.12.0
+ */
 export interface ResolutionExplanation {
   /** The token the request asks for. */
   readonly tokenName: string;
@@ -104,6 +124,8 @@ export interface ResolutionExplanation {
  * @param token - the token the request asks for
  * @param options - the request's criteria and the resolutions it is nested in
  * @throws An error `resolve` would throw, when one of `options.ancestors` selects no binding
+ *
+ * @since 0.12.0
  */
 export function explainRequest(
   registries: ReadonlyArray<BindingRegistry>,

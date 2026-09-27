@@ -15,6 +15,8 @@ const DEFAULT_LAYERS_ROOT = "src";
 
 /**
  * The shared audit prelude plus the layered packages `audit.layers.packages` names, resolved to their roots.
+ *
+ * @since 0.14.0
  */
 export type LayersAuditPrelude = AuditCommandPrelude & {
   readonly packages: ReadonlyArray<LayersAuditPackage>;
@@ -41,6 +43,8 @@ async function workspacePackageDirectoriesByName(rootDir: string, fs: Filesystem
  *
  * @remarks A configured name no workspace package carries, an entry nested below the root or placed
  * twice, and a root that does not exist are each reported here, before anything is scanned.
+ *
+ * @since 0.14.0
  */
 export async function prepareLayersAudit(
   fs: Filesystem,

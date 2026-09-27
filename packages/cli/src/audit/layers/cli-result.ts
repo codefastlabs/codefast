@@ -3,6 +3,8 @@ import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 
 /**
  * Exit `1` when any non-allowlisted layering violation remains.
+ *
+ * @since 0.14.0
  */
 export function exitCodeForLayersAuditResult(result: LayersAuditResult): number {
   return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
@@ -10,6 +12,8 @@ export function exitCodeForLayersAuditResult(result: LayersAuditResult): number 
 
 /**
  * Machine-readable layering summary for `--json`.
+ *
+ * @since 0.14.0
  */
 export function formatLayersAuditJsonOutput(result: LayersAuditResult, rootDir: string): string {
   return JSON.stringify({

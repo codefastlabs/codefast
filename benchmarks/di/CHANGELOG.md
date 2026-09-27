@@ -1,5 +1,39 @@
 # @codefast/benchmark-di
 
+## 0.10.1
+
+### Patch Changes
+
+- [#996](https://github.com/codefastlabs/codefast/pull/996) `RESULTS.md` is rewritten from a pass over the tree that fixes two regressions the pass before it exposed: the tagged
+  lookups had slowed after the disposed-chain guard outgrew the inline budget, and a request missing every slot probed for
+  a default-slot alias even where none was ever bound. The cold-class and collection rows show the lookups that landed
+  since the previous baseline, and the page names what still loses, including the tagged lookups on a root, which it
+  attributes to the disposed-ancestor rule's child path and which a per-role `resolve` has since removed. The run's
+  `observations.jsonl` is committed under `baselines/`; the pass it replaces is removed.
+
+- [#1000](https://github.com/codefastlabs/codefast/pull/1000) `RESULTS.md` is rewritten from a pass over the 0.12 tree, which reads every aggregate higher: the tagged lookups on a
+  root are back at the figures of the pass before last, the cold collections now beat ditox and injection-js, and the
+  refined bind is a quarter faster. The page says which rises are the pass rather than the engine, since the rivals read a
+  few percent lower this time, and it names the child rows that improved but sit above the ceiling the harness resolves.
+  The run's `observations.jsonl` replaces the previous one under `baselines/`.
+
+- [#1011](https://github.com/codefastlabs/codefast/pull/1011) `RESULTS.md` is rewritten from a pass over the tree with the async-lane and disposed-container fixes. Every library
+  reads level with the previous pass, and two rows moved on the engine: the async warm-up rises by two fifths and an
+  all-async transient chain falls by a tenth, both confirmed in a paired probe. The page names the rows the harness
+  flagged that the probe reads level across the two builds, and `realistic-graph-resolve-root` is a win over injection-js
+  again. The run's `observations.jsonl` replaces the previous one under `baselines/`.
+
+- [#1004](https://github.com/codefastlabs/codefast/pull/1004) `RESULTS.md` is rewritten from a pass over the tree with the cold class lane, rebind and teardown changes. That pass
+  moves the 100-singleton pair from 0.58× and 0.55× ditox to 0.66× both, and lifts the decorated boot and the plan escapes
+  by a tenth or more. The teardown entry now measures the teardown on its own rather than inferring it from two ratios.
+  The page also names the rows that fell in the pass but read level in a paired probe. The run's `observations.jsonl`
+  replaces the previous one under `baselines/`.
+
+- [#999](https://github.com/codefastlabs/codefast/pull/999) The codefast scenarios declare each binding's slot before `to*()`, as `@codefast/di` 0.12 requires, and the refined bind
+  row now measures a slot declared before registration and a scope after it.
+- Updated dependencies:
+  - @codefast/di@0.12.0
+
 ## 0.10.0
 
 ### Minor Changes

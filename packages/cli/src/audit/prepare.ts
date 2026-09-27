@@ -51,6 +51,8 @@ export async function prepareRepoRootAudit(
  *
  * @remarks The selection runs with the root resolved, so it may read the workspace and refuse a
  * config that names what the workspace does not hold, before anything is scanned.
+ *
+ * @since 0.14.0
  */
 export async function prepareRepoRootAuditWith<Selected extends Pick<AuditCommandPrelude, "allowlist">>(
   fs: Filesystem,

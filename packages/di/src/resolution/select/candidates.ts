@@ -40,6 +40,8 @@ export function selectBinding(
  * @remarks `sole-candidate`: one candidate is eligible. `sole-predicate`: the only candidate carrying a `when()`
  * predicate beats those without. `most-criteria`: the slot declaring more criteria than every other wins.
  * `ambiguous`: a tie, which `resolve` reports as `AmbiguousBindingError`.
+ *
+ * @since 0.12.0
  */
 export type CandidateRule = "sole-candidate" | "sole-predicate" | "most-criteria" | "ambiguous";
 
@@ -50,6 +52,8 @@ export type CandidateRule = "sole-candidate" | "sole-predicate" | "most-criteria
  * @remarks Most specific wins, predicate before criterion count: a lone predicate-carrying candidate
  * is a deliberate specialization of the default, and a slot declaring more of what the request
  * carries is the more specific match, so an over-specified request resolves instead of tying.
+ *
+ * @since 0.12.0
  */
 export function chooseCandidate(candidates: ReadonlyArray<Binding>): Binding | undefined {
   if (candidates.length === 1) {
@@ -76,6 +80,8 @@ export function chooseCandidate(candidates: ReadonlyArray<Binding>): Binding | u
  *
  * @remarks Kept beside the decision and derived from it, so the order lives in one function and resolve
  * pays nothing for the label.
+ *
+ * @since 0.12.0
  */
 export function candidateRuleOf(candidates: ReadonlyArray<Binding>, chosen: Binding | undefined): CandidateRule {
   if (chosen === undefined) {

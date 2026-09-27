@@ -2,6 +2,8 @@ import * as z from "zod";
 
 /**
  * One layered package as the run reads it: its name, the absolute root the layers sit under, and the layers.
+ *
+ * @since 0.14.0
  */
 export type LayersAuditPackage = {
   readonly name: string;
@@ -11,6 +13,8 @@ export type LayersAuditPackage = {
 
 /**
  * Resolved request for a single layering audit run.
+ *
+ * @since 0.14.0
  */
 export type LayersAuditRunRequest = {
   readonly rootDir: string;
@@ -22,6 +26,8 @@ export type LayersAuditRunRequest = {
 
 /**
  * Zod schema for {@link LayersAuditRunRequest}.
+ *
+ * @since 0.14.0
  */
 export const layersAuditRunRequestSchema: z.ZodType<LayersAuditRunRequest> = z.object({
   rootDir: z.string().min(1),
