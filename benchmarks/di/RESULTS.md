@@ -116,21 +116,24 @@ correctness property paid for with its price known).
 - **Two warm reads sit on the parity line's wrong side by a hair** — `singleton-class-1-dep` 0.96×† and
   `to-resolved-3-deps` 0.96×† against ditox — both above the throughput ceiling, where the ratio moves between runs of
   the same build. **Open**: these two are the ones to re-measure paired before the next change to their lanes.
-- **A root's tagged lookups pay for the disposed-ancestor rule — attributed against this engine's own previous pass.**
-  Read against the previous baseline's own figures, the hoisted and inline `slot-tag-*` rows, `tagged-binding-resolve`,
+- **A root's tagged lookups pay for the disposed-ancestor rule — attributed, and removed since this pass.** Read against
+  the previous baseline's own figures, the hoisted and inline `slot-tag-*` rows, `tagged-binding-resolve`,
   `slot-tag-parent-owned` and `slot-name-parent-owned` run at roughly two thirds to four fifths of what they did. Two
   separate causes were found and fixed before this pass: the disposed-chain guard every entry point inlines had grown
   past the caller's inline budget (the `tagged-resolve-slots-*` rows recovered in full), and a request missing every
   slot probed for a default-slot alias in registries that never held one (`slot-tag-miss-optional` recovered most of its
-  loss). What is left is the rule itself, bisected to the commit that made a child refuse a disposed ancestor: once
-  children have run the guard's child path in a process, V8 compiles that path into a root's entry points too, and a
-  root's `resolve(token, options)` pays for it although a root never takes it. It is the engine, not the suite: the loss
+  loss). What is left is the rule's child path, bisected to the commit that made a child refuse a disposed ancestor:
+  once children have run it in a process, V8 compiles it into every entry point a child shares with a root, and a root's
+  `resolve(token, options)` pays for it although a root never takes it. It is the engine, not the suite: the loss
   reproduces in the clean probe of each row's own family as well as in the polluted one, and with the previous pass's
-  scenario set as well as this one. In the polluted probe, dropping the child path returns each row to what the previous
-  pass's engine measures there, and no spelling that keeps the rule does. **Chosen cost** of a normative SPEC rule.
+  scenario set as well as this one. No spelling of the guard removes it; giving each role its own `resolve` does, and
+  keeps the rule. A paired `bench:ab` against this pass's tree (four experiments, all agreeing) reads
+  `slot-tag-array-hoisted` +47%, `slot-tag-shorthand-hoisted` +54%, `slot-tag-parent-owned` +42%,
+  `tagged-binding-resolve` +46% and `slot-name-parent-owned` +23%, with the warm canaries +1–3%. It costs the two
+  creation rows about a tenth, `container-create-empty` −11% and `create-child-empty` −10%, while
+  `fresh-child-default-n1`, which uses the child it creates, is flat. The next pass shows all of it.
   `has-own-unbound-check` is the same rule seen from a child: every child read confirms its chain is live, an O(1) epoch
-  compare. The guard has since been reshaped so that compare inlines outright, which makes every child read cheaper and
-  leaves these root rows where they are; the next pass shows both.
+  compare that now inlines outright.
 
 ## The wins
 

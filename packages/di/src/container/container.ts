@@ -235,6 +235,8 @@ class DefaultContainer implements Container {
   #orphanedBindings: Map<BindingIdentifier, Binding> | undefined;
 
   constructor(parent?: DefaultContainer, options?: ContainerOptions) {
+    // oxlint-disable-next-line typescript/unbound-method -- installed as this instance's own method, so `this` is it
+    this.resolve = parent === undefined ? DefaultContainer.#rootResolve : DefaultContainer.#childResolve;
     this.#parent = parent;
     this.#registry = new BindingRegistry();
     this.#scope = new ScopeManager(parent !== undefined);
@@ -753,13 +755,41 @@ class DefaultContainer implements Container {
 
   // ── Resolution ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  resolve<Value, Names extends string = string>(
+  // Installed per role at construction, so a root's compiled resolve never carries the child's chain check.
+  declare resolve: <Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ) => Value;
+
+  static #rootResolve<Value, Names extends string = string>(
+    this: DefaultContainer,
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
   ): Value {
-    this.#assertNotDisposed();
+    if (this.#disposed) {
+      throw new DisposedContainerError();
+    }
     const rootStack = this.#resolver.rootStack;
     // A resolve already holding the shared stack means this one is nested; it mints its own.
+    if (rootStack.length !== 0) {
+      return options === undefined
+        ? this.#resolver.resolveFromContext(token, [])
+        : this.#resolver.resolve(token, options, []);
+    }
+    if (options === undefined) {
+      return this.#resolver.resolveFromContext(token, rootStack);
+    }
+    return this.#resolver.resolve(token, options, rootStack);
+  }
+
+  // The root's body again behind the child's check, so neither role's compiled resolve carries the other's path.
+  static #childResolve<Value, Names extends string = string>(
+    this: DefaultContainer,
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value {
+    this.#assertChainLive();
+    const rootStack = this.#resolver.rootStack;
     if (rootStack.length !== 0) {
       return options === undefined
         ? this.#resolver.resolveFromContext(token, [])
