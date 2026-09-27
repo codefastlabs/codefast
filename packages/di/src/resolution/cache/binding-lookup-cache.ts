@@ -29,7 +29,8 @@ export interface DefaultLookupEntry<Owner> {
  *
  * @remarks `values` is kept only while every member is a hook-free constant or a hook-free singleton
  * whose instance is cached, and `activationVersion` is the chain's activation version that promise was
- * made under.
+ * made under. It is settled on the read that repeats the first, which `readBefore` records, so a
+ * container read once never builds it.
  *
  * @since 0.10.0
  */
@@ -37,6 +38,7 @@ export interface CollectionEntry {
   readonly candidates: ReadonlyArray<Binding>;
   values: ReadonlyArray<unknown> | undefined;
   activationVersion: number;
+  readBefore: boolean;
 }
 
 /** The root-level collection memo: one per cache, built on its first root read, stamped with one chain version. */

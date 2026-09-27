@@ -539,10 +539,12 @@ singleton whose instance is cached, and no activation hook exists anywhere in th
 stamped with the chain's activation version, and kept unfrozen, because a frozen array iterates through a slow elements
 kind in V8. Every read hands out a copy of that list, as SPEC requires, so no caller can rewrite what the next one
 reads; a read that materialises the last such singleton settles the list for the next one, and any registry change that
-evicts an instance drops the memo with it. The memo is one object the cache builds on its first root read, because every
-per-request child builds a lookup cache and almost none reads a collection at the root; a field per piece of it would be
-paid on every `createChild()`. Inside it one entry sits in front of a map written only once a second token appears, as
-for `defaultEntry()`, because a collection is read in a loop over one token — an event bus dispatching each event.
+evicts an instance drops the memo with it. The list settles only on the read that repeats the first, the rule a plan
+follows: a container read once — a fresh container per request, or the cold row — would otherwise build a list it never
+reads again. The memo is one object the cache builds on its first root read, because every per-request child builds a
+lookup cache and almost none reads a collection at the root; a field per piece of it would be paid on every
+`createChild()`. Inside it one entry sits in front of a map written only once a second token appears, as for
+`defaultEntry()`, because a collection is read in a loop over one token — an event bus dispatching each event.
 `collection()` stamps the chain version before the gather, so a predicate that binds during it leaves the entry stale
 rather than current, and the version branch clears the entry in front before the rebuild, since the rebuild can throw on
 an alias cycle and a read after the throw must not answer from the list the generation before kept. A read carrying
@@ -956,13 +958,26 @@ and no ambiguity to report.
 ### The disposed guard stays inside the inline budget
 
 Every public entry point calls `#assertNotDisposed()` first, and V8 inlines it into whichever caller inlines the entry
-point, so its bytecode is charged against that caller's cumulative inline budget. The hot part is therefore two field
-reads — `#disposed || #parent !== undefined` — and a live root never leaves it. The child path, the dispose-epoch
-compare and both throws sit in `#assertChainLive()`, out of line. The obvious spellings are all losses: checking
-`#disposed` and then the parent's epoch inline spends enough budget that a root's tagged lookup stops inlining its
-lookup-cache reads, folding both checks into one epoch compare puts the epoch read on every root resolve, and a combined
-condition with a cold helper is no smaller than the two checks it replaced. A child's compare is the price of an O(1)
-check that every ancestor is live.
+point, so its bytecode is charged against that caller's cumulative inline budget. The guard is therefore two methods,
+each under V8's small-function size so that every caller inlines both outright. `#assertNotDisposed()` is two field
+reads — `#disposed || #parent !== undefined` — and a live root never leaves it. `#assertChainLive()` is a child's one
+compare of the dispose epoch against the epoch its chain was last confirmed live at. The walk and the throw sit in
+`#confirmChainLive()`, which runs only after some container in the process was disposed. Every dispose advances the
+epoch, the container's own included, so a disposed child always reaches the walk; and `createChild()` stamps the new
+child with the current epoch, since it has just checked the parent's chain, so a per-request child never walks on its
+first read.
+
+The obvious spellings are all losses. Checking `#disposed` and then the epoch in one method, with or without a cold
+helper, grows it past the small-function size, and a root's tagged lookup stops inlining its lookup-cache reads. Folding
+both checks into one epoch compare puts the epoch read on every root resolve. One method holding the compare, the walk
+and the throws is too large to inline outright, and every child resolve pays for it.
+
+The guarantee also has a price on a root that no spelling removes. Once children have run the child path in a process,
+V8 compiles that path into the root's entry points too, and a root's `resolve(token, options)` pays for it although a
+root never takes it; `resolve(token)` does not. A call-free child path, a guard under the small-function size, a larger
+inline budget and running without forced collections were each measured, and each left the cost in place; only dropping
+the child path removes it. It is the price of the rule that a disposed ancestor refuses its descendants, and
+`benchmarks/di/RESULTS.md` carries it as a chosen cost.
 
 ### Upserts: eager or computed, by hit rate
 

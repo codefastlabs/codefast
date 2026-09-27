@@ -1032,12 +1032,11 @@ export class DependencyResolver implements ResolverCallbacks {
     for (let index = 0; index < candidates.length; index += 1) {
       resolved[index] = this.#resolveCandidateSync(candidates[index]!, undefined, resolutionStack) as Value;
     }
-    // The members this read materialised may have made the list stable for the next one.
-    this.#settleCollectionValues(memo);
+    this.#settleOnRepeat(memo);
     return resolved;
   }
 
-  /** The async twin of `resolveRootCollection`: a stable value list settles at once, candidates fan out as usual. */
+  /** The async twin of `resolveRootCollection`: a stable value list answers at once, candidates fan out as usual. */
   resolveRootCollectionAsync<Value>(token: Token<Value> | Constructor<Value>): Promise<ReadonlyArray<Value>> {
     // The async lane appends to its branch and never unwinds, so it works on a stack of its own.
     const resolutionStack: Array<ResolutionFrame> = [];
@@ -1050,7 +1049,7 @@ export class DependencyResolver implements ResolverCallbacks {
         this.#resolveCandidateAsync(candidate, undefined, resolutionStack, UNOWNED_BRANCH),
       ),
       (values) => {
-        this.#settleCollectionValues(memo);
+        this.#settleOnRepeat(memo);
         return values as Array<Value>;
       },
     );
@@ -1061,8 +1060,8 @@ export class DependencyResolver implements ResolverCallbacks {
    *
    * @remarks Sound because a `when()` predicate is pure over its context and the root context is a
    * constant: the list can only change when a registry in the chain does, which is the version the
-   * memo is stamped with. The value list is kept too while every member is a hook-free constant
-   * and no activation hook exists anywhere in the chain.
+   * memo is stamped with. From the second read on, the value list is kept too while every member is
+   * a hook-free constant and no activation hook exists anywhere in the chain.
    */
   #rootCollection(token: Token<unknown> | Constructor, resolutionStack: Array<ResolutionFrame>): CollectionEntry {
     const memo = this.#lookup.collection(token);
@@ -1070,10 +1069,19 @@ export class DependencyResolver implements ResolverCallbacks {
       return memo;
     }
     const candidates = this.#candidateBindings(token, undefined, resolutionStack);
-    const entry: CollectionEntry = { candidates, values: undefined, activationVersion: -1 };
-    this.#settleCollectionValues(entry);
+    const entry: CollectionEntry = { candidates, values: undefined, activationVersion: -1, readBefore: false };
     this.#lookup.rememberCollection(token, entry);
     return entry;
+  }
+
+  // The first read interprets and the read that repeats it settles the value list, as a plan compiles on repeat;
+  // the members either read materialised may have made the list stable for the next one.
+  #settleOnRepeat(entry: CollectionEntry): void {
+    if (entry.readBefore) {
+      this.#settleCollectionValues(entry);
+    } else {
+      entry.readBefore = true;
+    }
   }
 
   /**
