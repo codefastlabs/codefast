@@ -350,6 +350,37 @@ describe("optional and resolveAll variants", () => {
   });
 });
 
+describe("a collection whose selection throws", () => {
+  it("rejects on the options-less lane when a predicate throws, root and child alike", async () => {
+    const members = token<string>("selection-throws-predicate");
+    const container = Container.create();
+    container
+      .bind(members)
+      .when(() => {
+        throw new Error("predicate boom");
+      })
+      .toConstantValue("guarded");
+    container.bind(members).toConstantValue("plain");
+
+    for (const host of [container, container.createChild()]) {
+      // Called outside `expect`, so a synchronous throw fails here rather than counting as the rejection.
+      const pending = host.resolveAllAsync(members);
+      await expect(pending).rejects.toThrow("predicate boom");
+    }
+  });
+
+  it("rejects on the options-less lane when an alias cycle is followed", async () => {
+    const first = token<string>("selection-throws-alias-first");
+    const second = token<string>("selection-throws-alias-second");
+    const container = Container.create();
+    container.bind(first).toAlias(second);
+    container.bind(second).toAlias(first);
+
+    const pending = container.resolveAllAsync(first);
+    await expect(pending).rejects.toBeInstanceOf(CircularDependencyError);
+  });
+});
+
 describe("the toResolved factory lane on the async path", () => {
   // `requiresResolutionContext()` answers only for the two factory kinds handed a context, so a
   // `resolved` binding legitimately reaches instantiation with none — every scope, every entry.

@@ -115,11 +115,50 @@ describe("dispose vs in-flight async materialization", () => {
 
     await parent.dispose();
 
-    // Both lanes now refuse at the container gate — resolveAsync guards synchronously, as it already
-    // did for a self-disposed container, so the refusal is a throw rather than a rejected promise.
+    // Both lanes refuse at the container gate, each in its own form: the sync lane throws, the async lane rejects.
     expect(() => child.resolve(serviceToken)).toThrow(DisposedContainerError);
-    expect(() => child.resolveAsync(serviceToken)).toThrow(DisposedContainerError);
+    await expect(child.resolveAsync(serviceToken)).rejects.toBeInstanceOf(DisposedContainerError);
     expect(constructed).toBe(1);
+  });
+
+  it("refuses a held context's async resolves of an unbuilt singleton as rejections, not throws", async () => {
+    const depToken = token<string>("teardown.context-dep");
+    const holderToken = token<string>("teardown.context-holder");
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let outcomes: Array<PromiseSettledResult<unknown>> = [];
+    const container = Container.create();
+    container
+      .bind(depToken)
+      .toDynamic(() => "dep")
+      .singleton();
+    container
+      .bind(holderToken)
+      .toDynamicAsync(async (ctx) => {
+        await gate;
+        // A synchronous throw here would reject the holder, which the assertion below would report.
+        outcomes = await Promise.allSettled([
+          ctx.resolveAsync(depToken),
+          ctx.resolveAsync(depToken, {}),
+          ctx.resolveOptionalAsync(depToken),
+          ctx.resolveAllAsync(depToken),
+        ]);
+        return "holder";
+      })
+      .singleton();
+
+    const holder = container.resolveAsync(holderToken);
+    const disposed = container.dispose();
+    release();
+
+    await expect(holder).resolves.toBe("holder");
+    await disposed;
+    expect(outcomes).toHaveLength(4);
+    for (const outcome of outcomes) {
+      expect(outcome).toEqual({ status: "rejected", reason: expect.any(DisposedContainerError) });
+    }
   });
 });
 

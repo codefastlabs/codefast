@@ -1045,16 +1045,21 @@ export class DependencyResolver implements ResolverCallbacks {
   resolveRootCollectionAsync<Value>(token: Token<Value> | Constructor<Value>): Promise<ReadonlyArray<Value>> {
     // The async lane appends to its branch and never unwinds, so it works on a stack of its own.
     const resolutionStack: Array<ResolutionFrame> = [];
-    const memo = this.#rootCollection(token, resolutionStack);
-    if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
-      return Promise.resolve(memo.values.slice() as Array<Value>);
+    try {
+      // Selection runs `when()` predicates and follows aliases, either of which may throw.
+      const memo = this.#rootCollection(token, resolutionStack);
+      if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
+        return Promise.resolve(memo.values.slice() as Array<Value>);
+      }
+      return asPromise(
+        this.#settleCandidates(memo.candidates, undefined, resolutionStack, UNOWNED_BRANCH, (values) => {
+          this.#settleOnRepeat(memo);
+          return values;
+        }),
+      ) as Promise<ReadonlyArray<Value>>;
+    } catch (collectionError) {
+      return Promise.reject(collectionError);
     }
-    return asPromise(
-      this.#settleCandidates(memo.candidates, undefined, resolutionStack, UNOWNED_BRANCH, (values) => {
-        this.#settleOnRepeat(memo);
-        return values;
-      }),
-    ) as Promise<ReadonlyArray<Value>>;
   }
 
   /**
