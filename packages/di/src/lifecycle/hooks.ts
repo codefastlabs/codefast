@@ -95,38 +95,46 @@ export class LifecycleManager {
     return hooked;
   }
 
-  async runActivation<Value>(
+  /**
+   * Runs the activation pipeline on the async lane: the activated instance, or its promise once a
+   * hook has returned one.
+   *
+   * @remarks A level yields only where a hook does, so a synchronous pipeline hands the instance
+   * back in the caller's own tick and a singleton it activates is cached before any sibling reads it.
+   */
+  runActivation<Value>(
     resolutionContext: ResolutionContext,
     binding: Binding<Value>,
     instance: Value,
     metadataReader: MetadataReader,
-  ): Promise<Value> {
-    let activatedInstance: Value = instance;
+  ): Value | Promise<Value> {
+    let activated: Value | Promise<Value> = instance;
 
     // 1. @postConstruct() — after TC39 construction (constructor + accessor addInitializer callbacks)
     for (const methodName of this.#lifecycleMethods(binding, metadataReader, "postConstruct")) {
-      const hookResult = callHook(activatedInstance, methodName);
-      if (hookResult instanceof Promise) {
-        await hookResult;
-      }
+      activated = afterActivationStep(activated, (current) => {
+        const hookResult = callHook(current, methodName);
+        return hookResult instanceof Promise ? hookResult.then(() => current) : current;
+      });
     }
 
     // 2. per-binding onActivation
     if (binding.kind !== "alias" && binding.activationHook !== undefined) {
-      const activationResult = binding.activationHook(resolutionContext, activatedInstance);
-      activatedInstance = activationResult instanceof Promise ? await activationResult : activationResult;
+      activated = afterActivationStep(activated, (current) => binding.activationHook!(resolutionContext, current));
     }
 
     // 3. container-level onActivation
     const containerHooks = this.#activationHooks?.get(binding.token);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
-        const activationResult = hook(resolutionContext, activatedInstance);
-        activatedInstance = (activationResult instanceof Promise ? await activationResult : activationResult) as Value;
+        activated = afterActivationStep(
+          activated,
+          (current) => hook(resolutionContext, current) as Value | Promise<Value>,
+        );
       }
     }
 
-    return activatedInstance;
+    return activated;
   }
 
   runActivationSync<Value>(
@@ -270,6 +278,14 @@ export class LifecycleManager {
 }
 
 const NO_METHODS: ReadonlyArray<string> = [];
+
+/** Applies one activation step now, or once the step before it has settled. */
+function afterActivationStep<Value>(
+  activated: Value | Promise<Value>,
+  step: (current: Value) => Value | Promise<Value>,
+): Value | Promise<Value> {
+  return activated instanceof Promise ? activated.then(step) : step(activated);
+}
 
 /**
  * Invokes a lifecycle hook by name.

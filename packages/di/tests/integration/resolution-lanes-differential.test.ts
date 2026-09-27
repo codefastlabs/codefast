@@ -4,7 +4,7 @@
  * compiled closure, runs a generated plan, reads a collection, asks optionally, starts from a
  * per-request child or goes through the async pipeline. A threshold inside the engine may pick a
  * data structure or a tier; it may never pick an answer. These properties generate graphs at random
- * and hold every lane to the same snapshot.
+ * and hold every lane to the same snapshot — a first async resolve to a cold one, the rest to a warm one.
  */
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
@@ -26,6 +26,10 @@ import {
 } from "#tests/integration/support/lane-differential";
 
 const NUM_RUNS = Number(process.env["DIFF_RUNS"] ?? "250");
+// A seed pins one run for a replay or a second sweep; unset, fast-check draws its own.
+const SEED = process.env["DIFF_SEED"];
+const propertyOptions: fc.Parameters<unknown> =
+  SEED === undefined ? { numRuns: NUM_RUNS } : { numRuns: NUM_RUNS, seed: Number(SEED) };
 // Hundreds of graphs through a dozen lanes each: seconds here, tens of seconds on a CI runner.
 const PROPERTY_TIMEOUT_MS = 300_000;
 
@@ -51,8 +55,25 @@ function differs(expected: unknown, actual: unknown): boolean {
   return JSON.stringify(expected) !== JSON.stringify(actual);
 }
 
+/** The sync lanes are all held to the interpreted resolve. */
+function syncReferenceOf(): string {
+  return "interpreted";
+}
+
 /**
- * Every lane's snapshot against the reference lane's.
+ * The lane an async lane is held to: the first resolve, and the cold reference itself, to the
+ * cold reference; every later lane to the warm interpreted resolve.
+ *
+ * @remarks A singleton still pending refuses a synchronous read that a warm resolve answers, by
+ * contract, so a cold and a warm resolve of one graph may legitimately differ — but two cold ones,
+ * and two warm ones, may not.
+ */
+function asyncReferenceOf(lane: string): string {
+  return lane === "async#0" || lane === "async-cold" ? "async-cold" : "async-interpreted";
+}
+
+/**
+ * Every lane's snapshot against its reference lane's.
  *
  * @remarks Two lanes answer a different question by contract and are held to that instead: an
  * optional read answers a root-level miss with `undefined`, and a collection read is empty on one
@@ -60,14 +81,14 @@ function differs(expected: unknown, actual: unknown): boolean {
  */
 function laneDisagreements(
   lanes: LaneSnapshots,
-  referenceName: string,
+  referenceOf: (lane: string) => string,
   where: string,
   collections: boolean,
   spec: GraphSpec,
 ): Array<Disagreement> {
-  const reference = lanes.get(referenceName);
   const found: Array<Disagreement> = [];
   for (const [lane, actual] of lanes) {
+    const reference = lanes.get(referenceOf(lane));
     if (
       lane.includes("collection") &&
       (!collections || (isEmptyCollection(actual) && isRootLevelMiss(reference, spec)))
@@ -113,15 +134,15 @@ async function disagreementsOf(spec: GraphSpec, errors: ErrorAgreement): Promise
 
   const rootContainer = rootHost(spec, materials);
   const rootSync = syncLanes(rootContainer, root);
-  found.push(...laneDisagreements(rootSync, "interpreted", "root sync", collections, spec));
-  const rootAsync = await asyncLanes(rootContainer, root);
-  found.push(...laneDisagreements(rootAsync, "async-interpreted", "root async", collections, spec));
+  found.push(...laneDisagreements(rootSync, syncReferenceOf, "root sync", collections, spec));
+  const rootAsync = await asyncLanes(rootContainer, root, () => rootHost(spec, materials));
+  found.push(...laneDisagreements(rootAsync, asyncReferenceOf, "root async", collections, spec));
 
   const childContainer = childHost(spec, materials);
   const childSync = syncLanes(childContainer, root);
-  found.push(...laneDisagreements(childSync, "interpreted", "child sync", collections, spec));
-  const childAsync = await asyncLanes(childContainer, root);
-  found.push(...laneDisagreements(childAsync, "async-interpreted", "child async", collections, spec));
+  found.push(...laneDisagreements(childSync, syncReferenceOf, "child sync", collections, spec));
+  const childAsync = await asyncLanes(childContainer, root, () => childHost(spec, materials));
+  found.push(...laneDisagreements(childAsync, asyncReferenceOf, "child async", collections, spec));
 
   // A sync lane that reached an async node fails where the async lane succeeds; every other outcome
   // — a value, or an error raised before any async node — is the async lane's outcome too.
@@ -173,7 +194,7 @@ describe("every resolution lane answers a random graph identically", () => {
         fc.asyncProperty(graphSpecArb, async (spec) => {
           expect(await disagreementsOf(spec, "exact")).toEqual([]);
         }),
-        { numRuns: NUM_RUNS },
+        propertyOptions,
       );
     },
     PROPERTY_TIMEOUT_MS,
@@ -186,7 +207,7 @@ describe("every resolution lane answers a random graph identically", () => {
         fc.asyncProperty(siblingSpecArb, async (spec) => {
           expect(await disagreementsOf(spec, "exact")).toEqual([]);
         }),
-        { numRuns: NUM_RUNS },
+        propertyOptions,
       );
     },
     PROPERTY_TIMEOUT_MS,
@@ -199,9 +220,52 @@ describe("every resolution lane answers a random graph identically", () => {
         fc.asyncProperty(chainSpecArb, async (spec) => {
           expect(await disagreementsOf(spec, "exact")).toEqual([]);
         }),
-        { numRuns: NUM_RUNS },
+        propertyOptions,
       );
     },
     PROPERTY_TIMEOUT_MS,
+  );
+});
+
+/**
+ * The seed counterexample's graph with its tagged singleton made genuinely async: a collection
+ * member that reads it synchronously meets it still pending on the first resolve and cached on
+ * every later one.
+ */
+function pendingSingletonGraph(kind: "dynamic-async" | "resolved-async"): GraphSpec {
+  const node = { token: 0, many: false, parentIs: undefined, hook: false, aliasTarget: 0 } as const;
+  return {
+    tokenCount: 1,
+    nodes: [
+      { ...node, kind: "class", scope: "transient", deps: [{ target: 0, mode: "single", tags: [2] }], slotTags: [] },
+      { ...node, kind, scope: "singleton", deps: [], slotTags: [0] },
+      { ...node, kind: "dynamic", scope: "transient", deps: [{ target: 0, mode: "single", tags: [0] }], slotTags: [1] },
+      {
+        ...node,
+        kind: "dynamic-async",
+        scope: "transient",
+        deps: [{ target: 0, mode: "multi", tags: [0, 1] }],
+        slotTags: [2],
+      },
+      { ...node, kind: "class", scope: "transient", deps: [], slotTags: [], parentIs: 0 },
+    ],
+  };
+}
+
+describe("a cold first async resolve is held to a cold reference, the warm lanes to a warm one", () => {
+  it.each(["dynamic-async", "resolved-async"] as const)(
+    "a %s singleton read synchronously by a later collection member refuses cold and answers warm",
+    async (kind) => {
+      const spec = pendingSingletonGraph(kind);
+      const materials = prepareGraph(spec);
+      const root = materials.tokens[0]!;
+      const lanes = await asyncLanes(rootHost(spec, materials), root, () => rootHost(spec, materials));
+
+      expect(lanes.get("async-cold")).toMatchObject({ error: "AsyncResolutionError" });
+      expect(lanes.get("async#0")).toEqual(lanes.get("async-cold"));
+      expect(isErrorSnapshot(lanes.get("async#1"))).toBe(false);
+      expect(isErrorSnapshot(lanes.get("async-interpreted"))).toBe(false);
+      expect(await disagreementsOf(spec, "exact")).toEqual([]);
+    },
   );
 });

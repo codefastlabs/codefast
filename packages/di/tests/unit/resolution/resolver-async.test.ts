@@ -237,6 +237,63 @@ describe("async singletons", () => {
     expect(third).toBe(1);
   });
 
+  it("hands the creator and every joiner a promise of its own over one pending creation", async () => {
+    let factoryCalls = 0;
+    const connectionToken = token<object>("connection.own-promise");
+    const container = Container.create();
+    container
+      .bind(connectionToken)
+      .toDynamicAsync(async () => {
+        factoryCalls += 1;
+        await Promise.resolve();
+        return {};
+      })
+      .singleton();
+
+    const first = container.resolveAsync(connectionToken);
+    const second = container.resolveAsync(connectionToken);
+    expect(first).not.toBe(second);
+    const [fromFirst, fromSecond] = await Promise.all([first, second]);
+    expect(fromSecond).toBe(fromFirst);
+    expect(factoryCalls).toBe(1);
+  });
+
+  it("rejects the creator and every joiner when one pending creation fails, leaving no rejection unhandled", async () => {
+    const unhandled: Array<unknown> = [];
+    const record = (reason: unknown): void => {
+      unhandled.push(reason);
+    };
+    process.on("unhandledRejection", record);
+    try {
+      let factoryCalls = 0;
+      const connectionToken = token<object>("connection.rejected");
+      const container = Container.create();
+      container
+        .bind(connectionToken)
+        .toDynamicAsync(async () => {
+          factoryCalls += 1;
+          await Promise.resolve();
+          if (factoryCalls === 1) {
+            throw new Error("connection refused");
+          }
+          return {};
+        })
+        .singleton();
+
+      const first = container.resolveAsync(connectionToken);
+      const second = container.resolveAsync(connectionToken);
+      await expect(first).rejects.toThrow("connection refused");
+      await expect(second).rejects.toThrow("connection refused");
+      // The next resolve retries: the failed creation left nothing in flight.
+      await expect(container.resolveAsync(connectionToken)).resolves.toEqual({});
+      expect(factoryCalls).toBe(2);
+      await new Promise((settle) => setImmediate(settle));
+      expect(unhandled).toEqual([]);
+    } finally {
+      process.off("unhandledRejection", record);
+    }
+  });
+
   it("throws AsyncResolutionError when a sync resolve hits an async binding", () => {
     const asyncToken = token<number>("async-value");
     const container = Container.create();

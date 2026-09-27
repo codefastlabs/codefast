@@ -57,7 +57,7 @@ describe("resolveAll owner-routing for singletons", () => {
 });
 
 describe("sync resolve during an in-flight async materialization", () => {
-  it("refuses to double-construct a singleton being materialized asynchronously", async () => {
+  it("caches a singleton whose factory completes synchronously before its promise settles", async () => {
     const serviceToken = token<object>("race.singleton");
     let constructed = 0;
     const container = Container.create();
@@ -65,6 +65,28 @@ describe("sync resolve during an in-flight async materialization", () => {
       .bind(serviceToken)
       .toDynamic(() => {
         constructed += 1;
+        return {};
+      })
+      .singleton();
+
+    const pending = container.resolveAsync(serviceToken);
+    // Nothing had to be awaited, so the instance is cached already and a sync read shares it.
+    const fromSync = container.resolve(serviceToken);
+    expect(constructed).toBe(1);
+
+    await expect(pending).resolves.toBe(fromSync);
+    expect(constructed).toBe(1);
+  });
+
+  it("refuses to double-construct a singleton whose materialization is still pending", async () => {
+    const serviceToken = token<object>("race.singleton.pending");
+    let constructed = 0;
+    const container = Container.create();
+    container
+      .bind(serviceToken)
+      .toDynamicAsync(async () => {
+        constructed += 1;
+        await Promise.resolve();
         return {};
       })
       .singleton();

@@ -112,11 +112,14 @@ in its dependency chain has an async factory. Use container.resolveAsync(app:Api
 > **Normative.** Concurrent `resolveAsync(Token)` calls for the same singleton token **share one in-flight Promise**.
 > The implementation must guarantee:
 >
-> 1. When the factory starts running, the Promise is stored in the in-flight map.
+> 1. When the factory starts running and has not completed synchronously, the Promise is stored in the in-flight map.
 > 2. The next concurrent call awaits that same Promise — no new instance is created. What it is handed back is a
 >    `Promise` of its own that settles with the shared result, not the stored object itself.
 > 3. When the Promise settles (resolved or rejected), the in-flight map entry is cleared.
 > 4. If the factory rejected, the next resolve creates a new Promise (retry).
+> 5. A materialization that completes without awaiting — a synchronous factory, a class whose dependencies and hooks all
+>    settle synchronously — is cached before `resolveAsync` returns, so a synchronous `resolve` issued in the same tick
+>    reads the instance instead of throwing `AsyncResolutionError`; only a materialization still pending refuses it.
 
 ```ts
 // Both get the same instance — the factory runs only once
