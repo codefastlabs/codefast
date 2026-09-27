@@ -11,7 +11,7 @@ import type { ConstructorInvocation } from "#core/constructor-type";
 import type { Constructor } from "#core/types";
 import { InvalidMetadataError } from "#errors/errors";
 import type { InjectionDescriptor } from "#injection/descriptor";
-import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#metadata/metadata-types";
+import type { ConstructorMetadata, LifecycleMetadata, MetadataReader, ParamMetadata } from "#metadata/metadata-types";
 
 // Verified pairs, not verified classes: two readers may disagree about the same class, and a reader
 // that goes out of scope takes its record with it.
@@ -207,6 +207,8 @@ export interface ClassFacts {
   /** Unknown until the first instantiation reads lifecycle metadata; callers read unknown as "it does". */
   hasPostConstruct: boolean | undefined;
   needsActiveContainer: boolean | undefined;
+  /** The parameters an instantiation injects, settled by the first one that succeeds. */
+  params: ReadonlyArray<ParamMetadata> | undefined;
 }
 
 // A reader answers from the class alone, so its facts are shared by every container reading through it.
@@ -232,6 +234,9 @@ function factsFor(reader: MetadataReader): WeakMap<Constructor, ClassFacts> {
  */
 export class ClassIntrospector {
   #byClass: WeakMap<Constructor, ClassFacts> | undefined;
+  // The class asked about last and its record: a cold resolve asks about one class several times in a row.
+  #lastTarget: Constructor | undefined;
+  #lastFacts: ClassFacts | undefined;
   readonly #reader: MetadataReader;
   readonly #container: Container;
 
@@ -243,12 +248,22 @@ export class ClassIntrospector {
 
   /** The record of what this reader has answered about a class, allocated on the class's first question. */
   facts(target: Constructor): ClassFacts {
+    if (target === this.#lastTarget) {
+      return this.#lastFacts!;
+    }
     const byClass = (this.#byClass ??= factsFor(this.#reader));
     let facts = byClass.get(target);
     if (facts === undefined) {
-      facts = { constructorMetadata: undefined, hasPostConstruct: undefined, needsActiveContainer: undefined };
+      facts = {
+        constructorMetadata: undefined,
+        hasPostConstruct: undefined,
+        needsActiveContainer: undefined,
+        params: undefined,
+      };
       byClass.set(target, facts);
     }
+    this.#lastTarget = target;
+    this.#lastFacts = facts;
     return facts;
   }
 
@@ -291,7 +306,7 @@ export class ClassIntrospector {
    * @remarks Callers treat unknown as "assume it does", so the first activation settles it.
    */
   knownPostConstruct(target: Constructor): boolean | undefined {
-    return (this.#byClass ??= factsFor(this.#reader)).get(target)?.hasPostConstruct;
+    return this.facts(target).hasPostConstruct;
   }
 
   discoverPostConstruct(target: Constructor): void {

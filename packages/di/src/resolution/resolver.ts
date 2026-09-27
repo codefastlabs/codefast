@@ -911,6 +911,11 @@ export class DependencyResolver implements ResolverCallbacks {
    * no parameters; anything else is a missing `@injectable()`.
    */
   #constructorParams(target: Constructor, facts: ClassFacts): ReadonlyArray<ParamMetadata> {
+    // Metadata is fixed once a class is defined, so the answer is too; only a throw is left unsettled.
+    return (facts.params ??= this.#settleConstructorParams(target, facts));
+  }
+
+  #settleConstructorParams(target: Constructor, facts: ClassFacts): ReadonlyArray<ParamMetadata> {
     const meta = this.#introspector().constructorMetadataOf(target, facts);
     if (meta !== undefined) {
       return meta.params;

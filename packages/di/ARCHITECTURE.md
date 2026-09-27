@@ -820,13 +820,18 @@ resolve that asks whether a binding needs the activation pipeline) and its memo 
 give).
 
 The per-reader metadata cache holds one record per class — its constructor metadata, whether it has a `@postConstruct`
-hook, whether accessor injection reads the container — each field unknown until first asked. A cold class resolve looks
-the record up once and hands it to the params read, the accessor check and the construction, and a class with no params
-is constructed with no arguments, so no dependency array is built for it. `hasPostConstruct` must start unknown, never
-`false`: unknown is what makes the first instantiation activate conservatively and read the lifecycle metadata, and
-filling it early would ask a custom `MetadataReader` — a public seam — for lifecycle metadata before construction. The
-same fact lets `refreshAfterFirstInstantiation()` return at once on a `false` answer, because a class binding answers
-`false` only once its lifecycle metadata is known.
+hook, whether accessor injection reads the container, and the parameter list an instantiation injects — each field
+unknown until first asked. The parameter list is settled by the first instantiation that succeeds, the check that a
+subclass with an implicit constructor is not silently dropping its base's declared deps included, since both follow from
+metadata that cannot change once a class is defined. A cold class resolve looks the record up once and hands it to the
+params read, the accessor check and the construction, and a class with no params is constructed with no arguments, so no
+dependency array is built for it. The introspector keeps the class it was asked about last and that record in front of
+the map, because a cold resolve asks about one class several times in a row — the activation-need check, then the
+instantiation — and a container that binds one class under many tokens asks about it over and over. `hasPostConstruct`
+must start unknown, never `false`: unknown is what makes the first instantiation activate conservatively and read the
+lifecycle metadata, and filling it early would ask a custom `MetadataReader` — a public seam — for lifecycle metadata
+before construction. The same fact lets `refreshAfterFirstInstantiation()` return at once on a `false` answer, because a
+class binding answers `false` only once its lifecycle metadata is known.
 
 The scope manager and the lifecycle manager stay eager on purpose: every generic level reads them, and a nullable field
 there is a branch on every hop. The resolver's lookup memo, its class introspector and its sync context pool are built
