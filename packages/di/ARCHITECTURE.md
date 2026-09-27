@@ -539,10 +539,12 @@ singleton whose instance is cached, and no activation hook exists anywhere in th
 stamped with the chain's activation version, and kept unfrozen, because a frozen array iterates through a slow elements
 kind in V8. Every read hands out a copy of that list, as SPEC requires, so no caller can rewrite what the next one
 reads; a read that materialises the last such singleton settles the list for the next one, and any registry change that
-evicts an instance drops the memo with it. The memo is one object the cache builds on its first root read, because every
-per-request child builds a lookup cache and almost none reads a collection at the root; a field per piece of it would be
-paid on every `createChild()`. Inside it one entry sits in front of a map written only once a second token appears, as
-for `defaultEntry()`, because a collection is read in a loop over one token — an event bus dispatching each event.
+evicts an instance drops the memo with it. The list settles only on the read that repeats the first, the rule a plan
+follows: a container read once — a fresh container per request, or the cold row — would otherwise build a list it never
+reads again. The memo is one object the cache builds on its first root read, because every per-request child builds a
+lookup cache and almost none reads a collection at the root; a field per piece of it would be paid on every
+`createChild()`. Inside it one entry sits in front of a map written only once a second token appears, as for
+`defaultEntry()`, because a collection is read in a loop over one token — an event bus dispatching each event.
 `collection()` stamps the chain version before the gather, so a predicate that binds during it leaves the entry stale
 rather than current, and the version branch clears the entry in front before the rebuild, since the rebuild can throw on
 an alias cycle and a read after the throw must not answer from the list the generation before kept. A read carrying
