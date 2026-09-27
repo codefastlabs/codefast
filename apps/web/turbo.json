@@ -1,0 +1,19 @@
+{
+  "$schema": "../../node_modules/turbo/schema.json",
+  "extends": ["//"],
+  // The home page reads the di benchmark ledger, which lives outside this package.
+  "tasks": {
+    "build": {
+      "inputs": ["$TURBO_EXTENDS$", "$TURBO_ROOT$/benchmarks/di/RESULTS.md"]
+    },
+    "test": {
+      "inputs": ["$TURBO_EXTENDS$", "$TURBO_ROOT$/benchmarks/di/RESULTS.md"]
+    },
+    "test:coverage": {
+      "inputs": ["$TURBO_EXTENDS$", "$TURBO_ROOT$/benchmarks/di/RESULTS.md"]
+    },
+    "test:integration": {
+      "inputs": ["$TURBO_EXTENDS$", "$TURBO_ROOT$/benchmarks/di/RESULTS.md"]
+    }
+  }
+}
