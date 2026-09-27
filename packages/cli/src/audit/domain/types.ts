@@ -293,6 +293,8 @@ export type PublishAuditResult = {
 
 /**
  * A module outside every configured layer, or a value import that points up the layers.
+ *
+ * @since 0.14.0
  */
 export type LayerViolation = {
   readonly line: number;
@@ -303,6 +305,8 @@ export type LayerViolation = {
 
 /**
  * The layering violations found in one file.
+ *
+ * @since 0.14.0
  */
 export type LayerFileViolations = {
   readonly relativePath: string;
@@ -311,6 +315,8 @@ export type LayerFileViolations = {
 
 /**
  * Outcome of one `audit layers` run.
+ *
+ * @since 0.14.0
  */
 export type LayersAuditResult = {
   readonly files: Array<LayerFileViolations>;

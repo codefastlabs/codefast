@@ -26,6 +26,8 @@ function withoutModuleExtension(name: string): string {
  *
  * @remarks `errors.ts`, `errors/` and `errors/taxonomy.ts` all key as `errors`, so a layer entry names
  * a family directly under the root — a directory, or a lone module sitting flat.
+ *
+ * @since 0.14.0
  */
 export function layerKeyOf(modulePath: string): string {
   const [first = ""] = modulePath.split("/");
@@ -34,6 +36,8 @@ export function layerKeyOf(modulePath: string): string {
 
 /**
  * Returns why a layer list breaks its contract, or `undefined` when every entry is a family under the root, placed once.
+ *
+ * @since 0.14.0
  */
 export function invalidLayerEntry(layers: ReadonlyArray<ReadonlyArray<string>>): string | undefined {
   const seen = new Map<string, string>();
@@ -56,6 +60,8 @@ export function invalidLayerEntry(layers: ReadonlyArray<ReadonlyArray<string>>):
 
 /**
  * Where a module sits: its layer's position from the bottom, and the entry that placed it there.
+ *
+ * @since 0.14.0
  */
 export interface LayerPlacement {
   readonly index: number;
@@ -64,6 +70,8 @@ export interface LayerPlacement {
 
 /**
  * A package's layers, bottom to top, answering the placement of any module path under the root.
+ *
+ * @since 0.14.0
  */
 export class LayerMap {
   readonly #placementByKey = new Map<string, LayerPlacement>();
@@ -159,6 +167,8 @@ function collectDynamicImports(node: OxcNode, visit: (node: OxcNode, specifier: 
  *
  * @remarks Type-only imports and re-exports erase at build time and couple nothing, so they pass
  * whichever way they point. Dynamic `import()` counts as a value import wherever it sits.
+ *
+ * @since 0.14.0
  */
 export function auditLayeringSource(
   filePath: string,

@@ -48,6 +48,8 @@ const directiveLinePattern = /^[ \t]*\/\/[ \t]*(?:oxlint-|eslint-|@ts-|prettier-
 
 /**
  * Returns whether a line is a `//` note: a line comment that is neither a divider nor a tooling directive.
+ *
+ * @since 0.14.0
  */
 export function isNoteLine(line: string): boolean {
   return lineCommentPattern.test(line) && !dividerLinePattern.test(line) && !isDirectiveLine(line);
@@ -55,6 +57,8 @@ export function isNoteLine(line: string): boolean {
 
 /**
  * Returns whether a line is a `//` tooling directive, which governs the code below it.
+ *
+ * @since 0.14.0
  */
 export function isDirectiveLine(line: string): boolean {
   return directiveLinePattern.test(line);

@@ -3,6 +3,8 @@ import { logger } from "#core/logger";
 
 /**
  * Human-readable layering report.
+ *
+ * @since 0.14.0
  */
 export function presentLayersAuditResult(result: LayersAuditResult): void {
   for (const file of result.files) {

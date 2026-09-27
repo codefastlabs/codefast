@@ -14,6 +14,8 @@ import { walkTsxFiles } from "#core/workspace/typescript-walk";
  *
  * @remarks The target narrows the scan: the repo root reaches every package, a package directory
  * reaches that package, and a path under a package's root reaches the modules beneath it.
+ *
+ * @since 0.14.0
  */
 export function runLayersAudit(
   fs: Filesystem,

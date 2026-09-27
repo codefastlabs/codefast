@@ -1,5 +1,116 @@
 # @codefast/di
 
+## 0.12.0
+
+### Minor Changes
+
+- [#1010](https://github.com/codefastlabs/codefast/pull/1010) **Breaking:** `resolveAsync`, `resolveOptionalAsync` and `resolveAllAsync` on a disposed container — or on a child of
+  one — now return a promise rejected with `DisposedContainerError` instead of throwing it, and `resolveAllAsync(token)`
+  likewise rejects when a `when()` predicate throws or an alias cycle is followed, so every async method reports its
+  failure through the promise it returns. Code that awaits these calls, or chains `.catch()`, behaves as before or better;
+  only a caller that wrapped the call itself in `try`/`catch` without awaiting it no longer sees the error there, and
+  should await it instead.
+
+- [#995](https://github.com/codefastlabs/codefast/pull/995) Add `container.explain(token, options)`, which answers why a request selects the binding it does without instantiating
+  anything. It reads the container chain the way `resolve` does and decides by the same rules, so its answer is the
+  engine's own. It reports each registry it read with every candidate and its verdict (`eligible`, `slot-mismatch`,
+  `predicate-refused`, `collection-member`), the rule that decided (`sole-candidate`, `sole-predicate`, `most-criteria`,
+  `default-alias`, `ambiguous`), the binding the request ends on after every alias, and an `outcome` naming the error
+  `resolve` would throw when it ends on none. `when()` predicates run as they would in `resolve`, and `options.ancestors`
+  explains a request made from inside other resolutions, so a predicate that reads the parent sees the one it would.
+
+- [#999](https://github.com/codefastlabs/codefast/pull/999) **Breaking:** a binding's slot is declared before its strategy —
+  `bind(Logger).whenNamed("file").to(FileLogger).singleton()`. `when()`, `whenNamed()`, `whenTagged()`, `whenDefault()`
+  and `many()` now come before `to*()` and are refused after it with `ChainAlreadyRegisteredError`, so a binding registers
+  once, in its final slot, and no later step moves it, displaces something else or brings back what it displaced. Scope
+  and lifecycle hooks stay after `to*()`. To migrate, move each chain's slot steps in front of its `to*()` call.
+
+  The registry no longer parks the bindings a re-slot displaced or restores them, so a bind with a name or a tag costs a
+  quarter to two fifths less. `BindingBuilder`, `ConstantBindingBuilder` and `AliasBindingBuilder` lose their `Names` type
+  parameter, since the slot is settled before they exist.
+
+- [#1005](https://github.com/codefastlabs/codefast/pull/1005) **Breaking for deep subpath imports only** — the root entry `@codefast/di` is unchanged. `src/` now follows three rules,
+  and the published subpaths follow `src/` with no exception: a directory names a family of two or more modules and a lone
+  module sits flat at its layer; a directory carries the topic and a file its role, so no file repeats its directory's
+  name; and the exports map is the source tree, so the `strip` that kept the introspection modules at flat specifiers is
+  gone.
+
+  Moves: the `MetadataReader` verification leaves `resolution/cache/class-introspector` for `metadata/verify` — it was the
+  one value import pointing up from `metadata/` into `resolution/`; the `RESOLUTION_DIAGNOSTICS` channel leaves `errors/`
+  for `introspection/diagnostics`; the fluent chain's contract leaves `core/binding` for `core/binding-builders`, and the
+  class implementing it is `container/binding-chain`; `effectiveBindingScope` folds into `core/binding`.
+
+  Renamed specifiers: `./errors/errors` → `./errors`; `./errors/diagnostics` → `./introspection/diagnostics`;
+  `./ambient/active-container` → `./ambient-container`; `./container/binding-builders` → `./container/binding-chain`;
+  `./core/binding-scope` → gone (`effectiveBindingScope` is in `./core/binding`); `./injection/resolve-options` →
+  `./injection/dependency-slot`;
+  `./metadata/{metadata-keys,metadata-types,metadata-reader-token,symbol-metadata-reader,verifying-metadata-reader}` →
+  `./metadata/{keys,types,reader-token,symbol-reader,verifying-reader}`; `./lifecycle/{lifecycle-manager,scope-manager}` →
+  `./lifecycle/{hooks,scopes}`; `./decorators/{lifecycle-decorators,decorator-metadata}` →
+  `./decorators/{lifecycle,metadata-record}`; `./resolution/path/resolution-path` → `./resolution/path`;
+  `./resolution/plan/{instantiation-plan,plan-codegen}` → `./resolution/plan/{compiler,codegen}`;
+  `./resolution/select/binding-select` → `./resolution/select/candidates`; `./resolution/cache/binding-lookup-cache` →
+  `./resolution/cache/lookup`; `./{inspector,explanation,dependency-graph,graph-adapters/*}` →
+  `./introspection/{inspector,explanation,dependency-graph,graph-adapters/*}`. New: `./core/binding-builders`,
+  `./metadata/verify`.
+
+  `@codefast/di-testing` follows the one specifier it imports, `metadata/verifying-reader`.
+
+### Patch Changes
+
+- [#996](https://github.com/codefastlabs/codefast/pull/996) A request with criteria that matches no slot is fast again when the container holds no alias: `resolveOptional()` of a
+  missing tagged slot no longer probes for a default-slot alias to forward to in a registry that never held one.
+
+- [#1009](https://github.com/codefastlabs/codefast/pull/1009) `resolveAsync` no longer rejects with `AsyncResolutionError` when a later sibling reads a singleton or scoped binding
+  synchronously — a `toDynamic` factory's `ctx.resolve`, an `@inject` accessor, a top-level `resolve` — while the async
+  lane is still materialising it from an earlier sibling. A level of the async lane now yields only where a dependency or
+  hook really awaits, so an instance built without yielding is cached before the next sibling starts, and only a
+  materialisation that is genuinely pending is published in flight.
+
+- [#994](https://github.com/codefastlabs/codefast/pull/994) A scope refinement costs less at bind time. `singleton()`, `transient()` and `scoped()` now do nothing when the scope
+  does not change, and release only what exists when it does, so `bind(T).to(X).singleton()` straight after registration
+  no longer calls into the scope manager.
+
+- [#997](https://github.com/codefastlabs/codefast/pull/997) Every read on a child container is cheaper. The child's check that no ancestor was disposed is now one epoch compare
+  that V8 inlines into each entry point, the walk up the chain runs only after some container was disposed, and a new
+  child starts confirmed live, so a per-request child skips the walk on its first read.
+
+- [#994](https://github.com/codefastlabs/codefast/pull/994) Resolving a class binding for the first time is cheaper. The metadata cache now keeps one record per class, which a cold
+  resolve looks up once instead of reading a separate map for each fact, and a class with no constructor parameters is
+  built without allocating an empty argument list. This mostly speeds up containers that bind and resolve many class
+  singletons at startup.
+
+- [#1001](https://github.com/codefastlabs/codefast/pull/1001) The first resolve of a class binding is cheaper. The class's parameter list, and the check that a subclass is not
+  dropping its base's declared dependencies, are settled once per class instead of once per instantiation, and the class
+  asked about last is answered without a map lookup, so a hundred singletons of one class bind and materialize about a
+  fifth faster.
+
+- [#994](https://github.com/codefastlabs/codefast/pull/994) A root-level `resolveAll()` read in a loop over the same token, as an event bus does for every event, is cheaper: the
+  lookup cache keeps the last collection in front of its map, so a repeat read skips the map lookup.
+
+- [#997](https://github.com/codefastlabs/codefast/pull/997) A container that reads a collection once no longer builds a value list it never reads again. A root-level `resolveAll`
+  keeps its stable value list from the second read on, the way an instantiation plan compiles on repeat, so a fresh
+  container per request pays only for the members it resolves.
+
+- [#996](https://github.com/codefastlabs/codefast/pull/996) A resolve that carries options on a root container gets back much of the speed 0.11.0 took from it. The check that
+  refuses a disposed chain grew in that release enough that V8 stopped inlining the lookup behind that entry point; a live
+  root now pays two field reads for it, and only a child reads the dispose epoch.
+
+- [#998](https://github.com/codefastlabs/codefast/pull/998) A root container's `resolve(token, options)` no longer pays for the check a child makes that no ancestor was disposed.
+  Each container is created with the `resolve` of its role, so the root's never carries the child's path and the rule that
+  a disposed ancestor refuses its descendants stays as it was.
+
+- [#994](https://github.com/codefastlabs/codefast/pull/994) A scoped binding whose scope changes stops handing children the instance they cached before the change. A binding
+  registered on a parent, resolved from a child, then refined `scoped()` → `transient()` → `scoped()` gave that child its
+  old scoped instance back, because only the registering container's cache was cleared. Every container now files a scoped
+  instance under a key the binding replaces when it leaves `scoped`, so the cached instance is never found again.
+
+- [#1003](https://github.com/codefastlabs/codefast/pull/1003) A teardown reads a class's `@preDestroy` methods once for a run of bindings of that class, instead of once per binding,
+  and names the token only when a hook fails.
+
+- [#1002](https://github.com/codefastlabs/codefast/pull/1002) A rebind that owes no teardown allocates nothing for the binding it displaces, and a collection read skips its scan for
+  dangling aliases in a chain that never held one.
+
 ## 0.11.0
 
 ### Minor Changes
