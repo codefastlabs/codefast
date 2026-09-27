@@ -61,67 +61,76 @@ function that grows past a size heuristic stops being inlined. Each term is expl
 
 ## Layered architecture
 
-### The five levels
+### The six levels
 
 Dependencies point downward only. Nothing below knows about anything above. An upward **value** import is a violation; a
 type-only one erases at build time and couples nothing.
 
 ```
-container/        Container, fluent binding chain             ← the public surface
-introspection/    inspector, explain, dependency graph, adapters
+container/             Container, fluent binding chain                              ← the public surface
   ↓
-decorators/       @injectable, @inject, lifecycle decorators
-metadata/         the reader port and its default reader
+introspection/         inspector, explain, dependency graph, diagnostics, adapters
   ↓
-resolution/       DependencyResolver + its collaborators      ← the engine
+resolution/            DependencyResolver + its collaborators                       ← the engine
   ↓
-lifecycle/        LifecycleManager, ScopeManager              ← per-container state
-ambient/          the container an @inject accessor reads
+lifecycle/             LifecycleManager, ScopeManager                               ← per-container state
+ambient-container.ts   the container an @inject accessor reads
+decorators/            @injectable, @inject, lifecycle decorators
   ↓
-core/             token, types, tag, binding, registry, module   ← the model
-errors/           the taxonomy and its diagnostics
-injection/        the descriptor every dependency normalises to
+metadata/              the reader port, its default reader, a foreign reader's verification
+  ↓
+core/                  token, types, tag, binding and its chain contract, registry, module   ← the model
+errors.ts              the taxonomy
+injection/             the dependency slot every dependency normalises to, and its descriptor
 ```
 
 Reading from the bottom:
 
-- **`core/`, `errors/`, `injection/`** are the model: what a token, binding, registry and dependency descriptor _are_.
-- **`lifecycle/` and `ambient/`** hold per-container state (scopes, activation hooks) and the "current container" an
-  `@inject` accessor reads from.
+- **`core/`, `errors.ts`, `injection/`** are the model: what a token, binding, registry and dependency _are_.
+- **`metadata/`** is the port the engine reads a class through: the `MetadataReader` interface, the default reader over
+  `Symbol.metadata`, and the verification a foreign reader's answers pass once. Nothing in it knows the engine.
+- **`lifecycle/`, `ambient-container.ts` and `decorators/`** hold per-container state (scopes, activation hooks), the
+  "current container" an `@inject` accessor reads from, and the decorators that write metadata. A decorator needs the
+  ambient container and the metadata keys, never the engine: an `@inject` accessor's initializer resolves through the
+  container the engine installed, so the engine and the decorator both depend on `ambient-container.ts` and neither on
+  the other.
 - **`resolution/`** is the engine.
-- **`decorators/` and `metadata/`** sit _above_ the engine. An `@inject` accessor's initializer resolves through the
-  ambient container while the instance is being constructed, so decorators depend on resolution, not the other way
-  around.
-- **`container/` and `introspection/`** sit on top because they compose everything below: `container/` imports
-  `@injectable`'s registry and four of the metadata modules.
+- **`introspection/`** reads the engine's model through the engine's own selection and contexts, and never through the
+  container.
+- **`container/`** sits on top because it composes everything below: `@injectable`'s registry, the metadata readers, the
+  engine and the introspection modules.
 
 The top two levels are not on any hot path, which is why they read as peripheral. They are still ordered, and an import
 the other way is a violation.
 
-### Three directories that name a rule
+A directory names a family of two or more modules, and a lone module sits flat at its layer, which is why `errors.ts`
+and `ambient-container.ts` are files. A directory carries the topic and a file its role, so no file repeats its
+directory's name.
 
-Most directories name a topic. Three name a rule instead:
+### Three places that name a rule
 
-- **`errors/` is cold by construction.** The hot path imports the error constructors and nothing else. Building a
+Most directories name a topic. Three places name a rule instead:
+
+- **`errors.ts` is cold by construction.** The hot path imports the error constructors and nothing else. Building a
   message is something an error path can afford, and a hot function's prefix cannot, so message building happens at the
   throw site.
 - **`injection/` is the one shape both dependency sources normalise to.** Because of it, the model can read a dependency
   without reaching up into `decorators/`.
-- **`resolution/` groups by lane** — `cache/`, `path/`, `plan/`, `select/` — because the reasoning about the engine is
-  per-lane, not per-noun.
+- **`resolution/` groups by lane** — `cache/`, `plan/`, `select/`, and `path.ts` — because the reasoning about the
+  engine is per-lane, not per-noun.
 
 ### Every module is an entry point
 
-`package.json#exports` is generated by `codefast mirror` from the `mirror["@codefast/di"]` entry in
-[`codefast.config.js`](../../codefast.config.js), with no exclusions. This repo is its own sole consumer, so full access
-beats encapsulation. The root export additionally re-exports everything a typical consumer needs.
+`package.json#exports` is generated by `codefast mirror` from `dist/`, and
+[`codefast.config.js`](../../codefast.config.js) carries no entry for this package: no exclusion, no renamed specifier.
+This repo is its own sole consumer, so full access beats encapsulation. The root export additionally re-exports
+everything a typical consumer needs.
 
-One naming consequence follows: the map is derived from `dist/`, so reorganising `src/` renames published specifiers.
-`strip: "./introspection/"` pins the introspection modules' consumer-facing specifiers where they shipped.
+One naming consequence follows: the map is the source tree, so reorganising `src/` renames published specifiers, and a
+rename ships with a changeset that lists them.
 
-> **Practical note.** `package.json#exports` is generated — edit `codefast.config.js` and re-run `pnpm cli:mirror`
-> rather than hand-editing the map. If a refactor moves a directory, `pnpm cli:mirror:preview` shows renamed specifiers
-> before you commit.
+> **Practical note.** `package.json#exports` is generated — re-run `pnpm cli:mirror` rather than hand-editing the map.
+> If a refactor moves a module, `pnpm cli:mirror:preview` shows renamed specifiers before you commit.
 
 ### Build and type-level facts
 
@@ -143,12 +152,12 @@ explains why that assignability matters.
 
 ### Bindings: one shape, one construction site — and the chain is the binding
 
-Every binding is a `BindingChain` from [`binding-builders.ts`](src/container/binding-builders.ts): the object `bind()`
-returns is the object the registry stores and the resolver reads. Its class declares every kind's fields first, in one
-fixed order, and the chain's own bookkeeping after them as private fields, so all bindings in a process share one V8
-hidden class (the engine-internal description of an object's property layout). `to*()` fills the fields in place and
-hands the object to the registry; a plain bind is therefore one allocation, where a builder that produced a separate
-binding object was three and a copy of every field.
+Every binding is a `BindingChain` from [`binding-chain.ts`](src/container/binding-chain.ts): the object `bind()` returns
+is the object the registry stores and the resolver reads. Its class declares every kind's fields first, in one fixed
+order, and the chain's own bookkeeping after them as private fields, so all bindings in a process share one V8 hidden
+class (the engine-internal description of an object's property layout). `to*()` fills the fields in place and hands the
+object to the registry; a plain bind is therefore one allocation, where a builder that produced a separate binding
+object was three and a copy of every field.
 
 This matters because the resolver's hot property reads — `kind`, `scope`, `factory` — are then monomorphic: every
 binding they see has the same layout. Mixed layouts would make those reads megamorphic, meaning V8 falls back to slow
@@ -188,7 +197,7 @@ times and copy the list never.
 
 > **Invariant (correctness).** A removal or a displacement replaces a token's binding array and never splices one that
 > has been handed out; an append lands in place, and every selection walk reads its starting length first.
-> `tests/unit/resolution/select/binding-select.test.ts` pins both halves.
+> `tests/unit/resolution/select/candidates.test.ts` pins both halves.
 
 ### The registry keeps the common token in one map, and a record for the rest
 
@@ -305,7 +314,7 @@ manager files it under the binding's `scopedCacheKey` rather than its id. The ke
 mints a new one from the id counter: every entry any child filed under the old key is then unreachable, and a later flip
 back to `scoped` materialises a fresh instance. The hit stays one field load and one `Map.get` — a generation compared
 on each read was measured as a clear loss on the scoped hit — and the id itself never changes, as SPEC requires of
-`id()`. `tests/unit/container/binding-builders.test.ts` pins it for the registering child, a child of the registering
+`id()`. `tests/unit/container/binding-chain.test.ts` pins it for the registering child, a child of the registering
 container, and the async lane.
 
 ### The fluent chain: one object, one registration
@@ -345,7 +354,7 @@ checks the order too, for that reason alone, since it otherwise has nothing to d
 
 > **Invariant (contract, two-part).** Both halves of the ordering contract are pinned, by two different kinds of test.
 > `tests/types/container-api.test.ts` asserts each step is absent from the **type** on the wrong side of `to*()`;
-> `tests/unit/container/bind-to-builder-order.test.ts` and `binding-builders.test.ts` assert each one **throws** there.
+> `tests/unit/container/bind-to-builder-order.test.ts` and `binding-chain.test.ts` assert each one **throws** there.
 > Asserting instead that the methods are absent from the _object_ would pin an implementation detail and forbid this
 > single-object shape. If you change the class, check which of the two a failing test is actually holding.
 
@@ -360,16 +369,16 @@ you want to challenge it, the benchmark suite is where.
 
 Everything that needs no cross-instance private access is split out into a collaborator:
 
-| Module                                                                                                                   | Owns                                                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| [`binding-lookup-cache.ts`](src/resolution/cache/binding-lookup-cache.ts)                                                | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions            |
-| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                                    | per-class metadata: constructor params, `@postConstruct` presence, accessor injection, and the `new` itself                   |
-| [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                          | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                                      |
-| [`instantiation-plan.ts`](src/resolution/plan/instantiation-plan.ts)                                                     | the plan compiler ([Compiled plans and escapes](#compiled-plans-and-escapes))                                                 |
-| [`plan-codegen.ts`](src/resolution/plan/plan-codegen.ts)                                                                 | renders a hot plan's `PlanNode` tree as a function of its own, or leaves it a closure where the runtime forbids compiling one |
-| [`resolution-path.ts`](src/resolution/path/resolution-path.ts)                                                           | cycle-detection bookkeeping carried on the path array                                                                         |
-| [`binding-select.ts`](src/resolution/select/binding-select.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, `matchesSlot()` — the one slot matcher — and `chooseCandidate()`           |
-| [`resolve-options.ts`](src/injection/resolve-options.ts)                                                                 | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                           |
+| Module                                                                                                           | Owns                                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| [`lookup.ts`](src/resolution/cache/lookup.ts)                                                                    | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions            |
+| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                            | per-class facts: constructor params, `@postConstruct` presence, accessor injection, and the `new` itself                      |
+| [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                  | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                                      |
+| [`compiler.ts`](src/resolution/plan/compiler.ts)                                                                 | the plan compiler ([Compiled plans and escapes](#compiled-plans-and-escapes))                                                 |
+| [`codegen.ts`](src/resolution/plan/codegen.ts)                                                                   | renders a hot plan's `PlanNode` tree as a function of its own, or leaves it a closure where the runtime forbids compiling one |
+| [`path.ts`](src/resolution/path.ts)                                                                              | cycle-detection bookkeeping carried on the path array                                                                         |
+| [`candidates.ts`](src/resolution/select/candidates.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, `matchesSlot()` — the one slot matcher — and `chooseCandidate()`           |
+| [`dependency-slot.ts`](src/injection/dependency-slot.ts)                                                         | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                           |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
 
@@ -427,8 +436,8 @@ behaviour is identical either way; `RESOLUTION_DIAGNOSTICS` reports `generatedPl
 
 > **Invariant (correctness).** The closure and the generated function are two renderings of one `PlanNode` tree, so
 > anything a closure does that its node does not state is a bug in the compiler, not a difference to preserve.
-> `tests/unit/resolution/plan/instantiation-plan-codegen.test.ts` pins the generated tier against the closure's
-> behaviour and `tests/unit/resolution/plan/plan-codegen.test.ts` pins each node kind's rendering.
+> `tests/unit/resolution/plan/compiler-codegen.test.ts` pins the generated tier against the closure's behaviour and
+> `tests/unit/resolution/plan/codegen.test.ts` pins each node kind's rendering.
 
 **An accessor-injected class compiles only as a plan's root.** Its `@inject` accessors resolve while the constructor
 runs, through the ambient container, so the class cannot be a static node: nothing the compiler could bake would be what
@@ -444,7 +453,7 @@ would not replay, and a cycle through them would be reported a level late.
 
 > **Invariant (correctness).** An escape must stay behaviourally indistinguishable from the interpreted path. If you add
 > a case, seed it with the same ancestors and replay the same call.
-> `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` pins this.
+> `tests/unit/resolution/plan/compiler-escapes.test.ts` pins this.
 
 **A dependency's criteria are fixed when it is declared, so nothing rebuilds them per hop.** `#compileInjectionThunk`
 derives a named or tagged param's `ResolveOptions` at _compile_ time and captures them in the escape thunk. The
@@ -473,7 +482,7 @@ predicate reads the resolution path, so it is the runtime's to evaluate.
 > **Invariant (correctness).** An entry reached by a criterion carries that criterion into every escape it falls back
 > to. `#compileDepThunk`'s escapes replay `resolveFromContext` — the _default_ slot — when handed no options, so a named
 > singleton's cold materialisation or a named factory would silently resolve a different binding without this.
-> `tests/unit/resolution/plan/instantiation-plan-named.test.ts` pins it.
+> `tests/unit/resolution/plan/compiler-named.test.ts` pins it.
 
 ### Lookup caches and inline caches
 
@@ -677,9 +686,9 @@ fact: whether the code producing the path runs on one synchronous call stack.
 | Async, a factory's prefix | `binding.inFlight`, held for the factory's synchronous prefix        | The request that closes a cycle comes from that prefix, and synchronous code does not interleave                  |
 | Async, on a branch        | `extendResolutionBranch` — append-only path, scanned by branch depth | A continuation's ancestors are on no call stack and several branches interleave, so a flag cannot name the branch |
 
-`enterSyncPath` / `leaveSyncPath` in `resolution/path/resolution-path.ts` are the whole synchronous mechanism: check the
-flag, set it, push the frame; pop, clear. The stack is still kept — it is what names the path in an error and what a
-constraint predicate reads — but nothing scans it and nothing is sized.
+`enterSyncPath` / `leaveSyncPath` in `resolution/path.ts` are the whole synchronous mechanism: check the flag, set it,
+push the frame; pop, clear. The stack is still kept — it is what names the path in an error and what a constraint
+predicate reads — but nothing scans it and nothing is sized.
 
 **A seeded path is marked before a synchronous call runs over it.** Two paths reach a synchronous call without any
 synchronous frame having pushed them: the static ancestors a compiled plan seeds into an escape, and the branch prefix
@@ -766,8 +775,8 @@ at all; a node with one awaiting dependency awaits it directly; anything with se
 `settleInOrder`, which is `Promise.all` on the happy path and, on a failure, every sibling settled and the earliest
 rejection in declaration order — the order the synchronous lanes report. That is exactly how the interpreted async path
 treats every dependency, down to unwrapping a promise-valued constant and starting every sibling before any failure is
-reported. `tests/unit/resolution/plan/instantiation-plan-async.test.ts` pins the lane being active, the escape criteria,
-the late-hook invalidation, and those exactness corners.
+reported. `tests/unit/resolution/plan/compiler-async.test.ts` pins the lane being active, the escape criteria, the
+late-hook invalidation, and those exactness corners.
 
 An async plan that keeps running is generated as a function of its own exactly as a sync one is
 ([Compiled plans and escapes](#compiled-plans-and-escapes)): the compiler records an `AsyncPlanNode` tree beside the
@@ -879,7 +888,7 @@ section before changing what the table describes.
 
 | Invariant                                                                                                                                                         | Pinned by                                                                                 | Where                                                                                         |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.                             | `tests/unit/resolution/select/binding-select.test.ts`                                     | [Binding list](#a-tokens-binding-list-appends-in-place-and-replaces-on-removal)               |
+| A removal or displacement replaces a token's binding array, an append lands in place, and a selection walk reads its starting length.                             | `tests/unit/resolution/select/candidates.test.ts`                                         | [Binding list](#a-tokens-binding-list-appends-in-place-and-replaces-on-removal)               |
 | Internal lanes take `Binding` and return `unknown`; only the eight public entry points name `Value`. Lifecycle hooks stay method syntax.                          | `tests/types/binding-variance.test.ts`                                                    | [Value-type erasure](#the-engine-erases-the-value-type)                                       |
 | `frame` is cleared whenever `scope` changes in place.                                                                                                             | `tests/unit/resolution/cache-invalidation.test.ts`                                        | [The memoised `frame`](#the-memoised-frame-and-scope-refinement)                              |
 | Chain steps are absent from the type **and** throw on the wrong side of `to*()`.                                                                                  | `tests/types/container-api.test.ts`, `tests/unit/container/bind-to-builder-order.test.ts` | [The fluent chain](#the-fluent-chain-one-object-one-registration)                             |
@@ -902,13 +911,13 @@ section before changing what the table describes.
 
 **Plans and escapes**
 
-| Invariant                                                                                           | Pinned by                                                       | Where                                                                   |
-| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| An escape is behaviourally indistinguishable from the interpreted path: same ancestors, same call.  | `tests/unit/resolution/plan/instantiation-plan-escapes.test.ts` | [Compiled plans and escapes](#compiled-plans-and-escapes)               |
-| An escape thunk copies the frame array; it never lends it.                                          | (structural; see the two mechanisms)                            | [The frame copy](#the-frame-copy-in-compileescapethunk-is-load-bearing) |
-| An entry reached by a criterion carries that criterion into every escape.                           | `tests/unit/resolution/plan/instantiation-plan-named.test.ts`   | [Compiled plans and escapes](#compiled-plans-and-escapes)               |
-| The async plan runs only at a root and mirrors the interpreted async path exactly.                  | `tests/unit/resolution/plan/instantiation-plan-async.test.ts`   | [The async pipeline](#the-async-pipeline-one-branch-lane)               |
-| A generated plan and its closure are two renderings of one `PlanNode` tree, and behave identically. | `tests/unit/resolution/plan/instantiation-plan-codegen.test.ts` | [Compiled plans and escapes](#compiled-plans-and-escapes)               |
+| Invariant                                                                                           | Pinned by                                             | Where                                                                   |
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------- |
+| An escape is behaviourally indistinguishable from the interpreted path: same ancestors, same call.  | `tests/unit/resolution/plan/compiler-escapes.test.ts` | [Compiled plans and escapes](#compiled-plans-and-escapes)               |
+| An escape thunk copies the frame array; it never lends it.                                          | (structural; see the two mechanisms)                  | [The frame copy](#the-frame-copy-in-compileescapethunk-is-load-bearing) |
+| An entry reached by a criterion carries that criterion into every escape.                           | `tests/unit/resolution/plan/compiler-named.test.ts`   | [Compiled plans and escapes](#compiled-plans-and-escapes)               |
+| The async plan runs only at a root and mirrors the interpreted async path exactly.                  | `tests/unit/resolution/plan/compiler-async.test.ts`   | [The async pipeline](#the-async-pipeline-one-branch-lane)               |
+| A generated plan and its closure are two renderings of one `PlanNode` tree, and behave identically. | `tests/unit/resolution/plan/compiler-codegen.test.ts` | [Compiled plans and escapes](#compiled-plans-and-escapes)               |
 
 **Cycle detection and paths**
 
@@ -916,7 +925,7 @@ section before changing what the table describes.
 | -------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | `binding.inFlight` is set and released on every exit path, with or without activation hooks. | `tests/unit/resolution/in-flight-invariants.test.ts`      | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
 | Path checks key on binding identity, never on a display name.                                | (structural)                                              | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
-| A seeded path is marked idempotently; an enclosing frame's flag is left as found.            | `tests/unit/resolution/path/resolution-path.test.ts`      | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| A seeded path is marked idempotently; an enclosing frame's flag is left as found.            | `tests/unit/resolution/path.test.ts`                      | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
 | Every lane answers a graph identically — value, sharing and error.                           | `tests/integration/resolution-lanes-differential.test.ts` | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
 | A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.          | `tests/types/async-branch-ownership.test.ts`              | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
 | A level's context answers from its own prefix before and after an `await`.                   | `tests/unit/resolution/resolver-async.test.ts`            | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |

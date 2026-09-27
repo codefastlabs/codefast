@@ -199,8 +199,8 @@ import type {
 } from "@codefast/di";
 ```
 
-The owning modules are subpaths too, if you prefer importing narrowly: `@codefast/di/metadata/metadata-types`,
-`@codefast/di/metadata/symbol-metadata-reader`.
+The owning modules are subpaths too, if you prefer importing narrowly: `@codefast/di/metadata/types`,
+`@codefast/di/metadata/symbol-reader`.
 
 ---
 

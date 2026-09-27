@@ -197,7 +197,7 @@ Graph adapters are tree-shakeable — import only what you use:
 
 ```ts
 import { toCytoscapeGraph, toDotGraph, toMermaidGraph, toReactFlowGraph } from "@codefast/di";
-// or narrowly: @codefast/di/graph-adapters/{dot,cytoscape,mermaid,reactflow}
+// or narrowly: @codefast/di/introspection/graph-adapters/{dot,cytoscape,mermaid,reactflow}
 ```
 
 ---
