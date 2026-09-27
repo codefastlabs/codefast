@@ -21,7 +21,17 @@ describe("package discovery", () => {
       "contributing",
       "changelog",
     ]);
-    expect(di?.docs.every((entry) => entry.pages.length === 0)).toBe(true);
+    expect(di?.docs.find((entry) => entry.kind === "spec")?.pages).toEqual([
+      "binding",
+      "constraints",
+      "container",
+      "decorators",
+      "errors",
+      "foundation-types",
+      "modules",
+      "token",
+    ]);
+    expect(di?.docs.filter((entry) => entry.kind !== "spec").every((entry) => entry.pages.length === 0)).toBe(true);
     expect(di?.version).toMatch(/^\d+\.\d+\.\d+/);
     expect(di?.license).toBe("MIT");
   });
@@ -40,8 +50,10 @@ describe("package discovery", () => {
   });
 
   it("resolves a document to its source file and returns null for anything else", async () => {
-    expect(docSource("di", "spec")?.file).toBe("SPEC.md");
+    expect(docSource("di", "spec")?.file).toBe("spec/README.md");
     await expect(docSource("di", "spec")?.load()).resolves.toMatch(/^# /);
+    expect(docSource("di", "spec", "binding")?.file).toBe("spec/binding.md");
+    expect(docSource("di", "architecture")?.file).toBe("ARCHITECTURE.md");
     expect(docSource("tracking", "spec")?.file).toBe("spec/README.md");
     expect(docSource("tracking", "spec", "spec-consent")?.file).toBe("spec/spec-consent.md");
     expect(docSource("tracking", "spec", "vectors")?.file).toBe("spec/vectors/README.md");

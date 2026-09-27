@@ -2,8 +2,8 @@
 
 > **How to read this file.** It records _why_ this library's API looks the way it does — what it took from InversifyJS
 > v8, what it rebuilt, and what it deliberately left behind. Nothing here is a contract: what the library guarantees is
-> in [`SPEC.md`](./SPEC.md), how the engine is built is in [`ARCHITECTURE.md`](./ARCHITECTURE.md), and how to use it is
-> in [`README.md`](./README.md). A comparison row describes InversifyJS v8.0.0 as it stood in March 2026.
+> in [`spec/`](./spec/README.md), how the engine is built is in [`ARCHITECTURE.md`](./ARCHITECTURE.md), and how to use
+> it is in [`README.md`](./README.md). A comparison row describes InversifyJS v8.0.0 as it stood in March 2026.
 
 ---
 

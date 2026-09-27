@@ -230,7 +230,7 @@ predicates ship from the root entry:
 | `whenAnyAncestorTaggedAll(criteria)` | some ancestor's slot carries all criteria in the array  |
 
 For the exact matching and most-specific-wins rules, see
-[`SPEC.md` → Slots and last-wins](./SPEC.md#slots-and-last-wins--the-exact-definition).
+[the specification → Slots and last-wins](./spec/binding.md#slots-and-last-wins--the-exact-definition).
 
 ## Decorators
 
@@ -501,7 +501,7 @@ alongside the method that produced them. Run it yourself rather than taking any 
 ## Documentation
 
 - [Rendered docs on codefastlabs.com](https://codefastlabs.com/docs/di)
-- [`SPEC.md`](./SPEC.md) — the behavioural contract: public API, semantics, and errors.
+- [`spec/`](./spec/README.md) — the behavioural contract: public API, semantics, and errors, one document per API area.
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md) — the internal shape and the invariants the hot paths depend on.
 - [`DECISIONS.md`](./DECISIONS.md) — why the API looks like this, and what it did not take from InversifyJS v8.
 - [`examples/`](./examples/README.md) — runnable examples from basic tokens to a multi-file Ports & Adapters app.

@@ -254,9 +254,9 @@ The registry also remembers which kinds it has ever held, as one bitmask that is
 the negative answers have to be exact: a registry that never held a constant skips its teardown sweep, and one that
 never held an alias answers `defaultSlotAlias()` without probing. That probe is what a request carrying criteria pays
 when it misses every slot of a token, because a default-slot alias forwards those criteria to its target
-([`toAlias` — hint forwarding](SPEC.md#toalias--hint-forwarding)); resolve, `hasOwn()` and `explain()` all ask through
-the one method, so the rule and its shortcut live in one place. The two flags share one field because the registry is
-allocated by every container, and a field there is paid on every `createChild()`.
+([`toAlias` — hint forwarding](spec/binding.md#toalias--hint-forwarding)); resolve, `hasOwn()` and `explain()` all ask
+through the one method, so the rule and its shortcut live in one place. The two flags share one field because the
+registry is allocated by every container, and a field there is paid on every `createChild()`.
 
 ### `scope` is a total field
 
@@ -347,8 +347,8 @@ of it.
 kind-specific builder after, and it commits to the registry itself. `bind()` is typed as `BindToBuilder`, which offers
 the slot steps and `to*()` only, and each `to*()` returns a builder with no slot step, so `singleton()` is not reachable
 before a `to*()` and `whenNamed()` is not reachable after one. The ordering is a **type-level** guarantee, matching
-[SPEC's fluent-chain section](SPEC.md#fluent-chain--the-canonical-invariant-order). A caller who has no types, or casts
-past them, gets `ChainNotRegisteredError` for a scope, a hook or `id()` before `to*()`, and
+[SPEC's fluent-chain section](spec/README.md#fluent-chain--the-canonical-invariant-order). A caller who has no types, or
+casts past them, gets `ChainNotRegisteredError` for a scope, a hook or `id()` before `to*()`, and
 `ChainAlreadyRegisteredError` for a slot step after it, each naming the token, never a silent no-op. `whenDefault()`
 checks the order too, for that reason alone, since it otherwise has nothing to do.
 
@@ -579,8 +579,9 @@ there.
 ### Criteria: interning and the tag indexes
 
 **A criterion is interned.** A tag key is minted by `tag()` and its criteria by `TagKey.of()`, which caches one object
-per value. So the `Object.is` equality the contract specifies ([SPEC — ResolveOptions](SPEC.md#resolveoptions)) becomes
-object identity, and the registry keys tagged bindings by the criterion itself rather than by key-then-value.
+per value. So the `Object.is` equality the contract specifies
+([SPEC — ResolveOptions](spec/foundation-types.md#resolveoptions)) becomes object identity, and the registry keys tagged
+bindings by the criterion itself rather than by key-then-value.
 
 Interning removes a hash level from every tagged lookup. More importantly, it removes a divergence: a value-keyed `Map`
 compares keys by SameValueZero, which holds `+0` and `-0` equal, while `Object.is` does not. The intern cache splits
@@ -603,9 +604,9 @@ all three the same way. A request carrying criteria from **two** sources at once
 is not something a one-criterion index can answer without skipping the ambiguity check the full path runs.
 
 > **Invariant (consistency of contract).** Two spellings SPEC calls equivalent have to reach the same lane, or the
-> shorter one becomes the slower one and the documentation recommending it becomes wrong. [SPEC](SPEC.md#resolveoptions)
-> makes the two spellings one request; `tests/unit/resolution/select/tag-shorthand-parity.test.ts` pins the lane
-> alongside the answer.
+> shorter one becomes the slower one and the documentation recommending it becomes wrong.
+> [SPEC](spec/foundation-types.md#resolveoptions) makes the two spellings one request;
+> `tests/unit/resolution/select/tag-shorthand-parity.test.ts` pins the lane alongside the answer.
 
 **A one-criterion index miss is a registry miss.** A request carrying one criterion matches only a slot that _is_ that
 criterion: a multi-criterion slot needs every one of its criteria covered, and the default slot matches no request that
@@ -640,7 +641,8 @@ index that serves it buckets every multi-criterion slot under its **first** crit
 is in the request, its first included, so walking the request's few buckets (plus the single-tag index under each
 request criterion, the folded name criterion among them) finds each candidate **exactly once**. There is no dedup set,
 no per-resolve allocation beyond the candidate list selection was already building, and no stringified tag values —
-buckets are keyed by the interned criterion, so the `Object.is` rule in [SPEC](SPEC.md#resolveoptions) still holds.
+buckets are keyed by the interned criterion, so the `Object.is` rule in [SPEC](spec/foundation-types.md#resolveoptions)
+still holds.
 
 Two deliberate bounds on that lane:
 

@@ -289,7 +289,7 @@ point of use beats brevity, and every word must convey information:
   `DefaultContainer` — not `ContainerImpl`. **A type parameter is named for what it holds**: `Value`, `Target`, `Deps`,
   `Ctx`, `Result` — not `T`, `TValue`, `TResult`. A bare `T` says nothing at the use site, which is where the reader
   meets it. Verbatim external API quoted for comparison (Inversify's `Newable<T>`) keeps its own spelling. This
-  originated as [the naming principle in `packages/di/SPEC.md`](packages/di/SPEC.md#naming--no-i-or-t-prefix) and
+  originated as [the naming principle in `packages/di/spec/`](packages/di/spec/README.md#naming--no-i-or-t-prefix) and
   applies repo-wide — it lived in one package's spec long enough for another package to drift from it.
 
 - **A display name is spelled like the TS symbol it stands for, under its owner's namespace: `<namespace>:<Name>`.** The
@@ -334,13 +334,14 @@ point of use beats brevity, and every word must convey information:
 
 ### `packages/di` layout
 
-**A contract doc, a design doc, and the benchmark suite.** [`SPEC.md`](packages/di/SPEC.md) is the external behavioural
-contract callers rely on — public API, semantics, errors, roadmap; [`ARCHITECTURE.md`](packages/di/ARCHITECTURE.md) is
-the source of truth for _what the internal shape is and what it guarantees_: the layering, the invariants each hot path
-depends on, and which shapes that look simplifiable are load-bearing — worth reading before changing anything under
-`resolution/`. The two cross-link at their seams and neither is generated from the other. What a shape _costs_, and
-whether a new idea beats it, is an empirical question the benchmark suite (`benchmarks/di`) answers by re-running;
-numbers live there and in its `RESULTS.md` ledger, never in a source comment and never in ARCHITECTURE.
+**A contract doc, a design doc, and the benchmark suite.** [`spec/`](packages/di/spec/README.md) is the external
+behavioural contract callers rely on — public API, semantics, errors, roadmap;
+[`ARCHITECTURE.md`](packages/di/ARCHITECTURE.md) is the source of truth for _what the internal shape is and what it
+guarantees_: the layering, the invariants each hot path depends on, and which shapes that look simplifiable are
+load-bearing — worth reading before changing anything under `resolution/`. The two cross-link at their seams and neither
+is generated from the other. What a shape _costs_, and whether a new idea beats it, is an empirical question the
+benchmark suite (`benchmarks/di`) answers by re-running; numbers live there and in its `RESULTS.md` ledger, never in a
+source comment and never in ARCHITECTURE.
 
 `src/` groups by layer; a directory names a family of two or more modules, a lone module sits flat at its layer, and no
 file repeats its directory's name: **`core/`** is the model (`token`, `types`, `tag`, `constructor-type`, `binding` and
