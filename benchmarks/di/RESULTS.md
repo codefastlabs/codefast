@@ -116,15 +116,21 @@ correctness property paid for with its price known).
 - **Two warm reads sit on the parity line's wrong side by a hair** — `singleton-class-1-dep` 0.96×† and
   `to-resolved-3-deps` 0.96×† against ditox — both above the throughput ceiling, where the ratio moves between runs of
   the same build. **Open**: these two are the ones to re-measure paired before the next change to their lanes.
-- **Open, against this engine's own previous pass: the tagged lookups in the harness child.** Read against the previous
-  baseline's own figures, the hoisted and inline `slot-tag-*` rows, `tagged-binding-resolve`, `slot-tag-parent-owned`
-  and `slot-name-parent-owned` run at roughly two thirds to four fifths of what they did. Two causes were found and
-  fixed before this pass: the disposed-chain guard every entry point inlines had grown past the caller's inline budget
-  (the `tagged-resolve-slots-*` rows recovered in full), and a request missing every slot probed for a default-slot
-  alias in registries that never held one (`slot-tag-miss-optional` recovered most of its loss). What is left does not
-  reproduce in a standalone probe of the same shapes, only in the child that has built every scenario, whose feedback
-  the suite's new scenarios also changed. `has-own-unbound-check` is separate and priced: a child now confirms its whole
-  chain is live on every read, which is the O(1) check that refuses a disposed ancestor.
+- **A root's tagged lookups pay for the disposed-ancestor rule — attributed against this engine's own previous pass.**
+  Read against the previous baseline's own figures, the hoisted and inline `slot-tag-*` rows, `tagged-binding-resolve`,
+  `slot-tag-parent-owned` and `slot-name-parent-owned` run at roughly two thirds to four fifths of what they did. Two
+  separate causes were found and fixed before this pass: the disposed-chain guard every entry point inlines had grown
+  past the caller's inline budget (the `tagged-resolve-slots-*` rows recovered in full), and a request missing every
+  slot probed for a default-slot alias in registries that never held one (`slot-tag-miss-optional` recovered most of its
+  loss). What is left is the rule itself, bisected to the commit that made a child refuse a disposed ancestor: once
+  children have run the guard's child path in a process, V8 compiles that path into a root's entry points too, and a
+  root's `resolve(token, options)` pays for it although a root never takes it. It is the engine, not the suite: the loss
+  reproduces in the clean probe of each row's own family as well as in the polluted one, and with the previous pass's
+  scenario set as well as this one. In the polluted probe, dropping the child path returns each row to what the previous
+  pass's engine measures there, and no spelling that keeps the rule does. **Chosen cost** of a normative SPEC rule.
+  `has-own-unbound-check` is the same rule seen from a child: every child read confirms its chain is live, an O(1) epoch
+  compare. The guard has since been reshaped so that compare inlines outright, which makes every child read cheaper and
+  leaves these root rows where they are; the next pass shows both.
 
 ## The wins
 
