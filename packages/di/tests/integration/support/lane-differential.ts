@@ -482,9 +482,21 @@ export function syncLanes(container: Container, root: Token<unknown>): LaneSnaps
   return lanes;
 }
 
-/** Resolves the root through every asynchronous entry point of one container. */
-export async function asyncLanes(container: Container, root: Token<unknown>): Promise<LaneSnapshots> {
+/**
+ * Resolves the root through every asynchronous entry point of one container, with a cold reference
+ * beside them.
+ *
+ * @remarks The first async resolve is cold, and a singleton still pending refuses a synchronous read
+ * that every warm resolve answers, by contract — so `async-cold` is a fresh host's first interpreted
+ * resolve, the lane a cold resolve is held to, while the warm lanes are held to `async-interpreted`.
+ */
+export async function asyncLanes(
+  container: Container,
+  root: Token<unknown>,
+  coldHost: () => Container,
+): Promise<LaneSnapshots> {
   const lanes = new Map<string, unknown>();
+  lanes.set("async-cold", await attemptAsync(() => coldHost().resolveAsync(root, {})));
   for (let index = 0; index < TIERED_RESOLVE_COUNT; index += 1) {
     lanes.set(`async#${String(index)}`, await attemptAsync(() => container.resolveAsync(root)));
   }

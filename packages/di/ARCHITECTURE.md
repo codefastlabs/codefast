@@ -716,8 +716,10 @@ are **derived from the frames** at the moment they are asked for, so no name arr
 > **Invariant (correctness).** Every lane answers a graph identically — the same value, the same sharing pattern, the
 > same error class and message. The lane differential test generates random graphs and deep chains and holds the
 > interpreted lane, the tiered plan lanes, the collection and optional reads, a per-request child and the async entry
-> points to one snapshot. A mechanism that catches a cycle one hop late on one lane, or runs a factory twice before
-> catching it, fails that test; three such divergences were found and fixed when it was first run.
+> points to one snapshot — the first async resolve to a fresh host's cold interpreted resolve, the lanes after it to the
+> warm one, since a singleton still pending refuses a synchronous read that a warm resolve answers, by contract. A
+> mechanism that catches a cycle one hop late on one lane, or runs a factory twice before catching it, fails that test;
+> three such divergences were found and fixed when it was first run.
 
 ### The async pipeline: one branch lane
 
@@ -944,15 +946,15 @@ section before changing what the table describes.
 
 **Cycle detection and paths**
 
-| Invariant                                                                                        | Pinned by                                                    | Where                                                                                          |
-| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| `binding.inFlight` is set and released on every exit path, with or without activation hooks.     | `tests/unit/resolution/in-flight-invariants.test.ts`         | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
-| Path checks key on binding identity, never on a display name.                                    | (structural)                                                 | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
-| A seeded path is marked idempotently; an enclosing frame's flag is left as found.                | `tests/unit/resolution/path.test.ts`                         | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
-| Every lane answers a graph identically — value, sharing and error.                               | `tests/integration/resolution-lanes-differential.test.ts`    | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
-| A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.              | `tests/types/async-branch-ownership.test.ts`                 | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
-| A level's context answers from its own prefix before and after an `await`.                       | `tests/unit/resolution/resolver-async.test.ts`               | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
-| The async lane completes in the caller's tick whatever the sync lane would, and caches it first. | `tests/unit/resolution/resolver-async-sibling-reads.test.ts` | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
+| Invariant                                                                                                                                     | Pinned by                                                    | Where                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `binding.inFlight` is set and released on every exit path, with or without activation hooks.                                                  | `tests/unit/resolution/in-flight-invariants.test.ts`         | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| Path checks key on binding identity, never on a display name.                                                                                 | (structural)                                                 | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| A seeded path is marked idempotently; an enclosing frame's flag is left as found.                                                             | `tests/unit/resolution/path.test.ts`                         | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| Every lane answers a graph identically — value, sharing and error; a first async resolve is held to a cold reference, the rest to a warm one. | `tests/integration/resolution-lanes-differential.test.ts`    | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.                                                           | `tests/types/async-branch-ownership.test.ts`                 | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
+| A level's context answers from its own prefix before and after an `await`.                                                                    | `tests/unit/resolution/resolver-async.test.ts`               | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
+| The async lane completes in the caller's tick whatever the sync lane would, and caches it first.                                              | `tests/unit/resolution/resolver-async-sibling-reads.test.ts` | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
 
 **Pooling, lending and deferral**
 
