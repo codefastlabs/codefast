@@ -53,6 +53,24 @@ const config = {
     displayNames: {
       allowlist: [],
     },
+    // A layer is a family under `src/`: a directory, or a lone module sitting flat. Bottom to top; a
+    // value import may point down or sideways, never up. Each package's ARCHITECTURE.md explains its order.
+    layers: {
+      packages: {
+        "@codefast/di": {
+          layers: [
+            ["core", "errors.ts", "injection"],
+            ["metadata"],
+            ["ambient-container.ts", "lifecycle", "decorators"],
+            ["resolution"],
+            ["introspection"],
+            ["container"],
+            ["index.ts"],
+          ],
+        },
+      },
+      allowlist: [],
+    },
     rtl: {
       target: "packages/ui/src",
       // Sheet: slides live in tv() side (left/right) buckets — the side is physical,
