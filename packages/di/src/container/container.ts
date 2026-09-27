@@ -403,16 +403,21 @@ class DefaultContainer implements Container {
     // ever cached — the hot-swap shape — owes no deactivation and hands the shared empty list back.
     let pairs: Array<unknown> | undefined;
     for (let index = 0; index < bindings.length; index += 1) {
-      const binding = bindings[index]!;
-      if (binding.instance !== NO_INSTANCE) {
-        (pairs ??= []).push(binding, binding.instance);
-        this.#scope.deleteSingleton(binding);
-      } else if (this.#owesConstantDeactivation(binding)) {
-        (pairs ??= []).push(binding, binding.value);
-      }
-      this.#scope.deleteScoped(binding.scopedCacheKey);
+      pairs = this.#drainSingleton(bindings[index]!, pairs);
     }
     return pairs ?? NO_DEACTIVATION_PAIRS;
+  }
+
+  /** One binding's share of {@link DefaultContainer.#drainSingletons}, allocating `pairs` on the first pair owed. */
+  #drainSingleton(binding: Binding, pairs: Array<unknown> | undefined): Array<unknown> | undefined {
+    if (binding.instance !== NO_INSTANCE) {
+      (pairs ??= []).push(binding, binding.instance);
+      this.#scope.deleteSingleton(binding);
+    } else if (this.#owesConstantDeactivation(binding)) {
+      (pairs ??= []).push(binding, binding.value);
+    }
+    this.#scope.deleteScoped(binding.scopedCacheKey);
+    return pairs;
   }
 
   /**
@@ -521,8 +526,12 @@ class DefaultContainer implements Container {
       registry: this.#registry,
       scope: this.#scope,
       moduleBindingIds: undefined,
+      // One binding at a time, so the hot-swap rebind that owes nothing allocates nothing.
       deactivateDisplaced: (binding) => {
-        this.#deactivatePairsSync(this.#drainSingletons([binding]));
+        const pairs = this.#drainSingleton(binding, undefined);
+        if (pairs !== undefined) {
+          this.#deactivatePairsSync(pairs);
+        }
       },
     });
   }

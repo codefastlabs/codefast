@@ -1129,6 +1129,19 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#withoutDanglingAliases(selected, options, resolutionStack);
   }
 
+  // A chain none of whose registries ever held an alias has none to drop, which spares the scan.
+  #chainHeldAlias(): boolean {
+    if (this.#registry.hasHeldAlias) {
+      return true;
+    }
+    for (let current = this.#parent; current !== undefined; current = current.#parent) {
+      if (current.#registry.hasHeldAlias) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * The candidates with any alias whose chain ends nowhere dropped, so a fan-out skips a dangling
    * alias rather than throwing on it.
@@ -1141,6 +1154,9 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
   ): ReadonlyArray<Binding> {
+    if (!this.#chainHeldAlias()) {
+      return candidates;
+    }
     let hasAlias = false;
     for (let index = 0; index < candidates.length; index += 1) {
       if (candidates[index]!.kind === "alias") {
