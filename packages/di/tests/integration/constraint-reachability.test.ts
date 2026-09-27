@@ -54,7 +54,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
 
     const container = Container.create();
     container.bind(loggerToken).toConstantValue("default");
-    container.bind(loggerToken).toConstantValue("constrained").when(whenParentNamed(consumerToken, "no-such-name"));
+    container.bind(loggerToken).when(whenParentNamed(consumerToken, "no-such-name")).toConstantValue("constrained");
 
     expect(() => {
       container.validate();
@@ -67,7 +67,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
 
     const container = Container.create();
     container.bind(loggerToken).toConstantValue("default");
-    container.bind(loggerToken).toConstantValue("constrained").when(whenAnyAncestorNamed(consumerToken, "typo"));
+    container.bind(loggerToken).when(whenAnyAncestorNamed(consumerToken, "typo")).toConstantValue("constrained");
 
     let caught: unknown;
     try {
@@ -95,8 +95,8 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
 
     const container = Container.create();
     container.bind(loggerToken).toConstantValue("default");
-    container.bind(loggerToken).toConstantValue("constrained").when(whenParentNamed(consumerToken, "reporting"));
-    container.bind(bystanderToken).toConstantValue("bystander").whenNamed("reporting");
+    container.bind(loggerToken).when(whenParentNamed(consumerToken, "reporting")).toConstantValue("constrained");
+    container.bind(bystanderToken).whenNamed("reporting").toConstantValue("bystander");
 
     expect(() => {
       container.validate();
@@ -116,7 +116,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     ]) {
       const container = Container.create();
       container.bind(loggerToken).toConstantValue("default");
-      container.bind(loggerToken).toConstantValue("constrained").when(constraint);
+      container.bind(loggerToken).when(constraint).toConstantValue("constrained");
 
       let caught: unknown;
       try {
@@ -140,9 +140,9 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     container.bind(loggerToken).toConstantValue("default");
     container
       .bind(loggerToken)
-      .toConstantValue("constrained")
-      .when(whenParentTagged(slotName.of("reporting")));
-    container.bind(consumerToken).toConstantValue("consumer").whenNamed("reporting");
+      .when(whenParentTagged(slotName.of("reporting")))
+      .toConstantValue("constrained");
+    container.bind(consumerToken).whenNamed("reporting").toConstantValue("consumer");
 
     expect(() => {
       container.validate();
@@ -157,8 +157,8 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     container.bind(loggerToken).toConstantValue("default");
     container
       .bind(loggerToken)
-      .toConstantValue("constrained")
-      .when(whenParentTagged(region.of("nowhere")));
+      .when(whenParentTagged(region.of("nowhere")))
+      .toConstantValue("constrained");
 
     expect(() => {
       container.validate();
@@ -171,8 +171,8 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
 
     const container = Container.create();
     container.bind(loggerToken).toConstantValue("default");
-    container.bind(loggerToken).toConstantValue("constrained").when(whenParentNamed(consumerToken, "reporting"));
-    container.bind(consumerToken).toConstantValue("consumer").whenNamed("reporting");
+    container.bind(loggerToken).when(whenParentNamed(consumerToken, "reporting")).toConstantValue("constrained");
+    container.bind(consumerToken).whenNamed("reporting").toConstantValue("consumer");
 
     expect(() => {
       container.validate();
@@ -185,11 +185,11 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     const consumerToken = token<string>("parent-declared-consumer");
 
     const parent = Container.create();
-    parent.bind(consumerToken).toConstantValue("consumer").whenNamed("reporting");
+    parent.bind(consumerToken).whenNamed("reporting").toConstantValue("consumer");
 
     const child = parent.createChild();
     child.bind(loggerToken).toConstantValue("default");
-    child.bind(loggerToken).toConstantValue("constrained").when(whenParentNamed(consumerToken, "reporting"));
+    child.bind(loggerToken).when(whenParentNamed(consumerToken, "reporting")).toConstantValue("constrained");
 
     expect(() => {
       child.validate();
@@ -203,8 +203,8 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     container.bind(loggerToken).toConstantValue("default");
     container
       .bind(loggerToken)
-      .toConstantValue("constrained")
-      .when((constraintContext) => constraintContext.parent !== undefined);
+      .when((constraintContext) => constraintContext.parent !== undefined)
+      .toConstantValue("constrained");
 
     expect(() => {
       container.validate();
@@ -220,9 +220,9 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     container.bind(loggerToken).toConstantValue("default");
     container
       .bind(loggerToken)
-      .toConstantValue("constrained")
       .when(whenParentNamed(consumerToken, "absent"))
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue("constrained");
 
     // The composed closure carries both sides' requirements, so the unreachable name still reports.
     expect(() => {
@@ -238,9 +238,9 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     container.bind(loggerToken).toConstantValue("default");
     container
       .bind(loggerToken)
-      .toConstantValue("constrained")
       .when(() => true)
-      .when(whenAnyAncestorNamed(consumerToken, "absent"));
+      .when(whenAnyAncestorNamed(consumerToken, "absent"))
+      .toConstantValue("constrained");
 
     expect(() => {
       container.validate();
@@ -251,12 +251,12 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     const loggerToken = token<string>("composed-requirement-satisfied");
 
     const container = Container.create();
-    container.bind(loggerToken).toConstantValue("default").whenNamed("present");
+    container.bind(loggerToken).whenNamed("present").toConstantValue("default");
     container
       .bind(loggerToken)
-      .toConstantValue("constrained")
       .when(whenParentNamed(loggerToken, "present"))
-      .when(whenAnyAncestorNamed(loggerToken, "present"));
+      .when(whenAnyAncestorNamed(loggerToken, "present"))
+      .toConstantValue("constrained");
 
     expect(() => {
       container.validate();

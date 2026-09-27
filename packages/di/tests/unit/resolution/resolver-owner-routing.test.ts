@@ -175,8 +175,8 @@ describe("a miss is classified against the whole chain", () => {
     const parent = Container.create();
     parent
       .bind(guardedToken)
-      .toConstantValue("only under a parent frame")
-      .when((ctx) => ctx.parent !== undefined);
+      .when((ctx) => ctx.parent !== undefined)
+      .toConstantValue("only under a parent frame");
     const child = parent.createChild();
 
     // The same miss, the same diagnosis: the token is bound, nothing matched this request.

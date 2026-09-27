@@ -169,8 +169,8 @@ constraints is its slot — think of a slot as a labelled variant of the token.
 `{ name }`:
 
 ```ts
-container.bind(LoggerToken).toConstantValue(consoleLogger).whenNamed("console");
-container.bind(LoggerToken).toConstantValue(fileLogger).whenNamed("file");
+container.bind(LoggerToken).whenNamed("console").toConstantValue(consoleLogger);
+container.bind(LoggerToken).whenNamed("file").toConstantValue(fileLogger);
 
 container.resolve(LoggerToken, { name: "file" }); // → fileLogger
 ```
@@ -180,7 +180,7 @@ Declare the names on the token and they become checked, completable literals at 
 ```ts
 const LoggerToken = token<Logger, "console" | "file">("app:Logger");
 
-container.bind(LoggerToken).toConstantValue(fileLogger).whenNamed("file");
+container.bind(LoggerToken).whenNamed("file").toConstantValue(fileLogger);
 container.resolve(LoggerToken, { name: "file" }); // { name: "fiel" } is a compile error
 ```
 
@@ -193,7 +193,7 @@ import { tag } from "@codefast/di";
 
 const Provider = tag<"s3" | "gcs">("app:provider");
 
-container.bind(StorageToken).to(S3Storage).whenTagged(Provider.of("s3"));
+container.bind(StorageToken).whenTagged(Provider.of("s3")).to(S3Storage);
 container.resolve(StorageToken, { tag: Provider.of("s3") }); // → S3Storage
 ```
 

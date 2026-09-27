@@ -39,13 +39,13 @@ describe("every exported function is callable with public values", () => {
 
   function snapshot(): BindingSnapshot {
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue(1).whenNamed("primary");
+    container.bind(serviceToken).whenNamed("primary").toConstantValue(1);
     return container.lookupBindings(serviceToken)[0]!;
   }
 
   it("explains a request in public types, down to options rebuilt from the selected slot", () => {
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue(1).whenNamed("primary");
+    container.bind(serviceToken).whenNamed("primary").toConstantValue(1);
     const explanation: ResolutionExplanation = container.explain(serviceToken, { name: "primary" });
 
     expectTypeOf(explanation.steps).toEqualTypeOf<ReadonlyArray<ExplanationStep>>();

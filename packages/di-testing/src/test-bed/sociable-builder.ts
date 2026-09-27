@@ -129,13 +129,14 @@ export class SociableBuilder<Class, Backend extends MockFunction = Spy>
         container.bind(realToken).to(realClass).singleton();
         container.bind(realClass).toDynamic((context) => context.resolve(realToken));
         for (const slot of slots) {
-          const builder = container.bind(realClass).toDynamic((context) => context.resolve(realToken));
+          const builder = container.bind(realClass);
           if (slot.name !== undefined) {
             builder.whenNamed(slot.name);
           }
           for (const tag of slot.tags ?? []) {
             builder.whenTagged(tag);
           }
+          builder.toDynamic((context) => context.resolve(realToken));
         }
       }
       // Sealed entries so mocks.get points at bed.exposed() instead of handing back a fake Mocked.

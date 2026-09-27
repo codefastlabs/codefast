@@ -145,12 +145,12 @@ describe("binding lookups against a history-free model", () => {
               }
               case "bindNamed": {
                 const name = NAMES[step.name]!;
-                const id = container.bind(key).toConstantValue(value).whenNamed(name).id();
+                const id = container.bind(key).whenNamed(name).toConstantValue(value).id();
                 record(entries, { shape: "named", name, value, id });
                 break;
               }
               case "bindMember": {
-                const id = container.bind(key).toConstantValue(value).many().id();
+                const id = container.bind(key).many().toConstantValue(value).id();
                 record(entries, { shape: "member", name: undefined, value, id });
                 break;
               }

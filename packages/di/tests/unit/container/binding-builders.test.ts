@@ -1,101 +1,65 @@
 /**
- * Registry-consistency tests for the fluent chain: a held builder refined after later registry
- * mutations must never undo them, and in-place refinements must keep the cached-instance state
- * coherent with the scope manager.
+ * The fluent chain registers once, in its final shape: slot steps come before `to*()` and are refused
+ * after it, and a scope change afterwards keeps the cached-instance state coherent with the scope manager.
  */
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
-import { NoMatchingBindingError, TokenNotBoundError } from "#errors/errors";
+import { ChainAlreadyRegisteredError, NoMatchingBindingError } from "#errors/errors";
 
-describe("held chains vs later registry mutations", () => {
-  it("does not undo an unbind when the chain is refined afterwards", () => {
-    const valueToken = token<number>("chain.unbind");
+describe("slot steps before to*()", () => {
+  it.each(["when", "whenNamed", "whenTagged", "whenDefault", "many"])(
+    "refuses %s() once the chain has registered",
+    (step) => {
+      const valueToken = token<number>(`chain.after-to.${step}`);
+      const container = Container.create();
+      const chain = container.bind(valueToken).toConstantValue(1);
+      // JavaScript callers can still reach a slot step the types no longer offer after to*().
+      const slotStep = Reflect.get(chain, step) as (argument?: unknown) => unknown;
+
+      expect(() => slotStep.call(chain, () => true)).toThrow(ChainAlreadyRegisteredError);
+      expect(container.resolve(valueToken)).toBe(1);
+    },
+  );
+
+  it("leaves the default in place when a predicate-only binding joins it", () => {
+    const valueToken = token<number>("chain.predicate-joins");
     const container = Container.create();
     container.bind(valueToken).toConstantValue(1);
-    const chain = container.bind(valueToken).toConstantValue(2);
-    container.unbind(valueToken);
-
-    chain.whenNamed("x");
-
-    expect(() => container.resolve(valueToken)).toThrow(TokenNotBoundError);
-    expect(() => container.resolve(valueToken, { name: "x" })).toThrow(TokenNotBoundError);
-  });
-
-  it("keeps the newest binding when a displaced chain is refined afterwards", () => {
-    const valueToken = token<number>("chain.newest");
-    const container = Container.create();
-    container.bind(valueToken).toConstantValue(1);
-    const chain = container.bind(valueToken).toConstantValue(2);
-    container.bind(valueToken).toConstantValue(3);
-
-    chain.whenNamed("x");
-
-    expect(container.resolve(valueToken)).toBe(3);
-  });
-
-  it("does not undo an unbind when a bare when() follows it", () => {
-    const valueToken = token<number>("chain.unbind-when");
-    const container = Container.create();
-    const chain = container.bind(valueToken).toConstantValue(2);
-    container.unbind(valueToken);
-
-    chain.when(() => true);
-
-    expect(() => container.resolve(valueToken)).toThrow(TokenNotBoundError);
-    expect(container.lookupBindings(valueToken)).toHaveLength(0);
-  });
-
-  it("keeps the newest binding when a displaced chain gets a bare when()", () => {
-    const valueToken = token<number>("chain.newest-when");
-    const container = Container.create();
-    const chain = container.bind(valueToken).toConstantValue(2);
-    container.bind(valueToken).toConstantValue(3);
-
-    chain.when(() => true);
-
-    expect(container.resolve(valueToken)).toBe(3);
-    expect(container.lookupBindings(valueToken)).toHaveLength(1);
-  });
-
-  it("restores the transiently displaced default when a bare when() frees the slot", () => {
-    const valueToken = token<number>("chain.free-when");
-    const container = Container.create();
-    container.bind(valueToken).toConstantValue(1);
-    // Displaces the default, then leaves the default slot again by becoming predicate-only.
     container
       .bind(valueToken)
-      .toConstantValue(2)
-      .when(() => false);
+      .when(() => false)
+      .toConstantValue(2);
 
     expect(container.lookupBindings(valueToken)).toHaveLength(2);
     expect(container.resolve(valueToken)).toBe(1);
   });
 
-  it("narrows a bare when() in place, keeping the chain's id", () => {
-    const valueToken = token<number>("chain.when-in-place");
+  it("narrows with every when(), keeping one id", () => {
+    const valueToken = token<number>("chain.when-narrows");
     const container = Container.create();
-    const chain = container.bind(valueToken).toConstantValue(2);
-    const before = chain.id();
     let gate = true;
+    const id = container
+      .bind(valueToken)
+      .when(() => gate)
+      .when(() => true)
+      .toConstantValue(2)
+      .id();
 
-    chain.when(() => gate).when(() => true);
-
-    expect(chain.id()).toBe(before);
     expect(container.resolve(valueToken)).toBe(2);
     gate = false;
     // The token is still bound; its one candidate now declines, which is a selection miss.
     expect(() => container.resolve(valueToken)).toThrow(NoMatchingBindingError);
-    container.unbind(before);
+    container.unbind(id);
     expect(container.lookupBindings(valueToken)).toHaveLength(0);
   });
 
-  it("still restores the transiently displaced default within one chain's own morph", () => {
-    const valueToken = token<number>("chain.morph");
+  it("keeps the default when a named binding joins it", () => {
+    const valueToken = token<number>("chain.named-joins");
     const container = Container.create();
     container.bind(valueToken).toConstantValue(1);
-    container.bind(valueToken).toConstantValue(2).whenNamed("special");
+    container.bind(valueToken).whenNamed("special").toConstantValue(2);
 
     expect(container.resolve(valueToken)).toBe(1);
     expect(container.resolve(valueToken, { name: "special" })).toBe(2);
@@ -176,41 +140,5 @@ describe("scope refinement vs the cached instance", () => {
     const fresh = await request.resolveAsync(serviceToken);
     expect(fresh).not.toBe(first);
     expect(await request.resolveAsync(serviceToken)).toBe(fresh);
-  });
-
-  it("deactivates a re-slotted singleton exactly once", async () => {
-    const serviceToken = token<{ closed: number }>("reslot.deactivate");
-    const instance = { closed: 0 };
-    const container = Container.create();
-    const chain = container.bind(serviceToken).toDynamic(() => instance);
-    chain.singleton().onDeactivation((value) => {
-      value.closed += 1;
-    });
-
-    container.resolve(serviceToken);
-    chain.whenNamed("x");
-    container.unbind(serviceToken);
-    await container.dispose();
-
-    expect(instance.closed).toBe(1);
-  });
-
-  it("keeps a cached undefined singleton across a re-slot", () => {
-    const maybeToken = token<string | undefined>("reslot.undefined");
-    let calls = 0;
-    const container = Container.create();
-    const chain = container.bind(maybeToken).toDynamic(() => {
-      calls += 1;
-      return undefined;
-    });
-    chain.singleton();
-
-    expect(container.resolve(maybeToken)).toBeUndefined();
-    expect(calls).toBe(1);
-
-    chain.whenNamed("x");
-
-    expect(container.resolve(maybeToken, { name: "x" })).toBeUndefined();
-    expect(calls).toBe(1);
   });
 });

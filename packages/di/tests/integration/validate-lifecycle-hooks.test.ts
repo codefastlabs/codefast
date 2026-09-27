@@ -157,7 +157,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
 
     const container = Container.create();
     container.bind(connectionToken).to(Connection).singleton();
-    container.bind(connectionToken).to(Connection).whenNamed("scoped").scoped();
+    container.bind(connectionToken).whenNamed("scoped").to(Connection).scoped();
     container.onDeactivation(connectionToken, () => {
       // the singleton binding can be deactivated, so the hook is reachable
     });

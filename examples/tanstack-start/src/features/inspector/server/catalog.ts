@@ -68,7 +68,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
 
   for (const region of REGIONS) {
     const storage: Storage = { adapter: `S3Adapter(${region})`, residency: RESIDENCY[region] };
-    const storageBinding = container.bind(storageToken).toConstantValue(storage).whenTagged(REGION_TAG.of(region));
+    const storageBinding = container.bind(storageToken).whenTagged(REGION_TAG.of(region)).toConstantValue(storage);
 
     entries.push({
       id: storageBinding.id(),
@@ -77,7 +77,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
     });
 
     const payment: PaymentGateway = { gateway: GATEWAY[region], feePercent: 2.9 };
-    const paymentBinding = container.bind(paymentToken).toConstantValue(payment).whenTagged(REGION_TAG.of(region));
+    const paymentBinding = container.bind(paymentToken).whenTagged(REGION_TAG.of(region)).toConstantValue(payment);
 
     entries.push({
       id: paymentBinding.id(),
@@ -92,9 +92,9 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
     const negotiated: PaymentGateway = { gateway, feePercent };
     const binding = container
       .bind(paymentToken)
-      .toConstantValue(negotiated)
       .whenTagged(REGION_TAG.of(region))
-      .whenTagged(TIER_TAG.of("enterprise"));
+      .whenTagged(TIER_TAG.of("enterprise"))
+      .toConstantValue(negotiated);
 
     entries.push({
       id: binding.id(),
@@ -107,7 +107,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
   // two tags and outranks it; in apac, where no contract exists, both carry one tag and the
   // container has nothing to separate them — the one combination that genuinely cannot be answered.
   const promo: PaymentGateway = { gateway: "Promo rate (global)", feePercent: 1.9 };
-  const promoBinding = container.bind(paymentToken).toConstantValue(promo).whenTagged(TIER_TAG.of("enterprise"));
+  const promoBinding = container.bind(paymentToken).whenTagged(TIER_TAG.of("enterprise")).toConstantValue(promo);
 
   entries.push({
     id: promoBinding.id(),
@@ -120,7 +120,7 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
     ["system", "webhook"],
   ] as const) {
     const notifier: Notifier = { channel };
-    const binding = container.bind(notifierToken).toConstantValue(notifier).whenNamed(name);
+    const binding = container.bind(notifierToken).whenNamed(name).toConstantValue(notifier);
 
     entries.push({
       id: binding.id(),
@@ -143,8 +143,8 @@ export function registerCatalog(container: Container): Array<CatalogEntry> {
   const paymentsLog: AuditLogger = { sink: "payments.audit · retained 7y" };
   const paymentsLogBinding = container
     .bind(auditLoggerToken)
-    .toConstantValue(paymentsLog)
-    .when(whenParentIs(settlementToken));
+    .when(whenParentIs(settlementToken))
+    .toConstantValue(paymentsLog);
 
   entries.push({
     id: paymentsLogBinding.id(),

@@ -49,9 +49,9 @@ function buildMultiTagSlotResolveScenario(): BenchScenario {
   for (const [env, tier] of SLOT_VARIANTS) {
     container
       .bind(slottedServiceToken)
-      .toConstantValue({ env, tier })
       .whenTagged(ENV_TAG.of(env))
-      .whenTagged(TIER_TAG.of(tier));
+      .whenTagged(TIER_TAG.of(tier))
+      .toConstantValue({ env, tier });
   }
 
   container.resolve(slottedServiceToken, { tags: TARGET_SLOT_TAGS });
@@ -104,17 +104,17 @@ function buildMultiTagConstraintResolveScenario(): BenchScenario {
   // Constrained binding — only activates when the parent slot has BOTH tags
   container
     .bind(pluginToken)
-    .toDynamic(() => ({ name: "premium" }))
     .when(whenParentTaggedAll(CONSTRAINT_TAGS))
+    .toDynamic(() => ({ name: "premium" }))
     .transient();
 
   // Parent service: slot carries the same tags so MaterializationFrame.slot.tags
   // is visible to whenParentTaggedAll when IPlugin is resolved inside the factory.
   container
     .bind(appServiceToken)
-    .toDynamic((ctx) => ({ plugin: ctx.resolve(pluginToken) }))
     .whenTagged(ENV_TAG.of("prod"))
     .whenTagged(TIER_TAG.of("premium"))
+    .toDynamic((ctx) => ({ plugin: ctx.resolve(pluginToken) }))
     .transient();
 
   // Pre-warm
@@ -155,9 +155,9 @@ function buildMultiTagSelectAtScaleScenario(): BenchScenario {
     for (let tierIndex = 0; tierIndex < SELECT_TIER_COUNT; tierIndex++) {
       container
         .bind(selectServiceToken)
-        .toConstantValue({ env: `env-${String(envIndex)}`, tier: `tier-${String(tierIndex)}` })
         .whenTagged(ENV_TAG.of(`env-${String(envIndex)}`))
-        .whenTagged(TIER_TAG.of(`tier-${String(tierIndex)}`));
+        .whenTagged(TIER_TAG.of(`tier-${String(tierIndex)}`))
+        .toConstantValue({ env: `env-${String(envIndex)}`, tier: `tier-${String(tierIndex)}` });
     }
   }
 

@@ -13,7 +13,7 @@ describe("name-plus-tag selection falls through to the scan", () => {
     const Region = tag<string>("nt:region-fallthrough");
     const container = Container.create();
 
-    container.bind(K).toConstantValue("tagged").whenTagged(Region.of("eu"));
+    container.bind(K).whenTagged(Region.of("eu")).toConstantValue("tagged");
 
     // Nothing has minted this name, yet the request's criteria are a superset of the slot's.
     expect(slotName.peek(name)).toBeUndefined();
@@ -32,7 +32,7 @@ describe("name-plus-tag selection falls through to the scan", () => {
     const Region = tag<string>("nt:region-parent");
     const parent = Container.create();
 
-    parent.bind(K).toConstantValue("parent-tagged").whenTagged(Region.of("eu"));
+    parent.bind(K).whenTagged(Region.of("eu")).toConstantValue("parent-tagged");
     const child = parent.createChild();
 
     expect(child.resolve(K, { name, tag: Region.of("eu") })).toBe("parent-tagged");
@@ -46,12 +46,12 @@ describe("name-plus-tag selection falls through to the scan", () => {
     const Region = tag<string>("nt:region-determinism");
     const container = Container.create();
 
-    container.bind(K).toConstantValue("tagged").whenTagged(Region.of("eu"));
+    container.bind(K).whenTagged(Region.of("eu")).toConstantValue("tagged");
 
     const before = container.resolve(K, { name, tag: Region.of("eu") });
     // An unrelated container declaring the same name interns it process-wide.
     const other = Container.create();
-    other.bind(token<string>("nt:other-determinism")).toConstantValue("x").whenNamed(name);
+    other.bind(token<string>("nt:other-determinism")).whenNamed(name).toConstantValue("x");
     const after = container.resolve(K, { name, tag: Region.of("eu") });
 
     expect(before).toBe("tagged");
@@ -68,10 +68,10 @@ describe("name-plus-tag selection honours predicate specificity", () => {
 
     container
       .bind(K)
-      .toConstantValue("1crit+predicate")
       .whenNamed(name)
-      .when(() => true);
-    container.bind(K).toConstantValue("2crit").whenNamed(name).whenTagged(A.of("a"));
+      .when(() => true)
+      .toConstantValue("1crit+predicate");
+    container.bind(K).whenNamed(name).whenTagged(A.of("a")).toConstantValue("2crit");
 
     const nameForm = { name, tag: A.of("a") } as const;
     const tagsForm = { tags: [slotName.of(name), A.of("a")] } as const;

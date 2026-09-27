@@ -20,7 +20,7 @@ describe("chained when()", () => {
     const first = vi.fn(() => false);
     const second = vi.fn(() => true);
 
-    container.bind(LoggerToken).toConstantValue({ name: "constrained" }).when(first).when(second);
+    container.bind(LoggerToken).when(first).when(second).toConstantValue({ name: "constrained" });
 
     expect(container.resolveOptional(LoggerToken)).toBeUndefined();
     expect(first).toHaveBeenCalled();
@@ -32,9 +32,9 @@ describe("chained when()", () => {
     container.bind(LoggerToken).toConstantValue({ name: "default" });
     container
       .bind(LoggerToken)
-      .toConstantValue({ name: "both" })
       .when(() => true)
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue({ name: "both" });
 
     expect(container.resolve(LoggerToken).name).toBe("both");
   });
@@ -47,9 +47,9 @@ describe("chained when()", () => {
     container.bind(LoggerToken).toConstantValue({ name: "default" });
     container
       .bind(LoggerToken)
-      .toConstantValue({ name: "constrained" })
       .when(() => false)
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue({ name: "constrained" });
 
     expect(container.resolve(LoggerToken).name).toBe("default");
   });

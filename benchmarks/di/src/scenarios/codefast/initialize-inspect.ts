@@ -111,8 +111,8 @@ function buildLookupBindingsScenario(): BenchScenario {
   for (let i = 0; i < LOOKUP_VARIANT_COUNT; i++) {
     container
       .bind(lookupMultiToken)
-      .toConstantValue(`v${String(i)}`)
-      .whenNamed(`slot-${String(i)}`);
+      .whenNamed(`slot-${String(i)}`)
+      .toConstantValue(`v${String(i)}`);
   }
 
   // Pre-warm

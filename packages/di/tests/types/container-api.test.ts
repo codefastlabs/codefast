@@ -6,27 +6,33 @@ import type { BindingScope, ResolutionContext } from "#core/types";
 
 describe("Container public API inference", () => {
   /**
-   * The to*()-before-when*() ordering is enforced by the compiler through each step's return type.
-   * That is this assertion's job; the runtime half of the same contract — a ChainNotRegisteredError
+   * The slot-before-to*() ordering is enforced by the compiler through each step's return type.
+   * That is this assertion's job; the runtime half of the same contract — the two chain-order errors
    * for callers without types — lives in `tests/unit/container/bind-to-builder-order.test.ts`.
    */
-  it("keeps refinements off the object bind() returns", () => {
+  it("offers the slot steps before to*() and only the scope, hooks and id() after it", () => {
     const NumberToken = token<number>("bind-order-types");
     const container = Container.create();
     const bindBuilder = container.bind(NumberToken);
 
     expectTypeOf(bindBuilder).toHaveProperty("toConstantValue");
-    expectTypeOf(bindBuilder).not.toHaveProperty("when");
-    expectTypeOf(bindBuilder).not.toHaveProperty("whenNamed");
-    expectTypeOf(bindBuilder).not.toHaveProperty("whenTagged");
-    expectTypeOf(bindBuilder).not.toHaveProperty("whenDefault");
+    expectTypeOf(bindBuilder).toHaveProperty("when");
+    expectTypeOf(bindBuilder).toHaveProperty("whenNamed");
+    expectTypeOf(bindBuilder).toHaveProperty("whenTagged");
+    expectTypeOf(bindBuilder).toHaveProperty("whenDefault");
+    expectTypeOf(bindBuilder).toHaveProperty("many");
     expectTypeOf(bindBuilder).not.toHaveProperty("singleton");
     expectTypeOf(bindBuilder).not.toHaveProperty("transient");
     expectTypeOf(bindBuilder).not.toHaveProperty("scoped");
     expectTypeOf(bindBuilder).not.toHaveProperty("id");
 
-    // ...and they appear only once a to*() has narrowed the chain.
-    expectTypeOf(bindBuilder.toConstantValue(1)).toHaveProperty("whenNamed");
+    // ...and a to*() closes the slot: what follows is the scope, the hooks and id().
+    const registered = bindBuilder.whenNamed("primary").toDynamic(() => 1);
+    expectTypeOf(registered).toHaveProperty("singleton");
+    expectTypeOf(registered).toHaveProperty("id");
+    expectTypeOf(registered).not.toHaveProperty("whenNamed");
+    expectTypeOf(registered).not.toHaveProperty("when");
+    expectTypeOf(registered).not.toHaveProperty("many");
   });
 
   it("resolveOptional widens to undefined union", () => {
@@ -46,8 +52,8 @@ describe("Container public API inference", () => {
   it("resolveAll narrows to array of token value", () => {
     const NumberToken = token<number>("n");
     const container = Container.create();
-    container.bind(NumberToken).toConstantValue(1).whenNamed("a");
-    container.bind(NumberToken).toConstantValue(2).whenNamed("b");
+    container.bind(NumberToken).whenNamed("a").toConstantValue(1);
+    container.bind(NumberToken).whenNamed("b").toConstantValue(2);
     expectTypeOf(container.resolveAll(NumberToken)).toEqualTypeOf<ReadonlyArray<number>>();
     expect(container.resolveAll(NumberToken).length).toBe(2);
   });
@@ -74,7 +80,7 @@ describe("Container public API inference", () => {
   it("resolve with name options stays typed as token value", () => {
     const StringToken = token<string>("s");
     const container = Container.create();
-    container.bind(StringToken).toConstantValue("primary").whenNamed("primary");
+    container.bind(StringToken).whenNamed("primary").toConstantValue("primary");
     expectTypeOf(container.resolve(StringToken, { name: "primary" })).toEqualTypeOf<string>();
   });
 
@@ -102,7 +108,7 @@ describe("alias bindings expose transient scope in snapshots", () => {
     const AliasToken = token<{ id: 1 }>("B");
     const container = Container.create();
     container.bind(SourceToken).toConstantValue({ id: 1 });
-    container.bind(AliasToken).toAlias(SourceToken).whenDefault();
+    container.bind(AliasToken).whenDefault().toAlias(SourceToken);
     const bindingSnapshots = container.lookupBindings(AliasToken);
     expect(bindingSnapshots.length).toBeGreaterThan(0);
     expectTypeOf(bindingSnapshots[0]!.scope).toEqualTypeOf<BindingScope>();

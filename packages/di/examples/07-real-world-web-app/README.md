@@ -107,8 +107,8 @@ builder
 
 ```ts
 // Two separate named bindings under MiddlewareToken
-builder.bind(MiddlewareToken).to(LoggingMiddleware).whenNamed("logging");
-builder.bind(MiddlewareToken).to(AuthMiddleware).whenNamed("auth");
+builder.bind(MiddlewareToken).whenNamed("logging").to(LoggingMiddleware);
+builder.bind(MiddlewareToken).whenNamed("auth").to(AuthMiddleware);
 
 // Resolve the pipeline, then build a next() chain through it
 const pipeline = container.resolveAll(MiddlewareToken);

@@ -211,7 +211,7 @@ export function bindMocks(
   };
 
   const bindConstant = (slot: DependencySlot, value: unknown): void => {
-    const builder = container.bind(slot.token).toConstantValue(value);
+    const builder = container.bind(slot.token);
     if (slot.name !== undefined) {
       builder.whenNamed(slot.name);
     }
@@ -220,6 +220,7 @@ export function bindMocks(
         builder.whenTagged(tag);
       }
     }
+    builder.toConstantValue(value);
   };
 
   for (const slot of dependencies) {
@@ -264,8 +265,8 @@ export function bindMocks(
           for (const [index, value] of values.entries()) {
             container
               .bind(slot.token)
-              .toConstantValue(value)
-              .whenNamed(`${ALL_ELEMENT_SLOT_PREFIX}${String(index)}`);
+              .whenNamed(`${ALL_ELEMENT_SLOT_PREFIX}${String(index)}`)
+              .toConstantValue(value);
           }
           record(slot.token, { criteria: override.criteria, value: values, kind: "all" });
         }

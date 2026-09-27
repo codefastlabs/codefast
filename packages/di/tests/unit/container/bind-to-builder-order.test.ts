@@ -15,10 +15,10 @@ import { tag } from "#core/tag";
 const ENV_TAG = tag("env");
 
 /**
- * Constraints and scope come after `to*()`, never before.
+ * Slot steps come before `to*()`; scope, lifecycle and `id()` come after it.
  *
- * The ordering is a type-level guarantee — `bind()` returns `BindToBuilder`, which declares only
- * `to*()`, so the out-of-order call does not compile (pinned in `tests/types/container-api.test.ts`).
+ * The ordering is a type-level guarantee — `bind()` returns `BindToBuilder`, which declares only the
+ * slot steps and `to*()`, so the out-of-order call does not compile (pinned in `tests/types/container-api.test.ts`).
  * These tests cover the runtime half of the contract: what a caller who has no types, or who casts
  * past them, actually gets. The guarantee is that the misuse *fails loudly* — not that the method
  * happens to be absent from the object.
@@ -48,17 +48,20 @@ describe("BindToBuilder fluent surface", () => {
     expect(typeof bindBuilder.toAlias).toBe("function");
   });
 
-  describe("refining before to*() fails loudly", () => {
+  it("offers every slot step on the object bind() returns", () => {
+    const container = Container.create();
+    const bindBuilder = container.bind(token<number>("api-order-slot"));
+
+    expect(typeof bindBuilder.when).toBe("function");
+    expect(typeof bindBuilder.whenNamed).toBe("function");
+    expect(typeof bindBuilder.whenTagged).toBe("function");
+    expect(typeof bindBuilder.whenDefault).toBe("function");
+    expect(typeof bindBuilder.many).toBe("function");
+  });
+
+  describe("a scope, a hook or id() before to*() fails loudly", () => {
     // Each of these is unreachable from TypeScript; the cast is what a JS caller does implicitly.
     const refinements: ReadonlyArray<[string, (builder: BindToBuilder<number>) => unknown]> = [
-      ["when", (builder) => (builder as never as { when: (p: () => boolean) => unknown }).when(() => true)],
-      ["whenNamed", (builder) => (builder as never as { whenNamed: (n: string) => unknown }).whenNamed("primary")],
-      [
-        "whenTagged",
-        (builder) =>
-          (builder as never as { whenTagged: (criterion: unknown) => unknown }).whenTagged(ENV_TAG.of("prod")),
-      ],
-      ["whenDefault", (builder) => (builder as never as { whenDefault: () => unknown }).whenDefault()],
       ["singleton", (builder) => (builder as never as { singleton: () => unknown }).singleton()],
       ["transient", (builder) => (builder as never as { transient: () => unknown }).transient()],
       ["scoped", (builder) => (builder as never as { scoped: () => unknown }).scoped()],
@@ -98,9 +101,7 @@ describe("BindToBuilder fluent surface", () => {
       const container = Container.create();
       const bindBuilder = container.bind(ServiceToken);
 
-      expect(() => (bindBuilder as never as { whenNamed: (n: string) => unknown }).whenNamed("x")).toThrow(
-        ChainNotRegisteredError,
-      );
+      expect(() => (bindBuilder as never as { singleton: () => unknown }).singleton()).toThrow(ChainNotRegisteredError);
       expect(container.has(ServiceToken)).toBe(false);
       expect(container.lookupBindings(ServiceToken)).toHaveLength(0);
     });
@@ -111,16 +112,16 @@ describe("BindToBuilder fluent surface", () => {
       const bindBuilder = container.bind(ServiceToken);
 
       expect(() => (bindBuilder as never as { singleton: () => unknown }).singleton()).toThrow(ChainNotRegisteredError);
-      bindBuilder.toConstantValue(7).whenNamed("primary");
+      bindBuilder.whenNamed("primary").toConstantValue(7);
 
       expect(container.resolve(ServiceToken, { name: "primary" })).toBe(7);
     });
   });
 
-  it("allows whenNamed after toConstantValue", () => {
+  it("allows whenNamed before toConstantValue", () => {
     const container = Container.create();
-    const NamedValueToken = token<number>("named-after-to");
-    container.bind(NamedValueToken).toConstantValue(1).whenNamed("a");
+    const NamedValueToken = token<number>("named-before-to");
+    container.bind(NamedValueToken).whenNamed("a").toConstantValue(1);
     expect(container.resolve(NamedValueToken, { name: "a" })).toBe(1);
   });
 
@@ -140,19 +141,22 @@ describe("BindToBuilder fluent surface", () => {
   it("overwrites a tag value when whenTagged repeats the same key", () => {
     const container = Container.create();
     const TaggedToken = token<string>("tag-overwrite");
-    container.bind(TaggedToken).toConstantValue("final").whenTagged(ENV_TAG.of("dev")).whenTagged(ENV_TAG.of("prod"));
+    container.bind(TaggedToken).whenTagged(ENV_TAG.of("dev")).whenTagged(ENV_TAG.of("prod")).toConstantValue("final");
 
     expect(container.resolve(TaggedToken, { tags: [ENV_TAG.of("prod")] })).toBe("final");
     expect(() => container.resolve(TaggedToken, { tags: [ENV_TAG.of("dev")] })).toThrow(NoMatchingBindingError);
   });
 
-  it("keeps the chain id stable across every refinement", () => {
+  it("keeps the chain id stable through the scope step", () => {
     const container = Container.create();
     const ServiceToken = token<string>("stable-chain-id");
 
-    const chain = container.bind(ServiceToken).toDynamic(() => "value");
+    const chain = container
+      .bind(ServiceToken)
+      .whenNamed("primary")
+      .toDynamic(() => "value");
     const afterTo = chain.id();
-    const scoped = chain.whenNamed("primary").singleton();
+    const scoped = chain.singleton();
 
     // An id captured mid-chain must still name the binding the chain settled on.
     expect(scoped.id()).toBe(afterTo);

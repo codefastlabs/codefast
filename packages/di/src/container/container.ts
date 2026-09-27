@@ -337,14 +337,11 @@ class DefaultContainer implements Container {
       onDisplaced: (binding) => {
         this.#recordDisplaced(binding);
       },
-      onRestored: (binding) => {
-        this.#orphanedBindings?.delete(binding.identifier);
-      },
     });
   }
 
-  // A displaced binding holding a cached instance or owing a constant's deactivation is remembered;
-  // a later restore takes it back out, and every other displaced binding is dropped as before.
+  // A displaced binding holding a cached instance or owing a constant's deactivation is remembered until
+  // dispose, an unbind of its id or its module's unload; every other displaced binding is dropped.
   #recordDisplaced(binding: Binding): void {
     if (binding.instance !== NO_INSTANCE || this.#owesConstantDeactivation(binding)) {
       (this.#orphanedBindings ??= new Map()).set(binding.identifier, binding);
@@ -354,18 +351,17 @@ class DefaultContainer implements Container {
   /**
    * One registration per module load, holding that module's id list directly.
    *
-   * @remarks It borrows the container's own displacement callbacks, so a constant a module's bind
-   * displaces is parked for dispose exactly as one displaced by `bind()` is.
+   * @remarks It borrows the container's own displacement callback, so a constant a module's bind
+   * displaces is kept for dispose exactly as one displaced by `bind()` is.
    */
   #moduleRegistration(moduleRef: object): BindingRegistration {
     this.#moduleBindingIds ??= new Map();
-    const { onDisplaced, onRestored } = this.#ownRegistration();
+    const { onDisplaced } = this.#ownRegistration();
     return {
       registry: this.#registry,
       scope: this.#scope,
       moduleBindingIds: getOrInsert(this.#moduleBindingIds, moduleRef, []),
       onDisplaced,
-      onRestored,
     };
   }
 
@@ -392,13 +388,8 @@ class DefaultContainer implements Container {
     return this.#drainSingletons(this.#registry.removeByToken(tokenOrId));
   }
 
-  /**
-   * Retires an id the registry no longer holds, returning the displaced binding still owed a teardown.
-   *
-   * @remarks Counts as a registry write, so no chain holding the binding parked can restore it.
-   */
+  /** Retires an id the registry no longer holds, returning the displaced binding still owed a teardown. */
   #retireNotLive(id: BindingIdentifier): Binding | undefined {
-    this.#registry.touch();
     const orphaned = this.#orphanedBindings?.get(id);
     if (orphaned !== undefined) {
       this.#orphanedBindings!.delete(id);
@@ -524,7 +515,7 @@ class DefaultContainer implements Container {
 
   #displacingRegistration: BindingRegistration | undefined;
 
-  /** A registration whose displaced binding is deactivated instead of parked, for `rebind`. */
+  /** A registration whose displaced binding is deactivated on the spot instead of kept for dispose, for `rebind`. */
   #rebindRegistration(): BindingRegistration {
     return (this.#displacingRegistration ??= {
       registry: this.#registry,

@@ -81,7 +81,7 @@ describe("generateDependencyGraph", () => {
     root.bind(logToken).toConstantValue("parent-default");
     const child = root.createChild();
     // Named only: resolution skips it for a hint-less request and walks up to the parent's default.
-    child.bind(logToken).toConstantValue("child-named").whenNamed("audit");
+    child.bind(logToken).whenNamed("audit").toConstantValue("child-named");
     child.bind(Service).toSelf();
 
     expect(child.resolve(Service).log).toBe("parent-default");
@@ -119,9 +119,9 @@ describe("generateDependencyGraph", () => {
       constructor(readonly plugins: ReadonlyArray<string>) {}
     }
     const root = Container.create();
-    root.bind(pluginToken).toConstantValue("root").many();
+    root.bind(pluginToken).many().toConstantValue("root");
     const child = root.createChild();
-    child.bind(pluginToken).toConstantValue("child").many();
+    child.bind(pluginToken).many().toConstantValue("child");
     child.bind(Host).toSelf();
 
     expect(child.resolve(Host).plugins).toStrictEqual(["child", "root"]);
@@ -226,8 +226,8 @@ describe("generateDependencyGraph", () => {
       constructor(readonly validators: ReadonlyArray<string>) {}
     }
     const container = Container.create();
-    container.bind(validatorToken).toConstantValue("a").whenNamed("first");
-    container.bind(validatorToken).toConstantValue("b").whenNamed("second");
+    container.bind(validatorToken).whenNamed("first").toConstantValue("a");
+    container.bind(validatorToken).whenNamed("second").toConstantValue("b");
     container.bind(Composite).toSelf().singleton();
 
     const graph = container.generateDependencyGraph();
@@ -247,8 +247,8 @@ describe("generateDependencyGraph", () => {
       constructor(readonly config: number) {}
     }
     const container = Container.create();
-    container.bind(configToken).toConstantValue(1).whenNamed("primary");
-    container.bind(configToken).toConstantValue(2).whenNamed("secondary");
+    container.bind(configToken).whenNamed("primary").toConstantValue(1);
+    container.bind(configToken).whenNamed("secondary").toConstantValue(2);
     container.bind(Service).toSelf().singleton();
 
     const graph = container.generateDependencyGraph();
@@ -268,7 +268,7 @@ describe("generateDependencyGraph", () => {
       constructor(readonly engine: string) {}
     }
     const container = Container.create();
-    container.bind(engineToken).toConstantValue("gas-engine").whenTagged(fuel.of("gas"));
+    container.bind(engineToken).whenTagged(fuel.of("gas")).toConstantValue("gas-engine");
     container.bind(Service).toSelf().singleton();
 
     const graph = container.generateDependencyGraph();
@@ -302,8 +302,8 @@ describe("generateDependencyGraph", () => {
       constructor(readonly config: number) {}
     }
     const container = Container.create();
-    container.bind(configToken).toConstantValue(1).whenNamed("primary");
-    container.bind(configToken).toConstantValue(2).whenNamed("secondary");
+    container.bind(configToken).whenNamed("primary").toConstantValue(1);
+    container.bind(configToken).whenNamed("secondary").toConstantValue(2);
     container.bind(Service).toSelf().singleton();
 
     const graph = container.generateDependencyGraph();

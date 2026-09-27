@@ -308,9 +308,9 @@ export const infrastructureModule = Module.create("tasks:Infrastructure", (build
 
 export const validationModule = Module.create("tasks:Validation", (builder) => {
   // Multi-binding: same token, distinct named slots — without whenNamed, last-wins keeps only one.
-  builder.bind(TaskValidatorToken).to(NonEmptyTitleValidator).whenNamed("non-empty").singleton();
-  builder.bind(TaskValidatorToken).to(MaxTitleLengthValidator).whenNamed("max-length").singleton();
-  builder.bind(TaskValidatorToken).to(UniqueTitleValidator).whenNamed("no-duplicate").singleton();
+  builder.bind(TaskValidatorToken).whenNamed("non-empty").to(NonEmptyTitleValidator).singleton();
+  builder.bind(TaskValidatorToken).whenNamed("max-length").to(MaxTitleLengthValidator).singleton();
+  builder.bind(TaskValidatorToken).whenNamed("no-duplicate").to(UniqueTitleValidator).singleton();
   builder.bind(TaskValidationToken).to(CompositeTaskValidator).singleton();
 });
 

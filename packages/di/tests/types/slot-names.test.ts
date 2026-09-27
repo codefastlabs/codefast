@@ -28,17 +28,17 @@ const Unnamed = token<Logger>("slot-names.unnamed");
 describe("a token declaring slot names narrows every `name` it meets", () => {
   it("whenNamed accepts only the declared names", () => {
     const container = Container.create();
-    container.bind(Named).to(ConsoleLogger).whenNamed("console");
-    container.bind(Named).to(FileLogger).whenNamed("file");
+    container.bind(Named).whenNamed("console").to(ConsoleLogger);
+    container.bind(Named).whenNamed("file").to(FileLogger);
     // @ts-expect-error a name the token does not declare is a compile error
-    container.bind(Named).to(FileLogger).whenNamed("fiel");
+    container.bind(Named).whenNamed("fiel").to(FileLogger);
 
     expect(container.resolve(Named, { name: "file" })).toBeInstanceOf(FileLogger);
   });
 
   it("resolve, has and the descriptor factories narrow `name` from the token alone", () => {
     const container = Container.create();
-    container.bind(Named).to(ConsoleLogger).whenNamed("console");
+    container.bind(Named).whenNamed("console").to(ConsoleLogger);
 
     expectTypeOf(container.resolve(Named, { name: "console" })).toEqualTypeOf<Logger>();
     expectTypeOf(container.resolveOptional(Named, { name: "console" })).toEqualTypeOf<Logger | undefined>();
@@ -77,8 +77,8 @@ describe("a token declaring slot names narrows every `name` it meets", () => {
   it("a token declaring no names, and a class key, still take any string", () => {
     const container = Container.create();
     const free: string | undefined = "anything";
-    container.bind(Unnamed).to(ConsoleLogger).whenNamed("anything");
-    container.bind(ConsoleLogger).toSelf().whenNamed("anything");
+    container.bind(Unnamed).whenNamed("anything").to(ConsoleLogger);
+    container.bind(ConsoleLogger).whenNamed("anything").toSelf();
 
     expectTypeOf(container.resolve(Unnamed, { name: free })).toEqualTypeOf<Logger>();
     expectTypeOf(container.resolve(ConsoleLogger, { name: free })).toEqualTypeOf<ConsoleLogger>();

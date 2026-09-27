@@ -251,7 +251,7 @@ function buildProductionEventBusDispatchScenario(): BenchScenario {
   for (let handlerIndex = 0; handlerIndex < EVENT_HANDLER_COUNT; handlerIndex++) {
     const index = handlerIndex;
     const handler: EventHandler = { handle: (_event: string) => void index };
-    container.bind(eventHandlerToken).toConstantValue(handler).many();
+    container.bind(eventHandlerToken).many().toConstantValue(handler);
   }
 
   // Pre-warm so singleton handler list is cached.

@@ -49,9 +49,9 @@ graph LR
 Register multiple values under the same token using `.whenNamed(name)`:
 
 ```ts
-container.bind(LoggerToken).toConstantValue(consoleLogger).whenNamed("console");
-container.bind(LoggerToken).toConstantValue(fileLogger).whenNamed("file");
-container.bind(LoggerToken).toConstantValue(silentLogger).whenNamed("silent");
+container.bind(LoggerToken).whenNamed("console").toConstantValue(consoleLogger);
+container.bind(LoggerToken).whenNamed("file").toConstantValue(fileLogger);
+container.bind(LoggerToken).whenNamed("silent").toConstantValue(silentLogger);
 ```
 
 Resolve a specific one by passing a `name` hint:
@@ -78,8 +78,8 @@ compare by identity. Building one by hand matches nothing.
 ```ts
 const PROVIDER_TAG = tag<"local" | "s3">("constraints-multi-binding:provider");
 
-container.bind(StorageToken).to(S3Storage).whenTagged(PROVIDER_TAG.of("s3")).singleton();
-container.bind(StorageToken).to(LocalStorage).whenTagged(PROVIDER_TAG.of("local")).singleton();
+container.bind(StorageToken).whenTagged(PROVIDER_TAG.of("s3")).to(S3Storage).singleton();
+container.bind(StorageToken).whenTagged(PROVIDER_TAG.of("local")).to(LocalStorage).singleton();
 ```
 
 Resolve by tags:
@@ -110,7 +110,7 @@ import { whenParentIs } from "@codefast/di/resolution/select/constraints";
 Register two bindings for `LoggerToken`; each fires only when the correct consumer is being resolved:
 
 ```ts
-container.bind(LoggerToken).toConstantValue(consoleLogger).when(whenParentIs(OrderServiceToken)); // only for OrderService
+container.bind(LoggerToken).when(whenParentIs(OrderServiceToken)).toConstantValue(consoleLogger); // only for OrderService
 
 container.bind(PaymentLoggerToken).toConstantValue(fileLogger); // dedicated token for PaymentService
 ```
@@ -127,9 +127,9 @@ See Example 17 for the full constraint family (`whenAnyAncestorIs`, `whenParentN
 When you need _all_ implementations of a token (event handlers, middleware, plugins):
 
 ```ts
-container.bind(EventHandlerToken).to(LogEventHandler).whenNamed("log");
-container.bind(EventHandlerToken).to(MetricsEventHandler).whenNamed("metrics");
-container.bind(EventHandlerToken).to(AlertEventHandler).whenNamed("alert");
+container.bind(EventHandlerToken).whenNamed("log").to(LogEventHandler);
+container.bind(EventHandlerToken).whenNamed("metrics").to(MetricsEventHandler);
+container.bind(EventHandlerToken).whenNamed("alert").to(AlertEventHandler);
 ```
 
 ```ts

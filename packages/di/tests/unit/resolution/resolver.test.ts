@@ -321,12 +321,12 @@ describe("optional & multi injection", () => {
     // Pure-predicate bindings coexist (default-slot bindings would collapse under last-wins).
     container
       .bind(partToken)
-      .toConstantValue(1)
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue(1);
     container
       .bind(partToken)
-      .toConstantValue(2)
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue(2);
     container.bind(aggregateToken).to(Aggregate).transient();
 
     expect(container.resolve(aggregateToken).parts).toEqual([1, 2]);

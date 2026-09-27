@@ -80,22 +80,22 @@ function applyBind(
     }
     return;
   }
-  const chain = container.bind(serviceToken).toConstantValue(value);
-  ids.set(value, chain.id());
+  const bound = container.bind(serviceToken);
   if (step.shape === "member") {
-    chain.many();
-    return;
+    bound.many();
+  } else {
+    if (step.shape === "named" || step.shape === "named-tagged") {
+      bound.whenNamed(NAME);
+    }
+    if (step.shape === "tagged" || step.shape === "named-tagged") {
+      bound.whenTagged(REGION.of("eu"));
+    }
+    if (step.guard !== "none") {
+      const accepts = step.guard === "accepts";
+      bound.when(() => accepts);
+    }
   }
-  if (step.shape === "named" || step.shape === "named-tagged") {
-    chain.whenNamed(NAME);
-  }
-  if (step.shape === "tagged" || step.shape === "named-tagged") {
-    chain.whenTagged(REGION.of("eu"));
-  }
-  if (step.guard !== "none") {
-    const accepts = step.guard === "accepts";
-    chain.when(() => accepts);
-  }
+  ids.set(value, bound.toConstantValue(value).id());
 }
 
 describe("explain() against resolve", () => {

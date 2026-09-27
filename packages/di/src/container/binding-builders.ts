@@ -3,8 +3,8 @@
  *
  * @remarks One object plays every role: each builder step, the record the registry stores, and the
  * binding the resolver reads. The binding fields are declared first and in a fixed order, so every
- * binding in the process shares one hidden class; the return type of each step is what pins the
- * chain's order, so no runtime check has to.
+ * binding in the process shares one hidden class; the return type of each step pins the chain's
+ * order, slot before strategy, so the binding registers once and is never re-slotted.
  */
 import type {
   AliasBindingBuilder,
@@ -24,7 +24,6 @@ import {
   DEFAULT_BINDING_SLOT,
   generateBindingId,
   NO_INSTANCE,
-  UNREGISTERED_ORDER,
   withSlotCriterion,
 } from "#core/binding";
 import type { DeclaredBinding } from "#core/binding-declaration";
@@ -69,12 +68,10 @@ export interface BindingRegistration {
   readonly registry: BindingRegistry;
   readonly scope: ScopeManager;
   readonly moduleBindingIds: Array<BindingIdentifier> | undefined;
-  /** Runs for a binding this registration displaces, instead of parking it for a later restore. */
+  /** Runs for a binding this registration displaces, deactivating it on the spot. */
   readonly deactivateDisplaced?: ((binding: Binding) => void) | undefined;
-  /** Notes a parked displaced binding so the container can still tear it down if no restore reclaims it. */
+  /** Notes a displaced binding so the container can still tear it down, when nothing deactivates it on the spot. */
   readonly onDisplaced?: ((binding: Binding) => void) | undefined;
-  /** Undoes {@link BindingRegistration.onDisplaced} when a refinement restores the binding to the registry. */
-  readonly onRestored?: ((binding: Binding) => void) | undefined;
 }
 
 // ── BindingChain ─────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -83,18 +80,18 @@ export interface BindingRegistration {
  * The one builder behind `bind()` and every `to*()` return type — and the binding it registers.
  *
  * @remarks The binding fields come first, in the order every binding shares, and the chain's own
- * bookkeeping follows as private fields; `to*()` fills the fields in place and hands this object to
- * the registry, so a plain bind is one allocation. Refinements write the registered object: a scope
- * or hook in place, a slot or predicate through the registry so its indexes follow.
+ * bookkeeping follows as a private field. The slot steps write the fields before anything registers;
+ * `to*()` fills the strategy in place and hands this object to the registry once, so a bind is one
+ * allocation and one add. A scope or hook afterwards writes the registered object in place.
  *
  * @since 0.5.0-canary.8
  */
 export class BindingChain<Value, Names extends string = string>
   implements
-    AliasBindingBuilder<Names>,
-    BindingBuilder<Value, Names>,
+    AliasBindingBuilder,
+    BindingBuilder<Value>,
     BindToBuilder<Value, Names>,
-    ConstantBindingBuilder<Value, Names>,
+    ConstantBindingBuilder<Value>,
     ScopedBindingBuilder<Value>,
     SingletonBindingBuilder<Value>,
     SingletonLifecycleBuilder<Value>,
@@ -107,7 +104,6 @@ export class BindingChain<Value, Names extends string = string>
   frame: ResolutionFrame | undefined = undefined;
   rootContext: ResolutionContext | undefined = undefined;
   activationStamp: number = NO_ACTIVATION_STAMP;
-  registrationOrder: number = UNREGISTERED_ORDER;
   instance: unknown = NO_INSTANCE;
   scopedCacheKey: BindingIdentifier = this.identifier;
   readonly token: Token<Value, Names> | Constructor<Value>;
@@ -124,10 +120,6 @@ export class BindingChain<Value, Names extends string = string>
 
   // The chain. Set by the first `to*()`, which is the only one a chain accepts.
   #isRegistered = false;
-  // Allocated only by a chain that actually displaces something — most never do.
-  #displacedByChain: Array<Binding> | undefined;
-  // Registry version after this chain's last write — a mismatch means someone else wrote in between.
-  #versionAfterLastWrite = -1;
   readonly #registration: BindingRegistration;
 
   constructor(token: Token<Value, Names> | Constructor<Value>, registration: BindingRegistration) {
@@ -140,14 +132,14 @@ export class BindingChain<Value, Names extends string = string>
     return this as Binding;
   }
 
-  /** Loud failure for a refinement before `to*()`. */
+  /** Loud failure for a scope, a hook or `id()` before `to*()`. */
   #requireRegistered(): void {
     if (!this.#isRegistered) {
       throw new ChainNotRegisteredError(tokenName(this.token));
     }
   }
 
-  /** Loud failure for a second `to*()`, raised before the first one's fields can be overwritten. */
+  /** Loud failure for a slot step or a second `to*()` once registered, raised before a field is overwritten. */
   #requireUnregistered(): void {
     if (this.#isRegistered) {
       throw new ChainAlreadyRegisteredError(tokenName(this.token));
@@ -158,32 +150,22 @@ export class BindingChain<Value, Names extends string = string>
     this.kind = kind;
     this.scope = scope;
     this.#isRegistered = true;
-    // A fresh registration parks nothing yet and restores nothing: one add, then the version.
     const registration = this.#registration;
-    const registry = registration.registry;
-    const displaced = registry.add(this.#binding);
+    const displaced = registration.registry.add(this.#binding);
     if (displaced !== undefined) {
       if (registration.deactivateDisplaced !== undefined) {
         registration.deactivateDisplaced(displaced);
       } else {
-        this.#displacedByChain = [displaced];
         registration.onDisplaced?.(displaced);
       }
     }
     if (registration.moduleBindingIds !== undefined) {
       registration.moduleBindingIds.push(this.identifier);
     }
-    this.#versionAfterLastWrite = registry.version;
     return this;
   }
 
-  /**
-   * Registers a declared module's bindings in list order, each a chain of its own that no step
-   * will ever refine.
-   *
-   * @remarks A displaced binding is handled as `to*()` handles it, never parked: nothing refines the
-   * chain, so nothing could restore it.
-   */
+  /** Registers a declared module's bindings in list order, each a chain of its own, handled as `to*()` handles one. */
   static registerDeclared(declarations: ReadonlyArray<DeclaredBinding>, registration: BindingRegistration): void {
     const { registry, moduleBindingIds, deactivateDisplaced, onDisplaced } = registration;
     for (let index = 0; index < declarations.length; index += 1) {
@@ -225,13 +207,13 @@ export class BindingChain<Value, Names extends string = string>
 
   // ── Registration ───────────────────────────────────────────────────────────────────────────────────────────────────
 
-  to(type: Constructor<Value>): BindingBuilder<Value, Names> {
+  to(type: Constructor<Value>): BindingBuilder<Value> {
     this.#requireUnregistered();
     this.target = type;
     return this.#register("class", "transient");
   }
 
-  toSelf(): BindingBuilder<Value, Names> {
+  toSelf(): BindingBuilder<Value> {
     this.#requireUnregistered();
     if (typeof this.token !== "function") {
       throw new SelfBindingRequiresClassError(tokenName(this.token));
@@ -240,19 +222,19 @@ export class BindingChain<Value, Names extends string = string>
     return this.#register("class", "transient");
   }
 
-  toConstantValue(value: Value): ConstantBindingBuilder<Value, Names> {
+  toConstantValue(value: Value): ConstantBindingBuilder<Value> {
     this.#requireUnregistered();
     this.value = value;
     return this.#register("constant", "singleton");
   }
 
-  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value, Names> {
+  toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value> {
     this.#requireUnregistered();
     this.factory = factory;
     return this.#register("dynamic", "transient");
   }
 
-  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value, Names> {
+  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
     this.#requireUnregistered();
     this.factory = factory;
     return this.#register("dynamic-async", "transient");
@@ -261,7 +243,7 @@ export class BindingChain<Value, Names extends string = string>
   toResolved<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,
-  ): BindingBuilder<Value, Names> {
+  ): BindingBuilder<Value> {
     this.#requireUnregistered();
     this.factory = factory;
     this.deps = deps.map((dependency) => normalizeToDescriptor(dependency));
@@ -271,61 +253,63 @@ export class BindingChain<Value, Names extends string = string>
   toResolvedAsync<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Promise<Value>,
     deps: Deps,
-  ): BindingBuilder<Value, Names> {
+  ): BindingBuilder<Value> {
     this.#requireUnregistered();
     this.factory = factory;
     this.deps = deps.map((dependency) => normalizeToDescriptor(dependency));
     return this.#register("resolved-async", "transient");
   }
 
-  toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder<Names> {
+  toAlias(target: Token<Value> | Constructor<Value>): AliasBindingBuilder {
     this.#requireUnregistered();
     this.target = target;
     return this.#register("alias", "transient");
   }
 
-  // ── Refinement ─────────────────────────────────────────────────────────────────────────────────────────────────────
+  // ── Slot ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  /**
-   * Whether this chain provably still owns the registry's last write with nothing parked.
-   *
-   * @remarks When it does, a refinement rewrites the live binding in place; otherwise `#reslot`
-   * re-checks liveness and restores what the new shape frees.
-   */
-  get #isProvablyLive(): boolean {
-    return this.#registration.registry.version === this.#versionAfterLastWrite && this.#displacedByChain === undefined;
-  }
-
-  /** Stamps this chain's last-write version after a mutation it made in place. */
-  #recordWrite(): void {
-    this.#versionAfterLastWrite = this.#registration.registry.version;
-  }
-
-  /**
-   * Bumps the registry for an index-neutral mutation (scope, hook), recording this chain's write only
-   * when nothing else wrote since its last one, so a snapshot another write invalidated stays invalid.
-   */
-  #touchAndRecordWrite(): void {
-    const registry = this.#registration.registry;
-    const isCurrent = registry.version === this.#versionAfterLastWrite;
-    registry.touch();
-    if (isCurrent) {
-      this.#versionAfterLastWrite = registry.version;
-    }
-  }
-
-  // Slot and predicate are what the registry indexes on, so a re-slot takes the binding out of the
-  // registry, rewrites the two fields while it is out, and registers it again — same object, same id.
-  #reslot(slot: BindingSlot, predicate: BindingConstraint | undefined): this {
-    this.#requireRegistered();
-    this.#commit(() => {
-      this.slot = slot;
-      this.predicate = predicate;
-      // The frame reports the slot, so a resolve before this call memoized the previous one.
-      clearBindingFrame(this.#binding);
-    });
+  // SPEC calls a candidate a binding that passes *all* of a chain's predicates, so a second `when()`
+  // narrows rather than replaces.
+  when(predicate: BindingConstraint): this {
+    this.#requireUnregistered();
+    const previous = this.predicate;
+    // The composite carries both sides' requirements, so validate() still sees them.
+    this.predicate =
+      previous === undefined
+        ? predicate
+        : mergingConstraintRequirements((ctx) => previous(ctx) && predicate(ctx), previous, predicate);
     return this;
   }
+
+  whenNamed(name: Names): this {
+    return this.whenTagged(slotName.of(name));
+  }
+
+  whenTagged(criterion: BindingTag): this {
+    this.#requireUnregistered();
+    if (this.isMany) {
+      throw new ManyBindingSlotError(tokenName(this.token));
+    }
+    this.slot = withSlotCriterion(this.slot, criterion);
+    return this;
+  }
+
+  many(): this {
+    this.#requireUnregistered();
+    if (this.slot.tags.length !== 0) {
+      throw new ManyBindingSlotError(tokenName(this.token));
+    }
+    this.isMany = true;
+    return this;
+  }
+
+  whenDefault(): this {
+    // The default slot is what a fresh chain already has; the check keeps it a slot step like the others.
+    this.#requireUnregistered();
+    return this;
+  }
+
+  // ── Scope and lifecycle ────────────────────────────────────────────────────────────────────────────────────────────
 
   #withScope(scope: BindingScope): this {
     this.#requireRegistered();
@@ -349,66 +333,7 @@ export class BindingChain<Value, Names extends string = string>
     if (this.frame !== undefined || this.rootContext !== undefined) {
       clearBindingFrame(this.#binding);
     }
-    this.#touchAndRecordWrite();
-    return this;
-  }
-
-  // SPEC calls a candidate a binding that passes *all* of a chain's predicates, and the chain type
-  // reads as refinement, so a second `when()` narrows rather than replaces.
-  when(predicate: BindingConstraint): this {
-    this.#requireRegistered();
-    const previous = this.predicate;
-    // The composite carries both sides' requirements, so validate() still sees them.
-    const narrowed =
-      previous === undefined
-        ? predicate
-        : mergingConstraintRequirements((ctx) => previous(ctx) && predicate(ctx), previous, predicate);
-    // The slot is unchanged, so a provably-live binding just takes the predicate in place.
-    if (this.#isProvablyLive) {
-      this.#registration.registry.setPredicate(this.#binding, narrowed);
-      this.#recordWrite();
-      return this;
-    }
-    return this.#reslot(this.slot, narrowed);
-  }
-
-  whenNamed(name: Names): this {
-    return this.whenTagged(slotName.of(name));
-  }
-
-  whenTagged(criterion: BindingTag): this {
-    this.#requireRegistered();
-    if (this.isMany) {
-      throw new ManyBindingSlotError(tokenName(this.token));
-    }
-    return this.#reslot(withSlotCriterion(this.slot, criterion), this.predicate);
-  }
-
-  many(): this {
-    this.#requireRegistered();
-    if (this.slot.tags.length !== 0) {
-      throw new ManyBindingSlotError(tokenName(this.token));
-    }
-    if (this.isMany) {
-      return this;
-    }
-    // A provably-live binding takes membership in place; the registry only moves it out of the lone
-    // map. Otherwise `#commit` re-checks liveness and restores what the freed slot lets back in.
-    if (this.#isProvablyLive) {
-      this.#registration.registry.setMany(this.#binding);
-      this.#recordWrite();
-      return this;
-    }
-    this.#commit(() => {
-      this.isMany = true;
-    });
-    return this;
-  }
-
-  whenDefault(): this {
-    // The default slot is what a fresh registration already has, so there is nothing to re-slot —
-    // but an unregistered chain must fail here exactly as it does in every other refinement.
-    this.#requireRegistered();
+    registration.registry.touch();
     return this;
   }
 
@@ -427,82 +352,19 @@ export class BindingChain<Value, Names extends string = string>
   onActivation(fn: ActivationHandler<Value>): this {
     this.#requireRegistered();
     this.activationHook = fn;
-    this.#touchAndRecordWrite();
+    this.#registration.registry.touch();
     return this;
   }
 
   onDeactivation(fn: DeactivationHandler<Value>): this {
     this.#requireRegistered();
     this.deactivationHook = fn;
-    this.#touchAndRecordWrite();
+    this.#registration.registry.touch();
     return this;
   }
 
   id(): BindingIdentifier {
     this.#requireRegistered();
     return this.identifier;
-  }
-
-  // ── Registry ───────────────────────────────────────────────────────────────────────────────────────────────────────
-
-  /**
-   * Registers this binding; with `rewrite` given, first takes the live binding out, rewrites it, and
-   * registers it again.
-   *
-   * @remarks A `when*()` that follows `to*()` re-slots an already-live binding and can displace one
-   * the final shape would never conflict with. Those stay parked in `#displacedByChain` until the
-   * chain settles, then get restored.
-   */
-  #commit(rewrite: (() => void) | undefined): void {
-    const { registry, moduleBindingIds } = this.#registration;
-    const registered = this.#binding;
-
-    if (rewrite !== undefined) {
-      // A registry someone else wrote since this chain's last write invalidates the parked
-      // snapshot: restoring it could undo an unbind or shadow a newer binding.
-      if (registry.version !== this.#versionAfterLastWrite) {
-        this.#displacedByChain = undefined;
-      }
-      if (!registry.reslot(registered, rewrite)) {
-        // The chain's binding is no longer live (unbound or displaced) — a refinement must not
-        // resurrect it, so the chain goes inert against the registry.
-        this.#displacedByChain = undefined;
-        this.#versionAfterLastWrite = registry.version;
-        return;
-      }
-    } else {
-      // Each `to*()` starts its own registration, so anything a previous one displaced is not this
-      // registration's to restore.
-      this.#displacedByChain = undefined;
-    }
-    const displaced = registry.add(registered);
-    if (displaced !== undefined) {
-      if (this.#registration.deactivateDisplaced !== undefined && rewrite === undefined) {
-        this.#registration.deactivateDisplaced(displaced);
-      } else {
-        (this.#displacedByChain ??= []).push(displaced);
-        this.#registration.onDisplaced?.(displaced);
-      }
-    }
-    if (rewrite !== undefined && this.#displacedByChain !== undefined) {
-      this.#restoreNonConflicting(this.#displacedByChain);
-    }
-    if (rewrite === undefined && moduleBindingIds !== undefined) {
-      moduleBindingIds.push(this.identifier);
-    }
-    this.#versionAfterLastWrite = registry.version;
-  }
-
-  #restoreNonConflicting(displaced: Array<Binding>): void {
-    for (let index = displaced.length - 1; index >= 0; index -= 1) {
-      const candidate = displaced[index]!;
-      // A restore must never displace: a slot that has been re-occupied keeps its occupant, and
-      // the candidate stays parked.
-      if (!this.#registration.registry.hasSlotOccupant(candidate)) {
-        this.#registration.registry.add(candidate);
-        this.#registration.onRestored?.(candidate);
-        displaced.splice(index, 1);
-      }
-    }
   }
 }

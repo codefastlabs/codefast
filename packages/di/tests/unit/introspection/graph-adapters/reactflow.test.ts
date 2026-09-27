@@ -52,7 +52,7 @@ describe("toReactFlowGraph", () => {
     const depToken = token<string>("rf:dep");
     const consumerToken = token<{ dep: string }>("rf:consumer");
     const container = Container.create();
-    container.bind(depToken).toConstantValue("primary-value").whenNamed("primary");
+    container.bind(depToken).whenNamed("primary").toConstantValue("primary-value");
     container.bind(consumerToken).toResolved((dep: string) => ({ dep }), [inject(depToken, { name: "primary" })]);
 
     const flow = toReactFlowGraph(container.generateDependencyGraph());

@@ -61,7 +61,7 @@ function buildResolveAllStrategiesScenario(strategyCount: ResolveAllStrategyCoun
   const strategyToken = token<number>("bench-cf-fanout-resolve-all-strategy");
   const container = Container.create();
   for (let index = 0; index < strategyCount; index++) {
-    container.bind(strategyToken).toConstantValue(index).many();
+    container.bind(strategyToken).many().toConstantValue(index);
   }
   container.resolveAll(strategyToken);
 
@@ -85,7 +85,7 @@ function buildResolveAllColdScenario(strategyCount: ResolveAllStrategyCount): Be
   function buildAndRead(): ReadonlyArray<number> {
     const container = Container.create();
     for (let index = 0; index < strategyCount; index++) {
-      container.bind(strategyToken).toConstantValue(index).many();
+      container.bind(strategyToken).many().toConstantValue(index);
     }
     return container.resolveAll(strategyToken);
   }
@@ -113,8 +113,8 @@ function buildResolveAllNamedScenario(namedCount: ResolveAllNamedCount): BenchSc
   for (let index = 0; index < namedCount; index++) {
     container
       .bind(strategyToken)
-      .toConstantValue(index)
-      .whenNamed(`strategy-${String(index)}`);
+      .whenNamed(`strategy-${String(index)}`)
+      .toConstantValue(index);
   }
   const prewarmedStrategies = container.resolveAll(strategyToken, { name: targetName });
 

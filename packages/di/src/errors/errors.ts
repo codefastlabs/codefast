@@ -418,10 +418,11 @@ export class MissingContainerContextError extends DiError {
 }
 
 /**
- * A second `to*()` on a chain that already registered its binding.
+ * A slot step or a second `to*()` on a chain that already registered its binding.
  *
- * @remarks A chain is its binding, so it registers exactly once; a token bound twice is two `bind()`
- * calls, the second of which displaces the first under slot last-wins.
+ * @remarks A chain is its binding and registers exactly once, in its final shape, so its slot is
+ * settled by `to*()`; a token bound twice is two `bind()` calls, the second of which displaces the
+ * first under slot last-wins.
  *
  * @since 0.10.0
  */
@@ -432,7 +433,7 @@ export class ChainAlreadyRegisteredError extends DiError {
 
   constructor(tokenName: string) {
     super(
-      `The binding for token '${tokenName}' is already registered on this chain. Call bind() again to register another binding for the token.`,
+      `The binding for token '${tokenName}' is already registered on this chain, so its slot is final. Declare when*() and many() before to*(), or call bind() again to register another binding for the token.`,
     );
     this.tokenName = tokenName;
   }
@@ -460,11 +461,11 @@ export class ManyBindingSlotError extends DiError {
 }
 
 /**
- * A fluent chain was refined before a `to*()` call gave it a binding to refine.
+ * A scope, a lifecycle hook or `id()` asked of a fluent chain before a `to*()` call registered its binding.
  *
  * @remarks The builder types make this unreachable from TypeScript — `bind()` returns
- * `BindToBuilder`, which exposes only `to*()`. It exists for JavaScript callers and for anyone who
- * casts past the types, so the misuse fails loudly instead of mutating nothing.
+ * `BindToBuilder`, which exposes only the slot steps and `to*()`. It exists for JavaScript callers and
+ * for anyone who casts past the types, so the misuse fails loudly instead of mutating nothing.
  *
  * @since 0.10.0
  */

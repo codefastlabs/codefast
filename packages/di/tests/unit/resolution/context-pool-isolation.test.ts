@@ -19,8 +19,8 @@ describe("sync context pool isolation", () => {
     container.bind(Selected).toDynamic(() => "generic");
     container
       .bind(Selected)
-      .toDynamic(() => "under-entry")
-      .when(whenParentIs(Entry));
+      .when(whenParentIs(Entry))
+      .toDynamic(() => "under-entry");
     container.bind(Entry).toDynamic((ctx) => {
       // A nested top-level resolve mints its own path arrays and acquires a context at the same
       // depth as this factory's ctx — which must not re-point ctx at those arrays.

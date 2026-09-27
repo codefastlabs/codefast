@@ -286,8 +286,8 @@ describe("optional and resolveAll variants", () => {
     container.bind(handlerToken).toConstantValue("sync");
     container
       .bind(handlerToken)
-      .toDynamicAsync(async () => "async")
-      .whenNamed("late");
+      .whenNamed("late")
+      .toDynamicAsync(async () => "async");
 
     await expect(container.resolveAllAsync(handlerToken)).resolves.toEqual(expect.arrayContaining(["sync", "async"]));
   });
@@ -362,7 +362,7 @@ describe("ResolutionContext surface inside factories", () => {
 
     const container = Container.create();
     container.bind(itemToken).toConstantValue("one");
-    container.bind(itemToken).toConstantValue("two").whenNamed("second");
+    container.bind(itemToken).whenNamed("second").toConstantValue("two");
     container
       .bind(probeToken)
       .toDynamic((ctx) => ({
@@ -508,18 +508,18 @@ describe("sibling failures are reported in declaration order, as the sync lanes 
     const container = Container.create();
     container
       .bind(members)
+      .many()
       .toDynamicAsync(async () => {
         await Promise.resolve();
         throw new Error("first boom");
       })
-      .many()
       .transient();
     container
       .bind(members)
+      .many()
       .toDynamic(() => {
         throw new Error("second boom");
       })
-      .many()
       .transient();
 
     await expect(container.resolveAllAsync(members)).rejects.toThrow("first boom");
@@ -566,7 +566,7 @@ describe("a factory's context after an await", () => {
     const rootToken = token<string>("post-await-root");
     const container = Container.create();
     container.bind(selectedToken).toConstantValue("top");
-    container.bind(selectedToken).toConstantValue("under-root").when(whenParentIs(rootToken));
+    container.bind(selectedToken).when(whenParentIs(rootToken)).toConstantValue("under-root");
     container
       .bind(rootToken)
       .toDynamicAsync(async (ctx) => {
@@ -585,7 +585,7 @@ describe("a factory's context after an await", () => {
     const otherToken = token<string>("post-await-other-2");
     const container = Container.create();
     container.bind(selectedToken).toConstantValue("top");
-    container.bind(selectedToken).toConstantValue("under-other").when(whenParentIs(otherToken));
+    container.bind(selectedToken).when(whenParentIs(otherToken)).toConstantValue("under-other");
     let release: () => void = () => {};
     const gate = new Promise<void>((resolve) => {
       release = resolve;

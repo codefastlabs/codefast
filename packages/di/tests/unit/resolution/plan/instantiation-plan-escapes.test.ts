@@ -177,11 +177,11 @@ describe("escaped dependencies inside a compiled plan", () => {
     container.bind(Leaf).toSelf().transient();
     container
       .bind(portToken)
-      .toDynamic(() => 8080)
       .when((ctx: ConstraintContext) => {
         seenPaths.push([...ctx.resolutionPath]);
         return true;
       })
+      .toDynamic(() => 8080)
       .transient();
 
     warm(() => container.resolve(Root));
@@ -217,8 +217,8 @@ describe("escaped dependencies inside a compiled plan", () => {
     }
 
     const container = Container.create();
-    container.bind(pluginToken).toConstantValue("a").whenNamed("a");
-    container.bind(pluginToken).toConstantValue("b").whenNamed("b");
+    container.bind(pluginToken).whenNamed("a").toConstantValue("a");
+    container.bind(pluginToken).whenNamed("b").toConstantValue("b");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));
@@ -235,8 +235,8 @@ describe("escaped dependencies inside a compiled plan", () => {
     }
 
     const container = Container.create();
-    container.bind(driverToken).toConstantValue("primary-driver").whenNamed("primary");
-    container.bind(driverToken).toConstantValue("backup-driver").whenNamed("backup");
+    container.bind(driverToken).whenNamed("primary").toConstantValue("primary-driver");
+    container.bind(driverToken).whenNamed("backup").toConstantValue("backup-driver");
     container.bind(Root).toSelf().transient();
 
     warm(() => container.resolve(Root));

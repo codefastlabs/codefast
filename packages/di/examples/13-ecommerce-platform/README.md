@@ -146,9 +146,9 @@ payment fallback and for the notification pipeline.
 
 ```ts
 // Three notification channels under one token
-builder.bind(NotificationChannelToken).to(EmailChannel).whenNamed("email").singleton();
-builder.bind(NotificationChannelToken).to(SmsChannel).whenNamed("sms").singleton();
-builder.bind(NotificationChannelToken).to(PushChannel).whenNamed("push").singleton();
+builder.bind(NotificationChannelToken).whenNamed("email").to(EmailChannel).singleton();
+builder.bind(NotificationChannelToken).whenNamed("sms").to(SmsChannel).singleton();
+builder.bind(NotificationChannelToken).whenNamed("push").to(PushChannel).singleton();
 
 // Orchestrator injects all three
 @injectable([injectAll(NotificationChannelToken)])

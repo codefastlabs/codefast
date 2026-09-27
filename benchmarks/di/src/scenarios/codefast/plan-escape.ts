@@ -108,8 +108,8 @@ const bindHookedLeaf: BindLeaf = (container, leafToken) => {
 const bindMultiLeaf: BindLeaf = (container, leafToken) => {
   container
     .bind(leafToken)
-    .to(PlanLeaf)
     .when(() => true)
+    .to(PlanLeaf)
     .transient();
 };
 

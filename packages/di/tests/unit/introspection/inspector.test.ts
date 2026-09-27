@@ -14,12 +14,12 @@ describe("has and hasOwn as existence probes", () => {
     const container = Container.create();
     container
       .bind(serviceToken)
-      .toDynamic(() => "first")
-      .when(() => true);
+      .when(() => true)
+      .toDynamic(() => "first");
     container
       .bind(serviceToken)
-      .toDynamic(() => "second")
-      .when(() => true);
+      .when(() => true)
+      .toDynamic(() => "second");
 
     expect(container.has(serviceToken, {})).toBe(true);
     expect(container.hasOwn(serviceToken, {})).toBe(true);
@@ -40,7 +40,7 @@ describe("binding snapshots", () => {
     const serviceToken = token<string>("inspector.snapshot");
     const regionTag = tag<string>("region");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("eu-value").whenTagged(regionTag.of("eu"));
+    container.bind(serviceToken).whenTagged(regionTag.of("eu")).toConstantValue("eu-value");
 
     const [snapshot] = container.lookupBindings(serviceToken);
     expect(() => {

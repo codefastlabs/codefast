@@ -19,7 +19,7 @@ describe("NoMatchingBindingError diagnostics", () => {
     const serviceToken = token<number>("errors.bigint");
     const versionTag = tag<bigint>("version");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue(1).whenTagged(versionTag.of(1n));
+    container.bind(serviceToken).whenTagged(versionTag.of(1n)).toConstantValue(1);
 
     expect(() => container.resolve(serviceToken, { tags: [versionTag.of(2n)] })).toThrow(NoMatchingBindingError);
   });
@@ -30,7 +30,7 @@ describe("NoMatchingBindingError diagnostics", () => {
     const cyclic: { self?: object } = {};
     cyclic.self = cyclic;
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue(1).whenTagged(contextTag.of({}));
+    container.bind(serviceToken).whenTagged(contextTag.of({})).toConstantValue(1);
 
     expect(() => container.resolve(serviceToken, { tags: [contextTag.of(cyclic)] })).toThrow(NoMatchingBindingError);
   });
@@ -41,8 +41,8 @@ describe("NoMatchingBindingError diagnostics", () => {
     const container = Container.create();
     container
       .bind(serviceToken)
-      .toConstantValue(1)
-      .whenTagged(contextTag.of(Object.create(null) as object));
+      .whenTagged(contextTag.of(Object.create(null) as object))
+      .toConstantValue(1);
 
     // The bound value cannot be stringified; the miss must still surface as the domain error.
     expect(() => container.resolve(serviceToken, { tags: [contextTag.of({ shape: "other" })] })).toThrow(
@@ -62,7 +62,7 @@ describe("NoMatchingBindingError diagnostics", () => {
       },
     };
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue(1).whenTagged(contextTag.of(thrower));
+    container.bind(serviceToken).whenTagged(contextTag.of(thrower)).toConstantValue(1);
 
     expect(() => container.resolve(serviceToken, { tags: [contextTag.of({ shape: "other" })] })).toThrow(
       NoMatchingBindingError,

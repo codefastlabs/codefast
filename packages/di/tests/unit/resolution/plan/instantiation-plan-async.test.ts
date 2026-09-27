@@ -89,8 +89,8 @@ describe("async instantiation plans", () => {
       .singleton();
     container
       .bind(driver)
-      .toDynamic(() => "primary-driver")
       .whenNamed("primary")
+      .toDynamic(() => "primary-driver")
       .singleton();
     container
       .bind(root)

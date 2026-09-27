@@ -15,11 +15,11 @@ describe("resolveOptional single evaluation", () => {
     const container = Container.create();
     container
       .bind(serviceToken)
-      .toConstantValue("x")
       .when(() => {
         evaluations += 1;
         return true;
-      });
+      })
+      .toConstantValue("x");
 
     expect(container.resolveOptional(serviceToken)).toBe("x");
     expect(evaluations).toBe(1);
@@ -31,11 +31,11 @@ describe("resolveOptional single evaluation", () => {
     const container = Container.create();
     container
       .bind(serviceToken)
-      .toConstantValue("x")
       .when(() => {
         allow = !allow;
         return allow;
-      });
+      })
+      .toConstantValue("x");
 
     // Probe evaluates once (true) — the resolve must not re-ask and see false.
     expect(container.resolveOptional(serviceToken)).toBe("x");
@@ -47,11 +47,11 @@ describe("resolveOptional single evaluation", () => {
     const container = Container.create();
     container
       .bind(serviceToken)
-      .toConstantValue("x")
       .when(() => {
         evaluations += 1;
         return true;
-      });
+      })
+      .toConstantValue("x");
 
     await expect(container.resolveOptionalAsync(serviceToken)).resolves.toBe("x");
     expect(evaluations).toBe(1);

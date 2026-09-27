@@ -42,23 +42,23 @@ export const infrastructureModule = Module.create("explicit-architecture:Infrast
   builder.bind(ComplianceToken).to(ComplianceLogHandler).singleton();
   builder
     .bind(EventHandlerToken)
-    .toDynamic((ctx) => ctx.resolve(AuditLogToken))
     .whenNamed("audit")
+    .toDynamic((ctx) => ctx.resolve(AuditLogToken))
     .singleton();
   builder
     .bind(EventHandlerToken)
-    .toDynamic((ctx) => ctx.resolve(MetricsToken))
     .whenNamed("metrics")
+    .toDynamic((ctx) => ctx.resolve(MetricsToken))
     .singleton();
   builder
     .bind(EventHandlerToken)
-    .toDynamic((ctx) => ctx.resolve(FraudEngineToken))
     .whenNamed("fraud")
+    .toDynamic((ctx) => ctx.resolve(FraudEngineToken))
     .singleton();
   builder
     .bind(EventHandlerToken)
-    .toDynamic((ctx) => ctx.resolve(ComplianceToken))
     .whenNamed("compliance")
+    .toDynamic((ctx) => ctx.resolve(ComplianceToken))
     .singleton();
 
   builder.bind(EventPublisherToken).to(FanOutEventPublisher).singleton();

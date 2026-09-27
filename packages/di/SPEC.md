@@ -96,23 +96,30 @@ preferred form when an abstraction is needed.
 
 ### Fluent chain — the canonical, invariant order
 
-A binding is declared as a chain of four steps. Only the first is required, and the order never changes.
+A binding is declared as a chain of four steps. Only the strategy is required, and the order never changes.
 
 ```
 bind(token)
-  .to*(…)       // 1. Strategy — required
-  .when*(…)     // 2. Constraint — optional, always after to*
-  .scope()      // 3. Scope — optional, always after when*
+  .when*(…)     // 1. Slot — optional, always before to*
+  .to*(…)       // 2. Strategy — required; registers the binding
+  .scope()      // 3. Scope — optional, always after to*
   .on*(…)       // 4. Lifecycle — optional, always after scope
 ```
 
 > **Normative.** The compiler enforces this order through each step's return type:
 >
-> - `when*` **cannot** be called before `to*()` — `bind(token)` returns only a `BindToBuilder`, which has no `when*`.
-> - `when*` **cannot** be called after `scope()` — scope builders do not expose `when*`.
+> - `when*` and `many()` **cannot** be called after `to*()` — the builder `to*()` returns has no slot step, and a caller
+>   without types gets `ChainAlreadyRegisteredError`. The slot is final once the binding registers.
+> - Scope **cannot** be called before `to*()` — `bind(token)` returns a `BindToBuilder`, which offers the slot steps and
+>   `to*()` only, and a caller without types gets `ChainNotRegisteredError`.
 > - Lifecycle hooks **cannot** be called before `scope()` — `BindingBuilder` (the result of `to*()`) does not expose
 >   `on*`. `toConstantValue()` is the exception: a constant is always a singleton, so its builder offers `on*` directly
 >   with no scope step.
+
+> **Rationale — why the slot comes first.** The slot is what the registry files a binding under and what slot last-wins
+> compares, so it decides what the binding displaces. Declared before `to*()`, it is known when the binding registers,
+> and the binding registers once, in its final shape: no step afterwards can move it to another slot, displace something
+> else, or bring back what it displaced.
 
 > **Rationale — why lifecycle comes after scope.** If `onActivation` could be called before scope, it would be unclear
 > whether activation fires for a transient instance (every resolve) or a singleton (only the first). Forcing scope to be
@@ -126,9 +133,9 @@ bind(token)
   `whenNamed`, same `whenTagged`) means the new binding replaces the old one; a different slot appends, which is what
   serves `resolveAll`. The exact definition is in [Slots and last-wins](#slots-and-last-wins--the-exact-definition);
   worked examples are in [Full examples](#full-examples).
-- **Eager commit.** `to*()` commits the binding into the registry immediately — exactly **once** for the whole chain.
-  Every read after that (`has`, `resolve*`, `validate`, `inspect`) sees the latest state, even if the chain is abandoned
-  midway.
+- **Eager commit.** `to*()` commits the binding into the registry immediately — exactly **once** for the whole chain, in
+  its final slot. Every read after that (`has`, `resolve*`, `validate`, `inspect`) sees the latest state, even if the
+  chain is abandoned midway; a later scope or hook is written in place on the registered binding.
 - **Async must be explicit.** `resolve()` on an async binding throws `AsyncResolutionError` with a clear message. It
   never silently returns a `Promise`. Once an async singleton is cached — by `resolveAsync()` or `initializeAsync()` — a
   plain `resolve()` returns that instance, since no async work is left to do.
@@ -252,7 +259,7 @@ both `tag` and `tags` and folds `tag` into `tags`, so an `InjectionDescriptor` o
 
 ```ts
 const Region = tag<"eu" | "us">("app:region");
-container.bind(Storage).to(S3).whenTagged(Region.of("eu"));
+container.bind(Storage).whenTagged(Region.of("eu")).to(S3);
 container.resolve(Storage, { tag: Region.of("eu") });
 ```
 
@@ -458,7 +465,7 @@ interface Token<Value, Names extends string = string> {
 ```ts
 // Declaring the slot names makes every `name` the token meets a checked, completable literal
 const Logger = token<Logger, "console" | "file">("app:Logger");
-container.bind(Logger).to(FileLogger).whenNamed("file");
+container.bind(Logger).whenNamed("file").to(FileLogger);
 container.resolve(Logger, { name: "file" }); // { name: "fiel" } is a compile error
 type Names = SlotNamesOf<typeof Logger>; // "console" | "file"; `string` for a class or an undeclared token
 ```
@@ -595,40 +602,41 @@ no scope choice.
 - **Predicates** — `when(ctx => boolean)`. Dynamic, evaluated at resolve time against the `ConstraintContext`, after
   slot matching.
 
-`when*` comes immediately after `to*()`, before scope. A binding may carry one or several combined constraints.
+`when*` comes before `to*()`, which registers the binding in the slot the constraints declare. A binding may carry one
+or several combined constraints.
 
 ```ts
 // Named binding
-container.bind(Logger).to(ConsoleLogger).whenNamed("console").singleton();
-container.bind(Logger).to(FileLogger).whenNamed("file").singleton();
+container.bind(Logger).whenNamed("console").to(ConsoleLogger).singleton();
+container.bind(Logger).whenNamed("file").to(FileLogger).singleton();
 
 // Tagged binding — a criterion can only be minted from a tag key, never by hand
 const Fuel = tag<"petrol" | "electric">("app:fuel");
 const Size = tag<"v8" | "v6">("app:size");
 
-container.bind(Engine).to(PetrolEngine).whenTagged(Fuel.of("petrol"));
-container.bind(Engine).to(ElectricEngine).whenTagged(Fuel.of("electric"));
+container.bind(Engine).whenTagged(Fuel.of("petrol")).to(PetrolEngine);
+container.bind(Engine).whenTagged(Fuel.of("electric")).to(ElectricEngine);
 
 // Several tags on one binding — a specialisation of the petrol binding above. The hint
 // {fuel:petrol} gets PetrolEngine; the hint {fuel:petrol, size:v8} gets TurboV8 because it
 // declares more tags, i.e. it is more specific.
-container.bind(Engine).to(TurboV8).whenTagged(Fuel.of("petrol")).whenTagged(Size.of("v8"));
+container.bind(Engine).whenTagged(Fuel.of("petrol")).whenTagged(Size.of("v8")).to(TurboV8);
 
 // Explicit default slot — matches when there is no name and no tag
-container.bind(Logger).to(NoopLogger).whenDefault();
+container.bind(Logger).whenDefault().to(NoopLogger);
 
 // Custom predicate — uses ConstraintContext
 container
   .bind(Logger)
-  .to(VerboseLogger)
-  .when((ctx) => ctx.ancestors.some((f) => f.tokenName === "DebugModule"));
+  .when((ctx) => ctx.ancestors.some((f) => f.tokenName === "DebugModule"))
+  .to(VerboseLogger);
 
 // Combining a name with a custom predicate on one binding
 container
   .bind(Logger)
-  .to(AuditLogger)
   .whenNamed("audit")
-  .when((ctx) => ctx.parent?.scope === "singleton");
+  .when((ctx) => ctx.parent?.scope === "singleton")
+  .to(AuditLogger);
 ```
 
 **Slot criteria — the three verbs:**
@@ -694,8 +702,8 @@ resolution.
 > carries criteria.
 
 ```ts
-container.bind(Logger).to(ConsoleLogger).whenNamed("console").singleton();
-container.bind(Logger).to(FileLogger).whenNamed("file").singleton();
+container.bind(Logger).whenNamed("console").to(ConsoleLogger).singleton();
+container.bind(Logger).whenNamed("file").to(FileLogger).singleton();
 container.bind(AbstractLogger).toAlias(Logger);
 
 // The hint is forwarded to the Logger resolution
@@ -707,7 +715,7 @@ If the alias carries its own constraint (`whenNamed("audit")`), that constraint 
 it does not affect what gets forwarded:
 
 ```ts
-container.bind(AbstractAuditLogger).toAlias(Logger).whenNamed("audit");
+container.bind(AbstractAuditLogger).whenNamed("audit").toAlias(Logger);
 // This binding is only selected when resolving AbstractAuditLogger with the hint { name: "audit" }
 // Once selected, the hint { name: "audit" } is forwarded to the Logger resolution
 const logger = container.resolve(AbstractAuditLogger, { name: "audit" });
@@ -819,16 +827,16 @@ container
 The builder has `.id()` to obtain a `BindingIdentifier` — used to unbind one specific binding out of several:
 
 ```ts
-const consoleId = container.bind(Logger).to(ConsoleLogger).whenNamed("console").singleton().id();
-const fileId = container.bind(Logger).to(FileLogger).whenNamed("file").singleton().id();
+const consoleId = container.bind(Logger).whenNamed("console").to(ConsoleLogger).singleton().id();
+const fileId = container.bind(Logger).whenNamed("file").to(FileLogger).singleton().id();
 
 // Unbind only the "console" binding — "file" is untouched
 container.unbind(consoleId);
 ```
 
 > **`.id()` and chain order.** `.id()` may be called at any step after `to*()`. The builder can keep chaining afterwards
-> — `.id()` is not terminal. The id is **stable for the whole chain**: a value taken early still points at the right
-> binding after the chain is refined.
+> — `.id()` is not terminal. The id is **stable for the whole chain**: a value taken right after `to*()` still points at
+> the binding once its scope and hooks are set.
 
 ### Lifecycle hooks
 
@@ -923,13 +931,13 @@ container.bind(Config).toConstantValue({
 });
 
 // Named bindings
-container.bind(Logger).to(ConsoleLogger).whenNamed("console").singleton();
-container.bind(Logger).to(FileLogger).whenNamed("file").singleton();
+container.bind(Logger).whenNamed("console").to(ConsoleLogger).singleton();
+container.bind(Logger).whenNamed("file").to(FileLogger).singleton();
 
 // Tagged binding
-container.bind(Engine).to(PetrolEngine).whenTagged(Fuel.of("petrol"));
-container.bind(Engine).to(ElectricEngine).whenTagged(Fuel.of("electric"));
-container.bind(Engine).to(TurboV8).whenTagged(Fuel.of("petrol")).whenTagged(Size.of("v8"));
+container.bind(Engine).whenTagged(Fuel.of("petrol")).to(PetrolEngine);
+container.bind(Engine).whenTagged(Fuel.of("electric")).to(ElectricEngine);
+container.bind(Engine).whenTagged(Fuel.of("petrol")).whenTagged(Size.of("v8")).to(TurboV8);
 
 // Sync dynamic factory
 container
@@ -964,7 +972,7 @@ container
 
 // Alias
 container.bind(AbstractLogger).toAlias(Logger);
-container.bind(AbstractAuditLogger).toAlias(Logger).whenNamed("audit");
+container.bind(AbstractAuditLogger).whenNamed("audit").toAlias(Logger);
 ```
 
 ### Slots and last-wins — the exact definition
@@ -1016,7 +1024,7 @@ condition the slot declares. The slot with no conditions is the **default slot**
 > 2 candidates remain after runtime filtering, `resolve`/`resolveAsync` throws `AmbiguousBindingError` (not
 > `InternalError` — this is a user error, not an internal one).
 
-> **Normative — collection members: `many()`.** A binding refined with `.many()` is a **collection member**: several
+> **Normative — collection members: `many()`.** A binding declared with `.many()` is a **collection member**: several
 > members of one token coexist on the default slot, `resolveAll`/`resolveAllAsync` return every member (plus whatever
 > else the request matches, in registration order), and `resolve`/`resolveAsync` **never select** a member — a token
 > holding only members has nothing a single resolve can select, so `resolve` throws `NoMatchingBindingError` (the token
@@ -1060,9 +1068,9 @@ condition the slot declares. The slot with no conditions is the **default slot**
 | --- | ------------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | 1   | `bind(T).to*(A)`                                                          | Default                | A                                                                            | `[A]`                                                                                             |
 | 2   | `bind(T).to*(A)` then `bind(T).to*(B)`                                    | Default last-wins      | B                                                                            | `[B]`                                                                                             |
-| 3   | `to*(A).whenNamed("a")` then `to*(B).whenNamed("a")`                      | Named "a" last-wins    | `NoMatchingBindingError` (no default)                                        | Hint `{name:"a"}` → B                                                                             |
-| 4   | `to*(A).whenNamed("a")` and `to*(B).whenNamed("b")`                       | Named "a" + Named "b"  | `NoMatchingBindingError`                                                     | `resolveAll` → `[A, B]`                                                                           |
-| 5   | `to*(A)` and `to*(B).whenNamed("x")`                                      | Default + Named "x"    | A                                                                            | `resolveAll` → `[A, B]`                                                                           |
+| 3   | `whenNamed("a").to*(A)` then `whenNamed("a").to*(B)`                      | Named "a" last-wins    | `NoMatchingBindingError` (no default)                                        | Hint `{name:"a"}` → B                                                                             |
+| 4   | `whenNamed("a").to*(A)` and `whenNamed("b").to*(B)`                       | Named "a" + Named "b"  | `NoMatchingBindingError`                                                     | `resolveAll` → `[A, B]`                                                                           |
+| 5   | `to*(A)` and `whenNamed("x").to*(B)`                                      | Default + Named "x"    | A                                                                            | `resolveAll` → `[A, B]`                                                                           |
 | 6   | `rebind(T).to*(C)`                                                        | Explicit reset         | C                                                                            | `[C]`                                                                                             |
 | 7   | Tags `{fuel:petrol, size:v8}.to*(A)` then the same tags `.to*(B)`         | Tag-set last-wins      | Hint `{tags:[...]}` → B                                                      | Hint → B                                                                                          |
 | 8   | Tags `{fuel:petrol}.to*(A)` and tags `{fuel:petrol, size:v8}.to*(B)`      | Two different tag-sets | Hint `{tags:[fuel]}` → A; hint `{tags:[fuel, size]}` → **B** (more specific) | `resolveAll` → `[A, B]`                                                                           |
@@ -1171,9 +1179,9 @@ is what gets cached.
 >   `{ token, optional: false, multi: false }`. The `deps` in `ResolvedBinding`/`ResolvedAsyncBinding` is always
 >   `readonly InjectionDescriptor[]` — never a raw token.
 > - A `BindingIdentifier` is generated **once per fluent chain**, unique across the whole container hierarchy (not
->   merely within one container), from a process-wide monotonic counter. Later refinement (`.singleton()`,
->   `.whenNamed()`, …) does **not** mint a new id — the id taken from `.id()` at any step of the chain stays valid until
->   the chain ends.
+>   merely within one container), from a process-wide monotonic counter. A later scope or hook (`.singleton()`,
+>   `.onActivation()`, …) does **not** mint a new id — the id taken from `.id()` at any step of the chain stays valid
+>   until the chain ends.
 
 **The scope of an alias is its target's — at resolve time.** An `AliasBinding` does carry a `scope` field, but it is
 always `"transient"`: a placeholder declared only so the engine reads `scope` as a plain field on every kind rather than
@@ -1260,7 +1268,7 @@ const petrolEngine = container.resolve(Engine, { tag: Fuel.of("petrol") });
 
 ```ts
 container.bind(Logger).to(ConsoleLogger); // default slot
-container.bind(Logger).to(FileLogger).whenNamed("file"); // named "file" slot
+container.bind(Logger).whenNamed("file").to(FileLogger); // named "file" slot
 
 container.resolveAll(Logger); // → [ConsoleLogger, FileLogger]
 container.resolveAll(Logger, { name: "file" }); // → [FileLogger]
@@ -1377,8 +1385,7 @@ unbind-then-bind, never a way to override a parent.
 > - If a handler is async, `unbindAsync()` must be used — a sync `unbind()` on a binding with async deactivation throws
 >   `AsyncDeactivationError`.
 > - `unbind(bindingId)` reaches a binding a later last-wins bind displaced, too: its cached singleton, or a constant's
->   owed `onDeactivation`, runs then rather than at `dispose()`, and no refinement of the displacing chain can restore
->   it afterwards.
+>   owed `onDeactivation`, runs then rather than at `dispose()`.
 
 #### `rebind` and async deactivation
 
@@ -1459,8 +1466,7 @@ const container = Container.fromModules(ModuleA, ModuleB);
 > - Cached singleton instances belonging to that module are **deactivated** — `onDeactivation` and `@preDestroy()` are
 >   called.
 > - A binding the module registered that a later last-wins bind displaced is torn down the same way: its cached
->   singleton, or a constant's owed `onDeactivation`, runs at this unload rather than waiting for `dispose()`, and no
->   refinement of the displacing chain can restore it afterwards.
+>   singleton, or a constant's owed `onDeactivation`, runs at this unload rather than waiting for `dispose()`.
 > - A sync `unload()` is only safe if every deactivation handler is sync. If any is async, `unloadAsync()` must be used.
 
 ### Container-level activation hooks
@@ -1665,7 +1671,7 @@ const graph = container.generateDependencyGraph({ includeParent: false }); // Co
 binding?". Neither asks "will a hintless resolve succeed" — that needs a default slot.
 
 ```ts
-container.bind(Logger).to(FileLogger).whenNamed("file");
+container.bind(Logger).whenNamed("file").to(FileLogger);
 // There is no default slot
 
 container.has(Logger); // true  — there is a binding (named "file")
@@ -1711,7 +1717,7 @@ rules, so its answer is the engine's, not a model of it.
 ```ts
 container.bind(Settlement).toSelf();
 container.bind(Logger).to(ConsoleLogger);
-container.bind(Logger).to(AuditLogger).when(whenParentIs(Settlement));
+container.bind(Logger).when(whenParentIs(Settlement)).to(AuditLogger);
 
 container.explain(Logger).steps[0].candidates.map((candidate) => candidate.verdict);
 // ["eligible", "predicate-refused"] — no parent, so the predicate refuses
@@ -2464,7 +2470,7 @@ include `ctx.parent`.
 import { whenParentIs } from "@codefast/di";
 
 container.bind(Logger).to(ConsoleLogger);
-container.bind(Logger).to(VerboseLogger).when(whenParentIs(DebugService));
+container.bind(Logger).when(whenParentIs(DebugService)).to(VerboseLogger);
 ```
 
 When `DebugService` asks for `Logger`, the predicate matches and `VerboseLogger` is chosen. Every other service gets
@@ -2486,9 +2492,9 @@ const underHarness = (ctx: ConstraintContext): boolean =>
 
 container
   .bind(Config)
-  .toConstantValue(prodConfig)
-  .when((ctx) => !underHarness(ctx));
-container.bind(Config).toConstantValue(testConfig).when(underHarness);
+  .when((ctx) => !underHarness(ctx))
+  .toConstantValue(prodConfig);
+container.bind(Config).when(underHarness).toConstantValue(testConfig);
 ```
 
 Any service resolved within the subtree rooted at `TestHarness` — `TestHarness`'s own `Config` included — receives
@@ -2502,12 +2508,12 @@ import { token, whenParentNamed } from "@codefast/di";
 
 const Database = token<Database, "primary" | "replica">("app:Database");
 
-container.bind(Database).to(PrimaryDatabase).whenNamed("primary").singleton();
-container.bind(Database).to(ReplicaDatabase).whenNamed("replica").singleton();
+container.bind(Database).whenNamed("primary").to(PrimaryDatabase).singleton();
+container.bind(Database).whenNamed("replica").to(ReplicaDatabase).singleton();
 
-container.bind(Logger).to(PrimaryLogger).when(whenParentNamed(Database, "primary"));
+container.bind(Logger).when(whenParentNamed(Database, "primary")).to(PrimaryLogger);
 
-container.bind(Logger).to(ReplicaLogger).when(whenParentNamed(Database, "replica"));
+container.bind(Logger).when(whenParentNamed(Database, "replica")).to(ReplicaLogger);
 ```
 
 When `PrimaryDatabase` is resolved (binding slot `"primary"`), it injects `PrimaryLogger` because the parent frame is a
@@ -2523,14 +2529,14 @@ const Env = tag<"test" | "prod">("app:env");
 // Some ancestor in the chain carries env=test → use the sandbox
 container
   .bind(Mailer)
-  .to(SandboxMailer)
-  .when(whenAnyAncestorTagged(Env.of("test")));
+  .when(whenAnyAncestorTagged(Env.of("test")))
+  .to(SandboxMailer);
 
 // No ancestor carries env=test → use real SMTP
 container
   .bind(Mailer)
-  .to(SmtpMailer)
-  .when((ctx) => !whenAnyAncestorTagged(Env.of("test"))(ctx));
+  .when((ctx) => !whenAnyAncestorTagged(Env.of("test"))(ctx))
+  .to(SmtpMailer);
 ```
 
 **`whenParentTaggedAll` — inject differently when the parent carries several tags at once:**
@@ -2544,8 +2550,8 @@ const Tier = tag<"basic" | "premium">("app:tier");
 // PremiumPlugin is only injected when the parent has BOTH env=prod AND tier=premium
 container
   .bind(Plugin)
-  .to(PremiumPlugin)
-  .when(whenParentTaggedAll([Env.of("prod"), Tier.of("premium")]));
+  .when(whenParentTaggedAll([Env.of("prod"), Tier.of("premium")]))
+  .to(PremiumPlugin);
 
 // The default fallback for every other case
 container.bind(Plugin).to(BasicPlugin);
@@ -2572,14 +2578,14 @@ import { whenAnyAncestorIs, whenParentIs } from "@codefast/di";
 // AND — both conditions must hold
 container
   .bind(Logger)
-  .to(AuditVerboseLogger)
-  .when((ctx) => whenParentIs(AuditService)(ctx) && whenAnyAncestorIs(ProductionModule)(ctx));
+  .when((ctx) => whenParentIs(AuditService)(ctx) && whenAnyAncestorIs(ProductionModule)(ctx))
+  .to(AuditVerboseLogger);
 
 // OR — either one is enough
 container
   .bind(Logger)
-  .to(OperationsLogger)
-  .when((ctx) => whenParentIs(OrderService)(ctx) || whenParentIs(PaymentService)(ctx));
+  .when((ctx) => whenParentIs(OrderService)(ctx) || whenParentIs(PaymentService)(ctx))
+  .to(OperationsLogger);
 ```
 
 **Closure reuse — create once, use many times:**
@@ -2588,12 +2594,12 @@ container
 // Good — the closure is created once
 const isInsideDebugModule = whenAnyAncestorIs(DebugModule);
 
-container.bind(Logger).to(VerboseLogger).when(isInsideDebugModule);
-container.bind(Tracer).to(VerboseTracer).when(isInsideDebugModule);
+container.bind(Logger).when(isInsideDebugModule).to(VerboseLogger);
+container.bind(Tracer).when(isInsideDebugModule).to(VerboseTracer);
 
 // Avoid — a new closure each time (not wrong, just a needless allocation)
-container.bind(Logger).to(VerboseLogger).when(whenAnyAncestorIs(DebugModule));
-container.bind(Tracer).to(VerboseTracer).when(whenAnyAncestorIs(DebugModule));
+container.bind(Logger).when(whenAnyAncestorIs(DebugModule)).to(VerboseLogger);
+container.bind(Tracer).when(whenAnyAncestorIs(DebugModule)).to(VerboseTracer);
 ```
 
 ### Rules (normative)
@@ -2776,7 +2782,7 @@ a fluent module mixes in a declared one with `builder.import(InfraModule)`.
 
 > **Non-normative — why it exists.** A declared module's list is checked and normalised once, when the module is
 > defined, and a load registers each binding already in its final shape, where a fluent setup pays every chain step — a
-> re-slot, a scope change, a hook — each time the module loads. It changes nothing a resolve reads.
+> slot, a scope change, a hook — each time the module loads. It changes nothing a resolve reads.
 
 ### Using modules
 
@@ -2876,8 +2882,8 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | `MissingContainerContextError`   | `MISSING_CONTAINER_CONTEXT`   | A class with `@inject accessor` was `new`-ed outside a container               | `className` (may be `undefined`), `accessorName`               |
 | `RebindUnboundTokenError`        | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container                    | `tokenName`                                                    |
 | `DisposedContainerError`         | `DISPOSED_CONTAINER`          | Any operation on an already-disposed container                                 | —                                                              |
-| `ChainNotRegisteredError`        | `CHAIN_NOT_REGISTERED`        | Refinement (`when*`, scope, `on*`, `id()`) called before `to*()`               | `tokenName`                                                    |
-| `ChainAlreadyRegisteredError`    | `CHAIN_ALREADY_REGISTERED`    | A second `to*()` on a chain that already registered its binding                | `tokenName`                                                    |
+| `ChainNotRegisteredError`        | `CHAIN_NOT_REGISTERED`        | A scope, `on*` or `id()` called before `to*()`                                 | `tokenName`                                                    |
+| `ChainAlreadyRegisteredError`    | `CHAIN_ALREADY_REGISTERED`    | A slot step or a second `to*()` on a chain that already registered its binding | `tokenName`                                                    |
 | `ManyBindingSlotError`           | `MANY_BINDING_SLOT`           | `many()` on a named or tagged binding, or a slot constraint on a member        | `tokenName`                                                    |
 | `SelfBindingRequiresClassError`  | `SELF_BINDING_REQUIRES_CLASS` | `toSelf()` on a token that is not a class                                      | `tokenName`                                                    |
 | `StaticMemberDecoratorError`     | `STATIC_MEMBER_DECORATOR`     | `@inject` / `@postConstruct` / `@preDestroy` on a static member                | `decoratorName`, `memberName`                                  |

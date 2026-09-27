@@ -8,11 +8,11 @@
  *
  *   container-create-empty   an empty container, nothing bound
  *   create-child-empty       the same for a child, whose parent is warm
- *   bind-128-plain           one container, 128 tokens bound and never refined
- *   bind-128-refined         the same 128 with a scope and a slot written after registration
+ *   bind-128-plain           one container, 128 tokens bound with no slot step and no scope step
+ *   bind-128-refined         the same 128, each with a slot declared before registration and a scope after it
  *
  * The two bind rows each pay one container create, which `container-create-empty` prices, and differ
- * from each other only by the refinements — so both terms are subtractable.
+ * from each other only by the slot and the scope — so both terms are subtractable.
  */
 import { Container, token } from "@codefast/di";
 
@@ -82,10 +82,15 @@ function buildBindPathScenario(descriptor: ScenarioDescriptor, refine: boolean):
     const container = Container.create();
 
     for (const [index, bindToken] of bindTokens.entries()) {
-      const chain = container.bind(bindToken).toDynamic(buildBoundValue);
+      const bound = container.bind(bindToken);
 
       if (refine) {
-        chain.whenNamed(`slot-${String(index)}`).singleton();
+        bound
+          .whenNamed(`slot-${String(index)}`)
+          .toDynamic(buildBoundValue)
+          .singleton();
+      } else {
+        bound.toDynamic(buildBoundValue);
       }
     }
 
@@ -124,7 +129,7 @@ export function buildCodefastColdBootScenarios(): ReadonlyArray<BenchScenario> {
     buildBindPathScenario(
       {
         ...BIND_128_REFINED,
-        what: `the same ${String(BIND_TOKEN_COUNT)} refined after registration with .whenNamed().singleton() — one re-slot and one in-place scope write each`,
+        what: `the same ${String(BIND_TOKEN_COUNT)} bound with .whenNamed() before .toDynamic() and .singleton() after it — one named add and one in-place scope write each`,
       },
       true,
     ),

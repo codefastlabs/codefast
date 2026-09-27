@@ -39,7 +39,7 @@ describe("the rule that settles a registry", () => {
     const serviceToken = token<string, "file">("explain:Named");
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("default");
-    const namedId = container.bind(serviceToken).toConstantValue("file").whenNamed("file").id();
+    const namedId = container.bind(serviceToken).whenNamed("file").toConstantValue("file").id();
 
     const explanation = container.explain(serviceToken, { name: "file" });
 
@@ -57,8 +57,8 @@ describe("the rule that settles a registry", () => {
     container.bind(serviceToken).toConstantValue("plain");
     const guardedId = container
       .bind(serviceToken)
-      .toConstantValue("guarded")
       .when(() => true)
+      .toConstantValue("guarded")
       .id();
 
     const explanation = container.explain(serviceToken);
@@ -74,8 +74,8 @@ describe("the rule that settles a registry", () => {
     const plainId = container.bind(serviceToken).toConstantValue("plain").id();
     container
       .bind(serviceToken)
-      .toConstantValue("guarded")
-      .when(() => false);
+      .when(() => false)
+      .toConstantValue("guarded");
 
     const explanation = container.explain(serviceToken);
 
@@ -91,12 +91,12 @@ describe("the rule that settles a registry", () => {
   it("prefers the slot declaring more of what the request carries", () => {
     const serviceToken = token<string>("explain:Specific");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue("region").whenTagged(REGION.of("eu"));
+    container.bind(serviceToken).whenTagged(REGION.of("eu")).toConstantValue("region");
     const specificId = container
       .bind(serviceToken)
-      .toConstantValue("region-and-tier")
       .whenTagged(REGION.of("eu"))
       .whenTagged(TIER.of("gold"))
+      .toConstantValue("region-and-tier")
       .id();
     const request = { tags: [REGION.of("eu"), TIER.of("gold")] };
 
@@ -112,12 +112,12 @@ describe("the rule that settles a registry", () => {
     const container = Container.create();
     container
       .bind(serviceToken)
-      .toConstantValue("first")
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue("first");
     container
       .bind(serviceToken)
-      .toConstantValue("second")
-      .when(() => true);
+      .when(() => true)
+      .toConstantValue("second");
 
     const explanation = container.explain(serviceToken);
 
@@ -145,7 +145,7 @@ describe("where the lookup goes", () => {
   it("moves up past a registry whose candidates are all out", () => {
     const serviceToken = token<string, "file">("explain:Shadow");
     const parent = Container.create();
-    const parentId = parent.bind(serviceToken).toConstantValue("parent").whenNamed("file").id();
+    const parentId = parent.bind(serviceToken).whenNamed("file").toConstantValue("parent").id();
     const child = parent.createChild();
     child.bind(serviceToken).toConstantValue("child");
 
@@ -164,7 +164,7 @@ describe("where the lookup goes", () => {
     const store = token<string, "replica">("explain:Store");
     const container = Container.create();
     container.bind(facade).toAlias(store);
-    const replicaId = container.bind(store).toConstantValue("replica").whenNamed("replica").id();
+    const replicaId = container.bind(store).whenNamed("replica").toConstantValue("replica").id();
 
     const explanation = container.explain(facade, { name: "replica" });
 
@@ -207,7 +207,7 @@ describe("a request that selects nothing", () => {
   it("is unmatched when bindings exist and none is eligible", () => {
     const serviceToken = token<number>("explain:Members");
     const container = Container.create();
-    container.bind(serviceToken).toConstantValue(1).many();
+    container.bind(serviceToken).many().toConstantValue(1);
 
     const explanation = container.explain(serviceToken);
 
@@ -224,7 +224,7 @@ describe("a request nested in other resolutions", () => {
   function auditContainer(): Container {
     const container = Container.create();
     container.bind(audit).toConstantValue("general");
-    container.bind(audit).toConstantValue("settlement").when(whenParentIs(settlement));
+    container.bind(audit).when(whenParentIs(settlement)).toConstantValue("settlement");
     container.bind(settlement).toResolved((logger) => ({ audit: logger }), [audit]);
     return container;
   }

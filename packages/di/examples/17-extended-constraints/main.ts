@@ -91,10 +91,10 @@ class BillingService {
 const parentIsContainer = Container.create();
 
 // Verbose logger only when the direct parent is OrderService.
-parentIsContainer.bind(LoggerToken).toConstantValue(makeLogger("verbose")).when(whenParentIs(OrderServiceToken));
+parentIsContainer.bind(LoggerToken).when(whenParentIs(OrderServiceToken)).toConstantValue(makeLogger("verbose"));
 
 // Silent logger when the direct parent is NOT OrderService.
-parentIsContainer.bind(LoggerToken).toConstantValue(makeLogger("silent")).when(whenNoParentIs(OrderServiceToken));
+parentIsContainer.bind(LoggerToken).when(whenNoParentIs(OrderServiceToken)).toConstantValue(makeLogger("silent"));
 
 parentIsContainer.bind(OrderServiceToken).to(OrderService).singleton();
 parentIsContainer.bind(BillingServiceToken).to(BillingService).singleton();
@@ -176,14 +176,14 @@ const ancestorIsContainer = Container.create();
 // "audit" logger when PaymentOrchestrator is anywhere in the ancestor chain.
 ancestorIsContainer
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("audit"))
-  .when(whenAnyAncestorIs(PaymentOrchestratorToken));
+  .when(whenAnyAncestorIs(PaymentOrchestratorToken))
+  .toConstantValue(makeLogger("audit"));
 
 // "standard" logger when PaymentOrchestrator is NOT in the ancestor chain.
 ancestorIsContainer
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("standard"))
-  .when(whenNoAncestorIs(PaymentOrchestratorToken));
+  .when(whenNoAncestorIs(PaymentOrchestratorToken))
+  .toConstantValue(makeLogger("standard"));
 
 ancestorIsContainer.bind(RiskScorerToken).to(RiskScorer).singleton();
 ancestorIsContainer.bind(FraudCheckerToken).to(FraudChecker).singleton();
@@ -236,22 +236,22 @@ const namedContainer = Container.create();
 // Logger adapts based on which DataSource slot is being built — the token types the name.
 namedContainer
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("primary-logger"))
-  .when(whenParentNamed(DataSourceToken, "primary"));
+  .when(whenParentNamed(DataSourceToken, "primary"))
+  .toConstantValue(makeLogger("primary-logger"));
 
 namedContainer
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("replica-logger"))
-  .when(whenParentNamed(DataSourceToken, "replica"));
+  .when(whenParentNamed(DataSourceToken, "replica"))
+  .toConstantValue(makeLogger("replica-logger"));
 
 // Fallback for contexts with no name (e.g. QueryRunner itself).
 namedContainer
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("default-logger"))
-  .when((context) => context.parent === undefined || context.parent.slot.name === undefined);
+  .when((context) => context.parent === undefined || context.parent.slot.name === undefined)
+  .toConstantValue(makeLogger("default-logger"));
 
-namedContainer.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
-namedContainer.bind(DataSourceToken).to(DataSource).whenNamed("replica").singleton();
+namedContainer.bind(DataSourceToken).whenNamed("primary").to(DataSource).singleton();
+namedContainer.bind(DataSourceToken).whenNamed("replica").to(DataSource).singleton();
 namedContainer.bind(QueryRunnerToken).to(QueryRunner).singleton();
 
 namedContainer.resolve(DataSourceToken, { name: "primary" }).connect(); // [primary-logger]
@@ -271,16 +271,16 @@ const sharedNameContainer = Container.create();
 
 sharedNameContainer
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("datasource-primary-logger"))
-  .when(whenParentNamed(DataSourceToken, "primary"));
+  .when(whenParentNamed(DataSourceToken, "primary"))
+  .toConstantValue(makeLogger("datasource-primary-logger"));
 
 sharedNameContainer
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("archive-primary-logger"))
-  .when(whenParentNamed(ArchiveSourceToken, "primary"));
+  .when(whenParentNamed(ArchiveSourceToken, "primary"))
+  .toConstantValue(makeLogger("archive-primary-logger"));
 
-sharedNameContainer.bind(DataSourceToken).to(DataSource).whenNamed("primary").singleton();
-sharedNameContainer.bind(ArchiveSourceToken).to(DataSource).whenNamed("primary").singleton();
+sharedNameContainer.bind(DataSourceToken).whenNamed("primary").to(DataSource).singleton();
+sharedNameContainer.bind(ArchiveSourceToken).whenNamed("primary").to(DataSource).singleton();
 
 sharedNameContainer.resolve(DataSourceToken, { name: "primary" }).connect(); // [datasource-primary-logger]
 sharedNameContainer.resolve(ArchiveSourceToken, { name: "primary" }).connect(); // [archive-primary-logger]
@@ -313,17 +313,17 @@ const ancestorContainer = Container.create();
 
 ancestorContainer
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("primary-audit"))
-  .when(whenAnyAncestorNamed(ConnectionPoolToken, "primary"));
+  .when(whenAnyAncestorNamed(ConnectionPoolToken, "primary"))
+  .toConstantValue(makeLogger("primary-audit"));
 
 ancestorContainer
   .bind(LoggerToken)
-  .toConstantValue(makeLogger("replica-audit"))
-  .when(whenAnyAncestorNamed(ConnectionPoolToken, "replica"));
+  .when(whenAnyAncestorNamed(ConnectionPoolToken, "replica"))
+  .toConstantValue(makeLogger("replica-audit"));
 
 // Transient so each resolve rebuilds the chain and re-selects the logger by ancestor.
-ancestorContainer.bind(ConnectionPoolToken).to(ConnectionPool).whenNamed("primary").transient();
-ancestorContainer.bind(ConnectionPoolToken).to(ConnectionPool).whenNamed("replica").transient();
+ancestorContainer.bind(ConnectionPoolToken).whenNamed("primary").to(ConnectionPool).transient();
+ancestorContainer.bind(ConnectionPoolToken).whenNamed("replica").to(ConnectionPool).transient();
 ancestorContainer.bind(HealthProbeToken).to(HealthProbe).transient();
 
 ancestorContainer.resolve(ConnectionPoolToken, { name: "primary" }).ping(); // [primary-audit] health ok
@@ -378,25 +378,25 @@ const taggedContainer = Container.create();
 // Redis-EU adapter: requires parent to have BOTH backend=redis AND region=eu.
 taggedContainer
   .bind(CacheAdapterToken)
-  .toConstantValue({ backend: "redis-eu", read: () => undefined })
-  .when(whenParentTaggedAll([BACKEND_TAG.of("redis"), REGION_TAG.of("eu")]));
+  .when(whenParentTaggedAll([BACKEND_TAG.of("redis"), REGION_TAG.of("eu")]))
+  .toConstantValue({ backend: "redis-eu", read: () => undefined });
 
 // Memcached adapter: requires parent to have backend=memcached (single tag).
 taggedContainer
   .bind(CacheAdapterToken)
-  .toConstantValue({ backend: "memcached", read: () => undefined })
-  .when(whenParentTagged(BACKEND_TAG.of("memcached")));
+  .when(whenParentTagged(BACKEND_TAG.of("memcached")))
+  .toConstantValue({ backend: "memcached", read: () => undefined });
 
 // Tag SessionStore with both backend=redis and region=eu.
 taggedContainer
   .bind(SessionStoreToken)
-  .to(SessionStore)
   .whenTagged(BACKEND_TAG.of("redis"))
   .whenTagged(REGION_TAG.of("eu"))
+  .to(SessionStore)
   .singleton();
 
 // Tag ProductCache with backend=memcached only.
-taggedContainer.bind(ProductCacheToken).to(ProductCache).whenTagged(BACKEND_TAG.of("memcached")).singleton();
+taggedContainer.bind(ProductCacheToken).whenTagged(BACKEND_TAG.of("memcached")).to(ProductCache).singleton();
 
 taggedContainer.resolve(SessionStoreToken, {
   tags: [BACKEND_TAG.of("redis"), REGION_TAG.of("eu")],
@@ -454,20 +454,20 @@ const tenantContainer = Container.create();
 // whenAnyAncestorTaggedAll requires BOTH tags on the same ancestor frame.
 tenantContainer
   .bind(AuditLoggerToken)
+  .when(whenAnyAncestorTaggedAll([TENANT_TAG.of("enterprise"), TIER_TAG.of("paid")]))
   .toConstantValue({
     tier: "enterprise",
     audit: (event) => console.log(`[ENTERPRISE AUDIT] ${event}`),
-  })
-  .when(whenAnyAncestorTaggedAll([TENANT_TAG.of("enterprise"), TIER_TAG.of("paid")]));
+  });
 
 // whenAnyAncestorTagged checks a single tag — simpler when only one tag identifies the tier.
 tenantContainer
   .bind(AuditLoggerToken)
+  .when(whenAnyAncestorTagged(TENANT_TAG.of("starter")))
   .toConstantValue({
     tier: "starter",
     audit: (event) => console.log(`[starter audit] ${event}`),
-  })
-  .when(whenAnyAncestorTagged(TENANT_TAG.of("starter")));
+  });
 
 // ReportGenerator: single untagged transient binding — no tenant knowledge needed.
 // Transient so each AnalyticsDashboard singleton gets its own instance (and thus
@@ -478,12 +478,12 @@ tenantContainer.bind(ReportGeneratorToken).to(ReportGenerator).transient();
 // The tag on the binding slot is what the ancestor constraints check upstream.
 tenantContainer
   .bind(AnalyticsDashboardToken)
-  .to(AnalyticsDashboard)
   .whenTagged(TENANT_TAG.of("enterprise"))
   .whenTagged(TIER_TAG.of("paid"))
+  .to(AnalyticsDashboard)
   .singleton();
 
-tenantContainer.bind(AnalyticsDashboardToken).to(AnalyticsDashboard).whenTagged(TENANT_TAG.of("starter")).singleton();
+tenantContainer.bind(AnalyticsDashboardToken).whenTagged(TENANT_TAG.of("starter")).to(AnalyticsDashboard).singleton();
 
 step("Enterprise tenant");
 tenantContainer

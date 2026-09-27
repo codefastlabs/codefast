@@ -11,7 +11,6 @@ import * as fc from "fast-check";
 
 import type { Container } from "#container/container";
 import { Container as ContainerStatic } from "#container/container";
-import type { SlotConstrainedBuilder } from "#core/binding";
 import type { BindingTag, TagKey } from "#core/tag";
 import { tag } from "#core/tag";
 import type { Token } from "#core/token";
@@ -328,24 +327,21 @@ function bindGraph(container: Container, spec: GraphSpec, materials: GraphMateri
   spec.nodes.forEach((node, nodeIndex) => {
     const bindTarget = materials.tokens[node.token]!;
     const chain = container.bind(bindTarget);
-    const constrain = (builder: SlotConstrainedBuilder): void => {
-      for (const tagIndex of node.slotTags) {
-        builder.whenTagged(criterion(materials, tagIndex));
-      }
-      if (node.many) {
-        builder.many();
-      }
-      if (node.parentIs !== undefined) {
-        builder.when(whenParentIs(materials.tokens[node.parentIs]!));
-      }
-    };
+    for (const tagIndex of node.slotTags) {
+      chain.whenTagged(criterion(materials, tagIndex));
+    }
+    if (node.many) {
+      chain.many();
+    }
+    if (node.parentIs !== undefined) {
+      chain.when(whenParentIs(materials.tokens[node.parentIs]!));
+    }
     if (node.kind === "alias") {
-      constrain(chain.toAlias(materials.tokens[node.aliasTarget]!));
+      chain.toAlias(materials.tokens[node.aliasTarget]!);
       return;
     }
     if (node.kind === "constant") {
       const constant = chain.toConstantValue(materials.constants[nodeIndex]!);
-      constrain(constant);
       if (node.hook) {
         constant.onActivation((_ctx, instance) => instance);
       }
@@ -381,7 +377,6 @@ function bindGraph(container: Container, spec: GraphSpec, materials: GraphMateri
         );
         break;
     }
-    constrain(scoped);
     const withScope =
       node.scope === "singleton" ? scoped.singleton() : node.scope === "scoped" ? scoped.scoped() : scoped.transient();
     if (node.hook) {

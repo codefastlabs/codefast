@@ -48,8 +48,8 @@ describe("toMermaidGraph", () => {
       constructor(readonly validators: ReadonlyArray<string>) {}
     }
     const container = Container.create();
-    container.bind(validatorToken).toConstantValue("a").whenNamed("first");
-    container.bind(validatorToken).toConstantValue("b").whenNamed("second");
+    container.bind(validatorToken).whenNamed("first").toConstantValue("a");
+    container.bind(validatorToken).whenNamed("second").toConstantValue("b");
     container.bind(Composite).toSelf().singleton();
 
     const mermaid = toMermaidGraph(container.generateDependencyGraph());

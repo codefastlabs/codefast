@@ -67,14 +67,14 @@ describe("resolveOptionsForSlot", () => {
 
     const first = Container.create();
 
-    first.bind(driverToken).toConstantValue("first-primary").whenNamed("primary");
-    first.bind(driverToken).toConstantValue("first-backup").whenNamed("backup");
+    first.bind(driverToken).whenNamed("primary").toConstantValue("first-primary");
+    first.bind(driverToken).whenNamed("backup").toConstantValue("first-backup");
     first.bind(Root).toSelf().transient();
 
     const second = Container.create();
 
-    second.bind(driverToken).toConstantValue("second-primary").whenNamed("primary");
-    second.bind(driverToken).toConstantValue("second-backup").whenNamed("backup");
+    second.bind(driverToken).whenNamed("primary").toConstantValue("second-primary");
+    second.bind(driverToken).whenNamed("backup").toConstantValue("second-backup");
     second.bind(Root).toSelf().transient();
 
     expect(first.resolve(Root).driver).toBe("first-primary");
@@ -95,13 +95,13 @@ describe("resolveOptionsForSlot", () => {
 
     container
       .bind(driverToken)
-      .toConstantValue("primary-driver")
       .whenNamed("primary")
       .when((context) => {
         seen = context.currentResolveOptions;
 
         return true;
-      });
+      })
+      .toConstantValue("primary-driver");
     container.bind(Root).toSelf().transient();
 
     expect(container.resolve(Root).driver).toBe("primary-driver");

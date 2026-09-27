@@ -86,12 +86,12 @@ describe("lookup memo invalidation", () => {
     const container = Container.create();
     container
       .bind(childToken)
-      .toDynamic(() => "from-transient")
-      .when((ctx) => ctx.parent?.scope === "transient");
+      .when((ctx) => ctx.parent?.scope === "transient")
+      .toDynamic(() => "from-transient");
     container
       .bind(childToken)
-      .toDynamic(() => "from-singleton")
-      .when((ctx) => ctx.parent?.scope === "singleton");
+      .when((ctx) => ctx.parent?.scope === "singleton")
+      .toDynamic(() => "from-singleton");
     const parentChain = container.bind(parentToken).toDynamic((ctx) => ctx.resolve(childToken));
 
     expect(container.resolve(parentToken)).toBe("from-transient");
@@ -226,11 +226,11 @@ describe("resolved-kind plans and the named-lookup memo", () => {
     const configToken = token<number>("config");
     const container = Container.create();
     container.bind(configToken).toConstantValue(0);
-    container.bind(configToken).toConstantValue(1).whenNamed("slot");
+    container.bind(configToken).whenNamed("slot").toConstantValue(1);
     warm(() => container.resolve(configToken, { name: "slot" }));
     expect(container.resolve(configToken, { name: "slot" })).toBe(1);
 
-    container.bind(configToken).toConstantValue(2).whenNamed("slot");
+    container.bind(configToken).whenNamed("slot").toConstantValue(2);
     expect(container.resolve(configToken, { name: "slot" })).toBe(2);
     expect(container.resolve(configToken)).toBe(0);
   });
@@ -241,11 +241,11 @@ describe("resolved-kind plans and the named-lookup memo", () => {
     const container = Container.create();
     container
       .bind(serviceToken)
+      .whenNamed("main")
       .toDynamic(() => {
         factoryCalls += 1;
         return 7;
       })
-      .whenNamed("main")
       .singleton();
 
     warm(() => container.resolve(serviceToken, { name: "main" }));
@@ -256,11 +256,11 @@ describe("resolved-kind plans and the named-lookup memo", () => {
   it("a named binding resolved from a child observes a parent-level rebind", () => {
     const configToken = token<number>("config");
     const root = Container.create();
-    root.bind(configToken).toConstantValue(1).whenNamed("slot");
+    root.bind(configToken).whenNamed("slot").toConstantValue(1);
     const child = root.createChild();
     warm(() => child.resolve(configToken, { name: "slot" }));
 
-    root.bind(configToken).toConstantValue(9).whenNamed("slot");
+    root.bind(configToken).whenNamed("slot").toConstantValue(9);
     expect(child.resolve(configToken, { name: "slot" })).toBe(9);
   });
 });
@@ -273,12 +273,12 @@ describe("the tagged-lookup memo", () => {
     const configToken = token<number>("config");
     const container = Container.create();
     container.bind(configToken).toConstantValue(0);
-    container.bind(configToken).toConstantValue(1).whenTagged(Env.of("prod"));
+    container.bind(configToken).whenTagged(Env.of("prod")).toConstantValue(1);
     warm(() => container.resolve(configToken, { tags: [Env.of("prod")] }));
     expect(container.resolve(configToken, { tags: [Env.of("prod")] })).toBe(1);
     expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(1);
 
-    container.bind(configToken).toConstantValue(2).whenTagged(Env.of("prod"));
+    container.bind(configToken).whenTagged(Env.of("prod")).toConstantValue(2);
     expect(container.resolve(configToken, { tags: [Env.of("prod")] })).toBe(2);
     expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(2);
     expect(container.resolve(configToken)).toBe(0);
@@ -287,7 +287,7 @@ describe("the tagged-lookup memo", () => {
   it("unbind makes a warmed tagged token throw TokenNotBoundError", () => {
     const configToken = token<number>("config");
     const container = Container.create();
-    container.bind(configToken).toConstantValue(1).whenTagged(Env.of("prod"));
+    container.bind(configToken).whenTagged(Env.of("prod")).toConstantValue(1);
     warm(() => container.resolve(configToken, { tag: Env.of("prod") }));
 
     container.unbind(configToken);
@@ -300,11 +300,11 @@ describe("the tagged-lookup memo", () => {
     const container = Container.create();
     container
       .bind(serviceToken)
+      .whenTagged(Env.of("prod"))
       .toDynamic(() => {
         factoryCalls += 1;
         return 7;
       })
-      .whenTagged(Env.of("prod"))
       .singleton();
 
     warm(() => container.resolve(serviceToken, { tag: Env.of("prod") }));
@@ -315,11 +315,11 @@ describe("the tagged-lookup memo", () => {
   it("a tagged binding resolved from a child observes a parent-level rebind", () => {
     const configToken = token<number>("config");
     const root = Container.create();
-    root.bind(configToken).toConstantValue(1).whenTagged(Env.of("prod"));
+    root.bind(configToken).whenTagged(Env.of("prod")).toConstantValue(1);
     const child = root.createChild();
     warm(() => child.resolve(configToken, { tag: Env.of("prod") }));
 
-    root.bind(configToken).toConstantValue(9).whenTagged(Env.of("prod"));
+    root.bind(configToken).whenTagged(Env.of("prod")).toConstantValue(9);
     expect(child.resolve(configToken, { tag: Env.of("prod") })).toBe(9);
   });
 
@@ -329,9 +329,9 @@ describe("the tagged-lookup memo", () => {
     let admitted = true;
     container
       .bind(configToken)
-      .toConstantValue(1)
       .whenTagged(Env.of("prod"))
-      .when(() => admitted);
+      .when(() => admitted)
+      .toConstantValue(1);
     warm(() => container.resolve(configToken, { tag: Env.of("prod") }));
     expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(1);
 
@@ -342,7 +342,7 @@ describe("the tagged-lookup memo", () => {
   it("a container-level activation hook added after warming runs on the next resolve", () => {
     const configToken = token<number>("config");
     const container = Container.create();
-    container.bind(configToken).toConstantValue(1).whenTagged(Env.of("prod"));
+    container.bind(configToken).whenTagged(Env.of("prod")).toConstantValue(1);
     warm(() => container.resolve(configToken, { tag: Env.of("prod") }));
     expect(container.resolve(configToken, { tag: Env.of("prod") })).toBe(1);
 
@@ -353,8 +353,8 @@ describe("the tagged-lookup memo", () => {
   it("two criteria alternating on one child stay correct as the memo's map fills", () => {
     const configToken = token<number>("config");
     const root = Container.create();
-    root.bind(configToken).toConstantValue(1).whenTagged(Env.of("prod"));
-    root.bind(configToken).toConstantValue(2).whenTagged(Env.of("dev"));
+    root.bind(configToken).whenTagged(Env.of("prod")).toConstantValue(1);
+    root.bind(configToken).whenTagged(Env.of("dev")).toConstantValue(2);
     const child = root.createChild();
 
     for (let index = 0; index < WARM_ITERATIONS; index += 1) {
@@ -366,7 +366,7 @@ describe("the tagged-lookup memo", () => {
   it("a warmed +0 criterion does not answer a -0 request", () => {
     const configToken = token<number>("config");
     const container = Container.create();
-    container.bind(configToken).toConstantValue(1).whenTagged(Level.of(0));
+    container.bind(configToken).whenTagged(Level.of(0)).toConstantValue(1);
     warm(() => container.resolve(configToken, { tag: Level.of(0) }));
 
     expect(container.resolve(configToken, { tag: Level.of(0) })).toBe(1);
@@ -461,7 +461,7 @@ describe("a late binding hook is honored on lanes that memoize activation need",
     }
     const widgetToken = token<Widget>("late-hook-named-class");
     const container = Container.create();
-    const chain = container.bind(widgetToken).to(Widget).whenNamed("n").transient();
+    const chain = container.bind(widgetToken).whenNamed("n").to(Widget).transient();
     warm(() => container.resolve(widgetToken, { name: "n" }));
 
     chain.onActivation((_ctx, instance) => {
@@ -479,8 +479,8 @@ describe("a late binding hook is honored on lanes that memoize activation need",
     container.onActivation(unrelatedToken, (_ctx, instance) => instance);
     const chain = container
       .bind(serviceToken)
-      .toDynamic(() => ({}))
       .whenNamed("n")
+      .toDynamic(() => ({}))
       .transient();
     warm(() => container.resolve(serviceToken, { name: "n" }));
 

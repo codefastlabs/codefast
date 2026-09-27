@@ -48,15 +48,15 @@ export const infrastructureModule = Module.create("explicit-architecture-ecommer
   }
 
   // A gateway needs a config secret, so its instance is built here — one named slot per provider.
-  builder.bind(PaymentGatewayToken).toConstantValue(new StripePaymentGateway(config.stripeKey)).whenNamed("stripe");
+  builder.bind(PaymentGatewayToken).whenNamed("stripe").toConstantValue(new StripePaymentGateway(config.stripeKey));
   builder
     .bind(PaymentGatewayToken)
-    .toConstantValue(new PayPalPaymentGateway(config.paypalClientId))
-    .whenNamed("paypal");
+    .whenNamed("paypal")
+    .toConstantValue(new PayPalPaymentGateway(config.paypalClientId));
 
-  builder.bind(NotificationSenderToken).to(EmailNotificationSender).whenNamed("email").singleton();
-  builder.bind(NotificationSenderToken).to(SmsNotificationSender).whenNamed("sms").singleton();
-  builder.bind(NotificationSenderToken).to(DiscordNotificationSender).whenNamed("discord").singleton();
+  builder.bind(NotificationSenderToken).whenNamed("email").to(EmailNotificationSender).singleton();
+  builder.bind(NotificationSenderToken).whenNamed("sms").to(SmsNotificationSender).singleton();
+  builder.bind(NotificationSenderToken).whenNamed("discord").to(DiscordNotificationSender).singleton();
 
   builder
     .bind(RequestContextToken)

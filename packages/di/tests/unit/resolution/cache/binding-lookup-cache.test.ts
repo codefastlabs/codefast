@@ -28,7 +28,7 @@ describe("named lookup across the container chain", () => {
   it("resolves a named binding that only exists on the parent", () => {
     const driverToken = token<string>("chain-driver");
     const parent = Container.create();
-    parent.bind(driverToken).toConstantValue("parent-primary").whenNamed("primary");
+    parent.bind(driverToken).whenNamed("primary").toConstantValue("parent-primary");
     const child = parent.createChild();
 
     warm(() => child.resolve(driverToken, { name: "primary" }));
@@ -39,9 +39,9 @@ describe("named lookup across the container chain", () => {
   it("prefers the child's own named binding over the parent's", () => {
     const driverToken = token<string>("chain-driver-shadowed");
     const parent = Container.create();
-    parent.bind(driverToken).toConstantValue("parent").whenNamed("primary");
+    parent.bind(driverToken).whenNamed("primary").toConstantValue("parent");
     const child = parent.createChild();
-    child.bind(driverToken).toConstantValue("child").whenNamed("primary");
+    child.bind(driverToken).whenNamed("primary").toConstantValue("child");
 
     warm(() => child.resolve(driverToken, { name: "primary" }));
 
@@ -55,12 +55,12 @@ describe("named lookup across the container chain", () => {
     const container = Container.create();
     container
       .bind(driverToken)
-      .toConstantValue("guarded")
       .whenNamed("primary")
       .when((ctx: ConstraintContext) => {
         seen.push(ctx.resolutionPath.length);
         return true;
-      });
+      })
+      .toConstantValue("guarded");
 
     warm(() => container.resolve(driverToken, { name: "primary" }));
     seen.length = 0;
@@ -76,8 +76,8 @@ describe("named lookup across the container chain", () => {
     const container = Container.create();
     // An alias carries the resolve options through to its target, so the target needs the
     // same slot — which is exactly why the memo refuses to answer for a named alias.
-    container.bind(targetToken).toConstantValue("aliased").whenNamed("primary");
-    container.bind(aliasToken).toAlias(targetToken).whenNamed("primary");
+    container.bind(targetToken).whenNamed("primary").toConstantValue("aliased");
+    container.bind(aliasToken).whenNamed("primary").toAlias(targetToken);
 
     warm(() => container.resolve(aliasToken, { name: "primary" }));
 
@@ -87,13 +87,13 @@ describe("named lookup across the container chain", () => {
   it("invalidates the memo when the parent rebinds a name the child had warmed", () => {
     const driverToken = token<string>("chain-driver-rebound");
     const parent = Container.create();
-    parent.bind(driverToken).toConstantValue("before").whenNamed("primary");
+    parent.bind(driverToken).whenNamed("primary").toConstantValue("before");
     const child = parent.createChild();
 
     warm(() => child.resolve(driverToken, { name: "primary" }));
 
     parent.unbind(driverToken);
-    parent.bind(driverToken).toConstantValue("after").whenNamed("primary");
+    parent.bind(driverToken).whenNamed("primary").toConstantValue("after");
 
     expect(child.resolve(driverToken, { name: "primary" })).toBe("after");
   });

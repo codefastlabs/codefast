@@ -118,7 +118,7 @@ describe("async construction", () => {
       .toDynamicAsync(async () => Promise.resolve("here"))
       .singleton();
     container.bind(handlerToken).toConstantValue("a");
-    container.bind(handlerToken).toConstantValue("b").whenNamed("second");
+    container.bind(handlerToken).whenNamed("second").toConstantValue("b");
     container.bind(rootToken).to(Root).singleton();
 
     const root = await container.resolveAsync(rootToken);
@@ -157,8 +157,8 @@ describe("async construction", () => {
       .transient();
     container
       .bind(handlerToken)
-      .toDynamicAsync(async () => Promise.resolve("two"))
       .whenNamed("second")
+      .toDynamicAsync(async () => Promise.resolve("two"))
       .transient()
       .onActivation((_ctx, value) => value);
 
@@ -174,9 +174,9 @@ describe("slot selection", () => {
   function containerWithSlots(): ReturnType<typeof Container.create> {
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("default");
-    container.bind(serviceToken).toConstantValue("named").whenNamed("special");
-    container.bind(serviceToken).toConstantValue("prod").whenTagged(ENV_TAG.of("prod"));
-    container.bind(serviceToken).toConstantValue("dev").whenTagged(ENV_TAG.of("dev"));
+    container.bind(serviceToken).whenNamed("special").toConstantValue("named");
+    container.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("prod");
+    container.bind(serviceToken).whenTagged(ENV_TAG.of("dev")).toConstantValue("dev");
     return container;
   }
 
@@ -206,7 +206,7 @@ describe("slot selection", () => {
     // allowed to answer what the matcher refuses: tag values compare with `Object.is`.
     const numericToken = token<string>("slot-numeric-tag");
     const container = Container.create();
-    container.bind(numericToken).toConstantValue("zero").whenTagged(N_TAG.of(0));
+    container.bind(numericToken).whenTagged(N_TAG.of(0)).toConstantValue("zero");
 
     expect(container.resolve(numericToken, { tags: [N_TAG.of(0)] })).toBe("zero");
     expect(container.resolve(numericToken, { tag: N_TAG.of(0) })).toBe("zero");
@@ -220,7 +220,7 @@ describe("slot selection", () => {
   it("treats NaN tag values as equal to themselves, in both spellings", () => {
     const nanToken = token<string>("slot-nan-tag");
     const container = Container.create();
-    container.bind(nanToken).toConstantValue("nan").whenTagged(N_TAG.of(Number.NaN));
+    container.bind(nanToken).whenTagged(N_TAG.of(Number.NaN)).toConstantValue("nan");
 
     expect(container.resolve(nanToken, { tags: [N_TAG.of(Number.NaN)] })).toBe("nan");
     expect(container.resolve(nanToken, { tag: N_TAG.of(Number.NaN) })).toBe("nan");
@@ -233,9 +233,9 @@ describe("slot selection", () => {
     const container = Container.create();
     container
       .bind(serviceToken)
-      .toConstantValue("named")
       .whenNamed("special")
-      .when(() => false);
+      .when(() => false)
+      .toConstantValue("named");
 
     expect(container.resolveAll(serviceToken, { name: "special" })).toEqual([]);
     expect(container.resolveOptional(serviceToken, { name: "special" })).toBeUndefined();
@@ -243,7 +243,7 @@ describe("slot selection", () => {
 
   it("falls back to a parent container's named binding", () => {
     const parent = Container.create();
-    parent.bind(serviceToken).toConstantValue("parent-named").whenNamed("special");
+    parent.bind(serviceToken).whenNamed("special").toConstantValue("parent-named");
     const child = parent.createChild();
 
     expect(child.resolve(serviceToken, { name: "special" })).toBe("parent-named");
@@ -252,9 +252,9 @@ describe("slot selection", () => {
 
   it("prefers the child's own named binding over the parent's", () => {
     const parent = Container.create();
-    parent.bind(serviceToken).toConstantValue("parent-named").whenNamed("special");
+    parent.bind(serviceToken).whenNamed("special").toConstantValue("parent-named");
     const child = parent.createChild();
-    child.bind(serviceToken).toConstantValue("child-named").whenNamed("special");
+    child.bind(serviceToken).whenNamed("special").toConstantValue("child-named");
 
     expect(child.resolve(serviceToken, { name: "special" })).toBe("child-named");
   });
@@ -281,8 +281,8 @@ describe("sibling dependencies on the async interpreted lane", () => {
 
     const container = Container.create();
     container.bind(Leaf).toSelf().transient();
-    container.bind(pickToken).toConstantValue("under-root").when(whenParentIs(Root));
-    container.bind(pickToken).toConstantValue("under-leaf").when(whenParentIs(Leaf));
+    container.bind(pickToken).when(whenParentIs(Root)).toConstantValue("under-root");
+    container.bind(pickToken).when(whenParentIs(Leaf)).toConstantValue("under-leaf");
     container.bind(Root).toSelf().transient();
 
     // Options force the interpreted lane on both sides; the first sibling has already appended its
