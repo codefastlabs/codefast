@@ -65,4 +65,38 @@ describe("BenchmarkSection", () => {
     expect(screen.getByText(/The 3 losses stay published/)).toBeInTheDocument();
     expect(screen.getByText("September 6, 2026")).toBeInTheDocument();
   });
+
+  it("names the competitors the ledger lists in its lead", () => {
+    render(<BenchmarkSection ledger={ledger} />);
+
+    expect(
+      screen.getByText(/through @codefast\/di and inversify, awilix, and tsyringe, every library interleaved/),
+    ).toHaveTextContent(/The scoreboard here is lifted from that ledger/);
+  });
+
+  it("keeps to what it knows when the ledger reads as empty: no scoreboard, no claim about losses, the links", () => {
+    render(
+      <BenchmarkSection
+        ledger={{
+          libraries: [],
+          environment: "",
+          latestEntry: null,
+          lastFullRemeasure: null,
+          aggregateProfile: "",
+          aggregates: [],
+          losses: [],
+          lossesAnchor: "",
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByText(/through @codefast\/di and the libraries it is measured against, every library interleaved/),
+    ).not.toHaveTextContent(/scoreboard/);
+    expect(screen.queryByRole("table")).not.toBeInTheDocument();
+    expect(screen.queryByText(/No comparable row lost/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/last full re-measure/)).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Read the ledger" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Run it yourself" })).toBeInTheDocument();
+  });
 });

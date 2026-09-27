@@ -12,6 +12,8 @@ import { GITHUB_URL } from "#lib/nav-links";
 
 const LEDGER_URL = `${GITHUB_URL}/blob/main/benchmarks/di/RESULTS.md`;
 const GUIDE_URL = `${GITHUB_URL}/blob/main/benchmarks/di/BENCH_GUIDE.md`;
+// A fixed locale, so the server render and the client agree on the sentence.
+const LIBRARY_LIST = new Intl.ListFormat("en-US", { style: "long", type: "conjunction" });
 
 /** The ledger's `name version` for a competitor line, matched by name prefix; the line's own label otherwise. */
 function competitorLabel(ledger: LedgerFacts, competitor: string): string {
@@ -20,6 +22,21 @@ function competitorLabel(ledger: LedgerFacts, competitor: string): string {
   );
 
   return library ? `${library.name} ${library.version}` : competitor;
+}
+
+/** The section's lead: the competitors the ledger names, and the scoreboard only when there is one to show. */
+function suiteDescription(ledger: LedgerFacts): string {
+  const [, ...competitors] = ledger.libraries;
+  const cast =
+    competitors.length > 0
+      ? LIBRARY_LIST.format(competitors.map((library) => library.name))
+      : "the libraries it is measured against";
+  const scoreboard =
+    ledger.aggregates.length > 0
+      ? " The scoreboard here is lifted from that ledger at build time, losses included."
+      : "";
+
+  return `A first-party suite runs the same workloads through @codefast/di and ${cast}, every library interleaved so none of them rides the machine's drift. Its ledger records every figure beside the recipe that produced it and the machine it ran on, and the guide shows how to re-run any row.${scoreboard}`;
 }
 
 function trackLedgerClick(): void {
@@ -56,7 +73,7 @@ export function BenchmarkSection({ ledger, className, ...props }: BenchmarkSecti
                 the method attached.
               </>
             }
-            description="A first-party suite runs the same workloads through @codefast/di, InversifyJS, Awilix and tsyringe, every library interleaved so none of them rides the machine's drift. Its ledger records every figure beside the recipe that produced it and the machine it ran on, and the guide shows how to re-run any row. The scoreboard here is lifted from that ledger at build time, losses included."
+            description={suiteDescription(ledger)}
             className="reveal-up"
           />
           <div className="reveal-up flex flex-col gap-5 rounded-2xl border border-ui-border/60 bg-ui-card p-6 sm:p-8">
@@ -143,31 +160,31 @@ export function BenchmarkSection({ ledger, className, ...props }: BenchmarkSecti
                   A ratio is @codefast/di&rsquo;s throughput over the competitor&rsquo;s on the same row, so 2× means
                   twice the work in the same time.
                 </p>
+                <p className="text-sm leading-relaxed text-ui-muted">
+                  {lossCount === 0 ? (
+                    "No comparable row lost; parity and unreliable rows are marked in the ledger."
+                  ) : (
+                    <>
+                      {lossCount === 1 ? "The one loss" : `The ${lossCount} losses`}
+                      {ledger.losses.length > 0
+                        ? `: ${ledger.losses.map((loss) => `${loss.scenario} at ${loss.ratio}× of ${loss.competitor}`).join(", ")}, `
+                        : " "}
+                      stay published, with the reason, under{" "}
+                      <a
+                        href={ledger.lossesAnchor ? `${LEDGER_URL}#${ledger.lossesAnchor}` : LEDGER_URL}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={trackLedgerClick}
+                        className="text-ui-fg underline underline-offset-4 hover:text-ui-brand"
+                      >
+                        where it loses
+                      </a>
+                      .
+                    </>
+                  )}
+                </p>
               </>
             ) : null}
-            <p className="text-sm leading-relaxed text-ui-muted">
-              {lossCount === 0 ? (
-                "No comparable row lost; parity and unreliable rows are marked in the ledger."
-              ) : (
-                <>
-                  {lossCount === 1 ? "The one loss" : `The ${lossCount} losses`}
-                  {ledger.losses.length > 0
-                    ? `: ${ledger.losses.map((loss) => `${loss.scenario} at ${loss.ratio}× of ${loss.competitor}`).join(", ")}, `
-                    : " "}
-                  stay published, with the reason, under{" "}
-                  <a
-                    href={ledger.lossesAnchor ? `${LEDGER_URL}#${ledger.lossesAnchor}` : LEDGER_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={trackLedgerClick}
-                    className="text-ui-fg underline underline-offset-4 hover:text-ui-brand"
-                  >
-                    where it loses
-                  </a>
-                  .
-                </>
-              )}
-            </p>
             {ledger.environment || ledger.lastFullRemeasure ? (
               <p className="font-mono text-xs leading-relaxed text-ui-muted">
                 {ledger.environment}
