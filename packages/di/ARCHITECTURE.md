@@ -480,7 +480,10 @@ predicate reads the resolution path, so it is the runtime's to evaluate.
 **An inline cache in front of a map.** When a loop asks a map about the same key every iteration, a one-entry cache in
 front of the map turns a hash lookup into a pointer compare. `LifecycleManager.activationHandlersFor()` keeps one such
 token → hooks cache, invalidated by `registerActivation`, because a resolve loop asks about the same token every
-iteration.
+iteration. It keeps a second, class → `@postConstruct` / `@preDestroy` methods, because a teardown asks about the same
+class for every binding it deactivates. That one sits on the per-container manager and not on the reader: the default
+reader lives as long as the process, so a front there would keep the last class it read alive after everything else let
+go of it, where the manager's goes with its container.
 
 **`defaultEntry()` is the same shape one layer down.** `BindingLookupCache.defaultEntry()` is reached by exactly two
 cases the registry's direct index cannot serve: an **alias**, whose terminal the index cannot name, and a token owned by

@@ -440,10 +440,11 @@ class DefaultContainer implements Container {
       return;
     }
     const reader = this.#getMetadataReader();
+    const lifecycle = this.#lifecycle;
     let errors: Array<unknown> | undefined;
     for (let index = 0; index < pairs.length; index += 2) {
       try {
-        this.#lifecycle.runDeactivationSync(pairs[index] as Binding, pairs[index + 1], reader);
+        lifecycle.runDeactivationSync(pairs[index] as Binding, pairs[index + 1], reader);
       } catch (error) {
         (errors ??= []).push(error);
       }
@@ -458,10 +459,11 @@ class DefaultContainer implements Container {
       return;
     }
     const reader = this.#getMetadataReader();
+    const lifecycle = this.#lifecycle;
     let errors: Array<unknown> | undefined;
     for (let index = 0; index < pairs.length; index += 2) {
       try {
-        await this.#lifecycle.runDeactivation(pairs[index] as Binding, pairs[index + 1], reader);
+        await lifecycle.runDeactivation(pairs[index] as Binding, pairs[index + 1], reader);
       } catch (error) {
         (errors ??= []).push(error);
       }

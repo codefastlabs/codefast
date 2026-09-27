@@ -80,6 +80,38 @@ describe("deactivation on dispose", () => {
     expect(container.isDisposed).toBe(true);
   });
 
+  it("runs each class's own @preDestroy when a teardown alternates between classes", () => {
+    const events: Array<string> = [];
+    class Cache {
+      @preDestroy()
+      flush(): void {
+        events.push("cache.flush");
+      }
+    }
+    class Pool {
+      @preDestroy()
+      drain(): void {
+        events.push("pool.drain");
+      }
+    }
+    const firstCache = token<Cache>("cache-a");
+    const firstPool = token<Pool>("pool-a");
+    const secondCache = token<Cache>("cache-b");
+    const secondPool = token<Pool>("pool-b");
+    const container = Container.create();
+    container.bind(firstCache).to(Cache).singleton();
+    container.bind(firstPool).to(Pool).singleton();
+    container.bind(secondCache).to(Cache).singleton();
+    container.bind(secondPool).to(Pool).singleton();
+    container.resolve(firstCache);
+    container.resolve(firstPool);
+    container.resolve(secondCache);
+    container.resolve(secondPool);
+
+    container.unbindAll();
+    expect(events).toEqual(["cache.flush", "pool.drain", "cache.flush", "pool.drain"]);
+  });
+
   it("await using disposes the container and fires deactivation", async () => {
     const events: Array<string> = [];
     const serviceToken = token<string>("service");

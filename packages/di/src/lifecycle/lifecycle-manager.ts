@@ -11,7 +11,7 @@ import type {
   ResolutionContext,
 } from "#core/types";
 import { AsyncActivationError, AsyncDeactivationError, InvalidMetadataError } from "#errors/errors";
-import type { MetadataReader } from "#metadata/metadata-types";
+import type { LifecycleMetadata, MetadataReader } from "#metadata/metadata-types";
 
 /**
  * One container's registry of container-level activation and deactivation hooks, keyed by token.
@@ -29,6 +29,10 @@ export class LifecycleManager {
   // and registration is the only thing that can change the answer.
   #cachedToken: Token<unknown> | Constructor | undefined;
   #cachedHooks: Array<ActivationHandler<unknown>> | undefined;
+  // The class whose hooks were read last, and through which reader: a teardown walks many bindings of one class.
+  #lastLifecycleTarget: Constructor | undefined;
+  #lastLifecycleReader: MetadataReader | undefined;
+  #lastLifecycle: LifecycleMetadata | undefined;
 
   registerActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void {
     this.#activationVersion += 1;
@@ -100,7 +104,7 @@ export class LifecycleManager {
     let activatedInstance: Value = instance;
 
     // 1. @postConstruct() — after TC39 construction (constructor + accessor addInitializer callbacks)
-    for (const methodName of lifecycleMethods(binding, metadataReader, "postConstruct")) {
+    for (const methodName of this.#lifecycleMethods(binding, metadataReader, "postConstruct")) {
       const hookResult = callHook(activatedInstance, methodName);
       if (hookResult instanceof Promise) {
         await hookResult;
@@ -134,7 +138,7 @@ export class LifecycleManager {
     let activatedInstance: Value = instance;
 
     // 1. @postConstruct() — must be sync (instance fully constructed per TC39 order)
-    for (const methodName of lifecycleMethods(binding, metadataReader, "postConstruct")) {
+    for (const methodName of this.#lifecycleMethods(binding, metadataReader, "postConstruct")) {
       const hookResult = callHook(activatedInstance, methodName);
       if (hookResult instanceof Promise) {
         // The hook has already run; adopt its rejection so a failing async hook cannot become an
@@ -155,14 +159,13 @@ export class LifecycleManager {
     }
 
     // 3. container-level onActivation (must be sync)
-    const tokenDisplayName = tokenName(binding.token);
     const containerHooks = this.#activationHooks?.get(binding.token);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
         const activationResult = hook(resolutionContext, activatedInstance);
         if (activationResult instanceof Promise) {
           void activationResult.catch(() => {});
-          throw new AsyncActivationError(tokenDisplayName, "onActivation");
+          throw new AsyncActivationError(tokenName(binding.token), "onActivation");
         }
         activatedInstance = activationResult as Value;
       }
@@ -198,7 +201,7 @@ export class LifecycleManager {
     }
 
     // 3. @preDestroy() — all methods in declaration order
-    for (const methodName of lifecycleMethods(binding, metadataReader, "preDestroy")) {
+    for (const methodName of this.#lifecycleMethods(binding, metadataReader, "preDestroy")) {
       const hookResult = callHook(instance, methodName);
       if (hookResult instanceof Promise) {
         await hookResult;
@@ -207,7 +210,6 @@ export class LifecycleManager {
   }
 
   runDeactivationSync<Value>(binding: Binding<Value>, instance: Value, metadataReader: MetadataReader): void {
-    const tokenDisplayName = tokenName(binding.token);
     const tokenKey: DependencyKey = binding.token;
 
     // 1. container-level onDeactivation
@@ -219,7 +221,7 @@ export class LifecycleManager {
           // The hook has already run; adopt its rejection so a failing async hook cannot become an
           // unhandled rejection that ends the process, then report the sync-lane violation.
           void hookResult.catch(() => {});
-          throw new AsyncDeactivationError(tokenDisplayName);
+          throw new AsyncDeactivationError(tokenName(binding.token));
         }
       }
     }
@@ -229,18 +231,36 @@ export class LifecycleManager {
       const hookResult = binding.deactivationHook(instance);
       if (hookResult instanceof Promise) {
         void hookResult.catch(() => {});
-        throw new AsyncDeactivationError(tokenDisplayName);
+        throw new AsyncDeactivationError(tokenName(binding.token));
       }
     }
 
     // 3. @preDestroy()
-    for (const methodName of lifecycleMethods(binding, metadataReader, "preDestroy")) {
+    for (const methodName of this.#lifecycleMethods(binding, metadataReader, "preDestroy")) {
       const hookResult = callHook(instance, methodName);
       if (hookResult instanceof Promise) {
         void hookResult.catch(() => {});
-        throw new AsyncDeactivationError(tokenDisplayName);
+        throw new AsyncDeactivationError(tokenName(binding.token));
       }
     }
+  }
+
+  /** The `@postConstruct` / `@preDestroy` methods a binding declares — only a class can declare any. */
+  #lifecycleMethods(
+    binding: Binding,
+    metadataReader: MetadataReader,
+    phase: "postConstruct" | "preDestroy",
+  ): ReadonlyArray<string> {
+    if (binding.kind !== "class") {
+      return NO_METHODS;
+    }
+    const target = binding.target;
+    if (target !== this.#lastLifecycleTarget || metadataReader !== this.#lastLifecycleReader) {
+      this.#lastLifecycle = metadataReader.getLifecycleMetadata(target);
+      this.#lastLifecycleTarget = target;
+      this.#lastLifecycleReader = metadataReader;
+    }
+    return this.#lastLifecycle?.[phase] ?? NO_METHODS;
   }
 
   /** Whether the deferred activation-hook table has had to be built. */
@@ -250,18 +270,6 @@ export class LifecycleManager {
 }
 
 const NO_METHODS: ReadonlyArray<string> = [];
-
-/** The `@postConstruct` / `@preDestroy` methods a binding declares — only a class can declare any. */
-function lifecycleMethods<Value>(
-  binding: Binding<Value>,
-  metadataReader: MetadataReader,
-  phase: "postConstruct" | "preDestroy",
-): ReadonlyArray<string> {
-  if (binding.kind !== "class") {
-    return NO_METHODS;
-  }
-  return metadataReader.getLifecycleMetadata(binding.target)?.[phase] ?? NO_METHODS;
-}
 
 /**
  * Invokes a lifecycle hook by name.
