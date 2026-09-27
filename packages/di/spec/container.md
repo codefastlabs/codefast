@@ -369,8 +369,10 @@ const handler = req.container.resolve(UserController);
 > **Normative.** A container has an `isDisposed` state, exposed as a readonly property. After `dispose()` is called:
 >
 > - Every mutation (`bind`, `unbind`, `rebind`, `load`, `unload`) throws `DisposedContainerError`.
-> - Resolution operations (`resolve*`, `has*`, `inspect`) throw `DisposedContainerError` too. `resolveAsync` guards
->   synchronously at the entry, so a disposed container refuses it with a throw rather than a rejected promise.
+> - Resolution operations (`resolve*`, `has*`, `inspect`) are refused with `DisposedContainerError` too.
+> - A method that returns a promise — `resolveAsync`, `resolveOptionalAsync`, `resolveAllAsync`, `loadAsync`,
+>   `unloadAsync`, `unbindAsync`, `unbindAllAsync`, `initializeAsync` — refuses with a promise rejected with
+>   `DisposedContainerError`, never a synchronous throw, so `.catch()` and `Promise.allSettled` observe the refusal.
 > - `dispose()` is idempotent: calling it again is a no-op — no throw, no double-deactivation. This holds for a child
 >   whose ancestor is already disposed, so an `await using` child still tears down cleanly at scope exit.
 > - A descendant of a disposed container is disposed too — it reports `isDisposed` and refuses the same operations,
@@ -384,6 +386,7 @@ await container.dispose();
 
 container.resolve(Logger); // throws DisposedContainerError
 container.bind(Logger).toSelf(); // throws DisposedContainerError
+await container.resolveAsync(Logger); // rejects with DisposedContainerError
 
 // Idempotent: calling dispose() again is a no-op
 await container.dispose(); // safe — no throw, no double-deactivation

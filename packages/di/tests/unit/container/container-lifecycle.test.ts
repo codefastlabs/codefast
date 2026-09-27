@@ -583,3 +583,61 @@ describe("disposed container", () => {
     await expect(container.dispose()).resolves.toBeUndefined();
   });
 });
+
+describe("disposed container, async methods", () => {
+  const serviceToken = token<string>("disposed-async-guard");
+  const loadedModule = Module.create("disposed-async-module", (builder) => {
+    builder.bind(token<string>("disposed-async-module-value")).toConstantValue("module");
+  });
+  const asyncMethods: ReadonlyArray<readonly [string, (container: Container) => Promise<unknown>]> = [
+    ["resolveAsync", (container) => container.resolveAsync(serviceToken)],
+    ["resolveAsync with options", (container) => container.resolveAsync(serviceToken, {})],
+    ["resolveOptionalAsync", (container) => container.resolveOptionalAsync(serviceToken)],
+    ["resolveAllAsync", (container) => container.resolveAllAsync(serviceToken)],
+    ["resolveAllAsync with options", (container) => container.resolveAllAsync(serviceToken, {})],
+    ["loadAsync", (container) => container.loadAsync(loadedModule)],
+    ["unloadAsync", (container) => container.unloadAsync(loadedModule)],
+    ["unbindAsync", (container) => container.unbindAsync(serviceToken)],
+    ["unbindAllAsync", (container) => container.unbindAllAsync()],
+    ["initializeAsync", (container) => container.initializeAsync()],
+  ];
+
+  // Each call is made outside `expect`, so a synchronous throw fails the test rather than counting as the refusal.
+  it.each(asyncMethods)("%s rejects on a disposed container instead of throwing", async (_method, call) => {
+    const container = Container.create();
+    container.bind(serviceToken).toConstantValue("value");
+    await container.dispose();
+
+    const pending = call(container);
+
+    expect(pending).toBeInstanceOf(Promise);
+    await expect(pending).rejects.toBeInstanceOf(DisposedContainerError);
+  });
+
+  it.each(asyncMethods)("%s rejects on a child whose parent was disposed", async (_method, call) => {
+    const parent = Container.create();
+    parent.bind(serviceToken).toConstantValue("value");
+    const child = parent.createChild();
+    await parent.dispose();
+
+    const pending = call(child);
+
+    expect(pending).toBeInstanceOf(Promise);
+    await expect(pending).rejects.toBeInstanceOf(DisposedContainerError);
+  });
+
+  it("settles alongside live requests under Promise.allSettled", async () => {
+    const live = Container.create();
+    live.bind(serviceToken).toConstantValue("value");
+    const disposed = Container.create();
+    await disposed.dispose();
+
+    const [served, refused] = await Promise.allSettled([
+      live.resolveAsync(serviceToken),
+      disposed.resolveAsync(serviceToken),
+    ]);
+
+    expect(served).toEqual({ status: "fulfilled", value: "value" });
+    expect(refused).toEqual({ status: "rejected", reason: expect.any(DisposedContainerError) });
+  });
+});

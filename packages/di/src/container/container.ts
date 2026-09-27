@@ -807,7 +807,12 @@ class DefaultContainer implements Container {
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<Value> {
-    this.#assertNotDisposed();
+    // Not `async`: the guard's throw becomes the rejection this method promises.
+    try {
+      this.#assertNotDisposed();
+    } catch (disposedError) {
+      return Promise.reject(disposedError);
+    }
     if (options === undefined) {
       return this.#resolver.resolveAsyncFromRoot(token) as Promise<Value>;
     }
@@ -829,7 +834,11 @@ class DefaultContainer implements Container {
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<Value | undefined> {
-    this.#assertNotDisposed();
+    try {
+      this.#assertNotDisposed();
+    } catch (disposedError) {
+      return Promise.reject(disposedError);
+    }
     return this.#resolver.resolveOptionalAsync(token, options, [], ROOT_BRANCH);
   }
 
@@ -851,7 +860,11 @@ class DefaultContainer implements Container {
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<ReadonlyArray<Value>> {
-    this.#assertNotDisposed();
+    try {
+      this.#assertNotDisposed();
+    } catch (disposedError) {
+      return Promise.reject(disposedError);
+    }
     if (options === undefined) {
       return this.#resolver.resolveRootCollectionAsync(token);
     }

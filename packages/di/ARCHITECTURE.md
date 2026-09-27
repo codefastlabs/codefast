@@ -1025,6 +1025,11 @@ and the rule that a disposed ancestor refuses its descendants stays whole. The o
 root lanes were measured without the cost. The price moves to creation: every container carries one more field, and a
 child that is created and dropped at once is slower, while one that is used is not.
 
+The async resolve entry points turn the guard's throw into a rejection without changing the guard. `resolveAsync`,
+`resolveOptionalAsync` and `resolveAllAsync` are not `async`, which would cost every resolve a promise and a tick, so
+each calls the shared guard inside a `try` and returns its throw through `Promise.reject`, leaving the resolver call
+outside the `try`. The container's other async methods are `async` already and convert their own throw.
+
 ### Upserts: eager or computed, by hit rate
 
 The package's own upsert helpers in [`core/map-upsert.ts`](src/core/map-upsert.ts) come in two forms. `getOrInsert`
