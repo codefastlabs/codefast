@@ -1,4 +1,4 @@
-import type { ReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
+import type { ReactFlowGraph } from "@codefast/di";
 import { Badge } from "@codefast/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import { Label } from "@codefast/ui/label";

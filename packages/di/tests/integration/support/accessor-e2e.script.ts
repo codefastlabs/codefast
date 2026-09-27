@@ -11,7 +11,7 @@ import { Container } from "#container/container";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { postConstruct } from "#decorators/lifecycle-decorators";
+import { postConstruct } from "#decorators/lifecycle";
 
 const AccessorDepToken = token<{ tag: "dep" }>("accessor-e2e.dep");
 const container = Container.create();

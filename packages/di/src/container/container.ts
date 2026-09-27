@@ -1,8 +1,8 @@
-import type { BindingRegistration } from "#container/binding-builders";
-import { BindingChain } from "#container/binding-builders";
-import type { Binding, BindingBuilder, BindToBuilder, ConstantBinding } from "#core/binding";
-import { NO_INSTANCE } from "#core/binding";
-import { effectiveBindingScope } from "#core/binding-scope";
+import type { BindingRegistration } from "#container/binding-chain";
+import { BindingChain } from "#container/binding-chain";
+import type { Binding, ConstantBinding } from "#core/binding";
+import { effectiveBindingScope, NO_INSTANCE } from "#core/binding";
+import type { BindingBuilder, BindToBuilder } from "#core/binding-builders";
 import type { ConstraintRequirement } from "#core/constraint-requirement";
 import { constraintRequirementsOf } from "#core/constraint-requirement";
 import { getOrInsert, getOrInsertComputed } from "#core/map-upsert";
@@ -21,8 +21,6 @@ import type {
   ResolveOptions,
 } from "#core/types";
 import type { AutoRegisterRegistry } from "#decorators/injectable";
-import type { ResolutionDiagnostics } from "#errors/diagnostics";
-import { RESOLUTION_DIAGNOSTICS } from "#errors/diagnostics";
 import {
   AsyncModuleLoadError,
   CircularDependencyError,
@@ -33,22 +31,24 @@ import {
   SyncDisposalNotSupportedError,
   UnreachableConstraintError,
   UnreachableLifecycleHookError,
-} from "#errors/errors";
-import type { DependencySlot } from "#injection/resolve-options";
-import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#injection/resolve-options";
+} from "#errors";
+import type { DependencySlot } from "#injection/dependency-slot";
+import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#injection/dependency-slot";
 import type { ContainerGraphJson, GraphOptions } from "#introspection/dependency-graph";
 import { buildDependencyGraph } from "#introspection/dependency-graph";
+import type { ResolutionDiagnostics } from "#introspection/diagnostics";
+import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
 import type { ExplainOptions, ResolutionExplanation } from "#introspection/explanation";
 import { explainRequest } from "#introspection/explanation";
 import type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";
 import { Inspector } from "#introspection/inspector";
-import { LifecycleManager } from "#lifecycle/lifecycle-manager";
-import { ScopeManager } from "#lifecycle/scope-manager";
-import { MetadataReaderToken } from "#metadata/metadata-reader-token";
-import type { MetadataReader } from "#metadata/metadata-types";
-import { defaultMetadataReader } from "#metadata/symbol-metadata-reader";
-import { verifyingMetadataReader } from "#metadata/verifying-metadata-reader";
-import { ROOT_BRANCH } from "#resolution/path/resolution-path";
+import { LifecycleManager } from "#lifecycle/hooks";
+import { ScopeManager } from "#lifecycle/scopes";
+import { MetadataReaderToken } from "#metadata/reader-token";
+import { defaultMetadataReader } from "#metadata/symbol-reader";
+import type { MetadataReader } from "#metadata/types";
+import { verifyingMetadataReader } from "#metadata/verifying-reader";
+import { ROOT_BRANCH } from "#resolution/path";
 import { DependencyResolver } from "#resolution/resolver";
 
 /** Whether a requirement's name is declared — on its token when it names one, on any token otherwise. */

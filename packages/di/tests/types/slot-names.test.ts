@@ -5,7 +5,7 @@ import type { SlotNamesOf, Token } from "#core/token";
 import { token } from "#core/token";
 import type { ResolveOptions } from "#core/types";
 import { inject } from "#decorators/inject";
-import { NoMatchingBindingError } from "#errors/errors";
+import { NoMatchingBindingError } from "#errors";
 import type { InjectOptions } from "#injection/descriptor";
 import { injectAll, optional } from "#injection/descriptor";
 import { whenAnyAncestorNamed, whenParentNamed } from "#resolution/select/constraints";

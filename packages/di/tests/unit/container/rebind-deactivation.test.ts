@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
-import { AsyncDeactivationError, TokenNotBoundError } from "#errors/errors";
+import { AsyncDeactivationError, TokenNotBoundError } from "#errors";
 
 /** A container whose `service` singleton is cached and owes an async `onDeactivation`. */
 function containerOwingAsyncDeactivation(withNamedSibling: boolean): {

@@ -35,7 +35,7 @@ export type {
   SingletonLifecycleBuilder,
   SlotConstrainedBuilder,
   TransientBindingBuilder,
-} from "#core/binding";
+} from "#core/binding-builders";
 
 // Container
 export { Container } from "#container/container";
@@ -43,7 +43,7 @@ export type { Container as ContainerInterface, ContainerOptions, ContainerStatic
 
 // Ambient container — the context an `@inject` accessor initializer resolves from. `resolution/context`
 // stays internal: it hands out resolver callbacks, not public values.
-export { getActiveContainer, runWithContainer } from "#ambient/active-container";
+export { getActiveContainer, runWithContainer } from "#ambient-container";
 
 // `effectiveBindingScope` is deliberately absent: it reads a `Binding`, which is internal, and no
 // public API hands one out. `BindingSnapshot.scope` and `GraphNode.scope` are the public answers.
@@ -51,8 +51,8 @@ export {
   bindingSlotToResolveOptions,
   injectionSlotToResolveOptions,
   resolveOptionsForSlot,
-} from "#injection/resolve-options";
-export type { DependencySlot } from "#injection/resolve-options";
+} from "#injection/dependency-slot";
+export type { DependencySlot } from "#injection/dependency-slot";
 
 // Introspection types
 export type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";
@@ -65,7 +65,7 @@ export type {
   ResolutionExplanation,
   SelectionRule,
 } from "#introspection/explanation";
-export type { CandidateRule } from "#resolution/select/binding-select";
+export type { CandidateRule } from "#resolution/select/candidates";
 
 // Graph types
 export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#introspection/dependency-graph";
@@ -82,22 +82,22 @@ export { injectAll, isInjectionDescriptor, optional } from "#injection/descripto
 export type { InjectionDescriptor, InjectOptions } from "#injection/descriptor";
 export { injectable } from "#decorators/injectable";
 export type { InjectableDependency, InjectableOptions } from "#decorators/injectable";
-export { postConstruct, preDestroy } from "#decorators/lifecycle-decorators";
+export { postConstruct, preDestroy } from "#decorators/lifecycle";
 
 // Auto-register
 export { createAutoRegisterRegistry } from "#decorators/injectable";
 export type { AutoRegisterRegistry } from "#decorators/injectable";
 
 // MetadataReader — everything a consumer needs to write one and pass it to Container.create()
-export { MetadataReaderToken } from "#metadata/metadata-reader-token";
+export { MetadataReaderToken } from "#metadata/reader-token";
 export type {
   ConstructorMetadata,
   LifecycleMetadata,
   MetadataReader,
   MutableLifecycleMetadata,
   ParamMetadata,
-} from "#metadata/metadata-types";
-export { defaultMetadataReader, SymbolMetadataReader } from "#metadata/symbol-metadata-reader";
+} from "#metadata/types";
+export { defaultMetadataReader, SymbolMetadataReader } from "#metadata/symbol-reader";
 
 // Constraints — contextual injection predicates for .when()
 export {
@@ -144,8 +144,8 @@ export {
   TokenNotBoundError,
   UnreachableConstraintError,
   UnreachableLifecycleHookError,
-} from "#errors/errors";
-export type { ScopeViolationDetails } from "#errors/errors";
+} from "#errors";
+export type { ScopeViolationDetails } from "#errors";
 
 // Graph adapters — render `generateDependencyGraph()` output for common viewers
 export { toDotGraph } from "#introspection/graph-adapters/dot";

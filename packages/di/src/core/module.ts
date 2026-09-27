@@ -1,4 +1,4 @@
-import type { BindToBuilder } from "#core/binding";
+import type { BindToBuilder } from "#core/binding-builders";
 import type { BindingDeclaration, DeclaredBinding } from "#core/binding-declaration";
 import { asDeclaredBinding } from "#core/binding-declaration";
 import type { Token } from "#core/token";

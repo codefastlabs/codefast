@@ -10,7 +10,7 @@ import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { CircularDependencyError } from "#errors/errors";
+import { CircularDependencyError } from "#errors";
 
 const KIND_TAG = tag("kind");
 

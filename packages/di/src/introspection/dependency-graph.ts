@@ -1,15 +1,14 @@
 import type { Binding } from "#core/binding";
-import { stringifyTagValue } from "#core/binding";
-import { effectiveBindingScope } from "#core/binding-scope";
+import { effectiveBindingScope, stringifyTagValue } from "#core/binding";
 import type { BindingRegistry } from "#core/registry";
 import { slotName } from "#core/tag";
 import type { Token } from "#core/token";
 import { tokenName } from "#core/token";
 import type { BindingKind, BindingScope, Constructor } from "#core/types";
-import type { DependencySlot } from "#injection/resolve-options";
-import { bindingSlotToResolveOptions } from "#injection/resolve-options";
-import type { MetadataReader } from "#metadata/metadata-types";
-import { matchesSlot } from "#resolution/select/binding-select";
+import type { DependencySlot } from "#injection/dependency-slot";
+import { bindingSlotToResolveOptions } from "#injection/dependency-slot";
+import type { MetadataReader } from "#metadata/types";
+import { matchesSlot } from "#resolution/select/candidates";
 
 // ── Types ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 

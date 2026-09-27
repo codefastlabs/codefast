@@ -8,8 +8,8 @@ import { describe, expect, it } from "vitest";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { postConstruct, preDestroy } from "#decorators/lifecycle-decorators";
-import { MissingDecoratorMetadataError } from "#errors/errors";
+import { postConstruct, preDestroy } from "#decorators/lifecycle";
+import { MissingDecoratorMetadataError } from "#errors";
 
 const logger = token<string>("mdm:Logger");
 

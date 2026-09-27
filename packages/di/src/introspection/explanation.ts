@@ -13,13 +13,13 @@ import {
   InternalError,
   NoMatchingBindingError,
   TokenNotBoundError,
-} from "#errors/errors";
+} from "#errors";
 import type { BindingSnapshot } from "#introspection/inspector";
 import { snapshotOf } from "#introspection/inspector";
 import { DefaultConstraintContext } from "#resolution/context";
-import { buildResolutionFrame } from "#resolution/path/resolution-path";
-import type { CandidateRule } from "#resolution/select/binding-select";
-import { candidateRuleOf, chooseCandidate, matchesSlot } from "#resolution/select/binding-select";
+import { buildResolutionFrame } from "#resolution/path";
+import type { CandidateRule } from "#resolution/select/candidates";
+import { candidateRuleOf, chooseCandidate, matchesSlot } from "#resolution/select/candidates";
 
 // ── Public types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

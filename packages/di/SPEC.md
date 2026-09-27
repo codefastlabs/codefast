@@ -384,7 +384,7 @@ one into the [`ResolveOptions`](#resolveoptions) that asks for them, omitting a 
 `undefined`, and answering `undefined` when the slot states no criteria. The binding side has its own converter
 ([Resolving what a snapshot points at](#resolving-what-a-snapshot-points-at)).
 
-> **Exact shape:** `src/injection/resolve-options.ts` — `DependencySlot`.
+> **Exact shape:** `src/injection/dependency-slot.ts` — `DependencySlot`.
 
 ### `TokenValue`
 
@@ -760,7 +760,7 @@ How to read the rows:
 - **`transient()` and `scoped()`** have no `onDeactivation` because those two scopes have no deactivation
   ([`ActivationHandler` and `DeactivationHandler`](#activationhandler-and-deactivationhandler)).
 
-> **Exact shape:** `src/core/binding.ts` — `BindToBuilder`, `SlotConstrainedBuilder`, `BindingBuilder`,
+> **Exact shape:** `src/core/binding-builders.ts` — `BindToBuilder`, `SlotConstrainedBuilder`, `BindingBuilder`,
 > `ConstantBindingBuilder`, `AliasBindingBuilder`, `SingletonBindingBuilder`, `TransientBindingBuilder`,
 > `ScopedBindingBuilder`, `SingletonLifecycleBuilder`.
 
@@ -2019,7 +2019,7 @@ If a reader omits `getAccessorMetadata`, no class ever gets a container context 
 injection throws `MissingContainerContextError` unless the caller opens one with `runWithContainer`
 ([Property injection](#property-injection-through-the-accessor-field-decorator)).
 
-> **Exact shape:** `src/metadata/metadata-types.ts` — `MetadataReader`, `ConstructorMetadata`, `ParamMetadata`,
+> **Exact shape:** `src/metadata/types.ts` — `MetadataReader`, `ConstructorMetadata`, `ParamMetadata`,
 > `LifecycleMetadata`.
 
 #### Installing your own reader
@@ -2150,7 +2150,7 @@ const instance = runWithContainer(container, () => new Dashboard());
 >   is rejected by the return type (it resolves to `never`).
 > - `getActiveContainer()` reads the currently active container, returning `undefined` when no context is open.
 
-> **Exact shape:** `src/ambient/active-container.ts`.
+> **Exact shape:** `src/ambient-container.ts`.
 
 The container opens that context itself around every `new` it performs for a class with accessor injection, so a resolve
 needs no `runWithContainer` at the call site — only a hand-built instance does.
@@ -2894,7 +2894,7 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | `EmptyTagCriteriaError`          | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                                | `helperName`                                                   |
 | `UnreachableConstraintError`     | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares                | `tokenName`, `requiredName`, `requiredTokenName`, `helperName` |
 
-> **Exact shape:** `src/errors/errors.ts` — every class above, plus `ScopeViolationDetails`.
+> **Exact shape:** `src/errors.ts` — every class above, plus `ScopeViolationDetails`.
 
 A message names what went wrong and, where the library can know it, the way out — every misuse error does; a few report
 a state rather than a remedy (`CircularDependencyError` names the cycle, `ScopeViolationError` the path,
@@ -2981,18 +2981,18 @@ sits:
 
 > **Normative — a subpath mirrors the source layout, and that layout is not frozen.** Every module is also published at
 > a subpath derived from the built output, so `@codefast/di/core/token`, `@codefast/di/container/container` and the rest
-> resolve to the same modules the root re-exports. The introspection group is flattened: `@codefast/di/inspector`,
-> `@codefast/di/dependency-graph`, and `@codefast/di/graph-adapters/{dot,mermaid,cytoscape,reactflow}`. Because the map
-> follows the source tree, moving a module renames its specifier — import from the root unless you are deliberately
-> trimming a bundle.
+> resolve to the same modules the root re-exports, the introspection group with them
+> (`@codefast/di/introspection/inspector`, `@codefast/di/introspection/dependency-graph`,
+> `@codefast/di/introspection/graph-adapters/{dot,mermaid,cytoscape,reactflow}`). Because the map follows the source
+> tree, moving a module renames its specifier — import from the root unless you are deliberately trimming a bundle.
 
 Because every module is published, most subpaths also carry names the root does not re-export: the engine's
 collaborators (`DependencyResolver`, `BindingRegistry`, `ScopeManager`, the plan compiler, `Inspector`,
 `buildDependencyGraph`, …) and the helpers they share. Those are implementation surface, not contract — nothing in this
 document promises their shape, and they change with the source.
 
-One of them is a deliberate channel: **`@codefast/di/errors/diagnostics`** exports `RESOLUTION_DIAGNOSTICS`, the symbol
-a container answers to with its runtime counters — `generatedPlanCount` among them
+One of them is a deliberate channel: **`@codefast/di/introspection/diagnostics`** exports `RESOLUTION_DIAGNOSTICS`, the
+symbol a container answers to with its runtime counters — `generatedPlanCount` among them
 ([Code generation and Content Security Policy](#code-generation-and-content-security-policy)). It is a diagnostic
 channel, not part of the resolution contract: a counter may be added or renamed without a rule above changing.
 

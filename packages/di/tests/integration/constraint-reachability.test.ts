@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { slotName, tag } from "#core/tag";
 import { token } from "#core/token";
-import { EmptyTagCriteriaError, UnreachableConstraintError } from "#errors/errors";
+import { EmptyTagCriteriaError, UnreachableConstraintError } from "#errors";
 import {
   whenAnyAncestorNamed,
   whenAnyAncestorTagged,

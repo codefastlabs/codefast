@@ -17,7 +17,7 @@ import type {
   DeactivationHandler,
   ResolutionContext,
 } from "#core/types";
-import { InvalidBindingDeclarationError, ManyBindingSlotError, SelfBindingRequiresClassError } from "#errors/errors";
+import { InvalidBindingDeclarationError, ManyBindingSlotError, SelfBindingRequiresClassError } from "#errors";
 import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#injection/descriptor";
 import { normalizeToDescriptor } from "#injection/descriptor";
 

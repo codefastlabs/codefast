@@ -477,19 +477,20 @@ Every error extends `DiError` and carries a stable `code`, so you can branch on 
 
 The full taxonomy — including `MissingMetadataError`, `InvalidMetadataError`, `RebindUnboundTokenError`,
 `AsyncModuleLoadError`, `InvalidBindingDeclarationError`, and the rest — is exported from the root entry and from
-`@codefast/di/errors/errors`.
+`@codefast/di/errors`.
 
 ## Subpath exports
 
 Prefer the root entry: it re-exports the whole public API. Reach for a subpath only to trim a bundle, or to pull in
 something the root doesn't surface.
 
-Every module is also published as a subpath that mirrors the source layout: the model under `@codefast/di/core/*`
-(`core/token`, `core/tag`, `core/module`, …), errors under `errors/*`, the runtime under `container/*`, `injection/*`,
-`lifecycle/*`, and `resolution/*` (for example `@codefast/di/resolution/select/constraints`), and decorators and
-metadata under `decorators/*` and `metadata/*`. Introspection ships at flat specifiers: `@codefast/di/inspector`,
-`@codefast/di/explanation`, `@codefast/di/dependency-graph`, and
-`@codefast/di/graph-adapters/{dot,mermaid,cytoscape,reactflow}`.
+Every module is also published as a subpath that is its source path, with no exception: the model under
+`@codefast/di/core/*` (`core/token`, `core/tag`, `core/module`, …), the error taxonomy at `@codefast/di/errors`, the
+runtime under `container/*`, `injection/*`, `lifecycle/*`, and `resolution/*` (for example
+`@codefast/di/resolution/select/constraints`), decorators and metadata under `decorators/*` and `metadata/*`, and
+introspection under `introspection/*`: `@codefast/di/introspection/inspector`, `@codefast/di/introspection/explanation`,
+`@codefast/di/introspection/dependency-graph`, and
+`@codefast/di/introspection/graph-adapters/{dot,mermaid,cytoscape,reactflow}`.
 
 ## Benchmarks
 

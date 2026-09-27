@@ -2,7 +2,7 @@
 
 import type { Constructor, Container, DependencyKey, InjectOptions, MetadataReader } from "@codefast/di";
 import { defaultMetadataReader } from "@codefast/di";
-import { verifyingMetadataReader } from "@codefast/di/metadata/verifying-metadata-reader";
+import { verifyingMetadataReader } from "@codefast/di/metadata/verifying-reader";
 
 import type { BoundMock, SlotCriteria, SlottedOverride } from "#discovery/mock-binder";
 import { criteriaEquals, normalizeCriteria } from "#discovery/mock-binder";

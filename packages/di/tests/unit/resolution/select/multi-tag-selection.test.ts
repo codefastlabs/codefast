@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
-import { AmbiguousBindingError } from "#errors/errors";
+import { AmbiguousBindingError } from "#errors";
 
 const ENV = tag<string>("mt-select-env");
 const TIER = tag<string>("mt-select-tier");

@@ -2,7 +2,7 @@
  * A real binding for a test that drives an engine part directly, made at the one site every binding
  * is: the chain `bind()` returns, registered by its `to*()` step.
  */
-import type { BindingChain } from "#container/binding-builders";
+import type { BindingChain } from "#container/binding-chain";
 import { Container } from "#container/container";
 import type { Binding } from "#core/binding";
 import { token } from "#core/token";

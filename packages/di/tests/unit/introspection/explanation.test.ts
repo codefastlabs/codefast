@@ -13,7 +13,7 @@ import {
   DisposedContainerError,
   NoMatchingBindingError,
   TokenNotBoundError,
-} from "#errors/errors";
+} from "#errors";
 import { whenParentIs } from "#resolution/select/constraints";
 
 const REGION = tag("explain:region");

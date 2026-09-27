@@ -6,7 +6,7 @@ import type { BindingDeclaration } from "#core/binding-declaration";
 import { Module } from "#core/module";
 import type { SyncModule } from "#core/module";
 import { token } from "#core/token";
-import { InvalidBindingDeclarationError } from "#errors/errors";
+import { InvalidBindingDeclarationError } from "#errors";
 
 const Port = token<number>("module-unit:Port");
 

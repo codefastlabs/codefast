@@ -1,4 +1,4 @@
-import type { ReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
+import type { ReactFlowGraph } from "@codefast/di";
 
 type GraphNodes = ReactFlowGraph["nodes"];
 type GraphEdges = ReactFlowGraph["edges"];

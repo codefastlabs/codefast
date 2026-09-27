@@ -10,8 +10,8 @@ import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { postConstruct } from "#decorators/lifecycle-decorators";
-import { NoMatchingBindingError, TokenNotBoundError } from "#errors/errors";
+import { postConstruct } from "#decorators/lifecycle";
+import { NoMatchingBindingError, TokenNotBoundError } from "#errors";
 
 const WARM_ITERATIONS = 5;
 

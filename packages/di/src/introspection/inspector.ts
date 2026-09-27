@@ -1,5 +1,5 @@
 import type { Binding } from "#core/binding";
-import { effectiveBindingScope } from "#core/binding-scope";
+import { effectiveBindingScope } from "#core/binding";
 import type { BindingRegistry } from "#core/registry";
 import type { Token } from "#core/token";
 import { tokenName } from "#core/token";
@@ -12,9 +12,9 @@ import type {
   Constructor,
   ResolveOptions,
 } from "#core/types";
-import type { ScopeManager } from "#lifecycle/scope-manager";
+import type { ScopeManager } from "#lifecycle/scopes";
 import { DefaultConstraintContext } from "#resolution/context";
-import { selectAllBindings } from "#resolution/select/binding-select";
+import { selectAllBindings } from "#resolution/select/candidates";
 
 // ── Public types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 

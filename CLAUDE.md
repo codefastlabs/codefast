@@ -342,16 +342,19 @@ depends on, and which shapes that look simplifiable are load-bearing — worth r
 whether a new idea beats it, is an empirical question the benchmark suite (`benchmarks/di`) answers by re-running;
 numbers live there and in its `RESULTS.md` ledger, never in a source comment and never in ARCHITECTURE.
 
-`src/` groups by subsystem: **`core/`** is the model (`token`, `types`, `tag`, `constructor-type`, `binding`,
-`registry`, `module`, plus the `map-upsert` helpers every index allocates through), **`errors/`** the error taxonomy and
-its diagnostics, **`injection/`** the descriptor every dependency normalises to plus resolve options, **`ambient/`** the
-active container an `@inject` accessor reads, **`lifecycle/`** the per-container lifecycle and scope managers,
-**`container/`** the container + the fluent binding chain, **`resolution/`** the engine class plus its collaborators
-grouped by lane (`cache/` — binding lookup, class introspector, activation need; `path/` — the resolution-path cycle
-guard; `plan/` — the instantiation-plan compiler; `select/` — binding selection and constraints), and
-**`introspection/`** the inspector, dependency graph, and graph adapters, plus `decorators/` and `metadata/`. The sync
-and async pipelines stay in one class because `#` private fields can't span files and both touch the same private state
-per hop; anything that doesn't is already extracted. Tests mirror these paths (`tests/unit/resolution/…`).
+`src/` groups by layer; a directory names a family of two or more modules, a lone module sits flat at its layer, and no
+file repeats its directory's name: **`core/`** is the model (`token`, `types`, `tag`, `constructor-type`, `binding` and
+its chain contract `binding-builders`, `binding-declaration`, `registry`, `module`, plus the `map-upsert` helpers every
+index allocates through), **`errors.ts`** the error taxonomy, **`injection/`** the dependency slot every dependency
+normalises to and its descriptor, **`metadata/`** the reader port, its default reader and the verification of a foreign
+one, **`ambient-container.ts`** the container an `@inject` accessor reads, **`lifecycle/`** the per-container hook and
+scope managers, **`decorators/`** the decorators, **`resolution/`** the engine class plus its collaborators grouped by
+lane (`cache/` — binding lookup, class introspector, activation need; `path.ts` — the resolution-path cycle guard;
+`plan/` — the plan compiler and its codegen; `select/` — candidate selection and constraints), **`container/`** the
+container + the fluent binding chain, and **`introspection/`** the inspector, explain, dependency graph, diagnostics and
+graph adapters. Value imports point down that list only, and the published subpaths are that tree with no exception. The
+sync and async pipelines stay in one class because `#` private fields can't span files and both touch the same private
+state per hop; anything that doesn't is already extracted. Tests mirror these paths (`tests/unit/resolution/…`).
 `package.json#exports` is generated from `dist/` by `codefast mirror` — rerun it after moving/adding modules. Verify
 hot-path changes against `benchmarks/di` (`pnpm di:bench`, which isolates every scenario, ≥3 trials, best-of across
 several processes) before assuming a refactor is free — and measure cold paths too, which the hot loops hide.

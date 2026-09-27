@@ -1,12 +1,7 @@
 /** The DI board's server functions — per-request child containers over the shared domain modules. */
 
-import { Container } from "@codefast/di";
-import type { ContainerGraphJson } from "@codefast/di";
-import { toCytoscapeGraph } from "@codefast/di/graph-adapters/cytoscape";
-import { toDotGraph } from "@codefast/di/graph-adapters/dot";
-import { toMermaidGraph } from "@codefast/di/graph-adapters/mermaid";
-import { toReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
-import type { ReactFlowGraph } from "@codefast/di/graph-adapters/reactflow";
+import { Container, toCytoscapeGraph, toDotGraph, toMermaidGraph, toReactFlowGraph } from "@codefast/di";
+import type { ContainerGraphJson, ReactFlowGraph } from "@codefast/di";
 import { createServerFn } from "@tanstack/react-start";
 
 import {

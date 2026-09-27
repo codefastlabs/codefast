@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
-import { CircularDependencyError, TokenNotBoundError } from "#errors/errors";
+import { CircularDependencyError, TokenNotBoundError } from "#errors";
 
 describe("a dangling alias is a miss on the optional and collection lanes", () => {
   it("resolveOptional returns undefined through an alias to an unbound token", () => {

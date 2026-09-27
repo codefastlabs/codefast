@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
-import { AsyncResolutionError, NoMatchingBindingError, TokenNotBoundError } from "#errors/errors";
+import { AsyncResolutionError, NoMatchingBindingError, TokenNotBoundError } from "#errors";
 
 const depToken = token<string>("owner.dep");
 

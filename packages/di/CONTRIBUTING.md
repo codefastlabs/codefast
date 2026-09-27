@@ -21,8 +21,8 @@ Ground rules that bite in this package specifically:
 - `exactOptionalPropertyTypes` is on — an optional prop that may receive an explicit value is typed `?: T | undefined`.
 - The sync and async resolve pipelines live in **one class** (`resolution/resolver.ts`) because `#` private fields
   cannot span files and both pipelines touch the same private state on every hop. Everything that does _not_ need that
-  state is already a named collaborator (`binding-lookup-cache`, `class-introspector`, `activation-need`,
-  `instantiation-plan`) — extend those rather than growing the engine.
+  state is already a named collaborator (`resolution/cache/lookup`, `class-introspector`, `activation-need`,
+  `resolution/plan/compiler`) — extend those rather than growing the engine.
 - **Before touching `resolution/` or `registry`, read [ARCHITECTURE.md](./ARCHITECTURE.md).** It records the invariants
   the hot paths depend on — the single binding construction site and its hidden class, why the resolution contexts are
   pooled, which cycle-detection mechanism each lane uses and why they differ, and the (correctness) invariant that a

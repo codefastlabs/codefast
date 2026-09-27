@@ -22,7 +22,7 @@
  */
 import type { Token } from "@codefast/di";
 import { Container, injectable, token } from "@codefast/di";
-import { PLAN_CODEGEN_THRESHOLD } from "@codefast/di/resolution/plan/plan-codegen";
+import { PLAN_CODEGEN_THRESHOLD } from "@codefast/di/resolution/plan/codegen";
 
 import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
 import type { BenchScenario } from "#scenarios/types";

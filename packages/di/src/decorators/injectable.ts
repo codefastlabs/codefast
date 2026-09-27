@@ -1,9 +1,9 @@
 import type { BindingScope, Constructor } from "#core/types";
-import { decoratorMetadataOf } from "#decorators/decorator-metadata";
+import { decoratorMetadataOf } from "#decorators/metadata-record";
 import type { InjectableDependency, ResolvedDependencyValue } from "#injection/descriptor";
 import { normalizeToDescriptor } from "#injection/descriptor";
-import { INJECTABLE_KEY } from "#metadata/metadata-keys";
-import type { ParamMetadata } from "#metadata/metadata-types";
+import { INJECTABLE_KEY } from "#metadata/keys";
+import type { ParamMetadata } from "#metadata/types";
 
 // ── AutoRegisterRegistry ─────────────────────────────────────────────────────────────────────────────────────────────
 

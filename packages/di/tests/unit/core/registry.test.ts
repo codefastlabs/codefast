@@ -6,15 +6,15 @@
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 
-import type { BindingRegistration } from "#container/binding-builders";
-import { BindingChain } from "#container/binding-builders";
+import type { BindingRegistration } from "#container/binding-chain";
+import { BindingChain } from "#container/binding-chain";
 import { Container } from "#container/container";
 import { BindingRegistry } from "#core/registry";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import type { BindingIdentifier } from "#core/types";
-import { NoMatchingBindingError, RebindUnboundTokenError } from "#errors/errors";
-import { ScopeManager } from "#lifecycle/scope-manager";
+import { NoMatchingBindingError, RebindUnboundTokenError } from "#errors";
+import { ScopeManager } from "#lifecycle/scopes";
 
 const ENV_TAG = tag("env");
 

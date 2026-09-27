@@ -9,9 +9,9 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NO_TAG_KEYS } from "#core/tag";
 import type { BindingIdentifier, ResolutionFrame } from "#core/types";
-import type { ResolutionDiagnostics } from "#errors/diagnostics";
-import type { BranchDepth, OwnedBranchDepth, OwnedBranchStack } from "#resolution/path/resolution-path";
-import { branchDepthOf, extendResolutionBranch, ROOT_BRANCH } from "#resolution/path/resolution-path";
+import type { ResolutionDiagnostics } from "#introspection/diagnostics";
+import type { BranchDepth, OwnedBranchDepth, OwnedBranchStack } from "#resolution/path";
+import { branchDepthOf, extendResolutionBranch, ROOT_BRANCH } from "#resolution/path";
 
 function frameOf(name: string, id: number): ResolutionFrame {
   return {

@@ -10,7 +10,7 @@ import { tag } from "#core/tag";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { AsyncResolutionError, NoMatchingBindingError } from "#errors/errors";
+import { AsyncResolutionError, NoMatchingBindingError } from "#errors";
 import { injectAll, optional } from "#injection/descriptor";
 import { whenParentIs } from "#resolution/select/constraints";
 

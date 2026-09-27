@@ -9,8 +9,8 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { postConstruct } from "#decorators/lifecycle-decorators";
-import { AsyncResolutionError, CircularDependencyError, MissingScopeContextError } from "#errors/errors";
+import { postConstruct } from "#decorators/lifecycle";
+import { AsyncResolutionError, CircularDependencyError, MissingScopeContextError } from "#errors";
 import { injectAll, optional } from "#injection/descriptor";
 
 describe("class instantiation — arity 0..3 (unrolled fast path)", () => {

@@ -1,0 +1,119 @@
+/**
+ * The memo behind a dependency's resolve options: one object per slot, shared by every container
+ * that resolves through it, and reachable from user code as `currentResolveOptions`.
+ */
+import { describe, expect, it } from "vitest";
+
+import { Container } from "#container/container";
+import { token } from "#core/token";
+import type { ConstraintContext } from "#core/types";
+import { inject } from "#decorators/inject";
+import { injectable } from "#decorators/injectable";
+import type { DependencySlot } from "#injection/dependency-slot";
+import {
+  bindingSlotToResolveOptions,
+  injectionSlotToResolveOptions,
+  resolveOptionsForSlot,
+} from "#injection/dependency-slot";
+
+function slotFor(criteria: Partial<Pick<DependencySlot, "name" | "tags">>): DependencySlot {
+  return { token: token<string>("slot-subject"), optional: false, multi: false, ...criteria };
+}
+
+describe("resolveOptionsForSlot", () => {
+  it("answers a slot with no criterion without building anything", () => {
+    expect(resolveOptionsForSlot(slotFor({}))).toBeUndefined();
+  });
+
+  it("reads an empty criterion list as no criterion, as the binding side does", () => {
+    expect(resolveOptionsForSlot(slotFor({ tags: [] }))).toBeUndefined();
+    expect(injectionSlotToResolveOptions({ tags: [] })).toBeUndefined();
+    expect(bindingSlotToResolveOptions({ tags: [] })).toBeUndefined();
+    expect(injectionSlotToResolveOptions({ name: "primary", tags: [] })).toStrictEqual({ name: "primary" });
+  });
+
+  it("hands out one object for the life of a slot", () => {
+    const slot = slotFor({ name: "primary" });
+
+    expect(resolveOptionsForSlot(slot)).toBe(resolveOptionsForSlot(slot));
+  });
+
+  it("freezes what it memoizes, so no holder can rewrite the request", () => {
+    const options = resolveOptionsForSlot(slotFor({ name: "primary" }));
+
+    expect(Object.isFrozen(options)).toBe(true);
+    expect(() => {
+      (options as { name?: string }).name = "rewritten";
+    }).toThrow(TypeError);
+  });
+
+  it("keeps answering for a frozen slot, rebuilding rather than throwing", () => {
+    const slot = Object.freeze(slotFor({ name: "primary" }));
+    const first = resolveOptionsForSlot(slot);
+    const second = resolveOptionsForSlot(slot);
+
+    expect(first).toEqual({ name: "primary" });
+    expect(second).toEqual({ name: "primary" });
+    expect(second).not.toBe(first);
+  });
+
+  it("carries no criterion between two containers reading the same slot", () => {
+    const driverToken = token<string>("shared-slot-driver");
+
+    @injectable([inject(driverToken, { name: "primary" })])
+    class Root {
+      constructor(readonly driver: string) {}
+    }
+
+    const first = Container.create();
+
+    first.bind(driverToken).whenNamed("primary").toConstantValue("first-primary");
+    first.bind(driverToken).whenNamed("backup").toConstantValue("first-backup");
+    first.bind(Root).toSelf().transient();
+
+    const second = Container.create();
+
+    second.bind(driverToken).whenNamed("primary").toConstantValue("second-primary");
+    second.bind(driverToken).whenNamed("backup").toConstantValue("second-backup");
+    second.bind(Root).toSelf().transient();
+
+    expect(first.resolve(Root).driver).toBe("first-primary");
+    expect(second.resolve(Root).driver).toBe("second-primary");
+    expect(first.resolve(Root).driver).toBe("first-primary");
+  });
+
+  it("refuses a constraint that tries to rewrite the request it was shown", () => {
+    const driverToken = token<string>("constraint-slot-driver");
+
+    @injectable([inject(driverToken, { name: "primary" })])
+    class Root {
+      constructor(readonly driver: string) {}
+    }
+
+    const container = Container.create();
+    let seen: ConstraintContext["currentResolveOptions"];
+
+    container
+      .bind(driverToken)
+      .whenNamed("primary")
+      .when((context) => {
+        seen = context.currentResolveOptions;
+
+        return true;
+      })
+      .toConstantValue("primary-driver");
+    container.bind(Root).toSelf().transient();
+
+    expect(container.resolve(Root).driver).toBe("primary-driver");
+    expect(seen).toEqual({ name: "primary" });
+    // Narrowed first: a write to `undefined` throws a TypeError too, and would pass for the wrong reason.
+    const captured = seen;
+    if (captured === undefined) {
+      throw new Error("the constraint never saw the request's options");
+    }
+    expect(() => {
+      Object.assign(captured, { name: "backup" });
+    }).toThrow(TypeError);
+    expect(container.resolve(Root).driver).toBe("primary-driver");
+  });
+});
