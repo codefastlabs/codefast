@@ -56,11 +56,13 @@ const FIRST_HEADING = /^## (.+)$/m;
 const LAST_FULL_REMEASURE = /\*\*Last full re-measure: (\d{4}-\d{2}-\d{2})\*\*/;
 const RUN_DATE = /\bRun (\d{4}-\d{2}-\d{2})\b/;
 const RUNTIME = /Node \d[^,]*,\s*[^,]+,\s*[\w/-]+/;
-const LIBRARY = /^`?([^`\s]+)`?\s+(\S+)$/;
-const FLAGSHIP_LEAD = /^`?(@[\w-]+\/[\w-]+)`?\s+(\d\S*)/;
+const LIBRARY = /^`?([^`\s]+)`? (\d+\.\d+\.\d+(?:-[\w.]*\w)?)$/;
+// The flagship's version follows its name, or follows the measured commit when that commit is not a release.
+const FLAGSHIP = /`?(@codefast\/di)`?(?: at `[\da-f]+` —)? (\d+\.\d+\.\d+(?:-[\w.]*\w)?)/;
 const AGGREGATE_HEADER = /^\|[^\n]*Win \/ parity \/ loss[^\n]*$/m;
 const AGGREGATE_ROW =
-  /^\|\s*([^|]+?)\s*\|(?:\s*\d+ of \d+\s*\|)?\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\|\s*([\d.]+)×\s*\|\s*([\d.]+)×\s*\|/gm;
+  /^\|\s*([^|]+?)\s*\|(?:\s*\d+ of \d+\s*\|)?\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\|\s*([\d.]+)×\s*\|\s*([\d.]+)×\s*\|/;
+const TABLE_RULE = /^\|(?:\s*:?-+:?\s*\|)+$/;
 const LOSS = /\*\*`([\w-]+)` — ([\d.]+)× of ([^*]+?)\*\*/g;
 const LOSSES_HEADING = /\b(?:loss|losses|loses)\b/i;
 const PROFILE_MARK = "subprocess per scenario";
@@ -99,28 +101,47 @@ function environmentParagraph(markdown: string): string {
 }
 
 /**
- * The libraries the environment paragraph names: a flagship clause that opens it, then the
- * `name version · name version` sentence; a library named in both is listed once.
+ * The libraries the environment paragraph names, the flagship first, then the `name version · name version`
+ * sentence; a library named in both is listed once, and a part the sentence cannot be read as throws.
  */
 function librariesOf(paragraph: string): Array<LedgerLibrary> {
-  const libraries: Array<LedgerLibrary> = [];
-  const flagship = FLAGSHIP_LEAD.exec(paragraph);
+  const flagship = FLAGSHIP.exec(paragraph);
 
-  if (flagship?.[1] !== undefined && flagship[2] !== undefined) {
-    libraries.push({ name: flagship[1], version: flagship[2] });
+  if (flagship?.[1] === undefined || flagship[2] === undefined) {
+    throw new Error("The benchmark ledger's environment paragraph names no `@codefast/di` version.");
   }
 
+  const libraries: Array<LedgerLibrary> = [{ name: flagship[1], version: flagship[2] }];
   const sentence = paragraph.split(/\.\s+/).find((part) => part.includes(" · "));
 
-  for (const part of sentence?.split(" · ") ?? []) {
+  if (sentence === undefined) {
+    throw new Error("The benchmark ledger's environment paragraph has no `name version · name version` sentence.");
+  }
+
+  for (const part of sentence.split(" · ")) {
     const match = LIBRARY.exec(part.trim().replace(/\.$/, ""));
 
-    if (match?.[1] !== undefined && match[2] !== undefined && !libraries.some((known) => known.name === match[1])) {
+    if (match?.[1] === undefined || match[2] === undefined) {
+      throw new Error(`The benchmark ledger names a library as "${part.trim()}", not as a name and a version.`);
+    }
+
+    if (!libraries.some((known) => known.name === match[1])) {
       libraries.push({ name: match[1], version: match[2] });
     }
   }
 
   return libraries;
+}
+
+/** The runtime and machine the environment paragraph names; a paragraph that names none throws. */
+function runtimeOf(paragraph: string): string {
+  const runtime = RUNTIME.exec(paragraph)?.[0];
+
+  if (runtime === undefined) {
+    throw new Error("The benchmark ledger's environment paragraph names no Node runtime and machine.");
+  }
+
+  return runtime;
 }
 
 /** The first paragraph that states the profile, with its bold lead-in dropped and its first clause kept. */
@@ -131,7 +152,10 @@ function aggregateProfileOf(markdown: string): string {
   return clause.replaceAll(/[`*]/g, "").replace(/\.$/, "").trim();
 }
 
-/** Every competitor line of the table headed `Win / parity / loss`; empty when the ledger has no such table. */
+/**
+ * Every competitor line of the table headed `Win / parity / loss`; empty when the ledger has no such table,
+ * and a line that is not `competitor | wins / parities / losses | median× | geomean×` throws.
+ */
 function aggregatesOf(markdown: string): Array<LedgerAggregate> {
   const header = AGGREGATE_HEADER.exec(markdown);
 
@@ -142,24 +166,26 @@ function aggregatesOf(markdown: string): Array<LedgerAggregate> {
   const body = markdown.slice(header.index + header[0].length);
   const end = body.search(/\n\s*\n/);
   const table = end === -1 ? body : body.slice(0, end);
-  const aggregates: Array<LedgerAggregate> = [];
+  return table
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line !== "" && !TABLE_RULE.test(line))
+    .map((line) => {
+      const [, competitor, wins, parities, losses, median, geomean] = AGGREGATE_ROW.exec(line) ?? [];
 
-  for (const match of table.matchAll(AGGREGATE_ROW)) {
-    const [, competitor, wins, parities, losses, median, geomean] = match;
+      if (!competitor || !wins || !parities || !losses || !median || !geomean) {
+        throw new Error(`The benchmark ledger's aggregates table has a line it cannot read: ${line}`);
+      }
 
-    if (competitor && wins && parities && losses && median && geomean) {
-      aggregates.push({
+      return {
         competitor,
         wins: Number(wins),
         parities: Number(parities),
         losses: Number(losses),
         median: Number(median),
         geomean: Number(geomean),
-      });
-    }
-  }
-
-  return aggregates;
+      };
+    });
 }
 
 /** The first `## ` heading about losses, as written; empty when the ledger has none. */
@@ -204,19 +230,30 @@ function latestEntryOf(markdown: string, paragraph: string): LedgerEntry | null 
   return runDate === undefined ? null : { date: runDate, title: (first ?? "").replaceAll("`", "").trim() };
 }
 
-/** Reads the ledger's self-description out of its markdown; every field degrades to empty or null, never throws. */
+/**
+ * Reads the ledger's self-description out of its markdown; a ledger stating no cast and no aggregates reads as
+ * empty facts, and one whose cast or aggregates it cannot read in full, or whose two disagree, throws.
+ */
 export function parseLedgerFacts(markdown: string): LedgerFacts {
   const paragraph = environmentParagraph(markdown);
+  const libraries = paragraph === "" ? [] : librariesOf(paragraph);
+  const aggregates = aggregatesOf(markdown);
   const remeasure = LAST_FULL_REMEASURE.exec(markdown)?.[1] ?? RUN_DATE.exec(paragraph)?.[1] ?? null;
   const lossesHeading = lossesHeadingOf(markdown);
 
+  if (aggregates.length !== Math.max(libraries.length - 1, 0)) {
+    throw new Error(
+      `The benchmark ledger names ${String(libraries.length)} libraries but its aggregates table has ${String(aggregates.length)} lines, not one per competitor.`,
+    );
+  }
+
   return {
-    libraries: librariesOf(paragraph),
-    environment: RUNTIME.exec(paragraph)?.[0] ?? "",
+    libraries,
+    environment: paragraph === "" ? "" : runtimeOf(paragraph),
     latestEntry: latestEntryOf(markdown, paragraph),
     lastFullRemeasure: remeasure,
     aggregateProfile: aggregateProfileOf(markdown),
-    aggregates: aggregatesOf(markdown),
+    aggregates,
     losses: lossesOf(sectionBody(markdown, lossesHeading)),
     lossesAnchor: lossesHeading === "" ? "" : slugify(lossesHeading.replaceAll("`", "")),
   };

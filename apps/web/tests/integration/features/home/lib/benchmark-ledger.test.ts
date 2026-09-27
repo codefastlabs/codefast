@@ -1,10 +1,24 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { readLedgerFacts } from "#features/home/lib/benchmark-ledger.impl";
 
 describe("readLedgerFacts", () => {
-  it("reads the real ledger: the flagship among the libraries, and a dated entry", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // The reader degrades a parse error to empty facts and logs why; asserting no log puts that reason in the failure.
+  function readQuietly(): ReturnType<typeof readLedgerFacts> {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
     const facts = readLedgerFacts();
+
+    expect(errors).not.toHaveBeenCalled();
+
+    return facts;
+  }
+
+  it("reads the real ledger: the flagship among the libraries, and a dated entry", () => {
+    const facts = readQuietly();
 
     expect(facts.libraries.map((library) => library.name)).toContain("@codefast/di");
     expect(facts.libraries.length).toBeGreaterThan(1);
@@ -13,8 +27,9 @@ describe("readLedgerFacts", () => {
   });
 
   it("reads the aggregates table with a line per competitor and two ratios each", () => {
-    const facts = readLedgerFacts();
+    const facts = readQuietly();
 
+    expect(facts.aggregateProfile).not.toBe("");
     expect(facts.aggregates.length).toBe(facts.libraries.length - 1);
 
     for (const row of facts.aggregates) {
