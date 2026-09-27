@@ -389,9 +389,8 @@ Lookup caches form their own parent chain mirroring the resolvers', for the same
 A dependency reaches the engine from one of two sources: a class's constructor parameter (`ParamMetadata`, read by the
 class introspector) or a `toResolved` `InjectionDescriptor`. Both are structurally a `DependencySlot`.
 
-Because they share a shape, `#resolveDeps`/`#resolveDepsAsync` serve both and the plan compiler compiles both. That is
-one pair of loops rather than four near-identical ones, and a dispatch rule that can no longer be fixed in only one of
-them.
+Because they share a shape, `#resolveDeps`/`#settleDeps` serve both and the plan compiler compiles both. That is one
+pair of loops rather than four near-identical ones, and a dispatch rule that can no longer be fixed in only one of them.
 
 Two questions about a slot are answered in exactly one place each:
 
@@ -769,6 +768,26 @@ roughly half the throughput; with one instance kept live, none and parity. So th
 level's context in one field. What is embedded was narrowed — not the class's map, not the branch array — but not named;
 the field is the measured remedy, not an explanation.
 
+**A level yields only where something awaits.** The interpreted lane's `#settle*` methods — `#settleBinding`,
+`#settleInstance`, `#settleDeps`, `#settleCandidates` and the request cores behind `resolveAsync`,
+`resolveOptionalAsync` and `resolveAllAsync` — answer with the value when the level completed in the caller's own tick
+and with a promise only where a dependency, factory or hook really returned one; the public entry points wrap that
+answer into the promise they hand out, and turn a synchronous throw into a rejection there. This is the discipline the
+compiled async plan settles at compile time, carried at run time. It is what lets a fan-out start its siblings in order
+and still serve a sibling that reads an earlier one **synchronously**: a singleton or scoped instance built without
+yielding is cached by `#settleBinding` before the fan-out moves on, so a `toDynamic` factory's `ctx.resolve`, an
+`@inject` accessor or a top-level `resolve` finds it, exactly as the sync lane would have. Only a materialisation that
+is genuinely pending is published in flight, so the sync guard in `#resolveBinding` refuses exactly the request it
+should: one for a value that cannot exist yet. A singleton whose subtree is asynchronous keeps that refusal cold and
+answers warm — that is the contract, not a divergence — while one whose subtree is synchronous no longer differs between
+the two.
+
+> **Invariant (correctness).** The interpreted async lane completes in the caller's tick whatever the sync lane would
+> complete, and caches a singleton or scoped instance before the sibling that may read it synchronously starts.
+> `tests/unit/resolution/resolver-async-sibling-reads.test.ts` pins the shapes: a cold singleton read by a later
+> sibling's factory, accessor, optional or collection request, by name or through an alias, in a child, and under the
+> compiled and generated tiers of both lanes.
+
 **Async plans.** The sync lane's compiled plan ([Compiled plans and escapes](#compiled-plans-and-escapes)) ports to
 async exactly as far as the graph is visible. `class`, `resolved` and `resolved-async` bindings declare their
 dependencies, so `compileAsync` compiles those into an async plan; a `dynamic-async` factory stays opaque and runs on
@@ -925,14 +944,15 @@ section before changing what the table describes.
 
 **Cycle detection and paths**
 
-| Invariant                                                                                    | Pinned by                                                 | Where                                                                                          |
-| -------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `binding.inFlight` is set and released on every exit path, with or without activation hooks. | `tests/unit/resolution/in-flight-invariants.test.ts`      | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
-| Path checks key on binding identity, never on a display name.                                | (structural)                                              | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
-| A seeded path is marked idempotently; an enclosing frame's flag is left as found.            | `tests/unit/resolution/path.test.ts`                      | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
-| Every lane answers a graph identically — value, sharing and error.                           | `tests/integration/resolution-lanes-differential.test.ts` | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
-| A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.          | `tests/types/async-branch-ownership.test.ts`              | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
-| A level's context answers from its own prefix before and after an `await`.                   | `tests/unit/resolution/resolver-async.test.ts`            | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
+| Invariant                                                                                        | Pinned by                                                    | Where                                                                                          |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `binding.inFlight` is set and released on every exit path, with or without activation hooks.     | `tests/unit/resolution/in-flight-invariants.test.ts`         | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| Path checks key on binding identity, never on a display name.                                    | (structural)                                                 | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| A seeded path is marked idempotently; an enclosing frame's flag is left as found.                | `tests/unit/resolution/path.test.ts`                         | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| Every lane answers a graph identically — value, sharing and error.                               | `tests/integration/resolution-lanes-differential.test.ts`    | [Cycle detection](#cycle-detection-one-flag-for-synchronous-paths-one-scan-for-async-branches) |
+| A branch appends only to an `OwnedBranchStack` it minted; `BranchDepth` is branded.              | `tests/types/async-branch-ownership.test.ts`                 | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
+| A level's context answers from its own prefix before and after an `await`.                       | `tests/unit/resolution/resolver-async.test.ts`               | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
+| The async lane completes in the caller's tick whatever the sync lane would, and caches it first. | `tests/unit/resolution/resolver-async-sibling-reads.test.ts` | [The async pipeline](#the-async-pipeline-one-branch-lane)                                      |
 
 **Pooling, lending and deferral**
 
@@ -951,8 +971,8 @@ benchmark suite before and after; if the arities or workloads the suite measures
 
 Two shapes in the resolver look like copy-paste of `#resolveBinding`. Both are deliberate.
 
-**A candidate answers where it is selected.** `#resolveCandidateSync`/`#resolveCandidateAsync` re-check plain-constant
-and cached-singleton before delegating, which `#resolveBinding` would check anyway. Routing every candidate through
+**A candidate answers where it is selected.** `#resolveCandidateSync`/`#settleCandidate` re-check plain-constant and
+cached-singleton before delegating, which `#resolveBinding` would check anyway. Routing every candidate through
 `#resolveBinding` instead pays those checks per candidate rather than per call, and a `resolveAll` over cached
 singletons multiplies that out.
 

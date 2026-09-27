@@ -651,7 +651,7 @@ export class DependencyResolver implements ResolverCallbacks {
         }
         return this.resolve(token, options, resolutionStack);
       },
-      // Dispatches exactly as #resolveDepAsync does, for the async lane's escapes.
+      // Dispatches exactly as #settleDep does, for the async lane's escapes.
       resolveEscapedAsync: (token, options, arity, resolutionStack) => {
         if (arity === "all") {
           return this.resolveAllAsync(token, options, resolutionStack, UNOWNED_BRANCH);
@@ -1049,15 +1049,12 @@ export class DependencyResolver implements ResolverCallbacks {
     if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
       return Promise.resolve(memo.values.slice() as Array<Value>);
     }
-    return settleInOrder(
-      memo.candidates.map((candidate) =>
-        this.#resolveCandidateAsync(candidate, undefined, resolutionStack, UNOWNED_BRANCH),
-      ),
-      (values) => {
+    return asPromise(
+      this.#settleCandidates(memo.candidates, undefined, resolutionStack, UNOWNED_BRANCH, (values) => {
         this.#settleOnRepeat(memo);
-        return values as Array<Value>;
-      },
-    );
+        return values;
+      }),
+    ) as Promise<ReadonlyArray<Value>>;
   }
 
   /**
@@ -1207,37 +1204,69 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#resolveAsyncDefaultEntry(entry.binding, entry.owner, resolutionStack, branchDepth) as Promise<Value>;
   }
 
+  // A `#settle*` lane answers with the value when its level completed in this tick and with a promise
+  // only where something had to be awaited, so a singleton or scoped instance built without yielding
+  // is cached before the fan-out that started it moves on to a sibling that may read it synchronously.
+
   #resolveAsyncDefaultEntry(
     binding: Binding,
     owner: DependencyResolver,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth,
   ): Promise<unknown> {
+    try {
+      return asPromise(this.#settleDefaultEntry(binding, owner, resolutionStack, branchDepth));
+    } catch (entryError) {
+      // Not `async`: a failure is turned into the rejection the entry point promises.
+      return Promise.reject(entryError);
+    }
+  }
+
+  /** `resolveAsyncFromContext` for a dependency slot: the same lanes, answered in this tick where they can be. */
+  #settleDefault(
+    token: Token<unknown> | Constructor,
+    resolutionStack: Array<ResolutionFrame>,
+    branchDepth: BranchDepth,
+  ): unknown {
+    const fastBinding = this.#registry.getFastDefault(token);
+    if (fastBinding !== undefined && fastBinding.kind !== "alias") {
+      return this.#settleDefaultEntry(fastBinding, this, resolutionStack, branchDepth);
+    }
+    const entry = this.#lookup.defaultEntry(token);
+    if (entry === null) {
+      return this.#settleRequest(token, undefined, resolutionStack, branchDepth);
+    }
+    return this.#settleDefaultEntry(entry.binding, entry.owner, resolutionStack, branchDepth);
+  }
+
+  #settleDefaultEntry(
+    binding: Binding,
+    owner: DependencyResolver,
+    resolutionStack: Array<ResolutionFrame>,
+    branchDepth: BranchDepth,
+  ): unknown {
     if (owner.#isPlainConstant(binding)) {
-      return Promise.resolve(binding.value);
+      return binding.value;
     }
     const scope = binding.scope;
     if (scope === "transient") {
       if ((binding.kind === "dynamic" || binding.kind === "dynamic-async") && !owner.#hasAnyActivation(binding)) {
-        return this.#resolveTransientDynamicAsyncFromContext(binding, resolutionStack, branchDepth);
+        return this.#settleTransientFactory(binding, resolutionStack, branchDepth);
       }
     } else if (scope === "singleton") {
       if (binding.instance !== NO_INSTANCE) {
-        return Promise.resolve(binding.instance);
+        return binding.instance;
       }
       if (owner !== this) {
-        return owner.#resolveBindingAsync(binding, undefined, resolutionStack, branchDepth, owner);
-      }
-    } else if (this.#scope.isChild) {
-      const cachedScoped = this.#scope.readScoped(binding.scopedCacheKey);
-      if (cachedScoped !== SCOPED_MISS) {
-        return Promise.resolve(cachedScoped);
+        return owner.#settleBinding(binding, undefined, resolutionStack, branchDepth, owner);
       }
     } else {
-      // Not `#readScoped`: this entry point reports failure as a rejection, never a sync throw.
-      return Promise.reject(new MissingScopeContextError(tokenName(binding.token)));
+      const cachedScoped = this.#readScoped(binding);
+      if (cachedScoped !== SCOPED_MISS) {
+        return cachedScoped;
+      }
     }
-    return this.#resolveBindingAsync(binding, undefined, resolutionStack, branchDepth, owner);
+    return this.#settleBinding(binding, undefined, resolutionStack, branchDepth, owner);
   }
 
   /**
@@ -1247,33 +1276,60 @@ export class DependencyResolver implements ResolverCallbacks {
    * could pick a different candidate whose criteria are a subset of them.
    */
   warmBindingAsync(binding: Binding, options: ResolveOptions | undefined): Promise<unknown> {
-    return this.#resolveBindingAsync(binding, options, [], ROOT_BRANCH, this);
+    try {
+      return asPromise(this.#settleBinding(binding, options, [], ROOT_BRANCH, this));
+    } catch (bindingError) {
+      return Promise.reject(bindingError);
+    }
   }
 
-  async resolveAsync<Value>(
+  resolveAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
     precomputedCriterion?: BindingTag | null,
   ): Promise<Value> {
+    try {
+      return asPromise(
+        this.#settleRequest(token, options, resolutionStack, branchDepth, precomputedCriterion),
+      ) as Promise<Value>;
+    } catch (requestError) {
+      return Promise.reject(requestError);
+    }
+  }
+
+  /** Selects the binding a request names and settles it on the async lane. */
+  #settleRequest(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions | undefined,
+    resolutionStack: Array<ResolutionFrame>,
+    branchDepth: BranchDepth,
+    precomputedCriterion?: BindingTag | null,
+  ): unknown {
     const path = ownPrefixOf(resolutionStack, branchDepth);
     const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
     const { binding, owner } = this.#requireBinding(token, options, path, precomputedCriterion);
 
     if (binding.scope === "singleton" && owner !== this) {
-      return owner.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
+      return owner.#settleBinding(binding, options, path, depth, owner);
     }
-    return this.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
+    return this.#settleBinding(binding, options, path, depth, owner);
   }
 
-  async #resolveBindingAsync(
+  /**
+   * Materialises one binding on the async lane: the instance once nothing yielded, else its promise.
+   *
+   * @remarks A singleton or scoped instance built in this tick is cached in this tick, so a sibling
+   * reading it synchronously finds it; only a materialisation still pending is published in flight.
+   */
+  #settleBinding(
     binding: Binding,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth,
     owner: DependencyResolver,
-  ): Promise<unknown> {
+  ): unknown {
     if (owner.#isPlainConstant(binding)) {
       return binding.value;
     }
@@ -1286,7 +1342,7 @@ export class DependencyResolver implements ResolverCallbacks {
       // In-flight dedup: concurrent callers share the first creation.
       const inflight = this.#scope.getInflight(binding.identifier);
       if (inflight !== undefined) {
-        return inflight;
+        return ownPromiseOf(inflight);
       }
       if (this.#scope.isClosed) {
         throw new DisposedContainerError();
@@ -1299,7 +1355,7 @@ export class DependencyResolver implements ResolverCallbacks {
       // In-flight dedup, scoped flavor: one instance per scope even under concurrency.
       const inflight = this.#scope.getInflight(binding.identifier);
       if (inflight !== undefined) {
-        return inflight;
+        return ownPromiseOf(inflight);
       }
       if (this.#scope.isClosed) {
         throw new DisposedContainerError();
@@ -1317,8 +1373,7 @@ export class DependencyResolver implements ResolverCallbacks {
       if (branchDepth === ROOT_BRANCH) {
         this.#recentRootLevelContext = resolutionCtx;
       }
-      const dynamicResult = runFactoryPrefix(binding, resolutionCtx, levelStack);
-      return dynamicResult instanceof Promise ? await dynamicResult : dynamicResult;
+      return runFactoryPrefix(binding, resolutionCtx, levelStack);
     }
 
     const resolutionCtx =
@@ -1329,62 +1384,43 @@ export class DependencyResolver implements ResolverCallbacks {
       this.#recentRootLevelContext = resolutionCtx;
     }
 
+    const activated = this.#settleActivated(binding, resolutionCtx, levelStack, levelDepth, needsActivation, owner);
+    if (scope === "transient") {
+      return activated;
+    }
+    if (isPending(activated)) {
+      return this.#publishInFlight(binding, activated, scope);
+    }
     if (scope === "singleton") {
-      // The promise is published before it settles, so concurrent callers dedup onto it.
-      const singletonPromise = this.#instantiateAndActivateAsync(
-        binding,
-        resolutionCtx,
-        levelStack,
-        levelDepth,
-        needsActivation,
-        owner,
-      ).then(
-        (activated) => {
+      this.#scope.setSingleton(binding, activated);
+    } else {
+      this.#scope.setScoped(binding, activated);
+    }
+    return activated;
+  }
+
+  /**
+   * Publishes a pending singleton or scoped materialisation so concurrent callers dedup onto it,
+   * and caches what it settles to; the creator, like every joiner, is handed a promise of its own.
+   */
+  #publishInFlight(binding: Binding, pending: Promise<unknown>, scope: "singleton" | "scoped"): Promise<unknown> {
+    const published = pending.then(
+      (activated) => {
+        if (scope === "singleton") {
           this.#scope.setSingleton(binding, activated);
-          this.#scope.clearInflight(binding.identifier);
-          return activated;
-        },
-        (error: unknown) => {
-          this.#scope.clearInflight(binding.identifier);
-          throw error;
-        },
-      );
-      this.#scope.setInflight(binding.identifier, singletonPromise);
-      return await singletonPromise;
-    }
-
-    if (scope === "scoped") {
-      // Published before it settles, like the singleton lane: concurrent callers share one creation.
-      const scopedPromise = this.#instantiateAndActivateAsync(
-        binding,
-        resolutionCtx,
-        levelStack,
-        levelDepth,
-        needsActivation,
-        owner,
-      ).then(
-        (activated) => {
+        } else {
           this.#scope.setScoped(binding, activated);
-          this.#scope.clearInflight(binding.identifier);
-          return activated;
-        },
-        (error: unknown) => {
-          this.#scope.clearInflight(binding.identifier);
-          throw error;
-        },
-      );
-      this.#scope.setInflight(binding.identifier, scopedPromise);
-      return await scopedPromise;
-    }
-
-    return await this.#instantiateAndActivateAsync(
-      binding,
-      resolutionCtx,
-      levelStack,
-      levelDepth,
-      needsActivation,
-      owner,
+        }
+        this.#scope.clearInflight(binding.identifier);
+        return activated;
+      },
+      (error: unknown) => {
+        this.#scope.clearInflight(binding.identifier);
+        throw error;
+      },
     );
+    this.#scope.setInflight(binding.identifier, published);
+    return ownPromiseOf(published);
   }
 
   /**
@@ -1404,15 +1440,29 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  async #instantiateAndActivateAsync(
+  /** The activated instance: built and activated in this tick when nothing yielded, else its promise. */
+  #settleActivated(
     binding: Binding,
     ctx: AsyncLevelContext | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth,
     needsActivation: boolean,
     owner: DependencyResolver,
-  ): Promise<unknown> {
-    const instance = await this.#instantiateAsync(binding, ctx, resolutionStack, branchDepth);
+  ): unknown {
+    const instance = this.#settleInstance(binding, ctx, resolutionStack, branchDepth);
+    if (isPending(instance)) {
+      return instance.then((built) => this.#activateAsync(binding, ctx, built, needsActivation, owner));
+    }
+    return this.#activateAsync(binding, ctx, instance, needsActivation, owner);
+  }
+
+  #activateAsync(
+    binding: Binding,
+    ctx: AsyncLevelContext | undefined,
+    instance: unknown,
+    needsActivation: boolean,
+    owner: DependencyResolver,
+  ): unknown {
     this.#mirrorPostConstructFromOwner(binding, owner);
     if (!owner.#activationNeed().refreshAfterFirstInstantiation(binding, needsActivation)) {
       return instance;
@@ -1420,12 +1470,13 @@ export class DependencyResolver implements ResolverCallbacks {
     return owner.#lifecycle.runActivation(ctx as AsyncLevelContext, binding, instance, owner.#metadataReader);
   }
 
-  async #instantiateAsync(
+  /** The instance a binding builds: in this tick when every dependency settled in it, else its promise. */
+  #settleInstance(
     binding: Binding,
     ctx: AsyncLevelContext | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth,
-  ): Promise<unknown> {
+  ): unknown {
     switch (binding.kind) {
       case "constant":
         return binding.value;
@@ -1435,8 +1486,7 @@ export class DependencyResolver implements ResolverCallbacks {
         if (ctx === undefined) {
           throw new InternalError("dynamic binding requires resolution context");
         }
-        const factoryResult = runFactoryPrefix(binding, ctx, resolutionStack);
-        return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
+        return runFactoryPrefix(binding, ctx, resolutionStack);
       }
 
       case "class": {
@@ -1444,27 +1494,29 @@ export class DependencyResolver implements ResolverCallbacks {
         const target = binding.target;
         const facts = introspector.facts(target);
         const params = this.#constructorParams(target, facts);
-        const deps =
-          params.length === 0 ? NO_ARGUMENTS : await this.#resolveDepsAsync(params, resolutionStack, branchDepth);
         const needsActiveContainer = introspector.needsActiveContainerOf(target, facts);
         // Accessor initializers resolve synchronously, so the branch-owned path serves them directly.
-        return introspector.construct(
-          target,
-          deps,
-          needsActiveContainer,
-          needsActiveContainer ? this.#ambientResolutionFor(resolutionStack) : undefined,
-        );
+        const ambient = needsActiveContainer ? this.#ambientResolutionFor(resolutionStack) : undefined;
+        if (params.length === 0) {
+          return introspector.construct(target, NO_ARGUMENTS, needsActiveContainer, ambient);
+        }
+        const deps = this.#settleDeps(params, resolutionStack, branchDepth);
+        if (isPending(deps)) {
+          return deps.then((settled) => introspector.construct(target, settled, needsActiveContainer, ambient));
+        }
+        return introspector.construct(target, deps, needsActiveContainer, ambient);
       }
 
       case "resolved": {
-        const deps = await this.#resolveDepsAsync(binding.deps, resolutionStack, branchDepth);
-        const factoryResult = binding.factory(...deps);
-        return factoryResult instanceof Promise ? factoryResult : Promise.resolve(factoryResult);
+        const factory = binding.factory;
+        const deps = this.#settleDeps(binding.deps, resolutionStack, branchDepth);
+        return isPending(deps) ? deps.then((settled) => factory(...settled)) : factory(...deps);
       }
 
       case "resolved-async": {
-        const deps = await this.#resolveDepsAsync(binding.deps, resolutionStack, branchDepth);
-        return binding.factory(...deps);
+        const factory = binding.factory;
+        const deps = this.#settleDeps(binding.deps, resolutionStack, branchDepth);
+        return isPending(deps) ? deps.then((settled) => factory(...settled)) : factory(...deps);
       }
 
       case "alias":
@@ -1472,52 +1524,80 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  async #resolveDepsAsync(
+  /**
+   * One level's dependencies: their values when every one settled in this tick, else the fan-out
+   * that settles them in declaration order.
+   */
+  #settleDeps(
     deps: ReadonlyArray<DependencySlot>,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth,
-  ): Promise<Array<unknown>> {
+  ): Array<unknown> | Promise<Array<unknown>> {
     const count = deps.length;
     if (count === 0) {
       return [];
     }
     if (count === 1) {
-      return [await this.#resolveDepAsync(deps[0]!, resolutionStack, branchDepth)];
+      const only = this.#settleDep(deps[0]!, resolutionStack, branchDepth);
+      return isPending(only) ? only.then(settledAlone) : [only];
     }
-    // Siblings resolve concurrently and each extends the same branch, so the first appends in
-    // place and the rest copy the prefix — no caller has to isolate them.
-    const pending = new Array<Promise<unknown>>(count);
+    // Siblings start concurrently and each extends the same branch, so the first appends in
+    // place and the rest copy the prefix — no caller has to isolate them. A sibling's sync throw
+    // becomes its slot's rejection so the ones after it still start, as on every other lane.
+    const pending = new Array<unknown>(count);
+    let yielded = false;
     for (let index = 0; index < count; index += 1) {
-      pending[index] = this.#resolveDepAsync(deps[index]!, resolutionStack, branchDepth);
+      let settled: unknown;
+      try {
+        settled = this.#settleDep(deps[index]!, resolutionStack, branchDepth);
+      } catch (dependencyError) {
+        settled = Promise.reject(dependencyError);
+      }
+      if (isPending(settled)) {
+        yielded = true;
+      }
+      pending[index] = settled;
     }
-    return settleInOrder(pending, identity);
+    return yielded ? settleInOrder(pending, identity) : pending;
   }
 
-  #resolveDepAsync(
-    dep: DependencySlot,
-    resolutionStack: Array<ResolutionFrame>,
-    branchDepth: BranchDepth,
-  ): Promise<unknown> {
+  #settleDep(dep: DependencySlot, resolutionStack: Array<ResolutionFrame>, branchDepth: BranchDepth): unknown {
     const options = resolveOptionsForSlot(dep);
     if (dep.multi) {
-      return this.resolveAllAsync(dep.token, options, resolutionStack, branchDepth);
+      return this.#settleCollection(dep.token, options, resolutionStack, branchDepth);
     }
     if (dep.optional) {
-      return this.resolveOptionalAsync(dep.token, options, resolutionStack, branchDepth, singleCriterionForSlot(dep));
+      return this.#settleOptionalRequest(dep.token, options, resolutionStack, branchDepth, singleCriterionForSlot(dep));
     }
     if (options === undefined) {
-      return this.resolveAsyncFromContext(dep.token, resolutionStack, branchDepth);
+      return this.#settleDefault(dep.token, resolutionStack, branchDepth);
     }
-    return this.resolveAsync(dep.token, options, resolutionStack, branchDepth, singleCriterionForSlot(dep));
+    return this.#settleRequest(dep.token, options, resolutionStack, branchDepth, singleCriterionForSlot(dep));
   }
 
-  async resolveOptionalAsync<Value>(
+  resolveOptionalAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
     precomputedCriterion?: BindingTag | null,
   ): Promise<Value | undefined> {
+    try {
+      return asPromise(
+        this.#settleOptionalRequest(token, options, resolutionStack, branchDepth, precomputedCriterion),
+      ) as Promise<Value | undefined>;
+    } catch (requestError) {
+      return Promise.reject(requestError);
+    }
+  }
+
+  #settleOptionalRequest(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions | undefined,
+    resolutionStack: Array<ResolutionFrame>,
+    branchDepth: BranchDepth,
+    precomputedCriterion?: BindingTag | null,
+  ): unknown {
     const path = ownPrefixOf(resolutionStack, branchDepth);
     const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
     const singleCriterion =
@@ -1533,25 +1613,65 @@ export class DependencyResolver implements ResolverCallbacks {
     }
     const { binding, owner } = entry;
     if (binding.scope === "singleton" && owner !== this) {
-      return owner.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
+      return owner.#settleBinding(binding, options, path, depth, owner);
     }
-    return this.#resolveBindingAsync(binding, options, path, depth, owner) as Promise<Value>;
+    return this.#settleBinding(binding, options, path, depth, owner);
   }
 
-  async resolveAllAsync<Value>(
+  resolveAllAsync<Value>(
     token: Token<Value> | Constructor<Value>,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth = UNOWNED_BRANCH,
   ): Promise<ReadonlyArray<Value>> {
+    try {
+      return asPromise(this.#settleCollection(token, options, resolutionStack, branchDepth)) as Promise<
+        ReadonlyArray<Value>
+      >;
+    } catch (collectionError) {
+      return Promise.reject(collectionError);
+    }
+  }
+
+  #settleCollection(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions | undefined,
+    resolutionStack: Array<ResolutionFrame>,
+    branchDepth: BranchDepth,
+  ): unknown {
     const path = ownPrefixOf(resolutionStack, branchDepth);
     const depth = path === resolutionStack ? branchDepth : branchDepthOf(path as OwnedBranchStack);
     const candidates = this.#candidateBindings(token, options, path);
-    const pending = new Array<Promise<unknown>>(candidates.length);
-    for (let index = 0; index < candidates.length; index += 1) {
-      pending[index] = this.#resolveCandidateAsync(candidates[index]!, options, path, depth);
+    return this.#settleCandidates(candidates, options, path, depth, identity);
+  }
+
+  /**
+   * Every candidate of a fan-out, started in order: `apply` over their values when all settled in
+   * this tick, else over the fan-out settled in declaration order.
+   */
+  #settleCandidates(
+    candidates: ReadonlyArray<Binding>,
+    options: ResolveOptions | undefined,
+    resolutionStack: Array<ResolutionFrame>,
+    branchDepth: BranchDepth,
+    apply: (values: Array<unknown>) => unknown,
+  ): unknown {
+    const count = candidates.length;
+    const pending = new Array<unknown>(count);
+    let yielded = false;
+    for (let index = 0; index < count; index += 1) {
+      let settled: unknown;
+      try {
+        settled = this.#settleCandidate(candidates[index]!, options, resolutionStack, branchDepth);
+      } catch (memberError) {
+        settled = Promise.reject(memberError);
+      }
+      if (isPending(settled)) {
+        yielded = true;
+      }
+      pending[index] = settled;
     }
-    return settleInOrder(pending, identity) as Promise<ReadonlyArray<Value>>;
+    return yielded ? settleInOrder(pending, apply) : apply(pending);
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1698,7 +1818,24 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  // Deliberately not `async`: that would allocate a state machine and a promise per level.
+  /** A transient factory level with no activation: its factory's own result over the level's context. */
+  #settleTransientFactory(
+    binding: DynamicBinding<unknown> | DynamicAsyncBinding<unknown>,
+    resolutionStack: Array<ResolutionFrame>,
+    branchDepth: BranchDepth,
+  ): unknown {
+    const frame = this.#getResolutionFrame(binding);
+    const levelStack = extendResolutionBranch(resolutionStack, branchDepth, frame);
+    // Nothing this level appended is ever removed, so no level observes its own settlement.
+    const ctx = new AsyncLevelContext(this, levelStack, undefined);
+    if (branchDepth === ROOT_BRANCH) {
+      this.#recentRootLevelContext = ctx;
+    }
+    return runFactoryPrefix(binding, ctx, levelStack);
+  }
+
+  // Deliberately not `async`: that would allocate a state machine and a promise per level. The
+  // dominant lane keeps its body whole rather than reaching the settle core through a call.
   #resolveTransientDynamicAsyncFromContext(
     binding: DynamicBinding<unknown> | DynamicAsyncBinding<unknown>,
     resolutionStack: Array<ResolutionFrame>,
@@ -1828,40 +1965,40 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#resolveBinding(binding, options, resolutionStack, owner);
   }
 
-  #resolveCandidateAsync(
+  #settleCandidate(
     binding: Binding,
     options: ResolveOptions | undefined,
     resolutionStack: Array<ResolutionFrame>,
     branchDepth: BranchDepth,
-  ): Promise<unknown> {
+  ): unknown {
     if (binding.kind === "constant" && binding.activationHook === undefined && this.#chainActivationVersion() === 0) {
-      return Promise.resolve(binding.value);
+      return binding.value;
     }
     const owner = this.#ownerOf(binding);
     if (owner.#isPlainConstant(binding)) {
-      return Promise.resolve(binding.value);
+      return binding.value;
     }
     if (binding.kind === "alias") {
-      return this.resolveAsync(binding.target, options, resolutionStack, branchDepth);
+      return this.#settleRequest(binding.target, options, resolutionStack, branchDepth);
     }
     if (binding.scope === "singleton") {
       if (binding.instance !== NO_INSTANCE) {
-        return Promise.resolve(binding.instance);
+        return binding.instance;
       }
-      return owner.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner);
+      return owner.#settleBinding(binding, options, resolutionStack, branchDepth, owner);
     }
     // The dominant collection member — a transient factory with no activation, asked with no
-    // options — takes the non-async lane a single resolve takes, so a fan-out costs one factory
-    // promise per member rather than a state machine on top of each.
+    // options — takes the lane a single resolve takes, so a fan-out costs one factory result per
+    // member rather than a promise on top of each.
     if (
       options === undefined &&
       binding.scope === "transient" &&
       (binding.kind === "dynamic" || binding.kind === "dynamic-async") &&
       !owner.#hasAnyActivation(binding)
     ) {
-      return this.#resolveTransientDynamicAsyncFromContext(binding, resolutionStack, branchDepth);
+      return this.#settleTransientFactory(binding, resolutionStack, branchDepth);
     }
-    return this.#resolveBindingAsync(binding, options, resolutionStack, branchDepth, owner);
+    return this.#settleBinding(binding, options, resolutionStack, branchDepth, owner);
   }
 
   /** The resolver whose registry holds `binding` — `this` (the common case) when it is own. */
@@ -1995,6 +2132,31 @@ function asyncResolutionErrorFor(
 /** The settled values of a fan-out, as they are. */
 function identity(values: Array<unknown>): Array<unknown> {
   return values;
+}
+
+/** A settled value, as it is. */
+function settledValue(value: unknown): unknown {
+  return value;
+}
+
+/** A promise of its own over a shared in-flight one: the same settlement, never the stored object. */
+function ownPromiseOf(shared: Promise<unknown>): Promise<unknown> {
+  return shared.then(settledValue);
+}
+
+/** A lone dependency's settled value as the argument list its level applies. */
+function settledAlone(value: unknown): Array<unknown> {
+  return [value];
+}
+
+/** Whether an async-lane answer is still pending, narrowing it to the promise it is. */
+function isPending(answer: unknown): answer is Promise<unknown> {
+  return answer instanceof Promise;
+}
+
+/** A settled answer as the promise an async entry point hands out; a pending one passes through. */
+function asPromise(answer: unknown): Promise<unknown> {
+  return answer instanceof Promise ? answer : Promise.resolve(answer);
 }
 
 /** Only a factory is handed the resolution context; everything else gets its deps directly. */
