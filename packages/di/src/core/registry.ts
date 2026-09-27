@@ -96,6 +96,11 @@ export class BindingRegistry {
     return (this.#heldKinds & HELD_CONSTANT) !== 0;
   }
 
+  /** Whether an alias has ever been registered here, and so whether a candidate list can hold one. */
+  get hasHeldAlias(): boolean {
+    return (this.#heldKinds & HELD_ALIAS) !== 0;
+  }
+
   /** Whether the deferred tagged-slot index has had to be built. */
   get isTaggedIndexBuilt(): boolean {
     return this.#taggedIndexBuilt;
