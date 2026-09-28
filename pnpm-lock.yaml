@@ -160,8 +160,8 @@ catalogs:
       specifier: ^2.0.0
       version: 2.0.0
     hono:
-      specifier: ^4.13.8
-      version: 4.13.8
+      specifier: ^4.13.9
+      version: 4.13.9
     injection-js:
       specifier: ^2.6.1
       version: 2.6.1
@@ -682,7 +682,7 @@ importers:
         version: link:../../packages/tailwind-variants
       '@hono/node-server':
         specifier: 'catalog:'
-        version: 2.1.1(hono@4.13.8)
+        version: 2.1.1(hono@4.13.9)
       '@internal/benchmark-harness':
         specifier: workspace:*
         version: link:../benchmark-harness
@@ -697,7 +697,7 @@ importers:
         version: 4.4.0
       hono:
         specifier: 'catalog:'
-        version: 4.13.8
+        version: 4.13.9
       react:
         specifier: 'catalog:'
         version: 19.3.0
@@ -5118,8 +5118,8 @@ packages:
   hast-util-whitespace@3.0.0:
     resolution: {integrity: sha512-88JUN06ipLwsnv+dVn+OIYOvAuvBMy/Qoi6O7mQHxdPXpjy+Cd6xRkWwux7DKO+4sYILtLBRIKgsdpS2gQc7qw==}
 
-  hono@4.13.8:
-    resolution: {integrity: sha512-/Gng7NfoykZl2pjukW5Z6+8Yxm3BPRf86GTbQnt0SbySkvax4fyL4H3HhY1cCpBGmiW9XDRFzRV+CXK2W8QudQ==}
+  hono@4.13.9:
+    resolution: {integrity: sha512-7dMkQmZoC4E6F7AtaQSPhlWAdnBti+j7rreMZl8QB4jFiEhP9TWbGWUMi8WYzBCgmgulxuvLQupKqo+Co6Omyg==}
     engines: {node: '>=16.9.0'}
 
   hookable@6.1.1:
@@ -7140,9 +7140,9 @@ snapshots:
 
   '@fontsource-variable/inter@5.3.0': {}
 
-  '@hono/node-server@2.1.1(hono@4.13.8)':
+  '@hono/node-server@2.1.1(hono@4.13.9)':
     dependencies:
-      hono: 4.13.8
+      hono: 4.13.9
 
   '@iconify/types@2.0.0': {}
 
@@ -10117,7 +10117,7 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.5
 
-  hono@4.13.8: {}
+  hono@4.13.9: {}
 
   hookable@6.1.1: {}
 
