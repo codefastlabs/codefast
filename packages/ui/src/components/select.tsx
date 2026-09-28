@@ -29,7 +29,13 @@ type SelectGroupProps = ComponentProps<typeof SelectPrimitive.Group>;
  * @since 0.3.16-canary.0
  */
 function SelectGroup({ className, ...props }: SelectGroupProps): JSX.Element {
-  return <SelectPrimitive.Group className={cn("scroll-my-1 p-1", className)} data-slot="select-group" {...props} />;
+  return (
+    <SelectPrimitive.Group
+      className={cn("[[data-slot=select-group]+&]:mt-2", className)}
+      data-slot="select-group"
+      {...props}
+    />
+  );
 }
 
 // ── Component: SelectValue ───────────────────────────────────────────────────────────────────────────────────────────
@@ -161,10 +167,7 @@ function SelectContent({
       >
         <SelectScrollUpButton />
         <SelectPrimitive.Viewport
-          className={cn(
-            "data-[position=popper]:h-(--radix-select-trigger-height) data-[position=popper]:w-full data-[position=popper]:min-w-(--radix-select-trigger-width)",
-            position === "popper" && "",
-          )}
+          className="scroll-py-1 p-1 data-[position=popper]:h-(--radix-select-trigger-height) data-[position=popper]:w-full data-[position=popper]:min-w-(--radix-select-trigger-width)"
           data-position={position}
         >
           {children}
