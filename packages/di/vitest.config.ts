@@ -1,4 +1,4 @@
-import babel from "@rolldown/plugin-babel";
+import babel, { defineRolldownBabelPreset } from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
 
 /**
@@ -6,16 +6,21 @@ import { defineConfig } from "vitest/config";
  *
  * Test taxonomy:
  *   tests/unit/**         — isolated unit tests
- *   tests/integration/**  — multi-module decorator/lifecycle integration; the
- *                           accessor-e2e.script.ts subprocess it drives is a SUPPORT
- *                           entrypoint, not a test, so it lives under support/.
- *   tests/e2e/**          — pre-wired (none yet)
+ *   tests/integration/**  — multi-module decorator/lifecycle integration
+ *   tests/e2e/**          — a consumer's program run against the built dist, under
+ *                           tsx and under tsc plus a bare Node, in child processes
  *   tests/types/**        — static type-inference tests (vitest expectTypeOf)
  */
 export default defineConfig({
   plugins: [
     babel({
-      plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]],
+      // Filtered to files that can hold a decorator, so Babel leaves every other module to Oxc.
+      presets: [
+        defineRolldownBabelPreset({
+          preset: () => ({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] }),
+          rolldown: { filter: { code: "@" } },
+        }),
+      ],
     }),
   ],
   // Resolve internal `#` subpath imports to `src` (not the built `dist`): the

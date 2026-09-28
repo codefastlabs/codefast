@@ -58,3 +58,7 @@ jobs:
 
       - name: Run Unit Tests
         run: npx turbo run test:unit --filter="./packages/**" --filter="./internal/**"
+
+      # A consumer lane loads the built packages on this very runtime, which is where a missing builtin shows first.
+      - name: Run End-to-End Tests
+        run: npx turbo run test:e2e --filter="./packages/**" --filter="./internal/**"
