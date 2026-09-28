@@ -1,4 +1,4 @@
-import babel from "@rolldown/plugin-babel";
+import babel, { defineRolldownBabelPreset } from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
@@ -17,10 +17,16 @@ export default defineConfig({
       vercel: { immutableStaticFiles: true },
     }),
     viteReact(),
-    // Lower @codefast/di's standard decorators and run the React Compiler.
+    // Lower @codefast/di's standard decorators and run the React Compiler; the decorators preset is listed last so it
+    // runs first, since Babel runs presets last to first.
     babel({
-      presets: [reactCompilerPreset()],
-      plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]],
+      presets: [
+        reactCompilerPreset(),
+        defineRolldownBabelPreset({
+          preset: () => ({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] }),
+          rolldown: { filter: { code: "@" } },
+        }),
+      ],
     }),
   ],
 });

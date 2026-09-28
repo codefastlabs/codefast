@@ -6,7 +6,8 @@
       "ignoreBinaries": ["read"]
     },
     "apps/web": {
-      "entry": ["src/registry/**/usage.tsx", "src/features/home/demos/*.source.ts"]
+      "entry": ["src/registry/**/usage.tsx", "src/features/home/demos/*.source.ts"],
+      "ignoreDependencies": ["@babel/plugin-proposal-decorators"]
     },
     "benchmarks/di": {
       "entry": ["src/*-benches.ts"]
@@ -20,6 +21,9 @@
     },
     "internal/benchmark-viewer": {
       "entry": ["src/app/entry.tsx"]
+    },
+    "examples/tanstack-start": {
+      "ignoreDependencies": ["@babel/plugin-proposal-decorators"]
     },
     "packages/di": {
       "entry": ["examples/**/*.ts", "tests/e2e/fixtures/**/entry-*.ts"],

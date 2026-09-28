@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { SERVER_ONLY_SUBPATHS } from "@codefast/tracking/tooling/import-protection";
-import babel from "@rolldown/plugin-babel";
+import babel, { defineRolldownBabelPreset } from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -248,10 +248,16 @@ export default defineConfig(({ command }) => {
         traceDeps: ["react", "react-dom"],
       }),
       viteReact(),
-      // Standard decorators for the home page's live `@codefast/di` demos; oxc strips types but leaves decorators to Babel.
       babel({
-        presets: [reactCompilerPreset()],
-        plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]],
+        presets: [
+          reactCompilerPreset(),
+          // Standard decorators for the home page's live `@codefast/di` demos, which oxc leaves to Babel; listed last so
+          // they lower first, since Babel runs presets last to first.
+          defineRolldownBabelPreset({
+            preset: () => ({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] }),
+            rolldown: { filter: { code: "@" } },
+          }),
+        ],
       }),
     ],
   };

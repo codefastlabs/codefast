@@ -1,4 +1,4 @@
-import babel from "@rolldown/plugin-babel";
+import babel, { defineRolldownBabelPreset } from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
 
 /**
@@ -13,7 +13,12 @@ export default defineConfig({
       // A custom exclude replaces the plugin's node_modules default, so both go here: the linked
       // workspace dist is realpath'd outside node_modules and carries no decorator syntax to lower.
       exclude: [/[/\\]node_modules[/\\]/, /[/\\]dist[/\\]/],
-      plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]],
+      presets: [
+        defineRolldownBabelPreset({
+          preset: () => ({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] }),
+          rolldown: { filter: { code: "@" } },
+        }),
+      ],
     }),
   ],
   test: {

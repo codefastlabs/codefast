@@ -1,4 +1,4 @@
-import babel from "@rolldown/plugin-babel";
+import babel, { defineRolldownBabelPreset } from "@rolldown/plugin-babel";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
@@ -20,7 +20,17 @@ export default defineConfig({
     projects: [
       {
         // Standard decorators for the home page's live `@codefast/di` demos, as the app build compiles them.
-        plugins: [viteReact(), babel({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] })],
+        plugins: [
+          viteReact(),
+          babel({
+            presets: [
+              defineRolldownBabelPreset({
+                preset: () => ({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] }),
+                rolldown: { filter: { code: "@" } },
+              }),
+            ],
+          }),
+        ],
         test: {
           environment: "jsdom",
           // Babel and React transforms dominate this run, so persist them across runs.

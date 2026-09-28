@@ -1,4 +1,4 @@
-import babel from "@rolldown/plugin-babel";
+import babel, { defineRolldownBabelPreset } from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
 
 /**
@@ -12,7 +12,13 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [
     babel({
-      plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]],
+      // Filtered to files that can hold a decorator, so Babel leaves every other module to Oxc.
+      presets: [
+        defineRolldownBabelPreset({
+          preset: () => ({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] }),
+          rolldown: { filter: { code: "@" } },
+        }),
+      ],
     }),
   ],
   // Vitest 4 resolves test modules through the SSR pipeline; gate `#` on the
