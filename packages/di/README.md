@@ -528,6 +528,9 @@ Every error extends `DiError` and carries a stable `code`, so you can branch on 
 | `MissingContainerContextError` | `MISSING_CONTAINER_CONTEXT` | An `@inject` accessor initializes with no container open                   |
 | `DisposedContainerError`       | `DISPOSED_CONTAINER`        | A disposed container is used                                               |
 
+A miss below the token you asked for names its path: `TokenNotBoundError` and `NoMatchingBindingError` carry `path`, and
+the message ends with it — `Path: UserService → UserRepository → app:Logger`.
+
 The full taxonomy — including `MissingMetadataError`, `InvalidMetadataError`, `RebindUnboundTokenError`,
 `AsyncModuleLoadError`, `InvalidBindingDeclarationError`, and the rest — is exported from the root entry and from
 `@codefast/di/errors`.

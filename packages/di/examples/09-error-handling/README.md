@@ -47,6 +47,13 @@ try {
 }
 ```
 
+A miss below the token you asked for also names the path down to it, in `err.path` and at the end of the message:
+
+```ts
+container.bind(AuditTrail).toSelf(); // @injectable([LoggerToken]), and LoggerToken is unbound
+container.resolve(AuditTrail); // TokenNotBoundError — Path: AuditTrail → error-handling:Logger
+```
+
 **Recovery:** use `resolveOptional` when a missing binding is acceptable:
 
 ```ts

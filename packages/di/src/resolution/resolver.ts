@@ -55,6 +55,7 @@ import {
   enterSyncPath,
   extendResolutionBranch,
   leaveSyncPath,
+  missPathOf,
   ROOT_BRANCH,
   UNOWNED_BRANCH,
 } from "#resolution/path";
@@ -360,14 +361,16 @@ export class DependencyResolver implements ResolverCallbacks {
       // dominated by that capture. Bindings under the token anywhere in the chain mean the request
       // matched none of them, so a child reports the same miss its parent would.
       const bound = this.#allBindingsFromChain(currentToken);
+      const path = missPathOf(resolutionStack, token, visitedAliasTokens);
       if (bound.length > 0) {
         throw new NoMatchingBindingError(
           tokenName(currentToken),
           options ?? {},
           bound.map((binding) => bindingSlotToString(binding.slot)),
+          path,
         );
       }
-      throw new TokenNotBoundError(tokenName(currentToken));
+      throw new TokenNotBoundError(tokenName(currentToken), path);
     }
     return found;
   }

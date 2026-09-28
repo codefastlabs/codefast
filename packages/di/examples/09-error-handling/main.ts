@@ -59,6 +59,22 @@ try {
 const optionalLogger = emptyContainer.resolveOptional(LoggerToken);
 item("resolveOptional on unbound", optionalLogger); // undefined
 
+// A miss deep in the graph names the path from the request down to the unbound token
+@injectable([LoggerToken])
+class AuditTrail {
+  constructor(readonly logger: Logger) {}
+}
+
+const nestedContainer = Container.create();
+nestedContainer.bind(AuditTrail).toSelf();
+
+try {
+  nestedContainer.resolve(AuditTrail);
+} catch (error) {
+  caughtError("resolve a class whose dependency is unbound", error);
+  item("path", error instanceof TokenNotBoundError ? error.path.join(" → ") : undefined); // AuditTrail → error-handling:Logger
+}
+
 // ── 2. NoMatchingBindingError ────────────────────────────────────────────────────────────────────────────────────────
 
 section("2. NoMatchingBindingError");
