@@ -305,7 +305,7 @@ class UserRepository {
   constructor(
     private readonly db: Database,
     private readonly cache: Cache | undefined,
-    private readonly plugins: Array<Plugin>,
+    private readonly plugins: ReadonlyArray<Plugin>,
     private readonly audit: Logger,
   ) {}
 
