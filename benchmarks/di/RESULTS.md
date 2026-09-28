@@ -122,8 +122,9 @@ correctness property paid for with its price known).
   which keeps a native private field, resolves in 44 ns against 139 ns through esbuild, so the lowering is most of the
   row. What the engine pays is the ambient scope around construction and the accessor's own `resolve` through the
   container, where inversify's property injection is a metadata read on the same plan. **Work difference**, and the
-  harness stays as it is: a codefast user on Vite or tsx pays the same lowering, and a different transpiler for one
-  library would move every codefast row, canaries included.
+  harness stays as it is: a codefast user on tsx or esbuild pays the same lowering, and a different transpiler for one
+  library would move every codefast row, canaries included. Vite 8's Babel recipe keeps a native private field, as `tsc`
+  does, so a Vite user sits nearer the probe's figure than the row's.
 - **Failing fast costs more here: `misconfigured-missing-binding` 0.74×‡ tsyringe, 0.78×‡ brandi, 0.78×‡ ditox, 0.89×‡
   injection-js.** codefast builds a structured error carrying the resolution path; the rivals throw a string, and the
   stack capture both pay is most of the row. **Work difference** on a path a production request should never take.
