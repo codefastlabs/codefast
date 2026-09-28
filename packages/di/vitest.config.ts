@@ -2,7 +2,7 @@ import babel from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
 
 /**
- * DI: Node + Stage 3 decorators.
+ * DI: Node + standard decorators.
  *
  * Test taxonomy:
  *   tests/unit/**         — isolated unit tests

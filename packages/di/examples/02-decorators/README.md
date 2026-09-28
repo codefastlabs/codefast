@@ -9,7 +9,7 @@
 When a class has constructor dependencies, you don't have to write a factory function by hand. The `@injectable`
 decorator records the dependency list once; the container reads it and wires up arguments automatically.
 
-This uses **TC39 Stage 3 decorators** — no `reflect-metadata`, no `experimentalDecorators`.
+This uses **standard decorators** — no `reflect-metadata`, no `experimentalDecorators`.
 
 ---
 

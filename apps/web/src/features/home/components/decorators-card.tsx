@@ -10,7 +10,7 @@ interface DecoratorsCardProps extends Omit<ComponentProps<"article">, "children"
   readonly decorators: FoldedSnippet;
 }
 
-/** Native decorators: dependencies and lifecycle declared where they are consumed, nothing reflected at runtime. */
+/** Standard decorators: dependencies and lifecycle declared where they are consumed, nothing reflected at runtime. */
 export function DecoratorsCard({ decorators, className, ...props }: DecoratorsCardProps) {
   return (
     <article
@@ -19,7 +19,7 @@ export function DecoratorsCard({ decorators, className, ...props }: DecoratorsCa
     >
       <div className="flex items-baseline gap-3">
         <span className="font-mono text-sm text-ui-brand tabular-nums">02</span>
-        <h3 className="text-base font-semibold text-ui-fg">Native Stage 3 decorators</h3>
+        <h3 className="text-base font-semibold text-ui-fg">Standard decorators</h3>
       </div>
       <p className="text-sm leading-relaxed text-ui-muted">
         Six decorators cover dependencies and lifecycle. ReceiptMailer, which mails what place() returns, takes a

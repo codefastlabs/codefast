@@ -35,7 +35,7 @@ still returns the wrong type.
 ### Goals of this library
 
 - **Zero `reflect-metadata`** — no polyfill, no legacy flags
-- **TC39 Decorator Stage 3** — `Symbol.metadata`, no `experimentalDecorators`
+- **Standard decorators** — `Symbol.metadata`, no `experimentalDecorators`
 - **Branded `Token<Value>`** — fully type-safe, never leaks `any`
 - **ESM-only** — like InversifyJS v8, no dual build
 - **Learn the good API from v8** — lifecycle hooks, fluent builder, naming convention — but rebuild it from scratch
@@ -54,26 +54,27 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 #### Setup and requirements
 
-| Aspect             | InversifyJS v8                                                | `@codefast/di`                                  |
-| ------------------ | ------------------------------------------------------------- | ----------------------------------------------- |
-| Installation       | `npm install inversify reflect-metadata`                      | `npm install @codefast/di`                      |
-| reflect-metadata   | Required — `import 'reflect-metadata'` at the entry point     | Not needed — zero dependencies                  |
-| tsconfig flags     | `experimentalDecorators: true`, `emitDecoratorMetadata: true` | No special flags needed                         |
-| Decorator standard | Legacy TC39 Stage 1 (experimentalDecorators)                  | TC39 Stage 3 (`Symbol.metadata`, TypeScript 7+) |
-| Module format      | ESM-only                                                      | ESM-only                                        |
-| Minimum Node.js    | Node ≥ 20.19.0                                                | Node ≥ 24.0.0                                   |
+| Aspect              | InversifyJS v8                                                                          | `@codefast/di`                                                                                    |
+| ------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Installation        | `npm install inversify reflect-metadata`                                                | `npm install @codefast/di`                                                                        |
+| reflect-metadata    | Required — `import 'reflect-metadata'` at the entry point                               | Not needed — zero dependencies                                                                    |
+| tsconfig flags      | `experimentalDecorators: true`, `emitDecoratorMetadata: true`                           | No special flags needed                                                                           |
+| Decorator standard  | Legacy TC39 Stage 1 (experimentalDecorators)                                            | Standard decorators — the TC39 proposal, at Stage 2.7 (`Symbol.metadata`, TypeScript 7+)          |
+| Decorator transform | Any: Oxc, SWC and tsc lower legacy decorators, but esbuild emits no `design:paramtypes` | One that lowers standard decorators: tsx and esbuild as they are, Vite 8 and Vitest through Babel |
+| Module format       | ESM-only                                                                                | ESM-only                                                                                          |
+| Minimum Node.js     | Node ≥ 20.19.0                                                                          | Node ≥ 24.0.0                                                                                     |
 
 #### Binding API
 
-| Feature                | InversifyJS v8                                    | `@codefast/di`                                                      |
-| ---------------------- | ------------------------------------------------- | ------------------------------------------------------------------- |
-| Async binding          | `toDynamicValue` takes both sync and async        | `toDynamic` vs `toDynamicAsync` — enforced by the compiler          |
-| Explicit async deps    | No `toResolvedValueAsync`                         | `toResolvedAsync(factory, deps)` — symmetric with the sync one      |
-| Scope naming           | `inSingletonScope()` / `inTransientScope()` / ... | `singleton()` / `transient()` / `scoped()`                          |
-| Lifecycle after scope  | `when*` available after scope (v8)                | `on*()` only after scope — the chain order is invariant             |
-| `onDeactivation` guard | Runtime error on a non-singleton                  | Compile time: only on `SingletonBindingBuilder`                     |
-| Alias                  | `toService()` returns `void`                      | `toAlias()` returns an `AliasBindingBuilder` — with `when*`/`.id()` |
-| Alias + hint forward   | Not specified                                     | The hint is forwarded to the target resolution                      |
+| Feature                | InversifyJS v8                                    | `@codefast/di`                                                   |
+| ---------------------- | ------------------------------------------------- | ---------------------------------------------------------------- |
+| Async binding          | `toDynamicValue` takes both sync and async        | `toDynamic` vs `toDynamicAsync` — enforced by the compiler       |
+| Explicit async deps    | No `toResolvedValueAsync`                         | `toResolvedAsync(factory, deps)` — symmetric with the sync one   |
+| Scope naming           | `inSingletonScope()` / `inTransientScope()` / ... | `singleton()` / `transient()` / `scoped()`                       |
+| Lifecycle after scope  | `when*` available after scope (v8)                | `when*` before `to*()`, `on*()` after scope — an invariant order |
+| `onDeactivation` guard | Runtime error on a non-singleton                  | Compile time: only on `SingletonBindingBuilder`                  |
+| Alias                  | `toService()` returns `void`                      | `toAlias()` returns an `AliasBindingBuilder` — with `.id()`      |
+| Alias + hint forward   | Not specified                                     | The hint is forwarded to the target resolution                   |
 
 #### Container API
 
@@ -115,22 +116,22 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 ### Learned from v8
 
-| v8 feature                                                     | How it is done here                                                                |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Naming: unqualified=sync, `Async`=async                        | Kept: `resolve`/`resolveAsync`, `load`/`loadAsync`, `unbind`/`unbindAsync`, …      |
-| ESM-only                                                       | Same as v8                                                                         |
-| Per-binding `onActivation` / `onDeactivation`                  | Kept, with the callback inferring its type from the binding — no manual annotation |
-| Container-level `onActivation` / `onDeactivation`              | Kept; children do not inherit the parent's hooks                                   |
-| `toResolvedValue(factory, injectOptions)`                      | `toResolved(factory, deps)` sync, plus the new `toResolvedAsync`                   |
-| The `toService()` alias concept                                | `toAlias()` — a clearer name, with hint forwarding specified                       |
-| `BindingIdentifier` / `.getIdentifier()`                       | Concept kept, renamed to `.id()` — shorter                                         |
-| `whenNamed` / `whenTagged` / `whenDefault` / `when(predicate)` | Kept; tag keys are declared with `tag()`, criteria minted with `TagKey.of()`       |
-| `isBound()` checking the hierarchy                             | `has()` — same semantics, with hint support                                        |
-| `isCurrentBound()` checking the current container only         | `hasOwn()` — a clearer name                                                        |
-| `unbindAll()` / `unbindAllAsync()`                             | Kept as-is                                                                         |
-| `@postConstruct()` / `@preDestroy()` method decorators         | Kept, on TC39 Stage 3, supporting several methods per class rather than just one   |
-| `getAll` filter semantics                                      | `resolveAll` — filter semantics, returning `[]` when nothing matches               |
-| `bind(id).unbind(bindingId)` — unbinding one specific binding  | Kept, via `container.unbind(bindingId)`                                            |
+| v8 feature                                                     | How it is done here                                                                                                                            |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Naming: unqualified=sync, `Async`=async                        | Kept: `resolve`/`resolveAsync`, `load`/`loadAsync`, `unbind`/`unbindAsync`, …                                                                  |
+| ESM-only                                                       | Same as v8                                                                                                                                     |
+| Per-binding `onActivation` / `onDeactivation`                  | Kept, with the callback inferring its type from the binding — no manual annotation                                                             |
+| Container-level `onActivation` / `onDeactivation`              | Kept; children do not inherit the parent's hooks                                                                                               |
+| `toResolvedValue(factory, injectOptions)`                      | `toResolved(factory, deps)` sync, plus the new `toResolvedAsync`; `deps` take `inject()`, `optional()` and `injectAll()` as `@injectable` does |
+| The `toService()` alias concept                                | `toAlias()` — a clearer name, with hint forwarding specified                                                                                   |
+| `BindingIdentifier` / `.getIdentifier()`                       | Concept kept, renamed to `.id()` — shorter                                                                                                     |
+| `whenNamed` / `whenTagged` / `whenDefault` / `when(predicate)` | Kept; tag keys are declared with `tag()`, criteria minted with `TagKey.of()`                                                                   |
+| `isBound()` checking the hierarchy                             | `has()` — same semantics, with hint support                                                                                                    |
+| `isCurrentBound()` checking the current container only         | `hasOwn()` — a clearer name                                                                                                                    |
+| `unbindAll()` / `unbindAllAsync()`                             | Kept as-is                                                                                                                                     |
+| `@postConstruct()` / `@preDestroy()` method decorators         | Kept, on standard decorators, supporting several methods per class rather than one                                                             |
+| `getAll` filter semantics                                      | `resolveAll` — filter semantics, returning `[]` when nothing matches                                                                           |
+| `bind(id).unbind(bindingId)` — unbinding one specific binding  | Kept, via `container.unbind(bindingId)`                                                                                                        |
 
 ---
 
@@ -138,16 +139,16 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 | InversifyJS v8                                                           | This library                                                                                          |
 | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| `reflect-metadata` + `experimentalDecorators` required                   | Zero `reflect-metadata` — TC39 Stage 3, no legacy flags                                               |
+| `reflect-metadata` + `experimentalDecorators` required                   | Zero `reflect-metadata` — standard decorators, no legacy flags                                        |
 | `ServiceIdentifier` is a union type, not branded                         | `Token<Value>` branded — `resolve` always has the right type                                          |
 | `container.get<WrongType>('id')` compiles                                | Impossible — `Token<Value>` carries the type at compile time                                          |
 | `inSingletonScope()` / `inTransientScope()` / `inRequestScope()`         | `singleton()` / `transient()` / `scoped()` — shorter names, no `in` prefix                            |
 | `toDynamicValue` takes sync and async, with no compiler enforcement      | `toDynamic` vs `toDynamicAsync` — the compiler enforces `resolveAsync()` where needed                 |
 | No `toResolvedValueAsync`                                                | `toResolvedAsync(factory, deps)` — symmetric with `toResolved`                                        |
-| `when*` available after scope                                            | `on*()` only after scope — an invariant chain order that removes the ambiguity                        |
+| `when*` available after scope                                            | `when*` before `to*()`, `on*()` after scope — an invariant chain order that removes the ambiguity     |
 | `onDeactivation` has no compile-time guard                               | Builder type narrowing — `onDeactivation` exists only on `SingletonBindingBuilder`                    |
-| `toService()` returns `void`                                             | `toAlias()` returns an `AliasBindingBuilder` — with `when*`, `.id()` and hint forwarding              |
-| `@inject` on a parameter needs `experimentalDecorators`                  | `@injectable([deps])` + `inject()` — pure TC39 Stage 3                                                |
+| `toService()` returns `void`                                             | `toAlias()` returns an `AliasBindingBuilder` — with `.id()` and hint forwarding                       |
+| `@inject` on a parameter needs `experimentalDecorators`                  | `@injectable([deps])` + `inject()` — standard decorators only                                         |
 | `@inject` on a plain property                                            | `@inject accessor field` — using the TC39 `accessor` keyword                                          |
 | `getAll()` is sync only                                                  | `resolveAll()` + `resolveAllAsync()`                                                                  |
 | `container.get()` + `{ optional: true }` — hidden inside options         | `resolveOptional()` + `resolveOptionalAsync()` — an explicit method name                              |
@@ -189,7 +190,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | `container.register(PluginClass)`                                        | No plugin system — avoids a hidden extension mechanism                              |
 | `toFactory(ctx => curriedFn)`                                            | `toConstantValue(fn)` or `toDynamic` — less indirection                             |
 | `rebindAsync()` — async unbind then bind again                           | Use `unbindAsync()` then `bind()` — two clear steps, explicit semantics             |
-| Parameter decorators `@inject` / `@optional` / `@named` / `@tagged`      | TS1206 — they do not exist in TC39 Stage 3                                          |
+| Parameter decorators `@inject` / `@optional` / `@named` / `@tagged`      | TS1206 — standard decorators have none                                              |
 | `@multiInject(id)` on a parameter / property                             | `injectAll(token)` in the deps array — a plain function, no decorator needed        |
 | `@injectFromBase()` / `@injectFromHierarchy()`                           | An explicit deps array replaces them — no implicit inheritance injection            |
 | `@unmanaged()` on a parameter                                            | In a deps array, simply do not declare an arg that needs no injection               |
@@ -198,7 +199,6 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | The `ContainerModule` callback has `bind`, `unbind`, `rebind`, `isBound` | `ModuleBuilder` has only `bind` + `import` — avoids hidden coupling between modules |
 | `when*` ancestor/parent constraints on the main API surface              | Present at the root, plus a dedicated subpath for anyone wanting a narrow import    |
 | `inRequestScope()` per-resolve-tree semantics                            | `scoped()` per child container — a clearer lifecycle boundary                       |
-| `toResolvedValue` with per-dep name/tag injection options                | `toResolved` takes a plain token array — for name/tag, use `toDynamic`              |
 
 ---
 

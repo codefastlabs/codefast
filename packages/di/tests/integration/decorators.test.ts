@@ -20,7 +20,7 @@ import { defaultMetadataReader } from "#metadata/symbol-reader";
 const integrationDir = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(integrationDir, "..", "..");
 
-describe("Stage 3 decorators — metadata & lifecycle", () => {
+describe("standard decorators — metadata & lifecycle", () => {
   it("registers accessor metadata via @injectable + getAccessorMetadata", () => {
     const MetadataDepToken = token<string>("decorators.meta");
     const container = Container.create();

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24.0.0, pnpm 11 — every package holds that one floor,
 `di` included, which is why it keeps its own `Map` upsert helpers instead of the platform's `getOrInsert`) publishing
-the `@codefast/*` packages. The flagship is `@codefast/di`, lightweight dependency injection on TC39 Stage 3 decorators;
+the `@codefast/*` packages. The flagship is `@codefast/di`, type-safe dependency injection on standard decorators;
 `@codefast/ui` is the Radix-based, Tailwind CSS 4 component library. `apps/web` is the TanStack Start site behind
 codefastlabs.com: a landing page over every published package, the `@codefast/ui` showcase, and `/docs/<pkg>` pages
 rendered at build time from each package's own `README.md`/`SPEC.md`/`ARCHITECTURE.md`/… — or from a directory named
@@ -322,7 +322,7 @@ point of use beats brevity, and every word must convey information:
 | `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.)             |
 | `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                              |
 | `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                                     |
-| `packages/di`                | Lightweight dependency-injection primitives                                                                       |
+| `packages/di`                | Type-safe, zero-dependency dependency-injection primitives                                                        |
 | `packages/di-testing`        | Solitary and sociable auto-mocking test beds for `@codefast/di` (`TestBed.solitary`/`.sociable`)                  |
 | `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog                   |
 | `packages/cli`               | `codefast` CLI — subcommands `arrange`, `audit`, `mirror`, `pack-slim`, `tag` (run via `pnpm run codefast <cmd>`) |

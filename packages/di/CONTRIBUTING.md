@@ -93,7 +93,7 @@ Tests live under exactly one of `tests/{unit,integration,e2e,types}/**`, mirrori
 pnpm --filter @codefast/di test:unit   # or test:integration / test:type / test:e2e
 ```
 
-Add coverage for the new behavior. Vitest transforms with OXC by default; a test that needs Stage 3 decorators goes
+Add coverage for the new behavior. Vitest transforms with OXC by default; a test that needs standard decorators goes
 through `@rolldown/plugin-babel` with `@babel/plugin-proposal-decorators` (`version: "2023-11"`), configured in
 [`vitest.config.ts`](./vitest.config.ts). A transform touching decorator metadata has to keep `inject()` a callable
 object — use `isInjectionDescriptor(value)` before walking a deps array.

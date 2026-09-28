@@ -8,7 +8,7 @@
 ## What this example shows
 
 Everything the resolver knows about a class — its constructor parameters, its lifecycle hooks, its `@inject` accessors —
-it learns through one interface: `MetadataReader`. The default implementation reads Stage 3 decorator metadata. Bind
+it learns through one interface: `MetadataReader`. The default implementation reads standard decorator metadata. Bind
 your own and you can wire classes that carry no decorators at all: a class from a dependency, generated code, plain
 JavaScript.
 

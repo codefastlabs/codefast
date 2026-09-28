@@ -61,7 +61,7 @@ function OverviewPage() {
         </PackageCard>
 
         <PackageCard
-          description="Lightweight dependency-injection primitives — used here as a server-side composition root."
+          description="Type-safe, zero-dependency dependency injection — used here as a server-side composition root."
           name="@codefast/di"
           version={VERSION}
         >

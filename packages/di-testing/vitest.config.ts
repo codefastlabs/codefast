@@ -2,7 +2,7 @@ import babel from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
 
 /**
- * DI testing: Node + Stage 3 decorators.
+ * DI testing: Node + standard decorators.
  *
  * The test beds instantiate decorated `@injectable` classes, so the decorator
  * transform is required here exactly as in `@codefast/di`. Test taxonomy:

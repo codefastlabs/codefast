@@ -248,7 +248,7 @@ export default defineConfig(({ command }) => {
         traceDeps: ["react", "react-dom"],
       }),
       viteReact(),
-      // Stage 3 decorators for the home page's live `@codefast/di` demos; oxc strips types but leaves decorators to Babel.
+      // Standard decorators for the home page's live `@codefast/di` demos; oxc strips types but leaves decorators to Babel.
       babel({
         presets: [reactCompilerPreset()],
         plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]],

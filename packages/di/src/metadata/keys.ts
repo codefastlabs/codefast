@@ -18,7 +18,7 @@ export const LIFECYCLE_KEY: unique symbol = Symbol("di:lifecycle");
 export const INJECT_ACCESSOR_KEY: unique symbol = Symbol("di:inject-accessor");
 
 /**
- * The symbol TC39 Stage 3 decorator transforms store class metadata under.
+ * The symbol standard decorator transforms store class metadata under.
  *
  * @remarks Falls back to the global-registry symbol, which is what Babel and esbuild emit until
  * a runtime ships `Symbol.metadata` natively.

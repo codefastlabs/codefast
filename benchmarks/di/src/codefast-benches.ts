@@ -8,7 +8,7 @@
  * - Emit the resulting `SubprocessPayload` with framing markers so the
  *   parent harness can parse it unambiguously.
  *
- * Must run under `tsconfig.codefast.json` — Stage 3 decorators + emit
+ * Must run under `tsconfig.codefast.json` — standard decorators + emit
  * `Symbol.metadata`. The parent spawns it with
  * `NODE_OPTIONS=--expose-gc --no-warnings NODE_ENV=production`.
  */
