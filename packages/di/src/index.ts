@@ -139,7 +139,6 @@ export {
   SelfBindingRequiresClassError,
   StaticMemberDecoratorError,
   SymbolKeyedLifecycleError,
-  SyncDisposalNotSupportedError,
   EmptyTagCriteriaError,
   TokenNotBoundError,
   UnreachableConstraintError,

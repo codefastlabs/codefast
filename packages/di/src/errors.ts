@@ -29,6 +29,11 @@ export class InternalError extends DiError {
   }
 }
 
+// A path of one token only repeats the name the message already opens with.
+function pathSuffix(path: ReadonlyArray<string>): string {
+  return path.length > 1 ? ` Path: ${path.join(" → ")}` : "";
+}
+
 /**
  * A token with no binding at all, even after walking the parent container chain.
  *
@@ -38,10 +43,13 @@ export class TokenNotBoundError extends DiError {
   override readonly name = "TokenNotBoundError";
   readonly code = "TOKEN_NOT_BOUND";
   readonly tokenName: string;
+  /** The token names from the outermost request down to the unbound one, which is last. */
+  readonly path: ReadonlyArray<string>;
 
-  constructor(tokenName: string) {
-    super(`No binding found for token '${tokenName}'. Did you forget container.bind(${tokenName})?`);
+  constructor(tokenName: string, path: ReadonlyArray<string> = [tokenName]) {
+    super(`No binding found for token '${tokenName}'. Did you forget container.bind(${tokenName})?${pathSuffix(path)}`);
     this.tokenName = tokenName;
+    this.path = path;
   }
 }
 
@@ -90,14 +98,24 @@ export class NoMatchingBindingError extends DiError {
   readonly tokenName: string;
   readonly options: ResolveOptions;
   readonly availableSlots: Array<string>;
+  /** The token names from the outermost request down to the unmatched one, which is last. */
+  readonly path: ReadonlyArray<string>;
 
-  constructor(tokenName: string, options: ResolveOptions, availableSlots: Array<string>) {
+  constructor(
+    tokenName: string,
+    options: ResolveOptions,
+    availableSlots: Array<string>,
+    path: ReadonlyArray<string> = [tokenName],
+  ) {
     const optionsString = describeResolveOptions(options);
     const slotsStr = availableSlots.join(", ");
-    super(`No binding for '${tokenName}' matching ${optionsString}. Available slots: [${slotsStr}].`);
+    super(
+      `No binding for '${tokenName}' matching ${optionsString}. Available slots: [${slotsStr}].${pathSuffix(path)}`,
+    );
     this.tokenName = tokenName;
     this.options = options;
     this.availableSlots = availableSlots;
+    this.path = path;
   }
 }
 
@@ -276,7 +294,7 @@ export class UnreachableLifecycleHookError extends DiError {
   readonly code = "UNREACHABLE_LIFECYCLE_HOOK";
   readonly tokenName: string;
   readonly phase: "onActivation" | "onDeactivation";
-  /** Nothing binds the token, or — for a deactivation hook — every binding it has is transient or scoped. */
+  /** Nothing binds the token, or — for a deactivation hook — every binding it has is transient. */
   readonly reason: "unbound" | "no-deactivatable-binding";
 
   constructor(
@@ -287,7 +305,7 @@ export class UnreachableLifecycleHookError extends DiError {
     super(
       reason === "unbound"
         ? `${phase}() is registered for '${tokenName}', which nothing is bound to in this container or its ancestors, so the hook can never run. Bind the token, or — if '${tokenName}' is a class you bound as an implementation via .to(${tokenName}) — register the hook against the token you bound instead.`
-        : `${phase}() is registered for '${tokenName}', whose every binding in this container and its ancestors is transient or scoped, so the hook can never run: only a singleton or a constant is deactivated. Make one of its bindings a singleton, or drop the hook.`,
+        : `${phase}() is registered for '${tokenName}', whose every binding in this container and its ancestors is transient, so the hook can never run: a transient instance is never deactivated. Make one of its bindings a singleton or scoped, or drop the hook.`,
     );
     this.tokenName = tokenName;
     this.phase = phase;
@@ -352,22 +370,6 @@ export class AsyncModuleLoadError extends DiError {
   constructor(moduleName: string) {
     super(`Module '${moduleName}' is async. Use container.loadAsync() instead.`);
     this.moduleName = moduleName;
-  }
-}
-
-/**
- * A synchronous disposal attempt on a container whose `onDeactivation` handlers may be async.
- *
- * @since 0.3.16-canary.0
- */
-export class SyncDisposalNotSupportedError extends DiError {
-  override readonly name = "SyncDisposalNotSupportedError";
-  readonly code = "SYNC_DISPOSAL_NOT_SUPPORTED";
-
-  constructor() {
-    super(
-      "Container cannot be disposed synchronously because onDeactivation handlers may be async. Use `await using` or call container.dispose() explicitly.",
-    );
   }
 }
 

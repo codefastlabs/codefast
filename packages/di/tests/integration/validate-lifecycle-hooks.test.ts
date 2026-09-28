@@ -118,24 +118,23 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     }).not.toThrow();
   });
 
-  it("throws for a deactivation hook on a token whose only binding is scoped", () => {
+  it("passes a deactivation hook on a token whose only binding is scoped, which a child's disposal runs", async () => {
     const connectionToken = token<Connection>("scoped-deactivation");
+    const deactivated: Array<Connection> = [];
 
     const container = Container.create();
     container.bind(connectionToken).to(Connection).scoped();
-    container.onDeactivation(connectionToken, () => {
-      // a scoped binding is never deactivated, so this can never run
+    container.onDeactivation(connectionToken, (connection) => {
+      deactivated.push(connection);
     });
 
     expect(() => {
       container.validate();
-    }).toThrow(UnreachableLifecycleHookError);
-    // The token is bound, so the error must say why the hook is unreachable rather than claim it is not.
-    expect(() => {
-      container.validate();
-    }).toThrow(
-      expect.objectContaining({ reason: "no-deactivatable-binding", message: expect.stringContaining("scoped") }),
-    );
+    }).not.toThrow();
+    const request = container.createChild();
+    const connection = request.resolve(connectionToken);
+    await request.dispose();
+    expect(deactivated).toEqual([connection]);
   });
 
   it("throws for a deactivation hook on a token whose only binding is transient", () => {

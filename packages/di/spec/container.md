@@ -316,7 +316,7 @@ requestContainer.bind(RequestId).toConstantValue(crypto.randomUUID());
 
 const handler = requestContainer.resolve(RequestHandler);
 
-// Dispose: deactivate every singleton DEFINED at the child (the parent is untouched)
+// Dispose: deactivate the child's scoped instances, then every singleton DEFINED at it (the parent is untouched)
 await requestContainer.dispose();
 
 // `await using` — TC39 Explicit Resource Management
@@ -328,12 +328,13 @@ await requestContainer.dispose();
 }
 ```
 
-> **Normative — `[Symbol.dispose](): never`.** The container implements `Symbol.dispose` but always throws
-> `SyncDisposalNotSupportedError`, because `onDeactivation` may be async. Use `await using` (which calls
-> `Symbol.asyncDispose`) rather than `using` (which calls `Symbol.dispose`).
+> **Normative — asynchronous disposal only.** The container implements `Symbol.asyncDispose` and not `Symbol.dispose`,
+> because `onDeactivation` may be async: `await using` disposes it, and a synchronous `using` is a compile error.
 
-**Scoped bindings — the request scope pattern.** A `scoped` binding is a singleton within one child container. The
-pattern for request scope in a web framework:
+**Scoped bindings — the request scope pattern.** A `scoped` binding is a singleton within one child container, and is
+deactivated with it: disposing the child runs the `onDeactivation` hooks and `@preDestroy()` of every scoped instance it
+cached, latest first and before its own singletons, with the hooks of the container that owns each binding — the same
+container whose hooks activated it. The pattern for request scope in a web framework:
 
 ```ts
 // One child container per request
@@ -416,7 +417,7 @@ fail fast at startup on a config error, and remove lazy-init latency from the fi
 > - A singleton carrying a `when()` predicate is **skipped**: a predicate reads the resolution path, and warm-up has no
 >   path to hand it, so such a singleton is created by its first real resolve.
 
-## `validate` — detecting captive dependencies
+## `validate` — checking the graph before the first resolve
 
 ```ts
 container.validate();
@@ -449,6 +450,18 @@ still checked as a dependency — a singleton that depends on a transient `toDyn
 other. At runtime, a factory's own captive dependency is caught only when it breaks something: a singleton factory
 resolving a `scoped` binding from the root throws `MissingScopeContextError`, while one capturing a `transient`
 dependency raises nothing.
+
+**Dependencies that cannot resolve.** Every binding the walk reaches is a singleton, which resolves its dependencies
+from the chain of the container that owns it — so a parent-owned singleton reached from a child is read from the
+parent's chain, as `resolve` reads it. A required dependency nothing in that chain selects therefore fails however the
+graph is entered, and so does a binding met twice on one path. `validate()` throws what `resolve` would:
+`TokenNotBoundError` or `NoMatchingBindingError` with the `path` from the singleton down to the miss, alias hops
+included, or `CircularDependencyError` with the cycle. An optional dependency and an `injectAll` collection never miss.
+
+> **Normative — what `validate()` leaves to `resolve`.** A transient or scoped consumer's dependencies are not reported
+> missing, since a child container may bind them before it resolves the consumer; and neither is a request whose only
+> slot-matching candidates carry a `when()` predicate, since the predicate reads a resolution path the walk does not
+> have. Both keep the check free of false positives.
 
 Call `validate()` after loading every module, before serving the first request.
 
@@ -611,11 +624,12 @@ slot the edge points at, if the binding declares one). The `label` field is **fo
 - **An optional dep that is not bound still appears**, as a placeholder node with `kind`/`scope` = `"unbound"` and an
   edge carrying `optional: true`. That keeps "optional but absent" distinct from "not a dependency". "Bound" means bound
   within the graph: with `includeParent: false`, an optional dep that only an ancestor binds is a placeholder too.
-- **A required dep that is not bound is skipped** — that is `validate()`'s job, not the graph's.
+- **A required dep that is not bound is skipped** — `validate()` reports one a singleton needs; the graph draws what is
+  bound.
 - **`injectAll` fans out to every binding** of the token, each edge carrying its `slotName`.
 - **Edge targets are filtered by resolution's own slot rules**
-  ([`validate`](#validate--detecting-captive-dependencies)): a request that names nothing will not connect to a named
-  binding it could never have resolved.
+  ([`validate`](#validate--checking-the-graph-before-the-first-resolve)): a request that names nothing will not connect
+  to a named binding it could never have resolved.
 - **Predicates (`when...`) are not evaluated** — a predicate needs a real resolve context, so the graph keeps every
   candidate that has one.
 - **With `includeParent: true`**, every ancestor's bindings join the graph (`fromParent: true`), and each edge follows
@@ -635,7 +649,7 @@ Put together, a container exposes nine groups:
 | Container-level hooks | `onActivation`, `onDeactivation`                                                                      |
 | Resolution            | `resolve`, `resolveAsync`, `resolveOptional`, `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync` |
 | Child                 | `createChild`                                                                                         |
-| Disposal              | `dispose`, `[Symbol.asyncDispose]`, `[Symbol.dispose]` (always throws)                                |
+| Disposal              | `dispose`, `[Symbol.asyncDispose]`                                                                    |
 | Initialise & check    | `initializeAsync`, `validate`                                                                         |
 | Introspection         | `has`, `hasOwn`, `lookupBindings`, `inspect`, `generateDependencyGraph`                               |
 

@@ -55,6 +55,7 @@ import {
   enterSyncPath,
   extendResolutionBranch,
   leaveSyncPath,
+  missPathOf,
   ROOT_BRANCH,
   UNOWNED_BRANCH,
 } from "#resolution/path";
@@ -360,14 +361,16 @@ export class DependencyResolver implements ResolverCallbacks {
       // dominated by that capture. Bindings under the token anywhere in the chain mean the request
       // matched none of them, so a child reports the same miss its parent would.
       const bound = this.#allBindingsFromChain(currentToken);
+      const path = missPathOf(resolutionStack, token, visitedAliasTokens);
       if (bound.length > 0) {
         throw new NoMatchingBindingError(
           tokenName(currentToken),
           options ?? {},
           bound.map((binding) => bindingSlotToString(binding.slot)),
+          path,
         );
       }
-      throw new TokenNotBoundError(tokenName(currentToken));
+      throw new TokenNotBoundError(tokenName(currentToken), path);
     }
     return found;
   }
@@ -420,6 +423,48 @@ export class DependencyResolver implements ResolverCallbacks {
     options: ResolveOptions | undefined,
   ): ReadonlyArray<Binding> {
     return this.#candidateBindings(token, options, []);
+  }
+
+  /**
+   * The error `resolve` raises for a request nothing selects, or `undefined` while a `when()` candidate leaves it open.
+   *
+   * @remarks A predicate reads the resolution path, which a static walk does not have, so a slot-matching candidate
+   * that carries one may still be selected when the request is really made.
+   */
+  missForValidate(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions | undefined,
+    path: ReadonlyArray<string>,
+  ): TokenNotBoundError | NoMatchingBindingError | undefined {
+    const bound = this.#allBindingsFromChain(token);
+    if (bound.length === 0) {
+      return new TokenNotBoundError(tokenName(token), path);
+    }
+    for (const binding of bound) {
+      if (binding.predicate !== undefined && !binding.isMany && matchesSlot(binding.slot, options)) {
+        return undefined;
+      }
+    }
+    return new NoMatchingBindingError(
+      tokenName(token),
+      options ?? {},
+      bound.map((binding) => bindingSlotToString(binding.slot)),
+      path,
+    );
+  }
+
+  /** The resolver whose chain a binding this one can see resolves its dependencies from, as a singleton does. */
+  ownerForValidate(binding: Binding): DependencyResolver {
+    return this.#ownerOf(binding);
+  }
+
+  /** Deactivates a scoped instance of a binding this resolver owns, with its hooks and reader, when it owes a teardown. */
+  deactivateScoped(binding: Binding, instance: unknown): Promise<void> | undefined {
+    const lifecycle = this.#lifecycle;
+    const reader = this.#metadataReader;
+    return lifecycle.owesDeactivation(binding, reader)
+      ? lifecycle.runDeactivation(binding, instance, reader)
+      : undefined;
   }
 
   // ── Sync resolve ───────────────────────────────────────────────────────────────────────────────────────────────────
@@ -814,7 +859,7 @@ export class DependencyResolver implements ResolverCallbacks {
       if (scope === "singleton") {
         this.#scope.setSingleton(binding, activated);
       } else if (scope === "scoped") {
-        this.#scope.setScoped(binding, activated);
+        this.#scope.setScoped(binding, activated, owner);
       }
 
       return activated;
@@ -1394,12 +1439,12 @@ export class DependencyResolver implements ResolverCallbacks {
       return activated;
     }
     if (isPending(activated)) {
-      return this.#publishInFlight(binding, activated, scope);
+      return this.#publishInFlight(binding, activated, scope, owner);
     }
     if (scope === "singleton") {
       this.#scope.setSingleton(binding, activated);
     } else {
-      this.#scope.setScoped(binding, activated);
+      this.#scope.setScoped(binding, activated, owner);
     }
     return activated;
   }
@@ -1408,13 +1453,18 @@ export class DependencyResolver implements ResolverCallbacks {
    * Publishes a pending singleton or scoped materialisation so concurrent callers dedup onto it,
    * and caches what it settles to; the creator, like every joiner, is handed a promise of its own.
    */
-  #publishInFlight(binding: Binding, pending: Promise<unknown>, scope: "singleton" | "scoped"): Promise<unknown> {
+  #publishInFlight(
+    binding: Binding,
+    pending: Promise<unknown>,
+    scope: "singleton" | "scoped",
+    owner: DependencyResolver,
+  ): Promise<unknown> {
     const published = pending.then(
       (activated) => {
         if (scope === "singleton") {
           this.#scope.setSingleton(binding, activated);
         } else {
-          this.#scope.setScoped(binding, activated);
+          this.#scope.setScoped(binding, activated, owner);
         }
         this.#scope.clearInflight(binding.identifier);
         return activated;

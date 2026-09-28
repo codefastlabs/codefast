@@ -63,8 +63,9 @@ describe("a binding definition is typed exactly as the chain is", () => {
     );
   });
 
-  it("offers onDeactivation only to a singleton", () => {
+  it("offers onDeactivation to a singleton and a scoped binding, never a transient", () => {
     binding(LoggerToken, { to: ConsoleLogger, scope: "singleton", onDeactivation: (logger) => logger.log("bye") });
+    binding(LoggerToken, { to: ConsoleLogger, scope: "scoped", onDeactivation: (logger) => logger.log("bye") });
     binding(LoggerToken, { to: ConsoleLogger, scope: "scoped", onActivation: (_ctx, logger) => logger });
     expect(() =>
       // @ts-expect-error onDeactivation on a transient

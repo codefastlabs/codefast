@@ -10,8 +10,8 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | Error                            | `code`                        | Thrown when                                                                    | Context fields                                                 |
 | -------------------------------- | ----------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------- |
 | `InternalError`                  | `INTERNAL_ERROR`              | An internal assertion failed — **not** a user error                            | —                                                              |
-| `TokenNotBoundError`             | `TOKEN_NOT_BOUND`             | The token has no binding at all, even after walking the parent chain           | `tokenName`                                                    |
-| `NoMatchingBindingError`         | `NO_MATCHING_BINDING`         | The token **has** bindings but no slot matches the hint                        | `tokenName`, `options`, `availableSlots`                       |
+| `TokenNotBoundError`             | `TOKEN_NOT_BOUND`             | The token has no binding at all, even after walking the parent chain           | `tokenName`, `path`                                            |
+| `NoMatchingBindingError`         | `NO_MATCHING_BINDING`         | The token **has** bindings but no slot matches the hint                        | `tokenName`, `options`, `availableSlots`, `path`               |
 | `AmbiguousBindingError`          | `AMBIGUOUS_BINDING`           | ≥ 2 candidates remain and the more-specific rule cannot decide                 | `tokenName`, `candidateIds`                                    |
 | `CircularDependencyError`        | `CIRCULAR_DEPENDENCY`         | A → B → A, including a cycle along an alias chain                              | `cycle`                                                        |
 | `AsyncResolutionError`           | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain          | `tokenName`, `asyncSourceToken`                                |
@@ -21,7 +21,6 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | `MissingMetadataError`           | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing            | `targetName`                                                   |
 | `InvalidMetadataError`           | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use               | `targetName`, `reason`                                         |
 | `AsyncModuleLoadError`           | `ASYNC_MODULE_LOAD`           | A sync `load()` received an `AsyncModule`                                      | `moduleName`                                                   |
-| `SyncDisposalNotSupportedError`  | `SYNC_DISPOSAL_NOT_SUPPORTED` | `[Symbol.dispose]()` was called                                                | —                                                              |
 | `MissingScopeContextError`       | `MISSING_SCOPE_CONTEXT`       | A `scoped` binding resolved from a container with no child scope               | `tokenName`                                                    |
 | `MissingContainerContextError`   | `MISSING_CONTAINER_CONTEXT`   | A class with `@inject accessor` was `new`-ed outside a container               | `className` (may be `undefined`), `accessorName`               |
 | `RebindUnboundTokenError`        | `REBIND_UNBOUND_TOKEN`        | `rebind()` on a token with no own binding in this container                    | `tokenName`                                                    |
@@ -50,6 +49,11 @@ No binding for 'app:Logger' matching {"name":"file"}. Available slots: [default,
 Token 'app:Api' requires async resolution because 'app:Database' in its dependency
 chain has an async factory. Use container.resolveAsync(app:Api).
 ```
+
+`TokenNotBoundError` and `NoMatchingBindingError` carry `path`: the token names from the outermost request down to the
+one that missed, alias hops included — `[tokenName]` for a miss on the token asked for, which the message then leaves
+out. Their message ends with `Path: a → b → c` otherwise. `validate()` raises both, and `CircularDependencyError`, for a
+singleton graph that cannot resolve, with the path from that singleton.
 
 `ScopeViolationError` is raised by `validate()` alone: a resolve does not check scopes, so a singleton that captures a
 transient resolves silently, and one that captures a `scoped` binding from the root fails with

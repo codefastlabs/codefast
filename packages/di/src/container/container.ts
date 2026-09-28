@@ -28,7 +28,6 @@ import {
   InternalError,
   RebindUnboundTokenError,
   ScopeViolationError,
-  SyncDisposalNotSupportedError,
   UnreachableConstraintError,
   UnreachableLifecycleHookError,
 } from "#errors";
@@ -43,11 +42,12 @@ import { explainRequest } from "#introspection/explanation";
 import type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";
 import { Inspector } from "#introspection/inspector";
 import { LifecycleManager } from "#lifecycle/hooks";
-import { ScopeManager } from "#lifecycle/scopes";
+import { SCOPED_MISS, ScopeManager } from "#lifecycle/scopes";
 import { MetadataReaderToken } from "#metadata/reader-token";
 import { defaultMetadataReader } from "#metadata/symbol-reader";
 import type { MetadataReader } from "#metadata/types";
 import { verifyingMetadataReader } from "#metadata/verifying-reader";
+import type { DefaultLookupEntry } from "#resolution/cache/lookup";
 import { ROOT_BRANCH } from "#resolution/path";
 import { DependencyResolver } from "#resolution/resolver";
 
@@ -129,7 +129,6 @@ export interface Container {
 
   dispose(): Promise<void>;
   [Symbol.asyncDispose](): Promise<void>;
-  [Symbol.dispose](): never;
 
   initializeAsync(): Promise<void>;
   validate(): void;
@@ -198,6 +197,22 @@ const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown
     builder.transient();
   },
 };
+
+/** One edge `validate` judges: the binding it reaches, and the resolver whose chain resolves that binding's own. */
+interface ValidationEdge {
+  readonly terminal: Binding;
+  readonly owner: DependencyResolver;
+  readonly depTokenName: string;
+}
+
+/** Where `validate` finds an alias chain ends: a terminal binding, or the token nothing selects and the hops to it. */
+type AliasChainEnd =
+  | { readonly found: true; readonly terminal: Binding; readonly owner: DependencyResolver }
+  | {
+      readonly found: false;
+      readonly missingToken: Token<unknown> | Constructor;
+      readonly hopNames: ReadonlyArray<string>;
+    };
 
 /** Bindings owing a deactivation, each followed by the instance it is owed for. */
 type DeactivationPairs = ReadonlyArray<unknown>;
@@ -416,7 +431,10 @@ class DefaultContainer implements Container {
     } else if (this.#owesConstantDeactivation(binding)) {
       (pairs ??= []).push(binding, binding.value);
     }
-    this.#scope.deleteScoped(binding.scopedCacheKey);
+    const scopedInstance = this.#scope.takeScoped(binding.scopedCacheKey);
+    if (scopedInstance !== SCOPED_MISS) {
+      (pairs ??= []).push(binding, scopedInstance);
+    }
     return pairs;
   }
 
@@ -899,6 +917,11 @@ class DefaultContainer implements Container {
 
     const reader = this.#getMetadataReader();
     const errors: Array<unknown> = [];
+    // A scoped instance may hold this container's singletons and never the reverse, so it goes first, latest first.
+    const scopedTeardown = this.#scope.deactivateScoped(errors);
+    if (scopedTeardown !== undefined) {
+      await scopedTeardown;
+    }
     // Iterate a copy: a deactivation handler is user code, and the live list is what
     // materializing or dropping a singleton mutates. Reverse materialization order, so a
     // dependent tears down before the dependencies it may still reach through.
@@ -945,10 +968,6 @@ class DefaultContainer implements Container {
 
   [Symbol.asyncDispose](): Promise<void> {
     return this.dispose();
-  }
-
-  [Symbol.dispose](): never {
-    throw new SyncDisposalNotSupportedError();
   }
 
   // ── Initialization ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1000,8 +1019,8 @@ class DefaultContainer implements Container {
       if (!this.#isBoundInChain(hookToken)) {
         throw new UnreachableLifecycleHookError(tokenName(hookToken), phase);
       }
-      // A deactivation only ever runs for a singleton or constant, so a hook on a token whose every
-      // binding is scoped or transient can never fire — the builder blocks it, `container.onDeactivation` cannot.
+      // A deactivation never runs for a transient, so a hook on a token whose every binding is transient
+      // can never fire — the builder blocks it, `container.onDeactivation` cannot.
       if (phase === "onDeactivation" && !this.#hasDeactivatableBindingInChain(hookToken)) {
         throw new UnreachableLifecycleHookError(tokenName(hookToken), phase, "no-deactivatable-binding");
       }
@@ -1053,10 +1072,10 @@ class DefaultContainer implements Container {
     return parent !== undefined && parent.#isBoundInChain(token);
   }
 
-  // Whether the token has a binding a deactivation hook can run for — a singleton or a constant.
+  // Whether the token has a binding a deactivation hook can run for — anything but a transient.
   #hasDeactivatableBindingInChain(token: Token<unknown> | Constructor): boolean {
     for (const binding of this.#registry.getAll(token)) {
-      if (effectiveBindingScope(binding) === "singleton") {
+      if (effectiveBindingScope(binding) !== "transient") {
         return true;
       }
     }
@@ -1072,24 +1091,28 @@ class DefaultContainer implements Container {
   }
 
   /**
-   * DFS over explicit constructor / `toResolved*` dependency edges. Follows `toAlias` chains to the
-   * terminal binding for scope checks.
+   * DFS over explicit constructor / `toResolved*` dependency edges, following `toAlias` chains to the terminal binding.
    *
-   * @remarks A `toDynamic*` dependency is scope-checked like any other — its declared scope is what
-   * makes it captive — but the DFS does not descend into the factory, whose body is opaque.
+   * @remarks Every binding reached is a singleton resolved from its owner's chain, so a required miss or a repeat
+   * on one path fails however the graph is entered; a `toDynamic*` edge is scope-checked, its factory not descended.
    */
   #validateSingletonBindingGraph(root: Binding, reader: MetadataReader): void {
     const rootName = tokenName(root.token);
 
-    const dfs = (current: Binding, pathNames: Array<string>, pathBindingIds: Set<BindingIdentifier>): void => {
+    const dfs = (
+      current: Binding,
+      view: DependencyResolver,
+      pathNames: Array<string>,
+      pathBindingIds: Set<BindingIdentifier>,
+    ): void => {
       if (pathBindingIds.has(current.identifier)) {
-        return;
+        throw new CircularDependencyError(pathNames);
       }
       const extendedPathIds = new Set(pathBindingIds);
       extendedPathIds.add(current.identifier);
 
-      for (const edge of this.#collectStaticDependencyEdges(current, reader)) {
-        const { terminal, depTokenName } = edge;
+      for (const edge of this.#collectStaticDependencyEdges(current, view, reader, pathNames)) {
+        const { terminal, owner, depTokenName } = edge;
         const depScope = this.#validationScopeFromTerminal(terminal);
         if (depScope !== "singleton") {
           throw new ScopeViolationError({
@@ -1101,12 +1124,12 @@ class DefaultContainer implements Container {
           });
         }
         if (terminal.kind === "class" || terminal.kind === "resolved" || terminal.kind === "resolved-async") {
-          dfs(terminal, [...pathNames, depTokenName], extendedPathIds);
+          dfs(terminal, owner, [...pathNames, depTokenName], extendedPathIds);
         }
       }
     };
 
-    dfs(root, [rootName], new Set());
+    dfs(root, this.#resolver, [rootName], new Set());
   }
 
   /**
@@ -1123,34 +1146,45 @@ class DefaultContainer implements Container {
     return terminal.scope;
   }
 
-  #followAliasChainToTerminal(binding: Binding, options: ResolveOptions | undefined): Binding | undefined {
+  /** Where an alias chain ends as `resolve` walks it from `view`: its terminal binding, or the names up to a miss. */
+  #followAliasChainToTerminal(
+    entry: DefaultLookupEntry<DependencyResolver>,
+    view: DependencyResolver,
+    options: ResolveOptions | undefined,
+  ): AliasChainEnd {
     const cyclePath: Array<string> = [];
     const seenAliasIds = new Set<BindingIdentifier>();
-    let current: Binding | undefined = binding;
+    let current = entry;
 
-    while (current !== undefined && current.kind === "alias") {
-      if (seenAliasIds.has(current.identifier)) {
+    while (current.binding.kind === "alias") {
+      const alias = current.binding;
+      if (seenAliasIds.has(alias.identifier)) {
         throw new CircularDependencyError(cyclePath);
       }
-      seenAliasIds.add(current.identifier);
-      cyclePath.push(tokenName(current.token));
-      const nextToken = current.target;
-      const next = this.#resolver.peekBindingForValidate(nextToken, options);
+      seenAliasIds.add(alias.identifier);
+      cyclePath.push(tokenName(alias.token));
+      const next = view.peekBindingForValidate(alias.target, options);
       if (next === undefined) {
-        return undefined;
+        return { found: false, missingToken: alias.target, hopNames: cyclePath };
       }
-      current = next.binding;
+      current = next;
     }
-    return current;
+    return { found: true, terminal: current.binding, owner: current.owner };
   }
 
-  /** What one dependency could resolve to: every candidate for `injectAll`, else at most one. */
-  #peekDependencyCandidates(dep: DependencySlot, options: ResolveOptions | undefined): ReadonlyArray<Binding> {
+  /** What one dependency could resolve to from `view`: every candidate for `injectAll`, else at most one. */
+  #peekDependencyCandidates(
+    dep: DependencySlot,
+    view: DependencyResolver,
+    options: ResolveOptions | undefined,
+  ): ReadonlyArray<DefaultLookupEntry<DependencyResolver>> {
     if (dep.multi) {
-      return this.#resolver.peekCandidateBindingsForValidate(dep.token, options);
+      return view
+        .peekCandidateBindingsForValidate(dep.token, options)
+        .map((binding) => ({ binding, owner: view.ownerForValidate(binding) }));
     }
-    const found = this.#resolver.peekBindingForValidate(dep.token, options);
-    return found === undefined ? [] : [found.binding];
+    const found = view.peekBindingForValidate(dep.token, options);
+    return found === undefined ? [] : [found];
   }
 
   /** What a binding declares up front — a class's params, a factory's descriptors, else nothing. */
@@ -1164,19 +1198,45 @@ class DefaultContainer implements Container {
     return [];
   }
 
+  /**
+   * The bindings a singleton's declared dependencies resolve to, throwing the error `resolve` would for a required one
+   * nothing selects.
+   */
   #collectStaticDependencyEdges(
     binding: Binding,
+    view: DependencyResolver,
     reader: MetadataReader,
-  ): Array<{ terminal: Binding; depTokenName: string }> {
-    const edges: Array<{ terminal: Binding; depTokenName: string }> = [];
+    pathNames: ReadonlyArray<string>,
+  ): Array<ValidationEdge> {
+    const edges: Array<ValidationEdge> = [];
 
     for (const dep of this.#staticDependencies(binding, reader)) {
       // An optional dependency that is absent peeks no candidate; one that is bound is captured like any other.
       const depOptions = injectionSlotToResolveOptions(dep);
-      for (const candidate of this.#peekDependencyCandidates(dep, depOptions)) {
-        const terminal = this.#followAliasChainToTerminal(candidate, depOptions);
-        if (terminal !== undefined) {
-          edges.push({ terminal, depTokenName: tokenName(terminal.token) });
+      // A collection may be empty and an optional dependency absent, so only a required one can miss.
+      const required = !dep.multi && !dep.optional;
+      const candidates = this.#peekDependencyCandidates(dep, view, depOptions);
+      if (required && candidates.length === 0) {
+        const miss = view.missForValidate(dep.token, depOptions, [...pathNames, tokenName(dep.token)]);
+        if (miss !== undefined) {
+          throw miss;
+        }
+      }
+      for (const candidate of candidates) {
+        const end = this.#followAliasChainToTerminal(candidate, view, depOptions);
+        if (end.found) {
+          edges.push({ terminal: end.terminal, owner: end.owner, depTokenName: tokenName(end.terminal.token) });
+          continue;
+        }
+        if (required) {
+          const miss = view.missForValidate(end.missingToken, depOptions, [
+            ...pathNames,
+            ...end.hopNames,
+            tokenName(end.missingToken),
+          ]);
+          if (miss !== undefined) {
+            throw miss;
+          }
         }
       }
     }

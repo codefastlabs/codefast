@@ -6,13 +6,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
-import {
-  AsyncActivationError,
-  AsyncDeactivationError,
-  InternalError,
-  NoMatchingBindingError,
-  SyncDisposalNotSupportedError,
-} from "#errors";
+import { AsyncActivationError, AsyncDeactivationError, InternalError, NoMatchingBindingError } from "#errors";
 
 describe("NoMatchingBindingError diagnostics", () => {
   it("survives a bigint tag value in the request options", () => {
@@ -97,10 +91,5 @@ describe("error classes carry their name, code and message", () => {
     expect(error.code).toBe("ASYNC_DEACTIVATION");
     expect(error.tokenName).toBe("svc");
     expect(error.message).toContain("unbindAsync()");
-  });
-
-  it("SyncDisposalNotSupportedError is thrown by the sync dispose protocol", () => {
-    const container = Container.create();
-    expect(() => container[Symbol.dispose]()).toThrow(SyncDisposalNotSupportedError);
   });
 });

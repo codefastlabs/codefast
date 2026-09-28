@@ -66,15 +66,15 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 #### Binding API
 
-| Feature                | InversifyJS v8                                    | `@codefast/di`                                                   |
-| ---------------------- | ------------------------------------------------- | ---------------------------------------------------------------- |
-| Async binding          | `toDynamicValue` takes both sync and async        | `toDynamic` vs `toDynamicAsync` — enforced by the compiler       |
-| Explicit async deps    | No `toResolvedValueAsync`                         | `toResolvedAsync(factory, deps)` — symmetric with the sync one   |
-| Scope naming           | `inSingletonScope()` / `inTransientScope()` / ... | `singleton()` / `transient()` / `scoped()`                       |
-| Lifecycle after scope  | `when*` available after scope (v8)                | `when*` before `to*()`, `on*()` after scope — an invariant order |
-| `onDeactivation` guard | Runtime error on a non-singleton                  | Compile time: only on `SingletonBindingBuilder`                  |
-| Alias                  | `toService()` returns `void`                      | `toAlias()` returns an `AliasBindingBuilder` — with `.id()`      |
-| Alias + hint forward   | Not specified                                     | The hint is forwarded to the target resolution                   |
+| Feature                | InversifyJS v8                                    | `@codefast/di`                                                              |
+| ---------------------- | ------------------------------------------------- | --------------------------------------------------------------------------- |
+| Async binding          | `toDynamicValue` takes both sync and async        | `toDynamic` vs `toDynamicAsync` — enforced by the compiler                  |
+| Explicit async deps    | No `toResolvedValueAsync`                         | `toResolvedAsync(factory, deps)` — symmetric with the sync one              |
+| Scope naming           | `inSingletonScope()` / `inTransientScope()` / ... | `singleton()` / `transient()` / `scoped()`                                  |
+| Lifecycle after scope  | `when*` available after scope (v8)                | `when*` before `to*()`, `on*()` after scope — an invariant order            |
+| `onDeactivation` guard | Runtime error on a non-singleton                  | Compile time: on the singleton and scoped builders, never the transient one |
+| Alias                  | `toService()` returns `void`                      | `toAlias()` returns an `AliasBindingBuilder` — with `.id()`                 |
+| Alias + hint forward   | Not specified                                     | The hint is forwarded to the target resolution                              |
 
 #### Container API
 
@@ -146,7 +146,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | `toDynamicValue` takes sync and async, with no compiler enforcement      | `toDynamic` vs `toDynamicAsync` — the compiler enforces `resolveAsync()` where needed                 |
 | No `toResolvedValueAsync`                                                | `toResolvedAsync(factory, deps)` — symmetric with `toResolved`                                        |
 | `when*` available after scope                                            | `when*` before `to*()`, `on*()` after scope — an invariant chain order that removes the ambiguity     |
-| `onDeactivation` has no compile-time guard                               | Builder type narrowing — `onDeactivation` exists only on `SingletonBindingBuilder`                    |
+| `onDeactivation` has no compile-time guard                               | Builder type narrowing — `onDeactivation` exists on the singleton and scoped builders only            |
 | `toService()` returns `void`                                             | `toAlias()` returns an `AliasBindingBuilder` — with `.id()` and hint forwarding                       |
 | `@inject` on a parameter needs `experimentalDecorators`                  | `@injectable([deps])` + `inject()` — standard decorators only                                         |
 | `@inject` on a plain property                                            | `@inject accessor field` — using the TC39 `accessor` keyword                                          |
@@ -156,7 +156,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | The `Symbol.metadata` prototype chain is not handled                     | `SymbolMetadataReader` uses an `Object.hasOwn` guard — no leaking of parent metadata                  |
 | `ContainerModule` / `AsyncContainerModule` are not distinguished by type | `SyncModule` / `AsyncModule` branded — `load(asyncModule)` is a TypeScript error                      |
 | `@postConstruct` allows only one method per class                        | Arrays supported — several `@postConstruct()` / `@preDestroy()` per class                             |
-| No `validate()`                                                          | `container.validate()` — static captive-dependency detection, transitive through aliases              |
+| No `validate()`                                                          | `container.validate()` — captive dependencies, missing bindings and cycles, before the first resolve  |
 | No `initializeAsync()`                                                   | Idempotent warm-up, with the cross-container trigger documented                                       |
 | No typed error hierarchy                                                 | `DiError` abstract + a `code` string + context fields on every subclass                               |
 | A module can `unbind` / `rebind` another module's bindings               | `ModuleBuilder` is additive-only — avoids hidden coupling between modules                             |
@@ -171,7 +171,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | No testing guide                                                         | [Testing](./README.md#testing) with patterns for isolated containers, child overrides, MetadataReader |
 | `autoRegister` through a global option or per-get                        | `createAutoRegisterRegistry()` — an explicit registry, no global state                                |
 | `[Symbol.asyncDispose]()` is not specified                               | `dispose()` + `[Symbol.asyncDispose]()` — `await using` support                                       |
-| `[Symbol.dispose]()` is not specified                                    | `[Symbol.dispose](): never` — throws `SyncDisposalNotSupportedError`, plainly                         |
+| `[Symbol.dispose]()` is not specified                                    | No `[Symbol.dispose]` — a sync `using` on a container is a compile error                              |
 | No `lookupBindings()`, `inspect()`, `generateDependencyGraph()`          | A full introspection API — typed snapshot, JSON graph, DOT export                                     |
 
 ---

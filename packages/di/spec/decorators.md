@@ -414,9 +414,9 @@ container.bind(Database).to(DatabaseService).singleton();
 >   error is propagated.
 > - **Across an inheritance chain:** `@postConstruct()` methods run base class first, `@preDestroy()` methods derived
 >   class first — teardown unwinds construction.
-> - **Scope:** `@postConstruct()` runs for every scope — each time a new instance is created. `@preDestroy()` only runs
->   for `singleton`, when the container is disposed or the binding unbound. `scoped` and `transient` instances get no
->   `@preDestroy()`.
+> - **Scope:** `@postConstruct()` runs for every scope — each time a new instance is created. `@preDestroy()` runs for a
+>   `singleton` when its container is disposed or the binding unbound, and for a `scoped` instance when the child
+>   container that cached it is disposed. A `transient` instance gets no `@preDestroy()`.
 > - **Async contamination:** an async `@postConstruct()` forces `resolveAsync()` — async contamination spreads along the
 >   entire dependency path.
 
@@ -469,7 +469,7 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 | `injectAll(token, options?)`   | plain fn                      | deps array                    | Resolves every matching binding into an array                                                            |
 | `isInjectionDescriptor(v)`     | type guard fn                 | —                             | Checks whether a value is an `InjectionDescriptor`                                                       |
 | `@postConstruct()`             | decorator                     | method                        | Writes the method name into `Symbol.metadata` — runs after construction, before caching                  |
-| `@preDestroy()`                | decorator                     | method                        | Writes the method name into `Symbol.metadata` — runs at deactivation (singleton only)                    |
+| `@preDestroy()`                | decorator                     | method                        | Writes the method name into `Symbol.metadata` — runs at deactivation (singleton or scoped)               |
 | `MetadataReaderToken`          | `Token<MetadataReader>`       | —                             | The token for swapping the MetadataReader in tests                                                       |
 | `createAutoRegisterRegistry()` | fn                            | —                             | Creates the explicit registry `options.autoRegister` takes                                               |
 | `runWithContainer(c, fn)`      | fn                            | —                             | Runs `fn` with `c` active, so a hand-built instance's accessors can inject                               |

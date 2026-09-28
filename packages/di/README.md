@@ -25,7 +25,7 @@ its keep as the dependency graph grows.
 - **Fluent bindings.** Constants, classes, sync and async factories, aliases, named/tagged/predicate constraints, and
   lifecycle hooks compose in one invariant chain order.
 - **Scopes with validation.** Choose `singleton`, `scoped`, or `transient`, and call `validate()` to catch captive
-  dependencies before the first request.
+  dependencies, missing bindings and cycles before the first request.
 - **Modules and introspection.** Bundle bindings into reusable modules, and inspect a container or render its dependency
   graph as DOT, Mermaid, Cytoscape, or React Flow.
 
@@ -174,7 +174,7 @@ no scope produces a new instance every time.
 | Scope          | Lifetime                                                                                 |
 | -------------- | ---------------------------------------------------------------------------------------- |
 | `.singleton()` | One instance for the container that owns the binding; children resolve the same instance |
-| `.scoped()`    | One instance per child container — resolving from a container with no child scope throws |
+| `.scoped()`    | One instance per child container, deactivated with it — resolving outside a child throws |
 | `.transient()` | A new instance on every resolution — the default                                         |
 
 ```ts
@@ -188,9 +188,10 @@ container.bind(RequestContextToken).toSelf().scoped();
 ### Lifecycle hooks
 
 A lifecycle hook runs your code as an instance is created or torn down. `.onActivation(fn)` runs right after an instance
-is created, and may replace it; `.onDeactivation(fn)` runs when the owning container is disposed or the binding is
-unbound. Both are also available container-wide, through `container.onActivation(token, fn)` and
-`container.onDeactivation(token, fn)`:
+is created, and may replace it; `.onDeactivation(fn)` runs as the instance's lifetime ends — a singleton's when its
+container is disposed or the binding is unbound, a scoped instance's when the child container that cached it is
+disposed. A transient instance has no deactivation. Both hooks are also available container-wide, through
+`container.onActivation(token, fn)` and `container.onDeactivation(token, fn)`:
 
 ```ts
 container
@@ -305,7 +306,7 @@ class UserRepository {
   constructor(
     private readonly db: Database,
     private readonly cache: Cache | undefined,
-    private readonly plugins: Array<Plugin>,
+    private readonly plugins: ReadonlyArray<Plugin>,
     private readonly audit: Logger,
   ) {}
 
@@ -402,17 +403,21 @@ parent's singletons, while each `scoped` binding gets a fresh instance per child
 
 A captive dependency is a long-lived binding that holds a shorter-lived one — a `singleton` that depends on a `scoped`
 or `transient` binding — which silently freezes that dependency for the singleton's whole life. `validate()` fails fast
-on captive dependencies, and on constraints no request can satisfy, before the first resolve.
+on captive dependencies, and on constraints no request can satisfy, before the first resolve. It also throws the error
+`resolve()` would for a singleton graph that cannot resolve: a required dependency nothing binds, a slot nothing
+matches, or a cycle.
 
 ```ts
-container.validate(); // throws ScopeViolationError on the first violation
+container.validate(); // throws on the first violation — ScopeViolationError, TokenNotBoundError, …
 ```
+
+A transient or scoped consumer's dependencies are left to `resolve()`, because a child container may still bind them.
 
 ### Disposal
 
 `Container` implements `AsyncDisposable`, so `await using` runs every deactivation hook automatically as the block
-exits. Synchronous `using` isn't supported — `onDeactivation` may be async — and `Symbol.dispose` throws
-`SyncDisposalNotSupportedError`.
+exits, and disposing a child deactivates the scoped instances it cached. Synchronous `using` is a compile error: a
+deactivation hook may be async, so the container implements `Symbol.asyncDispose` only.
 
 ### Introspection
 
@@ -527,6 +532,9 @@ Every error extends `DiError` and carries a stable `code`, so you can branch on 
 | `MissingScopeContextError`     | `MISSING_SCOPE_CONTEXT`     | A `scoped` binding is resolved outside a child container                   |
 | `MissingContainerContextError` | `MISSING_CONTAINER_CONTEXT` | An `@inject` accessor initializes with no container open                   |
 | `DisposedContainerError`       | `DISPOSED_CONTAINER`        | A disposed container is used                                               |
+
+A miss below the token you asked for names its path: `TokenNotBoundError` and `NoMatchingBindingError` carry `path`, and
+the message ends with it — `Path: UserService → UserRepository → app:Logger`.
 
 The full taxonomy — including `MissingMetadataError`, `InvalidMetadataError`, `RebindUnboundTokenError`,
 `AsyncModuleLoadError`, `InvalidBindingDeclarationError`, and the rest — is exported from the root entry and from

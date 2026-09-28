@@ -17,7 +17,7 @@ import {
 import type { BindingSnapshot } from "#introspection/inspector";
 import { snapshotOf } from "#introspection/inspector";
 import { DefaultConstraintContext } from "#resolution/context";
-import { buildResolutionFrame } from "#resolution/path";
+import { buildResolutionFrame, missPathOf } from "#resolution/path";
 import type { CandidateRule } from "#resolution/select/candidates";
 import { candidateRuleOf, chooseCandidate, matchesSlot } from "#resolution/select/candidates";
 
@@ -136,7 +136,7 @@ export function explainRequest(
   for (const ancestor of options?.ancestors ?? []) {
     const walk = walkLookup(registries, ancestor, undefined, stack);
     if (walk.binding === undefined) {
-      throw lookupError(registries, walk);
+      throw lookupError(registries, ancestor, walk, stack);
     }
     stack.push(buildResolutionFrame(walk.binding, tokenName(walk.binding.token)));
   }
@@ -161,6 +161,8 @@ interface Walk {
   /** The eligible candidates of an ambiguous step, or the tokens of an alias cycle. */
   readonly ambiguity: ReadonlyArray<Binding> | undefined;
   readonly cycle: ReadonlyArray<Token<unknown> | Constructor> | undefined;
+  /** The tokens an alias walk visited, from the one asked, when the lookup took any hop. */
+  readonly aliasHops: ReadonlySet<Token<unknown> | Constructor> | undefined;
 }
 
 // The `ancestors` key is explain's own, and a request carrying no criterion is the request with no options.
@@ -195,15 +197,32 @@ function walkLookup(
         lastToken: current,
         ambiguity: found.eligible,
         cycle: undefined,
+        aliasHops: visited,
       };
     }
     if (found.kind === "none") {
       const outcome = registries.some((registry) => registry.getAll(current).length > 0) ? "unmatched" : "unbound";
-      return { steps, binding: undefined, outcome, lastToken: current, ambiguity: undefined, cycle: undefined };
+      return {
+        steps,
+        binding: undefined,
+        outcome,
+        lastToken: current,
+        ambiguity: undefined,
+        cycle: undefined,
+        aliasHops: visited,
+      };
     }
     const binding = found.binding;
     if (binding.kind !== "alias") {
-      return { steps, binding, outcome: "selected", lastToken: current, ambiguity: undefined, cycle: undefined };
+      return {
+        steps,
+        binding,
+        outcome: "selected",
+        lastToken: current,
+        ambiguity: undefined,
+        cycle: undefined,
+        aliasHops: visited,
+      };
     }
     // An alias hop restarts at the container asked, as `resolve` does, and a revisited token is a cycle.
     const target = binding.target;
@@ -216,6 +235,7 @@ function walkLookup(
         lastToken: current,
         ambiguity: undefined,
         cycle: [...visited, target],
+        aliasHops: visited,
       };
     }
     visited.add(target);
@@ -287,8 +307,13 @@ function verdictOf(binding: Binding, request: ResolveOptions | undefined, ctx: C
   return predicate === undefined || predicate(ctx) ? "eligible" : "predicate-refused";
 }
 
-/** The error `resolve` throws for a lookup that ended without a binding. */
-function lookupError(registries: ReadonlyArray<BindingRegistry>, walk: Walk): Error {
+/** The error `resolve` throws for a lookup that ended without a binding, named along the path it was made from. */
+function lookupError(
+  registries: ReadonlyArray<BindingRegistry>,
+  requested: Token<unknown> | Constructor,
+  walk: Walk,
+  stack: ReadonlyArray<ResolutionFrame>,
+): Error {
   const name = tokenName(walk.lastToken);
   switch (walk.outcome) {
     case "ambiguous":
@@ -305,9 +330,10 @@ function lookupError(registries: ReadonlyArray<BindingRegistry>, walk: Walk): Er
         registries.flatMap((registry) =>
           registry.getAll(walk.lastToken).map((binding) => bindingSlotToString(binding.slot)),
         ),
+        missPathOf(stack, requested, walk.aliasHops),
       );
     case "unbound":
-      return new TokenNotBoundError(name);
+      return new TokenNotBoundError(name, missPathOf(stack, requested, walk.aliasHops));
     case "selected":
       return new InternalError("a lookup that selected a binding has no error");
   }

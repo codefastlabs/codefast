@@ -16,7 +16,7 @@
  * describe()/it() from Vitest or Jest.
  */
 
-import { Container, inject, injectable, Module, token } from "@codefast/di";
+import { Container, inject, injectable, Module, token, TokenNotBoundError } from "@codefast/di";
 
 import { fail, ok, section } from "#examples/support/log";
 
@@ -384,9 +384,9 @@ await test("module override replaces all three stubs", async () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Pattern E — container.validate() to catch wiring mistakes early
 //
-// validate() walks the binding graph and throws if a dependency cannot be
-// resolved. Call it at the start of your integration test suite or at app
-// startup to surface missing / mismatched bindings before the first request.
+// validate() walks every singleton's declared dependencies and throws the error
+// resolve() would for one that cannot resolve — a missing or mismatched binding,
+// a captive scope or a cycle. Call it at suite start or at app startup.
 // ─────────────────────────────────────────────────────────────────────────────
 
 section("Pattern E: validate() for wiring checks");
@@ -397,18 +397,24 @@ await test("validate passes on a correctly wired container", async () => {
   assert(true, "validate() passed without throwing");
 });
 
-await test("incomplete container is detected by inspect() before validate()", async () => {
+await test("an incomplete singleton graph fails validate() before any resolve", async () => {
   const testContainer = Container.create();
   testContainer.bind(OrderServiceToken).to(OrderProcessor).singleton();
-  // Intentionally missing: Logger, UserService, PaymentGateway, EmailService
+  // Intentionally missing: UserService, PaymentGateway, EmailService
 
-  const snapshot = testContainer.inspect();
-  const hasLogger = testContainer.has(LoggerToken);
-  const hasUser = testContainer.has(UserServiceToken);
+  let thrown: unknown;
+  try {
+    testContainer.validate();
+  } catch (error) {
+    thrown = error;
+  }
 
-  assert(!hasLogger, "LoggerToken should be missing");
-  assert(!hasUser, "UserServiceToken should be missing");
-  assert(snapshot.ownBindings.length === 1, "only OrderService is bound");
+  assert(thrown instanceof TokenNotBoundError, "validate() reports the first unbound dependency");
+  assert(
+    thrown instanceof TokenNotBoundError &&
+      thrown.path.join(" → ") === "testing-patterns:OrderService → testing-patterns:UserService",
+    "the error names the path from the singleton down to it",
+  );
 });
 
 // ── Summary ──────────────────────────────────────────────────────────────────────────────────────────────────────────

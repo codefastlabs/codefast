@@ -1,6 +1,8 @@
 import type { Binding } from "#core/binding";
-import type { ResolutionFrame } from "#core/types";
-/** Cycle-detection bookkeeping carried on the resolution stack itself. */
+import type { Token } from "#core/token";
+import { tokenName } from "#core/token";
+import type { Constructor, ResolutionFrame } from "#core/types";
+/** The resolution path: cycle bookkeeping carried on the stack itself, and the names an error prints. */
 import { CircularDependencyError } from "#errors";
 
 /** The key under which a resolver-built frame carries its binding, for marking a seeded path. */
@@ -48,7 +50,7 @@ export function bindingsOf(frames: ReadonlyArray<ResolutionFrame>): Array<Bindin
 }
 
 /**
- * The token names along a stack plus the frame that closed the cycle — built only to throw.
+ * The token names along a stack plus the one ending the path, a cycle's closing frame or a miss — built only to throw.
  *
  * @since 0.6.0
  */
@@ -59,6 +61,28 @@ export function cycleNamesOf(resolutionStack: ReadonlyArray<ResolutionFrame>, cl
   }
   names[resolutionStack.length] = closingName;
   return names;
+}
+
+/**
+ * The token names from the outermost request to a lookup that selected nothing, its alias hops included.
+ *
+ * @remarks `aliasHops` is the set an alias walk keeps, which starts at `requested` — the name the path already
+ * ends on.
+ */
+export function missPathOf(
+  resolutionStack: ReadonlyArray<ResolutionFrame>,
+  requested: Token<unknown> | Constructor,
+  aliasHops: ReadonlySet<Token<unknown> | Constructor> | undefined,
+): Array<string> {
+  const path = cycleNamesOf(resolutionStack, tokenName(requested));
+  if (aliasHops !== undefined) {
+    for (const hop of aliasHops) {
+      if (hop !== requested) {
+        path.push(tokenName(hop));
+      }
+    }
+  }
+  return path;
 }
 
 /**
