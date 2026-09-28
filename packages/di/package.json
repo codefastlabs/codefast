@@ -1,6 +1,6 @@
 {
   "name": "@codefast/di",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Type-safe, zero-dependency dependency injection for TypeScript, on standard decorators",
   "keywords": [
     "codefast",
