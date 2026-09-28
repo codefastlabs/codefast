@@ -572,6 +572,8 @@ export class SymbolKeyedLifecycleError extends DiError {
  *
  * @remarks Reported at decoration rather than at resolve, so the error points at the declaration
  * instead of a `MetadataReader` the caller never configured.
+ *
+ * @since 0.13.0
  */
 export class PrivateLifecycleMethodError extends DiError {
   override readonly name = "PrivateLifecycleMethodError";

@@ -1,5 +1,45 @@
 # @codefast/di
 
+## 0.13.0
+
+### Minor Changes
+
+- [#1022](https://github.com/codefastlabs/codefast/pull/1022) **Breaking:** `Container` no longer declares `[Symbol.dispose]`, and `SyncDisposalNotSupportedError` is removed. A
+  deactivation hook may be async, so a container disposes through `await using` or `dispose()` only, and a synchronous
+  `using` on one is now a compile error instead of a `SyncDisposalNotSupportedError` at runtime. Replace `using` with
+  `await using`, and drop any `instanceof SyncDisposalNotSupportedError` check.
+
+- [#1024](https://github.com/codefastlabs/codefast/pull/1024) **Breaking:** `@postConstruct()` and `@preDestroy()` now reject a private (`#name`) method, as they already rejected a
+  static or symbol-keyed one. The lifecycle manager calls a hook by name on the instance, so a private hook passed
+  `validate()` and then failed at resolve with an `InvalidMetadataError` that blamed the metadata reader, or at
+  `dispose()` for `@preDestroy()`. Decorating one now throws the new `PrivateLifecycleMethodError` when the class is
+  defined. The decorators' types also accept only a public, instance, string-named method, and `@inject` only an instance
+  accessor, so TypeScript reports all of these at the decoration site (TS1240, TS1241). To run private code from a hook,
+  call it from a public one.
+
+- [#1022](https://github.com/codefastlabs/codefast/pull/1022) `TokenNotBoundError` and `NoMatchingBindingError` now carry `path`: the token names from the outermost request down to
+  the one that missed, alias hops included. A miss below the token asked for ends its message with that path —
+  `Path: UserService → UserRepository → Database → app:Logger` — so a deep graph says which consumer needed the binding; a
+  miss on the token asked for keeps its message as it was. Every lane reports the same path: sync and async, generated
+  plans, factory bodies, and `explain()` for an ancestor that selects nothing.
+
+- [#1022](https://github.com/codefastlabs/codefast/pull/1022) **Breaking:** a `scoped` instance is now deactivated with the child container that cached it. Disposing that child runs
+  the binding's `onDeactivation`, the container-level `onDeactivation` hooks of the container that owns the binding, and
+  `@preDestroy()` for every scoped instance it cached, latest first and before its own singletons; unbinding a scoped
+  binding on the child that cached it deactivates that instance too. `.scoped()` now offers `onDeactivation`, and
+  `Module.fromBindings` accepts `onDeactivation` with `scope: "scoped"`, so per-request resources — a transaction, a
+  connection — can be released where they are declared. `validate()` no longer reports a deactivation hook on a
+  scoped-only token as unreachable. Code that relied on a scoped instance never being torn down, or that closed one by
+  hand after `dispose()`, should drop the manual close.
+
+- [#1022](https://github.com/codefastlabs/codefast/pull/1022) **Breaking:** `validate()` now throws the error `resolve()` would for a singleton graph that cannot resolve — a required
+  dependency nothing binds (`TokenNotBoundError`), a slot nothing matches (`NoMatchingBindingError`), or a cycle
+  (`CircularDependencyError`) — with the path from that singleton down to the problem. A parent-owned singleton reached
+  from a child is now read from the parent's chain, as `resolve` reads it. It still leaves alone what it cannot decide: a
+  transient or scoped consumer, whose dependencies a child container may bind, and a request only a `when()` candidate
+  matches. A container that passed `validate()` while holding such a graph now fails it; bind the missing dependency, or
+  mark it `optional()` when it may be absent.
+
 ## 0.12.0
 
 ### Minor Changes

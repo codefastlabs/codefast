@@ -1,5 +1,20 @@
 # @codefast/ui
 
+## 0.10.1
+
+### Patch Changes
+
+- [#1027](https://github.com/codefastlabs/codefast/pull/1027) `Avatar` draws its edge in a translucent `foreground/10` instead of blending `--border` over the image with
+  `mix-blend-mode`. In Chromium, a page with a few hundred blended avatars inside a sideways scroller left stretches of
+  the scroller unpainted, and they stayed blank after scrolling stopped. Dark mode looks the same, since `lighten` with a
+  translucent white composites like a plain overlay. In light mode the edge over white stays within a shade of `--border`,
+  and over a darker photo it now darkens the rim slightly where `darken` left it unchanged.
+
+- [#1026](https://github.com/codefastlabs/codefast/pull/1026) `SelectContent` insets its list by 4px whether or not the items sit in a `SelectGroup`. The inset lived on the group, so
+  items placed straight in `SelectContent` touched the popup's edge and an item-aligned popup opened 4px right of its
+  trigger. The viewport now carries the inset and keeps it when the keyboard scrolls an item into view. A group adds 8px
+  only after another group, and a `SelectSeparator` between groups keeps 4px on either side, as in the other menus.
+
 ## 0.10.0
 
 ### Minor Changes

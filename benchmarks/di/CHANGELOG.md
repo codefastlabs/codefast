@@ -1,5 +1,12 @@
 # @codefast/benchmark-di
 
+## 0.10.2
+
+### Patch Changes
+
+- Updated dependencies:
+  - @codefast/di@0.13.0
+
 ## 0.10.1
 
 ### Patch Changes

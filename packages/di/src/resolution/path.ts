@@ -68,6 +68,8 @@ export function cycleNamesOf(resolutionStack: ReadonlyArray<ResolutionFrame>, cl
  *
  * @remarks `aliasHops` is the set an alias walk keeps, which starts at `requested` — the name the path already
  * ends on.
+ *
+ * @since 0.13.0
  */
 export function missPathOf(
   resolutionStack: ReadonlyArray<ResolutionFrame>,

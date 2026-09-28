@@ -8,6 +8,8 @@ import { MissingScopeContextError } from "#errors";
  * What deactivates a scoped instance: the resolver owning its binding, which activated it.
  *
  * @remarks Answers `undefined` when the binding owes no teardown, so disposing a per-request child awaits nothing.
+ *
+ * @since 0.13.0
  */
 export interface ScopedInstanceOwner {
   deactivateScoped(binding: Binding, instance: unknown): Promise<void> | undefined;
