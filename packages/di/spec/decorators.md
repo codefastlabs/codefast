@@ -261,8 +261,9 @@ class Dashboard {
 ```
 
 > **Normative — `static accessor` is not supported.** A static initializer runs when the class is defined, outside the
-> reach of both `runWithContainer` and `new`. The decorator **throws** when `context.static === true`. On toolchains
-> that do not invoke decorators for static fields, the error only surfaces if the decorator actually runs.
+> reach of both `runWithContainer` and `new`. TypeScript rejects it at the decoration site (TS1240), because the
+> decorator only accepts a context with `static: false`; untyped code gets `StaticMemberDecoratorError` when the
+> decorator runs. On toolchains that do not invoke decorators for static fields, that error only surfaces if it runs.
 
 ### The mechanism — initialization order
 
@@ -384,9 +385,15 @@ separate import for either role.
 
 ## Method lifecycle decorators
 
-`@postConstruct()` and `@preDestroy()` are method decorators on **instance methods**; the method name is written into
-`Symbol.metadata`, and nowhere else. **Static methods are not supported** — the lifecycle manager only calls hooks on an
-instance.
+`@postConstruct()` and `@preDestroy()` are method decorators on **public instance methods with a string name**; the
+method name is written into `Symbol.metadata`, and nowhere else. The lifecycle manager calls a hook on the instance by
+that name, so it can reach no other kind of method.
+
+> **Normative — hook keys.** Both decorators accept only a context with `static: false`, `private: false` and a string
+> `name`, so TypeScript reports a static, private (`#name`) or symbol-keyed hook at the decoration site (TS1241).
+> Untyped code gets the matching error when the class is defined: `StaticMemberDecoratorError`,
+> `PrivateLifecycleMethodError` or `SymbolKeyedLifecycleError`. A private hook would otherwise pass `validate()` and
+> fail only at resolve or dispose. To run private code, call it from a public hook.
 
 ```ts
 @injectable([Config])

@@ -15,7 +15,7 @@ import { tag } from "#core/tag";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { postConstruct, preDestroy } from "#decorators/lifecycle";
-import { StaticMemberDecoratorError } from "#errors";
+import { PrivateLifecycleMethodError, StaticMemberDecoratorError } from "#errors";
 import type { InjectionDescriptor } from "#injection/descriptor";
 import { injectAll, isInjectionDescriptor, normalizeToDescriptor, optional } from "#injection/descriptor";
 
@@ -143,7 +143,7 @@ describe("inject() as an accessor decorator", () => {
   it("rejects a static accessor at class evaluation time", () => {
     expect(() => {
       class Holder {
-        // Type-legal but unsupported: only instance accessors participate in property injection.
+        // @ts-expect-error — only an instance accessor takes injection; the runtime guard is what is under test.
         @inject(serviceToken) static accessor dependency: string;
       }
       return Holder;
@@ -158,15 +158,37 @@ describe("the lifecycle decorators reject static members too", () => {
   ])("rejects a static @%s method at class evaluation time", (name, decorator) => {
     expect(() => {
       class Holder {
+        // @ts-expect-error — a hook is an instance method; the runtime guard is what is under test.
         @decorator() static warm(): void {}
       }
       return Holder;
     }).toThrow(StaticMemberDecoratorError);
     expect(() => {
       class Holder {
+        // @ts-expect-error — a hook is an instance method; the runtime guard is what is under test.
         @decorator() static warm(): void {}
       }
       return Holder;
     }).toThrow(new RegExp(`@${name}\\(\\) applies to instance members only`));
+  });
+});
+
+describe("the lifecycle decorators reject private methods", () => {
+  it.each([
+    ["postConstruct", postConstruct],
+    ["preDestroy", preDestroy],
+  ])("rejects a private @%s method at class evaluation time", (name, decorator) => {
+    const define = (): unknown =>
+      class Holder {
+        // @ts-expect-error — the lifecycle reader calls a hook by name; the runtime guard is what is under test.
+        @decorator() #warm(): void {}
+
+        warmUp(): void {
+          this.#warm();
+        }
+      };
+
+    expect(define).toThrow(PrivateLifecycleMethodError);
+    expect(define).toThrow(new RegExp(`@${name}\\(\\) does not support a private method \\('#warm'\\)`));
   });
 });

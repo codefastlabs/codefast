@@ -568,6 +568,27 @@ export class SymbolKeyedLifecycleError extends DiError {
 }
 
 /**
+ * A `@postConstruct` or `@preDestroy` on a private method, which the lifecycle reader cannot call by name.
+ *
+ * @remarks Reported at decoration rather than at resolve, so the error points at the declaration
+ * instead of a `MetadataReader` the caller never configured.
+ */
+export class PrivateLifecycleMethodError extends DiError {
+  override readonly name = "PrivateLifecycleMethodError";
+  readonly code = "PRIVATE_LIFECYCLE_METHOD";
+  readonly decoratorName: string;
+  readonly memberName: string;
+
+  constructor(decoratorName: string, memberName: string) {
+    super(
+      `@${decoratorName}() does not support a private method ('${memberName}'). Make the lifecycle method public, and call the private code from it.`,
+    );
+    this.decoratorName = decoratorName;
+    this.memberName = memberName;
+  }
+}
+
+/**
  * A decorator handed no metadata object, because the runtime has no `Symbol.metadata` to key one by.
  *
  * @remarks TypeScript compiles `context.metadata` to `undefined` when `Symbol.metadata` is missing, so
