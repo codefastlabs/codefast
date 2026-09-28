@@ -156,7 +156,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | The `Symbol.metadata` prototype chain is not handled                     | `SymbolMetadataReader` uses an `Object.hasOwn` guard — no leaking of parent metadata                  |
 | `ContainerModule` / `AsyncContainerModule` are not distinguished by type | `SyncModule` / `AsyncModule` branded — `load(asyncModule)` is a TypeScript error                      |
 | `@postConstruct` allows only one method per class                        | Arrays supported — several `@postConstruct()` / `@preDestroy()` per class                             |
-| No `validate()`                                                          | `container.validate()` — static captive-dependency detection, transitive through aliases              |
+| No `validate()`                                                          | `container.validate()` — captive dependencies, missing bindings and cycles, before the first resolve  |
 | No `initializeAsync()`                                                   | Idempotent warm-up, with the cross-container trigger documented                                       |
 | No typed error hierarchy                                                 | `DiError` abstract + a `code` string + context fields on every subclass                               |
 | A module can `unbind` / `rebind` another module's bindings               | `ModuleBuilder` is additive-only — avoids hidden coupling between modules                             |

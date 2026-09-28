@@ -51,6 +51,11 @@ Token 'app:Api' requires async resolution because 'app:Database' in its dependen
 chain has an async factory. Use container.resolveAsync(app:Api).
 ```
 
+`TokenNotBoundError` and `NoMatchingBindingError` carry `path`: the token names from the outermost request down to the
+one that missed, alias hops included — `[tokenName]` for a miss on the token asked for, which the message then leaves
+out. Their message ends with `Path: a → b → c` otherwise. `validate()` raises both, and `CircularDependencyError`, for a
+singleton graph that cannot resolve, with the path from that singleton.
+
 `ScopeViolationError` is raised by `validate()` alone: a resolve does not check scopes, so a singleton that captures a
 transient resolves silently, and one that captures a `scoped` binding from the root fails with
 `MissingScopeContextError` instead.

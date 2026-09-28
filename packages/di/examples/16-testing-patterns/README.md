@@ -158,8 +158,8 @@ it("module override replaces all three stubs", () => {
 
 ## Pattern E — `validate()` as a wiring smoke-test
 
-Call `validate()` at the start of an integration test suite to catch missing or mismatched bindings before any test
-runs:
+Call `validate()` at the start of an integration test suite: it walks every singleton's declared dependencies and throws
+the error `resolve()` would for one that cannot resolve — a missing or mismatched binding, a captive scope, a cycle:
 
 ```ts
 it("fully-wired container passes validate()", () => {
@@ -167,13 +167,12 @@ it("fully-wired container passes validate()", () => {
   expect(() => c.validate()).not.toThrow();
 });
 
-it("incomplete container detected via inspect() and has()", () => {
+it("an incomplete singleton graph fails validate()", () => {
   const c = Container.create();
   c.bind(OrderServiceToken).to(OrderProcessor).singleton();
-  // intentionally missing: Logger, UserService, PaymentGateway, EmailService
+  // intentionally missing: UserService, PaymentGateway, EmailService
 
-  expect(c.has(LoggerToken)).toBe(false);
-  expect(c.inspect().ownBindings).toHaveLength(1);
+  expect(() => c.validate()).toThrow(TokenNotBoundError); // Path: testing-patterns:OrderService → testing-patterns:UserService
 });
 ```
 

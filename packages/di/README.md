@@ -25,7 +25,7 @@ its keep as the dependency graph grows.
 - **Fluent bindings.** Constants, classes, sync and async factories, aliases, named/tagged/predicate constraints, and
   lifecycle hooks compose in one invariant chain order.
 - **Scopes with validation.** Choose `singleton`, `scoped`, or `transient`, and call `validate()` to catch captive
-  dependencies before the first request.
+  dependencies, missing bindings and cycles before the first request.
 - **Modules and introspection.** Bundle bindings into reusable modules, and inspect a container or render its dependency
   graph as DOT, Mermaid, Cytoscape, or React Flow.
 
@@ -402,11 +402,15 @@ parent's singletons, while each `scoped` binding gets a fresh instance per child
 
 A captive dependency is a long-lived binding that holds a shorter-lived one — a `singleton` that depends on a `scoped`
 or `transient` binding — which silently freezes that dependency for the singleton's whole life. `validate()` fails fast
-on captive dependencies, and on constraints no request can satisfy, before the first resolve.
+on captive dependencies, and on constraints no request can satisfy, before the first resolve. It also throws the error
+`resolve()` would for a singleton graph that cannot resolve: a required dependency nothing binds, a slot nothing
+matches, or a cycle.
 
 ```ts
-container.validate(); // throws ScopeViolationError on the first violation
+container.validate(); // throws on the first violation — ScopeViolationError, TokenNotBoundError, …
 ```
+
+A transient or scoped consumer's dependencies are left to `resolve()`, because a child container may still bind them.
 
 ### Disposal
 

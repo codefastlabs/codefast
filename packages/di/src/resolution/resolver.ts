@@ -425,6 +425,38 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#candidateBindings(token, options, []);
   }
 
+  /**
+   * The error `resolve` raises for a request nothing selects, or `undefined` while a `when()` candidate leaves it open.
+   *
+   * @remarks A predicate reads the resolution path, which a static walk does not have, so a slot-matching candidate
+   * that carries one may still be selected when the request is really made.
+   */
+  missForValidate(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions | undefined,
+    path: ReadonlyArray<string>,
+  ): TokenNotBoundError | NoMatchingBindingError | undefined {
+    const bound = this.#allBindingsFromChain(token);
+    if (bound.length === 0) {
+      return new TokenNotBoundError(tokenName(token), path);
+    }
+    for (const binding of bound) {
+      if (binding.predicate !== undefined && !binding.isMany && matchesSlot(binding.slot, options)) {
+        return undefined;
+      }
+    }
+    return new NoMatchingBindingError(
+      tokenName(token),
+      options ?? {},
+      bound.map((binding) => bindingSlotToString(binding.slot)),
+      path,
+    );
+  }
+
+  /** The resolver whose chain a binding this one can see resolves its dependencies from, as a singleton does. */
+  ownerForValidate(binding: Binding): DependencyResolver {
+    return this.#ownerOf(binding);
+  }
   // ── Sync resolve ───────────────────────────────────────────────────────────────────────────────────────────────────
 
   resolveFromContext<Value>(token: Token<Value> | Constructor<Value>, resolutionStack: Array<ResolutionFrame>): Value {
