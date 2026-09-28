@@ -49,24 +49,41 @@ you need stability.
 No JavaScript engine runs decorators natively yet — the TC39 proposal went back to Stage 2.7 in May 2026 — so a
 decorated class always passes through a transform that lowers it. What that takes depends on the toolchain:
 
-| Toolchain                 | What it needs                                                                                     |
-| ------------------------- | ------------------------------------------------------------------------------------------------- |
-| tsx, esbuild              | Nothing: esbuild lowers standard decorators.                                                      |
-| Vite 8, and Vitest on it  | The Babel decorators plugin: their Oxc transform lowers only `experimentalDecorators`.            |
-| `tsc`, then Node directly | A `target` below `ESNext`, and `Symbol.metadata` installed before any decorated class is defined. |
+| Toolchain                 | What it needs                                                                                               |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| tsx                       | Nothing: it lowers standard decorators for the Node it runs on.                                             |
+| esbuild                   | A `target` below `esnext`, such as `es2024` or `node24`: at its default, `esnext`, decorators pass through. |
+| Vite 8, and Vitest on it  | The Babel decorators plugin: their Oxc transform lowers only `experimentalDecorators`.                      |
+| SWC 1.15.21 or later      | `jsc.parser.decorators: true` and `jsc.transform.decoratorVersion: "2023-11"`.                              |
+| `tsc`, then Node directly | A `target` below `ESNext`, and `Symbol.metadata` installed before any decorated class is defined.           |
 
 For Vite and Vitest, add `@babel/core`, `@babel/plugin-proposal-decorators` and `@rolldown/plugin-babel` as dev
-dependencies, then the plugin to the config — `vitest.config.ts` takes the same one:
+dependencies, then the decorators preset to the config — `vitest.config.ts` takes the same one:
 
 ```ts
 // vite.config.ts
-import babel from "@rolldown/plugin-babel";
+import babel, { defineRolldownBabelPreset } from "@rolldown/plugin-babel";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [babel({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] })],
+  plugins: [
+    babel({
+      presets: [
+        defineRolldownBabelPreset({
+          preset: () => ({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] }),
+          // Every decorator holds an `@`, so Babel skips only files that cannot hold one.
+          rolldown: { filter: { code: "@" } },
+        }),
+      ],
+    }),
+  ],
 });
 ```
+
+The filter is what keeps Babel off the files without decorators; the plugin applies it only when every preset carries
+one and `plugins` is left empty. Keep it the plain `"@"`: a narrower pattern can miss a legal position such as
+`export @injectable() class`, and a missed file ships its decorators raw. Beside other presets, list this one last,
+since Babel runs presets last to first.
 
 > **Warning.** Without the plugin the decorators pass through untouched, and nothing flags it at build time:
 > `vite build` succeeds, then the bundle throws `SyntaxError: Invalid or unexpected token` as it loads — the same error
@@ -79,6 +96,10 @@ without `Symbol.metadata` it hands them no metadata object, which every decorato
 ```ts
 (Symbol as { metadata?: symbol }).metadata ??= Symbol.for("Symbol.metadata");
 ```
+
+Not every toolchain lowers them yet. Node's own type stripping rejects decorators; Next.js cannot select the `2023-11`
+version (vercel/next.js#96328 adds it); and Bun 1.4.2 and earlier inject the wrong values, silently, into a module that
+holds two decorated classes (oven-sh/bun#28316).
 
 [The specification → tsconfig setup](./spec/decorators.md#tsconfig-setup) covers the compiler options. And
 [decorators](#decorators) are optional: an app wired through `toResolved`, `toDynamic` and `Module.fromBindings` needs
