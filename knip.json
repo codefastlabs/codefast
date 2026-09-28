@@ -22,7 +22,7 @@
       "entry": ["src/app/entry.tsx"]
     },
     "packages/di": {
-      "entry": ["examples/**/*.ts", "tests/integration/support/accessor-e2e.script.ts"],
+      "entry": ["examples/**/*.ts", "tests/e2e/fixtures/**/entry-*.ts"],
       "ignoreDependencies": ["@babel/plugin-proposal-decorators"]
     },
     "packages/di-testing": {

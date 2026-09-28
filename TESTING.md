@@ -90,15 +90,16 @@ Root `pnpm test:e2e` runs every package that defines the script — use it for f
 | `@apps/web`                   | yes  |     yes     |  —  |  —   |
 | `@internal/benchmark-harness` | yes  |     yes     |  —  |  —   |
 | `@internal/benchmark-viewer`  | yes  |      —      |  —  |  —   |
-| `@codefast/cli`               | yes  |      —      |  —  |  —   |
-| `@codefast/di`                | yes  |     yes     |  —  | yes  |
+| `@codefast/cli`               | yes  |     yes     | yes |  —   |
+| `@codefast/di`                | yes  |     yes     | yes | yes  |
 | `@codefast/di-testing`        | yes  |      —      |  —  | yes  |
 | `@codefast/tailwind-variants` | yes  |      —      |  —  | yes  |
 | `@codefast/theme`             | yes  |      —      |  —  |  —   |
 | `@codefast/tracking`          | yes  |      —      |  —  |  —   |
 | `@codefast/ui`                | yes  |      —      |  —  |  —   |
 
-No package has an `e2e/` directory yet — the category is wired everywhere and empty everywhere.
+Two packages have an `e2e/` directory: `@codefast/cli` runs its built binary, and `@codefast/di` compiles and runs a
+consumer's program against its built `dist` under tsx and under `tsc` plus a bare Node.
 
 Categories without tests are still **wired into the Vitest include glob and into the package scripts** so adding the
 first test in a new category is purely additive — no config or script change needed.

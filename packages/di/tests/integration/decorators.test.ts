@@ -1,7 +1,3 @@
-import { spawnSync } from "node:child_process";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
@@ -16,9 +12,6 @@ import {
   SymbolKeyedLifecycleError,
 } from "#errors";
 import { defaultMetadataReader } from "#metadata/symbol-reader";
-
-const integrationDir = dirname(fileURLToPath(import.meta.url));
-const packageRoot = join(integrationDir, "..", "..");
 
 describe("standard decorators — metadata & lifecycle", () => {
   it("registers accessor metadata via @injectable + getAccessorMetadata", () => {
@@ -276,28 +269,5 @@ describe("decorator metadata across class inheritance", () => {
     container.bind(CycleBToken).to(CycleB).transient();
 
     await expect(container.resolveAsync(CycleAToken)).rejects.toThrow(CircularDependencyError);
-  });
-});
-
-// A cold Node + tsx start on a saturated machine can outlive the default test timeout.
-const SUBPROCESS_TEST_TIMEOUT_MS = 60_000;
-const SUBPROCESS_KILL_AFTER_MS = 45_000;
-
-describe("Accessor injection e2e (tsx subprocess)", () => {
-  it("constructor → accessor inject → @postConstruct with tsx emit", { timeout: SUBPROCESS_TEST_TIMEOUT_MS }, () => {
-    const scriptPath = join(integrationDir, "support", "accessor-e2e.script.ts");
-    const spawnResult = spawnSync("node", ["--import", "tsx/esm", scriptPath], {
-      cwd: packageRoot,
-      encoding: "utf-8",
-      timeout: SUBPROCESS_KILL_AFTER_MS,
-    });
-    // stderr rides along only on failure, so the diff shows why the child died.
-    const outcome = {
-      error: spawnResult.error?.message,
-      status: spawnResult.status,
-      stderr: spawnResult.status === 0 ? "" : spawnResult.stderr,
-    };
-    expect(outcome).toEqual({ error: undefined, status: 0, stderr: "" });
-    expect(spawnResult.stdout).toContain("ACCESSOR_E2E_OK");
   });
 });

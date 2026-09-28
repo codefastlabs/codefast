@@ -6,10 +6,9 @@ import { defineConfig } from "vitest/config";
  *
  * Test taxonomy:
  *   tests/unit/**         — isolated unit tests
- *   tests/integration/**  — multi-module decorator/lifecycle integration; the
- *                           accessor-e2e.script.ts subprocess it drives is a SUPPORT
- *                           entrypoint, not a test, so it lives under support/.
- *   tests/e2e/**          — pre-wired (none yet)
+ *   tests/integration/**  — multi-module decorator/lifecycle integration
+ *   tests/e2e/**          — a consumer's program run against the built dist, under
+ *                           tsx and under tsc plus a bare Node, in child processes
  *   tests/types/**        — static type-inference tests (vitest expectTypeOf)
  */
 export default defineConfig({
