@@ -58,6 +58,12 @@ describe("Container public API inference", () => {
         .transient(),
     ).not.toHaveProperty("onDeactivation");
   });
+
+  it("disposes through await using only, so a sync using is a compile error", () => {
+    expectTypeOf<Container>().toExtend<AsyncDisposable>();
+    expectTypeOf<Container>().not.toExtend<Disposable>();
+  });
+
   it("resolveOptional widens to undefined union", () => {
     const StringToken = token<string>("s");
     const container = Container.create();

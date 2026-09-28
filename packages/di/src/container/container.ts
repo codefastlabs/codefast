@@ -28,7 +28,6 @@ import {
   InternalError,
   RebindUnboundTokenError,
   ScopeViolationError,
-  SyncDisposalNotSupportedError,
   UnreachableConstraintError,
   UnreachableLifecycleHookError,
 } from "#errors";
@@ -130,7 +129,6 @@ export interface Container {
 
   dispose(): Promise<void>;
   [Symbol.asyncDispose](): Promise<void>;
-  [Symbol.dispose](): never;
 
   initializeAsync(): Promise<void>;
   validate(): void;
@@ -970,10 +968,6 @@ class DefaultContainer implements Container {
 
   [Symbol.asyncDispose](): Promise<void> {
     return this.dispose();
-  }
-
-  [Symbol.dispose](): never {
-    throw new SyncDisposalNotSupportedError();
   }
 
   // ── Initialization ─────────────────────────────────────────────────────────────────────────────────────────────────

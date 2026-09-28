@@ -171,7 +171,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | No testing guide                                                         | [Testing](./README.md#testing) with patterns for isolated containers, child overrides, MetadataReader |
 | `autoRegister` through a global option or per-get                        | `createAutoRegisterRegistry()` — an explicit registry, no global state                                |
 | `[Symbol.asyncDispose]()` is not specified                               | `dispose()` + `[Symbol.asyncDispose]()` — `await using` support                                       |
-| `[Symbol.dispose]()` is not specified                                    | `[Symbol.dispose](): never` — throws `SyncDisposalNotSupportedError`, plainly                         |
+| `[Symbol.dispose]()` is not specified                                    | No `[Symbol.dispose]` — a sync `using` on a container is a compile error                              |
 | No `lookupBindings()`, `inspect()`, `generateDependencyGraph()`          | A full introspection API — typed snapshot, JSON graph, DOT export                                     |
 
 ---

@@ -328,9 +328,8 @@ await requestContainer.dispose();
 }
 ```
 
-> **Normative — `[Symbol.dispose](): never`.** The container implements `Symbol.dispose` but always throws
-> `SyncDisposalNotSupportedError`, because `onDeactivation` may be async. Use `await using` (which calls
-> `Symbol.asyncDispose`) rather than `using` (which calls `Symbol.dispose`).
+> **Normative — asynchronous disposal only.** The container implements `Symbol.asyncDispose` and not `Symbol.dispose`,
+> because `onDeactivation` may be async: `await using` disposes it, and a synchronous `using` is a compile error.
 
 **Scoped bindings — the request scope pattern.** A `scoped` binding is a singleton within one child container, and is
 deactivated with it: disposing the child runs the `onDeactivation` hooks and `@preDestroy()` of every scoped instance it
@@ -650,7 +649,7 @@ Put together, a container exposes nine groups:
 | Container-level hooks | `onActivation`, `onDeactivation`                                                                      |
 | Resolution            | `resolve`, `resolveAsync`, `resolveOptional`, `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync` |
 | Child                 | `createChild`                                                                                         |
-| Disposal              | `dispose`, `[Symbol.asyncDispose]`, `[Symbol.dispose]` (always throws)                                |
+| Disposal              | `dispose`, `[Symbol.asyncDispose]`                                                                    |
 | Initialise & check    | `initializeAsync`, `validate`                                                                         |
 | Introspection         | `has`, `hasOwn`, `lookupBindings`, `inspect`, `generateDependencyGraph`                               |
 

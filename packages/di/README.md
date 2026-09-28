@@ -416,8 +416,8 @@ A transient or scoped consumer's dependencies are left to `resolve()`, because a
 ### Disposal
 
 `Container` implements `AsyncDisposable`, so `await using` runs every deactivation hook automatically as the block
-exits. Synchronous `using` isn't supported — `onDeactivation` may be async — and `Symbol.dispose` throws
-`SyncDisposalNotSupportedError`.
+exits, and disposing a child deactivates the scoped instances it cached. Synchronous `using` is a compile error: a
+deactivation hook may be async, so the container implements `Symbol.asyncDispose` only.
 
 ### Introspection
 

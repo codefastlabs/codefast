@@ -374,22 +374,6 @@ export class AsyncModuleLoadError extends DiError {
 }
 
 /**
- * A synchronous disposal attempt on a container whose `onDeactivation` handlers may be async.
- *
- * @since 0.3.16-canary.0
- */
-export class SyncDisposalNotSupportedError extends DiError {
-  override readonly name = "SyncDisposalNotSupportedError";
-  readonly code = "SYNC_DISPOSAL_NOT_SUPPORTED";
-
-  constructor() {
-    super(
-      "Container cannot be disposed synchronously because onDeactivation handlers may be async. Use `await using` or call container.dispose() explicitly.",
-    );
-  }
-}
-
-/**
  * A `scoped` binding resolved from a container with no child scope context.
  *
  * @since 0.3.16-canary.0
