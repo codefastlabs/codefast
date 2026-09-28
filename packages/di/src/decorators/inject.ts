@@ -30,9 +30,10 @@ function classNameOf(instance: unknown): string | undefined {
 
 // ── inject() — dual-role ─────────────────────────────────────────────────────────────────────────────────────────────
 
+// An instance accessor only: the injection runs per instance, as the class constructs.
 type ClassAccessorDecorator<This, Value> = (
   target: ClassAccessorDecoratorTarget<This, Value>,
-  context: ClassAccessorDecoratorContext<This, Value>,
+  context: ClassAccessorDecoratorContext<This, Value> & { readonly static: false },
 ) => ClassAccessorDecoratorResult<This, Value> | void;
 
 /**

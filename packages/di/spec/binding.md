@@ -392,9 +392,10 @@ Step by step:
 In short: accessor initializers (`@inject accessor`) → constructor body → `@postConstruct()` → `onActivation`. The
 constructor body and `@postConstruct()` both run after the accessor fields have been injected.
 
-> **`@postConstruct` / `@preDestroy` require a string-named method.** The lifecycle reader keys methods by name, so a
-> symbol-keyed method cannot be found again. Decorating one throws `SymbolKeyedLifecycleError` at the declaration,
-> rather than a misleading metadata error at resolve.
+> **`@postConstruct` / `@preDestroy` require a public, string-named method.** The lifecycle reader calls a hook by name
+> on the instance, so a symbol-keyed or private method cannot be found again. TypeScript rejects both at the decoration
+> site; untyped code throws `SymbolKeyedLifecycleError` or `PrivateLifecycleMethodError` at the declaration, rather than
+> a misleading metadata error at resolve.
 
 **Type inference — no annotation needed:**
 

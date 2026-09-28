@@ -137,6 +137,7 @@ export {
   RebindUnboundTokenError,
   ScopeViolationError,
   SelfBindingRequiresClassError,
+  PrivateLifecycleMethodError,
   StaticMemberDecoratorError,
   SymbolKeyedLifecycleError,
   EmptyTagCriteriaError,

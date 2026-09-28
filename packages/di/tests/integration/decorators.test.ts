@@ -91,6 +91,7 @@ describe("standard decorators — metadata & lifecycle", () => {
   it("rejects @postConstruct on static method at class evaluation time", () => {
     expect(() => {
       class StaticPostConstructTarget {
+        // @ts-expect-error — a hook is an instance method; the runtime guard is what is under test.
         @postConstruct()
         static init(): void {}
       }
@@ -101,6 +102,7 @@ describe("standard decorators — metadata & lifecycle", () => {
   it("rejects @preDestroy on static method at class evaluation time", () => {
     expect(() => {
       class StaticPreDestroyTarget {
+        // @ts-expect-error — a hook is an instance method; the runtime guard is what is under test.
         @preDestroy()
         static cleanup(): void {}
       }
@@ -112,6 +114,7 @@ describe("standard decorators — metadata & lifecycle", () => {
     const hook = Symbol("probe:post-construct");
     expect(() => {
       class SymbolPostConstructTarget {
+        // @ts-expect-error — the lifecycle reader names a hook by string; the runtime guard is what is under test.
         @postConstruct()
         [hook](): void {}
       }
@@ -123,6 +126,7 @@ describe("standard decorators — metadata & lifecycle", () => {
     const hook = Symbol("probe:pre-destroy");
     expect(() => {
       class SymbolPreDestroyTarget {
+        // @ts-expect-error — the lifecycle reader names a hook by string; the runtime guard is what is under test.
         @preDestroy()
         [hook](): void {}
       }
