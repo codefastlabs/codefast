@@ -28,7 +28,7 @@ export const CODEFAST_DI = {
   tsconfigFileName: "tsconfig.codefast.json",
   benchEntryFileName: "codefast-benches.ts",
   shortName: "cf",
-  runtime: "TC39 Stage 3 decorators + Symbol.metadata",
+  runtime: "standard decorators + Symbol.metadata",
   features: [
     "transient",
     "transient-root",

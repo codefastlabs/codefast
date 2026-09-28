@@ -4,12 +4,12 @@
 container reads that metadata through a swappable port and does the actual work. Decorators are syntactic sugar; the
 core container does not depend on them.
 
-They use **TC39 Decorator Stage 3** and `Symbol.metadata`. Neither `experimentalDecorators: true` nor `reflect-metadata`
-is needed.
+They use **standard decorators** — the TC39 decorators proposal, at Stage 2.7 — and `Symbol.metadata`. Neither
+`experimentalDecorators: true` nor `reflect-metadata` is needed.
 
 ## Usage
 
-TC39 Decorator Stage 3 **does not support parameter decorators** (TS1206). `@inject` on a constructor parameter is only
+Standard decorators **do not support parameter decorators** (TS1206). `@inject` on a constructor parameter is only
 available with `experimentalDecorators: true` (legacy). The solution: `@injectable()` takes a **deps array** that
 declares the constructor order explicitly — the same pattern as Angular Ivy.
 
@@ -250,7 +250,7 @@ frame, as the class's fields initialize — so the constructor body already sees
 has seen the instance yet. It works because the resolver opens a "current container" context around the `new` and the
 field's initializer reads it.
 
-TC39 Stage 3 supports `accessor`. `@inject(token)` is a **field decorator** on an **instance `accessor`**.
+Standard decorators support `accessor`. `@inject(token)` is a **field decorator** on an **instance `accessor`**.
 
 ```ts
 @injectable()
@@ -367,7 +367,7 @@ active container open, so its initializers go through `container.resolve`.
 > break a circular dependency.
 
 > **`@inject` on a plain field is not supported** (`@inject(Logger) logger!`). Property injection only goes through
-> `accessor` (`@inject(Logger) accessor logger`, …). A Stage 3 field decorator does have `context.access`; restricting
+> `accessor` (`@inject(Logger) accessor logger`, …). A standard field decorator does have `context.access`; restricting
 > this to `accessor` is an **API choice** (a narrower surface), not a limitation of the proposal.
 
 ### `inject()` is dual-role
@@ -377,7 +377,7 @@ active container open, so its initializers go through `container.resolve`.
 TypeScript matches the first half; used as a decorator, it matches the second. One function, one import — there is no
 separate import for either role.
 
-> **Decorator toolchain.** Vitest uses its default transform (OXC). Test snippets that need Stage 3 decorators go
+> **Decorator toolchain.** Vitest uses its default transform (OXC). Test snippets that need standard decorators go
 > through `@rolldown/plugin-babel` with `@babel/plugin-proposal-decorators` (`version: "2023-11"`). A transform around
 > decorator metadata must keep `inject()` a callable object; use `isInjectionDescriptor(value)` before processing a deps
 > array.
@@ -480,7 +480,7 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 > **`@singleton()` and `@scoped()` do not exist.** Scope is a binding-time concern — declared at `.singleton()` /
 > `.transient()` / `.scoped()` in the fluent chain. A class does not decide its own scope.
 
-> **There are no parameter decorators.** TC39 Stage 3 does not support them (TS1206). The deps array replaces them
+> **There are no parameter decorators.** Standard decorators do not support them (TS1206). The deps array replaces them
 > entirely.
 
 ## tsconfig setup
@@ -495,7 +495,7 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 }
 ```
 
-`experimentalDecorators: true` is not needed: Stage 3 decorators are TypeScript's default.
+`experimentalDecorators: true` is not needed: standard decorators are TypeScript's default.
 
 > **Normative — the program declares explicit resource management; the package does not.** The published declarations
 > name `Symbol.asyncDispose` and `Symbol.dispose`, and `await using` checks a container against `AsyncDisposable` and

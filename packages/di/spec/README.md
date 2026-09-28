@@ -1,6 +1,6 @@
 # DI Library — Design Specification
 
-> Inspired by InversifyJS v8 · Built from scratch · Zero `reflect-metadata` · TC39 Decorators Stage 3 · TypeScript 7+ ·
+> Inspired by InversifyJS v8 · Built from scratch · Zero `reflect-metadata` · Standard decorators · TypeScript 7+ ·
 > ESM-only
 
 ## How to read this specification
@@ -56,7 +56,7 @@ with any version of InversifyJS, by design.
 > - **In a browser, Chrome and Edge 136, Firefox 136, or Safari 18.4**, the first releases that ship every ES2025
 >   builtin ([support policy](../../../SUPPORT.md#browsers)). `await using` also needs the browser to ship explicit
 >   resource management, which Safari has not; `dispose()` needs nothing extra.
-> - **TypeScript ≥ 7**, the one compiler that type-checks this package and emits its published declarations. Stage 3
+> - **TypeScript ≥ 7**, the one compiler that type-checks this package and emits its published declarations. Standard
 >   decorators are TypeScript's default, so `experimentalDecorators` and `emitDecoratorMetadata` stay **off** and
 >   `reflect-metadata` is never loaded ([tsconfig setup](decorators.md#tsconfig-setup)).
 > - **The explicit resource management types.** The declarations key `Container`'s disposal methods by

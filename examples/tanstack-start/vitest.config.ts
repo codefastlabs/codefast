@@ -2,7 +2,7 @@ import babel from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
 
 /**
- * Example app tests: Node + Stage 3 decorators, consuming the built `@codefast/*` dist like the app.
+ * Example app tests: Node + standard decorators, consuming the built `@codefast/*` dist like the app.
  *
  * A standalone config so Vitest never loads vite.config.ts — the app's nitro/tanstack plugins have
  * no business in a unit-test run. Test taxonomy: tests/unit/** mirrors src/**.

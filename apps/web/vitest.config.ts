@@ -19,7 +19,7 @@ export default defineConfig({
     passWithNoTests: true,
     projects: [
       {
-        // Stage 3 decorators for the home page's live `@codefast/di` demos, as the app build compiles them.
+        // Standard decorators for the home page's live `@codefast/di` demos, as the app build compiles them.
         plugins: [viteReact(), babel({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] })],
         test: {
           environment: "jsdom",

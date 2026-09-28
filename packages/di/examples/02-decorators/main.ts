@@ -1,7 +1,7 @@
 /**
  * Example 02 — Decorators
  *
- * TC39 Stage 3 decorators (no reflect-metadata needed).
+ * Standard decorators (no reflect-metadata needed).
  * Shows `@injectable`, inject(), and optional().
  */
 

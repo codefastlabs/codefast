@@ -31,7 +31,7 @@
 ---
 
 This monorepo publishes the `@codefast/*` packages — a family of small, strictly typed libraries for building React 19
-products. The flagship is [`@codefast/di`](packages/di): lightweight, type-safe dependency injection on TC39 Stage 3
+products. The flagship is [`@codefast/di`](packages/di): type-safe, zero-dependency dependency injection on standard
 decorators — typed tokens, scopes, modules, introspection — with [`@codefast/di-testing`](packages/di-testing) as its
 auto-mocking test bed. Around it sit the packages a product reaches for next — 70+ accessible components built on Radix
 UI primitives and Tailwind CSS 4, a type-safe variant API, appearance management, consent-gated event tracking, and the
@@ -44,7 +44,7 @@ source under `/ui`, and each package's own README, specification, and architectu
 
 | Package                                                     | Description                                                                                     |
 | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| [`@codefast/di`](packages/di)                               | Lightweight, type-safe dependency injection on TC39 Stage 3 decorators — the flagship           |
+| [`@codefast/di`](packages/di)                               | Type-safe, zero-dependency dependency injection on standard decorators — the flagship           |
 | [`@codefast/di-testing`](packages/di-testing)               | Solitary and sociable auto-mocking test beds for `@codefast/di`                                 |
 | [`@codefast/ui`](packages/ui)                               | 70+ accessible React components built on Radix UI primitives and Tailwind CSS 4                 |
 | [`@codefast/tailwind-variants`](packages/tailwind-variants) | Type-safe variant styling API — a faster drop-in replacement for `tailwind-variants`            |
@@ -91,8 +91,8 @@ container.bind(CheckoutService).toSelf();
 container.resolve(CheckoutService).complete("ORD-1001");
 ```
 
-`@codefast/di` requires Node.js 24 or later and TypeScript 7 or later with native Stage 3 decorators — no
-`reflect-metadata`, no `experimentalDecorators`. Its README, specification, and architecture notes live at
+`@codefast/di` requires Node.js 24 or later and TypeScript 7 or later with standard decorators — no `reflect-metadata`,
+no `experimentalDecorators`. Its README, specification, and architecture notes live at
 [codefastlabs.com/docs/di](https://codefastlabs.com/docs/di); the component library at
 [codefastlabs.com/ui](https://codefastlabs.com/ui); every other package at `https://codefastlabs.com/docs/<pkg>`.
 

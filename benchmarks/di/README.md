@@ -69,8 +69,8 @@ src/fixtures/               workloads and descriptors both sides share
 src/instruments/            diagnostic tools, outside the comparison
 ```
 
-Each library runs **in its own subprocess, under its own tsconfig, in its canonical mode**: `@codefast/di` with TC39
-Stage 3 decorators and `Symbol.metadata`, `inversify`, `tsyringe` and `injection-js` with legacy decorators and
+Each library runs **in its own subprocess, under its own tsconfig, in its canonical mode**: `@codefast/di` with standard
+decorators and `Symbol.metadata`, `inversify`, `tsyringe` and `injection-js` with legacy decorators and
 `reflect-metadata`, `awilix` and `brandi` and `ditox` decorator-free (awilix's proxy cradle, brandi's and ditox's token
 wiring). Nothing is forced into another library's idiom, and no two libraries share a heap.
 

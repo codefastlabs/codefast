@@ -1,7 +1,7 @@
 {
   "name": "@codefast/di",
   "version": "0.12.0",
-  "description": "Lightweight dependency injection primitives for Codefast",
+  "description": "Type-safe, zero-dependency dependency injection for TypeScript, on standard decorators",
   "keywords": [
     "codefast",
     "dependency-injection",

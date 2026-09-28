@@ -36,7 +36,7 @@ export function HeroSection({ quickStartHtml, className, ...props }: HeroSection
           <div className="text-center lg:text-start">
             <div className="hero-enter">
               <Badge variant="outline" className="mb-6 border-ui-border/60 text-ui-muted">
-                @codefast/di · TypeScript · Stage 3 decorators
+                @codefast/di · TypeScript · standard decorators
               </Badge>
             </div>
 
@@ -51,8 +51,8 @@ export function HeroSection({ quickStartHtml, className, ...props }: HeroSection
             </h1>
 
             <p className="hero-enter mx-auto mb-8 max-w-lg text-lg leading-relaxed text-ui-muted [--hero-enter-delay:200ms] lg:mx-0">
-              Wire services with typed tokens and native decorators — no reflect-metadata, no runtime reflection — then
-              add scopes, modules, introspection and an auto-mocking test bed as the graph grows. Around it sit the
+              Wire services with typed tokens and standard decorators — no reflect-metadata, no runtime reflection —
+              then add scopes, modules, introspection and an auto-mocking test bed as the graph grows. Around it sit the
               @codefast packages a React 19 product reaches for next.
             </p>
 

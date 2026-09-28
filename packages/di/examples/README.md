@@ -22,7 +22,7 @@ its own domain logging.
 ## Prerequisites
 
 ```json
-// tsconfig.json — native Stage 3 decorators, NO experimentalDecorators
+// tsconfig.json — standard decorators, NO experimentalDecorators
 {
   "compilerOptions": {
     "target": "ES2025",

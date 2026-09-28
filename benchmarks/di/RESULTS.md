@@ -21,9 +21,9 @@ its declared features allow, so a `—` below is a feature the library lacks, ne
 **Environment.** `@codefast/di` at `f1234b08f` — 0.11.0 plus the unreleased 0.12 changes — from a `dist` built first, on
 Node 26.1.0 / V8 14.6, Apple M3 Max × 14, darwin/arm64, `--expose-gc` for every library. inversify 8.2.3 · awilix 13.0.5
 · tsyringe 4.10.0 · brandi 5.1.0 · ditox 3.3.0 · injection-js 2.6.1. Each library runs at its canonical decorator mode
-(inversify legacy decorators + `reflect-metadata`, codefast TC39 Stage 3 + `Symbol.metadata`); every inversify container
-uses `{ jitless: false }`, its fastest documented configuration. Run 2026-09-27, 2m17s wall, 0 sanity failures; the
-1-minute load average read 3.16 at every child's start, on fourteen cores.
+(inversify legacy decorators + `reflect-metadata`, codefast standard decorators + `Symbol.metadata`); every inversify
+container uses `{ jitless: false }`, its fastest documented configuration. Run 2026-09-27, 2m17s wall, 0 sanity
+failures; the 1-minute load average read 3.16 at every child's start, on fourteen cores.
 
 **What moved since the previous pass.** Per row, every library reads within 2% of the previous pass's median, 1.01× to
 1.02×, so this pass sits level with the last and a row that moved is the row, not the pass. Since that pass the async

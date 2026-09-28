@@ -111,7 +111,7 @@ export class OpenAccount implements OpenAccountUseCase {
 
 ## Decorators need no extra tooling here
 
-These are TC39 Stage 3 decorators (`experimentalDecorators` is off). The examples run under `tsx`, which transforms them
+These are standard decorators (`experimentalDecorators` is off). The examples run under `tsx`, which transforms them
 directly — there is nothing to configure. The package's own unit tests transform the same decorators through
 `@babel/plugin-proposal-decorators` only because they run under Vitest; that plugin is a Vitest concern, not something
 an example (or a consumer) has to add.

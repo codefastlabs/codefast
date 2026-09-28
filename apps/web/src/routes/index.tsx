@@ -76,7 +76,7 @@ function HomePage() {
         command={DI_INSTALL_COMMAND}
         titleId="home-install-title"
         title="One command to start."
-        description="Add the package, declare a class's dependencies with @injectable, and resolve it from a container. Native decorators, no reflect-metadata, nothing to configure."
+        description="Add the package, declare a class's dependencies with @injectable, and resolve it from a container. Standard decorators, no reflect-metadata, no experimentalDecorators."
         analyticsName="home-di"
         docsAction={
           <Link to="/docs/$pkg" params={{ pkg: "di" }}>
