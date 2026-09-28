@@ -897,6 +897,13 @@ list of the bindings that have materialised, so disposal and `inspect()` can sti
 binding's instance and marks the list, and the next enumeration compacts it, keeping each live binding once at its
 latest position — a teardown of a hundred singletons is a hundred field writes, not a hundred splices.
 
+A scoped instance cannot live on its binding, because one binding caches an instance in every child that resolves it, so
+it stays in the child's `Map` under the binding's `scopedCacheKey`. Beside that map `ScopeManager` keeps each binding
+with the resolver that owns it, in caching order — the first in two fields, so a per-request child caching one scoped
+instance allocates nothing for it, and nothing on a hit. A child's disposal walks them latest first and hands each
+current instance to its owner, which runs its hooks and reader as activation did, and only when the binding owes a
+teardown: a child whose scoped instances owe none awaits nothing.
+
 > **Invariant (correctness).** This is only sound while one binding maps to one owning container. Anything that would
 > share a binding object between two registries — a snapshot that re-registers into a different container, a clone that
 > copies bindings by reference — breaks it silently, by making two containers share one instance.

@@ -316,7 +316,7 @@ requestContainer.bind(RequestId).toConstantValue(crypto.randomUUID());
 
 const handler = requestContainer.resolve(RequestHandler);
 
-// Dispose: deactivate every singleton DEFINED at the child (the parent is untouched)
+// Dispose: deactivate the child's scoped instances, then every singleton DEFINED at it (the parent is untouched)
 await requestContainer.dispose();
 
 // `await using` — TC39 Explicit Resource Management
@@ -332,8 +332,10 @@ await requestContainer.dispose();
 > `SyncDisposalNotSupportedError`, because `onDeactivation` may be async. Use `await using` (which calls
 > `Symbol.asyncDispose`) rather than `using` (which calls `Symbol.dispose`).
 
-**Scoped bindings — the request scope pattern.** A `scoped` binding is a singleton within one child container. The
-pattern for request scope in a web framework:
+**Scoped bindings — the request scope pattern.** A `scoped` binding is a singleton within one child container, and is
+deactivated with it: disposing the child runs the `onDeactivation` hooks and `@preDestroy()` of every scoped instance it
+cached, latest first and before its own singletons, with the hooks of the container that owns each binding — the same
+container whose hooks activated it. The pattern for request scope in a web framework:
 
 ```ts
 // One child container per request

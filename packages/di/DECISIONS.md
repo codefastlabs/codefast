@@ -66,15 +66,15 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 #### Binding API
 
-| Feature                | InversifyJS v8                                    | `@codefast/di`                                                   |
-| ---------------------- | ------------------------------------------------- | ---------------------------------------------------------------- |
-| Async binding          | `toDynamicValue` takes both sync and async        | `toDynamic` vs `toDynamicAsync` — enforced by the compiler       |
-| Explicit async deps    | No `toResolvedValueAsync`                         | `toResolvedAsync(factory, deps)` — symmetric with the sync one   |
-| Scope naming           | `inSingletonScope()` / `inTransientScope()` / ... | `singleton()` / `transient()` / `scoped()`                       |
-| Lifecycle after scope  | `when*` available after scope (v8)                | `when*` before `to*()`, `on*()` after scope — an invariant order |
-| `onDeactivation` guard | Runtime error on a non-singleton                  | Compile time: only on `SingletonBindingBuilder`                  |
-| Alias                  | `toService()` returns `void`                      | `toAlias()` returns an `AliasBindingBuilder` — with `.id()`      |
-| Alias + hint forward   | Not specified                                     | The hint is forwarded to the target resolution                   |
+| Feature                | InversifyJS v8                                    | `@codefast/di`                                                              |
+| ---------------------- | ------------------------------------------------- | --------------------------------------------------------------------------- |
+| Async binding          | `toDynamicValue` takes both sync and async        | `toDynamic` vs `toDynamicAsync` — enforced by the compiler                  |
+| Explicit async deps    | No `toResolvedValueAsync`                         | `toResolvedAsync(factory, deps)` — symmetric with the sync one              |
+| Scope naming           | `inSingletonScope()` / `inTransientScope()` / ... | `singleton()` / `transient()` / `scoped()`                                  |
+| Lifecycle after scope  | `when*` available after scope (v8)                | `when*` before `to*()`, `on*()` after scope — an invariant order            |
+| `onDeactivation` guard | Runtime error on a non-singleton                  | Compile time: on the singleton and scoped builders, never the transient one |
+| Alias                  | `toService()` returns `void`                      | `toAlias()` returns an `AliasBindingBuilder` — with `.id()`                 |
+| Alias + hint forward   | Not specified                                     | The hint is forwarded to the target resolution                              |
 
 #### Container API
 
@@ -146,7 +146,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | `toDynamicValue` takes sync and async, with no compiler enforcement      | `toDynamic` vs `toDynamicAsync` — the compiler enforces `resolveAsync()` where needed                 |
 | No `toResolvedValueAsync`                                                | `toResolvedAsync(factory, deps)` — symmetric with `toResolved`                                        |
 | `when*` available after scope                                            | `when*` before `to*()`, `on*()` after scope — an invariant chain order that removes the ambiguity     |
-| `onDeactivation` has no compile-time guard                               | Builder type narrowing — `onDeactivation` exists only on `SingletonBindingBuilder`                    |
+| `onDeactivation` has no compile-time guard                               | Builder type narrowing — `onDeactivation` exists on the singleton and scoped builders only            |
 | `toService()` returns `void`                                             | `toAlias()` returns an `AliasBindingBuilder` — with `.id()` and hint forwarding                       |
 | `@inject` on a parameter needs `experimentalDecorators`                  | `@injectable([deps])` + `inject()` — standard decorators only                                         |
 | `@inject` on a plain property                                            | `@inject accessor field` — using the TC39 `accessor` keyword                                          |

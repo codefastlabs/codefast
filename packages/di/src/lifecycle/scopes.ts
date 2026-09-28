@@ -5,6 +5,15 @@ import type { BindingIdentifier } from "#core/types";
 import { MissingScopeContextError } from "#errors";
 
 /**
+ * What deactivates a scoped instance: the resolver owning its binding, which activated it.
+ *
+ * @remarks Answers `undefined` when the binding owes no teardown, so disposing a per-request child awaits nothing.
+ */
+export interface ScopedInstanceOwner {
+  deactivateScoped(binding: Binding, instance: unknown): Promise<void> | undefined;
+}
+
+/**
  * One container's instance caches — singletons, in-flight async creations, and the scoped cache.
  *
  * @since 0.3.16-canary.0
@@ -16,6 +25,12 @@ export class ScopeManager {
   #inflight: Map<BindingIdentifier, Promise<unknown>> | undefined;
   // Scoped cache — only a child container resolving a `scoped` binding ever needs it.
   #scoped: Map<BindingIdentifier, unknown> | undefined;
+  // Scoped bindings in the order their instances were cached, each beside its owner, so disposal can deactivate them
+  // latest first. The first sits in fields: a per-request child caching one scoped instance allocates nothing for it.
+  #firstScopedBinding: Binding | undefined;
+  #firstScopedOwner: ScopedInstanceOwner | undefined;
+  #laterScopedBindings: Array<Binding> | undefined;
+  #laterScopedOwners: Array<ScopedInstanceOwner> | undefined;
   // Set once by the owning container's dispose — refuses new materializations into torn-down state.
   #closed = false;
 
@@ -118,16 +133,92 @@ export class ScopeManager {
   }
 
   /** Takes the binding rather than its id, so a failure here can name the token — as `setSingleton` does. */
-  setScoped(binding: Binding, instance: unknown): void {
+  setScoped(binding: Binding, instance: unknown, owner: ScopedInstanceOwner): void {
     if (!this.isChild) {
       throw new MissingScopeContextError(tokenName(binding.token));
     }
     (this.#scoped ??= new Map<BindingIdentifier, unknown>()).set(binding.scopedCacheKey, instance);
+    if (this.#firstScopedBinding === undefined) {
+      this.#firstScopedBinding = binding;
+      this.#firstScopedOwner = owner;
+    } else {
+      (this.#laterScopedBindings ??= []).push(binding);
+      (this.#laterScopedOwners ??= []).push(owner);
+    }
   }
 
-  /** Releases a removed binding's scoped instance, by its scoped cache key. A scoped instance has no deactivation. */
+  /** Drops the instance cached under a scoped cache key, owing it nothing — what a binding leaving `scoped` retires. */
   deleteScoped(key: BindingIdentifier): void {
     this.#scoped?.delete(key);
+  }
+
+  /** Removes the instance cached under a scoped cache key and hands it back, or {@link SCOPED_MISS} when none is. */
+  takeScoped(key: BindingIdentifier): unknown {
+    const scoped = this.#scoped;
+    if (scoped === undefined || !scoped.has(key)) {
+      return SCOPED_MISS;
+    }
+    const instance = scoped.get(key);
+    scoped.delete(key);
+    return instance;
+  }
+
+  /**
+   * Deactivates every cached scoped instance through its owner, the latest cached first and one at a time, collecting
+   * each failure into `errors` — or answers `undefined` when no owner had a teardown to run.
+   *
+   * @remarks A binding cached again after its instance was taken is listed twice; only its current instance is owed.
+   */
+  deactivateScoped(errors: Array<unknown>): Promise<void> | undefined {
+    if (this.#firstScopedBinding === undefined) {
+      return undefined;
+    }
+    return this.#deactivateScopedFrom(this.#laterScopedBindings?.length ?? 0, errors);
+  }
+
+  // Positions count down from the latest: `position - 1` in the later lists while positive, then the first at 0.
+  #deactivateScopedFrom(position: number, errors: Array<unknown>): Promise<void> | undefined {
+    for (let current = position; current >= 0; current -= 1) {
+      const pending = this.#deactivateScopedAt(current, errors);
+      if (pending !== undefined) {
+        return this.#finishDeactivatingScoped(pending, current - 1, errors);
+      }
+    }
+    return undefined;
+  }
+
+  // The rest of the walk once a teardown is pending: each one settles before the next starts.
+  async #finishDeactivatingScoped(pending: Promise<void>, position: number, errors: Array<unknown>): Promise<void> {
+    let current: Promise<void> | undefined = pending;
+    for (let next = position; ; next -= 1) {
+      if (current !== undefined) {
+        try {
+          await current;
+        } catch (error) {
+          errors.push(error);
+        }
+      }
+      if (next < 0) {
+        return;
+      }
+      current = this.#deactivateScopedAt(next, errors);
+    }
+  }
+
+  #deactivateScopedAt(position: number, errors: Array<unknown>): Promise<void> | undefined {
+    const binding = position === 0 ? this.#firstScopedBinding! : this.#laterScopedBindings![position - 1]!;
+    const owner = position === 0 ? this.#firstScopedOwner! : this.#laterScopedOwners![position - 1]!;
+    // The first is read last, so only a later entry can find a key cached twice; taking it leaves the rest a miss.
+    const instance = position === 0 ? this.readScoped(binding.scopedCacheKey) : this.takeScoped(binding.scopedCacheKey);
+    if (instance === SCOPED_MISS) {
+      return undefined;
+    }
+    try {
+      return owner.deactivateScoped(binding, instance);
+    } catch (error) {
+      errors.push(error);
+      return undefined;
+    }
   }
 
   /** Scoped instances currently cached — a structural count for diagnostics. */
@@ -146,6 +237,10 @@ export class ScopeManager {
     }
     this.#inflight?.clear();
     this.#scoped?.clear();
+    this.#firstScopedBinding = undefined;
+    this.#firstScopedOwner = undefined;
+    this.#laterScopedBindings = undefined;
+    this.#laterScopedOwners = undefined;
   }
   /** Whether the deferred scoped-instance cache has had to be built. */
   get isScopedCacheBuilt(): boolean {

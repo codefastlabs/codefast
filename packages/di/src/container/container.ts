@@ -43,7 +43,7 @@ import { explainRequest } from "#introspection/explanation";
 import type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";
 import { Inspector } from "#introspection/inspector";
 import { LifecycleManager } from "#lifecycle/hooks";
-import { ScopeManager } from "#lifecycle/scopes";
+import { SCOPED_MISS, ScopeManager } from "#lifecycle/scopes";
 import { MetadataReaderToken } from "#metadata/reader-token";
 import { defaultMetadataReader } from "#metadata/symbol-reader";
 import type { MetadataReader } from "#metadata/types";
@@ -433,7 +433,10 @@ class DefaultContainer implements Container {
     } else if (this.#owesConstantDeactivation(binding)) {
       (pairs ??= []).push(binding, binding.value);
     }
-    this.#scope.deleteScoped(binding.scopedCacheKey);
+    const scopedInstance = this.#scope.takeScoped(binding.scopedCacheKey);
+    if (scopedInstance !== SCOPED_MISS) {
+      (pairs ??= []).push(binding, scopedInstance);
+    }
     return pairs;
   }
 
@@ -916,6 +919,11 @@ class DefaultContainer implements Container {
 
     const reader = this.#getMetadataReader();
     const errors: Array<unknown> = [];
+    // A scoped instance may hold this container's singletons and never the reverse, so it goes first, latest first.
+    const scopedTeardown = this.#scope.deactivateScoped(errors);
+    if (scopedTeardown !== undefined) {
+      await scopedTeardown;
+    }
     // Iterate a copy: a deactivation handler is user code, and the live list is what
     // materializing or dropping a singleton mutates. Reverse materialization order, so a
     // dependent tears down before the dependencies it may still reach through.
@@ -1017,8 +1025,8 @@ class DefaultContainer implements Container {
       if (!this.#isBoundInChain(hookToken)) {
         throw new UnreachableLifecycleHookError(tokenName(hookToken), phase);
       }
-      // A deactivation only ever runs for a singleton or constant, so a hook on a token whose every
-      // binding is scoped or transient can never fire — the builder blocks it, `container.onDeactivation` cannot.
+      // A deactivation never runs for a transient, so a hook on a token whose every binding is transient
+      // can never fire — the builder blocks it, `container.onDeactivation` cannot.
       if (phase === "onDeactivation" && !this.#hasDeactivatableBindingInChain(hookToken)) {
         throw new UnreachableLifecycleHookError(tokenName(hookToken), phase, "no-deactivatable-binding");
       }
@@ -1070,10 +1078,10 @@ class DefaultContainer implements Container {
     return parent !== undefined && parent.#isBoundInChain(token);
   }
 
-  // Whether the token has a binding a deactivation hook can run for — a singleton or a constant.
+  // Whether the token has a binding a deactivation hook can run for — anything but a transient.
   #hasDeactivatableBindingInChain(token: Token<unknown> | Constructor): boolean {
     for (const binding of this.#registry.getAll(token)) {
-      if (effectiveBindingScope(binding) === "singleton") {
+      if (effectiveBindingScope(binding) !== "transient") {
         return true;
       }
     }

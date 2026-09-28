@@ -113,11 +113,15 @@ export interface TransientBindingBuilder<Value> {
 }
 
 /**
- * The fluent chain after `scoped()`, sharing the `transient()` surface.
+ * The fluent chain after `scoped()`, where both lifecycle hooks stay available: a child deactivates what it cached.
  *
  * @since 0.3.16-canary.0
  */
-export interface ScopedBindingBuilder<Value> extends TransientBindingBuilder<Value> {}
+export interface ScopedBindingBuilder<Value> {
+  onActivation(fn: ActivationHandler<Value>): this;
+  onDeactivation(fn: DeactivationHandler<Value>): this;
+  id(): BindingIdentifier;
+}
 
 /**
  * The fluent chain a constant enters once a lifecycle hook is added.

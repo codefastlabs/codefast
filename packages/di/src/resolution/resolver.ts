@@ -457,6 +457,16 @@ export class DependencyResolver implements ResolverCallbacks {
   ownerForValidate(binding: Binding): DependencyResolver {
     return this.#ownerOf(binding);
   }
+
+  /** Deactivates a scoped instance of a binding this resolver owns, with its hooks and reader, when it owes a teardown. */
+  deactivateScoped(binding: Binding, instance: unknown): Promise<void> | undefined {
+    const lifecycle = this.#lifecycle;
+    const reader = this.#metadataReader;
+    return lifecycle.owesDeactivation(binding, reader)
+      ? lifecycle.runDeactivation(binding, instance, reader)
+      : undefined;
+  }
+
   // ── Sync resolve ───────────────────────────────────────────────────────────────────────────────────────────────────
 
   resolveFromContext<Value>(token: Token<Value> | Constructor<Value>, resolutionStack: Array<ResolutionFrame>): Value {
@@ -849,7 +859,7 @@ export class DependencyResolver implements ResolverCallbacks {
       if (scope === "singleton") {
         this.#scope.setSingleton(binding, activated);
       } else if (scope === "scoped") {
-        this.#scope.setScoped(binding, activated);
+        this.#scope.setScoped(binding, activated, owner);
       }
 
       return activated;
@@ -1429,12 +1439,12 @@ export class DependencyResolver implements ResolverCallbacks {
       return activated;
     }
     if (isPending(activated)) {
-      return this.#publishInFlight(binding, activated, scope);
+      return this.#publishInFlight(binding, activated, scope, owner);
     }
     if (scope === "singleton") {
       this.#scope.setSingleton(binding, activated);
     } else {
-      this.#scope.setScoped(binding, activated);
+      this.#scope.setScoped(binding, activated, owner);
     }
     return activated;
   }
@@ -1443,13 +1453,18 @@ export class DependencyResolver implements ResolverCallbacks {
    * Publishes a pending singleton or scoped materialisation so concurrent callers dedup onto it,
    * and caches what it settles to; the creator, like every joiner, is handed a promise of its own.
    */
-  #publishInFlight(binding: Binding, pending: Promise<unknown>, scope: "singleton" | "scoped"): Promise<unknown> {
+  #publishInFlight(
+    binding: Binding,
+    pending: Promise<unknown>,
+    scope: "singleton" | "scoped",
+    owner: DependencyResolver,
+  ): Promise<unknown> {
     const published = pending.then(
       (activated) => {
         if (scope === "singleton") {
           this.#scope.setSingleton(binding, activated);
         } else {
-          this.#scope.setScoped(binding, activated);
+          this.#scope.setScoped(binding, activated, owner);
         }
         this.#scope.clearInflight(binding.identifier);
         return activated;

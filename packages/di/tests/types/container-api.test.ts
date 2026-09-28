@@ -35,6 +35,29 @@ describe("Container public API inference", () => {
     expectTypeOf(registered).not.toHaveProperty("many");
   });
 
+  it("offers onDeactivation after singleton() and scoped(), never after transient()", () => {
+    const NumberToken = token<number>("scope-hook-types");
+    const container = Container.create();
+
+    expectTypeOf(
+      container
+        .bind(NumberToken)
+        .toDynamic(() => 1)
+        .singleton(),
+    ).toHaveProperty("onDeactivation");
+    expectTypeOf(
+      container
+        .bind(NumberToken)
+        .toDynamic(() => 1)
+        .scoped(),
+    ).toHaveProperty("onDeactivation");
+    expectTypeOf(
+      container
+        .bind(NumberToken)
+        .toDynamic(() => 1)
+        .transient(),
+    ).not.toHaveProperty("onDeactivation");
+  });
   it("resolveOptional widens to undefined union", () => {
     const StringToken = token<string>("s");
     const container = Container.create();

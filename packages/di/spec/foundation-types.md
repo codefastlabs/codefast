@@ -65,12 +65,12 @@ instance. A **deactivation handler** is the teardown step when an instance leave
 > - The handler receives the instance and runs when the instance is evicted from its scope. Its return value is ignored.
 > - It is called only for the scopes in the table below.
 
-| Scope / kind      | Deactivation runs?                                                            | When                                       |
-| ----------------- | ----------------------------------------------------------------------------- | ------------------------------------------ |
-| `singleton`       | Yes                                                                           | Container disposed, or the binding unbound |
-| `toConstantValue` | Yes — treated as a singleton, **even if never resolved**                      | `dispose()` / `unbind()`                   |
-| `transient`       | No — each instance is an orphan once handed to the caller                     | —                                          |
-| `scoped`          | No — a child container only clears its cache, it does not notify the instance | —                                          |
+| Scope / kind      | Deactivation runs?                                            | When                                              |
+| ----------------- | ------------------------------------------------------------- | ------------------------------------------------- |
+| `singleton`       | Yes                                                           | Container disposed, or the binding unbound        |
+| `toConstantValue` | Yes — treated as a singleton, **even if never resolved**      | `dispose()` / `unbind()`                          |
+| `transient`       | No — each instance is an orphan once handed to the caller     | —                                                 |
+| `scoped`          | Yes — each child container deactivates the instance it cached | That child disposed, or the binding unbound on it |
 
 > **Why a constant deactivates without a resolve.** A singleton only exists after the first resolve, so if it is never
 > resolved there is nothing to deactivate. A constant is the opposite — the value is supplied by the caller at bind

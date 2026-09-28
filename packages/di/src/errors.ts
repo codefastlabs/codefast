@@ -294,7 +294,7 @@ export class UnreachableLifecycleHookError extends DiError {
   readonly code = "UNREACHABLE_LIFECYCLE_HOOK";
   readonly tokenName: string;
   readonly phase: "onActivation" | "onDeactivation";
-  /** Nothing binds the token, or — for a deactivation hook — every binding it has is transient or scoped. */
+  /** Nothing binds the token, or — for a deactivation hook — every binding it has is transient. */
   readonly reason: "unbound" | "no-deactivatable-binding";
 
   constructor(
@@ -305,7 +305,7 @@ export class UnreachableLifecycleHookError extends DiError {
     super(
       reason === "unbound"
         ? `${phase}() is registered for '${tokenName}', which nothing is bound to in this container or its ancestors, so the hook can never run. Bind the token, or — if '${tokenName}' is a class you bound as an implementation via .to(${tokenName}) — register the hook against the token you bound instead.`
-        : `${phase}() is registered for '${tokenName}', whose every binding in this container and its ancestors is transient or scoped, so the hook can never run: only a singleton or a constant is deactivated. Make one of its bindings a singleton, or drop the hook.`,
+        : `${phase}() is registered for '${tokenName}', whose every binding in this container and its ancestors is transient, so the hook can never run: a transient instance is never deactivated. Make one of its bindings a singleton or scoped, or drop the hook.`,
     );
     this.tokenName = tokenName;
     this.phase = phase;

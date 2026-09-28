@@ -83,6 +83,15 @@ export class LifecycleManager {
     return list !== undefined && list.length > 0;
   }
 
+  /** Whether deactivating an instance of a binding runs anything: a container hook, the binding's own, or `@preDestroy()`. */
+  owesDeactivation(binding: Binding, metadataReader: MetadataReader): boolean {
+    return (
+      this.hasDeactivationHandlers(binding.token) ||
+      (binding.kind !== "alias" && binding.deactivationHook !== undefined) ||
+      this.#lifecycleMethods(binding, metadataReader, "preDestroy").length > 0
+    );
+  }
+
   /** Every token carrying a container-level hook, paired with the phase that registered it. */
   hookedTokens(): Array<[DependencyKey, "onActivation" | "onDeactivation"]> {
     const hooked: Array<[DependencyKey, "onActivation" | "onDeactivation"]> = [];

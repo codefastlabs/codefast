@@ -174,7 +174,7 @@ no scope produces a new instance every time.
 | Scope          | Lifetime                                                                                 |
 | -------------- | ---------------------------------------------------------------------------------------- |
 | `.singleton()` | One instance for the container that owns the binding; children resolve the same instance |
-| `.scoped()`    | One instance per child container — resolving from a container with no child scope throws |
+| `.scoped()`    | One instance per child container, deactivated with it — resolving outside a child throws |
 | `.transient()` | A new instance on every resolution — the default                                         |
 
 ```ts
@@ -188,9 +188,10 @@ container.bind(RequestContextToken).toSelf().scoped();
 ### Lifecycle hooks
 
 A lifecycle hook runs your code as an instance is created or torn down. `.onActivation(fn)` runs right after an instance
-is created, and may replace it; `.onDeactivation(fn)` runs when the owning container is disposed or the binding is
-unbound. Both are also available container-wide, through `container.onActivation(token, fn)` and
-`container.onDeactivation(token, fn)`:
+is created, and may replace it; `.onDeactivation(fn)` runs as the instance's lifetime ends — a singleton's when its
+container is disposed or the binding is unbound, a scoped instance's when the child container that cached it is
+disposed. A transient instance has no deactivation. Both hooks are also available container-wide, through
+`container.onActivation(token, fn)` and `container.onDeactivation(token, fn)`:
 
 ```ts
 container

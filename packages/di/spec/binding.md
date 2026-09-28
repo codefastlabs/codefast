@@ -254,7 +254,8 @@ How to read the rows:
   part.
 - **`toAlias()`** is the only builder **without a value type parameter** — an alias produces no value of its own, so
   there is nothing to infer. It still carries the token's slot names, so `whenNamed` stays checked.
-- **`transient()` and `scoped()`** have no `onDeactivation` because those two scopes have no deactivation
+- **`transient()`** has no `onDeactivation` because a transient instance is never deactivated; `scoped()` keeps it,
+  since a child container deactivates what it cached
   ([`ActivationHandler` and `DeactivationHandler`](foundation-types.md#activationhandler-and-deactivationhandler)).
 
 > **Exact shape:** `src/core/binding-builders.ts` — `BindToBuilder`, `SlotConstrainedBuilder`, `BindingBuilder`,
@@ -274,9 +275,9 @@ How to read the rows:
 > to accumulate is a behavior change, not a clarification.
 
 > **Rationale — why `BindingBuilder` has no `on*()`.** Lifecycle hooks need the scope context to have clear semantics:
-> `onDeactivation` only makes sense for a singleton, while `onActivation` on a transient fires every time a new instance
-> is created. Forcing scope to be declared before lifecycle removes the ambiguity entirely — the compiler will not let
-> you confuse them.
+> `onDeactivation` only makes sense for an instance something owns — a singleton or a scoped one — while `onActivation`
+> on a transient fires every time a new instance is created. Forcing scope to be declared before lifecycle removes the
+> ambiguity entirely — the compiler will not let you confuse them.
 
 > **`ConstantBindingBuilder.onActivation` → `SingletonLifecycleBuilder`.** After `onActivation()` or `onDeactivation()`
 > is called, the builder no longer exposes `when*` — a one-way state: calling lifecycle "locks" the constraint and moves
@@ -339,10 +340,10 @@ container.unbind(consoleId);
 
 `onActivation` runs after `@postConstruct()`, before the instance is cached into its scope. It must return an instance.
 
-`onDeactivation` is only available on `singleton` and `toConstantValue` — enforced at compile time by the builder type.
-The container-level `container.onDeactivation(token, handler)` takes any token, so the type gate does not apply there;
-`validate()` reports an `UnreachableLifecycleHookError` when such a hook is keyed to a token whose every binding is
-`scoped` or `transient` (nothing it could ever deactivate). An `onActivation` hook stays valid on any scope.
+`onDeactivation` is available on `singleton`, `scoped` and `toConstantValue`, never on `transient` — enforced at compile
+time by the builder type. The container-level `container.onDeactivation(token, handler)` takes any token, so the type
+gate does not apply there; `validate()` reports an `UnreachableLifecycleHookError` when such a hook is keyed to a token
+whose every binding is `transient` (nothing it could ever deactivate). An `onActivation` hook stays valid on any scope.
 
 ```ts
 container
@@ -663,9 +664,9 @@ runtime.
 
 The hook fields are named `activationHook`/`deactivationHook` rather than after the fluent `onActivation()`/
 `onDeactivation()` steps, because the chain that registers them is the binding object itself and a field cannot share a
-name with a method. A deactivation hook only means anything when `scope` is `"singleton"`; that is enforced by the
-builder's type, not at runtime. For `constant`, `onActivation` runs the first time the value is resolved and its result
-is what gets cached.
+name with a method. A deactivation hook only means anything when `scope` is `"singleton"` or `"scoped"`; that is
+enforced by the builder's type, not at runtime. For `constant`, `onActivation` runs the first time the value is resolved
+and its result is what gets cached.
 
 > **Exact shape:** `src/core/binding.ts` — `Binding` and its seven member interfaces.
 

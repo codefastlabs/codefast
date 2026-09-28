@@ -51,12 +51,12 @@ type SlotDefinition<Names extends string> =
 /** How long an instance lives, and the hooks that lifetime allows. */
 type LifetimeDefinition<Value> =
   | {
-      readonly scope: "singleton";
+      readonly scope: "singleton" | "scoped";
       readonly onActivation?: ActivationHandler<Value> | undefined;
       readonly onDeactivation?: DeactivationHandler<Value> | undefined;
     }
   | ({
-      readonly scope?: "transient" | "scoped" | undefined;
+      readonly scope?: "transient" | undefined;
       readonly onActivation?: ActivationHandler<Value> | undefined;
     } & Never<"onDeactivation">);
 
@@ -337,8 +337,8 @@ export function binding(key: Token<unknown> | Constructor, definition: AnyDefini
   if (kind === "alias" && (onActivation !== undefined || onDeactivation !== undefined)) {
     throw new InvalidBindingDeclarationError(name, "`toAlias` takes no lifecycle hook");
   }
-  if (onDeactivation !== undefined && kind !== "constant" && scope !== "singleton") {
-    throw new InvalidBindingDeclarationError(name, '`onDeactivation` needs `scope: "singleton"`');
+  if (onDeactivation !== undefined && kind !== "constant" && scope === "transient") {
+    throw new InvalidBindingDeclarationError(name, '`onDeactivation` needs `scope: "singleton"` or `scope: "scoped"`');
   }
 
   if (definition.many !== undefined && definition.many !== true) {
