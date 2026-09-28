@@ -1,6 +1,6 @@
 # @codefast/di
 
-Lightweight, type-safe dependency injection for TypeScript applications, built on TC39 Stage 3 decorators with no
+Type-safe dependency injection for TypeScript applications, with zero dependencies, built on standard decorators with no
 `reflect-metadata` and no `experimentalDecorators`.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/di)](https://www.npmjs.com/package/@codefast/di)
@@ -20,8 +20,8 @@ its keep as the dependency graph grows.
 
 - **Typed tokens.** `Token<Value>` flows through every `bind → resolve` path, so `resolve()` returns exactly the type
   you registered.
-- **Native Stage 3 decorators.** `@injectable`, `inject`, `optional`, `injectAll`, `@postConstruct`, and `@preDestroy`
-  declare dependencies explicitly — no runtime reflection.
+- **Standard decorators.** `@injectable`, `inject`, `optional`, `injectAll`, `@postConstruct`, and `@preDestroy` declare
+  dependencies explicitly — no runtime reflection.
 - **Fluent bindings.** Constants, classes, sync and async factories, aliases, named/tagged/predicate constraints, and
   lifecycle hooks compose in one invariant chain order.
 - **Scopes with validation.** Choose `singleton`, `scoped`, or `transient`, and call `validate()` to catch captive
@@ -36,13 +36,53 @@ pnpm add @codefast/di
 ```
 
 `@codefast/di` runs on Node.js 24 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
-([support policy](../../SUPPORT.md#browsers)). It requires TypeScript 7 or later, with native Stage 3 decorators. Leave
+([support policy](../../SUPPORT.md#browsers)). It requires TypeScript 7 or later, with standard decorators. Leave
 `experimentalDecorators` off — it's off by default. Its declarations use explicit resource management, which no numbered
 `lib` declares yet, so your program needs those types: `@types/node` 24 or later loads them, and any other program adds
 `ESNext.Disposable` to `lib` once its runtime ships explicit resource management. A browser program that targets Safari,
 which has not shipped it, keeps `skipLibCheck` on and calls `dispose()` instead of `await using`. The package is
 published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the minor version when
 you need stability.
+
+### Toolchain
+
+No JavaScript engine runs decorators natively yet — the TC39 proposal went back to Stage 2.7 in May 2026 — so a
+decorated class always passes through a transform that lowers it. What that takes depends on the toolchain:
+
+| Toolchain                 | What it needs                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------- |
+| tsx, esbuild              | Nothing: esbuild lowers standard decorators.                                                      |
+| Vite 8, and Vitest on it  | The Babel decorators plugin: their Oxc transform lowers only `experimentalDecorators`.            |
+| `tsc`, then Node directly | A `target` below `ESNext`, and `Symbol.metadata` installed before any decorated class is defined. |
+
+For Vite and Vitest, add `@babel/core`, `@babel/plugin-proposal-decorators` and `@rolldown/plugin-babel` as dev
+dependencies, then the plugin to the config — `vitest.config.ts` takes the same one:
+
+```ts
+// vite.config.ts
+import babel from "@rolldown/plugin-babel";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [babel({ plugins: [["@babel/plugin-proposal-decorators", { version: "2023-11" }]] })],
+});
+```
+
+> **Warning.** Without the plugin the decorators pass through untouched, and nothing flags it at build time:
+> `vite build` succeeds, then the bundle throws `SyntaxError: Invalid or unexpected token` as it loads — the same error
+> Vitest reports for a test file that imports a decorated class.
+
+`tsc` leaves decorators in its output at `target: "ESNext"`. At any lower target it lowers them, but on a runtime
+without `Symbol.metadata` it hands them no metadata object, which every decorator here reports as
+`MissingDecoratorMetadataError`. Install the symbol in a module the entry point imports first:
+
+```ts
+(Symbol as { metadata?: symbol }).metadata ??= Symbol.for("Symbol.metadata");
+```
+
+[The specification → tsconfig setup](./spec/decorators.md#tsconfig-setup) covers the compiler options. And
+[decorators](#decorators) are optional: an app wired through `toResolved`, `toDynamic` and `Module.fromBindings` needs
+none of this.
 
 ## Quick start
 
@@ -98,9 +138,9 @@ A class constructor works as a key too: `container.bind(UserService).toSelf()`, 
 
 ## Bindings
 
-A binding describes how the container produces a value for a token. You declare it as a chain, in one fixed order: a
-strategy (the `to*` step, which produces the value), then optional constraints, a scope, and lifecycle hooks. Only
-`container.bind(key).to*(…)` is required; everything after it is optional.
+A binding describes how the container produces a value for a token. You declare it as a chain, in one fixed order:
+optional [constraints](#constraints), then a strategy (the `to*` step, which produces the value and registers the
+binding), then an optional scope and lifecycle hooks. Only `container.bind(key).to*(…)` is required.
 
 | Strategy                          | Produces                                                          |
 | --------------------------------- | ----------------------------------------------------------------- |
@@ -211,6 +251,19 @@ container.resolve(StorageToken, { tag: Provider.of("s3") }); // → S3Storage
 `{ tag: criterion }` and `{ tags: [criterion] }` are the same request — for `resolve`, and for `inject`, `optional`, and
 `injectAll` alike. Chain `.whenTagged(...)` once per criterion a slot carries, and request several at once with
 `{ tags: [...] }`.
+
+**One binding per slot; a collection with `many()`.** Binding a token again in a slot it already fills replaces the
+earlier binding — `bind` is last-wins per slot, so `resolveAll` then finds only the newer one. To register several
+implementations for `resolveAll` and `injectAll` to gather, mark each one a collection member with `.many()`:
+
+```ts
+container.bind(PluginToken).many().to(AuditPlugin);
+container.bind(PluginToken).many().to(MetricsPlugin);
+
+container.resolveAll(PluginToken); // → an AuditPlugin and a MetricsPlugin, in registration order
+```
+
+A member keeps the default slot and is never what a single `resolve` selects.
 
 **Predicate constraints — graph-aware selection.** When a slot isn't enough — when you need to choose based on _who_ is
 resolving — pass a predicate to `.when(ctx => boolean)`. It runs at resolve time, after slot matching. These ready-made
@@ -495,8 +548,9 @@ introspection under `introspection/*`: `@codefast/di/introspection/inspector`, `
 ## Benchmarks
 
 A first-party benchmark suite lives in the monorepo, at [`benchmarks/di`](../../benchmarks/di). It runs the same
-workloads through `@codefast/di`, InversifyJS, Awilix, and tsyringe, and its `RESULTS.md` ledger records the numbers
-alongside the method that produced them. Run it yourself rather than taking any figure on faith.
+workloads through `@codefast/di`, InversifyJS, Awilix, tsyringe, Brandi, ditox, and injection-js, and its `RESULTS.md`
+ledger records the numbers alongside the method that produced them. Run it yourself rather than taking any figure on
+faith.
 
 ## Documentation
 
