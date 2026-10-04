@@ -1,5 +1,12 @@
 # @codefast/benchmark-viewer
 
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies:
+  - @codefast/tailwind-variants@0.9.1
+
 ## 0.10.0
 
 ### Minor Changes
