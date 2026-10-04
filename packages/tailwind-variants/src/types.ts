@@ -348,9 +348,13 @@ export interface TailwindVariantsFactory {
 
   <
     BaseVariants extends VariantSchema,
-    ExtensionVariants extends VariantSchema,
-    BaseSlots extends SlotSchema,
-    ExtensionSlots extends SlotSchema,
+    // Defaults, not the constraints, for an extension that omits `variants` or `slots`: with no
+    // inference candidate a parameter falls back to its constraint, a string index that widens every
+    // merged key. `BaseSlots` is always inferred from `extend`; it has a default only because the
+    // parameter after it does.
+    ExtensionVariants extends VariantSchema = Record<never, never>,
+    BaseSlots extends SlotSchema = Record<never, never>,
+    ExtensionSlots extends SlotSchema = Record<never, never>,
   >(
     config: ExtendedVariantConfig<BaseVariants, ExtensionVariants, BaseSlots, ExtensionSlots>,
     localConfig?: TailwindVariantsOptions,
@@ -410,19 +414,26 @@ export interface ExtendedVariantConfig<
 > {
   /** Classes appended after the extended resolver's own base classes. */
   readonly base?: ClassValue;
+  /*
+   * The compounds and defaults read the merged schema but never define it: `NoInfer` keeps them from
+   * becoming an inference site, which would widen the extension's schema to a string index.
+   */
   /** Compound slots added after the extended resolver's, over the merged variants and slots. */
   readonly compoundSlots?: ReadonlyArray<
-    CompoundSlot<MergedVariantSchema<BaseVariants, ExtensionVariants>, MergedSlotSchema<BaseSlots, ExtensionSlots>>
+    CompoundSlot<
+      NoInfer<MergedVariantSchema<BaseVariants, ExtensionVariants>>,
+      NoInfer<MergedSlotSchema<BaseSlots, ExtensionSlots>>
+    >
   >;
   /** Compound variants added after the extended resolver's, over the merged variants and slots. */
   readonly compoundVariants?: ReadonlyArray<
     SlotCompoundVariant<
-      MergedVariantSchema<BaseVariants, ExtensionVariants>,
-      MergedSlotSchema<BaseSlots, ExtensionSlots>
+      NoInfer<MergedVariantSchema<BaseVariants, ExtensionVariants>>,
+      NoInfer<MergedSlotSchema<BaseSlots, ExtensionSlots>>
     >
   >;
   /** Defaults that override the extended resolver's, over the merged variants. */
-  readonly defaultVariants?: VariantValues<MergedVariantSchema<BaseVariants, ExtensionVariants>>;
+  readonly defaultVariants?: VariantValues<NoInfer<MergedVariantSchema<BaseVariants, ExtensionVariants>>>;
   /**
    * The resolver whose configuration this one inherits. Required: made optional, this overload
    * would catch every configuration the earlier ones reject and widen every variant name to `string`.
