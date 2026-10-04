@@ -121,9 +121,13 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
  */
 export function tv<
   BaseVariants extends VariantSchema,
-  ExtensionVariants extends VariantSchema,
-  BaseSlots extends SlotSchema,
-  ExtensionSlots extends SlotSchema,
+  // Defaults, not the constraints, for an extension that omits `variants` or `slots`: with no
+  // inference candidate a parameter falls back to its constraint, a string index that widens every
+  // merged key. `BaseSlots` is always inferred from `extend`; it has a default only because the
+  // parameter after it does.
+  ExtensionVariants extends VariantSchema = Record<never, never>,
+  BaseSlots extends SlotSchema = Record<never, never>,
+  ExtensionSlots extends SlotSchema = Record<never, never>,
 >(
   config: ExtendedVariantConfig<BaseVariants, ExtensionVariants, BaseSlots, ExtensionSlots>,
   tvConfig?: TailwindVariantsOptions,
@@ -282,9 +286,13 @@ export function createTV(globalConfiguration: TailwindVariantsOptions = {}): Tai
   /** Creates a class resolver that extends another resolver's configuration. */
   function tvFactory<
     BaseVariants extends VariantSchema,
-    ExtensionVariants extends VariantSchema,
-    BaseSlots extends SlotSchema,
-    ExtensionSlots extends SlotSchema,
+    // Defaults, not the constraints, for an extension that omits `variants` or `slots`: with no
+    // inference candidate a parameter falls back to its constraint, a string index that widens every
+    // merged key. `BaseSlots` is always inferred from `extend`; it has a default only because the
+    // parameter after it does.
+    ExtensionVariants extends VariantSchema = Record<never, never>,
+    BaseSlots extends SlotSchema = Record<never, never>,
+    ExtensionSlots extends SlotSchema = Record<never, never>,
   >(
     configuration: ExtendedVariantConfig<BaseVariants, ExtensionVariants, BaseSlots, ExtensionSlots>,
     localConfiguration?: TailwindVariantsOptions,

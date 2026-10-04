@@ -47,6 +47,32 @@ const rejectedConfigurations = (): void => {
 
   // @ts-expect-error — `unknownOption` is not a tv option
   tv({ base: "block" }, { unknownOption: true });
+
+  const tone = tv({ variants: { tone: { muted: "text-muted", loud: "text-loud" } } });
+
+  // @ts-expect-error — `tonee` is not a declared variant, though the extension declares none of its own
+  tv({ base: "text-sm", extend: tone })({ tonee: "muted" });
+
+  // @ts-expect-error — `tonee` is not a declared variant, though the extension only adds compounds
+  tv({ compoundVariants: [{ class: "font-bold", tone: "loud" }], extend: tone })({ tonee: "muted" });
+
+  const card = tv({ slots: { base: "rounded", title: "text-xl" } });
+
+  // @ts-expect-error — `notASlot` is not a declared slot, though the extension declares none of its own
+  void tv({ base: "p-4", extend: card })().notASlot;
+  tv({
+    // @ts-expect-error — `"huge"` is not one of the extension's own `size` values
+    compoundVariants: [{ class: "ring", size: "huge" }],
+    extend: tone,
+    variants: { size: { sm: "px-2" } },
+  });
+
+  tv({
+    // @ts-expect-error — `"huge"` is not one of the extension's own `size` values
+    defaultVariants: { size: "huge" },
+    extend: tone,
+    variants: { size: { sm: "px-2" } },
+  });
 };
 
 describe("Configuration Authoring Type Safety", () => {
@@ -60,6 +86,48 @@ describe("Configuration Authoring Type Safety", () => {
     // This is where the widening happened: `extend` was optional, so a configuration the earlier
     // overloads rejected still matched here, and the schema's key became `string`.
     expectTypeOf<keyof VariantProps<typeof button>>().toEqualTypeOf<"size">();
+  });
+
+  test("keeps an extension without variants or slots of its own to the extended resolver's", () => {
+    // An omitted `variants` or `slots` left its type parameter with no inference candidate, so it fell
+    // back to its constraint — a string index — and every key of the merged schema became `string`.
+    const tone = tv({ variants: { tone: { loud: "text-loud", muted: "text-muted" } } });
+    const card = tv({ slots: { base: "rounded", title: "text-xl" }, variants: { tone: { loud: "", muted: "" } } });
+
+    expectTypeOf<keyof VariantProps<ReturnType<typeof extendOnlyBase>>>().toEqualTypeOf<"tone">();
+    expectTypeOf<keyof VariantProps<ReturnType<typeof extendOnlyCompounds>>>().toEqualTypeOf<"tone">();
+    expectTypeOf<keyof VariantProps<ReturnType<typeof extendWithVariants>>>().toEqualTypeOf<"size" | "tone">();
+    expectTypeOf<keyof ReturnType<ReturnType<typeof extendSlotsOnlyBase>>>().toEqualTypeOf<"base" | "title">();
+
+    function extendOnlyBase() {
+      return tv({ base: "text-sm", extend: tone });
+    }
+    function extendOnlyCompounds() {
+      return tv({ compoundVariants: [{ class: "font-bold", tone: "loud" }], extend: tone });
+    }
+    function extendWithVariants() {
+      return tv({ extend: tone, variants: { size: { lg: "px-8", sm: "px-2" } } });
+    }
+    function extendSlotsOnlyBase() {
+      return tv({ base: "p-4", extend: card });
+    }
+
+    expect(extendOnlyBase()({ tone: "loud" })).toBe("text-sm text-loud");
+    expect(extendOnlyCompounds()({ tone: "loud" })).toBe("text-loud font-bold");
+    expect(extendSlotsOnlyBase()({ tone: "loud" }).title()).toBe("text-xl");
+  });
+
+  test("keeps an extension's compounds and defaults reading its own variants", () => {
+    const tone = tv({ variants: { tone: { loud: "text-loud", muted: "text-muted" } } });
+    const chip = tv({
+      compoundVariants: [{ class: "ring", size: "sm", tone: "loud" }],
+      defaultVariants: { size: "sm" },
+      extend: tone,
+      variants: { size: { lg: "px-8", sm: "px-2" } },
+    });
+
+    expectTypeOf<keyof VariantProps<typeof chip>>().toEqualTypeOf<"size" | "tone">();
+    expect(chip({ tone: "loud" })).toBe("text-loud px-2 ring");
   });
 
   test("keeps declaring a default, a compound and a slot map compiling — and applying", () => {
