@@ -95,7 +95,7 @@ catalog:
   react: ^19.3.0
   "@daypicker/react": ^10.0.2
   react-dom: ^19.3.0
-  react-hook-form: ^7.88.0
+  react-hook-form: ^7.89.0
   react-resizable-panels: ^4.14.1
   recharts: ^3.10.1
   reflect-metadata: ^0.2.2
