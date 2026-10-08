@@ -2,6 +2,7 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import * as SelectPrimitive from "radix-ui/select";
 import type { ComponentProps, JSX } from "react";
 
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 
 // ── Component: Select ────────────────────────────────────────────────────────────────────────────────────────────────
@@ -49,7 +50,7 @@ type SelectValueProps = ComponentProps<typeof SelectPrimitive.Value>;
  * @since 0.3.16-canary.0
  */
 function SelectValue({ ...props }: SelectValueProps): JSX.Element {
-  return <SelectPrimitive.Value data-slot="select-value" {...props} />;
+  return <SelectPrimitive.Value {...behaviorSlot("select-value", props.asChild)} {...props} />;
 }
 
 // ── Component: SelectTrigger ─────────────────────────────────────────────────────────────────────────────────────────

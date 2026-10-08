@@ -2,6 +2,7 @@ import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import * as MenubarPrimitive from "radix-ui/menubar";
 import type { ComponentProps, JSX } from "react";
 
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 
 // ── Component: Menubar ───────────────────────────────────────────────────────────────────────────────────────────────
@@ -49,7 +50,7 @@ type MenubarGroupProps = ComponentProps<typeof MenubarPrimitive.Group>;
  * @since 0.3.16-canary.0
  */
 function MenubarGroup({ ...props }: MenubarGroupProps): JSX.Element {
-  return <MenubarPrimitive.Group data-slot="menubar-group" {...props} />;
+  return <MenubarPrimitive.Group {...behaviorSlot("menubar-group", props.asChild)} {...props} />;
 }
 
 // ── Component: MenubarSub ────────────────────────────────────────────────────────────────────────────────────────────
@@ -77,7 +78,7 @@ type MenubarRadioGroupProps = ComponentProps<typeof MenubarPrimitive.RadioGroup>
  * @since 0.3.16-canary.0
  */
 function MenubarRadioGroup({ ...props }: MenubarRadioGroupProps): JSX.Element {
-  return <MenubarPrimitive.RadioGroup data-slot="menubar-radio-group" {...props} />;
+  return <MenubarPrimitive.RadioGroup {...behaviorSlot("menubar-radio-group", props.asChild)} {...props} />;
 }
 
 // ── Component: MenubarTrigger ────────────────────────────────────────────────────────────────────────────────────────

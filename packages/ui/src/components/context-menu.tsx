@@ -2,6 +2,7 @@ import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import * as ContextMenuPrimitive from "radix-ui/context-menu";
 import type { ComponentProps, JSX } from "react";
 
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 
 // ── Component: ContextMenu ───────────────────────────────────────────────────────────────────────────────────────────
@@ -49,7 +50,7 @@ type ContextMenuGroupProps = ComponentProps<typeof ContextMenuPrimitive.Group>;
  * @since 0.3.16-canary.0
  */
 function ContextMenuGroup({ ...props }: ContextMenuGroupProps): JSX.Element {
-  return <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />;
+  return <ContextMenuPrimitive.Group {...behaviorSlot("context-menu-group", props.asChild)} {...props} />;
 }
 
 // ── Component: ContextMenuSub ────────────────────────────────────────────────────────────────────────────────────────
@@ -77,7 +78,7 @@ type ContextMenuRadioGroupProps = ComponentProps<typeof ContextMenuPrimitive.Rad
  * @since 0.3.16-canary.0
  */
 function ContextMenuRadioGroup({ ...props }: ContextMenuRadioGroupProps): JSX.Element {
-  return <ContextMenuPrimitive.RadioGroup data-slot="context-menu-radio-group" {...props} />;
+  return <ContextMenuPrimitive.RadioGroup {...behaviorSlot("context-menu-radio-group", props.asChild)} {...props} />;
 }
 
 // ── Component: ContextMenuSubTrigger ─────────────────────────────────────────────────────────────────────────────────

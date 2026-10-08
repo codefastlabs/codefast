@@ -1,6 +1,7 @@
 import * as HoverCardPrimitive from "radix-ui/hover-card";
 import type { ComponentProps, JSX } from "react";
 
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 
 // ── Component: HoverCard ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -28,7 +29,7 @@ type HoverCardTriggerProps = ComponentProps<typeof HoverCardPrimitive.Trigger>;
  * @since 0.3.16-canary.0
  */
 function HoverCardTrigger({ ...props }: HoverCardTriggerProps): JSX.Element {
-  return <HoverCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />;
+  return <HoverCardPrimitive.Trigger {...behaviorSlot("hover-card-trigger", props.asChild)} {...props} />;
 }
 
 // ── Component: HoverCardContent ──────────────────────────────────────────────────────────────────────────────────────

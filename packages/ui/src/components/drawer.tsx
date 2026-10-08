@@ -1,6 +1,7 @@
 import type { ComponentProps, JSX } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 
+import { behaviorSlot } from "#lib/slot";
 import type { VariantProps } from "#lib/utils";
 import { cn } from "#lib/utils";
 import { buttonVariants } from "#variants/button";
@@ -30,7 +31,7 @@ type DrawerTriggerProps = ComponentProps<typeof DrawerPrimitive.Trigger>;
  * @since 0.3.16-canary.0
  */
 function DrawerTrigger({ ...props }: DrawerTriggerProps): JSX.Element {
-  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
+  return <DrawerPrimitive.Trigger {...behaviorSlot("drawer-trigger", props.asChild)} {...props} />;
 }
 
 // ── Component: DrawerContent ─────────────────────────────────────────────────────────────────────────────────────────

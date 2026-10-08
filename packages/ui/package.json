@@ -474,6 +474,11 @@
       "types": "./dist/lib/message-scroller/types.d.ts",
       "import": "./dist/lib/message-scroller/types.js"
     },
+    "./lib/slot": {
+      "source": "./src/lib/slot.ts",
+      "types": "./dist/lib/slot.d.ts",
+      "import": "./dist/lib/slot.js"
+    },
     "./lib/use-render": {
       "source": "./src/lib/use-render.ts",
       "types": "./dist/lib/use-render.d.ts",

@@ -2,6 +2,7 @@ import { XIcon } from "lucide-react";
 import * as SheetPrimitive from "radix-ui/dialog";
 import type { ComponentProps, JSX } from "react";
 
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 import type { ButtonVariants } from "#variants/button";
 import { buttonVariants } from "#variants/button";
@@ -33,7 +34,7 @@ type SheetTriggerProps = ComponentProps<typeof SheetPrimitive.Trigger>;
  * @since 0.3.16-canary.0
  */
 function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
+  return <SheetPrimitive.Trigger {...behaviorSlot("sheet-trigger", props.asChild)} {...props} />;
 }
 
 // ── Component: SheetContent ──────────────────────────────────────────────────────────────────────────────────────────
