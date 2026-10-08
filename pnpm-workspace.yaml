@@ -17,6 +17,12 @@ overrides:
   # mermaid pins chevrotain `~11.1.2`, whose packages pin an exact lodash-es below the fix for
   # GHSA-r5fr-rjxr-66jc and GHSA-f23m-r3pf-42rh; scoped to the vulnerable range so it lapses once chevrotain moves on.
   "lodash-es@<4.18.0": ^4.18.0
+  # TanStack devtools reach solid-js only as an auto-installed peer, which `pnpm update` never re-resolves; 1.9.17
+  # moves it onto seroval 1.6.8, past GHSA-p6vx-979v-rg4c and GHSA-jp82-f5mq-hwhp. Scoped so it lapses on its own.
+  "solid-js@<1.9.17": ^1.9.17
+  # mermaid still pins katex `^0.16.47`, below the fix for GHSA-238p-pmpm-9mq7; it calls only `renderToString`, which
+  # the later majors keep. Scoped to the vulnerable range so it lapses once mermaid moves on.
+  "katex@<0.18.2": ^0.19.0
 
 catalog:
   "@babel/core": ^8.0.6
