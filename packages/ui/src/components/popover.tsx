@@ -1,6 +1,7 @@
 import * as PopoverPrimitive from "radix-ui/popover";
 import type { ComponentProps, JSX } from "react";
 
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 
 // ── Component: Popover ───────────────────────────────────────────────────────────────────────────────────────────────
@@ -28,7 +29,7 @@ type PopoverTriggerProps = ComponentProps<typeof PopoverPrimitive.Trigger>;
  * @since 0.3.16-canary.0
  */
 function PopoverTrigger({ ...props }: PopoverTriggerProps): JSX.Element {
-  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
+  return <PopoverPrimitive.Trigger {...behaviorSlot("popover-trigger", props.asChild)} {...props} />;
 }
 
 // ── Component: PopoverAnchor ─────────────────────────────────────────────────────────────────────────────────────────
@@ -42,7 +43,7 @@ type PopoverAnchorProps = ComponentProps<typeof PopoverPrimitive.Anchor>;
  * @since 0.3.16-canary.0
  */
 function PopoverAnchor({ ...props }: PopoverAnchorProps): JSX.Element {
-  return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
+  return <PopoverPrimitive.Anchor {...behaviorSlot("popover-anchor", props.asChild)} {...props} />;
 }
 
 // ── Component: PopoverContent ────────────────────────────────────────────────────────────────────────────────────────

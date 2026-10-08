@@ -2,6 +2,7 @@ import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import * as DropdownMenuPrimitive from "radix-ui/dropdown-menu";
 import type { ComponentProps, JSX } from "react";
 
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 
 // ── Component: DropdownMenu ──────────────────────────────────────────────────────────────────────────────────────────
@@ -29,7 +30,7 @@ type DropdownMenuTriggerProps = ComponentProps<typeof DropdownMenuPrimitive.Trig
  * @since 0.3.16-canary.0
  */
 function DropdownMenuTrigger({ ...props }: DropdownMenuTriggerProps): JSX.Element {
-  return <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
+  return <DropdownMenuPrimitive.Trigger {...behaviorSlot("dropdown-menu-trigger", props.asChild)} {...props} />;
 }
 
 // ── Component: DropdownMenuGroup ─────────────────────────────────────────────────────────────────────────────────────
@@ -43,7 +44,7 @@ type DropdownMenuGroupProps = ComponentProps<typeof DropdownMenuPrimitive.Group>
  * @since 0.3.16-canary.0
  */
 function DropdownMenuGroup({ ...props }: DropdownMenuGroupProps): JSX.Element {
-  return <DropdownMenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />;
+  return <DropdownMenuPrimitive.Group {...behaviorSlot("dropdown-menu-group", props.asChild)} {...props} />;
 }
 
 // ── Component: DropdownMenuSub ───────────────────────────────────────────────────────────────────────────────────────
@@ -71,7 +72,7 @@ type DropdownMenuRadioGroupProps = ComponentProps<typeof DropdownMenuPrimitive.R
  * @since 0.3.16-canary.0
  */
 function DropdownMenuRadioGroup({ ...props }: DropdownMenuRadioGroupProps): JSX.Element {
-  return <DropdownMenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />;
+  return <DropdownMenuPrimitive.RadioGroup {...behaviorSlot("dropdown-menu-radio-group", props.asChild)} {...props} />;
 }
 
 // ── Component: DropdownMenuSubTrigger ────────────────────────────────────────────────────────────────────────────────

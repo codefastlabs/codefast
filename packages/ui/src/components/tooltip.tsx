@@ -1,6 +1,7 @@
 import * as TooltipPrimitive from "radix-ui/tooltip";
 import type { ComponentProps, JSX } from "react";
 
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 
 // ── Component: TooltipProvider ───────────────────────────────────────────────────────────────────────────────────────
@@ -42,7 +43,7 @@ type TooltipTriggerProps = ComponentProps<typeof TooltipPrimitive.Trigger>;
  * @since 0.3.16-canary.0
  */
 function TooltipTrigger({ ...props }: TooltipTriggerProps): JSX.Element {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
+  return <TooltipPrimitive.Trigger {...behaviorSlot("tooltip-trigger", props.asChild)} {...props} />;
 }
 
 // ── Component: TooltipContent ────────────────────────────────────────────────────────────────────────────────────────

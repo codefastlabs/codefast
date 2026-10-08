@@ -1,6 +1,8 @@
 import * as CollapsiblePrimitive from "radix-ui/collapsible";
 import type { ComponentProps, JSX } from "react";
 
+import { behaviorSlot } from "#lib/slot";
+
 // ── Component: Collapsible ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -12,7 +14,7 @@ type CollapsibleProps = ComponentProps<typeof CollapsiblePrimitive.Root>;
  * @since 0.3.16-canary.0
  */
 function Collapsible({ ...props }: CollapsibleProps): JSX.Element {
-  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
+  return <CollapsiblePrimitive.Root {...behaviorSlot("collapsible", props.asChild)} {...props} />;
 }
 
 // ── Component: CollapsibleTrigger ────────────────────────────────────────────────────────────────────────────────────
@@ -26,7 +28,7 @@ type CollapsibleTriggerProps = ComponentProps<typeof CollapsiblePrimitive.Collap
  * @since 0.3.16-canary.0
  */
 function CollapsibleTrigger({ ...props }: CollapsibleTriggerProps): JSX.Element {
-  return <CollapsiblePrimitive.CollapsibleTrigger data-slot="collapsible-trigger" {...props} />;
+  return <CollapsiblePrimitive.CollapsibleTrigger {...behaviorSlot("collapsible-trigger", props.asChild)} {...props} />;
 }
 
 // ── Component: CollapsibleContent ────────────────────────────────────────────────────────────────────────────────────
@@ -40,7 +42,7 @@ type CollapsibleContentProps = ComponentProps<typeof CollapsiblePrimitive.Collap
  * @since 0.3.16-canary.0
  */
 function CollapsibleContent({ ...props }: CollapsibleContentProps): JSX.Element {
-  return <CollapsiblePrimitive.CollapsibleContent data-slot="collapsible-content" {...props} />;
+  return <CollapsiblePrimitive.CollapsibleContent {...behaviorSlot("collapsible-content", props.asChild)} {...props} />;
 }
 
 // ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────

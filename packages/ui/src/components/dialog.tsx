@@ -3,6 +3,7 @@ import * as DialogPrimitive from "radix-ui/dialog";
 import type { ComponentProps, JSX } from "react";
 
 import { Button } from "#components/button";
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 
 // ── Component: Dialog ────────────────────────────────────────────────────────────────────────────────────────────────
@@ -30,7 +31,7 @@ type DialogTriggerProps = ComponentProps<typeof DialogPrimitive.Trigger>;
  * @since 0.3.16-canary.0
  */
 function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
+  return <DialogPrimitive.Trigger {...behaviorSlot("dialog-trigger", props.asChild)} {...props} />;
 }
 
 // ── Component: DialogContent ─────────────────────────────────────────────────────────────────────────────────────────
@@ -76,7 +77,7 @@ function DialogContent({
       >
         {children}
         {showCloseButton ? (
-          <DialogPrimitive.Close asChild data-slot="dialog-close">
+          <DialogPrimitive.Close asChild>
             <Button className="absolute inset-e-2 top-2" size="icon-sm" variant="ghost">
               <XIcon />
               <span className="sr-only">{closeLabel}</span>
@@ -221,7 +222,7 @@ type DialogCloseProps = ComponentProps<typeof DialogPrimitive.Close>;
  * @since 0.3.16-canary.0
  */
 function DialogClose({ ...props }: DialogCloseProps): JSX.Element {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+  return <DialogPrimitive.Close {...behaviorSlot("dialog-close", props.asChild)} {...props} />;
 }
 
 // ── Exports ──────────────────────────────────────────────────────────────────────────────────────────────────────────

@@ -2,6 +2,7 @@ import * as RadioGroupPrimitive from "radix-ui/radio-group";
 import type { ComponentProps, JSX } from "react";
 
 import { Label } from "#components/label";
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 
 // ── Component: RadioCards ────────────────────────────────────────────────────────────────────────────────────────────
@@ -15,7 +16,7 @@ type RadioCardsProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
  * @since 0.3.16-canary.0
  */
 function RadioCards(props: RadioCardsProps): JSX.Element {
-  return <RadioGroupPrimitive.Root data-slot="radio-cards" {...props} />;
+  return <RadioGroupPrimitive.Root {...behaviorSlot("radio-cards", props.asChild)} {...props} />;
 }
 
 // ── Component: RadioCardsItem ────────────────────────────────────────────────────────────────────────────────────────

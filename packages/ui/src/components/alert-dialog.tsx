@@ -3,6 +3,7 @@ import type { ComponentProps, JSX } from "react";
 
 import { Button } from "#components/button";
 import type { ButtonProps } from "#components/button";
+import { behaviorSlot } from "#lib/slot";
 import { cn } from "#lib/utils";
 
 // ── Component: AlertDialog ───────────────────────────────────────────────────────────────────────────────────────────
@@ -30,7 +31,7 @@ type AlertDialogTriggerProps = ComponentProps<typeof AlertDialogPrimitive.Trigge
  * @since 0.3.16-canary.0
  */
 function AlertDialogTrigger({ ...props }: AlertDialogTriggerProps): JSX.Element {
-  return <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
+  return <AlertDialogPrimitive.Trigger {...behaviorSlot("alert-dialog-trigger", props.asChild)} {...props} />;
 }
 
 // ── Component: AlertDialogContent ────────────────────────────────────────────────────────────────────────────────────
@@ -220,7 +221,7 @@ interface AlertDialogActionProps
 function AlertDialogAction({ size = "default", variant = "default", ...props }: AlertDialogActionProps): JSX.Element {
   return (
     <Button asChild size={size} variant={variant}>
-      <AlertDialogPrimitive.Action data-slot="alert-dialog-action" {...props} />
+      <AlertDialogPrimitive.Action {...behaviorSlot("alert-dialog-action", props.asChild)} {...props} />
     </Button>
   );
 }
@@ -239,7 +240,7 @@ interface AlertDialogCancelProps
 function AlertDialogCancel({ size = "default", variant = "outline", ...props }: AlertDialogCancelProps): JSX.Element {
   return (
     <Button asChild size={size} variant={variant}>
-      <AlertDialogPrimitive.Cancel data-slot="alert-dialog-cancel" {...props} />
+      <AlertDialogPrimitive.Cancel {...behaviorSlot("alert-dialog-cancel", props.asChild)} {...props} />
     </Button>
   );
 }

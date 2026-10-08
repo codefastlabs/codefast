@@ -118,6 +118,21 @@ export function DocsLink() {
 }
 ```
 
+## Slots and `asChild`
+
+Every element a component renders carries a `data-slot` naming the component that styles it, and components select each
+other by it — `AvatarGroup` rings its children through `[data-slot=avatar]`. A part that adds behavior but no styling —
+a dialog, popover, hover-card or tooltip trigger, a close, an anchor — lends no slot when it composes onto its child
+with `asChild`, so the child keeps its own:
+
+```tsx
+<HoverCardTrigger asChild>
+  <Avatar /> {/* data-slot="avatar", still ringed by AvatarGroup */}
+</HoverCardTrigger>
+```
+
+A behavior wrapper of your own does the same with `behaviorSlot` from `@codefast/ui/lib/slot`.
+
 ## Theming
 
 Theme tokens live in plain CSS files. Swap `themes/neutral.css` in the imports above for any palette under
