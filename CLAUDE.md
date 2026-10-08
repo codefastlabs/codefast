@@ -377,6 +377,11 @@ These are project rules the linters do not fully enforce:
   the wrapper hard-sets. When forwarding to another component (not a DOM element), extend
   `ComponentProps<typeof ThatComponent>` and `Omit` the required props the wrapper supplies. Exception: a handler the
   component must own (e.g. a `CopyButton`'s `onClick`) goes _after_ `{...props}` with a comment.
+- **`data-slot` names the component that styles the element.** Keep it before `{...props}` — a wrapper that renames a
+  slot (`<Input data-slot="input-group-control" {...props}>`) relies on the passed one winning. A part that adds
+  behavior but no styling (an unstyled Radix `Trigger`/`Close`/`Anchor`/…) stamps it through
+  `behaviorSlot(slot, props.asChild)` from `#lib/slot`, so under `asChild` the child keeps its own slot — upstream
+  shadcn writes a literal `data-slot` there, so convert it on every sync.
 - **RTL: keep physical classes that sit under a side variant.** `packages/ui` is RTL-hardened with logical utilities +
   `rtl:` overrides, but physical `left-/right-/border-l/r/slide-in-from-*` classes gated behind `data-[side=…]` (or the
   custom `data-side-left`/`data-side-right`) are intentional — Radix resolves `side` per reading direction, so
