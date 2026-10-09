@@ -358,8 +358,20 @@ export type {
   InputGroupTextareaProps,
   InputGroupTextProps,
 } from "#components/input-group";
-export { InputNumber } from "#components/input-number";
-export type { InputNumberProps } from "#components/input-number";
+export {
+  InputNumber,
+  InputNumberDecrement,
+  InputNumberField,
+  InputNumberIncrement,
+  InputNumberStepper,
+} from "#components/input-number";
+export type {
+  InputNumberDecrementProps,
+  InputNumberFieldProps,
+  InputNumberIncrementProps,
+  InputNumberProps,
+  InputNumberStepperProps,
+} from "#components/input-number";
 export {
   InputOTP,
   InputOTPGroup,
