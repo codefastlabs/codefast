@@ -444,21 +444,6 @@
       "types": "./dist/hooks/use-pagination.d.ts",
       "import": "./dist/hooks/use-pagination.js"
     },
-    "./lib/message-scroller/geometry": {
-      "source": "./src/lib/message-scroller/geometry.ts",
-      "types": "./dist/lib/message-scroller/geometry.d.ts",
-      "import": "./dist/lib/message-scroller/geometry.js"
-    },
-    "./lib/message-scroller/stores": {
-      "source": "./src/lib/message-scroller/stores.ts",
-      "types": "./dist/lib/message-scroller/stores.d.ts",
-      "import": "./dist/lib/message-scroller/stores.js"
-    },
-    "./lib/message-scroller/types": {
-      "source": "./src/lib/message-scroller/types.ts",
-      "types": "./dist/lib/message-scroller/types.d.ts",
-      "import": "./dist/lib/message-scroller/types.js"
-    },
     "./lib/slot": {
       "source": "./src/lib/slot.ts",
       "types": "./dist/lib/slot.d.ts",

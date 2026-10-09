@@ -80,9 +80,4 @@ function areVisibilityStatesEqual(current: MessageScrollerVisibilityState, next:
   return current.visibleMessageIds.every((messageId, index) => messageId === next.visibleMessageIds[index]);
 }
 
-export {
-  areScrollStatesEqual,
-  areVisibilityStatesEqual,
-  createMessageScrollerStore,
-  createMessageScrollerVisibilityStore,
-};
+export { areScrollStatesEqual, createMessageScrollerStore, createMessageScrollerVisibilityStore };

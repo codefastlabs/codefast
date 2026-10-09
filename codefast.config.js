@@ -9,11 +9,12 @@ const config = {
   mirror: {
     "@codefast/ui": {
       strip: "./components/",
-      // The message-scroller hooks pass private ref bags between the primitive's own parts.
+      // The message-scroller hooks and lib are the primitive's internals; its public types ship from the primitive.
       exclude: [
         "./hooks/use-message-scroller-commands",
         "./hooks/use-message-scroller-controller",
         "./hooks/use-message-scroller-refs",
+        "./lib/message-scroller/*",
       ],
       exports: {
         "./css/*": "./src/css/*",
