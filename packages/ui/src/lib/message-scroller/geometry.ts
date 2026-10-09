@@ -382,7 +382,6 @@ function readCssPixel(value: string | undefined) {
 }
 
 export {
-  getContentBlockPadding,
   getContentBottom,
   getElementScrollTop,
   getElementTop,

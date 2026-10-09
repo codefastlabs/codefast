@@ -191,9 +191,11 @@ export type {
   MessageScrollerViewportProps,
 };
 export type {
+  MessageScrollerButtonDirection,
+  MessageScrollerButtonRenderState,
   MessageScrollerDefaultScrollPosition,
   MessageScrollerScrollAlign,
   MessageScrollerScrollable,
   MessageScrollerScrollOptions,
   MessageScrollerVisibilityState,
-} from "#lib/message-scroller/types";
+} from "#primitives/message-scroller";

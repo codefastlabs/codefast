@@ -485,7 +485,9 @@ export {
   useMessageScrollerVisibility,
 } from "#components/message-scroller";
 export type {
+  MessageScrollerButtonDirection,
   MessageScrollerButtonProps,
+  MessageScrollerButtonRenderState,
   MessageScrollerContentProps,
   MessageScrollerDefaultScrollPosition,
   MessageScrollerItemProps,

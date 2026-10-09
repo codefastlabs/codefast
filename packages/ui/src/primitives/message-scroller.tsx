@@ -412,3 +412,18 @@ export {
   useMessageScrollerScrollable,
   useMessageScrollerVisibility,
 };
+export type {
+  MessageScrollerButtonDirection,
+  MessageScrollerButtonProps,
+  MessageScrollerButtonRenderState,
+  MessageScrollerContentProps,
+  MessageScrollerDefaultScrollPosition,
+  MessageScrollerItemProps,
+  MessageScrollerProps,
+  MessageScrollerProviderProps,
+  MessageScrollerScrollable,
+  MessageScrollerScrollAlign,
+  MessageScrollerScrollOptions,
+  MessageScrollerViewportProps,
+  MessageScrollerVisibilityState,
+} from "#lib/message-scroller/types";
