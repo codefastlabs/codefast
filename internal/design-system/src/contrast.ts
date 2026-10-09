@@ -24,7 +24,11 @@ function relativeLuminance(color: string): number | undefined {
   return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
 }
 
-/** Computes the WCAG contrast ratio of two opaque `oklch()` colors, or `undefined` when either is not one. */
+/**
+ * Computes the WCAG contrast ratio of two opaque `oklch()` colors, or `undefined` when either is not one.
+ *
+ * @since 0.1.0
+ */
 export function contrastRatio(ink: string, ground: string): number | undefined {
   const first = relativeLuminance(ink);
   const second = relativeLuminance(ground);

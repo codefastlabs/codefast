@@ -19,6 +19,8 @@ function text(file: OutputFile | undefined): string {
  *
  * @remarks
  * This catches what a type check cannot: a demo that needs a provider the frame lacks, or a part the bundle misses.
+ *
+ * @since 0.1.0
  */
 export async function checkPreviews(files: Array<OutputFile>, runtimeOrder: Array<string>): Promise<Array<string>> {
   const byPath = new Map(files.map((file) => [file.path, file]));

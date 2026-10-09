@@ -1,5 +1,21 @@
 # @codefast/ui
 
+## 0.12.0
+
+### Minor Changes
+
+- [#1052](https://github.com/codefastlabs/codefast/pull/1052) The root entry, `@codefast/ui`, now re-exports `useHasHydrated` and `useLatest`, so every published hook is reachable
+  from it. The `@codefast/ui/hooks/use-message-scroller-commands`, `use-message-scroller-controller` and
+  `use-message-scroller-refs` subpaths are no longer published: they pass the message-scroller primitive's private ref
+  bags between its own parts and were never usable on their own — compose a scroller from
+  `@codefast/ui/primitives/message-scroller` or `@codefast/ui/message-scroller` instead.
+
+### Patch Changes
+
+- [#1050](https://github.com/codefastlabs/codefast/pull/1050) The root entry, `@codefast/ui`, now re-exports `InputNumberField`, `InputNumberStepper`, `InputNumberIncrement` and
+  `InputNumberDecrement` with their prop types, which only `@codefast/ui/input-number` offered before, so an `InputNumber`
+  can be composed from the root import alone.
+
 ## 0.11.0
 
 ### Minor Changes

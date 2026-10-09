@@ -1,4 +1,8 @@
-/** A custom property as a stylesheet declares it, with the trailing comment that annotates it. */
+/**
+ * A custom property as a stylesheet declares it, with the trailing comment that annotates it.
+ *
+ * @since 0.1.0
+ */
 export interface CssDeclaration {
   comment: string | undefined;
   name: string;
@@ -10,6 +14,8 @@ export interface CssDeclaration {
  *
  * @remarks
  * Nested at-rules inside the block are skipped; the block ends at its matching brace.
+ *
+ * @since 0.1.0
  */
 export function readBlock(css: string, selector: string): Array<CssDeclaration> {
   const start = css.indexOf(`${selector} {`);
@@ -29,7 +35,11 @@ export function readBlock(css: string, selector: string): Array<CssDeclaration> 
   return readDeclarations(css.slice(start, end));
 }
 
-/** Reads every single-line custom property in `css`, in source order. */
+/**
+ * Reads every single-line custom property in `css`, in source order.
+ *
+ * @since 0.1.0
+ */
 export function readDeclarations(css: string): Array<CssDeclaration> {
   return [...css.matchAll(/^\s*--([\w-]+):\s*([^;\n]+);[ \t]*(?:\/\*\s*(.*?)\s*\*\/)?/gm)].map((match) => ({
     comment: match[3],
@@ -38,12 +48,20 @@ export function readDeclarations(css: string): Array<CssDeclaration> {
   }));
 }
 
-/** Indexes declarations by name; a later declaration wins, as in the cascade. */
+/**
+ * Indexes declarations by name; a later declaration wins, as in the cascade.
+ *
+ * @since 0.1.0
+ */
 export function byName(declarations: Array<CssDeclaration>): Map<string, CssDeclaration> {
   return new Map(declarations.map((declaration) => [declaration.name, declaration]));
 }
 
-/** Evaluates a plain arithmetic `calc()` over numbers, or returns a bare number. */
+/**
+ * Evaluates a plain arithmetic `calc()` over numbers, or returns a bare number.
+ *
+ * @since 0.1.0
+ */
 export function evaluateNumber(value: string): number {
   const expression = value.replace(/^calc\((.*)\)$/, "$1").trim();
   if (!/^[\d.\s*/+-]+$/.test(expression)) {
@@ -60,7 +78,11 @@ export function evaluateNumber(value: string): number {
     ).total;
 }
 
-/** Rounds to four decimals and drops trailing zeros. */
+/**
+ * Rounds to four decimals and drops trailing zeros.
+ *
+ * @since 0.1.0
+ */
 export function trimNumber(value: number): string {
   return String(Number(value.toFixed(4)));
 }

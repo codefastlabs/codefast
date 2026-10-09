@@ -27,6 +27,8 @@ function siteColors(): Array<string> {
  * @remarks
  * No palette is imported and the preset's `--radius` default is dropped: those values come from the artifact's
  * `tokens.css`, so an edit on the page reaches the previews. Dark mode follows the frame's `data-theme`.
+ *
+ * @since 0.1.0
  */
 export async function buildStyles(): Promise<OutputFile> {
   const input = [

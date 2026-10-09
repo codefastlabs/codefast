@@ -8,7 +8,11 @@ import type { ContrastShortfall } from "#tokens";
 
 const THEMES = join(UI_ROOT, "src/css/themes");
 
-/** Writes the Palettes section: every palette `@codefast/ui` ships, read from its theme files. */
+/**
+ * Writes the Palettes section: every palette `@codefast/ui` ships, read from its theme files.
+ *
+ * @since 0.1.0
+ */
 export function buildPalettes(): string {
   const rows = readdirSync(THEMES)
     .filter((file) => file.endsWith(".css"))
@@ -100,7 +104,11 @@ function contrastNotes(shortfalls: Array<ContrastShortfall>): string {
     .join("\n");
 }
 
-/** Fills the hand-written brand book with the values only the source can say: contrast and motion. */
+/**
+ * Fills the hand-written brand book with the values only the source can say: contrast and motion.
+ *
+ * @since 0.1.0
+ */
 export function buildBrandBook(shortfalls: Array<ContrastShortfall>): string {
   return readFileSync(packagePath("content/brand-book.md"), "utf8")
     .replace("{{contrast}}", contrastNotes(shortfalls))

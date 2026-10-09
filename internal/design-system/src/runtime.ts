@@ -8,7 +8,11 @@ import type { OutputFile } from "#output";
 import { packagePath, WORK_ROOT } from "#paths";
 import type { ComponentCard } from "#registry";
 
-/** A runtime library the previews load before the component bundle, as the artifact's index lists it. */
+/**
+ * A runtime library the previews load before the component bundle, as the artifact's index lists it.
+ *
+ * @since 0.1.0
+ */
 export interface RuntimeLibrary {
   file: string;
   global: string;
@@ -44,6 +48,8 @@ function writeEntry(name: string, source: string): string {
  * @remarks
  * React ships no browser global build, so the libraries are bundled here; the component bundle and the previews read
  * them back from `window` instead of carrying their own copies.
+ *
+ * @since 0.1.0
  */
 export async function buildRuntime(
   cards: Array<ComponentCard>,

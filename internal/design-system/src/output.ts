@@ -10,6 +10,8 @@ import { OUTPUT_ROOT } from "#paths";
  * @remarks
  * An `upload` goes to the artifact's asset store and is named by a record in its index; a `file` is published as is.
  * `contentType` is set only where the extension alone does not name a servable type.
+ *
+ * @since 0.1.0
  */
 export interface OutputFile {
   content: Buffer | string;
@@ -18,7 +20,11 @@ export interface OutputFile {
   path: string;
 }
 
-/** Clears the previous run's output, keeping nothing a stale build could leave behind. */
+/**
+ * Clears the previous run's output, keeping nothing a stale build could leave behind.
+ *
+ * @since 0.1.0
+ */
 export function resetOutput(): void {
   rmSync(OUTPUT_ROOT, { force: true, recursive: true });
 }
@@ -28,6 +34,8 @@ export function resetOutput(): void {
  *
  * @remarks
  * The manifest is what a publisher diffs against the last published run, so a re-sync sends only what changed.
+ *
+ * @since 0.1.0
  */
 export function writeOutput(files: Array<OutputFile>): void {
   const manifest: Record<string, { contentType?: string; kind: OutputFile["kind"]; sha256: string; size: number }> = {};

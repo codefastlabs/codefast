@@ -4,7 +4,11 @@ import type { Plugin, Rolldown } from "vite";
 import { NAMESPACE } from "#config";
 import { packagePath } from "#paths";
 
-/** The globals a classic script can lean on, because the artifact loads them first. */
+/**
+ * The globals a classic script can lean on, because the artifact loads them first.
+ *
+ * @since 0.1.0
+ */
 export type RuntimeGlobal = "CodefastUI" | "React" | "ReactDOM" | "Recharts";
 
 const SHIM = "\0runtime-global:";
@@ -48,7 +52,11 @@ function runtimeGlobals(provided: ReadonlySet<RuntimeGlobal>): Plugin {
   };
 }
 
-/** Bundles one entry into a minified classic script, leaving `provided` globals to the page. */
+/**
+ * Bundles one entry into a minified classic script, leaving `provided` globals to the page.
+ *
+ * @since 0.1.0
+ */
 export async function bundleScript(
   entry: string,
   provided: ReadonlySet<RuntimeGlobal>,
