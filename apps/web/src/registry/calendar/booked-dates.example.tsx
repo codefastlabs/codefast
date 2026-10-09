@@ -3,10 +3,10 @@ import { Card, CardContent } from "@codefast/ui/card";
 import { useState } from "react";
 
 const initialDate = new Date(new Date().getFullYear(), 1, 3);
+const bookedDates = Array.from({ length: 15 }, (_, i) => new Date(new Date().getFullYear(), 1, 12 + i));
 
 export function CalendarBookedDates() {
   const [date, setDate] = useState<Date | undefined>(initialDate);
-  const bookedDates = Array.from({ length: 15 }, (_, i) => new Date(new Date().getFullYear(), 1, 12 + i));
 
   return (
     <Card className="mx-auto w-fit p-0">

@@ -96,8 +96,9 @@ The zero-dependency default is the `TestBed` export itself. Assert against the b
 with `.mockReturnValue()`:
 
 ```ts
-import { TestBed } from "@codefast/di-testing";
 import assert from "node:assert/strict";
+
+import { TestBed } from "@codefast/di-testing";
 
 const { unit, mocks } = TestBed.solitary(OrderProcessor).compile();
 unit.placeOrder("u1", 42);

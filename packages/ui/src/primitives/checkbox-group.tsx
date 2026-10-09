@@ -207,7 +207,13 @@ function CheckboxGroup({
       onItemCheck={handleItemCheck}
       onItemUncheck={handleItemUncheck}
     >
-      <RovingFocus.Root asChild {...rovingFocusGroupScope} dir={direction} loop={loop} orientation={orientation}>
+      <RovingFocus.Root
+        asChild
+        {...rovingFocusGroupScope}
+        dir={direction}
+        loop={loop}
+        {...(orientation === undefined ? {} : { orientation })}
+      >
         <div data-disabled={disabled ? "" : undefined} dir={direction} role="group" {...props} />
       </RovingFocus.Root>
     </CheckboxGroupContextProvider>
