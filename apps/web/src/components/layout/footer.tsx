@@ -6,9 +6,9 @@ import { ConsentGate } from "#features/tracking/components/consent-gate";
 import { track } from "#features/tracking/lib/tracking";
 import { PRIMARY_NAV, RESOURCE_LINKS, UI_NAV } from "#lib/nav-links";
 
-export function Footer() {
-  const year = new Date().getFullYear();
+const year = new Date().getFullYear();
 
+export function Footer() {
   return (
     <footer className="border-t border-ui-border bg-ui-surface py-16">
       <div className="container mx-auto px-4">

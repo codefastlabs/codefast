@@ -19,8 +19,8 @@ The four-value model fails commercially in ways that create direct legal exposur
    moving target: **Montana was dropped** after 2025 SB 297 repealed its mandate, verified against primary text;
    **Maryland**'s "may utilize" wording may be permissive rather than a mandate — see §3). Sensitive-data handling
    splits opt-out-to-limit (CA) vs opt-in (VA/CO/CT/TX/OR/MT). A single `us` rule cannot encode this, and missing GPC in
-   a mandate state is an active enforcement target (California AG, Sephora settlement
-   $1.2M, 2022-08-24; CPPA Todd Snyder order $345,178, effective 2025-05-01).
+   a mandate state is an active enforcement target (California AG, Sephora settlement $1.2M, 2022-08-24; CPPA Todd
+   Snyder order $345,178, effective 2025-05-01).
 2. **No universal-opt-out-signal handling exists at all.** GPC binds in roughly 11 US states; California from 2026-01-01
    additionally requires a _visible confirmation_ that the signal was processed (11 CCR §7025).
 3. **Washington's health-data law (MHMDA) is entirely unmodeled** — opt-in for "consumer health data," a 2,000-ft

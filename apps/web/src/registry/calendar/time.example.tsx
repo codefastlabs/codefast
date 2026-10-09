@@ -6,7 +6,9 @@ import { Clock2Icon } from "lucide-react";
 import { useState } from "react";
 
 export function CalendarWithTime() {
-  const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), new Date().getMonth(), 12));
+  const [date, setDate] = useState<Date | undefined>(
+    () => new Date(new Date().getFullYear(), new Date().getMonth(), 12),
+  );
 
   return (
     <Card size="sm" className="mx-auto w-fit">

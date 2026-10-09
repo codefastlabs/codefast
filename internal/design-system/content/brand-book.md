@@ -75,8 +75,8 @@ Write like the library's own docs: plain, direct, second person, present tense.
 
 ### Shape
 
-- One unit, `radius` = 0.375rem; the scale derives from it in sixths (`radius-sm` = 4/6, `radius-lg` = 8/6, `radius-xl`
-  = 2×…). Override `radius` once to square off or soften everything.
+- One unit, `radius` = 0.375rem; the scale derives from it in sixths (`radius-sm` = 4/6, `radius-lg` = 8/6,
+  `radius-xl` = 2×…). Override `radius` once to square off or soften everything.
 - Controls — Button, Input, Select, Textarea, Popover, menus — are `radius-lg`. Menu items inside them are `radius-md`.
 - Containers — Card, Dialog, Alert, Command — are `radius-xl`. Toasts `radius-2xl`.
 - Pills and discs (`radius-full`): Avatar, Switch, Radio, Spinner, ProgressCircle; Badge uses `radius-4xl`.

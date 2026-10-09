@@ -10,8 +10,10 @@ function addDays(date: Date, days: number): Date {
 }
 
 export function CalendarWithPresets() {
-  const [date, setDate] = useState<Date | undefined>(new Date(new Date().getFullYear(), 1, 12));
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+  const [date, setDate] = useState<Date | undefined>(() => new Date(new Date().getFullYear(), 1, 12));
+  const [currentMonth, setCurrentMonth] = useState<Date>(
+    () => new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  );
 
   return (
     <Card className="mx-auto w-fit max-w-75" size="sm">
