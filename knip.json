@@ -19,6 +19,10 @@
       "ignore": ["tests/integration/parent/fixtures/**"],
       "ignoreBinaries": ["bench"]
     },
+    "internal/design-system": {
+      "entry": ["src/preview-frame.tsx"],
+      "ignoreDependencies": ["@fontsource-variable/inter", "recharts", "tailwindcss"]
+    },
     "internal/benchmark-viewer": {
       "entry": ["src/app/entry.tsx"]
     },
