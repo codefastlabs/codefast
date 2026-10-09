@@ -96,7 +96,7 @@ All components, prop types, hooks, and variants are also re-exported from the ro
 Beyond the components, the package exposes:
 
 - `@codefast/ui/hooks/*` — standalone hooks such as `useMediaQuery` (`@codefast/ui/hooks/use-media-query`),
-  `useIsMobile`, `useCopyToClipboard`, `useMutationObserver`, and `usePagination`.
+  `useIsMobile`, `useCopyToClipboard`, `useMutationObserver`, `usePagination`, `useHasHydrated`, and `useLatest`.
 - `@codefast/ui/variants/*` — the variant functions behind the styled components, such as `buttonVariants` from
   `@codefast/ui/variants/button`, for styling an element that isn't the component itself.
 - `@codefast/ui/primitives/*` — unstyled building blocks the styled components are composed from.

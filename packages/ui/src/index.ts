@@ -718,7 +718,9 @@ export type {
 } from "#components/tooltip";
 export { useAnimatedValue } from "#hooks/use-animated-value";
 export { useCopyToClipboard } from "#hooks/use-copy-to-clipboard";
+export { useHasHydrated } from "#hooks/use-has-hydrated";
 export { useIsMobile } from "#hooks/use-is-mobile";
+export { useLatest } from "#hooks/use-latest";
 export { useMediaQuery } from "#hooks/use-media-query";
 export { useMutationObserver } from "#hooks/use-mutation-observer";
 export { ELLIPSIS, usePagination } from "#hooks/use-pagination";
