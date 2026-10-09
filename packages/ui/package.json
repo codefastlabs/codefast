@@ -434,21 +434,6 @@
       "types": "./dist/hooks/use-media-query.d.ts",
       "import": "./dist/hooks/use-media-query.js"
     },
-    "./hooks/use-message-scroller-commands": {
-      "source": "./src/hooks/use-message-scroller-commands.ts",
-      "types": "./dist/hooks/use-message-scroller-commands.d.ts",
-      "import": "./dist/hooks/use-message-scroller-commands.js"
-    },
-    "./hooks/use-message-scroller-controller": {
-      "source": "./src/hooks/use-message-scroller-controller.ts",
-      "types": "./dist/hooks/use-message-scroller-controller.d.ts",
-      "import": "./dist/hooks/use-message-scroller-controller.js"
-    },
-    "./hooks/use-message-scroller-refs": {
-      "source": "./src/hooks/use-message-scroller-refs.ts",
-      "types": "./dist/hooks/use-message-scroller-refs.d.ts",
-      "import": "./dist/hooks/use-message-scroller-refs.js"
-    },
     "./hooks/use-mutation-observer": {
       "source": "./src/hooks/use-mutation-observer.ts",
       "types": "./dist/hooks/use-mutation-observer.d.ts",

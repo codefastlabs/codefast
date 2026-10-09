@@ -5,7 +5,6 @@ import type { RefObject } from "react";
 
 import { useMessageScrollerCommands } from "#hooks/use-message-scroller-commands";
 import { useMessageScrollerRefs } from "#hooks/use-message-scroller-refs";
-import type { MessageScrollerRefs } from "#hooks/use-message-scroller-refs";
 import {
   getContentBottom,
   getElementTop,
@@ -730,4 +729,3 @@ function useMessageScrollerController({
 }
 
 export { useMessageScrollerController };
-export type { MessageScrollerRefs };
