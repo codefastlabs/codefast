@@ -31,7 +31,11 @@ interface ColorToken {
   value: { dark: string; light: string };
 }
 
-/** One ink/ground pair that misses its WCAG minimum in at least one scheme. */
+/**
+ * One ink/ground pair that misses its WCAG minimum in at least one scheme.
+ *
+ * @since 0.1.0
+ */
 export interface ContrastShortfall {
   ground: string;
   ink: string;
@@ -40,7 +44,11 @@ export interface ContrastShortfall {
   role: string;
 }
 
-/** The variable font the system's type is set in, as the artifact stores it. */
+/**
+ * The variable font the system's type is set in, as the artifact stores it.
+ *
+ * @since 0.1.0
+ */
 export interface FontFile {
   family: string;
   source: string;
@@ -48,7 +56,11 @@ export interface FontFile {
   weight: string;
 }
 
-/** The token file plus what was learned building it. */
+/**
+ * The token file plus what was learned building it.
+ *
+ * @since 0.1.0
+ */
 export interface TokenBuild {
   font: FontFile;
   shortfalls: Array<ContrastShortfall>;
@@ -231,7 +243,11 @@ function gitRef(): string {
   return `${run("rev-parse", "--abbrev-ref", "HEAD")}@${run("rev-parse", "--short", "HEAD")}`;
 }
 
-/** Builds `tokens.json` from the palette, the preset, Tailwind's theme and the site's typography. */
+/**
+ * Builds `tokens.json` from the palette, the preset, Tailwind's theme and the site's typography.
+ *
+ * @since 0.1.0
+ */
 export function buildTokens(): TokenBuild {
   const { colors, shortfalls } = readPalette();
   const { families, font } = readFont();

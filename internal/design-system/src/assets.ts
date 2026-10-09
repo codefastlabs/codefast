@@ -83,7 +83,11 @@ function buildLogos(): Array<OutputFile> {
   ];
 }
 
-/** Collects the brand marks, the icons and the font file. */
+/**
+ * Collects the brand marks, the icons and the font file.
+ *
+ * @since 0.1.0
+ */
 export function buildAssets(font: FontFile): Array<OutputFile> {
   return [
     ...buildLogos(),

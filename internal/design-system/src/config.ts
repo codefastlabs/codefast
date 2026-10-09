@@ -1,24 +1,48 @@
-/** The design system's name, as the artifact and its cover spell it. */
+/**
+ * The design system's name, as the artifact and its cover spell it.
+ *
+ * @since 0.1.0
+ */
 export const SYSTEM_NAME = "Codefast UI";
 
-/** The global the component bundle assigns. */
+/**
+ * The global the component bundle assigns.
+ *
+ * @since 0.1.0
+ */
 export const NAMESPACE = "CodefastUI";
 
-/** The `@codefast/ui` palette the tokens are read from — the one codefastlabs.com ships. */
+/**
+ * The `@codefast/ui` palette the tokens are read from — the one codefastlabs.com ships.
+ *
+ * @since 0.1.0
+ */
 export const PALETTE = "sky";
 
-/** The asset groups in the order the page shows them, with the tile size each group's files get. */
+/**
+ * The asset groups in the order the page shows them, with the tile size each group's files get.
+ *
+ * @since 0.1.0
+ */
 export const ASSET_GROUPS: Array<{ name: string; tile: "l" | "m" | "s" | "xs" }> = [
   { name: "Logos", tile: "l" },
   { name: "Icons", tile: "xs" },
 ];
 
-/** The ink the exported icon files are drawn in, since an `<img>` cannot inherit `currentColor`. */
+/**
+ * The ink the exported icon files are drawn in, since an `<img>` cannot inherit `currentColor`.
+ *
+ * @since 0.1.0
+ */
 export const ICON_INK = "#18181b";
 
 // ── Color usage ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
-/** Where each semantic color is spent; the palette swatches and any contrast shortfall are appended at build time. */
+/**
+ * Where each semantic color is spent; the palette swatches and any contrast shortfall are appended at build time.
+ *
+ * @since 0.1.0
+ */
 export const COLOR_USAGE: Record<string, string> = {
   background: "Page and app background. `foreground` reads on it.",
   foreground:
@@ -59,7 +83,11 @@ export const COLOR_USAGE: Record<string, string> = {
   "chart-5": "Chart series 5.",
 };
 
-/** A text or mark color and the ground it must read on, with the WCAG minimum it is held to. */
+/**
+ * A text or mark color and the ground it must read on, with the WCAG minimum it is held to.
+ *
+ * @since 0.1.0
+ */
 export interface ContrastPair {
   ground: string;
   ink: string;
@@ -67,7 +95,11 @@ export interface ContrastPair {
   role: string;
 }
 
-/** The pairs checked in every scheme; a shortfall is flagged on the ink's token and in the brand book, never re-tinted. */
+/**
+ * The pairs checked in every scheme; a shortfall is flagged on the ink's token and in the brand book, never re-tinted.
+ *
+ * @since 0.1.0
+ */
 export const CONTRAST_PAIRS: Array<ContrastPair> = [
   { ground: "background", ink: "foreground", minimum: 4.5, role: "body text" },
   { ground: "background", ink: "muted-foreground", minimum: 4.5, role: "secondary text" },
@@ -85,7 +117,11 @@ export const CONTRAST_PAIRS: Array<ContrastPair> = [
 
 // ── Type styles ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
-/** A text style named by role, spelled as the Tailwind utilities the components put on it. */
+/**
+ * A text style named by role, spelled as the Tailwind utilities the components put on it.
+ *
+ * @since 0.1.0
+ */
 export interface TypeStyleSpec {
   leading?: string;
   name: string;
@@ -96,7 +132,11 @@ export interface TypeStyleSpec {
   weight: string;
 }
 
-/** The text styles the components use, grouped as the Typography view shows them. */
+/**
+ * The text styles the components use, grouped as the Typography view shows them.
+ *
+ * @since 0.1.0
+ */
 export const TYPE_GROUPS: Array<{ family: "heading" | "mono" | "sans"; name: string; styles: Array<TypeStyleSpec> }> = [
   {
     family: "heading",
@@ -188,7 +228,11 @@ export const TYPE_GROUPS: Array<{ family: "heading" | "mono" | "sans"; name: str
 
 // ── Scales ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-/** The spacing multiples the components use, each with where it shows up. */
+/**
+ * The spacing multiples the components use, each with where it shows up.
+ *
+ * @since 0.1.0
+ */
 export const SPACING_STEPS: Array<[step: number, usage: string]> = [
   [0.5, "Hairline offsets: badge padding, tight icon gaps."],
   [1, "Icon-to-label gap in compact controls; menu item vertical padding."],
@@ -204,7 +248,11 @@ export const SPACING_STEPS: Array<[step: number, usage: string]> = [
   [10, "Extra-large controls and avatar `lg`."],
 ];
 
-/** Where each step of the radius scale is used. */
+/**
+ * Where each step of the radius scale is used.
+ *
+ * @since 0.1.0
+ */
 export const RADIUS_USAGE: Record<string, string> = {
   radius:
     "The base unit the whole radius scale derives from. Override it to round or square off every component at once.",
@@ -219,14 +267,22 @@ export const RADIUS_USAGE: Record<string, string> = {
   "radius-4xl": "Badge pill.",
 };
 
-/** Tailwind's `rounded-full`, which the scale does not derive. */
+/**
+ * Tailwind's `rounded-full`, which the scale does not derive.
+ *
+ * @since 0.1.0
+ */
 export const RADIUS_FULL = {
   name: "radius-full",
   usage: "Avatar, Switch track and thumb, Radio, Spinner, ProgressCircle (Tailwind `rounded-full`).",
   value: "9999px",
 };
 
-/** The Tailwind shadows the components use, each with where it shows up. */
+/**
+ * The Tailwind shadows the components use, each with where it shows up.
+ *
+ * @since 0.1.0
+ */
 export const SHADOW_USAGE: Record<string, string> = {
   "shadow-xs":
     "Resting controls and Card: Button, Input, Select trigger, Textarea, Checkbox, Radio, Switch, Toggle, Card.",
@@ -238,7 +294,11 @@ export const SHADOW_USAGE: Record<string, string> = {
 
 // ── Component cards ──────────────────────────────────────────────────────────────────────────────────────────────────
 
-/** Card groups, keyed by the registry's `meta.category`. */
+/**
+ * Card groups, keyed by the registry's `meta.category`.
+ *
+ * @since 0.1.0
+ */
 export const CARD_GROUPS: Record<string, string> = {
   display: "Display",
   feedback: "Feedback",
@@ -248,17 +308,29 @@ export const CARD_GROUPS: Record<string, string> = {
   overlay: "Overlay",
 };
 
-/** Component files that get no card: providers and hooks render nothing of their own. */
+/**
+ * Component files that get no card: providers and hooks render nothing of their own.
+ *
+ * @since 0.1.0
+ */
 export const CARDLESS = new Set(["direction"]);
 
-/** Cards named after a part other than the file's PascalCase name, because no export carries that name. */
+/**
+ * Cards named after a part other than the file's PascalCase name, because no export carries that name.
+ *
+ * @since 0.1.0
+ */
 export const CARD_NAMES: Record<string, string> = {
   chart: "ChartContainer",
   resizable: "ResizableGroup",
   sonner: "Toaster",
 };
 
-/** Registry example files worth showing under the demo, in order of preference; at most two are taken. */
+/**
+ * Registry example files worth showing under the demo, in order of preference; at most two are taken.
+ *
+ * @since 0.1.0
+ */
 export const EXAMPLE_PRIORITY = [
   "variants",
   "variant",
@@ -275,10 +347,18 @@ export const EXAMPLE_PRIORITY = [
   "with-icon",
 ];
 
-/** Components whose demo already fills the card, so no examples are stacked under it. */
+/**
+ * Components whose demo already fills the card, so no examples are stacked under it.
+ *
+ * @since 0.1.0
+ */
 export const DEMO_ONLY = new Set(["calendar", "carousel", "chart", "form", "message-scroller", "resizable", "sidebar"]);
 
-/** Starting row heights for cards whose demo is taller than a control; every card grows to fit. */
+/**
+ * Starting row heights for cards whose demo is taller than a control; every card grows to fit.
+ *
+ * @since 0.1.0
+ */
 export const CARD_HEIGHTS: Record<string, number> = {
   attachment: 360,
   bubble: 360,
@@ -301,7 +381,11 @@ export const CARD_HEIGHTS: Record<string, number> = {
   table: 360,
 };
 
-/** Summaries that replace a registry description which lists features instead of saying what the component is. */
+/**
+ * Summaries that replace a registry description which lists features instead of saying what the component is.
+ *
+ * @since 0.1.0
+ */
 export const SUMMARY_OVERRIDES: Record<string, string> = {
   button:
     "Triggers an action or, with `asChild`, styles a link as one: six variants and four sizes, with icon and loading states.",

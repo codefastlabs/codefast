@@ -1,7 +1,11 @@
 import { TooltipProvider } from "@codefast/ui/tooltip";
 import type { ComponentType } from "react";
 
-/** A registry demo with the caption it is shown under; the first section carries none. */
+/**
+ * A registry demo with the caption it is shown under; the first section carries none.
+ *
+ * @since 0.1.0
+ */
 export interface PreviewSection {
   Demo: ComponentType;
   title: string;
@@ -11,7 +15,11 @@ interface PreviewFrameProps {
   sections: Array<PreviewSection>;
 }
 
-/** Stacks a card's demo and examples inside the app-level `TooltipProvider` the site supplies. */
+/**
+ * Stacks a card's demo and examples inside the app-level `TooltipProvider` the site supplies.
+ *
+ * @since 0.1.0
+ */
 export function PreviewFrame({ sections }: PreviewFrameProps) {
   return (
     <TooltipProvider>

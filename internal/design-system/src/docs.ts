@@ -91,7 +91,11 @@ function optionLines(card: ComponentCard, variants: Map<string, Array<VariantKey
   return lines;
 }
 
-/** Writes each card's guidelines from the registry's description, the variants, the declarations and the demo. */
+/**
+ * Writes each card's guidelines from the registry's description, the variants, the declarations and the demo.
+ *
+ * @since 0.1.0
+ */
 export function buildComponentDocs(cards: Array<ComponentCard>): Array<OutputFile> {
   const variants = readVariants();
   return cards.map((card) => {
@@ -115,7 +119,11 @@ export function buildComponentDocs(cards: Array<ComponentCard>): Array<OutputFil
   });
 }
 
-/** Concatenates the declarations of every component, variant and the class helpers into one reference file. */
+/**
+ * Concatenates the declarations of every component, variant and the class helpers into one reference file.
+ *
+ * @since 0.1.0
+ */
 export function buildDeclarations(): OutputFile {
   const dist = join(UI_ROOT, "dist");
   const files = [

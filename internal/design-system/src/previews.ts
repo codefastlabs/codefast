@@ -27,7 +27,11 @@ function entrySource(card: ComponentCard): string {
   ].join("\n");
 }
 
-/** Writes each card's bundle entry, where Tailwind can also scan it for the classes the previews use. */
+/**
+ * Writes each card's bundle entry, where Tailwind can also scan it for the classes the previews use.
+ *
+ * @since 0.1.0
+ */
 export function writePreviewEntries(cards: Array<ComponentCard>): void {
   mkdirSync(join(WORK_ROOT, "previews"), { recursive: true });
   for (const card of cards) {
@@ -40,6 +44,8 @@ export function writePreviewEntries(cards: Array<ComponentCard>): void {
  *
  * @remarks
  * The demos run against the bundle's globals, so a preview carries only its own code.
+ *
+ * @since 0.1.0
  */
 export async function buildPreviews(cards: Array<ComponentCard>): Promise<Array<OutputFile>> {
   const files: Array<OutputFile> = [];

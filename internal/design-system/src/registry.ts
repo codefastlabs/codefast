@@ -11,7 +11,11 @@ interface RegistryExample {
   title: string;
 }
 
-/** One component card: the `@codefast/ui` file it documents and the registry material that shows it. */
+/**
+ * One component card: the `@codefast/ui` file it documents and the registry material that shows it.
+ *
+ * @since 0.1.0
+ */
 export interface ComponentCard {
   category: string;
   examples: Array<RegistryExample>;
@@ -44,7 +48,11 @@ function readExamples(slug: string): Array<RegistryExample> {
   ].map((match) => ({ description: match[2], stem: match[3] ?? "", title: match[1] ?? "" }));
 }
 
-/** Lists a card for every `@codefast/ui` component file the registry demonstrates. */
+/**
+ * Lists a card for every `@codefast/ui` component file the registry demonstrates.
+ *
+ * @since 0.1.0
+ */
 export function discoverCards(): Array<ComponentCard> {
   const components = join(UI_ROOT, "src/components");
   return readdirSync(components)
