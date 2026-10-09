@@ -60,6 +60,17 @@
     "clean": {
       "cache": false
     },
+    "design-system": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/web/public/brand/**",
+        "$TURBO_ROOT$/apps/web/src/registry/**",
+        "$TURBO_ROOT$/apps/web/src/styles.css"
+      ],
+      "outputs": ["dist/**"],
+      "outputLogs": "new-only"
+    },
     "dev": {
       "cache": false,
       "persistent": true

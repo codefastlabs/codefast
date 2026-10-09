@@ -29,6 +29,8 @@ const config = {
     // Node lane is tsc; the browser app is a Vite bundle whose hashed chunks in
     // dist/app must not be turned into package exports — exports are hand-kept.
     "@internal/benchmark-viewer": false,
+    // A build script, not a library: its dist/ is the design-system artifact's files.
+    "@internal/design-system": false,
     "@benchmark/tailwind-variants": false,
     "@codefast/typescript-config": false,
   },
