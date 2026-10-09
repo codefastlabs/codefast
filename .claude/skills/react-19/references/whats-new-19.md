@@ -64,7 +64,6 @@ Ref callbacks may return a **cleanup** function; an implicit return is now a typ
 
 ```tsx
 import type { ReactNode } from "react";
-
 import { createContext, use } from "react";
 
 const ColorSchemeContext = createContext<"light" | "dark">("light");
@@ -191,7 +190,6 @@ required to benefit; call it in custom error tooling if you need the stack strin
 
 ```tsx
 import type { ReactNode } from "react";
-
 import { Activity } from "react";
 
 interface RouterProps {
@@ -276,7 +274,6 @@ change is inside `startTransition`, a Suspense reveal, or `useDeferredValue`.
 
 ```tsx
 import type { ReactNode } from "react";
-
 import { ViewTransition, startTransition, addTransitionType } from "react";
 
 interface GalleryProps {

@@ -106,8 +106,8 @@ Beyond the components, the package exposes:
 For example, to style a link like a button:
 
 ```tsx
-import { buttonVariants } from "@codefast/ui/variants/button";
 import { cn } from "@codefast/ui/lib/utils";
+import { buttonVariants } from "@codefast/ui/variants/button";
 
 export function DocsLink() {
   return (

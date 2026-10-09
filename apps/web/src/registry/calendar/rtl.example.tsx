@@ -27,7 +27,7 @@ const locales = {
 
 export function CalendarRtl() {
   const { dir, language } = useTranslation(translations, "ar");
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(() => new Date());
 
   return (
     <Calendar
