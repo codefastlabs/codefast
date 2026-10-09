@@ -1,6 +1,6 @@
 {
   "name": "@internal/design-system",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Builds the Codefast UI design-system artifact — tokens, brand book, live component previews — from @codefast/ui and the codefastlabs.com registry",
   "license": "MIT",
