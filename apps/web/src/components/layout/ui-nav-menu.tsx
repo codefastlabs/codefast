@@ -14,7 +14,7 @@ export function UiNavMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm transition-colors outline-none hover:bg-ui-surface hover:text-ui-fg focus-visible:ring-3 focus-visible:ring-ring/50 data-[state=open]:bg-ui-surface data-[state=open]:text-ui-fg",
+          "inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm transition-colors outline-none hover:bg-ui-surface hover:text-ui-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid data-[state=open]:bg-ui-surface data-[state=open]:text-ui-fg",
           isActive ? "bg-ui-surface font-medium text-ui-fg" : "text-ui-muted",
         )}
         aria-label="UI section"

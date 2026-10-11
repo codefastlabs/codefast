@@ -77,7 +77,7 @@ function TranscriptOutline() {
       <HoverCardTrigger asChild>
         <button
           aria-label="Open transcript outline"
-          className="flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-md transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-md transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid"
           type="button"
         >
           {USER_TURNS.map((turn) => (

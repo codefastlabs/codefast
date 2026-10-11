@@ -36,7 +36,7 @@
 
   --border: oklch(0.922 0 0); /* --color-neutral-200 */
   --input: oklch(0.922 0 0); /* --color-neutral-200 */
-  --ring: oklch(0.708 0 0); /* --color-neutral-400 */
+  --ring: oklch(0.556 0 0); /* --color-neutral-500 */
 
   /* ── Sidebar ───────────────────────────────────────────────────────────────────────────────────────────────────── */
 
@@ -47,7 +47,7 @@
   --sidebar-accent: oklch(0.97 0 0); /* --color-neutral-100 */
   --sidebar-accent-foreground: oklch(0.205 0 0); /* --color-neutral-900 */
   --sidebar-border: oklch(0.922 0 0); /* --color-neutral-200 */
-  --sidebar-ring: oklch(0.708 0 0); /* --color-neutral-400 */
+  --sidebar-ring: oklch(0.556 0 0); /* --color-neutral-500 */
 
   /* ── Charts ────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
@@ -95,7 +95,7 @@
   --sidebar-accent: oklch(0.269 0 0); /* --color-neutral-800 */
   --sidebar-accent-foreground: oklch(0.985 0 0); /* --color-neutral-50 */
   --sidebar-border: oklch(1 0 0 / 10%); /* --color-white */
-  --sidebar-ring: oklch(0.439 0 0); /* --color-neutral-600 */
+  --sidebar-ring: oklch(0.556 0 0); /* --color-neutral-500 */
 
   --chart-1: var(--color-blue-300); /* --color-blue-300 */
   --chart-2: var(--color-blue-500); /* --color-blue-500 */

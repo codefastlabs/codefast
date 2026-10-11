@@ -36,7 +36,7 @@
 
   --border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --input: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
-  --ring: oklch(0.708 0 0); /* default ring */
+  --ring: oklch(0.623 0.214 259.815); /* --color-blue-500 */
 
   /* ── Sidebar ───────────────────────────────────────────────────────────────────────────────────────────────────── */
 
@@ -47,7 +47,7 @@
   --sidebar-accent: oklch(0.967 0.001 286.375); /* --color-zinc-100 */
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
   --sidebar-border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
-  --sidebar-ring: oklch(0.708 0 0); /* default sidebar ring */
+  --sidebar-ring: oklch(0.623 0.214 259.815); /* --color-blue-500 */
 
   /* ── Charts ────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
@@ -64,8 +64,8 @@
   --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
   --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
 
-  --primary: oklch(0.488 0.243 264.376); /* --color-blue-700 */
-  --primary-foreground: oklch(0.97 0.014 254.604); /* --color-blue-50 */
+  --primary: oklch(0.707 0.165 254.624); /* --color-blue-400 */
+  --primary-foreground: oklch(0.282 0.091 267.935); /* --color-blue-950 */
 
   --secondary: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
   --secondary-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
@@ -90,12 +90,12 @@
 
   --sidebar: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
   --sidebar-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-  --sidebar-primary: oklch(0.623 0.214 259.815); /* --color-blue-500 */
-  --sidebar-primary-foreground: oklch(0.97 0.014 254.604); /* --color-blue-50 */
+  --sidebar-primary: oklch(0.707 0.165 254.624); /* --color-blue-400 */
+  --sidebar-primary-foreground: oklch(0.282 0.091 267.935); /* --color-blue-950 */
   --sidebar-accent: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
   --sidebar-accent-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
   --sidebar-border: oklch(1 0 0 / 10%); /* --color-white */
-  --sidebar-ring: oklch(0.439 0 0); /* default sidebar ring (dark) */
+  --sidebar-ring: oklch(0.556 0 0); /* default ring (dark) */
 
   --chart-1: oklch(0.809 0.105 251.813); /* --color-blue-300 */
   --chart-2: oklch(0.623 0.214 259.815); /* --color-blue-500 */

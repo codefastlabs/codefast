@@ -34,7 +34,7 @@ function ScrollArea({ __scopeScrollArea, children, className, size, ...props }: 
     <ScrollAreaContextProvider scope={__scopeScrollArea} size={size}>
       <ScrollAreaPrimitive.Root className={cn("relative", className)} data-slot="scroll-area" {...props}>
         <ScrollAreaPrimitive.Viewport
-          className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1"
+          className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid"
           data-slot="scroll-area-viewport"
         >
           {children}
