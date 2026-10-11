@@ -82,7 +82,7 @@ export function Header() {
             <Link
               key={to}
               to={to}
-              className="rounded-lg px-3 py-1.5 text-sm text-ui-muted no-underline transition-colors outline-none hover:bg-ui-surface hover:text-ui-fg focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="rounded-lg px-3 py-1.5 text-sm text-ui-muted no-underline transition-colors outline-none hover:bg-ui-surface hover:text-ui-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid"
               activeProps={{
                 className: "rounded-lg bg-ui-surface px-3 py-1.5 text-sm font-medium text-ui-fg no-underline",
               }}

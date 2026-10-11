@@ -32,7 +32,8 @@ Write like the library's own docs: plain, direct, second person, present tense.
 - Lay content on `card` (Card, Alert); float it on `popover` (menus, Select, Popover, HoverCard, Command, and modal
   surfaces — Dialog, AlertDialog, Sheet, Drawer).
 - Hover and focus states use `accent` in menus and `muted` on buttons (`ghost`, `outline`). A pressed Button nudges down
-  1px (`active:translate-y-px`); a hovered primary Button drops to 80% (`hover:bg-primary/80`).
+  1px (`active:translate-y-px`); a hovered primary Button deepens toward `foreground` (`hover:bg-primary-hover`), so its
+  label gains contrast rather than losing it.
 - `destructive` is never a solid fill behind white text. Destructive Buttons and Badges are a 10% tint of `destructive`
   with `destructive` as the text color (20% in dark). Invalid fields add a `destructive` border and a 3px
   `destructive/20` ring.
@@ -91,9 +92,9 @@ Write like the library's own docs: plain, direct, second person, present tense.
 
 ### Focus and states
 
-- Every focusable control shows the same focus treatment: a solid `ring` border plus a 3px halo of `ring` at 50%
-  (`focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50`). Never remove it: the halo is part of
-  the indicator, not decoration.
+- Every focusable control shows the same focus treatment: a solid 2px `ring` outline, offset 2px from the control
+  (`focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring`).
+  `ring` holds 3:1 against every surface in both schemes, and an outline survives forced-colors mode. Never remove it.
 - Disabled is `opacity-50` with pointer events off — no separate disabled colors.
 - Invalid (`aria-invalid`) is `destructive` border + `destructive/20` ring (`/40` in dark).
 - State is read from data attributes (`data-open`, `data-checked`, `data-disabled`, `data-selected`…), which the preset

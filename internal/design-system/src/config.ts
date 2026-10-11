@@ -67,7 +67,7 @@ export const COLOR_USAGE: Record<string, string> = {
   "card-foreground": "Text on `card`.",
   border: "Every default border and divider (`*` gets it as border-color): Card, Separator, Table rows, menus.",
   input: "Form control borders and inset rings: Input, Textarea, Select trigger, Checkbox, Radio, Switch track off.",
-  ring: "Focus ring colour; controls draw it as a solid border plus a 3px halo at 50% (`focus-visible:ring-ring/50`).",
+  ring: "Focus ring colour; controls draw it as a solid 2px outline offset 2px (`focus-visible:outline-ring`).",
   sidebar: "Sidebar surface.",
   "sidebar-foreground": "Text on `sidebar`.",
   "sidebar-primary": "Active/brand item fill inside Sidebar.",

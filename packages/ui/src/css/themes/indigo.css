@@ -36,7 +36,7 @@
 
   --border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --input: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
-  --ring: oklch(0.68 0.16 277); /* --color-indigo-400 */
+  --ring: oklch(0.59 0.2 277); /* --color-indigo-500 */
 
   /* ── Sidebar ───────────────────────────────────────────────────────────────────────────────────────────────────── */
 
@@ -47,7 +47,7 @@
   --sidebar-accent: oklch(0.967 0.001 286.375); /* --color-zinc-100 */
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
   --sidebar-border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
-  --sidebar-ring: oklch(0.68 0.16 277); /* --color-indigo-400 */
+  --sidebar-ring: oklch(0.59 0.2 277); /* --color-indigo-500 */
 
   /* ── Charts ────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
@@ -64,8 +64,8 @@
   --background: oklch(0.141 0.005 285.823); /* --color-zinc-950 */
   --foreground: oklch(0.985 0 0); /* --color-zinc-50 */
 
-  --primary: oklch(0.59 0.2 277); /* --color-indigo-500 */
-  --primary-foreground: oklch(0.96 0.02 272); /* --color-indigo-50 */
+  --primary: oklch(0.68 0.16 277); /* --color-indigo-400 */
+  --primary-foreground: oklch(0.257 0.09 281.288); /* --color-indigo-950 */
 
   --secondary: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
   --secondary-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
@@ -86,16 +86,16 @@
 
   --border: oklch(1 0 0 / 10%); /* --color-white */
   --input: oklch(1 0 0 / 15%); /* --color-white */
-  --ring: oklch(0.36 0.14 279); /* --color-indigo-900 */
+  --ring: oklch(0.59 0.2 277); /* --color-indigo-500 */
 
   --sidebar: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
   --sidebar-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
-  --sidebar-primary: oklch(0.59 0.2 277); /* --color-indigo-500 */
-  --sidebar-primary-foreground: oklch(0.96 0.02 272); /* --color-indigo-50 */
+  --sidebar-primary: oklch(0.68 0.16 277); /* --color-indigo-400 */
+  --sidebar-primary-foreground: oklch(0.257 0.09 281.288); /* --color-indigo-950 */
   --sidebar-accent: oklch(0.274 0.006 286.033); /* --color-zinc-800 */
   --sidebar-accent-foreground: oklch(0.985 0 0); /* --color-zinc-50 */
   --sidebar-border: oklch(1 0 0 / 10%); /* --color-white */
-  --sidebar-ring: oklch(0.36 0.14 279); /* --color-indigo-900 */
+  --sidebar-ring: oklch(0.59 0.2 277); /* --color-indigo-500 */
 
   --chart-1: oklch(0.79 0.1 275); /* --color-indigo-300 */
   --chart-2: oklch(0.68 0.16 277); /* --color-indigo-400 */

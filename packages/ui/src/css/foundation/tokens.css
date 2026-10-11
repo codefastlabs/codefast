@@ -27,6 +27,8 @@
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  /* Pulled toward `foreground`, so `primary-foreground` gains contrast on hover in both schemes. */
+  --color-primary-hover: color-mix(in oklab, var(--primary), var(--foreground) 20%);
 
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);

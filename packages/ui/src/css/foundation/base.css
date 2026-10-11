@@ -15,7 +15,7 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-border);
-    outline-color: --alpha(var(--color-ring) / 20%);
+    outline-color: var(--color-ring);
   }
 
   /* ----------------------------------------------------------------------
