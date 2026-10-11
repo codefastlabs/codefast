@@ -1,5 +1,25 @@
 # @codefast/ui
 
+## 0.13.0
+
+### Minor Changes
+
+- [#1054](https://github.com/codefastlabs/codefast/pull/1054) The `@codefast/ui/lib/message-scroller/geometry`, `stores` and `types` subpaths are no longer published: they are the
+  message-scroller primitive's internals. Its public types now ship from `@codefast/ui/primitives/message-scroller`, and
+  `MessageScrollerButtonRenderState` and `MessageScrollerButtonDirection` — the button's `render` state and `direction` —
+  are also exported from `@codefast/ui/message-scroller` and the root entry, so every type in the scroller's public
+  signatures stays nameable.
+
+- [#1056](https://github.com/codefastlabs/codefast/pull/1056) Every palette now meets WCAG 2.2 AA contrast in both color schemes. `primary` moves to the step whose label and
+  `text-primary` links clear 4.5:1; `primary-foreground` turns dark on the bright dark-scheme `primary`; `ring` moves to a
+  step that clears 3:1 against every surface, and the sidebar tokens follow. Focus is drawn as a solid 2px `ring` outline
+  offset 2px
+  (`focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring`)
+  instead of a `ring` border with a 50% halo, so it keeps its contrast and survives forced-colors mode; the destructive
+  Button and Badge draw it in `destructive`. The base `outline-color` every element inherits is `ring` at full strength.
+  The default Button, Badge link and Bubble hover with the new `bg-primary-hover`, which pulls `primary` toward
+  `foreground` instead of fading it, so the label gains contrast on hover.
+
 ## 0.12.0
 
 ### Minor Changes
