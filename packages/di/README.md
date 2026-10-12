@@ -420,6 +420,9 @@ parent's singletons, while each `scoped` binding gets a fresh instance per child
 } // dispose() runs here and releases what this child owns
 ```
 
+[Example 22](examples/22-per-request-scope/README.md) is the guide to this pattern: where each binding lives, the rules
+that keep a scope from leaking, and how it lands in TanStack Start server functions and server routes.
+
 ### Validation
 
 A captive dependency is a long-lived binding that holds a shorter-lived one — a `singleton` that depends on a `scoped`

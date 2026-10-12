@@ -65,6 +65,7 @@ with the `ESNext.Disposable` lib that `@codefast/di`'s declarations need.
 | 19  | [19-custom-metadata-reader](./19-custom-metadata-reader)                   | `MetadataReader`, `MetadataReaderToken` — wiring classes that carry no decorators              |
 | 20  | [20-explicit-architecture](./20-explicit-architecture)                     | Multi-file Ports & Adapters app; `@injectable` wiring with a framework-free domain             |
 | 21  | [21-explicit-architecture-ecommerce](./21-explicit-architecture-ecommerce) | Larger multi-context Ports & Adapters with `@injectable`; HTTP + CLI, config-selected adapters |
+| 22  | [22-per-request-scope](./22-per-request-scope)                             | Per-request scope guide: `createChild()` + `await using`, its rules, TanStack Start middleware |
 
 ---
 
@@ -79,6 +80,7 @@ Everything else builds on top of them.
 
 - Selecting between multiple implementations → `06`, `17`
 - Structuring a real application → `07`, `10`, `11`, `12`, `13`
+- Scoping services to one HTTP request, in any framework → `22`
 - Keeping the DI container out of your domain (Explicit / Hexagonal Architecture) → `20` (one context), `21`
   (multi-context, larger)
 - Advanced binding strategies → `08`
