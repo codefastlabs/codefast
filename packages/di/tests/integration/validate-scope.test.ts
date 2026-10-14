@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { validate } from "#container/introspect";
 import { Module } from "#core/module";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
 import { AsyncModuleLoadError, CircularDependencyError, ScopeViolationError } from "#errors";
 import { optional } from "#injection/descriptor";
 
-describe("container.validate() — transitive scope + alias chain", () => {
+describe("validate(container) — transitive scope + alias chain", () => {
   it("throws ScopeViolationError when a singleton transitively depends on a scoped binding", () => {
     @injectable([])
     class ScopedService {}
@@ -35,7 +36,7 @@ describe("container.validate() — transitive scope + alias chain", () => {
 
     let thrown: unknown;
     try {
-      container.validate();
+      validate(container);
     } catch (error) {
       thrown = error;
     }
@@ -64,7 +65,7 @@ describe("container.validate() — transitive scope + alias chain", () => {
     container.bind(Alias).toAlias(Leaf);
     container.bind(RootViaAlias).toSelf().singleton();
 
-    expect(() => container.validate()).toThrow(ScopeViolationError);
+    expect(() => validate(container)).toThrow(ScopeViolationError);
   });
 
   it("follows a multi-hop alias chain before checking scope", () => {
@@ -86,7 +87,7 @@ describe("container.validate() — transitive scope + alias chain", () => {
     container.bind(AliasHopA).toAlias(AliasHopB);
     container.bind(AliasConsumer).toSelf().singleton();
 
-    expect(() => container.validate()).toThrow(ScopeViolationError);
+    expect(() => validate(container)).toThrow(ScopeViolationError);
   });
 
   it("throws CircularDependencyError when an alias chain cycles during validation", () => {
@@ -104,7 +105,7 @@ describe("container.validate() — transitive scope + alias chain", () => {
 
     container.bind(CycleRoot).toSelf().singleton();
 
-    expect(() => container.validate()).toThrow(CircularDependencyError);
+    expect(() => validate(container)).toThrow(CircularDependencyError);
   });
 });
 
@@ -125,7 +126,7 @@ describe("AsyncModuleLoadError", () => {
 
     let thrown: unknown;
     try {
-      container.validate();
+      validate(container);
     } catch (error) {
       thrown = error;
     }
@@ -149,7 +150,7 @@ describe("AsyncModuleLoadError", () => {
       .toResolved((leaf: SingletonService) => `root:${leaf.constructor.name}`, [SingletonLeaf])
       .singleton();
 
-    expect(() => container.validate()).not.toThrow();
+    expect(() => validate(container)).not.toThrow();
   });
 
   it("reports a transient toDynamic dependency of a singleton as captive", () => {
@@ -170,7 +171,7 @@ describe("AsyncModuleLoadError", () => {
 
     let thrown: unknown;
     try {
-      container.validate();
+      validate(container);
     } catch (error) {
       thrown = error;
     }
@@ -192,7 +193,7 @@ describe("AsyncModuleLoadError", () => {
       .toResolved((leaf) => `root:${String(leaf)}`, [DynamicLeaf])
       .singleton();
 
-    expect(() => container.validate()).not.toThrow();
+    expect(() => validate(container)).not.toThrow();
   });
 
   it("does not descend into a factory body", () => {
@@ -216,7 +217,7 @@ describe("AsyncModuleLoadError", () => {
       .toResolved((leaf) => `root:${String(leaf)}`, [DynamicLeaf])
       .singleton();
 
-    expect(() => container.validate()).not.toThrow();
+    expect(() => validate(container)).not.toThrow();
   });
 
   it("throws when sync load receives an async module at runtime", () => {
@@ -226,7 +227,7 @@ describe("AsyncModuleLoadError", () => {
   });
 });
 
-describe("container.validate() — optional dependencies", () => {
+describe("validate(container) — optional dependencies", () => {
   it("reports a singleton that captures a bound optional transient", () => {
     const Dep = token<object>("vs:OptionalDep");
     const Svc = token<object>("vs:OptionalConsumer");
@@ -241,7 +242,7 @@ describe("container.validate() — optional dependencies", () => {
       .singleton();
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).toThrow(ScopeViolationError);
   });
 
@@ -255,7 +256,7 @@ describe("container.validate() — optional dependencies", () => {
       .singleton();
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 });

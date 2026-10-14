@@ -7,6 +7,7 @@ import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { explain } from "#container/introspect";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import type { Token } from "#core/token";
@@ -108,7 +109,7 @@ describe("explain() against resolve", () => {
         for (const container of [containers.root, containers.child]) {
           for (const serviceToken of tokens) {
             for (const request of REQUESTS) {
-              const explanation = container.explain(serviceToken, request);
+              const explanation = explain(container, serviceToken, request);
               let resolved: number | undefined;
               let outcome: ExplanationOutcome = "selected";
               try {

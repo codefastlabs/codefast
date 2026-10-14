@@ -10,6 +10,7 @@ import {
 import type { BindToBuilder } from "@codefast/di";
 import { describe, expect, it } from "vitest";
 
+import { lookupBindings } from "#container/introspect";
 import { tag } from "#core/tag";
 
 const ENV_TAG = tag("env");
@@ -103,7 +104,7 @@ describe("BindToBuilder fluent surface", () => {
 
       expect(() => (bindBuilder as never as { singleton: () => unknown }).singleton()).toThrow(ChainNotRegisteredError);
       expect(container.has(ServiceToken)).toBe(false);
-      expect(container.lookupBindings(ServiceToken)).toHaveLength(0);
+      expect(lookupBindings(container, ServiceToken)).toHaveLength(0);
     });
 
     it("still works normally once to*() has run", () => {
@@ -172,7 +173,7 @@ describe("BindToBuilder fluent surface", () => {
 
     // The chain is its binding: another binding for the token is another bind() call.
     expect(() => bindBuilder.toConstantValue(2)).toThrow(ChainAlreadyRegisteredError);
-    expect(container.lookupBindings(ServiceToken)).toHaveLength(1);
+    expect(lookupBindings(container, ServiceToken)).toHaveLength(1);
     expect(container.resolve(ServiceToken)).toBe(1);
   });
 });

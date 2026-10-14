@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { explain } from "#container/introspect";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
@@ -146,7 +147,7 @@ describe("the path a missing-binding error names", () => {
     const Missing = token<unknown>("test:Missing");
     const container = chainContainer("transient");
 
-    const error = caught(() => container.explain(LoggerToken, { ancestors: [UserService, Missing] }));
+    const error = caught(() => explain(container, LoggerToken, { ancestors: [UserService, Missing] }));
 
     expect(error).toBeInstanceOf(TokenNotBoundError);
     expect((error as TokenNotBoundError).path).toEqual(["UserService", "test:Missing"]);

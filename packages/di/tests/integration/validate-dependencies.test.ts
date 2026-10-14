@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { validate } from "#container/introspect";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
@@ -40,14 +41,14 @@ function caught(run: () => unknown): Error {
 
 /** Validation and a real resolve fail alike: same class, same message. */
 function expectSameFailure(container: Container, resolveTarget: () => unknown): Error {
-  const validated = caught(() => container.validate());
+  const validated = caught(() => validate(container));
   const resolved = caught(resolveTarget);
   expect(validated.constructor).toBe(resolved.constructor);
   expect(validated.message).toBe(resolved.message);
   return validated;
 }
 
-describe("container.validate() — dependencies that cannot resolve", () => {
+describe("validate(container) — dependencies that cannot resolve", () => {
   it("reports a required dependency nothing binds, with the path from the singleton", () => {
     const container = Container.create();
     // Validation walks singletons in registration order, so the consumer bound first is where its path starts.
@@ -139,7 +140,7 @@ describe("container.validate() — dependencies that cannot resolve", () => {
   });
 });
 
-describe("container.validate() — what it leaves to resolve", () => {
+describe("validate(container) — what it leaves to resolve", () => {
   it("passes an optional dependency nothing binds, and an empty collection", () => {
     @injectable([optional(LoggerToken), injectAll(LoggerToken)])
     class Quiet {
@@ -151,7 +152,7 @@ describe("container.validate() — what it leaves to resolve", () => {
     const container = Container.create();
     container.bind(Quiet).toSelf().singleton();
 
-    expect(() => container.validate()).not.toThrow();
+    expect(() => validate(container)).not.toThrow();
     expect(container.resolve(Quiet).all).toEqual([]);
   });
 
@@ -165,7 +166,7 @@ describe("container.validate() — what it leaves to resolve", () => {
     const root = Container.create();
     root.bind(RequestHandler).toSelf();
 
-    expect(() => root.validate()).not.toThrow();
+    expect(() => validate(root)).not.toThrow();
     const request = root.createChild();
     request.bind(RequestId).toConstantValue("req-1");
     expect(request.resolve(RequestHandler).requestId).toBe("req-1");
@@ -176,7 +177,7 @@ describe("container.validate() — what it leaves to resolve", () => {
     container.bind(LoggerToken).when(whenParentIs(Database)).toConstantValue(silentLogger);
     container.bind(Database).toSelf().singleton();
 
-    expect(() => container.validate()).not.toThrow();
+    expect(() => validate(container)).not.toThrow();
     expect(container.resolve(Database).logger).toBe(silentLogger);
   });
 });

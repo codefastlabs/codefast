@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { generateDependencyGraph } from "#container/introspect";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
 import { optional } from "#injection/descriptor";
@@ -14,7 +15,7 @@ describe("toDotGraph", () => {
     container.bind(configToken).toConstantValue(1);
     container.bind(serviceToken).toResolved((config) => ({ config }), [configToken]);
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const dot = toDotGraph(graph);
 
     expect(dot).toMatch(/^digraph/);
@@ -31,7 +32,7 @@ describe("toDotGraph", () => {
     const container = Container.create();
     container.bind(hostileToken).toConstantValue(1);
 
-    const dot = toDotGraph(container.generateDependencyGraph());
+    const dot = toDotGraph(generateDependencyGraph(container));
 
     // One node, no edges: header, rankdir, the node line, and the closing brace.
     expect(dot.split("\n")).toHaveLength(4);
@@ -48,7 +49,7 @@ describe("toDotGraph", () => {
     const container = Container.create();
     container.bind(Service).toSelf().singleton();
 
-    const dot = toDotGraph(container.generateDependencyGraph());
+    const dot = toDotGraph(generateDependencyGraph(container));
 
     // The placeholder for the optional-but-unbound dependency renders dashed.
     expect(dot).toContain('style="dashed"');
@@ -62,7 +63,7 @@ describe("toDotGraph", () => {
     const child = parent.createChild();
     child.bind(localToken).toResolved((shared: number) => ({ shared }), [sharedToken]);
 
-    const dot = toDotGraph(child.generateDependencyGraph({ includeParent: true }));
+    const dot = toDotGraph(generateDependencyGraph(child, { includeParent: true }));
 
     // The parent-owned binding renders dashed under the child's graph.
     expect(dot).toContain('style="dashed"');

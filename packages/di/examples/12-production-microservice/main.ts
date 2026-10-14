@@ -18,7 +18,7 @@
  *   4. Start background job worker              (async, onActivation)
  *   5. Register HTTP routes                     (reads all above via tokens)
  *   6. Start HTTP server                        (onActivation)
- *   7. Validate scope rules                     (container.validate())
+ *   7. Validate scope rules                     (validate(container))
  *   8. Serve traffic
  *
  * Shutdown sequence (all triggered by a single container.dispose()):
@@ -34,7 +34,7 @@
  * order, parallelises independent branches, and disposes in reverse.
  */
 
-import { Container, Module, inject, injectable, token } from "@codefast/di";
+import { Container, inject, injectable, Module, token, validate } from "@codefast/di";
 
 import { banner } from "#examples/support/log";
 
@@ -757,7 +757,7 @@ async function bootstrap(): Promise<void> {
   await serviceContainer.initializeAsync();
 
   // Validate scope rules — no captive dependencies
-  serviceContainer.validate();
+  validate(serviceContainer);
 
   // HttpServer is toDynamicAsync (depends on async HealthRegistry) → resolveAsync
   const httpServer = await serviceContainer.resolveAsync(HttpServerToken);

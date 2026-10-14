@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { lookupBindings } from "#container/introspect";
 import { token } from "#core/token";
 import { ChainAlreadyRegisteredError, NoMatchingBindingError } from "#errors";
 
@@ -32,7 +33,7 @@ describe("slot steps before to*()", () => {
       .when(() => false)
       .toConstantValue(2);
 
-    expect(container.lookupBindings(valueToken)).toHaveLength(2);
+    expect(lookupBindings(container, valueToken)).toHaveLength(2);
     expect(container.resolve(valueToken)).toBe(1);
   });
 
@@ -52,7 +53,7 @@ describe("slot steps before to*()", () => {
     // The token is still bound; its one candidate now declines, which is a selection miss.
     expect(() => container.resolve(valueToken)).toThrow(NoMatchingBindingError);
     container.unbind(id);
-    expect(container.lookupBindings(valueToken)).toHaveLength(0);
+    expect(lookupBindings(container, valueToken)).toHaveLength(0);
   });
 
   it("keeps the default when a named binding joins it", () => {

@@ -30,6 +30,7 @@ import type {
 } from "@codefast/di";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import { explain, generateDependencyGraph, lookupBindings } from "#container/introspect";
 import { tag } from "#core/tag";
 
 const ENV_TAG = tag("env");
@@ -40,13 +41,13 @@ describe("every exported function is callable with public values", () => {
   function snapshot(): BindingSnapshot {
     const container = Container.create();
     container.bind(serviceToken).whenNamed("primary").toConstantValue(1);
-    return container.lookupBindings(serviceToken)[0]!;
+    return lookupBindings(container, serviceToken)[0]!;
   }
 
   it("explains a request in public types, down to options rebuilt from the selected slot", () => {
     const container = Container.create();
     container.bind(serviceToken).whenNamed("primary").toConstantValue(1);
-    const explanation: ResolutionExplanation = container.explain(serviceToken, { name: "primary" });
+    const explanation: ResolutionExplanation = explain(container, serviceToken, { name: "primary" });
 
     expectTypeOf(explanation.steps).toEqualTypeOf<ReadonlyArray<ExplanationStep>>();
     expect(
@@ -77,7 +78,7 @@ describe("every exported function is callable with public values", () => {
   it("reads a binding's scope off a graph node", () => {
     const container = Container.create();
     container.bind(serviceToken).toConstantValue(1);
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
 
     expectTypeOf(graph.nodes[0]!.scope).toEqualTypeOf<BindingScope | "unbound">();
     expect(graph.nodes[0]!.scope).toBe("singleton");

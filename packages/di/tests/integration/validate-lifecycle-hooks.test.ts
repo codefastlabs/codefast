@@ -6,6 +6,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { validate } from "#container/introspect";
 import { token } from "#core/token";
 import { UnreachableLifecycleHookError } from "#errors";
 
@@ -13,7 +14,7 @@ class Connection {
   readonly id = "connection";
 }
 
-describe("container.validate() — container-level lifecycle hooks", () => {
+describe("validate(container) — container-level lifecycle hooks", () => {
   it("throws when a deactivation hook is keyed by the class but the binding is keyed by a token", () => {
     const connectionToken = token<Connection>("mismatch-deactivation");
 
@@ -24,7 +25,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     });
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).toThrow(UnreachableLifecycleHookError);
   });
 
@@ -37,7 +38,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
 
     let caught: unknown;
     try {
-      container.validate();
+      validate(container);
     } catch (error) {
       caught = error;
     }
@@ -60,7 +61,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     });
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).toThrow(/'stray'/);
   });
 
@@ -75,7 +76,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     container.bind(connectionToken).to(Connection).singleton();
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 
@@ -87,7 +88,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     });
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 
@@ -103,7 +104,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     });
 
     expect(() => {
-      child.validate();
+      validate(child);
     }).not.toThrow();
   });
 
@@ -114,7 +115,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     container.bind(connectionToken).to(Connection).singleton();
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 
@@ -129,7 +130,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     });
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
     const request = container.createChild();
     const connection = request.resolve(connectionToken);
@@ -147,7 +148,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     });
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).toThrow(UnreachableLifecycleHookError);
   });
 
@@ -162,7 +163,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     });
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 
@@ -174,7 +175,7 @@ describe("container.validate() — container-level lifecycle hooks", () => {
     container.onActivation(connectionToken, (_ctx, instance) => instance);
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 });

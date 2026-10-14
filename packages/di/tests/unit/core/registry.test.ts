@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import type { BindingRegistration } from "#container/binding-chain";
 import { BindingChain } from "#container/binding-chain";
 import { Container } from "#container/container";
+import { inspect, lookupBindings } from "#container/introspect";
 import { BindingRegistry } from "#core/registry";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
@@ -26,11 +27,11 @@ describe("removing every binding for a token", () => {
     container.bind(serviceToken).whenNamed("primary").toConstantValue("named");
     container.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("tagged");
 
-    expect(container.lookupBindings(serviceToken)).toHaveLength(3);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(3);
 
     container.unbind(serviceToken);
 
-    expect(container.lookupBindings(serviceToken)).toHaveLength(0);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(0);
     expect(container.has(serviceToken)).toBe(false);
     // Every index is cleared, not just the default one.
     expect(container.resolveOptional(serviceToken, { name: "primary" })).toBeUndefined();
@@ -67,7 +68,7 @@ describe("removing a single binding by id", () => {
 
     expect(container.resolveOptional(serviceToken, { name: "primary" })).toBeUndefined();
     expect(container.resolve(serviceToken, { tag: ENV_TAG.of("prod") })).toBe("tagged");
-    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(1);
   });
 
   it("drops the token entirely once its last binding is removed", () => {
@@ -148,7 +149,7 @@ describe("a token nobody bound", () => {
     const container = Container.create();
     const unbound = token<number>("registry-unbound");
 
-    expect(container.lookupBindings(unbound)).toEqual([]);
+    expect(lookupBindings(container, unbound)).toEqual([]);
     expect(container.has(unbound)).toBe(false);
   });
 
@@ -159,7 +160,7 @@ describe("a token nobody bound", () => {
     expect(() => {
       container.unbindAll();
     }).not.toThrow();
-    expect(container.inspect().ownBindings).toEqual([]);
+    expect(inspect(container).ownBindings).toEqual([]);
     expect(() => container.rebind(unbound)).toThrow(RebindUnboundTokenError);
     expect(container.resolveOptional(unbound)).toBeUndefined();
 
@@ -176,7 +177,7 @@ describe("a lone default-slot binding and the record it grows into", () => {
     container.bind(serviceToken).toConstantValue("default");
     container.bind(serviceToken).whenTagged(ENV_TAG.of("prod")).toConstantValue("prod");
 
-    expect(container.lookupBindings(serviceToken)).toHaveLength(2);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(2);
     expect(container.resolve(serviceToken)).toBe("default");
     expect(container.resolve(serviceToken, { tags: [ENV_TAG.of("prod")] })).toBe("prod");
   });
@@ -189,7 +190,7 @@ describe("a lone default-slot binding and the record it grows into", () => {
 
     container.unbind(tagged.id());
 
-    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(1);
     expect(container.resolve(serviceToken)).toBe("default");
     expect(() => container.resolve(serviceToken, { tags: [ENV_TAG.of("prod")] })).toThrow(NoMatchingBindingError);
 
@@ -206,7 +207,7 @@ describe("a lone default-slot binding and the record it grows into", () => {
     const first = container.bind(serviceToken).toConstantValue("first");
     container.bind(serviceToken).toConstantValue("second");
 
-    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(1);
     expect(container.resolve(serviceToken)).toBe("second");
     // The displaced binding's id is gone with it.
     expect(() => container.unbind(first.id())).not.toThrow();
@@ -222,12 +223,12 @@ describe("a lone default-slot binding and the record it grows into", () => {
       .when(() => false)
       .toConstantValue("guarded");
 
-    expect(container.lookupBindings(serviceToken)).toHaveLength(2);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(2);
     expect(container.resolve(serviceToken)).toBe("default");
 
     container.unbind(guarded.id());
 
-    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(1);
     expect(container.resolve(serviceToken)).toBe("default");
   });
 
@@ -244,7 +245,7 @@ describe("a lone default-slot binding and the record it grows into", () => {
 
     expect(container.has(loneToken)).toBe(false);
     expect(container.has(recordToken)).toBe(false);
-    expect(container.inspect().ownBindings).toEqual([]);
+    expect(inspect(container).ownBindings).toEqual([]);
   });
 });
 
@@ -262,7 +263,7 @@ describe("last-wins displacement inside a record is answered by slot index", () 
     // The member is untouched; the second default binding took the first's slot through the index.
     expect(container.resolve(serviceToken)).toBe("second");
     expect(container.resolveAll(serviceToken)).toContain("member");
-    expect(container.lookupBindings(serviceToken)).toHaveLength(2);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(2);
   });
 
   it("displaces a two-criterion slot in either declaration order", () => {
@@ -272,7 +273,7 @@ describe("last-wins displacement inside a record is answered by slot index", () 
     container.bind(serviceToken).whenTagged(TIER_TAG.of("gold")).whenNamed("primary").toConstantValue("second");
 
     expect(container.resolve(serviceToken, { name: "primary", tags: [TIER_TAG.of("gold")] })).toBe("second");
-    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(1);
   });
 
   it("re-indexes a displaced default binding restored when a member takes the token", () => {
@@ -289,7 +290,7 @@ describe("last-wins displacement inside a record is answered by slot index", () 
     container.bind(serviceToken).toConstantValue("second-default");
 
     expect(container.resolve(serviceToken)).toBe("second-default");
-    expect(container.lookupBindings(serviceToken)).toHaveLength(2);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(2);
   });
 
   it("displaces a three-criterion slot declared in a different order", () => {
@@ -312,7 +313,7 @@ describe("last-wins displacement inside a record is answered by slot index", () 
       .toConstantValue("second");
 
     expect(container.resolve(serviceToken, { tags: [alpha.of("1"), beta.of("2"), gamma.of("3")] })).toBe("second");
-    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(1);
   });
 });
 

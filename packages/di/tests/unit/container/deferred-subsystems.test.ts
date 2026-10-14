@@ -10,6 +10,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { inspect, lookupBindings } from "#container/introspect";
 import { Module } from "#core/module";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
@@ -22,7 +23,7 @@ describe("inspector built on first use", () => {
   it("answers inspect() on a container that has done nothing else", () => {
     const container = Container.create();
 
-    expect(container.inspect()).toEqual({
+    expect(inspect(container)).toEqual({
       ownBindings: [],
       cachedSingletonCount: 0,
       hasParent: false,
@@ -36,18 +37,18 @@ describe("inspector built on first use", () => {
 
     expect(container.has(serviceToken)).toBe(false);
     expect(container.hasOwn(serviceToken)).toBe(false);
-    expect(container.lookupBindings(serviceToken)).toHaveLength(0);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(0);
 
     container.bind(serviceToken).toConstantValue("value");
 
     expect(container.has(serviceToken)).toBe(true);
-    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(1);
   });
 
   it("reports a parent through a child's own inspector", () => {
     const child = Container.create().createChild();
 
-    expect(child.inspect().hasParent).toBe(true);
+    expect(inspect(child).hasParent).toBe(true);
   });
 });
 

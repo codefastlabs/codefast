@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { inspect } from "#container/introspect";
 import { binding } from "#core/binding-declaration";
 import type { BindingDeclaration } from "#core/binding-declaration";
 import { Module } from "#core/module";
@@ -86,7 +87,7 @@ describe("binding() checks what the compiler cannot reach", () => {
     const container = Container.fromModules(Module.fromBindings("bd-unit:Absent", [declared]));
 
     expect(container.resolve(Port)).toBe(7);
-    expect(container.inspect().ownBindings.map((entry) => entry.scope)).toStrictEqual(["transient"]);
+    expect(inspect(container).ownBindings.map((entry) => entry.scope)).toStrictEqual(["transient"]);
   });
 
   it("keeps the last criterion of a key repeated in whenTagged", () => {

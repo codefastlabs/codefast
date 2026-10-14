@@ -10,16 +10,16 @@
  *     4 async-singleton bindings + `initializeAsync()`.  Measures the warm-up
  *     cost before serving the first request — the "fail fast at startup" pattern.
  *
- *   - `inspect-snapshot` — `container.inspect()` returns a `ContainerSnapshot`
+ *   - `inspect-snapshot` — `inspect(container)` returns a `ContainerSnapshot`
  *     of all bindings in the container.  Each call on a fixed 10-binding
  *     registry represents the introspection cost for dev-tools, health checks,
  *     or dynamic dependency graph rendering.
  *
- *   - `lookup-bindings` — `container.lookupBindings(token)` returns the
+ *   - `lookup-bindings` — `lookupBindings(container, token)` returns the
  *     `BindingSnapshot[]` for a single token without building a full snapshot.
  *     Faster than `inspect()` when only one token's metadata is needed.
  */
-import { Container, token } from "@codefast/di";
+import { Container, inspect, lookupBindings, token } from "@codefast/di";
 
 import { batched } from "#harness/batched";
 import type { AsyncBenchScenario, BenchScenario } from "#scenarios/types";
@@ -79,22 +79,22 @@ function buildInspectSnapshotScenario(): BenchScenario {
   }
 
   // Pre-warm
-  container.inspect();
+  inspect(container);
 
   return {
     id: "inspect-snapshot",
     tier: "contract",
     requires: ["introspection"],
     group: "introspection",
-    what: `container.inspect() over ${String(INSPECT_BINDING_COUNT)}-binding registry → full ContainerSnapshot (codefast-only)`,
+    what: `inspect(container) over ${String(INSPECT_BINDING_COUNT)}-binding registry → full ContainerSnapshot (codefast-only)`,
     batch: INSPECT_BATCH,
     sanity: () => {
-      const snapshot = container.inspect();
+      const snapshot = inspect(container);
       return snapshot.ownBindings.length === INSPECT_BINDING_COUNT;
     },
     build: () =>
       batched(INSPECT_BATCH, () => {
-        container.inspect();
+        inspect(container);
       }),
   };
 }
@@ -116,22 +116,22 @@ function buildLookupBindingsScenario(): BenchScenario {
   }
 
   // Pre-warm
-  container.lookupBindings(lookupMultiToken);
+  lookupBindings(container, lookupMultiToken);
 
   return {
     id: "lookup-bindings",
     tier: "contract",
     requires: ["introspection"],
     group: "introspection",
-    what: `container.lookupBindings(token) returning ${String(LOOKUP_VARIANT_COUNT)} BindingSnapshot entries (codefast-only)`,
+    what: `lookupBindings(container, token) returning ${String(LOOKUP_VARIANT_COUNT)} BindingSnapshot entries (codefast-only)`,
     batch: LOOKUP_BATCH,
     sanity: () => {
-      const result = container.lookupBindings(lookupMultiToken);
+      const result = lookupBindings(container, lookupMultiToken);
       return result.length === LOOKUP_VARIANT_COUNT;
     },
     build: () =>
       batched(LOOKUP_BATCH, () => {
-        container.lookupBindings(lookupMultiToken);
+        lookupBindings(container, lookupMultiToken);
       }),
   };
 }

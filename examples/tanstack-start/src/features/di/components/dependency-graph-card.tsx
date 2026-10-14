@@ -13,7 +13,7 @@ import type { GraphExports } from "#features/di/server/tasks";
 interface DependencyGraphCardProps {
   graph: ReactFlowGraph;
   graphExports: GraphExports;
-  /** Fresh `container.validate()` result — runtime bind/unbind/rebind can change it. */
+  /** Fresh `validate(container)` result — runtime bind/unbind/rebind can change it. */
   validated: boolean;
 }
 

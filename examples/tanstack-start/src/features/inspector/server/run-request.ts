@@ -2,7 +2,7 @@
  * One tenant request, run through a per-request child container, with every slot decision recorded.
  */
 import type { Container } from "@codefast/di";
-import { Container as DiContainer, DiError, token } from "@codefast/di";
+import { Container as DiContainer, DiError, token, validate } from "@codefast/di";
 import { createMiddleware, createServerFn } from "@tanstack/react-start";
 
 import type { BootReport } from "#features/inspector/server/boot";
@@ -141,7 +141,7 @@ function observeSettlementAudit(request: Container): NestedObservation {
 
 function validationReport(request: Container): ValidationReport {
   try {
-    request.validate();
+    validate(request);
 
     return { passed: true, detail: "every binding's dependencies outlive it" };
   } catch (caught) {

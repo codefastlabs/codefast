@@ -1,5 +1,5 @@
 /** The demo container the home page wires live: a small order flow with every scope the library offers. */
-import { Container, injectable, token } from "@codefast/di";
+import { Container, generateDependencyGraph, injectable, token } from "@codefast/di";
 import type { ContainerGraphJson } from "@codefast/di";
 
 /** Configuration the catalog reads; bound as a constant. */
@@ -137,5 +137,5 @@ export function createShop(options: ShopOptions = {}): Shop {
     orderService.transient();
   }
 
-  return { container, graph: container.generateDependencyGraph() };
+  return { container, graph: generateDependencyGraph(container) };
 }

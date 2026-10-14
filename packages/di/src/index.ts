@@ -40,6 +40,7 @@ export type {
 // Container
 export { Container } from "#container/container";
 export type { Container as ContainerInterface, ContainerOptions, ContainerStatic } from "#container/container";
+export { explain, generateDependencyGraph, inspect, lookupBindings, validate } from "#container/introspect";
 
 // Ambient container — the context an `@inject` accessor initializer resolves from. `resolution/context`
 // stays internal: it hands out resolver callbacks, not public values.

@@ -1,6 +1,7 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { Container } from "#container/container";
+import { lookupBindings } from "#container/introspect";
 import { token } from "#core/token";
 import type { BindingScope, ResolutionContext } from "#core/types";
 
@@ -138,7 +139,7 @@ describe("alias bindings expose transient scope in snapshots", () => {
     const container = Container.create();
     container.bind(SourceToken).toConstantValue({ id: 1 });
     container.bind(AliasToken).whenDefault().toAlias(SourceToken);
-    const bindingSnapshots = container.lookupBindings(AliasToken);
+    const bindingSnapshots = lookupBindings(container, AliasToken);
     expect(bindingSnapshots.length).toBeGreaterThan(0);
     expectTypeOf(bindingSnapshots[0]!.scope).toEqualTypeOf<BindingScope>();
     expect(bindingSnapshots[0]!.scope).toBe("transient");

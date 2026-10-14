@@ -1,4 +1,4 @@
-import { toDotGraph } from "@codefast/di";
+import { generateDependencyGraph, inspect, toDotGraph, validate } from "@codefast/di";
 /**
  * Example 13 — Real-World E-Commerce Platform
  *
@@ -37,7 +37,7 @@ import { toDotGraph } from "@codefast/di";
  *   ✅ Tagged bindings for shipping carrier selection
  *   ✅ Child containers per HTTP request (scoped cart, user session)
  *   ✅ Optional injection for optional integrations (analytics, A/B testing)
- *   ✅ container.validate() scope-rule check before serving traffic
+ *   ✅ validate(container) scope-rule check before serving traffic
  *   ✅ container.initializeAsync() eager singleton warm-up
  *   ✅ await using for guaranteed graceful shutdown
  *   ✅ `@injectable` + `@inject` decorators throughout
@@ -45,7 +45,7 @@ import { toDotGraph } from "@codefast/di";
  *   ✅ `@preDestroy` for resource cleanup
  *   ✅ module.import() diamond-dedup (infrastructure modules imported by many contexts)
  *   ✅ whenParentIs constraint for context-aware logger injection
- *   ✅ toDotGraph(container.generateDependencyGraph(...)) for architecture visualization
+ *   ✅ toDotGraph(generateDependencyGraph(container, ...)) for architecture visualization
  *   ✅ resolveOptional for optional A/B test service
  * ```
  *
@@ -2466,7 +2466,7 @@ async function bootstrap() {
   await container.initializeAsync();
 
   // 3. Validate scope rules — catches captive-dependency bugs
-  container.validate();
+  validate(container);
   console.log("[Bootstrap] ✅ Container validated — no scope violations");
 
   // 4. Register event handlers (cross-cutting concerns via EventBus)
@@ -2573,12 +2573,12 @@ async function main(): Promise<void> {
   console.log(`[Catalog] Found ${results.length} results`);
 
   // ── Dependency graph ───────────────────────────────────────────────────────────────────────────────────────────────
-  const dot = toDotGraph(platform.container.generateDependencyGraph());
+  const dot = toDotGraph(generateDependencyGraph(platform.container));
   const lineCount = dot.split("\n").length;
   console.log(`\n[Graph] Dependency graph: ${lineCount} lines (paste at graphviz.org to visualize)`);
 
   // ── Container snapshot ─────────────────────────────────────────────────────────────────────────────────────────────
-  const snapshot = platform.container.inspect();
+  const snapshot = inspect(platform.container);
   console.log(`[Inspect] Total bindings registered: ${snapshot.ownBindings.length}`);
 
   const singletonBindings = snapshot.ownBindings.filter((binding) => binding.scope === "singleton").length;

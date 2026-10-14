@@ -17,7 +17,7 @@
  * doubles, and `generateDependencyGraph`.
  */
 
-import { toDotGraph } from "@codefast/di";
+import { generateDependencyGraph, toDotGraph } from "@codefast/di";
 
 import { AccountRepositoryToken } from "#examples/20-explicit-architecture/application/ports/account-repository.port";
 import { ClockToken } from "#examples/20-explicit-architecture/application/ports/clock.port";
@@ -52,7 +52,7 @@ banner("Example 20 — Meridian Private Bank: the closing-window transfer");
 
 section("Composition root — adapters wired to ports, validated at the edge");
 const container = buildContainer();
-ok("container.validate() passed — every port has a compatible adapter");
+ok("validate(container) passed — every port has a compatible adapter");
 
 section("Open the client account and the settlement account");
 const bank = container.resolve(BankingControllerToken);
@@ -122,4 +122,4 @@ section("The dependency rule, made visible");
 step("The domain ring never imports @codefast/di, even though the outer rings are decorated. Prove it:");
 step('grep -rl "@codefast/di" domain   # → no matches');
 step("Dependency graph as Graphviz DOT (paste into an online viewer):");
-console.log(toDotGraph(container.generateDependencyGraph()));
+console.log(toDotGraph(generateDependencyGraph(container)));

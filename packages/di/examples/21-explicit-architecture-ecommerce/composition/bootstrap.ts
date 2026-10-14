@@ -1,6 +1,6 @@
 /** The runnable entry — NeonCart's Black Friday drop, driven over HTTP and the warehouse CLI. */
 
-import { toDotGraph } from "@codefast/di";
+import { generateDependencyGraph, toDotGraph } from "@codefast/di";
 
 import { PaymentGatewayToken } from "#examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
 import type { PaymentGateway } from "#examples/21-explicit-architecture-ecommerce/application/ports/payment-gateway";
@@ -41,7 +41,7 @@ export async function bootstrap(): Promise<void> {
 
   section("Composition root — validate the wiring");
   const container = createContainer();
-  ok("container.validate() passed — every port has a compatible adapter");
+  ok("validate(container) passed — every port has a compatible adapter");
 
   section("Seed the drop — only 3 pairs of Void Runner X exist worldwide");
   const products = container.resolve(ProductRepositoryToken);
@@ -118,5 +118,5 @@ export async function bootstrap(): Promise<void> {
   step("Decorated classes import @codefast/di, but the domain ring never does. Prove it:");
   step('grep -rl "@codefast/di" domain   # → no matches');
   step("Dependency graph as Graphviz DOT:");
-  console.log(toDotGraph(container.generateDependencyGraph()));
+  console.log(toDotGraph(generateDependencyGraph(container)));
 }

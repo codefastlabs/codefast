@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { explain } from "#container/introspect";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import {
@@ -25,7 +26,7 @@ describe("the rule that settles a registry", () => {
     const container = Container.create();
     const id = container.bind(serviceToken).toConstantValue("lone").id();
 
-    const explanation = container.explain(serviceToken);
+    const explanation = explain(container, serviceToken);
 
     expect(explanation.outcome).toBe("selected");
     expect(explanation.selected?.id).toBe(id);
@@ -41,7 +42,7 @@ describe("the rule that settles a registry", () => {
     container.bind(serviceToken).toConstantValue("default");
     const namedId = container.bind(serviceToken).whenNamed("file").toConstantValue("file").id();
 
-    const explanation = container.explain(serviceToken, { name: "file" });
+    const explanation = explain(container, serviceToken, { name: "file" });
 
     expect(explanation.selected?.id).toBe(namedId);
     expect(explanation.steps[0]?.candidates.map((candidate) => candidate.verdict)).toStrictEqual([
@@ -61,7 +62,7 @@ describe("the rule that settles a registry", () => {
       .toConstantValue("guarded")
       .id();
 
-    const explanation = container.explain(serviceToken);
+    const explanation = explain(container, serviceToken);
 
     expect(explanation.steps[0]?.rule).toBe("sole-predicate");
     expect(explanation.selected?.id).toBe(guardedId);
@@ -77,7 +78,7 @@ describe("the rule that settles a registry", () => {
       .when(() => false)
       .toConstantValue("guarded");
 
-    const explanation = container.explain(serviceToken);
+    const explanation = explain(container, serviceToken);
 
     expect(explanation.steps[0]?.candidates.map((candidate) => candidate.verdict)).toStrictEqual([
       "eligible",
@@ -100,7 +101,7 @@ describe("the rule that settles a registry", () => {
       .id();
     const request = { tags: [REGION.of("eu"), TIER.of("gold")] };
 
-    const explanation = container.explain(serviceToken, request);
+    const explanation = explain(container, serviceToken, request);
 
     expect(explanation.steps[0]?.rule).toBe("most-criteria");
     expect(explanation.selected?.id).toBe(specificId);
@@ -119,7 +120,7 @@ describe("the rule that settles a registry", () => {
       .when(() => true)
       .toConstantValue("second");
 
-    const explanation = container.explain(serviceToken);
+    const explanation = explain(container, serviceToken);
 
     expect(explanation.outcome).toBe("ambiguous");
     expect(explanation.steps[0]?.rule).toBe("ambiguous");
@@ -135,7 +136,7 @@ describe("where the lookup goes", () => {
     const id = parent.bind(serviceToken).toConstantValue("parent").id();
     const child = parent.createChild();
 
-    const explanation = child.explain(serviceToken);
+    const explanation = explain(child, serviceToken);
 
     expect(explanation.steps.map((step) => step.depth)).toStrictEqual([1]);
     expect(explanation.selected?.id).toBe(id);
@@ -149,7 +150,7 @@ describe("where the lookup goes", () => {
     const child = parent.createChild();
     child.bind(serviceToken).toConstantValue("child");
 
-    const explanation = child.explain(serviceToken, { name: "file" });
+    const explanation = explain(child, serviceToken, { name: "file" });
 
     expect(explanation.steps.map((step) => [step.depth, step.rule])).toStrictEqual([
       [0, undefined],
@@ -166,7 +167,7 @@ describe("where the lookup goes", () => {
     container.bind(facade).toAlias(store);
     const replicaId = container.bind(store).whenNamed("replica").toConstantValue("replica").id();
 
-    const explanation = container.explain(facade, { name: "replica" });
+    const explanation = explain(container, facade, { name: "replica" });
 
     expect(explanation.steps.map((step) => [step.tokenName, step.rule])).toStrictEqual([
       ["explain:Facade", "default-alias"],
@@ -183,7 +184,7 @@ describe("where the lookup goes", () => {
     container.bind(first).toAlias(second);
     container.bind(second).toAlias(first);
 
-    expect(container.explain(first).outcome).toBe("alias-cycle");
+    expect(explain(container, first).outcome).toBe("alias-cycle");
     expect(() => container.resolve(first)).toThrow(CircularDependencyError);
   });
 });
@@ -193,7 +194,7 @@ describe("a request that selects nothing", () => {
     const serviceToken = token<string>("explain:Unbound");
     const container = Container.create().createChild();
 
-    const explanation = container.explain(serviceToken);
+    const explanation = explain(container, serviceToken);
 
     expect(explanation).toStrictEqual({
       tokenName: "explain:Unbound",
@@ -209,7 +210,7 @@ describe("a request that selects nothing", () => {
     const container = Container.create();
     container.bind(serviceToken).many().toConstantValue(1);
 
-    const explanation = container.explain(serviceToken);
+    const explanation = explain(container, serviceToken);
 
     expect(explanation.outcome).toBe("unmatched");
     expect(explanation.steps[0]?.candidates.map((candidate) => candidate.verdict)).toStrictEqual(["collection-member"]);
@@ -232,8 +233,8 @@ describe("a request nested in other resolutions", () => {
   it("shows a parent predicate the way the parent's factory meets it", () => {
     const container = auditContainer();
 
-    const nested = container.explain(audit, { ancestors: [settlement] });
-    const topLevel = container.explain(audit);
+    const nested = explain(container, audit, { ancestors: [settlement] });
+    const topLevel = explain(container, audit);
 
     expect(nested.steps[0]?.rule).toBe("sole-predicate");
     expect(topLevel.steps[0]?.candidates.map((candidate) => candidate.verdict)).toStrictEqual([
@@ -247,7 +248,7 @@ describe("a request nested in other resolutions", () => {
   it("throws what resolve would for an ancestor that selects nothing", () => {
     const container = auditContainer();
 
-    expect(() => container.explain(audit, { ancestors: [token<object>("explain:Missing")] })).toThrow(
+    expect(() => explain(container, audit, { ancestors: [token<object>("explain:Missing")] })).toThrow(
       TokenNotBoundError,
     );
   });
@@ -266,7 +267,7 @@ describe("explain() as a read", () => {
       })
       .singleton();
 
-    container.explain(serviceToken);
+    explain(container, serviceToken);
 
     expect(constructed).toBe(0);
   });
@@ -275,6 +276,6 @@ describe("explain() as a read", () => {
     const container = Container.create();
     await container.dispose();
 
-    expect(() => container.explain(token<string>("explain:Disposed"))).toThrow(DisposedContainerError);
+    expect(() => explain(container, token<string>("explain:Disposed"))).toThrow(DisposedContainerError);
   });
 });

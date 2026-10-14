@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BindingChain } from "#container/binding-chain";
 import { Container } from "#container/container";
+import { generateDependencyGraph, inspect, validate } from "#container/introspect";
 import { binding } from "#core/binding-declaration";
 import type { BindingDeclaration } from "#core/binding-declaration";
 import { Module } from "#core/module";
@@ -284,7 +285,7 @@ function rankGraph(graph: ContainerGraphJson, ranks: Map<string, number>): unkno
 }
 
 function observe(container: Container): unknown {
-  const snapshot = container.inspect().ownBindings;
+  const snapshot = inspect(container).ownBindings;
   const ranks = rankIds(snapshot.map((entry) => entry.id));
   const answers: Array<unknown> = [];
   for (const key of KEYS) {
@@ -303,10 +304,10 @@ function observe(container: Container): unknown {
       .toSorted((left, right) => left.tokenName.localeCompare(right.tokenName)),
     answers,
     validate: attempt(() => {
-      container.validate();
+      validate(container);
       return "valid";
     }),
-    graph: rankGraph(container.generateDependencyGraph(), ranks),
+    graph: rankGraph(generateDependencyGraph(container), ranks),
   };
 }
 

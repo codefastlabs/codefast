@@ -1,6 +1,7 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { Container } from "#container/container";
+import { explain } from "#container/introspect";
 import type { SlotNamesOf, Token } from "#core/token";
 import { token } from "#core/token";
 import type { ResolveOptions } from "#core/types";
@@ -48,9 +49,9 @@ describe("a token declaring slot names narrows every `name` it meets", () => {
     expect(() => container.resolve(Named, { name: "consol" })).toThrow(NoMatchingBindingError);
     // @ts-expect-error the options side cannot widen the token's names
     container.has(Named, { name: "consol" });
-    expect(container.explain(Named, { name: "console" }).outcome).toBe("selected");
+    expect(explain(container, Named, { name: "console" }).outcome).toBe("selected");
     // @ts-expect-error the options side cannot widen the token's names
-    container.explain(Named, { name: "consol" });
+    explain(container, Named, { name: "consol" });
     // @ts-expect-error the options side cannot widen the token's names
     inject(Named, { name: "consol" });
     // @ts-expect-error the options side cannot widen the token's names

@@ -9,7 +9,7 @@
  * count so a graph that stopped deriving edges cannot pass as a hit.
  */
 import type { Constructor, Token } from "@codefast/di";
-import { Container, injectable, token } from "@codefast/di";
+import { Container, generateDependencyGraph, injectable, token } from "@codefast/di";
 
 import { batched } from "#harness/batched";
 import type { BenchScenario } from "#scenarios/types";
@@ -69,18 +69,18 @@ function buildGraphContainer(): Container {
 
 function buildGenerateDependencyGraphScenario(): BenchScenario {
   const container = buildGraphContainer();
-  const prewarmed = container.generateDependencyGraph();
+  const prewarmed = generateDependencyGraph(container);
 
   return {
     id: "generate-dependency-graph",
     tier: "contract",
     requires: ["introspection"],
     group: "introspection",
-    what: `container.generateDependencyGraph() over a ${String(GRAPH_SPECS.length)}-node class graph → nodes and their declared-dependency edges (codefast-only)`,
+    what: `generateDependencyGraph(container) over a ${String(GRAPH_SPECS.length)}-node class graph → nodes and their declared-dependency edges (codefast-only)`,
     batch: GRAPH_EXPORT_BATCH,
     // Edges are the point: a node-only count would pass over a graph whose edge walk found nothing.
     sanity: () => {
-      const graph = container.generateDependencyGraph();
+      const graph = generateDependencyGraph(container);
 
       return (
         graph.nodes.length === GRAPH_SPECS.length &&
@@ -90,7 +90,7 @@ function buildGenerateDependencyGraphScenario(): BenchScenario {
     },
     build: () =>
       batched(GRAPH_EXPORT_BATCH, () => {
-        container.generateDependencyGraph();
+        generateDependencyGraph(container);
       }),
   };
 }

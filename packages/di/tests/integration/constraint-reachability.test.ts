@@ -6,6 +6,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { validate } from "#container/introspect";
 import { slotName, tag } from "#core/tag";
 import { token } from "#core/token";
 import { EmptyTagCriteriaError, UnreachableConstraintError } from "#errors";
@@ -47,7 +48,7 @@ describe("a …TaggedAll constraint with no criteria", () => {
   });
 });
 
-describe("container.validate() — a constraint waiting on a slot name", () => {
+describe("validate(container) — a constraint waiting on a slot name", () => {
   it("throws when no binding declares the name the constraint waits for", () => {
     const loggerToken = token<string>("unreachable-name-logger");
     const consumerToken = token<string>("unreachable-name-consumer");
@@ -57,7 +58,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     container.bind(loggerToken).when(whenParentNamed(consumerToken, "no-such-name")).toConstantValue("constrained");
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).toThrow(UnreachableConstraintError);
   });
 
@@ -71,7 +72,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
 
     let caught: unknown;
     try {
-      container.validate();
+      validate(container);
     } catch (error) {
       caught = error;
     }
@@ -99,7 +100,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     container.bind(bystanderToken).whenNamed("reporting").toConstantValue("bystander");
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).toThrow(UnreachableConstraintError);
   });
 
@@ -120,7 +121,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
 
       let caught: unknown;
       try {
-        container.validate();
+        validate(container);
       } catch (error) {
         caught = error;
       }
@@ -145,7 +146,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     container.bind(consumerToken).whenNamed("reporting").toConstantValue("consumer");
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 
@@ -161,7 +162,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
       .toConstantValue("constrained");
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 
@@ -175,7 +176,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     container.bind(consumerToken).whenNamed("reporting").toConstantValue("consumer");
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 
@@ -192,7 +193,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
     child.bind(loggerToken).when(whenParentNamed(consumerToken, "reporting")).toConstantValue("constrained");
 
     expect(() => {
-      child.validate();
+      validate(child);
     }).not.toThrow();
   });
 
@@ -207,7 +208,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
       .toConstantValue("constrained");
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 
@@ -226,7 +227,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
 
     // The composed closure carries both sides' requirements, so the unreachable name still reports.
     expect(() => {
-      container.validate();
+      validate(container);
     }).toThrow(UnreachableConstraintError);
   });
 
@@ -243,7 +244,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
       .toConstantValue("constrained");
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).toThrow(UnreachableConstraintError);
   });
 
@@ -259,7 +260,7 @@ describe("container.validate() — a constraint waiting on a slot name", () => {
       .toConstantValue("constrained");
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
   });
 });

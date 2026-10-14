@@ -7,6 +7,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { Container } from "#container/container";
+import { inspect } from "#container/introspect";
 import { token } from "#core/token";
 
 describe("singleton caching", () => {
@@ -56,7 +57,7 @@ describe("singleton caching", () => {
       .singleton();
 
     expect(container.resolve(serviceToken).n).toBe(2);
-    expect(container.inspect().cachedSingletonCount).toBe(1);
+    expect(inspect(container).cachedSingletonCount).toBe(1);
   });
 
   it("drops the instance on rebind", () => {
@@ -89,13 +90,13 @@ describe("singleton caching", () => {
       .toDynamic(() => 2)
       .singleton();
 
-    expect(container.inspect().cachedSingletonCount).toBe(0);
+    expect(inspect(container).cachedSingletonCount).toBe(0);
     container.resolve(eagerToken);
-    expect(container.inspect().cachedSingletonCount).toBe(1);
+    expect(inspect(container).cachedSingletonCount).toBe(1);
     container.resolve(eagerToken);
-    expect(container.inspect().cachedSingletonCount).toBe(1);
+    expect(inspect(container).cachedSingletonCount).toBe(1);
     container.resolve(lazyToken);
-    expect(container.inspect().cachedSingletonCount).toBe(2);
+    expect(inspect(container).cachedSingletonCount).toBe(2);
   });
 
   it("deactivates every cached singleton on dispose", async () => {
@@ -142,7 +143,7 @@ describe("singleton caching", () => {
     expect(built).toBe(2);
 
     container.unbindAll();
-    expect(container.inspect().cachedSingletonCount).toBe(0);
+    expect(inspect(container).cachedSingletonCount).toBe(0);
 
     container
       .bind(alphaToken)
