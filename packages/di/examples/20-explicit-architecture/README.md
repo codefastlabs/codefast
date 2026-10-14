@@ -126,7 +126,7 @@ an example (or a consumer) has to add.
 | Many subscribers on one port (fan-out) | one `whenNamed` slot each + `injectAll` / resolveAll |
 | Bounded module / layer                 | `Module.create` + `builder.import`                   |
 | Unit of work per request               | `scoped()` binding + `createChild()`                 |
-| Wire-up check before serving traffic   | `container.validate()`                               |
+| Wire-up check before serving traffic   | `validate(container)`                                |
 | Swap an adapter in a test              | `container.rebind(token)`                            |
 | Seeing the dependency rule             | `generateDependencyGraph()` + `toDotGraph()`         |
 

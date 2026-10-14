@@ -425,7 +425,7 @@ fail fast at startup on a config error, and remove lazy-init latency from the fi
 ## `validate` — checking the graph before the first resolve
 
 ```ts
-container.validate();
+validate(container);
 ```
 
 Walks the dependency graph and throws `ScopeViolationError` for any violation of the scope matrix in
@@ -472,6 +472,10 @@ Call `validate()` after loading every module, before serving the first request.
 
 ## Introspection
 
+`has` and `hasOwn` are methods of the container. Everything else that checks or describes a container without resolving
+from it — `validate`, `lookupBindings`, `inspect`, `explain` and `generateDependencyGraph` — is a function that takes
+the container, so a bundle that never calls one leaves it out.
+
 ```ts
 // Check whether there is any binding at all — checks the whole parent chain
 // Returns true if the token has a binding, even if only named/tagged slots (no default)
@@ -484,16 +488,16 @@ container.hasOwn(Logger, { name: "file" });
 
 // Every binding of a token (own only, no walk up to the parent)
 // Returns [] rather than undefined when there is no binding
-const bindings = container.lookupBindings(Logger); // readonly BindingSnapshot[]
+const bindings = lookupBindings(container, Logger); // readonly BindingSnapshot[]
 
 // A snapshot at the moment of the call
-const snapshot = container.inspect(); // ContainerSnapshot
+const snapshot = inspect(container); // ContainerSnapshot
 
 // Why a request selects the binding it does — read-only, nothing is instantiated
-const explanation = container.explain(Logger, { name: "file" }); // ResolutionExplanation
+const explanation = explain(container, Logger, { name: "file" }); // ResolutionExplanation
 
 // The dependency graph as JSON
-const graph = container.generateDependencyGraph({ includeParent: false }); // ContainerGraphJson
+const graph = generateDependencyGraph(container, { includeParent: false }); // ContainerGraphJson
 ```
 
 ### `has(token)` vs `has(token, hint)`
@@ -538,7 +542,7 @@ member, the binding `resolveAll` takes and `resolve` never selects
 
 > **Exact shape:** `src/introspection/inspector.ts` — `ContainerSnapshot`, `BindingSnapshot`.
 
-### `explain(token, options?)` — why this binding and not another
+### `explain(container, token, options?)` — why this binding and not another
 
 `explain()` answers for one request what `resolve(token, options)` would do with it, without instantiating anything: the
 bindings each registry offered, what selection made of each, the rule that settled it, and the binding the request ends
@@ -550,10 +554,10 @@ container.bind(Settlement).toSelf();
 container.bind(Logger).to(ConsoleLogger);
 container.bind(Logger).when(whenParentIs(Settlement)).to(AuditLogger);
 
-container.explain(Logger).steps[0].candidates.map((candidate) => candidate.verdict);
+explain(container, Logger).steps[0].candidates.map((candidate) => candidate.verdict);
 // ["eligible", "predicate-refused"] — no parent, so the predicate refuses
 
-container.explain(Logger, { ancestors: [Settlement] }).steps[0].rule;
+explain(container, Logger, { ancestors: [Settlement] }).steps[0].rule;
 // "sole-predicate" — inside Settlement's factory, the guarded binding wins
 ```
 
@@ -590,7 +594,7 @@ hand. It is the binding-side twin of `injectionSlotToResolveOptions`
 ([`DependencySlot`](foundation-types.md#dependencyslot)).
 
 ```ts
-for (const binding of container.lookupBindings(Logger)) {
+for (const binding of lookupBindings(container, Logger)) {
   const value = container.resolve(Logger, bindingSlotToResolveOptions(binding.slot));
 }
 ```
@@ -644,7 +648,7 @@ slot the edge points at, if the binding declares one). The `label` field is **fo
 
 ## The Container interface
 
-Put together, a container exposes nine groups:
+Put together, a container exposes nine groups of members:
 
 | Group                 | Members                                                                                               |
 | --------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -655,10 +659,13 @@ Put together, a container exposes nine groups:
 | Resolution            | `resolve`, `resolveAsync`, `resolveOptional`, `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync` |
 | Child                 | `createChild`                                                                                         |
 | Disposal              | `dispose`, `[Symbol.asyncDispose]`                                                                    |
-| Initialise & check    | `initializeAsync`, `validate`                                                                         |
-| Introspection         | `has`, `hasOwn`, `lookupBindings`, `inspect`, `generateDependencyGraph`                               |
+| Initialisation        | `initializeAsync`                                                                                     |
+| Introspection         | `has`, `hasOwn`                                                                                       |
 
-At the static level there are three: `create(options?)`, `fromModules(...)`, `fromModulesAsync(...)`. `ContainerOptions`
-currently has only `metadataReader` — defaulting to the decorator reader, and inherited by children.
+Five functions take a container instead: `validate`, `lookupBindings`, `inspect`, `explain` and
+`generateDependencyGraph`. At the static level there are three: `create(options?)`, `fromModules(...)`,
+`fromModulesAsync(...)`. `ContainerOptions` currently has only `metadataReader` — defaulting to the decorator reader,
+and inherited by children.
 
-> **Exact shape:** `src/container/container.ts` — `Container`, `ContainerOptions`, `ContainerStatic`.
+> **Exact shape:** `src/container/container.ts` — `Container`, `ContainerOptions`, `ContainerStatic`;
+> `src/container/introspect.ts` — the functions that take a container.

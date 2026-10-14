@@ -12,7 +12,7 @@ This is the integration example. It wires together every concept from Examples 0
 - **Infrastructure layer** — async module fetches config, opens DB connection, warms cache
 - **Domain layer** — repositories, services, auth
 - **Request handling** — scoped child container per HTTP request, middleware pipeline resolved with `resolveAll`
-- **Validation** — `container.validate()` before serving traffic
+- **Validation** — `validate(container)` before serving traffic
 - **Graceful shutdown** — `await using` triggers `onDeactivation` hooks in reverse order
 
 ---
@@ -143,7 +143,7 @@ binding (`RequestContext`). Scoped services resolve from the child, singletons r
 
 ```ts
 await container.initializeAsync(); // eagerly resolve all singletons + run onActivation hooks
-container.validate(); // throw ScopeViolationError if any captive dependency detected
+validate(container); // throw ScopeViolationError if any captive dependency detected
 
 // Now safe to start accepting requests
 ```
@@ -162,9 +162,9 @@ await using container = await Container.fromModulesAsync(...);
 ### Dependency graph for debugging
 
 ```ts
-import { toDotGraph } from "@codefast/di";
+import { generateDependencyGraph, toDotGraph } from "@codefast/di";
 
-const graph = container.generateDependencyGraph();
+const graph = generateDependencyGraph(container);
 const dot = toDotGraph(graph);
 // Paste into https://graphviz.online to visualize the full wiring
 ```

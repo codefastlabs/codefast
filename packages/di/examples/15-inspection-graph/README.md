@@ -1,7 +1,7 @@
 # Example 15 — Container Inspection & Graph Visualization
 
-**Concepts:** `container.inspect()`, `container.lookupBindings()`, `container.has()` / `hasOwn()`,
-`container.generateDependencyGraph()`, `toDotGraph()`, `toCytoscapeGraph()`, startup audit helper
+**Concepts:** `inspect(container)`, `lookupBindings(container, token)`, `container.has()` / `hasOwn()`,
+`generateDependencyGraph(container)`, `toDotGraph()`, `toCytoscapeGraph()`, startup audit helper
 
 ---
 
@@ -50,10 +50,10 @@ graph TB
     Q4["child.hasOwn(RequestScopedToken)"] --> Yes3["true ✓"]
 ```
 
-## `container.inspect()` — full snapshot
+## `inspect(container)` — full snapshot
 
 ```ts
-const snapshot = container.inspect();
+const snapshot = inspect(container);
 
 console.log(snapshot.hasParent); // is this a child container?
 console.log(snapshot.isDisposed); // has dispose() been called?
@@ -72,10 +72,10 @@ for (const binding of snapshot.ownBindings) {
 
 ---
 
-## `container.lookupBindings(token)` — narrow to one token
+## `lookupBindings(container, token)` — narrow to one token
 
 ```ts
-const loggerBindings = container.lookupBindings(LoggerToken);
+const loggerBindings = lookupBindings(container, LoggerToken);
 // Returns BindingSnapshot[] for all bindings under LoggerToken
 
 for (const b of loggerBindings) {
@@ -109,7 +109,7 @@ container shadows a parent binding.
 const child = parent.createChild();
 child.bind(RequestScopedToken).toConstantValue({ requestId: "req-42" });
 
-const childSnapshot = child.inspect();
+const childSnapshot = inspect(child);
 console.log(childSnapshot.hasParent); // true
 console.log(childSnapshot.ownBindings.length); // 1 — only what the child adds
 
@@ -125,7 +125,7 @@ child.hasOwn(RequestScopedToken); // true
 ## Dependency graph
 
 ```ts
-const graph = container.generateDependencyGraph();
+const graph = generateDependencyGraph(container);
 // graph.nodes — one entry per binding
 // graph.edges — directed edges from dependent → dependency
 ```

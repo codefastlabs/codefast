@@ -26,7 +26,7 @@ flowchart TD
     Q -->|"resolve() on async binding"| E3["AsyncResolutionError\ncode: ASYNC_RESOLUTION\n→ use resolveAsync()"]
     Q -->|"A → B → A cycle"| E4["CircularDependencyError\ncode: CIRCULAR_DEPENDENCY\nerr.cycle shows full path"]
     Q -->|"to() / toSelf() without @injectable"| E5["MissingMetadataError\ncode: MISSING_METADATA\n→ add @injectable or use toDynamic"]
-    Q -->|"singleton depends on scoped/transient"| E6["ScopeViolationError\ncode: SCOPE_VIOLATION\n→ caught by container.validate()"]
+    Q -->|"singleton depends on scoped/transient"| E6["ScopeViolationError\ncode: SCOPE_VIOLATION\n→ caught by validate(container)"]
     Q -->|"load() called with AsyncModule"| E7["AsyncModuleLoadError\ncode: ASYNC_MODULE_LOAD\n→ use loadAsync()"]
 ```
 
@@ -156,7 +156,7 @@ container.bind(ScopedServiceToken).to(ScopedService).scoped();
 container.bind(SingletonConsumerToken).to(SingletonConsumer).singleton();
 // SingletonConsumer injects ScopedService ← violation
 
-container.validate(); // ← throws ScopeViolationError before any request is served
+validate(container); // ← throws ScopeViolationError before any request is served
 ```
 
 Call `validate()` at startup (after `initializeAsync`) to catch this class of bug before production traffic hits it.

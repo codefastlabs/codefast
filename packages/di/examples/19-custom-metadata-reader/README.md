@@ -173,8 +173,8 @@ followed by `load(...)` is the equivalent.
 Because the static checks read the same reader, table-declared wiring is a first-class citizen:
 
 ```ts
-app.validate(); // checks table-declared params too
-const graph = app.generateDependencyGraph();
+validate(app); // checks table-declared params too
+const graph = generateDependencyGraph(app);
 // Pool → Config [0]
 // Pool → Logger [1]
 // ReportService → Pool [0]

@@ -432,7 +432,7 @@ on captive dependencies, and on constraints no request can satisfy, before the f
 matches, or a cycle.
 
 ```ts
-container.validate(); // throws on the first violation — ScopeViolationError, TokenNotBoundError, …
+validate(container); // throws on the first violation — ScopeViolationError, TokenNotBoundError, …
 ```
 
 A transient or scoped consumer's dependencies are left to `resolve()`, because a child container may still bind them.
@@ -445,17 +445,17 @@ deactivation hook may be async, so the container implements `Symbol.asyncDispose
 
 ### Introspection
 
-`container.inspect()` returns a `ContainerSnapshot`; `container.lookupBindings(token)` returns the snapshots of one
-token's bindings; and `container.generateDependencyGraph()` returns a JSON graph. Adapters render that graph for common
+`inspect(container)` returns a `ContainerSnapshot`; `lookupBindings(container, token)` returns the snapshots of one
+token's bindings; and `generateDependencyGraph(container)` returns a JSON graph. Adapters render that graph for common
 viewers: `toDotGraph`, `toMermaidGraph`, `toCytoscapeGraph`, and `toReactFlowGraph`.
 
-`container.explain(token, options)` answers why a request selects the binding it does, without instantiating anything:
+`explain(container, token, options)` answers why a request selects the binding it does, without instantiating anything:
 every candidate each registry offered and what selection made of it, the rule that decided, and the binding it ends on.
 It evaluates `when()` predicates the way `resolve` does, and `options.ancestors` explains a request made from inside
 other resolutions, so a predicate that reads the parent sees the one it would:
 
 ```ts
-const explanation = container.explain(Logger, { ancestors: [Settlement] });
+const explanation = explain(container, Logger, { ancestors: [Settlement] });
 
 explanation.selected?.id; // the binding `resolve` would answer with
 explanation.steps[0]?.rule; // "sole-predicate": the only candidate with a `when()` beat the rest

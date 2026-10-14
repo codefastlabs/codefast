@@ -111,7 +111,7 @@ return await next({ context: { scope } }); // not `return next(…)`
 ### A singleton must not depend on request state
 
 A singleton built during request A keeps request A's `scoped` instance forever — a _captive dependency_. Call
-`root.validate()` once at boot, after every module is loaded: it walks the graph and throws `ScopeViolationError` for a
+`validate(root)` once at boot, after every module is loaded: it walks the graph and throws `ScopeViolationError` for a
 singleton that reaches a `scoped` or `transient` binding. It does not report a `scoped` service whose `RequestContext`
 is unbound on the root — that binding arrives with each child, which is the point.
 

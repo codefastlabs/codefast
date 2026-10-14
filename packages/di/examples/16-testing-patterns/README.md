@@ -1,7 +1,7 @@
 # Example 16 — Testing Patterns
 
 **Concepts:** fresh containers per test, `rebind()` for targeted stub injection, child container overrides, module-based
-setup with factory helper, `container.validate()` as a wiring smoke-test
+setup with factory helper, `validate(container)` as a wiring smoke-test
 
 ---
 
@@ -31,7 +31,7 @@ flowchart TD
     Q1 -->|"Most, repeated setup"| D["Pattern D\nFactory helper + rebind()\n— DRY across many tests"]
 
     Start --> Q3{Is the wiring\nconfiguration correct?}
-    Q3 -->|"Verify at suite start"| E["Pattern E\ncontainer.validate()\n— catches scope violations\nbefore runtime"]
+    Q3 -->|"Verify at suite start"| E["Pattern E\nvalidate(container)\n— catches scope violations\nbefore runtime"]
 ```
 
 ### Container isolation levels
@@ -117,7 +117,7 @@ it("child container shadows PaymentGateway without mutating parent", () => {
   expect(stubPayment.capturedPayments).toHaveLength(1);
 
   // Parent is untouched
-  const parentBinding = productionContainer.lookupBindings(PaymentGatewayToken);
+  const parentBinding = lookupBindings(productionContainer, PaymentGatewayToken);
   expect(parentBinding[0]?.kind).toBe("class"); // still the real class
 });
 ```
@@ -164,7 +164,7 @@ the error `resolve()` would for one that cannot resolve — a missing or mismatc
 ```ts
 it("fully-wired container passes validate()", () => {
   const c = Container.fromModules(CoreModule);
-  expect(() => c.validate()).not.toThrow();
+  expect(() => validate(c)).not.toThrow();
 });
 
 it("an incomplete singleton graph fails validate()", () => {
@@ -172,7 +172,7 @@ it("an incomplete singleton graph fails validate()", () => {
   c.bind(OrderServiceToken).to(OrderProcessor).singleton();
   // intentionally missing: UserService, PaymentGateway, EmailService
 
-  expect(() => c.validate()).toThrow(TokenNotBoundError); // Path: testing-patterns:OrderService → testing-patterns:UserService
+  expect(() => validate(c)).toThrow(TokenNotBoundError); // Path: testing-patterns:OrderService → testing-patterns:UserService
 });
 ```
 

@@ -66,7 +66,7 @@ shorter-lived dependency, which silently freezes that dependency for the consume
 | `scoped`              | ✅ OK       | ✅ OK        | ✅ OK        |
 | `transient`           | ✅ OK       | ✅ OK        | ✅ OK        |
 
-`container.validate()` walks the whole dependency graph and throws `ScopeViolationError` for any violation. See
+`validate(container)` walks the whole dependency graph and throws `ScopeViolationError` for any violation. See
 [`validate`](container.md#validate--checking-the-graph-before-the-first-resolve) for the limits of `validate()`.
 
 > **Rationale — why `transient` is the default.** It is the safest row of the matrix — a `transient` consumer may depend
