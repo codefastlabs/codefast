@@ -3,7 +3,7 @@
  */
 import type { Container } from "@codefast/di";
 import { Container as DiContainer, DiError, token } from "@codefast/di";
-import { createServerFn } from "@tanstack/react-start";
+import { createMiddleware, createServerFn } from "@tanstack/react-start";
 
 import type { BootReport } from "#features/inspector/server/boot";
 import { bindPricingConfig, warmAndReport } from "#features/inspector/server/boot";
@@ -152,13 +152,25 @@ function validationReport(request: Container): ValidationReport {
   }
 }
 
-async function runRequest(input: RequestInput): Promise<RequestOutcome> {
+/**
+ * Function middleware giving each server-function call its own child container, disposed once the handler settles.
+ *
+ * @remarks Scoped bindings live and die with the child; the catalog stays on the root.
+ */
+const requestScopeMiddleware = createMiddleware({ type: "function" }).server(async ({ next }) => {
+  const root = await getRoot();
+  await using scope = root.container.createChild();
+
+  scope.bind(requestIdToken).toConstantValue(nextId());
+
+  // Awaited inside the block, so the handler has finished with the scope before it is disposed.
+  return await next({ context: { scope } });
+});
+
+async function runRequest(request: Container, input: RequestInput): Promise<RequestOutcome> {
   const root = await getRoot();
   const context: TenantContext = { tenant: input.tenant, region: input.region, tier: input.tier };
-  // A child per request: scoped bindings live and die with it, the catalog stays on the parent.
-  const request = root.container.createChild();
 
-  request.bind(requestIdToken).toConstantValue(nextId());
   // The tenant is a binding, so Settlement can read it instead of being handed it.
   request.bind(tenantContextToken).toConstantValue(context);
 
@@ -213,6 +225,7 @@ async function runRequest(input: RequestInput): Promise<RequestOutcome> {
 }
 
 export const runRequestServerFn = createServerFn({ method: "POST" })
+  .middleware([requestScopeMiddleware])
   .validator((input: RequestInput): RequestInput => ({
     tenant: String(input.tenant).slice(0, 40),
     region: REGIONS.includes(input.region) ? input.region : "eu",
@@ -220,4 +233,4 @@ export const runRequestServerFn = createServerFn({ method: "POST" })
     fraudScreening: input.fraudScreening === true,
     introduceCaptive: input.introduceCaptive === true,
   }))
-  .handler(async ({ data }): Promise<RequestOutcome> => runRequest(data));
+  .handler(async ({ context, data }): Promise<RequestOutcome> => runRequest(context.scope, data));

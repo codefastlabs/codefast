@@ -200,7 +200,8 @@ Nothing here is normative. It is intent, and intent is not a commitment — what
 everything above this section.
 
 Framework adapter packages are **not** planned. A per-request scope is `createChild()` plus `await using`
-([Child containers](container.md#child-containers)) — a pattern to document, not a package to publish.
+([Child containers](container.md#child-containers)) — a pattern, not a package, documented in
+[Example 22](../examples/22-per-request-scope/README.md) with a TanStack Start middleware.
 
 ---
 

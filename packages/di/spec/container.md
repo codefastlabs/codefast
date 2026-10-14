@@ -337,18 +337,23 @@ cached, latest first and before its own singletons, with the hooks of the contai
 container whose hooks activated it. The pattern for request scope in a web framework:
 
 ```ts
-// One child container per request
-app.use(async (req, res, next) => {
+// One child container per request, in a middleware whose `next()` settles when the handler does
+app.use(async (ctx, next) => {
   await using requestScope = container.createChild();
-  requestScope.bind(RequestContext).toConstantValue({ req, res });
-  req.container = requestScope;
-  next();
+  requestScope.bind(RequestContext).toConstantValue({ request: ctx.request });
+  ctx.container = requestScope;
+  await next(); // the handler runs here, so the scope is still open
 });
 
 // The handler uses requestScope
-const handler = req.container.resolve(UserController);
-// When the request ends, await using calls requestScope.dispose() for you
+const handler = ctx.container.resolve(UserController);
+// When the middleware's block exits, await using calls requestScope.dispose() for you
 ```
+
+The scope lives exactly as long as the block that opened it, so the block must not exit before the handler finishes: a
+middleware that calls `next()` without awaiting it — or returns `next()` un-awaited — disposes the scope under a handler
+still running. [Example 22](../examples/22-per-request-scope/README.md) is the full guide, with TanStack Start server
+functions and server routes.
 
 > **The cost of `createChild()`.** `createChild()` creates one new container object holding a parent reference — O(1),
 > with no binding copies. `dispose()` only clears the child's singleton cache. The pattern is safe for high-throughput
