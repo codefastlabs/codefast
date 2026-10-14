@@ -5,15 +5,27 @@
  * container — useful for debugging, architecture audits, and developer tooling.
  *
  * Covers:
- * - container.inspect()        → ContainerSnapshot (binding list + cache counts)
- * - container.lookupBindings() → BindingSnapshot[] for a specific token
+ * - inspect(container)        → ContainerSnapshot (binding list + cache counts)
+ * - lookupBindings(container, token) → BindingSnapshot[] for a specific token
  * - container.has() / hasOwn() → existence checks with optional hints
- * - container.generateDependencyGraph() → ContainerGraphJson
+ * - generateDependencyGraph(container) → ContainerGraphJson
  * - toDotGraph()               → Graphviz DOT string (paste into graphviz.online)
  * - toCytoscapeGraph()         → Cytoscape.js elements (drop into a browser app)
  */
 
-import { Container, inject, injectable, Module, toCytoscapeGraph, toDotGraph, token, tokenName } from "@codefast/di";
+import {
+  Container,
+  generateDependencyGraph,
+  inject,
+  injectable,
+  inspect,
+  lookupBindings,
+  Module,
+  toCytoscapeGraph,
+  toDotGraph,
+  token,
+  tokenName,
+} from "@codefast/di";
 
 import { item, ok, section, step } from "#examples/support/log";
 
@@ -140,12 +152,10 @@ const container = Container.fromModules(InfraModule, AppModule);
 container.resolve(UserServiceToken);
 container.resolve(AnalyticsToken);
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 1. container.inspect() — full snapshot of the container state
-// ─────────────────────────────────────────────────────────────────────────────
+// ── 1. inspect(container) — full snapshot of the container state ─────────────────────────────────────────────────────
 
 section("ContainerSnapshot");
-const snapshot = container.inspect();
+const snapshot = inspect(container);
 
 item("hasParent", snapshot.hasParent);
 item("isDisposed", snapshot.isDisposed);
@@ -163,10 +173,10 @@ for (const binding of snapshot.ownBindings) {
   console.log(`  ${binding.tokenName.padEnd(16)} kind=${binding.kind.padEnd(10)} scope=${binding.scope}${slotInfo}`);
 }
 
-// ── 2. container.lookupBindings() — narrow to a specific token ───────────────────────────────────────────────────────
+// ── 2. lookupBindings(container, token) — narrow to a specific token ─────────────────────────────────────────────────
 
 section("lookupBindings for LoggerToken");
-const loggerBindings = container.lookupBindings(LoggerToken);
+const loggerBindings = lookupBindings(container, LoggerToken);
 for (const binding of loggerBindings) {
   console.log(`  kind=${binding.kind}, scope=${binding.scope}, id=${binding.id}`);
 }
@@ -200,7 +210,7 @@ const RequestScopedToken = token<{ requestId: string }>("inspection-graph:Reques
 const childContainer = container.createChild();
 childContainer.bind(RequestScopedToken).toConstantValue({ requestId: "req-42" });
 
-const childSnapshot = childContainer.inspect();
+const childSnapshot = inspect(childContainer);
 item("child hasParent", childSnapshot.hasParent);
 item("child ownBindings count", childSnapshot.ownBindings.length);
 
@@ -216,7 +226,7 @@ item("child.hasOwn(RequestScopedToken)", childContainer.hasOwn(RequestScopedToke
 // ─────────────────────────────────────────────────────────────────────────────
 
 section("Dependency graph (DOT)");
-const graph = container.generateDependencyGraph();
+const graph = generateDependencyGraph(container);
 console.log(`Graph nodes: ${graph.nodes.length}, edges: ${graph.edges.length}`);
 
 const dot = toDotGraph(graph);

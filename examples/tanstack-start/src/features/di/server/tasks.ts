@@ -1,6 +1,16 @@
 /** The DI board's server functions — per-request child containers over the shared domain modules. */
 
-import { Container, toCytoscapeGraph, toDotGraph, toMermaidGraph, toReactFlowGraph } from "@codefast/di";
+import {
+  Container,
+  generateDependencyGraph,
+  inspect,
+  lookupBindings,
+  toCytoscapeGraph,
+  toDotGraph,
+  toMermaidGraph,
+  toReactFlowGraph,
+  validate,
+} from "@codefast/di";
 import type { ContainerGraphJson, ReactFlowGraph } from "@codefast/di";
 import { createServerFn } from "@tanstack/react-start";
 
@@ -56,13 +66,13 @@ export interface BoardSnapshot {
   graph: ReactFlowGraph;
   /** The same graph as portable sources, one per adapter, for the export panel. */
   graphExports: GraphExports;
-  /** Result of `container.validate()` for this snapshot — runtime rebinding can change it. */
+  /** Result of `validate(container)` for this snapshot — runtime rebinding can change it. */
   validated: boolean;
   /** Validation errors from the last add attempt — empty when nothing was rejected. */
   validationErrors: Array<string>;
   /** Whether the optional MetricsExporter dependency is bound. */
   metricsEnabled: boolean;
-  /** Serialized `container.inspect()` output for the inspector panel. */
+  /** Serialized `inspect(container)` output for the inspector panel. */
   bindings: Array<BindingInfo>;
   /** Two resolves of the transient IdGenerator, proving they differ. */
   transientProof: TransientProof;
@@ -77,10 +87,10 @@ function getRootContainer(): Container {
     const container = Container.fromModules(infrastructureModule, validationModule, domainModule);
 
     // Detect captive dependencies (e.g. a singleton depending on a scoped binding) up front.
-    container.validate();
+    validate(container);
 
     // lookupBindings surfaces how many implementations back the multi-bound validator token.
-    const validatorCount = container.lookupBindings(TaskValidatorToken).length;
+    const validatorCount = lookupBindings(container, TaskValidatorToken).length;
     const log = container.resolve(ActivityLogToken);
 
     log.record(`registered ${validatorCount} task validators`);
@@ -127,7 +137,7 @@ function stabilizeNodeIds(graph: ContainerGraphJson): ContainerGraphJson {
 
 /** Every adapter view of the request child's wiring — its overrides plus the root chain. */
 function dependencyViews(container: Container): Pick<BoardSnapshot, "graph" | "graphExports"> {
-  const stable = stabilizeNodeIds(container.generateDependencyGraph({ includeParent: true }));
+  const stable = stabilizeNodeIds(generateDependencyGraph(container, { includeParent: true }));
 
   return {
     graph: toReactFlowGraph(stable),
@@ -140,9 +150,9 @@ function dependencyViews(container: Container): Pick<BoardSnapshot, "graph" | "g
   };
 }
 
-/** Serialize `container.inspect()` into a plain, client-safe binding list. */
+/** Serialize `inspect(container)` into a plain, client-safe binding list. */
 function describeBindings(container: Container): Array<BindingInfo> {
-  return container.inspect().ownBindings.map((binding) => ({
+  return inspect(container).ownBindings.map((binding) => ({
     token: binding.tokenName,
     scope: binding.scope,
     kind: binding.kind,
@@ -188,7 +198,7 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
   let validated = true;
 
   try {
-    root.validate();
+    validate(root);
   } catch {
     validated = false;
   }

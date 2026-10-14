@@ -11,7 +11,16 @@
  * - Graceful shutdown with await using
  */
 
-import { Container, inject, injectable, Module, toDotGraph, token } from "@codefast/di";
+import {
+  Container,
+  generateDependencyGraph,
+  inject,
+  injectable,
+  Module,
+  toDotGraph,
+  token,
+  validate,
+} from "@codefast/di";
 
 // ── Domain types ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -250,7 +259,7 @@ async function createServer() {
   await container.initializeAsync();
 
   // Validate scope rules (singleton → scoped violations, etc.)
-  container.validate();
+  validate(container);
   console.log("[Server] container validated, ready to serve\n");
 
   async function handleRequest(request: HttpRequest): Promise<HttpResponse> {
@@ -310,7 +319,7 @@ async function main(): Promise<void> {
   console.log("Response 2:", JSON.stringify(unauthorizedResponse));
 
   // Introspect dependency graph
-  const dotGraph = toDotGraph(server.container.generateDependencyGraph());
+  const dotGraph = toDotGraph(generateDependencyGraph(server.container));
   console.log(`\nDOT graph (${dotGraph.split("\n").length} lines, paste at graphviz.org)`);
 }
 

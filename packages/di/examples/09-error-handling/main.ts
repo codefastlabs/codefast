@@ -10,7 +10,7 @@
  * - AsyncResolutionError — sync resolve() on async binding
  * - CircularDependencyError — A → B → A cycle
  * - MissingMetadataError — .to() / .toSelf() without `@injectable`
- * - ScopeViolationError  — container.validate() detects captive dependency
+ * - ScopeViolationError  — validate(container) detects captive dependency
  * - AsyncModuleLoadError — load() called with AsyncModule
  */
 
@@ -27,6 +27,7 @@ import {
   ScopeViolationError,
   token,
   TokenNotBoundError,
+  validate,
 } from "@codefast/di";
 
 import { caughtError, item, ok, section } from "#examples/support/log";
@@ -210,7 +211,7 @@ scopeViolationContainer.bind(SingletonConsumerToken).to(SingletonConsumer).singl
 
 try {
   // validate() checks the dependency graph for scope violations
-  scopeViolationContainer.validate();
+  validate(scopeViolationContainer);
 } catch (error) {
   caughtError("singleton depends on scoped (captive dependency)", error);
   item("Is ScopeViolationError", error instanceof ScopeViolationError);

@@ -1,3 +1,4 @@
+import { inspect } from "@codefast/di";
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps } from "react";
 
@@ -6,7 +7,7 @@ import { createShop } from "#features/home/demos/shop";
 const RENDERERS = ["DOT", "Mermaid", "Cytoscape", "React Flow"];
 
 // inspect() reads bindings only, so the snapshot is the same on the server and in the browser.
-const SNAPSHOT = createShop().container.inspect();
+const SNAPSHOT = inspect(createShop().container);
 
 type IntrospectionCardProps = Omit<ComponentProps<"article">, "children">;
 

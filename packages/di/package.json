@@ -80,6 +80,11 @@
       "types": "./dist/container/container.d.ts",
       "import": "./dist/container/container.js"
     },
+    "./container/introspect": {
+      "source": "./src/container/introspect.ts",
+      "types": "./dist/container/introspect.d.ts",
+      "import": "./dist/container/introspect.js"
+    },
     "./core/binding": {
       "source": "./src/core/binding.ts",
       "types": "./dist/core/binding.d.ts",
@@ -214,6 +219,11 @@
       "source": "./src/introspection/inspector.ts",
       "types": "./dist/introspection/inspector.d.ts",
       "import": "./dist/introspection/inspector.js"
+    },
+    "./introspection/validation": {
+      "source": "./src/introspection/validation.ts",
+      "types": "./dist/introspection/validation.d.ts",
+      "import": "./dist/introspection/validation.js"
     },
     "./lifecycle/hooks": {
       "source": "./src/lifecycle/hooks.ts",

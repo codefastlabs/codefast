@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { generateDependencyGraph } from "#container/introspect";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
@@ -15,7 +16,7 @@ describe("toReactFlowGraph", () => {
     container.bind(configToken).toConstantValue(1);
     container.bind(serviceToken).toResolved((config) => ({ config }), [configToken]);
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const flow = toReactFlowGraph(graph);
 
     expect(flow.nodes).toHaveLength(graph.nodes.length);
@@ -40,7 +41,7 @@ describe("toReactFlowGraph", () => {
     const container = Container.create();
     container.bind(Service).toSelf().singleton();
 
-    const flow = toReactFlowGraph(container.generateDependencyGraph());
+    const flow = toReactFlowGraph(generateDependencyGraph(container));
     const placeholder = flow.nodes.find((node) => node.data.label === "metrics");
 
     expect(flow.nodes.every((node) => node.data.tokenKey.length > 0)).toBe(true);
@@ -55,7 +56,7 @@ describe("toReactFlowGraph", () => {
     container.bind(depToken).whenNamed("primary").toConstantValue("primary-value");
     container.bind(consumerToken).toResolved((dep: string) => ({ dep }), [inject(depToken, { name: "primary" })]);
 
-    const flow = toReactFlowGraph(container.generateDependencyGraph());
+    const flow = toReactFlowGraph(generateDependencyGraph(container));
     const namedEdge = flow.edges.find((edge) => edge.slotName === "primary");
 
     expect(namedEdge).toBeDefined();

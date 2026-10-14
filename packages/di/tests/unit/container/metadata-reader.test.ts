@@ -7,6 +7,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { generateDependencyGraph, validate } from "#container/introspect";
 import { token } from "#core/token";
 import type { Constructor } from "#core/types";
 import { InvalidMetadataError, MissingMetadataError } from "#errors";
@@ -159,10 +160,10 @@ describe("ContainerOptions.metadataReader", () => {
     container.bind(Pool).toSelf().singleton();
 
     expect(() => {
-      container.validate();
+      validate(container);
     }).not.toThrow();
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const poolNode = graph.nodes.find((node) => node.tokenName === "Pool");
     const dsnNode = graph.nodes.find((node) => node.tokenName === "metadata-reader.dsn");
 
@@ -222,7 +223,7 @@ describe("MetadataReaderToken binding", () => {
 
     // A reader is fixed when the resolver is built, so introspection cannot disagree with resolution:
     // the table's Pool params are invisible here exactly as they are to resolve().
-    expect(container.generateDependencyGraph().edges).toEqual([]);
+    expect(generateDependencyGraph(container).edges).toEqual([]);
   });
 
   it("reaches a child, whose resolver is built after the binding exists", () => {

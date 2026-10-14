@@ -31,7 +31,7 @@ export function ScopesCard({ className, ...props }: ScopesCardProps) {
       </p>
       <ScrollFade className="rounded-xl bg-ui-surface [--scroll-fade-color:var(--ui-surface)]">
         <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-ui-fg">
-          {`container.bind(RequestContextToken).to(RequestContext).scoped();\ncontainer.bind(OrderServiceToken).to(OrderService).${fixed ? "transient" : "singleton"}();\ncontainer.validate();`}
+          {`container.bind(RequestContextToken).to(RequestContext).scoped();\ncontainer.bind(OrderServiceToken).to(OrderService).${fixed ? "transient" : "singleton"}();\nvalidate(container);`}
         </pre>
       </ScrollFade>
       <DemoVerdict tone={message === null ? "pass" : "caught"}>

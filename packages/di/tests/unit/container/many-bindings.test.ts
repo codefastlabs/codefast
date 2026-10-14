@@ -6,6 +6,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { lookupBindings } from "#container/introspect";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import { ManyBindingSlotError, NoMatchingBindingError } from "#errors";
@@ -21,7 +22,7 @@ describe("many() bindings", () => {
     container.bind(strategyToken).many().toConstantValue(3);
 
     expect(container.resolveAll(strategyToken)).toEqual([1, 2, 3]);
-    expect(container.lookupBindings(strategyToken).map((snapshot) => snapshot.isMany)).toEqual([true, true, true]);
+    expect(lookupBindings(container, strategyToken).map((snapshot) => snapshot.isMany)).toEqual([true, true, true]);
   });
 
   it("are never what a single resolve selects", () => {

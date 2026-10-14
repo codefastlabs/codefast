@@ -17,6 +17,7 @@ import {
   preDestroy,
   ScopeViolationError,
   token,
+  validate,
 } from "@codefast/di";
 
 import { banner, caughtError, item, ok, section, step } from "#examples/support/log";
@@ -102,7 +103,7 @@ function createRoot(): Container {
   // Declared once on the root; the instance belongs to whichever child resolves it first.
   root.bind(UnitOfWorkToken).to(UnitOfWork).scoped();
   root.bind(OrderServiceToken).to(OrderService).scoped();
-  root.validate();
+  validate(root);
 
   return root;
 }
@@ -183,7 +184,7 @@ async function main(): Promise<void> {
       .toResolved((orders) => orders, [OrderServiceToken])
       .singleton();
     try {
-      captive.validate();
+      validate(captive);
     } catch (error) {
       if (!(error instanceof ScopeViolationError)) {
         throw error;

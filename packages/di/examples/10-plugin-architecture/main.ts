@@ -46,7 +46,7 @@
  *   └───────────────────────────────────────────────────────────┘
  */
 
-import { Container, inject, injectable, Module, token } from "@codefast/di";
+import { Container, inject, injectable, Module, token, validate } from "@codefast/di";
 
 import { ok, section } from "#examples/support/log";
 
@@ -359,7 +359,7 @@ class Platform {
 
     // Eagerly warm up all singletons before serving traffic
     await this.#container.initializeAsync();
-    this.#container.validate();
+    validate(this.#container);
 
     // Register plugin descriptors directly on the container with named slots.
     this.#container

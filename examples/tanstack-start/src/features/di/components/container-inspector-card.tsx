@@ -8,7 +8,7 @@ interface ContainerInspectorCardProps {
   transientProof: TransientProof;
 }
 
-/** Every binding on the root container with its scope and kind, from `container.inspect()`. */
+/** Every binding on the root container with its scope and kind, from `inspect(container)`. */
 export function ContainerInspectorCard({ bindings, transientProof }: ContainerInspectorCardProps) {
   return (
     <Card>
@@ -18,7 +18,7 @@ export function ContainerInspectorCard({ bindings, transientProof }: ContainerIn
           <Badge variant="secondary">{bindings.length} bindings</Badge>
         </div>
         <CardDescription>
-          Serialized from <code className="font-mono text-xs">container.inspect()</code> — every binding on the root
+          Serialized from <code className="font-mono text-xs">inspect(container)</code> — every binding on the root
           container with its scope and kind.
         </CardDescription>
       </CardHeader>

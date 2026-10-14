@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { generateDependencyGraph } from "#container/introspect";
 import { slotName, tag } from "#core/tag";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
@@ -22,7 +23,7 @@ function buildContainer(): { container: ReturnType<typeof Container.create> } {
 describe("generateDependencyGraph", () => {
   it("emits one node per binding and edges for class dependencies", () => {
     const { container } = buildContainer();
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
 
     const names = graph.nodes.map((node) => node.tokenName);
     expect(names).toContain("config");
@@ -43,12 +44,12 @@ describe("generateDependencyGraph", () => {
     const child = root.createChild();
     child.bind(token<string>("local")).toConstantValue("x");
 
-    const withParent = child.generateDependencyGraph({ includeParent: true });
+    const withParent = generateDependencyGraph(child, { includeParent: true });
     expect(withParent.includesParent).toBe(true);
     const parentNode = withParent.nodes.find((node) => node.tokenName === "config");
     expect(parentNode?.fromParent).toBe(true);
 
-    const withoutParent = child.generateDependencyGraph();
+    const withoutParent = generateDependencyGraph(child);
     expect(withoutParent.nodes.map((node) => node.tokenName)).not.toContain("config");
   });
 
@@ -63,7 +64,7 @@ describe("generateDependencyGraph", () => {
     const child = root.createChild();
     child.bind(Service).toSelf().singleton();
 
-    const graph = child.generateDependencyGraph({ includeParent: true });
+    const graph = generateDependencyGraph(child, { includeParent: true });
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
     const configNode = graph.nodes.find((node) => node.tokenName === "config");
 
@@ -85,7 +86,7 @@ describe("generateDependencyGraph", () => {
     child.bind(Service).toSelf();
 
     expect(child.resolve(Service).log).toBe("parent-default");
-    const graph = child.generateDependencyGraph({ includeParent: true });
+    const graph = generateDependencyGraph(child, { includeParent: true });
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
     const parentLog = graph.nodes.find((node) => node.tokenName === "log" && node.fromParent);
 
@@ -104,7 +105,7 @@ describe("generateDependencyGraph", () => {
     child.bind(Service).toSelf();
 
     expect(child.resolve(Service).config).toBe(1);
-    const graph = child.generateDependencyGraph({ includeParent: true });
+    const graph = generateDependencyGraph(child, { includeParent: true });
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
     const configNode = graph.nodes.find((node) => node.tokenName === "config");
 
@@ -125,7 +126,7 @@ describe("generateDependencyGraph", () => {
     child.bind(Host).toSelf();
 
     expect(child.resolve(Host).plugins).toStrictEqual(["child", "root"]);
-    const graph = child.generateDependencyGraph({ includeParent: true });
+    const graph = generateDependencyGraph(child, { includeParent: true });
     const hostNode = graph.nodes.find((node) => node.tokenName === "Host");
     const pluginIds = graph.nodes.filter((node) => node.tokenName === "plugin").map((node) => node.id);
 
@@ -142,7 +143,7 @@ describe("generateDependencyGraph", () => {
     container.bind(metricsToken).toConstantValue(1);
     container.bind(Service).toSelf().singleton();
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
 
     expect(graph.edges).toContainEqual(
@@ -152,7 +153,7 @@ describe("generateDependencyGraph", () => {
 
   it("keeps required edges marked not-optional", () => {
     const { container } = buildContainer();
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
 
     expect(graph.edges.every((edge) => edge.optional === false)).toBe(true);
   });
@@ -164,7 +165,7 @@ describe("generateDependencyGraph", () => {
     container.bind(first).toConstantValue(1);
     container.bind(second).toConstantValue(2);
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const keys = graph.nodes.filter((node) => node.tokenName === "config").map((node) => node.tokenKey);
 
     expect(keys).toHaveLength(2);
@@ -176,8 +177,8 @@ describe("generateDependencyGraph", () => {
     const container = Container.create();
     container.bind(configToken).toConstantValue(1);
 
-    const first = container.generateDependencyGraph().nodes[0]!.tokenKey;
-    const second = container.generateDependencyGraph().nodes[0]!.tokenKey;
+    const first = generateDependencyGraph(container).nodes[0]!.tokenKey;
+    const second = generateDependencyGraph(container).nodes[0]!.tokenKey;
 
     expect(second).toBe(first);
   });
@@ -191,7 +192,7 @@ describe("generateDependencyGraph", () => {
     const container = Container.create();
     container.bind(Service).toSelf().singleton();
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const placeholder = graph.nodes.find((node) => node.tokenName === "metrics");
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
 
@@ -213,7 +214,7 @@ describe("generateDependencyGraph", () => {
     const container = Container.create();
     container.bind(Service).toSelf().singleton();
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
 
     expect(graph.nodes.map((node) => node.tokenName)).not.toContain("missing");
     expect(graph.edges).toEqual([]);
@@ -230,7 +231,7 @@ describe("generateDependencyGraph", () => {
     container.bind(validatorToken).whenNamed("second").toConstantValue("b");
     container.bind(Composite).toSelf().singleton();
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const compositeNode = graph.nodes.find((node) => node.tokenName === "Composite");
     const validatorIds = graph.nodes.filter((node) => node.tokenName === "validator").map((node) => node.id);
     const fanOut = graph.edges.filter((edge) => edge.from === compositeNode!.id);
@@ -251,7 +252,7 @@ describe("generateDependencyGraph", () => {
     container.bind(configToken).whenNamed("secondary").toConstantValue(2);
     container.bind(Service).toSelf().singleton();
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
     const fanOut = graph.edges.filter((edge) => edge.from === serviceNode!.id);
 
@@ -271,7 +272,7 @@ describe("generateDependencyGraph", () => {
     container.bind(engineToken).whenTagged(fuel.of("gas")).toConstantValue("gas-engine");
     container.bind(Service).toSelf().singleton();
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
     const edge = graph.edges.find((candidate) => candidate.from === serviceNode!.id);
 
@@ -287,7 +288,7 @@ describe("generateDependencyGraph", () => {
     const container = Container.create();
     container.bind(Service).toSelf().singleton();
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
     const edge = graph.edges.find((candidate) => candidate.from === serviceNode!.id);
 
@@ -306,7 +307,7 @@ describe("generateDependencyGraph", () => {
     container.bind(configToken).whenNamed("secondary").toConstantValue(2);
     container.bind(Service).toSelf().singleton();
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const serviceNode = graph.nodes.find((node) => node.tokenName === "Service");
     const fanOut = graph.edges.filter((edge) => edge.from === serviceNode!.id);
 

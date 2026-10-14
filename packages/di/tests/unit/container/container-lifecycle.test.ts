@@ -7,6 +7,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { lookupBindings } from "#container/introspect";
 import { Module } from "#core/module";
 import type { ModuleBuilder } from "#core/module";
 import { tag } from "#core/tag";
@@ -43,7 +44,7 @@ describe("unbinding", () => {
 
     container.unbind(first.id());
 
-    expect(container.lookupBindings(serviceToken)).toHaveLength(1);
+    expect(lookupBindings(container, serviceToken)).toHaveLength(1);
     expect(container.resolve(serviceToken, { name: "b" })).toBe("b");
   });
 

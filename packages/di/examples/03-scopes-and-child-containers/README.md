@@ -123,7 +123,7 @@ console.log(handlerA === handlerB); // false
 
 A **singleton** must never depend on a **scoped** or **transient** binding directly — the singleton is created once and
 would capture an instance from the first child container forever, breaking isolation for all subsequent requests. Call
-`container.validate()` to detect this (shown in Example 09).
+`validate(container)` to detect this (shown in Example 09).
 
 ---
 

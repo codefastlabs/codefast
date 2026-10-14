@@ -1,5 +1,6 @@
 /** validate() over the live shop, with OrderService bound as shipped or as the captive singleton. */
 import type { Container } from "@codefast/di";
+import { validate } from "@codefast/di";
 
 import { createShop } from "#features/home/demos/shop";
 
@@ -11,7 +12,7 @@ export function createCaptiveContainer(fixed: boolean): Container {
 /** What validate() says about a container: the message it throws, or null when the graph is sound. */
 export function validationMessage(container: Container): string | null {
   try {
-    container.validate();
+    validate(container);
 
     return null;
   } catch (error: unknown) {

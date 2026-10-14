@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { generateDependencyGraph } from "#container/introspect";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { toCytoscapeGraph } from "#introspection/graph-adapters/cytoscape";
@@ -13,7 +14,7 @@ describe("toCytoscapeGraph", () => {
     container.bind(configToken).toConstantValue(1);
     container.bind(serviceToken).toResolved((config) => ({ config }), [configToken]);
 
-    const graph = container.generateDependencyGraph();
+    const graph = generateDependencyGraph(container);
     const elements = toCytoscapeGraph(graph);
 
     const edges = elements.filter((element) => "source" in element.data);
@@ -33,7 +34,7 @@ describe("toCytoscapeGraph", () => {
     container.bind(depToken).whenNamed("primary").toConstantValue("primary-value");
     container.bind(consumerToken).toResolved((dep: string) => ({ dep }), [inject(depToken, { name: "primary" })]);
 
-    const elements = toCytoscapeGraph(container.generateDependencyGraph());
+    const elements = toCytoscapeGraph(generateDependencyGraph(container));
     const namedEdge = elements.find(
       (element) => "source" in element.data && (element.data as { slotName?: string }).slotName === "primary",
     );

@@ -9,14 +9,23 @@
  * - Pattern B: rebind() to swap a real service for a stub mid-test
  * - Pattern C: Child container for test overrides (parent stays unchanged)
  * - Pattern D: Module-based setup + selective override
- * - Pattern E: container.validate() to catch wiring mistakes before runtime
+ * - Pattern E: validate(container) to catch wiring mistakes before runtime
  *
  * The "test framework" here is a minimal harness so the file runs with
  * plain `tsx` / `node`. In a real project replace suite()/test() with
  * describe()/it() from Vitest or Jest.
  */
 
-import { Container, inject, injectable, Module, token, TokenNotBoundError } from "@codefast/di";
+import {
+  Container,
+  inject,
+  injectable,
+  lookupBindings,
+  Module,
+  token,
+  TokenNotBoundError,
+  validate,
+} from "@codefast/di";
 
 import { fail, ok, section } from "#examples/support/log";
 
@@ -318,7 +327,7 @@ await test("child container shadows PaymentGateway without mutating parent", asy
   assert(stubPayment.capturedPayments.length === 1, "child stub captured payment");
 
   // Parent's payment gateway is still the real Stripe one.
-  const parentBindings = productionContainer.lookupBindings(PaymentGatewayToken);
+  const parentBindings = lookupBindings(productionContainer, PaymentGatewayToken);
   assert(parentBindings[0]?.kind === "class", "parent still holds real class binding");
 });
 
@@ -382,7 +391,7 @@ await test("module override replaces all three stubs", async () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Pattern E — container.validate() to catch wiring mistakes early
+// Pattern E — validate(container) to catch wiring mistakes early
 //
 // validate() walks every singleton's declared dependencies and throws the error
 // resolve() would for one that cannot resolve — a missing or mismatched binding,
@@ -393,7 +402,7 @@ section("Pattern E: validate() for wiring checks");
 
 await test("validate passes on a correctly wired container", async () => {
   const testContainer = Container.fromModules(CoreModule);
-  testContainer.validate(); // throws if any binding is broken
+  validate(testContainer); // throws if any binding is broken
   assert(true, "validate() passed without throwing");
 });
 
@@ -404,7 +413,7 @@ await test("an incomplete singleton graph fails validate() before any resolve", 
 
   let thrown: unknown;
   try {
-    testContainer.validate();
+    validate(testContainer);
   } catch (error) {
     thrown = error;
   }

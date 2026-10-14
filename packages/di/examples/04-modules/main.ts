@@ -6,7 +6,7 @@
  * (including diamond imports) runs setup only once.
  */
 
-import { Container, inject, injectable, Module, token } from "@codefast/di";
+import { Container, inject, injectable, inspect, Module, token } from "@codefast/di";
 
 import { item, step } from "#examples/support/log";
 
@@ -134,5 +134,5 @@ container.unload(ExtraModule);
 step("Module unloaded");
 
 // Introspect: see all active bindings
-const containerSnapshot = container.inspect();
+const containerSnapshot = inspect(container);
 item("Active binding count", containerSnapshot.ownBindings.length);

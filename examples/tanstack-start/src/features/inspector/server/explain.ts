@@ -9,7 +9,7 @@ import type {
   SelectionRule,
   Token,
 } from "@codefast/di";
-import { DiError } from "@codefast/di";
+import { DiError, explain } from "@codefast/di";
 
 import type { CatalogEntry } from "#features/inspector/server/catalog";
 import type { SlotTags } from "#features/inspector/shared/tenant";
@@ -125,7 +125,8 @@ export function explainSlot(
   nested?: NestedObservation,
 ): Decision {
   const options = optionsOf(request);
-  const explanation = container.explain(
+  const explanation = explain(
+    container,
     slotToken,
     nested === undefined ? options : { ...options, ancestors: nested.ancestors },
   );

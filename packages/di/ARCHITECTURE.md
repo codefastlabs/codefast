@@ -69,9 +69,9 @@ type-only one erases at build time and couples nothing. `pnpm cli:audit:layers` 
 layer before CI goes green.
 
 ```
-container/             Container, fluent binding chain                              ← the public surface
+container/             Container, fluent binding chain, the functions over a container ← the public surface
   ↓
-introspection/         inspector, explain, dependency graph, diagnostics, adapters
+introspection/         inspector, explain, validation, dependency graph, diagnostics, adapters
   ↓
 resolution/            DependencyResolver + its collaborators                       ← the engine
   ↓
@@ -100,7 +100,9 @@ Reading from the bottom:
 - **`introspection/`** reads the engine's model through the engine's own selection and contexts, and never through the
   container.
 - **`container/`** sits on top because it composes everything below: `@injectable`'s registry, the metadata readers, the
-  engine and the introspection modules.
+  engine and the introspection modules. Checking and describing a container (`validate`, `inspect`, `explain`, …) are
+  functions in `introspect.ts`, not methods, so a bundle that only binds and resolves leaves the introspection modules
+  out; they read the container's private state through `containerInternals`, which the class installs in a static block.
 
 The top two levels are not on any hot path, which is why they read as peripheral. They are still ordered, and an import
 the other way is a violation.

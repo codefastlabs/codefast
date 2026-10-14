@@ -16,11 +16,13 @@
 import {
   Container,
   defaultMetadataReader,
+  generateDependencyGraph,
   inject,
   injectable,
   MetadataReaderToken,
   MissingMetadataError,
   token,
+  validate,
 } from "@codefast/di";
 import type { ConstructorMetadata, Constructor, LifecycleMetadata, MetadataReader } from "@codefast/di";
 
@@ -182,10 +184,10 @@ console.log(app.resolve(ReportServiceToken).run());
 
 section("4. Static checks see the table too");
 
-app.validate();
+validate(app);
 ok("validate(): no missing or scope-violating bindings");
 
-const graph = app.generateDependencyGraph();
+const graph = generateDependencyGraph(app);
 
 console.log("nodes:", graph.nodes.map((node) => node.tokenName).join(", "));
 for (const edge of graph.edges) {

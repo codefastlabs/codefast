@@ -6,6 +6,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { lookupBindings } from "#container/introspect";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 
@@ -52,6 +53,6 @@ describe("resolveAll registration order", () => {
     container.bind(service).whenNamed("x").toConstantValue("B");
 
     await expect(container.resolveAllAsync(service)).resolves.toStrictEqual(["A", "B"]);
-    expect(container.lookupBindings(service)?.map((binding) => binding.slot.name)).toStrictEqual([undefined, "x"]);
+    expect(lookupBindings(container, service)?.map((binding) => binding.slot.name)).toStrictEqual([undefined, "x"]);
   });
 });

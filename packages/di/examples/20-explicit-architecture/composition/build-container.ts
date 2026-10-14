@@ -1,6 +1,6 @@
 /** The composition root — the single place that knows every module and hands back a wired container. */
 
-import { Container, Module } from "@codefast/di";
+import { Container, Module, validate } from "@codefast/di";
 
 import { applicationModule } from "#examples/20-explicit-architecture/composition/application.module";
 import { infrastructureModule } from "#examples/20-explicit-architecture/composition/infrastructure.module";
@@ -14,7 +14,7 @@ export function buildContainer(): Container {
   const container = Container.fromModules(bankingModule);
 
   // Fail fast at the edge: catch a missing or scope-incompatible adapter before serving traffic.
-  container.validate();
+  validate(container);
 
   return container;
 }

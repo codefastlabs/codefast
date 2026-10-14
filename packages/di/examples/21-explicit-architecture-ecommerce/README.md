@@ -117,7 +117,7 @@ if (config.database === "postgres") {
 | Many providers/channels behind one port | `whenNamed` slots + `injectAll` / `resolveAll`     |
 | Bounded module per layer                | `Module.create` + a root `builder.import`          |
 | One correlation id per request          | a `scoped()` binding + `createChild()`             |
-| Wire-up check before serving traffic    | `container.validate()`                             |
+| Wire-up check before serving traffic    | `validate(container)`                              |
 | Swap an adapter to replay an incident   | `container.rebind(token)`                          |
 | Seeing the dependency rule              | `generateDependencyGraph()` + `toDotGraph()`       |
 

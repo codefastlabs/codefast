@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { lookupBindings } from "#container/introspect";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 
@@ -42,13 +43,13 @@ describe("binding snapshots", () => {
     const container = Container.create();
     container.bind(serviceToken).whenTagged(regionTag.of("eu")).toConstantValue("eu-value");
 
-    const [snapshot] = container.lookupBindings(serviceToken);
+    const [snapshot] = lookupBindings(container, serviceToken);
     expect(() => {
       (snapshot!.slot.tags as Array<unknown>).length = 0;
     }).toThrow(TypeError);
 
     expect(container.resolve(serviceToken, { tags: [regionTag.of("eu")] })).toBe("eu-value");
-    const [fresh] = container.lookupBindings(serviceToken);
+    const [fresh] = lookupBindings(container, serviceToken);
     expect(fresh!.slot.tags).toHaveLength(1);
   });
 });

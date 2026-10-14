@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { inspect } from "#container/introspect";
 import { binding } from "#core/binding-declaration";
 import type { BindingDeclaration } from "#core/binding-declaration";
 import { Module } from "#core/module";
@@ -48,7 +49,7 @@ describe("Module.fromBindings", () => {
 
     expect(first.resolve(Service)).toBe(first.resolve(Service));
     expect(first.resolve(Service)).not.toBe(second.resolve(Service));
-    expect(first.inspect().ownBindings[0]!.id).not.toBe(second.inspect().ownBindings[0]!.id);
+    expect(inspect(first).ownBindings[0]!.id).not.toBe(inspect(second).ownBindings[0]!.id);
   });
 
   it("is reference-counted and unloaded like any module", () => {

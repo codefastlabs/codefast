@@ -1,7 +1,7 @@
 # Example 12 — Production Microservice Bootstrap
 
 **Concepts:** Full service lifecycle — config, async DB/Redis pools, job worker, health registry, HTTP server,
-`container.validate()`, graceful shutdown via `await using`
+`validate(container)`, graceful shutdown via `await using`
 
 ---
 
@@ -89,7 +89,7 @@ await using container = await Container.fromModulesAsync(
   HttpModule,
 );
 await container.initializeAsync(); // all onActivation hooks run in dependency order
-container.validate(); // catch scope violations before serving traffic
+validate(container); // catch scope violations before serving traffic
 ```
 
 ---
@@ -190,7 +190,7 @@ job before returning.
 
 ```ts
 await container.initializeAsync(); // all singletons warm, all onActivation ran
-container.validate(); // throws ScopeViolationError on captive dependencies
+validate(container); // throws ScopeViolationError on captive dependencies
 startHttpServer(); // safe to accept traffic
 ```
 
@@ -212,7 +212,7 @@ PostgreSQL   → drain connection pool
 async function main() {
   await using container = await Container.fromModulesAsync(...);
   await container.initializeAsync();
-  container.validate();
+  validate(container);
 
   process.on("SIGTERM", () => container.dispose());
 

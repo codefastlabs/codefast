@@ -1,6 +1,8 @@
+import { validate } from "@codefast/di";
+
 /**
  * `realistic-graph-validate` (codefast-only):
- * Measures the cost of calling `container.validate()` repeatedly on a fixed, already
+ * Measures the cost of calling `validate(container)` repeatedly on a fixed, already
  * built graph. `validate()` runs the full `validateScopeRules` pass on each call;
  * `@codefast/di` does **not** epoch-memoize explicit `validate()`. (The dev-only
  * `maybeRunDevValidationOnce` hook on `resolve` is separate.) There is no unbind or
@@ -18,7 +20,7 @@ function buildRealisticGraphValidateScenario(): BenchScenario {
   const { container } = buildCodefastRealisticContainer(REALISTIC_GRAPH);
   /* Warm a single `validate()` before measurement so the bench closure is the steady
    * path (same as other scenarios that pre-resolve in `build()`). */
-  container.validate();
+  validate(container);
 
   return {
     id: "realistic-graph-validate",
@@ -29,7 +31,7 @@ function buildRealisticGraphValidateScenario(): BenchScenario {
     batch: REALISTIC_VALIDATE_BATCH,
     sanity: () => {
       try {
-        container.validate();
+        validate(container);
         return true;
       } catch {
         return false;
@@ -37,7 +39,7 @@ function buildRealisticGraphValidateScenario(): BenchScenario {
     },
     build: () =>
       batched(REALISTIC_VALIDATE_BATCH, () => {
-        container.validate();
+        validate(container);
       }),
   };
 }

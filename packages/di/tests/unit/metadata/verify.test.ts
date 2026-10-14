@@ -7,6 +7,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { generateDependencyGraph, validate } from "#container/introspect";
 import { token } from "#core/token";
 import type { Constructor } from "#core/types";
 import { InvalidMetadataError } from "#errors";
@@ -89,12 +90,12 @@ describe("a reader's mistake reaches every consumer as the same error", () => {
 
   it("throws on validate() instead of reporting a container that cannot resolve", () => {
     expect(() => {
-      containerWith({}).validate();
+      validate(containerWith({}));
     }).toThrow(InvalidMetadataError);
   });
 
   it("throws on generateDependencyGraph() rather than drawing a class with no edges", () => {
-    expect(() => containerWith({}).generateDependencyGraph()).toThrow(InvalidMetadataError);
+    expect(() => generateDependencyGraph(containerWith({}))).toThrow(InvalidMetadataError);
   });
 });
 

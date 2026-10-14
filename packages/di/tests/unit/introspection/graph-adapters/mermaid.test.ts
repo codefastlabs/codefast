@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { generateDependencyGraph } from "#container/introspect";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
 import { injectAll, optional } from "#injection/descriptor";
@@ -14,7 +15,7 @@ describe("toMermaidGraph", () => {
     container.bind(configToken).toConstantValue(1);
     container.bind(serviceToken).toResolved((config) => ({ config }), [configToken]);
 
-    const mermaid = toMermaidGraph(container.generateDependencyGraph());
+    const mermaid = toMermaidGraph(generateDependencyGraph(container));
 
     expect(mermaid).toMatch(/^flowchart TD/);
     expect(mermaid).toContain('n0["config<br/>constant · singleton"]');
@@ -34,7 +35,7 @@ describe("toMermaidGraph", () => {
     const child = root.createChild();
     child.bind(Service).toSelf().singleton();
 
-    const mermaid = toMermaidGraph(child.generateDependencyGraph({ includeParent: true }));
+    const mermaid = toMermaidGraph(generateDependencyGraph(child, { includeParent: true }));
 
     expect(mermaid).toContain('-->|"[0] optional"|');
     expect(mermaid).toMatch(/classDef unbound/);
@@ -52,7 +53,7 @@ describe("toMermaidGraph", () => {
     container.bind(validatorToken).whenNamed("second").toConstantValue("b");
     container.bind(Composite).toSelf().singleton();
 
-    const mermaid = toMermaidGraph(container.generateDependencyGraph());
+    const mermaid = toMermaidGraph(generateDependencyGraph(container));
 
     expect(mermaid).toContain('|"name:first"|');
     expect(mermaid).toContain('|"name:second"|');
@@ -65,7 +66,7 @@ describe("toMermaidGraph", () => {
     container.bind(directiveToken).toConstantValue(1);
     container.bind(markupToken).toConstantValue(2);
 
-    const mermaid = toMermaidGraph(container.generateDependencyGraph());
+    const mermaid = toMermaidGraph(generateDependencyGraph(container));
 
     // The label string must never be closed early, and raw markup must not pass through.
     expect(mermaid).not.toContain('"];');

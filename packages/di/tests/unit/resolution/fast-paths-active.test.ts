@@ -10,6 +10,7 @@
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { inspect } from "#container/introspect";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
@@ -141,7 +142,7 @@ describe("deferred subsystems stay deferred", () => {
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("value");
 
-    container.inspect();
+    inspect(container);
     expect(diagnose(container).builtSubsystems).toContain("container.inspector");
 
     container.onActivation(serviceToken, (_ctx, value: string) => value);

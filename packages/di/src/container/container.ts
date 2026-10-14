@@ -3,9 +3,7 @@ import { BindingChain } from "#container/binding-chain";
 import type { Binding, ConstantBinding } from "#core/binding";
 import { effectiveBindingScope, NO_INSTANCE } from "#core/binding";
 import type { BindingBuilder, BindToBuilder } from "#core/binding-builders";
-import type { ConstraintRequirement } from "#core/constraint-requirement";
-import { constraintRequirementsOf } from "#core/constraint-requirement";
-import { getOrInsert, getOrInsertComputed } from "#core/map-upsert";
+import { getOrInsert } from "#core/map-upsert";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#core/module";
 import { isSyncModule, MODULE_SETUP } from "#core/module";
 import { BindingRegistry } from "#core/registry";
@@ -21,25 +19,10 @@ import type {
   ResolveOptions,
 } from "#core/types";
 import type { AutoRegisterRegistry } from "#decorators/injectable";
-import {
-  AsyncModuleLoadError,
-  CircularDependencyError,
-  DisposedContainerError,
-  InternalError,
-  RebindUnboundTokenError,
-  ScopeViolationError,
-  UnreachableConstraintError,
-  UnreachableLifecycleHookError,
-} from "#errors";
-import type { DependencySlot } from "#injection/dependency-slot";
-import { injectionSlotToResolveOptions, bindingSlotToResolveOptions } from "#injection/dependency-slot";
-import type { ContainerGraphJson, GraphOptions } from "#introspection/dependency-graph";
-import { buildDependencyGraph } from "#introspection/dependency-graph";
+import { AsyncModuleLoadError, DisposedContainerError, RebindUnboundTokenError } from "#errors";
+import { bindingSlotToResolveOptions } from "#injection/dependency-slot";
 import type { ResolutionDiagnostics } from "#introspection/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
-import type { ExplainOptions, ResolutionExplanation } from "#introspection/explanation";
-import { explainRequest } from "#introspection/explanation";
-import type { BindingSnapshot, ContainerSnapshot } from "#introspection/inspector";
 import { Inspector } from "#introspection/inspector";
 import { LifecycleManager } from "#lifecycle/hooks";
 import { SCOPED_MISS, ScopeManager } from "#lifecycle/scopes";
@@ -47,28 +30,8 @@ import { MetadataReaderToken } from "#metadata/reader-token";
 import { defaultMetadataReader } from "#metadata/symbol-reader";
 import type { MetadataReader } from "#metadata/types";
 import { verifyingMetadataReader } from "#metadata/verifying-reader";
-import type { DefaultLookupEntry } from "#resolution/cache/lookup";
 import { ROOT_BRANCH } from "#resolution/path";
 import { DependencyResolver } from "#resolution/resolver";
-
-/** Whether a requirement's name is declared — on its token when it names one, on any token otherwise. */
-function isSlotNameDeclared(
-  declared: ReadonlyMap<string, ReadonlySet<string>>,
-  requirement: ConstraintRequirement,
-): boolean {
-  if (requirement.tokenName !== undefined) {
-    return declared.get(requirement.tokenName)?.has(requirement.name) ?? false;
-  }
-  for (const names of declared.values()) {
-    if (names.has(requirement.name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/** Hoisted so the slot-name index's `getOrInsertComputed` allocates only on a miss, no closure per call. */
-const newSlotNameSet = (): Set<string> => new Set<string>();
 
 // ── Container interface ──────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -131,7 +94,6 @@ export interface Container {
   [Symbol.asyncDispose](): Promise<void>;
 
   initializeAsync(): Promise<void>;
-  validate(): void;
 
   has<Names extends string = string>(
     token: Token<unknown, Names> | Constructor,
@@ -141,20 +103,6 @@ export interface Container {
     token: Token<unknown, Names> | Constructor,
     options?: NoInfer<ResolveOptions<Names>>,
   ): boolean;
-  lookupBindings<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot>;
-  inspect(): ContainerSnapshot;
-  /**
-   * Explains why a request selects the binding it does, reading each registry the way `resolve` does and deciding
-   * by the same rules, without instantiating anything.
-   *
-   * @remarks A `when()` predicate runs here as it would in `resolve`. `options.ancestors` names the resolutions the
-   * request is nested in, so a predicate that reads the parent sees the one it would.
-   */
-  explain<Names extends string = string>(
-    token: Token<unknown, Names> | Constructor,
-    options?: NoInfer<ExplainOptions<Names>>,
-  ): ResolutionExplanation;
-  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson;
 }
 
 /**
@@ -184,6 +132,31 @@ export interface ContainerStatic {
   fromModulesAsync(...modules: Array<SyncModule | AsyncModule>): Promise<Container>;
 }
 
+/**
+ * The state the container functions read off a container, kept off its public surface.
+ *
+ * @remarks `ancestorRegistries` lists each ancestor's registry nearest first — the order every chain walk reads them in.
+ */
+export interface ContainerInternals {
+  readonly registry: BindingRegistry;
+  readonly ancestorRegistries: ReadonlyArray<BindingRegistry>;
+  readonly resolver: DependencyResolver;
+  readonly metadataReader: MetadataReader;
+  readonly lifecycle: LifecycleManager;
+  inspector(): Inspector;
+}
+
+let readInternals: (container: Container) => ContainerInternals;
+
+/**
+ * Reads the internals of a live container `Container` created.
+ *
+ * @throws `TypeError` for an object `Container` did not create, `DisposedContainerError` for a disposed chain.
+ */
+export function containerInternals(container: Container): ContainerInternals {
+  return readInternals(container);
+}
+
 // A Record rather than an if-chain, so a new `BindingScope` is a compile error here instead of
 // silently landing in whichever branch happened to be last.
 const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown>) => void> = {
@@ -197,22 +170,6 @@ const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown
     builder.transient();
   },
 };
-
-/** One edge `validate` judges: the binding it reaches, and the resolver whose chain resolves that binding's own. */
-interface ValidationEdge {
-  readonly terminal: Binding;
-  readonly owner: DependencyResolver;
-  readonly depTokenName: string;
-}
-
-/** Where `validate` finds an alias chain ends: a terminal binding, or the token nothing selects and the hops to it. */
-type AliasChainEnd =
-  | { readonly found: true; readonly terminal: Binding; readonly owner: DependencyResolver }
-  | {
-      readonly found: false;
-      readonly missingToken: Token<unknown> | Constructor;
-      readonly hopNames: ReadonlyArray<string>;
-    };
 
 /** Bindings owing a deactivation, each followed by the instance it is owed for. */
 type DeactivationPairs = ReadonlyArray<unknown>;
@@ -1001,249 +958,6 @@ class DefaultContainer implements Container {
     }
   }
 
-  // ── Validate ───────────────────────────────────────────────────────────────────────────────────────────────────────
-
-  validate(): void {
-    this.#assertNotDisposed();
-    const reader = this.#getMetadataReader();
-    const allBindings = this.#registry.allBindings();
-
-    for (const binding of allBindings) {
-      if (!this.#isSingletonStaticAnalyzableBinding(binding)) {
-        continue;
-      }
-      this.#validateSingletonBindingGraph(binding, reader);
-    }
-
-    for (const [hookToken, phase] of this.#lifecycle.hookedTokens()) {
-      if (!this.#isBoundInChain(hookToken)) {
-        throw new UnreachableLifecycleHookError(tokenName(hookToken), phase);
-      }
-      // A deactivation never runs for a transient, so a hook on a token whose every binding is transient
-      // can never fire — the builder blocks it, `container.onDeactivation` cannot.
-      if (phase === "onDeactivation" && !this.#hasDeactivatableBindingInChain(hookToken)) {
-        throw new UnreachableLifecycleHookError(tokenName(hookToken), phase, "no-deactivatable-binding");
-      }
-    }
-
-    this.#validateConstraintRequirements(allBindings);
-  }
-
-  /** A constraint waiting on a slot name no binding declares can never hold. */
-  #validateConstraintRequirements(allBindings: ReadonlyArray<Binding>): void {
-    let declaredSlotNames: Map<string, Set<string>> | undefined;
-
-    for (const binding of allBindings) {
-      const { predicate } = binding;
-      if (predicate === undefined) {
-        continue;
-      }
-      const requirements = constraintRequirementsOf(predicate);
-      if (requirements.length === 0) {
-        continue;
-      }
-      declaredSlotNames ??= this.#slotNamesInChain();
-      for (const requirement of requirements) {
-        if (!isSlotNameDeclared(declaredSlotNames, requirement)) {
-          throw new UnreachableConstraintError(tokenName(binding.token), requirement);
-        }
-      }
-    }
-  }
-
-  /** Every slot name declared anywhere a resolve through this container could reach, by declaring token. */
-  #slotNamesInChain(): Map<string, Set<string>> {
-    const names = this.#parent === undefined ? new Map<string, Set<string>>() : this.#parent.#slotNamesInChain();
-    for (const binding of this.#registry.allBindings()) {
-      const name = binding.slot.name;
-      if (name !== undefined) {
-        getOrInsertComputed(names, tokenName(binding.token), newSlotNameSet).add(name);
-      }
-    }
-    return names;
-  }
-
-  // Ancestors count: a parent-owned binding is one this container can still resolve through.
-  #isBoundInChain(token: Token<unknown> | Constructor): boolean {
-    if (this.#registry.has(token)) {
-      return true;
-    }
-    const parent = this.#parent;
-    return parent !== undefined && parent.#isBoundInChain(token);
-  }
-
-  // Whether the token has a binding a deactivation hook can run for — anything but a transient.
-  #hasDeactivatableBindingInChain(token: Token<unknown> | Constructor): boolean {
-    for (const binding of this.#registry.getAll(token)) {
-      if (effectiveBindingScope(binding) !== "transient") {
-        return true;
-      }
-    }
-    const parent = this.#parent;
-    return parent !== undefined && parent.#hasDeactivatableBindingInChain(token);
-  }
-
-  #isSingletonStaticAnalyzableBinding(binding: Binding): boolean {
-    if (effectiveBindingScope(binding) !== "singleton") {
-      return false;
-    }
-    return binding.kind === "class" || binding.kind === "resolved" || binding.kind === "resolved-async";
-  }
-
-  /**
-   * DFS over explicit constructor / `toResolved*` dependency edges, following `toAlias` chains to the terminal binding.
-   *
-   * @remarks Every binding reached is a singleton resolved from its owner's chain, so a required miss or a repeat
-   * on one path fails however the graph is entered; a `toDynamic*` edge is scope-checked, its factory not descended.
-   */
-  #validateSingletonBindingGraph(root: Binding, reader: MetadataReader): void {
-    const rootName = tokenName(root.token);
-
-    const dfs = (
-      current: Binding,
-      view: DependencyResolver,
-      pathNames: Array<string>,
-      pathBindingIds: Set<BindingIdentifier>,
-    ): void => {
-      if (pathBindingIds.has(current.identifier)) {
-        throw new CircularDependencyError(pathNames);
-      }
-      const extendedPathIds = new Set(pathBindingIds);
-      extendedPathIds.add(current.identifier);
-
-      for (const edge of this.#collectStaticDependencyEdges(current, view, reader, pathNames)) {
-        const { terminal, owner, depTokenName } = edge;
-        const depScope = this.#validationScopeFromTerminal(terminal);
-        if (depScope !== "singleton") {
-          throw new ScopeViolationError({
-            consumerToken: rootName,
-            consumerScope: "singleton",
-            dependencyToken: depTokenName,
-            dependencyScope: depScope,
-            path: [...pathNames, depTokenName],
-          });
-        }
-        if (terminal.kind === "class" || terminal.kind === "resolved" || terminal.kind === "resolved-async") {
-          dfs(terminal, owner, [...pathNames, depTokenName], extendedPathIds);
-        }
-      }
-    };
-
-    dfs(root, this.#resolver, [rootName], new Set());
-  }
-
-  /**
-   * The scope this edge is judged against.
-   *
-   * @remarks A factory's *body* is not statically analyzable, but the scope it was bound with is
-   * declared like any other — so the captive-dependency check applies to it too. The DFS still
-   * refuses to descend into a factory; only the edge is judged.
-   */
-  #validationScopeFromTerminal(terminal: Binding): BindingScope {
-    if (terminal.kind === "alias") {
-      throw new InternalError("validate: expected terminal binding after alias resolution");
-    }
-    return terminal.scope;
-  }
-
-  /** Where an alias chain ends as `resolve` walks it from `view`: its terminal binding, or the names up to a miss. */
-  #followAliasChainToTerminal(
-    entry: DefaultLookupEntry<DependencyResolver>,
-    view: DependencyResolver,
-    options: ResolveOptions | undefined,
-  ): AliasChainEnd {
-    const cyclePath: Array<string> = [];
-    const seenAliasIds = new Set<BindingIdentifier>();
-    let current = entry;
-
-    while (current.binding.kind === "alias") {
-      const alias = current.binding;
-      if (seenAliasIds.has(alias.identifier)) {
-        throw new CircularDependencyError(cyclePath);
-      }
-      seenAliasIds.add(alias.identifier);
-      cyclePath.push(tokenName(alias.token));
-      const next = view.peekBindingForValidate(alias.target, options);
-      if (next === undefined) {
-        return { found: false, missingToken: alias.target, hopNames: cyclePath };
-      }
-      current = next;
-    }
-    return { found: true, terminal: current.binding, owner: current.owner };
-  }
-
-  /** What one dependency could resolve to from `view`: every candidate for `injectAll`, else at most one. */
-  #peekDependencyCandidates(
-    dep: DependencySlot,
-    view: DependencyResolver,
-    options: ResolveOptions | undefined,
-  ): ReadonlyArray<DefaultLookupEntry<DependencyResolver>> {
-    if (dep.multi) {
-      return view
-        .peekCandidateBindingsForValidate(dep.token, options)
-        .map((binding) => ({ binding, owner: view.ownerForValidate(binding) }));
-    }
-    const found = view.peekBindingForValidate(dep.token, options);
-    return found === undefined ? [] : [found];
-  }
-
-  /** What a binding declares up front — a class's params, a factory's descriptors, else nothing. */
-  #staticDependencies(binding: Binding, reader: MetadataReader): ReadonlyArray<DependencySlot> {
-    if (binding.kind === "class") {
-      return reader.getConstructorMetadata(binding.target)?.params ?? [];
-    }
-    if (binding.kind === "resolved" || binding.kind === "resolved-async") {
-      return binding.deps;
-    }
-    return [];
-  }
-
-  /**
-   * The bindings a singleton's declared dependencies resolve to, throwing the error `resolve` would for a required one
-   * nothing selects.
-   */
-  #collectStaticDependencyEdges(
-    binding: Binding,
-    view: DependencyResolver,
-    reader: MetadataReader,
-    pathNames: ReadonlyArray<string>,
-  ): Array<ValidationEdge> {
-    const edges: Array<ValidationEdge> = [];
-
-    for (const dep of this.#staticDependencies(binding, reader)) {
-      // An optional dependency that is absent peeks no candidate; one that is bound is captured like any other.
-      const depOptions = injectionSlotToResolveOptions(dep);
-      // A collection may be empty and an optional dependency absent, so only a required one can miss.
-      const required = !dep.multi && !dep.optional;
-      const candidates = this.#peekDependencyCandidates(dep, view, depOptions);
-      if (required && candidates.length === 0) {
-        const miss = view.missForValidate(dep.token, depOptions, [...pathNames, tokenName(dep.token)]);
-        if (miss !== undefined) {
-          throw miss;
-        }
-      }
-      for (const candidate of candidates) {
-        const end = this.#followAliasChainToTerminal(candidate, view, depOptions);
-        if (end.found) {
-          edges.push({ terminal: end.terminal, owner: end.owner, depTokenName: tokenName(end.terminal.token) });
-          continue;
-        }
-        if (required) {
-          const miss = view.missForValidate(end.missingToken, depOptions, [
-            ...pathNames,
-            ...end.hopNames,
-            tokenName(end.missingToken),
-          ]);
-          if (miss !== undefined) {
-            throw miss;
-          }
-        }
-      }
-    }
-
-    return edges;
-  }
-
   // ── Introspection ──────────────────────────────────────────────────────────────────────────────────────────────────
 
   has<Names extends string = string>(
@@ -1275,27 +989,22 @@ class DefaultContainer implements Container {
     return this.#getInspector().hasOwn(token, options);
   }
 
-  lookupBindings<Value>(token: Token<Value> | Constructor<Value>): ReadonlyArray<BindingSnapshot> {
-    this.#assertNotDisposed();
-    return this.#getInspector().lookupBindings(token);
-  }
-
-  inspect(): ContainerSnapshot {
-    this.#assertNotDisposed();
-    return this.#getInspector().inspect();
-  }
-
-  explain<Names extends string = string>(
-    token: Token<unknown, Names> | Constructor,
-    options?: NoInfer<ExplainOptions<Names>>,
-  ): ResolutionExplanation {
-    this.#assertNotDisposed();
-    return explainRequest([this.#registry, ...this.#ancestorRegistries()], token, options);
-  }
-
-  generateDependencyGraph(options?: GraphOptions): ContainerGraphJson {
-    this.#assertNotDisposed();
-    return buildDependencyGraph(this.#registry, this.#getMetadataReader(), options, this.#ancestorRegistries());
+  // Installed once so the container functions reach the private state through the class's own brand check.
+  static {
+    readInternals = (container) => {
+      if (!(#registry in container)) {
+        throw new TypeError("Expected a container created by Container.create().");
+      }
+      container.#assertNotDisposed();
+      return {
+        registry: container.#registry,
+        ancestorRegistries: container.#ancestorRegistries(),
+        resolver: container.#resolver,
+        metadataReader: container.#getMetadataReader(),
+        lifecycle: container.#lifecycle,
+        inspector: () => container.#getInspector(),
+      };
+    };
   }
 
   /** The registries above this container, nearest first — the order every chain walk reads them in. */
