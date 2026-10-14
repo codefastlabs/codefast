@@ -2,8 +2,8 @@
  * Base
  *
  * Global element defaults layered into Tailwind's `base` cascade: default
- * border/outline colors, scrollbar styling, document background, and
- * native input appearance resets.
+ * border/outline colors, a solid focus outline, scrollbar styling, document
+ * background, and native input appearance resets.
  * ------------------------------------------------------------------------- */
 
 @layer base {
@@ -16,6 +16,13 @@
   ::file-selector-button {
     border-color: var(--color-border);
     outline-color: var(--color-ring);
+  }
+
+  /* A solid ring for focusables with no focus style of their own, instead of the UA's two-tone `auto` outline. */
+  :focus-visible {
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
   }
 
   /* ----------------------------------------------------------------------
