@@ -3,7 +3,9 @@ name: Dependabot auto-merge
 # Flags Dependabot PRs for auto-merge; GitHub merges once the required "Verify"
 # check passes (no merge queue — a GITHUB_TOKEN-created merge group would never
 # trigger merge_group CI). Majors are left for manual review.
-on: pull_request
+# pull_request_target skips the approval gate bot-authored release PRs hit under
+# pull_request; safe only because no step checks out or runs PR code.
+on: pull_request_target
 
 permissions:
   contents: write
@@ -11,7 +13,11 @@ permissions:
 
 jobs:
   auto-merge:
-    if: github.actor == 'dependabot[bot]'
+    # The PR's author and head repo, not github.actor: the actor is whoever fired the
+    # latest event, and this trigger hands fork PRs a write token.
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Dependabot metadata
