@@ -13,7 +13,11 @@ permissions:
 
 jobs:
   auto-merge:
-    if: github.actor == 'dependabot[bot]'
+    # The PR's author and head repo, not github.actor: the actor is whoever fired the
+    # latest event, and this trigger hands fork PRs a write token.
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Dependabot metadata
