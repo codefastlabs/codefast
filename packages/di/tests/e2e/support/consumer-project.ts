@@ -6,8 +6,10 @@ import { execFileSync, spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+
+import { rolldown } from "rolldown";
 
 // A cold tsc or tsx start on a saturated machine can outlive the default test timeout.
 export const SUBPROCESS_TEST_TIMEOUT_MS = 60_000;
@@ -26,6 +28,11 @@ export interface ProcessRun {
   readonly error: string | undefined;
 }
 
+/** One browser bundle of a consumer entry: the package's modules that kept code in it, relative to `dist/`. */
+interface BundleRun {
+  readonly packageModules: ReadonlyArray<string>;
+}
+
 export interface ConsumerProject {
   /** Runs one entry under tsx, which lowers the decorators with esbuild as it loads. */
   runTsx(entry: string): ProcessRun;
@@ -33,6 +40,8 @@ export interface ConsumerProject {
   compile(outDir: string, compilerOptions: Readonly<Record<string, unknown>>): void;
   /** Runs one compiled entry on a bare Node. */
   runNode(entry: string): ProcessRun;
+  /** Bundles one entry for the browser with Rolldown, minified, as a Vite app would. */
+  bundle(entry: string): Promise<BundleRun>;
   remove(): void;
 }
 
@@ -69,6 +78,20 @@ export function createConsumerProject(fixtureDir: string): ConsumerProject {
       }
     },
     runNode: (entry) => spawn([join(dir, entry)]),
+    async bundle(entry) {
+      const build = await rolldown({ input: join(dir, entry), cwd: dir, platform: "browser", logLevel: "silent" });
+      try {
+        const { output } = await build.generate({ format: "esm", minify: true });
+        const distDir = join(packageRoot, "dist");
+        const packageModules = output
+          .flatMap((item) => (item.type === "chunk" ? Object.entries(item.modules) : []))
+          .filter(([id, module]) => id.startsWith(distDir) && module.renderedLength > 0)
+          .map(([id]) => relative(distDir, id));
+        return { packageModules };
+      } finally {
+        await build.close();
+      }
+    },
     remove: () => {
       rmSync(dir, { recursive: true, force: true });
     },

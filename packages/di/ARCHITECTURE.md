@@ -103,6 +103,8 @@ Reading from the bottom:
   engine and the introspection modules. Checking and describing a container (`validate`, `inspect`, `explain`, …) are
   functions in `introspect.ts`, not methods, so a bundle that only binds and resolves leaves the introspection modules
   out; they read the container's private state through `containerInternals`, which the class installs in a static block.
+  `tests/e2e/tree-shaking.test.ts` bundles the built package with Rolldown and pins that a program which only binds and
+  resolves keeps none of them.
 
 The top two levels are not on any hot path, which is why they read as peripheral. They are still ordered, and an import
 the other way is a violation.
