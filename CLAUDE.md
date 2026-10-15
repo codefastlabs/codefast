@@ -4,13 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24.0.0, pnpm 11 — every package holds that one floor,
-`di` included, which is why it keeps its own `Map` upsert helpers instead of the platform's `getOrInsert`) publishing
-the `@codefast/*` packages. The flagship is `@codefast/di`, type-safe dependency injection on standard decorators;
-`@codefast/ui` is the Radix-based, Tailwind CSS 4 component library. `apps/web` is the TanStack Start site behind
-codefastlabs.com: a landing page over every published package, the `@codefast/ui` showcase, and `/docs/<pkg>` pages
-rendered at build time from each package's own `README.md`/`SPEC.md`/`ARCHITECTURE.md`/… — or from a directory named
-after the kind (`spec/`), whose `README.md` is the kind's page and whose other `*.md` render beneath it. Workspace
+Codefast is a **pnpm workspaces + Turborepo** monorepo (Node ≥ 24.0.0, pnpm 11 — each package declares its own
+`engines.node` floor with `@types/node` from the matching `node<N>` catalog, held together by `codefast audit engines`;
+`di`'s floor is 24, which is why it keeps its own `Map` upsert helpers instead of the platform's `getOrInsert`)
+publishing the `@codefast/*` packages. The flagship is `@codefast/di`, type-safe dependency injection on standard
+decorators; `@codefast/ui` is the Radix-based, Tailwind CSS 4 component library. `apps/web` is the TanStack Start site
+behind codefastlabs.com: a landing page over every published package, the `@codefast/ui` showcase, and `/docs/<pkg>`
+pages rendered at build time from each package's own `README.md`/`SPEC.md`/`ARCHITECTURE.md`/… — or from a directory
+named after the kind (`spec/`), whose `README.md` is the kind's page and whose other `*.md` render beneath it. Workspace
 layout is by audience: `packages/` holds only published `@codefast/*` libraries, `internal/` holds private workspace
 packages consumed only inside the repo, `benchmarks/` the benchmark suites, `apps/` deployed sites, `examples/` consumer
 demos. A new package is private until it is published, so it starts in `internal/`.

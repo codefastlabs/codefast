@@ -2,12 +2,13 @@
 
 ## Node.js
 
-The `@codefast/*` packages support **Node.js 24.0.0 or later**. That is the first release with explicit resource
-management built in (`using`, `await using`, `DisposableStack`, `AsyncDisposableStack`, `SuppressedError`) and all of
-ES2025, so code that runs on Node can rely on both as the platform ships them, with no shim. The repo targets modern
-runtimes rather than the widest audience, so an older line stays unsupported even while it is maintained. The floor
-rises, by a `minor`, when its line reaches [end-of-life](https://github.com/nodejs/release#release-schedule) or when the
-packages need a feature only a newer line ships — and only to a line that the serverless runtimes they deploy to offer.
+Each package declares its own Node.js floor in `engines.node`, and every `@codefast/*` package currently declares
+**Node.js 24.0.0 or later**. That is the first release with explicit resource management built in (`using`,
+`await using`, `DisposableStack`, `AsyncDisposableStack`, `SuppressedError`) and all of ES2025, so code that runs on
+Node can rely on both as the platform ships them, with no shim. The repo targets modern runtimes rather than the widest
+audience, so an older line stays unsupported even while it is maintained. A package's floor rises, by a `minor` of that
+package, when its line reaches [end-of-life](https://github.com/nodejs/release#release-schedule) or when the package
+needs a feature only a newer line ships — and only to a line that the serverless runtimes it deploys to offer.
 
 | Line    | Role            | Status                      |
 | ------- | --------------- | --------------------------- |
@@ -15,11 +16,14 @@ packages need a feature only a newer line ships — and only to a line that the 
 | Node 24 | Active LTS      | Supported — `engines` floor |
 | Node 26 | Current         | Supported                   |
 
-`engines.node` is `>=24.0.0` on every package, and the floor is enforced mechanically rather than by convention:
+Floors are enforced mechanically rather than by convention:
 
-- **`@types/node`** is pinned to the floor's release line (`~24.0`), so a Node API newer than the floor is a type error,
-  including one a later 24.x minor added, such as `fs.mkdtempDisposableSync` (24.4). Dependabot ignores its major and
-  minor updates (`.github/dependabot.yml`), so the pin moves only when the floor does.
+- **`@types/node`** is pinned per floor. `pnpm-workspace.yaml` holds one `node<N>` catalog for each floor in use,
+  pinning `@types/node` to that floor's release line (`~24.0`), and a package names the catalog of its own floor, so a
+  Node API newer than the floor is a type error, including one a later 24.x minor added, such as
+  `fs.mkdtempDisposableSync` (24.4). An override holds every transitive `@types/node` to the lowest floor's line without
+  touching the catalogs. Dependabot ignores its major and minor updates (`.github/dependabot.yml`), so a pin moves only
+  when its floor does.
 - **`lib` and `target`** are `ES2025`, the newest edition that both Node 24 and the [browser floor](#browsers) ship. A
   builtin newer than that, such as `Map.prototype.getOrInsert`, is a type error rather than a runtime crash.
 - **Node types reach only code that runs on Node.** A package that runs on Node sets `types: ["node"]` in its build
@@ -27,13 +31,24 @@ packages need a feature only a newer line ships — and only to a line that the 
   browser or universal code fails the build.
 - **Internal subpath imports** use a bare `#` prefix (`#core/token`), which Node's ESM resolver accepts on every
   supported line — `#/`-prefixed specifiers are rejected below Node 24.14.
-- **CI** develops on the Current line (`.node-version`) for speed, and a matrix runs the unit suite on the floor itself,
-  `24.0.0`, so the floor is a contract CI proves. `codefast audit publish` statically checks the publish surface — no
-  `#/` imports, and every `exports`/`imports` target ships.
+- **`codefast audit engines`** holds the floors to each other. A published package declares one, written `>=X.Y.Z`, no
+  lower than the toolchain's (the root `package.json`) or the floor of any workspace package it depends on at runtime,
+  since a consumer on its floor would otherwise install a dependency that cannot run there. The lockfile must resolve
+  its `@types/node` on its floor's release line.
+- **CI** develops on the Current line (`.node-version`) for speed, and a matrix runs each package's unit and end-to-end
+  suites on its own floor — one leg per distinct floor, planned from `codefast audit engines --json` — so every floor is
+  a contract CI proves. `codefast audit publish` statically checks the publish surface — no `#/` imports, and every
+  `exports`/`imports` target ships.
+
+Raising one package's floor touches only that package and whatever depends on it at runtime: add a `node<N>` catalog if
+none exists yet, set its `engines.node` and its `@types/node` to `catalog:node<N>`, raise each package the audit names
+as depending on it, and give each a `minor` changeset. A floor alone does not widen `lib` for code that also runs in a
+browser, which the browser floor bounds.
 
 Development uses the latest Node for speed and tooling; nothing about the contributor's local Node version can leak into
-the published packages, because the floor is checked by the compiler and by CI. A contributor's local Node must be at
-least the floor, which also covers the Node the repo's own toolchain (pnpm) needs.
+the published packages, because each floor is checked by the compiler and by CI. A contributor's local Node must be at
+least the toolchain's floor, which also covers the Node the repo's own toolchain (pnpm) needs, and which no package's
+floor sits below.
 
 ## Browsers
 
