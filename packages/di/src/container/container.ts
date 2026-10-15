@@ -143,10 +143,7 @@ export interface ContainerInternals {
   readonly resolver: DependencyResolver;
   readonly metadataReader: MetadataReader;
   readonly lifecycle: LifecycleManager;
-  inspector(): Inspector;
 }
-
-let readInternals: (container: Container) => ContainerInternals;
 
 /**
  * Reads the internals of a live container `Container` created.
@@ -154,7 +151,16 @@ let readInternals: (container: Container) => ContainerInternals;
  * @throws `TypeError` for an object `Container` did not create, `DisposedContainerError` for a disposed chain.
  */
 export function containerInternals(container: Container): ContainerInternals {
-  return readInternals(container);
+  return DefaultContainer.internalsOf(container);
+}
+
+/**
+ * Reads the inspector of a live container `Container` created, built on first use.
+ *
+ * @throws `TypeError` for an object `Container` did not create, `DisposedContainerError` for a disposed chain.
+ */
+export function containerInspector(container: Container): Inspector {
+  return DefaultContainer.inspectorOf(container);
 }
 
 // A Record rather than an if-chain, so a new `BindingScope` is a compile error here instead of
@@ -989,22 +995,28 @@ class DefaultContainer implements Container {
     return this.#getInspector().hasOwn(token, options);
   }
 
-  // Installed once so the container functions reach the private state through the class's own brand check.
-  static {
-    readInternals = (container) => {
-      if (!(#registry in container)) {
-        throw new TypeError("Expected a container created by Container.create().");
-      }
-      container.#assertNotDisposed();
-      return {
-        registry: container.#registry,
-        ancestorRegistries: container.#ancestorRegistries(),
-        resolver: container.#resolver,
-        metadataReader: container.#getMetadataReader(),
-        lifecycle: container.#lifecycle,
-        inspector: () => container.#getInspector(),
-      };
+  // Public statics of an unexported class: only this module's container functions can call them.
+  static internalsOf(container: Container): ContainerInternals {
+    const live = DefaultContainer.#live(container);
+    return {
+      registry: live.#registry,
+      ancestorRegistries: live.#ancestorRegistries(),
+      resolver: live.#resolver,
+      metadataReader: live.#getMetadataReader(),
+      lifecycle: live.#lifecycle,
     };
+  }
+
+  static inspectorOf(container: Container): Inspector {
+    return DefaultContainer.#live(container).#getInspector();
+  }
+
+  static #live(container: Container): DefaultContainer {
+    if (!(#registry in container)) {
+      throw new TypeError("Expected a container created by Container.create().");
+    }
+    container.#assertNotDisposed();
+    return container;
   }
 
   /** The registries above this container, nearest first — the order every chain walk reads them in. */
