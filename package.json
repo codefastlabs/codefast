@@ -27,6 +27,7 @@
     "cli:audit:assertions": "pnpm run codefast audit assertions",
     "cli:audit:comments": "pnpm run codefast audit comments",
     "cli:audit:display-names": "pnpm run codefast audit display-names",
+    "cli:audit:engines": "pnpm run codefast audit engines",
     "cli:audit:imports": "pnpm run codefast audit imports",
     "cli:audit:layers": "pnpm run codefast audit layers",
     "cli:audit:links": "pnpm run codefast audit links",

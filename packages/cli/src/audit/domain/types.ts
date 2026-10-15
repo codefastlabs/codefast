@@ -353,3 +353,51 @@ export type LayersAuditResult = {
   readonly scannedFileCount: number;
   readonly packageCount: number;
 };
+
+/**
+ * A workspace package's `engines.node` floor.
+ */
+export type PackageEngineFloor = {
+  readonly packageName: string;
+  /** Repo-relative POSIX path of the package directory. */
+  readonly directory: string;
+  /** The floor as `X.Y.Z`. */
+  readonly floor: string;
+};
+
+/**
+ * A package whose Node floor breaks a rule a consumer or CI depends on.
+ */
+export type EngineViolation =
+  | { readonly kind: "missing-floor"; readonly packageName: string }
+  | { readonly kind: "unparsable-floor"; readonly packageName: string; readonly range: string }
+  | {
+      readonly kind: "below-toolchain";
+      readonly packageName: string;
+      readonly floor: string;
+      readonly toolchainFloor: string;
+    }
+  | {
+      readonly kind: "below-dependency";
+      readonly packageName: string;
+      readonly floor: string;
+      readonly dependency: string;
+      readonly dependencyFloor: string;
+    }
+  | {
+      readonly kind: "types-off-floor";
+      readonly packageName: string;
+      readonly floor: string;
+      readonly typesVersion: string;
+    };
+
+/**
+ * Outcome of one `audit engines` run.
+ */
+export type EnginesAuditResult = {
+  /** The workspace root's own floor — what the toolchain needs — or `null` when it declares none. */
+  readonly toolchainFloor: string | null;
+  readonly floors: Array<PackageEngineFloor>;
+  readonly violations: Array<EngineViolation>;
+  readonly packageCount: number;
+};
