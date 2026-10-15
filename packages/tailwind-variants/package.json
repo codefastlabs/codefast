@@ -82,7 +82,7 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@types/node": "catalog:",
+    "@types/node": "catalog:node24",
     "@vitest/coverage-v8": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:",

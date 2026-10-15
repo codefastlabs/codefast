@@ -145,7 +145,7 @@
     "@codefast/di": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
-    "@types/node": "catalog:",
+    "@types/node": "catalog:node24",
     "@vitest/coverage-v8": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

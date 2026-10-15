@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@types/node": "catalog:",
+    "@types/node": "catalog:node24",
     "rolldown": "catalog:",
     "typescript": "catalog:"
   },

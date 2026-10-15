@@ -42,7 +42,7 @@
     "@codefast/typescript-config": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
     "@tailwindcss/vite": "catalog:",
-    "@types/node": "catalog:",
+    "@types/node": "catalog:node24",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",

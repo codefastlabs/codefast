@@ -11,9 +11,10 @@ allowBuilds:
   simple-git-hooks: true
 
 overrides:
-  # Hold the whole tree to the Node floor's release line: a later minor types APIs the floor lacks, and a dev tool's
-  # `@types/node: "*"` peer (commitlint's cosmiconfig loader) would otherwise pull one in.
-  "@types/node": ~24.0.15
+  # Hold every transitive `@types/node` (`"*"` from @types/jsdom, jest's types) to the lowest floor's line, so no
+  # package type-checks against APIs its floor lacks. The `@*` key matches any semver spec but never a `catalog:` one,
+  # which is how a package's own `catalog:node<N>` keeps its line; `codefast audit engines` reads the lockfile to prove it.
+  "@types/node@*": "catalog:node24"
   # mermaid pins chevrotain `~11.1.2`, whose packages pin an exact lodash-es below the fix for
   # GHSA-r5fr-rjxr-66jc and GHSA-f23m-r3pf-42rh; scoped to the vulnerable range so it lapses once chevrotain moves on.
   "lodash-es@<4.18.0": ^4.18.0
@@ -23,6 +24,12 @@ overrides:
   # mermaid still pins katex `^0.16.47`, below the fix for GHSA-238p-pmpm-9mq7; it calls only `renderToString`, which
   # the later majors keep. Scoped to the vulnerable range so it lapses once mermaid moves on.
   "katex@<0.18.2": ^0.19.0
+
+# One catalog per Node floor in use, pinning `@types/node` to that floor's release line so a newer API is a type error.
+# A package names the one its `engines.node` floor sits on; Dependabot leaves these to move with the floor.
+catalogs:
+  node24:
+    "@types/node": ~24.0.15
 
 catalog:
   "@babel/core": ^8.0.7
@@ -53,7 +60,6 @@ catalog:
   "@testing-library/user-event": ^14.6.7
   "@types/jest-axe": ^3.5.9
   "@types/jsdom": ^30.0.0
-  "@types/node": ~24.0.15
   "@types/picomatch": ^4.0.3
   "@types/react": ^19.3.0
   "@types/react-dom": ^19.3.0
