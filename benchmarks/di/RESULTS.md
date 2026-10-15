@@ -37,7 +37,11 @@ cite those, not this pass. `plan-async-resolved-chain-8` reads +24%, a row bimod
 rows at −5% to −7% — `resolve-all-named-16`, `scale-deep-transient-chain-512`, `plan-runs-mixed-512`,
 `fresh-child-default-n1` — each with siblings that read level (`resolve-all-named-8`/`-32`/`-64`,
 `scale-mid-transient-chain-32`, `plan-runs-mixed-1024`, `fresh-child-default-n4`), and `alias-parent-owned-terminal`
-reads −15% above the ceiling; no paired run has looked at those five yet, so they are directions, not findings.
+reads −15% above the ceiling. Those five are pass noise, not the slot change: a paired alternating `bench:ab` of the
+previous pass's tree (`1d5d44020`) against this one, four full-profile experiments in both orders, reads all five at
+0.998× to 1.002×, each flipping sign between experiments, with the siblings level beside them.
+`alias-parent-owned-terminal` is bimodal per process — in that A/B the older tree dropped into the same slow mode for a
+trial (78M against 100M ops/s).
 
 ## Summary — where we stand
 
