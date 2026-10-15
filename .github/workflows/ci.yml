@@ -61,8 +61,8 @@ jobs:
             | map({node: .[0].floor, filters: (map("--filter=" + .packageName) | join(" "))})')
           echo "floors=$floors" >> "$GITHUB_OUTPUT"
 
-  # Run each floor's packages on that floor itself; the current line (.node-version) is covered by `verify`.
-  # Publish-surface correctness is a static check in `verify` (audit publish), not a per-Node runtime step.
+  # Run each floor's packages, every test category, on that floor itself; the current line (.node-version) is covered
+  # by `verify`. Publish-surface correctness is a static check in `verify` (audit publish), not a per-Node runtime step.
   node-matrix:
     name: Node Matrix (${{ matrix.node }})
     needs: node-floors
@@ -92,9 +92,7 @@ jobs:
       - name: Build Workspace Packages
         run: npx turbo build $FLOOR_FILTERS
 
-      - name: Run Unit Tests
-        run: npx turbo run test:unit $FLOOR_FILTERS
-
-      # A consumer lane loads the built packages on this very runtime, which is where a missing builtin shows first.
-      - name: Run End-to-End Tests
-        run: npx turbo run test:e2e $FLOOR_FILTERS
+      # Unit tests run the source through Vite's transform, so the integration and end-to-end categories — which load
+      # the built packages on this very runtime — are what show a builtin or syntax the floor lacks.
+      - name: Run Tests
+        run: npx turbo run test $FLOOR_FILTERS
