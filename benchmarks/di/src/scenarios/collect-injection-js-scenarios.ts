@@ -1,4 +1,5 @@
 import { buildInjectionJsAliasScenarios } from "#scenarios/injection-js/alias";
+import { buildInjectionJsAppBootScenarios } from "#scenarios/injection-js/app-boot";
 import { buildInjectionJsAsyncScenarios } from "#scenarios/injection-js/async";
 import { buildInjectionJsBindingVariantScenarios } from "#scenarios/injection-js/binding-variants";
 import { buildInjectionJsBootScenarios } from "#scenarios/injection-js/boot";
@@ -27,6 +28,7 @@ export function collectAllInjectionJsScenarios(): ReadonlyArray<AnyScenario> {
     ...buildInjectionJsMicroScenarios(),
     ...buildInjectionJsRealisticScenarios(),
     ...buildInjectionJsRealisticClassScenarios(),
+    ...buildInjectionJsAppBootScenarios(),
     ...buildInjectionJsFanOutScenarios(),
     ...buildInjectionJsScopeScenarios(),
     ...buildInjectionJsProductionScenarios(),

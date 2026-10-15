@@ -20,6 +20,7 @@ pnpm di:bench            # from the repo root — one subprocess per scenario, l
 pnpm di:bench:fast       # smoke: one shared process per library, one trial, never a claim
 pnpm di:bench:baseline   # the ledger's pass: full profile, read against the anchor in baselines/
 pnpm di:bench:serve      # browse recorded runs
+pnpm di:bench:footprint  # what each library adds to a browser bundle, minified and gzipped
 ```
 
 From this directory, `pnpm bench` does the same as `pnpm di:bench`. Every run rebuilds `@codefast/di` first, so it
@@ -33,6 +34,7 @@ measures the working tree rather than a stale `dist/`.
 | `pnpm bench:ab`         | Two builds of `@codefast/di`, paired and alternating, on the rows you name (the guide has the recipe)             |
 | `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout and a coverage line per library on stderr, measuring nothing      |
 | `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                                                         |
+| `pnpm bench:footprint`  | Bundles each library's smallest bind-and-resolve program with Rolldown and prints its minified and gzipped size   |
 | `pnpm instrument:alloc` | The allocation instrument (see below)                                                                             |
 | `BENCH_MODE=<mode>`     | Timing profile: `fast`, `default` or `full` (longer windows, a collection between trials) — composes with `bench` |
 | `BENCH_VERBOSE=true`    | Streams every child line and prints the per-scenario table                                                        |
@@ -63,6 +65,8 @@ src/harness/run.ts          parent: rebuilds @codefast/di, spawns one subprocess
 src/harness/config.ts       the seven library configs (entry file, tsconfig, display name)
 src/harness/list.ts         the bench:list entry
 src/harness/serve.ts        the bench:serve entry
+src/harness/footprint.ts    the bench:footprint entry
+src/harness/rebuild.ts      the @codefast/di rebuild both entries run first
 src/*-benches.ts            one child entry per library
 src/scenarios/<library>/    that library's implementation of each scenario
 src/fixtures/               workloads and descriptors both sides share

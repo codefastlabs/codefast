@@ -1,3 +1,4 @@
+import { buildDitoxAppBootScenarios } from "#scenarios/ditox/app-boot";
 import { buildDitoxAsyncScenarios } from "#scenarios/ditox/async";
 import { buildDitoxBindingVariantScenarios } from "#scenarios/ditox/binding-variants";
 import { buildDitoxBootScenarios } from "#scenarios/ditox/boot";
@@ -32,6 +33,7 @@ export function collectAllDitoxScenarios(): ReadonlyArray<AnyScenario> {
     ...buildDitoxMicroScenarios(),
     ...buildDitoxRealisticScenarios(),
     ...buildDitoxRealisticClassScenarios(),
+    ...buildDitoxAppBootScenarios(),
     ...buildDitoxFanOutScenarios(),
     ...buildDitoxModuleScenarios(),
     ...buildDitoxLifecycleScenarios(),

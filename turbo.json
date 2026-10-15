@@ -35,6 +35,10 @@
       "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"],
       "passThroughEnv": ["BENCH_*"]
     },
+    "bench:footprint": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"]
+    },
     "bench:list": {
       "cache": false
     },

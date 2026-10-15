@@ -3,7 +3,6 @@
  * Parent harness: rebuild `@codefast/di`, run every library through the shared progress display, then
  * render the comparison and persist the run's observations.
  */
-import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -29,28 +28,11 @@ import { assembleDiComparison } from "#harness/comparison";
 import type { LibraryPayload } from "#harness/comparison";
 import { BENCH_LIBRARIES, CODEFAST_DI } from "#harness/config";
 import { DI_COMPARISON_CONSOLE } from "#harness/presentation";
+import { rebuildCodefastDiPackage } from "#harness/rebuild";
 
 const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-
-function rebuildCodefastDiPackage(): number {
-  console.log(`Rebuilding ${CODEFAST_DI.libraryName} before bench…`);
-  const startedAtMs = performance.now();
-  const result = spawnSync("pnpm", ["--filter", CODEFAST_DI.libraryName, "build"], {
-    cwd: packageRootDirectory,
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-    env: process.env,
-  });
-  if (result.status !== 0) {
-    console.error(result.stderr || result.stdout);
-    throw new Error(`Build failed for ${CODEFAST_DI.libraryName}, exit ${String(result.status)}`);
-  }
-  const elapsedMs = performance.now() - startedAtMs;
-  console.log(`Finished rebuild of ${CODEFAST_DI.libraryName} (${(elapsedMs / 1000).toFixed(1)}s wall).`);
-  return elapsedMs;
-}
 
 async function main(): Promise<void> {
   assertBenchEnvKeys();

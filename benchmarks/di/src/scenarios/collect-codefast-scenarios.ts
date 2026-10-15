@@ -2,6 +2,7 @@
  * Central list of all `@codefast/di` bench scenarios. Used by the bench subprocess.
  */
 import { buildCodefastAliasScenarios } from "#scenarios/codefast/alias";
+import { buildCodefastAppBootScenarios } from "#scenarios/codefast/app-boot";
 import { buildCodefastAsyncScenarios } from "#scenarios/codefast/async";
 import { buildCodefastAsyncEntryPointScenarios } from "#scenarios/codefast/async-entry-points";
 import { buildCodefastAsyncLaneScenarios } from "#scenarios/codefast/async-lanes";
@@ -44,6 +45,7 @@ export function collectAllCodefastScenarios(): ReadonlyArray<AnyScenario> {
     ...buildCodefastMicroScenarios(),
     ...buildCodefastRealisticScenarios(),
     ...buildCodefastRealisticClassScenarios(),
+    ...buildCodefastAppBootScenarios(),
     ...buildCodefastRealisticGraphValidateScenarios(),
     ...buildCodefastFanOutScenarios(),
     ...buildCodefastAsyncScenarios(),

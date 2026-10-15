@@ -1,4 +1,5 @@
 import { buildInversifyAliasScenarios } from "#scenarios/inversify/alias";
+import { buildInversifyAppBootScenarios } from "#scenarios/inversify/app-boot";
 /**
  * Central list of all InversifyJS 8 bench scenarios. Used by the bench subprocess.
  */
@@ -32,6 +33,7 @@ export function collectAllInversifyScenarios(): ReadonlyArray<AnyScenario> {
     ...buildInversifyMicroScenarios(),
     ...buildInversifyRealisticScenarios(),
     ...buildInversifyRealisticClassScenarios(),
+    ...buildInversifyAppBootScenarios(),
     ...buildInversifyFanOutScenarios(),
     ...buildInversifyAsyncScenarios(),
     ...buildInversifyLifecycleScenarios(),
