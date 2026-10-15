@@ -2,7 +2,7 @@
  * The functions that check and describe a container without resolving from it.
  */
 import type { Container } from "#container/container";
-import { containerInternals } from "#container/container";
+import { containerInspector, containerInternals } from "#container/container";
 import type { Token } from "#core/token";
 import type { Constructor } from "#core/types";
 import type { ContainerGraphJson, GraphOptions } from "#introspection/dependency-graph";
@@ -33,7 +33,7 @@ export function validate(container: Container): void {
  * disposed.
  */
 export function inspect(container: Container): ContainerSnapshot {
-  return containerInternals(container).inspector().inspect();
+  return containerInspector(container).inspect();
 }
 
 /**
@@ -43,7 +43,7 @@ export function lookupBindings<Value>(
   container: Container,
   token: Token<Value> | Constructor<Value>,
 ): ReadonlyArray<BindingSnapshot> {
-  return containerInternals(container).inspector().lookupBindings(token);
+  return containerInspector(container).lookupBindings(token);
 }
 
 /**
