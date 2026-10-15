@@ -19,7 +19,7 @@ import type {
 } from "#core/types";
 import { InvalidBindingDeclarationError, ManyBindingSlotError, SelfBindingRequiresClassError } from "#errors";
 import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#injection/descriptor";
-import { normalizeToDescriptor } from "#injection/descriptor";
+import { settledDescriptorsOf } from "#injection/descriptor";
 
 // ── Definition ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -311,7 +311,7 @@ export function binding(key: Token<unknown> | Constructor, definition: AnyDefini
       }
       kind = strategy === "toResolved" ? "resolved" : "resolved-async";
       factory = strategy === "toResolved" ? definition.toResolved : definition.toResolvedAsync;
-      deps = declaredDeps.map((dependency) => normalizeToDescriptor(dependency));
+      deps = settledDescriptorsOf(declaredDeps);
       break;
     }
     case "toAlias":

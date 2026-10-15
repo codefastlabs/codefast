@@ -2,6 +2,7 @@ import type { BindingTag } from "#core/tag";
 import { slotName, slotNameCriterionOf } from "#core/tag";
 import type { Token } from "#core/token";
 import type { Constructor, ResolveOptions } from "#core/types";
+import type { ParamMetadata } from "#metadata/types";
 
 /**
  * What one resolvable dependency declares.
@@ -109,8 +110,8 @@ const MEMOIZED_RESOLVE_OPTIONS: unique symbol = Symbol("di:resolve-options");
 const MEMOIZED_SINGLE_CRITERION: unique symbol = Symbol("di:single-criterion");
 
 interface SlotWithMemoizedOptions {
-  [MEMOIZED_RESOLVE_OPTIONS]?: ResolveOptions;
-  [MEMOIZED_SINGLE_CRITERION]?: BindingTag | null;
+  [MEMOIZED_RESOLVE_OPTIONS]?: ResolveOptions | undefined;
+  [MEMOIZED_SINGLE_CRITERION]?: BindingTag | null | undefined;
 }
 
 /**
@@ -180,6 +181,51 @@ export function singleCriterionForSlot(injectionSlot: DependencySlot): BindingTa
     }
   }
   return folded;
+}
+
+/**
+ * A copy of a slot in the one shape the engine resolves, its options and lone criterion settled up front.
+ *
+ * @remarks The engine passes every slot it resolves through here once — a factory's dependencies when it is bound, a
+ * class's parameters when they are settled — so a dependency read meets one hidden class and never adds a memo. A lone
+ * name whose criterion is still unknown is left unsettled, since a later bind can fold it.
+ */
+export function settledSlot(slot: DependencySlot): DependencySlot {
+  const options = resolveOptionsForSlot(slot);
+  const settled: DependencySlot & SlotWithMemoizedOptions = {
+    token: slot.token,
+    optional: slot.optional,
+    multi: slot.multi,
+    name: slot.name,
+    tags: slot.tags,
+    [MEMOIZED_RESOLVE_OPTIONS]: options,
+    [MEMOIZED_SINGLE_CRITERION]: settledCriterionOf(options),
+  };
+  return settled;
+}
+
+/**
+ * A copy of a constructor parameter in the one shape the engine resolves, as `settledSlot` makes one.
+ */
+export function settledParam(param: ParamMetadata): ParamMetadata {
+  const options = resolveOptionsForSlot(param);
+  const settled: ParamMetadata & SlotWithMemoizedOptions = {
+    index: param.index,
+    token: param.token,
+    optional: param.optional,
+    multi: param.multi,
+    name: param.name,
+    tags: param.tags,
+    [MEMOIZED_RESOLVE_OPTIONS]: options,
+    [MEMOIZED_SINGLE_CRITERION]: settledCriterionOf(options),
+  };
+  return settled;
+}
+
+/** The lone criterion `singleCriterionForSlot` would memoize for these options, or `undefined` where it would not. */
+function settledCriterionOf(options: ResolveOptions | undefined): BindingTag | null | undefined {
+  const criterion = singleCriterionOnlyOf(options);
+  return criterion !== undefined || !isLoneNameOptions(options) ? (criterion ?? null) : undefined;
 }
 
 /** A slot request whose only criterion is a name — the one shape whose fold can change after a bind. */
