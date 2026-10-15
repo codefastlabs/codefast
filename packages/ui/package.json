@@ -622,7 +622,7 @@
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
     "@types/jest-axe": "catalog:",
-    "@types/node": "catalog:node24",
+    "@types/node": "catalog:node22.22",
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "jest-axe": "catalog:",
@@ -647,6 +647,6 @@
     }
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.22.2"
   }
 }

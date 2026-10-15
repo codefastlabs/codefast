@@ -1,5 +1,5 @@
 {
-  "extends": "@codefast/typescript-config/library.json",
+  "extends": ["@codefast/typescript-config/library.json", "@codefast/typescript-config/node22.json"],
   "compilerOptions": {
     // `outDir` sits here, not only in tsconfig.build.json: knip derives its dist → src mapping from this file.
     "outDir": "./dist",

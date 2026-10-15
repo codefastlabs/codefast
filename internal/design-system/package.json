@@ -39,13 +39,13 @@
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@types/jsdom": "catalog:",
-    "@types/node": "catalog:node24",
+    "@types/node": "catalog:node22.22",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.22.2"
   }
 }

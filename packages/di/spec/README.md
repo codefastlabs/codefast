@@ -52,7 +52,8 @@ with any version of InversifyJS, by design.
 > **Normative — what a consumer must bring.**
 >
 > - **ESM only.** There is no CommonJS build and no dual build.
-> - **Node.js ≥ 24**, the first line with explicit resource management built in.
+> - **Node.js ≥ 22.18.** `await using` on a container also needs a runtime with explicit resource management, which Node
+>   ships from 24; `dispose()` needs nothing extra.
 > - **In a browser, Chrome and Edge 136, Firefox 136, or Safari 18.4**, the first releases that ship every ES2025
 >   builtin ([support policy](../../../SUPPORT.md#browsers)). `await using` also needs the browser to ship explicit
 >   resource management, which Safari has not; `dispose()` needs nothing extra.

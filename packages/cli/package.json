@@ -90,7 +90,7 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@types/node": "catalog:node24",
+    "@types/node": "catalog:node22.12",
     "@types/picomatch": "catalog:",
     "@types/semver": "catalog:",
     "@vitest/coverage-v8": "catalog:",
@@ -108,6 +108,6 @@
     }
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.12.0"
   }
 }

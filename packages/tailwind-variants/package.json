@@ -82,7 +82,7 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@types/node": "catalog:node24",
+    "@types/node": "catalog:node22.12",
     "@vitest/coverage-v8": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:",
@@ -92,6 +92,6 @@
     "tailwind-merge": ">=3.0.0"
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.12.0"
   }
 }

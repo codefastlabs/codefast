@@ -110,7 +110,7 @@
     "@codefast/typescript-config": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
     "@tailwindcss/vite": "catalog:",
-    "@types/node": "catalog:node24",
+    "@types/node": "catalog:node22.18",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
@@ -121,6 +121,6 @@
     "vitest": "catalog:"
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.18.0"
   }
 }
