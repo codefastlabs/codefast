@@ -372,17 +372,14 @@ export type EngineViolation =
   | { readonly kind: "missing-floor"; readonly packageName: string }
   | { readonly kind: "unparsable-floor"; readonly packageName: string; readonly range: string }
   | {
-      readonly kind: "below-toolchain";
-      readonly packageName: string;
-      readonly floor: string;
-      readonly toolchainFloor: string;
-    }
-  | {
-      readonly kind: "below-dependency";
+      readonly kind: "outside-dependency-engines";
       readonly packageName: string;
       readonly floor: string;
       readonly dependency: string;
-      readonly dependencyFloor: string;
+      /** The manifest field that lists the dependency. */
+      readonly field: string;
+      /** The dependency's own `engines.node`. */
+      readonly range: string;
     }
   | {
       readonly kind: "types-off-floor";
@@ -395,8 +392,6 @@ export type EngineViolation =
  * Outcome of one `audit engines` run.
  */
 export type EnginesAuditResult = {
-  /** The workspace root's own floor — what the toolchain needs — or `null` when it declares none. */
-  readonly toolchainFloor: string | null;
   readonly floors: Array<PackageEngineFloor>;
   readonly violations: Array<EngineViolation>;
   readonly packageCount: number;

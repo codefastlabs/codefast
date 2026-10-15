@@ -30,14 +30,11 @@ function describeViolation(violation: EngineViolation): string {
     case "unparsable-floor": {
       return `engines.node "${violation.range}" → write the floor as ">=X.Y.Z"`;
     }
-    case "below-toolchain": {
-      return `floor ${violation.floor} is below the toolchain's ${violation.toolchainFloor} → CI cannot run the leg that proves it`;
-    }
-    case "below-dependency": {
-      return `floor ${violation.floor} is below ${violation.dependency}'s ${violation.dependencyFloor} → a consumer on the floor installs a dependency it cannot run`;
+    case "outside-dependency-engines": {
+      return `floor ${violation.floor} is outside ${violation.dependency}'s engines.node "${violation.range}" (${violation.field}) → raise the floor or drop the dependency`;
     }
     case "types-off-floor": {
-      return `@types/node resolves to ${violation.typesVersion}, off the release line of floor ${violation.floor} → pin it to that line`;
+      return `@types/node resolves to ${violation.typesVersion}, off floor ${violation.floor}'s line → pin it to the floor's major at a minor no newer`;
     }
   }
 }

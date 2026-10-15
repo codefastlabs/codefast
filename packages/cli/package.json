@@ -84,6 +84,7 @@
     "jiti": "catalog:",
     "oxc-parser": "catalog:",
     "picomatch": "catalog:",
+    "semver": "catalog:",
     "yaml": "catalog:",
     "zod": "catalog:"
   },
@@ -91,6 +92,7 @@
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "catalog:node24",
     "@types/picomatch": "catalog:",
+    "@types/semver": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "github-slugger": "catalog:",
     "typescript": "catalog:",

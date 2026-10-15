@@ -4,7 +4,6 @@ import type { EnginesAuditResult } from "#audit/domain/types";
 import { exitCodeForEnginesAuditResult, formatEnginesAuditJsonOutput } from "#audit/engines/cli-result";
 
 const clean: EnginesAuditResult = {
-  toolchainFloor: "24.0.0",
   floors: [{ packageName: "@x/a", directory: "packages/a", floor: "24.0.0" }],
   violations: [],
   packageCount: 1,

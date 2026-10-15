@@ -281,7 +281,7 @@ const publishCheck: AuditCheck<PublishAuditRunRequest, PublishAuditResult> = {
 const enginesCheck: AuditCheck<EnginesAuditRunRequest, EnginesAuditResult> = {
   name: "engines",
   description:
-    "Report Node floors (engines.node) that are missing, malformed, below the toolchain's or a runtime dependency's, or off their @types/node line",
+    "Report Node floors (engines.node) that are missing, malformed, outside a dependency's engines, or off their @types/node line",
   targetHelp: "Directory or file to scan (default: the repo root)",
   schema: enginesAuditRunRequestSchema,
   prepare: prepareEnginesAudit,

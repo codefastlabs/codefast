@@ -22,7 +22,7 @@ encode an opinionated house style (called out below) that you can adopt, ignore,
 
 ## Requirements
 
-- **Node.js ≥ 24** (the CLI is published as ESM).
+- **Node.js ≥ 22.12** (the CLI is published as ESM).
 - **TypeScript ≥ 7** to type-check a config written with `defineConfig`, and for
   `arrange simplify --fold-variant-classname`, the one command that loads `typescript` (an optional peer).
 - **A project root — workspace or single package.** Commands resolve their root by walking up from the current
@@ -114,7 +114,7 @@ codefast                              # Codefast monorepo developer CLI
 │  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
 │  ├─ props [target]                  # *Props aliases joined with & that an interface could express (TS type server)
 │  ├─ publish [target]                # what breaks a consumer's install: #/ imports, unshipped targets, @source paths
-│  ├─ engines [target]                # Node floors (engines.node) that don't hold against toolchain, deps, @types/node
+│  ├─ engines [target]                # Node floors (engines.node) outside a dependency's engines or their @types/node line
 │  ├─ layers [target]                 # value imports pointing up a package's configured layers
 │  └─ comments [target]               # section dividers not in the one allowed form
 │      └─ --fix                       # rewrite every fixable divider in place (the only audit that writes)
@@ -425,18 +425,20 @@ codefast audit publish --json              # machine-readable summary
 
 ### `audit engines`
 
-_General-purpose._ Holds each workspace package's own Node floor — its `engines.node` — to the others, so packages can
-sit on different floors without a consumer installing one that cannot run where its dependent can. It reports:
+_General-purpose._ Holds each workspace package's own Node floor — its `engines.node` — to what actually runs on it, so
+packages can sit on different floors, each as low as the package can go. It reports:
 
 - a published package that declares no floor, and a floor not written `>=X.Y.Z`;
-- a floor below the toolchain's, the workspace root's `engines.node`, where CI could not run the leg that proves it;
-- a floor below that of a workspace package it depends on at runtime (`dependencies`, `peerDependencies`,
-  `optionalDependencies`) — dev dependencies run on the toolchain's Node, so they are left alone;
-- an `@types/node` the lockfile (`pnpm-lock.yaml`) resolves off the floor's release line (its major and minor), where
+- a floor outside the `engines.node` of a dependency that runs on it: a runtime one (`dependencies`, `peerDependencies`,
+  `optionalDependencies`) a consumer installs there, or a dev dependency that runs the package's own tests there in CI.
+  A workspace dependency is read from its manifest, any other from the package's own `node_modules`, so run the audit
+  after the install;
+- an `@types/node` the lockfile (`pnpm-lock.yaml`) resolves on another major than the floor or on a newer minor, where
   the compiler would accept APIs the floor lacks.
 
-A narrower `[target]` checks only the packages it reaches, still against every floor they depend on. `--json` lists
-every floor with its package directory, which is enough to plan one CI leg per floor. It takes no allowlist.
+The workspace root's own `engines.node` plays no part: it is the contributors' toolchain, not a floor any package
+inherits. A narrower `[target]` checks only the packages it reaches, still against every floor they depend on. `--json`
+lists every floor with its package directory, which is enough to plan one CI leg per floor. It takes no allowlist.
 
 ```bash
 codefast audit engines                     # every package in the workspace

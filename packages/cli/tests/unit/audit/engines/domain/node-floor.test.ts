@@ -1,16 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  compareNodeVersions,
-  formatNodeVersion,
-  isOnReleaseLine,
-  parseNodeFloor,
-  parseNodeVersion,
-} from "#audit/engines/domain/node-floor";
+import { formatNodeVersion, parseNodeFloor, parseNodeVersion, typesFitFloor } from "#audit/engines/domain/node-floor";
 
 describe("parseNodeFloor", () => {
   it("reads a >=X.Y.Z floor, with or without a space", () => {
-    expect(parseNodeFloor(">=24.0.0")).toEqual([24, 0, 0]);
+    expect(parseNodeFloor(">=22.12.0")).toEqual([22, 12, 0]);
     expect(parseNodeFloor(">= 24.14.1")).toEqual([24, 14, 1]);
   });
 
@@ -30,24 +24,21 @@ describe("parseNodeVersion", () => {
   });
 });
 
-describe("compareNodeVersions", () => {
-  it("orders by major, then minor, then patch", () => {
-    expect(compareNodeVersions([24, 0, 0], [26, 0, 0])).toBeLessThan(0);
-    expect(compareNodeVersions([24, 14, 0], [24, 4, 9])).toBeGreaterThan(0);
-    expect(compareNodeVersions([24, 0, 1], [24, 0, 1])).toBe(0);
+describe("typesFitFloor", () => {
+  it("holds on the floor's major at a minor no newer, whatever the patch", () => {
+    expect(typesFitFloor([22, 12, 9], [22, 12, 0])).toBe(true);
+    expect(typesFitFloor([22, 12, 0], [22, 18, 0])).toBe(true);
   });
-});
 
-describe("isOnReleaseLine", () => {
-  it("holds for the same major and minor, whatever the patch", () => {
-    expect(isOnReleaseLine([24, 0, 15], [24, 0, 0])).toBe(true);
-    expect(isOnReleaseLine([24, 4, 0], [24, 0, 0])).toBe(false);
-    expect(isOnReleaseLine([26, 0, 0], [24, 0, 0])).toBe(false);
+  it("fails for a newer minor or another major", () => {
+    expect(typesFitFloor([22, 13, 0], [22, 12, 0])).toBe(false);
+    expect(typesFitFloor([24, 0, 0], [22, 12, 0])).toBe(false);
+    expect(typesFitFloor([20, 19, 0], [22, 12, 0])).toBe(false);
   });
 });
 
 describe("formatNodeVersion", () => {
   it("joins the parts with dots", () => {
-    expect(formatNodeVersion([24, 0, 0])).toBe("24.0.0");
+    expect(formatNodeVersion([22, 12, 0])).toBe("22.12.0");
   });
 });

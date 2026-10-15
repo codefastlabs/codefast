@@ -1,4 +1,4 @@
-/** Parses and orders the Node versions an `engines.node` floor and a resolved `@types/node` name. */
+/** Parses and compares the Node versions an `engines.node` floor and a resolved `@types/node` name. */
 
 /**
  * A Node release as its major, minor and patch numbers.
@@ -29,17 +29,10 @@ export function parseNodeVersion(version: string): NodeVersion | null {
 }
 
 /**
- * Orders two versions: negative when `left` is older, positive when newer, zero when equal.
+ * Whether `@types/node` at this version declares nothing the floor lacks — the floor's major, at a minor no newer.
  */
-export function compareNodeVersions(left: NodeVersion, right: NodeVersion): number {
-  return left[0] - right[0] || left[1] - right[1] || left[2] - right[2];
-}
-
-/**
- * Whether a version sits on the floor's release line — the same major and minor.
- */
-export function isOnReleaseLine(version: NodeVersion, floor: NodeVersion): boolean {
-  return version[0] === floor[0] && version[1] === floor[1];
+export function typesFitFloor(types: NodeVersion, floor: NodeVersion): boolean {
+  return types[0] === floor[0] && types[1] <= floor[1];
 }
 
 /**

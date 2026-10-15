@@ -1,16 +1,11 @@
 import path from "node:path";
 
+import { satisfies, validRange } from "semver";
 import { parse as parseYaml } from "yaml";
 
 import type { EngineViolation, EnginesAuditResult, PackageEngineFloor } from "#audit/domain/types";
 import type { NodeVersion } from "#audit/engines/domain/node-floor";
-import {
-  compareNodeVersions,
-  formatNodeVersion,
-  isOnReleaseLine,
-  parseNodeFloor,
-  parseNodeVersion,
-} from "#audit/engines/domain/node-floor";
+import { formatNodeVersion, parseNodeFloor, parseNodeVersion, typesFitFloor } from "#audit/engines/domain/node-floor";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import type { Result } from "#core/result";
@@ -22,26 +17,24 @@ const lockfileName = "pnpm-lock.yaml";
 
 const typesPackageName = "@types/node";
 
-// The edges a consumer installs; dev dependencies run on the toolchain's Node, never on the floor.
-const runtimeDependencyFields = ["dependencies", "peerDependencies", "optionalDependencies"] as const;
+// Runtime fields are what a consumer installs on the floor; dev dependencies run the package's own tests there in CI.
+const dependencyFields = ["dependencies", "peerDependencies", "optionalDependencies", "devDependencies"] as const;
 
 const lockfileDependencyFields = ["dependencies", "devDependencies", "optionalDependencies"] as const;
 
 type WorkspaceManifest = {
   readonly packageName: string;
+  readonly packageDir: string;
   readonly directory: string;
-  readonly isPrivate: boolean;
-  readonly range: string | undefined;
-  readonly floor: NodeVersion | null;
-  readonly runtimeDependencies: ReadonlyArray<string>;
+  readonly manifest: Record<string, unknown>;
   readonly checked: boolean;
 };
 
 /**
  * Reports every Node floor that breaks a rule a consumer or CI depends on.
  *
- * @remarks A published package declares a floor as `>=X.Y.Z`, no lower than the toolchain's, the floor of any workspace
- * package it depends on at runtime, or the release line of the `@types/node` the lockfile resolves for it.
+ * @remarks A published package declares a floor as `>=X.Y.Z`. Each floor must satisfy the `engines.node` of every
+ * dependency that runs on it, and the `@types/node` the lockfile resolves for it must declare nothing the floor lacks.
  */
 export async function runEnginesAudit(
   fs: Filesystem,
@@ -52,14 +45,6 @@ export async function runEnginesAudit(
 ): Promise<Result<EnginesAuditResult, AppError>> {
   try {
     const { rootDir, targetPath } = args;
-    const violations: Array<EngineViolation> = [];
-
-    const rootManifest = readManifest(fs, rootDir);
-    const toolchainRange = rootManifest === null ? undefined : nodeRangeOf(rootManifest);
-    const toolchainFloor = toolchainRange === undefined ? null : parseNodeFloor(toolchainRange);
-    if (toolchainRange !== undefined && toolchainFloor === null) {
-      violations.push({ kind: "unparsable-floor", packageName: nameOf(rootManifest, "."), range: toolchainRange });
-    }
 
     const layout = await listWorkspacePackageDirectories(rootDir, fs, true);
     const manifests: Array<WorkspaceManifest> = [];
@@ -69,37 +54,31 @@ export async function runEnginesAudit(
         continue;
       }
       const directory = toPosixPath(path.relative(rootDir, packageDir)) || ".";
-      const range = nodeRangeOf(manifest);
       manifests.push({
-        packageName: nameOf(manifest, directory),
+        packageName: typeof manifest.name === "string" ? manifest.name : directory,
+        packageDir,
         directory,
-        isPrivate: manifest.private === true,
-        range,
-        floor: range === undefined ? null : parseNodeFloor(range),
-        runtimeDependencies: runtimeDependencyFields.flatMap((field) => Object.keys(recordOf(manifest[field]))),
+        manifest,
         checked: isWithin(packageDir, targetPath) || isWithin(targetPath, packageDir),
       });
     }
     manifests.sort((left, right) => left.directory.localeCompare(right.directory));
 
-    const floorsByName = new Map<string, NodeVersion>();
-    for (const { packageName, floor } of manifests) {
-      if (floor !== null) {
-        floorsByName.set(packageName, floor);
-      }
-    }
+    const workspaceManifests = new Map(manifests.map((entry) => [entry.packageName, entry.manifest]));
     const typesVersions = readLockfileTypesVersions(fs, rootDir);
 
     const floors: Array<PackageEngineFloor> = [];
-    const checked = manifests.filter((manifest) => manifest.checked);
-    for (const manifest of checked) {
-      const { packageName, directory, range, floor } = manifest;
+    const violations: Array<EngineViolation> = [];
+    const checked = manifests.filter((entry) => entry.checked);
+    for (const { packageName, packageDir, directory, manifest } of checked) {
+      const range = nodeRangeOf(manifest);
       if (range === undefined) {
-        if (!manifest.isPrivate) {
+        if (manifest.private !== true) {
           violations.push({ kind: "missing-floor", packageName });
         }
         continue;
       }
+      const floor = parseNodeFloor(range);
       if (floor === null) {
         violations.push({ kind: "unparsable-floor", packageName, range });
         continue;
@@ -107,44 +86,53 @@ export async function runEnginesAudit(
       const formatted = formatNodeVersion(floor);
       floors.push({ packageName, directory, floor: formatted });
 
-      if (toolchainFloor !== null && compareNodeVersions(floor, toolchainFloor) < 0) {
-        violations.push({
-          kind: "below-toolchain",
-          packageName,
-          floor: formatted,
-          toolchainFloor: formatNodeVersion(toolchainFloor),
-        });
-      }
-
-      for (const dependency of manifest.runtimeDependencies) {
-        const dependencyFloor = floorsByName.get(dependency);
-        if (dependencyFloor !== undefined && compareNodeVersions(floor, dependencyFloor) < 0) {
+      for (const { dependency, field } of dependenciesOf(manifest)) {
+        const dependencyManifest =
+          workspaceManifests.get(dependency) ?? readInstalledManifest(fs, packageDir, dependency);
+        const dependencyRange = dependencyManifest === null ? undefined : nodeRangeOf(dependencyManifest);
+        if (dependencyRange !== undefined && !floorSatisfies(floor, dependencyRange)) {
           violations.push({
-            kind: "below-dependency",
+            kind: "outside-dependency-engines",
             packageName,
             floor: formatted,
             dependency,
-            dependencyFloor: formatNodeVersion(dependencyFloor),
+            field,
+            range: dependencyRange,
           });
         }
       }
 
       const typesVersion = typesVersions.get(directory);
       const resolvedTypes = typesVersion === undefined ? null : parseNodeVersion(typesVersion);
-      if (typesVersion !== undefined && (resolvedTypes === null || !isOnReleaseLine(resolvedTypes, floor))) {
+      if (typesVersion !== undefined && (resolvedTypes === null || !typesFitFloor(resolvedTypes, floor))) {
         violations.push({ kind: "types-off-floor", packageName, floor: formatted, typesVersion });
       }
     }
 
-    return ok({
-      toolchainFloor: toolchainFloor === null ? null : formatNodeVersion(toolchainFloor),
-      floors,
-      violations,
-      packageCount: checked.length,
-    });
+    return ok({ floors, violations, packageCount: checked.length });
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
+}
+
+// Each dependency once, under the first field that lists it.
+function dependenciesOf(manifest: Record<string, unknown>): Array<{ dependency: string; field: string }> {
+  const seen = new Set<string>();
+  const dependencies: Array<{ dependency: string; field: string }> = [];
+  for (const field of dependencyFields) {
+    for (const dependency of Object.keys(recordOf(manifest[field]))) {
+      if (!seen.has(dependency)) {
+        seen.add(dependency);
+        dependencies.push({ dependency, field });
+      }
+    }
+  }
+  return dependencies;
+}
+
+// A range no semver parser reads cannot be judged, so it passes rather than guessing.
+function floorSatisfies(floor: NodeVersion, range: string): boolean {
+  return validRange(range) === null || satisfies(formatNodeVersion(floor), range);
 }
 
 function readManifest(fs: Filesystem, directory: string): Record<string, unknown> | null {
@@ -155,13 +143,14 @@ function readManifest(fs: Filesystem, directory: string): Record<string, unknown
   return recordOf(JSON.parse(fs.readFileSync(manifestPath, "utf8")));
 }
 
+// The manifest pnpm links into the package's own `node_modules`; a dependency not installed there is not judged.
+function readInstalledManifest(fs: Filesystem, packageDir: string, dependency: string): Record<string, unknown> | null {
+  return readManifest(fs, path.join(packageDir, "node_modules", ...dependency.split("/")));
+}
+
 function nodeRangeOf(manifest: Record<string, unknown>): string | undefined {
   const range = recordOf(manifest.engines).node;
   return typeof range === "string" ? range : undefined;
-}
-
-function nameOf(manifest: Record<string, unknown> | null, fallback: string): string {
-  return typeof manifest?.name === "string" ? manifest.name : fallback;
 }
 
 // The `@types/node` version the lockfile resolves for each importer, keyed by its repo-relative directory.

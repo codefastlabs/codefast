@@ -55,23 +55,28 @@ async function audit(targetPath = rootDir): Promise<EnginesAuditResult> {
 
 describe("audit engines", () => {
   it("lists every floor and passes when each holds", async () => {
-    writePackage("core", { name: "@x/core", engines: { node: ">=24.0.0" } });
+    writePackage("core", { name: "@x/core", engines: { node: ">=22.12.0" } });
     writePackage("app", {
       name: "@x/app",
-      engines: { node: ">=26.0.0" },
+      engines: { node: ">=24.0.0" },
       dependencies: { "@x/core": "workspace:*" },
     });
-    writeLockfile({ core: "24.0.15", app: "26.0.1" });
+    writeLockfile({ core: "22.12.0", app: "24.0.15" });
 
     expect(await audit()).toEqual({
-      toolchainFloor: "24.0.0",
       floors: [
-        { packageName: "@x/app", directory: "packages/app", floor: "26.0.0" },
-        { packageName: "@x/core", directory: "packages/core", floor: "24.0.0" },
+        { packageName: "@x/app", directory: "packages/app", floor: "24.0.0" },
+        { packageName: "@x/core", directory: "packages/core", floor: "22.12.0" },
       ],
       violations: [],
       packageCount: 2,
     });
+  });
+
+  it("lets a package sit below the workspace root's own floor", async () => {
+    writePackage("lib", { name: "@x/lib", engines: { node: ">=22.12.0" } });
+
+    expect((await audit()).violations).toEqual([]);
   });
 
   it("flags a published package with no floor, but not a private one", async () => {
@@ -87,68 +92,88 @@ describe("audit engines", () => {
     expect((await audit()).violations).toEqual([{ kind: "unparsable-floor", packageName: "@x/lib", range: "^24.0.0" }]);
   });
 
-  it("flags a floor below the toolchain's", async () => {
-    writePackage("lib", { name: "@x/lib", engines: { node: ">=22.0.0" } });
-
-    expect((await audit()).violations).toEqual([
-      { kind: "below-toolchain", packageName: "@x/lib", floor: "22.0.0", toolchainFloor: "24.0.0" },
-    ]);
-  });
-
-  it("flags a floor below a runtime dependency's, peers included", async () => {
-    writePackage("core", { name: "@x/core", engines: { node: ">=26.0.0" } });
+  it("flags a floor below a workspace dependency's, peers included", async () => {
+    writePackage("core", { name: "@x/core", engines: { node: ">=24.0.0" } });
     writePackage("testing", {
       name: "@x/testing",
-      engines: { node: ">=24.0.0" },
+      engines: { node: ">=22.12.0" },
       peerDependencies: { "@x/core": ">=0.1.0" },
     });
 
     expect((await audit()).violations).toEqual([
       {
-        kind: "below-dependency",
+        kind: "outside-dependency-engines",
         packageName: "@x/testing",
-        floor: "24.0.0",
+        floor: "22.12.0",
         dependency: "@x/core",
-        dependencyFloor: "26.0.0",
+        field: "peerDependencies",
+        range: ">=24.0.0",
       },
     ]);
   });
 
-  it("leaves a dev dependency's floor alone, since it runs on the toolchain", async () => {
-    writePackage("tool", { name: "@x/tool", engines: { node: ">=26.0.0" } });
+  it("holds the floor to an installed dev dependency's engines, since CI runs its tests there", async () => {
+    writePackage("lib", { name: "@x/lib", engines: { node: ">=22.0.0" }, devDependencies: { vitest: "^5.0.0" } });
+    writeJson("packages/lib/node_modules/vitest/package.json", {
+      name: "vitest",
+      engines: { node: "^22.12.0 || ^24.0.0 || >=26.0.0" },
+    });
+
+    expect((await audit()).violations).toEqual([
+      {
+        kind: "outside-dependency-engines",
+        packageName: "@x/lib",
+        floor: "22.0.0",
+        dependency: "vitest",
+        field: "devDependencies",
+        range: "^22.12.0 || ^24.0.0 || >=26.0.0",
+      },
+    ]);
+  });
+
+  it("passes a floor every dependency's engines admit, and skips a range no parser reads", async () => {
     writePackage("lib", {
       name: "@x/lib",
-      engines: { node: ">=24.0.0" },
-      devDependencies: { "@x/tool": "workspace:*" },
+      engines: { node: ">=22.12.0" },
+      dependencies: { "@scope/old": "^1.0.0", missing: "^1.0.0" },
+      devDependencies: { vitest: "^5.0.0" },
     });
+    writeJson("packages/lib/node_modules/vitest/package.json", { engines: { node: "^22.12.0 || >=24.0.0" } });
+    writeJson("packages/lib/node_modules/@scope/old/package.json", { engines: { node: "node >= 0.8" } });
 
     expect((await audit()).violations).toEqual([]);
   });
 
-  it("flags @types/node resolved off the floor's release line", async () => {
-    writePackage("lib", { name: "@x/lib", engines: { node: ">=24.0.0" } });
-    writeLockfile({ lib: "24.4.0" });
+  it("flags @types/node resolved newer than the floor, and passes an older minor", async () => {
+    writePackage("lib", { name: "@x/lib", engines: { node: ">=22.12.0" } });
+    writePackage("harness", { name: "@x/harness", engines: { node: ">=22.18.0" } });
+    writeLockfile({ lib: "22.13.0", harness: "22.12.0" });
 
     expect((await audit()).violations).toEqual([
-      { kind: "types-off-floor", packageName: "@x/lib", floor: "24.0.0", typesVersion: "24.4.0" },
+      { kind: "types-off-floor", packageName: "@x/lib", floor: "22.12.0", typesVersion: "22.13.0" },
     ]);
   });
 
   it("checks only the packages a narrower target reaches", async () => {
-    writePackage("core", { name: "@x/core", engines: { node: ">=26.0.0" } });
+    writePackage("core", { name: "@x/core", engines: { node: ">=24.0.0" } });
     writePackage("lib", { name: "@x/lib", dependencies: { "@x/core": "workspace:*" } });
-    writePackage("app", { name: "@x/app", engines: { node: ">=24.0.0" }, dependencies: { "@x/core": "workspace:*" } });
+    writePackage("app", {
+      name: "@x/app",
+      engines: { node: ">=22.12.0" },
+      dependencies: { "@x/core": "workspace:*" },
+    });
 
     const result = await audit(path.join(rootDir, "packages/app/src"));
 
     expect(result.packageCount).toBe(1);
     expect(result.violations).toEqual([
       {
-        kind: "below-dependency",
+        kind: "outside-dependency-engines",
         packageName: "@x/app",
-        floor: "24.0.0",
+        floor: "22.12.0",
         dependency: "@x/core",
-        dependencyFloor: "26.0.0",
+        field: "dependencies",
+        range: ">=24.0.0",
       },
     ]);
   });
