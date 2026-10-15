@@ -177,4 +177,16 @@ describe("audit engines", () => {
       },
     ]);
   });
+
+  it("reports an unreadable manifest as an infrastructure failure", async () => {
+    write("packages/lib/package.json", "{ not json");
+
+    const outcome = await runEnginesAudit(nodeFilesystem, { rootDir, targetPath: rootDir });
+
+    expect(outcome.ok).toBe(false);
+    if (outcome.ok) {
+      return;
+    }
+    expect(outcome.error.code).toBe("INFRA_FAILURE");
+  });
 });

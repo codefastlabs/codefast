@@ -56,4 +56,11 @@ describe("audit command runner", () => {
     expect(out).toContain("✓");
     expect(out).toContain("all resolve");
   });
+
+  it("runs an engines audit over a target holding no package and reports no floors", async () => {
+    const { exitCode, out } = await runAudit(["engines", fixtureDir, "--json"]);
+
+    expect(exitCode).toBe(0);
+    expect(JSON.parse(out)).toMatchObject({ ok: true, result: { floors: [], violations: [], packageCount: 0 } });
+  });
 });
