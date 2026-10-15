@@ -933,6 +933,21 @@ export const BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE = {
   what: "create container, bind decorated graph, resolve root once",
 } as const satisfies ScenarioDescriptor;
 
+/**
+ * An application's startup: a fresh container, the forty-service app graph registered as classes, every handler
+ * resolved once.
+ *
+ * @remarks The cost a user waits through before the first request, at the scale of a real service rather than the
+ * ten-node graph.
+ */
+export const APP_BOOT_40 = {
+  id: "app-boot-40",
+  tier: "contract",
+  requires: ["class-injection", "transient-root"],
+  group: "boot",
+  what: "create a container, register a 40-service app graph as classes (32 singletons, 8 transient handlers), resolve every handler once",
+} as const satisfies ScenarioDescriptor;
+
 // ── production ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**

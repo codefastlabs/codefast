@@ -1,3 +1,4 @@
+import { buildBrandiAppBootScenarios } from "#scenarios/brandi/app-boot";
 /**
  * Every brandi scenario, in report order: the rows brandi's token, scope, module, async-factory and
  * conditional-injection APIs express natively.
@@ -28,6 +29,7 @@ export function collectAllBrandiScenarios(): ReadonlyArray<AnyScenario> {
     ...buildBrandiMicroScenarios(),
     ...buildBrandiRealisticScenarios(),
     ...buildBrandiRealisticClassScenarios(),
+    ...buildBrandiAppBootScenarios(),
     ...buildBrandiFanOutScenarios(),
     ...buildBrandiConditionalScenarios(),
     ...buildBrandiModuleScenarios(),

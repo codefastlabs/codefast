@@ -1,4 +1,5 @@
 import { buildTsyringeAliasScenarios } from "#scenarios/tsyringe/alias";
+import { buildTsyringeAppBootScenarios } from "#scenarios/tsyringe/app-boot";
 import { buildTsyringeAsyncScenarios } from "#scenarios/tsyringe/async";
 import { buildTsyringeBindingVariantScenarios } from "#scenarios/tsyringe/binding-variants";
 import { buildTsyringeBootScenarios } from "#scenarios/tsyringe/boot";
@@ -29,6 +30,7 @@ export function collectAllTsyringeScenarios(): ReadonlyArray<AnyScenario> {
     ...buildTsyringeMicroScenarios(),
     ...buildTsyringeRealisticScenarios(),
     ...buildTsyringeRealisticClassScenarios(),
+    ...buildTsyringeAppBootScenarios(),
     ...buildTsyringeFanOutScenarios(),
     ...buildTsyringeScopeScenarios(),
     ...buildTsyringeLifecycleScenarios(),

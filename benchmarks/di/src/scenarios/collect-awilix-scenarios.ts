@@ -1,4 +1,5 @@
 import { buildAwilixAliasScenarios } from "#scenarios/awilix/alias";
+import { buildAwilixAppBootScenarios } from "#scenarios/awilix/app-boot";
 import { buildAwilixAsyncScenarios } from "#scenarios/awilix/async";
 import { buildAwilixBootScenarios } from "#scenarios/awilix/boot";
 import { buildAwilixDisposeScaleScenarios } from "#scenarios/awilix/dispose-scale";
@@ -29,6 +30,7 @@ export function collectAllAwilixScenarios(): ReadonlyArray<AnyScenario> {
     ...buildAwilixMicroScenarios(),
     ...buildAwilixRealisticScenarios(),
     ...buildAwilixRealisticClassScenarios(),
+    ...buildAwilixAppBootScenarios(),
     ...buildAwilixFanOutScenarios(),
     ...buildAwilixScopeScenarios(),
     ...buildAwilixScaleScenarios(),
