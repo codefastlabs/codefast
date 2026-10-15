@@ -14,6 +14,9 @@ import {
   bindingSlotToResolveOptions,
   injectionSlotToResolveOptions,
   resolveOptionsForSlot,
+  settledParam,
+  settledSlot,
+  singleCriterionForSlot,
 } from "#injection/dependency-slot";
 
 function slotFor(criteria: Partial<Pick<DependencySlot, "name" | "tags">>): DependencySlot {
@@ -115,5 +118,37 @@ describe("resolveOptionsForSlot", () => {
       Object.assign(captured, { name: "backup" });
     }).toThrow(TypeError);
     expect(container.resolve(Root).driver).toBe("primary-driver");
+  });
+});
+
+describe("settledSlot and settledParam", () => {
+  it("answer with the options and criterion the slot itself answers with", () => {
+    const tagged = slotFor({ tags: [] });
+    const named = slotFor({ name: "primary" });
+    for (const slot of [slotFor({}), tagged, named]) {
+      const settled = settledSlot(slot);
+      expect(resolveOptionsForSlot(settled)).toBe(resolveOptionsForSlot(slot));
+      expect(singleCriterionForSlot(settled)).toBe(singleCriterionForSlot(slot));
+      const fieldsOf = (subject: DependencySlot): Readonly<Record<string, unknown>> => ({
+        token: subject.token,
+        optional: subject.optional,
+        multi: subject.multi,
+        name: subject.name,
+        tags: subject.tags,
+      });
+      expect(fieldsOf(settled)).toEqual(fieldsOf(slot));
+    }
+  });
+
+  it("keeps a parameter's index", () => {
+    const param = { ...slotFor({ name: "primary" }), index: 2 };
+    const settled = settledParam(param);
+    expect(settled.index).toBe(2);
+    expect(resolveOptionsForSlot(settled)).toBe(resolveOptionsForSlot(param));
+  });
+
+  it("gives every settled slot the same keys in the same order", () => {
+    const keysOf = (slot: DependencySlot): Array<string | symbol> => Reflect.ownKeys(slot);
+    expect(keysOf(settledSlot(slotFor({ name: "primary" })))).toEqual(keysOf(settledSlot(slotFor({}))));
   });
 });

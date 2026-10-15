@@ -50,7 +50,7 @@ import {
   SelfBindingRequiresClassError,
 } from "#errors";
 import type { InjectableDependency, InjectionDescriptor, ResolvedDependencyValue } from "#injection/descriptor";
-import { normalizeToDescriptor } from "#injection/descriptor";
+import { settledDescriptorsOf } from "#injection/descriptor";
 import type { ScopeManager } from "#lifecycle/scopes";
 
 // ── Registration target ──────────────────────────────────────────────────────────────────────────────────────────────
@@ -245,7 +245,7 @@ export class BindingChain<Value, Names extends string = string>
   ): BindingBuilder<Value> {
     this.#requireUnregistered();
     this.factory = factory;
-    this.deps = deps.map((dependency) => normalizeToDescriptor(dependency));
+    this.deps = settledDescriptorsOf(deps);
     return this.#register("resolved", "transient");
   }
 
@@ -255,7 +255,7 @@ export class BindingChain<Value, Names extends string = string>
   ): BindingBuilder<Value> {
     this.#requireUnregistered();
     this.factory = factory;
-    this.deps = deps.map((dependency) => normalizeToDescriptor(dependency));
+    this.deps = settledDescriptorsOf(deps);
     return this.#register("resolved-async", "transient");
   }
 

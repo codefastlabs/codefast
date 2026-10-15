@@ -2,6 +2,7 @@
 import type { Token } from "#core/token";
 import type { BindingTag, Constructor, TokenValue } from "#core/types";
 import type { DependencySlot } from "#injection/dependency-slot";
+import { settledSlot } from "#injection/dependency-slot";
 
 /**
  * Slot-selection options — a name and tags — a declared dependency narrows its binding with.
@@ -98,6 +99,13 @@ export function normalizeToDescriptor(dependency: InjectableDependency): Injecti
     return materializeInjectionDescriptor(dependency);
   }
   return { token: dependency, optional: false, multi: false };
+}
+
+/**
+ * Normalises a factory's declared dependencies to settled descriptors, the one shape the engine resolves.
+ */
+export function settledDescriptorsOf(dependencies: ReadonlyArray<InjectableDependency>): Array<InjectionDescriptor> {
+  return dependencies.map((dependency) => settledSlot(normalizeToDescriptor(dependency)));
 }
 
 /**

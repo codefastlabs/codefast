@@ -31,6 +31,7 @@ import type { DependencySlot } from "#injection/dependency-slot";
 import {
   loneTagBesideNameOf,
   resolveOptionsForSlot,
+  settledParam,
   singleCriterionForSlot,
   singleCriterionOnlyOf,
 } from "#injection/dependency-slot";
@@ -963,7 +964,7 @@ export class DependencyResolver implements ResolverCallbacks {
   #settleConstructorParams(target: Constructor, facts: ClassFacts): ReadonlyArray<ParamMetadata> {
     const meta = this.#introspector().constructorMetadataOf(target, facts);
     if (meta !== undefined) {
-      return meta.params;
+      return meta.params.map(settledParam);
     }
     if (target.length === 0) {
       // A subclass with an implicit constructor and no own metadata inherits its base's declared
