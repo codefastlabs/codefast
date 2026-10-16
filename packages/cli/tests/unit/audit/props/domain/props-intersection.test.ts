@@ -75,6 +75,7 @@ describe("findPropsIntersections", () => {
         "export default function Panel(props: Base & Extra) {}",
         "export const Tile = function (props: Base & Extra) {};",
         "export default memo(function Badge(props: Base & Extra) {});",
+        "const Chip = ((props: Base & Extra) => null);",
       ].join("\n"),
     );
 
@@ -85,6 +86,7 @@ describe("findPropsIntersections", () => {
       { site: "parameter", line: 4, raw: "Base & Extra" },
       { site: "parameter", line: 5, raw: "Base & Extra" },
       { site: "parameter", line: 6, raw: "Base & Extra" },
+      { site: "parameter", line: 7, raw: "Base & Extra" },
     ]);
     expect(found[1]?.parts.map(({ text }) => text)).toStrictEqual(["Base", "Extra"]);
   });
@@ -104,13 +106,15 @@ describe("findPropsIntersections", () => {
     expect(find(source)).toStrictEqual([]);
   });
 
-  it("passes over a module-level function that is not named as a component, and a class method", () => {
+  it("passes over a module-level function not named as a component, a class method, and a binding holding no function", () => {
     const source = [
       "function mergeProps(props: Base & Extra) {}",
       "export const toRow = (props: Base & Extra) => null;",
       "const handlers = { Click: (event: Base & Extra) => null };",
       "export default function (props: Base & Extra) {}",
       "class Panel { render(props: Base & Extra) {} }",
+      'const Theme = "dark", Slot = styled(Box);',
+      "let Pending;",
     ].join("\n");
 
     expect(find(source)).toStrictEqual([]);
