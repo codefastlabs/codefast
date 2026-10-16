@@ -10,6 +10,7 @@ import { toggleVariants } from "#variants/toggle";
 
 const TOGGLE_GROUP_NAME = "ToggleGroup";
 
+// A type alias, since an interface cannot extend the type parameter `P` it scopes.
 type ScopedProps<P> = P & { __scopeToggleGroup?: Context.Scope };
 
 const [createToggleGroupContext] = Context.createContextScope(TOGGLE_GROUP_NAME, [
@@ -28,6 +29,8 @@ const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<
 // ── Component: ToggleGroup ───────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * @remarks A type alias, since Radix's root props are a union over `type` that only `&` distributes into.
+ *
  * @since 0.3.16-canary.0
  */
 type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> &
@@ -86,9 +89,8 @@ const TOGGLE_GROUP_ITEM_NAME = "ToggleGroupItem";
 /**
  * @since 0.3.16-canary.0
  */
-type ToggleGroupItemProps = ScopedProps<
-  ComponentProps<typeof ToggleGroupPrimitive.Item> & VariantProps<typeof toggleVariants>
->;
+interface ToggleGroupItemProps
+  extends ScopedProps<ComponentProps<typeof ToggleGroupPrimitive.Item>>, VariantProps<typeof toggleVariants> {}
 
 /**
  * @since 0.3.16-canary.0

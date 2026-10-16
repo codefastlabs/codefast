@@ -48,7 +48,7 @@ function EmptyHeader({ className, ...props }: EmptyHeaderProps): JSX.Element {
 /**
  * @since 0.3.16-canary.0
  */
-type EmptyMediaProps = ComponentProps<"div"> & EmptyMediaVariants;
+interface EmptyMediaProps extends ComponentProps<"div">, EmptyMediaVariants {}
 
 /**
  * @since 0.3.16-canary.0

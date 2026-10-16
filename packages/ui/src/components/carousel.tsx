@@ -13,6 +13,7 @@ import { cn } from "#lib/utils";
 
 const CAROUSEL_NAME = "Carousel";
 
+// A type alias, since an interface cannot extend the type parameter `P` it scopes.
 type ScopedProps<P> = P & { __scopeCarousel?: Context.Scope };
 
 const [createCarouselContext, createCarouselScope] = Context.createContextScope(CAROUSEL_NAME);

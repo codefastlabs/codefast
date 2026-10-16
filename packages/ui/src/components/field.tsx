@@ -35,9 +35,9 @@ function FieldSet({ className, ...props }: FieldSetProps): JSX.Element {
 /**
  * @since 0.3.16-canary.0
  */
-type FieldLegendProps = ComponentProps<"legend"> & {
+interface FieldLegendProps extends ComponentProps<"legend"> {
   variant?: "label" | "legend";
-};
+}
 
 /**
  * @since 0.3.16-canary.0
@@ -81,7 +81,7 @@ function FieldGroup({ className, ...props }: FieldGroupProps): JSX.Element {
 /**
  * @since 0.3.16-canary.0
  */
-type FieldProps = ComponentProps<"div"> & FieldVariants;
+interface FieldProps extends ComponentProps<"div">, FieldVariants {}
 
 /**
  * @since 0.3.16-canary.0
@@ -195,9 +195,9 @@ function FieldDescription({ className, ...props }: FieldDescriptionProps): JSX.E
 /**
  * @since 0.3.16-canary.0
  */
-type FieldSeparatorProps = ComponentProps<"div"> & {
+interface FieldSeparatorProps extends ComponentProps<"div"> {
   children?: ComponentProps<"span">["children"];
-};
+}
 
 /**
  * @since 0.3.16-canary.0

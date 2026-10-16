@@ -9,11 +9,9 @@ import { buttonVariants } from "#variants/button";
 /**
  * @since 0.3.16-canary.0
  */
-type ButtonProps = ComponentProps<"button"> &
-  ButtonVariants & {
-    asChild?: boolean;
-    type?: ComponentProps<"button">["type"];
-  };
+interface ButtonProps extends ComponentProps<"button">, ButtonVariants {
+  asChild?: boolean;
+}
 
 /**
  * @since 0.3.16-canary.0

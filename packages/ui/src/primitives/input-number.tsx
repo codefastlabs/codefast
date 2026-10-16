@@ -25,6 +25,8 @@ const NUMBER_INPUT_NAME = "InputNumber";
 
 /**
  * Props that include an optional scope for the InputNumber component.
+ *
+ * @remarks A type alias, since an interface cannot extend the type parameter `P` it scopes.
  */
 type ScopedProps<P> = P & {
   /**

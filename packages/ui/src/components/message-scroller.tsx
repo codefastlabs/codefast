@@ -130,8 +130,10 @@ function MessageScrollerItem({ className, isScrollAnchor = false, ...props }: Me
  *
  * @since 0.5.0-canary.3
  */
-type MessageScrollerButtonProps = ComponentProps<typeof MessageScrollerButtonPrimitive> &
-  Pick<ComponentProps<typeof Button>, "size" | "variant">;
+interface MessageScrollerButtonProps
+  extends
+    ComponentProps<typeof MessageScrollerButtonPrimitive>,
+    Pick<ComponentProps<typeof Button>, "size" | "variant"> {}
 
 /**
  * @since 0.5.0-canary.3

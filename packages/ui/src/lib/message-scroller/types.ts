@@ -173,32 +173,32 @@ type MessageScrollerProps = ComponentProps<"div">;
  *
  * @since 0.5.0-canary.3
  */
-type MessageScrollerViewportProps = ComponentProps<"div"> & {
+interface MessageScrollerViewportProps extends ComponentProps<"div"> {
   // Keep the first visible messageId row stable on prepend. Defaults to true.
   preserveScrollOnPrepend?: boolean;
-};
+}
 
 /**
  * Transcript row container. Every direct child should be a MessageScrollerItem.
  *
  * @since 0.5.0-canary.3
  */
-type MessageScrollerContentProps = ComponentProps<"div"> & {
+interface MessageScrollerContentProps extends ComponentProps<"div"> {
   // Class name for the internal tail spacer used when anchoring turns near the top.
   spacerClassName?: string;
-};
+}
 
 /**
  * One transcript row: a message, marker, typing row, separator, or load-more row.
  *
  * @since 0.5.0-canary.3
  */
-type MessageScrollerItemProps = ComponentProps<"div"> & {
+interface MessageScrollerItemProps extends ComponentProps<"div"> {
   // Stable row id for scrollToMessage, visibility, and prepend preservation.
   messageId?: string;
   // Marks a turn boundary that newly appended anchors and last-anchor restore use.
   isScrollAnchor?: boolean;
-};
+}
 
 /**
  * State passed to MessageScrollerButton's render prop.
@@ -216,12 +216,12 @@ type MessageScrollerButtonRenderState = {
  *
  * @since 0.5.0-canary.3
  */
-type MessageScrollerButtonProps = UseRenderComponentProps<"button", MessageScrollerButtonRenderState> & {
+interface MessageScrollerButtonProps extends UseRenderComponentProps<"button", MessageScrollerButtonRenderState> {
   // Native scroll behavior when clicked. Defaults to "smooth".
   behavior?: ScrollBehavior;
   // Transcript edge to scroll toward. Defaults to "end".
   direction?: MessageScrollerButtonDirection;
-};
+}
 
 /**
  * Minimal external store backing useMessageScrollerScrollable, consumed via

@@ -32,7 +32,7 @@ function Tabs({ className, orientation = "horizontal", ...props }: TabsProps): J
 /**
  * @since 0.3.16-canary.0
  */
-type TabsListProps = ComponentProps<typeof TabsPrimitive.List> & TabsListVariants;
+interface TabsListProps extends ComponentProps<typeof TabsPrimitive.List>, TabsListVariants {}
 
 /**
  * @since 0.3.16-canary.0

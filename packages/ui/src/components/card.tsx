@@ -7,9 +7,9 @@ import { cn } from "#lib/utils";
 /**
  * @since 0.3.16-canary.0
  */
-type CardProps = ComponentProps<"div"> & {
+interface CardProps extends ComponentProps<"div"> {
   size?: "default" | "sm";
-};
+}
 
 /**
  * @since 0.3.16-canary.0

@@ -8,9 +8,9 @@ import { cn } from "#lib/utils";
 /**
  * @since 0.3.16-canary.0
  */
-type SwitchProps = ComponentProps<typeof SwitchPrimitives.Root> & {
+interface SwitchProps extends ComponentProps<typeof SwitchPrimitives.Root> {
   size?: "default" | "sm";
-};
+}
 
 /**
  * @since 0.3.16-canary.0

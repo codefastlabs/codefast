@@ -49,10 +49,9 @@ function ItemSeparator({ className, ...props }: ItemSeparatorProps): JSX.Element
 /**
  * @since 0.3.16-canary.0
  */
-type ItemProps = ComponentProps<"div"> &
-  ItemVariants & {
-    asChild?: boolean;
-  };
+interface ItemProps extends ComponentProps<"div">, ItemVariants {
+  asChild?: boolean;
+}
 
 /**
  * @since 0.3.16-canary.0
@@ -76,7 +75,7 @@ function Item({ asChild = false, className, size = "default", variant = "default
 /**
  * @since 0.3.16-canary.0
  */
-type ItemMediaProps = ComponentProps<"div"> & ItemMediaVariants;
+interface ItemMediaProps extends ComponentProps<"div">, ItemMediaVariants {}
 
 /**
  * @since 0.3.16-canary.0

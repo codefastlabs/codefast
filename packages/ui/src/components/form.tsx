@@ -25,6 +25,7 @@ const Form: typeof FormProvider = FormProvider;
 
 const FORM_FIELD_NAME = "FormField";
 
+// A type alias, since an interface cannot extend the type parameter `P` it scopes.
 type ScopedProps<P> = P & { __scopeFormField?: Context.Scope };
 
 const [createFormFieldContext, createFormFieldScope] = Context.createContextScope(FORM_FIELD_NAME);
