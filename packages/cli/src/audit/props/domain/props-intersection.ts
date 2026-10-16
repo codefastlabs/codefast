@@ -4,7 +4,7 @@ import { parseSync } from "oxc-parser";
 
 import type { PropsViolation } from "#audit/domain/types";
 import type { OxcNode } from "#core/oxc-node";
-import { isOxcNode } from "#core/oxc-node";
+import { isOxcNode, programStatements } from "#core/oxc-node";
 import { firstLineOf, lineOfOffset } from "#core/source-position";
 
 /**
@@ -85,12 +85,52 @@ function intersectionsOfAlias(sourceText: string, alias: OxcNode): Array<PropsIn
     .map((argument) => ({ ...base, wrapper, parts: intersectionParts(sourceText, argument) }));
 }
 
-const FUNCTION_TYPES = new Set([
-  "FunctionDeclaration",
-  "FunctionExpression",
-  "ArrowFunctionExpression",
-  "TSDeclareFunction",
-]);
+const FUNCTION_DECLARATION_TYPES = new Set(["FunctionDeclaration", "TSDeclareFunction"]);
+
+/** JSX renders a capitalised name as a component and a lowercase one as a host element. */
+const COMPONENT_NAME = /^[A-Z]/;
+
+function isComponentName(node: unknown): boolean {
+  return isOxcNode(node) && typeof node.name === "string" && COMPONENT_NAME.test(node.name);
+}
+
+/** Returns the functions an initialiser is: itself, or each one passed to the call it is, such as `memo(…)`. */
+function functionsOfExpression(expression: OxcNode): Array<OxcNode> {
+  if (expression.type === "ParenthesizedExpression" && isOxcNode(expression.expression)) {
+    return functionsOfExpression(expression.expression);
+  }
+  if (expression.type === "ArrowFunctionExpression" || expression.type === "FunctionExpression") {
+    return [expression];
+  }
+  if (expression.type === "CallExpression" && Array.isArray(expression.arguments)) {
+    return expression.arguments.filter(isOxcNode).flatMap(functionsOfExpression);
+  }
+  return [];
+}
+
+/**
+ * Returns the components a top-level statement declares: a capitalised function, or the functions a
+ * capitalised binding holds; a function nested in another is never one.
+ */
+function componentsOfStatement(statement: OxcNode): Array<OxcNode> {
+  const declaration =
+    (statement.type === "ExportNamedDeclaration" || statement.type === "ExportDefaultDeclaration") &&
+    isOxcNode(statement.declaration)
+      ? statement.declaration
+      : statement;
+  if (FUNCTION_DECLARATION_TYPES.has(declaration.type)) {
+    return isComponentName(declaration.id) ? [declaration] : [];
+  }
+  if (declaration.type === "VariableDeclaration" && Array.isArray(declaration.declarations)) {
+    return declaration.declarations
+      .filter(isOxcNode)
+      .flatMap(({ id, init }) => (isComponentName(id) && isOxcNode(init) ? functionsOfExpression(init) : []));
+  }
+  // `export default memo(function Row(…))` names the component on the function itself.
+  return statement.type === "ExportDefaultDeclaration"
+    ? functionsOfExpression(declaration).filter((fn) => isComponentName(fn.id))
+    : [];
+}
 
 /** Returns the type annotating a function's first parameter, past a `this` parameter and a default value. */
 function firstParameterAnnotation(fn: OxcNode): OxcNode | undefined {
@@ -141,9 +181,9 @@ function collectNodes(node: OxcNode, matches: (node: OxcNode) => boolean, found:
 /**
  * Finds every props type in one TypeScript source that joins types with `&`.
  *
- * @remarks A candidate is a `*Props` alias, or in a `.tsx` file the first parameter of any function
- * whose annotation is an intersection at its top level. Syntax alone decides the candidates; whether
- * an interface could express one is for the type checker, through {@link judgePropsIntersection}.
+ * @remarks A candidate is a `*Props` alias, or in a `.tsx` file a module-level component's first
+ * parameter whose annotation is an intersection at its top level. Syntax alone decides the candidates;
+ * whether an interface could express one is for the type checker, through {@link judgePropsIntersection}.
  */
 export function findPropsIntersections(filePath: string, sourceText: string): Array<PropsIntersection> {
   const readsParameters = filePath.endsWith(".tsx");
@@ -152,19 +192,17 @@ export function findPropsIntersections(filePath: string, sourceText: string): Ar
     return [];
   }
   const { program } = parseSync(filePath, sourceText);
-  const candidates: Array<OxcNode> = [];
+  const candidates: Array<OxcNode> = readsParameters ? programStatements(program).flatMap(componentsOfStatement) : [];
   if (isOxcNode(program)) {
-    collectNodes(
-      program,
-      (node) => node.type === "TSTypeAliasDeclaration" || (readsParameters && FUNCTION_TYPES.has(node.type)),
-      candidates,
-    );
+    collectNodes(program, (node) => node.type === "TSTypeAliasDeclaration", candidates);
   }
-  return candidates.flatMap((node) =>
-    node.type === "TSTypeAliasDeclaration"
-      ? intersectionsOfAlias(sourceText, node)
-      : intersectionsOfParameter(sourceText, node),
-  );
+  return candidates
+    .toSorted((a, b) => a.start - b.start)
+    .flatMap((node) =>
+      node.type === "TSTypeAliasDeclaration"
+        ? intersectionsOfAlias(sourceText, node)
+        : intersectionsOfParameter(sourceText, node),
+    );
 }
 
 function listParts(parts: ReadonlyArray<IntersectionPart>): string {

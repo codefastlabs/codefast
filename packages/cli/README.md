@@ -383,10 +383,13 @@ Configure exceptions via `audit.assertions.allowlist` — each entry is the asse
 Reports every `*Props` type alias joined with `&` that an interface could express instead — at the alias's top level
 (`type ButtonProps = ComponentProps<"button"> & ButtonVariants & { … }`) or passed to the type it wraps
 (`type ScrollAreaProps = ScopedProps<RootProps & ContextValue>`) — and every component parameter annotated inline with
-one: in a `.tsx` file, the first parameter of any function whose annotation is an intersection at its top level
+one: in a `.tsx` file, the first parameter of a component whose annotation is an intersection at its top level
 (`function ListItem({ href, ...props }: ComponentProps<"li"> & { href: string })`), which wants naming as an interface.
-An interface checks its members against every base where it is declared, so a conflicting prop fails there (TS2430, or
-TS2320 between two bases); `&` intersects the two silently and the narrowed prop only fails at a call site.
+A component is a module-level function with a capitalised name, as JSX renders one — a function declaration, or a
+`const` holding an arrow or function expression, directly or through a call such as `memo(…)`. A function nested in
+another (an event handler, a callback) takes no props, so its parameters are never read. An interface checks its members
+against every base where it is declared, so a conflicting prop fails there (TS2430, or TS2320 between two bases); `&`
+intersects the two silently and the narrowed prop only fails at a call site.
 
 Whether a part can be extended is the type checker's call, not a name list: the audit asks the native TypeScript type
 server (`typescript/unstable/sync`) what each part resolves to, and keeps the `&` when one is a union (only `&`
