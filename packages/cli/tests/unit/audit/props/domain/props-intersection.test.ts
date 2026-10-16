@@ -66,13 +66,15 @@ describe("findPropsIntersections", () => {
     ).toStrictEqual([]);
   });
 
-  it("finds an intersection annotating the first parameter of any function in a .tsx file", () => {
+  it("finds an intersection annotating the first parameter of a module-level component in a .tsx file", () => {
     const found = find(
       [
         'function ListItem({ href, ...props }: ComponentProps<"li"> & { href: string }) {}',
         "const Card = (props: (Base & Extra)) => null;",
-        'const Row = memo(function Row(this: Window, { a }: Base & { a: string } = { a: "" }) {});',
-        "class Panel { render(props: Base & Extra) {} }",
+        'export const Row = memo(function Row(this: Window, { a }: Base & { a: string } = { a: "" }) {});',
+        "export default function Panel(props: Base & Extra) {}",
+        "export const Tile = function (props: Base & Extra) {};",
+        "export default memo(function Badge(props: Base & Extra) {});",
       ].join("\n"),
     );
 
@@ -81,8 +83,54 @@ describe("findPropsIntersections", () => {
       { site: "parameter", line: 2, raw: "(Base & Extra)" },
       { site: "parameter", line: 3, raw: "Base & { a: string }" },
       { site: "parameter", line: 4, raw: "Base & Extra" },
+      { site: "parameter", line: 5, raw: "Base & Extra" },
+      { site: "parameter", line: 6, raw: "Base & Extra" },
     ]);
     expect(found[1]?.parts.map(({ text }) => text)).toStrictEqual(["Base", "Extra"]);
+  });
+
+  it("passes over a closure inside a component, whose parameter is not props", () => {
+    const source = [
+      "function BoardDnd(props: BoardDndProps) {",
+      '  const targetFor = (event: Pick<DragMoveEvent, "active" | "over"> & Partial<Pick<DragMoveEvent, "collisions">>) => {',
+      "    function Inner(props: Base & Extra) {}",
+      "  };",
+      "}",
+      "const Board = () => {",
+      "  const Cell = (props: Base & Extra) => null;",
+      "};",
+    ].join("\n");
+
+    expect(find(source)).toStrictEqual([]);
+  });
+
+  it("passes over a module-level function that is not named as a component, and a class method", () => {
+    const source = [
+      "function mergeProps(props: Base & Extra) {}",
+      "export const toRow = (props: Base & Extra) => null;",
+      "const handlers = { Click: (event: Base & Extra) => null };",
+      "export default function (props: Base & Extra) {}",
+      "class Panel { render(props: Base & Extra) {} }",
+    ].join("\n");
+
+    expect(find(source)).toStrictEqual([]);
+  });
+
+  it("keeps a props alias declared inside a function, in source order with the components", () => {
+    const found = find(
+      [
+        "function Box(props: Base & Extra) {",
+        "  type InnerProps = Base & Extra;",
+        "}",
+        "type OuterProps = Base & Extra;",
+      ].join("\n"),
+    );
+
+    expect(found.map(({ site, line }) => ({ site, line }))).toStrictEqual([
+      { site: "parameter", line: 1 },
+      { site: "alias", line: 2 },
+      { site: "alias", line: 4 },
+    ]);
   });
 
   it("passes over a parameter not annotated with a top-level intersection, a later parameter, and a .ts file", () => {

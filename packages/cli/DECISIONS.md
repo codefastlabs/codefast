@@ -211,9 +211,10 @@ distributes over the members. Syntax cannot tell `ComponentProps<"div">` from `C
 name list or a disable comment for the second kind would rot the first time a primitive's props changed shape.
 
 **Decision.** `oxc-parser` finds the candidates — every `*Props` alias joined with `&`, at its top level or passed to
-the type it wraps — and the native TypeScript type server classifies each part from its type node: an object (or an
-intersection of objects) can be extended; a union, a type parameter, a mapped type over a type parameter, or anything
-that is not an object keeps the `&`. A part that does not resolve is reported, never passed.
+the type it wraps, and in a `.tsx` file a module-level component's first parameter annotated inline with one — and the
+native TypeScript type server classifies each part from its type node: an object (or an intersection of objects) can be
+extended; a union, a type parameter, a mapped type over a type parameter, or anything that is not an object keeps the
+`&`. A part that does not resolve is reported, never passed.
 
 **Consequences.** The audit needs no allowlist for the forms that must stay a `type`, and it follows a dependency that
 turns its props into a union without anyone editing a list. Like the `className` fold, it is the type server's cost only
