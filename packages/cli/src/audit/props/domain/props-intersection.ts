@@ -1,4 +1,4 @@
-/** Finds component props aliases joined with `&`, and judges each from what its parts resolved to. */
+/** Finds component props types joined with `&`, and judges each from what its parts resolved to. */
 
 import { parseSync } from "oxc-parser";
 
@@ -26,12 +26,13 @@ export interface IntersectionPart {
 }
 
 /**
- * A `*Props` type alias whose body joins types with `&`, at its top level or as an argument of the type it wraps.
+ * A props type joined with `&`: a `*Props` alias, or the inline annotation of a component's props parameter.
  */
 export interface PropsIntersection {
-  readonly name: string;
+  /** Whether a `*Props` alias declares the intersection or a parameter annotation spells it inline. */
+  readonly site: "alias" | "parameter";
   readonly line: number;
-  /** The alias as written, up to its first line break. */
+  /** The alias, or the parameter's annotation, as written up to its first line break. */
   readonly raw: string;
   /** The type the intersection is passed to, when it is not the alias's whole body. */
   readonly wrapper: string | undefined;
@@ -67,7 +68,7 @@ function intersectionsOfAlias(sourceText: string, alias: OxcNode): Array<PropsIn
     return [];
   }
   const base = {
-    name: alias.id.name,
+    site: "alias" as const,
     line: lineOfOffset(sourceText, alias.start),
     raw: firstLineOf(sourceText.slice(alias.start, alias.end)),
   };
@@ -84,40 +85,86 @@ function intersectionsOfAlias(sourceText: string, alias: OxcNode): Array<PropsIn
     .map((argument) => ({ ...base, wrapper, parts: intersectionParts(sourceText, argument) }));
 }
 
-function collectAliases(node: OxcNode, found: Array<OxcNode>): void {
-  if (node.type === "TSTypeAliasDeclaration") {
+const FUNCTION_TYPES = new Set([
+  "FunctionDeclaration",
+  "FunctionExpression",
+  "ArrowFunctionExpression",
+  "TSDeclareFunction",
+]);
+
+/** Returns the type annotating a function's first parameter, past a `this` parameter and a default value. */
+function firstParameterAnnotation(fn: OxcNode): OxcNode | undefined {
+  const params = Array.isArray(fn.params) ? fn.params.filter(isOxcNode) : [];
+  const first = params.find((param) => !(param.type === "Identifier" && param.name === "this"));
+  const binding = first?.type === "AssignmentPattern" && isOxcNode(first.left) ? first.left : first;
+  const annotation = binding?.typeAnnotation;
+  return isOxcNode(annotation) && isOxcNode(annotation.typeAnnotation) ? annotation.typeAnnotation : undefined;
+}
+
+function intersectionsOfParameter(sourceText: string, fn: OxcNode): Array<PropsIntersection> {
+  const annotation = firstParameterAnnotation(fn);
+  if (annotation === undefined) {
+    return [];
+  }
+  const body = unwrapParentheses(annotation);
+  if (body.type !== "TSIntersectionType") {
+    return [];
+  }
+  return [
+    {
+      site: "parameter",
+      line: lineOfOffset(sourceText, annotation.start),
+      raw: firstLineOf(sourceText.slice(annotation.start, annotation.end)),
+      wrapper: undefined,
+      parts: intersectionParts(sourceText, body),
+    },
+  ];
+}
+
+function collectNodes(node: OxcNode, matches: (node: OxcNode) => boolean, found: Array<OxcNode>): void {
+  if (matches(node)) {
     found.push(node);
   }
   for (const value of Object.values(node)) {
     if (Array.isArray(value)) {
       for (const item of value) {
         if (isOxcNode(item)) {
-          collectAliases(item, found);
+          collectNodes(item, matches, found);
         }
       }
     } else if (isOxcNode(value)) {
-      collectAliases(value, found);
+      collectNodes(value, matches, found);
     }
   }
 }
 
 /**
- * Finds every `*Props` type alias in one TypeScript source whose body joins types with `&`.
+ * Finds every props type in one TypeScript source that joins types with `&`.
  *
- * @remarks Syntax alone decides which aliases are candidates; whether an interface could express
- * one is for the type checker, through {@link judgePropsIntersection}.
+ * @remarks A candidate is a `*Props` alias, or in a `.tsx` file the first parameter of any function
+ * whose annotation is an intersection at its top level. Syntax alone decides the candidates; whether
+ * an interface could express one is for the type checker, through {@link judgePropsIntersection}.
  */
 export function findPropsIntersections(filePath: string, sourceText: string): Array<PropsIntersection> {
-  // Most files declare no props alias with an `&`, so a text probe spares them the parse.
-  if (!sourceText.includes("Props") || !sourceText.includes("&")) {
+  const readsParameters = filePath.endsWith(".tsx");
+  // Most files hold no props type with an `&`, so a text probe spares them the parse.
+  if (!sourceText.includes("&") || (!readsParameters && !sourceText.includes("Props"))) {
     return [];
   }
   const { program } = parseSync(filePath, sourceText);
-  const aliases: Array<OxcNode> = [];
+  const candidates: Array<OxcNode> = [];
   if (isOxcNode(program)) {
-    collectAliases(program, aliases);
+    collectNodes(
+      program,
+      (node) => node.type === "TSTypeAliasDeclaration" || (readsParameters && FUNCTION_TYPES.has(node.type)),
+      candidates,
+    );
   }
-  return aliases.flatMap((alias) => intersectionsOfAlias(sourceText, alias));
+  return candidates.flatMap((node) =>
+    node.type === "TSTypeAliasDeclaration"
+      ? intersectionsOfAlias(sourceText, node)
+      : intersectionsOfParameter(sourceText, node),
+  );
 }
 
 function listParts(parts: ReadonlyArray<IntersectionPart>): string {
@@ -134,7 +181,7 @@ export function judgePropsIntersection(
   intersection: PropsIntersection,
   kinds: ReadonlyArray<ConstituentKind>,
 ): PropsViolation | undefined {
-  const { line, raw, wrapper, parts } = intersection;
+  const { site, line, raw, wrapper, parts } = intersection;
   const unresolved = parts.filter((_, index) => kinds[index] === "unresolved" || kinds[index] === undefined);
   if (unresolved.length > 0) {
     return {
@@ -146,10 +193,11 @@ export function judgePropsIntersection(
   if (!kinds.every((kind) => kind === "object")) {
     return undefined;
   }
-  const where = wrapper === undefined ? "" : ` passed to \`${wrapper}\``;
+  const where = site === "parameter" ? " inline" : wrapper === undefined ? "" : ` passed to \`${wrapper}\``;
+  const remedy = site === "parameter" ? "name it as an interface" : "declare an interface";
   return {
     line,
     raw,
-    reason: `joins object types with \`&\`${where} — declare an interface that extends them, so a conflicting member fails at the declaration instead of narrowing silently`,
+    reason: `joins object types with \`&\`${where} — ${remedy} that extends them, so a conflicting member fails at the declaration instead of narrowing silently`,
   };
 }

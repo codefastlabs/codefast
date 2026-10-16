@@ -28,9 +28,9 @@ describe("findPropsIntersections", () => {
       ].join("\n"),
     );
 
-    expect(found.map(({ name, line, raw, wrapper }) => ({ name, line, raw, wrapper }))).toStrictEqual([
-      { name: "ButtonProps", line: 1, raw: 'type ButtonProps = ComponentProps<"button"> &', wrapper: undefined },
-      { name: "CardProps", line: 5, raw: "type CardProps = Base & { size?: string };", wrapper: undefined },
+    expect(found.map(({ site, line, raw, wrapper }) => ({ site, line, raw, wrapper }))).toStrictEqual([
+      { site: "alias", line: 1, raw: 'type ButtonProps = ComponentProps<"button"> &', wrapper: undefined },
+      { site: "alias", line: 5, raw: "type CardProps = Base & { size?: string };", wrapper: undefined },
     ]);
     expect(found[0]?.parts.map(({ text }) => text)).toStrictEqual([
       'ComponentProps<"button">',
@@ -65,6 +65,37 @@ describe("findPropsIntersections", () => {
       ),
     ).toStrictEqual([]);
   });
+
+  it("finds an intersection annotating the first parameter of any function in a .tsx file", () => {
+    const found = find(
+      [
+        'function ListItem({ href, ...props }: ComponentProps<"li"> & { href: string }) {}',
+        "const Card = (props: (Base & Extra)) => null;",
+        'const Row = memo(function Row(this: Window, { a }: Base & { a: string } = { a: "" }) {});',
+        "class Panel { render(props: Base & Extra) {} }",
+      ].join("\n"),
+    );
+
+    expect(found.map(({ site, line, raw }) => ({ site, line, raw }))).toStrictEqual([
+      { site: "parameter", line: 1, raw: 'ComponentProps<"li"> & { href: string }' },
+      { site: "parameter", line: 2, raw: "(Base & Extra)" },
+      { site: "parameter", line: 3, raw: "Base & { a: string }" },
+      { site: "parameter", line: 4, raw: "Base & Extra" },
+    ]);
+    expect(found[1]?.parts.map(({ text }) => text)).toStrictEqual(["Base", "Extra"]);
+  });
+
+  it("passes over a parameter not annotated with a top-level intersection, a later parameter, and a .ts file", () => {
+    const source = [
+      'function Plain(props: ComponentProps<"div">) {}',
+      "function Wrapped(props: ScopedProps<Base & Extra>) {}",
+      "function Bare({ a }) {}",
+      "function Second(ref: Ref, props: Base & Extra) {}",
+    ].join("\n");
+
+    expect(find(source)).toStrictEqual([]);
+    expect(findPropsIntersections("a.ts", "function ListItem(props: Base & Extra) {}")).toStrictEqual([]);
+  });
 });
 
 describe("judgePropsIntersection", () => {
@@ -97,5 +128,16 @@ describe("judgePropsIntersection", () => {
     const wrapped = only("type BProps = ScopedProps<Base & Extra>;");
 
     expect(judgePropsIntersection(wrapped, ["object", "object"])?.reason).toContain("passed to `ScopedProps`");
+  });
+
+  it("asks for a named interface when the intersection is written inline on a parameter", () => {
+    const inline = only("function Box(props: Base & Extra) {}");
+
+    expect(judgePropsIntersection(inline, ["object", "object"])).toStrictEqual({
+      line: 1,
+      raw: "Base & Extra",
+      reason: expect.stringContaining("joins object types with `&` inline — name it as an interface that extends them"),
+    });
+    expect(judgePropsIntersection(inline, ["union", "object"])).toBeUndefined();
   });
 });
