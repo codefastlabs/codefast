@@ -21,7 +21,7 @@ const callout = tv({
   },
 });
 
-type CalloutProps = ComponentProps<"div"> & VariantProps<typeof callout>;
+interface CalloutProps extends ComponentProps<"div">, VariantProps<typeof callout> {}
 
 // `tone`/`emphasis` are defaulted here (rather than via tv's `defaultVariants`) so the resolver
 // never receives an explicit `undefined` — the app runs with `exactOptionalPropertyTypes`.
