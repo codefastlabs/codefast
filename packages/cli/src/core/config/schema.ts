@@ -91,6 +91,7 @@ interface CodefastAuditConfig {
   imports?: CodefastAuditAllowlistConfig | undefined;
   assertions?: CodefastAuditAllowlistConfig | undefined;
   displayNames?: CodefastAuditAllowlistConfig | undefined;
+  props?: CodefastAuditAllowlistConfig | undefined;
   layers?: CodefastAuditLayersConfig | undefined;
 }
 
@@ -192,6 +193,7 @@ const codefastAuditConfigSchema = z
     imports: codefastAuditAllowlistConfigSchema.optional(),
     assertions: codefastAuditAllowlistConfigSchema.optional(),
     displayNames: codefastAuditAllowlistConfigSchema.optional(),
+    props: codefastAuditAllowlistConfigSchema.optional(),
     layers: codefastAuditLayersConfigSchema.optional(),
   })
   .strict();

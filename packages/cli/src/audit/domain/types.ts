@@ -115,6 +115,34 @@ export type AssertionAuditResult = {
 };
 
 /**
+ * A component props alias joined with `&` where an interface could extend every part, or whose parts do not resolve.
+ */
+export type PropsViolation = {
+  readonly line: number;
+  /** The alias as written, up to its first line break. */
+  readonly raw: string;
+  readonly reason: string;
+};
+
+/**
+ * The props-declaration violations found in one file.
+ */
+export type PropsFileViolations = {
+  readonly relativePath: string;
+  readonly violations: Array<PropsViolation>;
+};
+
+/**
+ * Outcome of one `audit props` run.
+ */
+export type PropsAuditResult = {
+  readonly files: Array<PropsFileViolations>;
+  readonly violationCount: number;
+  readonly allowlistedCount: number;
+  readonly scannedFileCount: number;
+};
+
+/**
  * A `token()`, `tag()` or module display name that breaks the display-name convention.
  *
  * @since 0.9.0

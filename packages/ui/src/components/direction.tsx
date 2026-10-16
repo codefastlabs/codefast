@@ -6,9 +6,9 @@ import type { ComponentProps } from "react";
 /**
  * @since 0.4.0-canary.4
  */
-type DirectionProviderProps = ComponentProps<typeof Direction.DirectionProvider> & {
+interface DirectionProviderProps extends ComponentProps<typeof Direction.DirectionProvider> {
   direction?: ComponentProps<typeof Direction.DirectionProvider>["dir"];
-};
+}
 
 /**
  * @since 0.4.0-canary.4

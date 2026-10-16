@@ -10,6 +10,7 @@ import { scrollAreaScrollbarVariants } from "#variants/scroll-area";
 
 const SCROLL_AREA_NAME = "ScrollArea";
 
+// A type alias, since an interface cannot extend the type parameter `P` it scopes.
 type ScopedProps<P> = P & { __scopeScrollArea?: Context.Scope };
 
 const [createScrollAreaContext] = Context.createContextScope(SCROLL_AREA_NAME);
@@ -24,7 +25,8 @@ const [ScrollAreaContextProvider, useScrollAreaContext] =
 /**
  * @since 0.3.16-canary.0
  */
-type ScrollAreaProps = ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>;
+interface ScrollAreaProps
+  extends ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root>>, ScrollAreaContextValue {}
 
 /**
  * @since 0.3.16-canary.0

@@ -8,9 +8,9 @@ import { cn } from "#lib/utils";
 /**
  * @since 0.3.16-canary.0
  */
-type NativeSelectProps = Omit<ComponentProps<"select">, "size"> & {
+interface NativeSelectProps extends Omit<ComponentProps<"select">, "size"> {
   size?: "default" | "sm";
-};
+}
 
 /**
  * @since 0.3.16-canary.0

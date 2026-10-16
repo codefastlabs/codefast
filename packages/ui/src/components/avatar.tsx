@@ -8,9 +8,9 @@ import { cn } from "#lib/utils";
 /**
  * @since 0.3.16-canary.0
  */
-type AvatarProps = ComponentProps<typeof AvatarPrimitive.Root> & {
+interface AvatarProps extends ComponentProps<typeof AvatarPrimitive.Root> {
   size?: "default" | "sm" | "lg";
-};
+}
 
 /**
  * @since 0.3.16-canary.0

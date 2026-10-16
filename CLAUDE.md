@@ -364,6 +364,25 @@ which the hot loops hide.
 
 ## UI/component conventions (apps/web and packages/ui)
 
+**A props type takes one of three forms**, and `pnpm cli:audit:props` gates it repo-wide:
+
+- **Own props, or a second base such as a variants type → an interface.**
+  `interface XxxProps extends ComponentProps<"element">, XxxVariants { … }`. An interface checks its members against
+  every base at the declaration — a conflict is TS2430 (TS2320 between two bases) right there — while `&` intersects
+  them without a word: `ComponentProps<"select"> & { size?: "default" | "sm" }` leaves `size` assignable only from
+  `undefined`, and nothing says so until a call site fails. Resolve a real conflict with `Omit` on the losing base.
+  TypeScript's performance guide prefers interfaces as well: their type relationships are cached, while an intersection
+  has each constituent checked before its flattened type.
+- **A rename that adds nothing → a type alias.** `type XxxProps = ComponentProps<typeof Primitive>`, never an
+  `interface` with one base and an empty body.
+- **A base that is a union or a type parameter → `type` with `&`, and a one-line `//` naming which.** An interface
+  cannot extend either (TS2312); `&` is what distributes over a union's members (DayPicker's props split by `mode`,
+  Radix's single/multiple `ToggleGroup` root) and defers over `P` (the `ScopedProps<P>` helpers).
+
+The audit reads every `*Props` alias joined with `&` — at its top level or passed to the type it wraps — and asks the
+TypeScript 7 type server what each part resolves to, so the third form needs no allowlist or disable comment; a part
+that does not resolve is reported rather than waved through.
+
 These are project rules the linters do not fully enforce:
 
 - **No Tailwind-classes-in-a-variable** (`const FOO = "flex gap-3"`) — it loses IntelliSense/auto-sort. Write classes
@@ -373,9 +392,9 @@ These are project rules the linters do not fully enforce:
 - **One component per file** under `apps/web/src/components/**`. Extract sub-components/helpers into their own
   kebab-case file and import. Accepted co-location exceptions: icon sets, and `*.example.tsx` / `demo.tsx` under
   `registry/`.
-- **No inline prop types.** Declare `interface XxxProps extends ComponentProps<"element">` (matching the host element
-  rendered), spread `{...props}` **last** on that element, and merge classes via `cn(base, className)`. `Omit` any attr
-  the wrapper hard-sets. When forwarding to another component (not a DOM element), extend
+- **No inline prop types.** Name the props type in one of the forms above, extending `ComponentProps<"element">` for the
+  host element rendered; spread `{...props}` **last** on that element, and merge classes via `cn(base, className)`.
+  `Omit` any attr the wrapper hard-sets. When forwarding to another component (not a DOM element), extend
   `ComponentProps<typeof ThatComponent>` and `Omit` the required props the wrapper supplies. Exception: a handler the
   component must own (e.g. a `CopyButton`'s `onClick`) goes _after_ `{...props}` with a comment.
 - **`data-slot` names the component that styles the element.** Keep it before `{...props}` — a wrapper that renames a

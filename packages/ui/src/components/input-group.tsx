@@ -29,7 +29,7 @@ function InputGroup({ className, ...props }: InputGroupProps): JSX.Element {
 /**
  * @since 0.3.16-canary.0
  */
-type InputGroupAddonProps = ComponentProps<"div"> & InputGroupAddonVariants;
+interface InputGroupAddonProps extends ComponentProps<"div">, InputGroupAddonVariants {}
 
 /**
  * @since 0.3.16-canary.0
@@ -64,7 +64,7 @@ function InputGroupAddon({ align = "inline-start", className, ...props }: InputG
 /**
  * @since 0.3.16-canary.0
  */
-type InputGroupButtonProps = Omit<ButtonProps, "size"> & InputGroupButtonVariants;
+interface InputGroupButtonProps extends Omit<ButtonProps, "size">, InputGroupButtonVariants {}
 
 /**
  * @since 0.3.16-canary.0

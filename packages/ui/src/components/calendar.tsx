@@ -11,6 +11,8 @@ import { buttonVariants } from "#variants/button";
 // ── Component: Calendar ──────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
+ * @remarks A type alias, since DayPicker's props are a union over `mode` that only `&` distributes into.
+ *
  * @since 0.3.16-canary.0
  */
 type CalendarProps = ComponentProps<typeof DayPicker> & {
@@ -164,9 +166,9 @@ function CalendarWeekNumber({ children, ...props }: ComponentProps<typeof WeekNu
 /**
  * @since 0.3.16-canary.0
  */
-type CalendarDayButtonProps = ComponentProps<typeof DayButton> & {
+interface CalendarDayButtonProps extends ComponentProps<typeof DayButton> {
   locale?: Partial<Locale> | undefined;
-};
+}
 
 /**
  * @since 0.3.16-canary.0

@@ -6,6 +6,7 @@ import { useId, useMemo } from "react";
 
 const PROGRESS_CIRCLE_PROVIDER_NAME = "ProgressCircleProvider";
 
+// A type alias, since an interface cannot extend the type parameter `P` it scopes.
 type ScopedProps<P> = P & { __scopeProgressCircle?: Context.Scope };
 
 /**

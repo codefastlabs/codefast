@@ -13,6 +13,8 @@ type ExtractProps<T> = T extends (props: infer P) => ReactNode ? P : never;
 
 type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
+type LegendContentProps = ExtractProps<RechartsPrimitive.LegendProps["content"]>;
+
 // ── Chart Configuration and Theme Constants ──────────────────────────────────────────────────────────────────────────
 
 const THEMES = { dark: ".dark", light: "" } as const;
@@ -34,6 +36,7 @@ type ChartConfig = Record<
 
 const CHART_PROVIDER_NAME = "ChartProvider";
 
+// A type alias, since an interface cannot extend the type parameter `P` it scopes.
 type ScopedProps<P> = P & { __scopeChart?: Context.Scope };
 
 /**
@@ -147,13 +150,13 @@ const CHART_TOOLTIP_CONTENT_NAME = "ChartTooltipContent";
 /**
  * @since 0.3.16-canary.0
  */
-type ChartTooltipContentProps<TValue extends ValueType, TName extends NameType> = Omit<
+interface ChartTooltipContentProps<TValue extends ValueType, TName extends NameType> extends Omit<
   MakeOptional<
     TooltipContentProps<TValue, TName>,
     "accessibilityLayer" | "active" | "activeIndex" | "coordinate" | "payload"
   >,
   "payload"
-> & {
+> {
   hideIndicator?: boolean;
   hideLabel?: boolean;
   indicator?: "dashed" | "dot" | "line";
@@ -162,7 +165,7 @@ type ChartTooltipContentProps<TValue extends ValueType, TName extends NameType> 
   color?: string | undefined;
   className?: string | undefined;
   payload?: Array<Payload<TValue, TName>>;
-};
+}
 
 /**
  * @since 0.3.16-canary.0
@@ -314,11 +317,10 @@ const CHART_LEGEND_CONTENT_NAME = "ChartLegendContent";
 /**
  * @since 0.3.16-canary.0
  */
-type ChartLegendContentProps = ComponentProps<"div"> &
-  ExtractProps<RechartsPrimitive.LegendProps["content"]> & {
-    hideIcon?: boolean;
-    nameKey?: string;
-  };
+interface ChartLegendContentProps extends Omit<ComponentProps<"div">, keyof LegendContentProps>, LegendContentProps {
+  hideIcon?: boolean;
+  nameKey?: string;
+}
 
 /**
  * @since 0.3.16-canary.0

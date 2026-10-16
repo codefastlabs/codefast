@@ -138,9 +138,9 @@ syntax only — it never type-checks — which is all `arrange` and `tag` need.
 
 ## Audits are read-only and mechanical
 
-**Context.** `audit links`, `audit comments`, `audit imports`, `audit assertions`, `audit display-names`, `audit rtl`,
-`audit layers` and `audit publish` gate CI. A gate that needs judgment to interpret, or that can only be fixed by hand,
-is ignored under time pressure.
+**Context.** `audit links`, `audit comments`, `audit imports`, `audit assertions`, `audit display-names`, `audit props`,
+`audit rtl`, `audit layers` and `audit publish` gate CI. A gate that needs judgment to interpret, or that can only be
+fixed by hand, is ignored under time pressure.
 
 **Decision.** Every audit reports a location and a one-line reason, exits non-zero on any finding, and where the fix is
 mechanical offers `--fix` (comment dividers) so a red run is one command from green. Allowlists live in
@@ -202,6 +202,22 @@ that qualify rather than once per file. The type sees the option's shape but not
 variant configured `twMerge: false` would merge a folded `className` differently than the `cn()` it replaced — accepted
 as out of scope, since the option-type gate already excludes non-variant callees and the shipped variants use the
 default merge.
+
+## `audit props` judges by type, through the type server
+
+**Context.** Whether a props alias written `A & B & { … }` could be an interface depends on what each part resolves to:
+an interface cannot extend a union or a type parameter (TS2312), and for a union the `&` is the point, since it
+distributes over the members. Syntax cannot tell `ComponentProps<"div">` from `ComponentProps<typeof DayPicker>`, and a
+name list or a disable comment for the second kind would rot the first time a primitive's props changed shape.
+
+**Decision.** `oxc-parser` finds the candidates — every `*Props` alias joined with `&`, at its top level or passed to
+the type it wraps — and the native TypeScript type server classifies each part from its type node: an object (or an
+intersection of objects) can be extended; a union, a type parameter, a mapped type over a type parameter, or anything
+that is not an object keeps the `&`. A part that does not resolve is reported, never passed.
+
+**Consequences.** The audit needs no allowlist for the forms that must stay a `type`, and it follows a dependency that
+turns its props into a union without anyone editing a list. Like the `className` fold, it is the type server's cost only
+for files that hold a candidate, and it needs `typescript` (v7) and a `tsconfig.json` over the scanned files.
 
 ## License
 

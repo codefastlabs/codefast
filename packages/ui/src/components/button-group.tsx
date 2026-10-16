@@ -11,7 +11,7 @@ import { buttonGroupVariants } from "#variants/button-group";
 /**
  * @since 0.3.16-canary.0
  */
-type ButtonGroupProps = ComponentProps<"div"> & ButtonGroupVariants;
+interface ButtonGroupProps extends ComponentProps<"div">, ButtonGroupVariants {}
 
 /**
  * @since 0.3.16-canary.0

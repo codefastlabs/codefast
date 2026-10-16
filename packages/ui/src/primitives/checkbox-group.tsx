@@ -12,6 +12,8 @@ const CHECKBOX_GROUP_NAME = "CheckboxGroup";
 
 /**
  * Type for components that can be scoped within the CheckboxGroup context
+ *
+ * @remarks A type alias, since an interface cannot extend the type parameter `P` it scopes.
  */
 type ScopedProps<P> = P & {
   /**
@@ -126,7 +128,8 @@ interface CheckboxGroupBaseProps {
  *
  * @since 0.3.16-canary.0
  */
-type CheckboxGroupProps = CheckboxGroupBaseProps & ComponentProps<"div">;
+interface CheckboxGroupProps
+  extends CheckboxGroupBaseProps, Omit<ComponentProps<"div">, keyof CheckboxGroupBaseProps> {}
 
 /**
  * CheckboxGroup component that manages a group of checkboxes with roving focus

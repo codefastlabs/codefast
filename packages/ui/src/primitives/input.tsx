@@ -9,6 +9,8 @@ const INPUT_NAME = "Input";
 
 /**
  * Type for adding scope to component props
+ *
+ * @remarks A type alias, since an interface cannot extend the type parameter `P` it scopes.
  */
 type ScopedProps<P> = P & {
   /**
@@ -96,7 +98,7 @@ interface InputBehaviorProps {
  *
  * @since 0.3.16-canary.0
  */
-type InputProps = PropsWithChildren<InputBehaviorProps & InputVisualProps>;
+interface InputProps extends PropsWithChildren<InputBehaviorProps>, InputVisualProps {}
 
 /**
  * @since 0.3.16-canary.0
