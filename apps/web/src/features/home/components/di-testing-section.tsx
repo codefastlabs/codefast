@@ -12,7 +12,7 @@ interface DiTestingSectionProps extends Omit<ComponentProps<"section">, "childre
   readonly testBed: TestBedSnippet;
 }
 
-/** The flagship's second half: four tests over a real container, with every collaborator mocked for you. */
+/** `@codefast/di`'s second half: four tests over a real container, with every collaborator mocked for you. */
 export function DiTestingSection({ testBed, className, ...props }: DiTestingSectionProps) {
   return (
     <section

@@ -48,7 +48,7 @@ function buildLlmsTxt(packages: ReadonlyArray<PackageSummary>): string {
 
 ## Key facts
 - Every package is published to npm under the \`@codefast\` scope and developed in one monorepo
-- \`@codefast/di\` is the flagship: typed tokens, standard decorators, scopes, modules and introspection, with \`@codefast/di-testing\` as its auto-mocking test bed
+- \`@codefast/di\` provides typed tokens, standard decorators, scopes, modules and introspection, with \`@codefast/di-testing\` as its auto-mocking test bed
 - \`@codefast/ui\` components are named sub-path imports: \`@codefast/ui/<slug>\` (e.g. \`@codefast/ui/button\`)
 - Every page below has a raw Markdown twin: append \`.md\` to a component page, or use the Markdown links under each package
 

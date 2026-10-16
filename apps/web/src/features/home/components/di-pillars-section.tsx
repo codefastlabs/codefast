@@ -25,7 +25,7 @@ interface DiPillarsSectionProps extends Omit<ComponentProps<"section">, "childre
   readonly decorators: FoldedSnippet;
 }
 
-/** Why the flagship: four points from the package's README, each shown rather than told. */
+/** Why `@codefast/di`: four points from the package's README, each shown rather than told. */
 export function DiPillarsSection({
   rightListHtml,
   wrongListHtml,

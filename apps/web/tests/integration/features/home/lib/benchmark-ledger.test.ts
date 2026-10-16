@@ -17,7 +17,7 @@ describe("readLedgerFacts", () => {
     return facts;
   }
 
-  it("reads the real ledger: the flagship among the libraries, and a dated entry", () => {
+  it("reads the real ledger: `@codefast/di` among the libraries, and a dated entry", () => {
     const facts = readQuietly();
 
     expect(facts.libraries.map((library) => library.name)).toContain("@codefast/di");

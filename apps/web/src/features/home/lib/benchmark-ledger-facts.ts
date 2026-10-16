@@ -31,7 +31,7 @@ interface LedgerLoss {
 
 /** What the ledger states about its own runs: the cast, the profile, the aggregates, and where it loses. */
 export interface LedgerFacts {
-  /** The libraries the suite runs the same workloads through, the flagship first, in the ledger's order. */
+  /** The libraries the suite runs the same workloads through, `@codefast/di` first, in the ledger's order. */
   readonly libraries: ReadonlyArray<LedgerLibrary>;
   /** The runtime and machine the environment paragraph names, or an empty string when the ledger has none. */
   readonly environment: string;
@@ -57,8 +57,8 @@ const LAST_FULL_REMEASURE = /\*\*Last full re-measure: (\d{4}-\d{2}-\d{2})\*\*/;
 const RUN_DATE = /\bRun (\d{4}-\d{2}-\d{2})\b/;
 const RUNTIME = /Node \d[^,]*,\s*[^,]+,\s*[\w/-]+/;
 const LIBRARY = /^`?([^`\s]+)`? (\d+\.\d+\.\d+(?:-[\w.]*\w)?)$/;
-// The flagship's version follows its name, or follows the measured commit when that commit is not a release.
-const FLAGSHIP = /`?(@codefast\/di)`?(?: at `[\da-f]+` —)? (\d+\.\d+\.\d+(?:-[\w.]*\w)?)/;
+// `@codefast/di`'s version follows its name, or follows the measured commit when that commit is not a release.
+const CODEFAST_DI = /`?(@codefast\/di)`?(?: at `[\da-f]+` —)? (\d+\.\d+\.\d+(?:-[\w.]*\w)?)/;
 const AGGREGATE_HEADER = /^\|[^\n]*Win \/ parity \/ loss[^\n]*$/m;
 const AGGREGATE_ROW =
   /^\|\s*([^|]+?)\s*\|(?:\s*\d+ of \d+\s*\|)?\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\|\s*([\d.]+)×\s*\|\s*([\d.]+)×\s*\|/;
@@ -101,17 +101,17 @@ function environmentParagraph(markdown: string): string {
 }
 
 /**
- * The libraries the environment paragraph names, the flagship first, then the `name version · name version`
+ * The libraries the environment paragraph names, `@codefast/di` first, then the `name version · name version`
  * sentence; a library named in both is listed once, and a part the sentence cannot be read as throws.
  */
 function librariesOf(paragraph: string): Array<LedgerLibrary> {
-  const flagship = FLAGSHIP.exec(paragraph);
+  const codefastDi = CODEFAST_DI.exec(paragraph);
 
-  if (flagship?.[1] === undefined || flagship[2] === undefined) {
+  if (codefastDi?.[1] === undefined || codefastDi[2] === undefined) {
     throw new Error("The benchmark ledger's environment paragraph names no `@codefast/di` version.");
   }
 
-  const libraries: Array<LedgerLibrary> = [{ name: flagship[1], version: flagship[2] }];
+  const libraries: Array<LedgerLibrary> = [{ name: codefastDi[1], version: codefastDi[2] }];
   const sentence = paragraph.split(/\.\s+/).find((part) => part.includes(" · "));
 
   if (sentence === undefined) {
