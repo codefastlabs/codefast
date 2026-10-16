@@ -1,11 +1,11 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps, ReactNode } from "react";
 
-type PageHeaderProps = Omit<ComponentProps<"section">, "title"> & {
+interface PageHeaderProps extends Omit<ComponentProps<"section">, "title"> {
   readonly eyebrow?: ReactNode;
   readonly title: ReactNode;
   readonly description?: string;
-};
+}
 
 /** Eyebrow → title → description pattern shared by docs and marketing pages. */
 export function PageHeader({ eyebrow, title, description, className, ...props }: PageHeaderProps) {

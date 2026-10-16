@@ -44,7 +44,11 @@ const components: Array<{ title: string; href: string; description: string }> = 
   },
 ];
 
-function ListItem({ title, children, href, ...props }: ComponentPropsWithoutRef<"li"> & { href: string }) {
+interface ListItemProps extends ComponentPropsWithoutRef<"li"> {
+  href: string;
+}
+
+function ListItem({ title, children, href, ...props }: ListItemProps) {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>

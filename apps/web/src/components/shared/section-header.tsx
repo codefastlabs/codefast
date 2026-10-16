@@ -1,13 +1,13 @@
 import { cn } from "@codefast/ui/lib/utils";
 import type { ComponentProps, ReactNode } from "react";
 
-type SectionHeaderProps = Omit<ComponentProps<"header">, "title"> & {
+interface SectionHeaderProps extends Omit<ComponentProps<"header">, "title"> {
   readonly eyebrow?: string;
   readonly title: ReactNode;
   readonly description?: string;
   readonly inverted?: boolean;
   readonly titleId?: string;
-};
+}
 
 /** Section heading pattern for marketing and docs pages. */
 export function SectionHeader({
