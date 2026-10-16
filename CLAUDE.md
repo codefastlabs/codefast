@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Codefast is a **pnpm workspaces + Turborepo** monorepo (pnpm 11; Node ≥ 24 to develop, while each package declares its
+Codefast is a **pnpm workspaces + Turborepo** monorepo (pnpm 12; Node ≥ 24 to develop, while each package declares its
 own `engines.node` floor as low as its code, dependencies and test suite allow — 22.12 at lowest — with `@types/node`
 from the matching `node<major>.<minor>` catalog and, on Node 22, the `node22` `lib` overlay, held together by
 `codefast audit engines` and proven per floor in CI; see `SUPPORT.md`) publishing the `@codefast/*` packages. The
