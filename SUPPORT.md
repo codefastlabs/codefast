@@ -42,11 +42,11 @@ to a release that CI runs its tests on. Floors are enforced mechanically rather 
   inside the `engines.node` of every dependency it installs for a consumer and every dev dependency that runs its tests
   in CI, and the lockfile must resolve its `@types/node` on the floor's major at a minor no newer.
 - **CI** develops on the Current line (`.node-version`) for speed, and a matrix runs every test category of each package
-  on its own floor — one leg per distinct floor, planned from `codefast audit engines --json`. pnpm runs as its
-  standalone build there, with its own Node bundled, since pnpm 11 itself needs a newer Node than the lowest floor. Unit
-  tests run the source through Vite's transform, so the integration and end-to-end tests, which load the built packages,
-  are what catch a builtin or a syntax the floor lacks. `codefast audit publish` statically checks the publish surface —
-  no `#/` imports, and every `exports`/`imports` target ships.
+  on its own floor — one leg per distinct floor, planned from `codefast audit engines --json`. pnpm is a native binary
+  that needs no Node of its own, so a leg runs on nothing newer than its floor. Unit tests run the source through Vite's
+  transform, so the integration and end-to-end tests, which load the built packages, are what catch a builtin or a
+  syntax the floor lacks. `codefast audit publish` statically checks the publish surface — no `#/` imports, and every
+  `exports`/`imports` target ships.
 
 Moving one package's floor touches only that package and whatever depends on it at runtime: add the
 `node<major>.<minor>` catalog if none exists yet, set its `engines.node` and its `@types/node` to that catalog, layer

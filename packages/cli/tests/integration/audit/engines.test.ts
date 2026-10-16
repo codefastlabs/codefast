@@ -34,15 +34,19 @@ function writePackage(directory: string, manifest: Record<string, unknown>): voi
   writeJson(`packages/${directory}/package.json`, manifest);
 }
 
+// The env document pnpm writes ahead of the dependency lockfile to pin pnpm itself.
+const envDocument =
+  "---\nlockfileVersion: '9.0'\n\nimporters:\n\n  .:\n    packageManagerDependencies:\n      pnpm:\n        specifier: 12.14.0\n        version: 12.14.0\n\n---\n";
+
 // A lockfile whose importers resolve `@types/node` to the given version per package directory.
-function writeLockfile(typesVersions: Record<string, string>): void {
+function writeLockfile(typesVersions: Record<string, string>, prefix = ""): void {
   const importers = Object.entries(typesVersions)
     .map(
       ([directory, version]) =>
         `  packages/${directory}:\n    devDependencies:\n      '@types/node':\n        specifier: catalog:node24\n        version: ${version}\n`,
     )
     .join("\n");
-  write("pnpm-lock.yaml", `lockfileVersion: '9.0'\n\nimporters:\n\n${importers}`);
+  write("pnpm-lock.yaml", `${prefix}lockfileVersion: '9.0'\n\nimporters:\n\n${importers}`);
 }
 
 async function audit(targetPath = rootDir): Promise<EnginesAuditResult> {
@@ -148,6 +152,15 @@ describe("audit engines", () => {
     writePackage("lib", { name: "@x/lib", engines: { node: ">=22.12.0" } });
     writePackage("harness", { name: "@x/harness", engines: { node: ">=22.18.0" } });
     writeLockfile({ lib: "22.13.0", harness: "22.12.0" });
+
+    expect((await audit()).violations).toEqual([
+      { kind: "types-off-floor", packageName: "@x/lib", floor: "22.12.0", typesVersion: "22.13.0" },
+    ]);
+  });
+
+  it("reads @types/node from the dependency lockfile behind pnpm's env document", async () => {
+    writePackage("lib", { name: "@x/lib", engines: { node: ">=22.12.0" } });
+    writeLockfile({ lib: "22.13.0" }, envDocument);
 
     expect((await audit()).violations).toEqual([
       { kind: "types-off-floor", packageName: "@x/lib", floor: "22.12.0", typesVersion: "22.13.0" },

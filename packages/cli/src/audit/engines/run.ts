@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { satisfies, validRange } from "semver";
-import { parse as parseYaml } from "yaml";
+import { parseAllDocuments } from "yaml";
 
 import type { EngineViolation, EnginesAuditResult, PackageEngineFloor } from "#audit/domain/types";
 import type { NodeVersion } from "#audit/engines/domain/node-floor";
@@ -160,7 +160,9 @@ function readLockfileTypesVersions(fs: Filesystem, rootDir: string): Map<string,
   if (!fs.existsSync(lockfilePath)) {
     return versions;
   }
-  const importers = recordOf(recordOf(parseYaml(fs.readFileSync(lockfilePath, "utf8"))).importers);
+  // pnpm prefixes the dependency lockfile with an env document pinning pnpm itself, so the last document is the one.
+  const lockfile = parseAllDocuments(fs.readFileSync(lockfilePath, "utf8")).at(-1)?.toJS() as unknown;
+  const importers = recordOf(recordOf(lockfile).importers);
   for (const [directory, importer] of Object.entries(importers)) {
     for (const field of lockfileDependencyFields) {
       const version = recordOf(recordOf(recordOf(importer)[field])[typesPackageName]).version;
