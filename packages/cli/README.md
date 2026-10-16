@@ -147,7 +147,7 @@ Every command also responds to `--help`; each command's section below explains w
 | `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)      | no (report only)  |
 | `audit assertions`    | Report double type assertions through `unknown` / `any`, tests included    | no                |
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
-| `audit props`         | Report props aliases joined with `&` that an interface could express       | no                |
+| `audit props`         | Report props types joined with `&` that an interface could express         | no                |
 | `audit publish`       | Report what would break a consumer's install of a published package        | no                |
 | `audit layers`        | Report value imports that point up a package's configured layers           | no                |
 | `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
@@ -379,9 +379,11 @@ Configure exceptions via `audit.assertions.allowlist` — each entry is the asse
 
 Reports every `*Props` type alias joined with `&` that an interface could express instead — at the alias's top level
 (`type ButtonProps = ComponentProps<"button"> & ButtonVariants & { … }`) or passed to the type it wraps
-(`type ScrollAreaProps = ScopedProps<RootProps & ContextValue>`). An interface checks its members against every base
-where it is declared, so a conflicting prop fails there (TS2430, or TS2320 between two bases); `&` intersects the two
-silently and the narrowed prop only fails at a call site.
+(`type ScrollAreaProps = ScopedProps<RootProps & ContextValue>`) — and every component parameter annotated inline with
+one: in a `.tsx` file, the first parameter of any function whose annotation is an intersection at its top level
+(`function ListItem({ href, ...props }: ComponentProps<"li"> & { href: string })`), which wants naming as an interface.
+An interface checks its members against every base where it is declared, so a conflicting prop fails there (TS2430, or
+TS2320 between two bases); `&` intersects the two silently and the narrowed prop only fails at a call site.
 
 Whether a part can be extended is the type checker's call, not a name list: the audit asks the native TypeScript type
 server (`typescript/unstable/sync`) what each part resolves to, and keeps the `&` when one is a union (only `&`
@@ -396,8 +398,8 @@ codefast audit props packages/ui/src       # explicit target
 codefast audit props --json                # machine-readable summary
 ```
 
-Configure exceptions via `audit.props.allowlist` — each entry is the alias's first line as written or
-`repo/relative/path.tsx:<line>` — though a type that must stay an intersection needs none.
+Configure exceptions via `audit.props.allowlist` — each entry is the alias's, or the parameter annotation's, first line
+as written or `repo/relative/path.tsx:<line>` — though a type that must stay an intersection needs none.
 
 ### `audit publish`
 

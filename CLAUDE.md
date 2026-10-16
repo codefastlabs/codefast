@@ -379,9 +379,10 @@ which the hot loops hide.
   cannot extend either (TS2312); `&` is what distributes over a union's members (DayPicker's props split by `mode`,
   Radix's single/multiple `ToggleGroup` root) and defers over `P` (the `ScopedProps<P>` helpers).
 
-The audit reads every `*Props` alias joined with `&` — at its top level or passed to the type it wraps — and asks the
-TypeScript 7 type server what each part resolves to, so the third form needs no allowlist or disable comment; a part
-that does not resolve is reported rather than waved through.
+The audit reads every `*Props` alias joined with `&` — at its top level or passed to the type it wraps — and, in a
+`.tsx` file, every function's first parameter annotated inline with an `&` at its top level, and asks the TypeScript 7
+type server what each part resolves to, so the third form needs no allowlist or disable comment; a part that does not
+resolve is reported rather than waved through.
 
 These are project rules the linters do not fully enforce:
 

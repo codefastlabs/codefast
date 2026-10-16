@@ -32,6 +32,10 @@ interface TestScrollerOptions {
   messages: Array<TestMessage>;
 }
 
+interface TestScrollerProps extends TestScrollerOptions {
+  stateRef: RefObject<MessageScrollerScrollable | null>;
+}
+
 let resizeObservers: Array<TestResizeObserver> = [];
 let originalRequestAnimationFrame: typeof window.requestAnimationFrame;
 let originalCancelAnimationFrame: typeof window.cancelAnimationFrame;
@@ -251,12 +255,7 @@ function ScrollableProbe({ stateRef }: { stateRef: RefObject<MessageScrollerScro
   return null;
 }
 
-function TestScroller({
-  autoScroll = false,
-  defaultScrollPosition = "end",
-  messages,
-  stateRef,
-}: TestScrollerOptions & { stateRef: RefObject<MessageScrollerScrollable | null> }) {
+function TestScroller({ autoScroll = false, defaultScrollPosition = "end", messages, stateRef }: TestScrollerProps) {
   return (
     <MessageScrollerProvider autoScroll={autoScroll} defaultScrollPosition={defaultScrollPosition}>
       <MessageScroller data-testid="scroller">

@@ -115,11 +115,11 @@ export type AssertionAuditResult = {
 };
 
 /**
- * A component props alias joined with `&` where an interface could extend every part, or whose parts do not resolve.
+ * A component props type joined with `&` where an interface could extend every part, or whose parts do not resolve.
  */
 export type PropsViolation = {
   readonly line: number;
-  /** The alias as written, up to its first line break. */
+  /** The alias, or the parameter's annotation, as written up to its first line break. */
   readonly raw: string;
   readonly reason: string;
 };

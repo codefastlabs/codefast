@@ -10,9 +10,9 @@ import { logger } from "#core/logger";
 
 // Each alias stands for one judgement the type server has to make; the comment names it.
 const PROPS_SOURCE = [
-  "interface Base { a?: string }",
+  "export interface Base { a?: string }",
   "interface Extra { b?: string }",
-  'type Choice = { kind: "one" } | { kind: "many" };',
+  'export type Choice = { kind: "one" } | { kind: "many" };',
   "export type BoxProps = Base & { c?: string }; // object parts: reported",
   "export type ChoiceProps = Choice & { d?: string }; // a union part: kept",
   "export type PlainProps = Base; // a plain alias: not a candidate",
@@ -20,6 +20,15 @@ const PROPS_SOURCE = [
   "export type PartialProps<T> = Partial<T> & { e?: string }; // a mapped type over a type parameter: kept",
   "export type ScopedBoxProps = ScopedProps<Base & Extra>; // object parts passed to a wrapper: reported",
   "export type BrokenProps = Missing & { f?: string }; // an unresolved part: reported",
+  "",
+].join("\n");
+
+// Each component's first parameter stands for one inline judgement; the comment names it.
+const COMPONENT_SOURCE = [
+  'import type { Base, Choice } from "./props";',
+  "export function Inline(props: Base & { g?: string }) { return props; } // object parts: reported",
+  "export function InlineChoice(props: Choice & { h?: string }) { return props; } // a union part: kept",
+  "export function InlinePlain(props: Base) { return props; } // no intersection: not a candidate",
   "",
 ].join("\n");
 
@@ -36,6 +45,7 @@ beforeAll(async () => {
   );
   mkdirSync(path.join(fixtureDir, "src"));
   writeFileSync(path.join(fixtureDir, "src", "props.ts"), PROPS_SOURCE);
+  writeFileSync(path.join(fixtureDir, "src", "components.tsx"), COMPONENT_SOURCE);
 
   const previousExitCode = process.exitCode;
   process.exitCode = undefined;
@@ -77,7 +87,12 @@ describe("audit props over a real type server", () => {
     expect(reported).not.toContain("PlainProps");
   });
 
-  it("reports a part that does not resolve instead of letting it pass", () => {
-    expect(reported).toStrictEqual(["BoxProps", "ScopedBoxProps", "BrokenProps"]);
+  it("reports an inline props parameter of object types, and keeps one whose part is a union", () => {
+    expect(reported).toContain("Base & { g?: string }");
+    expect(reported).not.toContain("Choice & { h?: string }");
+  });
+
+  it("reports a part that does not resolve instead of letting it pass, and ignores a plain annotation", () => {
+    expect(reported).toStrictEqual(["Base & { g?: string }", "BoxProps", "ScopedBoxProps", "BrokenProps"]);
   });
 });

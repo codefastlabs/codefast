@@ -39,6 +39,25 @@ describe("runPropsAudit", () => {
     expect(dispose).toHaveBeenCalledTimes(1);
   });
 
+  it("reports an inline props parameter of object parts, and keeps one over a union", async () => {
+    const fs = createAuditTestFilesystem({
+      [sourcePath]: [
+        "function Box(props: Base & { b: string }) {}",
+        "function Pick(props: Choice & { c: string }) {}",
+        "function Plain(props: Base) {}",
+      ].join("\n"),
+    });
+
+    const result = await runPropsAudit(fs, { rootDir, targetPath: rootDir, allowlist: [] }, async () =>
+      fakeProbe({ Choice: "union" }),
+    );
+
+    expect(result.ok && result.value).toMatchObject({
+      violationCount: 1,
+      files: [{ relativePath: "packages/a/src/a.tsx", violations: [{ line: 1, raw: "Base & { b: string }" }] }],
+    });
+  });
+
   it("never starts the type server for a tree without a candidate", async () => {
     const fs = createAuditTestFilesystem({ [plainPath]: 'type PlainProps = ComponentProps<"div">;\n' });
     const createProbe = vi.fn(async () => fakeProbe({}));
