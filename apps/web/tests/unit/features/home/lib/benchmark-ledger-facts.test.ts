@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { parseLedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
 
-// A pass over an unreleased tree: the commit it measured stands between the flagship and its version.
+// A pass over an unreleased tree: the commit it measured stands between `@codefast/di` and its version.
 const [AT_COMMIT = ""] = Object.values(
   import.meta.glob<string>("./fixtures/benchmark-ledger-at-commit.md", {
     query: "?raw",
@@ -111,7 +111,7 @@ describe("parseLedgerFacts", () => {
     });
   });
 
-  it("reads the snapshot ledger: the flagship clause, the summary table with its comparable column, the run date", () => {
+  it("reads the snapshot ledger: the `@codefast/di` clause, the summary table with its comparable column, the run date", () => {
     expect(parseLedgerFacts(SNAPSHOT)).toEqual({
       libraries: [
         { name: "@codefast/di", version: "0.10.0" },
@@ -134,7 +134,7 @@ describe("parseLedgerFacts", () => {
     });
   });
 
-  it("reads the flagship clause that names the measured commit before the version", () => {
+  it("reads the `@codefast/di` clause that names the measured commit before the version", () => {
     expect(parseLedgerFacts(AT_COMMIT)).toEqual({
       libraries: [
         { name: "@codefast/di", version: "0.11.0" },
@@ -165,7 +165,7 @@ describe("parseLedgerFacts", () => {
 
   it.each<{ shape: string; reword: (ledger: string) => string; error: RegExp }>([
     {
-      shape: "a flagship clause with no version",
+      shape: "an `@codefast/di` clause with no version",
       reword: (ledger) => ledger.replace("0.11.0", "the tree"),
       error: /names no `@codefast\/di` version/,
     },

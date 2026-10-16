@@ -7,11 +7,11 @@ import type { ComponentProps } from "react";
 import { SnippetCard } from "#features/home/components/snippet-card";
 
 interface HeroSectionProps extends Omit<ComponentProps<"section">, "children"> {
-  /** The flagship's quick start as dual-theme highlighted HTML, from the route loader. */
+  /** `@codefast/di`'s quick start as dual-theme highlighted HTML, from the route loader. */
   readonly quickStartHtml: string;
 }
 
-/** The landing hero: the flagship's pitch beside its quick start. */
+/** The landing hero: `@codefast/di`'s pitch beside its quick start. */
 export function HeroSection({ quickStartHtml, className, ...props }: HeroSectionProps) {
   return (
     <section
