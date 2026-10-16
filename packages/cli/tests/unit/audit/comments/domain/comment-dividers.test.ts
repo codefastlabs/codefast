@@ -98,6 +98,17 @@ describe("scanCommentDividers", () => {
     expect(scanCommentDividers(source.join("\n"), "css")).toStrictEqual([]);
   });
 
+  it("reads a titled rule that leaves its block open as the heading of a doc block", () => {
+    const source = [
+      "  /* ── Status colours ──────",
+      "     Every role pairs with a foreground. */",
+      "  --warning: amber;",
+    ];
+
+    expect(scanCommentDividers(source.join("\n"), "css")).toStrictEqual([]);
+    expect(scanCommentDividers(source.join("\n"), "js")).toStrictEqual([]);
+  });
+
   it("accepts a canonical ignore-file divider and repads a mispadded one", () => {
     const canonical = scanCommentDividers(renderDivider("", "Build outputs", "ignore"), "ignore");
 
@@ -168,6 +179,12 @@ describe("applyCommentDividerFixes", () => {
     const source = ["// ─────", "// Title", "//", "// Prose that would be lost.", "// ─────"].join("\n");
 
     expect(applyCommentDividerFixes(source, "js")).toStrictEqual({ content: source, fixedCount: 0 });
+  });
+
+  it("never closes a block a titled rule leaves open, so its prose stays inside the comment", () => {
+    const source = ["/* ── Tokens ───", "   The palette already ships background and card. */", ":root {}"].join("\n");
+
+    expect(applyCommentDividerFixes(source, "css")).toStrictEqual({ content: source, fixedCount: 0 });
   });
 
   it("normalises a legacy hash divider into the canonical ignore form", () => {

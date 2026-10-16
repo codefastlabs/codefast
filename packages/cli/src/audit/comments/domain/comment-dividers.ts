@@ -167,6 +167,10 @@ function readRegionAt(lines: Array<string>, index: number, language: DividerLang
   const titled = patterns.titled.exec(line);
   const title = titled?.groups?.title?.trim();
   if (titled !== null && title !== undefined && title.length > 0 && !rulesOnlyPattern.test(title)) {
+    // A titled rule that leaves its `/*` open heads the prose below it; closing it would spill that prose into code.
+    if (opensUnterminatedBlock(line)) {
+      return null;
+    }
     const indent = titled.groups?.indent ?? "";
     const canonical = renderDivider(indent, title, language);
     return {
@@ -195,7 +199,7 @@ function readBannerAt(
   const line = lines[index]!;
   const patterns = patternsFor(language);
   // An unterminated `/*` opens a block whose body needs no per-line marker, so the run ends at `*/`.
-  const insideBlock = line.trimStart().startsWith("/*") && !line.includes("*/");
+  const insideBlock = opensUnterminatedBlock(line);
   const body: Array<string> = [];
   let cursor = index + 1;
   while (
@@ -226,6 +230,10 @@ function readBannerAt(
     raw: line.trim(),
     defect: "legacy-form",
   };
+}
+
+function opensUnterminatedBlock(line: string): boolean {
+  return line.trimStart().startsWith("/*") && !line.includes("*/");
 }
 
 function looksLikeTitle(text: string): boolean {
