@@ -112,6 +112,7 @@ codefast                              # Codefast monorepo developer CLI
 │  ├─ imports [target]                # banned import forms (React by-name, Zod namespace in front-end, …)
 │  ├─ assertions [target]             # double type assertions through unknown/any (x as unknown as T)
 │  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
+│  ├─ props [target]                  # *Props aliases joined with & that an interface could express (TS type server)
 │  ├─ publish [target]                # what breaks a consumer's install: #/ imports, unshipped targets, @source paths
 │  ├─ layers [target]                 # value imports pointing up a package's configured layers
 │  └─ comments [target]               # section dividers not in the one allowed form
@@ -146,15 +147,16 @@ Every command also responds to `--help`; each command's section below explains w
 | `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)      | no (report only)  |
 | `audit assertions`    | Report double type assertions through `unknown` / `any`, tests included    | no                |
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
+| `audit props`         | Report props aliases joined with `&` that an interface could express       | no                |
 | `audit publish`       | Report what would break a consumer's install of a published package        | no                |
 | `audit layers`        | Report value imports that point up a package's configured layers           | no                |
 | `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
 
 **Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, `audit links`, `audit assertions`,
 `audit layers`, and `audit publish` are general-purpose — they work for any pnpm workspace or single package that builds
-with `tsc`. The other four audits encode codefast's own house style (logical Tailwind directions, named React imports, a
-specific comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens). Adopt them if they fit your
-project; otherwise skip them, or use an allowlist to narrow their scope.
+with `tsc`. The other five audits encode codefast's own house style (logical Tailwind directions, named React imports, a
+specific comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens, interfaces for component props).
+Adopt them if they fit your project; otherwise skip them, or use an allowlist to narrow their scope.
 
 ## `arrange`
 
@@ -372,6 +374,30 @@ codefast audit assertions --json           # machine-readable summary
 
 Configure exceptions via `audit.assertions.allowlist` — each entry is the assertion as written or
 `repo/relative/path.ts:<assertion>` — though the inline directive keeps the reason beside the code it excuses.
+
+### `audit props`
+
+Reports every `*Props` type alias joined with `&` that an interface could express instead — at the alias's top level
+(`type ButtonProps = ComponentProps<"button"> & ButtonVariants & { … }`) or passed to the type it wraps
+(`type ScrollAreaProps = ScopedProps<RootProps & ContextValue>`). An interface checks its members against every base
+where it is declared, so a conflicting prop fails there (TS2430, or TS2320 between two bases); `&` intersects the two
+silently and the narrowed prop only fails at a call site.
+
+Whether a part can be extended is the type checker's call, not a name list: the audit asks the native TypeScript type
+server (`typescript/unstable/sync`) what each part resolves to, and keeps the `&` when one is a union (only `&`
+distributes over its members), a type parameter or a mapped type over one (an interface cannot extend either), or no
+object at all. A part that does not resolve is reported, since nothing can be said about it — on a workspace whose
+packages consume each other's `dist/`, build first. The type server starts only once a file holds a candidate, and needs
+the `typescript` package (v7) resolvable from the target and a `tsconfig.json` that includes each file.
+
+```bash
+codefast audit props                       # whole repo
+codefast audit props packages/ui/src       # explicit target
+codefast audit props --json                # machine-readable summary
+```
+
+Configure exceptions via `audit.props.allowlist` — each entry is the alias's first line as written or
+`repo/relative/path.tsx:<line>` — though a type that must stay an intersection needs none.
 
 ### `audit publish`
 

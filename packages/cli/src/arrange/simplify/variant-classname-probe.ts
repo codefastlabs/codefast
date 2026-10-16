@@ -2,7 +2,7 @@
 
 import type { Checker, SignatureKind, Type } from "typescript/unstable/sync";
 
-import { AppError, messageFrom } from "#core/errors";
+import { loadTypeServer } from "#core/type-server";
 
 /**
  * What a variant function's `className`/`class` option accepts, resolved from its type.
@@ -97,19 +97,6 @@ function classNameAcceptanceAt(
 
 // ── Probe lifecycle ──────────────────────────────────────────────────────────────────────────────────────────────────
 
-/** Loads the native TypeScript type-server API, or fails with a coded error naming the missing package. */
-async function loadTypeServer() {
-  try {
-    return await import("typescript/unstable/sync");
-  } catch (cause) {
-    throw new AppError(
-      "INFRA_FAILURE",
-      `--fold-variant-classname needs the "typescript" package (v7) resolvable from the target: ${messageFrom(cause)}`,
-      cause,
-    );
-  }
-}
-
 /**
  * Creates a type probe over the native TypeScript type server for the opt-in `className` fold.
  *
@@ -118,7 +105,7 @@ async function loadTypeServer() {
  * @since 0.11.0
  */
 export async function createVariantClassNameProbe(): Promise<VariantClassNameProbe> {
-  const sync = await loadTypeServer();
+  const sync = await loadTypeServer("--fold-variant-classname");
   const api = new sync.API();
   const callKind = sync.SignatureKind.Call;
 

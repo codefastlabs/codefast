@@ -26,6 +26,7 @@ import type {
   ImportsAuditResult,
   LayersAuditResult,
   LinkAuditResult,
+  PropsAuditResult,
   PublishAuditResult,
   RtlAuditResult,
 } from "#audit/domain/types";
@@ -49,6 +50,12 @@ import { presentLinkAuditResult } from "#audit/links/output";
 import { prepareLinkAudit } from "#audit/links/prepare";
 import { runLinkAudit } from "#audit/links/run";
 import type { AuditCommandPrelude } from "#audit/prepare";
+import { exitCodeForPropsAuditResult, formatPropsAuditJsonOutput } from "#audit/props/cli-result";
+import type { PropsAuditRunRequest } from "#audit/props/cli-schema";
+import { propsAuditRunRequestSchema } from "#audit/props/cli-schema";
+import { presentPropsAuditResult } from "#audit/props/output";
+import { preparePropsAudit } from "#audit/props/prepare";
+import { runPropsAudit } from "#audit/props/run";
 import { exitCodeForPublishAuditResult, formatPublishAuditJsonOutput } from "#audit/publish/cli-result";
 import type { PublishAuditRunRequest } from "#audit/publish/cli-schema";
 import { publishAuditRunRequestSchema } from "#audit/publish/cli-schema";
@@ -190,6 +197,25 @@ const displayNamesCheck: AuditCheck<DisplayNameAuditRunRequest, DisplayNameAudit
   exitCode: exitCodeForDisplayNameAuditResult,
 };
 
+const propsCheck: AuditCheck<PropsAuditRunRequest, PropsAuditResult> = {
+  name: "props",
+  description:
+    "Report component props aliases joined with & that an interface could express, judged by the type checker",
+  targetHelp: "Directory or file to scan (default: the repo root)",
+  schema: propsAuditRunRequestSchema,
+  prepare: preparePropsAudit,
+  buildRequest: baseAuditRequest,
+  run: (fs, request) =>
+    runPropsAudit(fs, {
+      rootDir: request.rootDir,
+      targetPath: request.targetPath,
+      allowlist: request.allowlist ?? [],
+    }),
+  present: presentPropsAuditResult,
+  formatJson: formatPropsAuditJsonOutput,
+  exitCode: exitCodeForPropsAuditResult,
+};
+
 const commentsCheck: AuditCheck<CommentAuditRunRequest, CommentAuditResult> = {
   name: "comments",
   description: "Report section dividers that are not in the repo's one allowed form",
@@ -281,6 +307,7 @@ export function createAuditCommand(): Command {
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(importsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(assertionsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(displayNamesCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(propsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(commentsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(layersCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(publishCheck));
