@@ -107,7 +107,7 @@ catalog:
   oxfmt: ^0.72.0
   oxc-parser: ^0.153.0
   oxlint: ^1.87.0
-  oxlint-tsgolint: ^7.0.2003
+  oxlint-tsgolint: ^7.0.2004
   picomatch: ^4.0.7
   postcss: ^8.5.30
   radix-ui: ^1.8.1
