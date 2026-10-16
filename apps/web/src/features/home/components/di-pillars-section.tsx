@@ -1,12 +1,20 @@
 import { cn } from "@codefast/ui/lib/utils";
+import { Skeleton } from "@codefast/ui/skeleton";
 import type { ComponentProps } from "react";
+import { Suspense, lazy } from "react";
 
 import { SectionHeader } from "#components/shared/section-header";
 import { DecoratorsCard } from "#features/home/components/decorators-card";
-import { IntrospectionCard } from "#features/home/components/introspection-card";
-import { ScopesCard } from "#features/home/components/scopes-card";
 import { TypedTokensCard } from "#features/home/components/typed-tokens-card";
 import type { FoldedSnippet } from "#features/home/lib/home-snippets";
+
+// The two cards that run a container are split off so @codefast/di stays out of the home page's initial JS.
+const ScopesCard = lazy(() =>
+  import("#features/home/components/scopes-card").then((module) => ({ default: module.ScopesCard })),
+);
+const IntrospectionCard = lazy(() =>
+  import("#features/home/components/introspection-card").then((module) => ({ default: module.IntrospectionCard })),
+);
 
 interface DiPillarsSectionProps extends Omit<ComponentProps<"section">, "children"> {
   /** The well-declared class for the typed-tokens card, as dual-theme highlighted HTML. */
@@ -49,8 +57,14 @@ export function DiPillarsSection({
         <div className="grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-2">
           <TypedTokensCard rightListHtml={rightListHtml} wrongListHtml={wrongListHtml} className="reveal-up" />
           <DecoratorsCard decorators={decorators} className="reveal-up md:col-start-2 md:row-span-2 md:row-start-1" />
-          <ScopesCard className="reveal-up" />
-          <IntrospectionCard className="reveal-up md:col-span-2" />
+          <Suspense fallback={<Skeleton aria-hidden className="min-h-[33rem] rounded-2xl" />}>
+            <ScopesCard className="reveal-up" />
+          </Suspense>
+          <Suspense
+            fallback={<Skeleton aria-hidden className="min-h-[40rem] rounded-2xl md:col-span-2 md:min-h-[19rem]" />}
+          >
+            <IntrospectionCard className="reveal-up md:col-span-2" />
+          </Suspense>
         </div>
       </div>
     </section>
