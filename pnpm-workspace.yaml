@@ -55,10 +55,10 @@ catalog:
   "@tailwindcss/vite": ^4.3.3
   "@tanstack/devtools-vite": ^0.8.5
   "@tanstack/react-devtools": ^0.10.13
-  "@tanstack/react-router": ^1.170.41
+  "@tanstack/react-router": ^1.170.44
   "@tanstack/react-router-devtools": ^1.167.2
-  "@tanstack/react-start": ^1.168.60
-  "@tanstack/react-table": ^9.2.8
+  "@tanstack/react-start": ^1.169.1
+  "@tanstack/react-table": ^9.3.1
   "@testing-library/dom": ^10.4.2
   "@testing-library/jest-dom": ^7.0.1
   "@testing-library/react": ^16.3.3
