@@ -271,8 +271,8 @@ catalogs:
       specifier: ^4.3.3
       version: 4.3.3
     tinybench:
-      specifier: ^6.2.1
-      version: 6.2.1
+      specifier: ^6.2.2
+      version: 6.2.2
     tsx:
       specifier: ^4.23.15
       version: 4.23.15
@@ -686,7 +686,7 @@ importers:
     dependencies:
       tinybench:
         specifier: 'catalog:'
-        version: 6.2.1
+        version: 6.2.2
     devDependencies:
       '@codefast/typescript-config':
         specifier: workspace:*
