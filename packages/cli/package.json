@@ -84,13 +84,15 @@
     "jiti": "catalog:",
     "oxc-parser": "catalog:",
     "picomatch": "catalog:",
+    "semver": "catalog:",
     "yaml": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@types/node": "catalog:",
+    "@types/node": "catalog:node22.12",
     "@types/picomatch": "catalog:",
+    "@types/semver": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "github-slugger": "catalog:",
     "typescript": "catalog:",
@@ -106,6 +108,6 @@
     }
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.12.0"
   }
 }

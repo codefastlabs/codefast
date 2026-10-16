@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "lib": ["ES2024", "ES2025.Collection", "ES2025.Iterator"],
+    "target": "ES2024"
+  },
+  "display": "Node 22 floor overlay for headless packages"
+}

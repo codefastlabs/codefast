@@ -19,7 +19,8 @@ The presets are plain JSON `tsconfig` files. There's no runtime code, and nothin
   way Vite, esbuild, and friends resolve them.
 - **`lib` and `target` match the runtime floors**: both are `ES2025`, the newest edition that Node 24 and the browser
   floor both ship ([support policy](../../SUPPORT.md)). A builtin newer than that, such as `Map.prototype.getOrInsert`,
-  is a type error here rather than a runtime crash on the floor. Move them together only when a floor moves.
+  is a type error here rather than a runtime crash on the floor. A package whose Node floor is 22 layers a floor overlay
+  on top, which narrows both to what Node 22 ships.
 - **Ambient types follow the runtime.** No preset loads `@types/node` or lists `ESNext.Disposable`. A program that runs
   on Node adds `types: ["node"]`, which brings the Node globals and explicit resource management with it. A browser
   program leaves both out: Safari has not shipped explicit resource management yet.
@@ -32,7 +33,7 @@ The presets are plain JSON `tsconfig` files. There's no runtime code, and nothin
 pnpm add -D @codefast/typescript-config
 ```
 
-`@codefast/typescript-config` requires Node.js 24 or later, and `typescript` 7 or later as a peer dependency —
+`@codefast/typescript-config` requires Node.js 22.12 or later, and `typescript` 7 or later as a peer dependency —
 TypeScript 7 is the one compiler the presets are checked against. The package is published on 0.x and versioned on its
 own track: breaking changes ship as minor versions, so pin the minor version when you need stability.
 
@@ -67,6 +68,8 @@ Options you set locally always win, so adjusting a preset takes one line — her
 | `library.json`       | `base.json` | Headless packages: `lib` is `ES2025` only, so relying on a browser global is a type error. A package that runs on Node adds `types: ["node"]`.                                                    |
 | `react.json`         | `base.json` | React with the automatic JSX runtime (`jsx: "react-jsx"`) — components need no `React` import.                                                                                                    |
 | `next.json`          | `base.json` | Next.js apps: `jsx: "preserve"`, `incremental` builds, and the `next` TypeScript plugin.                                                                                                          |
+| `node22.json`        | (overlay)   | Node 22 floor for a headless package: `lib` is `ES2024` plus the Set methods and iterator helpers Node 22 ships, and `target` is `ES2024`.                                                        |
+| `node22-dom.json`    | (overlay)   | Node 22 floor for a package that also renders in a browser: the same, with `DOM` and `DOM.Iterable`.                                                                                              |
 | `library-build.json` | (overlay)   | Build-emit overrides for a build config: `noEmit: false`, `declaration` + `isolatedDeclarations`, declaration and source maps, and `types: []`, so test-only ambient types stay out of the build. |
 
 ### Choosing a preset
@@ -113,6 +116,22 @@ A Next.js app:
 Next.js 16.3 and later type-check with TypeScript 7 through its `tsc` CLI (`experimental.useTypeScriptCli`, on by
 default). Earlier Next.js releases need TypeScript 6's compiler API, so an app on one of them stays on 0.9.x of this
 package.
+
+### Targeting a Node 22 floor
+
+The presets assume Node 24. A package whose `engines.node` floor is on Node 22 lists a floor overlay last in `extends`,
+so `lib` and `target` drop to what Node 22 ships and `RegExp.escape`, `Promise.try`, `Float16Array` or a regular
+expression modifier become type errors rather than crashes on the floor:
+
+```json
+{
+  "extends": ["@codefast/typescript-config/react.json", "@codefast/typescript-config/node22-dom.json"],
+  "include": ["src"]
+}
+```
+
+`node22.json` replaces `lib` with no DOM, so a headless package pairs it with `library.json`; a package that renders in
+a browser takes `node22-dom.json` instead. A local `lib` still wins over both.
 
 ### Building with `tsc`
 

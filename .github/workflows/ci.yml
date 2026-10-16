@@ -26,20 +26,55 @@ jobs:
     # test + coverage suite here (run-tests defaults to true).
     secrets: inherit
 
-  # Run the unit suite on the supported Node lines `verify` (on the latest, from .node-version) does not
-  # cover, so the floor is a contract CI proves. Publish-surface correctness is a static check in
-  # `verify` (audit publish), not a per-Node runtime step.
+  # Each package declares its own Node floor; `codefast audit engines` lists them, and this job turns that list into
+  # one Node Matrix leg per distinct floor, so every floor a package promises is a contract CI proves. The audit's
+  # rules gate in `verify`; here a violation only stops the plan.
+  node-floors:
+    name: Plan Node Floors
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      floors: ${{ steps.plan.outputs.floors }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Configure Build Environment
+        uses: ./.github/actions/setup-environment
+        with:
+          enable-remote-cache: false
+
+      - name: Build CLI
+        run: npx turbo build --filter=@codefast/cli
+
+      # Same scope as the legs below: the libraries under packages/ and internal/, grouped by floor.
+      - name: Group Packages by Floor
+        id: plan
+        run: |
+          set -o pipefail
+          floors=$(node ./packages/cli/dist/bin.js audit engines --json | jq -c '
+            [.result.floors[] | select(.directory | test("^(packages|internal)/"))]
+            | group_by(.floor)
+            | map({node: .[0].floor, filters: (map("--filter=" + .packageName) | join(" "))})')
+          echo "floors=$floors" >> "$GITHUB_OUTPUT"
+
+  # Run each floor's packages, every test category, on that floor itself; the current line (.node-version) is covered
+  # by `verify`. Publish-surface correctness is a static check in `verify` (audit publish), not a per-Node runtime step.
   node-matrix:
     name: Node Matrix (${{ matrix.node }})
+    needs: node-floors
     runs-on: ubuntu-latest
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
-        # 24.0.0 is the engines floor itself, which the dev toolchain (pnpm) runs on too; the current
-        # line (26) is covered by `verify`.
-        node: ["24.0.0"]
+        include: ${{ fromJSON(needs.node-floors.outputs.floors) }}
+    env:
+      FLOOR_FILTERS: ${{ matrix.filters }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -53,12 +88,11 @@ jobs:
           # Turbo leaves the runtime out of the task hash, so a shared cache could replay another Node line's results.
           enable-remote-cache: false
 
+      # The filters are word-split on purpose: one `--filter` per package on this floor.
       - name: Build Workspace Packages
-        run: npx turbo build --filter="./packages/**" --filter="./internal/**"
+        run: npx turbo build $FLOOR_FILTERS
 
-      - name: Run Unit Tests
-        run: npx turbo run test:unit --filter="./packages/**" --filter="./internal/**"
-
-      # A consumer lane loads the built packages on this very runtime, which is where a missing builtin shows first.
-      - name: Run End-to-End Tests
-        run: npx turbo run test:e2e --filter="./packages/**" --filter="./internal/**"
+      # Unit tests run the source through Vite's transform, so the integration and end-to-end categories — which load
+      # the built packages on this very runtime — are what show a builtin or syntax the floor lacks.
+      - name: Run Tests
+        run: npx turbo run test $FLOOR_FILTERS

@@ -22,7 +22,7 @@ encode an opinionated house style (called out below) that you can adopt, ignore,
 
 ## Requirements
 
-- **Node.js ≥ 24** (the CLI is published as ESM).
+- **Node.js ≥ 22.12** (the CLI is published as ESM).
 - **TypeScript ≥ 7** to type-check a config written with `defineConfig`, and for
   `arrange simplify --fold-variant-classname`, the one command that loads `typescript` (an optional peer).
 - **A project root — workspace or single package.** Commands resolve their root by walking up from the current
@@ -114,6 +114,7 @@ codefast                              # Codefast monorepo developer CLI
 │  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
 │  ├─ props [target]                  # *Props aliases joined with & that an interface could express (TS type server)
 │  ├─ publish [target]                # what breaks a consumer's install: #/ imports, unshipped targets, @source paths
+│  ├─ engines [target]                # Node floors (engines.node) outside a dependency's engines or their @types/node line
 │  ├─ layers [target]                 # value imports pointing up a package's configured layers
 │  └─ comments [target]               # section dividers not in the one allowed form
 │      └─ --fix                       # rewrite every fixable divider in place (the only audit that writes)
@@ -149,14 +150,16 @@ Every command also responds to `--help`; each command's section below explains w
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
 | `audit props`         | Report props types joined with `&` that an interface could express         | no                |
 | `audit publish`       | Report what would break a consumer's install of a published package        | no                |
+| `audit engines`       | Report each package's Node floor that does not hold                        | no                |
 | `audit layers`        | Report value imports that point up a package's configured layers           | no                |
 | `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
 
 **Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, `audit links`, `audit assertions`,
-`audit layers`, and `audit publish` are general-purpose — they work for any pnpm workspace or single package that builds
-with `tsc`. The other five audits encode codefast's own house style (logical Tailwind directions, named React imports, a
-specific comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens, interfaces for component props).
-Adopt them if they fit your project; otherwise skip them, or use an allowlist to narrow their scope.
+`audit layers`, `audit publish`, and `audit engines` are general-purpose — they work for any pnpm workspace or single
+package that builds with `tsc`. The other five audits encode codefast's own house style (logical Tailwind directions,
+named React imports, a specific comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens, interfaces
+for component props). Adopt them if they fit your project; otherwise skip them, or use an allowlist to narrow their
+scope.
 
 ## `arrange`
 
@@ -418,6 +421,29 @@ named in the report. Private packages are skipped, and it takes no allowlist.
 ```bash
 codefast audit publish                     # every published package in the workspace
 codefast audit publish --json              # machine-readable summary
+```
+
+### `audit engines`
+
+_General-purpose._ Holds each workspace package's own Node floor — its `engines.node` — to what actually runs on it, so
+packages can sit on different floors, each as low as the package can go. It reports:
+
+- a published package that declares no floor, and a floor not written `>=X.Y.Z`;
+- a floor outside the `engines.node` of a dependency that runs on it: a runtime one (`dependencies`, `peerDependencies`,
+  `optionalDependencies`) a consumer installs there, or a dev dependency that runs the package's own tests there in CI.
+  A workspace dependency is read from its manifest, any other from the package's own `node_modules`, so run the audit
+  after the install;
+- an `@types/node` the lockfile (`pnpm-lock.yaml`) resolves on another major than the floor or on a newer minor, where
+  the compiler would accept APIs the floor lacks.
+
+The workspace root's own `engines.node` plays no part: it is the contributors' toolchain, not a floor any package
+inherits. A narrower `[target]` checks only the packages it reaches, still against every floor they depend on. `--json`
+lists every floor with its package directory, which is enough to plan one CI leg per floor. It takes no allowlist.
+
+```bash
+codefast audit engines                     # every package in the workspace
+codefast audit engines packages/di         # one package
+codefast audit engines --json              # machine-readable summary, floors included
 ```
 
 ### `audit layers`
@@ -684,6 +710,7 @@ pnpm run cli:audit:assertions       # codefast audit assertions
 pnpm run cli:audit:display-names    # codefast audit display-names
 pnpm run cli:audit:layers           # codefast audit layers
 pnpm run cli:audit:publish          # codefast audit publish
+pnpm run cli:audit:engines          # codefast audit engines
 ```
 
 `pnpm run version-packages` runs `changeset version` and then `codefast tag`, so published APIs are stamped at release,

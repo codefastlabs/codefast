@@ -33,7 +33,7 @@ Or the equivalent with your package manager: `npm install @codefast/ui`, `yarn a
 
 `@codefast/ui` requires:
 
-- Node.js 24 or later.
+- Node.js 22.22.2 or later.
 - TypeScript 7 or later for its types.
 - Chrome and Edge 136, Firefox 136, or Safari 18.4 or later in the browser
   ([support policy](../../SUPPORT.md#browsers)).

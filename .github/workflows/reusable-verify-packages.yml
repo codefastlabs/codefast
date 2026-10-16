@@ -112,6 +112,11 @@ jobs:
       - name: Verify Publish Surface
         run: pnpm cli:audit:publish
 
+      # Each package states its own Node floor, and nothing else relates them: this audit holds every floor to
+      # `>=X.Y.Z`, no lower than the toolchain's or a runtime dependency's, with `@types/node` on its release line.
+      - name: Verify Node Floors
+        run: pnpm cli:audit:engines
+
       - name: Execute Automated Tests with Coverage
         if: ${{ inputs.run-tests }}
         run: npx turbo run test:coverage --filter="./packages/**" --filter="./internal/**"

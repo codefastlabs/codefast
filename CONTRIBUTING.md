@@ -25,7 +25,8 @@ Four things routinely surprise newcomers:
 
 ## Setup
 
-Node ≥ 24.0 ([why](SUPPORT.md#nodejs)) and pnpm 11, pinned via `packageManager`.
+Node ≥ 24.0 for development and pnpm 11, pinned via `packageManager`. Each package declares its own, lower Node floor
+([why](SUPPORT.md#nodejs)), which CI proves on that floor itself.
 
 ```bash
 git clone https://github.com/codefastlabs/codefast.git

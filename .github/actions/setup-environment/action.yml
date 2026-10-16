@@ -55,6 +55,8 @@ runs:
       with:
         version: ${{ inputs.package-manager-version }}
         run_install: false
+        # pnpm's own Node.js comes bundled, so a Node Matrix leg can run a package's floor below what pnpm itself needs.
+        standalone: true
 
     - name: "Set Up Node.js Environment"
       id: node-setup

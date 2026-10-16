@@ -91,8 +91,8 @@ container.bind(CheckoutService).toSelf();
 container.resolve(CheckoutService).complete("ORD-1001");
 ```
 
-`@codefast/di` requires Node.js 24 or later and TypeScript 7 or later with standard decorators — no `reflect-metadata`,
-no `experimentalDecorators`. Its README, specification, and architecture notes live at
+`@codefast/di` requires Node.js 22.18 or later and TypeScript 7 or later with standard decorators — no
+`reflect-metadata`, no `experimentalDecorators`. Its README, specification, and architecture notes live at
 [codefastlabs.com/docs/di](https://codefastlabs.com/docs/di); the component library at
 [codefastlabs.com/ui](https://codefastlabs.com/ui); every other package at `https://codefastlabs.com/docs/<pkg>`.
 

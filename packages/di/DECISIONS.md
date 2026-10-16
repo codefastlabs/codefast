@@ -62,7 +62,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | Decorator standard  | Legacy TC39 Stage 1 (experimentalDecorators)                                            | Standard decorators — the TC39 proposal, at Stage 2.7 (`Symbol.metadata`, TypeScript 7+)          |
 | Decorator transform | Any: Oxc, SWC and tsc lower legacy decorators, but esbuild emits no `design:paramtypes` | One that lowers standard decorators: tsx and esbuild as they are, Vite 8 and Vitest through Babel |
 | Module format       | ESM-only                                                                                | ESM-only                                                                                          |
-| Minimum Node.js     | Node ≥ 20.19.0                                                                          | Node ≥ 24.0.0                                                                                     |
+| Minimum Node.js     | Node ≥ 20.19.0                                                                          | Node ≥ 22.18.0                                                                                    |
 
 #### Binding API
 

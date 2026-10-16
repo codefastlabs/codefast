@@ -23,6 +23,7 @@ import type {
   AssertionAuditResult,
   CommentAuditResult,
   DisplayNameAuditResult,
+  EnginesAuditResult,
   ImportsAuditResult,
   LayersAuditResult,
   LinkAuditResult,
@@ -30,6 +31,12 @@ import type {
   PublishAuditResult,
   RtlAuditResult,
 } from "#audit/domain/types";
+import { exitCodeForEnginesAuditResult, formatEnginesAuditJsonOutput } from "#audit/engines/cli-result";
+import type { EnginesAuditRunRequest } from "#audit/engines/cli-schema";
+import { enginesAuditRunRequestSchema } from "#audit/engines/cli-schema";
+import { presentEnginesAuditResult } from "#audit/engines/output";
+import { prepareEnginesAudit } from "#audit/engines/prepare";
+import { runEnginesAudit } from "#audit/engines/run";
 import { exitCodeForImportsAuditResult, formatImportsAuditJsonOutput } from "#audit/imports/cli-result";
 import type { ImportsAuditRunRequest } from "#audit/imports/cli-schema";
 import { importsAuditRunRequestSchema } from "#audit/imports/cli-schema";
@@ -271,6 +278,20 @@ const publishCheck: AuditCheck<PublishAuditRunRequest, PublishAuditResult> = {
   exitCode: exitCodeForPublishAuditResult,
 };
 
+const enginesCheck: AuditCheck<EnginesAuditRunRequest, EnginesAuditResult> = {
+  name: "engines",
+  description:
+    "Report Node floors (engines.node) that are missing, malformed, outside a dependency's engines, or off their @types/node line",
+  targetHelp: "Directory or file to scan (default: the repo root)",
+  schema: enginesAuditRunRequestSchema,
+  prepare: prepareEnginesAudit,
+  buildRequest: baseAuditRequest,
+  run: (fs, request) => runEnginesAudit(fs, { rootDir: request.rootDir, targetPath: request.targetPath }),
+  present: presentEnginesAuditResult,
+  formatJson: formatEnginesAuditJsonOutput,
+  exitCode: exitCodeForEnginesAuditResult,
+};
+
 /**
  * Adapts an `AuditCheck` descriptor onto the shared command pipeline.
  */
@@ -311,6 +332,7 @@ export function createAuditCommand(): Command {
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(commentsCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(layersCheck));
   registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(publishCheck));
+  registerPipelineSubcommand(cmd, nodeFilesystem, auditCheckToPipeline(enginesCheck));
 
   return cmd;
 }
