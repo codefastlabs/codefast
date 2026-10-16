@@ -1,15 +1,12 @@
-import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
+import { createAuditCommand } from "#audit/command";
 import type { PropsAuditResult } from "#audit/domain/types";
-
-const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-const binPath = path.join(packageRoot, "dist", "bin.js");
+import { logger } from "#core/logger";
 
 // Each alias stands for one judgement the type server has to make; the comment names it.
 const PROPS_SOURCE = [
@@ -27,16 +24,12 @@ const PROPS_SOURCE = [
 ].join("\n");
 
 let fixtureDir: string;
-let exitCode: number | null;
+let exitCode: number;
 let reported: Array<string>;
 
-// The e2e tier drives the built binary; build it once if a prior turbo/build step has not.
-beforeAll(() => {
-  if (!existsSync(binPath)) {
-    execFileSync("pnpm", ["build"], { cwd: packageRoot, stdio: "ignore" });
-  }
+// Runs the audit command in-process, so the type server it spawns is the one subprocess and coverage sees the probe.
+beforeAll(async () => {
   fixtureDir = mkdtempSync(path.join(tmpdir(), "codefast-audit-props-"));
-  writeFileSync(path.join(fixtureDir, "package.json"), JSON.stringify({ name: "solo", version: "0.0.0" }));
   writeFileSync(
     path.join(fixtureDir, "tsconfig.json"),
     JSON.stringify({ compilerOptions: { strict: true, noEmit: true, types: [] }, include: ["src"] }),
@@ -44,13 +37,21 @@ beforeAll(() => {
   mkdirSync(path.join(fixtureDir, "src"));
   writeFileSync(path.join(fixtureDir, "src", "props.ts"), PROPS_SOURCE);
 
-  const run = spawnSync("node", [binPath, "audit", "props", "--json"], { cwd: fixtureDir, encoding: "utf8" });
-  const summary = JSON.parse(run.stdout) as { result: PropsAuditResult };
-  exitCode = run.status;
-  reported = summary.result.files.flatMap(({ violations }) =>
-    violations.map(({ raw }) => /type (\w+)/.exec(raw)?.[1] ?? raw),
-  );
-}, 180_000);
+  const previousExitCode = process.exitCode;
+  process.exitCode = undefined;
+  const out = vi.spyOn(logger, "out").mockImplementation(() => {});
+  try {
+    await createAuditCommand().parseAsync(["node", "audit", "props", fixtureDir, "--json"]);
+    exitCode = typeof process.exitCode === "number" ? process.exitCode : 0;
+    const summary = JSON.parse(String(out.mock.calls[0]?.[0])) as { result: PropsAuditResult };
+    reported = summary.result.files.flatMap(({ violations }) =>
+      violations.map(({ raw }) => /type (\w+)/.exec(raw)?.[1] ?? raw),
+    );
+  } finally {
+    process.exitCode = previousExitCode;
+    out.mockRestore();
+  }
+}, 60_000);
 
 afterAll(() => {
   rmSync(fixtureDir, { recursive: true, force: true });
