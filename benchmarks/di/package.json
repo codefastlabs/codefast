@@ -34,6 +34,7 @@
     "bench:ab": "node --import tsx/esm src/harness/ab.ts",
     "bench:baseline": "BENCH_BASELINE=baselines BENCH_MODE=full BENCH_ISOLATE=true node --import tsx/esm src/harness/run.ts",
     "bench:footprint": "node --import tsx/esm src/harness/footprint.ts",
+    "bench:footprint:check": "node --import tsx/esm src/harness/footprint.ts --check",
     "bench:fast": "BENCH_MODE=fast node --import tsx/esm src/harness/run.ts",
     "bench:list": "node --import tsx/esm src/harness/list.ts",
     "bench:report": "node --import tsx/esm src/harness/report.ts",

@@ -117,6 +117,11 @@ jobs:
       - name: Verify Node Floors
         run: pnpm cli:audit:engines
 
+      # The bundle is what `@codefast/di` costs an app, and no test or type sees it grow; this measures the smallest
+      # bind-and-resolve program and fails past the gzip budget checked in beside the benchmark suite.
+      - name: Verify DI Bundle Budget
+        run: pnpm di:bench:footprint:check
+
       - name: Execute Automated Tests with Coverage
         if: ${{ inputs.run-tests }}
         run: npx turbo run test:coverage --filter="./packages/**" --filter="./internal/**"
