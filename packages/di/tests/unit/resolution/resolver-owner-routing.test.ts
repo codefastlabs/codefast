@@ -5,6 +5,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveAllAsync, resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { AsyncResolutionError, NoMatchingBindingError, TokenNotBoundError } from "#errors";
@@ -47,8 +48,8 @@ describe("resolveAll owner-routing for singletons", () => {
     const child = parent.createChild();
 
     const [fromChild, fromParent] = await Promise.all([
-      child.resolveAllAsync(serviceToken),
-      parent.resolveAsync(serviceToken),
+      resolveAllAsync(child, serviceToken),
+      resolveAsync(parent, serviceToken),
     ]);
 
     expect(constructed).toBe(1);
@@ -69,7 +70,7 @@ describe("sync resolve during an in-flight async materialization", () => {
       })
       .singleton();
 
-    const pending = container.resolveAsync(serviceToken);
+    const pending = resolveAsync(container, serviceToken);
     // Nothing had to be awaited, so the instance is cached already and a sync read shares it.
     const fromSync = container.resolve(serviceToken);
     expect(constructed).toBe(1);
@@ -91,7 +92,7 @@ describe("sync resolve during an in-flight async materialization", () => {
       })
       .singleton();
 
-    const pending = container.resolveAsync(serviceToken);
+    const pending = resolveAsync(container, serviceToken);
     expect(() => container.resolve(serviceToken)).toThrow(AsyncResolutionError);
 
     const instance = await pending;
@@ -115,7 +116,7 @@ describe("scoped async in-flight dedup", () => {
       .scoped();
     const child = root.createChild();
 
-    const [first, second] = await Promise.all([child.resolveAsync(serviceToken), child.resolveAsync(serviceToken)]);
+    const [first, second] = await Promise.all([resolveAsync(child, serviceToken), resolveAsync(child, serviceToken)]);
 
     expect(constructed).toBe(1);
     expect(first).toBe(second);

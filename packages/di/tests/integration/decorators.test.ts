@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
@@ -272,6 +273,6 @@ describe("decorator metadata across class inheritance", () => {
     container.bind(CycleAToken).to(CycleA).transient();
     container.bind(CycleBToken).to(CycleB).transient();
 
-    await expect(container.resolveAsync(CycleAToken)).rejects.toThrow(CircularDependencyError);
+    await expect(resolveAsync(container, CycleAToken)).rejects.toThrow(CircularDependencyError);
   });
 });

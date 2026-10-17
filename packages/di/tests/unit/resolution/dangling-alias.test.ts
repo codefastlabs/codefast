@@ -5,6 +5,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveAllAsync, resolveOptionalAsync } from "#container/async";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { CircularDependencyError, TokenNotBoundError } from "#errors";
@@ -25,7 +26,7 @@ describe("a dangling alias is a miss on the optional and collection lanes", () =
     const container = Container.create();
     container.bind(facade).toAlias(missing);
 
-    await expect(container.resolveOptionalAsync(facade)).resolves.toBeUndefined();
+    await expect(resolveOptionalAsync(container, facade)).resolves.toBeUndefined();
   });
 
   it("resolveAll and resolveAllAsync never throw through a dangling alias", async () => {
@@ -35,7 +36,7 @@ describe("a dangling alias is a miss on the optional and collection lanes", () =
     container.bind(facade).toAlias(missing);
 
     expect(container.resolveAll(facade)).toStrictEqual([]);
-    await expect(container.resolveAllAsync(facade)).resolves.toStrictEqual([]);
+    await expect(resolveAllAsync(container, facade)).resolves.toStrictEqual([]);
   });
 
   it("skips a dangling alias member but keeps the live members, in order", () => {

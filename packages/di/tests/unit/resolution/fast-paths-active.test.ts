@@ -9,6 +9,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { inspect } from "#container/introspect";
 import { token } from "#core/token";
@@ -316,8 +317,8 @@ describe("a transient factory root's context", () => {
       })
       .transient();
 
-    const [first, second] = await Promise.all([container.resolveAsync(rootToken), container.resolveAsync(rootToken)]);
-    const third = await container.resolveAsync(rootToken);
+    const [first, second] = await Promise.all([resolveAsync(container, rootToken), resolveAsync(container, rootToken)]);
+    const third = await resolveAsync(container, rootToken);
 
     expect(first.path).toEqual(["test:Root"]);
     expect(second.path).toEqual(["test:Root"]);
@@ -343,7 +344,7 @@ describe("a transient factory root's context", () => {
       .toDynamicAsync((ctx) => ctx.resolveAsync(selfToken))
       .transient();
 
-    await expect(container.resolveAsync(throwingToken)).rejects.toThrow("prefix failure");
-    await expect(container.resolveAsync(selfToken)).rejects.toThrow(CircularDependencyError);
+    await expect(resolveAsync(container, throwingToken)).rejects.toThrow("prefix failure");
+    await expect(resolveAsync(container, selfToken)).rejects.toThrow(CircularDependencyError);
   });
 });

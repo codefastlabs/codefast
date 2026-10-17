@@ -6,6 +6,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { initializeAsync, resolveAllAsync, resolveAsync, resolveOptionalAsync } from "#container/async";
 import { Container } from "#container/container";
 import { lookupBindings } from "#container/introspect";
 import { Module } from "#core/module";
@@ -488,7 +489,7 @@ describe("initializeAsync", () => {
       })
       .singleton();
 
-    await container.initializeAsync();
+    await initializeAsync(container);
 
     expect(warmBuilt).toBe(1);
     expect(hijackBuilt).toBe(0);
@@ -524,12 +525,12 @@ describe("initializeAsync", () => {
       })
       .transient();
 
-    await container.initializeAsync();
+    await initializeAsync(container);
 
     // Both singletons are warmed exactly once; the transient is left alone.
     expect(built.toSorted()).toEqual(["async", "sync"]);
 
-    await container.resolveAsync(asyncToken);
+    await resolveAsync(container, asyncToken);
     container.resolve(syncToken);
     expect(built.toSorted()).toEqual(["async", "sync"]);
   });
@@ -539,7 +540,7 @@ describe("initializeAsync", () => {
     const container = Container.create();
     container.bind(constantToken).toConstantValue("value");
 
-    await expect(container.initializeAsync()).resolves.toBeUndefined();
+    await expect(initializeAsync(container)).resolves.toBeUndefined();
     expect(container.resolve(constantToken)).toBe("value");
   });
 
@@ -554,7 +555,7 @@ describe("initializeAsync", () => {
       return `${instance}!`;
     });
 
-    await container.initializeAsync();
+    await initializeAsync(container);
 
     // The hook ran during warm-up, and its result is what a later resolve reads.
     expect(activated).toEqual(["value"]);
@@ -591,16 +592,16 @@ describe("disposed container, async methods", () => {
     builder.bind(token<string>("disposed-async-module-value")).toConstantValue("module");
   });
   const asyncMethods: ReadonlyArray<readonly [string, (container: Container) => Promise<unknown>]> = [
-    ["resolveAsync", (container) => container.resolveAsync(serviceToken)],
-    ["resolveAsync with options", (container) => container.resolveAsync(serviceToken, {})],
-    ["resolveOptionalAsync", (container) => container.resolveOptionalAsync(serviceToken)],
-    ["resolveAllAsync", (container) => container.resolveAllAsync(serviceToken)],
-    ["resolveAllAsync with options", (container) => container.resolveAllAsync(serviceToken, {})],
+    ["resolveAsync", (container) => resolveAsync(container, serviceToken)],
+    ["resolveAsync with options", (container) => resolveAsync(container, serviceToken, {})],
+    ["resolveOptionalAsync", (container) => resolveOptionalAsync(container, serviceToken)],
+    ["resolveAllAsync", (container) => resolveAllAsync(container, serviceToken)],
+    ["resolveAllAsync with options", (container) => resolveAllAsync(container, serviceToken, {})],
     ["loadAsync", (container) => container.loadAsync(loadedModule)],
     ["unloadAsync", (container) => container.unloadAsync(loadedModule)],
     ["unbindAsync", (container) => container.unbindAsync(serviceToken)],
     ["unbindAllAsync", (container) => container.unbindAllAsync()],
-    ["initializeAsync", (container) => container.initializeAsync()],
+    ["initializeAsync", (container) => initializeAsync(container)],
   ];
 
   // Each call is made outside `expect`, so a synchronous throw fails the test rather than counting as the refusal.
@@ -634,8 +635,8 @@ describe("disposed container, async methods", () => {
     await disposed.dispose();
 
     const [served, refused] = await Promise.allSettled([
-      live.resolveAsync(serviceToken),
-      disposed.resolveAsync(serviceToken),
+      resolveAsync(live, serviceToken),
+      resolveAsync(disposed, serviceToken),
     ]);
 
     expect(served).toEqual({ status: "fulfilled", value: "value" });

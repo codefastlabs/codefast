@@ -14,6 +14,7 @@
 import {
   Container,
   generateDependencyGraph,
+  initializeAsync,
   inject,
   injectable,
   Module,
@@ -256,7 +257,7 @@ async function createServer() {
   const container = await Container.fromModulesAsync(InfrastructureModule, AppModule);
 
   // Eagerly initialize all singletons before accepting traffic
-  await container.initializeAsync();
+  await initializeAsync(container);
 
   // Validate scope rules (singleton → scoped violations, etc.)
   validate(container);

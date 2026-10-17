@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { explain } from "#container/introspect";
 import { token } from "#core/token";
@@ -83,9 +84,7 @@ describe("the path a missing-binding error names", () => {
   });
 
   it("is the same on the async lane", async () => {
-    const error = await chainContainer("transient")
-      .resolveAsync(UserService)
-      .catch((rejection: unknown) => rejection);
+    const error = await resolveAsync(chainContainer("transient"), UserService).catch((rejection: unknown) => rejection);
 
     expect(error).toBeInstanceOf(TokenNotBoundError);
     expect((error as TokenNotBoundError).path).toEqual(CHAIN);

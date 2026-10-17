@@ -4,6 +4,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
@@ -32,12 +33,12 @@ describe("async instantiation plans", () => {
       .transient();
 
     // The first request interprets; the plan is compiled on the request that repeats it.
-    expect(await container.resolveAsync(third)).toBe(3);
+    expect(await resolveAsync(container, third)).toBe(3);
     expect(asyncPlanCount(container)).toBe(0);
-    expect(await container.resolveAsync(third)).toBe(3);
+    expect(await resolveAsync(container, third)).toBe(3);
     // The optimization must be active, not merely the answer correct.
     expect(asyncPlanCount(container)).toBeGreaterThan(0);
-    expect(await container.resolveAsync(third)).toBe(3);
+    expect(await resolveAsync(container, third)).toBe(3);
   });
 
   it("runs a fully synchronous class chain through the async entry on a plan", async () => {
@@ -54,8 +55,8 @@ describe("async instantiation plans", () => {
     container.bind(Root).toSelf().transient();
 
     // First resolve discovers lifecycle metadata (interpreted); the second compiles.
-    expect((await container.resolveAsync(Root)).leaf.depth).toBe(0);
-    expect((await container.resolveAsync(Root)).leaf.depth).toBe(0);
+    expect((await resolveAsync(container, Root)).leaf.depth).toBe(0);
+    expect((await resolveAsync(container, Root)).leaf.depth).toBe(0);
     expect(asyncPlanCount(container)).toBeGreaterThan(0);
   });
 
@@ -76,7 +77,7 @@ describe("async instantiation plans", () => {
       )
       .transient();
 
-    expect(await container.resolveAsync(root)).toBe(42);
+    expect(await resolveAsync(container, root)).toBe(42);
   });
 
   it("carries a named criterion into the cold-singleton escape", async () => {
@@ -101,9 +102,9 @@ describe("async instantiation plans", () => {
       .transient();
 
     // Cold: the escape must replay the name, not fall back to the default slot.
-    expect(await container.resolveAsync(root)).toBe("via:primary-driver");
+    expect(await resolveAsync(container, root)).toBe("via:primary-driver");
     // Warm: the cached named singleton answers from the plan's field read.
-    expect(await container.resolveAsync(root)).toBe("via:primary-driver");
+    expect(await resolveAsync(container, root)).toBe("via:primary-driver");
   });
 
   it("invalidates a compiled plan when an activation hook registers later", async () => {
@@ -114,12 +115,12 @@ describe("async instantiation plans", () => {
       .toResolvedAsync(async () => 1, [])
       .transient();
 
-    expect(await container.resolveAsync(value)).toBe(1);
-    expect(await container.resolveAsync(value)).toBe(1);
+    expect(await resolveAsync(container, value)).toBe(1);
+    expect(await resolveAsync(container, value)).toBe(1);
     expect(asyncPlanCount(container)).toBeGreaterThan(0);
 
     container.onActivation(value, (_ctx, instance) => instance + 10);
-    expect(await container.resolveAsync(value)).toBe(11);
+    expect(await resolveAsync(container, value)).toBe(11);
   });
 
   it("reports a static resolved-async cycle as a rejection", async () => {
@@ -135,7 +136,7 @@ describe("async instantiation plans", () => {
       .toResolvedAsync(async (value: number) => value, [left])
       .transient();
 
-    await expect(container.resolveAsync(left)).rejects.toBeInstanceOf(CircularDependencyError);
+    await expect(resolveAsync(container, left)).rejects.toBeInstanceOf(CircularDependencyError);
   });
 
   it("interprets a plannable graph requested from inside a factory rather than planning it", async () => {
@@ -152,7 +153,7 @@ describe("async instantiation plans", () => {
       .toDynamicAsync(async (ctx) => (await ctx.resolveAsync(planned)) + 1)
       .transient();
 
-    expect(await container.resolveAsync(entry)).toBe(8);
+    expect(await resolveAsync(container, entry)).toBe(8);
   });
 
   it("turns a sync throw inside an inlined subtree into a rejection", async () => {
@@ -166,7 +167,7 @@ describe("async instantiation plans", () => {
       .transient();
 
     // Warm the plan first, then assert the failure shape.
-    await expect(container.resolveAsync(root)).rejects.toThrow("factory exploded");
-    await expect(container.resolveAsync(root)).rejects.toThrow("factory exploded");
+    await expect(resolveAsync(container, root)).rejects.toThrow("factory exploded");
+    await expect(resolveAsync(container, root)).rejects.toThrow("factory exploded");
   });
 });

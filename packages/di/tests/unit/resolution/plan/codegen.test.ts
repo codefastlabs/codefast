@@ -6,13 +6,10 @@
 import { describe, expect, it } from "vitest";
 
 import type { ConstructorInvocation } from "#core/constructor-type";
-import type { AsyncPlanNode, PlanNode } from "#resolution/plan/codegen";
-import {
-  generateAsyncPlan,
-  generatePlan,
-  isPlanCodegenAvailable,
-  PLAN_CODEGEN_THRESHOLD,
-} from "#resolution/plan/codegen";
+import type { AsyncPlanNode } from "#resolution/plan/async-codegen";
+import { generateAsyncPlan } from "#resolution/plan/async-codegen";
+import type { PlanNode } from "#resolution/plan/codegen";
+import { generatePlan, isPlanCodegenAvailable, PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/codegen";
 import { registeredBinding } from "#tests/unit/support/registered-binding";
 
 class Leaf {

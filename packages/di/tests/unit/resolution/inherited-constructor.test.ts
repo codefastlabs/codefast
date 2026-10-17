@@ -4,6 +4,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
@@ -51,7 +52,7 @@ describe("a subclass that inherits declared constructor deps", () => {
     container.bind(depToken).toConstantValue("d");
     container.bind(DerivedNoCtor).toSelf().transient();
 
-    await expect(container.resolveAsync(DerivedNoCtor)).rejects.toThrow(MissingMetadataError);
+    await expect(resolveAsync(container, DerivedNoCtor)).rejects.toThrow(MissingMetadataError);
   });
 
   it("builds a subclass that declares its own empty deps with @injectable([])", () => {

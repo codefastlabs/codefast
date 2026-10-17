@@ -1,4 +1,4 @@
-import { generateDependencyGraph, inspect, toDotGraph, validate } from "@codefast/di";
+import { generateDependencyGraph, initializeAsync, inspect, toDotGraph, validate } from "@codefast/di";
 /**
  * Example 13 — Real-World E-Commerce Platform
  *
@@ -38,7 +38,7 @@ import { generateDependencyGraph, inspect, toDotGraph, validate } from "@codefas
  *   ✅ Child containers per HTTP request (scoped cart, user session)
  *   ✅ Optional injection for optional integrations (analytics, A/B testing)
  *   ✅ validate(container) scope-rule check before serving traffic
- *   ✅ container.initializeAsync() eager singleton warm-up
+ *   ✅ initializeAsync(container) eager singleton warm-up
  *   ✅ await using for guaranteed graceful shutdown
  *   ✅ `@injectable` + `@inject` decorators throughout
  *   ✅ `@postConstruct` for cache warm-up
@@ -2463,7 +2463,7 @@ async function bootstrap() {
 
   // 2. Eagerly warm up all singletons (connects DB, Redis, etc.)
   console.log("\n[Bootstrap] Initialising all singletons...");
-  await container.initializeAsync();
+  await initializeAsync(container);
 
   // 3. Validate scope rules — catches captive-dependency bugs
   validate(container);

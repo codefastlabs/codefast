@@ -34,7 +34,7 @@
  * order, parallelises independent branches, and disposes in reverse.
  */
 
-import { Container, inject, injectable, Module, token, validate } from "@codefast/di";
+import { Container, initializeAsync, inject, injectable, Module, resolveAsync, token, validate } from "@codefast/di";
 
 import { banner } from "#examples/support/log";
 
@@ -754,13 +754,13 @@ async function bootstrap(): Promise<void> {
 
   // Eager init: resolve all singletons now, fail fast before binding port
   console.log("  Initialising infrastructure...");
-  await serviceContainer.initializeAsync();
+  await initializeAsync(serviceContainer);
 
   // Validate scope rules — no captive dependencies
   validate(serviceContainer);
 
   // HttpServer is toDynamicAsync (depends on async HealthRegistry) → resolveAsync
-  const httpServer = await serviceContainer.resolveAsync(HttpServerToken);
+  const httpServer = await resolveAsync(serviceContainer, HttpServerToken);
   const metricsCollector = serviceContainer.resolve(MetricsCollectorToken);
 
   console.log("\n  ✅ Service ready — simulating traffic\n");

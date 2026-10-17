@@ -38,20 +38,26 @@ throws. A `Promise` that is itself the bound value — `toConstantValue(someProm
 | `resolveAll`           | `Value[]`                     | `[]`                     | `AsyncResolutionError`    |
 | `resolveAllAsync`      | `Promise<Value[]>`            | `[]`                     | Resolves                  |
 
+> **Normative.** The sync three are `Container` methods; the async three, and `initializeAsync`, are functions that take
+> the container as their first argument (`resolveAsync(container, token, options)`), exported from the root entry. A
+> program that never calls one of them never bundles the async lane. A disposed container, or an object
+> `Container.create()` did not make, is a rejection rather than a throw. The resolution context an async factory
+> receives, `AsyncResolutionContext`, offers the async three as methods; a sync factory's `ResolutionContext` does not.
+
 ```ts
 // Sync resolve — throws AsyncResolutionError if the binding has an async factory
 const logger = container.resolve(Logger); // ^? LoggerService
 
 // Async resolve — safe for both sync and async bindings
-const db = await container.resolveAsync(Database); // ^? DatabaseService
+const db = await resolveAsync(container, Database); // ^? DatabaseService
 
 // Optional — undefined if there is no binding, no TokenNotBoundError
 const logger = container.resolveOptional(Logger); // ^? LoggerService | undefined
-const db = await container.resolveOptionalAsync(Database); // ^? DatabaseService | undefined
+const db = await resolveOptionalAsync(container, Database); // ^? DatabaseService | undefined
 
 // Multi — resolve every binding of a token, [] when there are none
 const plugins = container.resolveAll(Plugin); // ^? Plugin[]
-const plugins = await container.resolveAllAsync(Plugin); // ^? Plugin[]
+const plugins = await resolveAllAsync(container, Plugin); // ^? Plugin[]
 
 // Named / tagged hint
 const fileLogger = container.resolve(Logger, { name: "file" });
@@ -101,7 +107,7 @@ container.resolveAll(Logger, { name: "x" }); // → [] (empty array, no throw)
 
 ```
 AsyncResolutionError: Token 'app:Api' requires async resolution because 'app:Database'
-in its dependency chain has an async factory. Use container.resolveAsync(app:Api).
+in its dependency chain has an async factory. Use resolveAsync(container, app:Api).
   asyncSourceToken: "app:Database"
 ```
 
@@ -123,7 +129,7 @@ in its dependency chain has an async factory. Use container.resolveAsync(app:Api
 
 ```ts
 // Both get the same instance — the factory runs only once
-const [a, b] = await Promise.all([container.resolveAsync(Database), container.resolveAsync(Database)]);
+const [a, b] = await Promise.all([resolveAsync(container, Database), resolveAsync(container, Database)]);
 // a === b: true
 ```
 
@@ -392,7 +398,7 @@ await container.dispose();
 
 container.resolve(Logger); // throws DisposedContainerError
 container.bind(Logger).toSelf(); // throws DisposedContainerError
-await container.resolveAsync(Logger); // rejects with DisposedContainerError
+await resolveAsync(container, Logger); // rejects with DisposedContainerError
 
 // Idempotent: calling dispose() again is a no-op
 await container.dispose(); // safe — no throw, no double-deactivation
@@ -401,7 +407,7 @@ await container.dispose(); // safe — no throw, no double-deactivation
 ## `initializeAsync` — warm up singletons
 
 ```ts
-await container.initializeAsync();
+await initializeAsync(container);
 ```
 
 Resolves and caches every `singleton` binding in **the current container** (the parent is not included). The purpose:
