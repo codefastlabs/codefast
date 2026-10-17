@@ -86,6 +86,7 @@
     "@vitest/coverage-v8": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {

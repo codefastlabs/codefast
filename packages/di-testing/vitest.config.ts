@@ -1,4 +1,5 @@
 import babel, { defineRolldownBabelPreset } from "@rolldown/plugin-babel";
+import { defaultServerConditions } from "vite";
 import { defineConfig } from "vitest/config";
 
 /**
@@ -25,7 +26,7 @@ export default defineConfig({
   // `source` condition so tests (and `@codefast/di`) run against `src`, not `dist`.
   ssr: {
     resolve: {
-      conditions: ["source"],
+      conditions: ["source", ...defaultServerConditions],
     },
   },
   test: {

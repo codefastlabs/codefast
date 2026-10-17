@@ -1,7 +1,7 @@
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defaultClientConditions, defineConfig } from "vite";
 
 /**
  * Browser-app lane: bundles `src/app/entry.tsx` into `dist/app/` (the Node lane is
@@ -10,9 +10,9 @@ import { defineConfig } from "vite";
  * `emptyOutDir: false` preserves the tsc-emitted Node output already in `dist/`.
  */
 export default defineConfig({
-  // Resolve internal `#` to `src` so the browser entry bundles TS source, not `dist`.
+  // Resolve internal `#` to `src` so the browser entry bundles TS source, not `dist`, on top of Vite's defaults.
   resolve: {
-    conditions: ["source", "module", "browser"],
+    conditions: ["source", ...defaultClientConditions],
   },
   // Tailwind v4 via its dedicated Vite plugin — the recommended integration for Vite bundles.
   plugins: [tailwindcss(), viteReact(), babel({ presets: [reactCompilerPreset()] })],
