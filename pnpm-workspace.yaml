@@ -35,6 +35,8 @@ catalogs:
     "@types/node": ~22.18.13
   node22.22:
     "@types/node": ~22.20.5
+  node24.15:
+    "@types/node": ~24.13.6
 
 catalog:
   "@babel/core": ^8.0.7
