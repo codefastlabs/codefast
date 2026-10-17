@@ -43,7 +43,7 @@ import { ActivationNeedCache } from "#resolution/cache/activation-need";
 import type { ClassFacts } from "#resolution/cache/class-introspector";
 import { ClassIntrospector } from "#resolution/cache/class-introspector";
 import type { CollectionEntry, DefaultLookupEntry } from "#resolution/cache/lookup";
-import { BindingLookupCache } from "#resolution/cache/lookup";
+import { BindingLookupCache, stableCollectionValuesOf } from "#resolution/cache/lookup";
 import type { ResolverCallbacks } from "#resolution/context";
 import { AsyncLevelContext, DefaultConstraintContext, DefaultResolutionContext } from "#resolution/context";
 import type { BranchDepth, OwnedBranchStack } from "#resolution/path";
@@ -1086,24 +1086,16 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  /**
-   * Fills a collection memo's value list once every member is stable: a hook-free constant, or a
-   * hook-free singleton whose instance is cached — anything that changes either bumps a registry
-   * version the memo is keyed on. A member still to be materialised leaves the list unfilled.
-   */
+  /** Fills a collection memo's value list once its members are stable and no activation hook exists in the chain. */
   #settleCollectionValues(entry: CollectionEntry): void {
     if (entry.values !== undefined || this.#chainActivationVersion() !== 0) {
       return;
     }
-    const { candidates } = entry;
-    for (let index = 0; index < candidates.length; index += 1) {
-      if (!isStableCollectionMember(candidates[index]!)) {
-        return;
-      }
+    const values = stableCollectionValuesOf(entry.candidates);
+    if (values !== undefined) {
+      entry.values = values;
+      entry.activationVersion = 0;
     }
-    // Kept unfrozen: a frozen array reads through a slow elements kind, and every read copies it anyway.
-    entry.values = candidates.map(stableMemberValue);
-    entry.activationVersion = 0;
   }
 
   /** Every binding in the chain a `resolveAll` request matches, in chain order. */
@@ -2055,24 +2047,6 @@ export class DependencyResolver implements ResolverCallbacks {
     // A throwaway pair — a nested resolve, an async level's prefix — mints per call.
     return new DefaultResolutionContext(this, resolutionStack, options);
   }
-}
-
-/**
- * Whether a binding answers a collection read with a fixed value: a hook-free constant, or a
- * singleton whose instance is already cached.
- *
- * @remarks A cached singleton reads like a constant until a registry change evicts it, which also
- * drops the memo.
- */
-function isStableCollectionMember(binding: Binding): boolean {
-  if (binding.kind === "alias" || binding.activationHook !== undefined) {
-    return false;
-  }
-  return binding.kind === "constant" || (binding.scope === "singleton" && binding.instance !== NO_INSTANCE);
-}
-
-function stableMemberValue(binding: Binding): unknown {
-  return binding.kind === "constant" ? binding.value : binding.instance;
 }
 
 function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
