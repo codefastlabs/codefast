@@ -9,7 +9,11 @@ import type { AmbientResolution } from "#ambient-container";
 import type { Container } from "#container/container";
 import type { ConstructorInvocation } from "#core/constructor-type";
 import type { Constructor } from "#core/types";
+import { MissingMetadataError } from "#errors";
+import { settledParam } from "#injection/dependency-slot";
 import type { ConstructorMetadata, MetadataReader, ParamMetadata } from "#metadata/types";
+
+const EMPTY_PARAM_LIST: ReadonlyArray<ParamMetadata> = [];
 
 /**
  * What one reader has answered about one class so far, each field unknown until first asked.
@@ -100,13 +104,39 @@ export class ClassIntrospector {
   }
 
   /**
+   * The parameters an instantiation of a class injects, each settled into the one slot shape.
+   *
+   * @remarks A class the reader knows nothing about is constructible only if it declares no
+   * parameters; anything else is a missing `@injectable()`. The caller stores the answer on `facts`.
+   */
+  settleParams(target: Constructor, facts: ClassFacts): ReadonlyArray<ParamMetadata> {
+    const meta = this.constructorMetadataOf(target, facts);
+    if (meta !== undefined) {
+      return meta.params.map(settledParam);
+    }
+    if (target.length === 0) {
+      // A subclass with an implicit constructor and no own metadata inherits its base's declared
+      // deps but would be built with zero arguments, injecting `undefined` silently — reject it.
+      const inherited = this.#inheritedConstructorMetadata(target);
+      if (inherited !== undefined && inherited.metadata.params.length > 0) {
+        throw new MissingMetadataError(target.name, {
+          baseName: inherited.base.name,
+          dependencyCount: inherited.metadata.params.length,
+        });
+      }
+      return EMPTY_PARAM_LIST;
+    }
+    throw new MissingMetadataError(target.name);
+  }
+
+  /**
    * The nearest ancestor's own constructor metadata, for a subclass that declares none of its own.
    *
    * @remarks Constructor metadata is never borrowed down the chain, so a subclass with an implicit
-   * constructor would be built with zero arguments; this lets the resolver name the base whose
-   * declared deps the subclass silently drops.
+   * constructor would be built with zero arguments; this names the base whose declared deps the
+   * subclass silently drops.
    */
-  inheritedConstructorMetadata(target: Constructor): { base: Constructor; metadata: ConstructorMetadata } | undefined {
+  #inheritedConstructorMetadata(target: Constructor): { base: Constructor; metadata: ConstructorMetadata } | undefined {
     let current: unknown = Object.getPrototypeOf(target);
     while (typeof current === "function" && current !== Function.prototype) {
       const metadata = this.constructorMetadata(current as Constructor);

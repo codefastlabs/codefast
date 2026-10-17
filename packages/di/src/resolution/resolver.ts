@@ -22,7 +22,6 @@ import {
   CircularDependencyError,
   DisposedContainerError,
   InternalError,
-  MissingMetadataError,
   MissingScopeContextError,
   NoMatchingBindingError,
   TokenNotBoundError,
@@ -31,7 +30,6 @@ import type { DependencySlot } from "#injection/dependency-slot";
 import {
   loneTagBesideNameOf,
   resolveOptionsForSlot,
-  settledParam,
   singleCriterionForSlot,
   singleCriterionOnlyOf,
 } from "#injection/dependency-slot";
@@ -66,7 +64,6 @@ import { matchesSlot, selectAllBindings, selectBinding } from "#resolution/selec
 
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 
-const EMPTY_PARAM_LIST: ReadonlyArray<ParamMetadata> = [];
 // A class with no params is constructed with no arguments, so no dependency array is built for it.
 const NO_ARGUMENTS: ReadonlyArray<unknown> = [];
 /** Plans compiled so far, with the `null` unplannable marks left out. */
@@ -927,35 +924,10 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  /**
-   * The parameters a class binding injects.
-   *
-   * @remarks A class the metadata reader knows nothing about is constructible only if it declares
-   * no parameters; anything else is a missing `@injectable()`.
-   */
+  /** The parameters a class binding injects. */
   #constructorParams(target: Constructor, facts: ClassFacts): ReadonlyArray<ParamMetadata> {
     // Metadata is fixed once a class is defined, so the answer is too; only a throw is left unsettled.
-    return (facts.params ??= this.#settleConstructorParams(target, facts));
-  }
-
-  #settleConstructorParams(target: Constructor, facts: ClassFacts): ReadonlyArray<ParamMetadata> {
-    const meta = this.#introspector().constructorMetadataOf(target, facts);
-    if (meta !== undefined) {
-      return meta.params.map(settledParam);
-    }
-    if (target.length === 0) {
-      // A subclass with an implicit constructor and no own metadata inherits its base's declared
-      // deps but would be built with zero arguments, injecting `undefined` silently — reject it.
-      const inherited = this.#introspector().inheritedConstructorMetadata(target);
-      if (inherited !== undefined && inherited.metadata.params.length > 0) {
-        throw new MissingMetadataError(target.name, {
-          baseName: inherited.base.name,
-          dependencyCount: inherited.metadata.params.length,
-        });
-      }
-      return EMPTY_PARAM_LIST;
-    }
-    throw new MissingMetadataError(target.name);
+    return (facts.params ??= this.#introspector().settleParams(target, facts));
   }
 
   // One dispatch table for both dependency sources — constructor params and `toResolved`
