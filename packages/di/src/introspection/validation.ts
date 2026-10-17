@@ -2,7 +2,7 @@
  * The static checks `validate` runs over a container's chain: singleton graphs, lifecycle hooks and constraints.
  */
 import type { Binding } from "#core/binding";
-import { effectiveBindingScope } from "#core/binding";
+import { bindingSlotToString, effectiveBindingScope } from "#core/binding";
 import type { ConstraintRequirement } from "#core/constraint-requirement";
 import { constraintRequirementsOf } from "#core/constraint-requirement";
 import { getOrInsertComputed } from "#core/map-upsert";
@@ -13,7 +13,9 @@ import type { BindingIdentifier, BindingScope, Constructor, DependencyKey, Resol
 import {
   CircularDependencyError,
   InternalError,
+  NoMatchingBindingError,
   ScopeViolationError,
+  TokenNotBoundError,
   UnreachableConstraintError,
   UnreachableLifecycleHookError,
 } from "#errors";
@@ -22,6 +24,7 @@ import { injectionSlotToResolveOptions } from "#injection/dependency-slot";
 import type { MetadataReader } from "#metadata/types";
 import type { DefaultLookupEntry } from "#resolution/cache/lookup";
 import type { DependencyResolver } from "#resolution/resolver";
+import { matchesSlot } from "#resolution/select/candidates";
 
 /**
  * What `validate` reads off a container.
@@ -272,6 +275,35 @@ function staticDependencies(binding: Binding, reader: MetadataReader): ReadonlyA
 }
 
 /**
+ * The error `resolve` raises for a request nothing selects, or `undefined` while a `when()` candidate leaves it open.
+ *
+ * @remarks A predicate reads the resolution path, which a static walk does not have, so a slot-matching candidate
+ * that carries one may still be selected when the request is really made.
+ */
+function missForValidate(
+  view: DependencyResolver,
+  token: Token<unknown> | Constructor,
+  options: ResolveOptions | undefined,
+  path: ReadonlyArray<string>,
+): TokenNotBoundError | NoMatchingBindingError | undefined {
+  const bound = view.bindingsForValidate(token);
+  if (bound.length === 0) {
+    return new TokenNotBoundError(tokenName(token), path);
+  }
+  for (const binding of bound) {
+    if (binding.predicate !== undefined && !binding.isMany && matchesSlot(binding.slot, options)) {
+      return undefined;
+    }
+  }
+  return new NoMatchingBindingError(
+    tokenName(token),
+    options ?? {},
+    bound.map((binding) => bindingSlotToString(binding.slot)),
+    path,
+  );
+}
+
+/**
  * The bindings a singleton's declared dependencies resolve to, throwing the error `resolve` would for a required one
  * nothing selects.
  */
@@ -290,7 +322,7 @@ function collectStaticDependencyEdges(
     const required = !dep.multi && !dep.optional;
     const candidates = peekDependencyCandidates(dep, view, depOptions);
     if (required && candidates.length === 0) {
-      const miss = view.missForValidate(dep.token, depOptions, [...pathNames, tokenName(dep.token)]);
+      const miss = missForValidate(view, dep.token, depOptions, [...pathNames, tokenName(dep.token)]);
       if (miss !== undefined) {
         throw miss;
       }
@@ -302,7 +334,7 @@ function collectStaticDependencyEdges(
         continue;
       }
       if (required) {
-        const miss = view.missForValidate(end.missingToken, depOptions, [
+        const miss = missForValidate(view, end.missingToken, depOptions, [
           ...pathNames,
           ...end.hopNames,
           tokenName(end.missingToken),

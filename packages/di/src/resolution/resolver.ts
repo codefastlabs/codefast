@@ -22,7 +22,6 @@ import {
   CircularDependencyError,
   DisposedContainerError,
   InternalError,
-  MissingMetadataError,
   MissingScopeContextError,
   NoMatchingBindingError,
   TokenNotBoundError,
@@ -31,7 +30,6 @@ import type { DependencySlot } from "#injection/dependency-slot";
 import {
   loneTagBesideNameOf,
   resolveOptionsForSlot,
-  settledParam,
   singleCriterionForSlot,
   singleCriterionOnlyOf,
 } from "#injection/dependency-slot";
@@ -45,7 +43,7 @@ import { ActivationNeedCache } from "#resolution/cache/activation-need";
 import type { ClassFacts } from "#resolution/cache/class-introspector";
 import { ClassIntrospector } from "#resolution/cache/class-introspector";
 import type { CollectionEntry, DefaultLookupEntry } from "#resolution/cache/lookup";
-import { BindingLookupCache } from "#resolution/cache/lookup";
+import { BindingLookupCache, stableCollectionValuesOf } from "#resolution/cache/lookup";
 import type { ResolverCallbacks } from "#resolution/context";
 import { AsyncLevelContext, DefaultConstraintContext, DefaultResolutionContext } from "#resolution/context";
 import type { BranchDepth, OwnedBranchStack } from "#resolution/path";
@@ -66,7 +64,6 @@ import { matchesSlot, selectAllBindings, selectBinding } from "#resolution/selec
 
 const EMPTY_FRAME_LIST: ReadonlyArray<ResolutionFrame> = [];
 
-const EMPTY_PARAM_LIST: ReadonlyArray<ParamMetadata> = [];
 // A class with no params is constructed with no arguments, so no dependency array is built for it.
 const NO_ARGUMENTS: ReadonlyArray<unknown> = [];
 /** Plans compiled so far, with the `null` unplannable marks left out. */
@@ -426,32 +423,9 @@ export class DependencyResolver implements ResolverCallbacks {
     return this.#candidateBindings(token, options, []);
   }
 
-  /**
-   * The error `resolve` raises for a request nothing selects, or `undefined` while a `when()` candidate leaves it open.
-   *
-   * @remarks A predicate reads the resolution path, which a static walk does not have, so a slot-matching candidate
-   * that carries one may still be selected when the request is really made.
-   */
-  missForValidate(
-    token: Token<unknown> | Constructor,
-    options: ResolveOptions | undefined,
-    path: ReadonlyArray<string>,
-  ): TokenNotBoundError | NoMatchingBindingError | undefined {
-    const bound = this.#allBindingsFromChain(token);
-    if (bound.length === 0) {
-      return new TokenNotBoundError(tokenName(token), path);
-    }
-    for (const binding of bound) {
-      if (binding.predicate !== undefined && !binding.isMany && matchesSlot(binding.slot, options)) {
-        return undefined;
-      }
-    }
-    return new NoMatchingBindingError(
-      tokenName(token),
-      options ?? {},
-      bound.map((binding) => bindingSlotToString(binding.slot)),
-      path,
-    );
+  /** Every binding the chain holds under a token, nearest container first — for `Container.validate`. */
+  bindingsForValidate(token: Token<unknown> | Constructor): ReadonlyArray<Binding> {
+    return this.#allBindingsFromChain(token);
   }
 
   /** The resolver whose chain a binding this one can see resolves its dependencies from, as a singleton does. */
@@ -950,35 +924,10 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  /**
-   * The parameters a class binding injects.
-   *
-   * @remarks A class the metadata reader knows nothing about is constructible only if it declares
-   * no parameters; anything else is a missing `@injectable()`.
-   */
+  /** The parameters a class binding injects. */
   #constructorParams(target: Constructor, facts: ClassFacts): ReadonlyArray<ParamMetadata> {
     // Metadata is fixed once a class is defined, so the answer is too; only a throw is left unsettled.
-    return (facts.params ??= this.#settleConstructorParams(target, facts));
-  }
-
-  #settleConstructorParams(target: Constructor, facts: ClassFacts): ReadonlyArray<ParamMetadata> {
-    const meta = this.#introspector().constructorMetadataOf(target, facts);
-    if (meta !== undefined) {
-      return meta.params.map(settledParam);
-    }
-    if (target.length === 0) {
-      // A subclass with an implicit constructor and no own metadata inherits its base's declared
-      // deps but would be built with zero arguments, injecting `undefined` silently — reject it.
-      const inherited = this.#introspector().inheritedConstructorMetadata(target);
-      if (inherited !== undefined && inherited.metadata.params.length > 0) {
-        throw new MissingMetadataError(target.name, {
-          baseName: inherited.base.name,
-          dependencyCount: inherited.metadata.params.length,
-        });
-      }
-      return EMPTY_PARAM_LIST;
-    }
-    throw new MissingMetadataError(target.name);
+    return (facts.params ??= this.#introspector().settleParams(target, facts));
   }
 
   // One dispatch table for both dependency sources — constructor params and `toResolved`
@@ -1137,24 +1086,16 @@ export class DependencyResolver implements ResolverCallbacks {
     }
   }
 
-  /**
-   * Fills a collection memo's value list once every member is stable: a hook-free constant, or a
-   * hook-free singleton whose instance is cached — anything that changes either bumps a registry
-   * version the memo is keyed on. A member still to be materialised leaves the list unfilled.
-   */
+  /** Fills a collection memo's value list once its members are stable and no activation hook exists in the chain. */
   #settleCollectionValues(entry: CollectionEntry): void {
     if (entry.values !== undefined || this.#chainActivationVersion() !== 0) {
       return;
     }
-    const { candidates } = entry;
-    for (let index = 0; index < candidates.length; index += 1) {
-      if (!isStableCollectionMember(candidates[index]!)) {
-        return;
-      }
+    const values = stableCollectionValuesOf(entry.candidates);
+    if (values !== undefined) {
+      entry.values = values;
+      entry.activationVersion = 0;
     }
-    // Kept unfrozen: a frozen array reads through a slow elements kind, and every read copies it anyway.
-    entry.values = candidates.map(stableMemberValue);
-    entry.activationVersion = 0;
   }
 
   /** Every binding in the chain a `resolveAll` request matches, in chain order. */
@@ -2106,24 +2047,6 @@ export class DependencyResolver implements ResolverCallbacks {
     // A throwaway pair — a nested resolve, an async level's prefix — mints per call.
     return new DefaultResolutionContext(this, resolutionStack, options);
   }
-}
-
-/**
- * Whether a binding answers a collection read with a fixed value: a hook-free constant, or a
- * singleton whose instance is already cached.
- *
- * @remarks A cached singleton reads like a constant until a registry change evicts it, which also
- * drops the memo.
- */
-function isStableCollectionMember(binding: Binding): boolean {
-  if (binding.kind === "alias" || binding.activationHook !== undefined) {
-    return false;
-  }
-  return binding.kind === "constant" || (binding.scope === "singleton" && binding.instance !== NO_INSTANCE);
-}
-
-function stableMemberValue(binding: Binding): unknown {
-  return binding.kind === "constant" ? binding.value : binding.instance;
 }
 
 function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
