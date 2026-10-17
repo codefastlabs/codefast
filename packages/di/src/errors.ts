@@ -1,7 +1,6 @@
 import type { ConstraintRequirement } from "#core/constraint-requirement";
-import type { BindingTag } from "#core/tag";
-import { slotName } from "#core/tag";
 import type { BindingIdentifier, BindingScope, ResolveOptions } from "#core/types";
+import * as messages from "#error-messages";
 
 /**
  * Base class for every error the library throws, each carrying a machine-readable `code`.
@@ -29,11 +28,6 @@ export class InternalError extends DiError {
   }
 }
 
-// A path of one token only repeats the name the message already opens with.
-function pathSuffix(path: ReadonlyArray<string>): string {
-  return path.length > 1 ? ` Path: ${path.join(" → ")}` : "";
-}
-
 /**
  * A token with no binding at all, even after walking the parent container chain.
  *
@@ -47,43 +41,9 @@ export class TokenNotBoundError extends DiError {
   readonly path: ReadonlyArray<string>;
 
   constructor(tokenName: string, path: ReadonlyArray<string> = [tokenName]) {
-    super(`No binding found for token '${tokenName}'. Did you forget container.bind(${tokenName})?${pathSuffix(path)}`);
+    super(messages.tokenNotBound(tokenName, path));
     this.tokenName = tokenName;
     this.path = path;
-  }
-}
-
-// Options carry caller values a tag may hold — a bigint or a circular object must not make the
-// diagnostic itself throw and mask the real error. The reserved criterion renders as `name`.
-function describeResolveOptions(options: ResolveOptions): string {
-  try {
-    let name = options.name;
-    const criteria: Array<string> = [];
-    const add = (criterion: BindingTag): void => {
-      if (criterion.key === slotName) {
-        name ??= String(criterion.value);
-      } else {
-        criteria.push(`${criterion.key.name}=${String(criterion.value)}`);
-      }
-    };
-    if (options.tag !== undefined) {
-      add(options.tag);
-    }
-    if (options.tags !== undefined) {
-      for (const criterion of options.tags) {
-        add(criterion);
-      }
-    }
-    const display: { name?: string; tags?: Array<string> } = {};
-    if (name !== undefined) {
-      display.name = name;
-    }
-    if (criteria.length > 0) {
-      display.tags = criteria;
-    }
-    return JSON.stringify(display) ?? "undefined";
-  } catch {
-    return "[unserializable options]";
   }
 }
 
@@ -107,11 +67,7 @@ export class NoMatchingBindingError extends DiError {
     availableSlots: Array<string>,
     path: ReadonlyArray<string> = [tokenName],
   ) {
-    const optionsString = describeResolveOptions(options);
-    const slotsStr = availableSlots.join(", ");
-    super(
-      `No binding for '${tokenName}' matching ${optionsString}. Available slots: [${slotsStr}].${pathSuffix(path)}`,
-    );
+    super(messages.noMatchingBinding(tokenName, options, availableSlots, path));
     this.tokenName = tokenName;
     this.options = options;
     this.availableSlots = availableSlots;
@@ -131,9 +87,7 @@ export class AmbiguousBindingError extends DiError {
   readonly candidateIds: ReadonlyArray<BindingIdentifier>;
 
   constructor(tokenName: string, candidateIds: ReadonlyArray<BindingIdentifier>) {
-    super(
-      `Multiple bindings for '${tokenName}' matched without a clear winner. Candidates: [${candidateIds.join(", ")}]. Ensure when() predicates are mutually exclusive.`,
-    );
+    super(messages.ambiguousBinding(tokenName, candidateIds));
     this.tokenName = tokenName;
     this.candidateIds = candidateIds;
   }
@@ -150,7 +104,7 @@ export class CircularDependencyError extends DiError {
   readonly cycle: Array<string>;
 
   constructor(cycle: Array<string>) {
-    super(`Circular dependency detected: ${cycle.join(" → ")}`);
+    super(messages.circularDependency(cycle));
     this.cycle = cycle;
   }
 }
@@ -169,11 +123,7 @@ export class AsyncResolutionError extends DiError {
   readonly asyncSourceToken: string;
 
   constructor(tokenName: string, asyncSourceToken: string = tokenName) {
-    super(
-      asyncSourceToken === tokenName
-        ? `Token '${tokenName}' requires async resolution because its factory is async. Use container.resolveAsync(${tokenName}).`
-        : `Token '${tokenName}' requires async resolution because '${asyncSourceToken}' in its dependency chain has an async factory. Use container.resolveAsync(${tokenName}).`,
-    );
+    super(messages.asyncResolution(tokenName, asyncSourceToken));
     this.tokenName = tokenName;
     this.asyncSourceToken = asyncSourceToken;
   }
@@ -190,7 +140,7 @@ export class AsyncDeactivationError extends DiError {
   readonly tokenName: string;
 
   constructor(tokenName: string) {
-    super(`Token '${tokenName}' has an async onDeactivation handler. Use unbindAsync() instead.`);
+    super(messages.asyncDeactivation(tokenName));
     this.tokenName = tokenName;
   }
 }
@@ -220,7 +170,13 @@ export class ScopeViolationError extends DiError {
 
   constructor(details: ScopeViolationDetails) {
     super(
-      `Scope violation: '${details.consumerToken}' (${details.consumerScope}) depends on '${details.dependencyToken}' (${details.dependencyScope}). Path: ${details.path.join(" → ")}`,
+      messages.scopeViolation(
+        details.consumerToken,
+        details.consumerScope,
+        details.dependencyToken,
+        details.dependencyScope,
+        details.path,
+      ),
     );
     this.details = details;
   }
@@ -241,9 +197,7 @@ export class EmptyTagCriteriaError extends DiError {
   readonly helperName: string;
 
   constructor(helperName: string) {
-    super(
-      `${helperName}() was given no criteria. An empty list matches any ancestor, which is not what the call says — pass the criteria to require, or drop the constraint if there are none.`,
-    );
+    super(messages.emptyTagCriteria(helperName));
     this.helperName = helperName;
   }
 }
@@ -268,11 +222,7 @@ export class UnreachableConstraintError extends DiError {
 
   constructor(tokenName: string, requirement: ConstraintRequirement) {
     const { name, helperName, tokenName: requiredTokenName } = requirement;
-    const scope = requiredTokenName === undefined ? "no binding" : `no binding for '${requiredTokenName}'`;
-    const target = requiredTokenName === undefined ? "the binding it should match" : `a '${requiredTokenName}' binding`;
-    super(
-      `The binding for '${tokenName}' is constrained by ${helperName} waiting on the slot name '${name}', but ${scope} in this container or its ancestors declares it, so the constraint can never hold. Name the slot with .whenNamed('${name}') on ${target}, or correct the name here.`,
-    );
+    super(messages.unreachableConstraint(tokenName, requirement));
     this.tokenName = tokenName;
     this.requiredName = name;
     this.requiredTokenName = requiredTokenName;
@@ -302,11 +252,7 @@ export class UnreachableLifecycleHookError extends DiError {
     phase: "onActivation" | "onDeactivation",
     reason: "unbound" | "no-deactivatable-binding" = "unbound",
   ) {
-    super(
-      reason === "unbound"
-        ? `${phase}() is registered for '${tokenName}', which nothing is bound to in this container or its ancestors, so the hook can never run. Bind the token, or — if '${tokenName}' is a class you bound as an implementation via .to(${tokenName}) — register the hook against the token you bound instead.`
-        : `${phase}() is registered for '${tokenName}', whose every binding in this container and its ancestors is transient, so the hook can never run: a transient instance is never deactivated. Make one of its bindings a singleton or scoped, or drop the hook.`,
-    );
+    super(messages.unreachableLifecycleHook(tokenName, phase, reason));
     this.tokenName = tokenName;
     this.phase = phase;
     this.reason = reason;
@@ -329,9 +275,7 @@ export class InvalidMetadataError extends DiError {
   readonly reason: string;
 
   constructor(targetName: string, reason: string) {
-    super(
-      `MetadataReader returned invalid metadata for class '${targetName}': ${reason}. Check the reader bound to MetadataReaderToken or passed to Container.create().`,
-    );
+    super(messages.invalidMetadata(targetName, reason));
     this.targetName = targetName;
     this.reason = reason;
   }
@@ -348,11 +292,7 @@ export class MissingMetadataError extends DiError {
   readonly targetName: string;
 
   constructor(targetName: string, inheritedFrom?: { readonly baseName: string; readonly dependencyCount: number }) {
-    super(
-      inheritedFrom === undefined
-        ? `Class '${targetName}' is missing @injectable() decorator. Add @injectable([...deps]) or use toDynamic()/toResolved() instead.`
-        : `Class '${targetName}' inherits ${String(inheritedFrom.dependencyCount)} declared constructor ${inheritedFrom.dependencyCount === 1 ? "dependency" : "dependencies"} from '${inheritedFrom.baseName}' but declares none of its own. Add @injectable([...deps]) to '${targetName}' — @injectable([]) if it takes none — or bind it with toDynamic()/toResolved().`,
-    );
+    super(messages.missingMetadata(targetName, inheritedFrom));
     this.targetName = targetName;
   }
 }
@@ -368,7 +308,7 @@ export class AsyncModuleLoadError extends DiError {
   readonly moduleName: string;
 
   constructor(moduleName: string) {
-    super(`Module '${moduleName}' is async. Use container.loadAsync() instead.`);
+    super(messages.asyncModuleLoad(moduleName));
     this.moduleName = moduleName;
   }
 }
@@ -384,9 +324,7 @@ export class MissingScopeContextError extends DiError {
   readonly tokenName: string;
 
   constructor(tokenName: string) {
-    super(
-      `Token '${tokenName}' is scoped but was resolved from a container without a child scope context. Use container.createChild() to create a scoped context.`,
-    );
+    super(messages.missingScopeContext(tokenName));
     this.tokenName = tokenName;
   }
 }
@@ -408,12 +346,7 @@ export class MissingContainerContextError extends DiError {
   readonly accessorName: string | symbol;
 
   constructor(className: string | undefined, accessorName: string | symbol) {
-    const accessor = `@inject accessor '${String(accessorName)}'`;
-    super(
-      className === undefined
-        ? `An ${accessor} was initialized outside a container context. Resolve its class through a container, or open a synchronous context with runWithContainer() (the context does not survive an await).`
-        : `Class '${className}' has an ${accessor} but was constructed outside a container context. Resolve it via container.resolve(${className}), or open a synchronous context with runWithContainer() (the context does not survive an await).`,
-    );
+    super(messages.missingContainerContext(className, accessorName));
     this.className = className;
     this.accessorName = accessorName;
   }
@@ -434,9 +367,7 @@ export class ChainAlreadyRegisteredError extends DiError {
   readonly tokenName: string;
 
   constructor(tokenName: string) {
-    super(
-      `The binding for token '${tokenName}' is already registered on this chain, so its slot is final. Declare when*() and many() before to*(), or call bind() again to register another binding for the token.`,
-    );
+    super(messages.chainAlreadyRegistered(tokenName));
     this.tokenName = tokenName;
   }
 }
@@ -455,9 +386,7 @@ export class ManyBindingSlotError extends DiError {
   readonly tokenName: string;
 
   constructor(tokenName: string) {
-    super(
-      `A many() binding for token '${tokenName}' keeps the default slot: it cannot also declare whenNamed() or whenTagged().`,
-    );
+    super(messages.manyBindingSlot(tokenName));
     this.tokenName = tokenName;
   }
 }
@@ -477,9 +406,7 @@ export class ChainNotRegisteredError extends DiError {
   readonly tokenName: string;
 
   constructor(tokenName: string) {
-    super(
-      `Cannot refine the binding for token '${tokenName}' before choosing a target. Call a to*() method first — for example .to(SomeClass), .toConstantValue(value) or .toDynamic(factory).`,
-    );
+    super(messages.chainNotRegistered(tokenName));
     this.tokenName = tokenName;
   }
 }
@@ -495,9 +422,7 @@ export class RebindUnboundTokenError extends DiError {
   readonly tokenName: string;
 
   constructor(tokenName: string) {
-    super(
-      `Cannot rebind token '${tokenName}' because it has no own binding in this container. Use container.bind(${tokenName}) to create a new binding instead.`,
-    );
+    super(messages.rebindUnboundToken(tokenName));
     this.tokenName = tokenName;
   }
 }
@@ -513,9 +438,7 @@ export class SelfBindingRequiresClassError extends DiError {
   readonly tokenName: string;
 
   constructor(tokenName: string) {
-    super(
-      `toSelf() needs the token to be the class it constructs, and '${tokenName}' is not a class. Use .to(SomeClass) to name the implementation, or bind the class itself with container.bind(SomeClass).toSelf().`,
-    );
+    super(messages.selfBindingRequiresClass(tokenName));
     this.tokenName = tokenName;
   }
 }
@@ -536,9 +459,7 @@ export class StaticMemberDecoratorError extends DiError {
   readonly memberName: string;
 
   constructor(decoratorName: string, memberName: string) {
-    super(
-      `@${decoratorName}() applies to instance members only, and '${memberName}' is static. Move it to an instance member, or read the value from the container where the static member is used.`,
-    );
+    super(messages.staticMemberDecorator(decoratorName, memberName));
     this.decoratorName = decoratorName;
     this.memberName = memberName;
   }
@@ -559,9 +480,7 @@ export class SymbolKeyedLifecycleError extends DiError {
   readonly memberName: string;
 
   constructor(decoratorName: string, memberName: string) {
-    super(
-      `@${decoratorName}() does not support a symbol-keyed method ('${memberName}'). Give the lifecycle method a string name.`,
-    );
+    super(messages.symbolKeyedLifecycle(decoratorName, memberName));
     this.decoratorName = decoratorName;
     this.memberName = memberName;
   }
@@ -582,9 +501,7 @@ export class PrivateLifecycleMethodError extends DiError {
   readonly memberName: string;
 
   constructor(decoratorName: string, memberName: string) {
-    super(
-      `@${decoratorName}() does not support a private method ('${memberName}'). Make the lifecycle method public, and call the private code from it.`,
-    );
+    super(messages.privateLifecycleMethod(decoratorName, memberName));
     this.decoratorName = decoratorName;
     this.memberName = memberName;
   }
@@ -604,9 +521,7 @@ export class MissingDecoratorMetadataError extends DiError {
   readonly decoratorName: string;
 
   constructor(decoratorName: string) {
-    super(
-      `@${decoratorName}() received no decorator metadata: this runtime has no Symbol.metadata. Install it before any decorated class is defined, e.g. in a module imported first: (Symbol as { metadata?: symbol }).metadata ??= Symbol.for("Symbol.metadata");`,
-    );
+    super(messages.missingDecoratorMetadata(decoratorName));
     this.decoratorName = decoratorName;
   }
 }
@@ -626,7 +541,7 @@ export class InvalidBindingDeclarationError extends DiError {
   readonly reason: string;
 
   constructor(tokenName: string, reason: string) {
-    super(`Invalid binding declaration for '${tokenName}': ${reason}.`);
+    super(messages.invalidBindingDeclaration(tokenName, reason));
     this.tokenName = tokenName;
     this.reason = reason;
   }
@@ -642,7 +557,7 @@ export class DisposedContainerError extends DiError {
   readonly code = "DISPOSED_CONTAINER";
 
   constructor() {
-    super("Cannot perform operations on a disposed container.");
+    super(messages.disposedContainer());
   }
 }
 
@@ -659,11 +574,7 @@ export class AsyncActivationError extends DiError {
   readonly methodName: string | undefined;
 
   constructor(tokenName: string, hookKind: "postConstruct" | "onActivation", methodName?: string) {
-    const detail =
-      hookKind === "postConstruct"
-        ? `@postConstruct method '${methodName ?? ""}' returned a Promise`
-        : `onActivation for '${tokenName}' returned a Promise`;
-    super(`${detail}. Use resolveAsync() instead.`);
+    super(messages.asyncActivation(tokenName, hookKind, methodName));
     this.tokenName = tokenName;
     this.hookKind = hookKind;
     this.methodName = methodName;

@@ -156,9 +156,10 @@ export default defineConfig(({ command }) => {
        * build in both dev and prod via `module` — avoiding the tslib `__extends` SSR interop
        * error. `source` is the only condition that differs between dev and prod; `@codefast/*`
        * exports carry no `module` condition, so they fall back to the always-on `import`
-       * condition (`dist/*.js`) in prod.
+       * condition (`dist/*.js`) in prod. `development|production` is Vite's own default, which a
+       * list given here replaces: kept, so a package's production lane is what a build ships.
        */
-      conditions: isDev ? ["source", "module"] : ["module"],
+      conditions: isDev ? ["source", "module", "development|production"] : ["module", "development|production"],
     },
     plugins: [
       devtools({

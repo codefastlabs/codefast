@@ -5,7 +5,9 @@
 of them; a `switch` on `code` tells them apart without string-matching messages.
 
 > **Normative.** Every error extends `DiError` — an abstract class that forces each subclass to declare a `code` string
-> (machine-readable), alongside a message carrying enough context for a human reader.
+> (machine-readable), alongside a message carrying enough context for a human reader. The class, its `name`, its `code`
+> and its context fields are the same in every build; only the message text depends on the build, as
+> [Production messages](#production-messages) defines.
 
 | Error                            | `code`                        | Thrown when                                                                    | Context fields                                                 |
 | -------------------------------- | ----------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------- |
@@ -59,6 +61,18 @@ singleton graph that cannot resolve, with the path from that singleton.
 `ScopeViolationError` is raised by `validate()` alone: a resolve does not check scopes, so a singleton that captures a
 transient resolves silently, and one that captures a `scoped` binding from the root fails with
 `MissingScopeContextError` instead.
+
+## Production messages
+
+> **Normative.** A bundler that resolves the `production` condition — `vite build`, and webpack in production mode —
+> takes `#error-messages` from `dist/error-messages.production.js`, whose messages keep only the identifiers the full
+> message names: the path for a miss, the cycle, the token, the class and member. Every other resolution — Node, tsx, a
+> development server, a bundler without that condition — takes the full text above.
+
+So a production error reads `TokenNotBoundError: app:UserService → app:Logger`, and `name`, `code` and the context
+fields say the rest. Branch on `code` and read the fields; never parse the message, which is the one part that changes.
+`src/error-messages.production.ts` types each message against the full one, and a unit test holds the two modules to the
+same set.
 
 ## The boundary between a library bug and a caller error
 
