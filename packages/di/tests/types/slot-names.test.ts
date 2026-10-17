@@ -64,6 +64,41 @@ describe("a token declaring slot names narrows every `name` it meets", () => {
     >();
   });
 
+  it("a factory's and a hook's resolution context narrow `name` the way the container does", async () => {
+    const container = Container.create();
+    const Consumer = token<Logger>("slot-names.consumer");
+    const AsyncConsumer = token<Logger>("slot-names.async-consumer");
+    container.bind(Named).whenNamed("console").to(ConsoleLogger);
+    container.bind(Named).many().to(FileLogger);
+    container.bind(Consumer).toDynamic((ctx) => {
+      expectTypeOf(ctx.resolveOptional(Named, { name: "file" })).toEqualTypeOf<Logger | undefined>();
+      expectTypeOf(ctx.resolveAll(Named)).toEqualTypeOf<ReadonlyArray<Logger>>();
+      // @ts-expect-error the options side cannot widen the token's names
+      ctx.resolveOptional(Named, { name: "consol" });
+      // @ts-expect-error the options side cannot widen the token's names
+      ctx.resolveAll(Named, { name: "consol" });
+      expectTypeOf(ctx.resolveOptional(Unnamed, { name: "anything" })).toEqualTypeOf<Logger | undefined>();
+      return ctx.resolve(Named, { name: "console" });
+    });
+    container.bind(AsyncConsumer).toDynamicAsync(async (ctx) => {
+      // @ts-expect-error the options side cannot widen the token's names
+      void ctx.resolveAsync(Named, { name: "consol" }).catch(() => undefined);
+      // @ts-expect-error the options side cannot widen the token's names
+      void ctx.resolveOptionalAsync(Named, { name: "consol" });
+      // @ts-expect-error the options side cannot widen the token's names
+      void ctx.resolveAllAsync(Named, { name: "consol" });
+      return ctx.resolveAsync(Named, { name: "console" });
+    });
+    container.onActivation(Consumer, (ctx, instance) => {
+      // @ts-expect-error the options side cannot widen the token's names
+      ctx.resolveOptional(Named, { name: "fiel" });
+      return instance;
+    });
+
+    expect(container.resolve(Consumer)).toBeInstanceOf(ConsoleLogger);
+    expect(await container.resolveAsync(AsyncConsumer)).toBeInstanceOf(ConsoleLogger);
+  });
+
   it("the ancestor constraints read the names off the parent token they name", () => {
     expectTypeOf(whenParentNamed(Named, "console")).toBeFunction();
     expectTypeOf(whenAnyAncestorNamed(Named, "file")).toBeFunction();

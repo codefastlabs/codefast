@@ -99,14 +99,20 @@ export class DefaultResolutionContext implements ResolutionContext {
     }
   }
 
-  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
+  resolve<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value {
     if (options === undefined) {
       return this.#resolver.resolveFromContext(token, this.#resolutionStack);
     }
     return this.#resolver.resolve(token, options, this.#resolutionStack);
   }
 
-  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
+  resolveAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Promise<Value> {
     if (options === undefined) {
       // UNOWNED_BRANCH: this frame's array is a sync stack it will pop, so the lane must copy it.
       return this.#resolver.resolveAsyncFromContext(token, this.#resolutionStack, UNOWNED_BRANCH);
@@ -114,24 +120,30 @@ export class DefaultResolutionContext implements ResolutionContext {
     return this.#resolver.resolveAsync(token, options, this.#resolutionStack);
   }
 
-  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
+  resolveOptional<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value | undefined {
     return this.#resolver.resolveOptional(token, options, this.#resolutionStack);
   }
 
-  resolveOptionalAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
+  resolveOptionalAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<Value | undefined> {
     return this.#resolver.resolveOptionalAsync(token, options, this.#resolutionStack);
   }
 
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value> {
+  resolveAll<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): ReadonlyArray<Value> {
     return this.#resolver.resolveAll(token, options, this.#resolutionStack);
   }
 
-  resolveAllAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
+  resolveAllAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<ReadonlyArray<Value>> {
     return this.#resolver.resolveAllAsync(token, options, this.#resolutionStack);
   }
@@ -199,7 +211,10 @@ export class AsyncLevelContext implements ResolutionContext {
   // A synchronous call from an async level runs over a path no synchronous frame pushed, so the
   // level's ancestors are marked in flight for its duration — and the level itself, whose factory is
   // the caller: a factory resolving its own token synchronously has closed a cycle.
-  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
+  resolve<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value {
     const path = this.#exactStack();
     const marked = this.#exactBindings();
     const alreadyInFlight = enterSeededPath(marked);
@@ -213,7 +228,10 @@ export class AsyncLevelContext implements ResolutionContext {
     }
   }
 
-  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value> {
+  resolveAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Promise<Value> {
     if (options === undefined) {
       // The hot lane: the resolver reads this branch by depth, so nothing is materialized.
       return this.#resolver.resolveAsyncFromContext(token, this.#resolutionStack, this.#branchDepth);
@@ -221,7 +239,10 @@ export class AsyncLevelContext implements ResolutionContext {
     return this.#resolver.resolveAsync(token, options, this.#exactStack());
   }
 
-  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
+  resolveOptional<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value | undefined {
     const path = this.#exactStack();
     const marked = this.#exactBindings();
     const alreadyInFlight = enterSeededPath(marked);
@@ -232,14 +253,17 @@ export class AsyncLevelContext implements ResolutionContext {
     }
   }
 
-  resolveOptionalAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
+  resolveOptionalAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<Value | undefined> {
     return this.#resolver.resolveOptionalAsync(token, options, this.#exactStack());
   }
 
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value> {
+  resolveAll<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): ReadonlyArray<Value> {
     const path = this.#exactStack();
     const marked = this.#exactBindings();
     const alreadyInFlight = enterSeededPath(marked);
@@ -250,9 +274,9 @@ export class AsyncLevelContext implements ResolutionContext {
     }
   }
 
-  resolveAllAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
+  resolveAllAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<ReadonlyArray<Value>> {
     return this.#resolver.resolveAllAsync(token, options, this.#exactStack());
   }

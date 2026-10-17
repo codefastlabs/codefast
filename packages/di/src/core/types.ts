@@ -135,17 +135,29 @@ export type BindingConstraint = (ctx: ConstraintContext) => boolean;
  * @since 0.3.16-canary.0
  */
 export interface ResolutionContext {
-  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value;
-  resolveAsync<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Promise<Value>;
-  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined;
-  resolveOptionalAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
+  resolve<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value;
+  resolveAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Promise<Value>;
+  resolveOptional<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value | undefined;
+  resolveOptionalAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<Value | undefined>;
-  resolveAll<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): ReadonlyArray<Value>;
-  resolveAllAsync<Value>(
-    token: Token<Value> | Constructor<Value>,
-    options?: ResolveOptions,
+  resolveAll<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): ReadonlyArray<Value>;
+  resolveAllAsync<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<ReadonlyArray<Value>>;
   readonly graph: ConstraintContext;
 }
