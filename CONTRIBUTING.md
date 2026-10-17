@@ -25,7 +25,7 @@ Four things routinely surprise newcomers:
 
 ## Setup
 
-Node ≥ 24.0 for development and pnpm 12, pinned via `packageManager`. Each package declares its own, lower Node floor
+Node ≥ 24.15 for development and pnpm 12, pinned via `packageManager`. Each package declares its own, lower Node floor
 ([why](SUPPORT.md#nodejs)), which CI proves on that floor itself.
 
 ```bash

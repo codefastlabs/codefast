@@ -13,7 +13,7 @@ let rootDir: string;
 beforeEach(() => {
   rootDir = mkdtempSync(path.join(tmpdir(), "codefast-audit-engines-"));
   write("pnpm-workspace.yaml", "packages:\n  - packages/*\n");
-  writeJson("package.json", { name: "root", private: true, engines: { node: ">=24.0.0" } });
+  writeJson("package.json", { name: "root", private: true });
 });
 
 afterEach(() => {
@@ -78,6 +78,7 @@ describe("audit engines", () => {
   });
 
   it("lets a package sit below the workspace root's own floor", async () => {
+    writeJson("package.json", { name: "root", private: true, engines: { node: ">=24.0.0" } });
     writePackage("lib", { name: "@x/lib", engines: { node: ">=22.12.0" } });
 
     expect((await audit()).violations).toEqual([]);
@@ -250,6 +251,98 @@ describe("audit engines", () => {
         uncovered: ">=22.12.0 <24.0.0",
       },
     ]);
+  });
+
+  it("holds the root floor to every dependency any package installs, grouped by range", async () => {
+    write(".node-version", "26.8.2\n");
+    writeJson("package.json", {
+      name: "root",
+      private: true,
+      engines: { node: ">=24.0.0" },
+      devDependencies: { turbo: "^3.0.0" },
+    });
+    writeJson("node_modules/turbo/package.json", { engines: { node: ">=24.0.0" } });
+    writePackage("ui", { name: "@x/ui", private: true, devDependencies: { jsdom: "^29.0.0" } });
+    writePackage("theme", { name: "@x/theme", engines: { node: ">=22.22.2" }, devDependencies: { jsdom: "^29.0.0" } });
+    writePackage("di", { name: "@x/di", engines: { node: ">=22.18.0" }, devDependencies: { "@babel/core": "^8.0.0" } });
+    for (const directory of ["ui", "theme"]) {
+      writeJson(`packages/${directory}/node_modules/jsdom/package.json`, {
+        engines: { node: "^22.22.2 || ^24.15.0 || >=26.0.0" },
+      });
+    }
+    writeJson("packages/di/node_modules/@babel/core/package.json", { engines: { node: "^22.18.0 || >=24.11.0" } });
+
+    const result = await audit();
+
+    expect(result.floors.map((entry) => entry.packageName)).toEqual(["@x/di", "@x/theme"]);
+    expect(result.violations).toEqual([
+      {
+        kind: "root-outside-dependency-engines",
+        packageName: "root",
+        floor: "24.0.0",
+        dependency: "@babel/core",
+        range: "^22.18.0 || >=24.11.0",
+        dependents: ["@x/di"],
+        uncovered: ">=24.0.0 <24.11.0",
+      },
+      {
+        kind: "root-outside-dependency-engines",
+        packageName: "root",
+        floor: "24.0.0",
+        dependency: "jsdom",
+        range: "^22.22.2 || ^24.15.0 || >=26.0.0",
+        dependents: ["@x/theme", "@x/ui"],
+        uncovered: ">=24.0.0 <24.15.0",
+      },
+    ]);
+  });
+
+  it("judges the root floor against the root's own dependencies and workspace packages", async () => {
+    writeJson("package.json", {
+      name: "root",
+      private: true,
+      engines: { node: ">=24.0.0" },
+      devDependencies: { oxlint: "^2.0.0" },
+    });
+    writeJson("node_modules/oxlint/package.json", { engines: { node: "^24.4.0" } });
+    writePackage("core", { name: "@x/core", engines: { node: ">=24.15.0" } });
+    writePackage("app", { name: "@x/app", private: true, dependencies: { "@x/core": "workspace:*" } });
+
+    expect((await audit()).violations).toEqual([
+      {
+        kind: "root-outside-dependency-engines",
+        packageName: "root",
+        floor: "24.0.0",
+        dependency: "oxlint",
+        range: "^24.4.0",
+        dependents: ["root"],
+        uncovered: ">=24.0.0 <24.4.0 || >=25.0.0",
+      },
+      {
+        kind: "root-outside-dependency-engines",
+        packageName: "root",
+        floor: "24.0.0",
+        dependency: "@x/core",
+        range: ">=24.15.0",
+        dependents: ["@x/app"],
+        uncovered: ">=24.0.0 <24.15.0",
+      },
+    ]);
+  });
+
+  it("leaves the root floor unjudged on short-lived lines, without one, and for a narrower target", async () => {
+    write(".node-version", "26.8.2\n");
+    writePackage("lib", { name: "@x/lib", private: true, devDependencies: { vitest: "^5.0.0" } });
+    writeJson("packages/lib/node_modules/vitest/package.json", { engines: { node: "^24.15.0 || >=26.0.0" } });
+
+    expect((await audit()).violations).toEqual([]);
+
+    writeJson("package.json", { name: "root", private: true, engines: { node: ">=24.15.0" } });
+    expect((await audit()).violations).toEqual([]);
+
+    writeJson("package.json", { name: "root", private: true, engines: { node: ">=24.0.0" } });
+    expect((await audit(path.join(rootDir, "packages/lib"))).violations).toEqual([]);
+    expect((await audit()).violations).toHaveLength(1);
   });
 
   it("reports an unreadable manifest as an infrastructure failure", async () => {
