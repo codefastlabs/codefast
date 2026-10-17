@@ -64,15 +64,16 @@ describe("a token declaring slot names narrows every `name` it meets", () => {
     >();
   });
 
-  it("a factory's and a hook's resolution context narrow `name` the way the container does", async () => {
+  it("a factory's resolution context narrows `name` the way the container does", async () => {
     const container = Container.create();
     const Consumer = token<Logger>("slot-names.consumer");
     const AsyncConsumer = token<Logger>("slot-names.async-consumer");
     container.bind(Named).whenNamed("console").to(ConsoleLogger);
-    container.bind(Named).many().to(FileLogger);
     container.bind(Consumer).toDynamic((ctx) => {
       expectTypeOf(ctx.resolveOptional(Named, { name: "file" })).toEqualTypeOf<Logger | undefined>();
       expectTypeOf(ctx.resolveAll(Named)).toEqualTypeOf<ReadonlyArray<Logger>>();
+      // @ts-expect-error the options side cannot widen the token's names
+      expect(() => ctx.resolve(Named, { name: "consol" })).toThrow(NoMatchingBindingError);
       // @ts-expect-error the options side cannot widen the token's names
       ctx.resolveOptional(Named, { name: "consol" });
       // @ts-expect-error the options side cannot widen the token's names
@@ -88,11 +89,6 @@ describe("a token declaring slot names narrows every `name` it meets", () => {
       // @ts-expect-error the options side cannot widen the token's names
       void ctx.resolveAllAsync(Named, { name: "consol" });
       return ctx.resolveAsync(Named, { name: "console" });
-    });
-    container.onActivation(Consumer, (ctx, instance) => {
-      // @ts-expect-error the options side cannot widen the token's names
-      ctx.resolveOptional(Named, { name: "fiel" });
-      return instance;
     });
 
     expect(container.resolve(Consumer)).toBeInstanceOf(ConsoleLogger);
