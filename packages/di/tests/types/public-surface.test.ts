@@ -21,7 +21,6 @@ import type {
   BindingSnapshot,
   ConstructorMetadata,
   Constructor,
-  ContainerInterface,
   ExplanationStep,
   LifecycleMetadata,
   MetadataReader,
@@ -89,12 +88,12 @@ describe("the ambient container is reachable from the root entry", () => {
   it("opens a context around a callback and restores it after", () => {
     const container = Container.create();
 
-    expectTypeOf(getActiveContainer()).toEqualTypeOf<ContainerInterface | undefined>();
+    expectTypeOf(getActiveContainer()).toEqualTypeOf<Container | undefined>();
     expect(getActiveContainer()).toBeUndefined();
 
     const seen = runWithContainer(container, () => getActiveContainer());
 
-    expectTypeOf(seen).toEqualTypeOf<ContainerInterface | undefined>();
+    expectTypeOf(seen).toEqualTypeOf<Container | undefined>();
     expect(seen).toBe(container);
     expect(getActiveContainer()).toBeUndefined();
   });
