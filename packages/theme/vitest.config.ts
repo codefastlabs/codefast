@@ -1,4 +1,5 @@
 import react from "@vitejs/plugin-react";
+import { defaultClientConditions } from "vite";
 import { defineConfig } from "vitest/config";
 
 /**
@@ -14,9 +15,9 @@ export default defineConfig({
   plugins: [react()],
   // jsdom tests resolve through the client pipeline, so `#` is gated on the
   // `source` condition here (not `ssr.resolve`) to run against `src`, not `dist`.
-  // Keep the React-relevant defaults so `react`/jsx still resolve correctly.
+  // Spread Vite's defaults so `module`, `browser` and `development|production` still apply.
   resolve: {
-    conditions: ["source", "module", "browser", "development"],
+    conditions: ["source", ...defaultClientConditions],
   },
   test: {
     coverage: {

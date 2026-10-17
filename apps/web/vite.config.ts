@@ -9,7 +9,7 @@ import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
-import { defineConfig } from "vite";
+import { defaultClientConditions, defineConfig } from "vite";
 
 // The `.ts` extension is required: Vite externalizes these imports out of the bundled config,
 // so raw Node resolves them via package.json#imports — no extension probing, type-stripped.
@@ -151,14 +151,10 @@ export default defineConfig(({ command }) => {
     },
     resolve: {
       /**
-       * Resolves `@codefast/*` packages to their `src` entry points for HMR in dev via the
-       * `source` condition, and keeps dual CJS/ESM third-party dependencies on their ESM
-       * build in both dev and prod via `module` — avoiding the tslib `__extends` SSR interop
-       * error. `source` is the only condition that differs between dev and prod; `@codefast/*`
-       * exports carry no `module` condition, so they fall back to the always-on `import`
-       * condition (`dist/*.js`) in prod.
+       * The client keeps Vite's defaults, `development|production` resolved per mode, and adds `source` in dev
+       * so `@codefast/*` resolves to `src` for HMR; a list without the defaults would replace them.
        */
-      conditions: isDev ? ["source", "module"] : ["module"],
+      conditions: isDev ? ["source", ...defaultClientConditions] : [...defaultClientConditions],
     },
     plugins: [
       devtools({
@@ -238,6 +234,8 @@ export default defineConfig(({ command }) => {
           ),
           ...LEGACY_REDIRECTS,
         },
+        // Nitro appends `development`/`production` itself; `module` keeps dual CJS/ESM deps on ESM, avoiding tslib's
+        // `__extends` SSR interop error.
         exportConditions: isDev ? ["source", "module"] : ["module"],
         /**
          * Traces `react` and `react-dom` into the serverless function's `node_modules`.
