@@ -88,7 +88,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | Container lifecycle      | No `isDisposed`; operations after dispose are undefined | An `isDisposed` getter, `DisposedContainerError`           |
 | `isBound()`              | Unclear semantics with a hint                           | `has(token, hint?)` — has a binding / matches a given hint |
 | `isCurrentBound()`       | An easily confused name                                 | `hasOwn(token, hint?)` — clearer                           |
-| `lookupBindings()`       | Absent                                                  | `lookupBindings()` returns `[]` (never `undefined`)        |
+| `lookupBindings`         | Absent                                                  | `lookupBindings` returns `[]` (never `undefined`)          |
 | Disposed container guard | Absent                                                  | `DisposedContainerError` on every operation                |
 | Warming up singletons    | Absent                                                  | `initializeAsync()` — fail fast at startup                 |
 | Dependency graph export  | Absent                                                  | `generateDependencyGraph({ includeParent? })` → JSON + DOT |
@@ -156,7 +156,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | The `Symbol.metadata` prototype chain is not handled                     | `SymbolMetadataReader` uses an `Object.hasOwn` guard — no leaking of parent metadata                  |
 | `ContainerModule` / `AsyncContainerModule` are not distinguished by type | `SyncModule` / `AsyncModule` branded — `load(asyncModule)` is a TypeScript error                      |
 | `@postConstruct` allows only one method per class                        | Arrays supported — several `@postConstruct()` / `@preDestroy()` per class                             |
-| No `validate()`                                                          | `validate(container)` — captive dependencies, missing bindings and cycles, before the first resolve   |
+| No `validate`                                                            | `validate(container)` — captive dependencies, missing bindings and cycles, before the first resolve   |
 | No `initializeAsync()`                                                   | Idempotent warm-up, with the cross-container trigger documented                                       |
 | No typed error hierarchy                                                 | `DiError` abstract + a `code` string + context fields on every subclass                               |
 | A module can `unbind` / `rebind` another module's bindings               | `ModuleBuilder` is additive-only — avoids hidden coupling between modules                             |
@@ -166,13 +166,13 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | Concurrent async singleton resolution is not specified                   | Serialized through an in-flight Promise map — the factory runs exactly once                           |
 | A container after dispose: undefined behaviour                           | `DisposedContainerError` + an `isDisposed` getter                                                     |
 | Async unbind called synchronously: silent failure                        | `AsyncDeactivationError` — explicit                                                                   |
-| No `lookupBindings`                                                      | `lookupBindings()` returns `BindingSnapshot[]` — never `undefined`                                    |
+| No `lookupBindings`                                                      | `lookupBindings` returns `BindingSnapshot[]` — never `undefined`                                      |
 | `toService()` + hint semantics are not specified                         | `toAlias()` hint forwarding is documented                                                             |
 | No testing guide                                                         | [Testing](./README.md#testing) with patterns for isolated containers, child overrides, MetadataReader |
 | `autoRegister` through a global option or per-get                        | `createAutoRegisterRegistry()` — an explicit registry, no global state                                |
 | `[Symbol.asyncDispose]()` is not specified                               | `dispose()` + `[Symbol.asyncDispose]()` — `await using` support                                       |
 | `[Symbol.dispose]()` is not specified                                    | No `[Symbol.dispose]` — a sync `using` on a container is a compile error                              |
-| No `lookupBindings()`, `inspect()`, `generateDependencyGraph()`          | A full introspection API — typed snapshot, JSON graph, DOT export                                     |
+| No `lookupBindings`, `inspect`, `generateDependencyGraph`                | A full introspection API — typed snapshot, JSON graph, DOT export                                     |
 
 ---
 

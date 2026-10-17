@@ -229,7 +229,8 @@ container.load(FeatureModule);
 await container.loadAsync(AsyncFeatureModule);
 
 // Unload — only accepts SyncModule
-// Reason: a SyncModule only has sync onDeactivation — safe to unbind synchronously
+// Reason: an AsyncModule's bindings may own async teardown, so it unloads through unloadAsync.
+// A SyncModule still needs unloadAsync when any of its deactivation handlers is async.
 container.unload(FeatureModule);
 
 // Unload asynchronously — accepts both SyncModule and AsyncModule
@@ -294,6 +295,9 @@ container.onDeactivation(Database, async (db) => {
   await db.flushMetrics();
 });
 ```
+
+> **Normative — a container-level hook is register-only.** There is no call that removes one, and `unload`,
+> `unloadAsync`, `unbindAll` and `unbindAllAsync` leave it in place: a token bound again later still runs it.
 
 > **Normative — a child container does not inherit container-level hooks.** A hook fires only for bindings of the
 > container it was registered on. When a child resolves a token from the parent (walking up the parent chain), the
@@ -432,9 +436,9 @@ Walks the dependency graph and throws `ScopeViolationError` for any violation of
 [Scope](binding.md#scope). An `optional()` dependency counts whenever it is bound — a singleton captures it just the
 same — and imposes nothing when it is not.
 
-> **Normative — analysis scope.** `validate()` can only statically analyse bindings whose deps are declared explicitly:
+> **Normative — analysis scope.** `validate` can only statically analyse bindings whose deps are declared explicitly:
 >
-> | Binding kind                     | Can `validate()` analyse it?         |
+> | Binding kind                     | Can `validate` analyse it?           |
 > | -------------------------------- | ------------------------------------ |
 > | `to(Class)` with `@injectable`   | ✅ Fully analysed                    |
 > | `toSelf()` with `@injectable`    | ✅ Fully analysed                    |
@@ -445,12 +449,12 @@ same — and imposes nothing when it is not.
 > | `toDynamicAsync(ctx => ...)`     | ❌ Its own deps are opaque           |
 > | `toConstantValue(value)`         | ✅ No deps — always OK               |
 
-**Alias chains.** When tracing an alias (`toAlias(target)`), `validate()` follows the chain to the final binding. If a
-`singleton` consumer aliases to a `scoped` target, that is a scope violation. `validate()` checks transitively — not
-only direct dependencies.
+**Alias chains.** When tracing an alias (`toAlias(target)`), `validate` follows the chain to the final binding. If a
+`singleton` consumer aliases to a `scoped` target, that is a scope violation. `validate` checks transitively — not only
+direct dependencies.
 
 **Dynamic factories.** What a `toDynamic` or `toDynamicAsync` factory resolves inside its body is **opaque** to
-`validate()`: it never reports a violation there, so it has no false positives but can miss one. The binding itself is
+`validate`: it never reports a violation there, so it has no false positives but can miss one. The binding itself is
 still checked as a dependency — a singleton that depends on a transient `toDynamic` binding is a violation like any
 other. At runtime, a factory's own captive dependency is caught only when it breaks something: a singleton factory
 resolving a `scoped` binding from the root throws `MissingScopeContextError`, while one capturing a `transient`
@@ -459,22 +463,26 @@ dependency raises nothing.
 **Dependencies that cannot resolve.** Every binding the walk reaches is a singleton, which resolves its dependencies
 from the chain of the container that owns it — so a parent-owned singleton reached from a child is read from the
 parent's chain, as `resolve` reads it. A required dependency nothing in that chain selects therefore fails however the
-graph is entered, and so does a binding met twice on one path. `validate()` throws what `resolve` would:
+graph is entered, and so does a binding met twice on one path. `validate` throws what `resolve` would:
 `TokenNotBoundError` or `NoMatchingBindingError` with the `path` from the singleton down to the miss, alias hops
 included, or `CircularDependencyError` with the cycle. An optional dependency and an `injectAll` collection never miss.
 
-> **Normative — what `validate()` leaves to `resolve`.** A transient or scoped consumer's dependencies are not reported
+> **Normative — what `validate` leaves to `resolve`.** A transient or scoped consumer's dependencies are not reported
 > missing, since a child container may bind them before it resolves the consumer; and neither is a request whose only
 > slot-matching candidates carry a `when()` predicate, since the predicate reads a resolution path the walk does not
 > have. Both keep the check free of false positives.
 
-Call `validate()` after loading every module, before serving the first request.
+Call `validate(container)` after loading every module, before serving the first request.
 
 ## Introspection
 
+> **Normative — a method is what running code calls; a diagnostic is a function.** What application code calls while it
+> runs (`has`, `hasOwn`, `resolve*`) is a method; a heavy diagnostic an app can drop is a free function, so a bundle
+> that never calls it leaves it out.
+
 `has` and `hasOwn` are methods of the container. Everything else that checks or describes a container without resolving
 from it — `validate`, `lookupBindings`, `inspect`, `explain` and `generateDependencyGraph` — is a function that takes
-the container, so a bundle that never calls one leaves it out.
+the container.
 
 ```ts
 // Check whether there is any binding at all — checks the whole parent chain
@@ -532,9 +540,9 @@ container.resolve(Logger, { name: "file" }); // FileLogger
 
 `ContainerSnapshot` carries: `ownBindings` (every binding at this container, excluding the parent),
 `cachedSingletonCount` (how many singletons are cached here, also excluding the parent), `hasParent`, and `isDisposed`.
-`inspect()` on a disposed container throws `DisposedContainerError`, like every other read, so a snapshot you hold
-always reads `isDisposed: false` — the field records the state the snapshot was taken in. `ownBindings` lists one
-token's bindings in registration order; the order between tokens is unspecified.
+`inspect` on a disposed container throws `DisposedContainerError`, like every other read, so a snapshot you hold always
+reads `isDisposed: false` — the field records the state the snapshot was taken in. `ownBindings` lists one token's
+bindings in registration order; the order between tokens is unspecified.
 
 Each `BindingSnapshot` carries: `tokenName`, `kind`, `scope`, `slot`, `id`, and `isMany` — `true` for a collection
 member, the binding `resolveAll` takes and `resolve` never selects
@@ -544,7 +552,7 @@ member, the binding `resolveAll` takes and `resolve` never selects
 
 ### `explain(container, token, options?)` — why this binding and not another
 
-`explain()` answers for one request what `resolve(token, options)` would do with it, without instantiating anything: the
+`explain` answers for one request what `resolve(token, options)` would do with it, without instantiating anything: the
 bindings each registry offered, what selection made of each, the rule that settled it, and the binding the request ends
 on. It reads the chain in the order `resolve` does — the container asked, then each parent — and decides by the same
 rules, so its answer is the engine's, not a model of it.
@@ -577,11 +585,11 @@ explain(container, Logger, { ancestors: [Settlement] }).steps[0].rule;
   (`NoMatchingBindingError`), `ambiguous` (`AmbiguousBindingError`), `alias-cycle` (`CircularDependencyError`).
 - **`options.ancestors`** names the resolutions the request is nested in, outermost first. Each is selected as a request
   with no criteria nested in the ones before it, and becomes a frame of the path the request's predicates read — the
-  parent is the last one. An ancestor that selects nothing makes `explain()` throw the error its own `resolve` would.
-  The lookup runs on the container asked, the way a factory's `ctx.resolve()` runs on its own container.
+  parent is the last one. An ancestor that selects nothing makes `explain` throw the error its own `resolve` would. The
+  lookup runs on the container asked, the way a factory's `ctx.resolve()` runs on its own container.
 
-`explain()` runs `when()` predicates exactly as `resolve` does, which is safe because the contract makes a predicate
-pure. On a disposed container it throws `DisposedContainerError`, like every other read.
+`explain` runs `when()` predicates exactly as `resolve` does, which is safe because the contract makes a predicate pure.
+On a disposed container it throws `DisposedContainerError`, like every other read.
 
 > **Exact shape:** `src/introspection/explanation.ts` — `ResolutionExplanation`, `ExplanationStep`,
 > `CandidateExplanation`, `ExplainOptions`.
@@ -633,7 +641,7 @@ slot the edge points at, if the binding declares one). The `label` field is **fo
 - **An optional dep that is not bound still appears**, as a placeholder node with `kind`/`scope` = `"unbound"` and an
   edge carrying `optional: true`. That keeps "optional but absent" distinct from "not a dependency". "Bound" means bound
   within the graph: with `includeParent: false`, an optional dep that only an ancestor binds is a placeholder too.
-- **A required dep that is not bound is skipped** — `validate()` reports one a singleton needs; the graph draws what is
+- **A required dep that is not bound is skipped** — `validate` reports one a singleton needs; the graph draws what is
   bound.
 - **`injectAll` fans out to every binding** of the token, each edge carrying its `slotName`.
 - **Edge targets are filtered by resolution's own slot rules**

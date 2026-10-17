@@ -67,7 +67,7 @@ shorter-lived dependency, which silently freezes that dependency for the consume
 | `transient`           | ✅ OK       | ✅ OK        | ✅ OK        |
 
 `validate(container)` walks the whole dependency graph and throws `ScopeViolationError` for any violation. See
-[`validate`](container.md#validate--checking-the-graph-before-the-first-resolve) for the limits of `validate()`.
+[`validate`](container.md#validate--checking-the-graph-before-the-first-resolve) for the limits of `validate`.
 
 > **Rationale — why `transient` is the default.** It is the safest row of the matrix — a `transient` consumer may depend
 > on any scope without a captive dependency, so the default can never introduce a violation on its own. It is also a
@@ -241,7 +241,7 @@ by row tells you what you may call next.
 | `toAlias()`         |     ✅     |   —   |       —        |        —         |   ✅   |
 | `singleton()`       |     —      |   —   |       ✅       |        ✅        |   ✅   |
 | `transient()`       |     —      |   —   |       ✅       |        —         |   ✅   |
-| `scoped()`          |     —      |   —   |       ✅       |        —         |   ✅   |
+| `scoped()`          |     —      |   —   |       ✅       |        ✅        |   ✅   |
 
 How to read the rows:
 
@@ -342,7 +342,7 @@ container.unbind(consoleId);
 
 `onDeactivation` is available on `singleton`, `scoped` and `toConstantValue`, never on `transient` — enforced at compile
 time by the builder type. The container-level `container.onDeactivation(token, handler)` takes any token, so the type
-gate does not apply there; `validate()` reports an `UnreachableLifecycleHookError` when such a hook is keyed to a token
+gate does not apply there; `validate` reports an `UnreachableLifecycleHookError` when such a hook is keyed to a token
 whose every binding is `transient` (nothing it could ever deactivate). An `onActivation` hook stays valid on any scope.
 
 ```ts

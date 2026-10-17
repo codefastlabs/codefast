@@ -56,13 +56,13 @@ predicate call and allocate no intermediate closure. Criteria compare by identit
 
 > **Normative — a slot name nobody declares.** A slot name is a bare string, so a name the token does not type — a token
 > declaring no `Names`, or the reserved criterion `slotName.of(n)` handed to a `…Tagged` helper — can be a typo that
-> produces a constraint that is never true and that nobody reports. `validate()` throws `UnreachableConstraintError`
-> when the name is not declared where the constraint waits for it: for `whenParentNamed(T, n)` /
+> produces a constraint that is never true and that nobody reports. `validate` throws `UnreachableConstraintError` when
+> the name is not declared where the constraint waits for it: for `whenParentNamed(T, n)` /
 > `whenAnyAncestorNamed(T, n)`, on a binding **of `T`** in the container chain; for a reserved criterion in
 > `whenParentTagged`, `whenAnyAncestorTagged` or either `…TaggedAll`, on a binding of any token. A criterion of any
 > other key records nothing — it is minted from a typed key, so it cannot be a typo. The requirement survives `when()`
 > chaining: a composed predicate carries both sides' requirements, so narrowing a helper-built constraint does not hide
-> it from `validate()`.
+> it from `validate`.
 
 > **Exact shape:** `src/resolution/select/constraints.ts`.
 

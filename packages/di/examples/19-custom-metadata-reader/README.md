@@ -138,7 +138,7 @@ app.bind(PoolToken).to(LegacyPool).singleton(); // ✓ resolves from the table
 ```
 
 Children inherit it, so a per-request child needs no extra wiring. The option also outranks a `MetadataReaderToken`
-binding, which keeps every path — resolution, `validate()`, the graph — reading the same reader.
+binding, which keeps every path — resolution, `validate`, the graph — reading the same reader.
 
 `MetadataReaderToken` still works, in exactly one shape: bound on a container that already exists when the _using_
 container is constructed.
@@ -158,10 +158,10 @@ container.resolve(PoolToken); // MissingMetadataError
 Container.fromModules(moduleThatBindsTheReader);
 ```
 
-In the last two, nothing sees the reader — not resolution, and not `validate()` / `inspect()` /
-`generateDependencyGraph()` either. One container has exactly one reader, fixed when its resolver was built, so
-introspection can never disagree with resolution about how a class is wired. Prefer the option; reach for the token only
-when the reader itself has to be resolved from other bindings.
+In the last two, nothing sees the reader — not resolution, and not `validate` / `inspect` / `generateDependencyGraph`
+either. One container has exactly one reader, fixed when its resolver was built, so introspection can never disagree
+with resolution about how a class is wired. Prefer the option; reach for the token only when the reader itself has to be
+resolved from other bindings.
 
 Since `fromModules` takes modules variadically, there is no options argument to pass — `Container.create(options)`
 followed by `load(...)` is the equivalent.

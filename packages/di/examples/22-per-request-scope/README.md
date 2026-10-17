@@ -1,6 +1,6 @@
 # Example 22 — Per-Request Scope
 
-**Concepts:** `createChild()`, `await using`, `scoped`, `toConstantValue`, `validate()`
+**Concepts:** `createChild()`, `await using`, `scoped`, `toConstantValue`, `validate`
 
 ---
 
@@ -76,16 +76,16 @@ graph TB
 
 ## Where each binding lives
 
-| Lives on the root                                                      | Lives on the child                                                |
-| ---------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Singletons: pools, clients, configuration                              | The request itself: headers, user, tenant, a request id           |
-| Request services, declared **once** with `.scoped()`                   | The `scoped` instances, cached on first resolve and disposed here |
-| `validate()` and `initializeAsync()`, run once at boot, before serving | Nothing that outlives the block                                   |
+| Lives on the root                                                    | Lives on the child                                                |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Singletons: pools, clients, configuration                            | The request itself: headers, user, tenant, a request id           |
+| Request services, declared **once** with `.scoped()`                 | The `scoped` instances, cached on first resolve and disposed here |
+| `validate` and `initializeAsync()`, run once at boot, before serving | Nothing that outlives the block                                   |
 
 Declare request services `scoped` on the root rather than binding them on every child: the declaration happens once,
-`validate()` sees it at boot, and the child stays an empty container plus the request's own constants. A `scoped`
-binding resolved from the root itself throws `MissingScopeContextError`, so a request service that leaks onto a code
-path with no request is a loud failure rather than a shared instance.
+`validate` sees it at boot, and the child stays an empty container plus the request's own constants. A `scoped` binding
+resolved from the root itself throws `MissingScopeContextError`, so a request service that leaks onto a code path with
+no request is a loud failure rather than a shared instance.
 
 ---
 

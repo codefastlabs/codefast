@@ -156,18 +156,19 @@ it("module override replaces all three stubs", () => {
 
 ---
 
-## Pattern E — `validate()` as a wiring smoke-test
+## Pattern E — `validate` as a wiring smoke-test
 
-Call `validate()` at the start of an integration test suite: it walks every singleton's declared dependencies and throws
-the error `resolve()` would for one that cannot resolve — a missing or mismatched binding, a captive scope, a cycle:
+Call `validate(container)` at the start of an integration test suite: it walks every singleton's declared dependencies
+and throws the error `resolve()` would for one that cannot resolve — a missing or mismatched binding, a captive scope, a
+cycle:
 
 ```ts
-it("fully-wired container passes validate()", () => {
+it("fully-wired container passes validate", () => {
   const c = Container.fromModules(CoreModule);
   expect(() => validate(c)).not.toThrow();
 });
 
-it("an incomplete singleton graph fails validate()", () => {
+it("an incomplete singleton graph fails validate", () => {
   const c = Container.create();
   c.bind(OrderServiceToken).to(OrderProcessor).singleton();
   // intentionally missing: UserService, PaymentGateway, EmailService
@@ -176,8 +177,8 @@ it("an incomplete singleton graph fails validate()", () => {
 });
 ```
 
-**When to use:** add a single `validate()` call in your `beforeAll` hook for integration tests to surface misconfigured
-containers immediately.
+**When to use:** add a single `validate(container)` call in your `beforeAll` hook for integration tests to surface
+misconfigured containers immediately.
 
 ---
 
@@ -191,8 +192,8 @@ containers immediately.
 
 ## What to read next
 
-- **Example 09** — `ScopeViolationError`; understand what `validate()` is checking.
-- **Example 15** — `inspect()` and `lookupBindings()` for asserting container state in tests.
+- **Example 09** — `ScopeViolationError`; understand what `validate` is checking.
+- **Example 15** — `inspect` and `lookupBindings` for asserting container state in tests.
 
 ## License
 

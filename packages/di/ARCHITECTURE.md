@@ -260,7 +260,7 @@ The registry also remembers which kinds it has ever held, as one bitmask that is
 the negative answers have to be exact: a registry that never held a constant skips its teardown sweep, and one that
 never held an alias answers `defaultSlotAlias()` without probing. That probe is what a request carrying criteria pays
 when it misses every slot of a token, because a default-slot alias forwards those criteria to its target
-([`toAlias` — hint forwarding](spec/binding.md#toalias--hint-forwarding)); resolve, `hasOwn()` and `explain()` all ask
+([`toAlias` — hint forwarding](spec/binding.md#toalias--hint-forwarding)); resolve, `hasOwn()` and `explain` all ask
 through the one method, so the rule and its shortcut live in one place. The two flags share one field because the
 registry is allocated by every container, and a field there is paid on every `createChild()`.
 
@@ -695,9 +695,9 @@ a display name or a candidate array, which is what a name-plus-tag request and a
 to pay on every resolve. A second match, or a predicate on a match, hands the same list to full selection, which weighs
 specificity and reports ambiguity, so the two lanes answer identically.
 
-### `explain()` reads the full path and shares the one decision
+### `explain` reads the full path and shares the one decision
 
-`explain()` answers why a request selects the binding it does, so it must not have an opinion of its own. It reads each
+`explain` answers why a request selects the binding it does, so it must not have an opinion of its own. It reads each
 registry of the chain through `getAll()`, the token's whole list, never through `getFastDefault()`, the tagged index or
 the lookup memo, and classifies every binding with the resolver's own pieces: membership, `matchesSlot()`, then the
 `when()` predicate against a `DefaultConstraintContext` built the way the resolver builds one. The eligible candidates
@@ -928,7 +928,7 @@ resolving a parent's token delegates to the parent resolver, which owns the same
 Because of that, a singleton's slot is **per-binding, not per-container**. The instance lives on `binding.instance`
 (`NO_INSTANCE` when unset) instead of in a `Map` keyed by binding id. That replaces a keyed lookup with a field read on
 the most common resolve shape there is: a transient over cached singletons. `ScopeManager` keeps only a lazily-created
-list of the bindings that have materialised, so disposal and `inspect()` can still enumerate them; a removal clears the
+list of the bindings that have materialised, so disposal and `inspect` can still enumerate them; a removal clears the
 binding's instance and marks the list, and the next enumeration compacts it, keeping each live binding once at its
 latest position — a teardown of a hundred singletons is a hundred field writes, not a hundred splices.
 
@@ -969,7 +969,7 @@ section before changing what the table describes.
 | Invariant                                                                                                                          | Pinned by                                                       | Where                                                               |
 | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `matchesSlot()` and `singleCriterionOnlyOf()` are the only places their two rules are decided.                                     | (design rule; the parity and selection tests below exercise it) |
-| `explain()` selects the binding `resolve` answers with, whichever lane `resolve` takes, and ends where `resolve` throws.           | `tests/integration/explain-parity.test.ts`                      | [One slot shape](#two-dependency-sources-one-slot-shape)            |
+| `explain` selects the binding `resolve` answers with, whichever lane `resolve` takes, and ends where `resolve` throws.             | `tests/integration/explain-parity.test.ts`                      | [One slot shape](#two-dependency-sources-one-slot-shape)            |
 | A `BindingTag` is only constructed through `TagKey.of()`; the index never conflates `+0` and `-0`.                                 | `tests/unit/resolution/select/tagged-selection.test.ts`         | [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes) |
 | Equivalent spellings (`tag`, `tags`, folded `name`) reach the same lane.                                                           | `tests/unit/resolution/select/tag-shorthand-parity.test.ts`     | [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes) |
 | The multi-tag size threshold switches data structure only; both sides answer identically.                                          | `tests/unit/resolution/select/multi-tag-selection.test.ts`      | [Criteria and tag indexes](#criteria-interning-and-the-tag-indexes) |

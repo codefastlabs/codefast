@@ -65,7 +65,7 @@ Requirements:
 - `optional()` is not a decorator — accessor injection always goes through `resolve()`, so an unbound token throws.
 
 Use it for a dependency that is awkward as a constructor parameter (a base class shared by many subclasses, a
-framework-constructed object). Constructor injection stays the default: it is checked by `validate()` and visible in the
+framework-constructed object). Constructor injection stays the default: it is checked by `validate` and visible in the
 dependency graph.
 
 ---
@@ -132,8 +132,8 @@ function currentRequestId(): string {
 }
 ```
 
-This is a service-locator escape hatch: the dependency is invisible to `validate()` and to the graph. Reach for it when
-a signature genuinely cannot carry the dependency, not to avoid threading one.
+This is a service-locator escape hatch: the dependency is invisible to `validate` and to the graph. Reach for it when a
+signature genuinely cannot carry the dependency, not to avoid threading one.
 
 ---
 

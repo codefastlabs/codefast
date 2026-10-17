@@ -131,7 +131,7 @@ would capture an instance from the first child container forever, breaking isola
 
 - **Example 04** — organise bindings into reusable modules.
 - **Example 07** — full web-app example combining scoped containers with async modules and middleware.
-- **Example 09** — `ScopeViolationError` and how `validate()` catches captive dependencies.
+- **Example 09** — `ScopeViolationError` and how `validate` catches captive dependencies.
 
 ## License
 
