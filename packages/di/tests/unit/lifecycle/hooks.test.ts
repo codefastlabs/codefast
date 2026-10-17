@@ -1,13 +1,15 @@
 /**
  * Deactivation-side lifecycle semantics: binding-level and container-level
- * handlers plus `@preDestroy`, across unbind and dispose.
+ * handlers plus `@preDestroy`, across unbind, unload and dispose.
  */
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
+import { Module } from "#core/module";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
 import { preDestroy } from "#decorators/lifecycle";
+import { AsyncDeactivationError } from "#errors";
 
 describe("deactivation on unbind", () => {
   it("runs the binding-level onDeactivation with the cached singleton", async () => {
@@ -75,7 +77,7 @@ describe("deactivation on dispose", () => {
     container.bind(Database).toSelf().singleton();
     container.resolve(Database);
 
-    await container.dispose();
+    await container.disposeAsync();
     expect(events).toEqual(["closed"]);
     expect(container.isDisposed).toBe(true);
   });
@@ -128,5 +130,84 @@ describe("deactivation on dispose", () => {
       expect(events).toEqual([]);
     }
     expect(events).toEqual(["down:live"]);
+  });
+});
+
+describe("an async stage on a sync teardown", () => {
+  /** A container whose cached `Service` returns a promise from the stage named `asyncStage`. */
+  function containerWithStages(asyncStage: "container" | "binding" | "preDestroy"): {
+    container: Container;
+    service: ReturnType<typeof token<object>>;
+    ran: Array<string>;
+  } {
+    const ran: Array<string> = [];
+    const service = token<object>(`hk:Service-${asyncStage}`);
+    const settle = (stage: string): Promise<void> | undefined => {
+      ran.push(stage);
+      return stage === asyncStage ? Promise.resolve() : undefined;
+    };
+
+    @injectable([])
+    class Service {
+      @preDestroy()
+      close(): Promise<void> | undefined {
+        return settle("preDestroy");
+      }
+    }
+    const container = Container.create();
+    container
+      .bind(service)
+      .to(Service)
+      .singleton()
+      .onDeactivation(() => settle("binding"));
+    container.onDeactivation(service, () => settle("container"));
+    container.resolve(service);
+    return { container, service, ran };
+  }
+
+  it.each(["container", "binding", "preDestroy"] as const)(
+    "runs every stage after an async %s stage, then throws once",
+    (asyncStage) => {
+      const { container, service, ran } = containerWithStages(asyncStage);
+
+      expect(() => container.unbind(service)).toThrow(AsyncDeactivationError);
+      expect(ran).toStrictEqual(["container", "binding", "preDestroy"]);
+      expect(container.has(service)).toBe(false);
+    },
+  );
+
+  it("runs every stage on unbindAll", () => {
+    const { container, ran } = containerWithStages("container");
+
+    expect(() => container.unbindAll()).toThrow(AsyncDeactivationError);
+    expect(ran).toStrictEqual(["container", "binding", "preDestroy"]);
+  });
+
+  it("runs every stage on unload", () => {
+    const ran: Array<string> = [];
+    const service = token<object>("hk:ModuleService");
+
+    @injectable([])
+    class Service {
+      @preDestroy()
+      close(): void {
+        ran.push("preDestroy");
+      }
+    }
+    const feature = Module.create("hk:Feature", (builder) => {
+      builder
+        .bind(service)
+        .to(Service)
+        .singleton()
+        .onDeactivation(async () => {
+          ran.push("binding");
+        });
+    });
+    const container = Container.fromModules(feature);
+    container.resolve(service);
+
+    expect(() => container.unload(feature)).toThrow(AsyncDeactivationError);
+    expect(ran).toStrictEqual(["binding", "preDestroy"]);
+    expect(container.has(service)).toBe(false);
   });
 });

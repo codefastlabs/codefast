@@ -180,7 +180,10 @@ export class AsyncResolutionError extends DiError {
 }
 
 /**
- * A sync `unbind()` of a binding whose `onDeactivation` handler is async.
+ * A sync teardown — `unbind()`, `unbindAll()`, `rebind()` or `unload()` — that reached an async deactivation hook.
+ *
+ * @remarks By the time it is thrown every deactivation stage of the instance has run and the binding
+ * is gone; only the promises the async hooks returned were left unawaited.
  *
  * @since 0.3.16-canary.0
  */
@@ -190,7 +193,9 @@ export class AsyncDeactivationError extends DiError {
   readonly tokenName: string;
 
   constructor(tokenName: string) {
-    super(`Token '${tokenName}' has an async onDeactivation handler. Use unbindAsync() instead.`);
+    super(
+      `Token '${tokenName}' has an async deactivation hook: every hook ran, but its promise was not awaited. Use unbindAsync() or unloadAsync() instead.`,
+    );
     this.tokenName = tokenName;
   }
 }

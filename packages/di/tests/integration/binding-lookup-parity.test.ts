@@ -186,7 +186,7 @@ describe("binding lookups against a history-free model", () => {
               }
               case "replaceRoot":
                 // A fresh container binding tokens a dropped one held: the case a per-token cache is weakest at.
-                void fleet.containers[INDEPENDENT_ROOT]!.dispose();
+                void fleet.containers[INDEPENDENT_ROOT]!.disposeAsync();
                 fleet.containers[INDEPENDENT_ROOT] = Container.create();
                 fleet.own[INDEPENDENT_ROOT] = new Map();
                 break;

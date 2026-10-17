@@ -229,7 +229,7 @@ it("prices through the real PricingService over a mocked tax boundary", () => {
 - `mocks.get(token, options?)` — the `Mocked<T>` bound for a dependency, or for one slot of it. Only auto-mocks and
   `.stub` stubs come back; sealed values and exposed classes throw `SealedDependencyError`.
 - `resetMocks()` — clear the call history and configured behaviour of every auto-mock and stub the bed created.
-- `dispose()` — run the unit's `@preDestroy` hooks and dispose the container.
+- `disposeAsync()` — run the unit's `@preDestroy` hooks and dispose the container.
 
 The bed implements `AsyncDisposable`, so `await using bed = TestBed.solitary(X).compile()` disposes it at the end of the
 block.

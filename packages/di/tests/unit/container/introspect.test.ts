@@ -30,7 +30,7 @@ describe("functions that take a container", () => {
   it.each(READS)("%s throws DisposedContainerError once the container is disposed", async (_name, read) => {
     const container = Container.create();
     container.bind(Logger).toConstantValue("console");
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(() => read(container)).toThrow(DisposedContainerError);
   });
@@ -39,7 +39,7 @@ describe("functions that take a container", () => {
     const parent = Container.create();
     parent.bind(Logger).toConstantValue("console");
     const child = parent.createChild();
-    await parent.dispose();
+    await parent.disposeAsync();
 
     expect(() => read(child)).toThrow(DisposedContainerError);
   });

@@ -24,8 +24,8 @@ function DiPage() {
           A server-side composition root wires the object graph with <code className="font-mono">@injectable</code>{" "}
           constructor injection and modules. Each request you trigger below resolves a fresh{" "}
           <code className="font-mono">TaskService</code> from a child container (then{" "}
-          <code className="font-mono">dispose()</code>s it), while the repository and activity log stay singletons on
-          the server.
+          <code className="font-mono">disposeAsync()</code>s it), while the repository and activity log stay singletons
+          on the server.
         </p>
       </header>
 

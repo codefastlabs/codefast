@@ -348,7 +348,7 @@ function compareForms(
     reports[form].push(observe(host));
     host.unload(loaded);
     reports[form].push(observe(host), [...log]);
-    void host.dispose();
+    void host.disposeAsync();
   }
   return reports;
 }

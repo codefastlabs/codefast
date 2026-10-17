@@ -106,7 +106,7 @@ class CatalogService {
 
   @preDestroy()
   async flushCache(): Promise<void> {
-    // Called automatically during container.dispose()
+    // Called automatically during container.disposeAsync()
     await this.cache.flush();
   }
 }

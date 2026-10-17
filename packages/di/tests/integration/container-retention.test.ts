@@ -48,7 +48,7 @@ describe("what the module-scoped tokens keep alive", () => {
   it("releases a disposed container and the singletons it built", async () => {
     const refs = await (async () => {
       const { refs: held, container } = boundRoot();
-      await container.dispose();
+      await container.disposeAsync();
       return held;
     })();
 
@@ -71,7 +71,7 @@ describe("what the module-scoped tokens keep alive", () => {
       child.bind(Request).toConstantValue({ id: 1 });
       const request = child.resolve(Request);
       const held = [new WeakRef<object>(child), new WeakRef<object>(request)];
-      await child.dispose();
+      await child.disposeAsync();
       return held;
     })();
 

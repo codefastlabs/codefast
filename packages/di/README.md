@@ -109,7 +109,7 @@ none of this.
 The declarations use explicit resource management (`AsyncDisposable`, behind `await using`), which no numbered `lib`
 declares yet. `@types/node` 22 or later loads those types, so a Node program needs nothing more. Any other program adds
 `ESNext.Disposable` to `lib` once its runtime ships explicit resource management. A browser program that targets Safari,
-which has not shipped it, keeps `skipLibCheck` on and calls `dispose()` instead of `await using`.
+which has not shipped it, keeps `skipLibCheck` on and calls `disposeAsync()` instead of `await using`.
 
 ## Quick start
 
@@ -375,7 +375,8 @@ only**: the context does not survive an `await`, so a callback returning a `Prom
 
 To avoid binding classes one by one, let them register themselves.
 `@injectable(deps, { autoRegister: registry, scope })` records the class in a registry from
-`createAutoRegisterRegistry()`, and `container.loadAutoRegistered(registry)` binds the whole set in one call.
+`createAutoRegisterRegistry("app:Services")`. The registry is a `SyncModule`: `container.load(registry)` binds the whole
+set in one call, and `container.unload(registry)` removes it again.
 
 ### Custom metadata
 
@@ -423,7 +424,7 @@ parent's singletons, while each `scoped` binding gets a fresh instance per child
   await using requestContainer = container.createChild();
   requestContainer.bind(RequestIdToken).toConstantValue(crypto.randomUUID());
   const service = requestContainer.resolve(RequestScopedService);
-} // dispose() runs here and releases what this child owns
+} // disposeAsync() runs here and releases what this child owns
 ```
 
 [Example 22](examples/22-per-request-scope/README.md) is the guide to this pattern: where each binding lives, the rules
@@ -523,7 +524,7 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
-  await container.dispose();
+  await container.disposeAsync();
 });
 ```
 

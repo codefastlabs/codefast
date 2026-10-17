@@ -16,7 +16,7 @@ describe("TestBed.solitary lifecycle", () => {
     const bed = TestBed.solitary(LifecycleService).compile();
     const logger = bed.mocks.get(LoggerToken);
 
-    await bed.dispose();
+    await bed.disposeAsync();
 
     expect(logger.log.mock.calls).toContainEqual(["stop"]);
   });

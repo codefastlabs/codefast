@@ -55,7 +55,8 @@ hooks**.
 >   directly from a parent container (with no child scope context) throws `MissingScopeContextError`.
 > - **Singleton cache ownership:** a singleton is cached at the container where the binding is defined — not at the
 >   container that called resolve. When `child.resolve(SomeToken)` walks up to the parent and finds a singleton binding
->   there, the instance is cached at the **parent**. `child.dispose()` only deactivates singletons defined at the child.
+>   there, the instance is cached at the **parent**. `child.disposeAsync()` only deactivates singletons defined at the
+>   child.
 
 **Scope validation matrix — captive dependency.** A _captive dependency_ is a long-lived consumer holding a
 shorter-lived dependency, which silently freezes that dependency for the consumer's whole life.
@@ -582,12 +583,13 @@ since B replaced A on the one slot both declared; row 4 lists `[name:a, name:b]`
 
 > **Normative — a displaced binding still deactivates.** When a plain last-wins `bind()` (rows 2, 3, 7) displaces a
 > binding that owns a deactivation — a `singleton` or `toConstantValue` with an `onDeactivation` hook — the displaced
-> binding leaves the selection but its instance is still torn down — at `dispose()`, or earlier when its id is unbound
-> ([`unbind` and singleton deactivation](container.md#unbind-and-singleton-deactivation)) or the module that registered
-> it is unloaded ([`unload` and cached singletons](container.md#unload-and-cached-singletons)). Last-wins changes which
-> binding answers a resolve; it does not silently drop a lifecycle the container still owes. The same holds when the
-> displacing bind runs inside a module load — `Module.create` setup or a declared module alike — and unloading that
-> module does not restore the displaced binding: it stays out of the selection, and its deactivation stays owed.
+> binding leaves the selection but its instance is still torn down — at `disposeAsync()`, or earlier when its id is
+> unbound ([`unbind` and singleton deactivation](container.md#unbind-and-singleton-deactivation)) or the module that
+> registered it is unloaded ([`unload` and cached singletons](container.md#unload-and-cached-singletons)). Last-wins
+> changes which binding answers a resolve; it does not silently drop a lifecycle the container still owes. The same
+> holds when the displacing bind runs inside a module load — `Module.create` setup or a declared module alike — and
+> unloading that module does not restore the displaced binding: it stays out of the selection, and its deactivation
+> stays owed.
 
 **Rows 8 and 9 — a more detailed hint satisfies more bindings, hence the need for a tie-breaker.** A binding's criteria
 are **its conditions**, not a filter that must match exactly. In row 8 the hint `{fuel:petrol}` rules out B because B

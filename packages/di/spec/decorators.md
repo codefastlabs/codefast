@@ -429,7 +429,7 @@ container.bind(Database).to(DatabaseService).singleton();
 
 ## Auto-registration
 
-**Mental model.** A class can put itself on a list at module-load time; a container later binds everything on that list.
+**Mental model.** A class can put itself on a list at module-load time; a container later loads that list as a module.
 The list is an ordinary object you create and pass around — never a global.
 
 `@injectable()` supports `autoRegister` — a class registers itself into an **explicit registry** at module load time.
@@ -437,7 +437,7 @@ There is no global singleton.
 
 ```ts
 // An explicit registry — not a global
-const appRegistry = createAutoRegisterRegistry();
+const appRegistry = createAutoRegisterRegistry("app:Services");
 
 @injectable([Logger, Config], { autoRegister: appRegistry, scope: "singleton" })
 class UserService { ... }
@@ -446,43 +446,50 @@ class UserService { ... }
 class PostService { ... }  // default scope: transient
 
 const container = Container.create();
-const count = container.loadAutoRegistered(appRegistry);
-// count = 2
+container.load(appRegistry); // binds UserService and PostService to themselves
+container.unload(appRegistry); // and removes them again
 ```
+
+> **Normative — the registry is a module.** `AutoRegisterRegistry` extends `SyncModule`, so it loads through `load()`
+> like any other: dedup by identity, ref-counted, and torn down by `unload()` / `unloadAsync()` with every cached
+> singleton deactivated. A load binds the classes registered by then — each to itself, in the scope it registered with —
+> and the set one load bound is the set its unload removes. A class decorated after the registry is loaded is not bound
+> by a second `load()` of it, which only adds a reference; unload it to zero and load it again.
 
 > **Scope in auto-register.** The default is `transient`. Override it with
 > `{ autoRegister: registry, scope: "singleton" | "scoped" }`.
 
-> **Coexisting with explicit bind.** `container.bind(UserService)` after `loadAutoRegistered()` applies slot-aware
+> **Coexisting with explicit bind.** `container.bind(UserService)` after `load(appRegistry)` applies slot-aware
 > last-wins — the explicit binding replaces the auto-registered one when the slot is the same.
 
-**The `AutoRegisterRegistry` interface.** `AutoRegisterRegistry` has two methods: `register(target, scope)` — called
-automatically by `@injectable({ autoRegister })` — and `entries()`, returning everything registered.
-`createAutoRegisterRegistry()` builds a fresh registry.
+**The `AutoRegisterRegistry` interface.** `AutoRegisterRegistry` is a `SyncModule` with two methods besides:
+`register(target, scope)` — called automatically by `@injectable({ autoRegister })` — and `entries()`, returning
+everything registered. `createAutoRegisterRegistry(name)` builds a fresh registry; `name` is the module's display name,
+under the owner's namespace like any module's (`app:Services`).
 
 > **Exact shape:** `src/decorators/injectable.ts`.
 
 > **Rationale — why not a global registry.** Global state creates an implicit side effect at module import time — hard
-> to tree-shake, hard to isolate in tests. `createAutoRegisterRegistry()` returns an ordinary object that can be passed
-> around, mocked, or reset independently.
+> to tree-shake, hard to isolate in tests. `createAutoRegisterRegistry(name)` returns an ordinary object that can be
+> passed around, mocked, or reset independently.
 
 ## The decorator and helper list
 
-| API                            | Kind                          | Target                        | Effect                                                                                                   |
-| ------------------------------ | ----------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `@injectable(deps, options?)`  | decorator                     | class                         | Writes param metadata into `Symbol.metadata`. `options.autoRegister` registers into an explicit registry |
-| `inject(token, options?)`      | plain fn + accessor decorator | deps array / `accessor` field | An `InjectionDescriptor`, or injection through an accessor                                               |
-| `optional(token, options?)`    | plain fn                      | deps array                    | Like `inject`, but returns `undefined` when there is no binding                                          |
-| `injectAll(token, options?)`   | plain fn                      | deps array                    | Resolves every matching binding into an array                                                            |
-| `isInjectionDescriptor(v)`     | type guard fn                 | —                             | Checks whether a value is an `InjectionDescriptor`                                                       |
-| `@postConstruct()`             | decorator                     | method                        | Writes the method name into `Symbol.metadata` — runs after construction, before caching                  |
-| `@preDestroy()`                | decorator                     | method                        | Writes the method name into `Symbol.metadata` — runs at deactivation (singleton or scoped)               |
-| `MetadataReaderToken`          | `Token<MetadataReader>`       | —                             | The token for swapping the MetadataReader in tests                                                       |
-| `createAutoRegisterRegistry()` | fn                            | —                             | Creates the explicit registry `options.autoRegister` takes                                               |
-| `runWithContainer(c, fn)`      | fn                            | —                             | Runs `fn` with `c` active, so a hand-built instance's accessors can inject                               |
-| `getActiveContainer()`         | fn                            | —                             | The container active in the current synchronous call, or `undefined`                                     |
-| `SymbolMetadataReader`         | class                         | —                             | The `MetadataReader` that reads what these decorators write                                              |
-| `defaultMetadataReader`        | `SymbolMetadataReader`        | —                             | The shared instance a container uses when given no reader                                                |
+| API                                | Kind                          | Target                        | Effect                                                                                                   |
+| ---------------------------------- | ----------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `@injectable(deps, options?)`      | decorator                     | class                         | Writes param metadata into `Symbol.metadata`. `options.autoRegister` registers into an explicit registry |
+| `inject(token, options?)`          | plain fn + accessor decorator | deps array / `accessor` field | An `InjectionDescriptor`, or injection through an accessor                                               |
+| `optional(token, options?)`        | plain fn                      | deps array                    | Like `inject`, but returns `undefined` when there is no binding                                          |
+| `injectAll(token, options?)`       | plain fn                      | deps array                    | Resolves every matching binding into an array                                                            |
+| `isInjectionDescriptor(v)`         | type guard fn                 | —                             | Checks whether a value is an `InjectionDescriptor`                                                       |
+| `@postConstruct()`                 | decorator                     | method                        | Writes the method name into `Symbol.metadata` — runs after construction, before caching                  |
+| `@preDestroy()`                    | decorator                     | method                        | Writes the method name into `Symbol.metadata` — runs at deactivation (singleton or scoped)               |
+| `MetadataReaderToken`              | `Token<MetadataReader>`       | —                             | The token for swapping the MetadataReader in tests                                                       |
+| `createAutoRegisterRegistry(name)` | fn                            | —                             | Creates the explicit registry `options.autoRegister` takes — a `SyncModule` `load()` binds               |
+| `runWithContainer(c, fn)`          | fn                            | —                             | Runs `fn` with `c` active, so a hand-built instance's accessors can inject                               |
+| `getActiveContainer()`             | fn                            | —                             | The container active in the current synchronous call, or `undefined`                                     |
+| `SymbolMetadataReader`             | class                         | —                             | The `MetadataReader` that reads what these decorators write                                              |
+| `defaultMetadataReader`            | `SymbolMetadataReader`        | —                             | The shared instance a container uses when given no reader                                                |
 
 > **`@singleton()` and `@scoped()` do not exist.** Scope is a binding-time concern — declared at `.singleton()` /
 > `.transient()` / `.scoped()` in the fluent chain. A class does not decide its own scope.
@@ -510,12 +517,13 @@ automatically by `@injectable({ autoRegister })` — and `entries()`, returning 
 > TypeScript's `ESNext.Disposable` lib. Any other program adds `ESNext.Disposable` to its own `lib`. In a browser
 > program it goes beside `DOM`, and there it also asserts that the targeted browsers ship explicit resource management,
 > which Safari does not yet — so the `@codefast/typescript-config` presets leave it out, and a browser program on them
-> keeps `skipLibCheck` on and calls `dispose()`. `target: "ESNext"`, as above, loads all of `ESNext` and needs nothing
-> more. Without the types, `container.d.ts` fails with TS2550 under `skipLibCheck: false`, and the program's own
+> keeps `skipLibCheck` on and calls `disposeAsync()`. `target: "ESNext"`, as above, loads all of `ESNext` and needs
+> nothing more. Without the types, `container.d.ts` fails with TS2550 under `skipLibCheck: false`, and the program's own
 > `await using` fails with TS2318 even under `skipLibCheck: true`.
 >
 > At runtime, `await using` needs `Symbol.asyncDispose` when `@codefast/di` is evaluated, because the container's
-> methods are keyed by it then. Every supported Node line ships it. On a browser that does not, `dispose()` still works.
+> methods are keyed by it then. Every supported Node line ships it. On a browser that does not, `disposeAsync()` still
+> works.
 
 > **Normative — `Symbol.metadata` must exist before a decorated class is defined.** TypeScript emits `context.metadata`
 > as `undefined` on a runtime without `Symbol.metadata`, and every decorator here then throws

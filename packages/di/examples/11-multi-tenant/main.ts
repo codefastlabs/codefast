@@ -572,7 +572,7 @@ async function main(): Promise<void> {
   // Within the same tenant container, the same scoped instance is reused
   item("Tenant A UserService scoped identity", tenantAUserService === tenantAUserService2); // true
 
-  // rootContainer.dispose() at scope exit fires pool.close()
+  // rootContainer.disposeAsync() at scope exit fires pool.close()
 }
 
 function delay(ms: number): Promise<void> {

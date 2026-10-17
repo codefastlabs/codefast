@@ -16,7 +16,7 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | `CircularDependencyError`        | `CIRCULAR_DEPENDENCY`         | A → B → A, including a cycle along an alias chain                              | `cycle`                                                        |
 | `AsyncResolutionError`           | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain          | `tokenName`, `asyncSourceToken`                                |
 | `AsyncActivationError`           | `ASYNC_ACTIVATION`            | `@postConstruct` or `onActivation` returned a `Promise` on a sync path         | `tokenName`, `hookKind`, `methodName`                          |
-| `AsyncDeactivationError`         | `ASYNC_DEACTIVATION`          | A sync `unbind()`/`rebind()` owing an async deactivation (a cached singleton)  | `tokenName`                                                    |
+| `AsyncDeactivationError`         | `ASYNC_DEACTIVATION`          | A sync `unbind()`/`rebind()`/`unload()` that ran an async deactivation hook    | `tokenName`                                                    |
 | `ScopeViolationError`            | `SCOPE_VIOLATION`             | `validate` — a captive dependency: a singleton depending on scoped/transient   | `details`: both tokens + scopes, plus `path`                   |
 | `MissingMetadataError`           | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing            | `targetName`                                                   |
 | `InvalidMetadataError`           | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use               | `targetName`, `reason`                                         |
@@ -113,5 +113,7 @@ returning a `Promise` means the resolve must be `resolveAsync()`. The difference
 > **The hook has already run when the error is thrown.** A hook cannot be inspected for asyncness before it is called,
 > so when `AsyncActivationError` or `AsyncDeactivationError` is raised on a sync lane, the hook body has already
 > executed and returned a `Promise`. The container adopts that promise (attaching a no-op rejection handler) so a hook
-> that rejects cannot become an unhandled rejection — but any side effect the hook performed has happened. Retry the
-> operation on the async lane (`resolveAsync` / `unbindAsync`), which awaits the hook properly.
+> that rejects cannot become an unhandled rejection — but any side effect the hook performed has happened. A resolve can
+> be retried on the async lane (`resolveAsync`), which awaits the hook properly. A teardown cannot: a sync deactivation
+> runs every remaining stage before it throws, so the binding is gone and fully torn down — use `unbindAsync` /
+> `unloadAsync` from the start wherever a deactivation hook may be async.

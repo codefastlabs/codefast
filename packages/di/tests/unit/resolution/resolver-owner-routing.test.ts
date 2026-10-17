@@ -28,7 +28,7 @@ describe("resolveAll owner-routing for singletons", () => {
     expect(parent.resolve(serviceToken)).toBe(viaChild);
 
     // The child never owned it, so the child's teardown must not evict or deactivate it.
-    await child.dispose();
+    await child.disposeAsync();
     expect(parent.resolve(serviceToken)).toBe(viaChild);
   });
 

@@ -244,5 +244,5 @@ try {
 
 section("6. Teardown");
 
-await app.dispose();
+await app.disposeAsync();
 item("preDestroy ran close()", pool.closed);

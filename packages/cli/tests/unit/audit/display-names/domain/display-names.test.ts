@@ -30,9 +30,21 @@ describe("auditDisplayNames", () => {
       `Module.createAsync("shop:Database", async () => {});`,
       `SyncModule.create("app:Core", () => {});`,
       `AsyncModule.create("app:Root", async () => {});`,
+      `Module.fromBindings("shop:Declared", []);`,
+      `createAutoRegisterRegistry("app:Services");`,
       ``,
     ].join("\n");
     expect(auditDisplayNames(source)).toEqual([]);
+  });
+
+  it("reads a declared module and an auto-register registry as module names", () => {
+    const violations = auditDisplayNames(
+      [`Module.fromBindings("Declared", []);`, `createAutoRegisterRegistry("app:services")`].join("\n"),
+    );
+    expect(violations).toHaveLength(2);
+    expect(violations[0]).toMatchObject({ line: 1, raw: `Module.fromBindings("Declared"` });
+    expect(violations[1]).toMatchObject({ line: 2, raw: `createAutoRegisterRegistry("app:services")` });
+    expect(violations[1]!.reason).toContain("module name 'services'");
   });
 
   it("checks the case of the name half by kind", () => {

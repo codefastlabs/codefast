@@ -58,7 +58,7 @@ export async function run(): Promise<void> {
 
   const greeter = container.resolve(Greeter);
   const loud = container.resolve(LoudGreeter);
-  await container.dispose();
+  await container.disposeAsync();
 
   console.log(
     JSON.stringify({ fieldSawInjection: greeter.logSeenByField === log && loud.logSeenByField === log, log }),

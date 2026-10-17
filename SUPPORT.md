@@ -89,8 +89,8 @@ Explicit resource management enters the language in ES2027, so no numbered `lib`
 `@codefast/di-testing` name its symbols and interfaces in their declarations, so a program that uses them needs its
 types. A Node program gets them from `@types/node` 24 or later. A browser program adds `ESNext.Disposable` to its own
 `lib` only once the browsers it targets ship explicit resource management, so no `@codefast/typescript-config` preset
-lists it. Without the types, a program keeps `skipLibCheck` on, as every preset does, and calls `dispose()` instead of
-`await using`.
+lists it. Without the types, a program keeps `skipLibCheck` on, as every preset does, and calls `disposeAsync()` instead
+of `await using`.
 
 ## Reporting issues
 

@@ -457,7 +457,7 @@ class Platform {
 
   async shutdown(): Promise<void> {
     section("🛑 Shutting down platform");
-    await this.#container.dispose(); // fires all onDeactivation hooks
+    await this.#container.disposeAsync(); // fires all onDeactivation hooks
     ok("Platform shutdown complete");
   }
 }

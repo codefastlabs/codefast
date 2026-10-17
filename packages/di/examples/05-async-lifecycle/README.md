@@ -41,7 +41,7 @@ sequenceDiagram
 
     Note over App: serve traffic...
 
-    App->>Container: dispose() via await using
+    App->>Container: disposeAsync() via await using
     Container->>Cache: onDeactivation → stop()
     Cache-->>Container: ✓ stopped
     Container->>Database: onDeactivation → disconnect()
@@ -92,7 +92,7 @@ binding.
   })
 ```
 
-- Called during `container.dispose()`.
+- Called during `container.disposeAsync()`.
 - Hooks fire in **reverse activation order** (LIFO), so resources are torn down in the correct dependency order.
 
 ---
@@ -137,7 +137,7 @@ async function main(): Promise<void> {
   await container.initializeAsync();
   // ... use the container ...
 
-} // container.dispose() called automatically here, firing all onDeactivation hooks
+} // container.disposeAsync() called automatically here, firing all onDeactivation hooks
 ```
 
 `await using` is TC39 explicit resource management, which no ES20xx `lib` declares yet: its types come from

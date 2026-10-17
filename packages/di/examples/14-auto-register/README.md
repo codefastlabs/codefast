@@ -1,6 +1,6 @@
 # Example 14 — Auto-Register Registry
 
-**Concepts:** `createAutoRegisterRegistry()`, `autoRegister` option in `@injectable`, `container.loadAutoRegistered()`,
+**Concepts:** `createAutoRegisterRegistry(name)`, `autoRegister` option in `@injectable`, the registry as a module,
 per-layer registries, conditional (env-based) registration
 
 ---
@@ -22,7 +22,7 @@ flowchart TD
     A["@injectable(deps, { autoRegister: registry, scope })"]
     A -->|at decoration time| B["registry.entries() += { target: Constructor, scope }"]
 
-    C["container.loadAutoRegistered(registry)"]
+    C["container.load(registry)"]
     B --> C
     C -->|for each entry| D["container.bind(Constructor).to(Constructor).scope()"]
     D --> E["Constructor token bound ✓"]
@@ -46,9 +46,9 @@ graph LR
         C["container"]
     end
 
-    IR -->|loadAutoRegistered| C
-    DR -->|loadAutoRegistered| C
-    AR -->|loadAutoRegistered| C
+    IR -->|load| C
+    DR -->|load| C
+    AR -->|load| C
     C --> Ready["All classes bound ✓\nNo manual bind() calls needed"]
 ```
 
@@ -60,9 +60,9 @@ graph LR
 import { createAutoRegisterRegistry } from "@codefast/di";
 import type { AutoRegisterRegistry } from "@codefast/di";
 
-const infrastructureRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
-const domainRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
-const applicationRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
+const infrastructureRegistry: AutoRegisterRegistry = createAutoRegisterRegistry("auto-register:Infrastructure");
+const domainRegistry: AutoRegisterRegistry = createAutoRegisterRegistry("auto-register:Domain");
+const applicationRegistry: AutoRegisterRegistry = createAutoRegisterRegistry("auto-register:Application");
 ```
 
 **Step 2** — decorate each class with `autoRegister`:
@@ -87,21 +87,17 @@ here.
 **Step 3** — bulk-load the registry into a container at bootstrap:
 
 ```ts
-const infraCount = container.loadAutoRegistered(infrastructureRegistry);
-const domainCount = container.loadAutoRegistered(domainRegistry);
-const appCount = container.loadAutoRegistered(applicationRegistry);
-
-console.log(`Auto-registered: ${infraCount} infra + ${domainCount} domain + ${appCount} app`);
+container.load(infrastructureRegistry, domainRegistry, applicationRegistry);
 ```
 
-`loadAutoRegistered` internally calls `container.bind(Constructor).to(Constructor).scope()` for each entry and returns
-the number of bindings added.
+A registry is a `SyncModule`, so it loads like any module: deduplicated by identity, ref-counted, and removed again by
+`container.unload(registry)`, which deactivates every singleton it bound.
 
 ---
 
-## What `loadAutoRegistered` does
+## What loading a registry does
 
-For each entry in the registry:
+For each entry registered by the time it loads:
 
 ```ts
 container.bind(Constructor).to(Constructor).singleton(); // or .transient() / .scoped()
@@ -122,9 +118,9 @@ Separate registries per architectural layer enforce separation of concerns and m
 need (e.g. skip `applicationRegistry` in a CLI tool that only needs infrastructure):
 
 ```ts
-const infrastructureRegistry = createAutoRegisterRegistry(); // heavy resources
-const domainRegistry = createAutoRegisterRegistry(); // repositories
-const applicationRegistry = createAutoRegisterRegistry(); // use-case services
+const infrastructureRegistry = createAutoRegisterRegistry("auto-register:Infrastructure"); // heavy resources
+const domainRegistry = createAutoRegisterRegistry("auto-register:Domain"); // repositories
+const applicationRegistry = createAutoRegisterRegistry("auto-register:Application"); // use-case services
 ```
 
 ---
@@ -135,8 +131,8 @@ Because classes are registered at decorator-application time (module load), use 
 select one at bootstrap:
 
 ```ts
-const devRegistry  = createAutoRegisterRegistry();
-const prodRegistry = createAutoRegisterRegistry();
+const devRegistry  = createAutoRegisterRegistry("auto-register:DevServices");
+const prodRegistry = createAutoRegisterRegistry("auto-register:ProdServices");
 
 @injectable([], { autoRegister: devRegistry, scope: "singleton" })
 class StubNotificationService implements NotificationService { ... }
@@ -146,7 +142,7 @@ class SmtpNotificationService implements NotificationService { ... }
 
 // At bootstrap — pick the right registry
 const envRegistry = process.env.NODE_ENV === "production" ? prodRegistry : devRegistry;
-container.loadAutoRegistered(envRegistry);
+container.load(envRegistry);
 ```
 
 ---
