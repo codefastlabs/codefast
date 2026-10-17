@@ -10,7 +10,6 @@ import type {
   DependencyKey,
   ResolutionContext,
 } from "#core/types";
-import { lifecycleMethodMissing } from "#error-messages";
 import { AsyncActivationError, AsyncDeactivationError, InvalidMetadataError } from "#errors";
 import type { LifecycleMetadata, MetadataReader } from "#metadata/types";
 
@@ -313,7 +312,7 @@ function callHook(instance: unknown, methodName: string): unknown {
     // The class is derived here rather than passed in, so the happy path carries no extra argument.
     const constructor: unknown = Reflect.get(instance, "constructor");
     const className = typeof constructor === "function" && constructor.name !== "" ? constructor.name : "(anonymous)";
-    throw new InvalidMetadataError(className, lifecycleMethodMissing(methodName));
+    throw new InvalidMetadataError(className, `lifecycle method '${methodName}' is not a method on the instance`);
   }
 
   return method.call(instance);

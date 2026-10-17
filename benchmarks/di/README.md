@@ -35,7 +35,7 @@ measures the working tree rather than a stale `dist/`.
 | `pnpm bench:ab`              | Two builds of `@codefast/di`, paired and alternating, on the rows you name (the guide has the recipe)             |
 | `pnpm bench:list`            | Prints the scenario inventory as JSON on stdout and a coverage line per library on stderr, measuring nothing      |
 | `pnpm bench:serve`           | Serves the run history from `bench-results/` in a browser                                                         |
-| `pnpm bench:footprint`       | Bundles each library's smallest bind-and-resolve program as a production Vite build would, minified and gzipped   |
+| `pnpm bench:footprint`       | Bundles each library's smallest bind-and-resolve program with Rolldown and prints its minified and gzipped size   |
 | `pnpm bench:footprint:check` | Bundles only `@codefast/di`'s program and fails when its gzipped size exceeds `footprint-budget.json`             |
 | `pnpm instrument:alloc`      | The allocation instrument (see below)                                                                             |
 | `BENCH_MODE=<mode>`          | Timing profile: `fast`, `default` or `full` (longer windows, a collection between trials) — composes with `bench` |
@@ -65,10 +65,9 @@ or `BENCH_LIBRARY` does not move `latest.json`.
 The bundle is the cost of `@codefast/di` an app feels, and no test or type check sees it grow, so its minimal program
 (`Container`, `token`, bind a constant, resolve) has a gzip budget checked in as
 [`footprint-budget.json`](./footprint-budget.json). `pnpm bench:footprint:check` rebuilds the package, bundles that one
-program under the conditions a production `vite build` resolves (so a package's `production` lane is what counts),
-prints its gzipped size against the budget and exits non-zero when it is over; `pnpm bench:footprint` prints the same
-line under its table and fails the same way. The gate runs in CI's package verification and in `pnpm verify`, so a size
-regression turns a PR red instead of surfacing in the next [`RESULTS.md`](./RESULTS.md) pass.
+program, prints its gzipped size against the budget and exits non-zero when it is over; `pnpm bench:footprint` prints
+the same line under its table and fails the same way. The gate runs in CI's package verification and in `pnpm verify`,
+so a size regression turns a PR red instead of surfacing in the next [`RESULTS.md`](./RESULTS.md) pass.
 
 The budget is the measured size plus a small headroom, enough to absorb gzip and bundler noise but not a real feature.
 When a change grows the bundle on purpose, raise the budget in the same PR and say why there; when one shrinks it, lower

@@ -2,7 +2,6 @@
  * Verification of what a foreign `MetadataReader` claims about a class, done once per reader and class.
  */
 import type { Constructor } from "#core/types";
-import { invalidMetadataShape } from "#error-messages";
 import { InvalidMetadataError } from "#errors";
 import type { InjectionDescriptor } from "#injection/descriptor";
 import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#metadata/types";
@@ -89,24 +88,24 @@ export function assertConstructorMetadata(metadata: unknown, target: Constructor
     return undefined;
   }
   if (typeof metadata !== "object" || metadata === null) {
-    throw new InvalidMetadataError(target.name, invalidMetadataShape("constructor", "", "object", typeof metadata));
+    throw new InvalidMetadataError(
+      target.name,
+      `constructor metadata: expected an object, received ${typeof metadata}`,
+    );
   }
   const params: unknown = Reflect.get(metadata, "params");
   if (!Array.isArray(params)) {
-    throw new InvalidMetadataError(target.name, invalidMetadataShape("constructor", "params", "array"));
+    throw new InvalidMetadataError(target.name, "constructor metadata: params is not an array");
   }
   for (const [position, param] of params.entries()) {
     if (typeof param !== "object" || param === null) {
-      throw new InvalidMetadataError(
-        target.name,
-        invalidMetadataShape("constructor", `params[${String(position)}]`, "object"),
-      );
+      throw new InvalidMetadataError(target.name, `constructor metadata: params[${String(position)}] is not an object`);
     }
     const dependency: unknown = Reflect.get(param, "token");
     if (typeof dependency !== "object" && typeof dependency !== "function") {
       throw new InvalidMetadataError(
         target.name,
-        invalidMetadataShape("constructor", `params[${String(position)}].token`, "token"),
+        `constructor metadata: params[${String(position)}].token is not a token or a class`,
       );
     }
   }
@@ -122,7 +121,10 @@ export function assertConstructorMetadata(metadata: unknown, target: Constructor
 export function verifyLifecycleMetadata(reader: MetadataReader, target: Constructor): LifecycleMetadata | undefined {
   return verifyOnce(verifiedLifecycleTargets, reader, target, reader.getLifecycleMetadata(target), (metadata) => {
     if (typeof metadata !== "object" || metadata === null) {
-      throw new InvalidMetadataError(target.name, invalidMetadataShape("lifecycle", "", "object", typeof metadata));
+      throw new InvalidMetadataError(
+        target.name,
+        `lifecycle metadata: expected an object, received ${typeof metadata}`,
+      );
     }
     for (const phase of ["postConstruct", "preDestroy"] as const) {
       const methods: unknown = Reflect.get(metadata, phase);
@@ -130,13 +132,13 @@ export function verifyLifecycleMetadata(reader: MetadataReader, target: Construc
         continue;
       }
       if (!Array.isArray(methods)) {
-        throw new InvalidMetadataError(target.name, invalidMetadataShape("lifecycle", phase, "array"));
+        throw new InvalidMetadataError(target.name, `lifecycle metadata: ${phase} is not an array`);
       }
       for (const [position, name] of methods.entries()) {
         if (typeof name !== "string") {
           throw new InvalidMetadataError(
             target.name,
-            invalidMetadataShape("lifecycle", `${phase}[${String(position)}]`, "string"),
+            `lifecycle metadata: ${phase}[${String(position)}] is not a string`,
           );
         }
       }
@@ -155,34 +157,31 @@ export function verifyAccessorMetadata(
 ): ReadonlyArray<{ readonly key: string | symbol; readonly descriptor: InjectionDescriptor }> | undefined {
   return verifyOnce(verifiedAccessorTargets, reader, target, reader.getAccessorMetadata?.(target), (metadata) => {
     if (!Array.isArray(metadata)) {
-      throw new InvalidMetadataError(target.name, invalidMetadataShape("accessor", "", "array"));
+      throw new InvalidMetadataError(target.name, "accessor metadata: expected an array");
     }
     for (const [position, entry] of metadata.entries()) {
       if (typeof entry !== "object" || entry === null) {
-        throw new InvalidMetadataError(
-          target.name,
-          invalidMetadataShape("accessor", `[${String(position)}]`, "object"),
-        );
+        throw new InvalidMetadataError(target.name, `accessor metadata: [${String(position)}] is not an object`);
       }
       const key: unknown = Reflect.get(entry, "key");
       if (typeof key !== "string" && typeof key !== "symbol") {
         throw new InvalidMetadataError(
           target.name,
-          invalidMetadataShape("accessor", `[${String(position)}].key`, "key"),
+          `accessor metadata: [${String(position)}].key is not a string or symbol`,
         );
       }
       const descriptor: unknown = Reflect.get(entry, "descriptor");
       if (typeof descriptor !== "object" || descriptor === null) {
         throw new InvalidMetadataError(
           target.name,
-          invalidMetadataShape("accessor", `[${String(position)}].descriptor`, "object"),
+          `accessor metadata: [${String(position)}].descriptor is not an object`,
         );
       }
       const dependency: unknown = Reflect.get(descriptor, "token");
       if (typeof dependency !== "object" && typeof dependency !== "function") {
         throw new InvalidMetadataError(
           target.name,
-          invalidMetadataShape("accessor", `[${String(position)}].descriptor.token`, "token"),
+          `accessor metadata: [${String(position)}].descriptor.token is not a token or a class`,
         );
       }
     }

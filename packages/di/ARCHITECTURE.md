@@ -82,7 +82,7 @@ decorators/            @injectable, @inject, lifecycle decorators
 metadata/              the reader port, its default reader, a foreign reader's verification
   ↓
 core/                  token, types, tag, binding and its chain contract, registry, module   ← the model
-errors.ts              the taxonomy, its messages in error-messages.ts
+errors.ts              the taxonomy
 injection/             the dependency slot every dependency normalises to, and its descriptor
 ```
 
@@ -120,9 +120,6 @@ Most directories name a topic. Three places name a rule instead:
 - **`errors.ts` is cold by construction.** The hot path imports the error constructors and nothing else. Building a
   message is something an error path can afford, and a hot function's prefix cannot, so message building happens at the
   throw site.
-- **Every message's text lives in `error-messages.ts`.** An error class, and any throw site with prose of its own, calls
-  a function there rather than writing a string, because `#error-messages` is the one import a production build swaps
-  for `error-messages.production.ts`. A literal message elsewhere ships its prose to every production bundle.
 - **`injection/` is the one shape both dependency sources normalise to.** Because of it, the model can read a dependency
   without reaching up into `decorators/`.
 - **`resolution/` groups by lane** — `cache/`, `plan/`, `select/`, and `path.ts` — because the reasoning about the

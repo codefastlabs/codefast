@@ -7,10 +7,6 @@ import { execSync } from "node:child_process";
  */
 const config = {
   mirror: {
-    // The error-message modules are swapped in through `#error-messages` by build condition, never imported by subpath.
-    "@codefast/di": {
-      exclude: ["./error-messages", "./error-messages.production"],
-    },
     "@codefast/ui": {
       strip: "./components/",
       // The message-scroller hooks and lib are the primitive's internals; its public types ship from the primitive.
@@ -72,7 +68,7 @@ const config = {
       packages: {
         "@codefast/di": {
           layers: [
-            ["core", "errors.ts", "error-messages.ts", "error-messages.production.ts", "injection"],
+            ["core", "errors.ts", "injection"],
             ["metadata"],
             ["ambient-container.ts", "lifecycle", "decorators"],
             ["resolution"],

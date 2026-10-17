@@ -1,6 +1,6 @@
 /**
  * A browser bundle of the built package keeps only what the consumer calls: the functions that check and describe a
- * container stay out of a program that only binds and resolves, and a production build takes the short error messages.
+ * container stay out of a program that only binds and resolves.
  */
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -49,18 +49,4 @@ describe("a Rolldown browser bundle", () => {
 
     expect(packageModules).toEqual(expect.arrayContaining(["container/introspect.js", "introspection/validation.js"]));
   });
-
-  it(
-    "takes the short error messages in a production build and the full ones in development",
-    { timeout: SUBPROCESS_TEST_TIMEOUT_MS },
-    async () => {
-      const production = await project.bundle("src/entry-resolve-only.ts", "production");
-      const development = await project.bundle("src/entry-resolve-only.ts", "development");
-
-      expect(production.packageModules).toContain("error-messages.production.js");
-      expect(production.packageModules).not.toContain("error-messages.js");
-      expect(development.packageModules).toContain("error-messages.js");
-      expect(development.packageModules).not.toContain("error-messages.production.js");
-    },
-  );
 });

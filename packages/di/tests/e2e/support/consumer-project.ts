@@ -40,8 +40,8 @@ export interface ConsumerProject {
   compile(outDir: string, compilerOptions: Readonly<Record<string, unknown>>): void;
   /** Runs one compiled entry on a bare Node. */
   runNode(entry: string): ProcessRun;
-  /** Bundles one entry for the browser with Rolldown, minified, under the conditions a Vite app resolves in `mode`. */
-  bundle(entry: string, mode?: "development" | "production"): Promise<BundleRun>;
+  /** Bundles one entry for the browser with Rolldown, minified, as a Vite app would. */
+  bundle(entry: string): Promise<BundleRun>;
   remove(): void;
 }
 
@@ -78,14 +78,8 @@ export function createConsumerProject(fixtureDir: string): ConsumerProject {
       }
     },
     runNode: (entry) => spawn([join(dir, entry)]),
-    async bundle(entry, mode = "production") {
-      const build = await rolldown({
-        input: join(dir, entry),
-        cwd: dir,
-        platform: "browser",
-        resolve: { conditionNames: ["module", "browser", mode, "import", "default"] },
-        logLevel: "silent",
-      });
+    async bundle(entry) {
+      const build = await rolldown({ input: join(dir, entry), cwd: dir, platform: "browser", logLevel: "silent" });
       try {
         const { output } = await build.generate({ format: "esm", minify: true });
         const distDir = join(packageRoot, "dist");

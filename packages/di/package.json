@@ -47,12 +47,6 @@
       "./examples/*/index.ts",
       "./examples/*/index.tsx"
     ],
-    "#error-messages": {
-      "source": "./src/error-messages.ts",
-      "production": "./dist/error-messages.production.js",
-      "types": "./dist/error-messages.d.ts",
-      "default": "./dist/error-messages.js"
-    },
     "#*": {
       "source": [
         "./src/*",

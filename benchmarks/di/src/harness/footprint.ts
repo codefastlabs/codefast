@@ -13,8 +13,6 @@ import { rebuildCodefastDiPackage } from "#harness/rebuild";
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const ENTRY_ID = "\0footprint-entry";
 const BUDGET_PATH = join(packageRootDirectory, "footprint-budget.json");
-// The conditions a production `vite build` resolves for the browser, so a package's `production` lane is what is measured.
-const PRODUCTION_CONDITIONS = ["module", "browser", "production", "import", "default"];
 
 /**
  * Each library's smallest program — one container, one value bound and resolved — written the way its documentation
@@ -77,7 +75,6 @@ async function measure(label: string, source: string): Promise<Footprint> {
     input: ENTRY_ID,
     cwd: packageRootDirectory,
     platform: "browser",
-    resolve: { conditionNames: PRODUCTION_CONDITIONS },
     logLevel: "silent",
     plugins: [
       {
