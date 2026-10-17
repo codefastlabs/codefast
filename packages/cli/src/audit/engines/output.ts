@@ -31,7 +31,7 @@ function describeViolation(violation: EngineViolation): string {
       return `engines.node "${violation.range}" → write the floor as ">=X.Y.Z"`;
     }
     case "outside-dependency-engines": {
-      return `floor ${violation.floor} is outside ${violation.dependency}'s engines.node "${violation.range}" (${violation.field}) → raise the floor or drop the dependency`;
+      return `floor ${violation.floor} claims Node "${violation.uncovered}", which ${violation.dependency}'s engines.node "${violation.range}" (${violation.field}) leaves out → raise the floor or drop the dependency`;
     }
     case "types-off-floor": {
       return `@types/node resolves to ${violation.typesVersion}, off floor ${violation.floor}'s line → pin it to the floor's major at a minor no newer`;

@@ -1,11 +1,12 @@
 import path from "node:path";
 
-import { satisfies, validRange } from "semver";
+import { satisfies } from "semver";
 import { parseAllDocuments } from "yaml";
 
 import type { EngineViolation, EnginesAuditResult, PackageEngineFloor } from "#audit/domain/types";
 import type { NodeVersion } from "#audit/engines/domain/node-floor";
 import { formatNodeVersion, parseNodeFloor, parseNodeVersion, typesFitFloor } from "#audit/engines/domain/node-floor";
+import { shortLivedMajors, uncoveredNodeRanges } from "#audit/engines/domain/range-gaps";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import type { Result } from "#core/result";
@@ -15,10 +16,16 @@ import { packageJsonFileName } from "#core/workspace/well-known-files";
 
 const lockfileName = "pnpm-lock.yaml";
 
+// The Node release CI develops and runs every package's tests on, besides each package's own floor.
+const nodeVersionFileName = ".node-version";
+
 const typesPackageName = "@types/node";
 
-// Runtime fields are what a consumer installs on the floor; dev dependencies run the package's own tests there in CI.
+// Runtime fields are what a consumer installs on every release the floor claims; dev dependencies run the package's
+// own tests, which CI runs on the floor and on the newest line.
 const dependencyFields = ["dependencies", "peerDependencies", "optionalDependencies", "devDependencies"] as const;
+
+const testFields: ReadonlySet<string> = new Set(["devDependencies"]);
 
 const lockfileDependencyFields = ["dependencies", "devDependencies", "optionalDependencies"] as const;
 
@@ -33,8 +40,9 @@ type WorkspaceManifest = {
 /**
  * Reports every Node floor that breaks a rule a consumer or CI depends on.
  *
- * @remarks A published package declares a floor as `>=X.Y.Z`. Each floor must satisfy the `engines.node` of every
- * dependency that runs on it, and the `@types/node` the lockfile resolves for it must declare nothing the floor lacks.
+ * @remarks A published package declares a floor as `>=X.Y.Z`. The `engines.node` of every runtime dependency must
+ * admit every release from the floor up, short-lived odd lines aside; that of every dev dependency, the floor and the
+ * newest release CI tests on. The `@types/node` the lockfile resolves must declare nothing the floor lacks.
  */
 export async function runEnginesAudit(
   fs: Filesystem,
@@ -66,6 +74,7 @@ export async function runEnginesAudit(
 
     const workspaceManifests = new Map(manifests.map((entry) => [entry.packageName, entry.manifest]));
     const typesVersions = readLockfileTypesVersions(fs, rootDir);
+    const testedNewest = readNodeVersion(fs, rootDir);
 
     const floors: Array<PackageEngineFloor> = [];
     const violations: Array<EngineViolation> = [];
@@ -85,12 +94,22 @@ export async function runEnginesAudit(
       }
       const formatted = formatNodeVersion(floor);
       floors.push({ packageName, directory, floor: formatted });
+      const unjudgedMajors = shortLivedMajors(floor, testedNewest);
+      const tested = [formatted, ...(testedNewest === null ? [] : [formatNodeVersion(testedNewest)])];
 
       for (const { dependency, field } of dependenciesOf(manifest)) {
         const dependencyManifest =
           workspaceManifests.get(dependency) ?? readInstalledManifest(fs, packageDir, dependency);
         const dependencyRange = dependencyManifest === null ? undefined : nodeRangeOf(dependencyManifest);
-        if (dependencyRange !== undefined && !floorSatisfies(floor, dependencyRange)) {
+        // A range no semver parser reads cannot be judged, so it passes rather than guessing.
+        const gaps = dependencyRange === undefined ? null : uncoveredNodeRanges(floor, dependencyRange, unjudgedMajors);
+        if (dependencyRange === undefined || gaps === null) {
+          continue;
+        }
+        const uncovered = testFields.has(field)
+          ? gaps.filter((gap) => tested.some((version) => satisfies(version, gap)))
+          : gaps;
+        if (uncovered.length > 0) {
           violations.push({
             kind: "outside-dependency-engines",
             packageName,
@@ -98,6 +117,7 @@ export async function runEnginesAudit(
             dependency,
             field,
             range: dependencyRange,
+            uncovered: uncovered.join(" || "),
           });
         }
       }
@@ -130,9 +150,13 @@ function dependenciesOf(manifest: Record<string, unknown>): Array<{ dependency: 
   return dependencies;
 }
 
-// A range no semver parser reads cannot be judged, so it passes rather than guessing.
-function floorSatisfies(floor: NodeVersion, range: string): boolean {
-  return validRange(range) === null || satisfies(formatNodeVersion(floor), range);
+// The release `.node-version` pins, or `null` when the file is absent or names no full version.
+function readNodeVersion(fs: Filesystem, rootDir: string): NodeVersion | null {
+  const filePath = path.join(rootDir, nodeVersionFileName);
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+  return parseNodeVersion(fs.readFileSync(filePath, "utf8").trim().replace(/^v/, ""));
 }
 
 function readManifest(fs: Filesystem, directory: string): Record<string, unknown> | null {

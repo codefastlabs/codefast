@@ -5,7 +5,9 @@
 Each package declares its own Node.js floor in `engines.node`, set as low as the package can go: the lowest release that
 its code, every dependency that runs on it, and its own test suite all support. No package inherits a floor from the
 monorepo. The lowest any package can go is **Node.js 22.12**, the first release the test toolchain (Vitest) runs on,
-because a floor counts only once CI has run the package's full test suite on that very release.
+because a floor counts only once CI has run the package's full test suite on that very release. A floor claims every
+release from it up, so the code and every dependency it runs on must hold on each of them; the test suite is proven on
+the two ends CI runs it on, the floor and the newest release.
 
 | Package                                                      | Floor   | What sets it                                      |
 | ------------------------------------------------------------ | ------- | ------------------------------------------------- |
@@ -38,9 +40,14 @@ to a release that CI runs its tests on. Floors are enforced mechanically rather 
   config. Every other build loads no ambient types, so a Node global in browser or universal code fails the build.
 - **Internal subpath imports** use a bare `#` prefix (`#core/token`), which Node's ESM resolver accepts on every
   supported release — `#/`-prefixed specifiers are rejected below Node 24.14.
-- **`codefast audit engines`** holds each floor to what runs on it. A published package declares one, written `>=X.Y.Z`,
-  inside the `engines.node` of every dependency it installs for a consumer and every dev dependency that runs its tests
-  in CI, and the lockfile must resolve its `@types/node` on the floor's major at a minor no newer.
+- **`codefast audit engines`** holds each floor to what runs on it. A published package declares one, written `>=X.Y.Z`.
+  Every dependency it installs for a consumer must admit, in its own `engines.node`, every release from the floor up — a
+  range with a gap above the floor, such as Babel's `^22.18.0 || >=24.11.0` under a 22.18 floor, fails it. The odd lines
+  between the floor's and the newest tested one sit outside that claim: they reach end-of-life within months without
+  ever becoming LTS, and dependencies routinely skip them. A dev dependency only runs the package's tests, so its
+  `engines.node` must admit the two releases CI runs them on, the floor and the newest (`.node-version`), and a gap
+  between them is not one the tests claim. The lockfile must resolve the package's `@types/node` on the floor's major at
+  a minor no newer.
 - **CI** develops on the Current line (`.node-version`) for speed, and a matrix runs every test category of each package
   on its own floor — one leg per distinct floor, planned from `codefast audit engines --json`. pnpm is a native binary
   that needs no Node of its own, so a leg runs on nothing newer than its floor. Unit tests run the source through Vite's

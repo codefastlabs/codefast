@@ -34,6 +34,22 @@ describe("formatEnginesAuditJsonOutput", () => {
     });
   });
 
+  it("carries the releases a dependency's engines leave out", () => {
+    const violation = {
+      kind: "outside-dependency-engines",
+      packageName: "@x/c",
+      floor: "22.18.0",
+      dependency: "@babel/core",
+      field: "dependencies",
+      range: "^22.18.0 || >=24.11.0",
+      uncovered: ">=24.0.0 <24.11.0",
+    } as const;
+
+    const output = JSON.parse(formatEnginesAuditJsonOutput({ ...clean, violations: [violation] }, "/repo"));
+
+    expect(output.result.violations).toEqual([violation]);
+  });
+
   it("reports ok false when a violation remains", () => {
     expect(JSON.parse(formatEnginesAuditJsonOutput(violated, "/repo")).ok).toBe(false);
   });

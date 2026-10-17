@@ -380,6 +380,8 @@ export type EngineViolation =
       readonly field: string;
       /** The dependency's own `engines.node`. */
       readonly range: string;
+      /** The releases the floor claims that `range` leaves out, as semver ranges joined by `||`. */
+      readonly uncovered: string;
     }
   | {
       readonly kind: "types-off-floor";
