@@ -68,7 +68,7 @@ export const spinnerDoc: ComponentDoc = {
   features: [
     "With children and loading=true, it hides them invisibly (keeping their layout size) and overlays the spinner on top — a VisuallyHidden copy keeps the label announced to screen readers.",
     "loading={false} renders the children directly in place of the spinner, so a single component can toggle between the two states.",
-    "Respects prefers-reduced-motion — the animation pauses automatically.",
+    "Respects prefers-reduced-motion — the preset stops the animation and leaves the bars static.",
   ],
   api: [
     {
@@ -98,7 +98,7 @@ export const spinnerDoc: ComponentDoc = {
     notes: [
       "Give the spinner a label via children so its purpose is announced.",
       "Prefer a Spinner over a fake progress bar when you don’t know the duration.",
-      "Respect reduced motion — the animation is paused under prefers-reduced-motion.",
+      "Respect reduced motion — under prefers-reduced-motion the spinner holds still, so pair it with a label.",
     ],
   },
   guidelines: {

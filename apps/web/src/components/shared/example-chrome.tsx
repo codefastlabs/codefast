@@ -73,10 +73,7 @@ export function ExampleChrome({
             >
               <ChevronDownIcon
                 aria-hidden
-                className={cn(
-                  "size-4 transition-transform duration-200 motion-reduce:transition-none",
-                  codeExpanded && "rotate-180",
-                )}
+                className={cn("size-4 transition-transform duration-200", codeExpanded && "rotate-180")}
               />
             </Button>
           </div>
@@ -86,7 +83,7 @@ export function ExampleChrome({
           <div
             id={codePanelId}
             className={cn(
-              "transition-[max-height] duration-300 ease-out motion-reduce:transition-none",
+              "transition-[max-height] duration-300 ease-out",
               codeExpanded ? "max-h-[min(70vh,40rem)] overflow-y-auto" : cn(CODE_PEEK_MAX_HEIGHT, "overflow-hidden"),
               codeClassName,
             )}
