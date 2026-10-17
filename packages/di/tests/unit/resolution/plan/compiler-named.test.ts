@@ -7,7 +7,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
@@ -54,10 +53,10 @@ describe("a named dependency inside a compiled plan", () => {
       .transient();
 
     for (let index = 0; index < WARM_ITERATIONS; index += 1) {
-      await resolveAsync(container, rootToken);
+      await container.resolveAsync(rootToken);
     }
 
-    expect((await resolveAsync(container, rootToken)).driver).toBe("primary-driver");
+    expect((await container.resolveAsync(rootToken)).driver).toBe("primary-driver");
   });
 
   it("leaves an async named dependency to the runtime when its candidate carries a predicate", async () => {
@@ -76,10 +75,10 @@ describe("a named dependency inside a compiled plan", () => {
       .transient();
 
     for (let index = 0; index < WARM_ITERATIONS; index += 1) {
-      await resolveAsync(container, rootToken);
+      await container.resolveAsync(rootToken);
     }
 
-    expect((await resolveAsync(container, rootToken)).driver).toBe("primary-driver");
+    expect((await container.resolveAsync(rootToken)).driver).toBe("primary-driver");
   });
 
   it("resolves a named singleton to the named binding on its first materialization", () => {

@@ -10,7 +10,6 @@ import type { Token } from "#core/token";
 import { tokenName } from "#core/token";
 import type {
   ActivationHandler,
-  AsyncResolutionContext,
   BindingConstraint,
   BindingKind,
   BindingScope,
@@ -64,7 +63,7 @@ type LifetimeDefinition<Value> =
 type BuiltDefinition<Value, Deps extends ReadonlyArray<InjectableDependency>> =
   | ({ readonly to: Constructor<Value> } & Never<Exclude<StrategyKey, "to">>)
   | ({ readonly toDynamic: (ctx: ResolutionContext) => Value } & Never<Exclude<StrategyKey, "toDynamic">>)
-  | ({ readonly toDynamicAsync: (ctx: AsyncResolutionContext) => Promise<Value> } & Never<
+  | ({ readonly toDynamicAsync: (ctx: ResolutionContext) => Promise<Value> } & Never<
       Exclude<StrategyKey, "toDynamicAsync">
     >)
   | ({ readonly toResolved: (...args: ResolvedParameters<Deps>) => Value; readonly deps: Deps } & Never<

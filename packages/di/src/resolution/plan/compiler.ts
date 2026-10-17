@@ -14,9 +14,15 @@ import { AsyncResolutionError } from "#errors";
 import type { DependencySlot } from "#injection/dependency-slot";
 import { injectionSlotToResolveOptions } from "#injection/dependency-slot";
 import type { ConstructorMetadata } from "#metadata/types";
+import { settleInOrder } from "#resolution/async-fan-out";
 import { enterSeededPath, leaveSeededPath } from "#resolution/path";
-import type { PlanNode } from "#resolution/plan/codegen";
-import { generatePlan, isPlanCodegenAvailable, PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/codegen";
+import type { AsyncPlanNode, PlanNode } from "#resolution/plan/codegen";
+import {
+  generateAsyncPlan,
+  generatePlan,
+  isPlanCodegenAvailable,
+  PLAN_CODEGEN_THRESHOLD,
+} from "#resolution/plan/codegen";
 
 /**
  * Compilation asked to retry later (class lifecycle metadata not discovered yet).
@@ -50,32 +56,67 @@ type DependencyCompileResult = SyncNode | typeof PLAN_RETRY;
 type SyncPlanCompileResult = SyncNode | null | typeof PLAN_RETRY;
 
 /**
- * A plan that runs its closure first and, once it keeps running, swaps in a function generated of its own.
+ * Whether a compiled async thunk's return needs awaiting: never, at runtime's discretion, or always.
  *
- * @remarks Nothing resolved only a few times ever compiles one; `onGenerated` counts the plans generated.
+ * @remarks Settled at compile time so a fully synchronous subtree touches no promise, while anything
+ * that may yield one routes through `Promise.all` — the interpreted async path awaits every dependency.
  */
-export function tieredPlan(
-  closure: () => unknown,
-  generate: () => (() => unknown) | null,
-  replace: (current: () => unknown, next: () => unknown) => void,
-  onGenerated: () => void,
-): () => unknown {
-  if (!isPlanCodegenAvailable()) {
-    return closure;
-  }
-  let runs = 0;
-  const plan = (): unknown => {
-    runs += 1;
-    if (runs === PLAN_CODEGEN_THRESHOLD) {
-      const generated = generate();
-      if (generated !== null) {
-        onGenerated();
-      }
-      replace(plan, generated ?? closure);
+type ThunkPromiseShape = "never" | "maybe" | "always";
+
+/** One compiled async dependency: its thunk, what its return needs from the consumer, and its shape for the generator. */
+interface AsyncNodeThunk {
+  readonly run: () => unknown;
+  readonly promiseShape: ThunkPromiseShape;
+  readonly node: AsyncPlanNode;
+}
+
+type AsyncDependencyCompileResult = AsyncNodeThunk | typeof PLAN_RETRY;
+
+function allSynchronous(deps: ReadonlyArray<AsyncNodeThunk>): boolean {
+  for (let index = 0; index < deps.length; index += 1) {
+    if (deps[index]!.promiseShape !== "never") {
+      return false;
     }
-    return closure();
+  }
+  return true;
+}
+
+/**
+ * The promise-aware combinator: run every dep thunk, settle them together, then apply.
+ *
+ * @remarks A dep's sync throw becomes that slot's rejection so its siblings still start — the
+ * interpreted path starts every sibling before any failure is reported, and so does this; a failure
+ * is the first in declaration order, as it is on every other lane.
+ */
+function settleThenApply(
+  deps: ReadonlyArray<AsyncNodeThunk>,
+  apply: (values: Array<unknown>) => unknown,
+): () => Promise<unknown> {
+  if (deps.length === 1) {
+    // One dependency has one outcome, so there is nothing to order and no fan-out to settle.
+    const only = deps[0]!.run;
+    const applyOne = (value: unknown): unknown => apply([value]);
+    return () => {
+      let pending: unknown;
+      try {
+        pending = only();
+      } catch (dependencyError) {
+        pending = Promise.reject(dependencyError);
+      }
+      return Promise.resolve(pending).then(applyOne);
+    };
+  }
+  return () => {
+    const pending = new Array<unknown>(deps.length);
+    for (let index = 0; index < deps.length; index += 1) {
+      try {
+        pending[index] = deps[index]!.run();
+      } catch (dependencyError) {
+        pending[index] = Promise.reject(dependencyError);
+      }
+    }
+    return settleInOrder(pending, apply);
   };
-  return plan;
 }
 
 /**
@@ -122,6 +163,8 @@ export interface InstantiationPlanHost {
   getResolutionFrame(binding: Binding): ResolutionFrame;
   /** Swaps a plan the host still holds for its successor; a plan the host has since dropped stays dropped. */
   replacePlan(binding: Binding, current: () => unknown, next: () => unknown): void;
+  /** The async counterpart of {@link InstantiationPlanHost.replacePlan}, over the async plan map. */
+  replaceAsyncPlan(binding: Binding, current: () => unknown, next: () => unknown): void;
   /** Runtime resolve for an escaped dependency, seeded with the ancestor frames above it. */
   resolveEscaped(
     token: Token<unknown> | Constructor,
@@ -129,6 +172,13 @@ export interface InstantiationPlanHost {
     arity: EscapeArity,
     resolutionStack: Array<ResolutionFrame>,
   ): unknown;
+  /** The async counterpart of {@link InstantiationPlanHost.resolveEscaped}, replaying the async dispatch. */
+  resolveEscapedAsync(
+    token: Token<unknown> | Constructor,
+    options: ResolveOptions | undefined,
+    arity: EscapeArity,
+    resolutionStack: Array<ResolutionFrame>,
+  ): Promise<unknown>;
 }
 
 /**
@@ -173,14 +223,31 @@ export class InstantiationPlanCompiler {
     );
   }
 
+  /**
+   * The closure runs first; a plan that keeps running is generated as a function of its own and
+   * takes the closure's place in the host's map, so nothing resolved a few times ever compiles one.
+   */
   #tiered(
     closure: () => unknown,
     generate: () => (() => unknown) | null,
     replace: (current: () => unknown, next: () => unknown) => void,
   ): () => unknown {
-    return tieredPlan(closure, generate, replace, () => {
-      this.#generatedPlanCount += 1;
-    });
+    if (!isPlanCodegenAvailable()) {
+      return closure;
+    }
+    let runs = 0;
+    const plan = (): unknown => {
+      runs += 1;
+      if (runs === PLAN_CODEGEN_THRESHOLD) {
+        const generated = generate();
+        if (generated !== null) {
+          this.#generatedPlanCount += 1;
+        }
+        replace(plan, generated ?? closure);
+      }
+      return closure();
+    };
+    return plan;
   }
 
   /**
@@ -448,5 +515,235 @@ export class InstantiationPlanCompiler {
     // Anything opaque — a factory, a scoped binding, an activation hook, a class the compiler
     // declined — runs on the runtime path, seeded with this plan's ancestors.
     return this.#compileEscapeThunk(binding.token, ancestors, "single", options);
+  }
+
+  // ── The async lane ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Compiles a transient binding whose graph is statically visible, for the async entry point.
+   *
+   * @remarks Same gates as the sync lane; the differences are downstream — escapes replay the async
+   * dispatch, and a node whose dependencies may yield promises awaits them together, exactly as the
+   * interpreted async path does.
+   */
+  compileAsync(binding: Binding & { kind: "class" | "resolved" | "resolved-async" }): InstantiationPlanCompileResult {
+    const node =
+      binding.kind === "class"
+        ? this.#compileAsyncClassNode(binding, new Set(), 0, [])
+        : this.#compileAsyncResolvedNode(binding, new Set(), 0, []);
+    if (node === null || node === PLAN_RETRY) {
+      return node;
+    }
+    const host = this.#host;
+    return this.#tiered(
+      node.run,
+      () => generateAsyncPlan(node.node),
+      (current, next) => host.replaceAsyncPlan(binding, current, next),
+    );
+  }
+
+  #compileAsyncEscapeThunk(
+    token: Token<unknown> | Constructor,
+    ancestors: ReadonlyArray<Binding>,
+    arity: EscapeArity = "single",
+    options?: ResolveOptions,
+  ): AsyncNodeThunk {
+    const host = this.#host;
+    const frames = ancestors.map((ancestor) => host.getResolutionFrame(ancestor));
+    const run = (): unknown => host.resolveEscapedAsync(token, options, arity, [...frames]);
+    return { run, promiseShape: "always", node: { kind: "thunk", run } };
+  }
+
+  #compileAsyncClassNode(
+    binding: Binding & { kind: "class" },
+    compileStack: Set<Binding["identifier"]>,
+    depth: number,
+    ancestors: ReadonlyArray<Binding>,
+  ): AsyncNodeThunk | null | typeof PLAN_RETRY {
+    if (binding.activationHook !== undefined || this.#host.hasActivationHandlers(binding)) {
+      return null;
+    }
+    const target = binding.target;
+    const hasPostConstruct = this.#host.knownPostConstruct(target);
+    if (hasPostConstruct === undefined) {
+      return PLAN_RETRY;
+    }
+    if (hasPostConstruct || this.#host.needsActiveContainer(target)) {
+      return null;
+    }
+    const invokable = target as ConstructorInvocation;
+    const meta = this.#host.getConstructorMetadata(target);
+    const leaf: AsyncNodeThunk = {
+      run: () => new invokable(),
+      promiseShape: "never",
+      node: { kind: "construct", target: invokable, deps: [], awaits: false },
+    };
+    if (meta === undefined) {
+      // Metadata-less classes with required params throw on the runtime path — keep them there.
+      return target.length === 0 ? leaf : null;
+    }
+    const params = meta.params;
+    if (params.length === 0) {
+      return leaf;
+    }
+    const depThunks = new Array<AsyncNodeThunk>(params.length);
+    const depAncestors = [...ancestors, binding];
+    compileStack.add(binding.identifier);
+    try {
+      for (let index = 0; index < params.length; index += 1) {
+        const thunk = this.#compileAsyncInjectionThunk(params[index]!, compileStack, depth, depAncestors);
+        if (thunk === PLAN_RETRY) {
+          return thunk;
+        }
+        depThunks[index] = thunk;
+      }
+    } finally {
+      compileStack.delete(binding.identifier);
+    }
+    const nodes = depThunks.map((thunk) => thunk.node);
+    if (allSynchronous(depThunks)) {
+      const node: AsyncPlanNode = { kind: "construct", target: invokable, deps: nodes, awaits: false };
+      switch (depThunks.length) {
+        case 1: {
+          const dep0 = depThunks[0]!.run;
+          return { run: () => new invokable(dep0()), promiseShape: "never", node };
+        }
+        case 2: {
+          const dep0 = depThunks[0]!.run;
+          const dep1 = depThunks[1]!.run;
+          return { run: () => new invokable(dep0(), dep1()), promiseShape: "never", node };
+        }
+        default:
+          return {
+            run: () => new invokable(...depThunks.map((thunk) => thunk.run())),
+            promiseShape: "never",
+            node,
+          };
+      }
+    }
+    return {
+      run: settleThenApply(depThunks, (values) => new invokable(...values)),
+      promiseShape: "always",
+      node: { kind: "construct", target: invokable, deps: nodes, awaits: true },
+    };
+  }
+
+  #compileAsyncResolvedNode(
+    binding: Binding & { kind: "resolved" | "resolved-async" },
+    compileStack: Set<Binding["identifier"]>,
+    depth: number,
+    ancestors: ReadonlyArray<Binding>,
+  ): AsyncNodeThunk | null | typeof PLAN_RETRY {
+    if (binding.activationHook !== undefined || this.#host.hasActivationHandlers(binding)) {
+      return null;
+    }
+    const factory = binding.factory;
+    const depThunks = new Array<AsyncNodeThunk>(binding.deps.length);
+    const depAncestors = [...ancestors, binding];
+    compileStack.add(binding.identifier);
+    try {
+      for (let index = 0; index < binding.deps.length; index += 1) {
+        const thunk = this.#compileAsyncInjectionThunk(binding.deps[index]!, compileStack, depth, depAncestors);
+        if (thunk === PLAN_RETRY) {
+          return thunk;
+        }
+        depThunks[index] = thunk;
+      }
+    } finally {
+      compileStack.delete(binding.identifier);
+    }
+    // A sync-kind factory may still hand back a promise on this path — the async entry awaits it,
+    // so the consumer is told to as well.
+    const directShape: ThunkPromiseShape = binding.kind === "resolved-async" ? "always" : "maybe";
+    const nodes = depThunks.map((thunk) => thunk.node);
+    if (allSynchronous(depThunks)) {
+      return {
+        run: () => factory(...depThunks.map((thunk) => thunk.run())),
+        promiseShape: directShape,
+        node: { kind: "call", factory, deps: nodes, awaits: false },
+      };
+    }
+    return {
+      run: settleThenApply(depThunks, (values) => factory(...values)),
+      promiseShape: "always",
+      node: { kind: "call", factory, deps: nodes, awaits: true },
+    };
+  }
+
+  /** Mirrors {@link InstantiationPlanCompiler.#compileInjectionThunk}, escaping through the async dispatch. */
+  #compileAsyncInjectionThunk(
+    descriptor: DependencySlot,
+    compileStack: Set<Binding["identifier"]>,
+    depth: number,
+    ancestors: ReadonlyArray<Binding>,
+  ): AsyncDependencyCompileResult {
+    const token = descriptor.token;
+    const options = injectionSlotToResolveOptions(descriptor);
+    if (descriptor.multi) {
+      return this.#compileAsyncEscapeThunk(token, ancestors, "all", options);
+    }
+    if (descriptor.optional) {
+      return this.#compileAsyncEscapeThunk(token, ancestors, "optional", options);
+    }
+    if (options !== undefined) {
+      const indexed = this.#host.lookupPathIndependentEntry(token, options);
+      if (indexed !== null) {
+        return this.#compileAsyncDepThunk(indexed, compileStack, depth, ancestors, options);
+      }
+      return this.#compileAsyncEscapeThunk(token, ancestors, "single", options);
+    }
+    const entry = this.#host.lookupDependencyEntry(token);
+    if (entry === null) {
+      return this.#compileAsyncEscapeThunk(token, ancestors);
+    }
+    return this.#compileAsyncDepThunk(entry, compileStack, depth, ancestors);
+  }
+
+  #compileAsyncDepThunk(
+    entry: InstantiationPlanDependencyEntry,
+    compileStack: Set<Binding["identifier"]>,
+    depth: number,
+    ancestors: ReadonlyArray<Binding>,
+    options?: ResolveOptions,
+  ): AsyncDependencyCompileResult {
+    const { binding } = entry;
+    if (binding.kind === "constant" && binding.activationHook === undefined) {
+      if (!this.#host.hasActivationHandlers(binding)) {
+        const value = binding.value;
+        // The interpreted path funnels every dependency through an await, which unwraps a
+        // promise-valued constant — so one compiles as needing that same await.
+        return {
+          run: () => value,
+          promiseShape: value instanceof Promise ? "always" : "never",
+          node: { kind: "value", value },
+        };
+      }
+    }
+    const scope = binding.scope;
+    if (scope === "singleton") {
+      // Cached-singleton read; the cold materialization escapes with the same criteria.
+      const escape = this.#compileAsyncEscapeThunk(binding.token, ancestors, "single", options).run;
+      const singletonBinding = binding;
+      return {
+        run: () => {
+          const cached = singletonBinding.instance;
+          return cached === NO_INSTANCE ? escape() : cached;
+        },
+        promiseShape: "maybe",
+        node: { kind: "singleton", binding: singletonBinding, escape },
+      };
+    }
+    if (scope === "transient" && !compileStack.has(binding.identifier)) {
+      let inlined: AsyncNodeThunk | null | typeof PLAN_RETRY = null;
+      if (binding.kind === "class") {
+        inlined = this.#compileAsyncClassNode(binding, compileStack, depth + 1, ancestors);
+      } else if (binding.kind === "resolved" || binding.kind === "resolved-async") {
+        inlined = this.#compileAsyncResolvedNode(binding, compileStack, depth + 1, ancestors);
+      }
+      if (inlined !== null) {
+        return inlined;
+      }
+    }
+    return this.#compileAsyncEscapeThunk(binding.token, ancestors, "single", options);
   }
 }

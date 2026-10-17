@@ -71,8 +71,8 @@ export function circularDependency(cycle: ReadonlyArray<string>): string {
 /** The message of an `AsyncResolutionError`. */
 export function asyncResolution(tokenName: string, asyncSourceToken: string): string {
   return asyncSourceToken === tokenName
-    ? `Token '${tokenName}' requires async resolution because its factory is async. Use resolveAsync(container, ${tokenName}).`
-    : `Token '${tokenName}' requires async resolution because '${asyncSourceToken}' in its dependency chain has an async factory. Use resolveAsync(container, ${tokenName}).`;
+    ? `Token '${tokenName}' requires async resolution because its factory is async. Use container.resolveAsync(${tokenName}).`
+    : `Token '${tokenName}' requires async resolution because '${asyncSourceToken}' in its dependency chain has an async factory. Use container.resolveAsync(${tokenName}).`;
 }
 
 /** The message of an `AsyncDeactivationError`. */

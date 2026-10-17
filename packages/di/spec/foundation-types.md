@@ -3,20 +3,18 @@
 This section declares every foundation type used throughout the spec. The implementer must export all of them from
 `@codefast/di`. The table below is a map; each type is specified in its own subsection.
 
-| Type                                        | What it is                                                 | Where you meet it                                   |
-| ------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------- |
-| `BindingScope`                              | The three instance lifetimes                               | `.singleton()` / `.transient()` / `.scoped()`       |
-| `BindingIdentifier`                         | An opaque id for one committed binding                     | `.id()`, `unbind(id)`                               |
-| `Constructor`                               | A concrete `new`-able class                                | `.to(Class)`, `.toSelf()`, deps arrays              |
-| `ActivationHandler` / `DeactivationHandler` | The two per-instance lifecycle callbacks                   | `.onActivation()`, `.onDeactivation()`              |
-| `ResolveOptions`                            | The hint a single resolve carries (name and/or tags)       | `resolve(token, options)`, `inject(token, options)` |
-| `Resolver`                                  | The three sync resolve methods a container and `ctx` share | `container.resolve(…)`, `ctx.resolve(…)`            |
-| `AsyncResolver`                             | The three async resolve methods an async `ctx` adds        | `ctx.resolveAsync(…)`                               |
-| `ResolutionContext`                         | What a sync factory or a hook receives                     | `.toDynamic((ctx) => …)`                            |
-| `AsyncResolutionContext`                    | What an async factory receives                             | `.toDynamicAsync(async (ctx) => …)`                 |
-| `ConstraintContext`                         | Where the current resolve sits in the dependency graph     | `.when((ctx) => …)`, advanced constraints           |
-| `DependencySlot`                            | What one resolvable dependency declares                    | `@injectable([…])` deps, `ParamMetadata`            |
-| `TokenValue`                                | Extracts `Value` from a token or constructor               | Type-level helper                                   |
+| Type                                        | What it is                                             | Where you meet it                                   |
+| ------------------------------------------- | ------------------------------------------------------ | --------------------------------------------------- |
+| `BindingScope`                              | The three instance lifetimes                           | `.singleton()` / `.transient()` / `.scoped()`       |
+| `BindingIdentifier`                         | An opaque id for one committed binding                 | `.id()`, `unbind(id)`                               |
+| `Constructor`                               | A concrete `new`-able class                            | `.to(Class)`, `.toSelf()`, deps arrays              |
+| `ActivationHandler` / `DeactivationHandler` | The two per-instance lifecycle callbacks               | `.onActivation()`, `.onDeactivation()`              |
+| `ResolveOptions`                            | The hint a single resolve carries (name and/or tags)   | `resolve(token, options)`, `inject(token, options)` |
+| `Resolver`                                  | The six resolve methods a container and `ctx` share    | `container.resolve(…)`, `ctx.resolve(…)`            |
+| `ResolutionContext`                         | What a dynamic factory receives                        | `.toDynamic((ctx) => …)`                            |
+| `ConstraintContext`                         | Where the current resolve sits in the dependency graph | `.when((ctx) => …)`, advanced constraints           |
+| `DependencySlot`                            | What one resolvable dependency declares                | `@injectable([…])` deps, `ParamMetadata`            |
+| `TokenValue`                                | Extracts `Value` from a token or constructor           | Type-level helper                                   |
 
 ## `BindingScope`
 
@@ -134,15 +132,12 @@ Because interning gives each value exactly one criterion, comparing criteria by 
 
 ## `ResolutionContext`
 
-`ctx` is what a dynamic factory (`toDynamic` / `toDynamicAsync`) or an activation hook receives. It is **not** a full
-container — it opens up exactly the ability to resolve within the current context.
+`ctx` is what a dynamic factory (`toDynamic` / `toDynamicAsync`) receives. It is **not** a full container — it opens up
+exactly the ability to resolve within the current context.
 
-- A `ResolutionContext` — what `toDynamic` and a hook receive — has three methods, each taking a token plus the same
-  optional hint: `resolve`, `resolveOptional`, `resolveAll`. They are the `Resolver` interface, which `Container`
-  extends too, so a call through `ctx` narrows a token's slot names exactly as the same call on the container does.
-- An `AsyncResolutionContext` — what `toDynamicAsync` receives — adds the `AsyncResolver` three: `resolveAsync`,
-  `resolveOptionalAsync`, `resolveAllAsync`. A container offers those as functions instead
-  ([Container → resolve](container.md)), so a program that never awaits never bundles them.
+- Six methods, each taking a token plus the same optional hint: `resolve`, `resolveAsync`, `resolveOptional`,
+  `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync`. They are the `Resolver` interface, which `Container` extends
+  too, so a call through `ctx` narrows a token's slot names exactly as the same call on the container does.
 - `resolveAll` throws `AsyncResolutionError` if any matching binding is async, and returns `[]` when nothing matches.
   Both collection reads return a `ReadonlyArray` that belongs to the caller: every read hands out a fresh array, the
   memoized root-level read included, so writing into one can never change what a later read returns.
@@ -151,7 +146,7 @@ container — it opens up exactly the ability to resolve within the current cont
   frame of the binding the factory is building, so `parent` is that binding — what a dependency the factory resolves
   sees as its parent.
 
-> **Exact shape:** `src/core/types.ts` — `Resolver`, `AsyncResolver`, `ResolutionContext` and `AsyncResolutionContext`.
+> **Exact shape:** `src/core/types.ts` — `Resolver` and `ResolutionContext`.
 
 ## `ConstraintContext`
 

@@ -5,7 +5,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAllAsync } from "#container/async";
 import { Container } from "#container/container";
 import { lookupBindings } from "#container/introspect";
 import { tag } from "#core/tag";
@@ -132,7 +131,7 @@ describe("many() bindings", () => {
         return 100;
       });
 
-    await expect(resolveAllAsync(container, factoryToken)).resolves.toEqual([1, 100]);
-    await expect(resolveAllAsync(container, factoryToken)).resolves.toEqual([2, 100]);
+    await expect(container.resolveAllAsync(factoryToken)).resolves.toEqual([1, 100]);
+    await expect(container.resolveAllAsync(factoryToken)).resolves.toEqual([2, 100]);
   });
 });

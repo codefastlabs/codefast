@@ -5,7 +5,7 @@
  * on the inversify column.  They still provide useful regression protection for
  * the codefast-specific code paths.
  *
- *   - `initialize-async-warmup` — `initializeAsync(container)` resolves and
+ *   - `initialize-async-warmup` — `container.initializeAsync()` resolves and
  *     caches all singleton bindings eagerly.  Each iteration: fresh container +
  *     4 async-singleton bindings + `initializeAsync()`.  Measures the warm-up
  *     cost before serving the first request — the "fail fast at startup" pattern.
@@ -19,7 +19,7 @@
  *     `BindingSnapshot[]` for a single token without building a full snapshot.
  *     Faster than `inspect()` when only one token's metadata is needed.
  */
-import { Container, initializeAsync, inspect, lookupBindings, token } from "@codefast/di";
+import { Container, inspect, lookupBindings, token } from "@codefast/di";
 
 import { batched } from "#harness/batched";
 import type { AsyncBenchScenario, BenchScenario } from "#scenarios/types";
@@ -44,7 +44,7 @@ function buildInitializeAsyncWarmupScenario(): AsyncBenchScenario {
         })
         .singleton();
     }
-    await initializeAsync(container);
+    await container.initializeAsync();
   }
 
   return {

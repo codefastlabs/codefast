@@ -4,6 +4,7 @@
 import type { Binding } from "#core/binding";
 import { NO_INSTANCE } from "#core/binding";
 import type { ConstructorInvocation } from "#core/constructor-type";
+import { settleInOrder } from "#resolution/async-fan-out";
 
 /**
  * The number of runs a plan's closure makes before the plan is generated as its own function.
@@ -39,6 +40,35 @@ export type PlanNode =
   | { readonly kind: "value"; readonly value: unknown }
   | { readonly kind: "singleton"; readonly binding: Binding; readonly escape: () => unknown }
   | { readonly kind: "thunk"; readonly run: () => unknown };
+
+/**
+ * The shape of a compiled async plan.
+ *
+ * @remarks A node that `awaits` has a dependency that may yield a promise, so it runs as the
+ * interpreted async path does: every dependency starts in order, a sync throw becomes that slot's
+ * rejection, the constructor or factory runs on the settled values, and a failure is reported in
+ * declaration order.
+ *
+ * @since 0.10.0
+ */
+export type AsyncPlanNode =
+  | {
+      readonly kind: "construct";
+      readonly target: ConstructorInvocation;
+      readonly deps: ReadonlyArray<AsyncPlanNode>;
+      readonly awaits: boolean;
+    }
+  | {
+      readonly kind: "call";
+      readonly factory: (...args: Array<unknown>) => unknown;
+      readonly deps: ReadonlyArray<AsyncPlanNode>;
+      readonly awaits: boolean;
+    }
+  | { readonly kind: "value"; readonly value: unknown }
+  | { readonly kind: "singleton"; readonly binding: Binding; readonly escape: () => unknown }
+  | { readonly kind: "thunk"; readonly run: () => unknown };
+
+const rejectWith = (error: unknown): Promise<never> => Promise.reject(error);
 
 let codegenAvailable: boolean | undefined;
 let generatedCount = 0;
@@ -80,8 +110,20 @@ export function generatePlan(node: PlanNode): (() => unknown) | null {
   return compileRendered(emitter, emitter.expression(node));
 }
 
-/** Compiles an emitter's rendered plan, or `null` when the runtime refuses to. */
-export function compileRendered(emitter: PlanEmitter, result: string): (() => unknown) | null {
+/**
+ * Generates an async plan as a function of its own, or `null` when the runtime refuses to compile one.
+ *
+ * @since 0.10.0
+ */
+export function generateAsyncPlan(node: AsyncPlanNode): (() => unknown) | null {
+  if (!isPlanCodegenAvailable()) {
+    return null;
+  }
+  const emitter = new PlanEmitter();
+  return compileRendered(emitter, emitter.asyncExpression(node));
+}
+
+function compileRendered(emitter: PlanEmitter, result: string): (() => unknown) | null {
   generatedCount += 1;
   const locals = emitter.locals.length === 0 ? "" : `let ${emitter.locals.join(", ")};`;
   const body = `"use strict";/* plan ${String(generatedCount)} */${emitter.hoisted.join("")}return () => {${locals}${emitter.statements.join("")}return ${result};};`;
@@ -104,7 +146,7 @@ export function compileRendered(emitter: PlanEmitter, result: string): (() => un
  * its dependencies renders as an inner function of the same shape, so every plan's awaiting nodes have call
  * sites of their own too.
  */
-export class PlanEmitter {
+class PlanEmitter {
   readonly names: Array<string> = [];
   readonly values: Array<unknown> = [];
   readonly hoisted: Array<string> = [];
@@ -128,23 +170,46 @@ export class PlanEmitter {
   expression(node: PlanNode): string {
     switch (node.kind) {
       case "construct":
-        return this.define(`new ${this.slot(node.target, "C")}(${this.#list(node.deps)})`);
+        return this.#define(`new ${this.#slot(node.target, "C")}(${this.#list(node.deps)})`);
       case "accessors":
-        return this.define(`${this.slot(node.construct, "A")}([${this.#list(node.deps)}])`);
+        return this.#define(`${this.#slot(node.construct, "A")}([${this.#list(node.deps)}])`);
       case "call": {
         // The settle only ever throws, so it runs on the promise branch alone and the plain result stands.
-        const local = this.define(`${this.slot(node.factory, "F")}(${this.#list(node.deps)})`);
-        this.statement(
-          `if (${local} instanceof ${this.slot(Promise, "P")}) ${local} = ${this.slot(node.settle, "S")}(${local});`,
+        const local = this.#define(`${this.#slot(node.factory, "F")}(${this.#list(node.deps)})`);
+        this.#statement(
+          `if (${local} instanceof ${this.#slot(Promise, "P")}) ${local} = ${this.#slot(node.settle, "S")}(${local});`,
         );
         return local;
       }
       case "value":
-        return this.slot(node.value, "V");
+        return this.#slot(node.value, "V");
       case "singleton":
-        return this.singletonRead(node.binding, node.escape);
+        return this.#singletonRead(node.binding, node.escape);
       case "thunk":
-        return this.define(`${this.slot(node.run, "T")}()`);
+        return this.#define(`${this.#slot(node.run, "T")}()`);
+    }
+  }
+
+  asyncExpression(node: AsyncPlanNode): string {
+    switch (node.kind) {
+      case "construct": {
+        const target = this.#slot(node.target, "C");
+        return node.awaits
+          ? this.#settled(node.deps, (values) => `new ${target}(${values})`)
+          : this.#define(`new ${target}(${this.#asyncList(node.deps)})`);
+      }
+      case "call": {
+        const factory = this.#slot(node.factory, "F");
+        return node.awaits
+          ? this.#settled(node.deps, (values) => `${factory}(${values})`)
+          : this.#define(`${factory}(${this.#asyncList(node.deps)})`);
+      }
+      case "value":
+        return this.#slot(node.value, "V");
+      case "singleton":
+        return this.#singletonRead(node.binding, node.escape);
+      case "thunk":
+        return this.#define(`${this.#slot(node.run, "T")}()`);
     }
   }
 
@@ -152,31 +217,48 @@ export class PlanEmitter {
     return deps.map((dep) => this.expression(dep)).join(", ");
   }
 
-  /** Opens a nested function's frame, whose statements and locals collect apart until it closes. */
-  openFrame(): { readonly locals: Array<string>; readonly statements: Array<string> } {
-    const frame = { locals: [] as Array<string>, statements: [] as Array<string> };
-    this.#frames.push(frame);
-    return frame;
+  #asyncList(deps: ReadonlyArray<AsyncPlanNode>): string {
+    return deps.map((dep) => this.asyncExpression(dep)).join(", ");
   }
 
-  closeFrame(): void {
-    this.#frames.pop();
-  }
-
-  /** A serial for a hoisted function, unique within this plan. */
-  nextHoistedIndex(): number {
+  // Every dependency starts in order, a sync throw becomes that slot's rejection so its siblings still
+  // start, and the node applies to the settled values — the interpreted async path, rendered.
+  #settled(deps: ReadonlyArray<AsyncPlanNode>, apply: (values: string) => string): string {
     const index = this.#hoistedCount;
     this.#hoistedCount += 1;
-    return index;
+    const name = `n${String(index)}`;
+    const applyName = `a${String(index)}`;
+    const reject = this.#slot(rejectWith, "R");
+    const frame = { locals: [] as Array<string>, statements: [] as Array<string> };
+    this.#frames.push(frame);
+    const pendings: Array<string> = [];
+    for (let position = 0; position < deps.length; position += 1) {
+      const pending = `p${String(position)}`;
+      pendings.push(pending);
+      // A dependency's own statements run inside its try, so its sync throw is its rejection alone.
+      const mark = frame.statements.length;
+      const reference = this.asyncExpression(deps[position]!);
+      const inner = frame.statements.splice(mark).join("");
+      frame.statements.push(`try{${inner}${pending}=${reference};}catch(e){${pending}=${reject}(e);}`);
+    }
+    this.#frames.pop();
+    const locals = [...pendings, ...frame.locals];
+    // One dependency has one outcome, so there is nothing to order and no fan-out to settle.
+    const settled =
+      deps.length === 1
+        ? `const ${applyName}=(v0)=>${apply("v0")};const ${name}=()=>{let ${locals.join(",")};${frame.statements.join("")}return ${this.#slot(Promise, "P")}.resolve(p0).then(${applyName});};`
+        : `const ${applyName}=(v)=>${apply(deps.map((_dep, position) => `v[${String(position)}]`).join(","))};const ${name}=()=>{let ${locals.join(",")};${frame.statements.join("")}return ${this.#slot(settleInOrder, "W")}([${pendings.join(",")}],${applyName});};`;
+    this.hoisted.push(settled);
+    return this.#define(`${name}()`);
   }
 
-  define(expression: string): string {
+  #define(expression: string): string {
     const local = this.#local();
-    this.statement(`${local} = ${expression};`);
+    this.#statement(`${local} = ${expression};`);
     return local;
   }
 
-  statement(statement: string): void {
+  #statement(statement: string): void {
     this.#frames.at(-1)!.statements.push(statement);
   }
 
@@ -187,14 +269,14 @@ export class PlanEmitter {
     return local;
   }
 
-  singletonRead(binding: Binding, escape: () => unknown): string {
-    const local = this.define(`${this.slot(binding, "B")}.instance`);
-    this.statement(`if (${local} === ${this.slot(NO_INSTANCE, "N")}) ${local} = ${this.slot(escape, "E")}();`);
+  #singletonRead(binding: Binding, escape: () => unknown): string {
+    const local = this.#define(`${this.#slot(binding, "B")}.instance`);
+    this.#statement(`if (${local} === ${this.#slot(NO_INSTANCE, "N")}) ${local} = ${this.#slot(escape, "E")}();`);
     return local;
   }
 
   // One parameter per distinct value, so a class constructed four times is one constructor with four sites.
-  slot(value: unknown, prefix: string): string {
+  #slot(value: unknown, prefix: string): string {
     let name = this.#slotByValue.get(value);
     if (name === undefined) {
       name = `${prefix}${String(this.names.length)}`;

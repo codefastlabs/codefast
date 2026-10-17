@@ -46,7 +46,7 @@
  *   └───────────────────────────────────────────────────────────┘
  */
 
-import { Container, initializeAsync, inject, injectable, Module, resolveAsync, token, validate } from "@codefast/di";
+import { Container, inject, injectable, Module, token, validate } from "@codefast/di";
 
 import { ok, section } from "#examples/support/log";
 
@@ -358,7 +358,7 @@ class Platform {
     );
 
     // Eagerly warm up all singletons before serving traffic
-    await initializeAsync(this.#container);
+    await this.#container.initializeAsync();
     validate(this.#container);
 
     // Register plugin descriptors directly on the container with named slots.
@@ -412,7 +412,7 @@ class Platform {
   async runWithDocumentService<Result>(
     callback: (documentService: DocumentService) => Promise<Result>,
   ): Promise<Result> {
-    const documentService = await resolveAsync(this.#container, DocumentServiceToken);
+    const documentService = await this.#container.resolveAsync(DocumentServiceToken);
     return callback(documentService);
   }
 
@@ -439,7 +439,7 @@ class Platform {
 
     // Load new storage plugin and warm up only its singleton
     await this.#container.loadAsync(newPluginModule);
-    await resolveAsync(this.#container, StorageProviderToken);
+    await this.#container.resolveAsync(StorageProviderToken);
 
     // Register new descriptor in the same named slot to replace old storage descriptor.
     this.#container.bind(PluginDescriptorToken).whenNamed("storage").toConstantValue(newDescriptor);
@@ -451,7 +451,7 @@ class Platform {
   }
 
   async flushAnalytics(): Promise<void> {
-    const analyticsProvider = await resolveAsync(this.#container, AnalyticsProviderToken);
+    const analyticsProvider = await this.#container.resolveAsync(AnalyticsProviderToken);
     await analyticsProvider.flush();
   }
 

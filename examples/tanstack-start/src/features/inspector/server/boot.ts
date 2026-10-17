@@ -1,6 +1,6 @@
 /** Boot-time warm-up of the async pricing config, and the proof that it happened. */
 import type { Container } from "@codefast/di";
-import { DiError, initializeAsync, token } from "@codefast/di";
+import { DiError, token } from "@codefast/di";
 
 interface PricingConfig {
   readonly revision: string;
@@ -48,7 +48,7 @@ const syncResolveOutcome = (container: Container): string => {
  * ordering: it has the identical binding and simply never had `initializeAsync()` called on it.
  */
 export async function warmAndReport(container: Container, cold: Container): Promise<BootReport> {
-  await initializeAsync(container);
+  await container.initializeAsync();
 
   const config = container.resolve(pricingConfigToken);
 

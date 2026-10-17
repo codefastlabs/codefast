@@ -6,7 +6,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
@@ -249,12 +248,12 @@ describe("a hot async plan is generated as a function of its own", () => {
       .transient();
     container.bind(Root).toSelf().transient();
 
-    await heatAsync(() => resolveAsync(container, Root));
+    await heatAsync(() => container.resolveAsync(Root));
 
     expect(diagnose(container).compiledAsyncPlanCount).toBe(1);
     expect(diagnose(container).generatedPlanCount).toBe(1);
     const before = calls;
-    const instance = await resolveAsync(container, Root);
+    const instance = await container.resolveAsync(Root);
     expect(instance).toBeInstanceOf(Root);
     expect(instance.leaf.n).toBe(before + 1);
   });
@@ -275,10 +274,10 @@ describe("a hot async plan is generated as a function of its own", () => {
     container.bind(Leaf).toSelf().transient();
     container.bind(Root).toSelf().transient();
 
-    await heatAsync(() => resolveAsync(container, Root));
+    await heatAsync(() => container.resolveAsync(Root));
 
     expect(diagnose(container).generatedPlanCount).toBe(1);
-    const instance = await resolveAsync(container, Root);
+    const instance = await container.resolveAsync(Root);
     expect(instance.a).toBeInstanceOf(Leaf);
     expect(instance.a).not.toBe(instance.b);
   });
@@ -300,10 +299,10 @@ describe("a hot async plan is generated as a function of its own", () => {
       )
       .transient();
 
-    await heatAsync(() => resolveAsync(container, rootToken));
+    await heatAsync(() => container.resolveAsync(rootToken));
 
     expect(diagnose(container).generatedPlanCount).toBe(1);
-    expect(await resolveAsync(container, rootToken)).toBe(42);
+    expect(await container.resolveAsync(rootToken)).toBe(42);
   });
 
   it("keeps a sync throw inside a generated awaiting plan a rejection", async () => {
@@ -335,13 +334,13 @@ describe("a hot async plan is generated as a function of its own", () => {
       .toResolvedAsync(async (left: number, right: number) => [left, right], [leafToken, asyncToken])
       .transient();
 
-    await heatAsync(() => resolveAsync(container, rootToken));
+    await heatAsync(() => container.resolveAsync(rootToken));
     expect(diagnose(container).generatedPlanCount).toBe(1);
 
     explode = true;
     const startsBefore = siblingStarts;
 
-    await expect(resolveAsync(container, rootToken)).rejects.toThrow("leaf exploded");
+    await expect(container.resolveAsync(rootToken)).rejects.toThrow("leaf exploded");
     expect(siblingStarts).toBe(startsBefore + 1);
   });
 
@@ -361,11 +360,11 @@ describe("a hot async plan is generated as a function of its own", () => {
       .transient();
     container.bind(Root).toSelf().transient();
 
-    await heatAsync(() => resolveAsync(container, Root));
+    await heatAsync(() => container.resolveAsync(Root));
     expect(diagnose(container).generatedPlanCount).toBe(1);
 
     cycle = true;
 
-    await expect(resolveAsync(container, Root)).rejects.toThrow(CircularDependencyError);
+    await expect(container.resolveAsync(Root)).rejects.toThrow(CircularDependencyError);
   });
 });

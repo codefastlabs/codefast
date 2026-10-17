@@ -9,7 +9,7 @@
  * - Parallel inflight deduplication for async singletons
  */
 
-import { Container, initializeAsync, inject, injectable, Module, resolveAsync, token } from "@codefast/di";
+import { Container, inject, injectable, Module, token } from "@codefast/di";
 
 import { item } from "#examples/support/log";
 
@@ -159,15 +159,15 @@ async function main(): Promise<void> {
   );
 
   // initializeAsync: eagerly resolve all singletons (including async ones)
-  await initializeAsync(container);
+  await container.initializeAsync();
 
-  const app = await resolveAsync(container, AppToken);
+  const app = await container.resolveAsync(AppToken);
   console.log(app.run("SELECT 1")); // result(SELECT 1)
 
   // Parallel inflight deduplication: two concurrent resolves share one Promise
   const [firstDatabaseResolve, secondDatabaseResolve] = await Promise.all([
-    resolveAsync(container, DatabaseToken),
-    resolveAsync(container, DatabaseToken),
+    container.resolveAsync(DatabaseToken),
+    container.resolveAsync(DatabaseToken),
   ]);
 
   item("Same Database instance (parallel resolve)", firstDatabaseResolve === secondDatabaseResolve); // true

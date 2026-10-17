@@ -1,8 +1,6 @@
 // Foundation types
 export type {
   ActivationHandler,
-  AsyncResolutionContext,
-  AsyncResolver,
   BindingConstraint,
   BindingIdentifier,
   BindingKind,
@@ -44,7 +42,6 @@ export type {
 export { Container } from "#container/container";
 export type { ContainerOptions, ContainerStatic } from "#container/container";
 export { explain, generateDependencyGraph, inspect, lookupBindings, validate } from "#container/introspect";
-export { initializeAsync, resolveAllAsync, resolveAsync, resolveOptionalAsync } from "#container/async";
 
 // Ambient container — the context an `@inject` accessor initializer resolves from. `resolution/context`
 // stays internal: it hands out resolver callbacks, not public values.

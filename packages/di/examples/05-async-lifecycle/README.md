@@ -119,7 +119,7 @@ const container = await Container.fromModulesAsync(InfrastructureModule, Databas
 ## `initializeAsync` — eager singleton resolution
 
 ```ts
-await initializeAsync(container);
+await container.initializeAsync();
 ```
 
 Without this call, async singletons are resolved lazily (on first `resolveAsync`). `initializeAsync()` eagerly resolves
@@ -134,7 +134,7 @@ production services.
 async function main(): Promise<void> {
   await using container = await Container.fromModulesAsync(...);
 
-  await initializeAsync(container);
+  await container.initializeAsync();
   // ... use the container ...
 
 } // container.dispose() called automatically here, firing all onDeactivation hooks
@@ -152,7 +152,7 @@ For async singletons, two concurrent `resolveAsync` calls share a single in-flig
 once:
 
 ```ts
-const [db1, db2] = await Promise.all([resolveAsync(container, DatabaseToken), resolveAsync(container, DatabaseToken)]);
+const [db1, db2] = await Promise.all([container.resolveAsync(DatabaseToken), container.resolveAsync(DatabaseToken)]);
 console.log(db1 === db2); // true — one instance, one connection
 ```
 

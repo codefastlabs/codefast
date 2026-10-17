@@ -7,10 +7,9 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { token } from "#core/token";
-import type { AsyncResolutionContext } from "#core/types";
+import type { ResolutionContext } from "#core/types";
 import { AsyncResolutionError, CircularDependencyError } from "#errors";
 
 describe("binding.inFlight is released on every exit path", () => {
@@ -166,10 +165,10 @@ describe("an async factory's prefix flag is released on every exit path", () => 
       })
       .transient();
 
-    await expect(resolveAsync(container, serviceToken)).rejects.toThrow("sync boom");
+    await expect(container.resolveAsync(serviceToken)).rejects.toThrow("sync boom");
     shouldThrow = false;
 
-    expect(await resolveAsync(container, serviceToken)).toBe("ok");
+    expect(await container.resolveAsync(serviceToken)).toBe("ok");
   });
 
   it("survives a rejected factory", async () => {
@@ -181,10 +180,10 @@ describe("an async factory's prefix flag is released on every exit path", () => 
       .toDynamicAsync(() => (shouldReject ? Promise.reject(new Error("async boom")) : Promise.resolve("ok")))
       .transient();
 
-    await expect(resolveAsync(container, serviceToken)).rejects.toThrow("async boom");
+    await expect(container.resolveAsync(serviceToken)).rejects.toThrow("async boom");
     shouldReject = false;
 
-    expect(await resolveAsync(container, serviceToken)).toBe("ok");
+    expect(await container.resolveAsync(serviceToken)).toBe("ok");
   });
 
   it("keeps two concurrent chains from sharing a context after one fails", async () => {
@@ -206,15 +205,15 @@ describe("an async factory's prefix flag is released on every exit path", () => 
       .transient();
 
     const [failed, worked] = await Promise.allSettled([
-      resolveAsync(container, failingToken),
-      resolveAsync(container, workingRootToken),
+      container.resolveAsync(failingToken),
+      container.resolveAsync(workingRootToken),
     ]);
 
     expect(failed.status).toBe("rejected");
     expect(worked).toEqual({ status: "fulfilled", value: "root:leaf" });
 
     // A context released twice would let a later chain read another chain's path.
-    expect(await resolveAsync(container, workingRootToken)).toBe("root:leaf");
+    expect(await container.resolveAsync(workingRootToken)).toBe("root:leaf");
   });
 
   it("still detects a genuine cycle after an unrelated chain failed", async () => {
@@ -230,14 +229,14 @@ describe("an async factory's prefix flag is released on every exit path", () => 
       .toDynamicAsync(async (ctx) => ctx.resolveAsync(cyclicToken))
       .transient();
 
-    await expect(resolveAsync(container, brokenToken)).rejects.toThrow("broken");
-    await expect(resolveAsync(container, cyclicToken)).rejects.toThrow(CircularDependencyError);
+    await expect(container.resolveAsync(brokenToken)).rejects.toThrow("broken");
+    await expect(container.resolveAsync(cyclicToken)).rejects.toThrow(CircularDependencyError);
   });
 });
 
 describe("a nested async level leaves its branch exactly as it found it", () => {
   /** Depth-3 chain whose middle level can be made to fail three different ways. */
-  function buildThreeLevelChain(middle: (ctx: AsyncResolutionContext) => Promise<string>): {
+  function buildThreeLevelChain(middle: (ctx: ResolutionContext) => Promise<string>): {
     container: Container;
     outer: ReturnType<typeof token<string>>;
   } {
@@ -263,11 +262,11 @@ describe("a nested async level leaves its branch exactly as it found it", () => 
       return Promise.resolve("mid");
     });
 
-    await expect(resolveAsync(container, outer)).rejects.toThrow("mid boom");
+    await expect(container.resolveAsync(outer)).rejects.toThrow("mid boom");
     shouldThrow = false;
 
     // A flag left set two levels down reports a cycle that is not there.
-    expect(await resolveAsync(container, outer)).toBe("outer:mid");
+    expect(await container.resolveAsync(outer)).toBe("outer:mid");
   });
 
   it("clears a middle level's flag when its factory rejects", async () => {
@@ -276,10 +275,10 @@ describe("a nested async level leaves its branch exactly as it found it", () => 
       shouldReject ? Promise.reject(new Error("mid rejected")) : Promise.resolve("mid"),
     );
 
-    await expect(resolveAsync(container, outer)).rejects.toThrow("mid rejected");
+    await expect(container.resolveAsync(outer)).rejects.toThrow("mid rejected");
     shouldReject = false;
 
-    expect(await resolveAsync(container, outer)).toBe("outer:mid");
+    expect(await container.resolveAsync(outer)).toBe("outer:mid");
   });
 
   it("clears a middle level's flag when a deeper level reports a cycle", async () => {
@@ -291,10 +290,10 @@ describe("a nested async level leaves its branch exactly as it found it", () => 
       .toDynamicAsync(async (ctx) => ctx.resolveAsync(cyclic))
       .transient();
 
-    await expect(resolveAsync(container, outer)).rejects.toThrow(CircularDependencyError);
+    await expect(container.resolveAsync(outer)).rejects.toThrow(CircularDependencyError);
     goCyclic = false;
 
-    expect(await resolveAsync(container, outer)).toBe("outer:mid");
+    expect(await container.resolveAsync(outer)).toBe("outer:mid");
   });
 
   it("leaves nothing between chains, so a later diamond is not a cycle", async () => {
@@ -322,7 +321,7 @@ describe("a nested async level leaves its branch exactly as it found it", () => 
 
     // A level that leaked its frame would leave `shared` on the path for the second sibling.
     for (let attempt = 0; attempt < 3; attempt += 1) {
-      expect(await resolveAsync(container, root)).toBe("s+s");
+      expect(await container.resolveAsync(root)).toBe("s+s");
     }
   });
 
@@ -345,7 +344,7 @@ describe("a nested async level leaves its branch exactly as it found it", () => 
       .transient();
 
     for (let attempt = 0; attempt < 3; attempt += 1) {
-      expect(await resolveAsync(container, root)).toBe("root:leaf");
+      expect(await container.resolveAsync(root)).toBe("root:leaf");
     }
 
     // Every chain sees exactly its own two levels, never an earlier chain's.
@@ -436,13 +435,13 @@ describe("a factory that resolves its own token from its synchronous prefix runs
 
   it("on the async branch lane", async () => {
     const { container, selfToken, runs } = bindSelfResolving();
-    await expect(resolveAsync(container, selfToken, {})).rejects.toThrow("in-flight-self → in-flight-self");
+    await expect(container.resolveAsync(selfToken, {})).rejects.toThrow("in-flight-self → in-flight-self");
     expect(runs()).toBe(1);
   });
 
   it("on the async root lane", async () => {
     const { container, selfToken, runs } = bindSelfResolving();
-    await expect(resolveAsync(container, selfToken)).rejects.toThrow("in-flight-self → in-flight-self");
+    await expect(container.resolveAsync(selfToken)).rejects.toThrow("in-flight-self → in-flight-self");
     expect(runs()).toBe(1);
   });
 });

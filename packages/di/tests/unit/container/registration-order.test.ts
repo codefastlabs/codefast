@@ -5,7 +5,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAllAsync } from "#container/async";
 import { Container } from "#container/container";
 import { lookupBindings } from "#container/introspect";
 import { tag } from "#core/tag";
@@ -53,7 +52,7 @@ describe("resolveAll registration order", () => {
     container.bind(service).toConstantValue("A");
     container.bind(service).whenNamed("x").toConstantValue("B");
 
-    await expect(resolveAllAsync(container, service)).resolves.toStrictEqual(["A", "B"]);
+    await expect(container.resolveAllAsync(service)).resolves.toStrictEqual(["A", "B"]);
     expect(lookupBindings(container, service)?.map((binding) => binding.slot.name)).toStrictEqual([undefined, "x"]);
   });
 });

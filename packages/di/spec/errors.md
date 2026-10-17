@@ -50,7 +50,7 @@ a state rather than a remedy (`CircularDependencyError` names the cycle, `ScopeV
 No binding for 'app:Logger' matching {"name":"file"}. Available slots: [default, name:console].
 
 Token 'app:Api' requires async resolution because 'app:Database' in its dependency
-chain has an async factory. Use resolveAsync(container, app:Api).
+chain has an async factory. Use container.resolveAsync(app:Api).
 ```
 
 `TokenNotBoundError` and `NoMatchingBindingError` carry `path`: the token names from the outermost request down to the

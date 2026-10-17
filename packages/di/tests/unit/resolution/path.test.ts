@@ -8,7 +8,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import type { Binding } from "#core/binding";
 import { NO_TAG_KEYS } from "#core/tag";
@@ -134,7 +133,7 @@ describe("distinct tokens sharing a display name", () => {
     container.bind(mid).to(buildChainLevelClass(inner)).transient();
     container.bind(outer).to(buildChainLevelClass(mid)).transient();
 
-    await expect(resolveAsync(container, outer)).resolves.toMatchObject({ depth: 2 });
+    await expect(container.resolveAsync(outer)).resolves.toMatchObject({ depth: 2 });
   });
 
   it("still reports a real cycle between distinct same-named bindings", () => {
@@ -160,7 +159,7 @@ describe("distinct tokens sharing a display name", () => {
     container.bind(first).to(buildChainLevelClass(second)).transient();
     container.bind(second).to(buildChainLevelClass(first)).transient();
 
-    await expect(resolveAsync(container, first)).rejects.toThrow(/Circular dependency/);
+    await expect(container.resolveAsync(first)).rejects.toThrow(/Circular dependency/);
   });
 });
 

@@ -130,7 +130,7 @@ export type BindingConstraint = (ctx: ConstraintContext) => boolean;
 // ── Resolver ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * The sync resolve methods a container and a factory's resolution context share.
+ * The resolve methods a container and a factory's resolution context share.
  *
  * @remarks One declaration for both, so a slot name narrows the same way wherever a token is resolved.
  */
@@ -139,31 +139,22 @@ export interface Resolver {
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
   ): Value;
-  resolveOptional<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): Value | undefined;
-  resolveAll<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): ReadonlyArray<Value>;
-}
-
-/**
- * The async resolve methods an async factory's resolution context adds to the sync ones.
- *
- * @remarks A container offers the same three as the `resolveAsync`, `resolveOptionalAsync` and `resolveAllAsync`
- * functions instead, so a program that never awaits a resolve never bundles the async lane.
- */
-export interface AsyncResolver {
   resolveAsync<Value, Names extends string = string>(
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<Value>;
+  resolveOptional<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): Value | undefined;
   resolveOptionalAsync<Value, Names extends string = string>(
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<Value | undefined>;
+  resolveAll<Value, Names extends string = string>(
+    token: Token<Value, Names> | Constructor<Value>,
+    options?: NoInfer<ResolveOptions<Names>>,
+  ): ReadonlyArray<Value>;
   resolveAllAsync<Value, Names extends string = string>(
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
@@ -180,11 +171,6 @@ export interface AsyncResolver {
 export interface ResolutionContext extends Resolver {
   readonly graph: ConstraintContext;
 }
-
-/**
- * The container view an async factory resolves through, which can also await a dependency.
- */
-export interface AsyncResolutionContext extends ResolutionContext, AsyncResolver {}
 
 // ── TokenValue ───────────────────────────────────────────────────────────────────────────────────────────────────────
 

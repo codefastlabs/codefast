@@ -1,4 +1,4 @@
-import { Container, resolveAsync, token } from "@codefast/di";
+import { Container, token } from "@codefast/di";
 
 import {
   ASYNC_CHAIN_DEPTH,
@@ -36,12 +36,12 @@ function buildResolveAsyncSingleHopScenario(): AsyncBenchScenario {
     kind: "async",
     batch: 1,
     sanity: async () => {
-      const value = await resolveAsync(container, asyncValueToken);
+      const value = await container.resolveAsync(asyncValueToken);
       return value === 42;
     },
     build: () => {
       return async () => {
-        const value = await resolveAsync(container, asyncValueToken);
+        const value = await container.resolveAsync(asyncValueToken);
         if (value !== 42) {
           throw new Error(`Expected async singleton value 42, received ${String(value)}`);
         }
@@ -77,12 +77,12 @@ function buildDynamicAsyncChainDepthEightScenario(): AsyncBenchScenario {
     kind: "async",
     batch: 1,
     sanity: async () => {
-      const value = await resolveAsync(container, leafToken);
+      const value = await container.resolveAsync(leafToken);
       return value === expectedLeafValue;
     },
     build: () => {
       return async () => {
-        const value = await resolveAsync(container, leafToken);
+        const value = await container.resolveAsync(leafToken);
         if (value !== expectedLeafValue) {
           throw new Error(`Expected async chain leaf value ${String(expectedLeafValue)}, received ${String(value)}`);
         }
@@ -116,7 +116,7 @@ function buildAsyncFanOutConcurrentScenario(
     batch: 1,
     sanity: async () => {
       const values = await Promise.all(
-        dependencyTokens.map((dependencyToken) => resolveAsync(container, dependencyToken)),
+        dependencyTokens.map((dependencyToken) => container.resolveAsync(dependencyToken)),
       );
       const total = values.reduce((runningTotal, value) => runningTotal + value, 0);
       return values.length === concurrency && total === expectedTotal;
@@ -124,7 +124,7 @@ function buildAsyncFanOutConcurrentScenario(
     build: () => {
       return async () => {
         const values = await Promise.all(
-          dependencyTokens.map((dependencyToken) => resolveAsync(container, dependencyToken)),
+          dependencyTokens.map((dependencyToken) => container.resolveAsync(dependencyToken)),
         );
         const total = values.reduce((runningTotal, value) => runningTotal + value, 0);
         if (values.length !== concurrency || total !== expectedTotal) {
@@ -152,10 +152,10 @@ function buildAsyncInitSingleHopScenario(): AsyncBenchScenario {
     ...ASYNC_INIT_SINGLE_HOP,
     kind: "async",
     batch: 1,
-    sanity: async () => (await resolveAsync(container, asyncServiceToken)).ready,
+    sanity: async () => (await container.resolveAsync(asyncServiceToken)).ready,
     build: () => {
       return async () => {
-        const service = await resolveAsync(container, asyncServiceToken);
+        const service = await container.resolveAsync(asyncServiceToken);
         if (!service.ready) {
           throw new Error("Expected async-constructed service to be ready");
         }

@@ -1,6 +1,5 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { resolveAsync, resolveOptionalAsync } from "#container/async";
 import { Container } from "#container/container";
 import { lookupBindings } from "#container/introspect";
 import { token } from "#core/token";
@@ -75,7 +74,7 @@ describe("Container public API inference", () => {
   it("resolveOptionalAsync returns a promise of the optional union", async () => {
     const StringToken = token<string>("s");
     const container = Container.create();
-    const pendingString = resolveOptionalAsync(container, StringToken);
+    const pendingString = container.resolveOptionalAsync(StringToken);
     expectTypeOf(pendingString).toEqualTypeOf<Promise<string | undefined>>();
     await expect(pendingString).resolves.toBeUndefined();
   });
@@ -127,7 +126,7 @@ describe("Container public API inference", () => {
       },
       [DepToken],
     );
-    const resolved = await resolveAsync(container, OutputToken);
+    const resolved = await container.resolveAsync(OutputToken);
     expectTypeOf(resolved).toEqualTypeOf<{ out: true }>();
     expect(resolved).toEqual({ out: true });
   });

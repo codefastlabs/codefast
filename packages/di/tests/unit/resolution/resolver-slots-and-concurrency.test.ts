@@ -9,7 +9,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAsync, resolveOptionalAsync } from "#container/async";
 import { Container } from "#container/container";
 import { slotName, tag } from "#core/tag";
 import { token } from "#core/token";
@@ -199,7 +198,7 @@ describe("toResolved with injection descriptors", () => {
       )
       .singleton();
 
-    await expect(resolveAsync(container, sumToken)).resolves.toBe("42|undefined");
+    await expect(container.resolveAsync(sumToken)).resolves.toBe("42|undefined");
   });
 });
 
@@ -230,7 +229,7 @@ describe("async resolution branches", () => {
       .transient();
 
     // Both roots start before either settles, so the second one runs as a non-owner chain.
-    const [slow, fast] = await Promise.all([resolveAsync(container, slowToken), resolveAsync(container, fastToken)]);
+    const [slow, fast] = await Promise.all([container.resolveAsync(slowToken), container.resolveAsync(fastToken)]);
 
     expect(slow).toBe("slow:leaf");
     expect(fast).toBe("fast:leaf");
@@ -250,7 +249,7 @@ describe("async resolution branches", () => {
       .toDynamicAsync(async (ctx) => ctx.resolveAsync(firstToken))
       .transient();
 
-    await expect(resolveAsync(container, firstToken)).rejects.toBeInstanceOf(CircularDependencyError);
+    await expect(container.resolveAsync(firstToken)).rejects.toBeInstanceOf(CircularDependencyError);
   });
 
   it("awaits @postConstruct when a class is built asynchronously", async () => {
@@ -277,13 +276,13 @@ describe("async resolution branches", () => {
       .singleton();
     container.bind(serviceToken).to(Service).singleton();
 
-    const service = await resolveAsync(container, serviceToken);
+    const service = await container.resolveAsync(serviceToken);
 
     expect(service.ready).toBe(true);
   });
 
   it("resolveOptionalAsync yields undefined for a missing binding", async () => {
     const container = Container.create();
-    await expect(resolveOptionalAsync(container, token<string>("async-missing"))).resolves.toBeUndefined();
+    await expect(container.resolveOptionalAsync(token<string>("async-missing"))).resolves.toBeUndefined();
   });
 });

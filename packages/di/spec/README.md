@@ -96,7 +96,7 @@ is the name `Symbol.asyncDispose` pairs with.
 
 ```ts
 container.resolve(Logger); // sync
-resolveAsync(container, Database); // async — an async factory is in the chain
+container.resolveAsync(Database); // async — an async factory is in the chain
 container.load(AppModule); // sync
 container.loadAsync(LazyModule); // async — the module has async setup
 ```

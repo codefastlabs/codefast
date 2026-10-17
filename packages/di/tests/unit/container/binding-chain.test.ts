@@ -4,7 +4,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { lookupBindings } from "#container/introspect";
 import { token } from "#core/token";
@@ -134,13 +133,13 @@ describe("scope refinement vs the cached instance", () => {
     const request = parent.createChild();
     const chain = parent.bind(serviceToken).toDynamic(() => ({ n: (constructed += 1) }));
     chain.scoped();
-    const first = await resolveAsync(request, serviceToken);
+    const first = await request.resolveAsync(serviceToken);
 
     chain.transient();
     chain.scoped();
 
-    const fresh = await resolveAsync(request, serviceToken);
+    const fresh = await request.resolveAsync(serviceToken);
     expect(fresh).not.toBe(first);
-    expect(await resolveAsync(request, serviceToken)).toBe(fresh);
+    expect(await request.resolveAsync(serviceToken)).toBe(fresh);
   });
 });

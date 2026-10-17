@@ -8,7 +8,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
@@ -193,10 +192,10 @@ describe("a tagged dependency inside a compiled plan", () => {
     container.bind(Root).toSelf().transient();
 
     for (let index = 0; index < WARM_ITERATIONS; index += 1) {
-      await resolveAsync(container, Root);
+      await container.resolveAsync(Root);
     }
 
-    expect((await resolveAsync(container, Root)).driver).toBe("primary-driver");
+    expect((await container.resolveAsync(Root)).driver).toBe("primary-driver");
   });
 
   it("keeps a two-tag dependency on the runtime path, resolved correctly", () => {

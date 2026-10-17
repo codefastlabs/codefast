@@ -123,10 +123,10 @@ await container.unloadAsync(S3PluginModule); // fires onDeactivation → closeCo
 container.rebind(DocumentServiceToken).toDynamicAsync(/* same async factory */).singleton();
 
 await container.loadAsync(LocalStoragePluginModule);
-await resolveAsync(container, StorageToken); // warm the new storage singleton
+await container.resolveAsync(StorageToken); // warm the new storage singleton
 
 // DocumentService now uses the LocalStorage provider — zero code change to the class
-const documentService = await resolveAsync(container, DocumentServiceToken);
+const documentService = await container.resolveAsync(DocumentServiceToken);
 await documentService.uploadDocument("user-456", "memo.txt", "Meeting notes: launch date confirmed");
 ```
 

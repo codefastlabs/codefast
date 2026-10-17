@@ -1,6 +1,5 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { explain } from "#container/introspect";
 import type { SlotNamesOf, Token } from "#core/token";
@@ -93,7 +92,7 @@ describe("a token declaring slot names narrows every `name` it meets", () => {
     });
 
     expect(container.resolve(Consumer)).toBeInstanceOf(ConsoleLogger);
-    expect(await resolveAsync(container, AsyncConsumer)).toBeInstanceOf(ConsoleLogger);
+    expect(await container.resolveAsync(AsyncConsumer)).toBeInstanceOf(ConsoleLogger);
   });
 
   it("the ancestor constraints read the names off the parent token they name", () => {

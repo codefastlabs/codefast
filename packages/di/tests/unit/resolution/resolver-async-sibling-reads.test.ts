@@ -9,13 +9,12 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAllAsync, resolveAsync } from "#container/async";
 import type { Container } from "#container/container";
 import { Container as ContainerStatic } from "#container/container";
 import { tag } from "#core/tag";
 import type { Token } from "#core/token";
 import { token } from "#core/token";
-import type { AsyncResolutionContext } from "#core/types";
+import type { ResolutionContext } from "#core/types";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
 import { AsyncResolutionError } from "#errors";
@@ -59,7 +58,7 @@ async function materialiseOnBothLanes(
   const asyncContainer = host(ContainerStatic.create());
   shape.build(asyncContainer);
   const before = shape.constructed();
-  const fromAsync = await resolveAsync(asyncContainer, shape.root);
+  const fromAsync = await asyncContainer.resolveAsync(shape.root);
   expect(shape.constructed() - before).toBe(1);
   expect(fromAsync.reader).toBe(fromAsync.singleton);
 
@@ -140,9 +139,9 @@ describe("a singleton started on the async lane is readable synchronously by a l
     };
 
     const container = build();
-    const cold = await resolveAsync(container, t0);
-    const warm = await resolveAsync(container, t0);
-    const interpreted = await resolveAsync(build(), t0, {});
+    const cold = await container.resolveAsync(t0);
+    const warm = await container.resolveAsync(t0);
+    const interpreted = await build().resolveAsync(t0, {});
 
     const shape = { dep: { dynamic: 3, deps: [expect.any(N1), { dynamic: 2, dep: expect.any(N1) }] } };
     expect(cold).toBeInstanceOf(N0);
@@ -372,8 +371,8 @@ describe("a singleton started on the async lane is readable synchronously by a l
       container.bind(reader).toDynamicAsync(async (ctx) => ctx.resolve(singleton));
       rootOver(container, root, singleton, reader);
 
-      const cold = await resolveAsync(container, root);
-      const warm = await resolveAsync(container, root);
+      const cold = await container.resolveAsync(root);
+      const warm = await container.resolveAsync(root);
       expect(constructed).toBe(1);
       expect(cold.reader).toBe(cold.singleton);
       expect(warm).toEqual(cold);
@@ -433,7 +432,7 @@ describe("a singleton started on the async lane is readable synchronously by a l
 
       const asyncContainer = ContainerStatic.create();
       build(asyncContainer);
-      const fromAsync = await resolveAllAsync(asyncContainer, member, request);
+      const fromAsync = await asyncContainer.resolveAllAsync(member, request);
       expect(constructed).toBe(1);
       expect(fromAsync).toHaveLength(2);
       expect(fromAsync[1]).toBe(fromAsync[0]);
@@ -468,7 +467,7 @@ describe("a singleton started on the async lane is readable synchronously by a l
 
       const asyncContainer = ContainerStatic.create();
       build(asyncContainer);
-      const fromAsync = await resolveAllAsync(asyncContainer, member);
+      const fromAsync = await asyncContainer.resolveAllAsync(member);
       expect(constructed).toBe(1);
       expect(fromAsync).toHaveLength(2);
       expect(fromAsync[1]).toBe(fromAsync[0]);
@@ -517,7 +516,7 @@ describe("a singleton started on the async lane is readable synchronously by a l
       .singleton();
     parent.bind(reader).toDynamic((ctx) => ctx.resolve(singleton));
     rootOver(parent, root, singleton, reader);
-    const fromChild = await resolveAsync(parent.createChild(), root);
+    const fromChild = await parent.createChild().resolveAsync(root);
     expect(parentBuilt).toBe(1);
     expect(fromChild.reader).toBe(fromChild.singleton);
     expect(parent.resolve(singleton)).toBe(fromChild.singleton);
@@ -537,9 +536,9 @@ describe("a singleton started on the async lane is readable synchronously by a l
       .singleton();
     container.bind(reader).toDynamic((ctx) => ctx.resolve(singleton));
 
-    const pending = resolveAsync(container, singleton);
+    const pending = container.resolveAsync(singleton);
     const readNow = container.resolve(reader);
-    const [instance, read] = await Promise.all([pending, resolveAsync(container, reader)]);
+    const [instance, read] = await Promise.all([pending, container.resolveAsync(reader)]);
     expect(constructed).toBe(1);
     expect(readNow).toBe(instance);
     expect(read).toBe(instance);
@@ -561,12 +560,10 @@ describe("a singleton started on the async lane is readable synchronously by a l
     container.bind(reader).toDynamic((ctx) => ctx.resolve(singleton));
     container
       .bind(root)
-      .toDynamicAsync((ctx: AsyncResolutionContext) =>
-        Promise.all([ctx.resolveAsync(singleton), ctx.resolveAsync(reader)]),
-      )
+      .toDynamicAsync((ctx: ResolutionContext) => Promise.all([ctx.resolveAsync(singleton), ctx.resolveAsync(reader)]))
       .transient();
 
-    const [instance, read] = await resolveAsync(container, root);
+    const [instance, read] = await container.resolveAsync(root);
     expect(constructed).toBe(1);
     expect(read).toBe(instance);
   });
@@ -592,10 +589,10 @@ describe("a singleton started on the async lane is readable synchronously by a l
         rootOver(container, root, singleton, reader);
 
         for (let run = 0; run < failingRuns; run += 1) {
-          await expect(resolveAsync(container, root)).rejects.toThrow("not yet");
+          await expect(container.resolveAsync(root)).rejects.toThrow("not yet");
         }
         cold.succeed();
-        const materialised = await resolveAsync(container, root);
+        const materialised = await container.resolveAsync(root);
         expect(cold.built()).toBe(1);
         expect(materialised.reader).toBe(materialised.singleton);
         // The optimization must have been active, not merely the answer correct.
@@ -619,7 +616,7 @@ describe("a singleton started on the async lane is readable synchronously by a l
       }
       cold.succeed();
 
-      const pending = resolveAsync(container, singleton);
+      const pending = container.resolveAsync(singleton);
       const fromPlan = container.resolve(planned);
       expect(cold.built()).toBe(1);
       await expect(pending).resolves.toBe(fromPlan.singleton);
@@ -644,8 +641,8 @@ describe("a singleton started on the async lane is readable synchronously by a l
     rootOver(container, root, singleton, reader);
 
     // The sync lane would have refused this read too: the value cannot exist in the reader's tick.
-    await expect(resolveAsync(container, root)).rejects.toThrow(AsyncResolutionError);
-    const warm = await resolveAsync(container, root);
+    await expect(container.resolveAsync(root)).rejects.toThrow(AsyncResolutionError);
+    const warm = await container.resolveAsync(root);
     expect(warm.reader).toBe(warm.singleton);
   });
 });

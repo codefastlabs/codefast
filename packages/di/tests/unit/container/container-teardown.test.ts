@@ -4,7 +4,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { Module } from "#core/module";
 import { token } from "#core/token";
@@ -93,7 +92,7 @@ describe("dispose vs in-flight async materialization", () => {
         instance.closed = true;
       });
 
-    const pending = resolveAsync(container, serviceToken);
+    const pending = container.resolveAsync(serviceToken);
     await container.dispose();
 
     const instance = await pending;
@@ -118,7 +117,7 @@ describe("dispose vs in-flight async materialization", () => {
 
     // Both lanes refuse at the container gate, each in its own form: the sync lane throws, the async lane rejects.
     expect(() => child.resolve(serviceToken)).toThrow(DisposedContainerError);
-    await expect(resolveAsync(child, serviceToken)).rejects.toBeInstanceOf(DisposedContainerError);
+    await expect(child.resolveAsync(serviceToken)).rejects.toBeInstanceOf(DisposedContainerError);
     expect(constructed).toBe(1);
   });
 
@@ -150,7 +149,7 @@ describe("dispose vs in-flight async materialization", () => {
       })
       .singleton();
 
-    const holder = resolveAsync(container, holderToken);
+    const holder = container.resolveAsync(holderToken);
     const disposed = container.dispose();
     release();
 

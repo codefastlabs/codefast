@@ -6,7 +6,6 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { resolveAllAsync } from "#container/async";
 import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
@@ -232,9 +231,9 @@ describe("a root collection of cached singleton members", () => {
     container.bind(handlers).many().to(Handler).singleton();
     container.bind(handlers).many().to(Handler).singleton();
 
-    const first = await resolveAllAsync(container, handlers);
-    const second = await resolveAllAsync(container, handlers);
-    const third = await resolveAllAsync(container, handlers);
+    const first = await container.resolveAllAsync(handlers);
+    const second = await container.resolveAllAsync(handlers);
+    const third = await container.resolveAllAsync(handlers);
 
     expect(second).toEqual(first);
     expect(second[1]).toBe(first[1]);

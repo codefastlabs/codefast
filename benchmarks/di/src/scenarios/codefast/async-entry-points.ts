@@ -6,7 +6,7 @@
  * `resolveAllAsync` fans a whole candidate set out at once, and `resolveOptionalAsync` is the
  * async lane's miss — the one shape that reaches a caller without ever instantiating anything.
  */
-import { Container, resolveAllAsync, resolveOptionalAsync, token } from "@codefast/di";
+import { Container, token } from "@codefast/di";
 
 import { ASYNC_STRATEGY_COUNT, RESOLVE_ALL_ASYNC, RESOLVE_OPTIONAL_ASYNC_MISS } from "#fixtures/scenario-parity";
 import type { AsyncBenchScenario } from "#scenarios/types";
@@ -36,7 +36,7 @@ function buildResolveAllAsyncScenario(): AsyncBenchScenario {
     kind: "async",
     batch: 1,
     sanity: async () => {
-      const values = await resolveAllAsync(container, strategyToken);
+      const values = await container.resolveAllAsync(strategyToken);
 
       return (
         values.length === ASYNC_STRATEGY_COUNT && values.reduce((total, value) => total + value, 0) === expectedTotal
@@ -44,7 +44,7 @@ function buildResolveAllAsyncScenario(): AsyncBenchScenario {
     },
     build: () => {
       return async () => {
-        const values = await resolveAllAsync(container, strategyToken);
+        const values = await container.resolveAllAsync(strategyToken);
 
         if (values.length !== ASYNC_STRATEGY_COUNT) {
           throw new Error(
@@ -70,11 +70,11 @@ function buildResolveOptionalAsyncMissScenario(): AsyncBenchScenario {
     // A miss over a populated registry, not over an empty one: an empty container answers a
     // different question, and the row's name would then overstate what it covers.
     sanity: async () =>
-      (await resolveOptionalAsync(container, missingToken)) === undefined &&
-      (await resolveOptionalAsync(container, boundToken)) === 1,
+      (await container.resolveOptionalAsync(missingToken)) === undefined &&
+      (await container.resolveOptionalAsync(boundToken)) === 1,
     build: () => {
       return async () => {
-        const value = await resolveOptionalAsync(container, missingToken);
+        const value = await container.resolveOptionalAsync(missingToken);
 
         if (value !== undefined) {
           throw new Error(`Expected the unbound token to resolve to undefined, received ${String(value)}`);

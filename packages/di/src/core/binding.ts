@@ -2,7 +2,6 @@ import type { BindingTag, TagKeyMask } from "#core/tag";
 import { NO_TAG_KEYS, slotName, tagKeyMaskOf } from "#core/tag";
 import type { Token } from "#core/token";
 import type {
-  AsyncResolutionContext,
   BindingConstraint,
   BindingIdentifier,
   BindingScope,
@@ -249,7 +248,7 @@ export interface DynamicBinding<Value> extends BindingBase<Value>, BindingLifecy
  */
 export interface DynamicAsyncBinding<Value> extends BindingBase<Value>, BindingLifecycleHooks<Value> {
   readonly kind: "dynamic-async";
-  readonly factory: (ctx: AsyncResolutionContext) => Promise<Value>;
+  readonly factory: (ctx: ResolutionContext) => Promise<Value>;
   readonly scope: BindingScope;
 }
 
