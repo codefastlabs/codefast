@@ -27,7 +27,7 @@ function Spinner({ children, className, loading = true, ...props }: SpinnerProps
       {Array.from({ length: SPINNER_COUNT }, (_, index) => (
         <span
           key={index}
-          className="absolute h-full rotate-(--spinner-rotate) before:block before:h-1/3 before:w-full before:animate-out before:rounded-full before:bg-current before:delay-(--spinner-delay) before:animation-duration-(--spinner-duration) before:fade-out-25 before:repeat-infinite motion-reduce:before:animate-none"
+          className="absolute h-full rotate-(--spinner-rotate) before:block before:h-1/3 before:w-full before:animate-out before:rounded-full before:bg-current before:delay-(--spinner-delay) before:animation-duration-(--spinner-duration) before:fade-out-25 before:repeat-infinite"
           style={
             {
               "--spinner-delay": `-${((SPINNER_COUNT - index) * 100).toString()}ms`,
