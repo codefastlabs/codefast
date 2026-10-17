@@ -215,9 +215,9 @@ Binding the token **on the very container you are using** is invisible to every 
 the binding existed, so the resolver keeps the default reader, and an undecorated class whose constructor declares
 parameters throws `MissingMetadataError`.
 
-> **Normative — one container, one reader.** The reader is fixed when the container's resolver is built; `validate()`,
-> `inspect()`, `generateDependencyGraph()` and `unbind*` all answer using that same reader. Introspection cannot
-> disagree with resolution.
+> **Normative — one container, one reader.** The reader is fixed when the container's resolver is built; `validate`,
+> `inspect`, `generateDependencyGraph` and `unbind*` all answer using that same reader. Introspection cannot disagree
+> with resolution.
 
 > **Normative — a reader is asked about a class once.** Every container that reads through the same reader (a child
 > inherits its parent's) shares that reader's answers for the life of the process, so a reader must answer from the
@@ -392,8 +392,8 @@ that name, so it can reach no other kind of method.
 > **Normative — hook keys.** Both decorators accept only a context with `static: false`, `private: false` and a string
 > `name`, so TypeScript reports a static, private (`#name`) or symbol-keyed hook at the decoration site (TS1241).
 > Untyped code gets the matching error when the class is defined: `StaticMemberDecoratorError`,
-> `PrivateLifecycleMethodError` or `SymbolKeyedLifecycleError`. A private hook would otherwise pass `validate()` and
-> fail only at resolve or dispose. To run private code, call it from a public hook.
+> `PrivateLifecycleMethodError` or `SymbolKeyedLifecycleError`. A private hook would otherwise pass `validate` and fail
+> only at resolve or dispose. To run private code, call it from a public hook.
 
 ```ts
 @injectable([Config])

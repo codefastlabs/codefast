@@ -128,7 +128,7 @@ an example (or a consumer) has to add.
 | Unit of work per request               | `scoped()` binding + `createChild()`                 |
 | Wire-up check before serving traffic   | `validate(container)`                                |
 | Swap an adapter in a test              | `container.rebind(token)`                            |
-| Seeing the dependency rule             | `generateDependencyGraph()` + `toDotGraph()`         |
+| Seeing the dependency rule             | `generateDependencyGraph` + `toDotGraph()`           |
 
 ## Is this too many files?
 

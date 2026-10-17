@@ -91,7 +91,7 @@ export class PlaceOrder {
 ```
 
 The **smart part**: config is a compose-time value, so the module reads it once and lets the container construct and
-wire the chosen adapter with `.to()` — no manual `new` in a runtime factory, and `validate()` still traces the graph:
+wire the chosen adapter with `.to()` — no manual `new` in a runtime factory, and `validate` still traces the graph:
 
 ```ts
 const config = loadEnvConfig();
@@ -119,7 +119,7 @@ if (config.database === "postgres") {
 | One correlation id per request          | a `scoped()` binding + `createChild()`             |
 | Wire-up check before serving traffic    | `validate(container)`                              |
 | Swap an adapter to replay an incident   | `container.rebind(token)`                          |
-| Seeing the dependency rule              | `generateDependencyGraph()` + `toDotGraph()`       |
+| Seeing the dependency rule              | `generateDependencyGraph` + `toDotGraph()`         |
 
 ## What the run shows
 

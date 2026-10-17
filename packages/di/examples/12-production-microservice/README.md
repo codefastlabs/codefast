@@ -37,7 +37,7 @@ sequenceDiagram
     Container->>HTTP: new HttpServer() → listen(:3000)
     HTTP-->>Container: ✓ listening
 
-    main->>Container: validate()
+    main->>Container: validate(container)
     Note over Container: scope rules OK ✓
 
     Note over main,HTTP: serve traffic...
@@ -225,7 +225,7 @@ async function main() {
 ## What to read next
 
 - **Example 05** — async lifecycle fundamentals (`toDynamicAsync`, `onActivation`, `onDeactivation`, `await using`).
-- **Example 09** — `ScopeViolationError` and how `validate()` catches it.
+- **Example 09** — `ScopeViolationError` and how `validate` catches it.
 - **Example 13** — the same patterns applied to a full e-commerce platform with multiple bounded contexts.
 
 ## License

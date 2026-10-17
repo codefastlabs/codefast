@@ -58,8 +58,8 @@ with the `ESNext.Disposable` lib that `@codefast/di`'s declarations need.
 | 12  | [12-production-microservice](./12-production-microservice)                 | Full microservice lifecycle: config, DB/Redis pools, health checks, graceful shutdown          |
 | 13  | [13-ecommerce-platform](./13-ecommerce-platform)                           | Domain-rich e-commerce backend showcasing all DI features together                             |
 | 14  | [14-auto-register](./14-auto-register)                                     | `createAutoRegisterRegistry()`, `autoRegister` decorator option, `loadAutoRegistered()`        |
-| 15  | [15-inspection-graph](./15-inspection-graph)                               | `inspect()`, `lookupBindings()`, `generateDependencyGraph()`, DOT / Cytoscape adapters         |
-| 16  | [16-testing-patterns](./16-testing-patterns)                               | Fresh containers, `rebind()` stubs, child-container overrides, `validate()`                    |
+| 15  | [15-inspection-graph](./15-inspection-graph)                               | `inspect`, `lookupBindings`, `generateDependencyGraph`, DOT / Cytoscape adapters               |
+| 16  | [16-testing-patterns](./16-testing-patterns)                               | Fresh containers, `rebind()` stubs, child-container overrides, `validate`                      |
 | 17  | [17-extended-constraints](./17-extended-constraints)                       | Full constraint family: `whenAnyAncestorIs`, `whenParentNamed`, `whenParentTaggedAll`, …       |
 | 18  | [18-ambient-container](./18-ambient-container)                             | `@inject()` accessor injection, `getActiveContainer()`, `runWithContainer()`                   |
 | 19  | [19-custom-metadata-reader](./19-custom-metadata-reader)                   | `MetadataReader`, `MetadataReaderToken` — wiring classes that carry no decorators              |

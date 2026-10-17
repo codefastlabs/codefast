@@ -91,7 +91,8 @@ vocabulary, one key per step:
 > - a value, class or factory whose type is not the key's value type, and a `whenNamed` outside the token's `Names`;
 > - `toSelf` on a key that is not a class;
 > - `scope` on `toConstantValue` or `toAlias`, and a hook on `toAlias`;
-> - `onDeactivation` on any scope but `"singleton"` — `toConstantValue` excepted, as it is always a singleton;
+> - `onDeactivation` on any scope but `"singleton"` or `"scoped"` — `toConstantValue` excepted, as it is always a
+>   singleton;
 > - `many: true` beside `whenNamed` or `whenTagged`.
 >
 > `toResolved` / `toResolvedAsync` infer the factory's parameters from `deps` exactly as their chain steps do.

@@ -205,7 +205,7 @@ class SearchController {
 1. Bootstrap infrastructure (async modules, onActivation hooks)
 2. Load all domain modules
 3. initializeAsync() — warm all singletons (catalog cache, pricing rules)
-4. validate() — catch captive dependencies before traffic
+4. validate(container) — catch captive dependencies before traffic
 5. Customer journey:
    a. Browse catalog + search
    b. Register / login

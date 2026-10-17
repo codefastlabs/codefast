@@ -1,7 +1,7 @@
 # Example 07 — Real-world Web App
 
 **Concepts:** All features combined — `AsyncModule`, scoped child containers per request, lifecycle hooks, named
-multi-bindings (`whenNamed`), `resolveAll` middleware pipeline, `validate()`, `await using`, dependency graph export
+multi-bindings (`whenNamed`), `resolveAll` middleware pipeline, `validate`, `await using`, dependency graph export
 
 ---
 

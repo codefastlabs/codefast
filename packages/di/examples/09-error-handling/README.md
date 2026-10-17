@@ -144,7 +144,7 @@ constructor arguments.
 
 ---
 
-### 6. `ScopeViolationError` — captive dependency detected by `validate()`
+### 6. `ScopeViolationError` — captive dependency detected by `validate`
 
 **Code:** `SCOPE_VIOLATION`
 
@@ -159,7 +159,8 @@ container.bind(SingletonConsumerToken).to(SingletonConsumer).singleton();
 validate(container); // ← throws ScopeViolationError before any request is served
 ```
 
-Call `validate()` at startup (after `initializeAsync`) to catch this class of bug before production traffic hits it.
+Call `validate(container)` at startup (after `initializeAsync`) to catch this class of bug before production traffic
+hits it.
 
 ---
 
@@ -199,7 +200,7 @@ import {
 ## What to read next
 
 - **Example 03** — `scoped` scope explained; prerequisite for understanding `ScopeViolationError`.
-- **Example 16** — testing patterns: `validate()` as a wiring smoke-test at the start of integration tests.
+- **Example 16** — testing patterns: `validate` as a wiring smoke-test at the start of integration tests.
 
 ## License
 

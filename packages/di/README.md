@@ -24,8 +24,8 @@ its keep as the dependency graph grows.
   dependencies explicitly — no runtime reflection.
 - **Fluent bindings.** Constants, classes, sync and async factories, aliases, named/tagged/predicate constraints, and
   lifecycle hooks compose in one invariant chain order.
-- **Scopes with validation.** Choose `singleton`, `scoped`, or `transient`, and call `validate()` to catch captive
-  dependencies, missing bindings and cycles before the first request.
+- **Scopes with validation.** Choose `singleton`, `scoped`, or `transient`, and call `validate(container)` to catch
+  captive dependencies, missing bindings and cycles before the first request.
 - **Modules and introspection.** Bundle bindings into reusable modules, and inspect a container or render its dependency
   graph as DOT, Mermaid, Cytoscape, or React Flow.
 
@@ -432,8 +432,8 @@ that keep a scope from leaking, and how it lands in TanStack Start server functi
 ### Validation
 
 A captive dependency is a long-lived binding that holds a shorter-lived one — a `singleton` that depends on a `scoped`
-or `transient` binding — which silently freezes that dependency for the singleton's whole life. `validate()` fails fast
-on captive dependencies, and on constraints no request can satisfy, before the first resolve. It also throws the error
+or `transient` binding — which silently freezes that dependency for the singleton's whole life. `validate` fails fast on
+captive dependencies, and on constraints no request can satisfy, before the first resolve. It also throws the error
 `resolve()` would for a singleton graph that cannot resolve: a required dependency nothing binds, a slot nothing
 matches, or a cycle.
 
@@ -442,6 +442,9 @@ validate(container); // throws on the first violation — ScopeViolationError, T
 ```
 
 A transient or scoped consumer's dependencies are left to `resolve()`, because a child container may still bind them.
+
+Guard the call with a dev-only check (`if (import.meta.env.DEV)` or `process.env.NODE_ENV !== "production"`) and the
+production bundle drops `validate` and the introspection code behind it.
 
 ### Disposal
 
@@ -558,7 +561,7 @@ Every error extends `DiError` and carries a stable `code`, so you can branch on 
 | `CircularDependencyError`      | `CIRCULAR_DEPENDENCY`       | A cycle appears on the resolution path                                     |
 | `AsyncResolutionError`         | `ASYNC_RESOLUTION`          | A sync `resolve()` reaches an async factory                                |
 | `AsyncActivationError`         | `ASYNC_ACTIVATION`          | A `@postConstruct` or `onActivation` hook returns a promise on a sync path |
-| `ScopeViolationError`          | `SCOPE_VIOLATION`           | `validate()` finds a captive dependency                                    |
+| `ScopeViolationError`          | `SCOPE_VIOLATION`           | `validate` finds a captive dependency                                      |
 | `MissingScopeContextError`     | `MISSING_SCOPE_CONTEXT`     | A `scoped` binding is resolved outside a child container                   |
 | `MissingContainerContextError` | `MISSING_CONTAINER_CONTEXT` | An `@inject` accessor initializes with no container open                   |
 | `DisposedContainerError`       | `DISPOSED_CONTAINER`        | A disposed container is used                                               |

@@ -20,11 +20,11 @@ the full dependency graph as Graphviz DOT or Cytoscape.js data for visualization
 graph TD
     Container(["container"])
 
-    Container -->|"inspect()"| Snap["ContainerSnapshot\n• hasParent\n• isDisposed\n• cachedSingletonCount\n• ownBindings: BindingSnapshot[]"]
+    Container -->|"inspect(container)"| Snap["ContainerSnapshot\n• hasParent\n• isDisposed\n• cachedSingletonCount\n• ownBindings: BindingSnapshot[]"]
     Container -->|"lookupBindings(Token)"| LB["BindingSnapshot[]\nfor that token only\n(kind, scope, id, slot)"]
     Container -->|"has(Token, hint?)"| HasP["boolean\nwalks parent chain"]
     Container -->|"hasOwn(Token, hint?)"| HasO["boolean\nonly this container"]
-    Container -->|"generateDependencyGraph()"| Graph["ContainerGraphJson\nnodes + edges"]
+    Container -->|"generateDependencyGraph(container)"| Graph["ContainerGraphJson\nnodes + edges"]
 
     Graph -->|"toDotGraph(graph)"| DOT["Graphviz DOT string\npaste → graphviz.online"]
     Graph -->|"toCytoscapeGraph(graph)"| Cyto["Cytoscape.js elements\ndrop into browser UI"]
@@ -187,7 +187,7 @@ function auditContainer(c: Container, required: Token<unknown>[]): void {
 auditContainer(container, [LoggerToken, DatabaseToken, UserServiceToken]);
 ```
 
-Call this after `initializeAsync()` and `validate()` for a three-layer wiring check at startup.
+Call this after `initializeAsync()` and `validate` for a three-layer wiring check at startup.
 
 ---
 
@@ -204,8 +204,8 @@ import { toCytoscapeGraph, toDotGraph, toMermaidGraph, toReactFlowGraph } from "
 
 ## What to read next
 
-- **Example 09** — `ScopeViolationError`; `validate()` is the dynamic complement to graph inspection.
-- **Example 16** — using `inspect()` and `has()` in tests to verify container wiring.
+- **Example 09** — `ScopeViolationError`; `validate` is the dynamic complement to graph inspection.
+- **Example 16** — using `inspect` and `has()` in tests to verify container wiring.
 
 ## License
 

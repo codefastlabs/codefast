@@ -17,7 +17,7 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | `AsyncResolutionError`           | `ASYNC_RESOLUTION`            | A sync `resolve()` on an async binding, directly or via the dep chain          | `tokenName`, `asyncSourceToken`                                |
 | `AsyncActivationError`           | `ASYNC_ACTIVATION`            | `@postConstruct` or `onActivation` returned a `Promise` on a sync path         | `tokenName`, `hookKind`, `methodName`                          |
 | `AsyncDeactivationError`         | `ASYNC_DEACTIVATION`          | A sync `unbind()`/`rebind()` owing an async deactivation (a cached singleton)  | `tokenName`                                                    |
-| `ScopeViolationError`            | `SCOPE_VIOLATION`             | `validate()` — a captive dependency: a singleton depending on scoped/transient | `details`: both tokens + scopes, plus `path`                   |
+| `ScopeViolationError`            | `SCOPE_VIOLATION`             | `validate` — a captive dependency: a singleton depending on scoped/transient   | `details`: both tokens + scopes, plus `path`                   |
 | `MissingMetadataError`           | `MISSING_METADATA`            | The container must construct a class but `@injectable()` is missing            | `targetName`                                                   |
 | `InvalidMetadataError`           | `INVALID_METADATA`            | The `MetadataReader` returned something the container cannot use               | `targetName`, `reason`                                         |
 | `AsyncModuleLoadError`           | `ASYNC_MODULE_LOAD`           | A sync `load()` received an `AsyncModule`                                      | `moduleName`                                                   |
@@ -34,9 +34,9 @@ of them; a `switch` on `code` tells them apart without string-matching messages.
 | `PrivateLifecycleMethodError`    | `PRIVATE_LIFECYCLE_METHOD`    | `@postConstruct` / `@preDestroy` on a private (`#name`) method                 | `decoratorName`, `memberName`                                  |
 | `InvalidBindingDeclarationError` | `INVALID_BINDING_DECLARATION` | `binding()` — no strategy, several, or a key the strategy does not allow       | `tokenName`, `reason`                                          |
 | `MissingDecoratorMetadataError`  | `MISSING_DECORATOR_METADATA`  | A decorator handed no `context.metadata` — the runtime lacks `Symbol.metadata` | `decoratorName`                                                |
-| `UnreachableLifecycleHookError`  | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate()` — a container-level hook for a token nobody binds                 | `tokenName`, `phase`, `reason`                                 |
+| `UnreachableLifecycleHookError`  | `UNREACHABLE_LIFECYCLE_HOOK`  | `validate` — a container-level hook for a token nobody binds                   | `tokenName`, `phase`, `reason`                                 |
 | `EmptyTagCriteriaError`          | `EMPTY_TAG_CRITERIA`          | `…TaggedAll()` received an empty criterion list                                | `helperName`                                                   |
-| `UnreachableConstraintError`     | `UNREACHABLE_CONSTRAINT`      | `validate()` — a constraint expects a slot name nobody declares                | `tokenName`, `requiredName`, `requiredTokenName`, `helperName` |
+| `UnreachableConstraintError`     | `UNREACHABLE_CONSTRAINT`      | `validate` — a constraint expects a slot name nobody declares                  | `tokenName`, `requiredName`, `requiredTokenName`, `helperName` |
 
 > **Exact shape:** `src/errors.ts` — every class above, plus `ScopeViolationDetails`.
 
@@ -53,10 +53,10 @@ chain has an async factory. Use container.resolveAsync(app:Api).
 
 `TokenNotBoundError` and `NoMatchingBindingError` carry `path`: the token names from the outermost request down to the
 one that missed, alias hops included — `[tokenName]` for a miss on the token asked for, which the message then leaves
-out. Their message ends with `Path: a → b → c` otherwise. `validate()` raises both, and `CircularDependencyError`, for a
+out. Their message ends with `Path: a → b → c` otherwise. `validate` raises both, and `CircularDependencyError`, for a
 singleton graph that cannot resolve, with the path from that singleton.
 
-`ScopeViolationError` is raised by `validate()` alone: a resolve does not check scopes, so a singleton that captures a
+`ScopeViolationError` is raised by `validate` alone: a resolve does not check scopes, so a singleton that captures a
 transient resolves silently, and one that captures a `scoped` binding from the root fails with
 `MissingScopeContextError` instead.
 
