@@ -5,6 +5,7 @@
  * the container hierarchy again.
  */
 import type { Binding } from "#core/binding";
+import { NO_INSTANCE } from "#core/binding";
 import { getOrInsertComputed } from "#core/map-upsert";
 import type { BindingRegistry } from "#core/registry";
 import { stateEpoch } from "#core/state-epoch";
@@ -39,6 +40,33 @@ export interface CollectionEntry {
   values: ReadonlyArray<unknown> | undefined;
   activationVersion: number;
   readBefore: boolean;
+}
+
+/**
+ * A collection's value list when every member answers with a fixed value, else `undefined`.
+ *
+ * @remarks A fixed value is a hook-free constant, or a hook-free singleton whose instance is cached — anything that
+ * changes either bumps a registry version the memo is keyed on. The list is kept unfrozen: a frozen array reads
+ * through a slow elements kind, and every read copies it anyway.
+ */
+export function stableCollectionValuesOf(candidates: ReadonlyArray<Binding>): Array<unknown> | undefined {
+  for (let index = 0; index < candidates.length; index += 1) {
+    if (!isStableCollectionMember(candidates[index]!)) {
+      return undefined;
+    }
+  }
+  return candidates.map(stableMemberValue);
+}
+
+function isStableCollectionMember(binding: Binding): boolean {
+  if (binding.kind === "alias" || binding.activationHook !== undefined) {
+    return false;
+  }
+  return binding.kind === "constant" || (binding.scope === "singleton" && binding.instance !== NO_INSTANCE);
+}
+
+function stableMemberValue(binding: Binding): unknown {
+  return binding.kind === "constant" ? binding.value : binding.instance;
 }
 
 /** The root-level collection memo: one per cache, built on its first root read, stamped with one chain version. */

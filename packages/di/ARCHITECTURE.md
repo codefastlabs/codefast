@@ -378,7 +378,7 @@ Everything that needs no cross-instance private access is split out into a colla
 | Module                                                                                                           | Owns                                                                                                                          |
 | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | [`lookup.ts`](src/resolution/cache/lookup.ts)                                                                    | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions            |
-| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                            | per-class facts: constructor params, `@postConstruct` presence, accessor injection, and the `new` itself                      |
+| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                            | per-class facts: constructor params and their settle, `@postConstruct` presence, accessor injection, and the `new` itself     |
 | [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                  | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                                      |
 | [`compiler.ts`](src/resolution/plan/compiler.ts)                                                                 | the plan compiler ([Compiled plans and escapes](#compiled-plans-and-escapes))                                                 |
 | [`codegen.ts`](src/resolution/plan/codegen.ts)                                                                   | renders a hot plan's `PlanNode` tree as a function of its own, or leaves it a closure where the runtime forbids compiling one |
@@ -387,6 +387,29 @@ Everything that needs no cross-instance private access is split out into a colla
 | [`dependency-slot.ts`](src/injection/dependency-slot.ts)                                                         | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                           |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
+
+### What `resolver.ts` holds
+
+The file's size is not budgeted; its contents are. **`resolver.ts` holds the `DependencyResolver` class and the
+module-level helpers its resolve lanes call, and nothing else.** A method stays in the class when it reads the private
+state of a resolver — its own or another one in the chain — or when it is a warm lane, whose placement is measured. Code
+that needs neither lives with what it is about: a class's facts with the class introspector, a memo's facts beside the
+memo, what `validate` reports in `introspection/validation.ts`, which reads the chain through `bindingsForValidate()`.
+Moving a cold path out is worth doing only along such a boundary; a split by size alone would hand private state through
+accessors and put a call on lanes that run per hop. The package's `dist/` is not budgeted either, since every module
+ships and a consumer's bundler keeps only what it reaches: the size an app pays is the minimal program's bundle, gated
+by [`footprint-budget.json`](../../benchmarks/di/footprint-budget.json).
+
+Three parts of the class look like extraction candidates and are not, because each reads private state across the chain:
+the plan compiler's host (owner lookups, the plan maps, the root stack, frames), the `ForValidate` peeks, and
+`describeCaches()`. Two shapes were measured and kept inside:
+
+- **A lookup miss builds its error where it throws.** `#requireBinding` constructs `TokenNotBoundError` /
+  `NoMatchingBindingError` inline. A shared helper returning the error, called at the same throw site, measured as a
+  loss on the miss row in both experiment orders, and inlining it again recovered it. The alias-cycle throws follow the
+  same rule. Validation, which pays nothing per resolve, builds the same errors itself.
+- **Warm resolve bodies stay methods.** Moving one into a module function that takes the resolver was measured as a loss
+  on the resolve rows.
 
 ### Two dependency sources, one slot shape
 
