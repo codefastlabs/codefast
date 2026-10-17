@@ -10,6 +10,7 @@ This section declares every foundation type used throughout the spec. The implem
 | `Constructor`                               | A concrete `new`-able class                            | `.to(Class)`, `.toSelf()`, deps arrays              |
 | `ActivationHandler` / `DeactivationHandler` | The two per-instance lifecycle callbacks               | `.onActivation()`, `.onDeactivation()`              |
 | `ResolveOptions`                            | The hint a single resolve carries (name and/or tags)   | `resolve(token, options)`, `inject(token, options)` |
+| `Resolver`                                  | The six resolve methods a container and `ctx` share    | `container.resolve(…)`, `ctx.resolve(…)`            |
 | `ResolutionContext`                         | What a dynamic factory receives                        | `.toDynamic((ctx) => …)`                            |
 | `ConstraintContext`                         | Where the current resolve sits in the dependency graph | `.when((ctx) => …)`, advanced constraints           |
 | `DependencySlot`                            | What one resolvable dependency declares                | `@injectable([…])` deps, `ParamMetadata`            |
@@ -135,7 +136,8 @@ Because interning gives each value exactly one criterion, comparing criteria by 
 exactly the ability to resolve within the current context.
 
 - Six methods, each taking a token plus the same optional hint: `resolve`, `resolveAsync`, `resolveOptional`,
-  `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync`.
+  `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync`. They are the `Resolver` interface, which `Container` extends
+  too, so a call through `ctx` narrows a token's slot names exactly as the same call on the container does.
 - `resolveAll` throws `AsyncResolutionError` if any matching binding is async, and returns `[]` when nothing matches.
   Both collection reads return a `ReadonlyArray` that belongs to the caller: every read hands out a fresh array, the
   memoized root-level read included, so writing into one can never change what a later read returns.
@@ -144,7 +146,7 @@ exactly the ability to resolve within the current context.
   frame of the binding the factory is building, so `parent` is that binding — what a dependency the factory resolves
   sees as its parent.
 
-> **Exact shape:** `src/core/types.ts` — `ResolutionContext`.
+> **Exact shape:** `src/core/types.ts` — `Resolver` and `ResolutionContext`.
 
 ## `ConstraintContext`
 
