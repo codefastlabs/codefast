@@ -21,7 +21,7 @@
  *   7. Validate scope rules                     (validate(container))
  *   8. Serve traffic
  *
- * Shutdown sequence (all triggered by a single container.dispose()):
+ * Shutdown sequence (all triggered by a single container.disposeAsync()):
  *   - Stop accepting new HTTP requests
  *   - Drain in-flight jobs
  *   - Flush job worker queue
@@ -749,7 +749,7 @@ const AppModule = Module.createAsync("production-microservice:App", async (build
 async function bootstrap(): Promise<void> {
   banner("🏗 Bootstrapping job-service v1.5.0");
 
-  // await using: container.dispose() fires automatically when main() returns
+  // await using: container.disposeAsync() fires automatically when main() returns
   await using serviceContainer = await Container.fromModulesAsync(AppModule);
 
   // Eager init: resolve all singletons now, fail fast before binding port
@@ -820,7 +820,7 @@ async function bootstrap(): Promise<void> {
 
   // ── Graceful shutdown ──────────────────────────────────────────────────────────────────────────────────────────────
   banner("🛑 Initiating graceful shutdown...");
-  // container.dispose() called automatically by `await using`:
+  // container.disposeAsync() called automatically by `await using`:
   // Deactivation order (reverse of activation):
   //   HttpServer.stop() → JobWorker.stop() → Redis.quit() → Database.close()
 }

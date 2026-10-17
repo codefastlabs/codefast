@@ -69,7 +69,7 @@ instance. A **deactivation handler** is the teardown step when an instance leave
 | Scope / kind      | Deactivation runs?                                            | When                                              |
 | ----------------- | ------------------------------------------------------------- | ------------------------------------------------- |
 | `singleton`       | Yes                                                           | Container disposed, or the binding unbound        |
-| `toConstantValue` | Yes — treated as a singleton, **even if never resolved**      | `dispose()` / `unbind()`                          |
+| `toConstantValue` | Yes — treated as a singleton, **even if never resolved**      | `disposeAsync()` / `unbind()`                     |
 | `transient`       | No — each instance is an orphan once handed to the caller     | —                                                 |
 | `scoped`          | Yes — each child container deactivates the instance it cached | That child disposed, or the binding unbound on it |
 

@@ -77,7 +77,7 @@ describe("deactivation on dispose", () => {
     container.bind(Database).toSelf().singleton();
     container.resolve(Database);
 
-    await container.dispose();
+    await container.disposeAsync();
     expect(events).toEqual(["closed"]);
     expect(container.isDisposed).toBe(true);
   });

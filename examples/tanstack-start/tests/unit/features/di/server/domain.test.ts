@@ -108,7 +108,7 @@ describe("TaskService", () => {
       .compile();
     const log = bed.mocks.get(ActivityLogToken);
 
-    await bed.dispose();
+    await bed.disposeAsync();
 
     expect(log.record).toHaveBeenCalledWith("request req-1 torn down · per-request service disposed");
   });
@@ -120,7 +120,7 @@ describe("TaskService", () => {
       .compile();
     const log = bed.mocks.get(ActivityLogToken);
 
-    await bed.dispose();
+    await bed.disposeAsync();
 
     expect(log.record).not.toHaveBeenCalled();
   });

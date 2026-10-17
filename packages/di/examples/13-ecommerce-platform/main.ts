@@ -2519,7 +2519,7 @@ async function main(): Promise<void> {
     container: await bootstrap(),
     [Symbol.asyncDispose]: async function () {
       console.log("\n[Shutdown] Initiating graceful shutdown...");
-      await this.container.dispose();
+      await this.container.disposeAsync();
       console.log("[Shutdown] ✅ All connections closed. Goodbye!");
     },
   };

@@ -155,7 +155,7 @@ await using container = await Container.fromModulesAsync(...);
 
 // ... serve traffic ...
 
-// On scope exit: container.dispose() fires all onDeactivation hooks in reverse order:
+// On scope exit: container.disposeAsync() fires all onDeactivation hooks in reverse order:
 // controller → service → repository → cache → database
 ```
 

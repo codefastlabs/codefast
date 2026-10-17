@@ -199,7 +199,7 @@ unbind-then-bind, never a way to override a parent.
 >   rejection among them is swallowed rather than reported. Nothing remains to retry, and `unbindAsync()` on the same
 >   token afterwards finds nothing bound. The same holds for `unbindAll()`, `rebind()` and `unload()`.
 > - `unbind(bindingId)` reaches a binding a later last-wins bind displaced, too: its cached singleton, or a constant's
->   owed `onDeactivation`, runs then rather than at `dispose()`.
+>   owed `onDeactivation`, runs then rather than at `disposeAsync()`.
 
 ### `rebind` and async deactivation
 
@@ -282,7 +282,7 @@ const container = Container.fromModules(ModuleA, ModuleB);
 > - Cached singleton instances belonging to that module are **deactivated** — `onDeactivation` and `@preDestroy()` are
 >   called.
 > - A binding the module registered that a later last-wins bind displaced is torn down the same way: its cached
->   singleton, or a constant's owed `onDeactivation`, runs at this unload rather than waiting for `dispose()`.
+>   singleton, or a constant's owed `onDeactivation`, runs at this unload rather than waiting for `disposeAsync()`.
 > - A sync `unload()` is only safe if every deactivation handler is sync. If any is async, `unloadAsync()` must be used:
 >   a sync `unload()` that meets one throws `AsyncDeactivationError` only after the module is unloaded and every
 >   deactivation stage of its instances has run, as [a sync `unbind()`](#unbind-and-singleton-deactivation) does.
@@ -328,7 +328,7 @@ requestContainer.bind(RequestId).toConstantValue(crypto.randomUUID());
 const handler = requestContainer.resolve(RequestHandler);
 
 // Dispose: deactivate the child's scoped instances, then every singleton DEFINED at it (the parent is untouched)
-await requestContainer.dispose();
+await requestContainer.disposeAsync();
 
 // `await using` — TC39 Explicit Resource Management
 {
@@ -358,7 +358,7 @@ app.use(async (ctx, next) => {
 
 // The handler uses requestScope
 const handler = ctx.container.resolve(UserController);
-// When the middleware's block exits, await using calls requestScope.dispose() for you
+// When the middleware's block exits, await using calls requestScope.disposeAsync() for you
 ```
 
 The scope lives exactly as long as the block that opened it, so the block must not exit before the handler finishes: a
@@ -367,8 +367,8 @@ still running. [Example 22](../examples/22-per-request-scope/README.md) is the f
 functions and server routes.
 
 > **The cost of `createChild()`.** `createChild()` creates one new container object holding a parent reference — O(1),
-> with no binding copies. `dispose()` only clears the child's singleton cache. The pattern is safe for high-throughput
-> request handling.
+> with no binding copies. `disposeAsync()` only clears the child's singleton cache. The pattern is safe for
+> high-throughput request handling.
 
 > **Normative — disposing a container reaches its descendants.** A container whose parent (or any ancestor) has been
 > disposed is itself disposed: `isDisposed` reads `true`, and every resolve, `has` and mutation is refused with
@@ -378,20 +378,21 @@ functions and server routes.
 > disposed. A child of a disposed ancestor cannot be revived — open a fresh `Container.create()` for an independent one.
 >
 > Disposing an ancestor refuses the child's operations but does **not** tear the child down: the child's own singletons
-> are deactivated only by the child's own `dispose()`, which stays callable after its ancestor is gone. Dispose each
-> child you created — `await using` does it at scope exit.
+> are deactivated only by the child's own `disposeAsync()`, which stays callable after its ancestor is gone. Dispose
+> each child you created — `await using` does it at scope exit.
 
 ## Container state lifecycle
 
-> **Normative.** A container has an `isDisposed` state, exposed as a readonly property. After `dispose()` is called:
+> **Normative.** A container has an `isDisposed` state, exposed as a readonly property. After `disposeAsync()` is
+> called:
 >
 > - Every mutation (`bind`, `unbind`, `rebind`, `load`, `unload`) throws `DisposedContainerError`.
 > - Resolution operations (`resolve*`, `has*`, `inspect`) are refused with `DisposedContainerError` too.
 > - A method that returns a promise — `resolveAsync`, `resolveOptionalAsync`, `resolveAllAsync`, `loadAsync`,
 >   `unloadAsync`, `unbindAsync`, `unbindAllAsync`, `initializeAsync` — refuses with a promise rejected with
 >   `DisposedContainerError`, never a synchronous throw, so `.catch()` and `Promise.allSettled` observe the refusal.
-> - `dispose()` is idempotent: calling it again is a no-op — no throw, no double-deactivation. This holds for a child
->   whose ancestor is already disposed, so an `await using` child still tears down cleanly at scope exit.
+> - `disposeAsync()` is idempotent: calling it again is a no-op — no throw, no double-deactivation. This holds for a
+>   child whose ancestor is already disposed, so an `await using` child still tears down cleanly at scope exit.
 > - A descendant of a disposed container is disposed too — it reports `isDisposed` and refuses the same operations,
 >   because its resolution walks a chain that is gone.
 
@@ -399,14 +400,14 @@ functions and server routes.
 const container = Container.create();
 container.bind(Logger).to(ConsoleLogger);
 
-await container.dispose();
+await container.disposeAsync();
 
 container.resolve(Logger); // throws DisposedContainerError
 container.bind(Logger).toSelf(); // throws DisposedContainerError
 await container.resolveAsync(Logger); // rejects with DisposedContainerError
 
-// Idempotent: calling dispose() again is a no-op
-await container.dispose(); // safe — no throw, no double-deactivation
+// Idempotent: calling disposeAsync() again is a no-op
+await container.disposeAsync(); // safe — no throw, no double-deactivation
 ```
 
 ## `initializeAsync` — warm up singletons
@@ -673,7 +674,7 @@ Put together, a container exposes nine groups of members:
 | Container-level hooks | `onActivation`, `onDeactivation`                                                                      |
 | Resolution            | `resolve`, `resolveAsync`, `resolveOptional`, `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync` |
 | Child                 | `createChild`                                                                                         |
-| Disposal              | `dispose`, `[Symbol.asyncDispose]`                                                                    |
+| Disposal              | `disposeAsync`, `[Symbol.asyncDispose]`                                                               |
 | Initialisation        | `initializeAsync`                                                                                     |
 | Introspection         | `has`, `hasOwn`                                                                                       |
 

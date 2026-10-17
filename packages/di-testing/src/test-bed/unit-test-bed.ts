@@ -53,7 +53,7 @@ export interface UnitTestBed<Class, Backend extends MockFunction = Spy> extends 
   /** Clears the call history and configured behaviour of every auto-mock and stub the bed created. */
   resetMocks(this: void): void;
   /** Runs the unit's `@preDestroy` hooks and disposes the backing container. */
-  dispose(this: void): Promise<void>;
+  disposeAsync(this: void): Promise<void>;
 }
 
 /**
@@ -89,7 +89,7 @@ export function createSociableUnitTestBed<Class, Backend extends MockFunction = 
     unit: bed.unit,
     mocks: bed.mocks,
     resetMocks: bed.resetMocks,
-    dispose: bed.dispose,
+    disposeAsync: bed.disposeAsync,
     [Symbol.asyncDispose]: bed[Symbol.asyncDispose],
     exposed<Real>(target: Constructor<Real>): Real {
       if (!exposedClasses.has(target)) {
@@ -145,15 +145,15 @@ export function createUnitTestBed<Class, Backend extends MockFunction = Spy>(
     }
   };
 
-  const dispose = async (): Promise<void> => {
-    await container.dispose();
+  const disposeAsync = async (): Promise<void> => {
+    await container.disposeAsync();
   };
 
   return {
     unit,
     mocks,
     resetMocks,
-    dispose,
-    [Symbol.asyncDispose]: dispose,
+    disposeAsync,
+    [Symbol.asyncDispose]: disposeAsync,
   };
 }

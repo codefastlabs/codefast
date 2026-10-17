@@ -134,7 +134,7 @@ describe("unbind by the id of a displaced binding", () => {
 
     expect(log).toStrictEqual(["displaced"]);
     expect(container.resolve(serviceToken)).toBe("winner");
-    await container.dispose();
+    await container.disposeAsync();
     expect(log).toStrictEqual(["displaced"]);
   });
 
@@ -156,7 +156,7 @@ describe("unbind by the id of a displaced binding", () => {
     container.unbind(displacedId);
 
     expect(log).toStrictEqual(["displaced"]);
-    await container.dispose();
+    await container.disposeAsync();
     expect(log).toStrictEqual(["displaced"]);
   });
 
@@ -336,7 +336,7 @@ describe("unload of a module whose binding was displaced", () => {
 
     expect(log).toStrictEqual(["owned"]);
     expect(container.resolve(serviceToken)).toBe("winner");
-    await container.dispose();
+    await container.disposeAsync();
     expect(log).toStrictEqual(["owned"]);
   });
 
@@ -362,7 +362,7 @@ describe("unload of a module whose binding was displaced", () => {
     container.unload(owner);
 
     expect(log).toStrictEqual(["owned"]);
-    await container.dispose();
+    await container.disposeAsync();
     expect(log).toStrictEqual(["owned"]);
   });
 
@@ -383,7 +383,7 @@ describe("unload of a module whose binding was displaced", () => {
     container.bind(serviceToken).toConstantValue({ id: "winner" });
 
     container.unload(owner);
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(log).toStrictEqual([]);
   });
@@ -548,7 +548,7 @@ describe("disposed container", () => {
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("value");
 
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(container.isDisposed).toBe(true);
     expect(() => container.resolve(serviceToken)).toThrow(DisposedContainerError);
@@ -559,8 +559,8 @@ describe("disposed container", () => {
 
   it("is idempotent", async () => {
     const container = Container.create();
-    await container.dispose();
-    await expect(container.dispose()).resolves.toBeUndefined();
+    await container.disposeAsync();
+    await expect(container.disposeAsync()).resolves.toBeUndefined();
   });
 });
 
@@ -586,7 +586,7 @@ describe("disposed container, async methods", () => {
   it.each(asyncMethods)("%s rejects on a disposed container instead of throwing", async (_method, call) => {
     const container = Container.create();
     container.bind(serviceToken).toConstantValue("value");
-    await container.dispose();
+    await container.disposeAsync();
 
     const pending = call(container);
 
@@ -598,7 +598,7 @@ describe("disposed container, async methods", () => {
     const parent = Container.create();
     parent.bind(serviceToken).toConstantValue("value");
     const child = parent.createChild();
-    await parent.dispose();
+    await parent.disposeAsync();
 
     const pending = call(child);
 
@@ -610,7 +610,7 @@ describe("disposed container, async methods", () => {
     const live = Container.create();
     live.bind(serviceToken).toConstantValue("value");
     const disposed = Container.create();
-    await disposed.dispose();
+    await disposed.disposeAsync();
 
     const [served, refused] = await Promise.allSettled([
       live.resolveAsync(serviceToken),

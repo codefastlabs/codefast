@@ -25,7 +25,7 @@ describe("constant deactivation", () => {
       });
     container.resolve(connectionToken);
 
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(closed).toEqual(["only"]);
   });
@@ -80,7 +80,7 @@ describe("constant deactivation", () => {
         closed.push(instance.id);
       });
 
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(closed).toEqual(["never-asked-for"]);
   });
@@ -96,7 +96,7 @@ describe("constant deactivation", () => {
     container.bind(connectionToken).toConstantValue({ id: "only" });
     container.resolve(connectionToken);
 
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(closed).toEqual(["only"]);
   });
@@ -117,7 +117,7 @@ describe("constant deactivation", () => {
       });
     container.resolve(connectionToken);
 
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(closed).toEqual(["raw+activated"]);
   });
@@ -136,7 +136,7 @@ describe("constant deactivation", () => {
       });
     container.resolve(connectionToken);
 
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(closed).toEqual(["replaced"]);
   });
@@ -157,7 +157,7 @@ describe("constant deactivation", () => {
       });
     container.resolve(connectionToken);
 
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(order).toEqual(["container", "binding"]);
   });
@@ -200,7 +200,7 @@ describe("constant deactivation", () => {
     container.resolve(plainToken);
     container.resolve(hookedToken);
 
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(closed).toEqual(["hooked"]);
   });
@@ -222,7 +222,7 @@ describe("constant deactivation", () => {
         log.push(`deact:${value}`);
       });
 
-    await container.dispose();
+    await container.disposeAsync();
 
     // Both the winner and the displaced constant get their hook, exactly once each.
     expect(new Set(log)).toStrictEqual(new Set(["deact:A", "deact:B"]));
@@ -249,7 +249,7 @@ describe("constant deactivation", () => {
       });
 
     expect(container.resolve(serviceToken)).toBe("A");
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(new Set(log)).toStrictEqual(new Set(["deact:A", "deact:B"]));
     expect(log).toHaveLength(2);
@@ -284,7 +284,7 @@ describe("constant deactivation", () => {
       container.load(displacing(serviceToken));
 
       expect(container.resolve(serviceToken)).toBe("B");
-      await container.dispose();
+      await container.disposeAsync();
 
       expect(log).toStrictEqual(["deact:A"]);
     });
@@ -307,7 +307,7 @@ describe("constant deactivation", () => {
 
       expect(container.has(serviceToken)).toBe(false);
       expect(log).toStrictEqual([]);
-      await container.dispose();
+      await container.disposeAsync();
 
       expect(log).toStrictEqual(["deact:A"]);
     });
@@ -329,7 +329,7 @@ describe("constant deactivation", () => {
       );
 
       expect(container.resolve(serviceToken)).toBe("A");
-      await container.dispose();
+      await container.disposeAsync();
 
       expect(log).toStrictEqual(["deact:A"]);
     });

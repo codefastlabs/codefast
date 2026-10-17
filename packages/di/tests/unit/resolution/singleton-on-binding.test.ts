@@ -122,7 +122,7 @@ describe("singleton caching", () => {
 
     container.resolve(firstToken);
     container.resolve(secondToken);
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(deactivated.toSorted()).toEqual(["first", "second"]);
   });

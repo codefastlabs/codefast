@@ -25,7 +25,7 @@ export function advanceStateEpoch(): void {
 
 /**
  * The container-disposal counter, held in a cell so a hot reader dereferences a field rather than
- * paying a cross-module call — apart from {@link stateEpoch} so a per-request child's `dispose()`
+ * paying a cross-module call — apart from {@link stateEpoch} so a per-request child's `disposeAsync()`
  * does not invalidate the chain-version memo that keeps deep resolves cheap. A child compares it to
  * learn whether an ancestor was disposed, re-walking the chain only after a disposal somewhere.
  *

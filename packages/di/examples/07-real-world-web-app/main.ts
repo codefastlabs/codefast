@@ -296,7 +296,7 @@ async function main(): Promise<void> {
   await using server = {
     ...(await createServer()),
     [Symbol.asyncDispose]: async function () {
-      await this.container.dispose();
+      await this.container.disposeAsync();
       console.log("\n[Server] gracefully shut down");
     },
   };

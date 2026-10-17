@@ -96,7 +96,7 @@ describe("TestBed.sociable", () => {
 
     expect(log.log).toHaveBeenCalledWith("start");
 
-    await bed.dispose();
+    await bed.disposeAsync();
 
     expect(log.log).toHaveBeenCalledWith("stop");
   });

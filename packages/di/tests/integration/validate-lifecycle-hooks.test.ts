@@ -134,7 +134,7 @@ describe("validate(container) — container-level lifecycle hooks", () => {
     }).not.toThrow();
     const request = container.createChild();
     const connection = request.resolve(connectionToken);
-    await request.dispose();
+    await request.disposeAsync();
     expect(deactivated).toEqual([connection]);
   });
 

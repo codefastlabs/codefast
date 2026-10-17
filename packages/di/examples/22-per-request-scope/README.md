@@ -31,11 +31,11 @@ async function handle(request: Request): Promise<Response> {
 
 Three calls, each with one job:
 
-| Call                               | What it does                                                                                    |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `root.createChild()`               | One container object holding a parent reference — no binding copies, O(1) per request           |
-| `scope.bind(…).toConstantValue(…)` | Makes the request itself a dependency, visible to this request's services and to no other       |
-| `await using`                      | Calls `dispose()` at block exit: every `scoped` instance the request cached is deactivated here |
+| Call                               | What it does                                                                                         |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `root.createChild()`               | One container object holding a parent reference — no binding copies, O(1) per request                |
+| `scope.bind(…).toConstantValue(…)` | Makes the request itself a dependency, visible to this request's services and to no other            |
+| `await using`                      | Calls `disposeAsync()` at block exit: every `scoped` instance the request cached is deactivated here |
 
 The container implements `Symbol.asyncDispose` and not `Symbol.dispose`, because a teardown hook may be async — a
 synchronous `using` is a compile error, not a silent skip.
@@ -117,7 +117,7 @@ is unbound on the root — that binding arrives with each child, which is the po
 
 ### Teardown failures surface from the block
 
-`dispose()` keeps tearing down the remaining instances when one hook throws, then throws the one error as itself or
+`disposeAsync()` keeps tearing down the remaining instances when one hook throws, then throws the one error as itself or
 several as an `AggregateError`. Under `await using` that error leaves the block like any other; if the body had already
 thrown, the runtime wraps both in a `SuppressedError`. When a failed teardown must not turn a finished response into an
 error, dispose in a `finally` you own and log it instead:
@@ -128,7 +128,7 @@ const scope = root.createChild();
 try {
   return await handleWith(scope);
 } finally {
-  await scope.dispose().catch(reportTeardownFailure);
+  await scope.disposeAsync().catch(reportTeardownFailure);
 }
 ```
 

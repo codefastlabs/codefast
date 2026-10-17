@@ -40,7 +40,7 @@ describe("disposing a child container", () => {
     const request = root.createChild();
     request.resolve(RequestContext);
 
-    await request.dispose();
+    await request.disposeAsync();
 
     expect(ended).toEqual(["request ended"]);
   });
@@ -59,7 +59,7 @@ describe("disposing a child container", () => {
     const request = root.createChild();
     const transaction = request.resolve(TransactionToken);
 
-    await request.dispose();
+    await request.disposeAsync();
 
     expect(closed).toEqual([transaction.id]);
   });
@@ -79,10 +79,10 @@ describe("disposing a child container", () => {
     const firstTransaction = first.resolve(TransactionToken);
     const secondTransaction = second.resolve(TransactionToken);
 
-    await first.dispose();
+    await first.disposeAsync();
     expect(closed).toEqual([firstTransaction.id]);
 
-    await second.dispose();
+    await second.disposeAsync();
     expect(closed).toEqual([firstTransaction.id, secondTransaction.id]);
   });
 
@@ -118,7 +118,7 @@ describe("disposing a child container", () => {
     request.resolve(Session);
     request.resolve(Audit);
 
-    await request.dispose();
+    await request.disposeAsync();
 
     expect(order).toEqual(["audit", "session", "pool"]);
   });
@@ -136,7 +136,7 @@ describe("disposing a child container", () => {
     });
     request.resolve(TransactionToken);
 
-    await request.dispose();
+    await request.disposeAsync();
 
     expect(heard).toEqual(["root"]);
   });
@@ -163,7 +163,7 @@ describe("disposing a child container", () => {
     request.resolve(TransactionToken);
     request.resolve(Failing);
 
-    await expect(request.dispose()).rejects.toThrow("boom in scoped");
+    await expect(request.disposeAsync()).rejects.toThrow("boom in scoped");
     expect(ran).toEqual(["survivor"]);
   });
 });
@@ -202,7 +202,7 @@ describe("a scoped declaration's onDeactivation", () => {
     const request = Container.fromModules(Declared).createChild();
     const transaction = request.resolve(TransactionToken);
 
-    await request.dispose();
+    await request.disposeAsync();
 
     expect(closed).toEqual([transaction.id]);
   });

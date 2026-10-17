@@ -8,7 +8,7 @@
 ## What this example shows
 
 A complete, production-grade microservice where DI manages the entire lifecycle: ordered async startup, health checks,
-background job processing, and graceful shutdown triggered by a single `container.dispose()`.
+background job processing, and graceful shutdown triggered by a single `container.disposeAsync()`.
 
 ---
 
@@ -42,7 +42,7 @@ sequenceDiagram
 
     Note over main,HTTP: serve traffic...
 
-    main->>Container: dispose() via await using
+    main->>Container: disposeAsync() via await using
     Container->>HTTP: stop() → drain in-flight requests
     Container->>Worker: stop() → drain(jobs)
     Container->>Redis: quit()
@@ -198,8 +198,8 @@ startHttpServer(); // safe to accept traffic
 
 ## Shutdown sequence (reverse of startup)
 
-`await using` ensures `container.dispose()` fires even if an exception is thrown. Deactivation hooks run in **reverse
-dependency order**:
+`await using` ensures `container.disposeAsync()` fires even if an exception is thrown. Deactivation hooks run in
+**reverse dependency order**:
 
 ```
 HTTP server  → stop accepting requests
@@ -214,10 +214,10 @@ async function main() {
   await container.initializeAsync();
   validate(container);
 
-  process.on("SIGTERM", () => container.dispose());
+  process.on("SIGTERM", () => container.disposeAsync());
 
   // serve traffic...
-} // container.dispose() called automatically
+} // container.disposeAsync() called automatically
 ```
 
 ---

@@ -127,7 +127,7 @@ export abstract class BedBuilder<Class, Backend extends MockFunction = Spy> {
       return build(unit, prepared);
     } catch (error) {
       // A failed compile still owns the container — dispose it so no lifecycle state leaks.
-      void prepared?.container.dispose().catch(() => undefined);
+      void prepared?.container.disposeAsync().catch(() => undefined);
       throw error;
     }
   }
@@ -143,7 +143,7 @@ export abstract class BedBuilder<Class, Backend extends MockFunction = Spy> {
       const unit = await prepared.container.resolveAsync(this.target);
       return build(unit, prepared);
     } catch (error) {
-      await prepared?.container.dispose().catch(() => undefined);
+      await prepared?.container.disposeAsync().catch(() => undefined);
       throw error;
     }
   }

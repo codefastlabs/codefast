@@ -53,10 +53,10 @@ with any version of InversifyJS, by design.
 >
 > - **ESM only.** There is no CommonJS build and no dual build.
 > - **Node.js ≥ 22.18.** `await using` on a container also needs a runtime with explicit resource management, which Node
->   ships from 24; `dispose()` needs nothing extra.
+>   ships from 24; `disposeAsync()` needs nothing extra.
 > - **In a browser, Chrome and Edge 136, Firefox 136, or Safari 18.4**, the first releases that ship every ES2025
 >   builtin ([support policy](../../../SUPPORT.md#browsers)). `await using` also needs the browser to ship explicit
->   resource management, which Safari has not; `dispose()` needs nothing extra.
+>   resource management, which Safari has not; `disposeAsync()` needs nothing extra.
 > - **TypeScript ≥ 7**, the one compiler that type-checks this package and emits its published declarations. Standard
 >   decorators are TypeScript's default, so `experimentalDecorators` and `emitDecoratorMetadata` stay **off** and
 >   `reflect-metadata` is never loaded ([tsconfig setup](decorators.md#tsconfig-setup)).
@@ -90,15 +90,16 @@ not distort the source.
 
 ### Naming — sync/async convention
 
-One consistent rule: **unqualified = sync, `Async` suffix = async**. There is never a `Sync` suffix. The one exception
-is `dispose()`, which is always async and returns a `Promise` — disposal has no sync form to tell it apart from, and it
-is the name `Symbol.asyncDispose` pairs with.
+One consistent rule, with no exception: **unqualified = sync, `Async` suffix = async**. There is never a `Sync` suffix.
+A method that returns a `Promise` carries the suffix even when it has no sync twin — `disposeAsync()`, the name TC39's
+`AsyncDisposableStack.disposeAsync()` already gives the method `Symbol.asyncDispose` delegates to.
 
 ```ts
 container.resolve(Logger); // sync
 container.resolveAsync(Database); // async — an async factory is in the chain
 container.load(AppModule); // sync
 container.loadAsync(LazyModule); // async — the module has async setup
+container.disposeAsync(); // async — no sync twin, and still suffixed
 ```
 
 ### Token replaces ServiceIdentifier

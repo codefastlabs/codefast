@@ -32,11 +32,11 @@ describe("dispose with throwing hooks", () => {
     container.resolve(failingToken);
     container.resolve(survivorToken);
 
-    await expect(container.dispose()).rejects.toThrow("boom in A");
+    await expect(container.disposeAsync()).rejects.toThrow("boom in A");
     expect(ran).toEqual(["survivor"]);
   });
 
-  it("hands every dispose() caller the same teardown run", async () => {
+  it("hands every disposeAsync() caller the same teardown run", async () => {
     const serviceToken = token<string>("teardown.same-run");
     const container = Container.create();
     container
@@ -45,8 +45,8 @@ describe("dispose with throwing hooks", () => {
       .singleton();
     container.resolve(serviceToken);
 
-    const first = container.dispose();
-    const second = container.dispose();
+    const first = container.disposeAsync();
+    const second = container.disposeAsync();
     expect(second).toBe(first);
     await first;
   });
@@ -72,7 +72,7 @@ describe("dispose with throwing hooks", () => {
       });
     container.resolve(consumerToken);
 
-    await container.dispose();
+    await container.disposeAsync();
     expect(ran).toEqual(["consumer", "dep"]);
   });
 });
@@ -93,7 +93,7 @@ describe("dispose vs in-flight async materialization", () => {
       });
 
     const pending = container.resolveAsync(serviceToken);
-    await container.dispose();
+    await container.disposeAsync();
 
     const instance = await pending;
     expect(instance.closed).toBe(true);
@@ -113,7 +113,7 @@ describe("dispose vs in-flight async materialization", () => {
     const child = parent.createChild();
     parent.resolve(serviceToken);
 
-    await parent.dispose();
+    await parent.disposeAsync();
 
     // Both lanes refuse at the container gate, each in its own form: the sync lane throws, the async lane rejects.
     expect(() => child.resolve(serviceToken)).toThrow(DisposedContainerError);
@@ -150,7 +150,7 @@ describe("dispose vs in-flight async materialization", () => {
       .singleton();
 
     const holder = container.resolveAsync(holderToken);
-    const disposed = container.dispose();
+    const disposed = container.disposeAsync();
     release();
 
     await expect(holder).resolves.toBe("holder");
@@ -269,7 +269,7 @@ describe("a container with a disposed ancestor is itself disposed", () => {
     const parent = Container.create();
     parent.bind(shared).toConstantValue("v");
     const child = parent.createChild();
-    await parent.dispose();
+    await parent.disposeAsync();
 
     expect(child.isDisposed).toBe(true);
     expect(() => child.has(shared)).toThrow(DisposedContainerError);
@@ -281,7 +281,7 @@ describe("a container with a disposed ancestor is itself disposed", () => {
     const parent = Container.create();
     parent.bind(shared).toConstantValue("v");
     const grandchild = parent.createChild().createChild();
-    await parent.dispose();
+    await parent.disposeAsync();
 
     expect(grandchild.isDisposed).toBe(true);
     expect(() => grandchild.has(shared)).toThrow(DisposedContainerError);
@@ -292,7 +292,7 @@ describe("a container with a disposed ancestor is itself disposed", () => {
     const parent = Container.create();
     parent.bind(shared).toConstantValue("v");
     const child = parent.createChild();
-    await child.dispose();
+    await child.disposeAsync();
 
     expect(() => child.has(shared)).toThrow(DisposedContainerError);
   });
@@ -309,7 +309,7 @@ describe("a container with a disposed ancestor is itself disposed", () => {
       })
       .transient();
     const child = parent.createChild();
-    await parent.dispose();
+    await parent.disposeAsync();
 
     expect(() => child.resolve(service)).toThrow(DisposedContainerError);
     expect(built).toBe(0);
@@ -320,7 +320,7 @@ describe("a container with a disposed ancestor is itself disposed", () => {
     const parent = Container.create();
     parent.bind(service).toConstantValue("v");
     const child = parent.createChild();
-    await parent.dispose();
+    await parent.disposeAsync();
 
     expect(() => child.resolve(service)).toThrow(DisposedContainerError);
   });
@@ -338,7 +338,7 @@ describe("a container with a disposed ancestor is itself disposed", () => {
     parent.resolve(service);
     parent.resolve(service);
     const child = parent.createChild();
-    await parent.dispose();
+    await parent.disposeAsync();
 
     expect(() => child.resolve(service)).toThrow(DisposedContainerError);
   });
@@ -349,7 +349,7 @@ describe("a container with a disposed ancestor is itself disposed", () => {
     parent.bind(shared).toConstantValue("v");
     const child = parent.createChild();
     expect(child.resolve(shared)).toBe("v");
-    await parent.dispose();
+    await parent.disposeAsync();
 
     expect(() => child.resolve(shared)).toThrow(DisposedContainerError);
   });
@@ -360,7 +360,7 @@ describe("a container with a disposed ancestor is itself disposed", () => {
     parent.bind(shared).toConstantValue("v");
     const child = parent.createChild();
     expect(child.resolve(shared)).toBe("v");
-    await Container.create().createChild().dispose();
+    await Container.create().createChild().disposeAsync();
 
     expect(child.resolve(shared)).toBe("v");
     expect(child.isDisposed).toBe(false);
@@ -371,7 +371,7 @@ describe("a container with a disposed ancestor is itself disposed", () => {
     const parent = Container.create();
     const child = parent.createChild();
     child.bind(own).toConstantValue("child-owned");
-    await parent.dispose();
+    await parent.disposeAsync();
 
     expect(() => child.resolve(own)).toThrow(DisposedContainerError);
   });
@@ -379,7 +379,7 @@ describe("a container with a disposed ancestor is itself disposed", () => {
   it("lets a child dispose after its parent is disposed", async () => {
     const parent = Container.create();
     const child = parent.createChild();
-    await parent.dispose();
+    await parent.disposeAsync();
 
     // The `using` protocol calls this at scope exit; dispose is ungated, so it must not throw.
     await expect(child[Symbol.asyncDispose]()).resolves.toBeUndefined();

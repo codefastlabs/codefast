@@ -56,7 +56,7 @@ graph TB
 const snapshot = inspect(container);
 
 console.log(snapshot.hasParent); // is this a child container?
-console.log(snapshot.isDisposed); // has dispose() been called?
+console.log(snapshot.isDisposed); // has disposeAsync() been called?
 console.log(snapshot.cachedSingletonCount); // how many singletons are cached?
 console.log(snapshot.ownBindings.length); // how many bindings are registered?
 

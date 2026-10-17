@@ -148,7 +148,7 @@ describe("ContainerOptions.metadataReader", () => {
 
     expect(pool.opened).toBe(true);
 
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(pool.closed).toBe(true);
   });

@@ -175,7 +175,7 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
   };
 
   request.bind(RequestContextToken).toConstantValue(context);
-  // Child-owned singleton (not the root's scoped binding): published `dispose()` only deactivates
+  // Child-owned singleton (not the root's scoped binding): published `disposeAsync()` only deactivates
   // singletons, so a scoped instance would be cleared without running `@preDestroy`.
   request.bind(TaskServiceToken).to(TaskService).singleton();
 
@@ -204,7 +204,7 @@ async function handleRequest(mutate?: (service: TaskService) => Array<string> | 
   }
 
   // Async-only disposal — tears down the child and runs the service's @preDestroy hook.
-  await request.dispose();
+  await request.disposeAsync();
 
   // Read state from the surviving root singletons after teardown so the log includes the teardown.
   const repository = root.resolve(TaskRepositoryToken);

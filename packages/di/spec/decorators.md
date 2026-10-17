@@ -517,12 +517,13 @@ under the owner's namespace like any module's (`app:Services`).
 > TypeScript's `ESNext.Disposable` lib. Any other program adds `ESNext.Disposable` to its own `lib`. In a browser
 > program it goes beside `DOM`, and there it also asserts that the targeted browsers ship explicit resource management,
 > which Safari does not yet — so the `@codefast/typescript-config` presets leave it out, and a browser program on them
-> keeps `skipLibCheck` on and calls `dispose()`. `target: "ESNext"`, as above, loads all of `ESNext` and needs nothing
-> more. Without the types, `container.d.ts` fails with TS2550 under `skipLibCheck: false`, and the program's own
+> keeps `skipLibCheck` on and calls `disposeAsync()`. `target: "ESNext"`, as above, loads all of `ESNext` and needs
+> nothing more. Without the types, `container.d.ts` fails with TS2550 under `skipLibCheck: false`, and the program's own
 > `await using` fails with TS2318 even under `skipLibCheck: true`.
 >
 > At runtime, `await using` needs `Symbol.asyncDispose` when `@codefast/di` is evaluated, because the container's
-> methods are keyed by it then. Every supported Node line ships it. On a browser that does not, `dispose()` still works.
+> methods are keyed by it then. Every supported Node line ships it. On a browser that does not, `disposeAsync()` still
+> works.
 
 > **Normative — `Symbol.metadata` must exist before a decorated class is defined.** TypeScript emits `context.metadata`
 > as `undefined` on a runtime without `Symbol.metadata`, and every decorator here then throws

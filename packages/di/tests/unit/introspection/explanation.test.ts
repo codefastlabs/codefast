@@ -274,7 +274,7 @@ describe("explain() as a read", () => {
 
   it("refuses a disposed container like every other read", async () => {
     const container = Container.create();
-    await container.dispose();
+    await container.disposeAsync();
 
     expect(() => explain(container, token<string>("explain:Disposed"))).toThrow(DisposedContainerError);
   });

@@ -5,7 +5,7 @@
  * - toDynamicAsync / toResolvedAsync for async initialization
  * - onActivation (runs after creation) / onDeactivation (runs on dispose)
  * - AsyncModule for async bootstrap
- * - container.dispose() with `await using`
+ * - container.disposeAsync() with `await using`
  * - Parallel inflight deduplication for async singletons
  */
 
@@ -120,7 +120,7 @@ const DatabaseModule = Module.create("async-lifecycle:Database", (builder) => {
       await database.connect();
       return database; // must return the (possibly transformed) instance
     })
-    // onDeactivation: called during container.dispose()
+    // onDeactivation: called during container.disposeAsync()
     .onDeactivation(async (database) => {
       await database.disconnect();
     });
@@ -150,7 +150,7 @@ const AppModule = Module.create("async-lifecycle:App", (builder) => {
 // ── Bootstrap & teardown ─────────────────────────────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  // await using — container.dispose() is called automatically at scope exit
+  // await using — container.disposeAsync() is called automatically at scope exit
   await using container = await Container.fromModulesAsync(
     InfrastructureModule,
     DatabaseModule,
@@ -173,7 +173,7 @@ async function main(): Promise<void> {
   item("Same Database instance (parallel resolve)", firstDatabaseResolve === secondDatabaseResolve); // true
   item("Database connected", firstDatabaseResolve.isConnected()); // true
 
-  // container.dispose() fires all onDeactivation hooks in reverse order
+  // container.disposeAsync() fires all onDeactivation hooks in reverse order
   // (handled automatically by `await using`)
 }
 

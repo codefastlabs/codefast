@@ -63,7 +63,7 @@ export interface Container extends Resolver {
 
   createChild(): Container;
 
-  dispose(): Promise<void>;
+  disposeAsync(): Promise<void>;
   [Symbol.asyncDispose](): Promise<void>;
 
   initializeAsync(): Promise<void>;
@@ -147,7 +147,7 @@ class DefaultContainer implements Container {
   // The dispose epoch at which this child's chain was last confirmed live. Every dispose anywhere
   // bumps the epoch, so an unchanged epoch means no ancestor closed since — the chain needs no walk.
   #liveGeneration = -1;
-  // The one teardown run — every dispose() call returns it once it exists.
+  // The one teardown run — every disposeAsync() call returns it once it exists.
   #disposePromise: Promise<void> | undefined;
   readonly #registry: BindingRegistry;
   readonly #scope: ScopeManager;
@@ -814,7 +814,7 @@ class DefaultContainer implements Container {
 
   // ── Dispose ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  dispose(): Promise<void> {
+  disposeAsync(): Promise<void> {
     // One teardown, shared: a second caller awaits the same run instead of returning early while
     // hooks from the first are still executing.
     return (this.#disposePromise ??= this.#runDispose());
@@ -876,11 +876,11 @@ class DefaultContainer implements Container {
     }
 
     this.#scope.clearAll();
-    throwCollected(errors, "dispose() completed, but deactivation hooks threw");
+    throwCollected(errors, "disposeAsync() completed, but deactivation hooks threw");
   }
 
   [Symbol.asyncDispose](): Promise<void> {
-    return this.dispose();
+    return this.disposeAsync();
   }
 
   // ── Initialization ─────────────────────────────────────────────────────────────────────────────────────────────────
