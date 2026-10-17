@@ -15,7 +15,7 @@
  * that says whether a binding is released when its factory returns its promise, since the second
  * sibling reaches the leaf while the first is still unsettled.
  */
-import { Container, token } from "@codefast/di";
+import { Container, resolveAsync, token } from "@codefast/di";
 
 import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
 import { ASYNC_CHAIN_DEPTH, ASYNC_DIAMOND_SHARED_LEAF } from "#fixtures/scenario-parity";
@@ -84,10 +84,10 @@ function buildAsyncChainScenario(
     ...descriptor,
     kind: "async",
     batch: 1,
-    sanity: async () => (await container.resolveAsync(leafToken)) === expectedLeafValue,
+    sanity: async () => (await resolveAsync(container, leafToken)) === expectedLeafValue,
     build: () => {
       return async () => {
-        const value = await container.resolveAsync(leafToken);
+        const value = await resolveAsync(container, leafToken);
 
         if (value !== expectedLeafValue) {
           throw new Error(`Expected async chain leaf value ${String(expectedLeafValue)}, received ${String(value)}`);
@@ -137,10 +137,10 @@ function buildAsyncDiamondSharedLeafScenario(): AsyncBenchScenario {
     ...ASYNC_DIAMOND_SHARED_LEAF,
     kind: "async",
     batch: 1,
-    sanity: async () => (await container.resolveAsync(rootToken)) === expectedRootValue,
+    sanity: async () => (await resolveAsync(container, rootToken)) === expectedRootValue,
     build: () => {
       return async () => {
-        const value = await container.resolveAsync(rootToken);
+        const value = await resolveAsync(container, rootToken);
 
         if (value !== expectedRootValue) {
           throw new Error(`Expected async diamond root value ${String(expectedRootValue)}, received ${String(value)}`);
