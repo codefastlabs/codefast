@@ -28,6 +28,7 @@ describe("presentEnginesAuditResult", () => {
           dependency: "vitest",
           field: "devDependencies",
           range: "^22.12.0 || >=24.0.0",
+          uncovered: ">=22.0.0 <22.12.0",
         },
         { kind: "types-off-floor", packageName: "@x/d", floor: "22.12.0", typesVersion: "22.13.0" },
       ],
@@ -41,7 +42,7 @@ describe("presentEnginesAuditResult", () => {
     expect(out).toContain("@x/a: declares no engines.node");
     expect(out).toContain('@x/b: engines.node "^24.0.0" → write the floor as ">=X.Y.Z"');
     expect(out).toContain(
-      `@x/c: floor 22.0.0 is outside vitest's engines.node "^22.12.0 || >=24.0.0" (devDependencies)`,
+      `@x/c: floor 22.0.0 claims Node ">=22.0.0 <22.12.0", which vitest's engines.node "^22.12.0 || >=24.0.0" (devDependencies) leaves out`,
     );
     expect(out).toContain("@x/d: @types/node resolves to 22.13.0, off floor 22.12.0's line");
     expect(out).toContain("✖ 4 Node floor violation(s) across 4 package(s)");

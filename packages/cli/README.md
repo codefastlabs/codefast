@@ -432,10 +432,13 @@ _General-purpose._ Holds each workspace package's own Node floor — its `engine
 packages can sit on different floors, each as low as the package can go. It reports:
 
 - a published package that declares no floor, and a floor not written `>=X.Y.Z`;
-- a floor outside the `engines.node` of a dependency that runs on it: a runtime one (`dependencies`, `peerDependencies`,
-  `optionalDependencies`) a consumer installs there, or a dev dependency that runs the package's own tests there in CI.
-  A workspace dependency is read from its manifest, any other from the package's own `node_modules`, so run the audit
-  after the install;
+- a release the floor claims that a dependency's `engines.node` leaves out, named with the dependency, its range and the
+  sub-range it misses. A runtime dependency (`dependencies`, `peerDependencies`, `optionalDependencies`) a consumer
+  installs must admit every release from the floor up — the odd majors below the one `.node-version` pins aside, since
+  they reach end-of-life without becoming LTS — so `^22.18.0 || >=24.11.0` fails a `>=22.18.0` floor on 24.0–24.10. A
+  dev dependency only runs the package's tests, so it must admit the floor and the `.node-version` release CI runs them
+  on. A workspace dependency is read from its manifest, any other from the package's own `node_modules`, so run the
+  audit after the install;
 - an `@types/node` the lockfile (`pnpm-lock.yaml`) resolves on another major than the floor or on a newer minor, where
   the compiler would accept APIs the floor lacks.
 

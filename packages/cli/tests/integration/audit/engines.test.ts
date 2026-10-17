@@ -112,6 +112,7 @@ describe("audit engines", () => {
         dependency: "@x/core",
         field: "peerDependencies",
         range: ">=24.0.0",
+        uncovered: ">=22.12.0 <24.0.0",
       },
     ]);
   });
@@ -131,6 +132,65 @@ describe("audit engines", () => {
         dependency: "vitest",
         field: "devDependencies",
         range: "^22.12.0 || ^24.0.0 || >=26.0.0",
+        uncovered: ">=22.0.0 <22.12.0",
+      },
+    ]);
+  });
+
+  it("flags a runtime dependency whose engines leave a gap above the floor", async () => {
+    write(".node-version", "26.8.2\n");
+    writePackage("lib", { name: "@x/lib", engines: { node: ">=22.18.0" }, dependencies: { "@babel/core": "^8.0.0" } });
+    writeJson("packages/lib/node_modules/@babel/core/package.json", { engines: { node: "^22.18.0 || >=24.11.0" } });
+
+    expect((await audit()).violations).toEqual([
+      {
+        kind: "outside-dependency-engines",
+        packageName: "@x/lib",
+        floor: "22.18.0",
+        dependency: "@babel/core",
+        field: "dependencies",
+        range: "^22.18.0 || >=24.11.0",
+        uncovered: ">=24.0.0 <24.11.0",
+      },
+    ]);
+  });
+
+  it("judges a runtime dependency on every line without a newest release to place the short-lived ones", async () => {
+    writePackage("lib", { name: "@x/lib", engines: { node: ">=22.18.0" }, peerDependencies: { react: "*" } });
+    writeJson("packages/lib/node_modules/react/package.json", { engines: { node: "^22.18.0 || >=24.0.0" } });
+
+    expect((await audit()).violations).toEqual([
+      {
+        kind: "outside-dependency-engines",
+        packageName: "@x/lib",
+        floor: "22.18.0",
+        dependency: "react",
+        field: "peerDependencies",
+        range: "^22.18.0 || >=24.0.0",
+        uncovered: ">=23.0.0 <24.0.0",
+      },
+    ]);
+  });
+
+  it("holds a dev dependency to the floor and the newest release only, since CI tests on those", async () => {
+    write(".node-version", "v26.8.2\n");
+    writePackage("lib", {
+      name: "@x/lib",
+      engines: { node: ">=22.18.0" },
+      devDependencies: { "@babel/core": "^8.0.0", vitest: "^5.0.0" },
+    });
+    writeJson("packages/lib/node_modules/@babel/core/package.json", { engines: { node: "^22.18.0 || >=24.11.0" } });
+    writeJson("packages/lib/node_modules/vitest/package.json", { engines: { node: "^22.12.0 || ^24.0.0" } });
+
+    expect((await audit()).violations).toEqual([
+      {
+        kind: "outside-dependency-engines",
+        packageName: "@x/lib",
+        floor: "22.18.0",
+        dependency: "vitest",
+        field: "devDependencies",
+        range: "^22.12.0 || ^24.0.0",
+        uncovered: ">=26.0.0",
       },
     ]);
   });
@@ -187,6 +247,7 @@ describe("audit engines", () => {
         dependency: "@x/core",
         field: "dependencies",
         range: ">=24.0.0",
+        uncovered: ">=22.12.0 <24.0.0",
       },
     ]);
   });
