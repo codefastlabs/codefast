@@ -2,7 +2,7 @@ import type { BindingRegistration } from "#container/binding-chain";
 import { BindingChain } from "#container/binding-chain";
 import type { Binding, ConstantBinding } from "#core/binding";
 import { effectiveBindingScope, NO_INSTANCE } from "#core/binding";
-import type { BindingBuilder, BindToBuilder } from "#core/binding-builders";
+import type { BindToBuilder } from "#core/binding-builders";
 import { getOrInsert } from "#core/map-upsert";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#core/module";
 import { isSyncModule, MODULE_SETUP } from "#core/module";
@@ -13,13 +13,11 @@ import { tokenName } from "#core/token";
 import type {
   ActivationHandler,
   BindingIdentifier,
-  BindingScope,
   Constructor,
   DeactivationHandler,
   Resolver,
   ResolveOptions,
 } from "#core/types";
-import type { AutoRegisterRegistry } from "#decorators/injectable";
 import { AsyncModuleLoadError, DisposedContainerError, RebindUnboundTokenError } from "#errors";
 import { bindingSlotToResolveOptions } from "#injection/dependency-slot";
 import type { ResolutionDiagnostics } from "#introspection/diagnostics";
@@ -59,7 +57,6 @@ export interface Container extends Resolver {
   loadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
   unload(...modules: Array<SyncModule>): void;
   unloadAsync(...modules: Array<SyncModule | AsyncModule>): Promise<void>;
-  loadAutoRegistered(registry: AutoRegisterRegistry): number;
 
   onActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void;
   onDeactivation<Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void;
@@ -138,20 +135,6 @@ export function containerInternals(container: Container): ContainerInternals {
 export function containerInspector(container: Container): Inspector {
   return DefaultContainer.inspectorOf(container);
 }
-
-// A Record rather than an if-chain, so a new `BindingScope` is a compile error here instead of
-// silently landing in whichever branch happened to be last.
-const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown>) => void> = {
-  singleton: (builder) => {
-    builder.singleton();
-  },
-  scoped: (builder) => {
-    builder.scoped();
-  },
-  transient: (builder) => {
-    builder.transient();
-  },
-};
 
 /** Bindings owing a deactivation, each followed by the instance it is owed for. */
 type DeactivationPairs = ReadonlyArray<unknown>;
@@ -689,15 +672,6 @@ class DefaultContainer implements Container {
     } else {
       this.#moduleRefs!.set(ref, count - 1);
     }
-  }
-
-  loadAutoRegistered(registry: AutoRegisterRegistry): number {
-    this.#assertNotDisposed();
-    const entries = registry.entries();
-    for (const { target, scope } of entries) {
-      APPLY_BINDING_SCOPE[scope](this.#createBindToBuilder(target).toSelf());
-    }
-    return entries.length;
   }
 
   // ── Lifecycle hooks ────────────────────────────────────────────────────────────────────────────────────────────────

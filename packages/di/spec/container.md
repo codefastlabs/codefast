@@ -241,8 +241,8 @@ container.unload(FeatureModule);
 // Unload asynchronously — accepts both SyncModule and AsyncModule
 await container.unloadAsync(AsyncFeatureModule);
 
-// Load auto-registered classes from an explicit registry
-const count = container.loadAutoRegistered(appRegistry);
+// An auto-register registry is a SyncModule — load and unload it like one
+container.load(appRegistry);
 ```
 
 ### Reference counting for shared deps
@@ -669,7 +669,7 @@ Put together, a container exposes nine groups of members:
 | --------------------- | ----------------------------------------------------------------------------------------------------- |
 | State                 | `isDisposed`                                                                                          |
 | Binding               | `bind`, `unbind`, `unbindAsync`, `unbindAll`, `unbindAllAsync`, `rebind`                              |
-| Module                | `load`, `loadAsync`, `unload`, `unloadAsync`, `loadAutoRegistered`                                    |
+| Module                | `load`, `loadAsync`, `unload`, `unloadAsync`                                                          |
 | Container-level hooks | `onActivation`, `onDeactivation`                                                                      |
 | Resolution            | `resolve`, `resolveAsync`, `resolveOptional`, `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync` |
 | Child                 | `createChild`                                                                                         |

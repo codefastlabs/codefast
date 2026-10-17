@@ -12,7 +12,6 @@ import { Module } from "#core/module";
 import type { ModuleBuilder } from "#core/module";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
-import { createAutoRegisterRegistry } from "#decorators/injectable";
 import { AsyncModuleLoadError, DisposedContainerError } from "#errors";
 
 describe("unbinding", () => {
@@ -440,26 +439,6 @@ describe("async modules", () => {
     const container = Container.create();
     // @ts-expect-error — load() only accepts sync modules; the runtime guard is what is under test.
     expect(() => container.load(asyncModule)).toThrow(AsyncModuleLoadError);
-  });
-});
-
-describe("auto-registration", () => {
-  it("binds every registered class to itself and returns how many were bound", () => {
-    class FirstService {}
-    class SecondService {}
-
-    const registry = createAutoRegisterRegistry();
-    registry.register(FirstService, "singleton");
-    registry.register(SecondService, "transient");
-
-    const container = Container.create();
-    const count = container.loadAutoRegistered(registry);
-
-    expect(count).toBe(2);
-    expect(container.resolve(FirstService)).toBeInstanceOf(FirstService);
-    // Singleton scope is honoured; transient hands back a fresh instance each time.
-    expect(container.resolve(FirstService)).toBe(container.resolve(FirstService));
-    expect(container.resolve(SecondService)).not.toBe(container.resolve(SecondService));
   });
 });
 

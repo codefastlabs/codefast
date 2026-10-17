@@ -1,3 +1,5 @@
+import type { BindingBuilder } from "#core/binding-builders";
+import { SyncModule } from "#core/module";
 import type { BindingScope, Constructor } from "#core/types";
 import { decoratorMetadataOf } from "#decorators/metadata-record";
 import type { InjectableDependency, ResolvedDependencyValue } from "#injection/descriptor";
@@ -8,23 +10,33 @@ import type { ParamMetadata } from "#metadata/types";
 // ── AutoRegisterRegistry ─────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * The collector `@injectable` registers a class into, for a container to bind later.
+ * The collector `@injectable` registers a class into: a module that binds every registered class to itself.
+ *
+ * @remarks It loads like any `SyncModule` — deduplicated and ref-counted, and torn down by `unload()`.
+ * A load binds the entries registered by then; the set one load bound is the set its unload removes.
  *
  * @since 0.3.16-canary.0
  */
-export interface AutoRegisterRegistry {
+export interface AutoRegisterRegistry extends SyncModule {
   register(target: Constructor, scope: BindingScope): void;
   entries(): ReadonlyArray<{ target: Constructor; scope: BindingScope }>;
 }
 
 /**
- * Creates an empty auto-register registry.
+ * Creates an empty auto-register registry, loaded under `name`.
  *
  * @since 0.3.16-canary.0
  */
-export function createAutoRegisterRegistry(): AutoRegisterRegistry {
+export function createAutoRegisterRegistry(name: string): AutoRegisterRegistry {
   const registeredEntries: Array<{ target: Constructor; scope: BindingScope }> = [];
+  // A setup callback rather than declarations, so a class decorated after the registry exists still loads.
+  const module = SyncModule.create(name, (builder) => {
+    for (const { target, scope } of registeredEntries) {
+      APPLY_BINDING_SCOPE[scope](builder.bind(target).toSelf());
+    }
+  });
   return {
+    ...module,
     register(target: Constructor, scope: BindingScope): void {
       registeredEntries.push({ target, scope });
     },
@@ -33,6 +45,20 @@ export function createAutoRegisterRegistry(): AutoRegisterRegistry {
     },
   };
 }
+
+// A Record rather than an if-chain, so a new `BindingScope` is a compile error here instead of
+// silently landing in whichever branch happened to be last.
+const APPLY_BINDING_SCOPE: Record<BindingScope, (builder: BindingBuilder<unknown>) => void> = {
+  singleton: (builder) => {
+    builder.singleton();
+  },
+  scoped: (builder) => {
+    builder.scoped();
+  },
+  transient: (builder) => {
+    builder.transient();
+  },
+};
 
 // ── InjectableOptions ────────────────────────────────────────────────────────────────────────────────────────────────
 

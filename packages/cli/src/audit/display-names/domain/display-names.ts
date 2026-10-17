@@ -10,7 +10,8 @@ const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
 const CAMEL_CASE = /^[a-z][A-Za-z0-9]*$/;
 
 /**
- * A bare `token(…)` / `tag(…)` call, or a module factory call, whose first argument is a string literal.
+ * A bare `token(…)` / `tag(…)` call, or a module factory call — an auto-register registry is a module too —
+ * whose first argument is a string literal.
  *
  * @remarks Generic arguments are skipped up to four levels of nesting, which is deeper than any
  * declaration in the repo. Template literals are not matched: an interpolated name has no fixed
@@ -18,7 +19,7 @@ const CAMEL_CASE = /^[a-z][A-Za-z0-9]*$/;
  * reported text reads as the call was written.
  */
 const DISPLAY_NAME_CALL =
-  /(?<![\w$.])(?:(token|tag)\s*(?:<(?:[^<>]|<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)*>)?|((?:Sync|Async)?Module)\s*\.\s*create(?:Async)?)\s*\(\s*(["'])((?:(?!\3)[^\\\n]|\\.)*)\3(\s*\))?/g;
+  /(?<![\w$.])(?:(token|tag)\s*(?:<(?:[^<>]|<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)*>)?|((?:Sync|Async)?Module)\s*\.\s*(?:create(?:Async)?|fromBindings)|(createAutoRegisterRegistry))\s*\(\s*(["'])((?:(?!\4)[^\\\n]|\\.)*)\4(\s*\))?/g;
 
 type DisplayNameKind = "token" | "tag" | "module";
 
@@ -40,7 +41,7 @@ export function auditDisplayNames(sourceText: string): Array<DisplayNameViolatio
   const violations: Array<DisplayNameViolation> = [];
   for (const match of sourceText.matchAll(DISPLAY_NAME_CALL)) {
     const kind: DisplayNameKind = match[1] === undefined ? "module" : (match[1] as "token" | "tag");
-    const reason = reasonFor(kind, match[4]!);
+    const reason = reasonFor(kind, match[5]!);
     if (reason === null) {
       continue;
     }

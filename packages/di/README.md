@@ -375,7 +375,8 @@ only**: the context does not survive an `await`, so a callback returning a `Prom
 
 To avoid binding classes one by one, let them register themselves.
 `@injectable(deps, { autoRegister: registry, scope })` records the class in a registry from
-`createAutoRegisterRegistry()`, and `container.loadAutoRegistered(registry)` binds the whole set in one call.
+`createAutoRegisterRegistry("app:Services")`. The registry is a `SyncModule`: `container.load(registry)` binds the whole
+set in one call, and `container.unload(registry)` removes it again.
 
 ### Custom metadata
 

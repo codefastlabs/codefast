@@ -169,7 +169,7 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 | No `lookupBindings`                                                      | `lookupBindings` returns `BindingSnapshot[]` — never `undefined`                                      |
 | `toService()` + hint semantics are not specified                         | `toAlias()` hint forwarding is documented                                                             |
 | No testing guide                                                         | [Testing](./README.md#testing) with patterns for isolated containers, child overrides, MetadataReader |
-| `autoRegister` through a global option or per-get                        | `createAutoRegisterRegistry()` — an explicit registry, no global state                                |
+| `autoRegister` through a global option or per-get                        | `createAutoRegisterRegistry(name)` — an explicit registry, loaded as a module, no global state        |
 | `[Symbol.asyncDispose]()` is not specified                               | `dispose()` + `[Symbol.asyncDispose]()` — `await using` support                                       |
 | `[Symbol.dispose]()` is not specified                                    | No `[Symbol.dispose]` — a sync `using` on a container is a compile error                              |
 | No `lookupBindings`, `inspect`, `generateDependencyGraph`                | A full introspection API — typed snapshot, JSON graph, DOT export                                     |

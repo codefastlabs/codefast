@@ -7,8 +7,8 @@
  * Pattern:
  *   1. Create a registry (one per layer or one global).
  *   2. Decorate each class with `@injectable([...], { autoRegister: registry, scope })`.
- *   3. Call container.loadAutoRegistered(registry) once at bootstrap — the container
- *      binds every registered class in the order they were decorated.
+ *   3. Load the registry like any module — container.load(registry) binds every
+ *      registered class in the order they were decorated, and unload() removes them.
  *
  * This eliminates the verbosity of a long list of container.bind().to().singleton()
  * calls when a large number of services share the same wiring strategy.
@@ -75,9 +75,9 @@ interface NotificationService {
 // Separate registries per architectural layer keep concerns isolated.
 // You can also use a single global registry — pick what fits your project.
 
-const infrastructureRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
-const domainRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
-const applicationRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
+const infrastructureRegistry: AutoRegisterRegistry = createAutoRegisterRegistry("auto-register:Infrastructure");
+const domainRegistry: AutoRegisterRegistry = createAutoRegisterRegistry("auto-register:Domain");
+const applicationRegistry: AutoRegisterRegistry = createAutoRegisterRegistry("auto-register:Application");
 
 // ── Infrastructure layer ─────────────────────────────────────────────────────────────────────────────────────────────
 //
@@ -219,12 +219,12 @@ class EmailNotificationService implements NotificationService {
 
 // ── Token wiring map ─────────────────────────────────────────────────────────────────────────────────────────────────
 //
-// loadAutoRegistered binds each Constructor to its token using Constructor itself
+// Loading a registry binds each Constructor to its token using Constructor itself
 // as the token. Since our tokens are symbol-based (not the class itself), we must
 // bind the interface token → the concrete class explicitly, or use the class
 // constructor as the token directly.
 //
-// Strategy A (used here): loadAutoRegistered + manual token alias bindings.
+// Strategy A (used here): load the registries + manual token alias bindings.
 // Strategy B: use the class constructor as the token everywhere (skips aliases).
 
 // ── Bootstrap ────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -237,15 +237,15 @@ container.bind(ConfigToken).to(AppConfig).singleton();
 container.bind(LoggerToken).to(ConsoleLogger).singleton();
 container.bind(DatabaseToken).to(PostgresDatabase).singleton();
 
-// loadAutoRegistered: binds each entry as `container.bind(Constructor).to(Constructor).scope()`
-// The returned number is how many bindings were added.
-const infrastructureCount = container.loadAutoRegistered(infrastructureRegistry);
-const domainCount = container.loadAutoRegistered(domainRegistry);
-const applicationCount = container.loadAutoRegistered(applicationRegistry);
+// A registry is a SyncModule: loading it binds each entry as `bind(Constructor).toSelf().scope()`,
+// and unload(registry) would remove exactly those bindings again.
+container.load(infrastructureRegistry, domainRegistry, applicationRegistry);
 
-console.log(`Auto-registered: ${infrastructureCount} infra + ${domainCount} domain + ${applicationCount} app`);
+console.log(
+  `Auto-registered: ${infrastructureRegistry.entries().length} infra + ${domainRegistry.entries().length} domain + ${applicationRegistry.entries().length} app`,
+);
 
-// Alias interface tokens → concrete singletons (already bound by loadAutoRegistered).
+// Alias interface tokens → concrete singletons (already bound by loading the registries).
 container.bind(UserRepositoryToken).to(SqlUserRepository).singleton();
 container.bind(OrderRepositoryToken).to(SqlOrderRepository).singleton();
 container.bind(UserServiceToken).to(UserManager).singleton();
@@ -290,8 +290,8 @@ console.log(
 // Because registration happens at decorator-application time (module load), use
 // separate registries per environment and select one at bootstrap.
 
-const devRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
-const prodRegistry: AutoRegisterRegistry = createAutoRegisterRegistry();
+const devRegistry: AutoRegisterRegistry = createAutoRegisterRegistry("auto-register:DevServices");
+const prodRegistry: AutoRegisterRegistry = createAutoRegisterRegistry("auto-register:ProdServices");
 
 @injectable([], { autoRegister: devRegistry, scope: "singleton" })
 class DevNotificationService implements NotificationService {
@@ -314,7 +314,7 @@ const envRegistry = isProduction ? prodRegistry : devRegistry;
 
 const envContainer = Container.create();
 envContainer.bind(LoggerToken).to(ConsoleLogger).singleton();
-envContainer.loadAutoRegistered(envRegistry);
+envContainer.load(envRegistry);
 
 // Bind the interface token to whichever concrete class was auto-registered.
 const SelectedNotificationService = isProduction ? ProdNotificationService : DevNotificationService;
