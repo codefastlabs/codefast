@@ -5,6 +5,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveOptionalAsync } from "#container/async";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 
@@ -53,7 +54,7 @@ describe("resolveOptional single evaluation", () => {
       })
       .toConstantValue("x");
 
-    await expect(container.resolveOptionalAsync(serviceToken)).resolves.toBe("x");
+    await expect(resolveOptionalAsync(container, serviceToken)).resolves.toBe("x");
     expect(evaluations).toBe(1);
   });
 });

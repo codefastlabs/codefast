@@ -1,7 +1,7 @@
 import type { BindingRegistration } from "#container/binding-chain";
 import { BindingChain } from "#container/binding-chain";
 import type { Binding, ConstantBinding } from "#core/binding";
-import { effectiveBindingScope, NO_INSTANCE } from "#core/binding";
+import { NO_INSTANCE } from "#core/binding";
 import type { BindingBuilder, BindToBuilder } from "#core/binding-builders";
 import { getOrInsert } from "#core/map-upsert";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#core/module";
@@ -22,7 +22,6 @@ import type {
 import type { AutoRegisterRegistry } from "#decorators/injectable";
 import { deactivationHooksThrew, foreignContainer, moduleRollbackThrew } from "#error-messages";
 import { AsyncModuleLoadError, DisposedContainerError, RebindUnboundTokenError } from "#errors";
-import { bindingSlotToResolveOptions } from "#injection/dependency-slot";
 import type { ResolutionDiagnostics } from "#introspection/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
 import { Inspector } from "#introspection/inspector";
@@ -32,7 +31,6 @@ import { MetadataReaderToken } from "#metadata/reader-token";
 import { defaultMetadataReader } from "#metadata/symbol-reader";
 import type { MetadataReader } from "#metadata/types";
 import { verifyingMetadataReader } from "#metadata/verifying-reader";
-import { ROOT_BRANCH } from "#resolution/path";
 import { DependencyResolver } from "#resolution/resolver";
 
 // ── Container interface ──────────────────────────────────────────────────────────────────────────────────────────────
@@ -69,8 +67,6 @@ export interface Container extends Resolver {
 
   dispose(): Promise<void>;
   [Symbol.asyncDispose](): Promise<void>;
-
-  initializeAsync(): Promise<void>;
 
   has<Names extends string = string>(
     token: Token<unknown, Names> | Constructor,
@@ -129,6 +125,15 @@ export interface ContainerInternals {
  */
 export function containerInternals(container: Container): ContainerInternals {
   return DefaultContainer.internalsOf(container);
+}
+
+/**
+ * Reads the resolver of a live container `Container` created.
+ *
+ * @throws `TypeError` for an object `Container` did not create, `DisposedContainerError` for a disposed chain.
+ */
+export function containerResolver(container: Container): DependencyResolver {
+  return DefaultContainer.resolverOf(container);
 }
 
 /**
@@ -761,22 +766,6 @@ class DefaultContainer implements Container {
     return this.#resolver.resolve(token, options, rootStack);
   }
 
-  resolveAsync<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): Promise<Value> {
-    // Not `async`: the guard's throw becomes the rejection this method promises.
-    try {
-      this.#assertNotDisposed();
-    } catch (disposedError) {
-      return Promise.reject(disposedError);
-    }
-    if (options === undefined) {
-      return this.#resolver.resolveAsyncFromRoot(token) as Promise<Value>;
-    }
-    return this.#resolver.resolveAsync(token, options, [], ROOT_BRANCH);
-  }
-
   resolveOptional<Value, Names extends string = string>(
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
@@ -786,18 +775,6 @@ class DefaultContainer implements Container {
     return rootStack.length === 0
       ? this.#resolver.resolveOptional(token, options, rootStack)
       : this.#resolver.resolveOptional(token, options, []);
-  }
-
-  resolveOptionalAsync<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): Promise<Value | undefined> {
-    try {
-      this.#assertNotDisposed();
-    } catch (disposedError) {
-      return Promise.reject(disposedError);
-    }
-    return this.#resolver.resolveOptionalAsync(token, options, [], ROOT_BRANCH);
   }
 
   resolveAll<Value, Names extends string = string>(
@@ -812,21 +789,6 @@ class DefaultContainer implements Container {
     return rootStack.length === 0
       ? this.#resolver.resolveAll(token, options, rootStack)
       : this.#resolver.resolveAll(token, options, []);
-  }
-
-  resolveAllAsync<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): Promise<ReadonlyArray<Value>> {
-    try {
-      this.#assertNotDisposed();
-    } catch (disposedError) {
-      return Promise.reject(disposedError);
-    }
-    if (options === undefined) {
-      return this.#resolver.resolveRootCollectionAsync(token);
-    }
-    return this.#resolver.resolveAllAsync(token, options, [], ROOT_BRANCH);
   }
 
   // ── Child ──────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -910,37 +872,6 @@ class DefaultContainer implements Container {
     return this.dispose();
   }
 
-  // ── Initialization ─────────────────────────────────────────────────────────────────────────────────────────────────
-
-  async initializeAsync(): Promise<void> {
-    this.#assertNotDisposed();
-    const allBindings = this.#registry.allBindings();
-    for (const binding of allBindings) {
-      if (binding.kind === "alias") {
-        continue;
-      }
-      const scope = effectiveBindingScope(binding);
-      if (scope === "singleton" && binding.instance === NO_INSTANCE) {
-        if (binding.predicate !== undefined) {
-          continue;
-        }
-        // A constant is already its own instance, so only an activation hook gives the warm-up
-        // something to run — and a container-level hook counts as one just as a per-binding hook does.
-        if (
-          binding.kind === "constant" &&
-          binding.activationHook === undefined &&
-          !this.#lifecycle.hasActivationHandlers(binding.token)
-        ) {
-          continue;
-        }
-        // Warm the binding itself — re-selecting by its own criteria could pick a different
-        // candidate whose criteria are a subset of them.
-        const slotOptions = bindingSlotToResolveOptions(binding.slot);
-        await this.#resolver.warmBindingAsync(binding, slotOptions);
-      }
-    }
-  }
-
   // ── Introspection ──────────────────────────────────────────────────────────────────────────────────────────────────
 
   has<Names extends string = string>(
@@ -982,6 +913,10 @@ class DefaultContainer implements Container {
       metadataReader: live.#getMetadataReader(),
       lifecycle: live.#lifecycle,
     };
+  }
+
+  static resolverOf(container: Container): DependencyResolver {
+    return DefaultContainer.#live(container).#resolver;
   }
 
   static inspectorOf(container: Container): Inspector {

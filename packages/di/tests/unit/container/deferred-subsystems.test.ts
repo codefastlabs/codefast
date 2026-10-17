@@ -9,6 +9,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { inspect, lookupBindings } from "#container/introspect";
 import { Module } from "#core/module";
@@ -68,8 +69,8 @@ describe("scope caches built on first use", () => {
 
     // Concurrent resolves must share one in-flight promise, not race two constructions.
     const [first, second] = await Promise.all([
-      container.resolveAsync(serviceToken),
-      container.resolveAsync(serviceToken),
+      resolveAsync(container, serviceToken),
+      resolveAsync(container, serviceToken),
     ]);
 
     expect(constructions).toBe(1);
@@ -248,7 +249,7 @@ describe("plan compiler and plan maps built on first use", () => {
     container.bind(depToken).toConstantValue(3);
     container.bind(Service).toSelf().transient();
 
-    await expect(container.resolveAsync(Service)).resolves.toMatchObject({ value: 3 });
+    await expect(resolveAsync(container, Service)).resolves.toMatchObject({ value: 3 });
     expect(container.resolve(Service).value).toBe(3);
   });
 });

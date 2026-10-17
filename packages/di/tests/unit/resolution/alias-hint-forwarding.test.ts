@@ -5,6 +5,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
@@ -42,7 +43,7 @@ describe("hint forwarding through a default-slot alias", () => {
 
     expect(container.resolveOptional(abstract, { name: "file" })).toBe("file");
     expect(container.resolveOptional(abstract, { name: "missing" })).toBeUndefined();
-    await expect(container.resolveAsync(abstract, { name: "file" })).resolves.toBe("file");
+    await expect(resolveAsync(container, abstract, { name: "file" })).resolves.toBe("file");
     expect(container.has(abstract, { name: "file" })).toBe(true);
   });
 

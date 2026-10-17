@@ -6,6 +6,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
@@ -393,7 +394,7 @@ describe("alias cycle safety", () => {
     container.bind(aToken).toAlias(bToken);
     container.bind(bToken).toAlias(aToken);
 
-    await expect(container.resolveAsync(aToken)).rejects.toThrow(/circular/i);
+    await expect(resolveAsync(container, aToken)).rejects.toThrow(/circular/i);
   });
 
   it("a self-alias throws CircularDependencyError", () => {

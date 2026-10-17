@@ -34,6 +34,7 @@ import type { Token } from "#core/token";
 import { tokenName } from "#core/token";
 import type {
   ActivationHandler,
+  AsyncResolutionContext,
   BindingConstraint,
   BindingIdentifier,
   BindingKind,
@@ -233,7 +234,7 @@ export class BindingChain<Value, Names extends string = string>
     return this.#register("dynamic", "transient");
   }
 
-  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value> {
+  toDynamicAsync(factory: (ctx: AsyncResolutionContext) => Promise<Value>): BindingBuilder<Value> {
     this.#requireUnregistered();
     this.factory = factory;
     return this.#register("dynamic-async", "transient");

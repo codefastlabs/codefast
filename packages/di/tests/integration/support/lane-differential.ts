@@ -9,13 +9,14 @@
  */
 import * as fc from "fast-check";
 
+import { resolveAllAsync, resolveAsync, resolveOptionalAsync } from "#container/async";
 import type { Container } from "#container/container";
 import { Container as ContainerStatic } from "#container/container";
 import type { BindingTag, TagKey } from "#core/tag";
 import { tag } from "#core/tag";
 import type { Token } from "#core/token";
 import { token } from "#core/token";
-import type { BindingScope, Constructor, ResolutionContext } from "#core/types";
+import type { AsyncResolutionContext, BindingScope, Constructor, ResolutionContext } from "#core/types";
 import type { InjectableDependency } from "#injection/descriptor";
 import { injectAll, optional } from "#injection/descriptor";
 import type { ConstructorMetadata, MetadataReader, ParamMetadata } from "#metadata/types";
@@ -273,7 +274,11 @@ function resolveThroughContext(ctx: ResolutionContext, materials: GraphMaterials
   return ctx.resolve(target, options);
 }
 
-function resolveThroughContextAsync(ctx: ResolutionContext, materials: GraphMaterials, dep: DepSpec): Promise<unknown> {
+function resolveThroughContextAsync(
+  ctx: AsyncResolutionContext,
+  materials: GraphMaterials,
+  dep: DepSpec,
+): Promise<unknown> {
   const target = materials.tokens[dep.target]!;
   const options =
     dep.tags.length === 0 ? undefined : { tags: dep.tags.map((tagIndex) => criterion(materials, tagIndex)) };
@@ -496,15 +501,15 @@ export async function asyncLanes(
   coldHost: () => Container,
 ): Promise<LaneSnapshots> {
   const lanes = new Map<string, unknown>();
-  lanes.set("async-cold", await attemptAsync(() => coldHost().resolveAsync(root, {})));
+  lanes.set("async-cold", await attemptAsync(() => resolveAsync(coldHost(), root, {})));
   for (let index = 0; index < TIERED_RESOLVE_COUNT; index += 1) {
-    lanes.set(`async#${String(index)}`, await attemptAsync(() => container.resolveAsync(root)));
+    lanes.set(`async#${String(index)}`, await attemptAsync(() => resolveAsync(container, root)));
   }
-  lanes.set("async-interpreted", await attemptAsync(() => container.resolveAsync(root, {})));
-  lanes.set("async-optional", await attemptAsync(() => container.resolveOptionalAsync(root)));
+  lanes.set("async-interpreted", await attemptAsync(() => resolveAsync(container, root, {})));
+  lanes.set("async-optional", await attemptAsync(() => resolveOptionalAsync(container, root)));
   lanes.set(
     "async-collection",
-    await attemptAsync(async () => unwrapLoneMember(await container.resolveAllAsync(root))),
+    await attemptAsync(async () => unwrapLoneMember(await resolveAllAsync(container, root))),
   );
   return lanes;
 }

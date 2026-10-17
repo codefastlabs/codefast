@@ -88,7 +88,7 @@ container
   .singleton();
 
 container.resolve(DbToken); // ← throws
-await container.resolveAsync(DbToken); // ← correct
+await resolveAsync(container, DbToken); // ← correct
 ```
 
 The container cannot await a factory during a synchronous `resolve()` call. Always use `resolveAsync` /

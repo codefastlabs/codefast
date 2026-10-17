@@ -169,15 +169,15 @@ A binding describes how the container produces a value for a token. You declare 
 optional [constraints](#constraints), then a strategy (the `to*` step, which produces the value and registers the
 binding), then an optional scope and lifecycle hooks. Only `container.bind(key).to*(…)` is required.
 
-| Strategy                          | Produces                                                          |
-| --------------------------------- | ----------------------------------------------------------------- |
-| `.toConstantValue(value)`         | A fixed value (always singleton)                                  |
-| `.toSelf()` / `.to(Constructor)`  | A class instance built from its `@injectable` metadata            |
-| `.toDynamic(factory)`             | A sync factory `(ctx: ResolutionContext) => Value`                |
-| `.toDynamicAsync(factory)`        | An async factory — resolve it with the `*Async` container methods |
-| `.toResolved(factory, deps)`      | A factory called with its typed dependency tuple already resolved |
-| `.toResolvedAsync(factory, deps)` | The same, returning a `Promise`                                   |
-| `.toAlias(targetToken)`           | An alias — a redirect to another token's binding                  |
+| Strategy                          | Produces                                                                                            |
+| --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `.toConstantValue(value)`         | A fixed value (always singleton)                                                                    |
+| `.toSelf()` / `.to(Constructor)`  | A class instance built from its `@injectable` metadata                                              |
+| `.toDynamic(factory)`             | A sync factory `(ctx: ResolutionContext) => Value`                                                  |
+| `.toDynamicAsync(factory)`        | An async factory `(ctx: AsyncResolutionContext) => Promise<Value>` — resolve it with `resolveAsync` |
+| `.toResolved(factory, deps)`      | A factory called with its typed dependency tuple already resolved                                   |
+| `.toResolvedAsync(factory, deps)` | The same, returning a `Promise`                                                                     |
+| `.toAlias(targetToken)`           | An alias — a redirect to another token's binding                                                    |
 
 ```ts
 container.bind(ConfigToken).toConstantValue({ dbUrl: "postgres://…" });
@@ -387,6 +387,8 @@ classes keep working. The reader is fixed when the container is created, and inh
 ## Container
 
 ```ts
+import { Container, resolveAsync } from "@codefast/di";
+
 const container = Container.create();
 
 container.resolve(ServiceToken); // throws TokenNotBoundError when unbound
@@ -394,24 +396,28 @@ container.resolveOptional(CacheToken); // undefined when unbound
 container.resolveAll(HandlerToken); // every matching binding
 container.has(ServiceToken); // true when this container or an ancestor binds it
 
-const db = await container.resolveAsync(DbToken); // required for async bindings
+const db = await resolveAsync(container, DbToken); // required for async bindings
 ```
 
 ### Sync vs async resolution
 
-The rule is simple: if anything in the chain is async, resolve with an `*Async` method. A synchronous `resolve()` that
+The rule is simple: if anything in the chain is async, resolve with an `*Async` function. A synchronous `resolve()` that
 reaches an async factory — its own, or a dependency's — throws `AsyncResolutionError` rather than silently returning a
 `Promise`.
 
-| Sync              | Async counterpart      |
-| ----------------- | ---------------------- |
-| `resolve`         | `resolveAsync`         |
-| `resolveOptional` | `resolveOptionalAsync` |
-| `resolveAll`      | `resolveAllAsync`      |
+| Sync method                 | Async counterpart                    |
+| --------------------------- | ------------------------------------ |
+| `container.resolve`         | `resolveAsync(container, …)`         |
+| `container.resolveOptional` | `resolveOptionalAsync(container, …)` |
+| `container.resolveAll`      | `resolveAllAsync(container, …)`      |
 
-An async `@postConstruct` or `onActivation` hook needs an `*Async` resolve too; on a synchronous path, it throws
-`AsyncActivationError`. `initializeAsync()` warms every eligible singleton up front, so later `resolve()` calls stay
-synchronous.
+The async side is functions that take the container, imported from `@codefast/di`, so a program that never awaits a
+resolve leaves the async lane out of its bundle. Inside a `toDynamicAsync` factory, the context offers the same three as
+methods: `ctx.resolveAsync(token)`.
+
+An async `@postConstruct` or `onActivation` hook needs an async resolve too; on a synchronous path, it throws
+`AsyncActivationError`. `initializeAsync(container)` warms every eligible singleton up front, so later `resolve()` calls
+stay synchronous.
 
 ### Child containers
 

@@ -5,6 +5,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveAllAsync, resolveAsync } from "#container/async";
 import { Container } from "#container/container";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
@@ -89,7 +90,7 @@ describe("async construction", () => {
       .singleton();
     container.bind(clientToken).to(Client).singleton();
 
-    const client = await container.resolveAsync(clientToken);
+    const client = await resolveAsync(container, clientToken);
 
     expect(client).toBeInstanceOf(Client);
     expect(client.config).toBe("from-async");
@@ -121,7 +122,7 @@ describe("async construction", () => {
     container.bind(handlerToken).whenNamed("second").toConstantValue("b");
     container.bind(rootToken).to(Root).singleton();
 
-    const root = await container.resolveAsync(rootToken);
+    const root = await resolveAsync(container, rootToken);
 
     expect(root.present).toBe("here");
     expect(root.missing).toBeUndefined();
@@ -144,7 +145,7 @@ describe("async construction", () => {
       .toResolvedAsync(async (left: number, right: number) => Promise.resolve(left + right), [leftToken, rightToken])
       .singleton();
 
-    await expect(container.resolveAsync(sumToken)).resolves.toBe(5);
+    await expect(resolveAsync(container, sumToken)).resolves.toBe(5);
   });
 
   it("resolveAllAsync returns every candidate", async () => {
@@ -162,7 +163,7 @@ describe("async construction", () => {
       .transient()
       .onActivation((_ctx, value) => value);
 
-    const all = await container.resolveAllAsync(handlerToken);
+    const all = await resolveAllAsync(container, handlerToken);
 
     expect(all.toSorted()).toEqual(["one", "two"]);
   });
@@ -288,7 +289,7 @@ describe("sibling dependencies on the async interpreted lane", () => {
     // Options force the interpreted lane on both sides; the first sibling has already appended its
     // frame to the branch when the second is selected.
     expect(container.resolve(Root, {}).pick).toBe("under-root");
-    expect((await container.resolveAsync(Root, {})).pick).toBe("under-root");
-    expect((await container.resolveAsync(Root)).pick).toBe("under-root");
+    expect((await resolveAsync(container, Root, {})).pick).toBe("under-root");
+    expect((await resolveAsync(container, Root)).pick).toBe("under-root");
   });
 });

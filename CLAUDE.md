@@ -357,12 +357,13 @@ lane (`cache/` — binding lookup, class introspector, activation need; `path.ts
 container, the fluent binding chain and the functions that check and describe a container, and **`introspection/`** the
 inspector, explain, validation, dependency graph, diagnostics and graph adapters. Value imports point down that list
 only — `pnpm cli:audit:layers` holds it, from the `audit.layers` entry in `codefast.config.js` — and the published
-subpaths are that tree with no exception. The sync and async pipelines stay in one class because `#` private fields
-can't span files and both touch the same private state per hop; anything that doesn't is already extracted. Tests mirror
-these paths (`tests/unit/resolution/…`). `package.json#exports` is generated from `dist/` by `codefast mirror` — rerun
-it after moving/adding modules. Verify hot-path changes against `benchmarks/di` (`pnpm di:bench`, which isolates every
-scenario, ≥3 trials, best-of across several processes) before assuming a refactor is free — and measure cold paths too,
-which the hot loops hide.
+subpaths are that tree with no exception. The sync lanes stay in one class because `#` private fields can't span files
+and they touch the same private state per hop; the async lane lives in `resolution/async-lane.ts`, reading that state
+through the accessors the class's `static` block hands out, so a program that never awaits never bundles it. Tests
+mirror these paths (`tests/unit/resolution/…`). `package.json#exports` is generated from `dist/` by `codefast mirror` —
+rerun it after moving/adding modules. Verify hot-path changes against `benchmarks/di` (`pnpm di:bench`, which isolates
+every scenario, ≥3 trials, best-of across several processes) before assuming a refactor is free — and measure cold paths
+too, which the hot loops hide.
 
 ## UI/component conventions (apps/web and packages/ui)
 

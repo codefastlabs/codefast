@@ -371,23 +371,48 @@ checks the order too, for that reason alone, since it otherwise has nothing to d
 
 ### The engine and its collaborators
 
-`DependencyResolver` is one large class on purpose. `#private` access in JavaScript is per class, and the sync and async
-pipelines both need the same private state on every hop. Splitting them behind interfaces would put a call and a
-property load on paths that run millions of times a second. That is design reasoning, and it is a measurable claim: if
-you want to challenge it, the benchmark suite is where.
+`DependencyResolver` is one large class on purpose. `#private` access in JavaScript is per class, and the sync lanes
+need the same private state on every hop. Splitting them behind interfaces would put a call and a property load on paths
+that run millions of times a second. That is design reasoning, and it is a measurable claim: if you want to challenge
+it, the benchmark suite is where.
+
+**The async lane is the one exception, and the bundle is what earns it.** A method is never tree-shaken, so while the
+`#settle*` pipeline lived in the class every program shipped it, awaited or not. It lives in
+[`async-lane.ts`](src/resolution/async-lane.ts) instead — one `AsyncLane` per resolver, built by the first async request
+— and the container's async entry points are the functions in [`container/async.ts`](src/container/async.ts), so a
+program that never awaits a resolve never imports it. The lane reads the resolver through `resolverInternals()`,
+accessors the class's own `static` block defines, so nothing private became public. Three rules keep that from costing
+the lanes it touches:
+
+- **A lane reads its own resolver's collaborators directly.** It captures the registry, scope, lookup cache and
+  lifecycle manager at construction, and takes an accessor only for another resolver in the chain (a parent-owned
+  binding) or a private method.
+- **The sync lanes keep their bodies.** The pure predicates both lanes ask — a plain constant, an activation hook, a
+  scoped read, a binding's frame — are module functions the lane calls, while the class keeps its own copies inline:
+  routing the class's warm dispatch through the shared function was measured as a loss on the root resolve rows.
+- **A level's context holds the lane alone**, reaching the sync callbacks through `lane.resolver`, because each async
+  level allocates one and its size shows on the chain rows.
+
+The async plan compiler and its generator follow the same line:
+[`plan/async-compiler.ts`](src/resolution/plan/async-compiler.ts) and
+[`plan/async-codegen.ts`](src/resolution/plan/async-codegen.ts) share `tieredPlan` and the `PlanEmitter` primitives with
+the sync ones. `tests/e2e/tree-shaking.test.ts` pins that a bind-and-resolve program bundles none of these modules and a
+program that calls `resolveAsync` bundles them.
 
 Everything that needs no cross-instance private access is split out into a collaborator:
 
-| Module                                                                                                           | Owns                                                                                                                          |
-| ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| [`lookup.ts`](src/resolution/cache/lookup.ts)                                                                    | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions            |
-| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                            | per-class facts: constructor params and their settle, `@postConstruct` presence, accessor injection, and the `new` itself     |
-| [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                  | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                                      |
-| [`compiler.ts`](src/resolution/plan/compiler.ts)                                                                 | the plan compiler ([Compiled plans and escapes](#compiled-plans-and-escapes))                                                 |
-| [`codegen.ts`](src/resolution/plan/codegen.ts)                                                                   | renders a hot plan's `PlanNode` tree as a function of its own, or leaves it a closure where the runtime forbids compiling one |
-| [`path.ts`](src/resolution/path.ts)                                                                              | cycle-detection bookkeeping carried on the path array                                                                         |
-| [`candidates.ts`](src/resolution/select/candidates.ts), [`constraints.ts`](src/resolution/select/constraints.ts) | candidate selection for name/tag/predicate shapes, `matchesSlot()` — the one slot matcher — and `chooseCandidate()`           |
-| [`dependency-slot.ts`](src/injection/dependency-slot.ts)                                                         | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                           |
+| Module                                                                                                                   | Owns                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| [`lookup.ts`](src/resolution/cache/lookup.ts)                                                                            | options-less token → `{binding, owner}` memo, alias hops folded, stamped with the chain's summed registry versions            |
+| [`class-introspector.ts`](src/resolution/cache/class-introspector.ts)                                                    | per-class facts: constructor params and their settle, `@postConstruct` presence, accessor injection, and the `new` itself     |
+| [`activation-need.ts`](src/resolution/cache/activation-need.ts)                                                          | per-binding "does this need the activation pipeline", versioned on the lifecycle manager                                      |
+| [`compiler.ts`](src/resolution/plan/compiler.ts)                                                                         | the plan compiler ([Compiled plans and escapes](#compiled-plans-and-escapes))                                                 |
+| [`codegen.ts`](src/resolution/plan/codegen.ts)                                                                           | renders a hot plan's `PlanNode` tree as a function of its own, or leaves it a closure where the runtime forbids compiling one |
+| [`async-lane.ts`](src/resolution/async-lane.ts)                                                                          | the async lane: the `#settle*` pipeline, its plan map and the root level's context, per resolver                              |
+| [`async-compiler.ts`](src/resolution/plan/async-compiler.ts), [`async-codegen.ts`](src/resolution/plan/async-codegen.ts) | the async plan compiler and its generator                                                                                     |
+| [`path.ts`](src/resolution/path.ts)                                                                                      | cycle-detection bookkeeping carried on the path array                                                                         |
+| [`candidates.ts`](src/resolution/select/candidates.ts), [`constraints.ts`](src/resolution/select/constraints.ts)         | candidate selection for name/tag/predicate shapes, `matchesSlot()` — the one slot matcher — and `chooseCandidate()`           |
+| [`dependency-slot.ts`](src/injection/dependency-slot.ts)                                                                 | `DependencySlot`, the shape both dependency sources share, and the `ResolveOptions` derived from it                           |
 
 Lookup caches form their own parent chain mirroring the resolvers', for the same `#private`-is-per-class reason.
 

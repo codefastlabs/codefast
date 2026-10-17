@@ -24,6 +24,7 @@ import {
   MissingMetadataError,
   Module,
   NoMatchingBindingError,
+  resolveAsync,
   ScopeViolationError,
   token,
   TokenNotBoundError,
@@ -121,7 +122,7 @@ try {
 }
 
 // Correct: use resolveAsync()
-const asyncDatabase = await asyncBindingContainer.resolveAsync(DatabaseToken);
+const asyncDatabase = await resolveAsync(asyncBindingContainer, DatabaseToken);
 item("resolveAsync succeeded", asyncDatabase instanceof Database);
 
 // ── 4. CircularDependencyError ───────────────────────────────────────────────────────────────────────────────────────

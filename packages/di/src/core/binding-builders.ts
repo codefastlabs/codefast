@@ -5,6 +5,7 @@ import type { BindingTag } from "#core/tag";
 import type { Token } from "#core/token";
 import type {
   ActivationHandler,
+  AsyncResolutionContext,
   BindingConstraint,
   BindingIdentifier,
   Constructor,
@@ -44,7 +45,7 @@ export interface BindToBuilder<Value, Names extends string = string> extends Slo
   toSelf(): BindingBuilder<Value>;
   toConstantValue(value: Value): ConstantBindingBuilder<Value>;
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value>;
-  toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value>;
+  toDynamicAsync(factory: (ctx: AsyncResolutionContext) => Promise<Value>): BindingBuilder<Value>;
   toResolved<const Deps extends ReadonlyArray<InjectableDependency>>(
     factory: (...args: { [K in keyof Deps]: ResolvedDependencyValue<NoInfer<Deps>[K]> }) => Value,
     deps: Deps,

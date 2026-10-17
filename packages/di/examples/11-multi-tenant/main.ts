@@ -38,7 +38,7 @@
 
 import { randomBytes } from "node:crypto";
 
-import { Container, Module, inject, injectable, token } from "@codefast/di";
+import { Container, initializeAsync, inject, injectable, Module, resolveAsync, token } from "@codefast/di";
 
 import { caughtError, item, section } from "#examples/support/log";
 
@@ -482,8 +482,8 @@ async function main(): Promise<void> {
 
   // Resolve the shared DB pool once (async) before creating tenant containers.
   // All tenant containers receive it as a plain value — no repeated async resolution.
-  await rootContainer.initializeAsync();
-  const sharedDatabasePool = await rootContainer.resolveAsync(DatabasePoolToken);
+  await initializeAsync(rootContainer);
+  const sharedDatabasePool = await resolveAsync(rootContainer, DatabasePoolToken);
   console.log("\n✅ Root container ready\n");
 
   // ── Tenant A: free plan ────────────────────────────────────────────────────────────────────────────────────────────

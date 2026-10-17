@@ -1,6 +1,7 @@
 /**
  * A browser bundle of the built package keeps only what the consumer calls: the functions that check and describe a
- * container stay out of a program that only binds and resolves, and a production build takes the short error messages.
+ * container stay out of a program that only binds and resolves, and so does the async lane until it awaits a resolve; a
+ * production build takes the short error messages.
  */
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,6 +19,14 @@ const INTROSPECTION_MODULES = [
   "introspection/validation.js",
   "introspection/explanation.js",
   "introspection/dependency-graph.js",
+];
+
+/** The modules behind `resolveAsync`, `resolveOptionalAsync`, `resolveAllAsync` and `initializeAsync`. */
+const ASYNC_LANE_MODULES = [
+  "container/async.js",
+  "resolution/async-lane.js",
+  "resolution/async-fan-out.js",
+  "resolution/plan/async-compiler.js",
 ];
 
 let project: ConsumerProject;
@@ -43,6 +52,24 @@ describe("a Rolldown browser bundle", () => {
       expect(packageModules.filter((id) => INTROSPECTION_MODULES.includes(id))).toEqual([]);
     },
   );
+
+  it(
+    "leaves the async lane out of a program that never awaits a resolve",
+    { timeout: SUBPROCESS_TEST_TIMEOUT_MS },
+    async () => {
+      const { packageModules } = await project.bundle("src/entry-resolve-only.ts");
+
+      expect(packageModules.filter((id) => ASYNC_LANE_MODULES.includes(id))).toEqual([]);
+    },
+  );
+
+  it("keeps the async lane once the program calls resolveAsync", { timeout: SUBPROCESS_TEST_TIMEOUT_MS }, async () => {
+    const { packageModules } = await project.bundle("src/entry-resolve-async.ts");
+
+    expect(packageModules).toEqual(
+      expect.arrayContaining(["container/async.js", "resolution/async-lane.js", "resolution/plan/async-compiler.js"]),
+    );
+  });
 
   it("keeps the validation walk once the program calls validate", { timeout: SUBPROCESS_TEST_TIMEOUT_MS }, async () => {
     const { packageModules } = await project.bundle("src/entry-validate.ts");

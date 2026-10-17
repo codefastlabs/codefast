@@ -88,7 +88,7 @@ await using container = await Container.fromModulesAsync(
   HealthModule,
   HttpModule,
 );
-await container.initializeAsync(); // all onActivation hooks run in dependency order
+await initializeAsync(container); // all onActivation hooks run in dependency order
 validate(container); // catch scope violations before serving traffic
 ```
 
@@ -189,7 +189,7 @@ job before returning.
 ## Scope validation before serving traffic
 
 ```ts
-await container.initializeAsync(); // all singletons warm, all onActivation ran
+await initializeAsync(container); // all singletons warm, all onActivation ran
 validate(container); // throws ScopeViolationError on captive dependencies
 startHttpServer(); // safe to accept traffic
 ```
@@ -211,7 +211,7 @@ PostgreSQL   → drain connection pool
 ```ts
 async function main() {
   await using container = await Container.fromModulesAsync(...);
-  await container.initializeAsync();
+  await initializeAsync(container);
   validate(container);
 
   process.on("SIGTERM", () => container.dispose());

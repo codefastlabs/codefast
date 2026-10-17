@@ -1,7 +1,7 @@
 /** The override-recording core both test-bed builders extend. */
 
 import type { Constructor, Container, DependencyKey, InjectOptions, MetadataReader } from "@codefast/di";
-import { defaultMetadataReader } from "@codefast/di";
+import { defaultMetadataReader, resolveAsync } from "@codefast/di";
 import { verifyingMetadataReader } from "@codefast/di/metadata/verifying-reader";
 
 import type { BoundMock, SlotCriteria, SlottedOverride } from "#discovery/mock-binder";
@@ -140,7 +140,7 @@ export abstract class BedBuilder<Class, Backend extends MockFunction = Spy> {
     let prepared: Prepared | undefined;
     try {
       prepared = prepare();
-      const unit = await prepared.container.resolveAsync(this.target);
+      const unit = await resolveAsync(prepared.container, this.target);
       return build(unit, prepared);
     } catch (error) {
       await prepared?.container.dispose().catch(() => undefined);

@@ -5,6 +5,7 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { resolveAllAsync, resolveAsync, resolveOptionalAsync } from "#container/async";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
@@ -26,7 +27,7 @@ describe("async chains", () => {
         .transient();
     }
 
-    await expect(container.resolveAsync(tokens[CHAIN_DEPTH - 1]!)).resolves.toBe(CHAIN_DEPTH - 1);
+    await expect(resolveAsync(container, tokens[CHAIN_DEPTH - 1]!)).resolves.toBe(CHAIN_DEPTH - 1);
   });
 
   it("rejects a sequential await of the same in-flight token as a cycle, but allows re-resolving after settle", async () => {
@@ -46,7 +47,7 @@ describe("async chains", () => {
       })
       .transient();
 
-    await expect(container.resolveAsync(doubleToken)).resolves.toBe(42);
+    await expect(resolveAsync(container, doubleToken)).resolves.toBe(42);
   });
 
   it("detects an async cycle through dynamic factories", async () => {
@@ -62,7 +63,7 @@ describe("async chains", () => {
       .toDynamicAsync(async (ctx) => ctx.resolveAsync(aToken))
       .transient();
 
-    await expect(container.resolveAsync(aToken)).rejects.toBeInstanceOf(CircularDependencyError);
+    await expect(resolveAsync(container, aToken)).rejects.toBeInstanceOf(CircularDependencyError);
   });
 
   it("names the cycle it detected, which is what the per-level bookkeeping is for", async () => {
@@ -86,7 +87,7 @@ describe("async chains", () => {
       .toDynamicAsync(async (ctx) => ctx.resolveAsync(firstToken))
       .transient();
 
-    await expect(container.resolveAsync(firstToken)).rejects.toThrow(
+    await expect(resolveAsync(container, firstToken)).rejects.toThrow(
       /cycle-first → cycle-second → cycle-third → cycle-first/,
     );
   });
@@ -124,7 +125,7 @@ describe("concurrent branches of one async chain", () => {
 
   it("resolves a diamond started in parallel from one factory", async () => {
     const { container, rootToken } = buildDiamondContainer();
-    await expect(container.resolveAsync(rootToken)).resolves.toBe(2);
+    await expect(resolveAsync(container, rootToken)).resolves.toBe(2);
   });
 
   it("still reports a cycle inside one branch, with only that branch's path", async () => {
@@ -149,7 +150,7 @@ describe("concurrent branches of one async chain", () => {
       .transient();
 
     // The sibling branch must not appear in the path: it is not an ancestor of the cycle.
-    await expect(container.resolveAsync(rootToken)).rejects.toThrow(/branch-cycle-root → loop → loop$/);
+    await expect(resolveAsync(container, rootToken)).rejects.toThrow(/branch-cycle-root → loop → loop$/);
   });
 
   it("keeps branches independent past the resolution-set threshold", async () => {
@@ -177,7 +178,7 @@ describe("concurrent branches of one async chain", () => {
         .transient();
     }
 
-    await expect(container.resolveAsync(chainTokens[DEPTH - 1]!)).resolves.toBe(DEPTH - 1);
+    await expect(resolveAsync(container, chainTokens[DEPTH - 1]!)).resolves.toBe(DEPTH - 1);
   });
 
   it("reports a cycle whose every edge is requested after an await, from the true root", async () => {
@@ -201,14 +202,14 @@ describe("concurrent branches of one async chain", () => {
       })
       .transient();
 
-    await expect(container.resolveAsync(firstToken)).rejects.toThrow(/post-first → post-second → post-first/);
+    await expect(resolveAsync(container, firstToken)).rejects.toThrow(/post-first → post-second → post-first/);
   });
 
   it("leaves nothing behind between chains", async () => {
     const { container, rootToken } = buildDiamondContainer();
-    await Promise.all(Array.from({ length: 8 }, () => container.resolveAsync(rootToken)));
+    await Promise.all(Array.from({ length: 8 }, () => resolveAsync(container, rootToken)));
     // A chain that leaked a path entry would make the next one report a cycle that is not there.
-    await expect(container.resolveAsync(rootToken)).resolves.toBe(2);
+    await expect(resolveAsync(container, rootToken)).resolves.toBe(2);
   });
 });
 
@@ -227,9 +228,9 @@ describe("async singletons", () => {
       .singleton();
 
     const [first, second, third] = await Promise.all([
-      container.resolveAsync(connectionToken),
-      container.resolveAsync(connectionToken),
-      container.resolveAsync(connectionToken),
+      resolveAsync(container, connectionToken),
+      resolveAsync(container, connectionToken),
+      resolveAsync(container, connectionToken),
     ]);
     expect(factoryCalls).toBe(1);
     expect(first).toBe(1);
@@ -250,8 +251,8 @@ describe("async singletons", () => {
       })
       .singleton();
 
-    const first = container.resolveAsync(connectionToken);
-    const second = container.resolveAsync(connectionToken);
+    const first = resolveAsync(container, connectionToken);
+    const second = resolveAsync(container, connectionToken);
     expect(first).not.toBe(second);
     const [fromFirst, fromSecond] = await Promise.all([first, second]);
     expect(fromSecond).toBe(fromFirst);
@@ -280,12 +281,12 @@ describe("async singletons", () => {
         })
         .singleton();
 
-      const first = container.resolveAsync(connectionToken);
-      const second = container.resolveAsync(connectionToken);
+      const first = resolveAsync(container, connectionToken);
+      const second = resolveAsync(container, connectionToken);
       await expect(first).rejects.toThrow("connection refused");
       await expect(second).rejects.toThrow("connection refused");
       // The next resolve retries: the failed creation left nothing in flight.
-      await expect(container.resolveAsync(connectionToken)).resolves.toEqual({});
+      await expect(resolveAsync(container, connectionToken)).resolves.toEqual({});
       expect(factoryCalls).toBe(2);
       await new Promise((settle) => setImmediate(settle));
       expect(unhandled).toEqual([]);
@@ -317,8 +318,8 @@ describe("async singletons", () => {
       })
       .singleton();
 
-    await container.resolveAsync(configToken);
-    await container.resolveAsync(configToken);
+    await resolveAsync(container, configToken);
+    await resolveAsync(container, configToken);
     expect(factoryCalls).toBe(1);
   });
 });
@@ -333,8 +334,8 @@ describe("optional and resolveAll variants", () => {
       .toDynamicAsync(async () => 9)
       .transient();
 
-    await expect(container.resolveOptionalAsync(boundToken)).resolves.toBe(9);
-    await expect(container.resolveOptionalAsync(unboundToken)).resolves.toBeUndefined();
+    await expect(resolveOptionalAsync(container, boundToken)).resolves.toBe(9);
+    await expect(resolveOptionalAsync(container, unboundToken)).resolves.toBeUndefined();
   });
 
   it("resolveAllAsync resolves every candidate, sync and async alike", async () => {
@@ -346,7 +347,7 @@ describe("optional and resolveAll variants", () => {
       .whenNamed("late")
       .toDynamicAsync(async () => "async");
 
-    await expect(container.resolveAllAsync(handlerToken)).resolves.toEqual(expect.arrayContaining(["sync", "async"]));
+    await expect(resolveAllAsync(container, handlerToken)).resolves.toEqual(expect.arrayContaining(["sync", "async"]));
   });
 });
 
@@ -364,7 +365,7 @@ describe("a collection whose selection throws", () => {
 
     for (const host of [container, container.createChild()]) {
       // Called outside `expect`, so a synchronous throw fails here rather than counting as the rejection.
-      const pending = host.resolveAllAsync(members);
+      const pending = resolveAllAsync(host, members);
       await expect(pending).rejects.toThrow("predicate boom");
     }
   });
@@ -376,7 +377,7 @@ describe("a collection whose selection throws", () => {
     container.bind(first).toAlias(second);
     container.bind(second).toAlias(first);
 
-    const pending = container.resolveAllAsync(first);
+    const pending = resolveAllAsync(container, first);
     await expect(pending).rejects.toBeInstanceOf(CircularDependencyError);
   });
 });
@@ -397,7 +398,7 @@ describe("the toResolved factory lane on the async path", () => {
     }
     const resolver = scope === "scoped" ? container.createChild() : container;
 
-    await expect(resolver.resolveAsync(madeToken)).resolves.toBe("v42");
+    await expect(resolveAsync(resolver, madeToken)).resolves.toBe("v42");
   });
 
   it("resolves a toResolved binding reached from inside an async factory", async () => {
@@ -412,7 +413,7 @@ describe("the toResolved factory lane on the async path", () => {
       .toDynamicAsync(async (ctx) => ({ value: await ctx.resolveAsync(madeToken) }))
       .transient();
 
-    await expect(container.resolveAsync(rootToken)).resolves.toEqual({ value: "v42" });
+    await expect(resolveAsync(container, rootToken)).resolves.toEqual({ value: "v42" });
   });
 
   it("keeps activation running on a toResolved binding, which does take a context", async () => {
@@ -424,7 +425,7 @@ describe("the toResolved factory lane on the async path", () => {
       .transient()
       .onActivation((_ctx, instance) => `${instance}+activated`);
 
-    await expect(container.resolveAsync(madeToken)).resolves.toBe("base+activated");
+    await expect(resolveAsync(container, madeToken)).resolves.toBe("base+activated");
   });
 
   it("resolves a toResolved binding through resolveAllAsync and resolveOptionalAsync", async () => {
@@ -432,8 +433,8 @@ describe("the toResolved factory lane on the async path", () => {
     const container = Container.create();
     container.bind(madeToken).toResolved(() => "only", []);
 
-    await expect(container.resolveAllAsync(madeToken)).resolves.toEqual(["only"]);
-    await expect(container.resolveOptionalAsync(madeToken)).resolves.toBe("only");
+    await expect(resolveAllAsync(container, madeToken)).resolves.toEqual(["only"]);
+    await expect(resolveOptionalAsync(container, madeToken)).resolves.toBe("only");
   });
 });
 
@@ -556,7 +557,7 @@ describe("deep chains past the resolution-set threshold", () => {
         .transient();
     }
 
-    await expect(container.resolveAsync(tokens[DEPTH - 1]!)).resolves.toBe(DEPTH - 1);
+    await expect(resolveAsync(container, tokens[DEPTH - 1]!)).resolves.toBe(DEPTH - 1);
   });
 });
 
@@ -586,9 +587,9 @@ describe("sibling failures are reported in declaration order, as the sync lanes 
     container.bind(Root).toSelf().transient();
 
     for (let index = 0; index < PLAN_CODEGEN_THRESHOLD + 4; index += 1) {
-      await expect(container.resolveAsync(Root)).rejects.toThrow("slow boom");
+      await expect(resolveAsync(container, Root)).rejects.toThrow("slow boom");
     }
-    await expect(container.resolveAsync(Root, {})).rejects.toThrow("slow boom");
+    await expect(resolveAsync(container, Root, {})).rejects.toThrow("slow boom");
   });
 
   it("names the first declared failing member of a collection", async () => {
@@ -610,8 +611,8 @@ describe("sibling failures are reported in declaration order, as the sync lanes 
       })
       .transient();
 
-    await expect(container.resolveAllAsync(members)).rejects.toThrow("first boom");
-    await expect(container.resolveAllAsync(members, {})).rejects.toThrow("first boom");
+    await expect(resolveAllAsync(container, members)).rejects.toThrow("first boom");
+    await expect(resolveAllAsync(container, members, {})).rejects.toThrow("first boom");
   });
 
   it("still starts every sibling before reporting", async () => {
@@ -643,7 +644,7 @@ describe("sibling failures are reported in declaration order, as the sync lanes 
       .transient();
     container.bind(Root).toSelf().transient();
 
-    await expect(container.resolveAsync(Root, {})).rejects.toThrow("failing boom");
+    await expect(resolveAsync(container, Root, {})).rejects.toThrow("failing boom");
     expect(laterStarted).toBe(true);
   });
 });
@@ -663,8 +664,8 @@ describe("a factory's context after an await", () => {
       })
       .transient();
 
-    await expect(container.resolveAsync(rootToken, {})).resolves.toBe("under-root");
-    await expect(container.resolveAsync(rootToken)).resolves.toBe("under-root");
+    await expect(resolveAsync(container, rootToken, {})).resolves.toBe("under-root");
+    await expect(resolveAsync(container, rootToken)).resolves.toBe("under-root");
   });
 
   it("never reads another chain's frames as its own ancestors", async () => {
@@ -693,8 +694,8 @@ describe("a factory's context after an await", () => {
       })
       .transient();
 
-    const rootPromise = container.resolveAsync(rootToken);
-    await expect(container.resolveAsync(otherToken)).resolves.toBe("under-other");
+    const rootPromise = resolveAsync(container, rootToken);
+    await expect(resolveAsync(container, otherToken)).resolves.toBe("under-other");
     await expect(rootPromise).resolves.toBe("top");
   });
 
@@ -717,6 +718,6 @@ describe("a factory's context after an await", () => {
       })
       .transient();
 
-    await expect(container.resolveAsync(rootToken)).resolves.toEqual(["post-await-path-root", "post-await-path-leaf"]);
+    await expect(resolveAsync(container, rootToken)).resolves.toEqual(["post-await-path-root", "post-await-path-leaf"]);
   });
 });

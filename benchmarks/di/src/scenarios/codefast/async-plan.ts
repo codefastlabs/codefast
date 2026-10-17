@@ -12,7 +12,7 @@
  *                                 resolved through the async entry point
  */
 import type { Constructor } from "@codefast/di";
-import { Container, injectable, token } from "@codefast/di";
+import { Container, injectable, resolveAsync, token } from "@codefast/di";
 
 import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
 import { ASYNC_CHAIN_DEPTH } from "#fixtures/scenario-parity";
@@ -57,10 +57,10 @@ function buildResolvedAsyncChainScenario(): AsyncBenchScenario {
     ...PLAN_ASYNC_RESOLVED_CHAIN,
     kind: "async",
     batch: 1,
-    sanity: async () => (await container.resolveAsync(leafToken)) === expectedLeafValue,
+    sanity: async () => (await resolveAsync(container, leafToken)) === expectedLeafValue,
     build: () => {
       return async () => {
-        const value = await container.resolveAsync(leafToken);
+        const value = await resolveAsync(container, leafToken);
 
         if (value !== expectedLeafValue) {
           throw new Error(`Expected resolved-async leaf value ${String(expectedLeafValue)}, received ${String(value)}`);
@@ -102,10 +102,10 @@ function buildClassChainAsyncScenario(): AsyncBenchScenario {
     ...PLAN_ASYNC_CLASS_CHAIN,
     kind: "async",
     batch: 1,
-    sanity: async () => (await container.resolveAsync(rootClass)).depth === expectedDepth,
+    sanity: async () => (await resolveAsync(container, rootClass)).depth === expectedDepth,
     build: () => {
       return async () => {
-        const instance = await container.resolveAsync(rootClass);
+        const instance = await resolveAsync(container, rootClass);
 
         if (instance.depth !== expectedDepth) {
           throw new Error(`Expected class chain depth ${String(expectedDepth)}, received ${String(instance.depth)}`);

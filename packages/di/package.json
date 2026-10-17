@@ -76,6 +76,11 @@
       "types": "./dist/ambient-container.d.ts",
       "import": "./dist/ambient-container.js"
     },
+    "./container/async": {
+      "source": "./src/container/async.ts",
+      "types": "./dist/container/async.d.ts",
+      "import": "./dist/container/async.js"
+    },
     "./container/binding-chain": {
       "source": "./src/container/binding-chain.ts",
       "types": "./dist/container/binding-chain.d.ts",
@@ -276,6 +281,11 @@
       "types": "./dist/resolution/async-fan-out.d.ts",
       "import": "./dist/resolution/async-fan-out.js"
     },
+    "./resolution/async-lane": {
+      "source": "./src/resolution/async-lane.ts",
+      "types": "./dist/resolution/async-lane.d.ts",
+      "import": "./dist/resolution/async-lane.js"
+    },
     "./resolution/cache/activation-need": {
       "source": "./src/resolution/cache/activation-need.ts",
       "types": "./dist/resolution/cache/activation-need.d.ts",
@@ -300,6 +310,16 @@
       "source": "./src/resolution/path.ts",
       "types": "./dist/resolution/path.d.ts",
       "import": "./dist/resolution/path.js"
+    },
+    "./resolution/plan/async-codegen": {
+      "source": "./src/resolution/plan/async-codegen.ts",
+      "types": "./dist/resolution/plan/async-codegen.d.ts",
+      "import": "./dist/resolution/plan/async-codegen.js"
+    },
+    "./resolution/plan/async-compiler": {
+      "source": "./src/resolution/plan/async-compiler.ts",
+      "types": "./dist/resolution/plan/async-compiler.d.ts",
+      "import": "./dist/resolution/plan/async-compiler.js"
     },
     "./resolution/plan/codegen": {
       "source": "./src/resolution/plan/codegen.ts",

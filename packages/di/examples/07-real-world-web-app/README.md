@@ -142,7 +142,7 @@ binding (`RequestContext`). Scoped services resolve from the child, singletons r
 ### Validation before serving traffic
 
 ```ts
-await container.initializeAsync(); // eagerly resolve all singletons + run onActivation hooks
+await initializeAsync(container); // eagerly resolve all singletons + run onActivation hooks
 validate(container); // throw ScopeViolationError if any captive dependency detected
 
 // Now safe to start accepting requests
