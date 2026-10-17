@@ -65,6 +65,8 @@ function buildAppBootScenario(): BenchScenario {
 
 /**
  * Builds the app-boot scenario.
+ *
+ * @since 0.10.4
  */
 export function buildBrandiAppBootScenarios(): ReadonlyArray<BenchScenario> {
   return [buildAppBootScenario()];

@@ -1,5 +1,15 @@
 # @codefast/benchmark-tailwind-variants
 
+## 0.10.2
+
+### Patch Changes
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor to the lowest release each runs on, 22.18, which Node's built-in type stripping needs.
+- Updated dependencies:
+  - @internal/benchmark-harness@0.11.1
+  - @internal/benchmark-viewer@0.10.2
+  - @codefast/tailwind-variants@0.10.0
+
 ## 0.10.1
 
 ### Patch Changes

@@ -9,6 +9,8 @@ const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..",
 
 /**
  * Rebuilds the subject package and returns the wall time it took, in milliseconds.
+ *
+ * @since 0.10.4
  */
 export function rebuildCodefastDiPackage(): number {
   console.log(`Rebuilding ${CODEFAST_DI.libraryName} before bench…`);

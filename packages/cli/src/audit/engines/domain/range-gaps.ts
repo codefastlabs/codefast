@@ -16,6 +16,8 @@ type Interval = { readonly lower: Bound | null; readonly upper: Bound | null };
  *
  * @remarks The floor's own line and every line from the newest tested major up stay judged, since a package still
  * claims those; with no newest release known, every line does.
+ *
+ * @since 0.15.0
  */
 export function shortLivedMajors(floor: NodeVersion, newest: NodeVersion | null): Array<number> {
   const majors: Array<number> = [];
@@ -33,6 +35,8 @@ export function shortLivedMajors(floor: NodeVersion, newest: NodeVersion | null)
  *
  * @remarks Releases on the `unjudged` majors never count as left out. Node publishes no prereleases on a release line,
  * so a prerelease bound such as the `<23.0.0-0` a caret expands to is read as the release it precedes.
+ *
+ * @since 0.15.0
  */
 export function uncoveredNodeRanges(
   floor: NodeVersion,

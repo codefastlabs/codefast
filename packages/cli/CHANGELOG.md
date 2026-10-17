@@ -1,5 +1,53 @@
 # @codefast/cli
 
+## 0.15.0
+
+### Minor Changes
+
+- [#1104](https://github.com/codefastlabs/codefast/pull/1104) `codefast audit engines` now holds the workspace root's `engines.node` floor, when written `>=X.Y.Z`, to the
+  `engines.node` of every dependency any workspace package installs, runtime and dev alike, from the root floor up
+  (short-lived odd lines below `.node-version` aside). A gap is reported as `root-outside-dependency-engines`, once per
+  dependency range, naming the packages that install it. The root is still never listed among `floors` and is checked only
+  when the target reaches it.
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Add `codefast audit engines`, which holds each workspace package's own Node floor (`engines.node`) to what runs on it: a
+  published package declares one as `>=X.Y.Z`, every runtime dependency's `engines.node` admits each release from the
+  floor up (odd lines below the newest tested one aside), every dev dependency's admits the floor and the newest release
+  CI tests on (`.node-version`), and the `@types/node` the lockfile resolves declares nothing the floor lacks. A violation
+  names the dependency, its range and the releases it leaves out. `--json` lists every floor, enough to plan one CI leg
+  per floor.
+
+- [#1072](https://github.com/codefastlabs/codefast/pull/1072) `codefast audit props` also reads a component's props parameter annotated inline with `&`: in a `.tsx` file, the first
+  parameter of a module-level component whose annotation is an intersection at its top level, such as
+  `function ListItem({ href, ...props }: ComponentProps<"li"> & { href: string })`. The type server judges it like an
+  alias — a union, a type parameter or a non-object part keeps it — and a reported one asks to be named as an interface.
+  `audit.props.allowlist` takes the annotation's first line as written.
+
+- [#1071](https://github.com/codefastlabs/codefast/pull/1071) Add `codefast audit props`, which reports every `*Props` type alias joined with `&` that an interface could express — at
+  the alias's top level, or passed to the type it wraps. The native TypeScript type server decides it: an alias keeps its
+  `&` when a part resolves to a union, a type parameter or a mapped type over one, or no object at all, so the forms that
+  must stay intersections need no allowlist. A part that does not resolve is reported rather than passed. The type server
+  starts only for a file that holds a candidate and needs `typescript` (v7); `audit.props.allowlist` takes the alias's
+  first line as written, or `path:<line>`.
+
+- [#1101](https://github.com/codefastlabs/codefast/pull/1101) `codefast audit display-names` also checks the names given to `Module.fromBindings(…)` and
+  `createAutoRegisterRegistry(…)` — both are modules, so their names follow the module rule, `<namespace>:<PascalName>`.
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor from 24 to the lowest release the package, its dependencies and its full test suite run on:
+  22.12 for `@codefast/cli` and `@codefast/tailwind-variants`, 22.18 for `@codefast/di` and `@codefast/di-testing`, and
+  22.22.2 for `@codefast/theme`, `@codefast/tracking` and `@codefast/ui`. Each floor is type-checked against what Node 22
+  ships and proven by running the package's tests on that release in CI.
+
+### Patch Changes
+
+- [#1086](https://github.com/codefastlabs/codefast/pull/1086) `codefast audit comments` reads a titled rule that opens a block comment without closing it, such as
+  `/* ── Status colours ──` followed by prose and `*/`, as the heading of a doc block rather than a divider, so `--fix` no
+  longer closes the comment on that line and leaves the prose below it outside the comment.
+
+- [#1085](https://github.com/codefastlabs/codefast/pull/1085) `codefast audit props` reads an inline `&` parameter only on a component — a module-level function with a capitalised
+  name, declared as a function or held by a `const`, directly or through a call such as `memo(…)` — so a closure inside a
+  component, like `const targetFor = (event: Pick<…> & Partial<…>) => …`, and a lowercase helper are no longer reported.
+
 ## 0.14.0
 
 ### Minor Changes

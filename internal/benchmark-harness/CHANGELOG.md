@@ -1,5 +1,11 @@
 # @codefast/benchmark-harness
 
+## 0.11.1
+
+### Patch Changes
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor to the lowest release each runs on, 22.18, which Node's built-in type stripping needs.
+
 ## 0.11.0
 
 ### Minor Changes
