@@ -16,6 +16,7 @@ import type {
   BindingScope,
   Constructor,
   DeactivationHandler,
+  Resolver,
   ResolveOptions,
 } from "#core/types";
 import type { AutoRegisterRegistry } from "#decorators/injectable";
@@ -40,7 +41,7 @@ import { DependencyResolver } from "#resolution/resolver";
  *
  * @since 0.3.16-canary.0
  */
-export interface Container {
+export interface Container extends Resolver {
   readonly isDisposed: boolean;
 
   bind<Value, Names extends string = string>(
@@ -62,31 +63,6 @@ export interface Container {
 
   onActivation<Value>(token: Token<Value> | Constructor<Value>, handler: ActivationHandler<Value>): void;
   onDeactivation<Value>(token: Token<Value> | Constructor<Value>, handler: DeactivationHandler<Value>): void;
-
-  resolve<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): Value;
-  resolveAsync<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): Promise<Value>;
-  resolveOptional<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): Value | undefined;
-  resolveOptionalAsync<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): Promise<Value | undefined>;
-  resolveAll<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): ReadonlyArray<Value>;
-  resolveAllAsync<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-    options?: NoInfer<ResolveOptions<Names>>,
-  ): Promise<ReadonlyArray<Value>>;
 
   createChild(): Container;
 

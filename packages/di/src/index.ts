@@ -13,6 +13,7 @@ export type {
   ResolutionFrame,
   ResolveOptions,
   ResolutionContext,
+  Resolver,
   TokenValue,
 } from "#core/types";
 

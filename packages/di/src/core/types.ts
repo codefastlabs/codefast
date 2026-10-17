@@ -127,14 +127,14 @@ export interface ConstraintContext {
  */
 export type BindingConstraint = (ctx: ConstraintContext) => boolean;
 
-// ── ResolutionContext ────────────────────────────────────────────────────────────────────────────────────────────────
+// ── Resolver ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * The container view a dynamic factory or activation handler resolves further dependencies through.
+ * The resolve methods a container and a factory's resolution context share.
  *
- * @since 0.3.16-canary.0
+ * @remarks One declaration for both, so a slot name narrows the same way wherever a token is resolved.
  */
-export interface ResolutionContext {
+export interface Resolver {
   resolve<Value, Names extends string = string>(
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
@@ -159,6 +159,16 @@ export interface ResolutionContext {
     token: Token<Value, Names> | Constructor<Value>,
     options?: NoInfer<ResolveOptions<Names>>,
   ): Promise<ReadonlyArray<Value>>;
+}
+
+// ── ResolutionContext ────────────────────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * The container view a dynamic factory or activation handler resolves further dependencies through.
+ *
+ * @since 0.3.16-canary.0
+ */
+export interface ResolutionContext extends Resolver {
   readonly graph: ConstraintContext;
 }
 
