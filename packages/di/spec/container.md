@@ -193,7 +193,11 @@ unbind-then-bind, never a way to override a parent.
 > - If the binding is a singleton and already cached, `onDeactivation` and `@preDestroy()` **are called synchronously**
 >   when the handlers are sync.
 > - If a handler is async, `unbindAsync()` must be used — a sync `unbind()` on a binding with async deactivation throws
->   `AsyncDeactivationError`.
+>   `AsyncDeactivationError`. By the time it throws, the call has finished everything but the waiting: the binding is
+>   removed, and every deactivation stage of every instance it owed — container hooks, the binding's own hook,
+>   `@preDestroy()` — has run, an async stage included. Only the promises those stages returned are left unawaited; a
+>   rejection among them is swallowed rather than reported. Nothing remains to retry, and `unbindAsync()` on the same
+>   token afterwards finds nothing bound. The same holds for `unbindAll()`, `rebind()` and `unload()`.
 > - `unbind(bindingId)` reaches a binding a later last-wins bind displaced, too: its cached singleton, or a constant's
 >   owed `onDeactivation`, runs then rather than at `dispose()`.
 
@@ -203,8 +207,9 @@ unbind-then-bind, never a way to override a parent.
 >
 > - If the old binding has **no** async `onDeactivation` (or no `onDeactivation` at all): a sync `rebind()` is safe.
 > - If the old binding **does** have an async `onDeactivation`: a sync `rebind()` throws `AsyncDeactivationError` — the
->   same behaviour as a sync `unbind()`. The throw comes from `rebind()` itself, the old bindings are already removed,
->   and no replacement is committed, whatever shape the token had.
+>   same behaviour as a sync `unbind()`. The throw comes from `rebind()` itself, after the old bindings are removed and
+>   every deactivation stage of their instances has run (its promise unawaited); no replacement is committed, whatever
+>   shape the token had, so the token is left unbound.
 
 There is no `rebindAsync()` (see [Not adopted from v8](../DECISIONS.md#not-adopted-from-v8)), so the required workaround
 is:
@@ -278,7 +283,9 @@ const container = Container.fromModules(ModuleA, ModuleB);
 >   called.
 > - A binding the module registered that a later last-wins bind displaced is torn down the same way: its cached
 >   singleton, or a constant's owed `onDeactivation`, runs at this unload rather than waiting for `dispose()`.
-> - A sync `unload()` is only safe if every deactivation handler is sync. If any is async, `unloadAsync()` must be used.
+> - A sync `unload()` is only safe if every deactivation handler is sync. If any is async, `unloadAsync()` must be used:
+>   a sync `unload()` that meets one throws `AsyncDeactivationError` only after the module is unloaded and every
+>   deactivation stage of its instances has run, as [a sync `unbind()`](#unbind-and-singleton-deactivation) does.
 
 ## Container-level activation hooks
 

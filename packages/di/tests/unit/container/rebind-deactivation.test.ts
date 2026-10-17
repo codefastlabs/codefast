@@ -1,12 +1,14 @@
 /**
  * A sync `rebind()` whose old binding owes an async deactivation fails the way a sync `unbind()`
- * does, whatever shape the token has: the old binding is removed, `rebind()` itself throws, and no
- * replacement is ever committed by a call that then reports failure.
+ * does, whatever shape the token has: the old binding is removed and fully deactivated, `rebind()`
+ * itself throws, and no replacement is ever committed by a call that then reports failure.
  */
 import { describe, expect, it } from "vitest";
 
 import { Container } from "#container/container";
 import { token } from "#core/token";
+import { injectable } from "#decorators/injectable";
+import { preDestroy } from "#decorators/lifecycle";
 import { AsyncDeactivationError, TokenNotBoundError } from "#errors";
 
 /** A container whose `service` singleton is cached and owes an async `onDeactivation`. */
@@ -38,6 +40,34 @@ describe("rebind over an async deactivation", () => {
     expect(() => container.rebind(service)).toThrow(AsyncDeactivationError);
     expect(container.has(service)).toBe(false);
     expect(() => container.resolve(service)).toThrow(TokenNotBoundError);
+  });
+
+  it("runs every deactivation stage of the old instance before it throws", () => {
+    const service = token<object>("rd:AllStages");
+    const ran: Array<string> = [];
+
+    @injectable([])
+    class Service {
+      @preDestroy()
+      close(): void {
+        ran.push("preDestroy");
+      }
+    }
+    const container = Container.create();
+    container
+      .bind(service)
+      .to(Service)
+      .singleton()
+      .onDeactivation(async () => {
+        ran.push("binding");
+      });
+    container.onDeactivation(service, async () => {
+      ran.push("container");
+    });
+    container.resolve(service);
+
+    expect(() => container.rebind(service)).toThrow(AsyncDeactivationError);
+    expect(ran).toStrictEqual(["container", "binding", "preDestroy"]);
   });
 
   it("still swaps a lone binding that owes no deactivation in one step", () => {

@@ -226,39 +226,36 @@ export class LifecycleManager {
     }
   }
 
+  /**
+   * Runs the deactivation pipeline on the sync lane.
+   *
+   * @remarks A stage that returns a promise does not stop the ones after it: the binding is already
+   * gone, so nothing could run them later. Every stage runs, then one `AsyncDeactivationError` reports it.
+   */
   runDeactivationSync<Value>(binding: Binding<Value>, instance: Value, metadataReader: MetadataReader): void {
     const tokenKey: DependencyKey = binding.token;
+    let returnedPromise = false;
 
     // 1. container-level onDeactivation
     const containerHooks = this.#deactivationHooks?.get(tokenKey);
     if (containerHooks !== undefined) {
       for (const hook of containerHooks) {
-        const hookResult = hook(instance);
-        if (hookResult instanceof Promise) {
-          // The hook has already run; adopt its rejection so a failing async hook cannot become an
-          // unhandled rejection that ends the process, then report the sync-lane violation.
-          void hookResult.catch(() => {});
-          throw new AsyncDeactivationError(tokenName(binding.token));
-        }
+        returnedPromise = adoptPromise(hook(instance)) || returnedPromise;
       }
     }
 
     // 2. per-binding onDeactivation
     if (binding.kind !== "alias" && binding.deactivationHook !== undefined) {
-      const hookResult = binding.deactivationHook(instance);
-      if (hookResult instanceof Promise) {
-        void hookResult.catch(() => {});
-        throw new AsyncDeactivationError(tokenName(binding.token));
-      }
+      returnedPromise = adoptPromise(binding.deactivationHook(instance)) || returnedPromise;
     }
 
     // 3. @preDestroy()
     for (const methodName of this.#lifecycleMethods(binding, metadataReader, "preDestroy")) {
-      const hookResult = callHook(instance, methodName);
-      if (hookResult instanceof Promise) {
-        void hookResult.catch(() => {});
-        throw new AsyncDeactivationError(tokenName(binding.token));
-      }
+      returnedPromise = adoptPromise(callHook(instance, methodName)) || returnedPromise;
+    }
+
+    if (returnedPromise) {
+      throw new AsyncDeactivationError(tokenName(binding.token));
     }
   }
 
@@ -287,6 +284,18 @@ export class LifecycleManager {
 }
 
 const NO_METHODS: ReadonlyArray<string> = [];
+
+/**
+ * Whether a sync-lane hook returned a promise, adopting its rejection so it cannot end the process
+ * as an unhandled one.
+ */
+function adoptPromise(hookResult: unknown): boolean {
+  if (hookResult instanceof Promise) {
+    void hookResult.catch(() => {});
+    return true;
+  }
+  return false;
+}
 
 /** Applies one activation step now, or once the step before it has settled. */
 function afterActivationStep<Value>(
