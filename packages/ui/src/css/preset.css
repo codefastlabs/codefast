@@ -3,7 +3,7 @@
  *
  * Aggregates the foundation layers in cascade order. Import this from an app
  * after `tailwindcss` and a theme to pull in @codefast/ui's variants, tokens,
- * motion, utilities, and base styles.
+ * motion (with its reduced-motion override), utilities, and base styles.
  * ------------------------------------------------------------------------- */
 
 @import "./foundation/source.css";

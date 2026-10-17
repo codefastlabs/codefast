@@ -63,3 +63,20 @@
     }
   }
 }
+
+/* ── Reduced motion ──────────────────────────────────────────────────────────────────────────────────────────────── */
+
+/*
+ * Unlayered so its `!important` beats every utility, yet a layered `!important` (`motion-reduce:duration-200!`) still
+ * opts essential motion back in. A near-zero duration, not `none`, keeps `animationend`/`transitionend` firing, which
+ * Radix Presence waits on before unmounting closed content.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
