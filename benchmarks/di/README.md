@@ -21,30 +21,32 @@ pnpm di:bench:fast       # smoke: one shared process per library, one trial, nev
 pnpm di:bench:baseline   # the ledger's pass: full profile, read against the anchor in baselines/
 pnpm di:bench:serve      # browse recorded runs
 pnpm di:bench:footprint  # what each library adds to a browser bundle, minified and gzipped
+pnpm di:bench:footprint:check  # the bundle gate: @codefast/di's program against its gzip budget
 ```
 
 From this directory, `pnpm bench` does the same as `pnpm di:bench`. Every run rebuilds `@codefast/di` first, so it
 measures the working tree rather than a stale `dist/`.
 
-| Command                 | What changes                                                                                                      |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `pnpm bench`            | The lane to cite: one subprocess per scenario, libraries interleaved, default profile, three trials               |
-| `pnpm bench:fast`       | Smoke profile — one shared process per library, shorter windows, one trial. For "did I break it", never a claim   |
-| `pnpm bench:baseline`   | The ledger's pass: `bench` in the full profile, read against the anchor in `baselines/`                           |
-| `pnpm bench:ab`         | Two builds of `@codefast/di`, paired and alternating, on the rows you name (the guide has the recipe)             |
-| `pnpm bench:list`       | Prints the scenario inventory as JSON on stdout and a coverage line per library on stderr, measuring nothing      |
-| `pnpm bench:serve`      | Serves the run history from `bench-results/` in a browser                                                         |
-| `pnpm bench:footprint`  | Bundles each library's smallest bind-and-resolve program with Rolldown and prints its minified and gzipped size   |
-| `pnpm instrument:alloc` | The allocation instrument (see below)                                                                             |
-| `BENCH_MODE=<mode>`     | Timing profile: `fast`, `default` or `full` (longer windows, a collection between trials) — composes with `bench` |
-| `BENCH_VERBOSE=true`    | Streams every child line and prints the per-scenario table                                                        |
-| `BENCH_TRIALS=<n>`      | Trials per scenario; the harness refuses anything below its minimum                                               |
-| `BENCH_ONLY=<id>,<id>`  | Restrict the run to these scenario ids — what the A/B recipes in the guide use                                    |
-| `BENCH_LIBRARY=<name>`  | Restrict the run to these libraries, comma-separated; `@codefast/di` must be among them                           |
-| `BENCH_TIER=<tier>`     | Restrict the run to `contract` rows (public API, compared across libraries) or `engine` rows (ours alone)         |
-| `BENCH_BASELINE=<run>`  | Diff against this run id, or a directory of runs — its newest member — instead of the `latest.json` pointer       |
-| `BENCH_PORT=<n>`        | Preferred port for `bench:serve`                                                                                  |
-| `PORT=<n>`              | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                              |
+| Command                      | What changes                                                                                                      |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `pnpm bench`                 | The lane to cite: one subprocess per scenario, libraries interleaved, default profile, three trials               |
+| `pnpm bench:fast`            | Smoke profile — one shared process per library, shorter windows, one trial. For "did I break it", never a claim   |
+| `pnpm bench:baseline`        | The ledger's pass: `bench` in the full profile, read against the anchor in `baselines/`                           |
+| `pnpm bench:ab`              | Two builds of `@codefast/di`, paired and alternating, on the rows you name (the guide has the recipe)             |
+| `pnpm bench:list`            | Prints the scenario inventory as JSON on stdout and a coverage line per library on stderr, measuring nothing      |
+| `pnpm bench:serve`           | Serves the run history from `bench-results/` in a browser                                                         |
+| `pnpm bench:footprint`       | Bundles each library's smallest bind-and-resolve program with Rolldown and prints its minified and gzipped size   |
+| `pnpm bench:footprint:check` | Bundles only `@codefast/di`'s program and fails when its gzipped size exceeds `footprint-budget.json`             |
+| `pnpm instrument:alloc`      | The allocation instrument (see below)                                                                             |
+| `BENCH_MODE=<mode>`          | Timing profile: `fast`, `default` or `full` (longer windows, a collection between trials) — composes with `bench` |
+| `BENCH_VERBOSE=true`         | Streams every child line and prints the per-scenario table                                                        |
+| `BENCH_TRIALS=<n>`           | Trials per scenario; the harness refuses anything below its minimum                                               |
+| `BENCH_ONLY=<id>,<id>`       | Restrict the run to these scenario ids — what the A/B recipes in the guide use                                    |
+| `BENCH_LIBRARY=<name>`       | Restrict the run to these libraries, comma-separated; `@codefast/di` must be among them                           |
+| `BENCH_TIER=<tier>`          | Restrict the run to `contract` rows (public API, compared across libraries) or `engine` rows (ours alone)         |
+| `BENCH_BASELINE=<run>`       | Diff against this run id, or a directory of runs — its newest member — instead of the `latest.json` pointer       |
+| `BENCH_PORT=<n>`             | Preferred port for `bench:serve`                                                                                  |
+| `PORT=<n>`                   | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                              |
 
 Switches compose with the lanes: `BENCH_MODE=full pnpm bench` is what `bench:baseline` runs, without the anchor — it
 reads against whatever run landed before instead.
@@ -58,6 +60,19 @@ summarises — including each cell's IQR — and stamps every row with the run's
 report derived from disk records the configuration the run actually used. A run narrowed with `BENCH_ONLY`, `BENCH_TIER`
 or `BENCH_LIBRARY` does not move `latest.json`.
 
+## Bundle budget
+
+The bundle is the cost of `@codefast/di` an app feels, and no test or type check sees it grow, so its minimal program
+(`Container`, `token`, bind a constant, resolve) has a gzip budget checked in as
+[`footprint-budget.json`](./footprint-budget.json). `pnpm bench:footprint:check` rebuilds the package, bundles that one
+program, prints its gzipped size against the budget and exits non-zero when it is over; `pnpm bench:footprint` prints
+the same line under its table and fails the same way. The gate runs in CI's package verification and in `pnpm verify`,
+so a size regression turns a PR red instead of surfacing in the next [`RESULTS.md`](./RESULTS.md) pass.
+
+The budget is the measured size plus a small headroom, enough to absorb gzip and bundler noise but not a real feature.
+When a change grows the bundle on purpose, raise the budget in the same PR and say why there; when one shrinks it, lower
+the budget to the new size plus the same headroom, so the gate keeps holding what was won.
+
 ## How it is put together
 
 ```
@@ -65,7 +80,8 @@ src/harness/run.ts          parent: rebuilds @codefast/di, spawns one subprocess
 src/harness/config.ts       the seven library configs (entry file, tsconfig, display name)
 src/harness/list.ts         the bench:list entry
 src/harness/serve.ts        the bench:serve entry
-src/harness/footprint.ts    the bench:footprint entry
+src/harness/footprint.ts    the bench:footprint entry, and the bundle gate behind --check
+footprint-budget.json       the gzip budget the gate holds @codefast/di's program to
 src/harness/rebuild.ts      the @codefast/di rebuild both entries run first
 src/*-benches.ts            one child entry per library
 src/scenarios/<library>/    that library's implementation of each scenario

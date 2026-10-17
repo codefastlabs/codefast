@@ -39,6 +39,10 @@
       "cache": false,
       "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"]
     },
+    "bench:footprint:check": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "tsconfig.*.json"]
+    },
     "bench:list": {
       "cache": false
     },

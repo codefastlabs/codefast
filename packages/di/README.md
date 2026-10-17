@@ -37,12 +37,11 @@ pnpm add @codefast/di
 
 `@codefast/di` runs on Node.js 22.18 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
 ([support policy](../../SUPPORT.md#browsers)). It requires TypeScript 7 or later, with standard decorators. Leave
-`experimentalDecorators` off — it's off by default. Its declarations use explicit resource management, which no numbered
-`lib` declares yet, so your program needs those types: `@types/node` 22 or later loads them, and any other program adds
-`ESNext.Disposable` to `lib` once its runtime ships explicit resource management. A browser program that targets Safari,
-which has not shipped it, keeps `skipLibCheck` on and calls `dispose()` instead of `await using`. The package is
-published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the minor version when
-you need stability.
+`experimentalDecorators` off — it's off by default. A browser program also needs the
+[disposal types](#explicit-resource-management-types).
+
+The package is published on 0.x and versioned on its own track: breaking changes ship as minor versions, so pin the
+minor version when you need stability.
 
 ### Toolchain
 
@@ -104,6 +103,13 @@ holds two decorated classes (oven-sh/bun#28316).
 [The specification → tsconfig setup](./spec/decorators.md#tsconfig-setup) covers the compiler options. And
 [decorators](#decorators) are optional: an app wired through `toResolved`, `toDynamic` and `Module.fromBindings` needs
 none of this.
+
+### Explicit resource management types
+
+The declarations use explicit resource management (`AsyncDisposable`, behind `await using`), which no numbered `lib`
+declares yet. `@types/node` 22 or later loads those types, so a Node program needs nothing more. Any other program adds
+`ESNext.Disposable` to `lib` once its runtime ships explicit resource management. A browser program that targets Safari,
+which has not shipped it, keeps `skipLibCheck` on and calls `dispose()` instead of `await using`.
 
 ## Quick start
 
@@ -455,7 +461,7 @@ It evaluates `when()` predicates the way `resolve` does, and `options.ancestors`
 other resolutions, so a predicate that reads the parent sees the one it would:
 
 ```ts
-const explanation = explain(container, Logger, { ancestors: [Settlement] });
+const explanation = explain(container, LoggerToken, { ancestors: [CheckoutService] });
 
 explanation.selected?.id; // the binding `resolve` would answer with
 explanation.steps[0]?.rule; // "sole-predicate": the only candidate with a `when()` beat the rest
