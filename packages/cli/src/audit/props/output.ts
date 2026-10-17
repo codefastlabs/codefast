@@ -3,6 +3,8 @@ import { logger } from "#core/logger";
 
 /**
  * Human-readable props-declaration report.
+ *
+ * @since 0.15.0
  */
 export function presentPropsAuditResult(result: PropsAuditResult): void {
   for (const file of result.files) {

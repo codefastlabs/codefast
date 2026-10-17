@@ -3,6 +3,8 @@ import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 
 /**
  * Exit `1` when any non-allowlisted props-declaration violation remains.
+ *
+ * @since 0.15.0
  */
 export function exitCodeForPropsAuditResult(result: PropsAuditResult): number {
   return result.violationCount > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
@@ -10,6 +12,8 @@ export function exitCodeForPropsAuditResult(result: PropsAuditResult): number {
 
 /**
  * Machine-readable props-declaration summary for `--json`.
+ *
+ * @since 0.15.0
  */
 export function formatPropsAuditJsonOutput(result: PropsAuditResult, rootDir: string): string {
   return JSON.stringify({

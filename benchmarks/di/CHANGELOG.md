@@ -1,5 +1,44 @@
 # @codefast/benchmark-di
 
+## 0.10.4
+
+### Patch Changes
+
+- [#1066](https://github.com/codefastlabs/codefast/pull/1066) A new `app-boot-40` row prices an application's startup: a fresh container, a forty-service graph registered as classes
+  in each library's own idiom (32 singletons, 8 transient handlers), and every handler resolved once.
+
+- [#1095](https://github.com/codefastlabs/codefast/pull/1095) `pnpm bench:footprint:check` gates `@codefast/di`'s smallest bind-and-resolve program on a gzip budget checked in as
+  `footprint-budget.json`, and runs in CI and `pnpm verify`; `pnpm bench:footprint` reports and enforces the same budget
+  under its table.
+
+- [#1066](https://github.com/codefastlabs/codefast/pull/1066) `pnpm bench:footprint` bundles each library's smallest bind-and-resolve program for the browser with Rolldown and prints
+  its minified and gzipped size, with `reflect-metadata` measured alone beside the libraries that ship it.
+
+- [#1063](https://github.com/codefastlabs/codefast/pull/1063) The introspection and validation scenarios call `validate`, `inspect`, `lookupBindings` and `generateDependencyGraph` as
+  functions that take the container, following `@codefast/di`.
+
+- [#1062](https://github.com/codefastlabs/codefast/pull/1062) `RESULTS.md` is rewritten from a pass over the 0.13.0 tree. Every library reads level with the previous pass, and one
+  row moved on the engine: `container-create-empty` rises by about a seventh, confirmed in both orders of a paired A/B.
+  The five rows the harness flagged as regressions read level in that A/B, and `plan-async-resolved-chain-8`, which the
+  previous page named as the lane to look at next, is closed: a standalone probe reads it level across the two builds, so
+  its earlier fall was the pass, not the engine. The run's `observations.jsonl` replaces the previous one under
+  `baselines/`.
+
+- [#1069](https://github.com/codefastlabs/codefast/pull/1069) `RESULTS.md` is rewritten from a pass over the tree with settled dependency slots. Every competitor reads level with the
+  previous pass, and the rows that change aims at moved: `app-boot-40` now reads level with ditox where it read 0.85×, and
+  `realistic-graph-class-cold-resolve` closes from 0.81× to 0.94×. The run's `observations.jsonl` replaces the previous
+  one under `baselines/`, and the bundle table picks up the engine's extra 0.1 KB.
+
+- [#1066](https://github.com/codefastlabs/codefast/pull/1066) `RESULTS.md` opens with what an application feels — startup (`app-boot-40`), one request, and the bundle table from
+  `bench:footprint` — before the per-row losses, and is rewritten from a pass over the tree with the introspection
+  functions. The run's `observations.jsonl` replaces the previous one under `baselines/`.
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor to the lowest release each runs on, 22.18, which Node's built-in type stripping needs.
+- Updated dependencies:
+  - @codefast/di@0.14.0
+  - @internal/benchmark-harness@0.11.1
+  - @internal/benchmark-viewer@0.10.2
+
 ## 0.10.3
 
 ### Patch Changes

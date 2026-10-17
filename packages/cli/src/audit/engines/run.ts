@@ -44,6 +44,8 @@ type WorkspaceManifest = {
  * admit every release from the floor up, short-lived odd lines aside; that of every dev dependency, the floor and the
  * newest release CI tests on. The `@types/node` the lockfile resolves must declare nothing the floor lacks. The
  * workspace root's floor, never listed among `floors`, must be admitted by every dependency any package installs.
+ *
+ * @since 0.15.0
  */
 export async function runEnginesAudit(
   fs: Filesystem,

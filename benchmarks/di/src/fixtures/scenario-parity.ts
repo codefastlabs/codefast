@@ -939,6 +939,8 @@ export const BOOT_DECORATED_CONTAINER_BUILD_AND_RESOLVE = {
  *
  * @remarks The cost a user waits through before the first request, at the scale of a real service rather than the
  * ten-node graph.
+ *
+ * @since 0.10.4
  */
 export const APP_BOOT_40 = {
   id: "app-boot-40",

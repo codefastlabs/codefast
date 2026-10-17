@@ -1,5 +1,92 @@
 # @codefast/di
 
+## 0.14.0
+
+### Minor Changes
+
+- [#1101](https://github.com/codefastlabs/codefast/pull/1101) **Breaking:** an auto-register registry is now a `SyncModule`, and `Container#loadAutoRegistered` is removed.
+  `createAutoRegisterRegistry(name)` takes the module's display name, and the registry loads like any other module —
+  deduplicated by identity, ref-counted, and torn down by `unload()` / `unloadAsync()`, which deactivates every singleton
+  it bound. `loadAutoRegistered` was a bare bind loop: it could not be unloaded, and a second call rebound the whole set
+  over the first.
+
+  Migrate:
+
+  ```ts
+  // before
+  const registry = createAutoRegisterRegistry();
+  const count = container.loadAutoRegistered(registry);
+
+  // after
+  const registry = createAutoRegisterRegistry("app:Services");
+  container.load(registry); // or Container.fromModules(registry)
+  const count = registry.entries().length; // if you used the returned count
+  ```
+
+  A load binds the classes registered by then; a second `load()` of the same registry only adds a reference, so a class
+  decorated after the first load is bound by unloading the registry to zero and loading it again.
+
+- [#1101](https://github.com/codefastlabs/codefast/pull/1101) **Breaking:** `Container#dispose()` is renamed `disposeAsync()`. It returns a `Promise`, so the bare name broke the
+  package's own rule — unqualified is sync, the `Async` suffix is async — and the spec carried an exception for it that is
+  now gone. `disposeAsync` is the name TC39's `AsyncDisposableStack` gives the same method, and `[Symbol.asyncDispose]()`
+  still delegates to it, so `await using` is unchanged. Replace `await container.dispose()` with
+  `await container.disposeAsync()`; an `AggregateError` from a teardown with several throwing hooks now reads
+  "disposeAsync() completed, but deactivation hooks threw".
+
+- [#1094](https://github.com/codefastlabs/codefast/pull/1094) **Breaking:** the `ContainerInterface` type export is removed. It aliased the `Container` interface, which `Container`
+  already exports under its own name beside the value, so replace `ContainerInterface` with `Container`.
+
+- [#1063](https://github.com/codefastlabs/codefast/pull/1063) **Breaking:** `validate`, `inspect`, `lookupBindings`, `explain` and `generateDependencyGraph` are functions that take
+  the container instead of `Container` methods, so a bundle that only binds and resolves leaves them out: importing
+  `Container` and `token` alone drops from 23.2 KB to 20.5 KB gzipped. `has` and `hasOwn` stay methods. Replace
+  `container.validate()` with `validate(container)`, `container.explain(token, options)` with
+  `explain(container, token, options)`, and likewise for the other three, importing each from `@codefast/di`. They refuse
+  a disposed container with `DisposedContainerError` as the methods did, and an object `Container` did not create with a
+  `TypeError`.
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor from 24 to the lowest release the package, its dependencies and its full test suite run on:
+  22.12 for `@codefast/cli` and `@codefast/tailwind-variants`, 22.18 for `@codefast/di` and `@codefast/di-testing`, and
+  22.22.2 for `@codefast/theme`, `@codefast/tracking` and `@codefast/ui`. Each floor is type-checked against what Node 22
+  ships and proven by running the package's tests on that release in CI.
+
+### Patch Changes
+
+- [#1091](https://github.com/codefastlabs/codefast/pull/1091) The `ResolutionContext` a factory or activation hook receives narrows `name` to the slot names its token declares, as
+  `Container#resolve` already did: inside `toDynamic((ctx) => ctx.resolve(LoggerToken, { name: "fiel" }))`, a name the
+  token does not declare is now a compile error instead of a `NoMatchingBindingError` at resolve time. A token that
+  declares no names, and a class key, still take any string.
+
+- [#1100](https://github.com/codefastlabs/codefast/pull/1100) The README writes `validate`, `inspect` and the other introspection functions as the free functions they are —
+  `validate(container)` rather than a method-style `validate()` — and notes that guarding `validate(container)` with a
+  dev-only check keeps the introspection code out of a production bundle.
+
+- [#1065](https://github.com/codefastlabs/codefast/pull/1065) `inspect` and `lookupBindings` read the container's inspector directly instead of building an internals object and the
+  ancestor-registry list on every call, so they cost what the methods did before they became functions. A paired run
+  against the method-shaped build reads `lookup-bindings` at −2% and `inspect-snapshot` at −4%, from −13% and −9%.
+
+- Move three cold paths out of the resolver to the modules they belong to: a class's constructor-parameter settle (and its
+  `MissingMetadataError`) to the class introspector, a root collection's stable-value check beside its memo in
+  `resolution/cache/lookup`, and `validate`'s miss check to `introspection/validation`, which reads the chain through the
+  new `DependencyResolver.bindingsForValidate()` in place of `missForValidate()`. `ARCHITECTURE.md` replaces the
+  resolver's line budget with the rule for what `resolution/resolver.ts` holds.
+
+- [#1067](https://github.com/codefastlabs/codefast/pull/1067) Every dependency slot the engine resolves now has one shape: a class's parameters are copied once when they are settled,
+  and a factory's dependencies when it is bound or declared, each with its resolve options and criterion already filled. A
+  process that has resolved many kinds of slot no longer meets the cold class lane megamorphic, so booting an application
+  gets faster where it was slowest — `app-boot-40` +13%, `realistic-graph-class-cold-resolve` +16% and the interpreted
+  `slot-injected-*` rows +31% in a paired run — with the warm rows level.
+
+- [#1093](https://github.com/codefastlabs/codefast/pull/1093) The six resolve methods are declared once, on a new exported `Resolver` interface that both `Container` and
+  `ResolutionContext` extend, so a call through a factory's `ctx` can never again narrow a token's slot names differently
+  from the same call on the container. Types only: the emitted JavaScript is unchanged.
+
+- [#1101](https://github.com/codefastlabs/codefast/pull/1101) A sync `unbind()`, `unbindAll()`, `rebind()` or `unload()` that meets an async deactivation hook now runs every
+  deactivation stage of that instance — container `onDeactivation` hooks, the binding's own `onDeactivation`, then each
+  `@preDestroy()` — before it throws `AsyncDeactivationError`. It used to stop at the first stage that returned a promise,
+  and since the binding was already removed, the stages after it could never run. The error is still thrown, and each
+  returned promise is still left unawaited with its rejection swallowed, so use `unbindAsync()` / `unloadAsync()` wherever
+  a deactivation hook may be async.
+
 ## 0.13.0
 
 ### Minor Changes
