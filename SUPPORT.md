@@ -47,7 +47,8 @@ to a release that CI runs its tests on. Floors are enforced mechanically rather 
   ever becoming LTS, and dependencies routinely skip them. A dev dependency only runs the package's tests, so its
   `engines.node` must admit the two releases CI runs them on, the floor and the newest (`.node-version`), and a gap
   between them is not one the tests claim. The lockfile must resolve the package's `@types/node` on the floor's major at
-  a minor no newer.
+  a minor no newer. The workspace root's floor is held to every dependency any package installs, runtime and dev alike,
+  from that floor up — a contributor on it builds and tests the whole repo — so jsdom's `^24.15.0` line sets it.
 - **CI** develops on the Current line (`.node-version`) for speed, and a matrix runs every test category of each package
   on its own floor — one leg per distinct floor, planned from `codefast audit engines --json`. pnpm is a native binary
   that needs no Node of its own, so a leg runs on nothing newer than its floor. Unit tests run the source through Vite's
@@ -59,9 +60,9 @@ Moving one package's floor touches only that package and whatever depends on it 
 `node<major>.<minor>` catalog if none exists yet, set its `engines.node` and its `@types/node` to that catalog, layer
 the floor's `lib` overlay if the major changes, raise each package the audit names, and give each a `minor` changeset.
 
-Development uses the latest Node for speed and tooling, and contributors need the root `engines.node` (Node 24), which
-the repo's own toolchain asks for. Nothing about a contributor's local Node version can leak into the published
-packages, because each floor is checked by the compiler and by CI on that floor.
+Development uses the latest Node for speed and tooling, and contributors need the root `engines.node` (Node 24.15), the
+lowest release every tool any package builds or tests with admits. Nothing about a contributor's local Node version can
+leak into the published packages, because each floor is checked by the compiler and by CI on that floor.
 
 ## Browsers
 

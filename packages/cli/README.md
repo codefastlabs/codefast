@@ -442,9 +442,13 @@ packages can sit on different floors, each as low as the package can go. It repo
 - an `@types/node` the lockfile (`pnpm-lock.yaml`) resolves on another major than the floor or on a newer minor, where
   the compiler would accept APIs the floor lacks.
 
-The workspace root's own `engines.node` plays no part: it is the contributors' toolchain, not a floor any package
-inherits. A narrower `[target]` checks only the packages it reaches, still against every floor they depend on. `--json`
-lists every floor with its package directory, which is enough to plan one CI leg per floor. It takes no allowlist.
+The workspace root's own `engines.node`, when written `>=X.Y.Z`, is the contributors' floor rather than one any package
+inherits: a contributor on it builds and tests every package, so every dependency any of them installs, runtime and dev
+alike, must admit every release from the root floor up, short-lived odd lines aside. Each gap is reported once per
+dependency range, naming the packages that install it. The root is never listed among the floors and is checked only
+when the target reaches it. A narrower `[target]` checks only the packages it reaches, still against every floor they
+depend on. `--json` lists every floor with its package directory, which is enough to plan one CI leg per floor. It takes
+no allowlist.
 
 ```bash
 codefast audit engines                     # every package in the workspace

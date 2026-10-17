@@ -42,7 +42,8 @@ type WorkspaceManifest = {
  *
  * @remarks A published package declares a floor as `>=X.Y.Z`. The `engines.node` of every runtime dependency must
  * admit every release from the floor up, short-lived odd lines aside; that of every dev dependency, the floor and the
- * newest release CI tests on. The `@types/node` the lockfile resolves must declare nothing the floor lacks.
+ * newest release CI tests on. The `@types/node` the lockfile resolves must declare nothing the floor lacks. The
+ * workspace root's floor, never listed among `floors`, must be admitted by every dependency any package installs.
  */
 export async function runEnginesAudit(
   fs: Filesystem,
@@ -129,10 +130,70 @@ export async function runEnginesAudit(
       }
     }
 
+    if (isWithin(targetPath, rootDir)) {
+      violations.push(...auditRootFloor(fs, rootDir, manifests, workspaceManifests, testedNewest));
+    }
+
     return ok({ floors, violations, packageCount: checked.length });
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
+}
+
+/**
+ * Reports each dependency installed anywhere in the workspace whose `engines.node` leaves out a release the root floor
+ * claims, since a contributor on that release runs every package's build and tests.
+ */
+function auditRootFloor(
+  fs: Filesystem,
+  rootDir: string,
+  manifests: ReadonlyArray<WorkspaceManifest>,
+  workspaceManifests: ReadonlyMap<string, Record<string, unknown>>,
+  testedNewest: NodeVersion | null,
+): Array<EngineViolation> {
+  const rootManifest = readManifest(fs, rootDir);
+  const rootRange = rootManifest === null ? undefined : nodeRangeOf(rootManifest);
+  const floor = rootRange === undefined ? null : parseNodeFloor(rootRange);
+  if (rootManifest === null || floor === null) {
+    return [];
+  }
+  const packageName = typeof rootManifest.name === "string" ? rootManifest.name : ".";
+  const formatted = formatNodeVersion(floor);
+  const unjudgedMajors = shortLivedMajors(floor, testedNewest);
+  const importers: ReadonlyArray<Pick<WorkspaceManifest, "packageName" | "packageDir" | "manifest">> = manifests.some(
+    (entry) => entry.packageDir === rootDir,
+  )
+    ? manifests
+    : [{ packageName, packageDir: rootDir, manifest: rootManifest }, ...manifests];
+
+  const byDependency = new Map<string, Extract<EngineViolation, { kind: "root-outside-dependency-engines" }>>();
+  for (const importer of importers) {
+    for (const { dependency } of dependenciesOf(importer.manifest)) {
+      const dependencyManifest =
+        workspaceManifests.get(dependency) ?? readInstalledManifest(fs, importer.packageDir, dependency);
+      const dependencyRange = dependencyManifest === null ? undefined : nodeRangeOf(dependencyManifest);
+      const gaps = dependencyRange === undefined ? null : uncoveredNodeRanges(floor, dependencyRange, unjudgedMajors);
+      if (dependencyRange === undefined || gaps === null || gaps.length === 0) {
+        continue;
+      }
+      const key = `${dependency}@${dependencyRange}`;
+      const existing = byDependency.get(key);
+      if (existing === undefined) {
+        byDependency.set(key, {
+          kind: "root-outside-dependency-engines",
+          packageName,
+          floor: formatted,
+          dependency,
+          range: dependencyRange,
+          dependents: [importer.packageName],
+          uncovered: gaps.join(" || "),
+        });
+      } else if (!existing.dependents.includes(importer.packageName)) {
+        existing.dependents.push(importer.packageName);
+      }
+    }
+  }
+  return [...byDependency.values()];
 }
 
 // Each dependency once, under the first field that lists it.

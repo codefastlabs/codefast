@@ -31,6 +31,15 @@ describe("presentEnginesAuditResult", () => {
           uncovered: ">=22.0.0 <22.12.0",
         },
         { kind: "types-off-floor", packageName: "@x/d", floor: "22.12.0", typesVersion: "22.13.0" },
+        {
+          kind: "root-outside-dependency-engines",
+          packageName: "root",
+          floor: "24.0.0",
+          dependency: "jsdom",
+          range: "^24.15.0 || >=26.0.0",
+          dependents: ["@x/ui", "@x/theme"],
+          uncovered: ">=24.0.0 <24.15.0",
+        },
       ],
       packageCount: 4,
     };
@@ -45,7 +54,10 @@ describe("presentEnginesAuditResult", () => {
       `@x/c: floor 22.0.0 claims Node ">=22.0.0 <22.12.0", which vitest's engines.node "^22.12.0 || >=24.0.0" (devDependencies) leaves out`,
     );
     expect(out).toContain("@x/d: @types/node resolves to 22.13.0, off floor 22.12.0's line");
-    expect(out).toContain("✖ 4 Node floor violation(s) across 4 package(s)");
+    expect(out).toContain(
+      `root: workspace root floor 24.0.0 claims Node ">=24.0.0 <24.15.0", which jsdom's engines.node "^24.15.0 || >=26.0.0" (installed for @x/ui, @x/theme) leaves out → raise the root floor`,
+    );
+    expect(out).toContain("✖ 5 Node floor violation(s) across 4 package(s)");
   });
 
   it("prints a clean summary counting the packages on each floor", () => {

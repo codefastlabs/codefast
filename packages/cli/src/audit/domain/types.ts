@@ -384,6 +384,19 @@ export type EngineViolation =
       readonly uncovered: string;
     }
   | {
+      readonly kind: "root-outside-dependency-engines";
+      /** The workspace root's name. */
+      readonly packageName: string;
+      readonly floor: string;
+      readonly dependency: string;
+      /** The dependency's own `engines.node`. */
+      readonly range: string;
+      /** The workspace packages that install the dependency at this range. */
+      readonly dependents: Array<string>;
+      /** The releases the root floor claims that `range` leaves out, as semver ranges joined by `||`. */
+      readonly uncovered: string;
+    }
+  | {
       readonly kind: "types-off-floor";
       readonly packageName: string;
       readonly floor: string;
