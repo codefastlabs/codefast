@@ -12,7 +12,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   // Resolve internal `#` to `src` so the browser entry bundles TS source, not `dist`.
   resolve: {
-    conditions: ["source", "module", "browser"],
+    conditions: ["source", "module", "browser", "development|production"],
   },
   // Tailwind v4 via its dedicated Vite plugin — the recommended integration for Vite bundles.
   plugins: [tailwindcss(), viteReact(), babel({ presets: [reactCompilerPreset()] })],
