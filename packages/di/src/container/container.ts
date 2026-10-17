@@ -20,6 +20,7 @@ import type {
   ResolveOptions,
 } from "#core/types";
 import type { AutoRegisterRegistry } from "#decorators/injectable";
+import { deactivationHooksThrew, foreignContainer, moduleRollbackThrew } from "#error-messages";
 import { AsyncModuleLoadError, DisposedContainerError, RebindUnboundTokenError } from "#errors";
 import { bindingSlotToResolveOptions } from "#injection/dependency-slot";
 import type { ResolutionDiagnostics } from "#introspection/diagnostics";
@@ -407,7 +408,7 @@ class DefaultContainer implements Container {
       }
     }
     if (errors !== undefined) {
-      throwCollected(errors, "unbind completed, but deactivation hooks threw");
+      throwCollected(errors, deactivationHooksThrew("unbind"));
     }
   }
 
@@ -426,7 +427,7 @@ class DefaultContainer implements Container {
       }
     }
     if (errors !== undefined) {
-      throwCollected(errors, "unbind completed, but deactivation hooks threw");
+      throwCollected(errors, deactivationHooksThrew("unbind"));
     }
   }
 
@@ -549,7 +550,7 @@ class DefaultContainer implements Container {
     try {
       this.#deactivatePairsSync(pairs);
     } catch (rollbackError) {
-      return new AggregateError([cause, rollbackError], "module load failed, and rolling it back threw too");
+      return new AggregateError([cause, rollbackError], moduleRollbackThrew());
     }
     return cause;
   }
@@ -559,7 +560,7 @@ class DefaultContainer implements Container {
     try {
       await this.#deactivatePairs(pairs);
     } catch (rollbackError) {
-      return new AggregateError([cause, rollbackError], "module load failed, and rolling it back threw too");
+      return new AggregateError([cause, rollbackError], moduleRollbackThrew());
     }
     return cause;
   }
@@ -902,7 +903,7 @@ class DefaultContainer implements Container {
     }
 
     this.#scope.clearAll();
-    throwCollected(errors, "dispose() completed, but deactivation hooks threw");
+    throwCollected(errors, deactivationHooksThrew("dispose()"));
   }
 
   [Symbol.asyncDispose](): Promise<void> {
@@ -989,7 +990,7 @@ class DefaultContainer implements Container {
 
   static #live(container: Container): DefaultContainer {
     if (!(#registry in container)) {
-      throw new TypeError("Expected a container created by Container.create().");
+      throw new TypeError(foreignContainer());
     }
     container.#assertNotDisposed();
     return container;

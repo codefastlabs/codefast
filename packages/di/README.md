@@ -566,6 +566,11 @@ Every error extends `DiError` and carries a stable `code`, so you can branch on 
 A miss below the token you asked for names its path: `TokenNotBoundError` and `NoMatchingBindingError` carry `path`, and
 the message ends with it — `Path: UserService → UserRepository → app:Logger`.
 
+A production build keeps the bundle small by shortening the messages: under the `production` condition (`vite build`,
+webpack in production mode), a message keeps only the identifiers it names, so `TokenNotBoundError: app:Logger` replaces
+the sentence. `name`, `code` and the context fields stay the same in every build, which is why the code is the thing to
+branch on. See [the specification → Production messages](./spec/errors.md#production-messages).
+
 The full taxonomy — including `MissingMetadataError`, `InvalidMetadataError`, `RebindUnboundTokenError`,
 `AsyncModuleLoadError`, `InvalidBindingDeclarationError`, and the rest — is exported from the root entry and from
 `@codefast/di/errors`.
