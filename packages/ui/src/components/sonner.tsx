@@ -1,5 +1,5 @@
+import { useAppearance } from "@codefast/theme";
 import { CircleCheckIcon, InfoIcon, Loader2Icon, OctagonXIcon, TriangleAlertIcon } from "lucide-react";
-import { useTheme } from "next-themes";
 import type { CSSProperties, JSX } from "react";
 import type { ToasterProps as SonnerToasterProps } from "sonner";
 import { Toaster as Sonner } from "sonner";
@@ -12,10 +12,12 @@ import { Toaster as Sonner } from "sonner";
 type ToasterProps = SonnerToasterProps;
 
 /**
+ * Renders the toast region in the color scheme resolved by the enclosing `AppearanceProvider`.
+ *
  * @since 0.3.16-canary.0
  */
 function Toaster({ ...props }: ToasterProps): JSX.Element {
-  const { theme = "system" } = useTheme();
+  const { colorScheme } = useAppearance();
 
   return (
     <Sonner
@@ -35,7 +37,7 @@ function Toaster({ ...props }: ToasterProps): JSX.Element {
           "--normal-text": "var(--popover-foreground)",
         } as CSSProperties
       }
-      theme={theme as NonNullable<ToasterProps["theme"]>}
+      theme={colorScheme}
       toastOptions={{
         classNames: {
           toast: "rounded-2xl",

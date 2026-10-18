@@ -604,7 +604,6 @@
     "embla-carousel-react": "catalog:",
     "input-otp": "catalog:",
     "lucide-react": "catalog:",
-    "next-themes": "catalog:",
     "radix-ui": "catalog:",
     "react-hook-form": "catalog:",
     "react-resizable-panels": "catalog:",
@@ -615,6 +614,7 @@
     "vaul": "catalog:"
   },
   "devDependencies": {
+    "@codefast/theme": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -634,6 +634,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@codefast/theme": ">=0.9.0",
     "@types/react": ">=19.0.0",
     "@types/react-dom": ">=19.0.0",
     "react": ">=19.0.0",

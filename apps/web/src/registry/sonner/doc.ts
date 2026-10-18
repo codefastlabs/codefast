@@ -31,7 +31,7 @@ export const sonnerDoc: ComponentDoc = {
   ],
   features: [
     "Custom icons per severity (success/error/warning/info/loading) match the rest of the design system instead of Sonner's defaults.",
-    "Automatically follows the app's next-themes theme (light/dark/system) — no manual theme prop needed.",
+    "Follows the color scheme @codefast/theme resolves from the user's appearance — no manual theme prop needed.",
     "toast.promise(promise, { loading, success, error }) chains all three states from a single call, auto-updating as the promise settles.",
   ],
   anatomy: [{ name: "Toaster" }],
