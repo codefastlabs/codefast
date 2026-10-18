@@ -1,5 +1,26 @@
 # @codefast/di-testing
 
+## 0.4.0
+
+### Minor Changes
+
+- [#1101](https://github.com/codefastlabs/codefast/pull/1101) **Breaking:** a test bed's `dispose()` is renamed `disposeAsync()`, matching `@codefast/di`'s `Container#disposeAsync()`
+  — it returns a `Promise`, so it carries the `Async` suffix. `await using bed = …compile()` is unchanged; replace
+  `await bed.dispose()` with `await bed.disposeAsync()`.
+
+- [#1114](https://github.com/codefastlabs/codefast/pull/1114) **Breaking:** `TestBedOptions.metadataReader` is typed `VerifiedMetadataReader`, matching `@codefast/di`'s container
+  option: wrap a custom reader with `verifyingMetadataReader()` from `@codefast/di` first.
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor from 24 to the lowest release the package, its dependencies and its full test suite run on:
+  22.12 for `@codefast/cli` and `@codefast/tailwind-variants`, 22.18 for `@codefast/di` and `@codefast/di-testing`, and
+  22.22.2 for `@codefast/theme`, `@codefast/tracking` and `@codefast/ui`. Each floor is type-checked against what Node 22
+  ships and proven by running the package's tests on that release in CI.
+
+### Patch Changes
+
+- Updated dependencies:
+  - @codefast/di@0.14.0
+
 ## 0.3.0
 
 ### Minor Changes

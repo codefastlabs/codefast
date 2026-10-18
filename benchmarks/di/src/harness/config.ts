@@ -281,7 +281,11 @@ export const COMPETITORS = [
   INJECTION_JS,
 ] as const satisfies ReadonlyArray<DiBenchLibrary>;
 
-/** A competitor, by the `libraryName` its config declares — the name the results notes quote it by. */
+/**
+ * A competitor, by the `libraryName` its config declares — the name the results notes quote it by.
+ *
+ * @since 0.11.0
+ */
 export type DiCompetitorName = (typeof COMPETITORS)[number]["libraryName"];
 
 /**

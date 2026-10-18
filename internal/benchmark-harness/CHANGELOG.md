@@ -1,5 +1,28 @@
 # @codefast/benchmark-harness
 
+## 0.12.0
+
+### Minor Changes
+
+- [#1107](https://github.com/codefastlabs/codefast/pull/1107) The results generator every suite shares lives here now, under `results/`: `runResultsMain` builds a suite's
+  `RESULTS.md` and `results.json` from the one run under its `baselines/` (or with `--check` fails when either committed
+  file differs), from a `ResultsSuite` that names the subject and competitors, the comparison the suite already assembles,
+  figure-free notes typed by its competitors' names, and the few sentences that describe the suite. Validation refuses a
+  figure in a note's prose, a loss note naming a row that no longer loses, and a loss below the throughput ceiling no note
+  names. `runFootprintMain` is the matching `bench:footprint` entry — each library's smallest program bundled with
+  Rolldown, minified and gzipped, the subject held to its `footprint-budget.json` — and `rebuildSubjectPackage` the
+  rebuild both entries and `bench` run first.
+
+### Patch Changes
+
+- [#1108](https://github.com/codefastlabs/codefast/pull/1108) The generated `RESULTS.md` separates a time from its unit with a plain space instead of a non-breaking one, so the page
+  holds no invisible characters for search, diffs or copy to trip on.
+
+- [#1112](https://github.com/codefastlabs/codefast/pull/1112) A loss note can be judged a `process mode`: a library runs the row at one of two speeds per process, and the pass caught
+  the one that decides it. The results page names it in its legend beside the other four kinds.
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor to the lowest release each runs on, 22.18, which Node's built-in type stripping needs.
+
 ## 0.11.0
 
 ### Minor Changes

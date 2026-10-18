@@ -1,5 +1,12 @@
 # @codefast/typescript-config
 
+## 0.11.0
+
+### Minor Changes
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Add the `node22.json` and `node22-dom.json` overlays, which narrow `lib` and `target` to what Node 22 ships for a
+  package whose floor is on Node 22, and lower the package's own Node.js floor to 22.12.
+
 ## 0.10.0
 
 ### Minor Changes

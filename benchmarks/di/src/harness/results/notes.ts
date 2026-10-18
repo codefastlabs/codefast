@@ -130,7 +130,11 @@ const LOSS_NOTES: ReadonlyArray<LossNote<DiCompetitorName>> = [
   },
 ];
 
-/** Every note the DI results page renders and is checked against. */
+/**
+ * Every note the DI results page renders and is checked against.
+ *
+ * @since 0.11.0
+ */
 export const DI_RESULTS_NOTES: ResultsNotes<DiCompetitorName> = {
   userFacingNotes: USER_FACING_NOTES,
   bundleNote: BUNDLE_NOTE,

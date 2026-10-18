@@ -2,6 +2,8 @@
 
 /**
  * A Node release as its major, minor and patch numbers.
+ *
+ * @since 0.15.0
  */
 export type NodeVersion = readonly [major: number, minor: number, patch: number];
 
@@ -14,6 +16,8 @@ const versionPattern = /^(\d+)\.(\d+)\.(\d+)/;
  *
  * @remarks A floor is the one bound a package promises, so a range with an upper bound or a wildcard is refused
  * rather than approximated.
+ *
+ * @since 0.15.0
  */
 export function parseNodeFloor(range: string): NodeVersion | null {
   const match = floorPattern.exec(range.trim());
@@ -22,6 +26,8 @@ export function parseNodeFloor(range: string): NodeVersion | null {
 
 /**
  * Parses a resolved version such as `24.0.15`, ignoring any peer suffix the lockfile appends, or returns `null`.
+ *
+ * @since 0.15.0
  */
 export function parseNodeVersion(version: string): NodeVersion | null {
   const match = versionPattern.exec(version.trim());
@@ -30,6 +36,8 @@ export function parseNodeVersion(version: string): NodeVersion | null {
 
 /**
  * Whether `@types/node` at this version declares nothing the floor lacks — the floor's major, at a minor no newer.
+ *
+ * @since 0.15.0
  */
 export function typesFitFloor(types: NodeVersion, floor: NodeVersion): boolean {
   return types[0] === floor[0] && types[1] <= floor[1];
@@ -37,6 +45,8 @@ export function typesFitFloor(types: NodeVersion, floor: NodeVersion): boolean {
 
 /**
  * Formats a version as `X.Y.Z`.
+ *
+ * @since 0.15.0
  */
 export function formatNodeVersion(version: NodeVersion): string {
   return version.join(".");

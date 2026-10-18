@@ -78,6 +78,8 @@ function buildAppBootScenario(): BenchScenario {
 
 /**
  * Builds the app-boot scenario.
+ *
+ * @since 0.11.0
  */
 export function buildAwilixAppBootScenarios(): ReadonlyArray<BenchScenario> {
   return [buildAppBootScenario()];

@@ -1,5 +1,76 @@
 # @codefast/benchmark-di
 
+## 0.11.0
+
+### Minor Changes
+
+- [#1105](https://github.com/codefastlabs/codefast/pull/1105) `RESULTS.md` is generated: `pnpm bench:results` builds it from the run under `baselines/` and the analysis notes in
+  `src/harness/results/notes.ts`, which carry no figures, and `pnpm bench:results:check` gates CI on the committed page
+  matching. A baseline now keeps `footprint.json` (written by `pnpm bench:footprint --save`) and a `notes.md` for the pass
+  beside its observations. The baseline moves to a pass over the release tree: every competitor reads level with the
+  previous pass, and the six rows the harness flagged read level in a paired A/B.
+
+- [#1107](https://github.com/codefastlabs/codefast/pull/1107) `RESULTS.md`, `results.json` and the bundle table are built by `@internal/benchmark-harness`'s shared generator; the
+  suite keeps only its notes and the copy that describes it, and both files regenerate byte for byte. Competitor names in
+  the notes are typed from the bench config, so a note can only quote a library the suite measures.
+
+- [#1106](https://github.com/codefastlabs/codefast/pull/1106) `pnpm bench:results` also writes `results.json` beside `RESULTS.md`: the baseline's facts as data — the libraries and
+  their versions, the machine, the profile, the aggregates per competitor and every loss with its ratio — built from the
+  same comparison and held by the same `pnpm bench:results:check`. The codefastlabs.com home page reads its scoreboard
+  from that file instead of parsing the page, so `RESULTS.md`'s prose no longer has a shape to keep.
+
+### Patch Changes
+
+- [#1108](https://github.com/codefastlabs/codefast/pull/1108) The generated `RESULTS.md` separates a time from its unit with a plain space instead of a non-breaking one, so the page
+  holds no invisible characters for search, diffs or copy to trip on.
+
+- [#1110](https://github.com/codefastlabs/codefast/pull/1110) The accessor-injection note in `RESULTS.md` now says the engine compiles the accessor into the class's plan, and that
+  what it still pays over inversify is the ambient scope and the standard decorator runtime's per-instance initializer.
+
+- [#1066](https://github.com/codefastlabs/codefast/pull/1066) A new `app-boot-40` row prices an application's startup: a fresh container, a forty-service graph registered as classes
+  in each library's own idiom (32 singletons, 8 transient handlers), and every handler resolved once.
+
+- [#1112](https://github.com/codefastlabs/codefast/pull/1112) `RESULTS.md` is regenerated from a pass over the tree with accessors compiled into plans and a shared root collection.
+  Every competitor reads level with the previous pass. `accessor-injection-construct` and `realistic-graph-validate` rise
+  with their changes, and the three stable-set rows now lead ditox and injection-js, so their loss note is gone and ditox
+  takes eight rows where it took ten. `realistic-graph-resolve-root` gets a note of its own: injection-js runs it at one
+  of two speeds per process, and this pass caught the faster one.
+
+- [#1095](https://github.com/codefastlabs/codefast/pull/1095) `pnpm bench:footprint:check` gates `@codefast/di`'s smallest bind-and-resolve program on a gzip budget checked in as
+  `footprint-budget.json`, and runs in CI and `pnpm verify`; `pnpm bench:footprint` reports and enforces the same budget
+  under its table.
+
+- [#1066](https://github.com/codefastlabs/codefast/pull/1066) `pnpm bench:footprint` bundles each library's smallest bind-and-resolve program for the browser with Rolldown and prints
+  its minified and gzipped size, with `reflect-metadata` measured alone beside the libraries that ship it.
+
+- [#1063](https://github.com/codefastlabs/codefast/pull/1063) The introspection and validation scenarios call `validate`, `inspect`, `lookupBindings` and `generateDependencyGraph` as
+  functions that take the container, following `@codefast/di`.
+
+- [#1062](https://github.com/codefastlabs/codefast/pull/1062) `RESULTS.md` is rewritten from a pass over the 0.13.0 tree. Every library reads level with the previous pass, and one
+  row moved on the engine: `container-create-empty` rises by about a seventh, confirmed in both orders of a paired A/B.
+  The five rows the harness flagged as regressions read level in that A/B, and `plan-async-resolved-chain-8`, which the
+  previous page named as the lane to look at next, is closed: a standalone probe reads it level across the two builds, so
+  its earlier fall was the pass, not the engine. The run's `observations.jsonl` replaces the previous one under
+  `baselines/`.
+
+- [#1069](https://github.com/codefastlabs/codefast/pull/1069) `RESULTS.md` is rewritten from a pass over the tree with settled dependency slots. Every competitor reads level with the
+  previous pass, and the rows that change aims at moved: `app-boot-40` now reads level with ditox where it read 0.85×, and
+  `realistic-graph-class-cold-resolve` closes from 0.81× to 0.94×. The run's `observations.jsonl` replaces the previous
+  one under `baselines/`, and the bundle table picks up the engine's extra 0.1 KB.
+
+- [#1066](https://github.com/codefastlabs/codefast/pull/1066) `RESULTS.md` opens with what an application feels — startup (`app-boot-40`), one request, and the bundle table from
+  `bench:footprint` — before the per-row losses, and is rewritten from a pass over the tree with the introspection
+  functions. The run's `observations.jsonl` replaces the previous one under `baselines/`.
+
+- [#1111](https://github.com/codefastlabs/codefast/pull/1111) The stable-set note in `RESULTS.md` records that the engine no longer copies a memoized root collection, so the next
+  accepted pass decides whether those rows still lose.
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor to the lowest release each runs on, 22.18, which Node's built-in type stripping needs.
+- Updated dependencies:
+  - @internal/benchmark-harness@0.12.0
+  - @codefast/di@0.14.0
+  - @internal/benchmark-viewer@0.10.2
+
 ## 0.10.3
 
 ### Patch Changes

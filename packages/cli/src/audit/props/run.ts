@@ -14,6 +14,8 @@ import { walkTsxFiles } from "#core/workspace/typescript-walk";
  * Scans a target path for component props aliases joined with `&` that an interface could express.
  *
  * @remarks The type server starts only once a file holds a candidate, so a tree without one never spawns it.
+ *
+ * @since 0.15.0
  */
 export async function runPropsAudit(
   fs: Filesystem,

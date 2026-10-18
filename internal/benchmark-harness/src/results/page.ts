@@ -23,7 +23,11 @@ import type { QuotedRow } from "#results/notes";
 import type { ResultsSuite } from "#results/suite";
 import { resolveDisplayName } from "#shared/config";
 
-/** Everything the page is rendered from. */
+/**
+ * Everything the page is rendered from.
+ *
+ * @since 0.12.0
+ */
 export interface ResultsPageInput {
   readonly suite: ResultsSuite;
   readonly runId: string;
@@ -33,7 +37,11 @@ export interface ResultsPageInput {
   readonly passNotes: string;
 }
 
-/** The heading the losses are explained under, which `results.json` names so a reader can link to it. */
+/**
+ * The heading the losses are explained under, which `results.json` names so a reader can link to it.
+ *
+ * @since 0.12.0
+ */
 export const LOSSES_HEADING = "The losses, foregrounded — where to improve";
 
 /** A scenario's cell against one competitor, located by name. */
@@ -44,7 +52,11 @@ interface LocatedCell {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-/** The label a competitor heads its column with, found by the `libraryName` a note quotes it by. */
+/**
+ * The label a competitor heads its column with, found by the `libraryName` a note quotes it by.
+ *
+ * @since 0.12.0
+ */
 export function competitorDisplayName(suite: ResultsSuite, name: string): string {
   const library = suite.competitors.find((candidate) => candidate.libraryName === name);
   if (library === undefined) {
@@ -61,7 +73,11 @@ function scenarioById(document: ComparisonDocument, id: string): ComparisonDocum
   return scenario;
 }
 
-/** Locates a measured cell; a missing scenario or an unmeasured competitor is an error, never a silent dash. */
+/**
+ * Locates a measured cell; a missing scenario or an unmeasured competitor is an error, never a silent dash.
+ *
+ * @since 0.12.0
+ */
 export function locateCell(suite: ResultsSuite, document: ComparisonDocument, id: string, name: string): LocatedCell {
   const scenario = scenarioById(document, id);
   const displayName = competitorDisplayName(suite, name);
@@ -435,7 +451,11 @@ function rerunSection(suite: ResultsSuite): Array<string> {
   ];
 }
 
-/** Renders the whole page; the caller formats it. */
+/**
+ * Renders the whole page; the caller formats it.
+ *
+ * @since 0.12.0
+ */
 export function renderResultsPage(input: ResultsPageInput): string {
   const sections = [
     introSection(input),

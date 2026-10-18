@@ -62,7 +62,11 @@ export const CVA = {
  */
 export const COMPETITORS = [TAILWIND_VARIANTS, CVA] as const satisfies ReadonlyArray<TvBenchLibrary>;
 
-/** A competitor, by the `libraryName` its config declares — the name the results notes quote it by. */
+/**
+ * A competitor, by the `libraryName` its config declares — the name the results notes quote it by.
+ *
+ * @since 0.11.0
+ */
 export type TvCompetitorName = (typeof COMPETITORS)[number]["libraryName"];
 
 /**

@@ -35,7 +35,11 @@ const BUNDLE_NOTE =
 /** Every loss shape, ordered by how much it matters. */
 const LOSS_NOTES: ReadonlyArray<LossNote<TvCompetitorName>> = [];
 
-/** Every note the tailwind-variants results page renders and is checked against. */
+/**
+ * Every note the tailwind-variants results page renders and is checked against.
+ *
+ * @since 0.11.0
+ */
 export const TV_RESULTS_NOTES: ResultsNotes<TvCompetitorName> = {
   userFacingNotes: USER_FACING_NOTES,
   bundleNote: BUNDLE_NOTE,

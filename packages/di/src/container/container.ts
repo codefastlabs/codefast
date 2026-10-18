@@ -111,6 +111,8 @@ export interface ContainerStatic {
  *
  * @remarks `registries` lists the container's own registry, then each ancestor's nearest first — the order every chain
  * walk reads them in.
+ *
+ * @since 0.14.0
  */
 export interface ContainerInternals {
   readonly registries: readonly [BindingRegistry, ...Array<BindingRegistry>];
@@ -123,6 +125,8 @@ export interface ContainerInternals {
  * Reads the internals of a live container `Container` created, built on first use.
  *
  * @throws `TypeError` for an object `Container` did not create, `DisposedContainerError` for a disposed chain.
+ *
+ * @since 0.14.0
  */
 export function containerInternals(container: Container): ContainerInternals {
   return DefaultContainer.internalsOf(container);
@@ -132,6 +136,8 @@ export function containerInternals(container: Container): ContainerInternals {
  * Reads the inspector of a live container `Container` created, built on first use.
  *
  * @throws `TypeError` for an object `Container` did not create, `DisposedContainerError` for a disposed chain.
+ *
+ * @since 0.14.0
  */
 export function containerInspector(container: Container): Inspector {
   return DefaultContainer.inspectorOf(container);

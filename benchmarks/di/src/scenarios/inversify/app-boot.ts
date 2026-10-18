@@ -62,6 +62,8 @@ function buildAppBootScenario(): BenchScenario {
 
 /**
  * Builds the app-boot scenario.
+ *
+ * @since 0.11.0
  */
 export function buildInversifyAppBootScenarios(): ReadonlyArray<BenchScenario> {
   return [buildAppBootScenario()];

@@ -68,7 +68,11 @@ function uncoveredLossProblems(suite: ResultsSuite, document: ComparisonDocument
   );
 }
 
-/** Every reason the suite's notes cannot render against this baseline; empty when they can. */
+/**
+ * Every reason the suite's notes cannot render against this baseline; empty when they can.
+ *
+ * @since 0.12.0
+ */
 export function validateResultsNotes(suite: ResultsSuite, document: ComparisonDocument): Array<string> {
   const { notes } = suite;
   return [

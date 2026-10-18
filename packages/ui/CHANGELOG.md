@@ -1,5 +1,40 @@
 # @codefast/ui
 
+## 0.14.0
+
+### Minor Changes
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor from 24 to the lowest release the package, its dependencies and its full test suite run on:
+  22.12 for `@codefast/cli` and `@codefast/tailwind-variants`, 22.18 for `@codefast/di` and `@codefast/di-testing`, and
+  22.22.2 for `@codefast/theme`, `@codefast/tracking` and `@codefast/ui`. Each floor is type-checked against what Node 22
+  ships and proven by running the package's tests on that release in CI.
+
+### Patch Changes
+
+- [#1060](https://github.com/codefastlabs/codefast/pull/1060) Every focusable element now draws the same solid 2px `ring` outline, offset 2px, as `Button`. An element with no focus
+  style of its own (a plain link, `<summary>`, a custom `tabIndex` element) gets it from the base layer instead of the
+  browser's two-tone `auto` outline, and a component's own `outline-*` utilities still override it. The sidebar parts
+  (`SidebarMenuButton`, `SidebarMenuSubButton`, `SidebarMenuAction`, `SidebarGroupLabel`, `SidebarGroupAction`) and
+  `ResizableSeparator` draw focus as that outline instead of a box-shadow ring, so it also shows in forced-colors mode.
+
+- [#1071](https://github.com/codefastlabs/codefast/pull/1071) Component props that add their own members or join a variants type are declared as interfaces instead of `&`
+  intersections — `ButtonProps`, `CardProps`, `FieldProps`, `ScrollAreaProps` and the other 24 — so a prop that clashes
+  with the element's own now fails where it is declared rather than narrowing to `never`. Each accepts exactly the props
+  it did, with one exception: `ChartLegendContentProps` takes Recharts' legend-content type for every member the two
+  share, where the intersection demanded a value that satisfied both a `div` handler and a Recharts one, so it now accepts
+  more. `CalendarProps`, `ToggleGroupProps` and the internal `ScopedProps` helpers stay intersections, because their base
+  is a union or a type parameter.
+
+- [#1090](https://github.com/codefastlabs/codefast/pull/1090) The preset now honours `prefers-reduced-motion` with one global rule: under `reduce`, every animation and transition,
+  including those on `::before` and `::after`, runs for a near-zero duration and plays once. Closed dialogs, popovers,
+  sheets and menus still unmount, because `animationend` and `transitionend` keep firing. The rule sits outside every
+  cascade layer, so it beats every utility, and a layered `!important` such as `motion-reduce:duration-200!` still opts
+  essential motion back in. This restores the reduced-motion coverage that most components had lost, and the per-component
+  `motion-reduce:` guards on `Spinner` and `InputNumber` and the `shimmer` utility's own reduced-motion block are gone,
+  since the global rule covers them.
+- Updated dependencies:
+  - @codefast/tailwind-variants@0.10.0
+
 ## 0.13.0
 
 ### Minor Changes

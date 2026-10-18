@@ -133,6 +133,8 @@ export type BindingConstraint = (ctx: ConstraintContext) => boolean;
  * The resolve methods a container and a factory's resolution context share.
  *
  * @remarks One declaration for both, so a slot name narrows the same way wherever a token is resolved.
+ *
+ * @since 0.14.0
  */
 export interface Resolver {
   resolve<Value, Names extends string = string>(

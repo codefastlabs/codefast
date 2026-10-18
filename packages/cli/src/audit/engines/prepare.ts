@@ -9,6 +9,8 @@ import type { Result } from "#core/result";
  *
  * @remarks Defaults to the repo root. A narrower target checks only the packages it reaches, still against the floors
  * of every workspace package they depend on. It takes no allowlist.
+ *
+ * @since 0.15.0
  */
 export async function prepareEnginesAudit(
   fs: Filesystem,
