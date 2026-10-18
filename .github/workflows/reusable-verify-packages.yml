@@ -117,16 +117,16 @@ jobs:
       - name: Verify Node Floors
         run: pnpm cli:audit:engines
 
-      # The bundle is what `@codefast/di` costs an app, and no test or type sees it grow; this measures the smallest
-      # bind-and-resolve program and fails past the gzip budget checked in beside the benchmark suite.
-      - name: Verify DI Bundle Budget
-        run: pnpm di:bench:footprint:check
+      # The bundle is what a subject package costs an app, and no test or type sees it grow; every benchmark suite
+      # bundles its subject's smallest program and fails past the gzip budget checked in beside the suite.
+      - name: Verify Bundle Budgets
+        run: pnpm bench:footprint:check
 
-      # RESULTS.md and results.json are generated from the committed baseline and the analysis notes; this rebuilds them
-      # and fails when either committed file differs, or when a note names a row that no longer loses or a loss has no
-      # note.
-      - name: Verify DI Results Page
-        run: pnpm di:bench:results:check
+      # Every suite's RESULTS.md and results.json are generated from its committed baseline and analysis notes; this
+      # rebuilds them and fails when a committed file differs, or when a note names a row that no longer loses or a loss
+      # has no note.
+      - name: Verify Benchmark Results Pages
+        run: pnpm bench:results:check
 
       - name: Execute Automated Tests with Coverage
         if: ${{ inputs.run-tests }}

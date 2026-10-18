@@ -19,27 +19,61 @@ pnpm bench
 From the repo root, `pnpm bench` runs every suite; filter with `pnpm --filter @benchmark/tailwind-variants bench`. Every
 run rebuilds `@codefast/tailwind-variants` first, so it measures the working tree rather than a stale `dist/`.
 
-| Command                         | What changes                                                                            |
-| ------------------------------- | --------------------------------------------------------------------------------------- |
-| `pnpm bench`                    | The lane to cite: one subprocess per scenario, libraries interleaved, default profile   |
-| `pnpm bench:fast`               | Smoke profile — one shared process per library, shorter windows, one trial. Not a claim |
-| `pnpm bench:ab`                 | Two builds of `@codefast/tailwind-variants`, paired and alternating, on the rows named  |
-| `pnpm bench:list`               | Prints the scenario inventory as JSON on stdout, measuring nothing                      |
-| `BENCH_MODE=full pnpm bench`    | Longer windows, three trials, a collection between trials                               |
-| `BENCH_VERBOSE=true pnpm bench` | Streams every child line and prints the per-scenario table                              |
-| `pnpm bench:serve`              | Serves the run history from `bench-results/` in a browser                               |
-| `BENCH_MODE=<mode>`             | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set            |
-| `BENCH_TRIALS=<n>`              | Trials per scenario; the harness refuses anything below its minimum                     |
-| `BENCH_ONLY=<id>,<id>`          | Restrict the run to these scenario ids                                                  |
-| `BENCH_LIBRARY=<name>`          | Restrict the run to these libraries; `@codefast/tailwind-variants` must be among them   |
-| `BENCH_PORT=<n>`                | Preferred port for `bench:serve`                                                        |
-| `PORT=<n>`                      | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process    |
+| Command                         | What changes                                                                                          |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `pnpm bench`                    | The lane to cite: one subprocess per scenario, libraries interleaved, default profile                 |
+| `pnpm bench:baseline`           | The baseline's pass: `bench` in the full profile, read against the run in `baselines/`                |
+| `pnpm bench:footprint`          | Bundles each library's smallest `tv()` program with Rolldown and prints its minified and gzipped size |
+| `pnpm bench:footprint:check`    | Bundles only `@codefast/tailwind-variants`'s program and fails past `footprint-budget.json`           |
+| `pnpm bench:results`            | Regenerates `RESULTS.md` and `results.json` from the run in `baselines/`                              |
+| `pnpm bench:results:check`      | Fails when the committed `RESULTS.md` or `results.json` is not what the baseline generates            |
+| `pnpm bench:fast`               | Smoke profile — one shared process per library, shorter windows, one trial. Not a claim               |
+| `pnpm bench:ab`                 | Two builds of `@codefast/tailwind-variants`, paired and alternating, on the rows named                |
+| `pnpm bench:list`               | Prints the scenario inventory as JSON on stdout, measuring nothing                                    |
+| `BENCH_MODE=full pnpm bench`    | Longer windows, three trials, a collection between trials                                             |
+| `BENCH_VERBOSE=true pnpm bench` | Streams every child line and prints the per-scenario table                                            |
+| `pnpm bench:serve`              | Serves the run history from `bench-results/` in a browser                                             |
+| `BENCH_MODE=<mode>`             | Timing profile: `fast`, `default` or `full` — what the `bench:*` scripts set                          |
+| `BENCH_TRIALS=<n>`              | Trials per scenario; the harness refuses anything below its minimum                                   |
+| `BENCH_ONLY=<id>,<id>`          | Restrict the run to these scenario ids                                                                |
+| `BENCH_LIBRARY=<name>`          | Restrict the run to these libraries; `@codefast/tailwind-variants` must be among them                 |
+| `BENCH_PORT=<n>`                | Preferred port for `bench:serve`                                                                      |
+| `PORT=<n>`                      | Read by `bench:serve` when `BENCH_PORT` is unset — what a launcher hands the process                  |
 
 Every run writes a timestamped directory under `bench-results/` (git-ignored) holding one file, `observations.jsonl`,
 and — for a whole-suite run — points its configuration's entry in `bench-results/latest.json` at it, one pointer per
 profile, shape and trial count. `report.md` and `report.json` are derived on demand: `pnpm bench:report [run]` rebuilds
 them from a run's observations, and `pnpm bench:serve` offers them as downloads. A run narrowed with `BENCH_ONLY` or
 `BENCH_LIBRARY` does not move `latest.json`.
+
+## The results page
+
+[`RESULTS.md`](./RESULTS.md) is generated, never edited: `pnpm bench:results` builds it from the one run committed under
+`baselines/` — its `observations.jsonl`, the bundle table `pnpm bench:footprint --save` records beside it as
+`footprint.json`, and a hand-written `notes.md` stating the commit it measured and what moved since the previous pass —
+and from the analysis in `src/harness/results/notes.ts`, which says why each loss exists and states no figure. Every
+number on the page is computed from the run. The build refuses a note that names a row which no longer loses, a loss
+below the throughput ceiling that no note explains, and a figure in a note's prose. Beside the page it writes
+[`results.json`](./results.json), the same run's facts as data. `pnpm bench:results:check` rebuilds both and fails when
+either committed file differs, and it runs in CI and in `pnpm verify`.
+
+The generator is `@internal/benchmark-harness`'s, shared with the DI suite; this suite supplies its notes and the
+sentences that describe it, in `src/harness/results.ts`. Accepting a pass replaces the run under `baselines/` with it:
+`pnpm bench:baseline`, move the new run's `observations.jsonl` there in place of the old directory,
+`pnpm bench:footprint --save`, write its `notes.md`, then `pnpm bench:results`.
+
+## Bundle budget
+
+The bundle is the cost of `@codefast/tailwind-variants` an app feels, and no test or type check sees it grow, so its
+smallest program — one component with one variant, defined and rendered once — has a gzip budget checked in as
+[`footprint-budget.json`](./footprint-budget.json). `pnpm bench:footprint:check` rebuilds the package, bundles that one
+program, prints its gzipped size against the budget and exits non-zero when it is over; `pnpm bench:footprint` prints
+the whole table — `tailwind-variants`, `class-variance-authority`, and `tailwind-merge` alone, which both `tv()`
+libraries call by default — and fails the same way. The gate runs in CI's package verification and in `pnpm verify`.
+
+The budget is the measured size plus a small headroom, enough to absorb gzip and bundler noise but not a real feature.
+When a change grows the bundle on purpose, raise the budget in the same PR and say why there; when one shrinks it, lower
+the budget to the new size plus the same headroom.
 
 ## What it measures
 
@@ -92,6 +126,10 @@ src/harness/bench-options.ts the explicit tv option bags every scenario passes
 src/harness/list.ts         the bench:list entry
 src/harness/report.ts       the bench:report entry
 src/harness/serve.ts        the bench:serve entry
+src/harness/footprint.ts    the bench:footprint entry, and the bundle gate behind --check
+footprint-budget.json       the gzip budget the gate holds @codefast/tailwind-variants's program to
+src/harness/results.ts      the bench:results entry: this suite's notes and copy, handed to the harness generator
+src/harness/results/notes.ts the figure-free analysis RESULTS.md carries
 src/*-benches.ts            one child entry per library
 src/scenarios/<library>/    that library's implementation of each shape
 src/fixtures/               the variant configs, shared by every library
@@ -124,6 +162,8 @@ machine, and a run card with timing, profile, sanity failures and versions. The 
 
 ## Documentation
 
+- [`RESULTS.md`](./RESULTS.md) — where `@codefast/tailwind-variants` stands against the field, generated from the
+  committed baseline.
 - [`../di/BENCH_GUIDE.md`](../di/BENCH_GUIDE.md) — the measurement standard both suites hold a number to.
 - [`CHANGELOG.md`](./CHANGELOG.md) — release notes for this suite.
 - [`../../packages/tailwind-variants`](../../packages/tailwind-variants) — the library under test.
