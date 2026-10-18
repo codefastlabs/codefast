@@ -39,12 +39,25 @@ the build with a message naming what to add.
 
 ## Publishing
 
-Publishing needs the claude.ai Artifact tool, so it is a Claude Code session's job, not CI's:
+Publishing writes to the claude.ai artifact through the Artifact tool, which CI does not have.
+
+> **Claude Code cannot publish this artifact.** It was created from the Design System Artifact type, whose page
+> (`index.html`) and `artifact-type/` files belong to the type. Claude Code's Artifact tool sends every publish with a
+> page entry named `index.html`, so the server refuses it — "nothing can be published to it from this session" — even
+> when the call carries only `project/` files. Two separate Claude Code sessions met the same refusal. The type's own
+> `SKILL.md` names a claude.ai chat and Cowork as the surfaces that revise a system; publish from one of them. Neither
+> has been tried with this build yet.
+
+The steps, wherever they run:
 
 1. Run `pnpm design-system`.
-2. Read the artifact's `project/design-system.json`, and compare `dist/files.json` with the files it serves.
-3. Upload each changed `upload` file to the artifact's asset store and write its record (`name`, `blob`, `size`, `type`)
+2. Read the artifact's `project/design-system.json`, and list its files and its assets.
+3. Diff `dist/files.json` against what it serves: sizes first, then the sha256 of every same-size file. An `upload`
+   whose only difference is SVG whitespace is unchanged, because the asset store normalizes SVG markup.
+4. Upload each changed `upload` file to the artifact's asset store and write its record (`name`, `blob`, `size`, `type`)
    under `assetGroups.<Group>.files`.
-4. Publish the changed `file` entries in one call, with `dist` as the root (`index.d.ts` as `text/plain`).
-5. Last, publish `design-system.json` with `index-fields.json` merged in and a new `lastChange`. A brand-new artifact
-   needs nothing else: its index is these keys, the upload records, and the type's `createdOnFiles` marker.
+5. Publish only the changed `project/` files in one call, with `dist` as the root, a changed file under `project/` as
+   the page argument (never the type's `index.html`), and `index.d.ts` as `text/plain`.
+6. Last, read `project/design-system.json` again and publish it with `index-fields.json` merged in, every upload record
+   kept, and a new `lastChange`. A brand-new artifact needs nothing else: its index is these keys, the upload records,
+   and the type's `createdOnFiles` marker.
