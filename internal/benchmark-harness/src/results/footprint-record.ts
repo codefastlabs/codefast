@@ -2,13 +2,11 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { CODEFAST_DI } from "#harness/config";
-
 /** The file a baseline run directory keeps its bundle measurement in. */
 const FOOTPRINT_FILE_NAME = "footprint.json";
 
-/** The file beside the suite that holds `@codefast/di`'s gzip ceiling. */
-const BUDGET_FILE_NAME = "footprint-budget.json";
+/** The file beside a suite that holds its subject's gzip ceiling. */
+export const FOOTPRINT_BUDGET_FILE_NAME = "footprint-budget.json";
 
 /** One bundled program's size. */
 export interface Footprint {
@@ -57,16 +55,19 @@ export function readFootprintRecord(runDirectory: string): FootprintRecord {
   return { bundler, footprints };
 }
 
-/** Reads the checked-in gzip ceiling for `@codefast/di`'s program. */
-export function readBudgetBytes(packageRootDirectory: string): number {
-  const path = join(packageRootDirectory, BUDGET_FILE_NAME);
+/**
+ * Reads the checked-in gzip ceiling for the subject's program.
+ *
+ * @throws Error when the budget file has no positive integer entry for `libraryName`.
+ */
+export function readBudgetBytes(packageRootDirectory: string, libraryName: string): number {
+  const path = join(packageRootDirectory, FOOTPRINT_BUDGET_FILE_NAME);
   const budget: unknown = JSON.parse(readFileSync(path, "utf8"));
-  const entry: unknown =
-    typeof budget === "object" && budget !== null ? Reflect.get(budget, CODEFAST_DI.libraryName) : undefined;
+  const entry: unknown = typeof budget === "object" && budget !== null ? Reflect.get(budget, libraryName) : undefined;
   const gzippedBytes: unknown =
     typeof entry === "object" && entry !== null ? Reflect.get(entry, "gzippedBytes") : undefined;
   if (typeof gzippedBytes !== "number" || !Number.isInteger(gzippedBytes) || gzippedBytes <= 0) {
-    throw new Error(`${path} needs a positive integer "${CODEFAST_DI.libraryName}".gzippedBytes.`);
+    throw new Error(`${path} needs a positive integer "${libraryName}".gzippedBytes.`);
   }
   return gzippedBytes;
 }

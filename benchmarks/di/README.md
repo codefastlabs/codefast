@@ -73,6 +73,9 @@ aggregates per competitor and every loss — which the codefastlabs.com home pag
 parses the page's prose. `pnpm bench:results:check` rebuilds both and fails when either committed file differs, and it
 runs in CI and in `pnpm verify`.
 
+The generator is `@internal/benchmark-harness`'s, shared with every suite under `benchmarks/`; this suite supplies its
+notes and the sentences that describe it, in `src/harness/results.ts`.
+
 ## Bundle budget
 
 The bundle is the cost of `@codefast/di` an app feels, and no test or type check sees it grow, so its minimal program
@@ -95,7 +98,8 @@ src/harness/list.ts         the bench:list entry
 src/harness/serve.ts        the bench:serve entry
 src/harness/footprint.ts    the bench:footprint entry, and the bundle gate behind --check
 footprint-budget.json       the gzip budget the gate holds @codefast/di's program to
-src/harness/rebuild.ts      the @codefast/di rebuild both entries run first
+src/harness/results.ts      the bench:results entry: this suite's notes and copy, handed to the harness generator
+src/harness/results/notes.ts the figure-free analysis RESULTS.md carries
 src/*-benches.ts            one child entry per library
 src/scenarios/<library>/    that library's implementation of each scenario
 src/fixtures/               workloads and descriptors both sides share

@@ -1,14 +1,14 @@
-/** Derives `results.json`, the typed facts a page outside this package reads instead of parsing RESULTS.md. */
-import type { ComparisonDocument } from "@internal/benchmark-harness/report/comparison-document";
+/** Derives a suite's `results.json`, the typed facts a page outside the suite reads instead of parsing RESULTS.md. */
+import type { ComparisonDocument } from "#report/comparison-document";
 
 /** A library the baseline measured, at the version it ran. */
-interface ResultsLibrary {
+export interface ResultsLibrary {
   readonly name: string;
   readonly version: string;
 }
 
-/** One competitor's head-to-head against `@codefast/di`; ratios are codefast over the competitor. */
-interface ResultsAggregate {
+/** One competitor's head-to-head against the subject; ratios are the subject over the competitor. */
+export interface ResultsAggregate {
   readonly competitor: string;
   readonly displayName: string;
   readonly comparable: number;
@@ -21,8 +21,8 @@ interface ResultsAggregate {
   readonly unreliable: number;
 }
 
-/** A row `@codefast/di` loses, against the competitor that wins it. */
-interface ResultsLoss {
+/** A row the subject loses, against the competitor that wins it. */
+export interface ResultsLoss {
   readonly scenario: string;
   readonly competitor: string;
   readonly ratio: number;
@@ -47,7 +47,7 @@ export interface ResultsFacts {
     readonly platform: string;
     readonly arch: string;
   };
-  /** `@codefast/di` first, then every competitor in report order. */
+  /** The subject first, then every competitor in report order. */
   readonly libraries: ReadonlyArray<ResultsLibrary>;
   readonly aggregates: ReadonlyArray<ResultsAggregate>;
   /** Every loss, per competitor in report order, then in scenario order. */

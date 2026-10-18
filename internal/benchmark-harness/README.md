@@ -21,12 +21,13 @@ renders a pivot library against any number of competitors.
 The package is organised by role in the subprocess model. Every module is also reachable as a subpath export
 (`@internal/benchmark-harness/parent/run-bench-subprocess`, and so on); the root export re-exports all of them.
 
-| Area       | Owns                                                                                                                                                                                                                          |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `shared/*` | The framed stdout protocol (`emitSubprocessPayload`, `extractSubprocessPayload`), the `BENCH_*` spec map and its parsers (`env-keys`), and the `BenchSubprocessConfig` a suite declares per library                           |
-| `child/*`  | What runs inside a bench subprocess: `runBenchmarkChildMain` (sanity checks, trials, payload), `createRunAllTrials`, `runSanityChecks`, `collectFingerprint`, the `BenchScenario` types, and the default tinybench options    |
-| `parent/*` | What the suite entry runs: `runBenchSubprocess`, `runBenchSubprocessesInterleaved`, `discoverBenchScenarioIds`, `isIsolatedBenchRunRequested`, `writeBenchRunArtifacts`, `runBenchScenarioListingMain`, exit-code resolution  |
-| `report/*` | Aggregation and quantiles, the pivot-vs-competitors tables and summaries (`comparison`), the `report.json` document (`comparison-document`), the reliability markers (`reliability`), JSONL row helpers, and the file writers |
+| Area        | Owns                                                                                                                                                                                                                                                                                                                 |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shared/*`  | The framed stdout protocol (`emitSubprocessPayload`, `extractSubprocessPayload`), the `BENCH_*` spec map and its parsers (`env-keys`), and the `BenchSubprocessConfig` a suite declares per library                                                                                                                  |
+| `child/*`   | What runs inside a bench subprocess: `runBenchmarkChildMain` (sanity checks, trials, payload), `createRunAllTrials`, `runSanityChecks`, `collectFingerprint`, the `BenchScenario` types, and the default tinybench options                                                                                           |
+| `parent/*`  | What the suite entry runs: `runBenchSubprocess`, `runBenchSubprocessesInterleaved`, `discoverBenchScenarioIds`, `isIsolatedBenchRunRequested`, `writeBenchRunArtifacts`, `runBenchScenarioListingMain`, `rebuildSubjectPackage`, exit-code resolution                                                                |
+| `report/*`  | Aggregation and quantiles, the pivot-vs-competitors tables and summaries (`comparison`), the `report.json` document (`comparison-document`), the reliability markers (`reliability`), JSONL row helpers, and the file writers                                                                                        |
+| `results/*` | Every suite's generated `RESULTS.md` and `results.json`: the page (`page`), the figure-free note types (`notes`), their validation against the baseline (`validate`), the facts file (`facts`), the bundle table and budget gate (`footprint`, `footprint-record`), and the `bench:results` entry (`runResultsMain`) |
 
 ## Two execution shapes
 
@@ -81,6 +82,26 @@ used rather than the shell's.
 **A filtered run does not move `latest.json`** — narrowed by scenario, by tier or by library. It writes its own
 directory and says so on stdout; each pointer has to mean the whole suite. A run whose subject measured no rows does not
 move it either.
+
+## The results page
+
+Each suite's `RESULTS.md` is generated from the one run committed under its `baselines/`, so every figure on it can be
+re-read from the repository. A suite declares a `ResultsSuite` — its subject and competitors, the comparison it already
+assembles for `bench:report`, its figure-free notes typed by its competitors' names, and the few sentences that describe
+it rather than the run — and hands it to `runResultsMain`, which reads the baseline's `observations.jsonl`,
+`footprint.json` and `notes.md`, validates the notes and writes the page and `results.json` formatted with oxfmt. With
+`--check` it writes nothing and fails when either committed file differs.
+
+Validation refuses a figure in a note's prose (digits are fine inside code spans and link targets), a loss note naming a
+row that no longer loses, and a loss below the throughput ceiling that no note names. The page's sections are fixed: an
+intro with the run's own counts, the environment, the pass's `notes.md`, the summary table and headline, what a user
+waits for (the suite's user-facing notes and its bundle table), the losses, the wins, the geomean by group, the full
+per-scenario table, and how to re-run it.
+
+`runFootprintMain` is the `bench:footprint` entry behind that bundle table: it rebuilds the subject, bundles each
+library's smallest program with Rolldown for the browser, minified, and holds the subject's gzipped size to the budget
+in the suite's `footprint-budget.json`; `--check` bundles only the subject, and `--save` records the table beside the
+baseline.
 
 ## Environment keys
 

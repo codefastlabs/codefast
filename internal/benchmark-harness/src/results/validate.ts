@@ -1,17 +1,9 @@
-/** Holds the analysis notes to the baseline: no figure in the prose, no stale loss, no loss without a note. */
-import type { ComparisonDocument } from "@internal/benchmark-harness/report/comparison-document";
-import { HEAD_TO_HEAD_PARITY_BAND } from "@internal/benchmark-harness/report/verdict";
-
-import { COMPETITORS } from "#harness/config";
-import type { LossNote, QuotedRow, UserFacingNote } from "#harness/results/notes";
-import { locateCell } from "#harness/results/page";
-
-/** The notes a baseline is checked against. */
-export interface ResultsNotes {
-  readonly userFacingNotes: ReadonlyArray<UserFacingNote>;
-  readonly bundleNote: string;
-  readonly lossNotes: ReadonlyArray<LossNote>;
-}
+/** Holds a suite's analysis notes to its baseline: no figure in the prose, no stale loss, no loss without a note. */
+import type { ComparisonDocument } from "#report/comparison-document";
+import { HEAD_TO_HEAD_PARITY_BAND } from "#report/verdict";
+import type { LossNote, QuotedRow } from "#results/notes";
+import { competitorDisplayName, locateCell } from "#results/page";
+import type { ResultsSuite } from "#results/suite";
 
 // Code spans and link targets carry ids and paths, which may hold digits; only the prose around them may not.
 function proseOf(text: string): string {
@@ -22,11 +14,16 @@ function figureProblems(where: string, text: string): Array<string> {
   return /\d/.test(proseOf(text)) ? [`${where} states a figure; the page renders figures from the baseline.`] : [];
 }
 
-function quotedRowProblems(document: ComparisonDocument, where: string, rows: ReadonlyArray<QuotedRow>): Array<string> {
+function quotedRowProblems(
+  suite: ResultsSuite,
+  document: ComparisonDocument,
+  where: string,
+  rows: ReadonlyArray<QuotedRow>,
+): Array<string> {
   return rows.flatMap((row) =>
     row.versus.flatMap((name) => {
       try {
-        locateCell(document, row.id, name);
+        locateCell(suite, document, row.id, name);
         return [];
       } catch (error) {
         return [`${where}: ${error instanceof Error ? error.message : String(error)}`];
@@ -35,11 +32,11 @@ function quotedRowProblems(document: ComparisonDocument, where: string, rows: Re
   );
 }
 
-function staleLossProblems(document: ComparisonDocument, note: LossNote): Array<string> {
+function staleLossProblems(suite: ResultsSuite, document: ComparisonDocument, note: LossNote): Array<string> {
   return note.losses.flatMap((row) =>
     row.versus.flatMap((name) => {
       try {
-        const { cell } = locateCell(document, row.id, name);
+        const { cell } = locateCell(suite, document, row.id, name);
         return cell.ratio < 1 - HEAD_TO_HEAD_PARITY_BAND
           ? []
           : [
@@ -53,13 +50,13 @@ function staleLossProblems(document: ComparisonDocument, note: LossNote): Array<
   );
 }
 
-function uncoveredLossProblems(document: ComparisonDocument, notes: ResultsNotes): Array<string> {
+function uncoveredLossProblems(suite: ResultsSuite, document: ComparisonDocument): Array<string> {
   const covered = new Set(
-    notes.lossNotes.flatMap((note) =>
+    suite.notes.lossNotes.flatMap((note) =>
       note.losses.flatMap((row) =>
         row.versus.map((name) => {
-          const library = COMPETITORS.find((candidate) => candidate.libraryName === name);
-          return `${row.id}|${library?.displayName ?? name}`;
+          const library = suite.competitors.find((candidate) => candidate.libraryName === name);
+          return `${row.id}|${library === undefined ? name : competitorDisplayName(suite, name)}`;
         }),
       ),
     ),
@@ -71,19 +68,20 @@ function uncoveredLossProblems(document: ComparisonDocument, notes: ResultsNotes
   );
 }
 
-/** Every reason the notes cannot render against this baseline; empty when they can. */
-export function validateResultsNotes(document: ComparisonDocument, notes: ResultsNotes): Array<string> {
+/** Every reason the suite's notes cannot render against this baseline; empty when they can. */
+export function validateResultsNotes(suite: ResultsSuite, document: ComparisonDocument): Array<string> {
+  const { notes } = suite;
   return [
     ...figureProblems("The bundle note", notes.bundleNote),
     ...notes.userFacingNotes.flatMap((note) => [
       ...figureProblems(`"${note.title}"`, `${note.title} ${note.lead} ${note.body}`),
-      ...quotedRowProblems(document, `"${note.title}"`, note.rows),
+      ...quotedRowProblems(suite, document, `"${note.title}"`, note.rows),
     ]),
     ...notes.lossNotes.flatMap((note) => [
       ...figureProblems(`"${note.title}"`, `${note.title} ${note.body}`),
-      ...quotedRowProblems(document, `"${note.title}"`, [...note.losses, ...note.context]),
-      ...staleLossProblems(document, note),
+      ...quotedRowProblems(suite, document, `"${note.title}"`, [...note.losses, ...note.context]),
+      ...staleLossProblems(suite, document, note),
     ]),
-    ...uncoveredLossProblems(document, notes),
+    ...uncoveredLossProblems(suite, document),
   ];
 }

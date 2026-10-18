@@ -272,7 +272,17 @@ export const INJECTION_JS = {
  *
  * @since 0.8.0
  */
-export const COMPETITORS: ReadonlyArray<DiBenchLibrary> = [INVERSIFY, AWILIX, TSYRINGE, BRANDI, DITOX, INJECTION_JS];
+export const COMPETITORS = [
+  INVERSIFY,
+  AWILIX,
+  TSYRINGE,
+  BRANDI,
+  DITOX,
+  INJECTION_JS,
+] as const satisfies ReadonlyArray<DiBenchLibrary>;
+
+/** A competitor, by the `libraryName` its config declares — the name the results notes quote it by. */
+export type DiCompetitorName = (typeof COMPETITORS)[number]["libraryName"];
 
 /**
  * Every benched library, subject first, in spawn order.
