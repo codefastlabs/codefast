@@ -28,7 +28,6 @@
     "@codefast/ui": "workspace:*",
     "@fontsource-variable/inter": "catalog:",
     "@tailwindcss/postcss": "catalog:",
-    "jsdom": "catalog:",
     "lucide-react": "catalog:",
     "postcss": "catalog:",
     "react": "catalog:",
@@ -39,14 +38,13 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@types/jsdom": "catalog:",
-    "@types/node": "catalog:node24.15",
+    "@types/node": "catalog:node22.22",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {
-    "node": ">=24.15.0"
+    "node": ">=22.22.2"
   }
 }
