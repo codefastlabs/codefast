@@ -21,6 +21,7 @@ import {
 } from "#errors";
 import type { DependencySlot } from "#injection/dependency-slot";
 import { injectionSlotToResolveOptions } from "#injection/dependency-slot";
+import type { LifecycleManager } from "#lifecycle/hooks";
 import type { MetadataReader } from "#metadata/types";
 import type { DefaultLookupEntry } from "#resolution/cache/lookup";
 import type { DependencyResolver } from "#resolution/resolver";
@@ -33,10 +34,10 @@ import { matchesSlot } from "#resolution/select/candidates";
  * every chain walk reads them in.
  */
 export interface ValidationTarget {
-  readonly registries: ReadonlyArray<BindingRegistry>;
+  readonly registries: readonly [BindingRegistry, ...ReadonlyArray<BindingRegistry>];
   readonly resolver: DependencyResolver;
   readonly metadataReader: MetadataReader;
-  readonly hookedTokens: ReadonlyArray<readonly [DependencyKey, "onActivation" | "onDeactivation"]>;
+  readonly lifecycle: Pick<LifecycleManager, "hookedTokens">;
 }
 
 /** One edge `validate` judges: the binding it reaches, and the resolver whose chain resolves that binding's own. */
@@ -63,19 +64,18 @@ type AliasChainEnd =
  * constraint that can never fire.
  */
 export function validateChain(target: ValidationTarget): void {
-  const [ownRegistry] = target.registries;
-  if (ownRegistry === undefined) {
-    throw new InternalError("validate: a container chain starts with its own registry");
-  }
-  const allBindings = ownRegistry.allBindings();
-
-  for (const binding of allBindings) {
+  // One pass over the bindings; the constrained ones wait for the hook check, so the errors keep their order.
+  let constrained: Array<Binding> | undefined;
+  for (const binding of target.registries[0].allBindings()) {
     if (isSingletonStaticAnalyzableBinding(binding)) {
       validateSingletonBindingGraph(binding, target.resolver, target.metadataReader);
     }
+    if (binding.predicate !== undefined) {
+      (constrained ??= []).push(binding);
+    }
   }
 
-  for (const [hookToken, phase] of target.hookedTokens) {
+  for (const [hookToken, phase] of target.lifecycle.hookedTokens()) {
     if (!isBoundInChain(target.registries, hookToken)) {
       throw new UnreachableLifecycleHookError(tokenName(hookToken), phase);
     }
@@ -86,17 +86,19 @@ export function validateChain(target: ValidationTarget): void {
     }
   }
 
-  validateConstraintRequirements(allBindings, target.registries);
+  if (constrained !== undefined) {
+    validateConstraintRequirements(constrained, target.registries);
+  }
 }
 
 /** A constraint waiting on a slot name no binding declares can never hold. */
 function validateConstraintRequirements(
-  allBindings: ReadonlyArray<Binding>,
+  constrained: ReadonlyArray<Binding>,
   registries: ReadonlyArray<BindingRegistry>,
 ): void {
   let declaredSlotNames: Map<string, Set<string>> | undefined;
 
-  for (const binding of allBindings) {
+  for (const binding of constrained) {
     const { predicate } = binding;
     if (predicate === undefined) {
       continue;
