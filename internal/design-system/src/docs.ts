@@ -73,7 +73,8 @@ function optionLines(card: ComponentCard, variants: Map<string, Array<VariantKey
     }
   }
   const declarations = readFileSync(join(UI_ROOT, `dist/components/${card.slug}.d.ts`), "utf8");
-  for (const [, part = "", body = ""] of declarations.matchAll(/(?:interface|type) (\w+)Props[^{]*\{([^}]*)\}/g)) {
+  // `[^{;]` stops at a body-less alias, so it never claims the next declaration's members.
+  for (const [, part = "", body = ""] of declarations.matchAll(/(?:interface|type) (\w+)Props[^{;]*\{([^}]*)\}/g)) {
     if (!card.parts.includes(part)) {
       continue;
     }
@@ -119,30 +120,47 @@ export function buildComponentDocs(cards: Array<ComponentCard>): Array<OutputFil
   });
 }
 
+/** The published declaration files whose exports the bundle puts on the runtime global. */
+const RUNTIME_DECLARATIONS = /^\.\/dist\/(?:(?:components|hooks|variants)\/[\w-]+|lib\/utils)\.d\.ts$/;
+
+/** Lists each published `@codefast/ui` subpath the runtime carries, with its declaration file. */
+function runtimeSubpaths(): Array<{ specifier: string; types: string }> {
+  const manifest: unknown = JSON.parse(readFileSync(join(UI_ROOT, "package.json"), "utf8"));
+  const exports =
+    typeof manifest === "object" &&
+    manifest !== null &&
+    "exports" in manifest &&
+    typeof manifest.exports === "object" &&
+    manifest.exports !== null
+      ? manifest.exports
+      : {};
+  return Object.entries(exports).flatMap(([subpath, target]: [string, unknown]) => {
+    const types =
+      typeof target === "object" && target !== null && "types" in target && typeof target.types === "string"
+        ? target.types
+        : "";
+    return RUNTIME_DECLARATIONS.test(types) ? [{ specifier: `@codefast/ui${subpath.slice(1)}`, types }] : [];
+  });
+}
+
 /**
- * Concatenates the declarations of every component, variant and the class helpers into one reference file.
+ * Concatenates the declarations of every published component, hook, variant and class helper into one reference file.
  *
  * @since 0.1.0
  */
 export function buildDeclarations(): OutputFile {
-  const dist = join(UI_ROOT, "dist");
-  const files = [
-    ...readdirSync(join(dist, "components")).map((file) => `components/${file}`),
-    ...readdirSync(join(dist, "variants")).map((file) => `variants/${file}`),
-    "lib/utils.d.ts",
-  ].filter((file) => file.endsWith(".d.ts"));
-  const body = files
-    .sort()
+  const body = runtimeSubpaths()
+    .sort((left, right) => left.types.localeCompare(right.types))
     .map(
-      (file) =>
-        `// ── ${file} ──\n${readFileSync(join(dist, file), "utf8")
+      ({ specifier, types }) =>
+        `// ── ${specifier} ──\n${readFileSync(join(UI_ROOT, types), "utf8")
           .split("\n")
           .filter((line) => !/^import |sourceMappingURL/.test(line))
           .join("\n")}`,
     )
     .join("\n");
   return {
-    content: `/* Codefast UI — declarations of @codefast/ui's components and variants, concatenated from its build (documentation; imports stripped). Runtime: window.${NAMESPACE}. */\n\n${body}`,
+    content: `/* Codefast UI — declarations of @codefast/ui's components, hooks and variants, concatenated from its build (documentation; imports stripped). Runtime: window.${NAMESPACE}. */\n\n${body}`,
     contentType: "text/plain",
     kind: "file",
     path: "project/components/index.d.ts",

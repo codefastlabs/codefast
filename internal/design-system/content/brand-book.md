@@ -1,8 +1,8 @@
 Codefast UI is a quiet, neutral-first component system with one brand hue. Surfaces are white or near-black zinc,
-separated by hairline `border` rather than shadow; the sky `primary` is spent on the single action that matters on a
-screen. Controls are compact (32px tall), rounded at `radius-lg`, set in Inter at 14px. Everything is themeable in plain
-CSS: the tokens below are the palette the codefastlabs.com site ships, and the same components accept any palette the
-package offers (see Palettes).
+separated by a hairline rather than shadow; the sky `primary` is spent on the single action that matters on a screen.
+Controls are compact (32px tall), rounded at `radius-lg`, set in Inter at 14px. Everything is themeable in plain CSS:
+the tokens below are the palette the codefastlabs.com site ships, and the same components accept any palette the package
+offers (see Palettes).
 
 ## Content fundamentals
 
@@ -38,7 +38,8 @@ Write like the library's own docs: plain, direct, second person, present tense.
   with `destructive` as the text color (20% in dark). Invalid fields add a `destructive` border and a 3px
   `destructive/20` ring.
 - Borders: every element defaults to `border`; form controls use `input`. In dark, `border` and `input` are white at 10%
-  and 15%, so they lift rather than darken.
+  and 15%, so they lift rather than darken. Card, Dialog, AlertDialog and the floating menus are outlined by a 1px
+  `foreground/10` ring instead, which tracks the scheme on its own.
 - Charts use `chart-1` … `chart-5`, five steps of the palette hue from light to dark. Pair a series color with a label
   or legend; never encode meaning in hue alone.
 - **Contrast you must design around**, measured from the tokens on every build:
@@ -71,30 +72,35 @@ Write like the library's own docs: plain, direct, second person, present tense.
   are square at the same sizes.
 - Inside controls: horizontal padding `spacing-2.5`, icon gap `spacing-1.5`. Icons inside buttons are 16px (`size-4`),
   12–14px in `xs`/`sm`.
-- Cards: `spacing-6` vertical rhythm, `spacing-4`–`spacing-6` inset. Form fields stack with `spacing-4`–`spacing-6`
-  between them; a label sits `spacing-1.5` above its control.
+- Cards: one `--card-spacing` sets the inset and the gap between sections — `spacing-4`, or `spacing-3` at `size="sm"`.
+  Dialogs pad and gap at `spacing-4`. Fields in a FieldGroup stack `spacing-5` apart; a label sits `spacing-2` above its
+  control.
 
 ### Shape
 
 - One unit, `radius` = 0.375rem; the scale derives from it in sixths (`radius-sm` = 4/6, `radius-lg` = 8/6,
   `radius-xl` = 2×…). Override `radius` once to square off or soften everything.
-- Controls — Button, Input, Select, Textarea, Popover, menus — are `radius-lg`. Menu items inside them are `radius-md`.
-- Containers — Card, Dialog, Alert, Command — are `radius-xl`. Toasts `radius-2xl`.
-- Pills and discs (`radius-full`): Avatar, Switch, Radio, Spinner, ProgressCircle; Badge uses `radius-4xl`.
+- Controls — Button, Input, Select, Textarea, Popover, menus — are `radius-lg`, and so is Alert. Menu items inside them
+  are `radius-md`.
+- Containers — Card, Dialog, AlertDialog, Command, Empty — are `radius-xl`. Toasts `radius-2xl`.
+- Pills and discs (`radius-full`): Avatar, Switch, Radio, Spinner, Progress; Badge uses `radius-4xl`.
 - The brand mark is the same idea at icon scale: four 24-unit tiles cut at radius 6, a quarter of their side.
 
 ### Elevation
 
-- Flat by default. Resting controls and Card carry only `shadow-xs`; the separation comes from `border`.
+- Flat by default. Resting fields, the `outline` Button and Card carry only `shadow-xs`; the separation comes from
+  `border` or the `foreground/10` ring.
 - Floating layers step up: `shadow-md` for Popover, DropdownMenu, Select, HoverCard; `shadow-lg` for Sheet and
   sub-menus; `shadow-xl` for the Chart tooltip.
 - Overlays (Dialog, Sheet, Drawer backdrop) are `black/10` with a light backdrop blur. Floating layers sit at `z-50`.
 
 ### Focus and states
 
-- Every focusable control shows the same focus treatment: a solid 2px `ring` outline, offset 2px from the control
-  (`focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring`).
-  `ring` holds 3:1 against every surface in both schemes, and an outline survives forced-colors mode. Never remove it.
+- Every focusable element shows the same focus treatment: a solid 2px `ring` outline, offset 2px from the element
+  (`focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring`). The
+  preset's base layer gives `:focus-visible` that outline too, so your own focusable elements get it without a class;
+  Sidebar parts draw it in `sidebar-ring`. `ring` holds 3:1 against every surface in both schemes, and an outline
+  survives forced-colors mode. Never remove it.
 - Disabled is `opacity-50` with pointer events off — no separate disabled colors.
 - Invalid (`aria-invalid`) is `destructive` border + `destructive/20` ring (`/40` in dark).
 - State is read from data attributes (`data-open`, `data-checked`, `data-disabled`, `data-selected`…), which the preset
@@ -110,7 +116,10 @@ Motion is short and purposeful. The token file has no motion family, so these ar
 - Exits are shorter than their enters and use `ease-exit`, accelerating away.
 - Popups fade and zoom from 95% and slide 8px from the side they open on.
 - `ease-spring` (overshoot) is opt-in, never a default.
-- Loading text uses the `shimmer` utility (2.2s linear); scrollers fade their edges with `scroll-fade`.
+- Loading text uses the `shimmer` utility (2s linear, set `--shimmer-duration` to change it); Skeleton sweeps with
+  `animate-shimmer` (2.2s linear). Scrollers fade their edges with `scroll-fade`.
+- Under `prefers-reduced-motion: reduce` the preset cuts every animation and transition to near zero, so overlays still
+  finish opening and closing. Opt essential motion back in with an important utility (`motion-reduce:duration-200!`).
 
 ### Layout
 
