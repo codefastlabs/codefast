@@ -274,8 +274,10 @@ Two differences to check for:
 
 The repository maintains a [benchmark suite](../../benchmarks/tailwind-variants) that runs the same variant workloads —
 simple, complex, slots, compound slots, `extend`, `createTV`, and extreme configurations, each with and without merging
-— against the upstream `tailwind-variants` package and `class-variance-authority` in isolated subprocesses. Numbers vary
-by hardware, so run it yourself rather than reading them here:
+— against the upstream `tailwind-variants` package and `class-variance-authority` in isolated subprocesses. Its
+[`RESULTS.md`](../../benchmarks/tailwind-variants/RESULTS.md) is generated from the committed baseline — every figure,
+the bundle table, and every row the package loses — and CI fails when it drifts from that run. Numbers vary by hardware,
+so run it yourself rather than reading them here:
 
 ```bash
 pnpm --filter @benchmark/tailwind-variants bench
