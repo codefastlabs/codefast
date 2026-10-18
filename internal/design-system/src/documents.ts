@@ -53,6 +53,8 @@ export function buildPalettes(): string {
     '@import "@codefast/ui/css/preset.css";',
     "```",
     "",
+    "For **neutral**, `@codefast/ui/css/style.css` is all three imports in one.",
+    "",
   ].join("\n");
 }
 

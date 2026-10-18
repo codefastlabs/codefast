@@ -61,13 +61,14 @@ export const COLOR_USAGE: Record<string, string> = {
   accent: "Highlighted menu rows: DropdownMenu, ContextMenu, Menubar and Select items on focus.",
   "accent-foreground": "Text on `accent`.",
   popover:
-    "Floating and modal surfaces: Popover, DropdownMenu, ContextMenu, Menubar, Select, HoverCard, Command, Dialog, AlertDialog, Sheet, Drawer.",
+    "Floating and modal surfaces: Popover, DropdownMenu, ContextMenu, Menubar, Select, HoverCard, NavigationMenu, Command, Dialog, AlertDialog, Sheet, Drawer.",
   "popover-foreground": "Text on `popover`.",
   card: "Card, Alert and Attachment surfaces.",
   "card-foreground": "Text on `card`.",
-  border: "Every default border and divider (`*` gets it as border-color): Card, Separator, Table rows, menus.",
+  border:
+    "Every default border and divider (`*` gets it as border-color): Separator, Table rows, Accordion items, outline Button. Card, Dialog and floating menus draw a 1px `foreground/10` ring instead.",
   input: "Form control borders and inset rings: Input, Textarea, Select trigger, Checkbox, Radio, Switch track off.",
-  ring: "Focus ring colour; controls draw it as a solid 2px outline offset 2px (`focus-visible:outline-ring`).",
+  ring: "Focus ring colour: every focusable element draws it as a solid 2px outline offset 2px (`focus-visible:outline-ring`).",
   sidebar: "Sidebar surface.",
   "sidebar-foreground": "Text on `sidebar`.",
   "sidebar-primary": "Active/brand item fill inside Sidebar.",
@@ -112,7 +113,13 @@ export const CONTRAST_PAIRS: Array<ContrastPair> = [
   { ground: "background", ink: "destructive", minimum: 4.5, role: "error text" },
   { ground: "sidebar", ink: "sidebar-foreground", minimum: 4.5, role: "text" },
   { ground: "sidebar-primary", ink: "sidebar-primary-foreground", minimum: 4.5, role: "text" },
-  { ground: "background", ink: "ring", minimum: 3, role: "a focus indicator" },
+  ...["background", "card", "popover", "muted", "sidebar"].map((ground) => ({
+    ground,
+    ink: "ring",
+    minimum: 3,
+    role: "a focus indicator",
+  })),
+  { ground: "sidebar", ink: "sidebar-ring", minimum: 3, role: "a focus indicator" },
 ];
 
 // ── Type styles ──────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -156,7 +163,8 @@ export const TYPE_GROUPS: Array<{ family: "heading" | "mono" | "sans"; name: str
         sample: "No results found",
         size: "sm",
         tracking: "tight",
-        usage: 'EmptyTitle and `size="sm"` Card titles: `text-sm font-medium tracking-tight`.',
+        usage:
+          'EmptyTitle: `text-sm font-medium tracking-tight`. A `size="sm"` CardTitle drops to `text-sm` untracked.',
         weight: "medium",
       },
     ],
@@ -236,12 +244,13 @@ export const TYPE_GROUPS: Array<{ family: "heading" | "mono" | "sans"; name: str
 export const SPACING_STEPS: Array<[step: number, usage: string]> = [
   [0.5, "Hairline offsets: badge padding, tight icon gaps."],
   [1, "Icon-to-label gap in compact controls; menu item vertical padding."],
-  [1.5, "Gap inside buttons and menu items; label-to-field spacing (`mb-1.5`)."],
-  [2, "The most-used step: control inner padding, row gaps, menu padding."],
-  [2.5, "Horizontal padding of inputs and default buttons (`px-2.5`)."],
-  [3, "Alert and Item padding; compact card padding."],
-  [4, "Card and Dialog section padding; gap between form fields."],
-  [6, "Card vertical rhythm (`py-6`/`gap-6`); dialog content gap."],
+  [1.5, "Gap inside buttons and menu items; the space under a FieldLegend (`mb-1.5`)."],
+  [2, "The most-used step: control inner padding, row gaps, menu padding, label-to-control gap in a Field."],
+  [2.5, "Horizontal padding of inputs, default buttons and Alert (`px-2.5`)."],
+  [3, 'Item horizontal padding (`px-3`); Card padding and gap at `size="sm"`.'],
+  [4, "Card padding and gap (`--card-spacing`); Dialog padding and gap; gap inside a FieldSet."],
+  [5, "Gap between the fields of a FieldGroup."],
+  [6, "Empty padding (`p-6`); the gap between MessageScroller messages."],
   [7, "Small control height (`h-7`, `size-7`): sm buttons, icon buttons."],
   [8, "Default control height (`h-8`): Button, Input, Select trigger, Toggle."],
   [9, "Large control height (`h-9`)."],
@@ -260,7 +269,7 @@ export const RADIUS_USAGE: Record<string, string> = {
   "radius-sm": "Checkbox box, Kbd, Command and Menubar items, small Item.",
   "radius-md": "DropdownMenu, ContextMenu and Select items; Skeleton; Tabs trigger; Tooltip.",
   "radius-lg":
-    "The default control radius: Button, Input, Select, Textarea, Popover, DropdownMenu (`rounded-lg`, the most-used step).",
+    "The default control radius: Button, Input, Select, Textarea, Popover, DropdownMenu, Alert (`rounded-lg`, the most-used step).",
   "radius-xl": "Card, Dialog, AlertDialog, Command, Empty, chat Bubble and Attachment.",
   "radius-2xl": "Toast (Sonner).",
   "radius-3xl": "Not used by a component; the next step of the scale, for app surfaces.",
@@ -274,7 +283,7 @@ export const RADIUS_USAGE: Record<string, string> = {
  */
 export const RADIUS_FULL = {
   name: "radius-full",
-  usage: "Avatar, Switch track and thumb, Radio, Spinner, ProgressCircle (Tailwind `rounded-full`).",
+  usage: "Avatar, Switch track and thumb, Radio, Spinner, Progress track (Tailwind `rounded-full`).",
   value: "9999px",
 };
 
@@ -285,7 +294,7 @@ export const RADIUS_FULL = {
  */
 export const SHADOW_USAGE: Record<string, string> = {
   "shadow-xs":
-    "Resting controls and Card: Button, Input, Select trigger, Textarea, Checkbox, Radio, Switch, Toggle, Card.",
+    "Resting controls and Card: Input, Select trigger, Textarea, Checkbox, Radio, Switch, the `outline` Button and Toggle, Card.",
   "shadow-sm": "Slider thumb, the active Tabs trigger, the floating Sidebar.",
   "shadow-md": "Popover, DropdownMenu, Select content, HoverCard, ContextMenu, Menubar, NavigationMenu.",
   "shadow-lg": "Sheet; nested sub-menus of DropdownMenu, ContextMenu and Menubar.",
@@ -388,5 +397,5 @@ export const CARD_HEIGHTS: Record<string, number> = {
  */
 export const SUMMARY_OVERRIDES: Record<string, string> = {
   button:
-    "Triggers an action or, with `asChild`, styles a link as one: six variants and four sizes, with icon and loading states.",
+    "Triggers an action or, with `asChild`, styles a link as one: six variants, four sizes each with a square `icon-*` twin, and a Spinner child for loading.",
 };
