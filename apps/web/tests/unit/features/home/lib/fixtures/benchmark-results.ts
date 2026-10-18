@@ -1,0 +1,45 @@
+/** A `results.json` as `pnpm bench:results` writes it, cut to two competitors. */
+export const BENCHMARK_RESULTS = {
+  runId: "2026-10-18T02-02-01-347Z",
+  runDate: "2026-10-18",
+  profile: { mode: "full", isolated: true, trialCount: 3 },
+  environment: {
+    nodeVersion: "26.1.0",
+    v8Version: "14.6.202.34-node.19",
+    cpuModel: "Apple M3 Max",
+    cpuCount: 14,
+    platform: "darwin",
+    arch: "arm64",
+  },
+  libraries: [
+    { name: "@codefast/di", version: "0.13.0" },
+    { name: "inversify", version: "8.2.3" },
+    { name: "ditox", version: "3.3.0" },
+  ],
+  aggregates: [
+    {
+      competitor: "inversify",
+      displayName: "InversifyJS 8",
+      comparable: 93,
+      wins: 91,
+      parities: 1,
+      losses: 1,
+      median: 4.307953369966096,
+      geomean: 5.80329438669165,
+      unreliable: 44,
+    },
+    {
+      competitor: "ditox",
+      displayName: "Ditox 3",
+      comparable: 46,
+      wins: 33,
+      parities: 3,
+      losses: 10,
+      median: 1.4,
+      geomean: 1.68,
+      unreliable: 20,
+    },
+  ],
+  losses: [{ scenario: "accessor-injection-construct", competitor: "inversify", ratio: 0.25, unreliable: true }],
+  lossesHeading: "The losses, foregrounded — where to improve",
+};

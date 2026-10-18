@@ -35,6 +35,9 @@ export interface ResultsPageInput {
   readonly lossNotes: ReadonlyArray<LossNote>;
 }
 
+/** The heading the losses are explained under, which `results.json` names so a reader can link to it. */
+export const LOSSES_HEADING = "The losses, foregrounded — where to improve";
+
 /** A scenario's cell against one competitor, located by name. */
 interface LocatedCell {
   readonly scenario: ComparisonDocumentScenario;
@@ -184,7 +187,6 @@ function environmentSection(document: ComparisonDocument): Array<string> {
       : ` The 1-minute load average read ${environment.loadAverage1m.toFixed(2)} as the subject's child started, on ${String(environment.cpuCount)} cores.`;
   const versions = competitors.map((library) => `${library.libraryName} ${library.libraryVersion}`).join(" · ");
   const sanity = [pivot, ...competitors].reduce((total, library) => total + library.sanityFailures.length, 0);
-  // apps/web lifts the cast and runtime from this paragraph by its bold lead, so the lead stays as written.
   return [
     `**Environment.** \`${pivot.libraryName}\` ${pivot.libraryVersion} on Node ${environment.nodeVersion} / V8 ${environment.v8Version}, ${environment.cpuModel} × ${String(environment.cpuCount)}, ${environment.platform}/${environment.arch}, \`${environment.nodeOptions}\` for every library. ${versions}. Each library runs at its canonical decorator mode (inversify legacy decorators + \`reflect-metadata\`, codefast standard decorators + \`Symbol.metadata\`); every inversify container uses \`{ jitless: false }\`, its fastest documented configuration. Run ${environment.timestampIso.slice(0, 10)}, ${String(sanity)} sanity failures.${load}`,
   ];
@@ -305,7 +307,7 @@ function lossSection(input: ResultsPageInput): Array<string> {
       .map((entry) => `\`${entry.id}\` ${formatEntry(entry)} ${libraryNameOf(displayName)}`),
   );
   return [
-    "## The losses, foregrounded — where to improve",
+    `## ${LOSSES_HEADING}`,
     "",
     "Ordered by how much they matter, each marked as a **real deficit** (same work, codefast slower), a **work difference** (codefast does more per op by design, so the row is a design cost to reconsider, not a bug), a **chosen cost** (a correctness property paid for with its price known) or **harness state** (the harness puts the engine in a state a probe of the row alone does not).",
     "",
