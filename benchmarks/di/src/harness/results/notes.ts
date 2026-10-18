@@ -46,10 +46,11 @@ const LOSS_NOTES: ReadonlyArray<LossNote<DiCompetitorName>> = [
       { id: "realistic-graph-class-cold-resolve", versus: ["ditox"] },
       { id: "container-create-empty", versus: ["injection-js"] },
       { id: "create-child-empty", versus: ["injection-js"] },
+      { id: "app-boot-40", versus: ["ditox"] },
     ],
     context: [
       { id: "bind-128-plain", versus: ["tsyringe", "injection-js"] },
-      { id: "app-boot-40", versus: ["ditox", "tsyringe"] },
+      { id: "app-boot-40", versus: ["tsyringe"] },
       { id: "container-create-empty", versus: ["ditox", "tsyringe"] },
       { id: "create-child-empty", versus: ["ditox", "tsyringe"] },
       { id: "module-cold-from-modules", versus: ["ditox"] },

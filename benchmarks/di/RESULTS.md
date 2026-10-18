@@ -8,13 +8,13 @@ accreted ledger. The method is in [`BENCH_GUIDE.md`](./BENCH_GUIDE.md); re-run i
 
 **This is one full-profile pass, so read the aggregates, not the rows.** GC-exposed for one collection between trials,
 one subprocess per scenario, libraries interleaved with rotating order, 3 trials each over the one closure a scenario
-builds before its first trial — a single pass measures no between-run variance of its own, 96 of the cells carry a
+builds before its first trial — a single pass measures no between-run variance of its own, 116 of the cells carry a
 per-trial IQR above 5%, and 139 cells in 48 rows sit above ~30M ops/s, where the ratio moves between runs of the same
 build whatever its IQR says. Ratios are worth more than the absolute `hz/op`; a single row is worth less than the group
 it sits in. A loss below points at a direction — quote a precise factor only after a paired re-run, except where a loss
 is a structural difference that reproduces by construction.
 
-**This page is the baseline.** It is generated from `baselines/2026-10-18T07-56-19-799Z`, whose `observations.jsonl` and
+**This page is the baseline.** It is generated from `baselines/2026-10-18T14-23-12-340Z`, whose `observations.jsonl` and
 `footprint.json` are committed, so every figure here can be re-read from the repository rather than from a local
 `bench-results/` run only the author has. `baselines/` holds that one run and nothing else: the next pass is read
 against it, and a pass accepted in its place becomes this page. 146 scenarios ran, 132 of them aggregate-eligible; every
@@ -26,29 +26,30 @@ nobody wrote.
 3.3.0 · injection-js 2.6.1. Each library runs at its canonical decorator mode (inversify legacy decorators +
 `reflect-metadata`, codefast standard decorators + `Symbol.metadata`); every inversify container uses
 `{ jitless: false }`, its fastest documented configuration. Run 2026-10-18, 0 sanity failures. The 1-minute load average
-read 3.52 as the subject's child started, on 14 cores.
+read 2.11 as the subject's child started, on 14 cores.
 
 ## This pass
 
-Measured at `dbae5d4cc` — the previous baseline's tree plus three engine changes: `validate` reading a container's
-internals built once (#1109), `@inject` accessors compiled into their class's plan (#1110), and a memoized root
-collection handed out instead of copied (#1111) — from a `dist` built first. 2m19s wall.
+Measured at `cda9d6d26` — the previous baseline's tree plus `@inject`-accessor classes compiled into async plans
+(#1113), typed error codes and a `@postConstruct` error that names its token (#1115), the type-only `Binder` and
+`@injectable()` fixes (#1119), one module factory and `injectOptional` (#1120), and a docs fix (#1121) — from a `dist`
+built first. 2m22s wall.
 
-**What moved since the previous pass (`2026-10-18T02-02-01-347Z`, at `7d7060a19`).** The rows those changes aim at, and
-nothing else. Per row, every competitor reads within 1.1% of the previous pass's median, 0.995× to 1.011×, and
-codefast's own median row reads 0.998×.
+**What moved since the previous pass (`2026-10-18T07-56-19-799Z`, at `dbae5d4cc`).** Nothing the engine did. Every
+library reads about 1% slower per row than in the previous pass, 0.985× to 0.998×, and codefast's median row reads
+0.990×, the same drift.
 
-- `accessor-injection-construct` +28%, in line with #1110's paired run (1.26×).
-- `realistic-graph-validate` +23%, in line with #1109's paired run (1.17×).
-- The three stable-set rows, above the throughput ceiling: `resolve-all-strategies-10` +45%,
-  `resolve-all-strategies-100` +61% and `production-event-bus-dispatch` +30%, in line with #1111's paired run (1.22×,
-  1.67×, 1.32×). All three now lead ditox and injection-js, so the page drops their loss note.
+The harness flags twelve rows at −5% to −13% — eight `plan-*` rows, `app-boot-40`, `multi-tag-constraint-resolve`,
+`accessor-injection-construct`, `resolve-all-named-8`, `bind-128-refined` and `fresh-child-default-n4` among them — and
+three at +8% to +18%. The renames break `bench:ab` across the two trees, so they were paired as two full checkouts: four
+alternating narrowed runs of `dbae5d4cc` against this tree read every flagged row at 0.986× to 1.018×, canaries at
+1.006× and 1.001×. `accessor-injection-construct`, the one left below parity at 0.92×, took six more pairs and read
+0.972× with the two sides' ranges overlapping, and a standalone probe of its lane, built by `tsc`, reads 30.4–31.5 ns on
+this tree against 30.2–32.6 ns on the previous one: pass noise.
 
-The harness flags three rows at −8% to −10% — `dynamic-async-chain-8`, `unbind-all-100-singletons`,
-`generate-dependency-graph` — and `fresh-child-name-n1` at +9%. The three are pass noise: a paired alternating
-`bench:ab` of the previous pass's tree (`7d7060a19`) against this one, four full-profile experiments in both orders,
-reads them at 1.02×, 0.98× and 0.995×, each flipping sign between experiments, with per-side spreads of ±5% to ±15% and
-two canaries at 1.00× and 0.99×.
+`app-boot-40` now reads 0.94× ditox where it read 0.99×. codefast's own row did not move in the paired runs; its three
+trials spread from 95.8K to 109.9K ops/s while ditox's sat within 3%. The row sits at the registration floor, at parity
+with ditox give or take a pass, so it joins that note's losses.
 
 ## Summary — where we stand
 
@@ -59,12 +60,12 @@ should cite one alone.
 
 | Competitor     | Comparable | Win / parity / loss | Median | Geomean |   † |
 | -------------- | ---------: | ------------------: | -----: | ------: | --: |
-| InversifyJS 8  |  93 of 132 |          91 / 1 / 1 |  4.31× |   5.87× |  45 |
-| Awilix 13      |  39 of 132 |          39 / 0 / 0 |  6.45× |   6.16× |  16 |
-| tsyringe 4     |  44 of 132 |          40 / 1 / 3 |  4.55× |   3.97× |  20 |
-| Brandi 5       |  31 of 132 |          30 / 0 / 1 |  13.2× |   11.8× |  16 |
-| Ditox 3        |  46 of 132 |          35 / 3 / 8 |  1.34× |   1.70× |  20 |
-| injection-js 2 |  32 of 132 |          22 / 2 / 8 |  1.58× |   1.54× |  22 |
+| InversifyJS 8  |  93 of 132 |          91 / 1 / 1 |  4.50× |   5.94× |  45 |
+| Awilix 13      |  39 of 132 |          39 / 0 / 0 |  6.27× |   6.26× |  16 |
+| tsyringe 4     |  44 of 132 |          40 / 1 / 3 |  4.54× |   4.00× |  20 |
+| Brandi 5       |  31 of 132 |          30 / 0 / 1 |  12.3× |   12.0× |  16 |
+| Ditox 3        |  46 of 132 |          36 / 2 / 8 |  1.34× |   1.69× |  20 |
+| injection-js 2 |  32 of 132 |          22 / 2 / 8 |  1.56× |   1.52× |  22 |
 
 **Ahead of every competitor on both aggregates.** Awilix 13 takes no row at all. Every loss is named, with its reason,
 in the section after next.
@@ -76,17 +77,17 @@ measurements are the ones an application feels, so they lead: what starting it u
 what the library adds to a browser bundle.
 
 **Startup.** A fresh container, a forty-service graph registered as classes in each library's own idiom (thirty-two
-singletons, eight transient handlers), and every handler resolved once. `app-boot-40` runs at 112,870 ops/s, about 8.9
-µs each, and reads 36.1×‡ inversify, 13.4×‡ awilix, 1.64× tsyringe, 5.84× brandi, 0.99× ditox and 2.31× injection-js.
-Beside it: `realistic-graph-class-cold-resolve` 0.95× ditox and 1.78× tsyringe;
-`boot-decorated-container-build-and-resolve` 1.22× tsyringe. The ten-node rows measure the same path on a smaller graph.
-Whatever separates codefast from ditox here is the registration the losses below name.
+singletons, eight transient handlers), and every handler resolved once. `app-boot-40` runs at 104,835‡ ops/s, about 9.5
+µs each, and reads 34.8×‡ inversify, 13.3×‡ awilix, 1.57×‡ tsyringe, 5.52×‡ brandi, 0.94×‡ ditox and 2.23×‡
+injection-js. Beside it: `realistic-graph-class-cold-resolve` 0.91× ditox and 1.49× tsyringe;
+`boot-decorated-container-build-and-resolve` 1.18×‡ tsyringe. The ten-node rows measure the same path on a smaller
+graph. Whatever separates codefast from ditox here is the registration the losses below name.
 
 **One request.** A request through a child container: create the child, resolve the request's graph, dispose the child.
-`production-http-handler` runs at 1,832,463 ops/s, about 546 ns each, and reads 1.24× ditox, 3.46×‡ tsyringe, 7.97×‡
-awilix and 27.6×‡ inversify. Beside it: `production-unit-of-work` 1.16×‡ ditox and 2.35×‡ tsyringe;
-`child-request-lifecycle-create-resolve-dispose` 1.50× ditox and 5.41× tsyringe; `scoped-binding-per-child` 1.40×‡ ditox
-and 1.22×‡ tsyringe. Only libraries with a child container run these rows.
+`production-http-handler` runs at 1,785,374‡ ops/s, about 560 ns each, and reads 1.17×‡ ditox, 3.28×‡ tsyringe, 8.35×‡
+awilix and 30.6×‡ inversify. Beside it: `production-unit-of-work` 1.16×‡ ditox and 2.33×‡ tsyringe;
+`child-request-lifecycle-create-resolve-dispose` 1.51×‡ ditox and 5.02×‡ tsyringe; `scoped-binding-per-child` 1.44×‡
+ditox and 1.25×‡ tsyringe. Only libraries with a child container run these rows.
 
 **Bundle.** `pnpm bench:footprint` bundles each library's smallest bind-and-resolve program with Rolldown 1.2.14 for the
 browser, minified. A library whose setup requires `reflect-metadata` ships it, and the polyfill is measured alone on the
@@ -94,7 +95,7 @@ last line.
 
 | Library                  | Minified | Gzipped |
 | ------------------------ | -------: | ------: |
-| @codefast/di             |  76.1 KB | 20.4 KB |
+| @codefast/di             |  77.0 KB | 20.6 KB |
 | InversifyJS 8            |  97.4 KB | 21.3 KB |
 | Awilix 13                |   8.9 KB |  3.4 KB |
 | tsyringe 4               |  26.7 KB |  8.2 KB |
@@ -103,7 +104,7 @@ last line.
 | injection-js 2           |  30.9 KB |  8.9 KB |
 | `reflect-metadata` alone |  13.3 KB |  4.2 KB |
 
-`@codefast/di` ships 20.4 KB gzipped, the second largest of 7 libraries, against a checked-in budget of 20,600 B. Most
+`@codefast/di` ships 20.6 KB gzipped, the second largest of 7 libraries, against a checked-in budget of 20,600 B. Most
 of `@codefast/di`'s share is the engine that wins the per-request rows — the resolver, the plan compiler and its code
 generation — and the checking and describing functions stay out of a program that does not call them.
 
@@ -115,22 +116,22 @@ correctness property paid for with its price known), **harness state** (the harn
 of the row alone does not) or **process mode** (a library runs the row at one of two speeds per process, and the pass
 caught the one that decides it).
 
-- **Registration, and everything that binds before it resolves** — real deficit. `bind-128-plain` 0.40× ditox, 1.01×
-  tsyringe and 1.80× injection-js; `realistic-graph-class-cold-resolve` 0.95× ditox; `container-create-empty` 0.56×†
-  injection-js, 1.49× ditox and 1.06× tsyringe; `create-child-empty` 0.57×† injection-js, 1.84× ditox and 1.13×
-  tsyringe; `app-boot-40` 0.99× ditox and 1.64× tsyringe; `module-cold-from-modules` 1.27× ditox. `bind-128-plain` binds
-  a hundred and twenty-eight transient factories into a fresh container and resolves nothing. What it pays is the
+- **Registration, and everything that binds before it resolves** — real deficit. `bind-128-plain` 0.42× ditox, 0.99×
+  tsyringe and 1.84× injection-js; `realistic-graph-class-cold-resolve` 0.91× ditox; `container-create-empty` 0.67×†
+  injection-js, 1.72× ditox and 1.27× tsyringe; `create-child-empty` 0.55×† injection-js, 1.76× ditox and 1.22×
+  tsyringe; `app-boot-40` 0.94×‡ ditox and 1.57×‡ tsyringe; `module-cold-from-modules` 1.28× ditox. `bind-128-plain`
+  binds a hundred and twenty-eight transient factories into a fresh container and resolves nothing. What it pays is the
   object: the chain object is the fluent builder the contract returns, and the probe is last-wins, so closing this row
   is a contract change (a lighter builder, or a bulk bind), not an optimisation. Everything that binds before it
   resolves sits on the same floor, and the empty-container rows lose injection-js, whose injector is fewer objects
   still. With the cold class lane settled, the startup rows that bind classes lose ditox by registration alone. One
   object per binding is the design, so the deficit is structural.
-- **The cold collection, against tsyringe** — real deficit. `resolve-all-cold-10` 0.68× tsyringe, 1.14× ditox and 1.46×
-  injection-js; `resolve-all-cold-100` 0.49×‡ tsyringe, 1.76×‡ ditox and 1.55×‡ injection-js. `resolve-all-cold-N`
+- **The cold collection, against tsyringe** — real deficit. `resolve-all-cold-10` 0.69× tsyringe, 1.10× ditox and 1.41×‡
+  injection-js; `resolve-all-cold-100` 0.50×‡ tsyringe, 1.74×‡ ditox and 1.64×‡ injection-js. `resolve-all-cold-N`
   builds a fresh container and reads the collection once. What the pair pays is the registration above, once per
   element, against tsyringe's plain array of providers — the registration cost seen from the collection side.
-- **Teardown at scale** — real deficit, work difference. `materialize-100-singletons` 0.68× ditox and 2.18×‡ tsyringe;
-  `unbind-all-100-singletons` 0.61×‡ ditox and 1.85×‡ tsyringe; `lifecycle-pre-destroy-unbind` 1.20× ditox and 2.54×
+- **Teardown at scale** — real deficit, work difference. `materialize-100-singletons` 0.72× ditox and 2.37× tsyringe;
+  `unbind-all-100-singletons` 0.66×‡ ditox and 1.92×‡ tsyringe; `lifecycle-pre-destroy-unbind` 1.20× ditox and 2.52×
   tsyringe. `materialize-100-singletons` binds and resolves a hundred singletons with no teardown;
   `unbind-all-100-singletons` does the same, then `unbindAll()` with a hundred `@preDestroy` calls, so the teardown
   alone is the second row less the first — a difference of two rows, which carries the noise of both. It is the walk
@@ -138,13 +139,13 @@ caught the one that decides it).
   Most of either row sits underneath it, and that part is the real deficit: the bindings, and the first resolve of each,
   because codefast's side binds a class with `.to(Class).singleton()` where ditox binds a factory, and constructing a
   class with metadata costs more than calling a factory.
-- **Rebind, against ditox** — work difference. `rebind-hot-swap` 0.23×† ditox and 1.55× awilix;
-  `rebind-parent-resolve-child-depth-3` 1.49× awilix and 1.54× ditox. A rebind of a lone token is one registration whose
+- **Rebind, against ditox** — work difference. `rebind-hot-swap` 0.23×† ditox and 1.52× awilix;
+  `rebind-parent-resolve-child-depth-3` 1.45× awilix and 1.51× ditox. A rebind of a lone token is one registration whose
   displaced binding is deactivated on the spot; what it pays against ditox's bare map write is the builder object and
   the deactivation walk.
 - **Nested factories and a parent-owned alias, against injection-js** — harness state, work difference.
-  `nested-context-resolve-in-factory` 0.83×† injection-js; `nested-container-resolve-in-factory` 0.79×† injection-js;
-  `alias-parent-owned-terminal` 0.87×† injection-js; `alias-chain-3` 0.98×† injection-js; `to-alias-redirect` 0.89×†
+  `nested-context-resolve-in-factory` 0.87×† injection-js; `nested-container-resolve-in-factory` 0.82×† injection-js;
+  `alias-parent-owned-terminal` 0.88×† injection-js; `alias-chain-3` 0.99×† injection-js; `to-alias-redirect` 0.91×†
   injection-js. The two nested rows are a factory that resolves from its context or from the container mid-construction.
   Measured on their own, outside the harness, codefast is ahead of injection-js on both. The loss appears in the harness
   child, which builds every scenario before it measures one, so the factory call site the transient dynamic lane inlines
@@ -153,12 +154,12 @@ caught the one that decides it).
   [`BENCH_GUIDE.md`](./BENCH_GUIDE.md) records. The alias is structural: injection-js caches an alias's answer in the
   injector's own slot on the first read, while codefast resolves the alias on every read and never caches a parent's
   instance in a child.
-- **The realistic root graph, against injection-js** — process mode. `realistic-graph-resolve-root` 0.86× injection-js.
+- **The realistic root graph, against injection-js** — process mode. `realistic-graph-resolve-root` 0.89× injection-js.
   injection-js runs this row at one of two speeds per process, and codefast's own row does not move between them.
   Narrowed probes of the two libraries alone reproduce both: in the slower mode, where most processes land, codefast
   leads; in the faster one injection-js edges ahead. This pass caught the faster mode, which the previous passes had
   not. The row is a resolve through a warm graph, where neither library does work the other skips.
-- **Accessor injection, against inversify** — work difference. `accessor-injection-construct` 0.33×† inversify. The row
+- **Accessor injection, against inversify** — work difference. `accessor-injection-construct` 0.31×†‡ inversify. The row
   measures the benchmark's transpiler as much as the engine: tsx's esbuild lowers the scenario's decorated `accessor`
   field to `WeakMap`-backed privates (`__privateAdd`, `__accessCheck`) and its own decorator runtime. A standalone probe
   of the same class compiled by the repo's `tsc`, which keeps a native private field, resolves several times faster than
@@ -168,46 +169,45 @@ caught the one that decides it).
   model. The harness stays as it is: a codefast user on tsx or esbuild pays the same lowering, and a different
   transpiler for one library would move every codefast row, canaries included. Vite's Babel recipe keeps a native
   private field, as `tsc` does, so a Vite user sits nearer the probe than the row.
-- **Failing fast** — work difference. `misconfigured-missing-binding` 0.71×‡ tsyringe, 0.74×‡ brandi, 0.75×‡ ditox and
-  0.91×‡ injection-js. codefast builds a structured error carrying the resolution path; the rivals throw a string, and
+- **Failing fast** — work difference. `misconfigured-missing-binding` 0.72×‡ tsyringe, 0.75×‡ brandi, 0.76×‡ ditox and
+  0.88×‡ injection-js. codefast builds a structured error carrying the resolution path; the rivals throw a string, and
   the stack capture both pay is most of the row. It is a path a production request should never take.
 
-Below parity above the ceiling, with no note of their own: `singleton-class-1-dep` 0.91×† ditox, `to-resolved-3-deps`
-0.97×† ditox and `to-alias-redirect` 0.89×† injection-js. Each is a `†` cell, which moves between runs of the same
-build.
+Below parity above the ceiling, with no note of their own: `singleton-class-1-dep` 0.96×† ditox and `to-alias-redirect`
+0.91×† injection-js. Each is a `†` cell, which moves between runs of the same build.
 
 ## The wins
 
 Per competitor, its comparable rows and aggregates, its groups from widest to tightest, and every row it does not lose;
 the 14 rows declared incomparable stay out of every aggregate.
 
-- **InversifyJS 8 — 91 of 93 comparable rows, 4.31× median, 5.87× geomean.** By group, widest first: `boot` 23.6×,
-  `production` 20.3×, `scope` 13.3×, `lifecycle` 12.4×, `fan-out` 6.83×, `realistic` 6.23×, `introspection` 5.96×,
-  `micro` 4.19×, `slot-selection` 3.94×, `scale` 2.17×, `failure` 1.51×, `async` 1.46×, `resolution` 0.99×. At parity:
-  `resolve-all-async-8` 1.02×. It takes `accessor-injection-construct` 0.33×†.
-- **Awilix 13 — 39 of 39 comparable rows, 6.45× median, 6.16× geomean.** By group, widest first: `boot` 14.8×, `scale`
-  10.1×, `realistic` 7.34×, `production` 7.17×, `scope` 7.10×, `micro` 6.67×, `lifecycle` 5.48×, `resolution` 3.20×,
-  `failure` 2.22×, `fan-out` 2.04×, `async` 1.23×, `introspection` 1.20×. It takes no row.
-- **tsyringe 4 — 40 of 44 comparable rows, 4.55× median, 3.97× geomean.** By group, widest first: `micro` 12.4×, `scope`
-  6.51×, `resolution` 4.89×, `introspection` 4.07×, `realistic` 4.06×, `production` 3.99×, `scale` 3.62×, `fan-out`
-  2.69×, `lifecycle` 2.64×, `async` 1.43×, `boot` 1.19×, `failure` 0.71×. At parity: `bind-128-plain` 1.01×. It takes
-  `resolve-all-cold-10` 0.68×, `resolve-all-cold-100` 0.49× and `misconfigured-missing-binding` 0.71×.
-- **Brandi 5 — 30 of 31 comparable rows, 13.2× median, 11.8× geomean.** By group, widest first: `micro` 23.3×,
-  `realistic` 17.4×, `scope` 17.1×, `resolution` 17.1×, `fan-out` 9.50×, `scale` 8.78×, `boot` 5.09×, `async` 2.80×,
-  `failure` 0.74×. It takes `misconfigured-missing-binding` 0.74×.
-- **Ditox 3 — 35 of 46 comparable rows, 1.34× median, 1.70× geomean.** By group, widest first: `scope` 4.72×,
-  `realistic` 2.20×, `micro` 2.06×, `introspection` 1.59×, `resolution` 1.56×, `fan-out` 1.37×, `scale` 1.25×, `boot`
-  1.22×, `production` 1.18×, `async` 1.04×, `failure` 0.75×, `lifecycle` 0.71×. At parity: `app-boot-40` 0.99×,
-  `resolve-all-strategies-100` 1.01×† and `resolve-optional-hit` 1.01×†. It takes `singleton-class-1-dep` 0.91×†,
-  `realistic-graph-class-cold-resolve` 0.95×, `bind-128-plain` 0.40×, `misconfigured-missing-binding` 0.75×,
-  `to-resolved-3-deps` 0.97×†, `rebind-hot-swap` 0.23×†, `materialize-100-singletons` 0.68× and
-  `unbind-all-100-singletons` 0.61×.
-- **injection-js 2 — 22 of 32 comparable rows, 1.58× median, 1.54× geomean.** By group, widest first: `realistic` 2.52×,
-  `scope` 1.87×, `micro` 1.68×, `fan-out` 1.32×, `boot` 1.28×, `production` 1.25×, `async` 1.01×, `failure` 0.91×,
-  `resolution` 0.81×. At parity: `async-init-single-hop` 1.01× and `alias-chain-3` 0.98×†. It takes
-  `realistic-graph-resolve-root` 0.86×, `container-create-empty` 0.56×†, `create-child-empty` 0.57×†,
-  `misconfigured-missing-binding` 0.91×, `to-alias-redirect` 0.89×†, `alias-parent-owned-terminal` 0.87×†,
-  `nested-context-resolve-in-factory` 0.83×† and `nested-container-resolve-in-factory` 0.79×†.
+- **InversifyJS 8 — 91 of 93 comparable rows, 4.50× median, 5.94× geomean.** By group, widest first: `boot` 24.2×,
+  `production` 21.3×, `scope` 13.7×, `lifecycle` 13.0×, `fan-out` 6.70×, `realistic` 6.50×, `introspection` 5.94×,
+  `micro` 4.18×, `slot-selection` 3.95×, `scale` 2.06×, `failure` 1.53×, `async` 1.49×, `resolution` 1.01×. At parity:
+  `resolve-all-async-8` 0.99×. It takes `accessor-injection-construct` 0.31×†.
+- **Awilix 13 — 39 of 39 comparable rows, 6.27× median, 6.26× geomean.** By group, widest first: `boot` 16.1×, `scale`
+  9.78×, `realistic` 7.36×, `production` 7.23×, `scope` 7.11×, `micro` 6.81×, `lifecycle` 5.59×, `resolution` 3.41×,
+  `failure` 2.26×, `fan-out` 1.93×, `async` 1.22×, `introspection` 1.19×. It takes no row.
+- **tsyringe 4 — 40 of 44 comparable rows, 4.54× median, 4.00× geomean.** By group, widest first: `micro` 12.7×, `scope`
+  6.56×, `resolution` 5.03×, `introspection` 4.13×, `production` 3.95×, `realistic` 3.83×, `scale` 3.64×, `lifecycle`
+  2.72×, `fan-out` 2.67×, `async` 1.44×, `boot` 1.23×, `failure` 0.72×. At parity: `bind-128-plain` 0.99×. It takes
+  `resolve-all-cold-10` 0.69×, `resolve-all-cold-100` 0.50× and `misconfigured-missing-binding` 0.72×.
+- **Brandi 5 — 30 of 31 comparable rows, 12.3× median, 12.0× geomean.** By group, widest first: `micro` 24.0×,
+  `resolution` 18.0×, `scope` 17.8×, `realistic` 17.4×, `fan-out` 9.20×, `scale` 8.73×, `boot` 5.25×, `async` 2.78×,
+  `failure` 0.75×. It takes `misconfigured-missing-binding` 0.75×.
+- **Ditox 3 — 36 of 46 comparable rows, 1.34× median, 1.69× geomean.** By group, widest first: `scope` 4.66×,
+  `realistic` 2.19×, `micro` 2.05×, `introspection` 1.60×, `resolution` 1.58×, `fan-out` 1.34×, `scale` 1.23×, `boot`
+  1.22×, `production` 1.11×, `async` 1.05×, `failure` 0.76×, `lifecycle` 0.72×. At parity:
+  `production-event-bus-dispatch` 1.02×† and `to-resolved-3-deps` 0.97×†. It takes `singleton-class-1-dep` 0.96×†,
+  `realistic-graph-class-cold-resolve` 0.91×, `app-boot-40` 0.94×, `bind-128-plain` 0.42×,
+  `misconfigured-missing-binding` 0.76×, `rebind-hot-swap` 0.23×†, `materialize-100-singletons` 0.72× and
+  `unbind-all-100-singletons` 0.66×.
+- **injection-js 2 — 22 of 32 comparable rows, 1.56× median, 1.52× geomean.** By group, widest first: `realistic` 2.40×,
+  `scope` 1.80×, `micro` 1.63×, `production` 1.48×, `fan-out` 1.30×, `boot` 1.30×, `async` 1.01×, `failure` 0.88×,
+  `resolution` 0.85×. At parity: `async-init-single-hop` 1.01× and `alias-chain-3` 0.99×†. It takes
+  `realistic-graph-resolve-root` 0.89×, `container-create-empty` 0.67×†, `create-child-empty` 0.55×†,
+  `misconfigured-missing-binding` 0.88×, `to-alias-redirect` 0.91×†, `alias-parent-owned-terminal` 0.88×†,
+  `nested-context-resolve-in-factory` 0.87×† and `nested-container-resolve-in-factory` 0.82×†.
 
 ## Geomean by group
 
@@ -215,19 +215,19 @@ Geomean of the ratios in each group, comparable row count in parentheses. Read a
 
 | Group          | InversifyJS 8 | Awilix 13 | tsyringe 4 |  Brandi 5 |   Ditox 3 | injection-js 2 |
 | -------------- | ------------: | --------: | ---------: | --------: | --------: | -------------: |
-| micro          |    4.19× (22) | 6.67× (8) |  12.4× (7) | 23.3× (8) | 2.06× (7) |      1.68× (9) |
-| realistic      |     6.23× (5) | 7.34× (4) |  4.06× (4) | 17.4× (5) | 2.20× (5) |      2.52× (5) |
-| boot           |     23.6× (9) | 14.8× (4) |  1.19× (5) | 5.09× (6) | 1.22× (6) |      1.28× (5) |
-| fan-out        |     6.83× (9) | 2.04× (1) |  2.69× (5) | 9.50× (1) | 1.37× (5) |      1.32× (4) |
-| async          |    1.46× (10) | 1.23× (1) |  1.43× (1) | 2.80× (1) | 1.04× (1) |      1.01× (1) |
-| lifecycle      |     12.4× (8) | 5.48× (5) |  2.64× (4) |         — | 0.71× (5) |              — |
-| scope          |    13.3× (12) | 7.10× (8) |  6.51× (8) | 17.1× (5) | 4.72× (8) |      1.87× (4) |
-| scale          |     2.17× (2) | 10.1× (2) |  3.62× (2) | 8.78× (2) | 1.25× (2) |              — |
-| failure        |     1.51× (2) | 2.22× (1) |  0.71× (1) | 0.74× (1) | 0.75× (1) |      0.91× (1) |
-| production     |     20.3× (3) | 7.17× (2) |  3.99× (3) |         — | 1.18× (3) |      1.25× (1) |
-| introspection  |     5.96× (2) | 1.20× (1) |  4.07× (2) |         — | 1.59× (1) |              — |
-| slot-selection |     3.94× (6) |         — |          — |         — |         — |              — |
-| resolution     |     0.99× (3) | 3.20× (2) |  4.89× (2) | 17.1× (2) | 1.56× (2) |      0.81× (2) |
+| micro          |    4.18× (22) | 6.81× (8) |  12.7× (7) | 24.0× (8) | 2.05× (7) |      1.63× (9) |
+| realistic      |     6.50× (5) | 7.36× (4) |  3.83× (4) | 17.4× (5) | 2.19× (5) |      2.40× (5) |
+| boot           |     24.2× (9) | 16.1× (4) |  1.23× (5) | 5.25× (6) | 1.22× (6) |      1.30× (5) |
+| fan-out        |     6.70× (9) | 1.93× (1) |  2.67× (5) | 9.20× (1) | 1.34× (5) |      1.30× (4) |
+| async          |    1.49× (10) | 1.22× (1) |  1.44× (1) | 2.78× (1) | 1.05× (1) |      1.01× (1) |
+| lifecycle      |     13.0× (8) | 5.59× (5) |  2.72× (4) |         — | 0.72× (5) |              — |
+| scope          |    13.7× (12) | 7.11× (8) |  6.56× (8) | 17.8× (5) | 4.66× (8) |      1.80× (4) |
+| scale          |     2.06× (2) | 9.78× (2) |  3.64× (2) | 8.73× (2) | 1.23× (2) |              — |
+| failure        |     1.53× (2) | 2.26× (1) |  0.72× (1) | 0.75× (1) | 0.76× (1) |      0.88× (1) |
+| production     |     21.3× (3) | 7.23× (2) |  3.95× (3) |         — | 1.11× (3) |      1.48× (1) |
+| introspection  |     5.94× (2) | 1.19× (1) |  4.13× (2) |         — | 1.60× (1) |              — |
+| slot-selection |     3.95× (6) |         — |          — |         — |         — |              — |
+| resolution     |     1.01× (3) | 3.41× (2) |  5.03× (2) | 18.0× (2) | 1.58× (2) |      0.85× (2) |
 
 ## Full per-scenario table
 
@@ -242,152 +242,152 @@ aggregates because their two sides do incomparable work per op.
 
 | Scenario                                       | Group          | batch | @codefast/di hz/op | vs InversifyJS 8 | vs Awilix 13 | vs tsyringe 4 | vs Brandi 5 | vs Ditox 3 | vs injection-js 2 |
 | ---------------------------------------------- | -------------- | ----: | -----------------: | ---------------: | -----------: | ------------: | ----------: | ---------: | ----------------: |
-| constant-resolve                               | micro          |  1000 |        217,099,197 |           2.71×† |       5.71×† |        11.6×† |      37.3×† |     1.11×† |            2.87×† |
-| singleton-class-1-dep                          | micro          |   200 |        176,207,475 |           3.23×† |       4.26×† |        10.1×† |      30.8×† |     0.91×† |            3.16×† |
-| transient-class-1-dep                          | micro          |   200 |         78,465,195 |           1.85×† |       9.30×† |        13.3×† |      33.8×† |     8.04×† |                 — |
-| named-constant-get                             | micro          |   500 |         99,473,815 |           3.66×† |            — |             — |           — |          — |                 — |
-| named-resolve-slots-1                          | micro          |   500 |        138,389,054 |           4.86×† |            — |             — |           — |          — |                 — |
-| named-resolve-slots-4                          | micro          |   500 |        138,652,865 |           4.76×† |            — |             — |           — |          — |                 — |
-| named-resolve-slots-16                         | micro          |   500 |        139,870,481 |           5.01×† |            — |             — |           — |          — |                 — |
-| named-resolve-slots-64                         | micro          |   500 |        138,469,992 |           5.02×† |            — |             — |           — |          — |                 — |
-| optional-missing-transient                     | micro          |   200 |         55,618,244 |           1.10×† |            — |             — |      13.2×† |     4.09×† |                 — |
-| realistic-graph-resolve-root                   | realistic      |    20 |         18,057,452 |            2.68× |        2.47× |         5.13× |       14.9× |      1.56× |             0.86× |
-| realistic-graph-cold-resolve                   | realistic      |     1 |           316,010‡ |           9.41×‡ |       4.85×‡ |        2.21×‡ |      5.79×‡ |     1.13×‡ |            2.39×‡ |
-| realistic-graph-resolved-root                  | realistic      |    20 |         64,163,268 |           3.29×† |            — |             — |      51.4×† |     5.48×† |            4.16×† |
-| realistic-graph-class-resolve-root             | realistic      |    20 |         60,182,857 |           3.06×† |       10.0×† |        13.5×† |      48.4×† |     5.56×† |            4.21×† |
-| realistic-graph-class-cold-resolve             | realistic      |     1 |            669,547 |            37.0× |       24.2×‡ |         1.78× |       7.34× |      0.95× |             2.84× |
-| app-boot-40                                    | boot           |     1 |            112,870 |           36.1×‡ |       13.4×‡ |         1.64× |       5.84× |      0.99× |             2.31× |
-| realistic-graph-validate                       | realistic      |    10 |         22,163,281 |                — |            — |             — |           — |          — |                 — |
-| fan-out-tree-depth-3-breadth-4                 | fan-out        |    20 |          1,849,940 |            1.67× |        2.04× |         2.97× |       9.50× |      2.11× |                 — |
-| resolve-all-strategies-10                      | fan-out        |     1 |        43,867,930‡ |          11.5×†‡ |            — |       4.85×†‡ |           — |    1.13×†‡ |           1.22×†‡ |
-| resolve-all-strategies-100                     | fan-out        |     1 |        38,885,883‡ |          86.5×†‡ |            — |       29.0×†‡ |           — |    1.01×†‡ |           1.08×†‡ |
-| resolve-all-cold-10                            | fan-out        |     1 |          2,352,767 |           31.0×‡ |            — |         0.68× |           — |      1.14× |             1.46× |
-| resolve-all-cold-100                           | fan-out        |     1 |           267,356‡ |           32.1×‡ |            — |        0.49×‡ |           — |     1.76×‡ |            1.55×‡ |
-| resolve-all-named-8                            | fan-out        |     1 |         23,321,823 |            2.05× |            — |             — |           — |          — |                 — |
-| resolve-all-named-16                           | fan-out        |     1 |         23,339,293 |            2.09× |            — |             — |           — |          — |                 — |
-| resolve-all-named-32                           | fan-out        |     1 |         23,335,268 |            2.08× |            — |             — |           — |          — |                 — |
-| resolve-all-named-64                           | fan-out        |     1 |         23,737,827 |            2.18× |            — |             — |           — |          — |                 — |
-| resolve-async-single-hop                       | async          |     1 |          9,077,221 |           1.18×‡ |            — |             — |           — |          — |                 — |
-| async-init-single-hop                          | async          |     1 |          6,744,415 |            1.54× |        1.23× |         1.43× |       2.80× |      1.04× |             1.01× |
-| dynamic-async-chain-8                          | async          |     1 |          1,849,013 |            1.30× |            — |             — |           — |          — |                 — |
-| async-fanout-concurrent-8                      | async          |     1 |          1,182,381 |            1.55× |            — |             — |           — |          — |                 — |
-| async-fanout-concurrent-16                     | async          |     1 |            678,205 |           1.67×‡ |            — |             — |           — |          — |                 — |
-| async-fanout-concurrent-32                     | async          |     1 |            356,832 |            1.89× |            — |             — |           — |          — |                 — |
-| async-fanout-concurrent-64                     | async          |     1 |            155,462 |            1.89× |            — |             — |           — |          — |                 — |
-| async-branch-chain-8                           | async          |     1 |          1,349,733 |                — |            — |             — |           — |          — |                 — |
-| async-branch-escape-mid-chain-8                | async          |     1 |          1,701,748 |                — |            — |             — |           — |          — |                 — |
-| async-diamond-shared-leaf                      | async          |     1 |          1,896,084 |            1.29× |            — |             — |           — |          — |                 — |
-| plan-async-resolved-chain-8                    | async          |     1 |         2,799,132‡ |                — |            — |             — |           — |          — |                 — |
-| plan-async-class-chain-8                       | async          |     1 |          5,306,129 |                — |            — |             — |           — |          — |                 — |
-| resolve-all-async-8                            | async          |     1 |            986,441 |            1.02× |            — |             — |           — |          — |                 — |
-| resolve-optional-async-miss                    | async          |     1 |          9,849,591 |            1.51× |            — |             — |           — |          — |                 — |
-| lifecycle-post-construct-singleton             | lifecycle      |   250 |        188,419,847 |           3.23×† |            — |             — |           — |          — |                 — |
-| lifecycle-pre-destroy-unbind                   | lifecycle      |     1 |          3,660,736 |            25.1× |       9.07×‡ |         2.54× |           — |      1.20× |                 — |
-| binding-level-activation-hook                  | lifecycle      |   200 |         63,143,519 |           2.34×† |            — |             — |           — |          — |                 — |
-| child-depth-1-resolve                          | scope          |   500 |        108,731,062 |           1.51×† |       4.28×† |        7.11×† |      20.4×† |     5.17×† |            1.60×† |
-| child-depth-2-resolve                          | scope          |   500 |        109,057,777 |           1.54×† |       5.54×† |        8.51×† |      22.1×† |     8.57×† |            1.58×† |
-| child-depth-4-resolve                          | scope          |   500 |        108,230,150 |           1.56×† |       8.21×† |        10.8×† |      23.4×† |     17.6×† |            1.75×† |
-| child-depth-8-resolve                          | scope          |   500 |         99,541,081 |           1.39×† |       14.4×† |        15.5×† |      26.5×† |     28.8×† |            2.76×† |
-| child-request-lifecycle-create-resolve-dispose | scope          |   100 |          2,607,470 |            46.8× |       11.5×‡ |         5.41× |           — |      1.50× |                 — |
-| fresh-child-default-n1                         | scope          |   100 |        10,878,645‡ |           42.3×‡ |       8.27×‡ |        7.17×‡ |           — |     2.04×‡ |                 — |
-| fresh-child-default-n4                         | scope          |   100 |          7,637,516 |           29.1×‡ |       6.96×‡ |         6.71× |           — |      2.54× |                 — |
-| fresh-child-name-n1                            | scope          |   100 |         10,515,620 |           43.1×‡ |            — |             — |           — |          — |                 — |
-| fresh-child-name-n4                            | scope          |   100 |         7,639,301‡ |           32.3×‡ |            — |             — |           — |          — |                 — |
-| fresh-child-tag-n1                             | scope          |   100 |         10,521,616 |            46.8× |            — |             — |           — |          — |                 — |
-| fresh-child-tag-n4                             | scope          |   100 |         7,601,611‡ |           34.9×‡ |            — |             — |           — |          — |                 — |
-| scale-mid-transient-chain-32                   | scale          |     1 |          1,460,431 |            2.45× |        4.72× |         4.14× |       10.6× |      1.51× |                 — |
-| scale-deep-transient-chain-512                 | scale          |     1 |             55,374 |            1.92× |        21.7× |         3.16× |       7.29× |      1.04× |                 — |
-| boot-decorated-container-build-and-resolve     | boot           |     1 |            918,521 |           23.8×‡ |            — |         1.22× |           — |          — |             2.56× |
-| container-create-empty                         | boot           |   100 |         24,805,849 |           39.7×‡ |       8.86×‡ |         1.06× |       7.43× |      1.49× |            0.56×† |
-| create-child-empty                             | boot           |   100 |         25,928,985 |            55.9× |       11.7×‡ |         1.13× |       8.06× |      1.84× |            0.57×† |
-| bind-128-plain                                 | boot           |     1 |            188,864 |           27.5×‡ |       34.8×‡ |         1.01× |       9.15× |      0.40× |             1.80× |
-| bind-128-refined                               | boot           |     1 |             38,441 |           4.61×‡ |            — |             — |           — |          — |                 — |
-| misconfigured-missing-binding                  | failure        |     1 |           266,103‡ |           1.52×‡ |       2.22×‡ |        0.71×‡ |      0.74×‡ |     0.75×‡ |            0.91×‡ |
-| circular-dependency-3                          | failure        |     1 |           166,123‡ |          186.7×‡ |       1.51×‡ |             — |           — |          — |            0.50×‡ |
-| ambiguous-multi-binding                        | failure        |     1 |           232,636‡ |           1.51×‡ |            — |             — |           — |          — |                 — |
-| production-http-handler                        | production     |    50 |          1,832,463 |           27.6×‡ |       7.97×‡ |        3.46×‡ |           — |      1.24× |                 — |
-| production-unit-of-work                        | production     |   100 |         1,031,564‡ |           17.8×‡ |       6.45×‡ |        2.35×‡ |           — |     1.16×‡ |                 — |
-| production-event-bus-dispatch                  | production     |   100 |         68,950,940 |           16.9×† |            — |        7.82×† |           — |     1.14×† |            1.25×† |
-| to-resolved-3-deps                             | micro          |   200 |        186,926,942 |           3.27×† |            — |             — |      32.6×† |     0.97×† |            1.67×† |
-| to-alias-redirect                              | micro          |   500 |        109,969,628 |           1.97×† |       6.18×† |        12.6×† |           — |          — |            0.89×† |
-| to-self-binding                                | micro          |   300 |        177,319,012 |           2.95×† |            — |        7.99×† |           — |          — |            2.99×† |
-| alias-chain-3                                  | micro          |   500 |        110,458,499 |           4.31×† |       14.3×† |        24.4×† |           — |          — |            0.98×† |
-| alias-parent-owned-terminal                    | micro          |   500 |        101,262,926 |           1.84×† |       6.84×† |        12.3×† |           — |          — |            0.87×† |
-| alias-cycle-detected                           | failure        |     1 |           250,383‡ |          704.6×‡ |       2.69×‡ |             — |           — |          — |            0.84×‡ |
-| resolve-optional-hit                           | micro          |   500 |        208,302,882 |           6.38×† |       5.86×† |             — |      36.1×† |     1.01×† |            1.57×† |
-| resolve-optional-miss                          | micro          |   500 |        262,980,253 |           7.77×† |       4.89×† |             — |      4.32×† |     4.87×† |            1.92×† |
-| tagged-binding-resolve                         | micro          |   300 |        146,074,523 |           7.01×† |            — |             — |           — |          — |                 — |
-| tagged-resolve-slots-1                         | micro          |   300 |        221,686,775 |           10.9×† |            — |             — |           — |          — |                 — |
-| tagged-resolve-slots-4                         | micro          |   300 |        218,971,023 |           10.3×† |            — |             — |           — |          — |                 — |
-| tagged-resolve-slots-16                        | micro          |   300 |        221,426,294 |           10.2×† |            — |             — |           — |          — |                 — |
-| tagged-resolve-slots-64                        | micro          |   300 |        219,913,665 |          10.6×†‡ |            — |             — |           — |          — |                 — |
-| conditional-injection-tagged                   | micro          |   300 |         80,041,034 |           2.04×† |            — |             — |      33.2×† |          — |                 — |
-| rebind-hot-swap                                | lifecycle      |    50 |         20,639,906 |           44.2×‡ |        1.55× |             — |           — |     0.23×† |                 — |
-| has-bound-check                                | introspection  |  1000 |        368,153,159 |           6.65×† |       1.20×† |        3.37×† |           — |     1.59×† |                 — |
-| has-own-unbound-check                          | introspection  |  1000 |        534,799,166 |           5.33×† |            — |        4.90×† |           — |          — |                 — |
-| container-level-activation-hook                | lifecycle      |   200 |         55,151,642 |           1.95×† |            — |        4.69×† |           — |          — |                 — |
-| scoped-binding-per-child                       | scope          |   100 |         5,977,259‡ |           47.9×‡ |       3.50×‡ |        1.22×‡ |      5.23×‡ |     1.40×‡ |                 — |
-| rebind-parent-resolve-child-depth-3            | lifecycle      |    50 |         13,431,027 |            75.7× |        1.49× |             — |           — |      1.54× |                 — |
-| materialize-100-singletons                     | lifecycle      |     1 |             89,463 |           20.4×‡ |       17.1×‡ |        2.18×‡ |           — |      0.68× |                 — |
-| unbind-all-100-singletons                      | lifecycle      |     1 |            68,651‡ |           22.2×‡ |       13.8×‡ |        1.85×‡ |           — |     0.61×‡ |                 — |
-| module-load-unload                             | boot           |     1 |         1,154,127‡ |           15.8×‡ |            — |             — |           — |          — |                 — |
-| module-cold-from-modules                       | boot           |     1 |          2,152,407 |            23.9× |            — |             — |       4.20× |      1.27× |                 — |
-| module-cold-128                                | boot           |     1 |            203,879 |           25.3×‡ |            — |             — |       1.30× |      2.32× |                 — |
-| initialize-async-warmup                        | boot           |     1 |            797,813 |                — |            — |             — |           — |          — |                 — |
-| inspect-snapshot                               | introspection  |    20 |          9,400,435 |                — |            — |             — |           — |          — |                 — |
-| lookup-bindings                                | introspection  |   200 |         24,276,574 |                — |            — |             — |           — |          — |                 — |
-| generate-dependency-graph                      | introspection  |    10 |            707,716 |                — |            — |             — |           — |          — |                 — |
-| multi-tag-slot-resolve                         | micro          |   300 |         14,210,899 |                — |            — |             — |           — |          — |                 — |
-| multi-tag-constraint-resolve                   | micro          |   200 |          7,538,863 |                — |            — |             — |           — |          — |                 — |
-| multi-tag-select-32                            | micro          |   300 |          2,860,974 |                — |            — |             — |           — |          — |                 — |
-| mask-reject-wide-catalog                       | slot-selection |   300 |         31,659,810 |                — |            — |             — |           — |          — |                 — |
-| mask-accept-two-of-four                        | slot-selection |   300 |         20,186,299 |                — |            — |             — |           — |          — |                 — |
-| mask-collision-same-bit                        | slot-selection |   300 |         42,106,843 |                — |            — |             — |           — |          — |                 — |
-| slot-tag-array-hoisted                         | slot-selection |   300 |        145,223,068 |                — |            — |             — |           — |          — |                 — |
-| slot-tag-shorthand-hoisted                     | slot-selection |   300 |        159,329,799 |                — |            — |             — |           — |          — |                 — |
-| slot-tag-array-inline                          | slot-selection |   300 |         95,614,295 |                — |            — |             — |           — |          — |                 — |
-| slot-tag-shorthand-inline                      | slot-selection |   300 |        115,054,358 |                — |            — |             — |           — |          — |                 — |
-| slot-tag-zero-value                            | slot-selection |   300 |        145,800,859 |           6.58×† |            — |             — |           — |          — |                 — |
-| slot-name-and-tag                              | slot-selection |   300 |         47,408,113 |           2.33×† |            — |             — |           — |          — |                 — |
-| slot-tag-resolve-all                           | slot-selection |   300 |         42,034,685 |           3.42×† |            — |             — |           — |          — |                 — |
-| slot-tag-miss-optional                         | slot-selection |   300 |         67,634,277 |           2.93×† |            — |             — |           — |          — |                 — |
-| slot-tag-parent-owned                          | slot-selection |   300 |        130,055,973 |           5.82×† |            — |             — |           — |          — |                 — |
-| slot-name-parent-owned                         | slot-selection |   300 |        105,966,243 |           4.18×† |            — |             — |           — |          — |                 — |
-| slot-injected-name-compiled                    | slot-selection |   300 |         70,961,026 |                — |            — |             — |           — |          — |                 — |
-| slot-injected-name-interpreted                 | slot-selection |   300 |          6,285,707 |                — |            — |             — |           — |          — |                 — |
-| slot-injected-tag-compiled                     | slot-selection |   300 |         67,938,854 |                — |            — |             — |           — |          — |                 — |
-| slot-injected-tag-interpreted                  | slot-selection |   300 |          6,409,190 |                — |            — |             — |           — |          — |                 — |
-| plan-deps-inlined                              | resolution     |   300 |         62,588,640 |                — |            — |             — |           — |          — |                 — |
-| plan-escape-factory-dep                        | resolution     |   300 |          7,505,454 |                — |            — |             — |           — |          — |                 — |
-| plan-escape-scoped-dep                         | resolution     |   300 |        11,967,220‡ |                — |            — |             — |           — |          — |                 — |
-| plan-escape-hooked-dep                         | resolution     |   300 |          4,020,229 |                — |            — |             — |           — |          — |                 — |
-| plan-escape-optional-dep                       | resolution     |   300 |          5,971,501 |                — |            — |             — |           — |          — |                 — |
-| plan-escape-multi-dep                          | resolution     |   300 |          3,089,816 |                — |            — |             — |           — |          — |                 — |
-| plan-class-chain-24                            | resolution     |     1 |          7,408,111 |                — |            — |             — |           — |          — |                 — |
-| plan-class-chain-40                            | resolution     |     1 |          4,236,381 |                — |            — |             — |           — |          — |                 — |
-| interpreted-class-chain-24                     | resolution     |     1 |            474,273 |                — |            — |             — |           — |          — |                 — |
-| interpreted-class-chain-40                     | resolution     |     1 |            260,737 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-1                                    | resolution     |     1 |           919,101‡ |                — |            — |             — |           — |          — |                 — |
-| plan-runs-256                                  | resolution     |     1 |             14,941 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-512                                  | resolution     |     1 |              8,004 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-1024                                 | resolution     |     1 |              3,983 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-2048                                 | resolution     |     1 |              1,960 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-4096                                 | resolution     |     1 |              1,195 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-8192                                 | resolution     |     1 |                648 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-deep-1                               | resolution     |     1 |            256,658 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-deep-256                             | resolution     |     1 |              4,729 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-deep-512                             | resolution     |     1 |              2,499 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-deep-1024                            | resolution     |     1 |              1,291 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-deep-2048                            | resolution     |     1 |                655 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-deep-8192                            | resolution     |     1 |                213 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-mixed-1                              | resolution     |     1 |            937,646 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-mixed-512                            | resolution     |     1 |              7,619 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-mixed-1024                           | resolution     |     1 |              3,959 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-mixed-2048                           | resolution     |     1 |              1,970 |                — |            — |             — |           — |          — |                 — |
-| plan-runs-mixed-8192                           | resolution     |     1 |                641 |                — |            — |             — |           — |          — |                 — |
-| nested-context-resolve-in-factory              | resolution     |   300 |         46,107,231 |           1.86×† |       3.82×† |        5.42×† |      19.3×† |     2.36×† |            0.83×† |
-| nested-container-resolve-in-factory            | resolution     |   300 |         37,822,857 |           1.60×† |       2.68×† |        4.41×† |      15.2×† |     1.03×† |            0.79×† |
-| accessor-injection-construct                   | resolution     |   300 |         11,683,720 |           0.33×† |            — |             — |           — |          — |                 — |
+| constant-resolve                               | micro          |  1000 |        215,882,684 |           2.74×† |       5.69×† |        11.4×† |      37.8×† |     1.09×† |            1.89×† |
+| singleton-class-1-dep                          | micro          |   200 |        187,963,138 |           3.23×† |       4.46×† |        10.7×† |      34.7×† |     0.96×† |            3.40×† |
+| transient-class-1-dep                          | micro          |   200 |         78,132,422 |           1.97×† |       9.06×† |        13.9×† |     36.5×†‡ |     8.11×† |                 — |
+| named-constant-get                             | micro          |   500 |         97,828,755 |           3.62×† |            — |             — |           — |          — |                 — |
+| named-resolve-slots-1                          | micro          |   500 |        137,729,794 |           4.90×† |            — |             — |           — |          — |                 — |
+| named-resolve-slots-4                          | micro          |   500 |        138,274,264 |           4.94×† |            — |             — |           — |          — |                 — |
+| named-resolve-slots-16                         | micro          |   500 |        138,433,099 |           4.87×† |            — |             — |           — |          — |                 — |
+| named-resolve-slots-64                         | micro          |   500 |        139,624,334 |           4.97×† |            — |             — |           — |          — |                 — |
+| optional-missing-transient                     | micro          |   200 |         51,880,908 |           1.04×† |            — |             — |      12.3×† |     3.62×† |                 — |
+| realistic-graph-resolve-root                   | realistic      |    20 |         18,769,432 |            2.57× |        2.66× |         5.13× |       15.7× |      1.58× |             0.89× |
+| realistic-graph-cold-resolve                   | realistic      |     1 |           296,329‡ |           10.1×‡ |       4.59×‡ |        2.04×‡ |      5.32×‡ |     1.12×‡ |            2.32×‡ |
+| realistic-graph-resolved-root                  | realistic      |    20 |         62,881,342 |           3.47×† |            — |             — |      52.3×† |     5.42×† |            3.09×† |
+| realistic-graph-class-resolve-root             | realistic      |    20 |         61,760,891 |           3.17×† |       10.5×† |        13.8×† |      51.4×† |     5.75×† |            4.33×† |
+| realistic-graph-class-cold-resolve             | realistic      |     1 |            648,368 |            40.6× |       22.8×‡ |         1.49× |       7.14× |      0.91× |             2.89× |
+| app-boot-40                                    | boot           |     1 |           104,835‡ |           34.8×‡ |       13.3×‡ |        1.57×‡ |      5.52×‡ |     0.94×‡ |            2.23×‡ |
+| realistic-graph-validate                       | realistic      |    10 |         21,936,190 |                — |            — |             — |           — |          — |                 — |
+| fan-out-tree-depth-3-breadth-4                 | fan-out        |    20 |          1,767,994 |            1.57× |        1.93× |         3.06× |       9.20× |      1.97× |                 — |
+| resolve-all-strategies-10                      | fan-out        |     1 |        39,661,790‡ |          10.5×†‡ |            — |       4.42×†‡ |           — |    1.06×†‡ |           1.09×†‡ |
+| resolve-all-strategies-100                     | fan-out        |     1 |        39,369,670‡ |          88.4×†‡ |            — |       29.6×†‡ |           — |    1.08×†‡ |           1.12×†‡ |
+| resolve-all-cold-10                            | fan-out        |     1 |          2,333,175 |           35.2×‡ |            — |         0.69× |           — |      1.10× |            1.41×‡ |
+| resolve-all-cold-100                           | fan-out        |     1 |           257,857‡ |           28.7×‡ |            — |        0.50×‡ |           — |     1.74×‡ |            1.64×‡ |
+| resolve-all-named-8                            | fan-out        |     1 |         21,849,325 |            1.97× |            — |             — |           — |          — |                 — |
+| resolve-all-named-16                           | fan-out        |     1 |         23,788,079 |            2.10× |            — |             — |           — |          — |                 — |
+| resolve-all-named-32                           | fan-out        |     1 |         23,184,869 |            2.16× |            — |             — |           — |          — |                 — |
+| resolve-all-named-64                           | fan-out        |     1 |         22,959,734 |            2.05× |            — |             — |           — |          — |                 — |
+| resolve-async-single-hop                       | async          |     1 |          9,250,547 |            1.25× |            — |             — |           — |          — |                 — |
+| async-init-single-hop                          | async          |     1 |          6,790,052 |            1.60× |        1.22× |         1.44× |       2.78× |      1.05× |             1.01× |
+| dynamic-async-chain-8                          | async          |     1 |          2,005,038 |            1.41× |            — |             — |           — |          — |                 — |
+| async-fanout-concurrent-8                      | async          |     1 |          1,201,503 |            1.59× |            — |             — |           — |          — |                 — |
+| async-fanout-concurrent-16                     | async          |     1 |            664,941 |            1.67× |            — |             — |           — |          — |                 — |
+| async-fanout-concurrent-32                     | async          |     1 |           340,207‡ |           1.79×‡ |            — |             — |           — |          — |                 — |
+| async-fanout-concurrent-64                     | async          |     1 |            154,471 |            1.90× |            — |             — |           — |          — |                 — |
+| async-branch-chain-8                           | async          |     1 |          1,363,304 |                — |            — |             — |           — |          — |                 — |
+| async-branch-escape-mid-chain-8                | async          |     1 |          1,748,128 |                — |            — |             — |           — |          — |                 — |
+| async-diamond-shared-leaf                      | async          |     1 |          1,890,557 |            1.31× |            — |             — |           — |          — |                 — |
+| plan-async-resolved-chain-8                    | async          |     1 |          2,433,755 |                — |            — |             — |           — |          — |                 — |
+| plan-async-class-chain-8                       | async          |     1 |          5,433,427 |                — |            — |             — |           — |          — |                 — |
+| resolve-all-async-8                            | async          |     1 |            963,771 |            0.99× |            — |             — |           — |          — |                 — |
+| resolve-optional-async-miss                    | async          |     1 |         10,004,703 |            1.60× |            — |             — |           — |          — |                 — |
+| lifecycle-post-construct-singleton             | lifecycle      |   250 |        187,885,736 |           3.31×† |            — |             — |           — |          — |                 — |
+| lifecycle-pre-destroy-unbind                   | lifecycle      |     1 |          3,620,404 |           25.0×‡ |       8.74×‡ |         2.52× |           — |      1.20× |                 — |
+| binding-level-activation-hook                  | lifecycle      |   200 |         61,835,363 |           2.26×† |            — |             — |           — |          — |                 — |
+| child-depth-1-resolve                          | scope          |   500 |        108,837,118 |           1.43×† |       4.50×† |        7.17×† |      21.1×† |     4.73×† |            1.23×† |
+| child-depth-2-resolve                          | scope          |   500 |        109,947,344 |           1.55×† |       5.67×† |        8.53×† |      23.0×† |     8.72×† |            1.44×† |
+| child-depth-4-resolve                          | scope          |   500 |        107,951,102 |           1.50×† |       8.05×† |        11.1×† |      23.7×† |     16.8×† |            1.63×† |
+| child-depth-8-resolve                          | scope          |   500 |        108,889,770 |           1.55×† |       14.8×† |        17.0×† |      28.8×† |     30.9×† |            3.62×† |
+| child-request-lifecycle-create-resolve-dispose | scope          |   100 |         2,489,635‡ |           48.4×‡ |       11.8×‡ |        5.02×‡ |           — |     1.51×‡ |                 — |
+| fresh-child-default-n1                         | scope          |   100 |        10,463,748‡ |           42.4×‡ |       8.20×‡ |        7.36×‡ |           — |     1.96×‡ |                 — |
+| fresh-child-default-n4                         | scope          |   100 |          7,250,759 |            30.6× |       6.17×‡ |         6.45× |           — |      2.43× |                 — |
+| fresh-child-name-n1                            | scope          |   100 |         10,923,740 |           45.7×‡ |            — |             — |           — |          — |                 — |
+| fresh-child-name-n4                            | scope          |   100 |          7,618,585 |           33.2×‡ |            — |             — |           — |          — |                 — |
+| fresh-child-tag-n1                             | scope          |   100 |         10,361,381 |           44.8×‡ |            — |             — |           — |          — |                 — |
+| fresh-child-tag-n4                             | scope          |   100 |         7,847,041‡ |           36.8×‡ |            — |             — |           — |          — |                 — |
+| scale-mid-transient-chain-32                   | scale          |     1 |          1,455,048 |            2.41× |        4.68× |         4.11× |       10.5× |      1.40× |                 — |
+| scale-deep-transient-chain-512                 | scale          |     1 |             54,661 |            1.76× |        20.4× |         3.21× |       7.24× |      1.07× |                 — |
+| boot-decorated-container-build-and-resolve     | boot           |     1 |           899,544‡ |           24.3×‡ |            — |        1.18×‡ |           — |          — |            2.45×‡ |
+| container-create-empty                         | boot           |   100 |         29,350,205 |           47.5×‡ |       11.7×‡ |         1.27× |       8.98× |      1.72× |            0.67×† |
+| create-child-empty                             | boot           |   100 |         25,766,954 |           56.8×‡ |       12.2×‡ |         1.22× |       8.13× |      1.76× |            0.55×† |
+| bind-128-plain                                 | boot           |     1 |            188,471 |           30.9×‡ |       35.2×‡ |         0.99× |       9.47× |      0.42× |             1.84× |
+| bind-128-refined                               | boot           |     1 |             36,031 |           4.60×‡ |            — |             — |           — |          — |                 — |
+| misconfigured-missing-binding                  | failure        |     1 |           267,864‡ |           1.49×‡ |       2.26×‡ |        0.72×‡ |      0.75×‡ |     0.76×‡ |            0.88×‡ |
+| circular-dependency-3                          | failure        |     1 |           162,505‡ |          184.4×‡ |       1.47×‡ |             — |           — |          — |            0.50×‡ |
+| ambiguous-multi-binding                        | failure        |     1 |           236,644‡ |           1.57×‡ |            — |             — |           — |          — |                 — |
+| production-http-handler                        | production     |    50 |         1,785,374‡ |           30.6×‡ |       8.35×‡ |        3.28×‡ |           — |     1.17×‡ |                 — |
+| production-unit-of-work                        | production     |   100 |         1,006,500‡ |           17.6×‡ |       6.27×‡ |        2.33×‡ |           — |     1.16×‡ |                 — |
+| production-event-bus-dispatch                  | production     |   100 |         71,006,000 |           17.8×† |            — |        8.08×† |           — |     1.02×† |            1.48×† |
+| to-resolved-3-deps                             | micro          |   200 |        186,159,703 |           3.20×† |            — |             — |      34.0×† |     0.97×† |            1.68×† |
+| to-alias-redirect                              | micro          |   500 |        110,903,975 |           2.02×† |       6.43×† |        12.2×† |           — |          — |            0.91×† |
+| to-self-binding                                | micro          |   300 |        178,684,308 |           2.99×† |            — |        8.10×† |           — |          — |            3.01×† |
+| alias-chain-3                                  | micro          |   500 |        111,471,335 |           4.50×† |       14.8×† |        25.2×† |           — |          — |            0.99×† |
+| alias-parent-owned-terminal                    | micro          |   500 |        100,688,195 |           1.89×† |       6.91×† |        12.6×† |           — |          — |            0.88×† |
+| alias-cycle-detected                           | failure        |     1 |           246,774‡ |          688.3×‡ |       2.71×‡ |             — |           — |          — |            0.82×‡ |
+| resolve-optional-hit                           | micro          |   500 |        216,288,663 |           6.57×† |       6.01×† |             — |      38.4×† |     1.04×† |            1.63×† |
+| resolve-optional-miss                          | micro          |   500 |        265,206,999 |           7.98×† |       5.07×† |             — |      4.33×† |     4.91×† |            1.93×† |
+| tagged-binding-resolve                         | micro          |   300 |        145,515,986 |           6.44×† |            — |             — |           — |          — |                 — |
+| tagged-resolve-slots-1                         | micro          |   300 |        219,010,880 |          10.5×†‡ |            — |             — |           — |          — |                 — |
+| tagged-resolve-slots-4                         | micro          |   300 |        219,931,990 |          10.1×†‡ |            — |             — |           — |          — |                 — |
+| tagged-resolve-slots-16                        | micro          |   300 |        219,136,557 |           9.95×† |            — |             — |           — |          — |                 — |
+| tagged-resolve-slots-64                        | micro          |   300 |        221,267,245 |           10.0×† |            — |             — |           — |          — |                 — |
+| conditional-injection-tagged                   | micro          |   300 |         78,603,617 |           2.02×† |            — |             — |      33.3×† |          — |                 — |
+| rebind-hot-swap                                | lifecycle      |    50 |         20,554,408 |           44.1×‡ |        1.52× |             — |           — |     0.23×† |                 — |
+| has-bound-check                                | introspection  |  1000 |        369,122,347 |           6.59×† |       1.19×† |        3.38×† |           — |     1.60×† |                 — |
+| has-own-unbound-check                          | introspection  |  1000 |        527,613,608 |           5.35×† |            — |        5.06×† |           — |          — |                 — |
+| container-level-activation-hook                | lifecycle      |   200 |         55,458,227 |           2.02×† |            — |        4.77×† |           — |          — |                 — |
+| scoped-binding-per-child                       | scope          |   100 |         6,084,202‡ |           52.6×‡ |       3.60×‡ |        1.25×‡ |      5.34×‡ |     1.44×‡ |                 — |
+| rebind-parent-resolve-child-depth-3            | lifecycle      |    50 |         12,999,429 |           73.9×‡ |        1.45× |             — |           — |      1.51× |                 — |
+| materialize-100-singletons                     | lifecycle      |     1 |             99,072 |           27.4×‡ |       19.0×‡ |         2.37× |           — |      0.72× |                 — |
+| unbind-all-100-singletons                      | lifecycle      |     1 |            73,408‡ |           23.8×‡ |       15.0×‡ |        1.92×‡ |           — |     0.66×‡ |                 — |
+| module-load-unload                             | boot           |     1 |         1,175,274‡ |           16.3×‡ |            — |             — |           — |          — |                 — |
+| module-cold-from-modules                       | boot           |     1 |          2,137,544 |           22.8×‡ |            — |             — |       4.10× |      1.28× |                 — |
+| module-cold-128                                | boot           |     1 |            197,100 |           24.0×‡ |            — |             — |       1.34× |      2.20× |                 — |
+| initialize-async-warmup                        | boot           |     1 |            764,598 |                — |            — |             — |           — |          — |                 — |
+| inspect-snapshot                               | introspection  |    20 |          9,118,597 |                — |            — |             — |           — |          — |                 — |
+| lookup-bindings                                | introspection  |   200 |         23,886,990 |                — |            — |             — |           — |          — |                 — |
+| generate-dependency-graph                      | introspection  |    10 |            695,582 |                — |            — |             — |           — |          — |                 — |
+| multi-tag-slot-resolve                         | micro          |   300 |         13,850,266 |                — |            — |             — |           — |          — |                 — |
+| multi-tag-constraint-resolve                   | micro          |   200 |          7,002,764 |                — |            — |             — |           — |          — |                 — |
+| multi-tag-select-32                            | micro          |   300 |          2,755,129 |                — |            — |             — |           — |          — |                 — |
+| mask-reject-wide-catalog                       | slot-selection |   300 |        34,752,903‡ |                — |            — |             — |           — |          — |                 — |
+| mask-accept-two-of-four                        | slot-selection |   300 |         19,928,006 |                — |            — |             — |           — |          — |                 — |
+| mask-collision-same-bit                        | slot-selection |   300 |         43,935,399 |                — |            — |             — |           — |          — |                 — |
+| slot-tag-array-hoisted                         | slot-selection |   300 |        146,741,693 |                — |            — |             — |           — |          — |                 — |
+| slot-tag-shorthand-hoisted                     | slot-selection |   300 |        157,077,367 |                — |            — |             — |           — |          — |                 — |
+| slot-tag-array-inline                          | slot-selection |   300 |         92,699,303 |                — |            — |             — |           — |          — |                 — |
+| slot-tag-shorthand-inline                      | slot-selection |   300 |        112,586,415 |                — |            — |             — |           — |          — |                 — |
+| slot-tag-zero-value                            | slot-selection |   300 |        141,118,673 |           6.54×† |            — |             — |           — |          — |                 — |
+| slot-name-and-tag                              | slot-selection |   300 |         45,041,194 |           2.32×† |            — |             — |           — |          — |                 — |
+| slot-tag-resolve-all                           | slot-selection |   300 |         40,916,945 |           3.49×† |            — |             — |           — |          — |                 — |
+| slot-tag-miss-optional                         | slot-selection |   300 |         65,685,979 |           2.69×† |            — |             — |           — |          — |                 — |
+| slot-tag-parent-owned                          | slot-selection |   300 |        129,100,821 |           6.12×† |            — |             — |           — |          — |                 — |
+| slot-name-parent-owned                         | slot-selection |   300 |        105,609,297 |           4.34×† |            — |             — |           — |          — |                 — |
+| slot-injected-name-compiled                    | slot-selection |   300 |         64,113,171 |                — |            — |             — |           — |          — |                 — |
+| slot-injected-name-interpreted                 | slot-selection |   300 |          6,010,010 |                — |            — |             — |           — |          — |                 — |
+| slot-injected-tag-compiled                     | slot-selection |   300 |         65,656,215 |                — |            — |             — |           — |          — |                 — |
+| slot-injected-tag-interpreted                  | slot-selection |   300 |          5,807,086 |                — |            — |             — |           — |          — |                 — |
+| plan-deps-inlined                              | resolution     |   300 |         58,971,124 |                — |            — |             — |           — |          — |                 — |
+| plan-escape-factory-dep                        | resolution     |   300 |          7,053,192 |                — |            — |             — |           — |          — |                 — |
+| plan-escape-scoped-dep                         | resolution     |   300 |         12,740,415 |                — |            — |             — |           — |          — |                 — |
+| plan-escape-hooked-dep                         | resolution     |   300 |          3,935,740 |                — |            — |             — |           — |          — |                 — |
+| plan-escape-optional-dep                       | resolution     |   300 |          6,033,526 |                — |            — |             — |           — |          — |                 — |
+| plan-escape-multi-dep                          | resolution     |   300 |          3,025,213 |                — |            — |             — |           — |          — |                 — |
+| plan-class-chain-24                            | resolution     |     1 |          7,299,648 |                — |            — |             — |           — |          — |                 — |
+| plan-class-chain-40                            | resolution     |     1 |         4,300,484‡ |                — |            — |             — |           — |          — |                 — |
+| interpreted-class-chain-24                     | resolution     |     1 |            479,959 |                — |            — |             — |           — |          — |                 — |
+| interpreted-class-chain-40                     | resolution     |     1 |            254,830 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-1                                    | resolution     |     1 |            966,434 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-256                                  | resolution     |     1 |             15,050 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-512                                  | resolution     |     1 |              7,840 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-1024                                 | resolution     |     1 |              3,840 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-2048                                 | resolution     |     1 |              1,918 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-4096                                 | resolution     |     1 |              1,130 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-8192                                 | resolution     |     1 |                640 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-deep-1                               | resolution     |     1 |            252,811 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-deep-256                             | resolution     |     1 |              4,690 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-deep-512                             | resolution     |     1 |              2,373 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-deep-1024                            | resolution     |     1 |              1,221 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-deep-2048                            | resolution     |     1 |                641 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-deep-8192                            | resolution     |     1 |                215 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-mixed-1                              | resolution     |     1 |            879,596 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-mixed-512                            | resolution     |     1 |              7,884 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-mixed-1024                           | resolution     |     1 |              3,911 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-mixed-2048                           | resolution     |     1 |              1,935 |                — |            — |             — |           — |          — |                 — |
+| plan-runs-mixed-8192                           | resolution     |     1 |                623 |                — |            — |             — |           — |          — |                 — |
+| nested-context-resolve-in-factory              | resolution     |   300 |         45,839,111 |           1.94×† |       3.98×† |        5.44×† |      19.1×† |     2.30×† |            0.87×† |
+| nested-container-resolve-in-factory            | resolution     |   300 |         39,450,976 |           1.69×† |       2.92×† |        4.65×† |      17.0×† |     1.08×† |            0.82×† |
+| accessor-injection-construct                   | resolution     |   300 |        10,861,571‡ |          0.31×†‡ |            — |             — |           — |          — |                 — |
 
 ## Re-running this
 

@@ -1,5 +1,5 @@
 {
-  "runId": "2026-10-18T07-56-19-799Z",
+  "runId": "2026-10-18T14-23-12-340Z",
   "runDate": "2026-10-18",
   "profile": { "mode": "full", "isolated": true, "trialCount": 3 },
   "environment": {
@@ -27,8 +27,8 @@
       "wins": 91,
       "parities": 1,
       "losses": 1,
-      "median": 4.306472254551093,
-      "geomean": 5.871205480650282,
+      "median": 4.504168260075184,
+      "geomean": 5.943614520701813,
       "unreliable": 45
     },
     {
@@ -38,8 +38,8 @@
       "wins": 39,
       "parities": 0,
       "losses": 0,
-      "median": 6.454990083666559,
-      "geomean": 6.163241494847089,
+      "median": 6.265003126188714,
+      "geomean": 6.263729587844842,
       "unreliable": 16
     },
     {
@@ -49,8 +49,8 @@
       "wins": 40,
       "parities": 1,
       "losses": 3,
-      "median": 4.549194998963513,
-      "geomean": 3.9698121422355057,
+      "median": 4.53765953983802,
+      "geomean": 4.000980942435498,
       "unreliable": 20
     },
     {
@@ -60,19 +60,19 @@
       "wins": 30,
       "parities": 0,
       "losses": 1,
-      "median": 13.217487158319297,
-      "geomean": 11.767218788671787,
+      "median": 12.324255579437928,
+      "geomean": 12.036669557911162,
       "unreliable": 16
     },
     {
       "competitor": "ditox",
       "displayName": "Ditox 3",
       "comparable": 46,
-      "wins": 35,
-      "parities": 3,
+      "wins": 36,
+      "parities": 2,
       "losses": 8,
-      "median": 1.3375412374007312,
-      "geomean": 1.702700112715798,
+      "median": 1.3399115771141017,
+      "geomean": 1.6911756545794434,
       "unreliable": 20
     },
     {
@@ -82,8 +82,8 @@
       "wins": 22,
       "parities": 2,
       "losses": 8,
-      "median": 1.5773900079139151,
-      "geomean": 1.5401349340265689,
+      "median": 1.555612975658206,
+      "geomean": 1.5205391680195044,
       "unreliable": 22
     }
   ],
@@ -91,87 +91,87 @@
     {
       "scenario": "accessor-injection-construct",
       "competitor": "inversify",
-      "ratio": 0.329683989332321,
+      "ratio": 0.3104509603094338,
       "unreliable": true
     },
-    { "scenario": "resolve-all-cold-10", "competitor": "tsyringe", "ratio": 0.6763244649046262, "unreliable": false },
-    { "scenario": "resolve-all-cold-100", "competitor": "tsyringe", "ratio": 0.49423011162026814, "unreliable": false },
+    { "scenario": "resolve-all-cold-10", "competitor": "tsyringe", "ratio": 0.6886100512624047, "unreliable": false },
+    { "scenario": "resolve-all-cold-100", "competitor": "tsyringe", "ratio": 0.49605821979963793, "unreliable": false },
     {
       "scenario": "misconfigured-missing-binding",
       "competitor": "tsyringe",
-      "ratio": 0.7139938599631139,
+      "ratio": 0.7228372805939859,
       "unreliable": false
     },
     {
       "scenario": "misconfigured-missing-binding",
       "competitor": "brandi",
-      "ratio": 0.7421792210333847,
+      "ratio": 0.7496963895677115,
       "unreliable": false
     },
-    { "scenario": "singleton-class-1-dep", "competitor": "ditox", "ratio": 0.9117409292926077, "unreliable": true },
+    { "scenario": "singleton-class-1-dep", "competitor": "ditox", "ratio": 0.9578691068027051, "unreliable": true },
     {
       "scenario": "realistic-graph-class-cold-resolve",
       "competitor": "ditox",
-      "ratio": 0.9509315186986654,
+      "ratio": 0.9128393827681714,
       "unreliable": false
     },
-    { "scenario": "bind-128-plain", "competitor": "ditox", "ratio": 0.40478117105055067, "unreliable": false },
+    { "scenario": "app-boot-40", "competitor": "ditox", "ratio": 0.9359523173061342, "unreliable": false },
+    { "scenario": "bind-128-plain", "competitor": "ditox", "ratio": 0.4185193827089761, "unreliable": false },
     {
       "scenario": "misconfigured-missing-binding",
       "competitor": "ditox",
-      "ratio": 0.7506469335047763,
+      "ratio": 0.7603503058348704,
       "unreliable": false
     },
-    { "scenario": "to-resolved-3-deps", "competitor": "ditox", "ratio": 0.9677603268653437, "unreliable": true },
-    { "scenario": "rebind-hot-swap", "competitor": "ditox", "ratio": 0.22897770747341664, "unreliable": true },
+    { "scenario": "rebind-hot-swap", "competitor": "ditox", "ratio": 0.2268778474705476, "unreliable": true },
     {
       "scenario": "materialize-100-singletons",
       "competitor": "ditox",
-      "ratio": 0.6790190837230541,
+      "ratio": 0.7225645996217132,
       "unreliable": false
     },
     {
       "scenario": "unbind-all-100-singletons",
       "competitor": "ditox",
-      "ratio": 0.6092176181240927,
+      "ratio": 0.6573533474881826,
       "unreliable": false
     },
     {
       "scenario": "realistic-graph-resolve-root",
       "competitor": "injection-js",
-      "ratio": 0.8599085189064865,
+      "ratio": 0.8897714928330509,
       "unreliable": false
     },
     {
       "scenario": "container-create-empty",
       "competitor": "injection-js",
-      "ratio": 0.5599680888788579,
+      "ratio": 0.6673369722068142,
       "unreliable": true
     },
-    { "scenario": "create-child-empty", "competitor": "injection-js", "ratio": 0.5736506482214769, "unreliable": true },
+    { "scenario": "create-child-empty", "competitor": "injection-js", "ratio": 0.5450541927171932, "unreliable": true },
     {
       "scenario": "misconfigured-missing-binding",
       "competitor": "injection-js",
-      "ratio": 0.9101822729737061,
+      "ratio": 0.8838800836795051,
       "unreliable": false
     },
-    { "scenario": "to-alias-redirect", "competitor": "injection-js", "ratio": 0.8933414581555235, "unreliable": true },
+    { "scenario": "to-alias-redirect", "competitor": "injection-js", "ratio": 0.9081655075802973, "unreliable": true },
     {
       "scenario": "alias-parent-owned-terminal",
       "competitor": "injection-js",
-      "ratio": 0.8724750040307698,
+      "ratio": 0.883957091763472,
       "unreliable": true
     },
     {
       "scenario": "nested-context-resolve-in-factory",
       "competitor": "injection-js",
-      "ratio": 0.8254899298702258,
+      "ratio": 0.8749179711047137,
       "unreliable": true
     },
     {
       "scenario": "nested-container-resolve-in-factory",
       "competitor": "injection-js",
-      "ratio": 0.7889240496506827,
+      "ratio": 0.8166490615215999,
       "unreliable": true
     }
   ],
