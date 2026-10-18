@@ -16,6 +16,20 @@ import {
 import { contrastRatio } from "#contrast";
 import { byName, evaluateNumber, readBlock, readDeclarations, trimNumber } from "#css";
 import { modulePath, repoPath, UI_ROOT } from "#paths";
+import {
+  tailwindBlur,
+  tailwindBreakpoints,
+  tailwindColors,
+  tailwindFontWeights,
+  tailwindLeading,
+  tailwindPerspective,
+  tailwindShadows,
+  tailwindSizing,
+  tailwindSpacing,
+  tailwindTracking,
+  tailwindTransitions,
+  tailwindTypeStyles,
+} from "#tailwind";
 
 /** A token as the design-system page reads it: a name, a value, and where it is used. */
 interface Token {
@@ -162,7 +176,7 @@ function readFont(): { families: Record<string, string>; font: FontFile } {
 }
 
 function readTypeGroups(): Array<Record<string, unknown>> {
-  return TYPE_GROUPS.map((group) => ({
+  const roles = TYPE_GROUPS.map((group) => ({
     family: group.family,
     name: group.name,
     styles: group.styles.map((style) => {
@@ -181,24 +195,7 @@ function readTypeGroups(): Array<Record<string, unknown>> {
       };
     }),
   }));
-}
-
-function readSpacing(): Array<Token> {
-  const base = tailwindValue("spacing");
-  const [, amount = "", unit = ""] = /^([\d.]+)([a-z]+)$/.exec(base) ?? [];
-  return [
-    {
-      name: "spacing",
-      usage:
-        "The base unit every spacing, size and inset utility multiplies. Change this to scale the whole library's density.",
-      value: base,
-    },
-    ...SPACING_STEPS.map(([step, usage]) => ({
-      name: `spacing-${step}`,
-      usage: `spacing × ${step}. ${usage}`,
-      value: `${trimNumber(Number(amount) * step)}${unit}`,
-    })),
-  ];
+  return [...roles, { family: "sans", name: "Tailwind scale", styles: tailwindTypeStyles() }];
 }
 
 function readRadius(): Array<Token> {
@@ -243,6 +240,21 @@ function gitRef(): string {
   return `${run("rev-parse", "--abbrev-ref", "HEAD")}@${run("rev-parse", "--short", "HEAD")}`;
 }
 
+/** Every family but `type` shares one namespace in the artifact; a repeated name would be dropped silently. */
+function assertUniqueNames(tokens: Record<string, unknown>): void {
+  const seen = new Map<string, string>();
+  for (const [family, value] of Object.entries(tokens)) {
+    const list = (value as { tokens?: Array<{ name: string }> } | undefined)?.tokens;
+    for (const token of Array.isArray(list) ? list : []) {
+      const previous = seen.get(token.name);
+      if (previous !== undefined) {
+        throw new Error(`Token "${token.name}" is in both ${previous} and ${family}; names are shared across families`);
+      }
+      seen.set(token.name, family);
+    }
+  }
+}
+
 /**
  * Builds `tokens.json` from the palette, the preset, Tailwind's theme and the site's typography.
  *
@@ -277,7 +289,7 @@ export function buildTokens(): TokenBuild {
         { id: "light", name: "Light" },
         { id: "dark", name: "Dark" },
       ],
-      tokens: colors,
+      tokens: [...colors, ...tailwindColors()],
     },
     type: {
       fonts: [{ family: font.family, file: font.target, style: "normal", weight: font.weight }],
@@ -285,18 +297,32 @@ export function buildTokens(): TokenBuild {
       groups: readTypeGroups(),
     },
     spacing: {
-      note: "Tailwind 4 spacing: every `p-*`, `gap-*`, `h-*` utility is `spacing × N`. Only `spacing` drives the components; the steps document the multiples the library actually uses.",
-      tokens: readSpacing(),
+      note: "Tailwind 4 spacing: every `p-*`, `gap-*`, `h-*` utility is `spacing × N`. Only `spacing` drives the components; every multiple Tailwind ships is listed, with a note where the library uses it.",
+      tokens: tailwindSpacing(new Map(SPACING_STEPS)),
     },
     radius: {
       note: "Every step derives from `radius`; the values here are at its default.",
       tokens: readRadius(),
     },
     shadow: {
-      note: "Tailwind 4's shadow scale, as the components use it. Shadows stay quiet: borders and `ring` do most of the separating.",
-      tokens: Object.entries(SHADOW_USAGE).map(([name, usage]) => ({ name, usage, value: tailwindValue(name) })),
+      note: "Tailwind 4's full shadow set (box, inset, drop and text); notes mark the ones the components use. Shadows stay quiet: borders and `ring` do most of the separating.",
+      tokens: tailwindShadows(SHADOW_USAGE),
     },
-    breakpoint: { note: "Custom breakpoints minted by the preset.", tokens: [readBreakpoint()] },
+    breakpoint: {
+      note: "Tailwind's responsive breakpoints, then the custom one the preset mints.",
+      tokens: [...tailwindBreakpoints(), readBreakpoint()],
+    },
+    sizing: { note: "Tailwind's named container widths and aspect ratio.", tokens: tailwindSizing() },
+    fontWeight: { note: "Tailwind's font weights. Inter Variable covers all nine.", tokens: tailwindFontWeights() },
+    tracking: { note: "Tailwind's letter-spacing steps.", tokens: tailwindTracking() },
+    leading: { note: "Tailwind's named line heights.", tokens: tailwindLeading() },
+    blur: { note: "Tailwind's blur radii.", tokens: tailwindBlur() },
+    perspective: { note: "Tailwind's 3D perspective distances.", tokens: tailwindPerspective() },
+    transition: {
+      note: "Tailwind's easing curves, animations and default transition. The preset's own motion tokens are in the brand book.",
+      tokens: tailwindTransitions(),
+    },
   };
+  assertUniqueNames(tokens);
   return { font, shortfalls, tokens };
 }

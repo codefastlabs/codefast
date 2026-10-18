@@ -108,8 +108,8 @@ Write like the library's own docs: plain, direct, second person, present tense.
 
 ### Motion
 
-Motion is short and purposeful. The token file has no motion family, so these are the preset's values, read from
-`motion.css` on every build.
+Motion is short and purposeful. The token file carries Tailwind's easing curves, but not the preset's own, so these are
+the preset's values, read from `motion.css` on every build.
 
 {{motion}}
 
@@ -126,6 +126,20 @@ Motion is short and purposeful. The token file has no motion family, so these ar
 - Sidebar docks from `breakpoint-sidebar` (48rem) and is a Sheet below it.
 - The library is RTL-ready: it uses logical properties (`ps-`, `me-`, `start-`), so a `dir="rtl"` ancestor mirrors every
   component.
+
+### Tailwind's defaults
+
+The system carries Tailwind v4's whole default theme, not only the steps the components use, so you can build beside
+them with the same scales. The components themselves read the semantic tokens, which resolve to steps of these.
+
+- **Palette**: every hue at 50–950, plus `black` and `white`, in Colors (`red-500`, `zinc-200`).
+- **Type**: the `type-xs` … `type-9xl` styles under Typography are `text-xs` … `text-9xl`; weights, tracking and leading
+  are the `fontWeight`, `tracking` and `leading` families.
+- **Space and shape**: every `spacing` multiple, from `spacing-0` to `spacing-96`; the radius scale derives from
+  `radius`.
+- **Layout**: `breakpoint-sm` … `breakpoint-2xl`, and `container-3xs` … `container-7xl` for `max-w-*` and `@container`.
+- **Elevation and effects**: box, inset, drop and text shadows, `blur-*` and `perspective-*`.
+- **Motion**: `ease-in`, `ease-out`, `ease-in-out`, the four `animate-*` presets and the default transition.
 
 ## Iconography
 
