@@ -44,6 +44,13 @@ describe("renderResultsPage", () => {
     );
   });
 
+  it("separates a time from its unit with a plain space, never a non-breaking one", () => {
+    const page = renderResultsPage(input());
+
+    expect(page).toMatch(/about \d+(?:\.\d+)? (?:ns|µs|ms) each/);
+    expect(page).not.toContain(" ");
+  });
+
   it("quotes each loss note with its rows' figures", () => {
     const page = renderResultsPage(input());
 

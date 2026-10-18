@@ -63,14 +63,14 @@ faster than any frame could notice. Three measurements are the ones an applicati
 its components costs as a module loads, what one render costs, and what the library adds to a browser bundle.
 
 **Defining a component.** What a module pays as it loads: one component's `tv()` call, and that definition plus its
-first render. `define-only-simple` runs at 27,382,391 ops/s, about 37 ns each, and reads 2.14× tailwind-variants. Beside
+first render. `define-only-simple` runs at 27,382,391 ops/s, about 37 ns each, and reads 2.14× tailwind-variants. Beside
 it: `define-only-slots` 6.17×† tailwind-variants; `first-render-simple` 1.54× tailwind-variants; `first-render-slots`
 1.34×‡ tailwind-variants. An eager library compiles its configuration at definition and a lazy one at the first render,
 so the definition and first-render rows are read together, and all four stay off the aggregates. `cva` is not ported to
 them.
 
 **One render.** A component rendered with a selection it has seen before, through `tailwind-merge` — what every render
-after the first costs. `simple-with-merge` runs at 12,853,801 ops/s, about 78 ns each, and reads 5.88× tailwind-variants
+after the first costs. `simple-with-merge` runs at 12,853,801 ops/s, about 78 ns each, and reads 5.88× tailwind-variants
 and 6.18× class-variance-authority. Beside it: `complex-with-merge` 15.5× tailwind-variants and 20.1×
 class-variance-authority; `slots-with-merge` 4.47× tailwind-variants. Both `tv()` libraries answer a repeated selection
 from a cache, so these rows price the hit path; `cva` caches nothing, so its cells compare a hit against a full
