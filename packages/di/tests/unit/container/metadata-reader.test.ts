@@ -12,7 +12,9 @@ import { token } from "#core/token";
 import type { Constructor } from "#core/types";
 import { InvalidMetadataError, MissingMetadataError } from "#errors";
 import { MetadataReaderToken } from "#metadata/reader-token";
+import { defaultMetadataReader } from "#metadata/symbol-reader";
 import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#metadata/types";
+import { verifyingMetadataReader } from "#metadata/verifying-reader";
 
 const dsnToken = token<string>("metadata-reader.dsn");
 
@@ -49,7 +51,7 @@ function tableReader(overrides?: { lifecycle?: boolean }): MetadataReader {
 
 describe("ContainerOptions.metadataReader", () => {
   it("resolves a class the decorator reader knows nothing about", () => {
-    const container = Container.create({ metadataReader: tableReader() });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(tableReader()) });
 
     container.bind(dsnToken).toConstantValue("postgres://localhost/app");
     container.bind(Pool).toSelf().singleton();
@@ -58,7 +60,7 @@ describe("ContainerOptions.metadataReader", () => {
   });
 
   it("is inherited by children, which build their own resolver", () => {
-    const root = Container.create({ metadataReader: tableReader() });
+    const root = Container.create({ metadataReader: verifyingMetadataReader(tableReader()) });
     const child = root.createChild().createChild();
 
     child.bind(dsnToken).toConstantValue("postgres://localhost/child");
@@ -71,13 +73,13 @@ describe("ContainerOptions.metadataReader", () => {
     const reads: Array<Constructor> = [];
     const reader = tableReader();
     const root = Container.create({
-      metadataReader: {
+      metadataReader: verifyingMetadataReader({
         ...reader,
         getConstructorMetadata(target: Constructor) {
           reads.push(target);
           return reader.getConstructorMetadata(target);
         },
-      },
+      }),
     });
     root.bind(dsnToken).toConstantValue("postgres://localhost/app");
     root.bind(Pool).toSelf().transient();
@@ -98,7 +100,7 @@ describe("ContainerOptions.metadataReader", () => {
       }
     }
     const container = Container.create({
-      metadataReader: {
+      metadataReader: verifyingMetadataReader({
         getConstructorMetadata: () => {
           log.push("constructor-metadata");
           return { params: [] };
@@ -107,7 +109,7 @@ describe("ContainerOptions.metadataReader", () => {
           log.push("lifecycle-metadata");
           return undefined;
         },
-      },
+      }),
     });
     const firstToken = token<Probe>("metadata-reader.first");
     const secondToken = token<Probe>("metadata-reader.second");
@@ -122,16 +124,16 @@ describe("ContainerOptions.metadataReader", () => {
   });
 
   it("keeps one reader's answers apart from another's", () => {
-    const described = Container.create({ metadataReader: tableReader() });
+    const described = Container.create({ metadataReader: verifyingMetadataReader(tableReader()) });
     described.bind(dsnToken).toConstantValue("postgres://localhost/app");
     described.bind(Pool).toSelf().transient();
     described.resolve(Pool);
 
     const bare = Container.create({
-      metadataReader: {
+      metadataReader: verifyingMetadataReader({
         getConstructorMetadata: () => ({ params: [] }),
         getLifecycleMetadata: () => undefined,
-      },
+      }),
     });
     bare.bind(Pool).toSelf().transient();
 
@@ -139,7 +141,7 @@ describe("ContainerOptions.metadataReader", () => {
   });
 
   it("drives the lifecycle hooks the reader declares", async () => {
-    const container = Container.create({ metadataReader: tableReader({ lifecycle: true }) });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(tableReader({ lifecycle: true })) });
 
     container.bind(dsnToken).toConstantValue("postgres://localhost/app");
     container.bind(Pool).toSelf().singleton();
@@ -154,7 +156,7 @@ describe("ContainerOptions.metadataReader", () => {
   });
 
   it("is also what validate() and generateDependencyGraph() read", () => {
-    const container = Container.create({ metadataReader: tableReader() });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(tableReader()) });
 
     container.bind(dsnToken).toConstantValue("postgres://localhost/app");
     container.bind(Pool).toSelf().singleton();
@@ -171,13 +173,15 @@ describe("ContainerOptions.metadataReader", () => {
   });
 
   it("outranks a MetadataReaderToken binding on the same container", () => {
-    const container = Container.create({ metadataReader: tableReader() });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(tableReader()) });
 
     // A reader that describes nothing: if it won, resolving Pool would throw.
-    container.bind(MetadataReaderToken).toConstantValue({
-      getConstructorMetadata: () => undefined,
-      getLifecycleMetadata: () => undefined,
-    });
+    container.bind(MetadataReaderToken).toConstantValue(
+      verifyingMetadataReader({
+        getConstructorMetadata: () => undefined,
+        getLifecycleMetadata: () => undefined,
+      }),
+    );
     container.bind(dsnToken).toConstantValue("postgres://localhost/app");
     container.bind(Pool).toSelf().singleton();
 
@@ -185,13 +189,15 @@ describe("ContainerOptions.metadataReader", () => {
   });
 
   it("outranks that binding for the children too, at every depth", () => {
-    const root = Container.create({ metadataReader: tableReader() });
+    const root = Container.create({ metadataReader: verifyingMetadataReader(tableReader()) });
 
     // A reader that describes nothing: a child that inherited it instead would fail to build Pool.
-    root.bind(MetadataReaderToken).toConstantValue({
-      getConstructorMetadata: () => undefined,
-      getLifecycleMetadata: () => undefined,
-    });
+    root.bind(MetadataReaderToken).toConstantValue(
+      verifyingMetadataReader({
+        getConstructorMetadata: () => undefined,
+        getLifecycleMetadata: () => undefined,
+      }),
+    );
     const child = root.createChild();
     const grandchild = child.createChild();
 
@@ -207,7 +213,7 @@ describe("MetadataReaderToken binding", () => {
   it("cannot reach the resolver of the container it is bound on", () => {
     const container = Container.create();
 
-    container.bind(MetadataReaderToken).toConstantValue(tableReader());
+    container.bind(MetadataReaderToken).toConstantValue(verifyingMetadataReader(tableReader()));
     container.bind(dsnToken).toConstantValue("postgres://localhost/app");
     container.bind(Pool).toSelf().singleton();
 
@@ -217,7 +223,7 @@ describe("MetadataReaderToken binding", () => {
   it("does not reach that container's validate() or graph either", () => {
     const container = Container.create();
 
-    container.bind(MetadataReaderToken).toConstantValue(tableReader());
+    container.bind(MetadataReaderToken).toConstantValue(verifyingMetadataReader(tableReader()));
     container.bind(dsnToken).toConstantValue("postgres://localhost/app");
     container.bind(Pool).toSelf().singleton();
 
@@ -229,7 +235,7 @@ describe("MetadataReaderToken binding", () => {
   it("reaches a child, whose resolver is built after the binding exists", () => {
     const root = Container.create();
 
-    root.bind(MetadataReaderToken).toConstantValue(tableReader());
+    root.bind(MetadataReaderToken).toConstantValue(verifyingMetadataReader(tableReader()));
 
     const child = root.createChild();
 
@@ -249,10 +255,36 @@ describe("a reader that names a lifecycle method the class does not have", () =>
       getConstructorMetadata: () => ({ params: [] }),
       getLifecycleMetadata: () => ({ postConstruct: ["strat"], preDestroy: [] }),
     };
-    const container = Container.create({ metadataReader: lyingReader });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(lyingReader) });
     container.bind(Pool).toSelf();
 
     expect(() => container.resolve(Pool)).toThrow(InvalidMetadataError);
     expect(() => container.resolve(Pool)).toThrow(/lifecycle method 'strat' is not a method/);
+  });
+});
+
+describe("a container accepts only a verified reader", () => {
+  it("refuses an unwrapped reader passed as an option", () => {
+    expect(() =>
+      Container.create({
+        // @ts-expect-error — an unwrapped reader is a type error; the runtime guard is what is under test.
+        metadataReader: tableReader(),
+      }),
+    ).toThrow(TypeError);
+  });
+
+  it("refuses an unwrapped reader bound for the children", () => {
+    const root = Container.create();
+    // @ts-expect-error — the token holds a verified reader; the runtime guard is what is under test.
+    root.bind(MetadataReaderToken).toConstantValue(tableReader());
+
+    expect(() => root.createChild()).toThrow(TypeError);
+  });
+
+  it("hands back a reader that is already verified instead of wrapping it again", () => {
+    const verified = verifyingMetadataReader(tableReader());
+
+    expect(verifyingMetadataReader(verified)).toBe(verified);
+    expect(verifyingMetadataReader(defaultMetadataReader)).toBe(defaultMetadataReader);
   });
 });

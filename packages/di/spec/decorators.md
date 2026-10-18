@@ -196,18 +196,24 @@ injection throws `MissingContainerContextError` unless the caller opens one with
 > and children inherit it (a child calls the parent's `#getMetadataReader()` again when building its own resolver).
 
 ```ts
-import { Container } from "@codefast/di";
+import { Container, verifyingMetadataReader } from "@codefast/di";
 
-const container = Container.create({ metadataReader: customReader });
+const container = Container.create({ metadataReader: verifyingMetadataReader(customReader) });
 ```
+
+> **Normative — a container reads only a verified reader.** `ContainerOptions.metadataReader` and `MetadataReaderToken`
+> take a `VerifiedMetadataReader`: the decorator reader, or what `verifyingMetadataReader` returns for a custom one. The
+> wrapper checks each answer's shape before the engine reads it and memoizes it per class. A container handed an
+> unwrapped reader — through the option, or bound for its children — throws `TypeError`. The checks are a cost only a
+> program with a reader of its own pays, so the wrapping is the caller's.
 
 ### `MetadataReaderToken` — the binding, and its limits
 
 ```ts
-import { MetadataReaderToken } from "@codefast/di";
+import { MetadataReaderToken, verifyingMetadataReader } from "@codefast/di";
 
 const root = Container.create();
-root.bind(MetadataReaderToken).toConstantValue(customReader);
+root.bind(MetadataReaderToken).toConstantValue(verifyingMetadataReader(customReader));
 const app = root.createChild(); // app's resolver is built after the binding exists → it sees the reader
 ```
 

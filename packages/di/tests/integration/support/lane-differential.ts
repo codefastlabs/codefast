@@ -19,6 +19,7 @@ import type { BindingScope, Constructor, ResolutionContext } from "#core/types";
 import type { InjectableDependency } from "#injection/descriptor";
 import { injectAll, optional } from "#injection/descriptor";
 import type { ConstructorMetadata, MetadataReader, ParamMetadata } from "#metadata/types";
+import { verifyingMetadataReader } from "#metadata/verifying-reader";
 import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/codegen";
 import { whenParentIs } from "#resolution/select/constraints";
 
@@ -524,14 +525,14 @@ function unwrapLoneMember(values: ReadonlyArray<unknown>): unknown {
 
 /** A fresh root container holding the graph. */
 export function rootHost(spec: GraphSpec, materials: GraphMaterials): Container {
-  const container = ContainerStatic.create({ metadataReader: materials.reader });
+  const container = ContainerStatic.create({ metadataReader: verifyingMetadataReader(materials.reader) });
   bindGraph(container, spec, materials);
   return container;
 }
 
 /** A fresh child whose parent holds the graph — the per-request shape. */
 export function childHost(spec: GraphSpec, materials: GraphMaterials): Container {
-  const parent = ContainerStatic.create({ metadataReader: materials.reader });
+  const parent = ContainerStatic.create({ metadataReader: verifyingMetadataReader(materials.reader) });
   bindGraph(parent, spec, materials);
   return parent.createChild();
 }

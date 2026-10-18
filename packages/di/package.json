@@ -255,6 +255,11 @@
       "types": "./dist/metadata/types.d.ts",
       "import": "./dist/metadata/types.js"
     },
+    "./metadata/verified-reader": {
+      "source": "./src/metadata/verified-reader.ts",
+      "types": "./dist/metadata/verified-reader.d.ts",
+      "import": "./dist/metadata/verified-reader.js"
+    },
     "./metadata/verify": {
       "source": "./src/metadata/verify.ts",
       "types": "./dist/metadata/verify.d.ts",

@@ -23,6 +23,7 @@ import {
   MissingMetadataError,
   token,
   validate,
+  verifyingMetadataReader,
 } from "@codefast/di";
 import type { ConstructorMetadata, Constructor, LifecycleMetadata, MetadataReader } from "@codefast/di";
 
@@ -157,7 +158,7 @@ try {
 
 section("2. Container.create({ metadataReader })");
 
-const app = Container.create({ metadataReader: new TableFirstMetadataReader() });
+const app = Container.create({ metadataReader: verifyingMetadataReader(new TableFirstMetadataReader()) });
 
 app.bind(ConfigToken).toConstantValue({ dsn: "postgres://localhost/app" });
 app.bind(LoggerToken).toConstantValue({ log: (message) => console.log(`  [log] ${message}`) });
@@ -214,7 +215,7 @@ item("child inherited the reader", request.resolve(LegacyPoolToken).config.dsn);
 
 const readerRoot = Container.create();
 
-readerRoot.bind(MetadataReaderToken).toConstantValue(new TableFirstMetadataReader());
+readerRoot.bind(MetadataReaderToken).toConstantValue(verifyingMetadataReader(new TableFirstMetadataReader()));
 
 const boundChild = readerRoot.createChild();
 
@@ -227,7 +228,7 @@ item("bound in the parent", boundChild.resolve(LegacyPoolToken).config.dsn);
 // The same binding on the container that needs it is too late — prefer the option.
 const tooLate = Container.create();
 
-tooLate.bind(MetadataReaderToken).toConstantValue(new TableFirstMetadataReader());
+tooLate.bind(MetadataReaderToken).toConstantValue(verifyingMetadataReader(new TableFirstMetadataReader()));
 tooLate.bind(ConfigToken).toConstantValue({ dsn: "postgres://localhost/late" });
 tooLate.bind(LoggerToken).toConstantValue({ log: () => undefined });
 tooLate.bind(LegacyPoolToken).to(LegacyPool).singleton();
