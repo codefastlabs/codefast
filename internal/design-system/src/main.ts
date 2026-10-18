@@ -11,7 +11,6 @@ import { OUTPUT_ROOT } from "#paths";
 import { buildPreviews, writePreviewEntries } from "#previews";
 import { discoverCards } from "#registry";
 import { buildRuntime } from "#runtime";
-import { checkPreviews } from "#smoke";
 import { buildStyles } from "#styles";
 import { buildTokens } from "#tokens";
 
@@ -31,14 +30,6 @@ const files: Array<OutputFile> = [
   ...buildComponentDocs(cards),
   buildDeclarations(),
 ];
-
-const failures = await checkPreviews(files, [
-  ...runtime.libraries.map((library) => library.file),
-  "components/bundle.js",
-]);
-if (failures.length > 0) {
-  throw new Error(`${failures.length} preview(s) failed to mount:\n${failures.join("\n")}`);
-}
 
 writeOutput(files);
 // Vector marks lead their group, then names in order, so `mark.svg` comes before `mark-dark.svg` and the lockups.

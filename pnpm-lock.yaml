@@ -245,9 +245,6 @@ catalogs:
     '@types/jest-axe':
       specifier: ^3.5.9
       version: 3.5.9
-    '@types/jsdom':
-      specifier: ^30.0.0
-      version: 30.0.0
     '@types/picomatch':
       specifier: ^4.0.3
       version: 4.0.3
@@ -470,10 +467,6 @@ catalogs:
     '@types/node':
       specifier: ~22.20.5
       version: 22.20.5
-  node24.15:
-    '@types/node':
-      specifier: ~24.13.6
-      version: 24.13.6
 
 overrides:
   '@types/node@*': ~22.12.0
@@ -953,9 +946,6 @@ importers:
       '@tailwindcss/postcss':
         specifier: 'catalog:'
         version: 4.3.3
-      jsdom:
-        specifier: 'catalog:'
-        version: 30.1.2
       lucide-react:
         specifier: 'catalog:'
         version: 1.55.0(@types/react@19.3.0)(react@19.3.0)
@@ -976,17 +966,14 @@ importers:
         version: 4.3.3
       vite:
         specifier: 'catalog:'
-        version: 8.3.4(@types/node@24.13.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
+        version: 8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
     devDependencies:
       '@codefast/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      '@types/jsdom':
-        specifier: 'catalog:'
-        version: 30.0.0
       '@types/node':
-        specifier: catalog:node24.15
-        version: 24.13.6
+        specifier: catalog:node22.22
+        version: 22.20.5
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
@@ -4400,9 +4387,6 @@ packages:
   '@types/jest@30.0.0':
     resolution: {integrity: sha512-XTYugzhuwqWjws0CVz8QpM36+T+Dz5mTEBKhNs/esGLnCIlGdRy+Dq78NRjd7ls7r8BC8ZRMOrKlkO1hU0JOwA==}
 
-  '@types/jsdom@30.0.0':
-    resolution: {integrity: sha512-uAHGxujGE0cDaKGdK28zgDotFtNA7MKq5DXl8LrfdxdCI8VHcg15oJz+amHTChPNI5JpgEPQWc2xFdrw3em/nQ==}
-
   '@types/jsesc@2.5.1':
     resolution: {integrity: sha512-9VN+6yxLOPLOav+7PwjZbxiID2bVaeq0ED4qSQmdQTdjnXJSaCVKTR58t15oqH1H5t8Ng2ZX1SabJVoN9Q34bw==}
 
@@ -4417,9 +4401,6 @@ packages:
 
   '@types/node@22.20.5':
     resolution: {integrity: sha512-U2+DNr+wSjpsTS/wZGYHq7GcwfuSmKiKvoPvK22zwTlRhU91yOniN4qRR5KhIjvif7ysw/dz/hKmfDH0Ris4aA==}
-
-  '@types/node@24.13.6':
-    resolution: {integrity: sha512-SGrw/h3KPFshy3OE6ZL53LMBG5vGQQ8/gIpiqz/kRZhPJ7HgwCEs8LBuNtWLa8dvGZVpSF7+Bf+c11HUrCb/yg==}
 
   '@types/picomatch@4.0.3':
     resolution: {integrity: sha512-iG0T6+nYJ9FAPmx9SsUlnwcq1ZVRuCXcVEvWnntoPlrOpwtSTKNDC9uVAxTsC3PUvJ+99n4RpAcNgBbHX3JSnQ==}
@@ -4437,9 +4418,6 @@ packages:
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
-
-  '@types/tough-cookie@4.0.5':
-    resolution: {integrity: sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==}
 
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
@@ -6375,12 +6353,6 @@ packages:
 
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-
-  undici-types@7.18.2:
-    resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
-
-  undici-types@8.11.2:
-    resolution: {integrity: sha512-iMVNmWZ0leK/goS6eXMizSzmm9CDWtyphwbaCms3DNLqRxDL+mMoNVcZMTyyVgXP0N+Z8neAMzDoUOUJL8veKg==}
 
   undici@8.11.2:
     resolution: {integrity: sha512-u4UB2/IrKdU6lFxumHmmo1a3fCQO5tzQllRorfoRS63txhrB7xTpSn1PftwC4qEHkOaqP95fCWW4lJzwErwzhQ==}
@@ -9542,13 +9514,6 @@ snapshots:
       expect: 30.5.2
       pretty-format: 30.5.1
 
-  '@types/jsdom@30.0.0':
-    dependencies:
-      '@types/node': 22.12.0
-      '@types/tough-cookie': 4.0.5
-      parse5: 8.0.1
-      undici-types: 8.11.2
-
   '@types/jsesc@2.5.1': {}
 
   '@types/mdast@4.0.4':
@@ -9567,10 +9532,6 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/node@24.13.6':
-    dependencies:
-      undici-types: 7.18.2
-
   '@types/picomatch@4.0.3': {}
 
   '@types/react-dom@19.3.0(@types/react@19.3.0)':
@@ -9584,8 +9545,6 @@ snapshots:
   '@types/semver@7.8.0': {}
 
   '@types/stack-utils@2.0.3': {}
-
-  '@types/tough-cookie@4.0.5': {}
 
   '@types/trusted-types@2.0.7':
     optional: true
@@ -11548,10 +11507,6 @@ snapshots:
 
   undici-types@6.21.0: {}
 
-  undici-types@7.18.2: {}
-
-  undici-types@8.11.2: {}
-
   undici@8.11.2: {}
 
   unenv@2.0.0-rc.24:
@@ -11699,21 +11654,6 @@ snapshots:
       tinyglobby: 0.2.17
     optionalDependencies:
       '@types/node': 22.20.5
-      esbuild: 0.28.2
-      fsevents: 2.3.3
-      jiti: 2.7.0
-      tsx: 4.23.15
-      yaml: 2.9.1
-
-  vite@8.3.4(@types/node@24.13.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1):
-    dependencies:
-      lightningcss: 1.33.0
-      picomatch: 4.0.7
-      postcss: 8.5.29
-      rolldown: 1.2.14
-      tinyglobby: 0.2.17
-    optionalDependencies:
-      '@types/node': 24.13.6
       esbuild: 0.28.2
       fsevents: 2.3.3
       jiti: 2.7.0

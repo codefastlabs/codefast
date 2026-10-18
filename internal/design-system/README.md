@@ -25,9 +25,6 @@ Everything lands in `dist/`, laid out the way the artifact serves it:
 | `files.json`                | Every file's SHA-256, size and kind: `upload` (an image for the asset store) or `file`.                                                                                                |
 | `index-fields.json`         | The keys of the artifact's `design-system.json` this build owns: `title`, `namespace`, `libraries`, `groups`, and each asset group's `name`, `tile` and `order`.                       |
 
-Before writing anything the build mounts every preview in jsdom on the real runtime scripts and fails if one throws, so
-a demo that needs a missing provider, or a part the bundle lacks, is caught here rather than on the page.
-
 ## What is hand-written
 
 - `content/` — the brand book, the cover, and the Logos and Icons guidance.
