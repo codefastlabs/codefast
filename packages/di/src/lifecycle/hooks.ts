@@ -127,7 +127,7 @@ export class LifecycleManager {
   ): Value | Promise<Value> {
     let activated: Value | Promise<Value> = instance;
 
-    // 1. @postConstruct() — after TC39 construction (constructor + accessor addInitializer callbacks)
+    // 1. @postConstruct() — after TC39 construction (accessor initial values + constructor)
     for (const methodName of this.#lifecycleMethods(binding, metadataReader, "postConstruct")) {
       activated = afterActivationStep(activated, (current) => {
         const hookResult = callHook(current, methodName);

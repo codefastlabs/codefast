@@ -4,6 +4,8 @@
  * @remarks A dependency the compiler cannot inline escapes to a resolver callback instead; the
  * closure must stay callable for it, which is what bounds what may be inlined.
  */
+import type { AmbientResolution } from "#ambient-container";
+import { isPreparableSlot, PreparedAccessorResolution } from "#ambient-container";
 import type { Binding } from "#core/binding";
 import { NO_INSTANCE } from "#core/binding";
 import type { ConstructorInvocation } from "#core/constructor-type";
@@ -140,11 +142,10 @@ export interface InstantiationPlanHost {
   /** Cached postConstruct presence — `undefined` until a runtime resolve discovers it. */
   knownPostConstruct(target: Constructor): boolean | undefined;
   needsActiveContainer(target: Constructor): boolean;
-  /**
-   * Constructs a class whose accessors resolve during construction, with the container ambient and
-   * the binding's frame on the path so an accessor that cycles back is still caught.
-   */
-  constructWithAccessors(binding: Binding, target: ConstructorInvocation, deps: Array<unknown>): unknown;
+  /** The slots of a class's `@inject` accessors, in the order their initializers run; empty when it has none. */
+  accessorSlots(target: Constructor): ReadonlyArray<DependencySlot>;
+  /** Constructs a class with the container ambient and `resolution` answering its accessors. */
+  constructWithAccessors(target: ConstructorInvocation, deps: Array<unknown>, resolution: AmbientResolution): unknown;
   getConstructorMetadata(target: Constructor): ConstructorMetadata | undefined;
   /** Options-less lookup with alias hops folded; `null` when the fast lane can't answer. */
   lookupDependencyEntry(token: Token<unknown> | Constructor): InstantiationPlanDependencyEntry | null;
@@ -402,26 +403,25 @@ export class InstantiationPlanCompiler {
     if (hasPostConstruct) {
       return null;
     }
-    // An accessor-injected class compiles only as the plan's root: its accessors resolve during
-    // construction with the class's own frame on the path, and a root has no static ancestors to replay.
-    const withAccessors = this.#host.needsActiveContainer(target);
-    if (withAccessors && depth !== 0) {
-      return null;
+    const accessorSlots = this.#host.accessorSlots(target);
+    // A slot no `@inject` initializer asks for — a custom reader's own record — would be resolved for nothing.
+    for (let index = 0; index < accessorSlots.length; index += 1) {
+      if (!isPreparableSlot(accessorSlots[index]!)) {
+        return null;
+      }
     }
     const invokable = target as ConstructorInvocation;
     const meta = this.#host.getConstructorMetadata(target);
-    if (meta === undefined) {
-      // Metadata-less classes with required params throw on the runtime path — keep them there.
-      if (target.length !== 0) {
-        return null;
-      }
-      return this.#classNode(binding, invokable, withAccessors, []);
+    // Metadata-less classes with required params throw on the runtime path — keep them there.
+    if (meta === undefined && target.length !== 0) {
+      return null;
     }
-    const params = meta.params;
-    if (params.length === 0) {
-      return this.#classNode(binding, invokable, withAccessors, []);
+    const params = meta?.params ?? [];
+    if (params.length === 0 && accessorSlots.length === 0) {
+      return this.#classNode(invokable, []);
     }
     const deps = new Array<SyncNode>(params.length);
+    const accessorDeps = new Array<SyncNode>(accessorSlots.length);
     const depAncestors = [...ancestors, binding];
     compileStack.add(binding.identifier);
     try {
@@ -432,26 +432,89 @@ export class InstantiationPlanCompiler {
         }
         deps[index] = dep;
       }
+      for (let index = 0; index < accessorSlots.length; index += 1) {
+        const dep = this.#compileInjectionThunk(accessorSlots[index]!, compileStack, depth, depAncestors);
+        if (dep === PLAN_RETRY) {
+          return dep;
+        }
+        accessorDeps[index] = dep;
+      }
     } finally {
       compileStack.delete(binding.identifier);
     }
-    return this.#classNode(binding, invokable, withAccessors, deps);
+    if (accessorSlots.length === 0) {
+      return this.#classNode(invokable, deps);
+    }
+    return this.#accessorClassNode(invokable, deps, accessorSlots, accessorDeps, depAncestors);
+  }
+
+  /**
+   * A class whose accessors take values the plan resolves before `new`, as its params do.
+   *
+   * @remarks The fallback resolves an accessor the prepared values do not cover, seeded with the class
+   * on the path so a cycle back into it is still caught.
+   */
+  #accessorClassNode(
+    invokable: ConstructorInvocation,
+    deps: ReadonlyArray<SyncNode>,
+    accessorSlots: ReadonlyArray<DependencySlot>,
+    accessorDeps: ReadonlyArray<SyncNode>,
+    ancestors: ReadonlyArray<Binding>,
+  ): SyncNode {
+    const host = this.#host;
+    const fallback = this.#seededResolution(ancestors);
+    const construct = (params: Array<unknown>, accessorValues: Array<unknown>): unknown =>
+      host.constructWithAccessors(
+        invokable,
+        params,
+        new PreparedAccessorResolution(fallback, accessorSlots, accessorValues),
+      );
+    const runs = deps.map((dep) => dep.run);
+    const accessorRuns = accessorDeps.map((dep) => dep.run);
+    const node: PlanNode = {
+      kind: "accessors",
+      construct,
+      deps: deps.map((dep) => dep.node),
+      accessors: accessorDeps.map((dep) => dep.node),
+    };
+    // The common shape — no constructor params, one accessor — is written out so it maps nothing.
+    if (runs.length === 0 && accessorRuns.length === 1) {
+      const accessor0 = accessorRuns[0]!;
+      return { run: () => construct([], [accessor0()]), node };
+    }
+    return {
+      run: () =>
+        construct(
+          runs.map((run) => run()),
+          accessorRuns.map((run) => run()),
+        ),
+      node,
+    };
+  }
+
+  /** A path-continuing resolution seeded with fixed ancestors, for a request no thunk was compiled for. */
+  #seededResolution(ancestors: ReadonlyArray<Binding>): AmbientResolution {
+    const host = this.#host;
+    const frames = ancestors.map((ancestor) => host.getResolutionFrame(ancestor));
+    const escaped = (token: Token<unknown> | Constructor, options: ResolveOptions | undefined, arity: EscapeArity) => {
+      const alreadyInFlight = enterSeededPath(ancestors);
+      try {
+        return host.resolveEscaped(token, options, arity, [...frames]);
+      } finally {
+        leaveSeededPath(ancestors, alreadyInFlight);
+      }
+    };
+    return {
+      resolve: <Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value =>
+        escaped(token, options, "single") as Value,
+      resolveOptional: <Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined =>
+        escaped(token, options, "optional") as Value | undefined,
+    };
   }
 
   // The closure is hand-written per arity up to three so the common shapes spread nothing.
-  #classNode(
-    binding: Binding,
-    invokable: ConstructorInvocation,
-    withAccessors: boolean,
-    deps: ReadonlyArray<SyncNode>,
-  ): SyncNode {
+  #classNode(invokable: ConstructorInvocation, deps: ReadonlyArray<SyncNode>): SyncNode {
     const nodes = deps.map((dep) => dep.node);
-    if (withAccessors) {
-      const host = this.#host;
-      const construct = (values: Array<unknown>): unknown => host.constructWithAccessors(binding, invokable, values);
-      const runs = deps.map((dep) => dep.run);
-      return { run: () => construct(runs.map((run) => run())), node: { kind: "accessors", construct, deps: nodes } };
-    }
     const node: PlanNode = { kind: "construct", target: invokable, deps: nodes };
     switch (deps.length) {
       case 0:

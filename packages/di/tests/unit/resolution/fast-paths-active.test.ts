@@ -17,6 +17,8 @@ import { injectable } from "#decorators/injectable";
 import { CircularDependencyError } from "#errors";
 import type { DiagnosableContainer, ResolutionDiagnostics } from "#introspection/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
+import { defaultMetadataReader } from "#metadata/symbol-reader";
+import type { MetadataReader } from "#metadata/types";
 
 const WARM_ITERATIONS = 5;
 
@@ -262,7 +264,7 @@ describe("deferred subsystems stay deferred", () => {
   });
 });
 
-describe("an accessor-injected class compiles as a plan root", () => {
+describe("an accessor-injected class compiles into a plan", () => {
   it("is served by a compiled plan once warm, and its accessor still resolves", () => {
     const depToken = token<string>("accessor-plan-dep");
 
@@ -297,6 +299,107 @@ describe("an accessor-injected class compiles as a plan root", () => {
     for (let iteration = 0; iteration < WARM_ITERATIONS; iteration += 1) {
       expect(() => container.resolve(Loop)).toThrow(CircularDependencyError);
     }
+  });
+});
+
+describe("a plan resolves accessors before construction", () => {
+  it("compiles an accessor class nested under a plan root and fills its accessors", () => {
+    const depToken = token<string>("accessor-nested-dep");
+
+    @injectable([])
+    class Inner {
+      @inject(depToken) accessor dependency!: string;
+    }
+
+    @injectable([Inner])
+    class Outer {
+      constructor(readonly inner: Inner) {}
+    }
+
+    const container = Container.create();
+    container.bind(depToken).toConstantValue("value");
+    container.bind(Inner).toSelf().transient();
+    container.bind(Outer).toSelf().transient();
+
+    for (let iteration = 0; iteration < WARM_ITERATIONS; iteration += 1) {
+      expect(container.resolve(Outer).inner.dependency).toBe("value");
+    }
+
+    expect(diagnose(container).compiledPlanCount).toBeGreaterThanOrEqual(1);
+  });
+
+  it("gives a class built inside the constructor its own value, not the one prepared for the instance", () => {
+    const counterToken = token<{ readonly id: number }>("accessor-counter");
+    const leadToken = token<string>("accessor-lead");
+    let next = 0;
+    const counter = inject(counterToken);
+
+    @injectable([])
+    class Inner {
+      @counter accessor counted!: { readonly id: number };
+    }
+
+    @injectable([])
+    class Base {
+      @inject(leadToken) accessor lead!: string;
+      readonly built: Inner = new Inner();
+    }
+
+    @injectable([])
+    class Derived extends Base {
+      @counter accessor counted!: { readonly id: number };
+    }
+
+    const container = Container.create();
+    container.bind(leadToken).toConstantValue("lead");
+    container
+      .bind(counterToken)
+      .toDynamic(() => ({ id: (next += 1) }))
+      .transient();
+    container.bind(Derived).toSelf().transient();
+
+    for (let iteration = 0; iteration < WARM_ITERATIONS; iteration += 1) {
+      const derived = container.resolve(Derived);
+      expect(derived.lead).toBe("lead");
+      expect(derived.built.counted).not.toBe(derived.counted);
+      expect(derived.built.counted.id).toBeGreaterThan(0);
+      expect(derived.counted.id).toBeGreaterThan(0);
+    }
+
+    expect(diagnose(container).compiledPlanCount).toBe(1);
+  });
+});
+
+describe("a custom reader's accessor records", () => {
+  it("are not prepared, so a transient accessor dependency is created once per instance", () => {
+    const counterToken = token<{ readonly id: number }>("accessor-reader-counter");
+    let created = 0;
+
+    @injectable([])
+    class Holder {
+      @inject(counterToken) accessor counted!: { readonly id: number };
+    }
+
+    // Copies each record, so no slot is the descriptor the accessor's initializer holds.
+    const copying: MetadataReader = {
+      getConstructorMetadata: (target) => defaultMetadataReader.getConstructorMetadata(target),
+      getLifecycleMetadata: (target) => defaultMetadataReader.getLifecycleMetadata(target),
+      getAccessorMetadata: (target) =>
+        defaultMetadataReader
+          .getAccessorMetadata(target)
+          ?.map((entry) => ({ key: entry.key, descriptor: { ...entry.descriptor } })),
+    };
+    const container = Container.create({ metadataReader: copying });
+    container
+      .bind(counterToken)
+      .toDynamic(() => ({ id: (created += 1) }))
+      .transient();
+    container.bind(Holder).toSelf().transient();
+
+    for (let iteration = 1; iteration <= WARM_ITERATIONS; iteration += 1) {
+      expect(container.resolve(Holder).counted.id).toBe(iteration);
+    }
+    expect(created).toBe(WARM_ITERATIONS);
   });
 });
 

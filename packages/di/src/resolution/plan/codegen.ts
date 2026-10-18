@@ -28,8 +28,9 @@ export type PlanNode =
   | { readonly kind: "construct"; readonly target: ConstructorInvocation; readonly deps: ReadonlyArray<PlanNode> }
   | {
       readonly kind: "accessors";
-      readonly construct: (deps: Array<unknown>) => unknown;
+      readonly construct: (deps: Array<unknown>, accessorValues: Array<unknown>) => unknown;
       readonly deps: ReadonlyArray<PlanNode>;
+      readonly accessors: ReadonlyArray<PlanNode>;
     }
   | {
       readonly kind: "call";
@@ -172,7 +173,9 @@ class PlanEmitter {
       case "construct":
         return this.#define(`new ${this.#slot(node.target, "C")}(${this.#list(node.deps)})`);
       case "accessors":
-        return this.#define(`${this.#slot(node.construct, "A")}([${this.#list(node.deps)}])`);
+        return this.#define(
+          `${this.#slot(node.construct, "A")}([${this.#list(node.deps)}], [${this.#list(node.accessors)}])`,
+        );
       case "call": {
         // The settle only ever throws, so it runs on the promise branch alone and the plain result stands.
         const local = this.#define(`${this.#slot(node.factory, "F")}(${this.#list(node.deps)})`);
