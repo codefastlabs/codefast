@@ -4,8 +4,10 @@
 `code` plus the context fields a human needs to act. A `catch (error) { if (error instanceof DiError) … }` catches all
 of them; a `switch` on `code` tells them apart without string-matching messages.
 
-> **Normative.** Every error extends `DiError` — an abstract class that forces each subclass to declare a `code` string
-> (machine-readable), alongside a message carrying enough context for a human reader.
+> **Normative.** Every error extends `DiError` — an abstract class that forces each subclass to declare a `code`
+> (machine-readable), alongside a message carrying enough context for a human reader. `DiError.code` is typed as
+> `DiErrorCode`, the union of every code below, so a `switch` on it is checked; `tests/types/error-codes.test.ts` holds
+> the union to exactly the codes the error classes carry.
 
 | Error                            | `code`                        | Thrown when                                                                    | Context fields                                                 |
 | -------------------------------- | ----------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------- |

@@ -147,7 +147,7 @@ export {
   UnreachableConstraintError,
   UnreachableLifecycleHookError,
 } from "#errors";
-export type { ScopeViolationDetails } from "#errors";
+export type { DiErrorCode, ScopeViolationDetails } from "#errors";
 
 // Graph adapters — render `generateDependencyGraph()` output for common viewers
 export { toDotGraph } from "#introspection/graph-adapters/dot";

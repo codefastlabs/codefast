@@ -552,7 +552,8 @@ mocks from the class's own declared dependencies, through a real container.
 
 ## Errors
 
-Every error extends `DiError` and carries a stable `code`, so you can branch on the code rather than the message:
+Every error extends `DiError` and carries a stable `code`, typed as the `DiErrorCode` union, so you can branch on the
+code rather than the message and the compiler checks every case:
 
 | Error                          | Code                        | Raised when                                                                |
 | ------------------------------ | --------------------------- | -------------------------------------------------------------------------- |

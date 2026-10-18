@@ -4,12 +4,45 @@ import { slotName } from "#core/tag";
 import type { BindingIdentifier, BindingScope, ResolveOptions } from "#core/types";
 
 /**
+ * The machine-readable code of every error the library throws.
+ */
+export type DiErrorCode =
+  | "AMBIGUOUS_BINDING"
+  | "ASYNC_ACTIVATION"
+  | "ASYNC_DEACTIVATION"
+  | "ASYNC_MODULE_LOAD"
+  | "ASYNC_RESOLUTION"
+  | "CHAIN_ALREADY_REGISTERED"
+  | "CHAIN_NOT_REGISTERED"
+  | "CIRCULAR_DEPENDENCY"
+  | "DISPOSED_CONTAINER"
+  | "EMPTY_TAG_CRITERIA"
+  | "INTERNAL_ERROR"
+  | "INVALID_BINDING_DECLARATION"
+  | "INVALID_METADATA"
+  | "MANY_BINDING_SLOT"
+  | "MISSING_CONTAINER_CONTEXT"
+  | "MISSING_DECORATOR_METADATA"
+  | "MISSING_METADATA"
+  | "MISSING_SCOPE_CONTEXT"
+  | "NO_MATCHING_BINDING"
+  | "PRIVATE_LIFECYCLE_METHOD"
+  | "REBIND_UNBOUND_TOKEN"
+  | "SCOPE_VIOLATION"
+  | "SELF_BINDING_REQUIRES_CLASS"
+  | "STATIC_MEMBER_DECORATOR"
+  | "SYMBOL_KEYED_LIFECYCLE"
+  | "TOKEN_NOT_BOUND"
+  | "UNREACHABLE_CONSTRAINT"
+  | "UNREACHABLE_LIFECYCLE_HOOK";
+
+/**
  * Base class for every error the library throws, each carrying a machine-readable `code`.
  *
  * @since 0.3.16-canary.0
  */
 export abstract class DiError extends Error {
-  abstract readonly code: string;
+  abstract readonly code: DiErrorCode;
   // Each subclass names itself with a literal: a constructor lookup per throw is what a
   // polymorphic read across every error class costs, on top of the stack capture every error pays.
   abstract override readonly name: string;
@@ -666,7 +699,7 @@ export class AsyncActivationError extends DiError {
   constructor(tokenName: string, hookKind: "postConstruct" | "onActivation", methodName?: string) {
     const detail =
       hookKind === "postConstruct"
-        ? `@postConstruct method '${methodName ?? ""}' returned a Promise`
+        ? `@postConstruct method '${methodName ?? ""}' of '${tokenName}' returned a Promise`
         : `onActivation for '${tokenName}' returned a Promise`;
     super(`${detail}. Use resolveAsync() instead.`);
     this.tokenName = tokenName;
