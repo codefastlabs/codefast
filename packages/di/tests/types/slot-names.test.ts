@@ -8,7 +8,7 @@ import type { ResolveOptions } from "#core/types";
 import { inject } from "#decorators/inject";
 import { NoMatchingBindingError } from "#errors";
 import type { InjectOptions } from "#injection/descriptor";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 import { whenAnyAncestorNamed, whenParentNamed } from "#resolution/select/constraints";
 
 interface Logger {
@@ -55,7 +55,7 @@ describe("a token declaring slot names narrows every `name` it meets", () => {
     // @ts-expect-error the options side cannot widen the token's names
     inject(Named, { name: "consol" });
     // @ts-expect-error the options side cannot widen the token's names
-    optional(Named, { name: "consol" });
+    injectOptional(Named, { name: "consol" });
     // @ts-expect-error the options side cannot widen the token's names
     injectAll(Named, { name: "consol" });
 

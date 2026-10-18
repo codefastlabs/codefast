@@ -312,9 +312,10 @@ With `deps: [Logger, Config] as const`, TypeScript infers the factory params as 
 annotation needed.
 
 > **`toResolved`/`toResolvedAsync` and named/tagged deps.** Each element of `deps` is an `InjectableDependency`: a plain
-> token, or a descriptor from `inject(token, { name, tag, tags })`, `optional(token, ...)` or `injectAll(token, ...)` —
-> the same forms `@injectable([...])` takes. A named, tagged, optional or collection dependency is declared there
-> directly; `toDynamic`/`toDynamicAsync` is only needed when the resolve itself is conditional.
+> token, or a descriptor from `inject(token, { name, tag, tags })`, `injectOptional(token, ...)` or
+> `injectAll(token, ...)` — the same forms `@injectable([...])` takes. A named, tagged, optional or collection
+> dependency is declared there directly; `toDynamic`/`toDynamicAsync` is only needed when the resolve itself is
+> conditional.
 
 ```ts
 container

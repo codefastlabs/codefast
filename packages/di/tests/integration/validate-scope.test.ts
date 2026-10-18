@@ -6,7 +6,7 @@ import { Module } from "#core/module";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
 import { AsyncModuleLoadError, CircularDependencyError, ScopeViolationError } from "#errors";
-import { optional } from "#injection/descriptor";
+import { injectOptional } from "#injection/descriptor";
 
 describe("validate(container) — transitive scope + alias chain", () => {
   it("throws ScopeViolationError when a singleton transitively depends on a scoped binding", () => {
@@ -238,7 +238,7 @@ describe("validate(container) — optional dependencies", () => {
       .transient();
     container
       .bind(Svc)
-      .toResolved((dep) => ({ dep }), [optional(Dep)])
+      .toResolved((dep) => ({ dep }), [injectOptional(Dep)])
       .singleton();
 
     expect(() => {
@@ -252,7 +252,7 @@ describe("validate(container) — optional dependencies", () => {
     const container = Container.create();
     container
       .bind(Svc)
-      .toResolved((dep) => ({ dep }), [optional(Dep)])
+      .toResolved((dep) => ({ dep }), [injectOptional(Dep)])
       .singleton();
 
     expect(() => {

@@ -269,7 +269,7 @@ export const removeTaskServerFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<BoardSnapshot> => handleRequest((service) => service.remove(data.id)));
 
 // Demonstrates runtime `bind`/`unbind`: the optional MetricsExporter appears or disappears for
-// every later resolve, and TaskService keeps working either way (`optional(...)` degrades to
+// every later resolve, and TaskService keeps working either way (`injectOptional(...)` degrades to
 // `undefined` instead of throwing).
 export const setMetricsServerFn = createServerFn({ method: "POST" })
   .validator((input: unknown): { enabled: boolean } => ({ enabled: readEnabled(input) }))

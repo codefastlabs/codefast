@@ -1,5 +1,6 @@
 import type { BindingBuilder } from "#core/binding-builders";
-import { SyncModule } from "#core/module";
+import type { SyncModule } from "#core/module";
+import { Module } from "#core/module";
 import type { BindingScope, Constructor } from "#core/types";
 import { decoratorMetadataOf } from "#decorators/metadata-record";
 import type { InjectableDependency, ResolvedDependencyValue } from "#injection/descriptor";
@@ -30,7 +31,7 @@ export interface AutoRegisterRegistry extends SyncModule {
 export function createAutoRegisterRegistry(name: string): AutoRegisterRegistry {
   const registeredEntries: Array<{ target: Constructor; scope: BindingScope }> = [];
   // A setup callback rather than declarations, so a class decorated after the registry exists still loads.
-  const module = SyncModule.create(name, (builder) => {
+  const module = Module.create(name, (builder) => {
     for (const { target, scope } of registeredEntries) {
       APPLY_BINDING_SCOPE[scope](builder.bind(target).toSelf());
     }
@@ -78,7 +79,7 @@ export interface InjectableOptions {
  * The parameters a constructor is handed, given what its `deps` declare.
  *
  * @remarks Reuses the same reading a `toResolved` factory gets, so `injectAll` arrives as an array
- * and `optional` as possibly undefined in both places.
+ * and `injectOptional` as possibly undefined in both places.
  */
 type InjectedParameters<Deps extends ReadonlyArray<InjectableDependency>> = {
   -readonly [Index in keyof Deps]: ResolvedDependencyValue<Deps[Index]>;

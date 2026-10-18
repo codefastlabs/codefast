@@ -63,8 +63,8 @@ interface MetadataReader {
 ```
 
 - `ConstructorMetadata.params` — one `ParamMetadata` per constructor parameter:
-  `{ index, token, optional, multi, name?, tags? }`. This is the same shape `@injectable([inject(A), optional(B)])`
-  produces.
+  `{ index, token, optional, multi, name?, tags? }`. This is the same shape
+  `@injectable([inject(A), injectOptional(B)])` produces.
 - `LifecycleMetadata` — **method names**, not functions: `{ postConstruct: ["open"], preDestroy: ["close"] }`.
 - `getAccessorMetadata` is optional — but omitting it means no class gets an ambient container context, so any `@inject`
   accessor then throws `MissingContainerContextError` (see example 18). Delegate it unless you are replacing property

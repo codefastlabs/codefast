@@ -116,22 +116,22 @@ is examined along three axes: **learned from v8**, **improved over v8**, **not a
 
 ### Learned from v8
 
-| v8 feature                                                     | How it is done here                                                                                                                            |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Naming: unqualified=sync, `Async`=async                        | Kept: `resolve`/`resolveAsync`, `load`/`loadAsync`, `unbind`/`unbindAsync`, …                                                                  |
-| ESM-only                                                       | Same as v8                                                                                                                                     |
-| Per-binding `onActivation` / `onDeactivation`                  | Kept, with the callback inferring its type from the binding — no manual annotation                                                             |
-| Container-level `onActivation` / `onDeactivation`              | Kept; children do not inherit the parent's hooks                                                                                               |
-| `toResolvedValue(factory, injectOptions)`                      | `toResolved(factory, deps)` sync, plus the new `toResolvedAsync`; `deps` take `inject()`, `optional()` and `injectAll()` as `@injectable` does |
-| The `toService()` alias concept                                | `toAlias()` — a clearer name, with hint forwarding specified                                                                                   |
-| `BindingIdentifier` / `.getIdentifier()`                       | Concept kept, renamed to `.id()` — shorter                                                                                                     |
-| `whenNamed` / `whenTagged` / `whenDefault` / `when(predicate)` | Kept; tag keys are declared with `tag()`, criteria minted with `TagKey.of()`                                                                   |
-| `isBound()` checking the hierarchy                             | `has()` — same semantics, with hint support                                                                                                    |
-| `isCurrentBound()` checking the current container only         | `hasOwn()` — a clearer name                                                                                                                    |
-| `unbindAll()` / `unbindAllAsync()`                             | Kept as-is                                                                                                                                     |
-| `@postConstruct()` / `@preDestroy()` method decorators         | Kept, on standard decorators, supporting several methods per class rather than one                                                             |
-| `getAll` filter semantics                                      | `resolveAll` — filter semantics, returning `[]` when nothing matches                                                                           |
-| `bind(id).unbind(bindingId)` — unbinding one specific binding  | Kept, via `container.unbind(bindingId)`                                                                                                        |
+| v8 feature                                                     | How it is done here                                                                                                                                  |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Naming: unqualified=sync, `Async`=async                        | Kept: `resolve`/`resolveAsync`, `load`/`loadAsync`, `unbind`/`unbindAsync`, …                                                                        |
+| ESM-only                                                       | Same as v8                                                                                                                                           |
+| Per-binding `onActivation` / `onDeactivation`                  | Kept, with the callback inferring its type from the binding — no manual annotation                                                                   |
+| Container-level `onActivation` / `onDeactivation`              | Kept; children do not inherit the parent's hooks                                                                                                     |
+| `toResolvedValue(factory, injectOptions)`                      | `toResolved(factory, deps)` sync, plus the new `toResolvedAsync`; `deps` take `inject()`, `injectOptional()` and `injectAll()` as `@injectable` does |
+| The `toService()` alias concept                                | `toAlias()` — a clearer name, with hint forwarding specified                                                                                         |
+| `BindingIdentifier` / `.getIdentifier()`                       | Concept kept, renamed to `.id()` — shorter                                                                                                           |
+| `whenNamed` / `whenTagged` / `whenDefault` / `when(predicate)` | Kept; tag keys are declared with `tag()`, criteria minted with `TagKey.of()`                                                                         |
+| `isBound()` checking the hierarchy                             | `has()` — same semantics, with hint support                                                                                                          |
+| `isCurrentBound()` checking the current container only         | `hasOwn()` — a clearer name                                                                                                                          |
+| `unbindAll()` / `unbindAllAsync()`                             | Kept as-is                                                                                                                                           |
+| `@postConstruct()` / `@preDestroy()` method decorators         | Kept, on standard decorators, supporting several methods per class rather than one                                                                   |
+| `getAll` filter semantics                                      | `resolveAll` — filter semantics, returning `[]` when nothing matches                                                                                 |
+| `bind(id).unbind(bindingId)` — unbinding one specific binding  | Kept, via `container.unbind(bindingId)`                                                                                                              |
 
 ---
 

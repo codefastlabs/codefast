@@ -45,7 +45,7 @@ with the `ESNext.Disposable` lib that `@codefast/di`'s declarations need.
 | #   | Directory                                                                  | What it teaches                                                                                     |
 | --- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | 01  | [01-basic-tokens](./01-basic-tokens)                                       | `token()`, `toConstantValue`, `toDynamic`, `singleton`, `transient`, `resolveOptional`              |
-| 02  | [02-decorators](./02-decorators)                                           | `@injectable`, `inject()`, `optional()`, `.to()`, `.toSelf()`                                       |
+| 02  | [02-decorators](./02-decorators)                                           | `@injectable`, `inject()`, `injectOptional()`, `.to()`, `.toSelf()`                                 |
 | 03  | [03-scopes-and-child-containers](./03-scopes-and-child-containers)         | `singleton` / `transient` / `scoped` lifetimes, `createChild()`                                     |
 | 04  | [04-modules](./04-modules)                                                 | `Module.create()`, `builder.import()`, diamond deduplication, `load` / `unload`                     |
 | 05  | [05-async-lifecycle](./05-async-lifecycle)                                 | `toDynamicAsync`, `onActivation`, `onDeactivation`, `AsyncModule`, `await using`                    |

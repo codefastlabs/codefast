@@ -1,4 +1,4 @@
-import { inject, injectAll, injectable, optional, postConstruct, preDestroy, token } from "@codefast/di";
+import { inject, injectAll, injectable, injectOptional, postConstruct, preDestroy, token } from "@codefast/di";
 
 interface Transport {
   connect(): Promise<void>;
@@ -18,7 +18,7 @@ const LoggerToken = token<Logger>("app:Logger");
 
 @injectable([
   TransportToken,
-  optional(LoggerToken),
+  injectOptional(LoggerToken),
   injectAll(FormatterToken),
   inject(TransportToken, { name: "fallback" }),
 ])

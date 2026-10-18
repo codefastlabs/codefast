@@ -11,7 +11,7 @@ import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
 import { postConstruct } from "#decorators/lifecycle";
 import { AsyncResolutionError, CircularDependencyError, MissingScopeContextError } from "#errors";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 
 describe("class instantiation — arity 0..3 (unrolled fast path)", () => {
   it("resolves a zero-arg transient class fresh each time", () => {
@@ -293,7 +293,7 @@ describe("optional & multi injection", () => {
     const presentToken = token<string>("present");
     const absentToken = token<string>("absent");
 
-    @injectable([optional(presentToken), optional(absentToken)])
+    @injectable([injectOptional(presentToken), injectOptional(absentToken)])
     class Consumer {
       constructor(
         readonly present: string | undefined,

@@ -28,8 +28,6 @@ describe("auditDisplayNames", () => {
       `tag<"gold" | "silver">("shop:cacheTier");`,
       `Module.create("shop:Infra", () => {});`,
       `Module.createAsync("shop:Database", async () => {});`,
-      `SyncModule.create("app:Core", () => {});`,
-      `AsyncModule.create("app:Root", async () => {});`,
       `Module.fromBindings("shop:Declared", []);`,
       `createAutoRegisterRegistry("app:Services");`,
       ``,

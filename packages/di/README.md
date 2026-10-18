@@ -20,8 +20,8 @@ its keep as the dependency graph grows.
 
 - **Typed tokens.** `Token<Value>` flows through every `bind → resolve` path, so `resolve()` returns exactly the type
   you registered.
-- **Standard decorators.** `@injectable`, `inject`, `optional`, `injectAll`, `@postConstruct`, and `@preDestroy` declare
-  dependencies explicitly — no runtime reflection.
+- **Standard decorators.** `@injectable`, `inject`, `injectOptional`, `injectAll`, `@postConstruct`, and `@preDestroy`
+  declare dependencies explicitly — no runtime reflection.
 - **Fluent bindings.** Constants, classes, sync and async factories, aliases, named/tagged/predicate constraints, and
   lifecycle hooks compose in one invariant chain order.
 - **Scopes with validation.** Choose `singleton`, `scoped`, or `transient`, and call `validate(container)` to catch
@@ -278,9 +278,9 @@ container.resolve(StorageToken, { tag: Provider.of("s3") }); // → S3Storage
 > **Note.** `key.of(value)` interns each value: the same value always yields the same criterion object, which lets
 > lookup compare by identity. A criterion built by hand — not through `.of()` — matches nothing.
 
-`{ tag: criterion }` and `{ tags: [criterion] }` are the same request — for `resolve`, and for `inject`, `optional`, and
-`injectAll` alike. Chain `.whenTagged(...)` once per criterion a slot carries, and request several at once with
-`{ tags: [...] }`.
+`{ tag: criterion }` and `{ tags: [criterion] }` are the same request — for `resolve`, and for `inject`,
+`injectOptional`, and `injectAll` alike. Chain `.whenTagged(...)` once per criterion a slot carries, and request several
+at once with `{ tags: [...] }`.
 
 **One binding per slot; a collection with `many()`.** Binding a token again in a slot it already fills replaces the
 earlier binding — `bind` is last-wins per slot, so `resolveAll` then finds only the newer one. To register several
@@ -322,7 +322,7 @@ them:
 
 - `@injectable([...deps])` — declares a class's constructor dependencies, in parameter order.
 - `inject(token, options)` — wraps one dependency with slot options (`name`, `tag`, `tags`).
-- `optional(token)` — resolves to `undefined` when nothing is bound.
+- `injectOptional(token)` — resolves to `undefined` when nothing is bound.
 - `injectAll(token)` — collects every matching binding into an array.
 - `@postConstruct()` — runs after wiring; `@preDestroy()` runs on disposal. An async `@postConstruct` needs
   `resolveAsync`.
@@ -330,7 +330,7 @@ them:
 ```ts
 import { inject, injectable, injectAll, optional, postConstruct, preDestroy } from "@codefast/di";
 
-@injectable([DbToken, optional(CacheToken), injectAll(PluginToken), inject(LoggerToken, { name: "audit" })])
+@injectable([DbToken, injectOptional(CacheToken), injectAll(PluginToken), inject(LoggerToken, { name: "audit" })])
 class UserRepository {
   constructor(
     private readonly db: Database,

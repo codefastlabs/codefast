@@ -4,7 +4,7 @@ import { Container } from "#container/container";
 import { generateDependencyGraph } from "#container/introspect";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 import { toMermaidGraph } from "#introspection/graph-adapters/mermaid";
 
 describe("toMermaidGraph", () => {
@@ -26,7 +26,7 @@ describe("toMermaidGraph", () => {
   it("marks unbound placeholders and parent-chain nodes with class defs", () => {
     const metricsToken = token<number>("metrics");
     const configToken = token<number>("config");
-    @injectable([optional(metricsToken)])
+    @injectable([injectOptional(metricsToken)])
     class Service {
       constructor(readonly metrics: number | undefined) {}
     }

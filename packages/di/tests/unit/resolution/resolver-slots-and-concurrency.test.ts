@@ -16,7 +16,7 @@ import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
 import { postConstruct } from "#decorators/lifecycle";
 import { CircularDependencyError } from "#errors";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 
 const ENV_TAG = tag("env");
 const REGION_TAG = tag("region");
@@ -161,7 +161,7 @@ describe("toResolved dependency tokens", () => {
 });
 
 describe("toResolved with injection descriptors", () => {
-  it("accepts optional() and injectAll() and types each argument accordingly", () => {
+  it("accepts injectOptional() and injectAll() and types each argument accordingly", () => {
     const presentToken = token<string>("descriptor-present");
     const absentToken = token<string>("descriptor-absent");
     const pluginToken = token<string>("descriptor-plugin");
@@ -176,7 +176,7 @@ describe("toResolved with injection descriptors", () => {
       .toResolved(
         // No casts: `present` is string, `missing` is string | undefined, `plugins` is string[].
         (present, missing, plugins) => `${present}|${String(missing)}|${plugins.length}`,
-        [inject(presentToken), optional(absentToken), injectAll(pluginToken)],
+        [inject(presentToken), injectOptional(absentToken), injectAll(pluginToken)],
       )
       .singleton();
 
@@ -194,7 +194,7 @@ describe("toResolved with injection descriptors", () => {
       .bind(sumToken)
       .toResolvedAsync(
         async (present, missing) => Promise.resolve(`${String(present + 1)}|${String(missing)}`),
-        [inject(presentToken), optional(absentToken)],
+        [inject(presentToken), injectOptional(absentToken)],
       )
       .singleton();
 

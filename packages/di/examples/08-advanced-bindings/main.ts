@@ -9,7 +9,7 @@
  * - Plain tokens directly in `@injectable` (no inject() wrapper needed)
  */
 
-import { Container, inject, injectable, optional, token } from "@codefast/di";
+import { Container, inject, injectable, injectOptional, token } from "@codefast/di";
 
 import { item, section } from "#examples/support/log";
 
@@ -127,8 +127,8 @@ class PlainNotifier implements Notifier {
   }
 }
 
-// Mixed: plain token + inject() with options + optional()
-@injectable([LoggerToken, inject(ConfigToken), optional(NotifierToken)])
+// Mixed: plain token + inject() with options + injectOptional()
+@injectable([LoggerToken, inject(ConfigToken), injectOptional(NotifierToken)])
 class MixedService {
   constructor(
     private readonly logger: Logger,

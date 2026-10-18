@@ -75,7 +75,7 @@ import {
   injectable,
   injectAll,
   Module,
-  optional,
+  injectOptional,
   postConstruct,
   preDestroy,
   token,
@@ -2050,8 +2050,8 @@ interface CheckoutApplicationService {
   inject(UserServiceToken),
   inject(FulfillmentServiceToken),
   inject(NotificationServiceToken),
-  optional(AnalyticsServiceToken),
-  optional(AbTestServiceToken),
+  injectOptional(AnalyticsServiceToken),
+  injectOptional(AbTestServiceToken),
 ])
 class CheckoutOrchestrator implements CheckoutApplicationService {
   constructor(

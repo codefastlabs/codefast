@@ -239,7 +239,7 @@ export function bindMocks(
         if (!slot.optional && !slot.multi) {
           throw new OverrideMismatchError(
             tokenName(slot.token),
-            ".absent() targets a required dependency — only optional() or injectAll() slots can be absent.",
+            ".absent() targets a required dependency — only injectOptional() or injectAll() slots can be absent.",
           );
         }
         if (!overrideValues.has(override)) {

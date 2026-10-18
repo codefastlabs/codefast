@@ -9,11 +9,11 @@ and remembers what it produced.
 ```ts
 import { SyncModule } from "@codefast/di";
 
-export const LoggerModule = SyncModule.create("app:Logger", (builder) => {
+export const LoggerModule = Module.create("app:Logger", (builder) => {
   builder.bind(Logger).to(ConsoleLogger).singleton();
 });
 
-export const AppModule = SyncModule.create("app:Root", (builder) => {
+export const AppModule = Module.create("app:Root", (builder) => {
   builder.import(LoggerModule);
   builder.bind(Config).toConstantValue(loadConfig());
   builder.bind(App).toSelf().singleton();
@@ -23,7 +23,7 @@ export const AppModule = SyncModule.create("app:Root", (builder) => {
 ## Async module
 
 ```ts
-export const DatabaseModule = AsyncModule.create("app:Database", async (builder) => {
+export const DatabaseModule = Module.createAsync("app:Database", async (builder) => {
   const config = await loadRemoteConfig();
 
   builder.import(LoggerModule); // a SyncModule can be imported by an AsyncModuleBuilder
@@ -49,7 +49,7 @@ await container.loadAsync(DatabaseModule);
 **Mental model.** A declared module is a module written as a list rather than a function: each entry states one binding
 as data, so the whole list is checked once, where it is written, and a container files it in one pass when it loads the
 module. It is a `SyncModule` like any other — `load`, `fromModules`, `import`, reference counting and `unload` treat it
-exactly as they treat one built by `SyncModule.create`.
+exactly as they treat one built by `Module.create`.
 
 ```ts
 import { binding, Module } from "@codefast/di";
@@ -70,7 +70,7 @@ const container = Container.fromModules(InfraModule);
 ```
 
 `binding(key, definition)` returns a `BindingDeclaration`; `Module.fromBindings(name, declarations)` — also reachable as
-`SyncModule.fromBindings` — returns a `SyncModule`. A `BindingDefinition` spells a binding with the fluent chain's own
+`Module.fromBindings` — returns a `SyncModule`. A `BindingDefinition` spells a binding with the fluent chain's own
 vocabulary, one key per step:
 
 | Key                                               | The fluent step it stands for                                                   |
@@ -102,13 +102,12 @@ vocabulary, one key per step:
 > in order, so a key repeated within it keeps its last criterion — the rule a slot applies to any repeated key
 > ([Slots and last-wins](binding.md#slots-and-last-wins--the-exact-definition)).
 
-> **Normative — equivalence.** Loading a declared module is indistinguishable from loading a `SyncModule.create` whose
-> setup binds each declaration, in list order, through the chain steps its keys stand for — strategy, then slot
-> (`whenNamed`, each `whenTagged`), then `when`, then `many`, then scope, then hooks. Slot last-wins, the displacement
-> of an earlier binding and what it still owes, registration order, the binding ids the module records, `unload`,
-> `validate`, `inspect` and `generateDependencyGraph` all answer exactly as they would for that setup. Each load builds
-> bindings of its own, so one declared module loaded into several containers shares nothing between them, as any module
-> does.
+> **Normative — equivalence.** Loading a declared module is indistinguishable from loading a `Module.create` whose setup
+> binds each declaration, in list order, through the chain steps its keys stand for — strategy, then slot (`whenNamed`,
+> each `whenTagged`), then `when`, then `many`, then scope, then hooks. Slot last-wins, the displacement of an earlier
+> binding and what it still owes, registration order, the binding ids the module records, `unload`, `validate`,
+> `inspect` and `generateDependencyGraph` all answer exactly as they would for that setup. Each load builds bindings of
+> its own, so one declared module loaded into several containers shares nothing between them, as any module does.
 
 > **Normative — a malformed declaration fails where it is written.** `binding()` checks its definition when it is
 > called, for callers the compiler cannot reach — plain JavaScript, a value built from `any`:
@@ -161,32 +160,32 @@ scoped.bind(Database).toConstantValue(mockDatabase); // the child's binding shad
 
 ## A `SyncModule` cannot import an `AsyncModule`
 
-> **Normative.** `ModuleBuilder` (used inside `SyncModule.create()`) only accepts `SyncModule[]` in `import()`. A
+> **Normative.** `ModuleBuilder` (used inside `Module.create()`) only accepts `SyncModule[]` in `import()`. A
 > `SyncModule` callback is sync and cannot await an async setup.
 
 ```ts
 // Compile error — a SyncModule cannot import an AsyncModule
-export const AppModule = SyncModule.create("app:Root", (builder) => {
+export const AppModule = Module.create("app:Root", (builder) => {
   builder.import(DatabaseModule); // TypeScript error: AsyncModule is not assignable to SyncModule
 });
 
 // Right — convert to an AsyncModule when you need to import one
-export const AppModule = AsyncModule.create("app:Root", async (builder) => {
+export const AppModule = Module.createAsync("app:Root", async (builder) => {
   builder.import(DatabaseModule); // OK — AsyncModuleBuilder accepts both SyncModule and AsyncModule
 });
 ```
 
 ## Module interface
 
-| Type                 | What it offers                                                                                                                                               |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `ModuleBuilder`      | Exists only inside a `SyncModule.create()` callback. Exactly two things: `bind(token)` and `import(...modules)` accepting **only** `SyncModule`              |
-| `AsyncModuleBuilder` | The same two things, but its `import` accepts both `SyncModule` and `AsyncModule`                                                                            |
-| `SyncModule`         | Carries a `name` and a **branded field**; built by `SyncModule.create(name, setup)` with a sync `setup`, or by `SyncModule.fromBindings(name, declarations)` |
-| `AsyncModule`        | Carries a `name` and a **branded field**; built by `AsyncModule.create(name, setup)` with an async `setup`                                                   |
-| `Module`             | `Module.create` / `Module.createAsync` / `Module.fromBindings` only forward to the factories above, for call sites that prefer importing a single name       |
-| `binding`            | Builds one `BindingDeclaration` from a key and a `BindingDefinition` ([Declared module](#declared-module))                                                   |
-| `isSyncModule`       | Type guard for telling the two apart at runtime when all you hold is the union                                                                               |
+| Type                 | What it offers                                                                                                                                         |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ModuleBuilder`      | Exists only inside a `Module.create()` callback. Exactly two things: `bind(token)` and `import(...modules)` accepting **only** `SyncModule`            |
+| `AsyncModuleBuilder` | The same two things, but its `import` accepts both `SyncModule` and `AsyncModule`                                                                      |
+| `SyncModule`         | Carries a `name` and a **branded field**; built by `Module.create(name, setup)` with a sync `setup`, or by `Module.fromBindings(name, declarations)`   |
+| `AsyncModule`        | Carries a `name` and a **branded field**; built by `Module.createAsync(name, setup)` with an async `setup`                                             |
+| `Module`             | `Module.create` / `Module.createAsync` / `Module.fromBindings` only forward to the factories above, for call sites that prefer importing a single name |
+| `binding`            | Builds one `BindingDeclaration` from a key and a `BindingDefinition` ([Declared module](#declared-module))                                             |
+| `isSyncModule`       | Type guard for telling the two apart at runtime when all you hold is the union                                                                         |
 
 > **Exact shape:** `src/core/module.ts` — `ModuleBuilder`, `AsyncModuleBuilder`, `SyncModule`, `AsyncModule`, `Module`,
 > `isSyncModule`.

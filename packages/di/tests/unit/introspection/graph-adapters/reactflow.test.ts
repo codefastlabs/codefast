@@ -5,7 +5,7 @@ import { generateDependencyGraph } from "#container/introspect";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { optional } from "#injection/descriptor";
+import { injectOptional } from "#injection/descriptor";
 import { toReactFlowGraph } from "#introspection/graph-adapters/reactflow";
 
 describe("toReactFlowGraph", () => {
@@ -34,7 +34,7 @@ describe("toReactFlowGraph", () => {
 
   it("carries the graph's own facts through — token identity and optional edges", () => {
     const metricsToken = token<number>("metrics");
-    @injectable([optional(metricsToken)])
+    @injectable([injectOptional(metricsToken)])
     class Service {
       constructor(readonly metrics: number | undefined) {}
     }

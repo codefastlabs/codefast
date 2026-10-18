@@ -254,7 +254,7 @@ interface DependencySlot {
 }
 ```
 
-> **Normative — both dependency sources are this shape.** `InjectionDescriptor` (what `inject`, `optional` and
+> **Normative — both dependency sources are this shape.** `InjectionDescriptor` (what `inject`, `injectOptional` and
 > `injectAll` return) and `ParamMetadata` (what a `MetadataReader` reports per constructor parameter) each extend it,
 > adding only what is theirs: a value type parameter and an `index` respectively. Every rule the specification states
 > about a dependency's `optional`, `multi`, `name` and `tags` therefore holds for both.

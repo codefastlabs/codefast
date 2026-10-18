@@ -2,10 +2,10 @@
  * Example 02 — Decorators
  *
  * Standard decorators (no reflect-metadata needed).
- * Shows `@injectable`, inject(), and optional().
+ * Shows `@injectable`, inject(), and injectOptional().
  */
 
-import { Container, inject, injectable, optional, token } from "@codefast/di";
+import { Container, inject, injectable, injectOptional, token } from "@codefast/di";
 
 import { item } from "#examples/support/log";
 
@@ -35,8 +35,8 @@ interface Logger {
 // ── Implementations ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 // @injectable declares constructor dependencies in order.
-// inject() marks a required dependency; optional() marks optional.
-@injectable([inject(AppConfigToken), optional(LoggerToken)])
+// inject() marks a required dependency; injectOptional() marks optional.
+@injectable([inject(AppConfigToken), injectOptional(LoggerToken)])
 class Database {
   readonly url: string;
 
@@ -66,7 +66,7 @@ class InMemoryCache implements Cache {
 }
 
 // Multiple required dependencies
-@injectable([inject(Database), inject(CacheToken), optional(LoggerToken)])
+@injectable([inject(Database), inject(CacheToken), injectOptional(LoggerToken)])
 class UserService {
   constructor(
     private readonly database: Database,

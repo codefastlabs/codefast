@@ -17,7 +17,7 @@ import type { Token } from "#core/token";
 import { token } from "#core/token";
 import type { BindingScope, Constructor, ResolutionContext } from "#core/types";
 import type { InjectableDependency } from "#injection/descriptor";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 import type { ConstructorMetadata, MetadataReader, ParamMetadata } from "#metadata/types";
 import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/codegen";
 import { whenParentIs } from "#resolution/select/constraints";
@@ -252,7 +252,7 @@ function descriptorOf(materials: GraphMaterials, dep: DepSpec): InjectableDepend
   const options =
     dep.tags.length === 0 ? undefined : { tags: dep.tags.map((tagIndex) => criterion(materials, tagIndex)) };
   if (dep.mode === "optional") {
-    return optional(target, options);
+    return injectOptional(target, options);
   }
   if (dep.mode === "multi") {
     return injectAll(target, options);

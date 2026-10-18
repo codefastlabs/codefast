@@ -24,7 +24,7 @@
  * aggregates rather than being read beside them.
  */
 import type { Constructor } from "@codefast/di";
-import { Container, injectAll, injectable, optional, token } from "@codefast/di";
+import { Container, injectAll, injectable, injectOptional, token } from "@codefast/di";
 
 import type { ScenarioDescriptor } from "#fixtures/scenario-parity";
 import { batched } from "#harness/batched";
@@ -58,7 +58,12 @@ class PlainDepsRoot {
   ) {}
 }
 
-@injectable([optional(alphaLeafToken), optional(betaLeafToken), optional(gammaLeafToken), optional(deltaLeafToken)])
+@injectable([
+  injectOptional(alphaLeafToken),
+  injectOptional(betaLeafToken),
+  injectOptional(gammaLeafToken),
+  injectOptional(deltaLeafToken),
+])
 class OptionalDepsRoot {
   constructor(
     readonly alpha: EscapeLeaf | undefined,

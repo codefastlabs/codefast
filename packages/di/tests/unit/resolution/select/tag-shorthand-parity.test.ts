@@ -11,7 +11,7 @@ import { slotName, tag } from "#core/tag";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { bindingSlotToResolveOptions, singleCriterionForSlot, singleCriterionOnlyOf } from "#injection/dependency-slot";
-import { injectAll, normalizeToDescriptor, optional } from "#injection/descriptor";
+import { injectAll, injectOptional, normalizeToDescriptor } from "#injection/descriptor";
 
 const SLOT = tag("slot");
 const ENV = tag("env");
@@ -100,7 +100,7 @@ describe("tag shorthand on the injection surface", () => {
 
   it.each([
     ["inject", inject],
-    ["optional", optional],
+    ["injectOptional", injectOptional],
     ["injectAll", injectAll],
   ])("%s builds the same descriptor from either spelling", (_label, build) => {
     const dependency = token<string>("inject-parity-dep");

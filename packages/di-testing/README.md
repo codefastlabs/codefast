@@ -135,8 +135,8 @@ The builder records overrides, then compiles:
   `fn().returns(...)` (Sinon) type-check against the factory you chose.
 - `.mock(token).using(value)` — bind a fixed value. The value is **sealed**: it has no mock surface, so `mocks.get`
   refuses it rather than hand it back mistyped — the test already holds the reference it passed in.
-- `.mock(token).absent()` — leave the dependency unbound: an `optional()` slot resolves `undefined`, an `injectAll()`
-  slot `[]`. On a required dependency this is an `OverrideMismatchError`.
+- `.mock(token).absent()` — leave the dependency unbound: an `injectOptional()` slot resolves `undefined`, an
+  `injectAll()` slot `[]`. On a required dependency this is an `OverrideMismatchError`.
 - `.mock(token).usingAll([a, b])` — supply the elements of an unconstrained `injectAll()` slot, in order. Sealed like
   `.using`.
 - `.mock(token, { name })` / `.mock(token, { tag })` — target one slot of a token that is injected several ways; the
@@ -211,8 +211,8 @@ it("prices through the real PricingService over a mocked tax boundary", () => {
 
 - A class whose constructor takes no parameters is testable without `@injectable`; a parameterful constructor with no
   metadata is a `NotInjectableError`.
-- An `optional()` dependency is auto-mocked like any other — it resolves to the mock, not to the `undefined` an unbound
-  optional would give in production. Use `.mock(token).absent()` to exercise the absent branch.
+- An `injectOptional()` dependency is auto-mocked like any other — it resolves to the mock, not to the `undefined` an
+  unbound optional would give in production. Use `.mock(token).absent()` to exercise the absent branch.
 - An `injectAll()` dependency receives a one-element array holding the token's mock; use `.mock(token).usingAll([...])`
   to supply several elements.
 - Named or tagged parameters of one token share the token's mock unless a slot-targeted `.mock(token, { name })` gives

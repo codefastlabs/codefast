@@ -74,7 +74,7 @@ type Names = SlotNamesOf<typeof Logger>; // "console" | "file"; `string` for a c
 
 `Names` is covariant and defaults to `string`, so a token declaring none behaves as before, and a declaring token is
 still a `Token<unknown>` wherever the engine erases the value type. Only the token infers `Names`: the `options` bag of
-`resolve*`, `has`, `hasOwn`, `inject`, `optional` and `injectAll` is `NoInfer`, so a request cannot widen the set.
+`resolve*`, `has`, `hasOwn`, `inject`, `injectOptional` and `injectAll` is `NoInfer`, so a request cannot widen the set.
 
 ```ts
 // Resolve always returns the right type — the wrong token cannot be passed

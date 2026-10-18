@@ -4,7 +4,7 @@ import { Container } from "#container/container";
 import { generateDependencyGraph } from "#container/introspect";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { optional } from "#injection/descriptor";
+import { injectOptional } from "#injection/descriptor";
 import { toDotGraph } from "#introspection/graph-adapters/dot";
 
 describe("toDotGraph", () => {
@@ -42,7 +42,7 @@ describe("toDotGraph", () => {
   it("dashes an unbound-optional placeholder node", () => {
     const metricsToken = token<number>("dot:metrics");
 
-    @injectable([optional(metricsToken)])
+    @injectable([injectOptional(metricsToken)])
     class Service {
       constructor(readonly metrics: number | undefined) {}
     }
