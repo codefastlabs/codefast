@@ -7,7 +7,7 @@ and remembers what it produced.
 ## Sync module
 
 ```ts
-import { SyncModule } from "@codefast/di";
+import { Module } from "@codefast/di";
 
 export const LoggerModule = Module.create("app:Logger", (builder) => {
   builder.bind(Logger).to(ConsoleLogger).singleton();
