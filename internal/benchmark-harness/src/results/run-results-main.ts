@@ -29,6 +29,8 @@ async function formatted(fileName: string, source: string): Promise<string> {
  * exit code when either committed file differs.
  *
  * @remarks Refuses to build, with every reason listed, while a note fails validation or the pass has no `notes.md`.
+ *
+ * @since 0.12.0
  */
 export async function runResultsMain(
   suite: ResultsSuite,

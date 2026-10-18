@@ -1,5 +1,53 @@
 # @codefast/ui
 
+## 0.14.0
+
+### Minor Changes
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor from 24 to the lowest release the package, its dependencies and its full test suite run on:
+  22.12 for `@codefast/cli` and `@codefast/tailwind-variants`, 22.18 for `@codefast/di` and `@codefast/di-testing`, and
+  22.22.2 for `@codefast/theme`, `@codefast/tracking` and `@codefast/ui`. Each floor is type-checked against what Node 22
+  ships and proven by running the package's tests on that release in CI.
+
+- [#1125](https://github.com/codefastlabs/codefast/pull/1125) **Breaking:** `Toaster` takes its color scheme from `@codefast/theme` instead of `next-themes`, so toasts follow the
+  user's appearance like every other component rather than falling back to `"system"` in an app with no `next-themes`
+  provider. `@codefast/theme` 0.10 or later — the version this release ships — is now a peer dependency, `next-themes` is
+  no longer a dependency, and `Toaster` must render inside an `AppearanceProvider` — outside one it throws, as
+  `useAppearance` does.
+
+### Patch Changes
+
+- [#1060](https://github.com/codefastlabs/codefast/pull/1060) Every focusable element now draws the same solid 2px `ring` outline, offset 2px, as `Button`. An element with no focus
+  style of its own (a plain link, `<summary>`, a custom `tabIndex` element) gets it from the base layer instead of the
+  browser's two-tone `auto` outline, and a component's own `outline-*` utilities still override it. The sidebar parts
+  (`SidebarMenuButton`, `SidebarMenuSubButton`, `SidebarMenuAction`, `SidebarGroupLabel`, `SidebarGroupAction`) and
+  `ResizableSeparator` draw focus as that outline instead of a box-shadow ring, so it also shows in forced-colors mode.
+
+- [#1124](https://github.com/codefastlabs/codefast/pull/1124) Secondary text now meets WCAG 2.2 AA contrast in every palette. In the light scheme `muted-foreground` moves from the
+  500 step of the palette's neutral to its 600 step (`zinc-600`, or `gray-600`, `neutral-600`, `slate-600`, `stone-600`),
+  so descriptions, placeholders, table captions and `Kbd` clear 4.5:1 on `muted` as well as on `background`, `card` and
+  `popover`; the 500 step measured 4.3–4.5:1 on `muted`. The dark scheme already cleared it and is unchanged.
+  `tests/unit/css/themes.test.ts` now checks `muted-foreground` on all four surfaces in every palette and both schemes.
+
+- [#1071](https://github.com/codefastlabs/codefast/pull/1071) Component props that add their own members or join a variants type are declared as interfaces instead of `&`
+  intersections — `ButtonProps`, `CardProps`, `FieldProps`, `ScrollAreaProps` and the other 24 — so a prop that clashes
+  with the element's own now fails where it is declared rather than narrowing to `never`. Each accepts exactly the props
+  it did, with one exception: `ChartLegendContentProps` takes Recharts' legend-content type for every member the two
+  share, where the intersection demanded a value that satisfied both a `div` handler and a Recharts one, so it now accepts
+  more. `CalendarProps`, `ToggleGroupProps` and the internal `ScopedProps` helpers stay intersections, because their base
+  is a union or a type parameter.
+
+- [#1090](https://github.com/codefastlabs/codefast/pull/1090) The preset now honours `prefers-reduced-motion` with one global rule: under `reduce`, every animation and transition,
+  including those on `::before` and `::after`, runs for a near-zero duration and plays once. Closed dialogs, popovers,
+  sheets and menus still unmount, because `animationend` and `transitionend` keep firing. The rule sits outside every
+  cascade layer, so it beats every utility, and a layered `!important` such as `motion-reduce:duration-200!` still opts
+  essential motion back in. This restores the reduced-motion coverage that most components had lost, and the per-component
+  `motion-reduce:` guards on `Spinner` and `InputNumber` and the `shimmer` utility's own reduced-motion block are gone,
+  since the global rule covers them.
+- Updated dependencies:
+  - @codefast/tailwind-variants@0.10.0
+  - @codefast/theme@0.10.0
+
 ## 0.13.0
 
 ### Minor Changes

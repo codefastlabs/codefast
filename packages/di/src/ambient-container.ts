@@ -27,17 +27,29 @@ export interface AmbientResolution {
 // Slots whose initializer asks for a prepared value — an `@inject` accessor's own descriptor.
 const preparableSlots = new WeakSet<DependencySlot>();
 
-/** Marks a slot whose accessor initializer takes a prepared value when one is offered. */
+/**
+ * Marks a slot whose accessor initializer takes a prepared value when one is offered.
+ *
+ * @since 0.14.0
+ */
 export function markPreparableSlot(slot: DependencySlot): void {
   preparableSlots.add(slot);
 }
 
-/** Whether an initializer will ask for this slot's prepared value, so preparing it is never wasted. */
+/**
+ * Whether an initializer will ask for this slot's prepared value, so preparing it is never wasted.
+ *
+ * @since 0.14.0
+ */
 export function isPreparableSlot(slot: DependencySlot): boolean {
   return preparableSlots.has(slot);
 }
 
-/** The answer {@link AmbientResolution.takePrepared} gives for an accessor it holds no value for. */
+/**
+ * The answer {@link AmbientResolution.takePrepared} gives for an accessor it holds no value for.
+ *
+ * @since 0.14.0
+ */
 export const NOT_PREPARED: unique symbol = Symbol("di:not-prepared");
 
 /**
@@ -46,6 +58,8 @@ export const NOT_PREPARED: unique symbol = Symbol("di:not-prepared");
  * @remarks An initializer takes the next value only when its slot is the next one prepared and it
  * initializes the instance that took the first, so a class constructed inside the constructor
  * resolves for itself instead of taking another instance's value.
+ *
+ * @since 0.14.0
  */
 export class PreparedAccessorResolution implements AmbientResolution {
   readonly #fallback: AmbientResolution;

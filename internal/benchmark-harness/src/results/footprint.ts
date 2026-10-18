@@ -11,14 +11,22 @@ import { resolveDisplayName } from "#shared/config";
 
 const ENTRY_ID = "\0footprint-entry";
 
-/** A program bundled alone, after the libraries, so a shared dependency's share reads off one line. */
+/**
+ * A program bundled alone, after the libraries, so a shared dependency's share reads off one line.
+ *
+ * @since 0.12.0
+ */
 export interface FootprintExtraProgram {
   /** Wrapped in backticks, which keeps the line out of the subject's size ranking. */
   readonly label: string;
   readonly source: string;
 }
 
-/** Everything a suite declares to measure its bundle table and gate its subject. */
+/**
+ * Everything a suite declares to measure its bundle table and gate its subject.
+ *
+ * @since 0.12.0
+ */
 export interface FootprintSuite {
   readonly packageRootDirectory: string;
   readonly subject: BenchSubprocessConfig;
@@ -31,7 +39,11 @@ export interface FootprintSuite {
   readonly rebuild: () => unknown;
 }
 
-/** Bundles one program for the browser, minified, and returns its minified and gzipped size. */
+/**
+ * Bundles one program for the browser, minified, and returns its minified and gzipped size.
+ *
+ * @since 0.12.0
+ */
 export async function measureFootprint(cwd: string, label: string, source: string): Promise<Footprint> {
   const build = await rolldown({
     input: ENTRY_ID,
@@ -91,6 +103,8 @@ function programFor(suite: FootprintSuite, libraryName: string): string {
  *
  * @remarks `--check` bundles only the subject against its budget; `--save` records the whole table beside the run
  * under `baselines/`, so the results page rebuilds from the repo alone.
+ *
+ * @since 0.12.0
  */
 export async function runFootprintMain(
   suite: FootprintSuite,

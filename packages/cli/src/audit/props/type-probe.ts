@@ -11,6 +11,8 @@ type ConstituentClassifier = (parts: ReadonlyArray<IntersectionPart>) => Array<C
 
 /**
  * A whole-run type probe backing `audit props`, bound to one type server.
+ *
+ * @since 0.15.0
  */
 export interface PropsTypeProbe {
   /** Returns the file's classifier, which reports every part unresolved when no project types the file. */
@@ -64,6 +66,8 @@ function kindOfType(type: Type, mappedFlag: number): ConstituentKind {
  * Creates a type probe over the native TypeScript type server for `audit props`.
  *
  * @throws AppError when the `typescript` package providing the type server cannot be loaded.
+ *
+ * @since 0.15.0
  */
 export async function createPropsTypeProbe(): Promise<PropsTypeProbe> {
   const sync = await loadTypeServer("audit props");

@@ -32,6 +32,8 @@ import { matchesSlot } from "#resolution/select/candidates";
  *
  * @remarks `registries` lists the container's own registry first, then each ancestor's, nearest first — the order
  * every chain walk reads them in.
+ *
+ * @since 0.14.0
  */
 export interface ValidationTarget {
   readonly registries: readonly [BindingRegistry, ...ReadonlyArray<BindingRegistry>];
@@ -62,6 +64,8 @@ type AliasChainEnd =
  * @throws `CircularDependencyError`, `ScopeViolationError`, `TokenNotBoundError` or `NoMatchingBindingError` for a
  * singleton graph that cannot resolve, `UnreachableLifecycleHookError` or `UnreachableConstraintError` for a hook or
  * constraint that can never fire.
+ *
+ * @since 0.14.0
  */
 export function validateChain(target: ValidationTarget): void {
   // One pass over the bindings; the constrained ones wait for the hook check, so the errors keep their order.

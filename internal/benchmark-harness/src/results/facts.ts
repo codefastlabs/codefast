@@ -1,13 +1,21 @@
 /** Derives a suite's `results.json`, the typed facts a page outside the suite reads instead of parsing RESULTS.md. */
 import type { ComparisonDocument } from "#report/comparison-document";
 
-/** A library the baseline measured, at the version it ran. */
+/**
+ * A library the baseline measured, at the version it ran.
+ *
+ * @since 0.12.0
+ */
 export interface ResultsLibrary {
   readonly name: string;
   readonly version: string;
 }
 
-/** One competitor's head-to-head against the subject; ratios are the subject over the competitor. */
+/**
+ * One competitor's head-to-head against the subject; ratios are the subject over the competitor.
+ *
+ * @since 0.12.0
+ */
 export interface ResultsAggregate {
   readonly competitor: string;
   readonly displayName: string;
@@ -21,7 +29,11 @@ export interface ResultsAggregate {
   readonly unreliable: number;
 }
 
-/** A row the subject loses, against the competitor that wins it. */
+/**
+ * A row the subject loses, against the competitor that wins it.
+ *
+ * @since 0.12.0
+ */
 export interface ResultsLoss {
   readonly scenario: string;
   readonly competitor: string;
@@ -29,7 +41,11 @@ export interface ResultsLoss {
   readonly unreliable: boolean;
 }
 
-/** What the baseline states about itself, as data rather than as prose. */
+/**
+ * What the baseline states about itself, as data rather than as prose.
+ *
+ * @since 0.12.0
+ */
 export interface ResultsFacts {
   readonly runId: string;
   /** The day the baseline ran, `YYYY-MM-DD`. */
@@ -56,7 +72,11 @@ export interface ResultsFacts {
   readonly lossesHeading: string;
 }
 
-/** Builds the facts from the same comparison the page renders. */
+/**
+ * Builds the facts from the same comparison the page renders.
+ *
+ * @since 0.12.0
+ */
 export function buildResultsFacts(document: ComparisonDocument, lossesHeading: string): ResultsFacts {
   const { run, environment, pivot, competitors } = document;
   const libraryNameOf = (displayName: string): string => {

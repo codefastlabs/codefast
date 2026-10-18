@@ -5,6 +5,8 @@ import type { NodeDescriptor, RealisticNode } from "#fixtures/realistic-graph";
 
 /**
  * A graph with several entry points: every node in dependency order, and the handlers a boot resolves.
+ *
+ * @since 0.11.0
  */
 export interface AppGraphDescriptor {
   readonly nodes: ReadonlyArray<NodeDescriptor>;
@@ -48,6 +50,8 @@ function appGraph(): AppGraphDescriptor {
 /**
  * Forty services an application registers at startup: infrastructure, repositories and services as singletons, and
  * the request handlers transient.
+ *
+ * @since 0.11.0
  */
 export const APP_GRAPH: AppGraphDescriptor = appGraph();
 
@@ -56,6 +60,8 @@ export const APP_GRAPH: AppGraphDescriptor = appGraph();
  *
  * @remarks One singleton registry spans both passes and every handler, so a singleton built twice anywhere in the
  * container reads as a broken graph, and each handler must be fresh per resolve.
+ *
+ * @since 0.11.0
  */
 export function isAppGraphWellFormed(
   graph: AppGraphDescriptor,
@@ -102,11 +108,15 @@ export function isAppGraphWellFormed(
 
 /**
  * A class for one node, as an application writes it with no container in view: it keeps its constructor arguments.
+ *
+ * @since 0.11.0
  */
 export type AppNodeClass = new (...resolved: Array<RealisticNode>) => RealisticNode;
 
 /**
  * Creates the plain class of one node, for a library to wire with its own decorators or registration.
+ *
+ * @since 0.11.0
  */
 export function appNodeClass(id: string): AppNodeClass {
   return class AppNode implements RealisticNode {

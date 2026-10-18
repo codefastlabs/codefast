@@ -2,6 +2,8 @@ import * as z from "zod";
 
 /**
  * Resolved request for a single engines audit run.
+ *
+ * @since 0.15.0
  */
 export type EnginesAuditRunRequest = {
   readonly rootDir: string;
@@ -12,6 +14,8 @@ export type EnginesAuditRunRequest = {
 
 /**
  * Zod schema for {@link EnginesAuditRunRequest}.
+ *
+ * @since 0.15.0
  */
 export const enginesAuditRunRequestSchema: z.ZodType<EnginesAuditRunRequest> = z.object({
   rootDir: z.string().min(1),

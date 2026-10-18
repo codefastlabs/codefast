@@ -103,6 +103,8 @@ export function normalizeToDescriptor(dependency: InjectableDependency): Injecti
 
 /**
  * Normalises a factory's declared dependencies to settled descriptors, the one shape the engine resolves.
+ *
+ * @since 0.14.0
  */
 export function settledDescriptorsOf(dependencies: ReadonlyArray<InjectableDependency>): Array<InjectionDescriptor> {
   return dependencies.map((dependency) => settledSlot(normalizeToDescriptor(dependency)));

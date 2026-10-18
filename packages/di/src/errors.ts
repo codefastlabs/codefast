@@ -5,6 +5,8 @@ import type { BindingIdentifier, BindingScope, ResolveOptions } from "#core/type
 
 /**
  * The machine-readable code of every error the library throws.
+ *
+ * @since 0.14.0
  */
 export type DiErrorCode =
   | "AMBIGUOUS_BINDING"

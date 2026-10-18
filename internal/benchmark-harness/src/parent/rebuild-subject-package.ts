@@ -5,6 +5,8 @@ import { spawnSync } from "node:child_process";
  * Rebuilds the named workspace package and returns the wall time it took, in milliseconds.
  *
  * @throws Error when pnpm cannot be run or the build fails.
+ *
+ * @since 0.12.0
  */
 export function rebuildSubjectPackage(libraryName: string, cwd: string): number {
   console.log(`Rebuilding ${libraryName} before bench…`);

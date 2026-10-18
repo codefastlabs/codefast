@@ -189,6 +189,8 @@ export function singleCriterionForSlot(injectionSlot: DependencySlot): BindingTa
  * @remarks The engine passes every slot it resolves through here once — a factory's dependencies when it is bound, a
  * class's parameters when they are settled — so a dependency read meets one hidden class and never adds a memo. A lone
  * name whose criterion is still unknown is left unsettled, since a later bind can fold it.
+ *
+ * @since 0.14.0
  */
 export function settledSlot(slot: DependencySlot): DependencySlot {
   const options = resolveOptionsForSlot(slot);
@@ -206,6 +208,8 @@ export function settledSlot(slot: DependencySlot): DependencySlot {
 
 /**
  * A copy of a constructor parameter in the one shape the engine resolves, as `settledSlot` makes one.
+ *
+ * @since 0.14.0
  */
 export function settledParam(param: ParamMetadata): ParamMetadata {
   const options = resolveOptionsForSlot(param);

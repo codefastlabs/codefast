@@ -116,6 +116,8 @@ export type AssertionAuditResult = {
 
 /**
  * A component props type joined with `&` where an interface could extend every part, or whose parts do not resolve.
+ *
+ * @since 0.15.0
  */
 export type PropsViolation = {
   readonly line: number;
@@ -126,6 +128,8 @@ export type PropsViolation = {
 
 /**
  * The props-declaration violations found in one file.
+ *
+ * @since 0.15.0
  */
 export type PropsFileViolations = {
   readonly relativePath: string;
@@ -134,6 +138,8 @@ export type PropsFileViolations = {
 
 /**
  * Outcome of one `audit props` run.
+ *
+ * @since 0.15.0
  */
 export type PropsAuditResult = {
   readonly files: Array<PropsFileViolations>;
@@ -356,6 +362,8 @@ export type LayersAuditResult = {
 
 /**
  * A workspace package's `engines.node` floor.
+ *
+ * @since 0.15.0
  */
 export type PackageEngineFloor = {
   readonly packageName: string;
@@ -367,6 +375,8 @@ export type PackageEngineFloor = {
 
 /**
  * A package whose Node floor breaks a rule a consumer or CI depends on.
+ *
+ * @since 0.15.0
  */
 export type EngineViolation =
   | { readonly kind: "missing-floor"; readonly packageName: string }
@@ -405,6 +415,8 @@ export type EngineViolation =
 
 /**
  * Outcome of one `audit engines` run.
+ *
+ * @since 0.15.0
  */
 export type EnginesAuditResult = {
   readonly floors: Array<PackageEngineFloor>;

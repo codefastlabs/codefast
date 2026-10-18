@@ -1,5 +1,26 @@
 # @codefast/tailwind-variants
 
+## 0.10.0
+
+### Minor Changes
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor from 24 to the lowest release the package, its dependencies and its full test suite run on:
+  22.12 for `@codefast/cli` and `@codefast/tailwind-variants`, 22.18 for `@codefast/di` and `@codefast/di-testing`, and
+  22.22.2 for `@codefast/theme`, `@codefast/tracking` and `@codefast/ui`. Each floor is type-checked against what Node 22
+  ships and proven by running the package's tests on that release in CI.
+
+### Patch Changes
+
+- [#1107](https://github.com/codefastlabs/codefast/pull/1107) The README's benchmark section links the suite's generated `RESULTS.md`, the committed baseline behind the "faster"
+  claim.
+
+- [#1126](https://github.com/codefastlabs/codefast/pull/1126) `@codefast/tailwind-variants` will be renamed `@codefast/tv` in a future release, and the README now says so at the top.
+  Only the name changes: when that release lands, replace the dependency
+  (`pnpm remove @codefast/tailwind-variants && pnpm add @codefast/tv`) and change every
+  `from "@codefast/tailwind-variants"` import to `from "@codefast/tv"`. Code that imports `tv` and `cn` through
+  `@codefast/ui/lib/utils` instead needs no change. Nothing changes in this release, and `@codefast/tailwind-variants`
+  stays the package to install until then.
+
 ## 0.9.1
 
 ### Patch Changes
