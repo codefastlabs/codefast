@@ -48,6 +48,9 @@ export const WORK_ROOT = packagePath("dist/.work");
  */
 export const UI_ROOT = repoPath("packages/ui");
 
+/** The `@codefast/theme` workspace, whose appearance API the runtime carries beside the components. */
+export const THEME_ROOT = repoPath("packages/theme");
+
 /**
  * The codefastlabs.com component registry: one folder per component with `meta.ts`, `doc.ts` and `demo.tsx`.
  *

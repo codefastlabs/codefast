@@ -24,6 +24,7 @@
     "design-system": "node --import tsx/esm src/main.ts"
   },
   "dependencies": {
+    "@codefast/theme": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@fontsource-variable/inter": "catalog:",
     "@tailwindcss/postcss": "catalog:",

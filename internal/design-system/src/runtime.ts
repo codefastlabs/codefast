@@ -43,7 +43,7 @@ function writeEntry(name: string, source: string): string {
 }
 
 /**
- * Builds React, ReactDOM and Recharts as classic scripts, and every `@codefast/ui` export as one more.
+ * Builds React, ReactDOM and Recharts as classic scripts, and every `@codefast/ui` and `@codefast/theme` export as one more.
  *
  * @remarks
  * React ships no browser global build, so the libraries are bundled here; the component bundle and the previews read
@@ -96,6 +96,8 @@ export async function buildRuntime(
     [
       'export * from "@codefast/ui";',
       'export { cn, tv } from "@codefast/ui/lib/utils";',
+      // The copy the components read their appearance from, so a preview's provider is the one `Toaster` sees.
+      'export * from "@codefast/theme";',
       ...cards.map((card) => `export * from "@codefast/ui/${card.slug}";`),
       "",
     ].join("\n"),

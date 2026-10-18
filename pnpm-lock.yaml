@@ -941,6 +941,9 @@ importers:
 
   internal/design-system:
     dependencies:
+      '@codefast/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
       '@codefast/ui':
         specifier: workspace:*
         version: link:../../packages/ui

@@ -1,3 +1,4 @@
+import { AppearanceProvider } from "@codefast/theme";
 import { TooltipProvider } from "@codefast/ui/tooltip";
 import type { ComponentType } from "react";
 
@@ -16,23 +17,25 @@ interface PreviewFrameProps {
 }
 
 /**
- * Stacks a card's demo and examples inside the app-level `TooltipProvider` the site supplies.
+ * Stacks a card's demo and examples inside the app-level providers the site supplies: appearance, then tooltips.
  *
  * @since 0.1.0
  */
 export function PreviewFrame({ sections }: PreviewFrameProps) {
   return (
-    <TooltipProvider>
-      <div className="flex min-h-full w-full flex-col items-stretch gap-8 p-6">
-        {sections.map(({ Demo, title }) => (
-          <section className="flex w-full flex-col gap-3" key={title}>
-            {title ? <p className="text-xs font-medium text-muted-foreground">{title}</p> : null}
-            <div className="flex w-full items-center justify-center">
-              <Demo />
-            </div>
-          </section>
-        ))}
-      </div>
-    </TooltipProvider>
+    <AppearanceProvider>
+      <TooltipProvider>
+        <div className="flex min-h-full w-full flex-col items-stretch gap-8 p-6">
+          {sections.map(({ Demo, title }) => (
+            <section className="flex w-full flex-col gap-3" key={title}>
+              {title ? <p className="text-xs font-medium text-muted-foreground">{title}</p> : null}
+              <div className="flex w-full items-center justify-center">
+                <Demo />
+              </div>
+            </section>
+          ))}
+        </div>
+      </TooltipProvider>
+    </AppearanceProvider>
   );
 }
