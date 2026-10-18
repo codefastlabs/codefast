@@ -87,9 +87,9 @@ function markedThroughput(scenario: ComparisonDocumentScenario): string {
 function timePerOp(hzPerOp: number): string {
   const nanoseconds = 1e9 / hzPerOp;
   if (nanoseconds < 1000) {
-    return `${nanoseconds.toFixed(0)} ns`;
+    return `${nanoseconds.toFixed(0)} ns`;
   }
-  return nanoseconds < 1e6 ? `${(nanoseconds / 1000).toFixed(1)} µs` : `${(nanoseconds / 1e6).toFixed(2)} ms`;
+  return nanoseconds < 1e6 ? `${(nanoseconds / 1000).toFixed(1)} µs` : `${(nanoseconds / 1e6).toFixed(2)} ms`;
 }
 
 function kilobytes(bytes: number): string {

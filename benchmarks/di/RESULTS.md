@@ -76,14 +76,14 @@ measurements are the ones an application feels, so they lead: what starting it u
 what the library adds to a browser bundle.
 
 **Startup.** A fresh container, a forty-service graph registered as classes in each library's own idiom (thirty-two
-singletons, eight transient handlers), and every handler resolved once. `app-boot-40` runs at 115,147‡ ops/s, about
-8.7 µs each, and reads 37.1×‡ inversify, 13.9×‡ awilix, 1.68×‡ tsyringe, 6.05×‡ brandi, 1.05×‡ ditox and 2.44×‡
+singletons, eight transient handlers), and every handler resolved once. `app-boot-40` runs at 115,147‡ ops/s, about 8.7
+µs each, and reads 37.1×‡ inversify, 13.9×‡ awilix, 1.68×‡ tsyringe, 6.05×‡ brandi, 1.05×‡ ditox and 2.44×‡
 injection-js. Beside it: `realistic-graph-class-cold-resolve` 0.95×‡ ditox and 1.53×‡ tsyringe;
 `boot-decorated-container-build-and-resolve` 1.27×‡ tsyringe. The ten-node rows measure the same path on a smaller
 graph. Whatever separates codefast from ditox here is the registration the losses below name.
 
 **One request.** A request through a child container: create the child, resolve the request's graph, dispose the child.
-`production-http-handler` runs at 1,792,128 ops/s, about 558 ns each, and reads 1.16× ditox, 3.39×‡ tsyringe, 7.48×‡
+`production-http-handler` runs at 1,792,128 ops/s, about 558 ns each, and reads 1.16× ditox, 3.39×‡ tsyringe, 7.48×‡
 awilix and 28.3×‡ inversify. Beside it: `production-unit-of-work` 1.17×‡ ditox and 2.32×‡ tsyringe;
 `child-request-lifecycle-create-resolve-dispose` 1.54×‡ ditox and 5.19×‡ tsyringe; `scoped-binding-per-child` 1.44×‡
 ditox and 1.31×‡ tsyringe. Only libraries with a child container run these rows.
