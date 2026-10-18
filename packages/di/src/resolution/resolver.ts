@@ -1022,10 +1022,8 @@ export class DependencyResolver implements ResolverCallbacks {
     const resolutionStack = this.rootStack;
     const memo = this.#rootCollection(token, resolutionStack);
     if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
-      // A copy, never the memo itself: a caller that writes into its result must not rewrite the
-      // next caller's. Reading a frozen array is several times slower than reading a plain one, so
-      // the copy is the cheaper guard by far, and it costs one allocation the read already paid before the memo.
-      return memo.values.slice() as Array<Value>;
+      // The memo itself: the result is typed read-only, so every caller may share one list.
+      return memo.values as ReadonlyArray<Value>;
     }
     const { candidates } = memo;
     const resolved = new Array<Value>(candidates.length);
@@ -1044,7 +1042,7 @@ export class DependencyResolver implements ResolverCallbacks {
       // Selection runs `when()` predicates and follows aliases, either of which may throw.
       const memo = this.#rootCollection(token, resolutionStack);
       if (memo.values !== undefined && memo.activationVersion === this.#chainActivationVersion()) {
-        return Promise.resolve(memo.values.slice() as Array<Value>);
+        return Promise.resolve(memo.values as ReadonlyArray<Value>);
       }
       return asPromise(
         this.#settleCandidates(memo.candidates, undefined, resolutionStack, UNOWNED_BRANCH, (values) => {

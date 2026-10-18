@@ -139,8 +139,9 @@ exactly the ability to resolve within the current context.
   `resolveOptionalAsync`, `resolveAll`, `resolveAllAsync`. They are the `Resolver` interface, which `Container` extends
   too, so a call through `ctx` narrows a token's slot names exactly as the same call on the container does.
 - `resolveAll` throws `AsyncResolutionError` if any matching binding is async, and returns `[]` when nothing matches.
-  Both collection reads return a `ReadonlyArray` that belongs to the caller: every read hands out a fresh array, the
-  memoized root-level read included, so writing into one can never change what a later read returns.
+  Both collection reads return a `ReadonlyArray`, and it is read-only in fact as well as in type: the memoized
+  root-level read hands every caller the same list while the chain and its activation hooks are unchanged. A caller that
+  needs a list of its own copies it (`[...list]`).
 - `graph` holds the `ConstraintContext` — the dependency-graph context used inside a `when()` predicate. An ordinary
   resolve never needs it. Read from a factory, it describes the factory's own level: its `resolutionStack` ends with the
   frame of the binding the factory is building, so `parent` is that binding — what a dependency the factory resolves

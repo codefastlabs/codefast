@@ -95,7 +95,7 @@ const LOSS_NOTES: ReadonlyArray<LossNote<DiCompetitorName>> = [
       { id: "resolve-all-strategies-10", versus: ["injection-js"] },
       { id: "production-event-bus-dispatch", versus: ["injection-js"] },
     ],
-    body: "A root-level `resolveAll` hands each caller a copy of its memoized list rather than the list itself, so no caller can mutate the engine's memo, while both rivals hand out the cached array they share. The event bus is that copy plus the dispatch. A frozen list was measured and rejected — a frozen array iterates through a slow elements kind for every consumer. The copy is its own commit, reversible alone.",
+    body: "In this pass a root-level `resolveAll` handed each caller a copy of its memoized list, while both rivals hand out the cached array they share; the event bus is that copy plus the dispatch. The engine has since dropped the copy: the memoized list is handed out itself, typed `ReadonlyArray`, and a paired run reads all three rows clearly ahead of the tree this pass measured. The next accepted pass decides whether they still lose.",
   },
   {
     title: "Rebind, against ditox",
