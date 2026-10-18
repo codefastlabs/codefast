@@ -53,6 +53,9 @@ source under `/ui`, and each package's own README, specification, and architectu
 | [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`arrange`, `audit`, `mirror`, `pack-slim`, `tag`)               |
 | [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                                         |
 
+`@codefast/tailwind-variants` will be renamed `@codefast/tv` in a future release; its
+[README](packages/tailwind-variants/README.md) says what to change.
+
 ## Quick start
 
 The flagship package is the fastest way in. Install it:

@@ -1,5 +1,9 @@
 # @codefast/tailwind-variants
 
+> **Note.** A future release renames this package `@codefast/tv`, and only the name changes: when it lands, swap the
+> dependency and change every `from "@codefast/tailwind-variants"` import to `from "@codefast/tv"`. Until then, keep
+> installing `@codefast/tailwind-variants`.
+
 A type-safe variant styling API for Tailwind CSS — a faster drop-in replacement for `tailwind-variants`, for anyone
 building components whose classes depend on props.
 
