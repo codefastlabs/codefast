@@ -49,6 +49,12 @@
     "bench:report": {
       "cache": false
     },
+    "bench:results": {
+      "cache": false
+    },
+    "bench:results:check": {
+      "cache": false
+    },
     "bench:serve": {
       "cache": false,
       "persistent": true,

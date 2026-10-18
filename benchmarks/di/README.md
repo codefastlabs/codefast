@@ -60,6 +60,16 @@ summarises — including each cell's IQR — and stamps every row with the run's
 report derived from disk records the configuration the run actually used. A run narrowed with `BENCH_ONLY`, `BENCH_TIER`
 or `BENCH_LIBRARY` does not move `latest.json`.
 
+## The results page
+
+[`RESULTS.md`](./RESULTS.md) is generated, never edited: `pnpm bench:results` builds it from the one run committed under
+`baselines/` — its `observations.jsonl`, the bundle table `pnpm bench:footprint --save` records beside it as
+`footprint.json`, and a hand-written `notes.md` stating the commit it measured and what moved since the previous pass —
+and from the analysis in `src/harness/results/notes.ts`, which says why each loss exists and states no figure. Every
+number on the page is computed from the run. The build refuses a note that names a row which no longer loses, a loss
+below the throughput ceiling that no note explains, and a figure in a note's prose; `pnpm bench:results:check` rebuilds
+the page and fails when the committed one differs, and it runs in CI and in `pnpm verify`.
+
 ## Bundle budget
 
 The bundle is the cost of `@codefast/di` an app feels, and no test or type check sees it grow, so its minimal program
@@ -67,7 +77,7 @@ The bundle is the cost of `@codefast/di` an app feels, and no test or type check
 [`footprint-budget.json`](./footprint-budget.json). `pnpm bench:footprint:check` rebuilds the package, bundles that one
 program, prints its gzipped size against the budget and exits non-zero when it is over; `pnpm bench:footprint` prints
 the same line under its table and fails the same way. The gate runs in CI's package verification and in `pnpm verify`,
-so a size regression turns a PR red instead of surfacing in the next [`RESULTS.md`](./RESULTS.md) pass.
+so a size regression turns a PR red instead of surfacing in the next [`RESULTS.md`](./RESULTS.md) baseline.
 
 The budget is the measured size plus a small headroom, enough to absorb gzip and bundler noise but not a real feature.
 When a change grows the bundle on purpose, raise the budget in the same PR and say why there; when one shrinks it, lower
@@ -156,8 +166,8 @@ and `BENCH_ALLOC_SHAPE=<id>` measures one shape in a child.
 beats re-running the suite.
 
 It produces no row and no ratio, and it is **not** exempt from the standard on that account: a figure from here is a
-figure, so it meets [`BENCH_GUIDE.md`](./BENCH_GUIDE.md) and it is published in [`RESULTS.md`](./RESULTS.md) before it
-appears in a commit message, exactly like a ratio.
+figure, so it meets [`BENCH_GUIDE.md`](./BENCH_GUIDE.md) and it is published in a baseline's `notes.md`, which
+[`RESULTS.md`](./RESULTS.md) carries, before it appears in a commit message, exactly like a ratio.
 
 A shape measures the **bench row's own scenario**, so its construction, batch factor and sanity check come from the one
 place that owns them. A shape the suite has no row for says so, which is what stops an unmeasured lane from staying
@@ -187,8 +197,7 @@ which library goes first rotates each time. The report's Environment section sta
 That is not a detail. Scheduling one library's whole suite before the next one starts puts minutes between the two sides
 of every ratio, so any drift over the run lands entirely on whoever was scheduled later — and in a suite written to
 promote one library, that is never the one being promoted. The same scenario, measured library-major and then
-interleaved, reads a materially different ratio against the same competitor; the measured gap is recorded in
-[`RESULTS.md`](./RESULTS.md).
+interleaved, reads a materially different ratio against the same competitor.
 
 **In `bench:fast` there is nothing to interleave** — one process per library runs that library's whole suite — so a
 cross-library ratio from the smoke profile stays provisional, and the report says so in the same place.
@@ -197,7 +206,8 @@ cross-library ratio from the smoke profile stays provisional, and the report say
 
 - [`BENCH_GUIDE.md`](./BENCH_GUIDE.md) — how to measure so the number survives: paired A/B runs, interleaving, when to
   count allocations, and what must hold before a figure is published.
-- [`RESULTS.md`](./RESULTS.md) — the ledger of what has actually been measured, including losses and retractions.
+- [`RESULTS.md`](./RESULTS.md) — where `@codefast/di` stands against the field, generated from the committed baseline,
+  with every loss and its reason.
 - [`CHANGELOG.md`](./CHANGELOG.md) — release notes for this suite.
 - [`../../packages/di`](../../packages/di) — the library under test; its `ARCHITECTURE.md` explains the shapes these
   rows exercise.

@@ -38,6 +38,8 @@
     "bench:fast": "BENCH_MODE=fast node --import tsx/esm src/harness/run.ts",
     "bench:list": "node --import tsx/esm src/harness/list.ts",
     "bench:report": "node --import tsx/esm src/harness/report.ts",
+    "bench:results": "node --import tsx/esm src/harness/results.ts",
+    "bench:results:check": "node --import tsx/esm src/harness/results.ts --check",
     "bench:serve": "node --import tsx/esm src/harness/serve.ts",
     "check-types": "tsc --noEmit",
     "instrument:alloc": "TSX_TSCONFIG_PATH=tsconfig.codefast.json node --import tsx/esm src/instruments/alloc.ts"
@@ -58,6 +60,7 @@
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "catalog:node22.18",
+    "oxfmt": "catalog:",
     "rolldown": "catalog:",
     "typescript": "catalog:"
   },
