@@ -21,7 +21,7 @@
   --destructive: oklch(0.577 0.245 27.325); /* --color-red-600 */
 
   --muted: oklch(0.97 0.001 106.424); /* --color-stone-100 */
-  --muted-foreground: oklch(0.553 0.013 58.071); /* --color-stone-500 */
+  --muted-foreground: oklch(0.444 0.011 73.639); /* --color-stone-600 */
 
   --accent: oklch(0.97 0.001 106.424); /* --color-stone-100 */
   --accent-foreground: oklch(0.216 0.006 56.043); /* --color-stone-900 */
