@@ -13,6 +13,10 @@ import type {
 import { AsyncActivationError, AsyncDeactivationError, InvalidMetadataError } from "#errors";
 import type { LifecycleMetadata, MetadataReader } from "#metadata/types";
 
+/** A token carrying a container-level hook, paired with the phase that registered it. */
+type HookedToken = readonly [DependencyKey, "onActivation" | "onDeactivation"];
+const NO_HOOKED_TOKENS: ReadonlyArray<HookedToken> = [];
+
 /**
  * One container's registry of container-level activation and deactivation hooks, keyed by token.
  *
@@ -93,8 +97,12 @@ export class LifecycleManager {
   }
 
   /** Every token carrying a container-level hook, paired with the phase that registered it. */
-  hookedTokens(): Array<[DependencyKey, "onActivation" | "onDeactivation"]> {
-    const hooked: Array<[DependencyKey, "onActivation" | "onDeactivation"]> = [];
+  hookedTokens(): ReadonlyArray<HookedToken> {
+    // Read on every `validate`, and most containers register no hook.
+    if (this.#activationHooks === undefined && this.#deactivationHooks === undefined) {
+      return NO_HOOKED_TOKENS;
+    }
+    const hooked: Array<HookedToken> = [];
     for (const key of this.#activationHooks?.keys() ?? []) {
       hooked.push([key, "onActivation"]);
     }

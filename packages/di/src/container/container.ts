@@ -108,18 +108,18 @@ export interface ContainerStatic {
 /**
  * The state the container functions read off a container, kept off its public surface.
  *
- * @remarks `ancestorRegistries` lists each ancestor's registry nearest first — the order every chain walk reads them in.
+ * @remarks `registries` lists the container's own registry, then each ancestor's nearest first — the order every chain
+ * walk reads them in.
  */
 export interface ContainerInternals {
-  readonly registry: BindingRegistry;
-  readonly ancestorRegistries: ReadonlyArray<BindingRegistry>;
+  readonly registries: readonly [BindingRegistry, ...Array<BindingRegistry>];
   readonly resolver: DependencyResolver;
   readonly metadataReader: MetadataReader;
   readonly lifecycle: LifecycleManager;
 }
 
 /**
- * Reads the internals of a live container `Container` created.
+ * Reads the internals of a live container `Container` created, built on first use.
  *
  * @throws `TypeError` for an object `Container` did not create, `DisposedContainerError` for a disposed chain.
  */
@@ -157,6 +157,8 @@ class DefaultContainer implements Container {
   #hasConfiguredReader = false;
   // Built on the first introspecting call — a container that only binds and resolves never needs it.
   #inspector: Inspector | undefined;
+  // Built on the first container function that reads it; every field it holds is fixed once the container exists.
+  #internals: ContainerInternals | undefined;
   readonly #parent: DefaultContainer | undefined;
 
   // Module tracking: module -> ref count. Both tables stay unallocated until a module is loaded.
@@ -948,13 +950,12 @@ class DefaultContainer implements Container {
   // Public statics of an unexported class: only this module's container functions can call them.
   static internalsOf(container: Container): ContainerInternals {
     const live = DefaultContainer.#live(container);
-    return {
-      registry: live.#registry,
-      ancestorRegistries: live.#ancestorRegistries(),
+    return (live.#internals ??= {
+      registries: [live.#registry, ...live.#ancestorRegistries()],
       resolver: live.#resolver,
       metadataReader: live.#getMetadataReader(),
       lifecycle: live.#lifecycle,
-    };
+    });
   }
 
   static inspectorOf(container: Container): Inspector {

@@ -19,13 +19,7 @@ import { validateChain } from "#introspection/validation";
  * a missing binding, a cycle or a captive dependency fails here instead of on the first request.
  */
 export function validate(container: Container): void {
-  const internals = containerInternals(container);
-  validateChain({
-    registries: [internals.registry, ...internals.ancestorRegistries],
-    resolver: internals.resolver,
-    metadataReader: internals.metadataReader,
-    hookedTokens: internals.lifecycle.hookedTokens(),
-  });
+  validateChain(containerInternals(container));
 }
 
 /**
@@ -58,14 +52,13 @@ export function explain<Names extends string = string>(
   token: Token<unknown, Names> | Constructor,
   options?: NoInfer<ExplainOptions<Names>>,
 ): ResolutionExplanation {
-  const { registry, ancestorRegistries } = containerInternals(container);
-  return explainRequest([registry, ...ancestorRegistries], token, options);
+  return explainRequest(containerInternals(container).registries, token, options);
 }
 
 /**
  * Builds the dependency graph of a container's own bindings, with the ancestors they resolve through.
  */
 export function generateDependencyGraph(container: Container, options?: GraphOptions): ContainerGraphJson {
-  const { registry, ancestorRegistries, metadataReader } = containerInternals(container);
-  return buildDependencyGraph(registry, metadataReader, options, ancestorRegistries);
+  const { registries, metadataReader } = containerInternals(container);
+  return buildDependencyGraph(registries[0], metadataReader, options, registries.slice(1));
 }
