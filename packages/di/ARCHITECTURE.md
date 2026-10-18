@@ -468,17 +468,21 @@ behaviour is identical either way; `RESOLUTION_DIAGNOSTICS` reports `generatedPl
 > `tests/unit/resolution/plan/compiler-codegen.test.ts` pins the generated tier against the closure's behaviour and
 > `tests/unit/resolution/plan/codegen.test.ts` pins each node kind's rendering.
 
-**An accessor-injected class compiles only as a plan's root.** Its `@inject` accessors resolve while the constructor
-runs, through the ambient container, so the class cannot be a static node: nothing the compiler could bake would be what
-the accessor reads. As a root it can still be a plan — the constructor parameters compile as usual, and construction
-goes through the host, which pushes the class's own frame on the root stack, installs the ambient resolution, constructs
-and pops. An accessor that cycles back therefore arrives with its class already on the path and is caught exactly as on
-the interpreted lane. Below the root the class stays an escape, because a nested node has static ancestors a frame push
-would not replay, and a cycle through them would be reported a level late.
+**An accessor-injected class compiles like any other class.** The compiler reads the class's `@inject` accessor slots
+from its metadata, in the order their initializers run (base class first, then declaration order), and compiles each
+slot the way it compiles a constructor parameter. A plan run resolves the accessors before `new` and installs a
+`PreparedAccessorResolution` as the ambient resolution. Each accessor's `init` takes the next value from it. A cycle
+back into the class is therefore caught when the plan compiles, as a parameter's cycle is, and the class may sit at any
+depth of a plan. An initializer takes a value only when its slot is the next one prepared and its instance is the one
+that took the first. A class built inside the constructor fails that check and resolves through the fallback, which is
+seeded with the class and its ancestors. The compiler prepares only slots that `@inject` itself registered. A custom
+reader's own records would be resolved for an initializer that never asks for them, so such a class stays on the
+interpreted lane.
 
-> **Invariant (correctness).** An accessor-injected class is planned only at depth zero, and its plan node enters the
-> resolution path before constructing. `tests/unit/resolution/fast-paths-active.test.ts` pins both the compiled plan and
-> the cycle that closes through an accessor.
+> **Invariant (correctness).** A plan prepares an accessor value only for a slot an `@inject` initializer will take, and
+> an initializer takes one only in order and for the instance that took the first.
+> `tests/unit/resolution/fast-paths-active.test.ts` pins the compiled plan, a nested accessor class, a class built in
+> the constructor, a custom reader's records, and the cycle that closes through an accessor.
 
 > **Invariant (correctness).** An escape must stay behaviourally indistinguishable from the interpreted path. If you add
 > a case, seed it with the same ancestors and replay the same call.

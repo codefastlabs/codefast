@@ -10,10 +10,12 @@ import type { Container } from "#container/container";
 import type { ConstructorInvocation } from "#core/constructor-type";
 import type { Constructor } from "#core/types";
 import { MissingMetadataError } from "#errors";
+import type { DependencySlot } from "#injection/dependency-slot";
 import { settledParam } from "#injection/dependency-slot";
 import type { ConstructorMetadata, MetadataReader, ParamMetadata } from "#metadata/types";
 
 const EMPTY_PARAM_LIST: ReadonlyArray<ParamMetadata> = [];
+const NO_ACCESSOR_SLOTS: ReadonlyArray<DependencySlot> = [];
 
 /**
  * What one reader has answered about one class so far, each field unknown until first asked.
@@ -176,6 +178,15 @@ export class ClassIntrospector {
       facts.needsActiveContainer = needsActiveContainer;
     }
     return needsActiveContainer;
+  }
+
+  /** The slots of a class's `@inject` accessors, in the order their initializers run. */
+  accessorSlots(target: Constructor): ReadonlyArray<DependencySlot> {
+    const entries = this.#reader.getAccessorMetadata?.(target);
+    if (entries === undefined || entries.length === 0) {
+      return NO_ACCESSOR_SLOTS;
+    }
+    return entries.map((entry) => entry.descriptor);
   }
 
   instantiate(target: Constructor, deps: Array<unknown>, resolution?: AmbientResolution): unknown {

@@ -162,9 +162,10 @@ of the row alone does not).
   measures the benchmark's transpiler as much as the engine: tsx's esbuild lowers the scenario's decorated `accessor`
   field to `WeakMap`-backed privates (`__privateAdd`, `__accessCheck`) and its own decorator runtime. A standalone probe
   of the same class compiled by the repo's `tsc`, which keeps a native private field, resolves several times faster than
-  through esbuild, so the lowering is most of the row. What the engine pays is the ambient scope around construction and
-  the accessor's own `resolve` through the container, where inversify's property injection is a metadata read on the
-  same plan. The harness stays as it is: a codefast user on tsx or esbuild pays the same lowering, and a different
+  through esbuild, so the lowering is most of the row. The engine compiles the accessor into the class's plan like a
+  constructor parameter and hands the value to the accessor's `init`. What it still pays over inversify is the ambient
+  scope around construction and the decorator runtime's per-instance initializer, both part of the standard decorator
+  model. The harness stays as it is: a codefast user on tsx or esbuild pays the same lowering, and a different
   transpiler for one library would move every codefast row, canaries included. Vite's Babel recipe keeps a native
   private field, as `tsc` does, so a Vite user sits nearer the probe than the row.
 - **Failing fast** — work difference. `misconfigured-missing-binding` 0.73×‡ tsyringe, 0.77×‡ brandi, 0.76×‡ ditox and

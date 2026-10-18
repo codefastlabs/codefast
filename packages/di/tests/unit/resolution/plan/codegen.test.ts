@@ -129,24 +129,28 @@ describe("generatePlan", () => {
     expect(() => pending()).toThrow("async factory");
   });
 
-  it("hands an accessor root its dependency list", () => {
-    let received: Array<unknown> | undefined;
+  it("hands an accessor class its params and its accessor values apart", () => {
+    let receivedParams: Array<unknown> | undefined;
+    let receivedAccessors: Array<unknown> | undefined;
     const plan = generated({
       kind: "accessors",
-      construct: (deps) => {
-        received = deps;
+      construct: (deps, accessorValues) => {
+        receivedParams = deps;
+        receivedAccessors = accessorValues;
         return "constructed";
       },
       deps: [
         { kind: "value", value: "x" },
         { kind: "construct", target: leaf, deps: [{ kind: "value", value: "y" }] },
       ],
+      accessors: [{ kind: "value", value: "z" }],
     });
 
     expect(plan()).toBe("constructed");
-    expect(received).toHaveLength(2);
-    expect(received?.[0]).toBe("x");
-    expect(received?.[1]).toBeInstanceOf(Leaf);
+    expect(receivedParams).toHaveLength(2);
+    expect(receivedParams?.[0]).toBe("x");
+    expect(receivedParams?.[1]).toBeInstanceOf(Leaf);
+    expect(receivedAccessors).toEqual(["z"]);
   });
 
   it("constructs a repeated class once per site", () => {

@@ -275,3 +275,22 @@ describe("decorator metadata across class inheritance", () => {
     await expect(container.resolveAsync(CycleAToken)).rejects.toThrow(CircularDependencyError);
   });
 });
+
+describe("an injected accessor is its field's initial value", () => {
+  it("is readable by a field declared after it", () => {
+    const nameToken = token<string>("test:Name");
+
+    @injectable([])
+    class Greeter {
+      @inject(nameToken) accessor name!: string;
+      readonly greeting = `hello ${this.name}`;
+    }
+
+    const container = Container.create();
+    container.bind(nameToken).toConstantValue("world");
+    container.bind(Greeter).toSelf().transient();
+
+    expect(container.resolve(Greeter).greeting).toBe("hello world");
+    expect(container.resolve(Greeter).greeting).toBe("hello world");
+  });
+});

@@ -3,6 +3,7 @@ import type { Container } from "#container/container";
 import type { ConstructorInvocation } from "#core/constructor-type";
 import type { Token } from "#core/token";
 import type { Constructor, ResolveOptions } from "#core/types";
+import type { DependencySlot } from "#injection/dependency-slot";
 
 /**
  * Path-continuing resolution the engine installs while constructing a class with `@inject` accessors.
@@ -15,6 +16,76 @@ import type { Constructor, ResolveOptions } from "#core/types";
 export interface AmbientResolution {
   resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value;
   resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined;
+  /**
+   * The value a plan resolved for this accessor ahead of construction, or {@link NOT_PREPARED}.
+   *
+   * @remarks Absent on a resolution that prepares nothing, which leaves every accessor to resolve itself.
+   */
+  takePrepared?(instance: unknown, slot: DependencySlot): unknown;
+}
+
+// Slots whose initializer asks for a prepared value — an `@inject` accessor's own descriptor.
+const preparableSlots = new WeakSet<DependencySlot>();
+
+/** Marks a slot whose accessor initializer takes a prepared value when one is offered. */
+export function markPreparableSlot(slot: DependencySlot): void {
+  preparableSlots.add(slot);
+}
+
+/** Whether an initializer will ask for this slot's prepared value, so preparing it is never wasted. */
+export function isPreparableSlot(slot: DependencySlot): boolean {
+  return preparableSlots.has(slot);
+}
+
+/** The answer {@link AmbientResolution.takePrepared} gives for an accessor it holds no value for. */
+export const NOT_PREPARED: unique symbol = Symbol("di:not-prepared");
+
+/**
+ * Accessor values a compiled plan resolved before construction, handed to the initializers in order.
+ *
+ * @remarks An initializer takes the next value only when its slot is the next one prepared and it
+ * initializes the instance that took the first, so a class constructed inside the constructor
+ * resolves for itself instead of taking another instance's value.
+ */
+export class PreparedAccessorResolution implements AmbientResolution {
+  readonly #fallback: AmbientResolution;
+  readonly #slots: ReadonlyArray<DependencySlot>;
+  readonly #values: ReadonlyArray<unknown>;
+  #next = 0;
+  #owner: unknown = undefined;
+
+  /**
+   * @param fallback - Resolves an accessor the plan did not prepare, with the class on the path.
+   * @param slots - The accessors' slots, in the order their initializers run.
+   * @param values - One resolved value per slot.
+   */
+  constructor(fallback: AmbientResolution, slots: ReadonlyArray<DependencySlot>, values: ReadonlyArray<unknown>) {
+    this.#fallback = fallback;
+    this.#slots = slots;
+    this.#values = values;
+  }
+
+  resolve<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value {
+    return this.#fallback.resolve(token, options);
+  }
+
+  resolveOptional<Value>(token: Token<Value> | Constructor<Value>, options?: ResolveOptions): Value | undefined {
+    return this.#fallback.resolveOptional(token, options);
+  }
+
+  takePrepared(instance: unknown, slot: DependencySlot): unknown {
+    const index = this.#next;
+    if (this.#slots[index] !== slot) {
+      return NOT_PREPARED;
+    }
+    if (index === 0) {
+      this.#owner = instance;
+    } else if (this.#owner !== instance) {
+      return NOT_PREPARED;
+    }
+    this.#next = index + 1;
+    return this.#values[index];
+  }
 }
 
 let activeContainer: Container | undefined;
@@ -78,7 +149,8 @@ export function constructWithAmbientResolution(
   activeContainer = container;
   activeResolution = resolution;
   try {
-    return new target(...deps);
+    // A spread call is not inlined, and most accessor classes take no constructor arguments.
+    return deps.length === 0 ? new target() : new target(...deps);
   } finally {
     activeContainer = previousContainer;
     activeResolution = previousResolution;

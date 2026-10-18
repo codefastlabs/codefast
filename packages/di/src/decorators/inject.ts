@@ -1,4 +1,4 @@
-import { getActiveContainer, getAmbientResolution } from "#ambient-container";
+import { getActiveContainer, getAmbientResolution, markPreparableSlot, NOT_PREPARED } from "#ambient-container";
 /** `@inject` — the accessor-decorator channel, resolving from the ambient container. */
 import type { Token } from "#core/token";
 import type { Constructor } from "#core/types";
@@ -69,29 +69,37 @@ export function inject<Value, Names extends string = string>(
       key: context.name,
       descriptor,
     });
+    markPreparableSlot(descriptor);
 
-    context.addInitializer(function (this: unknown) {
-      // Prefer the engine's path-continuing resolver: it keeps this accessor's dependencies on the
-      // live resolution path, so a cycle through an accessor is detected instead of recursing.
-      const ambient = getAmbientResolution();
-      if (ambient !== undefined) {
-        const value = descriptor.optional
-          ? ambient.resolveOptional(resolveKey, resolveOptions)
-          : ambient.resolve(resolveKey, resolveOptions);
-        context.access.set(this, value as Value);
-        return;
-      }
-      const container = getActiveContainer();
-      if (container === undefined) {
-        throw new MissingContainerContextError(classNameOf(this), context.name);
-      }
-      const value = descriptor.optional
-        ? container.resolveOptional(resolveKey, resolveOptions)
-        : container.resolve(resolveKey, resolveOptions);
-      context.access.set(this, value as Value);
-    });
-
-    return {};
+    // The value is the accessor's initial value, so its storage is written once as the field initializes.
+    return {
+      init(this: unknown): Value {
+        // Prefer the engine's path-continuing resolver: it keeps this accessor's dependencies on the
+        // live resolution path, so a cycle through an accessor is detected instead of recursing.
+        const ambient = getAmbientResolution();
+        if (ambient !== undefined) {
+          // A compiled plan resolved this accessor before construction; take its value when it holds one.
+          const prepared = ambient.takePrepared === undefined ? NOT_PREPARED : ambient.takePrepared(this, descriptor);
+          if (prepared !== NOT_PREPARED) {
+            return prepared as Value;
+          }
+          return (
+            descriptor.optional
+              ? ambient.resolveOptional(resolveKey, resolveOptions)
+              : ambient.resolve(resolveKey, resolveOptions)
+          ) as Value;
+        }
+        const container = getActiveContainer();
+        if (container === undefined) {
+          throw new MissingContainerContextError(classNameOf(this), context.name);
+        }
+        return (
+          descriptor.optional
+            ? container.resolveOptional(resolveKey, resolveOptions)
+            : container.resolve(resolveKey, resolveOptions)
+        ) as Value;
+      },
+    };
   };
 
   // Use defineProperties to handle read-only `name` property of functions

@@ -267,8 +267,8 @@ class Dashboard {
 
 ### The mechanism — initialization order
 
-`@inject(token)` on an `accessor` writes the token into `Symbol.metadata` through `context.metadata`, and installs an
-initializer through `context.addInitializer` that injects the value into each instance. The order:
+`@inject(token)` on an `accessor` writes the token into `Symbol.metadata` through `context.metadata`, and returns an
+`init` that supplies the accessor's initial value on each instance. The order:
 
 ```
 1. accessor initializers run as the fields initialize — the property-injected fields are set
@@ -307,8 +307,8 @@ const instance = runWithContainer(container, () => new Dashboard());
 
 ### How the container context is passed — a module-level active container
 
-> **Normative.** An accessor's `context.addInitializer` callback runs synchronously as the instance's fields initialize,
-> in the same call frame as `new`. The container exploits this with a **module-level active container variable**:
+> **Normative.** An accessor's `init` runs synchronously as the instance's fields initialize, in the same call frame as
+> `new`. The container exploits this with a **module-level active container variable**:
 >
 > - `runWithContainer(container, fn)` sets the active variable to the given container, runs `fn`, then restores the
 >   previous value in a `finally` block — so it is correct even when the constructor throws, and nested calls (A builds
@@ -328,15 +328,16 @@ implementation of `inject()` does three things:
 1. It throws if `context.static` is `true`.
 2. It writes `{ key, descriptor }` into `Symbol.metadata` through `context.metadata` so `MetadataReader` can read it
    back.
-3. It installs an initializer via `context.addInitializer`. During a container resolve, that initializer resolves
-   through the engine's own resolution path, which the resolver opens beside the active container: the accessor's
-   dependency is resolved as a dependency of the class being built, so a `when()` constraint sees that class as its
-   parent and a cycle through an accessor raises `CircularDependencyError`. Outside a resolve it falls back to
-   `getActiveContainer()` — with no container it throws `MissingContainerContextError` carrying the class name and the
-   accessor name — and with one it calls `container.resolve` as any caller would. Either way the `resolveOptional`
-   variant is used for an optional descriptor, and the value is written through `context.access.set`.
+3. It returns an `init` whose result is the accessor's initial value. During a container resolve, that `init` reads the
+   engine's own resolution, which the resolver opens beside the active container. When a compiled plan has already
+   resolved the accessor as a dependency of the class being built, it takes that value. Otherwise it resolves through
+   the engine's resolution path. Either way the accessor's dependency is resolved as a dependency of that class, so a
+   `when()` constraint sees the class as its parent and a cycle through an accessor raises `CircularDependencyError`.
+   Outside a resolve it falls back to `getActiveContainer()`. With no container it throws `MissingContainerContextError`
+   carrying the class name and the accessor name; with one it calls `container.resolve` as any caller would. On every
+   path the `resolveOptional` variant is used for an optional descriptor.
 
-It does not override `get`/`set`; it only adds an initializer.
+It does not override `get`/`set`; it only supplies the initial value.
 
 > **Exact shape:** `src/decorators/inject.ts`.
 
@@ -345,9 +346,9 @@ It does not override `get`/`set`; it only adds an initializer.
 ```
 resolver.resolve(Dashboard)
   → opens the active container and the engine's resolution path, then new Dashboard(...args)
-    → accessor initializers run (addInitializer callbacks)
-      → the engine path resolves each field's token      // read in the same call frame
-      → context.access.set(this, value)                   // inject the value
+    → each accessor's init runs as its field initializes
+      → it takes the value the plan resolved, or resolves its token on the engine path
+      → the returned value becomes the field's initial value
     → Dashboard constructor body runs                     // the fields are already set
     → the context is restored                             // the previous one, in a finally
   → @postConstruct() runs (after the context is closed)

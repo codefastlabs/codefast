@@ -6,7 +6,7 @@
  * descriptors — a plain property read would pick up `Function.prototype.name`. These cases pin
  * that materialization and the option combinations around it.
  *
- * Accessor injection itself (the `addInitializer` path) is covered end-to-end by
+ * Accessor injection itself (the accessor's `init`) is covered end-to-end by
  * `tests/integration/decorators.test.ts`, which runs it in a tsx subprocess.
  */
 import { describe, expect, it } from "vitest";
