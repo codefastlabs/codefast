@@ -78,7 +78,7 @@ describe("error classes carry their name, code and message", () => {
     expect(fromMethod.code).toBe("ASYNC_ACTIVATION");
     expect(fromMethod.hookKind).toBe("postConstruct");
     expect(fromMethod.methodName).toBe("init");
-    expect(fromMethod.message).toContain("@postConstruct method 'init'");
+    expect(fromMethod.message).toContain("@postConstruct method 'init' of 'svc'");
 
     const fromHook = new AsyncActivationError("svc", "onActivation");
     expect(fromHook.methodName).toBeUndefined();
