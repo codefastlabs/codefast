@@ -51,6 +51,7 @@ decorated class always passes through a transform that lowers it. What that take
 | Toolchain                 | What it needs                                                                                               |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | tsx                       | Nothing: it lowers standard decorators for the Node it runs on.                                             |
+| Bun 1.4.3 or later        | Nothing: its transpiler lowers standard decorators, and supplies their metadata without `Symbol.metadata`.  |
 | esbuild                   | A `target` below `esnext`, such as `es2024` or `node24`: at its default, `esnext`, decorators pass through. |
 | Vite 8, and Vitest on it  | The Babel decorators plugin: their Oxc transform lowers only `experimentalDecorators`.                      |
 | SWC 1.15.21 or later      | `jsc.parser.decorators: true` and `jsc.transform.decoratorVersion: "2023-11"`.                              |
@@ -98,7 +99,7 @@ without `Symbol.metadata` it hands them no metadata object, which every decorato
 
 Not every toolchain lowers them yet. Node's own type stripping rejects decorators; Next.js cannot select the `2023-11`
 version (vercel/next.js#96328 adds it); and Bun 1.4.2 and earlier inject the wrong values, silently, into a module that
-holds two decorated classes (oven-sh/bun#28316).
+holds two decorated classes (oven-sh/bun#28316, fixed in 1.4.3).
 
 [The specification → tsconfig setup](./spec/decorators.md#tsconfig-setup) covers the compiler options. And
 [decorators](#decorators) are optional: an app wired through `toResolved`, `toDynamic` and `Module.fromBindings` needs
