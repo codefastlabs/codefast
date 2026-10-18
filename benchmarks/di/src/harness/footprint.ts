@@ -2,18 +2,13 @@
 /** Measures what each library adds to a browser bundle: the smallest bind-and-resolve program, minified and gzipped. */
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { gzipSync } from "node:zlib";
 
-import { resolveRunDirectory } from "@internal/benchmark-harness/parent/bench-run-artifacts";
-import { rolldown, VERSION as ROLLDOWN_VERSION } from "rolldown";
+import { rebuildSubjectPackage } from "@internal/benchmark-harness/parent/rebuild-subject-package";
+import { runFootprintMain } from "@internal/benchmark-harness/results/footprint";
 
 import { BENCH_LIBRARIES, CODEFAST_DI } from "#harness/config";
-import type { Footprint } from "#harness/footprint-record";
-import { readBudgetBytes, writeFootprintRecord } from "#harness/footprint-record";
-import { rebuildCodefastDiPackage } from "#harness/rebuild";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const ENTRY_ID = "\0footprint-entry";
 
 /**
  * Each library's smallest program — one container, one value bound and resolved — written the way its documentation
@@ -65,90 +60,11 @@ const PROGRAMS: Readonly<Record<string, string>> = {
 /** The polyfill the legacy-decorator libraries need, bundled alone so its share of their rows reads off one line. */
 const POLYFILL_PROGRAM = `import "reflect-metadata";`;
 
-async function measure(label: string, source: string): Promise<Footprint> {
-  const build = await rolldown({
-    input: ENTRY_ID,
-    cwd: packageRootDirectory,
-    platform: "browser",
-    logLevel: "silent",
-    plugins: [
-      {
-        name: "footprint-entry",
-        resolveId: (id) => (id === ENTRY_ID ? id : null),
-        load: (id) => (id === ENTRY_ID ? source : null),
-      },
-    ],
-  });
-  try {
-    const { output } = await build.generate({ format: "esm", minify: true });
-    const code = output
-      .filter((item) => item.type === "chunk")
-      .map((chunk) => chunk.code)
-      .join("");
-    return { label, minifiedBytes: Buffer.byteLength(code), gzippedBytes: gzipSync(code, { level: 9 }).byteLength };
-  } finally {
-    await build.close();
-  }
-}
-
-function kilobytes(bytes: number): string {
-  return `${(bytes / 1000).toFixed(1)} KB`;
-}
-
-/** Reports the subject's gzipped size against its budget and returns whether it fits. */
-function checkBudget({ gzippedBytes }: Footprint): boolean {
-  const budgetBytes = readBudgetBytes(packageRootDirectory);
-  const headroomBytes = budgetBytes - gzippedBytes;
-  const verdict = `${CODEFAST_DI.libraryName}: ${String(gzippedBytes)} B gzipped, budget ${String(budgetBytes)} B`;
-  if (headroomBytes < 0) {
-    console.error(
-      `${verdict} — over by ${String(-headroomBytes)} B. Shrink the bundle, or raise the budget in footprint-budget.json with the reason in the PR.`,
-    );
-    return false;
-  }
-  console.log(`${verdict} (${String(headroomBytes)} B headroom).`);
-  return true;
-}
-
-function programFor(libraryName: string): string {
-  const program = PROGRAMS[libraryName];
-  if (program === undefined) {
-    throw new Error(`No footprint program for ${libraryName}: add one to PROGRAMS.`);
-  }
-  return program;
-}
-
-async function main(): Promise<void> {
-  rebuildCodefastDiPackage();
-  if (process.argv.includes("--check")) {
-    process.exitCode = checkBudget(await measure(CODEFAST_DI.libraryName, programFor(CODEFAST_DI.libraryName))) ? 0 : 1;
-    return;
-  }
-  const footprints: Array<Footprint> = [];
-  let subject: Footprint | undefined;
-  for (const library of BENCH_LIBRARIES) {
-    const footprint = await measure(library.displayName ?? library.libraryName, programFor(library.libraryName));
-    if (library.libraryName === CODEFAST_DI.libraryName) {
-      subject = footprint;
-    }
-    footprints.push(footprint);
-  }
-  footprints.push(await measure("`reflect-metadata` alone", POLYFILL_PROGRAM));
-  const rows = footprints.map(
-    ({ label, minifiedBytes, gzippedBytes }) =>
-      `| ${label} | ${kilobytes(minifiedBytes)} | ${kilobytes(gzippedBytes)} |`,
-  );
-  console.log(["| Library | Minified | Gzipped |", "| --- | ---: | ---: |", ...rows].join("\n"));
-  if (subject === undefined) {
-    throw new Error(`${CODEFAST_DI.libraryName} is missing from BENCH_LIBRARIES.`);
-  }
-  if (process.argv.includes("--save")) {
-    // The baseline keeps the table beside its observations, so the results page rebuilds from the repo alone.
-    const { runDirectory } = resolveRunDirectory(packageRootDirectory, "baselines");
-    writeFootprintRecord(runDirectory, { bundler: `Rolldown ${ROLLDOWN_VERSION}`, footprints });
-    console.log(`Saved the table to ${runDirectory}.`);
-  }
-  process.exitCode = checkBudget(subject) ? 0 : 1;
-}
-
-await main();
+await runFootprintMain({
+  packageRootDirectory,
+  subject: CODEFAST_DI,
+  libraries: BENCH_LIBRARIES,
+  programs: PROGRAMS,
+  extraPrograms: [{ label: "`reflect-metadata` alone", source: POLYFILL_PROGRAM }],
+  rebuild: () => rebuildSubjectPackage(CODEFAST_DI.libraryName, packageRootDirectory),
+});

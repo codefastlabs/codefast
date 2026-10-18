@@ -60,7 +60,10 @@ export const CVA = {
  *
  * @since 0.8.0
  */
-export const COMPETITORS: ReadonlyArray<TvBenchLibrary> = [TAILWIND_VARIANTS, CVA];
+export const COMPETITORS = [TAILWIND_VARIANTS, CVA] as const satisfies ReadonlyArray<TvBenchLibrary>;
+
+/** A competitor, by the `libraryName` its config declares — the name the results notes quote it by. */
+export type TvCompetitorName = (typeof COMPETITORS)[number]["libraryName"];
 
 /**
  * Every benched library, subject first, in spawn order.

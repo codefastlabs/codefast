@@ -72,6 +72,7 @@ export {
 
 export { runSanityChecks } from "#child/run-sanity-checks";
 
+export { rebuildSubjectPackage } from "#parent/rebuild-subject-package";
 export { resolveBenchParentExitCode } from "#parent/resolve-bench-parent-exit-code";
 
 export type {
@@ -221,3 +222,21 @@ export {
 } from "#report/run-diff";
 export type { PrintRunCardParameters, RenderRunCardOptions, RunCardInput } from "#report/run-card";
 export { printRunCard, renderRunCardLines } from "#report/run-card";
+
+export type { ResultsAggregate, ResultsFacts, ResultsLibrary, ResultsLoss } from "#results/facts";
+export { buildResultsFacts } from "#results/facts";
+export type { FootprintExtraProgram, FootprintSuite } from "#results/footprint";
+export { measureFootprint, runFootprintMain } from "#results/footprint";
+export type { Footprint, FootprintRecord } from "#results/footprint-record";
+export {
+  FOOTPRINT_BUDGET_FILE_NAME,
+  readBudgetBytes,
+  readFootprintRecord,
+  writeFootprintRecord,
+} from "#results/footprint-record";
+export type { LossKind, LossNote, QuotedRow, ResultsNotes, UserFacingNote } from "#results/notes";
+export type { ResultsPageInput } from "#results/page";
+export { competitorDisplayName, locateCell, LOSSES_HEADING, renderResultsPage } from "#results/page";
+export { runResultsMain } from "#results/run-results-main";
+export type { ResultsComparisonOptions, ResultsCompetitor, ResultsCopy, ResultsSuite } from "#results/suite";
+export { validateResultsNotes } from "#results/validate";

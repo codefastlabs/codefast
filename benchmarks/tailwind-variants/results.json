@@ -1,0 +1,44 @@
+{
+  "runId": "2026-10-18T02-39-58-707Z",
+  "runDate": "2026-10-18",
+  "profile": { "mode": "full", "isolated": true, "trialCount": 3 },
+  "environment": {
+    "nodeVersion": "26.1.0",
+    "v8Version": "14.6.202.34-node.19",
+    "cpuModel": "Apple M3 Max",
+    "cpuCount": 14,
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "libraries": [
+    { "name": "@codefast/tailwind-variants", "version": "0.9.1" },
+    { "name": "tailwind-variants", "version": "3.3.1" },
+    { "name": "class-variance-authority", "version": "0.7.1" }
+  ],
+  "aggregates": [
+    {
+      "competitor": "tailwind-variants",
+      "displayName": "tailwind-variants",
+      "comparable": 20,
+      "wins": 20,
+      "parities": 0,
+      "losses": 0,
+      "median": 6.901580083939683,
+      "geomean": 10.758060176334133,
+      "unreliable": 0
+    },
+    {
+      "competitor": "class-variance-authority",
+      "displayName": "cva",
+      "comparable": 4,
+      "wins": 4,
+      "parities": 0,
+      "losses": 0,
+      "median": 12.266173709301345,
+      "geomean": 9.85466108620823,
+      "unreliable": 0
+    }
+  ],
+  "losses": [],
+  "lossesHeading": "The losses, foregrounded — where to improve"
+}

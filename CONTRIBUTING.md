@@ -117,8 +117,9 @@ The rules that make a result publishable — learned the hard way, and enforced 
 - **Validate a hypothesis by throwaway ablation, not by reasoning.** Build the variant, measure it, delete it.
 - **A claim gets retracted when a better measurement disagrees with it.** That is the standard, not an embarrassment.
 
-For anything material, run the publishable profile and accept it as the baseline; `RESULTS.md` is generated from it
-([`benchmarks/di/README.md`](benchmarks/di/README.md#the-results-page) has the steps):
+For anything material, run the publishable profile and accept it as the baseline; every suite's `RESULTS.md` is
+generated from its baseline ([`benchmarks/di/README.md`](benchmarks/di/README.md#the-results-page) has the steps, and
+[`benchmarks/tailwind-variants/README.md`](benchmarks/tailwind-variants/README.md#the-results-page) the same ones):
 
 ```bash
 pnpm --filter @benchmark/di bench:baseline

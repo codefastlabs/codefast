@@ -11,6 +11,7 @@ import {
   buildBenchRunOutputPaths,
   writeBenchRunArtifacts,
 } from "@internal/benchmark-harness/parent/bench-run-artifacts";
+import { rebuildSubjectPackage } from "@internal/benchmark-harness/parent/rebuild-subject-package";
 import { resolveBenchParentExitCode } from "@internal/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import { runBenchLibraries } from "@internal/benchmark-harness/parent/run-bench-libraries";
 import { renderComparisonConsoleReport } from "@internal/benchmark-harness/report/comparison";
@@ -28,7 +29,6 @@ import { assembleDiComparison } from "#harness/comparison";
 import type { LibraryPayload } from "#harness/comparison";
 import { BENCH_LIBRARIES, CODEFAST_DI } from "#harness/config";
 import { DI_COMPARISON_CONSOLE } from "#harness/presentation";
-import { rebuildCodefastDiPackage } from "#harness/rebuild";
 
 const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
@@ -48,7 +48,7 @@ async function main(): Promise<void> {
       : `Progress per library follows; its time column is machine time spent measuring, never a speed. \`${BENCH_VERBOSE_ENV_KEY}=true\` streams every child line and prints the per-scenario table.\n`,
   );
 
-  const rebuildMs = rebuildCodefastDiPackage();
+  const rebuildMs = rebuildSubjectPackage(CODEFAST_DI.libraryName, packageRootDirectory);
 
   const { payloads, runOrder } = await runBenchLibraries({
     packageRootDirectory,

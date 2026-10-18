@@ -3,7 +3,6 @@
  * Parent harness: rebuild `@codefast/tailwind-variants`, run every library through the shared progress
  * display, then render the comparison and persist the run's observations.
  */
-import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -12,6 +11,7 @@ import {
   buildBenchRunOutputPaths,
   writeBenchRunArtifacts,
 } from "@internal/benchmark-harness/parent/bench-run-artifacts";
+import { rebuildSubjectPackage } from "@internal/benchmark-harness/parent/rebuild-subject-package";
 import { resolveBenchParentExitCode } from "@internal/benchmark-harness/parent/resolve-bench-parent-exit-code";
 import { runBenchLibraries } from "@internal/benchmark-harness/parent/run-bench-libraries";
 import { renderComparisonConsoleReport } from "@internal/benchmark-harness/report/comparison";
@@ -34,30 +34,6 @@ const VERBOSE_MODE_ENABLED = isEnvFlagEnabled(BENCH_VERBOSE_ENV_KEY);
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
-function rebuildCodefastTailwindVariantsPackage(): number {
-  console.log(`Rebuilding ${CODEFAST_TV.libraryName} before bench…`);
-  const startedAtMs = performance.now();
-  const result = spawnSync("pnpm", ["--filter", CODEFAST_TV.libraryName, "build"], {
-    cwd: packageRootDirectory,
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-    env: process.env,
-  });
-  if (result.error !== undefined) {
-    throw new Error(`Build failed for ${CODEFAST_TV.libraryName}: pnpm could not be run (${result.error.message})`, {
-      cause: result.error,
-    });
-  }
-  if (result.status !== 0) {
-    console.error(result.stderr || result.stdout);
-    const outcome = result.signal === null ? `exit ${String(result.status)}` : `signal ${result.signal}`;
-    throw new Error(`Build failed for ${CODEFAST_TV.libraryName}, ${outcome}`);
-  }
-  const elapsedMs = performance.now() - startedAtMs;
-  console.log(`Finished rebuild of ${CODEFAST_TV.libraryName} (${(elapsedMs / 1000).toFixed(1)}s wall).`);
-  return elapsedMs;
-}
-
 async function main(): Promise<void> {
   assertBenchEnvKeys();
   const runStartedAtMs = performance.now();
@@ -72,7 +48,7 @@ async function main(): Promise<void> {
       : `Progress per library follows; its time column is machine time spent measuring, never a speed. \`${BENCH_VERBOSE_ENV_KEY}=true\` streams every child line and prints the per-scenario table.\n`,
   );
 
-  const rebuildMs = rebuildCodefastTailwindVariantsPackage();
+  const rebuildMs = rebuildSubjectPackage(CODEFAST_TV.libraryName, packageRootDirectory);
 
   const { payloads, runOrder } = await runBenchLibraries({
     packageRootDirectory,

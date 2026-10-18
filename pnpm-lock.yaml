@@ -718,12 +718,6 @@ importers:
       '@types/node':
         specifier: catalog:node22.18
         version: 22.18.13
-      oxfmt:
-        specifier: 'catalog:'
-        version: 0.72.0
-      rolldown:
-        specifier: 'catalog:'
-        version: 1.2.14
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
@@ -849,6 +843,12 @@ importers:
 
   internal/benchmark-harness:
     dependencies:
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.72.0
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.2.14
       tinybench:
         specifier: 'catalog:'
         version: 6.2.2

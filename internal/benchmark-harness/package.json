@@ -125,6 +125,11 @@
       "types": "./dist/parent/progress/render-progress-frame.d.ts",
       "import": "./dist/parent/progress/render-progress-frame.js"
     },
+    "./parent/rebuild-subject-package": {
+      "source": "./src/parent/rebuild-subject-package.ts",
+      "types": "./dist/parent/rebuild-subject-package.d.ts",
+      "import": "./dist/parent/rebuild-subject-package.js"
+    },
     "./parent/resolve-bench-parent-exit-code": {
       "source": "./src/parent/resolve-bench-parent-exit-code.ts",
       "types": "./dist/parent/resolve-bench-parent-exit-code.d.ts",
@@ -215,6 +220,46 @@
       "types": "./dist/report/write.d.ts",
       "import": "./dist/report/write.js"
     },
+    "./results/facts": {
+      "source": "./src/results/facts.ts",
+      "types": "./dist/results/facts.d.ts",
+      "import": "./dist/results/facts.js"
+    },
+    "./results/footprint": {
+      "source": "./src/results/footprint.ts",
+      "types": "./dist/results/footprint.d.ts",
+      "import": "./dist/results/footprint.js"
+    },
+    "./results/footprint-record": {
+      "source": "./src/results/footprint-record.ts",
+      "types": "./dist/results/footprint-record.d.ts",
+      "import": "./dist/results/footprint-record.js"
+    },
+    "./results/notes": {
+      "source": "./src/results/notes.ts",
+      "types": "./dist/results/notes.d.ts",
+      "import": "./dist/results/notes.js"
+    },
+    "./results/page": {
+      "source": "./src/results/page.ts",
+      "types": "./dist/results/page.d.ts",
+      "import": "./dist/results/page.js"
+    },
+    "./results/run-results-main": {
+      "source": "./src/results/run-results-main.ts",
+      "types": "./dist/results/run-results-main.d.ts",
+      "import": "./dist/results/run-results-main.js"
+    },
+    "./results/suite": {
+      "source": "./src/results/suite.ts",
+      "types": "./dist/results/suite.d.ts",
+      "import": "./dist/results/suite.js"
+    },
+    "./results/validate": {
+      "source": "./src/results/validate.ts",
+      "types": "./dist/results/validate.d.ts",
+      "import": "./dist/results/validate.js"
+    },
     "./shared/config": {
       "source": "./src/shared/config.ts",
       "types": "./dist/shared/config.d.ts",
@@ -255,6 +300,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "oxfmt": "catalog:",
+    "rolldown": "catalog:",
     "tinybench": "catalog:"
   },
   "devDependencies": {

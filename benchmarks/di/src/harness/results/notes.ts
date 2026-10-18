@@ -1,51 +1,14 @@
 /** The analysis RESULTS.md carries: why each loss exists and what a user-facing row measures, with no figures. */
+import type { LossNote, ResultsNotes, UserFacingNote } from "@internal/benchmark-harness/results/notes";
 
-/** A competitor, by the `libraryName` its bench config declares. */
-export type CompetitorName = "inversify" | "awilix" | "tsyringe" | "brandi" | "ditox" | "injection-js";
+import { COMPETITORS } from "#harness/config";
+import type { DiCompetitorName } from "#harness/config";
 
 /** Every competitor, for a row the page should quote against the whole field. */
-const EVERY_COMPETITOR: ReadonlyArray<CompetitorName> = [
-  "inversify",
-  "awilix",
-  "tsyringe",
-  "brandi",
-  "ditox",
-  "injection-js",
-];
-
-/** A scenario quoted against the named competitors, each cell rendered from the baseline. */
-export interface QuotedRow {
-  readonly id: string;
-  readonly versus: ReadonlyArray<CompetitorName>;
-}
-
-/** How a loss is judged: the same work done slower, more work by design, a price paid on purpose, or the harness. */
-type LossKind = "real deficit" | "work difference" | "chosen cost" | "harness state";
-
-/**
- * One loss shape: the rows it explains and the reasoning, which states no figure.
- *
- * @remarks `losses` must still lose against each named competitor, or the page refuses to build; `context` rows are
- * quoted beside them without that check.
- */
-export interface LossNote {
-  readonly title: string;
-  readonly kinds: ReadonlyArray<LossKind>;
-  readonly losses: ReadonlyArray<QuotedRow>;
-  readonly context: ReadonlyArray<QuotedRow>;
-  readonly body: string;
-}
-
-/** One of the measurements an application feels, described without its figures. */
-export interface UserFacingNote {
-  readonly title: string;
-  readonly lead: string;
-  readonly rows: ReadonlyArray<QuotedRow>;
-  readonly body: string;
-}
+const EVERY_COMPETITOR: ReadonlyArray<DiCompetitorName> = COMPETITORS.map((library) => library.libraryName);
 
 /** Startup and one request; the bundle section renders from the footprint record. */
-export const USER_FACING_NOTES: ReadonlyArray<UserFacingNote> = [
+const USER_FACING_NOTES: ReadonlyArray<UserFacingNote<DiCompetitorName>> = [
   {
     title: "Startup",
     lead: "A fresh container, a forty-service graph registered as classes in each library's own idiom (thirty-two singletons, eight transient handlers), and every handler resolved once.",
@@ -70,11 +33,11 @@ export const USER_FACING_NOTES: ReadonlyArray<UserFacingNote> = [
 ];
 
 /** The paragraph under the bundle table, which the footprint record cannot say. */
-export const BUNDLE_NOTE =
+const BUNDLE_NOTE =
   "Most of `@codefast/di`'s share is the engine that wins the per-request rows — the resolver, the plan compiler and its code generation — and the checking and describing functions stay out of a program that does not call them.";
 
 /** Every loss shape, ordered by how much it matters. */
-export const LOSS_NOTES: ReadonlyArray<LossNote> = [
+const LOSS_NOTES: ReadonlyArray<LossNote<DiCompetitorName>> = [
   {
     title: "Registration, and everything that binds before it resolves",
     kinds: ["real deficit"],
@@ -174,3 +137,10 @@ export const LOSS_NOTES: ReadonlyArray<LossNote> = [
     body: "codefast builds a structured error carrying the resolution path; the rivals throw a string, and the stack capture both pay is most of the row. It is a path a production request should never take.",
   },
 ];
+
+/** Every note the DI results page renders and is checked against. */
+export const DI_RESULTS_NOTES: ResultsNotes<DiCompetitorName> = {
+  userFacingNotes: USER_FACING_NOTES,
+  bundleNote: BUNDLE_NOTE,
+  lossNotes: LOSS_NOTES,
+};

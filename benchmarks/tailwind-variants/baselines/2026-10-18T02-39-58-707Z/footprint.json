@@ -1,0 +1,25 @@
+{
+  "bundler": "Rolldown 1.2.14",
+  "footprints": [
+    {
+      "label": "@codefast/tv",
+      "minifiedBytes": 39207,
+      "gzippedBytes": 12436
+    },
+    {
+      "label": "tailwind-variants",
+      "minifiedBytes": 40385,
+      "gzippedBytes": 12703
+    },
+    {
+      "label": "cva",
+      "minifiedBytes": 1039,
+      "gzippedBytes": 563
+    },
+    {
+      "label": "`tailwind-merge` alone",
+      "minifiedBytes": 27226,
+      "gzippedBytes": 8511
+    }
+  ]
+}
