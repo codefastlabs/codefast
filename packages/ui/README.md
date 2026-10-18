@@ -39,6 +39,8 @@ Or the equivalent with your package manager: `npm install @codefast/ui`, `yarn a
   ([support policy](../../SUPPORT.md#browsers)).
 - React 19 — `react` and `react-dom` (19 or later) are peer dependencies; `@types/react` and `@types/react-dom` are
   optional peers.
+- `@codefast/theme` 0.9 or later — a peer dependency, because `Toaster` takes its color scheme from the enclosing
+  `AppearanceProvider`.
 - Tailwind CSS 4 at build time — the stylesheets are Tailwind source, and rely on your Tailwind pipeline to compile
   them.
 
