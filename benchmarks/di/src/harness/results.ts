@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Generates RESULTS.md from the one run under `baselines/`, or with `--check` fails when the committed page differs. */
+/** Generates RESULTS.md and results.json from the run under `baselines/`, or with `--check` fails when either differs. */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,13 +11,22 @@ import { format } from "oxfmt";
 
 import { assembleDiComparison } from "#harness/comparison";
 import { readBudgetBytes, readFootprintRecord } from "#harness/footprint-record";
+import { buildResultsFacts } from "#harness/results/facts";
 import { BUNDLE_NOTE, LOSS_NOTES, USER_FACING_NOTES } from "#harness/results/notes";
-import { renderResultsPage } from "#harness/results/page";
+import { LOSSES_HEADING, renderResultsPage } from "#harness/results/page";
 import { validateResultsNotes } from "#harness/results/validate";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const RESULTS_PATH = join(packageRootDirectory, "RESULTS.md");
 const PASS_NOTES_FILE_NAME = "notes.md";
+
+/** Formats a generated file with the repo's settings, so `pnpm format` leaves it alone. */
+async function formatted(fileName: string, source: string): Promise<string> {
+  const result = await format(fileName, source, { printWidth: 120, proseWrap: "always" });
+  if (result.errors.length > 0) {
+    throw new Error(`oxfmt could not format ${fileName}: ${result.errors.map((error) => error.message).join("; ")}`);
+  }
+  return result.code;
+}
 
 async function main(): Promise<void> {
   const { runId, runDirectory } = resolveRunDirectory(packageRootDirectory, "baselines");
@@ -53,26 +62,31 @@ async function main(): Promise<void> {
     passNotes: readFileSync(passNotesPath, "utf8"),
     ...notes,
   });
-  // Formatted with the repo's markdown settings, so `pnpm format` leaves the generated page alone.
-  const formatted = await format("RESULTS.md", page, { printWidth: 120, proseWrap: "always" });
-  if (formatted.errors.length > 0) {
-    throw new Error(`oxfmt could not format the page: ${formatted.errors.map((error) => error.message).join("; ")}`);
-  }
+  const files = new Map([
+    ["RESULTS.md", await formatted("RESULTS.md", page)],
+    ["results.json", await formatted("results.json", JSON.stringify(buildResultsFacts(document, LOSSES_HEADING)))],
+  ]);
 
   if (process.argv.includes("--check")) {
-    const committed = existsSync(RESULTS_PATH) ? readFileSync(RESULTS_PATH, "utf8") : "";
-    if (committed !== formatted.code) {
+    const stale = [...files].filter(([fileName, code]) => {
+      const path = join(packageRootDirectory, fileName);
+      return (existsSync(path) ? readFileSync(path, "utf8") : "") !== code;
+    });
+    if (stale.length > 0) {
+      const names = stale.map(([fileName]) => fileName).join(" and ");
       console.error(
-        `RESULTS.md is not what ${runId} and the notes generate. Run \`pnpm bench:results\` and commit it.`,
+        `${names} ${stale.length === 1 ? "is" : "are"} not what ${runId} and the notes generate. Run \`pnpm bench:results\` and commit.`,
       );
       process.exitCode = 1;
       return;
     }
-    console.log(`RESULTS.md matches ${runId}.`);
+    console.log(`RESULTS.md and results.json match ${runId}.`);
     return;
   }
-  writeFileSync(RESULTS_PATH, formatted.code);
-  console.log(`Wrote RESULTS.md from ${runId}.`);
+  for (const [fileName, code] of files) {
+    writeFileSync(join(packageRootDirectory, fileName), code);
+  }
+  console.log(`Wrote RESULTS.md and results.json from ${runId}.`);
 }
 
 await main();

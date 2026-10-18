@@ -67,8 +67,11 @@ or `BENCH_LIBRARY` does not move `latest.json`.
 `footprint.json`, and a hand-written `notes.md` stating the commit it measured and what moved since the previous pass —
 and from the analysis in `src/harness/results/notes.ts`, which says why each loss exists and states no figure. Every
 number on the page is computed from the run. The build refuses a note that names a row which no longer loses, a loss
-below the throughput ceiling that no note explains, and a figure in a note's prose; `pnpm bench:results:check` rebuilds
-the page and fails when the committed one differs, and it runs in CI and in `pnpm verify`.
+below the throughput ceiling that no note explains, and a figure in a note's prose. Beside the page it writes
+[`results.json`](./results.json), the same run's facts as data — the cast and versions, the machine, the profile, the
+aggregates per competitor and every loss — which the codefastlabs.com home page reads for its scoreboard, so nothing
+parses the page's prose. `pnpm bench:results:check` rebuilds both and fails when either committed file differs, and it
+runs in CI and in `pnpm verify`.
 
 ## Bundle budget
 

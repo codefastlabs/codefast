@@ -165,11 +165,8 @@ export function BenchmarkSection({ ledger, className, ...props }: BenchmarkSecti
                     "No comparable row lost; parity and unreliable rows are marked in the ledger."
                   ) : (
                     <>
-                      {lossCount === 1 ? "The one loss" : `The ${lossCount} losses`}
-                      {ledger.losses.length > 0
-                        ? `: ${ledger.losses.map((loss) => `${loss.scenario} at ${loss.ratio}× of ${loss.competitor}`).join(", ")}, `
-                        : " "}
-                      stay published, with the reason, under{" "}
+                      {lossCount === 1 ? "The one loss stays" : `The ${lossCount} losses stay`} published, with the
+                      reason, under{" "}
                       <a
                         href={ledger.lossesAnchor ? `${LEDGER_URL}#${ledger.lossesAnchor}` : LEDGER_URL}
                         target="_blank"

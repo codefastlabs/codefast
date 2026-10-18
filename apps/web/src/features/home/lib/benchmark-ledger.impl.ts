@@ -1,23 +1,23 @@
-/** Server-only reader of the benchmark ledger, bundled at build through a raw glob like the package documents. */
+/** Server-only reader of the benchmark ledger's facts, bundled at build through an eager glob. */
 import type { LedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
-import { parseLedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
+import { EMPTY_LEDGER_FACTS, parseLedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
 
-const [LEDGER = ""] = Object.values(
-  import.meta.glob<string>("../../../../../../benchmarks/di/RESULTS.md", {
-    query: "?raw",
-    import: "default",
-    eager: true,
-  }),
+const [RESULTS] = Object.values(
+  import.meta.glob<unknown>("../../../../../../benchmarks/di/results.json", { import: "default", eager: true }),
 );
 
-/** The ledger's self-description; empty facts when the file is missing, and when it is misread, logging why. */
-export function readLedgerFacts(markdown = LEDGER): LedgerFacts {
+/** The ledger's facts; empty facts when the file is missing, and when it is misread, logging why. */
+export function readLedgerFacts(results: unknown = RESULTS): LedgerFacts {
+  if (results === undefined) {
+    return EMPTY_LEDGER_FACTS;
+  }
+
   try {
-    return parseLedgerFacts(markdown);
+    return parseLedgerFacts(results);
   } catch (error) {
-    // A reworded ledger costs the landing page its scoreboard, never the page; the tests are what fail on it.
+    // A reshaped facts file costs the landing page its scoreboard, never the page; the tests are what fail on it.
     console.error("The home page shows no benchmark scoreboard:", error instanceof Error ? error.message : error);
 
-    return parseLedgerFacts("");
+    return EMPTY_LEDGER_FACTS;
   }
 }

@@ -122,8 +122,9 @@ jobs:
       - name: Verify DI Bundle Budget
         run: pnpm di:bench:footprint:check
 
-      # RESULTS.md is generated from the committed baseline and the analysis notes; this rebuilds it and fails when the
-      # committed page differs, or when a note names a row that no longer loses or a loss has no note.
+      # RESULTS.md and results.json are generated from the committed baseline and the analysis notes; this rebuilds them
+      # and fails when either committed file differs, or when a note names a row that no longer loses or a loss has no
+      # note.
       - name: Verify DI Results Page
         run: pnpm di:bench:results:check
 

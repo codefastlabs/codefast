@@ -17,20 +17,21 @@ describe("readLedgerFacts", () => {
     return facts;
   }
 
-  it("reads the real ledger: `@codefast/di` among the libraries, and a dated entry", () => {
+  it("reads the real facts: `@codefast/di` among the libraries, the machine, and a dated full re-measure", () => {
     const facts = readQuietly();
 
     expect(facts.libraries.map((library) => library.name)).toContain("@codefast/di");
     expect(facts.libraries.length).toBeGreaterThan(1);
     expect(facts.environment).toMatch(/^Node \d/);
-    expect(facts.latestEntry?.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(facts.lastFullRemeasure).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 
-  it("reads the aggregates table with a line per competitor and two ratios each", () => {
+  it("reads the aggregates with a line per competitor, two ratios each, and the losses anchor", () => {
     const facts = readQuietly();
 
     expect(facts.aggregateProfile).not.toBe("");
     expect(facts.aggregates.length).toBe(facts.libraries.length - 1);
+    expect(facts.lossesAnchor).not.toBe("");
 
     for (const row of facts.aggregates) {
       expect(row.wins + row.parities + row.losses).toBeGreaterThan(0);

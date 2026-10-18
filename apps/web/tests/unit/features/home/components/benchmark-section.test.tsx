@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { BenchmarkSection } from "#features/home/components/benchmark-section";
 import type { LedgerFacts } from "#features/home/lib/benchmark-ledger-facts";
+import { EMPTY_LEDGER_FACTS } from "#features/home/lib/benchmark-ledger-facts";
 
 vi.mock("#features/tracking/lib/tracking", () => ({ track: vi.fn() }));
 
@@ -18,15 +19,13 @@ const ledger: LedgerFacts = {
     { name: "tsyringe", version: "4.10.0" },
   ],
   environment: "Node 26.1.0 / V8 14.6, Apple M3 Max × 14, darwin/arm64",
-  latestEntry: { date: "2026-09-06", title: "full re-measure on 0.8.1" },
   lastFullRemeasure: "2026-09-06",
-  aggregateProfile: "BENCH_ISOLATE=true BENCH_MODE=full, one subprocess per scenario, libraries interleaved",
+  aggregateProfile: "full profile · 3 trials · one subprocess per scenario",
   aggregates: [
     { competitor: "inversify", wins: 45, parities: 0, losses: 0, median: 2.33, geomean: 2.84 },
     { competitor: "Awilix 13", wins: 8, parities: 0, losses: 0, median: 3.22, geomean: 3.77 },
     { competitor: "tsyringe 4", wins: 7, parities: 0, losses: 1, median: 6, geomean: 4.89 },
   ],
-  losses: [{ scenario: "realistic-graph-cold-resolve", ratio: 0.89, competitor: "tsyringe" }],
   lossesAnchor: "where-it-loses",
 };
 
@@ -43,7 +42,7 @@ describe("BenchmarkSection", () => {
       "vs tsyringe 4.10.0",
     ]);
     expect(screen.getByText("6.00×")).toBeInTheDocument();
-    expect(screen.getByText(/The one loss: realistic-graph-cold-resolve at 0.89× of tsyringe/)).toBeInTheDocument();
+    expect(screen.getByText(/The one loss stays published/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "where it loses" })).toHaveAttribute(
       "href",
       expect.stringContaining("#where-it-loses"),
@@ -56,7 +55,6 @@ describe("BenchmarkSection", () => {
         ledger={{
           ...ledger,
           aggregates: [{ competitor: "inversify", wins: 40, parities: 2, losses: 3, median: 1.5, geomean: 1.4 }],
-          losses: [],
         }}
       />,
     );
@@ -75,20 +73,7 @@ describe("BenchmarkSection", () => {
   });
 
   it("keeps to what it knows when the ledger reads as empty: no scoreboard, no claim about losses, the links", () => {
-    render(
-      <BenchmarkSection
-        ledger={{
-          libraries: [],
-          environment: "",
-          latestEntry: null,
-          lastFullRemeasure: null,
-          aggregateProfile: "",
-          aggregates: [],
-          losses: [],
-          lossesAnchor: "",
-        }}
-      />,
-    );
+    render(<BenchmarkSection ledger={EMPTY_LEDGER_FACTS} />);
 
     expect(
       screen.getByText(/through @codefast\/di and the libraries it is measured against, every library interleaved/),
