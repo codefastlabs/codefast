@@ -102,7 +102,7 @@ class PlainNotifier implements Notifier { ... }
 Mix styles freely:
 
 ```ts
-@injectable([LoggerToken, inject(ConfigToken), optional(NotifierToken)])
+@injectable([LoggerToken, inject(ConfigToken), injectOptional(NotifierToken)])
 class MixedService { ... }
 ```
 

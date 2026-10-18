@@ -1,6 +1,16 @@
 /** Decorated fixtures the test-bed unit tests exercise. */
 
-import { inject, injectable, injectAll, optional, postConstruct, preDestroy, slotName, tag, token } from "@codefast/di";
+import {
+  inject,
+  injectable,
+  injectAll,
+  injectOptional,
+  postConstruct,
+  preDestroy,
+  slotName,
+  tag,
+  token,
+} from "@codefast/di";
 
 // ── Collaborator contracts ───────────────────────────────────────────────────────────────────────────────────────────
 
@@ -95,7 +105,7 @@ export class Undecorated {
 }
 
 /** A unit with an optional dependency and a multi dependency. */
-@injectable([optional(LoggerToken), injectAll(PluginToken)])
+@injectable([injectOptional(LoggerToken), injectAll(PluginToken)])
 export class ReportService {
   constructor(
     readonly logger: Logger | undefined,
@@ -139,8 +149,8 @@ export class DualLoggerConsumer {
 
 /** A unit that repeats its slots, so shared override lanes are consumed more than once. */
 @injectable([
-  optional(LoggerToken),
-  optional(LoggerToken),
+  injectOptional(LoggerToken),
+  injectOptional(LoggerToken),
   injectAll(PluginToken),
   injectAll(PluginToken),
   inject(EmailServiceToken, { name: "outbox" }),

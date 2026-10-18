@@ -10,7 +10,7 @@ import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
 import { CircularDependencyError, NoMatchingBindingError, TokenNotBoundError } from "#errors";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 import { whenParentIs } from "#resolution/select/constraints";
 
 interface Logger {
@@ -142,7 +142,7 @@ describe("validate(container) — dependencies that cannot resolve", () => {
 
 describe("validate(container) — what it leaves to resolve", () => {
   it("passes an optional dependency nothing binds, and an empty collection", () => {
-    @injectable([optional(LoggerToken), injectAll(LoggerToken)])
+    @injectable([injectOptional(LoggerToken), injectAll(LoggerToken)])
     class Quiet {
       constructor(
         readonly logger: Logger | undefined,

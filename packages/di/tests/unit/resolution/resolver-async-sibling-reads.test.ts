@@ -18,7 +18,7 @@ import type { ResolutionContext } from "#core/types";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
 import { AsyncResolutionError } from "#errors";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 import type { DiagnosableContainer, ResolutionDiagnostics } from "#introspection/diagnostics";
 import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
 import { PLAN_CODEGEN_THRESHOLD } from "#resolution/plan/codegen";
@@ -288,7 +288,7 @@ describe("a singleton started on the async lane is readable synchronously by a l
       constructor(readonly all: ReadonlyArray<object>) {}
     }
 
-    @injectable([optional(singleton)])
+    @injectable([injectOptional(singleton)])
     class OverOptional {
       constructor(readonly maybe: object | undefined) {}
     }

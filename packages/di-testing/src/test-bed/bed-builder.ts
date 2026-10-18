@@ -49,7 +49,7 @@ export interface MockOverrideBuilder<Dependency, Owner, Backend extends MockFunc
    * @remarks The callback runs once per compile, so beds built from one builder never share spies.
    */
   stub(setup: (fn: MockFactory<Backend>) => DeepPartial<Dependency>): Owner;
-  /** Leaves the dependency unbound: an `optional()` slot resolves `undefined`, an `injectAll()` slot `[]`. */
+  /** Leaves the dependency unbound: an `injectOptional()` slot resolves `undefined`, an `injectAll()` slot `[]`. */
   absent(): Owner;
   /** Supplies every element of an unconstrained `injectAll()` slot, in order. Sealed like `.using`. */
   usingAll(values: ReadonlyArray<Dependency>): Owner;

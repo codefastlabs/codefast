@@ -75,14 +75,14 @@ export type { CandidateRule } from "#resolution/select/candidates";
 export type { ContainerGraphJson, GraphEdge, GraphNode, GraphOptions } from "#introspection/dependency-graph";
 
 // Module
-export { AsyncModule, isSyncModule, Module, SyncModule } from "#core/module";
-export type { AsyncModuleBuilder, ModuleBuilder } from "#core/module";
+export { isSyncModule, Module } from "#core/module";
+export type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#core/module";
 export { binding } from "#core/binding-declaration";
 export type { BindingDeclaration, BindingDefinition } from "#core/binding-declaration";
 
 // Decorators
 export { inject } from "#decorators/inject";
-export { injectAll, isInjectionDescriptor, optional } from "#injection/descriptor";
+export { injectAll, injectOptional, isInjectionDescriptor } from "#injection/descriptor";
 export type { InjectionDescriptor, InjectOptions } from "#injection/descriptor";
 export { injectable } from "#decorators/injectable";
 export type { InjectableDependency, InjectableOptions } from "#decorators/injectable";

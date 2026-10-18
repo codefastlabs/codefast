@@ -6,7 +6,7 @@ import { slotName, tag } from "#core/tag";
 import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 
 function buildContainer(): { container: ReturnType<typeof Container.create> } {
   const configToken = token<number>("config");
@@ -135,7 +135,7 @@ describe("generateDependencyGraph", () => {
 
   it("reports an optional dependency as a field, not only in the label", () => {
     const metricsToken = token<number>("metrics");
-    @injectable([optional(metricsToken)])
+    @injectable([injectOptional(metricsToken)])
     class Service {
       constructor(readonly metrics: number | undefined) {}
     }
@@ -185,7 +185,7 @@ describe("generateDependencyGraph", () => {
 
   it("keeps an optional-but-unbound dependency visible via an unbound placeholder node", () => {
     const metricsToken = token<number>("metrics");
-    @injectable([optional(metricsToken)])
+    @injectable([injectOptional(metricsToken)])
     class Service {
       constructor(readonly metrics: number | undefined) {}
     }
@@ -281,7 +281,7 @@ describe("generateDependencyGraph", () => {
 
   it("keeps the reserved-criterion name on an unbound optional dependency's edge", () => {
     const ghostToken = token<number>("ghost-config");
-    @injectable([optional(ghostToken, { tags: [slotName.of("ghost")] })])
+    @injectable([injectOptional(ghostToken, { tags: [slotName.of("ghost")] })])
     class Service {
       constructor(readonly config?: number) {}
     }

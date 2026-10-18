@@ -4,7 +4,7 @@ import { Container } from "#container/container";
 import { token } from "#core/token";
 import type { DependencyKey, TokenValue } from "#core/types";
 import { inject } from "#decorators/inject";
-import { injectAll, normalizeToDescriptor, optional } from "#injection/descriptor";
+import { injectAll, injectOptional, normalizeToDescriptor } from "#injection/descriptor";
 import type { InjectionDescriptor } from "#injection/descriptor";
 
 describe("compile-time API inference", () => {
@@ -47,7 +47,7 @@ describe("compile-time API inference", () => {
 
   it("inject optional widens to undefined union in descriptor", () => {
     const StringToken = token<string>("s");
-    const descriptor = optional(StringToken);
+    const descriptor = injectOptional(StringToken);
     expectTypeOf(descriptor).toExtend<InjectionDescriptor<string | undefined>>();
   });
 
@@ -73,7 +73,7 @@ describe("compile-time API inference", () => {
 });
 
 describe("toResolved dependency inference", () => {
-  it("maps bare tokens, optional() and injectAll() to their factory argument types", () => {
+  it("maps bare tokens, injectOptional() and injectAll() to their factory argument types", () => {
     const stringToken = token<string>("infer-string");
     const numberToken = token<number>("infer-number");
     const container = Container.create();
@@ -90,7 +90,7 @@ describe("toResolved dependency inference", () => {
           expectTypeOf(multiDep).toEqualTypeOf<ReadonlyArray<string>>();
           return "ok";
         },
-        [stringToken, optional(numberToken), injectAll(stringToken)],
+        [stringToken, injectOptional(numberToken), injectAll(stringToken)],
       )
       .singleton();
   });

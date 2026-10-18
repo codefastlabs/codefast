@@ -1,8 +1,8 @@
 # Example 13 — E-Commerce Platform
 
 **Concepts:** All DI features combined in a domain-rich context — bounded contexts as modules, `@postConstruct()`,
-`@preDestroy()`, `injectAll`, `optional`, multi-gateway payment, notification pipeline, per-request scoped cart,
-`optional` for A/B testing
+`@preDestroy()`, `injectAll`, `injectOptional`, multi-gateway payment, notification pipeline, per-request scoped cart,
+`injectOptional` for A/B testing
 
 ---
 
@@ -37,7 +37,7 @@ graph TB
         Users["Users\n(accounts, loyalty)"]
         Notif["Notifications\n(email + SMS + push\nmulti-binding pipeline)"]
         Search["Search\n(Elasticsearch adapter)"]
-        Analytics["Analytics\noptional()"]
+        Analytics["Analytics\ninjectOptional()"]
     end
 
     PG & Redis --> Catalog & Orders & Payments & Users
@@ -178,10 +178,10 @@ const cart = requestContainer.resolve(CartToken); // fresh per request
 
 ---
 
-## `optional` for A/B testing
+## `injectOptional` for A/B testing
 
 ```ts
-@injectable([inject(CatalogServiceToken), optional(AbTestingToken)])
+@injectable([inject(CatalogServiceToken), injectOptional(AbTestingToken)])
 class SearchController {
   constructor(
     private readonly catalog: CatalogService,
@@ -195,7 +195,7 @@ class SearchController {
 }
 ```
 
-`optional(token)` gracefully handles the A/B service not being configured in development environments.
+`injectOptional(token)` gracefully handles the A/B service not being configured in development environments.
 
 ---
 

@@ -19,7 +19,7 @@ const CAMEL_CASE = /^[a-z][A-Za-z0-9]*$/;
  * reported text reads as the call was written.
  */
 const DISPLAY_NAME_CALL =
-  /(?<![\w$.])(?:(token|tag)\s*(?:<(?:[^<>]|<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)*>)?|((?:Sync|Async)?Module)\s*\.\s*(?:create(?:Async)?|fromBindings)|(createAutoRegisterRegistry))\s*\(\s*(["'])((?:(?!\4)[^\\\n]|\\.)*)\4(\s*\))?/g;
+  /(?<![\w$.])(?:(token|tag)\s*(?:<(?:[^<>]|<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)*>)?|(Module)\s*\.\s*(?:create(?:Async)?|fromBindings)|(createAutoRegisterRegistry))\s*\(\s*(["'])((?:(?!\4)[^\\\n]|\\.)*)\4(\s*\))?/g;
 
 type DisplayNameKind = "token" | "tag" | "module";
 

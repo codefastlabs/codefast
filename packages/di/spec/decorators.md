@@ -15,7 +15,7 @@ declares the constructor order explicitly — the same pattern as Angular Ivy.
 
 > **Normative — the deps array is checked against the constructor at compile time, in both directions.**
 >
-> - Each element's resolved value must match its parameter (order, `optional`, `injectAll`).
+> - Each element's resolved value must match its parameter (order, `injectOptional`, `injectAll`).
 > - For a **literal deps tuple the arity must match exactly** — a list longer than the constructor is rejected rather
 >   than resolved and discarded.
 > - Optional trailing parameters admit every arity they declare, and a rest parameter admits any list.
@@ -44,7 +44,7 @@ class App {
 }
 
 // Optional dependency
-@injectable([Logger, Config, optional(Analytics)])
+@injectable([Logger, Config, injectOptional(Analytics)])
 class App {
   constructor(
     private logger: LoggerService,
@@ -62,7 +62,7 @@ class PluginRunner {
 
 ## Named / tagged / multi inject
 
-`inject()`, `optional()` and `injectAll()` are plain functions returning an `InjectionDescriptor`:
+`inject()`, `injectOptional()` and `injectAll()` are plain functions returning an `InjectionDescriptor`:
 
 ```ts
 @injectable([inject(Logger, { name: "console" }), inject(Engine, { tag: Fuel.of("electric") })])
@@ -74,7 +74,7 @@ class Dashboard {
 }
 
 // Combining optional + named
-@injectable([inject(Logger, { name: "file" }), optional(Analytics)])
+@injectable([inject(Logger, { name: "file" }), injectOptional(Analytics)])
 class Reporter {
   constructor(
     private logger: LoggerService,
@@ -93,15 +93,15 @@ class Runner {
 ```
 
 **Type signatures.** All three take a token plus the same optional `InjectOptions`, and return an `InjectionDescriptor`:
-`inject` for a required dependency, `optional` returning `undefined` when there is no binding, `injectAll` collecting
-every matching binding into an array.
+`inject` for a required dependency, `injectOptional` returning `undefined` when there is no binding, `injectAll`
+collecting every matching binding into an array.
 
 - `InjectOptions` has three fields: `name`, `tag` (shorthand for one criterion, folded into `tags` when the descriptor
   is built — see [`ResolveOptions`](foundation-types.md#resolveoptions)), and `tags`.
 - `InjectionDescriptor` is a [`DependencySlot`](foundation-types.md#dependencyslot) carrying a value type parameter —
   `multi` is `true` exactly when `injectAll` created it. It comes with the type guard `isInjectionDescriptor(value)`.
 
-> **Exact shape:** `src/injection/descriptor.ts` — `injectAll`, `optional`, `isInjectionDescriptor`,
+> **Exact shape:** `src/injection/descriptor.ts` — `injectAll`, `injectOptional`, `isInjectionDescriptor`,
 > `InjectionDescriptor`, `InjectOptions`; `src/decorators/inject.ts` — `inject`.
 
 ### `InjectableDependency` — one element of the deps array
@@ -111,7 +111,7 @@ every matching binding into an array.
  * A valid element in the deps array of @injectable().
  * - Token<Value>       → plain inject: resolve the token, throw if there is no binding
  * - Constructor<Value> → plain inject: resolve the class, throw if there is no binding
- * - InjectionDescriptor → decorated inject: inject(), optional(), injectAll()
+ * - InjectionDescriptor → decorated inject: inject(), injectOptional(), injectAll()
  *                          Use it for named/tagged/optional/multi injection
  */
 type InjectableDependency<Value = unknown> = Token<Value> | Constructor<Value> | InjectionDescriptor<Value>;
@@ -480,7 +480,7 @@ under the owner's namespace like any module's (`app:Services`).
 | ---------------------------------- | ----------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `@injectable(deps, options?)`      | decorator                     | class                         | Writes param metadata into `Symbol.metadata`. `options.autoRegister` registers into an explicit registry |
 | `inject(token, options?)`          | plain fn + accessor decorator | deps array / `accessor` field | An `InjectionDescriptor`, or injection through an accessor                                               |
-| `optional(token, options?)`        | plain fn                      | deps array                    | Like `inject`, but returns `undefined` when there is no binding                                          |
+| `injectOptional(token, options?)`  | plain fn                      | deps array                    | Like `inject`, but returns `undefined` when there is no binding                                          |
 | `injectAll(token, options?)`       | plain fn                      | deps array                    | Resolves every matching binding into an array                                                            |
 | `isInjectionDescriptor(v)`         | type guard fn                 | —                             | Checks whether a value is an `InjectionDescriptor`                                                       |
 | `@postConstruct()`                 | decorator                     | method                        | Writes the method name into `Symbol.metadata` — runs after construction, before caching                  |

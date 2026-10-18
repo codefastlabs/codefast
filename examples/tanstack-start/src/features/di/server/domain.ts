@@ -1,6 +1,6 @@
 /** The DI board's domain — tokens, services, validators, and the modules that bind them. */
 
-import { injectAll, injectable, Module, optional, postConstruct, preDestroy, token } from "@codefast/di";
+import { injectAll, injectable, injectOptional, Module, postConstruct, preDestroy, token } from "@codefast/di";
 
 // ── Domain model ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -229,7 +229,7 @@ export class InMemoryTaskRepository implements TaskRepository {
   RequestContextToken,
   IdGeneratorToken,
   TaskValidationToken,
-  optional(MetricsExporterToken),
+  injectOptional(MetricsExporterToken),
 ])
 export class TaskService {
   readonly #repository: TaskRepository;

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { token } from "#core/token";
 import { injectable } from "#decorators/injectable";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 
 interface Logger {
   log: () => void;
@@ -62,7 +62,7 @@ const rejectedDeclarations = (): void => {
   }
 
   // @ts-expect-error — `optional` can hand the constructor undefined
-  @injectable([optional(ConfigToken)])
+  @injectable([injectOptional(ConfigToken)])
   class WrongOptional {
     constructor(readonly config: Config) {}
   }
@@ -113,7 +113,7 @@ describe("injection declarations are checked against what receives them", () => 
       .bind(Described)
       .toResolved(
         (all: ReadonlyArray<Logger>, config: Config | undefined) => `${String(all.length)}:${String(config?.port)}`,
-        [injectAll(LoggerToken), optional(ConfigToken)],
+        [injectAll(LoggerToken), injectOptional(ConfigToken)],
       );
 
     expect(container.resolve(Described)).toBe("1:3000");

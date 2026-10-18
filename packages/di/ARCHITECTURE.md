@@ -501,10 +501,10 @@ handed it as `currentResolveOptions`; a write through that reference would rewri
 then on. Frozen, the attempt throws where it is made.
 
 **Every slot the engine resolves has one hidden class.** Slots are declared in several shapes — a bare token,
-`optional()`, a name, tags, whatever a foreign reader answers — and the memo above would add properties to them as they
-are read. A process that has resolved many shapes then meets every `#resolveDep` read megamorphic, on the cold path a
-boot runs most. So the engine copies each slot once, where it settles it — `settledParam` when a class's parameters are
-settled, `settledDescriptorsOf` when a factory is bound or declared — into one shape with both memos already filled,
+`injectOptional()`, a name, tags, whatever a foreign reader answers — and the memo above would add properties to them as
+they are read. A process that has resolved many shapes then meets every `#resolveDep` read megamorphic, on the cold path
+a boot runs most. So the engine copies each slot once, where it settles it — `settledParam` when a class's parameters
+are settled, `settledDescriptorsOf` when a factory is bound or declared — into one shape with both memos already filled,
 leaving only a lone name whose criterion a later bind can still fold. `app-boot-40` and the `slot-injected-*` rows in
 `benchmarks/di` price it in the harness's full-suite state, where it shows; a probe of one scenario alone does not.
 

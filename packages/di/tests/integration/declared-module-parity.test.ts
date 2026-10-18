@@ -18,7 +18,7 @@ import type { BindingTag } from "#core/tag";
 import { token } from "#core/token";
 import type { Token } from "#core/token";
 import type { BindingConstraint, BindingIdentifier, BindingScope, ResolveOptions } from "#core/types";
-import { optional } from "#injection/descriptor";
+import { injectOptional } from "#injection/descriptor";
 import type { ContainerGraphJson } from "#introspection/dependency-graph";
 
 /** A class key, so `toSelf` and the constructor lane are covered beside the token lane. */
@@ -120,7 +120,7 @@ function declare(spec: DeclarationSpec, index: number, log: HookLog): BindingDec
       break;
     case "resolved":
       definition["toResolved"] = (secondary: unknown) => `${value}<${String(secondary)}>`;
-      definition["deps"] = [optional(Secondary)];
+      definition["deps"] = [injectOptional(Secondary)];
       break;
     case "class":
       definition["to"] = class extends Built {
@@ -191,7 +191,7 @@ function bindFluently(builder: ModuleBuilder, spec: DeclarationSpec, index: numb
       chain.toDynamic(() => value);
       break;
     case "resolved":
-      chain.toResolved((secondary) => `${value}<${String(secondary)}>`, [optional(Secondary)]);
+      chain.toResolved((secondary) => `${value}<${String(secondary)}>`, [injectOptional(Secondary)]);
       break;
     case "class":
       chain.to(

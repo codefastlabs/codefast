@@ -49,7 +49,7 @@ export type InjectableDependency<Value = unknown> = Token<Value> | Constructor<V
 /**
  * The value a factory receives for one declared dependency.
  *
- * @remarks `optional()` and `injectAll()` fold their effect into the descriptor's own type
+ * @remarks `injectOptional()` and `injectAll()` fold their effect into the descriptor's own type
  * parameter, so reading it back is enough; bare tokens fall through to {@link TokenValue}.
  *
  * @since 0.5.0-canary.7
@@ -65,7 +65,7 @@ export type ResolvedDependencyValue<Dependency> = Dependency extends { readonly 
  *
  * @remarks Split out because a hand-written descriptor states its flags and its value type
  * separately, and only the flags are load-bearing: `{ token: Plugin, multi: true }` says `Plugin`
- * and delivers `ReadonlyArray<Plugin>`. `injectAll()` and `optional()` already fold their effect in, so the
+ * and delivers `ReadonlyArray<Plugin>`. `injectAll()` and `injectOptional()` already fold their effect in, so the
  * flags find an array or an optional there and leave it alone.
  */
 type DescribedValue<Dependency> = Dependency extends InjectionDescriptor<infer Value> ? Value : TokenValue<Dependency>;
@@ -194,7 +194,7 @@ export function buildInjectionDescriptor<Value, Names extends string = string>(
  *
  * @since 0.3.16-canary.0
  */
-export function optional<Value, Names extends string = string>(
+export function injectOptional<Value, Names extends string = string>(
   token: Token<Value, Names> | Constructor<Value>,
   options?: NoInfer<InjectOptions<Names>>,
 ): InjectionDescriptor<Value | undefined> {

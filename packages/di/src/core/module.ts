@@ -60,11 +60,11 @@ export interface AsyncModuleBuilder extends Binder {
 // ── Static factories ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * The companion factory that creates `SyncModule` values.
+ * The module factory: `create` and `fromBindings` for a sync module, `createAsync` for an async one.
  *
  * @since 0.3.16-canary.0
  */
-export const SyncModule = {
+export const Module = {
   create(name: string, setup: (builder: ModuleBuilder) => void): SyncModule {
     return {
       name,
@@ -82,39 +82,12 @@ export const SyncModule = {
       [MODULE_SETUP]: declared,
     };
   },
-};
-
-/**
- * The companion factory that creates `AsyncModule` values.
- *
- * @since 0.3.16-canary.0
- */
-export const AsyncModule = {
-  create(name: string, setup: (builder: AsyncModuleBuilder) => Promise<void>): AsyncModule {
+  createAsync(name: string, setup: (builder: AsyncModuleBuilder) => Promise<void>): AsyncModule {
     return {
       name,
       [ASYNC_MODULE_BRAND]: true as const,
       [MODULE_SETUP]: setup,
     };
-  },
-};
-
-// ── Module — unified API ─────────────────────────────────────────────────────────────────────────────────────────────
-
-/**
- * The unified module factory — `create` and `fromBindings` for sync modules, `createAsync` for async ones.
- *
- * @since 0.3.16-canary.0
- */
-export const Module = {
-  create(name: string, setup: (builder: ModuleBuilder) => void): SyncModule {
-    return SyncModule.create(name, setup);
-  },
-  fromBindings(name: string, declarations: ReadonlyArray<BindingDeclaration>): SyncModule {
-    return SyncModule.fromBindings(name, declarations);
-  },
-  createAsync(name: string, setup: (builder: AsyncModuleBuilder) => Promise<void>): AsyncModule {
-    return AsyncModule.create(name, setup);
   },
 };
 

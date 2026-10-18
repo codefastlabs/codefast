@@ -441,8 +441,8 @@ validate(container);
 ```
 
 Walks the dependency graph and throws `ScopeViolationError` for any violation of the scope matrix in
-[Scope](binding.md#scope). An `optional()` dependency counts whenever it is bound — a singleton captures it just the
-same — and imposes nothing when it is not.
+[Scope](binding.md#scope). An `injectOptional()` dependency counts whenever it is bound — a singleton captures it just
+the same — and imposes nothing when it is not.
 
 > **Normative — analysis scope.** `validate` can only statically analyse bindings whose deps are declared explicitly:
 >

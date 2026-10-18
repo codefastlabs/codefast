@@ -7,7 +7,7 @@ import type { SyncModule } from "#core/module";
 import { tag } from "#core/tag";
 import { token } from "#core/token";
 import { InvalidBindingDeclarationError, ManyBindingSlotError, SelfBindingRequiresClassError } from "#errors";
-import { optional } from "#injection/descriptor";
+import { injectOptional } from "#injection/descriptor";
 
 interface Logger {
   log(message: string): void;
@@ -103,7 +103,7 @@ describe("a binding definition is typed exactly as the chain is", () => {
         expectTypeOf(clock).toEqualTypeOf<Clock | undefined>();
         return port;
       },
-      deps: [Port, LoggerToken, optional(Clock)],
+      deps: [Port, LoggerToken, injectOptional(Clock)],
     });
     binding(Port, { toResolvedAsync: async (port) => port, deps: [Port] });
     // @ts-expect-error a parameter that does not match its dependency

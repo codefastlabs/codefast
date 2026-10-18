@@ -62,7 +62,8 @@ Requirements:
   accessor's initializer.
 - The class still needs `@injectable([...])` for its **constructor** parameters; the accessor list is separate metadata.
 - Instance accessors only. A `static` accessor throws at class-evaluation time.
-- `optional()` is not a decorator — accessor injection always goes through `resolve()`, so an unbound token throws.
+- `injectOptional()` is not a decorator — accessor injection always goes through `resolve()`, so an unbound token
+  throws.
 
 Use it for a dependency that is awkward as a constructor parameter (a base class shared by many subclasses, a
 framework-constructed object). Constructor injection stays the default: it is checked by `validate` and visible in the

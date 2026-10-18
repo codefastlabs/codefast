@@ -15,7 +15,7 @@ import type { ConstraintContext, ResolutionContext } from "#core/types";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
 import { CircularDependencyError, MissingScopeContextError } from "#errors";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 
 const WARM_ITERATIONS = 5;
 
@@ -195,7 +195,7 @@ describe("escaped dependencies inside a compiled plan", () => {
   it("keeps optional semantics for an unbound optional param", () => {
     const missingToken = token<string>("missing");
 
-    @injectable([optional(missingToken)])
+    @injectable([injectOptional(missingToken)])
     class Root {
       constructor(readonly maybe: string | undefined) {}
     }

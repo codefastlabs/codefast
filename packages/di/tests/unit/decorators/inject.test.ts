@@ -1,5 +1,5 @@
 /**
- * Descriptor-shaping tests for `inject()` / `optional()` / `injectAll()`.
+ * Descriptor-shaping tests for `inject()` / `injectOptional()` / `injectAll()`.
  *
  * `inject()` is dual-role: the returned value is a function that also carries the injection
  * descriptor's fields, so `name` and `tags` have to be read back from own enumerable property
@@ -17,7 +17,7 @@ import { inject } from "#decorators/inject";
 import { postConstruct, preDestroy } from "#decorators/lifecycle";
 import { PrivateLifecycleMethodError, StaticMemberDecoratorError } from "#errors";
 import type { InjectionDescriptor } from "#injection/descriptor";
-import { injectAll, isInjectionDescriptor, normalizeToDescriptor, optional } from "#injection/descriptor";
+import { injectAll, injectOptional, isInjectionDescriptor, normalizeToDescriptor } from "#injection/descriptor";
 
 const ENV_TAG = tag("env");
 const KIND_TAG = tag("kind");
@@ -80,19 +80,19 @@ describe("descriptor options", () => {
   });
 });
 
-describe("optional()", () => {
+describe("injectOptional()", () => {
   it("marks the dependency optional and keeps slot options", () => {
     const tags = [ENV_TAG.of("dev")] as const;
 
-    const plain = optional(serviceToken);
+    const plain = injectOptional(serviceToken);
     expect(plain.optional).toBe(true);
     expect(plain.multi).toBe(false);
     expect(plain.name).toBeUndefined();
 
-    expect(optional(serviceToken, { name: "fallback" }).name).toBe("fallback");
-    expect(optional(serviceToken, { tags }).tags).toEqual(tags);
+    expect(injectOptional(serviceToken, { name: "fallback" }).name).toBe("fallback");
+    expect(injectOptional(serviceToken, { tags }).tags).toEqual(tags);
 
-    const both = optional(serviceToken, { name: "fallback", tags });
+    const both = injectOptional(serviceToken, { name: "fallback", tags });
     expect(both.name).toBe("fallback");
     expect(both.tags).toEqual(tags);
   });

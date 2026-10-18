@@ -1,6 +1,6 @@
 # Example 02 — Decorators
 
-**Concepts:** `@injectable`, `inject()`, `optional()`, `.to()`, `.toSelf()`
+**Concepts:** `@injectable`, `inject()`, `injectOptional()`, `.to()`, `.toSelf()`
 
 ---
 
@@ -45,7 +45,7 @@ graph TD
 ### `@injectable` — declare constructor dependencies
 
 ```ts
-@injectable([inject(ConfigToken), optional(LoggerToken)])
+@injectable([inject(ConfigToken), injectOptional(LoggerToken)])
 class Database {
   constructor(config: AppConfig, logger?: Logger) {
     this.url = config.databaseUrl;
@@ -57,7 +57,7 @@ class Database {
 The array passed to `@injectable` maps positionally to constructor parameters:
 
 - `inject(Token)` — required dependency; throws if not bound.
-- `optional(Token)` — optional dependency; resolves to `undefined` if not bound.
+- `injectOptional(Token)` — optional dependency; resolves to `undefined` if not bound.
 
 The order of entries must match the order of constructor parameters exactly.
 
@@ -66,7 +66,7 @@ The order of entries must match the order of constructor parameters exactly.
 ### `inject()` — required dependency marker
 
 ```ts
-@injectable([inject(Database), inject(CacheToken), optional(LoggerToken)])
+@injectable([inject(Database), inject(CacheToken), injectOptional(LoggerToken)])
 class UserService {
   constructor(
     private readonly database: Database,
@@ -81,10 +81,10 @@ Example 08 for the plain-token shorthand).
 
 ---
 
-### `optional()` — nullable dependency
+### `injectOptional()` — nullable dependency
 
 ```ts
-optional(LoggerToken);
+injectOptional(LoggerToken);
 ```
 
 If `LoggerToken` is not bound in the container the parameter receives `undefined`. The TypeScript type must be

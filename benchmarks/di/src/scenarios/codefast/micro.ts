@@ -13,7 +13,7 @@
  * operations per second per *logical* operation — otherwise a batched
  * scenario would appear 1000× faster than the equivalent un-batched one.
  */
-import { Container, injectable, optional, token } from "@codefast/di";
+import { Container, injectable, injectOptional, token } from "@codefast/di";
 
 import { isFreshEachResolve } from "#fixtures/sanity";
 import {
@@ -148,7 +148,7 @@ class OptionalMissLeaf {}
 const optionalMissLeafToken = token<OptionalMissLeaf>("bench-cf-optional-miss-leaf");
 const optionalMissServiceToken = token<OptionalMissService>("bench-cf-optional-miss-svc");
 
-@injectable([optional(optionalMissLeafToken)])
+@injectable([injectOptional(optionalMissLeafToken)])
 class OptionalMissService {
   constructor(readonly leafDependency?: OptionalMissLeaf) {}
 }

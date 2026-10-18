@@ -11,7 +11,7 @@ import { token } from "#core/token";
 import { inject } from "#decorators/inject";
 import { injectable } from "#decorators/injectable";
 import { AsyncResolutionError, NoMatchingBindingError } from "#errors";
-import { injectAll, optional } from "#injection/descriptor";
+import { injectAll, injectOptional } from "#injection/descriptor";
 import { whenParentIs } from "#resolution/select/constraints";
 
 const ENV_TAG = tag("env");
@@ -103,7 +103,7 @@ describe("async construction", () => {
       "async-root",
     );
 
-    @injectable([inject(presentToken), optional(absentToken), injectAll(handlerToken)])
+    @injectable([inject(presentToken), injectOptional(absentToken), injectAll(handlerToken)])
     class Root {
       constructor(
         readonly present: string,
