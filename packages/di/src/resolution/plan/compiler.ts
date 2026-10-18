@@ -141,7 +141,6 @@ export interface InstantiationPlanHost {
   hasActivationHandlers(binding: Binding): boolean;
   /** Cached postConstruct presence — `undefined` until a runtime resolve discovers it. */
   knownPostConstruct(target: Constructor): boolean | undefined;
-  needsActiveContainer(target: Constructor): boolean;
   /** The slots of a class's `@inject` accessors, in the order their initializers run; empty when it has none. */
   accessorSlots(target: Constructor): ReadonlyArray<DependencySlot>;
   /** Constructs a class with the container ambient and `resolution` answering its accessors. */
@@ -403,12 +402,9 @@ export class InstantiationPlanCompiler {
     if (hasPostConstruct) {
       return null;
     }
-    const accessorSlots = this.#host.accessorSlots(target);
-    // A slot no `@inject` initializer asks for — a custom reader's own record — would be resolved for nothing.
-    for (let index = 0; index < accessorSlots.length; index += 1) {
-      if (!isPreparableSlot(accessorSlots[index]!)) {
-        return null;
-      }
+    const accessorSlots = this.#preparableAccessorSlots(target);
+    if (accessorSlots === null) {
+      return null;
     }
     const invokable = target as ConstructorInvocation;
     const meta = this.#host.getConstructorMetadata(target);
@@ -490,6 +486,54 @@ export class InstantiationPlanCompiler {
         ),
       node,
     };
+  }
+
+  /** A class's accessor slots, or `null` when one is a record no `@inject` initializer will ask for. */
+  #preparableAccessorSlots(target: Constructor): ReadonlyArray<DependencySlot> | null {
+    const accessorSlots = this.#host.accessorSlots(target);
+    // A custom reader's own record would be resolved for nothing, so its class stays on the interpreted lane.
+    for (let index = 0; index < accessorSlots.length; index += 1) {
+      if (!isPreparableSlot(accessorSlots[index]!)) {
+        return null;
+      }
+    }
+    return accessorSlots;
+  }
+
+  /**
+   * Constructs an accessor class from its settled params, resolving its accessors synchronously first.
+   *
+   * @remarks The async lane's construction, where the params may have been awaited but the accessors
+   * resolve on the sync lane, as their initializers would.
+   */
+  #accessorConstruct(
+    invokable: ConstructorInvocation,
+    accessorSlots: ReadonlyArray<DependencySlot>,
+    accessorDeps: ReadonlyArray<SyncNode>,
+    ancestors: ReadonlyArray<Binding>,
+  ): (params: Array<unknown>) => unknown {
+    const host = this.#host;
+    const fallback = this.#seededResolution(ancestors);
+    const accessorRuns = accessorDeps.map((dep) => dep.run);
+    if (accessorRuns.length === 1) {
+      const accessor0 = accessorRuns[0]!;
+      return (params) =>
+        host.constructWithAccessors(
+          invokable,
+          params,
+          new PreparedAccessorResolution(fallback, accessorSlots, [accessor0()]),
+        );
+    }
+    return (params) =>
+      host.constructWithAccessors(
+        invokable,
+        params,
+        new PreparedAccessorResolution(
+          fallback,
+          accessorSlots,
+          accessorRuns.map((run) => run()),
+        ),
+      );
   }
 
   /** A path-continuing resolution seeded with fixed ancestors, for a request no thunk was compiled for. */
@@ -631,11 +675,26 @@ export class InstantiationPlanCompiler {
     if (hasPostConstruct === undefined) {
       return PLAN_RETRY;
     }
-    if (hasPostConstruct || this.#host.needsActiveContainer(target)) {
+    if (hasPostConstruct) {
+      return null;
+    }
+    const accessorSlots = this.#preparableAccessorSlots(target);
+    if (accessorSlots === null) {
       return null;
     }
     const invokable = target as ConstructorInvocation;
     const meta = this.#host.getConstructorMetadata(target);
+    if (accessorSlots.length > 0) {
+      return this.#compileAsyncAccessorClassNode(
+        binding,
+        invokable,
+        meta,
+        accessorSlots,
+        compileStack,
+        depth,
+        ancestors,
+      );
+    }
     const leaf: AsyncNodeThunk = {
       run: () => new invokable(),
       promiseShape: "never",
@@ -688,6 +747,63 @@ export class InstantiationPlanCompiler {
       run: settleThenApply(depThunks, (values) => new invokable(...values)),
       promiseShape: "always",
       node: { kind: "construct", target: invokable, deps: nodes, awaits: true },
+    };
+  }
+
+  /**
+   * An accessor class on the async lane: its params settle as any class's do, then its accessors
+   * resolve synchronously and the class constructs, the order the interpreted async lane keeps.
+   */
+  #compileAsyncAccessorClassNode(
+    binding: Binding & { kind: "class" },
+    invokable: ConstructorInvocation,
+    meta: ConstructorMetadata | undefined,
+    accessorSlots: ReadonlyArray<DependencySlot>,
+    compileStack: Set<Binding["identifier"]>,
+    depth: number,
+    ancestors: ReadonlyArray<Binding>,
+  ): AsyncNodeThunk | null | typeof PLAN_RETRY {
+    // Metadata-less classes with required params throw on the runtime path — keep them there.
+    if (meta === undefined && binding.target.length !== 0) {
+      return null;
+    }
+    const params = meta?.params ?? [];
+    const depThunks = new Array<AsyncNodeThunk>(params.length);
+    const accessorDeps = new Array<SyncNode>(accessorSlots.length);
+    const depAncestors = [...ancestors, binding];
+    compileStack.add(binding.identifier);
+    try {
+      for (let index = 0; index < params.length; index += 1) {
+        const thunk = this.#compileAsyncInjectionThunk(params[index]!, compileStack, depth, depAncestors);
+        if (thunk === PLAN_RETRY) {
+          return thunk;
+        }
+        depThunks[index] = thunk;
+      }
+      for (let index = 0; index < accessorSlots.length; index += 1) {
+        const dep = this.#compileInjectionThunk(accessorSlots[index]!, compileStack, depth, depAncestors);
+        if (dep === PLAN_RETRY) {
+          return dep;
+        }
+        accessorDeps[index] = dep;
+      }
+    } finally {
+      compileStack.delete(binding.identifier);
+    }
+    const construct = this.#accessorConstruct(invokable, accessorSlots, accessorDeps, depAncestors);
+    const factory = (...values: Array<unknown>): unknown => construct(values);
+    const nodes = depThunks.map((thunk) => thunk.node);
+    if (allSynchronous(depThunks)) {
+      return {
+        run: () => construct(depThunks.map((thunk) => thunk.run())),
+        promiseShape: "never",
+        node: { kind: "call", factory, deps: nodes, awaits: false },
+      };
+    }
+    return {
+      run: settleThenApply(depThunks, construct),
+      promiseShape: "always",
+      node: { kind: "call", factory, deps: nodes, awaits: true },
     };
   }
 

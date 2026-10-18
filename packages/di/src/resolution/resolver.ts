@@ -613,7 +613,6 @@ export class DependencyResolver implements ResolverCallbacks {
     return {
       hasActivationHandlers: (binding) => this.#ownerOf(binding).#lifecycle.hasActivationHandlers(binding.token),
       knownPostConstruct: (target) => classes.knownPostConstruct(target),
-      needsActiveContainer: (target) => classes.needsActiveContainer(target),
       accessorSlots: (target) => classes.accessorSlots(target),
       constructWithAccessors: (target, deps, resolution) => classes.construct(target, deps, true, resolution),
       getConstructorMetadata: (target) => classes.constructorMetadata(target),

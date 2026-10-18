@@ -477,12 +477,14 @@ depth of a plan. An initializer takes a value only when its slot is the next one
 that took the first. A class built inside the constructor fails that check and resolves through the fallback, which is
 seeded with the class and its ancestors. The compiler prepares only slots that `@inject` itself registered. A custom
 reader's own records would be resolved for an initializer that never asks for them, so such a class stays on the
-interpreted lane.
+interpreted lane. The async plan follows the order the interpreted async lane keeps: the params settle first, then the
+accessors resolve on the sync lane, as their initializers would, and the class constructs.
 
 > **Invariant (correctness).** A plan prepares an accessor value only for a slot an `@inject` initializer will take, and
 > an initializer takes one only in order and for the instance that took the first.
-> `tests/unit/resolution/fast-paths-active.test.ts` pins the compiled plan, a nested accessor class, a class built in
-> the constructor, a custom reader's records, and the cycle that closes through an accessor.
+> `tests/unit/resolution/fast-paths-active.test.ts` pins the compiled plan on both lanes, a nested accessor class, a
+> class built in the constructor, a custom reader's records, the async lane's order, and the cycle that closes through
+> an accessor.
 
 > **Invariant (correctness).** An escape must stay behaviourally indistinguishable from the interpreted path. If you add
 > a case, seed it with the same ancestors and replay the same call.
