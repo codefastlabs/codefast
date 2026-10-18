@@ -40,7 +40,8 @@ describe("BindToBuilder fluent surface", () => {
     const bindBuilder = container.bind(token<number>("api-order"));
 
     expect(typeof bindBuilder.to).toBe("function");
-    expect(typeof bindBuilder.toSelf).toBe("function");
+    // A token's chain is not typed to offer toSelf(); the runtime object still carries it, guarded.
+    expect("toSelf" in bindBuilder).toBe(true);
     expect(typeof bindBuilder.toConstantValue).toBe("function");
     expect(typeof bindBuilder.toDynamic).toBe("function");
     expect(typeof bindBuilder.toDynamicAsync).toBe("function");
@@ -131,6 +132,7 @@ describe("BindToBuilder fluent surface", () => {
     const ValueToken = token<number>("to-self-non-constructor");
 
     // A consumer's `catch (error) { if (error instanceof DiError) … }` must see this one too.
+    // @ts-expect-error — a token's chain offers no toSelf(); the runtime guard for untyped callers is under test.
     const thrown = captureThrown(() => container.bind(ValueToken).toSelf());
 
     expect(thrown).toBeInstanceOf(SelfBindingRequiresClassError);

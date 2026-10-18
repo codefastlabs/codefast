@@ -85,25 +85,16 @@ type InjectedParameters<Deps extends ReadonlyArray<InjectableDependency>> = {
 };
 
 /**
- * Declare a class injectable, and what its constructor is to be handed.
+ * Declares a class injectable, and what its constructor is to be handed.
+ *
+ * @remarks The decorator only accepts a class whose constructor takes exactly what `deps` resolve to, in that order —
+ * no deps means no required parameter, so a class (or a subclass inheriting its base's constructor) cannot be built
+ * with an argument left `undefined`. A deps *array* whose length the compiler cannot know skips the arity check.
  *
  * @since 0.3.16-canary.0
  */
-export function injectable(): (target: unknown, context: ClassDecoratorContext) => void;
-
-/**
- * @remarks Declaring dependencies constrains the class: the decorator only accepts one whose
- * constructor takes exactly what `deps` resolve to, in that order — including arity, so a literal
- * deps list longer than the constructor is a compile error rather than a resolved-and-discarded
- * value. Optional trailing parameters admit every arity they declare, and a rest parameter admits
- * any list. A deps *array* — one whose length the compiler cannot know — skips the arity check,
- * which is also the deliberate spelling for declaring more dependencies than the constructor
- * takes, e.g. for the dependency graph's edges.
- *
- * @since 0.3.16-canary.0
- */
-export function injectable<const Deps extends ReadonlyArray<InjectableDependency>>(
-  deps: Deps,
+export function injectable<const Deps extends ReadonlyArray<InjectableDependency> = []>(
+  deps?: Deps,
   options?: InjectableOptions,
 ): <Target extends abstract new (...args: InjectedParameters<Deps>) => unknown>(
   target: Target &

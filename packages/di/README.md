@@ -149,7 +149,8 @@ container.rebind(LoggerToken).toConstantValue({
 
 `@injectable([...])` declares a class's constructor dependencies, in parameter order. The decorator checks the list
 against the constructor signature, so a dependency of the wrong type — or a list of the wrong length — is a compile-time
-error.
+error. `@injectable()` with no list declares none, so it compiles only on a class whose constructor needs nothing, a
+subclass inheriting its base's constructor included.
 
 ## Tokens
 
@@ -207,7 +208,7 @@ no scope produces a new instance every time.
 
 ```ts
 container.bind(DbToken).toDynamic(createDb).singleton();
-container.bind(RequestContextToken).toSelf().scoped();
+container.bind(RequestContext).toSelf().scoped();
 ```
 
 > **Important.** Resolving a `scoped` binding from a container with no child scope throws `MissingScopeContextError`.

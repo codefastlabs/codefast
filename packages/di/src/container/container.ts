@@ -2,7 +2,7 @@ import type { BindingRegistration } from "#container/binding-chain";
 import { BindingChain } from "#container/binding-chain";
 import type { Binding, ConstantBinding } from "#core/binding";
 import { effectiveBindingScope, NO_INSTANCE } from "#core/binding";
-import type { BindToBuilder } from "#core/binding-builders";
+import type { Binder, BindToBuilder, ClassBindToBuilder } from "#core/binding-builders";
 import { getOrInsert } from "#core/map-upsert";
 import type { AsyncModule, AsyncModuleBuilder, ModuleBuilder, SyncModule } from "#core/module";
 import { isSyncModule, MODULE_SETUP } from "#core/module";
@@ -39,18 +39,17 @@ import { DependencyResolver } from "#resolution/resolver";
  *
  * @since 0.3.16-canary.0
  */
-export interface Container extends Resolver {
+export interface Container extends Resolver, Binder {
   readonly isDisposed: boolean;
 
-  bind<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-  ): BindToBuilder<Value, Names>;
   unbind(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): void;
   unbindAsync(tokenOrId: Token<unknown> | Constructor | BindingIdentifier): Promise<void>;
   unbindAll(): void;
   unbindAllAsync(): Promise<void>;
+  rebind<Value>(type: Constructor<Value>): ClassBindToBuilder<Value>;
+  rebind<Value, Names extends string = string>(token: Token<Value, Names>): BindToBuilder<Value, Names>;
   rebind<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
+    key: Token<Value, Names> | Constructor<Value>,
   ): BindToBuilder<Value, Names>;
 
   load(...modules: Array<SyncModule>): void;
@@ -260,11 +259,14 @@ class DefaultContainer implements Container {
 
   // ── Binding ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
+  bind<Value>(type: Constructor<Value>): ClassBindToBuilder<Value>;
+  bind<Value, Names extends string = string>(token: Token<Value, Names>): BindToBuilder<Value, Names>;
   bind<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-  ): BindToBuilder<Value, Names> {
+    key: Token<Value, Names> | Constructor<Value>,
+  ): BindToBuilder<Value, Names>;
+  bind<Value>(key: Token<Value> | Constructor<Value>): BindingChain<Value> {
     this.#assertNotDisposed();
-    return this.#createBindToBuilder(token);
+    return this.#createBindToBuilder(key);
   }
 
   /** The registration every non-module chain shares, so `bind()` allocates only the builder. */
@@ -307,7 +309,7 @@ class DefaultContainer implements Container {
   #createBindToBuilder<Value>(
     token: Token<Value> | Constructor<Value>,
     registration: BindingRegistration = this.#ownRegistration(),
-  ): BindToBuilder<Value> {
+  ): BindingChain<Value> {
     return new BindingChain<Value>(token, registration);
   }
 
@@ -444,9 +446,12 @@ class DefaultContainer implements Container {
     this.#moduleImports = undefined;
   }
 
+  rebind<Value>(type: Constructor<Value>): ClassBindToBuilder<Value>;
+  rebind<Value, Names extends string = string>(token: Token<Value, Names>): BindToBuilder<Value, Names>;
   rebind<Value, Names extends string = string>(
-    token: Token<Value, Names> | Constructor<Value>,
-  ): BindToBuilder<Value, Names> {
+    key: Token<Value, Names> | Constructor<Value>,
+  ): BindToBuilder<Value, Names>;
+  rebind<Value>(token: Token<Value> | Constructor<Value>): BindingChain<Value> {
     this.#assertNotDisposed();
     // A lone default binding that owes no deactivation is replaced by the new chain's own
     // registration, so the swap unbinds nothing up front. Anything else is unbound first, so an
@@ -582,8 +587,8 @@ class DefaultContainer implements Container {
   #createModuleBuilder(moduleRef: object): ModuleBuilder {
     const registration = this.#moduleRegistration(moduleRef);
     return {
-      bind: <Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
-        this.#createBindToBuilder(token, registration),
+      bind: <Value>(key: Token<Value> | Constructor<Value>): BindingChain<Value> =>
+        this.#createBindToBuilder(key, registration),
       import: (...modules: Array<SyncModule>): void => {
         this.#recordModuleImports(moduleRef, modules);
         this.#loadSyncModules(modules);
@@ -594,8 +599,8 @@ class DefaultContainer implements Container {
   #createAsyncModuleBuilder(moduleRef: object, importPromises: Array<Promise<void>>): AsyncModuleBuilder {
     const registration = this.#moduleRegistration(moduleRef);
     return {
-      bind: <Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value> =>
-        this.#createBindToBuilder(token, registration),
+      bind: <Value>(key: Token<Value> | Constructor<Value>): BindingChain<Value> =>
+        this.#createBindToBuilder(key, registration),
       import: (...modules: Array<SyncModule | AsyncModule>): void => {
         this.#recordModuleImports(moduleRef, modules);
         for (const module of modules) {

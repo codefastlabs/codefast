@@ -35,13 +35,34 @@ export interface SlotConstrainedBuilder<Names extends string = string> {
 }
 
 /**
+ * The first step of a chain whose key is a class, which can also construct that class itself.
+ *
+ * @remarks A token names no class to construct, so only this chain offers `toSelf()`.
+ */
+export interface ClassBindToBuilder<Value> extends BindToBuilder<Value> {
+  toSelf(): BindingBuilder<Value>;
+}
+
+/**
+ * The `bind` a container and a module builder share, so every place a binding starts is typed by one declaration.
+ *
+ * @remarks A class key starts a chain that can `toSelf()`; a token, or a key typed as either, starts one that cannot.
+ */
+export interface Binder {
+  bind<Value>(type: Constructor<Value>): ClassBindToBuilder<Value>;
+  bind<Value, Names extends string = string>(token: Token<Value, Names>): BindToBuilder<Value, Names>;
+  bind<Value, Names extends string = string>(
+    key: Token<Value, Names> | Constructor<Value>,
+  ): BindToBuilder<Value, Names>;
+}
+
+/**
  * The first step of the fluent chain: the slot, then the `to*` strategy that registers the binding.
  *
  * @since 0.3.16-canary.0
  */
 export interface BindToBuilder<Value, Names extends string = string> extends SlotConstrainedBuilder<Names> {
   to(type: Constructor<Value>): BindingBuilder<Value>;
-  toSelf(): BindingBuilder<Value>;
   toConstantValue(value: Value): ConstantBindingBuilder<Value>;
   toDynamic(factory: (ctx: ResolutionContext) => Value): BindingBuilder<Value>;
   toDynamicAsync(factory: (ctx: ResolutionContext) => Promise<Value>): BindingBuilder<Value>;

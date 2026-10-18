@@ -253,15 +253,19 @@ How to read the rows:
 - **`toConstantValue()`** has no scope step because a constant binding is always a singleton. Calling a lifecycle hook
   on it moves to a builder with only lifecycle and `id()` left — a one-way state: calling a hook locks the constraint
   part.
+- **`toSelf()`** exists only on a chain whose key is a class: `bind` returns a `ClassBindToBuilder` for a `Constructor`
+  key and a `BindToBuilder` for a token, or for a key typed as either. A container, a `ModuleBuilder` and an
+  `AsyncModuleBuilder` all bind through one `Binder`, so a module's chain narrows slot names exactly as a container's.
+  An untyped caller that reaches `toSelf()` on a token still gets `SelfBindingRequiresClassError`.
 - **`toAlias()`** is the only builder **without a value type parameter** — an alias produces no value of its own, so
   there is nothing to infer. It still carries the token's slot names, so `whenNamed` stays checked.
 - **`transient()`** has no `onDeactivation` because a transient instance is never deactivated; `scoped()` keeps it,
   since a child container deactivates what it cached
   ([`ActivationHandler` and `DeactivationHandler`](foundation-types.md#activationhandler-and-deactivationhandler)).
 
-> **Exact shape:** `src/core/binding-builders.ts` — `BindToBuilder`, `SlotConstrainedBuilder`, `BindingBuilder`,
-> `ConstantBindingBuilder`, `AliasBindingBuilder`, `SingletonBindingBuilder`, `TransientBindingBuilder`,
-> `ScopedBindingBuilder`, `SingletonLifecycleBuilder`.
+> **Exact shape:** `src/core/binding-builders.ts` — `Binder`, `BindToBuilder`, `ClassBindToBuilder`,
+> `SlotConstrainedBuilder`, `BindingBuilder`, `ConstantBindingBuilder`, `AliasBindingBuilder`,
+> `SingletonBindingBuilder`, `TransientBindingBuilder`, `ScopedBindingBuilder`, `SingletonLifecycleBuilder`.
 
 > **Normative — a repeated `on*()` on one chain replaces the hook it already carries.** The three chain verbs compose
 > three different ways:
