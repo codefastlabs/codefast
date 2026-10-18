@@ -13,11 +13,15 @@ import { firstLineOf, lineOfOffset } from "#core/source-position";
  * @remarks Only an `object` part can be extended by an interface. A `union` part needs the `&` to
  * distribute over its members and a `type-parameter` part needs it to defer; an `other` part (a
  * primitive, a conditional) has no interface form; an `unresolved` part leaves the question open.
+ *
+ * @since 0.15.0
  */
 export type ConstituentKind = "object" | "union" | "type-parameter" | "other" | "unresolved";
 
 /**
  * One part of a props intersection: its UTF-16 source span and its text as written.
+ *
+ * @since 0.15.0
  */
 export interface IntersectionPart {
   readonly start: number;
@@ -27,6 +31,8 @@ export interface IntersectionPart {
 
 /**
  * A props type joined with `&`: a `*Props` alias, or the inline annotation of a component's props parameter.
+ *
+ * @since 0.15.0
  */
 export interface PropsIntersection {
   /** Whether a `*Props` alias declares the intersection or a parameter annotation spells it inline. */
@@ -184,6 +190,8 @@ function collectNodes(node: OxcNode, matches: (node: OxcNode) => boolean, found:
  * @remarks A candidate is a `*Props` alias, or in a `.tsx` file a module-level component's first
  * parameter whose annotation is an intersection at its top level. Syntax alone decides the candidates;
  * whether an interface could express one is for the type checker, through {@link judgePropsIntersection}.
+ *
+ * @since 0.15.0
  */
 export function findPropsIntersections(filePath: string, sourceText: string): Array<PropsIntersection> {
   const readsParameters = filePath.endsWith(".tsx");
@@ -214,6 +222,8 @@ function listParts(parts: ReadonlyArray<IntersectionPart>): string {
  *
  * @remarks An intersection stays a `type` when any part is a union, a type parameter or not an
  * object; it is reported when an interface could extend every part, or when a part did not resolve.
+ *
+ * @since 0.15.0
  */
 export function judgePropsIntersection(
   intersection: PropsIntersection,

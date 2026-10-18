@@ -38,6 +38,8 @@ export interface SlotConstrainedBuilder<Names extends string = string> {
  * The first step of a chain whose key is a class, which can also construct that class itself.
  *
  * @remarks A token names no class to construct, so only this chain offers `toSelf()`.
+ *
+ * @since 0.14.0
  */
 export interface ClassBindToBuilder<Value> extends BindToBuilder<Value> {
   toSelf(): BindingBuilder<Value>;
@@ -47,6 +49,8 @@ export interface ClassBindToBuilder<Value> extends BindToBuilder<Value> {
  * The `bind` a container and a module builder share, so every place a binding starts is typed by one declaration.
  *
  * @remarks A class key starts a chain that can `toSelf()`; a token, or a key typed as either, starts one that cannot.
+ *
+ * @since 0.14.0
  */
 export interface Binder {
   bind<Value>(type: Constructor<Value>): ClassBindToBuilder<Value>;

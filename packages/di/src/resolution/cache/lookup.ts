@@ -48,6 +48,8 @@ export interface CollectionEntry {
  * @remarks A fixed value is a hook-free constant, or a hook-free singleton whose instance is cached — anything that
  * changes either bumps a registry version the memo is keyed on. The list is kept unfrozen: a frozen array reads
  * through a slow elements kind, and every read copies it anyway.
+ *
+ * @since 0.14.0
  */
 export function stableCollectionValuesOf(candidates: ReadonlyArray<Binding>): Array<unknown> | undefined {
   for (let index = 0; index < candidates.length; index += 1) {

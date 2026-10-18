@@ -17,6 +17,8 @@ import { validateChain } from "#introspection/validation";
  *
  * @remarks A singleton graph is followed through its declared dependencies the way `resolve` would follow them, so
  * a missing binding, a cycle or a captive dependency fails here instead of on the first request.
+ *
+ * @since 0.14.0
  */
 export function validate(container: Container): void {
   validateChain(containerInternals(container));
@@ -25,6 +27,8 @@ export function validate(container: Container): void {
 /**
  * Describes a container: the bindings it registers itself, its cached singletons, and whether it has a parent and is
  * disposed.
+ *
+ * @since 0.14.0
  */
 export function inspect(container: Container): ContainerSnapshot {
   return containerInspector(container).inspect();
@@ -32,6 +36,8 @@ export function inspect(container: Container): ContainerSnapshot {
 
 /**
  * Describes the bindings a container registers itself for one token, ancestors excluded.
+ *
+ * @since 0.14.0
  */
 export function lookupBindings<Value>(
   container: Container,
@@ -46,6 +52,8 @@ export function lookupBindings<Value>(
  *
  * @remarks A `when()` predicate runs here as it would in `resolve`. `options.ancestors` names the resolutions the
  * request is nested in, so a predicate that reads the parent sees the one it would.
+ *
+ * @since 0.14.0
  */
 export function explain<Names extends string = string>(
   container: Container,
@@ -57,6 +65,8 @@ export function explain<Names extends string = string>(
 
 /**
  * Builds the dependency graph of a container's own bindings, with the ancestors they resolve through.
+ *
+ * @since 0.14.0
  */
 export function generateDependencyGraph(container: Container, options?: GraphOptions): ContainerGraphJson {
   const { registries, metadataReader } = containerInternals(container);

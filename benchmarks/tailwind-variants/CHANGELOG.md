@@ -1,5 +1,27 @@
 # @codefast/benchmark-tailwind-variants
 
+## 0.11.0
+
+### Minor Changes
+
+- [#1107](https://github.com/codefastlabs/codefast/pull/1107) The suite has a committed baseline and a generated `RESULTS.md` and `results.json`, as the DI suite does:
+  `pnpm bench:baseline` is the full-profile isolated pass read against the run under `baselines/`, `pnpm bench:results`
+  rebuilds the page from it, and `pnpm bench:results:check` gates CI and `pnpm verify`. The page leads with what a user
+  feels — defining a component, one render, and the bundle — and `pnpm bench:footprint` bundles each library's smallest
+  `tv()` program with Rolldown, holding `@codefast/tailwind-variants`'s gzipped size to `footprint-budget.json` behind
+  `pnpm bench:footprint:check`, which gates CI as well.
+
+### Patch Changes
+
+- [#1108](https://github.com/codefastlabs/codefast/pull/1108) The generated `RESULTS.md` separates a time from its unit with a plain space instead of a non-breaking one, so the page
+  holds no invisible characters for search, diffs or copy to trip on.
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor to the lowest release each runs on, 22.18, which Node's built-in type stripping needs.
+- Updated dependencies:
+  - @internal/benchmark-harness@0.12.0
+  - @internal/benchmark-viewer@0.10.2
+  - @codefast/tailwind-variants@0.10.0
+
 ## 0.10.1
 
 ### Patch Changes

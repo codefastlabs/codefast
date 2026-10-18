@@ -22,6 +22,8 @@ async function loadOptionalPeer<Module>(purpose: string, load: () => Promise<Mod
  *
  * @param purpose - The command or flag that needs the type server, named in the error when it is missing.
  * @throws AppError when the `typescript` package providing the type server cannot be loaded.
+ *
+ * @since 0.15.0
  */
 export async function loadTypeServer(purpose: string): Promise<typeof TypeServer> {
   return loadOptionalPeer(purpose, () => import("typescript/unstable/sync"));
@@ -32,6 +34,8 @@ export async function loadTypeServer(purpose: string): Promise<typeof TypeServer
  *
  * @param purpose - The command or flag that needs the helpers, named in the error when they are missing.
  * @throws AppError when the `typescript` package providing them cannot be loaded.
+ *
+ * @since 0.15.0
  */
 export async function loadTypeServerSyntax(purpose: string): Promise<typeof TypeServerSyntax> {
   return loadOptionalPeer(purpose, () => import("typescript/unstable/ast"));

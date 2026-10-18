@@ -1,5 +1,157 @@
 # @codefast/di
 
+## 0.14.0
+
+### Minor Changes
+
+- [#1101](https://github.com/codefastlabs/codefast/pull/1101) **Breaking:** an auto-register registry is now a `SyncModule`, and `Container#loadAutoRegistered` is removed.
+  `createAutoRegisterRegistry(name)` takes the module's display name, and the registry loads like any other module —
+  deduplicated by identity, ref-counted, and torn down by `unload()` / `unloadAsync()`, which deactivates every singleton
+  it bound. `loadAutoRegistered` was a bare bind loop: it could not be unloaded, and a second call rebound the whole set
+  over the first.
+
+  Migrate:
+
+  ```ts
+  // before
+  const registry = createAutoRegisterRegistry();
+  const count = container.loadAutoRegistered(registry);
+
+  // after
+  const registry = createAutoRegisterRegistry("app:Services");
+  container.load(registry); // or Container.fromModules(registry)
+  const count = registry.entries().length; // if you used the returned count
+  ```
+
+  A load binds the classes registered by then; a second `load()` of the same registry only adds a reference, so a class
+  decorated after the first load is bound by unloading the registry to zero and loading it again.
+
+- [#1119](https://github.com/codefastlabs/codefast/pull/1119) **Breaking (types only):** three places the types let through what the library then did wrong or rejected late.
+
+  - `@injectable()` with no deps now compiles only on a class whose constructor needs nothing. It used to accept a class
+    with required parameters — a subclass inheriting its base's constructor included — and build it with those parameters
+    left `undefined`, silently. List the deps, as `@injectable([...])`.
+  - A `ModuleBuilder` and an `AsyncModuleBuilder` now narrow slot names as a container does: `whenNamed` inside
+    `Module.create` took any string. A container and both builders bind through one new `Binder` interface, so the three
+    can no longer drift apart.
+  - `toSelf()` exists only on a chain whose key is a class (`ClassBindToBuilder`); on a token it was accepted by the
+    compiler and threw `SelfBindingRequiresClassError` at runtime. An untyped caller still gets that error.
+
+  `Binder` and `ClassBindToBuilder` are exported from the package root. Runtime behaviour is unchanged.
+
+- [#1101](https://github.com/codefastlabs/codefast/pull/1101) **Breaking:** `Container#dispose()` is renamed `disposeAsync()`. It returns a `Promise`, so the bare name broke the
+  package's own rule — unqualified is sync, the `Async` suffix is async — and the spec carried an exception for it that is
+  now gone. `disposeAsync` is the name TC39's `AsyncDisposableStack` gives the same method, and `[Symbol.asyncDispose]()`
+  still delegates to it, so `await using` is unchanged. Replace `await container.dispose()` with
+  `await container.disposeAsync()`; an `AggregateError` from a teardown with several throwing hooks now reads
+  "disposeAsync() completed, but deactivation hooks threw".
+
+- [#1094](https://github.com/codefastlabs/codefast/pull/1094) **Breaking:** the `ContainerInterface` type export is removed. It aliased the `Container` interface, which `Container`
+  already exports under its own name beside the value, so replace `ContainerInterface` with `Container`.
+
+- [#1063](https://github.com/codefastlabs/codefast/pull/1063) **Breaking:** `validate`, `inspect`, `lookupBindings`, `explain` and `generateDependencyGraph` are functions that take
+  the container instead of `Container` methods, so a bundle that only binds and resolves leaves them out: importing
+  `Container` and `token` alone drops from 23.2 KB to about 20.6 KB gzipped. `has` and `hasOwn` stay methods. Replace
+  `container.validate()` with `validate(container)`, `container.explain(token, options)` with
+  `explain(container, token, options)`, and likewise for the other three, importing each from `@codefast/di`. They refuse
+  a disposed container with `DisposedContainerError` as the methods did, and an object `Container` did not create with a
+  `TypeError`.
+
+- [#1120](https://github.com/codefastlabs/codefast/pull/1120) **Breaking:** two spellings of the same API collapse into one.
+
+  - `Module` is the one module factory: `Module.create`, `Module.createAsync` and `Module.fromBindings`. The
+    `SyncModule.create`, `SyncModule.fromBindings` and `AsyncModule.create` companions are removed; `SyncModule` and
+    `AsyncModule` remain as the types those factories return. Replace `SyncModule.create(` with `Module.create(`,
+    `SyncModule.fromBindings(` with `Module.fromBindings(` and `AsyncModule.create(` with `Module.createAsync(`.
+  - `optional()` is renamed `injectOptional()`, so the descriptor family reads as the resolve family does —
+    `inject`/`injectOptional`/`injectAll` beside `resolve`/`resolveOptional`/`resolveAll`. Replace `optional(` with
+    `injectOptional(`.
+
+- [#1111](https://github.com/codefastlabs/codefast/pull/1111) **Breaking:** a root-level `resolveAll` / `resolveAllAsync` with no options now hands every caller the same memoized
+  list while the chain and its activation hooks are unchanged, instead of a fresh copy per read. The result was already
+  typed `ReadonlyArray`; it is now read-only in fact, and a caller that needs a list of its own copies it (`[...list]`).
+  Dropping the copy reads `resolve-all-strategies-10` +22%, `resolve-all-strategies-100` +67% and
+  `production-event-bus-dispatch` +32% in a paired run, with the cold collection rows and the canaries level.
+
+- [#1068](https://github.com/codefastlabs/codefast/pull/1068) Lower the Node.js floor from 24 to the lowest release the package, its dependencies and its full test suite run on:
+  22.12 for `@codefast/cli` and `@codefast/tailwind-variants`, 22.18 for `@codefast/di` and `@codefast/di-testing`, and
+  22.22.2 for `@codefast/theme`, `@codefast/tracking` and `@codefast/ui`. Each floor is type-checked against what Node 22
+  ships and proven by running the package's tests on that release in CI.
+
+### Patch Changes
+
+- [#1110](https://github.com/codefastlabs/codefast/pull/1110) An `@inject` accessor now compiles into its class's instantiation plan, like a constructor parameter: the plan resolves
+  it before `new` and the accessor's `init` takes the value, instead of each accessor resolving again through the
+  container as the instance initializes. An accessor-injected class may now sit anywhere in a plan, not only at its root.
+  `@inject` returns an `init` rather than adding an initializer that writes through `context.access.set`, so the value is
+  the field's initial value. A standalone probe built with `tsc` puts one accessor at 46 ns → 31 ns per resolve and two at
+  59 ns → 41 ns; a paired run reads `accessor-injection-construct` +26%, with the canaries level. A custom
+  `MetadataReader`'s accessor records are not prepared, so such a class keeps resolving its accessors itself.
+
+- [#1113](https://github.com/codefastlabs/codefast/pull/1113) An `@inject`-accessor class now compiles into an async plan too, so `resolveAsync` stops interpreting it on every call.
+  The plan keeps the interpreted async lane's order: the constructor params settle first, then the accessors resolve on
+  the sync lane and the class constructs. A standalone probe puts `resolveAsync` of a one-accessor class at 120 ns → 78
+  ns, against 66 ns for the same class taking its dependency as a constructor param.
+
+- [#1091](https://github.com/codefastlabs/codefast/pull/1091) The `ResolutionContext` a factory or activation hook receives narrows `name` to the slot names its token declares, as
+  `Container#resolve` already did: inside `toDynamic((ctx) => ctx.resolve(LoggerToken, { name: "fiel" }))`, a name the
+  token does not declare is now a compile error instead of a `NoMatchingBindingError` at resolve time. A token that
+  declares no names, and a class key, still take any string.
+
+- [#1100](https://github.com/codefastlabs/codefast/pull/1100) The README writes `validate`, `inspect` and the other introspection functions as the free functions they are —
+  `validate(container)` rather than a method-style `validate()` — and notes that guarding `validate(container)` with a
+  dev-only check keeps the introspection code out of a production bundle.
+
+- [#1121](https://github.com/codefastlabs/codefast/pull/1121) Three code samples still imported a name the previous release removed or renamed: the README's decorator sample and the
+  decorators spec imported `optional` while calling `injectOptional`, and the modules spec imported `SyncModule` while
+  calling `Module.create`. They import what they call now.
+
+- [#1116](https://github.com/codefastlabs/codefast/pull/1116) The foundation-types spec now documents the helpers a custom `when()` constraint reads a frame's `slot.keyMask` with —
+  `tagKeyMaskOf`, `coversTagKeys` and `NO_TAG_KEYS`, the ones the built-in tag constraints use — with an example that
+  rules a parent out by its tag keys before comparing any value.
+
+- [#1115](https://github.com/codefastlabs/codefast/pull/1115) `DiError.code` is now typed as `DiErrorCode`, a union of every code the library throws, exported from the package root,
+  so a `switch (error.code)` is checked by the compiler and a misspelled code no longer compiles. An
+  `AsyncActivationError` raised by a `@postConstruct` hook now names the token it was building —
+  `@postConstruct method 'init' of 'app:Cache' returned a Promise` — where it named only the method.
+
+- [#1065](https://github.com/codefastlabs/codefast/pull/1065) `inspect` and `lookupBindings` read the container's inspector directly instead of building an internals object and the
+  ancestor-registry list on every call, so they cost what the methods did before they became functions. A paired run
+  against the method-shaped build reads `lookup-bindings` at −2% and `inspect-snapshot` at −4%, from −13% and −9%.
+
+- [#1117](https://github.com/codefastlabs/codefast/pull/1117) The README's toolchain table lists Bun 1.4.3 or later as needing nothing: its transpiler lowers standard decorators and
+  supplies their metadata without `Symbol.metadata`. Bun 1.4.2 and earlier still inject the wrong values into a module
+  holding two decorated classes; 1.4.3 fixes that, checked with two accessor-injected and two constructor-injected classes
+  in one module, run directly and after `bun build`.
+
+- Move three cold paths out of the resolver to the modules they belong to: a class's constructor-parameter settle (and its
+  `MissingMetadataError`) to the class introspector, a root collection's stable-value check beside its memo in
+  `resolution/cache/lookup`, and `validate`'s miss check to `introspection/validation`, which reads the chain through the
+  new `DependencyResolver.bindingsForValidate()` in place of `missForValidate()`. `ARCHITECTURE.md` replaces the
+  resolver's line budget with the rule for what `resolution/resolver.ts` holds.
+
+- [#1067](https://github.com/codefastlabs/codefast/pull/1067) Every dependency slot the engine resolves now has one shape: a class's parameters are copied once when they are settled,
+  and a factory's dependencies when it is bound or declared, each with its resolve options and criterion already filled. A
+  process that has resolved many kinds of slot no longer meets the cold class lane megamorphic, so booting an application
+  gets faster where it was slowest — `app-boot-40` +13%, `realistic-graph-class-cold-resolve` +16% and the interpreted
+  `slot-injected-*` rows +31% in a paired run — with the warm rows level.
+
+- [#1093](https://github.com/codefastlabs/codefast/pull/1093) The six resolve methods are declared once, on a new exported `Resolver` interface that both `Container` and
+  `ResolutionContext` extend, so a call through a factory's `ctx` can never again narrow a token's slot names differently
+  from the same call on the container. Types only: the emitted JavaScript is unchanged.
+
+- [#1101](https://github.com/codefastlabs/codefast/pull/1101) A sync `unbind()`, `unbindAll()`, `rebind()` or `unload()` that meets an async deactivation hook now runs every
+  deactivation stage of that instance — container `onDeactivation` hooks, the binding's own `onDeactivation`, then each
+  `@preDestroy()` — before it throws `AsyncDeactivationError`. It used to stop at the first stage that returned a promise,
+  and since the binding was already removed, the stages after it could never run. The error is still thrown, and each
+  returned promise is still left unawaited with its rejection swallowed, so use `unbindAsync()` / `unloadAsync()` wherever
+  a deactivation hook may be async.
+
+- [#1109](https://github.com/codefastlabs/codefast/pull/1109) `validate`, `explain` and `generateDependencyGraph` read a container's internals from an object built once per container
+  instead of rebuilding it, with the ancestor-registry list, on every call. `validate` also walks the container's bindings
+  once rather than twice and allocates nothing for a container with no container-level hooks, so it costs less than the
+  `container.validate()` method did in 0.13.0.
+
 ## 0.13.0
 
 ### Minor Changes

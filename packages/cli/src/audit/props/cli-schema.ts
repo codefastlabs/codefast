@@ -2,6 +2,8 @@ import * as z from "zod";
 
 /**
  * Resolved request for a single props-declaration audit run.
+ *
+ * @since 0.15.0
  */
 export type PropsAuditRunRequest = {
   readonly rootDir: string;
@@ -12,6 +14,8 @@ export type PropsAuditRunRequest = {
 
 /**
  * Zod schema for {@link PropsAuditRunRequest}.
+ *
+ * @since 0.15.0
  */
 export const propsAuditRunRequestSchema: z.ZodType<PropsAuditRunRequest> = z.object({
   rootDir: z.string().min(1),

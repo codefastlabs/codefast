@@ -5,12 +5,20 @@ import type { ResultsNotes } from "#results/notes";
 import type { BenchSubprocessConfig } from "#shared/config";
 import type { BenchRunShape } from "#shared/env-keys";
 
-/** A competitor whose `libraryName` is one of the names the suite's notes may quote. */
+/**
+ * A competitor whose `libraryName` is one of the names the suite's notes may quote.
+ *
+ * @since 0.12.0
+ */
 export interface ResultsCompetitor<Name extends string = string> extends BenchSubprocessConfig {
   readonly libraryName: Name;
 }
 
-/** The sentences of the page that describe the suite rather than the run. */
+/**
+ * The sentences of the page that describe the suite rather than the run.
+ *
+ * @since 0.12.0
+ */
 export interface ResultsCopy {
   /** Closes the baseline paragraph: what a `—` cell means in this suite. */
   readonly coverage: string;
@@ -28,14 +36,22 @@ export interface ResultsCopy {
   readonly listing: string;
 }
 
-/** Inputs a suite's comparison needs when it is assembled from a committed run rather than a live one. */
+/**
+ * Inputs a suite's comparison needs when it is assembled from a committed run rather than a live one.
+ *
+ * @since 0.12.0
+ */
 export interface ResultsComparisonOptions {
   readonly runId: string;
   readonly runOrder: string;
   readonly shape: BenchRunShape;
 }
 
-/** Everything a suite declares to generate its RESULTS.md and results.json. */
+/**
+ * Everything a suite declares to generate its RESULTS.md and results.json.
+ *
+ * @since 0.12.0
+ */
 export interface ResultsSuite<Name extends string = string> {
   /** The suite's directory from the repository root, named in the re-running recipe. */
   readonly directory: string;

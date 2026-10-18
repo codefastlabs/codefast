@@ -3,6 +3,8 @@ import { logger } from "#core/logger";
 
 /**
  * Human-readable engines audit report.
+ *
+ * @since 0.15.0
  */
 export function presentEnginesAuditResult(result: EnginesAuditResult): void {
   for (const violation of result.violations) {
