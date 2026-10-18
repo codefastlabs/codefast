@@ -84,20 +84,6 @@ const LOSS_NOTES: ReadonlyArray<LossNote<DiCompetitorName>> = [
     body: "`materialize-100-singletons` binds and resolves a hundred singletons with no teardown; `unbind-all-100-singletons` does the same, then `unbindAll()` with a hundred `@preDestroy` calls, so the teardown alone is the second row less the first — a difference of two rows, which carries the noise of both. It is the walk plus a method found by name on each instance, where ditox calls the one function it was handed: a work difference. Most of either row sits underneath it, and that part is the real deficit: the bindings, and the first resolve of each, because codefast's side binds a class with `.to(Class).singleton()` where ditox binds a factory, and constructing a class with metadata costs more than calling a factory.",
   },
   {
-    title: "The stable-set collections",
-    kinds: ["chosen cost"],
-    losses: [
-      { id: "resolve-all-strategies-10", versus: ["ditox"] },
-      { id: "resolve-all-strategies-100", versus: ["ditox", "injection-js"] },
-      { id: "production-event-bus-dispatch", versus: ["ditox"] },
-    ],
-    context: [
-      { id: "resolve-all-strategies-10", versus: ["injection-js"] },
-      { id: "production-event-bus-dispatch", versus: ["injection-js"] },
-    ],
-    body: "In this pass a root-level `resolveAll` handed each caller a copy of its memoized list, while both rivals hand out the cached array they share; the event bus is that copy plus the dispatch. The engine has since dropped the copy: the memoized list is handed out itself, typed `ReadonlyArray`, and a paired run reads all three rows clearly ahead of the tree this pass measured. The next accepted pass decides whether they still lose.",
-  },
-  {
     title: "Rebind, against ditox",
     kinds: ["work difference"],
     losses: [{ id: "rebind-hot-swap", versus: ["ditox"] }],
@@ -118,9 +104,15 @@ const LOSS_NOTES: ReadonlyArray<LossNote<DiCompetitorName>> = [
     context: [
       { id: "alias-chain-3", versus: ["injection-js"] },
       { id: "to-alias-redirect", versus: ["injection-js"] },
-      { id: "realistic-graph-resolve-root", versus: ["injection-js"] },
     ],
     body: "The two nested rows are a factory that resolves from its context or from the container mid-construction. Measured on their own, outside the harness, codefast is ahead of injection-js on both. The loss appears in the harness child, which builds every scenario before it measures one, so the factory call site the transient dynamic lane inlines has already seen hundreds of factories and the engine stops inlining through it; injection-js's lane inlines nothing to begin with, so the same state costs it nothing. The harness keeps that state on purpose, as [`BENCH_GUIDE.md`](./BENCH_GUIDE.md) records. The alias is structural: injection-js caches an alias's answer in the injector's own slot on the first read, while codefast resolves the alias on every read and never caches a parent's instance in a child.",
+  },
+  {
+    title: "The realistic root graph, against injection-js",
+    kinds: ["process mode"],
+    losses: [{ id: "realistic-graph-resolve-root", versus: ["injection-js"] }],
+    context: [],
+    body: "injection-js runs this row at one of two speeds per process, and codefast's own row does not move between them. Narrowed probes of the two libraries alone reproduce both: in the slower mode, where most processes land, codefast leads; in the faster one injection-js edges ahead. This pass caught the faster mode, which the previous passes had not. The row is a resolve through a warm graph, where neither library does work the other skips.",
   },
   {
     title: "Accessor injection, against inversify",

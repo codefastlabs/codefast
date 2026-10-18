@@ -6,8 +6,8 @@ export interface QuotedRow<Name extends string = string> {
   readonly versus: ReadonlyArray<Name>;
 }
 
-/** How a loss is judged: the same work done slower, more work by design, a price paid on purpose, or the harness. */
-export type LossKind = "real deficit" | "work difference" | "chosen cost" | "harness state";
+/** How a loss is judged: slower at the same work, more work by design, a price paid on purpose, the harness, or a mode. */
+export type LossKind = "real deficit" | "work difference" | "chosen cost" | "harness state" | "process mode";
 
 /**
  * One loss shape: the rows it explains and the reasoning, which states no figure.

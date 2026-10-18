@@ -3,8 +3,8 @@
   "footprints": [
     {
       "label": "@codefast/di",
-      "minifiedBytes": 74962,
-      "gzippedBytes": 20112
+      "minifiedBytes": 76072,
+      "gzippedBytes": 20413
     },
     {
       "label": "InversifyJS 8",
