@@ -139,10 +139,10 @@ of the row alone does not).
   class with metadata costs more than calling a factory.
 - **The stable-set collections** — chosen cost. `resolve-all-strategies-10` 0.78×†‡ ditox and 1.21×† injection-js;
   `resolve-all-strategies-100` 0.61×†‡ ditox and 0.67×†‡ injection-js; `production-event-bus-dispatch` 0.78×† ditox and
-  1.35×† injection-js. A root-level `resolveAll` hands each caller a copy of its memoized list rather than the list
-  itself, so no caller can mutate the engine's memo, while both rivals hand out the cached array they share. The event
-  bus is that copy plus the dispatch. A frozen list was measured and rejected — a frozen array iterates through a slow
-  elements kind for every consumer. The copy is its own commit, reversible alone.
+  1.35×† injection-js. In this pass a root-level `resolveAll` handed each caller a copy of its memoized list, while both
+  rivals hand out the cached array they share; the event bus is that copy plus the dispatch. The engine has since
+  dropped the copy: the memoized list is handed out itself, typed `ReadonlyArray`, and a paired run reads all three rows
+  clearly ahead of the tree this pass measured. The next accepted pass decides whether they still lose.
 - **Rebind, against ditox** — work difference. `rebind-hot-swap` 0.23×† ditox and 1.59× awilix;
   `rebind-parent-resolve-child-depth-3` 1.46× awilix and 1.86× ditox. A rebind of a lone token is one registration whose
   displaced binding is deactivated on the spot; what it pays against ditox's bare map write is the builder object and

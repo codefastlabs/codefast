@@ -102,9 +102,10 @@ describe("many() bindings", () => {
     const second = child.resolveAll(strategyToken);
 
     expect(first).toEqual([2, 1]);
-    // Read from the memo while the chain is unchanged, as a list of the caller's own.
+    // Read from the memo while the chain is unchanged, as one shared read-only list.
     expect(second).toEqual(first);
-    expect(second).not.toBe(first);
+    const settled = child.resolveAll(strategyToken);
+    expect(child.resolveAll(strategyToken)).toBe(settled);
 
     parent.bind(strategyToken).many().toConstantValue(3);
 
