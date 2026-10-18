@@ -44,6 +44,9 @@ const pairs: Array<Pair> = [
   ...["--background", "--card", "--popover"].map((ground) =>
     tokenPair("--primary", ground, textMinimum, "text-primary and link Button"),
   ),
+  ...["--background", "--card", "--popover", "--muted"].map((ground) =>
+    tokenPair("--muted-foreground", ground, textMinimum, "secondary text"),
+  ),
   tokenPair("--sidebar-primary-foreground", "--sidebar-primary", textMinimum, "sidebar primary"),
   ...["--background", "--card", "--popover", "--muted", "--sidebar"].map((ground) =>
     tokenPair("--ring", ground, graphicMinimum, "focus outline"),
