@@ -328,7 +328,7 @@ them:
   `resolveAsync`.
 
 ```ts
-import { inject, injectable, injectAll, optional, postConstruct, preDestroy } from "@codefast/di";
+import { inject, injectable, injectAll, injectOptional, postConstruct, preDestroy } from "@codefast/di";
 
 @injectable([DbToken, injectOptional(CacheToken), injectAll(PluginToken), inject(LoggerToken, { name: "audit" })])
 class UserRepository {

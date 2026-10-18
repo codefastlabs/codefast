@@ -24,7 +24,7 @@ declares the constructor order explicitly — the same pattern as Angular Ivy.
 >   values are resolved and discarded.
 
 ```ts
-import { injectable, inject, injectAll, optional } from "@codefast/di";
+import { injectable, injectAll, injectOptional } from "@codefast/di";
 
 // A class with no deps
 @injectable()
