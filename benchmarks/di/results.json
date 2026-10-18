@@ -1,5 +1,5 @@
 {
-  "runId": "2026-10-18T02-02-01-347Z",
+  "runId": "2026-10-18T07-56-19-799Z",
   "runDate": "2026-10-18",
   "profile": { "mode": "full", "isolated": true, "trialCount": 3 },
   "environment": {
@@ -27,9 +27,9 @@
       "wins": 91,
       "parities": 1,
       "losses": 1,
-      "median": 4.307953369966096,
-      "geomean": 5.80329438669165,
-      "unreliable": 44
+      "median": 4.306472254551093,
+      "geomean": 5.871205480650282,
+      "unreliable": 45
     },
     {
       "competitor": "awilix",
@@ -38,20 +38,20 @@
       "wins": 39,
       "parities": 0,
       "losses": 0,
-      "median": 6.372333379901792,
-      "geomean": 6.208986137344083,
+      "median": 6.454990083666559,
+      "geomean": 6.163241494847089,
       "unreliable": 16
     },
     {
       "competitor": "tsyringe",
       "displayName": "tsyringe 4",
       "comparable": 44,
-      "wins": 39,
-      "parities": 2,
+      "wins": 40,
+      "parities": 1,
       "losses": 3,
-      "median": 4.206028587994149,
-      "geomean": 3.9111964725726676,
-      "unreliable": 19
+      "median": 4.549194998963513,
+      "geomean": 3.9698121422355057,
+      "unreliable": 20
     },
     {
       "competitor": "brandi",
@@ -60,19 +60,19 @@
       "wins": 30,
       "parities": 0,
       "losses": 1,
-      "median": 12.415089510563654,
-      "geomean": 11.849071195007337,
+      "median": 13.217487158319297,
+      "geomean": 11.767218788671787,
       "unreliable": 16
     },
     {
       "competitor": "ditox",
       "displayName": "Ditox 3",
       "comparable": 46,
-      "wins": 33,
+      "wins": 35,
       "parities": 3,
-      "losses": 10,
-      "median": 1.3992010687133338,
-      "geomean": 1.681317598435106,
+      "losses": 8,
+      "median": 1.3375412374007312,
+      "geomean": 1.702700112715798,
       "unreliable": 20
     },
     {
@@ -80,10 +80,10 @@
       "displayName": "injection-js 2",
       "comparable": 32,
       "wins": 22,
-      "parities": 3,
-      "losses": 7,
-      "median": 1.5782237128304646,
-      "geomean": 1.5190672935675404,
+      "parities": 2,
+      "losses": 8,
+      "median": 1.5773900079139151,
+      "geomean": 1.5401349340265689,
       "unreliable": 22
     }
   ],
@@ -91,98 +91,87 @@
     {
       "scenario": "accessor-injection-construct",
       "competitor": "inversify",
-      "ratio": 0.25272483753746794,
+      "ratio": 0.329683989332321,
       "unreliable": true
     },
-    { "scenario": "resolve-all-cold-10", "competitor": "tsyringe", "ratio": 0.6863560996889442, "unreliable": false },
-    { "scenario": "resolve-all-cold-100", "competitor": "tsyringe", "ratio": 0.4783657867353964, "unreliable": false },
+    { "scenario": "resolve-all-cold-10", "competitor": "tsyringe", "ratio": 0.6763244649046262, "unreliable": false },
+    { "scenario": "resolve-all-cold-100", "competitor": "tsyringe", "ratio": 0.49423011162026814, "unreliable": false },
     {
       "scenario": "misconfigured-missing-binding",
       "competitor": "tsyringe",
-      "ratio": 0.7332779650636034,
+      "ratio": 0.7139938599631139,
       "unreliable": false
     },
     {
       "scenario": "misconfigured-missing-binding",
       "competitor": "brandi",
-      "ratio": 0.7709317801442753,
+      "ratio": 0.7421792210333847,
       "unreliable": false
     },
-    { "scenario": "singleton-class-1-dep", "competitor": "ditox", "ratio": 0.9368558550307687, "unreliable": true },
+    { "scenario": "singleton-class-1-dep", "competitor": "ditox", "ratio": 0.9117409292926077, "unreliable": true },
     {
       "scenario": "realistic-graph-class-cold-resolve",
       "competitor": "ditox",
-      "ratio": 0.9504854625012411,
+      "ratio": 0.9509315186986654,
       "unreliable": false
     },
-    { "scenario": "resolve-all-strategies-10", "competitor": "ditox", "ratio": 0.7754752145996104, "unreliable": true },
-    {
-      "scenario": "resolve-all-strategies-100",
-      "competitor": "ditox",
-      "ratio": 0.6126809864882989,
-      "unreliable": true
-    },
-    { "scenario": "bind-128-plain", "competitor": "ditox", "ratio": 0.3987046913954973, "unreliable": false },
+    { "scenario": "bind-128-plain", "competitor": "ditox", "ratio": 0.40478117105055067, "unreliable": false },
     {
       "scenario": "misconfigured-missing-binding",
       "competitor": "ditox",
-      "ratio": 0.7637474076408232,
+      "ratio": 0.7506469335047763,
       "unreliable": false
     },
-    {
-      "scenario": "production-event-bus-dispatch",
-      "competitor": "ditox",
-      "ratio": 0.775842799281879,
-      "unreliable": true
-    },
-    { "scenario": "rebind-hot-swap", "competitor": "ditox", "ratio": 0.2342632372754622, "unreliable": true },
+    { "scenario": "to-resolved-3-deps", "competitor": "ditox", "ratio": 0.9677603268653437, "unreliable": true },
+    { "scenario": "rebind-hot-swap", "competitor": "ditox", "ratio": 0.22897770747341664, "unreliable": true },
     {
       "scenario": "materialize-100-singletons",
       "competitor": "ditox",
-      "ratio": 0.6852752303352085,
+      "ratio": 0.6790190837230541,
       "unreliable": false
     },
     {
       "scenario": "unbind-all-100-singletons",
       "competitor": "ditox",
-      "ratio": 0.6363238280448691,
+      "ratio": 0.6092176181240927,
       "unreliable": false
     },
     {
-      "scenario": "resolve-all-strategies-100",
+      "scenario": "realistic-graph-resolve-root",
       "competitor": "injection-js",
-      "ratio": 0.6747608475532777,
-      "unreliable": true
+      "ratio": 0.8599085189064865,
+      "unreliable": false
     },
     {
       "scenario": "container-create-empty",
       "competitor": "injection-js",
-      "ratio": 0.564552094857047,
+      "ratio": 0.5599680888788579,
       "unreliable": true
     },
-    { "scenario": "create-child-empty", "competitor": "injection-js", "ratio": 0.5559442930253884, "unreliable": true },
+    { "scenario": "create-child-empty", "competitor": "injection-js", "ratio": 0.5736506482214769, "unreliable": true },
     {
       "scenario": "misconfigured-missing-binding",
       "competitor": "injection-js",
-      "ratio": 0.8777611843825032,
+      "ratio": 0.9101822729737061,
       "unreliable": false
     },
+    { "scenario": "to-alias-redirect", "competitor": "injection-js", "ratio": 0.8933414581555235, "unreliable": true },
     {
       "scenario": "alias-parent-owned-terminal",
       "competitor": "injection-js",
-      "ratio": 0.7756459955732586,
+      "ratio": 0.8724750040307698,
       "unreliable": true
     },
     {
       "scenario": "nested-context-resolve-in-factory",
       "competitor": "injection-js",
-      "ratio": 0.8725832665365879,
+      "ratio": 0.8254899298702258,
       "unreliable": true
     },
     {
       "scenario": "nested-container-resolve-in-factory",
       "competitor": "injection-js",
-      "ratio": 0.8681728418725931,
+      "ratio": 0.7889240496506827,
       "unreliable": true
     }
   ],

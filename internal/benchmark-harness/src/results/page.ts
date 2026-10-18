@@ -319,7 +319,7 @@ function lossSection(input: ResultsPageInput): Array<string> {
     "",
     lossCount === 0
       ? "None: no competitor takes a comparable row from codefast in this pass, above the ceiling or below it."
-      : "Ordered by how much they matter, each marked as a **real deficit** (same work, codefast slower), a **work difference** (codefast does more per op by design, so the row is a design cost to reconsider, not a bug), a **chosen cost** (a correctness property paid for with its price known) or **harness state** (the harness puts the engine in a state a probe of the row alone does not).",
+      : "Ordered by how much they matter, each marked as a **real deficit** (same work, codefast slower), a **work difference** (codefast does more per op by design, so the row is a design cost to reconsider, not a bug), a **chosen cost** (a correctness property paid for with its price known), **harness state** (the harness puts the engine in a state a probe of the row alone does not) or **process mode** (a library runs the row at one of two speeds per process, and the pass caught the one that decides it).",
     ...(items.length === 0 ? [] : ["", ...items]),
     ...(uncovered.length === 0
       ? []
