@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Derives `report.md` and `report.json` from a run's `observations.jsonl`, for the RESULTS.md workflow. */
+/** Derives `report.md` and `report.json` from a run's `observations.jsonl`. */
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 

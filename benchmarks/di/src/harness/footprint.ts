@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 /** Measures what each library adds to a browser bundle: the smallest bind-and-resolve program, minified and gzipped. */
-import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
 
-import { rolldown } from "rolldown";
+import { resolveRunDirectory } from "@internal/benchmark-harness/parent/bench-run-artifacts";
+import { rolldown, VERSION as ROLLDOWN_VERSION } from "rolldown";
 
 import { BENCH_LIBRARIES, CODEFAST_DI } from "#harness/config";
+import type { Footprint } from "#harness/footprint-record";
+import { readBudgetBytes, writeFootprintRecord } from "#harness/footprint-record";
 import { rebuildCodefastDiPackage } from "#harness/rebuild";
 
 const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const ENTRY_ID = "\0footprint-entry";
-const BUDGET_PATH = join(packageRootDirectory, "footprint-budget.json");
 
 /**
  * Each library's smallest program — one container, one value bound and resolved — written the way its documentation
@@ -64,12 +65,6 @@ const PROGRAMS: Readonly<Record<string, string>> = {
 /** The polyfill the legacy-decorator libraries need, bundled alone so its share of their rows reads off one line. */
 const POLYFILL_PROGRAM = `import "reflect-metadata";`;
 
-interface Footprint {
-  readonly label: string;
-  readonly minifiedBytes: number;
-  readonly gzippedBytes: number;
-}
-
 async function measure(label: string, source: string): Promise<Footprint> {
   const build = await rolldown({
     input: ENTRY_ID,
@@ -100,22 +95,9 @@ function kilobytes(bytes: number): string {
   return `${(bytes / 1000).toFixed(1)} KB`;
 }
 
-/** The checked-in gzip ceiling for `@codefast/di`'s program, read from `footprint-budget.json`. */
-function readBudgetBytes(): number {
-  const budget: unknown = JSON.parse(readFileSync(BUDGET_PATH, "utf8"));
-  const entry: unknown =
-    typeof budget === "object" && budget !== null ? Reflect.get(budget, CODEFAST_DI.libraryName) : undefined;
-  const gzippedBytes: unknown =
-    typeof entry === "object" && entry !== null ? Reflect.get(entry, "gzippedBytes") : undefined;
-  if (typeof gzippedBytes !== "number" || !Number.isInteger(gzippedBytes) || gzippedBytes <= 0) {
-    throw new Error(`${BUDGET_PATH} needs a positive integer "${CODEFAST_DI.libraryName}".gzippedBytes.`);
-  }
-  return gzippedBytes;
-}
-
 /** Reports the subject's gzipped size against its budget and returns whether it fits. */
 function checkBudget({ gzippedBytes }: Footprint): boolean {
-  const budgetBytes = readBudgetBytes();
+  const budgetBytes = readBudgetBytes(packageRootDirectory);
   const headroomBytes = budgetBytes - gzippedBytes;
   const verdict = `${CODEFAST_DI.libraryName}: ${String(gzippedBytes)} B gzipped, budget ${String(budgetBytes)} B`;
   if (headroomBytes < 0) {
@@ -159,6 +141,12 @@ async function main(): Promise<void> {
   console.log(["| Library | Minified | Gzipped |", "| --- | ---: | ---: |", ...rows].join("\n"));
   if (subject === undefined) {
     throw new Error(`${CODEFAST_DI.libraryName} is missing from BENCH_LIBRARIES.`);
+  }
+  if (process.argv.includes("--save")) {
+    // The baseline keeps the table beside its observations, so the results page rebuilds from the repo alone.
+    const { runDirectory } = resolveRunDirectory(packageRootDirectory, "baselines");
+    writeFootprintRecord(runDirectory, { bundler: `Rolldown ${ROLLDOWN_VERSION}`, footprints });
+    console.log(`Saved the table to ${runDirectory}.`);
   }
   process.exitCode = checkBudget(subject) ? 0 : 1;
 }

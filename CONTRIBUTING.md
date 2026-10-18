@@ -115,13 +115,14 @@ The rules that make a result publishable — learned the hard way, and enforced 
 - **Measure cold paths too.** Container construction and registration are invisible to the hot loops and have been the
   source of the suite's real losses.
 - **Validate a hypothesis by throwaway ablation, not by reasoning.** Build the variant, measure it, delete it.
-- **A claim gets retracted when a better measurement disagrees with it.** `RESULTS.md` has retracted one; that is the
-  standard, not an embarrassment.
+- **A claim gets retracted when a better measurement disagrees with it.** That is the standard, not an embarrassment.
 
-For anything material, run the publishable profile and update `RESULTS.md`:
+For anything material, run the publishable profile and accept it as the baseline; `RESULTS.md` is generated from it
+([`benchmarks/di/README.md`](benchmarks/di/README.md#the-results-page) has the steps):
 
 ```bash
 pnpm --filter @benchmark/di bench:baseline
+pnpm --filter @benchmark/di bench:results
 ```
 
 `bench` runs **scenario-major and interleaved** — every library measures a scenario before the next one starts, rotating
