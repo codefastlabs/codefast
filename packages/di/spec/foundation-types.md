@@ -170,6 +170,30 @@ reserved name criterion included) plus `name`, the derived view of the reserved 
 declares no `whenNamed()`), and `keyMask`, a bitmask of the tag keys present that lets a constraint rule out a frame
 without walking its tags — see [Slots and last-wins](binding.md#slots-and-last-wins--the-exact-definition).
 
+A custom constraint reads `keyMask` with the helpers the built-in ones use, all exported from the package root:
+`tagKeyMaskOf(tags)` is the mask of a list of criteria, `coversTagKeys(mask, wanted)` is whether a mask holds every key
+of another, and `NO_TAG_KEYS` is the empty mask. A frame whose mask does not cover the wanted keys cannot carry the
+criteria, so the constraint returns `false` before comparing any value:
+
+```ts
+import { coversTagKeys, tag, tagKeyMaskOf } from "@codefast/di";
+
+const region = tag<string>("app:region");
+const wanted = [region.of("eu")];
+const wantedKeys = tagKeyMaskOf(wanted);
+
+container
+  .bind(Storage)
+  .when((ctx) => {
+    const parent = ctx.parent;
+    if (parent === undefined || !coversTagKeys(parent.slot.keyMask, wantedKeys)) {
+      return false;
+    }
+    return parent.slot.tags.some((criterion) => criterion.key === region && criterion.value === "eu");
+  })
+  .to(EuStorage);
+```
+
 > **Normative.** A frame's `slot` reflects the **constraint registered at bind time**, not the hint passed at resolve
 > time. The advanced constraints in [Advanced Constraints](constraints.md#advanced-constraints) read exactly this field.
 
