@@ -15,6 +15,7 @@ import {
   injectionSlotToResolveOptions,
   runWithContainer,
   token,
+  verifyingMetadataReader,
 } from "@codefast/di";
 import type {
   BindingScope,
@@ -118,7 +119,7 @@ describe("a MetadataReader can be written and installed with root exports only",
       },
     };
 
-    const container = Container.create({ metadataReader: reader });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(reader) });
 
     container.bind(dsnToken).toConstantValue("postgres://localhost/app");
     container.bind(Pool).toSelf().singleton();

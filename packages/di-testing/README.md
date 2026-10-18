@@ -119,7 +119,8 @@ export const TestBed = createTestBed({ mockFactory: () => vi.fn() });
 
 - `mockFactory: () => spy` — required: the spy backend each auto-mock is built from. Its return type is the entry
   point's backend and types every bed it begins. Pass `defaultMockFactory` for the built-in spy.
-- `metadataReader?: MetadataReader` — the reader dependencies are discovered through. Defaults to di's reader.
+- `metadataReader?: VerifiedMetadataReader` — the reader dependencies are discovered through, a custom one wrapped with
+  `verifyingMetadataReader()` first. Defaults to di's reader.
 
 The `TestBed` export is `createTestBed({ mockFactory: defaultMockFactory })`: the built-in spy, no framework needed.
 

@@ -19,6 +19,7 @@ import type { DiagnosableContainer, ResolutionDiagnostics } from "#introspection
 import { RESOLUTION_DIAGNOSTICS } from "#introspection/diagnostics";
 import { defaultMetadataReader } from "#metadata/symbol-reader";
 import type { MetadataReader } from "#metadata/types";
+import { verifyingMetadataReader } from "#metadata/verifying-reader";
 
 const WARM_ITERATIONS = 5;
 
@@ -466,7 +467,7 @@ describe("a custom reader's accessor records", () => {
           .getAccessorMetadata(target)
           ?.map((entry) => ({ key: entry.key, descriptor: { ...entry.descriptor } })),
     };
-    const container = Container.create({ metadataReader: copying });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(copying) });
     container
       .bind(counterToken)
       .toDynamic(() => ({ id: (created += 1) }))

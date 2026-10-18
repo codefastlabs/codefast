@@ -133,12 +133,14 @@ A container hands its reader to the resolver it builds **in its constructor**, s
 `ContainerOptions.metadataReader` is:
 
 ```ts
-const app = Container.create({ metadataReader: new TableFirstMetadataReader() });
+const app = Container.create({ metadataReader: verifyingMetadataReader(new TableFirstMetadataReader()) });
 app.bind(PoolToken).to(LegacyPool).singleton(); // ✓ resolves from the table
 ```
 
-Children inherit it, so a per-request child needs no extra wiring. The option also outranks a `MetadataReaderToken`
-binding, which keeps every path — resolution, `validate`, the graph — reading the same reader.
+`verifyingMetadataReader` checks the shape of every answer the reader gives before the engine reads it, and a container
+refuses a reader that skipped it. Children inherit it, so a per-request child needs no extra wiring. The option also
+outranks a `MetadataReaderToken` binding, which keeps every path — resolution, `validate`, the graph — reading the same
+reader.
 
 `MetadataReaderToken` still works, in exactly one shape: bound on a container that already exists when the _using_
 container is constructed.
@@ -146,12 +148,12 @@ container is constructed.
 ```ts
 // ✓ the child is constructed after the parent binding exists
 const root = Container.create();
-root.bind(MetadataReaderToken).toConstantValue(new TableFirstMetadataReader());
+root.bind(MetadataReaderToken).toConstantValue(verifyingMetadataReader(new TableFirstMetadataReader()));
 const app = root.createChild();
 
 // ✗ too late — this container's resolver already holds the default reader
 const container = Container.create();
-container.bind(MetadataReaderToken).toConstantValue(new TableFirstMetadataReader());
+container.bind(MetadataReaderToken).toConstantValue(verifyingMetadataReader(new TableFirstMetadataReader()));
 container.resolve(PoolToken); // MissingMetadataError
 
 // ✗ same problem — modules load after the container exists

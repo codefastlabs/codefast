@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 import { Container } from "#container/container";
 import { InvalidMetadataError } from "#errors";
 import type { MetadataReader } from "#metadata/types";
+import { verifyingMetadataReader } from "#metadata/verifying-reader";
 
 class Probe {
   init(): void {}
@@ -26,7 +27,7 @@ describe("verifying a foreign reader's lifecycle metadata", () => {
     const reader = readerWith({
       getLifecycleMetadata: () => ({ postConstruct: "init" }) as never,
     });
-    const container = Container.create({ metadataReader: reader });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(reader) });
     container.bind(Probe).toSelf().transient();
 
     expect(() => container.resolve(Probe)).toThrow(InvalidMetadataError);
@@ -37,7 +38,7 @@ describe("verifying a foreign reader's lifecycle metadata", () => {
     const reader = readerWith({
       getLifecycleMetadata: () => ({ postConstruct: [42], preDestroy: [] }) as never,
     });
-    const container = Container.create({ metadataReader: reader });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(reader) });
     container.bind(Probe).toSelf().transient();
 
     expect(() => container.resolve(Probe)).toThrow(/postConstruct\[0\] is not a string/);
@@ -49,7 +50,7 @@ describe("verifying a foreign reader's accessor metadata", () => {
     const reader = readerWith({
       getAccessorMetadata: () => "nope" as never,
     });
-    const container = Container.create({ metadataReader: reader });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(reader) });
     container.bind(Probe).toSelf().transient();
 
     expect(() => container.resolve(Probe)).toThrow(/accessor metadata: expected an array/);
@@ -59,7 +60,7 @@ describe("verifying a foreign reader's accessor metadata", () => {
     const reader = readerWith({
       getAccessorMetadata: () => [{ key: "value", descriptor: { token: 42 } }] as never,
     });
-    const container = Container.create({ metadataReader: reader });
+    const container = Container.create({ metadataReader: verifyingMetadataReader(reader) });
     container.bind(Probe).toSelf().transient();
 
     expect(() => container.resolve(Probe)).toThrow(/descriptor\.token is not a token or a class/);
@@ -88,8 +89,8 @@ describe("asking a foreign reader about a class", () => {
     };
 
     for (const container of [
-      Container.create({ metadataReader: reader }),
-      Container.create({ metadataReader: reader }),
+      Container.create({ metadataReader: verifyingMetadataReader(reader) }),
+      Container.create({ metadataReader: verifyingMetadataReader(reader) }),
     ]) {
       container.bind(Counted).toSelf().transient();
       for (let index = 0; index < 5; index += 1) {

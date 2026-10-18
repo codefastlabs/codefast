@@ -7,13 +7,13 @@ child containers that see its bindings. Everything a container does falls into n
 ## Creating a container
 
 ```ts
-import { Container } from "@codefast/di";
+import { Container, verifyingMetadataReader } from "@codefast/di";
 
 // Static factory — never new Container()
 const container = Container.create();
 
 // Construction-time options — what the container must know before it exists
-const container = Container.create({ metadataReader: customReader });
+const container = Container.create({ metadataReader: verifyingMetadataReader(customReader) });
 
 // From modules — load all modules, then return the container
 const container = Container.fromModules(AppModule, DatabaseModule);

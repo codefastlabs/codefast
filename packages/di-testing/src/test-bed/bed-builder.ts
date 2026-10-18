@@ -1,8 +1,7 @@
 /** The override-recording core both test-bed builders extend. */
 
-import type { Constructor, Container, DependencyKey, InjectOptions, MetadataReader } from "@codefast/di";
-import { defaultMetadataReader } from "@codefast/di";
-import { verifyingMetadataReader } from "@codefast/di/metadata/verifying-reader";
+import type { Constructor, Container, DependencyKey, InjectOptions, VerifiedMetadataReader } from "@codefast/di";
+import { defaultMetadataReader, verifyingMetadataReader } from "@codefast/di";
 
 import type { BoundMock, SlotCriteria, SlottedOverride } from "#discovery/mock-binder";
 import { criteriaEquals, normalizeCriteria } from "#discovery/mock-binder";
@@ -23,7 +22,7 @@ export interface TestBedOptions<Backend extends MockFunction> {
   /** Spy factory each auto-mock property is materialized with; its return type is the beds' backend. */
   readonly mockFactory: MockFactory<Backend>;
   /** Reader the dependency scan and the compile container both consult; defaults to di's reader. */
-  readonly metadataReader?: MetadataReader | undefined;
+  readonly metadataReader?: VerifiedMetadataReader | undefined;
 }
 
 /**
@@ -79,13 +78,13 @@ export interface PreparedBed {
  */
 export abstract class BedBuilder<Class, Backend extends MockFunction = Spy> {
   protected readonly target: Constructor<Class>;
-  protected readonly reader: MetadataReader;
+  protected readonly reader: VerifiedMetadataReader;
   protected readonly mockFactory: MockFactory<Backend>;
   protected readonly overrides: ReadonlyMap<DependencyKey, ReadonlyArray<SlottedOverride>> = new Map();
 
   constructor(target: Constructor<Class>, options: TestBedOptions<Backend>) {
     this.target = target;
-    // A supplied reader is a claim — verify it the way the container itself does.
+    // The type asks for a verified reader; untyped code gets the same wrapper the container asks for.
     this.reader = verifyingMetadataReader(options.metadataReader ?? defaultMetadataReader);
     this.mockFactory = options.mockFactory;
   }

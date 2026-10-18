@@ -28,7 +28,8 @@ import { SCOPED_MISS, ScopeManager } from "#lifecycle/scopes";
 import { MetadataReaderToken } from "#metadata/reader-token";
 import { defaultMetadataReader } from "#metadata/symbol-reader";
 import type { MetadataReader } from "#metadata/types";
-import { verifyingMetadataReader } from "#metadata/verifying-reader";
+import type { VerifiedMetadataReader } from "#metadata/verified-reader";
+import { requireVerifiedReader } from "#metadata/verified-reader";
 import { ROOT_BRANCH } from "#resolution/path";
 import { DependencyResolver } from "#resolution/resolver";
 
@@ -89,9 +90,9 @@ export interface ContainerOptions {
    *
    * @remarks Takes precedence over a {@link MetadataReaderToken} binding, and children inherit it.
    * A resolver is handed its reader when it is built, so this is the only way to give the container
-   * you are creating a reader of your own.
+   * you are creating a reader of your own. A custom reader passes through `verifyingMetadataReader` first.
    */
-  readonly metadataReader?: MetadataReader | undefined;
+  readonly metadataReader?: VerifiedMetadataReader | undefined;
 }
 
 /**
@@ -220,12 +221,16 @@ class DefaultContainer implements Container {
     return { ...resolverCaches, scopedInstanceCount: this.#scope.scopedCount, builtSubsystems };
   }
 
-  #initResolver(configuredReader: MetadataReader | undefined): void {
+  #initResolver(configuredReader: VerifiedMetadataReader | undefined): void {
     const parent = this.#parent;
     this.#hasConfiguredReader = configuredReader !== undefined || (parent !== undefined && parent.#hasConfiguredReader);
-    const metadataReader = verifyingMetadataReader(
-      configuredReader ?? (parent === undefined ? defaultMetadataReader : parent.#readerForChild()),
-    );
+    // Only the option and a bound reader can bring one from outside; a parent's own is already checked.
+    const metadataReader =
+      configuredReader === undefined
+        ? parent === undefined
+          ? defaultMetadataReader
+          : parent.#readerForChild()
+        : requireVerifiedReader(configuredReader);
     const parentResolver = parent === undefined ? undefined : parent.#resolver;
     this.#resolver = new DependencyResolver(
       this.#registry,
@@ -240,10 +245,15 @@ class DefaultContainer implements Container {
   /** What a container being constructed under this one inherits: a configured reader, else one bound here, else this one's. */
   #readerForChild(): MetadataReader {
     if (!this.#hasConfiguredReader && this.#registry.has(MetadataReaderToken)) {
+      let bound: MetadataReader | undefined;
       try {
-        return this.#resolver.resolve(MetadataReaderToken, undefined, []);
+        bound = this.#resolver.resolve(MetadataReaderToken, undefined, []);
       } catch {
         // An unresolvable reader binding is not worth failing a child over.
+      }
+      // An unverified reader is a mistake to report, not one to fall back from.
+      if (bound !== undefined) {
+        return requireVerifiedReader(bound);
       }
     }
     return this.#resolver.metadataReader;

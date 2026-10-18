@@ -13,6 +13,7 @@ import type { Constructor } from "#core/types";
 import { InvalidMetadataError } from "#errors";
 import type { ConstructorMetadata, MetadataReader } from "#metadata/types";
 import { assertConstructorMetadata, verifyConstructorMetadata } from "#metadata/verify";
+import { verifyingMetadataReader } from "#metadata/verifying-reader";
 
 const dsnToken = token<string>("verify.dsn");
 
@@ -29,7 +30,7 @@ function readerReturning(metadata: unknown): MetadataReader {
 }
 
 function containerWith(metadata: unknown): Container {
-  const container = Container.create({ metadataReader: readerReturning(metadata) });
+  const container = Container.create({ metadataReader: verifyingMetadataReader(readerReturning(metadata)) });
 
   container.bind(dsnToken).toConstantValue("postgres://localhost/app");
   container.bind(Pool).toSelf().singleton();

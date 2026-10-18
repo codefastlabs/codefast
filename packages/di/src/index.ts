@@ -100,6 +100,8 @@ export type {
   ParamMetadata,
 } from "#metadata/types";
 export { defaultMetadataReader, SymbolMetadataReader } from "#metadata/symbol-reader";
+export type { VerifiedMetadataReader } from "#metadata/verified-reader";
+export { verifyingMetadataReader } from "#metadata/verifying-reader";
 
 // Constraints — contextual injection predicates for .when()
 export {

@@ -90,7 +90,9 @@ Reading from the bottom:
 
 - **`core/`, `errors.ts`, `injection/`** are the model: what a token, binding, registry and dependency _are_.
 - **`metadata/`** is the port the engine reads a class through: the `MetadataReader` interface, the default reader over
-  `Symbol.metadata`, and the verification a foreign reader's answers pass once. Nothing in it knows the engine.
+  `Symbol.metadata`, and the verification a foreign reader's answers pass once. A container checks only the
+  `VerifiedMetadataReader` brand, a `WeakSet` lookup, so the verification itself ships only in a program that calls
+  `verifyingMetadataReader`. Nothing in it knows the engine.
 - **`lifecycle/`, `ambient-container.ts` and `decorators/`** hold per-container state (scopes, activation hooks), the
   "current container" an `@inject` accessor reads from, and the decorators that write metadata. A decorator needs the
   ambient container and the metadata keys, never the engine: an `@inject` accessor's initializer resolves through the

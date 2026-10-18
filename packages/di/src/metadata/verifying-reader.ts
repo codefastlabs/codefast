@@ -4,15 +4,13 @@
  */
 
 import type { Constructor } from "#core/types";
-import { defaultMetadataReader } from "#metadata/symbol-reader";
 import type { MetadataReader } from "#metadata/types";
+import type { VerifiedMetadataReader } from "#metadata/verified-reader";
+import { isVerifiedReader, markVerifiedReader } from "#metadata/verified-reader";
 import { verifyAccessorMetadata, verifyConstructorMetadata, verifyLifecycleMetadata } from "#metadata/verify";
 
-// Wrapping a wrapper would stack a layer per child container, so each one is remembered.
-const verifyingReaders = new WeakSet<MetadataReader>();
-
 // One wrapper per foreign reader, so every container handed that reader shares its answers.
-const wrapperByReader = new WeakMap<MetadataReader, MetadataReader>();
+const wrapperByReader = new WeakMap<MetadataReader, VerifiedMetadataReader>();
 
 // `null` records a verified "no metadata", so an absent answer is not asked for again either.
 function memoized<Answer>(
@@ -32,32 +30,30 @@ function memoized<Answer>(
 }
 
 /**
- * The reader a container should hand its resolver: verified and memoized when it came from outside.
+ * Creates the verified form of a custom reader: its answers checked before the engine reads them, and memoized.
  *
- * @remarks The decorator reader writes the metadata it later reads, so there is nothing to check and
- * nothing to pay — a container that supplies no reader of its own is left on the same code path it
- * has always taken. A supplied reader is a claim, and only its callers can be charged for checking;
- * it is asked about a class once, however many containers read through it.
+ * @remarks A container accepts only a verified reader, so a custom one passes through here first, in
+ * `ContainerOptions.metadataReader` or bound to `MetadataReaderToken`. The checks ship only in a program
+ * that calls this. The decorator reader, and a reader this already returned, come back as they are.
  *
  * @since 0.6.0
  */
-export function verifyingMetadataReader(reader: MetadataReader): MetadataReader {
-  if (reader === defaultMetadataReader || verifyingReaders.has(reader)) {
+export function verifyingMetadataReader(reader: MetadataReader): VerifiedMetadataReader {
+  if (isVerifiedReader(reader)) {
     return reader;
   }
   const existing = wrapperByReader.get(reader);
   if (existing !== undefined) {
     return existing;
   }
-  const verifying: MetadataReader = {
+  const verifying = markVerifiedReader<MetadataReader>({
     getConstructorMetadata: memoized((target) => verifyConstructorMetadata(reader, target)),
     getLifecycleMetadata: memoized((target) => verifyLifecycleMetadata(reader, target)),
     ...(reader.getAccessorMetadata === undefined
       ? {}
       : { getAccessorMetadata: memoized((target) => verifyAccessorMetadata(reader, target)) }),
-  };
+  });
 
-  verifyingReaders.add(verifying);
   wrapperByReader.set(reader, verifying);
 
   return verifying;

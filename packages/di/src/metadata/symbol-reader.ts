@@ -2,6 +2,8 @@ import type { Constructor } from "#core/types";
 import type { InjectionDescriptor } from "#injection/descriptor";
 import { INJECT_ACCESSOR_KEY, INJECTABLE_KEY, LIFECYCLE_KEY, METADATA_SYMBOL } from "#metadata/keys";
 import type { ConstructorMetadata, LifecycleMetadata, MetadataReader } from "#metadata/types";
+import type { VerifiedMetadataReader } from "#metadata/verified-reader";
+import { markVerifiedReader } from "#metadata/verified-reader";
 
 type AccessorEntry = { readonly key: string | symbol; readonly descriptor: InjectionDescriptor };
 
@@ -123,4 +125,6 @@ function mergeUniqueNames(lists: Array<ReadonlyArray<string>>): Array<string> {
  *
  * @since 0.3.16-canary.0
  */
-export const defaultMetadataReader: SymbolMetadataReader = new SymbolMetadataReader();
+export const defaultMetadataReader: SymbolMetadataReader & VerifiedMetadataReader = markVerifiedReader(
+  new SymbolMetadataReader(),
+);

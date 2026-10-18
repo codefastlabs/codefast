@@ -540,12 +540,18 @@ testContainer.bind(DbToken).toConstantValue(fakeDatabase);
 `RebindUnboundTokenError` when the token is only bound at a parent, so it is the wrong tool for the override above.
 
 To construct a class the container was never told about — plain JavaScript, generated code, a class you cannot decorate
-— supply the metadata yourself. Pass the reader to `Container.create`: a reader bound through `MetadataReaderToken` on
-the container you are about to use is read too late, because the resolver was built with the container.
+— supply the metadata yourself. Wrap the reader with `verifyingMetadataReader`, which checks its answers before the
+engine reads them, and pass it to `Container.create`: a reader bound through `MetadataReaderToken` on the container you
+are about to use is read too late, because the resolver was built with the container.
 
 ```ts
-const container = Container.create({ metadataReader: customReader });
+import { Container, verifyingMetadataReader } from "@codefast/di";
+
+const container = Container.create({ metadataReader: verifyingMetadataReader(customReader) });
 ```
+
+A container refuses an unwrapped reader with a `TypeError`, so the checks ship only in a program that brings a reader of
+its own.
 
 For unit tests where every collaborator should be a mock, [`@codefast/di-testing`](../di-testing/README.md) builds the
 mocks from the class's own declared dependencies, through a real container.
