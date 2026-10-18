@@ -370,6 +370,83 @@ describe("a plan resolves accessors before construction", () => {
   });
 });
 
+describe("an accessor-injected class on the async lane", () => {
+  it("compiles into an async plan and fills its accessors", async () => {
+    const depToken = token<string>("accessor-async-dep");
+
+    @injectable([])
+    class WithAccessor {
+      @inject(depToken) accessor dependency!: string;
+    }
+
+    const container = Container.create();
+    container.bind(depToken).toConstantValue("value");
+    container.bind(WithAccessor).toSelf().transient();
+
+    for (let iteration = 0; iteration < WARM_ITERATIONS; iteration += 1) {
+      expect((await container.resolveAsync(WithAccessor)).dependency).toBe("value");
+    }
+
+    expect(diagnose(container).compiledAsyncPlanCount).toBe(1);
+  });
+
+  it("settles its params before its accessors resolve, as the interpreted lane does", async () => {
+    const paramToken = token<string>("accessor-async-param");
+    const accessorToken = token<string>("accessor-async-late");
+    const order: Array<string> = [];
+
+    @injectable([paramToken])
+    class Ordered {
+      @inject(accessorToken) accessor late!: string;
+      constructor(readonly param: string) {}
+    }
+
+    const container = Container.create();
+    container
+      .bind(paramToken)
+      .toDynamicAsync(async () => {
+        await Promise.resolve();
+        order.push("param");
+        return "param";
+      })
+      .transient();
+    container
+      .bind(accessorToken)
+      .toDynamic(() => {
+        order.push("accessor");
+        return "late";
+      })
+      .transient();
+    container.bind(Ordered).toSelf().transient();
+
+    for (let iteration = 0; iteration < WARM_ITERATIONS; iteration += 1) {
+      order.length = 0;
+      const resolved = await container.resolveAsync(Ordered);
+      expect([resolved.param, resolved.late]).toEqual(["param", "late"]);
+      expect(order).toEqual(["param", "accessor"]);
+    }
+
+    expect(diagnose(container).compiledAsyncPlanCount).toBe(1);
+  });
+
+  it("still reports a cycle that closes through an accessor", async () => {
+    const loopToken = token<object>("accessor-async-loop");
+
+    @injectable([])
+    class Loop {
+      @inject(loopToken) accessor self!: object;
+    }
+
+    const container = Container.create();
+    container.bind(loopToken).to(Loop).transient();
+    container.bind(Loop).toSelf().transient();
+
+    for (let iteration = 0; iteration < WARM_ITERATIONS; iteration += 1) {
+      await expect(container.resolveAsync(Loop)).rejects.toThrow(CircularDependencyError);
+    }
+  });
+});
+
 describe("a custom reader's accessor records", () => {
   it("are not prepared, so a transient accessor dependency is created once per instance", () => {
     const counterToken = token<{ readonly id: number }>("accessor-reader-counter");
