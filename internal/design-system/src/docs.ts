@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { NAMESPACE } from "#config";
 import type { OutputFile } from "#output";
-import { REGISTRY_ROOT, UI_ROOT } from "#paths";
+import { REGISTRY_ROOT, THEME_ROOT, UI_ROOT } from "#paths";
 import type { ComponentCard } from "#registry";
 
 interface VariantKey {
@@ -143,24 +143,36 @@ function runtimeSubpaths(): Array<{ specifier: string; types: string }> {
   });
 }
 
+/** The `@codefast/theme` declaration files its root re-exports, which the runtime carries beside the components. */
+function themeDeclarations(): Array<{ specifier: string; types: string }> {
+  const index = readFileSync(join(THEME_ROOT, "dist/index.d.ts"), "utf8");
+  const modules = [...new Set([...index.matchAll(/from "#([\w-]+)"/g)].map(([, name = ""]) => name))];
+  return modules.map((name) => ({
+    specifier: `@codefast/theme (${name})`,
+    types: join(THEME_ROOT, `dist/${name}.d.ts`),
+  }));
+}
+
 /**
  * Concatenates the declarations of every published component, hook, variant and class helper into one reference file.
  *
  * @since 0.1.0
  */
 export function buildDeclarations(): OutputFile {
-  const body = runtimeSubpaths()
+  const subpaths = runtimeSubpaths()
     .sort((left, right) => left.types.localeCompare(right.types))
+    .map(({ specifier, types }) => ({ specifier, types: join(UI_ROOT, types) }));
+  const body = [...subpaths, ...themeDeclarations()]
     .map(
       ({ specifier, types }) =>
-        `// ── ${specifier} ──\n${readFileSync(join(UI_ROOT, types), "utf8")
+        `// ── ${specifier} ──\n${readFileSync(types, "utf8")
           .split("\n")
           .filter((line) => !/^import |sourceMappingURL/.test(line))
           .join("\n")}`,
     )
     .join("\n");
   return {
-    content: `/* Codefast UI — declarations of @codefast/ui's components, hooks and variants, concatenated from its build (documentation; imports stripped). Runtime: window.${NAMESPACE}. */\n\n${body}`,
+    content: `/* Codefast UI — declarations of @codefast/ui's components, hooks and variants, and of @codefast/theme's appearance API, concatenated from their builds (documentation; imports stripped). Runtime: window.${NAMESPACE}. */\n\n${body}`,
     contentType: "text/plain",
     kind: "file",
     path: "project/components/index.d.ts",

@@ -27,7 +27,8 @@ function globalFor(specifier: string): RuntimeGlobal | undefined {
   if (specifier === "recharts") {
     return "Recharts";
   }
-  return specifier === "@codefast/ui" || specifier.startsWith("@codefast/ui/") ? NAMESPACE : undefined;
+  // The component bundle carries `@codefast/theme` too, so a preview reads it from the same global as the components.
+  return /^@codefast\/(?:ui|theme)(?:\/|$)/.test(specifier) ? NAMESPACE : undefined;
 }
 
 /** Replaces the imports a bundle leaves to the page with reads of the matching `window` global. */
