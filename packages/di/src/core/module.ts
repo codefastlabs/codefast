@@ -1,8 +1,6 @@
-import type { BindToBuilder } from "#core/binding-builders";
+import type { Binder } from "#core/binding-builders";
 import type { BindingDeclaration, DeclaredBinding } from "#core/binding-declaration";
 import { asDeclaredBinding } from "#core/binding-declaration";
-import type { Token } from "#core/token";
-import type { Constructor } from "#core/types";
 
 // ── Branded types (runtime symbols for branding) ─────────────────────────────────────────────────────────────────────
 
@@ -46,8 +44,7 @@ export interface AsyncModule {
  *
  * @since 0.3.16-canary.0
  */
-export interface ModuleBuilder {
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+export interface ModuleBuilder extends Binder {
   import(...modules: Array<SyncModule>): void;
 }
 
@@ -56,8 +53,7 @@ export interface ModuleBuilder {
  *
  * @since 0.3.16-canary.0
  */
-export interface AsyncModuleBuilder {
-  bind<Value>(token: Token<Value> | Constructor<Value>): BindToBuilder<Value>;
+export interface AsyncModuleBuilder extends Binder {
   import(...modules: Array<SyncModule | AsyncModule>): void;
 }
 

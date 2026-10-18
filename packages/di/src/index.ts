@@ -28,8 +28,10 @@ export type { TagKey, TagKeyMask } from "#core/tag";
 // Binding builders — types only
 export type {
   AliasBindingBuilder,
+  Binder,
   BindToBuilder,
   BindingBuilder,
+  ClassBindToBuilder,
   ConstantBindingBuilder,
   ScopedBindingBuilder,
   SingletonBindingBuilder,
