@@ -1,0 +1,45 @@
+{
+  "bundler": "Rolldown 1.2.14",
+  "footprints": [
+    {
+      "label": "@codefast/di",
+      "minifiedBytes": 74962,
+      "gzippedBytes": 20112
+    },
+    {
+      "label": "InversifyJS 8",
+      "minifiedBytes": 97386,
+      "gzippedBytes": 21294
+    },
+    {
+      "label": "Awilix 13",
+      "minifiedBytes": 8897,
+      "gzippedBytes": 3429
+    },
+    {
+      "label": "tsyringe 4",
+      "minifiedBytes": 26727,
+      "gzippedBytes": 8225
+    },
+    {
+      "label": "Brandi 5",
+      "minifiedBytes": 4765,
+      "gzippedBytes": 1587
+    },
+    {
+      "label": "Ditox 3",
+      "minifiedBytes": 2084,
+      "gzippedBytes": 915
+    },
+    {
+      "label": "injection-js 2",
+      "minifiedBytes": 30897,
+      "gzippedBytes": 8891
+    },
+    {
+      "label": "`reflect-metadata` alone",
+      "minifiedBytes": 13319,
+      "gzippedBytes": 4242
+    }
+  ]
+}
