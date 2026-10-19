@@ -354,8 +354,8 @@ catalogs:
       specifier: ^18.1.1
       version: 18.1.1
     mermaid:
-      specifier: ^12.1.0
-      version: 12.1.0
+      specifier: ^12.2.0
+      version: 12.2.0
     nitro:
       specifier: 3.0.260903-beta
       version: 3.0.260903-beta
@@ -582,7 +582,7 @@ importers:
         version: 18.1.1
       mermaid:
         specifier: 'catalog:'
-        version: 12.1.0
+        version: 12.2.0
       nitro:
         specifier: 'catalog:'
         version: 3.0.260903-beta
@@ -5756,8 +5756,8 @@ packages:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
 
-  mermaid@12.1.0:
-    resolution: {integrity: sha512-wlVCp+8eTupfCeeFvoZNNiTuHrvag0P2jz/ILgb/f/6jkVokUefOcujefi8qUe/j2asHiSePncVsz/xzzA80LQ==}
+  mermaid@12.2.0:
+    resolution: {integrity: sha512-w7nr/SFrLO7BaVTs3dQTvYSV6nYSBj0Yy9DjBhsIJtAcHqRzXSq4Pg32ujHZ/AdWsAMNEvvhbm5dt9E2tOiHzw==}
     engines: {node: '>=22.12.0'}
 
   micromark-util-character@2.1.1:
@@ -10779,7 +10779,7 @@ snapshots:
 
   merge2@1.4.1: {}
 
-  mermaid@12.1.0:
+  mermaid@12.2.0:
     dependencies:
       '@braintree/sanitize-url': 7.1.2
       '@iconify/utils': 3.1.7
