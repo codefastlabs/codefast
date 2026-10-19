@@ -192,8 +192,8 @@ catalogs:
       specifier: ^5.3.0
       version: 5.3.0
     '@hono/node-server':
-      specifier: ^2.1.4
-      version: 2.1.4
+      specifier: ^2.1.5
+      version: 2.1.5
     '@microsoft/tsdoc':
       specifier: ^0.17.1
       version: 0.17.1
@@ -869,7 +869,7 @@ importers:
         version: link:../../packages/tailwind-variants
       '@hono/node-server':
         specifier: 'catalog:'
-        version: 2.1.4(hono@4.13.13)
+        version: 2.1.5(hono@4.13.13)
       '@internal/benchmark-harness':
         specifier: workspace:*
         version: link:../benchmark-harness
@@ -1997,8 +1997,8 @@ packages:
   '@fontsource-variable/inter@5.3.0':
     resolution: {integrity: sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==}
 
-  '@hono/node-server@2.1.4':
-    resolution: {integrity: sha512-2g1qeHl4BduwDn6L8nkAvDrPUWPMlkQ//a5NhP/zIyaXKMjZNRV+cG9Csu+BiJFf6+68pqzjf4Hi5sJGKHuS1g==}
+  '@hono/node-server@2.1.5':
+    resolution: {integrity: sha512-MgP/I06GdvsilDspMk/qmRzpk8LOUStP6jFAbSRi40W09DhoyUn+Mj7eyKICPqeYKybOjVFLVIAQzvu1bfIa7Q==}
     engines: {node: '>=20'}
     peerDependencies:
       hono: ^4 || ^5.0.0-0
@@ -7336,7 +7336,7 @@ snapshots:
 
   '@fontsource-variable/inter@5.3.0': {}
 
-  '@hono/node-server@2.1.4(hono@4.13.13)':
+  '@hono/node-server@2.1.5(hono@4.13.13)':
     dependencies:
       hono: 4.13.13
 
