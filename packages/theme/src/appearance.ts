@@ -1,27 +1,13 @@
-import * as z from "zod";
-
-/* -----------------------------------------------------------------------------
- * Schema & Types
- *
- * Vocabulary follows Apple's Human Interface Guidelines: "appearance" is the
- * user's preference (Light / Dark / Auto), "color scheme" is the resolved
- * light-or-dark value actually applied (matching CSS `color-scheme` and
- * `prefers-color-scheme`).
- * -------------------------------------------------------------------------- */
+// ── Values & Types ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Zod schema for appearance validation.
+ * The appearance values, in display order: `['light', 'dark', 'automatic']`.
  *
- * Acts as the single source of truth for all appearance-related types.
- * Valid values: 'light', 'dark', 'automatic'.
+ * The single source of truth for every appearance type and check. Useful for rendering appearance selectors.
  *
  * @since 0.5.0-canary.2
  */
-export const appearanceSchema: z.ZodEnum<{ light: "light"; dark: "dark"; automatic: "automatic" }> = z.enum([
-  "light",
-  "dark",
-  "automatic",
-]);
+export const appearances = ["light", "dark", "automatic"] as const;
 
 /**
  * User's appearance preference.
@@ -32,7 +18,7 @@ export const appearanceSchema: z.ZodEnum<{ light: "light"; dark: "dark"; automat
  *
  * @since 0.5.0-canary.2
  */
-export type Appearance = z.infer<typeof appearanceSchema>;
+export type Appearance = (typeof appearances)[number];
 
 /**
  * Color scheme actually applied to the UI after resolving 'automatic'.
@@ -44,13 +30,13 @@ export type Appearance = z.infer<typeof appearanceSchema>;
 export type ColorScheme = Exclude<Appearance, "automatic">;
 
 /**
- * Array of all available appearance options: `['light', 'dark', 'automatic']`.
+ * Reports whether a value is one of the {@link appearances}.
  *
- * Useful for rendering appearance selectors in UI components.
- *
- * @since 0.5.0-canary.2
+ * Guards values that bypass TypeScript, such as stored strings, cross-tab messages and raw API data.
  */
-export const appearances: ReadonlyArray<Appearance> = appearanceSchema.options;
+export function isAppearance(value: unknown): value is Appearance {
+  return appearances.some((item) => item === value);
+}
 
 /**
  * Shape of the context value provided by AppearanceProvider.

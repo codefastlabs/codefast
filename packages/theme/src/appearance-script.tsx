@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import { appearances, appearanceSchema } from "#appearance";
+import { appearances, isAppearance } from "#appearance";
 import type { Appearance } from "#appearance";
 import { DEFAULT_APPEARANCE, MEDIA, STORAGE_KEY } from "#constants";
 
@@ -10,7 +10,7 @@ function toScriptSafe(value: unknown): string {
   return JSON.stringify(value).replaceAll("<", "\\u003C").replaceAll(">", "\\u003E").replaceAll("/", "\\u002F");
 }
 
-/* Derived once from schema + constants — the inline script uses these to stay in sync */
+/* Derived once from `appearances`, so the inline script accepts exactly the values the provider does. */
 const APPEARANCE_REMOVE_ARGS = appearances.map((s) => toScriptSafe(s)).join(",");
 const APPEARANCE_VALID_CHECK = appearances.map((s) => `s===${toScriptSafe(s)}`).join("||");
 
@@ -75,7 +75,7 @@ export function AppearanceScript({
   appearance = DEFAULT_APPEARANCE,
 }: AppearanceScriptProps): JSX.Element {
   // Guard against invalid values bypassing TypeScript so the fallback matches AppearanceProvider.
-  const safeAppearance = appearanceSchema.safeParse(appearance).success ? appearance : DEFAULT_APPEARANCE;
+  const safeAppearance = isAppearance(appearance) ? appearance : DEFAULT_APPEARANCE;
 
   // toScriptSafe = JSON.stringify + escape <>/  so </script> cannot break out of the tag.
   // The script reads localStorage before first paint so the stored preference applies
