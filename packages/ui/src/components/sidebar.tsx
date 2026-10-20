@@ -230,7 +230,7 @@ function Sidebar({
           <SheetHeader className="sr-only">
             <SheetTitle>{mobileTitle}</SheetTitle>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
+          <div className="flex h-full min-h-0 w-full flex-col">{children}</div>
         </SheetContent>
       </Sheet>
     );
@@ -400,7 +400,7 @@ type SidebarHeaderProps = ComponentProps<"div">;
 function SidebarHeader({ className, ...props }: SidebarHeaderProps): JSX.Element {
   return (
     <div
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn("flex shrink-0 flex-col gap-2 p-2", className)}
       data-sidebar="header"
       data-slot="sidebar-header"
       {...props}
@@ -421,7 +421,7 @@ type SidebarFooterProps = ComponentProps<"div">;
 function SidebarFooter({ className, ...props }: SidebarFooterProps): JSX.Element {
   return (
     <div
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn("flex shrink-0 flex-col gap-2 p-2", className)}
       data-sidebar="footer"
       data-slot="sidebar-footer"
       {...props}
@@ -464,7 +464,7 @@ function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Eleme
   return (
     <div
       className={cn(
-        "flex min-h-0 flex-1 scrollbar-none flex-col gap-0 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        "flex min-h-0 flex-1 scrollbar-none flex-col gap-0 overflow-auto overscroll-contain group-data-[collapsible=icon]:overflow-hidden",
         className,
       )}
       data-sidebar="content"
