@@ -14,16 +14,17 @@ const buttonVariants = tv({
   },
   variants: {
     size: {
-      default: "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2", // 32px
-      xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 [&_svg:not([class*='size-'])]:size-3", // 24px
-      sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 [&_svg:not([class*='size-'])]:size-3.5", // 28px
-      lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2", // 36px
+      default:
+        "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2 max-touch:min-h-10", // 32px
+      xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 max-touch:min-h-10 [&_svg:not([class*='size-'])]:size-3", // 24px
+      sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5 max-touch:min-h-10 [&_svg:not([class*='size-'])]:size-3.5", // 28px
+      lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2 max-touch:min-h-11", // 36px
 
-      icon: "size-8", // 32px
+      icon: "size-8 max-touch:size-11", // 32px
       "icon-xs":
-        "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3", // 24px
-      "icon-sm": "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg", // 28px
-      "icon-lg": "size-9", // 36px
+        "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg max-touch:size-11 [&_svg:not([class*='size-'])]:size-3", // 24px
+      "icon-sm": "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg max-touch:size-11", // 28px
+      "icon-lg": "size-9 max-touch:size-11", // 36px
     },
     variant: {
       default: "bg-primary text-primary-foreground hover:bg-primary-hover",

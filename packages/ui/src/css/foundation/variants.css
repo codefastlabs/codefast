@@ -35,6 +35,12 @@
   --breakpoint-sidebar: 48rem;
 }
 
+/* Mints the `max-touch:` variant: below this width controls grow to touch-size hit areas (44px target, Apple HIG;
+   40px minimum). An app moves it with its own `@theme { --breakpoint-touch: … }`. */
+@theme default {
+  --breakpoint-touch: 40rem;
+}
+
 /* The resolved breakpoint, which `SidebarProvider` reads to match the same media query in JS. */
 :root {
   --sidebar-breakpoint: --theme(--breakpoint-sidebar inline);
