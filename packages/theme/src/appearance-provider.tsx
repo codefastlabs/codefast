@@ -13,7 +13,7 @@ import {
 } from "react";
 
 import type { Appearance, AppearanceContextValue, ColorScheme } from "#appearance";
-import { appearanceSchema } from "#appearance";
+import { isAppearance } from "#appearance";
 import { AppearanceContext } from "#appearance-context";
 import { getSystemColorScheme } from "#color-scheme";
 import { DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME, MEDIA, STORAGE_KEY, SYNC_CHANNEL } from "#constants";
@@ -72,9 +72,9 @@ function readAppearanceFromStorage(storageKey: string): Appearance | null {
   }
 
   try {
-    const result = appearanceSchema.safeParse(globalThis.window.localStorage.getItem(storageKey));
+    const stored = globalThis.window.localStorage.getItem(storageKey);
 
-    return result.success ? result.data : null;
+    return isAppearance(stored) ? stored : null;
   } catch {
     return null;
   }
@@ -156,9 +156,7 @@ export function AppearanceProvider({
   appearance: initialAppearance = DEFAULT_APPEARANCE,
 }: AppearanceProviderProps): JSX.Element {
   // Runtime guard against invalid values bypassing TypeScript (e.g. raw API strings)
-  const safeInitialAppearance = appearanceSchema.safeParse(initialAppearance).success
-    ? initialAppearance
-    : DEFAULT_APPEARANCE;
+  const safeInitialAppearance = isAppearance(initialAppearance) ? initialAppearance : DEFAULT_APPEARANCE;
 
   // Actual persisted appearance. Read localStorage in the initializer so the first client render
   // already matches what AppearanceScript applied pre-paint (no flash, no post-mount settle). SSR has
@@ -238,14 +236,14 @@ export function AppearanceProvider({
 
   // Validate cross-tab messages before applying to prevent injection from extensions/scripts
   const handleCrossTabMessage = useEffectEvent((event: MessageEvent) => {
-    const result = appearanceSchema.safeParse(event.data);
+    const next: unknown = event.data;
 
-    if (!result.success || result.data === appearance) {
+    if (!isAppearance(next) || next === appearance) {
       return;
     }
 
     startTransition(() => {
-      setAppearanceState(result.data);
+      setAppearanceState(next);
     });
   });
 
@@ -255,14 +253,14 @@ export function AppearanceProvider({
       return;
     }
 
-    const result = appearanceSchema.safeParse(event.newValue);
+    const next = event.newValue;
 
-    if (!result.success || result.data === appearance) {
+    if (!isAppearance(next) || next === appearance) {
       return;
     }
 
     startTransition(() => {
-      setAppearanceState(result.data);
+      setAppearanceState(next);
     });
   });
 

@@ -12,9 +12,9 @@
  * - **`@codefast/theme/appearance-context`**: `AppearanceContext` for rare custom wiring.
  */
 
-// Types & Schema
+// Types & Values
 export type { Appearance, AppearanceContextValue, ColorScheme } from "#appearance";
-export { appearances, appearanceSchema } from "#appearance";
+export { appearances, isAppearance } from "#appearance";
 
 // Constants
 export { DEFAULT_APPEARANCE, DEFAULT_COLOR_SCHEME } from "#constants";

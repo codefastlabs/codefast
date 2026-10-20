@@ -220,7 +220,7 @@ Everything below ships from the root entry unless a subpath is noted.
 | `AppearanceScript`                                                           | component | Inline head script that applies the stored preference before first paint.                     |
 | `resolveColorScheme(appearance)`                                             | function  | Resolves an `Appearance` to a `ColorScheme`; `automatic` uses `matchMedia` on the client.     |
 | `appearances`                                                                | constant  | `["light", "dark", "automatic"]` — handy for rendering selectors.                             |
-| `appearanceSchema`                                                           | schema    | Zod enum validating appearance values.                                                        |
+| `isAppearance(value)`                                                        | function  | Type guard for an `Appearance`; for a schema, pass `appearances` to your validator.           |
 | `DEFAULT_APPEARANCE`                                                         | constant  | `"automatic"` — the fallback preference.                                                      |
 | `DEFAULT_COLOR_SCHEME`                                                       | constant  | `"dark"` — the fallback when `matchMedia` is unavailable (SSR).                               |
 | `Appearance`, `ColorScheme`                                                  | types     | The preference and resolved-value unions.                                                     |

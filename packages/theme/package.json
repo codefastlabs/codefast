@@ -117,9 +117,6 @@
     "test:unit": "vitest run tests/unit",
     "test:watch": "vitest"
   },
-  "dependencies": {
-    "zod": "catalog:"
-  },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@testing-library/dom": "catalog:",
