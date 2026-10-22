@@ -1,5 +1,33 @@
 # @internal/design-system
 
+## 0.3.0
+
+### Minor Changes
+
+- [#1131](https://github.com/codefastlabs/codefast/pull/1131) The build no longer mounts the previews in jsdom, and the Node floor drops to 22.22.2, the floor of `@codefast/ui` and
+  `@codefast/theme` it builds from.
+
+- [#1132](https://github.com/codefastlabs/codefast/pull/1132) `tokens.json` carries Tailwind v4's whole default theme beside the components' own tokens: the full palette, every
+  spacing multiple, the text-size scale as `type-*` styles, every shadow, breakpoints, container widths, font weights,
+  tracking, leading, blur, perspective and the easing and animation presets. The brand book says what each family is for,
+  and the build fails when two families mint the same token name.
+
+### Patch Changes
+
+- [#1128](https://github.com/codefastlabs/codefast/pull/1128) The build failed after `@codefast/ui`'s `Toaster` began reading its color scheme from `@codefast/theme`: the Toaster
+  preview mounted with no `AppearanceProvider`, and the smoke check refused it. Each preview now renders inside an
+  `AppearanceProvider`, as the site's root does. `@codefast/theme`'s exports ride on `window.CodefastUI` beside the
+  components, so a preview's provider is the same copy `Toaster` reads, and its declarations join `index.d.ts`.
+
+- [#1130](https://github.com/codefastlabs/codefast/pull/1130) The README's Publishing section says Claude Code cannot publish the Codefast UI artifact: it was created from the Design
+  System Artifact type, and Claude Code's Artifact tool sends every publish with an `index.html` page entry, which belongs
+  to the type, so the server refuses it. It points to the surfaces the type's `SKILL.md` names (a claude.ai chat or
+  Cowork), and the steps now diff by size then sha256, leave whitespace-only SVG differences alone, and keep the type's
+  `index.html` out of the call.
+- Updated dependencies:
+  - @codefast/ui@0.14.1
+  - @codefast/theme@0.11.0
+
 ## 0.2.0
 
 ### Minor Changes

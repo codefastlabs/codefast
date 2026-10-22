@@ -1,5 +1,16 @@
 # @codefast/ui
 
+## 0.14.1
+
+### Patch Changes
+
+- [#1140](https://github.com/codefastlabs/codefast/pull/1140) `SelectTrigger` truncates long values with an ellipsis instead of overflowing: the trigger can shrink (`min-w-0`,
+  `max-w-full`) and `SelectValue` renders as a truncating block. `line-clamp-1` combined with `flex` gave no ellipsis.
+  Icons inside the value stay inline. `NativeSelect` ends a long value in an ellipsis too, instead of clipping it
+  mid-letter.
+- Updated dependencies:
+  - @codefast/theme@0.11.0
+
 ## 0.14.0
 
 ### Minor Changes
