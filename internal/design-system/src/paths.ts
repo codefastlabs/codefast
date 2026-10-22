@@ -48,7 +48,11 @@ export const WORK_ROOT = packagePath("dist/.work");
  */
 export const UI_ROOT = repoPath("packages/ui");
 
-/** The `@codefast/theme` workspace, whose appearance API the runtime carries beside the components. */
+/**
+ * The `@codefast/theme` workspace, whose appearance API the runtime carries beside the components.
+ *
+ * @since 0.3.0
+ */
 export const THEME_ROOT = repoPath("packages/theme");
 
 /**

@@ -3,14 +3,22 @@ import { readFileSync } from "node:fs";
 import { evaluateNumber, trimNumber } from "#css";
 import { modulePath } from "#paths";
 
-/** A token as the design-system page reads it: a name, a value, and where it is used. */
+/**
+ * A token as the design-system page reads it: a name, a value, and where it is used.
+ *
+ * @since 0.3.0
+ */
 export interface TailwindToken {
   name: string;
   usage: string;
   value: string;
 }
 
-/** A color token whose value is the same in every scheme. */
+/**
+ * A color token whose value is the same in every scheme.
+ *
+ * @since 0.3.0
+ */
 export interface TailwindColorToken {
   name: string;
   usage: string;
@@ -45,6 +53,8 @@ function required(name: string): string {
 
 /**
  * Tailwind's default palette: every hue at every step, plus `black` and `white`.
+ *
+ * @since 0.3.0
  */
 export function tailwindColors(): Array<TailwindColorToken> {
   return entries(/^color-/).map(([name, value]) => {
@@ -59,6 +69,8 @@ export function tailwindColors(): Array<TailwindColorToken> {
 
 /**
  * Tailwind's text-size scale as type styles, named `type-<size>` so they never share a class with a Tailwind utility.
+ *
+ * @since 0.3.0
  */
 export function tailwindTypeStyles(): Array<Record<string, unknown>> {
   return entries(/^text-[0-9a-z]+$/).map(([name, size]) => {
@@ -116,6 +128,8 @@ const SPACING_MULTIPLES: Array<number | "px"> = [
 
 /**
  * The spacing family: the base unit and every multiple, with `known` notes where the components use a step.
+ *
+ * @since 0.3.0
  */
 export function tailwindSpacing(known: Map<number, string>): Array<TailwindToken> {
   const base = required("spacing");
@@ -145,6 +159,8 @@ export function tailwindSpacing(known: Map<number, string>): Array<TailwindToken
 
 /**
  * Every Tailwind shadow: box, inset, drop and text. `known` carries the notes for the ones the components use.
+ *
+ * @since 0.3.0
  */
 export function tailwindShadows(known: Record<string, string>): Array<TailwindToken> {
   return entries(/^(shadow|inset-shadow|drop-shadow|text-shadow)-[0-9a-z]+$/)
@@ -158,6 +174,8 @@ export function tailwindShadows(known: Record<string, string>): Array<TailwindTo
 
 /**
  * Tailwind's responsive breakpoints.
+ *
+ * @since 0.3.0
  */
 export function tailwindBreakpoints(): Array<TailwindToken> {
   return entries(/^breakpoint-/).map(([name, value]) => {
@@ -168,6 +186,8 @@ export function tailwindBreakpoints(): Array<TailwindToken> {
 
 /**
  * Tailwind's named container widths, plus the `video` aspect ratio.
+ *
+ * @since 0.3.0
  */
 export function tailwindSizing(): Array<TailwindToken> {
   return [
@@ -189,6 +209,8 @@ function plain(pattern: RegExp, usage: (name: string) => string): Array<Tailwind
 
 /**
  * Tailwind's font weights, as the utilities name them.
+ *
+ * @since 0.3.0
  */
 export function tailwindFontWeights(): Array<TailwindToken> {
   return plain(/^font-weight-/, (name) => `\`font-${name.replace(/^font-weight-/, "")}\`.`);
@@ -196,6 +218,8 @@ export function tailwindFontWeights(): Array<TailwindToken> {
 
 /**
  * Tailwind's letter-spacing steps.
+ *
+ * @since 0.3.0
  */
 export function tailwindTracking(): Array<TailwindToken> {
   return plain(/^tracking-/, (name) => `\`${name}\`, in em so it scales with the text.`);
@@ -203,6 +227,8 @@ export function tailwindTracking(): Array<TailwindToken> {
 
 /**
  * Tailwind's named line heights.
+ *
+ * @since 0.3.0
  */
 export function tailwindLeading(): Array<TailwindToken> {
   return plain(/^leading-/, (name) => `\`${name}\`, unitless so it scales with the text.`);
@@ -210,6 +236,8 @@ export function tailwindLeading(): Array<TailwindToken> {
 
 /**
  * Tailwind's blur radii.
+ *
+ * @since 0.3.0
  */
 export function tailwindBlur(): Array<TailwindToken> {
   return plain(/^blur-[0-9a-z]+$/, (name) => `\`${name}\` and \`backdrop-${name}\`.`);
@@ -217,6 +245,8 @@ export function tailwindBlur(): Array<TailwindToken> {
 
 /**
  * Tailwind's 3D perspective distances.
+ *
+ * @since 0.3.0
  */
 export function tailwindPerspective(): Array<TailwindToken> {
   return plain(/^perspective-/, (name) => `\`${name}\` for \`perspective-*\` utilities.`);
@@ -224,6 +254,8 @@ export function tailwindPerspective(): Array<TailwindToken> {
 
 /**
  * Tailwind's easing curves, animations and the default transition.
+ *
+ * @since 0.3.0
  */
 export function tailwindTransitions(): Array<TailwindToken> {
   return plain(/^(ease-|animate-|default-transition-)/, (name) =>

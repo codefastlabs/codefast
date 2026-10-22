@@ -33,6 +33,8 @@ export type ColorScheme = Exclude<Appearance, "automatic">;
  * Reports whether a value is one of the {@link appearances}.
  *
  * Guards values that bypass TypeScript, such as stored strings, cross-tab messages and raw API data.
+ *
+ * @since 0.11.0
  */
 export function isAppearance(value: unknown): value is Appearance {
   return appearances.some((item) => item === value);
