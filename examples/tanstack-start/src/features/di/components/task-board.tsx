@@ -139,7 +139,7 @@ export function TaskBoard({ board }: TaskBoardProps) {
                     type="button"
                   >
                     <span
-                      className={`flex size-4 items-center justify-center rounded border ${task.done ? "border-primary bg-primary text-primary-foreground" : "border-input"}`}
+                      className={`flex size-4 items-center justify-center rounded border ${task.done ? "border-primary bg-primary text-primary-foreground" : "border-control"}`}
                     >
                       {task.done ? "✓" : ""}
                     </span>

@@ -30,7 +30,7 @@ function InputNumber({
   return (
     <InputNumberPrimitive.Root
       className={cn(
-        "group/input-number relative flex h-8 w-full min-w-0 items-center overflow-hidden rounded-lg bg-transparent text-base inset-ring inset-ring-input transition-[color,box-shadow] not-has-[input:disabled]:shadow-xs has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 has-aria-invalid:inset-ring-destructive has-[input:disabled]:bg-input/50 has-[input:disabled]:opacity-50 has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-ring has-[input:focus-visible]:outline-solid md:text-sm dark:bg-input/30 dark:has-aria-invalid:ring-destructive/40 dark:has-aria-invalid:inset-ring-destructive/50 dark:has-[input:disabled]:bg-input/80 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/input-number relative flex h-8 w-full min-w-0 items-center overflow-hidden rounded-lg bg-transparent text-base inset-ring inset-ring-control transition-[color,box-shadow] not-has-[input:disabled]:shadow-xs has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 has-aria-invalid:inset-ring-destructive has-[input:disabled]:bg-input/50 has-[input:disabled]:opacity-50 has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-ring has-[input:focus-visible]:outline-solid md:text-sm dark:bg-input/30 dark:has-aria-invalid:ring-destructive/40 dark:has-aria-invalid:inset-ring-destructive/50 dark:has-[input:disabled]:bg-input/80 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="input-number"

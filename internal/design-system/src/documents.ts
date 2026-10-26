@@ -26,20 +26,22 @@ export function buildPalettes(): string {
         token ? `\`${token.value}\` (${token.comment?.replace(/^--color-/, "") ?? "custom"})` : "—";
       const neutral = /--color-([a-z]+)-/.exec(find(light, "border")?.comment ?? "")?.[1] ?? "—";
       return {
-        destructive: `${find(light, "destructive")?.value} / ${find(dark, "destructive")?.value}`,
+        status: ["destructive", "success", "warning"]
+          .map((name) => `${find(light, name)?.value} / ${find(dark, name)?.value}`)
+          .join(", "),
         row: `| ${file.replace(/\.css$/, "")} | ${neutral} | ${cell(find(light, "primary"))} | ${cell(find(dark, "primary"))} |`,
       };
     });
-  const destructive = new Set(rows.map((row) => row.destructive));
+  const status = new Set(rows.map((row) => row.status));
   return [
     "# Palettes",
     "",
     `The components read only the semantic tokens (\`background\`, \`primary\`, \`ring\`…), so a palette is a different set of values for the same names. This system's tokens are **${PALETTE}** — the palette codefastlabs.com ships. \`@codefast/ui\` offers ${rows.length}, one CSS file each under \`@codefast/ui/css/themes/\`; import exactly one, before the preset.`,
     "",
     "- Pick a palette by its `primary`: in most palettes it is the only token that carries hue. Surfaces, `border`, `muted` and `accent` come from the palette's neutral.",
-    destructive.size === 1
-      ? "- `destructive` is the same in every palette, so error states read alike whichever you pick."
-      : "- `destructive` differs between palettes; check it against the grounds you use.",
+    status.size === 1
+      ? "- `destructive`, `success` and `warning` are the same in every palette, so status reads alike whichever you pick."
+      : "- `destructive`, `success` and `warning` differ between palettes; check them against the grounds you use.",
     "",
     "| Palette | Neutral | `primary` light | `primary` dark |",
     "| --- | --- | --- | --- |",

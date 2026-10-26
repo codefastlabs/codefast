@@ -54,6 +54,12 @@ export const COLOR_USAGE: Record<string, string> = {
   "secondary-foreground": "Text on `secondary`.",
   destructive:
     "Errors and irreversible actions: destructive Button, Badge and Bubble (this as text on a 10% tint, 15% hovered; 20% and 25% in dark), invalid field rings, error Alert and field text. Never a fill behind white body text.",
+  success:
+    "Confirmations and healthy states, as text or as text on a 10% tint of itself (15% hovered; 20% and 25% in dark); no component uses it yet.",
+  "success-foreground": "Text on a solid `success` fill.",
+  warning:
+    "Cautions and degraded states, as text or as text on a 10% tint of itself (15% hovered; 20% and 25% in dark); no component uses it yet.",
+  "warning-foreground": "Text on a solid `warning` fill.",
   muted:
     "Quiet fills: Skeleton, Progress and Slider track, Avatar fallback, ghost Button hover, Toggle on, table and Kbd backgrounds, dialog footers.",
   "muted-foreground":
@@ -67,7 +73,10 @@ export const COLOR_USAGE: Record<string, string> = {
   "card-foreground": "Text on `card`.",
   border:
     "Every default border and divider (`*` gets it as border-color): Separator, Table rows, Accordion items, outline Button. Card, Dialog and floating menus draw a 1px `foreground/10` ring instead.",
-  input: "Form control borders and inset rings: Input, Textarea, Select trigger, Checkbox, Radio, Switch track off.",
+  input:
+    "Quiet form chrome: dark field and outline Button fills, outline Toggle, CheckboxCards and RadioCards borders, ButtonGroup separator.",
+  control:
+    "Form control boundaries, held to 3:1 on every surface they sit on: Input, Textarea, Select and NativeSelect triggers, InputGroup, InputNumber, InputOTP, Checkbox, Radio, Switch track off.",
   ring: "Focus ring colour: every focusable element draws it as a solid 2px outline offset 2px (`focus-visible:outline-ring`).",
   sidebar: "Sidebar surface.",
   "sidebar-foreground": "Text on `sidebar`.",
@@ -112,19 +121,23 @@ export const CONTRAST_PAIRS: Array<ContrastPair> = [
   { ground: "accent", ink: "accent-foreground", minimum: 4.5, role: "text" },
   { ground: "card", ink: "card-foreground", minimum: 4.5, role: "text" },
   { ground: "popover", ink: "popover-foreground", minimum: 4.5, role: "text" },
-  ...["background", "card", "popover"].flatMap((ground) => [
-    { ground, ink: "destructive", minimum: 4.5, role: "error text" },
-    ...[
-      { dark: 0.2, light: 0.1 },
-      { dark: 0.25, light: 0.15 },
-    ].map((tint) => ({
-      ground,
-      ink: "destructive",
-      minimum: 4.5,
-      role: `text on a ${tint.light * 100}% (light) or ${tint.dark * 100}% (dark) tint of itself`,
-      tint,
-    })),
-  ]),
+  ...["background", "card", "popover"].flatMap((ground) =>
+    (["destructive", "success", "warning"] as const).flatMap((ink) => [
+      { ground, ink, minimum: 4.5, role: ink === "destructive" ? "error text" : "status text" },
+      ...[
+        { dark: 0.2, light: 0.1 },
+        { dark: 0.25, light: 0.15 },
+      ].map((tint) => ({
+        ground,
+        ink,
+        minimum: 4.5,
+        role: `text on a ${tint.light * 100}% (light) or ${tint.dark * 100}% (dark) tint of itself`,
+        tint,
+      })),
+    ]),
+  ),
+  { ground: "success", ink: "success-foreground", minimum: 4.5, role: "text" },
+  { ground: "warning", ink: "warning-foreground", minimum: 4.5, role: "text" },
   { ground: "sidebar", ink: "sidebar-foreground", minimum: 4.5, role: "text" },
   { ground: "sidebar-primary", ink: "sidebar-primary-foreground", minimum: 4.5, role: "text" },
   ...["background", "card", "popover", "muted", "sidebar"].map((ground) => ({

@@ -16,8 +16,8 @@ Write like the library's own docs: plain, direct, second person, present tense.
   `Copy link`. A destructive action names what it destroys.
 - **Titles state the thing, descriptions state the consequence.** DialogTitle `Delete project?`; DialogDescription
   `This permanently removes the project and its deployments. You can't undo this.`
-- **No emoji, no exclamation marks** in interface copy. Status is carried by `destructive`, an icon and a word, never by
-  an emoji.
+- **No emoji, no exclamation marks** in interface copy. Status is carried by its color (`destructive`, `warning`,
+  `success`), an icon and a word, never by an emoji.
 - **Keyboard shortcuts** are shown as glyphs in `Kbd` or a menu `Shortcut`: `⌘K`, `⇧⌘P`.
 - **Numbers** in data views use tabular figures (`tabular-nums`), in the `data` style when shown in charts.
 
@@ -37,10 +37,12 @@ Write like the library's own docs: plain, direct, second person, present tense.
 - `destructive` is never a solid fill behind white text. Destructive Buttons, Badges and Bubbles are a 10% tint of
   `destructive` with `destructive` as the text color, deepening to 15% on hover (20% and 25% in dark). Keep the hover
   tint that light: a deeper one pulls the fill toward the text and drops it under 4.5:1. Invalid fields add a
-  `destructive` border and a 3px `destructive/20` ring.
-- Borders: every element defaults to `border`; form controls use `input`. In dark, `border` and `input` are white at 10%
-  and 15%, so they lift rather than darken. Card, Dialog, AlertDialog and the floating menus are outlined by a 1px
-  `foreground/10` ring instead, which tracks the scheme on its own.
+  `destructive` border and a 3px `destructive/20` ring. `success` and `warning` take the same tints; their
+  `*-foreground` is for a solid fill.
+- Borders: every element defaults to `border`. Form controls draw their boundary in `control`, which holds 3:1 on every
+  surface they sit on; `input` is the quieter field chrome around them. In dark, `border`, `input` and `control` are
+  white at 10%, 15% and 36%, so they lift rather than darken. Card, Dialog, AlertDialog and the floating menus are
+  outlined by a 1px `foreground/10` ring instead, which tracks the scheme on its own.
 - Charts use `chart-1` … `chart-5`, five steps of the palette hue from light to dark. Pair a series color with a label
   or legend; never encode meaning in hue alone.
 - **Contrast you must design around**, measured from the tokens on every build:

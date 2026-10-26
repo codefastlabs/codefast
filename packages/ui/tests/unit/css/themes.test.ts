@@ -55,20 +55,29 @@ const pairs: Array<Pair> = [
   ...["--background", "--card", "--popover"].map((ground) =>
     tokenPair("--destructive", ground, textMinimum, "error text and destructive focus outline"),
   ),
+  ...["--background", "--card", "--popover", "--sidebar"].map((ground) =>
+    tokenPair("--control", ground, graphicMinimum, "form control border"),
+  ),
+  ...["--success", "--warning"].flatMap((status) => [
+    tokenPair(`${status}-foreground`, status, textMinimum, "status fill"),
+    ...["--background", "--card", "--popover"].map((ground) => tokenPair(status, ground, textMinimum, "status text")),
+  ]),
 ];
 
-/** The shares of `--destructive` the destructive Button, Badge, Bubble and menu items fill with, at rest and hovered. */
-const destructiveTints: Record<ColorScheme, Array<number>> = { dark: [0.2, 0.25], light: [0.1, 0.15] };
+/** The shares of a status color its tinted fill uses, at rest and hovered, as the destructive Button, Badge and Bubble do. */
+const statusTints: Record<ColorScheme, Array<number>> = { dark: [0.2, 0.25], light: [0.1, 0.15] };
 
-/** Builds the pairs of `--destructive` text on its own tint over each ground, for one scheme's tints. */
-function destructiveTintPairs(scheme: ColorScheme): Array<Pair> {
-  return destructiveTints[scheme].flatMap((share) =>
-    ["--background", "--card", "--popover"].map((ground) => ({
-      ground: (token) => tintOver(token("--destructive"), share, token(ground)),
-      ink: (token) => token("--destructive"),
-      minimum: textMinimum,
-      name: `--destructive on its ${share * 100}% tint over ${ground} (destructive Button, Badge, Bubble)`,
-    })),
+/** Builds the pairs of each status color as text on its own tint over each ground, for one scheme's tints. */
+function statusTintPairs(scheme: ColorScheme): Array<Pair> {
+  return ["--destructive", "--success", "--warning"].flatMap((status) =>
+    statusTints[scheme].flatMap((share) =>
+      ["--background", "--card", "--popover"].map((ground) => ({
+        ground: (token) => tintOver(token(status), share, token(ground)),
+        ink: (token) => token(status),
+        minimum: textMinimum,
+        name: `${status} on its ${share * 100}% tint over ${ground} (tinted status fill)`,
+      })),
+    ),
   );
 }
 
@@ -76,7 +85,7 @@ describe.each(palettes)("%s palette", (palette) => {
   describe.each(schemes)("%s", (scheme) => {
     const token = readPalette(join(themesDirectory, `${palette}.css`), scheme);
 
-    test.each([...pairs, ...destructiveTintPairs(scheme)])("$name meets $minimum:1", ({ ground, ink, minimum }) => {
+    test.each([...pairs, ...statusTintPairs(scheme)])("$name meets $minimum:1", ({ ground, ink, minimum }) => {
       expect(contrastRatio(ink(token), ground(token))).toBeGreaterThanOrEqual(minimum);
     });
   });
