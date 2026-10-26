@@ -76,7 +76,7 @@ catalog:
   awilix: ^13.0.5
   babel-plugin-react-compiler: ^1.0.0
   brandi: ^5.1.0
-  chart.js: ^4.5.1
+  chart.js: ^4.6.1
   chartjs-plugin-zoom: ^2.2.0
   class-variance-authority: ^0.7.1
   chrono-node: ^2.10.3
