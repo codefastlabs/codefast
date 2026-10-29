@@ -20,10 +20,10 @@
 
   --destructive: oklch(0.505 0.213 27.518); /* --color-red-700 */
 
-  --success: oklch(0.48 0.13 150); /* green, dark enough for text on its own tint */
+  --success: oklch(0.48 0.13 150); /* --color-green-800 */
   --success-foreground: oklch(0.982 0.018 155.826); /* --color-green-50 */
 
-  --warning: oklch(0.5 0.105 70); /* amber, dark enough for text on its own tint */
+  --warning: oklch(0.5 0.105 70); /* --color-amber-800 */
   --warning-foreground: oklch(0.987 0.022 95.277); /* --color-amber-50 */
 
   --muted: oklch(0.97 0 0); /* --color-neutral-100 */
@@ -79,10 +79,10 @@
 
   --destructive: oklch(0.808 0.114 19.571); /* --color-red-300 */
 
-  --success: oklch(0.8 0.15 150); /* green */
+  --success: oklch(0.8 0.15 150); /* --color-green-400 */
   --success-foreground: oklch(0.266 0.065 152.934); /* --color-green-950 */
 
-  --warning: oklch(0.82 0.14 80); /* amber */
+  --warning: oklch(0.82 0.14 80); /* --color-amber-400 */
   --warning-foreground: oklch(0.279 0.077 45.635); /* --color-amber-950 */
 
   --muted: oklch(0.269 0 0); /* --color-neutral-800 */
@@ -121,7 +121,7 @@
 /* A viewer who asks for more contrast gets form control borders at 3:1 on every surface. */
 @media (prefers-contrast: more) {
   :root {
-    --control: oklch(0.645 0 0); /* --color-neutral hue, dark enough for a control boundary */
+    --control: oklch(0.645 0 0); /* --color-neutral-400 */
   }
 
   .dark {
