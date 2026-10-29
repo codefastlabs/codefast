@@ -38,6 +38,15 @@ jobs:
       - name: Configure Build Environment
         uses: ./.github/actions/setup-environment
 
+      # A bump can leave one importer on an old peer, splitting a package into two copies that `--frozen-lockfile`
+      # accepts and only a test outside this gate (a `vi.mock` hitting the other copy) notices.
+      - name: Verify Lockfile Is Deduplicated
+        run: |
+          if ! pnpm dedupe --check; then
+            echo "::error::pnpm-lock.yaml holds peer variants 'pnpm dedupe' would collapse — run 'pnpm dedupe' and commit the lockfile"
+            exit 1
+          fi
+
       - name: Build Workspace Packages
         run: npx turbo build --filter="./packages/**" --filter="./internal/**"
 

@@ -3,6 +3,8 @@ name: Dependabot auto-merge
 # Flags Dependabot PRs for auto-merge; GitHub merges once the required "Verify"
 # check passes (no merge queue — a GITHUB_TOKEN-created merge group would never
 # trigger merge_group CI). Majors are left for manual review.
+# A bump whose lockfile needs `pnpm dedupe` fails Verify and waits: push the
+# deduped lockfile to its branch and the armed auto-merge completes.
 # pull_request_target skips the approval gate bot-authored release PRs hit under
 # pull_request; safe only because no step checks out or runs PR code.
 on: pull_request_target
