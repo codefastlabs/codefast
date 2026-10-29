@@ -1,5 +1,24 @@
 # @internal/design-system
 
+## 0.3.1
+
+### Patch Changes
+
+- [#1153](https://github.com/codefastlabs/codefast/pull/1153) The build failed once `@codefast/ui`'s palettes declared `success` and `warning`: every color token needs a usage note.
+  `control`, `success`, `success-foreground`, `warning` and `warning-foreground` have one, `input` describes its quieter
+  roles, the contrast check measures `success` and `warning` as text and on their own tints, and their foregrounds on
+  their fills, and the brand book and Palettes page name the new tokens.
+
+- [#1155](https://github.com/codefastlabs/codefast/pull/1155) The contrast check reads `destructive` the way the components paint it: as text on `background`, `card` and `popover`,
+  and on its own rest and hover tints over each, composited in gamma-encoded sRGB. A `CONTRAST_PAIRS` entry can name a
+  `tint` per scheme for that. The brand book and the `destructive` usage note give the new tints.
+
+- [#1159](https://github.com/codefastlabs/codefast/pull/1159) The README's Publishing steps work from Claude Code: read the artifact first, then publish the changed `project/` files
+  with the absolute path of one as the page argument. The `success`, `warning` and raised `control` values name their
+  nearest Tailwind swatch, so their usage notes read `green-800`, `amber-800` and the like instead of a sentence.
+- Updated dependencies:
+  - @codefast/ui@0.15.0
+
 ## 0.3.0
 
 ### Minor Changes
