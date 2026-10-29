@@ -34,9 +34,10 @@ Write like the library's own docs: plain, direct, second person, present tense.
 - Hover and focus states use `accent` in menus and `muted` on buttons (`ghost`, `outline`). A pressed Button nudges down
   1px (`active:translate-y-px`); a hovered primary Button deepens toward `foreground` (`hover:bg-primary-hover`), so its
   label gains contrast rather than losing it.
-- `destructive` is never a solid fill behind white text. Destructive Buttons and Badges are a 10% tint of `destructive`
-  with `destructive` as the text color (20% in dark). Invalid fields add a `destructive` border and a 3px
-  `destructive/20` ring.
+- `destructive` is never a solid fill behind white text. Destructive Buttons, Badges and Bubbles are a 10% tint of
+  `destructive` with `destructive` as the text color, deepening to 15% on hover (20% and 25% in dark). Keep the hover
+  tint that light: a deeper one pulls the fill toward the text and drops it under 4.5:1. Invalid fields add a
+  `destructive` border and a 3px `destructive/20` ring.
 - Borders: every element defaults to `border`; form controls use `input`. In dark, `border` and `input` are white at 10%
   and 15%, so they lift rather than darken. Card, Dialog, AlertDialog and the floating menus are outlined by a 1px
   `foreground/10` ring instead, which tracks the scheme on its own.

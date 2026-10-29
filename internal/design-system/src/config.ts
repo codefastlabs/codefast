@@ -53,7 +53,7 @@ export const COLOR_USAGE: Record<string, string> = {
   secondary: "Low-emphasis fill: secondary Button, secondary Badge, secondary chat Bubble.",
   "secondary-foreground": "Text on `secondary`.",
   destructive:
-    "Errors and irreversible actions: destructive Button and Badge (as a 10–20% tint with this as text), invalid field rings, error Alert text. Never a fill behind white body text.",
+    "Errors and irreversible actions: destructive Button, Badge and Bubble (this as text on a 10% tint, 15% hovered; 20% and 25% in dark), invalid field rings, error Alert and field text. Never a fill behind white body text.",
   muted:
     "Quiet fills: Skeleton, Progress and Slider track, Avatar fallback, ghost Button hover, Toggle on, table and Kbd backgrounds, dialog footers.",
   "muted-foreground":
@@ -94,6 +94,8 @@ export interface ContrastPair {
   ink: string;
   minimum: number;
   role: string;
+  /** The share of the ink laid over the ground as the fill it reads on, per scheme. */
+  tint?: { dark: number; light: number };
 }
 
 /**
@@ -110,7 +112,19 @@ export const CONTRAST_PAIRS: Array<ContrastPair> = [
   { ground: "accent", ink: "accent-foreground", minimum: 4.5, role: "text" },
   { ground: "card", ink: "card-foreground", minimum: 4.5, role: "text" },
   { ground: "popover", ink: "popover-foreground", minimum: 4.5, role: "text" },
-  { ground: "background", ink: "destructive", minimum: 4.5, role: "error text" },
+  ...["background", "card", "popover"].flatMap((ground) => [
+    { ground, ink: "destructive", minimum: 4.5, role: "error text" },
+    ...[
+      { dark: 0.2, light: 0.1 },
+      { dark: 0.25, light: 0.15 },
+    ].map((tint) => ({
+      ground,
+      ink: "destructive",
+      minimum: 4.5,
+      role: `text on a ${tint.light * 100}% (light) or ${tint.dark * 100}% (dark) tint of itself`,
+      tint,
+    })),
+  ]),
   { ground: "sidebar", ink: "sidebar-foreground", minimum: 4.5, role: "text" },
   { ground: "sidebar-primary", ink: "sidebar-primary-foreground", minimum: 4.5, role: "text" },
   ...["background", "card", "popover", "muted", "sidebar"].map((ground) => ({

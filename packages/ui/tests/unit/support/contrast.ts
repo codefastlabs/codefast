@@ -56,6 +56,35 @@ function toSrgb({ blueYellow, greenRed, lightness }: Oklab): [number, number, nu
   ];
 }
 
+/** Converts gamma-encoded sRGB channels to Oklab, the inverse of `toSrgb` inside the gamut. */
+function fromSrgb(channels: [number, number, number]): Oklab {
+  const [red = 0, green = 0, blue = 0] = channels.map((channel) =>
+    channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4,
+  );
+  const long = Math.cbrt(0.4122214708 * red + 0.5363325363 * green + 0.0514459929 * blue);
+  const medium = Math.cbrt(0.2119034982 * red + 0.6806995451 * green + 0.1073969566 * blue);
+  const short = Math.cbrt(0.0883024619 * red + 0.2817188376 * green + 0.6299787005 * blue);
+  return {
+    alpha: 1,
+    blueYellow: 0.0259040371 * long + 0.7827717662 * medium - 0.808675766 * short,
+    greenRed: 1.9779984951 * long - 2.428592205 * medium + 0.4505937099 * short,
+    lightness: 0.2104542553 * long + 0.793617785 * medium - 0.0040720468 * short,
+  };
+}
+
+/** Composites a translucent ink over an opaque ground in gamma-encoded sRGB, as a browser paints it. */
+function compositeOver(ink: Oklab, ground: Oklab): [number, number, number] {
+  const [inkRed, inkGreen, inkBlue] = toSrgb(ink);
+  const [groundRed, groundGreen, groundBlue] = toSrgb(ground);
+  const blend = (top: number, bottom: number) => ink.alpha * top + (1 - ink.alpha) * bottom;
+  return [blend(inkRed, groundRed), blend(inkGreen, groundGreen), blend(inkBlue, groundBlue)];
+}
+
+/** Computes the opaque fill a `share` tint of a color paints over a ground, as `bg-color/10` does. */
+function tintOver(color: Oklab, share: number, ground: Oklab): Oklab {
+  return fromSrgb(compositeOver({ ...color, alpha: share }, ground));
+}
+
 /** Computes the WCAG relative luminance of gamma-encoded sRGB channels. */
 function relativeLuminance(channels: [number, number, number]): number {
   const [red, green, blue] = channels.map((channel) =>
@@ -96,5 +125,5 @@ function readPalette(path: string, scheme: ColorScheme): (token: string) => Okla
   };
 }
 
-export { contrastRatio, mixOklab, readPalette };
+export { contrastRatio, mixOklab, readPalette, tintOver };
 export type { ColorScheme, Oklab };
