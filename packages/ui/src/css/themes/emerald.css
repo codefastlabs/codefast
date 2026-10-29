@@ -42,7 +42,7 @@
 
   --border: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --input: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
-  --control: oklch(0.645 0.004 286.32); /* --color-zinc hue, dark enough for a control boundary */
+  --control: oklch(0.92 0.004 286.32); /* --color-zinc-200 */
   --ring: oklch(0.6 0.13 163); /* --color-emerald-600 */
 
   /* ── Sidebar ───────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -99,7 +99,7 @@
 
   --border: oklch(1 0 0 / 10%); /* --color-white */
   --input: oklch(1 0 0 / 15%); /* --color-white */
-  --control: oklch(1 0 0 / 36%); /* --color-white */
+  --control: oklch(1 0 0 / 15%); /* --color-white */
   --ring: oklch(0.6 0.13 163); /* --color-emerald-600 */
 
   --sidebar: oklch(0.21 0.006 285.885); /* --color-zinc-900 */
@@ -116,4 +116,15 @@
   --chart-3: oklch(0.7 0.15 162); /* --color-emerald-500 */
   --chart-4: oklch(0.6 0.13 163); /* --color-emerald-600 */
   --chart-5: oklch(0.51 0.1 166); /* --color-emerald-700 */
+}
+
+/* A viewer who asks for more contrast gets form control borders at 3:1 on every surface. */
+@media (prefers-contrast: more) {
+  :root {
+    --control: oklch(0.645 0.004 286.32); /* --color-zinc hue, dark enough for a control boundary */
+  }
+
+  .dark {
+    --control: oklch(1 0 0 / 36%); /* --color-white */
+  }
 }

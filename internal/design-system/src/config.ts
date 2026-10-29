@@ -76,7 +76,7 @@ export const COLOR_USAGE: Record<string, string> = {
   input:
     "Quiet form chrome: dark field and outline Button fills, outline Toggle, CheckboxCards and RadioCards borders, ButtonGroup separator.",
   control:
-    "Form control boundaries, held to 3:1 on every surface they sit on: Input, Textarea, Select and NativeSelect triggers, InputGroup, InputNumber, InputOTP, Checkbox, Radio, Switch track off.",
+    "Form control boundaries: Input, Textarea, Select and NativeSelect triggers, InputGroup, InputNumber, InputOTP, Checkbox, Radio, Switch track off. The same hairline as `input` by default; 3:1 on every surface under `prefers-contrast: more`.",
   ring: "Focus ring colour: every focusable element draws it as a solid 2px outline offset 2px (`focus-visible:outline-ring`).",
   sidebar: "Sidebar surface.",
   "sidebar-foreground": "Text on `sidebar`.",
