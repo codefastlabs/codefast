@@ -28,7 +28,7 @@ const buttonVariants = tv({
     variant: {
       default: "bg-primary text-primary-foreground hover:bg-primary-hover",
       destructive:
-        "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:outline-destructive dark:bg-destructive/20 dark:hover:bg-destructive/30",
+        "bg-destructive/10 text-destructive hover:bg-destructive/15 focus-visible:outline-destructive dark:bg-destructive/20 dark:hover:bg-destructive/25",
       ghost:
         "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
       link: "text-primary underline-offset-4 hover:underline",

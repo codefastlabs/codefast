@@ -114,7 +114,10 @@ function readPalette(): { colors: Array<ColorToken>; shortfalls: Array<ContrastS
     if (!ink || !ground) {
       throw new Error(`Contrast pair ${pair.ink} on ${pair.ground} names a token the palette lacks`);
     }
-    const ratios = { dark: contrastRatio(ink.dark, ground.dark), light: contrastRatio(ink.light, ground.light) };
+    const ratios = {
+      dark: contrastRatio(ink.dark, ground.dark, pair.tint?.dark),
+      light: contrastRatio(ink.light, ground.light, pair.tint?.light),
+    };
     if (ratios.light === undefined || ratios.dark === undefined) {
       continue;
     }

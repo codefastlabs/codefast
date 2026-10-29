@@ -1,7 +1,7 @@
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 
-import { contrastRatio, mixOklab, readPalette } from "#tests/unit/support/contrast";
+import { contrastRatio, mixOklab, readPalette, tintOver } from "#tests/unit/support/contrast";
 import type { ColorScheme, Oklab } from "#tests/unit/support/contrast";
 
 const themesDirectory = join(import.meta.dirname, "../../../src/css/themes");
@@ -53,15 +53,30 @@ const pairs: Array<Pair> = [
   ),
   tokenPair("--sidebar-ring", "--sidebar", graphicMinimum, "sidebar focus ring"),
   ...["--background", "--card", "--popover"].map((ground) =>
-    tokenPair("--destructive", ground, graphicMinimum, "destructive focus outline"),
+    tokenPair("--destructive", ground, textMinimum, "error text and destructive focus outline"),
   ),
 ];
+
+/** The shares of `--destructive` the destructive Button, Badge, Bubble and menu items fill with, at rest and hovered. */
+const destructiveTints: Record<ColorScheme, Array<number>> = { dark: [0.2, 0.25], light: [0.1, 0.15] };
+
+/** Builds the pairs of `--destructive` text on its own tint over each ground, for one scheme's tints. */
+function destructiveTintPairs(scheme: ColorScheme): Array<Pair> {
+  return destructiveTints[scheme].flatMap((share) =>
+    ["--background", "--card", "--popover"].map((ground) => ({
+      ground: (token) => tintOver(token("--destructive"), share, token(ground)),
+      ink: (token) => token("--destructive"),
+      minimum: textMinimum,
+      name: `--destructive on its ${share * 100}% tint over ${ground} (destructive Button, Badge, Bubble)`,
+    })),
+  );
+}
 
 describe.each(palettes)("%s palette", (palette) => {
   describe.each(schemes)("%s", (scheme) => {
     const token = readPalette(join(themesDirectory, `${palette}.css`), scheme);
 
-    test.each(pairs)("$name meets $minimum:1", ({ ground, ink, minimum }) => {
+    test.each([...pairs, ...destructiveTintPairs(scheme)])("$name meets $minimum:1", ({ ground, ink, minimum }) => {
       expect(contrastRatio(ink(token), ground(token))).toBeGreaterThanOrEqual(minimum);
     });
   });
