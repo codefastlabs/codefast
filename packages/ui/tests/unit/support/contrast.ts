@@ -11,6 +11,9 @@ interface Oklab {
 /** A color scheme a palette file declares: `:root` for light, `.dark` layered over it for dark. */
 type ColorScheme = "dark" | "light";
 
+/** A contrast preference a palette answers in a trailing `@media (prefers-contrast: more)` block. */
+type ContrastPreference = "more" | "no-preference";
+
 const OKLCH = /^oklch\(\s*([\d.]+)(%?)\s+([\d.]+)\s+([\d.]+)\s*(?:\/\s*([\d.]+)(%?))?\s*\)$/;
 
 /** Parses an `oklch()` literal, the only form the palette files declare. */
@@ -109,13 +112,25 @@ function declarationsIn(block: string): Map<string, string> {
   );
 }
 
-/** Reads a palette file's tokens as one color scheme resolves them. */
-function readPalette(path: string, scheme: ColorScheme): (token: string) => Oklab {
-  const css = readFileSync(path, "utf8").replaceAll(/\/\*[\s\S]*?\*\//g, "");
+/** Reads the custom properties a `:root` block and its `.dark` layer resolve to in one color scheme. */
+function schemeDeclarations(css: string, scheme: ColorScheme): Map<string, string> {
   const darkStart = css.indexOf(".dark {");
   const tokens = declarationsIn(css.slice(0, darkStart));
   if (scheme === "dark") {
     for (const [name, value] of declarationsIn(css.slice(darkStart))) {
+      tokens.set(name, value);
+    }
+  }
+  return tokens;
+}
+
+/** Reads a palette file's tokens as one color scheme and contrast preference resolve them. */
+function readPalette(path: string, scheme: ColorScheme, contrast: ContrastPreference): (token: string) => Oklab {
+  const css = readFileSync(path, "utf8").replaceAll(/\/\*[\s\S]*?\*\//g, "");
+  const moreStart = css.indexOf("@media (prefers-contrast: more)");
+  const tokens = schemeDeclarations(moreStart === -1 ? css : css.slice(0, moreStart), scheme);
+  if (contrast === "more" && moreStart !== -1) {
+    for (const [name, value] of schemeDeclarations(css.slice(moreStart), scheme)) {
       tokens.set(name, value);
     }
   }

@@ -39,10 +39,11 @@ Write like the library's own docs: plain, direct, second person, present tense.
   tint that light: a deeper one pulls the fill toward the text and drops it under 4.5:1. Invalid fields add a
   `destructive` border and a 3px `destructive/20` ring. `success` and `warning` take the same tints; their
   `*-foreground` is for a solid fill.
-- Borders: every element defaults to `border`. Form controls draw their boundary in `control`, which holds 3:1 on every
-  surface they sit on; `input` is the quieter field chrome around them. In dark, `border`, `input` and `control` are
-  white at 10%, 15% and 36%, so they lift rather than darken. Card, Dialog, AlertDialog and the floating menus are
-  outlined by a 1px `foreground/10` ring instead, which tracks the scheme on its own.
+- Borders: every element defaults to `border`; form controls draw their boundary in `control`, the same hairline as
+  `input`. In dark, `border` and `input` are white at 10% and 15%, so they lift rather than darken. A viewer who asks
+  their system for more contrast (`prefers-contrast: more`) gets `control` at 3:1 on every surface. Card, Dialog,
+  AlertDialog and the floating menus are outlined by a 1px `foreground/10` ring instead, which tracks the scheme on its
+  own.
 - Charts use `chart-1` … `chart-5`, five steps of the palette hue from light to dark. Pair a series color with a label
   or legend; never encode meaning in hue alone.
 - **Contrast you must design around**, measured from the tokens on every build:

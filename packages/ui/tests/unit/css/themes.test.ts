@@ -55,14 +55,16 @@ const pairs: Array<Pair> = [
   ...["--background", "--card", "--popover"].map((ground) =>
     tokenPair("--destructive", ground, textMinimum, "error text and destructive focus outline"),
   ),
-  ...["--background", "--card", "--popover", "--sidebar"].map((ground) =>
-    tokenPair("--control", ground, graphicMinimum, "form control border"),
-  ),
   ...["--success", "--warning"].flatMap((status) => [
     tokenPair(`${status}-foreground`, status, textMinimum, "status fill"),
     ...["--background", "--card", "--popover"].map((ground) => tokenPair(status, ground, textMinimum, "status text")),
   ]),
 ];
+
+/** The pairs a viewer who asks for more contrast is owed on top of the rest. */
+const moreContrastPairs: Array<Pair> = ["--background", "--card", "--popover", "--sidebar"].map((ground) =>
+  tokenPair("--control", ground, graphicMinimum, "form control border"),
+);
 
 /** The shares of a status color its tinted fill uses, at rest and hovered, as the destructive Button, Badge and Bubble do. */
 const statusTints: Record<ColorScheme, Array<number>> = { dark: [0.2, 0.25], light: [0.1, 0.15] };
@@ -83,10 +85,15 @@ function statusTintPairs(scheme: ColorScheme): Array<Pair> {
 
 describe.each(palettes)("%s palette", (palette) => {
   describe.each(schemes)("%s", (scheme) => {
-    const token = readPalette(join(themesDirectory, `${palette}.css`), scheme);
+    const token = readPalette(join(themesDirectory, `${palette}.css`), scheme, "no-preference");
+    const moreContrastToken = readPalette(join(themesDirectory, `${palette}.css`), scheme, "more");
 
     test.each([...pairs, ...statusTintPairs(scheme)])("$name meets $minimum:1", ({ ground, ink, minimum }) => {
       expect(contrastRatio(ink(token), ground(token))).toBeGreaterThanOrEqual(minimum);
+    });
+
+    test.each(moreContrastPairs)("$name meets $minimum:1 under prefers-contrast: more", ({ ground, ink, minimum }) => {
+      expect(contrastRatio(ink(moreContrastToken), ground(moreContrastToken))).toBeGreaterThanOrEqual(minimum);
     });
   });
 });
