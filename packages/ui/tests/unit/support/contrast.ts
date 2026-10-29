@@ -93,9 +93,12 @@ function relativeLuminance(channels: [number, number, number]): number {
   return 0.2126 * (red ?? 0) + 0.7152 * (green ?? 0) + 0.0722 * (blue ?? 0);
 }
 
-/** Computes the WCAG contrast ratio of two opaque colors. */
+/** Computes the WCAG contrast ratio of an ink, composited by its alpha, against an opaque ground. */
 function contrastRatio(ink: Oklab, ground: Oklab): number {
-  const [first, second] = [relativeLuminance(toSrgb(ink)), relativeLuminance(toSrgb(ground))];
+  if (ground.alpha < 1) {
+    throw new Error("A contrast ground must be opaque; lay a translucent fill over its surface with tintOver");
+  }
+  const [first, second] = [relativeLuminance(compositeOver(ink, ground)), relativeLuminance(toSrgb(ground))];
   return (Math.max(first, second) + 0.05) / (Math.min(first, second) + 0.05);
 }
 
