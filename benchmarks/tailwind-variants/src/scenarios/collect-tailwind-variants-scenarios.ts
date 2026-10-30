@@ -9,6 +9,7 @@ import { buildTailwindVariantsNpmExtremeScenarios } from "#scenarios/tailwind-va
 import { buildTailwindVariantsNpmExtremeSlotsScenarios } from "#scenarios/tailwind-variants/extreme-slots";
 import { buildTailwindVariantsNpmFewRendersScenarios } from "#scenarios/tailwind-variants/few-renders";
 import { buildTailwindVariantsNpmFirstRenderScenarios } from "#scenarios/tailwind-variants/first-render";
+import { buildTailwindVariantsNpmNovelClassesScenarios } from "#scenarios/tailwind-variants/novel-classes";
 import { buildTailwindVariantsNpmOverrideScenarios } from "#scenarios/tailwind-variants/override";
 import { buildTailwindVariantsNpmRepeatScenarios } from "#scenarios/tailwind-variants/repeat";
 import { buildTailwindVariantsNpmSimpleScenarios } from "#scenarios/tailwind-variants/simple";
@@ -38,6 +39,7 @@ export function collectAllTailwindVariantsNpmScenarios(): ReadonlyArray<BenchSce
     ...buildTailwindVariantsNpmSlotClassScenarios(),
     ...buildTailwindVariantsNpmDataCellsScenarios(),
     ...buildTailwindVariantsNpmWideSlotsScenarios(),
+    ...buildTailwindVariantsNpmNovelClassesScenarios(),
     ...buildTailwindVariantsNpmFewRendersScenarios(),
   ];
 }

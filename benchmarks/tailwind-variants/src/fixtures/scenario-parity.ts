@@ -6,6 +6,7 @@ import { simpleTestProps as createTvTestProps } from "#fixtures/create-tv";
 import { DATA_CELLS_PER_ITERATION } from "#fixtures/data-cells";
 import { extendsTestProps } from "#fixtures/extends";
 import { extremeSlotsTestProps, extremeTestProps } from "#fixtures/extreme";
+import { uniqueClassSelections } from "#fixtures/novel-classes";
 import { overrideTestProps } from "#fixtures/override";
 import { repeatSimpleTestProps, repeatSlotsTestProps } from "#fixtures/repeat";
 import { simpleTestProps } from "#fixtures/simple";
@@ -358,6 +359,32 @@ export const SLOT_CLASS_WITH_MERGE = {
   group: "slot-class",
   what: "Card slots each called with their own className, usually absent, sometimes overriding a slot class",
   batch: slotClassTestCalls.length,
+} as const satisfies ScenarioDescriptor;
+
+/** One button from many call sites, each passing a `className` no call passed before, so every merge is a miss. */
+export const UNIQUE_CLASS_WITH_MERGE = {
+  id: "unique-class-with-merge",
+  group: "unique-class",
+  what: "Button variants from many call sites, each with a className no earlier call passed, so the merge never hits a cache",
+  batch: uniqueClassSelections.length,
+} as const satisfies ScenarioDescriptor;
+
+/** A button whose definition carries a class of its own, rendered once, so its merge starts cold. */
+export const FIRST_RENDER_COLD_SIMPLE = {
+  id: "first-render-cold-simple",
+  group: "first-render",
+  what: "Define a button carrying a class of its own and render it once, every merge a miss (per definition — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
+} as const satisfies ScenarioDescriptor;
+
+/** A slot component whose base slot carries a class of its own, every slot rendered once. */
+export const FIRST_RENDER_COLD_SLOTS = {
+  id: "first-render-cold-slots",
+  group: "first-render",
+  what: "Define a slot component carrying a class of its own and render every slot once, every merge a miss (per definition — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
 /** Table cells whose selection comes from row data and whose `className` comes from the column, about a thousand distinct calls. */

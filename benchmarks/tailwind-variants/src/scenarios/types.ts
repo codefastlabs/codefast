@@ -22,7 +22,8 @@ type ScenarioGroup =
   | "override"
   | "slot-class"
   | "data-cells"
-  | "wide-slots";
+  | "wide-slots"
+  | "unique-class";
 
 /**
  * @since 0.3.16-canary.0
