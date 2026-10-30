@@ -95,7 +95,7 @@ const createSlotCallContext = (
     } else {
       const key = toVariantKey(selected);
 
-      classes = key ? (entry.group[key] ?? compileGroupValue(entry, key)) : undefined;
+      classes = key === undefined ? undefined : (entry.group[key] ?? compileGroupValue(entry, key));
     }
 
     matched.push(classes);
@@ -167,7 +167,7 @@ const resolveSlotWithOverrides = (
     } else {
       const key = toVariantKey(override);
 
-      classes = key ? (entry.group[key] ?? compileGroupValue(entry, key)) : undefined;
+      classes = key === undefined ? undefined : (entry.group[key] ?? compileGroupValue(entry, key));
     }
 
     index++;

@@ -25,10 +25,9 @@ export const joinVariantClasses = (plan: VariantPlan, variantProps: Record<strin
     if (selected === undefined) {
       classes = entry.defaultClasses;
     } else {
-      // `toVariantKey` only answers `undefined` for `undefined`, which the default branch takes.
-      const key = toVariantKey(selected) as string;
+      const key = toVariantKey(selected);
 
-      classes = entry.group[key] ?? compileGroupValue(entry, key);
+      classes = key === undefined ? undefined : (entry.group[key] ?? compileGroupValue(entry, key));
     }
 
     if (typeof classes === "string" && classes !== "") {

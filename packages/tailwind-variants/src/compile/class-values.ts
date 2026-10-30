@@ -93,20 +93,19 @@ export const toPlanClasses = (value: ClassValue, slotIndexByName: Record<string,
 };
 
 /**
- * Whether a group keyed by "true"/"false" accepts boolean variant values.
+ * The key a value a caller passed selects inside its group, or `undefined` when it selects nothing.
  *
- * @since 0.8.0
- */
-export const hasBooleanVariantValues = (variantGroup: Record<string, unknown>): boolean => {
-  return "true" in variantGroup || "false" in variantGroup;
-};
-
-/**
- * The key a variant value selects inside its group, with booleans spelled as their group keys.
+ * @remarks Booleans and `0` are spelled as their keys, any other falsy value reads as `"false"`, and
+ * `null`, an array or an object selects nothing. Only `undefined` falls back to the default, so
+ * callers answer it before asking here.
  *
  * @since 0.6.0
  */
 export const toVariantKey = (value: unknown): string | undefined => {
+  if (typeof value === "string") {
+    return value === "" ? "false" : value;
+  }
+
   if (value === true) {
     return "true";
   }
@@ -115,5 +114,25 @@ export const toVariantKey = (value: unknown): string | undefined => {
     return "false";
   }
 
-  return value as string | undefined;
+  if (value === null || typeof value === "object") {
+    return undefined;
+  }
+
+  if (value === 0) {
+    return "0";
+  }
+
+  return (value || "false") as string;
+};
+
+/**
+ * The key a group reads when a call omits its variant: the configured default's key, or `"false"` without one.
+ */
+export const toDefaultKey = (configuredDefault: unknown): string => {
+  if (configuredDefault === undefined || configuredDefault === null) {
+    return "false";
+  }
+
+  // An object default is looked up as written, where a caller passing the same object selects nothing.
+  return toVariantKey(configuredDefault) ?? (configuredDefault as string);
 };

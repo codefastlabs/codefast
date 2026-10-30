@@ -2,7 +2,7 @@
  * The cold lane: one resolution read straight from the configuration, before a plan exists.
  */
 
-import { hasBooleanVariantValues, isSlotClassMap, toClassText, toVariantKey } from "#compile/class-values";
+import { isSlotClassMap, toClassText, toDefaultKey, toVariantKey } from "#compile/class-values";
 import { getCompoundClass } from "#compile/compound";
 import type {
   ClassMerger,
@@ -28,29 +28,9 @@ const append = (text: string, classes: string): string => {
   return text === "" ? classes : `${text} ${classes}`;
 };
 
-/**
- * The group key these props select for one variant, or `undefined` for none.
- *
- * @remarks Mirrors the plan: a missing selection takes the configured default, or `false` for a
- * boolean group, and the slot lane alone treats a falsy key as no selection.
- */
-const selectedKey = (
-  group: Record<string, unknown>,
-  configuredDefault: unknown,
-  selected: unknown,
-  slotLane: boolean,
-): unknown => {
-  if (selected === undefined) {
-    if (configuredDefault === undefined) {
-      return hasBooleanVariantValues(group) ? "false" : undefined;
-    }
-
-    return toVariantKey(configuredDefault);
-  }
-
-  const key = toVariantKey(selected);
-
-  return slotLane && !key ? undefined : key;
+/** The group key these props select for one variant, or `undefined` for none; a missing selection takes the default. */
+const selectedKey = (configuredDefault: unknown, selected: unknown): string | undefined => {
+  return selected === undefined ? toDefaultKey(configuredDefault) : toVariantKey(selected);
 };
 
 /** The own value a group holds under a key a caller chose, guarding against inherited members. */
@@ -132,7 +112,7 @@ export const resolveColdVariantClasses = (
         continue;
       }
 
-      const key = selectedKey(group, defaults[name], props[name], false);
+      const key = selectedKey(defaults[name], props[name]);
 
       if (key !== undefined) {
         text = append(text, toClassText(ownValue(group, key) as ClassValue));
@@ -192,15 +172,10 @@ const coldSlotText = (
         continue;
       }
 
-      let key: unknown;
-
-      if (overrides !== null && overrides[name] !== undefined) {
-        const overrideKey = toVariantKey(overrides[name]);
-
-        key = overrideKey ? overrideKey : undefined;
-      } else {
-        key = selectedKey(group, defaults[name], props[name], true);
-      }
+      const key =
+        overrides !== null && overrides[name] !== undefined
+          ? toVariantKey(overrides[name])
+          : selectedKey(defaults[name], props[name]);
 
       if (key !== undefined) {
         text = append(text, slotContribution(ownValue(group, key), slotName));

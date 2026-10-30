@@ -99,13 +99,11 @@ const collectComparedValues = (plan: VariantPlan): Map<string, Map<unknown, numb
 /**
  * Compile a plan's variants into an encoder.
  *
- * @remarks `treatFalsyKeyAsUnknown` mirrors the lane the encoder serves: the slot lane rejects a
- * falsy variant key where the flat lane looks it up. A selection space past one safe integer spans
- * several, joined into a string key.
+ * @remarks A selection space past one safe integer spans several, joined into a string key.
  *
  * @since 0.6.0
  */
-export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknown: boolean): SelectionEncoder => {
+export const compileSelectionEncoder = (plan: VariantPlan): SelectionEncoder => {
   const comparedValues = plan.conditionNames.length > 0 ? collectComparedValues(plan) : null;
   const axes: Array<SelectionAxis> = [];
   let part = 0;
@@ -147,12 +145,7 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
     const axis = addAxis(entry.name, entry.source, entry.valueCount);
     const defaultKey = entry.defaultKey;
 
-    // A call passing the default explicitly resolves as one omitting it, so both take id zero. The slot
-    // lane reads a falsy key as no selection, which an omitted variant is not.
-    if (defaultKey === undefined || (treatFalsyKeyAsUnknown && !defaultKey)) {
-      continue;
-    }
-
+    // A call passing the default explicitly resolves as one omitting it, so both take id zero.
     if (axis.kind === AXIS_BY_GROUP_KEY) {
       axis.valueIds[defaultKey] = 0;
     } else {
@@ -180,7 +173,7 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
   const groupIdOf = (axis: SelectionAxis, selected: unknown): number => {
     const variantKey = toVariantKey(selected);
 
-    if (variantKey === undefined || (treatFalsyKeyAsUnknown && !variantKey)) {
+    if (variantKey === undefined) {
       return axis.unknownId;
     }
 
@@ -280,7 +273,7 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
         if (axis.kind === AXIS_BY_GROUP_KEY) {
           const variantKey = toVariantKey(selected);
 
-          if (variantKey === undefined || (treatFalsyKeyAsUnknown && !variantKey)) {
+          if (variantKey === undefined) {
             id = axis.unknownId;
           } else {
             const found = axis.valueIds[variantKey];

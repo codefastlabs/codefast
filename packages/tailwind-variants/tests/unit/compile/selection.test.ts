@@ -57,7 +57,7 @@ const COMPOUND_CONFIG = {
 describe("compileSelectionEncoder", () => {
   test("gives two selections one key only when every condition and group key agrees", () => {
     const plan = compileVariantPlan(COMPOUND_CONFIG as never, null);
-    const { keyOf } = compileSelectionEncoder(plan, false);
+    const { keyOf } = compileSelectionEncoder(plan);
 
     expect(keyOf({ pressed: true })).not.toBe(keyOf({ pressed: "true" }));
     expect(keyOf({ size: 0 })).not.toBe(keyOf({ size: "0" }));
@@ -72,7 +72,7 @@ describe("compileSelectionEncoder", () => {
   test("keeps a numeric key while the selection space fits one safe integer", () => {
     const plan = compileVariantPlan(COMPOUND_CONFIG as never, null);
 
-    expect(typeof compileSelectionEncoder(plan, false).keyOf({ size: "sm" })).toBe("number");
+    expect(typeof compileSelectionEncoder(plan).keyOf({ size: "sm" })).toBe("number");
   });
 
   test("spans several safe integers rather than declining a selection space past one", () => {
@@ -88,7 +88,7 @@ describe("compileSelectionEncoder", () => {
       variants[`g${String(group)}`] = values;
     }
 
-    const { keyOf } = compileSelectionEncoder(compileVariantPlan({ variants }, null), false);
+    const { keyOf } = compileSelectionEncoder(compileVariantPlan({ variants }, null));
     const first = keyOf({ g0: "v1", g19: "v2" });
 
     expect(typeof first).toBe("string");

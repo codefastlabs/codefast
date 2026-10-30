@@ -7,7 +7,7 @@
  */
 
 import type { PlanClasses } from "#compile/class-values";
-import { hasBooleanVariantValues, toClassText, toPlanClasses, toVariantKey } from "#compile/class-values";
+import { toClassText, toDefaultKey, toPlanClasses } from "#compile/class-values";
 import type { CompoundPlanEntry, CompoundSlotPlanEntry } from "#compile/compound";
 import { compileCompoundSlots, compileCompoundVariants } from "#compile/compound";
 import { hasSlotsConfig } from "#compile/configuration";
@@ -29,7 +29,7 @@ import type {
 export interface VariantPlanEntry {
   readonly defaultClasses: PlanClasses | undefined;
   /** The group key a call that omits this variant reads, so passing it explicitly can share that call's answer. */
-  readonly defaultKey: string | undefined;
+  readonly defaultKey: string;
   /** The configured default as written, which a compound compares an omitted value against. */
   readonly defaultValue: unknown;
   /** Values compiled so far, filled as callers select them; the configuration's own group when it is read in place. */
@@ -167,17 +167,11 @@ const compileVariantEntries = (
         ? (variantGroup as Record<string, string>)
         : (Object.create(null) as Record<string, PlanClasses>);
     const configuredDefault = defaultVariantProps[name];
-    // A group keyed by "true"/"false" reads as false unless the configuration says otherwise.
-    const defaultKey =
-      configuredDefault === undefined
-        ? hasBooleanVariantValues(variantGroup)
-          ? "false"
-          : undefined
-        : toVariantKey(configuredDefault);
+    const defaultKey = toDefaultKey(configuredDefault);
     let defaultClasses: PlanClasses | undefined;
 
     // The default is the one value every call without a selection reads, so it compiles now.
-    if (defaultKey !== undefined && Object.hasOwn(variantGroup, defaultKey)) {
+    if (Object.hasOwn(variantGroup, defaultKey)) {
       const value = variantGroup[defaultKey];
 
       defaultClasses = typeof value === "string" ? value : toPlanClasses(value, slotIndexByName);

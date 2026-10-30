@@ -78,7 +78,7 @@ const compileResolver = (
   shouldCacheResolutions: boolean,
 ): CompiledResolver => {
   const plan = compileVariantPlan(configuration, mergeClasses);
-  const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan, plan.slots !== null) : null;
+  const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan) : null;
 
   if (encoder === null) {
     return { flatDoor: null, flatMemo: null, plan, slotMemo: null };
