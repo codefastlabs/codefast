@@ -138,14 +138,16 @@ Everything else follows from having to make that distinction hold:
   a plain string until a caller passes a class string; only then does its entry become a record holding the joined and
   merged text and the classes it has met. A hit therefore builds no key, and a component nobody passes a class to never
   allocates the record.
-- **A caller's class is remembered from its second sighting.** A per-resolver door of hashed class strings, allocated on
-  the first class, keeps one-off strings out of the store. Their merge goes through `twMerge` like every other: the
-  engine's `cn` would skip its whole-string probe, but pulls its argument cache into every bundle that renders a
-  variant, for no gain this row could measure.
-- **A merged selection stands in for its joined text only when merging dropped nothing but repeats.** The engine's
-  conflict table is not transitive: a class one merge drops can come back once a caller's class overrides what dropped
-  it, and a merge of the whole keeps it, so merging onto an already-merged prefix is exact only when no real class was
-  dropped. A supplied merge always merges the whole, because the rule rests on the default engine's semantics.
+- **A caller's class is remembered from its second sighting, and only so many per selection.** A small per-resolver door
+  of hashed class strings, allocated on the first class, keeps one-off strings out of the store, and a selection stops
+  remembering classes past a fixed count, because the store promotes a live entry whole and would otherwise carry an
+  ever-growing map with it. Their merge goes through `twMerge` like every other: the engine's `cn` would skip its
+  whole-string probe, but pulls its argument cache into every bundle that renders a variant, for no gain this row could
+  measure.
+- **A caller's class is merged onto the joined text, never onto the merged answer.** The engine's conflict table is not
+  transitive: a class one merge drops can come back once a caller's class overrides what dropped it, and a merge of the
+  whole keeps it. Checking whether a merge dropped only repeats, which would make the merged answer safe to reuse, costs
+  more than the shorter merge saves.
 - **`selectForSlot` stays out of line.** Inlining it by hand measured slower on every slot scenario — the engine already
   inlines it, and the larger caller falls out of the shape it optimises.
 - **The flat lane accepts only a string it reads.** A configuration without slots compiles every class value to a

@@ -14,9 +14,11 @@ import { joinVariantClasses } from "#resolve/variants";
 export interface FlatSelection {
   readonly joined: string;
   readonly merged: string | undefined;
+  /** Caller classes merged onto this selection that it did not remember, counted until it settles its prefix. */
+  misses: number;
   /** Caller classes seen at least twice, keyed by the class string as passed. */
   pairs: Map<string, string> | null;
-  /** What a caller's class is merged onto, worked out the first time one arrives. */
+  /** What a caller's class merges onto once settled: the merged answer when that is exact, the joined text otherwise. */
   prefix: string | null;
 }
 
@@ -26,9 +28,13 @@ export interface FlatSelection {
 export type ClassDoor = (className: string) => boolean;
 
 /** Slots in a class door; a power of two, so a hash masks straight to one. */
-const DOOR_SLOTS = 1024;
+const DOOR_SLOTS = 256;
 
-const WHITESPACE = /\s+/;
+/** Caller classes a selection merges before it settles its prefix, so a selection meeting one or two never pays to. */
+const PREFIX_AFTER_MISSES = 4;
+
+/** Caller classes one selection remembers, so a selection the store keeps promoting cannot grow without bound. */
+const PAIR_LIMIT = 64;
 
 /**
  * Creates a bounded door that lets a class string be remembered only from its second sighting.
@@ -87,16 +93,21 @@ export const createFlatSelection = (
           : mergeClasses === null
             ? joined
             : mergeClasses(joined),
+    misses: 0,
     pairs: null,
     prefix: null,
   };
 };
 
-/** Whether merging dropped nothing but repeats, which is when the merged text stands in for the joined one. */
+/**
+ * Whether merging dropped nothing but repeats, which makes the merged answer as good a prefix as the joined text.
+ *
+ * @remarks Split on single spaces: a token the engine re-spaced reads as dropped, which only keeps the joined text.
+ */
 const dropsOnlyRepeats = (joined: string, merged: string): boolean => {
-  const kept = new Set(merged.split(WHITESPACE));
+  const kept = new Set(merged.split(" "));
 
-  for (const token of joined.split(WHITESPACE)) {
+  for (const token of joined.split(" ")) {
     if (token !== "" && !kept.has(token)) {
       return false;
     }
@@ -108,9 +119,10 @@ const dropsOnlyRepeats = (joined: string, merged: string): boolean => {
 /**
  * Resolves a selection with a caller's class string appended, remembering the answer from the class's second sighting.
  *
- * @remarks A merged prefix stands in for the joined text only when merging it dropped
- * nothing but repeats: a dropped class can otherwise come back once the caller's class overrides what
- * dropped it, and a merge of the whole would keep it.
+ * @remarks A caller's class merges onto the merged answer only when merging dropped nothing but repeats:
+ * the engine's conflicts are not transitive, so a class one merge drops can come back once a caller's
+ * class overrides what dropped it. That check runs once a selection has met a few classes, where the
+ * shorter merges repay it.
  */
 export const resolveFlatSelectionWithClass = (
   plan: VariantPlan,
@@ -129,38 +141,32 @@ export const resolveFlatSelectionWithClass = (
     }
   }
 
-  const joined = selection.joined;
   const mergeClasses = plan.mergeClasses;
+  let prefix = selection.prefix;
 
-  if (mergeClasses === null) {
-    return joined === "" ? className : joined + " " + className;
-  }
+  if (prefix === null) {
+    prefix = selection.joined;
 
-  let merged: string;
+    if (mergeClasses === twMerge && ++selection.misses === PREFIX_AFTER_MISSES) {
+      const merged = selection.merged;
 
-  if (mergeClasses === twMerge) {
-    let prefix = selection.prefix;
-
-    if (prefix === null) {
-      prefix = selection.merged !== undefined && dropsOnlyRepeats(joined, selection.merged) ? selection.merged : joined;
+      prefix = merged !== undefined && dropsOnlyRepeats(prefix, merged) ? merged : prefix;
       selection.prefix = prefix;
     }
-
-    merged = twMerge(prefix === "" ? className : prefix + " " + className);
-
-    if (!door(className)) {
-      return merged;
-    }
-  } else {
-    merged = mergeClasses(joined === "" ? className : joined + " " + className);
-
-    if (!door(className)) {
-      return merged;
-    }
   }
 
-  (selection.pairs ??= new Map()).set(className, merged);
-  cache.charge();
+  const text = prefix === "" ? className : prefix + " " + className;
+
+  if (mergeClasses === null) {
+    return text;
+  }
+
+  const merged = mergeClasses(text);
+
+  if (door(className) && (pairs === null || pairs.size < PAIR_LIMIT)) {
+    (selection.pairs ??= new Map()).set(className, merged);
+    cache.charge();
+  }
 
   return merged;
 };

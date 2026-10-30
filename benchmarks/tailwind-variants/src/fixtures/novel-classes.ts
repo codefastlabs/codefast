@@ -12,16 +12,21 @@ export const uniqueClassSelections: ReadonlyArray<Readonly<Record<string, string
 /** A `className` no earlier call passed, numbered by the caller's own counter. */
 export const uniqueClassName = (serial: number): string => `w-[${String(serial)}px] gap-[${String(serial % 97)}px]`;
 
-/** The button configuration with a class of its own, so its definition shares no merge with any other. */
+/**
+ * The button configuration with a class of its own, so its definition shares no merge with any other.
+ *
+ * @remarks The class must survive the merge: one a variant overrides drops out, and every definition would merge to
+ * the same answer.
+ */
 export const novelButtonVariants = (serial: number): typeof buttonVariants => ({
   ...buttonVariants,
-  base: `${buttonVariants.base} min-w-[${String(serial)}px]`,
+  base: `${buttonVariants.base} scroll-mt-[${String(serial)}px]`,
 });
 
 /** The card configuration with a base slot class of its own. */
 export const novelCardVariants = (serial: number): typeof slotsVariants => ({
   ...slotsVariants,
-  slots: { ...slotsVariants.slots, base: `${slotsVariants.slots.base} min-w-[${String(serial)}px]` },
+  slots: { ...slotsVariants.slots, base: `${slotsVariants.slots.base} scroll-mt-[${String(serial)}px]` },
 });
 
 /**

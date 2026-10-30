@@ -43,6 +43,11 @@ describe("a caller's class on a remembered selection", () => {
   test.each(NON_TRANSITIVE)("merges the whole text when a merge dropped more than repeats: $base", (example) => {
     const button = untypedTv({ base: example.base, variants: { size: { sm: "text-sm" } } });
 
+    // Enough other classes first that the selection settles what it merges a caller's class onto.
+    for (const filler of ["m-1", "m-2", "m-3", "m-4", "m-5", "m-6"]) {
+      expect(button({ className: filler })).toBe(tailwindMerge(`${example.base} ${filler}`));
+    }
+
     for (let call = 0; call < 5; call++) {
       expect(button({ className: example.className })).toBe(tailwindMerge(`${example.base} ${example.className}`));
     }
@@ -77,6 +82,16 @@ describe("a caller's class on a remembered selection", () => {
     }
   });
 
+  test("merges onto the shorter answer once settled when merging dropped only repeats", () => {
+    const button = untypedTv({ base: "flex flex px-4", variants: { size: { sm: "text-sm" } } });
+
+    for (let index = 0; index < 12; index++) {
+      const className = `mt-${String(index)}`;
+
+      expect(button({ className })).toBe(twMerge(`flex flex px-4 ${className}`));
+    }
+  });
+
   test("agrees with the engine's whole-text merge for a one-off class", () => {
     const button = untypedTv({ base: "inline-flex px-4 py-2", variants: { size: { sm: "px-2" } } });
 
@@ -87,6 +102,20 @@ describe("a caller's class on a remembered selection", () => {
       const className = `w-[${String(index)}px] px-[${String(index)}px]`;
 
       expect(button({ className, size: "sm" })).toBe(twMerge(`inline-flex px-4 py-2 px-2 ${className}`));
+    }
+  });
+});
+
+describe("a selection meeting many recurring classes", () => {
+  test("keeps answering every one exactly once it stops remembering more", () => {
+    const button = untypedTv({ base: "inline-flex px-4", variants: { size: { sm: "px-2" } } });
+
+    for (let pass = 0; pass < 3; pass++) {
+      for (let index = 0; index < 150; index++) {
+        const className = `mt-${String(index % 96)} px-[${String(index)}px]`;
+
+        expect(button({ className, size: "sm" })).toBe(twMerge(`inline-flex px-4 px-2 ${className}`));
+      }
     }
   });
 });
