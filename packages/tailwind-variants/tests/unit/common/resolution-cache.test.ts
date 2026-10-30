@@ -96,4 +96,50 @@ describe("resolution cache", () => {
 
     expect(chip({ tone: "t1" } as never)).toBe("block p-1 ring");
   });
+
+  test("answers an explicitly passed default from the entry an omitted one filled", () => {
+    const merged: Array<string> = [];
+    const button = tv(
+      {
+        base: "px-4",
+        compoundVariants: [{ class: "ring", size: "md", tone: "accent" }],
+        defaultVariants: { size: "md", tone: "plain" },
+        variants: { size: { md: "px-6", sm: "px-2" }, tone: { accent: "text-accent", plain: "" } },
+      },
+      {
+        twMerge: (classes) => {
+          merged.push(classes);
+
+          return classes;
+        },
+      },
+    );
+
+    expect(button({})).toBe("px-4 px-6");
+    expect(button({})).toBe("px-4 px-6");
+    expect(button({ size: "md", tone: "plain" })).toBe("px-4 px-6");
+    expect(button({ size: "md", tone: "plain" })).toBe("px-4 px-6");
+    expect(button({ tone: "accent" })).toBe("px-4 px-6 text-accent ring");
+    expect(button({ size: "md", tone: "accent" })).toBe("px-4 px-6 text-accent ring");
+    // The first call resolves cold, so the store holds what the second one merged.
+    expect(merged).toEqual(["px-4 px-6", "px-4 px-6", "px-4 px-6 text-accent ring"]);
+  });
+
+  test("keeps a falsy default apart from an omitted variant on the slot lane", () => {
+    const slotsTv = tv as (
+      configuration: object,
+      options?: object,
+    ) => (props?: Record<string, unknown>) => Record<string, () => string | undefined>;
+    const configuration = {
+      defaultVariants: { level: 0 },
+      slots: { base: "block" },
+      variants: { level: { 0: { base: "p-0" }, 1: { base: "p-1" } } },
+    };
+    const card = slotsTv(configuration);
+    const uncached = slotsTv(configuration, { cacheResolutions: false });
+
+    for (const props of [{}, { level: 0 }, {}, { level: 0 }, { level: 1 }]) {
+      expect(card(props).base?.()).toBe(uncached(props).base?.());
+    }
+  });
 });

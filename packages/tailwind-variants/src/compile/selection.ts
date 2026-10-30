@@ -112,7 +112,7 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
   let states = 1;
 
   // Id zero always means "the call omitted this variant", so a radix leaves room for it.
-  const addAxis = (name: string, group: Record<string, unknown>, valueCount: number): void => {
+  const addAxis = (name: string, group: Record<string, unknown>, valueCount: number): SelectionAxis => {
     const matchIds = comparedValues?.get(name);
     const kind = matchIds === undefined ? AXIS_BY_GROUP_KEY : AXIS_BY_RAW_VALUE;
     // A raw-value axis numbers its compared values first, then a group id for every other value.
@@ -124,7 +124,7 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
       states = 1;
     }
 
-    axes.push({
+    const axis: SelectionAxis = {
       group,
       kind,
       matchIds: matchIds ?? EMPTY_IDS,
@@ -135,12 +135,34 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
       stride: states,
       unknownId,
       valueIds: createValueIds(),
-    });
+    };
+
+    axes.push(axis);
     states *= radix;
+
+    return axis;
   };
 
   for (const entry of plan.entries) {
-    addAxis(entry.name, entry.source, entry.valueCount);
+    const axis = addAxis(entry.name, entry.source, entry.valueCount);
+    const defaultKey = entry.defaultKey;
+
+    // A call passing the default explicitly resolves as one omitting it, so both take id zero. The slot
+    // lane reads a falsy key as no selection, which an omitted variant is not.
+    if (defaultKey === undefined || (treatFalsyKeyAsUnknown && !defaultKey)) {
+      continue;
+    }
+
+    if (axis.kind === AXIS_BY_GROUP_KEY) {
+      axis.valueIds[defaultKey] = 0;
+    } else {
+      const defaultValue = entry.defaultValue;
+
+      // A compound reads an omitted value as the configured default exactly as written, so only that value joins it.
+      if (defaultValue !== undefined && typeof defaultValue !== "object" && typeof defaultValue !== "function") {
+        axis.rawIds.set(defaultValue, 0);
+      }
+    }
   }
 
   if (comparedValues !== null) {

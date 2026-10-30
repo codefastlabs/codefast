@@ -387,6 +387,24 @@ export const FIRST_RENDER_COLD_SLOTS = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
+/** A button carrying a class of its own, rendered the way one page shows it several times, every merge new to the engine. */
+export const FIRST_PAGE_COLD_SIMPLE = {
+  id: "first-page-cold-simple",
+  group: "first-render",
+  what: "Define a button carrying a class of its own and render it as one page does — repeats, an explicit default, a caller's class (per definition — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
+} as const satisfies ScenarioDescriptor;
+
+/** A slot component carrying a class of its own, every slot rendered for the selections one page shows. */
+export const FIRST_PAGE_COLD_SLOTS = {
+  id: "first-page-cold-slots",
+  group: "first-render",
+  what: "Define a slot component carrying a class of its own and render every slot as one page does (per definition — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
+} as const satisfies ScenarioDescriptor;
+
 /** Table cells whose selection comes from row data and whose `className` comes from the column, about a thousand distinct calls. */
 export const DATA_CELLS_WITH_MERGE = {
   id: "data-cells-with-merge",

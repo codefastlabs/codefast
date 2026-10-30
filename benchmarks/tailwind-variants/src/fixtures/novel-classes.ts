@@ -23,3 +23,28 @@ export const novelCardVariants = (serial: number): typeof slotsVariants => ({
   ...slotsVariants,
   slots: { ...slotsVariants.slots, base: `${slotsVariants.slots.base} min-w-[${String(serial)}px]` },
 });
+
+/**
+ * The calls one page makes of a button it shows several times: repeats of one selection, the default passed
+ * explicitly, and a caller's class, in render order.
+ */
+export const firstPageButtonCalls: ReadonlyArray<Readonly<Record<string, string>>> = [
+  {},
+  {},
+  { size: "default", variant: "default" },
+  { size: "sm", variant: "outline" },
+  { size: "sm", variant: "outline" },
+  { className: "mt-4" },
+  { className: "mt-4" },
+  { size: "sm", variant: "outline" },
+];
+
+/** The calls one page makes of a card it shows several times, in render order. */
+export const firstPageCardCalls: ReadonlyArray<Readonly<Record<string, string>>> = [
+  {},
+  {},
+  { size: "md", variant: "default" },
+  { size: "lg", variant: "success" },
+  { size: "lg", variant: "success" },
+  {},
+];

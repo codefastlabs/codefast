@@ -28,6 +28,10 @@ import type {
  */
 export interface VariantPlanEntry {
   readonly defaultClasses: PlanClasses | undefined;
+  /** The group key a call that omits this variant reads, so passing it explicitly can share that call's answer. */
+  readonly defaultKey: string | undefined;
+  /** The configured default as written, which a compound compares an omitted value against. */
+  readonly defaultValue: unknown;
   /** Values compiled so far, filled as callers select them; the configuration's own group when it is read in place. */
   readonly group: Record<string, PlanClasses>;
   readonly name: string;
@@ -185,6 +189,8 @@ const compileVariantEntries = (
 
     entries.push({
       defaultClasses,
+      defaultKey,
+      defaultValue: configuredDefault,
       group,
       name,
       slotIndexByName,
