@@ -142,6 +142,10 @@ Everything else follows from having to make that distinction hold:
   and a configuration without compounds shares one empty object.
 - **The per-slot memo holds `undefined` and a sentinel apart.** A slot that resolves to nothing and a slot nobody has
   read yet are both absent from an array of strings, and they are not the same.
+- **A slot call that selects nothing reads the call's shared text.** A sub-component calls its slot with the `className`
+  it was given, usually absent, so props carrying only `class` or `className` skip the per-slot re-resolve: an empty
+  class returns the memoised answer, and any other merges the shared text with it. Only a prop that is not a class — a
+  variant, or a name a compound tests — sends the slot down the override path.
 - **A resolver returns the same slot object for a repeated selection.** That is the point — the merge per slot happens
   once — and it makes the object shared, so nothing may mutate it.
 
