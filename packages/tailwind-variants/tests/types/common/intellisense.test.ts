@@ -109,6 +109,6 @@ describe("IntelliSense-driving types", () => {
     expect(button({ size: "lg", variant: "outline" })).toBe("px-8 border ring");
     // `p-6` and `p-3` share a class group, so the merge keeps the later one.
     expect(card({ size: "sm" }).header()).toBe("p-3 gap-1");
-    expect(textarea({ resize: "y" })).toBe("px-8 bg-primary resize-y");
+    expect(textarea({ resize: "y" })).toBe("resize-y px-8 bg-primary");
   });
 });

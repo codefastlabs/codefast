@@ -127,7 +127,7 @@ describe("Configuration Authoring Type Safety", () => {
     });
 
     expectTypeOf<keyof VariantProps<typeof chip>>().toEqualTypeOf<"size" | "tone">();
-    expect(chip({ tone: "loud" })).toBe("text-loud px-2 ring");
+    expect(chip({ tone: "loud" })).toBe("px-2 text-loud ring");
   });
 
   test("keeps declaring a default, a compound and a slot map compiling — and applying", () => {

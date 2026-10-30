@@ -10,11 +10,11 @@ describe("resolver metadata", () => {
     expect(button.config.variants).toEqual({ size: { sm: "px-2" }, variant: { primary: "bg-primary" } });
   });
 
-  test("puts an extended resolver's keys first and adds the extension's after", () => {
+  test("puts the extension's keys first and the extended resolver's after", () => {
     const base = tv({ variants: { size: { sm: "px-2" } } });
     const extended = tv({ extend: base, variants: { tone: { loud: "font-bold" } } });
 
-    expect(extended.variantKeys).toEqual(["size", "tone"]);
+    expect(extended.variantKeys).toEqual(["tone", "size"]);
   });
 
   test("answers an empty list for a configuration without variants", () => {
