@@ -3,7 +3,7 @@
  */
 
 import { isSlotClassMap, toCallerClasses, toClassText, toDefaultKey, toVariantKey } from "#compile/class-values";
-import { getCompoundClass } from "#compile/compound";
+import { getCompoundClass, matchesCompoundValue } from "#compile/compound";
 import type {
   ClassMerger,
   ClassValue,
@@ -47,7 +47,6 @@ const matchesColdCompound = (
   props: Props,
   defaults: Props,
   slotProps: Props | null,
-  coerceMissingBoolean: boolean,
   skipSlots: boolean,
 ): boolean => {
   for (const name of Object.keys(definition)) {
@@ -55,7 +54,6 @@ const matchesColdCompound = (
       continue;
     }
 
-    const expected = definition[name];
     let value = slotProps === null ? undefined : slotProps[name];
 
     if (value === undefined) {
@@ -66,15 +64,7 @@ const matchesColdCompound = (
       value = defaults[name];
     }
 
-    if (Array.isArray(expected)) {
-      if (!expected.includes(value)) {
-        return false;
-      }
-    } else if (typeof expected === "boolean" && coerceMissingBoolean) {
-      if ((value === undefined ? false : value) !== expected) {
-        return false;
-      }
-    } else if (value !== expected) {
+    if (!matchesCompoundValue(definition[name], value)) {
       return false;
     }
   }
@@ -124,7 +114,7 @@ export const resolveColdVariantClasses = (
 
   if (compounds !== undefined) {
     for (const compound of compounds) {
-      if (matchesColdCompound(compound, props, defaults, null, true, false)) {
+      if (matchesColdCompound(compound, props, defaults, null, false)) {
         text = append(text, toClassText(getCompoundClass(compound, false)));
       }
     }
@@ -186,7 +176,7 @@ const coldSlotText = (
 
   if (compounds !== undefined) {
     for (const compound of compounds) {
-      if (matchesColdCompound(compound, props, defaults, overrides, false, false)) {
+      if (matchesColdCompound(compound, props, defaults, overrides, false)) {
         text = append(text, slotContribution(getCompoundClass(compound, true), slotName));
       }
     }
@@ -197,7 +187,7 @@ const coldSlotText = (
   if (compoundSlots !== undefined) {
     for (const compoundSlot of compoundSlots) {
       // Compound slots read the call's props only, never a slot's own overrides.
-      if (!matchesColdCompound(compoundSlot, props, defaults, null, true, true)) {
+      if (!matchesColdCompound(compoundSlot, props, defaults, null, true)) {
         continue;
       }
 

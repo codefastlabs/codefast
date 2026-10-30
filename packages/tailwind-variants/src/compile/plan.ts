@@ -246,13 +246,7 @@ export const compileVariantPlan = (
     defaultVariantProps,
     slotIndexByName ?? {},
   );
-  // Only the flat lane treats a boolean absent from props and defaults as false.
-  const compounds = compileCompoundVariants(
-    configuration.compoundVariants,
-    defaultVariantProps,
-    slotIndexByName,
-    slotIndexByName === null,
-  );
+  const compounds = compileCompoundVariants(configuration.compoundVariants, defaultVariantProps, slotIndexByName);
 
   return {
     base: toClassText(configuration.base),

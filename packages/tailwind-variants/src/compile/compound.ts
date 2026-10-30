@@ -11,13 +11,13 @@ import { joinClassValues, joinSlotClassValues } from "#compile/configuration";
 import type { ClassValue, CompoundSlot, CompoundVariant, SlotCompoundVariant, VariantSchema } from "#types";
 
 /** Condition satisfied when the resolved value strictly equals the configured one. */
-const CONDITION_STRICT = 0;
-/** Condition on a boolean where a value absent from both props and defaults counts as `false`. */
-const CONDITION_BOOLEAN = 1;
-/** Condition satisfied when the resolved value appears in the configured list. */
+const CONDITION_EQUAL = 0;
+/** Condition on `undefined`, `null` or `false`, which any of the three satisfies. */
+const CONDITION_ABSENT = 1;
+/** Condition satisfied when the resolved value satisfies any value of the configured list. */
 const CONDITION_LIST = 2;
 
-type ConditionKind = typeof CONDITION_BOOLEAN | typeof CONDITION_LIST | typeof CONDITION_STRICT;
+type ConditionKind = typeof CONDITION_ABSENT | typeof CONDITION_EQUAL | typeof CONDITION_LIST;
 
 /**
  * One `variant: value` test from a compound definition, with the configured default it falls
@@ -26,11 +26,56 @@ type ConditionKind = typeof CONDITION_BOOLEAN | typeof CONDITION_LIST | typeof C
  * @since 0.6.0
  */
 export interface CompoundCondition {
+  /** The value to equal, or a list's values other than `undefined`, `null` and `false`. */
   readonly expected: unknown;
   readonly fallback: unknown;
   readonly kind: ConditionKind;
+  /** Whether `undefined`, `null` and `false` satisfy the condition. */
+  readonly matchesAbsent: boolean;
   readonly name: string;
 }
+
+/** Whether a value is one of the three a compound condition treats as the same absent value. */
+const isAbsent = (value: unknown): boolean => value === undefined || value === null || value === false;
+
+/**
+ * Whether a value a call resolved satisfies one configured compound value, a list meaning any of its values.
+ *
+ * @remarks `undefined`, `null` and `false` satisfy one another; anything else must be strictly equal.
+ */
+export const matchesCompoundValue = (expected: unknown, actual: unknown): boolean => {
+  if (!Array.isArray(expected)) {
+    return expected === actual || (isAbsent(expected) && isAbsent(actual));
+  }
+
+  for (const value of expected) {
+    if (value === actual || (isAbsent(value) && isAbsent(actual))) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+/**
+ * The values a condition tells apart, so a selection key can keep them apart too.
+ *
+ * @remarks An absent value adds `null` and `false`; `undefined` is an omitted variant, which the key already separates.
+ */
+export const listComparedValues = (condition: CompoundCondition): ReadonlyArray<unknown> => {
+  const values =
+    condition.kind === CONDITION_LIST
+      ? [...(condition.expected as ReadonlyArray<unknown>)]
+      : condition.kind === CONDITION_EQUAL
+        ? [condition.expected]
+        : [];
+
+  if (condition.matchesAbsent) {
+    values.push(null, false);
+  }
+
+  return values;
+};
 
 /**
  * A compound variant reduced to the conditions to test and the classes to apply.
@@ -81,10 +126,27 @@ export const getCompoundClass = (
   return slotMode ? joinSlotClassValues(classValue, classNameValue) : joinClassValues(classValue, classNameValue);
 };
 
+const compileCondition = (name: string, expected: unknown, fallback: unknown): CompoundCondition => {
+  if (Array.isArray(expected)) {
+    const present = expected.filter((value) => !isAbsent(value));
+
+    return {
+      expected: present,
+      fallback,
+      kind: CONDITION_LIST,
+      matchesAbsent: present.length < expected.length,
+      name,
+    };
+  }
+
+  return isAbsent(expected)
+    ? { expected, fallback, kind: CONDITION_ABSENT, matchesAbsent: true, name }
+    : { expected, fallback, kind: CONDITION_EQUAL, matchesAbsent: false, name };
+};
+
 const compileConditions = (
   definition: Record<string, unknown>,
   defaultVariantProps: Record<string, unknown>,
-  coerceMissingBoolean: boolean,
   skipSlots: boolean,
 ): ReadonlyArray<CompoundCondition> => {
   const conditions: Array<CompoundCondition> = [];
@@ -94,15 +156,7 @@ const compileConditions = (
       continue;
     }
 
-    const expected = definition[name];
-    // Without coercion a boolean condition is an ordinary strict comparison.
-    const kind: ConditionKind = Array.isArray(expected)
-      ? CONDITION_LIST
-      : typeof expected === "boolean" && coerceMissingBoolean
-        ? CONDITION_BOOLEAN
-        : CONDITION_STRICT;
-
-    conditions.push({ expected, fallback: defaultVariantProps[name], kind, name });
+    conditions.push(compileCondition(name, definition[name], defaultVariantProps[name]));
   }
 
   return conditions;
@@ -111,8 +165,7 @@ const compileConditions = (
 /**
  * Compile compound variants into condition lists.
  *
- * @remarks A `null` `slotIndexByName` says the configuration has no slots. `coerceMissingBoolean`
- * decides whether a boolean condition reads a value absent from both props and defaults as `false`.
+ * @remarks A `null` `slotIndexByName` says the configuration has no slots.
  *
  * @since 0.6.0
  */
@@ -120,7 +173,6 @@ export const compileCompoundVariants = <Variants extends VariantSchema>(
   compoundVariants: ReadonlyArray<CompoundVariant<Variants> | SlotCompoundVariant<Variants, never>> | undefined,
   defaultVariantProps: Record<string, unknown>,
   slotIndexByName: Record<string, number> | null,
-  coerceMissingBoolean: boolean,
 ): ReadonlyArray<CompoundPlanEntry> => {
   if (compoundVariants === undefined || compoundVariants.length === 0) {
     return EMPTY_COMPOUNDS;
@@ -131,7 +183,7 @@ export const compileCompoundVariants = <Variants extends VariantSchema>(
   for (const compoundVariant of compoundVariants) {
     entries.push({
       classes: toPlanClasses(getCompoundClass(compoundVariant, slotIndexByName !== null), slotIndexByName),
-      conditions: compileConditions(compoundVariant, defaultVariantProps, coerceMissingBoolean, false),
+      conditions: compileConditions(compoundVariant, defaultVariantProps, false),
     });
   }
 
@@ -167,7 +219,7 @@ export const compileCompoundSlots = <Variants extends VariantSchema>(
 
     entries.push({
       classes: toClassText(getCompoundClass(compoundSlot, false)),
-      conditions: compileConditions(compoundSlot, defaultVariantProps, true, true),
+      conditions: compileConditions(compoundSlot, defaultVariantProps, true),
       slotIndexes,
     });
   }
@@ -198,17 +250,18 @@ export const matchesCompoundConditions = (
       value = condition.fallback;
     }
 
-    const kind = condition.kind;
-
-    if (kind === CONDITION_STRICT) {
+    if (condition.kind === CONDITION_EQUAL) {
       if (value !== condition.expected) {
         return false;
       }
-    } else if (kind === CONDITION_BOOLEAN) {
-      if ((value === undefined ? false : value) !== condition.expected) {
+    } else if (value === undefined || value === null || value === false) {
+      if (!condition.matchesAbsent) {
         return false;
       }
-    } else if (!(condition.expected as Array<unknown>).includes(value)) {
+    } else if (
+      condition.kind === CONDITION_ABSENT ||
+      (condition.expected as ReadonlyArray<unknown>).indexOf(value) === -1
+    ) {
       return false;
     }
   }

@@ -224,7 +224,7 @@ describe("Tailwind Variants (TV) - Slots Edge Cases", () => {
     // Should match compound with default boolean (undefined -> false)
     const { base: defaultBase, item: defaultItem } = component({ color: "red" });
 
-    expect(defaultBase()).toHaveClassName(["flex", "bg-red-500", "opacity-50"]);
+    expect(defaultBase()).toHaveClassName(["flex", "bg-red-500", "opacity-50", "border-2"]);
     expect(defaultItem()).toHaveClassName(["px-2", "text-gray-500"]);
   });
 

@@ -10,6 +10,7 @@
 
 import { toVariantKey } from "#compile/class-values";
 import type { CompoundCondition } from "#compile/compound";
+import { listComparedValues } from "#compile/compound";
 import type { VariantPlan } from "#compile/plan";
 
 /**
@@ -65,8 +66,7 @@ const createValueIds = (): Record<string, number> => Object.create(null) as Reco
 /**
  * The values each compound-tested name is compared against, keyed by name.
  *
- * @remarks A `Map` keys by SameValueZero, which partitions values exactly as every condition kind
- * tells them apart.
+ * @remarks A `Map` keys by SameValueZero, which tells apart every pair of values a condition does.
  */
 const collectComparedValues = (plan: VariantPlan): Map<string, Map<unknown, number>> => {
   const comparedValues = new Map<string, Map<unknown, number>>();
@@ -78,9 +78,9 @@ const collectComparedValues = (plan: VariantPlan): Map<string, Map<unknown, numb
       comparedValues.set(condition.name, ids);
     }
 
-    for (const expected of Array.isArray(condition.expected) ? condition.expected : [condition.expected]) {
-      if (expected !== undefined && !ids.has(expected)) {
-        ids.set(expected, ids.size + 1);
+    for (const value of listComparedValues(condition)) {
+      if (!ids.has(value)) {
+        ids.set(value, ids.size + 1);
       }
     }
   };
