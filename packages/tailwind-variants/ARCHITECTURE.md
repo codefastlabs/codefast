@@ -125,12 +125,12 @@ Everything else follows from having to make that distinction hold:
   never fills it pays nothing for the headroom.
 - Ids are handed out as values turn up rather than up front, so a group of two hundred values costs nothing to compile
   and only what a caller actually selects to run.
-- `valueIds` is a **null-prototype** object, and so is every copied variant group and the slot index map. A plain object
-  answers `group["toString"]` with a function rather than `undefined`, and a caller chooses that key by passing it as a
-  variant value; `"__proto__"` hands the slot lane `Object.prototype` to read slot positions off. The slot lane
-  therefore always reads a copy. The flat lane accepts only a string it reads, so a group whose values are all strings
-  on a plain prototype is read in place, and the encoder asks `Object.hasOwn` before it hands a value an id; every other
-  group is copied key by key, which measured about a quarter of either bulk form onto a prototype-less object.
+- `valueIds` is a **null-prototype** object, and so is every compiled variant group and the slot index map. A plain
+  object answers `group["toString"]` with a function rather than `undefined`, and a caller chooses that key by passing
+  it as a variant value; `"__proto__"` hands the slot lane `Object.prototype` to read slot positions off. The slot lane
+  therefore always reads its own compiled group. The flat lane accepts only a string it reads, so a group whose values
+  are all strings on a plain prototype is read in place, and the encoder asks `Object.hasOwn` of the configuration's own
+  group before it hands a value an id.
 
 ## Shapes that are load-bearing
 
@@ -165,13 +165,14 @@ times earns its plan back on the `repeat-*` shape — read those rows, not a fig
 costs today.
 
 Three things keep the second call from paying more than it must, and all are worth preserving: the selection encoder
-hands out ids as values turn up rather than up front, so a group of two hundred values costs nothing to compile and only
-what a caller actually selects to run; a flat-lane group whose values are all strings is read in place rather than
-copied, behind the type check the flat lane already makes; and every other group is copied onto a prototype-less object
-exactly once, which is what lets the slot lane index it by whatever a caller passed without a guard per read.
+hands out ids as values turn up rather than up front; a flat-lane group whose values are all strings is read in place
+rather than copied, behind the type check the flat lane already makes; and every other group starts empty and compiles a
+value the first time a call selects it, reading `entry.group[key] ?? compileGroupValue(entry, key)`. So a group of two
+hundred values costs nothing to compile and only what a caller actually selects to run, and the default — the one value
+every call without a selection reads — is the only one compiled up front.
 
-If the second call ever needs to come down, `compileVariantPlan` is where the time goes — the slot-lane copies most of
-all — and the difference between a fresh resolver's second and first call is how to see it.
+If the second call ever needs to come down further, what is left in `compileVariantPlan` is the compound conditions and
+the slot entries, and the difference between a fresh resolver's second and first call is how to see it.
 
 ## How much of this a page can actually feel
 
