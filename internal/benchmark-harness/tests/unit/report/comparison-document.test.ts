@@ -38,6 +38,7 @@ function scenario(id: string, hzPerOpMedian: number, hzPerOpIqrFraction = 0): Ag
     stress: false,
     excludeFromAggregates: false,
     batch: 1,
+    revision: 1,
     what: `what ${id}`,
     trialsIncluded: 3,
     hzPerOpMedian,

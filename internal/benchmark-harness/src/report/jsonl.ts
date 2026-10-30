@@ -30,6 +30,8 @@ export interface JsonlBenchObservationRow {
   readonly stress: boolean;
   readonly excludeFromAggregates?: boolean;
   readonly batch: number;
+  /** Absent on rows written before revisions existed, which were all the first. */
+  readonly revision?: number;
   readonly what: string;
   readonly hzPerIteration: number;
   readonly hzPerOp: number;
@@ -94,6 +96,7 @@ export function isJsonlBenchObservationRow(value: unknown): value is JsonlBenchO
     numberFields.every((field) => typeof candidate[field] === "number") &&
     typeof candidate["gcExposed"] === "boolean" &&
     (candidate["loadAverage1m"] === undefined || typeof candidate["loadAverage1m"] === "number") &&
+    (candidate["revision"] === undefined || typeof candidate["revision"] === "number") &&
     typeof candidate["stress"] === "boolean"
   );
 }
@@ -156,6 +159,7 @@ export function jsonlBenchObservationRowToScenarioTrialResult(row: JsonlBenchObs
     stress: row.stress,
     excludeFromAggregates: row.excludeFromAggregates === true,
     batch: row.batch,
+    revision: row.revision ?? 1,
     what: row.what,
     hzPerIteration: row.hzPerIteration,
     hzPerOp: row.hzPerOp,

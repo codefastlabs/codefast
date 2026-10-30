@@ -37,6 +37,8 @@ export interface ScenarioTrialResult {
   readonly stress: boolean;
   readonly excludeFromAggregates: boolean;
   readonly batch: number;
+  /** The row's measurement revision; see `BenchScenario.revision`. */
+  readonly revision: number;
   readonly what: string;
   readonly hzPerIteration: number;
   readonly hzPerOp: number;
