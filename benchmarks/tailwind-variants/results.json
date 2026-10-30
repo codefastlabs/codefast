@@ -1,5 +1,5 @@
 {
-  "runId": "2026-10-30T04-44-38-156Z",
+  "runId": "2026-10-30T06-11-54-426Z",
   "runDate": "2026-10-30",
   "profile": { "mode": "full", "isolated": true, "trialCount": 3 },
   "environment": {
@@ -20,11 +20,11 @@
       "competitor": "tailwind-variants",
       "displayName": "tailwind-variants",
       "comparable": 26,
-      "wins": 24,
+      "wins": 25,
       "parities": 1,
-      "losses": 1,
-      "median": 2.705764253236531,
-      "geomean": 2.8888493490183818,
+      "losses": 0,
+      "median": 2.8373795081358812,
+      "geomean": 3.132195790140717,
       "unreliable": 1
     },
     {
@@ -34,18 +34,11 @@
       "wins": 7,
       "parities": 0,
       "losses": 0,
-      "median": 3.5345079888047524,
-      "geomean": 5.110983253181609,
+      "median": 5.225047749284711,
+      "geomean": 5.750599426552757,
       "unreliable": 1
     }
   ],
-  "losses": [
-    {
-      "scenario": "unique-class-with-merge",
-      "competitor": "tailwind-variants",
-      "ratio": 0.9324820620377413,
-      "unreliable": false
-    }
-  ],
+  "losses": [],
   "lossesHeading": "The losses, foregrounded — where to improve"
 }
