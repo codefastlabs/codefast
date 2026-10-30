@@ -49,6 +49,6 @@ describe("behaviour sweep", () => {
   );
 
   test("the sweep is large enough to be worth running", () => {
-    expect(base.length).toBeGreaterThan(50_000);
+    expect(base.length).toBeGreaterThan(200_000);
   });
 });
