@@ -1,11 +1,12 @@
 import { tv } from "#index";
+import { CLASS_KEYS } from "#tests/unit/support/class-keys";
 
-describe("Tailwind Variants (TV) - Compound Slots", () => {
+describe.each(CLASS_KEYS)("Tailwind Variants (TV) - Compound Slots (%s)", (key) => {
   test("should work with compound slots -- without variants", () => {
     const pagination = tv({
       compoundSlots: [
         {
-          class: ["flex", "flex-wrap", "truncate"],
+          [key]: ["flex", "flex-wrap", "truncate"],
           slots: ["item", "prev", "next"],
         },
       ],
@@ -30,11 +31,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     const pagination = tv({
       compoundSlots: [
         {
-          class: ["flex", "flex-wrap", "truncate"],
+          [key]: ["flex", "flex-wrap", "truncate"],
           slots: ["item", "prev", "next"],
         },
         {
-          class: "h-7 w-7 text-xs",
+          [key]: "h-7 w-7 text-xs",
           size: "xs",
           slots: ["item", "prev", "next"],
         },
@@ -102,11 +103,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     const pagination = tv({
       compoundSlots: [
         {
-          class: ["flex", "flex-wrap", "truncate"],
+          [key]: ["flex", "flex-wrap", "truncate"],
           slots: ["item", "prev", "next"],
         },
         {
-          class: "h-7 w-7 text-xs",
+          [key]: "h-7 w-7 text-xs",
           size: "xs",
           slots: ["item", "prev", "next"],
         },
@@ -176,11 +177,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     const pagination = tv({
       compoundSlots: [
         {
-          class: ["flex", "flex-wrap", "truncate"],
+          [key]: ["flex", "flex-wrap", "truncate"],
           slots: ["item", "prev", "next"],
         },
         {
-          class: "h-7 w-7 text-xs",
+          [key]: "h-7 w-7 text-xs",
           color: "primary",
           isBig: true,
           size: "xs",
@@ -268,11 +269,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     const pagination = tv({
       compoundSlots: [
         {
-          class: ["flex", "flex-wrap", "truncate"],
+          [key]: ["flex", "flex-wrap", "truncate"],
           slots: ["item", "prev", "next"],
         },
         {
-          class: "h-7 w-7 text-xs",
+          [key]: "h-7 w-7 text-xs",
           color: "primary",
           isBig: true,
           size: "xs",

@@ -1,4 +1,5 @@
 import { tv } from "#index";
+import { CLASS_KEYS } from "#tests/unit/support/class-keys";
 
 describe("Tailwind Variants (TV) - Extends", () => {
   test("should include the extended classes", () => {
@@ -109,55 +110,6 @@ describe("Tailwind Variants (TV) - Extends", () => {
     expect(result3).toHaveClassName(expectedResult3);
   });
 
-  test("should work correctly with extended compoundVariants", () => {
-    const base = tv({
-      base: "text-base",
-      compoundVariants: [
-        {
-          class: "underline",
-          color: "primary",
-          size: "sm",
-        },
-      ],
-      variants: {
-        color: {
-          primary: "text-blue-500",
-          secondary: "text-purple-500",
-        },
-        size: {
-          lg: "text-lg",
-          sm: "text-sm",
-        },
-      },
-    });
-
-    const extended = tv({
-      base: "font-bold",
-      compoundVariants: [
-        {
-          class: "italic",
-          color: "primary",
-          size: "lg",
-        },
-      ],
-      extend: base,
-    });
-
-    expect(extended({ color: "primary", size: "sm" })).toHaveClassName([
-      "font-bold",
-      "text-blue-500",
-      "text-sm",
-      "underline",
-    ]);
-
-    expect(extended({ color: "primary", size: "lg" })).toHaveClassName([
-      "font-bold",
-      "text-blue-500",
-      "text-lg",
-      "italic",
-    ]);
-  });
-
   test("should work with slots extension", () => {
     const base = tv({
       slots: {
@@ -230,13 +182,64 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     expect(extended()).toHaveClassName(["font-bold", "text-purple-500", "text-sm"]);
   });
+});
+
+describe.each(CLASS_KEYS)("Tailwind Variants (TV) - Extends (%s)", (key) => {
+  test("should work correctly with extended compoundVariants", () => {
+    const base = tv({
+      base: "text-base",
+      compoundVariants: [
+        {
+          [key]: "underline",
+          color: "primary",
+          size: "sm",
+        },
+      ],
+      variants: {
+        color: {
+          primary: "text-blue-500",
+          secondary: "text-purple-500",
+        },
+        size: {
+          lg: "text-lg",
+          sm: "text-sm",
+        },
+      },
+    });
+
+    const extended = tv({
+      base: "font-bold",
+      compoundVariants: [
+        {
+          [key]: "italic",
+          color: "primary",
+          size: "lg",
+        },
+      ],
+      extend: base,
+    });
+
+    expect(extended({ color: "primary", size: "sm" })).toHaveClassName([
+      "font-bold",
+      "text-blue-500",
+      "text-sm",
+      "underline",
+    ]);
+
+    expect(extended({ color: "primary", size: "lg" })).toHaveClassName([
+      "font-bold",
+      "text-blue-500",
+      "text-lg",
+      "italic",
+    ]);
+  });
 
   test("should support multi-level extends", () => {
     const themeButton = tv({
       base: "font-medium",
       compoundVariants: [
         {
-          class: "bg-black",
+          [key]: "bg-black",
           color: "primary",
           disabled: true,
         },

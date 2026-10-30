@@ -1,50 +1,9 @@
 import { extendTailwindMerge } from "cn/config";
 
 import { createTV, tv } from "#index";
+import { CLASS_KEYS } from "#tests/unit/support/class-keys";
 
 describe("Tailwind Variants (TV) - Integration Tests", () => {
-  test("should work with realistic button component patterns", () => {
-    const buttonVariants = tv({
-      base: "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
-      defaultVariants: {
-        size: "default",
-        variant: "default",
-      },
-      variants: {
-        size: {
-          default: "h-10 px-4 py-2",
-          icon: "h-10 w-10",
-          lg: "h-11 rounded-md px-8",
-          sm: "h-9 rounded-md px-3",
-        },
-        variant: {
-          default: "bg-primary text-primary-foreground hover:bg-primary/90",
-          destructive: "text-destructive-foreground bg-destructive hover:bg-destructive/90",
-          ghost: "hover:bg-accent hover:text-accent-foreground",
-          link: "text-primary underline-offset-4 hover:underline",
-          outline: "border border-input hover:bg-accent hover:text-accent-foreground",
-          secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        },
-      },
-    });
-
-    expect(buttonVariants()).toContain("bg-primary");
-    expect(buttonVariants()).toContain("h-10");
-
-    const destructiveLarge = buttonVariants({ size: "lg", variant: "destructive" });
-
-    expect(destructiveLarge).toContain("bg-destructive");
-    expect(destructiveLarge).toContain("h-11");
-
-    const customButton = buttonVariants({
-      class: "w-full",
-      variant: "outline",
-    });
-
-    expect(customButton).toContain("border");
-    expect(customButton).toContain("w-full");
-  });
-
   test("should work with realistic card component with slots", () => {
     const cardVariants = tv({
       defaultVariants: {
@@ -100,65 +59,6 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
     expect(description()).toContain("text-sm");
     expect(content()).toContain("p-4");
     expect(footer()).toContain("p-4");
-  });
-
-  test("should work with realistic navigation menu with compound variants", () => {
-    const navigationMenuVariants = tv({
-      compoundVariants: [
-        {
-          class: {
-            list: "space-y-2",
-          },
-          orientation: "vertical",
-          variant: "pills",
-        },
-      ],
-      defaultVariants: {
-        orientation: "horizontal",
-        variant: "default",
-      },
-      slots: {
-        content:
-          "top-0 left-0 w-full data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out md:absolute md:w-auto",
-        indicator:
-          "top-full z-1 flex h-1.5 items-end justify-center overflow-hidden data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:animate-in data-[state=visible]:fade-in",
-        item: "",
-        link: "block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-        list: "group flex flex-1 list-none items-center justify-center space-x-1",
-        root: "relative z-10 flex max-w-max flex-1 items-center justify-center",
-        trigger:
-          "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
-      },
-      variants: {
-        orientation: {
-          horizontal: {
-            list: "flex-row",
-          },
-          vertical: {
-            list: "flex-col space-y-1 space-x-0",
-            root: "flex-col",
-          },
-        },
-        variant: {
-          default: {},
-          pills: {
-            link: "rounded-full",
-            trigger: "rounded-full",
-          },
-        },
-      },
-    });
-
-    const { link, list, root, trigger } = navigationMenuVariants({
-      orientation: "vertical",
-      variant: "pills",
-    });
-
-    expect(root()).toContain("flex-col");
-    expect(list()).toContain("flex-col");
-    expect(list()).toContain("space-y-2");
-    expect(trigger()).toContain("rounded-full");
-    expect(link()).toContain("rounded-full");
   });
 
   test("should work with theme system using createTV", () => {
@@ -275,5 +175,108 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
     expect(grid3Cols).toContain("lg:grid-cols-3");
     expect(grid3Cols).toContain("gap-6");
     expect(autoGrid).toContain("repeat(auto-fit,minmax(250px,1fr))");
+  });
+});
+
+describe.each(CLASS_KEYS)("Tailwind Variants (TV) - Integration Tests (%s)", (key) => {
+  test("should work with realistic button component patterns", () => {
+    const buttonVariants = tv({
+      base: "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+      defaultVariants: {
+        size: "default",
+        variant: "default",
+      },
+      variants: {
+        size: {
+          default: "h-10 px-4 py-2",
+          icon: "h-10 w-10",
+          lg: "h-11 rounded-md px-8",
+          sm: "h-9 rounded-md px-3",
+        },
+        variant: {
+          default: "bg-primary text-primary-foreground hover:bg-primary/90",
+          destructive: "text-destructive-foreground bg-destructive hover:bg-destructive/90",
+          ghost: "hover:bg-accent hover:text-accent-foreground",
+          link: "text-primary underline-offset-4 hover:underline",
+          outline: "border border-input hover:bg-accent hover:text-accent-foreground",
+          secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        },
+      },
+    });
+
+    expect(buttonVariants()).toContain("bg-primary");
+    expect(buttonVariants()).toContain("h-10");
+
+    const destructiveLarge = buttonVariants({ size: "lg", variant: "destructive" });
+
+    expect(destructiveLarge).toContain("bg-destructive");
+    expect(destructiveLarge).toContain("h-11");
+
+    const customButton = buttonVariants({
+      [key]: "w-full",
+      variant: "outline",
+    });
+
+    expect(customButton).toContain("border");
+    expect(customButton).toContain("w-full");
+  });
+
+  test("should work with realistic navigation menu with compound variants", () => {
+    const navigationMenuVariants = tv({
+      compoundVariants: [
+        {
+          [key]: {
+            list: "space-y-2",
+          },
+          orientation: "vertical",
+          variant: "pills",
+        },
+      ],
+      defaultVariants: {
+        orientation: "horizontal",
+        variant: "default",
+      },
+      slots: {
+        content:
+          "top-0 left-0 w-full data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out md:absolute md:w-auto",
+        indicator:
+          "top-full z-1 flex h-1.5 items-end justify-center overflow-hidden data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:animate-in data-[state=visible]:fade-in",
+        item: "",
+        link: "block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+        list: "group flex flex-1 list-none items-center justify-center space-x-1",
+        root: "relative z-10 flex max-w-max flex-1 items-center justify-center",
+        trigger:
+          "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+      },
+      variants: {
+        orientation: {
+          horizontal: {
+            list: "flex-row",
+          },
+          vertical: {
+            list: "flex-col space-y-1 space-x-0",
+            root: "flex-col",
+          },
+        },
+        variant: {
+          default: {},
+          pills: {
+            link: "rounded-full",
+            trigger: "rounded-full",
+          },
+        },
+      },
+    });
+
+    const { link, list, root, trigger } = navigationMenuVariants({
+      orientation: "vertical",
+      variant: "pills",
+    });
+
+    expect(root()).toContain("flex-col");
+    expect(list()).toContain("flex-col");
+    expect(list()).toContain("space-y-2");
+    expect(trigger()).toContain("rounded-full");
+    expect(link()).toContain("rounded-full");
   });
 });

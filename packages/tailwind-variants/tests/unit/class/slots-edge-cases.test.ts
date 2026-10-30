@@ -1,4 +1,5 @@
 import { tv } from "#index";
+import { CLASS_KEYS } from "#tests/unit/support/class-keys";
 
 describe("Tailwind Variants (TV) - Slots Edge Cases", () => {
   test("should handle undefined slot variants", () => {
@@ -92,142 +93,6 @@ describe("Tailwind Variants (TV) - Slots Edge Cases", () => {
     expect(lightHeader()).toHaveClassName(["text-lg", "text-gray-900"]);
   });
 
-  test("should handle compound variants with slots - partial matching", () => {
-    const component = tv({
-      compoundVariants: [
-        {
-          class: "shadow-lg",
-          color: "red",
-          size: "large",
-        },
-      ],
-      slots: {
-        base: "flex",
-        item: "px-2",
-      },
-      variants: {
-        color: {
-          blue: {
-            base: "bg-blue-500",
-            item: "text-blue-500",
-          },
-          red: {
-            base: "bg-red-500",
-            item: "text-red-500",
-          },
-        },
-        size: {
-          large: {
-            base: "p-4",
-            item: "text-lg",
-          },
-          small: {
-            base: "p-2",
-            item: "text-sm",
-          },
-        },
-      },
-    });
-
-    // Partial match - should not apply compound
-    const { base: partialBase, item: partialItem } = component({ color: "red" });
-
-    expect(partialBase()).toHaveClassName(["flex", "bg-red-500"]);
-    expect(partialItem()).toHaveClassName(["px-2", "text-red-500"]);
-
-    // Full match - should apply compound to base only
-    const { base: fullBase, item: fullItem } = component({ color: "red", size: "large" });
-
-    expect(fullBase()).toHaveClassName(["flex", "bg-red-500", "p-4", "shadow-lg"]);
-    expect(fullItem()).toHaveClassName(["px-2", "text-red-500", "text-lg"]);
-  });
-
-  test("should handle compound variants with boolean values in slots", () => {
-    const component = tv({
-      compoundVariants: [
-        {
-          class: "ring-2",
-          color: "red",
-          isActive: true,
-        },
-      ],
-      slots: {
-        base: "flex",
-        item: "px-2",
-      },
-      variants: {
-        color: {
-          red: {
-            base: "bg-red-500",
-            item: "text-red-500",
-          },
-        },
-        isActive: {
-          false: {
-            base: "opacity-50",
-            item: "text-gray-500",
-          },
-          true: {
-            base: "opacity-100",
-            item: "text-white",
-          },
-        },
-      },
-    });
-
-    // Should match boolean compound variant
-    const { base: matchBase, item: matchItem } = component({ color: "red", isActive: true });
-
-    expect(matchBase()).toHaveClassName(["flex", "bg-red-500", "opacity-100", "ring-2"]);
-    expect(matchItem()).toHaveClassName(["px-2", "text-white"]);
-
-    // Should not match - boolean value is false
-    const { base: noMatchBase, item: noMatchItem } = component({ color: "red", isActive: false });
-
-    expect(noMatchBase()).toHaveClassName(["flex", "bg-red-500", "opacity-50"]);
-    expect(noMatchItem()).toHaveClassName(["px-2", "text-gray-500"]);
-  });
-
-  test("should handle compound variants with default boolean resolution", () => {
-    const component = tv({
-      compoundVariants: [
-        {
-          class: "border-2",
-          color: "red",
-          isActive: false, // Matching the default false
-        },
-      ],
-      slots: {
-        base: "flex",
-        item: "px-2",
-      },
-      variants: {
-        color: {
-          red: {
-            base: "bg-red-500",
-            item: "text-red-500",
-          },
-        },
-        isActive: {
-          false: {
-            base: "opacity-50",
-            item: "text-gray-500",
-          },
-          true: {
-            base: "opacity-100",
-            item: "text-white",
-          },
-        },
-      },
-    });
-
-    // Should match compound with default boolean (undefined -> false)
-    const { base: defaultBase, item: defaultItem } = component({ color: "red" });
-
-    expect(defaultBase()).toHaveClassName(["flex", "bg-red-500", "opacity-50", "border-2"]);
-    expect(defaultItem()).toHaveClassName(["px-2", "text-gray-500"]);
-  });
-
   test("should handle empty compound variants array", () => {
     const component = tv({
       compoundVariants: [],
@@ -300,5 +165,143 @@ describe("Tailwind Variants (TV) - Slots Edge Cases", () => {
 
     expect(mixedBase()).toHaveClassName(["flex", "p-4", "bg-gray-800"]);
     expect(mixedItem()).toHaveClassName("px-2"); // No variant classes applied
+  });
+});
+
+describe.each(CLASS_KEYS)("Tailwind Variants (TV) - Slots Edge Cases (%s)", (key) => {
+  test("should handle compound variants with slots - partial matching", () => {
+    const component = tv({
+      compoundVariants: [
+        {
+          [key]: "shadow-lg",
+          color: "red",
+          size: "large",
+        },
+      ],
+      slots: {
+        base: "flex",
+        item: "px-2",
+      },
+      variants: {
+        color: {
+          blue: {
+            base: "bg-blue-500",
+            item: "text-blue-500",
+          },
+          red: {
+            base: "bg-red-500",
+            item: "text-red-500",
+          },
+        },
+        size: {
+          large: {
+            base: "p-4",
+            item: "text-lg",
+          },
+          small: {
+            base: "p-2",
+            item: "text-sm",
+          },
+        },
+      },
+    });
+
+    // Partial match - should not apply compound
+    const { base: partialBase, item: partialItem } = component({ color: "red" });
+
+    expect(partialBase()).toHaveClassName(["flex", "bg-red-500"]);
+    expect(partialItem()).toHaveClassName(["px-2", "text-red-500"]);
+
+    // Full match - should apply compound to base only
+    const { base: fullBase, item: fullItem } = component({ color: "red", size: "large" });
+
+    expect(fullBase()).toHaveClassName(["flex", "bg-red-500", "p-4", "shadow-lg"]);
+    expect(fullItem()).toHaveClassName(["px-2", "text-red-500", "text-lg"]);
+  });
+
+  test("should handle compound variants with boolean values in slots", () => {
+    const component = tv({
+      compoundVariants: [
+        {
+          [key]: "ring-2",
+          color: "red",
+          isActive: true,
+        },
+      ],
+      slots: {
+        base: "flex",
+        item: "px-2",
+      },
+      variants: {
+        color: {
+          red: {
+            base: "bg-red-500",
+            item: "text-red-500",
+          },
+        },
+        isActive: {
+          false: {
+            base: "opacity-50",
+            item: "text-gray-500",
+          },
+          true: {
+            base: "opacity-100",
+            item: "text-white",
+          },
+        },
+      },
+    });
+
+    // Should match boolean compound variant
+    const { base: matchBase, item: matchItem } = component({ color: "red", isActive: true });
+
+    expect(matchBase()).toHaveClassName(["flex", "bg-red-500", "opacity-100", "ring-2"]);
+    expect(matchItem()).toHaveClassName(["px-2", "text-white"]);
+
+    // Should not match - boolean value is false
+    const { base: noMatchBase, item: noMatchItem } = component({ color: "red", isActive: false });
+
+    expect(noMatchBase()).toHaveClassName(["flex", "bg-red-500", "opacity-50"]);
+    expect(noMatchItem()).toHaveClassName(["px-2", "text-gray-500"]);
+  });
+
+  test("should handle compound variants with default boolean resolution", () => {
+    const component = tv({
+      compoundVariants: [
+        {
+          [key]: "border-2",
+          color: "red",
+          isActive: false, // Matching the default false
+        },
+      ],
+      slots: {
+        base: "flex",
+        item: "px-2",
+      },
+      variants: {
+        color: {
+          red: {
+            base: "bg-red-500",
+            item: "text-red-500",
+          },
+        },
+        isActive: {
+          false: {
+            base: "opacity-50",
+            item: "text-gray-500",
+          },
+          true: {
+            base: "opacity-100",
+            item: "text-white",
+          },
+        },
+      },
+    });
+
+    // Should match compound with default boolean (undefined -> false)
+    const { base: defaultBase, item: defaultItem } = component({ color: "red" });
+
+    expect(defaultBase()).toHaveClassName(["flex", "bg-red-500", "opacity-50", "border-2"]);
+    expect(defaultItem()).toHaveClassName(["px-2", "text-gray-500"]);
   });
 });

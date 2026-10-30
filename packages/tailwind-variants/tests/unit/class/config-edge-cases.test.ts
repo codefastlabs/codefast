@@ -1,4 +1,5 @@
 import { tv } from "#index";
+import { CLASS_KEYS } from "#tests/unit/support/class-keys";
 
 describe("Tailwind Variants (TV) - Configuration Edge Cases", () => {
   test("should handle extends with undefined base variants", () => {
@@ -167,49 +168,6 @@ describe("Tailwind Variants (TV) - Configuration Edge Cases", () => {
     ]);
   });
 
-  test("should handle extends with compound variants merging", () => {
-    const baseComponent = tv({
-      base: "flex",
-      compoundVariants: [
-        {
-          class: "shadow-lg",
-          color: "red",
-          size: "sm",
-        },
-      ],
-      variants: {
-        color: {
-          blue: "text-blue-500",
-          red: "text-red-500",
-        },
-        size: {
-          md: "text-base",
-          sm: "text-sm",
-        },
-      },
-    });
-
-    const extendedComponent = tv({
-      compoundVariants: [
-        {
-          class: "ring-2",
-          color: "blue",
-          size: "md",
-        },
-      ],
-      extend: baseComponent,
-    });
-
-    // Should have both base and extended compound variants
-    const baseCompound = extendedComponent({ color: "red", size: "sm" });
-
-    expect(baseCompound).toHaveClassName(["flex", "text-red-500", "text-sm", "shadow-lg"]);
-
-    const extendedCompound = extendedComponent({ color: "blue", size: "md" });
-
-    expect(extendedCompound).toHaveClassName(["flex", "text-blue-500", "text-base", "ring-2"]);
-  });
-
   test("should handle extends with compound slots merging", () => {
     const baseComponent = tv({
       slots: {
@@ -333,5 +291,50 @@ describe("Tailwind Variants (TV) - Configuration Edge Cases", () => {
     const result = component({ size: "sm" });
 
     expect(result).toHaveClassName(["flex", "text-sm"]);
+  });
+});
+
+describe.each(CLASS_KEYS)("Tailwind Variants (TV) - Configuration Edge Cases (%s)", (key) => {
+  test("should handle extends with compound variants merging", () => {
+    const baseComponent = tv({
+      base: "flex",
+      compoundVariants: [
+        {
+          [key]: "shadow-lg",
+          color: "red",
+          size: "sm",
+        },
+      ],
+      variants: {
+        color: {
+          blue: "text-blue-500",
+          red: "text-red-500",
+        },
+        size: {
+          md: "text-base",
+          sm: "text-sm",
+        },
+      },
+    });
+
+    const extendedComponent = tv({
+      compoundVariants: [
+        {
+          [key]: "ring-2",
+          color: "blue",
+          size: "md",
+        },
+      ],
+      extend: baseComponent,
+    });
+
+    // Should have both base and extended compound variants
+    const baseCompound = extendedComponent({ color: "red", size: "sm" });
+
+    expect(baseCompound).toHaveClassName(["flex", "text-red-500", "text-sm", "shadow-lg"]);
+
+    const extendedCompound = extendedComponent({ color: "blue", size: "md" });
+
+    expect(extendedCompound).toHaveClassName(["flex", "text-blue-500", "text-base", "ring-2"]);
   });
 });

@@ -562,6 +562,41 @@ describe("Real-World Type Inference Tests", () => {
     expectTypeOf(customClass).toEqualTypeOf<string>();
   });
 
+  test("accepts class and className alike on calls, slots, compound variants and compound slots", () => {
+    const button = tv({
+      compoundVariants: [
+        { class: "ring", size: "sm" },
+        { className: "italic", size: "lg" },
+        { class: "font-bold", className: "underline", size: "sm" },
+      ],
+      variants: { size: { lg: "px-8", sm: "px-2" } },
+    });
+    const card = tv({
+      compoundSlots: [
+        { class: "gap-1", size: "sm", slots: ["header"] },
+        { className: "gap-4", size: "lg", slots: ["header"] },
+        { class: "p-1", className: "p-2", slots: ["base", "header"] },
+      ],
+      compoundVariants: [
+        { class: { header: "ring" }, size: "sm" },
+        { className: { base: "shadow" }, size: "lg" },
+        { class: "border", className: { header: "border-2" }, size: "sm" },
+      ],
+      slots: { base: "block", header: "flex" },
+      variants: { size: { lg: { header: "p-8" }, sm: { header: "p-2" } } },
+    });
+
+    expectTypeOf(button({ class: "w-full", size: "sm" })).toEqualTypeOf<string>();
+    expectTypeOf(button({ className: "w-full", size: "sm" })).toEqualTypeOf<string>();
+    expectTypeOf(button({ class: ["w-full"], className: { "h-full": true } })).toEqualTypeOf<string>();
+
+    const slots = card({ class: "ignored", className: "ignored", size: "lg" });
+
+    expectTypeOf(slots.header({ class: "w-full" })).toEqualTypeOf<string>();
+    expectTypeOf(slots.header({ className: "w-full", size: "sm" })).toEqualTypeOf<string>();
+    expectTypeOf(slots.base({ class: "w-full", className: "h-full" })).toEqualTypeOf<string>();
+  });
+
   test("should infer types for components with deeply nested extends", () => {
     const level1Variants = tv({
       base: "base-level1",

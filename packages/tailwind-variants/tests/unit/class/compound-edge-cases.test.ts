@@ -1,4 +1,5 @@
 import { tv } from "#index";
+import { CLASS_KEYS } from "#tests/unit/support/class-keys";
 
 describe("Tailwind Variants (TV) - Compound Edge Cases", () => {
   test("should handle empty compound slots array", () => {
@@ -30,16 +31,53 @@ describe("Tailwind Variants (TV) - Compound Edge Cases", () => {
     expect(item()).toHaveClassName("px-2");
   });
 
+  test("should handle compound slots with class vs className property", () => {
+    const component = tv({
+      compoundSlots: [
+        {
+          class: "bg-blue-100",
+          color: "primary",
+          slots: ["item"],
+        },
+        {
+          className: "bg-gray-100",
+          color: "secondary",
+          slots: ["item"],
+        },
+      ],
+      slots: {
+        base: "flex",
+        item: "px-2",
+      },
+      variants: {
+        color: {
+          primary: "text-blue-500",
+          secondary: "text-gray-500",
+        },
+      },
+    });
+
+    const { item: itemClass } = component({ color: "primary" });
+
+    expect(itemClass()).toHaveClassName(["px-2", "bg-blue-100"]);
+
+    const { item: itemClassName } = component({ color: "secondary" });
+
+    expect(itemClassName()).toHaveClassName(["px-2", "bg-gray-100"]);
+  });
+});
+
+describe.each(CLASS_KEYS)("Tailwind Variants (TV) - Compound Edge Cases (%s)", (key) => {
   test("should handle compound slots with boolean variants - false case", () => {
     const component = tv({
       compoundSlots: [
         {
-          class: "bg-red-500",
+          [key]: "bg-red-500",
           isActive: false,
           slots: ["item"],
         },
         {
-          class: "bg-blue-500",
+          [key]: "bg-blue-500",
           isActive: true,
           slots: ["item"],
         },
@@ -76,7 +114,7 @@ describe("Tailwind Variants (TV) - Compound Edge Cases", () => {
     const component = tv({
       compoundSlots: [
         {
-          class: "special-combo",
+          [key]: "special-combo",
           color: "primary",
           isLarge: true,
           size: "md",
@@ -120,46 +158,11 @@ describe("Tailwind Variants (TV) - Compound Edge Cases", () => {
     expect(item2()).toHaveClassName(["px-2", "special-combo"]);
   });
 
-  test("should handle compound slots with class vs className property", () => {
-    const component = tv({
-      compoundSlots: [
-        {
-          class: "bg-blue-100",
-          color: "primary",
-          slots: ["item"],
-        },
-        {
-          className: "bg-gray-100",
-          color: "secondary",
-          slots: ["item"],
-        },
-      ],
-      slots: {
-        base: "flex",
-        item: "px-2",
-      },
-      variants: {
-        color: {
-          primary: "text-blue-500",
-          secondary: "text-gray-500",
-        },
-      },
-    });
-
-    const { item: itemClass } = component({ color: "primary" });
-
-    expect(itemClass()).toHaveClassName(["px-2", "bg-blue-100"]);
-
-    const { item: itemClassName } = component({ color: "secondary" });
-
-    expect(itemClassName()).toHaveClassName(["px-2", "bg-gray-100"]);
-  });
-
   test("should handle compound slots with multiple slots per definition", () => {
     const component = tv({
       compoundSlots: [
         {
-          class: "bg-blue-100",
+          [key]: "bg-blue-100",
           isActive: true,
           slots: ["header", "content", "footer"],
         },
@@ -190,7 +193,7 @@ describe("Tailwind Variants (TV) - Compound Edge Cases", () => {
     const component = tv({
       compoundSlots: [
         {
-          class: "bg-red-500",
+          [key]: "bg-red-500",
           color: "primary",
           size: "large",
           slots: ["item"],
@@ -232,7 +235,7 @@ describe("Tailwind Variants (TV) - Compound Edge Cases", () => {
     const component = tv({
       compoundSlots: [
         {
-          class: ["bg-blue-100", "text-blue-800", "rounded"],
+          [key]: ["bg-blue-100", "text-blue-800", "rounded"],
           isSpecial: true,
           slots: ["item", "header"],
         },

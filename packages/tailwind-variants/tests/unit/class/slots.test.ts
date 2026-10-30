@@ -1,5 +1,6 @@
 import { tv } from "#index";
 import { customTwMerge } from "#tests/unit/fixtures/merge-config";
+import { CLASS_KEYS } from "#tests/unit/support/class-keys";
 
 describe("Tailwind Variants (TV) - Slots", () => {
   test("should work with slots -- default variants", () => {
@@ -71,66 +72,6 @@ describe("Tailwind Variants (TV) - Slots", () => {
     expect(title()).toBe(expectedResult);
     expect(item()).toBe(expectedResult);
     expect(list()).toBe(expectedResult);
-  });
-
-  test("should work with slots -- default variants -- custom class & class", () => {
-    const menu = tv({
-      defaultVariants: {
-        color: "primary",
-        isDisabled: false,
-        size: "sm",
-      },
-      slots: {
-        base: "text-3xl font-bold underline",
-        item: "text-xl",
-        list: "list-none",
-        title: "text-2xl",
-        wrapper: "flex flex-col",
-      },
-      variants: {
-        color: {
-          primary: {
-            base: "bg-blue-500",
-          },
-          secondary: {
-            item: "bg-purple-100",
-            list: "bg-purple-200",
-            title: "text-white",
-            wrapper: "bg-transparent",
-          },
-        },
-        isDisabled: {
-          false: {
-            item: "opacity-100",
-          },
-          true: {
-            title: "opacity-50",
-          },
-        },
-        size: {
-          md: {
-            title: "text-md",
-          },
-          sm: {
-            base: "text-sm",
-          },
-          xs: {
-            base: "text-xs",
-          },
-        },
-      },
-    });
-
-    const { base, item, list, title, wrapper } = menu();
-
-    expect(base({ class: "text-lg" })).toHaveClassName(["font-bold", "underline", "bg-blue-500", "text-lg"]);
-    expect(base({ class: "text-lg" })).toHaveClassName(["font-bold", "underline", "bg-blue-500", "text-lg"]);
-    expect(title({ class: "text-2xl" })).toHaveClassName(["text-2xl"]);
-    expect(title({ class: "text-2xl" })).toHaveClassName(["text-2xl"]);
-    expect(item({ class: "text-sm" })).toHaveClassName(["text-sm", "opacity-100"]);
-    expect(list({ class: "bg-blue-50" })).toHaveClassName(["list-none", "bg-blue-50"]);
-    expect(wrapper({ class: "flex-row" })).toHaveClassName(["flex", "flex-row"]);
-    expect(wrapper({ class: "flex-row" })).toHaveClassName(["flex", "flex-row"]);
   });
 
   test("should work with slots -- variant with boolean values", () => {
@@ -257,13 +198,72 @@ describe("Tailwind Variants (TV) - Slots", () => {
     expect(base({ color: "secondary" })).toHaveClassName(["text-3xl", "color--secondary-base"]);
     expect(title({ color: "secondary" })).toHaveClassName(["text-2xl", "color--secondary-title"]);
   });
+});
+
+describe.each(CLASS_KEYS)("Tailwind Variants (TV) - Slots (%s)", (key) => {
+  test("should work with slots -- default variants -- custom class", () => {
+    const menu = tv({
+      defaultVariants: {
+        color: "primary",
+        isDisabled: false,
+        size: "sm",
+      },
+      slots: {
+        base: "text-3xl font-bold underline",
+        item: "text-xl",
+        list: "list-none",
+        title: "text-2xl",
+        wrapper: "flex flex-col",
+      },
+      variants: {
+        color: {
+          primary: {
+            base: "bg-blue-500",
+          },
+          secondary: {
+            item: "bg-purple-100",
+            list: "bg-purple-200",
+            title: "text-white",
+            wrapper: "bg-transparent",
+          },
+        },
+        isDisabled: {
+          false: {
+            item: "opacity-100",
+          },
+          true: {
+            title: "opacity-50",
+          },
+        },
+        size: {
+          md: {
+            title: "text-md",
+          },
+          sm: {
+            base: "text-sm",
+          },
+          xs: {
+            base: "text-xs",
+          },
+        },
+      },
+    });
+
+    const { base, item, list, title, wrapper } = menu();
+
+    expect(base({ [key]: "text-lg" })).toHaveClassName(["font-bold", "underline", "bg-blue-500", "text-lg"]);
+    expect(title({ [key]: "text-2xl" })).toHaveClassName(["text-2xl"]);
+    expect(item({ [key]: "text-sm" })).toHaveClassName(["text-sm", "opacity-100"]);
+    expect(list({ [key]: "bg-blue-50" })).toHaveClassName(["list-none", "bg-blue-50"]);
+    expect(wrapper({ [key]: "flex-row" })).toHaveClassName(["flex", "flex-row"]);
+  });
 
   test("should support slot level variant overrides - compoundVariants", () => {
     const menu = tv({
       base: "text-3xl",
       compoundVariants: [
         {
-          class: {
+          [key]: {
             title: "truncate",
           },
           color: "secondary",
