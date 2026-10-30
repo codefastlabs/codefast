@@ -215,7 +215,7 @@ const resolveSlot = (
     }
 
     const slotText = context.texts[slotIndex] as string;
-    const answer = slotText === "" ? undefined : plan.shouldMerge ? plan.tailwindMerge(slotText) : slotText;
+    const answer = slotText === "" ? undefined : plan.mergeClasses === null ? slotText : plan.mergeClasses(slotText);
 
     context.resolved[slotIndex] = answer;
 
@@ -241,7 +241,7 @@ const resolveSlot = (
     return undefined;
   }
 
-  return plan.shouldMerge ? plan.tailwindMerge(text) : text;
+  return plan.mergeClasses === null ? text : plan.mergeClasses(text);
 };
 
 /**

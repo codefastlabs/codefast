@@ -8,6 +8,8 @@
  * exactly as it answered the first.
  */
 
+import { extendTailwindMerge } from "tailwind-merge";
+
 import { createTV, tv } from "#index";
 import type { TailwindVariantsOptions } from "#types";
 
@@ -93,7 +95,9 @@ const CASES: ReadonlyArray<SweepCase> = [
   {
     config: BUTTON,
     name: "button/merge-config",
-    options: { twMergeConfig: { extend: { classGroups: { "font-size": [{ text: ["tiny", "huge"] }] } } } },
+    options: {
+      twMerge: extendTailwindMerge({ extend: { classGroups: { "font-size": [{ text: ["tiny", "huge"] }] } } }),
+    },
   },
   { config: CARD, name: "card/merge" },
   { config: CARD, name: "card/no-merge", options: { twMerge: false } },

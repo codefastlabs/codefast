@@ -3,7 +3,9 @@
  * once, compiles it into a plan on its second call, and runs that plan on every call after.
  */
 
-import { createTailwindMergeFn, cx } from "#class-names";
+import { twMerge } from "tailwind-merge";
+
+import { cx } from "#class-names";
 import { hasExtendConfig, hasSlotsConfig, mergeVariantConfigs } from "#compile/configuration";
 import type { VariantPlan } from "#compile/plan";
 import { compileVariantPlan } from "#compile/plan";
@@ -14,6 +16,7 @@ import { createColdSlotResolvers, resolveColdVariantClasses } from "#resolve/col
 import { createSlotResolvers } from "#resolve/slots";
 import { resolveVariantClasses } from "#resolve/variants";
 import type {
+  ClassMerger,
   ClassValue,
   SlotClassResolver,
   VariantConfig,
@@ -51,13 +54,21 @@ interface CompiledResolver {
   readonly slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null;
 }
 
+/** The merge a `twMerge` option selects: `tailwind-merge` by default, none for `false`, or the caller's own. */
+const toClassMerger = (option: TailwindVariantsOptions["twMerge"]): ClassMerger | null => {
+  if (option === false) {
+    return null;
+  }
+
+  return option === undefined || option === true ? twMerge : option;
+};
+
 const compileResolver = (
   configuration: VariantConfig<VariantSchema> | SlotVariantConfig<VariantSchema, SlotSchema>,
-  shouldMerge: boolean,
-  tailwindMerge: (classes: string) => string,
+  mergeClasses: ClassMerger | null,
   shouldCacheResolutions: boolean,
 ): CompiledResolver => {
-  const plan = compileVariantPlan(configuration, shouldMerge, tailwindMerge);
+  const plan = compileVariantPlan(configuration, mergeClasses);
   const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan, plan.slots !== null) : null;
 
   if (encoder === null) {
@@ -148,12 +159,8 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
     | ExtendedVariantConfig<VariantSchema, Variants, SlotSchema, Slots>,
   tvConfiguration: TailwindVariantsOptions = {},
 ): VariantResolver<Variants, Slots> {
-  const {
-    cacheResolutions: shouldCacheResolutions = true,
-    twMerge: shouldMergeClasses = true,
-    twMergeConfig,
-  } = tvConfiguration;
-  const tailwindMergeFn = createTailwindMergeFn(twMergeConfig);
+  const { cacheResolutions: shouldCacheResolutions = true } = tvConfiguration;
+  const mergeClasses = toClassMerger(tvConfiguration.twMerge);
 
   const mergedConfiguration: VariantConfig<VariantSchema> | SlotVariantConfig<VariantSchema, SlotSchema> =
     hasExtendConfig(configuration)
@@ -184,11 +191,11 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
         isColdCall = false;
 
         return slotConfiguration === null
-          ? resolveColdVariantClasses(mergedConfiguration, shouldMergeClasses, tailwindMergeFn, props)
-          : createColdSlotResolvers(slotConfiguration, shouldMergeClasses, tailwindMergeFn, props);
+          ? resolveColdVariantClasses(mergedConfiguration, mergeClasses, props)
+          : createColdSlotResolvers(slotConfiguration, mergeClasses, props);
       }
 
-      compiled = compileResolver(mergedConfiguration, shouldMergeClasses, tailwindMergeFn, shouldCacheResolutions);
+      compiled = compileResolver(mergedConfiguration, mergeClasses, shouldCacheResolutions);
     }
 
     const plan = compiled.plan;
@@ -262,8 +269,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
  * @since 0.3.16-canary.0
  */
 export function createTV(globalConfiguration: TailwindVariantsOptions = {}): TailwindVariantsApi {
-  const { twMerge: shouldMergeClasses = true, twMergeConfig } = globalConfiguration;
-  const tailwindMergeFn = createTailwindMergeFn(twMergeConfig);
+  const mergeClasses = toClassMerger(globalConfiguration.twMerge);
 
   /** Creates a class resolver for a component without slots. */
   function tvFactory<Variants extends VariantSchema = Record<never, never>>(
@@ -312,7 +318,7 @@ export function createTV(globalConfiguration: TailwindVariantsOptions = {}): Tai
   }
 
   const cnFunction = (...classes: Array<ClassValue>): string => {
-    return shouldMergeClasses ? tailwindMergeFn(cx(...classes)) : cx(...classes);
+    return mergeClasses === null ? cx(...classes) : mergeClasses(cx(...classes));
   };
 
   return {

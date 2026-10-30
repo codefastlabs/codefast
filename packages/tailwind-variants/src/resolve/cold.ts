@@ -5,6 +5,7 @@
 import { hasBooleanVariantValues, isSlotClassMap, toClassText, toVariantKey } from "#compile/class-values";
 import { getCompoundClass } from "#compile/compound";
 import type {
+  ClassMerger,
   ClassValue,
   SlotClassResolver,
   SlotResolverProps,
@@ -101,12 +102,12 @@ const matchesColdCompound = (
   return true;
 };
 
-const finish = (text: string, shouldMerge: boolean, tailwindMerge: (classes: string) => string): string | undefined => {
+const finish = (text: string, mergeClasses: ClassMerger | null): string | undefined => {
   if (text === "") {
     return undefined;
   }
 
-  return shouldMerge ? tailwindMerge(text) : text;
+  return mergeClasses === null ? text : mergeClasses(text);
 };
 
 /**
@@ -116,8 +117,7 @@ const finish = (text: string, shouldMerge: boolean, tailwindMerge: (classes: str
  */
 export const resolveColdVariantClasses = (
   configuration: Definition,
-  shouldMerge: boolean,
-  tailwindMerge: (classes: string) => string,
+  mergeClasses: ClassMerger | null,
   props: Props,
 ): string | undefined => {
   const variants = configuration.variants;
@@ -157,7 +157,7 @@ export const resolveColdVariantClasses = (
     text = append(text, toClassText(customClasses));
   }
 
-  return finish(text, shouldMerge, tailwindMerge);
+  return finish(text, mergeClasses);
 };
 
 /** What one configured class value contributes to a slot: its map entry, or all of it to `base`. */
@@ -247,8 +247,7 @@ const coldSlotText = (
  */
 export const createColdSlotResolvers = (
   configuration: SlotVariantConfig<VariantSchema, SlotSchema>,
-  shouldMerge: boolean,
-  tailwindMerge: (classes: string) => string,
+  mergeClasses: ClassMerger | null,
   props: Props,
 ): Record<string, SlotClassResolver<VariantSchema>> => {
   const defaults = configuration.defaultVariants ?? EMPTY_DEFAULTS;
@@ -268,7 +267,7 @@ export const createColdSlotResolvers = (
     resolvers[slotName] = (slotProps?: SlotResolverProps<VariantSchema>): string | undefined => {
       if (slotProps === undefined) {
         if (!resolved) {
-          memoised = finish(coldSlotText(configuration, defaults, props, slotName, null), shouldMerge, tailwindMerge);
+          memoised = finish(coldSlotText(configuration, defaults, props, slotName, null), mergeClasses);
           resolved = true;
         }
 
@@ -281,7 +280,7 @@ export const createColdSlotResolvers = (
       text = append(text, toClassText(overrides.className as ClassValue));
       text = append(text, toClassText(overrides.class as ClassValue));
 
-      return finish(text, shouldMerge, tailwindMerge);
+      return finish(text, mergeClasses);
     };
   }
 

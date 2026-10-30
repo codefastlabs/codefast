@@ -1,6 +1,8 @@
+import { extendTailwindMerge } from "tailwind-merge";
+
 export const COMMON_UNITS = ["small", "medium", "large"];
 
-export const twMergeConfig = {
+const twMergeConfig = {
   extend: {
     classGroups: {
       "bg-image": ["bg-stripe-gradient"],
@@ -20,3 +22,5 @@ export const twMergeConfig = {
     },
   },
 };
+
+export const customTwMerge = extendTailwindMerge(twMergeConfig);

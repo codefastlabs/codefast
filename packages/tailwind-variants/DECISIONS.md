@@ -12,9 +12,9 @@ replaced here, not annotated.
 fell short was resolution cost on hot render paths and some type-inference edges. Inventing a different API would have
 forced a rewrite of the consumer for no gain in expressiveness.
 
-**Decision.** Keep the upstream configuration shape and option names (`twMerge`, `twMergeConfig`) exactly, so the
-migration for most codebases is the import specifier. The exports are `tv`, `createTV`, `cn`, `cx`, `VariantProps` and
-the configuration types.
+**Decision.** Keep the upstream configuration shape and the `twMerge` option name exactly, so the migration for most
+codebases is the import specifier. The exports are `tv`, `createTV`, `cn`, `cx`, `VariantProps` and the configuration
+types.
 
 **Consequences.** The README's examples run as tests and a behaviour sweep covers the upstream shapes, and
 `@codefast/ui` moved over by changing imports. The constraint runs the other way too: an API idea that upstream users
@@ -63,17 +63,22 @@ second call on, slot components return the same object of slot functions for the
 returned slot object is shared, so it must not be mutated; and a variant fed ids or timestamps should opt out or it
 fills the store with entries nothing reads again.
 
-## `tailwind-merge` is a peer, and merging is optional
+## The application chooses the merge engine
 
-**Context.** Conflict resolution is what makes `className` overrides safe, but `tailwind-merge` is a sizeable dependency
-whose version a design system wants to pin once, not receive twice.
+**Context.** Conflict resolution is what makes `className` overrides safe, but the engine is the largest thing a variant
+library can pull into a bundle, and engines trade speed against size differently: `tailwind-merge` is the small one,
+`cn` merges faster from larger tables. A library that picks one, or builds one from a configuration at runtime, makes
+that trade for every application at once.
 
-**Decision.** `tailwind-merge >= 3` is a peer dependency, not a dependency; the package ships ESM only with no runtime
-dependencies of its own. `twMerge: false` keeps every declared class for callers that resolve conflicts elsewhere, and
-`twMergeConfig` extends the class groups for custom themes.
+**Decision.** `tailwind-merge >= 3` is a peer dependency, and the package imports only its `twMerge`, as the default.
+The `twMerge` option takes `true`, `false`, or a merge function; custom class groups are an `extendTailwindMerge` result
+the caller builds and passes in. There is no `twMergeConfig`, because accepting a configuration means importing the code
+that compiles one into every bundle that never uses it.
 
-**Consequences.** One copy of `tailwind-merge` per application, at the version the application chose. Callers who turn
-merging off own their conflicts.
+**Consequences.** One engine per application, the one it chose: an alias from `tailwind-merge` to a drop-in engine
+reaches this package too, which an `extendTailwindMerge` import inside the package would break. The merge runs only on a
+selection a resolver has not answered yet, so the engine sets the cost of a first render and nothing after it. Callers
+who turn merging off own their conflicts.
 
 ## Types describe what the selection can be, no more
 

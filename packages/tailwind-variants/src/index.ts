@@ -5,6 +5,7 @@ export { createTV, tv } from "#tv";
 export { cn, cx } from "#class-names";
 
 export type {
+  ClassMerger,
   ClassValue,
   CompoundSlot,
   CompoundVariant,

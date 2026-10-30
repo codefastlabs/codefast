@@ -32,7 +32,7 @@ That split is the directory layout:
 | -------------------------- | --------------------------------------------------------------------- |
 | `types.ts`                 | the model: configurations, variant selections, compiled shapes        |
 | `tv.ts`                    | the public entry point, and the seam between the phases               |
-| `class-names.ts`           | `cx` / `cn` / `createTailwindMergeFn` — class utilities, variant-free |
+| `class-names.ts`           | `cx` / `cn` — class utilities, variant-free                           |
 | `compile/plan.ts`          | `VariantPlan` and how it is built                                     |
 | `compile/compound.ts`      | compound variants and slots as flat condition lists, and testing them |
 | `compile/class-values.ts`  | flattening configuration class values into plan form                  |

@@ -57,5 +57,5 @@ export const resolveVariantClasses = (
     return undefined;
   }
 
-  return plan.shouldMerge ? plan.tailwindMerge(text) : text;
+  return plan.mergeClasses === null ? text : plan.mergeClasses(text);
 };
