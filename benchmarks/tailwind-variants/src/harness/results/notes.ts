@@ -47,18 +47,11 @@ const BUNDLE_NOTE =
 /** Every loss shape, ordered by how much it matters. */
 const LOSS_NOTES: ReadonlyArray<LossNote<TvCompetitorName>> = [
   {
-    title: "A slot called with props leaves the memo",
-    kinds: ["real deficit"],
-    losses: [{ id: "slot-class-with-merge", versus: ["tailwind-variants"] }],
-    context: [{ id: "slots-with-merge", versus: ["tailwind-variants"] }],
-    body: "A slot answers a bare call from its per-slot memo, but any props object — even one carrying only an absent `className` — sends it down the override path, which rebuilds the slot's text and merges it on every call. A sub-component calls its slot with the `className` it was given, so this is the common slot call, not the corner. `tailwind-variants` answers a call that carries only `class` or `className` from the cached slot and merges only a class that is actually present. Nothing structural forces the gap: a slot call with no variant override can reuse the memo and merge just the caller's class.",
-  },
-  {
     title: "`cn` runs the application's merge engine",
-    kinds: ["chosen cost"],
-    losses: [{ id: "cn-with-merge", versus: ["tailwind-variants"] }],
-    context: [{ id: "cn-with-merge", versus: ["class-variance-authority"] }],
-    body: "`cn` flattens its arguments and hands the string to `tailwind-merge`'s `twMerge`, which is why it sits level with `cva`'s `cn`, the same join and the same engine. `tailwind-variants` ships its own engine, whose argument cache answers a repeated call before any merge. The package leaves the engine to the application on purpose, so the default pays `tailwind-merge`'s cost, and an application that aliases `tailwind-merge` to a faster drop-in engine moves this row with it.",
+    kinds: ["chosen cost", "real deficit"],
+    losses: [{ id: "cn-with-merge", versus: ["tailwind-variants", "class-variance-authority"] }],
+    context: [],
+    body: "`cn` flattens its arguments and hands the string to `tailwind-merge`'s `twMerge`. `tailwind-variants` ships its own engine, whose argument cache answers a repeated call before any merge; the package leaves the engine to the application on purpose, so the default pays `tailwind-merge`'s cost, and an application that aliases `tailwind-merge` to a faster drop-in engine moves this row with it. Against `cva`'s `cn` — the same engine after a clsx-style join — the row sits at the edge of parity, and what is left is the join: when `cn` meets an argument that is not a string, it restarts its flatten from the first argument.",
   },
 ];
 
