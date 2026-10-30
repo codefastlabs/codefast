@@ -83,14 +83,13 @@ describe("resolution cache", () => {
     }
   });
 
-  test("keeps resolving once a selection axis exhausts its capacity", () => {
+  test("keeps resolving a compound-tested variant across many distinct values", () => {
     const chip = tv({
       base: "block",
       compoundVariants: [{ class: "ring", tone: "t1" }],
       variants: { tone: { t1: "p-1" } },
     });
 
-    // Past the per-axis capacity a call stops being encodable, and must still resolve.
     for (let index = 0; index < 40; index++) {
       expect(chip({ tone: `t${String(index)}` } as never)).toBe(index === 1 ? "block p-1 ring" : "block");
     }

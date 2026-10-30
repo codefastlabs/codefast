@@ -1,14 +1,15 @@
 /**
- * Encoding one call's variant selection as a single number, so a resolver can answer a repeated
- * selection from a cache instead of walking the plan again.
+ * Encoding one call's variant selection as a key, so a resolver can answer a repeated selection
+ * from a cache instead of walking the plan again.
  *
- * Each variant is one axis of a mixed-radix number. An axis no compound reads is keyed by the group
- * key, because two values sharing a key select the same classes. An axis a compound reads is keyed
- * by the raw value instead: a compound compares against what the caller passed, and `true` and
- * `"true"` share a group key while comparing differently.
+ * Each variant is one digit of a mixed-radix number. An axis no compound reads is keyed by the group
+ * key, because two values sharing a key select the same classes. On an axis a compound reads, a
+ * value the compounds compare against gets a digit of its own, since `true` and `"true"` share a
+ * group key while comparing differently; every other value falls back to its group key.
  */
 
 import { toVariantKey } from "#compile/class-values";
+import type { CompoundCondition } from "#compile/compound";
 import type { VariantPlan } from "#compile/plan";
 
 /**
@@ -18,8 +19,8 @@ import type { VariantPlan } from "#compile/plan";
  */
 export const UNENCODABLE = -1;
 
-/** Distinct raw values one axis admits before it stops encoding calls. */
-const RAW_AXIS_CAPACITY = 16;
+/** Values a compound-tested axis remembers beyond those its group answers or its compounds name. */
+const UNANSWERED_RAW_LIMIT = 32;
 
 const AXIS_BY_GROUP_KEY = 0;
 const AXIS_BY_RAW_VALUE = 1;
@@ -29,10 +30,16 @@ type AxisKind = typeof AXIS_BY_GROUP_KEY | typeof AXIS_BY_RAW_VALUE;
 interface SelectionAxis {
   readonly group: Record<string, unknown>;
   readonly kind: AxisKind;
+  /** Ids for the values the compounds compare against, from one; empty on a group-key axis. */
+  readonly matchIds: Map<unknown, number>;
   readonly name: string;
   nextId: number;
+  /** Which safe-integer part of the key this digit lands in. */
+  readonly part: number;
+  /** Ids already worked out on a raw-value axis, keyed by the value passed. */
   readonly rawIds: Map<unknown, number>;
   readonly stride: number;
+  /** The id every value the group does not answer shares, and one past the last group id. */
   readonly unknownId: number;
   readonly valueIds: Record<string, number>;
 }
@@ -43,12 +50,11 @@ interface SelectionAxis {
  * @since 0.6.0
  */
 export interface SelectionEncoder {
-  keyOf: (variantProps: Record<string, unknown>) => number;
+  keyOf: (variantProps: Record<string, unknown>) => number | string;
 }
 
 const EMPTY_GROUP: Record<string, unknown> = {};
-const EMPTY_NAMES: ReadonlySet<string> = new Set();
-const EMPTY_RAW_IDS: Map<unknown, number> = new Map();
+const EMPTY_IDS: Map<unknown, number> = new Map();
 
 /**
  * Ids live on a null-prototype object: a variant value of `"toString"` would otherwise read
@@ -56,81 +62,184 @@ const EMPTY_RAW_IDS: Map<unknown, number> = new Map();
  */
 const createValueIds = (): Record<string, number> => Object.create(null) as Record<string, number>;
 
-const EMPTY_VALUE_IDS: Record<string, number> = createValueIds();
+/**
+ * The values each compound-tested name is compared against, keyed by name.
+ *
+ * @remarks A `Map` keys by SameValueZero, which partitions values exactly as every condition kind
+ * tells them apart.
+ */
+const collectComparedValues = (plan: VariantPlan): Map<string, Map<unknown, number>> => {
+  const comparedValues = new Map<string, Map<unknown, number>>();
+  const addCondition = (condition: CompoundCondition): void => {
+    let ids = comparedValues.get(condition.name);
+
+    if (ids === undefined) {
+      ids = new Map();
+      comparedValues.set(condition.name, ids);
+    }
+
+    for (const expected of Array.isArray(condition.expected) ? condition.expected : [condition.expected]) {
+      if (expected !== undefined && !ids.has(expected)) {
+        ids.set(expected, ids.size + 1);
+      }
+    }
+  };
+
+  for (const compound of plan.compounds) {
+    compound.conditions.forEach(addCondition);
+  }
+
+  for (const compoundSlot of plan.compoundSlots) {
+    compoundSlot.conditions.forEach(addCondition);
+  }
+
+  return comparedValues;
+};
 
 /**
- * Compile a plan's variants into an encoder, or `null` when the selection space is too large to
- * address with one safe integer.
+ * Compile a plan's variants into an encoder.
  *
  * @remarks `treatFalsyKeyAsUnknown` mirrors the lane the encoder serves: the slot lane rejects a
- * falsy variant key where the flat lane looks it up.
+ * falsy variant key where the flat lane looks it up. A selection space past one safe integer spans
+ * several, joined into a string key.
  *
  * @since 0.6.0
  */
-export const compileSelectionEncoder = (
-  plan: VariantPlan,
-  treatFalsyKeyAsUnknown: boolean,
-): SelectionEncoder | null => {
-  const hasConditions = plan.conditionNames.length > 0;
-  const conditionNames = hasConditions ? new Set(plan.conditionNames) : EMPTY_NAMES;
+export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknown: boolean): SelectionEncoder => {
+  const comparedValues = plan.conditionNames.length > 0 ? collectComparedValues(plan) : null;
   const axes: Array<SelectionAxis> = [];
+  let part = 0;
   let states = 1;
 
   // Id zero always means "the call omitted this variant", so a radix leaves room for it.
-  const addAxis = (
-    name: string,
-    kind: AxisKind,
-    idCount: number,
-    group: Record<string, unknown>,
-  ): SelectionAxis | null => {
-    const radix = idCount + 1;
+  const addAxis = (name: string, group: Record<string, unknown>, valueCount: number): void => {
+    const matchIds = comparedValues?.get(name);
+    const kind = matchIds === undefined ? AXIS_BY_GROUP_KEY : AXIS_BY_RAW_VALUE;
+    // A raw-value axis numbers its compared values first, then a group id for every other value.
+    const unknownId = (matchIds === undefined ? 0 : matchIds.size) + valueCount + 1;
+    const radix = unknownId + 1;
 
     if (states > Number.MAX_SAFE_INTEGER / radix) {
-      return null;
+      part++;
+      states = 1;
     }
 
-    const byRawValue = kind === AXIS_BY_RAW_VALUE;
-    const axis: SelectionAxis = {
+    axes.push({
       group,
       kind,
+      matchIds: matchIds ?? EMPTY_IDS,
       name,
-      nextId: 1,
-      rawIds: byRawValue ? new Map() : EMPTY_RAW_IDS,
+      nextId: matchIds === undefined ? 1 : matchIds.size + 1,
+      part,
+      rawIds: kind === AXIS_BY_RAW_VALUE ? new Map() : EMPTY_IDS,
       stride: states,
-      unknownId: idCount,
-      valueIds: byRawValue ? EMPTY_VALUE_IDS : createValueIds(),
-    };
-
-    axes.push(axis);
+      unknownId,
+      valueIds: createValueIds(),
+    });
     states *= radix;
-
-    return axis;
   };
 
   for (const entry of plan.entries) {
-    if (hasConditions && conditionNames.has(entry.name)) {
-      if (addAxis(entry.name, AXIS_BY_RAW_VALUE, RAW_AXIS_CAPACITY, EMPTY_GROUP) === null) {
-        return null;
-      }
-
-      continue;
-    }
-
-    // Ids are handed out as values turn up, so a group nobody selects from costs nothing to compile.
-    if (addAxis(entry.name, AXIS_BY_GROUP_KEY, entry.valueCount + 1, entry.group) === null) {
-      return null;
-    }
+    addAxis(entry.name, entry.group, entry.valueCount);
   }
 
-  if (hasConditions) {
+  if (comparedValues !== null) {
     const declaredNames = new Set(plan.entries.map((entry) => entry.name));
 
     // A compound may test a name no variant declares, and the call's value for it still decides.
-    for (const name of conditionNames) {
-      if (!declaredNames.has(name) && addAxis(name, AXIS_BY_RAW_VALUE, RAW_AXIS_CAPACITY, EMPTY_GROUP) === null) {
-        return null;
+    for (const name of plan.conditionNames) {
+      if (!declaredNames.has(name)) {
+        addAxis(name, EMPTY_GROUP, 0);
       }
     }
+  }
+
+  /** The id the group gives a value, handing one out on first sight. */
+  const groupIdOf = (axis: SelectionAxis, selected: unknown): number => {
+    const variantKey = toVariantKey(selected);
+
+    if (variantKey === undefined || (treatFalsyKeyAsUnknown && !variantKey)) {
+      return axis.unknownId;
+    }
+
+    const found = axis.valueIds[variantKey];
+
+    if (found !== undefined) {
+      return found;
+    }
+
+    if (!Object.hasOwn(axis.group, variantKey)) {
+      // Not remembered: the ids table is only ever as large as the group, where remembering
+      // every value a caller passes would grow it without bound for the resolver's lifetime.
+      return axis.unknownId;
+    }
+
+    if (axis.nextId >= axis.unknownId) {
+      // More answering keys than own keys were counted for the radix — an inherited one.
+      return UNENCODABLE;
+    }
+
+    const id = axis.nextId++;
+
+    axis.valueIds[variantKey] = id;
+
+    return id;
+  };
+
+  /** The id of a value on a raw-value axis the first time it is seen. */
+  const rawIdOf = (axis: SelectionAxis, selected: unknown): number => {
+    // A compared value fixes its group key too, so its own id stands for both.
+    const id = axis.matchIds.get(selected) ?? groupIdOf(axis, selected);
+    const rawIds = axis.rawIds;
+
+    // Only primitives are kept, and past a few only those the configuration names, so the map stays bounded.
+    if (
+      id !== UNENCODABLE &&
+      (id !== axis.unknownId || rawIds.size < UNANSWERED_RAW_LIMIT) &&
+      typeof selected !== "object" &&
+      typeof selected !== "function"
+    ) {
+      rawIds.set(selected, id);
+    }
+
+    return id;
+  };
+
+  if (part > 0) {
+    return {
+      keyOf: (variantProps: Record<string, unknown>): string | number => {
+        let text = "";
+        let key = 0;
+        let currentPart = 0;
+
+        for (const axis of axes) {
+          if (axis.part !== currentPart) {
+            text = `${text}${String(key)}.`;
+            key = 0;
+            currentPart = axis.part;
+          }
+
+          const selected = variantProps[axis.name];
+
+          if (selected === undefined) {
+            continue;
+          }
+
+          const id =
+            axis.kind === AXIS_BY_GROUP_KEY
+              ? groupIdOf(axis, selected)
+              : (axis.rawIds.get(selected) ?? rawIdOf(axis, selected));
+
+          if (id === UNENCODABLE) {
+            return UNENCODABLE;
+          }
+
+          key += id * axis.stride;
+        }
+
+        return text + String(key);
+      },
+    };
   }
 
   return {
@@ -154,33 +263,16 @@ export const compileSelectionEncoder = (
           } else {
             const found = axis.valueIds[variantKey];
 
-            if (found !== undefined) {
-              id = found;
-            } else if (!Object.hasOwn(axis.group, variantKey)) {
-              // Not remembered: the ids table is only ever as large as the group, where remembering
-              // every value a caller passes would grow it without bound for the resolver's lifetime.
-              id = axis.unknownId;
-            } else if (axis.nextId < axis.unknownId) {
-              id = axis.nextId++;
-              axis.valueIds[variantKey] = id;
-            } else {
-              // More answering keys than own keys were counted for the radix — an inherited one.
-              return UNENCODABLE;
-            }
+            id = found === undefined ? groupIdOf(axis, selected) : found;
           }
         } else {
           const found = axis.rawIds.get(selected);
 
-          if (found === undefined) {
-            if (axis.rawIds.size >= RAW_AXIS_CAPACITY) {
-              return UNENCODABLE;
-            }
+          id = found === undefined ? rawIdOf(axis, selected) : found;
+        }
 
-            id = axis.rawIds.size + 1;
-            axis.rawIds.set(selected, id);
-          } else {
-            id = found;
-          }
+        if (id === UNENCODABLE) {
+          return UNENCODABLE;
         }
 
         key += id * axis.stride;
