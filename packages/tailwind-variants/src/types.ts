@@ -5,9 +5,18 @@
 /**
  * The value a caller passes for one group key: `boolean` for a `"true"`/`"false"` key, the key itself otherwise.
  *
+ * @remarks A numeric key is admitted in both spellings, `1` and `"1"`, because resolution reads both as the same
+ * property name.
+ *
  * @since 0.3.16-canary.0
  */
-export type VariantValue<Key> = Key extends "false" | "true" ? boolean : Key;
+export type VariantValue<Key> = Key extends "false" | "true"
+  ? boolean
+  : Key extends number
+    ? Key | `${Key}`
+    : Key extends `${infer Numeric extends number}`
+      ? Key | Numeric
+      : Key;
 
 /**
  * Checks whether a variant group supports boolean values.
@@ -66,9 +75,7 @@ export type SlotSchema = Record<string, ClassValue>;
  *
  * @since 0.3.16-canary.0
  */
-export type VariantSelection<Variants extends VariantSchema> = {
-  readonly [Variant in keyof VariantValues<Variants>]?: VariantValues<Variants>[Variant] | undefined;
-} & {
+export type VariantSelection<Variants extends VariantSchema> = VariantValues<Variants> & {
   className?: ClassValue | undefined;
   class?: ClassValue | undefined;
 };
@@ -82,7 +89,7 @@ export type VariantSelection<Variants extends VariantSchema> = {
  * @since 0.6.0
  */
 type VariantValues<Variants extends VariantSchema> = {
-  readonly [Variant in keyof Variants]?: VariantValue<keyof Variants[Variant]>;
+  readonly [Variant in keyof Variants]?: VariantValue<keyof Variants[Variant]> | undefined;
 };
 
 /**

@@ -102,7 +102,7 @@ describe("IntelliSense-driving types", () => {
   test("spells a boolean group as boolean and any other group as its keys", () => {
     expectTypeOf<VariantValue<"false" | "true">>().toEqualTypeOf<boolean>();
     expectTypeOf<VariantValue<"lg" | "sm">>().toEqualTypeOf<"lg" | "sm">();
-    expectTypeOf<VariantValue<1 | 2>>().toEqualTypeOf<1 | 2>();
+    expectTypeOf<VariantValue<1 | 2>>().toEqualTypeOf<"1" | "2" | 1 | 2>();
   });
 
   test("still resolves what the types describe", () => {

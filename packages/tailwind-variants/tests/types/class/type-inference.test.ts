@@ -465,8 +465,8 @@ describe("Real-World Type Inference Tests", () => {
     const number = numberVariants({ columns: 2, gap: 4 });
 
     type NumberProps = VariantProps<typeof numberVariants>;
-    expectTypeOf<NumberProps["columns"]>().toEqualTypeOf<1 | 2 | 3 | 4 | undefined>();
-    expectTypeOf<NumberProps["gap"]>().toEqualTypeOf<0 | 1 | 2 | 4 | undefined>();
+    expectTypeOf<NumberProps["columns"]>().toEqualTypeOf<"1" | "2" | "3" | "4" | 1 | 2 | 3 | 4 | undefined>();
+    expectTypeOf<NumberProps["gap"]>().toEqualTypeOf<"0" | "1" | "2" | "4" | 0 | 1 | 2 | 4 | undefined>();
 
     expectTypeOf(number).toEqualTypeOf<string>();
   });
