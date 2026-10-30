@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
+import { useEffect, useRef } from "react";
 
 import {
   ChevronDownIcon,
@@ -159,18 +160,47 @@ interface ReportMenuProps {
 
 /** The newest matching run's report, offered in both formats behind one download button. */
 function ReportMenu({ runFolder }: ReportMenuProps) {
+  const menuRef = useRef<HTMLDetailsElement>(null);
+
+  // A details element stays open until its summary is clicked again, so a press outside or Escape closes it here.
+  useEffect(() => {
+    const close = (): void => {
+      menuRef.current?.removeAttribute("open");
+    };
+    const onPointerDown = (event: PointerEvent): void => {
+      if (event.target instanceof Node && menuRef.current?.contains(event.target) !== true) {
+        close();
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === "Escape" && menuRef.current?.open === true) {
+        close();
+        menuRef.current.querySelector("summary")?.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
+
   const link = (format: "md" | "json"): ReactNode => (
     <a
       className="block rounded-lg px-3 py-2 text-[0.8125rem] text-zinc-200 hover:bg-white/6"
       download
       href={`/api/report.${format}?run=${encodeURIComponent(runFolder)}`}
+      onClick={() => menuRef.current?.removeAttribute("open")}
     >
       report.{format}
     </a>
   );
 
   return (
-    <details className="group relative">
+    <details className="group relative" ref={menuRef}>
       <summary
         aria-label="Download the newest matching run's report"
         className="border-bh-border bh-hover-ready:bg-bh-fill-white-7 bg-bh-fill-white-4 text-bh-label hover:text-bh-ink-hover focus-visible:outline-bh-blue group-open:bg-bh-fill-white-7 inline-flex size-9 cursor-pointer list-none items-center justify-center rounded-xl border focus-visible:outline focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden"
