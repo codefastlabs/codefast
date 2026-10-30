@@ -21,24 +21,24 @@ plan, and from then on resolving a component is string work — with a repeated 
 
 - **One configuration, one typed function.** Describe `base`, `variants`, `compoundVariants`, `slots`, and
   `defaultVariants` once; get back a function whose props are inferred from it.
-- **Conflicts settled by `tailwind-merge`.** A caller's `className` wins over the configuration, and an unknown variant
-  value is a type error.
+- **Conflicts settled by [`cn`](https://github.com/shadcn-ui/cn).** A caller's `className` wins over the configuration,
+  and an unknown variant value is a type error.
 - **Compiled once, when it pays.** `tv()` only wraps the configuration; the first render reads it directly and the
   second compiles it into a plan, so a component rendered once costs no more than that render, and every render after is
   string work with repeated selections answered from a cache.
-- **Drop-in, with no runtime dependencies of its own.** Same configuration shape as `tailwind-variants`;
-  `tailwind-merge` is a peer, so you get one copy at the version you chose.
+- **Drop-in, with no runtime dependencies of its own.** Same configuration shape as `tailwind-variants`; the merge
+  engine, `cn`, is a peer, so you get one copy at the version you chose.
 
 ## Installation
 
 ```bash
-pnpm add @codefast/tailwind-variants tailwind-merge
-# npm install @codefast/tailwind-variants tailwind-merge
-# yarn add @codefast/tailwind-variants tailwind-merge
+pnpm add @codefast/tailwind-variants cn
+# npm install @codefast/tailwind-variants cn
+# yarn add @codefast/tailwind-variants cn
 ```
 
-`@codefast/tailwind-variants` ships ESM only. `tailwind-merge` is a peer dependency (`>=3.0.0`), and the package runs on
-Node.js 22.12 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
+`@codefast/tailwind-variants` ships ESM only. `cn` is a peer dependency (`>=0.5.0`), and the package runs on Node.js
+22.12 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
 ([support policy](../../SUPPORT.md#browsers)). It requires TypeScript 7 or later for its types. It's published on 0.x
 and versioned on its own track: breaking changes ship as minor versions, so pin the minor version when you need
 stability.
@@ -186,9 +186,9 @@ iconButton({ tone: "outline", size: "sm" });
 
 `tv(config, options)` takes an optional second argument:
 
-- `twMerge` — how conflicts are resolved: `true` merges with `tailwind-merge` (the default), `false` keeps every
-  declared class, and a function `(classes: string) => string` replaces the merge — `extendTailwindMerge(…)` for custom
-  class groups, or another engine.
+- `twMerge` — how conflicts are resolved: `true` merges with `cn`'s `twMerge` (the default), `false` keeps every
+  declared class, and a function `(classes: string) => string` replaces the merge — `extendTailwindMerge(…)` from
+  `cn/config` for custom class groups, or another engine.
 - `cacheResolutions` — set `false` to resolve every call from scratch (default `true`).
 
 A variant function remembers what each selection resolved to, because a list renders the same few selections many times
@@ -205,7 +205,7 @@ and both the plan walk and the merge are pure functions of the selection. Two co
 
 ```ts
 import { createTV } from "@codefast/tailwind-variants";
-import { extendTailwindMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "cn/config";
 
 const { tv, cn } = createTV({
   twMerge: extendTailwindMerge({ extend: { classGroups: { "font-size": [{ text: ["huge"] }] } } }),
@@ -221,10 +221,10 @@ hand.
 
 ### Choosing the merge engine
 
-The package imports one thing from `tailwind-merge`: its `twMerge`, as the default merge. Everything else comes in
-through the `twMerge` option, so the application decides which engine runs and ships exactly one copy of it. A drop-in
-engine such as [`cn`](https://github.com/shadcn-ui/cn) can take over every import of `tailwind-merge` in the app — this
-package's included — with a bundler alias:
+The package imports two things from [`cn`](https://github.com/shadcn-ui/cn): its `twMerge`, as the default merge, and
+its `cn`, which this package re-exports. `cn` produces the same output as `tailwind-merge` and runs faster on a string
+it has not seen; anything else comes in through the `twMerge` option, so the application decides which engine runs. An
+app that still imports `tailwind-merge` elsewhere can alias it to `cn` so the bundle carries one engine:
 
 ```ts
 // vite.config.ts
@@ -239,7 +239,7 @@ repeated selection never reaches it.
 ```ts
 import { cn, cx } from "@codefast/tailwind-variants";
 
-cn("px-4 py-2", "px-6"); // => "py-2 px-6" — joined, then tailwind-merge
+cn("px-4 py-2", "px-6"); // => "py-2 px-6" — joined, then merged
 cx("px-4 py-2", "px-6"); // => "px-4 py-2 px-6" — joined only, no merging
 cn("base", isActive && "text-primary", { hidden: false }); // conditional values, the shapes clsx accepts
 ```

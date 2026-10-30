@@ -247,8 +247,8 @@ export interface TailwindVariantsOptions {
   /**
    * Resolves Tailwind conflicts in every answer, so a later class wins over an earlier one.
    *
-   * @remarks `true` merges with `tailwind-merge`'s `twMerge`, `false` keeps every declared class, and a function
-   * replaces the merge — an `extendTailwindMerge` result for custom class groups, or another engine.
+   * @remarks `true` merges with the `cn` engine's `twMerge`, `false` keeps every declared class, and a function
+   * replaces the merge — an `extendTailwindMerge` result from `cn/config` for custom class groups, or another engine.
    *
    * @defaultValue true
    */

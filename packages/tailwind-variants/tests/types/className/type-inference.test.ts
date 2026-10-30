@@ -1,4 +1,4 @@
-import { extendTailwindMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "cn/config";
 import { expectTypeOf } from "vitest";
 
 import type { VariantProps } from "#index";

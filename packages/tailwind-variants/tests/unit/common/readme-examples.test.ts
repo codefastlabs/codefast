@@ -1,7 +1,7 @@
 /**
  * Verification of README code examples - ensures documented examples work correctly.
  */
-import { extendTailwindMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "cn/config";
 
 import type { VariantProps } from "#index";
 import { cn, createTV, cx, tv } from "#index";
@@ -103,7 +103,7 @@ describe("README code examples", () => {
     expect(typeof cn2).toBe("function");
   });
 
-  test("createTV with an extended tailwind-merge", () => {
+  test("createTV with an extended merge engine", () => {
     const { cn: themeCn } = createTV({
       twMerge: extendTailwindMerge({ extend: { classGroups: { "font-size": [{ text: ["huge"] }] } } }),
     });

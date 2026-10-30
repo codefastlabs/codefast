@@ -84,13 +84,14 @@
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "catalog:node22.12",
     "@vitest/coverage-v8": "catalog:",
+    "cn": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "tailwind-merge": ">=3.0.0"
+    "cn": ">=0.5.0"
   },
   "engines": {
     "node": ">=22.12.0"

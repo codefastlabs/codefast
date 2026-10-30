@@ -2,7 +2,7 @@
  * The class-name utilities this package exposes to consumers, independent of variants.
  */
 
-import { twMerge } from "tailwind-merge";
+import { cn as engineCn } from "cn";
 
 import type { ClassMerger, ClassValue } from "#types";
 
@@ -101,7 +101,7 @@ const PAIR_GENERATION_LIMIT = 512;
 const PAIR_BUCKET_LIMIT = 8;
 
 /**
- * Creates a `cn` that merges through `mergeClasses`, answering a repeated pair of strings from a memo.
+ * Creates a `cn` for a merge the application supplies, answering a repeated pair of strings from a memo.
  *
  * @remarks Most calls pass a static class list and the caller's `className`. Keying the memo on those
  * two strings as passed, rather than on their join, hashes nothing new on a hit: a freshly joined
@@ -207,6 +207,8 @@ export const createMergingCn = (mergeClasses: ClassMerger): ((...classes: Array<
 /**
  * Combine CSS classes and resolve Tailwind conflicts between them.
  *
+ * @remarks The default engine's own `cn`, whose argument cache answers a repeated call before any join.
+ *
  * @since 0.3.16-canary.0
  */
-export const cn: (...classes: Array<ClassValue>) => string = createMergingCn(twMerge);
+export const cn: (...classes: Array<ClassValue>) => string = engineCn;

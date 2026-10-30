@@ -1,4 +1,4 @@
-import { extendTailwindMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "cn/config";
 
 export const COMMON_UNITS = ["small", "medium", "large"];
 

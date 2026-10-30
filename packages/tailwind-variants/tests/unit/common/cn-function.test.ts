@@ -1,9 +1,9 @@
-import { extendTailwindMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "cn/config";
 
 import { cn, createTV } from "#index";
 
 describe("cn function", () => {
-  test("should work like cx but with tailwind-merge", () => {
+  test("should work like cx but with merging", () => {
     const result = cn("text-xl", "text-blue-500", "text-2xl", "text-red-500");
 
     expect(result).toBe("text-2xl text-red-500");
@@ -56,7 +56,7 @@ describe("cn function from createTV", () => {
     expect(result).toBe("text-xl text-blue-500 text-2xl");
   });
 
-  test("should merge with a caller's extended tailwind-merge", () => {
+  test("should merge with a caller's extended engine", () => {
     const { cn: cnWithConfig } = createTV({
       twMerge: extendTailwindMerge({
         extend: {
