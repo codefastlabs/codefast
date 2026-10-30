@@ -1,5 +1,5 @@
 {
-  "runId": "2026-10-30T01-10-51-943Z",
+  "runId": "2026-10-30T01-44-36-482Z",
   "runDate": "2026-10-30",
   "profile": { "mode": "full", "isolated": true, "trialCount": 3 },
   "environment": {
@@ -23,8 +23,8 @@
       "wins": 20,
       "parities": 0,
       "losses": 0,
-      "median": 3.497792733958403,
-      "geomean": 4.252764328693022,
+      "median": 3.4213894487722185,
+      "geomean": 4.224550151290028,
       "unreliable": 0
     },
     {
@@ -34,8 +34,8 @@
       "wins": 4,
       "parities": 0,
       "losses": 0,
-      "median": 12.34667044270497,
-      "geomean": 10.031940480804616,
+      "median": 12.224215352928272,
+      "geomean": 9.815747292547295,
       "unreliable": 0
     }
   ],
