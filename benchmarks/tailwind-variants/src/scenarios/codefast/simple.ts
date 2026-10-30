@@ -16,7 +16,7 @@ export function buildCodefastSimpleScenarios(): ReadonlyArray<BenchScenario> {
       ...SIMPLE_WITHOUT_MERGE,
       build: () => () => {
         for (const props of simpleTestProps) {
-          codefastNoMerge(props);
+          codefastNoMerge({ ...props });
         }
       },
     },
@@ -24,7 +24,7 @@ export function buildCodefastSimpleScenarios(): ReadonlyArray<BenchScenario> {
       ...SIMPLE_WITH_MERGE,
       build: () => () => {
         for (const props of simpleTestProps) {
-          codefastWithMerge(props);
+          codefastWithMerge({ ...props });
         }
       },
     },

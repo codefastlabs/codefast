@@ -16,7 +16,7 @@ export function buildTailwindVariantsNpmExtremeScenarios(): ReadonlyArray<BenchS
       ...EXTREME_WITHOUT_MERGE,
       build: () => () => {
         for (const props of extremeTestProps) {
-          npmNoMerge(props);
+          npmNoMerge({ ...props });
         }
       },
     },
@@ -24,7 +24,7 @@ export function buildTailwindVariantsNpmExtremeScenarios(): ReadonlyArray<BenchS
       ...EXTREME_WITH_MERGE,
       build: () => () => {
         for (const props of extremeTestProps) {
-          npmWithMerge(props);
+          npmWithMerge({ ...props });
         }
       },
     },

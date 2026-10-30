@@ -11,7 +11,7 @@ const codefastWithMerge = codefastTvFn(extremeSlotsVariants, TV_MERGE_ENABLED) a
 
 function runExtremeSlotsLoop(renderer: DialogRenderer): void {
   for (const props of extremeSlotsTestProps) {
-    renderDialogSlots(renderer(props));
+    renderDialogSlots(renderer({ ...props }));
   }
 }
 

@@ -25,7 +25,7 @@ export function buildTailwindVariantsNpmExtendsScenarios(): ReadonlyArray<BenchS
       ...EXTENDS_WITHOUT_MERGE,
       build: () => () => {
         for (const props of extendsTestProps) {
-          npmExtendsNoMerge(props);
+          npmExtendsNoMerge({ ...props });
         }
       },
     },
@@ -33,7 +33,7 @@ export function buildTailwindVariantsNpmExtendsScenarios(): ReadonlyArray<BenchS
       ...EXTENDS_WITH_MERGE,
       build: () => () => {
         for (const props of extendsTestProps) {
-          npmExtendsWithMerge(props);
+          npmExtendsWithMerge({ ...props });
         }
       },
     },

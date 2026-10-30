@@ -16,7 +16,7 @@ export function buildTailwindVariantsNpmSimpleScenarios(): ReadonlyArray<BenchSc
       ...SIMPLE_WITHOUT_MERGE,
       build: () => () => {
         for (const props of simpleTestProps) {
-          npmNoMerge(props);
+          npmNoMerge({ ...props });
         }
       },
     },
@@ -24,7 +24,7 @@ export function buildTailwindVariantsNpmSimpleScenarios(): ReadonlyArray<BenchSc
       ...SIMPLE_WITH_MERGE,
       build: () => () => {
         for (const props of simpleTestProps) {
-          npmWithMerge(props);
+          npmWithMerge({ ...props });
         }
       },
     },

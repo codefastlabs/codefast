@@ -11,7 +11,7 @@ const npmWithMerge = tailwindVariantsTv(extremeSlotsVariants, TV_MERGE_ENABLED) 
 
 function runExtremeSlotsLoop(renderer: DialogRenderer): void {
   for (const props of extremeSlotsTestProps) {
-    renderDialogSlots(renderer(props));
+    renderDialogSlots(renderer({ ...props }));
   }
 }
 

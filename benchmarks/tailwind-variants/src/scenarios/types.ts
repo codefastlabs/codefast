@@ -17,7 +17,10 @@ type ScenarioGroup =
   | "repeat-simple"
   | "repeat-slots"
   | "define-only"
-  | "first-render";
+  | "first-render"
+  | "cn"
+  | "override"
+  | "slot-class";
 
 /**
  * @since 0.3.16-canary.0

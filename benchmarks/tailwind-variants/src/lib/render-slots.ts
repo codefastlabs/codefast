@@ -1,5 +1,11 @@
 /** The slot calls every side makes per render, so both libraries do the same work under one scenario id. */
-import type { CompoundPaginationSlots, ExtremeDialogSlots, ServicePreviewSlots } from "#fixtures/slot-types";
+import type { SlotClassCall } from "#fixtures/slot-class";
+import type {
+  ClassedCardSlots,
+  CompoundPaginationSlots,
+  ExtremeDialogSlots,
+  ServicePreviewSlots,
+} from "#fixtures/slot-types";
 
 /**
  * Renders the card slots a service preview shows.
@@ -65,4 +71,16 @@ export function renderEverySlot(slots: Readonly<Record<string, () => string>>): 
   }
 
   return length;
+}
+
+/** Renders the card slots the way its sub-components do, each passing the `className` it was given. */
+export function renderCardSlotsWithClasses(slots: ClassedCardSlots, classes: SlotClassCall["classes"]): number {
+  return (
+    slots.base({ className: classes.base }).length +
+    slots.header({ className: classes.header }).length +
+    slots.content({ className: classes.content }).length +
+    slots.footer({ className: classes.footer }).length +
+    slots.title({ className: classes.title }).length +
+    slots.description({ className: classes.description }).length
+  );
 }

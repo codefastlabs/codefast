@@ -19,7 +19,7 @@ export function buildCodefastCreateTvScenarios(): ReadonlyArray<BenchScenario> {
       ...CREATE_TV_WITHOUT_MERGE,
       build: () => () => {
         for (const props of simpleTestProps) {
-          codefastButtonNoMerge(props);
+          codefastButtonNoMerge({ ...props });
         }
       },
     },
@@ -27,7 +27,7 @@ export function buildCodefastCreateTvScenarios(): ReadonlyArray<BenchScenario> {
       ...CREATE_TV_WITH_MERGE,
       build: () => () => {
         for (const props of simpleTestProps) {
-          codefastButtonWithMerge(props);
+          codefastButtonWithMerge({ ...props });
         }
       },
     },

@@ -19,13 +19,13 @@ const slotsNoMerge = codefastTvFn(slotsVariants, TV_CACHE_AND_MERGE_DISABLED) as
 
 function runFlatLoop(renderer: FlatRenderer): void {
   for (const props of simpleTestProps) {
-    renderer(props);
+    renderer({ ...props });
   }
 }
 
 function runSlotLoop(renderer: CardRenderer): void {
   for (const props of slotsTestProps) {
-    renderCardSlots(renderer(props));
+    renderCardSlots(renderer({ ...props }));
   }
 }
 
