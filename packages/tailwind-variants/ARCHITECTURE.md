@@ -137,6 +137,13 @@ Everything else follows from having to make that distinction hold:
 - **The flattener in `class-names.ts` reproduces clsx exactly, corners included** — a `bigint` contributes nothing
   though the type admits one, and object keys are read with `for…in`. It replaced the dependency, so matching it is the
   contract; the behaviour sweep run against the build that still had clsx is what holds it there.
+- **`cn` keys its memo on the strings the caller passed, never on their join.** A static class list and a `className`
+  keep the hashes V8 already computed for them, so a repeated pair costs two `Map` reads; a freshly joined string has to
+  be flattened and hashed before any cache, the merge engine's included, can answer it. Only a call of exactly two
+  strings is remembered — one string is already a cached-hash hit in the merge engine — and a first class earns a bucket
+  only on its second sighting, so one-off calls stay close to what the merge alone costs.
+- **`cx` joins in one pass.** A value that is not a string continues the join from where it stands; restarting from the
+  first argument re-joins everything before it.
 - **A slot call context keeps `conditionValues`, not the caller's props.** A cached resolver outlives its call, and the
   props object a component passes carries `children` — most of a tree. Only the names a compound tests are copied out,
   and a configuration without compounds shares one empty object.

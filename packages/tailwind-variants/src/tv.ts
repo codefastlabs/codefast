@@ -5,7 +5,7 @@
 
 import { twMerge } from "tailwind-merge";
 
-import { cx } from "#class-names";
+import { createMergingCn, cx } from "#class-names";
 import { hasExtendConfig, hasSlotsConfig, mergeVariantConfigs } from "#compile/configuration";
 import type { VariantPlan } from "#compile/plan";
 import { compileVariantPlan } from "#compile/plan";
@@ -317,12 +317,8 @@ export function createTV(globalConfiguration: TailwindVariantsOptions = {}): Tai
     return tv(configuration, mergedConfiguration) as VariantResolver<Variants, Slots>;
   }
 
-  const cnFunction = (...classes: Array<ClassValue>): string => {
-    return mergeClasses === null ? cx(...classes) : mergeClasses(cx(...classes));
-  };
-
   return {
-    cn: cnFunction,
+    cn: mergeClasses === null ? cx : createMergingCn(mergeClasses),
     tv: tvFactory,
   };
 }
