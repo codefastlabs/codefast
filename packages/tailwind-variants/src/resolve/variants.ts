@@ -10,29 +10,22 @@ import type { VariantPlan } from "#compile/plan";
 import type { ClassValue } from "#types";
 
 /**
- * Resolves classes for a configuration without slots, appending `customClasses` last so the
- * caller's `className`/`class` outranks the configuration.
+ * Joins the classes a selection declares for a configuration without slots, unmerged.
  *
  * @remarks Such a configuration compiles every class value to a string, and a group may be the
  * caller's own object, so only a string read counts — an inherited member contributes nothing.
- *
- * @since 0.6.0
  */
-export const resolveVariantClasses = (
-  plan: VariantPlan,
-  variantProps: Record<string, unknown>,
-  customClasses: ClassValue,
-): string | undefined => {
+export const joinVariantClasses = (plan: VariantPlan, variantProps: Record<string, unknown>): string => {
   let text = plan.base;
 
   for (const entry of plan.entries) {
     const selected = variantProps[entry.name];
-    // `toVariantKey` only answers `undefined` for `undefined`, which the default branch takes.
     let classes: PlanClasses | undefined;
 
     if (selected === undefined) {
       classes = entry.defaultClasses;
     } else {
+      // `toVariantKey` only answers `undefined` for `undefined`, which the default branch takes.
       const key = toVariantKey(selected) as string;
 
       classes = entry.group[key] ?? compileGroupValue(entry, key);
@@ -54,6 +47,22 @@ export const resolveVariantClasses = (
       text = text === "" ? classes : text + " " + classes;
     }
   }
+
+  return text;
+};
+
+/**
+ * Resolves classes for a configuration without slots, appending `customClasses` last so the
+ * caller's `className`/`class` outranks the configuration.
+ *
+ * @since 0.6.0
+ */
+export const resolveVariantClasses = (
+  plan: VariantPlan,
+  variantProps: Record<string, unknown>,
+  customClasses: ClassValue,
+): string | undefined => {
+  let text = joinVariantClasses(plan, variantProps);
 
   if (customClasses) {
     const classes = toClassText(customClasses);

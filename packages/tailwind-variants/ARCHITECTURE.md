@@ -117,12 +117,12 @@ Everything else follows from having to make that distinction hold:
   values can exhaust one. The per-raw-value `Map` keeps every value the configuration names and only a few others, so it
   stays bounded too. A selection space past one safe integer spans several, joined into a string key, so a large
   configuration stays cached instead of resolving the long way on every call.
-- The store's generation limit is sized for a component whose selections come from data, not only from call sites. A key
-  is one selection plus the caller's own class string, so the entries a component can fill is its distinct selections
-  times the classes callers pass it — a table cell keyed by a row's status and a column's alignment fills far more than
-  any count of call sites suggests. Past the working set every miss falls through to the merge engine, which is the
-  slowest thing a call can reach, so the limit errs high; a `Map` grows only as entries arrive, so a component that
-  never fills it pays nothing for the headroom.
+- The store's generation limit is sized for a component whose selections come from data, not only from call sites. A
+  flat-lane entry is one selection, and each caller class remembered inside it is charged against the same limit, so
+  what a component can fill is its distinct selections times the classes callers pass it — a table cell keyed by a row's
+  status and a column's alignment fills far more than any count of call sites suggests. Past the working set every miss
+  falls through to the merge engine, which is the slowest thing a call can reach, so the limit errs high; a `Map` grows
+  only as entries arrive, so a component that never fills it pays nothing for the headroom.
 - Ids are handed out as values turn up rather than up front, so a group of two hundred values costs nothing to compile
   and only what a caller actually selects to run.
 - `valueIds` is a **null-prototype** object, and so is every compiled variant group and the slot index map. A plain
@@ -134,6 +134,18 @@ Everything else follows from having to make that distinction hold:
 
 ## Shapes that are load-bearing
 
+- **The flat store is keyed by the selection, and a caller's class lives inside it.** A selection's answer is stored as
+  a plain string until a caller passes a class string; only then does its entry become a record holding the joined and
+  merged text and the classes it has met. A hit therefore builds no key, and a component nobody passes a class to never
+  allocates the record.
+- **A caller's class is remembered from its second sighting.** A per-resolver door of hashed class strings, allocated on
+  the first class, keeps one-off strings out of the store. Their merge goes through `twMerge` like every other: the
+  engine's `cn` would skip its whole-string probe, but pulls its argument cache into every bundle that renders a
+  variant, for no gain this row could measure.
+- **A merged selection stands in for its joined text only when merging dropped nothing but repeats.** The engine's
+  conflict table is not transitive: a class one merge drops can come back once a caller's class overrides what dropped
+  it, and a merge of the whole keeps it, so merging onto an already-merged prefix is exact only when no real class was
+  dropped. A supplied merge always merges the whole, because the rule rests on the default engine's semantics.
 - **`selectForSlot` stays out of line.** Inlining it by hand measured slower on every slot scenario — the engine already
   inlines it, and the larger caller falls out of the shape it optimises.
 - **The flat lane accepts only a string it reads.** A configuration without slots compiles every class value to a

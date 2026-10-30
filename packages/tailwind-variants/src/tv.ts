@@ -13,6 +13,8 @@ import { compileSelectionEncoder, UNENCODABLE } from "#compile/selection";
 import type { ResolutionCache } from "#resolve/cache";
 import { createResolutionCache } from "#resolve/cache";
 import { createColdSlotResolvers, resolveColdVariantClasses } from "#resolve/cold";
+import type { ClassDoor, FlatSelection } from "#resolve/flat-selection";
+import { createClassDoor, createFlatSelection, resolveFlatSelectionWithClass } from "#resolve/flat-selection";
 import { createSlotResolvers } from "#resolve/slots";
 import { resolveVariantClasses } from "#resolve/variants";
 import type {
@@ -49,7 +51,9 @@ interface ResolverMemo<Value> {
 
 /** Everything a resolver settles on its second call: the plan, and the store for the lane it runs. */
 interface CompiledResolver {
-  readonly flatMemo: ResolverMemo<string | typeof NO_CLASSES> | null;
+  /** Admits a caller's class string to a selection's pairs from its second sighting. */
+  readonly flatDoor: ClassDoor | null;
+  readonly flatMemo: ResolverMemo<FlatSelection | string | typeof NO_CLASSES> | null;
   readonly plan: VariantPlan;
   readonly slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null;
 }
@@ -72,12 +76,17 @@ const compileResolver = (
   const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan, plan.slots !== null) : null;
 
   if (encoder === null) {
-    return { flatMemo: null, plan, slotMemo: null };
+    return { flatDoor: null, flatMemo: null, plan, slotMemo: null };
   }
 
   return plan.slots === null
-    ? { flatMemo: { cache: createResolutionCache(), keyOf: encoder.keyOf }, plan, slotMemo: null }
-    : { flatMemo: null, plan, slotMemo: { cache: createResolutionCache(), keyOf: encoder.keyOf } };
+    ? {
+        flatDoor: createClassDoor(),
+        flatMemo: { cache: createResolutionCache(), keyOf: encoder.keyOf },
+        plan,
+        slotMemo: null,
+      }
+    : { flatDoor: null, flatMemo: null, plan, slotMemo: { cache: createResolutionCache(), keyOf: encoder.keyOf } };
 };
 
 /**
@@ -234,18 +243,38 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
       const selectionKey = memo.keyOf(props);
 
       if (selectionKey !== UNENCODABLE) {
-        const cacheKey = customClassKey === "" ? selectionKey : `${String(selectionKey)} ${customClassKey}`;
-        const hit = memo.cache.get(cacheKey);
+        // Keyed by the selection alone: its answer is stored as is, and becomes a record of the caller
+        // classes it meets only once one arrives, so a hit builds no key and most selections hold a string.
+        const hit = memo.cache.get(selectionKey);
 
-        if (hit !== undefined) {
-          return hit === NO_CLASSES ? undefined : hit;
+        if (customClassKey === "") {
+          if (hit === undefined) {
+            const resolved = resolveVariantClasses(plan, props, undefined);
+
+            memo.cache.set(selectionKey, resolved ?? NO_CLASSES);
+
+            return resolved;
+          }
+
+          return typeof hit === "string" ? hit : hit === NO_CLASSES ? undefined : hit.merged;
         }
 
-        const resolved = resolveVariantClasses(plan, props, customClasses);
+        let selection: FlatSelection;
 
-        memo.cache.set(cacheKey, resolved ?? NO_CLASSES);
+        if (typeof hit === "object" && hit !== NO_CLASSES) {
+          selection = hit;
+        } else {
+          selection = createFlatSelection(plan, props, hit);
+          memo.cache.set(selectionKey, selection);
+        }
 
-        return resolved;
+        return resolveFlatSelectionWithClass(
+          plan,
+          memo.cache,
+          compiled.flatDoor as ClassDoor,
+          selection,
+          customClassKey,
+        );
       }
     }
 
