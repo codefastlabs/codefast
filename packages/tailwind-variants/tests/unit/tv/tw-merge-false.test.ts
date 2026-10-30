@@ -1,189 +1,193 @@
-import { tv } from "#index";
 import { CLASS_KEYS } from "#tests/unit/support/class-keys";
+import { LANES, tvOn } from "#tests/unit/support/lanes";
 
-describe("Tailwind Variants (TV) - twMerge: false", () => {
-  test("should not resolve tailwind conflicts when twMerge is false", () => {
-    const button = tv(
-      {
-        base: "bg-blue-500 bg-red-500 px-2 px-4 py-2 py-4",
-      },
-      {
-        twMerge: false,
-      },
-    );
+describe.each(LANES)("on the %s lane", (lane) => {
+  const tv = tvOn(lane);
 
-    expect(button()).toBe("bg-blue-500 bg-red-500 px-2 px-4 py-2 py-4");
-  });
+  describe("Tailwind Variants (TV) - twMerge: false", () => {
+    test("should not resolve tailwind conflicts when twMerge is false", () => {
+      const button = tv(
+        {
+          base: "bg-blue-500 bg-red-500 px-2 px-4 py-2 py-4",
+        },
+        {
+          twMerge: false,
+        },
+      );
 
-  test("should not resolve conflicts in variants when twMerge is false", () => {
-    const button = tv(
-      {
-        base: "font-medium",
-        variants: {
-          color: {
-            primary: "bg-blue-500 bg-blue-600 text-gray-100 text-white",
-            secondary: "bg-gray-500 bg-gray-600",
-          },
-          size: {
-            md: "text-md px-4 px-5 text-base",
-            sm: "px-2 px-3 text-sm text-xs",
+      expect(button()).toBe("bg-blue-500 bg-red-500 px-2 px-4 py-2 py-4");
+    });
+
+    test("should not resolve conflicts in variants when twMerge is false", () => {
+      const button = tv(
+        {
+          base: "font-medium",
+          variants: {
+            color: {
+              primary: "bg-blue-500 bg-blue-600 text-gray-100 text-white",
+              secondary: "bg-gray-500 bg-gray-600",
+            },
+            size: {
+              md: "text-md px-4 px-5 text-base",
+              sm: "px-2 px-3 text-sm text-xs",
+            },
           },
         },
-      },
-      {
-        twMerge: false,
-      },
-    );
-
-    expect(button({ size: "sm" })).toBe("font-medium px-2 px-3 text-sm text-xs");
-    expect(button({ color: "primary", size: "md" })).toBe(
-      "font-medium bg-blue-500 bg-blue-600 text-gray-100 text-white text-md px-4 px-5 text-base",
-    );
-  });
-
-  test("should not resolve conflicts in slots when twMerge is false", () => {
-    const card = tv(
-      {
-        slots: {
-          base: "rounded-lg rounded-xl p-4 p-6",
-          body: "mt-2 mt-4 text-gray-600 text-gray-700",
-          header: "text-lg text-xl font-bold font-semibold",
+        {
+          twMerge: false,
         },
-      },
-      {
-        twMerge: false,
-      },
-    );
+      );
 
-    const slots = card();
+      expect(button({ size: "sm" })).toBe("font-medium px-2 px-3 text-sm text-xs");
+      expect(button({ color: "primary", size: "md" })).toBe(
+        "font-medium bg-blue-500 bg-blue-600 text-gray-100 text-white text-md px-4 px-5 text-base",
+      );
+    });
 
-    expect(slots.base()).toBe("rounded-lg rounded-xl p-4 p-6");
-    expect(slots.header()).toBe("text-lg text-xl font-bold font-semibold");
-    expect(slots.body()).toBe("mt-2 mt-4 text-gray-600 text-gray-700");
-  });
-
-  test("should work with non-tailwind classes when twMerge is false", () => {
-    const button = tv(
-      {
-        base: "button",
-        variants: {
-          size: {
-            lg: "button--lg",
-            md: "button--md",
-            sm: "button--sm",
-          },
-          variant: {
-            primary: "button--primary",
-            secondary: "button--secondary",
+    test("should not resolve conflicts in slots when twMerge is false", () => {
+      const card = tv(
+        {
+          slots: {
+            base: "rounded-lg rounded-xl p-4 p-6",
+            body: "mt-2 mt-4 text-gray-600 text-gray-700",
+            header: "text-lg text-xl font-bold font-semibold",
           },
         },
-      },
-      {
-        twMerge: false,
-      },
-    );
+        {
+          twMerge: false,
+        },
+      );
 
-    expect(button()).toBe("button");
-    expect(button({ size: "sm" })).toBe("button button--sm");
-    expect(button({ size: "lg", variant: "secondary" })).toBe("button button--lg button--secondary");
-  });
+      const slots = card();
 
-  test("should handle empty/falsy values correctly when twMerge is false", () => {
-    const button = tv(
-      {
-        base: "base",
-        variants: {
-          size: {
-            lg: null,
-            md: "",
-            sm: "small",
+      expect(slots.base()).toBe("rounded-lg rounded-xl p-4 p-6");
+      expect(slots.header()).toBe("text-lg text-xl font-bold font-semibold");
+      expect(slots.body()).toBe("mt-2 mt-4 text-gray-600 text-gray-700");
+    });
+
+    test("should work with non-tailwind classes when twMerge is false", () => {
+      const button = tv(
+        {
+          base: "button",
+          variants: {
+            size: {
+              lg: "button--lg",
+              md: "button--md",
+              sm: "button--sm",
+            },
+            variant: {
+              primary: "button--primary",
+              secondary: "button--secondary",
+            },
           },
         },
-      },
-      {
-        twMerge: false,
-      },
-    );
+        {
+          twMerge: false,
+        },
+      );
 
-    expect(button({ size: "sm" })).toBe("base small");
-    expect(button({ size: "md" })).toBe("base");
-    expect(button({ size: "lg" })).toBe("base");
-  });
+      expect(button()).toBe("button");
+      expect(button({ size: "sm" })).toBe("button button--sm");
+      expect(button({ size: "lg", variant: "secondary" })).toBe("button button--lg button--secondary");
+    });
 
-  test("should handle arrays of classes when twMerge is false", () => {
-    const button = tv(
-      {
-        base: ["px-4", "py-2", ["rounded", ["bg-blue-500"]]],
-        variants: {
-          size: {
-            sm: ["text-sm", ["px-2", "py-1"]],
+    test("should handle empty/falsy values correctly when twMerge is false", () => {
+      const button = tv(
+        {
+          base: "base",
+          variants: {
+            size: {
+              lg: null,
+              md: "",
+              sm: "small",
+            },
           },
         },
-      },
-      {
-        twMerge: false,
-      },
-    );
+        {
+          twMerge: false,
+        },
+      );
 
-    expect(button()).toBe("px-4 py-2 rounded bg-blue-500");
-    expect(button({ size: "sm" })).toBe("px-4 py-2 rounded bg-blue-500 text-sm px-2 py-1");
-  });
-});
+      expect(button({ size: "sm" })).toBe("base small");
+      expect(button({ size: "md" })).toBe("base");
+      expect(button({ size: "lg" })).toBe("base");
+    });
 
-describe.each(CLASS_KEYS)("Tailwind Variants (TV) - twMerge: false (%s)", (key) => {
-  test("should not resolve conflicts in compound variants when twMerge is false", () => {
-    const button = tv(
-      {
-        base: "font-semibold",
-        compoundVariants: [
-          {
-            [key]: "bg-blue-600 bg-blue-700 px-3 px-4",
-            size: "sm",
-            variant: "primary",
-          },
-        ],
-        variants: {
-          size: {
-            md: "px-4",
-            sm: "px-2",
-          },
-          variant: {
-            primary: "bg-blue-500",
-            secondary: "bg-gray-500",
+    test("should handle arrays of classes when twMerge is false", () => {
+      const button = tv(
+        {
+          base: ["px-4", "py-2", ["rounded", ["bg-blue-500"]]],
+          variants: {
+            size: {
+              sm: ["text-sm", ["px-2", "py-1"]],
+            },
           },
         },
-      },
-      {
-        twMerge: false,
-      },
-    );
+        {
+          twMerge: false,
+        },
+      );
 
-    expect(button({ size: "sm", variant: "primary" })).toBe(
-      "font-semibold px-2 bg-blue-500 bg-blue-600 bg-blue-700 px-3 px-4",
-    );
+      expect(button()).toBe("px-4 py-2 rounded bg-blue-500");
+      expect(button({ size: "sm" })).toBe("px-4 py-2 rounded bg-blue-500 text-sm px-2 py-1");
+    });
   });
 
-  test("should preserve conflicting classes when twMerge is false", () => {
-    const button = tv(
-      {
-        base: "px-4 py-2",
-        variants: {
-          size: {
-            lg: "px-6 py-3",
-            sm: "px-2 py-1",
+  describe.each(CLASS_KEYS)("Tailwind Variants (TV) - twMerge: false (%s)", (key) => {
+    test("should not resolve conflicts in compound variants when twMerge is false", () => {
+      const button = tv(
+        {
+          base: "font-semibold",
+          compoundVariants: [
+            {
+              [key]: "bg-blue-600 bg-blue-700 px-3 px-4",
+              size: "sm",
+              variant: "primary",
+            },
+          ],
+          variants: {
+            size: {
+              md: "px-4",
+              sm: "px-2",
+            },
+            variant: {
+              primary: "bg-blue-500",
+              secondary: "bg-gray-500",
+            },
           },
         },
-      },
-      {
-        twMerge: false,
-      },
-    );
+        {
+          twMerge: false,
+        },
+      );
 
-    expect(button()).toBe("px-4 py-2");
+      expect(button({ size: "sm", variant: "primary" })).toBe(
+        "font-semibold px-2 bg-blue-500 bg-blue-600 bg-blue-700 px-3 px-4",
+      );
+    });
 
-    expect(button({ size: "sm" })).toBe("px-4 py-2 px-2 py-1");
-    expect(button({ size: "lg" })).toBe("px-4 py-2 px-6 py-3");
+    test("should preserve conflicting classes when twMerge is false", () => {
+      const button = tv(
+        {
+          base: "px-4 py-2",
+          variants: {
+            size: {
+              lg: "px-6 py-3",
+              sm: "px-2 py-1",
+            },
+          },
+        },
+        {
+          twMerge: false,
+        },
+      );
 
-    expect(button({ [key]: "px-8 py-4", size: "sm" })).toBe("px-4 py-2 px-2 py-1 px-8 py-4");
+      expect(button()).toBe("px-4 py-2");
+
+      expect(button({ size: "sm" })).toBe("px-4 py-2 px-2 py-1");
+      expect(button({ size: "lg" })).toBe("px-4 py-2 px-6 py-3");
+
+      expect(button({ [key]: "px-8 py-4", size: "sm" })).toBe("px-4 py-2 px-2 py-1 px-8 py-4");
+    });
   });
 });
