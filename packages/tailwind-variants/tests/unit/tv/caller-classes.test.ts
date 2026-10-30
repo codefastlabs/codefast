@@ -8,31 +8,34 @@ const F = { twMerge: false } as const;
 describe("tv: a caller's class and className", () => {
   const button = { base: "b", variants: { size: { sm: "s" } } };
 
-  test("appends both, class first, without slots", () => {
+  test("takes className over class without slots", () => {
     const answers = readEveryLane(
       () => tv(button, F),
       (resolver) => resolver({ class: "x", className: "y", size: "sm" }),
     );
 
-    expect(answers).toEqual(everyLane("b s x y"));
+    expect(answers).toEqual(everyLane("b s y"));
   });
 
-  test("keeps class when className is empty", () => {
+  test("takes an empty className over class", () => {
     const answers = readEveryLane(
       () => tv(button, F),
       (resolver) => resolver({ class: "x", className: "" }),
     );
 
-    expect(answers).toEqual(everyLane("b x"));
+    expect(answers).toEqual(everyLane("b"));
   });
 
-  test("appends both when either is clsx-shaped", () => {
+  test("falls back to class when className is null or undefined", () => {
     const answers = readEveryLane(
       () => tv(button, F),
-      (resolver) => resolver({ class: ["x", { z: true }], className: "y" }),
+      (resolver) => [
+        resolver({ class: ["x", { z: true }], className: null }),
+        resolver({ class: "x", className: undefined }),
+      ],
     );
 
-    expect(answers).toEqual(everyLane("b x z y"));
+    expect(answers).toEqual(everyLane(["b x z", "b x"]));
   });
 
   test("answers a pair from its store exactly as a fresh resolution does", () => {
@@ -52,13 +55,13 @@ describe("tv: a caller's class and className", () => {
     }
   });
 
-  test("appends a slot's class then its className", () => {
+  test("takes a slot's className over its class", () => {
     const answers = readEveryLane(
       () => tv({ slots: { base: "b", item: "i" } }, F),
       (resolver) => resolver().item({ class: "x", className: "y" }),
     );
 
-    expect(answers).toEqual(everyLane("i x y"));
+    expect(answers).toEqual(everyLane("i y"));
   });
 });
 
@@ -89,7 +92,7 @@ describe("tv: a resolution with no classes", () => {
 });
 
 describe("tv: a call passing both class and className", () => {
-  test("should apply both keys, class first, on a call and a compound", () => {
+  test("should take className over class on a call and a compound", () => {
     const h1 = tv(
       {
         base: "text-3xl",
@@ -99,10 +102,10 @@ describe("tv: a call passing both class and className", () => {
       { twMerge: false },
     );
 
-    expect(h1({ class: "x", className: "y", color: "red" })).toBe("text-3xl text-red-500 c1 c2 x y");
+    expect(h1({ class: "x", className: "y", color: "red" })).toBe("text-3xl text-red-500 c2 y");
   });
 
-  test("should apply both keys, class first, on a slot, a slot compound and a compound slot", () => {
+  test("should take className over class on a slot, a slot compound and a compound slot", () => {
     const card = tv(
       {
         compoundSlots: [{ class: "s1", className: "s2", color: "red", slots: ["item"] }],
@@ -114,7 +117,7 @@ describe("tv: a call passing both class and className", () => {
     );
     const { item } = card({ color: "red" });
 
-    expect(item({ class: "x", className: "y" })).toBe("i text-red-500 c1 c2 s1 s2 x y");
-    expect(item({ class: "x", className: "y", color: "red" })).toBe("i text-red-500 c1 c2 s1 s2 x y");
+    expect(item({ class: "x", className: "y" })).toBe("i text-red-500 c2 s2 y");
+    expect(item({ class: "x", className: "y", color: "red" })).toBe("i text-red-500 c2 s2 y");
   });
 });

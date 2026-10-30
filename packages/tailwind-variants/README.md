@@ -68,8 +68,9 @@ button({ size: "sm", className: "w-full" });
 // => "... bg-primary text-primary-foreground h-9 px-3 text-sm w-full"
 ```
 
-Every call accepts `class` and `className` for ad-hoc additions. Both are appended last, `class` before `className`, so
-they win any Tailwind conflict with the configuration. A resolution with no classes at all returns `""`.
+Every call accepts `className`, or `class`, for ad-hoc additions. They are appended last, so they win any Tailwind
+conflict with the configuration; when both are passed, `className` is used, on a call, a slot and a compound entry
+alike. A resolution with no classes at all returns `""`.
 
 A variant value is read as its group key: a number and its string spelling select the same key (`cols: 1` or
 `cols: "1"`), `""` reads as `false`, and `null`, an array or an object selects nothing. Only an omitted or `undefined`
@@ -100,7 +101,7 @@ toggle({ pressed: true, disabled: true });
 
 `compoundVariants` apply extra classes only when all listed conditions match. A condition value may be an array,
 matching any of its entries, and `undefined`, `null` and `false` match one another, so a condition on `false` also holds
-for an omitted boolean variant. An entry that declares both `class` and `className` applies both:
+for an omitted boolean variant:
 
 ```ts
 const alert = tv({
@@ -317,6 +318,8 @@ Resolution matches upstream `tailwind-variants` 4.0.0 — variant values, `exten
   `cn/config`, which is also how upstream's `lite` entry takes a merge function. The package has one entry point, so
   `tailwind-variants/lite`, `/merge`, `/config` and `/utils` have no counterpart: `twMerge: false` is the merge-free
   `tv`.
+- When a call, a slot call or a compound entry passes both `class` and `className`, `className` is used; upstream
+  applies both, `class` first.
 - `variantKeys` is exposed as upstream exposes it; the other metadata upstream attaches to the function (`base`,
   `variants`, `defaultVariants`, `slots`, `compoundVariants`, `compoundSlots`, `extend`) lives under `config`.
 

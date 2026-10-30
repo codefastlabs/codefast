@@ -113,6 +113,18 @@ isolated subprocesses; its results ledger is the only place a ratio is recorded,
 **Consequences.** A hot-path change is judged by re-running the suite, not by argument. `ARCHITECTURE.md` states what a
 shape guarantees; the suite says what it costs.
 
+## `className` wins over `class`
+
+**Context.** Upstream applies both `class` and `className` when a call passes the two. Supporting that means reading
+`class` on every call, and a component forwarding its `className` almost never passes `class` beside it, so every call
+pays for a lookup that answers nothing.
+
+**Decision.** When both are given, `className` is used and `class` is never read — on a resolver call, a slot call and a
+compound entry, so one rule covers every place a class prop appears.
+
+**Consequences.** A call forwarding `className` reads one property instead of two, which the `override` and `simple`
+rows of the benchmark suite measure. The README's migration section lists the difference from upstream.
+
 ## Not built, deliberately
 
 A browser devtools extension, a VS Code extension, a CLI migration tool and CSS-in-JS integration were once listed as a

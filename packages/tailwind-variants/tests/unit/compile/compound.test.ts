@@ -115,7 +115,7 @@ describe("compound conditions", () => {
 });
 
 describe("compound classes", () => {
-  test("applies a compound variant's class then its className", () => {
+  test("takes a compound variant's className over its class", () => {
     const answers = readEveryLane(
       () =>
         tv(
@@ -129,10 +129,10 @@ describe("compound classes", () => {
       (resolver) => resolver({ tone: "loud" }),
     );
 
-    expect(answers).toEqual(everyLane("b l font-bold underline"));
+    expect(answers).toEqual(everyLane("b l underline"));
   });
 
-  test("applies a compound slot's class then its className", () => {
+  test("takes a compound slot's className over its class", () => {
     const answers = readEveryLane(
       () =>
         tv(
@@ -146,10 +146,10 @@ describe("compound classes", () => {
       (resolver) => resolver({ tone: "loud" }).item(),
     );
 
-    expect(answers).toEqual(everyLane("i font-bold underline"));
+    expect(answers).toEqual(everyLane("i underline"));
   });
 
-  test("joins a slot compound variant's class and className per slot", () => {
+  test("takes a slot compound variant's className map over its class", () => {
     const answers = readEveryLane(
       () =>
         tv(
@@ -167,6 +167,6 @@ describe("compound classes", () => {
       },
     );
 
-    expect(answers).toEqual(everyLane(["b ring shadow", "i underline", "i underline"]));
+    expect(answers).toEqual(everyLane(["b shadow", "i underline", "i underline"]));
   });
 });

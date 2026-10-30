@@ -98,9 +98,9 @@ why a plain string class value can be assigned to `texts[0]` without a lookup.
 
 The first calls have no plan, so `resolve/cold.ts` walks the configuration itself. It is a second statement of the
 resolution rules, and every rule the plan settles at compile time it applies inline instead. The two share the pieces a
-rule lives in — `toVariantKey` and `toDefaultKey` for what a value selects, `getCompoundClass` for what a compound
-contributes, and the same absent-value rule for its conditions — and restate only the walk: a missing selection takes
-the configured default's key, or `"false"` without one; a slot prop left `null` or `undefined` keeps the call's
+rule lives in — `toVariantKey` and `toDefaultKey` for what a value selects, `pickClassProp` for what a call or a
+compound contributes, and the same absent-value rule for its conditions — and restate only the walk: a missing selection
+takes the configured default's key, or `"false"` without one; a slot prop left `null` or `undefined` keeps the call's
 selection; compound variants and compound slots read a slot's own props, then the call's, then the configured default.
 Where the plan reads a compiled group with no prototype, or a string-only flat group behind a type check, the cold lane
 guards each read with `Object.hasOwn`, which is the same answer paid per read instead of per definition. A cold slot

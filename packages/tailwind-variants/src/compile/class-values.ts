@@ -89,14 +89,14 @@ export const toPlanClasses = (value: ClassValue, slotIndexByName: Record<string,
 };
 
 /**
- * A caller's `class` and `className` as one class value, `class` first, so neither one hides the other.
+ * The classes a call or a compound definition adds: its `className`, or its `class` when it gives none.
+ *
+ * @remarks `class` is read only when `className` is absent, so a call forwarding `className` pays for one lookup.
  */
-export const toCallerClasses = (classValue: ClassValue, classNameValue: ClassValue): ClassValue => {
-  if (!classValue) {
-    return classNameValue;
-  }
+export const pickClassProp = (definition: { readonly class?: unknown; readonly className?: unknown }): ClassValue => {
+  const className = definition.className as ClassValue;
 
-  return classNameValue ? [classValue, classNameValue] : classValue;
+  return className === undefined || className === null ? (definition.class as ClassValue) : className;
 };
 
 /**
