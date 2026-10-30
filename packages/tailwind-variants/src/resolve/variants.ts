@@ -3,7 +3,9 @@
  */
 
 import { toClassText, toVariantKey } from "#compile/class-values";
+import type { PlanClasses } from "#compile/class-values";
 import { matchesCompoundConditions } from "#compile/compound";
+import { compileGroupValue } from "#compile/plan";
 import type { VariantPlan } from "#compile/plan";
 import type { ClassValue } from "#types";
 
@@ -26,7 +28,15 @@ export const resolveVariantClasses = (
   for (const entry of plan.entries) {
     const selected = variantProps[entry.name];
     // `toVariantKey` only answers `undefined` for `undefined`, which the default branch takes.
-    const classes = selected === undefined ? entry.defaultClasses : entry.group[toVariantKey(selected) as string];
+    let classes: PlanClasses | undefined;
+
+    if (selected === undefined) {
+      classes = entry.defaultClasses;
+    } else {
+      const key = toVariantKey(selected) as string;
+
+      classes = entry.group[key] ?? compileGroupValue(entry, key);
+    }
 
     if (typeof classes === "string" && classes !== "") {
       text = text === "" ? classes : text + " " + classes;

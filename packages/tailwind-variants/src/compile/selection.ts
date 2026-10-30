@@ -140,7 +140,7 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
   };
 
   for (const entry of plan.entries) {
-    addAxis(entry.name, entry.group, entry.valueCount);
+    addAxis(entry.name, entry.source, entry.valueCount);
   }
 
   if (comparedValues !== null) {

@@ -1,8 +1,8 @@
 /**
  * Compiled form of a merged variant configuration.
  *
- * Everything that depends only on the configuration is resolved once, when `tv` runs: dictionary
- * lookups become monomorphic field reads, and every class value is flattened to a string so that
+ * Everything that depends only on the configuration is resolved once: dictionary lookups become
+ * monomorphic field reads, and a variant value is flattened the first time a call selects it, so
  * resolution never calls clsx.
  */
 
@@ -26,13 +26,39 @@ import type {
  *
  * @since 0.6.0
  */
-interface VariantPlanEntry {
+export interface VariantPlanEntry {
   readonly defaultClasses: PlanClasses | undefined;
+  /** Values compiled so far, filled as callers select them; the configuration's own group when it is read in place. */
   readonly group: Record<string, PlanClasses>;
   readonly name: string;
+  /** Slot positions a value's slot map compiles against, or `null` without slots. */
+  readonly slotIndexByName: Record<string, number> | null;
+  /** The configuration's own group, which says what a key answers before its value is compiled. */
+  readonly source: Record<string, ClassValue>;
   /** Own keys the group declares, so the selection encoder sizes its axis without walking the group again. */
   readonly valueCount: number;
 }
+
+/**
+ * Compiles the value a group holds under a key the first time a caller selects it.
+ *
+ * @remarks A group read in place is the configuration's own object and already holds every value,
+ * so it is never written to.
+ */
+export const compileGroupValue = (entry: VariantPlanEntry, key: string): PlanClasses | undefined => {
+  const source = entry.source;
+
+  if (entry.group === source || !Object.hasOwn(source, key)) {
+    return undefined;
+  }
+
+  const value = source[key];
+  const compiled = typeof value === "string" ? value : toPlanClasses(value, entry.slotIndexByName);
+
+  entry.group[key] = compiled;
+
+  return compiled;
+};
 
 /**
  * One slot with the classes it starts from. `base` is always position zero.
@@ -109,32 +135,6 @@ const isReadableInPlace = (variantGroup: Record<string, ClassValue>): boolean =>
   return true;
 };
 
-/**
- * Flatten a variant group's classes onto an object with no prototype.
- *
- * @remarks The group is indexed by whatever value a caller passes, and on a plain object
- * `group["toString"]` answers with a function rather than `undefined` — which the slot lane would
- * read slot positions off, `"__proto__"` handing it `Object.prototype` itself.
- */
-const normalizeVariantGroup = (
-  variantGroup: Record<string, ClassValue>,
-  slotIndexByName: Record<string, number> | null,
-): Record<string, PlanClasses> => {
-  // Copied a key at a time on purpose: both bulk forms onto a prototype-less object — a spread with
-  // `__proto__: null`, and `Object.assign` onto `Object.create(null)` — measured about four times
-  // this, because neither keeps V8 on its fast copy path once the prototype is gone.
-  const normalized = Object.create(null) as Record<string, PlanClasses>;
-
-  for (const value of Object.keys(variantGroup)) {
-    const classes = variantGroup[value];
-
-    // A string is already in plan form; only a clsx-shaped value costs a flattening pass.
-    normalized[value] = typeof classes === "string" ? classes : toPlanClasses(classes, slotIndexByName);
-  }
-
-  return normalized;
-};
-
 const compileVariantEntries = (
   variantGroups: VariantSchema,
   defaultVariantProps: Record<string, unknown>,
@@ -155,11 +155,13 @@ const compileVariantEntries = (
       continue;
     }
 
-    // The flat lane guards each read with a type check, so a string-only group needs no copy.
+    // The flat lane guards each read with a type check, so a string-only group needs no copy. Any
+    // other group starts empty on an object with no prototype: a caller chooses the key, and on a
+    // plain object `group["toString"]` answers with a function, `"__proto__"` with `Object.prototype`.
     const group =
       slotIndexByName === null && isReadableInPlace(variantGroup)
         ? (variantGroup as Record<string, string>)
-        : normalizeVariantGroup(variantGroup, slotIndexByName);
+        : (Object.create(null) as Record<string, PlanClasses>);
     const configuredDefault = defaultVariantProps[name];
     // A group keyed by "true"/"false" reads as false unless the configuration says otherwise.
     const defaultKey =
@@ -168,11 +170,25 @@ const compileVariantEntries = (
           ? "false"
           : undefined
         : toVariantKey(configuredDefault);
+    let defaultClasses: PlanClasses | undefined;
+
+    // The default is the one value every call without a selection reads, so it compiles now.
+    if (defaultKey !== undefined && Object.hasOwn(variantGroup, defaultKey)) {
+      const value = variantGroup[defaultKey];
+
+      defaultClasses = typeof value === "string" ? value : toPlanClasses(value, slotIndexByName);
+
+      if (group !== variantGroup) {
+        group[defaultKey] = defaultClasses;
+      }
+    }
 
     entries.push({
-      defaultClasses: defaultKey === undefined || !Object.hasOwn(group, defaultKey) ? undefined : group[defaultKey],
+      defaultClasses,
       group,
       name,
+      slotIndexByName,
+      source: variantGroup,
       valueCount: Object.keys(variantGroup).length,
     });
   }

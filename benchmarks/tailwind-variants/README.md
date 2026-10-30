@@ -107,9 +107,10 @@ but out of the medians and geomeans:
 - `define-only` — define a component without rendering it. An eager library compiles here and a lazy one defers to its
   first render, so the ratio is shown but stays off the aggregates.
 - `first-render` — define a component and render it once (every slot, for a slot component); minus `define-only` it is
-  the cost of the first render alone, and it stays off the aggregates for the same reason. Its `three-renders-*` rows
-  render three selections instead, which reaches a lazy library's second-call compile — what a server render or a first
-  page load pays for a component it shows a few times.
+  the cost of the first render alone, and it stays off the aggregates for the same reason. Its `two-renders-*` and
+  `three-renders-*` rows render two and three selections instead, which reaches a lazy library's second-call compile —
+  what a server render or a first page load pays for a component it shows a few times; the two-render rows end on that
+  compile, with nothing after it to spread its cost over.
 
 The `uncached-*` rows are controls too — `@codefast/tailwind-variants` only, with its resolution cache and
 tailwind-merge's own cache switched off, so the plan walk and the merge itself stay measured, and each with-merge row

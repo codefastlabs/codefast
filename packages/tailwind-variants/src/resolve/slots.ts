@@ -7,6 +7,7 @@ import type { PlanClasses } from "#compile/class-values";
 import { toClassText, toVariantKey } from "#compile/class-values";
 import type { CompoundSlotPlanEntry } from "#compile/compound";
 import { collectMatchedCompoundSlots, matchesCompoundConditions } from "#compile/compound";
+import { compileGroupValue } from "#compile/plan";
 import type { SlotPlanEntry, VariantPlan } from "#compile/plan";
 import type { ClassValue, SlotClassResolver, SlotResolverProps, VariantSchema } from "#types";
 
@@ -94,7 +95,7 @@ const createSlotCallContext = (
     } else {
       const key = toVariantKey(selected);
 
-      classes = key ? entry.group[key] : undefined;
+      classes = key ? (entry.group[key] ?? compileGroupValue(entry, key)) : undefined;
     }
 
     matched.push(classes);
@@ -166,7 +167,7 @@ const resolveSlotWithOverrides = (
     } else {
       const key = toVariantKey(override);
 
-      classes = key ? entry.group[key] : undefined;
+      classes = key ? (entry.group[key] ?? compileGroupValue(entry, key)) : undefined;
     }
 
     index++;
