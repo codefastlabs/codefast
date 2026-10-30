@@ -43,7 +43,7 @@ function TextButton({ className, ...props }: ComponentProps<"button">) {
       type="button"
       {...props}
       className={cn(
-        "border-bh-border bh-hover-ready:border-bh-border-strong bg-bh-fill-white-4 bh-hover-ready:bg-bh-fill-white-7 text-bh-ink bh-hover-ready:text-bh-ink-hover focus-visible:outline-bh-blue inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[0.8125rem] font-medium [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none",
+        "border-bh-border bh-hover-ready:border-bh-border-strong bg-bh-fill-white-4 bh-hover-ready:bg-bh-fill-white-7 text-bh-ink bh-hover-ready:text-bh-ink-hover focus-visible:outline-bh-blue text-bh-small inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 font-medium [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none",
         className,
       )}
     />
@@ -61,7 +61,7 @@ function ChipSelect({ label, displayValue, className, ...props }: ChipSelectProp
   return (
     <span
       className={cn(
-        "border-bh-border bg-bh-fill-white-4 has-[select:hover]:bg-bh-fill-white-7 has-[select:focus-visible]:outline-bh-blue relative inline-flex h-8 max-w-full shrink-0 items-center gap-1.5 rounded-full border ps-3 pe-2 text-[0.75rem] text-zinc-400 has-[select:focus-visible]:outline has-[select:focus-visible]:outline-offset-2",
+        "border-bh-border bg-bh-fill-white-4 has-[select:hover]:bg-bh-fill-white-7 has-[select:focus-visible]:outline-bh-blue text-bh-caption relative inline-flex h-8 max-w-full shrink-0 items-center gap-1.5 rounded-full border ps-3 pe-2 text-zinc-400 has-[select:focus-visible]:outline has-[select:focus-visible]:outline-offset-2",
         className,
       )}
     >
@@ -115,15 +115,15 @@ function ScenarioPicker({
         {current !== undefined && (
           <span
             aria-hidden="true"
-            className="bg-bh-blue/15 shrink-0 rounded-full px-2 py-px text-[0.6875rem] font-medium text-sky-200"
+            className="bg-bh-blue/15 text-bh-caption shrink-0 rounded-full px-2 py-px font-medium text-sky-200"
           >
             {current.group}
           </span>
         )}
-        <span aria-hidden="true" className="truncate text-sm font-medium text-zinc-100">
+        <span aria-hidden="true" className="text-bh-small truncate font-medium text-zinc-100">
           {current?.id ?? "No scenario matches"}
         </span>
-        <span aria-hidden="true" className="ms-auto shrink-0 text-xs text-zinc-500 tabular-nums">
+        <span aria-hidden="true" className="text-bh-caption text-bh-label-muted ms-auto shrink-0 tabular-nums">
           {visibleScenarios.length > 0 ? `${String(scenarioIndex + 1)} / ${String(visibleScenarios.length)}` : ""}
         </span>
         <select
@@ -190,7 +190,7 @@ function ReportMenu({ runFolder }: ReportMenuProps) {
 
   const link = (format: "md" | "json"): ReactNode => (
     <a
-      className="block rounded-lg px-3 py-2 text-[0.8125rem] text-zinc-200 hover:bg-white/6"
+      className="text-bh-small block rounded-lg px-3 py-2 text-zinc-200 hover:bg-white/6"
       download
       href={`/api/report.${format}?run=${encodeURIComponent(runFolder)}`}
       onClick={() => menuRef.current?.removeAttribute("open")}
@@ -209,7 +209,7 @@ function ReportMenu({ runFolder }: ReportMenuProps) {
         <DownloadIcon className="size-4" />
       </summary>
       <div className="border-bh-border-strong bg-bh-surface-elevated absolute end-0 top-11 z-50 w-48 rounded-xl border p-1.5 backdrop-blur-2xl">
-        <p className="px-3 pt-1 pb-1.5 text-[0.6875rem] text-zinc-500">Newest matching run</p>
+        <p className="text-bh-caption text-bh-label-muted px-3 pt-1 pb-1.5">Newest matching run</p>
         {link("md")}
         {link("json")}
       </div>
@@ -317,7 +317,7 @@ export function ChartControlPanel({
         />
         <label
           className={cn(
-            "border-bh-border has-[input:focus-visible]:border-bh-blue relative flex h-9 items-center gap-2 rounded-xl border bg-black/30 ps-2.5 text-zinc-500 max-sm:flex-1 sm:w-48",
+            "border-bh-border has-[input:focus-visible]:border-bh-blue text-bh-label-muted relative flex h-9 items-center gap-2 rounded-xl border bg-black/30 ps-2.5 max-sm:flex-1 sm:w-48",
             foldable,
           )}
           htmlFor="scenario-search"
@@ -326,7 +326,7 @@ export function ChartControlPanel({
           <input
             aria-label="Search scenarios"
             autoComplete="off"
-            className="h-full min-w-0 flex-1 bg-transparent pe-2.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none"
+            className="text-bh-small h-full min-w-0 flex-1 bg-transparent pe-2.5 text-zinc-100 placeholder:text-zinc-500 focus:outline-none"
             id="scenario-search"
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search scenarios"
@@ -403,7 +403,7 @@ export function ChartControlPanel({
             ))}
           </ChipSelect>
         )}
-        {isCompact && <p className="m-0 truncate text-xs text-zinc-500 max-sm:hidden">{filterSummary}</p>}
+        {isCompact && <p className="text-bh-caption text-bh-label-muted m-0 truncate max-sm:hidden">{filterSummary}</p>}
         <div className="ms-auto flex shrink-0 items-center gap-2">
           {isCompact ? (
             <TextButton className="max-sm:hidden" onClick={togglePinned} title="Show every filter while scrolling">
@@ -455,14 +455,14 @@ export function ChartControlPanel({
           className={cn("flex flex-wrap items-center gap-1.5 px-1", foldable)}
           role="group"
         >
-          <span className="text-bh-label-muted me-1.5 text-[0.6875rem] font-medium">Features</span>
+          <span className="text-bh-label-muted text-bh-caption me-1.5 font-medium">Features</span>
           {facetLabels.map((label) => {
             const isSelected = selectedFacets.includes(label);
             return (
               <button
                 aria-pressed={isSelected}
                 className={cn(
-                  "focus-visible:outline-bh-blue inline-flex min-h-7 items-center rounded-full border px-2.5 py-0.5 text-[0.75rem] leading-5 font-medium [transition:background_0.15s_ease,border-color_0.15s_ease,color_0.15s_ease] focus-visible:outline focus-visible:outline-offset-2 motion-reduce:transition-none",
+                  "focus-visible:outline-bh-blue text-bh-caption inline-flex min-h-7 items-center rounded-full border px-2.5 py-0.5 leading-5 font-medium [transition:background_0.15s_ease,border-color_0.15s_ease,color_0.15s_ease] focus-visible:outline focus-visible:outline-offset-2 motion-reduce:transition-none",
                   isSelected
                     ? "border-bh-blue-ring bg-bh-blue/15 text-zinc-50"
                     : "border-bh-border bg-bh-fill-white-4 hover:bg-bh-fill-white-7 text-zinc-400 hover:text-zinc-200",

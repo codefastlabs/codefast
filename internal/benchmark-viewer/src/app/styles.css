@@ -4,6 +4,18 @@
 @theme {
   --font-bh: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
 
+  /* Five sizes and nothing under 12px: labels, tables and controls, prose, card figures, the page title. */
+  --text-bh-caption: 0.75rem;
+  --text-bh-caption--line-height: 1.4;
+  --text-bh-small: 0.875rem;
+  --text-bh-small--line-height: 1.45;
+  --text-bh-body: 0.9375rem;
+  --text-bh-body--line-height: 1.6;
+  --text-bh-title: 1.0625rem;
+  --text-bh-title--line-height: 1.35;
+  --text-bh-display: 1.75rem;
+  --text-bh-display--line-height: 1.2;
+
   --color-bh-blue: #0a84ff;
   --color-bh-blue-hover: #409cff;
   --color-bh-blue-ring: rgba(10, 132, 255, 0.35);
@@ -14,7 +26,7 @@
   --color-bh-glow-green: rgba(52, 199, 89, 0.055);
 
   --color-bh-label: rgb(152, 152, 157);
-  --color-bh-label-muted: rgb(113, 113, 118);
+  --color-bh-label-muted: rgb(142, 142, 147);
   --color-bh-border: rgba(255, 255, 255, 0.065);
   --color-bh-border-strong: rgba(255, 255, 255, 0.1);
   --color-bh-surface: rgba(30, 30, 34, 0.55);

@@ -89,7 +89,7 @@ export function createMarkersPlugin(markers: ReadonlyArray<ChartMarker>): Plugin
       ctx.save();
       ctx.setLineDash([3, 3]);
       ctx.lineWidth = 1;
-      ctx.font = "10px system-ui, sans-serif";
+      ctx.font = "12px system-ui, sans-serif";
       ctx.textAlign = "left";
       ctx.textBaseline = "top";
       for (const marker of markers) {

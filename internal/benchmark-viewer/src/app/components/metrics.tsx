@@ -23,7 +23,7 @@ interface MetricsPanelProps {
 }
 
 const chip = tv({
-  base: "inline-flex items-center rounded-full px-[0.65rem] py-[0.15rem] text-[0.7rem] font-medium",
+  base: "text-bh-caption inline-flex items-center rounded-full px-[0.65rem] py-[0.15rem] font-medium",
   variants: {
     variant: {
       warn: "border-bh-warn-border bg-bh-warn-bg text-bh-warn-fg border",
@@ -46,7 +46,7 @@ function renderMetaItem(item: MetaItem) {
     case "text":
       return item.value;
     case "fine-text":
-      return <span className="text-[0.6875rem] leading-[1.45] opacity-90">{item.value}</span>;
+      return <span className="text-bh-caption leading-[1.45] opacity-90">{item.value}</span>;
     case "ratio-paired":
       return (
         <>
@@ -59,7 +59,7 @@ function renderMetaItem(item: MetaItem) {
         <div className="mt-[0.28rem] flex flex-col gap-[0.42rem]">
           {item.rows.map((row) => (
             <div
-              className="flex items-baseline justify-between gap-3 text-[0.72rem] leading-[1.35] tracking-[-0.012em]"
+              className="text-bh-caption flex items-baseline justify-between gap-3 leading-[1.35] tracking-[-0.012em]"
               key={row.libName}
             >
               <span className="text-bh-label min-w-0">{row.libName}</span>
@@ -84,7 +84,7 @@ export function MetricsPanel({ currentScenario, runIndices, metricsData }: Metri
       id="summary"
     >
       <div className="flex flex-wrap items-baseline gap-2 gap-y-1">
-        <h2 className="text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
+        <h2 className="text-bh-label text-bh-caption font-semibold tracking-[0.14em] uppercase">
           Selected scenario metrics
         </h2>
         {currentScenario && runIndices.length > 0 && (
@@ -93,13 +93,17 @@ export function MetricsPanel({ currentScenario, runIndices, metricsData }: Metri
           </span>
         )}
       </div>
-      {currentScenario?.what && <p className="mt-2 text-sm leading-relaxed text-zinc-400">{currentScenario.what}</p>}
+      {currentScenario?.what && (
+        <p className="text-bh-small mt-2 leading-relaxed text-zinc-400">{currentScenario.what}</p>
+      )}
       <div className="mt-5 grid grid-cols-[1fr] gap-3 sm:grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))]">
         {metricsData?.cards.map((card) => (
           <MetricCard key={card.label} {...card} />
         ))}
       </div>
-      {metricsData?.footnote && <p className="mt-3 text-xs leading-relaxed text-zinc-500">{metricsData.footnote}</p>}
+      {metricsData?.footnote && (
+        <p className="text-bh-small text-bh-label-muted mt-3 leading-relaxed">{metricsData.footnote}</p>
+      )}
     </section>
   );
 }
@@ -115,16 +119,16 @@ function MetricCard({ label, value, meta, accentColor, isRatio }: MetricCardProp
       role="group"
       style={accentColor ? ({ "--color-bh-metric-accent": accentColor } as CSSProperties) : undefined}
     >
-      <div className="text-bh-metric-accent mb-[0.4rem] text-[0.625rem] font-semibold tracking-[0.09em] uppercase">
+      <div className="text-bh-metric-accent text-bh-caption mb-[0.4rem] font-semibold tracking-[0.09em] uppercase">
         {label}
       </div>
-      <div className="text-bh-metric-accent text-[1.05rem] leading-[1.3] font-semibold tracking-[-0.028em] wrap-break-word tabular-nums">
+      <div className="text-bh-metric-accent text-bh-title leading-[1.3] font-semibold tracking-[-0.028em] wrap-break-word tabular-nums">
         {value}
       </div>
       {meta.map((item, metaIndex) => (
         <div
           className={cn(
-            "text-bh-label text-[0.72rem] leading-[1.42] font-normal tracking-[-0.014em]",
+            "text-bh-label text-bh-caption leading-[1.42] font-normal tracking-[-0.014em]",
             metaIndex === 0 ? "mt-[0.38rem]" : "mt-[0.22rem]",
           )}
           key={metaIndex}

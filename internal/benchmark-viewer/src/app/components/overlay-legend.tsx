@@ -98,19 +98,19 @@ export function OverlayLegend({
     <div className="border-bh-border bg-bh-scrim-table mt-4 overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
       <table
         aria-label="Rows of the overlaid group and their newest values per library"
-        className="w-full border-collapse text-[0.8rem]"
+        className="text-bh-small w-full border-collapse tabular-nums"
       >
         <thead>
           <tr>
             <th
-              className="text-bh-label px-3 py-1.5 text-start text-[0.7rem] font-semibold tracking-wider uppercase"
+              className="text-bh-label text-bh-caption px-3 py-1.5 text-start font-semibold tracking-wider uppercase"
               scope="col"
             >
               Row
             </th>
             {drawnLibraries.map((library) => (
               <th
-                className="text-bh-label px-3 py-1.5 text-end text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase"
+                className="text-bh-label text-bh-caption px-3 py-1.5 text-end font-semibold tracking-wider whitespace-nowrap uppercase"
                 key={library.key}
                 scope="col"
               >
@@ -123,7 +123,7 @@ export function OverlayLegend({
               </th>
             ))}
             <th
-              className="text-bh-label px-3 py-1.5 text-end text-[0.7rem] font-semibold tracking-wider uppercase"
+              className="text-bh-label text-bh-caption px-3 py-1.5 text-end font-semibold tracking-wider uppercase"
               scope="col"
             >
               Drawn
@@ -140,7 +140,7 @@ export function OverlayLegend({
                 className={cn(
                   "hover:bg-bh-table-hover border-t border-white/6",
                   isSelected && "bg-bh-blue/10",
-                  !isDrawn && "text-zinc-500",
+                  !isDrawn && "text-bh-label-muted",
                 )}
                 key={row.id}
                 onMouseEnter={() => onHoverRow(isDrawn ? row.id : null)}
@@ -182,7 +182,7 @@ export function OverlayLegend({
                       {value === null ? "—" : fmtHzCompact(value)}
                       {ratio !== null && (
                         <span
-                          className="text-bh-ratio-accent ms-1.5 text-[0.72rem]"
+                          className="text-bh-ratio-accent text-bh-caption ms-1.5"
                           title="Ratio to the selected row, same library"
                         >
                           {fmtRatio(ratio)}

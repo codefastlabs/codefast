@@ -12,7 +12,7 @@ interface PaletteAction {
 }
 
 const paletteItem = tv({
-  base: "focus-visible:outline-bh-blue mb-0.5 w-full cursor-pointer rounded-lg px-3 py-2.5 text-start text-sm text-zinc-200 hover:bg-white/6 focus-visible:outline focus-visible:outline-offset-2",
+  base: "focus-visible:outline-bh-blue text-bh-small mb-0.5 w-full cursor-pointer rounded-lg px-3 py-2.5 text-start text-zinc-200 hover:bg-white/6 focus-visible:outline focus-visible:outline-offset-2",
   variants: {
     active: {
       true: "bg-white/10 text-white",
@@ -179,7 +179,7 @@ export function CommandPalette({
           aria-haspopup="listbox"
           aria-label="Search actions"
           autoComplete="off"
-          className="focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue w-full rounded-none border-0 border-b border-white/8 bg-black/25 px-4 py-3 text-sm text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2"
+          className="focus:border-bh-blue focus:ring-bh-blue/35 focus-visible:outline-bh-blue text-bh-small w-full rounded-none border-0 border-b border-white/8 bg-black/25 px-4 py-3 text-zinc-100 shadow-(--shadow-bh-field-inset) placeholder:text-zinc-500 focus:ring-2 focus:outline-none focus-visible:outline focus-visible:outline-offset-2"
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder="Search actions…"
           ref={inputRef}
@@ -193,7 +193,7 @@ export function CommandPalette({
           role="listbox"
         >
           {filtered.length === 0 ? (
-            <li className="px-3 py-6 text-center text-sm text-zinc-500" role="presentation">
+            <li className="text-bh-small text-bh-label-muted px-3 py-6 text-center" role="presentation">
               No matching actions
             </li>
           ) : (
@@ -218,7 +218,7 @@ export function CommandPalette({
             ))
           )}
         </ul>
-        <p className="border-t border-white/6 px-3 py-2 text-[0.6875rem] text-zinc-500">
+        <p className="text-bh-caption text-bh-label-muted border-t border-white/6 px-3 py-2">
           <PaletteShortcutHint />
         </p>
       </div>

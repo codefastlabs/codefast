@@ -34,6 +34,10 @@ import { CHART_SKIP_TARGET_ID } from "#app/lib/skip-chart";
 import { cn } from "#app/lib/utils";
 import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#types";
 
+/** The chart's text, drawn on a canvas that page CSS never reaches: the page's small size, a step brighter. */
+const CHART_FONT = { family: "-apple-system, BlinkMacSystemFont, system-ui, sans-serif", size: 13 } as const;
+const CHART_TICK_COLOR = "rgba(235, 235, 245, 0.62)";
+
 /** Drops any alpha so a tooltip swatch shows the line's true hue, not the faint fill under the curve. */
 function toOpaqueColor(color: unknown): string {
   if (typeof color !== "string") {
@@ -48,7 +52,7 @@ function SegButton({ className, ...props }: ComponentProps<"button">) {
     <button
       {...props}
       className={cn(
-        "border-e-bh-border bg-bh-surface-seg text-bh-seg-ink hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled m-0 rounded-none border-0 border-e px-3 py-[0.35rem] text-[0.8125rem] leading-5 font-medium last:border-e-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40",
+        "border-e-bh-border bg-bh-surface-seg text-bh-seg-ink hover:bg-bh-surface-seg-hover disabled:hover:bg-bh-table-seg-disabled text-bh-small m-0 rounded-none border-0 border-e px-3 py-[0.35rem] leading-5 font-medium last:border-e-0 focus:z-1 focus:outline-none focus-visible:z-1 focus-visible:shadow-[inset_0_0_0_0.125rem_var(--color-bh-blue)] disabled:cursor-not-allowed disabled:opacity-40",
         className,
       )}
       type="button"
@@ -60,7 +64,7 @@ function ChartTh({ className, ...props }: ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-start text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
+        "border-b-bh-table-line bg-bh-table-head text-bh-label text-bh-caption z-3 border-b px-[0.65rem] py-[0.15rem] text-start font-semibold tracking-wider whitespace-nowrap uppercase",
         className,
       )}
       {...props}
@@ -439,7 +443,8 @@ export function ChartPanel({
           maxTicksLimit: Math.min(22, Math.max(pointCount || 2, 2)),
           maxRotation: 52,
           minRotation: 0,
-          color: "rgba(235, 235, 245, 0.42)",
+          color: CHART_TICK_COLOR,
+          font: CHART_FONT,
         },
         grid: { color: "rgba(255, 255, 255, 0.055)", drawOnChartArea: true },
         ...xWindow,
@@ -450,10 +455,12 @@ export function ChartPanel({
         title: {
           display: true,
           text: indexToFirstRun ? "% of first plotted run" : "hz/op (median)",
-          color: "rgba(235, 235, 245, 0.5)",
+          color: CHART_TICK_COLOR,
+          font: CHART_FONT,
         },
         ticks: {
-          color: "rgba(235, 235, 245, 0.42)",
+          color: CHART_TICK_COLOR,
+          font: CHART_FONT,
           // Compact ticks (70M) stay readable where full digits clip on narrow viewports; a log axis
           // labels only the 1, 2 and 5 of each decade so its ticks do not pile up.
           callback: (value: number | string) => {
@@ -474,8 +481,8 @@ export function ChartPanel({
       scales["y1"] = {
         type: "linear",
         position: "right",
-        title: { display: true, text: "ratio", color: "rgba(235, 235, 245, 0.5)" },
-        ticks: { color: "rgba(255, 200, 150, 0.55)" },
+        title: { display: true, text: "ratio", color: CHART_TICK_COLOR, font: CHART_FONT },
+        ticks: { color: "rgba(255, 200, 150, 0.72)", font: CHART_FONT },
         grid: { drawOnChartArea: false },
       };
     }
@@ -501,7 +508,8 @@ export function ChartPanel({
             // The overlay draws its legend as a table under the chart instead.
             display: !overlayActive,
             labels: {
-              color: "rgba(235, 235, 245, 0.72)",
+              color: "rgba(235, 235, 245, 0.8)",
+              font: CHART_FONT,
               boxWidth: 14,
               boxHeight: 8,
               filter: (item) => {
@@ -511,6 +519,8 @@ export function ChartPanel({
             },
           },
           tooltip: {
+            bodyFont: CHART_FONT,
+            titleFont: { ...CHART_FONT, weight: "bold" },
             filter: (item) => {
               const datasetLabel = item.dataset.label ?? "";
               return !datasetLabel.endsWith(" P25") && !datasetLabel.includes("P25–P75");
@@ -764,10 +774,10 @@ export function ChartPanel({
     >
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/6 pb-4">
         <div>
-          <h2 className="text-[0.9375rem] font-semibold tracking-[-0.01em] text-zinc-50" id="chart-section-title">
+          <h2 className="text-bh-body font-semibold tracking-[-0.01em] text-zinc-50" id="chart-section-title">
             Throughput over filtered runs
           </h2>
-          <p className="mt-1.5 text-[0.8125rem] leading-snug text-zinc-500">
+          <p className="text-bh-small text-bh-label-muted mt-1.5 leading-snug">
             {hasData
               ? buildChartSubtitle(
                   scenario,
@@ -826,7 +836,7 @@ export function ChartPanel({
         </SegButton>
       </div>
 
-      <p className="text-[0.8125rem] leading-relaxed text-zinc-500">
+      <p className="text-bh-small text-bh-label-muted leading-relaxed">
         Opens on newest portion of history; Reset zoom restores full range. <WheelHint /> Drag pans on the chart ·{" "}
         {overlayActive ? "the table below the chart selects, hides and lifts rows" : "legend toggles series"}. Dashed
         yellow rules mark runs where the row's definition or the primary library's version changed.
@@ -844,11 +854,11 @@ export function ChartPanel({
             className="bg-bh-overlay-soft absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl p-6 text-center backdrop-blur-md"
             id="chart-empty-state"
           >
-            <p className="text-bh-meta max-w-96 text-sm leading-normal">{emptyReason}</p>
+            <p className="text-bh-meta text-bh-small max-w-96 leading-normal">{emptyReason}</p>
             <div className="flex flex-wrap items-center justify-center gap-2">
               {envKey && (
                 <button
-                  className="focus-visible:ring-bh-blue inline-flex rounded-xl border border-white/12 bg-white/8 px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/14 focus-visible:ring-2 focus-visible:outline-none"
+                  className="focus-visible:ring-bh-blue text-bh-small inline-flex rounded-xl border border-white/12 bg-white/8 px-3.5 py-2 font-medium text-zinc-100 hover:bg-white/14 focus-visible:ring-2 focus-visible:outline-none"
                   onClick={onClearEnv}
                   type="button"
                 >
@@ -856,14 +866,14 @@ export function ChartPanel({
                 </button>
               )}
               <button
-                className="focus-visible:ring-bh-blue inline-flex rounded-xl border border-white/12 bg-white/8 px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/14 focus-visible:ring-2 focus-visible:outline-none"
+                className="focus-visible:ring-bh-blue text-bh-small inline-flex rounded-xl border border-white/12 bg-white/8 px-3.5 py-2 font-medium text-zinc-100 hover:bg-white/14 focus-visible:ring-2 focus-visible:outline-none"
                 onClick={onClearSearch}
                 type="button"
               >
                 Clear search
               </button>
               <button
-                className="focus-visible:ring-bh-blue inline-flex rounded-xl border border-white/12 bg-white/8 px-3.5 py-2 text-sm font-medium text-zinc-100 hover:bg-white/14 focus-visible:ring-2 focus-visible:outline-none"
+                className="focus-visible:ring-bh-blue text-bh-small inline-flex rounded-xl border border-white/12 bg-white/8 px-3.5 py-2 font-medium text-zinc-100 hover:bg-white/14 focus-visible:ring-2 focus-visible:outline-none"
                 onClick={onClearGroup}
                 type="button"
               >
@@ -897,13 +907,13 @@ export function ChartPanel({
       {/* Display toggles — `group` enables group-open: chevron rotation */}
       <details className="group mt-1 border-t border-white/6 sm:mt-0 sm:border-t-0" ref={displayDetailsRef}>
         <summary className="focus-visible:outline-bh-blue flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl py-2.5 pe-0.5 text-zinc-200 select-none marker:content-[''] focus-visible:outline focus-visible:outline-offset-2 max-sm:-mx-0.5 max-sm:px-1 max-sm:active:bg-white/4 sm:hidden [&::-webkit-details-marker]:hidden">
-          <span className="text-bh-label text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
+          <span className="text-bh-label text-bh-caption font-semibold tracking-[0.14em] uppercase">
             Display &amp; export
           </span>
-          <ChevronDownIcon className="size-4 shrink-0 text-zinc-500 transition-transform duration-200 ease-out group-open:rotate-180 sm:hidden" />
+          <ChevronDownIcon className="text-bh-label-muted size-4 shrink-0 transition-transform duration-200 ease-out group-open:rotate-180 sm:hidden" />
         </summary>
-        <div className="flex flex-col gap-3 text-[0.9rem] text-zinc-300 max-sm:gap-0 max-sm:divide-y max-sm:divide-white/6 max-sm:overflow-hidden max-sm:rounded-xl max-sm:bg-black/22 max-sm:py-0 max-sm:ring-1 max-sm:ring-white/6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:divide-y-0 sm:pt-4">
-          <span className="text-bh-label-muted hidden text-[0.62rem] tracking-[0.12em] sm:inline">Display</span>
+        <div className="text-bh-body flex flex-col gap-3 text-zinc-300 max-sm:gap-0 max-sm:divide-y max-sm:divide-white/6 max-sm:overflow-hidden max-sm:rounded-xl max-sm:bg-black/22 max-sm:py-0 max-sm:ring-1 max-sm:ring-white/6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2 sm:divide-y-0 sm:pt-4">
+          <span className="text-bh-label-muted text-bh-caption hidden tracking-[0.12em] sm:inline">Display</span>
           <label className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg py-0.5 hover:text-zinc-100 max-sm:min-h-11 max-sm:justify-between max-sm:gap-3 max-sm:border-0 max-sm:px-3 max-sm:py-2.5">
             <input
               aria-label="Overlay group"
@@ -974,7 +984,7 @@ export function ChartPanel({
               : "Primary ratios"}
           </label>
           <button
-            className="border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload text-bh-ink hover:bg-bh-fill-white-7 hover:border-bh-border-strong hover:text-bh-ink-hover focus-visible:outline-bh-blue order-last w-full shrink-0 justify-center rounded-xl border px-4 py-2.5 font-[inherit] text-[0.8125rem] font-medium tracking-[-0.015em] backdrop-blur-md backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3 sm:order-0 sm:ms-auto sm:w-auto sm:py-2"
+            className="border-bh-border bg-bh-fill-white-4 shadow-bh-btn-reload text-bh-ink hover:bg-bh-fill-white-7 hover:border-bh-border-strong hover:text-bh-ink-hover focus-visible:outline-bh-blue text-bh-small order-last w-full shrink-0 justify-center rounded-xl border px-4 py-2.5 font-[inherit] font-medium tracking-[-0.015em] backdrop-blur-md backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] max-sm:mt-0 max-sm:min-h-11 max-sm:rounded-none max-sm:border-0 max-sm:py-3 sm:order-0 sm:ms-auto sm:w-auto sm:py-2"
             id="chart-download-png-btn"
             onClick={() => onDownloadPng(chartRef)}
             title="Capture current chart view as PNG"
@@ -990,16 +1000,16 @@ export function ChartPanel({
         className="border-bh-border bg-bh-surface open:bg-bh-surface-open mt-6 rounded-2xl border px-4 py-3 shadow-(--shadow-bh-glass-tight) backdrop-blur-xl backdrop-saturate-180 sm:px-5"
         id="chart-data-details"
       >
-        <summary className="cursor-pointer list-none text-sm font-semibold text-zinc-100 select-none marker:content-[''] hover:text-white [&::-webkit-details-marker]:hidden">
+        <summary className="text-bh-small cursor-pointer list-none font-semibold text-zinc-100 select-none marker:content-[''] hover:text-white [&::-webkit-details-marker]:hidden">
           Tabular data for the current chart (accessibility)
         </summary>
-        <p className="mt-2 text-xs leading-relaxed text-zinc-500">
+        <p className="text-bh-small text-bh-label-muted mt-2 leading-relaxed">
           {overlayActive
             ? "The selected row's points and libraries; the chart above overlays every row of its group. Newest run first."
             : "Same points and libraries as the line chart above; newest run first. Useful for screen readers and copy‑paste."}
         </p>
         <div className="border-bh-border bg-bh-scrim-table mt-3 overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
-          <table aria-label="Chart series data" className="w-full border-collapse text-[0.8rem]">
+          <table aria-label="Chart series data" className="text-bh-small w-full border-collapse tabular-nums">
             {hasData && (
               <thead>
                 <ChartTableHeader compareLibs={compareLibs} orderedLibraries={orderedLibraries} />
