@@ -1,6 +1,6 @@
 /**
  * The package's public entry point: `tv` wraps a configuration in a resolver that reads it directly
- * once, compiles it into a plan on its second call, and runs that plan on every call after.
+ * at first, compiles it into a plan once it is called again, and runs that plan on every call after.
  */
 
 import { twMerge } from "cn";
@@ -49,7 +49,7 @@ interface ResolverMemo<Value> {
   readonly keyOf: (variantProps: Record<string, unknown>) => number | string;
 }
 
-/** Everything a resolver settles on its second call: the plan, and the store for the lane it runs. */
+/** Everything a resolver settles when it compiles: the plan, and the store for the lane it runs. */
 interface CompiledResolver {
   /** Admits a caller's class string to a selection's pairs from its second sighting. */
   readonly flatDoor: ClassDoor | null;
@@ -156,8 +156,8 @@ export function tv<
 /**
  * Wraps a configuration in a resolver that reads it directly once, then compiles it into a plan.
  *
- * @remarks The first call resolves straight from the configuration, so a component defined and
- * rendered once never pays for a plan; the second call compiles, and every call after runs the plan.
+ * @remarks The first calls resolve straight from the configuration — two without slots, one with them — so
+ * a component rendered no more often never pays for a plan; the next call compiles, and every call after runs it.
  *
  * @since 0.3.16-canary.0
  */
@@ -185,9 +185,10 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
 
   const slotConfiguration = hasSlotsConfig(mergedConfiguration) ? mergedConfiguration : null;
 
-  // Compiled on the second call, so a component defined and rendered once pays for neither.
+  // Compiled on the third call without slots and the second with them, so a component rendered once or twice pays
+  // for no plan it would not use; a cold slot call costs more than a compile.
   let compiled: CompiledResolver | null = null;
-  let isColdCall = true;
+  let coldCallsLeft = slotConfiguration === null ? 2 : 1;
 
   // Typed as what the engine builds; the public, per-config result type is applied once, below.
   const variantResolverFunction = (
@@ -196,8 +197,8 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
     const props = variantProps ?? EMPTY_PROPS;
 
     if (compiled === null) {
-      if (isColdCall) {
-        isColdCall = false;
+      if (coldCallsLeft > 0) {
+        coldCallsLeft--;
 
         return slotConfiguration === null
           ? resolveColdVariantClasses(mergedConfiguration, mergeClasses, props)

@@ -32,7 +32,7 @@ one merge config cannot be trusted after the global changes.
 **Consequences.** Every resolver knows its merge configuration at compile time. Migration needs one destructure where
 upstream assigned `createTV`'s result directly; the README records both departures.
 
-## Settle everything once, on the second call
+## Settle everything once, when a component is called again
 
 **Context.** A configuration is fixed the moment `tv` is called; the resolver it returns runs on every render, forever.
 Upstream pays for dictionary walks and array flattening on each call. But a design system defines every component at
@@ -40,15 +40,17 @@ module load and renders many of them once or not at all on a given page, so work
 components that never earn it back.
 
 **Decision.** `tv()` only wraps the configuration. The first call resolves straight from it, through a cold lane that
-answers exactly what the plan answers; the second call compiles the plan — flattened class strings, precomputed slot
-positions, compound conditions turned into checks — and every call after is string concatenation over that plan.
+answers exactly what the plan answers; the next call compiles the plan — flattened class strings, precomputed slot
+positions, compound conditions turned into checks — and every call after is string concatenation over that plan. A
+component without slots resolves its first two calls cold, because a cold flat call costs less than a compile and many
+components render exactly twice; a slot component compiles on its second, because a cold slot call costs more.
 
 **Consequences.** A definition and a single render each cost less than upstream's, and a component pays for its plan
-only once it has rendered twice. The benchmark suite prices both ends (`define-only-*` and `first-render-*` against the
-resolution rows) so the trade stays visible. The cold lane is a second implementation of the resolution rules and is
-held to the plan by the behaviour sweep, which drives every case through a fresh resolver as well as a shared one.
-Anything that would move work back into the per-render path is a regression, whatever it saves at definition or first
-render.
+only once it has rendered more than that. The benchmark suite prices both ends (`define-only-*` and `first-render-*`
+against the resolution rows) so the trade stays visible. The cold lane is a second implementation of the resolution
+rules and is held to the plan by the behaviour sweep, which drives every case through a fresh resolver as well as a
+shared one. Anything that would move work back into the per-render path is a regression, whatever it saves at definition
+or first render.
 
 ## Cache resolutions per selection, with an opt-out
 

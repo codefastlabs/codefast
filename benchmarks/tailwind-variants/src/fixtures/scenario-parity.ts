@@ -421,11 +421,20 @@ export const WIDE_SLOTS_WITH_MERGE = {
   batch: wideSlotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
-/** Defining a button and rendering it twice, which reaches a lazy library's second-call compile and nothing after it. */
+/** Defining a button and rendering it twice, the most a component without slots renders before codefast compiles it. */
 export const TWO_RENDERS_SIMPLE = {
   id: "two-renders-simple",
   group: "first-render",
-  what: "Define a button component and render it with two selections (per definition; reaches a second-call compile — off the aggregates)",
+  what: "Define a button component and render it with two selections (per definition; a lazy library compiles within these renders — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
+} as const satisfies ScenarioDescriptor;
+
+/** Defining a component with many defaulted variants and rendering it twice, where the compile grows with the variants. */
+export const TWO_RENDERS_WIDE = {
+  id: "two-renders-wide",
+  group: "first-render",
+  what: "Define a component with 24 defaulted variants and render it with two selections (per definition; a lazy library compiles within these renders — off the aggregates)",
   batch: COLD_DEFINITIONS_PER_LOOP,
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
@@ -434,16 +443,16 @@ export const TWO_RENDERS_SIMPLE = {
 export const TWO_RENDERS_SLOTS = {
   id: "two-renders-slots",
   group: "first-render",
-  what: "Define a slot component and render every slot for two selections (per definition; reaches a second-call compile — off the aggregates)",
+  what: "Define a slot component and render every slot for two selections (per definition; a lazy library compiles within these renders — off the aggregates)",
   batch: COLD_DEFINITIONS_PER_LOOP,
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** Defining a button and rendering it three times, which reaches a lazy library's second-call compile. */
+/** Defining a button and rendering it three times, which reaches a lazy library's compile. */
 export const THREE_RENDERS_SIMPLE = {
   id: "three-renders-simple",
   group: "first-render",
-  what: "Define a button component and render it with three selections (per definition; reaches a second-call compile — off the aggregates)",
+  what: "Define a button component and render it with three selections (per definition; a lazy library compiles within these renders — off the aggregates)",
   batch: COLD_DEFINITIONS_PER_LOOP,
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
@@ -452,7 +461,7 @@ export const THREE_RENDERS_SIMPLE = {
 export const THREE_RENDERS_SLOTS = {
   id: "three-renders-slots",
   group: "first-render",
-  what: "Define a slot component and render every slot for three selections (per definition; reaches a second-call compile — off the aggregates)",
+  what: "Define a slot component and render every slot for three selections (per definition; a lazy library compiles within these renders — off the aggregates)",
   batch: COLD_DEFINITIONS_PER_LOOP,
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;

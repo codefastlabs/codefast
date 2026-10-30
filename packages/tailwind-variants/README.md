@@ -16,16 +16,17 @@ building components whose classes depend on props.
 a set of props. Describe your `base`, `variants`, and `slots` once; call the function with props; get back a merged
 class string. It's a drop-in, faster replacement for `tailwind-variants`, with the same configuration shape.
 
-`tv()` costs next to nothing. The first call resolves straight from the configuration, the second compiles it into a
-plan, and from then on resolving a component is string work — with a repeated selection answered from a cache.
+`tv()` costs next to nothing. The first calls resolve straight from the configuration, the next compiles it into a plan,
+and from then on resolving a component is string work — with a repeated selection answered from a cache.
 
 - **One configuration, one typed function.** Describe `base`, `variants`, `compoundVariants`, `slots`, and
   `defaultVariants` once; get back a function whose props are inferred from it.
 - **Conflicts settled by [`cn`](https://github.com/shadcn-ui/cn).** A caller's `className` wins over the configuration,
   and an unknown variant value is a type error.
-- **Compiled once, when it pays.** `tv()` only wraps the configuration; the first render reads it directly and the
-  second compiles it into a plan, so a component rendered once costs no more than that render, and every render after is
-  string work with repeated selections answered from a cache.
+- **Compiled once, when it pays.** `tv()` only wraps the configuration; the first renders read it directly — two for a
+  component without slots, one with them — and the next compiles it into a plan, so a component rendered that few times
+  costs no more than those renders, and every render after is string work with repeated selections answered from a
+  cache.
 - **Drop-in, with no runtime dependencies of its own.** Same configuration shape as `tailwind-variants`; the merge
   engine, `cn`, is a peer, so you get one copy at the version you chose.
 
@@ -306,12 +307,12 @@ pnpm --filter @benchmark/tailwind-variants bench
 ```
 
 The speed comes from settling things once, and only once a component has shown it will be rendered again. `tv()` wraps
-the configuration and the first call reads it directly; the second call compiles it into a plan — variant groups,
-compound conditions, and slot positions settled, every class value flattened to a string — so every resolution after is
-string concatenation rather than dictionary lookups. The answer is then settled per selection, so a list rendering the
-same few selections resolves each of them once. `cn` / `cx` take the same string fast path, joining directly when every
-argument is already a string. The suite prices both ends: `define-only-*` and `first-render-*` for a definition and its
-first render, the resolution rows for every render after.
+the configuration and the first calls read it directly; the next call compiles it into a plan — variant groups, compound
+conditions, and slot positions settled, every class value flattened to a string — so every resolution after is string
+concatenation rather than dictionary lookups. The answer is then settled per selection, so a list rendering the same few
+selections resolves each of them once. `cn` / `cx` take the same string fast path, joining directly when every argument
+is already a string. The suite prices both ends: `define-only-*` and `first-render-*` for a definition and its first
+render, the resolution rows for every render after.
 
 ## Documentation
 

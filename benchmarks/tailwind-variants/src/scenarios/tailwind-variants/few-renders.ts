@@ -5,10 +5,12 @@ import {
   THREE_RENDERS_SLOTS,
   TWO_RENDERS_SIMPLE,
   TWO_RENDERS_SLOTS,
+  TWO_RENDERS_WIDE,
 } from "#fixtures/scenario-parity";
 import { buttonVariants } from "#fixtures/simple";
 import type { CardRenderer, FlatRenderer } from "#fixtures/slot-types";
 import { slotsVariants } from "#fixtures/slots";
+import { wideFlatSelections, wideFlatVariants } from "#fixtures/wide-flat";
 import { TV_MERGE_ENABLED } from "#harness/bench-options";
 import { renderEverySlot } from "#lib/render-slots";
 import { tailwindVariantsTv } from "#lib/tv-shims";
@@ -34,6 +36,17 @@ const defineAndRenderCard = (renders: number): number => {
 
   for (let index = 0; index < renders; index++) {
     length += renderEverySlot(card({ ...CARD_SELECTIONS[index] }));
+  }
+
+  return length;
+};
+
+const defineAndRenderWide = (renders: number): number => {
+  const component = tailwindVariantsTv(wideFlatVariants, TV_MERGE_ENABLED) as FlatRenderer;
+  let length = 0;
+
+  for (let index = 0; index < renders; index++) {
+    length += component({ ...wideFlatSelections[index] }).length;
   }
 
   return length;
@@ -66,6 +79,11 @@ export function buildTailwindVariantsNpmFewRendersScenarios(): ReadonlyArray<Ben
       ...TWO_RENDERS_SLOTS,
       build: () => repeatDefinitions(defineAndRenderCard, 2),
       sanity: () => defineAndRenderCard(2) > 0,
+    },
+    {
+      ...TWO_RENDERS_WIDE,
+      build: () => repeatDefinitions(defineAndRenderWide, 2),
+      sanity: () => defineAndRenderWide(2) > 0,
     },
     {
       ...THREE_RENDERS_SIMPLE,
