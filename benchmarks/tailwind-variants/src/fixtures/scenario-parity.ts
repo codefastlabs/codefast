@@ -3,6 +3,7 @@ import { cnTestCalls } from "#fixtures/cn";
 import { complexTestProps } from "#fixtures/complex";
 import { compoundSlotsTestProps } from "#fixtures/compound-slots";
 import { simpleTestProps as createTvTestProps } from "#fixtures/create-tv";
+import { DATA_CELLS_PER_ITERATION } from "#fixtures/data-cells";
 import { extendsTestProps } from "#fixtures/extends";
 import { extremeSlotsTestProps, extremeTestProps } from "#fixtures/extreme";
 import { overrideTestProps } from "#fixtures/override";
@@ -10,6 +11,7 @@ import { repeatSimpleTestProps, repeatSlotsTestProps } from "#fixtures/repeat";
 import { simpleTestProps } from "#fixtures/simple";
 import { slotClassTestCalls } from "#fixtures/slot-class";
 import { slotsTestProps } from "#fixtures/slots";
+import { wideSlotsTestProps } from "#fixtures/wide-slots";
 import type { BenchScenario } from "#scenarios/types";
 
 type ScenarioDescriptor = Pick<BenchScenario, "id" | "group" | "what"> &
@@ -356,6 +358,22 @@ export const SLOT_CLASS_WITH_MERGE = {
   group: "slot-class",
   what: "Card slots each called with their own className, usually absent, sometimes overriding a slot class",
   batch: slotClassTestCalls.length,
+} as const satisfies ScenarioDescriptor;
+
+/** Table cells whose selection comes from row data and whose `className` comes from the column, about a thousand distinct calls. */
+export const DATA_CELLS_WITH_MERGE = {
+  id: "data-cells-with-merge",
+  group: "data-cells",
+  what: "Table cells keyed by row status and column, drawn from about a thousand distinct calls",
+  batch: DATA_CELLS_PER_ITERATION,
+} as const satisfies ScenarioDescriptor;
+
+/** A sixteen-slot component with twenty compound-tested variants, every slot rendered. */
+export const WIDE_SLOTS_WITH_MERGE = {
+  id: "wide-slots-with-merge",
+  group: "wide-slots",
+  what: "Sixteen slots and twenty compound-tested variants, every slot rendered",
+  batch: wideSlotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
 /** Defining a button and rendering it three times, which reaches a lazy library's second-call compile. */

@@ -2,6 +2,7 @@ import { buildCodefastCnScenarios } from "#scenarios/codefast/cn";
 import { buildCodefastComplexScenarios } from "#scenarios/codefast/complex";
 import { buildCodefastCompoundSlotsScenarios } from "#scenarios/codefast/compound-slots";
 import { buildCodefastCreateTvScenarios } from "#scenarios/codefast/create-tv";
+import { buildCodefastDataCellsScenarios } from "#scenarios/codefast/data-cells";
 import { buildCodefastDefineOnlyScenarios } from "#scenarios/codefast/define-only";
 import { buildCodefastExtendsScenarios } from "#scenarios/codefast/extends";
 import { buildCodefastExtremeScenarios } from "#scenarios/codefast/extreme";
@@ -14,6 +15,7 @@ import { buildCodefastSlotClassScenarios } from "#scenarios/codefast/slot-class"
 import { buildCodefastSlotsScenarios } from "#scenarios/codefast/slots";
 import { buildCodefastThreeRendersScenarios } from "#scenarios/codefast/three-renders";
 import { buildCodefastUncachedScenarios } from "#scenarios/codefast/uncached";
+import { buildCodefastWideSlotsScenarios } from "#scenarios/codefast/wide-slots";
 import type { BenchScenario } from "#scenarios/types";
 
 /**
@@ -36,6 +38,8 @@ export function collectAllCodefastScenarios(): ReadonlyArray<BenchScenario> {
     ...buildCodefastCnScenarios(),
     ...buildCodefastOverrideScenarios(),
     ...buildCodefastSlotClassScenarios(),
+    ...buildCodefastDataCellsScenarios(),
+    ...buildCodefastWideSlotsScenarios(),
     ...buildCodefastThreeRendersScenarios(),
   ];
 }
