@@ -1,7 +1,7 @@
-import { extendTailwindMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "cn/config";
 
 import { createTV, tv } from "#index";
-import { COMMON_UNITS, customTwMerge } from "#tests/unit/fixtures/tailwind-merge-config";
+import { COMMON_UNITS, customTwMerge } from "#tests/unit/fixtures/merge-config";
 
 describe("Tailwind Variants (TV) - Tailwind Merge", () => {
   test("should merge the tailwind classes correctly", () => {
@@ -68,7 +68,7 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
         },
       },
       {
-        twMerge: extendTailwindMerge<string, string>({
+        twMerge: extendTailwindMerge({
           extend: {
             classGroups: {
               "bg-image": ["bg-stripe-gradient"],

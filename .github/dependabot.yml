@@ -63,6 +63,7 @@ updates:
           - "tailwindcss"
           - "tailwind-merge"
           - "tailwind-variants"
+          - "cn"
           - "@tailwindcss/*"
           - "tw-animate-css"
       vite:

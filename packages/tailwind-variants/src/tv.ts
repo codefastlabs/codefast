@@ -3,9 +3,9 @@
  * once, compiles it into a plan on its second call, and runs that plan on every call after.
  */
 
-import { twMerge } from "tailwind-merge";
+import { twMerge } from "cn";
 
-import { createMergingCn, cx } from "#class-names";
+import { cn, createMergingCn, cx } from "#class-names";
 import { hasExtendConfig, hasSlotsConfig, mergeVariantConfigs } from "#compile/configuration";
 import type { VariantPlan } from "#compile/plan";
 import { compileVariantPlan } from "#compile/plan";
@@ -54,7 +54,7 @@ interface CompiledResolver {
   readonly slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null;
 }
 
-/** The merge a `twMerge` option selects: `tailwind-merge` by default, none for `false`, or the caller's own. */
+/** The merge a `twMerge` option selects: `cn`'s by default, none for `false`, or the caller's own. */
 const toClassMerger = (option: TailwindVariantsOptions["twMerge"]): ClassMerger | null => {
   if (option === false) {
     return null;
@@ -318,7 +318,8 @@ export function createTV(globalConfiguration: TailwindVariantsOptions = {}): Tai
   }
 
   return {
-    cn: mergeClasses === null ? cx : createMergingCn(mergeClasses),
+    // The default engine's own `cn` already caches whole calls, so only a supplied merge needs our memo.
+    cn: mergeClasses === null ? cx : mergeClasses === twMerge ? cn : createMergingCn(mergeClasses),
     tv: tvFactory,
   };
 }

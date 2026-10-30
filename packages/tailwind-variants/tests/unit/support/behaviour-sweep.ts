@@ -8,7 +8,7 @@
  * exactly as it answered the first.
  */
 
-import { extendTailwindMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "cn/config";
 
 import { createTV, tv } from "#index";
 import type { TailwindVariantsOptions } from "#types";

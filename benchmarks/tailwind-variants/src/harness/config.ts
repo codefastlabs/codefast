@@ -27,7 +27,7 @@ export const CODEFAST_TV = {
   displayName: "@codefast/tv",
   shortName: "cf",
   strategy:
-    "resolution cached per selection, tailwind-merge behind its own cache; both switchable, and the `uncached-*` control rows switch both off",
+    "resolution cached per selection, the `cn` engine behind its own cache; both switchable, and the `uncached-*` control rows switch both off",
 } as const satisfies TvBenchLibrary;
 
 /**
@@ -39,7 +39,7 @@ export const TAILWIND_VARIANTS = {
   tsconfigFileName: TSCONFIG_FILE_NAME,
   benchEntryFileName: "tailwind-variants-benches.ts",
   shortName: "tv",
-  strategy: "resolution cached per selection with no switch to turn it off, tailwind-merge inside `tv()`",
+  strategy: "resolution cached per selection with no switch to turn it off, its own merge engine inside `tv()`",
 } as const satisfies TvBenchLibrary;
 
 /**

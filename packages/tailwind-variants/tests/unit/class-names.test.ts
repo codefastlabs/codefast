@@ -85,7 +85,7 @@ describe("cx", () => {
 });
 
 describe("cn", () => {
-  test("merges every drawn call as tailwind-merge does over the clsx join, repeats included", () => {
+  test("merges every drawn call exactly as tailwind-merge does over the clsx join, repeats included", () => {
     const random = createRandom(5);
     const calls = Array.from({ length: 400 }, () => drawCall(random));
 
@@ -150,5 +150,6 @@ describe("cn", () => {
     expect(customCn(["px-2"], { "px-4": true })).toBe("PX-2 PX-4");
     expect(merged).toEqual(["px-2 px-4", "px-2 px-4"]);
     expect(plainCn("px-2", "px-4")).toBe("px-2 px-4");
+    expect(createTV({}).cn).toBe(cn);
   });
 });

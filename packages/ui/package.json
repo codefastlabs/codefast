@@ -601,6 +601,7 @@
     "@codefast/tailwind-variants": "workspace:*",
     "@daypicker/react": "catalog:",
     "cmdk": "catalog:",
+    "cn": "catalog:",
     "embla-carousel-react": "catalog:",
     "input-otp": "catalog:",
     "lucide-react": "catalog:",
@@ -609,7 +610,6 @@
     "react-resizable-panels": "catalog:",
     "recharts": "catalog:",
     "sonner": "catalog:",
-    "tailwind-merge": "catalog:",
     "tw-animate-css": "catalog:",
     "vaul": "catalog:"
   },

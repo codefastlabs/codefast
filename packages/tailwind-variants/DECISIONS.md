@@ -63,22 +63,24 @@ second call on, slot components return the same object of slot functions for the
 returned slot object is shared, so it must not be mutated; and a variant fed ids or timestamps should opt out or it
 fills the store with entries nothing reads again.
 
-## The application chooses the merge engine
+## The merge engine is `cn`, and the application may replace it
 
-**Context.** Conflict resolution is what makes `className` overrides safe, but the engine is the largest thing a variant
-library can pull into a bundle, and engines trade speed against size differently: `tailwind-merge` is the small one,
-`cn` merges faster from larger tables. A library that picks one, or builds one from a configuration at runtime, makes
-that trade for every application at once.
+**Context.** Conflict resolution is what makes `className` overrides safe, and every first render, every unseen
+`className` and every cold page load runs it on strings no cache has seen. `cn` produces the same output as
+`tailwind-merge` — this repository's own class strings agree across both — and merges such a string several times
+faster, for a bundle about a kilobyte larger gzipped. A variant library that builds an engine from a configuration at
+runtime still makes every application ship the compiler.
 
-**Decision.** `tailwind-merge >= 3` is a peer dependency, and the package imports only its `twMerge`, as the default.
-The `twMerge` option takes `true`, `false`, or a merge function; custom class groups are an `extendTailwindMerge` result
-the caller builds and passes in. There is no `twMergeConfig`, because accepting a configuration means importing the code
-that compiles one into every bundle that never uses it.
+**Decision.** `cn >= 0.5` is a peer dependency. The package imports its `twMerge` as the default merge and re-exports
+its `cn`, whose own argument cache answers a repeated call before any join. The `twMerge` option takes `true`, `false`,
+or a merge function; custom class groups are an `extendTailwindMerge` result from `cn/config` the caller builds and
+passes in. There is no `twMergeConfig`, because accepting a configuration means importing the code that compiles one
+into every bundle that never uses it.
 
-**Consequences.** One engine per application, the one it chose: an alias from `tailwind-merge` to a drop-in engine
-reaches this package too, which an `extendTailwindMerge` import inside the package would break. The merge runs only on a
-selection a resolver has not answered yet, so the engine sets the cost of a first render and nothing after it. Callers
-who turn merging off own their conflicts.
+**Consequences.** One engine per application: an app that still imports `tailwind-merge` aliases it to `cn`. A merge
+function passed in replaces `cn` everywhere, including the `cn` a `createTV` factory returns, which then keeps a memo of
+its own over that merge. The merge runs only on a selection a resolver has not answered yet, so the engine sets the cost
+of a first render and nothing after it. Callers who turn merging off own their conflicts.
 
 ## Types describe what the selection can be, no more
 
