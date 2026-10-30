@@ -7,6 +7,7 @@
 
 import { toClassText, toPlanClasses } from "#compile/class-values";
 import type { PlanClasses } from "#compile/class-values";
+import { joinClassValues, joinSlotClassValues } from "#compile/configuration";
 import type { ClassValue, CompoundSlot, CompoundVariant, SlotCompoundVariant, VariantSchema } from "#types";
 
 /** Condition satisfied when the resolved value strictly equals the configured one. */
@@ -56,15 +57,28 @@ const EMPTY_COMPOUNDS: ReadonlyArray<CompoundPlanEntry> = [];
 const EMPTY_COMPOUND_SLOTS: ReadonlyArray<CompoundSlotPlanEntry> = [];
 
 /**
- * The classes a compound definition contributes, preferring `className` over `class`.
+ * The classes a compound definition contributes: its `class`, then its `className`.
+ *
+ * @remarks `slotMode` joins two slot maps per slot, reading a value that is not a map as the `base` slot's.
  *
  * @since 0.3.16-canary.2
  */
-export const getCompoundClass = (compoundDefinition: {
-  readonly class?: ClassValue;
-  readonly className?: ClassValue;
-}): ClassValue => {
-  return compoundDefinition.className === undefined ? compoundDefinition.class : compoundDefinition.className;
+export const getCompoundClass = (
+  compoundDefinition: { readonly class?: ClassValue; readonly className?: ClassValue },
+  slotMode: boolean,
+): ClassValue => {
+  const classValue = compoundDefinition.class;
+  const classNameValue = compoundDefinition.className;
+
+  if (classValue === undefined) {
+    return classNameValue;
+  }
+
+  if (classNameValue === undefined) {
+    return classValue;
+  }
+
+  return slotMode ? joinSlotClassValues(classValue, classNameValue) : joinClassValues(classValue, classNameValue);
 };
 
 const compileConditions = (
@@ -116,7 +130,7 @@ export const compileCompoundVariants = <Variants extends VariantSchema>(
 
   for (const compoundVariant of compoundVariants) {
     entries.push({
-      classes: toPlanClasses(getCompoundClass(compoundVariant), slotIndexByName),
+      classes: toPlanClasses(getCompoundClass(compoundVariant, slotIndexByName !== null), slotIndexByName),
       conditions: compileConditions(compoundVariant, defaultVariantProps, coerceMissingBoolean, false),
     });
   }
@@ -152,7 +166,7 @@ export const compileCompoundSlots = <Variants extends VariantSchema>(
     }
 
     entries.push({
-      classes: toClassText(getCompoundClass(compoundSlot)),
+      classes: toClassText(getCompoundClass(compoundSlot, false)),
       conditions: compileConditions(compoundSlot, defaultVariantProps, true, true),
       slotIndexes,
     });

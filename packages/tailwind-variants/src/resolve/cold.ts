@@ -2,7 +2,7 @@
  * The cold lane: one resolution read straight from the configuration, before a plan exists.
  */
 
-import { isSlotClassMap, toClassText, toDefaultKey, toVariantKey } from "#compile/class-values";
+import { isSlotClassMap, toCallerClasses, toClassText, toDefaultKey, toVariantKey } from "#compile/class-values";
 import { getCompoundClass } from "#compile/compound";
 import type {
   ClassMerger,
@@ -125,13 +125,12 @@ export const resolveColdVariantClasses = (
   if (compounds !== undefined) {
     for (const compound of compounds) {
       if (matchesColdCompound(compound, props, defaults, null, true, false)) {
-        text = append(text, toClassText(getCompoundClass(compound)));
+        text = append(text, toClassText(getCompoundClass(compound, false)));
       }
     }
   }
 
-  const className = props.className as ClassValue;
-  const customClasses = className === undefined || className === null ? (props.class as ClassValue) : className;
+  const customClasses = toCallerClasses(props.class as ClassValue, props.className as ClassValue);
 
   if (customClasses) {
     text = append(text, toClassText(customClasses));
@@ -188,7 +187,7 @@ const coldSlotText = (
   if (compounds !== undefined) {
     for (const compound of compounds) {
       if (matchesColdCompound(compound, props, defaults, overrides, false, false)) {
-        text = append(text, slotContribution(getCompoundClass(compound), slotName));
+        text = append(text, slotContribution(getCompoundClass(compound, true), slotName));
       }
     }
   }
@@ -202,7 +201,7 @@ const coldSlotText = (
         continue;
       }
 
-      const classes = toClassText(getCompoundClass(compoundSlot));
+      const classes = toClassText(getCompoundClass(compoundSlot, false));
 
       for (const target of compoundSlot.slots) {
         if (target === slotName) {
@@ -252,8 +251,8 @@ export const createColdSlotResolvers = (
       const overrides = slotProps as Props;
       let text = coldSlotText(configuration, defaults, props, slotName, overrides);
 
-      text = append(text, toClassText(overrides.className as ClassValue));
       text = append(text, toClassText(overrides.class as ClassValue));
+      text = append(text, toClassText(overrides.className as ClassValue));
 
       return finish(text, mergeClasses);
     };

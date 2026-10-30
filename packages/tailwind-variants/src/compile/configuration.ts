@@ -76,11 +76,13 @@ const mergeRecords = <Value>(
   return Object.fromEntries(entries);
 };
 
-/** Classes a parent and its child both declare, the parent's first; two strings stay one string. */
-const joinClassValues = (parentValue: ClassValue, childValue: ClassValue): ClassValue => {
-  return typeof parentValue === "string" && typeof childValue === "string"
-    ? cx(parentValue, childValue)
-    : [parentValue, childValue];
+/**
+ * Two class values declared for one place, the leading one's classes first; two strings stay one string.
+ */
+export const joinClassValues = (leadingValue: ClassValue, trailingValue: ClassValue): ClassValue => {
+  return typeof leadingValue === "string" && typeof trailingValue === "string"
+    ? cx(leadingValue, trailingValue)
+    : [leadingValue, trailingValue];
 };
 
 /** A slot configuration's value as a slot map, where anything that is not a map styles `base`. */
@@ -88,14 +90,17 @@ const toSlotClassMap = (value: ClassValue): Readonly<Record<string, ClassValue>>
   return isSlotClassMap(value) ? value : { base: value };
 };
 
-/** Classes a parent and its child both declare for one value of a slot configuration, combined per slot. */
-const joinSlotClassValues = (parentValue: ClassValue, childValue: ClassValue): ClassValue => {
-  if (!isSlotClassMap(parentValue) && !isSlotClassMap(childValue)) {
-    return joinClassValues(parentValue, childValue);
+/**
+ * Two class values of a slot configuration declared for one place, joined per slot, the leading one's classes first.
+ */
+export const joinSlotClassValues = (leadingValue: ClassValue, trailingValue: ClassValue): ClassValue => {
+  if (!isSlotClassMap(leadingValue) && !isSlotClassMap(trailingValue)) {
+    return joinClassValues(leadingValue, trailingValue);
   }
 
-  return mergeRecords(toSlotClassMap(childValue), toSlotClassMap(parentValue), (child, parent) =>
-    joinClassValues(parent, child),
+  // The trailing value's slots lead, which is the order upstream lists an extension's slot map in.
+  return mergeRecords(toSlotClassMap(trailingValue), toSlotClassMap(leadingValue), (trailing, leading) =>
+    joinClassValues(leading, trailing),
   );
 };
 

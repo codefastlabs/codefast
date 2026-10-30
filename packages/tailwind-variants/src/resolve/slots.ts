@@ -240,8 +240,8 @@ const resolveSlot = (
   }
 
   const overrides = slotProps as Record<string, unknown>;
-  const slotClassName = toClassText(overrides.className as ClassValue);
   const slotClass = toClassText(overrides.class as ClassValue);
+  const slotClassName = toClassText(overrides.className as ClassValue);
   let text: string;
 
   // A sub-component passes the `className` it was given, usually absent, so a class-only call is the common one.
@@ -253,12 +253,12 @@ const resolveSlot = (
     text = context.texts[slotIndex] as string;
   }
 
-  if (slotClassName) {
-    text = text === "" ? slotClassName : text + " " + slotClassName;
-  }
-
   if (slotClass) {
     text = text === "" ? slotClass : text + " " + slotClass;
+  }
+
+  if (slotClassName) {
+    text = text === "" ? slotClassName : text + " " + slotClassName;
   }
 
   if (text === "") {

@@ -93,6 +93,17 @@ export const toPlanClasses = (value: ClassValue, slotIndexByName: Record<string,
 };
 
 /**
+ * A caller's `class` and `className` as one class value, `class` first, so neither one hides the other.
+ */
+export const toCallerClasses = (classValue: ClassValue, classNameValue: ClassValue): ClassValue => {
+  if (!classValue) {
+    return classNameValue;
+  }
+
+  return classNameValue ? [classValue, classNameValue] : classValue;
+};
+
+/**
  * The key a value a caller passed selects inside its group, or `undefined` when it selects nothing.
  *
  * @remarks Booleans and `0` are spelled as their keys, any other falsy value reads as `"false"`, and
