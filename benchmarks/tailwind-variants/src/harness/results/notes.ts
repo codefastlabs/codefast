@@ -48,15 +48,7 @@ const BUNDLE_NOTE =
   "Most of either `tv()` library's share is its merge engine: `tailwind-variants` compiles its own tables into its bundle, while `@codefast/tailwind-variants` takes `cn` as a peer and imports its `twMerge` and `cn`, so an app ships one engine whichever library calls it. `cn` is a little larger than `tailwind-merge` gzipped and smaller minified, and merges a string no cache has seen several times faster. `cva` merges nothing, which is why its with-merge rows call `tailwind-merge` after it.";
 
 /** Every loss shape, ordered by how much it matters. */
-const LOSS_NOTES: ReadonlyArray<LossNote<TvCompetitorName>> = [
-  {
-    title: "A merge no cache has seen runs the engine",
-    kinds: ["chosen cost"],
-    losses: [{ id: "unique-class-with-merge", versus: ["tailwind-variants"] }],
-    context: [{ id: "unique-class-with-merge", versus: ["class-variance-authority"] }],
-    body: "Every call here hands the merge a string it has never seen, so no resolution cache or engine cache can answer it, and the row prices the merge engine itself. `@codefast/tailwind-variants` merges with `cn`, which is far ahead of `tailwind-merge` on such a string — hence the lead over `cva`, which pairs with `tailwind-merge` — and close behind the engine `tailwind-variants` compiles into its own bundle. The package takes `cn` as a peer rather than shipping an engine of its own, so an application carries one engine whichever library calls it, and one that injects a faster merge moves this row with it.",
-  },
-];
+const LOSS_NOTES: ReadonlyArray<LossNote<TvCompetitorName>> = [];
 
 /**
  * Every note the tailwind-variants results page renders and is checked against.
