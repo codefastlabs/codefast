@@ -12,10 +12,8 @@ const isClassArray = (value: ClassValue): value is ReadonlyArray<ClassValue> => 
 /**
  * One class value flattened to the classes it contributes.
  *
- * @remarks Deliberately identical to clsx, which this replaced so the package ships no runtime
- * dependency of its own — including the corners its own types disagree with: a `bigint` contributes
- * nothing despite being a `ClassValue`, and an object's keys are read with `for…in`, so an
- * inherited enumerable one counts.
+ * @remarks Identical to clsx, corners included: a `bigint` contributes nothing though it is a `ClassValue`,
+ * and an object's keys are read with `for…in`, so an inherited enumerable one counts.
  */
 const flattenClassValue = (value: ClassValue): string => {
   if (typeof value === "string") {
@@ -67,14 +65,14 @@ const appendClassValues = (text: string, classes: ReadonlyArray<ClassValue>, sta
 };
 
 /**
- * Flatten every class value a caller passed, dropping the ones that contribute nothing.
+ * Flattens every class value a caller passed, dropping the ones that contribute nothing.
  *
  * @since 0.6.0
  */
 export const flattenClassValues = (classes: ReadonlyArray<ClassValue>): string => appendClassValues("", classes, 0);
 
 /**
- * Combine CSS classes.
+ * Joins class values into one class string, without resolving conflicts.
  *
  * @remarks Joins in one pass: a value that is not a string continues the join rather than restarting it.
  *
@@ -106,11 +104,8 @@ const PAIR_BUCKET_LIMIT = 8;
 /**
  * Creates a `cn` for a merge the application supplies, answering a repeated pair of strings from a memo.
  *
- * @remarks Most calls pass a static class list and the caller's `className`. Keying the memo on those
- * two strings as passed, rather than on their join, hashes nothing new on a hit: a freshly joined
- * key is what the merge engine's own cache pays to look up. A first class earns a bucket only on its
- * second sighting, so a stream of one-off calls allocates nothing. The memo assumes `mergeClasses` is
- * a pure function of its input, as every merge engine's own cache does.
+ * @remarks Keyed on a static class list and the caller's `className` as passed, so a hit hashes no freshly
+ * joined string; a first class earns a bucket only on its second sighting. Assumes `mergeClasses` is pure.
  */
 export const createMergingCn = (mergeClasses: ClassMerger): ((...classes: Array<ClassValue>) => string) => {
   // `null` marks a first class seen once and not yet given a bucket.
@@ -208,7 +203,7 @@ export const createMergingCn = (mergeClasses: ClassMerger): ((...classes: Array<
 };
 
 /**
- * Combine CSS classes and resolve Tailwind conflicts between them.
+ * Joins class values into one class string and resolves Tailwind conflicts between them.
  *
  * @remarks The default engine's own `cn`, whose argument cache answers a repeated call before any join.
  *

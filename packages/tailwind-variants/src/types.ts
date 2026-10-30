@@ -97,19 +97,17 @@ export type SlotClassMap<Slots extends SlotSchema> = {
 type PlainClassValue = ReadonlyArray<PlainClassValue> | bigint | boolean | null | number | string | undefined;
 
 /**
- * What one variant value carries in a slot configuration: classes for the base slot, or a map
- * naming the slots it targets.
+ * What one variant value carries in a slot configuration: classes for the base slot, or a map naming its slots.
  *
- * @remarks Resolution reads any object here as slot names, never as clsx conditions, so the type
- * says the same. `base` is admitted whether or not the configuration declares it, because the plan
- * synthesises it as slot position zero either way.
+ * @remarks Resolution reads any object here as slot names, never as conditional classes, and admits `base`
+ * whether or not the configuration declares it, because the plan synthesises it as slot position zero.
  *
  * @since 0.6.0
  */
 type SlotClassValue<Slots extends SlotSchema> = PlainClassValue | (SlotClassMap<Slots> & { base?: ClassValue });
 
 /**
- * A variant schema whose object values name slots rather than clsx conditions.
+ * A variant schema whose object values name slots rather than conditional classes.
  *
  * @since 0.6.0
  */
@@ -209,17 +207,15 @@ export interface TailwindVariantsOptions {
   /**
    * Answers a repeated variant selection from what the resolver already produced.
    *
-   * @remarks Turn this off for a component whose selections are effectively unique per call, where
-   * the store would fill with entries nothing reads again.
+   * @remarks Off suits a component whose selections are unique per call, which fill the store for nothing.
    *
    * @defaultValue true
    */
   readonly cacheResolutions?: boolean | undefined;
   /**
-   * Resolves Tailwind conflicts in every answer, so a later class wins over an earlier one.
+   * How every answer resolves Tailwind conflicts: the `cn` engine's `twMerge`, none for `false`, or the given merge.
    *
-   * @remarks `true` merges with the `cn` engine's `twMerge`, `false` keeps every declared class, and a function
-   * replaces the merge — an `extendTailwindMerge` result from `cn/config` for custom class groups, or another engine.
+   * @remarks A function is an `extendTailwindMerge` result from `cn/config` for custom class groups, or another engine.
    *
    * @defaultValue true
    */
@@ -282,7 +278,7 @@ export type VariantResolver<
 export interface FlatVariantResolver<Variants extends VariantSchema> {
   /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */
   readonly config: VariantConfig<Variants>;
-  /** The variant names in declaration order, an extended resolver's first, for splitting props by hand. */
+  /** The variant names in declaration order, an extending configuration's own first, for splitting props by hand. */
   readonly variantKeys: ReadonlyArray<Extract<keyof Variants, string>>;
 
   /** Resolves the classes of one variant selection. */
@@ -295,7 +291,7 @@ export interface FlatVariantResolver<Variants extends VariantSchema> {
 export interface SlottedVariantResolver<Variants extends VariantSchema, Slots extends SlotSchema> {
   /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */
   readonly config: SlotVariantConfig<Variants, Slots>;
-  /** The variant names in declaration order, an extended resolver's first, for splitting props by hand. */
+  /** The variant names in declaration order, an extending configuration's own first, for splitting props by hand. */
   readonly variantKeys: ReadonlyArray<Extract<keyof Variants, string>>;
 
   /**
@@ -326,7 +322,7 @@ export type MergedSlotSchema<BaseSlots extends SlotSchema, ExtensionSlots extend
   ExtensionSlots;
 
 /**
- * The variant schema an extension may add: slot maps when the merged component has slots, clsx values otherwise.
+ * The variant schema an extension may add: slot maps when the merged component has slots, any class values otherwise.
  */
 type ExtensionVariantSchema<Slots extends SlotSchema> = keyof Slots extends never ? unknown : SlotVariantSchema<Slots>;
 
@@ -375,18 +371,17 @@ export interface ExtendedVariantConfig<
    * would catch every configuration the earlier ones reject and widen every variant name to `string`.
    */
   readonly extend: FlatVariantResolver<BaseVariants> | SlottedVariantResolver<BaseVariants, BaseSlots>;
-  /** Slots added to, or replacing, the extended resolver's. */
+  /** Slots added to the extended resolver's; a slot both declare joins, the extended resolver's classes first. */
   readonly slots?: ExtensionSlots;
-  /** Variants added to the extended resolver's; a group declared by both merges value by value. */
+  /** Variants added to the extended resolver's; a value both declare joins, the extended resolver's classes first. */
   readonly variants?: ExtensionVariantSchema<NoInfer<MergedSlotSchema<BaseSlots, ExtensionSlots>>> & ExtensionVariants;
 }
 
 /**
  * Anything accepted where classes are expected.
  *
- * @remarks Declared here rather than re-exported, so the package carries no runtime dependency of
- * its own. The shape is the one consumers already pass — `bigint` included, though nothing
- * contributes it.
+ * @remarks Declared here so the package carries no runtime dependency of its own; the shape is the one
+ * consumers already pass, `bigint` included, though a `bigint` contributes nothing.
  *
  * @since 0.3.16-canary.0
  */

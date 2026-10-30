@@ -172,11 +172,10 @@ const compoundSlotsOf = (
 };
 
 /**
- * Collapse a configuration and the one it extends into a single configuration, resolving an
- * extend chain of any depth.
+ * Collapses a configuration and the one it extends into one configuration, resolving a chain of any depth.
  *
- * @remarks Everything the child redeclares joins the parent's, parent first: the base, each variant
- * value, each slot, and the compound lists. The child's variant names lead.
+ * @remarks The base, each variant value, each slot and the compound lists join, the parent's classes first;
+ * defaults merge with the child's winning, and the child's variant names lead.
  *
  * @since 0.3.16-canary.0
  */

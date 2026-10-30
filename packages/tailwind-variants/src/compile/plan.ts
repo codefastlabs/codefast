@@ -1,10 +1,4 @@
-/**
- * Compiled form of a merged variant configuration.
- *
- * Everything that depends only on the configuration is resolved once: dictionary lookups become
- * monomorphic field reads, and a variant value is flattened the first time a call selects it, so
- * resolution never calls clsx.
- */
+/** The compiled form of a merged variant configuration, and how one is built. */
 
 import type { PlanClasses } from "#compile/class-values";
 import { toClassText, toDefaultKey, toPlanClasses } from "#compile/class-values";
@@ -215,7 +209,7 @@ const compileSlotEntries = (slotDefinitions: SlotSchema, baseClasses: ClassValue
 };
 
 /**
- * Compile a merged configuration into the plan resolution runs against.
+ * Compiles a merged configuration into the plan resolution runs against.
  *
  * @since 0.6.0
  */

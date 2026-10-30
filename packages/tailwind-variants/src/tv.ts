@@ -1,7 +1,4 @@
-/**
- * The package's public entry point: `tv` wraps a configuration in a resolver that reads it directly
- * at first, compiles it into a plan once it is called again, and runs that plan on every call after.
- */
+/** The package's public entry point: `tv`, which wraps a configuration in a resolver, and `createTV`. */
 
 import { twMerge } from "cn";
 
@@ -153,7 +150,7 @@ export function tv<
 ): VariantResolver<MergedVariantSchema<BaseVariants, ExtensionVariants>, MergedSlotSchema<BaseSlots, ExtensionSlots>>;
 
 /**
- * Wraps a configuration in a resolver that reads it directly once, then compiles it into a plan.
+ * Wraps a configuration in a resolver that reads it directly for its first calls, then compiles it into a plan.
  *
  * @remarks The first calls resolve straight from the configuration — two without slots, one with them — so
  * a component rendered no more often never pays for a plan; the next call compiles, and every call after runs it.

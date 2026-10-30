@@ -13,9 +13,8 @@ import type { ClassValue, SlotClassResolver, SlotResolverProps, VariantSchema } 
 /**
  * One resolution of the variant props, shared by every slot of that call.
  *
- * @remarks `texts` is the whole answer for a slot called without props: rather than each of N slots
- * scanning every variant, each variant distributes its classes to the slots it names. Slot maps are
- * sparse, so that is far less work than the scan it replaces.
+ * @remarks `texts` is the whole answer for a slot called without props: each variant distributes its classes
+ * to the slots it names, which on sparse slot maps is far less work than every slot scanning every variant.
  */
 interface SlotCallContext {
   readonly conditionValues: Record<string, unknown>;
@@ -30,7 +29,7 @@ const NOT_RESOLVED: unique symbol = Symbol("not-resolved");
 const EMPTY_CONDITION_VALUES: Record<string, unknown> = {};
 
 /**
- * Copy out the props a compound can still read once the call is over.
+ * The props a compound can still read once the call is over, copied out of the caller's object.
  *
  * @remarks A context outlives its call when a resolver is reused, and holding the caller's props
  * object would pin whatever else it carries — `children`, most of a component's tree.
@@ -52,7 +51,7 @@ const toConditionValues = (
   return values;
 };
 
-/** Distribute one compiled value across the slots it names, or to `base` when it is a plain string. */
+/** Adds one compiled value to the slots it names, or to `base` when it is a plain string. */
 const distribute = (classes: PlanClasses | undefined, texts: Array<string>): void => {
   if (typeof classes === "object") {
     const slotIndexes = classes.slotIndexes;
@@ -144,8 +143,8 @@ const selectForSlot = (classes: PlanClasses | undefined, slotIndex: number): str
 };
 
 /**
- * Re-resolve one slot from scratch, because its own props can select different variant values and
- * flip a compound's conditions.
+ * Resolves one slot from scratch, because its own props can select different variant values and flip a
+ * compound's conditions.
  */
 const resolveSlotWithOverrides = (
   plan: VariantPlan,

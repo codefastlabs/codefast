@@ -1,10 +1,4 @@
-/**
- * A bounded store for what a resolver already worked out, keyed by an encoded selection.
- *
- * Two generations rather than an LRU: eviction is one pointer move on overflow instead of
- * bookkeeping on every hit, and the older generation keeps a working set slightly over the limit
- * from thrashing.
- */
+/** A bounded, two-generation store for what a resolver already worked out, keyed by an encoded selection. */
 
 /** Weight one generation holds before it is retired: one per entry, plus what its entries hold inside. */
 const GENERATION_LIMIT = 2048;

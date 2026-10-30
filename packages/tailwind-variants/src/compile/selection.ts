@@ -1,12 +1,4 @@
-/**
- * Encoding one call's variant selection as a key, so a resolver can answer a repeated selection
- * from a cache instead of walking the plan again.
- *
- * Each variant is one digit of a mixed-radix number. An axis no compound reads is keyed by the group
- * key, because two values sharing a key select the same classes. On an axis a compound reads, a
- * value the compounds compare against gets a digit of its own, since `true` and `"true"` share a
- * group key while comparing differently; every other value falls back to its group key.
- */
+/** Encoding one call's variant selection as a key, so a resolver can answer a repeated selection from its store. */
 
 import { toVariantKey } from "#compile/class-values";
 import type { CompoundCondition } from "#compile/compound";
@@ -58,8 +50,8 @@ const EMPTY_GROUP: Record<string, unknown> = {};
 const EMPTY_IDS: Map<unknown, number> = new Map();
 
 /**
- * Ids live on a null-prototype object: a variant value of `"toString"` would otherwise read
- * `Object.prototype.toString` back out of a plain one and be mistaken for an id already assigned.
+ * An empty ids table with no prototype, so a variant value of `"toString"` cannot read
+ * `Object.prototype.toString` back out of it as an id already assigned.
  */
 const createValueIds = (): Record<string, number> => Object.create(null) as Record<string, number>;
 
@@ -97,7 +89,7 @@ const collectComparedValues = (plan: VariantPlan): Map<string, Map<unknown, numb
 };
 
 /**
- * Compile a plan's variants into an encoder.
+ * Compiles a plan's variants into an encoder.
  *
  * @remarks A selection space past one safe integer spans several, joined into a string key.
  *
@@ -109,7 +101,7 @@ export const compileSelectionEncoder = (plan: VariantPlan): SelectionEncoder => 
   let part = 0;
   let states = 1;
 
-  // Id zero always means "the call omitted this variant", so a radix leaves room for it.
+  // Id zero stands for the default, omitted or passed as what an omitted value resolves as, so a radix leaves room.
   const addAxis = (name: string, group: Record<string, unknown>, valueCount: number): SelectionAxis => {
     const matchIds = comparedValues?.get(name);
     const kind = matchIds === undefined ? AXIS_BY_GROUP_KEY : AXIS_BY_RAW_VALUE;
@@ -190,7 +182,7 @@ export const compileSelectionEncoder = (plan: VariantPlan): SelectionEncoder => 
     }
 
     if (axis.nextId >= axis.unknownId) {
-      // More answering keys than own keys were counted for the radix — an inherited one.
+      // An own key the radix did not count: non-enumerable, symbol-keyed, or added after compile.
       return UNENCODABLE;
     }
 

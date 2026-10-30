@@ -18,7 +18,7 @@ export interface FlatSelection {
   misses: number;
   /** Caller classes seen at least twice, keyed by the class string as passed. */
   pairs: Map<string, string> | null;
-  /** What a caller's class merges onto once settled: the merged answer when that is exact, the joined text otherwise. */
+  /** What a caller's class merges onto once settled: the merged answer when exact, the joined text otherwise. */
   prefix: string | null;
 }
 
@@ -112,10 +112,8 @@ const dropsOnlyRepeats = (joined: string, merged: string): boolean => {
 /**
  * Resolves a selection with a caller's class string appended, remembering the answer from the class's second sighting.
  *
- * @remarks A caller's class merges onto the merged answer only when merging dropped nothing but repeats:
- * the engine's conflicts are not transitive, so a class one merge drops can come back once a caller's
- * class overrides what dropped it. That check runs once a selection has met a few classes, where the
- * shorter merges repay it.
+ * @remarks The engine's conflicts are not transitive, so only under the default `twMerge`, once a selection has
+ * met a few classes, does it reuse its merged answer as the prefix, and only when merging dropped nothing but repeats.
  */
 export const resolveFlatSelectionWithClass = (
   plan: VariantPlan,

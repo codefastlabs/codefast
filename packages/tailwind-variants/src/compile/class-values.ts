@@ -1,9 +1,4 @@
-/**
- * Flattening configuration class values into the form a compiled plan holds.
- *
- * Every class value passes through here once, when a plan is compiled, so resolution only ever
- * concatenates strings and never reaches clsx.
- */
+/** Class values flattened into the form a compiled plan holds, and the group key a variant value selects. */
 
 import { flattenClassValues } from "#class-names";
 import type { ClassValue } from "#types";
@@ -27,10 +22,10 @@ interface SlotClassGroup {
 export type PlanClasses = SlotClassGroup | string;
 
 /**
- * Flatten a class value to the string it contributes.
+ * The string a class value contributes.
  *
- * @remarks Flattening each value separately matches flattening them together, because clsx joins
- * its arguments' contributions in order and drops the empty ones.
+ * @remarks Flattening each value separately matches flattening them together, because flattening joins
+ * each argument's contributions in order and drops the empty ones.
  *
  * @since 0.6.0
  */
@@ -48,7 +43,7 @@ export const isSlotClassMap = (value: ClassValue): value is Record<string, Class
 };
 
 /**
- * Flatten a slot map into parallel classes and slot positions.
+ * A slot map flattened into parallel classes and slot positions.
  *
  * @remarks A slot the plan does not declare, and one whose classes flatten to nothing, are both
  * dropped here — no resolver could ever ask for them.
@@ -79,10 +74,10 @@ const toSlotClassGroup = (
 };
 
 /**
- * Flatten a configuration class value for a compiled plan.
+ * A configuration class value flattened for a compiled plan.
  *
  * @remarks A `null` `slotIndexByName` says the configuration has no slots, so an object value is
- * clsx conditions rather than slot names.
+ * conditional classes rather than slot names.
  *
  * @since 0.6.0
  */
@@ -106,9 +101,8 @@ export const toCallerClasses = (classValue: ClassValue, classNameValue: ClassVal
 /**
  * The key a value a caller passed selects inside its group, or `undefined` when it selects nothing.
  *
- * @remarks Booleans and `0` are spelled as their keys, any other falsy value reads as `"false"`, and
- * `null`, an array or an object selects nothing. Only `undefined` falls back to the default, so
- * callers answer it before asking here.
+ * @remarks Booleans and `0` are spelled as their keys, other falsy values read as `"false"`, and `null`, an
+ * array or an object selects nothing; callers answer `undefined`, the one value that takes the default.
  *
  * @since 0.6.0
  */

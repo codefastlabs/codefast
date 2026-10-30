@@ -1,9 +1,4 @@
-/**
- * Compound variants and compound slots, reduced to flat condition lists.
- *
- * Testing a compiled condition lives here rather than under `resolve/` because it and the encoding
- * it reads are one contract; splitting them would put the two halves out of each other's sight.
- */
+/** Compound variants and compound slots reduced to flat condition lists, and the tests a call's values face. */
 
 import { toClassText, toPlanClasses } from "#compile/class-values";
 import type { PlanClasses } from "#compile/class-values";
@@ -163,7 +158,7 @@ const compileConditions = (
 };
 
 /**
- * Compile compound variants into condition lists.
+ * Compiles compound variants into condition lists.
  *
  * @remarks A `null` `slotIndexByName` says the configuration has no slots.
  *
@@ -191,7 +186,7 @@ export const compileCompoundVariants = <Variants extends VariantSchema>(
 };
 
 /**
- * Compile compound slots into condition lists paired with the slots they target.
+ * Compiles compound slots into condition lists paired with the slots they target.
  *
  * @since 0.6.0
  */
