@@ -120,6 +120,18 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
     }
   });
 
+  test("should keep every declared class in a compiled slot resolver when merging is off", () => {
+    const card = tv({ slots: { base: "p-2 p-4", icon: "" } }, { twMerge: false });
+
+    for (let call = 0; call < 2; call++) {
+      const { base, icon } = card();
+
+      expect(base()).toBe("p-2 p-4");
+      expect(icon()).toBeUndefined();
+      expect(base({ class: "p-6" })).toBe("p-2 p-4 p-6");
+    }
+  });
+
   test("should share a factory's merge function with its cn", () => {
     const merge = (classes: string): string => `merged(${classes})`;
     const { cn: mergeCn, tv: mergeTv } = createTV({ twMerge: merge });
