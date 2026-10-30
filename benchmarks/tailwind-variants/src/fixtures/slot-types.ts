@@ -51,3 +51,14 @@ export type PaginationRenderer = (props: Props) => CompoundPaginationSlots;
  * @since 0.7.3
  */
 export type DialogRenderer = (props: Props) => ExtremeDialogSlots;
+
+/** A slot called the way a sub-component calls it, with the `className` it was given. */
+type ClassedSlot = (props: { readonly className: string | undefined }) => string;
+
+/** The card slots a sub-component tree renders, each taking its own `className`. */
+export type ClassedCardSlots = Readonly<
+  Record<"base" | "content" | "description" | "footer" | "header" | "title", ClassedSlot>
+>;
+
+/** A card slot resolver whose slots are called with a `className`. */
+export type ClassedCardRenderer = (props: Props) => ClassedCardSlots;

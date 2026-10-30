@@ -21,7 +21,7 @@ export function buildClassVarianceAuthoritySimpleScenarios(): ReadonlyArray<Benc
       what: "Simple button variants (cva) without tailwind-merge after cva()",
       build: () => () => {
         for (const props of simpleTestProps) {
-          cvaInstance(props);
+          cvaInstance({ ...props });
         }
       },
     },
@@ -30,7 +30,7 @@ export function buildClassVarianceAuthoritySimpleScenarios(): ReadonlyArray<Benc
       what: "Simple button variants with tailwind-merge after cva()",
       build: () => () => {
         for (const props of simpleTestProps) {
-          twMerge(cvaInstance(props));
+          twMerge(cvaInstance({ ...props }));
         }
       },
     },

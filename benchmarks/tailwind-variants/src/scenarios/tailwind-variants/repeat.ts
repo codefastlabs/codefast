@@ -20,7 +20,7 @@ const slotsWithMerge = tailwindVariantsTv(slotsVariants, TV_MERGE_ENABLED) as Ca
 
 function runSlotLoop(renderer: CardRenderer): void {
   for (const props of repeatSlotsTestProps) {
-    renderCardSlots(renderer(props));
+    renderCardSlots(renderer({ ...props }));
   }
 }
 
@@ -33,7 +33,7 @@ export function buildTailwindVariantsNpmRepeatScenarios(): ReadonlyArray<BenchSc
       ...REPEAT_SIMPLE_WITHOUT_MERGE,
       build: () => () => {
         for (const props of repeatSimpleTestProps) {
-          flatNoMerge(props);
+          flatNoMerge({ ...props });
         }
       },
     },
@@ -41,7 +41,7 @@ export function buildTailwindVariantsNpmRepeatScenarios(): ReadonlyArray<BenchSc
       ...REPEAT_SIMPLE_WITH_MERGE,
       build: () => () => {
         for (const props of repeatSimpleTestProps) {
-          flatWithMerge(props);
+          flatWithMerge({ ...props });
         }
       },
     },

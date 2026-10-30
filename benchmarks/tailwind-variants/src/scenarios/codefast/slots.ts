@@ -11,7 +11,7 @@ const codefastWithMerge = codefastTvFn(slotsVariants, TV_MERGE_ENABLED) as CardR
 
 function runSlotLoop(renderer: CardRenderer): void {
   for (const props of slotsTestProps) {
-    renderCardSlots(renderer(props));
+    renderCardSlots(renderer({ ...props }));
   }
 }
 

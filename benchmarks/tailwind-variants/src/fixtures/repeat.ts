@@ -1,7 +1,7 @@
 /**
  * Prop selections that cycle a few choices, for the `repeat-*` scenarios.
  *
- * Built once, so the timed loop hands the same object references over and over, as every fixture here does.
+ * Built once; the timed loop copies each selection per call, as React hands a component fresh props on every render.
  */
 
 const SIMPLE_SELECTIONS = [

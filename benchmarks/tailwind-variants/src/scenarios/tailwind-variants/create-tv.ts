@@ -16,7 +16,7 @@ export function buildTailwindVariantsNpmCreateTvScenarios(): ReadonlyArray<Bench
       ...CREATE_TV_WITHOUT_MERGE,
       build: () => () => {
         for (const props of simpleTestProps) {
-          npmButtonNoMerge(props);
+          npmButtonNoMerge({ ...props });
         }
       },
     },
@@ -24,7 +24,7 @@ export function buildTailwindVariantsNpmCreateTvScenarios(): ReadonlyArray<Bench
       ...CREATE_TV_WITH_MERGE,
       build: () => () => {
         for (const props of simpleTestProps) {
-          npmButtonWithMerge(props);
+          npmButtonWithMerge({ ...props });
         }
       },
     },

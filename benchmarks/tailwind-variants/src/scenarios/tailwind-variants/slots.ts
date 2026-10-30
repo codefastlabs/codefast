@@ -11,7 +11,7 @@ const npmWithMerge = tailwindVariantsTv(slotsVariants, TV_MERGE_ENABLED) as Card
 
 function runSlotLoop(renderer: CardRenderer): void {
   for (const props of slotsTestProps) {
-    renderCardSlots(renderer(props));
+    renderCardSlots(renderer({ ...props }));
   }
 }
 

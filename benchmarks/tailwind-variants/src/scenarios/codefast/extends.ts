@@ -25,7 +25,7 @@ export function buildCodefastExtendsScenarios(): ReadonlyArray<BenchScenario> {
       ...EXTENDS_WITHOUT_MERGE,
       build: () => () => {
         for (const props of extendsTestProps) {
-          codefastExtendsNoMerge(props);
+          codefastExtendsNoMerge({ ...props });
         }
       },
     },
@@ -33,7 +33,7 @@ export function buildCodefastExtendsScenarios(): ReadonlyArray<BenchScenario> {
       ...EXTENDS_WITH_MERGE,
       build: () => () => {
         for (const props of extendsTestProps) {
-          codefastExtendsWithMerge(props);
+          codefastExtendsWithMerge({ ...props });
         }
       },
     },

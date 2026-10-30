@@ -16,7 +16,7 @@ export function buildCodefastExtremeScenarios(): ReadonlyArray<BenchScenario> {
       ...EXTREME_WITHOUT_MERGE,
       build: () => () => {
         for (const props of extremeTestProps) {
-          codefastNoMerge(props);
+          codefastNoMerge({ ...props });
         }
       },
     },
@@ -24,7 +24,7 @@ export function buildCodefastExtremeScenarios(): ReadonlyArray<BenchScenario> {
       ...EXTREME_WITH_MERGE,
       build: () => () => {
         for (const props of extremeTestProps) {
-          codefastWithMerge(props);
+          codefastWithMerge({ ...props });
         }
       },
     },

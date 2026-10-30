@@ -16,7 +16,7 @@ export function buildTailwindVariantsNpmComplexScenarios(): ReadonlyArray<BenchS
       ...COMPLEX_WITHOUT_MERGE,
       build: () => () => {
         for (const props of complexTestProps) {
-          npmNoMerge(props);
+          npmNoMerge({ ...props });
         }
       },
     },
@@ -24,7 +24,7 @@ export function buildTailwindVariantsNpmComplexScenarios(): ReadonlyArray<BenchS
       ...COMPLEX_WITH_MERGE,
       build: () => () => {
         for (const props of complexTestProps) {
-          npmWithMerge(props);
+          npmWithMerge({ ...props });
         }
       },
     },

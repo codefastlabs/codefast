@@ -1,11 +1,14 @@
+import { cnTestCalls } from "#fixtures/cn";
 /** Scenario descriptors every side spreads, so a row's id, group, description, and batch cannot drift. */
 import { complexTestProps } from "#fixtures/complex";
 import { compoundSlotsTestProps } from "#fixtures/compound-slots";
 import { simpleTestProps as createTvTestProps } from "#fixtures/create-tv";
 import { extendsTestProps } from "#fixtures/extends";
 import { extremeSlotsTestProps, extremeTestProps } from "#fixtures/extreme";
+import { overrideTestProps } from "#fixtures/override";
 import { repeatSimpleTestProps, repeatSlotsTestProps } from "#fixtures/repeat";
 import { simpleTestProps } from "#fixtures/simple";
+import { slotClassTestCalls } from "#fixtures/slot-class";
 import { slotsTestProps } from "#fixtures/slots";
 import type { BenchScenario } from "#scenarios/types";
 
@@ -327,6 +330,48 @@ export const FIRST_RENDER_SLOTS = {
   id: "first-render-slots",
   group: "first-render",
   what: "Define a slot component and render every slot once (per definition, not per render; minus define-only it is the first render — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
+} as const satisfies ScenarioDescriptor;
+
+/** `cn()` with a long static class list and the caller's usually absent `className`, the call a component makes most. */
+export const CN_WITH_MERGE = {
+  id: "cn-with-merge",
+  group: "cn",
+  what: "cn() calls shaped like a component library's: a static class list, a condition, the caller's className",
+  batch: cnTestCalls.length,
+} as const satisfies ScenarioDescriptor;
+
+/** A button rendered from many call sites, each with its own `className`, some of which conflict with a variant. */
+export const OVERRIDE_WITH_MERGE = {
+  id: "override-with-merge",
+  group: "override",
+  what: "Button variants from many call sites, each passing its own className, some conflicting with a variant",
+  batch: overrideTestProps.length,
+} as const satisfies ScenarioDescriptor;
+
+/** A card whose sub-components each call their slot with the `className` they were given, usually absent. */
+export const SLOT_CLASS_WITH_MERGE = {
+  id: "slot-class-with-merge",
+  group: "slot-class",
+  what: "Card slots each called with their own className, usually absent, sometimes overriding a slot class",
+  batch: slotClassTestCalls.length,
+} as const satisfies ScenarioDescriptor;
+
+/** Defining a button and rendering it three times, which reaches a lazy library's second-call compile. */
+export const THREE_RENDERS_SIMPLE = {
+  id: "three-renders-simple",
+  group: "first-render",
+  what: "Define a button component and render it with three selections (per definition; reaches a second-call compile — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
+} as const satisfies ScenarioDescriptor;
+
+/** Defining a slot component and rendering every slot for three selections. */
+export const THREE_RENDERS_SLOTS = {
+  id: "three-renders-slots",
+  group: "first-render",
+  what: "Define a slot component and render every slot for three selections (per definition; reaches a second-call compile — off the aggregates)",
   batch: COLD_DEFINITIONS_PER_LOOP,
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;

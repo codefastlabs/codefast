@@ -11,7 +11,7 @@ const codefastWithMerge = codefastTvFn(compoundSlotsVariants, TV_MERGE_ENABLED) 
 
 function runCompoundSlotLoop(renderer: PaginationRenderer): void {
   for (const props of compoundSlotsTestProps) {
-    renderPaginationSlots(renderer(props));
+    renderPaginationSlots(renderer({ ...props }));
   }
 }
 

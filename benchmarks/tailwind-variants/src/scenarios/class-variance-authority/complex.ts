@@ -22,7 +22,7 @@ export function buildClassVarianceAuthorityComplexScenarios(): ReadonlyArray<Ben
       what: "Complex variants (cva) without tailwind-merge after cva()",
       build: () => () => {
         for (const props of complexTestProps) {
-          cvaInstance(props);
+          cvaInstance({ ...props });
         }
       },
     },
@@ -31,7 +31,7 @@ export function buildClassVarianceAuthorityComplexScenarios(): ReadonlyArray<Ben
       what: "Complex variants with tailwind-merge after cva()",
       build: () => () => {
         for (const props of complexTestProps) {
-          twMerge(cvaInstance(props));
+          twMerge(cvaInstance({ ...props }));
         }
       },
     },
