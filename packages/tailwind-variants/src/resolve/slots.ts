@@ -5,8 +5,7 @@
 
 import type { PlanClasses } from "#compile/class-values";
 import { toClassText, toVariantKey } from "#compile/class-values";
-import type { CompoundSlotPlanEntry } from "#compile/compound";
-import { collectMatchedCompoundSlots, matchesCompoundConditions } from "#compile/compound";
+import { matchesCompoundConditions } from "#compile/compound";
 import { compileGroupValue } from "#compile/plan";
 import type { SlotPlanEntry, VariantPlan } from "#compile/plan";
 import type { ClassValue, SlotClassResolver, SlotResolverProps, VariantSchema } from "#types";
@@ -19,7 +18,6 @@ import type { ClassValue, SlotClassResolver, SlotResolverProps, VariantSchema } 
  * sparse, so that is far less work than the scan it replaces.
  */
 interface SlotCallContext {
-  readonly compoundSlots: ReadonlyArray<CompoundSlotPlanEntry>;
   readonly conditionValues: Record<string, unknown>;
   readonly matched: ReadonlyArray<PlanClasses | undefined>;
   readonly resolved: Array<string | typeof NOT_RESOLVED | undefined>;
@@ -108,9 +106,11 @@ const createSlotCallContext = (
     }
   }
 
-  const compoundSlots = collectMatchedCompoundSlots(plan.compoundSlots, variantProps);
+  for (const compoundSlot of plan.compoundSlots) {
+    if (!matchesCompoundConditions(compoundSlot.conditions, variantProps, null)) {
+      continue;
+    }
 
-  for (const compoundSlot of compoundSlots) {
     for (const slotIndex of compoundSlot.slotIndexes) {
       const text = texts[slotIndex] as string;
 
@@ -119,7 +119,6 @@ const createSlotCallContext = (
   }
 
   return {
-    compoundSlots,
     conditionValues: toConditionValues(plan.conditionNames, variantProps),
     matched,
     resolved,
@@ -162,7 +161,8 @@ const resolveSlotWithOverrides = (
     const override = overrides[entry.name];
     let classes: PlanClasses | undefined;
 
-    if (override === undefined) {
+    // A slot prop left null or undefined keeps the call's selection.
+    if (override === undefined || override === null) {
       classes = context.matched[index];
     } else {
       const key = toVariantKey(override);
@@ -191,9 +191,16 @@ const resolveSlotWithOverrides = (
     }
   }
 
-  for (const compoundSlot of context.compoundSlots) {
-    if (compoundSlot.slotIndexes.includes(slotIndex)) {
-      text = text === "" ? compoundSlot.classes : text + " " + compoundSlot.classes;
+  for (const compoundSlot of plan.compoundSlots) {
+    if (!matchesCompoundConditions(compoundSlot.conditions, context.conditionValues, overrides)) {
+      continue;
+    }
+
+    // A slot listed twice takes the classes twice, as it does on the bare path.
+    for (const targetIndex of compoundSlot.slotIndexes) {
+      if (targetIndex === slotIndex) {
+        text = text === "" ? compoundSlot.classes : text + " " + compoundSlot.classes;
+      }
     }
   }
 
@@ -233,9 +240,10 @@ const resolveSlot = (
   context: SlotCallContext,
   slot: SlotPlanEntry,
   slotIndex: number,
-  slotProps: SlotResolverProps<VariantSchema> | undefined,
+  // Null is what a JavaScript caller passes for no props.
+  slotProps: SlotResolverProps<VariantSchema> | null | undefined,
 ): string | undefined => {
-  if (slotProps === undefined) {
+  if (slotProps === undefined || slotProps === null) {
     return resolveBareSlot(plan, context, slotIndex);
   }
 

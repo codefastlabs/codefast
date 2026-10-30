@@ -207,9 +207,11 @@ export const compileCompoundSlots = <Variants extends VariantSchema>(
   const entries: Array<CompoundSlotPlanEntry> = [];
 
   for (const compoundSlot of compoundSlots) {
+    const classes = toClassText(getCompoundClass(compoundSlot, false));
     const slotIndexes: Array<number> = [];
 
-    for (const slotKey of compoundSlot.slots as ReadonlyArray<string>) {
+    // A slot is listed once per mention, so a repeated one takes the classes twice; empty classes target nothing.
+    for (const slotKey of classes === "" ? [] : (compoundSlot.slots as ReadonlyArray<string>)) {
       const slotIndex = slotIndexByName[slotKey];
 
       if (slotIndex !== undefined) {
@@ -218,7 +220,7 @@ export const compileCompoundSlots = <Variants extends VariantSchema>(
     }
 
     entries.push({
-      classes: toClassText(getCompoundClass(compoundSlot, false)),
+      classes,
       conditions: compileConditions(compoundSlot, defaultVariantProps, true),
       slotIndexes,
     });
@@ -267,30 +269,4 @@ export const matchesCompoundConditions = (
   }
 
   return true;
-};
-
-/**
- * The compound slots whose conditions hold for these props.
- *
- * @remarks Compound slots never read per-slot props, so one match pass serves every slot.
- *
- * @since 0.3.16-canary.0
- */
-export const collectMatchedCompoundSlots = (
-  compoundSlots: ReadonlyArray<CompoundSlotPlanEntry>,
-  variantProps: Record<string, unknown>,
-): ReadonlyArray<CompoundSlotPlanEntry> => {
-  if (compoundSlots.length === 0) {
-    return EMPTY_COMPOUND_SLOTS;
-  }
-
-  const matched: Array<CompoundSlotPlanEntry> = [];
-
-  for (const compoundSlot of compoundSlots) {
-    if (matchesCompoundConditions(compoundSlot.conditions, variantProps, null)) {
-      matched.push(compoundSlot);
-    }
-  }
-
-  return matched;
 };

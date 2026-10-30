@@ -161,10 +161,10 @@ const coldSlotText = (
         continue;
       }
 
+      const override = overrides === null ? undefined : overrides[name];
+      // A slot prop left null or undefined keeps the call's selection.
       const key =
-        overrides !== null && overrides[name] !== undefined
-          ? toVariantKey(overrides[name])
-          : selectedKey(defaults[name], props[name]);
+        override === undefined || override === null ? selectedKey(defaults[name], props[name]) : toVariantKey(override);
 
       if (key !== undefined) {
         text = append(text, slotContribution(ownValue(group, key), slotName));
@@ -186,8 +186,7 @@ const coldSlotText = (
 
   if (compoundSlots !== undefined) {
     for (const compoundSlot of compoundSlots) {
-      // Compound slots read the call's props only, never a slot's own overrides.
-      if (!matchesColdCompound(compoundSlot, props, defaults, null, true)) {
+      if (!matchesColdCompound(compoundSlot, props, defaults, overrides, true)) {
         continue;
       }
 
@@ -205,6 +204,25 @@ const coldSlotText = (
 };
 
 /**
+ * The props a slot reads, copied when the resolver is called, without the classes and `children` no slot reads.
+ *
+ * @remarks A slot is called later than its resolver, and the caller's props object may have changed
+ * by then or carry `children`, so the slots read this copy instead of holding it.
+ */
+const snapshotProps = (props: Props): Props => {
+  const snapshot: Props = {};
+
+  for (const name in props) {
+    // Assigning `__proto__` would replace the copy's prototype rather than add a key.
+    if (name !== "children" && name !== "class" && name !== "className" && name !== "__proto__") {
+      snapshot[name] = props[name];
+    }
+  }
+
+  return snapshot;
+};
+
+/**
  * Creates one class resolver per slot for one set of props, reading the configuration directly.
  *
  * @since 0.8.0
@@ -212,9 +230,10 @@ const coldSlotText = (
 export const createColdSlotResolvers = (
   configuration: SlotVariantConfig<VariantSchema, SlotSchema>,
   mergeClasses: ClassMerger | null,
-  props: Props,
+  callProps: Props,
 ): Record<string, SlotClassResolver<VariantSchema>> => {
   const defaults = configuration.defaultVariants ?? EMPTY_DEFAULTS;
+  const props = snapshotProps(callProps);
   const resolvers: Record<string, SlotClassResolver<VariantSchema>> = {};
   const names = ["base"];
 
@@ -228,8 +247,9 @@ export const createColdSlotResolvers = (
     let resolved = false;
     let memoised: string | undefined;
 
-    resolvers[slotName] = (slotProps?: SlotResolverProps<VariantSchema>): string | undefined => {
-      if (slotProps === undefined) {
+    // Null is what a JavaScript caller passes for no props.
+    resolvers[slotName] = (slotProps?: SlotResolverProps<VariantSchema> | null): string | undefined => {
+      if (slotProps === undefined || slotProps === null) {
         if (!resolved) {
           memoised = finish(coldSlotText(configuration, defaults, props, slotName, null), mergeClasses);
           resolved = true;
