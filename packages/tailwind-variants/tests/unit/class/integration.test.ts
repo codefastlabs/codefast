@@ -1,3 +1,5 @@
+import { extendTailwindMerge } from "tailwind-merge";
+
 import { createTV, tv } from "#index";
 
 describe("Tailwind Variants (TV) - Integration Tests", () => {
@@ -161,13 +163,13 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
 
   test("should work with theme system using createTV", () => {
     const { tv: createThemeTV } = createTV({
-      twMergeConfig: {
+      twMerge: extendTailwindMerge({
         extend: {
           classGroups: {
             "font-size": [{ text: ["xs", "sm", "base", "lg", "xl", "2xl"] }],
           },
         },
-      },
+      }),
     });
 
     const alertVariants = createThemeTV({

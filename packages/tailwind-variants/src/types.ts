@@ -2,8 +2,6 @@
  * The model: configurations, variant selections, and the compiled shapes a plan holds.
  */
 
-import type { ConfigExtension } from "tailwind-merge";
-
 /**
  * The value a caller passes for one group key: `boolean` for a `"true"`/`"false"` key, the key itself otherwise.
  *
@@ -247,14 +245,20 @@ export interface TailwindVariantsOptions {
    */
   readonly cacheResolutions?: boolean;
   /**
-   * Resolves Tailwind conflicts in every answer with `tailwind-merge`, so a later class wins over an earlier one.
+   * Resolves Tailwind conflicts in every answer, so a later class wins over an earlier one.
+   *
+   * @remarks `true` merges with `tailwind-merge`'s `twMerge`, `false` keeps every declared class, and a function
+   * replaces the merge — an `extendTailwindMerge` result for custom class groups, or another engine.
    *
    * @defaultValue true
    */
-  readonly twMerge?: boolean;
-  /** A `tailwind-merge` extension for custom class groups; one merge function is built per configuration object. */
-  readonly twMergeConfig?: ConfigExtension<string, string>;
+  readonly twMerge?: boolean | ClassMerger | undefined;
 }
+
+/**
+ * A function that resolves Tailwind conflicts in one space-separated class string.
+ */
+export type ClassMerger = (classes: string) => string;
 
 /**
  * Type for individual slot functions.

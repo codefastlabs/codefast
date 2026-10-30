@@ -11,7 +11,15 @@ import { hasBooleanVariantValues, toClassText, toPlanClasses, toVariantKey } fro
 import type { CompoundPlanEntry, CompoundSlotPlanEntry } from "#compile/compound";
 import { compileCompoundSlots, compileCompoundVariants } from "#compile/compound";
 import { hasSlotsConfig } from "#compile/configuration";
-import type { ClassValue, CompoundSlot, SlotSchema, SlotVariantConfig, VariantConfig, VariantSchema } from "#types";
+import type {
+  ClassMerger,
+  ClassValue,
+  CompoundSlot,
+  SlotSchema,
+  SlotVariantConfig,
+  VariantConfig,
+  VariantSchema,
+} from "#types";
 
 /**
  * One variant group with the classes its default selects already resolved.
@@ -48,9 +56,9 @@ export interface VariantPlan {
   readonly compoundSlots: ReadonlyArray<CompoundSlotPlanEntry>;
   readonly compounds: ReadonlyArray<CompoundPlanEntry>;
   readonly entries: ReadonlyArray<VariantPlanEntry>;
-  readonly shouldMerge: boolean;
+  /** The merge every answer passes through, or `null` to keep every declared class. */
+  readonly mergeClasses: ClassMerger | null;
   readonly slots: ReadonlyArray<SlotPlanEntry> | null;
-  readonly tailwindMerge: (classes: string) => string;
 }
 
 const EMPTY_ENTRIES: ReadonlyArray<VariantPlanEntry> = [];
@@ -197,8 +205,7 @@ const compileSlotEntries = (slotDefinitions: SlotSchema, baseClasses: ClassValue
  */
 export const compileVariantPlan = (
   configuration: SlotVariantConfig<VariantSchema, SlotSchema> | VariantConfig<VariantSchema>,
-  shouldMerge: boolean,
-  tailwindMerge: (classes: string) => string,
+  mergeClasses: ClassMerger | null,
 ): VariantPlan => {
   const slotDefinitions = hasSlotsConfig(configuration) ? configuration.slots : undefined;
   const defaultVariantProps = (configuration.defaultVariants ?? {}) as Record<string, unknown>;
@@ -237,8 +244,7 @@ export const compileVariantPlan = (
     compounds,
     conditionNames: collectConditionNames(compounds, compoundSlots),
     entries: compileVariantEntries(configuration.variants ?? {}, defaultVariantProps, slotIndexByName),
-    shouldMerge,
+    mergeClasses,
     slots,
-    tailwindMerge,
   };
 };

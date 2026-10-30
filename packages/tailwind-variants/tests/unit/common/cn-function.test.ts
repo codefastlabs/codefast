@@ -1,3 +1,5 @@
+import { extendTailwindMerge } from "tailwind-merge";
+
 import { cn, createTV } from "#index";
 
 describe("cn function", () => {
@@ -54,10 +56,9 @@ describe("cn function from createTV", () => {
     expect(result).toBe("text-xl text-blue-500 text-2xl");
   });
 
-  test("should use custom twMergeConfig", () => {
+  test("should merge with a caller's extended tailwind-merge", () => {
     const { cn: cnWithConfig } = createTV({
-      twMerge: true,
-      twMergeConfig: {
+      twMerge: extendTailwindMerge({
         extend: {
           classGroups: {
             "font-size": ["text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl"],
@@ -66,7 +67,7 @@ describe("cn function from createTV", () => {
             "font-size": ["font-size"],
           },
         },
-      },
+      }),
     });
 
     const result = cnWithConfig("text-lg", "text-xl", "text-2xl");

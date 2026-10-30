@@ -1,5 +1,5 @@
 import { tv } from "#index";
-import { twMergeConfig } from "#tests/unit/fixtures/tailwind-merge-config";
+import { customTwMerge } from "#tests/unit/fixtures/tailwind-merge-config";
 
 describe("Tailwind Variants (TV) - Slots", () => {
   test("should work with slots -- default variants", () => {
@@ -192,7 +192,7 @@ describe("Tailwind Variants (TV) - Slots", () => {
     expect(wrapper()).toHaveClassName(["flex", "flex-col", "text-lg"]);
   });
 
-  test("should work with slots -- twMergeConfig", () => {
+  test("should work with slots -- custom merge", () => {
     const menu = tv(
       {
         defaultVariants: {
@@ -218,7 +218,7 @@ describe("Tailwind Variants (TV) - Slots", () => {
         },
       },
       {
-        twMergeConfig,
+        twMerge: customTwMerge,
       },
     );
 

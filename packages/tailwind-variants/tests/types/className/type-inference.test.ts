@@ -1,3 +1,4 @@
+import { extendTailwindMerge } from "tailwind-merge";
 import { expectTypeOf } from "vitest";
 
 import type { VariantProps } from "#index";
@@ -295,13 +296,13 @@ describe("Real-World Type Inference Tests", () => {
 
   test("should infer types for alert component with createTV factory in real usage", () => {
     const { tv: createThemeTV } = createTV({
-      twMergeConfig: {
+      twMerge: extendTailwindMerge({
         extend: {
           classGroups: {
             "font-size": [{ text: ["xs", "sm", "base", "lg", "xl", "2xl"] }],
           },
         },
-      },
+      }),
     });
 
     const alertVariants = createThemeTV({

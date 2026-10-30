@@ -186,8 +186,9 @@ iconButton({ tone: "outline", size: "sm" });
 
 `tv(config, options)` takes an optional second argument:
 
-- `twMerge` — set `false` to keep every declared class instead of resolving conflicts (default `true`).
-- `twMergeConfig` — a `tailwind-merge` `ConfigExtension` for custom class groups.
+- `twMerge` — how conflicts are resolved: `true` merges with `tailwind-merge` (the default), `false` keeps every
+  declared class, and a function `(classes: string) => string` replaces the merge — `extendTailwindMerge(…)` for custom
+  class groups, or another engine.
 - `cacheResolutions` — set `false` to resolve every call from scratch (default `true`).
 
 A variant function remembers what each selection resolved to, because a list renders the same few selections many times
@@ -204,9 +205,10 @@ and both the plan walk and the merge are pure functions of the selection. Two co
 
 ```ts
 import { createTV } from "@codefast/tailwind-variants";
+import { extendTailwindMerge } from "tailwind-merge";
 
 const { tv, cn } = createTV({
-  twMergeConfig: { extend: { classGroups: { "font-size": [{ text: ["huge"] }] } } },
+  twMerge: extendTailwindMerge({ extend: { classGroups: { "font-size": [{ text: ["huge"] }] } } }),
 });
 
 cn("text-base", "text-huge"); // => "text-huge" — the custom group is understood
@@ -216,6 +218,21 @@ Options passed locally to `tv(config, options)` override the factory's globals. 
 `config`, its fully merged configuration (what `extend` reads), and `variantKeys`, the variant names in declaration
 order with an extended function's first — the same list upstream exposes, for splitting variant props from the rest by
 hand.
+
+### Choosing the merge engine
+
+The package imports one thing from `tailwind-merge`: its `twMerge`, as the default merge. Everything else comes in
+through the `twMerge` option, so the application decides which engine runs and ships exactly one copy of it. A drop-in
+engine such as [`cn`](https://github.com/shadcn-ui/cn) can take over every import of `tailwind-merge` in the app — this
+package's included — with a bundler alias:
+
+```ts
+// vite.config.ts
+resolve: { alias: { "tailwind-merge": "cn" } },
+```
+
+The merge runs once per selection a resolver has not answered before, so the engine decides what a first render costs; a
+repeated selection never reaches it.
 
 ## Class utilities
 
@@ -258,8 +275,7 @@ for library authors.
 ## Migrating from `tailwind-variants`
 
 The configuration shape is the same — `base`, `variants`, `slots`, `defaultVariants`, `compoundVariants`,
-`compoundSlots`, `extend`, plus the `twMerge` / `twMergeConfig` options — so for most codebases the migration is the
-import:
+`compoundSlots`, `extend`, plus the `twMerge` option — so for most codebases the migration is the import:
 
 ```diff
 - import { tv, cn, cx } from "tailwind-variants";
@@ -271,6 +287,8 @@ Two differences to check for:
 - `createTV` returns an object `{ tv, cn }` sharing the global options, rather than a bare `tv` function — destructure
   instead of assigning directly.
 - `cnMerge` and a mutable `defaultConfig` are not exported; use `createTV` to configure merging.
+- There is no `twMergeConfig`: pass `twMerge: extendTailwindMerge(config)` instead, which is also how upstream's `lite`
+  entry takes a merge function.
 - `variantKeys` is exposed as upstream exposes it; the other metadata upstream attaches to the function (`base`,
   `variants`, `defaultVariants`, `slots`, `compoundVariants`, `compoundSlots`, `extend`) lives under `config`.
 
