@@ -3,7 +3,7 @@
 import { twMerge } from "cn";
 
 import { cn, createMergingCn, cx } from "#class-names";
-import { toCallerClasses } from "#compile/class-values";
+import { pickClassProp } from "#compile/class-values";
 import { hasExtendConfig, hasSlotsConfig, mergeVariantConfigs } from "#compile/configuration";
 import type { VariantPlan } from "#compile/plan";
 import { compileVariantPlan } from "#compile/plan";
@@ -92,21 +92,18 @@ const compileResolver = (
 };
 
 /**
- * The caller's `class` and `className` as one key fragment, or `null` for a clsx-shaped value no key can carry.
+ * The caller's own classes as a key fragment, or `null` for a clsx-shaped value no key can carry.
  *
  * @remarks Tested before the selection is encoded: a call the cache can never answer should not pay
- * to find that out. Every falsy value contributes nothing, so it adds nothing to the key.
+ * to find that out.
  */
-const toCustomClassKey = (classValue: ClassValue, classNameValue: ClassValue): string | null => {
-  if (!classValue) {
-    return !classNameValue ? "" : typeof classNameValue === "string" ? classNameValue : null;
+const toCustomClassKey = (customClasses: ClassValue): string | null => {
+  // Every falsy value contributes nothing, so they all share the selection's own key.
+  if (!customClasses) {
+    return "";
   }
 
-  if (typeof classValue !== "string") {
-    return null;
-  }
-
-  return !classNameValue ? classValue : typeof classNameValue === "string" ? classValue + " " + classNameValue : null;
+  return typeof customClasses === "string" ? customClasses : null;
 };
 
 /**
@@ -231,10 +228,9 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
       return createSlotResolvers(plan, slots, props);
     }
 
-    const classValue = props.class as ClassValue;
-    const classNameValue = props.className as ClassValue;
+    const customClasses = pickClassProp(props);
     const memo = compiled.flatMemo;
-    const customClassKey = memo === null ? null : toCustomClassKey(classValue, classNameValue);
+    const customClassKey = memo === null ? null : toCustomClassKey(customClasses);
 
     if (memo !== null && customClassKey !== null) {
       const selectionKey = memo.keyOf(props);
@@ -275,7 +271,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
       }
     }
 
-    return resolveVariantClasses(plan, props, toCallerClasses(classValue, classNameValue));
+    return resolveVariantClasses(plan, props, customClasses);
   };
 
   const configuredVariantResolver = variantResolverFunction as VariantResolver<Variants, Slots>;

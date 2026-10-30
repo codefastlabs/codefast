@@ -4,11 +4,11 @@
  */
 
 import type { PlanClasses } from "#compile/class-values";
-import { toClassText, toVariantKey } from "#compile/class-values";
+import { pickClassProp, toClassText, toVariantKey } from "#compile/class-values";
 import { matchesCompoundConditions } from "#compile/compound";
 import { compileGroupValue } from "#compile/plan";
 import type { SlotPlanEntry, VariantPlan } from "#compile/plan";
-import type { ClassValue, SlotClassResolver, SlotResolverProps, VariantSchema } from "#types";
+import type { SlotClassResolver, SlotResolverProps, VariantSchema } from "#types";
 
 /**
  * One resolution of the variant props, shared by every slot of that call.
@@ -247,25 +247,20 @@ const resolveSlot = (
   }
 
   const overrides = slotProps as Record<string, unknown>;
-  const slotClass = toClassText(overrides.class as ClassValue);
-  const slotClassName = toClassText(overrides.className as ClassValue);
+  const slotClasses = toClassText(pickClassProp(overrides));
   let text: string;
 
   // A sub-component passes the `className` it was given, usually absent, so a class-only call is the common one.
   if (hasVariantOverride(overrides)) {
     text = resolveSlotWithOverrides(plan, context, slot, slotIndex, overrides);
-  } else if (!slotClassName && !slotClass) {
+  } else if (!slotClasses) {
     return resolveBareSlot(plan, context, slotIndex);
   } else {
     text = context.texts[slotIndex] as string;
   }
 
-  if (slotClass) {
-    text = text === "" ? slotClass : text + " " + slotClass;
-  }
-
-  if (slotClassName) {
-    text = text === "" ? slotClassName : text + " " + slotClassName;
+  if (slotClasses) {
+    text = text === "" ? slotClasses : text + " " + slotClasses;
   }
 
   if (text === "") {

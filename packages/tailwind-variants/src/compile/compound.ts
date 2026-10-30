@@ -1,9 +1,8 @@
 /** Compound variants and compound slots reduced to flat condition lists, and the tests a call's values face. */
 
-import { toClassText, toPlanClasses } from "#compile/class-values";
+import { pickClassProp, toClassText, toPlanClasses } from "#compile/class-values";
 import type { PlanClasses } from "#compile/class-values";
-import { joinClassValues, joinSlotClassValues } from "#compile/configuration";
-import type { ClassValue, CompoundSlot, CompoundVariant, SlotCompoundVariant, VariantSchema } from "#types";
+import type { CompoundSlot, CompoundVariant, SlotCompoundVariant, VariantSchema } from "#types";
 
 /** Condition satisfied when the resolved value strictly equals the configured one. */
 const CONDITION_EQUAL = 0;
@@ -96,31 +95,6 @@ export interface CompoundSlotPlanEntry {
 const EMPTY_COMPOUNDS: ReadonlyArray<CompoundPlanEntry> = [];
 const EMPTY_COMPOUND_SLOTS: ReadonlyArray<CompoundSlotPlanEntry> = [];
 
-/**
- * The classes a compound definition contributes: its `class`, then its `className`.
- *
- * @remarks `slotMode` joins two slot maps per slot, reading a value that is not a map as the `base` slot's.
- *
- * @since 0.3.16-canary.2
- */
-export const getCompoundClass = (
-  compoundDefinition: { readonly class?: ClassValue; readonly className?: ClassValue },
-  slotMode: boolean,
-): ClassValue => {
-  const classValue = compoundDefinition.class;
-  const classNameValue = compoundDefinition.className;
-
-  if (classValue === undefined) {
-    return classNameValue;
-  }
-
-  if (classNameValue === undefined) {
-    return classValue;
-  }
-
-  return slotMode ? joinSlotClassValues(classValue, classNameValue) : joinClassValues(classValue, classNameValue);
-};
-
 const compileCondition = (name: string, expected: unknown, fallback: unknown): CompoundCondition => {
   if (Array.isArray(expected)) {
     const present = expected.filter((value) => !isAbsent(value));
@@ -177,7 +151,7 @@ export const compileCompoundVariants = <Variants extends VariantSchema>(
 
   for (const compoundVariant of compoundVariants) {
     entries.push({
-      classes: toPlanClasses(getCompoundClass(compoundVariant, slotIndexByName !== null), slotIndexByName),
+      classes: toPlanClasses(pickClassProp(compoundVariant), slotIndexByName),
       conditions: compileConditions(compoundVariant, defaultVariantProps, false),
     });
   }
@@ -202,7 +176,7 @@ export const compileCompoundSlots = <Variants extends VariantSchema>(
   const entries: Array<CompoundSlotPlanEntry> = [];
 
   for (const compoundSlot of compoundSlots) {
-    const classes = toClassText(getCompoundClass(compoundSlot, false));
+    const classes = toClassText(pickClassProp(compoundSlot));
     const slotIndexes: Array<number> = [];
 
     // A slot is listed once per mention, so a repeated one takes the classes twice; empty classes target nothing.

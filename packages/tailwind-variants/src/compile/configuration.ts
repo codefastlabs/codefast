@@ -79,7 +79,7 @@ const mergeRecords = <Value>(
 /**
  * Two class values declared for one place, the leading one's classes first; two strings stay one string.
  */
-export const joinClassValues = (leadingValue: ClassValue, trailingValue: ClassValue): ClassValue => {
+const joinClassValues = (leadingValue: ClassValue, trailingValue: ClassValue): ClassValue => {
   return typeof leadingValue === "string" && typeof trailingValue === "string"
     ? cx(leadingValue, trailingValue)
     : [leadingValue, trailingValue];
@@ -93,7 +93,7 @@ const toSlotClassMap = (value: ClassValue): Readonly<Record<string, ClassValue>>
 /**
  * Two class values of a slot configuration declared for one place, joined per slot, the leading one's classes first.
  */
-export const joinSlotClassValues = (leadingValue: ClassValue, trailingValue: ClassValue): ClassValue => {
+const joinSlotClassValues = (leadingValue: ClassValue, trailingValue: ClassValue): ClassValue => {
   if (!isSlotClassMap(leadingValue) && !isSlotClassMap(trailingValue)) {
     return joinClassValues(leadingValue, trailingValue);
   }
