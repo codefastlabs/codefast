@@ -7,7 +7,7 @@
  */
 
 /** Entries one generation holds before it is retired. */
-const GENERATION_LIMIT = 128;
+const GENERATION_LIMIT = 1024;
 
 /**
  * A store whose values are never `undefined`, so a miss and a stored value stay distinguishable.

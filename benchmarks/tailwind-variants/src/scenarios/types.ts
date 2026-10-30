@@ -20,7 +20,9 @@ type ScenarioGroup =
   | "first-render"
   | "cn"
   | "override"
-  | "slot-class";
+  | "slot-class"
+  | "data-cells"
+  | "wide-slots";
 
 /**
  * @since 0.3.16-canary.0

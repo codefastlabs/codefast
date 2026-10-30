@@ -99,10 +99,13 @@ A key is a mixed-radix number, one digit per variant. Two calls sharing a key mu
 downstream, and there are two different notions of "same value":
 
 - **Resolution** only reads `entry.group[key]`, so two values with the same group key select the same classes and can
-  share a digit. A digit is therefore the group key's id — cheap, because it is an object read.
+  share a digit — cheap, because it is an object read.
 - **A compound** compares against the value the caller passed. `true` and `"true"` share the group key `"true"` and
-  compare differently, so for any variant a compound tests, a digit is instead the id of the **raw value**, held in a
-  `Map` (which distinguishes them, and `0` from `"0"`). That costs a `Map.get` on those axes only.
+  compare differently, so on any variant a compound tests, each **value the compounds compare against** gets an id of
+  its own, found in a `Map` keyed by SameValueZero — the partition every condition kind draws, `NaN` included. Such a
+  value also fixes its group key, so these ids come first and group ids follow, adding to the radix rather than
+  multiplying it. A value no compound names fails every condition alike and takes its group key's id. The answer is
+  remembered per raw value in a second `Map`, so a repeated call costs one `Map.get` on those axes only.
 
 Everything else follows from having to make that distinction hold:
 
@@ -110,12 +113,16 @@ Everything else follows from having to make that distinction hold:
   the compiled default and a compound reads its configured fallback.
 - Every value the group does not answer shares one id, because they all resolve to no classes.
 - A compound may test a name no variant declares. That name still decides the outcome, so it gets an axis of its own.
-- A raw-value axis is capped. Past the cap the call reports itself unencodable and resolves the long way, which is also
-  what a configuration too large to address in one safe integer does.
-- The store's generation limit is sized against what a design system actually asks for, not a guess. A key is one
-  selection plus the caller's own class string, so the entries a component can fill is the number of distinct call sites
-  it has. Across this repository's 800 `.tsx` files the busiest component reaches fifty, and none exceeds the limit. Two
-  generations then mean nothing in a real page is ever evicted, and the caller's class needs no tier of its own.
+- Every axis is therefore finite, sized by the configuration rather than by what callers pass, so no stream of distinct
+  values can exhaust one. The per-raw-value `Map` keeps every value the configuration names and only a few others, so it
+  stays bounded too. A selection space past one safe integer spans several, joined into a string key, so a large
+  configuration stays cached instead of resolving the long way on every call.
+- The store's generation limit is sized for a component whose selections come from data, not only from call sites. A key
+  is one selection plus the caller's own class string, so the entries a component can fill is its distinct selections
+  times the classes callers pass it — a table cell keyed by a row's status and a column's alignment fills far more than
+  any count of call sites suggests. Past the working set every miss falls through to the merge engine, which is the
+  slowest thing a call can reach, so the limit errs high; a `Map` grows only as entries arrive, so a component that
+  never fills it pays nothing for the headroom.
 - Ids are handed out as values turn up rather than up front, so a group of two hundred values costs nothing to compile
   and only what a caller actually selects to run.
 - `valueIds` is a **null-prototype** object, and so is every copied variant group and the slot index map. A plain object

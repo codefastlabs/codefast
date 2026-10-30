@@ -44,7 +44,7 @@ const NO_VARIANT_KEYS: ReadonlyArray<string> = [];
 /** One resolver's selection encoder paired with the store it fills. */
 interface ResolverMemo<Value> {
   readonly cache: ResolutionCache<Value>;
-  readonly keyOf: (variantProps: Record<string, unknown>) => number;
+  readonly keyOf: (variantProps: Record<string, unknown>) => number | string;
 }
 
 /** Everything a resolver settles on its second call: the plan, and the store for the lane it runs. */

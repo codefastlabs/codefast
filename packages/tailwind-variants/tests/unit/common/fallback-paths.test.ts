@@ -15,8 +15,8 @@ const untypedSlotsTv = tv as (configuration: object) => UntypedSlotsResolver;
  */
 describe("Fallback Paths", () => {
   test("resolves a selection space too large to address with one safe integer", () => {
-    // Twelve variants of twenty values overflow the mixed-radix key, so the encoder declines and
-    // every call takes the plan walk. The answers must not change because of that.
+    // Twelve variants of twenty values overflow one safe integer, so the key spans two. The answers
+    // must not change because of that.
     const variants: Record<string, Record<string, string>> = {};
 
     for (let group = 0; group < 12; group++) {
@@ -41,9 +41,8 @@ describe("Fallback Paths", () => {
     expect(wide({ g0: "v3", g11: "v19" })).toBe("block g0v3 g11v19");
   });
 
-  test("keeps encoding once one axis exhausts its capacity", () => {
-    // A compound makes `tone` a raw-value axis, which admits a fixed number of distinct values
-    // before a call stops being encodable — and must keep resolving after that.
+  test("keys every value a compound never names alike", () => {
+    // A compound reads `tone`, yet only `t1` decides it; every other value shares one digit.
     const chip = tv({
       base: "block",
       compoundVariants: [{ class: "ring", tone: "t1" }],

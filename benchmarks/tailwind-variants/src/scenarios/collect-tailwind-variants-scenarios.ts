@@ -2,6 +2,7 @@ import { buildTailwindVariantsNpmCnScenarios } from "#scenarios/tailwind-variant
 import { buildTailwindVariantsNpmComplexScenarios } from "#scenarios/tailwind-variants/complex";
 import { buildTailwindVariantsNpmCompoundSlotsScenarios } from "#scenarios/tailwind-variants/compound-slots";
 import { buildTailwindVariantsNpmCreateTvScenarios } from "#scenarios/tailwind-variants/create-tv";
+import { buildTailwindVariantsNpmDataCellsScenarios } from "#scenarios/tailwind-variants/data-cells";
 import { buildTailwindVariantsNpmDefineOnlyScenarios } from "#scenarios/tailwind-variants/define-only";
 import { buildTailwindVariantsNpmExtendsScenarios } from "#scenarios/tailwind-variants/extends";
 import { buildTailwindVariantsNpmExtremeScenarios } from "#scenarios/tailwind-variants/extreme";
@@ -13,6 +14,7 @@ import { buildTailwindVariantsNpmSimpleScenarios } from "#scenarios/tailwind-var
 import { buildTailwindVariantsNpmSlotClassScenarios } from "#scenarios/tailwind-variants/slot-class";
 import { buildTailwindVariantsNpmSlotsScenarios } from "#scenarios/tailwind-variants/slots";
 import { buildTailwindVariantsNpmThreeRendersScenarios } from "#scenarios/tailwind-variants/three-renders";
+import { buildTailwindVariantsNpmWideSlotsScenarios } from "#scenarios/tailwind-variants/wide-slots";
 import type { BenchScenario } from "#scenarios/types";
 
 /**
@@ -34,6 +36,8 @@ export function collectAllTailwindVariantsNpmScenarios(): ReadonlyArray<BenchSce
     ...buildTailwindVariantsNpmCnScenarios(),
     ...buildTailwindVariantsNpmOverrideScenarios(),
     ...buildTailwindVariantsNpmSlotClassScenarios(),
+    ...buildTailwindVariantsNpmDataCellsScenarios(),
+    ...buildTailwindVariantsNpmWideSlotsScenarios(),
     ...buildTailwindVariantsNpmThreeRendersScenarios(),
   ];
 }
