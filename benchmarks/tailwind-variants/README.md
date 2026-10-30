@@ -111,7 +111,9 @@ but out of the medians and geomeans:
   the cost of the first render alone, and it stays off the aggregates for the same reason. Its `two-renders-*` and
   `three-renders-*` rows render two and three selections instead, which reaches a lazy library's second-call compile —
   what a server render or a first page load pays for a component it shows a few times; the two-render rows end on that
-  compile, with nothing after it to spread its cost over.
+  compile, with nothing after it to spread its cost over. The `first-render-cold-*` and `first-page-cold-*` rows give
+  every definition a class of its own, so no merge they reach has been seen before: the first renders one selection, the
+  second renders each definition the way one page shows it — repeats, the default passed explicitly, a caller's class.
 
 The `uncached-*` rows are controls too — `@codefast/tailwind-variants` only, with its resolution cache and its engine's
 own cache switched off, so the plan walk and the merge itself stay measured, and each with-merge row pairs with a

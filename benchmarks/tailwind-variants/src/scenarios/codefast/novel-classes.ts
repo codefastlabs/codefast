@@ -1,5 +1,7 @@
 /** The rows whose merges always miss: a `className` unique to every call, and first renders of distinct components. */
 import {
+  firstPageButtonCalls,
+  firstPageCardCalls,
   novelButtonVariants,
   novelCardVariants,
   uniqueClassName,
@@ -7,6 +9,8 @@ import {
 } from "#fixtures/novel-classes";
 import {
   COLD_DEFINITIONS_PER_LOOP,
+  FIRST_PAGE_COLD_SIMPLE,
+  FIRST_PAGE_COLD_SLOTS,
   FIRST_RENDER_COLD_SIMPLE,
   FIRST_RENDER_COLD_SLOTS,
   UNIQUE_CLASS_WITH_MERGE,
@@ -64,6 +68,48 @@ export function buildCodefastNovelClassesScenarios(): ReadonlyArray<BenchScenari
             const card = codefastTvFn(novelCardVariants(serial++), TV_MERGE_ENABLED) as CardRenderer;
 
             renderedLength += renderEverySlot(card({ size: "md", variant: "info" }));
+          }
+
+          if (renderedLength < 0) {
+            throw new Error("unreachable");
+          }
+        };
+      },
+    },
+    {
+      ...FIRST_PAGE_COLD_SIMPLE,
+      build: () => {
+        let serial = 0;
+        let renderedLength = 0;
+
+        return () => {
+          for (let index = 0; index < COLD_DEFINITIONS_PER_LOOP; index++) {
+            const button = codefastTvFn(novelButtonVariants(serial++), TV_MERGE_ENABLED) as FlatRenderer;
+
+            for (const props of firstPageButtonCalls) {
+              renderedLength += button({ ...props }).length;
+            }
+          }
+
+          if (renderedLength < 0) {
+            throw new Error("unreachable");
+          }
+        };
+      },
+    },
+    {
+      ...FIRST_PAGE_COLD_SLOTS,
+      build: () => {
+        let serial = 0;
+        let renderedLength = 0;
+
+        return () => {
+          for (let index = 0; index < COLD_DEFINITIONS_PER_LOOP; index++) {
+            const card = codefastTvFn(novelCardVariants(serial++), TV_MERGE_ENABLED) as CardRenderer;
+
+            for (const props of firstPageCardCalls) {
+              renderedLength += renderEverySlot(card({ ...props }));
+            }
           }
 
           if (renderedLength < 0) {
