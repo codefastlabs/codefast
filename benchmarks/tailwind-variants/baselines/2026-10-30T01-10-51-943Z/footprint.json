@@ -1,5 +1,5 @@
 {
-  "bundler": "Rolldown 1.2.14",
+  "bundler": "Rolldown 1.2.16",
   "footprints": [
     {
       "label": "@codefast/tv",
@@ -8,8 +8,8 @@
     },
     {
       "label": "tailwind-variants",
-      "minifiedBytes": 40385,
-      "gzippedBytes": 12703
+      "minifiedBytes": 44873,
+      "gzippedBytes": 16847
     },
     {
       "label": "cva",
