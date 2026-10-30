@@ -1,6 +1,6 @@
 {
-  "runId": "2026-10-18T02-39-58-707Z",
-  "runDate": "2026-10-18",
+  "runId": "2026-10-30T01-10-51-943Z",
+  "runDate": "2026-10-30",
   "profile": { "mode": "full", "isolated": true, "trialCount": 3 },
   "environment": {
     "nodeVersion": "26.1.0",
@@ -11,8 +11,8 @@
     "arch": "arm64"
   },
   "libraries": [
-    { "name": "@codefast/tailwind-variants", "version": "0.9.1" },
-    { "name": "tailwind-variants", "version": "3.3.1" },
+    { "name": "@codefast/tailwind-variants", "version": "0.10.0" },
+    { "name": "tailwind-variants", "version": "4.0.0" },
     { "name": "class-variance-authority", "version": "0.7.1" }
   ],
   "aggregates": [
@@ -23,8 +23,8 @@
       "wins": 20,
       "parities": 0,
       "losses": 0,
-      "median": 6.901580083939683,
-      "geomean": 10.758060176334133,
+      "median": 3.497792733958403,
+      "geomean": 4.252764328693022,
       "unreliable": 0
     },
     {
@@ -34,8 +34,8 @@
       "wins": 4,
       "parities": 0,
       "losses": 0,
-      "median": 12.266173709301345,
-      "geomean": 9.85466108620823,
+      "median": 12.34667044270497,
+      "geomean": 10.031940480804616,
       "unreliable": 0
     }
   ],
