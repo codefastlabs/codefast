@@ -61,3 +61,29 @@ describe("tv: a caller's class and className", () => {
     expect(answers).toEqual(everyLane("i x y"));
   });
 });
+
+describe("tv: a resolution with no classes", () => {
+  for (const options of [{}, F, { cacheResolutions: false }]) {
+    test(`answers an empty string without slots (${JSON.stringify(options)})`, () => {
+      const answers = readEveryLane(
+        () => tv({ variants: { size: { sm: "" } } }, options),
+        (resolver) => [resolver(), resolver({ size: "sm" }), resolver({ className: "" })],
+      );
+
+      expect(answers).toEqual(everyLane(["", "", ""]));
+    });
+
+    test(`answers an empty string for a slot (${JSON.stringify(options)})`, () => {
+      const answers = readEveryLane(
+        () => tv({ slots: { base: "", item: "" }, variants: { size: { sm: { item: "" } } } }, options),
+        (resolver) => {
+          const slots = resolver({ size: "sm" });
+
+          return [slots.base(), slots.item(), slots.item({ className: "" }), slots.item({ size: "sm" })];
+        },
+      );
+
+      expect(answers).toEqual(everyLane(["", "", "", ""]));
+    });
+  }
+});

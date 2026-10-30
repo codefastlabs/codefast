@@ -72,9 +72,9 @@ const matchesColdCompound = (
   return true;
 };
 
-const finish = (text: string, mergeClasses: ClassMerger | null): string | undefined => {
+const finish = (text: string, mergeClasses: ClassMerger | null): string => {
   if (text === "") {
-    return undefined;
+    return text;
   }
 
   return mergeClasses === null ? text : mergeClasses(text);
@@ -89,7 +89,7 @@ export const resolveColdVariantClasses = (
   configuration: Definition,
   mergeClasses: ClassMerger | null,
   props: Props,
-): string | undefined => {
+): string => {
   const variants = configuration.variants;
   const defaults = configuration.defaultVariants ?? EMPTY_DEFAULTS;
   let text = toClassText(configuration.base);
@@ -245,10 +245,10 @@ export const createColdSlotResolvers = (
 
   for (const slotName of names) {
     let resolved = false;
-    let memoised: string | undefined;
+    let memoised = "";
 
     // Null is what a JavaScript caller passes for no props.
-    resolvers[slotName] = (slotProps?: SlotResolverProps<VariantSchema> | null): string | undefined => {
+    resolvers[slotName] = (slotProps?: SlotResolverProps<VariantSchema> | null): string => {
       if (slotProps === undefined || slotProps === null) {
         if (!resolved) {
           memoised = finish(coldSlotText(configuration, defaults, props, slotName, null), mergeClasses);

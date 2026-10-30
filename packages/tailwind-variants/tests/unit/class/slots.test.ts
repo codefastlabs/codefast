@@ -65,7 +65,7 @@ describe("Tailwind Variants (TV) - Slots", () => {
 
     const { base, item, list, title } = menu();
 
-    const expectedResult = undefined;
+    const expectedResult = "";
 
     expect(base()).toBe(expectedResult);
     expect(title()).toBe(expectedResult);

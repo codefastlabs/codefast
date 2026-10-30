@@ -153,11 +153,11 @@ describe("Fallback Paths", () => {
     expect(wide({ ghost: true })).toBe("block ring");
   });
 
-  test("returns undefined for a slot whose own props resolve to nothing", () => {
+  test("returns an empty string for a slot whose own props resolve to nothing", () => {
     const empty = tv({ slots: { base: "", label: "" }, variants: { size: { sm: { base: "" } } } });
 
-    expect(empty().base()).toBeUndefined();
-    expect(empty({ size: "sm" }).base({ className: "" })).toBeUndefined();
+    expect(empty().base()).toBe("");
+    expect(empty({ size: "sm" }).base({ className: "" })).toBe("");
   });
 
   test("drops a class map entry naming a slot the configuration never declared", () => {

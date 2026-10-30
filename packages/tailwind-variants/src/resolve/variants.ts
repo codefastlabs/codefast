@@ -52,7 +52,7 @@ export const joinVariantClasses = (plan: VariantPlan, variantProps: Record<strin
 
 /**
  * Resolves classes for a configuration without slots, appending `customClasses` last so the
- * caller's `className`/`class` outranks the configuration.
+ * caller's `class` and `className` outrank the configuration.
  *
  * @since 0.6.0
  */
@@ -60,7 +60,7 @@ export const resolveVariantClasses = (
   plan: VariantPlan,
   variantProps: Record<string, unknown>,
   customClasses: ClassValue,
-): string | undefined => {
+): string => {
   let text = joinVariantClasses(plan, variantProps);
 
   if (customClasses) {
@@ -72,7 +72,7 @@ export const resolveVariantClasses = (
   }
 
   if (text === "") {
-    return undefined;
+    return text;
   }
 
   return plan.mergeClasses === null ? text : plan.mergeClasses(text);

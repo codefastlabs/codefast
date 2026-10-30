@@ -127,7 +127,7 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
       const { base, icon } = card();
 
       expect(base()).toBe("p-2 p-4");
-      expect(icon()).toBeUndefined();
+      expect(icon()).toBe("");
       expect(base({ class: "p-6" })).toBe("p-2 p-4 p-6");
     }
   });

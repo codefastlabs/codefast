@@ -38,9 +38,6 @@ import type {
 /** Shared stand-in for a call that passed no props, so the common case allocates nothing. */
 const EMPTY_PROPS: Record<string, unknown> = {};
 
-/** Stored for a selection that resolves to no classes, so a miss stays distinguishable from it. */
-const NO_CLASSES = null;
-
 /** Shared answer for a configuration without variants, so defining one allocates no array. */
 const NO_VARIANT_KEYS: ReadonlyArray<string> = [];
 
@@ -54,14 +51,14 @@ interface ResolverMemo<Value> {
 interface CompiledResolver {
   /** Admits a caller's class string to a selection's pairs from its second sighting. */
   readonly flatDoor: ClassDoor | null;
-  readonly flatMemo: ResolverMemo<FlatSelection | string | typeof NO_CLASSES> | null;
+  readonly flatMemo: ResolverMemo<FlatSelection | string> | null;
   readonly plan: VariantPlan;
   readonly slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null;
 }
 
 /** The caller classes a flat-lane entry remembers, which the store charges against its limit like entries. */
-const countRememberedPairs = (entry: FlatSelection | string | typeof NO_CLASSES): number => {
-  return typeof entry === "object" && entry !== NO_CLASSES && entry.pairs !== null ? entry.pairs.size : 0;
+const countRememberedPairs = (entry: FlatSelection | string): number => {
+  return typeof entry === "object" && entry.pairs !== null ? entry.pairs.size : 0;
 };
 
 /** The merge a `twMerge` option selects: `cn`'s by default, none for `false`, or the caller's own. */
@@ -202,7 +199,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
   // Typed as what the engine builds; the public, per-config result type is applied once, below.
   const variantResolverFunction = (
     variantProps?: VariantSelection<Variants>,
-  ): string | undefined | Record<string, SlotClassResolver<VariantSchema>> => {
+  ): string | Record<string, SlotClassResolver<VariantSchema>> => {
     const props = variantProps ?? EMPTY_PROPS;
 
     if (compiled === null) {
@@ -261,17 +258,17 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
           if (hit === undefined) {
             const resolved = resolveVariantClasses(plan, props, undefined);
 
-            memo.cache.set(selectionKey, resolved ?? NO_CLASSES);
+            memo.cache.set(selectionKey, resolved);
 
             return resolved;
           }
 
-          return typeof hit === "string" ? hit : hit === NO_CLASSES ? undefined : hit.merged;
+          return typeof hit === "string" ? hit : hit.merged;
         }
 
         let selection: FlatSelection;
 
-        if (typeof hit === "object" && hit !== NO_CLASSES) {
+        if (typeof hit === "object") {
           selection = hit;
         } else {
           selection = createFlatSelection(plan, props, hit);

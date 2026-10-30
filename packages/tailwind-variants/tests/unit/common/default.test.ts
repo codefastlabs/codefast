@@ -98,7 +98,7 @@ describe("Tailwind Variants (TV) - Default (Common)", () => {
 
   test("should work without anything", () => {
     const styles = tv({});
-    const expectedResult = undefined;
+    const expectedResult = "";
 
     expect(styles()).toBe(expectedResult);
   });

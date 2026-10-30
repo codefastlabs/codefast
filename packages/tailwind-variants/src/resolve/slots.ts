@@ -20,11 +20,11 @@ import type { ClassValue, SlotClassResolver, SlotResolverProps, VariantSchema } 
 interface SlotCallContext {
   readonly conditionValues: Record<string, unknown>;
   readonly matched: ReadonlyArray<PlanClasses | undefined>;
-  readonly resolved: Array<string | typeof NOT_RESOLVED | undefined>;
+  readonly resolved: Array<string | typeof NOT_RESOLVED>;
   readonly texts: ReadonlyArray<string>;
 }
 
-/** Distinguishes a slot nobody has asked for yet from one that resolved to nothing. */
+/** Marks a slot nobody has asked for yet. */
 const NOT_RESOLVED: unique symbol = Symbol("not-resolved");
 
 const EMPTY_CONDITION_VALUES: Record<string, unknown> = {};
@@ -75,7 +75,7 @@ const createSlotCallContext = (
   variantProps: Record<string, unknown>,
 ): SlotCallContext => {
   const texts: Array<string> = [];
-  const resolved: Array<string | typeof NOT_RESOLVED | undefined> = [];
+  const resolved: Array<string | typeof NOT_RESOLVED> = [];
 
   for (const slot of slots) {
     texts.push(slot.classes);
@@ -219,16 +219,16 @@ const hasVariantOverride = (overrides: Record<string, unknown>): boolean => {
 };
 
 /** A slot called without props: the call's shared text, merged once and remembered. */
-const resolveBareSlot = (plan: VariantPlan, context: SlotCallContext, slotIndex: number): string | undefined => {
+const resolveBareSlot = (plan: VariantPlan, context: SlotCallContext, slotIndex: number): string => {
   // A resolver shared across calls reads each slot again, and the merge is the expensive part.
-  const memoised = context.resolved[slotIndex];
+  const memoised = context.resolved[slotIndex] as string | typeof NOT_RESOLVED;
 
   if (memoised !== NOT_RESOLVED) {
     return memoised;
   }
 
   const slotText = context.texts[slotIndex] as string;
-  const answer = slotText === "" ? undefined : plan.mergeClasses === null ? slotText : plan.mergeClasses(slotText);
+  const answer = slotText === "" ? slotText : plan.mergeClasses === null ? slotText : plan.mergeClasses(slotText);
 
   context.resolved[slotIndex] = answer;
 
@@ -242,7 +242,7 @@ const resolveSlot = (
   slotIndex: number,
   // Null is what a JavaScript caller passes for no props.
   slotProps: SlotResolverProps<VariantSchema> | null | undefined,
-): string | undefined => {
+): string => {
   if (slotProps === undefined || slotProps === null) {
     return resolveBareSlot(plan, context, slotIndex);
   }
@@ -270,7 +270,7 @@ const resolveSlot = (
   }
 
   if (text === "") {
-    return undefined;
+    return text;
   }
 
   return plan.mergeClasses === null ? text : plan.mergeClasses(text);
@@ -290,7 +290,7 @@ export const createSlotResolvers = (
   const resolvers: Record<string, SlotClassResolver<VariantSchema>> = {};
 
   for (const [slotIndex, slot] of slots.entries()) {
-    resolvers[slot.name] = (props?: SlotResolverProps<VariantSchema>): string | undefined =>
+    resolvers[slot.name] = (props?: SlotResolverProps<VariantSchema>): string =>
       resolveSlot(plan, context, slot, slotIndex, props);
   }
 
