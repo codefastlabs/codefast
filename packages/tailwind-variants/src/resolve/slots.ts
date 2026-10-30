@@ -199,6 +199,34 @@ const resolveSlotWithOverrides = (
   return text;
 };
 
+/** Whether a slot's own props select anything, as opposed to carrying only the caller's classes. */
+const hasVariantOverride = (overrides: Record<string, unknown>): boolean => {
+  for (const key in overrides) {
+    if (key !== "class" && key !== "className" && overrides[key] !== undefined) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+/** A slot called without props: the call's shared text, merged once and remembered. */
+const resolveBareSlot = (plan: VariantPlan, context: SlotCallContext, slotIndex: number): string | undefined => {
+  // A resolver shared across calls reads each slot again, and the merge is the expensive part.
+  const memoised = context.resolved[slotIndex];
+
+  if (memoised !== NOT_RESOLVED) {
+    return memoised;
+  }
+
+  const slotText = context.texts[slotIndex] as string;
+  const answer = slotText === "" ? undefined : plan.mergeClasses === null ? slotText : plan.mergeClasses(slotText);
+
+  context.resolved[slotIndex] = answer;
+
+  return answer;
+};
+
 const resolveSlot = (
   plan: VariantPlan,
   context: SlotCallContext,
@@ -207,27 +235,22 @@ const resolveSlot = (
   slotProps: SlotResolverProps<VariantSchema> | undefined,
 ): string | undefined => {
   if (slotProps === undefined) {
-    // A resolver shared across calls reads each slot again, and the merge is the expensive part.
-    const memoised = context.resolved[slotIndex];
-
-    if (memoised !== NOT_RESOLVED) {
-      return memoised;
-    }
-
-    const slotText = context.texts[slotIndex] as string;
-    const answer = slotText === "" ? undefined : plan.mergeClasses === null ? slotText : plan.mergeClasses(slotText);
-
-    context.resolved[slotIndex] = answer;
-
-    return answer;
+    return resolveBareSlot(plan, context, slotIndex);
   }
 
   const overrides = slotProps as Record<string, unknown>;
-
-  let text = resolveSlotWithOverrides(plan, context, slot, slotIndex, overrides);
-
   const slotClassName = toClassText(overrides.className as ClassValue);
   const slotClass = toClassText(overrides.class as ClassValue);
+  let text: string;
+
+  // A sub-component passes the `className` it was given, usually absent, so a class-only call is the common one.
+  if (hasVariantOverride(overrides)) {
+    text = resolveSlotWithOverrides(plan, context, slot, slotIndex, overrides);
+  } else if (!slotClassName && !slotClass) {
+    return resolveBareSlot(plan, context, slotIndex);
+  } else {
+    text = context.texts[slotIndex] as string;
+  }
 
   if (slotClassName) {
     text = text === "" ? slotClassName : text + " " + slotClassName;
