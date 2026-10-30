@@ -19,10 +19,7 @@ export type VariantValue<Key> = Key extends "false" | "true"
       : Key;
 
 /**
- * Checks whether a variant group supports boolean values.
- *
- * This utility type determines whether a variant group has boolean keys
- * ("true" or "false"), indicating it supports boolean variant values.
+ * `true` for a variant group that declares a `"true"` or `"false"` value, so a call may pass a boolean.
  *
  * @since 0.3.16-canary.0
  */
@@ -45,30 +42,21 @@ export type VariantProps<Component> = Component extends (props?: infer Props) =>
   : never;
 
 /**
- * Base configuration schema for variant groups.
- *
- * This type defines the structure of variant configurations where each
- * variant group maps variant values to CSS class values.
+ * Each variant name mapped to its values, and each value to the classes it contributes.
  *
  * @since 0.3.16-canary.0
  */
 export type VariantSchema = Record<string, Record<string, ClassValue>>;
 
 /**
- * Configuration schema for component slots.
- *
- * This type defines the structure of slot configurations where each
- * slot name maps to CSS class values.
+ * Each slot name mapped to the classes it starts from.
  *
  * @since 0.3.16-canary.0
  */
 export type SlotSchema = Record<string, ClassValue>;
 
 /**
- * Variant properties for a configuration schema.
- *
- * This type defines the properties that can be passed to variant functions,
- * including variant values and optional className/class properties.
+ * The props a resolver call takes: one value per variant, plus the caller's own classes.
  *
  * @remarks Each field admits an explicit `undefined` so a caller under `exactOptionalPropertyTypes`
  * can forward a possibly-undefined prop (`variant={variant}`) without omitting it.
@@ -93,10 +81,7 @@ type VariantValues<Variants extends VariantSchema> = {
 };
 
 /**
- * Properties for slot-based components.
- *
- * This type defines the properties that can be passed to slot functions,
- * allowing each slot to receive custom CSS classes.
+ * The classes a call may add to each slot, keyed by slot name.
  *
  * @since 0.3.16-canary.0
  */
@@ -174,10 +159,7 @@ export type CompoundSlot<Variants extends VariantSchema, Slots extends SlotSchem
 };
 
 /**
- * Base configuration interface for variant functions.
- *
- * This interface defines the structure of variant configurations,
- * including base classes, variants, default values, and compound variants.
+ * The configuration of a component without slots.
  *
  * @since 0.3.16-canary.0
  */
@@ -193,10 +175,7 @@ export interface VariantConfig<Variants extends VariantSchema> {
 }
 
 /**
- * Configuration interface for slot-based components.
- *
- * This interface extends the base configuration to include slot definitions
- * and slot-specific compound variants.
+ * The configuration of a component whose classes are split across named slots.
  *
  * @since 0.3.16-canary.0
  */
@@ -222,10 +201,7 @@ export interface SlotVariantConfig<Variants extends VariantSchema, Slots extends
 export type AbsentKeys<Key extends PropertyKey> = { readonly [Name in Key]?: undefined };
 
 /**
- * Runtime options for Tailwind Variants.
- *
- * This interface defines global configuration options that affect
- * how Tailwind Variants processes and merges CSS classes.
+ * The options that decide how a resolver merges and caches classes.
  *
  * @since 0.3.16-canary.0
  */
@@ -332,10 +308,7 @@ export interface SlottedVariantResolver<Variants extends VariantSchema, Slots ex
 }
 
 /**
- * Type for merged configuration schemas.
- *
- * This utility type merges two configuration schemas into a single type,
- * combining all variant groups from both schemas.
+ * The variant schema of an extended resolver: the base's groups and the extension's, merged.
  *
  * @since 0.3.16-canary.0
  */
@@ -345,10 +318,7 @@ export type MergedVariantSchema<
 > = BaseVariants & ExtensionVariants;
 
 /**
- * Type for merged slot configuration schemas.
- *
- * This utility type merges two slot configuration schemas into a single type,
- * combining all slot definitions from both schemas.
+ * The slot schema of an extended resolver: the base's slots and the extension's, merged.
  *
  * @since 0.3.16-canary.0
  */
