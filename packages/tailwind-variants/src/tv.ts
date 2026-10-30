@@ -58,6 +58,11 @@ interface CompiledResolver {
   readonly slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null;
 }
 
+/** The caller classes a flat-lane entry remembers, which the store charges against its limit like entries. */
+const countRememberedPairs = (entry: FlatSelection | string | typeof NO_CLASSES): number => {
+  return typeof entry === "object" && entry !== NO_CLASSES && entry.pairs !== null ? entry.pairs.size : 0;
+};
+
 /** The merge a `twMerge` option selects: `cn`'s by default, none for `false`, or the caller's own. */
 const toClassMerger = (option: TailwindVariantsOptions["twMerge"]): ClassMerger | null => {
   if (option === false) {
@@ -82,7 +87,7 @@ const compileResolver = (
   return plan.slots === null
     ? {
         flatDoor: createClassDoor(),
-        flatMemo: { cache: createResolutionCache(), keyOf: encoder.keyOf },
+        flatMemo: { cache: createResolutionCache(countRememberedPairs), keyOf: encoder.keyOf },
         plan,
         slotMemo: null,
       }

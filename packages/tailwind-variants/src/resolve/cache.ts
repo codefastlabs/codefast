@@ -6,8 +6,8 @@
  * from thrashing.
  */
 
-/** Entries one generation holds before it is retired. */
-const GENERATION_LIMIT = 1024;
+/** Weight one generation holds before it is retired: one per entry, plus what its entries hold inside. */
+const GENERATION_LIMIT = 2048;
 
 /**
  * A store whose values are never `undefined`, so a miss and a stored value stay distinguishable.
@@ -24,9 +24,12 @@ export interface ResolutionCache<Value> {
 /**
  * Creates a cache for one resolver.
  *
+ * @param nestedWeightOf - What an entry holds inside it, charged again when the entry is promoted out of the retired
+ * generation; omitted, every entry weighs one.
+ *
  * @since 0.6.0
  */
-export const createResolutionCache = <Value>(): ResolutionCache<Value> => {
+export const createResolutionCache = <Value>(nestedWeightOf?: (value: Value) => number): ResolutionCache<Value> => {
   let current = new Map<number | string, Value>();
   // Nothing is retired until a generation overflows, and most resolvers never get that far.
   let previous: Map<number | string, Value> | null = null;
@@ -55,7 +58,14 @@ export const createResolutionCache = <Value>(): ResolutionCache<Value> => {
       const retired = previous.get(key);
 
       if (retired !== undefined) {
+        // A promotion fills the current generation as a store does, or a re-read working set never retires.
         current.set(key, retired);
+
+        if (nestedWeightOf !== undefined) {
+          charged += nestedWeightOf(retired);
+        }
+
+        retireWhenFull();
       }
 
       return retired;
