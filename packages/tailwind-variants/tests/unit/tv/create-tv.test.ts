@@ -1,43 +1,36 @@
 import { extendTailwindMerge } from "cn/config";
 
-import { cn, createTV } from "#index";
+import { createTV } from "#index";
 
-describe("cn function", () => {
-  test("should work like cx but with merging", () => {
-    const result = cn("text-xl", "text-blue-500", "text-2xl", "text-red-500");
+describe("createTV", () => {
+  test("should use config in tv calls", () => {
+    const { tv } = createTV({ twMerge: false });
+    const h1 = tv({ base: "text-3xl text-xl font-bold text-blue-200 text-blue-400" });
 
-    expect(result).toBe("text-2xl text-red-500");
+    expect(h1()).toHaveClassName("text-3xl font-bold text-blue-400 text-xl text-blue-200");
   });
 
-  test("should handle conditional classes", () => {
-    const isActive = true;
-    const result = cn("base-class", isActive ? "active-class" : "", "text-xl", "text-blue-500");
+  test("should override config", () => {
+    const { tv } = createTV({ twMerge: false });
+    const h1 = tv({ base: "text-3xl text-xl font-bold text-blue-200 text-blue-400" }, { twMerge: true });
 
-    expect(result).toBe("base-class active-class text-xl text-blue-500");
+    expect(h1()).toHaveClassName("font-bold text-blue-400 text-xl");
   });
 
-  test("should handle arrays and objects", () => {
-    const result = cn(["text-xl", "font-bold"], { "text-blue-500": false, "text-red-500": true });
+  test("falls back to the shared option for a local one left undefined", () => {
+    const { tv } = createTV({ twMerge: false });
+    const twMerge: boolean | undefined = undefined;
+    const h1 = tv({ base: "text-3xl text-xl font-bold text-blue-200 text-blue-400" }, { twMerge });
 
-    expect(result).toBe("text-xl font-bold text-red-500");
+    expect(h1()).toHaveClassName("text-3xl font-bold text-blue-400 text-xl text-blue-200");
   });
 
-  test("should handle empty values", () => {
-    const result = cn("", null, undefined, false, 0, "text-xl");
+  test("forwards a possibly-undefined cacheResolutions without narrowing it first", () => {
+    const { tv } = createTV({ cacheResolutions: false });
+    const cacheResolutions: boolean | undefined = undefined;
+    const h1 = tv({ base: "text-xl" }, { cacheResolutions });
 
-    expect(result).toBe("text-xl");
-  });
-
-  test("should work with conflicting classes", () => {
-    const result = cn("p-4", "p-8", "m-2", "m-4");
-
-    expect(result).toBe("p-8 m-4");
-  });
-
-  test("should work with non-conflicting classes", () => {
-    const result = cn("text-xl", "font-bold", "text-blue-500", "bg-white");
-
-    expect(result).toBe("text-xl font-bold text-blue-500 bg-white");
+    expect(h1()).toBe("text-xl");
   });
 });
 

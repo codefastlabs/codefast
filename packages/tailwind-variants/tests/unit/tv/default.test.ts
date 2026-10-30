@@ -1,6 +1,126 @@
 import { tv } from "#index";
+import { CLASS_KEYS } from "#tests/unit/support/class-keys";
+
+describe.each(CLASS_KEYS)("Tailwind Variants (TV) - Default (%s)", (key) => {
+  test("should work with compoundVariants", () => {
+    const h1 = tv({
+      base: "text-3xl font-bold",
+      compoundVariants: [
+        {
+          [key]: "bg-red-500",
+          color: "red",
+          isBig: true,
+        },
+        {
+          [key]: "underline",
+          color: "red",
+          isBig: false,
+        },
+      ],
+      variants: {
+        color: {
+          blue: "text-blue-500",
+          red: "text-red-500",
+        },
+        isBig: {
+          false: "text-2xl",
+          true: "text-5xl",
+        },
+      },
+    });
+
+    expect(
+      h1({
+        color: "red",
+        isBig: true,
+      }),
+    ).toHaveClassName(["text-5xl", "font-bold", "text-red-500", "bg-red-500"]);
+
+    expect(
+      h1({
+        color: "red",
+        isBig: false,
+      }),
+    ).toHaveClassName(["text-2xl", "font-bold", "text-red-500", "underline"]);
+
+    expect(
+      h1({
+        color: "red",
+      }),
+    ).toHaveClassName(["text-2xl", "font-bold", "text-red-500", "underline"]);
+  });
+
+  test("should work with a custom class", () => {
+    const h1 = tv({
+      base: "text-3xl font-bold",
+    });
+
+    expect(h1({ [key]: "text-xl" })).toHaveClassName(["text-xl", "font-bold"]);
+  });
+
+  test("should work with defaultVariants -- compoundVariants", () => {
+    const h1 = tv({
+      base: "text-3xl",
+      compoundVariants: [
+        {
+          [key]: "bg-red-500",
+          color: "red",
+          size: "md",
+        },
+      ],
+      defaultVariants: {
+        color: "red",
+        size: "md",
+      },
+      variants: {
+        color: {
+          blue: "text-blue-500",
+          red: "text-red-500",
+        },
+        size: {
+          md: "text-lg",
+          sm: "text-sm",
+        },
+      },
+    });
+
+    expect(h1()).toHaveClassName(["text-red-500", "text-lg", "bg-red-500"]);
+    expect(h1({ color: "blue" })).toHaveClassName(["text-blue-500", "text-lg"]);
+    expect(h1({ size: "sm" })).toHaveClassName(["text-red-500", "text-sm"]);
+  });
+});
 
 describe("Tailwind Variants (TV) - Default (Common)", () => {
+  test("should resolve what the editor-facing types describe", () => {
+    const button = tv({
+      compoundVariants: [{ class: "ring", size: "lg", variant: "outline" }],
+      defaultVariants: { size: "md", variant: "primary" },
+      variants: {
+        disabled: { false: "", true: "opacity-50" },
+        size: { lg: "px-8", md: "px-4", sm: "px-2" },
+        variant: { outline: "border", primary: "bg-primary" },
+      },
+    });
+    const card = tv({
+      compoundSlots: [{ class: "gap-1", size: "sm", slots: ["header", "footer"] }],
+      slots: { footer: "p-6", header: "p-6", title: "text-xl" },
+      variants: {
+        size: { lg: { header: "p-8", title: "text-3xl" }, sm: { header: "p-3" } },
+        tone: { loud: { base: "border-red-500" }, quiet: "" },
+      },
+    });
+    const textarea = tv({
+      defaultVariants: { size: "lg" },
+      extend: button,
+      variants: { resize: { none: "resize-none", y: "resize-y" } },
+    });
+
+    expect(button({ size: "lg", variant: "outline" })).toBe("px-8 border ring");
+    // `p-6` and `p-3` share a class group, so the merge keeps the later one.
+    expect(card({ size: "sm" }).header()).toBe("p-3 gap-1");
+    expect(textarea({ resize: "y" })).toBe("resize-y px-8 bg-primary");
+  });
+
   test("should work with nested arrays", () => {
     const menu = tv({
       base: ["base--styles-1", ["base--styles-2", ["base--styles-3"]]],

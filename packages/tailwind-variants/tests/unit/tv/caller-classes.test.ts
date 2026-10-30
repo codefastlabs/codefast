@@ -87,3 +87,34 @@ describe("tv: a resolution with no classes", () => {
     });
   }
 });
+
+describe("tv: a call passing both class and className", () => {
+  test("should apply both keys, class first, on a call and a compound", () => {
+    const h1 = tv(
+      {
+        base: "text-3xl",
+        compoundVariants: [{ class: "c1", className: "c2", color: "red" }],
+        variants: { color: { red: "text-red-500" } },
+      },
+      { twMerge: false },
+    );
+
+    expect(h1({ class: "x", className: "y", color: "red" })).toBe("text-3xl text-red-500 c1 c2 x y");
+  });
+
+  test("should apply both keys, class first, on a slot, a slot compound and a compound slot", () => {
+    const card = tv(
+      {
+        compoundSlots: [{ class: "s1", className: "s2", color: "red", slots: ["item"] }],
+        compoundVariants: [{ class: { item: "c1" }, className: { item: "c2" }, color: "red" }],
+        slots: { base: "b", item: "i" },
+        variants: { color: { red: { item: "text-red-500" } } },
+      },
+      { twMerge: false },
+    );
+    const { item } = card({ color: "red" });
+
+    expect(item({ class: "x", className: "y" })).toBe("i text-red-500 c1 c2 s1 s2 x y");
+    expect(item({ class: "x", className: "y", color: "red" })).toBe("i text-red-500 c1 c2 s1 s2 x y");
+  });
+});

@@ -104,11 +104,4 @@ describe("IntelliSense-driving types", () => {
     expectTypeOf<VariantValue<"lg" | "sm">>().toEqualTypeOf<"lg" | "sm">();
     expectTypeOf<VariantValue<1 | 2>>().toEqualTypeOf<"1" | "2" | 1 | 2>();
   });
-
-  test("still resolves what the types describe", () => {
-    expect(button({ size: "lg", variant: "outline" })).toBe("px-8 border ring");
-    // `p-6` and `p-3` share a class group, so the merge keeps the later one.
-    expect(card({ size: "sm" }).header()).toBe("p-3 gap-1");
-    expect(textarea({ resize: "y" })).toBe("resize-y px-8 bg-primary");
-  });
 });

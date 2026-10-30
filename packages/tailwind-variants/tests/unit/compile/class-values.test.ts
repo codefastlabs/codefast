@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { toDefaultKey, toVariantKey } from "#compile/class-values";
+import { isSlotClassMap, toDefaultKey, toVariantKey } from "#compile/class-values";
 import { tv } from "#index";
 import { everyLane, readEveryLane } from "#tests/unit/support/lanes";
 
@@ -98,5 +98,57 @@ describe("variant value normalisation", () => {
     );
 
     expect(answers).toEqual(everyLane(["i on-f zero", "i on-f", "i on-f"]));
+  });
+});
+
+describe("isSlotClassMap", () => {
+  test("should correctly identify slot objects", () => {
+    expect(isSlotClassMap({ base: "class1", item: "class2" })).toBe(true);
+    expect(isSlotClassMap({ singleSlot: "class" })).toBe(true);
+    expect(isSlotClassMap({})).toBe(true); // Empty object is still an object
+  });
+
+  test("should correctly reject non-slot-object values", () => {
+    expect(isSlotClassMap("string")).toBe(false);
+    expect(isSlotClassMap(123)).toBe(false);
+    expect(isSlotClassMap(true)).toBe(false);
+    expect(isSlotClassMap(false)).toBe(false);
+    expect(isSlotClassMap(null)).toBe(false);
+    expect(isSlotClassMap(undefined)).toBe(false);
+    expect(isSlotClassMap([])).toBe(false);
+    // A function is no longer a `ClassValue` — clsx typed its dictionary `Record<string, any>`,
+    // which admitted one. The runtime still has to answer for it.
+    expect(
+      isSlotClassMap((() => {
+        /* empty function for test */
+      }) as never),
+    ).toBe(false);
+  });
+
+  test("should handle complex object structures", () => {
+    // Objects with string values should be considered slot objects
+    expect(
+      isSlotClassMap({
+        nested: { deep: "value" },
+        simple: "class",
+      }),
+    ).toBe(true);
+
+    // Objects with non-string values should still be considered slot objects
+    // as the type guard only checks if it's an object
+    expect(
+      isSlotClassMap({
+        array: ["item"],
+        boolean: true,
+        number: 123,
+      }),
+    ).toBe(true);
+  });
+
+  test("should handle prototype chain objects", () => {
+    const object = Object.create({ inherited: "value" }) as Record<string, unknown>;
+
+    object.own = "property";
+    expect(isSlotClassMap(object)).toBe(true);
   });
 });
