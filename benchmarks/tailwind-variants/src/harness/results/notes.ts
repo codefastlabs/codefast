@@ -18,7 +18,7 @@ const USER_FACING_NOTES: ReadonlyArray<UserFacingNote<TvCompetitorName>> = [
       { id: "three-renders-simple", versus: ["tailwind-variants"] },
       { id: "three-renders-slots", versus: ["tailwind-variants"] },
     ],
-    body: "An eager library compiles its configuration at definition and a lazy one at a later render — codefast at the second — so the definition, first-render, two-render and three-render rows are read together, and all eight stay off the aggregates. The two- and three-render rows are what a server render or a first page load pays for a component it shows a few times. `cva` is not ported to them.",
+    body: "An eager library compiles its configuration at definition and a lazy one at a later render — codefast at the third without slots and the second with them — so the definition, first-render, two-render and three-render rows are read together, and all eight stay off the aggregates. The two- and three-render rows are what a server render or a first page load pays for a component it shows a few times. `cva` is not ported to them.",
   },
   {
     title: "One render",

@@ -76,9 +76,9 @@ tailwind-variants. Beside it: `define-only-slots` 5.88×† tailwind-variants; `
 tailwind-variants; `first-render-slots` 1.48×‡ tailwind-variants; `two-renders-simple` 1.10× tailwind-variants;
 `two-renders-slots` 1.41×‡ tailwind-variants; `three-renders-simple` 1.35×‡ tailwind-variants; `three-renders-slots`
 1.57×‡ tailwind-variants. An eager library compiles its configuration at definition and a lazy one at a later render —
-codefast at the second — so the definition, first-render, two-render and three-render rows are read together, and all
-eight stay off the aggregates. The two- and three-render rows are what a server render or a first page load pays for a
-component it shows a few times. `cva` is not ported to them.
+codefast at the third without slots and the second with them — so the definition, first-render, two-render and
+three-render rows are read together, and all eight stay off the aggregates. The two- and three-render rows are what a
+server render or a first page load pays for a component it shows a few times. `cva` is not ported to them.
 
 **One render.** A component rendered with a selection it has seen before, through the merge engine — what every render
 after the first costs. `simple-with-merge` runs at 9,235,735 ops/s, about 108 ns each, and reads 2.19× tailwind-variants
