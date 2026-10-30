@@ -13,10 +13,12 @@ const USER_FACING_NOTES: ReadonlyArray<UserFacingNote<TvCompetitorName>> = [
       { id: "define-only-slots", versus: ["tailwind-variants"] },
       { id: "first-render-simple", versus: ["tailwind-variants"] },
       { id: "first-render-slots", versus: ["tailwind-variants"] },
+      { id: "two-renders-simple", versus: ["tailwind-variants"] },
+      { id: "two-renders-slots", versus: ["tailwind-variants"] },
       { id: "three-renders-simple", versus: ["tailwind-variants"] },
       { id: "three-renders-slots", versus: ["tailwind-variants"] },
     ],
-    body: "An eager library compiles its configuration at definition and a lazy one at a later render — codefast at the second — so the definition, first-render and three-render rows are read together, and all six stay off the aggregates. The three-render rows are what a server render or a first page load pays for a component it shows a few times. `cva` is not ported to them.",
+    body: "An eager library compiles its configuration at definition and a lazy one at a later render — codefast at the second — so the definition, first-render, two-render and three-render rows are read together, and all eight stay off the aggregates. The two- and three-render rows are what a server render or a first page load pays for a component it shows a few times. `cva` is not ported to them.",
   },
   {
     title: "One render",
@@ -35,8 +37,9 @@ const USER_FACING_NOTES: ReadonlyArray<UserFacingNote<TvCompetitorName>> = [
       { id: "cn-with-merge", versus: ["tailwind-variants", "class-variance-authority"] },
       { id: "override-with-merge", versus: ["tailwind-variants", "class-variance-authority"] },
       { id: "slot-class-with-merge", versus: ["tailwind-variants"] },
+      { id: "data-cells-with-merge", versus: ["tailwind-variants"] },
     ],
-    body: "Every call site passes its own `className`, usually absent and sometimes overriding a class the variants set, and props arrive as a fresh object per call as React hands them over. `cva` has no `cn` of its own, so its `cn` cell is its clsx-style join followed by `tailwind-merge`, the usual production pairing.",
+    body: "Every call site passes its own `className`, usually absent and sometimes overriding a class the variants set, and props arrive as a fresh object per call as React hands them over. The table-cell row draws its selections and classes from row and column data, about a thousand distinct calls, rather than from a fixed list of call sites. `cva` has no `cn` of its own, so its `cn` cell is its clsx-style join followed by `tailwind-merge`, the usual production pairing.",
   },
 ];
 
@@ -47,11 +50,22 @@ const BUNDLE_NOTE =
 /** Every loss shape, ordered by how much it matters. */
 const LOSS_NOTES: ReadonlyArray<LossNote<TvCompetitorName>> = [
   {
+    title: "A merge no cache has seen runs the application's engine",
+    kinds: ["chosen cost"],
+    losses: [{ id: "unique-class-with-merge", versus: ["tailwind-variants"] }],
+    context: [
+      { id: "unique-class-with-merge", versus: ["class-variance-authority"] },
+      { id: "first-render-cold-simple", versus: ["tailwind-variants"] },
+      { id: "first-render-cold-slots", versus: ["tailwind-variants"] },
+    ],
+    body: "Every call here hands the merge a string it has never seen, so no resolution cache, pair memo or engine cache can answer it, and the row prices the merge engine itself. `tailwind-variants` ships its own engine, which caches per token and is faster on a fresh string than `tailwind-merge`; the package leaves the engine to the application on purpose, so the default pays `tailwind-merge`'s cost — which is why `cva`, running the same engine after its own join, sits at parity — and an application that injects or aliases a faster engine moves these rows with it. The cold first-render rows, which give every definition a class of its own, are the same cost on a first page load.",
+  },
+  {
     title: "`cn` runs the application's merge engine",
-    kinds: ["chosen cost", "real deficit"],
-    losses: [{ id: "cn-with-merge", versus: ["tailwind-variants", "class-variance-authority"] }],
-    context: [],
-    body: "`cn` flattens its arguments and hands the string to `tailwind-merge`'s `twMerge`. `tailwind-variants` ships its own engine, whose argument cache answers a repeated call before any merge; the package leaves the engine to the application on purpose, so the default pays `tailwind-merge`'s cost, and an application that aliases `tailwind-merge` to a faster drop-in engine moves this row with it. Against `cva`'s `cn` — the same engine after a clsx-style join — the row sits at the edge of parity, and what is left is the join: when `cn` meets an argument that is not a string, it restarts its flatten from the first argument.",
+    kinds: ["chosen cost"],
+    losses: [{ id: "cn-with-merge", versus: ["tailwind-variants"] }],
+    context: [{ id: "cn-with-merge", versus: ["class-variance-authority"] }],
+    body: "`cn` answers a repeated pair of strings — a static class list and the caller's `className` — from a memo keyed on the strings as passed, and anything else from `tailwind-merge` after a one-pass join, which is what takes it past `cva`'s `cn` on the same engine. `tailwind-variants`' `cn` sits in front of its own engine with an argument cache that also remembers which call followed which, and this row replays the same calls in the same order every iteration, which is that cache's best case; the row runs above the throughput ceiling on both sides, so read it as a direction.",
   },
 ];
 

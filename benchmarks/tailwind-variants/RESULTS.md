@@ -9,16 +9,16 @@ the recipe at the bottom.
 
 **This is one full-profile pass, so read the aggregates, not the rows.** GC-exposed for one collection between trials,
 one subprocess per scenario, libraries interleaved with rotating order, 3 trials each over the one closure a scenario
-builds before its first trial — a single pass measures no between-run variance of its own, 4 of the cells carry a
-per-trial IQR above 5%, and 2 cells in 2 rows sit above ~30M ops/s, where the ratio moves between runs of the same build
+builds before its first trial — a single pass measures no between-run variance of its own, 12 of the cells carry a
+per-trial IQR above 5%, and 3 cells in 2 rows sit above ~30M ops/s, where the ratio moves between runs of the same build
 whatever its IQR says. Ratios are worth more than the absolute `hz/op`; a single row is worth less than the group it
 sits in. A loss below points at a direction — quote a precise factor only after a paired re-run, except where a loss is
 a structural difference that reproduces by construction.
 
-**This page is the baseline.** It is generated from `baselines/2026-10-30T01-58-56-923Z`, whose `observations.jsonl` and
+**This page is the baseline.** It is generated from `baselines/2026-10-30T04-01-56-737Z`, whose `observations.jsonl` and
 `footprint.json` are committed, so every figure here can be re-read from the repository rather than from a local
 `bench-results/` run only the author has. `baselines/` holds that one run and nothing else: the next pass is read
-against it, and a pass accepted in its place becomes this page. 33 scenarios ran, 23 of them aggregate-eligible; a `—`
+against it, and a pass accepted in its place becomes this page. 40 scenarios ran, 26 of them aggregate-eligible; a `—`
 below is a row the library cannot express — `cva` has no slots, no extends and no factory — or a control only codefast
 runs, never a row nobody wrote.
 
@@ -26,42 +26,50 @@ runs, never a row nobody wrote.
 darwin/arm64, `--expose-gc --no-warnings` for every library. tailwind-variants 4.0.0 · class-variance-authority 0.7.1.
 Each library runs through its default entry with the merge flag passed explicitly, so the two `tv()` libraries differ in
 implementation and not in configuration; `cva` has no merge option, so its with-merge rows call `tailwind-merge` after
-it, the usual production pairing. Run 2026-10-30, 0 sanity failures. The 1-minute load average read 1.22 as the
+it, the usual production pairing. Run 2026-10-30, 0 sanity failures. The 1-minute load average read 2.72 as the
 subject's child started, on 14 cores.
 
 ## This pass
 
-Measured at `0c72aea45` plus the change that answers a class-only slot call from the slot's memo —
-`@codefast/tailwind-variants` 0.10.0 with its unreleased changes, from a `dist` built first, against `tailwind-variants`
-4.0.0. The full profile in isolation, on a machine whose 1-minute load average read under 2 on 14 cores for the whole
-pass.
+Measured at `800897977` plus the rows that price merges no cache can answer — `@codefast/tailwind-variants` 0.10.0 with
+its unreleased changes, from a `dist` built first, against `tailwind-variants` 4.0.0. The full profile in isolation. Two
+processes outside the bench held a core each for the whole pass, and the 1-minute load average read 2.7 on 14 cores as
+the subject's child started, above the under-2 this page usually asks for; read single cells with that in mind and the
+aggregates as usual.
 
-**What moved since the previous pass.** `slot-class-with-merge` went from a loss to a win. A slot called with props that
-carry no variant override — usually only the `className` a sub-component was given, often absent — now reads the call's
-shared text instead of re-resolving the slot, and returns the memoised answer when the caller's class is empty. The run
-diff reports that row as its one improvement beyond noise and no regression; a paired A/B against `main` on the slot
-rows that call without props reads within noise, its two experiments disagreeing in sign. `cn-with-merge` against `cva`
-slipped from the edge of parity to just past it, on the same build of `cn`, so its note now names that side too.
+**What moved since the previous pass.** Three engine changes landed, each with a paired A/B against `main` in its pull
+request. The selection store holds a thousand entries a generation and the encoder no longer runs out of keys or
+switches the cache off, which the new `data-cells` and `wide-slots` rows price — both workloads lost before and win now.
+`cn` answers a repeated pair of strings from a memo keyed on the strings as passed and joins in one pass, which took
+`cn-with-merge` past `cva` and halved the gap to `tailwind-variants`. Variant values compile the first time a call
+selects them, which moved the two- and three-render slot rows up by about half. The run diff reports the extreme-slots
+rows as its improvements beyond noise and no regression.
 
-The harness flags four cells with a per-trial IQR above 5% — `uncached-slots-with-merge`, `uncached-slots-without-merge`
-and both sides of `three-renders-slots` — and two rows above the throughput ceiling, `define-only-slots` and
-`cn-with-merge`, where `tailwind-variants`' side runs above it. None of the flagged cells is in an aggregate except
-`cn-with-merge`, which the aggregates carry and no reader should cite alone.
+**New rows.** `two-renders-*` end on the second-call compile. `data-cells` draws about a thousand distinct calls from
+row and column data; `wide-slots` has enough compound-tested variants that the previous encoder overflowed its key and
+cached nothing. `unique-class` and `first-render-cold-*` hand every merge a string no cache has seen, so they price the
+merge engine itself — `tailwind-variants`' own engine beats `tailwind-merge` there, which the loss notes name as the
+cost of leaving the engine to the application.
+
+The harness flags per-trial IQR above 5% on the uncached slot controls, the first-render, two-render and three-render
+slot rows, both cold first-render rows and `unique-class-with-merge` against `tailwind-variants`; three rows run above
+the throughput ceiling — `define-only-slots`, and `cn-with-merge` on both competitors' sides. Of those, only
+`cn-with-merge` and `unique-class-with-merge` sit in an aggregate, and no reader should cite either alone.
 
 ## Summary — where we stand
 
 Ratios are `@codefast/tailwind-variants ÷ competitor`; above 1× means codefast is faster. Win `>1.03×`, parity
-`0.97–1.03×`, loss `<0.97×`. `Comparable` counts the rows both libraries ran, of 23 aggregate-eligible rows codefast
+`0.97–1.03×`, loss `<0.97×`. `Comparable` counts the rows both libraries ran, of 26 aggregate-eligible rows codefast
 measures; `†` is how many of those the median and geomean carry from above the throughput ceiling — they stay in the
 aggregate but no reader should cite one alone.
 
 | Competitor        | Comparable | Win / parity / loss | Median | Geomean |   † |
 | ----------------- | ---------: | ------------------: | -----: | ------: | --: |
-| tailwind-variants |   23 of 23 |          22 / 0 / 1 |  2.64× |   2.97× |   1 |
-| cva               |    6 of 23 |           5 / 0 / 1 |  4.25× |   4.75× |   0 |
+| tailwind-variants |   26 of 26 |          24 / 0 / 2 |  2.68× |   2.71× |   1 |
+| cva               |    7 of 26 |           6 / 1 / 0 |  3.66× |   4.14× |   1 |
 
-**Ahead of every competitor on both aggregates.** No competitor is swept outright. Every loss is named, with its reason,
-in the section after next.
+**Ahead of every competitor on both aggregates.** cva takes no row at all. Every loss is named, with its reason, in the
+section after next.
 
 ## What a user waits for
 
@@ -70,28 +78,31 @@ faster than any frame could notice. Three measurements are the ones an applicati
 its components costs as a module loads, what one render costs, and what the library adds to a browser bundle.
 
 **Defining a component.** What a module pays as it loads: one component's `tv()` call, that definition plus its first
-render, and plus its first three. `define-only-simple` runs at 27,925,571 ops/s, about 36 ns each, and reads 2.16×
-tailwind-variants. Beside it: `define-only-slots` 5.97×† tailwind-variants; `first-render-simple` 1.42×
-tailwind-variants; `first-render-slots` 1.48× tailwind-variants; `three-renders-simple` 1.36× tailwind-variants;
-`three-renders-slots` 1.22×‡ tailwind-variants. An eager library compiles its configuration at definition and a lazy one
-at a later render — codefast at the second — so the definition, first-render and three-render rows are read together,
-and all six stay off the aggregates. The three-render rows are what a server render or a first page load pays for a
+render, and plus its first three. `define-only-simple` runs at 27,876,435 ops/s, about 36 ns each, and reads 2.15×
+tailwind-variants. Beside it: `define-only-slots` 5.84×† tailwind-variants; `first-render-simple` 1.43×
+tailwind-variants; `first-render-slots` 1.48×‡ tailwind-variants; `two-renders-simple` 1.15× tailwind-variants;
+`two-renders-slots` 1.37×‡ tailwind-variants; `three-renders-simple` 1.32× tailwind-variants; `three-renders-slots`
+1.69×‡ tailwind-variants. An eager library compiles its configuration at definition and a lazy one at a later render —
+codefast at the second — so the definition, first-render, two-render and three-render rows are read together, and all
+eight stay off the aggregates. The two- and three-render rows are what a server render or a first page load pays for a
 component it shows a few times. `cva` is not ported to them.
 
 **One render.** A component rendered with a selection it has seen before, through `tailwind-merge` — what every render
-after the first costs. `simple-with-merge` runs at 9,091,659 ops/s, about 110 ns each, and reads 2.21× tailwind-variants
-and 4.82× class-variance-authority. Beside it: `complex-with-merge` 4.31× tailwind-variants and 15.0×
-class-variance-authority; `slots-with-merge` 1.83× tailwind-variants. Both `tv()` libraries answer a repeated selection
+after the first costs. `simple-with-merge` runs at 9,102,731 ops/s, about 110 ns each, and reads 2.19× tailwind-variants
+and 4.84× class-variance-authority. Beside it: `complex-with-merge` 4.13× tailwind-variants and 14.4×
+class-variance-authority; `slots-with-merge` 1.78× tailwind-variants. Both `tv()` libraries answer a repeated selection
 from a cache, so these rows price the hit path; `cva` caches nothing, so its cells compare a hit against a full
 computation plus the merge. The `uncached-*` rows in the full table price the miss, on codefast's side alone.
 
 **What a component calls on every render.** The calls a component library makes most: `cn()` over a static class list, a
-variant resolver handed the caller's `className`, and slots called with theirs. `cn-with-merge` runs at 15,709,441
-ops/s, about 64 ns each, and reads 0.34×† tailwind-variants and 0.96× class-variance-authority. Beside it:
-`override-with-merge` 1.69× tailwind-variants and 3.68× class-variance-authority; `slot-class-with-merge` 1.37×
-tailwind-variants. Every call site passes its own `className`, usually absent and sometimes overriding a class the
-variants set, and props arrive as a fresh object per call as React hands them over. `cva` has no `cn` of its own, so its
-`cn` cell is its clsx-style join followed by `tailwind-merge`, the usual production pairing.
+variant resolver handed the caller's `className`, and slots called with theirs. `cn-with-merge` runs at 30,336,401
+ops/s, about 33 ns each, and reads 0.66×† tailwind-variants and 1.87×† class-variance-authority. Beside it:
+`override-with-merge` 1.67× tailwind-variants and 3.66× class-variance-authority; `slot-class-with-merge` 1.40×
+tailwind-variants; `data-cells-with-merge` 1.33× tailwind-variants. Every call site passes its own `className`, usually
+absent and sometimes overriding a class the variants set, and props arrive as a fresh object per call as React hands
+them over. The table-cell row draws its selections and classes from row and column data, about a thousand distinct
+calls, rather than from a fixed list of call sites. `cva` has no `cn` of its own, so its `cn` cell is its clsx-style
+join followed by `tailwind-merge`, the usual production pairing.
 
 **Bundle.** `pnpm bench:footprint` bundles each library's smallest program — one component with one variant, defined and
 rendered once — with Rolldown 1.2.16 for the browser, minified. A library that merges by default ships `tailwind-merge`,
@@ -99,12 +110,12 @@ and the merge is measured alone on the last line.
 
 | Library                | Minified | Gzipped |
 | ---------------------- | -------: | ------: |
-| @codefast/tv           |  38.3 KB | 12.2 KB |
+| @codefast/tv           |  39.1 KB | 12.5 KB |
 | tailwind-variants      |  44.9 KB | 16.8 KB |
 | cva                    |   1.0 KB |  0.6 KB |
 | `tailwind-merge` alone |  27.2 KB |  8.5 KB |
 
-`@codefast/tv` ships 12.2 KB gzipped, the second largest of 3 libraries, against a checked-in budget of 12,750 B. Most
+`@codefast/tv` ships 12.5 KB gzipped, the second largest of 3 libraries, against a checked-in budget of 12,750 B. Most
 of either `tv()` library's share is its merge engine: `tailwind-variants` ships its own tables, while
 `@codefast/tailwind-variants` takes `tailwind-merge` as a peer and imports only its `twMerge`, so an app ships one
 engine, the one it chose. `cva` merges nothing, which is why its with-merge rows call `tailwind-merge` after it.
@@ -117,25 +128,36 @@ correctness property paid for with its price known), **harness state** (the harn
 of the row alone does not) or **process mode** (a library runs the row at one of two speeds per process, and the pass
 caught the one that decides it).
 
-- **`cn` runs the application's merge engine** — chosen cost, real deficit. `cn-with-merge` 0.34×† tailwind-variants and
-  0.96× class-variance-authority. `cn` flattens its arguments and hands the string to `tailwind-merge`'s `twMerge`.
-  `tailwind-variants` ships its own engine, whose argument cache answers a repeated call before any merge; the package
-  leaves the engine to the application on purpose, so the default pays `tailwind-merge`'s cost, and an application that
-  aliases `tailwind-merge` to a faster drop-in engine moves this row with it. Against `cva`'s `cn` — the same engine
-  after a clsx-style join — the row sits at the edge of parity, and what is left is the join: when `cn` meets an
-  argument that is not a string, it restarts its flatten from the first argument.
+- **A merge no cache has seen runs the application's engine** — chosen cost. `unique-class-with-merge` 0.31×‡
+  tailwind-variants and 0.99× class-variance-authority; `first-render-cold-simple` 0.39×‡ tailwind-variants;
+  `first-render-cold-slots` 0.85×‡ tailwind-variants. Every call here hands the merge a string it has never seen, so no
+  resolution cache, pair memo or engine cache can answer it, and the row prices the merge engine itself.
+  `tailwind-variants` ships its own engine, which caches per token and is faster on a fresh string than
+  `tailwind-merge`; the package leaves the engine to the application on purpose, so the default pays `tailwind-merge`'s
+  cost — which is why `cva`, running the same engine after its own join, sits at parity — and an application that
+  injects or aliases a faster engine moves these rows with it. The cold first-render rows, which give every definition a
+  class of its own, are the same cost on a first page load.
+- **`cn` runs the application's merge engine** — chosen cost. `cn-with-merge` 0.66×† tailwind-variants and 1.87×†
+  class-variance-authority. `cn` answers a repeated pair of strings — a static class list and the caller's `className` —
+  from a memo keyed on the strings as passed, and anything else from `tailwind-merge` after a one-pass join, which is
+  what takes it past `cva`'s `cn` on the same engine. `tailwind-variants`' `cn` sits in front of its own engine with an
+  argument cache that also remembers which call followed which, and this row replays the same calls in the same order
+  every iteration, which is that cache's best case; the row runs above the throughput ceiling on both sides, so read it
+  as a direction.
 
 ## The wins
 
 Per competitor, its comparable rows and aggregates, its groups from widest to tightest, and every row it does not lose;
-the 10 rows declared incomparable stay out of every aggregate.
+the 14 rows declared incomparable stay out of every aggregate.
 
-- **tailwind-variants — 22 of 23 comparable rows, 2.64× median, 2.97× geomean.** By group, widest first: `extreme`
-  12.6×, `compound-slots` 6.67×, `extreme-slots` 4.43×, `complex` 4.37×, `repeat-simple` 2.86×, `extends` 2.65×,
-  `create-tv` 2.63×, `simple` 2.41×, `repeat-slots` 2.10×, `slots` 1.89×, `override` 1.69×, `slot-class` 1.37×, `cn`
-  0.34×. It takes `cn-with-merge` 0.34×†.
-- **cva — 5 of 6 comparable rows, 4.25× median, 4.75× geomean.** By group, widest first: `complex` 14.2×, `simple`
-  4.01×, `override` 3.68×, `cn` 0.96×. It takes `cn-with-merge` 0.96×.
+- **tailwind-variants — 24 of 26 comparable rows, 2.68× median, 2.71× geomean.** By group, widest first: `extreme`
+  12.0×, `compound-slots` 6.63×, `extreme-slots` 4.87×, `complex` 4.30×, `wide-slots` 3.08×, `repeat-simple` 2.80×,
+  `create-tv` 2.70×, `extends` 2.68×, `simple` 2.45×, `repeat-slots` 2.06×, `slots` 1.83×, `override` 1.67×,
+  `slot-class` 1.40×, `data-cells` 1.33×, `cn` 0.66×, `unique-class` 0.31×. It takes `cn-with-merge` 0.66×† and
+  `unique-class-with-merge` 0.31×.
+- **cva — 6 of 7 comparable rows, 3.66× median, 4.14× geomean.** By group, widest first: `complex` 13.8×, `simple`
+  4.04×, `override` 3.66×, `cn` 1.87×, `unique-class` 0.99×. At parity: `unique-class-with-merge` 0.99×. It takes no
+  row.
 
 ## Geomean by group
 
@@ -143,19 +165,22 @@ Geomean of the ratios in each group, comparable row count in parentheses. Read a
 
 | Group          | tailwind-variants |       cva |
 | -------------- | ----------------: | --------: |
-| simple         |         2.41× (2) | 4.01× (2) |
-| complex        |         4.37× (2) | 14.2× (2) |
-| slots          |         1.89× (2) |         — |
-| compound-slots |         6.67× (2) |         — |
-| extends        |         2.65× (2) |         — |
-| create-tv      |         2.63× (2) |         — |
-| extreme        |         12.6× (2) |         — |
-| extreme-slots  |         4.43× (2) |         — |
-| repeat-simple  |         2.86× (2) |         — |
-| repeat-slots   |         2.10× (2) |         — |
-| cn             |         0.34× (1) | 0.96× (1) |
-| override       |         1.69× (1) | 3.68× (1) |
-| slot-class     |         1.37× (1) |         — |
+| simple         |         2.45× (2) | 4.04× (2) |
+| complex        |         4.30× (2) | 13.8× (2) |
+| slots          |         1.83× (2) |         — |
+| compound-slots |         6.63× (2) |         — |
+| extends        |         2.68× (2) |         — |
+| create-tv      |         2.70× (2) |         — |
+| extreme        |         12.0× (2) |         — |
+| extreme-slots  |         4.87× (2) |         — |
+| repeat-simple  |         2.80× (2) |         — |
+| repeat-slots   |         2.06× (2) |         — |
+| cn             |         0.66× (1) | 1.87× (1) |
+| override       |         1.67× (1) | 3.66× (1) |
+| slot-class     |         1.40× (1) |         — |
+| data-cells     |         1.33× (1) |         — |
+| wide-slots     |         3.08× (1) |         — |
+| unique-class   |         0.31× (1) | 0.99× (1) |
 
 ## Full per-scenario table
 
@@ -164,45 +189,53 @@ that figure divided by its ratio. `†` a row above the ~30M ops/s ceiling (rati
 per-trial IQR exceeds 5% within this run. Rows with no competitor ratio are the `uncached-*` controls: codefast with its
 resolution cache and tailwind-merge's cache both off, so the miss path stays measured. `uncached-simple-with-merge`,
 `uncached-simple-without-merge`, `uncached-slots-with-merge`, `uncached-slots-without-merge`, `define-only-simple`,
-`define-only-slots`, `first-render-simple`, `first-render-slots`, `three-renders-simple` and `three-renders-slots` are
-excluded from the aggregates because the controls have no competitor to compare, and the definition rows price a
-definition rather than a render, where an eager library pays at definition what a lazy one pays at its first render.
+`define-only-slots`, `first-render-simple`, `first-render-slots`, `first-render-cold-simple`, `first-render-cold-slots`,
+`two-renders-simple`, `two-renders-slots`, `three-renders-simple` and `three-renders-slots` are excluded from the
+aggregates because the controls have no competitor to compare, and the definition rows price a definition rather than a
+render, where an eager library pays at definition what a lazy one pays at its first render.
 
 | Scenario                      | Group          | batch | @codefast/tailwind-variants hz/op | vs tailwind-variants | vs cva |
 | ----------------------------- | -------------- | ----: | --------------------------------: | -------------------: | -----: |
-| simple-without-merge          | simple         |    12 |                         9,193,998 |                2.64× |  3.34× |
-| simple-with-merge             | simple         |    12 |                         9,091,659 |                2.21× |  4.82× |
-| complex-without-merge         | complex        |    14 |                         7,879,467 |                4.43× |  13.4× |
-| complex-with-merge            | complex        |    14 |                         7,914,358 |                4.31× |  15.0× |
-| slots-without-merge           | slots          |    12 |                         7,774,575 |                1.95× |      — |
-| slots-with-merge              | slots          |    12 |                         7,573,093 |                1.83× |      — |
-| compound-slots-without-merge  | compound-slots |    14 |                         7,026,265 |                6.67× |      — |
-| compound-slots-with-merge     | compound-slots |    14 |                         7,035,388 |                6.67× |      — |
-| extends-without-merge         | extends        |    13 |                         7,490,792 |                2.58× |      — |
-| extends-with-merge            | extends        |    13 |                         7,646,447 |                2.72× |      — |
-| create-tv-without-merge       | create-tv      |    15 |                         7,702,232 |                2.84× |      — |
-| create-tv-with-merge          | create-tv      |    15 |                         7,502,275 |                2.43× |      — |
-| extreme-without-merge         | extreme        |    20 |                         4,437,450 |                12.3× |      — |
-| extreme-with-merge            | extreme        |    20 |                         4,486,331 |                12.8× |      — |
-| extreme-slots-without-merge   | extreme-slots  |    15 |                         4,618,726 |                4.45× |      — |
-| extreme-slots-with-merge      | extreme-slots  |    15 |                         4,595,934 |                4.40× |      — |
-| repeat-simple-without-merge   | repeat-simple  |    12 |                        11,927,526 |                3.52× |      — |
-| repeat-simple-with-merge      | repeat-simple  |    12 |                        12,143,321 |                2.33× |      — |
-| repeat-slots-without-merge    | repeat-slots   |    12 |                        10,245,741 |                2.11× |      — |
-| repeat-slots-with-merge       | repeat-slots   |    12 |                        10,116,105 |                2.09× |      — |
-| uncached-simple-with-merge    | simple         |    12 |                            93,821 |                    — |      — |
-| uncached-simple-without-merge | simple         |    12 |                         8,468,733 |                    — |      — |
-| uncached-slots-with-merge     | slots          |    12 |                           47,591‡ |                    — |      — |
-| uncached-slots-without-merge  | slots          |    12 |                        2,118,222‡ |                    — |      — |
-| define-only-simple            | define-only    |    12 |                        27,925,571 |                2.16× |      — |
-| define-only-slots             | define-only    |    12 |                        31,306,814 |               5.97×† |      — |
-| first-render-simple           | first-render   |    12 |                         2,961,094 |                1.42× |      — |
-| first-render-slots            | first-render   |    12 |                           311,709 |                1.48× |      — |
-| cn-with-merge                 | cn             |    12 |                        15,709,441 |               0.34×† |  0.96× |
-| override-with-merge           | override       |    12 |                         6,689,243 |                1.69× |  3.68× |
-| slot-class-with-merge         | slot-class     |    12 |                         4,321,057 |                1.37× |      — |
-| three-renders-simple          | first-render   |    12 |                           732,152 |                1.36× |      — |
-| three-renders-slots           | first-render   |    12 |                           97,106‡ |               1.22×‡ |      — |
+| simple-without-merge          | simple         |    12 |                         9,343,902 |                2.74× |  3.37× |
+| simple-with-merge             | simple         |    12 |                         9,102,731 |                2.19× |  4.84× |
+| complex-without-merge         | complex        |    14 |                         7,823,296 |                4.49× |  13.2× |
+| complex-with-merge            | complex        |    14 |                         7,744,815 |                4.13× |  14.4× |
+| slots-without-merge           | slots          |    12 |                         7,606,105 |                1.87× |      — |
+| slots-with-merge              | slots          |    12 |                         7,600,182 |                1.78× |      — |
+| compound-slots-without-merge  | compound-slots |    14 |                         6,923,088 |                6.59× |      — |
+| compound-slots-with-merge     | compound-slots |    14 |                         7,003,781 |                6.68× |      — |
+| extends-without-merge         | extends        |    13 |                         7,521,471 |                2.66× |      — |
+| extends-with-merge            | extends        |    13 |                         7,620,402 |                2.69× |      — |
+| create-tv-without-merge       | create-tv      |    15 |                         7,815,723 |                2.84× |      — |
+| create-tv-with-merge          | create-tv      |    15 |                         7,712,627 |                2.56× |      — |
+| extreme-without-merge         | extreme        |    20 |                         4,365,890 |                11.9× |      — |
+| extreme-with-merge            | extreme        |    20 |                         4,440,977 |                12.0× |      — |
+| extreme-slots-without-merge   | extreme-slots  |    15 |                         5,079,409 |                4.94× |      — |
+| extreme-slots-with-merge      | extreme-slots  |    15 |                         4,934,302 |                4.80× |      — |
+| repeat-simple-without-merge   | repeat-simple  |    12 |                        12,090,542 |                3.47× |      — |
+| repeat-simple-with-merge      | repeat-simple  |    12 |                        11,847,098 |                2.25× |      — |
+| repeat-slots-without-merge    | repeat-slots   |    12 |                        10,080,917 |                2.05× |      — |
+| repeat-slots-with-merge       | repeat-slots   |    12 |                         9,898,478 |                2.08× |      — |
+| uncached-simple-with-merge    | simple         |    12 |                            98,478 |                    — |      — |
+| uncached-simple-without-merge | simple         |    12 |                         8,515,552 |                    — |      — |
+| uncached-slots-with-merge     | slots          |    12 |                           47,937‡ |                    — |      — |
+| uncached-slots-without-merge  | slots          |    12 |                        2,261,624‡ |                    — |      — |
+| define-only-simple            | define-only    |    12 |                        27,876,435 |                2.15× |      — |
+| define-only-slots             | define-only    |    12 |                        31,609,233 |               5.84×† |      — |
+| first-render-simple           | first-render   |    12 |                         3,040,240 |                1.43× |      — |
+| first-render-slots            | first-render   |    12 |                          318,444‡ |               1.48×‡ |      — |
+| cn-with-merge                 | cn             |    12 |                        30,336,401 |               0.66×† | 1.87×† |
+| override-with-merge           | override       |    12 |                         6,672,804 |                1.67× |  3.66× |
+| slot-class-with-merge         | slot-class     |    12 |                         4,503,867 |                1.40× |      — |
+| data-cells-with-merge         | data-cells     |    16 |                         5,207,324 |                1.33× |      — |
+| wide-slots-with-merge         | wide-slots     |    12 |                         1,971,679 |                3.08× |      — |
+| unique-class-with-merge       | unique-class   |    12 |                            79,556 |               0.31×‡ |  0.99× |
+| first-render-cold-simple      | first-render   |    12 |                            81,053 |               0.39×‡ |      — |
+| first-render-cold-slots       | first-render   |    12 |                          109,704‡ |               0.85×‡ |      — |
+| two-renders-simple            | first-render   |    12 |                           935,203 |                1.15× |      — |
+| two-renders-slots             | first-render   |    12 |                          170,599‡ |               1.37×‡ |      — |
+| three-renders-simple          | first-render   |    12 |                           732,967 |                1.32× |      — |
+| three-renders-slots           | first-render   |    12 |                          137,798‡ |               1.69×‡ |      — |
 
 ## Re-running this
 

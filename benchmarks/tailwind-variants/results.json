@@ -1,5 +1,5 @@
 {
-  "runId": "2026-10-30T01-58-56-923Z",
+  "runId": "2026-10-30T04-01-56-737Z",
   "runDate": "2026-10-30",
   "profile": { "mode": "full", "isolated": true, "trialCount": 3 },
   "environment": {
@@ -19,37 +19,32 @@
     {
       "competitor": "tailwind-variants",
       "displayName": "tailwind-variants",
-      "comparable": 23,
-      "wins": 22,
+      "comparable": 26,
+      "wins": 24,
       "parities": 0,
-      "losses": 1,
-      "median": 2.6433254969348354,
-      "geomean": 2.971148080951978,
+      "losses": 2,
+      "median": 2.675171172267228,
+      "geomean": 2.71449488791444,
       "unreliable": 1
     },
     {
       "competitor": "class-variance-authority",
       "displayName": "cva",
-      "comparable": 6,
-      "wins": 5,
-      "parities": 0,
-      "losses": 1,
-      "median": 4.252249637075731,
-      "geomean": 4.746638458550252,
-      "unreliable": 0
+      "comparable": 7,
+      "wins": 6,
+      "parities": 1,
+      "losses": 0,
+      "median": 3.6609281952661625,
+      "geomean": 4.144600574069568,
+      "unreliable": 1
     }
   ],
   "losses": [
+    { "scenario": "cn-with-merge", "competitor": "tailwind-variants", "ratio": 0.6634029935786698, "unreliable": true },
     {
-      "scenario": "cn-with-merge",
+      "scenario": "unique-class-with-merge",
       "competitor": "tailwind-variants",
-      "ratio": 0.34147786590648416,
-      "unreliable": true
-    },
-    {
-      "scenario": "cn-with-merge",
-      "competitor": "class-variance-authority",
-      "ratio": 0.9559034887639963,
+      "ratio": 0.3079386086109463,
       "unreliable": false
     }
   ],
