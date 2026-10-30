@@ -97,8 +97,9 @@ scenario groups:
 | `slot-class`     | card slots each called with the `className` their sub-component was given              |
 | `data-cells`     | table cells keyed by row status and column, about a thousand distinct calls            |
 | `wide-slots`     | sixteen slots and twenty compound-tested variants, every slot rendered                 |
+| `unique-class`   | one button from many call sites, each with a `className` no earlier call passed        |
 
-The last five run with `tailwind-merge` only: they price the calls a component library makes on every render, where the
+The last six run with `tailwind-merge` only: they price the calls a component library makes on every render, where the
 merge is part of the answer. Every loop hands each call a fresh props object, as React does on every render.
 
 Two more groups are controls rather than comparisons, and both declare `excludeFromAggregates` so they stay in the table

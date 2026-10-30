@@ -9,6 +9,7 @@ import { buildCodefastExtremeScenarios } from "#scenarios/codefast/extreme";
 import { buildCodefastExtremeSlotsScenarios } from "#scenarios/codefast/extreme-slots";
 import { buildCodefastFewRendersScenarios } from "#scenarios/codefast/few-renders";
 import { buildCodefastFirstRenderScenarios } from "#scenarios/codefast/first-render";
+import { buildCodefastNovelClassesScenarios } from "#scenarios/codefast/novel-classes";
 import { buildCodefastOverrideScenarios } from "#scenarios/codefast/override";
 import { buildCodefastRepeatScenarios } from "#scenarios/codefast/repeat";
 import { buildCodefastSimpleScenarios } from "#scenarios/codefast/simple";
@@ -40,6 +41,7 @@ export function collectAllCodefastScenarios(): ReadonlyArray<BenchScenario> {
     ...buildCodefastSlotClassScenarios(),
     ...buildCodefastDataCellsScenarios(),
     ...buildCodefastWideSlotsScenarios(),
+    ...buildCodefastNovelClassesScenarios(),
     ...buildCodefastFewRendersScenarios(),
   ];
 }

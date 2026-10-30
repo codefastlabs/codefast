@@ -2,6 +2,7 @@ import { buildClassVarianceAuthorityCnScenarios } from "#scenarios/class-varianc
 import { buildClassVarianceAuthorityComplexScenarios } from "#scenarios/class-variance-authority/complex";
 import { buildClassVarianceAuthorityOverrideScenarios } from "#scenarios/class-variance-authority/override";
 import { buildClassVarianceAuthoritySimpleScenarios } from "#scenarios/class-variance-authority/simple";
+import { buildClassVarianceAuthorityUniqueClassScenarios } from "#scenarios/class-variance-authority/unique-class";
 import type { BenchScenario } from "#scenarios/types";
 
 /**
@@ -13,5 +14,6 @@ export function collectAllClassVarianceAuthorityScenarios(): ReadonlyArray<Bench
     ...buildClassVarianceAuthorityComplexScenarios(),
     ...buildClassVarianceAuthorityCnScenarios(),
     ...buildClassVarianceAuthorityOverrideScenarios(),
+    ...buildClassVarianceAuthorityUniqueClassScenarios(),
   ];
 }
