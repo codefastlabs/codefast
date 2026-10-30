@@ -376,6 +376,24 @@ export const WIDE_SLOTS_WITH_MERGE = {
   batch: wideSlotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
+/** Defining a button and rendering it twice, which reaches a lazy library's second-call compile and nothing after it. */
+export const TWO_RENDERS_SIMPLE = {
+  id: "two-renders-simple",
+  group: "first-render",
+  what: "Define a button component and render it with two selections (per definition; reaches a second-call compile — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
+} as const satisfies ScenarioDescriptor;
+
+/** Defining a slot component and rendering every slot twice. */
+export const TWO_RENDERS_SLOTS = {
+  id: "two-renders-slots",
+  group: "first-render",
+  what: "Define a slot component and render every slot for two selections (per definition; reaches a second-call compile — off the aggregates)",
+  batch: COLD_DEFINITIONS_PER_LOOP,
+  excludeFromAggregates: true,
+} as const satisfies ScenarioDescriptor;
+
 /** Defining a button and rendering it three times, which reaches a lazy library's second-call compile. */
 export const THREE_RENDERS_SIMPLE = {
   id: "three-renders-simple",
