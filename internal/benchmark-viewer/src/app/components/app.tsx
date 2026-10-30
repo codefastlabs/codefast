@@ -217,6 +217,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           selectedFacets={view.facets}
           onLoadOlderRuns={loadOlderRuns}
           onReload={() => loadData(true)}
+          reportRunFolder={payload.reportsAvailable ? reportRunFolder : undefined}
           onRunWindowChange={(runWindow) => patchView({ runWindow })}
           onScenarioChange={(scenarioId) => patchView({ scenarioId })}
           onSearchChange={(search) => patchView({ search })}
@@ -231,26 +232,6 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           uniqueEnvKeys={uniqueEnvKeys}
           visibleScenarios={visibleScenarios}
         />
-
-        {payload.reportsAvailable && reportRunFolder !== undefined && (
-          <div className="mt-4 mb-6 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-            <span>Download the report for the newest matching run:</span>
-            <a
-              className="text-bh-ink border-bh-border bg-bh-fill-white-4 hover:bg-bh-fill-white-7 rounded-md border px-2 py-1"
-              download
-              href={`/api/report.md?run=${encodeURIComponent(reportRunFolder)}`}
-            >
-              report.md
-            </a>
-            <a
-              className="text-bh-ink border-bh-border bg-bh-fill-white-4 hover:bg-bh-fill-white-7 rounded-md border px-2 py-1"
-              download
-              href={`/api/report.json?run=${encodeURIComponent(reportRunFolder)}`}
-            >
-              report.json
-            </a>
-          </div>
-        )}
 
         <ChartPanel
           baseRunIndices={baseRunIndices}
