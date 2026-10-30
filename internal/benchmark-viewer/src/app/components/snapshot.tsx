@@ -10,7 +10,7 @@ function Th({ className, ...props }: ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "border-b-bh-table-line bg-bh-table-head text-bh-label z-3 border-b px-[0.65rem] py-[0.15rem] text-start text-[0.7rem] font-semibold tracking-wider whitespace-nowrap uppercase",
+        "border-b-bh-table-line bg-bh-table-head text-bh-label text-bh-caption z-3 border-b px-[0.65rem] py-[0.15rem] text-start font-semibold tracking-wider whitespace-nowrap uppercase",
         className,
       )}
       {...props}
@@ -51,15 +51,18 @@ export function SnapshotSection({
       className="border-bh-border bg-bh-surface open:bg-bh-surface-open-muted mt-10 rounded-[1.25rem] border px-5 py-4 backdrop-blur-xl backdrop-saturate-180 sm:px-6"
       id="snapshot-details"
     >
-      <summary className="cursor-pointer list-none py-1 text-sm leading-snug font-semibold text-zinc-100 marker:content-[''] [&::-webkit-details-marker]:hidden">
+      <summary className="text-bh-small cursor-pointer list-none py-1 leading-snug font-semibold text-zinc-100 marker:content-[''] [&::-webkit-details-marker]:hidden">
         <span className="text-cyan-200/90">Latest measurement</span> by scenario (table)
       </summary>
-      <p className="mb-3 text-xs leading-relaxed text-zinc-500" id="snapshot-desc">
+      <p className="text-bh-small text-bh-label-muted mb-3 leading-relaxed" id="snapshot-desc">
         Each cell uses that library's newest run with data ({runCount} runs scanned), independent of the Environment
         selector — so a ratio can pair values from different runs. As of dates the newest contributing run.
       </p>
       <div className="border-bh-border bg-bh-scrim-table overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
-        <table aria-label="Latest run throughput by scenario" className="w-full border-collapse text-[0.8rem]">
+        <table
+          aria-label="Latest run throughput by scenario"
+          className="text-bh-small w-full border-collapse tabular-nums"
+        >
           <thead>
             <tr>
               <Th
@@ -116,7 +119,7 @@ export function SnapshotSection({
                     {ratioCell}
                   </Td>
                 ))}
-                <Td className="text-end whitespace-nowrap text-zinc-500" suppressHydrationWarning>
+                <Td className="text-bh-label-muted text-end whitespace-nowrap" suppressHydrationWarning>
                   {row.asOf}
                 </Td>
               </tr>
@@ -125,7 +128,7 @@ export function SnapshotSection({
         </table>
       </div>
       {latestRun && (
-        <div className="mt-2 text-xs text-zinc-600" suppressHydrationWarning>
+        <div className="text-bh-caption text-bh-label-muted mt-2" suppressHydrationWarning>
           Folder {latestRun.folder} · {formatLocal(latestRun.timestampIso, latestRun.folder)} (local)
         </div>
       )}

@@ -135,16 +135,16 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         >
           {loadError ? (
             <div className="text-center">
-              <p className="text-sm text-red-400">Failed to load bench data.</p>
-              <p className="mt-1 text-xs text-zinc-500">{loadError}</p>
-              <p className="mt-3 text-xs text-zinc-600">
+              <p className="text-bh-small text-red-400">Failed to load bench data.</p>
+              <p className="text-bh-small text-bh-label-muted mt-1">{loadError}</p>
+              <p className="text-bh-caption text-bh-label-muted mt-3">
                 Run <code className="text-indigo-400">pnpm bench</code> first to generate data.
               </p>
             </div>
           ) : (
             <div className="text-center">
               <div className="border-t-bh-blue mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-zinc-600/80 motion-reduce:animate-none" />
-              <p className="text-sm text-zinc-400">Loading bench data…</p>
+              <p className="text-bh-small text-zinc-400">Loading bench data…</p>
             </div>
           )}
         </div>
@@ -167,7 +167,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
         {payload.benchResultsWarning !== undefined && payload.benchResultsWarning.length > 0 && (
           <div
-            className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
+            className="text-bh-small mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
             role="alert"
           >
             <strong className="font-semibold text-amber-200">Bench results directory.</strong>{" "}
@@ -177,7 +177,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
         {showMultiEnvBanner && (
           <div
-            className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
+            className="text-bh-small mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
             role="status"
           >
             <strong className="font-semibold text-amber-200">Multiple environments in history.</strong> Prefer an
@@ -187,7 +187,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
         {showMultiConfigBanner && (
           <div
-            className="mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-sm text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
+            className="text-bh-small mt-5 rounded-xl border border-amber-400/20 bg-amber-500/9 px-4 py-3 text-amber-100/95 shadow-sm shadow-amber-950/20 backdrop-blur-md backdrop-saturate-150"
             role="status"
           >
             <strong className="font-semibold text-amber-200">Multiple configurations in history.</strong> Pick a
@@ -276,10 +276,10 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
 
         {withinGroupCost.length > 0 && baselineScenario !== null && (
           <section className="border-bh-border bg-bh-surface mt-6 mb-8 rounded-2xl border p-4 sm:p-5">
-            <p className="text-bh-label mb-1 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
+            <p className="text-bh-label text-bh-caption mb-1 font-semibold tracking-[0.14em] uppercase">
               Within-group cost
             </p>
-            <p className="mb-3 text-xs text-zinc-500">
+            <p className="text-bh-small text-bh-label-muted mb-3">
               <span className="text-zinc-300">{currentScenario?.id}</span> vs baseline{" "}
               <code className="text-zinc-400">{baselineScenario.id}</code> — throughput relative to the baseline over
               the plotted runs; below <span className="tabular-nums">1.00×</span> is slower than the baseline.
@@ -287,8 +287,10 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
             <div className="flex flex-wrap gap-2">
               {withinGroupCost.map((entry) => (
                 <div className="rounded-lg border border-white/10 px-3 py-2" key={entry.libraryKey}>
-                  <div className="text-[0.7rem] text-zinc-400">{entry.displayName}</div>
-                  <div className="text-sm font-semibold text-zinc-100 tabular-nums">{entry.ratio.toFixed(2)}×</div>
+                  <div className="text-bh-caption text-zinc-400">{entry.displayName}</div>
+                  <div className="text-bh-small font-semibold text-zinc-100 tabular-nums">
+                    {entry.ratio.toFixed(2)}×
+                  </div>
                 </div>
               ))}
             </div>
@@ -306,7 +308,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
           snapshotRows={snapshotRows}
         />
 
-        <p className="mt-10 border-t border-white/6 pt-6 text-[0.8125rem] leading-relaxed text-zinc-500">
+        <p className="text-bh-small text-bh-label-muted mt-10 border-t border-white/6 pt-6 leading-relaxed">
           Reload data from Chart data or refresh the page for the latest snapshot · {payload.runs.length} runs ·{" "}
           {payload.scenarios.length} scenarios.
           {payload.generatedAtIso ? (
@@ -333,7 +335,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
         aria-atomic="true"
         aria-live="polite"
         className={cn(
-          "border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast text-bh-toast-ink bh-toast-visible:opacity-100 bh-toast-visible:translate-y-0 bh-toast-visible:scale-100 bh-toast-visible:pointer-events-auto pointer-events-none fixed end-[max(1rem,env(safe-area-inset-right,0px))] bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-200 max-w-[min(20rem,calc(100vw-2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] text-[0.8125rem] font-medium opacity-0 backdrop-blur-lg backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none",
+          "border-bh-blue-ring bg-bh-surface-toast shadow-bh-toast text-bh-toast-ink bh-toast-visible:opacity-100 bh-toast-visible:translate-y-0 bh-toast-visible:scale-100 bh-toast-visible:pointer-events-auto text-bh-small pointer-events-none fixed end-[max(1rem,env(safe-area-inset-right,0px))] bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-200 max-w-[min(20rem,calc(100vw-2rem))] translate-y-2 scale-[0.98] rounded-[0.875rem] border px-[1.05rem] py-[0.7rem] font-medium opacity-0 backdrop-blur-lg backdrop-saturate-180 [transition:opacity_0.22s_ease,transform_0.22s_cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none",
           { "is-visible": toastMsg },
         )}
         id="bh-toast"

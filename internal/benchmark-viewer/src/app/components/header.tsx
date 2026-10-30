@@ -13,22 +13,19 @@ interface PageHeaderProps {
 export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
   return (
     <header className="mb-8 border-b border-white/6 pb-6 sm:mb-10 sm:pb-8">
-      <p className="text-[0.6875rem] font-semibold tracking-[0.22em] text-cyan-300/90 uppercase">
-        Bench history viewer
-      </p>
-      <h1 className="mt-3 text-2xl font-semibold tracking-[-0.02em] wrap-break-word text-zinc-50 sm:text-[1.75rem] sm:leading-tight">
-        {title}
-      </h1>
+      <p className="text-bh-caption font-semibold tracking-[0.22em] text-cyan-300/90 uppercase">Bench history viewer</p>
+      <h1 className="text-bh-display mt-3 font-semibold tracking-[-0.02em] wrap-break-word text-zinc-50">{title}</h1>
       <div className="mt-3 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-prose text-[0.9375rem] leading-relaxed text-pretty wrap-break-word text-zinc-400/95">
+        <p className="text-bh-body max-w-prose leading-relaxed text-pretty wrap-break-word text-zinc-400/95">
           Median hz/op per saved run, optional P25–P75 bands, and primary-vs-compare ratios.{" "}
-          <span className="text-zinc-500">Press</span> <Kbd>⌘K</Kbd> <span className="text-zinc-500">or</span>{" "}
-          <Kbd>Ctrl+K</Kbd> <span className="text-zinc-500">for quick actions.</span>
+          <span className="text-bh-label-muted">Press</span> <Kbd>⌘K</Kbd>{" "}
+          <span className="text-bh-label-muted">or</span> <Kbd>Ctrl+K</Kbd>{" "}
+          <span className="text-bh-label-muted">for quick actions.</span>
         </p>
         <div className="flex w-full shrink-0 flex-wrap items-stretch gap-2 sm:w-auto sm:items-center sm:justify-end">
           <button
             aria-label="Copy link to this view"
-            className="border-bh-border bh-hover-ready:border-bh-border-strong bg-bh-fill-white-4 bh-hover-ready:bg-bh-fill-white-7 shadow-bh-btn-reload text-bh-ink bh-hover-ready:text-bh-ink-hover bh-aria-busy:opacity-55 bh-aria-busy:cursor-wait focus-visible:outline-bh-blue inline-flex min-h-11 items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] font-[inherit] text-[0.8125rem] leading-tight font-medium tracking-[-0.015em] backdrop-blur-md backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none sm:min-h-0"
+            className="border-bh-border bh-hover-ready:border-bh-border-strong bg-bh-fill-white-4 bh-hover-ready:bg-bh-fill-white-7 shadow-bh-btn-reload text-bh-ink bh-hover-ready:text-bh-ink-hover bh-aria-busy:opacity-55 bh-aria-busy:cursor-wait focus-visible:outline-bh-blue text-bh-small inline-flex min-h-11 items-center justify-center gap-[0.4rem] rounded-full border px-[0.95rem] py-[0.38rem] font-[inherit] leading-tight font-medium tracking-[-0.015em] backdrop-blur-md backdrop-saturate-160 [transition:background_0.18s_ease,border-color_0.18s_ease,color_0.18s_ease] focus-visible:outline focus-visible:outline-offset-[0.1875rem] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none sm:min-h-0"
             onClick={onCopyLink}
             title="Copies URL including filters, scenario, and display toggles"
             type="button"
@@ -41,10 +38,10 @@ export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
         className="border-bh-border bg-bh-surface mt-5 rounded-2xl border px-4 py-3 shadow-(--shadow-bh-glass-tight) backdrop-blur-xl backdrop-saturate-180 sm:px-5 sm:py-3.5"
         id="intro-howto-details"
       >
-        <summary className="cursor-pointer list-none text-sm font-semibold text-zinc-100 select-none marker:content-[''] hover:text-white [&::-webkit-details-marker]:hidden">
+        <summary className="text-bh-small cursor-pointer list-none font-semibold text-zinc-100 select-none marker:content-[''] hover:text-white [&::-webkit-details-marker]:hidden">
           How to read this viewer
         </summary>
-        <div className="mt-3 border-t border-white/6 pt-3 text-sm leading-relaxed text-zinc-400">
+        <div className="text-bh-small mt-3 border-t border-white/6 pt-3 leading-relaxed text-zinc-400">
           <p>
             Quantiles mirror{" "}
             <code className="rounded-md bg-white/8 px-1.5 py-0.5 font-mono text-[0.88em] text-cyan-200/90">

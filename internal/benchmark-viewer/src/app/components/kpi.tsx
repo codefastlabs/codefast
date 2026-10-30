@@ -12,10 +12,10 @@ interface KpiGridProps {
 function Stat({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex min-w-0 items-baseline gap-2">
-      <span className="text-bh-label shrink-0 text-[0.625rem] font-semibold tracking-[0.09em] whitespace-nowrap uppercase">
+      <span className="text-bh-label text-bh-caption shrink-0 font-semibold tracking-[0.09em] whitespace-nowrap uppercase">
         {label}
       </span>
-      <span className="min-w-0 text-sm leading-snug text-zinc-200">{children}</span>
+      <span className="text-bh-small min-w-0 leading-snug text-zinc-200">{children}</span>
     </div>
   );
 }
