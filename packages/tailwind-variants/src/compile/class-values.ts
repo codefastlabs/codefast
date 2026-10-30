@@ -30,7 +30,8 @@ export type PlanClasses = SlotClassGroup | string;
  * @since 0.6.0
  */
 export const toClassText = (value: ClassValue): string => {
-  return typeof value === "string" ? value : flattenClassValues([value]);
+  // An absent prop is the common case on the slot lane, and it should not allocate to say so.
+  return typeof value === "string" ? value : !value ? "" : flattenClassValues([value]);
 };
 
 /**
