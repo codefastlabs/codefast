@@ -1,5 +1,5 @@
 {
-  "runId": "2026-10-30T04-01-56-737Z",
+  "runId": "2026-10-30T04-44-38-156Z",
   "runDate": "2026-10-30",
   "profile": { "mode": "full", "isolated": true, "trialCount": 3 },
   "environment": {
@@ -21,30 +21,29 @@
       "displayName": "tailwind-variants",
       "comparable": 26,
       "wins": 24,
-      "parities": 0,
-      "losses": 2,
-      "median": 2.675171172267228,
-      "geomean": 2.71449488791444,
+      "parities": 1,
+      "losses": 1,
+      "median": 2.705764253236531,
+      "geomean": 2.8888493490183818,
       "unreliable": 1
     },
     {
       "competitor": "class-variance-authority",
       "displayName": "cva",
       "comparable": 7,
-      "wins": 6,
-      "parities": 1,
+      "wins": 7,
+      "parities": 0,
       "losses": 0,
-      "median": 3.6609281952661625,
-      "geomean": 4.144600574069568,
+      "median": 3.5345079888047524,
+      "geomean": 5.110983253181609,
       "unreliable": 1
     }
   ],
   "losses": [
-    { "scenario": "cn-with-merge", "competitor": "tailwind-variants", "ratio": 0.6634029935786698, "unreliable": true },
     {
       "scenario": "unique-class-with-merge",
       "competitor": "tailwind-variants",
-      "ratio": 0.3079386086109463,
+      "ratio": 0.9324820620377413,
       "unreliable": false
     }
   ],

@@ -22,7 +22,7 @@ const USER_FACING_NOTES: ReadonlyArray<UserFacingNote<TvCompetitorName>> = [
   },
   {
     title: "One render",
-    lead: "A component rendered with a selection it has seen before, through `tailwind-merge` — what every render after the first costs.",
+    lead: "A component rendered with a selection it has seen before, through the merge engine — what every render after the first costs.",
     rows: [
       { id: "simple-with-merge", versus: ["tailwind-variants", "class-variance-authority"] },
       { id: "complex-with-merge", versus: ["tailwind-variants", "class-variance-authority"] },
@@ -39,33 +39,22 @@ const USER_FACING_NOTES: ReadonlyArray<UserFacingNote<TvCompetitorName>> = [
       { id: "slot-class-with-merge", versus: ["tailwind-variants"] },
       { id: "data-cells-with-merge", versus: ["tailwind-variants"] },
     ],
-    body: "Every call site passes its own `className`, usually absent and sometimes overriding a class the variants set, and props arrive as a fresh object per call as React hands them over. The table-cell row draws its selections and classes from row and column data, about a thousand distinct calls, rather than from a fixed list of call sites. `cva` has no `cn` of its own, so its `cn` cell is its clsx-style join followed by `tailwind-merge`, the usual production pairing.",
+    body: "Every call site passes its own `className`, usually absent and sometimes overriding a class the variants set, and props arrive as a fresh object per call as React hands them over. The table-cell row draws its selections and classes from row and column data, about a thousand distinct calls, rather than from a fixed list of call sites. `cva` has no `cn` of its own, so its `cn` cell is its clsx-style join followed by `tailwind-merge`, the usual production pairing; `@codefast/tailwind-variants` exports the `cn` engine's own `cn`.",
   },
 ];
 
 /** The paragraph under the bundle table, which the footprint record cannot say. */
 const BUNDLE_NOTE =
-  "Most of either `tv()` library's share is its merge engine: `tailwind-variants` ships its own tables, while `@codefast/tailwind-variants` takes `tailwind-merge` as a peer and imports only its `twMerge`, so an app ships one engine, the one it chose. `cva` merges nothing, which is why its with-merge rows call `tailwind-merge` after it.";
+  "Most of either `tv()` library's share is its merge engine: `tailwind-variants` compiles its own tables into its bundle, while `@codefast/tailwind-variants` takes `cn` as a peer and imports its `twMerge` and `cn`, so an app ships one engine whichever library calls it. `cn` is a little larger than `tailwind-merge` gzipped and smaller minified, and merges a string no cache has seen several times faster. `cva` merges nothing, which is why its with-merge rows call `tailwind-merge` after it.";
 
 /** Every loss shape, ordered by how much it matters. */
 const LOSS_NOTES: ReadonlyArray<LossNote<TvCompetitorName>> = [
   {
-    title: "A merge no cache has seen runs the application's engine",
+    title: "A merge no cache has seen runs the engine",
     kinds: ["chosen cost"],
     losses: [{ id: "unique-class-with-merge", versus: ["tailwind-variants"] }],
-    context: [
-      { id: "unique-class-with-merge", versus: ["class-variance-authority"] },
-      { id: "first-render-cold-simple", versus: ["tailwind-variants"] },
-      { id: "first-render-cold-slots", versus: ["tailwind-variants"] },
-    ],
-    body: "Every call here hands the merge a string it has never seen, so no resolution cache, pair memo or engine cache can answer it, and the row prices the merge engine itself. `tailwind-variants` ships its own engine, which caches per token and is faster on a fresh string than `tailwind-merge`; the package leaves the engine to the application on purpose, so the default pays `tailwind-merge`'s cost — which is why `cva`, running the same engine after its own join, sits at parity — and an application that injects or aliases a faster engine moves these rows with it. The cold first-render rows, which give every definition a class of its own, are the same cost on a first page load.",
-  },
-  {
-    title: "`cn` runs the application's merge engine",
-    kinds: ["chosen cost"],
-    losses: [{ id: "cn-with-merge", versus: ["tailwind-variants"] }],
-    context: [{ id: "cn-with-merge", versus: ["class-variance-authority"] }],
-    body: "`cn` answers a repeated pair of strings — a static class list and the caller's `className` — from a memo keyed on the strings as passed, and anything else from `tailwind-merge` after a one-pass join, which is what takes it past `cva`'s `cn` on the same engine. `tailwind-variants`' `cn` sits in front of its own engine with an argument cache that also remembers which call followed which, and this row replays the same calls in the same order every iteration, which is that cache's best case; the row runs above the throughput ceiling on both sides, so read it as a direction.",
+    context: [{ id: "unique-class-with-merge", versus: ["class-variance-authority"] }],
+    body: "Every call here hands the merge a string it has never seen, so no resolution cache or engine cache can answer it, and the row prices the merge engine itself. `@codefast/tailwind-variants` merges with `cn`, which is far ahead of `tailwind-merge` on such a string — hence the lead over `cva`, which pairs with `tailwind-merge` — and close behind the engine `tailwind-variants` compiles into its own bundle. The package takes `cn` as a peer rather than shipping an engine of its own, so an application carries one engine whichever library calls it, and one that injects a faster merge moves this row with it.",
   },
 ];
 

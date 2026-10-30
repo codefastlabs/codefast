@@ -3,8 +3,8 @@
   "footprints": [
     {
       "label": "@codefast/tv",
-      "minifiedBytes": 39089,
-      "gzippedBytes": 12485
+      "minifiedBytes": 35331,
+      "gzippedBytes": 13597
     },
     {
       "label": "tailwind-variants",
@@ -15,6 +15,11 @@
       "label": "cva",
       "minifiedBytes": 1039,
       "gzippedBytes": 563
+    },
+    {
+      "label": "`cn` alone",
+      "minifiedBytes": 23513,
+      "gzippedBytes": 9656
     },
     {
       "label": "`tailwind-merge` alone",

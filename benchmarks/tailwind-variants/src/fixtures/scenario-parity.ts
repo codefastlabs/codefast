@@ -31,7 +31,7 @@ export const COLD_DEFINITIONS_PER_LOOP = 12;
 export const SIMPLE_WITHOUT_MERGE = {
   id: "simple-without-merge",
   group: "simple",
-  what: "Simple button variants without tailwind-merge",
+  what: "Simple button variants without merging",
   batch: simpleTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -42,7 +42,7 @@ export const SIMPLE_WITH_MERGE = {
   id: "simple-with-merge",
   comparesWithin: "simple-without-merge",
   group: "simple",
-  what: "Simple button variants with tailwind-merge on tv",
+  what: "Simple button variants with merging on tv",
   batch: simpleTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -52,7 +52,7 @@ export const SIMPLE_WITH_MERGE = {
 export const COMPLEX_WITHOUT_MERGE = {
   id: "complex-without-merge",
   group: "complex",
-  what: "Complex variants (compounds, booleans) without tailwind-merge",
+  what: "Complex variants (compounds, booleans) without merging",
   batch: complexTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -63,7 +63,7 @@ export const COMPLEX_WITH_MERGE = {
   id: "complex-with-merge",
   comparesWithin: "complex-without-merge",
   group: "complex",
-  what: "Complex variants with tailwind-merge on tv",
+  what: "Complex variants with merging on tv",
   batch: complexTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -73,7 +73,7 @@ export const COMPLEX_WITH_MERGE = {
 export const SLOTS_WITHOUT_MERGE = {
   id: "slots-without-merge",
   group: "slots",
-  what: "Slots (card-style) without tailwind-merge",
+  what: "Slots (card-style) without merging",
   batch: slotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -84,7 +84,7 @@ export const SLOTS_WITH_MERGE = {
   id: "slots-with-merge",
   comparesWithin: "slots-without-merge",
   group: "slots",
-  what: "Slots with tailwind-merge on tv",
+  what: "Slots with merging on tv",
   batch: slotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -94,7 +94,7 @@ export const SLOTS_WITH_MERGE = {
 export const COMPOUND_SLOTS_WITHOUT_MERGE = {
   id: "compound-slots-without-merge",
   group: "compound-slots",
-  what: "Compound slots (pagination-style) without tailwind-merge",
+  what: "Compound slots (pagination-style) without merging",
   batch: compoundSlotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -105,7 +105,7 @@ export const COMPOUND_SLOTS_WITH_MERGE = {
   id: "compound-slots-with-merge",
   comparesWithin: "compound-slots-without-merge",
   group: "compound-slots",
-  what: "Compound slots with tailwind-merge on tv",
+  what: "Compound slots with merging on tv",
   batch: compoundSlotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -115,7 +115,7 @@ export const COMPOUND_SLOTS_WITH_MERGE = {
 export const EXTENDS_WITHOUT_MERGE = {
   id: "extends-without-merge",
   group: "extends",
-  what: "Extended tv config without tailwind-merge",
+  what: "Extended tv config without merging",
   batch: extendsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -126,7 +126,7 @@ export const EXTENDS_WITH_MERGE = {
   id: "extends-with-merge",
   comparesWithin: "extends-without-merge",
   group: "extends",
-  what: "Extended tv config with tailwind-merge on tv",
+  what: "Extended tv config with merging on tv",
   batch: extendsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -136,7 +136,7 @@ export const EXTENDS_WITH_MERGE = {
 export const CREATE_TV_WITHOUT_MERGE = {
   id: "create-tv-without-merge",
   group: "create-tv",
-  what: "Resolver from the createTV factory without tailwind-merge; the factory call sits outside the timed loop",
+  what: "Resolver from the createTV factory without merging; the factory call sits outside the timed loop",
   batch: createTvTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -147,7 +147,7 @@ export const CREATE_TV_WITH_MERGE = {
   id: "create-tv-with-merge",
   comparesWithin: "create-tv-without-merge",
   group: "create-tv",
-  what: "Resolver from the createTV factory with tailwind-merge; the factory call sits outside the timed loop",
+  what: "Resolver from the createTV factory with merging; the factory call sits outside the timed loop",
   batch: createTvTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -157,7 +157,7 @@ export const CREATE_TV_WITH_MERGE = {
 export const EXTREME_WITHOUT_MERGE = {
   id: "extreme-without-merge",
   group: "extreme",
-  what: "Large variant matrix without tailwind-merge",
+  what: "Large variant matrix without merging",
   batch: extremeTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -168,7 +168,7 @@ export const EXTREME_WITH_MERGE = {
   id: "extreme-with-merge",
   comparesWithin: "extreme-without-merge",
   group: "extreme",
-  what: "Large variant matrix with tailwind-merge on tv",
+  what: "Large variant matrix with merging on tv",
   batch: extremeTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -178,7 +178,7 @@ export const EXTREME_WITH_MERGE = {
 export const EXTREME_SLOTS_WITHOUT_MERGE = {
   id: "extreme-slots-without-merge",
   group: "extreme-slots",
-  what: "Many slots without tailwind-merge",
+  what: "Many slots without merging",
   batch: extremeSlotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -189,7 +189,7 @@ export const EXTREME_SLOTS_WITH_MERGE = {
   id: "extreme-slots-with-merge",
   comparesWithin: "extreme-slots-without-merge",
   group: "extreme-slots",
-  what: "Many slots with tailwind-merge on tv",
+  what: "Many slots with merging on tv",
   batch: extremeSlotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -199,7 +199,7 @@ export const EXTREME_SLOTS_WITH_MERGE = {
 export const REPEAT_SIMPLE_WITHOUT_MERGE = {
   id: "repeat-simple-without-merge",
   group: "repeat-simple",
-  what: "Simple button variants, 3 selections repeated, without tailwind-merge",
+  what: "Simple button variants, 3 selections repeated, without merging",
   batch: repeatSimpleTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -210,7 +210,7 @@ export const REPEAT_SIMPLE_WITH_MERGE = {
   id: "repeat-simple-with-merge",
   comparesWithin: "repeat-simple-without-merge",
   group: "repeat-simple",
-  what: "Simple button variants, 3 selections repeated, with tailwind-merge on tv",
+  what: "Simple button variants, 3 selections repeated, with merging on tv",
   batch: repeatSimpleTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -220,7 +220,7 @@ export const REPEAT_SIMPLE_WITH_MERGE = {
 export const REPEAT_SLOTS_WITHOUT_MERGE = {
   id: "repeat-slots-without-merge",
   group: "repeat-slots",
-  what: "Slots, 3 selections repeated, without tailwind-merge",
+  what: "Slots, 3 selections repeated, without merging",
   batch: repeatSlotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -231,7 +231,7 @@ export const REPEAT_SLOTS_WITH_MERGE = {
   id: "repeat-slots-with-merge",
   comparesWithin: "repeat-slots-without-merge",
   group: "repeat-slots",
-  what: "Slots, 3 selections repeated, with tailwind-merge on tv",
+  what: "Slots, 3 selections repeated, with merging on tv",
   batch: repeatSlotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
@@ -267,7 +267,7 @@ export const UNCACHED_SLOTS_WITH_MERGE = {
 export const UNCACHED_SIMPLE_WITHOUT_MERGE = {
   id: "uncached-simple-without-merge",
   group: "simple",
-  what: "Control, not a comparison: simple variants with the resolution cache and tailwind-merge off; its delta from the with-merge row is the merge step",
+  what: "Control, not a comparison: simple variants with the resolution cache and the engine cache off; its delta from the with-merge row is the merge step",
   batch: simpleTestProps.length,
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
@@ -280,7 +280,7 @@ export const UNCACHED_SIMPLE_WITHOUT_MERGE = {
 export const UNCACHED_SLOTS_WITHOUT_MERGE = {
   id: "uncached-slots-without-merge",
   group: "slots",
-  what: "Control, not a comparison: slots with the resolution cache and tailwind-merge off; its delta from the with-merge row is the merge step",
+  what: "Control, not a comparison: slots with the resolution cache and the engine cache off; its delta from the with-merge row is the merge step",
   batch: slotsTestProps.length,
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;

@@ -50,6 +50,7 @@
     "@internal/benchmark-harness": "workspace:*",
     "@internal/benchmark-viewer": "workspace:*",
     "class-variance-authority": "catalog:",
+    "cn": "catalog:",
     "tailwind-merge": "catalog:",
     "tailwind-variants": "catalog:",
     "tsx": "catalog:"

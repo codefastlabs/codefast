@@ -12,7 +12,7 @@ const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..",
 
 /**
  * Each library's smallest program — one component with one variant, defined and rendered once — through its default
- * entry, so a library that merges with `tailwind-merge` by default ships it.
+ * entry, so a library that merges by default ships its engine.
  */
 const PROGRAMS: Readonly<Record<string, string>> = {
   "@codefast/tailwind-variants": `
@@ -29,8 +29,13 @@ const PROGRAMS: Readonly<Record<string, string>> = {
     console.log(button({ size: "sm" }));`,
 };
 
-/** The merge both `tv()` libraries call by default, bundled alone so its share of their rows reads off one line. */
-const MERGE_PROGRAM = `
+/** The engine `@codefast/tailwind-variants` merges with by default, bundled alone so its share reads off one line. */
+const ENGINE_PROGRAM = `
+  import { twMerge } from "cn";
+  console.log(twMerge("px-2 px-4"));`;
+
+/** The engine `cva`'s with-merge rows pair with, bundled alone for the same reason. */
+const TAILWIND_MERGE_PROGRAM = `
   import { twMerge } from "tailwind-merge";
   console.log(twMerge("px-2 px-4"));`;
 
@@ -39,6 +44,9 @@ await runFootprintMain({
   subject: CODEFAST_TV,
   libraries: BENCH_LIBRARIES,
   programs: PROGRAMS,
-  extraPrograms: [{ label: "`tailwind-merge` alone", source: MERGE_PROGRAM }],
+  extraPrograms: [
+    { label: "`cn` alone", source: ENGINE_PROGRAM },
+    { label: "`tailwind-merge` alone", source: TAILWIND_MERGE_PROGRAM },
+  ],
   rebuild: () => rebuildSubjectPackage(CODEFAST_TV.libraryName, packageRootDirectory),
 });

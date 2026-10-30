@@ -68,8 +68,8 @@ The bundle is the cost of `@codefast/tailwind-variants` an app feels, and no tes
 smallest program — one component with one variant, defined and rendered once — has a gzip budget checked in as
 [`footprint-budget.json`](./footprint-budget.json). `pnpm bench:footprint:check` rebuilds the package, bundles that one
 program, prints its gzipped size against the budget and exits non-zero when it is over; `pnpm bench:footprint` prints
-the whole table — `tailwind-variants`, `class-variance-authority`, and `tailwind-merge` alone, which both `tv()`
-libraries call by default — and fails the same way. The gate runs in CI's package verification and in `pnpm verify`.
+the whole table — `tailwind-variants`, `class-variance-authority`, and the `cn` and `tailwind-merge` engines alone — and
+fails the same way. The gate runs in CI's package verification and in `pnpm verify`.
 
 The budget is the measured size plus a small headroom, enough to absorb gzip and bundler noise but not a real feature.
 When a change grows the bundle on purpose, raise the budget in the same PR and say why there; when one shrinks it, lower
@@ -77,8 +77,8 @@ the budget to the new size plus the same headroom.
 
 ## What it measures
 
-Each configuration shape runs **twice** — once with `tailwind-merge` enabled and once without — and the shapes are the
-scenario groups:
+Each configuration shape runs **twice** — once with merging enabled and once without — and the shapes are the scenario
+groups:
 
 | Group            | What it exercises                                                                      |
 | ---------------- | -------------------------------------------------------------------------------------- |
@@ -99,8 +99,8 @@ scenario groups:
 | `wide-slots`     | sixteen slots and twenty compound-tested variants, every slot rendered                 |
 | `unique-class`   | one button from many call sites, each with a `className` no earlier call passed        |
 
-The last six run with `tailwind-merge` only: they price the calls a component library makes on every render, where the
-merge is part of the answer. Every loop hands each call a fresh props object, as React does on every render.
+The last six run with merging only: they price the calls a component library makes on every render, where the merge is
+part of the answer. Every loop hands each call a fresh props object, as React does on every render.
 
 Two more groups are controls rather than comparisons, and both declare `excludeFromAggregates` so they stay in the table
 but out of the medians and geomeans:
@@ -113,16 +113,17 @@ but out of the medians and geomeans:
   what a server render or a first page load pays for a component it shows a few times; the two-render rows end on that
   compile, with nothing after it to spread its cost over.
 
-The `uncached-*` rows are controls too — `@codefast/tailwind-variants` only, with its resolution cache and
-tailwind-merge's own cache switched off, so the plan walk and the merge itself stay measured, and each with-merge row
-pairs with a without-merge one so their delta is the merge step on a miss. They live inside the `simple` and `slots`
-groups rather than a group of their own, so `bench:serve` overlays them on the same chart as the cached rows they should
-be read against; they stay off the aggregates by declaration.
+The `uncached-*` rows are controls too — `@codefast/tailwind-variants` only, with its resolution cache and its engine's
+own cache switched off, so the plan walk and the merge itself stay measured, and each with-merge row pairs with a
+without-merge one so their delta is the merge step on a miss. They live inside the `simple` and `slots` groups rather
+than a group of their own, so `bench:serve` overlays them on the same chart as the cached rows they should be read
+against; they stay off the aggregates by declaration.
 
 The merge flag is always passed **explicitly** (`{ twMerge: true }` / `{ twMerge: false }`, from
 `src/harness/bench-options.ts`) rather than left to each package's default, so the pair differ in implementation and not
 in configuration. `class-variance-authority` has no merge option of its own, so its "with merge" rows call
-`tailwind-merge` after `cva()` — the usual production pairing.
+`tailwind-merge` after `cva()` — the usual production pairing — while `@codefast/tailwind-variants` merges with `cn`,
+its default.
 
 `class-variance-authority` has no slots, no extends and no factory; this suite ports only the `simple`, `complex`, `cn`
 and `override` groups to it, so it reads `—` on the rest, and the report counts only the rows a library actually
