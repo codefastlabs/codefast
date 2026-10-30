@@ -68,8 +68,12 @@ button({ size: "sm", className: "w-full" });
 // => "... bg-primary text-primary-foreground h-9 px-3 text-sm w-full"
 ```
 
-Every call accepts `className` or `class` for ad-hoc additions. They are appended last, so they win any Tailwind
-conflict with the configuration; when both are passed, `className` is used.
+Every call accepts `class` and `className` for ad-hoc additions. Both are appended last, `class` before `className`, so
+they win any Tailwind conflict with the configuration. A resolution with no classes at all returns `""`.
+
+A variant value is read as its group key: a number and its string spelling select the same key (`cols: 1` or
+`cols: "1"`), `""` reads as `false`, and `null`, an array or an object selects nothing. Only an omitted or `undefined`
+value falls back to `defaultVariants`.
 
 ## Variants
 
@@ -95,7 +99,8 @@ toggle({ pressed: true, disabled: true });
 ### Compound variants
 
 `compoundVariants` apply extra classes only when all listed conditions match. A condition value may be an array,
-matching any of its entries:
+matching any of its entries, and `undefined`, `null` and `false` match one another, so a condition on `false` also holds
+for an omitted boolean variant. An entry that declares both `class` and `className` applies both:
 
 ```ts
 const alert = tv({
@@ -135,7 +140,9 @@ styles.content({ className: "pb-0" }); // => "p-6 pt-0 px-3 pb-0" — merged per
 ```
 
 Each slot function also accepts variant props of its own, which override the values given at the top-level call for that
-slot only. In a slot configuration, a compound variant's `className` may be a slot map too.
+slot only; a variant left `null` or `undefined` there keeps the call's selection, and compound variants and compound
+slots test the slot's own props before the call's. In a slot configuration, a compound variant's `class` or `className`
+may be a slot map.
 
 ### Compound slots
 
@@ -158,9 +165,12 @@ pagination({ size: "sm" }).item();
 
 ## Extending
 
-`extend` inherits another variant function's configuration. Base classes concatenate; variants, slots, defaults, and
-compound definitions merge; the resulting types reflect the union; and a chain of any depth collapses into one
-configuration when `tv()` runs:
+`extend` inherits another variant function's configuration and merges the child's onto it the way upstream does. What
+both declare joins, the parent's classes first: the `base` (a slot parent's `base` slot included), each variant value,
+and each slot or slot-map entry. Defaults merge with the child's winning, compound variants and compound slots
+concatenate with the parent's first, and a child's `compoundSlots` apply without redeclaring `slots`. The child's
+variant names come first, so its variants' classes are emitted before the parent's. The resulting types reflect the
+union, and a chain of any depth collapses into one configuration when `tv()` runs:
 
 ```ts
 const baseButton = tv({
@@ -177,10 +187,15 @@ const iconButton = tv({
 });
 
 iconButton();
-// => "inline-flex items-center rounded-md aspect-square h-10 px-4 hover:bg-accent"
+// => "inline-flex items-center rounded-md aspect-square hover:bg-accent h-10 px-4"
 
 iconButton({ tone: "outline", size: "sm" });
-// => "inline-flex items-center rounded-md aspect-square h-9 px-3 border border-input"
+// => "inline-flex items-center rounded-md aspect-square border border-input h-9 px-3"
+
+const compactButton = tv({ extend: baseButton, variants: { size: { sm: "text-xs" } } });
+
+compactButton({ size: "sm" });
+// => "inline-flex items-center rounded-md h-9 px-3 text-xs" — the redeclared value joins the parent's
 ```
 
 ## Options and `createTV`
@@ -215,10 +230,10 @@ const { tv, cn } = createTV({
 cn("text-base", "text-huge"); // => "text-huge" — the custom group is understood
 ```
 
-Options passed locally to `tv(config, options)` override the factory's globals. Every variant function also exposes
-`config`, its fully merged configuration (what `extend` reads), and `variantKeys`, the variant names in declaration
-order with an extended function's first — the same list upstream exposes, for splitting variant props from the rest by
-hand.
+Options passed locally to `tv(config, options)` override the factory's, one by one: an option left out or `undefined`
+takes the shared value. Every variant function also exposes `config`, its fully merged configuration (what `extend`
+reads), and `variantKeys`, the variant names in declaration order with an extending function's own first — the same list
+upstream exposes, for splitting variant props from the rest by hand.
 
 ### Choosing the merge engine
 
@@ -232,8 +247,10 @@ app that still imports `tailwind-merge` elsewhere can alias it to `cn` so the bu
 resolve: { alias: { "tailwind-merge": "cn" } },
 ```
 
-The merge runs once per selection a resolver has not answered before, so the engine decides what a first render costs; a
-repeated selection never reaches it.
+The merge runs on every selection a resolver has not answered before, so the engine decides what a first render costs. A
+repeated selection without a caller class is answered from the store. A caller's class merges onto the selection's
+classes: a component without slots remembers the answer from that class's second sighting, while a slot called with a
+class merges on every call.
 
 ## Class utilities
 
@@ -244,6 +261,9 @@ cn("px-4 py-2", "px-6"); // => "py-2 px-6" — joined, then merged
 cx("px-4 py-2", "px-6"); // => "px-4 py-2 px-6" — joined only, no merging
 cn("base", isActive && "text-primary", { hidden: false }); // conditional values, the shapes clsx accepts
 ```
+
+`cn` is the engine's own, re-exported, and answers a repeated call from its argument cache. `cx` joins the same shapes
+without merging, and is what `createTV` returns as `cn` under `twMerge: false`.
 
 ## TypeScript
 
@@ -269,9 +289,11 @@ function Button({ variant, className, ...props }: ButtonProps) {
 
 Variant values, slot names, and compound conditions are all inferred — passing an unknown variant value or accessing a
 slot that does not exist is a type error. `ClassValue` is the type of anything accepted where classes are expected
-(strings, numbers, nested arrays, condition objects). Configuration and option types (`VariantConfig`,
-`SlotVariantConfig`, `ExtendedVariantConfig`, `TailwindVariantsOptions`, `VariantResolver`, and friends) are exported
-for library authors.
+(strings, numbers, nested arrays, readonly ones included, condition objects). Configuration and option types
+(`VariantConfig`, `SlotVariantConfig`, `ExtendedVariantConfig`, `TailwindVariantsOptions`, and friends) are exported for
+library authors, as are the resolver shapes: `VariantResolver<Variants, Slots>` selects `FlatVariantResolver` without
+slots and `SlottedVariantResolver` with them, and `TailwindVariantsFactory` is `typeof tv`. A configuration held in a
+variable is typed by its shape exactly as the same object literal would be.
 
 ## Migrating from `tailwind-variants`
 
@@ -283,13 +305,18 @@ The configuration shape is the same — `base`, `variants`, `slots`, `defaultVar
 + import { tv, cn, cx } from "@codefast/tailwind-variants";
 ```
 
-Two differences to check for:
+Resolution matches upstream `tailwind-variants` 4.0.0 — variant values, `extend`, compounds, slot props, `class` and
+`className`, and `""` for no classes. The differences to check for are in what the package exports and returns:
 
 - `createTV` returns an object `{ tv, cn }` sharing the global options, rather than a bare `tv` function — destructure
   instead of assigning directly.
 - `cnMerge` and a mutable `defaultConfig` are not exported; use `createTV` to configure merging.
-- There is no `twMergeConfig`: pass `twMerge: extendTailwindMerge(config)` instead, which is also how upstream's `lite`
-  entry takes a merge function.
+- `clsx`, `twJoin`, `twMerge` and the default export are not re-exported; import them from `cn`, the merge engine this
+  package is built on.
+- There is no `twMergeConfig`: pass `twMerge: extendTailwindMerge(config)` instead, with `extendTailwindMerge` from
+  `cn/config`, which is also how upstream's `lite` entry takes a merge function. The package has one entry point, so
+  `tailwind-variants/lite`, `/merge`, `/config` and `/utils` have no counterpart: `twMerge: false` is the merge-free
+  `tv`.
 - `variantKeys` is exposed as upstream exposes it; the other metadata upstream attaches to the function (`base`,
   `variants`, `defaultVariants`, `slots`, `compoundVariants`, `compoundSlots`, `extend`) lives under `config`.
 
@@ -307,12 +334,13 @@ pnpm --filter @benchmark/tailwind-variants bench
 ```
 
 The speed comes from settling things once, and only once a component has shown it will be rendered again. `tv()` wraps
-the configuration and the first calls read it directly; the next call compiles it into a plan — variant groups, compound
-conditions, and slot positions settled, every class value flattened to a string — so every resolution after is string
-concatenation rather than dictionary lookups. The answer is then settled per selection, so a list rendering the same few
-selections resolves each of them once. `cn` / `cx` take the same string fast path, joining directly when every argument
-is already a string. The suite prices both ends: `define-only-*` and `first-render-*` for a definition and its first
-render, the resolution rows for every render after.
+the configuration and the first calls read it directly; the next call compiles it into a plan — compound conditions and
+slot positions settled, each variant value flattened to a string the first time a call selects it — so every resolution
+after is string concatenation rather than dictionary lookups. The answer is then settled per selection, so a list
+rendering the same few selections resolves each of them once. `cx` joins directly while every argument is a string, and
+`cn` is the engine's own, answering a repeated call from its argument cache. The suite prices both ends:
+`define-only-*`, `first-render-*`, `two-renders-*` and `three-renders-*` for a definition and its first renders, the
+resolution rows for every render after.
 
 ## Documentation
 
