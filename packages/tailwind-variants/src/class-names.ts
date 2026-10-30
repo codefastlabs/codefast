@@ -6,6 +6,9 @@ import { cn as engineCn } from "cn";
 
 import type { ClassMerger, ClassValue } from "#types";
 
+/** Whether a class value is an array, readonly ones included, which `Array.isArray` alone leaves un-narrowed. */
+const isClassArray = (value: ClassValue): value is ReadonlyArray<ClassValue> => Array.isArray(value);
+
 /**
  * One class value flattened to the classes it contributes.
  *
@@ -29,7 +32,7 @@ const flattenClassValue = (value: ClassValue): string => {
 
   let text = "";
 
-  if (Array.isArray(value)) {
+  if (isClassArray(value)) {
     return appendClassValues(text, value, 0);
   }
 

@@ -82,9 +82,7 @@ export type VariantSelection<Variants extends VariantSchema> = {
  * @since 0.6.0
  */
 type VariantValues<Variants extends VariantSchema> = {
-  readonly [Variant in keyof Variants]?: HasBooleanVariant<Variants[Variant]> extends true
-    ? boolean | VariantValue<keyof Variants[Variant]>
-    : VariantValue<keyof Variants[Variant]>;
+  readonly [Variant in keyof Variants]?: VariantValue<keyof Variants[Variant]>;
 };
 
 /**
@@ -126,63 +124,47 @@ type SlotClassValue<Slots extends SlotSchema> = PlainClassValue | (SlotClassMap<
 type SlotVariantSchema<Slots extends SlotSchema> = Record<string, Record<string, SlotClassValue<Slots>>>;
 
 /**
- * Type for compound variant definitions.
- *
- * This type defines the structure of compound variants, which apply
- * additional classes when multiple variant conditions are met.
+ * The variant values a compound matches, each a single value or an array of alternatives.
+ */
+type CompoundCondition<Variants extends VariantSchema> = {
+  readonly [Variant in keyof Variants]?:
+    | ReadonlyArray<VariantValue<keyof Variants[Variant]>>
+    | VariantValue<keyof Variants[Variant]>;
+};
+
+/**
+ * Classes applied when a call selects every listed value at once.
  *
  * @since 0.3.16-canary.0
  */
-export type CompoundVariant<Variants extends VariantSchema> = Partial<{
-  readonly [Variant in keyof Variants]: HasBooleanVariant<Variants[Variant]> extends true
-    ? boolean | ReadonlyArray<boolean | VariantValue<keyof Variants[Variant]>> | VariantValue<keyof Variants[Variant]>
-    : ReadonlyArray<VariantValue<keyof Variants[Variant]>> | VariantValue<keyof Variants[Variant]>;
-}> & {
+export type CompoundVariant<Variants extends VariantSchema> = CompoundCondition<Variants> & {
   className?: ClassValue;
   class?: ClassValue;
 };
 
 /**
- * Type for compound variants that support slots.
- *
- * This type extends compound variants to support slot-based class definitions,
- * allowing different classes to be applied to different slots.
+ * Classes applied when a call selects every listed value at once, either to the base slot or to the slots a map names.
  *
  * @since 0.3.16-canary.0
  */
-export type SlotCompoundVariant<Variants extends VariantSchema, Slots extends SlotSchema> = Partial<{
-  readonly [Variant in keyof Variants]: HasBooleanVariant<Variants[Variant]> extends true
-    ? boolean | ReadonlyArray<boolean | VariantValue<keyof Variants[Variant]>> | VariantValue<keyof Variants[Variant]>
-    : ReadonlyArray<VariantValue<keyof Variants[Variant]>> | VariantValue<keyof Variants[Variant]>;
-}> & {
-  className?: ClassValue | SlotClassMap<Slots>;
-  class?: ClassValue | SlotClassMap<Slots>;
+export type SlotCompoundVariant<
+  Variants extends VariantSchema,
+  Slots extends SlotSchema,
+> = CompoundCondition<Variants> & {
+  className?: SlotClassValue<Slots>;
+  class?: SlotClassValue<Slots>;
 };
 
 /**
- * Type for compound slot definitions.
- *
- * This type defines compound slots that apply classes to specific slots
- * when certain variant conditions are met.
+ * Classes applied to each of the listed slots when a call selects every listed value at once.
  *
  * @since 0.3.16-canary.0
  */
-export type CompoundSlot<Variants extends VariantSchema, Slots extends SlotSchema> =
-  Variants extends Record<string, never>
-    ? {
-        readonly slots: ReadonlyArray<keyof Slots>;
-        className?: ClassValue;
-        class?: ClassValue;
-      }
-    : {
-        readonly slots: ReadonlyArray<keyof Slots>;
-        className?: ClassValue;
-        class?: ClassValue;
-      } & {
-        readonly [K in keyof Variants]?: HasBooleanVariant<Variants[K]> extends true
-          ? boolean | VariantValue<keyof Variants[K]>
-          : VariantValue<keyof Variants[K]>;
-      };
+export type CompoundSlot<Variants extends VariantSchema, Slots extends SlotSchema> = CompoundCondition<Variants> & {
+  readonly slots: ReadonlyArray<keyof Slots>;
+  className?: ClassValue;
+  class?: ClassValue;
+};
 
 /**
  * Base configuration interface for variant functions.
@@ -227,6 +209,12 @@ export interface SlotVariantConfig<Variants extends VariantSchema, Slots extends
 }
 
 /**
+ * The configuration keys a `tv` overload declares absent, so a configuration held in a variable selects it only
+ * when it leaves them out, exactly as a fresh literal would.
+ */
+export type AbsentKeys<Key extends PropertyKey> = { readonly [Name in Key]?: undefined };
+
+/**
  * Runtime options for Tailwind Variants.
  *
  * This interface defines global configuration options that affect
@@ -261,121 +249,79 @@ export interface TailwindVariantsOptions {
 export type ClassMerger = (classes: string) => string;
 
 /**
- * Type for individual slot functions.
- *
- * This type defines the signature of functions that generate CSS classes
- * for individual component slots.
+ * The function that resolves one slot's classes, optionally for its own variant selection.
  *
  * @since 0.3.16-canary.0
  */
-export type SlotClassResolver<Variants extends VariantSchema> = (
-  props?: SlotResolverProps<Variants>,
-) => string | undefined;
+export type SlotClassResolver<Variants extends VariantSchema> = (props?: SlotResolverProps<Variants>) => string;
 
 /**
- * Properties that can be passed to slot functions.
- *
- * This type defines the properties that can be passed to individual
- * slot functions, including variant props and class properties.
+ * The props a slot resolver takes: the same selection the component call does.
  *
  * @since 0.3.16-canary.0
  */
-export type SlotResolverProps<Variants extends VariantSchema> =
-  Variants extends Record<string, never>
-    ? {
-        className?: ClassValue;
-        class?: ClassValue;
-      }
-    : {
-        readonly [K in keyof VariantSelection<Variants>]?: VariantSelection<Variants>[K];
-      };
+export type SlotResolverProps<Variants extends VariantSchema> = VariantSelection<Variants>;
 
 /**
- * Return type for variant functions.
- *
- * This type defines the return type of variant functions, which can be
- * either a single function (for non-slot components) or an object with
- * slot functions (for slot-based components).
+ * What a resolver call returns: a class string without slots, or one resolver per slot, `base` included.
  *
  * @since 0.3.16-canary.0
  */
 export type VariantResolverResult<Variants extends VariantSchema, Slots extends SlotSchema> = keyof Slots extends never
-  ? SlotClassResolver<Variants>
-  : {
-      readonly [K in keyof Slots]: SlotClassResolver<Variants>;
-    } & {
-      readonly base: SlotClassResolver<Variants>;
-    };
+  ? string
+  : SlotClassResolvers<Variants, Slots>;
 
 /**
- * Main variant function type.
+ * One class resolver per slot, `base` included.
+ */
+type SlotClassResolvers<Variants extends VariantSchema, Slots extends SlotSchema> = {
+  readonly [Slot in keyof Slots]: SlotClassResolver<Variants>;
+} & {
+  readonly base: SlotClassResolver<Variants>;
+};
+
+/**
+ * The resolver `tv` returns: a function from a variant selection to classes, carrying the configuration it runs.
  *
- * This interface defines the structure of variant functions created by the tv function.
- * It includes the configuration and the function signature for generating CSS classes.
+ * @remarks Empty `Slots` select the shape without slots. A conditional over two shapes rather than one generic
+ * interface, so the two are compared by what a call returns, never assumed assignable from their slot schemas.
  *
  * @since 0.3.16-canary.0
  */
-export interface VariantResolver<Variants extends VariantSchema, Slots extends SlotSchema = SlotSchema> {
+export type VariantResolver<
+  Variants extends VariantSchema,
+  Slots extends SlotSchema = Record<never, never>,
+> = keyof Slots extends never ? FlatVariantResolver<Variants> : SlottedVariantResolver<Variants, Slots>;
+
+/**
+ * The resolver of a component without slots, which answers a call with one class string.
+ */
+export interface FlatVariantResolver<Variants extends VariantSchema> {
   /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */
-  config: VariantConfig<Variants> | SlotVariantConfig<Variants, Slots>;
+  readonly config: VariantConfig<Variants>;
   /** The variant names in declaration order, an extended resolver's first, for splitting props by hand. */
   readonly variantKeys: ReadonlyArray<Extract<keyof Variants, string>>;
 
-  (
-    props?: VariantSelection<Variants>,
-  ): Slots extends Record<string, never> ? string | undefined : VariantResolverResult<Variants, Slots>;
+  /** Resolves the classes of one variant selection. */
+  (props?: VariantSelection<Variants>): string;
 }
 
 /**
- * Factory function interface for creating variant functions.
- *
- * This interface defines the overloaded factory function that can create
- * variant functions with different configuration types and options.
- *
- * @since 0.3.16-canary.0
+ * The resolver of a component with slots, which answers a call with one class resolver per slot.
  */
-export interface TailwindVariantsFactory {
-  <Variants extends VariantSchema>(
-    config: VariantConfig<Variants>,
-    localConfig?: TailwindVariantsOptions,
-  ): VariantResolver<Variants, Record<string, never>>;
+export interface SlottedVariantResolver<Variants extends VariantSchema, Slots extends SlotSchema> {
+  /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */
+  readonly config: SlotVariantConfig<Variants, Slots>;
+  /** The variant names in declaration order, an extended resolver's first, for splitting props by hand. */
+  readonly variantKeys: ReadonlyArray<Extract<keyof Variants, string>>;
 
-  <Slots extends SlotSchema>(
-    config: SlotVariantConfig<Record<string, never>, Slots>,
-    localConfig?: TailwindVariantsOptions,
-  ): VariantResolver<Record<string, never>, Slots>;
-
-  <Variants extends VariantSchema, Slots extends SlotSchema>(
-    config: SlotVariantConfig<Variants, Slots>,
-    localConfig?: TailwindVariantsOptions,
-  ): VariantResolver<Variants, Slots>;
-
-  <
-    BaseVariants extends VariantSchema,
-    // Defaults, not the constraints, for an extension that omits `variants` or `slots`: with no
-    // inference candidate a parameter falls back to its constraint, a string index that widens every
-    // merged key. `BaseSlots` is always inferred from `extend`; it has a default only because the
-    // parameter after it does.
-    ExtensionVariants extends VariantSchema = Record<never, never>,
-    BaseSlots extends SlotSchema = Record<never, never>,
-    ExtensionSlots extends SlotSchema = Record<never, never>,
-  >(
-    config: ExtendedVariantConfig<BaseVariants, ExtensionVariants, BaseSlots, ExtensionSlots>,
-    localConfig?: TailwindVariantsOptions,
-  ): VariantResolver<MergedVariantSchema<BaseVariants, ExtensionVariants>, MergedSlotSchema<BaseSlots, ExtensionSlots>>;
-}
-
-/**
- * Result interface for the createTV factory function.
- *
- * This interface defines the object returned by createTV, which includes
- * both the tv factory function and the cn utility function.
- *
- * @since 0.3.16-canary.0
- */
-export interface TailwindVariantsApi {
-  cn: (...classes: Array<ClassValue>) => string;
-  tv: TailwindVariantsFactory;
+  /**
+   * Resolves one variant selection to a class resolver per slot, each of which may refine it.
+   *
+   * @remarks `NoInfer` stops a resolver without slots, matched against this shape when `extend` is inferred, from
+   * having its class string read as a slot map.
+   */
+  (props?: VariantSelection<Variants>): SlotClassResolvers<Variants, NoInfer<Slots>>;
 }
 
 /**
@@ -403,10 +349,19 @@ export type MergedSlotSchema<BaseSlots extends SlotSchema, ExtensionSlots extend
   ExtensionSlots;
 
 /**
- * Configuration interface for extending existing variant resolvers.
- *
- * This interface allows extending an existing variant configuration with
- * additional variants and slots, while maintaining type safety.
+ * The variant schema an extension may add: slot maps when the merged component has slots, clsx values otherwise.
+ */
+type ExtensionVariantSchema<Slots extends SlotSchema> = keyof Slots extends never ? unknown : SlotVariantSchema<Slots>;
+
+/**
+ * The compound variant an extension may add: slot-aware when the merged component has slots.
+ */
+type ExtensionCompoundVariant<Variants extends VariantSchema, Slots extends SlotSchema> = keyof Slots extends never
+  ? CompoundVariant<Variants>
+  : SlotCompoundVariant<Variants, Slots>;
+
+/**
+ * The configuration of a component that extends another resolver's.
  *
  * @since 0.3.16-canary.0
  */
@@ -431,7 +386,7 @@ export interface ExtendedVariantConfig<
   >;
   /** Compound variants added after the extended resolver's, over the merged variants and slots. */
   readonly compoundVariants?: ReadonlyArray<
-    SlotCompoundVariant<
+    ExtensionCompoundVariant<
       NoInfer<MergedVariantSchema<BaseVariants, ExtensionVariants>>,
       NoInfer<MergedSlotSchema<BaseSlots, ExtensionSlots>>
     >
@@ -442,11 +397,11 @@ export interface ExtendedVariantConfig<
    * The resolver whose configuration this one inherits. Required: made optional, this overload
    * would catch every configuration the earlier ones reject and widen every variant name to `string`.
    */
-  readonly extend: VariantResolver<BaseVariants, BaseSlots>;
+  readonly extend: FlatVariantResolver<BaseVariants> | SlottedVariantResolver<BaseVariants, BaseSlots>;
   /** Slots added to, or replacing, the extended resolver's. */
   readonly slots?: ExtensionSlots;
   /** Variants added to the extended resolver's; a group declared by both merges value by value. */
-  readonly variants?: ExtensionVariants;
+  readonly variants?: ExtensionVariantSchema<NoInfer<MergedSlotSchema<BaseSlots, ExtensionSlots>>> & ExtensionVariants;
 }
 
 /**
@@ -472,4 +427,4 @@ type ClassDictionary = Record<string, unknown>;
  *
  * @since 0.6.0
  */
-type ClassArray = Array<ClassValue>;
+type ClassArray = ReadonlyArray<ClassValue>;

@@ -2,6 +2,8 @@
 
 export { createTV, tv } from "#tv";
 
+export type { TailwindVariantsApi, TailwindVariantsFactory } from "#tv";
+
 export { cn, cx } from "#class-names";
 
 export type {
@@ -10,6 +12,7 @@ export type {
   CompoundSlot,
   CompoundVariant,
   ExtendedVariantConfig,
+  FlatVariantResolver,
   HasBooleanVariant,
   MergedSlotSchema,
   MergedVariantSchema,
@@ -18,9 +21,8 @@ export type {
   SlotClassResolver,
   SlotResolverProps,
   SlotSchema,
+  SlottedVariantResolver,
   SlotVariantConfig,
-  TailwindVariantsApi,
-  TailwindVariantsFactory,
   TailwindVariantsOptions,
   VariantConfig,
   VariantProps,

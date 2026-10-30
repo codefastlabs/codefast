@@ -38,7 +38,7 @@ describe("Real-World Type Inference Tests", () => {
       "default" | "destructive" | "ghost" | "link" | "outline" | "secondary" | undefined
     >();
 
-    expectTypeOf(button).toEqualTypeOf<string | undefined>();
+    expectTypeOf(button).toEqualTypeOf<string>();
   });
 
   test("should infer types for card component with slots in real usage", () => {
@@ -97,7 +97,7 @@ describe("Real-World Type Inference Tests", () => {
 
     const baseResult = card.base();
 
-    expectTypeOf(baseResult).toEqualTypeOf<string | undefined>();
+    expectTypeOf(baseResult).toEqualTypeOf<string>();
   });
 
   test("should infer types for toggle component with boolean variants in real usage", () => {
@@ -126,7 +126,7 @@ describe("Real-World Type Inference Tests", () => {
     expectTypeOf<ToggleProps["disabled"]>().toEqualTypeOf<boolean | undefined>();
     expectTypeOf<ToggleProps["size"]>().toEqualTypeOf<"default" | "lg" | "sm" | undefined>();
 
-    expectTypeOf(toggle).toEqualTypeOf<string | undefined>();
+    expectTypeOf(toggle).toEqualTypeOf<string>();
   });
 
   test("should infer types for form components with extends in real usage", () => {
@@ -161,7 +161,7 @@ describe("Real-World Type Inference Tests", () => {
     type TextareaProps = VariantProps<typeof textareaVariants>;
     expectTypeOf<TextareaProps["size"]>().toEqualTypeOf<"default" | "lg" | "sm" | undefined>();
 
-    expectTypeOf(textarea).toEqualTypeOf<string | undefined>();
+    expectTypeOf(textarea).toEqualTypeOf<string>();
   });
 
   test("should infer types for navigation menu with compound variants in real usage", () => {
@@ -222,7 +222,7 @@ describe("Real-World Type Inference Tests", () => {
 
     const listResult = navigation.list();
 
-    expectTypeOf(listResult).toEqualTypeOf<string | undefined>();
+    expectTypeOf(listResult).toEqualTypeOf<string>();
   });
 
   test("should infer types for pagination with compound slots in real usage", () => {
@@ -291,7 +291,7 @@ describe("Real-World Type Inference Tests", () => {
 
     const itemResult = pagination.item();
 
-    expectTypeOf(itemResult).toEqualTypeOf<string | undefined>();
+    expectTypeOf(itemResult).toEqualTypeOf<string>();
   });
 
   test("should infer types for alert component with createTV factory in real usage", () => {
@@ -323,7 +323,7 @@ describe("Real-World Type Inference Tests", () => {
     type AlertProps = VariantProps<typeof alertVariants>;
     expectTypeOf<AlertProps["variant"]>().toEqualTypeOf<"default" | "destructive" | undefined>();
 
-    expectTypeOf(alert).toEqualTypeOf<string | undefined>();
+    expectTypeOf(alert).toEqualTypeOf<string>();
   });
 
   test("should infer types for complex component with multi-level extends in real usage", () => {
@@ -371,7 +371,7 @@ describe("Real-World Type Inference Tests", () => {
     expectTypeOf<FinalProps["color"]>().toEqualTypeOf<"primary" | "secondary" | undefined>();
     expectTypeOf<FinalProps["weight"]>().toEqualTypeOf<"bold" | "normal" | undefined>();
 
-    expectTypeOf(component).toEqualTypeOf<string | undefined>();
+    expectTypeOf(component).toEqualTypeOf<string>();
   });
 
   test("should infer types for complex nested variants in real usage", () => {
@@ -408,7 +408,7 @@ describe("Real-World Type Inference Tests", () => {
     expectTypeOf<ComplexProps["size"]>().toEqualTypeOf<"default" | "lg" | undefined>();
     expectTypeOf<ComplexProps["theme"]>().toEqualTypeOf<"dark" | "light" | undefined>();
 
-    expectTypeOf(component).toEqualTypeOf<string | undefined>();
+    expectTypeOf(component).toEqualTypeOf<string>();
   });
 
   test("should infer types for components with no variants (base only)", () => {
@@ -418,7 +418,7 @@ describe("Real-World Type Inference Tests", () => {
 
     const simple = simpleVariants();
 
-    expectTypeOf(simple).toEqualTypeOf<string | undefined>();
+    expectTypeOf(simple).toEqualTypeOf<string>();
   });
 
   test("should infer types for components with only defaultVariants", () => {
@@ -440,7 +440,7 @@ describe("Real-World Type Inference Tests", () => {
     type DefaultOnlyProps = VariantProps<typeof defaultOnlyVariants>;
     expectTypeOf<DefaultOnlyProps["size"]>().toEqualTypeOf<"default" | "lg" | undefined>();
 
-    expectTypeOf(defaultOnly).toEqualTypeOf<string | undefined>();
+    expectTypeOf(defaultOnly).toEqualTypeOf<string>();
   });
 
   test("should infer types for components with number variants", () => {
@@ -468,7 +468,7 @@ describe("Real-World Type Inference Tests", () => {
     expectTypeOf<NumberProps["columns"]>().toEqualTypeOf<1 | 2 | 3 | 4 | undefined>();
     expectTypeOf<NumberProps["gap"]>().toEqualTypeOf<0 | 1 | 2 | 4 | undefined>();
 
-    expectTypeOf(number).toEqualTypeOf<string | undefined>();
+    expectTypeOf(number).toEqualTypeOf<string>();
   });
 
   test("should infer types for components with mixed variant types", () => {
@@ -499,7 +499,7 @@ describe("Real-World Type Inference Tests", () => {
     expectTypeOf<MixedProps["disabled"]>().toEqualTypeOf<boolean | undefined>();
     expectTypeOf<MixedProps["color"]>().toEqualTypeOf<"primary" | "secondary" | "success" | undefined>();
 
-    expectTypeOf(mixed).toEqualTypeOf<string | undefined>();
+    expectTypeOf(mixed).toEqualTypeOf<string>();
   });
 
   test("should infer types for components with conditional variants", () => {
@@ -537,7 +537,7 @@ describe("Real-World Type Inference Tests", () => {
     expectTypeOf<ConditionalProps["intent"]>().toEqualTypeOf<"danger" | "primary" | "secondary" | undefined>();
     expectTypeOf<ConditionalProps["size"]>().toEqualTypeOf<"large" | "medium" | "small" | undefined>();
 
-    expectTypeOf(conditional).toEqualTypeOf<string | undefined>();
+    expectTypeOf(conditional).toEqualTypeOf<string>();
   });
 
   test("should infer types for components with custom class prop", () => {
@@ -559,7 +559,7 @@ describe("Real-World Type Inference Tests", () => {
     type CustomClassProps = VariantProps<typeof customClassVariants>;
     expectTypeOf<CustomClassProps["variant"]>().toEqualTypeOf<"default" | "primary" | undefined>();
 
-    expectTypeOf(customClass).toEqualTypeOf<string | undefined>();
+    expectTypeOf(customClass).toEqualTypeOf<string>();
   });
 
   test("should infer types for components with deeply nested extends", () => {
@@ -616,6 +616,6 @@ describe("Real-World Type Inference Tests", () => {
     expectTypeOf<DeepProps["level3"]>().toEqualTypeOf<"alpha" | "beta" | undefined>();
     expectTypeOf<DeepProps["level4"]>().toEqualTypeOf<"one" | "two" | undefined>();
 
-    expectTypeOf(deep).toEqualTypeOf<string | undefined>();
+    expectTypeOf(deep).toEqualTypeOf<string>();
   });
 });

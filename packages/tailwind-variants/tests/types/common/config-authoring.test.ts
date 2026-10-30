@@ -73,6 +73,26 @@ const rejectedConfigurations = (): void => {
     extend: tone,
     variants: { size: { sm: "px-2" } },
   });
+
+  tv({
+    // @ts-expect-error — `notASlot` is not a declared slot, so a compound's slot map cannot target it
+    compoundVariants: [{ className: { notASlot: "p-3" }, size: "sm" }],
+    slots: { title: "text-xl" },
+    variants: { size: { sm: "" } },
+  });
+
+  // @ts-expect-error — `notASlot` is neither the extended resolver's slot nor the extension's
+  tv({ extend: card, variants: { tone: { loud: { notASlot: "p-3" } } } });
+
+  // @ts-expect-error — `notASlot` is neither the extended resolver's slot nor the extension's
+  tv({ compoundVariants: [{ className: { notASlot: "p-3" } }], extend: card });
+
+  tv({
+    // @ts-expect-error — `"huge"` is not one of `size`'s values, in an array or not
+    compoundSlots: [{ class: "gap-1", size: ["sm", "huge"], slots: ["title"] }],
+    slots: { title: "text-xl" },
+    variants: { size: { md: "", sm: "" } },
+  });
 };
 
 describe("Configuration Authoring Type Safety", () => {
@@ -162,6 +182,36 @@ describe("Configuration Authoring Type Safety", () => {
     const box = tv({ variants: { size: { sm: { "px-2": true, "px-8": false } } } });
 
     expect(box({ size: "sm" })).toBe("px-2");
+
+    const loud = tv({
+      compoundVariants: [{ className: { "font-bold": true }, size: "sm" }],
+      extend: box,
+      variants: { tone: { loud: { "text-red-500": true } } },
+    });
+
+    expect(loud({ size: "sm", tone: "loud" })).toBe("text-red-500 px-2 font-bold");
+  });
+
+  test("accepts alternatives in a compound slot condition", () => {
+    const card = tv({
+      compoundSlots: [{ class: "gap-1", size: ["md", "sm"], slots: ["title"] }],
+      slots: { title: "text-xl" },
+      variants: { size: { lg: "", md: "", sm: "" } },
+    });
+
+    expect(card({ size: "sm" }).title()).toBe("text-xl gap-1");
+    expect(card({ size: "lg" }).title()).toBe("text-xl");
+  });
+
+  test("keeps an extension's slot maps targeting the slots it inherits", () => {
+    const card = tv({ slots: { base: "rounded", title: "text-xl" } });
+    const loud = tv({
+      compoundVariants: [{ className: { title: "uppercase" }, tone: "loud" }],
+      extend: card,
+      variants: { tone: { loud: { title: "font-bold" } } },
+    });
+
+    expect(loud({ tone: "loud" }).title()).toBe("text-xl font-bold uppercase");
   });
 
   test("keeps both conflicting classes when merging is off", () => {
