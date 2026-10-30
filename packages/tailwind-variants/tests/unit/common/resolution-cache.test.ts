@@ -121,8 +121,8 @@ describe("resolution cache", () => {
     expect(button({ size: "md", tone: "plain" })).toBe("px-4 px-6");
     expect(button({ tone: "accent" })).toBe("px-4 px-6 text-accent ring");
     expect(button({ size: "md", tone: "accent" })).toBe("px-4 px-6 text-accent ring");
-    // The first call resolves cold, so the store holds what the second one merged.
-    expect(merged).toEqual(["px-4 px-6", "px-4 px-6", "px-4 px-6 text-accent ring"]);
+    // A component without slots resolves its first two calls cold, so the store holds what the third merged.
+    expect(merged).toEqual(["px-4 px-6", "px-4 px-6", "px-4 px-6", "px-4 px-6 text-accent ring"]);
   });
 
   test("keeps a falsy default apart from an omitted variant on the slot lane", () => {

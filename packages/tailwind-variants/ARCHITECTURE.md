@@ -9,13 +9,15 @@ trade this design makes — see [DECISIONS.md](./DECISIONS.md).
 ## The one idea
 
 A variant configuration is fixed the moment `tv` is called. A resolver is then called once per render, forever. So
-everything that depends only on the configuration is settled **once**, and resolution reads the result. The once is the
-resolver's second call, not `tv` itself: the first call reads the configuration directly, so a component defined and
-rendered a single time — a cold start, a page that shows it once — never pays for a plan it would not have used.
+everything that depends only on the configuration is settled **once**, and resolution reads the result. The once is a
+later call, not `tv` itself: the first calls read the configuration directly — two for a component without slots, where
+a cold call costs less than a compile, one for a slot component, where it costs more — so a component defined and
+rendered that few times — a cold start, a page that shows it once or twice — never pays for a plan it would not have
+used.
 
 ```
-tv(config) ──▶ resolver ──1st call──▶ cold lane ──2nd call──▶ VariantPlan ──resolve──▶ "px-4 py-2 bg-primary"
-  a wrapper                reads the configuration      compiled once           every call after
+tv(config) ──▶ resolver ──first calls──▶ cold lane ──next call──▶ VariantPlan ──resolve──▶ "px-4 py-2 bg-primary"
+  a wrapper                  reads the configuration        compiled once            every call after
 ```
 
 The same idea applied a second time: within one configuration, the answer depends only on the selection, and a list
@@ -179,21 +181,21 @@ Everything else follows from having to make that distinction hold:
 
 ## The trade this design makes
 
-The plan is the expensive end, and it is paid on the second call rather than in `tv`. `define-only-*` prices `tv` itself
+The plan is the expensive end, and it is paid on a later call rather than in `tv`. `define-only-*` prices `tv` itself
 and `first-render-*` a definition plus the cold lane; both are controls off the aggregates, and both now read against
 upstream rather than behind it. The resolution rows price the plan, and a component that renders more than a handful of
 times earns its plan back on the `repeat-*` shape — read those rows, not a figure written here, for what any of this
 costs today.
 
-Three things keep the second call from paying more than it must, and all are worth preserving: the selection encoder
+Three things keep the compiling call from paying more than it must, and all are worth preserving: the selection encoder
 hands out ids as values turn up rather than up front; a flat-lane group whose values are all strings is read in place
 rather than copied, behind the type check the flat lane already makes; and every other group starts empty and compiles a
 value the first time a call selects it, reading `entry.group[key] ?? compileGroupValue(entry, key)`. So a group of two
 hundred values costs nothing to compile and only what a caller actually selects to run, and the default — the one value
 every call without a selection reads — is the only one compiled up front.
 
-If the second call ever needs to come down further, what is left in `compileVariantPlan` is the compound conditions and
-the slot entries, and the difference between a fresh resolver's second and first call is how to see it.
+If the compiling call ever needs to come down further, what is left in `compileVariantPlan` is the compound conditions
+and the slot entries, and the difference between a fresh resolver's compiling call and a cold one is how to see it.
 
 ## How much of this a page can actually feel
 
@@ -244,7 +246,7 @@ every row now measures a lookup rather than the resolver:
 - `repeat-*` is the shape a UI actually has: three selections, fresh props objects, over and over.
 - `define-only-*` prices `tv` alone and `first-render-*` a definition plus its first render, which is the cold lane;
   both are per component definition where everything else is per render, so both are off the aggregates too. Neither
-  touches the plan — a change under `compile/` shows up between a fresh resolver's second call and its first.
+  touches the plan — a change under `compile/` shows up between a fresh resolver's compiling call and a cold one.
 
 Rows here are batched loops, so the noise floor is tighter than the DI suite's: an A/A run put every median within
 ±0.6%. Treat a ratio at or above 1.03× as signal, and re-measure anything smaller with more passes before believing it —
