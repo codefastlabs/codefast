@@ -12,6 +12,7 @@ export interface AggregatedScenarioResult {
   readonly stress: boolean;
   readonly excludeFromAggregates: boolean;
   readonly batch: number;
+  readonly revision: number;
   readonly what: string;
   readonly trialsIncluded: number;
   readonly hzPerOpMedian: number;
@@ -65,6 +66,7 @@ function aggregateTrialsForScenario(
     stress: firstTrial.stress,
     excludeFromAggregates: firstTrial.excludeFromAggregates,
     batch: firstTrial.batch,
+    revision: firstTrial.revision,
     what: firstTrial.what,
     trialsIncluded: successfulTrials.length,
     hzPerOpMedian,

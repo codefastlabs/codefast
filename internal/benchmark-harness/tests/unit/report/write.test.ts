@@ -36,6 +36,7 @@ function scenario(): ScenarioTrialResult {
     stress: false,
     excludeFromAggregates: false,
     batch: 1000,
+    revision: 1,
     what: "resolve a toConstantValue binding",
     hzPerIteration: 1,
     hzPerOp: 1000,

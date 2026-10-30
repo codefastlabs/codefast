@@ -89,6 +89,7 @@ for (let trial = 1; trial <= trialCount; trial += 1) {
       stress: false,
       excludeFromAggregates: false,
       batch: 1,
+      revision: 1,
       what: id,
       hzPerIteration: 100 + index,
       hzPerOp: 100 + index,

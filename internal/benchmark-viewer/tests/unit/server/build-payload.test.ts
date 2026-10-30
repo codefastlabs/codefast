@@ -143,6 +143,23 @@ describe("buildEmbeddedPayload", () => {
     expect(scenario?.changes).toEqual([{ runIndex: 1, label: "batch 1 → 12" }]);
   });
 
+  it("marks the run where a row's measurement revision changed, reading a row written before revisions as the first", () => {
+    const options: BenchServerOptions = {
+      benchResultsDir: "/tmp",
+      libraries: [{ name: "only-lib", displayName: "Only", isPrimary: true }],
+    };
+
+    const rawRuns: Array<RunLines> = [
+      { folderName: "run-1", lines: [observationLine("only-lib")] },
+      { folderName: "run-2", lines: [observationLine("only-lib", { revision: 1 })] },
+      { folderName: "run-3", lines: [observationLine("only-lib", { revision: 2 })] },
+    ];
+
+    const [scenario] = buildEmbeddedPayload(rawRuns, options, false, 200).scenarios;
+
+    expect(scenario?.changes).toEqual([{ runIndex: 2, label: "measurement changed (rev 2)" }]);
+  });
+
   it("marks a run whose description changed and leaves an unchanged scenario unmarked", () => {
     const options: BenchServerOptions = {
       benchResultsDir: "/tmp",

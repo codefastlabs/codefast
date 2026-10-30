@@ -42,6 +42,11 @@ export interface BenchScenario {
    */
   readonly comparesWithin?: string;
   readonly batch?: number;
+  /**
+   * Bumped whenever the work one timed iteration does changes, so a chart marks the run where the row was measured
+   * differently instead of reading the step as the library's; absent means the first.
+   */
+  readonly revision?: number;
   readonly stress?: boolean;
   /** Render the row but keep it out of median/geomean aggregates — for rows whose sides do incomparable work. */
   readonly excludeFromAggregates?: boolean;

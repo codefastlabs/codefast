@@ -34,6 +34,7 @@ export function scenario(
     stress: false,
     excludeFromAggregates: false,
     batch: 1,
+    revision: 1,
     what: id,
     hzPerIteration: hzPerOp,
     hzPerOp,

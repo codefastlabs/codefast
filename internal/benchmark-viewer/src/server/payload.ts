@@ -266,7 +266,7 @@ export function referenceBatches(
 }
 
 /**
- * The runs at which a scenario's `batch` or description differs from the run before it.
+ * The runs at which a scenario's `batch`, measurement revision or description differs from the run before it.
  *
  * @since 0.8.0
  */
@@ -285,6 +285,9 @@ export function definitionChanges(
     if (previous !== undefined) {
       if (row.batch !== previous.batch) {
         changes.push({ runIndex, label: `batch ${String(previous.batch)} → ${String(row.batch)}` });
+      }
+      if (row.revision !== previous.revision) {
+        changes.push({ runIndex, label: `measurement changed (rev ${String(row.revision)})` });
       }
       if (row.what !== previous.what && row.what.length > 0 && previous.what.length > 0) {
         changes.push({ runIndex, label: "description changed" });

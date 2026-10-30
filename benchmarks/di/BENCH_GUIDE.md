@@ -23,7 +23,9 @@ answering neither.
 **A guard row is only worth having while it stays identical** — same id, same batch, same workload. A feature that
 forces an existing row to change shape is telling you the change is not backward-neutral: leave that row alone and add a
 new one beside it. Editing a row in place retires every comparison against every earlier commit, and reports nothing
-when it does.
+when it does — so when a row must change what one timed iteration does anyway (a loop that starts handing each call a
+fresh props object, say), bump its `revision`. The history viewer then marks that run as "measurement changed" instead
+of leaving a step in the line that reads like a library regression.
 
 **A coverage row has no baseline in the parent commit.** Swapping the source runs both sides against the same
 `benchmarks/` tree, so a row reaching for an API only one side has either throws or is dropped by its own `sanity()` —
