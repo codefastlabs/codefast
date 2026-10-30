@@ -110,7 +110,7 @@ both engines are measured alone on the last lines.
 | `cn` alone             |  23.5 KB |  9.7 KB |
 | `tailwind-merge` alone |  27.2 KB |  8.5 KB |
 
-`@codefast/tv` ships 13.6 KB gzipped, the second largest of 3 libraries, against a checked-in budget of 14,000 B. Most
+`@codefast/tv` ships 13.6 KB gzipped, the second largest of 3 libraries, against a checked-in budget of 14,250 B. Most
 of either `tv()` library's share is its merge engine: `tailwind-variants` compiles its own tables into its bundle, while
 `@codefast/tailwind-variants` takes `cn` as a peer and imports its `twMerge` and `cn`, so an app ships one engine
 whichever library calls it. `cn` is a little larger than `tailwind-merge` gzipped and smaller minified, and merges a

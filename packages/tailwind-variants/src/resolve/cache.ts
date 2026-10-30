@@ -15,6 +15,8 @@ const GENERATION_LIMIT = 1024;
  * @since 0.6.0
  */
 export interface ResolutionCache<Value> {
+  /** Counts one more thing stored inside an entry already held, so nested growth stays within the limit. */
+  charge: () => void;
   get: (key: number | string) => Value | undefined;
   set: (key: number | string, value: Value) => void;
 }
@@ -28,8 +30,21 @@ export const createResolutionCache = <Value>(): ResolutionCache<Value> => {
   let current = new Map<number | string, Value>();
   // Nothing is retired until a generation overflows, and most resolvers never get that far.
   let previous: Map<number | string, Value> | null = null;
+  let charged = 0;
+
+  const retireWhenFull = (): void => {
+    if (current.size + charged > GENERATION_LIMIT) {
+      previous = current;
+      current = new Map();
+      charged = 0;
+    }
+  };
 
   return {
+    charge: (): void => {
+      charged++;
+      retireWhenFull();
+    },
     get: (key: number | string): Value | undefined => {
       const hit = current.get(key);
 
@@ -47,11 +62,7 @@ export const createResolutionCache = <Value>(): ResolutionCache<Value> => {
     },
     set: (key: number | string, value: Value): void => {
       current.set(key, value);
-
-      if (current.size > GENERATION_LIMIT) {
-        previous = current;
-        current = new Map();
-      }
+      retireWhenFull();
     },
   };
 };
