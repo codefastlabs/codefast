@@ -47,7 +47,7 @@ const createRandom = (seed: number): (() => number) => {
 const STRINGS = ["px-2", "px-4", "py-1", "text-sm", "text-lg", "font-bold", "", "  ", "p-2 px-6"];
 
 const drawValue = (random: () => number, depth: number): unknown => {
-  const pick = Math.floor(random() * 12);
+  const pick = Math.floor(random() * 14);
 
   switch (pick) {
     case 0:
@@ -63,7 +63,9 @@ const drawValue = (random: () => number, depth: number): unknown => {
     case 5:
       return { "text-red-500": random() < 0.5, "text-blue-500": random() < 0.5, "": true };
     case 6:
-      return 0n;
+      return random() < 0.5 ? 0n : 1n;
+    case 7:
+      return Object.assign(Object.create({ inherited: random() < 0.5 }) as object, { own: true });
     default:
       return STRINGS[Math.floor(random() * STRINGS.length)];
   }
@@ -81,6 +83,14 @@ describe("cx", () => {
 
       expect(cx(...classes)).toBe(referenceCx(...classes));
     }
+  });
+
+  test("reads an object's inherited keys and skips a bigint, as clsx does", () => {
+    const inherited = Object.assign(Object.create({ inherited: true }) as object, { own: true });
+
+    expect(cx(inherited)).toBe("own inherited");
+    expect(cx("a", inherited, 1n, 0n, "b")).toBe("a own inherited b");
+    expect(cx(1n)).toBe("");
   });
 });
 
@@ -129,7 +139,7 @@ describe("cn", () => {
       for (let index = 0; index < 3000; index++) {
         const first = `w-${String(index % 1500)}`;
 
-        expect(pairCn(first, "w-full")).toBe("w-full");
+        expect(pairCn(first, "h-full")).toBe(`${first} h-full`);
         expect(pairCn(first, `h-${String(index)}`)).toBe(`${first} h-${String(index)}`);
       }
     }
@@ -150,6 +160,28 @@ describe("cn", () => {
     expect(customCn(["px-2"], { "px-4": true })).toBe("PX-2 PX-4");
     expect(merged).toEqual(["px-2 px-4", "px-2 px-4"]);
     expect(plainCn("px-2", "px-4")).toBe("px-2 px-4");
+  });
+
+  test("passes every shape of call through a supplied merge, in the order given", () => {
+    const merged: Array<string> = [];
+    const { cn: customCn } = createTV({
+      twMerge: (classes) => {
+        merged.push(classes);
+
+        return classes.toUpperCase();
+      },
+    });
+
+    expect(customCn()).toBe("");
+    expect(customCn("", null, false)).toBe("");
+    expect(customCn("a")).toBe("A");
+    expect(customCn("a", "b", ["c"])).toBe("A B C");
+    expect(customCn("a", "b", "c", { d: true })).toBe("A B C D");
+    expect(customCn("a", "b", "c")).toBe("A B C");
+    expect(merged).toEqual(["a", "a b c", "a b c d", "a b c"]);
+  });
+
+  test("keeps the default engine's own cn for a factory that does not supply a merge", () => {
     expect(createTV({}).cn).toBe(cn);
   });
 });

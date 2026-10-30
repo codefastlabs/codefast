@@ -5,6 +5,39 @@ describe.each(LANES)("on the %s lane", (lane) => {
   const tv = tvOn(lane);
 
   describe("Tailwind Variants (TV) - Extends", () => {
+    test("should apply the extended configuration's compounds before the extension's", () => {
+      const base = tv(
+        {
+          compoundVariants: [{ class: "base-compound", tone: "loud" }],
+          variants: { tone: { loud: "text-loud" } },
+        },
+        { twMerge: false },
+      );
+      const extended = tv(
+        { compoundVariants: [{ class: "own-compound", tone: "loud" }], extend: base },
+        { twMerge: false },
+      );
+
+      expect(extended({ tone: "loud" })).toBe("text-loud base-compound own-compound");
+    });
+
+    test("should apply the extended configuration's compound slots before the extension's", () => {
+      const base = tv(
+        {
+          compoundSlots: [{ class: "base-slot", slots: ["item"], tone: "loud" }],
+          slots: { base: "b", item: "i" },
+          variants: { tone: { loud: "" } },
+        },
+        { twMerge: false },
+      );
+      const extended = tv(
+        { compoundSlots: [{ class: "own-slot", slots: ["item"], tone: "loud" }], extend: base },
+        { twMerge: false },
+      );
+
+      expect(extended({ tone: "loud" }).item()).toBe("i base-slot own-slot");
+    });
+
     test("should include the extended classes", () => {
       const p = tv({
         base: "text-base text-green-500",

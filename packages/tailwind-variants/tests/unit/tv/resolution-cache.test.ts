@@ -143,3 +143,70 @@ describe("resolution cache", () => {
     }
   });
 });
+
+describe("resolution cache: what a remembered caller class weighs", () => {
+  const values = Object.fromEntries(
+    Array.from({ length: 100 }, (_, index) => [`v${String(index)}`, `p-${String(index)}`]),
+  );
+  const remembered = { a: "v0", b: "v0" };
+  const MOST_SELECTIONS = 99 * 100;
+
+  /** Whether `insertions` other selections push a selection out of the store, once it has met `classCount` classes. */
+  const evicts = (classCount: number, insertions: number): boolean => {
+    let merges = 0;
+    const flatTv = tv as (configuration: object, options?: object) => (props?: Record<string, unknown>) => string;
+    const grid = flatTv(
+      { variants: { a: values, b: values } },
+      {
+        twMerge: (classes: string) => {
+          merges++;
+
+          return classes;
+        },
+      },
+    );
+
+    grid();
+    grid();
+    grid(remembered);
+
+    for (let index = 0; index < classCount; index++) {
+      grid({ ...remembered, className: `m-${String(index)}` });
+      grid({ ...remembered, className: `m-${String(index)}` });
+    }
+
+    for (let index = 0; index < insertions; index++) {
+      grid({ a: `v${String(1 + (index % 99))}`, b: `v${String(Math.floor(index / 99))}` });
+    }
+
+    merges = 0;
+    grid(remembered);
+
+    return merges > 0;
+  };
+
+  /** The fewest other selections that evict one, found by bisection: eviction only grows with them. */
+  const evictionPoint = (classCount: number): number => {
+    let low = 0;
+    let high = MOST_SELECTIONS;
+
+    while (low < high) {
+      const middle = Math.floor((low + high) / 2);
+
+      if (evicts(classCount, middle)) {
+        high = middle;
+      } else {
+        low = middle + 1;
+      }
+    }
+
+    return low;
+  };
+
+  test("charges a selection's remembered classes against the store's limit", () => {
+    const light = evictionPoint(0);
+
+    expect(light).toBeLessThan(MOST_SELECTIONS);
+    expect(evictionPoint(40)).toBeLessThan(light);
+  });
+});

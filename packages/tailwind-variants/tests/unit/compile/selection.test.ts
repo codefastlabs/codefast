@@ -137,6 +137,91 @@ describe("selection-keyed resolution", () => {
     }
   });
 
+  test("keeps apart two wide selections whose key parts would read alike unseparated", () => {
+    const variants: Record<string, Record<string, string>> = {};
+
+    for (let group = 0; group < 12; group++) {
+      const values: Record<string, string> = {};
+
+      for (let value = 0; value < 20; value++) {
+        values[`v${String(value)}`] = `g${String(group)}-v${String(value)}`;
+      }
+
+      variants[`g${String(group)}`] = values;
+    }
+
+    const button = untypedTv({ variants }, { twMerge: false });
+
+    // Past the cold calls, then every value of the first and last group in order, so `v0` takes id one.
+    button();
+    button();
+
+    for (let pass = 0; pass < 2; pass++) {
+      for (let value = 0; value < 20; value++) {
+        button({ g0: `v${String(value)}` });
+        button({ g11: `v${String(value)}` });
+      }
+    }
+
+    for (let pass = 0; pass < 3; pass++) {
+      expect(button({ g0: "v11", g11: "v0" })).toBe("g0-v11 g11-v0");
+      expect(button({ g0: "v0", g11: "nope" })).toBe("g0-v0");
+    }
+  });
+
+  test("resolves without caching a value its group answers but never counted", () => {
+    const size: Record<string, string> = { md: "p-4", sm: "p-2" };
+
+    Object.defineProperty(size, "hidden", { enumerable: false, value: "p-9" });
+
+    const config = { base: "b", variants: { size, tone: { loud: "font-bold", quiet: "font-light" } } };
+    const cached = untypedTv(config, { twMerge: false });
+    const uncached = untypedTv(config, { cacheResolutions: false, twMerge: false });
+
+    for (let pass = 0; pass < 4; pass++) {
+      for (const sizeValue of ["hidden", "sm", "md", "nope"]) {
+        for (const tone of [undefined, "loud", "quiet"]) {
+          for (const className of [undefined, "x", "x"]) {
+            const props = { className, size: sizeValue, tone };
+
+            expect(cached(props)).toBe(uncached(props));
+          }
+        }
+      }
+    }
+
+    expect(cached({ size: "hidden", tone: "loud" })).toBe("b p-9 font-bold");
+    expect(cached({ size: "md", tone: "quiet" })).toBe("b p-4 font-light");
+    expect(cached({ size: "md" })).toBe("b p-4");
+  });
+
+  test("resolves the slots of a value its group answers but never counted without caching them", () => {
+    const size: Record<string, unknown> = { md: { item: "p-4" }, sm: { item: "p-2" } };
+
+    Object.defineProperty(size, "hidden", { enumerable: false, value: { item: "p-9" } });
+
+    const config = {
+      slots: { base: "b", item: "i" },
+      variants: { size, tone: { loud: { item: "font-bold" }, quiet: { base: "font-light" } } },
+    };
+    const cached = untypedSlotsTv(config, { twMerge: false });
+    const uncached = untypedSlotsTv(config, { cacheResolutions: false, twMerge: false });
+
+    for (let pass = 0; pass < 4; pass++) {
+      for (const sizeValue of ["hidden", "sm", "md", "nope"]) {
+        for (const tone of [undefined, "loud", "quiet"]) {
+          const props = { size: sizeValue, tone };
+          const expected = uncached(props);
+          const actual = cached(props);
+
+          expect([actual.base?.(), actual.item?.()]).toEqual([expected.base?.(), expected.item?.()]);
+        }
+      }
+    }
+
+    expect(cached({ size: "md", tone: "loud" }).item?.()).toBe("i p-4 font-bold");
+  });
+
   test("remembers a selection of a configuration too wide for one safe integer", () => {
     const slots: Record<string, string> = { base: "flex" };
     const variants: Record<string, Record<string, Record<string, string>>> = {};

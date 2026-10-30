@@ -5,6 +5,14 @@ describe.each(LANES)("on the %s lane", (lane) => {
   const tv = tvOn(lane);
 
   describe("Tailwind Variants (TV) - Slots Edge Cases", () => {
+    test("should let slots.base win over a top-level base", () => {
+      const component = tv({ base: "top-level", slots: { base: "slot-base", item: "px-2" } }, { twMerge: false });
+
+      expect(component().base()).toBe("slot-base");
+      expect(component().item()).toBe("px-2");
+      expect(tv({ base: "top-level", slots: { item: "px-2" } }, { twMerge: false })().base()).toBe("top-level");
+    });
+
     test("should handle undefined slot variants", () => {
       const component = tv({
         slots: {
