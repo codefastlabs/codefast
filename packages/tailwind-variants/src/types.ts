@@ -231,7 +231,7 @@ export interface TailwindVariantsOptions {
    *
    * @defaultValue true
    */
-  readonly cacheResolutions?: boolean;
+  readonly cacheResolutions?: boolean | undefined;
   /**
    * Resolves Tailwind conflicts in every answer, so a later class wins over an earlier one.
    *

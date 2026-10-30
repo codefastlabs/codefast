@@ -307,7 +307,7 @@ export type TailwindVariantsFactory = typeof tv;
 export interface TailwindVariantsApi {
   /** Joins class values, resolving Tailwind conflicts as the shared `twMerge` option says. */
   readonly cn: (...classes: Array<ClassValue>) => string;
-  /** Creates a class resolver whose own options win over the shared ones. */
+  /** Creates a class resolver whose options fall back, one by one, to the shared ones. */
   readonly tv: TailwindVariantsFactory;
 }
 
@@ -321,7 +321,10 @@ export function createTV(globalOptions: TailwindVariantsOptions = {}): TailwindV
 
   // Forwards any configuration untouched, so it takes `tv`'s overloads rather than restating them.
   const tvWithOptions = (configuration: Parameters<TailwindVariantsFactory>[0], options?: TailwindVariantsOptions) =>
-    tv(configuration, { ...globalOptions, ...options });
+    tv(configuration, {
+      cacheResolutions: options?.cacheResolutions ?? globalOptions.cacheResolutions,
+      twMerge: options?.twMerge ?? globalOptions.twMerge,
+    });
 
   return {
     // The default engine's own `cn` already caches whole calls, so only a supplied merge needs our memo.
