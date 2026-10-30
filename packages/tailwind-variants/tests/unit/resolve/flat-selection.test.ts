@@ -120,6 +120,50 @@ describe("a selection meeting many recurring classes", () => {
   });
 });
 
+describe("a selection's remembered caller classes", () => {
+  /** Merges a pass over `count` classes needs after a first pass that saw each one twice in a row. */
+  const mergesOnSecondPass = (count: number): number => {
+    let merges = 0;
+    const button = untypedTv(
+      { base: "inline-flex", variants: { size: { sm: "px-2" } } },
+      {
+        twMerge: (classes: string) => {
+          merges++;
+
+          return classes;
+        },
+      },
+    );
+    const classNames = Array.from({ length: count }, (_, index) => `mt-${String(index)}`);
+
+    // Past the cold calls, so every class below reaches the compiled selection.
+    for (let call = 0; call < 3; call++) {
+      button({ size: "sm" });
+    }
+
+    for (const className of classNames) {
+      button({ className, size: "sm" });
+      button({ className, size: "sm" });
+    }
+
+    merges = 0;
+
+    for (const className of classNames) {
+      expect(button({ className, size: "sm" })).toBe(`inline-flex px-2 ${className}`);
+    }
+
+    return merges;
+  };
+
+  test("answers a class it has seen twice without merging again", () => {
+    expect(mergesOnSecondPass(10)).toBe(0);
+  });
+
+  test("stops remembering past a bounded count, merging the rest every time", () => {
+    expect(mergesOnSecondPass(200)).toBeGreaterThan(0);
+  });
+});
+
 describe("createClassDoor", () => {
   test("admits a class string from its second sighting", () => {
     const door = createClassDoor();

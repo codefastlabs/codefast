@@ -12,25 +12,27 @@ replaced here, not annotated.
 fell short was resolution cost on hot render paths and some type-inference edges. Inventing a different API would have
 forced a rewrite of the consumer for no gain in expressiveness.
 
-**Decision.** Keep the upstream configuration shape and the `twMerge` option name exactly, so the migration for most
-codebases is the import specifier. The exports are `tv`, `createTV`, `cn`, `cx`, `VariantProps` and the configuration
-types.
+**Decision.** Keep the upstream configuration shape and the `twMerge` option name exactly, and resolve every
+configuration to what upstream `tailwind-variants` resolves it to, so the migration for most codebases is the import
+specifier. The exports are `tv`, `createTV`, `cn`, `cx`, `VariantProps` and the configuration types; where the API
+departs from upstream's, the README's migration section lists every difference.
 
-**Consequences.** The README's examples run as tests and a behaviour sweep covers the upstream shapes, and
-`@codefast/ui` moved over by changing imports. The constraint runs the other way too: an API idea that upstream users
-could not express is out of scope here.
+**Consequences.** A unit test paraphrases the README's examples, a behaviour sweep covers the upstream shapes, and
+`@codefast/ui` moved over by changing imports. A difference in what a configuration resolves to is a bug, not a
+departure. The constraint runs the other way too: an API idea that upstream users could not express is out of scope
+here.
 
-## Two verified departures from upstream
+## `createTV` returns `{ tv, cn }`, and nothing global is mutable
 
 **Context.** Upstream's `createTV(options)` returns a bare `tv`, exposes a mutable `defaultConfig`, and ships `cnMerge`.
 Global mutable configuration is the one upstream shape that fights the compile-once design below: a plan compiled under
 one merge config cannot be trusted after the global changes.
 
 **Decision.** `createTV(options)` returns `{ tv, cn }` that share the options, and there is no mutable global: no
-`defaultConfig`, no `cnMerge`. Local `tv(config, options)` still overrides the factory.
+`defaultConfig`, no `cnMerge`. Local `tv(config, options)` still overrides the factory, one option at a time.
 
 **Consequences.** Every resolver knows its merge configuration at compile time. Migration needs one destructure where
-upstream assigned `createTV`'s result directly; the README records both departures.
+upstream assigned `createTV`'s result directly, and the README's migration section records it with the other departures.
 
 ## Settle everything once, when a component is called again
 
@@ -39,18 +41,19 @@ Upstream pays for dictionary walks and array flattening on each call. But a desi
 module load and renders many of them once or not at all on a given page, so work done inside `tv()` is paid by
 components that never earn it back.
 
-**Decision.** `tv()` only wraps the configuration. The first call resolves straight from it, through a cold lane that
-answers exactly what the plan answers; the next call compiles the plan — flattened class strings, precomputed slot
-positions, compound conditions turned into checks — and every call after is string concatenation over that plan. A
-component without slots resolves its first two calls cold, because a cold flat call costs less than a compile and many
-components render exactly twice; a slot component compiles on its second, because a cold slot call costs more.
+**Decision.** `tv()` only wraps the configuration. The first calls resolve straight from it, through a cold lane that
+answers exactly what the plan answers; the next call compiles the plan — precomputed slot positions, compound conditions
+turned into checks, each variant value flattened to a string the first time a call selects it — and every call after is
+string concatenation over that plan. A component without slots resolves its first two calls cold, because a cold flat
+call costs less than a compile and many components render exactly twice; a slot component compiles on its second,
+because a cold slot call costs more.
 
 **Consequences.** A definition and a single render each cost less than upstream's, and a component pays for its plan
-only once it has rendered more than that. The benchmark suite prices both ends (`define-only-*` and `first-render-*`
-against the resolution rows) so the trade stays visible. The cold lane is a second implementation of the resolution
-rules and is held to the plan by the behaviour sweep, which drives every case through a fresh resolver as well as a
-shared one. Anything that would move work back into the per-render path is a regression, whatever it saves at definition
-or first render.
+only once it has rendered more than that. The benchmark suite prices both ends (`define-only-*`, `first-render-*`,
+`two-renders-*` and `three-renders-*` against the resolution rows) so the trade stays visible. The cold lane is a second
+implementation of the resolution rules and is held to the plan by the behaviour sweep, which drives every case through a
+fresh resolver as well as a shared one. Anything that would move work back into the per-render path is a regression,
+whatever it saves at definition or first render.
 
 ## Cache resolutions per selection, with an opt-out
 
@@ -69,9 +72,9 @@ fills the store with entries nothing reads again.
 
 **Context.** Conflict resolution is what makes `className` overrides safe, and every first render, every unseen
 `className` and every cold page load runs it on strings no cache has seen. `cn` produces the same output as
-`tailwind-merge` — this repository's own class strings agree across both — and merges such a string several times
-faster, for a bundle about a kilobyte larger gzipped. A variant library that builds an engine from a configuration at
-runtime still makes every application ship the compiler.
+`tailwind-merge` — this repository's own class strings agree across both — and merges such a string faster, for a
+somewhat larger bundle. A variant library that builds an engine from a configuration at runtime still makes every
+application ship the compiler.
 
 **Decision.** `cn >= 0.5` is a peer dependency. The package imports its `twMerge` as the default merge and re-exports
 its `cn`, whose own argument cache answers a repeated call before any join. The `twMerge` option takes `true`, `false`,
@@ -80,9 +83,11 @@ passes in. There is no `twMergeConfig`, because accepting a configuration means 
 into every bundle that never uses it.
 
 **Consequences.** One engine per application: an app that still imports `tailwind-merge` aliases it to `cn`. A merge
-function passed in replaces `cn` everywhere, including the `cn` a `createTV` factory returns, which then keeps a memo of
-its own over that merge. The merge runs only on a selection a resolver has not answered yet, so the engine sets the cost
-of a first render and nothing after it. Callers who turn merging off own their conflicts.
+function passed in replaces the engine only where it is passed: in that resolver, or, given to `createTV`, in its `tv`
+and in the `cn` it returns, which then keeps a memo of its own over that merge; the exported `cn` stays the engine's.
+The merge runs on a selection a resolver has not answered yet and on a caller's class it has not remembered, so the
+engine sets the cost of a first render and of a `className` unique to its call. Callers who turn merging off own their
+conflicts.
 
 ## Types describe what the selection can be, no more
 

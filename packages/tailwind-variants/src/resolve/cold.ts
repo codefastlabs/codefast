@@ -2,8 +2,8 @@
  * The cold lane: one resolution read straight from the configuration, before a plan exists.
  */
 
-import { hasBooleanVariantValues, isSlotClassMap, toClassText, toVariantKey } from "#compile/class-values";
-import { getCompoundClass } from "#compile/compound";
+import { isSlotClassMap, toCallerClasses, toClassText, toDefaultKey, toVariantKey } from "#compile/class-values";
+import { getCompoundClass, matchesCompoundValue } from "#compile/compound";
 import type {
   ClassMerger,
   ClassValue,
@@ -28,29 +28,9 @@ const append = (text: string, classes: string): string => {
   return text === "" ? classes : `${text} ${classes}`;
 };
 
-/**
- * The group key these props select for one variant, or `undefined` for none.
- *
- * @remarks Mirrors the plan: a missing selection takes the configured default, or `false` for a
- * boolean group, and the slot lane alone treats a falsy key as no selection.
- */
-const selectedKey = (
-  group: Record<string, unknown>,
-  configuredDefault: unknown,
-  selected: unknown,
-  slotLane: boolean,
-): unknown => {
-  if (selected === undefined) {
-    if (configuredDefault === undefined) {
-      return hasBooleanVariantValues(group) ? "false" : undefined;
-    }
-
-    return toVariantKey(configuredDefault);
-  }
-
-  const key = toVariantKey(selected);
-
-  return slotLane && !key ? undefined : key;
+/** The group key these props select for one variant, or `undefined` for none; a missing selection takes the default. */
+const selectedKey = (configuredDefault: unknown, selected: unknown): string | undefined => {
+  return selected === undefined ? toDefaultKey(configuredDefault) : toVariantKey(selected);
 };
 
 /** The own value a group holds under a key a caller chose, guarding against inherited members. */
@@ -67,7 +47,6 @@ const matchesColdCompound = (
   props: Props,
   defaults: Props,
   slotProps: Props | null,
-  coerceMissingBoolean: boolean,
   skipSlots: boolean,
 ): boolean => {
   for (const name of Object.keys(definition)) {
@@ -75,7 +54,6 @@ const matchesColdCompound = (
       continue;
     }
 
-    const expected = definition[name];
     let value = slotProps === null ? undefined : slotProps[name];
 
     if (value === undefined) {
@@ -86,15 +64,7 @@ const matchesColdCompound = (
       value = defaults[name];
     }
 
-    if (Array.isArray(expected)) {
-      if (!expected.includes(value)) {
-        return false;
-      }
-    } else if (typeof expected === "boolean" && coerceMissingBoolean) {
-      if ((value === undefined ? false : value) !== expected) {
-        return false;
-      }
-    } else if (value !== expected) {
+    if (!matchesCompoundValue(definition[name], value)) {
       return false;
     }
   }
@@ -102,9 +72,9 @@ const matchesColdCompound = (
   return true;
 };
 
-const finish = (text: string, mergeClasses: ClassMerger | null): string | undefined => {
+const finish = (text: string, mergeClasses: ClassMerger | null): string => {
   if (text === "") {
-    return undefined;
+    return text;
   }
 
   return mergeClasses === null ? text : mergeClasses(text);
@@ -119,7 +89,7 @@ export const resolveColdVariantClasses = (
   configuration: Definition,
   mergeClasses: ClassMerger | null,
   props: Props,
-): string | undefined => {
+): string => {
   const variants = configuration.variants;
   const defaults = configuration.defaultVariants ?? EMPTY_DEFAULTS;
   let text = toClassText(configuration.base);
@@ -132,7 +102,7 @@ export const resolveColdVariantClasses = (
         continue;
       }
 
-      const key = selectedKey(group, defaults[name], props[name], false);
+      const key = selectedKey(defaults[name], props[name]);
 
       if (key !== undefined) {
         text = append(text, toClassText(ownValue(group, key) as ClassValue));
@@ -144,14 +114,13 @@ export const resolveColdVariantClasses = (
 
   if (compounds !== undefined) {
     for (const compound of compounds) {
-      if (matchesColdCompound(compound, props, defaults, null, true, false)) {
-        text = append(text, toClassText(getCompoundClass(compound)));
+      if (matchesColdCompound(compound, props, defaults, null, false)) {
+        text = append(text, toClassText(getCompoundClass(compound, false)));
       }
     }
   }
 
-  const className = props.className as ClassValue;
-  const customClasses = className === undefined || className === null ? (props.class as ClassValue) : className;
+  const customClasses = toCallerClasses(props.class as ClassValue, props.className as ClassValue);
 
   if (customClasses) {
     text = append(text, toClassText(customClasses));
@@ -192,15 +161,10 @@ const coldSlotText = (
         continue;
       }
 
-      let key: unknown;
-
-      if (overrides !== null && overrides[name] !== undefined) {
-        const overrideKey = toVariantKey(overrides[name]);
-
-        key = overrideKey ? overrideKey : undefined;
-      } else {
-        key = selectedKey(group, defaults[name], props[name], true);
-      }
+      const override = overrides === null ? undefined : overrides[name];
+      // A slot prop left null or undefined keeps the call's selection.
+      const key =
+        override === undefined || override === null ? selectedKey(defaults[name], props[name]) : toVariantKey(override);
 
       if (key !== undefined) {
         text = append(text, slotContribution(ownValue(group, key), slotName));
@@ -212,8 +176,8 @@ const coldSlotText = (
 
   if (compounds !== undefined) {
     for (const compound of compounds) {
-      if (matchesColdCompound(compound, props, defaults, overrides, false, false)) {
-        text = append(text, slotContribution(getCompoundClass(compound), slotName));
+      if (matchesColdCompound(compound, props, defaults, overrides, false)) {
+        text = append(text, slotContribution(getCompoundClass(compound, true), slotName));
       }
     }
   }
@@ -222,12 +186,11 @@ const coldSlotText = (
 
   if (compoundSlots !== undefined) {
     for (const compoundSlot of compoundSlots) {
-      // Compound slots read the call's props only, never a slot's own overrides.
-      if (!matchesColdCompound(compoundSlot, props, defaults, null, true, true)) {
+      if (!matchesColdCompound(compoundSlot, props, defaults, overrides, true)) {
         continue;
       }
 
-      const classes = toClassText(getCompoundClass(compoundSlot));
+      const classes = toClassText(getCompoundClass(compoundSlot, false));
 
       for (const target of compoundSlot.slots) {
         if (target === slotName) {
@@ -241,6 +204,25 @@ const coldSlotText = (
 };
 
 /**
+ * The props a slot reads, copied when the resolver is called, without the classes and `children` no slot reads.
+ *
+ * @remarks A slot is called later than its resolver, and the caller's props object may have changed
+ * by then or carry `children`, so the slots read this copy instead of holding it.
+ */
+const snapshotProps = (props: Props): Props => {
+  const snapshot: Props = {};
+
+  for (const name in props) {
+    // Assigning `__proto__` would replace the copy's prototype rather than add a key.
+    if (name !== "children" && name !== "class" && name !== "className" && name !== "__proto__") {
+      snapshot[name] = props[name];
+    }
+  }
+
+  return snapshot;
+};
+
+/**
  * Creates one class resolver per slot for one set of props, reading the configuration directly.
  *
  * @since 0.8.0
@@ -248,9 +230,10 @@ const coldSlotText = (
 export const createColdSlotResolvers = (
   configuration: SlotVariantConfig<VariantSchema, SlotSchema>,
   mergeClasses: ClassMerger | null,
-  props: Props,
+  callProps: Props,
 ): Record<string, SlotClassResolver<VariantSchema>> => {
   const defaults = configuration.defaultVariants ?? EMPTY_DEFAULTS;
+  const props = snapshotProps(callProps);
   const resolvers: Record<string, SlotClassResolver<VariantSchema>> = {};
   const names = ["base"];
 
@@ -262,10 +245,11 @@ export const createColdSlotResolvers = (
 
   for (const slotName of names) {
     let resolved = false;
-    let memoised: string | undefined;
+    let memoised = "";
 
-    resolvers[slotName] = (slotProps?: SlotResolverProps<VariantSchema>): string | undefined => {
-      if (slotProps === undefined) {
+    // Null is what a JavaScript caller passes for no props.
+    resolvers[slotName] = (slotProps?: SlotResolverProps<VariantSchema> | null): string => {
+      if (slotProps === undefined || slotProps === null) {
         if (!resolved) {
           memoised = finish(coldSlotText(configuration, defaults, props, slotName, null), mergeClasses);
           resolved = true;
@@ -277,8 +261,8 @@ export const createColdSlotResolvers = (
       const overrides = slotProps as Props;
       let text = coldSlotText(configuration, defaults, props, slotName, overrides);
 
-      text = append(text, toClassText(overrides.className as ClassValue));
       text = append(text, toClassText(overrides.class as ClassValue));
+      text = append(text, toClassText(overrides.className as ClassValue));
 
       return finish(text, mergeClasses);
     };

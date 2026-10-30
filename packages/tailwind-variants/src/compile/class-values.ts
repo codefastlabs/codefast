@@ -1,9 +1,4 @@
-/**
- * Flattening configuration class values into the form a compiled plan holds.
- *
- * Every class value passes through here once, when a plan is compiled, so resolution only ever
- * concatenates strings and never reaches clsx.
- */
+/** Class values flattened into the form a compiled plan holds, and the group key a variant value selects. */
 
 import { flattenClassValues } from "#class-names";
 import type { ClassValue } from "#types";
@@ -27,10 +22,10 @@ interface SlotClassGroup {
 export type PlanClasses = SlotClassGroup | string;
 
 /**
- * Flatten a class value to the string it contributes.
+ * The string a class value contributes.
  *
- * @remarks Flattening each value separately matches flattening them together, because clsx joins
- * its arguments' contributions in order and drops the empty ones.
+ * @remarks Flattening each value separately matches flattening them together, because flattening joins
+ * each argument's contributions in order and drops the empty ones.
  *
  * @since 0.6.0
  */
@@ -48,7 +43,7 @@ export const isSlotClassMap = (value: ClassValue): value is Record<string, Class
 };
 
 /**
- * Flatten a slot map into parallel classes and slot positions.
+ * A slot map flattened into parallel classes and slot positions.
  *
  * @remarks A slot the plan does not declare, and one whose classes flatten to nothing, are both
  * dropped here — no resolver could ever ask for them.
@@ -79,10 +74,10 @@ const toSlotClassGroup = (
 };
 
 /**
- * Flatten a configuration class value for a compiled plan.
+ * A configuration class value flattened for a compiled plan.
  *
  * @remarks A `null` `slotIndexByName` says the configuration has no slots, so an object value is
- * clsx conditions rather than slot names.
+ * conditional classes rather than slot names.
  *
  * @since 0.6.0
  */
@@ -93,20 +88,29 @@ export const toPlanClasses = (value: ClassValue, slotIndexByName: Record<string,
 };
 
 /**
- * Whether a group keyed by "true"/"false" accepts boolean variant values.
- *
- * @since 0.8.0
+ * A caller's `class` and `className` as one class value, `class` first, so neither one hides the other.
  */
-export const hasBooleanVariantValues = (variantGroup: Record<string, unknown>): boolean => {
-  return "true" in variantGroup || "false" in variantGroup;
+export const toCallerClasses = (classValue: ClassValue, classNameValue: ClassValue): ClassValue => {
+  if (!classValue) {
+    return classNameValue;
+  }
+
+  return classNameValue ? [classValue, classNameValue] : classValue;
 };
 
 /**
- * The key a variant value selects inside its group, with booleans spelled as their group keys.
+ * The key a value a caller passed selects inside its group, or `undefined` when it selects nothing.
+ *
+ * @remarks Booleans and `0` are spelled as their keys, other falsy values read as `"false"`, and `null`, an
+ * array or an object selects nothing; callers answer `undefined`, the one value that takes the default.
  *
  * @since 0.6.0
  */
 export const toVariantKey = (value: unknown): string | undefined => {
+  if (typeof value === "string") {
+    return value === "" ? "false" : value;
+  }
+
   if (value === true) {
     return "true";
   }
@@ -115,5 +119,25 @@ export const toVariantKey = (value: unknown): string | undefined => {
     return "false";
   }
 
-  return value as string | undefined;
+  if (value === null || typeof value === "object") {
+    return undefined;
+  }
+
+  if (value === 0) {
+    return "0";
+  }
+
+  return (value || "false") as string;
+};
+
+/**
+ * The key a group reads when a call omits its variant: the configured default's key, or `"false"` without one.
+ */
+export const toDefaultKey = (configuredDefault: unknown): string => {
+  if (configuredDefault === undefined || configuredDefault === null) {
+    return "false";
+  }
+
+  // An object default is looked up as written, where a caller passing the same object selects nothing.
+  return toVariantKey(configuredDefault) ?? (configuredDefault as string);
 };

@@ -36,5 +36,10 @@ export default defineConfig({
     passWithNoTests: true,
     pool: "threads",
     setupFiles: ["./vitest.setup.ts"],
+    typecheck: {
+      enabled: true,
+      include: ["tests/types/**/*.test.ts"],
+      tsconfig: "./tsconfig.json",
+    },
   },
 });

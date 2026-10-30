@@ -5,8 +5,7 @@
 
 import type { PlanClasses } from "#compile/class-values";
 import { toClassText, toVariantKey } from "#compile/class-values";
-import type { CompoundSlotPlanEntry } from "#compile/compound";
-import { collectMatchedCompoundSlots, matchesCompoundConditions } from "#compile/compound";
+import { matchesCompoundConditions } from "#compile/compound";
 import { compileGroupValue } from "#compile/plan";
 import type { SlotPlanEntry, VariantPlan } from "#compile/plan";
 import type { ClassValue, SlotClassResolver, SlotResolverProps, VariantSchema } from "#types";
@@ -14,25 +13,23 @@ import type { ClassValue, SlotClassResolver, SlotResolverProps, VariantSchema } 
 /**
  * One resolution of the variant props, shared by every slot of that call.
  *
- * @remarks `texts` is the whole answer for a slot called without props: rather than each of N slots
- * scanning every variant, each variant distributes its classes to the slots it names. Slot maps are
- * sparse, so that is far less work than the scan it replaces.
+ * @remarks `texts` is the whole answer for a slot called without props: each variant distributes its classes
+ * to the slots it names, which on sparse slot maps is far less work than every slot scanning every variant.
  */
 interface SlotCallContext {
-  readonly compoundSlots: ReadonlyArray<CompoundSlotPlanEntry>;
   readonly conditionValues: Record<string, unknown>;
   readonly matched: ReadonlyArray<PlanClasses | undefined>;
-  readonly resolved: Array<string | typeof NOT_RESOLVED | undefined>;
+  readonly resolved: Array<string | typeof NOT_RESOLVED>;
   readonly texts: ReadonlyArray<string>;
 }
 
-/** Distinguishes a slot nobody has asked for yet from one that resolved to nothing. */
+/** Marks a slot nobody has asked for yet. */
 const NOT_RESOLVED: unique symbol = Symbol("not-resolved");
 
 const EMPTY_CONDITION_VALUES: Record<string, unknown> = {};
 
 /**
- * Copy out the props a compound can still read once the call is over.
+ * The props a compound can still read once the call is over, copied out of the caller's object.
  *
  * @remarks A context outlives its call when a resolver is reused, and holding the caller's props
  * object would pin whatever else it carries — `children`, most of a component's tree.
@@ -54,7 +51,7 @@ const toConditionValues = (
   return values;
 };
 
-/** Distribute one compiled value across the slots it names, or to `base` when it is a plain string. */
+/** Adds one compiled value to the slots it names, or to `base` when it is a plain string. */
 const distribute = (classes: PlanClasses | undefined, texts: Array<string>): void => {
   if (typeof classes === "object") {
     const slotIndexes = classes.slotIndexes;
@@ -77,7 +74,7 @@ const createSlotCallContext = (
   variantProps: Record<string, unknown>,
 ): SlotCallContext => {
   const texts: Array<string> = [];
-  const resolved: Array<string | typeof NOT_RESOLVED | undefined> = [];
+  const resolved: Array<string | typeof NOT_RESOLVED> = [];
 
   for (const slot of slots) {
     texts.push(slot.classes);
@@ -95,7 +92,7 @@ const createSlotCallContext = (
     } else {
       const key = toVariantKey(selected);
 
-      classes = key ? (entry.group[key] ?? compileGroupValue(entry, key)) : undefined;
+      classes = key === undefined ? undefined : (entry.group[key] ?? compileGroupValue(entry, key));
     }
 
     matched.push(classes);
@@ -108,9 +105,11 @@ const createSlotCallContext = (
     }
   }
 
-  const compoundSlots = collectMatchedCompoundSlots(plan.compoundSlots, variantProps);
+  for (const compoundSlot of plan.compoundSlots) {
+    if (!matchesCompoundConditions(compoundSlot.conditions, variantProps, null)) {
+      continue;
+    }
 
-  for (const compoundSlot of compoundSlots) {
     for (const slotIndex of compoundSlot.slotIndexes) {
       const text = texts[slotIndex] as string;
 
@@ -119,7 +118,6 @@ const createSlotCallContext = (
   }
 
   return {
-    compoundSlots,
     conditionValues: toConditionValues(plan.conditionNames, variantProps),
     matched,
     resolved,
@@ -145,8 +143,8 @@ const selectForSlot = (classes: PlanClasses | undefined, slotIndex: number): str
 };
 
 /**
- * Re-resolve one slot from scratch, because its own props can select different variant values and
- * flip a compound's conditions.
+ * Resolves one slot from scratch, because its own props can select different variant values and flip a
+ * compound's conditions.
  */
 const resolveSlotWithOverrides = (
   plan: VariantPlan,
@@ -162,12 +160,13 @@ const resolveSlotWithOverrides = (
     const override = overrides[entry.name];
     let classes: PlanClasses | undefined;
 
-    if (override === undefined) {
+    // A slot prop left null or undefined keeps the call's selection.
+    if (override === undefined || override === null) {
       classes = context.matched[index];
     } else {
       const key = toVariantKey(override);
 
-      classes = key ? (entry.group[key] ?? compileGroupValue(entry, key)) : undefined;
+      classes = key === undefined ? undefined : (entry.group[key] ?? compileGroupValue(entry, key));
     }
 
     index++;
@@ -191,9 +190,16 @@ const resolveSlotWithOverrides = (
     }
   }
 
-  for (const compoundSlot of context.compoundSlots) {
-    if (compoundSlot.slotIndexes.includes(slotIndex)) {
-      text = text === "" ? compoundSlot.classes : text + " " + compoundSlot.classes;
+  for (const compoundSlot of plan.compoundSlots) {
+    if (!matchesCompoundConditions(compoundSlot.conditions, context.conditionValues, overrides)) {
+      continue;
+    }
+
+    // A slot listed twice takes the classes twice, as it does on the bare path.
+    for (const targetIndex of compoundSlot.slotIndexes) {
+      if (targetIndex === slotIndex) {
+        text = text === "" ? compoundSlot.classes : text + " " + compoundSlot.classes;
+      }
     }
   }
 
@@ -212,16 +218,16 @@ const hasVariantOverride = (overrides: Record<string, unknown>): boolean => {
 };
 
 /** A slot called without props: the call's shared text, merged once and remembered. */
-const resolveBareSlot = (plan: VariantPlan, context: SlotCallContext, slotIndex: number): string | undefined => {
+const resolveBareSlot = (plan: VariantPlan, context: SlotCallContext, slotIndex: number): string => {
   // A resolver shared across calls reads each slot again, and the merge is the expensive part.
-  const memoised = context.resolved[slotIndex];
+  const memoised = context.resolved[slotIndex] as string | typeof NOT_RESOLVED;
 
   if (memoised !== NOT_RESOLVED) {
     return memoised;
   }
 
   const slotText = context.texts[slotIndex] as string;
-  const answer = slotText === "" ? undefined : plan.mergeClasses === null ? slotText : plan.mergeClasses(slotText);
+  const answer = slotText === "" ? slotText : plan.mergeClasses === null ? slotText : plan.mergeClasses(slotText);
 
   context.resolved[slotIndex] = answer;
 
@@ -233,15 +239,16 @@ const resolveSlot = (
   context: SlotCallContext,
   slot: SlotPlanEntry,
   slotIndex: number,
-  slotProps: SlotResolverProps<VariantSchema> | undefined,
-): string | undefined => {
-  if (slotProps === undefined) {
+  // Null is what a JavaScript caller passes for no props.
+  slotProps: SlotResolverProps<VariantSchema> | null | undefined,
+): string => {
+  if (slotProps === undefined || slotProps === null) {
     return resolveBareSlot(plan, context, slotIndex);
   }
 
   const overrides = slotProps as Record<string, unknown>;
-  const slotClassName = toClassText(overrides.className as ClassValue);
   const slotClass = toClassText(overrides.class as ClassValue);
+  const slotClassName = toClassText(overrides.className as ClassValue);
   let text: string;
 
   // A sub-component passes the `className` it was given, usually absent, so a class-only call is the common one.
@@ -253,16 +260,16 @@ const resolveSlot = (
     text = context.texts[slotIndex] as string;
   }
 
-  if (slotClassName) {
-    text = text === "" ? slotClassName : text + " " + slotClassName;
-  }
-
   if (slotClass) {
     text = text === "" ? slotClass : text + " " + slotClass;
   }
 
+  if (slotClassName) {
+    text = text === "" ? slotClassName : text + " " + slotClassName;
+  }
+
   if (text === "") {
-    return undefined;
+    return text;
   }
 
   return plan.mergeClasses === null ? text : plan.mergeClasses(text);
@@ -282,7 +289,7 @@ export const createSlotResolvers = (
   const resolvers: Record<string, SlotClassResolver<VariantSchema>> = {};
 
   for (const [slotIndex, slot] of slots.entries()) {
-    resolvers[slot.name] = (props?: SlotResolverProps<VariantSchema>): string | undefined =>
+    resolvers[slot.name] = (props?: SlotResolverProps<VariantSchema>): string =>
       resolveSlot(plan, context, slot, slotIndex, props);
   }
 

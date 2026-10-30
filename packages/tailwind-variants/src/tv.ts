@@ -1,11 +1,9 @@
-/**
- * The package's public entry point: `tv` wraps a configuration in a resolver that reads it directly
- * at first, compiles it into a plan once it is called again, and runs that plan on every call after.
- */
+/** The package's public entry point: `tv`, which wraps a configuration in a resolver, and `createTV`. */
 
 import { twMerge } from "cn";
 
 import { cn, createMergingCn, cx } from "#class-names";
+import { toCallerClasses } from "#compile/class-values";
 import { hasExtendConfig, hasSlotsConfig, mergeVariantConfigs } from "#compile/configuration";
 import type { VariantPlan } from "#compile/plan";
 import { compileVariantPlan } from "#compile/plan";
@@ -18,6 +16,7 @@ import { createClassDoor, createFlatSelection, resolveFlatSelectionWithClass } f
 import { createSlotResolvers } from "#resolve/slots";
 import { resolveVariantClasses } from "#resolve/variants";
 import type {
+  AbsentKeys,
   ClassMerger,
   ClassValue,
   SlotClassResolver,
@@ -26,19 +25,17 @@ import type {
   VariantSelection,
   SlotVariantConfig,
   ExtendedVariantConfig,
+  FlatVariantResolver,
   MergedVariantSchema,
   MergedSlotSchema,
   SlotSchema,
+  SlottedVariantResolver,
   TailwindVariantsOptions,
-  TailwindVariantsApi,
   VariantResolver,
 } from "#types";
 
 /** Shared stand-in for a call that passed no props, so the common case allocates nothing. */
 const EMPTY_PROPS: Record<string, unknown> = {};
-
-/** Stored for a selection that resolves to no classes, so a miss stays distinguishable from it. */
-const NO_CLASSES = null;
 
 /** Shared answer for a configuration without variants, so defining one allocates no array. */
 const NO_VARIANT_KEYS: ReadonlyArray<string> = [];
@@ -53,10 +50,15 @@ interface ResolverMemo<Value> {
 interface CompiledResolver {
   /** Admits a caller's class string to a selection's pairs from its second sighting. */
   readonly flatDoor: ClassDoor | null;
-  readonly flatMemo: ResolverMemo<FlatSelection | string | typeof NO_CLASSES> | null;
+  readonly flatMemo: ResolverMemo<FlatSelection | string> | null;
   readonly plan: VariantPlan;
   readonly slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null;
 }
+
+/** The caller classes a flat-lane entry remembers, which the store charges against its limit like entries. */
+const countRememberedPairs = (entry: FlatSelection | string): number => {
+  return typeof entry === "object" && entry.pairs !== null ? entry.pairs.size : 0;
+};
 
 /** The merge a `twMerge` option selects: `cn`'s by default, none for `false`, or the caller's own. */
 const toClassMerger = (option: TailwindVariantsOptions["twMerge"]): ClassMerger | null => {
@@ -73,7 +75,7 @@ const compileResolver = (
   shouldCacheResolutions: boolean,
 ): CompiledResolver => {
   const plan = compileVariantPlan(configuration, mergeClasses);
-  const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan, plan.slots !== null) : null;
+  const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan) : null;
 
   if (encoder === null) {
     return { flatDoor: null, flatMemo: null, plan, slotMemo: null };
@@ -82,7 +84,7 @@ const compileResolver = (
   return plan.slots === null
     ? {
         flatDoor: createClassDoor(),
-        flatMemo: { cache: createResolutionCache(), keyOf: encoder.keyOf },
+        flatMemo: { cache: createResolutionCache(countRememberedPairs), keyOf: encoder.keyOf },
         plan,
         slotMemo: null,
       }
@@ -90,18 +92,21 @@ const compileResolver = (
 };
 
 /**
- * The caller's own classes as a key fragment, or `null` for a clsx-shaped value no key can carry.
+ * The caller's `class` and `className` as one key fragment, or `null` for a clsx-shaped value no key can carry.
  *
  * @remarks Tested before the selection is encoded: a call the cache can never answer should not pay
- * to find that out.
+ * to find that out. Every falsy value contributes nothing, so it adds nothing to the key.
  */
-const toCustomClassKey = (customClasses: ClassValue): string | null => {
-  // Every falsy value contributes nothing, so they all share the selection's own key.
-  if (!customClasses) {
-    return "";
+const toCustomClassKey = (classValue: ClassValue, classNameValue: ClassValue): string | null => {
+  if (!classValue) {
+    return !classNameValue ? "" : typeof classNameValue === "string" ? classNameValue : null;
   }
 
-  return typeof customClasses === "string" ? customClasses : null;
+  if (typeof classValue !== "string") {
+    return null;
+  }
+
+  return !classNameValue ? classValue : typeof classNameValue === "string" ? classValue + " " + classNameValue : null;
 };
 
 /**
@@ -110,28 +115,21 @@ const toCustomClassKey = (customClasses: ClassValue): string | null => {
  * @since 0.3.16-canary.0
  */
 export function tv<Variants extends VariantSchema = Record<never, never>>(
-  config: VariantConfig<Variants>,
-  tvConfig?: TailwindVariantsOptions,
-): VariantResolver<Variants, Record<string, never>>;
+  config: VariantConfig<Variants> & AbsentKeys<"compoundSlots" | "extend" | "slots">,
+  options?: TailwindVariantsOptions,
+): VariantResolver<Variants>;
 
 /**
- * Creates a class resolver for a component whose slots carry all of its styling.
+ * Creates a class resolver for a component whose classes are split across named slots.
  *
  * @since 0.3.16-canary.0
  */
-export function tv<Slots extends SlotSchema>(
-  config: SlotVariantConfig<Record<string, never>, Slots>,
-  tvConfig?: TailwindVariantsOptions,
-): VariantResolver<Record<string, never>, Slots>;
-
-/**
- * Creates a class resolver for a component with both variants and slots.
- *
- * @since 0.3.16-canary.0
- */
-export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
-  config: SlotVariantConfig<Variants, Slots>,
-  tvConfig?: TailwindVariantsOptions,
+export function tv<
+  Variants extends VariantSchema = Record<never, never>,
+  Slots extends SlotSchema = Record<never, never>,
+>(
+  config: SlotVariantConfig<Variants, Slots> & AbsentKeys<"extend">,
+  options?: TailwindVariantsOptions,
 ): VariantResolver<Variants, Slots>;
 
 /**
@@ -141,20 +139,18 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
  */
 export function tv<
   BaseVariants extends VariantSchema,
-  // Defaults, not the constraints, for an extension that omits `variants` or `slots`: with no
-  // inference candidate a parameter falls back to its constraint, a string index that widens every
-  // merged key. `BaseSlots` is always inferred from `extend`; it has a default only because the
-  // parameter after it does.
+  // Defaulted because an omitted `variants` or `slots` leaves its parameter no inference candidate, and the
+  // constraint it would fall back to is a string index that widens every merged key.
   ExtensionVariants extends VariantSchema = Record<never, never>,
   BaseSlots extends SlotSchema = Record<never, never>,
   ExtensionSlots extends SlotSchema = Record<never, never>,
 >(
   config: ExtendedVariantConfig<BaseVariants, ExtensionVariants, BaseSlots, ExtensionSlots>,
-  tvConfig?: TailwindVariantsOptions,
+  options?: TailwindVariantsOptions,
 ): VariantResolver<MergedVariantSchema<BaseVariants, ExtensionVariants>, MergedSlotSchema<BaseSlots, ExtensionSlots>>;
 
 /**
- * Wraps a configuration in a resolver that reads it directly once, then compiles it into a plan.
+ * Wraps a configuration in a resolver that reads it directly for its first calls, then compiles it into a plan.
  *
  * @remarks The first calls resolve straight from the configuration — two without slots, one with them — so
  * a component rendered no more often never pays for a plan; the next call compiles, and every call after runs it.
@@ -167,7 +163,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
     | SlotVariantConfig<Variants, Slots>
     | ExtendedVariantConfig<VariantSchema, Variants, SlotSchema, Slots>,
   tvConfiguration: TailwindVariantsOptions = {},
-): VariantResolver<Variants, Slots> {
+): FlatVariantResolver<Variants> | SlottedVariantResolver<Variants, Slots> {
   const { cacheResolutions: shouldCacheResolutions = true } = tvConfiguration;
   const mergeClasses = toClassMerger(tvConfiguration.twMerge);
 
@@ -193,7 +189,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
   // Typed as what the engine builds; the public, per-config result type is applied once, below.
   const variantResolverFunction = (
     variantProps?: VariantSelection<Variants>,
-  ): string | undefined | Record<string, SlotClassResolver<VariantSchema>> => {
+  ): string | Record<string, SlotClassResolver<VariantSchema>> => {
     const props = variantProps ?? EMPTY_PROPS;
 
     if (compiled === null) {
@@ -235,10 +231,10 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
       return createSlotResolvers(plan, slots, props);
     }
 
-    const className = props.className as ClassValue;
-    const customClasses = className === undefined || className === null ? (props.class as ClassValue) : className;
+    const classValue = props.class as ClassValue;
+    const classNameValue = props.className as ClassValue;
     const memo = compiled.flatMemo;
-    const customClassKey = memo === null ? null : toCustomClassKey(customClasses);
+    const customClassKey = memo === null ? null : toCustomClassKey(classValue, classNameValue);
 
     if (memo !== null && customClassKey !== null) {
       const selectionKey = memo.keyOf(props);
@@ -252,17 +248,17 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
           if (hit === undefined) {
             const resolved = resolveVariantClasses(plan, props, undefined);
 
-            memo.cache.set(selectionKey, resolved ?? NO_CLASSES);
+            memo.cache.set(selectionKey, resolved);
 
             return resolved;
           }
 
-          return typeof hit === "string" ? hit : hit === NO_CLASSES ? undefined : hit.merged;
+          return typeof hit === "string" ? hit : hit.merged;
         }
 
         let selection: FlatSelection;
 
-        if (typeof hit === "object" && hit !== NO_CLASSES) {
+        if (typeof hit === "object") {
           selection = hit;
         } else {
           selection = createFlatSelection(plan, props, hit);
@@ -279,7 +275,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
       }
     }
 
-    return resolveVariantClasses(plan, props, customClasses);
+    return resolveVariantClasses(plan, props, toCallerClasses(classValue, classNameValue));
   };
 
   const configuredVariantResolver = variantResolverFunction as VariantResolver<Variants, Slots>;
@@ -294,62 +290,42 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
 }
 
 /**
+ * The type of `tv`, which `createTV` returns bound to shared options.
+ *
+ * @since 0.3.16-canary.0
+ */
+export type TailwindVariantsFactory = typeof tv;
+
+/**
+ * A `tv` and a `cn` that share one set of options.
+ *
+ * @since 0.3.16-canary.0
+ */
+export interface TailwindVariantsApi {
+  /** Joins class values, resolving Tailwind conflicts as the shared `twMerge` option says. */
+  readonly cn: (...classes: Array<ClassValue>) => string;
+  /** Creates a class resolver whose options fall back, one by one, to the shared ones. */
+  readonly tv: TailwindVariantsFactory;
+}
+
+/**
  * Creates a `tv` and a `cn` that share one set of options, so components need not repeat them.
  *
  * @since 0.3.16-canary.0
  */
-export function createTV(globalConfiguration: TailwindVariantsOptions = {}): TailwindVariantsApi {
-  const mergeClasses = toClassMerger(globalConfiguration.twMerge);
+export function createTV(globalOptions: TailwindVariantsOptions = {}): TailwindVariantsApi {
+  const mergeClasses = toClassMerger(globalOptions.twMerge);
 
-  /** Creates a class resolver for a component without slots. */
-  function tvFactory<Variants extends VariantSchema = Record<never, never>>(
-    configuration: VariantConfig<Variants>,
-    localConfiguration?: TailwindVariantsOptions,
-  ): VariantResolver<Variants, Record<string, never>>;
-
-  /** Creates a class resolver for a component whose slots carry all of its styling. */
-  function tvFactory<Slots extends SlotSchema>(
-    configuration: SlotVariantConfig<Record<string, never>, Slots>,
-    localConfiguration?: TailwindVariantsOptions,
-  ): VariantResolver<Record<string, never>, Slots>;
-
-  /** Creates a class resolver for a component with both variants and slots. */
-  function tvFactory<Variants extends VariantSchema, Slots extends SlotSchema>(
-    configuration: SlotVariantConfig<Variants, Slots>,
-    localConfiguration?: TailwindVariantsOptions,
-  ): VariantResolver<Variants, Slots>;
-
-  /** Creates a class resolver that extends another resolver's configuration. */
-  function tvFactory<
-    BaseVariants extends VariantSchema,
-    // Defaults, not the constraints, for an extension that omits `variants` or `slots`: with no
-    // inference candidate a parameter falls back to its constraint, a string index that widens every
-    // merged key. `BaseSlots` is always inferred from `extend`; it has a default only because the
-    // parameter after it does.
-    ExtensionVariants extends VariantSchema = Record<never, never>,
-    BaseSlots extends SlotSchema = Record<never, never>,
-    ExtensionSlots extends SlotSchema = Record<never, never>,
-  >(
-    configuration: ExtendedVariantConfig<BaseVariants, ExtensionVariants, BaseSlots, ExtensionSlots>,
-    localConfiguration?: TailwindVariantsOptions,
-  ): VariantResolver<MergedVariantSchema<BaseVariants, ExtensionVariants>, MergedSlotSchema<BaseSlots, ExtensionSlots>>;
-
-  /** Local options win over the shared ones. */
-  function tvFactory<Variants extends VariantSchema, Slots extends SlotSchema>(
-    configuration:
-      | VariantConfig<Variants>
-      | SlotVariantConfig<Variants, Slots>
-      | ExtendedVariantConfig<VariantSchema, Variants, SlotSchema, Slots>,
-    localConfiguration?: TailwindVariantsOptions,
-  ): VariantResolver<Variants, Slots> {
-    const mergedConfiguration = { ...globalConfiguration, ...localConfiguration };
-
-    return tv(configuration, mergedConfiguration) as VariantResolver<Variants, Slots>;
-  }
+  // Forwards any configuration untouched, so it takes `tv`'s overloads rather than restating them.
+  const tvWithOptions = (configuration: Parameters<TailwindVariantsFactory>[0], options?: TailwindVariantsOptions) =>
+    tv(configuration, {
+      cacheResolutions: options?.cacheResolutions ?? globalOptions.cacheResolutions,
+      twMerge: options?.twMerge ?? globalOptions.twMerge,
+    });
 
   return {
     // The default engine's own `cn` already caches whole calls, so only a supplied merge needs our memo.
     cn: mergeClasses === null ? cx : mergeClasses === twMerge ? cn : createMergingCn(mergeClasses),
-    tv: tvFactory,
+    tv: tvWithOptions as TailwindVariantsFactory,
   };
 }

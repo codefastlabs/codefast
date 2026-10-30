@@ -1,15 +1,8 @@
-/**
- * Encoding one call's variant selection as a key, so a resolver can answer a repeated selection
- * from a cache instead of walking the plan again.
- *
- * Each variant is one digit of a mixed-radix number. An axis no compound reads is keyed by the group
- * key, because two values sharing a key select the same classes. On an axis a compound reads, a
- * value the compounds compare against gets a digit of its own, since `true` and `"true"` share a
- * group key while comparing differently; every other value falls back to its group key.
- */
+/** Encoding one call's variant selection as a key, so a resolver can answer a repeated selection from its store. */
 
 import { toVariantKey } from "#compile/class-values";
 import type { CompoundCondition } from "#compile/compound";
+import { listComparedValues } from "#compile/compound";
 import type { VariantPlan } from "#compile/plan";
 
 /**
@@ -57,16 +50,15 @@ const EMPTY_GROUP: Record<string, unknown> = {};
 const EMPTY_IDS: Map<unknown, number> = new Map();
 
 /**
- * Ids live on a null-prototype object: a variant value of `"toString"` would otherwise read
- * `Object.prototype.toString` back out of a plain one and be mistaken for an id already assigned.
+ * An empty ids table with no prototype, so a variant value of `"toString"` cannot read
+ * `Object.prototype.toString` back out of it as an id already assigned.
  */
 const createValueIds = (): Record<string, number> => Object.create(null) as Record<string, number>;
 
 /**
  * The values each compound-tested name is compared against, keyed by name.
  *
- * @remarks A `Map` keys by SameValueZero, which partitions values exactly as every condition kind
- * tells them apart.
+ * @remarks A `Map` keys by SameValueZero, which tells apart every pair of values a condition does.
  */
 const collectComparedValues = (plan: VariantPlan): Map<string, Map<unknown, number>> => {
   const comparedValues = new Map<string, Map<unknown, number>>();
@@ -78,9 +70,9 @@ const collectComparedValues = (plan: VariantPlan): Map<string, Map<unknown, numb
       comparedValues.set(condition.name, ids);
     }
 
-    for (const expected of Array.isArray(condition.expected) ? condition.expected : [condition.expected]) {
-      if (expected !== undefined && !ids.has(expected)) {
-        ids.set(expected, ids.size + 1);
+    for (const value of listComparedValues(condition)) {
+      if (!ids.has(value)) {
+        ids.set(value, ids.size + 1);
       }
     }
   };
@@ -97,21 +89,19 @@ const collectComparedValues = (plan: VariantPlan): Map<string, Map<unknown, numb
 };
 
 /**
- * Compile a plan's variants into an encoder.
+ * Compiles a plan's variants into an encoder.
  *
- * @remarks `treatFalsyKeyAsUnknown` mirrors the lane the encoder serves: the slot lane rejects a
- * falsy variant key where the flat lane looks it up. A selection space past one safe integer spans
- * several, joined into a string key.
+ * @remarks A selection space past one safe integer spans several, joined into a string key.
  *
  * @since 0.6.0
  */
-export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknown: boolean): SelectionEncoder => {
+export const compileSelectionEncoder = (plan: VariantPlan): SelectionEncoder => {
   const comparedValues = plan.conditionNames.length > 0 ? collectComparedValues(plan) : null;
   const axes: Array<SelectionAxis> = [];
   let part = 0;
   let states = 1;
 
-  // Id zero always means "the call omitted this variant", so a radix leaves room for it.
+  // Id zero stands for the default, omitted or passed as what an omitted value resolves as, so a radix leaves room.
   const addAxis = (name: string, group: Record<string, unknown>, valueCount: number): SelectionAxis => {
     const matchIds = comparedValues?.get(name);
     const kind = matchIds === undefined ? AXIS_BY_GROUP_KEY : AXIS_BY_RAW_VALUE;
@@ -147,12 +137,7 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
     const axis = addAxis(entry.name, entry.source, entry.valueCount);
     const defaultKey = entry.defaultKey;
 
-    // A call passing the default explicitly resolves as one omitting it, so both take id zero. The slot
-    // lane reads a falsy key as no selection, which an omitted variant is not.
-    if (defaultKey === undefined || (treatFalsyKeyAsUnknown && !defaultKey)) {
-      continue;
-    }
-
+    // A call passing the default explicitly resolves as one omitting it, so both take id zero.
     if (axis.kind === AXIS_BY_GROUP_KEY) {
       axis.valueIds[defaultKey] = 0;
     } else {
@@ -180,7 +165,7 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
   const groupIdOf = (axis: SelectionAxis, selected: unknown): number => {
     const variantKey = toVariantKey(selected);
 
-    if (variantKey === undefined || (treatFalsyKeyAsUnknown && !variantKey)) {
+    if (variantKey === undefined) {
       return axis.unknownId;
     }
 
@@ -197,7 +182,7 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
     }
 
     if (axis.nextId >= axis.unknownId) {
-      // More answering keys than own keys were counted for the radix — an inherited one.
+      // An own key the radix did not count: non-enumerable, symbol-keyed, or added after compile.
       return UNENCODABLE;
     }
 
@@ -280,7 +265,7 @@ export const compileSelectionEncoder = (plan: VariantPlan, treatFalsyKeyAsUnknow
         if (axis.kind === AXIS_BY_GROUP_KEY) {
           const variantKey = toVariantKey(selected);
 
-          if (variantKey === undefined || (treatFalsyKeyAsUnknown && !variantKey)) {
+          if (variantKey === undefined) {
             id = axis.unknownId;
           } else {
             const found = axis.valueIds[variantKey];

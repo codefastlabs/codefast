@@ -13,12 +13,12 @@ import { joinVariantClasses } from "#resolve/variants";
  */
 export interface FlatSelection {
   readonly joined: string;
-  readonly merged: string | undefined;
+  readonly merged: string;
   /** Caller classes merged onto this selection that it did not remember, counted until it settles its prefix. */
   misses: number;
   /** Caller classes seen at least twice, keyed by the class string as passed. */
   pairs: Map<string, string> | null;
-  /** What a caller's class merges onto once settled: the merged answer when that is exact, the joined text otherwise. */
+  /** What a caller's class merges onto once settled: the merged answer when exact, the joined text otherwise. */
   prefix: string | null;
 }
 
@@ -72,13 +72,12 @@ export const createClassDoor = (): ClassDoor => {
 /**
  * Resolves a selection's classes once, joined and merged, reusing a merge already worked out.
  *
- * @remarks `merged` is the selection's answer when the store already holds it — `null` for no
- * classes — and `undefined` when it does not.
+ * @remarks `merged` is the selection's answer when the store already holds it, and `undefined` when it does not.
  */
 export const createFlatSelection = (
   plan: VariantPlan,
   variantProps: Record<string, unknown>,
-  merged: string | null | undefined,
+  merged: string | undefined,
 ): FlatSelection => {
   const joined = joinVariantClasses(plan, variantProps);
   const mergeClasses = plan.mergeClasses;
@@ -86,13 +85,7 @@ export const createFlatSelection = (
   return {
     joined,
     merged:
-      merged !== undefined
-        ? (merged ?? undefined)
-        : joined === ""
-          ? undefined
-          : mergeClasses === null
-            ? joined
-            : mergeClasses(joined),
+      merged !== undefined ? merged : joined === "" ? joined : mergeClasses === null ? joined : mergeClasses(joined),
     misses: 0,
     pairs: null,
     prefix: null,
@@ -119,10 +112,8 @@ const dropsOnlyRepeats = (joined: string, merged: string): boolean => {
 /**
  * Resolves a selection with a caller's class string appended, remembering the answer from the class's second sighting.
  *
- * @remarks A caller's class merges onto the merged answer only when merging dropped nothing but repeats:
- * the engine's conflicts are not transitive, so a class one merge drops can come back once a caller's
- * class overrides what dropped it. That check runs once a selection has met a few classes, where the
- * shorter merges repay it.
+ * @remarks The engine's conflicts are not transitive, so only under the default `twMerge`, once a selection has
+ * met a few classes, does it reuse its merged answer as the prefix, and only when merging dropped nothing but repeats.
  */
 export const resolveFlatSelectionWithClass = (
   plan: VariantPlan,
@@ -150,7 +141,7 @@ export const resolveFlatSelectionWithClass = (
     if (mergeClasses === twMerge && ++selection.misses === PREFIX_AFTER_MISSES) {
       const merged = selection.merged;
 
-      prefix = merged !== undefined && dropsOnlyRepeats(prefix, merged) ? merged : prefix;
+      prefix = dropsOnlyRepeats(prefix, merged) ? merged : prefix;
       selection.prefix = prefix;
     }
   }

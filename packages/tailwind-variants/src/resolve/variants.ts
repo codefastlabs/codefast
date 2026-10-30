@@ -25,10 +25,9 @@ export const joinVariantClasses = (plan: VariantPlan, variantProps: Record<strin
     if (selected === undefined) {
       classes = entry.defaultClasses;
     } else {
-      // `toVariantKey` only answers `undefined` for `undefined`, which the default branch takes.
-      const key = toVariantKey(selected) as string;
+      const key = toVariantKey(selected);
 
-      classes = entry.group[key] ?? compileGroupValue(entry, key);
+      classes = key === undefined ? undefined : (entry.group[key] ?? compileGroupValue(entry, key));
     }
 
     if (typeof classes === "string" && classes !== "") {
@@ -53,7 +52,7 @@ export const joinVariantClasses = (plan: VariantPlan, variantProps: Record<strin
 
 /**
  * Resolves classes for a configuration without slots, appending `customClasses` last so the
- * caller's `className`/`class` outranks the configuration.
+ * caller's `class` and `className` outrank the configuration.
  *
  * @since 0.6.0
  */
@@ -61,7 +60,7 @@ export const resolveVariantClasses = (
   plan: VariantPlan,
   variantProps: Record<string, unknown>,
   customClasses: ClassValue,
-): string | undefined => {
+): string => {
   let text = joinVariantClasses(plan, variantProps);
 
   if (customClasses) {
@@ -73,7 +72,7 @@ export const resolveVariantClasses = (
   }
 
   if (text === "") {
-    return undefined;
+    return text;
   }
 
   return plan.mergeClasses === null ? text : plan.mergeClasses(text);
