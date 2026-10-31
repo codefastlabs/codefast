@@ -8,7 +8,11 @@ const VARIANT_COUNT = 20;
 
 const slotName = (index: number): string => (index === 0 ? "base" : `part${String(index)}`);
 
-/** The wide configuration, built once so every side defines the same object. */
+/**
+ * The wide configuration, built once so every side defines the same object.
+ *
+ * @since 0.11.1
+ */
 export const wideSlotsVariants = (() => {
   const slots: Record<string, string> = {};
   const variants: Record<string, Record<string, Record<string, string>>> = {};
@@ -47,7 +51,11 @@ const createSelection = (offset: number): Readonly<Record<string, string>> => {
   return selection;
 };
 
-/** The selections one timed iteration renders. */
+/**
+ * The selections one timed iteration renders.
+ *
+ * @since 0.11.1
+ */
 export const wideSlotsTestProps: ReadonlyArray<Readonly<Record<string, string>>> = Array.from(
   { length: 12 },
   (_, index) => createSelection(index),

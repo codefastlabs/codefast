@@ -14,6 +14,8 @@ import type { ClassValue } from "#types";
  *
  * @remarks Such a configuration compiles every class value to a string, and a group may be the
  * caller's own object, so only a string read counts — an inherited member contributes nothing.
+ *
+ * @since 0.11.0
  */
 export const joinVariantClasses = (plan: VariantPlan, variantProps: Record<string, unknown>): string => {
   let text = plan.base;

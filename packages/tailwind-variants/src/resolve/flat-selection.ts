@@ -10,6 +10,8 @@ import { joinVariantClasses } from "#resolve/variants";
 
 /**
  * One selection's classes, joined and merged once, with the caller classes it has met twice.
+ *
+ * @since 0.11.0
  */
 export interface FlatSelection {
   readonly joined: string;
@@ -24,6 +26,8 @@ export interface FlatSelection {
 
 /**
  * Whether a caller's class string has been seen before by this resolver, marking it seen.
+ *
+ * @since 0.11.0
  */
 export type ClassDoorkeeper = (className: string) => boolean;
 
@@ -40,6 +44,8 @@ const PAIR_LIMIT = 64;
  * Creates a bounded doorkeeper that lets a class string be remembered only from its second sighting.
  *
  * @remarks A collision only admits a class one sighting early, which costs a stored pair and nothing else.
+ *
+ * @since 0.11.0
  */
 export const createClassDoorkeeper = (): ClassDoorkeeper => {
   // Allocated on the first caller class, so a resolver nobody passes one to never pays for it.
@@ -73,6 +79,8 @@ export const createClassDoorkeeper = (): ClassDoorkeeper => {
  * Resolves a selection's classes once, joined and merged, reusing a merge already worked out.
  *
  * @remarks `merged` is the selection's answer when the store already holds it, and `undefined` when it does not.
+ *
+ * @since 0.11.0
  */
 export const createFlatSelection = (
   plan: VariantPlan,
@@ -114,6 +122,8 @@ const dropsOnlyRepeats = (joined: string, merged: string): boolean => {
  *
  * @remarks The engine's conflicts are not transitive, so only under the default `twMerge`, once a selection has
  * met a few classes, does it reuse its merged answer as the prefix, and only when merging dropped nothing but repeats.
+ *
+ * @since 0.11.0
  */
 export const resolveFlatSelectionWithClass = (
   plan: VariantPlan,

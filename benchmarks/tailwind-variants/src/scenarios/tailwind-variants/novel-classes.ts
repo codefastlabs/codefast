@@ -22,7 +22,11 @@ import { renderEverySlot } from "#lib/render-slots";
 import { tailwindVariantsTv } from "#lib/tv-shims";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the rows whose merges always miss. */
+/**
+ * Builds the rows whose merges always miss.
+ *
+ * @since 0.11.1
+ */
 export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {

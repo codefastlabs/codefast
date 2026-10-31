@@ -1,5 +1,12 @@
 # @internal/design-system
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies:
+  - @codefast/ui@0.15.1
+
 ## 0.3.1
 
 ### Patch Changes

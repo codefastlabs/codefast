@@ -8,6 +8,8 @@ const STACK_GAP = 12;
  * Renders charts top to bottom into one PNG data URL, on the given background.
  *
  * @remarks Chart canvases are transparent, so the background keeps the lines legible outside the page.
+ *
+ * @since 0.10.3
  */
 export function stackChartImages(charts: ReadonlyArray<Chart>, background: string): string {
   const pixelRatio = charts[0]?.currentDevicePixelRatio ?? 1;
