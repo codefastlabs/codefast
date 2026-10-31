@@ -70,9 +70,8 @@ function RowGlyph({
 
 /**
  * Renders the group overlay's legend as a table: one row per scenario of the group with its dash
- * pattern and marker shape, one column per library with its colour, each cell swatched in the shade
- * that row takes in that library's family and showing the newest value and its ratio to the selected
- * row's same-library value.
+ * pattern and marker shape, one column per library with its colour, each cell showing the newest value and its
+ * ratio to the selected row's same-library value.
  *
  * @remarks Clicking a row name selects it, the trailing checkbox hides it, and hovering a row lifts
  * its lines on the chart.

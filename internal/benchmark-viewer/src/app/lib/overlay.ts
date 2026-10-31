@@ -1,5 +1,5 @@
 /** Series for the group overlay: every row of one group plotted together, one line per row and library. */
-import { OVERLAY_DASHES, OVERLAY_POINT_STYLES, shadeOf } from "#app/lib/colors";
+import { OVERLAY_DASHES, OVERLAY_POINT_STYLES } from "#app/lib/colors";
 import type { PaletteEntry } from "#app/lib/colors";
 import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#types";
 
@@ -85,8 +85,8 @@ export function overlaySeriesLabel(scenarioId: string, libraryDisplayName: strin
 }
 
 /**
- * Builds the overlay lines: each library keeps its colour family, and a row's position in its group
- * picks the shade, the dash pattern and the point shape every line of that row shares.
+ * Builds the overlay lines: each library keeps its own colour on every row, and a row's position in its group picks
+ * the dash pattern and the point shape every line of that row shares.
  *
  * @remarks A library with no data for a row in the plotted runs draws nothing, so the legend only
  * lists lines that exist.
@@ -113,11 +113,10 @@ export function buildOverlaySeries({
 
     for (const library of libraries) {
       const libraryData = scenario.libraries[library.key];
-      const baseColor = paletteMap[library.key]?.border;
-      if (libraryData === undefined || baseColor === undefined) {
+      const color = paletteMap[library.key]?.border;
+      if (libraryData === undefined || color === undefined) {
         continue;
       }
-      const color = shadeOf(baseColor, scenarioIndex);
       const data = runIndices.map((globalIx) => libraryData.hz[globalIx] ?? null);
       if (data.every((value) => value === null)) {
         continue;

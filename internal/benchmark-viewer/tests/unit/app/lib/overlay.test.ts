@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { OVERLAY_DASHES, OVERLAY_POINT_STYLES, PALETTE, shadeOf } from "#app/lib/colors";
+import { OVERLAY_DASHES, OVERLAY_POINT_STYLES, PALETTE } from "#app/lib/colors";
 import type { PaletteEntry } from "#app/lib/colors";
 import {
   buildOverlaySeries,
@@ -32,7 +32,7 @@ const withMerge = scenario("simple-with-merge", { cf: [10, 12], tv: [2, 2], cva:
 const uncached = scenario("uncached-simple-with-merge", { cf: [0.1, 0.1] });
 
 describe("buildOverlaySeries", () => {
-  it("draws one line per row and library that has data: a family per library, shade, dash and marker per row", () => {
+  it("draws one line per row and library that has data: a colour per library, a dash and marker per row", () => {
     const series = buildOverlaySeries({
       hiddenScenarioIds: [],
       libraries,
@@ -53,9 +53,8 @@ describe("buildOverlaySeries", () => {
       PALETTE[0]!.border,
       PALETTE[1]!.border,
       PALETTE[2]!.border,
-      shadeOf(PALETTE[0]!.border, 1),
+      PALETTE[0]!.border,
     ]);
-    expect(series[3]?.color).not.toBe(PALETTE[0]!.border);
     expect(series.slice(0, 3).map((line) => line.borderDash)).toEqual(Array(3).fill(OVERLAY_DASHES[0]));
     expect(series[3]?.borderDash).toEqual(OVERLAY_DASHES[1]);
     expect(series.slice(0, 3).map((line) => line.pointStyle)).toEqual(Array(3).fill(OVERLAY_POINT_STYLES[0]));
@@ -90,21 +89,6 @@ describe("buildOverlaySeries", () => {
     expect(series.map((line) => line.scenarioId)).toEqual(["uncached-simple-with-merge"]);
     expect(series[0]?.borderDash).toEqual(OVERLAY_DASHES[1]);
     expect(series[0]?.pointStyle).toBe(OVERLAY_POINT_STYLES[1]);
-  });
-});
-
-describe("shadeOf", () => {
-  it("keeps the base colour for the first row and moves lightness for the others", () => {
-    const base = PALETTE[0]!.border;
-    const shades = [0, 1, 2, 3].map((step) => shadeOf(base, step));
-
-    expect(shades[0]).toBe(base);
-    expect(new Set(shades).size).toBe(4);
-    expect(shades.every((shade) => /^#[0-9a-f]{6}$/.test(shade))).toBe(true);
-  });
-
-  it("wraps past the last step so any row count gets a shade", () => {
-    expect(shadeOf(PALETTE[1]!.border, 4)).toBe(PALETTE[1]!.border);
   });
 });
 
