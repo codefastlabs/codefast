@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import type { ReactNode } from "react";
 
 import { formatLocal } from "#app/lib/format";
@@ -40,16 +41,19 @@ export function KpiGrid({ runCount, scenarioCount, latestRun }: KpiGridProps) {
       <Stat label="Libraries">
         {latestRun?.libraryVersions?.length
           ? latestRun.libraryVersions.map((libraryVersion, versionIndex) => (
-              <span className="whitespace-nowrap" key={libraryVersion.key}>
+              // The separator sits outside the unbreakable entry, so a narrow strip wraps between libraries.
+              <Fragment key={libraryVersion.key}>
                 {versionIndex > 0 && <span className="text-zinc-600"> · </span>}
-                <span className="text-bh-lib-key">{libraryVersion.key}</span> {libraryVersion.version}
-                {libraryVersion.gcExposed && (
-                  <span className="text-amber-400" title="--expose-gc active">
-                    {" "}
-                    [gc]
-                  </span>
-                )}
-              </span>
+                <span className="whitespace-nowrap">
+                  <span className="text-bh-lib-key">{libraryVersion.key}</span> {libraryVersion.version}
+                  {libraryVersion.gcExposed && (
+                    <span className="text-amber-400" title="--expose-gc active">
+                      {" "}
+                      [gc]
+                    </span>
+                  )}
+                </span>
+              </Fragment>
             ))
           : "—"}
       </Stat>
