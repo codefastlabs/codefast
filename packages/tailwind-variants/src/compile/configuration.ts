@@ -11,7 +11,7 @@ import type {
   VariantConfig,
   VariantSchema,
   SlotVariantConfig,
-  ExtendedVariantConfig,
+  ExtensionVariantConfig,
   SlotSchema,
   VariantResolver,
 } from "#types";
@@ -20,7 +20,7 @@ type Configuration = VariantConfig<VariantSchema> | SlotVariantConfig<VariantSch
 
 type ExtensionConfiguration =
   | Configuration
-  | ExtendedVariantConfig<VariantSchema, VariantSchema, SlotSchema, SlotSchema>;
+  | ExtensionVariantConfig<VariantSchema, VariantSchema, SlotSchema, SlotSchema>;
 
 /**
  * Whether a configuration declares slots.
@@ -42,8 +42,8 @@ export const hasExtendConfig = <Variants extends VariantSchema, Slots extends Sl
   configuration:
     | VariantConfig<Variants>
     | SlotVariantConfig<Variants, Slots>
-    | ExtendedVariantConfig<VariantSchema, Variants, SlotSchema, Slots>,
-): configuration is ExtendedVariantConfig<VariantSchema, Variants, SlotSchema, Slots> & {
+    | ExtensionVariantConfig<VariantSchema, Variants, SlotSchema, Slots>,
+): configuration is ExtensionVariantConfig<VariantSchema, Variants, SlotSchema, Slots> & {
   readonly extend: VariantResolver<VariantSchema>;
 } => {
   return "extend" in configuration && configuration.extend !== undefined;

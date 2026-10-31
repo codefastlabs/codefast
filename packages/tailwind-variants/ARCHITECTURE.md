@@ -170,12 +170,12 @@ Everything else follows from having to make that distinction hold:
   a plain string until a caller passes a class string; only then does its entry become a record holding the joined and
   merged text and the classes it has met. A hit therefore builds no key, and a component nobody passes a class to never
   allocates the record.
-- **A caller's class is remembered from its second sighting, and only so many per selection.** A small per-resolver door
-  of hashed class strings, allocated on the first class, keeps one-off strings out of the store, and a selection stops
-  remembering classes past a fixed count, because the store promotes a live entry whole and would otherwise carry an
-  ever-growing map with it. Their merge goes through `twMerge` like every other: the engine's `cn` would skip its
-  whole-string probe, but pulls its argument cache into every bundle that renders a variant, for no gain this row could
-  measure.
+- **A caller's class is remembered from its second sighting, and only so many per selection.** A small per-resolver
+  doorkeeper of hashed class strings, allocated on the first class, keeps one-off strings out of the store, and a
+  selection stops remembering classes past a fixed count, because the store promotes a live entry whole and would
+  otherwise carry an ever-growing map with it. Their merge goes through `twMerge` like every other: the engine's `cn`
+  would skip its whole-string probe, but pulls its argument cache into every bundle that renders a variant, for no gain
+  this row could measure.
 - **A caller's class is merged onto the joined text until the merged answer is proven a safe prefix.** The engine's
   conflict table is not transitive: a class one merge drops can come back once a caller's class overrides what dropped
   it, and a merge of the whole keeps it. The merged answer is therefore reused as the prefix only when merging the

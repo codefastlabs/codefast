@@ -11,8 +11,8 @@ import { compileSelectionEncoder, UNENCODABLE } from "#compile/selection";
 import type { ResolutionCache } from "#resolve/cache";
 import { createResolutionCache } from "#resolve/cache";
 import { createColdSlotResolvers, resolveColdVariantClasses } from "#resolve/cold";
-import type { ClassDoor, FlatSelection } from "#resolve/flat-selection";
-import { createClassDoor, createFlatSelection, resolveFlatSelectionWithClass } from "#resolve/flat-selection";
+import type { ClassDoorkeeper, FlatSelection } from "#resolve/flat-selection";
+import { createClassDoorkeeper, createFlatSelection, resolveFlatSelectionWithClass } from "#resolve/flat-selection";
 import { createSlotResolvers } from "#resolve/slots";
 import { resolveVariantClasses } from "#resolve/variants";
 import type {
@@ -24,12 +24,12 @@ import type {
   VariantSchema,
   VariantSelection,
   SlotVariantConfig,
-  ExtendedVariantConfig,
+  ExtensionVariantConfig,
   FlatVariantResolver,
   MergedVariantSchema,
   MergedSlotSchema,
   SlotSchema,
-  SlottedVariantResolver,
+  SlotVariantResolver,
   TailwindVariantsOptions,
   VariantResolver,
 } from "#types";
@@ -49,7 +49,7 @@ interface ResolverMemo<Value> {
 /** Everything a resolver settles when it compiles: the plan, and the store for the lane it runs. */
 interface CompiledResolver {
   /** Admits a caller's class string to a selection's pairs from its second sighting. */
-  readonly flatDoor: ClassDoor | null;
+  readonly flatDoorkeeper: ClassDoorkeeper | null;
   readonly flatMemo: ResolverMemo<FlatSelection | string> | null;
   readonly plan: VariantPlan;
   readonly slotMemo: ResolverMemo<Record<string, SlotClassResolver<VariantSchema>>> | null;
@@ -78,17 +78,22 @@ const compileResolver = (
   const encoder = shouldCacheResolutions ? compileSelectionEncoder(plan) : null;
 
   if (encoder === null) {
-    return { flatDoor: null, flatMemo: null, plan, slotMemo: null };
+    return { flatDoorkeeper: null, flatMemo: null, plan, slotMemo: null };
   }
 
   return plan.slots === null
     ? {
-        flatDoor: createClassDoor(),
+        flatDoorkeeper: createClassDoorkeeper(),
         flatMemo: { cache: createResolutionCache(countRememberedPairs), keyOf: encoder.keyOf },
         plan,
         slotMemo: null,
       }
-    : { flatDoor: null, flatMemo: null, plan, slotMemo: { cache: createResolutionCache(), keyOf: encoder.keyOf } };
+    : {
+        flatDoorkeeper: null,
+        flatMemo: null,
+        plan,
+        slotMemo: { cache: createResolutionCache(), keyOf: encoder.keyOf },
+      };
 };
 
 /**
@@ -142,7 +147,7 @@ export function tv<
   BaseSlots extends SlotSchema = Record<never, never>,
   ExtensionSlots extends SlotSchema = Record<never, never>,
 >(
-  config: ExtendedVariantConfig<BaseVariants, ExtensionVariants, BaseSlots, ExtensionSlots>,
+  config: ExtensionVariantConfig<BaseVariants, ExtensionVariants, BaseSlots, ExtensionSlots>,
   options?: TailwindVariantsOptions,
 ): VariantResolver<MergedVariantSchema<BaseVariants, ExtensionVariants>, MergedSlotSchema<BaseSlots, ExtensionSlots>>;
 
@@ -158,11 +163,11 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
   configuration:
     | VariantConfig<Variants>
     | SlotVariantConfig<Variants, Slots>
-    | ExtendedVariantConfig<VariantSchema, Variants, SlotSchema, Slots>,
-  tvConfiguration: TailwindVariantsOptions = {},
-): FlatVariantResolver<Variants> | SlottedVariantResolver<Variants, Slots> {
-  const { cacheResolutions: shouldCacheResolutions = true } = tvConfiguration;
-  const mergeClasses = toClassMerger(tvConfiguration.twMerge);
+    | ExtensionVariantConfig<VariantSchema, Variants, SlotSchema, Slots>,
+  options: TailwindVariantsOptions = {},
+): FlatVariantResolver<Variants> | SlotVariantResolver<Variants, Slots> {
+  const { cacheResolutions: shouldCacheResolutions = true } = options;
+  const mergeClasses = toClassMerger(options.twMerge);
 
   const mergedConfiguration: VariantConfig<VariantSchema> | SlotVariantConfig<VariantSchema, SlotSchema> =
     hasExtendConfig(configuration)
@@ -264,7 +269,7 @@ export function tv<Variants extends VariantSchema, Slots extends SlotSchema>(
         return resolveFlatSelectionWithClass(
           plan,
           memo.cache,
-          compiled.flatDoor as ClassDoor,
+          compiled.flatDoorkeeper as ClassDoorkeeper,
           selection,
           customClassKey,
         );
@@ -309,14 +314,14 @@ export interface TailwindVariantsApi {
  *
  * @since 0.3.16-canary.0
  */
-export function createTV(globalOptions: TailwindVariantsOptions = {}): TailwindVariantsApi {
-  const mergeClasses = toClassMerger(globalOptions.twMerge);
+export function createTV(sharedOptions: TailwindVariantsOptions = {}): TailwindVariantsApi {
+  const mergeClasses = toClassMerger(sharedOptions.twMerge);
 
   // Forwards any configuration untouched, so it takes `tv`'s overloads rather than restating them.
   const tvWithOptions = (configuration: Parameters<TailwindVariantsFactory>[0], options?: TailwindVariantsOptions) =>
     tv(configuration, {
-      cacheResolutions: options?.cacheResolutions ?? globalOptions.cacheResolutions,
-      twMerge: options?.twMerge ?? globalOptions.twMerge,
+      cacheResolutions: options?.cacheResolutions ?? sharedOptions.cacheResolutions,
+      twMerge: options?.twMerge ?? sharedOptions.twMerge,
     });
 
   return {

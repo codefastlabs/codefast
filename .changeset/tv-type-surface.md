@@ -12,7 +12,7 @@
   yields slot resolvers.
 - A call without slots, and every slot resolver, is typed `string`.
 - `VariantResolver<Variants, Slots>` now selects between two exported shapes, `FlatVariantResolver` and
-  `SlottedVariantResolver`, and its `Slots` defaults to none, so a resolver of one kind is no longer assignable to the
+  `SlotVariantResolver`, and its `Slots` defaults to none, so a resolver of one kind is no longer assignable to the
   other. Its `config` is `readonly`.
 - `TailwindVariantsFactory` is `typeof tv`, so `createTV().tv` carries exactly `tv`'s overloads.
 - A slot map in a compound variant's `class`/`className`, or in an extension's `variants`, must name a declared slot.

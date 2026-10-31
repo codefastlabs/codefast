@@ -291,10 +291,10 @@ function Button({ variant, className, ...props }: ButtonProps) {
 Variant values, slot names, and compound conditions are all inferred — passing an unknown variant value or accessing a
 slot that does not exist is a type error. `ClassValue` is the type of anything accepted where classes are expected
 (strings, numbers, nested arrays, readonly ones included, condition objects). Configuration and option types
-(`VariantConfig`, `SlotVariantConfig`, `ExtendedVariantConfig`, `TailwindVariantsOptions`, and friends) are exported for
-library authors, as are the resolver shapes: `VariantResolver<Variants, Slots>` selects `FlatVariantResolver` without
-slots and `SlottedVariantResolver` with them, and `TailwindVariantsFactory` is `typeof tv`. A configuration held in a
-variable is typed by its shape exactly as the same object literal would be.
+(`VariantConfig`, `SlotVariantConfig`, `ExtensionVariantConfig`, `TailwindVariantsOptions`, and friends) are exported
+for library authors, as are the resolver shapes: `VariantResolver<Variants, Slots>` selects `FlatVariantResolver`
+without slots and `SlotVariantResolver` with them, and `TailwindVariantsFactory` is `typeof tv`. A configuration held in
+a variable is typed by its shape exactly as the same object literal would be.
 
 ## Migrating from `tailwind-variants`
 
