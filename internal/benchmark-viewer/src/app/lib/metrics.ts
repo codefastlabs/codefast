@@ -3,7 +3,7 @@ import { NOISY_IQR_FRACTION } from "@internal/benchmark-harness/report/reliabili
 
 import type { PaletteEntry } from "#app/lib/colors";
 import { DISPERSION_IQR_ALERT } from "#app/lib/constants";
-import { fmtHz, fmtPctChange, fmtRatio, formatLocal } from "#app/lib/format";
+import { fmtCount, fmtHz, fmtPctChange, fmtRatio, formatLocal } from "#app/lib/format";
 import type { EmbeddedLibraryMeta, EmbeddedRun, EmbeddedScenarioSeries } from "#types";
 
 /**
@@ -108,6 +108,8 @@ export type MetaItem =
 export interface MetricCardProps {
   label: string;
   value: string;
+  /** Set apart from the value in a smaller face, so a long number never wraps its unit onto a line alone. */
+  unit?: string | undefined;
   meta: Array<MetaItem>;
   accentColor?: string | undefined;
   isRatio?: boolean;
@@ -205,7 +207,7 @@ export function buildMetrics({
       typeof hzAtNewest === "number" &&
       hzAtNewest > 0
     ) {
-      trend = fmtPctChange(hzAtOldest, hzAtNewest) + ", oldest → newest run in filter";
+      trend = `${fmtPctChange(hzAtOldest, hzAtNewest)} first → last run`;
     }
 
     const runsWithData = hzValues.length;
@@ -226,8 +228,9 @@ export function buildMetrics({
     }
 
     cards.push({
-      label: `${lib.displayName} median hz/op`,
-      value: median !== null ? `${fmtHz(median)} Hz/op` : "—",
+      label: `${lib.displayName} · median`,
+      value: fmtHz(median),
+      unit: median !== null ? "hz/op" : undefined,
       meta,
       accentColor: color,
     });
@@ -256,18 +259,13 @@ export function buildMetrics({
         ratioMedians !== null &&
         Math.abs(medianOfRunRatios - ratioMedians) / ratioMedians > 0.002;
 
-      const meta: Array<MetaItem> = [
-        {
-          type: "text",
-          value: "Median ÷ median for this filter; each side uses runs with hz/op for that library.",
-        },
-      ];
+      const meta: Array<MetaItem> = [];
       if (showPaired && medianOfRunRatios !== null) {
         meta.push({ type: "ratio-paired", value: medianOfRunRatios.toFixed(3) });
       }
 
       cards.push({
-        label: `Ratio · ${primaryLib.displayName} ÷ ${cmpLib.displayName}`,
+        label: `${primaryLib.displayName} ÷ ${cmpLib.displayName}`,
         value: fmtRatio(ratioMedians),
         meta,
         isRatio: true,
@@ -291,14 +289,17 @@ export function buildMetrics({
   });
 
   cards.push({
-    label: "Worst IQR÷median · per plotted run",
+    label: "Worst IQR ÷ median, per run",
     value: "",
     meta: [{ type: "iqr-table", rows: iqrRows }],
   });
 
   const footPieces: Array<string> = [
-    `${runIndices.length} run(s) on the chart${envKey ? "; environment filter on" : "; all environments"}. Median & range: all filtered runs with hz/op. Δ: % change from first → last run in this view when both have data`,
+    `${fmtCount(runIndices.length, "run")} on the chart${envKey ? "; environment filter on" : "; all environments"}. Median & range: all filtered runs with hz/op. Δ: % change from first → last run in this view when both have data`,
   ];
+  if (cards.some((card) => card.isRatio === true)) {
+    footPieces.push("Ratio: median ÷ median, each side over the runs where that library has hz/op");
+  }
   if (runWindow !== "all" && windowedRunCount < baseRunIndices.length) {
     footPieces.push(
       `Runs shown: last ${windowedRunCount} of ${baseRunIndices.length} runs matching Environment + search/group filters`,

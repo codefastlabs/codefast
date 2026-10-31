@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { createMarkersPlugin, definitionChangeMarkers, versionChangeMarkers } from "#app/lib/annotations";
+import {
+  createMarkersPlugin,
+  definitionChangeMarkers,
+  layoutMarkerLabels,
+  versionChangeMarkers,
+} from "#app/lib/annotations";
 import type { EmbeddedRun, EmbeddedScenarioSeries } from "#types";
 
 function run(folder: string, version: string): EmbeddedRun {
@@ -59,5 +64,61 @@ describe("createMarkersPlugin", () => {
 
     expect(plugin.id).toBe("definition-change-markers");
     expect(typeof plugin.afterDatasetsDraw).toBe("function");
+  });
+});
+
+describe("layoutMarkerLabels", () => {
+  const bounds = { left: 0, right: 500 };
+
+  it("keeps labels that clear each other on the top lane, right of their rules", () => {
+    expect(
+      layoutMarkerLabels(
+        [
+          { x: 10, width: 80 },
+          { x: 200, width: 80 },
+        ],
+        bounds,
+        6,
+      ),
+    ).toEqual([
+      { lane: 0, left: 14 },
+      { lane: 0, left: 204 },
+    ]);
+  });
+
+  it("drops a label that would collide to the next lane, whatever order the markers arrive in", () => {
+    expect(
+      layoutMarkerLabels(
+        [
+          { x: 120, width: 140 },
+          { x: 10, width: 150 },
+          { x: 300, width: 60 },
+        ],
+        bounds,
+        6,
+      ),
+    ).toEqual([
+      { lane: 1, left: 124 },
+      { lane: 0, left: 14 },
+      { lane: 0, left: 304 },
+    ]);
+  });
+
+  it("stacks labels sharing one rule", () => {
+    expect(
+      layoutMarkerLabels(
+        [
+          { x: 50, width: 40 },
+          { x: 50, width: 40 },
+        ],
+        bounds,
+        6,
+      ).map((placement) => placement.lane),
+    ).toEqual([0, 1]);
+  });
+
+  it("flips a label left of its rule near the right edge, clamped to the left one", () => {
+    expect(layoutMarkerLabels([{ x: 480, width: 100 }], bounds, 6)).toEqual([{ lane: 0, left: 376 }]);
+    expect(layoutMarkerLabels([{ x: 20, width: 600 }], bounds, 6)).toEqual([{ lane: 0, left: 0 }]);
   });
 });

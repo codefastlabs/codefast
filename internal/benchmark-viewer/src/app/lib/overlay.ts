@@ -1,5 +1,5 @@
 /** Series for the group overlay: every row of one group plotted together, one line per row and library. */
-import { OVERLAY_DASHES, OVERLAY_POINT_STYLES, shadeOf } from "#app/lib/colors";
+import { OVERLAY_DASHES, OVERLAY_POINT_STYLES } from "#app/lib/colors";
 import type { PaletteEntry } from "#app/lib/colors";
 import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#types";
 
@@ -12,7 +12,7 @@ export interface OverlaySeries {
   readonly borderDash: ReadonlyArray<number>;
   readonly color: string;
   readonly data: ReadonlyArray<number | null>;
-  /** Whether this line belongs to the row the user has selected, which draws heavier. */
+  /** Whether this line belongs to the row the user has selected, which draws in front with filled markers. */
   readonly emphasized: boolean;
   readonly iqrFraction: ReadonlyArray<number | null>;
   readonly label: string;
@@ -85,8 +85,8 @@ export function overlaySeriesLabel(scenarioId: string, libraryDisplayName: strin
 }
 
 /**
- * Builds the overlay lines: each library keeps its colour family, and a row's position in its group
- * picks the shade, the dash pattern and the point shape every line of that row shares.
+ * Builds the overlay lines: each library keeps its own colour on every row, and a row's position in its group picks
+ * the dash pattern and the point shape every line of that row shares.
  *
  * @remarks A library with no data for a row in the plotted runs draws nothing, so the legend only
  * lists lines that exist.
@@ -113,11 +113,10 @@ export function buildOverlaySeries({
 
     for (const library of libraries) {
       const libraryData = scenario.libraries[library.key];
-      const baseColor = paletteMap[library.key]?.border;
-      if (libraryData === undefined || baseColor === undefined) {
+      const color = paletteMap[library.key]?.border;
+      if (libraryData === undefined || color === undefined) {
         continue;
       }
-      const color = shadeOf(baseColor, scenarioIndex);
       const data = runIndices.map((globalIx) => libraryData.hz[globalIx] ?? null);
       if (data.every((value) => value === null)) {
         continue;
@@ -162,9 +161,33 @@ export function runIndicesWithData(
  * @since 0.8.0
  */
 export function isSparseLogTick(value: number): boolean {
+  return hasLogMantissa(value, SPARSE_LOG_MANTISSAS);
+}
+
+/**
+ * Whether a logarithmic tick is worth a label on an axis narrower than a decade, where the 1, 2 and 5 alone leave
+ * one or two labels.
+ */
+export function isFineLogTick(value: number): boolean {
+  return hasLogMantissa(value, FINE_LOG_MANTISSAS);
+}
+
+const SPARSE_LOG_MANTISSAS = [1, 2, 5] as const;
+const FINE_LOG_MANTISSAS = [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8] as const;
+
+function hasLogMantissa(value: number, mantissas: ReadonlyArray<number>): boolean {
   if (!(value > 0) || !Number.isFinite(value)) {
     return false;
   }
   const mantissa = value / 10 ** Math.floor(Math.log10(value));
-  return [1, 2, 5].some((step) => Math.abs(mantissa - step) < 1e-6);
+  return mantissas.some((step) => Math.abs(mantissa - step) < 1e-6);
+}
+
+/**
+ * Whether a logarithmic axis covers a full decade, wide enough to label only the 1, 2 and 5 of each.
+ */
+export function spansLogDecade(ticks: ReadonlyArray<{ readonly value: number }>): boolean {
+  const first = ticks[0]?.value;
+  const last = ticks.at(-1)?.value;
+  return first !== undefined && last !== undefined && first > 0 && last / first >= 10;
 }

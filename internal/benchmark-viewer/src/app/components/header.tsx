@@ -1,3 +1,4 @@
+import { DisclosurePanel } from "#app/components/disclosure-panel";
 import { Kbd } from "#app/components/kbd";
 
 interface PageHeaderProps {
@@ -34,14 +35,8 @@ export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
           </button>
         </div>
       </div>
-      <details
-        className="border-bh-border bg-bh-surface mt-5 rounded-2xl border px-4 py-3 shadow-(--shadow-bh-glass-tight) backdrop-blur-xl backdrop-saturate-180 sm:px-5 sm:py-3.5"
-        id="intro-howto-details"
-      >
-        <summary className="text-bh-small cursor-pointer list-none font-semibold text-zinc-100 select-none marker:content-[''] hover:text-white [&::-webkit-details-marker]:hidden">
-          How to read this viewer
-        </summary>
-        <div className="text-bh-small mt-3 border-t border-white/6 pt-3 leading-relaxed text-zinc-400">
+      <DisclosurePanel className="mt-5" id="intro-howto-details" summary="How to read this viewer">
+        <div className="text-bh-small leading-relaxed text-zinc-400">
           <p>
             Quantiles mirror{" "}
             <code className="rounded-md bg-white/8 px-1.5 py-0.5 font-mono text-[0.88em] text-cyan-200/90">
@@ -49,12 +44,13 @@ export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
             </code>{" "}
             across trials. Bands are per‑trial hz/op spread (P25–P75); tooltip IQR% and a dispersion hint highlight
             noisy runs. Axis labels use your <strong className="font-medium text-zinc-300">local time</strong>. Toggle{" "}
-            <strong className="font-medium text-zinc-300">Primary ratios</strong> to overlay primary ÷ compare on the
-            right axis. Use <strong className="font-medium text-zinc-300">Runs shown</strong> to focus on the most
-            recent history window.
+            <strong className="font-medium text-zinc-300">Primary ratios</strong> to plot primary ÷ compare in its own
+            chart under the throughput one, with parity marked. Use{" "}
+            <strong className="font-medium text-zinc-300">Runs shown</strong> to focus on the most recent history
+            window.
           </p>
         </div>
-      </details>
+      </DisclosurePanel>
     </header>
   );
 }

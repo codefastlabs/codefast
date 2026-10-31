@@ -108,7 +108,7 @@ export function MetricsPanel({ currentScenario, runIndices, metricsData }: Metri
   );
 }
 
-function MetricCard({ label, value, meta, accentColor, isRatio }: MetricCardProps) {
+function MetricCard({ label, value, unit, meta, accentColor, isRatio }: MetricCardProps) {
   return (
     <div
       aria-label={label}
@@ -119,12 +119,18 @@ function MetricCard({ label, value, meta, accentColor, isRatio }: MetricCardProp
       role="group"
       style={accentColor ? ({ "--color-bh-metric-accent": accentColor } as CSSProperties) : undefined}
     >
-      <div className="text-bh-metric-accent text-bh-caption mb-[0.4rem] font-semibold tracking-[0.09em] uppercase">
+      {/* Library names are package identifiers, so the label keeps their case instead of the section's capitals. */}
+      <div className="text-bh-metric-accent text-bh-small mb-[0.4rem] leading-snug font-semibold wrap-break-word">
         {label}
       </div>
-      <div className="text-bh-metric-accent text-bh-title leading-[1.3] font-semibold tracking-[-0.028em] wrap-break-word tabular-nums">
-        {value}
-      </div>
+      {value !== "" && (
+        <div className="text-bh-metric-accent text-bh-title leading-[1.3] font-semibold tracking-[-0.028em] wrap-break-word tabular-nums">
+          {value}
+          {unit !== undefined && (
+            <span className="text-bh-label text-bh-caption ms-1.5 font-medium tracking-normal">{unit}</span>
+          )}
+        </div>
+      )}
       {meta.map((item, metaIndex) => (
         <div
           className={cn(

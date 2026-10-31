@@ -97,6 +97,13 @@ export function fmtHz(hz: number | null | undefined): string {
   return Number(hz).toLocaleString("en-US", { maximumFractionDigits: 0 });
 }
 
+/**
+ * Formats a count with its noun in the matching number (`1 run`, `5 runs`).
+ */
+export function fmtCount(count: number, singular: string, plural = `${singular}s`): string {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
 const COMPACT_NUMBER = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
 
 /**

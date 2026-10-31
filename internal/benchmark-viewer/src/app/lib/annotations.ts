@@ -62,13 +62,55 @@ export function versionChangeMarkers(
 
 const MARKER_STROKE = "rgba(253, 224, 71, 0.45)";
 const MARKER_INK = "rgba(253, 224, 71, 0.85)";
-const LABEL_LINE_HEIGHT = 12;
+const LABEL_PLATE = "rgba(10, 10, 12, 0.82)";
+const LABEL_FONT_SIZE = 12;
+const LABEL_LINE_HEIGHT = 16;
+const LABEL_OFFSET = 4;
+const LABEL_PADDING = 3;
+
+/**
+ * Where one marker label lands: the lane it stacks in, counted from the top, and the left edge of its text.
+ */
+export interface MarkerLabelPlacement {
+  readonly lane: number;
+  readonly left: number;
+}
+
+/**
+ * Places marker labels so no two overlap: each sits right of its rule, or left of it when it would run past the right
+ * edge, in the topmost lane where it clears every label already there.
+ *
+ * @remarks Placements come back in the order of `labels`; they are laid out left to right by rule position.
+ */
+export function layoutMarkerLabels(
+  labels: ReadonlyArray<{ readonly x: number; readonly width: number }>,
+  bounds: { readonly left: number; readonly right: number },
+  gap: number,
+): Array<MarkerLabelPlacement> {
+  const placements = new Map<number, MarkerLabelPlacement>();
+  const lanes: Array<Array<readonly [number, number]>> = [];
+  const order = labels.map((_, index) => index).toSorted((a, b) => labels[a]!.x - labels[b]!.x);
+  for (const index of order) {
+    const { x, width } = labels[index]!;
+    const fitsRight = x + LABEL_OFFSET + width <= bounds.right;
+    const left = fitsRight ? x + LABEL_OFFSET : Math.max(bounds.left, x - LABEL_OFFSET - width);
+    const right = left + width;
+    let lane = lanes.findIndex((spans) => spans.every(([start, end]) => right + gap <= start || left >= end + gap));
+    if (lane === -1) {
+      lane = lanes.length;
+      lanes.push([]);
+    }
+    lanes[lane]!.push([left, right]);
+    placements.set(index, { lane, left });
+  }
+  return labels.map((_, index) => placements.get(index)!);
+}
 
 /**
  * A Chart.js plugin that draws each marker as a dashed vertical rule with its label at the top.
  *
- * @remarks Labels on the same point stack downward; drawing happens after the datasets so a rule
- * never hides a line.
+ * @remarks Labels stack into lanes so none overlap, and draw on a plate after every rule so no rule crosses their text;
+ * drawing happens after the datasets so a rule never hides a line.
  *
  * @since 0.8.0
  */
@@ -85,28 +127,39 @@ export function createMarkersPlugin(markers: ReadonlyArray<ChartMarker>): Plugin
         return;
       }
       const { ctx } = chart;
-      const stackByPoint = new Map<number, number>();
+      const visible = markers
+        .map((marker) => ({ label: marker.label, x: xScale.getPixelForValue(marker.pointIndex) }))
+        .filter(({ x }) => Number.isFinite(x) && x >= area.left && x <= area.right);
       ctx.save();
       ctx.setLineDash([3, 3]);
       ctx.lineWidth = 1;
-      ctx.font = "12px system-ui, sans-serif";
-      ctx.textAlign = "left";
-      ctx.textBaseline = "top";
-      for (const marker of markers) {
-        const x = xScale.getPixelForValue(marker.pointIndex);
-        if (!Number.isFinite(x) || x < area.left || x > area.right) {
-          continue;
-        }
-        ctx.strokeStyle = MARKER_STROKE;
+      ctx.strokeStyle = MARKER_STROKE;
+      for (const { x } of visible) {
         ctx.beginPath();
         ctx.moveTo(x, area.top);
         ctx.lineTo(x, area.bottom);
         ctx.stroke();
-        const stacked = stackByPoint.get(marker.pointIndex) ?? 0;
-        stackByPoint.set(marker.pointIndex, stacked + 1);
-        ctx.fillStyle = MARKER_INK;
-        ctx.fillText(marker.label, x + 4, area.top + 2 + stacked * LABEL_LINE_HEIGHT);
       }
+      ctx.setLineDash([]);
+      ctx.font = `${LABEL_FONT_SIZE}px system-ui, sans-serif`;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      const widths = visible.map(({ label }) => ctx.measureText(label).width);
+      const placements = layoutMarkerLabels(
+        visible.map(({ x }, index) => ({ x, width: widths[index]! })),
+        { left: area.left + LABEL_PADDING, right: area.right - LABEL_PADDING },
+        LABEL_PADDING * 2,
+      );
+      visible.forEach(({ label }, index) => {
+        const { lane, left } = placements[index]!;
+        const top = area.top + 2 + lane * LABEL_LINE_HEIGHT;
+        ctx.fillStyle = LABEL_PLATE;
+        ctx.beginPath();
+        ctx.roundRect(left - LABEL_PADDING, top, widths[index]! + LABEL_PADDING * 2, LABEL_LINE_HEIGHT - 1, 3);
+        ctx.fill();
+        ctx.fillStyle = MARKER_INK;
+        ctx.fillText(label, left, top + LABEL_LINE_HEIGHT / 2);
+      });
       ctx.restore();
     },
   };

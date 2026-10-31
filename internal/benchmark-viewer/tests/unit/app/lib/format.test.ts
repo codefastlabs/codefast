@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { fmtRunTick, formatLocal, resolveTimeConventions } from "#app/lib/format";
+import { fmtCount, fmtRunTick, formatLocal, resolveTimeConventions } from "#app/lib/format";
 
 // Mid-month noon UTC: whatever the test machine's timezone, the month stays August.
 const MID_MONTH_ISO = "2026-08-17T12:00:00.000Z";
@@ -52,5 +52,14 @@ describe("fmtRunTick", () => {
   it("falls back to the folder name for missing or invalid timestamps", () => {
     expect(fmtRunTick(undefined, "folder-a", false, VI)).toBe("folder-a");
     expect(fmtRunTick("not-a-date", "folder-b", true, VI)).toBe("folder-b");
+  });
+});
+
+describe("fmtCount", () => {
+  it("puts the noun in the number the count needs", () => {
+    expect(fmtCount(1, "run")).toBe("1 run");
+    expect(fmtCount(0, "run")).toBe("0 runs");
+    expect(fmtCount(5, "older run")).toBe("5 older runs");
+    expect(fmtCount(2, "entry", "entries")).toBe("2 entries");
   });
 });
