@@ -19,17 +19,6 @@ export type VariantValue<Key> = Key extends "false" | "true"
       : Key;
 
 /**
- * `true` for a variant group that declares a `"true"` or `"false"` value, so a call may pass a boolean.
- *
- * @since 0.3.16-canary.0
- */
-export type HasBooleanVariant<Group extends Record<string, unknown>> = "true" extends keyof Group
-  ? true
-  : "false" extends keyof Group
-    ? true
-    : false;
-
-/**
  * The variant props a resolver accepts, with `class` and `className` stripped, for a component's own props to extend.
  *
  * @remarks Read off the resolver's call signature rather than re-derived from its schema, so the
@@ -37,7 +26,7 @@ export type HasBooleanVariant<Group extends Record<string, unknown>> = "true" ex
  *
  * @since 0.3.16-canary.0
  */
-export type VariantProps<Component> = Component extends (props?: infer Props) => unknown
+export type VariantProps<Resolver> = Resolver extends (props?: infer Props) => unknown
   ? Omit<Exclude<Props, undefined>, "class" | "className">
   : never;
 
@@ -232,23 +221,7 @@ export type ClassMerger = (classes: string) => string;
  *
  * @since 0.3.16-canary.0
  */
-export type SlotClassResolver<Variants extends VariantSchema> = (props?: SlotResolverProps<Variants>) => string;
-
-/**
- * The props a slot resolver takes: the same selection the component call does.
- *
- * @since 0.3.16-canary.0
- */
-export type SlotResolverProps<Variants extends VariantSchema> = VariantSelection<Variants>;
-
-/**
- * What a resolver call returns: a class string without slots, or one resolver per slot, `base` included.
- *
- * @since 0.3.16-canary.0
- */
-export type VariantResolverResult<Variants extends VariantSchema, Slots extends SlotSchema> = keyof Slots extends never
-  ? string
-  : SlotClassResolvers<Variants, Slots>;
+export type SlotClassResolver<Variants extends VariantSchema> = (props?: VariantSelection<Variants>) => string;
 
 /**
  * One class resolver per slot, `base` included.
@@ -270,7 +243,7 @@ type SlotClassResolvers<Variants extends VariantSchema, Slots extends SlotSchema
 export type VariantResolver<
   Variants extends VariantSchema,
   Slots extends SlotSchema = Record<never, never>,
-> = keyof Slots extends never ? FlatVariantResolver<Variants> : SlottedVariantResolver<Variants, Slots>;
+> = keyof Slots extends never ? FlatVariantResolver<Variants> : SlotVariantResolver<Variants, Slots>;
 
 /**
  * The resolver of a component without slots, which answers a call with one class string.
@@ -288,7 +261,7 @@ export interface FlatVariantResolver<Variants extends VariantSchema> {
 /**
  * The resolver of a component with slots, which answers a call with one class resolver per slot.
  */
-export interface SlottedVariantResolver<Variants extends VariantSchema, Slots extends SlotSchema> {
+export interface SlotVariantResolver<Variants extends VariantSchema, Slots extends SlotSchema> {
   /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */
   readonly config: SlotVariantConfig<Variants, Slots>;
   /** The variant names in declaration order, an extending configuration's own first, for splitting props by hand. */
@@ -338,7 +311,7 @@ type ExtensionCompoundVariant<Variants extends VariantSchema, Slots extends Slot
  *
  * @since 0.3.16-canary.0
  */
-export interface ExtendedVariantConfig<
+export interface ExtensionVariantConfig<
   BaseVariants extends VariantSchema,
   ExtensionVariants extends VariantSchema,
   BaseSlots extends SlotSchema,
@@ -370,7 +343,7 @@ export interface ExtendedVariantConfig<
    * The resolver whose configuration this one inherits. Required: made optional, this overload
    * would catch every configuration the earlier ones reject and widen every variant name to `string`.
    */
-  readonly extend: FlatVariantResolver<BaseVariants> | SlottedVariantResolver<BaseVariants, BaseSlots>;
+  readonly extend: FlatVariantResolver<BaseVariants> | SlotVariantResolver<BaseVariants, BaseSlots>;
   /** Slots added to the extended resolver's; a slot both declare joins, the extended resolver's classes first. */
   readonly slots?: ExtensionSlots;
   /** Variants added to the extended resolver's; a value both declare joins, the extended resolver's classes first. */

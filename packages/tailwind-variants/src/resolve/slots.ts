@@ -8,7 +8,7 @@ import { pickClassProp, toClassText, toVariantKey } from "#compile/class-values"
 import { matchesCompoundConditions } from "#compile/compound";
 import { compileGroupValue } from "#compile/plan";
 import type { SlotPlanEntry, VariantPlan } from "#compile/plan";
-import type { SlotClassResolver, SlotResolverProps, VariantSchema } from "#types";
+import type { SlotClassResolver, VariantSchema, VariantSelection } from "#types";
 
 /**
  * One resolution of the variant props, shared by every slot of that call.
@@ -240,7 +240,7 @@ const resolveSlot = (
   slot: SlotPlanEntry,
   slotIndex: number,
   // Null is what a JavaScript caller passes for no props.
-  slotProps: SlotResolverProps<VariantSchema> | null | undefined,
+  slotProps: VariantSelection<VariantSchema> | null | undefined,
 ): string => {
   if (slotProps === undefined || slotProps === null) {
     return resolveBareSlot(plan, context, slotIndex);
@@ -284,7 +284,7 @@ export const createSlotResolvers = (
   const resolvers: Record<string, SlotClassResolver<VariantSchema>> = {};
 
   for (const [slotIndex, slot] of slots.entries()) {
-    resolvers[slot.name] = (props?: SlotResolverProps<VariantSchema>): string =>
+    resolvers[slot.name] = (props?: VariantSelection<VariantSchema>): string =>
       resolveSlot(plan, context, slot, slotIndex, props);
   }
 

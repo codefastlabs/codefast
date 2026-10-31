@@ -8,11 +8,11 @@ import type {
   ClassMerger,
   ClassValue,
   SlotClassResolver,
-  SlotResolverProps,
   SlotSchema,
   SlotVariantConfig,
   VariantConfig,
   VariantSchema,
+  VariantSelection,
 } from "#types";
 
 type Definition = SlotVariantConfig<VariantSchema, SlotSchema> | VariantConfig<VariantSchema>;
@@ -248,7 +248,7 @@ export const createColdSlotResolvers = (
     let memoised = "";
 
     // Null is what a JavaScript caller passes for no props.
-    resolvers[slotName] = (slotProps?: SlotResolverProps<VariantSchema> | null): string => {
+    resolvers[slotName] = (slotProps?: VariantSelection<VariantSchema> | null): string => {
       if (slotProps === undefined || slotProps === null) {
         if (!resolved) {
           memoised = finish(coldSlotText(configuration, defaults, props, slotName, null), mergeClasses);

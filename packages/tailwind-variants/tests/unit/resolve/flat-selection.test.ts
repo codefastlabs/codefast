@@ -2,7 +2,7 @@ import { twMerge } from "cn";
 import { twMerge as tailwindMerge } from "tailwind-merge";
 
 import { tv } from "#index";
-import { createClassDoor } from "#resolve/flat-selection";
+import { createClassDoorkeeper } from "#resolve/flat-selection";
 
 type FlatResolver = (props?: Record<string, unknown>) => string | undefined;
 
@@ -164,14 +164,14 @@ describe("a selection's remembered caller classes", () => {
   });
 });
 
-describe("createClassDoor", () => {
+describe("createClassDoorkeeper", () => {
   test("admits a class string from its second sighting", () => {
-    const door = createClassDoor();
+    const doorkeeper = createClassDoorkeeper();
 
-    expect(door("px-2")).toBe(false);
-    expect(door("px-2")).toBe(true);
-    expect(door("px-4")).toBe(false);
-    expect(door("")).toBe(false);
-    expect(door("")).toBe(true);
+    expect(doorkeeper("px-2")).toBe(false);
+    expect(doorkeeper("px-2")).toBe(true);
+    expect(doorkeeper("px-4")).toBe(false);
+    expect(doorkeeper("")).toBe(false);
+    expect(doorkeeper("")).toBe(true);
   });
 });

@@ -25,10 +25,10 @@ export interface FlatSelection {
 /**
  * Whether a caller's class string has been seen before by this resolver, marking it seen.
  */
-export type ClassDoor = (className: string) => boolean;
+export type ClassDoorkeeper = (className: string) => boolean;
 
-/** Slots in a class door; a power of two, so a hash masks straight to one. */
-const DOOR_SLOTS = 256;
+/** Slots in a class doorkeeper; a power of two, so a hash masks straight to one. */
+const DOORKEEPER_SLOTS = 256;
 
 /** Caller classes a selection merges before it settles its prefix, so a selection meeting one or two never pays to. */
 const PREFIX_AFTER_MISSES = 4;
@@ -37,16 +37,16 @@ const PREFIX_AFTER_MISSES = 4;
 const PAIR_LIMIT = 64;
 
 /**
- * Creates a bounded door that lets a class string be remembered only from its second sighting.
+ * Creates a bounded doorkeeper that lets a class string be remembered only from its second sighting.
  *
  * @remarks A collision only admits a class one sighting early, which costs a stored pair and nothing else.
  */
-export const createClassDoor = (): ClassDoor => {
+export const createClassDoorkeeper = (): ClassDoorkeeper => {
   // Allocated on the first caller class, so a resolver nobody passes one to never pays for it.
   let seen: Int32Array | null = null;
 
   return (className: string): boolean => {
-    seen ??= new Int32Array(DOOR_SLOTS);
+    seen ??= new Int32Array(DOORKEEPER_SLOTS);
 
     let hash = 0x811c9dc5;
 
@@ -57,7 +57,7 @@ export const createClassDoor = (): ClassDoor => {
     // Never zero, so an empty slot always reads as unseen.
     hash |= 1;
 
-    const slot = hash & (DOOR_SLOTS - 1);
+    const slot = hash & (DOORKEEPER_SLOTS - 1);
 
     if (seen[slot] === hash) {
       return true;
@@ -118,7 +118,7 @@ const dropsOnlyRepeats = (joined: string, merged: string): boolean => {
 export const resolveFlatSelectionWithClass = (
   plan: VariantPlan,
   cache: Pick<ResolutionCache<unknown>, "charge">,
-  door: ClassDoor,
+  doorkeeper: ClassDoorkeeper,
   selection: FlatSelection,
   className: string,
 ): string => {
@@ -154,7 +154,7 @@ export const resolveFlatSelectionWithClass = (
 
   const merged = mergeClasses(text);
 
-  if (door(className) && (pairs === null || pairs.size < PAIR_LIMIT)) {
+  if (doorkeeper(className) && (pairs === null || pairs.size < PAIR_LIMIT)) {
     (selection.pairs ??= new Map()).set(className, merged);
     cache.charge();
   }
