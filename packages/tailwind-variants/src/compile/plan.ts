@@ -42,6 +42,8 @@ export interface VariantPlanEntry {
  *
  * @remarks A group read in place is the configuration's own object and already holds every value,
  * so it is never written to.
+ *
+ * @since 0.11.0
  */
 export const compileGroupValue = (entry: VariantPlanEntry, key: string): PlanClasses | undefined => {
   const source = entry.source;

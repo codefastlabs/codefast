@@ -5,7 +5,11 @@ import { TV_MERGE_ENABLED } from "#harness/bench-options";
 import { tailwindVariantsTv } from "#lib/tv-shims";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `data-cells` row. */
+/**
+ * Builds the `data-cells` row.
+ *
+ * @since 0.11.1
+ */
 export function buildTailwindVariantsNpmDataCellsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {

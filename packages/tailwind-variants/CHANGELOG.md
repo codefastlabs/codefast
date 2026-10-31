@@ -1,5 +1,126 @@
 # @codefast/tailwind-variants
 
+## 0.11.0
+
+### Minor Changes
+
+- [#1185](https://github.com/codefastlabs/codefast/pull/1185) **Breaking:** three exported types are renamed or removed so each name says what the type is.
+
+  - `ExtendedVariantConfig` is now `ExtensionVariantConfig`: it configures the extension, not the resolver it extends.
+  - `SlotResolverProps` is removed; a slot resolver takes `VariantSelection`, the same selection a resolver call takes.
+  - `HasBooleanVariant` and `VariantResolverResult` are removed. Nothing read them: `VariantValue` already admits a
+    boolean for a `"true"`/`"false"` group, and `ReturnType` of a resolver gives what a call returns.
+
+- [#1182](https://github.com/codefastlabs/codefast/pull/1182) **Breaking:** a slot call that passes both `class` and `className` now uses `className` alone, as a resolver call and a
+  compound entry already did; it used to append both, `className` then `class`, so `class` won a conflict. One rule now
+  covers every place a class prop appears: `className` when it is given, `class` otherwise.
+
+- [#1172](https://github.com/codefastlabs/codefast/pull/1172) **Breaking:** the merge engine is now [`cn`](https://github.com/shadcn-ui/cn), which replaces `tailwind-merge` as the
+  peer dependency (`cn >= 0.5.0`). `cn` produces the same output as `tailwind-merge` and merges a string no cache has seen
+  several times faster, so a first render, a cold page load and a `className` unique to its call all cost less. The
+  exported `cn` is the engine's own, whose argument cache answers a repeated call before any join. Install `cn` in place
+  of `tailwind-merge`; custom class groups come from `extendTailwindMerge` in `cn/config`, and an app that still imports
+  `tailwind-merge` elsewhere can alias it to `cn` so the bundle carries one engine.
+
+- [#1182](https://github.com/codefastlabs/codefast/pull/1182) **Breaking:** a compound condition treats `undefined`, `null` and `false` as the same value, inside a list as well, in
+  compound variants and compound slots of every configuration — the rule upstream `tailwind-variants` applies. A slot
+  configuration's compound variant on `false` now matches an omitted variant, and a condition on `false` or `[false]`
+  matches a `null` one.
+
+- [#1182](https://github.com/codefastlabs/codefast/pull/1182) **Breaking:** a resolver or slot whose resolution has no classes now returns `""`, as upstream `tailwind-variants` does,
+  instead of `undefined`.
+
+- [#1182](https://github.com/codefastlabs/codefast/pull/1182) **Breaking:** `extend` now merges a configuration the way upstream `tailwind-variants` does. A variant value, a slot or
+  a slot-map entry the child redeclares joins the parent's classes, parent first, instead of replacing them; a child's
+  `base` joins a parent's `slots.base`; a slot child over a flat parent puts its own base before the parent's; a child's
+  `compoundSlots` apply without redeclaring `slots`; and the child's variant names come first, in `variantKeys` and in the
+  order their classes are emitted.
+
+- [#1162](https://github.com/codefastlabs/codefast/pull/1162) **Breaking:** `twMergeConfig` is removed. The `twMerge` option now takes `true` (the default engine's `twMerge`),
+  `false` (keep every declared class), or a merge function `(classes: string) => string` that replaces the merge for `tv`
+  and for the `cn` a `createTV` factory returns. Custom class groups move to `twMerge: extendTailwindMerge(config)`, built
+  by the caller from `cn/config` or any drop-in engine, so no bundle carries the configuration compiler unless the
+  application builds one. The new `ClassMerger` type names the function the option accepts.
+
+- [#1182](https://github.com/codefastlabs/codefast/pull/1182) **Breaking:** a slot resolves the way upstream `tailwind-variants` resolves it. A compound slot reads the slot's own
+  props, so `item({ disabled: true })` no longer gets a `disabled: false` compound slot; a slot prop set to `null` or
+  `undefined` keeps the call's selection; a slot listed twice in a compound slot takes its classes twice on every path; an
+  empty compound slot adds no stray space; and calling a slot with `null` returns its classes instead of throwing. The
+  first call no longer reads the caller's props object when a slot is called later, so a reused props object cannot change
+  what it resolved to.
+
+- [#1182](https://github.com/codefastlabs/codefast/pull/1182) **Breaking:** `tv`'s types now describe what it returns for every configuration, not only for a fresh object literal.
+
+  - A configuration held in a variable selects the same overload as the literal would: one with `slots` yields slot
+    resolvers rather than a string, and one with `extend` keeps the variants it inherits.
+  - A resolver without variants takes no variant props, slots or not, so `card({ bogus: "x" })` and
+    `createTV().tv({ base: "flex" })({ bogus: "x" })` no longer compile, `keyof VariantProps` of a slot-only resolver is
+    `never`, and extending it keeps the extension's literal values. Extending a resolver without slots and adding `slots`
+    yields slot resolvers.
+  - A call without slots, and every slot resolver, is typed `string`.
+  - `VariantResolver<Variants, Slots>` now selects between two exported shapes, `FlatVariantResolver` and
+    `SlotVariantResolver`, and its `Slots` defaults to none, so a resolver of one kind is no longer assignable to the
+    other. Its `config` is `readonly`.
+  - `TailwindVariantsFactory` is `typeof tv`, so `createTV().tv` carries exactly `tv`'s overloads.
+  - A slot map in a compound variant's `class`/`className`, or in an extension's `variants`, must name a declared slot.
+  - A compound slot's condition accepts an array of alternatives, as compound variants already did.
+  - Readonly class arrays (`as const`) are accepted wherever classes are.
+
+- [#1182](https://github.com/codefastlabs/codefast/pull/1182) **Breaking:** a variant value is read the way upstream `tailwind-variants` reads it, the same in every lane. A slot
+  component now selects key `"0"` for `0` instead of ignoring it; `""`, `NaN` and `0n` read as `"false"`, so they select a
+  boolean group's `false` value and no other key; and `null`, an array or an object selects nothing rather than looking up
+  its string form. Only an omitted or `undefined` value takes the configured default.
+
+- [#1182](https://github.com/codefastlabs/codefast/pull/1182) **Breaking:** a numeric variant key is typed in both spellings the resolver reads it by, so `cols: { 1: "…" }` accepts
+  `cols: "1"` and `cols: { "1": "…" }` accepts `cols: 1`. `VariantProps` widens to match: code that narrows such a prop to
+  the numbers alone now has to admit the strings too. `defaultVariants` also accepts an explicit `undefined`.
+
+### Patch Changes
+
+- [#1182](https://github.com/codefastlabs/codefast/pull/1182) A resolver whose callers keep re-reading more selections than its cache holds no longer grows without bound: an entry
+  read back from the older generation now counts toward the limit, together with the caller classes it remembers, so the
+  store retires a generation the way a fresh one does. A generation's limit is sized so a table whose cells take their
+  selection and `className` from data still fits once those classes are counted.
+
+- [#1169](https://github.com/codefastlabs/codefast/pull/1169) The `cn` a `createTV` factory returns over a merge function of the caller's answers a repeated call of two strings — a
+  static class list and the caller's `className` — from a memo keyed on the strings as passed, so a repeat skips both the
+  join and the merge engine's lookup of a freshly joined key. `cx` joins its arguments in one pass, so a value that is not
+  a string no longer restarts the join.
+
+- [#1182](https://github.com/codefastlabs/codefast/pull/1182) A `tv` from `createTV` falls back to each shared option the call leaves `undefined`, so `{ twMerge: undefined }` no
+  longer overrides a shared `twMerge: false`. `cacheResolutions` admits an explicit `undefined`, so a possibly-undefined
+  value can be forwarded under `exactOptionalPropertyTypes`.
+
+- [#1174](https://github.com/codefastlabs/codefast/pull/1174) A call that passes a variant's default explicitly resolves from the same cache entry as one that omits it, so a page
+  mixing `size: "default"` with no `size` at all merges that answer once.
+
+- [#1175](https://github.com/codefastlabs/codefast/pull/1175) A caller's class on a component without slots merges onto the selection's joined text. Under the default merge, a
+  selection that has met several classes settles on reusing its shorter merged answer instead when merging dropped nothing
+  but repeats, so the first class a selection meets costs one merge and nothing more. A selection also stops remembering
+  caller classes past a fixed count, which keeps a long-lived selection's memory bounded.
+
+- [#1176](https://github.com/codefastlabs/codefast/pull/1176) A component without slots compiles its plan on the third call instead of the second, so one rendered exactly twice —
+  common on a server render or a page that shows it twice — pays for no plan; a cold call without slots costs less than a
+  compile, and the gap grows with the number of variants. Slot components still compile on their second call.
+
+- [#1173](https://github.com/codefastlabs/codefast/pull/1173) A resolver without slots remembers each selection once and the classes callers pass it inside that entry, so a repeated
+  call builds no cache key, and a caller's class is remembered only from its second sighting — a `className` unique to its
+  call no longer churns the store.
+
+- [#1170](https://github.com/codefastlabs/codefast/pull/1170) The call that compiles a resolver's plan — the third for a component without slots, the second for one with them —
+  compiles only the variant values that call selects, plus each group's default, instead of every value the configuration
+  declares; the rest compile the first time a call selects them. A component rendered only a few times pays far less, and
+  a group nobody selects from costs nothing.
+
+- [#1168](https://github.com/codefastlabs/codefast/pull/1168) A resolver keeps answering from its cache where it used to stop: a compound-tested variant no longer runs out of keys
+  however many distinct values callers pass, a configuration whose selection space is past one safe integer is still
+  cached, and the store holds enough selections for a component whose variants and `className` come from data.
+
+- [#1167](https://github.com/codefastlabs/codefast/pull/1167) A slot called with props that carry only `class` or `className` — how a sub-component passes on the `className` it was
+  given — no longer re-resolves the slot on every call. An absent or empty class returns the slot's memoised answer, and a
+  present one is merged onto the call's shared text, so `root({ className })` costs a lookup instead of a full resolve and
+  merge. Answers are unchanged.
+
 ## 0.10.0
 
 ### Minor Changes

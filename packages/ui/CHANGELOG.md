@@ -1,5 +1,13 @@
 # @codefast/ui
 
+## 0.15.1
+
+### Patch Changes
+
+- [#1172](https://github.com/codefastlabs/codefast/pull/1172) Depends on `cn` instead of `tailwind-merge`, the merge engine `@codefast/tailwind-variants` now takes as its peer.
+- Updated dependencies:
+  - @codefast/tailwind-variants@0.11.0
+
 ## 0.15.0
 
 ### Minor Changes

@@ -184,6 +184,8 @@ export interface SlotVariantConfig<Variants extends VariantSchema, Slots extends
 /**
  * The configuration keys a `tv` overload declares absent, so a configuration held in a variable selects it only
  * when it leaves them out, exactly as a fresh literal would.
+ *
+ * @since 0.11.0
  */
 export type AbsentKeys<Key extends PropertyKey> = { readonly [Name in Key]?: undefined };
 
@@ -213,6 +215,8 @@ export interface TailwindVariantsOptions {
 
 /**
  * A function that resolves Tailwind conflicts in one space-separated class string.
+ *
+ * @since 0.11.0
  */
 export type ClassMerger = (classes: string) => string;
 
@@ -247,6 +251,8 @@ export type VariantResolver<
 
 /**
  * The resolver of a component without slots, which answers a call with one class string.
+ *
+ * @since 0.11.0
  */
 export interface FlatVariantResolver<Variants extends VariantSchema> {
   /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */
@@ -260,6 +266,8 @@ export interface FlatVariantResolver<Variants extends VariantSchema> {
 
 /**
  * The resolver of a component with slots, which answers a call with one class resolver per slot.
+ *
+ * @since 0.11.0
  */
 export interface SlotVariantResolver<Variants extends VariantSchema, Slots extends SlotSchema> {
   /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */

@@ -4,7 +4,11 @@ import { CN_WITH_MERGE } from "#fixtures/scenario-parity";
 import { tailwindVariantsCn } from "#lib/tv-shims";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `cn` row. */
+/**
+ * Builds the `cn` row.
+ *
+ * @since 0.11.1
+ */
 export function buildTailwindVariantsNpmCnScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {

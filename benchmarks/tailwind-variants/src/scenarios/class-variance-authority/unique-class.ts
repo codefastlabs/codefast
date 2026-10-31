@@ -7,7 +7,11 @@ import { buttonVariants } from "#fixtures/simple";
 import { cva } from "#lib/tv-shims";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `unique-class` row. */
+/**
+ * Builds the `unique-class` row.
+ *
+ * @since 0.11.1
+ */
 export function buildClassVarianceAuthorityUniqueClassScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {

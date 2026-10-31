@@ -1,5 +1,13 @@
 # @codefast/benchmark-di
 
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies:
+  - @internal/benchmark-harness@0.12.1
+  - @internal/benchmark-viewer@0.10.3
+
 ## 0.11.0
 
 ### Minor Changes

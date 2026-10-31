@@ -10,7 +10,11 @@ import type { BenchScenario } from "#scenarios/types";
 
 const card = codefastTvFn(slotsVariants, TV_MERGE_ENABLED) as ClassedCardRenderer;
 
-/** Builds the `slot-class` row. */
+/**
+ * Builds the `slot-class` row.
+ *
+ * @since 0.11.1
+ */
 export function buildCodefastSlotClassScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {

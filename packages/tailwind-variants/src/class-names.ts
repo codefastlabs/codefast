@@ -106,6 +106,8 @@ const PAIR_BUCKET_LIMIT = 8;
  *
  * @remarks Keyed on a static class list and the caller's `className` as passed, so a hit hashes no freshly
  * joined string; a first class earns a bucket only on its second sighting. Assumes `mergeClasses` is pure.
+ *
+ * @since 0.11.0
  */
 export const createMergingCn = (mergeClasses: ClassMerger): ((...classes: Array<ClassValue>) => string) => {
   // `null` marks a first class seen once and not yet given a bucket.

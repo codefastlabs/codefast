@@ -36,6 +36,8 @@ const isAbsent = (value: unknown): boolean => value === undefined || value === n
  * Whether a value a call resolved satisfies one configured compound value, a list meaning any of its values.
  *
  * @remarks `undefined`, `null` and `false` satisfy one another; anything else must be strictly equal.
+ *
+ * @since 0.11.0
  */
 export const matchesCompoundValue = (expected: unknown, actual: unknown): boolean => {
   if (!Array.isArray(expected)) {
@@ -55,6 +57,8 @@ export const matchesCompoundValue = (expected: unknown, actual: unknown): boolea
  * The values a condition tells apart, so a selection key can keep them apart too.
  *
  * @remarks An absent value adds `null` and `false`; `undefined` is an omitted variant, which the key already separates.
+ *
+ * @since 0.11.0
  */
 export const listComparedValues = (condition: CompoundCondition): ReadonlyArray<unknown> => {
   const values =
