@@ -1,5 +1,6 @@
 import type { ComponentProps } from "react";
 
+import { DisclosurePanel } from "#app/components/disclosure-panel";
 import type { PaletteEntry } from "#app/lib/colors";
 import { formatLocal } from "#app/lib/format";
 import type { SnapshotRow } from "#app/lib/metrics";
@@ -10,7 +11,7 @@ function Th({ className, ...props }: ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "border-b-bh-table-line bg-bh-table-head text-bh-label text-bh-caption z-3 border-b px-[0.65rem] py-[0.15rem] text-start font-semibold tracking-wider whitespace-nowrap uppercase",
+        "border-b-bh-table-line bg-bh-table-head text-bh-label text-bh-caption sticky top-0 z-3 border-b px-[0.65rem] py-[0.15rem] text-start font-semibold whitespace-nowrap",
         className,
       )}
       {...props}
@@ -20,7 +21,13 @@ function Th({ className, ...props }: ComponentProps<"th">) {
 
 function Td({ className, ...props }: ComponentProps<"td">) {
   return (
-    <td className={cn("border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-start", className)} {...props} />
+    <td
+      className={cn(
+        "border-b-bh-table-line border-b px-[0.65rem] py-[0.15rem] text-start whitespace-nowrap",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
@@ -47,34 +54,28 @@ export function SnapshotSection({
   latestRun,
 }: SnapshotSectionProps) {
   return (
-    <details
-      className="border-bh-border bg-bh-surface open:bg-bh-surface-open-muted mt-10 rounded-[1.25rem] border px-5 py-4 backdrop-blur-xl backdrop-saturate-180 sm:px-6"
-      id="snapshot-details"
-    >
-      <summary className="text-bh-small cursor-pointer list-none py-1 leading-snug font-semibold text-zinc-100 marker:content-[''] [&::-webkit-details-marker]:hidden">
-        <span className="text-cyan-200/90">Latest measurement</span> by scenario (table)
-      </summary>
+    <DisclosurePanel className="mt-6" id="snapshot-details" summary="Latest measurement per scenario">
       <p className="text-bh-small text-bh-label-muted mb-3 leading-relaxed" id="snapshot-desc">
-        Each cell uses that library's newest run with data ({runCount} runs scanned), independent of the Environment
-        selector — so a ratio can pair values from different runs. As of dates the newest contributing run.
+        Each cell uses that library's newest run with data ({runCount} runs scanned), whatever the Environment filter —
+        so a ratio can pair values from different runs. As of is the newest run that contributed to the row.
       </p>
-      <div className="border-bh-border bg-bh-scrim-table overflow-x-auto rounded-xl border [-webkit-overflow-scrolling:touch]">
+      {/* Its own scroll box, so the header row stays in view down every scenario. */}
+      <div className="border-bh-border bg-bh-scrim-table max-h-[min(36rem,70dvh)] overflow-auto overscroll-contain rounded-xl border [-webkit-overflow-scrolling:touch]">
         <table
+          aria-describedby="snapshot-desc"
           aria-label="Latest run throughput by scenario"
           className="text-bh-small w-full border-collapse tabular-nums"
         >
           <thead>
             <tr>
               <Th
-                className="bg-bh-table-sticky sticky start-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]"
+                className="bg-bh-table-sticky sticky start-0 z-4 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]"
                 scope="col"
               >
                 Scenario
               </Th>
-              <Th
-                className="bg-bh-table-sticky sticky start-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]"
-                scope="col"
-              >
+              {/* The id already leads with its group, so a phone spends the width on numbers instead. */}
+              <Th className="max-sm:hidden" scope="col">
                 Group
               </Th>
               {orderedLibraries.map((lib) => (
@@ -103,12 +104,10 @@ export function SnapshotSection({
                 className="group hover:bg-bh-table-hover even:bg-bh-table-zebra even:hover:bg-bh-table-zebra-hover"
                 key={row.id}
               >
-                <Td className="bg-bh-table-sticky group-hover:bg-bh-table-sticky-hover group-even:bg-bh-table-sticky-zebra group-even:group-hover:bg-bh-table-sticky-zebra-hover sticky start-0 z-2 max-w-56 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
+                <Td className="bg-bh-table-sticky group-hover:bg-bh-table-sticky-hover group-even:bg-bh-table-sticky-zebra group-even:group-hover:bg-bh-table-sticky-zebra-hover sticky start-0 z-2 min-w-30 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
                   {row.id}
                 </Td>
-                <Td className="bg-bh-table-sticky group-hover:bg-bh-table-sticky-hover group-even:bg-bh-table-sticky-zebra group-even:group-hover:bg-bh-table-sticky-zebra-hover sticky start-30 z-2 min-w-20 shadow-[0.0625rem_0_0_var(--color-bh-border-strong)]">
-                  {row.group}
-                </Td>
+                <Td className="text-bh-label max-sm:hidden">{row.group}</Td>
                 {row.hzCells.map((hzCell, cellIndex) => (
                   <Td className="text-end tabular-nums" key={cellIndex}>
                     {hzCell}
@@ -132,6 +131,6 @@ export function SnapshotSection({
           Folder {latestRun.folder} · {formatLocal(latestRun.timestampIso, latestRun.folder)} (local)
         </div>
       )}
-    </details>
+    </DisclosurePanel>
   );
 }
