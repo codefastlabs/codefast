@@ -1,5 +1,3 @@
-import type { RefObject } from "react";
-
 import type { ChartInstance } from "#app/components/chart";
 import { ChartPanel } from "#app/components/chart";
 import { ChartControlPanel } from "#app/components/controls";
@@ -17,6 +15,8 @@ import { useHashSync } from "#app/hooks/use-hash";
 import { useBenchPayload } from "#app/hooks/use-payload";
 import { useToast } from "#app/hooks/use-toast";
 import { useViewState } from "#app/hooks/use-view";
+import { stackChartImages } from "#app/lib/chart-image";
+import { CHART_SURFACE } from "#app/lib/colors";
 import { buildHash } from "#app/lib/hash";
 import { cn } from "#app/lib/utils";
 import type { EmbeddedViewerPayload } from "#types";
@@ -105,9 +105,8 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     })),
   ];
 
-  function handleDownloadPng(chartRef: RefObject<ChartInstance | null>) {
-    const chart = chartRef.current;
-    if (!chart) {
+  function handleDownloadPng(charts: ReadonlyArray<ChartInstance>) {
+    if (charts.length === 0) {
       showToast("Nothing to export yet — select a scenario with plotted runs.");
       return;
     }
@@ -116,7 +115,7 @@ export function App({ initialPayload }: { initialPayload?: EmbeddedViewerPayload
     const filename = `bench-history-${scenarioSlug}.png`;
     const downloadLink = document.createElement("a");
     downloadLink.download = filename;
-    downloadLink.href = chart.toBase64Image("image/png", 1);
+    downloadLink.href = stackChartImages(charts, CHART_SURFACE);
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);

@@ -44,9 +44,10 @@ export function PageHeader({ title, onCopyLink }: PageHeaderProps) {
             </code>{" "}
             across trials. Bands are per‑trial hz/op spread (P25–P75); tooltip IQR% and a dispersion hint highlight
             noisy runs. Axis labels use your <strong className="font-medium text-zinc-300">local time</strong>. Toggle{" "}
-            <strong className="font-medium text-zinc-300">Primary ratios</strong> to overlay primary ÷ compare on the
-            right axis. Use <strong className="font-medium text-zinc-300">Runs shown</strong> to focus on the most
-            recent history window.
+            <strong className="font-medium text-zinc-300">Primary ratios</strong> to plot primary ÷ compare in its own
+            chart under the throughput one, with parity marked. Use{" "}
+            <strong className="font-medium text-zinc-300">Runs shown</strong> to focus on the most recent history
+            window.
           </p>
         </div>
       </DisclosurePanel>

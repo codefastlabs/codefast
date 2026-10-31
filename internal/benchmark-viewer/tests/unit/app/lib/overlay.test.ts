@@ -5,10 +5,12 @@ import type { PaletteEntry } from "#app/lib/colors";
 import {
   buildOverlaySeries,
   indexToFirst,
+  isFineLogTick,
   isSparseLogTick,
   overlaySeriesLabel,
   rowShortLabel,
   runIndicesWithData,
+  spansLogDecade,
 } from "#app/lib/overlay";
 import type { EmbeddedLibraryMeta, EmbeddedScenarioSeries } from "#types";
 
@@ -132,5 +134,28 @@ describe("isSparseLogTick", () => {
     expect([3, 4, 6, 7, 8, 9, 30, 400_000].some(isSparseLogTick)).toBe(false);
     expect(isSparseLogTick(0)).toBe(false);
     expect(isSparseLogTick(Number.NaN)).toBe(false);
+  });
+});
+
+describe("isFineLogTick", () => {
+  it("adds the halves and the round steps between the 1, 2 and 5", () => {
+    expect([1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 15_000_000, 25_000_000].every(isFineLogTick)).toBe(true);
+    expect([1.7, 7, 9, 17_000_000, 19_000_000].some(isFineLogTick)).toBe(false);
+    expect(isFineLogTick(0)).toBe(false);
+  });
+});
+
+describe("spansLogDecade", () => {
+  const ticks = (...values: Array<number>) => values.map((value) => ({ value }));
+
+  it("holds once the axis reaches a tenfold range", () => {
+    expect(spansLogDecade(ticks(1e6, 2e6, 5e6, 1e7))).toBe(true);
+    expect(spansLogDecade(ticks(2e5, 1e6, 5e7))).toBe(true);
+  });
+
+  it("fails within a decade, where every tick keeps its label", () => {
+    expect(spansLogDecade(ticks(1.5e7, 2e7, 3e7, 4e7, 5e7))).toBe(false);
+    expect(spansLogDecade(ticks(1e7))).toBe(false);
+    expect(spansLogDecade([])).toBe(false);
   });
 });
