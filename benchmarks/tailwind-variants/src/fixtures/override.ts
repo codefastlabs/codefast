@@ -5,6 +5,8 @@
 
 /**
  * The selections one timed iteration renders, one per call site.
+ *
+ * @since 0.11.1
  */
 export const overrideTestProps: ReadonlyArray<Readonly<Record<string, string | undefined>>> = [
   { className: undefined, variant: "outline" },

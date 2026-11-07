@@ -6,7 +6,11 @@
 const VARIANT_COUNT = 24;
 const TONES = ["slate", "sky", "rose"] as const;
 
-/** The wide configuration, built once so every side defines the same object. */
+/**
+ * The wide configuration, built once so every side defines the same object.
+ *
+ * @since 0.11.1
+ */
 export const wideFlatVariants = (() => {
   const variants: Record<string, Record<string, string>> = {};
   const defaultVariants: Record<string, string> = {};
@@ -26,5 +30,9 @@ export const wideFlatVariants = (() => {
   return { base: "inline-flex items-center", defaultVariants, variants };
 })();
 
-/** The selections a wide component renders, in order: its defaults, then two variants changed. */
+/**
+ * The selections a wide component renders, in order: its defaults, then two variants changed.
+ *
+ * @since 0.11.1
+ */
 export const wideFlatSelections: ReadonlyArray<Readonly<Record<string, string>>> = [{}, { v3: "sky", v17: "rose" }];

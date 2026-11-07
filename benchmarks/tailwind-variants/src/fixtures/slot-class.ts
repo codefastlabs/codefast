@@ -9,6 +9,8 @@ type SlotClasses = Readonly<
 
 /**
  * One card render: the selection, then the `className` each rendered slot receives.
+ *
+ * @since 0.11.1
  */
 export interface SlotClassCall {
   readonly classes: SlotClasses;
@@ -17,6 +19,8 @@ export interface SlotClassCall {
 
 /**
  * The card renders one timed iteration makes.
+ *
+ * @since 0.11.1
  */
 export const slotClassTestCalls: ReadonlyArray<SlotClassCall> = [
   { classes: {}, props: {} },
