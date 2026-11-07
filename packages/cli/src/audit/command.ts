@@ -90,6 +90,8 @@ function fromRepoRoot(
 
 /**
  * The machine output every audit prints for `--json`.
+ *
+ * @since 0.16.0
  */
 export function formatAuditJson(result: unknown, rootDir: string, clean: boolean): string {
   return JSON.stringify({ schemaVersion: 1 as const, ok: clean, cwd: rootDir, result });
@@ -97,6 +99,8 @@ export function formatAuditJson(result: unknown, rootDir: string, clean: boolean
 
 /**
  * The exit code every audit records: `1` while findings remain.
+ *
+ * @since 0.16.0
  */
 export function auditExitCode(clean: boolean): number {
   return clean ? CLI_EXIT_SUCCESS : CLI_EXIT_GENERAL_ERROR;

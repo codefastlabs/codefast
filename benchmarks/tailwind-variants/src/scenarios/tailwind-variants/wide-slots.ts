@@ -6,7 +6,11 @@ import { renderEverySlot } from "#lib/render-slots";
 import { tailwindVariantsTv } from "#lib/tv-shims";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `wide-slots` row. */
+/**
+ * Builds the `wide-slots` row.
+ *
+ * @since 0.11.1
+ */
 export function buildTailwindVariantsNpmWideSlotsScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {

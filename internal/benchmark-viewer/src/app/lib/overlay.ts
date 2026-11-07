@@ -167,6 +167,8 @@ export function isSparseLogTick(value: number): boolean {
 /**
  * Whether a logarithmic tick is worth a label on an axis narrower than a decade, where the 1, 2 and 5 alone leave
  * one or two labels.
+ *
+ * @since 0.10.3
  */
 export function isFineLogTick(value: number): boolean {
   return hasLogMantissa(value, FINE_LOG_MANTISSAS);
@@ -185,6 +187,8 @@ function hasLogMantissa(value: number, mantissas: ReadonlyArray<number>): boolea
 
 /**
  * Whether a logarithmic axis covers a full decade, wide enough to label only the 1, 2 and 5 of each.
+ *
+ * @since 0.10.3
  */
 export function spansLogDecade(ticks: ReadonlyArray<{ readonly value: number }>): boolean {
   const first = ticks[0]?.value;

@@ -73,7 +73,11 @@ export function renderEverySlot(slots: Readonly<Record<string, () => string>>): 
   return length;
 }
 
-/** Renders the card slots the way its sub-components do, each passing the `className` it was given. */
+/**
+ * Renders the card slots the way its sub-components do, each passing the `className` it was given.
+ *
+ * @since 0.11.1
+ */
 export function renderCardSlotsWithClasses(slots: ClassedCardSlots, classes: SlotClassCall["classes"]): number {
   return (
     slots.base({ className: classes.base }).length +

@@ -9,7 +9,11 @@ import type { BenchScenario } from "#scenarios/types";
 
 const button = codefastTvFn(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;
 
-/** Builds the `override` row. */
+/**
+ * Builds the `override` row.
+ *
+ * @since 0.11.1
+ */
 export function buildCodefastOverrideScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {

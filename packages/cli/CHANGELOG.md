@@ -1,5 +1,24 @@
 # @codefast/cli
 
+## 0.16.0
+
+### Minor Changes
+
+- [#1189](https://github.com/codefastlabs/codefast/pull/1189) Removes the `arrange` command and its `inspect`, `simplify` and `group` subcommands, along with the `arrange` config key
+  and the `CodefastArrangeConfig` type. oxfmt's `sortTailwindcss` already orders classes inside each `cn()`/`tv()` string
+  and is checked in CI, so a second, unenforced ordering across strings only drifted. Remove `arrange` from
+  `codefast.config.*`; the strict schema now rejects it.
+
+- [#1188](https://github.com/codefastlabs/codefast/pull/1188) Every `@codefast/*` package now requires Node.js 24.15 or later and drops Node 22. The packages ship as one set, so they
+  share one floor instead of each sitting on its own 22.x release. `@codefast/typescript-config` removes the `node22.json`
+  and `node22-dom.json` overlays; extend a preset alone. `codefast audit engines` reports a published package whose floor
+  differs from the highest one any published package declares.
+
+### Patch Changes
+
+- [#1204](https://github.com/codefastlabs/codefast/pull/1204) The audits share one `--json` shape, one exit-code rule and one repo-root prelude instead of a copy per audit, and no
+  command re-validates a request it built itself. Output and exit codes are unchanged.
+
 ## 0.15.0
 
 ### Minor Changes

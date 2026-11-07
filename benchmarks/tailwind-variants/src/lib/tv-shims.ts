@@ -24,9 +24,21 @@ export const codefastCreateTV = codefastCreateTVFn as any;
  * @since 0.3.16-canary.0
  */
 export const cva = cvaFromLib as any;
-/** The `cn` `@codefast/tailwind-variants` exports. */
+/**
+ * The `cn` `@codefast/tailwind-variants` exports.
+ *
+ * @since 0.11.1
+ */
 export const codefastCn = codefastCnFn as any;
-/** The `cn` `tailwind-variants` exports. */
+/**
+ * The `cn` `tailwind-variants` exports.
+ *
+ * @since 0.11.1
+ */
 export const tailwindVariantsCn = tailwindCnFn as any;
-/** The clsx-style join `class-variance-authority` exports, which its `cn` pairs with `tailwind-merge`. */
+/**
+ * The clsx-style join `class-variance-authority` exports, which its `cn` pairs with `tailwind-merge`.
+ *
+ * @since 0.11.1
+ */
 export const cvaCx = cvaCxFn as any;

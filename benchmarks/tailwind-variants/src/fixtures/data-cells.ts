@@ -25,7 +25,11 @@ const COLUMN_CLASSES = [
   "max-w-64 truncate",
 ] as const;
 
-/** A cell keyed by a row's status and a column's alignment and density, with one compound on the status. */
+/**
+ * A cell keyed by a row's status and a column's alignment and density, with one compound on the status.
+ *
+ * @since 0.11.1
+ */
 export const dataCellVariants = {
   base: "border-b border-border px-4 py-2 align-middle text-sm",
   compoundVariants: [
@@ -48,13 +52,21 @@ export const dataCellVariants = {
   },
 } as const;
 
-/** One cell render: the row's selection and the column's `className`. */
+/**
+ * One cell render: the row's selection and the column's `className`.
+ *
+ * @since 0.11.1
+ */
 export interface DataCellCall {
   readonly className: string | undefined;
   readonly props: Readonly<Record<string, string>>;
 }
 
-/** Cell renders one timed iteration makes; the loop walks the draws below in order, so no iteration repeats the last. */
+/**
+ * Cell renders one timed iteration makes; the loop walks the draws below in order, so no iteration repeats the last.
+ *
+ * @since 0.11.1
+ */
 export const DATA_CELLS_PER_ITERATION = 16;
 
 const createRandom = (seed: number): (() => number) => {
@@ -70,7 +82,11 @@ const createRandom = (seed: number): (() => number) => {
 const pick = <Value>(random: () => number, values: ReadonlyArray<Value>): Value =>
   values[Math.floor(random() * values.length)] as Value;
 
-/** A long deterministic stream of cell renders drawn from about a thousand distinct ones. */
+/**
+ * A long deterministic stream of cell renders drawn from about a thousand distinct ones.
+ *
+ * @since 0.11.1
+ */
 export const dataCellTestCalls: ReadonlyArray<DataCellCall> = (() => {
   const random = createRandom(42);
   const calls: Array<DataCellCall> = [];

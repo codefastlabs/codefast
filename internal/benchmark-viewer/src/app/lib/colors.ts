@@ -40,6 +40,8 @@ export const RATIO_COLORS = ["#22d3ee", "#a3e635", "#f87171", "#fde047"] as cons
 
 /**
  * The plot area's background on the page, which fills hollow markers and backs an exported image.
+ *
+ * @since 0.10.3
  */
 export const CHART_SURFACE = "#0c0c0f";
 

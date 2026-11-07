@@ -12,7 +12,11 @@ const button = cva(buttonVariants.base, {
   variants: buttonVariants.variants,
 });
 
-/** Builds the `override` row. */
+/**
+ * Builds the `override` row.
+ *
+ * @since 0.11.1
+ */
 export function buildClassVarianceAuthorityOverrideScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {

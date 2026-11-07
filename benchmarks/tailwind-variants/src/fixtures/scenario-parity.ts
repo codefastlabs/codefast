@@ -337,7 +337,11 @@ export const FIRST_RENDER_SLOTS = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** `cn()` with a long static class list and the caller's usually absent `className`, the call a component makes most. */
+/**
+ * `cn()` with a long static class list and the caller's usually absent `className`, the call a component makes most.
+ *
+ * @since 0.11.1
+ */
 export const CN_WITH_MERGE = {
   id: "cn-with-merge",
   group: "cn",
@@ -345,7 +349,11 @@ export const CN_WITH_MERGE = {
   batch: cnTestCalls.length,
 } as const satisfies ScenarioDescriptor;
 
-/** A button rendered from many call sites, each with its own `className`, some of which conflict with a variant. */
+/**
+ * A button rendered from many call sites, each with its own `className`, some of which conflict with a variant.
+ *
+ * @since 0.11.1
+ */
 export const OVERRIDE_WITH_MERGE = {
   id: "override-with-merge",
   group: "override",
@@ -353,7 +361,11 @@ export const OVERRIDE_WITH_MERGE = {
   batch: overrideTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
-/** A card whose sub-components each call their slot with the `className` they were given, usually absent. */
+/**
+ * A card whose sub-components each call their slot with the `className` they were given, usually absent.
+ *
+ * @since 0.11.1
+ */
 export const SLOT_CLASS_WITH_MERGE = {
   id: "slot-class-with-merge",
   group: "slot-class",
@@ -361,7 +373,11 @@ export const SLOT_CLASS_WITH_MERGE = {
   batch: slotClassTestCalls.length,
 } as const satisfies ScenarioDescriptor;
 
-/** One button from many call sites, each passing a `className` no call passed before, so every merge is a miss. */
+/**
+ * One button from many call sites, each passing a `className` no call passed before, so every merge is a miss.
+ *
+ * @since 0.11.1
+ */
 export const UNIQUE_CLASS_WITH_MERGE = {
   id: "unique-class-with-merge",
   group: "unique-class",
@@ -369,7 +385,11 @@ export const UNIQUE_CLASS_WITH_MERGE = {
   batch: uniqueClassSelections.length,
 } as const satisfies ScenarioDescriptor;
 
-/** A button whose definition carries a class of its own, rendered once, so its merge starts cold. */
+/**
+ * A button whose definition carries a class of its own, rendered once, so its merge starts cold.
+ *
+ * @since 0.11.1
+ */
 export const FIRST_RENDER_COLD_SIMPLE = {
   id: "first-render-cold-simple",
   group: "first-render",
@@ -378,7 +398,11 @@ export const FIRST_RENDER_COLD_SIMPLE = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** A slot component whose base slot carries a class of its own, every slot rendered once. */
+/**
+ * A slot component whose base slot carries a class of its own, every slot rendered once.
+ *
+ * @since 0.11.1
+ */
 export const FIRST_RENDER_COLD_SLOTS = {
   id: "first-render-cold-slots",
   group: "first-render",
@@ -387,7 +411,11 @@ export const FIRST_RENDER_COLD_SLOTS = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** A button carrying a class of its own, rendered the way one page shows it several times, every merge new to the engine. */
+/**
+ * A button carrying a class of its own, rendered the way one page shows it several times, every merge new to the engine.
+ *
+ * @since 0.11.1
+ */
 export const FIRST_PAGE_COLD_SIMPLE = {
   id: "first-page-cold-simple",
   group: "first-render",
@@ -396,7 +424,11 @@ export const FIRST_PAGE_COLD_SIMPLE = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** A slot component carrying a class of its own, every slot rendered for the selections one page shows. */
+/**
+ * A slot component carrying a class of its own, every slot rendered for the selections one page shows.
+ *
+ * @since 0.11.1
+ */
 export const FIRST_PAGE_COLD_SLOTS = {
   id: "first-page-cold-slots",
   group: "first-render",
@@ -405,7 +437,11 @@ export const FIRST_PAGE_COLD_SLOTS = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** Table cells whose selection comes from row data and whose `className` comes from the column, about a thousand distinct calls. */
+/**
+ * Table cells whose selection comes from row data and whose `className` comes from the column, about a thousand distinct calls.
+ *
+ * @since 0.11.1
+ */
 export const DATA_CELLS_WITH_MERGE = {
   id: "data-cells-with-merge",
   group: "data-cells",
@@ -413,7 +449,11 @@ export const DATA_CELLS_WITH_MERGE = {
   batch: DATA_CELLS_PER_ITERATION,
 } as const satisfies ScenarioDescriptor;
 
-/** A sixteen-slot component with twenty compound-tested variants, every slot rendered. */
+/**
+ * A sixteen-slot component with twenty compound-tested variants, every slot rendered.
+ *
+ * @since 0.11.1
+ */
 export const WIDE_SLOTS_WITH_MERGE = {
   id: "wide-slots-with-merge",
   group: "wide-slots",
@@ -421,7 +461,11 @@ export const WIDE_SLOTS_WITH_MERGE = {
   batch: wideSlotsTestProps.length,
 } as const satisfies ScenarioDescriptor;
 
-/** Defining a button and rendering it twice, the most a component without slots renders before codefast compiles it. */
+/**
+ * Defining a button and rendering it twice, the most a component without slots renders before codefast compiles it.
+ *
+ * @since 0.11.1
+ */
 export const TWO_RENDERS_SIMPLE = {
   id: "two-renders-simple",
   group: "first-render",
@@ -430,7 +474,11 @@ export const TWO_RENDERS_SIMPLE = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** Defining a component with many defaulted variants and rendering it twice, where the compile grows with the variants. */
+/**
+ * Defining a component with many defaulted variants and rendering it twice, where the compile grows with the variants.
+ *
+ * @since 0.11.1
+ */
 export const TWO_RENDERS_WIDE = {
   id: "two-renders-wide",
   group: "first-render",
@@ -439,7 +487,11 @@ export const TWO_RENDERS_WIDE = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** Defining a slot component and rendering every slot twice. */
+/**
+ * Defining a slot component and rendering every slot twice.
+ *
+ * @since 0.11.1
+ */
 export const TWO_RENDERS_SLOTS = {
   id: "two-renders-slots",
   group: "first-render",
@@ -448,7 +500,11 @@ export const TWO_RENDERS_SLOTS = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** Defining a button and rendering it three times, which reaches a lazy library's compile. */
+/**
+ * Defining a button and rendering it three times, which reaches a lazy library's compile.
+ *
+ * @since 0.11.1
+ */
 export const THREE_RENDERS_SIMPLE = {
   id: "three-renders-simple",
   group: "first-render",
@@ -457,7 +513,11 @@ export const THREE_RENDERS_SIMPLE = {
   excludeFromAggregates: true,
 } as const satisfies ScenarioDescriptor;
 
-/** Defining a slot component and rendering every slot for three selections. */
+/**
+ * Defining a slot component and rendering every slot for three selections.
+ *
+ * @since 0.11.1
+ */
 export const THREE_RENDERS_SLOTS = {
   id: "three-renders-slots",
   group: "first-render",

@@ -67,7 +67,11 @@ const repeatDefinitions = (defineAndRender: (renders: number) => number, renders
   };
 };
 
-/** Builds the `two-renders-*` and `three-renders-*` rows. */
+/**
+ * Builds the `two-renders-*` and `three-renders-*` rows.
+ *
+ * @since 0.11.1
+ */
 export function buildTailwindVariantsNpmFewRendersScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {

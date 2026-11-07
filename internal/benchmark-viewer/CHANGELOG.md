@@ -1,5 +1,52 @@
 # @codefast/benchmark-viewer
 
+## 0.10.3
+
+### Patch Changes
+
+- [#1181](https://github.com/codefastlabs/codefast/pull/1181) A bench scenario can declare a `revision`, bumped whenever the work one timed iteration does changes. The harness
+  records it with every observation, and the history viewer marks the run where it changed as "measurement changed", so a
+  step caused by the suite no longer reads as a library regression. Rows written before revisions existed read as the
+  first.
+
+- [#1186](https://github.com/codefastlabs/codefast/pull/1186) Every folding panel — how to read, chart data, latest measurement — shares one card with a chevron and a visible focus
+  ring. The latest-measurement table keeps its header row in view while scrolling, keeps each scenario on one line, and
+  hides the group column on a phone.
+
+- [#1178](https://github.com/codefastlabs/codefast/pull/1178) The scenario and runs bar is one row: the scenario picker steps through the list in place and shows its group and
+  position, the filters are chips over the platform's own menus, and the report download, pin and reload sit as icon
+  buttons at the end. Scrolled past the chart's top it folds to the scenario row and a one-line summary of the filters.
+
+- [#1186](https://github.com/codefastlabs/codefast/pull/1186) The history strip wraps between libraries on a narrow screen instead of running off it and scrolling the whole page
+  sideways.
+
+- [#1186](https://github.com/codefastlabs/codefast/pull/1186) Labels on the chart's change rules stack into lanes so none overlap, flip left of their rule near the right edge, and
+  draw on a plate after every rule so no rule crosses their text.
+
+- [#1186](https://github.com/codefastlabs/codefast/pull/1186) Metric cards name each library in its own case with the unit set apart from the value, explain the ratio once in the
+  footnote instead of on every card, and drop the empty value row from the IQR card. Counts read `1 run` and `5 runs`
+  rather than `run(s)`.
+
+- [#1179](https://github.com/codefastlabs/codefast/pull/1179) The report download menu closes on a press outside it, on Escape — returning focus to its button — and once a report
+  link is chosen.
+
+- [#1186](https://github.com/codefastlabs/codefast/pull/1186) The throughput chart labels every tick of a log axis narrower than a decade, runs edge to edge so a zoomed window leaves
+  no gap on the right, and draws overlay rows at one width with filled markers for the selected row. Primary ratios plot
+  in their own chart under it, sharing its zoom and marking parity, and Download PNG captures both. The display toggles
+  name themselves by their visible text, the overlay toggle shows when a group has a single row, and tooltips list lines
+  highest first in both charts.
+
+- [#1180](https://github.com/codefastlabs/codefast/pull/1180) The viewer reads on a five-step type scale with nothing under 12px: data tables and controls at 14px with tabular
+  figures, explanations at 14–15px, and 12px kept for labels. Supporting text is a step brighter, and the chart's axes,
+  legend and tooltip draw at 13px.
+
+- [#1186](https://github.com/codefastlabs/codefast/pull/1186) Library colours sit at one lightness on the dark surface and pass colour-vision checks between neighbours. In the group
+  overlay every row keeps its library's colour, told apart by dash and marker, and ratio lines lead with cyan and lime so
+  none reads as a library.
+- Updated dependencies:
+  - @internal/benchmark-harness@0.12.1
+  - @codefast/tailwind-variants@0.11.0
+
 ## 0.10.2
 
 ### Patch Changes
