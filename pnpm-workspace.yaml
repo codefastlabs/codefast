@@ -110,7 +110,7 @@ catalog:
   reflect-metadata: ^0.2.2
   rolldown: ^1.2.16
   semver: ^7.8.6
-  shiki: ^4.5.0
+  shiki: ^4.6.0
   simple-git-hooks: ^2.14.0
   sonner: ^2.0.8
   tailwind-merge: ^3.7.0
