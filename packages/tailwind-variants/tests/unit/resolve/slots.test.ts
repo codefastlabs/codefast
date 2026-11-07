@@ -1,5 +1,5 @@
 import { tv } from "#index";
-import { everyLane, readEveryLane } from "#tests/unit/support/lanes";
+import { everyLane, readEveryLane } from "#tests/support/lanes";
 
 type SlotResolvers = Record<string, (props?: Record<string, unknown>) => string | undefined>;
 type UntypedSlotsResolver = (props?: Record<string, unknown>) => SlotResolvers;

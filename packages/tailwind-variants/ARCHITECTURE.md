@@ -32,7 +32,7 @@ That split is the directory layout:
 
 | Path                        | Owns                                                                  |
 | --------------------------- | --------------------------------------------------------------------- |
-| `types.ts`                  | the model: configurations, variant selections, compiled shapes        |
+| `types.ts` & `types/`       | the model: configurations, variant selections, compiled shapes        |
 | `index.ts`                  | the public surface                                                    |
 | `tv.ts`                     | the public entry point, and the seam between the phases               |
 | `class-names.ts`            | `cx` / `cn` — class utilities, variant-free                           |
@@ -42,7 +42,7 @@ That split is the directory layout:
 | `compile/configuration.ts`  | shape guards, and collapsing an `extend` chain into one configuration |
 | `compile/selection.ts`      | encoding a call's selection as one key                                |
 | `resolve/cold.ts`           | the cold lane: the first calls, read straight from the configuration  |
-| `resolve/variants.ts`       | the flat lane                                                         |
+| `resolve/flat.ts`           | the flat lane                                                         |
 | `resolve/flat-selection.ts` | what the flat lane remembers per selection, caller classes included   |
 | `resolve/slots.ts`          | the slot lane                                                         |
 | `resolve/cache.ts`          | the bounded store a resolver answers a repeated selection from        |
@@ -309,17 +309,18 @@ the widest per-trial spread and swing across runs on unchanged code; do not read
 Correctness is not checked by the hand-written tests alone. They assert the behaviour someone thought to write down, and
 the changes that hurt here are the ones nobody considered.
 
-[`tests/unit/support/behaviour-sweep.ts`](./tests/unit/support/behaviour-sweep.ts) generates the corpus instead — every
-variant value, every pair, every slot with each variant overridden per slot, every odd value a caller can pass including
-the inherited keys of a plain object, caller classes that recur, and selection spaces wide enough to fill the store past
-its generation limit — and runs the whole thing twice, because a resolver that remembers must answer the second pass
-exactly as it answered the first.
+[`tests/support/behaviour-sweep.ts`](./tests/support/behaviour-sweep.ts) generates the corpus instead — every variant
+value, every pair, every slot with each variant overridden per slot, every odd value a caller can pass including the
+inherited keys of a plain object, caller classes that recur, and selection spaces wide enough to fill the store past its
+generation limit — and runs the whole thing twice, because a resolver that remembers must answer the second pass exactly
+as it answered the first.
 
-[`tests/unit/tv/behaviour-sweep.test.ts`](./tests/unit/tv/behaviour-sweep.test.ts) then holds the corpus to a property
-that needs no stored baseline: **a resolver that remembers must answer exactly what one that does not answers.** That is
-what caught the selection cache collapsing `toString`, `constructor` and `hasOwnProperty` onto one entry while every
-other test stayed green, and it runs on every `pnpm test:unit`. A second property holds the cold lane to the plan:
-driven through a fresh resolver per call, the corpus must answer exactly what a shared one does.
+[`tests/integration/conformance/behaviour-sweep.test.ts`](./tests/integration/conformance/behaviour-sweep.test.ts) then
+holds the corpus to a property that needs no stored baseline: **a resolver that remembers must answer exactly what one
+that does not answers.** That is what caught the selection cache collapsing `toString`, `constructor` and
+`hasOwnProperty` onto one entry while every other test stayed green, and it runs on every `pnpm test:integration`. A
+second property holds the cold lane to the plan: driven through a fresh resolver per call, the corpus must answer
+exactly what a shared one does.
 
 The first property cannot see a change that moves the remembering and the uncached flat lanes together, such as a
 reshape of `joinVariantClasses`, which both join a selection through; the second can, because the cold lane walks the

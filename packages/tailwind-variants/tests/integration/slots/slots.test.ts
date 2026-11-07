@@ -1,6 +1,6 @@
-import { customTwMerge } from "#tests/unit/fixtures/merge-config";
-import { CLASS_KEYS } from "#tests/unit/support/class-keys";
-import { LANES, tvOn } from "#tests/unit/support/lanes";
+import { customTwMerge } from "#tests/fixtures/merge-config";
+import { CLASS_KEYS } from "#tests/support/class-keys";
+import { LANES, tvOn } from "#tests/support/lanes";
 
 describe.each(LANES)("on the %s lane", (lane) => {
   const tv = tvOn(lane);

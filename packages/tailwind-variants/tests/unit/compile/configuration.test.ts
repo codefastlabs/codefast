@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { tv } from "#index";
-import { everyLane, readEveryLane } from "#tests/unit/support/lanes";
+import { everyLane, readEveryLane } from "#tests/support/lanes";
 
 const F = { twMerge: false } as const;
 
