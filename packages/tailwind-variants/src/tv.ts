@@ -11,28 +11,27 @@ import { compileSelectionEncoder, UNENCODABLE } from "#compile/selection";
 import type { ResolutionCache } from "#resolve/cache";
 import { createResolutionCache } from "#resolve/cache";
 import { createColdSlotResolvers, resolveColdVariantClasses } from "#resolve/cold";
+import { resolveVariantClasses } from "#resolve/flat";
 import type { ClassDoorkeeper, FlatSelection } from "#resolve/flat-selection";
 import { createClassDoorkeeper, createFlatSelection, resolveFlatSelectionWithClass } from "#resolve/flat-selection";
 import { createSlotResolvers } from "#resolve/slots";
-import { resolveVariantClasses } from "#resolve/variants";
+import type { AbsentKeys, ClassMerger, ClassValue, TailwindVariantsOptions } from "#types/common";
 import type {
-  AbsentKeys,
-  ClassMerger,
-  ClassValue,
-  SlotClassResolver,
+  ExtensionVariantConfig,
+  MergedSlotSchema,
+  MergedVariantSchema,
+  SlotSchema,
+  SlotVariantConfig,
   VariantConfig,
   VariantSchema,
-  VariantSelection,
-  SlotVariantConfig,
-  ExtensionVariantConfig,
+} from "#types/config";
+import type {
   FlatVariantResolver,
-  MergedVariantSchema,
-  MergedSlotSchema,
-  SlotSchema,
+  SlotClassResolver,
   SlotVariantResolver,
-  TailwindVariantsOptions,
   VariantResolver,
-} from "#types";
+  VariantSelection,
+} from "#types/resolver";
 
 /** Shared stand-in for a call that passed no props, so the common case allocates nothing. */
 const EMPTY_PROPS: Record<string, unknown> = {};

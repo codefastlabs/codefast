@@ -6,26 +6,28 @@ export type { TailwindVariantsApi, TailwindVariantsFactory } from "#tv";
 
 export { cn, cx } from "#class-names";
 
+export type { ClassMerger, ClassValue, TailwindVariantsOptions } from "#types/common";
+
 export type {
-  ClassMerger,
-  ClassValue,
   CompoundSlot,
   CompoundVariant,
   ExtensionVariantConfig,
-  FlatVariantResolver,
   MergedSlotSchema,
   MergedVariantSchema,
-  SlotCompoundVariant,
   SlotClassMap,
-  SlotClassResolver,
+  SlotCompoundVariant,
   SlotSchema,
   SlotVariantConfig,
-  SlotVariantResolver,
-  TailwindVariantsOptions,
   VariantConfig,
+  VariantSchema,
+  VariantValue,
+} from "#types/config";
+
+export type {
+  FlatVariantResolver,
+  SlotClassResolver,
+  SlotVariantResolver,
   VariantProps,
   VariantResolver,
-  VariantSchema,
   VariantSelection,
-  VariantValue,
-} from "#types";
+} from "#types/resolver";

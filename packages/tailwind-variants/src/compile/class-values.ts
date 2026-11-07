@@ -1,7 +1,7 @@
 /** Class values flattened into the form a compiled plan holds, and the group key a variant value selects. */
 
 import { flattenClassValues } from "#class-names";
-import type { ClassValue } from "#types";
+import type { ClassValue } from "#types/common";
 
 /**
  * Classes a variant value contributes to named slots, each slot already resolved to its position

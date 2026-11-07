@@ -6,7 +6,7 @@ import { twMerge } from "cn";
 
 import type { VariantPlan } from "#compile/plan";
 import type { ResolutionCache } from "#resolve/cache";
-import { joinVariantClasses } from "#resolve/variants";
+import { joinVariantClasses } from "#resolve/flat";
 
 /**
  * One selection's classes, joined and merged once, with the caller classes it has met twice.

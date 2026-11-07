@@ -2,7 +2,7 @@
 
 import { pickClassProp, toClassText, toPlanClasses } from "#compile/class-values";
 import type { PlanClasses } from "#compile/class-values";
-import type { CompoundSlot, CompoundVariant, SlotCompoundVariant, VariantSchema } from "#types";
+import type { CompoundSlot, CompoundVariant, SlotCompoundVariant, VariantSchema } from "#types/config";
 
 /** Condition satisfied when the resolved value strictly equals the configured one. */
 const CONDITION_EQUAL = 0;

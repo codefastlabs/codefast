@@ -4,7 +4,7 @@
 
 import { cn as engineCn } from "cn";
 
-import type { ClassMerger, ClassValue } from "#types";
+import type { ClassMerger, ClassValue } from "#types/common";
 
 /** Whether a class value is an array, readonly ones included, which `Array.isArray` alone leaves un-narrowed. */
 const isClassArray = (value: ClassValue): value is ReadonlyArray<ClassValue> => Array.isArray(value);

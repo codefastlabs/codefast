@@ -7,7 +7,7 @@ import type { PlanClasses } from "#compile/class-values";
 import { matchesCompoundConditions } from "#compile/compound";
 import { compileGroupValue } from "#compile/plan";
 import type { VariantPlan } from "#compile/plan";
-import type { ClassValue } from "#types";
+import type { ClassValue } from "#types/common";
 
 /**
  * Joins the classes a selection declares for a configuration without slots, unmerged.

@@ -5,16 +5,16 @@
 
 import { cx } from "#class-names";
 import { isSlotClassMap } from "#compile/class-values";
+import type { ClassValue } from "#types/common";
 import type {
-  ClassValue,
   CompoundSlot,
-  VariantConfig,
-  VariantSchema,
-  SlotVariantConfig,
   ExtensionVariantConfig,
   SlotSchema,
-  VariantResolver,
-} from "#types";
+  SlotVariantConfig,
+  VariantConfig,
+  VariantSchema,
+} from "#types/config";
+import type { VariantResolver } from "#types/resolver";
 
 type Configuration = VariantConfig<VariantSchema> | SlotVariantConfig<VariantSchema, SlotSchema>;
 

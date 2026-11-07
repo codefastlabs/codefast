@@ -4,16 +4,9 @@
 
 import { isSlotClassMap, pickClassProp, toClassText, toDefaultKey, toVariantKey } from "#compile/class-values";
 import { matchesCompoundValue } from "#compile/compound";
-import type {
-  ClassMerger,
-  ClassValue,
-  SlotClassResolver,
-  SlotSchema,
-  SlotVariantConfig,
-  VariantConfig,
-  VariantSchema,
-  VariantSelection,
-} from "#types";
+import type { ClassMerger, ClassValue } from "#types/common";
+import type { SlotSchema, SlotVariantConfig, VariantConfig, VariantSchema } from "#types/config";
+import type { SlotClassResolver, VariantSelection } from "#types/resolver";
 
 type Definition = SlotVariantConfig<VariantSchema, SlotSchema> | VariantConfig<VariantSchema>;
 type Props = Record<string, unknown>;

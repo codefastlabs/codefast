@@ -1,7 +1,7 @@
 import { extendTailwindMerge } from "cn/config";
 
 import { createTV } from "#index";
-import { CLASS_KEYS } from "#tests/unit/support/class-keys";
+import { CLASS_KEYS } from "#tests/integration/support/class-keys";
 import { LANES, tvOn } from "#tests/unit/support/lanes";
 
 describe.each(LANES)("on the %s lane", (lane) => {
