@@ -8,7 +8,8 @@ import { pickClassProp, toClassText, toVariantKey } from "#compile/class-values"
 import { matchesCompoundConditions } from "#compile/compound";
 import { compileGroupValue } from "#compile/plan";
 import type { SlotPlanEntry, VariantPlan } from "#compile/plan";
-import type { SlotClassResolver, VariantSchema, VariantSelection } from "#types";
+import type { VariantSchema } from "#types/config";
+import type { SlotClassResolver, VariantSelection } from "#types/resolver";
 
 /**
  * One resolution of the variant props, shared by every slot of that call.

@@ -5,15 +5,8 @@ import { toClassText, toDefaultKey, toPlanClasses } from "#compile/class-values"
 import type { CompoundPlanEntry, CompoundSlotPlanEntry } from "#compile/compound";
 import { compileCompoundSlots, compileCompoundVariants } from "#compile/compound";
 import { hasSlotsConfig } from "#compile/configuration";
-import type {
-  ClassMerger,
-  ClassValue,
-  CompoundSlot,
-  SlotSchema,
-  SlotVariantConfig,
-  VariantConfig,
-  VariantSchema,
-} from "#types";
+import type { ClassMerger, ClassValue } from "#types/common";
+import type { CompoundSlot, SlotSchema, SlotVariantConfig, VariantConfig, VariantSchema } from "#types/config";
 
 /**
  * One variant group with the classes its default selects already resolved.

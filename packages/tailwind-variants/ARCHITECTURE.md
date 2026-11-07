@@ -32,7 +32,7 @@ That split is the directory layout:
 
 | Path                        | Owns                                                                  |
 | --------------------------- | --------------------------------------------------------------------- |
-| `types.ts` & `types/`       | the model: configurations, variant selections, compiled shapes        |
+| `types/`                    | the model: configurations, variant selections, compiled shapes        |
 | `index.ts`                  | the public surface                                                    |
 | `tv.ts`                     | the public entry point, and the seam between the phases               |
 | `class-names.ts`            | `cx` / `cn` — class utilities, variant-free                           |
