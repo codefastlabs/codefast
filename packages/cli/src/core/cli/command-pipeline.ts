@@ -27,7 +27,7 @@ export interface BaseCommandOptions {
  *
  * @since 0.11.0
  */
-export type CommandPrepare<Prelude> = (
+type CommandPrepare<Prelude> = (
   fs: Filesystem,
   input: {
     readonly currentWorkingDirectory: string;

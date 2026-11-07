@@ -50,7 +50,7 @@ source under `/ui`, and each package's own README, specification, and architectu
 | [`@codefast/tailwind-variants`](packages/tailwind-variants) | Type-safe variant styling API — a faster drop-in replacement for `tailwind-variants`            |
 | [`@codefast/theme`](packages/theme)                         | Appearance management for React 19 — optimistic updates, cross-tab sync, FOUC-free SSR          |
 | [`@codefast/tracking`](packages/tracking)                   | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog |
-| [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`arrange`, `audit`, `mirror`, `pack-slim`, `tag`)               |
+| [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`audit`, `mirror`, `pack-slim`, `tag`)                          |
 | [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                                         |
 
 `@codefast/tailwind-variants` will be renamed `@codefast/tv` in a future release; its

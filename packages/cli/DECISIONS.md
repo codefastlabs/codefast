@@ -6,12 +6,12 @@ that stops holding gets replaced here, not annotated.
 
 ## Plain functions, not Explicit Architecture
 
-**Context.** The CLI has five top-level commands (`arrange`, `audit`, `mirror`, `pack-slim`, `tag`), each a short
-pipeline: read files, run a pure transformation, print or write the result. An earlier revision applied full Explicit /
-Hexagonal Architecture to it — a port interface per use case, an adapter per port, a DI token per injectable, request
-objects for one-field inputs, and a `shell/` layer wrapping `node:fs`, `node:path`, `process` and Commander behind
-eleven more ports. Roughly three files in four existed to connect the other one, and the `@codefast/di` container
-resolved at runtime what a function call would have checked at compile time.
+**Context.** The CLI has four top-level commands (`audit`, `mirror`, `pack-slim`, `tag`), each a short pipeline: read
+files, run a pure transformation, print or write the result. An earlier revision applied full Explicit / Hexagonal
+Architecture to it — a port interface per use case, an adapter per port, a DI token per injectable, request objects for
+one-field inputs, and a `shell/` layer wrapping `node:fs`, `node:path`, `process` and Commander behind eleven more
+ports. Roughly three files in four existed to connect the other one, and the `@codefast/di` container resolved at
+runtime what a function call would have checked at compile time.
 
 **Decision.** Behaviour is wired with plain functions. A command module builds its Commander subcommand and calls
 `prepare*` / `run*` functions directly; domain modules export pure functions; output modules export `present*`
@@ -54,16 +54,16 @@ as stack traces.
 
 ## Subcommands nest like commands
 
-**Context.** `audit` and `arrange` each carry several subcommands. Left flat, a command directory became a pile of
-`run-rtl.ts`, `run-links.ts`, … beside a `domain/` holding every scan's detectors, and the file name was the only thing
-saying which scan a file served.
+**Context.** `audit` carries several subcommands. Left flat, a command directory became a pile of `run-rtl.ts`,
+`run-links.ts`, … beside a `domain/` holding every scan's detectors, and the file name was the only thing saying which
+scan a file served.
 
 **Decision.** A subcommand is a directory under its command with the same skeleton as a command: its own `run.ts`,
 `cli-schema.ts`, `output.ts`, `cli-result.ts` and `domain/`. What the subcommands genuinely share stays at the command
-root — the `audit` runner and its `prepare` helper, `arrange`'s grouping engine under `domain/`. A file moves into a
-subcommand only when that subcommand alone uses it; anything two subcommands use is shared, not duplicated.
+root — the `audit` runner and its `prepare` helper. A file moves into a subcommand only when that subcommand alone uses
+it; anything two subcommands use is shared, not duplicated.
 
-**Consequences.** Everything about one scan lives in one folder (`audit/rtl/`, `arrange/inspect/`), and `audit/domain/`
+**Consequences.** Everything about one scan lives in one folder (`audit/rtl/`, `audit/links/`), and `audit/domain/`
 holds only what every scan shares. `mirror`, `pack-slim` and `tag` have no subcommands and stay flat.
 
 ## One pipeline, exit code computed once
@@ -75,8 +75,7 @@ presenter. Only `audit` had factored the dance into a descriptor and runner, and
 **Decision.** The dance lives once in `core/cli/command-pipeline.ts`. A command supplies a `CommandPipeline` descriptor
 of typed slots — `prepare`, `schema`, `buildRequest`, `run`, `presentHuman` / `formatJson`, `exitCode`, plus optional
 `guard` and `createPresenter` — and the pipeline runs them, parses global options uniformly, and computes the exit code
-exactly once from the run result; `present*` functions return `void`. `arrange group` is the deliberate exception: a
-pure token-string transform with no workspace prelude and a variadic positional, it stays wired by hand.
+exactly once from the run result; `present*` functions return `void`.
 
 **Consequences.** Adding a command is a descriptor, not a copy of the spine; the exit code has one source; global
 options reach every command the same way. The optional slots (`guard` for pack-slim's working-tree check,
@@ -126,15 +125,16 @@ modules.
 
 ## Parse TypeScript with `oxc-parser`
 
-**Context.** `arrange` and `tag` read and rewrite TypeScript source. The classic `typescript` compiler API was the only
-consumer of that runtime in the repository once the build moved to native TypeScript 7.
+**Context.** `tag` and several audits read TypeScript source, and `tag` rewrites it. The classic `typescript` compiler
+API was the only consumer of that runtime in the repository once the build moved to native TypeScript 7.
 
-**Decision.** AST work (`arrange/domain/ast/`, `tag`) uses `oxc-parser`; edits are applied as text ranges
+**Decision.** AST work (`tag` and the audits) uses `oxc-parser`; edits are applied as text ranges
 (`core/source-text-edit.ts`) rather than by printing a transformed AST, so untouched code keeps its formatting byte for
 byte.
 
 **Consequences.** Nothing in the repository depends on the classic `typescript` runtime. The trade is that the CLI reads
-syntax only — it never type-checks — which is all `arrange` and `tag` need.
+syntax only — it never type-checks — which is all `tag` and those audits need; `audit props`, which must judge types,
+asks the type server instead.
 
 ## Audits are read-only and mechanical
 
@@ -177,31 +177,6 @@ infrastructure.
 
 **Consequences.** Adding a test means importing a function and asserting on a `Result`. Coverage is enforced by the
 workspace's `test:coverage` gate, not by this document.
-
-## Simplify preserves cn() precedence; the className fold is type-gated and opt-in
-
-**Context.** The mixed-`cn()` branch of `simplify` moved every static literal to the front of the call. Argument order
-in `cn()` is tailwind-merge precedence — a later argument overrides an earlier one — so hoisting an override string
-ahead of a variant call silently changed which utilities won, dropping the very override the trailing string existed to
-apply. Separately, the idiomatic way to override a variant is its own `className` option, not a `cn()` wrapper around
-it, and a codemod that produced the wrapper form left the tidier call unwritten.
-
-**Decision.** Two rules. The base pass coalesces only _adjacent_ static literals and never reorders arguments, so
-precedence is preserved and a lone static after a dynamic argument is left alone. Folding `cn(variant({…}), …overrides)`
-into `variant({…, className: …})` is a separate capability behind `--fold-variant-classname`. It fires only when the
-native TypeScript type server (`typescript/unstable/sync`) confirms the callee's first-parameter options accept a
-`className`/`class` of the right shape — string for a single static override, a class array for a dynamic or multi-part
-one. Detection is by type, never by name: a call the type server does not recognize as a variant function is left
-untouched.
-
-**Consequences.** The default pass stays oxc-only, synchronous, and workspace-free; the fold is the one path that spawns
-the type server and needs the target inside a `tsconfig`, so `typescript` is an optional peer and files outside a
-project keep the base pass. A cheap syntactic pre-scan gates that cost: the type server is queried only for a file that
-actually contains a `cn(variant({…}), …)` call, so a directory of hundreds of files loads a project once for the few
-that qualify rather than once per file. The type sees the option's shape but not the variant's `twMerge` setting, so a
-variant configured `twMerge: false` would merge a folded `className` differently than the `cn()` it replaced — accepted
-as out of scope, since the option-type gate already excludes non-variant callees and the shipped variants use the
-default merge.
 
 ## `audit props` judges by type, through the type server
 

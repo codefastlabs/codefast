@@ -17,9 +17,7 @@ export default defineConfig({
   // Stable key order across all workspace package.json files (scripts keep
   // their hand-curated order).
   sortPackageJson: true,
-  // Same algorithm as prettier-plugin-tailwindcss. Sorting happens *within*
-  // each class string; render-pipeline grouping across strings is handled by
-  // `codefast arrange` — the two are complementary.
+  // Same algorithm as prettier-plugin-tailwindcss: the one class order the repo keeps.
   sortTailwindcss: {
     stylesheet: "apps/web/src/styles.css",
     functions: ["cn", "cva", "cx", "tv"],

@@ -1,7 +1,7 @@
 {
   "name": "@codefast/cli",
   "version": "0.15.0",
-  "description": "Developer CLI for the Codefast monorepo (arrange, audit, mirror, pack-slim, tag)",
+  "description": "Developer CLI for the Codefast monorepo (audit, mirror, pack-slim, tag)",
   "keywords": [
     "cli",
     "codefast",

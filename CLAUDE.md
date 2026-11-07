@@ -24,7 +24,7 @@ it starts in `internal/`.
   used for **both** type-checking (`tsc --noEmit`) and package builds. TS 7 emits `.js` + `.d.ts`, so every `packages/*`
   builds with plain `tsc` (no bundler — see below). There is no `@typescript/native` alias and no classic
   `@typescript/typescript6` anymore: `@codefast/cli` — the only place that needed the classic compiler API — now parses
-  TypeScript with **`oxc-parser`** (its `arrange`/`tag` AST tooling), so nothing in the repo depends on the classic
+  TypeScript with **`oxc-parser`** (its `audit`/`tag` AST tooling), so nothing in the repo depends on the classic
   `typescript` runtime. (TanStack Start's Vite plugins build fine on TS 7 — verified.) TS 7 is also every package's
   **consumer floor** ([`SUPPORT.md`](SUPPORT.md#typescript)): the floor is the compiler the repo builds and checks with,
   so never lower it to the oldest release that happens to parse the declarations, and a `typescript` major bump raises
@@ -318,20 +318,20 @@ point of use beats brevity, and every word must convey information:
 
 ## Packages
 
-| Path                         | Role                                                                                                              |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.)             |
-| `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                              |
-| `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                                     |
-| `packages/di`                | Type-safe, zero-dependency dependency-injection primitives                                                        |
-| `packages/di-testing`        | Solitary and sociable auto-mocking test beds for `@codefast/di` (`TestBed.solitary`/`.sociable`)                  |
-| `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog                   |
-| `packages/cli`               | `codefast` CLI — subcommands `arrange`, `audit`, `mirror`, `pack-slim`, `tag` (run via `pnpm run codefast <cmd>`) |
-| `packages/typescript-config` | Shared tsconfig presets                                                                                           |
-| `internal/benchmark-*`       | Private benchmark harness/viewer shared by `benchmarks/*` (`pnpm bench`); never published                         |
-| `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di`, `tailwind-variants`)                             |
-| `apps/web`                   | codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` markdown docs, `@codefast/ui` showcase   |
-| `examples/tanstack-start`    | TanStack Start consumer demo; uses `workspace:*` so package changes are testable here directly                    |
+| Path                         | Role                                                                                                            |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.)           |
+| `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                            |
+| `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                                   |
+| `packages/di`                | Type-safe, zero-dependency dependency-injection primitives                                                      |
+| `packages/di-testing`        | Solitary and sociable auto-mocking test beds for `@codefast/di` (`TestBed.solitary`/`.sociable`)                |
+| `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog                 |
+| `packages/cli`               | `codefast` CLI — subcommands `audit`, `mirror`, `pack-slim`, `tag` (run via `pnpm run codefast <cmd>`)          |
+| `packages/typescript-config` | Shared tsconfig presets                                                                                         |
+| `internal/benchmark-*`       | Private benchmark harness/viewer shared by `benchmarks/*` (`pnpm bench`); never published                       |
+| `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di`, `tailwind-variants`)                           |
+| `apps/web`                   | codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` markdown docs, `@codefast/ui` showcase |
+| `examples/tanstack-start`    | TanStack Start consumer demo; uses `workspace:*` so package changes are testable here directly                  |
 
 ### `packages/di` layout
 

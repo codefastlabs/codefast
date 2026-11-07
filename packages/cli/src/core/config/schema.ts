@@ -56,15 +56,6 @@ export interface CodefastTagConfig {
   onAfterWrite?: CodefastAfterWriteHook | undefined;
 }
 
-/**
- * The validated `arrange` command configuration.
- *
- * @since 0.3.16-canary.0
- */
-export interface CodefastArrangeConfig {
-  onAfterWrite?: CodefastAfterWriteHook | undefined;
-}
-
 /** An audit's per-command defaults: entries to ignore, as bare tokens or `repo/relative/path:token`. */
 interface CodefastAuditAllowlistConfig {
   allowlist?: Array<string> | undefined;
@@ -103,7 +94,6 @@ interface CodefastAuditConfig {
 export interface CodefastConfig {
   mirror?: MirrorConfig | undefined;
   tag?: CodefastTagConfig | undefined;
-  arrange?: CodefastArrangeConfig | undefined;
   audit?: CodefastAuditConfig | undefined;
 }
 
@@ -148,12 +138,6 @@ export const mirrorConfigSchema: z.ZodType<MirrorConfig> = z.record(
 const codefastTagConfigSchema = z
   .object({
     skipPackages: z.array(z.string()).optional(),
-    onAfterWrite: afterWriteHookSchema.optional(),
-  })
-  .strict();
-
-const codefastArrangeConfigSchema = z
-  .object({
     onAfterWrite: afterWriteHookSchema.optional(),
   })
   .strict();
@@ -207,7 +191,6 @@ export const codefastConfigRootSchema: z.ZodType<CodefastConfig> = z
   .object({
     mirror: mirrorConfigSchema.optional(),
     tag: codefastTagConfigSchema.optional(),
-    arrange: codefastArrangeConfigSchema.optional(),
     audit: codefastAuditConfigSchema.optional(),
   })
   .strict();
