@@ -37,37 +37,6 @@ export function indentOfLineContaining(source: string, pos: number): string {
 }
 
 /**
- * Returns the text from the start of a position's line up to that position.
- *
- * @since 0.3.16-canary.0
- */
-export function textPrefixFromLineStartToPosition(source: string, pos: number): string {
-  const searchPos = Math.max(0, Math.min(pos, source.length));
-  return source.slice(lineStartIndexContaining(source, searchPos), searchPos);
-}
-
-/**
- * Extends a token's end position past any whitespace-separated trailing comma.
- *
- * @since 0.3.16-canary.0
- */
-export function endAfterOptionalCommaFollowingInSource(source: string, tokenEnd: number): number {
-  let index = tokenEnd;
-  while (index < source.length) {
-    const ch = source[index];
-    if (ch === " " || ch === "\t" || ch === "\n" || ch === "\r") {
-      index += 1;
-      continue;
-    }
-    if (ch === ",") {
-      return index + 1;
-    }
-    break;
-  }
-  return tokenEnd;
-}
-
-/**
  * Returns the edits with every overlap removed, keeping the outermost of any overlapping pair.
  *
  * @remarks A planned edit replaces a whole AST node, so two ranges either nest or are disjoint and

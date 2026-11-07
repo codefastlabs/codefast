@@ -100,15 +100,6 @@ export default defineConfig({
       },
     },
     {
-      // collectCnCallsInsideTv threads `sourceFile` through recursion as part
-      // of its published API signature; dropping the parameter would be a
-      // breaking change for @codefast/cli consumers.
-      files: ["packages/cli/src/arrange/domain/ast/collectors-tv.ts"],
-      rules: {
-        "oxc/only-used-in-recursion": "off",
-      },
-    },
-    {
       // Command palette uses combobox + listbox ARIA roles (not native
       // <select>/<datalist>/<dialog>). The input carries aria-expanded as part
       // of the combobox pattern (textbox + popup).

@@ -5,7 +5,6 @@ import { fileURLToPath } from "node:url";
 
 import { Command } from "commander";
 
-import { createArrangeCommand } from "#arrange/command";
 import { createAuditCommand } from "#audit/command";
 import { createMirrorCommand } from "#mirror/command";
 import { createPackSlimCommand } from "#pack-slim/command";
@@ -36,12 +35,11 @@ export async function runCli(argv: Array<string>): Promise<number> {
     .version(readVersion())
     .option("--no-color", "Disable ANSI color output")
     // Required so options after a subcommand bind to that subcommand rather than
-    // the program — e.g. `arrange inspect <target> --json` (see arrange/command.ts).
+    // the program — e.g. `audit links <target> --json`.
     .enablePositionalOptions()
     .configureHelp({ sortSubcommands: true })
     .showHelpAfterError("(use --help for usage)");
 
-  program.addCommand(createArrangeCommand());
   program.addCommand(createAuditCommand());
   program.addCommand(createMirrorCommand());
   program.addCommand(createPackSlimCommand());

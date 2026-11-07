@@ -44,7 +44,7 @@ describe("codefast binary", () => {
     const run = runBin(["--help"]);
     expect(run.status).toBe(0);
     expect(run.stdout).toContain("Codefast monorepo developer CLI");
-    for (const command of ["arrange", "audit", "mirror", "pack-slim", "tag"]) {
+    for (const command of ["audit", "mirror", "pack-slim", "tag"]) {
       expect(run.stdout).toContain(command);
     }
   });

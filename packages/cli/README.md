@@ -23,12 +23,11 @@ encode an opinionated house style (called out below) that you can adopt, ignore,
 ## Requirements
 
 - **Node.js ≥ 24.15** (the CLI is published as ESM).
-- **TypeScript ≥ 7** to type-check a config written with `defineConfig`, and for
-  `arrange simplify --fold-variant-classname`, the one command that loads `typescript` (an optional peer).
+- **TypeScript ≥ 7** to type-check a config written with `defineConfig`, and for `audit props`, the one command that
+  loads `typescript` (an optional peer).
 - **A project root — workspace or single package.** Commands resolve their root by walking up from the current
   directory: the nearest `pnpm-workspace.yaml` marks a **workspace** (every package under it is in scope), and with no
-  workspace file the nearest `package.json` marks a **single package** (that one package is the whole scope). Only
-  `arrange group` needs no project at all — it just formats a string you paste in.
+  workspace file the nearest `package.json` marks a **single package** (that one package is the whole scope).
 - **pnpm is not required to _run_ the CLI** — npm, npx, or a plain `node` invocation are all fine. pnpm matters only for
   workspace-wide behavior, which is keyed off `pnpm-workspace.yaml`.
 
@@ -60,11 +59,8 @@ so pin the minor (`@codefast/cli@~0.9.0`) when you need stability.
 
 ```bash
 codefast --help                                   # list commands
-codefast arrange group "flex h-10 w-full rounded-md bg-primary"   # works anywhere, no project needed
 
 # in a workspace or a single-package project:
-codefast arrange inspect packages/ui/src          # read-only report of arrange findings
-codefast arrange --dry-run packages/ui/src        # preview a class reorder
 codefast mirror --dry-run                          # preview generated exports for each package in scope
 codefast audit links                               # find broken markdown cross-references
 ```
@@ -89,22 +85,6 @@ codefast audit links                               # find broken markdown cross-
 codefast                              # Codefast monorepo developer CLI
 │  ├─ --no-color                      # disable ANSI color output
 │  └─ --version
-│
-├─ arrange [target]                   # regroup Tailwind classes in cn()/tv() in render-pipeline order
-│  │   ├─ --dry-run                   # preview, without writing files
-│  │   ├─ --with-class-name           # append className as the final cn() argument (alias: --with-classname)
-│  │   ├─ --cn-import <spec>          # override the module specifier when adding a cn import
-│  │   └─ --json
-│  │
-│  ├─ inspect [target]                # report long strings, cn nested in tv() (read-only)
-│  │   └─ --json
-│  ├─ simplify [target]               # flatten grouped arrays & static cn() to plain strings in tv() slots
-│  │   ├─ --dry-run
-│  │   └─ --fold-variant-class-name   # fold cn() overrides into the variant's className option (uses the TS type server)
-│  └─ group <tokens...>               # group a pasted class string (stdout: cn(...) or a tv() array with --tv)
-│      ├─ --tv                        # emit a tv()-style array instead of a cn() call
-│      ├─ --with-class-name
-│      └─ --json
 │
 ├─ audit                              # source audits (read-only source scans)
 │  ├─ rtl [target]                    # physical-direction Tailwind classes to make logical / rtl:-paired
@@ -137,82 +117,27 @@ codefast                              # Codefast monorepo developer CLI
 
 Every command also responds to `--help`; each command's section below explains what its flags do.
 
-| Command               | What it does                                                               | Writes?           |
-| --------------------- | -------------------------------------------------------------------------- | ----------------- |
-| `arrange`             | Regroup Tailwind classes in `cn()` / `tv()` calls in render-pipeline order | yes (`--dry-run`) |
-| `mirror`              | Write each package's `package.json#exports` from its built `dist/`         | yes (`--dry-run`) |
-| `pack-slim`           | Strip the dev-only surface from a package right before publish             | yes (`--dry-run`) |
-| `tag`                 | Stamp `@since <version>` on exported declarations that lack one            | yes (`--dry-run`) |
-| `audit rtl`           | Report physical-direction Tailwind classes that should be logical          | no                |
-| `audit links`         | Report markdown cross-references that resolve to nothing                   | no                |
-| `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)      | no (report only)  |
-| `audit assertions`    | Report double type assertions through `unknown` / `any`, tests included    | no                |
-| `audit display-names` | Enforce the `namespace:Name` display-name convention                       | no                |
-| `audit props`         | Report props types joined with `&` that an interface could express         | no                |
-| `audit publish`       | Report what would break a consumer's install of a published package        | no                |
-| `audit engines`       | Report each package's Node floor that does not hold                        | no                |
-| `audit layers`        | Report value imports that point up a package's configured layers           | no                |
-| `audit comments`      | Check doc-comment conventions; repair section dividers                     | `--fix` only      |
+| Command               | What it does                                                            | Writes?           |
+| --------------------- | ----------------------------------------------------------------------- | ----------------- |
+| `mirror`              | Write each package's `package.json#exports` from its built `dist/`      | yes (`--dry-run`) |
+| `pack-slim`           | Strip the dev-only surface from a package right before publish          | yes (`--dry-run`) |
+| `tag`                 | Stamp `@since <version>` on exported declarations that lack one         | yes (`--dry-run`) |
+| `audit rtl`           | Report physical-direction Tailwind classes that should be logical       | no                |
+| `audit links`         | Report markdown cross-references that resolve to nothing                | no                |
+| `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)   | no (report only)  |
+| `audit assertions`    | Report double type assertions through `unknown` / `any`, tests included | no                |
+| `audit display-names` | Enforce the `namespace:Name` display-name convention                    | no                |
+| `audit props`         | Report props types joined with `&` that an interface could express      | no                |
+| `audit publish`       | Report what would break a consumer's install of a published package     | no                |
+| `audit engines`       | Report each package's Node floor that does not hold                     | no                |
+| `audit layers`        | Report value imports that point up a package's configured layers        | no                |
+| `audit comments`      | Check doc-comment conventions; repair section dividers                  | `--fix` only      |
 
-**Which of these are for you?** `arrange`, `mirror`, `pack-slim`, `tag`, `audit links`, `audit assertions`,
-`audit layers`, `audit publish`, and `audit engines` are general-purpose — they work for any pnpm workspace or single
-package that builds with `tsc`. The other five audits encode codefast's own house style (logical Tailwind directions,
-named React imports, a specific comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens, interfaces
-for component props). Adopt them if they fit your project; otherwise skip them, or use an allowlist to narrow their
-scope.
-
-## `arrange`
-
-Rewrites Tailwind class strings inside `cn()` and `tv()` calls, regrouping utilities in render-pipeline order —
-existence, position, layout, sizing, spacing, shape, background, shadow, typography, composite, motion, starting,
-behavior, state, selector — rather than alphabetically. (This is codefast's ordering, deliberately different from the
-official Prettier Tailwind plugin's sort.)
-
-```bash
-codefast arrange inspect packages/ui/src          # read-only report
-codefast arrange --dry-run packages/ui/src        # preview the rewrite
-codefast arrange packages/ui/src                  # write
-```
-
-When `[target]` is omitted, `arrange` uses the nearest directory with a `package.json`, walking up from the current
-directory. Directory scans skip test files (`*.test.*` / `*.spec.*`), because a `cn()` inside an assertion is
-intentional; pass such a file explicitly to process it.
-
-`arrange` rewrites a `cn()` / `tv()` call only when its binding is imported from a recognized module — `clsx`,
-`class-variance-authority`, `tailwind-variants`, `@codefast/tailwind-variants`, a `@/lib/utils` / `~/lib/utils` /
-`#lib/utils` re-export, any `…/utils` path, or a dedicated `cn.ts` module — so an unrelated local `cn` is left alone.
-Long static JSX `className` strings are regrouped regardless of where `cn` comes from.
-
-Exits `1` when the `arrange.onAfterWrite` hook fails, `0` otherwise.
-
-### `arrange inspect [target]`
-
-Read-only report of long strings, nested `cn` inside `tv()`, and related findings. Accepts `--json`.
-
-### `arrange simplify [target]`
-
-Flattens grouped arrays and static-only `cn()` calls back to plain strings in `tv()` slots — the inverse cleanup pass.
-In a mixed `cn()` call it coalesces only _adjacent_ static literals and keeps argument order, so tailwind-merge
-precedence is unchanged (a later argument still overrides an earlier one).
-
-With `--fold-variant-classname`, `cn(buttonVariants({ size: "sm" }), "flex-1")` becomes
-`buttonVariants({ size: "sm", className: "flex-1" })`, and a dynamic or multi-part override folds into a `className`
-array. The fold fires only when the native TypeScript type server confirms the callee's options accept a `className` (or
-`class`) of the right shape, so it loads the `typescript` package (an optional peer, v7) and needs the target inside a
-`tsconfig`; files outside a project keep the base pass. Run a formatter afterward — a folded call can exceed the print
-width until it is wrapped.
-
-### `arrange group <tokens...>`
-
-Groups a pasted class string without touching the filesystem — the one command that needs no workspace, useful for
-checking how classes would be bucketed:
-
-```bash
-codefast arrange group "relative flex h-10 w-full items-center rounded-md bg-primary"
-codefast arrange group --tv "flex items-center gap-2"
-```
-
-With `--json`, that object is `{ schemaVersion, primaryLine, bucketsCommentLine }`.
+**Which of these are for you?** `mirror`, `pack-slim`, `tag`, `audit links`, `audit assertions`, `audit layers`,
+`audit publish`, and `audit engines` are general-purpose — they work for any pnpm workspace or single package that
+builds with `tsc`. The other five audits encode codefast's own house style (logical Tailwind directions, named React
+imports, a specific comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens, interfaces for
+component props). Adopt them if they fit your project; otherwise skip them, or use an allowlist to narrow their scope.
 
 ## `mirror`
 
@@ -547,12 +472,11 @@ The smallest valid config is empty. Grow it one section at a time — each top-l
 export default {};
 ```
 
-| Key       | Command   | What it configures                                                                             |
-| --------- | --------- | ---------------------------------------------------------------------------------------------- |
-| `mirror`  | `mirror`  | per-package `exports` generation — see [per-package config](#per-package-mirror-configuration) |
-| `tag`     | `tag`     | package names to skip, and a hook to run after writing                                         |
-| `arrange` | `arrange` | a hook to run after writing                                                                    |
-| `audit`   | `audit *` | each audit's default scan target and its `allowlist` of accepted exceptions                    |
+| Key      | Command   | What it configures                                                                             |
+| -------- | --------- | ---------------------------------------------------------------------------------------------- |
+| `mirror` | `mirror`  | per-package `exports` generation — see [per-package config](#per-package-mirror-configuration) |
+| `tag`    | `tag`     | package names to skip, and a hook to run after writing                                         |
+| `audit`  | `audit *` | each audit's default scan target and its `allowlist` of accepted exceptions                    |
 
 ### Author it with types
 
@@ -581,8 +505,8 @@ export default {
 
 ### Common recipes
 
-**Run a formatter after a command rewrites files.** `tag` and `arrange` take an `onAfterWrite` hook (sync or async). It
-runs only when files were actually written — never on `--dry-run`:
+**Run a formatter after a command rewrites files.** `tag` takes an `onAfterWrite` hook (sync or async). It runs only
+when files were actually written — never on `--dry-run`:
 
 ```js
 // codefast.config.js
@@ -592,7 +516,6 @@ const format = ({ files }) => execSync(`oxfmt ${files.join(" ")}`, { stdio: "inh
 
 export default {
   tag: { onAfterWrite: format },
-  arrange: { onAfterWrite: format },
 };
 ```
 
@@ -644,9 +567,6 @@ export default {
   },
   tag: {
     skipPackages: ["@acme/internal", "@apps/*"], // glob patterns matched against package names
-    onAfterWrite: ({ files }) => execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" }),
-  },
-  arrange: {
     onAfterWrite: ({ files }) => execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" }),
   },
   audit: {
@@ -711,7 +631,6 @@ if you adopt the CLI in your own workspace. It runs from the built output via ro
 ```bash
 pnpm run codefast <command>         # generic entry: node ./packages/cli/dist/bin.js
 
-pnpm run cli:arrange                # codefast arrange
 pnpm run cli:mirror                 # codefast mirror
 pnpm run cli:audit:links            # codefast audit links
 pnpm run cli:audit:rtl              # codefast audit rtl

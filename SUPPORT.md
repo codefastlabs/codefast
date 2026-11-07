@@ -71,8 +71,7 @@ every package with — TypeScript 7 alone emits the published `.d.ts` files — 
 accept them.
 
 - **`@codefast/typescript-config`** declares it as its `typescript` peer range (`>=7.0.0`).
-- **`@codefast/cli`** declares it as an optional `typescript` peer (`>=7.0.0`), which only
-  `arrange simplify --fold-variant-classname` loads.
+- **`@codefast/cli`** declares it as an optional `typescript` peer (`>=7.0.0`), which only `audit props` loads.
 - **The other packages** state it in their README and declare no `typescript` peer.
 
 Explicit resource management enters the language in ES2027, so no numbered `lib` declares it yet. `@codefast/di` and

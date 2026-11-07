@@ -1,5 +1,3 @@
-import { execSync } from "node:child_process";
-
 /**
  * Codefast monorepo tooling — sections are read by matching `codefast` subcommands.
  *
@@ -40,12 +38,6 @@ const config = {
     "@internal/design-system": false,
     "@benchmark/tailwind-variants": false,
     "@codefast/typescript-config": false,
-  },
-
-  arrange: {
-    onAfterWrite: ({ files }) => {
-      execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
-    },
   },
 
   audit: {
