@@ -1,5 +1,5 @@
-import { CLASS_KEYS } from "#tests/support/class-keys";
-import { LANES, tvOn } from "#tests/support/lanes";
+import { CLASS_KEYS } from "#tests/integration/support/class-keys";
+import { LANES, tvOn } from "#tests/unit/support/lanes";
 
 describe.each(LANES)("on the %s lane", (lane) => {
   const tv = tvOn(lane);

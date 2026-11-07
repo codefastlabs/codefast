@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { isSlotClassMap, toDefaultKey, toVariantKey } from "#compile/class-values";
 import { tv } from "#index";
-import { everyLane, readEveryLane } from "#tests/support/lanes";
+import { everyLane, readEveryLane } from "#tests/unit/support/lanes";
 
 const F = { twMerge: false } as const;
 

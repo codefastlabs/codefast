@@ -11,7 +11,7 @@
 import { extendTailwindMerge } from "cn/config";
 
 import { createTV, tv } from "#index";
-import type { TailwindVariantsOptions } from "#types";
+import type { TailwindVariantsOptions } from "#types/common";
 
 type AnyConfig = Record<string, unknown>;
 type AnyResolver = (props?: Record<string, unknown>) => unknown;

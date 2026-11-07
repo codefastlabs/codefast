@@ -309,11 +309,11 @@ the widest per-trial spread and swing across runs on unchanged code; do not read
 Correctness is not checked by the hand-written tests alone. They assert the behaviour someone thought to write down, and
 the changes that hurt here are the ones nobody considered.
 
-[`tests/support/behaviour-sweep.ts`](./tests/support/behaviour-sweep.ts) generates the corpus instead — every variant
-value, every pair, every slot with each variant overridden per slot, every odd value a caller can pass including the
-inherited keys of a plain object, caller classes that recur, and selection spaces wide enough to fill the store past its
-generation limit — and runs the whole thing twice, because a resolver that remembers must answer the second pass exactly
-as it answered the first.
+[`tests/integration/support/behaviour-sweep.ts`](./tests/integration/support/behaviour-sweep.ts) generates the corpus
+instead — every variant value, every pair, every slot with each variant overridden per slot, every odd value a caller
+can pass including the inherited keys of a plain object, caller classes that recur, and selection spaces wide enough to
+fill the store past its generation limit — and runs the whole thing twice, because a resolver that remembers must answer
+the second pass exactly as it answered the first.
 
 [`tests/integration/conformance/behaviour-sweep.test.ts`](./tests/integration/conformance/behaviour-sweep.test.ts) then
 holds the corpus to a property that needs no stored baseline: **a resolver that remembers must answer exactly what one

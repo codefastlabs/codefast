@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, test } from "vitest";
 
-import { collectSweepOutcomes } from "#tests/support/behaviour-sweep";
+import { collectSweepOutcomes } from "#tests/integration/support/behaviour-sweep";
 
 // The corpus is walked under v8 coverage, so compute the shared base once and give each comparison its
 // own budget: on a saturated CI runner a single sweep can outlive the default per-test timeout.
