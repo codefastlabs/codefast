@@ -1,4 +1,15 @@
-/** Stats and progress types for a pack-slim run. */
+/** Request, stats and progress types for a pack-slim run. */
+
+/**
+ * The inputs of a pack-slim run.
+ *
+ * @since 0.8.1
+ */
+export interface PackSlimRunRequest {
+  rootDir: string;
+  packageFilter?: string | undefined;
+  write?: boolean | undefined;
+}
 
 /**
  * The outcome of slimming one workspace package.

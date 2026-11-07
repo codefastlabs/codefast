@@ -2,12 +2,19 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { prepareLinkAudit } from "#audit/links/prepare";
+import { prepareRepoRootAudit } from "#audit/prepare";
 import { createWorkspaceFilesystem } from "#tests/unit/support/fake-workspace-filesystem";
 
 const rootDir = path.join(path.sep, "fake-repo-links");
 
-describe("prepareLinkAudit (repo-root prelude)", () => {
+function prepareLinkAudit(
+  fs: ReturnType<typeof createWorkspaceFilesystem>,
+  args: { readonly currentWorkingDirectory: string; readonly rawTarget: string | undefined },
+) {
+  return prepareRepoRootAudit(fs, args, () => []);
+}
+
+describe("prepareRepoRootAudit", () => {
   it("defaults the scan target to the repo root when none is passed", async () => {
     const fs = createWorkspaceFilesystem({ rootDir });
 

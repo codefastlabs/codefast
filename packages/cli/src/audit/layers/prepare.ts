@@ -1,6 +1,5 @@
 import path from "node:path";
 
-import type { LayersAuditPackage } from "#audit/layers/cli-schema";
 import { invalidLayerEntry } from "#audit/layers/domain/layering";
 import type { AuditCommandPrelude } from "#audit/prepare";
 import { prepareRepoRootAuditWith } from "#audit/prepare";
@@ -10,6 +9,17 @@ import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
 import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
 import { packageJsonFileName } from "#core/workspace/well-known-files";
+
+/**
+ * One layered package as the run reads it: its name, the absolute root the layers sit under, and the layers.
+ *
+ * @since 0.14.0
+ */
+export type LayersAuditPackage = {
+  readonly name: string;
+  readonly rootPath: string;
+  readonly layers: ReadonlyArray<ReadonlyArray<string>>;
+};
 
 const DEFAULT_LAYERS_ROOT = "src";
 

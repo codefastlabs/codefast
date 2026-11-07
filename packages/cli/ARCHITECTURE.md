@@ -6,22 +6,22 @@ intentionally avoids hexagonal/DI ceremony: behavior is wired with **plain funct
 
 ## Per-command skeleton
 
-Every command directory follows one shape, so a reader who knows one command knows them all:
+Every command directory follows one shape, so a reader who knows one command knows them all. A role file exists only
+where the command has something to put in it:
 
 | File                          | Role                                                                                                                                   |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `command.ts`                  | Declares the command's `CommandPipeline` descriptor and wires it with `applyCommandPipeline`; no control flow or serialization inline. |
-| `cli-schema.ts`               | Zod argv schema(s), named for what they parse.                                                                                         |
-| `prepare.ts`                  | Prelude: resolve repo root + config into a request (present only when a command needs one).                                            |
+| `prepare.ts`                  | Prelude: resolve repo root + config into what the run reads (only where the shared prelude does not fit).                              |
 | `run.ts` / `run-<variant>.ts` | The async orchestrator(s), returning `Result<T, AppError>`.                                                                            |
 | `output.ts`                   | Human presenters (`present*`) — side effects through `logger`, returning `void`.                                                       |
-| `cli-result.ts`               | Machine output — the `--json` string (pure) and the exit-code mapping (pure).                                                          |
+| `cli-result.ts`               | Machine output — the `--json` string (pure) and the exit-code mapping (pure); the audits share one instead.                            |
 | `domain/`                     | Pure logic and types: no Commander, no `process`, no `logger`.                                                                         |
 
-The control flow every command repeats — parse global options, `prepare`, guard, build and validate the request, run,
-then report to one of two audiences and record **one** exit code — lives once in
+The control flow every command repeats — parse global options, `prepare`, guard, build the request, run, then report to
+one of two audiences and record **one** exit code — lives once in
 [`core/cli/command-pipeline.ts`](src/core/cli/command-pipeline.ts). A `command.ts` supplies a descriptor of typed slots
-(`prepare`, `schema`, `buildRequest`, `run`, `presentHuman` / `formatJson`, `exitCode`, plus optional `guard` and
+(`prepare`, `buildRequest`, `run`, `presentHuman` / `formatJson`, `exitCode`, plus optional `guard` and
 `createPresenter`); the pipeline computes the exit code once, so `present*` functions return `void`.
 
 The orchestrator role is always `run*` — never `sync`, which survives only as `mirror`'s domain verb (it syncs
@@ -32,10 +32,10 @@ files groups it by subsystem instead of leaving a flat pile — `tag` keeps targ
 vocabulary in `domain/types.ts`.
 
 A command that has **subcommands** nests one level further: each subcommand (`audit rtl`, `audit links`, …) is its own
-directory under the command, holding the same skeleton for its own slice — its `run.ts`, `cli-schema.ts`, `output.ts`,
-`cli-result.ts`, `domain/` — and registers through `registerPipelineSubcommand`. The parent `command.ts` declares the
-descriptors and wires them; whatever they share (the `audit` prelude) stays at the command root. `mirror`, `pack-slim`
-and `tag` have no subcommands, so they stay flat.
+directory under the command, holding its `run.ts`, `output.ts` and `domain/`. The parent `command.ts` declares one
+`AuditCheck` per scan — its prelude, run, presenter and clean rule — and turns each into a pipeline; the repo-root
+prelude, the `--json` shape and the exit code are written once there. `mirror`, `pack-slim` and `tag` have no
+subcommands, so they stay flat.
 
 ## Layout (`src/`)
 
@@ -54,10 +54,10 @@ and `tag` have no subcommands, so they stay flat.
 
 - **Domain modules** (`*/domain/**`) stay **pure** where possible: no Commander, no `process`, no ad-hoc logging—only
   types and algorithms (I/O lives in callers or thin `core/` helpers).
-- **Commands** (`*/command.ts`) parse argv, call `parseWithSchema` / `consumeCliAppError`, delegate to `prepare*` /
-  `run*` functions, set `process.exitCode`. No serialization or exit-code logic lives inline in a `command.ts`.
-- **Output** splits by audience: `output.ts` presents to a human through `logger` (a side effect, spied in tests);
-  `cli-result.ts` is the pure machine output — the `--json` string and the exit-code mapping, asserted on directly.
+- **Commands** (`*/command.ts`) declare a pipeline descriptor that delegates to `prepare*` / `run*` functions; the
+  pipeline sets `process.exitCode`. No serialization or exit-code logic lives inline in a `command.ts`.
+- **Output** splits by audience: `output.ts` presents to a human through `logger` (a side effect, spied in tests); the
+  `--json` string and the exit-code mapping are pure, asserted on directly.
 - **Config** is loaded once per resolved repo root via [`core/config/loader.ts`](src/core/config/loader.ts); warnings go
   through [`core/config/warnings.ts`](src/core/config/warnings.ts).
 
@@ -70,13 +70,13 @@ paths.
 
 Rationale lives in [`DECISIONS.md`](DECISIONS.md).
 
-- Prefer **one concept per filename** (`grouping.ts`, `grouping-service.ts`, `analyze-service.ts`, `exports.ts`).
-- The per-command skeleton fixes a role name to each file: `command.ts`, `cli-schema.ts`, `prepare.ts`, `run*.ts`,
-  `output.ts`, `cli-result.ts`. The orchestrator is `run*`, never `sync` — `sync` is `mirror`'s domain verb alone; the
-  `output.ts` presenters are `present*`. A file that fills a role slot takes the role name even when its work has a verb
-  of its own — an "analyze" orchestrator is `run.ts`, with the concept kept in `domain/analyze-service.ts`.
-- Zod schemas are named for what they parse, not with a reserved suffix: per-command argv schemas are `cli-schema.ts`,
-  the config schema is [`core/config/schema.ts`](src/core/config/schema.ts).
+- Prefer **one concept per filename** (`range-gaps.ts`, `layering.ts`, `exports.ts`).
+- The per-command skeleton fixes a role name to each file: `command.ts`, `prepare.ts`, `run*.ts`, `output.ts`,
+  `cli-result.ts`. The orchestrator is `run*`, never `sync` — `sync` is `mirror`'s domain verb alone; the `output.ts`
+  presenters are `present*`. A file that fills a role slot takes the role name even when its work has a verb of its own
+  — an "analyze" orchestrator is `run.ts`, with the concept kept under `domain/`.
+- Zod validates what crosses into the CLI from outside — the config file
+  ([`core/config/schema.ts`](src/core/config/schema.ts)) and the global options — never a request the CLI builds itself.
 - **`.test.ts`** is reserved for Vitest. No `*.port.ts`, `*.adapter.ts`, `*.domain-service.ts`, or `*.value-object.ts`
   in new code.
 
