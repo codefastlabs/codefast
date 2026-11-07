@@ -1,7 +1,5 @@
 import { logger } from "#core/logger";
-
-const yellowAnsi = "\x1b[33m";
-const resetAnsi = "\x1b[0m";
+import { paint } from "#core/style";
 
 /**
  * Prints each config schema warning as a highlighted line.
@@ -10,6 +8,6 @@ const resetAnsi = "\x1b[0m";
  */
 export function reportSchemaWarnings(warnings: ReadonlyArray<string>): void {
   for (const warningMessage of warnings) {
-    logger.out(`${yellowAnsi}⚠ ${warningMessage}${resetAnsi}`);
+    logger.out(paint("yellow", `⚠ ${warningMessage}`));
   }
 }

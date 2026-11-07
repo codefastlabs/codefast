@@ -1,4 +1,4 @@
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
+import { CLI_EXIT_FAILURE, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 import type { TagResult } from "#tag/domain/types";
 
 /**
@@ -11,13 +11,11 @@ import type { TagResult } from "#tag/domain/types";
  */
 export function exitCodeForTagResult(result: TagResult): number {
   if (result.selectedTargets.length === 0) {
-    return CLI_EXIT_GENERAL_ERROR;
+    return CLI_EXIT_FAILURE;
   }
   const hasRunErrors = result.targetResults.some((targetResult) => targetResult.runError !== null);
   const hasBlockedDeclarations = result.blockedDeclarations.length > 0;
-  return hasRunErrors || hasBlockedDeclarations || result.hookError !== null
-    ? CLI_EXIT_GENERAL_ERROR
-    : CLI_EXIT_SUCCESS;
+  return hasRunErrors || hasBlockedDeclarations || result.hookError !== null ? CLI_EXIT_FAILURE : CLI_EXIT_SUCCESS;
 }
 
 /**

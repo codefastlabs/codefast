@@ -3,9 +3,11 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
-import { Command } from "commander";
+import { Command, CommanderError } from "commander";
 
 import { createAuditCommand } from "#audit/command";
+import { CLI_EXIT_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
+import { refuseColor } from "#core/style";
 import { createMirrorCommand } from "#mirror/command";
 import { createPackSlimCommand } from "#pack-slim/command";
 import { createTagCommand } from "#tag/command";
@@ -19,6 +21,14 @@ function readVersion(): string {
     return typeof pkgVersion === "string" && pkgVersion.length > 0 ? pkgVersion : "unknown";
   } catch {
     return "unknown";
+  }
+}
+
+// Commander exits on its own for usage errors; route every command's exit through a throw so `runCli` owns the code.
+function throwInsteadOfExiting(command: Command): void {
+  command.exitOverride();
+  for (const subcommand of command.commands) {
+    throwInsteadOfExiting(subcommand);
   }
 }
 
@@ -45,7 +55,20 @@ export async function runCli(argv: Array<string>): Promise<number> {
   program.addCommand(createPackSlimCommand());
   program.addCommand(createTagCommand());
 
-  await program.parseAsync(argv, { from: "node" });
+  program.hook("preAction", () => {
+    refuseColor(program.opts()["color"] === false);
+  });
+  throwInsteadOfExiting(program);
+
+  try {
+    await program.parseAsync(argv, { from: "node" });
+  } catch (caughtError: unknown) {
+    if (!(caughtError instanceof CommanderError)) {
+      throw caughtError;
+    }
+    // Help and version exit 0; every other Commander exit is a usage error it has already printed.
+    process.exitCode = caughtError.exitCode === 0 ? CLI_EXIT_SUCCESS : CLI_EXIT_ERROR;
+  }
   const code = process.exitCode ?? 0;
   return typeof code === "number" ? code : Number(code) || 0;
 }

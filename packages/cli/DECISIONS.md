@@ -101,7 +101,7 @@ Throwing for those turns every caller into a `try`/`catch` and loses the error c
 
 **Decision.** Fallible operations return `Result<T, AppError>` (`core/result.ts`, `core/errors.ts`). `AppError` is a
 plain object with a code, not an `Error` subclass, so building one costs no stack capture. One boundary,
-`consumeCliAppError` in `core/cli/result-handle.ts`, turns an `err` into a formatted message and the matching exit code
+`consumeCliAppError` in `core/cli/result-handle.ts`, turns an `err` into a formatted message and the error exit code
 (`core/exit-codes.ts`); unexpected exceptions still propagate.
 
 **Consequences.** Domain and orchestration code never touch `process.exitCode`; only the command boundary does. Error
@@ -117,7 +117,7 @@ asserting on the return). Folding both into one file mixes an effectful presente
 `present*` functions that write through `core/logger.ts` — a plain object, so a test can `vi.spyOn(logger, "out")` — and
 return `void`. `cli-result.ts` holds the machine output: the `format*JsonOutput` string builders and the `exitCodeFor*`
 mappers, which take a result and return a value, touching neither `logger` nor `process`. The audits share one `--json`
-shape and one exit rule, so `audit/command.ts` holds a single pair for all of them. The exit code is policy, not
+shape and one exit rule, so `audit/cli-result.ts` holds a single pair for all of them. The exit code is policy, not
 presentation, so the pipeline calls `exitCodeFor*` once for both audiences rather than letting a presenter decide it.
 
 **Consequences.** Output changes never touch orchestration; the `--json` shape and the exit-code rule are unit-tested
@@ -199,3 +199,15 @@ for files that hold a candidate, and it needs `typescript` (v7) and a `tsconfig.
 ## License
 
 Released under the [MIT License](./LICENSE).
+
+## Exit `1` for a failing result, `2` for a run that could not happen
+
+**Context.** Audit findings, a missing target, a crash and an unknown command all exited `1`, so a CI job could not tell
+code that needs fixing from a tool or invocation that does. Commander also exited on its own, past the pipeline.
+
+**Decision.** `1` means the run finished and its result fails — findings, an errored package, a failed hook. `2` means
+the run could not do its job: every `AppError`, whatever its code, and every usage error Commander raises, which
+`runCli` catches through `exitOverride` on the whole command tree. A full `audit` run ranks `2` above `1`.
+
+**Consequences.** A script reads the class of failure from the code alone. `bin.ts` sets `process.exitCode` rather than
+calling `process.exit`, which would end the process before a piped stdout drains.
