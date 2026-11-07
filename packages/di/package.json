@@ -343,7 +343,7 @@
     "@babel/plugin-proposal-decorators": "catalog:",
     "@codefast/typescript-config": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
-    "@types/node": "catalog:node22.18",
+    "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "fast-check": "catalog:",
     "rolldown": "catalog:",
@@ -353,6 +353,6 @@
     "vitest": "catalog:"
   },
   "engines": {
-    "node": ">=22.18.0"
+    "node": ">=24.15.0"
   }
 }

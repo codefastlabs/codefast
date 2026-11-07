@@ -35,8 +35,6 @@
     "./library.json": "./library.json",
     "./library-build.json": "./library-build.json",
     "./next.json": "./next.json",
-    "./node22.json": "./node22.json",
-    "./node22-dom.json": "./node22-dom.json",
     "./react.json": "./react.json"
   },
   "publishConfig": {
@@ -46,6 +44,6 @@
     "typescript": ">=7.0.0"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=24.15.0"
   }
 }

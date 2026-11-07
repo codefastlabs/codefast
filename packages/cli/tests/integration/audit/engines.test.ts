@@ -59,7 +59,7 @@ async function audit(targetPath = rootDir): Promise<EnginesAuditResult> {
 
 describe("audit engines", () => {
   it("lists every floor and passes when each holds", async () => {
-    writePackage("core", { name: "@x/core", engines: { node: ">=22.12.0" } });
+    writePackage("core", { name: "@x/core", private: true, engines: { node: ">=22.12.0" } });
     writePackage("app", {
       name: "@x/app",
       engines: { node: ">=24.0.0" },
@@ -84,6 +84,16 @@ describe("audit engines", () => {
     expect((await audit()).violations).toEqual([]);
   });
 
+  it("holds every published package to the highest published floor, but not a private one", async () => {
+    writePackage("core", { name: "@x/core", engines: { node: ">=24.15.0" } });
+    writePackage("lib", { name: "@x/lib", engines: { node: ">=24.0.0" } });
+    writePackage("bench", { name: "@x/bench", private: true, engines: { node: ">=22.12.0" } });
+
+    expect((await audit()).violations).toEqual([
+      { kind: "divergent-floor", packageName: "@x/lib", floor: "24.0.0", sharedFloor: "24.15.0" },
+    ]);
+  });
+
   it("flags a published package with no floor, but not a private one", async () => {
     writePackage("lib", { name: "@x/lib" });
     writePackage("site", { name: "@x/site", private: true });
@@ -101,6 +111,7 @@ describe("audit engines", () => {
     writePackage("core", { name: "@x/core", engines: { node: ">=24.0.0" } });
     writePackage("testing", {
       name: "@x/testing",
+      private: true,
       engines: { node: ">=22.12.0" },
       peerDependencies: { "@x/core": ">=0.1.0" },
     });
@@ -211,7 +222,7 @@ describe("audit engines", () => {
 
   it("flags @types/node resolved newer than the floor, and passes an older minor", async () => {
     writePackage("lib", { name: "@x/lib", engines: { node: ">=22.12.0" } });
-    writePackage("harness", { name: "@x/harness", engines: { node: ">=22.18.0" } });
+    writePackage("harness", { name: "@x/harness", private: true, engines: { node: ">=22.18.0" } });
     writeLockfile({ lib: "22.13.0", harness: "22.12.0" });
 
     expect((await audit()).violations).toEqual([
@@ -233,6 +244,7 @@ describe("audit engines", () => {
     writePackage("lib", { name: "@x/lib", dependencies: { "@x/core": "workspace:*" } });
     writePackage("app", {
       name: "@x/app",
+      private: true,
       engines: { node: ">=22.12.0" },
       dependencies: { "@x/core": "workspace:*" },
     });
@@ -264,7 +276,12 @@ describe("audit engines", () => {
     writeJson("node_modules/turbo/package.json", { engines: { node: ">=24.0.0" } });
     writePackage("ui", { name: "@x/ui", private: true, devDependencies: { jsdom: "^29.0.0" } });
     writePackage("theme", { name: "@x/theme", engines: { node: ">=22.22.2" }, devDependencies: { jsdom: "^29.0.0" } });
-    writePackage("di", { name: "@x/di", engines: { node: ">=22.18.0" }, devDependencies: { "@babel/core": "^8.0.0" } });
+    writePackage("di", {
+      name: "@x/di",
+      private: true,
+      engines: { node: ">=22.18.0" },
+      devDependencies: { "@babel/core": "^8.0.0" },
+    });
     for (const directory of ["ui", "theme"]) {
       writeJson(`packages/${directory}/node_modules/jsdom/package.json`, {
         engines: { node: "^22.22.2 || ^24.15.0 || >=26.0.0" },

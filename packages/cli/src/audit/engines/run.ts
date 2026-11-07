@@ -5,7 +5,13 @@ import { parseAllDocuments } from "yaml";
 
 import type { EngineViolation, EnginesAuditResult, PackageEngineFloor } from "#audit/domain/types";
 import type { NodeVersion } from "#audit/engines/domain/node-floor";
-import { formatNodeVersion, parseNodeFloor, parseNodeVersion, typesFitFloor } from "#audit/engines/domain/node-floor";
+import {
+  compareNodeVersions,
+  formatNodeVersion,
+  parseNodeFloor,
+  parseNodeVersion,
+  typesFitFloor,
+} from "#audit/engines/domain/node-floor";
 import { shortLivedMajors, uncoveredNodeRanges } from "#audit/engines/domain/range-gaps";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
@@ -16,7 +22,7 @@ import { packageJsonFileName } from "#core/workspace/well-known-files";
 
 const lockfileName = "pnpm-lock.yaml";
 
-// The Node release CI develops and runs every package's tests on, besides each package's own floor.
+// The Node release CI develops and runs every package's tests on, besides the floor.
 const nodeVersionFileName = ".node-version";
 
 const typesPackageName = "@types/node";
@@ -40,7 +46,7 @@ type WorkspaceManifest = {
 /**
  * Reports every Node floor that breaks a rule a consumer or CI depends on.
  *
- * @remarks A published package declares a floor as `>=X.Y.Z`. The `engines.node` of every runtime dependency must
+ * @remarks A published package declares a floor as `>=X.Y.Z`, the same one every other published package declares. The `engines.node` of every runtime dependency must
  * admit every release from the floor up, short-lived odd lines aside; that of every dev dependency, the floor and the
  * newest release CI tests on. The `@types/node` the lockfile resolves must declare nothing the floor lacks. The
  * workspace root's floor, never listed among `floors`, must be admitted by every dependency any package installs.
@@ -79,6 +85,7 @@ export async function runEnginesAudit(
     const typesVersions = readLockfileTypesVersions(fs, rootDir);
     const testedNewest = readNodeVersion(fs, rootDir);
 
+    const sharedFloor = highestPublishedFloor(manifests);
     const floors: Array<PackageEngineFloor> = [];
     const violations: Array<EngineViolation> = [];
     const checked = manifests.filter((entry) => entry.checked);
@@ -97,6 +104,9 @@ export async function runEnginesAudit(
       }
       const formatted = formatNodeVersion(floor);
       floors.push({ packageName, directory, floor: formatted });
+      if (manifest.private !== true && sharedFloor !== null && formatted !== sharedFloor) {
+        violations.push({ kind: "divergent-floor", packageName, floor: formatted, sharedFloor });
+      }
       const unjudgedMajors = shortLivedMajors(floor, testedNewest);
       const tested = [formatted, ...(testedNewest === null ? [] : [formatNodeVersion(testedNewest)])];
 
@@ -196,6 +206,19 @@ function auditRootFloor(
     }
   }
   return [...byDependency.values()];
+}
+
+// The packages ship as one set, so a consumer's floor is the highest any of them declares.
+function highestPublishedFloor(manifests: ReadonlyArray<WorkspaceManifest>): string | null {
+  let highest: NodeVersion | null = null;
+  for (const { manifest } of manifests) {
+    const range = manifest.private === true ? undefined : nodeRangeOf(manifest);
+    const floor = range === undefined ? null : parseNodeFloor(range);
+    if (floor !== null && (highest === null || compareNodeVersions(floor, highest) > 0)) {
+      highest = floor;
+    }
+  }
+  return highest === null ? null : formatNodeVersion(highest);
 }
 
 // Each dependency once, under the first field that lists it.

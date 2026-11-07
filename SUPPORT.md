@@ -2,67 +2,49 @@
 
 ## Node.js
 
-Each package declares its own Node.js floor in `engines.node`, set as low as the package can go: the lowest release that
-its code, every dependency that runs on it, and its own test suite all support. No package inherits a floor from the
-monorepo. The lowest any package can go is **Node.js 22.12**, the first release the test toolchain (Vitest) runs on,
-because a floor counts only once CI has run the package's full test suite on that very release. A floor claims every
-release from it up, so the code and every dependency it runs on must hold on each of them; the test suite is proven on
-the two ends CI runs it on, the floor and the newest release.
+Every published `@codefast/*` package declares the same Node.js floor in `engines.node`: **Node.js 24.15**. The packages
+are built to work together, and an app that installs several of them runs on the highest floor any of them declares, so
+a lower floor on one package would promise nothing a consumer could use. 24.15 is the first release every tool the
+packages build and test with runs on — jsdom, which the component tests render in, sets it — and a floor counts only
+once CI has run the full test suite on that very release.
 
-| Package                                                      | Floor   | What sets it                                      |
-| ------------------------------------------------------------ | ------- | ------------------------------------------------- |
-| `@codefast/cli`                                              | 22.12.0 | Vitest, `oxc-parser` and `commander`              |
-| `@codefast/tailwind-variants`, `@codefast/typescript-config` | 22.12.0 | Vitest                                            |
-| `@codefast/di`, `@codefast/di-testing`                       | 22.18.0 | Babel, which lowers the decorators in their tests |
-| `@codefast/theme`, `@codefast/tracking`, `@codefast/ui`      | 22.22.2 | jsdom, which their component tests render in      |
+| Line    | Role            | Status               |
+| ------- | --------------- | -------------------- |
+| Node 22 | Maintenance LTS | Not supported        |
+| Node 24 | Maintenance LTS | Supported from 24.15 |
+| Node 26 | Active LTS      | Supported            |
 
-| Line    | Role            | Status                                               |
-| ------- | --------------- | ---------------------------------------------------- |
-| Node 22 | Maintenance LTS | Supported from each package's floor, 22.12 at lowest |
-| Node 24 | Active LTS      | Supported                                            |
-| Node 26 | Current         | Supported                                            |
+The floor moves for every package at once, by a `minor` of each, when code or a dependency needs a newer release or when
+its line reaches [end-of-life](https://github.com/nodejs/release#release-schedule), and only ever to a release CI runs
+the tests on. It is enforced mechanically rather than by convention:
 
-A package's floor moves, by a `minor` of that package, when its code or a dependency needs a newer release, when its
-line reaches [end-of-life](https://github.com/nodejs/release#release-schedule), or when it can go lower — and only ever
-to a release that CI runs its tests on. Floors are enforced mechanically rather than by convention:
-
-- **`@types/node`** is pinned per floor. `pnpm-workspace.yaml` holds one `node<major>.<minor>` catalog for each floor in
-  use, pinning `@types/node` to the newest line that declares nothing the floor lacks — `@types/node` publishes no 22.22
-  line, so the 22.22 floor takes 22.20 — and a package names the catalog of its own floor. A Node API newer than the
-  floor is then a type error. An override holds every transitive `@types/node` to the lowest floor's line without
-  touching the catalogs. Dependabot ignores its major and minor updates (`.github/dependabot.yml`), so a pin moves only
-  when its floor does.
+- **`@types/node`** is pinned in the default catalog to the newest line that declares nothing the floor lacks —
+  `@types/node` publishes no 24.15 line, so it takes 24.13 — and an override holds every transitive `@types/node` to the
+  same line. A Node API newer than the floor is then a type error. Dependabot ignores its major and minor updates
+  (`.github/dependabot.yml`), so the pin moves only when the floor does.
 - **`lib` and `target`** are `ES2025` in the presets, the newest edition that both Node 24 and the
-  [browser floor](#browsers) ship. A package whose floor is on Node 22 layers the `node22.json` or `node22-dom.json`
-  overlay from `@codefast/typescript-config`, which narrows both to what Node 22 ships: `ES2024` plus the Set methods
-  and iterator helpers. For code that also runs in a browser that is the stricter of the two floors, so it holds both.
+  [browser floor](#browsers) ship.
 - **Node types reach only code that runs on Node.** A package that runs on Node sets `types: ["node"]` in its build
   config. Every other build loads no ambient types, so a Node global in browser or universal code fails the build.
 - **Internal subpath imports** use a bare `#` prefix (`#core/token`), which Node's ESM resolver accepts on every
   supported release — `#/`-prefixed specifiers are rejected below Node 24.14.
-- **`codefast audit engines`** holds each floor to what runs on it. A published package declares one, written `>=X.Y.Z`.
-  Every dependency it installs for a consumer must admit, in its own `engines.node`, every release from the floor up — a
-  range with a gap above the floor, such as Babel's `^22.18.0 || >=24.11.0` under a 22.18 floor, fails it. The odd lines
-  between the floor's and the newest tested one sit outside that claim: they reach end-of-life within months without
-  ever becoming LTS, and dependencies routinely skip them. A dev dependency only runs the package's tests, so its
-  `engines.node` must admit the two releases CI runs them on, the floor and the newest (`.node-version`), and a gap
-  between them is not one the tests claim. The lockfile must resolve the package's `@types/node` on the floor's major at
-  a minor no newer. The workspace root's floor is held to every dependency any package installs, runtime and dev alike,
-  from that floor up — a contributor on it builds and tests the whole repo — so jsdom's `^24.15.0` line sets it.
-- **CI** develops on the Current line (`.node-version`) for speed, and a matrix runs every test category of each package
-  on its own floor — one leg per distinct floor, planned from `codefast audit engines --json`. pnpm is a native binary
-  that needs no Node of its own, so a leg runs on nothing newer than its floor. Unit tests run the source through Vite's
-  transform, so the integration and end-to-end tests, which load the built packages, are what catch a builtin or a
-  syntax the floor lacks. `codefast audit publish` statically checks the publish surface — no `#/` imports, and every
-  `exports`/`imports` target ships.
+- **`codefast audit engines`** holds the floor to what runs on it. A published package declares it, written `>=X.Y.Z`,
+  and every published package declares the same one. Every dependency a package installs for a consumer must admit, in
+  its own `engines.node`, every release from the floor up; the odd lines between the floor's and the newest tested one
+  sit outside that claim, since they reach end-of-life within months without ever becoming LTS. A dev dependency only
+  runs the tests, so its `engines.node` must admit the two releases CI runs them on, the floor and the newest
+  (`.node-version`). The lockfile must resolve `@types/node` on the floor's major at a minor no newer. The workspace
+  root's floor, which contributors need, is held to every dependency any package installs, runtime and dev alike.
+- **CI** develops on the newest line (`.node-version`) for speed, and a matrix leg runs every test category of each
+  package on the floor itself, planned from `codefast audit engines --json`. pnpm is a native binary that needs no Node
+  of its own, so the leg runs on nothing newer than the floor. Unit tests run the source through Vite's transform, so
+  the integration and end-to-end tests, which load the built packages, are what catch a builtin or a syntax the floor
+  lacks. `codefast audit publish` statically checks the publish surface — no `#/` imports, and every `exports`/`imports`
+  target ships.
 
-Moving one package's floor touches only that package and whatever depends on it at runtime: add the
-`node<major>.<minor>` catalog if none exists yet, set its `engines.node` and its `@types/node` to that catalog, layer
-the floor's `lib` overlay if the major changes, raise each package the audit names, and give each a `minor` changeset.
-
-Development uses the latest Node for speed and tooling, and contributors need the root `engines.node` (Node 24.15), the
-lowest release every tool any package builds or tests with admits. Nothing about a contributor's local Node version can
-leak into the published packages, because each floor is checked by the compiler and by CI on that floor.
+Development uses the latest Node for speed and tooling, and contributors need the root `engines.node`. Nothing about a
+contributor's local Node version can leak into the published packages, because the floor is checked by the compiler and
+by CI on that floor.
 
 ## Browsers
 
@@ -95,10 +77,10 @@ accept them.
 
 Explicit resource management enters the language in ES2027, so no numbered `lib` declares it yet. `@codefast/di` and
 `@codefast/di-testing` name its symbols and interfaces in their declarations, so a program that uses them needs its
-types. A Node program gets them from `@types/node` 24 or later. A browser program adds `ESNext.Disposable` to its own
-`lib` only once the browsers it targets ship explicit resource management, so no `@codefast/typescript-config` preset
-lists it. Without the types, a program keeps `skipLibCheck` on, as every preset does, and calls `disposeAsync()` instead
-of `await using`.
+types. A Node program gets them from `@types/node`. A browser program adds `ESNext.Disposable` to its own `lib` only
+once the browsers it targets ship explicit resource management, so no `@codefast/typescript-config` preset lists it.
+Without the types, a program keeps `skipLibCheck` on, as every preset does, and calls `disposeAsync()` instead of
+`await using`.
 
 ## Reporting issues
 

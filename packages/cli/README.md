@@ -22,7 +22,7 @@ encode an opinionated house style (called out below) that you can adopt, ignore,
 
 ## Requirements
 
-- **Node.js ≥ 22.12** (the CLI is published as ESM).
+- **Node.js ≥ 24.15** (the CLI is published as ESM).
 - **TypeScript ≥ 7** to type-check a config written with `defineConfig`, and for
   `arrange simplify --fold-variant-classname`, the one command that loads `typescript` (an optional peer).
 - **A project root — workspace or single package.** Commands resolve their root by walking up from the current
@@ -428,17 +428,18 @@ codefast audit publish --json              # machine-readable summary
 
 ### `audit engines`
 
-_General-purpose._ Holds each workspace package's own Node floor — its `engines.node` — to what actually runs on it, so
-packages can sit on different floors, each as low as the package can go. It reports:
+_General-purpose._ Holds each workspace package's Node floor — its `engines.node` — to what actually runs on it. The
+published packages ship as one set, so they share one floor. It reports:
 
 - a published package that declares no floor, and a floor not written `>=X.Y.Z`;
+- a published package whose floor differs from the highest one any published package declares;
 - a release the floor claims that a dependency's `engines.node` leaves out, named with the dependency, its range and the
   sub-range it misses. A runtime dependency (`dependencies`, `peerDependencies`, `optionalDependencies`) a consumer
   installs must admit every release from the floor up — the odd majors below the one `.node-version` pins aside, since
-  they reach end-of-life without becoming LTS — so `^22.18.0 || >=24.11.0` fails a `>=22.18.0` floor on 24.0–24.10. A
-  dev dependency only runs the package's tests, so it must admit the floor and the `.node-version` release CI runs them
-  on. A workspace dependency is read from its manifest, any other from the package's own `node_modules`, so run the
-  audit after the install;
+  they reach end-of-life without becoming LTS — so `^24.0.0 || >=26.4.0` fails a `>=24.15.0` floor on 26.0–26.3. A dev
+  dependency only runs the package's tests, so it must admit the floor and the `.node-version` release CI runs them on.
+  A workspace dependency is read from its manifest, any other from the package's own `node_modules`, so run the audit
+  after the install;
 - an `@types/node` the lockfile (`pnpm-lock.yaml`) resolves on another major than the floor or on a newer minor, where
   the compiler would accept APIs the floor lacks.
 
@@ -447,8 +448,8 @@ inherits: a contributor on it builds and tests every package, so every dependenc
 alike, must admit every release from the root floor up, short-lived odd lines aside. Each gap is reported once per
 dependency range, naming the packages that install it. The root is never listed among the floors and is checked only
 when the target reaches it. A narrower `[target]` checks only the packages it reaches, still against every floor they
-depend on. `--json` lists every floor with its package directory, which is enough to plan one CI leg per floor. It takes
-no allowlist.
+depend on. `--json` lists every floor with its package directory, which is enough to plan the CI leg that runs on it. It
+takes no allowlist.
 
 ```bash
 codefast audit engines                     # every package in the workspace
