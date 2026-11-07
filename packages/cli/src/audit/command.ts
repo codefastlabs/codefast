@@ -1,23 +1,10 @@
 import { Command } from "commander";
-import type { ZodType } from "zod";
 
-import { exitCodeForAssertionAuditResult, formatAssertionAuditJsonOutput } from "#audit/assertions/cli-result";
-import type { AssertionAuditRunRequest } from "#audit/assertions/cli-schema";
-import { assertionAuditRunRequestSchema } from "#audit/assertions/cli-schema";
 import { presentAssertionAuditResult } from "#audit/assertions/output";
-import { prepareAssertionAudit } from "#audit/assertions/prepare";
 import { runAssertionAudit } from "#audit/assertions/run";
-import { exitCodeForCommentAuditResult, formatCommentAuditJsonOutput } from "#audit/comments/cli-result";
-import type { CommentAuditRunRequest } from "#audit/comments/cli-schema";
-import { commentAuditRunRequestSchema } from "#audit/comments/cli-schema";
 import { presentCommentAuditResult } from "#audit/comments/output";
-import { prepareCommentAudit } from "#audit/comments/prepare";
 import { runCommentAudit } from "#audit/comments/run";
-import { exitCodeForDisplayNameAuditResult, formatDisplayNameAuditJsonOutput } from "#audit/display-names/cli-result";
-import type { DisplayNameAuditRunRequest } from "#audit/display-names/cli-schema";
-import { displayNameAuditRunRequestSchema } from "#audit/display-names/cli-schema";
 import { presentDisplayNameAuditResult } from "#audit/display-names/output";
-import { prepareDisplayNameAudit } from "#audit/display-names/prepare";
 import { runDisplayNameAudit } from "#audit/display-names/run";
 import type {
   AssertionAuditResult,
@@ -31,53 +18,30 @@ import type {
   PublishAuditResult,
   RtlAuditResult,
 } from "#audit/domain/types";
-import { exitCodeForEnginesAuditResult, formatEnginesAuditJsonOutput } from "#audit/engines/cli-result";
-import type { EnginesAuditRunRequest } from "#audit/engines/cli-schema";
-import { enginesAuditRunRequestSchema } from "#audit/engines/cli-schema";
 import { presentEnginesAuditResult } from "#audit/engines/output";
-import { prepareEnginesAudit } from "#audit/engines/prepare";
 import { runEnginesAudit } from "#audit/engines/run";
-import { exitCodeForImportsAuditResult, formatImportsAuditJsonOutput } from "#audit/imports/cli-result";
-import type { ImportsAuditRunRequest } from "#audit/imports/cli-schema";
-import { importsAuditRunRequestSchema } from "#audit/imports/cli-schema";
 import { presentImportsAuditResult } from "#audit/imports/output";
-import { prepareImportsAudit } from "#audit/imports/prepare";
 import { runImportsAudit } from "#audit/imports/run";
-import { exitCodeForLayersAuditResult, formatLayersAuditJsonOutput } from "#audit/layers/cli-result";
-import type { LayersAuditRunRequest } from "#audit/layers/cli-schema";
-import { layersAuditRunRequestSchema } from "#audit/layers/cli-schema";
 import { presentLayersAuditResult } from "#audit/layers/output";
 import type { LayersAuditPrelude } from "#audit/layers/prepare";
 import { prepareLayersAudit } from "#audit/layers/prepare";
 import { runLayersAudit } from "#audit/layers/run";
-import { exitCodeForLinkAuditResult, formatLinkAuditJsonOutput } from "#audit/links/cli-result";
-import type { LinkAuditRunRequest } from "#audit/links/cli-schema";
-import { linkAuditRunRequestSchema } from "#audit/links/cli-schema";
 import { presentLinkAuditResult } from "#audit/links/output";
-import { prepareLinkAudit } from "#audit/links/prepare";
 import { runLinkAudit } from "#audit/links/run";
 import type { AuditCommandPrelude } from "#audit/prepare";
-import { exitCodeForPropsAuditResult, formatPropsAuditJsonOutput } from "#audit/props/cli-result";
-import type { PropsAuditRunRequest } from "#audit/props/cli-schema";
-import { propsAuditRunRequestSchema } from "#audit/props/cli-schema";
+import { prepareRepoRootAudit } from "#audit/prepare";
 import { presentPropsAuditResult } from "#audit/props/output";
-import { preparePropsAudit } from "#audit/props/prepare";
 import { runPropsAudit } from "#audit/props/run";
-import { exitCodeForPublishAuditResult, formatPublishAuditJsonOutput } from "#audit/publish/cli-result";
-import type { PublishAuditRunRequest } from "#audit/publish/cli-schema";
-import { publishAuditRunRequestSchema } from "#audit/publish/cli-schema";
 import { presentPublishAuditResult } from "#audit/publish/output";
-import { preparePublishAudit } from "#audit/publish/prepare";
 import { runPublishAudit } from "#audit/publish/run";
-import { exitCodeForRtlAuditResult, formatRtlAuditJsonOutput } from "#audit/rtl/cli-result";
-import type { RtlAuditRunRequest } from "#audit/rtl/cli-schema";
-import { rtlAuditRunRequestSchema } from "#audit/rtl/cli-schema";
 import { presentRtlAuditResult } from "#audit/rtl/output";
 import { prepareRtlAudit } from "#audit/rtl/prepare";
 import { runRtlAudit } from "#audit/rtl/run";
 import type { NamedCommandPipeline } from "#core/cli/command-pipeline";
 import { registerPipelineSubcommand } from "#core/cli/command-pipeline";
+import type { CodefastConfig } from "#core/config/schema";
 import type { AppError } from "#core/errors";
+import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import { nodeFilesystem } from "#core/filesystem/node";
 import type { Result } from "#core/result";
@@ -87,230 +51,171 @@ type AuditActionOptions = {
   readonly fix?: boolean;
 };
 
+type AuditRequest<Prelude> = { readonly prelude: Prelude; readonly opts: AuditActionOptions };
+
+type AuditPrepare<Prelude> = (
+  fs: Filesystem,
+  input: { readonly currentWorkingDirectory: string; readonly rawTarget: string | undefined },
+) => Promise<Result<Prelude, AppError>>;
+
 /**
- * One source audit: its argv contract, the prelude/run pipeline, and how it reports.
+ * One source audit: what it scans, how it runs, and when its result is clean.
  *
- * @remarks `Prelude` widens the shared prelude for an audit whose config resolves to more than an
- * allowlist — the layered packages of `audit layers` — and stays the shared one everywhere else.
+ * @remarks Most audits scan from the repo root with an allowlist from config; `rtl` (a configured default target) and
+ * `layers` (the layered packages) resolve a prelude of their own.
  */
-interface AuditCheck<Request, CheckResult, Prelude extends AuditCommandPrelude = AuditCommandPrelude> {
+interface AuditCheck<CheckResult, Prelude extends AuditCommandPrelude = AuditCommandPrelude> {
   readonly name: string;
   readonly description: string;
-  readonly targetHelp: string;
-  readonly schema: ZodType<Request>;
-  readonly prepare: (
-    fs: Filesystem,
-    input: { readonly currentWorkingDirectory: string; readonly rawTarget: string | undefined },
-  ) => Promise<Result<Prelude, AppError>>;
-  readonly buildRequest: (prelude: Prelude, opts: AuditActionOptions) => unknown;
+  readonly targetHelp?: string | undefined;
+  readonly prepare: AuditPrepare<Prelude>;
+  readonly extraOptions?: ((command: Command) => void) | undefined;
   readonly run: (
     fs: Filesystem,
-    request: Request,
+    prelude: Prelude,
+    opts: AuditActionOptions,
   ) => Result<CheckResult, AppError> | Promise<Result<CheckResult, AppError>>;
   readonly present: (result: CheckResult) => void;
-  readonly formatJson: (result: CheckResult, rootDir: string) => string;
-  readonly exitCode: (result: CheckResult) => number;
-  readonly extraOptions?: (command: Command) => void;
+  readonly isClean: (result: CheckResult) => boolean;
 }
 
-function baseAuditRequest(prelude: AuditCommandPrelude, opts: AuditActionOptions): Record<string, unknown> {
-  return {
-    rootDir: prelude.rootDir,
-    targetPath: prelude.targetPath,
-    allowlist: prelude.allowlist,
-    json: !!opts.json,
-  };
+const DEFAULT_TARGET_HELP = "Directory or file to scan (default: the repo root)";
+
+// The prelude of an audit that scans from the repo root, taking its allowlist from the config key it names.
+function fromRepoRoot(
+  selectAllowlist: (config: CodefastConfig) => ReadonlyArray<string> | undefined = () => [],
+): AuditPrepare<AuditCommandPrelude> {
+  return (fs, input) => prepareRepoRootAudit(fs, input, (config) => selectAllowlist(config) ?? []);
 }
 
-const rtlCheck: AuditCheck<RtlAuditRunRequest, RtlAuditResult> = {
+/**
+ * The machine output every audit prints for `--json`.
+ */
+export function formatAuditJson(result: unknown, rootDir: string, clean: boolean): string {
+  return JSON.stringify({ schemaVersion: 1 as const, ok: clean, cwd: rootDir, result });
+}
+
+/**
+ * The exit code every audit records: `1` while findings remain.
+ */
+export function auditExitCode(clean: boolean): number {
+  return clean ? CLI_EXIT_SUCCESS : CLI_EXIT_GENERAL_ERROR;
+}
+
+const rtlCheck: AuditCheck<RtlAuditResult> = {
   name: "rtl",
   description: "Report physical-direction Tailwind classes that should be logical or rtl:-paired",
   targetHelp: "Directory or file to scan (default: audit.rtl.target from config)",
-  schema: rtlAuditRunRequestSchema,
   prepare: prepareRtlAudit,
-  buildRequest: baseAuditRequest,
-  run: (fs, request) =>
-    runRtlAudit(fs, { rootDir: request.rootDir, targetPath: request.targetPath, allowlist: request.allowlist ?? [] }),
+  run: (fs, prelude) => runRtlAudit(fs, prelude),
   present: presentRtlAuditResult,
-  formatJson: formatRtlAuditJsonOutput,
-  exitCode: exitCodeForRtlAuditResult,
+  isClean: (result) => result.violationCount === 0,
 };
 
-const linksCheck: AuditCheck<LinkAuditRunRequest, LinkAuditResult> = {
+const linksCheck: AuditCheck<LinkAuditResult> = {
   name: "links",
   description: "Report markdown links pointing at a missing path or an anchor the target does not offer",
-  targetHelp: "Directory or file to scan (default: the repo root)",
-  schema: linkAuditRunRequestSchema,
-  prepare: prepareLinkAudit,
-  buildRequest: baseAuditRequest,
-  run: (fs, request) =>
-    runLinkAudit(fs, { rootDir: request.rootDir, targetPath: request.targetPath, allowlist: request.allowlist ?? [] }),
+  prepare: fromRepoRoot((config) => config.audit?.links?.allowlist),
+  run: (fs, prelude) => runLinkAudit(fs, prelude),
   present: presentLinkAuditResult,
-  formatJson: formatLinkAuditJsonOutput,
-  exitCode: exitCodeForLinkAuditResult,
+  isClean: (result) => result.breakageCount === 0,
 };
 
-const importsCheck: AuditCheck<ImportsAuditRunRequest, ImportsAuditResult> = {
+const importsCheck: AuditCheck<ImportsAuditResult> = {
   name: "imports",
   description: "Report banned import forms (React by-name, Zod namespace in front-end packages, …)",
-  targetHelp: "Directory or file to scan (default: the repo root)",
-  schema: importsAuditRunRequestSchema,
-  prepare: prepareImportsAudit,
-  buildRequest: baseAuditRequest,
-  run: (fs, request) =>
-    runImportsAudit(fs, {
-      rootDir: request.rootDir,
-      targetPath: request.targetPath,
-      allowlist: request.allowlist ?? [],
-    }),
+  prepare: fromRepoRoot((config) => config.audit?.imports?.allowlist),
+  run: (fs, prelude) => runImportsAudit(fs, prelude),
   present: presentImportsAuditResult,
-  formatJson: formatImportsAuditJsonOutput,
-  exitCode: exitCodeForImportsAuditResult,
+  isClean: (result) => result.violationCount === 0,
 };
 
-const assertionsCheck: AuditCheck<AssertionAuditRunRequest, AssertionAuditResult> = {
+const assertionsCheck: AuditCheck<AssertionAuditResult> = {
   name: "assertions",
   description: "Report double type assertions through unknown or any (x as unknown as T), tests included",
-  targetHelp: "Directory or file to scan (default: the repo root)",
-  schema: assertionAuditRunRequestSchema,
-  prepare: prepareAssertionAudit,
-  buildRequest: baseAuditRequest,
-  run: (fs, request) =>
-    runAssertionAudit(fs, {
-      rootDir: request.rootDir,
-      targetPath: request.targetPath,
-      allowlist: request.allowlist ?? [],
-    }),
+  prepare: fromRepoRoot((config) => config.audit?.assertions?.allowlist),
+  run: (fs, prelude) => runAssertionAudit(fs, prelude),
   present: presentAssertionAuditResult,
-  formatJson: formatAssertionAuditJsonOutput,
-  exitCode: exitCodeForAssertionAuditResult,
+  isClean: (result) => result.violationCount === 0,
 };
 
-const displayNamesCheck: AuditCheck<DisplayNameAuditRunRequest, DisplayNameAuditResult> = {
+const displayNamesCheck: AuditCheck<DisplayNameAuditResult> = {
   name: "display-names",
   description: "Report token(), tag() and module display names that break the <namespace>:<Name> convention",
-  targetHelp: "Directory or file to scan (default: the repo root)",
-  schema: displayNameAuditRunRequestSchema,
-  prepare: prepareDisplayNameAudit,
-  buildRequest: baseAuditRequest,
-  run: (fs, request) =>
-    runDisplayNameAudit(fs, {
-      rootDir: request.rootDir,
-      targetPath: request.targetPath,
-      allowlist: request.allowlist ?? [],
-    }),
+  prepare: fromRepoRoot((config) => config.audit?.displayNames?.allowlist),
+  run: (fs, prelude) => runDisplayNameAudit(fs, prelude),
   present: presentDisplayNameAuditResult,
-  formatJson: formatDisplayNameAuditJsonOutput,
-  exitCode: exitCodeForDisplayNameAuditResult,
+  isClean: (result) => result.violationCount === 0,
 };
 
-const propsCheck: AuditCheck<PropsAuditRunRequest, PropsAuditResult> = {
+const propsCheck: AuditCheck<PropsAuditResult> = {
   name: "props",
   description:
     "Report component props aliases joined with & that an interface could express, judged by the type checker",
-  targetHelp: "Directory or file to scan (default: the repo root)",
-  schema: propsAuditRunRequestSchema,
-  prepare: preparePropsAudit,
-  buildRequest: baseAuditRequest,
-  run: (fs, request) =>
-    runPropsAudit(fs, {
-      rootDir: request.rootDir,
-      targetPath: request.targetPath,
-      allowlist: request.allowlist ?? [],
-    }),
+  prepare: fromRepoRoot((config) => config.audit?.props?.allowlist),
+  run: (fs, prelude) => runPropsAudit(fs, prelude),
   present: presentPropsAuditResult,
-  formatJson: formatPropsAuditJsonOutput,
-  exitCode: exitCodeForPropsAuditResult,
+  isClean: (result) => result.violationCount === 0,
 };
 
-const commentsCheck: AuditCheck<CommentAuditRunRequest, CommentAuditResult> = {
+const commentsCheck: AuditCheck<CommentAuditResult> = {
   name: "comments",
   description: "Report section dividers that are not in the repo's one allowed form",
-  targetHelp: "Directory or file to scan (default: the repo root)",
-  schema: commentAuditRunRequestSchema,
-  prepare: prepareCommentAudit,
-  buildRequest: (prelude, opts) => ({ ...baseAuditRequest(prelude, opts), fix: !!opts.fix }),
-  run: (fs, request) =>
-    runCommentAudit(fs, {
-      rootDir: request.rootDir,
-      targetPath: request.targetPath,
-      allowlist: request.allowlist ?? [],
-      fix: request.fix,
-    }),
-  present: presentCommentAuditResult,
-  formatJson: formatCommentAuditJsonOutput,
-  exitCode: exitCodeForCommentAuditResult,
+  prepare: fromRepoRoot((config) => config.audit?.comments?.allowlist),
   extraOptions: (command) => {
     command.option("--fix", "Rewrite every mechanically fixable divider in place", false);
   },
+  run: (fs, prelude, opts) => runCommentAudit(fs, { ...prelude, fix: !!opts.fix }),
+  present: presentCommentAuditResult,
+  isClean: (result) => result.breakageCount === 0,
 };
 
-const layersCheck: AuditCheck<LayersAuditRunRequest, LayersAuditResult, LayersAuditPrelude> = {
+const layersCheck: AuditCheck<LayersAuditResult, LayersAuditPrelude> = {
   name: "layers",
   description: "Report value imports that point up a package's configured layers, and modules sitting in no layer",
   targetHelp: "Directory or file to scan (default: the repo root, reaching every package audit.layers names)",
-  schema: layersAuditRunRequestSchema,
   prepare: prepareLayersAudit,
-  buildRequest: (prelude, opts) => ({ ...baseAuditRequest(prelude, opts), packages: prelude.packages }),
-  run: (fs, request) =>
-    runLayersAudit(fs, {
-      rootDir: request.rootDir,
-      targetPath: request.targetPath,
-      allowlist: request.allowlist ?? [],
-      packages: request.packages,
-    }),
+  run: (fs, prelude) => runLayersAudit(fs, prelude),
   present: presentLayersAuditResult,
-  formatJson: formatLayersAuditJsonOutput,
-  exitCode: exitCodeForLayersAuditResult,
+  isClean: (result) => result.violationCount === 0,
 };
 
-const publishCheck: AuditCheck<PublishAuditRunRequest, PublishAuditResult> = {
+const publishCheck: AuditCheck<PublishAuditResult> = {
   name: "publish",
   description:
     "Report what breaks a consumer's install: #/ imports, unshipped exports/imports targets, and stylesheet @source paths reaching nothing shipped",
-  targetHelp: "Directory or file to scan (default: the repo root)",
-  schema: publishAuditRunRequestSchema,
-  prepare: preparePublishAudit,
-  buildRequest: baseAuditRequest,
-  run: (fs, request) => runPublishAudit(fs, { rootDir: request.rootDir, targetPath: request.targetPath }),
+  prepare: fromRepoRoot(),
+  run: (fs, prelude) => runPublishAudit(fs, prelude),
   present: presentPublishAuditResult,
-  formatJson: formatPublishAuditJsonOutput,
-  exitCode: exitCodeForPublishAuditResult,
+  isClean: (result) =>
+    result.legacyImportCount === 0 && result.unshipped.length === 0 && result.unreachableStylesheets.length === 0,
 };
 
-const enginesCheck: AuditCheck<EnginesAuditRunRequest, EnginesAuditResult> = {
+const enginesCheck: AuditCheck<EnginesAuditResult> = {
   name: "engines",
   description:
     "Report Node floors (engines.node) that are missing, malformed, outside a dependency's engines, or off their @types/node line",
-  targetHelp: "Directory or file to scan (default: the repo root)",
-  schema: enginesAuditRunRequestSchema,
-  prepare: prepareEnginesAudit,
-  buildRequest: baseAuditRequest,
-  run: (fs, request) => runEnginesAudit(fs, { rootDir: request.rootDir, targetPath: request.targetPath }),
+  prepare: fromRepoRoot(),
+  run: (fs, prelude) => runEnginesAudit(fs, prelude),
   present: presentEnginesAuditResult,
-  formatJson: formatEnginesAuditJsonOutput,
-  exitCode: exitCodeForEnginesAuditResult,
+  isClean: (result) => result.violations.length === 0,
 };
 
-/**
- * Adapts an `AuditCheck` descriptor onto the shared command pipeline.
- */
-function auditCheckToPipeline<Request, CheckResult, Prelude extends AuditCommandPrelude>(
-  check: AuditCheck<Request, CheckResult, Prelude>,
-): NamedCommandPipeline<Prelude, Request, CheckResult, never, AuditActionOptions> {
+function auditCheckToPipeline<CheckResult, Prelude extends AuditCommandPrelude>(
+  check: AuditCheck<CheckResult, Prelude>,
+): NamedCommandPipeline<Prelude, AuditRequest<Prelude>, CheckResult, never, AuditActionOptions> {
   return {
     name: check.name,
     description: check.description,
-    positional: { name: "[target]", help: check.targetHelp },
-    schema: check.schema,
+    positional: { name: "[target]", help: check.targetHelp ?? DEFAULT_TARGET_HELP },
     configureArgv: check.extraOptions,
     prepare: (fs, input) =>
       check.prepare(fs, { currentWorkingDirectory: input.currentWorkingDirectory, rawTarget: input.rawArg }),
-    buildRequest: ({ prelude, opts }) => check.buildRequest(prelude, opts),
-    run: async (fs, request) => check.run(fs, request),
+    buildRequest: ({ prelude, opts }) => ({ prelude, opts }),
+    run: async (fs, request) => check.run(fs, request.prelude, request.opts),
     presentHuman: ({ result }) => check.present(result),
-    formatJson: ({ result, prelude }) => check.formatJson(result, prelude.rootDir),
-    exitCode: check.exitCode,
+    formatJson: ({ result, prelude }) => formatAuditJson(result, prelude.rootDir, check.isClean(result)),
+    exitCode: (result) => auditExitCode(check.isClean(result)),
   };
 }
 

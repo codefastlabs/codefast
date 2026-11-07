@@ -5,9 +5,7 @@ import { applyCommandPipeline } from "#core/cli/command-pipeline";
 import { nodeFilesystem } from "#core/filesystem/node";
 import { ok } from "#core/result";
 import { exitCodeForPackSlimResult, formatPackSlimJsonOutput } from "#pack-slim/cli-result";
-import { packSlimRunRequestSchema } from "#pack-slim/cli-schema";
-import type { PackSlimRunRequest } from "#pack-slim/cli-schema";
-import type { PackSlimRunStats } from "#pack-slim/domain/types";
+import type { PackSlimRunRequest, PackSlimRunStats } from "#pack-slim/domain/types";
 import { PackSlimProgressPresenter } from "#pack-slim/output";
 import type { PackSlimCommandPrelude } from "#pack-slim/prepare";
 import { preparePackSlim } from "#pack-slim/prepare";
@@ -24,7 +22,6 @@ const packSlimPipeline: CommandPipeline<
   PackSlimCommandOptions
 > = {
   positional: { name: "[package]", help: "Optional package path relative to repo root (e.g. packages/ui)" },
-  schema: packSlimRunRequestSchema,
   configureArgv: (command) => {
     command.option("--dry-run", "Report what would change without touching any file", false);
     command.option("--force", "Run even if the git working tree has uncommitted tracked changes", false);

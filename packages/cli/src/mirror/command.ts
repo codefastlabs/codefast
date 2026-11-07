@@ -4,7 +4,6 @@ import type { CommandPipeline } from "#core/cli/command-pipeline";
 import { applyCommandPipeline } from "#core/cli/command-pipeline";
 import { nodeFilesystem } from "#core/filesystem/node";
 import { exitCodeForMirrorSyncResult, formatMirrorSyncJsonOutput } from "#mirror/cli-result";
-import { mirrorSyncRunRequestSchema } from "#mirror/cli-schema";
 import type { GlobalStats, MirrorSyncCommandPrelude, MirrorSyncRunRequest } from "#mirror/domain/types";
 import { MirrorSyncProgressPresenter } from "#mirror/output";
 import { prepareMirrorSync } from "#mirror/prepare";
@@ -20,7 +19,6 @@ const mirrorPipeline: CommandPipeline<
   MirrorCommandOptions
 > = {
   positional: { name: "[package]", help: "Optional package path relative to repo root (e.g. packages/ui)" },
-  schema: mirrorSyncRunRequestSchema,
   configureArgv: (command) => {
     command.option("--dry-run", "Report what would change without writing package.json", false);
     command.option("-v, --verbose", "Print extra diagnostics", false);

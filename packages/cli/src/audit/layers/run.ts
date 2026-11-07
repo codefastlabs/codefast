@@ -1,8 +1,8 @@
 import path from "node:path";
 
 import type { LayerFileViolations, LayersAuditResult } from "#audit/domain/types";
-import type { LayersAuditPackage } from "#audit/layers/cli-schema";
 import { auditLayeringSource, LayerMap } from "#audit/layers/domain/layering";
+import type { LayersAuditPackage } from "#audit/layers/prepare";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import type { Result } from "#core/result";

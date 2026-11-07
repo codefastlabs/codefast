@@ -1,7 +1,6 @@
 import process from "node:process";
 
 import type { Command } from "commander";
-import type { ZodType } from "zod";
 
 import type { GlobalCliOptions } from "#core/cli/global-options";
 import { globalCliCommanderOptionsSchema } from "#core/cli/global-options";
@@ -76,8 +75,7 @@ export interface CommandPipeline<
   readonly guard?:
     | ((input: { readonly prelude: Prelude; readonly opts: Opts }) => Promise<Result<void, AppError>>)
     | undefined;
-  readonly schema: ZodType<Request>;
-  readonly buildRequest: (input: BuildInput<Prelude, Opts>) => unknown;
+  readonly buildRequest: (input: BuildInput<Prelude, Opts>) => Request;
   readonly createPresenter?: ((input: BuildInput<Prelude, Opts>) => Presenter) | undefined;
   readonly run: (
     fs: Filesystem,
@@ -140,10 +138,7 @@ function makeAction<Prelude, Request, RunResult, Presenter, Opts extends BaseCom
       }
     }
 
-    const parsed = parseWithSchema(pipeline.schema, pipeline.buildRequest({ prelude: prelude.value, opts, globals }));
-    if (!consumeCliAppError(parsed)) {
-      return;
-    }
+    const request = pipeline.buildRequest({ prelude: prelude.value, opts, globals });
 
     const json = !!opts.json;
     const presenter =
@@ -152,7 +147,7 @@ function makeAction<Prelude, Request, RunResult, Presenter, Opts extends BaseCom
         : undefined;
 
     const startedAt = performance.now();
-    const outcome = await pipeline.run(fs, parsed.value, presenter);
+    const outcome = await pipeline.run(fs, request, presenter);
     if (!consumeCliAppError(outcome)) {
       return;
     }
