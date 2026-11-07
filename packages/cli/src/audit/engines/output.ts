@@ -38,6 +38,9 @@ function describeViolation(violation: EngineViolation): string {
     case "root-outside-dependency-engines": {
       return `workspace root floor ${violation.floor} claims Node "${violation.uncovered}", which ${violation.dependency}'s engines.node "${violation.range}" (installed for ${violation.dependents.join(", ")}) leaves out → raise the root floor or drop the dependency`;
     }
+    case "divergent-floor": {
+      return `floor ${violation.floor} differs from ${violation.sharedFloor}, which the other published packages ship on → declare ">=${violation.sharedFloor}"`;
+    }
     case "types-off-floor": {
       return `@types/node resolves to ${violation.typesVersion}, off floor ${violation.floor}'s line → pin it to the floor's major at a minor no newer`;
     }

@@ -35,7 +35,7 @@ its keep as the dependency graph grows.
 pnpm add @codefast/di
 ```
 
-`@codefast/di` runs on Node.js 22.18 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
+`@codefast/di` runs on Node.js 24.15 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
 ([support policy](../../SUPPORT.md#browsers)). It requires TypeScript 7 or later, with standard decorators. Leave
 `experimentalDecorators` off — it's off by default. A browser program also needs the
 [disposal types](#explicit-resource-management-types).

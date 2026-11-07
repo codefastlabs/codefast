@@ -59,10 +59,10 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@types/node": "catalog:node22.18",
+    "@types/node": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {
-    "node": ">=22.18.0"
+    "node": ">=24.15.0"
   }
 }

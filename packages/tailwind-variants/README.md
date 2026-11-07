@@ -39,7 +39,7 @@ pnpm add @codefast/tailwind-variants cn
 ```
 
 `@codefast/tailwind-variants` ships ESM only. `cn` is a peer dependency (`>=0.5.0`), and the package runs on Node.js
-22.12 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
+24.15 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
 ([support policy](../../SUPPORT.md#browsers)). It requires TypeScript 7 or later for its types. It's published on 0.x
 and versioned on its own track: breaking changes ship as minor versions, so pin the minor version when you need
 stability.

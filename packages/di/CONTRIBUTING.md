@@ -11,14 +11,14 @@ changes.
 
 Ground rules that bite in this package specifically:
 
-- **Node ≥ 22.18** — `engines.node` is `>=22.18.0`, the lowest Node the package's own test toolchain (Babel) runs on,
-  and the package keeps its own `Map` upsert helpers ([`core/map-upsert.ts`](./src/core/map-upsert.ts)) to hold that
-  floor. Calling the platform's `Map.prototype.getOrInsert` instead would raise it to 26, which the serverless runtimes
-  this package deploys to do not offer. That floor is mechanical, not a reminder: this package's `tsconfig.json` layers
-  the `node22.json` floor overlay and pins `lib` to what Node 22 ships plus `ESNext.Decorators` and `ESNext.Disposable`,
-  so a builtin newer than those is a compile error here even on an engine that ships it. The one disposal symbol the
-  package calls at runtime, `Symbol.asyncDispose`, Node 22 already ships. Reaching for anything newer means proving the
-  floor's Node ships it and widening `lib` deliberately.
+- **Node ≥ 24.15** — `engines.node` is `>=24.15.0`, the floor every published `@codefast/*` package shares, and the
+  package keeps its own `Map` upsert helpers ([`core/map-upsert.ts`](./src/core/map-upsert.ts)) to hold that floor.
+  Calling the platform's `Map.prototype.getOrInsert` instead would raise it to 26, which the serverless runtimes this
+  package deploys to do not offer. That floor is mechanical, not a reminder: this package's `tsconfig.json` pins `lib`
+  to `ES2025`, what Node 24 ships, plus `ESNext.Decorators` and `ESNext.Disposable`, so a builtin newer than those is a
+  compile error here even on an engine that ships it. The one disposal symbol the package calls at runtime,
+  `Symbol.asyncDispose`, Node 24 already ships. Reaching for anything newer means proving the floor's Node ships it and
+  widening `lib` deliberately.
 - `exactOptionalPropertyTypes` is on — an optional prop that may receive an explicit value is typed `?: T | undefined`.
 - The sync and async resolve pipelines live in **one class** (`resolution/resolver.ts`) because `#` private fields
   cannot span files and both pipelines touch the same private state on every hop. Everything that does _not_ need that

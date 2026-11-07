@@ -407,6 +407,13 @@ export type EngineViolation =
       readonly uncovered: string;
     }
   | {
+      readonly kind: "divergent-floor";
+      readonly packageName: string;
+      readonly floor: string;
+      /** The floor the other published packages share, the highest when they disagree. */
+      readonly sharedFloor: string;
+    }
+  | {
       readonly kind: "types-off-floor";
       readonly packageName: string;
       readonly floor: string;
