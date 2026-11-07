@@ -88,15 +88,15 @@ catalog:
   jest-axe: ^11.0.0
   jiti: ^2.7.0
   jsdom: ^30.1.3
-  knip: ^6.44.0
+  knip: ^6.44.1
   lint-staged: ^17.6.0
   marked: ^18.1.3
   lucide-react: ^1.68.0
   mermaid: ^12.3.0
   nitro: 3.0.261029-rc
-  oxfmt: ^0.75.0
-  oxc-parser: ^0.156.0
-  oxlint: ^1.90.0
+  oxfmt: ^0.76.0
+  oxc-parser: ^0.157.0
+  oxlint: ^1.91.0
   oxlint-tsgolint: ^7.0.2005
   picomatch: ^4.0.7
   postcss: ^8.5.32
