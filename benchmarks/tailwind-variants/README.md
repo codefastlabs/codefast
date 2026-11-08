@@ -27,6 +27,7 @@ run rebuilds `@codefast/tailwind-variants` first, so it measures the working tre
 | `pnpm bench:footprint:check`    | Bundles only `@codefast/tailwind-variants`'s program and fails past `footprint-budget.json`           |
 | `pnpm bench:results`            | Regenerates `RESULTS.md` and `results.json` from the run in `baselines/`                              |
 | `pnpm bench:results:check`      | Fails when the committed `RESULTS.md` or `results.json` is not what the baseline generates            |
+| `pnpm bench:parity`             | Fails when the two `tv()` libraries resolve any shared row's workload to different classes            |
 | `pnpm bench:fast`               | Smoke profile — one shared process per library, shorter windows, one trial. Not a claim               |
 | `pnpm bench:ab`                 | Two builds of `@codefast/tailwind-variants`, paired and alternating, on the rows named                |
 | `pnpm bench:list`               | Prints the scenario inventory as JSON on stdout, measuring nothing                                    |
@@ -146,19 +147,30 @@ src/harness/footprint.ts    the bench:footprint entry, and the bundle gate behin
 footprint-budget.json       the gzip budget the gate holds @codefast/tailwind-variants's program to
 src/harness/results.ts      the bench:results entry: this suite's notes and copy, handed to the harness generator
 src/harness/results/notes.ts the figure-free analysis RESULTS.md carries
-src/*-benches.ts            one child entry per library
-src/scenarios/<library>/    that library's implementation of each shape
+src/harness/parity.ts       the bench:parity entry: every shared row's output, compared across both tv() libraries
+src/*-benches.ts            one child entry per library, each loading only its own library's adapter
+src/lib/tv-library.ts       the surface a tv() library exposes to the shared scenarios
+src/lib/<library>.ts        each library's adapter, the only module its subprocess imports a library from
+src/scenarios/tv/           every shape both tv() libraries run, written once against that surface
+src/scenarios/codefast/     the subject's uncached control rows, which upstream has no switch for
+src/scenarios/class-variance-authority/  cva's own ports, which take a different configuration shape
 src/fixtures/               the variant configs, shared by every library
-src/lib/tv-shims.ts         the one typing escape hatch, isolated here
 ```
 
 `src/fixtures/scenario-parity.ts` holds each scenario's id, group and description once, and every side imports it — so a
 row cannot silently drift between implementations. The fixtures are the same variant configuration objects for all three
 libraries; only the call into the library differs.
 
-`tv` and `cva` both infer strict literal types from their configuration, while the fixtures are deliberately widened.
-`src/lib/tv-shims.ts` is where that relaxation lives, so the escape hatch is one file and not sprinkled through the
-scenarios.
+Both `tv()` libraries run the same scenario code: each row in `src/scenarios/tv/` is a builder that takes a `TvLibrary`
+and is called once per child with that child's adapter, so a loop cannot differ between the two sides and no child loads
+another library's code. `tv` and `cva` both infer strict literal types from their configuration, while the fixtures are
+deliberately widened; each adapter in `src/lib/` is where that relaxation lives, so the escape hatch is not sprinkled
+through the scenarios.
+
+Every shared row also declares an `output`: the classes one timed iteration resolves, every slot included.
+`pnpm bench:parity` runs each output three times through both libraries — the first calls, the compiling call, the
+cached answers — and fails on the first line that differs, so a ratio never rests on two libraries doing different work.
+CI runs it beside the results check.
 
 ## Reading the output
 

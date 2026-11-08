@@ -91,6 +91,11 @@ jobs:
       - name: Verify Benchmark Results Pages
         run: pnpm bench:results:check
 
+      # A benchmark ratio means something only while both libraries resolve the timed workload to the same classes;
+      # every shared row's output is compared across the subject and its upstream, so a regression cannot read as speed.
+      - name: Verify Benchmark Output Parity
+        run: pnpm bench:parity
+
       - name: Execute Automated Tests with Coverage
         if: ${{ inputs.run-tests }}
         run: npx turbo run test:coverage --filter="./packages/**" --filter="./internal/**"

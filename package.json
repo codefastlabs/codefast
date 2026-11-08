@@ -10,6 +10,7 @@
     "bench:fast": "turbo run bench:fast --concurrency=1",
     "bench:footprint:check": "turbo run bench:footprint:check",
     "bench:list": "turbo run bench:list --concurrency=1",
+    "bench:parity": "turbo run bench:parity",
     "bench:report": "turbo run bench:report --concurrency=1",
     "bench:results:check": "turbo run bench:results:check",
     "bench:serve": "turbo run bench:serve",
