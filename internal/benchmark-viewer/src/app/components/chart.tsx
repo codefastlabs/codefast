@@ -870,21 +870,24 @@ export function ChartPanel({
     if (typeof window === "undefined") {
       return;
     }
-    let scheduled = false;
+    // Pending frame id (0 when none), held in an object so the handlers update it without reassigning a binding
+    const pending = { frame: 0 };
     const onResize = () => {
-      if (scheduled || !chartRef.current) {
+      if (pending.frame !== 0 || !chartRef.current) {
         return;
       }
-      scheduled = true;
-      requestAnimationFrame(() => {
-        scheduled = false;
+      pending.frame = requestAnimationFrame(() => {
+        pending.frame = 0;
         chartRef.current?.resize();
         chartRef.current?.update("none");
         syncToolbarFromChart();
       });
     };
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      cancelAnimationFrame(pending.frame);
+    };
   }, [syncToolbarFromChart]);
 
   // Open display details on desktop

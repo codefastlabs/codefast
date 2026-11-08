@@ -57,8 +57,8 @@ export function useAnimatedValue(targetValue: null | number, duration: number, a
     // Start timestamp
     const startTime = performance.now();
 
-    // requestAnimationFrame id for cleanup
-    let animationFrame: number;
+    // Pending requestAnimationFrame id, held in an object so the RAF loop updates it without reassigning a binding
+    const frame = { id: 0 };
 
     // RAF step
     const animateValue = (currentTime: number): void => {
@@ -80,14 +80,14 @@ export function useAnimatedValue(targetValue: null | number, duration: number, a
 
         animatedValueRef.current = nextValue;
         setAnimatedValue(nextValue);
-        animationFrame = requestAnimationFrame(animateValue);
+        frame.id = requestAnimationFrame(animateValue);
       }
     };
 
-    animationFrame = requestAnimationFrame(animateValue);
+    frame.id = requestAnimationFrame(animateValue);
 
     return (): void => {
-      cancelAnimationFrame(animationFrame);
+      cancelAnimationFrame(frame.id);
     };
   }, [actualTargetValue, duration, shouldAnimate]);
 
