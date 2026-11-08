@@ -171,7 +171,7 @@ export type MirrorProcessingModeInput = { kind: "single" } | { kind: "multi"; so
  * @since 0.3.16-canary.0
  */
 export type MirrorSyncProgressListener = {
-  configure(options: { readonly noColor: boolean; readonly verbose: boolean; readonly dryRun: boolean }): void;
+  configure(options: { readonly verbose: boolean; readonly dryRun: boolean }): void;
   onBanner(): void;
   onProcessingMode(mode: MirrorProcessingModeInput): void;
   onNoPackages(): void;

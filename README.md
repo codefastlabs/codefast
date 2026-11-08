@@ -160,6 +160,7 @@ pnpm dev              # start all apps and packages in watch mode
 | `pnpm test:coverage`   | Run tests with coverage reports                                                                     |
 | `pnpm verify`          | Full gate: build, lint, format, type check, and tests with coverage                                 |
 | `pnpm bench`           | Run the benchmark suites                                                                            |
+| `pnpm cli:audit`       | Run every source audit (links, comments, imports, layers, …) in one report — what CI runs           |
 | `pnpm cli:audit:links` | Check every Markdown link and anchor in the repo                                                    |
 | `pnpm release`         | Add a changeset for a package change                                                                |
 

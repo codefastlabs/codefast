@@ -1,6 +1,8 @@
 import path from "node:path";
+import process from "node:process";
 
 import { logger } from "#core/logger";
+import { paint } from "#core/style";
 import type { TagProgressListener, TagResolvedTarget, TagResult, TagTargetExecutionResult } from "#tag/domain/types";
 
 type TagProgressEvent =
@@ -33,13 +35,6 @@ export class TagProgressPresenter implements TagProgressListener {
   }
 }
 
-const colorReset = "\x1b[0m";
-const colors = {
-  red: "\x1b[31m",
-  green: "\x1b[32m",
-  yellow: "\x1b[33m",
-} as const;
-
 /**
  * Prints a tag run's target table, warnings, and summary to the human reader.
  *
@@ -56,10 +51,6 @@ export function presentTagResult(result: TagResult, rootDir: string): void {
     logger.err(warningsAndErrorsSection);
   }
   logger.out(formatSummary(result));
-}
-
-function withColorizedLine(line: string, colorCode: string): string {
-  return `${colorCode}${line}${colorReset}`;
 }
 
 function warningsAndErrorsFromResult(result: TagResult, rootDir: string): Array<string> {
@@ -102,9 +93,9 @@ function formatWarningsAndErrors(result: TagResult, rootDir: string): string | n
   if (entries.length === 0) {
     return null;
   }
-  const lines = [withColorizedLine("⚠️ Warnings & Errors", colors.yellow)];
+  const lines = [paint("yellow", "⚠️ Warnings & Errors", process.stderr)];
   for (const entry of entries) {
-    lines.push(withColorizedLine(`- ${entry}`, colors.red));
+    lines.push(paint("red", `- ${entry}`, process.stderr));
   }
   return lines.join("\n");
 }
@@ -120,12 +111,12 @@ function formatSummary(result: TagResult): string {
     result.targetResults.some((targetResult) => targetResult.runError !== null) ||
     result.blockedDeclarations.length > 0 ||
     result.hookError !== null;
-  const summaryColor = hasError ? colors.red : isDryRun ? colors.yellow : colors.green;
+  const summaryStyle = hasError ? "red" : isDryRun ? "yellow" : "green";
   const blockedSuffix = result.blockedDeclarations.length > 0 ? ` blocked=${result.blockedDeclarations.length}` : "";
   const lines = [
-    withColorizedLine(
+    paint(
+      summaryStyle,
       `${summaryPrefix} version=${result.versionSummary}${versionSuffix} files=${result.filesChanged}/${result.filesScanned} declarations=${result.taggedDeclarations}${blockedSuffix}`,
-      summaryColor,
     ),
   ];
   if (result.skippedPackages.length > 0) {

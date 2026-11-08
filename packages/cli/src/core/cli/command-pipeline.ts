@@ -13,12 +13,14 @@ import type { Result } from "#core/result";
 import { parseWithSchema } from "#core/schema-parse";
 
 /**
- * The options every command shares: the `--json` machine-output flag. Per-command option shapes extend this.
+ * The options every command shares: `--json` machine output and `--verbose` diagnostics. Per-command option shapes
+ * extend this.
  *
  * @since 0.11.0
  */
 export interface BaseCommandOptions {
   readonly json?: boolean | undefined;
+  readonly verbose?: boolean | undefined;
 }
 
 /**
@@ -104,6 +106,7 @@ export type NamedCommandPipeline<
 };
 
 const DEFAULT_JSON_HELP = "Print one JSON object on stdout instead of the human-readable output";
+const DEFAULT_VERBOSE_HELP = "Print extra diagnostics, including the stack trace behind an unexpected failure";
 
 function readGlobalOptions(command: Command): Record<string, unknown> {
   return (
@@ -116,8 +119,9 @@ function makeAction<Prelude, Request, RunResult, Presenter, Opts extends BaseCom
   pipeline: CommandPipeline<Prelude, Request, RunResult, Presenter, Opts>,
 ): (rawArg: string | undefined, opts: Opts, command: Command) => Promise<void> {
   return async (rawArg, opts, command) => {
+    const reporting = { verbose: !!opts.verbose };
     const globalsOutcome = parseWithSchema(globalCliCommanderOptionsSchema, readGlobalOptions(command));
-    if (!consumeCliAppError(globalsOutcome)) {
+    if (!consumeCliAppError(globalsOutcome, reporting)) {
       return;
     }
     const globals = globalsOutcome.value;
@@ -127,13 +131,13 @@ function makeAction<Prelude, Request, RunResult, Presenter, Opts extends BaseCom
       rawArg: readOptionalPositionalArg(rawArg),
       globals,
     });
-    if (!consumeCliAppError(prelude)) {
+    if (!consumeCliAppError(prelude, reporting)) {
       return;
     }
 
     if (pipeline.guard) {
       const guarded = await pipeline.guard({ prelude: prelude.value, opts });
-      if (!consumeCliAppError(guarded)) {
+      if (!consumeCliAppError(guarded, reporting)) {
         return;
       }
     }
@@ -148,7 +152,7 @@ function makeAction<Prelude, Request, RunResult, Presenter, Opts extends BaseCom
 
     const startedAt = performance.now();
     const outcome = await pipeline.run(fs, request, presenter);
-    if (!consumeCliAppError(outcome)) {
+    if (!consumeCliAppError(outcome, reporting)) {
       return;
     }
     const elapsedSeconds = (performance.now() - startedAt) / 1000;
@@ -170,7 +174,7 @@ function makeAction<Prelude, Request, RunResult, Presenter, Opts extends BaseCom
 }
 
 /**
- * Wires a pipeline onto a named Command: the shared positional, `--json`, any extra options, and the action.
+ * Wires a pipeline onto a named Command: the shared positional, `--json`, `--verbose`, extra options, and the action.
  *
  * @since 0.11.0
  */
@@ -183,8 +187,15 @@ export function applyCommandPipeline<Prelude, Request, RunResult, Presenter, Opt
     command.argument(pipeline.positional.name, pipeline.positional.help);
   }
   command.option("--json", DEFAULT_JSON_HELP, false);
+  command.option("-v, --verbose", DEFAULT_VERBOSE_HELP, false);
   pipeline.configureArgv?.(command);
-  command.action(makeAction(fs, pipeline));
+  const action = makeAction(fs, pipeline);
+  // Commander passes the positional first only when one is declared.
+  if (pipeline.positional) {
+    command.action(action);
+  } else {
+    command.action((opts: Opts, self: Command) => action(undefined, opts, self));
+  }
   return command;
 }
 

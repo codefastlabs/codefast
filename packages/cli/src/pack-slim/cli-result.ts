@@ -1,4 +1,4 @@
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
+import { CLI_EXIT_FAILURE, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 import type { PackSlimRunStats } from "#pack-slim/domain/types";
 
 /**
@@ -7,7 +7,7 @@ import type { PackSlimRunStats } from "#pack-slim/domain/types";
  * @since 0.8.1
  */
 export function exitCodeForPackSlimResult(stats: PackSlimRunStats): number {
-  return stats.packagesErrored > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
+  return stats.packagesErrored > 0 ? CLI_EXIT_FAILURE : CLI_EXIT_SUCCESS;
 }
 
 /**

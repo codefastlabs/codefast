@@ -63,6 +63,7 @@ codefast --help                                   # list commands
 # in a workspace or a single-package project:
 codefast mirror --dry-run                          # preview generated exports for each package in scope
 codefast audit links                               # find broken markdown cross-references
+codefast audit                                     # run every audit over the repo root
 ```
 
 ## Global options and conventions
@@ -70,14 +71,14 @@ codefast audit links                               # find broken markdown cross-
 - `codefast --help` lists the commands, and `--help` on any command shows its usage; `codefast --version` prints the
   installed version.
 - **The global `--no-color` flag must come _before_ the command name** — `codefast --no-color mirror`, not
-  `codefast mirror --no-color`.
+  `codefast mirror --no-color`. Color is also off when stdout is not a terminal or `NO_COLOR` is set, and `FORCE_COLOR`
+  turns it back on.
 - **Writing commands write by default; pass `--dry-run` to preview.** The audits are read-only — the one exception is
   `audit comments --fix`, which repairs section dividers in place.
 - **`--json` prints a single JSON object on stdout** instead of the human-readable output, so any command can gate a
   script or a CI job.
-- **Set `CODEFAST_VERBOSE=1` (or `true`) for verbose error diagnostics.** On an unexpected infrastructure failure the
-  CLI also prints the underlying stack trace. This is distinct from `mirror --verbose`, which adds per-package progress
-  detail to that one command.
+- **`-v, --verbose` prints extra diagnostics** on every command: the stack trace behind an unexpected failure, and on
+  `mirror` the per-package detail.
 
 ## Commands at a glance
 
@@ -86,23 +87,23 @@ codefast                              # Codefast monorepo developer CLI
 │  ├─ --no-color                      # disable ANSI color output
 │  └─ --version
 │
-├─ audit                              # source audits (read-only source scans)
+├─ audit                              # run bare: every audit over the repo root, one report and one exit code
+│  ├─ --fix                           # apply the mechanical fixes an audit offers (comments)
 │  ├─ rtl [target]                    # physical-direction Tailwind classes to make logical / rtl:-paired
 │  ├─ links [target]                  # markdown links pointing at a missing path/anchor
-│  ├─ imports [target]                # banned import forms (React by-name, Zod namespace in front-end, …)
+│  ├─ imports [target]                # banned import forms (React imports that are not named-only, Zod by name, …)
 │  ├─ assertions [target]             # double type assertions through unknown/any (x as unknown as T)
 │  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
 │  ├─ props [target]                  # *Props aliases joined with & that an interface could express (TS type server)
 │  ├─ publish [target]                # what breaks a consumer's install: #/ imports, unshipped targets, @source paths
 │  ├─ engines [target]                # Node floors (engines.node) outside a dependency's engines or their @types/node line
 │  ├─ layers [target]                 # value imports pointing up a package's configured layers
-│  └─ comments [target]               # section dividers not in the one allowed form
+│  └─ comments [target]               # comment conventions: dividers, TSDoc grammar, banned content, links, @since
 │      └─ --fix                       # rewrite every fixable divider in place (the only audit that writes)
 │      (each audit also takes [target] + --json)
 │
 ├─ mirror [package]                   # write package.json#exports from dist/ for workspace packages
 │  ├─ --dry-run
-│  ├─ -v, --verbose
 │  └─ --json
 │
 ├─ pack-slim [package]                # strip src, source conditions, dev-only scripts/devDeps, source maps before publish
@@ -115,7 +116,7 @@ codefast                              # Codefast monorepo developer CLI
    └─ --json
 ```
 
-Every command also responds to `--help`; each command's section below explains what its flags do.
+Every command also responds to `--help` and `-v, --verbose`; each command's section below explains what its flags do.
 
 | Command               | What it does                                                            | Writes?           |
 | --------------------- | ----------------------------------------------------------------------- | ----------------- |
@@ -124,7 +125,7 @@ Every command also responds to `--help`; each command's section below explains w
 | `tag`                 | Stamp `@since <version>` on exported declarations that lack one         | yes (`--dry-run`) |
 | `audit rtl`           | Report physical-direction Tailwind classes that should be logical       | no                |
 | `audit links`         | Report markdown cross-references that resolve to nothing                | no                |
-| `audit imports`       | Enforce the import policy (React by-name, Zod namespace in front-end)   | no (report only)  |
+| `audit imports`       | Enforce the import policy (named-only React, Zod as a namespace)        | no (report only)  |
 | `audit assertions`    | Report double type assertions through `unknown` / `any`, tests included | no                |
 | `audit display-names` | Enforce the `namespace:Name` display-name convention                    | no                |
 | `audit props`         | Report props types joined with `&` that an interface could express      | no                |
@@ -227,8 +228,19 @@ Exits `1` when no target is selected, when any target fails, when a declaration 
 
 ## `audit`
 
-Every audit is read-only, exits non-zero when findings remain (so it gates a CI pipeline with no extra glue), and takes
-an optional `[target]` plus `--json`. Each also reads an `allowlist` from configuration for intentional exceptions.
+Every audit is read-only, exits `1` when findings remain (so it gates a CI pipeline with no extra glue), and takes an
+optional `[target]` plus `--json`. Each also reads an `allowlist` from configuration for intentional exceptions.
+
+Run bare, `codefast audit` runs every audit over the repo root and reports each under its name, so one CI step shows
+every failing audit rather than only the first. An audit with nothing configured to scan (`rtl` without
+`audit.rtl.target`) is skipped. It exits `2` when any audit could not run, `1` when any reported findings, `0`
+otherwise; `--json` prints one object whose `audits` array holds each audit's `status` — `clean`, `findings`, `skipped`
+or `error` — with its `result`, `reason` or `error`.
+
+```bash
+codefast audit                             # every audit, one report
+codefast audit --json                      # one machine summary for all of them
+```
 
 ### `audit links`
 
@@ -597,11 +609,13 @@ command exits `1`.
 
 ## Exit codes
 
-| Code | Meaning                                                         |
-| ---- | --------------------------------------------------------------- |
-| `0`  | Success.                                                        |
-| `1`  | General failure (missing paths, failed packages, failed hooks). |
-| `2`  | Invalid arguments or configuration.                             |
+| Code | Meaning                                                                                                |
+| ---- | ------------------------------------------------------------------------------------------------------ |
+| `0`  | Success.                                                                                               |
+| `1`  | The run finished and reported a failure: audit findings, a package that errored, a failed hook.        |
+| `2`  | The run could not do its job: an unknown command or option, invalid config, a missing target, a crash. |
+
+A script can tell "the code needs fixing" (`1`) from "the tool or its invocation needs fixing" (`2`).
 
 ## Programmatic use
 
@@ -632,6 +646,7 @@ if you adopt the CLI in your own workspace. It runs from the built output via ro
 pnpm run codefast <command>         # generic entry: node ./packages/cli/dist/bin.js
 
 pnpm run cli:mirror                 # codefast mirror
+pnpm run cli:audit                  # codefast audit (every audit — what CI runs)
 pnpm run cli:audit:links            # codefast audit links
 pnpm run cli:audit:rtl              # codefast audit rtl
 pnpm run cli:audit:comments         # codefast audit comments

@@ -1,7 +1,7 @@
-import process from "node:process";
-
 import { messageFrom } from "#core/errors";
 import { logger } from "#core/logger";
+import type { TextStyle } from "#core/style";
+import { paint } from "#core/style";
 import type {
   CliLoggerLike,
   GlobalStats,
@@ -23,10 +23,9 @@ export class MirrorSyncProgressPresenter implements MirrorSyncProgressListener {
   private verbose = false;
   private dryRun = false;
 
-  configure(options: { readonly noColor: boolean; readonly verbose: boolean; readonly dryRun: boolean }): void {
+  configure(options: { readonly verbose: boolean; readonly dryRun: boolean }): void {
     this.verbose = options.verbose;
     this.dryRun = options.dryRun;
-    this.reporter.configureMirrorColors(options.noColor);
   }
 
   onBanner(): void {
@@ -72,62 +71,43 @@ export class MirrorSyncProgressPresenter implements MirrorSyncProgressListener {
   }
 }
 
-const ANSI = {
-  reset: "\x1b[0m",
-  bold: "\x1b[1m",
-  dim: "\x1b[2m",
-  green: "\x1b[32m",
-  yellow: "\x1b[33m",
-  cyan: "\x1b[36m",
-  gray: "\x1b[90m",
-  magenta: "\x1b[35m",
-  brightGreen: "\x1b[92m",
-  brightCyan: "\x1b[96m",
-} as const;
-
 /**
- * Console rendering — ANSI styling and layout — for every line a mirror run prints.
+ * Console rendering — styling and layout — for every line a mirror run prints.
  */
 class MirrorSyncReporter {
-  private colorsAreEnabled = true;
-
-  configureMirrorColors(noColor: boolean): void {
-    this.colorsAreEnabled = !!process.stdout.isTTY && !noColor;
-  }
-
   mirrorBanner(target: CliLoggerLike): void {
-    target.out(`\n${this.paint("📦 Mirror — package exports", ANSI.bold + ANSI.cyan)}`);
-    target.out(`${this.paint("═".repeat(60), ANSI.dim)}\n`);
+    target.out(`\n${this.paint("📦 Mirror — package exports", ["bold", "cyan"])}`);
+    target.out(`${this.paint("═".repeat(60), "dim")}\n`);
   }
 
   mirrorDryRunNotice(target: CliLoggerLike): void {
-    target.out(`${this.paint("Dry run — no files will be written.", ANSI.yellow)}\n`);
+    target.out(`${this.paint("Dry run — no files will be written.", "yellow")}\n`);
   }
 
   mirrorProcessingMode(target: CliLoggerLike, mode: MirrorProcessingModeInput): void {
     if (mode.kind === "single") {
-      target.out(`${this.paint("Processing single package...", ANSI.dim)}\n`);
+      target.out(`${this.paint("Processing single package...", "dim")}\n`);
       return;
     }
     if (mode.source === "default-patterns") {
-      target.out(`${this.paint("Discovering workspace packages using default patterns (packages/*)…", ANSI.dim)}\n`);
+      target.out(`${this.paint("Discovering workspace packages using default patterns (packages/*)…", "dim")}\n`);
       return;
     }
     if (mode.source === "pnpm-workspace-yaml") {
-      target.out(`${this.paint("Discovering workspace packages from pnpm-workspace.yaml…", ANSI.dim)}\n`);
+      target.out(`${this.paint("Discovering workspace packages from pnpm-workspace.yaml…", "dim")}\n`);
       return;
     }
     if (mode.source === "single-package") {
       target.out(
-        `${this.paint("No pnpm-workspace.yaml — processing the single package at the project root…", ANSI.dim)}\n`,
+        `${this.paint("No pnpm-workspace.yaml — processing the single package at the project root…", "dim")}\n`,
       );
       return;
     }
-    target.out(`${this.paint("pnpm-workspace.yaml declares an empty workspace package list.", ANSI.dim)}\n`);
+    target.out(`${this.paint("pnpm-workspace.yaml declares an empty workspace package list.", "dim")}\n`);
   }
 
   mirrorNoPackages(target: CliLoggerLike): void {
-    target.out(this.paint("⚠ No packages found", ANSI.yellow));
+    target.out(this.paint("⚠ No packages found", "yellow"));
   }
 
   logSkippedWorkspacePackage(
@@ -137,9 +117,9 @@ class MirrorSyncReporter {
     displayName: string,
     reason: string,
   ): void {
-    const progress = this.paint(`[${index}/${total}]`, ANSI.dim);
-    target.out(`${progress} ${this.paint("○", ANSI.gray)} ${this.paint(displayName, ANSI.dim)}`);
-    target.out(`  ${this.paint("└─", ANSI.dim)} ${this.paint(`Skipped: ${reason}`, ANSI.gray)}`);
+    const progress = this.paint(`[${index}/${total}]`, "dim");
+    target.out(`${progress} ${this.paint("○", "gray")} ${this.paint(displayName, "dim")}`);
+    target.out(`  ${this.paint("└─", "dim")} ${this.paint(`Skipped: ${reason}`, "gray")}`);
     target.out("");
   }
 
@@ -151,42 +131,42 @@ class MirrorSyncReporter {
     generatedDistAssetCounts: MirrorDistAssetCounts,
     verbose: boolean,
   ): void {
-    const progress = this.paint(`[${index}/${total}]`, ANSI.dim);
-    target.out(`${progress} ${this.paint("✓", ANSI.brightGreen)} ${this.paint(pkgStats.name, ANSI.bold)}`);
+    const progress = this.paint(`[${index}/${total}]`, "dim");
+    target.out(`${progress} ${this.paint("✓", "greenBright")} ${this.paint(pkgStats.name, "bold")}`);
 
     if (verbose) {
-      target.out(`  ${this.paint("├─", ANSI.dim)} Path: ${pkgStats.path}`);
+      target.out(`  ${this.paint("├─", "dim")} Path: ${pkgStats.path}`);
       if (pkgStats.hasTransform) {
-        target.out(`  ${this.paint("├─", ANSI.dim)} ${this.paint("Custom path transformation", ANSI.cyan)}`);
+        target.out(`  ${this.paint("├─", "dim")} ${this.paint("Custom path transformation", "cyan")}`);
       }
       if (pkgStats.cssConfigStatus) {
         const status = pkgStats.cssConfigStatus === "disabled" ? "CSS disabled" : "CSS configured";
-        target.out(`  ${this.paint("├─", ANSI.dim)} ${this.paint(status, ANSI.cyan)}`);
+        target.out(`  ${this.paint("├─", "dim")} ${this.paint(status, "cyan")}`);
       }
     }
 
     const breakdown: Array<string> = [];
     if (generatedDistAssetCounts.jsCount > 0) {
-      breakdown.push(this.paint(`${generatedDistAssetCounts.jsCount} modules`, ANSI.green));
+      breakdown.push(this.paint(`${generatedDistAssetCounts.jsCount} modules`, "green"));
     }
     if (generatedDistAssetCounts.cssCount > 0) {
-      breakdown.push(this.paint(`${generatedDistAssetCounts.cssCount} CSS`, ANSI.magenta));
+      breakdown.push(this.paint(`${generatedDistAssetCounts.cssCount} CSS`, "magenta"));
     }
     if (pkgStats.extraExports > 0) {
-      breakdown.push(this.paint(`${pkgStats.extraExports} custom`, ANSI.yellow));
+      breakdown.push(this.paint(`${pkgStats.extraExports} custom`, "yellow"));
     }
 
-    const totalExportsText = this.paint(`${pkgStats.totalExports} exports`, ANSI.brightCyan);
+    const totalExportsText = this.paint(`${pkgStats.totalExports} exports`, "cyanBright");
     if (breakdown.length === 0) {
-      target.out(`  ${this.paint("└─", ANSI.dim)} ${totalExportsText}`);
+      target.out(`  ${this.paint("└─", "dim")} ${totalExportsText}`);
     } else {
-      target.out(`  ${this.paint("└─", ANSI.dim)} ${breakdown.join(" + ")} = ${totalExportsText}`);
+      target.out(`  ${this.paint("└─", "dim")} ${breakdown.join(" + ")} = ${totalExportsText}`);
     }
     target.out("");
   }
 
   logPrunedStaleExport(target: CliLoggerLike, exportSpecifier: string): void {
-    target.out(`  ${this.paint("└─", ANSI.dim)} ${this.paint(`Pruned stale export: ${exportSpecifier}`, ANSI.gray)}`);
+    target.out(`  ${this.paint("└─", "dim")} ${this.paint(`Pruned stale export: ${exportSpecifier}`, "gray")}`);
   }
 
   logPackageError(
@@ -198,43 +178,40 @@ class MirrorSyncReporter {
     verbose: boolean,
   ): void {
     target.out(
-      `${this.paint(`[${index}/${total}]`, ANSI.dim)} ${this.paint("✗", ANSI.yellow)} ${this.paint(displayName, ANSI.bold)}`,
+      `${this.paint(`[${index}/${total}]`, "dim")} ${this.paint("✗", "yellow")} ${this.paint(displayName, "bold")}`,
     );
-    target.out(`  ${this.paint("└─", ANSI.dim)} ${this.paint(`Error: ${messageFrom(errorValue)}`, ANSI.yellow)}\n`);
+    target.out(`  ${this.paint("└─", "dim")} ${this.paint(`Error: ${messageFrom(errorValue)}`, "yellow")}\n`);
     if (verbose) {
       target.err(errorValue instanceof Error && errorValue.stack ? errorValue.stack : messageFrom(errorValue));
     }
   }
 
   mirrorSummarySeparator(target: CliLoggerLike): void {
-    target.out(this.paint("═".repeat(60), ANSI.dim));
+    target.out(this.paint("═".repeat(60), "dim"));
   }
 
   mirrorSummary(target: CliLoggerLike, stats: GlobalStats, elapsedSeconds: number): void {
     target.out(
-      `${this.paint("📊 Summary", ANSI.bold)} ${this.paint(`(completed in ${elapsedSeconds.toFixed(2)}s)`, ANSI.dim)}\n`,
+      `${this.paint("📊 Summary", "bold")} ${this.paint(`(completed in ${elapsedSeconds.toFixed(2)}s)`, "dim")}\n`,
     );
-    target.out(`  ${this.paint("Packages:", ANSI.bold)}`);
-    target.out(`  ${this.paint("├─", ANSI.dim)} Processed: ${this.paint(String(stats.packagesProcessed), ANSI.green)}`);
+    target.out(`  ${this.paint("Packages:", "bold")}`);
+    target.out(`  ${this.paint("├─", "dim")} Processed: ${this.paint(String(stats.packagesProcessed), "green")}`);
     if (stats.packagesSkipped > 0) {
-      target.out(`  ${this.paint("├─", ANSI.dim)} Skipped: ${this.paint(String(stats.packagesSkipped), ANSI.gray)}`);
+      target.out(`  ${this.paint("├─", "dim")} Skipped: ${this.paint(String(stats.packagesSkipped), "gray")}`);
     }
     if (stats.packagesErrored > 0) {
-      target.out(`  ${this.paint("├─", ANSI.dim)} Errors: ${this.paint(String(stats.packagesErrored), ANSI.yellow)}`);
+      target.out(`  ${this.paint("├─", "dim")} Errors: ${this.paint(String(stats.packagesErrored), "yellow")}`);
     }
-    target.out(`  ${this.paint("└─", ANSI.dim)} Total found: ${stats.packagesFound}\n`);
+    target.out(`  ${this.paint("└─", "dim")} Total found: ${stats.packagesFound}\n`);
 
-    target.out(`  ${this.paint("Exports:", ANSI.bold)}`);
-    target.out(`  ${this.paint("├─", ANSI.dim)} JS Modules: ${this.paint(String(stats.totalJsModules), ANSI.cyan)}`);
-    target.out(`  ${this.paint("├─", ANSI.dim)} CSS Files: ${this.paint(String(stats.totalCssExports), ANSI.magenta)}`);
-    target.out(`  ${this.paint("└─", ANSI.dim)} Total: ${this.paint(String(stats.totalExports), ANSI.brightCyan)}\n`);
-    target.out(`${this.paint("═".repeat(60), ANSI.dim)}\n`);
+    target.out(`  ${this.paint("Exports:", "bold")}`);
+    target.out(`  ${this.paint("├─", "dim")} JS Modules: ${this.paint(String(stats.totalJsModules), "cyan")}`);
+    target.out(`  ${this.paint("├─", "dim")} CSS Files: ${this.paint(String(stats.totalCssExports), "magenta")}`);
+    target.out(`  ${this.paint("└─", "dim")} Total: ${this.paint(String(stats.totalExports), "cyanBright")}\n`);
+    target.out(`${this.paint("═".repeat(60), "dim")}\n`);
   }
 
-  private paint(text: string, openSequence: string): string {
-    if (!this.colorsAreEnabled) {
-      return text;
-    }
-    return `${openSequence}${text}${ANSI.reset}`;
+  private paint(text: string, style: TextStyle): string {
+    return paint(style, text);
   }
 }

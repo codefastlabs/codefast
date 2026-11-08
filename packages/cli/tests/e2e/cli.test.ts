@@ -49,9 +49,60 @@ describe("codefast binary", () => {
     }
   });
 
-  it("exits non-zero on an unknown command", () => {
+  it("exits 2 on an unknown command", () => {
     const run = runBin(["definitely-not-a-command"]);
-    expect(run.status).not.toBe(0);
+    expect(run.status).toBe(2);
+    expect(run.stderr).toContain("unknown command");
+  });
+
+  it("exits 2 when run with no command", () => {
+    expect(runBin([]).status).toBe(2);
+  });
+
+  it("exits 2 on an unknown option", () => {
+    expect(runBin(["audit", "links", "--definitely-not-an-option"]).status).toBe(2);
+  });
+
+  it("exits 2 when an audit target does not exist, apart from the 1 its findings record", () => {
+    const run = runBin(["audit", "links", path.join(packageRoot, "definitely-missing")]);
+    expect(run.status).toBe(2);
+    expect(run.stderr).toContain("[NOT_FOUND]");
+  });
+});
+
+describe("a full audit run", () => {
+  it("runs every audit, reports each one failing, and exits 1 for findings", () => {
+    const soloDir = mkdtempSync(path.join(tmpdir(), "codefast-cli-e2e-"));
+    try {
+      writeFileSync(path.join(soloDir, "package.json"), JSON.stringify({ name: "solo", private: true }));
+      writeFileSync(path.join(soloDir, "README.md"), "# Solo\n\n[gone](./missing.md)\n");
+      const run = runBin(["audit", "--json"], soloDir);
+      const summary = JSON.parse(run.stdout) as {
+        ok: boolean;
+        audits: Array<{ name: string; status: string }>;
+      };
+      expect(run.status).toBe(1);
+      expect(summary.ok).toBe(false);
+      expect(summary.audits).toHaveLength(10);
+      expect(summary.audits.find((audit) => audit.name === "links")?.status).toBe("findings");
+      expect(summary.audits.find((audit) => audit.name === "rtl")?.status).toBe("skipped");
+    } finally {
+      rmSync(soloDir, { recursive: true, force: true });
+    }
+  });
+
+  it("delivers a --json document larger than one pipe buffer whole", () => {
+    const soloDir = mkdtempSync(path.join(tmpdir(), "codefast-cli-e2e-"));
+    try {
+      writeFileSync(path.join(soloDir, "package.json"), JSON.stringify({ name: "solo", private: true }));
+      const links = Array.from({ length: 3000 }, (_, index) => `[gone](./missing-${index}.md)`);
+      writeFileSync(path.join(soloDir, "README.md"), `# Solo\n\n${links.join("\n")}\n`);
+      const run = runBin(["audit", "links", soloDir, "--json"], soloDir);
+      expect(run.stdout.length).toBeGreaterThan(65_536);
+      expect(() => JSON.parse(run.stdout) as unknown).not.toThrow();
+    } finally {
+      rmSync(soloDir, { recursive: true, force: true });
+    }
   });
 });
 

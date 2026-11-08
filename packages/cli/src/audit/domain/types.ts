@@ -1,3 +1,5 @@
+import type { AppError } from "#core/errors";
+
 /**
  * A class token parsed from a source string literal, split into variant, value, and modifier.
  *
@@ -430,3 +432,17 @@ export type EnginesAuditResult = {
   readonly violations: Array<EngineViolation>;
   readonly packageCount: number;
 };
+
+/**
+ * What one audit left behind in a full `audit` run: a judged result, a reason it had nothing to scan, or the error that
+ * kept it from running.
+ */
+export type AuditOutcome =
+  | {
+      readonly name: string;
+      readonly status: "clean" | "findings";
+      readonly result: unknown;
+      readonly present: () => void;
+    }
+  | { readonly name: string; readonly status: "skipped"; readonly reason: string }
+  | { readonly name: string; readonly status: "error"; readonly error: AppError };

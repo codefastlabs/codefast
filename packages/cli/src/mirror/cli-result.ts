@@ -1,4 +1,4 @@
-import { CLI_EXIT_GENERAL_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
+import { CLI_EXIT_FAILURE, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 import type { GlobalStats } from "#mirror/domain/types";
 
 /**
@@ -7,7 +7,7 @@ import type { GlobalStats } from "#mirror/domain/types";
  * @since 0.3.16-canary.0
  */
 export function exitCodeForMirrorSyncResult(stats: GlobalStats): number {
-  return stats.packagesErrored > 0 ? CLI_EXIT_GENERAL_ERROR : CLI_EXIT_SUCCESS;
+  return stats.packagesErrored > 0 ? CLI_EXIT_FAILURE : CLI_EXIT_SUCCESS;
 }
 
 /**
