@@ -7,14 +7,12 @@
     "noEmit": true,
     "types": ["node", "reflect-metadata"]
   },
+  // The files this library owns, which tsx compiles in its decorator mode; the shared modules they import are
+  // decorator-free and type-check here through those imports.
   "include": [
     "src/inversify-benches.ts",
-    "src/harness/**/*.ts",
-    "src/scenarios/types.ts",
-    "src/scenarios/baseline.ts",
     "src/scenarios/collect-inversify-scenarios.ts",
     "src/scenarios/inversify/**/*.ts",
-    "src/fixtures/realistic-graph.ts",
     "src/fixtures/inversify-adapter.ts"
   ]
 }

@@ -6,14 +6,13 @@
     "noEmit": true,
     "types": ["node"]
   },
+  // The files this library owns, which tsx compiles in its decorator mode; the shared modules they import are
+  // decorator-free and type-check here through those imports.
   "include": [
     "src/codefast-benches.ts",
-    "src/harness/**/*.ts",
-    "src/scenarios/types.ts",
-    "src/scenarios/baseline.ts",
     "src/scenarios/collect-codefast-scenarios.ts",
     "src/scenarios/codefast/**/*.ts",
-    "src/fixtures/realistic-graph.ts",
-    "src/fixtures/codefast-adapter.ts"
+    "src/fixtures/codefast-adapter.ts",
+    "src/instruments/**/*.ts"
   ]
 }
