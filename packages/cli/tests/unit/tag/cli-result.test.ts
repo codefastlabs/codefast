@@ -17,9 +17,9 @@ describe("tag cli-result", () => {
     });
 
     expect(JSON.parse(formatTagJsonOutput(createTagResult(), "/repo"))).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       ok: true,
-      cwd: "/repo",
+      rootDir: "/repo",
     });
     expect(JSON.parse(formatTagJsonOutput(blocked, "/repo"))).toMatchObject({
       ok: false,

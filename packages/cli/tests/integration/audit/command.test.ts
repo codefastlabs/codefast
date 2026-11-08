@@ -46,7 +46,7 @@ describe("audit command runner", () => {
     const { exitCode, out } = await runAudit(["links", cleanDoc, "--json"]);
 
     expect(exitCode).toBe(0);
-    expect(JSON.parse(out)).toMatchObject({ schemaVersion: 1, ok: true });
+    expect(JSON.parse(out)).toMatchObject({ schemaVersion: 2, ok: true });
   });
 
   it("runs a clean links scan and prints the human summary without --json", async () => {
