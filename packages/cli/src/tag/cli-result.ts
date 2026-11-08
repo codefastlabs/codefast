@@ -25,9 +25,9 @@ export function exitCodeForTagResult(result: TagResult): number {
  */
 export function formatTagJsonOutput(result: TagResult, rootDir: string): string {
   return JSON.stringify({
-    schemaVersion: 1 as const,
+    schemaVersion: 2 as const,
     ok: exitCodeForTagResult(result) === CLI_EXIT_SUCCESS,
-    cwd: rootDir,
+    rootDir,
     result,
   });
 }

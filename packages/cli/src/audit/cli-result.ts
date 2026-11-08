@@ -5,7 +5,7 @@ import { CLI_EXIT_ERROR, CLI_EXIT_FAILURE, CLI_EXIT_SUCCESS } from "#core/exit-c
  * The machine output every audit prints for `--json`.
  */
 export function formatAuditJson(result: unknown, rootDir: string, clean: boolean): string {
-  return JSON.stringify({ schemaVersion: 1 as const, ok: clean, cwd: rootDir, result });
+  return JSON.stringify({ schemaVersion: 2 as const, ok: clean, rootDir, result });
 }
 
 /**
@@ -20,9 +20,9 @@ export function auditExitCode(clean: boolean): number {
  */
 export function formatAuditAllJson(outcomes: ReadonlyArray<AuditOutcome>, rootDir: string): string {
   return JSON.stringify({
-    schemaVersion: 1 as const,
+    schemaVersion: 2 as const,
     ok: outcomes.every((outcome) => outcome.status === "clean" || outcome.status === "skipped"),
-    cwd: rootDir,
+    rootDir,
     audits: outcomes.map((outcome) => {
       switch (outcome.status) {
         case "error":

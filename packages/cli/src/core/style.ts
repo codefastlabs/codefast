@@ -18,6 +18,6 @@ export function refuseColor(refused: boolean): void {
 /**
  * Styles text for the stream it is written to, plain when `--no-color`, `NO_COLOR` or a non-TTY stream refuses color.
  */
-export function paint(style: TextStyle, text: string, stream: NodeJS.WriteStream = process.stdout): string {
+export function paint(style: TextStyle, text: string, stream: NodeJS.WritableStream = process.stdout): string {
   return colorRefused ? text : styleText(style, text, { stream, validateStream: true });
 }

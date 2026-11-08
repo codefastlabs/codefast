@@ -9,11 +9,11 @@ describe("audit reporting", () => {
     expect(auditExitCode(false)).toBe(1);
   });
 
-  it("serializes one machine summary carrying ok, cwd and the result", () => {
+  it("serializes one machine summary carrying ok, rootDir and the result", () => {
     expect(JSON.parse(formatAuditJson({ violationCount: 2 }, "/repo", false))).toEqual({
-      schemaVersion: 1,
+      schemaVersion: 2,
       ok: false,
-      cwd: "/repo",
+      rootDir: "/repo",
       result: { violationCount: 2 },
     });
   });
@@ -34,9 +34,9 @@ describe("audit reporting", () => {
     );
 
     expect(JSON.parse(json)).toEqual({
-      schemaVersion: 1,
+      schemaVersion: 2,
       ok: false,
-      cwd: "/repo",
+      rootDir: "/repo",
       audits: [
         { name: "links", status: "findings", result: { breakageCount: 1 } },
         { name: "rtl", status: "error", error: { code: "NOT_FOUND", message: "Not found: /repo/src" } },
