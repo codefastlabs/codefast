@@ -28,4 +28,8 @@ type ScenarioGroup =
 /**
  * @since 0.3.16-canary.0
  */
-export type BenchScenario = HarnessBenchScenario & { readonly group: ScenarioGroup };
+export type BenchScenario = HarnessBenchScenario & {
+  readonly group: ScenarioGroup;
+  /** The classes one timed iteration resolves, joined, which the parity check holds equal across libraries. */
+  readonly output?: () => string;
+};

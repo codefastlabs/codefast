@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 
 import { cnTestCalls } from "#fixtures/cn";
 import { CN_WITH_MERGE } from "#fixtures/scenario-parity";
-import { cvaCx } from "#lib/tv-shims";
+import { cvaCx } from "#lib/class-variance-authority";
 import type { BenchScenario } from "#scenarios/types";
 
 /** Builds the `cn` row. */

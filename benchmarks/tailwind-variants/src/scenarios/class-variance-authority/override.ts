@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { overrideTestProps } from "#fixtures/override";
 import { OVERRIDE_WITH_MERGE } from "#fixtures/scenario-parity";
 import { buttonVariants } from "#fixtures/simple";
-import { cva } from "#lib/tv-shims";
+import { cva } from "#lib/class-variance-authority";
 import type { BenchScenario } from "#scenarios/types";
 
 const button = cva(buttonVariants.base, {

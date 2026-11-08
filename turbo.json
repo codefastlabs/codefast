@@ -46,6 +46,9 @@
     "bench:list": {
       "cache": false
     },
+    "bench:parity": {
+      "cache": false
+    },
     "bench:report": {
       "cache": false
     },

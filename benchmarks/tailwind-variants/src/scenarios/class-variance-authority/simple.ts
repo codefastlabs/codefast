@@ -2,7 +2,7 @@ import { twMerge } from "tailwind-merge";
 
 import { SIMPLE_WITH_MERGE, SIMPLE_WITHOUT_MERGE } from "#fixtures/scenario-parity";
 import { buttonVariants, simpleTestProps } from "#fixtures/simple";
-import { cva } from "#lib/tv-shims";
+import { cva } from "#lib/class-variance-authority";
 import type { BenchScenario } from "#scenarios/types";
 
 const cvaInstance = cva(buttonVariants.base, {
