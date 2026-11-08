@@ -18,17 +18,21 @@ import {
 import { buttonVariants } from "#fixtures/simple";
 import type { CardRenderer, FlatRenderer } from "#fixtures/slot-types";
 import { TV_MERGE_ENABLED } from "#harness/bench-options";
-import { renderEverySlot } from "#lib/render-slots";
-import { tailwindVariantsTv } from "#lib/tv-shims";
+import { joinEverySlot, joinFlatRenders, renderEverySlot } from "#lib/render-slots";
+import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the rows whose merges always miss. */
-export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<BenchScenario> {
+/** Builds the rows whose merges always miss, for one library. */
+export function buildNovelClassesScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
+  // The first definition each cold row makes, rendered as its loop renders it; serial zero is as novel as any.
+  const novelButton = (): FlatRenderer => library.tv(novelButtonVariants(0), TV_MERGE_ENABLED) as FlatRenderer;
+  const novelCard = (): CardRenderer => library.tv(novelCardVariants(0), TV_MERGE_ENABLED) as CardRenderer;
+
   return [
     {
       ...UNIQUE_CLASS_WITH_MERGE,
       build: () => {
-        const button = tailwindVariantsTv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;
+        const button = library.tv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;
         let serial = 0;
 
         return () => {
@@ -36,6 +40,13 @@ export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<B
             button({ ...props, className: uniqueClassName(serial++) });
           }
         };
+      },
+      output: () => {
+        const button = library.tv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;
+
+        return uniqueClassSelections
+          .map((props, serial) => button({ ...props, className: uniqueClassName(serial) }))
+          .join("\n");
       },
     },
     {
@@ -46,7 +57,7 @@ export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<B
 
         return () => {
           for (let index = 0; index < COLD_DEFINITIONS_PER_LOOP; index++) {
-            const button = tailwindVariantsTv(novelButtonVariants(serial++), TV_MERGE_ENABLED) as FlatRenderer;
+            const button = library.tv(novelButtonVariants(serial++), TV_MERGE_ENABLED) as FlatRenderer;
 
             renderedLength += button({ size: "sm", variant: "outline" }).length;
           }
@@ -56,6 +67,7 @@ export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<B
           }
         };
       },
+      output: () => novelButton()({ size: "sm", variant: "outline" }),
     },
     {
       ...FIRST_RENDER_COLD_SLOTS,
@@ -65,7 +77,7 @@ export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<B
 
         return () => {
           for (let index = 0; index < COLD_DEFINITIONS_PER_LOOP; index++) {
-            const card = tailwindVariantsTv(novelCardVariants(serial++), TV_MERGE_ENABLED) as CardRenderer;
+            const card = library.tv(novelCardVariants(serial++), TV_MERGE_ENABLED) as CardRenderer;
 
             renderedLength += renderEverySlot(card({ size: "md", variant: "info" }));
           }
@@ -75,6 +87,7 @@ export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<B
           }
         };
       },
+      output: () => joinEverySlot(novelCard()({ size: "md", variant: "info" })),
     },
     {
       ...FIRST_PAGE_COLD_SIMPLE,
@@ -84,7 +97,7 @@ export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<B
 
         return () => {
           for (let index = 0; index < COLD_DEFINITIONS_PER_LOOP; index++) {
-            const button = tailwindVariantsTv(novelButtonVariants(serial++), TV_MERGE_ENABLED) as FlatRenderer;
+            const button = library.tv(novelButtonVariants(serial++), TV_MERGE_ENABLED) as FlatRenderer;
 
             for (const props of firstPageButtonCalls) {
               renderedLength += button({ ...props }).length;
@@ -96,6 +109,7 @@ export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<B
           }
         };
       },
+      output: () => joinFlatRenders(novelButton(), firstPageButtonCalls),
     },
     {
       ...FIRST_PAGE_COLD_SLOTS,
@@ -105,7 +119,7 @@ export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<B
 
         return () => {
           for (let index = 0; index < COLD_DEFINITIONS_PER_LOOP; index++) {
-            const card = tailwindVariantsTv(novelCardVariants(serial++), TV_MERGE_ENABLED) as CardRenderer;
+            const card = library.tv(novelCardVariants(serial++), TV_MERGE_ENABLED) as CardRenderer;
 
             for (const props of firstPageCardCalls) {
               renderedLength += renderEverySlot(card({ ...props }));
@@ -116,6 +130,11 @@ export function buildTailwindVariantsNpmNovelClassesScenarios(): ReadonlyArray<B
             throw new Error("unreachable");
           }
         };
+      },
+      output: () => {
+        const card = novelCard();
+
+        return firstPageCardCalls.map((props) => joinEverySlot(card({ ...props }))).join("\n\n");
       },
     },
   ];

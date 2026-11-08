@@ -1,30 +1,27 @@
+/** The `first-render-*` rows: a component definition plus its first render. */
 import { COLD_DEFINITIONS_PER_LOOP, FIRST_RENDER_SIMPLE, FIRST_RENDER_SLOTS } from "#fixtures/scenario-parity";
 import { buttonVariants } from "#fixtures/simple";
 import type { CardRenderer, FlatRenderer } from "#fixtures/slot-types";
 import { slotsVariants } from "#fixtures/slots";
 import { TV_MERGE_ENABLED } from "#harness/bench-options";
-import { renderEverySlot } from "#lib/render-slots";
-import { tailwindVariantsTv } from "#lib/tv-shims";
+import { joinEverySlot, renderEverySlot } from "#lib/render-slots";
+import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
-
-const defineAndRenderButton = (): number =>
-  (tailwindVariantsTv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer)({ size: "sm", variant: "outline" }).length;
-
-// Every slot renders: one library merges all slots on the first render, the other merges each slot on demand.
-const defineAndRenderCard = (): number =>
-  renderEverySlot(
-    (tailwindVariantsTv(slotsVariants, TV_MERGE_ENABLED) as CardRenderer)({ size: "md", variant: "info" }),
-  );
 
 /**
  * Builds the first-render rows, which price a component definition plus its first render.
  *
  * @remarks Minus the define-only row this is the first render alone; the descriptors keep the ratio off
  * the aggregates because the work is per definition, not per render.
- *
- * @since 0.7.3
  */
-export function buildTailwindVariantsNpmFirstRenderScenarios(): ReadonlyArray<BenchScenario> {
+export function buildFirstRenderScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
+  const defineAndRenderButton = (): number =>
+    (library.tv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer)({ size: "sm", variant: "outline" }).length;
+
+  // Every slot renders: one library merges all slots on the first render, the other merges each slot on demand.
+  const defineAndRenderCard = (): number =>
+    renderEverySlot((library.tv(slotsVariants, TV_MERGE_ENABLED) as CardRenderer)({ size: "md", variant: "info" }));
+
   return [
     {
       ...FIRST_RENDER_SIMPLE,
@@ -43,6 +40,7 @@ export function buildTailwindVariantsNpmFirstRenderScenarios(): ReadonlyArray<Be
         };
       },
       sanity: () => defineAndRenderButton() > 0,
+      output: () => (library.tv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer)({ size: "sm", variant: "outline" }),
     },
     {
       ...FIRST_RENDER_SLOTS,
@@ -60,6 +58,8 @@ export function buildTailwindVariantsNpmFirstRenderScenarios(): ReadonlyArray<Be
         };
       },
       sanity: () => defineAndRenderCard() > 0,
+      output: () =>
+        joinEverySlot((library.tv(slotsVariants, TV_MERGE_ENABLED) as CardRenderer)({ size: "md", variant: "info" })),
     },
   ];
 }

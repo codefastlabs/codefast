@@ -2,7 +2,7 @@ import { twMerge } from "tailwind-merge";
 
 import { complexTestProps, complexVariants } from "#fixtures/complex";
 import { COMPLEX_WITH_MERGE, COMPLEX_WITHOUT_MERGE } from "#fixtures/scenario-parity";
-import { cva } from "#lib/tv-shims";
+import { cva } from "#lib/class-variance-authority";
 import type { BenchScenario } from "#scenarios/types";
 
 const cvaInstance = cva(complexVariants.base, {

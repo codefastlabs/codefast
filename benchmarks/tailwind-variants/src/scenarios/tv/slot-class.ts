@@ -5,13 +5,16 @@ import type { ClassedCardRenderer } from "#fixtures/slot-types";
 import { slotsVariants } from "#fixtures/slots";
 import { TV_MERGE_ENABLED } from "#harness/bench-options";
 import { renderCardSlotsWithClasses } from "#lib/render-slots";
-import { tailwindVariantsTv } from "#lib/tv-shims";
+import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-const card = tailwindVariantsTv(slotsVariants, TV_MERGE_ENABLED) as ClassedCardRenderer;
+/** Every slot the card renders, each called with the `className` a call gives it, absent included. */
+const CARD_SLOTS = ["base", "content", "description", "footer", "header", "title"] as const;
 
-/** Builds the `slot-class` row. */
-export function buildTailwindVariantsNpmSlotClassScenarios(): ReadonlyArray<BenchScenario> {
+/** Builds the `slot-class` row for one library. */
+export function buildSlotClassScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
+  const card = library.tv(slotsVariants, TV_MERGE_ENABLED) as ClassedCardRenderer;
+
   return [
     {
       ...SLOT_CLASS_WITH_MERGE,
@@ -20,6 +23,14 @@ export function buildTailwindVariantsNpmSlotClassScenarios(): ReadonlyArray<Benc
           renderCardSlotsWithClasses(card({ ...call.props }), call.classes);
         }
       },
+      output: () =>
+        slotClassTestCalls
+          .map((call) => {
+            const slots = card({ ...call.props });
+
+            return CARD_SLOTS.map((slot) => `${slot}: ${slots[slot]({ className: call.classes[slot] })}`).join("\n");
+          })
+          .join("\n\n"),
     },
   ];
 }

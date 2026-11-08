@@ -1,3 +1,5 @@
+import { extendTailwindMerge } from "cn/config";
+
 import {
   UNCACHED_SIMPLE_WITH_MERGE,
   UNCACHED_SIMPLE_WITHOUT_MERGE,
@@ -7,15 +9,20 @@ import {
 import { buttonVariants, simpleTestProps } from "#fixtures/simple";
 import type { CardRenderer, FlatRenderer } from "#fixtures/slot-types";
 import { slotsTestProps, slotsVariants } from "#fixtures/slots";
-import { TV_CACHE_AND_MERGE_DISABLED, TV_CACHE_DISABLED } from "#harness/bench-options";
+import { codefast } from "#lib/codefast";
 import { renderCardSlots } from "#lib/render-slots";
-import { codefastTvFn } from "#lib/tv-shims";
 import type { BenchScenario } from "#scenarios/types";
 
-const flat = codefastTvFn(buttonVariants, TV_CACHE_DISABLED) as FlatRenderer;
-const flatNoMerge = codefastTvFn(buttonVariants, TV_CACHE_AND_MERGE_DISABLED) as FlatRenderer;
-const slots = codefastTvFn(slotsVariants, TV_CACHE_DISABLED) as CardRenderer;
-const slotsNoMerge = codefastTvFn(slotsVariants, TV_CACHE_AND_MERGE_DISABLED) as CardRenderer;
+/** Forces the plan walk and a real merge on every call: no resolution memo and no engine cache. */
+const TV_CACHE_DISABLED = { cacheResolutions: false, twMerge: extendTailwindMerge({ cacheSize: 0 }) } as const;
+
+/** The without-merge counterpart of `TV_CACHE_DISABLED`, so a paired control isolates the merge step. */
+const TV_CACHE_AND_MERGE_DISABLED = { cacheResolutions: false, twMerge: false } as const;
+
+const flat = codefast.tv(buttonVariants, TV_CACHE_DISABLED) as FlatRenderer;
+const flatNoMerge = codefast.tv(buttonVariants, TV_CACHE_AND_MERGE_DISABLED) as FlatRenderer;
+const slots = codefast.tv(slotsVariants, TV_CACHE_DISABLED) as CardRenderer;
+const slotsNoMerge = codefast.tv(slotsVariants, TV_CACHE_AND_MERGE_DISABLED) as CardRenderer;
 
 function runFlatLoop(renderer: FlatRenderer): void {
   for (const props of simpleTestProps) {

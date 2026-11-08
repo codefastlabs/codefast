@@ -4,13 +4,14 @@ import { OVERRIDE_WITH_MERGE } from "#fixtures/scenario-parity";
 import { buttonVariants } from "#fixtures/simple";
 import type { FlatRenderer } from "#fixtures/slot-types";
 import { TV_MERGE_ENABLED } from "#harness/bench-options";
-import { codefastTvFn } from "#lib/tv-shims";
+import { joinFlatRenders } from "#lib/render-slots";
+import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-const button = codefastTvFn(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;
+/** Builds the `override` row for one library. */
+export function buildOverrideScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
+  const button = library.tv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;
 
-/** Builds the `override` row. */
-export function buildCodefastOverrideScenarios(): ReadonlyArray<BenchScenario> {
   return [
     {
       ...OVERRIDE_WITH_MERGE,
@@ -19,6 +20,7 @@ export function buildCodefastOverrideScenarios(): ReadonlyArray<BenchScenario> {
           button({ ...props });
         }
       },
+      output: () => joinFlatRenders(button, overrideTestProps),
     },
   ];
 }

@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { uniqueClassName, uniqueClassSelections } from "#fixtures/novel-classes";
 import { UNIQUE_CLASS_WITH_MERGE } from "#fixtures/scenario-parity";
 import { buttonVariants } from "#fixtures/simple";
-import { cva } from "#lib/tv-shims";
+import { cva } from "#lib/class-variance-authority";
 import type { BenchScenario } from "#scenarios/types";
 
 /** Builds the `unique-class` row. */

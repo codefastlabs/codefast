@@ -1,22 +1,21 @@
+/** The `define-only-*` rows: a component definition with no render. */
 import { COLD_DEFINITIONS_PER_LOOP, DEFINE_ONLY_SIMPLE, DEFINE_ONLY_SLOTS } from "#fixtures/scenario-parity";
 import { buttonVariants } from "#fixtures/simple";
 import { slotsVariants } from "#fixtures/slots";
 import { TV_MERGE_ENABLED } from "#harness/bench-options";
-import { tailwindVariantsTv } from "#lib/tv-shims";
+import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-const defineButton = (): unknown => tailwindVariantsTv(buttonVariants, TV_MERGE_ENABLED);
-const defineCard = (): unknown => tailwindVariantsTv(slotsVariants, TV_MERGE_ENABLED);
-
 /**
- * Builds the define-only rows, which price a component definition with no render.
+ * Builds the define-only rows for one library, which price a component definition with no render.
  *
  * @remarks An eager library compiles here and a lazy one defers to its first render, so the descriptors
- * keep the ratio off the aggregates.
- *
- * @since 0.7.3
+ * keep the ratio off the aggregates. A definition renders nothing, so these rows have no output to compare.
  */
-export function buildTailwindVariantsNpmDefineOnlyScenarios(): ReadonlyArray<BenchScenario> {
+export function buildDefineOnlyScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
+  const defineButton = (): unknown => library.tv(buttonVariants, TV_MERGE_ENABLED);
+  const defineCard = (): unknown => library.tv(slotsVariants, TV_MERGE_ENABLED);
+
   return [
     {
       ...DEFINE_ONLY_SIMPLE,

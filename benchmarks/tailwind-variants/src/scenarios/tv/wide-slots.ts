@@ -2,19 +2,19 @@
 import { WIDE_SLOTS_WITH_MERGE } from "#fixtures/scenario-parity";
 import { wideSlotsTestProps, wideSlotsVariants } from "#fixtures/wide-slots";
 import { TV_MERGE_ENABLED } from "#harness/bench-options";
-import { renderEverySlot } from "#lib/render-slots";
-import { codefastTvFn } from "#lib/tv-shims";
+import { joinSlotRenders, renderEverySlot } from "#lib/render-slots";
+import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `wide-slots` row. */
-export function buildCodefastWideSlotsScenarios(): ReadonlyArray<BenchScenario> {
+type WideRenderer = (props: Readonly<Record<string, unknown>>) => Readonly<Record<string, () => string>>;
+
+/** Builds the `wide-slots` row for one library. */
+export function buildWideSlotsScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   return [
     {
       ...WIDE_SLOTS_WITH_MERGE,
       build: () => {
-        const component = codefastTvFn(wideSlotsVariants, TV_MERGE_ENABLED) as (
-          props: Record<string, unknown>,
-        ) => Readonly<Record<string, () => string>>;
+        const component = library.tv(wideSlotsVariants, TV_MERGE_ENABLED) as WideRenderer;
 
         return () => {
           for (const props of wideSlotsTestProps) {
@@ -22,6 +22,8 @@ export function buildCodefastWideSlotsScenarios(): ReadonlyArray<BenchScenario> 
           }
         };
       },
+      output: () =>
+        joinSlotRenders(library.tv(wideSlotsVariants, TV_MERGE_ENABLED) as WideRenderer, wideSlotsTestProps),
     },
   ];
 }

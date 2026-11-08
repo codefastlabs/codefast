@@ -84,3 +84,27 @@ export function renderCardSlotsWithClasses(slots: ClassedCardSlots, classes: Slo
     slots.description({ className: classes.description }).length
   );
 }
+
+/** Every slot's classes for one render, keyed by slot name, so a parity check sees slots a loop leaves unread. */
+export function joinEverySlot(slots: Readonly<Record<string, () => string>>): string {
+  return Object.keys(slots)
+    .sort()
+    .map((key) => `${key}: ${slots[key]?.() ?? ""}`)
+    .join("\n");
+}
+
+/** A flat resolver's classes for each selection, one per line, in the order a timed loop renders them. */
+export function joinFlatRenders(
+  resolver: (props: Readonly<Record<string, unknown>>) => string,
+  selections: ReadonlyArray<Readonly<Record<string, unknown>>>,
+): string {
+  return selections.map((props) => resolver({ ...props })).join("\n");
+}
+
+/** A slot resolver's classes for each selection, every slot included, in the order a timed loop renders them. */
+export function joinSlotRenders(
+  resolver: (props: Readonly<Record<string, unknown>>) => Readonly<Record<string, () => string>>,
+  selections: ReadonlyArray<Readonly<Record<string, unknown>>>,
+): string {
+  return selections.map((props) => joinEverySlot(resolver({ ...props }))).join("\n\n");
+}
