@@ -41,7 +41,7 @@
     "bench:results": "node --import tsx/esm src/harness/results.ts",
     "bench:results:check": "node --import tsx/esm src/harness/results.ts --check",
     "bench:serve": "node --import tsx/esm src/harness/serve.ts",
-    "check-types": "tsc --noEmit",
+    "check-types": "for config in tsconfig*.json; do tsc --noEmit -p \"$config\" || exit 1; done",
     "instrument:alloc": "TSX_TSCONFIG_PATH=tsconfig.codefast.json node --import tsx/esm src/instruments/alloc.ts"
   },
   "dependencies": {

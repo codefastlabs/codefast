@@ -5,6 +5,7 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "comment": "Editor-default only. Only includes library-agnostic files so decorator-mode conflicts never surface here. check-types uses the two explicit tsconfigs (codefast / inversify).",
+  // The editor default and the parent harness's runtime config; each child's program is checked under its own
+  // `tsconfig.<library>.json`, whose decorator mode is the one that child runs with.
   "include": ["src"]
 }
