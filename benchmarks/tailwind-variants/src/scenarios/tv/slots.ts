@@ -13,7 +13,11 @@ function runLoop(renderer: CardRenderer): void {
   }
 }
 
-/** Builds the `slots-*` rows for one library. */
+/**
+ * Builds the `slots-*` rows for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildSlotsScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const noMerge = library.tv(slotsVariants, TV_MERGE_DISABLED) as CardRenderer;
   const withMerge = library.tv(slotsVariants, TV_MERGE_ENABLED) as CardRenderer;

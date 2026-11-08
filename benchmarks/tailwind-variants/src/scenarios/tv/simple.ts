@@ -7,7 +7,11 @@ import { joinFlatRenders } from "#lib/render-slots";
 import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `simple-*` rows for one library. */
+/**
+ * Builds the `simple-*` rows for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildSimpleScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const noMerge = library.tv(buttonVariants, TV_MERGE_DISABLED) as FlatRenderer;
   const withMerge = library.tv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;

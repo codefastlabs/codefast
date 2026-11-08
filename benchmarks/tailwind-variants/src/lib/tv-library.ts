@@ -2,6 +2,8 @@
 
 /**
  * Options passed through to a library's `tv`, whose own option types differ.
+ *
+ * @since 0.11.1
  */
 export type TvOptions = Readonly<Record<string, unknown>>;
 
@@ -10,6 +12,8 @@ export type TvOptions = Readonly<Record<string, unknown>>;
  *
  * @remarks Each library's generics are widened here, the suite's one typing escape hatch, so one fixture
  * configuration fits every library; a scenario narrows what a resolver returns to the renderer it calls.
+ *
+ * @since 0.11.1
  */
 export interface TvLibrary {
   /** Joins class values and resolves Tailwind conflicts between them. */

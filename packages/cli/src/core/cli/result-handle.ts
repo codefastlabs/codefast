@@ -8,6 +8,8 @@ import type { Result } from "#core/result";
 
 /**
  * Prints an `AppError` to stderr, with the stack of its cause when `verbose` asks for it.
+ *
+ * @since 0.16.0
  */
 export function reportAppError(error: AppError, verbose: boolean): void {
   logger.err(formatAppError(error));

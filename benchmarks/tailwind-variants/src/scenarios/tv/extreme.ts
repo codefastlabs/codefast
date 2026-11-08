@@ -7,7 +7,11 @@ import { joinFlatRenders } from "#lib/render-slots";
 import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `extreme-*` rows for one library. */
+/**
+ * Builds the `extreme-*` rows for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildExtremeScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const noMerge = library.tv(extremeVariants, TV_MERGE_DISABLED) as FlatRenderer;
   const withMerge = library.tv(extremeVariants, TV_MERGE_ENABLED) as FlatRenderer;

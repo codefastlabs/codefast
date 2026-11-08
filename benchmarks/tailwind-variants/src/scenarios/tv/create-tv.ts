@@ -7,7 +7,11 @@ import { joinFlatRenders } from "#lib/render-slots";
 import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `create-tv-*` rows for one library. */
+/**
+ * Builds the `create-tv-*` rows for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildCreateTvScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const noMerge = library.createTv(TV_MERGE_DISABLED)(buttonVariants) as FlatRenderer;
   const withMerge = library.createTv(TV_MERGE_ENABLED)(buttonVariants) as FlatRenderer;

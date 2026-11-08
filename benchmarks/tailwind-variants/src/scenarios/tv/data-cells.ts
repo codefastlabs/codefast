@@ -6,7 +6,11 @@ import { TV_MERGE_ENABLED } from "#harness/bench-options";
 import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `data-cells` row for one library. */
+/**
+ * Builds the `data-cells` row for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildDataCellsScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   return [
     {

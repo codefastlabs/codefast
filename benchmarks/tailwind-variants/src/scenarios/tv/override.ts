@@ -8,7 +8,11 @@ import { joinFlatRenders } from "#lib/render-slots";
 import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `override` row for one library. */
+/**
+ * Builds the `override` row for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildOverrideScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const button = library.tv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;
 

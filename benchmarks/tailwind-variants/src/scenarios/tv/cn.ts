@@ -4,7 +4,11 @@ import { CN_WITH_MERGE } from "#fixtures/scenario-parity";
 import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `cn` row for one library. */
+/**
+ * Builds the `cn` row for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildCnScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const cn = library.cn;
 

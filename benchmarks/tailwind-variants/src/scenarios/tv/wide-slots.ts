@@ -8,7 +8,11 @@ import type { BenchScenario } from "#scenarios/types";
 
 type WideRenderer = (props: Readonly<Record<string, unknown>>) => Readonly<Record<string, () => string>>;
 
-/** Builds the `wide-slots` row for one library. */
+/**
+ * Builds the `wide-slots` row for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildWideSlotsScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   return [
     {
