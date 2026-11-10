@@ -1,5 +1,41 @@
 # @codefast/cli
 
+## 0.16.0
+
+### Minor Changes
+
+- [#1189](https://github.com/codefastlabs/codefast/pull/1189) Removes the `arrange` command and its `inspect`, `simplify` and `group` subcommands, along with the `arrange` config key
+  and the `CodefastArrangeConfig` type. oxfmt's `sortTailwindcss` already orders classes inside each `cn()`/`tv()` string
+  and is checked in CI, so a second, unenforced ordering across strings only drifted. Remove `arrange` from
+  `codefast.config.*`; the strict schema now rejects it.
+
+- [#1206](https://github.com/codefastlabs/codefast/pull/1206) Exit codes now separate a failing result from a run that could not happen: `1` means findings, an errored package or a
+  failed hook; `2` means an unknown command or option, invalid config, a missing target or a crash — Commander's own usage
+  errors included, which used to exit `1`. Scripts that treated any non-zero code as findings should check for `1`.
+
+  `codefast audit` run with no subcommand now runs every audit over the repo root, reports each under its name and exits
+  with the worst outcome, so one CI step shows every failing audit; `--json` prints each audit's status, and `rtl` is
+  skipped when no `audit.rtl.target` is configured.
+
+  `-v, --verbose` is now a flag on every command and replaces the `CODEFAST_VERBOSE` environment variable. Color goes
+  through `util.styleText`, so `NO_COLOR`, `FORCE_COLOR` and a non-terminal stream are honored everywhere, and `tag` no
+  longer writes escape codes into a pipe. The binary sets its exit code instead of calling `process.exit`, so a large
+  `--json` piped on macOS is no longer cut off at 64 KiB.
+
+- [#1207](https://github.com/codefastlabs/codefast/pull/1207) The `--json` output of `audit` and `tag` names the repo root `rootDir` instead of `cwd`, which it never was: it is the
+  resolved project root, not the directory the command ran in. Both shapes move to `schemaVersion: 2`; read `rootDir`
+  where a script read `cwd`.
+
+- [#1188](https://github.com/codefastlabs/codefast/pull/1188) Every `@codefast/*` package now requires Node.js 24.15 or later and drops Node 22. The packages ship as one set, so they
+  share one floor instead of each sitting on its own 22.x release. `@codefast/typescript-config` removes the `node22.json`
+  and `node22-dom.json` overlays; extend a preset alone. `codefast audit engines` reports a published package whose floor
+  differs from the highest one any published package declares.
+
+### Patch Changes
+
+- [#1204](https://github.com/codefastlabs/codefast/pull/1204) The audits share one `--json` shape, one exit-code rule and one repo-root prelude instead of a copy per audit, and no
+  command re-validates a request it built itself. Output and exit codes are unchanged.
+
 ## 0.15.0
 
 ### Minor Changes

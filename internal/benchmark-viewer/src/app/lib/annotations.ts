@@ -70,6 +70,8 @@ const LABEL_PADDING = 3;
 
 /**
  * Where one marker label lands: the lane it stacks in, counted from the top, and the left edge of its text.
+ *
+ * @since 0.10.3
  */
 export interface MarkerLabelPlacement {
   readonly lane: number;
@@ -81,6 +83,8 @@ export interface MarkerLabelPlacement {
  * edge, in the topmost lane where it clears every label already there.
  *
  * @remarks Placements come back in the order of `labels`; they are laid out left to right by rule position.
+ *
+ * @since 0.10.3
  */
 export function layoutMarkerLabels(
   labels: ReadonlyArray<{ readonly x: number; readonly width: number }>,

@@ -5,6 +5,8 @@ import { paint } from "#core/style";
 
 /**
  * Prints every audit of a full run under its name, then one line naming the audits that failed.
+ *
+ * @since 0.16.0
  */
 export function presentAuditAll(outcomes: ReadonlyArray<AuditOutcome>, verbose: boolean): void {
   for (const outcome of outcomes) {

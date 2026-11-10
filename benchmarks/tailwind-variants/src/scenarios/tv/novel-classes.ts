@@ -22,7 +22,11 @@ import { joinEverySlot, joinFlatRenders, renderEverySlot } from "#lib/render-slo
 import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the rows whose merges always miss, for one library. */
+/**
+ * Builds the rows whose merges always miss, for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildNovelClassesScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   // The first definition each cold row makes, rendered as its loop renders it; serial zero is as novel as any.
   const novelButton = (): FlatRenderer => library.tv(novelButtonVariants(0), TV_MERGE_ENABLED) as FlatRenderer;

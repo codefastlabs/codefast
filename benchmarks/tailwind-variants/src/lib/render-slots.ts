@@ -73,7 +73,11 @@ export function renderEverySlot(slots: Readonly<Record<string, () => string>>): 
   return length;
 }
 
-/** Renders the card slots the way its sub-components do, each passing the `className` it was given. */
+/**
+ * Renders the card slots the way its sub-components do, each passing the `className` it was given.
+ *
+ * @since 0.11.1
+ */
 export function renderCardSlotsWithClasses(slots: ClassedCardSlots, classes: SlotClassCall["classes"]): number {
   return (
     slots.base({ className: classes.base }).length +
@@ -85,7 +89,11 @@ export function renderCardSlotsWithClasses(slots: ClassedCardSlots, classes: Slo
   );
 }
 
-/** Every slot's classes for one render, keyed by slot name, so a parity check sees slots a loop leaves unread. */
+/**
+ * Every slot's classes for one render, keyed by slot name, so a parity check sees slots a loop leaves unread.
+ *
+ * @since 0.11.1
+ */
 export function joinEverySlot(slots: Readonly<Record<string, () => string>>): string {
   return Object.keys(slots)
     .sort()
@@ -93,7 +101,11 @@ export function joinEverySlot(slots: Readonly<Record<string, () => string>>): st
     .join("\n");
 }
 
-/** A flat resolver's classes for each selection, one per line, in the order a timed loop renders them. */
+/**
+ * A flat resolver's classes for each selection, one per line, in the order a timed loop renders them.
+ *
+ * @since 0.11.1
+ */
 export function joinFlatRenders(
   resolver: (props: Readonly<Record<string, unknown>>) => string,
   selections: ReadonlyArray<Readonly<Record<string, unknown>>>,
@@ -101,7 +113,11 @@ export function joinFlatRenders(
   return selections.map((props) => resolver({ ...props })).join("\n");
 }
 
-/** A slot resolver's classes for each selection, every slot included, in the order a timed loop renders them. */
+/**
+ * A slot resolver's classes for each selection, every slot included, in the order a timed loop renders them.
+ *
+ * @since 0.11.1
+ */
 export function joinSlotRenders(
   resolver: (props: Readonly<Record<string, unknown>>) => Readonly<Record<string, () => string>>,
   selections: ReadonlyArray<Readonly<Record<string, unknown>>>,

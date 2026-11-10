@@ -11,7 +11,11 @@ import type { BenchScenario } from "#scenarios/types";
 /** Every slot the card renders, each called with the `className` a call gives it, absent included. */
 const CARD_SLOTS = ["base", "content", "description", "footer", "header", "title"] as const;
 
-/** Builds the `slot-class` row for one library. */
+/**
+ * Builds the `slot-class` row for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildSlotClassScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const card = library.tv(slotsVariants, TV_MERGE_ENABLED) as ClassedCardRenderer;
 

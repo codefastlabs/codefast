@@ -1,5 +1,25 @@
 # @codefast/ui
 
+## 0.16.0
+
+### Minor Changes
+
+- [#1188](https://github.com/codefastlabs/codefast/pull/1188) Every `@codefast/*` package now requires Node.js 24.15 or later and drops Node 22. The packages ship as one set, so they
+  share one floor instead of each sitting on its own 22.x release. `@codefast/typescript-config` removes the `node22.json`
+  and `node22-dom.json` overlays; extend a preset alone. `codefast audit engines` reports a published package whose floor
+  differs from the highest one any published package declares.
+
+### Patch Changes
+
+- [#1209](https://github.com/codefastlabs/codefast/pull/1209) `useAnimatedValue` keeps its pending animation frame in a local object instead of reassigning a captured variable, which
+  React Compiler's immutability rule rejects; its behavior is unchanged. The benchmark viewer's chart does the same for
+  its resize frame and now cancels a pending one when it unmounts.
+
+- [#1172](https://github.com/codefastlabs/codefast/pull/1172) Depends on `cn` instead of `tailwind-merge`, the merge engine `@codefast/tailwind-variants` now takes as its peer.
+- Updated dependencies:
+  - @codefast/tailwind-variants@0.11.0
+  - @codefast/theme@0.12.0
+
 ## 0.15.0
 
 ### Minor Changes

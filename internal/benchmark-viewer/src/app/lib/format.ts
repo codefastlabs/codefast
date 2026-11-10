@@ -99,6 +99,8 @@ export function fmtHz(hz: number | null | undefined): string {
 
 /**
  * Formats a count with its noun in the matching number (`1 run`, `5 runs`).
+ *
+ * @since 0.10.3
  */
 export function fmtCount(count: number, singular: string, plural = `${singular}s`): string {
   return `${count} ${count === 1 ? singular : plural}`;

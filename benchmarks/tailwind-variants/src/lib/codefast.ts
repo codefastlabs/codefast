@@ -5,6 +5,8 @@ import type { TvLibrary, TvOptions } from "#lib/tv-library";
 
 /**
  * The subject library.
+ *
+ * @since 0.11.1
  */
 export const codefast: TvLibrary = {
   cn: cn as TvLibrary["cn"],

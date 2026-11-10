@@ -436,6 +436,8 @@ export type EnginesAuditResult = {
 /**
  * What one audit left behind in a full `audit` run: a judged result, a reason it had nothing to scan, or the error that
  * kept it from running.
+ *
+ * @since 0.16.0
  */
 export type AuditOutcome =
   | {
