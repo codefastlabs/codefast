@@ -7,7 +7,6 @@ import type { Audit } from "#audit/domain/types";
 export const commentsAudit: Audit = {
   name: "comments",
   configKey: "comments",
-  description:
-    "Report comment defects: off-form section dividers, banned content, invalid TSDoc, dangling links and impossible @since",
+  description: "Report comment defects: off-form section dividers, banned content, invalid TSDoc and dangling links",
   scan: runCommentAudit,
 };

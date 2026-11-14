@@ -101,10 +101,12 @@ export function presentSummary(passed: boolean, text: string, elapsedSeconds: nu
 }
 
 /**
- * Returns the verdict of a writing command: it fails when any package failed.
+ * Returns the verdict of a writing command: it fails when any package failed, or would change when `failOnChange`.
  */
-export function packagesVerdict(outcomes: ReadonlyArray<PackageOutcome>): Verdict {
-  return outcomes.some((outcome) => outcome.status === "failed") ? "fail" : "pass";
+export function packagesVerdict(outcomes: ReadonlyArray<PackageOutcome>, failOnChange = false): Verdict {
+  const fails = (outcome: PackageOutcome): boolean =>
+    outcome.status === "failed" || (failOnChange && outcome.status === "changed");
+  return outcomes.some(fails) ? "fail" : "pass";
 }
 
 /**

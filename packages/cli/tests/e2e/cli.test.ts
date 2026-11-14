@@ -88,7 +88,7 @@ describe("a full audit run", () => {
       };
       expect(run.status).toBe(1);
       expect(summary.ok).toBe(false);
-      expect(summary.result.audits).toHaveLength(10);
+      expect(summary.result.audits).toHaveLength(11);
       expect(summary.result.audits.find((audit) => audit.name === "links")?.status).toBe("findings");
       expect(summary.result.audits.find((audit) => audit.name === "tailwind-rtl")?.status).toBe("clean");
     } finally {
@@ -112,8 +112,8 @@ describe("a full audit run", () => {
 });
 
 describe("workspace discovery over the real monorepo", () => {
-  it("exports:generate --dry-run reports the workspace packages without writing", () => {
-    const run = runBin(["exports:generate", "--dry-run", "--json"], repoRoot);
+  it("exports:generate --check finds every workspace package's exports current, writing nothing", () => {
+    const run = runBin(["exports:generate", "--check", "--json"], repoRoot);
     expect(run.status).toBe(0);
     const summary = JSON.parse(run.stdout) as {
       ok: boolean;
@@ -122,7 +122,6 @@ describe("workspace discovery over the real monorepo", () => {
     };
     expect(summary).toMatchObject({ ok: true, command: "exports:generate" });
     expect(summary.result.packages.length).toBeGreaterThan(0);
-    expect(summary.result.packages.every(({ status }) => status !== "failed" && status !== "changed")).toBe(true);
   });
 
   it("audit runs read-only over a source tree and exits clean", () => {

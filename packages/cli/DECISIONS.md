@@ -52,6 +52,20 @@ says `changed` or `unchanged`, and a dry run reports the same outcome without wr
 **Consequences.** The report of a writing command is the list of files it changed, which is also what the `afterWrite`
 hook receives.
 
+## A drift check is the command's own verdict
+
+**Context.** CI caught stale `package.json#exports` by running `exports:generate` and then `git diff --exit-code` in
+shell, because a dry run reports a package as `changed` and still passes: the command could describe the drift but not
+fail on it, so the gate lived outside the CLI.
+
+**Decision.** `exports:generate --check` writes nothing, as `--dry-run` does, and its verdict fails when any package
+would change. A spec's `verdict` receives the run's context beside the report, so a flag can decide what fails without
+the report carrying the flag.
+
+**Consequences.** CI gates on the command alone, and a script reads the stale packages from the `--json` result. A dry
+run stays the preview that passes. `since:stamp` takes no `--check`: an unstamped declaration is the normal state
+between releases, not drift.
+
 ## The config lives at the project root, once
 
 **Context.** The loader walked up from the root, took the first of several file names silently, cached one load per
@@ -175,15 +189,31 @@ types, asks the type server instead.
 
 ## Audits are read-only and mechanical
 
-**Context.** `audit:links`, `audit:comments`, `audit:imports`, `audit:assertions`, `audit:di-display-names`,
-`audit:props`, `audit:tailwind-rtl`, `audit:layers` and `audit:publish` gate CI. A gate that needs judgment to
-interpret, or that can only be fixed by hand, is ignored under time pressure.
+**Context.** `audit:links`, `audit:comments`, `audit:since-versions`, `audit:imports`, `audit:assertions`,
+`audit:di-display-names`, `audit:props`, `audit:tailwind-rtl`, `audit:layers` and `audit:publish` gate CI. A gate that
+needs judgment to interpret, or that can only be fixed by hand, is ignored under time pressure.
 
 **Decision.** Every audit reports a location and a one-line reason, exits non-zero on any finding, and where the fix is
 mechanical applies it under `--fix` (comment dividers) so a red run is one command from green. Allowlists live in the
 config, never in the audited files.
 
 **Consequences.** Audits stay cheap to keep on; a new rule has to come with a precise detector or it does not ship.
+
+## `@since` versions are an audit of their own
+
+**Context.** `since:stamp` stamps the version a release ships and never corrects a tag already there, so a hand-written
+`@since` — most often the upcoming version, typed ahead of the release — stays wrong for good. `audit:comments` checked
+the version as one comment rule among many, reading the nearest `package.json` itself, and the PR template still asked a
+person to grep the diff.
+
+**Decision.** `audit:since-versions` judges every `@since` in a file's comments against the `version` its owning
+workspace package declares — the manifest `since:stamp` stamps from, read once with the workspace. A tag naming no
+version, or a version newer than the package's own, is a finding. `audit:comments` keeps the comment form, `@since`
+position included.
+
+**Consequences.** The slip is a red build rather than a checklist item. A hand-written tag naming the current version
+reads like one the last release stamped, and nothing short of the release history tells them apart, so the audit leaves
+it alone.
 
 ## `audit:props` judges by type, through the type server
 

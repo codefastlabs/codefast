@@ -40,9 +40,8 @@ happened is usually the reusable part.
 - [ ] Changeset added (`pnpm exec changeset`) if a published package changed — `minor` for a breaking change while the
       package is on 0.x; a `major` is a deliberate 1.0 for that one package, so ask first
 - [ ] Tests live under exactly one of `tests/{unit,integration,e2e,types}/**`, mirroring the `src/` path
-- [ ] No hand-written `@since` tags (`git diff | grep -E '^\+.*@since'` is empty — `codefast since:stamp` stamps them at
-      release)
 - [ ] Comments state the _why_ in three lines or fewer, with no numbers and no history
-- [ ] `package.json#exports` regenerated (`pnpm cli:exports:generate`) if a module was added, moved, or renamed
+- [ ] `pnpm cli:audit` and `pnpm cli:exports:generate --check` pass — CI runs both, so a hand-written `@since` and stale
+      `package.json#exports` fail there too
 - [ ] New or changed public API audited against the naming rubric in
       [CLAUDE.md](../CLAUDE.md#api-naming-swift-api-design-guidelines-adapted-to-ts)

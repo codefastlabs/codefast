@@ -67,7 +67,7 @@ describe("a full audit run", () => {
     expect(exitCode).toBe(0);
     expect(out).toContain("✓ audit:links: no findings in 1 file");
     expect(out).toContain("○ audit:tailwind-rtl: turned off in the config");
-    expect(out).toContain("✓ audit: all 9 audits that ran are clean");
+    expect(out).toContain("✓ audit: all 10 audits that ran are clean");
   });
 
   it("drops a finding the config allowlists, and counts it", async () => {
@@ -106,6 +106,6 @@ describe("a full audit run", () => {
 
     expect(exitCode).toBe(2);
     expect(out).toContain("✗ audit:tailwind-rtl: [NOT_FOUND]");
-    expect(out).toContain("✗ audit: 2 of 10 failed — tailwind-rtl (error), links (findings)");
+    expect(out).toContain("✗ audit: 2 of 11 failed — tailwind-rtl (error), links (findings)");
   });
 });

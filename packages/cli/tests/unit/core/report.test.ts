@@ -77,6 +77,14 @@ describe("package outcome helpers", () => {
     expect(packagesVerdict([outcome("di", "unchanged")])).toBe("pass");
   });
 
+  it("fails a package that would change only when asked to", () => {
+    const stale = [outcome("di", "changed"), outcome("ui", "unchanged")];
+
+    expect(packagesVerdict(stale)).toBe("pass");
+    expect(packagesVerdict(stale, true)).toBe("fail");
+    expect(packagesVerdict([outcome("ui", "unchanged"), outcome("x", "skipped")], true)).toBe("pass");
+  });
+
   it("lists the absolute files written, none on a dry run", () => {
     expect(writtenPackageFiles(outcomes, "/repo", false)).toEqual(["/repo/packages/di/package.json"]);
     expect(writtenPackageFiles(outcomes, "/repo", true)).toEqual([]);

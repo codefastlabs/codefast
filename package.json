@@ -32,6 +32,7 @@
     "cli:audit:links": "pnpm run codefast audit:links",
     "cli:audit:props": "pnpm run codefast audit:props",
     "cli:audit:publish": "pnpm run codefast audit:publish",
+    "cli:audit:since-versions": "pnpm run codefast audit:since-versions",
     "cli:audit:tailwind-rtl": "pnpm run codefast audit:tailwind-rtl",
     "cli:exports:generate": "pnpm run codefast exports:generate",
     "codefast": "node ./packages/cli/dist/bin.js",

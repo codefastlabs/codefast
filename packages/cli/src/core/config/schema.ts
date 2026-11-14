@@ -97,6 +97,7 @@ export interface AuditConfig {
   diDisplayNames?: false | AuditSection | undefined;
   props?: false | AuditSection | undefined;
   comments?: false | AuditSection | undefined;
+  sinceVersions?: false | AuditSection | undefined;
   layers?: false | LayersAuditSection | undefined;
   publish?: false | AuditSection | undefined;
   engines?: false | AuditSection | undefined;
@@ -213,6 +214,7 @@ const auditConfigSchema = z
     diDisplayNames: auditSectionSchema.optional(),
     props: auditSectionSchema.optional(),
     comments: auditSectionSchema.optional(),
+    sinceVersions: auditSectionSchema.optional(),
     layers: layersAuditSectionSchema.optional(),
     publish: auditSectionSchema.optional(),
     engines: auditSectionSchema.optional(),

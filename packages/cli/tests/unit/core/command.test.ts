@@ -101,6 +101,14 @@ describe("the command pipeline", () => {
     expect(exitCode).toBe(1);
   });
 
+  it("judges the report under the flags the run took", async () => {
+    const spec = echoSpec({ verdict: (_report, context) => (context.flags.dryRun ? "fail" : "pass") });
+
+    expect((await run(spec, [])).exitCode).toBe(0);
+    process.exitCode = undefined;
+    expect((await run(spec, ["--dry-run"])).exitCode).toBe(1);
+  });
+
   it("reports an error the run returns as exit 2, as JSON under --json", async () => {
     const failing = echoSpec({ run: async () => err(new AppError("VALIDATION_ERROR", "bad input")) });
 
