@@ -1,4 +1,4 @@
-import type { RtlClassToken, RtlViolation } from "#audit/domain/types";
+import type { Detection } from "#audit/domain/types";
 import {
   DIRECTION_RESOLVED_VARIANT,
   PHYSICAL_SIDE_VARIANT,
@@ -8,6 +8,7 @@ import {
   RTL_TRANSLATE_X_MAPPINGS,
   SLIDE_PREFIXES,
 } from "#audit/rtl/domain/mappings";
+import type { RtlClassToken } from "#audit/rtl/domain/tokenize";
 import { collectTokens } from "#audit/rtl/domain/tokenize";
 
 /**
@@ -35,9 +36,9 @@ function hasRtlCompanion(fileTokens: ReadonlyArray<RtlClassToken>, expectedValue
  *
  * @since 0.5.0-canary.6
  */
-export function auditFileContent(content: string): Array<RtlViolation> {
+export function auditFileContent(content: string): Array<Detection> {
   const tokens = collectTokens(content);
-  const violations: Array<RtlViolation> = [];
+  const violations: Array<Detection> = [];
 
   for (const { raw, token, variant, value, line } of tokens) {
     if (token.startsWith("rtl:") || token.startsWith("ltr:")) {
@@ -64,7 +65,7 @@ export function auditFileContent(content: string): Array<RtlViolation> {
         violations.push({
           line,
           raw,
-          suggestion: `add rtl:${expected} (or rtl:…:${expected})`,
+          reason: `add rtl:${expected} (or rtl:…:${expected})`,
         });
       }
       continue;
@@ -78,7 +79,7 @@ export function auditFileContent(content: string): Array<RtlViolation> {
         continue;
       }
       if (!hasRtlCompanion(tokens, reverseMapping[1])) {
-        violations.push({ line, raw, suggestion: `add rtl:${reverseMapping[1]}` });
+        violations.push({ line, raw, reason: `add rtl:${reverseMapping[1]}` });
       }
       continue;
     }
@@ -86,7 +87,7 @@ export function auditFileContent(content: string): Array<RtlViolation> {
     const swapMapping = RTL_SWAP_MAPPINGS.find(([physical]) => value === physical);
     if (swapMapping) {
       if (!hasRtlCompanion(tokens, swapMapping[1])) {
-        violations.push({ line, raw, suggestion: `add rtl:${swapMapping[1]}` });
+        violations.push({ line, raw, reason: `add rtl:${swapMapping[1]}` });
       }
       continue;
     }
@@ -98,7 +99,7 @@ export function auditFileContent(content: string): Array<RtlViolation> {
       violations.push({
         line,
         raw,
-        suggestion: "check: physical slide outside a side/motion context",
+        reason: "check: physical slide outside a side/motion context",
       });
       continue;
     }
@@ -112,7 +113,7 @@ export function auditFileContent(content: string): Array<RtlViolation> {
       if (!physical.endsWith("-") && value !== physical) {
         continue;
       }
-      violations.push({ line, raw, suggestion: value.replace(physical, logical) });
+      violations.push({ line, raw, reason: `use ${value.replace(physical, logical)}` });
       break;
     }
   }

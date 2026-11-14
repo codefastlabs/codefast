@@ -10,7 +10,7 @@ import { loadTypeServer, loadTypeServerSyntax } from "#core/type-server";
 type ConstituentClassifier = (parts: ReadonlyArray<IntersectionPart>) => Array<ConstituentKind>;
 
 /**
- * A whole-run type probe backing `audit props`, bound to one type server.
+ * A whole-run type probe backing `audit:props`, bound to one type server.
  *
  * @since 0.15.0
  */
@@ -63,15 +63,15 @@ function kindOfType(type: Type, mappedFlag: number): ConstituentKind {
 // ── Probe lifecycle ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Creates a type probe over the native TypeScript type server for `audit props`.
+ * Creates a type probe over the native TypeScript type server for `audit:props`.
  *
  * @throws AppError when the `typescript` package providing the type server cannot be loaded.
  *
  * @since 0.15.0
  */
 export async function createPropsTypeProbe(): Promise<PropsTypeProbe> {
-  const sync = await loadTypeServer("audit props");
-  const syntax = await loadTypeServerSyntax("audit props");
+  const sync = await loadTypeServer("audit:props");
+  const syntax = await loadTypeServerSyntax("audit:props");
   const api = new sync.API();
   const mappedFlag = sync.ObjectFlags.Mapped;
 

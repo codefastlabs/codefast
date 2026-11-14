@@ -13,9 +13,12 @@ import {
 } from "#audit/comments/domain/link-references";
 import { scanImpossibleSinceTags } from "#audit/comments/domain/since-versions";
 import { scanTsdocSyntax } from "#audit/comments/domain/tsdoc-syntax";
-import type { CommentAuditResult, DividerBreakage, DividerFileBreakages } from "#audit/domain/types";
+import { findingsIn } from "#audit/domain/findings";
+import type { AuditContext, AuditScan, Detection } from "#audit/domain/types";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
+import { relativePosixPath } from "#core/path";
+import type { Finding } from "#core/report";
 import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
 import { findNearestPackageVersion } from "#core/workspace/package-version";
@@ -45,132 +48,76 @@ interface ScannedFile {
 }
 
 /**
- * Reports every comment off the repo's conventions: divider form (which `fix` rewrites), banned
+ * Reports every comment off the repo's conventions: divider form (which `--fix` rewrites first), banned
  * content — document pointers, JSDoc types, tag misuse — `{@link}` targets nothing declares, and
  * every diagnostic the official TSDoc parser raises against a doc block's grammar.
  *
  * @since 0.6.0
  */
-export function runCommentAudit(
-  fs: Filesystem,
-  args: {
-    readonly rootDir: string;
-    readonly targetPath: string;
-    readonly allowlist: ReadonlyArray<string>;
-    readonly fix: boolean;
-  },
-): Result<CommentAuditResult, AppError> {
+export function runCommentAudit({ fs, workspace, target, flags }: AuditContext): Result<AuditScan, AppError> {
   try {
-    const allowlist = new Set(args.allowlist);
-    const { rootDir, targetPath, fix } = args;
-    const filesToScan = collectScanPaths(fs, targetPath);
-    const perFile = new Map<string, Array<DividerBreakage>>();
+    const { rootDir } = workspace;
+    const files = walkSourceFiles(target.path, fs);
     const scanned: Array<ScannedFile> = [];
+    const findings: Array<Finding> = [];
+    const fixedFiles: Array<string> = [];
     const versionByDirectory = new Map<string, string | null>();
-    let allowlistedCount = 0;
-    let fixedCount = 0;
-    let dividerCount = 0;
 
-    for (const absolutePath of filesToScan) {
+    for (const absolutePath of files) {
       const language = sourceCommentLanguage(absolutePath);
       if (language === null) {
         continue;
       }
-      const relativePath = toPosixPath(path.relative(rootDir, absolutePath));
+      const relativePath = relativePosixPath(rootDir, absolutePath);
       let content = fs.readFileSync(absolutePath, "utf8");
-
-      if (fix) {
+      if (flags.fix) {
         const rewritten = applyCommentDividerFixes(content, language);
         if (rewritten.fixedCount > 0) {
           fs.writeFileSync(absolutePath, rewritten.content, "utf8");
           content = rewritten.content;
-          fixedCount += rewritten.fixedCount;
+          fixedFiles.push(relativePath);
         }
       }
       scanned.push({ absolutePath, relativePath, content, links: scanLinkReferences(content) });
 
-      const regions = scanCommentDividers(content, language);
-      dividerCount += regions.length;
-
-      const breakages: Array<DividerBreakage> = [];
-      for (const region of regions) {
-        if (region.defect === null) {
-          continue;
+      const detections: Array<Detection> = [];
+      for (const region of scanCommentDividers(content, language)) {
+        if (region.defect !== null) {
+          detections.push({ line: region.startLine, raw: region.raw, reason: reasonByDefect[region.defect] });
         }
-        if (allowlist.has(region.raw) || allowlist.has(`${relativePath}:${region.raw}`)) {
-          allowlistedCount++;
-          continue;
-        }
-        breakages.push({ line: region.startLine, raw: region.raw, reason: reasonByDefect[region.defect] });
       }
       // The content rules — banned fragments, `@since`, TSDoc grammar — govern doc comments in
       // code; an ignore file carries only the divider convention.
       if (language !== "ignore") {
         for (const finding of scanCommentContent(content, language)) {
-          if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
-            allowlistedCount++;
-            continue;
-          }
-          breakages.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect[finding.defect] });
+          detections.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect[finding.defect] });
         }
         const packageVersion = nearestVersion(fs, absolutePath, versionByDirectory);
         if (packageVersion !== null) {
           for (const finding of scanImpossibleSinceTags(content, packageVersion)) {
-            if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
-              allowlistedCount++;
-              continue;
-            }
-            breakages.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect["since-impossible"] });
+            detections.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect["since-impossible"] });
           }
         }
         if (language === "js") {
-          for (const finding of scanTsdocSyntax(content)) {
-            if (allowlist.has(finding.raw) || allowlist.has(`${relativePath}:${finding.raw}`)) {
-              allowlistedCount++;
-              continue;
-            }
-            breakages.push({ line: finding.line, raw: finding.raw, reason: finding.reason });
-          }
+          detections.push(...scanTsdocSyntax(content));
         }
       }
-      if (breakages.length > 0) {
-        perFile.set(relativePath, breakages);
-      }
+      findings.push(...findingsIn(relativePath, detections));
     }
 
     // Cross-file resolution only sees what was scanned, so a partial scan would misread
     // every out-of-scope symbol as dead — the check runs on full-tree scans alone.
-    if (targetPath === rootDir) {
-      allowlistedCount += appendDeadLinkBreakages(fs, scanned, allowlist, perFile);
+    if (target.path === rootDir) {
+      findings.push(...deadLinkFindings(fs, scanned));
     }
 
-    const files: Array<DividerFileBreakages> = [];
-    let breakageCount = 0;
-    for (const [relativePath, breakages] of perFile) {
-      breakages.sort((a, b) => a.line - b.line);
-      breakageCount += breakages.length;
-      files.push({ relativePath, breakages });
-    }
-
-    return ok({
-      files,
-      breakageCount,
-      allowlistedCount,
-      fixedCount,
-      dividerCount,
-      scannedFileCount: filesToScan.length,
-    });
+    return ok({ findings, scannedFiles: files.length, scannedPackages: 0, fixedFiles });
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
 }
 
-function appendDeadLinkBreakages(
-  fs: Filesystem,
-  scanned: Array<ScannedFile>,
-  allowlist: ReadonlySet<string>,
-  perFile: Map<string, Array<DividerBreakage>>,
-): number {
+function deadLinkFindings(fs: Filesystem, scanned: ReadonlyArray<ScannedFile>): Array<Finding> {
   const linkOccurrences = new Map<string, number>();
   const heads = new Set<string>();
   for (const file of scanned) {
@@ -188,32 +135,27 @@ function appendDeadLinkBreakages(
     heads,
   );
 
-  let allowlisted = 0;
+  const findings: Array<Finding> = [];
   for (const file of scanned) {
     for (const reference of file.links) {
-      let dead: boolean;
       if (reference.target.startsWith("http://") || reference.target.startsWith("https://")) {
         continue;
-      } else if (isPathLinkTarget(reference.target)) {
-        dead = !fs.existsSync(path.resolve(path.dirname(file.absolutePath), reference.target));
-      } else {
-        const head = linkTargetHead(reference.target);
-        dead = (mentions.get(head) ?? 0) <= (linkOccurrences.get(head) ?? 0);
       }
-      if (!dead) {
-        continue;
+      const dead = isPathLinkTarget(reference.target)
+        ? !fs.existsSync(path.resolve(path.dirname(file.absolutePath), reference.target))
+        : (mentions.get(linkTargetHead(reference.target)) ?? 0) <=
+          (linkOccurrences.get(linkTargetHead(reference.target)) ?? 0);
+      if (dead) {
+        findings.push({
+          file: file.relativePath,
+          line: reference.line,
+          text: `{@link ${reference.target}}`,
+          message: reasonByDefect["dead-link"],
+        });
       }
-      const raw = `{@link ${reference.target}}`;
-      if (allowlist.has(raw) || allowlist.has(`${file.relativePath}:${raw}`)) {
-        allowlisted++;
-        continue;
-      }
-      const breakages = perFile.get(file.relativePath) ?? [];
-      breakages.push({ line: reference.line, raw, reason: reasonByDefect["dead-link"] });
-      perFile.set(file.relativePath, breakages);
     }
   }
-  return allowlisted;
+  return findings;
 }
 
 // One package.json walk per directory — sibling files share the answer.
@@ -226,16 +168,4 @@ function nearestVersion(fs: Filesystem, absolutePath: string, cache: Map<string,
   const version = findNearestPackageVersion(fs, directory);
   cache.set(directory, version);
   return version;
-}
-
-function collectScanPaths(fs: Filesystem, targetPath: string): Array<string> {
-  const stats = fs.statSync(targetPath);
-  if (stats.isFile()) {
-    return [targetPath];
-  }
-  return walkSourceFiles(targetPath, fs);
-}
-
-function toPosixPath(filePath: string): string {
-  return filePath.split(path.sep).join("/");
 }

@@ -1,113 +1,55 @@
 import path from "node:path";
 
-import jiti from "jiti";
-import type { ZodError } from "zod";
+import { createJiti } from "jiti";
 
 import { codefastConfigRootSchema } from "#core/config/schema";
 import type { CodefastConfig } from "#core/config/schema";
+import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
-import { ancestorDirectories } from "#core/workspace/ancestor-directories";
+import type { Result } from "#core/result";
+import { err, ok } from "#core/result";
+import { parseWithSchema } from "#core/schema-parse";
 
 /**
- * A loaded config together with its schema warnings and the path it was read from.
- *
- * @since 0.3.16-canary.0
+ * The config file names the project root may hold; at most one of them.
  */
-export type LoadConfigPayload = {
-  readonly config: CodefastConfig;
-  readonly warnings: Array<string>;
-  readonly configPath?: string;
-};
+const configFileNames = [
+  "codefast.config.ts",
+  "codefast.config.mts",
+  "codefast.config.js",
+  "codefast.config.mjs",
+  "codefast.config.cjs",
+  "codefast.config.json",
+] as const;
 
-function formatZodError(error: ZodError, filePath: string): string {
-  const formatted = error.issues
-    .map((issue) => {
-      const pathLabel = issue.path.length > 0 ? issue.path.join(".") : "<root>";
-      return `  - ${pathLabel}: ${issue.message}`;
-    })
-    .join("\n");
-
-  return `Invalid config schema in ${path.basename(filePath)}:\n${formatted}`;
-}
-
-function parseLoadedConfig(raw: unknown, filePath: string): CodefastConfig {
-  const parsed = codefastConfigRootSchema.safeParse(raw);
-  if (!parsed.success) {
-    throw new Error(formatZodError(parsed.error, filePath));
+async function readConfigModule(configPath: string, fs: Filesystem): Promise<unknown> {
+  if (path.extname(configPath) === ".json") {
+    return JSON.parse(await fs.readFile(configPath, "utf8")) as unknown;
   }
-  return parsed.data;
-}
-
-const configJsPriority = ["codefast.config.mjs", "codefast.config.js", "codefast.config.cjs"] as const;
-const configJson = "codefast.config.json";
-
-const cachedLoads = new Map<string, Promise<LoadConfigPayload>>();
-
-function listConfigCandidates(startDir: string, fs: Filesystem): Array<string> {
-  const candidates: Array<string> = [];
-  for (const current of ancestorDirectories(startDir)) {
-    for (const name of configJsPriority) {
-      const candidate = path.join(current, name);
-      if (fs.existsSync(candidate)) {
-        candidates.push(candidate);
-      }
-    }
-
-    const jsonCandidate = path.join(current, configJson);
-    if (fs.existsSync(jsonCandidate)) {
-      candidates.push(jsonCandidate);
-    }
-  }
-  return candidates;
-}
-
-async function readConfigFromPath(filePath: string, jitiBaseDir: string, fs: Filesystem): Promise<CodefastConfig> {
-  const ext = path.extname(filePath);
-  if (ext === ".json") {
-    const content = await fs.readFile(filePath, "utf8");
-    return parseLoadedConfig(JSON.parse(content) as unknown, filePath);
-  }
-
-  const loadWithJiti = jiti(jitiBaseDir, {
-    interopDefault: true,
-    moduleCache: false,
-  });
-  const moduleConfig = loadWithJiti(filePath) as unknown;
-  const unwrappedConfig =
-    typeof moduleConfig === "object" && moduleConfig !== null && "default" in moduleConfig
-      ? moduleConfig.default
-      : moduleConfig;
-  return parseLoadedConfig(unwrappedConfig, filePath);
-}
-
-async function loadOnce(startDir: string, fs: Filesystem): Promise<LoadConfigPayload> {
-  const warnings: Array<string> = [];
-  const configPaths = listConfigCandidates(startDir, fs);
-  if (configPaths.length === 0) {
-    return { config: {}, warnings };
-  }
-
-  const configPath = configPaths[0];
-  if (configPath === undefined) {
-    return { config: {}, warnings };
-  }
-  const config = await readConfigFromPath(configPath, startDir, fs);
-  return { config, warnings, configPath };
+  return createJiti(configPath, { moduleCache: false }).import(configPath, { default: true });
 }
 
 /**
- * Loads and caches the config payload for a directory, sharing one load per resolved path.
+ * Loads and validates the project root's `codefast.config.*`, or an empty config when there is none.
  *
- * @since 0.3.16-canary.0
+ * @remarks Two config files at the root are refused rather than ranked, so the one that applies is never a guess.
  */
-export function loadConfigPayload(startDir: string, fs: Filesystem): Promise<LoadConfigPayload> {
-  const cacheKey = path.resolve(startDir);
-  if (!cachedLoads.has(cacheKey)) {
-    cachedLoads.set(cacheKey, loadOnce(cacheKey, fs));
+export async function loadConfig(rootDir: string, fs: Filesystem): Promise<Result<CodefastConfig, AppError>> {
+  const present = configFileNames.filter((fileName) => fs.existsSync(path.join(rootDir, fileName)));
+  const [fileName] = present;
+  if (fileName === undefined) {
+    return ok({});
   }
-  const cached = cachedLoads.get(cacheKey);
-  if (cached === undefined) {
-    throw new Error("config loader cache invariant violated");
+  if (present.length > 1) {
+    return err(new AppError("VALIDATION_ERROR", `Several config files at the project root: ${present.join(", ")}`));
   }
-  return cached;
+
+  let raw: unknown;
+  try {
+    raw = await readConfigModule(path.join(rootDir, fileName), fs);
+  } catch (caughtError: unknown) {
+    return err(new AppError("INFRA_FAILURE", `${fileName}: ${messageFrom(caughtError)}`, caughtError));
+  }
+  const parsed = parseWithSchema(codefastConfigRootSchema, raw);
+  return parsed.ok ? parsed : err(new AppError("VALIDATION_ERROR", `${fileName}: ${parsed.error.message}`));
 }

@@ -28,9 +28,9 @@ description:
   ```
 
 - Publishing is **CI's job** (`.github/workflows/release.yml`, where `changesets/action` runs
-  `pnpm run publish-packages` — `codefast pack-slim`, then `changeset publish`) when a change under `.changeset/**`
-  lands on `main`. Never publish by hand from a local machine — the one exception is bootstrapping a brand-new package
-  (see below).
+  `pnpm run publish-packages` — `codefast publish:prepare`, then `changeset publish`) when a change under
+  `.changeset/**` lands on `main`. Never publish by hand from a local machine — the one exception is bootstrapping a
+  brand-new package (see below).
 - CI authenticates to npm with **OIDC trusted publishing**, not an `NPM_TOKEN` (`changesets/action` v2 dropped the
   token-to-`.npmrc` handling). The release job has `id-token: write`, and each published package has a trusted publisher
   on npmjs.com pinned to org `codefastlabs`, repo `codefast`, workflow `release.yml`, permission `npm publish`.
@@ -68,12 +68,12 @@ Prefer that over the mutating route. If you do need the real thing: temporarily 
 
 1. Make sure every change worth releasing has a changeset alongside it in the commit.
 2. Merge to `main` — CI opens or updates the release PR, running `version-packages`
-   (`changeset version && pnpm run codefast tag`, where `codefast tag` adds `@since` to the TSDoc). Publishing waits for
-   the maintainer to merge that PR.
+   (`changeset version && pnpm run codefast since:stamp`, where `codefast since:stamp` adds `@since` to the TSDoc).
+   Publishing waits for the maintainer to merge that PR.
 
 `changeset version` **exits 1 when there is no unreleased changeset**, so `version-packages` fails rather than
-no-opping, and `codefast tag` does not run. `changesets/action` only invokes it when it has detected changesets, so this
-surfaces as a local mistake far more often than a CI failure.
+no-opping, and `codefast since:stamp` does not run. `changesets/action` only invokes it when it has detected changesets,
+so this surfaces as a local mistake far more often than a CI failure.
 
 ## Canary
 

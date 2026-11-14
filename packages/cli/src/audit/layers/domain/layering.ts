@@ -5,7 +5,7 @@ import path from "node:path";
 
 import { parseSync } from "oxc-parser";
 
-import type { LayerViolation } from "#audit/domain/types";
+import type { Detection } from "#audit/domain/types";
 import type { OxcNode } from "#core/oxc-node";
 import { isOxcNode, programStatements } from "#core/oxc-node";
 import { firstLineOf, lineOfOffset } from "#core/source-position";
@@ -175,7 +175,7 @@ export function auditLayeringSource(
   modulePath: string,
   sourceText: string,
   layers: LayerMap,
-): Array<LayerViolation> {
+): Array<Detection> {
   const own = layers.placementOf(modulePath);
   if (own === undefined) {
     return [
@@ -187,7 +187,7 @@ export function auditLayeringSource(
     ];
   }
 
-  const violations: Array<LayerViolation> = [];
+  const violations: Array<Detection> = [];
   const check = (node: OxcNode, specifier: string): void => {
     const target = moduleTargetOf(specifier, modulePath);
     if (target === undefined) {
@@ -222,7 +222,7 @@ export function auditLayeringSource(
   return violations;
 }
 
-function violationAt(sourceText: string, node: OxcNode, reason: string): LayerViolation {
+function violationAt(sourceText: string, node: OxcNode, reason: string): Detection {
   return {
     line: lineOfOffset(sourceText, node.start),
     raw: firstLineOf(sourceText.slice(node.start, node.end)),

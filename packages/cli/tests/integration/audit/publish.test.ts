@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -6,11 +6,13 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { runPublishAudit } from "#audit/publish/run";
 import { nodeFilesystem } from "#core/filesystem/node";
+import type { Workspace } from "#core/workspace/workspace";
+import { loadWorkspace } from "#core/workspace/workspace";
 
 let rootDir: string;
 
 beforeEach(() => {
-  rootDir = mkdtempSync(path.join(tmpdir(), "codefast-audit-publish-"));
+  rootDir = realpathSync(mkdtempSync(path.join(tmpdir(), "codefast-audit-publish-")));
   write("pnpm-workspace.yaml", "packages:\n  - packages/*\n");
 });
 
@@ -52,23 +54,32 @@ function writeLibrary(options: { readonly sources: ReadonlyArray<string>; readon
 }
 
 async function unreachableStylesheets(): Promise<unknown> {
-  const outcome = await runPublishAudit(nodeFilesystem, { rootDir, targetPath: rootDir });
+  const workspace = await workspaceAt(rootDir);
+  const outcome = runPublishAudit({
+    fs: nodeFilesystem,
+    workspace,
+    target: { path: rootDir, relativePath: ".", isFile: false },
+    targetGiven: false,
+    currentWorkingDirectory: rootDir,
+    flags: { fix: false },
+    verbose: false,
+  });
   if (!outcome.ok) {
     throw outcome.error;
   }
-  return outcome.value.unreachableStylesheets;
+  return outcome.value.findings.filter((finding) => finding.file.endsWith(".css"));
 }
 
-describe("audit publish — stylesheet sources", () => {
+describe("audit:publish — stylesheet sources", () => {
   it("flags a preset that registers only the src the publish slim drops", async () => {
     writeLibrary({ sources: ["../../**/*.{ts,tsx}"], built: true });
 
     expect(await unreachableStylesheets()).toEqual([
       {
-        packageName: "@x/ui",
-        stylesheet: "packages/ui/src/css/foundation/source.css",
-        sources: [{ line: 1, pattern: "../../**/*.{ts,tsx}" }],
-        missingFilesEntries: [],
+        file: "packages/ui/src/css/foundation/source.css",
+        line: 1,
+        text: '@source "../../**/*.{ts,tsx}"',
+        message: "registers no file the tarball ships",
       },
     ]);
   });
@@ -84,8 +95,8 @@ describe("audit publish — stylesheet sources", () => {
 
     expect(await unreachableStylesheets()).toEqual([
       expect.objectContaining({
-        stylesheet: "packages/ui/src/css/foundation/source.css",
-        missingFilesEntries: ["dist"],
+        file: "packages/ui/src/css/foundation/source.css",
+        message: "registers no file the tarball ships; dist not on disk — build the package first",
       }),
     ]);
   });
@@ -100,3 +111,11 @@ describe("audit publish — stylesheet sources", () => {
     expect(await unreachableStylesheets()).toEqual([]);
   });
 });
+
+async function workspaceAt(directory: string): Promise<Workspace> {
+  const workspace = await loadWorkspace(nodeFilesystem, directory);
+  if (!workspace.ok) {
+    throw new Error(workspace.error.message);
+  }
+  return workspace.value;
+}

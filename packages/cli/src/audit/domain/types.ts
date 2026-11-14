@@ -1,448 +1,65 @@
+import type { CommandContext } from "#core/command";
+import type { CodefastConfig } from "#core/config/schema";
 import type { AppError } from "#core/errors";
+import type { Finding } from "#core/report";
+import type { Result } from "#core/result";
 
 /**
- * A class token parsed from a source string literal, split into variant, value, and modifier.
- *
- * @since 0.5.0-canary.6
+ * What an audit runs with: the shared command context, `--fix` included.
  */
-export type RtlClassToken = {
-  readonly raw: string;
-  readonly token: string;
-  readonly variant: string | null;
-  readonly value: string;
-  readonly modifier: string | null;
+export type AuditContext = CommandContext<"fix">;
+
+/**
+ * Something a detector found in one file's text, before the run places it in that file.
+ */
+export interface Detection {
   readonly line: number;
-};
-
-/**
- * A physical class occurrence the RTL audit flags, with its suggested logical replacement.
- *
- * @since 0.5.0-canary.6
- */
-export type RtlViolation = {
-  readonly line: number;
-  readonly raw: string;
-  readonly suggestion: string;
-};
-
-/**
- * The RTL violations found in one file.
- *
- * @since 0.5.0-canary.6
- */
-export type RtlFileViolations = {
-  readonly relativePath: string;
-  readonly violations: Array<RtlViolation>;
-};
-
-/**
- * Outcome of one `audit rtl` run.
- *
- * @since 0.5.0-canary.6
- */
-export type RtlAuditResult = {
-  readonly files: Array<RtlFileViolations>;
-  readonly violationCount: number;
-  readonly allowlistedCount: number;
-  readonly scannedFileCount: number;
-};
-
-/**
- * An import-policy violation: a banned import form (namespace / default / named), or an implicit
- * UMD-global type reference under a name nothing in the file imports.
- *
- * @since 0.10.0
- */
-export type ImportPolicyViolation = {
-  readonly line: number;
-  /** The offending source text — the import statement or the qualified type name. */
+  /** The offending text as written, up to its first line break; an allowlist entry matches it. */
   readonly raw: string;
   readonly reason: string;
-};
+}
 
 /**
- * The import-policy violations found in one file.
- *
- * @since 0.10.0
+ * What an audit's scan found, before the allowlist applies.
  */
-export type ImportPolicyFileViolations = {
-  readonly relativePath: string;
-  readonly violations: Array<ImportPolicyViolation>;
-};
+export interface AuditScan {
+  readonly findings: ReadonlyArray<Finding>;
+  readonly scannedFiles: number;
+  readonly scannedPackages: number;
+  /** The files `--fix` rewrote, as POSIX paths from the root. */
+  readonly fixedFiles: ReadonlyArray<string>;
+}
 
 /**
- * Outcome of one `audit imports` run.
- *
- * @since 0.10.0
+ * The report of one audit: the findings past the allowlist, how many it accepted, and what the scan covered.
  */
-export type ImportsAuditResult = {
-  readonly files: Array<ImportPolicyFileViolations>;
-  readonly violationCount: number;
-  readonly allowlistedCount: number;
-  readonly scannedFileCount: number;
-};
+export type AuditReport<Scan extends AuditScan = AuditScan> = Scan & { readonly allowlisted: number };
+
+// The key an audit's section takes under `audit` in the config.
+type AuditConfigKey = keyof NonNullable<CodefastConfig["audit"]>;
 
 /**
- * A double assertion through `unknown` or `any`, or a directive that keeps one without cause.
- *
- * @since 0.13.0
+ * One audit: its name, its config section, and the scan it runs over the target.
  */
-export type AssertionViolation = {
-  readonly line: number;
-  /** The assertion or the directive as written, up to its first line break. */
-  readonly raw: string;
-  readonly reason: string;
-};
+export interface Audit<Scan extends AuditScan = AuditScan> {
+  readonly name: string;
+  readonly configKey: AuditConfigKey;
+  readonly description: string;
+  readonly scan: (context: AuditContext) => Result<Scan, AppError> | Promise<Result<Scan, AppError>>;
+}
 
 /**
- * The type-assertion violations found in one file.
- *
- * @since 0.13.0
+ * What one audit left behind in a full `audit` run: its report, why the config turned it off, or the error that kept it
+ * from running.
  */
-export type AssertionFileViolations = {
-  readonly relativePath: string;
-  readonly violations: Array<AssertionViolation>;
-};
-
-/**
- * Outcome of one `audit assertions` run.
- *
- * @since 0.13.0
- */
-export type AssertionAuditResult = {
-  readonly files: Array<AssertionFileViolations>;
-  readonly violationCount: number;
-  readonly allowlistedCount: number;
-  readonly scannedFileCount: number;
-};
-
-/**
- * A component props type joined with `&` where an interface could extend every part, or whose parts do not resolve.
- *
- * @since 0.15.0
- */
-export type PropsViolation = {
-  readonly line: number;
-  /** The alias, or the parameter's annotation, as written up to its first line break. */
-  readonly raw: string;
-  readonly reason: string;
-};
-
-/**
- * The props-declaration violations found in one file.
- *
- * @since 0.15.0
- */
-export type PropsFileViolations = {
-  readonly relativePath: string;
-  readonly violations: Array<PropsViolation>;
-};
-
-/**
- * Outcome of one `audit props` run.
- *
- * @since 0.15.0
- */
-export type PropsAuditResult = {
-  readonly files: Array<PropsFileViolations>;
-  readonly violationCount: number;
-  readonly allowlistedCount: number;
-  readonly scannedFileCount: number;
-};
-
-/**
- * A `token()`, `tag()` or module display name that breaks the display-name convention.
- *
- * @since 0.9.0
- */
-export type DisplayNameViolation = {
-  readonly line: number;
-  /** The call as written, through its closing quote. */
-  readonly raw: string;
-  readonly reason: string;
-};
-
-/**
- * The display-name violations found in one file.
- *
- * @since 0.9.0
- */
-export type DisplayNameFileViolations = {
-  readonly relativePath: string;
-  readonly violations: Array<DisplayNameViolation>;
-};
-
-/**
- * Outcome of one `audit display-names` run.
- *
- * @since 0.9.0
- */
-export type DisplayNameAuditResult = {
-  readonly files: Array<DisplayNameFileViolations>;
-  readonly violationCount: number;
-  readonly allowlistedCount: number;
-  readonly scannedFileCount: number;
-};
-
-/**
- * A broken link or anchor found by the link audit.
- *
- * @since 0.5.0
- */
-export type LinkBreakage = {
-  readonly line: number;
-  /** The link target as written, fragment included. */
-  readonly raw: string;
-  readonly reason: string;
-};
-
-/**
- * The link breakages found in one markdown file.
- *
- * @since 0.5.0
- */
-export type LinkFileBreakages = {
-  readonly relativePath: string;
-  readonly breakages: Array<LinkBreakage>;
-};
-
-/**
- * Outcome of one `audit links` run.
- *
- * @since 0.5.0
- */
-export type LinkAuditResult = {
-  readonly files: Array<LinkFileBreakages>;
-  readonly breakageCount: number;
-  readonly allowlistedCount: number;
-  readonly linkCount: number;
-  readonly scannedFileCount: number;
-};
-
-/**
- * A section divider that does not match the repo's one allowed form. Always `--fix`-able.
- *
- * @since 0.6.0
- */
-export type DividerBreakage = {
-  readonly line: number;
-  /** The divider's opening line as written. */
-  readonly raw: string;
-  readonly reason: string;
-};
-
-/**
- * @see DividerBreakage
- *
- * @since 0.6.0
- */
-export type DividerFileBreakages = {
-  readonly relativePath: string;
-  readonly breakages: Array<DividerBreakage>;
-};
-
-/**
- * Outcome of one `audit comments` run. `fixedCount` stays `0` unless `--fix` was passed.
- *
- * @since 0.6.0
- */
-export type CommentAuditResult = {
-  readonly files: Array<DividerFileBreakages>;
-  readonly breakageCount: number;
-  readonly allowlistedCount: number;
-  readonly fixedCount: number;
-  readonly dividerCount: number;
-  readonly scannedFileCount: number;
-};
-
-/**
- * A `#/`-prefixed internal import specifier — valid to the in-repo runners but rejected by Node's ESM
- * resolver on the supported floor, so it breaks the published package.
- *
- * @since 0.12.0
- */
-export type LegacySubpathImport = {
-  readonly line: number;
-  /** The specifier as written, quotes included. */
-  readonly raw: string;
-};
-
-/**
- * The `#/` imports found in one source file.
- *
- * @since 0.12.0
- */
-export type LegacySubpathFile = {
-  readonly relativePath: string;
-  readonly imports: Array<LegacySubpathImport>;
-};
-
-/**
- * A published package whose slimmed manifest exports or imports a target it does not ship.
- *
- * @since 0.12.0
- */
-export type UnshippedTargetViolation = {
-  readonly packageName: string;
-  readonly field: string;
-  readonly subpath: string;
-  readonly target: string;
-};
-
-/**
- * A path a stylesheet registers with Tailwind's `@source`, as written.
- *
- * @since 0.13.0
- */
-export type StylesheetSource = {
-  readonly line: number;
-  readonly pattern: string;
-};
-
-/**
- * A shipped stylesheet whose `@source` paths reach no file its package's tarball ships.
- *
- * @since 0.13.0
- */
-export type UnreachableStylesheetViolation = {
-  readonly packageName: string;
-  /** Repo-relative path of the stylesheet. */
-  readonly stylesheet: string;
-  readonly sources: Array<StylesheetSource>;
-  /** The `files` entries missing on disk, which is how an unbuilt `dist` shows up. */
-  readonly missingFilesEntries: Array<string>;
-};
-
-/**
- * Outcome of one `audit publish` run.
- *
- * @since 0.12.0
- */
-export type PublishAuditResult = {
-  readonly legacyImportFiles: Array<LegacySubpathFile>;
-  readonly unshipped: Array<UnshippedTargetViolation>;
-  readonly unreachableStylesheets: Array<UnreachableStylesheetViolation>;
-  readonly legacyImportCount: number;
-  readonly scannedFileCount: number;
-  readonly packageCount: number;
-};
-
-/**
- * A module outside every configured layer, or a value import that points up the layers.
- *
- * @since 0.14.0
- */
-export type LayerViolation = {
-  readonly line: number;
-  /** The import or re-export as written, or the module path when the module itself is unplaced. */
-  readonly raw: string;
-  readonly reason: string;
-};
-
-/**
- * The layering violations found in one file.
- *
- * @since 0.14.0
- */
-export type LayerFileViolations = {
-  readonly relativePath: string;
-  readonly violations: Array<LayerViolation>;
-};
-
-/**
- * Outcome of one `audit layers` run.
- *
- * @since 0.14.0
- */
-export type LayersAuditResult = {
-  readonly files: Array<LayerFileViolations>;
-  readonly violationCount: number;
-  readonly allowlistedCount: number;
-  readonly scannedFileCount: number;
-  readonly packageCount: number;
-};
-
-/**
- * A workspace package's `engines.node` floor.
- *
- * @since 0.15.0
- */
-export type PackageEngineFloor = {
-  readonly packageName: string;
-  /** Repo-relative POSIX path of the package directory. */
-  readonly directory: string;
-  /** The floor as `X.Y.Z`. */
-  readonly floor: string;
-};
-
-/**
- * A package whose Node floor breaks a rule a consumer or CI depends on.
- *
- * @since 0.15.0
- */
-export type EngineViolation =
-  | { readonly kind: "missing-floor"; readonly packageName: string }
-  | { readonly kind: "unparsable-floor"; readonly packageName: string; readonly range: string }
-  | {
-      readonly kind: "outside-dependency-engines";
-      readonly packageName: string;
-      readonly floor: string;
-      readonly dependency: string;
-      /** The manifest field that lists the dependency. */
-      readonly field: string;
-      /** The dependency's own `engines.node`. */
-      readonly range: string;
-      /** The releases the floor claims that `range` leaves out, as semver ranges joined by `||`. */
-      readonly uncovered: string;
-    }
-  | {
-      readonly kind: "root-outside-dependency-engines";
-      /** The workspace root's name. */
-      readonly packageName: string;
-      readonly floor: string;
-      readonly dependency: string;
-      /** The dependency's own `engines.node`. */
-      readonly range: string;
-      /** The workspace packages that install the dependency at this range. */
-      readonly dependents: Array<string>;
-      /** The releases the root floor claims that `range` leaves out, as semver ranges joined by `||`. */
-      readonly uncovered: string;
-    }
-  | {
-      readonly kind: "divergent-floor";
-      readonly packageName: string;
-      readonly floor: string;
-      /** The floor the other published packages share, the highest when they disagree. */
-      readonly sharedFloor: string;
-    }
-  | {
-      readonly kind: "types-off-floor";
-      readonly packageName: string;
-      readonly floor: string;
-      readonly typesVersion: string;
-    };
-
-/**
- * Outcome of one `audit engines` run.
- *
- * @since 0.15.0
- */
-export type EnginesAuditResult = {
-  readonly floors: Array<PackageEngineFloor>;
-  readonly violations: Array<EngineViolation>;
-  readonly packageCount: number;
-};
-
-/**
- * What one audit left behind in a full `audit` run: a judged result, a reason it had nothing to scan, or the error that
- * kept it from running.
- */
-export type AuditOutcome =
-  | {
-      readonly name: string;
-      readonly status: "clean" | "findings";
-      readonly result: unknown;
-      readonly present: () => void;
-    }
+export type AuditRun =
+  | { readonly name: string; readonly status: "clean" | "findings"; readonly result: AuditReport }
   | { readonly name: string; readonly status: "skipped"; readonly reason: string }
-  | { readonly name: string; readonly status: "error"; readonly error: AppError };
+  | { readonly name: string; readonly status: "error"; readonly error: Pick<AppError, "code" | "message"> };
+
+/**
+ * The report of a full `audit` run: one entry per audit, in a fixed order.
+ */
+export interface AuditAllReport {
+  readonly audits: ReadonlyArray<AuditRun>;
+}

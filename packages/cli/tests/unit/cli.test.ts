@@ -21,23 +21,22 @@ afterEach(() => {
 });
 
 describe("runCli", () => {
-  it("resolves 0 for --help and --version", async () => {
+  it("resolves 0 for --help, --version, and no command at all", async () => {
     expect(await runCli(["node", "codefast", "--help"])).toBe(0);
     expect(await runCli(["node", "codefast", "--version"])).toBe(0);
+    expect(await runCli(["node", "codefast"])).toBe(0);
   });
 
-  it("resolves 2 for an unknown command, an unknown option, and no command at all", async () => {
+  it("resolves 2 for an unknown command and an unknown option", async () => {
     expect(await runCli(["node", "codefast", "definitely-not-a-command"])).toBe(2);
     process.exitCode = undefined;
-    expect(await runCli(["node", "codefast", "audit", "links", "--definitely-not-an-option"])).toBe(2);
-    process.exitCode = undefined;
-    expect(await runCli(["node", "codefast"])).toBe(2);
+    expect(await runCli(["node", "codefast", "audit:links", "--definitely-not-an-option"])).toBe(2);
   });
 
   it("refuses color for the run --no-color starts", async () => {
     vi.stubEnv("FORCE_COLOR", "1");
 
-    await runCli(["node", "codefast", "--no-color", "audit", "links", "definitely-missing"]);
+    await runCli(["node", "codefast", "--no-color", "audit:links", "definitely-missing"]);
 
     expect(paint("red", "x")).toBe("x");
   });

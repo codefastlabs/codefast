@@ -1,10 +1,10 @@
 /**
- * Codefast monorepo tooling — sections are read by matching `codefast` subcommands.
+ * Codefast monorepo tooling — each section configures the `codefast` commands of the same name.
  *
  * @type {import("@codefast/cli").CodefastConfig}
  */
 const config = {
-  mirror: {
+  exports: {
     "@codefast/ui": {
       strip: "./components/",
       // The message-scroller hooks and lib are the primitive's internals; its public types ship from the primitive.
@@ -85,9 +85,10 @@ const config = {
     },
   },
 
-  tag: {
-    // Glob patterns (picomatch) — skip every private app under the @apps scope.
-    skipPackages: ["@apps/*", "@examples/*"],
+  // Keyed by package name or glob, like `exports`: the apps and examples ship no API to stamp.
+  since: {
+    "@apps/*": false,
+    "@examples/*": false,
   },
 };
 

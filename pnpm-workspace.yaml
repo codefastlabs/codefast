@@ -12,7 +12,7 @@ allowBuilds:
 
 overrides:
   # Hold every transitive `@types/node` (`"*"` from jest's types) to the floor's line, so nothing type-checks against
-  # APIs the floor lacks; `codefast audit engines` checks the lockfile for it.
+  # APIs the floor lacks; `codefast audit:engines` checks the lockfile for it.
   "@types/node@*": "catalog:"
   # mermaid pins chevrotain `~11.1.2`, whose packages pin an exact lodash-es below the fix for
   # GHSA-r5fr-rjxr-66jc and GHSA-f23m-r3pf-42rh; scoped to the vulnerable range so it lapses once chevrotain moves on.

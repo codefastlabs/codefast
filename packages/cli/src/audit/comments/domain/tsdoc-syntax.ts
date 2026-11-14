@@ -17,7 +17,7 @@ export interface TsdocSyntaxFinding {
 }
 
 const configuration = new TSDocConfiguration();
-// The repo's one custom tag, stamped at release by `codefast tag`.
+// The repo's one custom tag, stamped at release by `codefast since:stamp`.
 configuration.addTagDefinition(new TSDocTagDefinition({ tagName: "@since", syntaxKind: TSDocTagSyntaxKind.BlockTag }));
 configuration.setSupportForTags(configuration.tagDefinitions, true);
 const parser = new TSDocParser(configuration);

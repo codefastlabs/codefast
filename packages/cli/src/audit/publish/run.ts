@@ -1,22 +1,22 @@
 import path from "node:path";
 
-import type {
-  LegacySubpathFile,
-  PublishAuditResult,
-  UnreachableStylesheetViolation,
-  UnshippedTargetViolation,
-} from "#audit/domain/types";
+import { findingsIn } from "#audit/domain/findings";
+import type { AuditContext, AuditScan } from "#audit/domain/types";
 import { scanLegacySubpathImports } from "#audit/publish/domain/legacy-subpath";
 import { missesShippedFiles, scanStylesheetSources } from "#audit/publish/domain/stylesheet-sources";
 import { listShippedFiles } from "#audit/publish/shipped-files";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
+import { relativePosixPath } from "#core/path";
+import type { Finding } from "#core/report";
 import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
-import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
+import { lineOfText } from "#core/source-position";
 import { sourceCommentLanguage, walkSourceFiles } from "#core/workspace/source-walk";
 import { packageJsonFileName } from "#core/workspace/well-known-files";
-import { unshippedPublishTargets } from "#pack-slim/domain/transform";
+import type { WorkspacePackage } from "#core/workspace/workspace";
+import { packagesInTarget } from "#core/workspace/workspace";
+import { unshippedPublishTargets } from "#publish/domain/transform";
 
 /**
  * Reports what would break a consumer's install: a `#/`-prefixed import Node's ESM resolver rejects on
@@ -25,97 +25,68 @@ import { unshippedPublishTargets } from "#pack-slim/domain/transform";
  *
  * @since 0.12.0
  */
-export async function runPublishAudit(
-  fs: Filesystem,
-  args: {
-    readonly rootDir: string;
-    readonly targetPath: string;
-  },
-): Promise<Result<PublishAuditResult, AppError>> {
+export function runPublishAudit({ fs, workspace, target }: AuditContext): Result<AuditScan, AppError> {
   try {
-    const { rootDir, targetPath } = args;
+    const { rootDir } = workspace;
+    const findings: Array<Finding> = [];
 
-    const legacyImportFiles: Array<LegacySubpathFile> = [];
-    let legacyImportCount = 0;
     // Tests are not published and may hold `#/` fixtures on purpose, so the specifier scan skips them.
-    const sourceFiles = walkSourceFiles(targetPath, fs).filter(
+    const sourceFiles = walkSourceFiles(target.path, fs).filter(
       (filePath) => sourceCommentLanguage(filePath) === "js" && !filePath.split(path.sep).includes("tests"),
     );
-    for (const absolutePath of sourceFiles) {
-      const imports = scanLegacySubpathImports(fs.readFileSync(absolutePath, "utf8"));
-      if (imports.length === 0) {
-        continue;
-      }
-      legacyImportCount += imports.length;
-      legacyImportFiles.push({ relativePath: toPosixPath(path.relative(rootDir, absolutePath)), imports });
+    for (const filePath of sourceFiles) {
+      findings.push(
+        ...findingsIn(
+          relativePosixPath(rootDir, filePath),
+          scanLegacySubpathImports(fs.readFileSync(filePath, "utf8")),
+        ),
+      );
     }
 
-    const layout = await listWorkspacePackageDirectories(rootDir, fs, true);
-    const unshipped: Array<UnshippedTargetViolation> = [];
-    const unreachableStylesheets: Array<UnreachableStylesheetViolation> = [];
-    let packageCount = 0;
-    for (const packageDir of layout.packageDirectoryPathsAbsolute) {
-      const manifestPath = path.join(packageDir, packageJsonFileName);
-      if (!fs.existsSync(manifestPath)) {
-        continue;
+    const published = packagesInTarget(workspace, target.path).filter((candidate) => !candidate.isPrivate);
+    for (const workspacePackage of published) {
+      const manifestPath = path.join(workspacePackage.directory, packageJsonFileName);
+      const manifestText = fs.readFileSync(manifestPath, "utf8");
+      for (const unshipped of unshippedPublishTargets(workspacePackage.manifest)) {
+        findings.push({
+          file: relativePosixPath(rootDir, manifestPath),
+          line: lineOfText(manifestText, JSON.stringify(unshipped.subpath)),
+          text: `${unshipped.field}["${unshipped.subpath}"]`,
+          message: `${unshipped.target} is not shipped by "files"`,
+        });
       }
-      const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8")) as Record<string, unknown>;
-      if (manifest.private === true) {
-        continue;
-      }
-      packageCount++;
-      const packageName =
-        typeof manifest.name === "string" ? manifest.name : toPosixPath(path.relative(rootDir, packageDir));
-      for (const target of unshippedPublishTargets(manifest)) {
-        unshipped.push({ packageName, field: target.field, subpath: target.subpath, target: target.target });
-      }
-      for (const violation of unreachableStylesheetsOf(fs, { rootDir, packageDir, manifest })) {
-        unreachableStylesheets.push({ packageName, ...violation });
-      }
+      findings.push(...unreachableStylesheetsOf(fs, rootDir, workspacePackage));
     }
 
-    return ok({
-      legacyImportFiles,
-      unshipped,
-      unreachableStylesheets,
-      legacyImportCount,
-      scannedFileCount: sourceFiles.length,
-      packageCount,
-    });
+    return ok({ findings, scannedFiles: sourceFiles.length, scannedPackages: published.length, fixedFiles: [] });
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
 }
 
 // The shipped stylesheets whose `@source` paths register nothing the tarball ships — what a consumer's Tailwind scans.
-function unreachableStylesheetsOf(
-  fs: Filesystem,
-  args: {
-    readonly rootDir: string;
-    readonly packageDir: string;
-    readonly manifest: Record<string, unknown>;
-  },
-): Array<Omit<UnreachableStylesheetViolation, "packageName">> {
-  const { rootDir, packageDir, manifest } = args;
-  const shipped = listShippedFiles(fs, packageDir, manifest);
+function unreachableStylesheetsOf(fs: Filesystem, rootDir: string, workspacePackage: WorkspacePackage): Array<Finding> {
+  const shipped = listShippedFiles(fs, workspacePackage.directory, workspacePackage.manifest);
   if (shipped === null) {
     return [];
   }
-  const violations: Array<Omit<UnreachableStylesheetViolation, "packageName">> = [];
+  const unbuilt =
+    shipped.missingEntries.length > 0
+      ? `; ${shipped.missingEntries.join(", ")} not on disk — build the package first`
+      : "";
+  const findings: Array<Finding> = [];
   for (const stylesheet of shipped.files.filter((file) => file.endsWith(".css"))) {
-    const stylesheetPath = path.join(packageDir, stylesheet);
+    const stylesheetPath = path.join(workspacePackage.directory, stylesheet);
     const sources = scanStylesheetSources(fs.readFileSync(stylesheetPath, "utf8"));
-    if (sources.length > 0 && missesShippedFiles(stylesheet, sources, shipped.files)) {
-      violations.push({
-        stylesheet: toPosixPath(path.relative(rootDir, stylesheetPath)),
-        sources,
-        missingFilesEntries: shipped.missingEntries,
+    const [first] = sources;
+    if (first !== undefined && missesShippedFiles(stylesheet, sources, shipped.files)) {
+      findings.push({
+        file: relativePosixPath(rootDir, stylesheetPath),
+        line: first.line,
+        text: sources.map(({ pattern }) => `@source "${pattern}"`).join(" "),
+        message: `registers no file the tarball ships${unbuilt}`,
       });
     }
   }
-  return violations;
-}
-
-function toPosixPath(filePath: string): string {
-  return filePath.split(path.sep).join("/");
+  return findings;
 }

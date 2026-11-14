@@ -2,7 +2,7 @@
 
 import { parseSync } from "oxc-parser";
 
-import type { PropsViolation } from "#audit/domain/types";
+import type { Detection } from "#audit/domain/types";
 import type { OxcNode } from "#core/oxc-node";
 import { isOxcNode, programStatements } from "#core/oxc-node";
 import { firstLineOf, lineOfOffset } from "#core/source-position";
@@ -228,7 +228,7 @@ function listParts(parts: ReadonlyArray<IntersectionPart>): string {
 export function judgePropsIntersection(
   intersection: PropsIntersection,
   kinds: ReadonlyArray<ConstituentKind>,
-): PropsViolation | undefined {
+): Detection | undefined {
   const { site, line, raw, wrapper, parts } = intersection;
   const unresolved = parts.filter((_, index) => kinds[index] === "unresolved" || kinds[index] === undefined);
   if (unresolved.length > 0) {

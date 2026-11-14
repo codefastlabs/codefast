@@ -1,7 +1,7 @@
 import type { Comment } from "oxc-parser";
 import { parseSync } from "oxc-parser";
 
-import type { AssertionViolation } from "#audit/domain/types";
+import type { Detection } from "#audit/domain/types";
 import type { OxcNode } from "#core/oxc-node";
 import { isOxcNode } from "#core/oxc-node";
 import { firstLineOf, lineOfOffset } from "#core/source-position";
@@ -96,7 +96,7 @@ function parseDirective(sourceText: string, comment: Comment): Directive | undef
  *
  * @since 0.13.0
  */
-export function auditDoubleAssertionSource(filePath: string, sourceText: string): Array<AssertionViolation> {
+export function auditDoubleAssertionSource(filePath: string, sourceText: string): Array<Detection> {
   if (!CANDIDATE_TEXT.test(sourceText)) {
     return [];
   }
@@ -107,7 +107,7 @@ export function auditDoubleAssertionSource(filePath: string, sourceText: string)
     collectDoubleAssertions(program, found);
   }
 
-  const violations: Array<AssertionViolation> = [];
+  const violations: Array<Detection> = [];
   for (const assertion of found) {
     const line = lineOfOffset(sourceText, assertion.start);
     const directive = directives.find(

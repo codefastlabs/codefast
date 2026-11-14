@@ -1,302 +1,205 @@
 # @codefast/cli
 
-`codefast` is a small, dependency-light CLI toolkit for TypeScript projects — a **pnpm workspace** or a **single
-package**. It reorders Tailwind classes, generates `package.json#exports` from a package's built `dist/`, slims the npm
-tarball at publish time, stamps `@since` on your public API, and audits a handful of source and documentation
-conventions.
+`codefast` is a small, dependency-light CLI for TypeScript projects — a **pnpm workspace** or a **single package**. It
+generates `package.json#exports` from a package's built `dist/`, prepares the npm tarball at publish time, stamps
+`@since` on your public API, and audits a handful of source and documentation conventions.
 
 It was built for — and is exercised daily by — the [codefast monorepo](https://github.com/codefastlabs/codefast), but
 nothing here is codefast-only: run it in any pnpm workspace, or in a standalone package, and it works. A few audits
-encode an opinionated house style (called out below) that you can adopt, ignore, or narrow with an allowlist.
+encode an opinionated house style (called out below) that you can adopt, turn off, or narrow with an allowlist.
 
 [![npm version](https://img.shields.io/npm/v/@codefast/cli)](https://www.npmjs.com/package/@codefast/cli)
 [![license](https://img.shields.io/npm/l/@codefast/cli)](./LICENSE)
 
-## Design principles
+## One command model
 
-- **Safe by default.** Every writing command supports `--dry-run`, and every audit is read-only except
-  `audit comments --fix`.
-- **Scriptable.** `--json` prints one JSON object on stdout instead of the human-readable output.
-- **CI-ready.** Audits exit non-zero when findings remain, so they gate a pipeline with no extra glue.
-- **Configurable.** An optional `codefast.config.*` file, validated by a strict schema, adjusts every command.
+Commands are named `namespace:action`, as Laravel's Artisan names them — the thing a command acts on, then what it does
+to it — and every command behaves the same way:
+
+- **One argument.** Every command takes an optional `[target]`: a file or directory inside the project root, resolved
+  against the working directory. With none, a command uses the target its config section names, else the project root. A
+  command that acts on packages reaches every package under the target, or the one package holding it.
+- **The same options.** `--json` prints one JSON document on stdout instead of the human report; `-v, --verbose` adds
+  the stack trace behind an unexpected failure. A command that writes takes `--dry-run`; an audit takes `--fix`.
+- **The same report.** Something a person must look at is a finding at `file:line`, printed as `line: text → message`
+  under its file. What a writing command did to a package is one row — `✎` changed, `✓` unchanged, `○` skipped, `✗`
+  failed. Every command ends with one summary line.
+- **The same exit codes.** `0` passed, `1` the run finished and reports a failure, `2` the run could not happen.
+- **The same config.** One `codefast.config.*` at the project root, a section per namespace.
 
 ## Requirements
 
 - **Node.js ≥ 24.15** (the CLI is published as ESM).
-- **TypeScript ≥ 7** to type-check a config written with `defineConfig`, and for `audit props`, the one command that
+- **TypeScript ≥ 7** to type-check a config written with `defineConfig`, and for `audit:props`, the one command that
   loads `typescript` (an optional peer).
-- **A project root — workspace or single package.** Commands resolve their root by walking up from the current
-  directory: the nearest `pnpm-workspace.yaml` marks a **workspace** (every package under it is in scope), and with no
-  workspace file the nearest `package.json` marks a **single package** (that one package is the whole scope).
-- **pnpm is not required to _run_ the CLI** — npm, npx, or a plain `node` invocation are all fine. pnpm matters only for
-  workspace-wide behavior, which is keyed off `pnpm-workspace.yaml`.
+- **A project root — workspace or single package.** The nearest `pnpm-workspace.yaml` above the working directory marks
+  a **workspace**, whose packages are the ones it lists; with no workspace file, the nearest `package.json` marks a
+  **single package**, which is the whole scope. pnpm is not needed to _run_ the CLI — npm, npx or plain `node` are fine.
 
 ## Install
 
-Install it globally, or run it once without installing:
-
-```bash
-# global install (pick your package manager)
-pnpm add -g @codefast/cli
-npm install -g @codefast/cli
-
-# one-off, no install
-pnpm dlx @codefast/cli --help
-npx @codefast/cli --help
-```
-
-As a project dev dependency:
-
 ```bash
 pnpm add -D @codefast/cli
-pnpm exec codefast --help
+pnpm exec codefast
 ```
 
-The package is published on the `0.x` line and versioned on its own track: **breaking changes ship as minor versions**,
-so pin the minor (`@codefast/cli@~0.9.0`) when you need stability.
+Or run it once without installing, with `pnpm dlx @codefast/cli` or `npx @codefast/cli`. The package is published on the
+`0.x` line and versioned on its own track: **breaking changes ship as minor versions**, so pin the minor
+(`@codefast/cli@~0.16.0`) when you need stability.
 
-## Quick start
+## Commands
+
+Run bare, `codefast` lists its commands, as `php artisan` does; `--help` on any command shows its usage, and
+`codefast --version` prints the installed version.
+
+| Command               | What it does                                                                | Writes?           |
+| --------------------- | --------------------------------------------------------------------------- | ----------------- |
+| `exports:generate`    | Write each package's `package.json#exports` from its built `dist/`          | yes (`--dry-run`) |
+| `publish:prepare`     | Strip the development surface from published packages right before publish  | yes (`--dry-run`) |
+| `since:stamp`         | Stamp `@since <version>` on exported declarations that lack one             | yes (`--dry-run`) |
+| `audit`               | Run every audit and report each under its name                              | `--fix` only      |
+| `audit:links`         | Markdown links pointing at a missing path or anchor                         | no                |
+| `audit:rtl`           | Physical-direction Tailwind classes that should be logical                  | no                |
+| `audit:imports`       | Banned import forms (React imports that are not named-only, Zod by name)    | no                |
+| `audit:assertions`    | Double type assertions through `unknown` / `any`, tests included            | no                |
+| `audit:display-names` | `token()` / `tag()` / module names breaking the `namespace:Name` convention | no                |
+| `audit:props`         | Props types joined with `&` that an interface could express                 | no                |
+| `audit:publish`       | What would break a consumer's install of a published package                | no                |
+| `audit:engines`       | Node floors (`engines.node`) that do not hold                               | no                |
+| `audit:layers`        | Value imports that point up a package's configured layers                   | no                |
+| `audit:comments`      | Doc-comment conventions; `--fix` repairs section dividers                   | `--fix` only      |
+
+`exports:generate`, `publish:prepare`, `since:stamp`, `audit:links`, `audit:assertions`, `audit:layers`, `audit:publish`
+and `audit:engines` are general-purpose. The other audits encode codefast's own house style (logical Tailwind
+directions, named React imports, a comment grammar, a `namespace:Name` scheme for `@codefast/di` tokens, interfaces for
+component props): adopt them, or turn one off with `audit: { rtl: false }`.
+
+The global `--no-color` flag comes before the command name — `codefast --no-color exports:generate`. Color is also off
+when stdout is not a terminal or `NO_COLOR` is set, and `FORCE_COLOR` turns it back on.
+
+## `exports:generate`
+
+Scans each package's built `dist/` and writes its `package.json#exports` map, plus `main`, `module` and `types` mirrored
+from the root export and a `files` entry for `dist`. It writes a manifest only when its content changes, so a run
+reports each package as changed or unchanged; a package with no `dist/` is skipped, so **build first**.
 
 ```bash
-codefast --help                                   # list commands
-
-# in a workspace or a single-package project:
-codefast mirror --dry-run                          # preview generated exports for each package in scope
-codefast audit links                               # find broken markdown cross-references
-codefast audit                                     # run every audit over the repo root
+codefast exports:generate                  # every package
+codefast exports:generate packages/ui      # one package
+codefast exports:generate --dry-run        # report what would change, write nothing
 ```
 
-## Global options and conventions
+### Per-package `exports` configuration
 
-- `codefast --help` lists the commands, and `--help` on any command shows its usage; `codefast --version` prints the
-  installed version.
-- **The global `--no-color` flag must come _before_ the command name** — `codefast --no-color mirror`, not
-  `codefast mirror --no-color`. Color is also off when stdout is not a terminal or `NO_COLOR` is set, and `FORCE_COLOR`
-  turns it back on.
-- **Writing commands write by default; pass `--dry-run` to preview.** The audits are read-only — the one exception is
-  `audit comments --fix`, which repairs section dividers in place.
-- **`--json` prints a single JSON object on stdout** instead of the human-readable output, so any command can gate a
-  script or a CI job.
-- **`-v, --verbose` prints extra diagnostics** on every command: the stack trace behind an unexpected failure, and on
-  `mirror` the per-package detail.
+The `exports` section is a record keyed by package name or glob — the exact name wins over a glob. Set a package to
+`false` to skip it; a package nothing names uses the defaults. For a package you do configure, these keys apply:
 
-## Commands at a glance
-
-```text
-codefast                              # Codefast monorepo developer CLI
-│  ├─ --no-color                      # disable ANSI color output
-│  └─ --version
-│
-├─ audit                              # run bare: every audit over the repo root, one report and one exit code
-│  ├─ --fix                           # apply the mechanical fixes an audit offers (comments)
-│  ├─ rtl [target]                    # physical-direction Tailwind classes to make logical / rtl:-paired
-│  ├─ links [target]                  # markdown links pointing at a missing path/anchor
-│  ├─ imports [target]                # banned import forms (React imports that are not named-only, Zod by name, …)
-│  ├─ assertions [target]             # double type assertions through unknown/any (x as unknown as T)
-│  ├─ display-names [target]          # token()/tag()/module names breaking the <namespace>:<Name> convention
-│  ├─ props [target]                  # *Props aliases joined with & that an interface could express (TS type server)
-│  ├─ publish [target]                # what breaks a consumer's install: #/ imports, unshipped targets, @source paths
-│  ├─ engines [target]                # Node floors (engines.node) outside a dependency's engines or their @types/node line
-│  ├─ layers [target]                 # value imports pointing up a package's configured layers
-│  └─ comments [target]               # comment conventions: dividers, TSDoc grammar, banned content, links, @since
-│      └─ --fix                       # rewrite every fixable divider in place (the only audit that writes)
-│      (each audit also takes [target] + --json)
-│
-├─ mirror [package]                   # write package.json#exports from dist/ for workspace packages
-│  ├─ --dry-run
-│  └─ --json
-│
-├─ pack-slim [package]                # strip src, source conditions, dev-only scripts/devDeps, source maps before publish
-│  ├─ --dry-run
-│  ├─ --force                         # run even if the git working tree has uncommitted changes
-│  └─ --json
-│
-└─ tag [target]                       # add @since <version> to exported declarations
-   ├─ --dry-run
-   └─ --json
-```
-
-Every command also responds to `--help` and `-v, --verbose`; each command's section below explains what its flags do.
-
-| Command               | What it does                                                            | Writes?           |
-| --------------------- | ----------------------------------------------------------------------- | ----------------- |
-| `mirror`              | Write each package's `package.json#exports` from its built `dist/`      | yes (`--dry-run`) |
-| `pack-slim`           | Strip the dev-only surface from a package right before publish          | yes (`--dry-run`) |
-| `tag`                 | Stamp `@since <version>` on exported declarations that lack one         | yes (`--dry-run`) |
-| `audit rtl`           | Report physical-direction Tailwind classes that should be logical       | no                |
-| `audit links`         | Report markdown cross-references that resolve to nothing                | no                |
-| `audit imports`       | Enforce the import policy (named-only React, Zod as a namespace)        | no (report only)  |
-| `audit assertions`    | Report double type assertions through `unknown` / `any`, tests included | no                |
-| `audit display-names` | Enforce the `namespace:Name` display-name convention                    | no                |
-| `audit props`         | Report props types joined with `&` that an interface could express      | no                |
-| `audit publish`       | Report what would break a consumer's install of a published package     | no                |
-| `audit engines`       | Report each package's Node floor that does not hold                     | no                |
-| `audit layers`        | Report value imports that point up a package's configured layers        | no                |
-| `audit comments`      | Check doc-comment conventions; repair section dividers                  | `--fix` only      |
-
-**Which of these are for you?** `mirror`, `pack-slim`, `tag`, `audit links`, `audit assertions`, `audit layers`,
-`audit publish`, and `audit engines` are general-purpose — they work for any pnpm workspace or single package that
-builds with `tsc`. The other five audits encode codefast's own house style (logical Tailwind directions, named React
-imports, a specific comment/divider grammar, a `namespace:Name` scheme for `@codefast/di` tokens, interfaces for
-component props). Adopt them if they fit your project; otherwise skip them, or use an allowlist to narrow their scope.
-
-## `mirror`
-
-Scans each package's built `dist/` tree and writes its `package.json#exports` map, plus top-level `main`, `module`, and
-`types` mirrored from the root export and a `files` entry for `dist`. In a workspace it processes every package under
-`pnpm-workspace.yaml`; in a single-package project it processes that one package. **Build first** — `mirror` reads
-`dist/`, and stale output produces stale exports.
-
-```bash
-codefast mirror                 # all workspace packages
-codefast mirror packages/ui     # one package (path relative to repo root)
-codefast mirror --dry-run       # report changes without writing
-```
-
-Exits `1` when any package fails, `0` otherwise.
-
-### Per-package `mirror` configuration
-
-The `mirror` config is a record keyed by package name, set under `mirror` in `codefast.config.*`. Set a package to
-`false` to skip it entirely; omit a package to process it with defaults. For a package you do configure, these keys
-apply (see the [Configuration](#configuration) example for their shape):
-
-- **`source`** (`boolean | string`, default `true`) — emit a `source` condition pointing at the original `.ts` so a
-  consumer using the `source` condition resolves your `src/`. A string overrides the root-export source path explicitly.
-- **`types`** (`boolean`, default `true`) — emit the `types` condition when a matching `.d.ts` exists.
+- **`source`** (`boolean | string`, default `true`) — emit a `source` condition pointing at the original `.ts`, so a
+  consumer that enables `source` resolves your `src/`. A string sets the root export's source path explicitly.
+- **`types`** (`boolean`, default `true`) — emit `types` when a matching `.d.ts` exists.
 - **`import`** (`boolean`, default `true`) — emit the `import` condition.
-- **`preserve`** (`boolean`) — keep the existing `package.json#exports` map as written and only fill in the missing
-  `source` / `types` / `import` conditions; no `dist/` scan runs, so the public surface stays exactly what you declared.
-- **`strip`** (`string`) — a `dist/` path prefix to flatten out of the generated specifiers, so `./components/button` is
-  published as `./button` rather than leaking the internal folder.
-- **`exclude`** (`string[]`) — specifiers to leave out of the generated map, making a package's public surface a
-  decision rather than a consequence of its `dist/` layout. Matched against the specifier as it appears in `exports`
-  (after `strip`); a trailing `/*` excludes a whole subtree. The root export and `./package.json` are never excluded.
-- **`exports`** (`Record<string, string>`) — extra or overriding entries merged into the generated map, for specifiers
-  the `dist/` scan does not produce (for example a raw CSS source path).
-- **`css`** (`boolean | { enabled?, forceExportFiles?, customExports? }`) — how CSS files in `dist/` become exports:
-  `true` enables the default wildcard handling, and the object form tunes it (`enabled` toggles it, `forceExportFiles`
-  adds them to `files`, `customExports` sets explicit per-file CSS entries).
+- **`preserve`** (`boolean`) — keep the existing `exports` map as written and only fill in missing `source` / `types` /
+  `import` conditions; no `dist/` scan runs, so the public surface stays exactly what you declared.
+- **`strip`** (`string`) — a `dist/` path prefix to flatten out of the specifiers, so `./components/button` publishes as
+  `./button`.
+- **`exclude`** (`string[]`) — specifiers to leave out, matched after `strip`; a trailing `/*` excludes a subtree. The
+  root export and `./package.json` are never excluded.
+- **`exports`** (`Record<string, string>`) — extra or overriding entries the `dist/` scan does not produce, such as a
+  raw CSS source path.
+- **`css`** (`boolean | { enabled?, forceExportFiles?, customExports? }`) — how CSS files in `dist/` become exports.
 
-`source`, `types`, and `import` default to `true`, so an empty config object still emits all three.
+## `publish:prepare`
 
-## `pack-slim`
+Slims each published package down to what a consumer's `tsc` and Node read, so the tarball ships `dist` and any `src`
+subtree an export still points into. Where `exports:generate` writes the full exports — the `source` condition included
+— for local development, `publish:prepare` removes that lane for publish: the rest of `src` in `files`, every `source`
+condition in `exports`/`imports`, every `imports` entry left pointing outside `files`, every script that is not an
+install or publish lifecycle hook, `devDependencies`, and the `dist` source maps with their dangling `sourceMappingURL`
+directives. Private packages are skipped.
 
-Slims a published package down to what a consumer's `tsc` and Node actually read, so the npm tarball ships `dist`
-runtime and types, plus any `src` subtree an export still points into (a raw stylesheet export such as `./css/*`). Where
-`mirror` writes the full exports — including the `source` condition — for local development, `pack-slim` removes that
-development lane for publish: it drops the rest of `src` from `files`, every `source` condition from
-`exports`/`imports`, every `imports` entry left pointing outside `files`, every script that is not an install or publish
-lifecycle hook, `devDependencies`, and the `dist` source maps plus their dangling `sourceMappingURL` directives. Private
-packages are skipped. It is meant to run on an ephemeral CI checkout right before publish, so its result is **never
-committed**.
-
-Because that result must never be committed, `pack-slim` refuses to write when the git working tree has uncommitted
-tracked changes — a guard against an accidental local run landing on real work. `--dry-run` is exempt (it writes
-nothing) and `--force` overrides the guard. In CI the guard is invisible: `dist` is gitignored, so the tree is already
-clean when the release workflow runs `pack-slim`.
+It is meant for an ephemeral CI checkout right before `changeset publish`, so its result is **never committed**. It
+refuses to write over uncommitted tracked changes; `--dry-run` writes nothing, so it is exempt, and `--force` overrides
+the guard.
 
 ```bash
-codefast pack-slim                 # every published package
-codefast pack-slim packages/ui     # one package (path relative to repo root)
-codefast pack-slim --dry-run       # report what would be stripped without touching a file
+codefast publish:prepare                   # every published package
+codefast publish:prepare packages/ui       # one package
+codefast publish:prepare --dry-run         # report what would be dropped
 ```
 
-Exits `1` when any package fails, `0` otherwise.
+## `since:stamp`
 
-## `tag`
+Adds `@since <version>` to the doc comments of exported declarations that lack one, creating the doc block when there is
+none, in each package's `src` (or the package itself when it has none). The version is the package's own. Overload
+signatures are stamped one by one, because the `.d.ts` keeps every overload's doc block. Run it at release time, so
+published APIs carry accurate versions — never hand-write `@since`.
 
-Adds `@since <version>` tags to the doc comments of exported declarations that lack one, creating the doc block when
-there is none. Overload signatures are declarations too, each stamped on its own, because the `.d.ts` keeps every
-overload's doc block and drops the implementation's. The version comes from the nearest `package.json` above each target
-file, and declarations that already carry `@since` are left alone. Run it at release time so published APIs carry
-accurate version metadata — never hand-write `@since`.
-
-A declaration with no doc block and a `//` comment on the line above it is reported instead: a block written there would
-stack under a note, which `audit comments` rejects, or split a directive from the code it governs. Its file is left as
-it is, so every reported line stays accurate. Write the doc block by hand before the release that ships the declaration,
-since a later run can only stamp a version that did not introduce it.
+A declaration with no doc block and a `//` comment on the line above it is reported as a finding instead: a block
+written there would stack under a note or split a directive from the code it governs. Its file is left as it is, and the
+run fails, since a later run could only stamp a version that did not introduce it.
 
 ```bash
-codefast tag                   # auto-discover packages from cwd (or the single package)
-codefast tag packages/ui/src   # tag one directory or file
-codefast tag --dry-run         # summary only, no writes
+codefast since:stamp                       # every package
+codefast since:stamp packages/ui/src       # one directory or file
+codefast since:stamp --dry-run             # report what would be stamped
 ```
 
-Exits `1` when no target is selected, when any target fails, when a declaration is left unstamped, or when the
-`tag.onAfterWrite` hook fails.
+The `since` section is a record keyed by package name or glob, `false` skipping the packages it matches:
+`since: { "@apps/*": false }`.
 
 ## `audit`
 
-Every audit is read-only, exits `1` when findings remain (so it gates a CI pipeline with no extra glue), and takes an
-optional `[target]` plus `--json`. Each also reads an `allowlist` from configuration for intentional exceptions.
+Every audit reports findings at `file:line`, exits `1` while any remain — so it gates CI with no extra glue — and takes
+the same config section:
 
-Run bare, `codefast audit` runs every audit over the repo root and reports each under its name, so one CI step shows
-every failing audit rather than only the first. An audit with nothing configured to scan (`rtl` without
-`audit.rtl.target`) is skipped. It exits `2` when any audit could not run, `1` when any reported findings, `0`
-otherwise; `--json` prints one object whose `audits` array holds each audit's `status` — `clean`, `findings`, `skipped`
-or `error` — with its `result`, `reason` or `error`.
+- `audit.<name>: false` turns the audit off in a full `audit` run;
+- `audit.<name>.target` is the target it scans when the command line names none;
+- `audit.<name>.allowlist` accepts findings: each entry is a finding's text as written, accepted everywhere, or
+  `path:text` for one file.
+
+The section key is the audit's name in camelCase (`audit.displayNames`). Every audit takes `--fix`, which applies the
+mechanical fixes its findings carry — today, `audit:comments` repairs section dividers.
+
+Run bare, `codefast audit` runs every audit and reports each under its name, so one CI step shows every failing audit
+rather than only the first. A `[target]` there is the target of every audit. It exits `2` when an audit could not run,
+`1` when any reported findings, `0` otherwise.
 
 ```bash
 codefast audit                             # every audit, one report
-codefast audit --json                      # one machine summary for all of them
+codefast audit packages/di                 # every audit over one package
+codefast audit --json                      # one document, each audit under result.audits
 ```
 
-### `audit links`
+### `audit:links`
 
-_General-purpose._ Scans markdown for cross-references that point at nothing: a relative path that does not exist, an
-in-document anchor with no matching heading or `<a id>`, and an anchor into another document that the target does not
-offer. That last case is the reason this exists — a browser fails it silently by scrolling to the top. External URLs are
-not checked, and links inside fenced code are treated as examples rather than references.
+_General-purpose._ Markdown cross-references that point at nothing: a relative path that does not exist, an in-document
+anchor with no matching heading or `<a id>`, and an anchor into another document that the target does not offer — the
+case a browser fails silently by scrolling to the top. External URLs are not checked, and links inside fenced code are
+examples, not references. A finding's text is the link target as written.
 
-```bash
-codefast audit links                       # whole repo
-codefast audit links packages/di           # explicit target
-codefast audit links --json                # machine-readable summary
-```
+### `audit:rtl`
 
-Configure exceptions via `audit.links.allowlist` — each entry is a bare link target or `repo/relative/doc.md:target`.
+_House style._ Physical-direction Tailwind classes (`ml-*`, `left-*`, `text-left`) that should use a logical equivalent
+(`ms-*`, `start-*`, `text-start`) or an `rtl:` companion (`translate-x`, `space-x`, resize cursors). A finding's text is
+the class token.
 
-### `audit rtl`
+### `audit:imports`
 
-_House style._ Scans for physical-direction Tailwind classes (e.g. `ml-*`, `left-*`, `text-left`) that should use
-logical equivalents (`ms-*`, `start-*`, `text-start`) or an `rtl:` companion (`translate-x`, `space-x`, resize cursors).
+_House style._ The import policy over `.ts`/`.tsx` files:
 
-```bash
-codefast audit rtl                         # uses audit.rtl.target from config
-codefast audit rtl packages/ui/src         # explicit target
-codefast audit rtl --json                  # machine-readable summary
-```
+- **React** — members are imported by name. It flags `import * as React`, a default `React` import (type-only included),
+  and an implicit `React.*` UMD-global type reference (`e: React.FormEvent` with no import) that `tsc` accepts silently.
+- **Zod** — a named `import { z } from "zod"`, which pins Zod's full locale set into a bundle;
+  `import * as z from "zod"` lets bundlers tree-shake it.
 
-With no `[target]`, the scan root is `audit.rtl.target` from the config; when neither is set the command fails.
-Configure exceptions via `audit.rtl.allowlist` — each entry is a bare class token or `repo/relative/path.tsx:token`.
+A finding's text is the offending source text.
 
-### `audit imports`
+### `audit:assertions`
 
-_House style._ Enforces the monorepo's import policy over `.ts`/`.tsx` files:
-
-- **React** — members must be imported by name. Flags `import * as React` and default `React` imports (type-only
-  included), plus an implicit `React.*` UMD-global type reference (`e: React.FormEvent` with no import) that `tsc`
-  accepts silently through the `export as namespace React` declaration in `@types/react`.
-- **Zod** (front-end packages only) — flags a named `import { z } from "zod"`, which pins Zod's full locale set into the
-  bundle; `import * as z from "zod"` lets bundlers tree-shake it.
-
-```bash
-codefast audit imports                       # whole repo
-codefast audit imports apps/web/src          # explicit target
-codefast audit imports --json                # machine-readable summary
-```
-
-Configure exceptions via `audit.imports.allowlist` — each entry is the offending source text as written or
-`repo/relative/path.tsx:<text>`.
-
-### `audit assertions`
-
-Reports every double type assertion through `unknown` or `any` in `.ts`/`.tsx` files, tests included —
-`x as unknown as T`, `(x as unknown) as T`, `<T><unknown>x` and the `any` spellings. The pair tells the compiler two
-types are unrelated and silences it anyway; no oxlint rule targets it (`typescript/no-unnecessary-type-assertion`
-catches the redundant ones only). Make the types agree, narrow with a type guard, or — where the erasure is the point —
-keep it with a directive that states why, on the assertion's line or the line above:
+Every double type assertion through `unknown` or `any`, tests included — `x as unknown as T`, `(x as unknown) as T`,
+`<T><unknown>x` and the `any` spellings. The pair tells the compiler two types are unrelated and silences it anyway; no
+oxlint rule targets it. Make the types agree, narrow with a type guard, or — where the erasure is the point — keep it
+with a directive that states why, on its line or the line above:
 
 ```ts
 // codefast-allow-double-assertion: the host stores each plugin's config untyped; the plugin owns its shape
@@ -306,101 +209,63 @@ const config = host.configFor(plugin.id) as unknown as PluginConfig;
 A directive with no reason, or one that keeps no assertion, is itself reported, so a kept assertion cannot outlive its
 cause.
 
-```bash
-codefast audit assertions                  # whole repo
-codefast audit assertions packages/di      # explicit target
-codefast audit assertions --json           # machine-readable summary
-```
+### `audit:display-names`
 
-Configure exceptions via `audit.assertions.allowlist` — each entry is the assertion as written or
-`repo/relative/path.ts:<assertion>` — though the inline directive keeps the reason beside the code it excuses.
+_House style._ The display-name convention for every string a `token()`, `tag()` or module factory takes: a name is
+spelled like the TS symbol it stands for, under its owner's namespace — `namespace:Name`. A token or module name is
+PascalCase, a tag key camelCase. It scans TypeScript and markdown alike, since a doc sample is what a reader copies, and
+skips `tests/`, `benchmarks/`, `.changeset/` and `CHANGELOG.md`.
 
-### `audit props`
+### `audit:props`
 
-Reports every `*Props` type alias joined with `&` that an interface could express instead — at the alias's top level
-(`type ButtonProps = ComponentProps<"button"> & ButtonVariants & { … }`) or passed to the type it wraps
-(`type ScrollAreaProps = ScopedProps<RootProps & ContextValue>`) — and every component parameter annotated inline with
-one: in a `.tsx` file, the first parameter of a component whose annotation is an intersection at its top level
-(`function ListItem({ href, ...props }: ComponentProps<"li"> & { href: string })`), which wants naming as an interface.
-A component is a module-level function with a capitalised name, as JSX renders one — a function declaration, or a
-`const` holding an arrow or function expression, directly or through a call such as `memo(…)`. A function nested in
-another (an event handler, a callback) takes no props, so its parameters are never read. An interface checks its members
-against every base where it is declared, so a conflicting prop fails there (TS2430, or TS2320 between two bases); `&`
-intersects the two silently and the narrowed prop only fails at a call site.
+Every `*Props` type alias joined with `&` that an interface could express — at the alias's top level or passed to the
+type it wraps — and every module-level component in a `.tsx` file whose first parameter is annotated inline with one. An
+interface checks its members against every base where it is declared (TS2430, or TS2320 between two bases); `&`
+intersects them silently and a narrowed prop fails only at a call site.
 
-Whether a part can be extended is the type checker's call, not a name list: the audit asks the native TypeScript type
-server (`typescript/unstable/sync`) what each part resolves to, and keeps the `&` when one is a union (only `&`
-distributes over its members), a type parameter or a mapped type over one (an interface cannot extend either), or no
-object at all. A part that does not resolve is reported, since nothing can be said about it — on a workspace whose
-packages consume each other's `dist/`, build first. The type server starts only once a file holds a candidate, and needs
-the `typescript` package (v7) resolvable from the target and a `tsconfig.json` that includes each file.
+Whether a part can be extended is the type checker's call: the audit asks the native TypeScript type server what each
+part resolves to, and keeps the `&` when one is a union, a type parameter or a mapped type over one, or no object at
+all. A part that does not resolve is reported — on a workspace whose packages consume each other's `dist/`, build first.
+The type server starts only once a file holds a candidate, and needs `typescript` (v7) resolvable from the target and a
+`tsconfig.json` that includes each file.
 
-```bash
-codefast audit props                       # whole repo
-codefast audit props packages/ui/src       # explicit target
-codefast audit props --json                # machine-readable summary
-```
+### `audit:publish`
 
-Configure exceptions via `audit.props.allowlist` — each entry is the alias's, or the parameter annotation's, first line
-as written or `repo/relative/path.tsx:<line>` — though a type that must stay an intersection needs none.
+What would break a consumer's install of a published package, while it can still be fixed:
 
-### `audit publish`
+- a `#/`-prefixed internal import, which Node's ESM resolver rejects before 24.14 while every in-repo runner accepts it;
+- an `exports`/`imports` target the slimmed manifest does not ship, found by applying the same slim as
+  `publish:prepare`, reported at its `package.json` line;
+- a shipped stylesheet whose Tailwind `@source` paths reach none of the files the tarball ships, so the consumer's
+  Tailwind registers no class names and the components render unstyled.
 
-Reports what would break a consumer's install of a published package, while it can still be fixed:
+It reads the built output, so run it after the build; a `files` entry missing on disk is named in the finding. Private
+packages are skipped.
 
-- a `#/`-prefixed internal import, which Node's ESM resolver rejects on Node 24 before 24.14 while every in-repo runner
-  accepts it;
-- an `exports`/`imports` target the slimmed manifest does not ship, found by applying the same slim as `pack-slim`;
-- a shipped stylesheet whose Tailwind `@source` paths reach none of the files the tarball ships. A workspace still
-  resolves them against `src`, so only the published layout shows it: the consumer's Tailwind registers no class names
-  and the components render unstyled.
+### `audit:engines`
 
-It reads the built output, so run it after the build; a `files` entry missing on disk, such as an unbuilt `dist`, is
-named in the report. Private packages are skipped, and it takes no allowlist.
+_General-purpose._ Each package's Node floor — its `engines.node` — against what actually runs on it, reported at the
+`package.json` it concerns:
 
-```bash
-codefast audit publish                     # every published package in the workspace
-codefast audit publish --json              # machine-readable summary
-```
+- a published package that declares no floor, or one not written `>=X.Y.Z`;
+- a published package whose floor differs from the highest one any published package declares, since they ship as a set;
+- a release the floor claims that a dependency's `engines.node` leaves out. A runtime dependency must admit every
+  release from the floor up — the odd majors below the one `.node-version` pins aside, since they reach end-of-life
+  without becoming LTS. A dev dependency only runs the package's tests, so it must admit the floor and the
+  `.node-version` release. A workspace dependency is read from its manifest, any other from the package's own
+  `node_modules`, so run the audit after the install;
+- an `@types/node` the lockfile resolves on another major than the floor, or on a newer minor.
 
-### `audit engines`
+The workspace root's own `engines.node` is the contributors' floor: every dependency any package installs must admit it,
+and each gap is reported once per dependency range. `--json` also lists every floor under `result.floors`, with its
+package directory, which is enough to plan the CI leg that runs on it.
 
-_General-purpose._ Holds each workspace package's Node floor — its `engines.node` — to what actually runs on it. The
-published packages ship as one set, so they share one floor. It reports:
+### `audit:layers`
 
-- a published package that declares no floor, and a floor not written `>=X.Y.Z`;
-- a published package whose floor differs from the highest one any published package declares;
-- a release the floor claims that a dependency's `engines.node` leaves out, named with the dependency, its range and the
-  sub-range it misses. A runtime dependency (`dependencies`, `peerDependencies`, `optionalDependencies`) a consumer
-  installs must admit every release from the floor up — the odd majors below the one `.node-version` pins aside, since
-  they reach end-of-life without becoming LTS — so `^24.0.0 || >=26.4.0` fails a `>=24.15.0` floor on 26.0–26.3. A dev
-  dependency only runs the package's tests, so it must admit the floor and the `.node-version` release CI runs them on.
-  A workspace dependency is read from its manifest, any other from the package's own `node_modules`, so run the audit
-  after the install;
-- an `@types/node` the lockfile (`pnpm-lock.yaml`) resolves on another major than the floor or on a newer minor, where
-  the compiler would accept APIs the floor lacks.
-
-The workspace root's own `engines.node`, when written `>=X.Y.Z`, is the contributors' floor rather than one any package
-inherits: a contributor on it builds and tests every package, so every dependency any of them installs, runtime and dev
-alike, must admit every release from the root floor up, short-lived odd lines aside. Each gap is reported once per
-dependency range, naming the packages that install it. The root is never listed among the floors and is checked only
-when the target reaches it. A narrower `[target]` checks only the packages it reaches, still against every floor they
-depend on. `--json` lists every floor with its package directory, which is enough to plan the CI leg that runs on it. It
-takes no allowlist.
-
-```bash
-codefast audit engines                     # every package in the workspace
-codefast audit engines packages/di         # one package
-codefast audit engines --json              # machine-readable summary, floors included
-```
-
-### `audit layers`
-
-_General-purpose._ Holds a package's `src/` to the layering its architecture states. You list the layers in
-configuration, bottom to top, each naming the families directly under the root — a directory, or a lone module sitting
-flat (`errors.ts`) — and the audit reports every value import or re-export that points up the list, plus every module no
-layer places. Type-only imports erase at build time and couple nothing, so they may point anywhere; a dynamic `import()`
-counts as a value import wherever it sits.
+_General-purpose._ Holds a package's `src/` to the layering its architecture states. You list the layers bottom to top,
+each naming the families directly under the root — a directory, or a lone module (`errors.ts`) — and the audit reports
+every value import or re-export that points up the list, plus every module no layer places. Type-only imports couple
+nothing, so they may point anywhere; a dynamic `import()` counts as a value import.
 
 ```js
 // codefast.config.js
@@ -413,259 +278,130 @@ export default {
           layers: [["core", "errors.ts"], ["engine"], ["container"], ["index.ts"]],
         },
       },
-      allowlist: [],
     },
   },
 };
-```
-
-```bash
-codefast audit layers                        # every package audit.layers.packages names
-codefast audit layers packages/di            # one package, or a directory beneath its root
-codefast audit layers --json                 # machine-readable summary
 ```
 
 A configured package name the workspace does not hold, a layer entry nested below the root, and a family placed twice
-are refused before anything is scanned. Configure exceptions via `audit.layers.allowlist` — each entry is the offending
-import as written or `repo/relative/path.ts:<import>`.
+are refused before anything is scanned.
 
-### `audit comments`
+### `audit:comments`
 
-_House style._ Checks doc-comment conventions. Section dividers not in the one allowed form are mechanical, so `--fix`
-rewrites them in place. The rest is reported for a person to fix: TSDoc grammar errors, JSDoc `{type}` payloads,
-comments pointing at repo documents, `@param` lists that name some parameters but not all, `@param` descriptions without
-the `-` separator, `@since` tags out of position or naming a version the package has not reached, and comment links to
-missing paths.
-
-```bash
-codefast audit comments                    # whole repo
-codefast audit comments packages/di/src    # explicit target
-codefast audit comments --fix              # rewrite fixable dividers in place
-codefast audit comments --json             # machine-readable summary
-```
-
-Configure exceptions via `audit.comments.allowlist` — each entry is a divider line as written or
-`repo/relative/path.ts:<divider>`.
-
-### `audit display-names`
-
-_House style._ Enforces the display-name convention for every string a `token()`, `tag()`, or module factory takes: a
-name is spelled like the TS symbol it stands for, under its owner's namespace — `namespace:Name`. The namespace is a
-kebab-case package, app, or feature slug (or a scoped package name); a token or module name is PascalCase, a tag key is
-camelCase. It scans TypeScript and markdown alike, since a doc sample is what a reader copies, and skips `tests/`,
-`benchmarks/`, `.changeset/`, and `CHANGELOG.md`.
-
-```bash
-codefast audit display-names                       # whole repo
-codefast audit display-names packages/di/examples  # explicit target
-codefast audit display-names --json                # machine-readable summary
-```
-
-Configure exceptions via `audit.displayNames.allowlist` — each entry is the call as written, through its closing quote
-(or parenthesis when the name is the only argument), or `repo/relative/path.ts:<call>`.
+_House style._ Doc-comment conventions. Section dividers not in the one allowed form are mechanical, so `--fix` rewrites
+them in place, before the scan reports what is left. The rest is for a person to fix: TSDoc grammar errors, JSDoc
+`{type}` payloads, comments pointing at repo documents, `@param` lists that name some parameters but not all, `@param`
+descriptions without the `-` separator, `@since` tags out of position or naming a version the package has not reached,
+and `{@link}` targets nothing declares.
 
 ## Configuration
 
-**You do not need a config file.** Every command has sensible defaults and works with none. Add a `codefast.config.*`
-file at your project root only to change a default — and add only the sections for the commands you actually use.
+**You do not need a config file.** Every command works with none. To change a default, add one `codefast.config.*` at
+the project root — `.ts`, `.mts`, `.js`, `.mjs`, `.cjs` or `.json`; two of them is an error. A JS or TS config is loaded
+through [jiti](https://github.com/unjs/jiti), so **only run the CLI in repositories you trust**. The schema is strict:
+an unknown key is an error, which catches typos at once.
 
-**Where it goes and how it loads.** The CLI walks up from the working directory and uses the first match, checking
-`codefast.config.mjs`, `codefast.config.js`, `codefast.config.cjs`, then `codefast.config.json` in each directory. JS
-configs are loaded via [jiti](https://github.com/unjs/jiti) — so **only run the CLI in repositories you trust**, and
-note that only a JS config can define `onAfterWrite` hooks (JSON can't hold functions). The schema is **strict**: an
-unknown key is an error, which catches typos immediately.
+| Key          | Configures                                                                                     |
+| ------------ | ---------------------------------------------------------------------------------------------- |
+| `exports`    | `exports:generate`, per package — see [per-package config](#per-package-exports-configuration) |
+| `since`      | `since:stamp`: the packages it skips                                                           |
+| `audit`      | every audit: `false`, or its `target` and `allowlist`                                          |
+| `afterWrite` | a hook every writing command calls with the files it wrote                                     |
 
-### Start small
-
-The smallest valid config is empty. Grow it one section at a time — each top-level key configures one command:
-
-```js
-// codefast.config.js
-export default {};
-```
-
-| Key      | Command   | What it configures                                                                             |
-| -------- | --------- | ---------------------------------------------------------------------------------------------- |
-| `mirror` | `mirror`  | per-package `exports` generation — see [per-package config](#per-package-mirror-configuration) |
-| `tag`    | `tag`     | package names to skip, and a hook to run after writing                                         |
-| `audit`  | `audit *` | each audit's default scan target and its `allowlist` of accepted exceptions                    |
-
-### Author it with types
-
-Don't memorize the shape. Import `defineConfig` (or annotate with the `CodefastConfig` type) and your editor completes
-every key, checks the values, and catches typos **before you run anything** — the types _are_ the reference for what's
-valid, and the strict runtime schema is the backstop.
+Import `defineConfig` (or annotate with `CodefastConfig`) and your editor completes and checks every key:
 
 ```ts
 // codefast.config.ts
+import { execSync } from "node:child_process";
+
 import { defineConfig } from "@codefast/cli";
 
 export default defineConfig({
-  mirror: { "@acme/ui": { strip: "./components/" } }, // autocomplete: strip, exclude, source, types, css, …
+  exports: {
+    "@acme/ui": { strip: "./components/", exports: { "./css/*": "./src/css/*" } },
+    "@apps/*": false,
+  },
+  since: { "@apps/*": false },
+  audit: {
+    rtl: { target: "packages/ui/src", allowlist: ["packages/ui/src/sheet.ts:slide-in-from-left-10"] },
+    props: false,
+  },
+  // Called after any command wrote files — exports:generate, publish:prepare, since:stamp, an audit's --fix.
+  afterWrite: ({ files }) => execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" }),
 });
 ```
 
-A plain `.js` config gets the same help through a JSDoc type — no build step, no `.ts`:
+`afterWrite` receives the command name and the absolute paths it wrote, and never runs on a dry run; a hook that throws
+fails the run with exit `1`. Only a JS or TS config can hold it.
 
-```js
-// codefast.config.js
-/** @type {import("@codefast/cli").CodefastConfig} */
-export default {
-  mirror: { "@acme/ui": { strip: "./components/" } },
-};
+## JSON output
+
+`--json` prints one document on stdout, shaped the same for every command:
+
+```json
+{
+  "schemaVersion": 3,
+  "command": "audit:links",
+  "ok": false,
+  "rootDir": "/repo",
+  "target": ".",
+  "elapsedSeconds": 0.12,
+  "result": {
+    "findings": [{ "file": "README.md", "line": 3, "text": "./missing.md", "message": "path does not exist" }],
+    "scannedFiles": 158,
+    "scannedPackages": 0,
+    "fixedFiles": [],
+    "allowlisted": 0
+  }
+}
 ```
 
-### Common recipes
-
-**Run a formatter after a command rewrites files.** `tag` takes an `onAfterWrite` hook (sync or async). It runs only
-when files were actually written — never on `--dry-run`:
-
-```js
-// codefast.config.js
-import { execSync } from "node:child_process";
-
-const format = ({ files }) => execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" });
-
-export default {
-  tag: { onAfterWrite: format },
-};
-```
-
-**Skip packages.** `tag.skipPackages` takes globs matched against package names; `mirror` skips any package set to
-`false`:
-
-```js
-export default {
-  tag: { skipPackages: ["@acme/internal", "@apps/*"] },
-  mirror: { "@acme/internal": false },
-};
-```
-
-**Accept a known audit finding.** Every audit takes an `allowlist`. An entry is the offending text exactly as it
-appears, or `repo/relative/path:<text>` to scope it to a single file:
-
-```js
-export default {
-  audit: {
-    imports: { allowlist: [`packages/legacy/src/x.ts:import { z } from "zod";`] },
-    rtl: { allowlist: ["packages/ui/src/variants/sheet.ts:data-open:slide-in-from-left-10"] },
-  },
-};
-```
-
-### Complete reference
-
-Every section together — see [per-package `mirror` configuration](#per-package-mirror-configuration) for the `mirror`
-keys:
-
-```js
-// codefast.config.js
-import { execSync } from "node:child_process";
-
-export default {
-  // Keyed by package name; `false` skips the package, omitted packages use defaults.
-  mirror: {
-    "@acme/ui": {
-      strip: "./components/", // flatten a dist/ prefix out of public specifiers
-      exclude: ["./internal/*"], // specifiers to leave out of the generated map
-      exports: { "./css/*": "./src/css/*" }, // extra or overriding entries
-      source: true, // add a `source` condition (a string overrides the root path)
-      types: true, // add `types` when a .d.ts exists
-      import: true, // add the `import` condition
-      css: true, // boolean or { enabled, forceExportFiles, customExports }
-    },
-    "@acme/tailwind-variants": { preserve: true }, // keep exports as-is, only fill missing conditions
-    "@acme/internal": false,
-  },
-  tag: {
-    skipPackages: ["@acme/internal", "@apps/*"], // glob patterns matched against package names
-    onAfterWrite: ({ files }) => execSync(`oxfmt ${files.join(" ")}`, { stdio: "inherit" }),
-  },
-  audit: {
-    rtl: {
-      target: "packages/ui/src", // default scan root when no CLI arg is passed
-      allowlist: [
-        // bare token, or `repo/relative/path.tsx:token`
-        "packages/ui/src/variants/sheet.ts:data-open:slide-in-from-left-10",
-      ],
-    },
-    links: { allowlist: [] }, // bare link target, or `repo/relative/doc.md:target`
-    comments: { allowlist: [] }, // divider as written, or `repo/relative/path.ts:<divider>`
-    imports: { allowlist: [] }, // offending import text as written, or `repo/relative/path.tsx:<text>`
-    assertions: { allowlist: [] }, // assertion as written, or `repo/relative/path.ts:<assertion>`
-    displayNames: { allowlist: [] }, // call as written, or `repo/relative/path.ts:<call>`
-    layers: {
-      // per package: its layers bottom to top, each entry a directory or module file under `root` (default `src`)
-      packages: { "@acme/di": { layers: [["core", "errors.ts"], ["engine"], ["index.ts"]] } },
-      allowlist: [], // import as written, or `repo/relative/path.ts:<import>`
-    },
-  },
-};
-```
-
-`source`, `types`, and `import` default to `true`, so an empty `mirror` entry still emits all three. The `onAfterWrite`
-hooks run only when files were actually written — never on `--dry-run`; a hook failure is reported on stderr and the
-command exits `1`.
+`result` is the command's report: an audit's findings as above, a full `audit` run's `audits` (each with its `status` —
+`clean`, `findings`, `skipped` or `error`), or a writing command's `packages`, one outcome each. A run that could not
+happen prints `{ "schemaVersion": 3, "command", "ok": false, "error": { "code", "message" } }` instead, and warnings go
+to stderr, so stdout always parses.
 
 ## Exit codes
 
 | Code | Meaning                                                                                                |
 | ---- | ------------------------------------------------------------------------------------------------------ |
 | `0`  | Success.                                                                                               |
-| `1`  | The run finished and reported a failure: audit findings, a package that errored, a failed hook.        |
+| `1`  | The run finished and reported a failure: findings, a package that failed, a failed `afterWrite` hook.  |
 | `2`  | The run could not do its job: an unknown command or option, invalid config, a missing target, a crash. |
 
 A script can tell "the code needs fixing" (`1`) from "the tool or its invocation needs fixing" (`2`).
 
 ## Programmatic use
 
-`@codefast/cli` is importable as well as executable. `runCli` runs the same CLI in-process and resolves to the exit code
-it would have exited with — the `codefast` binary is a thin wrapper around it.
+`runCli` runs the same CLI in-process and resolves to the exit code it would have exited with — the `codefast` binary is
+a thin wrapper around it. The command still writes its output to stdout and stderr; read stdout yourself for the JSON.
 
 ```ts
 import { runCli } from "@codefast/cli";
 
-// `argv` follows the `process.argv` layout: the first two entries are ignored,
-// exactly as when Node runs the binary.
-const exitCode = await runCli(["node", "codefast", "mirror", "--dry-run", "--json"]);
-
-if (exitCode !== 0) {
-  throw new Error(`codefast exited with ${exitCode}`);
-}
+// `argv` follows the `process.argv` layout: the first two entries are ignored.
+const exitCode = await runCli(["node", "codefast", "exports:generate", "--dry-run", "--json"]);
 ```
-
-The command still writes its human or `--json` output to stdout/stderr; `runCli` does not capture it. Read stdout
-yourself when you need the structured summary.
 
 ## How the codefast monorepo uses it
 
-The tool is general; the codefast monorepo just wires convenience scripts and a release step around it — a good template
-if you adopt the CLI in your own workspace. It runs from the built output via root `package.json` scripts:
+The monorepo runs the CLI from its built output through root `package.json` scripts, each named `cli:` plus the command:
 
 ```bash
-pnpm run codefast <command>         # generic entry: node ./packages/cli/dist/bin.js
-
-pnpm run cli:mirror                 # codefast mirror
-pnpm run cli:audit                  # codefast audit (every audit — what CI runs)
-pnpm run cli:audit:links            # codefast audit links
-pnpm run cli:audit:rtl              # codefast audit rtl
-pnpm run cli:audit:comments         # codefast audit comments
-pnpm run cli:audit:imports          # codefast audit imports
-pnpm run cli:audit:assertions       # codefast audit assertions
-pnpm run cli:audit:display-names    # codefast audit display-names
-pnpm run cli:audit:layers           # codefast audit layers
-pnpm run cli:audit:publish          # codefast audit publish
-pnpm run cli:audit:engines          # codefast audit engines
+pnpm run codefast <command>         # node ./packages/cli/dist/bin.js
+pnpm cli:audit                      # codefast audit — what CI runs
+pnpm cli:audit:links                # codefast audit:links, and one script per audit
+pnpm cli:exports:generate           # codefast exports:generate
 ```
 
-`pnpm run version-packages` runs `changeset version` and then `codefast tag`, so published APIs are stamped at release,
-and the release workflow runs `codefast pack-slim` as its publish step on a clean CI checkout.
+`pnpm run version-packages` runs `changeset version` and then `codefast since:stamp`, so published APIs are stamped at
+release, and the release workflow runs `codefast publish:prepare` before `changeset publish` on a clean CI checkout.
 
 ## Documentation
 
 - [codefastlabs.com/docs/cli](https://codefastlabs.com/docs/cli) — this document, rendered.
-- [`ARCHITECTURE.md`](./ARCHITECTURE.md) — how the package is laid out: command wiring, the `Result` type, and the
-  filesystem port.
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md) — how the package is laid out: the command model, the workspace and target, the
+  finding model.
 - [`DECISIONS.md`](./DECISIONS.md) — the design decisions that shape the package and the reasons behind them.
 - [`CHANGELOG.md`](./CHANGELOG.md) — release notes for every published version.
 

@@ -1,4 +1,16 @@
-import type { RtlClassToken } from "#audit/domain/types";
+/**
+ * A class token parsed from a source string literal, split into variant, value, and modifier.
+ *
+ * @since 0.5.0-canary.6
+ */
+export type RtlClassToken = {
+  readonly raw: string;
+  readonly token: string;
+  readonly variant: string | null;
+  readonly value: string;
+  readonly modifier: string | null;
+  readonly line: number;
+};
 
 /**
  * Splits a class token into [variant, value, modifier], colon/slash-aware of

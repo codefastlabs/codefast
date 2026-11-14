@@ -1,0 +1,177 @@
+import { messageFrom } from "#core/errors";
+import type { Filesystem } from "#core/filesystem/filesystem";
+import { PACKAGE_JSON_EXPORT } from "#exports/domain/constants";
+import type { ExportMapData, ExportOriginalPathBySpecifier, PackageJsonShape } from "#exports/domain/types";
+
+/**
+ * Merges the generated `exports` into `package.json` and writes it when it changed, through a temp file and a rename.
+ *
+ * @since 0.3.16-canary.0
+ */
+export async function writePackageJsonExportsAtomic(
+  fs: Filesystem,
+  packageJsonPath: string,
+  mergeInput: {
+    generatedExports: ExportMapData;
+    managedExportSpecifiers: Array<string>;
+    originalPathBySpecifier: ExportOriginalPathBySpecifier;
+  },
+  write = true,
+): Promise<{ prunedKeys: Array<string>; changed: boolean }> {
+  function containsDistTarget(value: unknown): boolean {
+    if (typeof value === "string") {
+      return value.startsWith("./dist/");
+    }
+    if (Array.isArray(value)) {
+      return value.some((entryValue) => containsDistTarget(entryValue));
+    }
+    if (value && typeof value === "object") {
+      return Object.values(value).some((entryValue) => containsDistTarget(entryValue));
+    }
+    return false;
+  }
+
+  /**
+   * Keeps `./package.json` at the very end for aesthetics by default.
+   * If a catch-all `./*` exists, move `./package.json` before wildcards so it remains reachable.
+   */
+  function exportSpecifierRank(exportSpecifier: string, hasCatchAllWildcard: boolean): number {
+    if (exportSpecifier === ".") {
+      return 0;
+    }
+    if (exportSpecifier === PACKAGE_JSON_EXPORT) {
+      return hasCatchAllWildcard ? 2 : 4;
+    }
+    if (exportSpecifier.includes("*")) {
+      return 3;
+    }
+    return 1;
+  }
+
+  function compareExportSpecifiers(
+    leftSpecifier: string,
+    rightSpecifier: string,
+    pathBySpecifier: ExportOriginalPathBySpecifier,
+    hasCatchAllWildcard: boolean,
+  ): number {
+    const leftRank = exportSpecifierRank(leftSpecifier, hasCatchAllWildcard);
+    const rightRank = exportSpecifierRank(rightSpecifier, hasCatchAllWildcard);
+    if (leftRank !== rightRank) {
+      return leftRank - rightRank;
+    }
+    const leftOriginalPath = pathBySpecifier[leftSpecifier] ?? leftSpecifier;
+    const rightOriginalPath = pathBySpecifier[rightSpecifier] ?? rightSpecifier;
+    const originalPathComparison = leftOriginalPath.localeCompare(rightOriginalPath);
+    if (originalPathComparison !== 0) {
+      return originalPathComparison;
+    }
+    return leftSpecifier.localeCompare(rightSpecifier);
+  }
+
+  const raw = await fs.readFile(packageJsonPath, "utf8");
+  const packageJson = JSON.parse(raw) as PackageJsonShape;
+
+  const existingExports = packageJson.exports;
+  const existingExportMap =
+    existingExports && typeof existingExports === "object" && !Array.isArray(existingExports)
+      ? (existingExports as Record<string, unknown>)
+      : {};
+
+  const managedSpecifiers = new Set(mergeInput.managedExportSpecifiers);
+  const originalPathBySpecifier: ExportOriginalPathBySpecifier = {
+    ...mergeInput.originalPathBySpecifier,
+  };
+  const mergedExportMap: Record<string, unknown> = {};
+  const prunedKeys: Array<string> = [];
+
+  // Preserve unmanaged manual entries; drop unmanaged stale entries targeting dist/.
+  for (const [exportSpecifier, exportValue] of Object.entries(existingExportMap)) {
+    if (exportSpecifier === PACKAGE_JSON_EXPORT) {
+      mergedExportMap[exportSpecifier] = exportValue;
+      if (!(exportSpecifier in originalPathBySpecifier)) {
+        originalPathBySpecifier[exportSpecifier] = exportSpecifier;
+      }
+      continue;
+    }
+    if (!managedSpecifiers.has(exportSpecifier)) {
+      if (containsDistTarget(exportValue)) {
+        prunedKeys.push(exportSpecifier);
+      } else {
+        mergedExportMap[exportSpecifier] = exportValue;
+        if (!(exportSpecifier in originalPathBySpecifier)) {
+          originalPathBySpecifier[exportSpecifier] = exportSpecifier;
+        }
+      }
+    }
+  }
+
+  // Generated entries always win for managed specifiers (including ".").
+  for (const [exportSpecifier, exportValue] of Object.entries(mergeInput.generatedExports)) {
+    mergedExportMap[exportSpecifier] = exportValue;
+  }
+
+  if (!(PACKAGE_JSON_EXPORT in mergedExportMap)) {
+    mergedExportMap[PACKAGE_JSON_EXPORT] = PACKAGE_JSON_EXPORT;
+  }
+  originalPathBySpecifier[PACKAGE_JSON_EXPORT] = PACKAGE_JSON_EXPORT;
+
+  const rootExport = mergedExportMap["."];
+  if (rootExport && typeof rootExport === "object" && !Array.isArray(rootExport)) {
+    const rootEntry = rootExport as Record<string, unknown>;
+    const requirePath = typeof rootEntry.require === "string" ? rootEntry.require : undefined;
+    const importPath = typeof rootEntry.import === "string" ? rootEntry.import : undefined;
+    const typesPath = typeof rootEntry.types === "string" ? rootEntry.types : undefined;
+
+    if (requirePath || importPath) {
+      packageJson.main = requirePath ?? importPath;
+    }
+    // The `import` condition is the ESM entry regardless of extension (`.js`
+    // under `type: module`, or `.mjs`). Mirror `module` to it either way.
+    if (importPath) {
+      packageJson.module = importPath;
+    }
+    if (typesPath) {
+      packageJson.types = typesPath;
+    }
+  }
+
+  const filesField = packageJson.files;
+  if (Array.isArray(filesField)) {
+    const normalizedFiles = filesField.filter((entry): entry is string => typeof entry === "string");
+    if (!normalizedFiles.includes("dist")) {
+      normalizedFiles.push("dist");
+    }
+    packageJson.files = normalizedFiles;
+  } else {
+    packageJson.files = ["dist"];
+  }
+
+  const sortedExportMap: Record<string, unknown> = {};
+  const hasCatchAllWildcard = "./*" in mergedExportMap;
+  for (const exportSpecifier of Object.keys(mergedExportMap).toSorted((leftSpecifier, rightSpecifier) =>
+    compareExportSpecifiers(leftSpecifier, rightSpecifier, originalPathBySpecifier, hasCatchAllWildcard),
+  )) {
+    sortedExportMap[exportSpecifier] = mergedExportMap[exportSpecifier];
+  }
+
+  packageJson.exports = sortedExportMap;
+  const serialized = JSON.stringify(packageJson, null, 2) + "\n";
+  const changed = serialized !== raw;
+  if (!write || !changed) {
+    return { prunedKeys, changed };
+  }
+
+  const tmpPath = `${packageJsonPath}.tmp`;
+  await fs.writeFile(tmpPath, serialized, "utf8");
+
+  try {
+    await fs.rename(tmpPath, packageJsonPath);
+  } catch (caughtRenameError: unknown) {
+    await fs.unlink(tmpPath).catch(() => {});
+    throw new Error(`Failed to atomically update ${packageJsonPath}: ${messageFrom(caughtRenameError)}`, {
+      cause: caughtRenameError,
+    });
+  }
+
+  return { prunedKeys, changed };
+}

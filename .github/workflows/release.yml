@@ -71,8 +71,8 @@ jobs:
           git config user.email "13298232+thevuong@users.noreply.github.com"
 
       # No npm token: pnpm publish authenticates to npm via OIDC trusted publishing, using the job's id-token permission.
-      # `publish-packages` runs `codefast pack-slim` then `changeset publish`. The action's publish path (no changesets
-      # left) only pushes git tags — it never commits the working tree — so pack-slim's edits on this ephemeral checkout
+      # `publish-packages` runs `codefast publish:prepare` then `changeset publish`. The action's publish path (no changesets
+      # left) only pushes git tags — it never commits the working tree — so publish:prepare's edits on this ephemeral checkout
       # are never committed back, and the tarball ships dist runtime and types only.
       - name: Version and publish
         uses: changesets/action@v2.1.2

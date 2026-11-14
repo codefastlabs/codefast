@@ -4,4 +4,11 @@
 
 export { runCli } from "#cli";
 export { defineConfig } from "#core/config/define-config";
-export type { CodefastAfterWriteHook, CodefastConfig, CodefastTagConfig, MirrorConfig } from "#core/config/schema";
+export type {
+  AfterWriteHook,
+  AuditConfig,
+  AuditSection,
+  CodefastConfig,
+  ExportsConfig,
+  SinceConfig,
+} from "#core/config/schema";

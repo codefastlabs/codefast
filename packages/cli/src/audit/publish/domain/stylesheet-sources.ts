@@ -1,8 +1,17 @@
+/**
+ * A path a stylesheet registers with Tailwind's `@source`, as written.
+ *
+ * @since 0.13.0
+ */
+export type StylesheetSource = {
+  readonly line: number;
+  readonly pattern: string;
+};
+
 /** Reads the paths a stylesheet registers with Tailwind's `@source` and checks them against a shipped file list. */
 
 import path from "node:path";
 
-import type { StylesheetSource } from "#audit/domain/types";
 import { createAnyGlobMatcher } from "#core/glob";
 import { lineOfOffset } from "#core/source-position";
 

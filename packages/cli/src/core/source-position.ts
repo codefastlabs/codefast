@@ -26,3 +26,11 @@ export function firstLineOf(text: string): string {
   const newlineIndex = text.indexOf("\n");
   return newlineIndex === -1 ? text : text.slice(0, newlineIndex);
 }
+
+/**
+ * Returns the one-based line a needle first appears on, or `1` when the text does not hold it.
+ */
+export function lineOfText(sourceText: string, needle: string): number {
+  const index = sourceText.indexOf(needle);
+  return index === -1 ? 1 : lineOfOffset(sourceText, index);
+}

@@ -1,16 +1,17 @@
 import * as z from "zod";
 
 /**
- * A config hook invoked with the written file paths after a command rewrites files.
- *
- * @since 0.3.16-canary.0
+ * A config hook a writing command calls with the absolute paths it wrote, never on a dry run.
  */
-export type CodefastAfterWriteHook = (context: { files: Array<string> }) => void | Promise<void>;
+export type AfterWriteHook = (context: {
+  readonly command: string;
+  readonly files: ReadonlyArray<string>;
+}) => void | Promise<void>;
 
 /**
- * CSS export configuration for a mirrored package — a flag, or per-file overrides.
+ * CSS export configuration for one package — a flag, or per-file overrides.
  */
-type MirrorCssConfig =
+type ExportsCssConfig =
   | boolean
   | {
       enabled?: boolean | undefined;
@@ -19,71 +20,67 @@ type MirrorCssConfig =
     };
 
 /**
- * Per-package mirror configuration. Setting a package to `false` skips it entirely.
+ * How `exports:generate` builds one package's exports map.
  */
-interface MirrorPackageConfig {
-  /** Preserve the existing `package.json#exports` map and only add missing conditions
-   *  (`source`, `types`, `import`); no `dist/` scan is performed. */
+interface ExportsPackageConfig {
+  /** Keep the existing `exports` map and only fill in missing conditions; no `dist/` scan runs. */
   preserve?: boolean | undefined;
   strip?: string | undefined;
-  /** Specifiers to leave out of the generated map, so a package's public surface is a decision
-   *  rather than a consequence of its `dist/` layout. Matched against the specifier as it would
-   *  appear in `exports` (after `strip`); a trailing `/*` excludes a whole subtree. The root
-   *  export and `./package.json` are never excluded. */
+  /** Specifiers left out of the generated map, matched after `strip`; a trailing `/*` excludes a subtree. */
   exclude?: Array<string> | undefined;
   exports?: Record<string, string> | undefined;
-  /** All three default to `true`; the mirror resolves an omitted value the same as `true`. */
+  /** All three default to `true`. */
   source?: boolean | string | undefined;
   types?: boolean | undefined;
   import?: boolean | undefined;
-  css?: MirrorCssConfig | undefined;
+  css?: ExportsCssConfig | undefined;
 }
 
 /**
- * The validated `mirror` configuration, keyed by package name.
- *
- * @since 0.3.16-canary.0
+ * The `exports` section: per-package options keyed by package name or glob, `false` skipping the package.
  */
-export type MirrorConfig = Record<string, false | MirrorPackageConfig>;
+export type ExportsConfig = Record<string, false | ExportsPackageConfig>;
 
 /**
- * The validated `tag` command configuration.
- *
- * @since 0.3.16-canary.0
+ * The `since` section: package names or globs keyed to `false`, each skipping the packages it matches.
  */
-export interface CodefastTagConfig {
-  skipPackages?: Array<string> | undefined;
-  onAfterWrite?: CodefastAfterWriteHook | undefined;
-}
+export type SinceConfig = Record<string, false>;
 
-/** An audit's per-command defaults: entries to ignore, as bare tokens or `repo/relative/path:token`. */
-interface CodefastAuditAllowlistConfig {
+/**
+ * One audit's section: the target it scans when the command line names none, and the findings it accepts — each the
+ * finding's text as written, or `path:text` for one file. `false` turns the audit off in a full `audit` run.
+ */
+export interface AuditSection {
+  target?: string | undefined;
   allowlist?: Array<string> | undefined;
 }
 
 /** One package's layering: `layers` bottom to top, each naming the directories and module files it holds under `root`. */
-interface CodefastAuditLayersPackageConfig {
+interface LayersPackageConfig {
   /** The directory the layers sit under, relative to the package directory. Defaults to `src`. */
   root?: string | undefined;
   layers: Array<Array<string>>;
 }
 
-/** The `audit layers` defaults: the layered packages by name, and the entries to ignore. */
-interface CodefastAuditLayersConfig {
-  packages?: Record<string, CodefastAuditLayersPackageConfig> | undefined;
-  allowlist?: Array<string> | undefined;
+/** The `audit:layers` section, which also names the layered packages. */
+interface LayersAuditSection extends AuditSection {
+  packages?: Record<string, LayersPackageConfig> | undefined;
 }
 
-/** Per-audit defaults grouped under `audit`; the scan always starts at the repo root. */
-interface CodefastAuditConfig {
-  rtl?: { target?: string | undefined; allowlist?: Array<string> | undefined } | undefined;
-  links?: CodefastAuditAllowlistConfig | undefined;
-  comments?: CodefastAuditAllowlistConfig | undefined;
-  imports?: CodefastAuditAllowlistConfig | undefined;
-  assertions?: CodefastAuditAllowlistConfig | undefined;
-  displayNames?: CodefastAuditAllowlistConfig | undefined;
-  props?: CodefastAuditAllowlistConfig | undefined;
-  layers?: CodefastAuditLayersConfig | undefined;
+/**
+ * The `audit` section: one entry per audit, keyed by its name in camelCase.
+ */
+export interface AuditConfig {
+  rtl?: false | AuditSection | undefined;
+  links?: false | AuditSection | undefined;
+  imports?: false | AuditSection | undefined;
+  assertions?: false | AuditSection | undefined;
+  displayNames?: false | AuditSection | undefined;
+  props?: false | AuditSection | undefined;
+  comments?: false | AuditSection | undefined;
+  layers?: false | LayersAuditSection | undefined;
+  publish?: false | AuditSection | undefined;
+  engines?: false | AuditSection | undefined;
 }
 
 /**
@@ -92,16 +89,17 @@ interface CodefastAuditConfig {
  * @since 0.3.16-canary.0
  */
 export interface CodefastConfig {
-  mirror?: MirrorConfig | undefined;
-  tag?: CodefastTagConfig | undefined;
-  audit?: CodefastAuditConfig | undefined;
+  exports?: ExportsConfig | undefined;
+  since?: SinceConfig | undefined;
+  audit?: AuditConfig | undefined;
+  afterWrite?: AfterWriteHook | undefined;
 }
 
-const afterWriteHookSchema = z.custom<CodefastAfterWriteHook>((value) => typeof value === "function", {
+const afterWriteHookSchema = z.custom<AfterWriteHook>((value) => typeof value === "function", {
   message: "Expected a function",
 });
 
-const mirrorCssConfigSchema = z.union([
+const exportsCssConfigSchema = z.union([
   z.boolean(),
   z
     .object({
@@ -112,7 +110,7 @@ const mirrorCssConfigSchema = z.union([
     .strict(),
 ]);
 
-const mirrorPackageConfigSchema = z
+const exportsPackageConfigSchema = z
   .object({
     preserve: z.boolean().optional(),
     strip: z.string().optional(),
@@ -121,64 +119,59 @@ const mirrorPackageConfigSchema = z
     source: z.union([z.boolean(), z.string()]).default(true),
     types: z.boolean().default(true),
     import: z.boolean().default(true),
-    css: mirrorCssConfigSchema.optional(),
+    css: exportsCssConfigSchema.optional(),
   })
   .strict();
 
 /**
- * Zod validator for the `mirror` configuration record; its output is a {@link MirrorConfig}.
- *
- * @since 0.3.16-canary.0
+ * Zod validator for the `exports` section; its output is an {@link ExportsConfig}.
  */
-export const mirrorConfigSchema: z.ZodType<MirrorConfig> = z.record(
+export const exportsConfigSchema: z.ZodType<ExportsConfig> = z.record(
   z.string(),
-  z.union([z.literal(false), mirrorPackageConfigSchema]),
+  z.union([z.literal(false), exportsPackageConfigSchema]),
 );
 
-const codefastTagConfigSchema = z
-  .object({
-    skipPackages: z.array(z.string()).optional(),
-    onAfterWrite: afterWriteHookSchema.optional(),
-  })
-  .strict();
+const sinceConfigSchema = z.record(z.string(), z.literal(false));
 
-const codefastAuditRtlConfigSchema = z
-  .object({
-    target: z.string().optional(),
-    allowlist: z.array(z.string()).optional(),
-  })
-  .strict();
+const auditSectionShape = {
+  target: z.string().min(1).optional(),
+  allowlist: z.array(z.string()).optional(),
+};
 
-const codefastAuditAllowlistConfigSchema = z
-  .object({
-    allowlist: z.array(z.string()).optional(),
-  })
-  .strict();
+const auditSectionSchema = z.union([z.literal(false), z.object(auditSectionShape).strict()]);
 
-const codefastAuditLayersPackageConfigSchema = z
-  .object({
-    root: z.string().min(1).optional(),
-    layers: z.array(z.array(z.string().min(1)).min(1)).min(1),
-  })
-  .strict();
+const layersAuditSectionSchema = z.union([
+  z.literal(false),
+  z
+    .object({
+      ...auditSectionShape,
+      packages: z
+        .record(
+          z.string(),
+          z
+            .object({
+              root: z.string().min(1).optional(),
+              layers: z.array(z.array(z.string().min(1)).min(1)).min(1),
+            })
+            .strict(),
+        )
+        .optional(),
+    })
+    .strict(),
+]);
 
-const codefastAuditLayersConfigSchema = z
+const auditConfigSchema = z
   .object({
-    packages: z.record(z.string(), codefastAuditLayersPackageConfigSchema).optional(),
-    allowlist: z.array(z.string()).optional(),
-  })
-  .strict();
-
-const codefastAuditConfigSchema = z
-  .object({
-    rtl: codefastAuditRtlConfigSchema.optional(),
-    links: codefastAuditAllowlistConfigSchema.optional(),
-    comments: codefastAuditAllowlistConfigSchema.optional(),
-    imports: codefastAuditAllowlistConfigSchema.optional(),
-    assertions: codefastAuditAllowlistConfigSchema.optional(),
-    displayNames: codefastAuditAllowlistConfigSchema.optional(),
-    props: codefastAuditAllowlistConfigSchema.optional(),
-    layers: codefastAuditLayersConfigSchema.optional(),
+    rtl: auditSectionSchema.optional(),
+    links: auditSectionSchema.optional(),
+    imports: auditSectionSchema.optional(),
+    assertions: auditSectionSchema.optional(),
+    displayNames: auditSectionSchema.optional(),
+    props: auditSectionSchema.optional(),
+    comments: auditSectionSchema.optional(),
+    layers: layersAuditSectionSchema.optional(),
+    publish: auditSectionSchema.optional(),
+    engines: auditSectionSchema.optional(),
   })
   .strict();
 
@@ -189,8 +182,9 @@ const codefastAuditConfigSchema = z
  */
 export const codefastConfigRootSchema: z.ZodType<CodefastConfig> = z
   .object({
-    mirror: mirrorConfigSchema.optional(),
-    tag: codefastTagConfigSchema.optional(),
-    audit: codefastAuditConfigSchema.optional(),
+    exports: exportsConfigSchema.optional(),
+    since: sinceConfigSchema.optional(),
+    audit: auditConfigSchema.optional(),
+    afterWrite: afterWriteHookSchema.optional(),
   })
   .strict();

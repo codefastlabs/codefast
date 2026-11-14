@@ -1,11 +1,11 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { createAuditCommand } from "#audit/command";
-import type { PropsAuditResult } from "#audit/domain/types";
+import type { AuditReport } from "#audit/domain/types";
+import { runCli } from "#cli";
 import { logger } from "#core/logger";
 
 // Each alias stands for one judgement the type server has to make; the comment names it.
@@ -38,7 +38,8 @@ let reported: Array<string>;
 
 // Runs the audit command in-process, so the type server it spawns is the one subprocess and coverage sees the probe.
 beforeAll(async () => {
-  fixtureDir = mkdtempSync(path.join(tmpdir(), "codefast-audit-props-"));
+  fixtureDir = realpathSync(mkdtempSync(path.join(tmpdir(), "codefast-audit-props-")));
+  writeFileSync(path.join(fixtureDir, "package.json"), JSON.stringify({ name: "props-fixture", private: true }));
   writeFileSync(
     path.join(fixtureDir, "tsconfig.json"),
     JSON.stringify({ compilerOptions: { strict: true, noEmit: true, types: [] }, include: ["src"] }),
@@ -50,16 +51,15 @@ beforeAll(async () => {
   const previousExitCode = process.exitCode;
   process.exitCode = undefined;
   const out = vi.spyOn(logger, "out").mockImplementation(() => {});
+  const cwd = vi.spyOn(process, "cwd").mockReturnValue(fixtureDir);
   try {
-    await createAuditCommand().parseAsync(["node", "audit", "props", fixtureDir, "--json"]);
-    exitCode = typeof process.exitCode === "number" ? process.exitCode : 0;
-    const summary = JSON.parse(String(out.mock.calls[0]?.[0])) as { result: PropsAuditResult };
-    reported = summary.result.files.flatMap(({ violations }) =>
-      violations.map(({ raw }) => /type (\w+)/.exec(raw)?.[1] ?? raw),
-    );
+    exitCode = await runCli(["node", "codefast", "audit:props", fixtureDir, "--json"]);
+    const summary = JSON.parse(String(out.mock.calls[0]?.[0])) as { result: AuditReport };
+    reported = summary.result.findings.map(({ text }) => /type (\w+)/.exec(text)?.[1] ?? text);
   } finally {
     process.exitCode = previousExitCode;
     out.mockRestore();
+    cwd.mockRestore();
   }
 }, 60_000);
 
@@ -67,7 +67,7 @@ afterAll(() => {
   rmSync(fixtureDir, { recursive: true, force: true });
 });
 
-describe("audit props over a real type server", () => {
+describe("audit:props over a real type server", () => {
   it("reports a props intersection of object types, and exits non-zero", () => {
     expect(exitCode).toBe(1);
     expect(reported).toContain("BoxProps");
