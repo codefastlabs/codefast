@@ -19,7 +19,7 @@ import { walkTsxFiles } from "#core/workspace/typescript-walk";
  */
 export async function runPropsAudit(
   { fs, workspace, target }: AuditContext,
-  createProbe: () => Promise<PropsTypeProbe> = createPropsTypeProbe,
+  createProbe: () => Promise<Result<PropsTypeProbe, AppError>> = createPropsTypeProbe,
 ): Promise<Result<AuditScan, AppError>> {
   let probe: PropsTypeProbe | undefined;
   try {
@@ -30,7 +30,13 @@ export async function runPropsAudit(
       if (intersections.length === 0) {
         continue;
       }
-      probe ??= await createProbe();
+      if (probe === undefined) {
+        const created = await createProbe();
+        if (!created.ok) {
+          return created;
+        }
+        probe = created.value;
+      }
       const classify = probe.forFile(filePath);
       const detections = intersections
         .map((intersection) => judgePropsIntersection(intersection, classify(intersection.parts)))
@@ -39,11 +45,7 @@ export async function runPropsAudit(
     }
     return ok(fileScan(findings, files.length));
   } catch (caughtError: unknown) {
-    return err(
-      caughtError instanceof AppError
-        ? caughtError
-        : new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError),
-    );
+    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   } finally {
     probe?.dispose();
   }
