@@ -8,13 +8,7 @@ import picomatch from "picomatch";
 export type StringMatcher = (value: string) => boolean;
 
 /**
- * Compile a list of glob patterns into a predicate that returns `true` when its
- * argument matches **any** of them (picomatch semantics). Returns a never-match
- * predicate when no patterns are supplied.
- *
- * Shared by every "match a name/path against a configured pattern list" use
- * (workspace excludes, `tag.skipPackages`, …) so the compile-then-`some` logic
- * lives in one place.
+ * Compiles glob patterns into a predicate that matches a value any of them matches, and nothing when there are none.
  *
  * @since 0.5.0-canary.0
  */
