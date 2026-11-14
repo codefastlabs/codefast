@@ -23,7 +23,8 @@ Everything else is written once, in [`core/command.ts`](src/core/command.ts), an
 5. **The output.** `--json` prints one document on stdout, shaped the same for every command —
    `{ schemaVersion, command, ok, rootDir, target, elapsedSeconds, result }`, or `{ …, ok: false, error }` when the run
    could not happen. Without it, `present` prints the report and ends with the one summary line every command ends with.
-6. **The exit code.** The `verdict` is `pass`, `fail` or `error`, and maps to `0`, `1` or `2`; every `AppError` is `2`.
+6. **The exit code.** The `verdict` is `pass`, `fail` or `error`, and maps to `0`, `1` or `2`; every `AppError` is `2`,
+   and so is a throw no run anticipated, reported as an `UNEXPECTED` error rather than left to exit Node's `1`.
 
 The vocabulary a report is written in is shared too, in [`core/report.ts`](src/core/report.ts): a `Finding` is something
 at a `file:line` a person must look at, and a `PackageOutcome` is what a writing command did to one package — `changed`,

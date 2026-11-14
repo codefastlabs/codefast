@@ -29,8 +29,8 @@ function readTrackedWorkingTreeStatus(rootDir: string): string {
 /**
  * Refuses when the git working tree carries uncommitted tracked changes, so a destructive slim never lands on real work.
  *
- * @remarks pack-slim rewrites tracked `package.json` files and deletes build output; its result must never be committed.
- * A caller passing `--force` skips this, and `--dry-run` never reaches it because it writes nothing.
+ * @remarks `publish:prepare` rewrites tracked `package.json` files and deletes build output; its result must never be
+ * committed. A caller passing `--force` skips this, and `--dry-run` never reaches it because it writes nothing.
  *
  * @since 0.8.1
  */
