@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { auditImportPolicySource, defaultImportPolicyRules } from "#audit/imports/domain/import-policy";
+import { auditImportPolicySource } from "#audit/imports/domain/import-policy";
+import { houseImportRules } from "#tests/unit/support/house-import-rules";
 
 function audit(filePath: string, source: string) {
-  return auditImportPolicySource(filePath, source, defaultImportPolicyRules);
+  return auditImportPolicySource(filePath, source, houseImportRules);
 }
 
 describe("auditImportPolicySource — React", () => {

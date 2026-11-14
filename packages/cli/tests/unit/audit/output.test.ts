@@ -42,10 +42,10 @@ describe("presentAuditReport", () => {
     refuseColor(true);
     const printed = captureLogger();
 
-    presentAuditReport("rtl", report({ findings: [finding] }), 0.5);
+    presentAuditReport("tailwind-rtl", report({ findings: [finding] }), 0.5);
 
     expect(printed.out()).toBe(
-      ["\na.ts", "  3: ml-2 → use ms-2", "\n✗ audit:rtl: 1 finding in 12 files (0.50s)"].join("\n"),
+      ["\na.ts", "  3: ml-2 → use ms-2", "\n✗ audit:tailwind-rtl: 1 finding in 12 files (0.50s)"].join("\n"),
     );
   });
 });
@@ -59,7 +59,7 @@ describe("presentAuditAll", () => {
       {
         audits: [
           { name: "links", status: "clean", result: report() },
-          { name: "rtl", status: "findings", result: report({ findings: [finding] }) },
+          { name: "tailwind-rtl", status: "findings", result: report({ findings: [finding] }) },
           { name: "props", status: "skipped", reason: "turned off in the config" },
           { name: "engines", status: "error", error: { code: "NOT_FOUND", message: "Not found" } },
         ],
@@ -70,12 +70,12 @@ describe("presentAuditAll", () => {
     expect(printed.out()).toBe(
       [
         "✓ audit:links: no findings in 12 files",
-        "✗ audit:rtl: 1 finding in 12 files",
+        "✗ audit:tailwind-rtl: 1 finding in 12 files",
         "\na.ts",
         "  3: ml-2 → use ms-2",
         "○ audit:props: turned off in the config",
         "✗ audit:engines: [NOT_FOUND] Not found",
-        "\n✗ audit: 2 of 4 failed — rtl (findings), engines (error) (0.50s)",
+        "\n✗ audit: 2 of 4 failed — tailwind-rtl (findings), engines (error) (0.50s)",
       ].join("\n"),
     );
   });

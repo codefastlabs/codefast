@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { runRtlAudit } from "#audit/rtl/run";
+import { runRtlAudit } from "#audit/tailwind-rtl/run";
 import { createAuditContext } from "#tests/unit/support/audit-context";
 
 describe("runRtlAudit", () => {

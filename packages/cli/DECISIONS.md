@@ -15,8 +15,14 @@ action keeps a bare command for it, as `migrate` sits beside `migrate:status`: `
 config section is named for the namespace it configures (`exports`, `since`, `audit`), and a source directory for the
 namespace too.
 
+An audit that serves one library or tool carries its name — `audit:di-display-names`, `audit:tailwind-rtl` — and reads
+only what uses it, and an audit that holds a policy reads the policy from the config rather than hardcoding one
+project's: `audit:imports` holds no rules of its own, and the codefast monorepo declares its React and Zod rules in its
+config like any project would.
+
 **Consequences.** `codefast --help`, sorted, groups the commands by what they act on, and a new command's name is
-decided by the same rule rather than by taste. Run bare, `codefast` lists them and exits `0`, as `php artisan` does.
+decided by the same rule rather than by taste. A name never claims more than the audit checks. Run bare, `codefast`
+lists them and exits `0`, as `php artisan` does.
 
 ## One command model
 
@@ -169,9 +175,9 @@ types, asks the type server instead.
 
 ## Audits are read-only and mechanical
 
-**Context.** `audit:links`, `audit:comments`, `audit:imports`, `audit:assertions`, `audit:display-names`, `audit:props`,
-`audit:rtl`, `audit:layers` and `audit:publish` gate CI. A gate that needs judgment to interpret, or that can only be
-fixed by hand, is ignored under time pressure.
+**Context.** `audit:links`, `audit:comments`, `audit:imports`, `audit:assertions`, `audit:di-display-names`,
+`audit:props`, `audit:tailwind-rtl`, `audit:layers` and `audit:publish` gate CI. A gate that needs judgment to
+interpret, or that can only be fixed by hand, is ignored under time pressure.
 
 **Decision.** Every audit reports a location and a one-line reason, exits non-zero on any finding, and where the fix is
 mechanical applies it under `--fix` (comment dividers) so a red run is one command from green. Allowlists live in the

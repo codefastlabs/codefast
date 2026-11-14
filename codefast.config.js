@@ -44,14 +44,31 @@ const config = {
     comments: {
       allowlist: [],
     },
+    // The house import policy: React members by name, and Zod as a namespace everywhere, so a named `z` never
+    // pins Zod's full locale set into a package that ships bundled.
     imports: {
+      rules: [
+        {
+          module: "react",
+          ban: ["namespace", "default"],
+          umdGlobal: "React",
+          message: 'import React members by name from "react"',
+        },
+        {
+          module: "zod",
+          ban: ["named:z"],
+          message:
+            'import Zod as a namespace: import * as z from "zod" (repo house form; a named import { z } pins Zod\'s ' +
+            "full locale set into any bundle that reaches it)",
+        },
+      ],
       allowlist: [],
     },
     // A kept double assertion carries its reason inline, beside the code it excuses.
     assertions: {
       allowlist: [],
     },
-    displayNames: {
+    diDisplayNames: {
       allowlist: [],
     },
     // A layer is a family under `src/`: a directory, or a lone module sitting flat. Bottom to top; a
@@ -72,7 +89,7 @@ const config = {
       },
       allowlist: [],
     },
-    rtl: {
+    tailwindRtl: {
       target: "packages/ui/src",
       // Sheet: slides live in tv() side (left/right) buckets — the side is physical,
       // so the physical slide is correct; the detector cannot see that tv() context.

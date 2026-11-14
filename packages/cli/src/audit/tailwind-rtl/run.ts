@@ -1,6 +1,6 @@
 import { fileScan, findingsIn } from "#audit/domain/findings";
 import type { AuditContext, AuditScan } from "#audit/domain/types";
-import { auditFileContent } from "#audit/rtl/domain/audit-file";
+import { auditFileContent } from "#audit/tailwind-rtl/domain/audit-file";
 import { AppError, messageFrom } from "#core/errors";
 import { relativePosixPath } from "#core/path";
 import type { Result } from "#core/result";

@@ -1,48 +1,10 @@
 import { parseSync } from "oxc-parser";
 
 import type { Detection } from "#audit/domain/types";
+import type { ImportRule } from "#core/config/schema";
 import type { OxcNode } from "#core/oxc-node";
 import { isOxcNode, programStatements } from "#core/oxc-node";
 import { firstLineOf, lineOfOffset } from "#core/source-position";
-
-/**
- * One library's import policy: which forms of importing `module` are banned, optionally limited to
- * files whose repo-relative path matches `scope`, plus an optional UMD-global name to flag when the
- * file references `<name>.*` without importing it.
- *
- * @since 0.10.0
- */
-export interface ImportPolicyRule {
-  readonly module: string;
-  /** Banned forms: `namespace` (`import * as x`), `default` (`import x`), or `named:<name>`. */
-  readonly ban: ReadonlyArray<"namespace" | "default" | `named:${string}`>;
-  readonly scope?: ReadonlyArray<string> | undefined;
-  readonly umdGlobal?: string | undefined;
-  readonly message: string;
-}
-
-/**
- * The import policies enforced across the monorepo: React members by name (never a namespace,
- * default, or implicit `React.*` UMD global), and Zod as a namespace repo-wide — the house form,
- * so a named `import { z }` never pins Zod's full locale set into a package that ships bundled.
- *
- * @since 0.10.0
- */
-export const defaultImportPolicyRules: ReadonlyArray<ImportPolicyRule> = [
-  {
-    module: "react",
-    ban: ["namespace", "default"],
-    umdGlobal: "React",
-    message: 'import React members by name from "react"',
-  },
-  {
-    module: "zod",
-    ban: ["named:z"],
-    message:
-      'import Zod as a namespace: import * as z from "zod" (repo house form; a named import { z } pins Zod\'s full ' +
-      "locale set into any bundle that reaches it)",
-  },
-];
 
 function isIdentifierNamed(node: unknown, name: string): boolean {
   return isOxcNode(node) && node.type === "Identifier" && node.name === name;
@@ -65,7 +27,7 @@ function importedName(specifier: OxcNode): string | undefined {
 export function auditImportPolicySource(
   filePath: string,
   sourceText: string,
-  rules: ReadonlyArray<ImportPolicyRule>,
+  rules: ReadonlyArray<ImportRule>,
 ): Array<Detection> {
   const { program } = parseSync(filePath, sourceText);
   const statements = programStatements(program);
@@ -137,7 +99,7 @@ function violationAt(sourceText: string, statement: OxcNode, reason: string): De
 function collectUmdGlobalReferences(
   node: OxcNode,
   sourceText: string,
-  rule: ImportPolicyRule,
+  rule: ImportRule,
   violations: Array<Detection>,
 ): void {
   if (node.type === "TSQualifiedName" && isIdentifierNamed(node.left, rule.umdGlobal ?? "")) {

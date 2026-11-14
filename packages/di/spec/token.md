@@ -43,7 +43,7 @@ identity — the object is — so two declarations may share one, and nothing bu
 > package name (`@scope/pkg:Config`) — and the library's own names sit under `di:`. Slot names (`whenNamed("primary")`)
 > and tag values (`Region.of("eu")`) are **values**, not display names: they mean something only within one token or one
 > key, so they stay lowercase and take no prefix. The convention holds in the library, the docs and every example, and
-> `pnpm cli:audit:display-names` fails the build where it does not; tests and benchmarks are outside it, since a name
+> `pnpm cli:audit:di-display-names` fails the build where it does not; tests and benchmarks are outside it, since a name
 > there is scoped by its file and meets no other author's.
 
 What it buys: a diagnostic that says `No binding for 'shop:Logger'` names one owner; two features that each declare a

@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
@@ -14,6 +14,9 @@ const packageVersion = (
     execFileSync("node", ["-p", "JSON.stringify(require('./package.json'))"], { cwd: packageRoot, encoding: "utf8" }),
   ) as { version: string }
 ).version;
+
+// Every test spawns the built binary, which a cold CI runner starts far slower than the unit-test timeout allows.
+vi.setConfig({ testTimeout: 30_000 });
 
 interface CliRun {
   status: number;
@@ -87,7 +90,7 @@ describe("a full audit run", () => {
       expect(summary.ok).toBe(false);
       expect(summary.result.audits).toHaveLength(10);
       expect(summary.result.audits.find((audit) => audit.name === "links")?.status).toBe("findings");
-      expect(summary.result.audits.find((audit) => audit.name === "rtl")?.status).toBe("clean");
+      expect(summary.result.audits.find((audit) => audit.name === "tailwind-rtl")?.status).toBe("clean");
     } finally {
       rmSync(soloDir, { recursive: true, force: true });
     }

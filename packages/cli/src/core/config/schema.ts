@@ -62,6 +62,25 @@ interface LayersPackageConfig {
   layers: Array<Array<string>>;
 }
 
+/**
+ * One import rule: the forms of importing `module` it bans, in the files its `scope` globs reach (every file when
+ * omitted), and a UMD global whose `<name>.*` reference it flags where nothing imports that name.
+ */
+export interface ImportRule {
+  module: string;
+  /** Banned forms: `namespace` (`import * as x`), `default` (`import x`), or `named:<name>` (`import { name }`). */
+  ban: Array<"namespace" | "default" | `named:${string}`>;
+  scope?: Array<string> | undefined;
+  umdGlobal?: string | undefined;
+  /** What the finding tells a person to do instead. */
+  message: string;
+}
+
+/** The `audit:imports` section, which also declares the import rules. */
+interface ImportsAuditSection extends AuditSection {
+  rules?: Array<ImportRule> | undefined;
+}
+
 /** The `audit:layers` section, which also names the layered packages. */
 interface LayersAuditSection extends AuditSection {
   packages?: Record<string, LayersPackageConfig> | undefined;
@@ -71,11 +90,11 @@ interface LayersAuditSection extends AuditSection {
  * The `audit` section: one entry per audit, keyed by its name in camelCase.
  */
 export interface AuditConfig {
-  rtl?: false | AuditSection | undefined;
+  tailwindRtl?: false | AuditSection | undefined;
   links?: false | AuditSection | undefined;
-  imports?: false | AuditSection | undefined;
+  imports?: false | ImportsAuditSection | undefined;
   assertions?: false | AuditSection | undefined;
-  displayNames?: false | AuditSection | undefined;
+  diDisplayNames?: false | AuditSection | undefined;
   props?: false | AuditSection | undefined;
   comments?: false | AuditSection | undefined;
   layers?: false | LayersAuditSection | undefined;
@@ -140,6 +159,31 @@ const auditSectionShape = {
 
 const auditSectionSchema = z.union([z.literal(false), z.object(auditSectionShape).strict()]);
 
+const importRuleSchema = z
+  .object({
+    module: z.string().min(1),
+    ban: z
+      .array(
+        z.union([
+          z.literal("namespace"),
+          z.literal("default"),
+          z.custom<`named:${string}`>((value) => typeof value === "string" && /^named:.+$/.test(value), {
+            message: 'Expected "namespace", "default" or "named:<name>"',
+          }),
+        ]),
+      )
+      .min(1),
+    scope: z.array(z.string().min(1)).optional(),
+    umdGlobal: z.string().min(1).optional(),
+    message: z.string().min(1),
+  })
+  .strict();
+
+const importsAuditSectionSchema = z.union([
+  z.literal(false),
+  z.object({ ...auditSectionShape, rules: z.array(importRuleSchema).optional() }).strict(),
+]);
+
 const layersAuditSectionSchema = z.union([
   z.literal(false),
   z
@@ -162,11 +206,11 @@ const layersAuditSectionSchema = z.union([
 
 const auditConfigSchema = z
   .object({
-    rtl: auditSectionSchema.optional(),
+    tailwindRtl: auditSectionSchema.optional(),
     links: auditSectionSchema.optional(),
-    imports: auditSectionSchema.optional(),
+    imports: importsAuditSectionSchema.optional(),
     assertions: auditSectionSchema.optional(),
-    displayNames: auditSectionSchema.optional(),
+    diDisplayNames: auditSectionSchema.optional(),
     props: auditSectionSchema.optional(),
     comments: auditSectionSchema.optional(),
     layers: layersAuditSectionSchema.optional(),
