@@ -81,8 +81,8 @@ export function isMapAnnotatedFile(fileName: string): boolean {
 /**
  * Whether a script name is an install or publish lifecycle hook, with or without its `pre`/`post` prefix.
  *
- * @remarks Publish hooks stay because `pnpm publish` runs them right after pack-slim; install hooks stay because a
- * consumer's package manager runs them.
+ * @remarks Publish hooks stay because `pnpm publish` runs them right after `publish:prepare`; install hooks stay
+ * because a consumer's package manager runs them.
  *
  * @since 0.9.0
  */
