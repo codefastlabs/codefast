@@ -80,6 +80,11 @@ export interface ExportsPackageOutcome extends PackageOutcome {
 }
 
 /**
+ * The flags `exports:generate` takes: `--dry-run` reports what would change, and `--check` fails on it too.
+ */
+export type ExportsFlag = "dryRun" | "check";
+
+/**
  * The report of an `exports:generate` run: one outcome per package the target reaches.
  */
 export interface ExportsReport {

@@ -63,7 +63,8 @@ export interface CommandSpec<Report, Flag extends string = never> {
   /** The target the config names for this command, used when the command line names none. */
   readonly configuredTarget?: ((config: CodefastConfig) => string | undefined) | undefined;
   readonly run: (context: CommandContext<Flag>) => Promise<Result<Report, AppError>>;
-  readonly verdict: (report: Report) => Verdict;
+  /** Judges the report, under the flags it was run with — a check fails on what a write would have fixed. */
+  readonly verdict: (report: Report, context: CommandContext<Flag>) => Verdict;
   readonly present: (report: Report, context: ReportContext<Flag>) => void;
   /** The absolute paths the run wrote, handed to the `afterWrite` hook. */
   readonly writtenFiles?: ((report: Report, context: CommandContext<Flag>) => ReadonlyArray<string>) | undefined;
@@ -184,7 +185,7 @@ async function execute<Report, Flag extends string>(
   const hookError = await runAfterWrite(workspace.value.config, spec.name, spec.writtenFiles?.(report, context) ?? []);
   const elapsedSeconds = (performance.now() - startedAt) / 1000;
 
-  let verdict = spec.verdict(report);
+  let verdict = spec.verdict(report, context);
   if (hookError !== null && verdict === "pass") {
     verdict = "fail";
   }

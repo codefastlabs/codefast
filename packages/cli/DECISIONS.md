@@ -52,6 +52,20 @@ says `changed` or `unchanged`, and a dry run reports the same outcome without wr
 **Consequences.** The report of a writing command is the list of files it changed, which is also what the `afterWrite`
 hook receives.
 
+## A drift check is the command's own verdict
+
+**Context.** CI caught stale `package.json#exports` by running `exports:generate` and then `git diff --exit-code` in
+shell, because a dry run reports a package as `changed` and still passes: the command could describe the drift but not
+fail on it, so the gate lived outside the CLI.
+
+**Decision.** `exports:generate --check` writes nothing, as `--dry-run` does, and its verdict fails when any package
+would change. A spec's `verdict` receives the run's context beside the report, so a flag can decide what fails without
+the report carrying the flag.
+
+**Consequences.** CI gates on the command alone, and a script reads the stale packages from the `--json` result. A dry
+run stays the preview that passes. `since:stamp` takes no `--check`: an unstamped declaration is the normal state
+between releases, not drift.
+
 ## The config lives at the project root, once
 
 **Context.** The loader walked up from the root, took the first of several file names silently, cached one load per

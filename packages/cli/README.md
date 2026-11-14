@@ -20,7 +20,8 @@ to it — and every command behaves the same way:
   against the working directory. With none, a command uses the target its config section names, else the project root. A
   command that acts on packages reaches every package under the target, or the one package holding it.
 - **The same options.** `--json` prints one JSON document on stdout instead of the human report; `-v, --verbose` adds
-  the stack trace behind an unexpected failure. A command that writes takes `--dry-run`; an audit takes `--fix`.
+  the stack trace behind an unexpected failure. A command that writes takes `--dry-run`; an audit takes `--fix`;
+  `exports:generate` also takes `--check`, which writes nothing and fails when a write would change a file.
 - **The same report.** Something a person must look at is a finding at `file:line`, printed as `line: text → message`
   under its file. What a writing command did to a package is one row — `✎` changed, `✓` unchanged, `○` skipped, `✗`
   failed. Every command ends with one summary line.
@@ -52,22 +53,22 @@ Or run it once without installing, with `pnpm dlx @codefast/cli` or `npx @codefa
 Run bare, `codefast` lists its commands, as `php artisan` does; `--help` on any command shows its usage, and
 `codefast --version` prints the installed version.
 
-| Command                  | What it does                                                               | Writes?           |
-| ------------------------ | -------------------------------------------------------------------------- | ----------------- |
-| `exports:generate`       | Write each package's `package.json#exports` from its built `dist/`         | yes (`--dry-run`) |
-| `publish:prepare`        | Strip the development surface from published packages right before publish | yes (`--dry-run`) |
-| `since:stamp`            | Stamp `@since <version>` on exported declarations that lack one            | yes (`--dry-run`) |
-| `audit`                  | Run every audit and report each under its name                             | `--fix` only      |
-| `audit:links`            | Markdown links pointing at a missing path or anchor                        | no                |
-| `audit:tailwind-rtl`     | Physical-direction Tailwind classes that should be logical                 | no                |
-| `audit:imports`          | Import forms the config's import rules ban                                 | no                |
-| `audit:assertions`       | Double type assertions through `unknown` / `any`, tests included           | no                |
-| `audit:di-display-names` | `@codefast/di` names breaking the `namespace:Name` convention              | no                |
-| `audit:props`            | Props types joined with `&` that an interface could express                | no                |
-| `audit:publish`          | What would break a consumer's install of a published package               | no                |
-| `audit:engines`          | Node floors (`engines.node`) that do not hold                              | no                |
-| `audit:layers`           | Value imports that point up a package's configured layers                  | no                |
-| `audit:comments`         | Doc-comment conventions; `--fix` repairs section dividers                  | `--fix` only      |
+| Command                  | What it does                                                               | Writes?                      |
+| ------------------------ | -------------------------------------------------------------------------- | ---------------------------- |
+| `exports:generate`       | Write each package's `package.json#exports` from its built `dist/`         | yes (`--dry-run`, `--check`) |
+| `publish:prepare`        | Strip the development surface from published packages right before publish | yes (`--dry-run`)            |
+| `since:stamp`            | Stamp `@since <version>` on exported declarations that lack one            | yes (`--dry-run`)            |
+| `audit`                  | Run every audit and report each under its name                             | `--fix` only                 |
+| `audit:links`            | Markdown links pointing at a missing path or anchor                        | no                           |
+| `audit:tailwind-rtl`     | Physical-direction Tailwind classes that should be logical                 | no                           |
+| `audit:imports`          | Import forms the config's import rules ban                                 | no                           |
+| `audit:assertions`       | Double type assertions through `unknown` / `any`, tests included           | no                           |
+| `audit:di-display-names` | `@codefast/di` names breaking the `namespace:Name` convention              | no                           |
+| `audit:props`            | Props types joined with `&` that an interface could express                | no                           |
+| `audit:publish`          | What would break a consumer's install of a published package               | no                           |
+| `audit:engines`          | Node floors (`engines.node`) that do not hold                              | no                           |
+| `audit:layers`           | Value imports that point up a package's configured layers                  | no                           |
+| `audit:comments`         | Doc-comment conventions; `--fix` repairs section dividers                  | `--fix` only                 |
 
 An audit that serves one library or tool names it — `audit:di-display-names` reads only the code and docs that use
 `@codefast/di`, `audit:tailwind-rtl` only Tailwind classes — and an audit that holds a policy reads it from the config:
@@ -88,7 +89,11 @@ reports each package as changed or unchanged; a package with no `dist/` is skipp
 codefast exports:generate                  # every package
 codefast exports:generate packages/ui      # one package
 codefast exports:generate --dry-run        # report what would change, write nothing
+codefast exports:generate --check          # write nothing, and exit 1 when any package would change
 ```
+
+`--check` is the CI gate: it reports what a write would change, as `--dry-run` does, and fails the run on it, so a
+module added, moved or renamed without a rerun is caught before it changes the published surface.
 
 ### Per-package `exports` configuration
 
@@ -406,6 +411,7 @@ pnpm run codefast <command>         # node ./packages/cli/dist/bin.js
 pnpm cli:audit                      # codefast audit — what CI runs
 pnpm cli:audit:links                # codefast audit:links, and one script per audit
 pnpm cli:exports:generate           # codefast exports:generate
+pnpm cli:exports:generate --check   # what CI runs: fail on stale exports
 ```
 
 `pnpm run version-packages` runs `changeset version` and then `codefast since:stamp`, so published APIs are stamped at

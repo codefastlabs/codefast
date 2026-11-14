@@ -8,8 +8,8 @@ runs through **one command model**. Behaviour is wired with **plain functions**,
 ## One command model
 
 A command is a [`CommandSpec`](src/core/command.ts): its name and description, the help for its one `[target]`, the
-boolean flags it takes, a `run`, a `verdict` over its report, and a `present` for a human. Everything else is written
-once, in [`core/command.ts`](src/core/command.ts), and no command repeats any of it:
+boolean flags it takes, a `run`, a `verdict` over its report and the flags it ran with, and a `present` for a human.
+Everything else is written once, in [`core/command.ts`](src/core/command.ts), and no command repeats any of it:
 
 1. **The workspace.** [`loadWorkspace`](src/core/workspace/workspace.ts) resolves the project root from the working
    directory, loads the root's one `codefast.config.*`, and reads every package manifest once. A command never resolves

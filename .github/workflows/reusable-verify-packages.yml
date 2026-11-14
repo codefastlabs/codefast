@@ -51,15 +51,10 @@ jobs:
         run: npx turbo build --filter="./packages/**" --filter="./internal/**"
 
       # `codefast exports:generate` generates `package.json#exports` from `dist/`, so a module added, moved or
-      # renamed in `src/` silently changes the published surface until someone reruns it. The command
-      # writes only what changed, so a diff here means it was not rerun.
+      # renamed in `src/` silently changes the published surface until someone reruns it. `--check` writes
+      # nothing and fails on every package a rerun would change.
       - name: Verify Generated Package Exports
-        run: |
-          pnpm cli:exports:generate
-          if ! git diff --exit-code -- ':(glob)**/package.json'; then
-            echo "::error::package.json exports are stale — run 'pnpm cli:exports:generate' and commit the result"
-            exit 1
-          fi
+        run: pnpm cli:exports:generate --check
 
       # `lint` and `format:check` are root-workspace tasks in turbo.json (`//#lint`, `//#format:check`),
       # so a `--filter="./packages/**"` drops both without failing — this step once ran neither, and

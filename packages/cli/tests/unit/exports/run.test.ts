@@ -24,7 +24,7 @@ function project(config?: object): ReturnType<typeof createMemoryFilesystem> {
 describe("runExportsGenerate", () => {
   it("writes the exports a package's dist/ builds, and skips a package with no dist/", async () => {
     const { fs, read } = project();
-    const context = await createCommandContext(fs, { cwd: root, flags: { dryRun: false } });
+    const context = await createCommandContext(fs, { cwd: root, flags: { dryRun: false, check: false } });
 
     const outcome = await runExportsGenerate(context);
 
@@ -45,24 +45,46 @@ describe("runExportsGenerate", () => {
 
   it("reports a package already up to date as unchanged, and writes nothing on a dry run", async () => {
     const first = project();
-    await runExportsGenerate(await createCommandContext(first.fs, { cwd: root, flags: { dryRun: false } }));
+    await runExportsGenerate(
+      await createCommandContext(first.fs, { cwd: root, flags: { dryRun: false, check: false } }),
+    );
     const second = await runExportsGenerate(
-      await createCommandContext(first.fs, { cwd: root, target: "packages/kit", flags: { dryRun: false } }),
+      await createCommandContext(first.fs, {
+        cwd: root,
+        target: "packages/kit",
+        flags: { dryRun: false, check: false },
+      }),
     );
 
     const dry = project();
     const before = dry.read(manifestPath);
-    const dryRun = await runExportsGenerate(await createCommandContext(dry.fs, { cwd: root, flags: { dryRun: true } }));
+    const dryRun = await runExportsGenerate(
+      await createCommandContext(dry.fs, { cwd: root, flags: { dryRun: true, check: false } }),
+    );
 
     expect(second.ok && second.value.packages.map(({ status }) => status)).toEqual(["unchanged"]);
     expect(dryRun.ok && dryRun.value.packages[0]?.status).toBe("changed");
     expect(dry.read(manifestPath)).toBe(before);
   });
 
+  it("writes nothing under --check, reporting the package that would change", async () => {
+    const { fs, read } = project();
+    const before = read(manifestPath);
+
+    const outcome = await runExportsGenerate(
+      await createCommandContext(fs, { cwd: root, flags: { dryRun: false, check: true } }),
+    );
+
+    expect(outcome.ok && outcome.value.packages[0]?.status).toBe("changed");
+    expect(read(manifestPath)).toBe(before);
+  });
+
   it("skips a package the config sets to false, by name or glob", async () => {
     const { fs } = project({ exports: { "@acme/*": false } });
 
-    const outcome = await runExportsGenerate(await createCommandContext(fs, { cwd: root, flags: { dryRun: true } }));
+    const outcome = await runExportsGenerate(
+      await createCommandContext(fs, { cwd: root, flags: { dryRun: true, check: false } }),
+    );
 
     expect(outcome.ok && outcome.value.packages.map(({ status, reason }) => [status, reason])).toEqual([
       ["skipped", "skipped by the config"],
