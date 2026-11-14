@@ -1,10 +1,10 @@
-import path from "node:path";
-
-import type { LayerFileViolations, LayersAuditResult } from "#audit/domain/types";
+import { findingsIn } from "#audit/domain/findings";
+import type { AuditContext, AuditScan } from "#audit/domain/types";
 import { auditLayeringSource, LayerMap } from "#audit/layers/domain/layering";
-import type { LayersAuditPackage } from "#audit/layers/layered-packages";
+import { resolveLayeredPackages } from "#audit/layers/layered-packages";
 import { AppError, messageFrom } from "#core/errors";
-import type { Filesystem } from "#core/filesystem/filesystem";
+import { isWithinDirectory, relativePosixPath } from "#core/path";
+import type { Finding } from "#core/report";
 import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
 import { walkTsxFiles } from "#core/workspace/typescript-walk";
@@ -17,64 +17,32 @@ import { walkTsxFiles } from "#core/workspace/typescript-walk";
  *
  * @since 0.14.0
  */
-export function runLayersAudit(
-  fs: Filesystem,
-  args: {
-    readonly rootDir: string;
-    readonly targetPath: string;
-    readonly allowlist: ReadonlyArray<string>;
-    readonly packages: ReadonlyArray<LayersAuditPackage>;
-  },
-): Result<LayersAuditResult, AppError> {
+export function runLayersAudit({ fs, workspace, target }: AuditContext): Result<AuditScan, AppError> {
+  const layered = resolveLayeredPackages(fs, workspace);
+  if (!layered.ok) {
+    return layered;
+  }
   try {
-    const allowlist = new Set(args.allowlist);
-    const files: Array<LayerFileViolations> = [];
-    let violationCount = 0;
-    let allowlistedCount = 0;
-    let scannedFileCount = 0;
-    let packageCount = 0;
-
-    for (const layeredPackage of args.packages) {
-      const targetInsideRoot = isWithin(layeredPackage.rootPath, args.targetPath);
-      if (!targetInsideRoot && !isWithin(args.targetPath, layeredPackage.rootPath)) {
+    const findings: Array<Finding> = [];
+    let scannedFiles = 0;
+    let scannedPackages = 0;
+    for (const layeredPackage of layered.value) {
+      const targetInsideRoot = isWithinDirectory(layeredPackage.rootPath, target.path);
+      if (!targetInsideRoot && !isWithinDirectory(target.path, layeredPackage.rootPath)) {
         continue;
       }
-      packageCount++;
+      scannedPackages++;
       const layers = new LayerMap(layeredPackage.layers);
-      const scanRoot = targetInsideRoot ? args.targetPath : layeredPackage.rootPath;
-      const filesToScan = fs.statSync(scanRoot).isFile() ? [scanRoot] : walkTsxFiles(scanRoot, fs);
-
-      for (const absolutePath of filesToScan) {
-        scannedFileCount++;
-        const relativePath = toPosixPath(path.relative(args.rootDir, absolutePath));
-        const modulePath = toPosixPath(path.relative(layeredPackage.rootPath, absolutePath));
-        const content = fs.readFileSync(absolutePath, "utf8");
-        const remaining = auditLayeringSource(absolutePath, modulePath, content, layers).filter(({ raw }) => {
-          const isAllowed = allowlist.has(raw) || allowlist.has(`${relativePath}:${raw}`);
-          if (isAllowed) {
-            allowlistedCount++;
-          }
-          return !isAllowed;
-        });
-        if (remaining.length === 0) {
-          continue;
-        }
-        violationCount += remaining.length;
-        files.push({ relativePath, violations: remaining });
+      const files = walkTsxFiles(targetInsideRoot ? target.path : layeredPackage.rootPath, fs);
+      scannedFiles += files.length;
+      for (const filePath of files) {
+        const modulePath = relativePosixPath(layeredPackage.rootPath, filePath);
+        const detections = auditLayeringSource(filePath, modulePath, fs.readFileSync(filePath, "utf8"), layers);
+        findings.push(...findingsIn(relativePosixPath(workspace.rootDir, filePath), detections));
       }
     }
-
-    return ok({ files, violationCount, allowlistedCount, scannedFileCount, packageCount });
+    return ok({ findings, scannedFiles, scannedPackages, fixedFiles: [] });
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
-}
-
-function isWithin(parentPath: string, childPath: string): boolean {
-  const relative = path.relative(parentPath, childPath);
-  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
-}
-
-function toPosixPath(filePath: string): string {
-  return filePath.split(path.sep).join("/");
 }

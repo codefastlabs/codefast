@@ -46,34 +46,41 @@ export type ExportsConfig = Record<string, false | ExportsPackageConfig>;
  */
 export type SinceConfig = Record<string, false>;
 
-/** An audit's per-command defaults: entries to ignore, as bare tokens or `repo/relative/path:token`. */
-interface CodefastAuditAllowlistConfig {
+/**
+ * One audit's section: the target it scans when the command line names none, and the findings it accepts — each the
+ * finding's text as written, or `path:text` for one file. `false` turns the audit off in a full `audit` run.
+ */
+export interface AuditSection {
+  target?: string | undefined;
   allowlist?: Array<string> | undefined;
 }
 
 /** One package's layering: `layers` bottom to top, each naming the directories and module files it holds under `root`. */
-interface CodefastAuditLayersPackageConfig {
+interface LayersPackageConfig {
   /** The directory the layers sit under, relative to the package directory. Defaults to `src`. */
   root?: string | undefined;
   layers: Array<Array<string>>;
 }
 
-/** The `audit:layers` defaults: the layered packages by name, and the entries to ignore. */
-interface CodefastAuditLayersConfig {
-  packages?: Record<string, CodefastAuditLayersPackageConfig> | undefined;
-  allowlist?: Array<string> | undefined;
+/** The `audit:layers` section, which also names the layered packages. */
+interface LayersAuditSection extends AuditSection {
+  packages?: Record<string, LayersPackageConfig> | undefined;
 }
 
-/** Per-audit defaults grouped under `audit`; the scan always starts at the repo root. */
-interface CodefastAuditConfig {
-  rtl?: { target?: string | undefined; allowlist?: Array<string> | undefined } | undefined;
-  links?: CodefastAuditAllowlistConfig | undefined;
-  comments?: CodefastAuditAllowlistConfig | undefined;
-  imports?: CodefastAuditAllowlistConfig | undefined;
-  assertions?: CodefastAuditAllowlistConfig | undefined;
-  displayNames?: CodefastAuditAllowlistConfig | undefined;
-  props?: CodefastAuditAllowlistConfig | undefined;
-  layers?: CodefastAuditLayersConfig | undefined;
+/**
+ * The `audit` section: one entry per audit, keyed by its name in camelCase.
+ */
+export interface AuditConfig {
+  rtl?: false | AuditSection | undefined;
+  links?: false | AuditSection | undefined;
+  imports?: false | AuditSection | undefined;
+  assertions?: false | AuditSection | undefined;
+  displayNames?: false | AuditSection | undefined;
+  props?: false | AuditSection | undefined;
+  comments?: false | AuditSection | undefined;
+  layers?: false | LayersAuditSection | undefined;
+  publish?: false | AuditSection | undefined;
+  engines?: false | AuditSection | undefined;
 }
 
 /**
@@ -84,7 +91,7 @@ interface CodefastAuditConfig {
 export interface CodefastConfig {
   exports?: ExportsConfig | undefined;
   since?: SinceConfig | undefined;
-  audit?: CodefastAuditConfig | undefined;
+  audit?: AuditConfig | undefined;
   afterWrite?: AfterWriteHook | undefined;
 }
 
@@ -126,43 +133,45 @@ export const exportsConfigSchema: z.ZodType<ExportsConfig> = z.record(
 
 const sinceConfigSchema = z.record(z.string(), z.literal(false));
 
-const codefastAuditRtlConfigSchema = z
-  .object({
-    target: z.string().optional(),
-    allowlist: z.array(z.string()).optional(),
-  })
-  .strict();
+const auditSectionShape = {
+  target: z.string().min(1).optional(),
+  allowlist: z.array(z.string()).optional(),
+};
 
-const codefastAuditAllowlistConfigSchema = z
-  .object({
-    allowlist: z.array(z.string()).optional(),
-  })
-  .strict();
+const auditSectionSchema = z.union([z.literal(false), z.object(auditSectionShape).strict()]);
 
-const codefastAuditLayersPackageConfigSchema = z
-  .object({
-    root: z.string().min(1).optional(),
-    layers: z.array(z.array(z.string().min(1)).min(1)).min(1),
-  })
-  .strict();
+const layersAuditSectionSchema = z.union([
+  z.literal(false),
+  z
+    .object({
+      ...auditSectionShape,
+      packages: z
+        .record(
+          z.string(),
+          z
+            .object({
+              root: z.string().min(1).optional(),
+              layers: z.array(z.array(z.string().min(1)).min(1)).min(1),
+            })
+            .strict(),
+        )
+        .optional(),
+    })
+    .strict(),
+]);
 
-const codefastAuditLayersConfigSchema = z
+const auditConfigSchema = z
   .object({
-    packages: z.record(z.string(), codefastAuditLayersPackageConfigSchema).optional(),
-    allowlist: z.array(z.string()).optional(),
-  })
-  .strict();
-
-const codefastAuditConfigSchema = z
-  .object({
-    rtl: codefastAuditRtlConfigSchema.optional(),
-    links: codefastAuditAllowlistConfigSchema.optional(),
-    comments: codefastAuditAllowlistConfigSchema.optional(),
-    imports: codefastAuditAllowlistConfigSchema.optional(),
-    assertions: codefastAuditAllowlistConfigSchema.optional(),
-    displayNames: codefastAuditAllowlistConfigSchema.optional(),
-    props: codefastAuditAllowlistConfigSchema.optional(),
-    layers: codefastAuditLayersConfigSchema.optional(),
+    rtl: auditSectionSchema.optional(),
+    links: auditSectionSchema.optional(),
+    imports: auditSectionSchema.optional(),
+    assertions: auditSectionSchema.optional(),
+    displayNames: auditSectionSchema.optional(),
+    props: auditSectionSchema.optional(),
+    comments: auditSectionSchema.optional(),
+    layers: layersAuditSectionSchema.optional(),
+    publish: auditSectionSchema.optional(),
+    engines: auditSectionSchema.optional(),
   })
   .strict();
 
@@ -175,7 +184,7 @@ export const codefastConfigRootSchema: z.ZodType<CodefastConfig> = z
   .object({
     exports: exportsConfigSchema.optional(),
     since: sinceConfigSchema.optional(),
-    audit: codefastAuditConfigSchema.optional(),
+    audit: auditConfigSchema.optional(),
     afterWrite: afterWriteHookSchema.optional(),
   })
   .strict();

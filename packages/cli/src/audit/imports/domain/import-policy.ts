@@ -1,6 +1,6 @@
 import { parseSync } from "oxc-parser";
 
-import type { ImportPolicyViolation } from "#audit/domain/types";
+import type { Detection } from "#audit/domain/types";
 import type { OxcNode } from "#core/oxc-node";
 import { isOxcNode, programStatements } from "#core/oxc-node";
 import { firstLineOf, lineOfOffset } from "#core/source-position";
@@ -66,10 +66,10 @@ export function auditImportPolicySource(
   filePath: string,
   sourceText: string,
   rules: ReadonlyArray<ImportPolicyRule>,
-): Array<ImportPolicyViolation> {
+): Array<Detection> {
   const { program } = parseSync(filePath, sourceText);
   const statements = programStatements(program);
-  const violations: Array<ImportPolicyViolation> = [];
+  const violations: Array<Detection> = [];
   const boundUmdNames = new Set<string>();
 
   for (const rule of rules) {
@@ -126,7 +126,7 @@ export function auditImportPolicySource(
   return violations;
 }
 
-function violationAt(sourceText: string, statement: OxcNode, reason: string): ImportPolicyViolation {
+function violationAt(sourceText: string, statement: OxcNode, reason: string): Detection {
   return {
     line: lineOfOffset(sourceText, statement.start),
     raw: firstLineOf(sourceText.slice(statement.start, statement.end)),
@@ -138,7 +138,7 @@ function collectUmdGlobalReferences(
   node: OxcNode,
   sourceText: string,
   rule: ImportPolicyRule,
-  violations: Array<ImportPolicyViolation>,
+  violations: Array<Detection>,
 ): void {
   if (node.type === "TSQualifiedName" && isIdentifierNamed(node.left, rule.umdGlobal ?? "")) {
     violations.push({

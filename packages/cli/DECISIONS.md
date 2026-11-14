@@ -90,17 +90,31 @@ none.
 **Consequences.** The `core/filesystem/node.ts` helpers are functions, not an adapter behind a port; telemetry or
 timing, if ever wanted, wraps a function instead of hooking a container activation.
 
+## Every audit reports findings
+
+**Context.** Ten audits returned ten result shapes: eight were the same `{ line, raw, reason }` under different names
+(`violations`, `breakages`, `imports`) and counters (`violationCount`, `breakageCount`, `legacyImportCount`), two were
+shapes of their own with no allowlist, and every audit re-implemented the same scan loop, allowlist filter, grouping and
+presenter.
+
+**Decision.** An audit is an `Audit` whose `scan` returns an `AuditScan`: `Finding`s at a `file:line`, what it scanned,
+and the files `--fix` rewrote. The allowlist, the verdict, the presenter, the `--json` result and the full run are
+written once in `audit/command.ts`. Every audit takes the same config section — `false` to turn it off in a full run, or
+`{ target, allowlist }` — and every audit takes `--fix`. A finding about a manifest (`audit:engines`, `audit:publish`)
+points at the `package.json` line it concerns, so it reads like any other.
+
+**Consequences.** An audit is its scan and nothing else, so adding one is writing a detector. A script reads every
+audit's findings from one shape, and `audit:engines` still lists every floor beside them for the CI legs.
+
 ## One directory per audit
 
 **Context.** The audits share a run, a report and an exit rule, but each has detectors of its own; left flat, a command
 directory became a pile of `run-rtl.ts`, `run-links.ts`, … beside a `domain/` holding every scan's detectors.
 
-**Decision.** Each audit is its own directory under `audit/`, holding its `run.ts`, `output.ts` and `domain/`, and
-registers as its own `audit:<name>` command. What the audits share lives once in `audit/command.ts`: one `AuditCheck`
-per audit — the target its config may name, its run, its presenter, its clean rule — and the bare `audit` that runs them
-all.
+**Decision.** Each audit is its own directory under `audit/`, holding its `Audit` in `command.ts`, its scan in `run.ts`
+and its detectors in `domain/`, as every other command directory does.
 
-**Consequences.** Everything about one scan lives in one folder, and adding a scan is adding a check.
+**Consequences.** Everything about one scan lives in one folder.
 
 ## Naming
 
@@ -160,8 +174,8 @@ types, asks the type server instead.
 fixed by hand, is ignored under time pressure.
 
 **Decision.** Every audit reports a location and a one-line reason, exits non-zero on any finding, and where the fix is
-mechanical offers `--fix` (comment dividers) so a red run is one command from green. Allowlists live in
-`codefast.config.js`, never in the audited files.
+mechanical applies it under `--fix` (comment dividers) so a red run is one command from green. Allowlists live in the
+config, never in the audited files.
 
 **Consequences.** Audits stay cheap to keep on; a new rule has to come with a precise detector or it does not ship.
 

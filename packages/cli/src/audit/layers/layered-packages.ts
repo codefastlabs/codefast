@@ -32,7 +32,8 @@ export function resolveLayeredPackages(
 ): Result<ReadonlyArray<LayersAuditPackage>, AppError> {
   const directoryByName = new Map(workspace.packages.map((candidate) => [candidate.name, candidate.directory]));
   const packages: Array<LayersAuditPackage> = [];
-  for (const [name, packageConfig] of Object.entries(workspace.config.audit?.layers?.packages ?? {})) {
+  const section = workspace.config.audit?.layers;
+  for (const [name, packageConfig] of Object.entries((section === false ? undefined : section?.packages) ?? {})) {
     const directory = directoryByName.get(name);
     if (directory === undefined) {
       return err(

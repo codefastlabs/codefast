@@ -1,9 +1,12 @@
 import path from "node:path";
 
-import type { LinkAuditResult, LinkFileBreakages, LinkBreakage } from "#audit/domain/types";
+import { fileScan, findingsIn } from "#audit/domain/findings";
+import type { AuditContext, AuditScan, Detection } from "#audit/domain/types";
 import { collectMarkdownAnchors, scanMarkdownLinks } from "#audit/links/domain/markdown-links";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
+import { relativePosixPath } from "#core/path";
+import type { Finding } from "#core/report";
 import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
 import { walkMarkdownFiles } from "#core/workspace/markdown-walk";
@@ -13,57 +16,21 @@ import { walkMarkdownFiles } from "#core/workspace/markdown-walk";
  *
  * @since 0.5.0
  */
-export function runLinkAudit(
-  fs: Filesystem,
-  args: {
-    readonly rootDir: string;
-    readonly targetPath: string;
-    readonly allowlist: ReadonlyArray<string>;
-  },
-): Result<LinkAuditResult, AppError> {
+export function runLinkAudit({ fs, workspace, target }: AuditContext): Result<AuditScan, AppError> {
   try {
-    const allowlist = new Set(args.allowlist);
-    const { rootDir, targetPath } = args;
-    const filesToScan = collectScanPaths(fs, targetPath);
+    const files = walkMarkdownFiles(target.path, fs);
     // One read per document however many links land on it.
     const anchorsByFile = new Map<string, ReadonlySet<string>>();
-    const files: Array<LinkFileBreakages> = [];
-    let breakageCount = 0;
-    let allowlistedCount = 0;
-    let linkCount = 0;
-
-    for (const absolutePath of filesToScan) {
-      const relativePath = toPosixPath(path.relative(rootDir, absolutePath));
-      const content = fs.readFileSync(absolutePath, "utf8");
-      const scan = scanMarkdownLinks(content);
+    const findings: Array<Finding> = [];
+    for (const absolutePath of files) {
+      const scan = scanMarkdownLinks(fs.readFileSync(absolutePath, "utf8"));
       anchorsByFile.set(absolutePath, scan.anchors);
-      linkCount += scan.references.length;
-
-      const breakages: Array<LinkBreakage> = [];
-      for (const reference of scan.references) {
-        const breakage = inspectReference(fs, anchorsByFile, {
-          absolutePath,
-          reference,
-          ownAnchors: scan.anchors,
-        });
-        if (breakage === null) {
-          continue;
-        }
-        if (allowlist.has(breakage.raw) || allowlist.has(`${relativePath}:${breakage.raw}`)) {
-          allowlistedCount++;
-          continue;
-        }
-        breakages.push(breakage);
-      }
-
-      if (breakages.length === 0) {
-        continue;
-      }
-      breakageCount += breakages.length;
-      files.push({ relativePath, breakages });
+      const detections = scan.references
+        .map((reference) => inspectReference(fs, anchorsByFile, { absolutePath, reference, ownAnchors: scan.anchors }))
+        .filter((detection) => detection !== null);
+      findings.push(...findingsIn(relativePosixPath(workspace.rootDir, absolutePath), detections));
     }
-
-    return ok({ files, breakageCount, allowlistedCount, linkCount, scannedFileCount: filesToScan.length });
+    return ok(fileScan(findings, files.length));
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
@@ -77,7 +44,7 @@ function inspectReference(
     readonly reference: { line: number; targetPath: string; anchor: string | null };
     readonly ownAnchors: ReadonlySet<string>;
   },
-): LinkBreakage | null {
+): Detection | null {
   const { absolutePath, reference, ownAnchors } = args;
   const raw = reference.anchor === null ? reference.targetPath : `${reference.targetPath}#${reference.anchor}`;
 
@@ -107,16 +74,4 @@ function inspectReference(
   return anchors.has(reference.anchor)
     ? null
     : { line: reference.line, raw, reason: `anchor not found in ${path.basename(resolved)}` };
-}
-
-function collectScanPaths(fs: Filesystem, targetPath: string): Array<string> {
-  const stats = fs.statSync(targetPath);
-  if (stats.isFile()) {
-    return [targetPath];
-  }
-  return walkMarkdownFiles(targetPath, fs);
-}
-
-function toPosixPath(filePath: string): string {
-  return filePath.split(path.sep).join("/");
 }

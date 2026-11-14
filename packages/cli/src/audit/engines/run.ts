@@ -3,7 +3,7 @@ import path from "node:path";
 import { satisfies } from "semver";
 import { parseAllDocuments } from "yaml";
 
-import type { EngineViolation, EnginesAuditResult, PackageEngineFloor } from "#audit/domain/types";
+import type { AuditContext, AuditScan } from "#audit/domain/types";
 import type { NodeVersion } from "#audit/engines/domain/node-floor";
 import {
   compareNodeVersions,
@@ -13,11 +13,15 @@ import {
   typesFitFloor,
 } from "#audit/engines/domain/node-floor";
 import { shortLivedMajors, uncoveredNodeRanges } from "#audit/engines/domain/range-gaps";
+import type { EngineViolation, PackageEngineFloor } from "#audit/engines/domain/violation";
+import { describeViolation, violationText } from "#audit/engines/domain/violation";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import { isWithinDirectory } from "#core/path";
+import type { Finding } from "#core/report";
 import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
+import { lineOfText } from "#core/source-position";
 import { packageJsonFileName } from "#core/workspace/well-known-files";
 import type { Workspace } from "#core/workspace/workspace";
 import { readManifest } from "#core/workspace/workspace";
@@ -46,102 +50,139 @@ type WorkspaceManifest = {
 };
 
 /**
- * Reports every Node floor that breaks a rule a consumer or CI depends on.
+ * The scan of `audit:engines`, which also lists every floor it read, for planning the CI legs that run on each.
+ */
+export interface EnginesScan extends AuditScan {
+  readonly floors: ReadonlyArray<PackageEngineFloor>;
+}
+
+// Places a violation in the manifest it names: the package's own, or the root's.
+function findingOf(fs: Filesystem, workspace: Workspace, violation: EngineViolation): Finding {
+  const owner = workspace.packages.find((candidate) => candidate.name === violation.packageName);
+  const directory =
+    violation.kind === "root-outside-dependency-engines" || owner === undefined ? "." : owner.relativeDirectory;
+  const file = directory === "." ? packageJsonFileName : `${directory}/${packageJsonFileName}`;
+  const { text, needle } = violationText(violation);
+  return {
+    file,
+    line: lineOfText(fs.readFileSync(path.join(workspace.rootDir, file), "utf8"), needle),
+    text,
+    message: describeViolation(violation),
+  };
+}
+
+/**
+ * Returns every floor the target reaches and every rule one of them breaks.
  *
  * @remarks A published package declares a floor as `>=X.Y.Z`, the same one every other published package declares. The `engines.node` of every runtime dependency must
  * admit every release from the floor up, short-lived odd lines aside; that of every dev dependency, the floor and the
  * newest release CI tests on. The `@types/node` the lockfile resolves must declare nothing the floor lacks. The
  * workspace root's floor, never listed among `floors`, must be admitted by every dependency any package installs.
+ */
+export function inspectEngines(
+  fs: Filesystem,
+  workspace: Workspace,
+  targetPath: string,
+): {
+  readonly floors: Array<PackageEngineFloor>;
+  readonly violations: Array<EngineViolation>;
+  readonly checked: number;
+} {
+  const { rootDir } = workspace;
+
+  const manifests: Array<WorkspaceManifest> = workspace.packages.map((workspacePackage) => ({
+    packageName: workspacePackage.name,
+    packageDir: workspacePackage.directory,
+    directory: workspacePackage.relativeDirectory,
+    manifest: workspacePackage.manifest,
+    checked:
+      isWithinDirectory(workspacePackage.directory, targetPath) ||
+      isWithinDirectory(targetPath, workspacePackage.directory),
+  }));
+
+  const workspaceManifests = new Map(manifests.map((entry) => [entry.packageName, entry.manifest]));
+  const typesVersions = readLockfileTypesVersions(fs, rootDir);
+  const testedNewest = readNodeVersion(fs, rootDir);
+
+  const sharedFloor = highestPublishedFloor(manifests);
+  const floors: Array<PackageEngineFloor> = [];
+  const violations: Array<EngineViolation> = [];
+  const checked = manifests.filter((entry) => entry.checked);
+  for (const { packageName, packageDir, directory, manifest } of checked) {
+    const range = nodeRangeOf(manifest);
+    if (range === undefined) {
+      if (manifest.private !== true) {
+        violations.push({ kind: "missing-floor", packageName });
+      }
+      continue;
+    }
+    const floor = parseNodeFloor(range);
+    if (floor === null) {
+      violations.push({ kind: "unparsable-floor", packageName, range });
+      continue;
+    }
+    const formatted = formatNodeVersion(floor);
+    floors.push({ packageName, directory, floor: formatted });
+    if (manifest.private !== true && sharedFloor !== null && formatted !== sharedFloor) {
+      violations.push({ kind: "divergent-floor", packageName, floor: formatted, sharedFloor });
+    }
+    const unjudgedMajors = shortLivedMajors(floor, testedNewest);
+    const tested = [formatted, ...(testedNewest === null ? [] : [formatNodeVersion(testedNewest)])];
+
+    for (const { dependency, field } of dependenciesOf(manifest)) {
+      const dependencyManifest =
+        workspaceManifests.get(dependency) ?? readInstalledManifest(fs, packageDir, dependency);
+      const dependencyRange = dependencyManifest === null ? undefined : nodeRangeOf(dependencyManifest);
+      // A range no semver parser reads cannot be judged, so it passes rather than guessing.
+      const gaps = dependencyRange === undefined ? null : uncoveredNodeRanges(floor, dependencyRange, unjudgedMajors);
+      if (dependencyRange === undefined || gaps === null) {
+        continue;
+      }
+      const uncovered = testFields.has(field)
+        ? gaps.filter((gap) => tested.some((version) => satisfies(version, gap)))
+        : gaps;
+      if (uncovered.length > 0) {
+        violations.push({
+          kind: "outside-dependency-engines",
+          packageName,
+          floor: formatted,
+          dependency,
+          field,
+          range: dependencyRange,
+          uncovered: uncovered.join(" || "),
+        });
+      }
+    }
+
+    const typesVersion = typesVersions.get(directory);
+    const resolvedTypes = typesVersion === undefined ? null : parseNodeVersion(typesVersion);
+    if (typesVersion !== undefined && (resolvedTypes === null || !typesFitFloor(resolvedTypes, floor))) {
+      violations.push({ kind: "types-off-floor", packageName, floor: formatted, typesVersion });
+    }
+  }
+
+  if (isWithinDirectory(targetPath, rootDir)) {
+    violations.push(...auditRootFloor(fs, workspace, manifests, workspaceManifests, testedNewest));
+  }
+
+  return { floors, violations, checked: checked.length };
+}
+
+/**
+ * Reports every Node floor that breaks a rule a consumer or CI depends on, each at the manifest it names.
  *
  * @since 0.15.0
  */
-export function runEnginesAudit(
-  fs: Filesystem,
-  args: {
-    readonly workspace: Workspace;
-    readonly targetPath: string;
-  },
-): Result<EnginesAuditResult, AppError> {
+export function runEnginesAudit({ fs, workspace, target }: AuditContext): Result<EnginesScan, AppError> {
   try {
-    const { workspace, targetPath } = args;
-    const { rootDir } = workspace;
-
-    const manifests: Array<WorkspaceManifest> = workspace.packages.map((workspacePackage) => ({
-      packageName: workspacePackage.name,
-      packageDir: workspacePackage.directory,
-      directory: workspacePackage.relativeDirectory,
-      manifest: workspacePackage.manifest,
-      checked:
-        isWithinDirectory(workspacePackage.directory, targetPath) ||
-        isWithinDirectory(targetPath, workspacePackage.directory),
-    }));
-
-    const workspaceManifests = new Map(manifests.map((entry) => [entry.packageName, entry.manifest]));
-    const typesVersions = readLockfileTypesVersions(fs, rootDir);
-    const testedNewest = readNodeVersion(fs, rootDir);
-
-    const sharedFloor = highestPublishedFloor(manifests);
-    const floors: Array<PackageEngineFloor> = [];
-    const violations: Array<EngineViolation> = [];
-    const checked = manifests.filter((entry) => entry.checked);
-    for (const { packageName, packageDir, directory, manifest } of checked) {
-      const range = nodeRangeOf(manifest);
-      if (range === undefined) {
-        if (manifest.private !== true) {
-          violations.push({ kind: "missing-floor", packageName });
-        }
-        continue;
-      }
-      const floor = parseNodeFloor(range);
-      if (floor === null) {
-        violations.push({ kind: "unparsable-floor", packageName, range });
-        continue;
-      }
-      const formatted = formatNodeVersion(floor);
-      floors.push({ packageName, directory, floor: formatted });
-      if (manifest.private !== true && sharedFloor !== null && formatted !== sharedFloor) {
-        violations.push({ kind: "divergent-floor", packageName, floor: formatted, sharedFloor });
-      }
-      const unjudgedMajors = shortLivedMajors(floor, testedNewest);
-      const tested = [formatted, ...(testedNewest === null ? [] : [formatNodeVersion(testedNewest)])];
-
-      for (const { dependency, field } of dependenciesOf(manifest)) {
-        const dependencyManifest =
-          workspaceManifests.get(dependency) ?? readInstalledManifest(fs, packageDir, dependency);
-        const dependencyRange = dependencyManifest === null ? undefined : nodeRangeOf(dependencyManifest);
-        // A range no semver parser reads cannot be judged, so it passes rather than guessing.
-        const gaps = dependencyRange === undefined ? null : uncoveredNodeRanges(floor, dependencyRange, unjudgedMajors);
-        if (dependencyRange === undefined || gaps === null) {
-          continue;
-        }
-        const uncovered = testFields.has(field)
-          ? gaps.filter((gap) => tested.some((version) => satisfies(version, gap)))
-          : gaps;
-        if (uncovered.length > 0) {
-          violations.push({
-            kind: "outside-dependency-engines",
-            packageName,
-            floor: formatted,
-            dependency,
-            field,
-            range: dependencyRange,
-            uncovered: uncovered.join(" || "),
-          });
-        }
-      }
-
-      const typesVersion = typesVersions.get(directory);
-      const resolvedTypes = typesVersion === undefined ? null : parseNodeVersion(typesVersion);
-      if (typesVersion !== undefined && (resolvedTypes === null || !typesFitFloor(resolvedTypes, floor))) {
-        violations.push({ kind: "types-off-floor", packageName, floor: formatted, typesVersion });
-      }
-    }
-
-    if (isWithinDirectory(targetPath, rootDir)) {
-      violations.push(...auditRootFloor(fs, workspace, manifests, workspaceManifests, testedNewest));
-    }
-
-    return ok({ floors, violations, packageCount: checked.length });
+    const { floors, violations, checked } = inspectEngines(fs, workspace, target.path);
+    return ok({
+      findings: violations.map((violation) => findingOf(fs, workspace, violation)),
+      scannedFiles: 0,
+      scannedPackages: checked,
+      fixedFiles: [],
+      floors,
+    });
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }

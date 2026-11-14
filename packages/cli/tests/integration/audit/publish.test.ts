@@ -54,11 +54,20 @@ function writeLibrary(options: { readonly sources: ReadonlyArray<string>; readon
 }
 
 async function unreachableStylesheets(): Promise<unknown> {
-  const outcome = runPublishAudit(nodeFilesystem, { workspace: await workspaceAt(rootDir), targetPath: rootDir });
+  const workspace = await workspaceAt(rootDir);
+  const outcome = runPublishAudit({
+    fs: nodeFilesystem,
+    workspace,
+    target: { path: rootDir, relativePath: ".", isFile: false },
+    targetGiven: false,
+    currentWorkingDirectory: rootDir,
+    flags: { fix: false },
+    verbose: false,
+  });
   if (!outcome.ok) {
     throw outcome.error;
   }
-  return outcome.value.unreachableStylesheets;
+  return outcome.value.findings.filter((finding) => finding.file.endsWith(".css"));
 }
 
 describe("audit:publish — stylesheet sources", () => {
@@ -67,10 +76,10 @@ describe("audit:publish — stylesheet sources", () => {
 
     expect(await unreachableStylesheets()).toEqual([
       {
-        packageName: "@x/ui",
-        stylesheet: "packages/ui/src/css/foundation/source.css",
-        sources: [{ line: 1, pattern: "../../**/*.{ts,tsx}" }],
-        missingFilesEntries: [],
+        file: "packages/ui/src/css/foundation/source.css",
+        line: 1,
+        text: '@source "../../**/*.{ts,tsx}"',
+        message: "registers no file the tarball ships",
       },
     ]);
   });
@@ -86,8 +95,8 @@ describe("audit:publish — stylesheet sources", () => {
 
     expect(await unreachableStylesheets()).toEqual([
       expect.objectContaining({
-        stylesheet: "packages/ui/src/css/foundation/source.css",
-        missingFilesEntries: ["dist"],
+        file: "packages/ui/src/css/foundation/source.css",
+        message: "registers no file the tarball ships; dist not on disk — build the package first",
       }),
     ]);
   });

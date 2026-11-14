@@ -1,5 +1,5 @@
 /** The display-name convention: a name is spelled like the TS symbol it stands for, under its owner's namespace. */
-import type { DisplayNameViolation } from "#audit/domain/types";
+import type { Detection } from "#audit/domain/types";
 import { lineOfOffset } from "#core/source-position";
 
 /** The owner: a kebab-case package, app or feature slug, or a scoped package name. */
@@ -37,8 +37,8 @@ const KIND_LABEL: Record<DisplayNameKind, string> = {
  *
  * @since 0.9.0
  */
-export function auditDisplayNames(sourceText: string): Array<DisplayNameViolation> {
-  const violations: Array<DisplayNameViolation> = [];
+export function auditDisplayNames(sourceText: string): Array<Detection> {
+  const violations: Array<Detection> = [];
   for (const match of sourceText.matchAll(DISPLAY_NAME_CALL)) {
     const kind: DisplayNameKind = match[1] === undefined ? "module" : (match[1] as "token" | "tag");
     const reason = reasonFor(kind, match[5]!);

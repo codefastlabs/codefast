@@ -87,7 +87,7 @@ describe("a full audit run", () => {
       expect(summary.ok).toBe(false);
       expect(summary.result.audits).toHaveLength(10);
       expect(summary.result.audits.find((audit) => audit.name === "links")?.status).toBe("findings");
-      expect(summary.result.audits.find((audit) => audit.name === "rtl")?.status).toBe("skipped");
+      expect(summary.result.audits.find((audit) => audit.name === "rtl")?.status).toBe("clean");
     } finally {
       rmSync(soloDir, { recursive: true, force: true });
     }

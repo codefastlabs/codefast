@@ -107,10 +107,8 @@ export function deriveContext<Flag extends string>(
   return target.ok ? { ok: true, value: { ...parent, target: target.value, flags } } : target;
 }
 
-/**
- * Prints an error on stderr as `[CODE] message`, with the stack behind it when `verbose` asks for it.
- */
-export function presentAppError(error: AppError, verbose: boolean): void {
+// Prints an error on stderr as `[CODE] message`, with the stack behind it when `verbose` asks for it.
+function presentAppError(error: AppError, verbose: boolean): void {
   logger.err(paint("red", `[${error.code}] ${error.message}`, process.stderr));
   if (verbose && error.cause instanceof Error && error.cause.stack !== undefined) {
     logger.err(error.cause.stack);

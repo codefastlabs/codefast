@@ -4,7 +4,7 @@ import path from "node:path";
 
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import type { PropsAuditResult } from "#audit/domain/types";
+import type { AuditReport } from "#audit/domain/types";
 import { runCli } from "#cli";
 import { logger } from "#core/logger";
 
@@ -54,10 +54,8 @@ beforeAll(async () => {
   const cwd = vi.spyOn(process, "cwd").mockReturnValue(fixtureDir);
   try {
     exitCode = await runCli(["node", "codefast", "audit:props", fixtureDir, "--json"]);
-    const summary = JSON.parse(String(out.mock.calls[0]?.[0])) as { result: PropsAuditResult };
-    reported = summary.result.files.flatMap(({ violations }) =>
-      violations.map(({ raw }) => /type (\w+)/.exec(raw)?.[1] ?? raw),
-    );
+    const summary = JSON.parse(String(out.mock.calls[0]?.[0])) as { result: AuditReport };
+    reported = summary.result.findings.map(({ text }) => /type (\w+)/.exec(text)?.[1] ?? text);
   } finally {
     process.exitCode = previousExitCode;
     out.mockRestore();

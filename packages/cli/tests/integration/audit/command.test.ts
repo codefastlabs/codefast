@@ -47,25 +47,40 @@ describe("an audit:<name> command", () => {
     const { exitCode, out } = await run(["audit:links"]);
 
     expect(exitCode).toBe(0);
-    expect(out).toContain("all resolve");
+    expect(out).toContain("✓ audit:links: no findings in 1 file");
   });
 
   it("reports no floors for a target holding no package", async () => {
     const { exitCode, out } = await run(["audit:engines", "--json"]);
 
     expect(exitCode).toBe(0);
-    expect(JSON.parse(out)).toMatchObject({ ok: true, result: { floors: [], violations: [] } });
+    expect(JSON.parse(out)).toMatchObject({ ok: true, result: { floors: [], findings: [], scannedPackages: 1 } });
   });
 });
 
 describe("a full audit run", () => {
-  it("reports every audit that ran as clean and skips rtl with no configured target", async () => {
+  it("reports every audit that ran as clean, and skips one the config turns off", async () => {
+    writeFileSync(path.join(projectDir, "codefast.config.json"), JSON.stringify({ audit: { rtl: false } }));
+
     const { exitCode, out } = await run(["audit"]);
 
     expect(exitCode).toBe(0);
-    expect(out).toContain("audit:links");
-    expect(out).toContain("○ skipped: no audit.rtl.target in the config");
+    expect(out).toContain("✓ audit:links: no findings in 1 file");
+    expect(out).toContain("○ audit:rtl: turned off in the config");
     expect(out).toContain("✓ audit: all 9 audits that ran are clean");
+  });
+
+  it("drops a finding the config allowlists, and counts it", async () => {
+    writeFileSync(path.join(projectDir, "README.md"), "# Solo\n\n[gone](./missing.md)\n");
+    writeFileSync(
+      path.join(projectDir, "codefast.config.json"),
+      JSON.stringify({ audit: { links: { allowlist: ["README.md:./missing.md"] } } }),
+    );
+
+    const { exitCode, out } = await run(["audit:links", "--json"]);
+
+    expect(exitCode).toBe(0);
+    expect(JSON.parse(out)).toMatchObject({ ok: true, result: { findings: [], allowlisted: 1 } });
   });
 
   it("exits 1 and names the audit with findings", async () => {
@@ -77,7 +92,7 @@ describe("a full audit run", () => {
     expect(exitCode).toBe(1);
     expect(summary.ok).toBe(false);
     expect(summary.result.audits.find((audit) => audit.name === "links")?.status).toBe("findings");
-    expect(summary.result.audits.find((audit) => audit.name === "rtl")?.status).toBe("skipped");
+    expect(summary.result.audits.find((audit) => audit.name === "rtl")?.status).toBe("clean");
   });
 
   it("exits 2 when an audit cannot run, and still runs the rest", async () => {
@@ -87,10 +102,10 @@ describe("a full audit run", () => {
       JSON.stringify({ audit: { rtl: { target: "missing" } } }),
     );
 
-    const { exitCode, out, err } = await run(["audit"]);
+    const { exitCode, out } = await run(["audit"]);
 
     expect(exitCode).toBe(2);
-    expect(err).toContain("[NOT_FOUND]");
+    expect(out).toContain("✗ audit:rtl: [NOT_FOUND]");
     expect(out).toContain("✗ audit: 2 of 10 failed — rtl (error), links (findings)");
   });
 });

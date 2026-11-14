@@ -1,71 +1,25 @@
-import path from "node:path";
-
-import type { RtlAuditResult, RtlFileViolations } from "#audit/domain/types";
+import { fileScan, findingsIn } from "#audit/domain/findings";
+import type { AuditContext, AuditScan } from "#audit/domain/types";
 import { auditFileContent } from "#audit/rtl/domain/audit-file";
 import { AppError, messageFrom } from "#core/errors";
-import type { Filesystem } from "#core/filesystem/filesystem";
+import { relativePosixPath } from "#core/path";
 import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
 import { walkTsxFiles } from "#core/workspace/typescript-walk";
 
 /**
- * Scans a target path for physical-direction Tailwind class violations.
+ * Scans the target for physical-direction Tailwind classes that should be logical or `rtl:`-paired.
  *
  * @since 0.5.0-canary.6
  */
-export function runRtlAudit(
-  fs: Filesystem,
-  args: {
-    readonly rootDir: string;
-    readonly targetPath: string;
-    readonly allowlist: ReadonlyArray<string>;
-  },
-): Result<RtlAuditResult, AppError> {
+export function runRtlAudit({ fs, workspace, target }: AuditContext): Result<AuditScan, AppError> {
   try {
-    const allowlist = new Set(args.allowlist);
-    // Caller passes canonical roots (prepareRtlAudit realpaths them) so relative() keys stay stable.
-    const { rootDir, targetPath } = args;
-    const filesToScan = collectScanPaths(fs, targetPath);
-    const files: Array<RtlFileViolations> = [];
-    let violationCount = 0;
-    let allowlistedCount = 0;
-
-    for (const absolutePath of filesToScan) {
-      const relativePath = toPosixPath(path.relative(rootDir, absolutePath));
-      const content = fs.readFileSync(absolutePath, "utf8");
-      const remaining = auditFileContent(content).filter(({ raw }) => {
-        const isAllowed = allowlist.has(raw) || allowlist.has(`${relativePath}:${raw}`);
-        if (isAllowed) {
-          allowlistedCount++;
-        }
-        return !isAllowed;
-      });
-      if (remaining.length === 0) {
-        continue;
-      }
-      violationCount += remaining.length;
-      files.push({ relativePath, violations: remaining });
-    }
-
-    return ok({
-      files,
-      violationCount,
-      allowlistedCount,
-      scannedFileCount: filesToScan.length,
-    });
+    const files = walkTsxFiles(target.path, fs);
+    const findings = files.flatMap((filePath) =>
+      findingsIn(relativePosixPath(workspace.rootDir, filePath), auditFileContent(fs.readFileSync(filePath, "utf8"))),
+    );
+    return ok(fileScan(findings, files.length));
   } catch (caughtError: unknown) {
     return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
   }
-}
-
-function collectScanPaths(fs: Filesystem, targetPath: string): Array<string> {
-  const stats = fs.statSync(targetPath);
-  if (stats.isFile()) {
-    return [targetPath];
-  }
-  return walkTsxFiles(targetPath, fs);
-}
-
-function toPosixPath(filePath: string): string {
-  return filePath.split(path.sep).join("/");
 }

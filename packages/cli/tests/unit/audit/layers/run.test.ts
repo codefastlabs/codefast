@@ -3,75 +3,48 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { runLayersAudit } from "#audit/layers/run";
-import { createAuditTestFilesystem } from "#tests/unit/support/audit-test-filesystem";
+import { createCommandContext } from "#tests/unit/support/command-context";
+import { createMemoryFilesystem } from "#tests/unit/support/memory-filesystem";
 
-const rootDir = path.join(path.sep, "repo");
-const diRoot = path.join(rootDir, "packages", "di", "src");
-const files = {
-  [path.join(diRoot, "core", "token.ts")]: `export const token = 1;\n`,
-  [path.join(diRoot, "core", "binding.ts")]: `import { resolve } from "#engine/resolver";\nexport const b = resolve;\n`,
-  [path.join(diRoot, "engine", "resolver.ts")]: `import { token } from "#core/token";\nexport const resolve = token;\n`,
-  [path.join(diRoot, "index.ts")]: `export { b } from "#core/binding";\nexport { resolve } from "#engine/resolver";\n`,
-};
-const packages = [{ name: "@acme/di", rootPath: diRoot, layers: [["core"], ["engine"], ["index.ts"]] }];
+const root = path.resolve("/repo");
+
+async function layersContext(target?: string) {
+  const { fs } = createMemoryFilesystem({
+    [path.join(root, "pnpm-workspace.yaml")]: "packages:\n  - packages/*\n",
+    [path.join(root, "codefast.config.json")]: JSON.stringify({
+      audit: { layers: { packages: { "@acme/di": { layers: [["core"], ["engine"], ["index.ts"]] } } } },
+    }),
+    [path.join(root, "packages/di/package.json")]: '{"name":"@acme/di"}',
+    [path.join(root, "packages/di/src/core/token.ts")]: `export const token = 1;\n`,
+    [path.join(root, "packages/di/src/core/binding.ts")]:
+      `import { resolve } from "#engine/resolver";\nexport const b = resolve;\n`,
+    [path.join(root, "packages/di/src/engine/resolver.ts")]:
+      `import { token } from "#core/token";\nexport const resolve = token;\n`,
+    [path.join(root, "packages/di/src/index.ts")]:
+      `export { b } from "#core/binding";\nexport { resolve } from "#engine/resolver";\n`,
+    [path.join(root, "packages/ui/package.json")]: '{"name":"@acme/ui"}',
+  });
+  return createCommandContext(fs, { cwd: root, target, flags: { fix: false } });
+}
 
 describe("runLayersAudit", () => {
-  it("reports the one import that points up, with a repo-relative path", () => {
-    const outcome = runLayersAudit(createAuditTestFilesystem(files), {
-      rootDir,
-      targetPath: rootDir,
-      allowlist: [],
-      packages,
+  it("reports the one import that points up, at its root-relative file", async () => {
+    const outcome = runLayersAudit(await layersContext());
+
+    expect(outcome.ok && outcome.value).toMatchObject({
+      scannedFiles: 4,
+      scannedPackages: 1,
+      findings: [
+        { file: "packages/di/src/core/binding.ts", line: 1, text: `import { resolve } from "#engine/resolver";` },
+      ],
     });
-    expect(outcome.ok).toBe(true);
-    if (!outcome.ok) {
-      return;
-    }
-    expect(outcome.value).toMatchObject({ violationCount: 1, scannedFileCount: 4, packageCount: 1 });
-    expect(outcome.value.files[0]?.relativePath).toBe("packages/di/src/core/binding.ts");
   });
 
-  it("honours an allowlist entry spelled bare or with its file", () => {
-    const raw = `import { resolve } from "#engine/resolver";`;
-    for (const entry of [raw, `packages/di/src/core/binding.ts:${raw}`]) {
-      const outcome = runLayersAudit(createAuditTestFilesystem(files), {
-        rootDir,
-        targetPath: rootDir,
-        allowlist: [entry],
-        packages,
-      });
-      expect(outcome.ok).toBe(true);
-      if (!outcome.ok) {
-        return;
-      }
-      expect(outcome.value).toMatchObject({ violationCount: 0, allowlistedCount: 1 });
-    }
-  });
+  it("narrows to the modules under a target inside a package, and skips packages the target misses", async () => {
+    const narrowed = runLayersAudit(await layersContext("packages/di/src/engine"));
+    const elsewhere = runLayersAudit(await layersContext("packages/ui"));
 
-  it("narrows to the modules under a target inside a package, and skips packages the target misses", () => {
-    const fs = createAuditTestFilesystem(files);
-    const narrowed = runLayersAudit(fs, {
-      rootDir,
-      targetPath: path.join(diRoot, "engine"),
-      allowlist: [],
-      packages,
-    });
-    expect(narrowed.ok).toBe(true);
-    if (!narrowed.ok) {
-      return;
-    }
-    expect(narrowed.value).toMatchObject({ violationCount: 0, scannedFileCount: 1, packageCount: 1 });
-
-    const elsewhere = runLayersAudit(fs, {
-      rootDir,
-      targetPath: path.join(rootDir, "packages", "ui"),
-      allowlist: [],
-      packages,
-    });
-    expect(elsewhere.ok).toBe(true);
-    if (!elsewhere.ok) {
-      return;
-    }
-    expect(elsewhere.value).toMatchObject({ scannedFileCount: 0, packageCount: 0 });
+    expect(narrowed.ok && narrowed.value).toMatchObject({ findings: [], scannedFiles: 1, scannedPackages: 1 });
+    expect(elsewhere.ok && elsewhere.value).toMatchObject({ scannedFiles: 0, scannedPackages: 0 });
   });
 });

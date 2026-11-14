@@ -14,11 +14,11 @@ describe("splitClassName", () => {
 });
 
 describe("auditFileContent", () => {
-  it("flags physical margin utilities with a logical suggestion", () => {
+  it("flags physical margin utilities with a logical replacement", () => {
     const violations = auditFileContent(`const c = "flex ml-2 pr-4";`);
     expect(violations).toEqual([
-      { line: 1, raw: "ml-2", suggestion: "ms-2" },
-      { line: 1, raw: "pr-4", suggestion: "pe-4" },
+      { line: 1, raw: "ml-2", reason: "use ms-2" },
+      { line: 1, raw: "pr-4", reason: "use pe-4" },
     ]);
   });
 
@@ -32,7 +32,7 @@ describe("auditFileContent", () => {
       {
         line: 1,
         raw: "translate-x-1",
-        suggestion: "add rtl:-translate-x-1 (or rtl:…:-translate-x-1)",
+        reason: "add rtl:-translate-x-1 (or rtl:…:-translate-x-1)",
       },
     ]);
     expect(auditFileContent(`const c = "translate-x-1 rtl:-translate-x-1";`)).toEqual([]);
@@ -44,7 +44,7 @@ describe("auditFileContent", () => {
 
   it("requires rtl:space-x-reverse for space-x", () => {
     expect(auditFileContent(`const c = "space-x-2";`)).toEqual([
-      { line: 1, raw: "space-x-2", suggestion: "add rtl:space-x-reverse" },
+      { line: 1, raw: "space-x-2", reason: "add rtl:space-x-reverse" },
     ]);
     expect(auditFileContent(`const c = "space-x-2 rtl:space-x-reverse";`)).toEqual([]);
   });
@@ -55,7 +55,7 @@ describe("auditFileContent", () => {
       {
         line: 1,
         raw: "slide-in-from-left-2",
-        suggestion: "check: physical slide outside a side/motion context",
+        reason: "check: physical slide outside a side/motion context",
       },
     ]);
   });
