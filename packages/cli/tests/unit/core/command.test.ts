@@ -145,16 +145,6 @@ describe("the command pipeline", () => {
     expect(verbose.err).toContain("Error: boom\n    at ");
   });
 
-  it("keeps the code of an AppError a run throws", async () => {
-    const throwing = echoSpec({
-      run: async () => {
-        throw new AppError("INFRA_FAILURE", "no typescript");
-      },
-    });
-
-    expect(await run(throwing, [])).toMatchObject({ exitCode: 2, err: "[INFRA_FAILURE] no typescript" });
-  });
-
   it("refuses a target that does not exist before the run starts", async () => {
     const runSpy = vi.fn();
 

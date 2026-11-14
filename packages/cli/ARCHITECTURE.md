@@ -37,8 +37,10 @@ own — which files or packages it reads and what it detects there — and it re
 scanned, and the files `--fix` rewrote. Everything after the scan is written once in
 [`audit/command.ts`](src/audit/command.ts): the allowlist from the audit's config section
 ([`applyAllowlist`](src/audit/domain/findings.ts)), the `audit:<name>` command, the verdict (any finding fails), the
-presenter ([`audit/output.ts`](src/audit/output.ts)), and the bare `audit` that runs them all. A detector states what it
-found as a `Detection` — `line`, `raw` text, `reason` — and the run places it in its file.
+presenter ([`audit/output.ts`](src/audit/output.ts)), and the bare `audit` that runs them all. A scan that throws fails
+only its own audit, as an `UNEXPECTED` error, so the bare `audit` still reports every other one, as a writing command
+still reports every other package. A detector states what it found as a `Detection` — `line`, `raw` text, `reason` — and
+the run places it in its file.
 
 ## Layout (`src/`)
 

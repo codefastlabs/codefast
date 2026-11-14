@@ -3,7 +3,8 @@ import process from "node:process";
 import { Command } from "commander";
 
 import type { CodefastConfig } from "#core/config/schema";
-import { AppError, messageFrom } from "#core/errors";
+import type { AppError } from "#core/errors";
+import { messageFrom, unexpectedError } from "#core/errors";
 import { CLI_EXIT_ERROR, CLI_EXIT_FAILURE, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import { nodeFilesystem } from "#core/filesystem/node";
@@ -227,9 +228,7 @@ async function execute<Report, Flag extends string>(
   try {
     return await runPipeline(spec, fs, givenTarget, options, output);
   } catch (caughtError: unknown) {
-    const error =
-      caughtError instanceof AppError ? caughtError : new AppError("UNEXPECTED", messageFrom(caughtError), caughtError);
-    reportError(spec.name, error, output);
+    reportError(spec.name, unexpectedError(caughtError), output);
     return CLI_EXIT_ERROR;
   }
 }
