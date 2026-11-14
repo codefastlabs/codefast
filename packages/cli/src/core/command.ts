@@ -3,8 +3,7 @@ import process from "node:process";
 import { Command } from "commander";
 
 import type { CodefastConfig } from "#core/config/schema";
-import type { AppError } from "#core/errors";
-import { messageFrom } from "#core/errors";
+import { AppError, messageFrom } from "#core/errors";
 import { CLI_EXIT_ERROR, CLI_EXIT_FAILURE, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import { nodeFilesystem } from "#core/filesystem/node";
@@ -116,7 +115,13 @@ function presentAppError(error: AppError, verbose: boolean): void {
   }
 }
 
-function reportError(command: string, error: AppError, options: { json: boolean; verbose: boolean }): void {
+// How the run reports: `--json` and `--verbose`, read before anything else can fail.
+interface Output {
+  readonly json: boolean;
+  readonly verbose: boolean;
+}
+
+function reportError(command: string, error: AppError, options: Output): void {
   if (options.json) {
     const { code, message } = error;
     logger.out(JSON.stringify({ schemaVersion: JSON_SCHEMA_VERSION, command, ok: false, error: { code, message } }));
@@ -141,13 +146,13 @@ async function runAfterWrite(
   }
 }
 
-async function execute<Report, Flag extends string>(
+async function runPipeline<Report, Flag extends string>(
   spec: CommandSpec<Report, Flag>,
   fs: Filesystem,
   givenTarget: string | undefined,
   options: Readonly<Record<string, unknown>>,
+  output: Output,
 ): Promise<number> {
-  const output = { json: options.json === true, verbose: options.verbose === true };
   const startedAt = performance.now();
   const currentWorkingDirectory = process.cwd();
 
@@ -209,6 +214,24 @@ async function execute<Report, Flag extends string>(
     }
   }
   return exitCodes[verdict];
+}
+
+// A throw no run anticipated is reported like any error and exits `2`, rather than escaping to Node's exit `1`.
+async function execute<Report, Flag extends string>(
+  spec: CommandSpec<Report, Flag>,
+  fs: Filesystem,
+  givenTarget: string | undefined,
+  options: Readonly<Record<string, unknown>>,
+): Promise<number> {
+  const output: Output = { json: options.json === true, verbose: options.verbose === true };
+  try {
+    return await runPipeline(spec, fs, givenTarget, options, output);
+  } catch (caughtError: unknown) {
+    const error =
+      caughtError instanceof AppError ? caughtError : new AppError("UNEXPECTED", messageFrom(caughtError), caughtError);
+    reportError(spec.name, error, output);
+    return CLI_EXIT_ERROR;
+  }
 }
 
 /**

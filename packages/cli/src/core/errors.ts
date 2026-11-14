@@ -5,7 +5,7 @@
  * @since 0.3.16-canary.0
  */
 
-export type AppErrorCode = "NOT_FOUND" | "VALIDATION_ERROR" | "INFRA_FAILURE";
+export type AppErrorCode = "NOT_FOUND" | "VALIDATION_ERROR" | "INFRA_FAILURE" | "UNEXPECTED";
 
 /**
  * A coded application error carried in `Result` values rather than thrown.
