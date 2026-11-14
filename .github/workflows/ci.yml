@@ -26,7 +26,7 @@ jobs:
     # test + coverage suite here (run-tests defaults to true).
     secrets: inherit
 
-  # Each package declares its own Node floor; `codefast audit engines` lists them, and this job turns that list into
+  # Each package declares its own Node floor; `codefast audit:engines` lists them, and this job turns that list into
   # one Node Matrix leg per distinct floor, so every floor a package promises is a contract CI proves. The audit's
   # rules gate in `verify`; here a violation only stops the plan.
   node-floors:
@@ -55,14 +55,14 @@ jobs:
         id: plan
         run: |
           set -o pipefail
-          floors=$(node ./packages/cli/dist/bin.js audit engines --json | jq -c '
+          floors=$(node ./packages/cli/dist/bin.js audit:engines --json | jq -c '
             [.result.floors[] | select(.directory | test("^(packages|internal)/"))]
             | group_by(.floor)
             | map({node: .[0].floor, filters: (map("--filter=" + .packageName) | join(" "))})')
           echo "floors=$floors" >> "$GITHUB_OUTPUT"
 
   # Run each floor's packages, every test category, on that floor itself; the current line (.node-version) is covered
-  # by `verify`. Publish-surface correctness is a static check in `verify` (audit publish), not a per-Node runtime step.
+  # by `verify`. Publish-surface correctness is a static check in `verify` (audit:publish), not a per-Node runtime step.
   node-matrix:
     name: Node Matrix (${{ matrix.node }})
     needs: node-floors

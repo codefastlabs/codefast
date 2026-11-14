@@ -41,7 +41,7 @@ import { presentRtlAuditResult } from "#audit/rtl/output";
 import { prepareRtlAudit } from "#audit/rtl/prepare";
 import { runRtlAudit } from "#audit/rtl/run";
 import type { BaseCommandOptions, CommandPipeline, NamedCommandPipeline } from "#core/cli/command-pipeline";
-import { applyCommandPipeline, registerPipelineSubcommand } from "#core/cli/command-pipeline";
+import { applyCommandPipeline } from "#core/cli/command-pipeline";
 import type { CodefastConfig } from "#core/config/schema";
 import type { AppError } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
@@ -217,9 +217,9 @@ type AuditAllRequest = {
   readonly opts: AuditActionOptions;
 };
 
-/** An audit as the full run sees it: registered as its own subcommand, and runnable over the repo root. */
+/** An audit as the full run sees it: a command of its own, and runnable over the repo root. */
 interface RegisteredAudit {
-  readonly pipeline: (fs: Filesystem) => (parent: Command) => void;
+  readonly command: (fs: Filesystem) => Command;
   readonly runOverRepo: (fs: Filesystem, request: AuditAllRequest) => Promise<AuditOutcome>;
 }
 
@@ -227,7 +227,12 @@ function registeredAudit<CheckResult, Prelude extends AuditCommandPrelude>(
   check: AuditCheck<CheckResult, Prelude>,
 ): RegisteredAudit {
   return {
-    pipeline: (fs) => (parent) => registerPipelineSubcommand(parent, fs, auditCheckToPipeline(check)),
+    command: (fs) =>
+      applyCommandPipeline(
+        new Command(`audit:${check.name}`).description(check.description),
+        fs,
+        auditCheckToPipeline(check),
+      ),
     runOverRepo: async (fs, request) => {
       const skipReason = check.skipReason?.(request.config);
       if (skipReason !== undefined) {
@@ -305,21 +310,13 @@ const auditAllPipeline: CommandPipeline<
 };
 
 /**
- * Top-level `audit` command — the source scans. Run bare, it runs every audit over the repo root and reports each;
- * every audit only reports, except `comments --fix`, which writes only where the rewrite discards nothing a person
- * wrote.
- *
- * @since 0.5.0-canary.6
+ * Creates the `audit` command, which runs every audit over the repo root, and one `audit:<name>` command per audit.
  */
-export function createAuditCommand(): Command {
-  const cmd = new Command("audit")
-    .description("Source audits — run bare to run every audit over the repo root")
-    .enablePositionalOptions();
-
-  for (const audit of AUDITS) {
-    audit.pipeline(nodeFilesystem)(cmd);
-  }
-  applyCommandPipeline(cmd, nodeFilesystem, auditAllPipeline);
-
-  return cmd;
+export function createAuditCommands(): Array<Command> {
+  const all = applyCommandPipeline(
+    new Command("audit").description("Run every audit over the repo root and report each under its name"),
+    nodeFilesystem,
+    auditAllPipeline,
+  );
+  return [all, ...AUDITS.map((audit) => audit.command(nodeFilesystem))];
 }

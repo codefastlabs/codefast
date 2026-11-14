@@ -16,7 +16,7 @@ import { err, ok } from "#core/result";
 import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
 import { sourceCommentLanguage, walkSourceFiles } from "#core/workspace/source-walk";
 import { packageJsonFileName } from "#core/workspace/well-known-files";
-import { unshippedPublishTargets } from "#pack-slim/domain/transform";
+import { unshippedPublishTargets } from "#publish/domain/transform";
 
 /**
  * Reports what would break a consumer's install: a `#/`-prefixed import Node's ESM resolver rejects on

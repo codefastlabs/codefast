@@ -57,7 +57,7 @@ async function audit(targetPath = rootDir): Promise<EnginesAuditResult> {
   return outcome.value;
 }
 
-describe("audit engines", () => {
+describe("audit:engines", () => {
   it("lists every floor and passes when each holds", async () => {
     writePackage("core", { name: "@x/core", private: true, engines: { node: ">=22.12.0" } });
     writePackage("app", {

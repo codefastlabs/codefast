@@ -43,10 +43,10 @@ Ground rules that bite in this package specifically:
 - Internal imports use the `#` subpath imports declared in `package.json#imports` (e.g. `#resolution/resolver`). Do
   **not** add `compilerOptions.paths` for internal aliases.
 - Keep `import type` separate from value imports.
-- Doc comments are **TSDoc**, one concise line stating the _why_. **Never hand-write an `@since` tag** — `codefast tag`
-  stamps it at release. Every export here already carries one, so a new export looks unfinished without it; the absence
-  is correct. Check rather than remember: `git diff --cached | grep -E '^\+.*@since'` — any hit is a bug, and a removed
-  tag is a bug too unless the symbol is gone.
+- Doc comments are **TSDoc**, one concise line stating the _why_. **Never hand-write an `@since` tag** —
+  `codefast since:stamp` stamps it at release. Every export here already carries one, so a new export looks unfinished
+  without it; the absence is correct. Check rather than remember: `git diff --cached | grep -E '^\+.*@since'` — any hit
+  is a bug, and a removed tag is a bug too unless the symbol is gone.
 - **Three prose lines is the cap, and no numbers, history, or document pointers in source comments.** A longer _why_
   belongs in [ARCHITECTURE.md](./ARCHITECTURE.md) and a number belongs with its method (the benchmark suite or its
   RESULTS.md), but do **not** link to either from the code — state the invariant in the comment instead. A pointer rots
@@ -60,12 +60,12 @@ Ground rules that bite in this package specifically:
 
 ## Regenerate exports — (conditional: added/moved/renamed a module)
 
-`package.json#exports` is **generated from `dist/`** by `codefast mirror`, never edited by hand:
+`package.json#exports` is **generated from `dist/`** by `codefast exports:generate`, never edited by hand:
 
 ```bash
-pnpm --filter @codefast/di build   # mirror reads dist/, so build first
-pnpm cli:mirror:preview            # dry-run: review the exports diff
-pnpm cli:mirror                    # write package.json#exports
+pnpm --filter @codefast/di build   # exports:generate reads dist/, so build first
+pnpm cli:exports:generate --dry-run            # dry-run: review the exports diff
+pnpm cli:exports:generate                    # write package.json#exports
 ```
 
 Requires `packages/cli/dist` to exist (build the CLI if it doesn't).
@@ -81,10 +81,10 @@ TS7 emits `.js` + `.d.ts` per file; there is no bundler. `apps/web` consumes the
 
 `package.json#files` ships `src` on purpose: the `source` export condition lets dev and tests run the TypeScript
 directly with no prior build, and `dist`'s source maps point back at it so in-repo consumers get go-to-definition. None
-of that reaches npm — `codefast pack-slim` runs on the CI checkout right before `changeset publish` and strips `src`,
-every `source` condition, the dev-only scripts and the source maps, so the tarball carries `dist` runtime and types
-only. Do not "tidy" `src` out of `files`, and do not repoint the `types`/`default` conditions at `src`: those two lanes
-are a consumer's compiler and a consumer's Node.
+of that reaches npm — `codefast publish:prepare` runs on the CI checkout right before `changeset publish` and strips
+`src`, every `source` condition, the dev-only scripts and the source maps, so the tarball carries `dist` runtime and
+types only. Do not "tidy" `src` out of `files`, and do not repoint the `types`/`default` conditions at `src`: those two
+lanes are a consumer's compiler and a consumer's Node.
 
 ## Test
 

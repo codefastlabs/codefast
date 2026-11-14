@@ -29,7 +29,7 @@ describe("presentAuditAll", () => {
     );
 
     expect(present).toHaveBeenCalledOnce();
-    expect(printed.out()).toContain("audit links");
+    expect(printed.out()).toContain("audit:links");
     expect(printed.out()).toContain("Skipped: no target");
     expect(printed.out()).toContain("All 1 audits that ran are clean");
   });

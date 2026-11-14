@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Overview
 
 Codefast is a **pnpm workspaces + Turborepo** monorepo (pnpm 12; Node ≥ 24.15 to develop, and every published package
-declares that same `engines.node` floor, because the packages ship as one set — held by `codefast audit engines` and
+declares that same `engines.node` floor, because the packages ship as one set — held by `codefast audit:engines` and
 proven on the floor in CI; see `SUPPORT.md`) publishing the `@codefast/*` packages. The flagship is `@codefast/di`,
 type-safe dependency injection on standard decorators; `@codefast/ui` is the Radix-based, Tailwind CSS 4 component
 library. `apps/web` is the TanStack Start site behind codefastlabs.com: a landing page over every published package, the
@@ -24,17 +24,17 @@ it starts in `internal/`.
   used for **both** type-checking (`tsc --noEmit`) and package builds. TS 7 emits `.js` + `.d.ts`, so every `packages/*`
   builds with plain `tsc` (no bundler — see below). There is no `@typescript/native` alias and no classic
   `@typescript/typescript6` anymore: `@codefast/cli` — the only place that needed the classic compiler API — now parses
-  TypeScript with **`oxc-parser`** (its `audit`/`tag` AST tooling), so nothing in the repo depends on the classic
-  `typescript` runtime. (TanStack Start's Vite plugins build fine on TS 7 — verified.) TS 7 is also every package's
-  **consumer floor** ([`SUPPORT.md`](SUPPORT.md#typescript)): the floor is the compiler the repo builds and checks with,
-  so never lower it to the oldest release that happens to parse the declarations, and a `typescript` major bump raises
-  it in the same PR.
+  TypeScript with **`oxc-parser`** (its `audit`/`since:stamp` AST tooling), so nothing in the repo depends on the
+  classic `typescript` runtime. (TanStack Start's Vite plugins build fine on TS 7 — verified.) TS 7 is also every
+  package's **consumer floor** ([`SUPPORT.md`](SUPPORT.md#typescript)): the floor is the compiler the repo builds and
+  checks with, so never lower it to the oldest release that happens to parse the declarations, and a `typescript` major
+  bump raises it in the same PR.
 - **Library and bin packages build with native `tsc`** — per-package `tsconfig.build.json`, the Turborepo "Compiled
   Packages" model, emitting per-file `.js` + `.d.ts` to `dist/`. tsc leaves internal `#` subpath imports verbatim, so
   each `package.json#imports` is conditional (`source` → `src` for dev/tests, `types`/`default` → `dist` for consumers),
-  and `apps/web` consumes the built `dist/`. Exports are generated from `dist/` by `codefast mirror`. The **only**
-  bundler is **Vite** (Rolldown), reserved for genuine browser bundles: `apps/web`/`examples` (TanStack Start) and the
-  `benchmark-viewer` browser app (its Node/SSR lane is plain tsc).
+  and `apps/web` consumes the built `dist/`. Exports are generated from `dist/` by `codefast exports:generate`. The
+  **only** bundler is **Vite** (Rolldown), reserved for genuine browser bundles: `apps/web`/`examples` (TanStack Start)
+  and the `benchmark-viewer` browser app (its Node/SSR lane is plain tsc).
 - **A build loads only its runtime's ambient types.** `library-build.json` sets `types: []`; a package whose code runs
   on Node (`cli`, the benchmark harness, the viewer's SSR lane) sets `types: ["node"]` in its `tsconfig.build.json`, and
   every browser or universal package leaves it empty, so a Node global in its `src` fails the build. Explicit resource
@@ -241,7 +241,7 @@ types carry the types.**
 - **A divider is not a doc block, and the rule reaches only the divider.** A divider is a label and nothing else: one
   short noun phrase. The moment a comment carries prose — a module header naming what the file owns, an explanation
   above a section — it is a doc block, whatever punctuation it happens to be drawn with, and neither this convention nor
-  `audit comments` says anything about its shape. That is why the audit reads a framed title as a divider to repad and a
+  `audit:comments` says anything about its shape. That is why the audit reads a framed title as a divider to repad and a
   framed paragraph as prose to leave alone. So: do not bolt a body onto a divider, and do not shave a doc block down to
   fit one — write the divider, then the `/** … */` block under it, each doing its own job.
 - **A divider marks a family, not a symbol.** Use one only where a file renders several exported members of one family —
@@ -276,9 +276,9 @@ types carry the types.**
   (Light / Dark / Auto) and **color scheme** is the resolved light/dark value applied — say "appearance" for the
   preference, "color scheme" for the resolved value, and avoid the legacy "theme" wording. Prefer `/** … */` doc blocks
   over `//` lines when the comment documents intent.
-- **`@since <version>` is generated** by `codefast tag` at release — never hand-write it, never remove a released one
-  (the add-only tool would re-stamp it with the current version, destroying the true original), and it stays the block's
-  **last** tag: a `@remarks` added later goes above it, not below.
+- **`@since <version>` is generated** by `codefast since:stamp` at release — never hand-write it, never remove a
+  released one (the add-only tool would re-stamp it with the current version, destroying the true original), and it
+  stays the block's **last** tag: a `@remarks` added later goes above it, not below.
 - No commented-out code left behind; a `TODO`/`FIXME` must state why or link an issue.
 
 ## API naming (Swift API Design Guidelines, adapted to TS)
@@ -318,20 +318,20 @@ point of use beats brevity, and every word must convey information:
 
 ## Packages
 
-| Path                         | Role                                                                                                            |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.)           |
-| `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                            |
-| `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                                   |
-| `packages/di`                | Type-safe, zero-dependency dependency-injection primitives                                                      |
-| `packages/di-testing`        | Solitary and sociable auto-mocking test beds for `@codefast/di` (`TestBed.solitary`/`.sociable`)                |
-| `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog                 |
-| `packages/cli`               | `codefast` CLI — subcommands `audit`, `mirror`, `pack-slim`, `tag` (run via `pnpm run codefast <cmd>`)          |
-| `packages/typescript-config` | Shared tsconfig presets                                                                                         |
-| `internal/benchmark-*`       | Private benchmark harness/viewer shared by `benchmarks/*` (`pnpm bench`); never published                       |
-| `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di`, `tailwind-variants`)                           |
-| `apps/web`                   | codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` markdown docs, `@codefast/ui` showcase |
-| `examples/tanstack-start`    | TanStack Start consumer demo; uses `workspace:*` so package changes are testable here directly                  |
+| Path                         | Role                                                                                                                                   |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.)                                  |
+| `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                                                   |
+| `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                                                          |
+| `packages/di`                | Type-safe, zero-dependency dependency-injection primitives                                                                             |
+| `packages/di-testing`        | Solitary and sociable auto-mocking test beds for `@codefast/di` (`TestBed.solitary`/`.sociable`)                                       |
+| `packages/tracking`          | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog                                        |
+| `packages/cli`               | `codefast` CLI — commands `audit`, `audit:*`, `exports:generate`, `publish:prepare`, `since:stamp` (run via `pnpm run codefast <cmd>`) |
+| `packages/typescript-config` | Shared tsconfig presets                                                                                                                |
+| `internal/benchmark-*`       | Private benchmark harness/viewer shared by `benchmarks/*` (`pnpm bench`); never published                                              |
+| `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di`, `tailwind-variants`)                                                  |
+| `apps/web`                   | codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` markdown docs, `@codefast/ui` showcase                        |
+| `examples/tanstack-start`    | TanStack Start consumer demo; uses `workspace:*` so package changes are testable here directly                                         |
 
 ### `packages/di` layout
 
@@ -358,10 +358,10 @@ inspector, explain, validation, dependency graph, diagnostics and graph adapters
 only — `pnpm cli:audit:layers` holds it, from the `audit.layers` entry in `codefast.config.js` — and the published
 subpaths are that tree with no exception. The sync and async pipelines stay in one class because `#` private fields
 can't span files and both touch the same private state per hop; anything that doesn't is already extracted. Tests mirror
-these paths (`tests/unit/resolution/…`). `package.json#exports` is generated from `dist/` by `codefast mirror` — rerun
-it after moving/adding modules. Verify hot-path changes against `benchmarks/di` (`pnpm di:bench`, which isolates every
-scenario, ≥3 trials, best-of across several processes) before assuming a refactor is free — and measure cold paths too,
-which the hot loops hide.
+these paths (`tests/unit/resolution/…`). `package.json#exports` is generated from `dist/` by `codefast exports:generate`
+— rerun it after moving/adding modules. Verify hot-path changes against `benchmarks/di` (`pnpm di:bench`, which isolates
+every scenario, ≥3 trials, best-of across several processes) before assuming a refactor is free — and measure cold paths
+too, which the hot loops hide.
 
 ## UI/component conventions (apps/web and packages/ui)
 
@@ -407,7 +407,7 @@ These are project rules the linters do not fully enforce:
 - **RTL: keep physical classes that sit under a side variant.** `packages/ui` is RTL-hardened with logical utilities +
   `rtl:` overrides, but physical `left-/right-/border-l/r/slide-in-from-*` classes gated behind `data-[side=…]` (or the
   custom `data-side-left`/`data-side-right`) are intentional — Radix resolves `side` per reading direction, so
-  converting them to logical double-flips. Run `pnpm run codefast audit rtl` (the RTL scan lives in the `codefast` CLI,
+  converting them to logical double-flips. Run `pnpm run codefast audit:rtl` (the RTL scan lives in the `codefast` CLI,
   config under `audit.rtl` in `codefast.config.js`) to check for genuine gaps.
 
 ## Documentation cross-references

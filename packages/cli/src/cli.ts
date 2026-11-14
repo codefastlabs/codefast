@@ -5,12 +5,12 @@ import { fileURLToPath } from "node:url";
 
 import { Command, CommanderError } from "commander";
 
-import { createAuditCommand } from "#audit/command";
+import { createAuditCommands } from "#audit/command";
 import { CLI_EXIT_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 import { refuseColor } from "#core/style";
-import { createMirrorCommand } from "#mirror/command";
-import { createPackSlimCommand } from "#pack-slim/command";
-import { createTagCommand } from "#tag/command";
+import { createExportsGenerateCommand } from "#exports/command";
+import { createPublishPrepareCommand } from "#publish/command";
+import { createSinceStampCommand } from "#since/command";
 
 function readVersion(): string {
   try {
@@ -45,20 +45,30 @@ export async function runCli(argv: Array<string>): Promise<number> {
     .version(readVersion())
     .option("--no-color", "Disable ANSI color output")
     // Required so options after a subcommand bind to that subcommand rather than
-    // the program — e.g. `audit links <target> --json`.
+    // the program — e.g. `audit:links <target> --json`.
     .enablePositionalOptions()
     .configureHelp({ sortSubcommands: true })
     .showHelpAfterError("(use --help for usage)");
 
-  program.addCommand(createAuditCommand());
-  program.addCommand(createMirrorCommand());
-  program.addCommand(createPackSlimCommand());
-  program.addCommand(createTagCommand());
+  for (const command of [
+    ...createAuditCommands(),
+    createExportsGenerateCommand(),
+    createPublishPrepareCommand(),
+    createSinceStampCommand(),
+  ]) {
+    program.addCommand(command);
+  }
 
   program.hook("preAction", () => {
     refuseColor(program.opts()["color"] === false);
   });
   throwInsteadOfExiting(program);
+
+  // Run bare, the CLI lists its commands, as `php artisan` does.
+  if (argv.length <= 2) {
+    program.outputHelp();
+    return CLI_EXIT_SUCCESS;
+  }
 
   try {
     await program.parseAsync(argv, { from: "node" });

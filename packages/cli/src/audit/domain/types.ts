@@ -36,7 +36,7 @@ export type RtlFileViolations = {
 };
 
 /**
- * Outcome of one `audit rtl` run.
+ * Outcome of one `audit:rtl` run.
  *
  * @since 0.5.0-canary.6
  */
@@ -71,7 +71,7 @@ export type ImportPolicyFileViolations = {
 };
 
 /**
- * Outcome of one `audit imports` run.
+ * Outcome of one `audit:imports` run.
  *
  * @since 0.10.0
  */
@@ -105,7 +105,7 @@ export type AssertionFileViolations = {
 };
 
 /**
- * Outcome of one `audit assertions` run.
+ * Outcome of one `audit:assertions` run.
  *
  * @since 0.13.0
  */
@@ -139,7 +139,7 @@ export type PropsFileViolations = {
 };
 
 /**
- * Outcome of one `audit props` run.
+ * Outcome of one `audit:props` run.
  *
  * @since 0.15.0
  */
@@ -173,7 +173,7 @@ export type DisplayNameFileViolations = {
 };
 
 /**
- * Outcome of one `audit display-names` run.
+ * Outcome of one `audit:display-names` run.
  *
  * @since 0.9.0
  */
@@ -207,7 +207,7 @@ export type LinkFileBreakages = {
 };
 
 /**
- * Outcome of one `audit links` run.
+ * Outcome of one `audit:links` run.
  *
  * @since 0.5.0
  */
@@ -242,7 +242,7 @@ export type DividerFileBreakages = {
 };
 
 /**
- * Outcome of one `audit comments` run. `fixedCount` stays `0` unless `--fix` was passed.
+ * Outcome of one `audit:comments` run. `fixedCount` stays `0` unless `--fix` was passed.
  *
  * @since 0.6.0
  */
@@ -314,7 +314,7 @@ export type UnreachableStylesheetViolation = {
 };
 
 /**
- * Outcome of one `audit publish` run.
+ * Outcome of one `audit:publish` run.
  *
  * @since 0.12.0
  */
@@ -350,7 +350,7 @@ export type LayerFileViolations = {
 };
 
 /**
- * Outcome of one `audit layers` run.
+ * Outcome of one `audit:layers` run.
  *
  * @since 0.14.0
  */
@@ -423,7 +423,7 @@ export type EngineViolation =
     };
 
 /**
- * Outcome of one `audit engines` run.
+ * Outcome of one `audit:engines` run.
  *
  * @since 0.15.0
  */

@@ -43,13 +43,13 @@ packages' built `dist/`, and Oxlint's type-aware rules need them too. Run it aga
 - **Internal imports use Node subpath imports** declared in each package's `package.json#imports` —
   `#components/button`, `#tests/...`. Do not add `compilerOptions.paths` for internal aliases.
 - Keep `import type` separate from value imports.
-- **`package.json#exports` is generated** from `dist/` by `codefast mirror`, never hand-edited. Regenerate it after
-  adding, moving, or renaming a module:
+- **`package.json#exports` is generated** from `dist/` by `codefast exports:generate`, never hand-edited. Regenerate it
+  after adding, moving, or renaming a module:
 
   ```bash
-  pnpm --filter <package> build   # mirror reads dist/, so build first
-  pnpm cli:mirror:preview        # review the exports diff
-  pnpm cli:mirror                # write it
+  pnpm --filter <package> build   # exports:generate reads dist/, so build first
+  pnpm cli:exports:generate --dry-run        # review the exports diff
+  pnpm cli:exports:generate                # write it
   ```
 
 - **No speculative features.** Every new public API needs a real call site.
@@ -64,8 +64,8 @@ Three rules the linter cannot enforce:
 - **No numbers in source comments** — no benchmark figures, percentages, or byte counts. They cannot be re-verified
   where they sit and go stale silently. Numbers live with their method, in `ARCHITECTURE.md` or `RESULTS.md`.
 - **No history** — no "used to", "previously", "the old threshold". Git carries that.
-- **Never hand-write an `@since` tag.** `codefast tag` stamps it at release. Existing exports all carry one, so a new
-  export looks unfinished without it; the absence is correct. Check your diff:
+- **Never hand-write an `@since` tag.** `codefast since:stamp` stamps it at release. Existing exports all carry one, so
+  a new export looks unfinished without it; the absence is correct. Check your diff:
   `git diff --cached | grep -E '^\+.*@since'` — any hit is a bug.
 
 ### Naming public API

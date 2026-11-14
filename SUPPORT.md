@@ -28,7 +28,7 @@ the tests on. It is enforced mechanically rather than by convention:
   config. Every other build loads no ambient types, so a Node global in browser or universal code fails the build.
 - **Internal subpath imports** use a bare `#` prefix (`#core/token`), which Node's ESM resolver accepts on every
   supported release — `#/`-prefixed specifiers are rejected below Node 24.14.
-- **`codefast audit engines`** holds the floor to what runs on it. A published package declares it, written `>=X.Y.Z`,
+- **`codefast audit:engines`** holds the floor to what runs on it. A published package declares it, written `>=X.Y.Z`,
   and every published package declares the same one. Every dependency a package installs for a consumer must admit, in
   its own `engines.node`, every release from the floor up; the odd lines between the floor's and the newest tested one
   sit outside that claim, since they reach end-of-life within months without ever becoming LTS. A dev dependency only
@@ -36,10 +36,10 @@ the tests on. It is enforced mechanically rather than by convention:
   (`.node-version`). The lockfile must resolve `@types/node` on the floor's major at a minor no newer. The workspace
   root's floor, which contributors need, is held to every dependency any package installs, runtime and dev alike.
 - **CI** develops on the newest line (`.node-version`) for speed, and a matrix leg runs every test category of each
-  package on the floor itself, planned from `codefast audit engines --json`. pnpm is a native binary that needs no Node
+  package on the floor itself, planned from `codefast audit:engines --json`. pnpm is a native binary that needs no Node
   of its own, so the leg runs on nothing newer than the floor. Unit tests run the source through Vite's transform, so
   the integration and end-to-end tests, which load the built packages, are what catch a builtin or a syntax the floor
-  lacks. `codefast audit publish` statically checks the publish surface — no `#/` imports, and every `exports`/`imports`
+  lacks. `codefast audit:publish` statically checks the publish surface — no `#/` imports, and every `exports`/`imports`
   target ships.
 
 Development uses the latest Node for speed and tooling, and contributors need the root `engines.node`. Nothing about a
@@ -71,7 +71,7 @@ every package with — TypeScript 7 alone emits the published `.d.ts` files — 
 accept them.
 
 - **`@codefast/typescript-config`** declares it as its `typescript` peer range (`>=7.0.0`).
-- **`@codefast/cli`** declares it as an optional `typescript` peer (`>=7.0.0`), which only `audit props` loads.
+- **`@codefast/cli`** declares it as an optional `typescript` peer (`>=7.0.0`), which only `audit:props` loads.
 - **The other packages** state it in their README and declare no `typescript` peer.
 
 Explicit resource management enters the language in ES2027, so no numbered `lib` declares it yet. `@codefast/di` and

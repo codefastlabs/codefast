@@ -8,7 +8,7 @@ import { paint } from "#core/style";
  */
 export function presentAuditAll(outcomes: ReadonlyArray<AuditOutcome>, verbose: boolean): void {
   for (const outcome of outcomes) {
-    logger.out(paint("bold", `audit ${outcome.name}`));
+    logger.out(paint("bold", `audit:${outcome.name}`));
     if (outcome.status === "error") {
       reportAppError(outcome.error, verbose);
     } else if (outcome.status === "skipped") {

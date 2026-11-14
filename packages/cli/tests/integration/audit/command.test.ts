@@ -4,7 +4,7 @@ import path from "node:path";
 
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { createAuditCommand } from "#audit/command";
+import { runCli } from "#cli";
 import { logger } from "#core/logger";
 
 let fixtureDir: string;
@@ -31,9 +31,9 @@ async function runAudit(args: Array<string>): Promise<{ exitCode: number; out: s
   process.exitCode = undefined;
   const spy = vi.spyOn(logger, "out").mockImplementation(() => {});
   try {
-    await createAuditCommand().parseAsync(["node", "audit", ...args]);
+    const exitCode = await runCli(["node", "codefast", ...args]);
     return {
-      exitCode: typeof process.exitCode === "number" ? process.exitCode : 0,
+      exitCode,
       out: spy.mock.calls.map((call) => String(call[0])).join("\n"),
     };
   } finally {
@@ -43,14 +43,14 @@ async function runAudit(args: Array<string>): Promise<{ exitCode: number; out: s
 
 describe("audit command runner", () => {
   it("runs a clean links scan and prints a machine summary with exit 0 for --json", async () => {
-    const { exitCode, out } = await runAudit(["links", cleanDoc, "--json"]);
+    const { exitCode, out } = await runAudit(["audit:links", cleanDoc, "--json"]);
 
     expect(exitCode).toBe(0);
     expect(JSON.parse(out)).toMatchObject({ schemaVersion: 2, ok: true });
   });
 
   it("runs a clean links scan and prints the human summary without --json", async () => {
-    const { exitCode, out } = await runAudit(["links", cleanDoc]);
+    const { exitCode, out } = await runAudit(["audit:links", cleanDoc]);
 
     expect(exitCode).toBe(0);
     expect(out).toContain("✓");
@@ -58,7 +58,7 @@ describe("audit command runner", () => {
   });
 
   it("runs an engines audit over a target holding no package and reports no floors", async () => {
-    const { exitCode, out } = await runAudit(["engines", fixtureDir, "--json"]);
+    const { exitCode, out } = await runAudit(["audit:engines", fixtureDir, "--json"]);
 
     expect(exitCode).toBe(0);
     expect(JSON.parse(out)).toMatchObject({ ok: true, result: { floors: [], violations: [], packageCount: 0 } });
@@ -87,7 +87,7 @@ describe("a full audit run", () => {
   ): Promise<{ exitCode: number; out: string; err: string }> {
     vi.spyOn(process, "cwd").mockReturnValue(cwd);
     const errSpy = vi.spyOn(logger, "err").mockImplementation(() => {});
-    const result = await runAudit(args);
+    const result = await runAudit(["audit", ...args]);
     return { ...result, err: errSpy.mock.calls.map((call) => String(call[0])).join("\n") };
   }
 
@@ -96,7 +96,7 @@ describe("a full audit run", () => {
     const { exitCode, out } = await runAll([]);
 
     expect(exitCode).toBe(0);
-    expect(out).toContain("audit links");
+    expect(out).toContain("audit:links");
     expect(out).toContain("Skipped: no audit.rtl.target in the config");
     expect(out).toContain("✓ All 9 audits that ran are clean");
   });

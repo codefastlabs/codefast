@@ -3,7 +3,7 @@
 import path from "node:path";
 
 import type { Filesystem } from "#core/filesystem/filesystem";
-import { isSourceMapFile, slimPublishManifest } from "#pack-slim/domain/transform";
+import { isSourceMapFile, slimPublishManifest } from "#publish/domain/transform";
 
 /**
  * What a package's tarball ships, plus the `files` entries that match nothing on disk.
@@ -19,7 +19,7 @@ export interface ShippedFiles {
 /**
  * Lists the files a package ships once the publish step has slimmed it, or `null` with no `files` field to go by.
  *
- * @remarks Applies the same slim as `pack-slim`, so a subtree it drops is absent here too, and leaves out source maps,
+ * @remarks Applies the same slim as `publish:prepare`, so a subtree it drops is absent here too, and leaves out source maps,
  * which the publish step deletes. Without a `files` field npm ships the whole directory, which leaves nothing to judge.
  *
  * @since 0.13.0

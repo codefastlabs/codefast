@@ -137,7 +137,8 @@ These bind the spec to this repository and do not constrain other implementation
   `storage` event.
 - The server lane is a TanStack Start server function. `SERVER_ONLY_SUBPATHS` denies the whole `server/**` and
   `adapters/**` families in client bundles rather than listing entry points, so a new server module is covered the
-  moment it exists — there is no runtime guard, and `codefast mirror` owns the exports map, generated from `dist/`.
+  moment it exists — there is no runtime guard, and `codefast exports:generate` owns the exports map, generated from
+  `dist/`.
 - The root `.` entry is the **client entry** — it re-exports the isomorphic core plus the whole browser surface
   (tracker, consent runtime, React bindings, client destinations); server lanes stay on their own subpaths and are never
   re-exported from the root.

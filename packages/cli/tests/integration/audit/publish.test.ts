@@ -59,7 +59,7 @@ async function unreachableStylesheets(): Promise<unknown> {
   return outcome.value.unreachableStylesheets;
 }
 
-describe("audit publish — stylesheet sources", () => {
+describe("audit:publish — stylesheet sources", () => {
   it("flags a preset that registers only the src the publish slim drops", async () => {
     writeLibrary({ sources: ["../../**/*.{ts,tsx}"], built: true });
 

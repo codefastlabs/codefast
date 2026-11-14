@@ -198,16 +198,3 @@ export function applyCommandPipeline<Prelude, Request, RunResult, Presenter, Opt
   }
   return command;
 }
-
-/**
- * Registers a pipeline as a subcommand under `parent`, taking its name and description from the pipeline.
- *
- * @since 0.11.0
- */
-export function registerPipelineSubcommand<Prelude, Request, RunResult, Presenter, Opts extends BaseCommandOptions>(
-  parent: Command,
-  fs: Filesystem,
-  pipeline: NamedCommandPipeline<Prelude, Request, RunResult, Presenter, Opts>,
-): void {
-  applyCommandPipeline(parent.command(pipeline.name).description(pipeline.description), fs, pipeline);
-}

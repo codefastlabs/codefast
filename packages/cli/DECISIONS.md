@@ -6,12 +6,12 @@ that stops holding gets replaced here, not annotated.
 
 ## Plain functions, not Explicit Architecture
 
-**Context.** The CLI has four top-level commands (`audit`, `mirror`, `pack-slim`, `tag`), each a short pipeline: read
-files, run a pure transformation, print or write the result. An earlier revision applied full Explicit / Hexagonal
-Architecture to it — a port interface per use case, an adapter per port, a DI token per injectable, request objects for
-one-field inputs, and a `shell/` layer wrapping `node:fs`, `node:path`, `process` and Commander behind eleven more
-ports. Roughly three files in four existed to connect the other one, and the `@codefast/di` container resolved at
-runtime what a function call would have checked at compile time.
+**Context.** The CLI has four top-level commands (`audit` and `audit:*`, `exports:generate`, `publish:prepare`,
+`since:stamp`), each a short pipeline: read files, run a pure transformation, print or write the result. An earlier
+revision applied full Explicit / Hexagonal Architecture to it — a port interface per use case, an adapter per port, a DI
+token per injectable, request objects for one-field inputs, and a `shell/` layer wrapping `node:fs`, `node:path`,
+`process` and Commander behind eleven more ports. Roughly three files in four existed to connect the other one, and the
+`@codefast/di` container resolved at runtime what a function call would have checked at compile time.
 
 **Decision.** Behaviour is wired with plain functions. A command module builds its Commander subcommand and calls
 `prepare*` / `run*` functions directly; domain modules export pure functions; output modules export `present*`
@@ -64,7 +64,8 @@ shape and the exit-code rule, declared once beside one `AuditCheck` per scan. A 
 that subcommand alone uses it; anything two subcommands use is shared, not duplicated.
 
 **Consequences.** Everything about one scan lives in one folder (`audit/rtl/`, `audit/links/`), and `audit/domain/`
-holds only what every scan shares. `mirror`, `pack-slim` and `tag` have no subcommands and stay flat.
+holds only what every scan shares. `exports:generate`, `publish:prepare` and `since:stamp` have no subcommands and stay
+flat.
 
 ## One pipeline, exit code computed once
 
@@ -78,17 +79,17 @@ of typed slots — `prepare`, `buildRequest`, `run`, `presentHuman` / `formatJso
 from the run result; `present*` functions return `void`.
 
 **Consequences.** Adding a command is a descriptor, not a copy of the spine; the exit code has one source; global
-options reach every command the same way. The optional slots (`guard` for pack-slim's working-tree check,
+options reach every command the same way. The optional slots (`guard` for publish:prepare's working-tree check,
 `createPresenter` for streaming progress) keep the shared spine from collapsing to a lowest common denominator.
 
 ## Group a command's I/O by subsystem
 
 **Context.** `domain/` is reserved for pure logic, so a command whose work is mostly I/O pushes that work to flat files
-at the command root. `tag` had target resolution, candidate discovery, the per-target runner, the since-writer and
-version resolution all in one root pile, with only types under `domain/`.
+at the command root. `since:stamp` had target resolution, candidate discovery, the per-target runner, the since-writer
+and version resolution all in one root pile, with only types under `domain/`.
 
-**Decision.** When the root pile grows past a handful, group it by subsystem rather than by purity: `tag/target/` for
-discovering and selecting what to tag, `tag/writer/` for stamping `@since`. The purity rule stays; this grouping is
+**Decision.** When the root pile grows past a handful, group it by subsystem rather than by purity: `since/target/` for
+discovering and selecting what to tag, `since/writer/` for stamping `@since`. The purity rule stays; this grouping is
 orthogonal to it. Shared types stay in `domain/types.ts` because they are genuinely cross-subsystem — scattering them
 would couple the subsystems through their type imports.
 
@@ -126,21 +127,22 @@ modules.
 
 ## Parse TypeScript with `oxc-parser`
 
-**Context.** `tag` and several audits read TypeScript source, and `tag` rewrites it. The classic `typescript` compiler
-API was the only consumer of that runtime in the repository once the build moved to native TypeScript 7.
+**Context.** `since:stamp` and several audits read TypeScript source, and `since:stamp` rewrites it. The classic
+`typescript` compiler API was the only consumer of that runtime in the repository once the build moved to native
+TypeScript 7.
 
-**Decision.** AST work (`tag` and the audits) uses `oxc-parser`; edits are applied as text ranges
+**Decision.** AST work (`since:stamp` and the audits) uses `oxc-parser`; edits are applied as text ranges
 (`core/source-text-edit.ts`) rather than by printing a transformed AST, so untouched code keeps its formatting byte for
 byte.
 
 **Consequences.** Nothing in the repository depends on the classic `typescript` runtime. The trade is that the CLI reads
-syntax only — it never type-checks — which is all `tag` and those audits need; `audit props`, which must judge types,
-asks the type server instead.
+syntax only — it never type-checks — which is all `since:stamp` and those audits need; `audit:props`, which must judge
+types, asks the type server instead.
 
 ## Audits are read-only and mechanical
 
-**Context.** `audit links`, `audit comments`, `audit imports`, `audit assertions`, `audit display-names`, `audit props`,
-`audit rtl`, `audit layers` and `audit publish` gate CI. A gate that needs judgment to interpret, or that can only be
+**Context.** `audit:links`, `audit:comments`, `audit:imports`, `audit:assertions`, `audit:display-names`, `audit:props`,
+`audit:rtl`, `audit:layers` and `audit:publish` gate CI. A gate that needs judgment to interpret, or that can only be
 fixed by hand, is ignored under time pressure.
 
 **Decision.** Every audit reports a location and a one-line reason, exits non-zero on any finding, and where the fix is
@@ -163,7 +165,7 @@ plus `core/`, and a command's pure logic lives under its `domain/`. The role win
 work reads as "analyze" still names its orchestrator `run.ts` and keeps the concept in `domain/analyze-service.ts` — the
 file that touches the `Filesystem` and returns a `Result` is `run*`, not the verb it computes. The orchestrator is
 `run*`, never `sync`: `sync` reads as "synchronous" (these functions are async) and is kept only where it is the domain
-verb, as in `mirror` syncing `package.json` exports.
+verb, as in `exports:generate` syncing `package.json` exports.
 
 **Consequences.** A filename says what a module does; the directory says which command it belongs to; and the same role
 answers to the same name in every command.
@@ -179,7 +181,7 @@ infrastructure.
 **Consequences.** Adding a test means importing a function and asserting on a `Result`. Coverage is enforced by the
 workspace's `test:coverage` gate, not by this document.
 
-## `audit props` judges by type, through the type server
+## `audit:props` judges by type, through the type server
 
 **Context.** Whether a props alias written `A & B & { … }` could be an interface depends on what each part resolves to:
 an interface cannot extend a union or a type parameter (TS2312), and for a union the `&` is the point, since it

@@ -4,8 +4,8 @@ import path from "node:path";
 
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { createAuditCommand } from "#audit/command";
 import type { PropsAuditResult } from "#audit/domain/types";
+import { runCli } from "#cli";
 import { logger } from "#core/logger";
 
 // Each alias stands for one judgement the type server has to make; the comment names it.
@@ -51,8 +51,7 @@ beforeAll(async () => {
   process.exitCode = undefined;
   const out = vi.spyOn(logger, "out").mockImplementation(() => {});
   try {
-    await createAuditCommand().parseAsync(["node", "audit", "props", fixtureDir, "--json"]);
-    exitCode = typeof process.exitCode === "number" ? process.exitCode : 0;
+    exitCode = await runCli(["node", "codefast", "audit:props", fixtureDir, "--json"]);
     const summary = JSON.parse(String(out.mock.calls[0]?.[0])) as { result: PropsAuditResult };
     reported = summary.result.files.flatMap(({ violations }) =>
       violations.map(({ raw }) => /type (\w+)/.exec(raw)?.[1] ?? raw),
@@ -67,7 +66,7 @@ afterAll(() => {
   rmSync(fixtureDir, { recursive: true, force: true });
 });
 
-describe("audit props over a real type server", () => {
+describe("audit:props over a real type server", () => {
   it("reports a props intersection of object types, and exits non-zero", () => {
     expect(exitCode).toBe(1);
     expect(reported).toContain("BoxProps");

@@ -8,7 +8,7 @@ import { err, ok } from "#core/result";
 import { resolveProjectRoot } from "#core/workspace/resolver";
 
 /**
- * Loads config and resolves the scan target for `audit rtl`.
+ * Loads config and resolves the scan target for `audit:rtl`.
  *
  * @since 0.5.0-canary.6
  */

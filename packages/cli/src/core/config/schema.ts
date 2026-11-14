@@ -40,18 +40,18 @@ interface MirrorPackageConfig {
 }
 
 /**
- * The validated `mirror` configuration, keyed by package name.
+ * The validated `exports` configuration, keyed by package name.
  *
  * @since 0.3.16-canary.0
  */
-export type MirrorConfig = Record<string, false | MirrorPackageConfig>;
+export type ExportsConfig = Record<string, false | MirrorPackageConfig>;
 
 /**
- * The validated `tag` command configuration.
+ * The validated `since` configuration.
  *
  * @since 0.3.16-canary.0
  */
-export interface CodefastTagConfig {
+export interface SinceConfig {
   skipPackages?: Array<string> | undefined;
   onAfterWrite?: CodefastAfterWriteHook | undefined;
 }
@@ -68,7 +68,7 @@ interface CodefastAuditLayersPackageConfig {
   layers: Array<Array<string>>;
 }
 
-/** The `audit layers` defaults: the layered packages by name, and the entries to ignore. */
+/** The `audit:layers` defaults: the layered packages by name, and the entries to ignore. */
 interface CodefastAuditLayersConfig {
   packages?: Record<string, CodefastAuditLayersPackageConfig> | undefined;
   allowlist?: Array<string> | undefined;
@@ -92,8 +92,8 @@ interface CodefastAuditConfig {
  * @since 0.3.16-canary.0
  */
 export interface CodefastConfig {
-  mirror?: MirrorConfig | undefined;
-  tag?: CodefastTagConfig | undefined;
+  exports?: ExportsConfig | undefined;
+  since?: SinceConfig | undefined;
   audit?: CodefastAuditConfig | undefined;
 }
 
@@ -126,16 +126,16 @@ const mirrorPackageConfigSchema = z
   .strict();
 
 /**
- * Zod validator for the `mirror` configuration record; its output is a {@link MirrorConfig}.
+ * Zod validator for the `exports` configuration record; its output is a {@link ExportsConfig}.
  *
  * @since 0.3.16-canary.0
  */
-export const mirrorConfigSchema: z.ZodType<MirrorConfig> = z.record(
+export const exportsConfigSchema: z.ZodType<ExportsConfig> = z.record(
   z.string(),
   z.union([z.literal(false), mirrorPackageConfigSchema]),
 );
 
-const codefastTagConfigSchema = z
+const sinceConfigSchema = z
   .object({
     skipPackages: z.array(z.string()).optional(),
     onAfterWrite: afterWriteHookSchema.optional(),
@@ -189,8 +189,8 @@ const codefastAuditConfigSchema = z
  */
 export const codefastConfigRootSchema: z.ZodType<CodefastConfig> = z
   .object({
-    mirror: mirrorConfigSchema.optional(),
-    tag: codefastTagConfigSchema.optional(),
+    exports: exportsConfigSchema.optional(),
+    since: sinceConfigSchema.optional(),
     audit: codefastAuditConfigSchema.optional(),
   })
   .strict();
