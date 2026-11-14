@@ -2,7 +2,7 @@ import path from "node:path";
 
 import type { LayerFileViolations, LayersAuditResult } from "#audit/domain/types";
 import { auditLayeringSource, LayerMap } from "#audit/layers/domain/layering";
-import type { LayersAuditPackage } from "#audit/layers/prepare";
+import type { LayersAuditPackage } from "#audit/layers/layered-packages";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import type { Result } from "#core/result";

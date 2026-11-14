@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -6,11 +6,13 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { runPublishAudit } from "#audit/publish/run";
 import { nodeFilesystem } from "#core/filesystem/node";
+import type { Workspace } from "#core/workspace/workspace";
+import { loadWorkspace } from "#core/workspace/workspace";
 
 let rootDir: string;
 
 beforeEach(() => {
-  rootDir = mkdtempSync(path.join(tmpdir(), "codefast-audit-publish-"));
+  rootDir = realpathSync(mkdtempSync(path.join(tmpdir(), "codefast-audit-publish-")));
   write("pnpm-workspace.yaml", "packages:\n  - packages/*\n");
 });
 
@@ -52,7 +54,7 @@ function writeLibrary(options: { readonly sources: ReadonlyArray<string>; readon
 }
 
 async function unreachableStylesheets(): Promise<unknown> {
-  const outcome = await runPublishAudit(nodeFilesystem, { rootDir, targetPath: rootDir });
+  const outcome = runPublishAudit(nodeFilesystem, { workspace: await workspaceAt(rootDir), targetPath: rootDir });
   if (!outcome.ok) {
     throw outcome.error;
   }
@@ -100,3 +102,11 @@ describe("audit:publish — stylesheet sources", () => {
     expect(await unreachableStylesheets()).toEqual([]);
   });
 });
+
+async function workspaceAt(directory: string): Promise<Workspace> {
+  const workspace = await loadWorkspace(nodeFilesystem, directory);
+  if (!workspace.ok) {
+    throw new Error(workspace.error.message);
+  }
+  return workspace.value;
+}

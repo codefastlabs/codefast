@@ -1,5 +1,5 @@
 /**
- * Filesystem surface used by mirror export generation (relative paths under `dist/`).
+ * The filesystem surface the exports map is generated from (relative paths under `dist/`).
  *
  * @since 0.3.16-canary.0
  */

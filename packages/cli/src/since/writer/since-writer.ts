@@ -6,7 +6,7 @@ import type { OxcNode } from "#core/oxc-node";
 import { isOxcNode, programStatements } from "#core/oxc-node";
 import { lineOfOffset } from "#core/source-position";
 import { applyEditsDescending, indentOfLineContaining } from "#core/source-text-edit";
-import type { TagBlockedDeclaration, TagFileResult } from "#since/domain/types";
+import type { BlockedDeclaration, SinceFileResult } from "#since/domain/types";
 
 type TextEdit = {
   start: number;
@@ -53,15 +53,13 @@ function lineAboveOffset(sourceText: string, offset: number): string | undefined
 
 /**
  * The writer that adds missing `@since` tags to a file's exported declarations.
- *
- * @since 0.3.16-canary.0
  */
-export class TagSinceWriter {
+export class SinceWriter {
   private readonly sinceDocumentationTag = "@since";
 
   constructor(private readonly fs: Filesystem) {}
 
-  applySinceTagsToFile(filePath: string, version: string, write: boolean): TagFileResult {
+  stampFile(filePath: string, version: string, write: boolean): SinceFileResult {
     const sourceText = this.fs.readFileSync(filePath, "utf8");
     const { program, comments } = parseSync(filePath, sourceText);
     const statements = programStatements(program);
@@ -70,7 +68,7 @@ export class TagSinceWriter {
     );
 
     const edits: Array<TextEdit> = [];
-    const blockedDeclarations: Array<TagBlockedDeclaration> = [];
+    const blockedDeclarations: Array<BlockedDeclaration> = [];
     for (const declaration of this.collectExportedDeclarations(statements)) {
       const existing = this.associatedJsDoc(declaration, jsDocComments, sourceText);
       if (existing === undefined && this.isDocBlockLineTaken(declaration, sourceText)) {
@@ -97,7 +95,7 @@ export class TagSinceWriter {
 
     return {
       filePath,
-      taggedDeclarations: appliedEdits.length,
+      stampedDeclarations: appliedEdits.length,
       blockedDeclarations,
       changed: appliedEdits.length > 0,
     };

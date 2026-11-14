@@ -85,9 +85,10 @@ const config = {
     },
   },
 
+  // Keyed by package name or glob, like `exports`: the apps and examples ship no API to stamp.
   since: {
-    // Glob patterns (picomatch) — skip every private app under the @apps scope.
-    skipPackages: ["@apps/*", "@examples/*"],
+    "@apps/*": false,
+    "@examples/*": false,
   },
 };
 

@@ -1,70 +1,36 @@
-import { logger } from "#core/logger";
-import type { PackSlimPackageStats, PackSlimProgressListener, PackSlimRunStats } from "#publish/domain/types";
+import type { ReportContext } from "#core/command";
+import { countPackageOutcomes, packagesVerdict, presentPackageOutcomes, presentSummary } from "#core/report";
+import type { PublishPackageOutcome, PublishPrepareReport } from "#publish/domain/types";
+
+function describeDropped({ status, dropped }: PublishPackageOutcome): string {
+  if (status === "unchanged") {
+    return "already slim";
+  }
+  const parts = [
+    dropped.filesSrc ? "files:src" : "",
+    dropped.exportsSource > 0 ? `exports:source×${dropped.exportsSource}` : "",
+    dropped.importsSource > 0 ? `imports:source×${dropped.importsSource}` : "",
+    dropped.importsUnshipped > 0 ? `imports:unshipped×${dropped.importsUnshipped}` : "",
+    dropped.scripts > 0 ? `scripts×${dropped.scripts}` : "",
+    dropped.devDependencies > 0 ? `devDependencies×${dropped.devDependencies}` : "",
+    dropped.sourceMaps > 0 ? `source maps×${dropped.sourceMaps}` : "",
+    dropped.sourceMappingComments > 0 ? `sourceMappingURL×${dropped.sourceMappingComments}` : "",
+  ].filter(Boolean);
+  return `dropped ${parts.join(", ")}`;
+}
 
 /**
- * A progress listener that renders pack-slim run events as human-readable CLI lines.
- *
- * @since 0.8.1
+ * Prints a `publish:prepare` report: one row per package, then the summary.
  */
-export class PackSlimProgressPresenter implements PackSlimProgressListener {
-  private dryRun = false;
-
-  configure(options: { readonly dryRun: boolean }): void {
-    this.dryRun = options.dryRun;
-  }
-
-  onBanner(): void {
-    logger.out(this.dryRun ? "pack-slim (dry run) — no files will change" : "pack-slim — slimming publish artifacts");
-  }
-
-  onPackageComplete(stats: PackSlimPackageStats, ordinal: number, total: number): void {
-    const position = `[${ordinal}/${total}]`;
-    if (stats.skipped) {
-      logger.out(`${position} skip ${stats.name} (${stats.skipReason})`);
-      return;
-    }
-    if (stats.error !== null) {
-      logger.err(`${position} error ${stats.name}: ${stats.error}`);
-      return;
-    }
-    if (!stats.changed) {
-      logger.out(`${position} ok   ${stats.name} (already slim)`);
-      return;
-    }
-    const verb = this.dryRun ? "would drop" : "dropped";
-    const parts: Array<string> = [];
-    if (stats.filesSrcRemoved) {
-      parts.push("files:src");
-    }
-    if (stats.exportsSourceRemoved > 0) {
-      parts.push(`exports:source×${stats.exportsSourceRemoved}`);
-    }
-    if (stats.importsSourceRemoved > 0) {
-      parts.push(`imports:source×${stats.importsSourceRemoved}`);
-    }
-    if (stats.importsUnshippedRemoved > 0) {
-      parts.push(`imports:unshipped×${stats.importsUnshippedRemoved}`);
-    }
-    if (stats.scriptsRemoved > 0) {
-      parts.push(`scripts×${stats.scriptsRemoved}`);
-    }
-    if (stats.devDependenciesRemoved > 0) {
-      parts.push(`devDependencies×${stats.devDependenciesRemoved}`);
-    }
-    if (stats.mapFilesDeleted > 0) {
-      parts.push(`maps×${stats.mapFilesDeleted}`);
-    }
-    if (stats.sourceCommentsStripped > 0) {
-      parts.push(`sourceMappingURL×${stats.sourceCommentsStripped}`);
-    }
-    logger.out(`${position} ok   ${stats.name} — ${verb} ${parts.join(", ")}`);
-  }
-
-  onComplete(stats: PackSlimRunStats, elapsedSeconds: number): void {
-    logger.out(
-      `pack-slim done in ${elapsedSeconds.toFixed(2)}s — ${stats.packagesChanged} changed, ` +
-        `${stats.packagesSkipped} skipped, ${stats.totalMapFilesDeleted} maps ${this.dryRun ? "to drop" : "dropped"}` +
-        (stats.packagesErrored > 0 ? `, ${stats.packagesErrored} errored` : ""),
-    );
-  }
+export function presentPublishPrepareReport(
+  report: PublishPrepareReport,
+  context: ReportContext<"dryRun" | "force">,
+): void {
+  presentPackageOutcomes(report.packages, describeDropped);
+  const dryRun = context.flags.dryRun ? " — dry run, nothing written" : "";
+  presentSummary(
+    packagesVerdict(report.packages) === "pass",
+    `publish:prepare: ${countPackageOutcomes(report.packages)}${dryRun}`,
+    context.elapsedSeconds,
+  );
 }

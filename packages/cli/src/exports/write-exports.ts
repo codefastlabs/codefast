@@ -1,12 +1,10 @@
 import { messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
 import { PACKAGE_JSON_EXPORT } from "#exports/domain/constants";
-import { MirrorError, MirrorErrorCode } from "#exports/domain/errors";
 import type { ExportMapData, ExportOriginalPathBySpecifier, PackageJsonShape } from "#exports/domain/types";
 
 /**
- * Writes `exports` into `package.json` via a temp file + rename (atomic on same volume).
- * Preserves a trailing newline after JSON.
+ * Merges the generated `exports` into `package.json` and writes it when it changed, through a temp file and a rename.
  *
  * @since 0.3.16-canary.0
  */
@@ -19,7 +17,7 @@ export async function writePackageJsonExportsAtomic(
     originalPathBySpecifier: ExportOriginalPathBySpecifier;
   },
   write = true,
-): Promise<{ prunedKeys: Array<string> }> {
+): Promise<{ prunedKeys: Array<string>; changed: boolean }> {
   function containsDistTarget(value: unknown): boolean {
     if (typeof value === "string") {
       return value.startsWith("./dist/");
@@ -156,13 +154,12 @@ export async function writePackageJsonExportsAtomic(
     sortedExportMap[exportSpecifier] = mergedExportMap[exportSpecifier];
   }
 
-  // Dry-run: skip the on-disk mutation but still report what would have been pruned.
-  if (!write) {
-    return { prunedKeys };
-  }
-
   packageJson.exports = sortedExportMap;
   const serialized = JSON.stringify(packageJson, null, 2) + "\n";
+  const changed = serialized !== raw;
+  if (!write || !changed) {
+    return { prunedKeys, changed };
+  }
 
   const tmpPath = `${packageJsonPath}.tmp`;
   await fs.writeFile(tmpPath, serialized, "utf8");
@@ -171,12 +168,10 @@ export async function writePackageJsonExportsAtomic(
     await fs.rename(tmpPath, packageJsonPath);
   } catch (caughtRenameError: unknown) {
     await fs.unlink(tmpPath).catch(() => {});
-    throw new MirrorError(
-      MirrorErrorCode.PACKAGE_WRITE,
-      `Failed to atomically update ${packageJsonPath}: ${messageFrom(caughtRenameError)}`,
-      caughtRenameError instanceof Error ? { cause: caughtRenameError } : undefined,
-    );
+    throw new Error(`Failed to atomically update ${packageJsonPath}: ${messageFrom(caughtRenameError)}`, {
+      cause: caughtRenameError,
+    });
   }
 
-  return { prunedKeys };
+  return { prunedKeys, changed };
 }

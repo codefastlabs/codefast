@@ -6,11 +6,12 @@ import { fileURLToPath } from "node:url";
 import { Command, CommanderError } from "commander";
 
 import { createAuditCommands } from "#audit/command";
+import { createCommand } from "#core/command";
 import { CLI_EXIT_ERROR, CLI_EXIT_SUCCESS } from "#core/exit-codes";
 import { refuseColor } from "#core/style";
-import { createExportsGenerateCommand } from "#exports/command";
-import { createPublishPrepareCommand } from "#publish/command";
-import { createSinceStampCommand } from "#since/command";
+import { exportsGenerateCommand } from "#exports/command";
+import { publishPrepareCommand } from "#publish/command";
+import { sinceStampCommand } from "#since/command";
 
 function readVersion(): string {
   try {
@@ -52,9 +53,9 @@ export async function runCli(argv: Array<string>): Promise<number> {
 
   for (const command of [
     ...createAuditCommands(),
-    createExportsGenerateCommand(),
-    createPublishPrepareCommand(),
-    createSinceStampCommand(),
+    createCommand(exportsGenerateCommand),
+    createCommand(publishPrepareCommand),
+    createCommand(sinceStampCommand),
   ]) {
     program.addCommand(command);
   }

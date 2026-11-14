@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -7,11 +7,13 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { EnginesAuditResult } from "#audit/domain/types";
 import { runEnginesAudit } from "#audit/engines/run";
 import { nodeFilesystem } from "#core/filesystem/node";
+import type { Workspace } from "#core/workspace/workspace";
+import { loadWorkspace } from "#core/workspace/workspace";
 
 let rootDir: string;
 
 beforeEach(() => {
-  rootDir = mkdtempSync(path.join(tmpdir(), "codefast-audit-engines-"));
+  rootDir = realpathSync(mkdtempSync(path.join(tmpdir(), "codefast-audit-engines-")));
   write("pnpm-workspace.yaml", "packages:\n  - packages/*\n");
   writeJson("package.json", { name: "root", private: true });
 });
@@ -50,7 +52,7 @@ function writeLockfile(typesVersions: Record<string, string>, prefix = ""): void
 }
 
 async function audit(targetPath = rootDir): Promise<EnginesAuditResult> {
-  const outcome = await runEnginesAudit(nodeFilesystem, { rootDir, targetPath });
+  const outcome = runEnginesAudit(nodeFilesystem, { workspace: await workspaceAt(rootDir), targetPath });
   if (!outcome.ok) {
     throw outcome.error;
   }
@@ -362,15 +364,20 @@ describe("audit:engines", () => {
     expect((await audit()).violations).toHaveLength(1);
   });
 
-  it("reports an unreadable manifest as an infrastructure failure", async () => {
+  it("refuses a workspace whose manifest does not parse, naming the file", async () => {
     write("packages/lib/package.json", "{ not json");
 
-    const outcome = await runEnginesAudit(nodeFilesystem, { rootDir, targetPath: rootDir });
+    const workspace = await loadWorkspace(nodeFilesystem, rootDir);
 
-    expect(outcome.ok).toBe(false);
-    if (outcome.ok) {
-      return;
-    }
-    expect(outcome.error.code).toBe("INFRA_FAILURE");
+    expect(!workspace.ok && workspace.error).toMatchObject({ code: "INFRA_FAILURE" });
+    expect(!workspace.ok && workspace.error.message).toContain(path.join("packages", "lib", "package.json"));
   });
 });
+
+async function workspaceAt(directory: string): Promise<Workspace> {
+  const workspace = await loadWorkspace(nodeFilesystem, directory);
+  if (!workspace.ok) {
+    throw new Error(workspace.error.message);
+  }
+  return workspace.value;
+}

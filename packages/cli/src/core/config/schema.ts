@@ -1,16 +1,17 @@
 import * as z from "zod";
 
 /**
- * A config hook invoked with the written file paths after a command rewrites files.
- *
- * @since 0.3.16-canary.0
+ * A config hook a writing command calls with the absolute paths it wrote, never on a dry run.
  */
-export type CodefastAfterWriteHook = (context: { files: Array<string> }) => void | Promise<void>;
+export type AfterWriteHook = (context: {
+  readonly command: string;
+  readonly files: ReadonlyArray<string>;
+}) => void | Promise<void>;
 
 /**
- * CSS export configuration for a mirrored package — a flag, or per-file overrides.
+ * CSS export configuration for one package — a flag, or per-file overrides.
  */
-type MirrorCssConfig =
+type ExportsCssConfig =
   | boolean
   | {
       enabled?: boolean | undefined;
@@ -19,42 +20,31 @@ type MirrorCssConfig =
     };
 
 /**
- * Per-package mirror configuration. Setting a package to `false` skips it entirely.
+ * How `exports:generate` builds one package's exports map.
  */
-interface MirrorPackageConfig {
-  /** Preserve the existing `package.json#exports` map and only add missing conditions
-   *  (`source`, `types`, `import`); no `dist/` scan is performed. */
+interface ExportsPackageConfig {
+  /** Keep the existing `exports` map and only fill in missing conditions; no `dist/` scan runs. */
   preserve?: boolean | undefined;
   strip?: string | undefined;
-  /** Specifiers to leave out of the generated map, so a package's public surface is a decision
-   *  rather than a consequence of its `dist/` layout. Matched against the specifier as it would
-   *  appear in `exports` (after `strip`); a trailing `/*` excludes a whole subtree. The root
-   *  export and `./package.json` are never excluded. */
+  /** Specifiers left out of the generated map, matched after `strip`; a trailing `/*` excludes a subtree. */
   exclude?: Array<string> | undefined;
   exports?: Record<string, string> | undefined;
-  /** All three default to `true`; the mirror resolves an omitted value the same as `true`. */
+  /** All three default to `true`. */
   source?: boolean | string | undefined;
   types?: boolean | undefined;
   import?: boolean | undefined;
-  css?: MirrorCssConfig | undefined;
+  css?: ExportsCssConfig | undefined;
 }
 
 /**
- * The validated `exports` configuration, keyed by package name.
- *
- * @since 0.3.16-canary.0
+ * The `exports` section: per-package options keyed by package name or glob, `false` skipping the package.
  */
-export type ExportsConfig = Record<string, false | MirrorPackageConfig>;
+export type ExportsConfig = Record<string, false | ExportsPackageConfig>;
 
 /**
- * The validated `since` configuration.
- *
- * @since 0.3.16-canary.0
+ * The `since` section: package names or globs keyed to `false`, each skipping the packages it matches.
  */
-export interface SinceConfig {
-  skipPackages?: Array<string> | undefined;
-  onAfterWrite?: CodefastAfterWriteHook | undefined;
-}
+export type SinceConfig = Record<string, false>;
 
 /** An audit's per-command defaults: entries to ignore, as bare tokens or `repo/relative/path:token`. */
 interface CodefastAuditAllowlistConfig {
@@ -95,13 +85,14 @@ export interface CodefastConfig {
   exports?: ExportsConfig | undefined;
   since?: SinceConfig | undefined;
   audit?: CodefastAuditConfig | undefined;
+  afterWrite?: AfterWriteHook | undefined;
 }
 
-const afterWriteHookSchema = z.custom<CodefastAfterWriteHook>((value) => typeof value === "function", {
+const afterWriteHookSchema = z.custom<AfterWriteHook>((value) => typeof value === "function", {
   message: "Expected a function",
 });
 
-const mirrorCssConfigSchema = z.union([
+const exportsCssConfigSchema = z.union([
   z.boolean(),
   z
     .object({
@@ -112,7 +103,7 @@ const mirrorCssConfigSchema = z.union([
     .strict(),
 ]);
 
-const mirrorPackageConfigSchema = z
+const exportsPackageConfigSchema = z
   .object({
     preserve: z.boolean().optional(),
     strip: z.string().optional(),
@@ -121,26 +112,19 @@ const mirrorPackageConfigSchema = z
     source: z.union([z.boolean(), z.string()]).default(true),
     types: z.boolean().default(true),
     import: z.boolean().default(true),
-    css: mirrorCssConfigSchema.optional(),
+    css: exportsCssConfigSchema.optional(),
   })
   .strict();
 
 /**
- * Zod validator for the `exports` configuration record; its output is a {@link ExportsConfig}.
- *
- * @since 0.3.16-canary.0
+ * Zod validator for the `exports` section; its output is an {@link ExportsConfig}.
  */
 export const exportsConfigSchema: z.ZodType<ExportsConfig> = z.record(
   z.string(),
-  z.union([z.literal(false), mirrorPackageConfigSchema]),
+  z.union([z.literal(false), exportsPackageConfigSchema]),
 );
 
-const sinceConfigSchema = z
-  .object({
-    skipPackages: z.array(z.string()).optional(),
-    onAfterWrite: afterWriteHookSchema.optional(),
-  })
-  .strict();
+const sinceConfigSchema = z.record(z.string(), z.literal(false));
 
 const codefastAuditRtlConfigSchema = z
   .object({
@@ -192,5 +176,6 @@ export const codefastConfigRootSchema: z.ZodType<CodefastConfig> = z
     exports: exportsConfigSchema.optional(),
     since: sinceConfigSchema.optional(),
     audit: codefastAuditConfigSchema.optional(),
+    afterWrite: afterWriteHookSchema.optional(),
   })
   .strict();

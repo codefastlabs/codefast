@@ -435,14 +435,20 @@ export type EnginesAuditResult = {
 
 /**
  * What one audit left behind in a full `audit` run: a judged result, a reason it had nothing to scan, or the error that
- * kept it from running.
+ * kept it from running, with how to present it.
  */
-export type AuditOutcome =
-  | {
-      readonly name: string;
-      readonly status: "clean" | "findings";
-      readonly result: unknown;
-      readonly present: () => void;
-    }
+export type AuditRun = (
+  | { readonly name: string; readonly status: "clean" | "findings"; readonly result: unknown }
   | { readonly name: string; readonly status: "skipped"; readonly reason: string }
-  | { readonly name: string; readonly status: "error"; readonly error: AppError };
+  | { readonly name: string; readonly status: "error"; readonly error: Pick<AppError, "code" | "message"> }
+) & {
+  /** Prints the audit's own report; left out of the `--json` document. */
+  readonly present: () => void;
+};
+
+/**
+ * The report of a full `audit` run: one entry per audit, in a fixed order.
+ */
+export interface AuditAllReport {
+  readonly audits: ReadonlyArray<AuditRun>;
+}

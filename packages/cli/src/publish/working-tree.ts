@@ -51,7 +51,7 @@ export function ensureWorkingTreeClean(rootDir: string): Result<void, AppError> 
     return err(
       new AppError(
         "VALIDATION_ERROR",
-        "pack-slim refuses to run: the git working tree has uncommitted tracked changes. " +
+        "publish:prepare refuses to run: the git working tree has uncommitted tracked changes. " +
           "Commit or stash them, use --dry-run to preview, or pass --force to override.",
       ),
     );

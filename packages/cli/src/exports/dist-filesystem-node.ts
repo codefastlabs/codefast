@@ -1,15 +1,13 @@
 import path from "node:path";
 
 import type { Filesystem } from "#core/filesystem/filesystem";
+import { toPosixPath } from "#core/path";
 import type { DistFilesystem } from "#exports/domain/dist-filesystem";
-import { normalizePath } from "#exports/domain/path-normalizer";
 
 /**
- * Creates the `DistFilesystem` the mirror scan uses, backed by a `Filesystem`.
- *
- * @since 0.3.16-canary.0
+ * Creates the `DistFilesystem` the `dist/` scan reads, backed by a `Filesystem`.
  */
-export function createMirrorDistFilesystem(fs: Filesystem): DistFilesystem {
+export function createDistFilesystem(fs: Filesystem): DistFilesystem {
   return {
     async listRelativeFilesRecursively(dirPath: string): Promise<Array<string>> {
       try {
@@ -19,7 +17,7 @@ export function createMirrorDistFilesystem(fs: Filesystem): DistFilesystem {
           .map((dirent) => {
             const fullPath = path.join(dirent.parentPath, dirent.name);
             const relPath = path.relative(dirPath, fullPath);
-            return normalizePath(relPath);
+            return toPosixPath(relPath);
           });
       } catch (caughtError: unknown) {
         if (isKnownReadDirError(caughtError)) {

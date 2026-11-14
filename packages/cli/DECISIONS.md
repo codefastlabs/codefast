@@ -4,6 +4,59 @@ The choices that shape this package and the reasons behind them. [`ARCHITECTURE.
 resulting layout; [`README.md`](./README.md) describes what the commands do. Each decision below still holds; a decision
 that stops holding gets replaced here, not annotated.
 
+## Commands are named `namespace:action`
+
+**Context.** `mirror`, `pack-slim` and `tag` named a metaphor, not what they act on: a reader could not tell from
+`codefast tag` that it stamps `@since` on exported declarations, and an audit hid behind a subcommand of `audit`.
+
+**Decision.** Every command is named as Laravel's Artisan names one: the thing it acts on, a colon, and what it does to
+it — `exports:generate`, `publish:prepare`, `since:stamp`, `audit:links`. A namespace that has an obvious whole-run
+action keeps a bare command for it, as `migrate` sits beside `migrate:status`: `audit` runs every `audit:<name>`. A
+config section is named for the namespace it configures (`exports`, `since`, `audit`), and a source directory for the
+namespace too.
+
+**Consequences.** `codefast --help`, sorted, groups the commands by what they act on, and a new command's name is
+decided by the same rule rather than by taste. Run bare, `codefast` lists them and exits `0`, as `php artisan` does.
+
+## One command model
+
+**Context.** Every command resolved its own project root — four ways, one of them falling back to the working directory
+when none was found — loaded the config on its own, parsed `package.json` files of its own, read its positional as a
+`[package]` or a `[target]`, printed `--json` in one of two shapes, sent errors under `--json` as text to stderr, and
+printed config warnings to stdout, into the JSON a script was parsing.
+
+**Decision.** A command is a `CommandSpec` — name, target help, flags, `run`, `verdict`, `present` — and the rest is
+written once in `core/command.ts`: the workspace (root, config, every manifest) loaded once, the one `[target]` resolved
+by one rule, the `--json` document every command prints, the error report, the `afterWrite` hook and the exit code.
+Diagnostics go to stderr, so stdout carries only the report. A report is written in a shared vocabulary: a `Finding` at
+a `file:line`, and a `PackageOutcome` of `changed`, `unchanged`, `skipped` or `failed`.
+
+**Consequences.** Two commands cannot drift apart on anything the pipeline owns, because neither writes it. A command
+that writes files lists them, so the `afterWrite` hook reaches every writer rather than one. Streaming progress went:
+every command reports once its run returns, as the audits always did.
+
+## A writing command writes only what changed
+
+**Context.** `exports:generate` rewrote every `package.json` it touched, changed or not, so a run could not say which
+packages it changed and a formatter hook would have reformatted files nobody edited.
+
+**Decision.** A writer compares what it would write with what is on disk and writes only on a difference; the outcome
+says `changed` or `unchanged`, and a dry run reports the same outcome without writing.
+
+**Consequences.** The report of a writing command is the list of files it changed, which is also what the `afterWrite`
+hook receives.
+
+## The config lives at the project root, once
+
+**Context.** The loader walked up from the root, took the first of several file names silently, cached one load per
+directory for the life of the process, and ignored `codefast.config.ts` although the README taught it.
+
+**Decision.** The config is the one `codefast.config.{ts,mts,js,mjs,cjs,json}` at the project root, loaded once per run
+through jiti. Two of them is an error, not a ranking. A per-package section (`exports`, `since`) is a record keyed by
+package name or glob, `false` skipping the package; the exact name wins over a glob.
+
+**Consequences.** Which config applies is never a guess, and skipping a package is spelled the same in every section.
+
 ## Plain functions, not Explicit Architecture
 
 **Context.** The CLI has four top-level commands (`audit` and `audit:*`, `exports:generate`, `publish:prepare`,
@@ -13,17 +66,17 @@ token per injectable, request objects for one-field inputs, and a `shell/` layer
 `process` and Commander behind eleven more ports. Roughly three files in four existed to connect the other one, and the
 `@codefast/di` container resolved at runtime what a function call would have checked at compile time.
 
-**Decision.** Behaviour is wired with plain functions. A command module builds its Commander subcommand and calls
-`prepare*` / `run*` functions directly; domain modules export pure functions; output modules export `present*`
-functions. There is no container, no module registry, no token. Node built-ins are called through thin helpers in
-`core/` only where a helper adds something (a `Result`, a normalised error), never to make them injectable.
+**Decision.** Behaviour is wired with plain functions. A command declares a spec whose `run` and `present` are plain
+functions; domain modules export pure functions. There is no container, no module registry, no token. Node built-ins are
+called through thin helpers in `core/` only where a helper adds something (a `Result`, a normalised error), never to
+make them injectable.
 
-**Consequences.** Dependencies are visible as imports and checked by `tsc`. A new command is one directory following a
-fixed skeleton — `command.ts` (Commander wiring), `prepare.ts` (prelude), `run*.ts` (orchestration), `output.ts`
-(human), `cli-result.ts` (machine), `domain/` (pure) — so one command reads like the next. The cost is that swapping an
-implementation for a test means passing a real path or spying on `logger`, not binding a mock — accepted, because every
-infrastructure call here is cheap to exercise for real. This is the worked example the `@codefast/di` "explicit
-architecture" samples cite when they say the pattern must be earned by the domain: a CLI of this size does not earn it.
+**Consequences.** Dependencies are visible as imports and checked by `tsc`. A new command is one directory —
+`command.ts` (its spec), `run.ts`, `output.ts`, `domain/` — so one command reads like the next. The cost is that
+swapping an implementation for a test means passing a real path or spying on `logger`, not binding a mock — accepted,
+because every infrastructure call here is cheap to exercise for real. This is the worked example the `@codefast/di`
+"explicit architecture" samples cite when they say the pattern must be earned by the domain: a CLI of this size does not
+earn it.
 
 ## An interface needs a second implementation
 
@@ -37,63 +90,41 @@ none.
 **Consequences.** The `core/filesystem/node.ts` helpers are functions, not an adapter behind a port; telemetry or
 timing, if ever wanted, wraps a function instead of hooking a container activation.
 
-## Commander is the command model
+## One directory per audit
 
-**Context.** Commander already gives a declarative, composable tree of commands, options and actions. The earlier
-`CommandTree` / `CommandRouteWire` JSON that was translated into Commander added a layer with no extra capability.
+**Context.** The audits share a run, a report and an exit rule, but each has detectors of its own; left flat, a command
+directory became a pile of `run-rtl.ts`, `run-links.ts`, … beside a `domain/` holding every scan's detectors.
 
-**Decision.** Each `<command>/command.ts` exports `create<Name>Command(): Command` and uses the Commander API directly;
-`cli.ts` is the composition root that registers the four commands and global options. The prepare → guard → run → report
-→ exit control flow every command and subcommand repeats is written once in `core/cli/command-pipeline.ts`; a
-`command.ts` supplies only a descriptor of typed slots, so the spine is never copied per command.
+**Decision.** Each audit is its own directory under `audit/`, holding its `run.ts`, `output.ts` and `domain/`, and
+registers as its own `audit:<name>` command. What the audits share lives once in `audit/command.ts`: one `AuditCheck`
+per audit — the target its config may name, its run, its presenter, its clean rule — and the bare `audit` that runs them
+all.
 
-**Consequences.** Adding a flag is one `.option()` call next to the action that reads it. Zod validates only what comes
-from outside — the config file and the global options — so a shape error there is a usage error, not a stack trace. A
-request the command builds from its own prelude is typed by `buildRequest`; validating it again would check the CLI
-against itself.
+**Consequences.** Everything about one scan lives in one folder, and adding a scan is adding a check.
 
-## Subcommands nest like commands
+## Naming
 
-**Context.** `audit` carries several subcommands. Left flat, a command directory became a pile of `run-rtl.ts`,
-`run-links.ts`, … beside a `domain/` holding every scan's detectors, and the file name was the only thing saying which
-scan a file served.
+**Context.** Suffixes such as `.port.ts`, `.adapter.ts` and `.domain-service.ts` described the pattern a file played in
+an earlier architecture, not what it contained.
 
-**Decision.** A subcommand is a directory under its command holding what is its own: its `run.ts`, `output.ts` and
-`domain/`. What the subcommands genuinely share stays at the command root — the `audit` repo-root prelude, the `--json`
-shape and the exit-code rule, declared once beside one `AuditCheck` per scan. A file moves into a subcommand only when
-that subcommand alone uses it; anything two subcommands use is shared, not duplicated.
+**Decision.** A role file carries its role name: `command.ts` (the spec), `run.ts` (the orchestrator), `output.ts` (the
+`present*` functions). Every other file is named for the one concept it holds: `range-gaps.ts`, `layering.ts`,
+`sync-package.ts`. The only reserved suffix is `.test.ts`.
 
-**Consequences.** Everything about one scan lives in one folder (`audit/rtl/`, `audit/links/`), and `audit/domain/`
-holds only what every scan shares. `exports:generate`, `publish:prepare` and `since:stamp` have no subcommands and stay
-flat.
+**Consequences.** A filename says what a module does, the directory says which namespace it belongs to, and the same
+role answers to the same name in every command.
 
-## One pipeline, exit code computed once
+## Tests
 
-**Context.** The prepare → run → report → exit dance was hand-copied into every `command.ts`, and each copy recomputed
-the exit code on its own path — some presenters even returned it, leaking control-flow policy into the human presenter.
-Only `audit` had factored the dance into a descriptor and runner, and nothing else reused it.
+**Context.** With no container, a test calls the function it targets — and five hand-written fake filesystems had grown,
+each faking a different subset.
 
-**Decision.** The dance lives once in `core/cli/command-pipeline.ts`. A command supplies a `CommandPipeline` descriptor
-of typed slots — `prepare`, `buildRequest`, `run`, `presentHuman` / `formatJson`, `exitCode`, plus optional `guard` and
-`createPresenter` — and the pipeline runs them, parses global options uniformly, and computes the exit code exactly once
-from the run result; `present*` functions return `void`.
+**Decision.** A unit test runs a command over the one in-memory filesystem, through the same `loadWorkspace` and
+`resolveTarget` the pipeline uses, and spies on `logger` for what a presenter prints. A JS config, the type server and
+the built binary need a real disk, so they are integration or e2e tests over a temporary directory.
 
-**Consequences.** Adding a command is a descriptor, not a copy of the spine; the exit code has one source; global
-options reach every command the same way. The optional slots (`guard` for publish:prepare's working-tree check,
-`createPresenter` for streaming progress) keep the shared spine from collapsing to a lowest common denominator.
-
-## Group a command's I/O by subsystem
-
-**Context.** `domain/` is reserved for pure logic, so a command whose work is mostly I/O pushes that work to flat files
-at the command root. `since:stamp` had target resolution, candidate discovery, the per-target runner, the since-writer
-and version resolution all in one root pile, with only types under `domain/`.
-
-**Decision.** When the root pile grows past a handful, group it by subsystem rather than by purity: `since/target/` for
-discovering and selecting what to tag, `since/writer/` for stamping `@since`. The purity rule stays; this grouping is
-orthogonal to it. Shared types stay in `domain/types.ts` because they are genuinely cross-subsystem — scattering them
-would couple the subsystems through their type imports.
-
-**Consequences.** "Where is the tagging logic?" answers by folder, not by scanning a flat root.
+**Consequences.** Adding a test means building a project in memory and asserting on a `Result`. Coverage is enforced by
+the workspace's `test:coverage` gate, not by this document.
 
 ## `Result<T, AppError>` for recoverable failures
 
@@ -101,29 +132,12 @@ would couple the subsystems through their type imports.
 Throwing for those turns every caller into a `try`/`catch` and loses the error code the exit code depends on.
 
 **Decision.** Fallible operations return `Result<T, AppError>` (`core/result.ts`, `core/errors.ts`). `AppError` is a
-plain object with a code, not an `Error` subclass, so building one costs no stack capture. One boundary,
-`consumeCliAppError` in `core/cli/result-handle.ts`, turns an `err` into a formatted message and the error exit code
-(`core/exit-codes.ts`); unexpected exceptions still propagate.
+plain object with a code, not an `Error` subclass, so building one costs no stack capture. One boundary, the command
+pipeline in `core/command.ts`, turns an `err` into a `[CODE] message` line — or the `error` of the `--json` document —
+and exit code `2`; unexpected exceptions still propagate.
 
-**Consequences.** Domain and orchestration code never touch `process.exitCode`; only the command boundary does. Error
-text is produced in one place (`formatAppError`), so `--json` and human output stay consistent.
-
-## Presenters are output functions
-
-**Context.** A command reports to two audiences that test differently: a human reads lines printed through `logger` (a
-side effect, checked with a spy), and a script reads the `--json` string and the exit code (pure values, checked by
-asserting on the return). Folding both into one file mixes an effectful presenter with a pure serializer.
-
-**Decision.** Each command directory splits output by audience. `output.ts` (or a small `*-reporter.ts`) holds the human
-`present*` functions that write through `core/logger.ts` — a plain object, so a test can `vi.spyOn(logger, "out")` — and
-return `void`. `cli-result.ts` holds the machine output: the `format*JsonOutput` string builders and the `exitCodeFor*`
-mappers, which take a result and return a value, touching neither `logger` nor `process`. The audits share one `--json`
-shape and one exit rule, so `audit/cli-result.ts` holds a single pair for all of them. The exit code is policy, not
-presentation, so the pipeline calls `exitCodeFor*` once for both audiences rather than letting a presenter decide it.
-
-**Consequences.** Output changes never touch orchestration; the `--json` shape and the exit-code rule are unit-tested
-without a spy. `command.ts` carries no serialization or exit-code logic of its own — the pipeline calls the two output
-modules.
+**Consequences.** Runs never touch `process.exitCode`; only the pipeline does. Error text is produced in one place
+(`presentAppError`), so every command reports a failure the same way.
 
 ## Parse TypeScript with `oxc-parser`
 
@@ -151,36 +165,6 @@ mechanical offers `--fix` (comment dividers) so a red run is one command from gr
 
 **Consequences.** Audits stay cheap to keep on; a new rule has to come with a precise detector or it does not ship.
 
-## Naming
-
-**Context.** Suffixes such as `.port.ts`, `.adapter.ts`, `.domain-service.ts`, `.value-object.ts` and `.coordination.ts`
-described the pattern a file played in the old architecture, not what the file contained.
-
-**Decision.** Two kinds of file, two naming rules. A **pipeline-role file** — the fixed slot every command and
-subcommand repeats — carries its role name: `command.ts` (Commander wiring), `prepare.ts` (prelude), `run*.ts`
-(orchestrator), `output.ts` (the human `present*` functions), `cli-result.ts` (machine output). Every **other** file is
-named for the one concept it holds: `range-gaps.ts`, `layering.ts`, `exports.ts`. The only reserved suffix is
-`.test.ts`; a Zod schema is named for what it parses (`core/config/schema.ts`). Directory names are the four commands
-plus `core/`, and a command's pure logic lives under its `domain/`. The role wins at a role slot: a subcommand whose
-work reads as "analyze" still names its orchestrator `run.ts` and keeps the concept in `domain/analyze-service.ts` — the
-file that touches the `Filesystem` and returns a `Result` is `run*`, not the verb it computes. The orchestrator is
-`run*`, never `sync`: `sync` reads as "synchronous" (these functions are async) and is kept only where it is the domain
-verb, as in `exports:generate` syncing `package.json` exports.
-
-**Consequences.** A filename says what a module does; the directory says which command it belongs to; and the same role
-answers to the same name in every command.
-
-## Tests
-
-**Context.** With no container, a test calls the function it targets.
-
-**Decision.** Unit tests live under `tests/unit/`, mirroring `src/`, and run in Node. Filesystem-touching code is tested
-against fixture inputs under `tests/unit/support/`; output through spies on `logger`. There is no mocking layer for
-infrastructure.
-
-**Consequences.** Adding a test means importing a function and asserting on a `Result`. Coverage is enforced by the
-workspace's `test:coverage` gate, not by this document.
-
 ## `audit:props` judges by type, through the type server
 
 **Context.** Whether a props alias written `A & B & { … }` could be an interface depends on what each part resolves to:
@@ -198,10 +182,6 @@ extended; a union, a type parameter, a mapped type over a type parameter, or any
 turns its props into a union without anyone editing a list. Like the `className` fold, it is the type server's cost only
 for files that hold a candidate, and it needs `typescript` (v7) and a `tsconfig.json` over the scanned files.
 
-## License
-
-Released under the [MIT License](./LICENSE).
-
 ## Exit `1` for a failing result, `2` for a run that could not happen
 
 **Context.** Audit findings, a missing target, a crash and an unknown command all exited `1`, so a CI job could not tell
@@ -209,7 +189,12 @@ code that needs fixing from a tool or invocation that does. Commander also exite
 
 **Decision.** `1` means the run finished and its result fails — findings, an errored package, a failed hook. `2` means
 the run could not do its job: every `AppError`, whatever its code, and every usage error Commander raises, which
-`runCli` catches through `exitOverride` on the whole command tree. A full `audit` run ranks `2` above `1`.
+`runCli` catches through `exitOverride` on the whole command tree. A full `audit` run ranks `2` above `1`, through a
+`verdict` of `error`.
 
 **Consequences.** A script reads the class of failure from the code alone. `bin.ts` sets `process.exitCode` rather than
 calling `process.exit`, which would end the process before a piped stdout drains.
+
+## License
+
+Released under the [MIT License](./LICENSE).

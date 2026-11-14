@@ -1,41 +1,56 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { logger } from "#core/logger";
-import { presentTagResult } from "#since/output";
-import { createTagResult } from "#tests/unit/support/since-result";
+import { refuseColor } from "#core/style";
+import type { SinceStampReport } from "#since/domain/types";
+import { presentSinceStampReport, sinceStampVerdict } from "#since/output";
+import { createCommandContext } from "#tests/unit/support/command-context";
+import { captureLogger } from "#tests/unit/support/logger-capture";
+import { createMemoryFilesystem } from "#tests/unit/support/memory-filesystem";
 
-function capture(run: () => void): { readonly out: string; readonly err: string } {
-  const outSpy = vi.spyOn(logger, "out").mockImplementation(() => {});
-  const errSpy = vi.spyOn(logger, "err").mockImplementation(() => {});
-  run();
-  const join = (calls: ReadonlyArray<ReadonlyArray<unknown>>): string =>
-    calls.map((call) => String(call[0])).join("\n");
-  return { out: join(outSpy.mock.calls), err: join(errSpy.mock.calls) };
-}
+afterEach(() => {
+  refuseColor(false);
+  vi.restoreAllMocks();
+});
 
-describe("presentTagResult", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
+const report: SinceStampReport = {
+  packages: [
+    {
+      name: "@acme/kit",
+      directory: "packages/kit",
+      status: "changed",
+      reason: null,
+      files: ["packages/kit/src/format.ts"],
+      version: "1.2.0",
+      filesScanned: 2,
+      stampedDeclarations: 1,
+    },
+  ],
+  findings: [{ file: "packages/kit/src/parse.ts", line: 6, text: "parse", message: "write the block by hand" }],
+};
+
+describe("presentSinceStampReport", () => {
+  it("prints each package, then each declaration left unstamped, then the summary", async () => {
+    refuseColor(true);
+    const { fs } = createMemoryFilesystem({ "/repo/package.json": "{}" });
+    const context = await createCommandContext<"dryRun">(fs, { cwd: "/repo", flags: { dryRun: false } });
+    const printed = captureLogger();
+
+    presentSinceStampReport(report, { ...context, elapsedSeconds: 0.25 });
+
+    expect(printed.out()).toBe(
+      [
+        "✎ @acme/kit  @since 1.2.0 on 1 declarations in 1 of 2 files",
+        "\npackages/kit/src/parse.ts",
+        "  6: parse → write the block by hand",
+        "\n✗ since:stamp: 1 changed; 1 declarations stamped, 1 left unstamped (0.25s)",
+      ].join("\n"),
+    );
   });
+});
 
-  it("prints each blocked declaration at its root-relative line and counts them in the summary", () => {
-    const { out, err } = capture(() => {
-      presentTagResult(
-        createTagResult({ blockedDeclarations: [{ filePath: "/repo/src/parse.ts", line: 6, name: "parse" }] }),
-        "/repo",
-      );
-    });
-
-    expect(err).toContain("src/parse.ts:6 `parse` left unstamped");
-    expect(out).toContain("declarations=0 blocked=1");
-  });
-
-  it("keeps the summary free of a blocked count when nothing is blocked", () => {
-    const { out, err } = capture(() => {
-      presentTagResult(createTagResult(), "/repo");
-    });
-
-    expect(err).toBe("");
-    expect(out).not.toContain("blocked=");
+describe("sinceStampVerdict", () => {
+  it("fails on a declaration left unstamped, since a later stamp would name the wrong version", () => {
+    expect(sinceStampVerdict(report)).toBe("fail");
+    expect(sinceStampVerdict({ ...report, findings: [] })).toBe("pass");
   });
 });

@@ -1,29 +1,28 @@
-import type { AuditOutcome } from "#audit/domain/types";
-import { reportAppError } from "#core/cli/result-handle";
+import type { AuditAllReport } from "#audit/domain/types";
 import { logger } from "#core/logger";
+import { presentSummary } from "#core/report";
 import { paint } from "#core/style";
 
 /**
- * Prints every audit of a full run under its name, then one line naming the audits that failed.
+ * Prints every audit of a full run under its name, then the summary naming the audits that failed.
  */
-export function presentAuditAll(outcomes: ReadonlyArray<AuditOutcome>, verbose: boolean): void {
-  for (const outcome of outcomes) {
-    logger.out(paint("bold", `audit:${outcome.name}`));
-    if (outcome.status === "error") {
-      reportAppError(outcome.error, verbose);
-    } else if (outcome.status === "skipped") {
-      logger.out(paint("dim", `– Skipped: ${outcome.reason}`));
+export function presentAuditAll(report: AuditAllReport, elapsedSeconds: number): void {
+  for (const run of report.audits) {
+    logger.out(paint("bold", `audit:${run.name}`));
+    if (run.status === "skipped") {
+      logger.out(paint("dim", `○ skipped: ${run.reason}`));
     } else {
-      outcome.present();
+      run.present();
     }
     logger.out("");
   }
-  const failing = outcomes.filter((outcome) => outcome.status === "findings" || outcome.status === "error");
-  if (failing.length === 0) {
-    const ran = outcomes.filter((outcome) => outcome.status === "clean").length;
-    logger.out(paint("green", `✓ All ${ran} audits that ran are clean`));
-    return;
-  }
-  const names = failing.map((outcome) => `${outcome.name} (${outcome.status})`).join(", ");
-  logger.out(paint("red", `✗ ${failing.length} of ${outcomes.length} audits failed: ${names}`));
+  const failing = report.audits.filter((run) => run.status === "findings" || run.status === "error");
+  const ran = report.audits.filter((run) => run.status !== "skipped").length;
+  presentSummary(
+    failing.length === 0,
+    failing.length === 0
+      ? `audit: all ${ran} audits that ran are clean`
+      : `audit: ${failing.length} of ${report.audits.length} failed — ${failing.map((run) => `${run.name} (${run.status})`).join(", ")}`,
+    elapsedSeconds,
+  );
 }

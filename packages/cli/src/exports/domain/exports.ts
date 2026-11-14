@@ -237,7 +237,7 @@ export interface GenerateExportsOptions {
   types?: boolean;
   /** Include the `import` condition (default `true`). */
   import?: boolean;
-  /** Specifiers to leave out of the generated map — see `mirror.<pkg>.exclude`. Matched against
+  /** Specifiers to leave out of the generated map — see `exports.<pkg>.exclude`. Matched against
    *  the post-`strip` specifier; a trailing `/*` excludes the whole subtree. */
   exclude?: ReadonlyArray<string>;
   /** Override the default source path derivation. Receives the module path relative to
@@ -252,7 +252,7 @@ export interface GenerateExportsOptions {
  * @since 0.3.16-canary.0
  */
 /**
- * Predicate for `mirror.<pkg>.exclude`. A pattern ending in `/*` drops the whole subtree; any other
+ * Predicate for `exports.<pkg>.exclude`. A pattern ending in `/*` drops the whole subtree; any other
  * pattern must match the specifier exactly. The root export is never excluded — a package with no
  * root export is not installable — and `./package.json` is added after this filter runs.
  */

@@ -2,63 +2,16 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import type { DirectoryEntry, Filesystem } from "#core/filesystem/filesystem";
-import { runPackSlim } from "#publish/run";
+import { runPublishPrepare } from "#publish/run";
+import { createCommandContext } from "#tests/unit/support/command-context";
+import { createMemoryFilesystem } from "#tests/unit/support/memory-filesystem";
 
-function createFakeRepo(files: Record<string, string>): {
-  readonly fs: Filesystem;
-  readonly store: Map<string, string>;
-} {
-  const store = new Map<string, string>(Object.entries(files));
-  const isDir = (candidate: string): boolean => [...store.keys()].some((key) => key.startsWith(`${candidate}/`));
-  const fs: Filesystem = {
-    existsSync: (filePath) => store.has(filePath) || isDir(filePath),
-    canonicalPathSync: (inputPath) => inputPath,
-    globSync: () => [],
-    statSync: (filePath) => ({ isDirectory: () => isDir(filePath), isFile: () => store.has(filePath) }),
-    readFileSync: (filePath) => {
-      const found = store.get(filePath);
-      if (found === undefined) {
-        throw new Error(`missing ${filePath}`);
-      }
-      return found;
-    },
-    writeFileSync: (filePath, data) => {
-      store.set(filePath, data);
-    },
-    readdirSync: () => [],
-    readFile: async (filePath) => {
-      const found = store.get(filePath);
-      if (found === undefined) {
-        throw new Error(`missing ${filePath}`);
-      }
-      return found;
-    },
-    writeFile: async (filePath, data) => {
-      store.set(filePath, data);
-    },
-    readdirEntries: async (dirPath): Promise<Array<DirectoryEntry>> =>
-      [...store.keys()]
-        .filter((key) => key.startsWith(`${dirPath}/`))
-        .map((key) => ({
-          name: path.basename(key),
-          parentPath: path.dirname(key),
-          isFile: () => true,
-          isDirectory: () => false,
-        })),
-    rename: async () => {},
-    unlink: async (filePath) => {
-      store.delete(filePath);
-    },
-  };
-  return { fs, store };
-}
-
-const ROOT = "/repo";
-const PKG = `${ROOT}/packages/di`;
+const ROOT = path.resolve("/repo");
+const PKG = path.join(ROOT, "packages/di");
 
 function seedPackage(): Record<string, string> {
   return {
+    [path.join(ROOT, "pnpm-workspace.yaml")]: 'packages:\n  - "packages/*"\n',
     [`${PKG}/package.json`]: `${JSON.stringify(
       {
         name: "@codefast/di",
@@ -83,73 +36,67 @@ function seedPackage(): Record<string, string> {
   };
 }
 
-describe("runPackSlim", () => {
-  it("strips the development lane and dist maps for a single package", async () => {
-    const { fs, store } = createFakeRepo(seedPackage());
+async function prepare(files: Record<string, string>, flags: { dryRun: boolean; force: boolean }) {
+  const memory = createMemoryFilesystem(files);
+  const context = await createCommandContext(memory.fs, { cwd: ROOT, target: "packages/di", flags });
+  return { ...memory, outcome: await runPublishPrepare(context) };
+}
 
-    const outcome = await runPackSlim(fs, { rootDir: ROOT, packageFilter: "packages/di", write: true });
+describe("runPublishPrepare", () => {
+  it("strips the development lane and dist maps of a published package", async () => {
+    const { read, outcome } = await prepare(seedPackage(), { dryRun: false, force: true });
 
-    expect(outcome.ok).toBe(true);
-    if (!outcome.ok) {
-      return;
-    }
-    const manifest = JSON.parse(store.get(`${PKG}/package.json`)!) as Record<string, unknown>;
+    const manifest = JSON.parse(read(`${PKG}/package.json`) ?? "") as Record<string, unknown>;
     expect(manifest.files).toEqual(["dist", "README.md"]);
     expect(manifest.exports).toEqual({ ".": { types: "./dist/index.d.ts", import: "./dist/index.js" } });
     expect(manifest.imports).toEqual({ "#*": { types: "./dist/*.d.ts", default: "./dist/*.js" } });
     expect(manifest).not.toHaveProperty("scripts");
     expect(manifest).not.toHaveProperty("devDependencies");
+    expect(read(`${PKG}/dist/index.js.map`)).toBeUndefined();
+    expect(read(`${PKG}/dist/core/token.js.map`)).toBeUndefined();
+    expect(read(`${PKG}/dist/index.js`)).not.toContain("sourceMappingURL");
 
-    expect(store.has(`${PKG}/dist/index.js.map`)).toBe(false);
-    expect(store.has(`${PKG}/dist/index.d.ts.map`)).toBe(false);
-    expect(store.has(`${PKG}/dist/core/token.js.map`)).toBe(false);
-    expect(store.get(`${PKG}/dist/index.js`)).not.toContain("sourceMappingURL");
-    expect(store.get(`${PKG}/dist/core/token.js`)).not.toContain("sourceMappingURL");
-
-    const stats = outcome.value;
-    expect(stats.packagesProcessed).toBe(1);
-    expect(stats.packagesChanged).toBe(1);
-    expect(stats.totalMapFilesDeleted).toBe(3);
-    expect(stats.packageDetails[0]).toMatchObject({
-      importsSourceRemoved: 1,
-      importsUnshippedRemoved: 1,
-      scriptsRemoved: 2,
-      devDependenciesRemoved: 1,
-      sourceCommentsStripped: 3,
-    });
+    expect(outcome.ok && outcome.value.packages).toEqual([
+      expect.objectContaining({
+        name: "@codefast/di",
+        directory: "packages/di",
+        status: "changed",
+        dropped: {
+          filesSrc: true,
+          exportsSource: 1,
+          importsSource: 1,
+          importsUnshipped: 1,
+          scripts: 2,
+          devDependencies: 1,
+          sourceMaps: 3,
+          sourceMappingComments: 3,
+        },
+      }),
+    ]);
   });
 
-  it("touches nothing under --dry-run but still reports what it would drop", async () => {
-    const { fs, store } = createFakeRepo(seedPackage());
-    const before = new Map(store);
+  it("touches nothing on a dry run but still reports what it would drop", async () => {
+    const files = seedPackage();
+    const { read, outcome } = await prepare(files, { dryRun: true, force: false });
 
-    const outcome = await runPackSlim(fs, { rootDir: ROOT, packageFilter: "packages/di", write: false });
-
-    expect(outcome.ok).toBe(true);
-    if (!outcome.ok) {
-      return;
+    for (const [filePath, content] of Object.entries(files)) {
+      expect(read(filePath)).toBe(content);
     }
-    expect([...store.entries()]).toEqual([...before.entries()]);
-    expect(outcome.value.totalMapFilesDeleted).toBe(3);
-    expect(outcome.value.packagesChanged).toBe(1);
+    expect(outcome.ok && outcome.value.packages[0]).toMatchObject({ status: "changed", dropped: { sourceMaps: 3 } });
   });
 
   it("skips a private package", async () => {
-    const { fs } = createFakeRepo({
-      [`${PKG}/package.json`]: JSON.stringify({
-        name: "@codefast/benchmark-di",
-        private: true,
-        files: ["dist", "src"],
-      }),
+    const { outcome } = await prepare(
+      {
+        [path.join(ROOT, "pnpm-workspace.yaml")]: 'packages:\n  - "packages/*"\n',
+        [`${PKG}/package.json`]: JSON.stringify({ name: "@codefast/benchmark-di", private: true }),
+      },
+      { dryRun: false, force: true },
+    );
+
+    expect(outcome.ok && outcome.value.packages[0]).toMatchObject({
+      status: "skipped",
+      reason: "private, never published",
     });
-
-    const outcome = await runPackSlim(fs, { rootDir: ROOT, packageFilter: "packages/di", write: true });
-
-    expect(outcome.ok).toBe(true);
-    if (!outcome.ok) {
-      return;
-    }
-    expect(outcome.value.packagesSkipped).toBe(1);
-    expect(outcome.value.packageDetails[0]?.skipReason).toBe("private package");
   });
 });

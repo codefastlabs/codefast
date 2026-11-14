@@ -11,11 +11,12 @@ import { missesShippedFiles, scanStylesheetSources } from "#audit/publish/domain
 import { listShippedFiles } from "#audit/publish/shipped-files";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
+import { relativePosixPath } from "#core/path";
 import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
-import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
 import { sourceCommentLanguage, walkSourceFiles } from "#core/workspace/source-walk";
-import { packageJsonFileName } from "#core/workspace/well-known-files";
+import type { Workspace } from "#core/workspace/workspace";
+import { packagesInTarget } from "#core/workspace/workspace";
 import { unshippedPublishTargets } from "#publish/domain/transform";
 
 /**
@@ -25,15 +26,16 @@ import { unshippedPublishTargets } from "#publish/domain/transform";
  *
  * @since 0.12.0
  */
-export async function runPublishAudit(
+export function runPublishAudit(
   fs: Filesystem,
   args: {
-    readonly rootDir: string;
+    readonly workspace: Workspace;
     readonly targetPath: string;
   },
-): Promise<Result<PublishAuditResult, AppError>> {
+): Result<PublishAuditResult, AppError> {
   try {
-    const { rootDir, targetPath } = args;
+    const { workspace, targetPath } = args;
+    const { rootDir } = workspace;
 
     const legacyImportFiles: Array<LegacySubpathFile> = [];
     let legacyImportCount = 0;
@@ -47,25 +49,18 @@ export async function runPublishAudit(
         continue;
       }
       legacyImportCount += imports.length;
-      legacyImportFiles.push({ relativePath: toPosixPath(path.relative(rootDir, absolutePath)), imports });
+      legacyImportFiles.push({ relativePath: relativePosixPath(rootDir, absolutePath), imports });
     }
 
-    const layout = await listWorkspacePackageDirectories(rootDir, fs, true);
     const unshipped: Array<UnshippedTargetViolation> = [];
     const unreachableStylesheets: Array<UnreachableStylesheetViolation> = [];
     let packageCount = 0;
-    for (const packageDir of layout.packageDirectoryPathsAbsolute) {
-      const manifestPath = path.join(packageDir, packageJsonFileName);
-      if (!fs.existsSync(manifestPath)) {
-        continue;
-      }
-      const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8")) as Record<string, unknown>;
-      if (manifest.private === true) {
+    for (const workspacePackage of packagesInTarget(workspace, targetPath)) {
+      if (workspacePackage.isPrivate) {
         continue;
       }
       packageCount++;
-      const packageName =
-        typeof manifest.name === "string" ? manifest.name : toPosixPath(path.relative(rootDir, packageDir));
+      const { name: packageName, directory: packageDir, manifest } = workspacePackage;
       for (const target of unshippedPublishTargets(manifest)) {
         unshipped.push({ packageName, field: target.field, subpath: target.subpath, target: target.target });
       }
@@ -93,7 +88,7 @@ function unreachableStylesheetsOf(
   args: {
     readonly rootDir: string;
     readonly packageDir: string;
-    readonly manifest: Record<string, unknown>;
+    readonly manifest: Readonly<Record<string, unknown>>;
   },
 ): Array<Omit<UnreachableStylesheetViolation, "packageName">> {
   const { rootDir, packageDir, manifest } = args;
@@ -107,15 +102,11 @@ function unreachableStylesheetsOf(
     const sources = scanStylesheetSources(fs.readFileSync(stylesheetPath, "utf8"));
     if (sources.length > 0 && missesShippedFiles(stylesheet, sources, shipped.files)) {
       violations.push({
-        stylesheet: toPosixPath(path.relative(rootDir, stylesheetPath)),
+        stylesheet: relativePosixPath(rootDir, stylesheetPath),
         sources,
         missingFilesEntries: shipped.missingEntries,
       });
     }
   }
   return violations;
-}
-
-function toPosixPath(filePath: string): string {
-  return filePath.split(path.sep).join("/");
 }

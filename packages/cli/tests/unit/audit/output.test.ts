@@ -1,52 +1,51 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { presentAuditAll } from "#audit/output";
-import { AppError } from "#core/errors";
-import { logger } from "#core/logger";
+import { refuseColor } from "#core/style";
+import { captureLogger } from "#tests/unit/support/logger-capture";
 
 afterEach(() => {
+  refuseColor(false);
   vi.restoreAllMocks();
 });
 
-function capture(): { out: () => string; err: () => string } {
-  const outSpy = vi.spyOn(logger, "out").mockImplementation(() => {});
-  const errSpy = vi.spyOn(logger, "err").mockImplementation(() => {});
-  const join = (calls: Array<Array<unknown>>): string => calls.map((call) => String(call[0])).join("\n");
-  return { out: () => join(outSpy.mock.calls), err: () => join(errSpy.mock.calls) };
-}
-
 describe("presentAuditAll", () => {
   it("prints each audit under its name and counts only the audits that ran", () => {
-    const printed = capture();
+    refuseColor(true);
+    const printed = captureLogger();
     const present = vi.fn();
 
     presentAuditAll(
-      [
-        { name: "links", status: "clean", result: {}, present },
-        { name: "rtl", status: "skipped", reason: "no target" },
-      ],
-      false,
+      {
+        audits: [
+          { name: "links", status: "clean", result: {}, present },
+          { name: "rtl", status: "skipped", reason: "no target", present: () => {} },
+        ],
+      },
+      0.5,
     );
 
     expect(present).toHaveBeenCalledOnce();
     expect(printed.out()).toContain("audit:links");
-    expect(printed.out()).toContain("Skipped: no target");
-    expect(printed.out()).toContain("All 1 audits that ran are clean");
+    expect(printed.out()).toContain("○ skipped: no target");
+    expect(printed.out()).toContain("✓ audit: all 1 audits that ran are clean (0.50s)");
   });
 
-  it("names every audit with findings or an error, and reports the error on stderr", () => {
-    const printed = capture();
+  it("names every audit with findings or an error", () => {
+    refuseColor(true);
+    const printed = captureLogger();
 
     presentAuditAll(
-      [
-        { name: "links", status: "findings", result: {}, present: () => {} },
-        { name: "rtl", status: "error", error: new AppError("NOT_FOUND", "Not found: /repo/src") },
-        { name: "imports", status: "clean", result: {}, present: () => {} },
-      ],
-      false,
+      {
+        audits: [
+          { name: "links", status: "findings", result: {}, present: () => {} },
+          { name: "rtl", status: "error", error: { code: "NOT_FOUND", message: "Not found" }, present: () => {} },
+          { name: "imports", status: "clean", result: {}, present: () => {} },
+        ],
+      },
+      0.5,
     );
 
-    expect(printed.err()).toBe("[NOT_FOUND] Not found: /repo/src");
-    expect(printed.out()).toContain("2 of 3 audits failed: links (findings), rtl (error)");
+    expect(printed.out()).toContain("✗ audit: 2 of 3 failed — links (findings), rtl (error)");
   });
 });

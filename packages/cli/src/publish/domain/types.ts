@@ -1,60 +1,25 @@
-/** Request, stats and progress types for a pack-slim run. */
+import type { PackageOutcome } from "#core/report";
 
 /**
- * The inputs of a pack-slim run.
- *
- * @since 0.8.1
+ * What `publish:prepare` dropped from one package, or would drop on a dry run.
  */
-export interface PackSlimRunRequest {
-  rootDir: string;
-  packageFilter?: string | undefined;
-  write?: boolean | undefined;
+export interface PublishPackageOutcome extends PackageOutcome {
+  readonly dropped: {
+    /** Whether `src` left the `files` list. */
+    readonly filesSrc: boolean;
+    readonly exportsSource: number;
+    readonly importsSource: number;
+    readonly importsUnshipped: number;
+    readonly scripts: number;
+    readonly devDependencies: number;
+    readonly sourceMaps: number;
+    readonly sourceMappingComments: number;
+  };
 }
 
 /**
- * The outcome of slimming one workspace package.
- *
- * @since 0.8.1
+ * The report of a `publish:prepare` run: one outcome per package the target reaches.
  */
-export interface PackSlimPackageStats {
-  name: string;
-  path: string;
-  skipped: boolean;
-  skipReason: string;
-  error: string | null;
-  filesSrcRemoved: boolean;
-  exportsSourceRemoved: number;
-  importsSourceRemoved: number;
-  importsUnshippedRemoved: number;
-  scriptsRemoved: number;
-  devDependenciesRemoved: number;
-  mapFilesDeleted: number;
-  sourceCommentsStripped: number;
-  changed: boolean;
-}
-
-/**
- * The aggregate stats of a pack-slim run across every targeted package.
- *
- * @since 0.8.1
- */
-export interface PackSlimRunStats {
-  packagesFound: number;
-  packagesProcessed: number;
-  packagesSkipped: number;
-  packagesErrored: number;
-  packagesChanged: number;
-  totalMapFilesDeleted: number;
-  packageDetails: Array<PackSlimPackageStats>;
-}
-
-/**
- * The progress events a pack-slim run emits as it works through the packages.
- *
- * @since 0.8.1
- */
-export interface PackSlimProgressListener {
-  onBanner?(): void;
-  onPackageComplete?(stats: PackSlimPackageStats, ordinal: number, total: number): void;
-  onComplete?(stats: PackSlimRunStats, elapsedSeconds: number): void;
+export interface PublishPrepareReport {
+  readonly packages: ReadonlyArray<PublishPackageOutcome>;
 }

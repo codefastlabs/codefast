@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -38,7 +38,8 @@ let reported: Array<string>;
 
 // Runs the audit command in-process, so the type server it spawns is the one subprocess and coverage sees the probe.
 beforeAll(async () => {
-  fixtureDir = mkdtempSync(path.join(tmpdir(), "codefast-audit-props-"));
+  fixtureDir = realpathSync(mkdtempSync(path.join(tmpdir(), "codefast-audit-props-")));
+  writeFileSync(path.join(fixtureDir, "package.json"), JSON.stringify({ name: "props-fixture", private: true }));
   writeFileSync(
     path.join(fixtureDir, "tsconfig.json"),
     JSON.stringify({ compilerOptions: { strict: true, noEmit: true, types: [] }, include: ["src"] }),
@@ -50,6 +51,7 @@ beforeAll(async () => {
   const previousExitCode = process.exitCode;
   process.exitCode = undefined;
   const out = vi.spyOn(logger, "out").mockImplementation(() => {});
+  const cwd = vi.spyOn(process, "cwd").mockReturnValue(fixtureDir);
   try {
     exitCode = await runCli(["node", "codefast", "audit:props", fixtureDir, "--json"]);
     const summary = JSON.parse(String(out.mock.calls[0]?.[0])) as { result: PropsAuditResult };
@@ -59,6 +61,7 @@ beforeAll(async () => {
   } finally {
     process.exitCode = previousExitCode;
     out.mockRestore();
+    cwd.mockRestore();
   }
 }, 60_000);
 

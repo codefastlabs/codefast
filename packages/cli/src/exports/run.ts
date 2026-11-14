@@ -1,124 +1,21 @@
-import path from "node:path";
-
-import type { ExportsConfig } from "#core/config/schema";
-import { AppError } from "#core/errors";
-import { messageFrom } from "#core/errors";
-import type { Filesystem } from "#core/filesystem/filesystem";
+import type { CommandContext } from "#core/command";
+import { selectPackageConfig } from "#core/config/package-selector";
+import type { AppError } from "#core/errors";
 import type { Result } from "#core/result";
-import { err, ok } from "#core/result";
-import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
-import type { WorkspacePackageLayoutOutcome } from "#core/workspace/resolver";
-import { normalizePath } from "#exports/domain/path-normalizer";
-import type {
-  FindWorkspacePackagesResult,
-  GlobalStats,
-  PackageStats,
-  WorkspaceMultiDiscoverySource,
-} from "#exports/domain/types";
-import type { MirrorSyncExecutionInput } from "#exports/domain/types";
-import { resolvePackageFilterUnderRoot } from "#exports/package-path";
-import { syncExportsForWorkspacePackage } from "#exports/sync-workspace-package";
-
-export type { MirrorSyncExecutionInput } from "#exports/domain/types";
+import { ok } from "#core/result";
+import { packagesInTarget } from "#core/workspace/workspace";
+import type { ExportsPackageOutcome, ExportsReport } from "#exports/domain/types";
+import { syncPackageExports } from "#exports/sync-package";
 
 /**
- * Runs the mirror sync across the targeted packages and returns the aggregate stats.
- *
- * @since 0.3.16-canary.0
+ * Regenerates the exports map of every package the target reaches.
  */
-export async function runMirrorSync(
-  fs: Filesystem,
-  input: MirrorSyncExecutionInput,
-): Promise<Result<GlobalStats, AppError>> {
-  const config = (input.config ?? {}) as ExportsConfig;
-  const { listener } = input;
-  const write = input.write ?? true;
-
-  listener?.onBanner();
-
-  const startTime = performance.now();
-
-  try {
-    let targetPackages: Array<string> = [];
-    if (input.packageFilter) {
-      const filterOutcome = resolvePackageFilterUnderRoot(fs, input.rootDir, input.packageFilter);
-      if (!filterOutcome.ok) {
-        return filterOutcome;
-      }
-      targetPackages = [filterOutcome.value];
-      listener?.onProcessingMode({ kind: "single" });
-    } else {
-      const layoutOutcome = await listWorkspacePackageDirectories(input.rootDir, fs, false);
-      const { relPaths, multiSource } = mirrorTargetsFromWorkspaceLayout(input.rootDir, layoutOutcome);
-      targetPackages = relPaths;
-      listener?.onProcessingMode({ kind: "multi", source: multiSource });
-    }
-
-    const stats: GlobalStats = {
-      packagesFound: targetPackages.length,
-      packagesProcessed: 0,
-      packagesSkipped: 0,
-      packagesErrored: 0,
-      totalExports: 0,
-      totalJsModules: 0,
-      totalCssExports: 0,
-      packageDetails: [],
-    };
-
-    if (targetPackages.length === 0) {
-      listener?.onNoPackages();
-      listener?.onComplete(stats, (performance.now() - startTime) / 1000);
-      return ok(stats);
-    }
-
-    let ordinal = 1;
-    for (const pkgPath of targetPackages) {
-      const pkgStats = await syncExportsForWorkspacePackage(fs, input.rootDir, pkgPath, config, write);
-      stats.packageDetails.push(pkgStats);
-      listener?.onPackageComplete(pkgStats, ordinal, targetPackages.length);
-      ordinal++;
-
-      accumulateStats(stats, pkgStats);
-    }
-
-    const elapsed = (performance.now() - startTime) / 1000;
-    listener?.onComplete(stats, elapsed);
-
-    return ok(stats);
-  } catch (caughtError: unknown) {
-    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
+export async function runExportsGenerate(context: CommandContext<"dryRun">): Promise<Result<ExportsReport, AppError>> {
+  const { fs, workspace, target, flags } = context;
+  const packages: Array<ExportsPackageOutcome> = [];
+  for (const workspacePackage of packagesInTarget(workspace, target.path)) {
+    const packageConfig = selectPackageConfig(workspace.config.exports, workspacePackage.name);
+    packages.push(await syncPackageExports(fs, workspacePackage, packageConfig, !flags.dryRun));
   }
-}
-
-function accumulateStats(stats: GlobalStats, pkgStats: PackageStats): void {
-  if (pkgStats.skipped) {
-    stats.packagesSkipped++;
-  } else if (pkgStats.error !== null) {
-    stats.packagesErrored++;
-  } else {
-    stats.packagesProcessed++;
-    stats.totalExports += pkgStats.totalExports;
-    stats.totalJsModules += pkgStats.jsModules;
-    stats.totalCssExports += pkgStats.cssExports;
-  }
-}
-
-function mirrorTargetsFromWorkspaceLayout(
-  rootDir: string,
-  layoutOutcome: WorkspacePackageLayoutOutcome,
-): FindWorkspacePackagesResult {
-  if (layoutOutcome.layoutSource === "declared-empty") {
-    return { relPaths: [], multiSource: "declared-empty" };
-  }
-
-  const multiSource: WorkspaceMultiDiscoverySource = layoutOutcome.layoutSource;
-
-  // A single-package root maps to "." (path.relative to itself is empty); a workspace maps to subpaths.
-  const relPaths = layoutOutcome.packageDirectoryPathsAbsolute.map((absolutePath) => {
-    const relativePath = normalizePath(path.relative(rootDir, absolutePath));
-    return relativePath.length > 0 ? relativePath : ".";
-  });
-
-  relPaths.sort((left, right) => left.localeCompare(right));
-  return { relPaths, multiSource };
+  return ok({ packages });
 }

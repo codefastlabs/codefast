@@ -1,5 +1,4 @@
-import type { GlobalCliOptions } from "#core/cli/global-options";
-import type { CodefastConfig } from "#core/config/schema";
+import type { PackageOutcome } from "#core/report";
 
 /**
  * One conditional exports entry, keyed by resolution condition.
@@ -67,133 +66,22 @@ export interface GenerateExportsResult {
 }
 
 /**
- * Per-package outcome of a mirror run, as reported in progress and JSON output.
- *
- * @since 0.3.16-canary.0
+ * The exports an `exports:generate` run built for one package.
  */
-export interface PackageStats {
-  name: string;
-  path: string;
-  jsModules: number;
-  cssExports: number;
-  extraExports: number;
-  totalExports: number;
-  hasTransform: boolean;
-  cssConfigStatus: "disabled" | "configured" | "";
-  skipped: boolean;
-  skipReason: string;
-  error: string | null;
-  prunedExportKeys: Array<string>;
+export interface ExportsPackageOutcome extends PackageOutcome {
+  readonly exports: {
+    readonly total: number;
+    readonly modules: number;
+    readonly stylesheets: number;
+    readonly custom: number;
+  };
+  /** The specifiers dropped because they pointed into `dist/` and nothing generates them any more. */
+  readonly pruned: ReadonlyArray<string>;
 }
 
 /**
- * Built dist assets tallied for one package (reporter / progress output).
- *
- * @since 0.3.16-canary.0
+ * The report of an `exports:generate` run: one outcome per package the target reaches.
  */
-export interface MirrorDistAssetCounts {
-  jsCount: number;
-  cssCount: number;
+export interface ExportsReport {
+  readonly packages: ReadonlyArray<ExportsPackageOutcome>;
 }
-
-/**
- * Aggregate totals across every package in a mirror run.
- *
- * @since 0.3.16-canary.0
- */
-export interface GlobalStats {
-  packagesFound: number;
-  packagesProcessed: number;
-  packagesSkipped: number;
-  packagesErrored: number;
-  totalExports: number;
-  totalJsModules: number;
-  totalCssExports: number;
-  packageDetails: Array<PackageStats>;
-}
-
-/**
- * How workspace packages were resolved when scanning the repo (for logging / UX).
- *
- * @since 0.3.16-canary.0
- */
-export type WorkspaceMultiDiscoverySource =
-  | "default-patterns"
-  | "pnpm-workspace-yaml"
-  | "declared-empty"
-  | "single-package";
-
-/**
- * The workspace package paths found for a mirror run and how they were discovered.
- *
- * @since 0.3.16-canary.0
- */
-export type FindWorkspacePackagesResult = {
-  relPaths: Array<string>;
-  multiSource: WorkspaceMultiDiscoverySource;
-};
-
-/**
- * Everything the `mirror` action needs resolved before a run: globals, root, config, and filter.
- *
- * @since 0.3.16-canary.0
- */
-export interface MirrorSyncCommandPrelude {
-  readonly globals: GlobalCliOptions;
-  readonly rootDir: string;
-  readonly config: CodefastConfig;
-  readonly packageFilter: string | undefined;
-}
-
-/**
- * The inputs a mirror run is invoked with.
- *
- * @since 0.3.16-canary.0
- */
-export type MirrorSyncRunRequest = {
-  rootDir: string;
-  packageFilter?: string | undefined;
-  config?: unknown;
-  /** When false, compute and report changes without writing package.json. Defaults to true. */
-  write?: boolean | undefined;
-};
-
-/**
- * Whether a run targets a single package or the discovered workspace set.
- *
- * @since 0.3.16-canary.0
- */
-export type MirrorProcessingModeInput = { kind: "single" } | { kind: "multi"; source: WorkspaceMultiDiscoverySource };
-
-/**
- * Callbacks a mirror run invokes as it progresses through packages.
- *
- * @since 0.3.16-canary.0
- */
-export type MirrorSyncProgressListener = {
-  configure(options: { readonly verbose: boolean; readonly dryRun: boolean }): void;
-  onBanner(): void;
-  onProcessingMode(mode: MirrorProcessingModeInput): void;
-  onNoPackages(): void;
-  onPackageComplete(pkgStats: PackageStats, ordinal: number, total: number): void;
-  onComplete(stats: GlobalStats, elapsedSeconds: number): void;
-};
-
-/**
- * A run request paired with an optional progress listener.
- *
- * @since 0.3.16-canary.0
- */
-export type MirrorSyncExecutionInput = MirrorSyncRunRequest & {
-  readonly listener?: MirrorSyncProgressListener | undefined;
-};
-
-/**
- * The stdout/stderr line-writer shape the reporter prints through.
- *
- * @since 0.3.16-canary.0
- */
-export type CliLoggerLike = {
-  out(line: string): void;
-  err(line: string): void;
-};

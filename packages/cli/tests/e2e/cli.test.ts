@@ -81,13 +81,13 @@ describe("a full audit run", () => {
       const run = runBin(["audit", "--json"], soloDir);
       const summary = JSON.parse(run.stdout) as {
         ok: boolean;
-        audits: Array<{ name: string; status: string }>;
+        result: { audits: Array<{ name: string; status: string }> };
       };
       expect(run.status).toBe(1);
       expect(summary.ok).toBe(false);
-      expect(summary.audits).toHaveLength(10);
-      expect(summary.audits.find((audit) => audit.name === "links")?.status).toBe("findings");
-      expect(summary.audits.find((audit) => audit.name === "rtl")?.status).toBe("skipped");
+      expect(summary.result.audits).toHaveLength(10);
+      expect(summary.result.audits.find((audit) => audit.name === "links")?.status).toBe("findings");
+      expect(summary.result.audits.find((audit) => audit.name === "rtl")?.status).toBe("skipped");
     } finally {
       rmSync(soloDir, { recursive: true, force: true });
     }
@@ -114,13 +114,12 @@ describe("workspace discovery over the real monorepo", () => {
     expect(run.status).toBe(0);
     const summary = JSON.parse(run.stdout) as {
       ok: boolean;
-      write: boolean;
-      stats: { packagesFound: number; packagesErrored: number };
+      command: string;
+      result: { packages: Array<{ status: string }> };
     };
-    expect(summary.ok).toBe(true);
-    expect(summary.write).toBe(false);
-    expect(summary.stats.packagesErrored).toBe(0);
-    expect(summary.stats.packagesFound).toBeGreaterThan(0);
+    expect(summary).toMatchObject({ ok: true, command: "exports:generate" });
+    expect(summary.result.packages.length).toBeGreaterThan(0);
+    expect(summary.result.packages.every(({ status }) => status !== "failed" && status !== "changed")).toBe(true);
   });
 
   it("audit runs read-only over a source tree and exits clean", () => {
@@ -136,9 +135,9 @@ describe("single-package mode", () => {
       writeFileSync(path.join(soloDir, "package.json"), JSON.stringify({ name: "solo", version: "0.0.0" }));
       const run = runBin(["exports:generate", "--dry-run", "--json"], soloDir);
       expect(run.status).toBe(0);
-      const summary = JSON.parse(run.stdout) as { ok: boolean; stats: { packagesFound: number } };
+      const summary = JSON.parse(run.stdout) as { ok: boolean; result: { packages: Array<{ directory: string }> } };
       expect(summary.ok).toBe(true);
-      expect(summary.stats.packagesFound).toBe(1);
+      expect(summary.result.packages).toEqual([expect.objectContaining({ directory: "." })]);
     } finally {
       rmSync(soloDir, { recursive: true, force: true });
     }

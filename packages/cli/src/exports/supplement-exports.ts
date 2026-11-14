@@ -136,6 +136,7 @@ function buildSupplementedEntry(
  */
 export type SupplementResult = {
   supplementedSpecifiers: Array<string>;
+  changed: boolean;
 };
 
 /**
@@ -160,7 +161,7 @@ export async function supplementExportsInPackageJson(
 
   const existingExports = packageJson.exports;
   if (!existingExports || typeof existingExports !== "object" || Array.isArray(existingExports)) {
-    return { supplementedSpecifiers: [] };
+    return { supplementedSpecifiers: [], changed: false };
   }
 
   const distDir = path.join(packageDir, distDirName);
@@ -188,7 +189,7 @@ export async function supplementExportsInPackageJson(
     originalPathBySpecifier[specifier] = specifier;
   }
 
-  await writePackageJsonExportsAtomic(
+  const { changed } = await writePackageJsonExportsAtomic(
     fs,
     packageJsonPath,
     {
@@ -199,7 +200,7 @@ export async function supplementExportsInPackageJson(
     write,
   );
 
-  return { supplementedSpecifiers };
+  return { supplementedSpecifiers, changed };
 }
 
 /**

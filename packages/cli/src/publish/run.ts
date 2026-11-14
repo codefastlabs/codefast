@@ -1,202 +1,133 @@
 import path from "node:path";
 
-import { AppError, messageFrom } from "#core/errors";
+import type { CommandContext } from "#core/command";
+import type { AppError } from "#core/errors";
+import { messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
+import { relativePosixPath } from "#core/path";
 import type { Result } from "#core/result";
-import { err, ok } from "#core/result";
-import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
+import { ok } from "#core/result";
 import { distDirName, packageJsonFileName } from "#core/workspace/well-known-files";
+import type { WorkspacePackage } from "#core/workspace/workspace";
+import { packagesInTarget } from "#core/workspace/workspace";
 import {
   isMapAnnotatedFile,
   isSourceMapFile,
   slimPublishManifest,
   stripSourceMappingComment,
 } from "#publish/domain/transform";
-import type { PackSlimRunRequest } from "#publish/domain/types";
-import type { PackSlimPackageStats, PackSlimProgressListener, PackSlimRunStats } from "#publish/domain/types";
+import type { PublishPackageOutcome, PublishPrepareReport } from "#publish/domain/types";
+import { ensureWorkingTreeClean } from "#publish/working-tree";
 
-/**
- * A pack-slim run request paired with an optional progress listener.
- *
- * @since 0.8.1
- */
-export type PackSlimRunInput = PackSlimRunRequest & {
-  readonly listener?: PackSlimProgressListener | undefined;
+const nothingDropped: PublishPackageOutcome["dropped"] = {
+  filesSrc: false,
+  exportsSource: 0,
+  importsSource: 0,
+  importsUnshipped: 0,
+  scripts: 0,
+  devDependencies: 0,
+  sourceMaps: 0,
+  sourceMappingComments: 0,
 };
 
-/**
- * Slims every published package's manifest and build output for publish and returns the aggregate stats.
- *
- * @remarks Meant to run on an ephemeral CI checkout right before `changeset publish`: it rewrites `package.json` down to
- * what a consumer reads, drops `dist` source maps, and clears their now-dangling `sourceMappingURL` directives, so the
- * tarball ships only `dist` runtime and types. Private packages are skipped because `changeset publish` never publishes them.
- *
- * @since 0.8.1
- */
-export async function runPackSlim(
-  fs: Filesystem,
-  input: PackSlimRunInput,
-): Promise<Result<PackSlimRunStats, AppError>> {
-  const write = input.write ?? true;
-  const { listener } = input;
-
-  listener?.onBanner?.();
-  const startTime = performance.now();
-
-  try {
-    const targets = await resolveTargets(fs, input.rootDir, input.packageFilter);
-
-    const stats: PackSlimRunStats = {
-      packagesFound: targets.length,
-      packagesProcessed: 0,
-      packagesSkipped: 0,
-      packagesErrored: 0,
-      packagesChanged: 0,
-      totalMapFilesDeleted: 0,
-      packageDetails: [],
-    };
-
-    let ordinal = 1;
-    for (const packageDir of targets) {
-      const pkgStats = await slimWorkspacePackage(fs, packageDir, write);
-      stats.packageDetails.push(pkgStats);
-      accumulate(stats, pkgStats);
-      listener?.onPackageComplete?.(pkgStats, ordinal, targets.length);
-      ordinal += 1;
-    }
-
-    listener?.onComplete?.(stats, (performance.now() - startTime) / 1000);
-    return ok(stats);
-  } catch (caughtError: unknown) {
-    return err(new AppError("INFRA_FAILURE", messageFrom(caughtError), caughtError));
-  }
-}
-
-async function resolveTargets(
-  fs: Filesystem,
-  rootDir: string,
-  packageFilter: string | undefined,
-): Promise<Array<string>> {
-  if (packageFilter !== undefined) {
-    const packageDir = path.resolve(rootDir, packageFilter);
-    if (!fs.existsSync(path.join(packageDir, packageJsonFileName))) {
-      throw new Error(`No package.json under "${packageFilter}"`);
-    }
-    return [packageDir];
-  }
-  const layout = await listWorkspacePackageDirectories(rootDir, fs, false);
-  return [...layout.packageDirectoryPathsAbsolute].sort((left, right) => left.localeCompare(right));
-}
-
-async function slimWorkspacePackage(fs: Filesystem, packageDir: string, write: boolean): Promise<PackSlimPackageStats> {
-  const packageJsonPath = path.join(packageDir, packageJsonFileName);
-  const pkgStats: PackSlimPackageStats = {
-    name: path.basename(packageDir),
-    path: packageDir,
-    skipped: false,
-    skipReason: "",
-    error: null,
-    filesSrcRemoved: false,
-    exportsSourceRemoved: 0,
-    importsSourceRemoved: 0,
-    importsUnshippedRemoved: 0,
-    scriptsRemoved: 0,
-    devDependenciesRemoved: 0,
-    mapFilesDeleted: 0,
-    sourceCommentsStripped: 0,
-    changed: false,
-  };
-
-  if (!fs.existsSync(packageJsonPath)) {
-    pkgStats.skipped = true;
-    pkgStats.skipReason = "package.json not found";
-    return pkgStats;
-  }
-
-  try {
-    const raw = await fs.readFile(packageJsonPath, "utf8");
-    const parsed = JSON.parse(raw) as unknown;
-    if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
-      throw new SyntaxError("package.json root must be a JSON object");
-    }
-    const manifest = parsed as Record<string, unknown>;
-    if (typeof manifest.name === "string") {
-      pkgStats.name = manifest.name;
-    }
-    if (manifest.private === true) {
-      pkgStats.skipped = true;
-      pkgStats.skipReason = "private package";
-      return pkgStats;
-    }
-
-    const { manifest: slimmed, report } = slimPublishManifest(manifest);
-    pkgStats.filesSrcRemoved = report.filesSrcRemoved;
-    pkgStats.exportsSourceRemoved = report.exportsSourceRemoved;
-    pkgStats.importsSourceRemoved = report.importsSourceRemoved;
-    pkgStats.importsUnshippedRemoved = report.importsUnshippedRemoved;
-    pkgStats.scriptsRemoved = report.scriptsRemoved;
-    pkgStats.devDependenciesRemoved = report.devDependenciesRemoved;
-    if (report.changed && write) {
-      await fs.writeFile(packageJsonPath, `${JSON.stringify(slimmed, null, 2)}\n`, "utf8");
-    }
-
-    await pruneDist(fs, path.join(packageDir, distDirName), write, pkgStats);
-
-    pkgStats.changed = report.changed || pkgStats.mapFilesDeleted > 0 || pkgStats.sourceCommentsStripped > 0;
-  } catch (caughtError: unknown) {
-    pkgStats.error = messageFrom(caughtError);
-  }
-
-  return pkgStats;
-}
-
+// Drops the `dist` source maps and the `sourceMappingURL` directives left dangling, returning the files rewritten.
 async function pruneDist(
   fs: Filesystem,
   distDir: string,
   write: boolean,
-  pkgStats: PackSlimPackageStats,
-): Promise<void> {
+): Promise<{ sourceMaps: number; rewritten: Array<string> }> {
+  const rewritten: Array<string> = [];
+  let sourceMaps = 0;
   if (!fs.existsSync(distDir)) {
-    return;
+    return { sourceMaps, rewritten };
   }
-  const entries = await fs.readdirEntries(distDir, { recursive: true });
-  for (const entry of entries) {
+  for (const entry of await fs.readdirEntries(distDir, { recursive: true })) {
     if (!entry.isFile()) {
       continue;
     }
     const filePath = path.join(entry.parentPath, entry.name);
     if (isSourceMapFile(entry.name)) {
+      sourceMaps += 1;
       if (write) {
         await fs.unlink(filePath);
       }
-      pkgStats.mapFilesDeleted += 1;
-      continue;
-    }
-    if (isMapAnnotatedFile(entry.name)) {
-      const contents = await fs.readFile(filePath, "utf8");
-      const { text, stripped } = stripSourceMappingComment(contents);
+    } else if (isMapAnnotatedFile(entry.name)) {
+      const { text, stripped } = stripSourceMappingComment(await fs.readFile(filePath, "utf8"));
       if (stripped) {
+        rewritten.push(filePath);
         if (write) {
           await fs.writeFile(filePath, text, "utf8");
         }
-        pkgStats.sourceCommentsStripped += 1;
       }
     }
   }
+  return { sourceMaps, rewritten };
 }
 
-function accumulate(stats: PackSlimRunStats, pkgStats: PackSlimPackageStats): void {
-  if (pkgStats.skipped) {
-    stats.packagesSkipped += 1;
-    return;
+async function preparePackage(
+  fs: Filesystem,
+  rootDir: string,
+  workspacePackage: WorkspacePackage,
+  write: boolean,
+): Promise<PublishPackageOutcome> {
+  const base = {
+    name: workspacePackage.name,
+    directory: workspacePackage.relativeDirectory,
+    reason: null,
+    files: [],
+    dropped: nothingDropped,
+  };
+  if (workspacePackage.isPrivate) {
+    return { ...base, status: "skipped", reason: "private, never published" };
   }
-  if (pkgStats.error !== null) {
-    stats.packagesErrored += 1;
-    return;
+  try {
+    const { manifest, report } = slimPublishManifest(workspacePackage.manifest);
+    const manifestPath = path.join(workspacePackage.directory, packageJsonFileName);
+    if (report.changed && write) {
+      await fs.writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+    }
+    const dist = await pruneDist(fs, path.join(workspacePackage.directory, distDirName), write);
+    const written = [...(report.changed ? [manifestPath] : []), ...dist.rewritten];
+    const changed = written.length > 0 || dist.sourceMaps > 0;
+    return {
+      ...base,
+      status: changed ? "changed" : "unchanged",
+      files: written.map((filePath) => relativePosixPath(rootDir, filePath)),
+      dropped: {
+        filesSrc: report.filesSrcRemoved,
+        exportsSource: report.exportsSourceRemoved,
+        importsSource: report.importsSourceRemoved,
+        importsUnshipped: report.importsUnshippedRemoved,
+        scripts: report.scriptsRemoved,
+        devDependencies: report.devDependenciesRemoved,
+        sourceMaps: dist.sourceMaps,
+        sourceMappingComments: dist.rewritten.length,
+      },
+    };
+  } catch (caughtError: unknown) {
+    return { ...base, status: "failed", reason: messageFrom(caughtError) };
   }
-  stats.packagesProcessed += 1;
-  stats.totalMapFilesDeleted += pkgStats.mapFilesDeleted;
-  if (pkgStats.changed) {
-    stats.packagesChanged += 1;
+}
+
+/**
+ * Slims every published package the target reaches down to what a consumer installs.
+ *
+ * @remarks Meant for an ephemeral CI checkout right before `changeset publish`; it refuses to write over uncommitted
+ * tracked changes unless `--force` says so, and a dry run writes nothing.
+ */
+export async function runPublishPrepare(
+  context: CommandContext<"dryRun" | "force">,
+): Promise<Result<PublishPrepareReport, AppError>> {
+  const { fs, workspace, target, flags } = context;
+  if (!flags.dryRun && !flags.force) {
+    const clean = ensureWorkingTreeClean(workspace.rootDir);
+    if (!clean.ok) {
+      return clean;
+    }
   }
+  const packages: Array<PublishPackageOutcome> = [];
+  for (const workspacePackage of packagesInTarget(workspace, target.path)) {
+    packages.push(await preparePackage(fs, workspace.rootDir, workspacePackage, !flags.dryRun));
+  }
+  return ok({ packages });
 }

@@ -15,10 +15,12 @@ import {
 import { shortLivedMajors, uncoveredNodeRanges } from "#audit/engines/domain/range-gaps";
 import { AppError, messageFrom } from "#core/errors";
 import type { Filesystem } from "#core/filesystem/filesystem";
+import { isWithinDirectory } from "#core/path";
 import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
-import { listWorkspacePackageDirectories } from "#core/workspace/resolver";
 import { packageJsonFileName } from "#core/workspace/well-known-files";
+import type { Workspace } from "#core/workspace/workspace";
+import { readManifest } from "#core/workspace/workspace";
 
 const lockfileName = "pnpm-lock.yaml";
 
@@ -39,7 +41,7 @@ type WorkspaceManifest = {
   readonly packageName: string;
   readonly packageDir: string;
   readonly directory: string;
-  readonly manifest: Record<string, unknown>;
+  readonly manifest: Readonly<Record<string, unknown>>;
   readonly checked: boolean;
 };
 
@@ -53,33 +55,26 @@ type WorkspaceManifest = {
  *
  * @since 0.15.0
  */
-export async function runEnginesAudit(
+export function runEnginesAudit(
   fs: Filesystem,
   args: {
-    readonly rootDir: string;
+    readonly workspace: Workspace;
     readonly targetPath: string;
   },
-): Promise<Result<EnginesAuditResult, AppError>> {
+): Result<EnginesAuditResult, AppError> {
   try {
-    const { rootDir, targetPath } = args;
+    const { workspace, targetPath } = args;
+    const { rootDir } = workspace;
 
-    const layout = await listWorkspacePackageDirectories(rootDir, fs, true);
-    const manifests: Array<WorkspaceManifest> = [];
-    for (const packageDir of layout.packageDirectoryPathsAbsolute) {
-      const manifest = readManifest(fs, packageDir);
-      if (manifest === null) {
-        continue;
-      }
-      const directory = toPosixPath(path.relative(rootDir, packageDir)) || ".";
-      manifests.push({
-        packageName: typeof manifest.name === "string" ? manifest.name : directory,
-        packageDir,
-        directory,
-        manifest,
-        checked: isWithin(packageDir, targetPath) || isWithin(targetPath, packageDir),
-      });
-    }
-    manifests.sort((left, right) => left.directory.localeCompare(right.directory));
+    const manifests: Array<WorkspaceManifest> = workspace.packages.map((workspacePackage) => ({
+      packageName: workspacePackage.name,
+      packageDir: workspacePackage.directory,
+      directory: workspacePackage.relativeDirectory,
+      manifest: workspacePackage.manifest,
+      checked:
+        isWithinDirectory(workspacePackage.directory, targetPath) ||
+        isWithinDirectory(targetPath, workspacePackage.directory),
+    }));
 
     const workspaceManifests = new Map(manifests.map((entry) => [entry.packageName, entry.manifest]));
     const typesVersions = readLockfileTypesVersions(fs, rootDir);
@@ -142,8 +137,8 @@ export async function runEnginesAudit(
       }
     }
 
-    if (isWithin(targetPath, rootDir)) {
-      violations.push(...auditRootFloor(fs, rootDir, manifests, workspaceManifests, testedNewest));
+    if (isWithinDirectory(targetPath, rootDir)) {
+      violations.push(...auditRootFloor(fs, workspace, manifests, workspaceManifests, testedNewest));
     }
 
     return ok({ floors, violations, packageCount: checked.length });
@@ -158,12 +153,12 @@ export async function runEnginesAudit(
  */
 function auditRootFloor(
   fs: Filesystem,
-  rootDir: string,
+  workspace: Workspace,
   manifests: ReadonlyArray<WorkspaceManifest>,
-  workspaceManifests: ReadonlyMap<string, Record<string, unknown>>,
+  workspaceManifests: ReadonlyMap<string, Readonly<Record<string, unknown>>>,
   testedNewest: NodeVersion | null,
 ): Array<EngineViolation> {
-  const rootManifest = readManifest(fs, rootDir);
+  const { rootDir, rootManifest } = workspace;
   const rootRange = rootManifest === null ? undefined : nodeRangeOf(rootManifest);
   const floor = rootRange === undefined ? null : parseNodeFloor(rootRange);
   if (rootManifest === null || floor === null) {
@@ -245,17 +240,14 @@ function readNodeVersion(fs: Filesystem, rootDir: string): NodeVersion | null {
   return parseNodeVersion(fs.readFileSync(filePath, "utf8").trim().replace(/^v/, ""));
 }
 
-function readManifest(fs: Filesystem, directory: string): Record<string, unknown> | null {
-  const manifestPath = path.join(directory, packageJsonFileName);
-  if (!fs.existsSync(manifestPath)) {
-    return null;
-  }
-  return recordOf(JSON.parse(fs.readFileSync(manifestPath, "utf8")));
-}
-
 // The manifest pnpm links into the package's own `node_modules`; a dependency not installed there is not judged.
-function readInstalledManifest(fs: Filesystem, packageDir: string, dependency: string): Record<string, unknown> | null {
-  return readManifest(fs, path.join(packageDir, "node_modules", ...dependency.split("/")));
+function readInstalledManifest(
+  fs: Filesystem,
+  packageDir: string,
+  dependency: string,
+): Readonly<Record<string, unknown>> | null {
+  const manifestPath = path.join(packageDir, "node_modules", ...dependency.split("/"), packageJsonFileName);
+  return fs.existsSync(manifestPath) ? readManifest(fs, manifestPath) : null;
 }
 
 function nodeRangeOf(manifest: Record<string, unknown>): string | undefined {
@@ -290,13 +282,4 @@ function recordOf(value: unknown): Record<string, unknown> {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isWithin(parent: string, child: string): boolean {
-  const relative = path.relative(parent, child);
-  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
-}
-
-function toPosixPath(filePath: string): string {
-  return filePath.split(path.sep).join("/");
 }

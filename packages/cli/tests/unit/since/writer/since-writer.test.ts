@@ -1,22 +1,22 @@
 import { describe, expect, it } from "vitest";
 
 import { scanCommentContent } from "#audit/comments/domain/comment-content";
-import type { TagFileResult } from "#since/domain/types";
-import { TagSinceWriter } from "#since/writer/since-writer";
-import { createTagTestFilesystem } from "#tests/unit/support/since-test-filesystem";
+import type { SinceFileResult } from "#since/domain/types";
+import { SinceWriter } from "#since/writer/since-writer";
+import { createMemoryFilesystem } from "#tests/unit/support/memory-filesystem";
 
 const filePath = "/virtual/src/module.ts";
 const version = "0.0.0-test";
 
-function tagSource(source: string, write: boolean): { readonly result: TagFileResult; readonly written: string } {
-  const { fs, contentOf } = createTagTestFilesystem({ [filePath]: source });
-  const result = new TagSinceWriter(fs).applySinceTagsToFile(filePath, version, write);
-  return { result, written: contentOf(filePath) ?? "" };
+function stampSource(source: string, write: boolean): { readonly result: SinceFileResult; readonly written: string } {
+  const { fs, read } = createMemoryFilesystem({ [filePath]: source });
+  const result = new SinceWriter(fs).stampFile(filePath, version, write);
+  return { result, written: read(filePath) ?? "" };
 }
 
-describe("TagSinceWriter", () => {
+describe("SinceWriter", () => {
   it("does not emit a trailing space after * on blank JSDoc continuation lines", () => {
-    const { written } = tagSource(
+    const { written } = stampSource(
       ["/**", " * First paragraph.", " *", " * Second paragraph.", " */", "export function taggedFn() {}", ""].join(
         "\n",
       ),
@@ -29,7 +29,7 @@ describe("TagSinceWriter", () => {
   });
 
   it("stamps every overload signature and the implementation, each in its own block", () => {
-    const { result, written } = tagSource(
+    const { result, written } = stampSource(
       [
         "/**",
         " * Formats a string.",
@@ -50,7 +50,7 @@ describe("TagSinceWriter", () => {
       true,
     );
 
-    expect(result).toMatchObject({ taggedDeclarations: 3, blockedDeclarations: [], changed: true });
+    expect(result).toMatchObject({ stampedDeclarations: 3, blockedDeclarations: [], changed: true });
     expect(written).toBe(
       [
         "/**",
@@ -79,7 +79,7 @@ describe("TagSinceWriter", () => {
   });
 
   it("writes a block for an overload signature that has none, directly above it", () => {
-    const { result, written } = tagSource(
+    const { result, written } = stampSource(
       [
         "/**",
         " * Formats a value.",
@@ -101,7 +101,7 @@ describe("TagSinceWriter", () => {
       true,
     );
 
-    expect(result.taggedDeclarations).toBe(1);
+    expect(result.stampedDeclarations).toBe(1);
     expect(written).toContain(
       ["export function format(value: string): string;", "/**", " * @since 0.0.0-test", " */"].join("\n"),
     );
@@ -109,7 +109,7 @@ describe("TagSinceWriter", () => {
   });
 
   it("stamps a declare function and local overloads exported by name", () => {
-    const { result, written } = tagSource(
+    const { result, written } = stampSource(
       [
         "export declare function ambient(): void;",
         "",
@@ -124,7 +124,7 @@ describe("TagSinceWriter", () => {
       true,
     );
 
-    expect(result.taggedDeclarations).toBe(3);
+    expect(result.stampedDeclarations).toBe(3);
     expect(written).toBe(
       [
         "/**",
@@ -162,11 +162,11 @@ describe("TagSinceWriter", () => {
       "",
     ].join("\n");
 
-    const { result, written } = tagSource(source, true);
+    const { result, written } = stampSource(source, true);
 
     expect(result).toStrictEqual({
       filePath,
-      taggedDeclarations: 0,
+      stampedDeclarations: 0,
       blockedDeclarations: [{ filePath, line: 6, name: "parse" }],
       changed: false,
     });
@@ -178,11 +178,11 @@ describe("TagSinceWriter", () => {
       "\n",
     );
 
-    const { result, written } = tagSource(source, true);
+    const { result, written } = stampSource(source, true);
 
     expect(result).toStrictEqual({
       filePath,
-      taggedDeclarations: 0,
+      stampedDeclarations: 0,
       blockedDeclarations: [{ filePath, line: 2, name: "loose" }],
       changed: false,
     });
@@ -190,18 +190,18 @@ describe("TagSinceWriter", () => {
   });
 
   it("names an anonymous default export default in its report", () => {
-    const { result } = tagSource(["// Wired by the host.", "export default function () {}", ""].join("\n"), false);
+    const { result } = stampSource(["// Wired by the host.", "export default function () {}", ""].join("\n"), false);
 
     expect(result.blockedDeclarations).toStrictEqual([{ filePath, line: 2, name: "default" }]);
   });
 
   it("writes a block under a section divider, which the comment audit accepts above a doc block", () => {
-    const { result, written } = tagSource(
+    const { result, written } = stampSource(
       ["// ── Helpers ──", "export function helper(): void {}", ""].join("\n"),
       true,
     );
 
-    expect(result).toMatchObject({ taggedDeclarations: 1, blockedDeclarations: [] });
+    expect(result).toMatchObject({ stampedDeclarations: 1, blockedDeclarations: [] });
     expect(written).toBe(
       ["// ── Helpers ──", "/**", " * @since 0.0.0-test", " */", "export function helper(): void {}", ""].join("\n"),
     );
@@ -216,11 +216,11 @@ describe("TagSinceWriter", () => {
       "",
     ].join("\n");
 
-    const dryRun = tagSource(source, false);
-    const applied = tagSource(source, true);
+    const dryRun = stampSource(source, false);
+    const applied = stampSource(source, true);
 
     expect(dryRun.result).toStrictEqual(applied.result);
-    expect(dryRun.result).toMatchObject({ taggedDeclarations: 0, blockedDeclarations: [{ line: 2, name: "mount" }] });
+    expect(dryRun.result).toMatchObject({ stampedDeclarations: 0, blockedDeclarations: [{ line: 2, name: "mount" }] });
     expect(applied.written).toBe(source);
   });
 });
