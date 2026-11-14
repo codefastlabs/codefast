@@ -69,9 +69,9 @@ jobs:
           npx turbo run check-types --filter="./packages/**" --filter="./internal/**"
 
       # Every source audit in one run, so a PR sees each failing audit at once rather than only the first. They hold
-      # what oxlint and tsc cannot see: doc cross-references, comment and TSDoc form, import policy, layering, double
-      # assertions, display names, props declarations, logical Tailwind directions, the publish surface (it reads
-      # `dist`, so it runs after the build) and Node floors. `codefast audit --help` says what each one reports.
+      # what oxlint and tsc cannot see: doc cross-references, comment and TSDoc form, `@since` versions, import policy,
+      # layering, double assertions, display names, props declarations, logical Tailwind directions, the publish
+      # surface (it reads `dist`, so it runs after the build) and Node floors. `codefast audit --help` says what each one reports.
       - name: Verify Source Audits
         run: pnpm cli:audit
 

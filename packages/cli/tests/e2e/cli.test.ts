@@ -88,7 +88,7 @@ describe("a full audit run", () => {
       };
       expect(run.status).toBe(1);
       expect(summary.ok).toBe(false);
-      expect(summary.result.audits).toHaveLength(10);
+      expect(summary.result.audits).toHaveLength(11);
       expect(summary.result.audits.find((audit) => audit.name === "links")?.status).toBe("findings");
       expect(summary.result.audits.find((audit) => audit.name === "tailwind-rtl")?.status).toBe("clean");
     } finally {

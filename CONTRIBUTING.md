@@ -65,7 +65,8 @@ Three rules the linter cannot enforce:
   where they sit and go stale silently. Numbers live with their method, in `ARCHITECTURE.md` or `RESULTS.md`.
 - **No history** — no "used to", "previously", "the old threshold". Git carries that.
 - **Never hand-write an `@since` tag.** `codefast since:stamp` stamps it at release. Existing exports all carry one, so
-  a new export looks unfinished without it; the absence is correct. Check your diff:
+  a new export looks unfinished without it; the absence is correct. `pnpm cli:audit:since-versions` fails on a tag newer
+  than its package's version; one naming the current version it cannot tell from a stamped one, so check your diff too:
   `git diff --cached | grep -E '^\+.*@since'` — any hit is a bug.
 
 ### Naming public API

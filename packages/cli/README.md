@@ -69,6 +69,7 @@ Run bare, `codefast` lists its commands, as `php artisan` does; `--help` on any 
 | `audit:engines`          | Node floors (`engines.node`) that do not hold                              | no                           |
 | `audit:layers`           | Value imports that point up a package's configured layers                  | no                           |
 | `audit:comments`         | Doc-comment conventions; `--fix` repairs section dividers                  | `--fix` only                 |
+| `audit:since-versions`   | `@since` tags naming no version, or one newer than the package's own       | no                           |
 
 An audit that serves one library or tool names it — `audit:di-display-names` reads only the code and docs that use
 `@codefast/di`, `audit:tailwind-rtl` only Tailwind classes — and an audit that holds a policy reads it from the config:
@@ -138,7 +139,8 @@ codefast publish:prepare --dry-run         # report what would be dropped
 Adds `@since <version>` to the doc comments of exported declarations that lack one, creating the doc block when there is
 none, in each package's `src` (or the package itself when it has none). The version is the package's own. Overload
 signatures are stamped one by one, because the `.d.ts` keeps every overload's doc block. Run it at release time, so
-published APIs carry accurate versions — never hand-write `@since`.
+published APIs carry accurate versions — never hand-write `@since`; `audit:since-versions` reports a tag no release can
+have stamped.
 
 A declaration with no doc block and a `//` comment on the line above it is reported as a finding instead: a block
 written there would stack under a note or split a directive from the code it governs. Its file is left as it is, and the
@@ -310,8 +312,15 @@ are refused before anything is scanned.
 _House style._ Doc-comment conventions. Section dividers not in the one allowed form are mechanical, so `--fix` rewrites
 them in place, before the scan reports what is left. The rest is for a person to fix: TSDoc grammar errors, JSDoc
 `{type}` payloads, comments pointing at repo documents, `@param` lists that name some parameters but not all, `@param`
-descriptions without the `-` separator, `@since` tags out of position or naming a version the package has not reached,
-and `{@link}` targets nothing declares.
+descriptions without the `-` separator, `@since` tags out of position, and `{@link}` targets nothing declares.
+
+### `audit:since-versions`
+
+_General-purpose._ Every `@since` tag no release can have stamped: one naming no version, or a version newer than the
+package's own. `since:stamp` stamps the version a release ships and never corrects a tag already there, so a
+hand-written one — most often the upcoming version, typed ahead of the release — would stay wrong for good. Each file is
+judged against the `version` in its own package's manifest; a file outside every package, or in one that declares no
+version, is not judged. Delete the tag and let `since:stamp` stamp it.
 
 ## Configuration
 

@@ -14,6 +14,7 @@ import { linksAudit } from "#audit/links/command";
 import { presentAuditAll, presentAuditReport } from "#audit/output";
 import { propsAudit } from "#audit/props/command";
 import { publishAudit } from "#audit/publish/command";
+import { sinceVersionsAudit } from "#audit/since-versions/command";
 import { tailwindRtlAudit } from "#audit/tailwind-rtl/command";
 import type { CommandSpec } from "#core/command";
 import { createCommand, deriveContext } from "#core/command";
@@ -30,6 +31,7 @@ const AUDITS: ReadonlyArray<Audit> = [
   diDisplayNamesAudit,
   propsAudit,
   commentsAudit,
+  sinceVersionsAudit,
   layersAudit,
   publishAudit,
   enginesAudit,

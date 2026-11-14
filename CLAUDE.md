@@ -280,7 +280,8 @@ types carry the types.**
   over `//` lines when the comment documents intent.
 - **`@since <version>` is generated** by `codefast since:stamp` at release — never hand-write it, never remove a
   released one (the add-only tool would re-stamp it with the current version, destroying the true original), and it
-  stays the block's **last** tag: a `@remarks` added later goes above it, not below.
+  stays the block's **last** tag: a `@remarks` added later goes above it, not below. `pnpm cli:audit:since-versions`
+  gates CI on a tag naming no version or one newer than its package's.
 - No commented-out code left behind; a `TODO`/`FIXME` must state why or link an issue.
 
 ## API naming (Swift API Design Guidelines, adapted to TS)

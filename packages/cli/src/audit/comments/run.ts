@@ -11,7 +11,6 @@ import {
   linkTargetHead,
   scanLinkReferences,
 } from "#audit/comments/domain/link-references";
-import { scanImpossibleSinceTags } from "#audit/comments/domain/since-versions";
 import { scanTsdocSyntax } from "#audit/comments/domain/tsdoc-syntax";
 import { findingsIn } from "#audit/domain/findings";
 import type { AuditContext, AuditScan, Detection } from "#audit/domain/types";
@@ -21,24 +20,20 @@ import { relativePosixPath } from "#core/path";
 import type { Finding } from "#core/report";
 import type { Result } from "#core/result";
 import { err, ok } from "#core/result";
-import { findNearestPackageVersion } from "#core/workspace/package-version";
 import { sourceCommentLanguage, walkSourceFiles } from "#core/workspace/source-walk";
 
-const reasonByDefect: Record<CommentContentDefectKind | DividerDefectKind | "dead-link" | "since-impossible", string> =
-  {
-    "bad-width": `rule does not end at column ${DIVIDER_COLUMN}`,
-    "dead-link": "{@link} target has no mention outside links — likely renamed",
-    "detached-doc": "// run separates a doc block from its declaration — merge it into the block",
-    "doc-pointer": "comment points at a document — state the invariant here instead",
-    "jsdoc-type": "JSDoc {type} syntax — the declaration already carries the type",
-    "legacy-form": "legacy divider form",
-    "param-coverage": "a block naming any parameter must name them all — a partial list reads as complete",
-    "param-hyphen": "TSDoc separates the name from its description with ' - '",
-    "since-impossible":
-      "@since names a version the package has not reached — set it to the release that shipped the symbol",
-    "since-order": "@since is stamped at release and stays the block's last tag",
-    "stacked-doc": "// run stacked above a doc block — fold it into the block",
-  };
+const reasonByDefect: Record<CommentContentDefectKind | DividerDefectKind | "dead-link", string> = {
+  "bad-width": `rule does not end at column ${DIVIDER_COLUMN}`,
+  "dead-link": "{@link} target has no mention outside links — likely renamed",
+  "detached-doc": "// run separates a doc block from its declaration — merge it into the block",
+  "doc-pointer": "comment points at a document — state the invariant here instead",
+  "jsdoc-type": "JSDoc {type} syntax — the declaration already carries the type",
+  "legacy-form": "legacy divider form",
+  "param-coverage": "a block naming any parameter must name them all — a partial list reads as complete",
+  "param-hyphen": "TSDoc separates the name from its description with ' - '",
+  "since-order": "@since is stamped at release and stays the block's last tag",
+  "stacked-doc": "// run stacked above a doc block — fold it into the block",
+};
 
 interface ScannedFile {
   readonly absolutePath: string;
@@ -61,7 +56,6 @@ export function runCommentAudit({ fs, workspace, target, flags }: AuditContext):
     const scanned: Array<ScannedFile> = [];
     const findings: Array<Finding> = [];
     const fixedFiles: Array<string> = [];
-    const versionByDirectory = new Map<string, string | null>();
 
     for (const absolutePath of files) {
       const language = sourceCommentLanguage(absolutePath);
@@ -91,12 +85,6 @@ export function runCommentAudit({ fs, workspace, target, flags }: AuditContext):
       if (language !== "ignore") {
         for (const finding of scanCommentContent(content, language)) {
           detections.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect[finding.defect] });
-        }
-        const packageVersion = nearestVersion(fs, absolutePath, versionByDirectory);
-        if (packageVersion !== null) {
-          for (const finding of scanImpossibleSinceTags(content, packageVersion)) {
-            detections.push({ line: finding.line, raw: finding.raw, reason: reasonByDefect["since-impossible"] });
-          }
         }
         if (language === "js") {
           detections.push(...scanTsdocSyntax(content));
@@ -156,16 +144,4 @@ function deadLinkFindings(fs: Filesystem, scanned: ReadonlyArray<ScannedFile>): 
     }
   }
   return findings;
-}
-
-// One package.json walk per directory — sibling files share the answer.
-function nearestVersion(fs: Filesystem, absolutePath: string, cache: Map<string, string | null>): string | null {
-  const directory = path.dirname(absolutePath);
-  const cached = cache.get(directory);
-  if (cached !== undefined) {
-    return cached;
-  }
-  const version = findNearestPackageVersion(fs, directory);
-  cache.set(directory, version);
-  return version;
 }
