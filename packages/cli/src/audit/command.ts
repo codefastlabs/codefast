@@ -4,7 +4,7 @@ import type { Command } from "commander";
 
 import { assertionsAudit } from "#audit/assertions/command";
 import { commentsAudit } from "#audit/comments/command";
-import { displayNamesAudit } from "#audit/display-names/command";
+import { diDisplayNamesAudit } from "#audit/di-display-names/command";
 import { applyAllowlist } from "#audit/domain/findings";
 import type { Audit, AuditAllReport, AuditContext, AuditReport, AuditRun } from "#audit/domain/types";
 import { enginesAudit } from "#audit/engines/command";
@@ -14,7 +14,7 @@ import { linksAudit } from "#audit/links/command";
 import { presentAuditAll, presentAuditReport } from "#audit/output";
 import { propsAudit } from "#audit/props/command";
 import { publishAudit } from "#audit/publish/command";
-import { rtlAudit } from "#audit/rtl/command";
+import { tailwindRtlAudit } from "#audit/tailwind-rtl/command";
 import type { CommandSpec } from "#core/command";
 import { createCommand, deriveContext } from "#core/command";
 import type { CodefastConfig } from "#core/config/schema";
@@ -23,11 +23,11 @@ import type { Result } from "#core/result";
 import { ok } from "#core/result";
 
 const AUDITS: ReadonlyArray<Audit> = [
-  rtlAudit,
+  tailwindRtlAudit,
   linksAudit,
   importsAudit,
   assertionsAudit,
-  displayNamesAudit,
+  diDisplayNamesAudit,
   propsAudit,
   commentsAudit,
   layersAudit,

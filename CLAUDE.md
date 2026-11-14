@@ -183,14 +183,16 @@ Rules: **no tests under** `src/**`; no test files directly under `tests/` (must 
 - **React imports are named-only.** `import * as React` and default `React` imports (value or type) are banned, and so
   is the implicit `React.*` UMD-global type reference (`e: React.FormEvent` with no import — tsc accepts it silently).
   Two-layer enforcement, no jsPlugins: oxlint's built-in `no-restricted-imports` catches the import forms in-editor, and
-  `pnpm cli:audit:imports` (the `codefast` CLI, gating CI) catches everything including the UMD global.
+  `pnpm cli:audit:imports` (the `codefast` CLI, gating CI, enforcing the rules `audit.imports.rules` declares in
+  `codefast.config.js`) catches everything including the UMD global.
 - **Zod is imported as a namespace** (`import * as z from "zod"`, the v4 style) — the repo-wide house form. A named
   `import { z } from "zod"` pins Zod's full locale set into the browser bundle because bundlers cannot tree-shake it,
   which is why the namespace form is mandatory wherever code ships bundled; the repo applies it everywhere for one
   consistent style. `pnpm cli:audit:imports` enforces it across every workspace package (`cli` included — a `named:z`
-  rule with no `scope`); a named-`z` type-only import stays fine (`import type { ZodType } from "zod"`), only the value
-  `z` is banned. oxlint cannot express this (it has no `no-restricted-syntax`, and `importNames` would flag the
-  namespace form too), so the audit is the only enforcement layer.
+  rule in `codefast.config.js` with no `scope`); a named-`z` type-only import stays fine
+  (`import type { ZodType } from "zod"`), only the value `z` is banned. oxlint cannot express this (it has no
+  `no-restricted-syntax`, and `importNames` would flag the namespace form too), so the audit is the only enforcement
+  layer.
 
 ## Comments (TSDoc, not JSDoc)
 
@@ -299,8 +301,8 @@ point of use beats brevity, and every word must convey information:
   (`shop:Logger`, `shop:Infra`, `di:MetadataReader`); a `tag()` key is camelCase — it names an attribute
   (`shop:cacheTier`, `di:name`). Slot names (`whenNamed("primary")`) and tag values are values, not display names:
   lowercase, no prefix. The string is not the thing's identity, so only this rule keeps two owners from minting the same
-  one; `pnpm cli:audit:display-names` enforces it across source, docs and examples (tests and benchmarks are out of
-  scope).
+  one; `pnpm cli:audit:di-display-names` enforces it across the source, docs and examples that use `@codefast/di` (tests
+  and benchmarks are out of scope).
 - **Name by role, never lie.** A name must state what the thing actually does (`options` for a hard selection criterion,
   never `hint`; a render function is `renderX`, never `customLabel`). No filler suffixes — `Type` on a type alias says
   nothing (`AppearanceContextValue`, not `AppearanceContextType`).
@@ -407,8 +409,8 @@ These are project rules the linters do not fully enforce:
 - **RTL: keep physical classes that sit under a side variant.** `packages/ui` is RTL-hardened with logical utilities +
   `rtl:` overrides, but physical `left-/right-/border-l/r/slide-in-from-*` classes gated behind `data-[side=…]` (or the
   custom `data-side-left`/`data-side-right`) are intentional — Radix resolves `side` per reading direction, so
-  converting them to logical double-flips. Run `pnpm run codefast audit:rtl` (the RTL scan lives in the `codefast` CLI,
-  config under `audit.rtl` in `codefast.config.js`) to check for genuine gaps.
+  converting them to logical double-flips. Run `pnpm cli:audit:tailwind-rtl` (the scan lives in the `codefast` CLI,
+  config under `audit.tailwindRtl` in `codefast.config.js`) to check for genuine gaps.
 
 ## Documentation cross-references
 

@@ -7,9 +7,9 @@ import {
   RTL_SWAP_MAPPINGS,
   RTL_TRANSLATE_X_MAPPINGS,
   SLIDE_PREFIXES,
-} from "#audit/rtl/domain/mappings";
-import type { RtlClassToken } from "#audit/rtl/domain/tokenize";
-import { collectTokens } from "#audit/rtl/domain/tokenize";
+} from "#audit/tailwind-rtl/domain/mappings";
+import type { RtlClassToken } from "#audit/tailwind-rtl/domain/tokenize";
+import { collectTokens } from "#audit/tailwind-rtl/domain/tokenize";
 
 /**
  * A token satisfies an "rtl companion" requirement when the same file has a

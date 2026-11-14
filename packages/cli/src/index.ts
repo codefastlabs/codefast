@@ -10,5 +10,6 @@ export type {
   AuditSection,
   CodefastConfig,
   ExportsConfig,
+  ImportRule,
   SinceConfig,
 } from "#core/config/schema";

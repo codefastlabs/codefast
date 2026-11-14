@@ -1,6 +1,5 @@
 import { fileScan, findingsIn } from "#audit/domain/findings";
 import type { AuditContext, AuditScan } from "#audit/domain/types";
-import { defaultImportPolicyRules } from "#audit/imports/domain/import-policy";
 import { auditImportPolicySource } from "#audit/imports/domain/import-policy";
 import { AppError, messageFrom } from "#core/errors";
 import { createAnyGlobMatcher } from "#core/glob";
@@ -10,13 +9,20 @@ import { err, ok } from "#core/result";
 import { walkTsxFiles } from "#core/workspace/typescript-walk";
 
 /**
- * Scans the target for banned import forms, applying each rule only to the files in its scope.
+ * Scans the target for the import forms the config's rules ban, each rule only in the files its scope reaches.
+ *
+ * @remarks The audit holds no rules of its own: a project declares its import policy under `audit.imports.rules`.
  *
  * @since 0.10.0
  */
 export function runImportsAudit({ fs, workspace, target }: AuditContext): Result<AuditScan, AppError> {
+  const section = workspace.config.audit?.imports;
+  const rules = (section === false ? undefined : section?.rules) ?? [];
+  if (rules.length === 0) {
+    return ok(fileScan([], 0));
+  }
   try {
-    const scopedRules = defaultImportPolicyRules.map((rule) => ({
+    const scopedRules = rules.map((rule) => ({
       rule,
       isInScope: rule.scope ? createAnyGlobMatcher(rule.scope, { dot: true }) : () => true,
     }));

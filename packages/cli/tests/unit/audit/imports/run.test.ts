@@ -2,10 +2,14 @@ import { describe, expect, it } from "vitest";
 
 import { runImportsAudit } from "#audit/imports/run";
 import { createAuditContext } from "#tests/unit/support/audit-context";
+import { houseImportRules } from "#tests/unit/support/house-import-rules";
+
+const config = { "codefast.config.json": JSON.stringify({ audit: { imports: { rules: houseImportRules } } }) };
 
 describe("runImportsAudit", () => {
   it("reports a namespace React import and an implicit UMD-global reference, and passes a clean file", async () => {
     const { context } = await createAuditContext({
+      ...config,
       "apps/web/src/demo.tsx": `import * as React from "react";\nexport const x = React.version;\n`,
       "clean.tsx": `import { useState } from "react";\nexport const use = useState;\n`,
       "umd.ts": `export type H = React.FormEvent;\n`,
@@ -22,6 +26,7 @@ describe("runImportsAudit", () => {
 
   it("applies the Zod namespace rule to every package, accepting only the namespace form", async () => {
     const { context } = await createAuditContext({
+      ...config,
       "packages/theme/src/named.ts": `import { z } from "zod";\nexport const s = z.string();\n`,
       "packages/theme/src/namespace.ts": `import * as z from "zod";\nexport const s = z.string();\n`,
       "packages/cli/src/named.ts": `import { z } from "zod";\nexport const s = z.string();\n`,
@@ -37,5 +42,14 @@ describe("runImportsAudit", () => {
     for (const finding of outcome.ok ? outcome.value.findings : []) {
       expect(finding.message).toContain('named import { z } from "zod"');
     }
+  });
+
+  it("reads nothing when the config declares no import rules", async () => {
+    const { context } = await createAuditContext({ "src/a.tsx": `import * as React from "react";\n` });
+
+    expect(runImportsAudit(context)).toEqual({
+      ok: true,
+      value: { findings: [], scannedFiles: 0, scannedPackages: 0, fixedFiles: [] },
+    });
   });
 });

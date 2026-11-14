@@ -52,27 +52,28 @@ Or run it once without installing, with `pnpm dlx @codefast/cli` or `npx @codefa
 Run bare, `codefast` lists its commands, as `php artisan` does; `--help` on any command shows its usage, and
 `codefast --version` prints the installed version.
 
-| Command               | What it does                                                                | Writes?           |
-| --------------------- | --------------------------------------------------------------------------- | ----------------- |
-| `exports:generate`    | Write each package's `package.json#exports` from its built `dist/`          | yes (`--dry-run`) |
-| `publish:prepare`     | Strip the development surface from published packages right before publish  | yes (`--dry-run`) |
-| `since:stamp`         | Stamp `@since <version>` on exported declarations that lack one             | yes (`--dry-run`) |
-| `audit`               | Run every audit and report each under its name                              | `--fix` only      |
-| `audit:links`         | Markdown links pointing at a missing path or anchor                         | no                |
-| `audit:rtl`           | Physical-direction Tailwind classes that should be logical                  | no                |
-| `audit:imports`       | Banned import forms (React imports that are not named-only, Zod by name)    | no                |
-| `audit:assertions`    | Double type assertions through `unknown` / `any`, tests included            | no                |
-| `audit:display-names` | `token()` / `tag()` / module names breaking the `namespace:Name` convention | no                |
-| `audit:props`         | Props types joined with `&` that an interface could express                 | no                |
-| `audit:publish`       | What would break a consumer's install of a published package                | no                |
-| `audit:engines`       | Node floors (`engines.node`) that do not hold                               | no                |
-| `audit:layers`        | Value imports that point up a package's configured layers                   | no                |
-| `audit:comments`      | Doc-comment conventions; `--fix` repairs section dividers                   | `--fix` only      |
+| Command                  | What it does                                                               | Writes?           |
+| ------------------------ | -------------------------------------------------------------------------- | ----------------- |
+| `exports:generate`       | Write each package's `package.json#exports` from its built `dist/`         | yes (`--dry-run`) |
+| `publish:prepare`        | Strip the development surface from published packages right before publish | yes (`--dry-run`) |
+| `since:stamp`            | Stamp `@since <version>` on exported declarations that lack one            | yes (`--dry-run`) |
+| `audit`                  | Run every audit and report each under its name                             | `--fix` only      |
+| `audit:links`            | Markdown links pointing at a missing path or anchor                        | no                |
+| `audit:tailwind-rtl`     | Physical-direction Tailwind classes that should be logical                 | no                |
+| `audit:imports`          | Import forms the config's import rules ban                                 | no                |
+| `audit:assertions`       | Double type assertions through `unknown` / `any`, tests included           | no                |
+| `audit:di-display-names` | `@codefast/di` names breaking the `namespace:Name` convention              | no                |
+| `audit:props`            | Props types joined with `&` that an interface could express                | no                |
+| `audit:publish`          | What would break a consumer's install of a published package               | no                |
+| `audit:engines`          | Node floors (`engines.node`) that do not hold                              | no                |
+| `audit:layers`           | Value imports that point up a package's configured layers                  | no                |
+| `audit:comments`         | Doc-comment conventions; `--fix` repairs section dividers                  | `--fix` only      |
 
-`exports:generate`, `publish:prepare`, `since:stamp`, `audit:links`, `audit:assertions`, `audit:layers`, `audit:publish`
-and `audit:engines` are general-purpose. The other audits encode codefast's own house style (logical Tailwind
-directions, named React imports, a comment grammar, a `namespace:Name` scheme for `@codefast/di` tokens, interfaces for
-component props): adopt them, or turn one off with `audit: { rtl: false }`.
+An audit that serves one library or tool names it — `audit:di-display-names` reads only the code and docs that use
+`@codefast/di`, `audit:tailwind-rtl` only Tailwind classes — and an audit that holds a policy reads it from the config:
+`audit:imports` bans exactly the import forms `audit.imports.rules` declares, and nothing when it declares none. The
+rest are general-purpose, apart from the comment grammar `audit:comments` holds; turn any audit off with
+`audit: { comments: false }`.
 
 The global `--no-color` flag comes before the command name — `codefast --no-color exports:generate`. Color is also off
 when stdout is not a terminal or `NO_COLOR` is set, and `FORCE_COLOR` turns it back on.
@@ -157,7 +158,7 @@ the same config section:
 - `audit.<name>.allowlist` accepts findings: each entry is a finding's text as written, accepted everywhere, or
   `path:text` for one file.
 
-The section key is the audit's name in camelCase (`audit.displayNames`). Every audit takes `--fix`, which applies the
+The section key is the audit's name in camelCase (`audit.diDisplayNames`). Every audit takes `--fix`, which applies the
 mechanical fixes its findings carry — today, `audit:comments` repairs section dividers.
 
 Run bare, `codefast audit` runs every audit and reports each under its name, so one CI step shows every failing audit
@@ -177,22 +178,34 @@ anchor with no matching heading or `<a id>`, and an anchor into another document
 case a browser fails silently by scrolling to the top. External URLs are not checked, and links inside fenced code are
 examples, not references. A finding's text is the link target as written.
 
-### `audit:rtl`
+### `audit:tailwind-rtl`
 
-_House style._ Physical-direction Tailwind classes (`ml-*`, `left-*`, `text-left`) that should use a logical equivalent
-(`ms-*`, `start-*`, `text-start`) or an `rtl:` companion (`translate-x`, `space-x`, resize cursors). A finding's text is
-the class token.
+Physical-direction Tailwind classes (`ml-*`, `left-*`, `text-left`) that should use a logical equivalent (`ms-*`,
+`start-*`, `text-start`) or an `rtl:` companion (`translate-x`, `space-x`, resize cursors). A finding's text is the
+class token.
 
 ### `audit:imports`
 
-_House style._ The import policy over `.ts`/`.tsx` files:
+The import policy a project declares, over `.ts`/`.tsx` files. Each rule under `audit.imports.rules` names a `module`,
+the forms of importing it that it bans — `namespace` (`import * as x`), `default` (`import x`), `named:<name>`
+(`import { name }`) — the `scope` globs it holds in (every file when omitted), an optional `umdGlobal` whose implicit
+`<name>.*` type reference it flags where nothing imports that name (the reference `tsc` accepts silently through a UMD
+`export as namespace`), and the `message` a finding carries. With no rules, the audit reads nothing. A finding's text is
+the offending source text.
 
-- **React** — members are imported by name. It flags `import * as React`, a default `React` import (type-only included),
-  and an implicit `React.*` UMD-global type reference (`e: React.FormEvent` with no import) that `tsc` accepts silently.
-- **Zod** — a named `import { z } from "zod"`, which pins Zod's full locale set into a bundle;
-  `import * as z from "zod"` lets bundlers tree-shake it.
-
-A finding's text is the offending source text.
+```js
+// codefast.config.js — the codefast monorepo's own policy
+export default {
+  audit: {
+    imports: {
+      rules: [
+        { module: "react", ban: ["namespace", "default"], umdGlobal: "React", message: "import React members by name" },
+        { module: "zod", ban: ["named:z"], message: 'import Zod as a namespace: import * as z from "zod"' },
+      ],
+    },
+  },
+};
+```
 
 ### `audit:assertions`
 
@@ -209,12 +222,13 @@ const config = host.configFor(plugin.id) as unknown as PluginConfig;
 A directive with no reason, or one that keeps no assertion, is itself reported, so a kept assertion cannot outlive its
 cause.
 
-### `audit:display-names`
+### `audit:di-display-names`
 
-_House style._ The display-name convention for every string a `token()`, `tag()` or module factory takes: a name is
+The `@codefast/di` display-name convention for every string a `token()`, `tag()` or module factory takes: a name is
 spelled like the TS symbol it stands for, under its owner's namespace — `namespace:Name`. A token or module name is
-PascalCase, a tag key camelCase. It scans TypeScript and markdown alike, since a doc sample is what a reader copies, and
-skips `tests/`, `benchmarks/`, `.changeset/` and `CHANGELOG.md`.
+PascalCase, a tag key camelCase. It reads only what uses `@codefast/di` — the package itself, code that imports it, and
+markdown that names it — so another library's `token()` is never mistaken for one. It scans TypeScript and markdown
+alike, since a doc sample is what a reader copies, and skips `tests/`, `benchmarks/`, `.changeset/` and `CHANGELOG.md`.
 
 ### `audit:props`
 
@@ -323,7 +337,7 @@ export default defineConfig({
   },
   since: { "@apps/*": false },
   audit: {
-    rtl: { target: "packages/ui/src", allowlist: ["packages/ui/src/sheet.ts:slide-in-from-left-10"] },
+    tailwindRtl: { target: "packages/ui/src", allowlist: ["packages/ui/src/sheet.ts:slide-in-from-left-10"] },
     props: false,
   },
   // Called after any command wrote files — exports:generate, publish:prepare, since:stamp, an audit's --fix.

@@ -60,13 +60,13 @@ describe("an audit:<name> command", () => {
 
 describe("a full audit run", () => {
   it("reports every audit that ran as clean, and skips one the config turns off", async () => {
-    writeFileSync(path.join(projectDir, "codefast.config.json"), JSON.stringify({ audit: { rtl: false } }));
+    writeFileSync(path.join(projectDir, "codefast.config.json"), JSON.stringify({ audit: { tailwindRtl: false } }));
 
     const { exitCode, out } = await run(["audit"]);
 
     expect(exitCode).toBe(0);
     expect(out).toContain("✓ audit:links: no findings in 1 file");
-    expect(out).toContain("○ audit:rtl: turned off in the config");
+    expect(out).toContain("○ audit:tailwind-rtl: turned off in the config");
     expect(out).toContain("✓ audit: all 9 audits that ran are clean");
   });
 
@@ -92,20 +92,20 @@ describe("a full audit run", () => {
     expect(exitCode).toBe(1);
     expect(summary.ok).toBe(false);
     expect(summary.result.audits.find((audit) => audit.name === "links")?.status).toBe("findings");
-    expect(summary.result.audits.find((audit) => audit.name === "rtl")?.status).toBe("clean");
+    expect(summary.result.audits.find((audit) => audit.name === "tailwind-rtl")?.status).toBe("clean");
   });
 
   it("exits 2 when an audit cannot run, and still runs the rest", async () => {
     writeFileSync(path.join(projectDir, "README.md"), "# Solo\n\n[gone](./missing.md)\n");
     writeFileSync(
       path.join(projectDir, "codefast.config.json"),
-      JSON.stringify({ audit: { rtl: { target: "missing" } } }),
+      JSON.stringify({ audit: { tailwindRtl: { target: "missing" } } }),
     );
 
     const { exitCode, out } = await run(["audit"]);
 
     expect(exitCode).toBe(2);
-    expect(out).toContain("✗ audit:rtl: [NOT_FOUND]");
-    expect(out).toContain("✗ audit: 2 of 10 failed — rtl (error), links (findings)");
+    expect(out).toContain("✗ audit:tailwind-rtl: [NOT_FOUND]");
+    expect(out).toContain("✗ audit: 2 of 10 failed — tailwind-rtl (error), links (findings)");
   });
 });
