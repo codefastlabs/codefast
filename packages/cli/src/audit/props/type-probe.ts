@@ -4,6 +4,9 @@ import type { Node, SourceFile, TypeNode } from "typescript/unstable/ast";
 import type { Checker, Type } from "typescript/unstable/sync";
 
 import type { ConstituentKind, IntersectionPart } from "#audit/props/domain/props-intersection";
+import type { AppError } from "#core/errors";
+import type { Result } from "#core/result";
+import { ok } from "#core/result";
 import { loadTypeServer, loadTypeServerSyntax } from "#core/type-server";
 
 /** Resolves the kind of each intersection part in one file, in the order given. */
@@ -63,15 +66,21 @@ function kindOfType(type: Type, mappedFlag: number): ConstituentKind {
 // ── Probe lifecycle ──────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Creates a type probe over the native TypeScript type server for `audit:props`.
- *
- * @throws AppError when the `typescript` package providing the type server cannot be loaded.
+ * Creates a type probe over the native TypeScript type server for `audit:props`, or the error when it cannot load.
  *
  * @since 0.15.0
  */
-export async function createPropsTypeProbe(): Promise<PropsTypeProbe> {
-  const sync = await loadTypeServer("audit:props");
-  const syntax = await loadTypeServerSyntax("audit:props");
+export async function createPropsTypeProbe(): Promise<Result<PropsTypeProbe, AppError>> {
+  const loadedSync = await loadTypeServer("audit:props");
+  if (!loadedSync.ok) {
+    return loadedSync;
+  }
+  const loadedSyntax = await loadTypeServerSyntax("audit:props");
+  if (!loadedSyntax.ok) {
+    return loadedSyntax;
+  }
+  const sync = loadedSync.value;
+  const syntax = loadedSyntax.value;
   const api = new sync.API();
   const mappedFlag = sync.ObjectFlags.Mapped;
 
@@ -100,7 +109,7 @@ export async function createPropsTypeProbe(): Promise<PropsTypeProbe> {
       });
   }
 
-  return {
+  return ok({
     forFile(filePath) {
       const project = api.updateSnapshot({ openFiles: [filePath] }).getDefaultProjectForFile(filePath);
       const sourceFile = project?.program.getSourceFile(filePath);
@@ -112,5 +121,5 @@ export async function createPropsTypeProbe(): Promise<PropsTypeProbe> {
     dispose() {
       api.close();
     },
-  };
+  });
 }

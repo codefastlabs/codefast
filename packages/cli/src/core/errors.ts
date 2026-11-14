@@ -28,6 +28,13 @@ export class AppError {
 }
 
 /**
+ * Wraps a value a run threw, which no `Result` carried, as an `UNEXPECTED` error that keeps it as the cause.
+ */
+export function unexpectedError(caughtError: unknown): AppError {
+  return new AppError("UNEXPECTED", messageFrom(caughtError), caughtError);
+}
+
+/**
  * Stable, user-facing text for values caught as `unknown`.
  *
  * @since 0.3.16-canary.0

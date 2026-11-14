@@ -4,6 +4,7 @@ import path from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { linksAudit } from "#audit/links/command";
 import { runCli } from "#cli";
 import { refuseColor } from "#core/style";
 import { captureLogger } from "#tests/unit/support/logger-capture";
@@ -107,5 +108,18 @@ describe("a full audit run", () => {
     expect(exitCode).toBe(2);
     expect(out).toContain("✗ audit:tailwind-rtl: [NOT_FOUND]");
     expect(out).toContain("✗ audit: 2 of 11 failed — tailwind-rtl (error), links (findings)");
+  });
+
+  it("reports an audit whose scan throws as an error, and still runs the rest", async () => {
+    vi.spyOn(linksAudit, "scan").mockImplementation(() => {
+      throw new Error("boom");
+    });
+
+    const { exitCode, out } = await run(["audit"]);
+
+    expect(exitCode).toBe(2);
+    expect(out).toContain("✗ audit:links: [UNEXPECTED] boom");
+    expect(out).toContain("✓ audit:tailwind-rtl: no findings");
+    expect(out).toContain("✗ audit: 1 of 11 failed — links (error)");
   });
 });

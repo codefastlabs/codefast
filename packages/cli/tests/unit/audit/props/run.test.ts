@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 import type { ConstituentKind } from "#audit/props/domain/props-intersection";
 import { runPropsAudit } from "#audit/props/run";
 import type { PropsTypeProbe } from "#audit/props/type-probe";
+import { AppError } from "#core/errors";
+import { err, ok } from "#core/result";
 import { createAuditContext } from "#tests/unit/support/audit-context";
 
 /** A probe that resolves every part by its text, standing in for the type server. */
@@ -24,7 +26,7 @@ describe("runPropsAudit", () => {
     });
     const dispose = vi.fn();
 
-    const result = await runPropsAudit(context, async () => fakeProbe({ Choice: "union" }, dispose));
+    const result = await runPropsAudit(context, async () => ok(fakeProbe({ Choice: "union" }, dispose)));
 
     expect(result.ok && result.value).toMatchObject({
       scannedFiles: 2,
@@ -42,7 +44,7 @@ describe("runPropsAudit", () => {
       ].join("\n"),
     });
 
-    const result = await runPropsAudit(context, async () => fakeProbe({ Choice: "union" }));
+    const result = await runPropsAudit(context, async () => ok(fakeProbe({ Choice: "union" })));
 
     expect(result.ok && result.value.findings).toMatchObject([
       { file: "packages/a/src/a.tsx", line: 1, text: "Base & { b: string }" },
@@ -51,7 +53,7 @@ describe("runPropsAudit", () => {
 
   it("never starts the type server for a tree without a candidate", async () => {
     const { context } = await createAuditContext({ "src/plain.ts": 'type PlainProps = ComponentProps<"div">;\n' });
-    const createProbe = vi.fn(async () => fakeProbe({}));
+    const createProbe = vi.fn(async () => ok(fakeProbe({})));
 
     const result = await runPropsAudit(context, createProbe);
 
@@ -59,13 +61,12 @@ describe("runPropsAudit", () => {
     expect(createProbe).not.toHaveBeenCalled();
   });
 
-  it("returns a failed result when the type server cannot start", async () => {
+  it("returns the error the type server reports when it cannot start", async () => {
     const { context } = await createAuditContext({ "src/a.tsx": "type BoxProps = Base & { b: string };\n" });
+    const missing = new AppError("INFRA_FAILURE", "no type server");
 
-    const result = await runPropsAudit(context, async () => {
-      throw new Error("no type server");
-    });
+    const result = await runPropsAudit(context, async () => err(missing));
 
-    expect(result.ok).toBe(false);
+    expect(result).toEqual({ ok: false, error: missing });
   });
 });

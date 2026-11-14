@@ -6,7 +6,7 @@ import { assertionsAudit } from "#audit/assertions/command";
 import { commentsAudit } from "#audit/comments/command";
 import { diDisplayNamesAudit } from "#audit/di-display-names/command";
 import { applyAllowlist } from "#audit/domain/findings";
-import type { Audit, AuditAllReport, AuditContext, AuditReport, AuditRun } from "#audit/domain/types";
+import type { Audit, AuditAllReport, AuditContext, AuditReport, AuditRun, AuditScan } from "#audit/domain/types";
 import { enginesAudit } from "#audit/engines/command";
 import { importsAudit } from "#audit/imports/command";
 import { layersAudit } from "#audit/layers/command";
@@ -20,8 +20,9 @@ import type { CommandSpec } from "#core/command";
 import { createCommand, deriveContext } from "#core/command";
 import type { CodefastConfig } from "#core/config/schema";
 import type { AppError } from "#core/errors";
+import { unexpectedError } from "#core/errors";
 import type { Result } from "#core/result";
-import { ok } from "#core/result";
+import { err, ok } from "#core/result";
 
 const AUDITS: ReadonlyArray<Audit> = [
   tailwindRtlAudit,
@@ -51,7 +52,13 @@ function configuredTarget(audit: Audit): (config: CodefastConfig) => string | un
 }
 
 async function runAudit(audit: Audit, context: AuditContext): Promise<Result<AuditReport, AppError>> {
-  const scan = await audit.scan(context);
+  let scan: Result<AuditScan, AppError>;
+  // A scan that throws fails only its own audit, so a full run still reports every other one.
+  try {
+    scan = await audit.scan(context);
+  } catch (caughtError: unknown) {
+    return err(unexpectedError(caughtError));
+  }
   if (!scan.ok) {
     return scan;
   }
