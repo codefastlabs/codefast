@@ -28,8 +28,8 @@ const config = {
         "./css/*": "./src/css/*",
       },
     },
-    "@apps/web": false,
-    "@examples/tanstack-start": false,
+    "@apps/*": false,
+    "@examples/*": false,
     "@codefast/cli": false,
     // Node lane is tsc; the browser app is a Vite bundle whose hashed chunks in
     // dist/app must not be turned into package exports — exports are hand-kept.
@@ -41,9 +41,6 @@ const config = {
   },
 
   audit: {
-    comments: {
-      allowlist: [],
-    },
     // The house import policy: React members by name, and Zod as a namespace everywhere, so a named `z` never
     // pins Zod's full locale set into a package that ships bundled.
     imports: {
@@ -62,14 +59,6 @@ const config = {
             "full locale set into any bundle that reaches it)",
         },
       ],
-      allowlist: [],
-    },
-    // A kept double assertion carries its reason inline, beside the code it excuses.
-    assertions: {
-      allowlist: [],
-    },
-    diDisplayNames: {
-      allowlist: [],
     },
     // A layer is a family under `src/`: a directory, or a lone module sitting flat. Bottom to top; a
     // value import may point down or sideways, never up. Each package's ARCHITECTURE.md explains its order.
@@ -87,7 +76,6 @@ const config = {
           ],
         },
       },
-      allowlist: [],
     },
     tailwindRtl: {
       target: "packages/ui/src",
