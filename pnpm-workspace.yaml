@@ -39,8 +39,8 @@ catalog:
   "@resvg/resvg-js": ^2.6.2
   "@rolldown/plugin-babel": ^0.3.0
   "@standard-schema/spec": ^1.1.0
-  "@tailwindcss/postcss": ^4.3.4
-  "@tailwindcss/vite": ^4.3.4
+  "@tailwindcss/postcss": ^4.3.5
+  "@tailwindcss/vite": ^4.3.5
   "@tanstack/devtools-vite": ^0.8.6
   "@tanstack/react-devtools": ^0.10.14
   "@tanstack/react-router": ^1.170.46
@@ -114,8 +114,8 @@ catalog:
   simple-git-hooks: ^2.14.0
   sonner: ^2.0.8
   tailwind-merge: ^3.7.0
-  tailwind-variants: ^4.0.1
-  tailwindcss: ^4.3.4
+  tailwind-variants: ^4.0.2
+  tailwindcss: ^4.3.5
   tinybench: ^6.2.3
   tsx: ^4.23.15
   tsyringe: ^4.10.0
