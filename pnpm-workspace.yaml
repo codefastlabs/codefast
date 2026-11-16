@@ -91,7 +91,7 @@ catalog:
   knip: ^6.44.1
   lint-staged: ^17.6.0
   marked: ^18.2.0
-  lucide-react: ^1.69.0
+  lucide-react: ^1.72.0
   mermaid: ^12.3.0
   nitro: 3.0.261029-rc
   oxfmt: ^0.76.0
