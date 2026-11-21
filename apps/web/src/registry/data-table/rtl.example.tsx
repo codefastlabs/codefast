@@ -227,7 +227,7 @@ export function DataTableRtl() {
         accessorKey: "status",
         header: t.status,
         cell: ({ row }) => {
-          const status = row.getValue("status") as string;
+          const status = row.getValue<string>("status");
           const statusMap: Record<string, string> = {
             success: t.success,
             processing: t.processing,

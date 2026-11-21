@@ -371,7 +371,6 @@ export const collectSweepOutcomes = (options: TailwindVariantsOptions, run: Swee
   for (const sweepCase of CASES) {
     const define = (): AnyResolver => {
       // tsc infers a resolver over `Record<string, never>` props here, which the linter's checker misses.
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       return tv(sweepCase.config as never, { ...sweepCase.options, ...options }) as AnyResolver;
     };
     const shared = define();
