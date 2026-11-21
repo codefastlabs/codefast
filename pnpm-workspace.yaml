@@ -62,7 +62,7 @@ catalog:
   "@vercel/analytics": ^2.0.1
   "@vitejs/plugin-react": ^6.3.0
   "@vitest/coverage-v8": ^5.1.0
-  awilix: ^13.0.5
+  awilix: ^13.0.7
   babel-plugin-react-compiler: ^1.0.0
   brandi: ^5.1.0
   chart.js: ^4.6.1

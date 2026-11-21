@@ -241,7 +241,7 @@ catalogs:
       version: 16.3.3
     '@testing-library/user-event':
       specifier: ^14.6.12
-      version: 14.6.13
+      version: 14.6.12
     '@types/jest-axe':
       specifier: ^3.5.9
       version: 3.5.9
@@ -273,8 +273,8 @@ catalogs:
       specifier: ^5.1.0
       version: 5.1.0
     awilix:
-      specifier: ^13.0.5
-      version: 13.0.5
+      specifier: ^13.0.7
+      version: 13.0.7
     babel-plugin-react-compiler:
       specifier: ^1.0.0
       version: 1.0.0
@@ -628,7 +628,7 @@ importers:
         version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@testing-library/user-event':
         specifier: 'catalog:'
-        version: 14.6.13(@testing-library/dom@10.4.2)
+        version: 14.6.12(@testing-library/dom@10.4.2)
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.6
@@ -670,7 +670,7 @@ importers:
         version: link:../../internal/benchmark-viewer
       awilix:
         specifier: 'catalog:'
-        version: 13.0.5
+        version: 13.0.7
       brandi:
         specifier: 'catalog:'
         version: 5.1.0
@@ -1055,7 +1055,7 @@ importers:
         version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@testing-library/user-event':
         specifier: 'catalog:'
-        version: 14.6.13(@testing-library/dom@10.4.2)
+        version: 14.6.12(@testing-library/dom@10.4.2)
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.6
@@ -1101,7 +1101,7 @@ importers:
         version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@testing-library/user-event':
         specifier: 'catalog:'
-        version: 14.6.13(@testing-library/dom@10.4.2)
+        version: 14.6.12(@testing-library/dom@10.4.2)
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.6
@@ -1252,7 +1252,7 @@ importers:
         version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@testing-library/user-event':
         specifier: 'catalog:'
-        version: 14.6.13(@testing-library/dom@10.4.2)
+        version: 14.6.12(@testing-library/dom@10.4.2)
       '@types/jest-axe':
         specifier: 'catalog:'
         version: 3.5.9
@@ -4201,8 +4201,8 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@testing-library/user-event@14.6.13':
-    resolution: {integrity: sha512-2LVZGptuB5un1Cu/u31o9adkCwbsUTMp4B4p04xupI7uobvTIpgKidSdShqZiReo/mQmvR9xjgdgTgge4oAbYA==}
+  '@testing-library/user-event@14.6.12':
+    resolution: {integrity: sha512-8yQV8v+eToBhsUO4oYrZY7fzhpTEMZx4IDx0/iuER/x0Xuy0NdqQOhsaaUNlvXE03N7vQ+4RCXUieKC0NJty9w==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
@@ -4684,8 +4684,8 @@ packages:
   ast-v8-to-istanbul@1.0.7:
     resolution: {integrity: sha512-kFL68AG6ajd8fg248zwM9GQrUWEp79gsmjum34OEXjs4yHuUMZfYKwOLW9GMmB4oNvVrj+EAGxsP7ye2UR9UlA==}
 
-  awilix@13.0.5:
-    resolution: {integrity: sha512-ORtca6suBdYA1FyTzqHEZDvEuUwo3lPDDBRm7GrzHgi6STESzJKdBtpqfTzObdMj1NGQUWX6k26E3EbQaGJX5Q==}
+  awilix@13.0.7:
+    resolution: {integrity: sha512-M7B1oVIyWrkY7RmQgczsdqpCI+j0+t0UjL5h1G/qqr4fRFo+zxI5E/0QUuOc5zdPg740BpUv4V+QSXNNBQlonQ==}
     engines: {node: '>=20.0.0'}
 
   axe-core@3.5.6:
@@ -9269,7 +9269,7 @@ snapshots:
       '@types/react': 19.3.0
       '@types/react-dom': 19.3.0(@types/react@19.3.0)
 
-  '@testing-library/user-event@14.6.13(@testing-library/dom@10.4.2)':
+  '@testing-library/user-event@14.6.12(@testing-library/dom@10.4.2)':
     dependencies:
       '@testing-library/dom': 10.4.2
 
@@ -9662,7 +9662,7 @@ snapshots:
       estree-walker: 3.0.3
       js-tokens: 10.0.0
 
-  awilix@13.0.5:
+  awilix@13.0.7:
     dependencies:
       fast-glob: 3.3.3
 
