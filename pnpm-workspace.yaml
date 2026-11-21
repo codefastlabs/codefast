@@ -97,7 +97,7 @@ catalog:
   oxlint: ^1.93.0
   oxlint-tsgolint: ^7.0.2007
   picomatch: ^4.0.7
-  postcss: ^8.5.32
+  postcss: ^8.5.33
   radix-ui: ^1.8.1
   react: ^19.3.1
   "@daypicker/react": ^10.0.2
