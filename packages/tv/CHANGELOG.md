@@ -1,5 +1,13 @@
 # @codefast/tailwind-variants
 
+## 0.12.0
+
+### Minor Changes
+
+- [#1238](https://github.com/codefastlabs/codefast/pull/1238) **Breaking:** `@codefast/tailwind-variants` is now published as `@codefast/tv`, and only the name changes. Swap the
+  dependency and change every `from "@codefast/tailwind-variants"` import to `from "@codefast/tv"`; the API and the
+  version line carry on unchanged. `@codefast/tailwind-variants` receives no further releases.
+
 ## 0.11.0
 
 ### Minor Changes

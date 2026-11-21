@@ -1,5 +1,14 @@
 # @codefast/ui
 
+## 0.16.1
+
+### Patch Changes
+
+- [#1238](https://github.com/codefastlabs/codefast/pull/1238) Depends on `@codefast/tv`, the new name of `@codefast/tailwind-variants`. A project that imports `tv` from
+  `@codefast/tailwind-variants` alongside `@codefast/ui` should switch to `@codefast/tv` so one copy is installed.
+- Updated dependencies:
+  - @codefast/tv@0.12.0
+
 ## 0.16.0
 
 ### Minor Changes
