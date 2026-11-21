@@ -26,13 +26,6 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["run", "tv:bench:serve"],
       "autoPort": true
-    },
-    {
-      "name": "tanstack-start",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@examples/tanstack-start", "exec", "vite", "dev", "--port", "3001"],
-      "port": 3001,
-      "autoPort": true
     }
   ]
 }

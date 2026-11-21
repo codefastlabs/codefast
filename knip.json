@@ -26,9 +26,6 @@
     "internal/benchmark-viewer": {
       "entry": ["src/app/entry.tsx"]
     },
-    "examples/tanstack-start": {
-      "ignoreDependencies": ["@babel/plugin-proposal-decorators"]
-    },
     "packages/di": {
       "entry": ["examples/**/*.ts", "tests/e2e/fixtures/**/entry-*.ts"],
       "ignoreDependencies": ["@babel/plugin-proposal-decorators"]

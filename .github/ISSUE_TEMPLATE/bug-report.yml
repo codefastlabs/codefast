@@ -50,8 +50,6 @@ body:
       label: Minimal reproduction
       description: |
         A link to a repository or StackBlitz, or the smallest code that shows the problem. Issues without one tend to stall.
-
-        [`examples/tanstack-start`](https://github.com/codefastlabs/codefast/tree/main/examples/tanstack-start) installs the published packages and is the fastest starting point.
     validations:
       required: true
 

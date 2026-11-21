@@ -29,7 +29,6 @@ const config = {
       },
     },
     "@apps/*": false,
-    "@examples/*": false,
     "@codefast/cli": false,
     // Node lane is tsc; the browser app is a Vite bundle whose hashed chunks in
     // dist/app must not be turned into package exports — exports are hand-kept.
@@ -90,10 +89,9 @@ const config = {
     },
   },
 
-  // Keyed by package name or glob, like `exports`: the apps and examples ship no API to stamp.
+  // Keyed by package name or glob, like `exports`: the apps ship no API to stamp.
   since: {
     "@apps/*": false,
-    "@examples/*": false,
   },
 };
 

@@ -169,10 +169,6 @@ export const placeOrder = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => context.scope.resolve(OrderService).place(data));
 ```
 
-`examples/tanstack-start` runs this in production: its `/inspector` route resolves every request through
-[`requestScopeMiddleware`](../../../../examples/tanstack-start/src/features/inspector/server/run-request.ts), built with
-`vite build` against the published `dist/`.
-
 ### Server routes — the handler is the block
 
 A server route handler receives the `Request` and returns a `Response`, so the scope is simply its first line. Build the
