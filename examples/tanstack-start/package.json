@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@codefast/di": "workspace:*",
-    "@codefast/tailwind-variants": "workspace:*",
     "@codefast/theme": "workspace:*",
+    "@codefast/tv": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-start": "catalog:",

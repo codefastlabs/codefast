@@ -11,7 +11,7 @@
     "arch": "arm64"
   },
   "libraries": [
-    { "name": "@codefast/tailwind-variants", "version": "0.10.0" },
+    { "name": "@codefast/tv", "version": "0.10.0" },
     { "name": "tailwind-variants", "version": "4.0.0" },
     { "name": "class-variance-authority", "version": "0.7.1" }
   ],

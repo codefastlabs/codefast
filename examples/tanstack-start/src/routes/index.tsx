@@ -21,8 +21,7 @@ function OverviewPage() {
         </h1>
         <p className="max-w-2xl text-pretty text-muted-foreground">
           This TanStack Start app depends on <code className="font-mono">@codefast/ui</code>,{" "}
-          <code className="font-mono">@codefast/theme</code>,{" "}
-          <code className="font-mono">@codefast/tailwind-variants</code> and{" "}
+          <code className="font-mono">@codefast/theme</code>, <code className="font-mono">@codefast/tv</code> and{" "}
           <code className="font-mono">@codefast/di</code> with real registry version ranges — not{" "}
           <code className="font-mono">workspace:*</code> links. Everything below therefore exercises the actual shipped{" "}
           <code className="font-mono">dist/</code>, the same bytes an external consumer would install.
@@ -52,7 +51,7 @@ function OverviewPage() {
 
         <PackageCard
           description="Type-safe variant styling API — a faster tailwind-variants replacement."
-          name="@codefast/tailwind-variants"
+          name="@codefast/tv"
           version={VERSION}
         >
           <Button asChild size="sm" variant="outline">

@@ -1,20 +1,16 @@
-# @codefast/tailwind-variants
-
-> **Note.** A future release renames this package `@codefast/tv`, and only the name changes: when it lands, swap the
-> dependency and change every `from "@codefast/tailwind-variants"` import to `from "@codefast/tv"`. Until then, keep
-> installing `@codefast/tailwind-variants`.
+# @codefast/tv
 
 A type-safe variant styling API for Tailwind CSS — a faster drop-in replacement for `tailwind-variants`, for anyone
 building components whose classes depend on props.
 
-[![npm version](https://img.shields.io/npm/v/@codefast/tailwind-variants)](https://www.npmjs.com/package/@codefast/tailwind-variants)
-[![license](https://img.shields.io/npm/l/@codefast/tailwind-variants)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/@codefast/tv)](https://www.npmjs.com/package/@codefast/tv)
+[![license](https://img.shields.io/npm/l/@codefast/tv)](./LICENSE)
 
 ## Overview
 
-`@codefast/tailwind-variants` turns one configuration into a typed function that returns the right Tailwind classes for
-a set of props. Describe your `base`, `variants`, and `slots` once; call the function with props; get back a merged
-class string. It's a drop-in, faster replacement for `tailwind-variants`, with the same configuration shape.
+`@codefast/tv` turns one configuration into a typed function that returns the right Tailwind classes for a set of props.
+Describe your `base`, `variants`, and `slots` once; call the function with props; get back a merged class string. It's a
+drop-in, faster replacement for `tailwind-variants`, with the same configuration shape.
 
 `tv()` costs next to nothing. The first calls resolve straight from the configuration, the next compiles it into a plan,
 and from then on resolving a component is string work — with a repeated selection answered from a cache.
@@ -33,21 +29,20 @@ and from then on resolving a component is string work — with a repeated select
 ## Installation
 
 ```bash
-pnpm add @codefast/tailwind-variants cn
-# npm install @codefast/tailwind-variants cn
-# yarn add @codefast/tailwind-variants cn
+pnpm add @codefast/tv cn
+# npm install @codefast/tv cn
+# yarn add @codefast/tv cn
 ```
 
-`@codefast/tailwind-variants` ships ESM only. `cn` is a peer dependency (`>=0.5.0`), and the package runs on Node.js
-24.15 or later and in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later
-([support policy](../../SUPPORT.md#browsers)). It requires TypeScript 7 or later for its types. It's published on 0.x
-and versioned on its own track: breaking changes ship as minor versions, so pin the minor version when you need
-stability.
+`@codefast/tv` ships ESM only. `cn` is a peer dependency (`>=0.5.0`), and the package runs on Node.js 24.15 or later and
+in Chrome and Edge 136, Firefox 136, or Safari 18.4 or later ([support policy](../../SUPPORT.md#browsers)). It requires
+TypeScript 7 or later for its types. It's published on 0.x and versioned on its own track: breaking changes ship as
+minor versions, so pin the minor version when you need stability.
 
 ## Quick start
 
 ```ts
-import { tv } from "@codefast/tailwind-variants";
+import { tv } from "@codefast/tv";
 
 const button = tv({
   base: "inline-flex items-center justify-center rounded-md font-medium",
@@ -221,7 +216,7 @@ and both the plan walk and the merge are pure functions of the selection. Two co
 `createTV(options)` bakes those options into a shared factory and returns `{ tv, cn }`:
 
 ```ts
-import { createTV } from "@codefast/tailwind-variants";
+import { createTV } from "@codefast/tv";
 import { extendTailwindMerge } from "cn/config";
 
 const { tv, cn } = createTV({
@@ -256,7 +251,7 @@ class merges on every call.
 ## Class utilities
 
 ```ts
-import { cn, cx } from "@codefast/tailwind-variants";
+import { cn, cx } from "@codefast/tv";
 
 cn("px-4 py-2", "px-6"); // => "py-2 px-6" — joined, then merged
 cx("px-4 py-2", "px-6"); // => "px-4 py-2 px-6" — joined only, no merging
@@ -272,8 +267,8 @@ without merging, and is what `createTV` returns as `cn` under `twMerge: false`.
 component props:
 
 ```tsx
-import { tv } from "@codefast/tailwind-variants";
-import type { VariantProps } from "@codefast/tailwind-variants";
+import { tv } from "@codefast/tv";
+import type { VariantProps } from "@codefast/tv";
 import type { ComponentProps } from "react";
 
 const button = tv({
@@ -303,7 +298,7 @@ The configuration shape is the same — `base`, `variants`, `slots`, `defaultVar
 
 ```diff
 - import { tv, cn, cx } from "tailwind-variants";
-+ import { tv, cn, cx } from "@codefast/tailwind-variants";
++ import { tv, cn, cx } from "@codefast/tv";
 ```
 
 Resolution matches upstream `tailwind-variants` 4.0.0 — variant values, `extend`, compounds, slot props, `class` and

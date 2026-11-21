@@ -1,4 +1,4 @@
-/** Fails when `@codefast/tailwind-variants` and `tailwind-variants` resolve a shared row's workload differently. */
+/** Fails when `@codefast/tv` and `tailwind-variants` resolve a shared row's workload differently. */
 import { codefast } from "#lib/codefast";
 import { tailwindVariants } from "#lib/tailwind-variants";
 import { collectTvScenarios } from "#scenarios/collect-tv-scenarios";

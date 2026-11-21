@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Parent harness: rebuild `@codefast/tailwind-variants`, run every library through the shared progress
+ * Parent harness: rebuild `@codefast/tv`, run every library through the shared progress
  * display, then render the comparison and persist the run's observations.
  */
 import { dirname, join } from "node:path";

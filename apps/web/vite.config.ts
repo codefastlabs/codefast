@@ -102,14 +102,17 @@ function packageDocPages(): Array<{ path: string }> {
 }
 
 /**
- * The `@codefast/ui` section moved from the site root to `/ui`. Every old URL — the gallery, each detail
- * page and its `.md` twin, Getting Started — answers a permanent redirect so indexed links and bookmarks
- * keep working. Emitted into Vercel's static routing, so no function runs for them.
+ * Permanent redirects from URLs the site no longer serves: the `@codefast/ui` section that lived at the root,
+ * and the docs of `@codefast/tv` under its former package name. Emitted into Vercel's static routing, so
+ * indexed links and bookmarks keep working without a function running for them.
  */
 const LEGACY_REDIRECTS = {
   "/components": { redirect: { to: "/ui/components", status: 308 } },
   "/components/**": { redirect: { to: "/ui/components/**", status: 308 } },
   "/about": { redirect: { to: "/ui/about", status: 308 } },
+  "/docs/tailwind-variants": { redirect: { to: "/docs/tv", status: 308 } },
+  "/docs/tailwind-variants.md": { redirect: { to: "/docs/tv.md", status: 308 } },
+  "/docs/tailwind-variants/**": { redirect: { to: "/docs/tv/**", status: 308 } },
 } as const;
 
 export default defineConfig(({ command }) => {

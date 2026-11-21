@@ -18,7 +18,7 @@ const config = {
         "./css/*": "./src/css/*",
       },
     },
-    "@codefast/tailwind-variants": {
+    "@codefast/tv": {
       preserve: true,
     },
     // Generate exports from dist/ like every other library package; the css directory is a

@@ -12,7 +12,7 @@ import appCss from "#styles.css?url";
 
 const TITLE = "Codefast × TanStack Start — npm consumer demo";
 const DESCRIPTION =
-  "A TanStack Start app that consumes the published @codefast/* packages straight from npm: UI components, color-scheme theming, tailwind-variants, and server-side DI.";
+  "A TanStack Start app that consumes the published @codefast/* packages straight from npm: UI components, color-scheme theming, type-safe variants, and server-side DI.";
 
 export const Route = createRootRoute({
   head: () => ({

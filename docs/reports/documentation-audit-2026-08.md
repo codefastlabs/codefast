@@ -60,9 +60,9 @@ only joined by a newer audit.
 |                                                                           | `SPEC.md` (since retired — `spec/README.md` is the Specification page)          | Spec pointer (into `spec/`)                            |
 |                                                                           | [spec/README.md](../../packages/tracking/spec/README.md) + 11 `spec-*.md`       | Spec — source of truth                                 |
 |                                                                           | [spec/vectors/README.md](../../packages/tracking/spec/vectors/README.md)        | Spec reference (vector format)                         |
-| **tailwind-variants**                                                     | [README.md](../../packages/tailwind-variants/README.md)                         | Guide                                                  |
-|                                                                           | [ARCHITECTURE.md](../../packages/tailwind-variants/ARCHITECTURE.md)             | Design doc                                             |
-|                                                                           | [DECISIONS.md](../../packages/tailwind-variants/DECISIONS.md)                   | Decision — settled design record (**was `RFC.md`**)    |
+| **tailwind-variants**                                                     | [README.md](../../packages/tv/README.md)                                        | Guide                                                  |
+|                                                                           | [ARCHITECTURE.md](../../packages/tv/ARCHITECTURE.md)                            | Design doc                                             |
+|                                                                           | [DECISIONS.md](../../packages/tv/DECISIONS.md)                                  | Decision — settled design record (**was `RFC.md`**)    |
 | **theme · ui · typescript-config · benchmark-harness · benchmark-viewer** | `README.md` each                                                                | Guide (overview)                                       |
 | **examples/tanstack-start**                                               | [README.md](../../examples/tanstack-start/README.md)                            | Guide                                                  |
 
@@ -91,9 +91,9 @@ only joined by a newer audit.
 
 - Renamed `packages/cli/SPEC.md` → **`DECISIONS.md`** (it self-identifies as decision history) and repointed the two
   links from [`cli/ARCHITECTURE.md`](../../packages/cli/ARCHITECTURE.md).
-- Renamed `packages/tailwind-variants/RFC.md` → **`DECISIONS.md`** and repointed the link from
-  [`tailwind-variants/ARCHITECTURE.md`](../../packages/tailwind-variants/ARCHITECTURE.md). This establishes a
-  package-local `DECISIONS.md` convention that mirrors the repo-level [`decisions/`](../decisions/) type.
+- Renamed `packages/tv/RFC.md` → **`DECISIONS.md`** and repointed the link from
+  [`tailwind-variants/ARCHITECTURE.md`](../../packages/tv/ARCHITECTURE.md). This establishes a package-local
+  `DECISIONS.md` convention that mirrors the repo-level [`decisions/`](../decisions/) type.
 - Reworded the `packages/di` section of [`CLAUDE.md`](../../CLAUDE.md) to name `SPEC.md`, `ARCHITECTURE.md`, and
   `LEARNING.md` with their distinct roles.
 - Corrected the spec count and added the missing `spec-security` bullet in `tracking/SPEC.md` (since retired in favour

@@ -9,7 +9,7 @@ export default defineConfig({
 
   // ── Plugins & categories ───────────────────────────────────────────────────────────────────────────────────────────
   // Built-in plugins relevant to this monorepo: TypeScript libraries (di,
-  // tailwind-variants, cli), React 19 UI packages (ui, theme, benchmark-viewer),
+  // tv, cli), React 19 UI packages (ui, theme, benchmark-viewer),
   // TanStack Start apps (apps/web docs site, examples/* consumers), and vitest test suites.
   plugins: ["import", "jsx-a11y", "node", "oxc", "promise", "react", "typescript", "unicorn", "vitest"],
   // Correctness only (oxlint's recommended default scope) — broader categories
@@ -94,7 +94,7 @@ export default defineConfig({
     {
       // Hot-path preallocation: `new Array(n)` is intentional in these
       // benchmark-backed packages; `Array.from({ length: n })` is slower.
-      files: ["packages/{di,tailwind-variants}/src/**/*.ts"],
+      files: ["packages/{di,tv}/src/**/*.ts"],
       rules: {
         "unicorn/no-new-array": "off",
       },

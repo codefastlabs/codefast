@@ -39,13 +39,13 @@ const USER_FACING_NOTES: ReadonlyArray<UserFacingNote<TvCompetitorName>> = [
       { id: "slot-class-with-merge", versus: ["tailwind-variants"] },
       { id: "data-cells-with-merge", versus: ["tailwind-variants"] },
     ],
-    body: "Every call site passes its own `className`, usually absent and sometimes overriding a class the variants set, and props arrive as a fresh object per call as React hands them over. The table-cell row draws its selections and classes from row and column data, about a thousand distinct calls, rather than from a fixed list of call sites. `cva` has no `cn` of its own, so its `cn` cell is its clsx-style join followed by `tailwind-merge`, the usual production pairing; `@codefast/tailwind-variants` exports the `cn` engine's own `cn`.",
+    body: "Every call site passes its own `className`, usually absent and sometimes overriding a class the variants set, and props arrive as a fresh object per call as React hands them over. The table-cell row draws its selections and classes from row and column data, about a thousand distinct calls, rather than from a fixed list of call sites. `cva` has no `cn` of its own, so its `cn` cell is its clsx-style join followed by `tailwind-merge`, the usual production pairing; `@codefast/tv` exports the `cn` engine's own `cn`.",
   },
 ];
 
 /** The paragraph under the bundle table, which the footprint record cannot say. */
 const BUNDLE_NOTE =
-  "Most of either `tv()` library's share is its merge engine: `tailwind-variants` compiles its own tables into its bundle, while `@codefast/tailwind-variants` takes `cn` as a peer and imports its `twMerge` and `cn`, so an app ships one engine whichever library calls it. `cn` is a little larger than `tailwind-merge` gzipped and smaller minified, and merges a string no cache has seen several times faster. `cva` merges nothing, which is why its with-merge rows call `tailwind-merge` after it.";
+  "Most of either `tv()` library's share is its merge engine: `tailwind-variants` compiles its own tables into its bundle, while `@codefast/tv` takes `cn` as a peer and imports its `twMerge` and `cn`, so an app ships one engine whichever library calls it. `cn` is a little larger than `tailwind-merge` gzipped and smaller minified, and merges a string no cache has seen several times faster. `cva` merges nothing, which is why its with-merge rows call `tailwind-merge` after it.";
 
 /** Every loss shape, ordered by how much it matters. */
 const LOSS_NOTES: ReadonlyArray<LossNote<TvCompetitorName>> = [];

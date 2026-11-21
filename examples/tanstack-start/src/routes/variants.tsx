@@ -13,7 +13,7 @@ function VariantsPage() {
   return (
     <div className="space-y-12">
       <header className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">@codefast/tailwind-variants</h1>
+        <h1 className="text-2xl font-bold tracking-tight">@codefast/tv</h1>
         <p className="max-w-2xl text-sm text-muted-foreground">
           The <code className="font-mono">Callout</code> component below is built with a single{" "}
           <code className="font-mono">tv()</code> config. The <code className="font-mono">tone</code> and{" "}
