@@ -273,8 +273,8 @@ catalogs:
       specifier: ^5.1.0
       version: 5.1.0
     awilix:
-      specifier: ^13.0.5
-      version: 13.0.5
+      specifier: ^13.0.7
+      version: 13.0.7
     babel-plugin-react-compiler:
       specifier: ^1.0.0
       version: 1.0.0
@@ -670,7 +670,7 @@ importers:
         version: link:../../internal/benchmark-viewer
       awilix:
         specifier: 'catalog:'
-        version: 13.0.5
+        version: 13.0.7
       brandi:
         specifier: 'catalog:'
         version: 5.1.0
@@ -4684,8 +4684,8 @@ packages:
   ast-v8-to-istanbul@1.0.7:
     resolution: {integrity: sha512-kFL68AG6ajd8fg248zwM9GQrUWEp79gsmjum34OEXjs4yHuUMZfYKwOLW9GMmB4oNvVrj+EAGxsP7ye2UR9UlA==}
 
-  awilix@13.0.5:
-    resolution: {integrity: sha512-ORtca6suBdYA1FyTzqHEZDvEuUwo3lPDDBRm7GrzHgi6STESzJKdBtpqfTzObdMj1NGQUWX6k26E3EbQaGJX5Q==}
+  awilix@13.0.7:
+    resolution: {integrity: sha512-M7B1oVIyWrkY7RmQgczsdqpCI+j0+t0UjL5h1G/qqr4fRFo+zxI5E/0QUuOc5zdPg740BpUv4V+QSXNNBQlonQ==}
     engines: {node: '>=20.0.0'}
 
   axe-core@3.5.6:
@@ -9662,7 +9662,7 @@ snapshots:
       estree-walker: 3.0.3
       js-tokens: 10.0.0
 
-  awilix@13.0.5:
+  awilix@13.0.7:
     dependencies:
       fast-glob: 3.3.3
 
