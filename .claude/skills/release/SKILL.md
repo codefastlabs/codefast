@@ -11,8 +11,8 @@ description:
 ## Ground rules
 
 - The versioning policy — independent tracks per package, when a `major` is warranted, how to read the pre-mode state —
-  is in CLAUDE.md's "Releases" section, which is always in context; this skill covers the procedures. `@apps/*` and
-  `@examples/*` are in `.changeset/config.json#ignore` and never need a changeset.
+  is in CLAUDE.md's "Releases" section, which is always in context; this skill covers the procedures. `@apps/*` is in
+  `.changeset/config.json#ignore` and never needs a changeset.
 - **Ask before a `major`.** It takes that one package to 1.0, and no edit to the changesets can take it back once
   versioned — only the reset recipe below can.
 - **Merging the release PR publishes to npm, so it is the maintainer's decision.** Report the release state; never merge

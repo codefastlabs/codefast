@@ -29,7 +29,7 @@ updates:
       # with the floor.
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
-      # Published @codefast/* consumed by examples/* — bumped by hand per release, not by Dependabot.
+      # Our own @codefast/* are workspace-linked, never a registry bump.
       - dependency-name: "@codefast/*"
     groups:
       # Order matters: first matching group wins (see react vs typescript @types).

@@ -1,6 +1,5 @@
 packages:
   - apps/*
-  - examples/*
   - packages/**
   - internal/*
   - benchmarks/*
@@ -63,7 +62,6 @@ catalog:
   "@vercel/analytics": ^2.0.1
   "@vitejs/plugin-react": ^6.3.0
   "@vitest/coverage-v8": ^5.1.0
-  "@xyflow/react": ^12.12.1
   awilix: ^13.0.5
   babel-plugin-react-compiler: ^1.0.0
   brandi: ^5.1.0

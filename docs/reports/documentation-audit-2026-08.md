@@ -64,7 +64,7 @@ only joined by a newer audit.
 |                                                                           | [ARCHITECTURE.md](../../packages/tv/ARCHITECTURE.md)                            | Design doc                                             |
 |                                                                           | [DECISIONS.md](../../packages/tv/DECISIONS.md)                                  | Decision — settled design record (**was `RFC.md`**)    |
 | **theme · ui · typescript-config · benchmark-harness · benchmark-viewer** | `README.md` each                                                                | Guide (overview)                                       |
-| **examples/tanstack-start**                                               | [README.md](../../examples/tanstack-start/README.md)                            | Guide                                                  |
+| **examples/tanstack-start**                                               | `README.md` (since removed)                                                     | Guide                                                  |
 
 ### Benchmarks
 
@@ -126,9 +126,8 @@ After the classification pass, all 75 authored documents were read in full and c
   `library-build.json`.
 - [`benchmarks/tailwind-variants/README.md`](../../benchmarks/tailwind-variants/README.md) — added the missing
   `bench:isolate` / `bench:list` rows.
-- [`examples/tanstack-start/README.md`](../../examples/tanstack-start/README.md) — premise corrected: it consumes
-  packages via `workspace:*` (not a catalog of published versions), differing from `apps/web` only by omitting the
-  dev-only `source` resolve condition.
+- `examples/tanstack-start/README.md` (since removed) — premise corrected: it consumes packages via `workspace:*` (not a
+  catalog of published versions), differing from `apps/web` only by omitting the dev-only `source` resolve condition.
 
 **`@codefast/di` example READMEs** — ten of the nineteen had drifted from their code (wrong token/method/import names, a
 non-existent middleware, a hot-swap narrative describing the wrong plugin, decorators shown without their required

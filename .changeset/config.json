@@ -12,7 +12,7 @@
   "linked": [],
   "access": "public",
   "updateInternalDependencies": "patch",
-  "ignore": ["@apps/*", "@examples/*"],
+  "ignore": ["@apps/*"],
   "privatePackages": { "version": true, "tag": false },
   "format": "oxfmt"
 }

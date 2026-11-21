@@ -10,7 +10,7 @@ export default defineConfig({
   // ── Plugins & categories ───────────────────────────────────────────────────────────────────────────────────────────
   // Built-in plugins relevant to this monorepo: TypeScript libraries (di,
   // tv, cli), React 19 UI packages (ui, theme, benchmark-viewer),
-  // TanStack Start apps (apps/web docs site, examples/* consumers), and vitest test suites.
+  // the TanStack Start app (apps/web), and vitest test suites.
   plugins: ["import", "jsx-a11y", "node", "oxc", "promise", "react", "typescript", "unicorn", "vitest"],
   // Correctness only (oxlint's recommended default scope) — broader categories
   // (suspicious, pedantic) are too noisy for this codebase under denyWarnings.

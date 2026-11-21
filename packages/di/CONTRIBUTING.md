@@ -142,8 +142,8 @@ Lint/format is Oxc (`oxlint --deny-warnings`, `oxfmt`). If you edited files via 
 
 ## Verify consumers — (conditional: changed a public API surface)
 
-`apps/web` and `examples/*` consume the built package. Verify the **production** build, not just `dev` — client
-import-protection and prerendering only surface at build time:
+`apps/web` consumes the built package. Verify the **production** build, not just `dev` — client import-protection and
+prerendering only surface at build time:
 
 ```bash
 pnpm build:packages

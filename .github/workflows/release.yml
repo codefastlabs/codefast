@@ -16,9 +16,8 @@ on:
       - "packages/**"
       - "internal/**"
       - ".changeset/**"
-      # changeset version reads every workspace manifest, including private apps/examples/benchmarks
+      # changeset version reads every workspace manifest, including private apps/benchmarks
       - "apps/*/package.json"
-      - "examples/*/package.json"
       - "benchmarks/*/package.json"
 
 concurrency:

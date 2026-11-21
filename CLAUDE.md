@@ -13,8 +13,7 @@ library. `apps/web` is the TanStack Start site behind codefastlabs.com: a landin
 `README.md`/`SPEC.md`/`ARCHITECTURE.md`/… — or from a directory named after the kind (`spec/`), whose `README.md` is the
 kind's page and whose other `*.md` render beneath it. Workspace layout is by audience: `packages/` holds only published
 `@codefast/*` libraries, `internal/` holds private workspace packages consumed only inside the repo, `benchmarks/` the
-benchmark suites, `apps/` deployed sites, `examples/` consumer demos. A new package is private until it is published, so
-it starts in `internal/`.
+benchmark suites, `apps/` deployed sites. A new package is private until it is published, so it starts in `internal/`.
 
 ## Toolchain (non-standard — read before assuming)
 
@@ -33,8 +32,8 @@ it starts in `internal/`.
   Packages" model, emitting per-file `.js` + `.d.ts` to `dist/`. tsc leaves internal `#` subpath imports verbatim, so
   each `package.json#imports` is conditional (`source` → `src` for dev/tests, `types`/`default` → `dist` for consumers),
   and `apps/web` consumes the built `dist/`. Exports are generated from `dist/` by `codefast exports:generate`. The
-  **only** bundler is **Vite** (Rolldown), reserved for genuine browser bundles: `apps/web`/`examples` (TanStack Start)
-  and the `benchmark-viewer` browser app (its Node/SSR lane is plain tsc).
+  **only** bundler is **Vite** (Rolldown), reserved for genuine browser bundles: `apps/web` (TanStack Start) and the
+  `benchmark-viewer` browser app (its Node/SSR lane is plain tsc).
 - **A build loads only its runtime's ambient types.** `library-build.json` sets `types: []`; a package whose code runs
   on Node (`cli`, the benchmark harness, the viewer's SSR lane) sets `types: ["node"]` in its `tsconfig.build.json`, and
   every browser or universal package leaves it empty, so a Node global in its `src` fails the build. Explicit resource
@@ -146,17 +145,17 @@ Rules: **no tests under** `src/**`; no test files directly under `tests/` (must 
   these `#` specifiers verbatim for a **consumer's** Node to resolve — so a leading slash silently breaks every package
   on the engine floor while the in-repo runners (tsc/Vite/Vitest/tsx), which resolve `#/` themselves, stay green and
   hide it. The `imports` keys are `#*`, `#tests/*`, `#examples/*` to match.
-- **`tsc` resolves `#` through the `imports` field itself, so no `tsconfig` under `packages/*`, `apps/*`, or
-  `examples/*` declares `paths`** — and neither Vite nor Vitest needs `resolve.tsconfigPaths`. Two requirements make
-  that work: every `#*` target lists its extension candidates (`./src/*`, `./src/*.ts`, `./src/*.tsx`, plus
-  `./src/*/index.ts`, `./src/*/index.tsx` everywhere except `benchmarks/*`) because `tsc` does no extension substitution
-  on a bare `"./src/*"`; and each `packages/*` tsconfig sets `"customConditions": ["source"]` to pick the `src` lane,
-  since TS's default conditions (`import`, `types`) match the `types` lane and would silently type-check `src/` against
-  stale `dist/*.d.ts`. Keep `./src/*` first in the array — `#styles.css?url` resolves on that candidate alone. That
-  condition also makes cross-package imports (`@codefast/ui` → `@codefast/tv`) resolve to the other package's `src`, so
-  `check-types` no longer needs a prior build; `apps/*`, `examples/*`, and `benchmarks/*` set no custom condition and
-  keep consuming the built `dist/`. Every runner in the repo resolves `#` through that field — `tsc`, Vite, Vitest, and
-  `tsx` (the benchmarks) — so `paths` exists nowhere.
+- **`tsc` resolves `#` through the `imports` field itself, so no `tsconfig` under `packages/*` or `apps/*` declares
+  `paths`** — and neither Vite nor Vitest needs `resolve.tsconfigPaths`. Two requirements make that work: every `#*`
+  target lists its extension candidates (`./src/*`, `./src/*.ts`, `./src/*.tsx`, plus `./src/*/index.ts`,
+  `./src/*/index.tsx` everywhere except `benchmarks/*`) because `tsc` does no extension substitution on a bare
+  `"./src/*"`; and each `packages/*` tsconfig sets `"customConditions": ["source"]` to pick the `src` lane, since TS's
+  default conditions (`import`, `types`) match the `types` lane and would silently type-check `src/` against stale
+  `dist/*.d.ts`. Keep `./src/*` first in the array — `#styles.css?url` resolves on that candidate alone. That condition
+  also makes cross-package imports (`@codefast/ui` → `@codefast/tv`) resolve to the other package's `src`, so
+  `check-types` no longer needs a prior build; `apps/*` and `benchmarks/*` set no custom condition and keep consuming
+  the built `dist/`. Every runner in the repo resolves `#` through that field — `tsc`, Vite, Vitest, and `tsx` (the
+  benchmarks) — so `paths` exists nowhere.
 - **The three conditions are three audiences, not three spellings of one path.** `tsc` emits `#` specifiers verbatim
   into both `.d.ts` and `.js`, so the field keeps resolving after the package leaves this repo: `source` → `./src/*` is
   you during dev; `types` → `./dist/*.d.ts` is a **consumer's** `tsc` resolving a `#` it found inside your shipped
@@ -168,13 +167,13 @@ Rules: **no tests under** `src/**`; no test files directly under `tests/` (must 
   checks that the file exists, and never falls through — so `["./dist/*.js", "./dist/*/index.js"]` is a safety net that
   cannot fire, and a missing first candidate throws `ERR_MODULE_NOT_FOUND` instead of trying the second. The `source`
   lane keeps its extension candidates because only `tsc` and Vite read it and both probe; `types` and `default` are
-  single strings. `apps/*` and `examples/*` may keep a bare array because nothing but `tsc`/Vite/Vitest reads it — the
-  one exception is `vite.config.ts`, which Vite externalises so raw Node resolves it, hence its `#lib/cache.ts` import
-  spells the extension to hit the first candidate exactly. `benchmarks/*` is the second exception, and the sharper one:
-  **tsx reads only the first candidate**, applying its own extension probing to it, so a `./src/*/index.ts` entry can
-  never fire there — a `#` specifier landing on a directory throws `ERR_UNSUPPORTED_DIR_IMPORT` at bench time while
-  `check-types` stays green. Both bench packages therefore drop the two `index` candidates and keep `src/` flat: one
-  `<group>.ts` per module, never an `index.ts`.
+  single strings. `apps/*` may keep a bare array because nothing but `tsc`/Vite/Vitest reads it — the one exception is
+  `vite.config.ts`, which Vite externalises so raw Node resolves it, hence its `#lib/cache.ts` import spells the
+  extension to hit the first candidate exactly. `benchmarks/*` is the second exception, and the sharper one: **tsx reads
+  only the first candidate**, applying its own extension probing to it, so a `./src/*/index.ts` entry can never fire
+  there — a `#` specifier landing on a directory throws `ERR_UNSUPPORTED_DIR_IMPORT` at bench time while `check-types`
+  stays green. Both bench packages therefore drop the two `index` candidates and keep `src/` flat: one `<group>.ts` per
+  module, never an `index.ts`.
 - **The condition is named `source` deliberately — do not "standardise" it to `development`.** Vite and webpack both
   enable `development` on their own in dev mode, so a published package would hand every consumer its raw `.tsx`:
   `next dev` answers 500 (`Unknown module type`) while `next build` stays green, and the fix — `transpilePackages` — is
@@ -262,8 +261,8 @@ types carry the types.**
   the code or the types, **delete it**; never narrate obvious lines.
 - **Every exported declaration in `packages/*/src` carries a doc comment** — Swift's rule, adopted because it already
   holds: the published packages sit at full coverage, and one undocumented export is a regression, not a style choice.
-  `apps/*` and `examples/*` are encouraged, not gated. Internal helpers get a comment only when non-obvious. Swift's
-  corollary is the sharper half: if the summary is hard to write in simple terms, redesign the API, not the sentence.
+  `apps/*` are encouraged, not gated. Internal helpers get a comment only when non-obvious. Swift's corollary is the
+  sharper half: if the summary is hard to write in simple terms, redesign the API, not the sentence.
 - **A summary is one third-person sentence fragment, ending with a period** (Swift API Design Guidelines). A function's
   summary states what it does and what it returns, omitting void effects —
   `Creates a class resolver for a component without slots.`, `Resolves the monorepo root.` Anything that is not a
@@ -334,7 +333,6 @@ point of use beats brevity, and every word must convey information:
 | `internal/benchmark-*`       | Private benchmark harness/viewer shared by `benchmarks/*` (`pnpm bench`); never published                                              |
 | `benchmarks/*`               | Benchmark suites comparing `@codefast/*` against upstream (`di`, `tailwind-variants`)                                                  |
 | `apps/web`                   | codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` markdown docs, `@codefast/ui` showcase                        |
-| `examples/tanstack-start`    | TanStack Start consumer demo; uses `workspace:*` so package changes are testable here directly                                         |
 
 ### `packages/di` layout
 

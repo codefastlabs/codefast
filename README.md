@@ -115,14 +115,13 @@ Feedback is welcome at any stage: if a name is confusing, a prop feels awkward, 
 
 The workspace is laid out by audience: who consumes a directory decides where it lives.
 
-| Path                                                 | Role                                                                                                               |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [`apps/web`](apps/web)                               | The codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` docs, and the `@codefast/ui` showcase |
-| [`packages/`](packages)                              | The published `@codefast/*` libraries — nothing else lives here                                                    |
-| [`internal/`](internal)                              | Private workspace packages consumed only inside the repo (the benchmark harness and viewer); never published       |
-| [`benchmarks/`](benchmarks)                          | Benchmark suites comparing `@codefast/*` against upstream libraries (`pnpm bench`)                                 |
-| [`examples/tanstack-start`](examples/tanstack-start) | Consumer demo that runs the packages' built `dist/` through `workspace:*` links                                    |
-| [`docs/`](docs)                                      | Repo-level documents organised by type: decisions, guides, reports, runbooks                                       |
+| Path                        | Role                                                                                                               |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| [`apps/web`](apps/web)      | The codefastlabs.com portal (TanStack Start): package landing, `/docs/<pkg>` docs, and the `@codefast/ui` showcase |
+| [`packages/`](packages)     | The published `@codefast/*` libraries — nothing else lives here                                                    |
+| [`internal/`](internal)     | Private workspace packages consumed only inside the repo (the benchmark harness and viewer); never published       |
+| [`benchmarks/`](benchmarks) | Benchmark suites comparing `@codefast/*` against upstream libraries (`pnpm bench`)                                 |
+| [`docs/`](docs)             | Repo-level documents organised by type: decisions, guides, reports, runbooks                                       |
 
 A new package starts in `internal/` and moves to `packages/` when it is published.
 
