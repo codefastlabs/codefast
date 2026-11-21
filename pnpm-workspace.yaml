@@ -79,7 +79,7 @@ catalog:
   embla-carousel-react: ^8.6.0
   fast-check: ^4.10.2
   github-slugger: ^2.0.0
-  hono: ^4.13.16
+  hono: ^4.13.19
   injection-js: ^2.6.1
   input-otp: ^1.5.0
   inversify: ^8.3.0
